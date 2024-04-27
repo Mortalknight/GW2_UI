@@ -4,10 +4,14 @@ local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local RGBToHex = GW.RGBToHex
 local GWGetClassColor = GW.GWGetClassColor
+local Wait = GW.Wait
+local GetUnitItemLevel = GW.GetUnitItemLevel
+local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local CI = GW.Libs.CI
+local nameRoleIcon = GW.nameRoleIcon
 
 local targetList = {}
+local MountIDs = {}
 local classification = {
     worldboss = format("|cffAF5050 %s|r", BOSS),
     rareelite = format("|cffAF5050+ %s|r", ITEM_QUALITY3_DESC),
@@ -24,6 +28,8 @@ local genderTable = {
 local LEVEL1 = strlower(_G.TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?", ""))
 local LEVEL2 = strlower(_G.TOOLTIP_UNIT_LEVEL_CLASS:gsub("^%%2$s%s?(.-)%s?%%1$s", "%1"):gsub("^%-?г?о?%s?", ""):gsub("%s?%%s%s?%-?", ""))
 local IDLine = "|cffffedba%s|r %d"
+
+local TT = CreateFrame("Frame")
 
 local function IsModKeyDown(setting)
     local k = setting and GetSetting(setting) or GetSetting("ADVANCED_TOOLTIP_ID_MODIFIER")
@@ -62,16 +68,32 @@ end
 local function SetUnitAura(self, unit, index, filter)
     if not self or self:IsForbidden() then return end
 
-    local name, _, _, _, _, _, source, _, _, spellID = UnitAura(unit, index, filter)
-    if not name then return end
+    local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
+    if not auraData then return end
+
+    local mountID, mountText = MountIDs[auraData.spellId], ""
+
+    if mountID then
+        local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(mountID)
+        mountText = sourceText and gsub(sourceText, "|n%s+|n", "|n")
+
+        if mountText then
+            self:AddLine(" ")
+            self:AddLine(mountText, 1, 1, 1)
+        end
+    end
 
     if IsModKeyDown() then
-        if source then
-            local _, class = UnitClass(source)
-            local color = GWGetClassColor(class, GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR"), true)
-            self:AddDoubleLine(format(IDLine, ID, spellID), format("|c%s%s|r", color.colorStr, UnitName(source) or UNKNOWN))
+        if mountText then
+            self:AddLine(" ")
+        end
+
+        if auraData.sourceUnit then
+            local _, class = UnitClass(auraData.sourceUnit)
+            local color = GWGetClassColor(class, GW.GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR"), true)
+            self:AddDoubleLine(format(IDLine, ID, auraData.spellId), format("|c%s%s|r", color.colorStr, UnitName(auraData.sourceUnit) or UNKNOWN))
         else
-            self:AddLine(format(IDLine, ID, spellID))
+            self:AddLine(format(IDLine, ID, auraData.spellId))
         end
     end
 
@@ -235,28 +257,134 @@ local function AddTargetInfo(self, unit)
     end
 end
 
+local function AddMountInfo(self, unit)
+    local index = 1
+    local auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
+    while auraData do
+        local mountID = MountIDs[auraData.spellId]
+        if mountID then
+            local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(mountID)
+            self:AddDoubleLine(format("%s:", MOUNT), auraData.name, nil, nil, nil, 1, 1, 1)
+
+            local mountText = sourceText and IsControlKeyDown() and gsub(sourceText, "|n%s+|n", "|n")
+            if mountText then
+                local sourceModified = gsub(mountText, "|n", "\10")
+                for x in gmatch(sourceModified, "[^\10]+\10?") do
+                    local left, right = strmatch(x, "(.-|r)%s?([^\10]+)\10?")
+                    if left and right then
+                        self:AddDoubleLine(left, right, nil, nil, nil, 1, 1, 1)
+                    else
+                        self:AddDoubleLine(FROM, gsub(mountText, "|c%x%x%x%x%x%x%x%x",""), nil, nil, nil, 1, 1, 1)
+                    end
+                end
+            end
+
+            break
+        else
+            index = index + 1
+            auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
+        end
+    end
+end
+
+local function AddRoleInfo(self, unit)
+    local r, g, b, role = 1, 1, 1, UnitGroupRolesAssigned(unit)
+    if IsInGroup() and (UnitInParty(unit) or UnitInRaid(unit)) and (role ~= "NONE") then
+        if role == "HEALER" then
+            role, r, g, b = nameRoleIcon[role] .. HEALER, 0, 1, 0.59
+        elseif role == "TANK" then
+            role, r, g, b = nameRoleIcon[role] .. TANK, 0.51, 0.67, 0.9
+        elseif role == "DAMAGER" then
+            role, r, g, b = nameRoleIcon[role] .. DAMAGER, 0.77, 0.12, 0.24
+        end
+        -- if in raid add also the assist function here eg: Role:      [] Tank ([] Maintank)
+        local isGroupLeader = UnitIsGroupLeader(unit)
+        local isGroupAssist = UnitIsGroupAssistant(unit)
+        local raidId = UnitInRaid(unit)
+        local raidRole = ""
+        if raidId then
+            local raidR = select(10, GetRaidRosterInfo(raidId))
+            if raidR == "MAINTANK" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-maintank:0:0:0:-3:64:64:4:60:4:60|t " .. MAINTANK .. ")" end
+            if raidR == "MAINASSIST" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist:0:0:0:-1:64:64:4:60:4:60|t " .. MAIN_ASSIST .. ")" end
+        end
+
+        self:AddDoubleLine(format("%s:", ROLE), role .. raidRole, nil, nil, nil, r, g, b)
+        if isGroupLeader or isGroupAssist then
+            local roleString
+            if isGroupLeader then
+                roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t " .. (IsInRaid() and RAID_LEADER or PARTY_LEADER)
+            else
+                roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist:0:0:0:-2:64:64:4:60:4:60|t " .. RAID_ASSISTANT
+            end
+            self:AddDoubleLine(" ", roleString, nil, nil, nil, r, g, b)
+        end
+    end
+end
+
+local function TT_OnEvent(_, event, unitGUID)
+    if UnitExists("mouseover") and UnitGUID("mouseover") == unitGUID then
+        local itemLevel, retryUnit, retryTable, iLevelDB = GetUnitItemLevel("mouseover")
+        if itemLevel == "tooSoon" then
+            Wait(0.05, function()
+                local canUpdate = true
+                for _, x in ipairs(retryTable) do
+                    local slotInfo = GW.GetGearSlotInfo(retryUnit, x)
+                    if slotInfo == "tooSoon" then
+                        canUpdate = false
+                    else
+                        iLevelDB[x] = slotInfo.iLvl
+                        slotInfo = nil --clear cache
+                    end
+                end
+
+                if canUpdate then
+                    local calculateItemLevel = GW.CalculateAverageItemLevel(iLevelDB, retryUnit)
+                    PopulateUnitIlvlsCache(unitGUID, calculateItemLevel, true)
+                end
+            end)
+        else
+            PopulateUnitIlvlsCache(unitGUID, itemLevel, true)
+        end
+    end
+
+    if event then
+        TT:UnregisterEvent(event)
+    end
+end
+
+local lastGUID
 local function AddInspectInfo(self, unit, numTries, r, g, b)
-    if not unit or numTries > 3 or not CanInspect(unit) then return end
+    if self.ItemLevelShown or (not unit) or (numTries > 3) or not CanInspect(unit) then return end
 
     local unitGUID = UnitGUID(unit)
     if not unitGUID then return end
-    local specIndex = CI:GetSpecialization(unitGUID) or 1
-    local x1, x2, x3 = 0, 0, 0
-
-    x1, x2, x3 = CI:GetTalentPoints(unitGUID)
-    GW.Libs.LibGearScore:NotifyInspect(unitGUID)
-    local _, gearScore = GW.Libs.LibGearScore:GetScore(unitGUID)
 
     if unitGUID == UnitGUID("player") then
-        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(GW.myclass, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)
-    else
-        local _, className = UnitClass(unit)
-        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(className, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)
-    end
+        self.ItemLevelShown = true
+        self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", GetUnitItemLevel(unit), nil, nil, nil, 1, 1, 1)
+    elseif GW.unitIlvlsCache[unitGUID] and GW.unitIlvlsCache[unitGUID].time then
+        local itemLevel = GW.unitIlvlsCache[unitGUID].itemLevel
+        if not itemLevel or (GetTime() - GW.unitIlvlsCache[unitGUID].time > 120) then
+            GW.unitIlvlsCache[unitGUID].time = nil
+            GW.unitIlvlsCache[unitGUID].itemLevel = nil
+            return Wait(0.33, AddInspectInfo(self, unit, numTries + 1, r, g, b))
+        end
 
-    if gearScore then
-        self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":" , gearScore.AvgItemLevel, nil, nil, nil, 1, 1, 1)
-        self:AddDoubleLine("GearScore:" , gearScore.GearScore, nil, nil, nil, 1, 1, 1)
+        self.ItemLevelShown = true
+        self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", itemLevel, nil, nil, nil, 1, 1, 1)
+    elseif unitGUID then
+        if not GW.unitIlvlsCache[unitGUID] then
+            GW.unitIlvlsCache[unitGUID] = {unitColor = {r, g, b}}
+        end
+
+        if lastGUID ~= unitGUID then
+            lastGUID = unitGUID
+            NotifyInspect(unit)
+            TT:RegisterEvent("INSPECT_READY")
+            TT:SetScript("OnEvent", TT_OnEvent)
+        else
+            TT_OnEvent(TT, nil, unitGUID)
+        end
     end
 end
 
@@ -285,9 +413,17 @@ local function GameTooltip_OnTooltipSetUnit(self)
         AddTargetInfo(self, unit)
     end
 
-    if isShiftKeyDown and color then
-        AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
+    if GW.GetSetting("ADVANCED_TOOLTIP_SHOW_MOUNT") and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown then
+        AddMountInfo(self, unit)
     end
+
+    if GW.GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE") then
+        AddRoleInfo(self, unit)
+    end
+
+    --if isShiftKeyDown and color and not self.ItemLevelShown then
+    --    AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
+    --end
 
     if unit and not isPlayerUnit and IsModKeyDown() then
         local guid = UnitGUID(unit) or ""
@@ -335,57 +471,55 @@ end
 local function GameTooltip_OnTooltipCleared(self)
     if self:IsForbidden() then return end
 
+    self.ItemLevelShown = nil
+
+    if self.ItemTooltip then
+        self.ItemTooltip:Hide()
+    end
+
     GameTooltip_ClearMoney(self)
     GameTooltip_ClearStatusBars(self)
     GameTooltip_ClearProgressBars(self)
     GameTooltip_ClearWidgetSet(self)
 end
 
-local function GameTooltip_OnTooltipSetItem(self)
+local function GameTooltip_OnTooltipSetItem(self, data)
     if (self ~= GameTooltip and self ~= ShoppingTooltip1 and self ~= ShoppingTooltip2) or self:IsForbidden() then return end
 
-    local owner = self:GetOwner()
-    local ownerName = owner and owner.GetName and owner:GetName()
-    local GetItem = (TooltipUtil and TooltipUtil.GetDisplayedItem) or self.GetItem
-
+    local itemID, bagCount, bankCount
+    local modKey = IsModKeyDown()
+    local GetItem = TooltipUtil.GetDisplayedItem or self.GetItem
     if GetItem then
-        local name, link = GetItem(self)
-        if name == "" and CraftFrame and CraftFrame:IsShown() then
-            local reagentIndex = ownerName and tonumber(strmatch(ownerName, 'Reagent(%d+)'))
-           if reagentIndex then link = GetCraftReagentItemLink(GetCraftSelectionIndex(), reagentIndex) end
-        end
+        local _, link = GetItem(self)
 
         if not link then return end
 
-        local left, right, bankCount = " ", " ", " "
-        local itemCountOption = GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT")
-
-        if IsModKeyDown() then
-            right = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, strmatch(link, ":(%w+)"))
+        if modKey then
+            itemID = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, (data and data.id) or strmatch(link, ":(%w+)"))
         end
 
-        if itemCountOption ~= "NONE" then
-            local num = GetItemCount(link)
-            local numall = GetItemCount(link, true)
-
-            if itemCountOption == "BAG" then
-                left = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
-            elseif itemCountOption == "BANK" then
+        if GW.GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT") then
+            local num = C_Item.GetItemCount(link)
+            local numall = C_Item.GetItemCount(link, true)
+            if GW.GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT") == "BAG" then
+                bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
+            elseif GW.GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT") == "BANK" then
                 bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
-            elseif itemCountOption == "BOTH" then
-                left = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
+            elseif GW.GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT") == "BOTH" then
+                bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
                 bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
             end
         end
-
-        if left ~= " " or right ~= " " then
-            self:AddLine(" ")
-            self:AddDoubleLine(left, right)
-        end
-        if bankCount ~= " " then
-            self:AddDoubleLine(bankCount, " ")
+    else
+        local id = data and data.id
+        if id then
+            itemID = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, id)
         end
     end
+
+    if itemID or bagCount or bankCount then self:AddLine(" ") end
+    if itemID or bagCount then self:AddDoubleLine(itemID or " ", bagCount or " ") end
+    if bankCount then self:AddDoubleLine(" ", bankCount) end
 end
 
 local function movePlacement(self)
@@ -674,6 +808,14 @@ local function LoadTooltips()
     hooksecurefunc("GameTooltip_AddQuestRewardsToTooltip", GameTooltip_AddQuestRewardsToTooltip) -- Color Progress Bars
     hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
 
+
+    -- Functions
+    MountIDs = {}
+    local mountIDs = C_MountJournal.GetMountIDs()
+    for _, mountID in ipairs(mountIDs) do
+        local _, spellID = C_MountJournal.GetMountInfoByID(mountID)
+        MountIDs[spellID] = mountID
+    end
     --Tooltip Fonts
     if not GameTooltip.hasMoney then
         SetTooltipMoney(GameTooltip, 1, nil, "", "")

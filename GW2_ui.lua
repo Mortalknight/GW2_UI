@@ -14,16 +14,21 @@ local animations = GW.animations
 
 local l = CreateFrame("Frame") -- Main event frame
 
-GW.VERSION_STRING = "GW2_UI @project-version@-Wrath"
+GW.VERSION_STRING = "GW2_UI @project-version@"
 
 -- setup Binding Header color
-BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
+BINDING_HEADER_GW2UI = C_AddOns.GetAddOnMetadata(..., "Title")
 
 -- Make a global GW variable , so others cann access out functions
 GW2_ADDON = GW
 
 if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
-    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r"):gsub("*", GW.Gw2Color))
+    GW.Notice("You have installed GW2_UI retail version. Please install the classic version to use GW2_UI.")
+    return
+end
+
+if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
+    GW.Notice("|cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
 end
 
 local loaded = false
@@ -57,7 +62,7 @@ end
 
 local function disableTitanPanelBarAdjusting()
     local ourBars = GetSetting("ACTIONBARS_ENABLED")
-    if ourBars and IsAddOnLoaded("TitanClassic") then
+    if ourBars and C_AddOns.IsAddOnLoaded("TitanClassic") then
         TitanMovable_AddonAdjust("MultiBarRight", true)
         TitanMovable_AddonAdjust("ExtraActionBarFrame", true)
         TitanMovable_AddonAdjust("MinimapCluster", true)
@@ -248,7 +253,10 @@ GW.SetDeadIcon = SetDeadIcon
 local function StopAnimation(name)
     if animations[name] then
         animations[name].completed = true
+        return true
     end
+
+    return false
 end
 GW.StopAnimation = StopAnimation
 
@@ -272,19 +280,20 @@ GW.AddUpdateCB = AddUpdateCB
 local function gw_OnUpdate(_, elapsed)
     local foundAnimation = false
     local count = 0
+    local time = GetTime()
     for _, v in pairs(animations) do
         count = count + 1
-        if v.completed == false and GetTime() >= (v.start + v.duration) then
+        if v.completed == false and time >= (v.start + v.duration) then
             if v.easeing == nil then
                 v.progress = GW.lerp(v.from, v.to, math.sin(1 * math.pi * 0.5))
             else
                 v.progress = GW.lerp(v.from, v.to, 1)
             end
-            if v.method ~= nil then
+            if v.method then
                 v.method(v.progress)
             end
 
-            if v.onCompleteCallback ~= nil then
+            if v.onCompleteCallback then
                 v.onCompleteCallback()
             end
 
@@ -293,10 +302,9 @@ local function gw_OnUpdate(_, elapsed)
         end
         if v.completed == false then
             if v.easeing == nil then
-                v.progress =
-                    GW.lerp(v.from, v.to, math.sin((GetTime() - v.start) / v.duration * math.pi * 0.5))
+                v.progress = GW.lerp(v.from, v.to, math.sin((time - v.start) / v.duration * math.pi * 0.5))
             else
-                v.progress = GW.lerp(v.from, v.to, (GetTime() - v.start) / v.duration)
+                v.progress = GW.lerp(v.from, v.to, (time - v.start) / v.duration)
             end
             v.method(v.progress)
             foundAnimation = true
@@ -310,10 +318,10 @@ local function gw_OnUpdate(_, elapsed)
     --Swim hud
     if lastSwimState ~= IsSwimming() then
         if IsSwimming() then
-            AddToAnimation("swimAnimation", swimAnimation, 1, GetTime(), 0.1, swimAnim)
+            AddToAnimation("swimAnimation", swimAnimation, 1, time, 0.1, swimAnim)
             swimAnimation = 1
         else
-            AddToAnimation("swimAnimation", swimAnimation, 0, GetTime(), 3.0, swimAnim)
+            AddToAnimation("swimAnimation", swimAnimation, 0, time, 3.0, swimAnim)
             swimAnimation = 0
         end
         lastSwimState = IsSwimming()
@@ -343,7 +351,7 @@ GW.PixelPerfection = PixelPerfection
 
 local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
-    local hudScale = tonumber(GetSetting("HUD_SCALE")) or 1
+    local hudScale = tonumber(GW.GetSetting("HUD_SCALE")) or 1
     for _, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
             local fm = f.gwMover
@@ -423,9 +431,9 @@ local function evAddonLoaded(_, addonName)
         return
     else
         -- setup default values on load, which are required for same skins
-        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
+        if GW.GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
             PixelPerfection()
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r"):gsub("*", GW.Gw2Color))
+            GW.Notice("Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
         else
             GW.scale = UIParent:GetScale()
             GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
@@ -438,7 +446,7 @@ local function evAddonLoaded(_, addonName)
     -- TODO: A lot of what happens in player login should probably happen here instead
 
     -- check for DeModal
-    local _, _, _, enabled, _ = GetAddOnInfo("DeModal")
+    local _, _, _, enabled, _ = C_AddOns.GetAddOnInfo("DeModal")
     if enabled then
         GW.HasDeModal = true
     else
@@ -451,16 +459,26 @@ local function evAddonLoaded(_, addonName)
     GW.LoadWorldMapSkin()
     GW.LoadMacroOptionsSkin()
     GW.LoadSocketUISkin()
-
-
+    GW.preLoadStatusBarMaskTextures()
 end
 AFP("evAddonLoaded", evAddonLoaded)
+
+local function evNeutralFactionSelectResult()
+    GW.myfaction, GW.myLocalizedFaction = UnitFactionGroup("player")
+    Debug("OK~EVENT~New faction:", GW.myfaction, GW.myLocalizedFaction)
+end
+AFP("evNeutralFactionSelectResult", evNeutralFactionSelectResult)
+
+local function evPlayerSpecializationChanged()
+    GW.CheckRole()
+end
+AFP("evPlayerSpecializationChanged", evPlayerSpecializationChanged)
 
 local function evUiScaleChanged()
     if not GetCVarBool("useUiScale") then
         return
     end
-    SetSetting("PIXEL_PERFECTION", false)
+    GW.SetSetting("PIXEL_PERFECTION", false)
     GW.scale = UIParent:GetScale()
     GW.screenwidth, GW.screenheight = GetPhysicalScreenSize()
     GW.resolution = format("%dx%d", GW.screenwidth, GW.screenheight)
@@ -482,7 +500,7 @@ AFP("evPlayerLeavingWorld", evPlayerLeavingWorld)
 local function commonEntering()
     GW.inWorld = true
     GW.CheckRole()
-    if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
+    if GW.GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
         PixelPerfection()
     end
     C_Timer.After(0.5, function()
@@ -494,6 +512,12 @@ end
 
 local function evPlayerEnteringWorld()
     commonEntering()
+
+    -- do migration one on first login
+    if not GW.GetSetting("migrationDone") then
+        --migration things
+        GW.Migration()
+    end
 end
 AFP("evPlayerEnteringWorld", evPlayerEnteringWorld)
 
@@ -504,12 +528,14 @@ AFP("evPlayerEnteringBattleground", evPlayerEnteringBattleground)
 
 
 local function evPlayerLogin(self)
-
     Debug("OK~EVENT~PLAYER_LOGIN; loaded:", loaded)
     if loaded then
-        GW.UpdateCharData() --TODO
+        GW.UpdateCharData()
         return
     end
+
+    -- Remove old debuffs from db
+    GW.RemoveOldRaidDebuffsFormProfiles()
 
     loaded = true
     GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
@@ -544,21 +570,10 @@ local function evPlayerLogin(self)
         --Setup addon button
         local GwMainMenuFrame = CreateFrame("Button", "GW2_UI_SettingsButton", _G.GameMenuFrame, "GameMenuButtonTemplate") -- add a button name to you that for other Addons
         GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
-        GwMainMenuFrame:SetScript(
-            "OnClick",
-            function()
-                if InCombatLockdown() then
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
-                    return
-                end
-                ShowUIPanel(GwSettingsWindow)
-                UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
-                HideUIPanel(GameMenuFrame)
-            end
-        )
+        GwMainMenuFrame:SetScript( "OnClick", GW.ToggleGw2Settings)
         GameMenuFrame[GW.addonName] = GwMainMenuFrame
 
-        if not IsAddOnLoaded("ConsolePortUI_Menu") then
+        if not C_AddOns.IsAddOnLoaded("ConsolePortUI_Menu") then
             GwMainMenuFrame:SetSize(GameMenuButtonMacros:GetWidth(), GameMenuButtonMacros:GetHeight())
             GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
             hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
@@ -577,6 +592,7 @@ local function evPlayerLogin(self)
     GW.LoadTimeManagerSkin()
 
     GW.LoadDetailsSkin()
+    GW.addMasqueSkin()
 
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
@@ -623,8 +639,10 @@ local function evPlayerLogin(self)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
-        GW.LoadCastingBar(CastingBarFrame, "GwCastingBarPlayer", "player", true)
-        GW.LoadCastingBar(PetCastingBarFrame, "GwCastingBarPet", "pet", false)
+        GW.LoadCastingBar("GwCastingBarPlayer", "player", true)
+        GW.LoadCastingBar("GwCastingBarPet", "pet", false)
+        CastingBarFrame:GwKill()
+        PetCastingBarFrame:GwKill()
     end
 
     if GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true) then
@@ -656,26 +674,26 @@ local function evPlayerLogin(self)
     elseif GetSetting("HEALTHGLOBE_ENABLED") and GetSetting("PLAYER_AS_TARGET_FRAME") then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
-        if GetSetting("PLAYER_ENERGY_MANA_TICK") then
-            GW.load5SR(hg)
-        end
+        --if GetSetting("PLAYER_ENERGY_MANA_TICK") then
+        --    GW.load5SR(hg)
+        --end
     end
 
     if GetSetting("POWERBAR_ENABLED") and (GetSetting("PLAYER_AS_TARGET_FRAME") and GetSetting("PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR") or not GetSetting("PLAYER_AS_TARGET_FRAME")) then
         GW.LoadPowerBar()
-        if GetSetting("PLAYER_ENERGY_MANA_TICK") then
-            GW.load5SR()
-        end
+        --if GetSetting("PLAYER_ENERGY_MANA_TICK") then
+        --    GW.load5SR()
+        --end
     end
 
     if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("BAGS_ENABLED") then
             GW.LoadInventory()
-            GW.SkinLooTFrame()
+            GW.LoadLootFrameSkin()
         end
     else
         -- if not our bags, we need to cut the bagbar frame out of the micromenu
-        if not IsAddOnLoaded("Bartender4") then
+        if not C_AddOns.IsAddOnLoaded("Bartender4") then
             MainMenuBarBackpackButton:ClearAllPoints()
             CharacterBag0Slot:ClearAllPoints()
             CharacterBag1Slot:ClearAllPoints()
@@ -748,23 +766,20 @@ local function evPlayerLogin(self)
 
     if not IsIncompatibleAddonLoadedOrOverride("DynamicCam", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("DYNAMIC_CAM") then
-            if GetSetting("DYNAMIC_CAM") then
-                C_CVar.SetCVar("test_cameraDynamicPitch", "1")
-                C_CVar.SetCVar("cameraKeepCharacterCentered", "0")
-                C_CVar.SetCVar("cameraReduceUnexpectedMovement", "0")
-            else
-                C_CVar.SetCVar("test_cameraDynamicPitch", "0")
-                C_CVar.SetCVar("cameraKeepCharacterCentered", "1")
-                C_CVar.SetCVar("cameraReduceUnexpectedMovement", "1")
+            if GetCVar("test_cameraDynamicPitch") == "0" then
+                SetCVar("test_cameraDynamicPitch", true)
             end
             hooksecurefunc("StaticPopup_Show", function(which)
                 if which == "EXPERIMENTAL_CVAR_WARNING" then
                     StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
                 end
             end)
+        else
+            if GetCVar("test_cameraDynamicPitch") == "1" then
+                SetCVar("test_cameraDynamicPitch", false)
+            end
         end
     end
-
     GW.loadAFKAnimation()
 
     if GetSetting("CHATBUBBLES_ENABLED") then
@@ -801,17 +816,17 @@ local function evPlayerLogin(self)
     end
 
     self:SetScript("OnUpdate", gw_OnUpdate)
-
     GW.UpdateCharData()
 end
 GW.AddForProfiling("index", "evPlayerLogin", evPlayerLogin)
 
 -- handles addon loading
+
 local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
         evPlayerLogin(self)
     elseif event == "UI_SCALE_CHANGED" then
-        evUiScaleChanged()
+        C_Timer.After(0, evUiScaleChanged) -- We need one frame time for setting the cvar values
     elseif event == "PLAYER_LEAVING_WORLD" then
         evPlayerLeavingWorld()
     elseif event == "PLAYER_ENTERING_WORLD" then
@@ -820,6 +835,10 @@ local function gw_OnEvent(self, event, ...)
         evPlayerEnteringBattleground()
     elseif event == "PLAYER_LEVEL_UP" then
         evPlayerLevelUp(self, ...)
+    elseif event == "NEUTRAL_FACTION_SELECT_RESULT" then
+        evNeutralFactionSelectResult()
+    elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
+        evPlayerSpecializationChanged()
     elseif event == "ADDON_LOADED" then
         evAddonLoaded(self, ...)
     end
@@ -833,6 +852,8 @@ l:RegisterEvent("PLAYER_ENTERING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
 l:RegisterEvent("UI_SCALE_CHANGED")
 l:RegisterEvent("PLAYER_LEVEL_UP")
+--l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
+l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 l:RegisterEvent("ADDON_LOADED")
 
 local function AddToClique(frame)

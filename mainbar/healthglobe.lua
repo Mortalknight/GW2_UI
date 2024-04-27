@@ -6,6 +6,19 @@ local TimeParts = GW.TimeParts
 local IsIn = GW.IsIn
 local GetSetting = GW.GetSetting
 
+local function flashAnimation(self, delta, t)
+    if t == nil then t = 0 end
+    local speed  =  max(1, 4 * (1 - (self.healthPrecentage / 0.65)))
+    t = t + (delta) * speed
+    local c =  0.4 * math.abs(math.sin(t))
+    self.border.normal:SetVertexColor(c, c, c, 1)
+
+    if self.healthPrecentage > 0.65 and c < 0.2 then
+        self:SetScript("OnUpdate", nil)
+        self.border.normal:SetVertexColor(0, 0, 0, 1)
+    end
+end
+
 local function repair_OnEvent(self, event, ...)
     if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
         return
@@ -39,77 +52,43 @@ local function repair_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("healthglobe", "repair_OnEvent", repair_OnEvent)
 
-local Y_FULL = 47
-local Y_EMPTY = -42
-local Y_RANGE = Y_FULL - Y_EMPTY
-local X_MAX = 20
-local X_MIN = -20
-local function updateHealthData(self, anims)
+local function updateHealthData(self)
     local health = UnitHealth("Player")
     local healthMax = UnitHealthMax("Player")
+    local absorb = UnitGetTotalAbsorbs and UnitGetTotalAbsorbs("Player") or 0
     local prediction = UnitGetIncomingHeals("Player") or 0
+    local healAbsorb =  UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs("Player") or 0
+    local absorbPrecentage = 0
+    local absorbAmount = 0
+    local absorbAmount2 = 0
+    local predictionPrecentage = 0
+    local healAbsorbPrecentage = 0
+    local healthPrecentage = health/healthMax
 
-    local health_def = healthMax - health
-    local prediction_over = prediction - health_def
-    if prediction_over < 0 then
-        prediction_over = 0
-    end
-    local prediction_under = prediction - prediction_over
+    self.healthPrecentage = healthPrecentage -- used for animation
+    self.health:SetFillAmount(healthPrecentage - 0.035)
+    self.candy:SetFillAmount(healthPrecentage)
 
-    -- determine how much black (anti) area to mask off
-    local hp = (health + prediction_under) / healthMax
-    local hpy_off = Y_FULL - Y_RANGE * (1 - hp)
-    local hpx_off = ((X_MAX - X_MIN) * (math.random())) + X_MIN
-
-    -- determine how much light (prediction) area to mask off
-    local pup = health / healthMax
-    local puy_off = Y_FULL - Y_RANGE * (1 - pup)
-
-    -- set the mask positions for health; prettily if animating,
-    -- otherwise just force them
-    local anti = self.fill.anti
-    local au = self.fill.prediction_under
-    if anims then
-        -- animate health transition
-        local ag = anti.gwAnimGroup
-        ag:Stop()
-        local _, _, _, _, y = anti:GetPoint()
-        anti:ClearAllPoints()
-        anti:SetPoint("CENTER", self.fill, "CENTER", hpx_off, y)
-        local aa = anti.gwAnim
-        aa.gwXoff = hpx_off
-        aa.gwYoff = hpy_off
-        aa:SetOffset(0, hpy_off - y)
-        ag:Play()
-
-        -- animate absorb under transition
-        local ag2 = au.gwAnimGroup
-        ag2:Stop()
-        local _, _, _, _, y2 = au:GetPoint()
-        au:ClearAllPoints()
-        au:SetPoint("CENTER", self.fill, "CENTER", hpx_off, y2)
-        local aa2 = au.gwAnim
-        aa2.gwXoff = hpx_off
-        aa2.gwYoff = puy_off
-        aa2:SetOffset(0, puy_off - y2)
-        ag2:Play()
-    else
-        -- hard-set positions
-        anti:ClearAllPoints()
-        anti:SetPoint("CENTER", self.fill, "CENTER", hpx_off, hpy_off)
-        au:ClearAllPoints()
-        au:SetPoint("CENTER", self.fill, "CENTER", hpx_off, puy_off)
+    if absorb > 0 and healthMax > 0 then
+        absorbPrecentage = absorb / healthMax
+        absorbAmount = healthPrecentage + absorbPrecentage
+        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
     end
 
-    local flash = anti.gwFlashGroup
-    if pup < 0.5 and not UnitIsDeadOrGhost("PLAYER") then
-        flash:Play()
-    else
-        flash:Finish()
+    if prediction > 0 and healthMax > 0 then
+        predictionPrecentage = prediction / healthMax
+    end
+    if healAbsorb > 0 and healthMax > 0 then
+        healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
     end
 
-    -- hard-set the text values for health based on the user settings (%, value or both)
+    self.healPrediction:SetFillAmount(healthPrecentage + predictionPrecentage)
+    self.absorbbg:SetFillAmount(absorbAmount)
+    self.absorbOverlay:SetFillAmount(absorbAmount2)
+    self.antiHeal:SetFillAmount(healAbsorbPrecentage)
+    -- hard-set the text values for health/absorb based on the user settings (%, value or both)
     local hv = ""
+    local av = ""
 
     if self.healthTextSetting == "PREC" then
         hv = CommaValue(health / healthMax * 100) .. "%"
@@ -119,12 +98,35 @@ local function updateHealthData(self, anims)
         hv = CommaValue(health) .. "\n" .. CommaValue(health / healthMax * 100) .. "%"
     end
 
+    --[[
+    if GW.settings.PLAYER_UNIT_ABSORB == "PREC" then
+        av = CommaValue(absorb / healthMax * 100) .. "%"
+    elseif GW.settings.PLAYER_UNIT_ABSORB == "VALUE" then
+        av = CommaValue(absorb)
+    elseif GW.settings.PLAYER_UNIT_ABSORB == "BOTH" then
+        av = CommaValue(absorb) .. "\n" .. CommaValue(absorb / healthMax * 100) .. "%"
+    end
+]]
     self.text_h.value:SetText(hv)
+    self.text_a.value:SetText(av)
 
     for _, v in ipairs(self.text_h.shadow) do
         v:SetText(hv)
     end
 
+    for _, v in ipairs(self.text_a.shadow) do
+        v:SetText(av)
+    end
+
+    if absorb < 1 then
+        self.text_a:Hide()
+    else
+        self.text_a:Show()
+    end
+
+    if healthPrecentage < 0.65 and self:GetScript("OnUpdate") == nil then
+        self:SetScript("OnUpdate", flashAnimation)
+    end
 end
 GW.AddForProfiling("healthglobe", "updateHealthData", updateHealthData)
 
@@ -150,14 +152,13 @@ end
 GW.PlayerSelectPvp = selectPvp
 GW.AddForProfiling("healthglobe", "selectPvp", selectPvp)
 
-local function globe_OnEvent(self, event, ...)
+local function globe_OnEvent(self, event)
     if event == "PLAYER_ENTERING_WORLD" then
-        GW.MixinHideDuringPetAndOverride(self)
-        updateHealthData(self, false)
+        updateHealthData(self)
         selectPvp(self)
-    elseif IsIn(event, "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_HEAL_PREDICTION") then
-        updateHealthData(self, true)
-    elseif IsIn(event, "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
+    elseif IsIn(event, "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
+        updateHealthData(self)
+    elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         selectPvp(self)
     elseif event == "RESURRECT_REQUEST" then
         PlaySound(SOUNDKIT.UI_70_BOOST_THANKSFORPLAYING_SMALLER, "Master")
@@ -234,17 +235,46 @@ local function repair_OnEnter(self)
 end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
 
-local function ToggleHealthglobeSettings()
+local function UpdateSettings()
     if not GW2_PlayerFrame then return end
     GW2_PlayerFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
     --GW2_PlayerFrame.absorbTextSetting = GetSetting("PLAYER_UNIT_ABSORB")
 
-    updateHealthData(GW2_PlayerFrame, false)
+    updateHealthData(GW2_PlayerFrame)
 end
-GW.ToggleHealthglobeSettings = ToggleHealthglobeSettings
+GW.UpdateHealthglobeSettings = UpdateSettings
 
 local function LoadHealthGlobe()
     local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, "GwHealthGlobeTmpl")
+
+    hg.absorbOverlay = hg.healPrediction.absorbbg.candy.health.antiHeal.absorbOverlay
+    hg.antiHeal = hg.healPrediction.absorbbg.candy.health.antiHeal
+    hg.health = hg.healPrediction.absorbbg.candy.health
+    hg.candy = hg.healPrediction.absorbbg.candy
+    hg.absorbbg = hg.healPrediction.absorbbg
+
+    hg.text_h = hg.absorbOverlay.text_h
+    hg.text_a = hg.absorbOverlay.text_a
+    hg.repair = hg.absorbOverlay.repair
+
+    GW.hookStatusbarBehaviour(hg.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(hg.antiHeal,true)
+    GW.hookStatusbarBehaviour(hg.health,true)
+    GW.hookStatusbarBehaviour(hg.candy,true)
+    GW.hookStatusbarBehaviour(hg.absorbbg,true)
+    GW.hookStatusbarBehaviour(hg.healPrediction,true)
+
+    hg.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
+    hg.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
+
+    hg.candy:SetOrientation("VERTICAL")
+    hg.absorbOverlay:SetOrientation("VERTICAL")
+    hg.antiHeal:SetOrientation("VERTICAL")
+    hg.candy:SetOrientation("VERTICAL")
+    hg.healPrediction:SetOrientation("VERTICAL")
+    hg.health:SetOrientation("VERTICAL")
+    hg.absorbbg:SetOrientation("VERTICAL")
+
     GW.RegisterScaleFrame(hg, 1.1)
 
     -- position based on XP bar space and make it movable if your actionbars are off
@@ -268,50 +298,26 @@ local function LoadHealthGlobe()
     hg:SetAttribute("*type1", "target")
     hg:SetAttribute("*type2", "togglemenu")
     hg:SetAttribute("unit", "player")
-    AddToClique(hg)
+    hg:EnableMouse(true)
     hg:RegisterForClicks("AnyUp")
 
-    -- setup masking textures
-    for _, v in ipairs(hg.fill.masked) do
-        v:AddMaskTexture(hg.fill.mask)
-    end
-
-    -- setting these values in the XML creates animation glitches
-    -- so we do it here instead
-    hg.fill.maskb:SetPoint("CENTER", hg.fill, "CENTER", 0, 0)
-
-    hg.fill.prediction_under:AddMaskTexture(hg.fill.maskb)
-    hg.fill.anti:AddMaskTexture(hg.fill.maskb)
-
-    -- setup fill animations; this marks off the black/empty space
-    local aag = hg.fill.anti:CreateAnimationGroup()
-    local aa = aag:CreateAnimation("translation")
-    aa:SetDuration(0.2)
-    aa:SetScript("OnFinished", fill_OnFinish)
-    hg.fill.anti.gwAnimGroup = aag
-    hg.fill.anti.gwAnim = aa
-
-    -- flashes the black/empty space (for low health warning)
-    local afg = hg.fill.anti:CreateAnimationGroup()
-    local af = afg:CreateAnimation("alpha")
-    af:SetDuration(0.66)
-    af:SetFromAlpha(1)
-    af:SetToAlpha(0.66)
-    afg:SetLooping("BOUNCE")
-    hg.fill.anti.gwFlashGroup = afg
-
-    -- marks off the light absorb/shield space
-    local aag2 = hg.fill.prediction_under:CreateAnimationGroup()
-    local aa2 = aag2:CreateAnimation("translation")
-    aa2:SetDuration(0.2)
-    aa2:SetScript("OnFinished", fill_OnFinish)
-    hg.fill.prediction_under.gwAnimGroup = aag2
-    hg.fill.prediction_under.gwAnim = aa2
+    AddToClique(hg)
 
     -- set text/font stuff
     hg.hSize = 14
+    if GW.GetSetting("PLAYER_UNIT_ABSORB") == "BOTH" then
+        hg.aSize = 12
+        hg.text_a:ClearAllPoints()
+        hg.text_a:SetPoint("CENTER", hg, "CENTER", 0, 25)
+    else
+        hg.aSize = 14
+    end
+
     hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
     hg.text_h.value:SetShadowColor(1, 1, 1, 0)
+
+    hg.text_a.value:SetFont(DAMAGE_TEXT_FONT, hg.aSize)
+    hg.text_a.value:SetShadowColor(1, 1, 1, 0)
 
     for i, v in ipairs(hg.text_h.shadow) do
         v:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
@@ -319,31 +325,29 @@ local function LoadHealthGlobe()
         v:SetTextColor(0, 0, 0, 1 / i)
     end
 
-    -- set handlers for health globe and disable default player frame
-    if GW.wowbuild >= 42873 then
-        PlayerFrame:SetScript("OnEvent", nil)
-        PlayerFrame:GwKill()
-    else
-        PlayerFrame:SetParent(GW.HiddenFrame)
+    for i, v in ipairs(hg.text_a.shadow) do
+        v:SetFont(DAMAGE_TEXT_FONT, hg.aSize)
+        v:SetShadowColor(1, 1, 1, 0)
+        v:SetTextColor(0, 0, 0, 1 / i)
     end
+
     hg:SetScript("OnEvent", globe_OnEvent)
     hg:SetScript("OnEnter", globe_OnEnter)
     hg:SetScript("OnLeave", function(self)
         GameTooltip_Hide()
-        if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and self.pvp.pvpFlag then
+        if GW.GetSetting("PLAYER_SHOW_PVP_INDICATOR") and self.pvp.pvpFlag then
             self.pvp:fadeOut()
         end
     end)
     hg:RegisterEvent("PLAYER_ENTERING_WORLD")
+    --hg:RegisterEvent("WAR_MODE_STATUS_UPDATE")
     hg:RegisterEvent("PLAYER_FLAGS_CHANGED")
     hg:RegisterEvent("RESURRECT_REQUEST")
-    hg:RegisterEvent("UNIT_HEAL_PREDICTION")
+    --hg:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
+    hg:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "player")
     hg:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     hg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     hg:RegisterUnitEvent("UNIT_FACTION", "player")
-
-    hg.unit = "Player"
-    hg.guid = UnitGUID("Player")
 
     -- setup hooks for the repair icon (and disable default repair frame)
     DurabilityFrame:UnregisterAllEvents()
@@ -357,10 +361,8 @@ local function LoadHealthGlobe()
     rep:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
     rep:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    -- grab the TotemFrame so it remains visible
-    if PlayerFrame and TotemFrame then
-        GW.Create_Totem_Bar()
-    end
+    -- grab the TotemFramebuttons to our own Totem Frame
+    --GW.Create_Totem_Bar()
 
     -- setup anim to flash the PvP marker
     local pvp = hg.pvp
@@ -392,10 +394,13 @@ local function LoadHealthGlobe()
         pagIn:Play()
     end
 
-    if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
+    if not GW.GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
 
-    --save settingsvalue for later use
-    ToggleHealthglobeSettings()
+    UpdateSettings()
+
+    -- set handlers for health globe and disable default player frame
+    PlayerFrame:SetScript("OnEvent", nil)
+    PlayerFrame:GwKill()
 
     return hg
 end

@@ -1,5 +1,5 @@
-## Interface: 30403
-## Title: |cffffedbaGW2 UI|r |cFF888888Wrath|r
+## Interface: 40400
+## Title: |cffffedbaGW2 UI|r |cFF888888Cata|r
 ## Notes: Hud Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
 ## OptionalDeps: MoveAnything, Questie, TitanClassic, Clique, _DebugLog, BugSack, !Stragglers, ACU
@@ -13,12 +13,14 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03, GW2UI_QUEST_WATCH_DB, GW2UI_PRIVATE_SETTINGS, GW2UI_PRIVATE_LAYOUTS
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2, GW2UI_LAYOUTS
 
-core\TaintLess.xml
-core\debug.lua
-core\incompatibleAddons.lua
-core\errorHandler.lua
-core\locationData.lua
-libs\libs.xml
+core/shared.xml
+core\migration.lua
+core/TaintLess.xml
+core/debug.lua
+core/incompatibleAddons.lua
+core/errorHandler.lua
+core/locationData.lua
+libs/libs.xml
 
 locales\enUS.lua
 locales\deDE.lua
@@ -37,14 +39,17 @@ core\init.lua
 core\staticPopupDialogs.lua
 core\raid_debuffs.lua
 core\toolkit.lua
+core\itemlevel.lua
 core\utils.lua
-core\shared.xml
+core\backdropTemplates.lua
 core\fonts.lua
 core\storage.lua
 core\statusReport.lua
 core\slashcommands.lua
 core\cooldowns.lua
 core\misc.lua
+core\statusbars.xml
+core\statusbars.lua
 
 settings\settings_menu.lua
 settings\settings.xml
@@ -89,16 +94,13 @@ core\auras.lua
 changelog.lua
 GW2_ui.lua
 
-units\raidControl.xml
 units\aurabar.xml
-units\aurabar.lua
 units\target.xml
 units\target.lua
 units\party.xml
 units\raidframes.xml
 units\unitframes.xml
 units\gridUtils.lua
-units\raidControl.lua
 units\raidframes.lua
 units\partyGrid.lua
 units\unitframes.lua
@@ -110,6 +112,9 @@ units\petGrid.lua
 mainbar\micromenu.xml
 mainbar\micromenu.lua
 
+mainbar\raidControl.xml
+mainbar\raidControl.lua
+mainbar\raidCounter.lua
 mainbar\experiencebar.xml
 mainbar\hudart.xml
 mainbar\hudelements.xml

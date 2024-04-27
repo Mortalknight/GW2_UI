@@ -52,6 +52,8 @@ GW_DEFAULT["ADVANCED_TOOLTIP_SHOW_TARGET_INFO"] = true
 GW_DEFAULT["ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES"] = true
 GW_DEFAULT["ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS"] = true
 GW_DEFAULT["ADVANCED_TOOLTIP_SHOW_GUILD_RANKS"] = true
+GW_DEFAULT["ADVANCED_TOOLTIP_SHOW_ROLE"] = true
+GW_DEFAULT["ADVANCED_TOOLTIP_SHOW_MOUNT"] = true
 GW_DEFAULT["ADVANCED_TOOLTIP_SHOW_CLASS_COLOR"] = true
 GW_DEFAULT["ADVANCED_TOOLTIP_SHOW_GENDER"] = false
 GW_DEFAULT["ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT"] = true
@@ -562,17 +564,25 @@ GW_DEFAULT["ACTIVE_PROFILE"] = nil
 GW_DEFAULT["PlayerBuffFrame"] = {}
 GW_DEFAULT["PlayerBuffFrame"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["PlayerBuffFrame"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 53
+GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 57
 GW_DEFAULT["PlayerBuffFrame"]["yOfs"] = 120
+GW_DEFAULT["PlayerBuffFrame"]["hasMoved"] = false
 GW_DEFAULT["PlayerBuffFrame_GrowDirection"] = "UP"
+GW_DEFAULT["PlayerBuffFrame_HorizontalSpacing"] = 1
+GW_DEFAULT["PlayerBuffFrame_VerticalSpacing"] = 34
+GW_DEFAULT["PlayerBuffFrame_MaxWraps"] = 3
 GW_DEFAULT["PlayerBuffFrame_scale"] = 1
 
 GW_DEFAULT["PlayerDebuffFrame"] = {}
 GW_DEFAULT["PlayerDebuffFrame"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["PlayerDebuffFrame"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["PlayerDebuffFrame"]["xOfs"] = 53
+GW_DEFAULT["PlayerDebuffFrame"]["xOfs"] = 57
 GW_DEFAULT["PlayerDebuffFrame"]["yOfs"] = 220
+GW_DEFAULT["PlayerDebuffFrame"]["hasMoved"] = false
 GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
+GW_DEFAULT["PlayerDebuffFrame_HorizontalSpacing"] = 1
+GW_DEFAULT["PlayerDebuffFrame_VerticalSpacing"] = 34
+GW_DEFAULT["PlayerDebuffFrame_MaxWraps"] = 3
 GW_DEFAULT["PlayerDebuffFrame_scale"] = 1
 
 GW_DEFAULT["PlayerBuffFrame_Seperate"] = 0
@@ -609,6 +619,8 @@ GW_DEFAULT["ROLE_BAR_pos_scale"] = 1
 GW_DEFAULT["ROLE_BAR"] = "IN_RAID"
 
 GW_DEFAULT["FADE_EXP_BAR"] = false
+
+GW_DEFAULT.pulltimerSeconds = 10
 
 -- incompatible addons
 GW_DEFAULT.IncompatibleAddons = {

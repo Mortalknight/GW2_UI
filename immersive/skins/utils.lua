@@ -125,7 +125,44 @@ local function HandleAchivementsScrollControls(self, specifiedScrollBar)
 end
 GW.HandleAchivementsScrollControls = HandleAchivementsScrollControls
 
-local function HandleTrimScrollBar(frame, small)
+local function HandleScrollControls(self, specifiedScrollBar)
+    local scrollBar = specifiedScrollBar and self[specifiedScrollBar] or self.ScrollBar
+    if not scrollBar then return end
+    scrollBar:SetWidth(20)
+
+    scrollBar.Track:ClearAllPoints()
+    scrollBar.Track:SetPoint("TOPLEFT", scrollBar, "TOPLEFT", 0, -12)
+    scrollBar.Track:SetPoint("BOTTOMRIGHT", scrollBar, "BOTTOMRIGHT", 0, 12)
+
+    local bg = scrollBar.Track:CreateTexture(nil, "BACKGROUND", nil, 0)
+    bg:ClearAllPoints()
+    bg:SetPoint("TOP", 0, 0)
+    bg:SetPoint("BOTTOM", 0, 0)
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
+
+    scrollBar.Back:ClearAllPoints()
+    scrollBar.Back:SetPoint("BOTTOM", scrollBar, "TOP", 0, -13)
+    scrollBar.Back:SetSize(12,12)
+    bg = scrollBar.Back:CreateTexture(nil, "BACKGROUND", nil, 0)
+    bg:ClearAllPoints();
+    bg:SetPoint("TOPLEFT",0,0)
+    bg:SetPoint("BOTTOMRIGHT",0,0)
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
+
+    scrollBar.Forward:ClearAllPoints()
+    scrollBar.Forward:SetPoint("TOP", scrollBar, "BOTTOM", 0, 13)
+    scrollBar.Forward:SetSize(12,12)
+    bg = scrollBar.Forward:CreateTexture(nil, "BACKGROUND", nil, 0)
+    bg:ClearAllPoints();
+    bg:SetPoint("TOPLEFT",0,0)
+    bg:SetPoint("BOTTOMRIGHT",0,0)
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
+    bg:SetTexCoord(0,1,1,0)
+end
+GW.HandleScrollControls = HandleScrollControls
+
+local function HandleTrimScrollBar(frame)
+    if not frame then return end
     frame:GwStripTextures()
 
     ReskinScrollBarArrow(frame.Back, "up")
@@ -142,15 +179,13 @@ local function HandleTrimScrollBar(frame, small)
 
     local thumb = frame:GetThumb()
     if thumb then
+        thumb:DisableDrawLayer("ARTWORK")
         thumb:DisableDrawLayer("BACKGROUND")
         thumb:GwCreateBackdrop("ScrollBar")
         thumb.backdrop:SetFrameLevel(thumb:GetFrameLevel() + 1)
-        thumb:SetSize(12, 12)
-        if not small then
-            thumb.backdrop:ClearAllPoints()
-            thumb.backdrop:SetPoint("TOP", 4, -1)
-            thumb.backdrop:SetPoint("BOTTOM", -4, 1)
-        end
+        local h = thumb:GetHeight()
+        thumb:SetSize(12, h)
+        --thumb:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
     end
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar

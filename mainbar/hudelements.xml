@@ -211,7 +211,7 @@
         <Size x="20" y="4"></Size>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="-1">
-                <Texture name="$parentTexture" parentKey="texture" file="Interface\AddOns\GW2_UI\textures\chat\chatframebackground">
+                <Texture name="$parentTexture" parentKey="texture" file="Interface/AddOns/GW2_UI/textures/chat/chatframebackground">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -221,14 +221,15 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="0">
-                <Texture name="$parentRight" file="Interface\AddOns\GW2_UI\textures\chat\chatframeborder">
+                <Texture name="$parentRight" file="Interface/AddOns/GW2_UI/textures/chat/chatframeborder">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentRight" file="Interface\AddOns\GW2_UI\textures\chat\chatdockbg">
+
+                <Texture name="$parentRight" file="Interface/AddOns/GW2_UI/textures/chat/chatdockbg">
                     <Size x="2" y="25"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -237,7 +238,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="0">
-                <Texture name="$parentEditBox" parentKey="EditBox" file="Interface\AddOns\GW2_UI\textures\chat\chateditboxmid">
+                <Texture name="$parentEditBox" parentKey="EditBox" file="Interface/AddOns/GW2_UI/textures/chat/chateditboxmid">
                     <Size x="2" y="32"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
@@ -450,54 +451,27 @@
         </Layers>
     </Frame>
 
-    <Frame name="GwCastingBar" virtual="true">
+    <Frame name="GwCastingBar" virtual="true" frameStrata="DIALOG">
         <Size x="176" y="15"></Size>
         <Anchors>
             <Anchor point="CENTER"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\units\castingbars">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="176" y="15"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                     </Anchors>
-                    <TexCoords left="1" right="0" top="0" bottom="0.25" />
+                    <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                     <Color r="1" g="1" b="1" a="0.6"></Color>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK" textureSubLevel="3">
-                <Texture parentKey="latency" file="Interface\AddOns\GW2_UI\textures\units\castingbars">
-                    <Size x="176" y="15"></Size>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
-                    </Anchors>
-                    <Color r="1" g="0.4" b="0.4" a="0.5"></Color>
-                    <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\units\castingbars">
-                    <Size x="176" y="15"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
-                    </Anchors>
-                    <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="4">
-                <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\uistuff\statusbar-spark-white">
-                    <Size x="15" y="15"></Size>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
-                    </Anchors>
-                    <Color r="1" g="1" b="1" a="0.7"></Color>
-                </Texture>
-            </Layer>
+
             <Layer level="ARTWORK" textureSubLevel="4">
                 <FontString parentKey="name" justifyH="LEFT" justifyV="MIDDLE">
-                    <Size x="160" y="15"></Size>
+                    <Size x="155" y="15"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>
@@ -517,6 +491,42 @@
                 </Texture>
             </Layer>
         </Layers>
+        <Frames>
+            <StatusBar parentKey="progress" inherits="GwStatusBarBar">
+                 <Size x="176" y="15"></Size>
+                 <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm"/>
+                <BarColor r="1" g="1" b ="1" a="1"/>
+                    <Layers>
+                     <Layer level="ARTWORK" textureSubLevel="3">
+                         <Texture parentKey="latency" file="Interface/AddOns/GW2_UI/textures/units/castingbars/red-norm" hidden="true">
+                           <Size x="176" y="15"></Size>
+                                <Anchors>
+                                    <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                                </Anchors>
+                                <Color r="1" g="1" b="1" a="0.5"></Color>
+                       
+                            </Texture>
+                        </Layer>
+                        <Layer level="ARTWORK" textureSubLevel="4">
+                            <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
+                                <Size x="32" y="18"></Size>
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                </Anchors>
+                      
+                                <Color r="1" g="1" b="1" a="0.7"></Color>
+                            </Texture>
+                            <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm" hidden="true">
+                                <Size x="176" y="15"></Size>
+                                <Anchors>
+                                    <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                                </Anchors>
+                            </Texture>
+                        </Layer>
+                    </Layers>
+            
+            </StatusBar>
+        </Frames>
     </Frame>
 
     <Frame name="GwLFDAnimation" virtual="true">

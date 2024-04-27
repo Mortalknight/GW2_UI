@@ -335,6 +335,14 @@ local function lerp(v0, v1, t)
 end
 GW.lerp = lerp
 
+local function lerpEaseOut(v0,v1,t)
+    t = min(1,t)
+    t = math.sin(t * math.pi * 0.5);
+
+    return lerp(v0,v1,t)
+end
+GW.lerpEaseOut = lerpEaseOut
+
 local function signum(number)
     if number > 0 then
        return 1

@@ -3,6 +3,22 @@ GW.DEFAULTS = GW.DEFAULTS or {}
 GW.DEFAULTS.RAIDDEBUFFS = {}
 GW.ImportendRaidDebuff = {}
 
+local function RemoveOldRaidDebuffsFormProfiles()
+    local profiles = GW2UI_SETTINGS_PROFILES or {}
+    for k, _ in pairs(profiles) do
+        if profiles[k] then
+            if profiles[k].RAIDDEBUFFS then
+                for id, _ in pairs(profiles[k].RAIDDEBUFFS) do
+                    if GW.DEFAULTS.RAIDDEBUFFS[id] == nil then
+                        GW2UI_SETTINGS_PROFILES[k].RAIDDEBUFFS[id] = nil
+                    end
+                end
+            end
+        end
+    end
+end
+GW.RemoveOldRaidDebuffsFormProfiles = RemoveOldRaidDebuffsFormProfiles
+
 local function SetDefaultOnTheFly(id)
     GW.DEFAULTS.RAIDDEBUFFS[id] = true
     GW.ImportendRaidDebuff[id] = true

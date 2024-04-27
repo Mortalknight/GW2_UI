@@ -17,4 +17,5 @@
 
     <Script file="addons\gearQuipper.lua"/>
     <Script file="addons\detailsProfile.lua"/>
+    <Script file="addons\masqueSkin.lua"/>
 </Ui>

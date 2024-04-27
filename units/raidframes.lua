@@ -330,7 +330,7 @@ GW.GridToggleFramesPreviewRaid = GridToggleFramesPreviewRaid
 
 local function LoadRaidFrames()
     if not _G.GwManageGroupButton then
-        GW.manageButton()
+        GW.CreateRaidControlFrame()
     end
 
     hideBlizzardRaidFrame()

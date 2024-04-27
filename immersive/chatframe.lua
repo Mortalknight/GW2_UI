@@ -71,9 +71,10 @@ local CHAT_FRAME_TEXTURES = {
     "ButtonFrameBottomLeftTexture",
     "ButtonFrameTopRightTexture",
     "ButtonFrameBottomRightTexture",
-    "ButtonFrameBottomButton",
-    "ButtonFrameDownButton",
-    "ButtonFrameUpButton",
+    "ButtonFrameLeftTexture",
+    "ButtonFrameRightTexture",
+    "ButtonFrameBottomTexture",
+    "ButtonFrameTopTexture",
     "EditBoxMid",
     "EditBoxLeft",
     "EditBoxRight",
@@ -83,8 +84,7 @@ local CHAT_FRAME_TEXTURES = {
     "TabRight",
     "TabLeft",
     "TabMiddle",
-    "Tab",
-    "TabText"
+    "Tab"
 }
 
 local throttle = {}
@@ -157,14 +157,14 @@ do
         end
     end
     local hyperLinkFunc = function(w, x, y)
-        if w ~= "" then
-            return
-        end
-        return y
+        if w ~= "" then return end
+        local emoji = (x~="" and x) and strmatch(x, 'gwuimoji:%%(.+)')
+        return (emoji and GW.Libs.Deflate:DecodeForPrint(emoji)) or y
     end
     local fourString = function(v, w, x, y)
         return format("%s%s%s", v, w, (v and v == "1" and x) or y)
     end
+
     removeIconFromLine = function(text)
         text = gsub(text, [[|TInterface\TargetingFrame\UI%-RaidTargetingIcon_(%d+):0|t]], raidIconFunc) --converts raid icons into {star} etc, if possible.
         text = gsub(text, "(%s?)(|?)|[TA].-|[ta](%s?)", stripTextureFunc) --strip any other texture out but keep a single space from the side(s).
@@ -210,10 +210,9 @@ local function ShowCopyChatFrame(frame)
     end
 end
 
-local function setButtonPosition(self)
-    local frame = _G["ChatFrame"..self:GetID()]
+local function setButtonPosition(frame)
     local name = frame:GetName()
-    local editbox = _G[name.."EditBox"]
+    local editbox = _G[name .. "EditBox"]
 
     if frame.buttonSide == "right" then
         frame.Container:ClearAllPoints()
@@ -226,19 +225,39 @@ local function setButtonPosition(self)
 
         editbox:ClearAllPoints()
         editbox:SetPoint("TOPLEFT", frame.Background, "BOTTOMLEFT", 0, 0)
-        editbox:SetPoint("TOPRIGHT", _G[name.."ButtonFrame"], "BOTTOMRIGHT", 0, 0)
+        editbox:SetPoint("TOPRIGHT", _G[name .. "ButtonFrame"], "BOTTOMRIGHT", 0, 0)
+
+        if QuickJoinToastButton and frame.isDocked ~= nil then
+            QuickJoinToastButton.ClearAllPoints = nil
+            QuickJoinToastButton.SetPoint = nil
+            QuickJoinToastButton:ClearAllPoints()
+            QuickJoinToastButton:SetPoint("LEFT", GeneralDockManager, "RIGHT", 30, 4)
+
+            QuickJoinToastButton.ClearAllPoints = GW.NoOp
+            QuickJoinToastButton.SetPoint = GW.NoOp
+        end
     else
         frame.Container:ClearAllPoints()
         frame.Container:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
         if not frame.isDocked then
-            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
         else
-            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 0, 0)
+            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 5, 0)
         end
 
         editbox:ClearAllPoints()
-        editbox:SetPoint("TOPLEFT", _G[name.."ButtonFrame"], "BOTTOMLEFT", 0, 0)
-        editbox:SetPoint("TOPRIGHT", frame.Background, "BOTTOMRIGHT", 0, 0)
+        editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, -6)
+        editbox:SetPoint("TOPRIGHT", frame.Background, "BOTTOMRIGHT", 0, -6)
+
+        if QuickJoinToastButton and frame.isDocked ~= nil then
+            QuickJoinToastButton.ClearAllPoints = nil
+            QuickJoinToastButton.SetPoint = nil
+            QuickJoinToastButton:ClearAllPoints()
+            QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
+
+            QuickJoinToastButton.ClearAllPoints = GW.NoOp
+            QuickJoinToastButton.SetPoint = GW.NoOp
+        end
     end
 end
 
@@ -272,11 +291,12 @@ local function handleChatFrameFadeIn(chatFrame, force)
             UIFrameFadeIn(object, 0.5, object:GetAlpha(), 1)
         end
     end
-
     if chatFrame.isDocked == 1 then
         for _, v in pairs(gw_fade_frames) do
             if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
-                if v:IsShown() then
+                if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
+                    UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
+                elseif v == ChatFrameToggleVoiceMuteButton and ChatFrameToggleVoiceMuteButton:IsShown() then
                     UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
                 end
             else
@@ -302,6 +322,7 @@ local function handleChatFrameFadeIn(chatFrame, force)
         UIFrameFadeIn(GW_EmoteFrame, 0.5, GW_EmoteFrame:GetAlpha(), 1)
     end
 
+
     local chatTab = _G[frameName .. "Tab"]
     UIFrameFadeIn(chatTab, 0.5, chatTab:GetAlpha(), 1)
     UIFrameFadeIn(chatFrame.buttonFrame, 0.5, chatFrame.buttonFrame:GetAlpha(), 1)
@@ -312,7 +333,6 @@ local function handleChatFrameFadeOut(chatFrame, force)
     if not GetSetting("CHATFRAME_FADE") and not force then
         return
     end
-
     setChatBackgroundColor(chatFrame)
     if chatFrame.editboxHasFocus or (GW_EmoteFrame and GW_EmoteFrame:IsShown() and GW_EmoteFrame:IsMouseOver()) then
         handleChatFrameFadeIn(chatFrame)
@@ -373,6 +393,16 @@ local function handleChatFrameFadeOut(chatFrame, force)
     end
 end
 GW.AddForProfiling("chatframe", "handleChatFrameFadeOut", handleChatFrameFadeOut)
+
+local function chatBackgroundOnResize(self)
+    local w, h = self:GetSize()
+
+    w = math.min(1, w / 512)
+    h = math.min(1, h / 512)
+
+    self.texture:SetTexCoord(0, w, 1 - h, 1)
+end
+GW.AddForProfiling("chatframe", "chatBackgroundOnResize", chatBackgroundOnResize)
 
 local function SetChatEditBoxMessage(message)
     local ChatFrameEditBox = ChatEdit_ChooseBoxForSend()
@@ -1236,6 +1266,13 @@ local function ChatFrame_SetScript(self, script, func)
     end
 end
 
+local function GetTab(chat)
+    if not chat.tab then
+        chat.tab = _G[format("ChatFrame%sTab", chat:GetID())]
+    end
+
+    return chat.tab
+end
 do
     local charCount
     local function CountLinkCharacters(self)
@@ -1285,8 +1322,9 @@ end
 
 local function styleChatWindow(frame)
     local name = frame:GetName()
-    _G[name .. "TabText"]:SetFont(DAMAGE_TEXT_FONT, 14, "")
-    _G[name .. "TabText"]:SetTextColor(1, 1, 1)
+    local tab = GetTab(frame)
+    tab.Text:SetFont(DAMAGE_TEXT_FONT, 14, "")
+    tab.Text:SetTextColor(1, 1, 1)
 
     if frame.styled then return end
 
@@ -1295,18 +1333,20 @@ local function styleChatWindow(frame)
     local id = frame:GetID()
     local _, fontSize, _, _, _, _, _, _, isDocked = GetChatWindowInfo(id)
 
-    local tab = _G[name.."Tab"]
-    local editbox = _G[name.."EditBox"]
+    local editbox = frame.editBox
+    local scroll = frame.ScrollBar
+    local scrollToBottom = frame.ScrollToBottomButton
     local background = _G[name .. "Background"]
 
     if not frame.hasContainer and (isDocked == 1 or (isDocked == nil and frame:IsShown())) then
         local fmGCC = CreateFrame("Frame", nil, UIParent, "GwChatContainer")
         fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
+        fmGCC:ClearAllPoints()
         fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
         if not frame.isDocked then
-            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
         else
-            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 0, 0)
+            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 5, 0)
         end
         if not frame.isDocked then fmGCC.EditBox:Hide() end
         frame.Container = fmGCC
@@ -1382,11 +1422,14 @@ local function styleChatWindow(frame)
     _G[name .. "ButtonFrameUpButton"]:SetHeight(24)
     _G[name .. "ButtonFrameUpButton"]:SetWidth(24)
 
-
-    frame.buttonFrame.minimizeButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
-    frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
-    frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
-    frame.buttonFrame.minimizeButton:SetSize(24, 24)
+    scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
+    scrollToBottom:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    scrollToBottom.Flash:GwKill()
+    scrollToBottom:SetSize(24, 24)
+    scrollToBottom:SetPoint("BOTTOMRIGHT", frame.ResizeButton, "TOPRIGHT", 7, -2)
+    GW.HandleTrimScrollBar(scroll, true)
+    GW.HandleScrollControls(frame)
 
     ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
     ChatFrameMenuButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_up")
@@ -1394,17 +1437,26 @@ local function styleChatWindow(frame)
     ChatFrameMenuButton:SetHeight(20)
     ChatFrameMenuButton:SetWidth(20)
 
+    if frame.buttonFrame.minimizeButton then
+        frame.buttonFrame.minimizeButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
+        frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
+        frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
+        frame.buttonFrame.minimizeButton:SetSize(24, 24)
+    end
+    frame.buttonFrame:GwStripTextures()
+
+    if not tab.Left then tab.Left = _G[name .. "TabLeft"] or _G[name .. "Tab"].Left end
+
     hooksecurefunc(tab, "SetAlpha", function(t, alpha)
-        if alpha ~= 1 and (not t.isDocked or _G.GeneralDockManager.selected:GetID() == t:GetID()) then
+        if alpha ~= 1 and (not t.isDocked or GeneralDockManager.selected:GetID() == t:GetID()) then
             t:SetAlpha(1)
         elseif alpha < 0.6 then
             t:SetAlpha(0.6)
         end
     end)
 
-    tab.text = _G[name.."TabText"]
-    tab.text:SetTextColor(1, 1, 1)
-    hooksecurefunc(tab.text, "SetTextColor", function(tt, r, g, b)
+    tab.Text:SetTextColor(1, 1, 1)
+    hooksecurefunc(tab.Text, "SetTextColor", function(tt, r, g, b)
         local rR, gG, bB = 1, 1, 1
         if r ~= rR or g ~= gG or b ~= bB then
             tt:SetTextColor(rR, gG, bB)
@@ -1419,17 +1471,20 @@ local function styleChatWindow(frame)
     frame:SetClampRectInsets(0,0,0,0)
     frame:SetClampedToScreen(false)
     frame:GwStripTextures(true)
-    _G[name.."ButtonFrame"]:Hide()
+    _G[name .. "ButtonFrame"]:Hide()
 
-    _G[format(editbox:GetName() .. "Left", id)]:Hide()
-    _G[format(editbox:GetName() .. "Mid", id)]:Hide()
-    _G[format(editbox:GetName() .. "Right", id)]:Hide()
+    local a, b, c = select(6, editbox:GetRegions())
+    a:GwKill()
+    b:GwKill()
+    c:GwKill()
+
     editbox:ClearAllPoints()
-    editbox:SetPoint("TOPLEFT", _G[name.."ButtonFrame"], "BOTTOMLEFT", 0, 0)
+    editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, 0)
     editbox:SetPoint("TOPRIGHT", background, "BOTTOMRIGHT", 0, 0)
     editbox:SetAltArrowKeyMode(false)
     editbox.editboxHasFocus = false
     editbox:Hide()
+    GW.SkinTextBox(_G[name .. "EditBoxMid"], _G[name .. "EditBoxLeft"], _G[name .. "EditBoxRight"])
 
     --Character count
     local charCount = editbox:CreateFontString(nil, "ARTWORK")
@@ -1443,23 +1498,24 @@ local function styleChatWindow(frame)
 
     editbox:HookScript("OnEditFocusGained", function(editBox)
         frame.editboxHasFocus = true
-        frame:SetScript(
-            "OnUpdate",
-            function()
-                handleChatFrameFadeIn(frame)
-            end
-        )
+        --frame:SetScript(
+        --    "OnUpdate",
+        --    function()
+        --        handleChatFrameFadeIn(frame)
+        --    end
+        --)
         FCF_FadeInChatFrame(frame)
         editBox:Show()
     end)
     editbox:HookScript("OnEditFocusLost", function(editBox)
-        frame:SetScript("OnUpdate", nil)
+        --frame:SetScript("OnUpdate", nil)
         frame.editboxHasFocus = false
         FCF_FadeOutChatFrame(frame)
         if GetSetting("CHATFRAME_EDITBOX_HIDE") then
             editBox:Hide()
         end
     end)
+
     editbox:HookScript("OnTextChanged", GW.ChatFrameEditBoxOnTextChanged)
 
     if GetSetting("CHAT_USE_GW2_STYLE") then
@@ -1494,7 +1550,7 @@ local function styleChatWindow(frame)
 
     frame.button:SetScript("OnEnter", function(button) button:SetAlpha(1) end)
     frame.button:SetScript("OnLeave", function(button)
-        if _G[button:GetParent():GetName() .. "TabText"]:IsShown() then
+        if GetTab(button:GetParent()).Text:IsShown() then
             button:SetAlpha(0.35)
         else
             button:SetAlpha(0)
@@ -1543,16 +1599,6 @@ local function styleChatWindow(frame)
     frame.styled = true
 end
 GW.AddForProfiling("chatframe", "styleChatWindow", styleChatWindow)
-
-local function chatBackgroundOnResize(self)
-    local w, h = self:GetSize()
-
-    w = math.min(1, w / 512)
-    h = math.min(1, h / 512)
-
-    self.texture:SetTexCoord(0, w, 1 - h, 1)
-end
-GW.AddForProfiling("chatframe", "chatBackgroundOnResize", chatBackgroundOnResize)
 
 local function BuildCopyChatFrame()
     local frame = CreateFrame("Frame", "GW2_UICopyChatFrame", UIParent)
@@ -1828,8 +1874,33 @@ local function LoadChat()
     local shouldFading = GetSetting("CHATFRAME_FADE")
     local eventFrame = CreateFrame("Frame")
 
+    if FriendsMicroButton then
+        FriendsMicroButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
+        FriendsMicroButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton")
+        FriendsMicroButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
+        FriendsMicroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
+        FriendsMicroButton:SetSize(25, 25)
+        FriendsMicroButton:ClearAllPoints()
+        FriendsMicroButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
+        --FriendsMicroButton.QueueCount:GwKill()
+        local _, _, fontFlags = FriendsMicroButtonCount:GetFont()
+        FriendsMicroButtonCount:SetFont(_, 12, fontFlags)
+        FriendsMicroButtonCount:SetTextColor(1, 1, 1)
+        FriendsMicroButtonCount:SetShadowOffset(1, 1)
+        FriendsMicroButtonCount:SetPoint("TOP", FriendsMicroButton, "BOTTOM", 1, 1)
+
+        if GetSetting("CHAT_SOCIAL_LINK") then
+            --FriendsMicroButton.Toast:GwKill()
+            --FriendsMicroButton.Toast2:GwKill()
+        end
+
+        FriendsMicroButton.ClearAllPoints = GW.NoOp
+        FriendsMicroButton.SetPoint = GW.NoOp
+    end
+
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]
+        -- possible fix for chatframe floating max error
         frame.oldAlpha = frame.oldAlpha and frame.oldAlpha or DEFAULT_CHATFRAME_ALPHA
         styleChatWindow(frame)
         FCFTab_UpdateAlpha(frame)
@@ -1877,9 +1948,9 @@ local function LoadChat()
                 fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
                 fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
                 if not frame.isDocked then
-                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
                 else
-                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxRight"], "BOTTOMRIGHT", 0, 0)
+                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxRight"], "BOTTOMRIGHT", 5, 0)
                 end
                 if not frame.isDocked then fmGCC.EditBox:Hide() end
                 frame.Container = fmGCC
@@ -1932,9 +2003,9 @@ local function LoadChat()
             fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
             fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
             if not frame.isDocked then
-                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
             else
-                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 0, 0)
+                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 5, 0)
             end
             if not frame.isDocked then fmGCC.EditBox:Hide() end
             frame.Container = fmGCC
@@ -2023,7 +2094,6 @@ local function LoadChat()
             ChatFrame3.Container:SetShown(showVoice)
         end
     end)
-    VoiceTranscriptionFrame_UpdateVisibility(_G["ChatFrame3"])
 
     -- set custom textures for chat channel buttons (chats/voice, mute mic/sound)
     ChatFrameChannelButton:SetHeight(20)
@@ -2037,23 +2107,74 @@ local function LoadChat()
             self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc")
             self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
             self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
+            --ChatFrameToggleVoiceMuteButton:Show()
+            --ChatFrameToggleVoiceDeafenButton:Show()
         else
             self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
             self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal")
             self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
             self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
+            --ChatFrameToggleVoiceMuteButton:Hide()
+            --ChatFrameToggleVoiceDeafenButton:Hide()
         end
     end)
+    if ChatFrameToggleVoiceMuteButton then
+        ChatFrameToggleVoiceMuteButton:SetHeight(20)
+        ChatFrameToggleVoiceMuteButton:SetWidth(20)
+        ChatFrameToggleVoiceMuteButton.Icon:GwKill()
+        hooksecurefunc(ChatFrameToggleVoiceMuteButton, "SetIconToState", function(self, state)
+            if state == MUTE_SILENCE_STATE_NONE then -- mic on
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on_highlight")
+            elseif state == MUTE_SILENCE_STATE_MUTE then -- mic off
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off_highlight")
+            elseif state == MUTE_SILENCE_STATE_SILENCE then -- mic silenced on
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on_highlight")
+            elseif state == MUTE_SILENCE_STATE_MUTE_AND_SILENCE then -- mic silenced off
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off_highlight")
+            end
+        end)
+    end
+    if ChatFrameToggleVoiceDeafenButton then
+        ChatFrameToggleVoiceDeafenButton:SetHeight(20)
+        ChatFrameToggleVoiceDeafenButton:SetWidth(20)
+        ChatFrameToggleVoiceDeafenButton.Icon:GwKill()
+        hooksecurefunc(ChatFrameToggleVoiceDeafenButton, "SetIconToState", function(self, deafened)
+            if deafened then
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off_highlight")
+            else
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight")
+            end
+        end)
+    end
 
     -- events for functions
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    --eventFrame:RegisterEvent("SOCIAL_QUEUE_UPDATE")
     eventFrame:RegisterEvent("CVAR_UPDATE")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "PLAYER_ENTERING_WORLD" then
+            CollectLfgRolesForChatIcons()
+
             ChatFrameChannelButton:UpdateVisibleState()
+            --ChatFrameToggleVoiceMuteButton:UpdateVisibleState()
+            --ChatFrameToggleVoiceDeafenButton:UpdateVisibleState()
         elseif event == "GROUP_ROSTER_UPDATE" then
             CollectLfgRolesForChatIcons()
+        elseif event == "SOCIAL_QUEUE_UPDATE" then
+            SocialQueueEvent(...)
         elseif event == "CVAR_UPDATE" and ... == "ENABLE_SPEECH_TO_TEXT_TRANSCRIPTION" then
             local showVoice = GetCVarBool("speechToText")
             SetChatWindowShown(3, showVoice)
@@ -2063,7 +2184,7 @@ local function LoadChat()
             end
             FloatingChatFrame_Update(3)
             FCF_DockUpdate()
-        elseif tonumber(GetSetting("CHAT_SPAM_INTERVAL_TIMER")) ~= 0 and (event == "CHAT_MSG_SAY" or event == "CHAT_MSG_YELL" or event == "CHAT_MSG_CHANNEL") then
+        elseif GW.loaded and (GetSetting("CHAT_SPAM_INTERVAL_TIMER") ~= 0 and (event == "CHAT_MSG_SAY" or event == "CHAT_MSG_YELL" or event == "CHAT_MSG_CHANNEL")) then
             local message, author = ...
             local when = time()
             ChatThrottleHandler(author, message, when)

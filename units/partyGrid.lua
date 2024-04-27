@@ -339,7 +339,7 @@ local function LoadPartyGrid()
     end
 
     if not GwManageGroupButton then
-        GW.manageButton()
+        GW.CreateRaidControlFrame()
 
         -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
         GW.UpdateMissingAndIgnoredAuras()

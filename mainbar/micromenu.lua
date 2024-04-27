@@ -410,21 +410,32 @@ local function setupMicroButtons(mbf)
     QuestLogMicroButton:ClearAllPoints()
     QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
 
-    -- SocialsMicroButton
-    SocialsMicroButton:ClearAllPoints()
-    SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-    SocialsMicroButton.Ticker = C_Timer.NewTicker(15, function() GuildRoster() end)
-    SocialsMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
-    SocialsMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
-    SocialsMicroButton:RegisterEvent("GUILD_MOTD")
-    SocialsMicroButton:HookScript("OnEnter", GW.Guild_OnEnter)
-    SocialsMicroButton:SetScript("OnClick", GW.Guild_OnClick)
-    SocialsMicroButton:HookScript("OnEvent", updateGuildButton)
-    updateGuildButton(SocialsMicroButton, "GUILD_ROSTER_UPDATE")
+    -- GuildMicroButton
+    GuildMicroButton:ClearAllPoints()
+    GuildMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
+    GuildMicroButton.Ticker = C_Timer.NewTicker(15, function() C_GuildInfo.GuildRoster() end)
+    GuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
+    GuildMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
+    GuildMicroButton:RegisterEvent("GUILD_MOTD")
+    GuildMicroButton:HookScript("OnEvent", updateGuildButton)
+    GuildMicroButton:HookScript("OnEnter", GW.Guild_OnEnter)
+    GuildMicroButton:SetScript("OnClick", GW.Guild_OnClick)
+    hooksecurefunc(GuildMicroButton, "UpdateTabard", function()
+        GuildMicroButton:GetDisabledTexture():SetAlpha(1)
+        GuildMicroButton:GetNormalTexture():SetAlpha(1)
+        GuildMicroButton:GetPushedTexture():SetAlpha(1)
+        GuildMicroButton:GetHighlightTexture():SetAlpha(1)
+
+        GuildMicroButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+        GuildMicroButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+        GuildMicroButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+        GuildMicroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+    end)
+    updateGuildButton(GuildMicroButton, "GUILD_ROSTER_UPDATE")
 
     -- CollectionsMicroButton
     CollectionsMicroButton:ClearAllPoints()
-    CollectionsMicroButton:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+    CollectionsMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- PVPMicroButton
     local pvpref
@@ -455,15 +466,20 @@ local function setupMicroButtons(mbf)
         pvpref = PVPMicroButton
         pvpref:ClearAllPoints()
         pvpref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+        PVPMicroButtonTexture:SetAlpha(0)
     end
 
     -- LFGMicroButton
     LFGMicroButton:ClearAllPoints()
     LFGMicroButton:SetPoint("BOTTOMLEFT", pvpref, "BOTTOMRIGHT", 4, 0)
 
+    -- EJMicroButton
+    EJMicroButton:ClearAllPoints()
+    EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
+
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
-    MainMenuMicroButton:SetPoint("BOTTOMLEFT", LFGMicroButton, "BOTTOMRIGHT", 4, 0)
+    MainMenuMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
     MainMenuBarPerformanceBar:SetAlpha(0)
 	MainMenuBarPerformanceBar:SetScale(0.00001)
     MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)
@@ -627,7 +643,7 @@ local function LoadMicroMenu()
         function()
             HelpMicroButton:Show()
             MicroButtonPortrait:Hide()
-            local m = SocialsMicroButton
+            local m = GuildMicroButton
             m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
             m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
             m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")

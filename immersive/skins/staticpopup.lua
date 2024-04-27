@@ -52,11 +52,11 @@ local function SkinStaticPopup()
 
     hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
     --Movie skip Frame
-    hooksecurefunc("CinematicFrame_OnDisplaySizeChanged", function(self)
-        if self and self.closeDialog and not self.closeDialog.tex then
-            self.closeDialog:GwStripTextures()
+    hooksecurefunc("CinematicFrame_UpdateLettboxForAspectRatio", function(self)
+        if self and self.closeDialog and not self.closeDialog.template then
+            self.closeDialog.Border:Hide()
 
-            local tex = self.closeDialog:CreateTexture("bg", "BACKGROUND")
+            local tex = self.closeDialog:CreateTexture(nil, "BACKGROUND")
             tex:SetPoint("TOP", self.closeDialog, "TOP", 0, 0)
             tex:SetSize(self.closeDialog:GetSize())
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
@@ -65,8 +65,12 @@ local function SkinStaticPopup()
             local dialogName = self.closeDialog.GetName and self.closeDialog:GetName()
             local closeButton = self.closeDialog.ConfirmButton or (dialogName and _G[dialogName .. "ConfirmButton"])
             local resumeButton = self.closeDialog.ResumeButton or (dialogName and _G[dialogName .. "ResumeButton"])
-            if closeButton then closeButton:GwSkinButton(false, true) end
-            if resumeButton then resumeButton:GwSkinButton(false, true) end
+            if closeButton then
+                closeButton:GwSkinButton(false, true)
+            end
+            if resumeButton then
+                resumeButton:GwSkinButton(false, true)
+            end
         end
     end)
 
