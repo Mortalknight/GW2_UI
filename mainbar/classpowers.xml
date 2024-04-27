@@ -739,7 +739,7 @@
                     </Layer>
                 </Layers>
             </Frame>
-               <Frame parentKey="paladin" hidden="true">
+            <Frame parentKey="paladin" hidden="true">
                 <Size x="316" y="18"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
