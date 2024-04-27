@@ -4,7 +4,7 @@ name: Release WOTLK Update # description of this workflow, can be anything you w
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+-Wrath'
+      - '[0-9]+.[0-9]+.[0-9]+-Cata'
 
 env:
   # for github releases, this secret is automatically provided to the workflow
@@ -19,4 +19,4 @@ jobs:
 
       - uses: BigWigsMods/packager@master
         with:
-          args: -g wrath
+          args: -g cata
