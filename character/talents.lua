@@ -99,6 +99,7 @@ local function hookTalentButton(talentButton, container, row, index)
         "CLAMPTOBLACKADDITIVE")
     mask:SetSize(talentButton:GetSize())
     talentButton.mask = mask
+    mask:SetParent(talentButton);
     talentButton.points:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
     talentButton.points:SetTextColor(1, 1, 1, 1)
 end

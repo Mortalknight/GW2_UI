@@ -361,6 +361,7 @@ local function getUnknownSpellItem(index)
     mask:SetSize(40, 40)
 
     f.mask = mask
+    mask:SetParent(f);
     return f
 end
 local UNKNOW_SPELL_CONTAINER_MAX_INDEX = 0
@@ -845,6 +846,7 @@ local function LoadSpellBook()
             mask:SetSize(40, 40)
 
             f.mask = mask
+            mask:SetParent(f)
             f.rank:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
             f.rank:SetTextColor(0.9, 0.9, 0.8, 1)
             f:SetPoint('TOPLEFT', container, 'TOPLEFT', (50 * x), (-70) + (-50 * y))
