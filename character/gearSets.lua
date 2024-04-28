@@ -51,7 +51,7 @@ local function UpdateSets(self)
         button.icon:SetTexture("")
         button:Hide()
     end
-    if GearManagerDialogPopup:IsShown() then
+    if GearManagerDialogPopup and GearManagerDialogPopup:IsShown() then
         RecalculateGearManagerDialogPopup()		--Scroll so that the texture appears and Save is enabled
     end
 end
@@ -124,6 +124,7 @@ local function LoadGeatSets()
         end
     end)
 
+    --[[
     GearManagerDialogPopup:HookScript("OnShow", function()
         GearManagerDialogPopup:ClearAllPoints()
         GearManagerDialogPopup:SetPoint("TOPLEFT", GwCharacterWindowContainer, "TOPRIGHT", 0, 0)
@@ -144,7 +145,7 @@ local function LoadGeatSets()
 
     GearManagerDialogPopup:SetParent(GwCharacterWindowContainer)
 
-    hooksecurefunc(C_EquipmentSet, "DeleteEquipmentSet", function() UpdateSets(gearSetsFrame) end)
+    
     hooksecurefunc("RecalculateGearManagerDialogPopup", function()
         if gearSetsFrame.selectedSet then
             GearManagerDialogPopupEditBox:SetText(gearSetsFrame.selectedSet.name)
@@ -152,6 +153,8 @@ local function LoadGeatSets()
         end
     end)
 
+    ]]
+    hooksecurefunc(C_EquipmentSet, "DeleteEquipmentSet", function() UpdateSets(gearSetsFrame) end)
     gearSetsFrame.delete:SetScript("OnClick", function()
         local selectedSet = gearSetsFrame.selectedSet;
         if selectedSet then

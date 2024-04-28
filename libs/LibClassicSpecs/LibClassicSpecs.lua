@@ -438,7 +438,6 @@ function LCS.GetSpecializationInfo(specIndex, isInspect, isPet)
 	if (isInspect or isPet) then
 		return
 	end
-
 	local specId = ClassByID[ClassID].specs[specIndex]
 	local spec = SpecInfo[specId]
 

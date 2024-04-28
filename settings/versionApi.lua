@@ -1,5 +1,4 @@
 local _, GW = ...
-local CI = GW.Libs.CI
 GW.api = {}
 
 local function GetAverageItemLevel()
@@ -14,7 +13,11 @@ GW.api.GetAverageItemLevel = GetAverageItemLevel
 
 local function GetItemLevelColor()
     if GW.tocversion > 40000 then
-        return _G.GetItemLevelColor()
+        if _G.GetItemLevelColor then
+            return _G.GetItemLevelColor()
+        else
+            return 1, 1, 1
+        end
     else
         GW.Libs.LibGearScore:PLAYER_ENTERING_WORLD()
         local _, gearScore = GW.Libs.LibGearScore:GetScore("player")
@@ -40,8 +43,8 @@ local function GetSpecialization()
     if GW.tocversion > 50000 then
         return _G.GetSpecialization()
     end
-    if GW.tocversion > 30000 then
-        return CI:GetSpecialization("player") or 1
+    if GW.tocversion > 40000 then
+        return GW.Libs.LCS.GetSpecialization()
     end
 
     return 0
@@ -52,6 +55,10 @@ local function GetSpecializationInfo(specIndex,isInspect,isPet,inspectTarget,sex
     if GW.tocversion > 50000 then
         return _G.GetSpecializationInfo(specIndex,isInspect,isPet,inspectTarget,sex)
     end
+    if GW.tocversion > 40000 then
+        return GW.Libs.LCS.GetSpecializationInfo(specIndex)
+    end
+
     local name, iconTexture, pointsSpent, background = GetTalentTabInfo(specIndex);
     return specIndex, name, nil, iconTexture, background, nil, nil
 end

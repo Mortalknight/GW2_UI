@@ -90,12 +90,6 @@ local function updateValues(self)
     self.defenseSection.block.tt2 = tt2
     self.defenseSection.block.TextL:SetText(STAT_BLOCK)
     self.defenseSection.block.TextR:SetText(block)
-
-    local resil, tt1, tt2 = GW.stats.getResilience()
-    self.defenseSection.resil.tt1 = tt1
-    self.defenseSection.resil.tt2 = tt2
-    self.defenseSection.resil.TextL:SetText(STAT_RESILIENCE)
-    self.defenseSection.resil.TextR:SetText(resil)
 end
 
 local function CreateSection(width, height, parent, anchor1, anchorTo, anchor2, yOffset)

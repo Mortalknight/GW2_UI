@@ -691,12 +691,40 @@
                 <FontString parentKey="itemLevel" text="100" justifyH="LEFT">
                     <Size x="180" y="40"></Size>
                     <Anchors>
-                        <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="0" y="0"></Anchor>
+                        <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="10" y="0"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
         <Frames>
+             <Frame parentKey="itemLevelFrame" hidden="false">
+                <Size x="180" y="20"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="10" y="0"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnEnter>
+                        local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel();
+                        avgItemLevel = floor(avgItemLevel);
+                        avgItemLevelEquipped = floor(avgItemLevelEquipped);
+
+                        self.tooltip = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_AVERAGE_ITEM_LEVEL).." "..avgItemLevel;
+                        if (avgItemLevelEquipped ~= avgItemLevel) then
+                            self.tooltip = self.tooltip .. "  " .. format(STAT_AVERAGE_ITEM_LEVEL_EQUIPPED, avgItemLevelEquipped);
+                        end
+                        self.tooltip = self.tooltip .. FONT_COLOR_CODE_CLOSE;
+                        self.tooltip2 = STAT_AVERAGE_ITEM_LEVEL_TOOLTIP;
+
+                        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+                        GameTooltip:SetText(self.tooltip)
+                        if self.tooltip2 then
+                            GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+                        end
+                        GameTooltip:Show()
+                    </OnEnter>
+                    <OnLeave function="GameTooltip_Hide"/>
+                </Scripts>
+            </Frame>
             <Frame parentKey="stats">
                 <Size x="184" y="301"></Size>
                 <Anchors>
@@ -753,6 +781,7 @@
                         self:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
                         self:RegisterEvent("MERCHANT_SHOW")
                         self:RegisterEvent("UPDATE_INVENTORY_ALERTS")
+                        self:RegisterEvent("MASTERY_UPDATE")
 
                         self:RegisterUnitEvent("UNIT_DAMAGE", "player")
                         self:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player")
@@ -779,7 +808,7 @@
             <OnLoad>
                 self.characterName:SetFont(UNIT_NAME_FONT, 14, "")
                 self.characterData:SetFont(UNIT_NAME_FONT, 12, "")
-                self.itemLevel:SetFont(UNIT_NAME_FONT, 12, "")
+                self.itemLevel:SetFont(UNIT_NAME_FONT, 24, "")
             </OnLoad>
         </Scripts>
     </Button>

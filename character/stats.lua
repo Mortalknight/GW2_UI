@@ -107,33 +107,30 @@ local function getPrimary(i, unit)
 	unitClass = strupper(unitClass)
 
     if i == 1 then
-		local attackPower = GetAttackPowerForStat(i,effectiveStat)
-		tooltip2 = format(tooltip2, attackPower)
-		if ( unitClass == "WARRIOR" or unitClass == "SHAMAN" or unitClass == "PALADIN" ) then
-			tooltip2 = tooltip2 .. "\n" .. format( STAT_BLOCK_TOOLTIP, effectiveStat * BLOCK_PER_STRENGTH )
-		end
+		local attackPower = GetAttackPowerForStat(i,effectiveStat);
+		tooltip2 = format(tooltip2, attackPower);
+    elseif ( i == 2 ) then
+        local attackPower = GetAttackPowerForStat(i,effectiveStat);
+        if ( attackPower > 0 ) then
+            tooltip2 = format(STAT_TOOLTIP_BONUS_AP, attackPower) .. format(tooltip2, GetCritChanceFromAgility("player"));
+        else
+            tooltip2 = format(tooltip2, GetCritChanceFromAgility("player"));
+        end
 	elseif i == 3 then
 		local baseStam = min(20, effectiveStat);
-		local moreStam = effectiveStat - baseStam;
-		tooltip2 = format(tooltip2, (baseStam + (moreStam*HEALTH_PER_STAMINA))*GetUnitMaxHealthModifier("player"));
-		local petStam = ComputePetBonus("PET_BONUS_STAM", effectiveStat );
-		if( petStam > 0 ) then
-			tooltip2 = tooltip2 .. "\n" .. format(PET_BONUS_TOOLTIP_STAMINA,petStam);
-		end
-	elseif i == 2 then
-		local attackPower = GetAttackPowerForStat(i,effectiveStat);
-		if ( attackPower > 0 ) then
-			tooltip2 = format(STAT_ATTACK_POWER, attackPower) .. format(tooltip2, GetCritChanceFromAgility("player"), effectiveStat*ARMOR_PER_AGILITY);
-		else
-			tooltip2 = format(tooltip2, GetCritChanceFromAgility("player"), effectiveStat*ARMOR_PER_AGILITY);
-		end
+        local moreStam = effectiveStat - baseStam;
+        tooltip2 = format(tooltip2, (baseStam + (moreStam*UnitHPPerStamina("player")))*GetUnitMaxHealthModifier("player"));
 	elseif i == 4 then
-		local baseInt = min(20, effectiveStat);
-		local moreInt = effectiveStat - baseInt
 		if ( UnitHasMana("player") ) then
-			tooltip2 = format(tooltip2, baseInt + moreInt*MANA_PER_INTELLECT, GetSpellCritChanceFromIntellect("player"));
+            local baseInt = min(20, effectiveStat);
+		    local moreInt = effectiveStat - baseInt
+            if (GetOverrideSpellPowerByAP() ~= nil) then
+                tooltip2 = format(STAT4_NOSPELLPOWER_TOOLTIP, baseInt + moreInt*MANA_PER_INTELLECT, GetSpellCritChanceFromIntellect("player"));
+            else
+                tooltip2 = format(tooltip2, baseInt + moreInt*MANA_PER_INTELLECT, max(0, effectiveStat-10), GetSpellCritChanceFromIntellect("player"));
+            end
 		else
-			tooltip2 = nil;
+			tooltip2 = STAT_USELESS_TOOLTIP;
 		end
 		local petInt = ComputePetBonus("PET_BONUS_INT", effectiveStat );
 		if( petInt > 0 ) then
@@ -144,12 +141,13 @@ local function getPrimary(i, unit)
 		end
 	elseif i == 5 then
 		-- All mana regen stats are displayed as mana/5 sec.
-		tooltip2 = format(tooltip2, GetUnitHealthRegenRateFromSpirit("player"));
 		if ( UnitHasMana("player") ) then
-			local regen = GetUnitManaRegenRateFromSpirit("player");
-			regen = floor( regen * 5.0 );
-			tooltip2 = tooltip2.."\n"..format(MANA_REGEN_FROM_SPIRIT, regen);
-		end
+            local regen = GetUnitManaRegenRateFromSpirit("player");
+            regen = floor( regen * 5.0 );
+            tooltip2 = format(MANA_REGEN_FROM_SPIRIT, regen);
+        else
+            tooltip2 = STAT_USELESS_TOOLTIP;
+        end
 	end
     return _G["SPELL_STAT" .. i .. "_NAME"], statText, tooltip, tooltip2
 end
@@ -176,26 +174,6 @@ local function getArmor(unit)
     return stat, tooltip, tooltip2
 end
 GW.stats.getArmor = getArmor
-
-local function getDefense()
-    local stat, tooltip, tooltip2
-
-    local base, modifier = UnitDefense("player")
-    local posBuff = 0
-    local negBuff = 0
-    if ( modifier > 0 ) then
-        posBuff = modifier
-    elseif ( modifier < 0 ) then
-        negBuff = modifier
-    end
-
-    stat, tooltip = formateStat(DEFENSE_COLON, base, posBuff, negBuff)
-    local defensePercent = GetDodgeBlockParryChanceFromDefense()
-    tooltip2 = format(DEFAULT_STATDEFENSE_TOOLTIP, GetCombatRating(CR_DEFENSE_SKILL), GetCombatRatingBonus(CR_DEFENSE_SKILL), defensePercent, defensePercent)
-
-    return stat, tooltip, tooltip2
-end
-GW.stats.getDefense = getDefense
 
 local function getDamage(unit, prefix)
     if not unit then
@@ -335,6 +313,54 @@ local function getAttackSpeed()
 end
 GW.stats.getAttackSpeed = getAttackSpeed
 
+local function getMastery()
+
+	if (UnitLevel("player") < SHOW_MASTERY_LEVEL) then
+		return format("N/A")
+	end
+
+	local mastery = GetMastery();
+    local _, class = UnitClass("player")
+	local masteryBonus = GetCombatRatingBonus(CR_MASTERY)
+    local tooltip, tooltip2
+	local title = HIGHLIGHT_FONT_COLOR_CODE..format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_MASTERY).." "..format("%.2F", mastery)..FONT_COLOR_CODE_CLOSE;
+	if (masteryBonus > 0) then
+		title = title..HIGHLIGHT_FONT_COLOR_CODE.." ("..format("%.2F", mastery-masteryBonus)..FONT_COLOR_CODE_CLOSE..GREEN_FONT_COLOR_CODE.."+"..format("%.2F", masteryBonus)..FONT_COLOR_CODE_CLOSE..HIGHLIGHT_FONT_COLOR_CODE..")";
+	end
+	tooltip = title
+
+	local masteryKnown = IsSpellKnown(CLASS_MASTERY_SPELLS[class]);
+	local primaryTalentTree = GetPrimaryTalentTree();
+	if (masteryKnown and primaryTalentTree) then
+		local masterySpell, masterySpell2 = GetTalentTreeMasterySpells(primaryTalentTree);
+		if (masterySpell) then
+			GameTooltip:AddSpellByID(masterySpell);
+		end
+		if (masterySpell2) then
+			GameTooltip:AddLine(" ");
+			GameTooltip:AddSpellByID(masterySpell2);
+		end
+		GameTooltip:AddLine(" ");
+		GameTooltip:AddLine(format(STAT_MASTERY_TOOLTIP, GetCombatRating(CR_MASTERY), masteryBonus), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+	else
+		GameTooltip:AddLine(format(STAT_MASTERY_TOOLTIP, GetCombatRating(CR_MASTERY), masteryBonus), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
+		GameTooltip:AddLine(" ");
+		if (masteryKnown) then
+			GameTooltip:AddLine(STAT_MASTERY_TOOLTIP_NO_TALENT_SPEC, GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, true);
+		else
+			GameTooltip:AddLine(STAT_MASTERY_TOOLTIP_NOT_KNOWN, GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, true);
+		end
+	end
+
+    return format("%.2F", mastery), tooltip, tooltip2
+end
+GW.stats.getMastery = getMastery
+
+local function getMovementSpeed()
+    return format(STAT_FORMAT, STAT_MOVEMENT_SPEED)
+end
+GW.stats.getMovementSpeed = getMovementSpeed
+
 local function getDodge()
     local chance = GetDodgeChance();
     local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("DODGE_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
@@ -361,16 +387,6 @@ local function getBlock()
     return format("%.2f%%", chance), tooltip, tooltip2
 end
 GW.stats.getBlock = getBlock
-
-local function getResilience()
-    local resilience = GetCombatRating(CR_RESILIENCE_CRIT_TAKEN);
-    local bonus = GetCombatRatingBonus(CR_RESILIENCE_CRIT_TAKEN);
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..STAT_RESILIENCE.." "..resilience..FONT_COLOR_CODE_CLOSE;
-    local tooltip2 = format(RESILIENCE_TOOLTIP, bonus, min(bonus * 2, 25.00), bonus);
-
-    return resilience, tooltip, tooltip2
-end
-GW.stats.getResilience = getResilience
 
 local function getRating(ratingIndex)
     local rating = GetCombatRating(ratingIndex)

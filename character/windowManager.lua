@@ -96,6 +96,7 @@ windowsList[6] = {
     ]=]
 }
 
+--[[
 windowsList[7] = {
     ["OnLoad"] = "LoadPvp",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
@@ -110,6 +111,7 @@ windowsList[7] = {
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "pvp")
     ]=]
 }
+]]
 
 -- turn click events (generated from key bind overrides) into the correct tab show/hide calls
 local charSecure_OnClick = [=[

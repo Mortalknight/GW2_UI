@@ -21,7 +21,6 @@ local PlayerSlots = {
     ["CharacterMainHandSlot"] = {0.25, 0.5, 0.125, 0.25},
     ["CharacterSecondaryHandSlot"] = {0, 0.25, 0.125, 0.25},
     ["CharacterRangedSlot"] = {0.25, 0.5, 0.5, 0.625},
-    ["CharacterAmmoSlot"] = {0.75, 1, 0.375, 0.5},
 }
 
 local  statsIconsSprite = {
@@ -75,41 +74,22 @@ local STATS_ICONS ={
 
 local durabilityFrame = nil
 
-local function collectDurability(self)
-    local completeDurability = 0
-    local completeDurabilityNumItems = 0
-    for i = 1, 23 do
-        local current, maximum = GetInventoryItemDurability(i)
-
-        if current ~= nil then
-            completeDurability = completeDurability + (current / maximum)
-            completeDurabilityNumItems = completeDurabilityNumItems + 1
-        end
-    end
-    if completeDurabilityNumItems > 0 then
-        self.Value:SetText(GW.RoundDec(completeDurability / completeDurabilityNumItems * 100) .. "%")
-    else
-        self.Value:SetText(NOT_APPLICABLE)
-    end
-end
-GW.AddForProfiling("paperdoll_equipment", "collectDurability", collectDurability)
 
 local function PaperDollStats_QueuedUpdate(self)
     self:SetScript("OnUpdate", nil)
     GW.PaperDollUpdateStats()
-    collectDurability(durabilityFrame)
 end
 
 local function PaperDollUpdateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
     local spec = GW.api.GetSpecialization()
-    local _, specName = GW.api.GetSpecializationInfo(spec, nil, nil, nil, GW.mysex)
+    local dddd, specName = GW.api.GetSpecializationInfo(spec, nil, nil, nil, GW.mysex)
     local color = GWGetClassColor(GW.myclass, true)
     GW.SetClassIcon(GwDressingRoom.classIcon, GW.myclass)
 
     GwDressingRoom.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
 
-    if specName ~= nil then
+    if specName then
         GwDressingRoom.characterData:SetText(GUILD_RECRUITMENT_LEVEL .. " " .. GW.mylevel.. " " .. specName .. " " .. GW.myLocalizedClass)
     else
         GwDressingRoom.characterData:SetFormattedText(PLAYER_LEVEL, GW.mylevel, GW.myLocalizedRace, GW.myLocalizedClass)
@@ -164,13 +144,13 @@ local function PaperDollStats_OnEvent(self, event, ...)
                 event == "UNIT_RANGEDDAMAGE" or
                 event == "UNIT_ATTACK" or
                 event == "UNIT_STATS" or
+                event == "MASTERY_UPDATE" or
                 event == "UNIT_RANGED_ATTACK_POWER" or
                 event == "UNIT_SPELL_HASTE" or
                 event == "UNIT_MAXHEALTH" or
                 event == "UNIT_AURA" or
                 event == "UNIT_RESISTANCES" or
-                event == "UPDATE_INVENTORY_ALERTS" or
-                IsMounted() then
+                event == "UPDATE_INVENTORY_ALERTS" then
             self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
         end
     end
@@ -183,8 +163,7 @@ local function PaperDollStats_OnEvent(self, event, ...)
             event == "PLAYER_EQUIPMENT_CHANGED" or
             event == "PLAYERBANKSLOTS_CHANGED" or
             event == "PLAYER_AVG_ITEM_LEVEL_UPDATE" or
-            event == "PLAYER_DAMAGE_DONE_MODS" or
-            IsMounted() then
+            event == "PLAYER_DAMAGE_DONE_MODS" then
         self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
     elseif event == "PLAYER_TALENT_UPDATE" then
         PaperDollUpdateUnitData()
@@ -208,7 +187,13 @@ local function statGridPos(grid, x, y)
 end
 
 local function stat_OnEnter(self)
-    if self.stat == "DURABILITY" then
+    if self.stat == "MASTERY" then
+        Mastery_OnEnter(self)
+        return
+    elseif self.stat == "MOVESPEED" then
+        MovementSpeed_OnEnter(self)
+        return
+    elseif self.stat == "DURABILITY" then
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GW.DurabilityTooltip()
         return
@@ -263,17 +248,26 @@ local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y
     statFrame.tooltip = tooltip
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
-    statFrame.Value:SetText(statText)
     GW.PaperDollSetStatIcon(statFrame, stat)
 
     statFrame:ClearAllPoints()
     if stat == "DURABILITY" then
         statFrame:SetPoint("TOPRIGHT", GwDressingRoom.stats, "TOPRIGHT", 22, -1)
         statFrame.icon:SetSize(25, 25)
+        durabilityFrame = statFrame
     else
+        statFrame.Value:SetText(statText)
         statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
     end
     grid, x, y = statGridPos(grid, x, y)
+
+    if stat == "MOVESPEED" then
+        statFrame.wasSwimming = nil;
+        statFrame.unit = "player";
+        MovementSpeed_OnUpdate(statFrame);
+        statFrame:SetScript("OnUpdate", MovementSpeed_OnUpdate)
+    end
+
     return grid, x, y, index + 1
 end
 
@@ -290,29 +284,13 @@ local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x
     return grid, x, y, index + 1
 end
 
-local function UpdateItemLevelAndGearScore(gearScoreData)
-    local gearScore, avgItemLevelEquipped, r, g, b
-    if gearScoreData then
-        gearScore, avgItemLevelEquipped = gearScoreData.GearScore, gearScoreData.AvgItemLevel
-        r, g, b = gearScoreData.Color.r, gearScoreData.Color.g, gearScoreData.Color.b
-    else
-        gearScore, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
-        r, g, b = GW.api.GetItemLevelColor(gearScore)
-    end
+local function UpdateItemLevelAndGearScore()
+    local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
+    avgItemLevel = floor(avgItemLevel);
+	avgItemLevelEquipped = floor(avgItemLevelEquipped);
 
-    local hexColor = ""
-
-    if gearScore > 0 and avgItemLevelEquipped > 0 then
-        avgItemLevelEquipped = avgItemLevelEquipped and math.floor(avgItemLevelEquipped) or 0
-
-        gearScore = gearScore and gearScore or 0
-        hexColor = GW.RGBToHex(r, g, b)
-
-        avgItemLevelEquipped = "GearScore: " .. hexColor .. gearScore .. "|r\n" .. STAT_AVERAGE_ITEM_LEVEL .. ": " .. hexColor .. avgItemLevelEquipped .."|r"
-        GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
-    else
-        GwDressingRoom.itemLevel:SetText("")
-    end
+    GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped .. " / " .. avgItemLevel)
+    GwDressingRoom.itemLevel:SetTextColor(GW.api.GetItemLevelColor())
 end
 
 local function PaperDollUpdateStats()
@@ -327,13 +305,13 @@ local function PaperDollUpdateStats()
         grid, x, y, numShownStats = setStatFrame(GW.stats.PRIMARY_STATS[primaryStatIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
+    --Mastery
+    statText, tooltip1, tooltip2 = GW.stats.getMastery()
+    grid, x, y, numShownStats = setStatFrame("MASTERY", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
+
     -- Armor
     statText, tooltip1, tooltip2 = GW.stats.getArmor()
     grid, x, y, numShownStats = setStatFrame("ARMOR", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-
-    -- Defense
-    statText, tooltip1, tooltip2 = GW.stats.getDefense()
-    grid, x, y, numShownStats = setStatFrame("DEFENSE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 
     --damage
     statText, tooltip1, tooltip2 = GW.stats.getDamage()
@@ -355,7 +333,11 @@ local function PaperDollUpdateStats()
         grid, x, y, numShownStats = setStatFrame("RANGEDATTACKPOWER", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
-    --resitance 
+    --movement speed
+    statText, tooltip1, tooltip2 = GW.stats.getMovementSpeed()
+    grid, x, y, numShownStats = setStatFrame("MOVESPEED", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
+
+    --resitance
     for resistanceIndex = 2, 6 do
         _, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex)
         grid, x, y, numShownStats = setStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
@@ -363,6 +345,8 @@ local function PaperDollUpdateStats()
 
     --durability
     grid, x, y, numShownStats = setStatFrame("DURABILITY", numShownStats, DURABILITY, nil, nil, grid, x, y)
+
+    UpdateItemLevelAndGearScore()
 end
 GW.PaperDollUpdateStats = PaperDollUpdateStats
 
@@ -760,19 +744,17 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
-    if slot ~= CharacterAmmoSlot then
-        slot.repairIcon = slot:CreateTexture(nil, "OVERLAY")
-        slot.repairIcon:SetPoint("BOTTOMRIGHT", slot, "BOTTOMRIGHT", 0, 0)
-        slot.repairIcon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
-        slot.repairIcon:SetTexCoord(0, 1, 0.5, 1)
-        slot.repairIcon:SetSize(20, 20)
+    slot.repairIcon = slot:CreateTexture(nil, "OVERLAY")
+    slot.repairIcon:SetPoint("BOTTOMRIGHT", slot, "BOTTOMRIGHT", 0, 0)
+    slot.repairIcon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
+    slot.repairIcon:SetTexCoord(0, 1, 0.5, 1)
+    slot.repairIcon:SetSize(20, 20)
 
-        slot.itemlevel = slot:CreateFontString(nil, "OVERLAY")
-        slot.itemlevel:SetSize(size, 10)
-        slot.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
-        slot.itemlevel:SetTextColor(1, 1, 1)
-        slot.itemlevel:SetJustifyH("LEFT")
-    end
+    slot.itemlevel = slot:CreateFontString(nil, "OVERLAY")
+    slot.itemlevel:SetSize(size, 10)
+    slot.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
+    slot.itemlevel:SetTextColor(1, 1, 1)
+    slot.itemlevel:SetJustifyH("LEFT")
 
     slot.IsGW2Hooked = true
 end
@@ -803,7 +785,6 @@ local function LoadPaperDoll()
     grabDefaultSlots(CharacterMainHandSlot, {"TOPLEFT", CharacterFeetSlot, "BOTTOMLEFT", 0, -20}, GwDressingRoom, 50)
     grabDefaultSlots(CharacterSecondaryHandSlot, {"TOPLEFT", CharacterMainHandSlot, "TOPRIGHT", 5, 0}, GwDressingRoom, 50)
     grabDefaultSlots(CharacterRangedSlot, {"TOPLEFT", CharacterMainHandSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterAmmoSlot, {"TOPLEFT", CharacterRangedSlot, "TOPRIGHT", 5, 0}, GwDressingRoom, 50)
 
     grabDefaultSlots(CharacterTabardSlot, {"TOPRIGHT", GwDressingRoom.stats, "BOTTOMRIGHT", -5, -20}, GwDressingRoom, 40)
     grabDefaultSlots(CharacterShirtSlot, {"TOPRIGHT", CharacterTabardSlot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
@@ -816,10 +797,8 @@ local function LoadPaperDoll()
 
     if UnitHasRelicSlot("player") then
         CharacterRangedSlot.icon:SetTexCoord(0.25, 0.5, 0.5, 0.625)
-        CharacterAmmoSlot:Hide()
     else
         CharacterRangedSlot.icon:SetTexCoord(0, 0.25, 0.5, 0.625)
-        CharacterAmmoSlot:Show()
     end
 
     hooksecurefunc("PaperDollItemSlotButton_Update", function(button)
@@ -891,14 +870,6 @@ local function LoadPaperDoll()
     C_Timer.After(1, function()
         PaperDollUpdateStats()
         PaperDollUpdatePetStats()
-    end)
-
-    -- setup gearscore
-    UpdateItemLevelAndGearScore()
-    GW.Libs.LibGearScore.RegisterCallback("GW2_UI", "LibGearScore_Update", function(_, _, gearScore)
-        if gearScore and gearScore.PlayerName == GW.myname then
-            UpdateItemLevelAndGearScore(gearScore)
-        end
     end)
 
     GwDressingRoomPet.model.expBar:SetScript("OnEnter", function(self)
