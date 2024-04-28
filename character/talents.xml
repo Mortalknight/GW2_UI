@@ -39,14 +39,14 @@
     </Frame>
 
     <Button name="GwTalentButton" registerForClicks="AnyDown" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
-        <Size x="32" y="32"/>
+        <Size x="42" y="42"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"/>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
-                    <Size x="42" y="42"/>
+                    <Size x="52" y="52"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
                     </Anchors>
@@ -63,14 +63,14 @@
             </Layer>
             <Layer level="OVERLAY">
                 <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
-                    <Size x="32" y="32"/>
+                    <Size x="42" y="42"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
                     </Anchors>
                     <Color r="1" b="0.6" g="1" a="0.9"></Color>
                 </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="legendaryHighlight" hidden="true">
-                    <Size x="32" y="32"/>
+                    <Size x="42" y="42"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
                     </Anchors>
