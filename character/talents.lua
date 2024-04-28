@@ -1,6 +1,6 @@
 local _, GW = ...
 -- Default 8 but none uses 8 talent rows in classic
-local MAX_NUM_TALENT_TIERS = 11
+local MAX_NUM_TALENT_TIERS = 8
 local TALENT_BRANCH_ARRAY = {}
 
 local activeSpec = nil
@@ -8,17 +8,17 @@ local openSpec = 1 -- Can be 1 or 2
 local isPetTalents = false
 
 StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
-	text = CONFIRM_LEARN_PREVIEW_TALENTS,
-	button1 = YES,
-	button2 = NO,
-	OnAccept = function ()
-		LearnPreviewTalents(isPetTalents)
-	end,
-	OnCancel = function (self)
-	end,
-	hideOnEscape = 1,
-	timeout = 0,
-	exclusive = 1,
+    text = CONFIRM_LEARN_PREVIEW_TALENTS,
+    button1 = YES,
+    button2 = NO,
+    OnAccept = function()
+        LearnPreviewTalents(isPetTalents)
+    end,
+    OnCancel = function(self)
+    end,
+    hideOnEscape = 1,
+    timeout = 0,
+    exclusive = 1,
     preferredIndex = 4
 }
 
@@ -35,7 +35,7 @@ end
 
 local function UpdateTalentPoints()
     local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
-	local unspentPoints = talentPoints - GetGroupPreviewTalentPointsSpent(isPetTalents ,openSpec);
+    local unspentPoints = talentPoints - GetGroupPreviewTalentPointsSpent(isPetTalents, openSpec);
 
     return unspentPoints
 end
@@ -51,18 +51,24 @@ end
 local function hookTalentButton(talentButton, container, row, index)
     local w = container:GetWidth()
     local h = container:GetHeight()
-    local x = (w / NUM_TALENT_COLUMNS) * (index - 1)
-    local y = (h / MAX_NUM_TALENT_TIERS) * (row - 1)
+
+    local columnSize = w / NUM_TALENT_COLUMNS
+    local rowSize = h / MAX_NUM_TALENT_TIERS
+
+    local x = (w / NUM_TALENT_COLUMNS) * (index - 1) + columnSize / 2
+    local y = (h / MAX_NUM_TALENT_TIERS) * (row - 1) + rowSize / 2
 
     talentButton:RegisterForClicks("AnyUp")
-    talentButton:SetPoint('TOPLEFT', container, 'TOPLEFT', x + (talentButton:GetWidth() / 4), -(y + (talentButton:GetHeight() / 4)))
+    talentButton:ClearAllPoints();
+    talentButton:SetPoint('CENTER', container, 'TOPLEFT', x, -y)
 
     talentButton:SetScript("OnEnter", talentBunnton_OnEnter)
     talentButton:SetScript("OnLeave", GameTooltip_Hide)
     talentButton:SetScript("OnClick", function(self, button)
         if button == "LeftButton" and openSpec == activeSpec then
             if IsModifiedClick("CHATLINK") then
-                local link = GetTalentLink(self.talentFrameId, self.talentid, false, isPetTalents, openSpec, GetCVarBool("previewTalents"))
+                local link = GetTalentLink(self.talentFrameId, self.talentid, false, isPetTalents, openSpec,
+                    GetCVarBool("previewTalents"))
                 if link then
                     ChatEdit_InsertLink(link)
                 end
@@ -73,10 +79,10 @@ local function hookTalentButton(talentButton, container, row, index)
                     LearnTalent(self.talentFrameId, self.talentid, isPetTalents, openSpec)
                 end
             end
-        elseif button == "RightButton" and openSpec == activeSpec  then
-			if GetCVarBool("previewTalents") then
-				AddPreviewTalentPoints(self.talentFrameId, self.talentid, -1, isPetTalents, openSpec)
-			end
+        elseif button == "RightButton" and openSpec == activeSpec then
+            if GetCVarBool("previewTalents") then
+                AddPreviewTalentPoints(self.talentFrameId, self.talentid, -1, isPetTalents, openSpec)
+            end
         end
     end)
     talentButton:SetScript("OnEvent", function(self)
@@ -89,7 +95,8 @@ local function hookTalentButton(talentButton, container, row, index)
     local mask = UIParent:CreateMaskTexture()
 
     mask:SetPoint("CENTER", talentButton, 'CENTER', 0, 0)
-    mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE",
+        "CLAMPTOBLACKADDITIVE")
     mask:SetSize(talentButton:GetSize())
     talentButton.mask = mask
     talentButton.points:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
@@ -106,14 +113,14 @@ local function getArrow(frame, teir, column, i)
 end
 
 local function colorTalentArrow(self, active)
-    local color = {r = 1, b = 0.6, g = 1}
+    local color = { r = 1, b = 0.6, g = 1 }
     if active == nil then
-        color = {r = 0.3, b = 0.3, g = 0.3}
+        color = { r = 0.3, b = 0.3, g = 0.3 }
     end
-    self.up:SetVertexColor(color.r,color.g,color.b)
-    self.down:SetVertexColor(color.r,color.g,color.b)
-    self.left:SetVertexColor(color.r,color.g,color.b)
-    self.right:SetVertexColor(color.r,color.g,color.b)
+    self.up:SetVertexColor(color.r, color.g, color.b)
+    self.down:SetVertexColor(color.r, color.g, color.b)
+    self.left:SetVertexColor(color.r, color.g, color.b)
+    self.right:SetVertexColor(color.r, color.g, color.b)
 end
 
 local function drawLegacyLine(path, frame, teir, column, requirementsMet)
@@ -123,32 +130,50 @@ local function drawLegacyLine(path, frame, teir, column, requirementsMet)
     local cCol = column
 
     for i = 1, #path do
-        local x = (w / NUM_TALENT_COLUMNS) * (cCol - 1)
-        local y = (h / MAX_NUM_TALENT_TIERS) * (cTeir - 1)
-        local arrow = getArrow(frame, cTeir, cCol, i)
+        local columnSize = w / NUM_TALENT_COLUMNS
+        local rowSize = h / MAX_NUM_TALENT_TIERS
 
+        local rowOffset = 0
+        local columnOffset = 0
+
+
+        local arrow = getArrow(frame, cTeir, cCol, i)
+        arrow:SetSize(columnSize, rowSize)
+        arrow.up:SetSize(rowSize, rowSize)
+        arrow.down:SetSize(rowSize, rowSize)
+        arrow.left:SetSize(columnSize, columnSize)
+        arrow.right:SetSize(columnSize, columnSize)
         arrow:ClearAllPoints()
-        arrow:SetPoint("TOPLEFT", _G["GwLegacyTalentTree" .. frame].treeContainer, "TOPLEFT", x + (arrow:GetWidth() / 4) , -(y + (arrow:GetHeight() / 4)))
 
 
         if path[i].y ~= 0 then
             if path[i].y > 0 then
-                arrow.down:Show()
-            else
                 arrow.up:Show()
             end
-        elseif path[i].x ~= 0 then
+            if path[i].y < 0 then
+                arrow.down:Show()
+            end
+        end
+        if path[i].x ~= 0 then
             if path[i].x > 0 then
                 arrow.right:Show()
-            else
+            end
+            if path[i].x < 0 then
                 arrow.left:Show()
             end
         end
+
+
+        local x = (columnSize * (cCol - 1) + columnSize / 2)
+        local y = (rowSize * (cTeir - 1) + rowSize / 2)
+
+        arrow:SetPoint("CENTER", _G["GwLegacyTalentTree" .. frame].treeContainer, "TOPLEFT", x, -y);
         colorTalentArrow(arrow, requirementsMet)
         cTeir = cTeir + path[i].y
         cCol = cCol + path[i].x
     end
 end
+
 
 local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
     --[[
@@ -161,11 +186,11 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
     -- Check to see if are in the same column
     if buttonColumn == column then
         if (buttonTier - tier) > 1 then
-            for i = tier , buttonTier - 1 do
-                path[#path + 1] = {x = 0, y = 1}
+            for i = tier, buttonTier - 1 do
+                path[#path + 1] = { x = 0, y = 1 }
             end
         else
-            path[#path + 1] = {x = 0, y= 1}
+            path[#path + 1] = { x = 0, y = 1 }
         end
         if not blocked then
             return drawLegacyLine(path, frame, tier, column, requirementsMet)
@@ -183,22 +208,22 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
                 if TALENT_BRANCH_ARRAY[frame][i][column].id ~= nil then
                     blocked = true
                 else
-                    path[#path + 1] = {x = 1, y = 0}
+                    path[#path + 1] = { x = 1, y = 0 }
                 end
             end
         else
             if buttonColumn < column then
-                path[#path + 1] = {x = -1, y = 0}
+                path[#path + 1] = { x = -1, y = 0 }
             else
-                path[#path + 1] = {x = 1, y = 0}
+                path[#path + 1] = { x = 1, y = 0 }
             end
         end
         if not blocked then
             return drawLegacyLine(path, frame, tier, column, requirementsMet)
         end
     end
-    path[#path + 1] = {x = 1, y = 0}
-    path[#path + 1] = {x = 0, y = 1}
+    path[#path + 1] = { x = 1, y = 0 }
+    path[#path + 1] = { x = 0, y = 1 }
 
     return drawLegacyLine(path, frame, tier, column, requirementsMet)
 end
@@ -208,9 +233,9 @@ local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesa
 
     for i = 1, select('#', ...), 4 do
         local tier, column, isLearnable, isPreviewLearnable = select(i, ...)
-        if ( forceDesaturated or
-			 (preview and not isPreviewLearnable) or
-			 (not preview and not isLearnable) ) then
+        if (forceDesaturated or
+                (preview and not isPreviewLearnable) or
+                (not preview and not isLearnable)) then
             requirementsMet = nil
         end
         getLinePath(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
@@ -225,7 +250,7 @@ local function CleanUpTalentTrees()
         for y = 1, 15 do
             TALENT_BRANCH_ARRAY[i][y] = {}
             for j = 1, NUM_TALENT_COLUMNS do
-                TALENT_BRANCH_ARRAY[i][y][j] = {id = nil, up = 0, left = 0, right = 0, down = 0, leftArrow = 0, rightArrow = 0, topArrow = 0}
+                TALENT_BRANCH_ARRAY[i][y][j] = { id = nil, up = 0, left = 0, right = 0, down = 0, leftArrow = 0, rightArrow = 0, topArrow = 0 }
                 local button = _G['GwLegacyTalentTree' .. i .. 'Teir' .. y .. 'index' .. j]
                 button.talentid = nil
                 button:Hide()
@@ -248,18 +273,18 @@ local function UpdatePreviewControls()
     if (isPetTalents or openSpec) and talentPoints > 0 and preview then
         GwTalentFrame.bottomBar.prevLearn:Show()
         GwTalentFrame.bottomBar.prevCancel:Show()
-		-- enable accept/cancel buttons if preview talent points were spent
-		if GetGroupPreviewTalentPointsSpent(isPetTalents, openSpec) > 0 then
-			GwTalentFrame.bottomBar.prevLearn:Enable();
-			GwTalentFrame.bottomBar.prevCancel:Enable();
-		else
-			GwTalentFrame.bottomBar.prevLearn:Disable();
-			GwTalentFrame.bottomBar.prevCancel:Disable();
-		end
-	else
-		GwTalentFrame.bottomBar.prevLearn:Hide()
+        -- enable accept/cancel buttons if preview talent points were spent
+        if GetGroupPreviewTalentPointsSpent(isPetTalents, openSpec) > 0 then
+            GwTalentFrame.bottomBar.prevLearn:Enable();
+            GwTalentFrame.bottomBar.prevCancel:Enable();
+        else
+            GwTalentFrame.bottomBar.prevLearn:Disable();
+            GwTalentFrame.bottomBar.prevCancel:Disable();
+        end
+    else
+        GwTalentFrame.bottomBar.prevLearn:Hide()
         GwTalentFrame.bottomBar.prevCancel:Hide()
-	end
+    end
 end
 
 local function updateTalentTrees()
@@ -306,7 +331,9 @@ local function updateTalentTrees()
     for f = 1, GW.api.GetNumSpecializations(isPetTalents) do
         local forceDesaturated
         local talentPoints = UpdateTalentPoints()
-        local name, _, pointsSpent, _, previewPointsSpent = GetTalentTabInfo(f, false, isPetTalents, openSpec)
+        local id, name, description, icon, pointsSpent, background, previewPointsSpent = GetTalentTabInfo(f, false,
+            isPetTalents, openSpec)
+        --Blizzard  local id, name, description, icon, pointsSpent, background, previewPointsSpent, isUnlocked = GetTalentTabInfo(selectedTab, TalentFrame.inspect, TalentFrame.pet, TalentFrame.talentGroup);
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
         local preview = GetCVarBool("previewTalents")
 
@@ -326,7 +353,8 @@ local function updateTalentTrees()
 
         local numTalents = GetNumTalents(f, false, isPetTalents)
         for i = 1, MAX_NUM_TALENTS do
-            local name, texture, tier, column, rank, maxRank, isExceptional, available, previewRank, meetsPreviewPrereq = GetTalentInfo(f, i, false, isPetTalents, openSpec)
+            local name, texture, tier, column, rank, maxRank, isExceptional, available, previewRank, meetsPreviewPrereq =
+                GetTalentInfo(f, i, false, isPetTalents, openSpec)
             local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
 
             if name and i <= numTalents then
@@ -351,20 +379,23 @@ local function updateTalentTrees()
                 end
 
                 local ispassive = not isExceptional
-                local Prereqs = TalentFrame_SetPrereqs(f, tier, column, forceDesaturated, tierUnlocked, preview, GetTalentPrereqs(f, i, false, isPetTalents, openSpec))
+                local Prereqs = TalentFrame_SetPrereqs(f, tier, column, forceDesaturated, tierUnlocked, preview,
+                    GetTalentPrereqs(f, i, false, isPetTalents, openSpec))
 
                 button.talentID = i
                 button.available = preview and meetsPreviewPrereq or available
                 button.known = (preview and previewRank or rank) == maxRank
 
                 if ispassive then
-                    button.legendaryHighlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight')
+                    button.legendaryHighlight:SetTexture(
+                        'Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight')
                     button.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight')
                     button.icon:AddMaskTexture(button.mask)
                     button.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_outline')
                 else
                     button.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight')
-                    button.legendaryHighlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight')
+                    button.legendaryHighlight:SetTexture(
+                        'Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight')
                     button.icon:RemoveMaskTexture(button.mask)
                     button.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
                 end
@@ -412,7 +443,8 @@ local function loadTalentsFrames()
     local mask = UIParent:CreateMaskTexture()
 
     mask:SetPoint("TOPLEFT", GwCharacterWindow, 'TOPLEFT', 0, 0)
-    mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE",
+        "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
 
     for i = 1, GW.api.GetNumSpecializations(isPetTalents) do
@@ -425,7 +457,7 @@ local function loadTalentsFrames()
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
         container.background:AddMaskTexture(mask)
-        container:HookScript('OnShow',function()
+        container:HookScript('OnShow', function()
             if InCombatLockdown() then return end
             updateTalentTrees()
         end)
@@ -433,8 +465,9 @@ local function loadTalentsFrames()
         for y = 1, 15 do
             TALENT_BRANCH_ARRAY[i][y] = {}
             for j = 1, NUM_TALENT_COLUMNS do
-                TALENT_BRANCH_ARRAY[i][y][j] = {id = nil, up = 0, left = 0, right = 0, down = 0, leftArrow = 0, rightArrow = 0, topArrow = 0}
-                local talentButton = CreateFrame('Button', 'GwLegacyTalentTree' .. i .. 'Teir' .. y .. 'index' .. j, container.treeContainer, 'GwTalentButton')
+                TALENT_BRANCH_ARRAY[i][y][j] = { id = nil, up = 0, left = 0, right = 0, down = 0, leftArrow = 0, rightArrow = 0, topArrow = 0 }
+                local talentButton = CreateFrame('Button', 'GwLegacyTalentTree' .. i .. 'Teir' .. y .. 'index' .. j,
+                    container.treeContainer, 'GwTalentButton')
                 hookTalentButton(talentButton, container.treeContainer, y, j)
             end
         end
@@ -446,7 +479,7 @@ end
 local function LoadTalents()
     TalentFrame_LoadUI()
 
-    CreateFrame('Frame','GwTalentFrame', GwCharacterWindow, 'GwLegacyTalentFrame')
+    CreateFrame('Frame', 'GwTalentFrame', GwCharacterWindow, 'GwLegacyTalentFrame')
 
     GwTalentFrame.bottomBar.activateSpecGroup:SetWidth(GwTalentFrame.bottomBar.activateSpecGroup:GetTextWidth() + 40)
 
@@ -501,7 +534,7 @@ local function LoadTalents()
         if InCombatLockdown() then return end
         updateTalentTrees()
     end)
-    hooksecurefunc('ToggleTalentFrame',function()
+    hooksecurefunc('ToggleTalentFrame', function()
         if InCombatLockdown() then return end
         GwCharacterWindow:SetAttribute("keytoggle", true)
         GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
