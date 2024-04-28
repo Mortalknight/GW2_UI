@@ -295,7 +295,7 @@
                 <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="256" y="20"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="15" y="-10"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-10"/>
                     </Anchors>
                 </FontString>
             </Layer>
