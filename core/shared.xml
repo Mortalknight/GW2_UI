@@ -1,13 +1,83 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
+    <FontFamily name="GW_Standard_Button_Font" virtual="true">
+        <Member alphabet="roman">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="14"/>
+        </Member>
+        <Member alphabet="korean">
+            <Font font="Interface/AddOns/GW2_UI/fonts/korean.ttf" height="14"/>
+        </Member>
+        <Member alphabet="simplifiedchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="14"/>
+        </Member>
+        <Member alphabet="traditionalchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="14"/>
+        </Member>
+        <Member alphabet="russian">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="14"/>
+        </Member>
+    </FontFamily>
+
+    <FontFamily name="GW_Standard_Button_Font_Small" virtual="true">
+        <Member alphabet="roman">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="10"/>
+        </Member>
+        <Member alphabet="korean">
+            <Font font="Interface/AddOns/GW2_UI/fonts/korean.ttf" height="10"/>
+        </Member>
+        <Member alphabet="simplifiedchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="10"/>
+        </Member>
+        <Member alphabet="traditionalchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="10"/>
+        </Member>
+        <Member alphabet="russian">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="10"/>
+        </Member>
+    </FontFamily>
+
+    <Font name="gw_button_font_black" inherits="GW_Standard_Button_Font" virtual="true">
+        <Color r="0" b="0" g="0"></Color>
+    </Font>
+
+    <Font name="gw_button_font_black_small" inherits="GW_Standard_Button_Font_Small" virtual="true">
+        <Color r="0" b="0" g="0"></Color>
+    </Font>
+
+    <Button name="GwStandardButton" text="" virtual="true">
+        <Size x="128" y="24" />
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/button"/>
+        <DisabledTexture file="Interface/AddOns/GW2_UI/textures/uistuff/button_disable"/>
+        <NormalFont style="gw_button_font_black"/>
+        <HighlightFont style="gw_button_font_black"/>
+        <Layers>
+            <Layer level="ARTWORK" textureSubLevel="7">
+                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button_hover">
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT"/>
+                        <Anchor point="TOP" relativePoint="TOP"/>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM"/>
+                        <Anchor point="RIGHT" relativePoint="LEFT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnShow>
+                self:HookScript("OnEnter", GwStandardButton_OnEnter)
+                self:HookScript("OnLeave", GwStandardButton_OnLeave)
+            </OnShow>
+        </Scripts>
+    </Button>
+
     <PlayerModel name="GW2ModelLevelTemplate" useParentLevel="true" virtual="true"/>
 
     <Slider name="GwHybridScrollBarTemplate" parentKey="scrollBar" virtual="true">
         <Size x="12" y="0"></Size>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="trackBG" file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbg">
+                <Texture parentKey="trackBG" file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbg">
                     <Anchors>
                         <Anchor point="TOPRIGHT" x="-3"></Anchor>
                         <Anchor point="BOTTOMRIGHT" x="-3"></Anchor>
@@ -23,7 +93,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbutton">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton">
                             <Size x="12" y="12"></Size>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -36,6 +106,7 @@
                     <OnClick function="HybridScrollFrameScrollButton_OnClick"/>
                 </Scripts>
             </Button>
+
             <Button parentKey="scrollDown">
                 <Size x="12" y="12"></Size>
                 <Anchors>
@@ -43,7 +114,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbutton">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton">
                             <Size x="12" y="12"></Size>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -61,7 +132,7 @@
         <Scripts>
             <OnValueChanged function="HybridScrollFrame_OnValueChanged"/>
         </Scripts>
-        <ThumbTexture parentKey="thumbTexture" file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbarmiddle">
+        <ThumbTexture parentKey="thumbTexture" file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle">
             <Size x="12" y="100"/>
             <Anchors>
                 <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -97,7 +168,7 @@
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="2">
                 <Texture parentKey="BGLEFT" file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
-                    <Size x="170" y="41"></Size>
+                    <Size x="512" y="41"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                     </Anchors>

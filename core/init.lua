@@ -2,19 +2,18 @@ local addonName, GW = ...
 
 -- init: store API, to reduce the API usage
 local function GetPlayerRole()
-    return UnitGroupRolesAssigned("player")
+    local assignedRole = UnitGroupRolesAssigned("player")
+    if assignedRole == "NONE" then
+        return GW.myspec and GW.Libs.LCS.GetSpecializationRole(GW.myspec)
+    end
+
+    return assignedRole
 end
 GW.GetPlayerRole = GetPlayerRole
 
 local function CheckRole()
+    GW.myspec = GW.Libs.LCS.GetSpecialization()
     GW.myrole = GetPlayerRole()
-
-    -- myrole = group role; TANK, HEALER, DAMAGER
-
-    local dispel = GW.DispelClasses[GW.myclass]
-    if GW.myrole and (GW.myclass ~= "PRIEST" and dispel ~= nil) then
-        dispel.Magic = (GW.myrole == "HEALER")
-    end
 end
 GW.CheckRole = CheckRole
 
@@ -31,7 +30,6 @@ GW.myname = UnitName("player")
 GW.myrealm = GetRealmName()
 GW.mysex = UnitSex("player")
 GW.mylevel = UnitLevel("player")
-GW.CheckRole()
 GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
 GW.resolution = format("%dx%d", GW.screenwidth, GW.screenHeight)
 GW.wowpatch, GW.wowbuild, _, GW.tocversion = GetBuildInfo()
@@ -88,7 +86,11 @@ do
     AddLib("CI", "LibClassicInspector", true)
     AddLib("LibGearScore", "LibGearScore.1000", true)
     AddLib("Dispel", "LibDispel-1.0-GW", true)
+    AddLib("GW2Lib", "LibGW2-1.0", true)
+    AddLib("LCS", "LibClassicSpecs-GW2", true)
 end
+
+GW.CheckRole()
 
 do
 	GW.UnlocalizedClasses = {}
@@ -102,6 +104,36 @@ end
 
 -- Locale doesn't exist yet, make it exist
 GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI")
+
+do
+	GW.UnlocalizedClasses = {}
+	for k, v in pairs(LOCALIZED_CLASS_NAMES_MALE) do GW.UnlocalizedClasses[v] = k end
+	for k, v in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do GW.UnlocalizedClasses[v] = k end
+
+	function GW.UnlocalizedClassName(className)
+		return (className and className ~= "") and GW.UnlocalizedClasses[className]
+	end
+end
+
+local function copyTable(newTable, tableToCopy)
+    if type(newTable) ~= "table" then newTable = {} end
+
+    if type(tableToCopy) == "table" then
+        for option, value in pairs(tableToCopy) do
+            if type(value) == "table" then
+                value = copyTable(newTable[option], value)
+            end
+
+            newTable[option] = value
+        end
+    end
+
+    return newTable
+end
+GW.copyTable = copyTable
+
+-- Create Warning Prompt
+GW.CreateWarningPrompt()
 
 --Add Shared Media
 --Font

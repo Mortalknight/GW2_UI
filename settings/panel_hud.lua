@@ -8,6 +8,7 @@ local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton
+local addGroupHeader = GW.AddGroupHeader
 
 local function LoadHudPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
@@ -70,22 +71,7 @@ local function LoadHudPanel(sWindow)
     addOption(general.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
     addOption(general.scroll.scrollchild, L["AFK Mode"], L["When you go AFK display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
     addOption(general.scroll.scrollchild, L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], "QUEST_REWARDS_MOST_VALUE_ICON", function() GW.ResetQuestRewardMostValueIcon() end)
-    addOption(general.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true})
-    addOption(general.scroll.scrollchild, L["Show Quest XP on Quest Tracker"], nil, "QUESTTRACKER_SHOW_XP", function() GW.UpdateQuestTracker(GwQuesttrackerContainerQuests) end, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(general.scroll.scrollchild, L["Fade experiencebar"], L["Show experiencebar only on hover"], "FADE_EXP_BAR", function(value) GW.UpdateExperiencebarSettings(not value) end, nil, {["XPBAR_ENABLED"] = true})
-    addOptionDropdown(
-        general.scroll.scrollchild,
-        L["Quest Tracker sorting"],
-        nil,
-        "QUESTTRACKER_SORTING",
-        function() GW.UpdateQuestTracker(GwQuesttrackerContainerQuests) end,
-        {"DEFAULT", "LEVEL", "ZONE"},
-        {DEFAULT, GUILD_RECRUITMENT_LEVEL, ZONE .. L[" |cFF888888(required Questie)|r"]},
-        nil,
-        {["QUESTTRACKER_ENABLED"] = true},
-        nil
-    )
-
     addOption(general.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU", function(value) Gw2MicroBarFrame.cf:SetAttribute("shouldFade", value) Gw2MicroBarFrame.cf:SetShown(not value) if value then Gw2MicroBarFrame.cf.fadeOut(Gw2MicroBarFrame.cf) else Gw2MicroBarFrame.cf.fadeIn(Gw2MicroBarFrame.cf) end end)
     addOption(general.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED", GW.ToggleHudBackground)
     addOption(general.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true})
@@ -162,27 +148,19 @@ local function LoadHudPanel(sWindow)
 
     --MINIMAP
     addOption(minimap.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", GW.ToogleMinimapFpsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
+    addOption(minimap.scroll.scrollchild, L["Disable FPS tooltip"], nil, "MINIMAP_FPS_TOOLTIP_DISABLED", nil, nil, {["MINIMAP_ENABLED"] = true, ["MINIMAP_FPS"] = true}, "Minimap")
     addOption(minimap.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", GW.ToogleMinimapCoorsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
     addOptionDropdown(
         minimap.scroll.scrollchild,
         L["Minimap details"],
         L["Always show Minimap details."],
-        "MINIMAP_HOVER",
+        "MINIMAP_ALWAYS_SHOW_HOVER_DETAILS",
         GW.SetMinimapHover,
-        {"NONE", "ALL", "CLOCK", "ZONE", "COORDS", "CLOCKZONE", "CLOCKCOORDS", "ZONECOORDS"},
-        {
-            NONE_KEY,
-            ALL,
-            TIMEMANAGER_TITLE,
-            ZONE,
-            L["Coordinates"],
-            TIMEMANAGER_TITLE .. " + " .. ZONE,
-            TIMEMANAGER_TITLE .. " + " .. L["Coordinates"],
-            ZONE .. " + " .. L["Coordinates"]
-        },
+        {"CLOCK", "ZONE", "COORDS"},
+        {TIMEMANAGER_TITLE, ZONE, L["Coordinates"]},
         nil,
         {["MINIMAP_ENABLED"] = true},
-        nil,
+        true,
         "Minimap"
     )
     addOptionSlider(
@@ -204,7 +182,53 @@ local function LoadHudPanel(sWindow)
     )
 
     --WORLDMAP
-    addOption(worldmap.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", GW.ToggleWorldMapCoords, nil)
+    addGroupHeader(worldmap.scroll.scrollchild, L["World Map Coordinates"])
+    addOption(worldmap.scroll.scrollchild, L["Enable"], nil, "WORLDMAP_COORDS_TOGGLE", GW.UpdateWorldMapCoordinateSettings, nil, nil, nil, nil, L["World Map Coordinates"])
+    addOptionDropdown(
+        worldmap.scroll.scrollchild,
+        L["Position"],
+        nil,
+        "WORLDMAP_COORDS_POSITION",
+        GW.UpdateWorldMapCoordinateSettings,
+        {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"},
+        {L["Bottom"],L["Bottom left"], L["Bottom right"], L["Left"], L["Right"], L["Top"], L["Top Left"], L["Top Right"]},
+        nil,
+        {["WORLDMAP_COORDS_TOGGLE"] = true},
+        nil, nil, nil, nil, nil, nil, nil, nil, nil,
+        L["World Map Coordinates"]
+    )
+    addOptionSlider(
+        worldmap.scroll.scrollchild,
+        L["X-Offset"],
+        nil,
+        "WORLDMAP_COORDS_X_OFFSET",
+        GW.UpdateWorldMapCoordinateSettings,
+        -200,
+        200,
+        nil,
+        0,
+        {["WORLDMAP_COORDS_TOGGLE"] = true},
+        1,
+        nil,
+        nil,
+        L["World Map Coordinates"]
+    )
+    addOptionSlider(
+        worldmap.scroll.scrollchild,
+        L["Y-Offset"],
+        nil,
+        "WORLDMAP_COORDS_Y_OFFSET",
+        GW.UpdateWorldMapCoordinateSettings,
+        -200,
+        200,
+        nil,
+        0,
+        {["WORLDMAP_COORDS_TOGGLE"] = true},
+        1,
+        nil,
+        nil,
+        L["World Map Coordinates"]
+    )
 
     --FCT
     addOptionDropdown(
@@ -241,6 +265,7 @@ local function LoadHudPanel(sWindow)
     )
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. ": " .. L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
 
     addOptionDropdown(
         fct.scroll.scrollchild,
@@ -263,13 +288,110 @@ local function LoadHudPanel(sWindow)
         "GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR",
         function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat(true) end,
         {"Nameplates", "Center"},
-        {L["Nameplates"], L["Center of screen"]},
+        {NAMEPLATES_LABEL, L["Center of screen"]},
         nil,
         {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = EXPANSION_NAME0},
         nil,
-        "FloatingCombatText"
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
     )
-    addOption(fct.scroll.scrollchild, L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE,
+        nil,
+        "GW_COMBAT_TEXT_FONT_SIZE",
+        GW.UpdateDameTextSettings,
+        2,
+        50,
+        nil,
+        0,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        2,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE .. ": " .. MISS,
+        nil,
+        "GW_COMBAT_TEXT_FONT_SIZE_MISS",
+        GW.UpdateDameTextSettings,
+        2,
+        50,
+        nil,
+        0,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        2,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE .. ": " .. CRIT_ABBR,
+        nil,
+        "GW_COMBAT_TEXT_FONT_SIZE_CRIT",
+        GW.UpdateDameTextSettings,
+        2,
+        50,
+        nil,
+        0,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        2,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE .. ": " .. BLOCK .. "/" .. ABSORB,
+        nil,
+        "GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE",
+        GW.UpdateDameTextSettings,
+        2,
+        50,
+        nil,
+        0,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        2,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE .. ": " .. L["Crit modifier"],
+        L["Used for animations"],
+        "GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER",
+        GW.UpdateDameTextSettings,
+        0.1,
+        50,
+        nil,
+        2,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        nil,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE .. ": " .. L["Pet number modifier"],
+        nil,
+        "GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER",
+        GW.UpdateDameTextSettings,
+        0.1,
+        50,
+        nil,
+        2,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        nil,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
 
     InitPanel(general, true)
     InitPanel(minimap, true)

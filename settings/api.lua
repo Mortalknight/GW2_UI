@@ -147,9 +147,9 @@ local function ResetToDefault()
         oldUsername = GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedCharacter
         oldProfilename = GW2UI_SETTINGS_PROFILES[profileIndex].profilename
         GW2UI_SETTINGS_PROFILES[profileIndex] = nil
-        GW2UI_SETTINGS_PROFILES[profileIndex] = GW.CopyTable(nil, GW_DEFAULT)
+        GW2UI_SETTINGS_PROFILES[profileIndex] = GW.copyTable(nil, GW_DEFAULT)
         GW2UI_PRIVATE_SETTINGS = nil
-        GW2UI_PRIVATE_SETTINGS = GW.CopyTable(nil, GW_PRIVATE_DEFAULT)
+        GW2UI_PRIVATE_SETTINGS = GW.copyTable(nil, GW_PRIVATE_DEFAULT)
         GW2UI_SETTINGS_PROFILES[profileIndex].profileLastUpdated = date("%m/%d/%y %H:%M:%S")
         GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedDate = date("%m/%d/%y %H:%M:%S")
         GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedCharacter = oldUsername or UNKNOWN

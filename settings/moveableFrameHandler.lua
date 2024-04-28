@@ -12,7 +12,7 @@ local AllTags = {}
 local function filterHudMovers(filter)
     if filter then
         for _, mf in pairs(GW.MOVABLE_FRAMES) do
-            if string.find(mf.tags, filter, 1, true) then
+            if string.find(mf.tags, filter, 1, true) and mf.enable then
                 mf:Show()
             else
                 mf:Hide()
@@ -145,7 +145,7 @@ local function moveHudObjects(self)
     for _, mf in pairs(GW.MOVABLE_FRAMES) do
         mf:EnableMouse(true)
         mf:SetMovable(true)
-        mf:Show()
+        mf:SetShown(mf.enable)
     end
     GW.MoveHudScaleableFrame.moverSettingsFrame.options:Hide()
     GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Show()
@@ -283,7 +283,7 @@ local function UpdateMatchingLayout(self, new_point)
         for i = 0, #layout.frames do
             if layout.frames[i].settingName == self.setting then
                 layout.frames[i].point = nil
-                layout.frames[i].point = GW.CopyTable(nil, new_point)
+                layout.frames[i].point = GW.copyTable(nil, new_point)
 
                 frameFound = true
                 break
@@ -295,7 +295,7 @@ local function UpdateMatchingLayout(self, new_point)
             local newIdx = #layout.frames + 1
             layout.frames[newIdx] = {}
             layout.frames[newIdx].settingName = self.setting
-            layout.frames[newIdx].point = GW.CopyTable(nil, new_point)
+            layout.frames[newIdx].point = GW.copyTable(nil, new_point)
         end
     end
 end
@@ -632,6 +632,8 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
         end)
     end
 
+    mf.enable = true
+
     GW.MOVABLE_FRAMES[#GW.MOVABLE_FRAMES + 1] = mf
 
     return mf
@@ -644,7 +646,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, tags, size
     if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
         -- use default position
         moveframe:SetPoint(moveframe.defaultPoint.point, UIParent, moveframe.defaultPoint.relativePoint, moveframe.defaultPoint.xOfs, moveframe.defaultPoint.yOfs)
-        moveframe.savedPoint = GW.CopyTable(nil, moveframe.defaultPoint)
+        moveframe.savedPoint = GW.copyTable(nil, moveframe.defaultPoint)
     else
         moveframe:SetPoint(moveframe.savedPoint.point, UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
     end
@@ -681,6 +683,16 @@ local function MoveFrameByPixel(nudgeX, nudgeY)
 
     mover_OnDragStop(mover)
 end
+
+local function ToggleMover(frame, toggle)
+    for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
+        if moveableFrame == frame then
+            moveableFrame.enable = toggle
+            break
+        end
+    end
+end
+GW.ToggleMover = ToggleMover
 
 local function LoadMovers(layoutManager)
     -- Create mover settings frame

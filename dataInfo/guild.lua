@@ -92,7 +92,9 @@ local function Guild_OnEnter(self)
     -- get blizzard tooltip infos:
     GameTooltip_SetTitle(GameTooltip, self.tooltipText)
     if not self:IsEnabled() then
-        if self.minLevel then
+        if self.factionGroup == "Neutral" then
+            GameTooltip:AddLine(FEATURE_NOT_AVAILBLE_PANDAREN, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
+        elseif self.minLevel then
             GameTooltip:AddLine(format(FEATURE_BECOMES_AVAILABLE_AT_LEVEL, self.minLevel), RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
         elseif self.disabledTooltip then
             local disabledTooltipText = GetValueOrCallFunction(self, "disabledTooltip")
@@ -119,13 +121,13 @@ local function Guild_OnEnter(self)
         GameTooltip:AddLine(GUILD_MOTD .. " |cffaaaaaa- |cffffffff" .. GetGuildRosterMOTD(), tthead.r, tthead.g, tthead.b, 1)
     end
 
-    --local _, _, standingID, barMin, barMax, barValue = GetGuildFactionInfo()
+    local _, _, standingID, barMin, barMax, barValue = GetGuildFactionInfo()
     -- Show only if not on max rep
-    --if standingID ~= 8 then
-    --    barMax = barMax - barMin
-    --    barValue = barValue - barMin
-    --    GameTooltip:AddLine(GW.RGBToHex(ttsubh.r, ttsubh.g, ttsubh.b) .. COMBAT_FACTION_CHANGE .. ":|r |cFFFFFFFF" .. CommaValue(barValue) .. "/" .. CommaValue(barMax) .. "(" .. ceil((barValue / barMax) * 100) .. "%)")
-    --end
+    if standingID ~= 8 then
+        barMax = barMax - barMin
+        barValue = barValue - barMin
+        GameTooltip:AddLine(GW.RGBToHex(ttsubh.r, ttsubh.g, ttsubh.b) .. COMBAT_FACTION_CHANGE .. ":|r |cFFFFFFFF" .. CommaValue(barValue) .. "/" .. CommaValue(barMax) .. "(" .. ceil((barValue / barMax) * 100) .. "%)")
+    end
 
     local zonec
 
@@ -136,7 +138,8 @@ local function Guild_OnEnter(self)
             break
         end
 
-        if GW.locationData.ZoneText and (GW.locationData.ZoneText == info.zone) then
+        local zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+        if zoneText and (zoneText == info.zone) then
             zonec = activezone
         else
             zonec = inactivezone
@@ -170,9 +173,9 @@ local function inviteClick(_, name, guid)
     if guid then
         local inviteType = GetDisplayedInviteType(guid)
         if inviteType == "INVITE" or inviteType == "SUGGEST_INVITE" then
-            InviteUnit(name)
+            C_PartyInfo.InviteUnit(name)
         elseif inviteType == "REQUEST_INVITE" then
-            RequestInviteFromUnit(name)
+            C_PartyInfo.RequestInviteFromUnit(name)
         end
     end
 end
@@ -183,7 +186,9 @@ local function whisperClick(_, playerName)
 end
 
 local function Guild_OnClick(self, button)
-    if button == "RightButton" and IsInGuild() then
+    if button == "LeftButton" then
+        self:OnClick()
+    elseif button == "RightButton" and IsInGuild() then
         local menuCountWhispers = 0
         local menuCountInvites = 0
 
@@ -208,16 +213,7 @@ local function Guild_OnClick(self, button)
             end
         end
         GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-        EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
-    elseif InCombatLockdown() then
-        UIErrorsFrame:AddMessage(ERR_NOT_IN_COMBAT)
-    else
-        --Workaround until blizz fixes ToggleGuildFrame correctly
-        if IsInGuild() then
-            ToggleFriendsFrame(3)
-        else
-            ToggleFriendsFrame()
-        end
+        GW.Libs.LibDD:EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
     end
 end
 GW.Guild_OnClick = Guild_OnClick

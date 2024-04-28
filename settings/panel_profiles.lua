@@ -339,7 +339,7 @@ local function rename_OnClick(self)
 end
 
 local function copy_OnClick(self)
-    local newProfil = GW.CopyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().parentItem.profileID])
+    local newProfil = GW.copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().parentItem.profileID])
     GW.addProfile(L["Copy of"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().parentItem.profileID].profilename, newProfil, true)
     self:GetParent():Hide()
 end
@@ -440,7 +440,7 @@ local function addProfile(name, profileData, copy)
     elseif profileData then
         GW2UI_SETTINGS_PROFILES[newIdx] = profileData
     else
-        GW2UI_SETTINGS_PROFILES[newIdx] = GW.CopyTable(nil, GW2UI_SETTINGS_DB_03)
+        GW2UI_SETTINGS_PROFILES[newIdx] = GW.copyTable(nil, GW2UI_SETTINGS_DB_03)
         GW2UI_SETTINGS_PROFILES[newIdx].profilename = name
         GW2UI_SETTINGS_PROFILES[newIdx].profileCreatedDate = date("%m/%d/%y %H:%M:%S")
         GW2UI_SETTINGS_PROFILES[newIdx].profileCreatedCharacter = GetUnitName("player", true)

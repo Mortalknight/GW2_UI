@@ -263,37 +263,6 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
-local function WarningPrompt(text, method, point, button1Name, button2Name)
-    GwWarningPrompt.string:SetText(text)
-    GwWarningPrompt.method = method
-    GwWarningPrompt:ClearAllPoints()
-    if point then
-        GwWarningPrompt:SetPoint(unpack(point))
-    else
-        GwWarningPrompt:SetPoint("CENTER")
-    end
-    GwWarningPrompt.acceptButton:SetText(button1Name or ACCEPT)
-    GwWarningPrompt.cancelButton:SetText(button2Name or CANCEL)
-    GwWarningPrompt:Show()
-    GwWarningPrompt.input:Hide()
-end
-GW.WarningPrompt = WarningPrompt
-
-local function InputPrompt(text, method, input, point)
-    GwWarningPrompt.string:SetText(text)
-    GwWarningPrompt.method = method
-    GwWarningPrompt:Show()
-    GwWarningPrompt:ClearAllPoints()
-    if point then
-        GwWarningPrompt:SetPoint(unpack(point))
-    else
-        GwWarningPrompt:SetPoint("CENTER")
-    end
-    GwWarningPrompt.input:Show()
-    GwWarningPrompt.input:SetText(input or "")
-end
-GW.InputPrompt = InputPrompt
-
 local function setDependenciesOption(type, name, SetEnable, deactivateColor, overrideColor)
     if deactivateColor then
         _G[name].title:SetTextColor(0.82, 0, 0)
@@ -630,7 +599,7 @@ local function InitPanel(panel, hasScroll)
             scrollFrame.scrollBar.scrollDown:SetPoint("BOTTOMRIGHT", 0, -12)
             scrollFrame.scrollBar:SetFrameLevel(scrollFrame:GetFrameLevel() + 5)
 
-            scrollFrame.data = GW.CopyTable(nil, v)
+            scrollFrame.data = GW.copyTable(nil, v)
             scrollFrame.of = of
             scrollFrame.update = loadDropDown
             scrollFrame.scrollBar.doNotHide = false
@@ -779,7 +748,7 @@ local function InitPanel(panel, hasScroll)
                     end
                     local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
-                    SetSetting(of.optionName, roundValue)
+                    SetSetting(of.optionName, tonumber(roundValue))
                     self:GetParent().inputFrame.input:SetText(roundValue)
                     if v.callback then
                         v.callback()
@@ -815,7 +784,7 @@ local function InitPanel(panel, hasScroll)
                     end
                     self:GetParent():GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
-                    SetSetting(v.optionName, roundValue)
+                    SetSetting(v.optionName, tonumber(roundValue))
                     if v.callback then
                         v.callback()
                     end
@@ -986,6 +955,7 @@ local function InitPanel(panel, hasScroll)
         panel.scroll.slider.thumb:SetHeight(panel.scroll.slider:GetHeight() * (panel.scroll:GetHeight() / (maxScroll + panel.scroll:GetHeight())) )
         panel.scroll.slider:SetValue(1)
         panel.scroll.maxScroll = maxScroll
+        panel.scroll.doNotHide = false
     end
 end
 GW.InitPanel = InitPanel
@@ -1116,6 +1086,7 @@ local function LoadSettings()
     GW.LoadTargetPanel(sWindow)
     GW.LoadActionbarPanel(sWindow)
     GW.LoadHudPanel(sWindow)
+    GW.LoadObjectivesPanel(sWindow)
     GW.LoadChatPanel(sWindow)
     GW.LoadTooltipPanel(sWindow)
     GW.LoadPartyPanel(sWindow)

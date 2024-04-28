@@ -1088,7 +1088,7 @@ GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 local function tracker_OnUpdate()
     local prevState = GwObjectivesNotification.shouldDisplay
 
-    if GW.locationData.mapID or GW.locationData.instanceMapID then
+    if GW.Libs.GW2Lib:GetPlayerLocationMapID() or GW.Libs.GW2Lib:GetPlayerInstanceMapID() then
         GW.SetObjectiveNotification()
     end
 

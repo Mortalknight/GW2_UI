@@ -1,15 +1,15 @@
 local _, GW = ...
-local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local TimeCount = GW.TimeCount
+local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
+local BleedList = GW.Libs.Dispel:GetBleedList()
+local BadDispels = GW.Libs.Dispel:GetBadList()
 
 local function GetDebuffScaleBasedOnPrio()
-    local debuffScalePrio = GW.GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO")
     local scale = 1
 
-    if debuffScalePrio == "DISPELL" then
+    if GW.GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO") == "DISPELL" then
         return tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
-    elseif debuffScalePrio == "IMPORTANT" then
+    elseif GW.GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO") == "IMPORTANT" then
         return tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
     end
 
@@ -35,6 +35,7 @@ local function sortAurasRevert(a, b)
 end
 GW.AddForProfiling("auras", "sortAuras", sortAuras)
 
+
 local function sortAuraList(auraList, revert)
     if revert then
         table.sort(auraList, sortAurasRevert)
@@ -48,30 +49,30 @@ GW.AddForProfiling("auras", "sortAuraList", sortAuraList)
 
 local function getBuffs(unit, filter, revert)
     local buffList = {}
-    local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
-
+    local auraData
+    local time = GetTime()
     if filter == nil then
         filter = ""
     end
     for i = 1, 40 do
-        name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitBuff(unit, i, filter)
-        if name then
+        auraData = C_UnitAuras.GetBuffDataByIndex(unit, i, filter)
+        if auraData then
             buffList[i] = {}
             local bli = buffList[i]
             bli.id = i
 
-            bli.name = name
-            bli.icon = icon
-            bli.count = count
-            bli.dispelType = dispelType
-            bli.duration = duration
-            bli.expires = expires
-            bli.caster = caster
-            bli.isStealable = isStealable
-            bli.shouldConsolidate = shouldConsolidate
-            bli.spellID = spellID
+            bli.name = auraData.name
+            bli.icon = auraData.icon
+            bli.count = auraData.applications
+            bli.dispelType = auraData.dispelName
+            bli.duration = auraData.duration
+            bli.expires = auraData.expirationTime
+            bli.caster = auraData.sourceUnit
+            bli.isStealable = auraData.isStealable
+            bli.shouldConsolidate = auraData.nameplateShowPersonal
+            bli.spellID = auraData.spellId
 
-            bli.timeremaning = bli.duration <= 0 and 500001 or bli.expires - GetTime()
+            bli.timeremaning = bli.duration <= 0 and 500001 or bli.expires - time
         end
     end
 
@@ -83,29 +84,32 @@ local function getDebuffs(unit, filter, revert)
     local debuffList = {}
     local showImportant = filter == "IMPORTANT"
     local counter = 0
-    local filterToUse = filter == "IMPORTANT" and nil or filter
-    local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
-
+    local filterToUse = nil
+    local time = GetTime()
+    local auraData
+    if not showImportant then
+        filterToUse = filter
+    end
     for i = 1, 40 do
-        name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitDebuff(unit, i, filterToUse)
-        if name and ((showImportant and (caster == "player" or caster == "vehicle" or GW.ImportendRaidDebuff[spellID])) or not showImportant) then
-            counter = #debuffList + 1
+        auraData = C_UnitAuras.GetDebuffDataByIndex(unit, i, filterToUse)
+        if auraData and ((showImportant and (auraData.sourceUnit == "player" or GW.ImportendRaidDebuff[auraData.spellId])) or not showImportant) then
+            counter = counter + 1
             debuffList[counter] = {}
             local dbi = debuffList[counter]
             dbi.id = i
 
-            dbi.name = name
-            dbi.icon = icon
-            dbi.count = count
-            dbi.dispelType = dispelType
-            dbi.duration = duration
-            dbi.expires = expires
-            dbi.caster = caster
-            dbi.isStealable = isStealable
-            dbi.shouldConsolidate = shouldConsolidate
-            dbi.spellID  = spellID
+            dbi.name = auraData.name
+            dbi.icon = auraData.icon
+            dbi.count = auraData.applications
+            dbi.dispelType = auraData.dispelName
+            dbi.duration = auraData.duration
+            dbi.expires = auraData.expirationTime
+            dbi.caster = auraData.sourceUnit
+            dbi.isStealable = auraData.isStealable
+            dbi.shouldConsolidate = auraData.nameplateShowPersonal
+            dbi.spellID  = auraData.spellId
 
-            dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - GetTime()
+            dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - time
         end
     end
 
@@ -121,20 +125,18 @@ local function setAuraType(self, typeAura)
     if typeAura == "smallbuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 1, -1)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, 1)
-        self.duration:SetFont(UNIT_NAME_FONT, 11, "")
+        self.duration:SetFont(UNIT_NAME_FONT, 11)
         self.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
-    end
-
-    if typeAura == "bigBuff" then
+    elseif typeAura == "bigBuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -3, 3)
-        self.duration:SetFont(UNIT_NAME_FONT, 14, "")
+        self.duration:SetFont(UNIT_NAME_FONT, 14)
         self.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
     end
 
     self.typeAura = typeAura
 end
-GW.AddForProfiling("unitframes", "setAuraType", setAuraType)
+GW.AddForProfiling("auras", "setAuraType", setAuraType)
 
 local function setBuffData(self, buffs, i)
     if not self or not buffs then
@@ -146,7 +148,6 @@ local function setBuffData(self, buffs, i)
     end
 
     local stacks = ""
-    local duration = ""
 
     if b.caster == "player" and (b.duration > 0 and b.duration < 120) then
         setAuraType(self, "bigBuff")
@@ -158,9 +159,6 @@ local function setBuffData(self, buffs, i)
     if b.count ~= nil and b.count > 1 then
         stacks = b.count
     end
-    if b.timeremaning ~= nil and b.timeremaning > 0 and b.timeremaning < 500000 then
-        duration = TimeCount(b.timeremaning)
-    end
 
     if b.expires < 1 or b.timeremaning > 500000 then
         self.expires = nil
@@ -169,21 +167,27 @@ local function setBuffData(self, buffs, i)
     end
 
     if self.auraType == "debuff" then
+        if b.dispelType and BadDispels[b.spellID] and GW.Libs.Dispel:IsDispellableByMe(b.dispelType) then
+            b.dispelType = "BadDispel"
+        end
+        if not b.dispelType and BleedList[b.spellID] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
+            b.dispelType = "Bleed"
+        end
+
         if b.dispelType then
-            self.background:SetVertexColor(DEBUFF_COLOR[b.dispelType].r, DEBUFF_COLOR[b.dispelType].g, DEBUFF_COLOR[b.dispelType].b)
+            self.background:SetVertexColor(DebuffColors[b.dispelType].r, DebuffColors[b.dispelType].g, DebuffColors[b.dispelType].b)
         else
             self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
         end
     else
         if b.isStealable then
-            self.background:SetVertexColor(1, 1, 1)
+            self.background:SetVertexColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
         else
             self.background:SetVertexColor(0, 0, 0)
         end
     end
 
     self.auraid = b.id
-    self.duration:SetText(duration)
     self.stacks:SetText(stacks)
     self.icon:SetTexture(b.icon)
 
@@ -217,8 +221,8 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local usedWidth = 0
     local usedHeight = 0
     local usedWidth2 = 2
-    local smallSize = self == GwTargetUnitFrame and tonumber(GW.GetSetting("target_ICON_SIZE")) or self == GwFocusUnitFrame and tonumber(GW.GetSetting("focus_ICON_SIZE")) or 20
-    local bigSize = self == GwTargetUnitFrame and tonumber(GW.GetSetting("target_ICON_SIZE")) * 1.4 or self == GwFocusUnitFrame and tonumber(GW.GetSetting("focus_ICON_SIZE")) * 1.4 or 28
+    local smallSize = 20
+    local bigSize = 28
     local maxSize = self.auras:GetWidth()
     local isBuff = false
     local auraList = getBuffs(self.unit, nil, self.frameInvert)
@@ -259,7 +263,6 @@ local function UpdateBuffLayout(self, event, anchorPos)
             if not frame:IsShown() then
                 frame:Show()
             end
-
             frame.nextUpdate = 0
             frame.duration:SetText("")
             frame:SetScript("OnUpdate", frame.OnUpdatefunction)
@@ -280,12 +283,12 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 saveAuras[frame.auraType][#saveAuras[frame.auraType] + 1] = list[index].name
             elseif UnitIsFriend(self.unit, "player") and not isBuff then
                 -- debuffs
-                if GW.ImportendRaidDebuff[list[index].spellID] and list[index].dispelType and GW.IsDispellableByMe(list[index].dispelType) then
+                if GW.ImportendRaidDebuff[list[index].spellID] and list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
                     size = size * debuffScale
                 elseif GW.ImportendRaidDebuff[list[index].spellID] then
-                    size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
-                elseif list[index].dispelType and GW.IsDispellableByMe(list[index].dispelType) then
-                    size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+                    size = size * tonumber(GW.GetSettings("RAIDDEBUFFS_Scale"))
+                elseif list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
+                    size = size * tonumber(GW.GetSettings("DISPELL_DEBUFFS_Scale"))
                 end
             end
 
@@ -323,6 +326,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
         elseif frame then
             frame:Hide()
             frame:SetScript("OnUpdate", nil)
+            frame.endTime = nil
         end
     end
 
@@ -343,7 +347,6 @@ local function auraFrame_OnEnter(self)
     end
 end
 GW.AddForProfiling("auras", "auraFrame_OnEnter", auraFrame_OnEnter)
-
 
 local function auraFrame_OnUpdate(self, elapsed)
     if self.nextUpdate > 0 then
@@ -368,7 +371,6 @@ GW.AddForProfiling("auras", "auraFrame_OnUpdate", auraFrame_OnUpdate)
 
 local function CreateAuraFrame(name, parent)
     local f = CreateFrame("Button", name, parent, "GwAuraFrame")
-    local fs = f.status
 
     f.typeAura = "smallbuff"
     f.cooldown:SetDrawEdge(0)
@@ -377,13 +379,13 @@ local function CreateAuraFrame(name, parent)
     f.cooldown:SetHideCountdownNumbers(true)
     f.nextUpdate = 0
 
-    fs.stacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
-    fs.duration:SetFont(UNIT_NAME_FONT, 10, "")
-    fs.duration:SetShadowOffset(1, -1)
+    f.status.stacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
+    f.status.duration:SetFont(UNIT_NAME_FONT, 10)
+    f.status.duration:SetShadowOffset(1, -1)
 
-    fs:GetParent().duration = fs.duration
-    fs:GetParent().stacks = fs.stacks
-    fs:GetParent().icon = fs.icon
+    f.duration = f.status.duration
+    f.stacks = f.status.stacks
+    f.icon = f.status.icon
 
     f.OnUpdatefunction = auraFrame_OnUpdate
 

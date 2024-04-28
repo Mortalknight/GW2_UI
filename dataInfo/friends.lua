@@ -7,6 +7,7 @@ local tthead = GW.myfaction == "Alliance" and GW.FACTION_COLOR[2] or GW.FACTION_
 local activezone, inactivezone = {r = 0.3, g = 1.0, b = 0.3}, {r = 0.65, g = 0.65, b = 0.65}
 local levelNameString = "|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r"
 local levelNameClassString = "|cff%02x%02x%02x%d|r %s%s%s"
+local retailID, classicID, tbcID, wrathID = WOW_PROJECT_MAINLINE, WOW_PROJECT_CLASSIC, WOW_PROJECT_BURNING_CRUSADE_CLASSIC or 5, WOW_PROJECT_WRATH_CLASSIC or 11
 
 local menuList = {
     {text = OPTIONS_MENU, isTitle = true, notCheckable = true},
@@ -21,8 +22,6 @@ local menuList = {
     },
     {text = BN_BROADCAST_TOOLTIP, notCheckable = true, func = function() StaticPopup_Show("SET_BN_BROADCAST") end},
 }
-
-
 
 local function inviteClick(_, name, guid)
     GW.EasyMenu:Hide()
@@ -103,7 +102,6 @@ local function inGroup(name, realmName)
     return (UnitInParty(name) or UnitInRaid(name)) and "|cffaaaaaa*|r" or ""
 end
 
-
 local function BuildFriendTable(total)
     wipe(friendTable)
     for i = 1, total do
@@ -162,7 +160,6 @@ local function clientSort(a, b)
     end
 end
 
-
 local function AddToBNTable(bnIndex, bnetIDAccount, accountName, battleTag, characterName, bnetIDGameAccount, client, isOnline, isBnetAFK, isBnetDND, noteText, wowProjectID, realmName, faction, race, className, zoneName, level, guid, gameText)
     className = GW.UnlocalizedClassName(className) or ""
     characterName = BNet_GetValidatedCharacterName(characterName, battleTag, client) or ""
@@ -189,20 +186,19 @@ local function AddToBNTable(bnIndex, bnetIDAccount, accountName, battleTag, char
         gameText = gameText				--19
     }
 
-    if strmatch(gameText, BNET_FRIEND_TOOLTIP_WOW_CLASSIC) then
+    if wowProjectID == classicID or wowProjectID == tbcID or wowProjectID == wrathID then
         obj.classicText, obj.realmName = strmatch(gameText, "(.-)%s%-%s(.+)")
     end
 
     BNTable[bnIndex] = obj
 
     if tableList[client] then
-        tableList[client][#tableList[client]+1] = BNTable[bnIndex]
+        tableList[client][#tableList[client] + 1] = BNTable[bnIndex]
     else
         tableList[client] = {}
         tableList[client][1] = BNTable[bnIndex]
     end
 end
-
 
 local function PopulateBNTable(bnIndex, bnetIDAccount, accountName, battleTag, characterName, bnetIDGameAccount, client, isOnline, isBnetAFK, isBnetDND, noteText, wowProjectID, realmName, faction, race, class, zoneName, level, guid, gameText, hasFocus)
     for i = 1, bnIndex do
@@ -253,7 +249,9 @@ local function PopulateBNTable(bnIndex, bnetIDAccount, accountName, battleTag, c
 end
 
 local function BuildBNTable(total)
-    for _, v in pairs(tableList) do wipe(v) end
+    for _, v in pairs(tableList) do
+        wipe(v)
+    end
     wipe(BNTable)
     wipe(clientSorted)
 
@@ -266,7 +264,9 @@ local function BuildBNTable(total)
             if numGameAccounts and numGameAccounts > 0 then
                 for y = 1, numGameAccounts do
                     local gameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(i, y)
-                    bnIndex = PopulateBNTable(bnIndex, accountInfo.bnetAccountID, accountInfo.accountName, accountInfo.battleTag, gameAccountInfo.characterName, gameAccountInfo.gameAccountID, gameAccountInfo.clientProgram, gameAccountInfo.isOnline, accountInfo.isAFK or gameAccountInfo.isGameAFK, accountInfo.isDND or gameAccountInfo.isGameBusy, accountInfo.note, accountInfo.gameAccountInfo.wowProjectID, gameAccountInfo.realmName, gameAccountInfo.factionName, gameAccountInfo.raceName, gameAccountInfo.className, gameAccountInfo.areaName, gameAccountInfo.characterLevel, gameAccountInfo.playerGuid, gameAccountInfo.richPresence, gameAccountInfo.hasFocus)
+                    if gameAccountInfo then
+                        bnIndex = PopulateBNTable(bnIndex, accountInfo.bnetAccountID, accountInfo.accountName, accountInfo.battleTag, gameAccountInfo.characterName, gameAccountInfo.gameAccountID, gameAccountInfo.clientProgram, gameAccountInfo.isOnline, accountInfo.isAFK or gameAccountInfo.isGameAFK, accountInfo.isDND or gameAccountInfo.isGameBusy, accountInfo.note, accountInfo.gameAccountInfo.wowProjectID, gameAccountInfo.realmName, gameAccountInfo.factionName, gameAccountInfo.raceName, gameAccountInfo.className, gameAccountInfo.areaName, gameAccountInfo.characterLevel, gameAccountInfo.playerGuid, gameAccountInfo.richPresence, gameAccountInfo.hasFocus)
+                    end
                 end
             else
                 bnIndex = PopulateBNTable(bnIndex, accountInfo.bnetAccountID, accountInfo.accountName, accountInfo.battleTag, accountInfo.gameAccountInfo.characterName, accountInfo.gameAccountInfo.gameAccountID, accountInfo.gameAccountInfo.clientProgram, accountInfo.gameAccountInfo.isOnline, accountInfo.isAFK, accountInfo.isDND, accountInfo.note, accountInfo.gameAccountInfo.wowProjectID)
@@ -303,9 +303,9 @@ local function Friends_OnEnter(self)
     local onlineFriends = C_FriendList.GetNumOnlineFriends()
     local numberOfFriends = C_FriendList.GetNumFriends()
     local totalBNet, numBNetOnline = BNGetNumFriends()
-    local totalonline = onlineFriends + numBNetOnline
+    local totalOnline = onlineFriends + numBNetOnline
+    lastTooltipXLineHeader = nil
 
-    if totalonline == 0 then return end
 
     GameTooltip:ClearLines()
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -321,10 +321,13 @@ local function Friends_OnEnter(self)
             GameTooltip:AddLine(disabledTooltipText, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
         end
     end
+
+    if totalOnline == 0 then
+        GameTooltip:Show()
+        return
+    end
+
     GameTooltip:AddLine(" ")
-
-
-    lastTooltipXLineHeader = nil
 
     if not dataValid then
         if numberOfFriends > 0 then BuildFriendTable(numberOfFriends) end
@@ -333,14 +336,19 @@ local function Friends_OnEnter(self)
     end
 
     local totalfriends = numberOfFriends + totalBNet
-    local zonec, classc, levelc, realmc
+    local zonec, classc, levelc, realmc, zoneText
     local shiftDown = IsShiftKeyDown()
 
-    GameTooltip:AddDoubleLine(FRIENDS_LIST, format(totalOnlineString, totalonline, totalfriends), tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
+    if shiftDown then
+        zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+    end
+
+    GameTooltip:AddDoubleLine(FRIENDS_LIST, format(totalOnlineString, totalOnline, totalfriends), tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
     if onlineFriends > 0 then
         for _, info in ipairs(friendTable) do
             if info.online then
-                if GW.locationData.ZoneText and (GW.locationData.ZoneText == info.zone) then zonec = activezone else zonec = inactivezone end
+                local zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+                if zoneText and (zoneText == info.zone) then zonec = activezone else zonec = inactivezone end
                 classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
                 if not classc then classc = levelc end
 
@@ -377,7 +385,7 @@ local function Friends_OnEnter(self)
 
                         TooltipAddXLine(true, header, format(levelNameString .. "%s%s", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.characterName, inGroup(info.characterName, info.realmName), status), info.accountName, 238, 238, 238, 238, 238, 238)
                         if shiftDown then
-                            if GW.locationData.ZoneText and (GW.locationData.ZoneText == info.zoneName) then zonec = activezone else zonec = inactivezone end
+                            if zoneText and (zoneText == info.zoneName) then zonec = activezone else zonec = inactivezone end
                             if GW.myrealm == info.realmName then realmc = activezone else realmc = inactivezone end
                             TooltipAddXLine(true, header, info.zoneName, info.realmName, zonec.r, zonec.g, zonec.b, realmc.r, realmc.g, realmc.b)
                         end
@@ -398,7 +406,7 @@ GW.Friends_OnEnter = Friends_OnEnter
 
 local function Friends_OnEvent(self, event, message)
     if event == "CHAT_MSG_SYSTEM" then
-        if not (strfind(message, gsub(ERR_FRIEND_ONLINE_SS, "\124Hplayer:%%s\124h%[%%s%]\124h", "")) or strfind(message, gsub(ERR_FRIEND_OFFLINE_S, "%%s", ""))) then return end
+        if not (strfind(message, gsub(ERR_FRIEND_ONLINE_SS, "|Hplayer:%%s|h%[%%s%]|h","")) or strfind(message, gsub(ERR_FRIEND_OFFLINE_S, "%%s", ""))) then return end
     end
     dataValid = false
 
@@ -446,7 +454,7 @@ local function Friends_OnClick(self, button)
                     menuList[3].menuList[menuCountWhispers] = {text = realID, arg1 = realID, arg2 = true, notCheckable = true, func = whisperClick}
                 end
 
-                if (info.client and info.client == BNET_CLIENT_WOW) and inGroup(info.characterName, info.realmName) == "" then
+                if (info.client and info.client == retailID) and inGroup(info.characterName, info.realmName) == "" then
                     local classc, levelc = GW.GWGetClassColor(info.className, true, true), GetQuestDifficultyColor(info.level)
                     if not classc then classc = levelc end
 
@@ -459,7 +467,7 @@ local function Friends_OnClick(self, button)
         end
 
         GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-        EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+        GW.Libs.LibDD:EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
     end
 end
 GW.Friends_OnClick = Friends_OnClick

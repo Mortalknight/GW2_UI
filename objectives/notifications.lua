@@ -123,11 +123,13 @@ end
 GW.AddForProfiling("notifications", "getQuestPOIText", getQuestPOIText)
 
 local function getNearestQuestPOI()
-    if not GW.locationData.mapID then
+    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
         return nil
     end
 
-    if (GW.locationData.x == nil or GW.locationData.y == nil) then
+    local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+
+    if (x == nil or y == nil) then
         return nil
     end
 
@@ -192,15 +194,11 @@ end
 GW.AddForProfiling("notifications", "getNearestQuestPOI", getNearestQuestPOI)
 
 local function getBodyPOI()
-    if not GW.locationData.mapID then
+    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
         return nil
     end
 
-    if GW.locationData.x == nil or GW.locationData.y == nil then
-        return nil
-    end
-
-    local corpTable = C_DeathInfo.GetCorpseMapPosition(GW.locationData.mapID)
+    local corpTable = C_DeathInfo.GetCorpseMapPosition(GW.Libs.GW2Lib:GetPlayerLocationMapID())
     if corpTable == nil then
         return nil
     end
@@ -291,11 +289,12 @@ GW.NotificationStateChanged = NotificationStateChanged
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
 local function updateRadar(self)
-    if not GW.locationData.mapID then
+    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
         return
     end
 
-    if GW.locationData.x == nil or GW.locationData.y == nil or self.data.X == nil then
+    local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+    if x == nil or y == nil or self.data.X == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
         return
     end

@@ -3,6 +3,20 @@ local mapInfoWatcher = CreateFrame("Frame")
 local coordsWatcher = CreateFrame("Frame")
 local mapRects, tempVec2D = {}, CreateVector2D(0, 0)
 
+-- we need to load this function here because it is need in defaults.lua
+local function MapTable(T, fn, withKey)
+    local t = {}
+    for k,v in pairs(T) do
+        if withKey then
+            t[k] = fn(v, k)
+        else
+            t[k] = fn(v)
+        end
+    end
+    return t
+end
+GW.MapTable = MapTable
+
 local function GetPlayerMapPos(mapID)
     tempVec2D.x, tempVec2D.y = UnitPosition("player")
     if not tempVec2D.x then return end
@@ -93,14 +107,33 @@ local function MapInfoUpdateMapId()
     end
     GW.Debug("Update location data: mapID:", GW.locationData.mapID)
 end
-
-local function MapInfoWatcherOnEvent()
+GwIsCurrentlyDragonRiding = false
+function GwDragonRidingStateChange(newState)
+    GwIsCurrentlyDragonRiding = newState
+end
+local function updateDragonRidingState(self)
+  local dragonridingSpellIds = C_MountJournal.GetCollectedDragonridingMounts()
+  local isDragonriding = false
+  if IsMounted() then
+    for _, mountId in ipairs(dragonridingSpellIds) do
+      local spellId = select(2, C_MountJournal.GetMountInfoByID(mountId))
+      if C_UnitAuras.GetPlayerAuraBySpellID(spellId) then
+        isDragonriding = true
+      end
+    end
+  end
+  if GwIsCurrentlyDragonRiding~=isDragonriding then
+      GwDragonRidingStateChange(isDragonriding)
+  end
+end
+local function MapInfoWatcherOnEvent(self,event)
+    if event=="PLAYER_MOUNT_DISPLAY_CHANGED" then
+      updateDragonRidingState()
+      return
+    end
     MapInfoUpdateMapId()
     GW.locationData.instanceMapID = select(8, GetInstanceInfo())
     GW.locationData.ZoneText = GetRealZoneText() or UNKNOWN
-    if GW.locationData.mapID then
-        GW.locationData.mapPosition = C_Map.GetPlayerMapPosition(GW.locationData.mapID, "player")
-    end
 
     CoordsUpdate()
 
@@ -113,7 +146,10 @@ local function InitLocationDataHandler()
     mapInfoWatcher:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     mapInfoWatcher:RegisterEvent("ZONE_CHANGED")
     mapInfoWatcher:RegisterEvent("ZONE_CHANGED_INDOORS")
+    --mapInfoWatcher:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
     mapInfoWatcher:SetScript("OnEvent", MapInfoWatcherOnEvent)
+
+    --MapInfoWatcherOnEvent(mapInfoWatcher,"PLAYER_MOUNT_DISPLAY_CHANGED")
 
     coordsWatcher:RegisterEvent("CRITERIA_UPDATE")
     coordsWatcher:RegisterEvent("PLAYER_STARTED_MOVING")

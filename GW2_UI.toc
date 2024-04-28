@@ -34,6 +34,8 @@ locales\frFR.lua
 locales\zhCN.lua
 locales\itIT.lua
 
+core\warningPrompt.xml
+core\warningPrompt.lua
 core\consts.lua
 core\init.lua
 core\staticPopupDialogs.lua
@@ -72,6 +74,7 @@ settings\panel_auras.lua
 settings\panel_skins.lua
 settings\panel_profiles.lua
 settings\panel_chat.lua
+settings\panel_objectives.lua
 settings\hover_binding.lua
 settings\welcome.xml
 settings\welcome.lua
@@ -88,6 +91,7 @@ dataInfo\bags.lua
 dataInfo\durability.lua
 dataInfo\system.lua
 dataInfo\friends.lua
+dataInfo\time.lua
 
 core\auras.lua
 
@@ -192,6 +196,7 @@ immersive\damagetext.xml
 immersive\damagetext.lua
 
 objectives\map.lua
+objectives\worldmap.lua
 objectives\questtracker.xml
 objectives\minimapButtons.lua
 objectives\objectives.lua

@@ -17,13 +17,13 @@ local CombineAddOns = {
 }
 
 local function BuildAddonList()
-    local addOnCount = GetNumAddOns()
+    local addOnCount = C_AddOns.GetNumAddOns()
     if addOnCount == #infoTable then return end
 
     wipe(infoTable)
 
     for i = 1, addOnCount do
-        local name, title, _, loadable, reason = GetAddOnInfo(i)
+        local name, title, _, loadable, reason = C_AddOns.GetAddOnInfo(i)
         if loadable or reason == "DEMAND_LOADED" then
             tinsert(infoTable, {name = name, index = i, title = title})
         end
@@ -42,6 +42,7 @@ end
 
 local function displayData(data, totalMEM, totalCPU)
     if not data then return end
+    if totalMEM == 0 then totalMEM = 0.00000000000000000001 end
 
     local name, mem, cpu = data.title, data.mem, data.cpu
     if cpu then
@@ -60,6 +61,7 @@ local function displaySort(a, b)
 end
 
 local function FpsOnEnter(self, slow)
+    if GW.GetSetting("MINIMAP_FPS_TOOLTIP_DISABLED") then return end
     enteredInfo = true
     GameTooltip:ClearLines()
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -95,7 +97,7 @@ local function FpsOnEnter(self, slow)
     local showByCPU = cpuProfiling and not IsShiftKeyDown()
     for _, data in ipairs(infoTable) do
         local i = data.index
-        if IsAddOnLoaded(i) then
+        if C_AddOns.IsAddOnLoaded(i) then
             local mem = GetAddOnMemoryUsage(i)
             totalMEM = totalMEM + mem
 
@@ -128,6 +130,8 @@ local function FpsOnEnter(self, slow)
         local addonIndex, memoryUsage, cpuUsage = 0, 0, 0
         for i, data in pairs(infoDisplay) do
             if data and data.name == addon then
+                cpuUsage = data.cpu or 0
+                memoryUsage = data.mem
                 addonIndex = i
                 break
             end
@@ -147,9 +151,17 @@ local function FpsOnEnter(self, slow)
                 end
             end
         end
-        if addonIndex > 0 and infoDisplay[addonIndex] then
-            if memoryUsage > 0 then infoDisplay[addonIndex].mem = memoryUsage end
-            if cpuProfiling and cpuUsage > 0 then infoDisplay[addonIndex].cpu = cpuUsage end
+
+        local data = addonIndex > 0 and infoDisplay[addonIndex]
+        if data then
+            local mem = memoryUsage > 0 and memoryUsage
+            local cpu = cpuUsage > 0 and cpuUsage
+
+            if mem then data.men = mem end
+            if cpu then data.cpu = cpu end
+            if mem or cpu then
+                data.sort = (showByCPU and cpu) or mem
+            end
         end
     end
 
