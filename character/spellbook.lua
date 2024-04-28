@@ -409,7 +409,8 @@ end
 local function depIsTalentAndLearned(name)
     for i = 1, GW.api.GetNumSpecializations(false) do
         for y = 1, MAX_NUM_TALENTS do
-            local name2, _, _, _, rank, maxRank, isExceptional = GetTalentInfo(i, y)
+           
+            local name2, _, _,_, rank, maxRank,_,_,_,isExceptional = GetTalentInfo(i, y)
             if isExceptional then
                 local spellId = select(7, GetSpellInfo(name2))
                 if name == name2 then

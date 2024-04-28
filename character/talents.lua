@@ -99,7 +99,7 @@ local function hookTalentButton(talentButton, container, row, index)
         "CLAMPTOBLACKADDITIVE")
     mask:SetSize(talentButton:GetSize())
     talentButton.mask = mask
-    talentButton.points:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
+    talentButton.points:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
     talentButton.points:SetTextColor(1, 1, 1, 1)
 end
 
@@ -353,7 +353,8 @@ local function updateTalentTrees()
 
         local numTalents = GetNumTalents(f, false, isPetTalents)
         for i = 1, MAX_NUM_TALENTS do
-            local name, texture, tier, column, rank, maxRank, isExceptional, available, previewRank, meetsPreviewPrereq =
+  
+            local name, texture, tier, column, rank, maxRank,meetsPrereq,previewRank,meetsPreviewPrereq,isExceptional, available =
                 GetTalentInfo(f, i, false, isPetTalents, openSpec)
             local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
 
