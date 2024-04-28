@@ -460,6 +460,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     header:SetWidth(frame:GetWidth() - 20)
     header.BGLEFT:SetWidth(frame:GetWidth() - 20)
     header.BGRIGHT:SetWidth(frame:GetWidth() - 20)
+    frame.gwHeader = header
 
     if titleText then
         if type(titleText) ~= "string" then

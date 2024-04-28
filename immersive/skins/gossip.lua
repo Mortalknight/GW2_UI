@@ -118,31 +118,49 @@ local function splitQuest(inputstr)
     return t
 end
 
-local function ReplaceGossipFormat(button, textFormat, text)
-    local newFormat, count = gsub(textFormat, "000000", "ffffff")
-    if count > 0 then
-        button:SetFormattedText(newFormat, text)
-    end
-end
-
 local ReplacedGossipColor = {
     ["000000"] = "ffffff",
     ["414141"] = "7b8489",
 }
-local function ReplaceGossipText(button, text)
-    if text and text ~= "" then
-        local newText, count = gsub(text, ":32:32:0:0", ":32:32:0:0:64:64:5:59:5:59")
-        if count > 0 then
-            text = newText
-            button:SetFormattedText("%s", text)
-        end
 
-        local colorStr, rawText = strmatch(text, "|c[fF][fF](%x%x%x%x%x%x)(.-)|r")
-        colorStr = ReplacedGossipColor[colorStr]
-        if colorStr and rawText then
-            button:SetFormattedText("|cff%s%s|r", colorStr, rawText)
-        end
+local function Gossip_SetTextColor(text, r, g, b)
+    if r ~= 1 or g ~= 1 or b ~= 1 then
+        text:SetTextColor(1, 1, 1)
     end
+end
+
+local function Gossip_ReplaceColor(color)
+    return "|cFF" .. (ReplacedGossipColor[color] or color)
+end
+
+local function ReplaceGossipFormat(button, textFormat, text, skip)
+    if skip or not text or text == "" then return end
+
+    local newFormat, count = gsub(textFormat, "|c[fF][fF](%x%x%x%x%x%x)", Gossip_ReplaceColor)
+    if count > 0 then
+        button:SetFormattedText(newFormat, text, true)
+    end
+end
+
+local function ReplaceGossipText(button, text)
+    if not text and text == "" then return end
+    local startText = text
+
+    local iconText, iconCount = gsub(text, ":32:32:0:0", ":32:32:0:0:64:64:5:59:5:59")
+    if iconCount > 0 then
+        text = iconText
+    end
+
+    local colorStr, colorCount = gsub(text, "|c[fF][fF](%x%x%x%x%x%x)", Gossip_ReplaceColor)
+    if colorCount > 0 then text = colorStr end
+
+    if startText ~= text then
+        button:SetFormattedText("%s", text, true)
+    end
+end
+
+local function Resize(self)
+    self:SetHeight(math.max(32, self:GetTextHeight() + 2, self.Icon:GetHeight()))
 end
 
 local function skinGossipOption(self)
@@ -180,13 +198,17 @@ local function skinGossipOption(self)
         end)
     end
 
-    local buttonText = select(3, self:GetRegions())
-    if buttonText and buttonText:IsObjectType("FontString") then
+    local buttonText = self.GetFontString and self:GetFontString()
+    if buttonText then
         buttonText:ClearAllPoints()
         buttonText:SetPoint("LEFT", self, "LEFT", 40, 0)
+        buttonText:SetTextColor(1, 1, 1)
+        hooksecurefunc(buttonText, "SetTextColor", Gossip_SetTextColor)
+
         ReplaceGossipText(self, self:GetText())
         hooksecurefunc(self, "SetText", ReplaceGossipText)
         hooksecurefunc(self, "SetFormattedText", ReplaceGossipFormat)
+        hooksecurefunc(self, "Resize", Resize)
     end
 end
 
@@ -629,15 +651,18 @@ local function LoadGossipSkin()
             -- replace the element default size calculator
             GossipFrame.GreetingPanel.ScrollBox.view:SetPadding(10, 10, 10, 10, 0)
             GossipFrame.GreetingPanel.ScrollBox.view:SetElementExtentCalculator(function(_, elementData)
-        		if elementData.greetingTextFrame then
-        			setGreetingsText(elementData.text)
-        			return 0
-        		elseif elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER then
+                if elementData.greetingTextFrame then
+                    setGreetingsText(elementData.text)
                     return 0
+                elseif elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER then
+                    return 0
+                elseif elementData.titleOptionButton then
+                    elementData.titleOptionButton:Setup(elementData.info)
+                    return math.max(32, elementData.titleOptionButton:GetHeight())
                 else
         			return 32
-        		end
-        	end)
+                end
+            end)
         end
     end)
 

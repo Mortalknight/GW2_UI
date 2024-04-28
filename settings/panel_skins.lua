@@ -31,6 +31,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, READY_CHECK, nil, "READYCHECK_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, TIMEMANAGER_TITLE, nil, "TIMEMANAGER_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Socket Frame"], nil, "SOCKET_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, FLIGHT_MAP, nil, "FLIGHTMAP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
 
     InitPanel(p, true)
 end
