@@ -91,7 +91,7 @@ local function SetPetActionButtonPositionAndStyle(self)
             button:SetAttribute("_onreceivedrag", nil)
         end
 
-        button.showMacroName = GW.GetSetting(".SHOWACTIONBAR_MACRO_NAME_ENABLED")
+        button.showMacroName = GW.GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
         GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
         GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])

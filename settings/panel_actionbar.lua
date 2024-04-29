@@ -91,6 +91,22 @@ local function LoadActionbarPanel(sWindow)
     createCat(BINDING_HEADER_ACTIONBAR, ACTIONBARS_SUBTEXT, p, {general, mainBar, extraBars, totemBar, stanceBar})
     settingsMenuAddButton(BINDING_HEADER_ACTIONBAR, p, {general, mainBar, extraBars, totemBar, stanceBar})
 
+    --GENERAL
+    addOptionSlider(
+        general.scroll.scrollchild,
+        L["Empty slots alpha"],
+        L["Set the empty action bar slots alpha value."],
+        "ACTIONBAR_BACKGROUND_ALPHA",
+        function()
+            GW.UpdateMainBarHot()
+            GW.UpdateMultibarButtons()
+        end,
+        0,
+        1,
+        nil,
+        1,
+        {["ACTIONBARS_ENABLED"] = true}
+    )
     addOption(general.scroll.scrollchild, L["Hide Empty Slots"], L["Hide the empty action bar slots."], "HIDEACTIONBAR_BACKGROUND_ENABLED", function() GW.ShowRlPopup = true; GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
     addOption(general.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
     addOption(general.scroll.scrollchild, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons(); GW.UpdatePetBarButtonsHot() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")

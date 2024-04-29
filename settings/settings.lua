@@ -777,7 +777,7 @@ local function InitPanel(panel, hasScroll)
                     end
                 end
             )
-            of.inputFrame.input:SetNumber(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
+            of.inputFrame.input:SetText(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
             of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
@@ -791,7 +791,7 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetNumber(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
+                        self:SetText(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
                         return
                     end
                     local roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min

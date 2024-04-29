@@ -376,6 +376,43 @@ end
 GW.updateHotkey = updateHotkey
 GW.AddForProfiling("Actionbars2", "updateHotkey", updateHotkey)
 
+local function UpdateActionbarBorders(btn)
+    if not btn.gwBackdrop then return end
+    local texture = GetActionTexture(btn.action)
+    if texture then
+        btn.gwBackdrop.border1:SetAlpha(1)
+        btn.gwBackdrop.border2:SetAlpha(1)
+        btn.gwBackdrop.border3:SetAlpha(1)
+        btn.gwBackdrop.border4:SetAlpha(1)
+    else
+        btn.gwBackdrop.border1:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+        btn.gwBackdrop.border2:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+        btn.gwBackdrop.border3:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+        btn.gwBackdrop.border4:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+    end
+end
+
+local function changeFlyoutStyle(self)
+    if not self.FlyoutArrow then
+        return
+    end
+
+    self.FlyoutBorder:Hide()
+    self.FlyoutBorderShadow:Hide()
+    SpellFlyoutHorizontalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Tooltip-Background")
+    SpellFlyoutVerticalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Tooltip-Background")
+    SpellFlyoutBackgroundEnd:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Tooltip-Background")
+
+    local i = 1
+    local btn = _G["SpellFlyoutButton1"]
+    while btn do
+        btn:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\actionbutton-pressed")
+        btn:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Quickslot-Depress")
+        i = i + 1
+        btn = _G["SpellFlyoutButton" .. i]
+    end
+end
+
 local function updateMacroName(self)
     if self.Name then
         if self.showMacroName then
@@ -418,7 +455,7 @@ local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
 end
 GW.FixHotKeyPosition = FixHotKeyPosition
 
-local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
+local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPet, hideUnused)
     local btn = _G[buttonName]
 
     if btn.icon then
@@ -487,6 +524,14 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
 
         btn.gwBackdrop = backDrop
+
+        if not isStanceButton and not isPet then
+            btn.gwBackdrop.bg:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+            btn.gwBackdrop.border1:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+            btn.gwBackdrop.border2:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+            btn.gwBackdrop.border3:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+            btn.gwBackdrop.border4:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+        end
     end
 
     if hideUnused == true then
@@ -549,8 +594,10 @@ local function updateMainBar()
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
             btn.showMacroName = showName
 
-            setActionButtonStyle("ActionButton" .. i, true)
+            setActionButtonStyle("ActionButton" .. i)
             updateHotkey(btn)
+            hooksecurefunc("ActionButton_Update", UpdateActionbarBorders)
+            UpdateActionbarBorders(btn)
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
@@ -701,7 +748,8 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             updateHotkey(btn)
             btn.showMacroName = showName
 
-            setActionButtonStyle(buttonName .. i, nil, hideActionBarBG)
+            setActionButtonStyle(buttonName .. i, nil, nil, nil, hideActionBarBG)
+            hooksecurefunc("ActionButton_Update", UpdateActionbarBorders)
 
             btn:ClearAllPoints()
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)
@@ -730,6 +778,14 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
     fmMultibar:SetScript("OnUpdate", nil)
     fmMultibar:SetSize(used_width, used_height)
+
+    -- to keep actionbutton style after spec switch
+    fmMultibar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    fmMultibar:SetScript("OnEvent", function()
+        for i = 1, 12 do
+            setActionButtonStyle(buttonName .. i)
+        end
+    end)
 
     if barName == "MultiBarLeft" then
         RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, FlyoutDirection)
@@ -819,6 +875,13 @@ local function UpdateMultibarButtons()
                     btn_padding = 0
                     used_height = used_height + settings.size + margin
                 end
+
+                btn.gwBackdrop.bg:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+                btn.gwBackdrop.border1:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+                btn.gwBackdrop.border2:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+                btn.gwBackdrop.border3:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+                btn.gwBackdrop.border4:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+
 
                 if hideActionbuttonBackdrop then
                     btn.gwBackdrop:Hide()
@@ -1116,27 +1179,6 @@ local function updateAnchors(self)
 end
 GW.AddForProfiling("Actionbars2", "updateAnchors", updateAnchors)
 
-local function changeFlyoutStyle(self)
-    if not self.FlyoutArrow then
-        return
-    end
-
-    self.FlyoutBorder:Hide()
-    self.FlyoutBorderShadow:Hide()
-    SpellFlyoutHorizontalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Tooltip-Background")
-    SpellFlyoutVerticalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Tooltip-Background")
-    SpellFlyoutBackgroundEnd:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Tooltip-Background")
-
-    local i = 1
-    local btn = _G["SpellFlyoutButton1"]
-    while btn do
-        btn:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\actionbutton-pressed")
-        btn:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Quickslot-Depress")
-        i = i + 1
-        btn = _G["SpellFlyoutButton" .. i]
-    end
-end
-
 local function UpdateMainBarHot()
     local fmActionbar = MainMenuBarArtFrame
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
@@ -1152,6 +1194,12 @@ local function UpdateMainBarHot()
         if i == 6 and not GetSetting("PLAYER_AS_TARGET_FRAME") then
             btn_padding = btn_padding + 108
         end
+
+        btn.gwBackdrop.bg:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+        btn.gwBackdrop.border1:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+        btn.gwBackdrop.border2:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+        btn.gwBackdrop.border3:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
+        btn.gwBackdrop.border4:SetAlpha(tonumber(GW.GetSetting("ACTIONBAR_BACKGROUND_ALPHA")))
 
         btn.showMacroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
         btn.rangeIndicatorSetting = GetSetting("MAINBAR_RANGEINDICATOR")
@@ -1211,7 +1259,7 @@ local function LoadActionBars(lm)
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", function() C_Timer.After(1, trackBarChanges) end)
     hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)
-    --hooksecurefunc("ActionButton_UpdateFlyout", changeFlyoutStyle)
+    hooksecurefunc("ActionButton_UpdateFlyout", changeFlyoutStyle)
     trackBarChanges()
 
     -- do stuff to other pieces of the blizz UI
