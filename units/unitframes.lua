@@ -752,7 +752,7 @@ local function target_OnEvent(self, event, unit)
     local ttf = GwTargetTargetUnitFrame
 
     if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED", "FORCE_UPDATE") then
-        if event == "PLAYER_TARGET_CHANGED" and CanInspect(self.unit) and GW.GetSetting("target_SHOW_ILVL") then
+        if event == "PLAYER_TARGET_CHANGED" then -- and CanInspect(self.unit) and GW.GetSetting("target_SHOW_ILVL") then
             local guid = UnitGUID(self.unit)
             if guid then
                 if not GW.unitIlvlsCache[guid] then
