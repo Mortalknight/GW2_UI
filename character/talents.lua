@@ -7,6 +7,41 @@ local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
 local isPetTalents = false
 
+local specIcons =     	{
+    [461112]="Interface/Addons/GW2_UI/Textures/talents/specIcons/ABILITY_HUNTER_BESTIALDISCIPLINE",
+[132090]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_BackStab",
+[461113]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Hunter_Camouflage",
+[236179]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Hunter_FocusedAim",
+[236264]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Paladin_ShieldoftheTemplar",
+[132276]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Racial_BearForm",
+[132292]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Rogue_Eviscerate",
+[132320]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Stealth",
+[132341]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Warrior_DefensiveStance",
+[132347]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Warrior_InnerRage",
+[132355]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Warrior_SavageBlow",
+[1132292]="Interface/Addons/GW2_UI/Textures/talents/specIcons/INV_Knife_1H_ArtifactCthun_D_03",
+[136041]="Interface/Addons/GW2_UI/Textures/talents/specIcons/SPELL_NATURE_HEALINGTOUCH",
+[135770]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Deathknight_BloodPresence",
+[135773]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Deathknight_FrostPresence",
+[135775]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Deathknight_UnholyPresence",
+[135810]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Fire_FireBolt02",
+[135846]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Frost_FrostBolt02",
+[135873]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_AuraOfLight",
+[237542]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_GuardianSpirit",
+[135920]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_HolyBolt",
+[135932]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_MagicalSentry",
+[135940]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_PowerWordShield",
+[136048]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_Lightning",
+[136051]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_LightningShield",
+[136052]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_MagicImmunity",
+[136096]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_StarFall",
+[136145]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_DeathCoil",
+[136172]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_Metamorphosis",
+[136186]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_RainOfFire",
+[136207]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_ShadowWordPain",
+}
+
+
 StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
     text = CONFIRM_LEARN_PREVIEW_TALENTS,
     button1 = YES,
@@ -523,7 +558,7 @@ local function updateTalentSummary(self)
 
     local summary = self.summary
 
-    summary.specIcon:SetTexture(icon)
+    summary.specIcon:SetTexture(specIcons[icon])
     if not summary.specIcon.mask then
         local mask = UIParent:CreateMaskTexture()
 
