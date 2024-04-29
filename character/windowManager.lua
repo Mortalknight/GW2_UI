@@ -96,22 +96,24 @@ windowsList[6] = {
     ]=]
 }
 
---[[
-windowsList[7] = {
-    ["OnLoad"] = "LoadPvp",
-    ["SettingName"] = "USE_CHARACTER_WINDOW",
-    ["TabIcon"] = "tabicon-pvp",
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/pvp-window-icon",
-    ["HeaderText"] = PVP,
-    ["TooltipText"] = PVP,
+windowsList[8] = {
+    ["OnLoad"] = "LoadProfessions",
+    ["FrameName"] = "GwProfessionsDetailsFrame",
+    ["SettingName"] = "USE_TALENT_WINDOW",
+    ["RefName"] = "GwProfessionsFrame",
+    ["TabIcon"] = "tabicon_professions",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon",
+    ["HeaderText"] = TRADE_SKILLS,
+    ["TooltipText"] = TRADE_SKILLS,
     ["Bindings"] = {
-        ["TOGGLECHARACTER4"] = "Pvp"
+        ["TOGGLEPROFESSIONBOOK"] = "Professions"
     },
     ["OnClick"] = [=[
-        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "pvp")
+        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "professions")
     ]=]
 }
-]]
+
+
 
 -- turn click events (generated from key bind overrides) into the correct tab show/hide calls
 local charSecure_OnClick = [=[
@@ -152,9 +154,9 @@ local charSecure_OnClick = [=[
     elseif button == "GearSet" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "gearset")
-    elseif button == "Pvp" then
+    elseif button == "Professions" then
         f:SetAttribute("keytoggle", true)
-        f:SetAttribute("windowpanelopen", "pvp")
+        f:SetAttribute("windowpanelopen", "professions")
     end
 ]=]
 
@@ -192,8 +194,8 @@ local charSecure_OnAttributeChanged = [=[
     local showCritter = false
     local fmCurrency = self:GetFrameRef("GwCurrencyDetailsFrame")
     local showCurrency = false
-    local fmPvp = self:GetFrameRef("GwPvpDetailsFrame")
-    local showPvp = false
+    local fmProf = self:GetFrameRef("GwProfessionsFrame")
+    local showProf = false
 
     local hasPetUI = self:GetAttribute("HasPetUI")
 
@@ -224,14 +226,6 @@ local charSecure_OnAttributeChanged = [=[
         else
             showCurrency = true
         end
-    elseif fmPvp ~= nil and value == "pvp" then
-        if keytoggle and fmPvp:IsVisible() then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showPvp = true
-        end
     elseif fmSBM ~= nil and value == "spellbook" then
         if keytoggle and fmSBM:IsVisible() then
             self:SetAttribute("keytoggle", nil)
@@ -247,6 +241,14 @@ local charSecure_OnAttributeChanged = [=[
             return
         else
             showSpell = true
+        end
+    elseif fmProf ~= nil and value == "professions" then
+        if keytoggle and fmProf:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showProf = true
         end
     elseif fmDoll ~= nil and value == "paperdoll" then
         if keytoggle and fmDoll:IsVisible() and (not fmDollSkills:IsVisible() and not fmDollPetCont:IsVisible() and not fmDollTitles:IsVisible() and not fmDollGearSets:IsVisible()) then
@@ -354,11 +356,11 @@ local charSecure_OnAttributeChanged = [=[
             fmCurrency:Hide()
         end
     end
-    if fmPvp then
-        if showPvp and not close then
-            fmPvp:Show()
+    if fmProf then
+        if showProf and not close then
+            fmProf:Show()
         else
-            fmPvp:Hide()
+            fmProf:Hide()
         end
     end
     if fmSBM then

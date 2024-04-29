@@ -181,8 +181,8 @@ character\glyphs.xml
 character\glyphs.lua
 character\currency.xml
 character\currency.lua
-character\pvp.xml
-character\pvp.lua
+character\professions.xml
+character\professions.lua
 character\windowManager.lua
 
 immersive\skins\skins.xml
