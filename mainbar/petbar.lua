@@ -345,6 +345,13 @@ local function LoadPetFrame(lm)
     playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11)
 
+    local mask = UIParent:CreateMaskTexture()
+    mask:SetPoint("CENTER", playerPetFrame.portrait, 'CENTER', 0, 0)
+    mask:SetTexture("Interface/AddOns/GW2_UI/textures/units/petportrait")
+    mask:SetSize(55, 55)
+
+    playerPetFrame.portrait:AddMaskTexture(mask)
+
     TogglePetAuraPosition()
 
     playerPetFrame:SetScript("OnEnter", function(self)
