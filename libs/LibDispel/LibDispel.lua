@@ -1024,8 +1024,6 @@ do
             return
         end
 
-        local undoRanks = (not Retail and GetCVar('ShowAllSpellRanks') ~= '1') and SetCVar('ShowAllSpellRanks', '1')
-
         if event == "UNIT_PET" then
             DispelList.Magic = CheckPetSpells()
         elseif myClass == "DRUID" then
@@ -1073,10 +1071,6 @@ do
             DispelList.Curse = cauterizing
             DispelList.Bleed = cauterizing
         end
-
-        if undoRanks then
-			SetCVar('ShowAllSpellRanks', '0')
-		end
     end
 
     local frame = CreateFrame("Frame")

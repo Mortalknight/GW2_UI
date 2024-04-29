@@ -784,12 +784,6 @@ local function LoadSpellBook()
     CreateFrame('Frame', 'GwSpellbook', GwCharacterWindow, 'GwSpellbook')
     CreateFrame('Frame', 'GwSpellbookMenu', GwSpellbook, 'GwSpellbookMenu')
 
-    GwSpellbook.showAllSpellRanks.checkbutton:SetScript("OnClick", function(self)
-        SetCVar("ShowAllSpellRanks", self:GetChecked())
-        updateSpellbookTab()
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    end)
-
     spellBookMenu_onLoad(GwSpellbookMenu)
     GwSpellbookMenu:RegisterEvent("PLAYER_ENTERING_WORLD")
     GwSpellbook:Hide()
