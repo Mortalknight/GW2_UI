@@ -675,16 +675,10 @@ local function evPlayerLogin(self)
     elseif GetSetting("HEALTHGLOBE_ENABLED") and GetSetting("PLAYER_AS_TARGET_FRAME") then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
-        --if GetSetting("PLAYER_ENERGY_MANA_TICK") then
-        --    GW.load5SR(hg)
-        --end
     end
 
     if GetSetting("POWERBAR_ENABLED") and (GetSetting("PLAYER_AS_TARGET_FRAME") and GetSetting("PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR") or not GetSetting("PLAYER_AS_TARGET_FRAME")) then
         GW.LoadPowerBar()
-        --if GetSetting("PLAYER_ENERGY_MANA_TICK") then
-        --    GW.load5SR()
-        --end
     end
 
     if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
