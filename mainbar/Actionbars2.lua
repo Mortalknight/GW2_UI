@@ -470,10 +470,10 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn.SpellHighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
     end
 
-    btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/actionbutton-pressed")
-    btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+    btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
+    btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     if btn.SetCheckedTexture then
-        btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+        btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     end
     btn.Name:SetAlpha(0) --Hide Marco Name on Actionbutton
 
