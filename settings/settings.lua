@@ -1030,6 +1030,7 @@ local function LoadSettings()
     sWindow:SetClampedToScreen(true)
     tinsert(UISpecialFrames, "GwSettingsWindow")
 
+    mf:SetFrameLevel(sWindow:GetFrameLevel() + 100)
 
     sWindow:SetScript(
         "OnShow",
