@@ -300,8 +300,8 @@ local function UpdateMatchingLayout(self, new_point)
     end
 end
 
-local function smallSettings_resetToDefault(self)
-    local mf = self:GetParent():GetParent().child
+local function smallSettings_resetToDefault(self, _,  moverFrame)
+    local mf = moverFrame and moverFrame or self:GetParent():GetParent().child
 
     mf:ClearAllPoints()
     mf:SetPoint(
@@ -325,7 +325,18 @@ local function smallSettings_resetToDefault(self)
 
     --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
     if mf.setting == "PlayerBuffFrame" or mf.setting == "PlayerDebuffFrame" then
-        SetSetting(mf.setting .. "_GrowDirection", "UP")
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_GrowDirection", "UP", true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_HorizontalSpacing", 1, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_VerticalSpacing", 34, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_MaxWraps", 3, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_MaxWraps", 3, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_ICON_SIZE", 32, true)
+        if mf.setting == "PlayerBuffFrame" then
+            GW.updateSettingsFrameSettingsValue("PLAYER_AURA_WRAP_NUM", 7, true)
+        elseif mf.setting == "PlayerDebuffFrame" then
+            GW.updateSettingsFrameSettingsValue("PLAYER_AURA_WRAP_NUM_DEBUFF", 7, true)
+        end
+        GW.UpdateAuraHeader(mf.parent, mf.setting)
     elseif mf.setting == "MicromenuPos" then
         -- Hide/Show BG here
         mf.parent.cf.bg:Show()
@@ -342,7 +353,9 @@ local function smallSettings_resetToDefault(self)
         mf:SetScale(scale)
         mf.parent:SetScale(scale)
         SetSetting(mf.setting .. "_scale", scale)
-        self:GetParent():GetParent().options.scaleSlider.slider:SetValue(scale)
+        if self then
+            self:GetParent():GetParent().options.scaleSlider.slider:SetValue(scale)
+        end
     end
 
     -- Set height back to default
@@ -351,10 +364,9 @@ local function smallSettings_resetToDefault(self)
         mf:SetHeight(height)
         mf.parent:SetHeight(height)
         SetSetting(mf.setting .. "_height", height)
-        self:GetParent():GetParent().options.heightSlider.slider:SetValue(height)
-
-        -- update also the matching settings
-        GW.UpdateObjectivesSettings()
+        if self then
+            self:GetParent():GetParent().options.heightSlider.slider:SetValue(height)
+        end
     end
 
     if mf.postdrag then
@@ -371,6 +383,7 @@ local function smallSettings_resetToDefault(self)
     GwSmallSettingsContainer.layoutManager:GetScript("OnEvent")(GwSmallSettingsContainer.layoutManager)
     GwSmallSettingsContainer.layoutManager:SetAttribute("inMoveHudMode", true)
 end
+GW.ResetMoverFrameToDefaultValues = smallSettings_resetToDefault
 GW.AddForProfiling("index", "smallSettings_resetToDefault", smallSettings_resetToDefault)
 
 local function lockFrame_OnEnter(self)
@@ -517,9 +530,6 @@ local function heightEditBoxValueChanged(self)
 
     moverFrame.parent:SetHeight(roundValue)
     moverFrame:SetHeight(roundValue)
-
-    -- update also the matching settings
-    GW.UpdateObjectivesSettings()
 end
 
 local function moverframe_OnEnter(self)

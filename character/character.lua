@@ -83,8 +83,9 @@ end
 local function PaperDollUpdateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
     local spec = GW.api.GetSpecialization()
-    local dddd, specName = GW.api.GetSpecializationInfo(spec, nil, nil, nil, GW.mysex)
+    local _, specName = GW.api.GetSpecializationInfo(spec, nil, nil, nil, GW.mysex)
     local color = GWGetClassColor(GW.myclass, true)
+    local classColorString = format("ff%.2x%.2x%.2x", color.r * 255, color.g * 255, color.b * 255);
     GW.SetClassIcon(GwDressingRoom.classIcon, GW.myclass)
 
     GwDressingRoom.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
@@ -92,7 +93,7 @@ local function PaperDollUpdateUnitData()
     if specName then
         GwDressingRoom.characterData:SetText(GUILD_RECRUITMENT_LEVEL .. " " .. GW.mylevel.. " " .. specName .. " " .. GW.myLocalizedClass)
     else
-        GwDressingRoom.characterData:SetFormattedText(PLAYER_LEVEL, GW.mylevel, GW.myLocalizedRace, GW.myLocalizedClass)
+        GwDressingRoom.characterData:SetFormattedText(PLAYER_LEVEL, GW.mylevel, classColorString, GW.myLocalizedRace, GW.myLocalizedClass)
     end
 end
 
@@ -366,22 +367,17 @@ local function PaperDollUpdatePetStats()
     GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. GUILD_RECRUITMENT_LEVEL .. " " .. UnitLevel("pet"))
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
     if isHunterPet then
-        local happiness = GetPetHappiness()
         local currXP, nextXP = GetPetExperience()
 
         GwDressingRoomPet.model.expBar:SetValue(currXP / nextXP)
         GwDressingRoomPet.model.expBar.value:SetText(GW.CommaValue(currXP) .. " / " .. GW.CommaValue(nextXP) .. " - " .. math.floor(currXP / nextXP * 100) .. "%")
-        GwDressingRoomPet.classIcon:SetTexCoord(GW.getSprite(petStateSprite, happiness, 1))
-        GwDressingRoomPet.characterData:SetText(GetPetLoyalty())
-        GwDressingRoomPet.characterData:Show()
+        GwDressingRoomPet.classIcon:Hide()
+        GwDressingRoomPet.characterData:Hide()
         GwDressingRoomPet.itemLevel:Hide()
         GwDressingRoomPet.itemLevelLabel:Hide()
-        GwDressingRoomPet.classIcon:Show()
         GwDressingRoomPet.model.expBar:Show()
         GwDressingRoomPet.model:SetPosition(-2,0,-0.5)
         GwDressingRoomPet.model:SetRotation(-0.15)
-
-        GwDressingRoomPet.happiness:Show()
     else
         GwDressingRoomPet.model.expBar:Hide()
         GwDressingRoomPet.characterData:Hide()

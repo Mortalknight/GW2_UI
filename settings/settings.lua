@@ -425,6 +425,28 @@ local function ShowColorPicker(r, g, b, a, changedCallback)
     ColorPickerFrame:Raise()
 end
 
+local function updateSettingsFrameSettingsValue(setting, value, setSetting)
+    local found = false
+    for _, panel in pairs(GW.getOptionReference()) do
+        for _, of in pairs(panel.options) do
+            if of.optionName == setting then
+                if setSetting then
+                    GW.settings[setting] = value
+                end
+                if of.optionType == "slider" then
+                    of.slider:SetValue(value)
+                    of.inputFrame.input:SetText(tonumber(value))
+                end
+
+                found = true
+                break
+            end
+        end
+        if found then break end
+    end
+end
+GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
+
 local panelUniqueID = 0
 local function InitPanel(panel, hasScroll)
     panelUniqueID = panelUniqueID + 1
