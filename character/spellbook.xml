@@ -182,11 +182,6 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="rank" text="" justifyH="RIGHT" justifyV="BOTTOM">
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
-                    </Anchors>
-                </FontString>
             </Layer>
             <Layer level="HIGHLIGHT">
                 <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
@@ -204,10 +199,6 @@
 
                 PickupSpellBookItem(self.spellbookIndex,self.booktype)
             </OnDragStart>
-            <OnLoad>
-                self.rank:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
-                self.rank:SetTextColor(0.9, 0.9, 0.8, 1)
-            </OnLoad>
         </Scripts>
     </Button>
 
