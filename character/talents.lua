@@ -44,7 +44,7 @@ local function talentBunnton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
 
-    GameTooltip:SetTalent(self.talentFrameId, self.talentid, false, isPetTalents, openSpec, GetCVarBool("previewTalents"))
+    GameTooltip:SetTalent(self.talentFrameId, self.talentid, false, isPetTalents, openSpec, GetCVarBool("previewTalentsOption"))
     self.UpdateTooltip = talentBunnton_OnEnter
 end
 
@@ -68,19 +68,19 @@ local function hookTalentButton(talentButton, container, row, index)
         if button == "LeftButton" and openSpec == activeSpec then
             if IsModifiedClick("CHATLINK") then
                 local link = GetTalentLink(self.talentFrameId, self.talentid, false, isPetTalents, openSpec,
-                    GetCVarBool("previewTalents"))
+                    GetCVarBool("previewTalentsOption"))
                 if link then
                     ChatEdit_InsertLink(link)
                 end
             else
-                if GetCVarBool("previewTalents") then
+                if GetCVarBool("previewTalentsOption") then
                     AddPreviewTalentPoints(self.talentFrameId, self.talentid, 1, isPetTalents, openSpec)
                 else
                     LearnTalent(self.talentFrameId, self.talentid, isPetTalents, openSpec)
                 end
             end
         elseif button == "RightButton" and openSpec == activeSpec then
-            if GetCVarBool("previewTalents") then
+            if GetCVarBool("previewTalentsOption") then
                 AddPreviewTalentPoints(self.talentFrameId, self.talentid, -1, isPetTalents, openSpec)
             end
         end
@@ -268,7 +268,7 @@ local function CleanUpTalentTrees()
 end
 
 local function UpdatePreviewControls()
-    local preview = GetCVarBool("previewTalents")
+    local preview = GetCVarBool("previewTalentsOption")
     local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
 
     if (isPetTalents or openSpec) and talentPoints > 0 and preview then
@@ -336,7 +336,7 @@ local function updateTalentTrees()
             isPetTalents, openSpec)
         --Blizzard  local id, name, description, icon, pointsSpent, background, previewPointsSpent, isUnlocked = GetTalentTabInfo(selectedTab, TalentFrame.inspect, TalentFrame.pet, TalentFrame.talentGroup);
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
-        local preview = GetCVarBool("previewTalents")
+        local preview = GetCVarBool("previewTalentsOption")
 
         TalentFrame.pointsSpent = pointsSpent + previewPointsSpent
 
@@ -355,9 +355,14 @@ local function updateTalentTrees()
         local numTalents = GetNumTalents(f, false, isPetTalents)
         for i = 1, MAX_NUM_TALENTS do
   
-            local name, texture, tier, column, rank, maxRank,meetsPrereq,previewRank,meetsPreviewPrereq,isExceptional, available =
+            local name, texture, tier, column, rank, maxRank,meetsPrereq,previewRank,meetsPreviewPrereq,isExceptional, goldBorder =
                 GetTalentInfo(f, i, false, isPetTalents, openSpec)
             local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
+
+
+            -- copie from blizzard
+            -- Temp hack - For now, we are just ignoring the "goldBorder" flag and putting the gold border on any "exceptional" talents
+			goldBorder = isExceptional
 
             if name and i <= numTalents then
                 TALENT_BRANCH_ARRAY[f][tier][column].id = i
@@ -385,7 +390,6 @@ local function updateTalentTrees()
                     GetTalentPrereqs(f, i, false, isPetTalents, openSpec))
 
                 button.talentID = i
-                button.available = preview and meetsPreviewPrereq or available
                 button.known = (preview and previewRank or rank) == maxRank
 
                 if ispassive then
