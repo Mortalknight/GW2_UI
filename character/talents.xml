@@ -543,7 +543,19 @@
                                 <TexCoords left="0.15625" right="0.4306640625" top="0.025390625" bottom="0.6220703125" />
                             </Texture>
                         </Layer>
-                               <Layer level="BACKGROUND" textureSubLevel="2">
+                        
+                        <Layer level="BACKGROUND" textureSubLevel="2">
+                            <Texture parentKey="backgroundFx" file="Interface\AddOns\GW2_UI\textures\talents\talents_header" alphaMode="ADD">
+                               <Size x="284" y="611"/>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                                </Anchors>
+                                
+                                <TexCoords left="0.15625" right="0.4306640625" top="0.025390625" bottom="0.6220703125" />
+                            </Texture>
+                        </Layer>
+                               <Layer level="BACKGROUND" textureSubLevel="3">
                             <Texture parentKey="backgroundOverlay" file="Interface\AddOns\GW2_UI\textures\character\windowbg-glyphs">
                                <Size x="284" y="611"/>
                                 <Anchors>
@@ -557,7 +569,7 @@
                         </Layer>
 
                         
-                        <Layer level="BACKGROUND" textureSubLevel="3">
+                        <Layer level="BACKGROUND" textureSubLevel="4">
                             <Texture parentkey="specIconBorder" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
                                <Size x="120" y="120"/>
                              
@@ -567,7 +579,7 @@
                              
                             </Texture>
                             </Layer>
-                              <Layer level="BACKGROUND" textureSubLevel="4">
+                              <Layer level="BACKGROUND" textureSubLevel="5">
                             <Texture parentKey="specIcon" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
                                <Size x="100" y="100"/>
                                   <Anchors>
@@ -576,7 +588,7 @@
                                 <TexCoords left="0.05" right="0.95" top="0.05" bottom="0.95" />
                             </Texture>
                         </Layer>
-                           <Layer level="BACKGROUND" textureSubLevel="5">
+                           <Layer level="BACKGROUND" textureSubLevel="6">
                             <Texture parentKey="roleIcon" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
                                <Size x="32" y="32"/>
                                 <Anchors>
@@ -631,19 +643,28 @@
                         <Scripts>
           
             <OnShow>
+            
                 self:SetScript('OnUpdate', function(self, elapsed)
+                    
                     if MouseIsOver(self) then
                          local r = self.backgroundMask:GetWidth()
                         r =  math.min(512,math.max(256,r + 2120 * elapsed))
+                        self.fx =math.max(0,self.fx - (1 *elapsed))
+                      
+                        self.backgroundFx:SetAlpha(self.fx)
   
                         self.backgroundMask:SetSize(r,r)
                         return
                     end
                     self.backgroundMask:SetSize(256,256)
+                    self.backgroundFx:SetAlpha( 0)
+                        self.fx =1;
                 end)
             </OnShow>
             <OnHide>
                 self:SetScript('OnUpdate', nil)
+                 self.backgroundFx:SetAlpha( 0)
+                self.fx = 1;
                 self.backgroundMask:SetSize(256,256)
             </OnHide>
         </Scripts>
