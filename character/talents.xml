@@ -7,14 +7,8 @@
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"/>
         </Anchors>
         <Layers>
-            <Layer level="BACKGROUND">
-                <Texture  file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
-                    <Size x="512" y="32"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
+       
+          
             <Layer level="BORDER">
                 <FontString parentKey="title" text="Passive" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="256" y="32"/>
@@ -85,6 +79,44 @@
                 </FontString>
             </Layer>
         </Layers>
+    </Button>
+
+    <Button name="GwTalentTabButton" registerForClicks="AnyDown" enableMouse="true"  virtual="true">
+        <Size x="64" y="37"/>
+    
+        <Layers>
+            <Layer level="BACKGROUND">
+            <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\button-normal">
+                    <Size x="64" y="64"/>
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+                <Layer level="BACKGROUND" textureSubLevel="2">
+                 <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icons\talent-icon">
+                    <Size x="32" y="32"/>
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"/>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+        <OnEnter>
+            if self.selected then 
+                return
+            end
+            self.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\button-hover")
+        </OnEnter>
+        <OnLeave>
+           if self.selected then 
+                return
+            end
+            self.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
+        </OnLeave>
+        </Scripts>
     </Button>
 
     <Frame name="GwSpellbookMenu" inherits="SecureHandlerAttributeTemplate" virtual="true">
@@ -382,33 +414,71 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg-brushed">
-                    <Size x="853" y="853"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
+
+             <Texture parentKey="glyphBackground" file="Interface\AddOns\GW2_UI\textures\character\windowbg-glyphs">
+              <Size x="853" y="853"></Size>
+              <Color r="1" g="1" b="1" a="1"></Color>
+              <Anchors>
+                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+              </Anchors>
+            </Texture>
+
             </Layer>
         </Layers>
         <Frames>
-            <Frame parentKey="bottomBar">
+          <Frame parentKey="navigation">
+                <Size x="853" y="65"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                </Anchors>
+                <Frames>
+                    <Button parentKey="spec1Button" registerForClicks="AnyDown" text="PRIMARY" enableMouse="true" inherits="GwTalentTabButton">
+                        <Size x="64" y="37"/>
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="0"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="spec2Button" registerForClicks="AnyDown" text="SECONDARY" enableMouse="true" inherits="GwTalentTabButton">
+                         <Size x="64" y="37"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.spec1Button" relativePoint="RIGHT" x="5" y="0"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="petTalentsButton" text="PETS" registerForClicks="AnyDown" enableMouse="true" inherits="GwTalentTabButton">
+                         <Size x="64" y="37"/>
+                        <Anchors>
+                           <Anchor point="LEFT" relativeKey="$parent.spec2Button" relativePoint="RIGHT" x="5" y="0"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
+            </Frame>
+               <Frame parentKey="bottomBarSummary" >
+                <Size x="853" y="65"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                </Anchors>
+                <Frames>
+                     <Button parentKey="viewTalentTrees" text="TALENTS_HIDE_SUMMARIES" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="140" y="22"/>
+                        <Anchors>
+                             <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-15"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
+             </Frame>
+            <Frame parentKey="bottomBar" hidden="true">
                 <Size x="853" y="65"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                    <Texture file="Interface\AddOns\GW2_UI\textures\talents\talents-window-header">
-                        <Size x="1024" y="512"/>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
-                        </Anchors>
-                    </Texture>
+               
                     </Layer>
                     <Layer level="BORDER">
-                        <FontString parentKey="unspentPoints" text="10" justifyH="LEFT" justifyV="MIDDLE">
+                        <FontString parentKey="unspentPoints" text="10" justifyH="RIGHT" justifyV="MIDDLE">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="10" y="-10"/>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" relativeKey="$parent.background" x="-10" y="0"/>
                             </Anchors>
                         </FontString>
                         <FontString parentKey="dualSpecActiveTalentGroupe" text="TALENT_SPECTAB_TOOLTIP_ACTIVE" justifyH="LEFT" justifyV="MIDDLE">
@@ -524,7 +594,7 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="5"/>
                     </Anchors>
                 </Frame>
-                <Frame parentKey="summary" FrameLevel="10" >
+                <Frame parentKey="summary" enableMouse="true" FrameLevel="10" >
                  <Size x="284" y="611"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -596,7 +666,7 @@
                                 </Anchors>
                                 
                             </Texture>
-                            <Texture parentKey="roleIcon2" file=""  hidden="true">
+                            <Texture parentKey="roleIcon2"  hidden="true">
                                <Size x="32" y="32"/>
                                 <Anchors>
                                     <Anchor point="TOPRIGHT" relativeKey="$parent.roleIcon" relativePoint="BOTTOMLEFT" x="10" y="20"/>
@@ -643,12 +713,15 @@
                         <Scripts>
           
             <OnShow>
-            
+       
                 self:SetScript('OnUpdate', function(self, elapsed)
-                    
+                    if self.interactable==nil or self.interactable==false then 
+                        return
+                    end
                     if MouseIsOver(self) then
                          local r = self.backgroundMask:GetWidth()
-                        r =  math.min(512,math.max(256,r + 2120 * elapsed))
+                         local min = self.primaryTree and 512 or 256
+                        r =  math.min(512,math.max(min,r + 2120 * elapsed))
                         self.fx =math.max(0,self.fx - (1 *elapsed))
                       
                         self.backgroundFx:SetAlpha(self.fx)
@@ -656,15 +729,16 @@
                         self.backgroundMask:SetSize(r,r)
                         return
                     end
-                    self.backgroundMask:SetSize(256,256)
+                    local min = self.primaryTree and 512 or 256
+                    self.backgroundMask:SetSize(min,min)
                     self.backgroundFx:SetAlpha( 0)
-                        self.fx =1;
+                    self.fx =1;
                 end)
             </OnShow>
             <OnHide>
                 self:SetScript('OnUpdate', nil)
                  self.backgroundFx:SetAlpha( 0)
-                self.fx = 1;
+                self.fx = 0;
                 self.backgroundMask:SetSize(256,256)
             </OnHide>
         </Scripts>

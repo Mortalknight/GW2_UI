@@ -7,38 +7,40 @@ local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
 local isPetTalents = false
 
-local specIcons =     	{
-    [461112]="Interface/Addons/GW2_UI/Textures/talents/specIcons/ABILITY_HUNTER_BESTIALDISCIPLINE",
-[132090]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_BackStab",
-[461113]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Hunter_Camouflage",
-[236179]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Hunter_FocusedAim",
-[236264]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Paladin_ShieldoftheTemplar",
-[132276]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Racial_BearForm",
-[132292]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Rogue_Eviscerate",
-[132320]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Stealth",
-[132341]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Warrior_DefensiveStance",
-[132347]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Warrior_InnerRage",
-[132355]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Warrior_SavageBlow",
-[1132292]="Interface/Addons/GW2_UI/Textures/talents/specIcons/INV_Knife_1H_ArtifactCthun_D_03",
-[136041]="Interface/Addons/GW2_UI/Textures/talents/specIcons/SPELL_NATURE_HEALINGTOUCH",
-[135770]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Deathknight_BloodPresence",
-[135773]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Deathknight_FrostPresence",
-[135775]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Deathknight_UnholyPresence",
-[135810]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Fire_FireBolt02",
-[135846]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Frost_FrostBolt02",
-[135873]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_AuraOfLight",
-[237542]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_GuardianSpirit",
-[135920]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_HolyBolt",
-[135932]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_MagicalSentry",
-[135940]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_PowerWordShield",
-[136048]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_Lightning",
-[136051]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_LightningShield",
-[136052]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_MagicImmunity",
-[136096]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_StarFall",
-[136145]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_DeathCoil",
-[136172]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_Metamorphosis",
-[136186]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_RainOfFire",
-[136207]="Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_ShadowWordPain",
+
+
+local specIcons = {
+    [461112] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/ABILITY_HUNTER_BESTIALDISCIPLINE",
+    [132090] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_BackStab",
+    [461113] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Hunter_Camouflage",
+    [236179] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Hunter_FocusedAim",
+    [236264] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Paladin_ShieldoftheTemplar",
+    [132276] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Racial_BearForm",
+    [132292] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Rogue_Eviscerate",
+    [132320] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Stealth",
+    [132341] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Warrior_DefensiveStance",
+    [132347] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Warrior_InnerRage",
+    [132355] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Ability_Warrior_SavageBlow",
+    [1132292] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/INV_Knife_1H_ArtifactCthun_D_03",
+    [136041] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/SPELL_NATURE_HEALINGTOUCH",
+    [135770] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Deathknight_BloodPresence",
+    [135773] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Deathknight_FrostPresence",
+    [135775] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Deathknight_UnholyPresence",
+    [135810] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Fire_FireBolt02",
+    [135846] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Frost_FrostBolt02",
+    [135873] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_AuraOfLight",
+    [237542] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_GuardianSpirit",
+    [135920] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_HolyBolt",
+    [135932] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_MagicalSentry",
+    [135940] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Holy_PowerWordShield",
+    [136048] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_Lightning",
+    [136051] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_LightningShield",
+    [136052] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_MagicImmunity",
+    [136096] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Nature_StarFall",
+    [136145] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_DeathCoil",
+    [136172] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_Metamorphosis",
+    [136186] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_RainOfFire",
+    [136207] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/Spell_Shadow_ShadowWordPain",
 }
 
 
@@ -56,6 +58,193 @@ StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
     exclusive = 1,
     preferredIndex = 4
 }
+local function getRoleIcon(role)
+    local path = "Interface\\AddOns\\GW2_UI\\textures\\party\\roleicon-"
+    if (role == "TANK") then
+        return path .. "tank"
+    end
+    if (role == "HEALER") then
+        return path .. "healer"
+    end
+    if (role == "DAMAGER") then
+        return path .. "dps"
+    end
+end
+
+local function getBonusFrame(self, index)
+    if self.bonus == nil then
+        self.bonus = {}
+    end
+    if self.bonus[index] == nil then
+        local x, y = 0, 0
+        y = (index - 1) * -44;
+
+        local f = CreateFrame("Button", nil, self, "GwTalentBonusSpell")
+        f:SetSize(30, 30)
+        f:SetPoint("TOPLEFT", self, "TOPLEFT", x, y)
+        f.outline:SetSize(f:GetWidth() * 1.2, f:GetHeight() * 1.2)
+        local mask = UIParent:CreateMaskTexture()
+        mask:SetPoint("CENTER", f, "CENTER", 0, 0)
+        mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE",
+            "CLAMPTOBLACKADDITIVE")
+        mask:SetSize(f:GetSize())
+
+        f.mask = mask
+        mask:SetParent(f);
+        self.bonus[index] = f;
+
+        return f
+    end
+    return self.bonus[index]
+end
+
+local function setBonusSpell(self, spellID, spellID2, formatString, desaturated)
+    local name, subname, icon = GetSpellInfo(spellID);
+    if (spellID2) then
+        local name2, _, _ = GetSpellInfo(spellID2);
+        if name2 and name then
+            name = name .. "/" .. name2;
+        end
+    end
+
+    if (formatString) then
+        self.name:SetFormattedText(formatString, name);
+    else
+        self.name:SetText(name);
+    end
+
+    self.icon:SetTexture(icon)
+
+    self.icon:SetDesaturated(desaturated)
+
+    self.spellId = spellID
+    self.booktype = "spell"
+    self.isFuture = true
+    self.isFlyout = false
+    self.futureSpellOverrider = true
+    self.requiredLevel = 0
+
+
+    self.lock:Hide()
+    self.arrow:Hide()
+    self.autocast:Hide()
+
+    if ispassive then
+        self.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight')
+        self.icon:AddMaskTexture(self.mask)
+        self.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_outline')
+    else
+        self.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight')
+        self.icon:RemoveMaskTexture(self.mask)
+        self.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
+    end
+    self:SetScript("OnEnter", GW.spellbook.spell_buttonOnEnter)
+    self:SetScript("OnLeave", GameTooltip_Hide)
+    self:Show()
+end
+
+local function updateTalentSummary(self)
+    local activeTalentGroup = GetActiveTalentGroup();
+    local primaryTree = GetPreviewPrimaryTalentTree(false, false, openSpec)
+        or GetPrimaryTalentTree(false, false, openSpec);
+    primaryTree = primaryTree == self.spec or false
+
+
+    local id, name, description, icon, pointsSpent, background, previewPointsSpent, isUnlocked = GetTalentTabInfo(
+        self.spec, false, isPetTalents, openSpec);
+    local role1, role2 = GetTalentTreeRoles(self.spec, false, isPetTalents);
+    local desaturated = false;
+
+    local summary = self.summary
+
+    summary.specIcon:SetTexture(specIcons[icon])
+    if not summary.specIcon.mask then
+        local mask = UIParent:CreateMaskTexture()
+
+        mask:SetPoint("CENTER", summary.specIcon, 'CENTER', 0, 0)
+        mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE",
+            "CLAMPTOBLACKADDITIVE")
+        mask:SetSize(summary.specIcon:GetSize())
+        summary.specIcon:AddMaskTexture(mask);
+        mask:SetParent(summary)
+        summary.specIcon.mask = mask
+
+        --background mask
+        summary.backgroundOverlay:AddMaskTexture(summary.backgroundMask)
+    end
+
+    summary.specName:SetText(name)
+    summary.specDesc:SetText(description)
+
+
+    if (role1 == "TANK" or role1 == "HEALER" or role1 == "DAMAGER") then
+        summary.roleIcon:SetTexture(getRoleIcon(role1))
+    end
+    if (role2 == "TANK" or role2 == "HEALER" or role2 == "DAMAGER") then
+        summary.roleIcon:SetPoint("CENTER", summary.specIcon, "BOTTOMRIGHT", -18, 12)
+        summary.roleIcon2:SetTexture(getRoleIcon(role2))
+        summary.roleIcon2:Show()
+    end
+
+    if (not isPetTalents and ((not isUnlocked and primaryTree) or not (activeTalentGroup == openSpec))) then
+        desaturated = true
+    end
+    summary.primaryTree = primaryTree
+    summary.specIcon:SetDesaturated(desaturated)
+    summary.background:SetDesaturated(desaturated)
+    summary.backgroundFx:SetDesaturated(desaturated)
+    if desaturated == true then
+        summary.interactable = false;
+    else
+        summary.interactable = true;
+    end
+
+    local bonuses = { GetMajorTalentTreeBonuses(self.spec, false, false) };
+    local bonusFrameIndex = 1
+    for i = 1, #bonuses do
+        local bonusFrame = getBonusFrame(summary.spells, bonusFrameIndex)
+
+        if (bonusFrame) then
+            setBonusSpell(bonusFrame, bonuses[i], nil, nil, desaturated)
+        end
+        bonusFrameIndex = bonusFrameIndex + 1
+    end
+    bonuses = { GetMinorTalentTreeBonuses(self.spec, false, false) };
+
+    for i = 1, #bonuses do
+        local bonusFrame = getBonusFrame(summary.spells, bonusFrameIndex)
+
+        if (bonusFrame) then
+            setBonusSpell(bonusFrame, bonuses[i], nil, nil, desaturated)
+        end
+        bonusFrameIndex = bonusFrameIndex + 1
+    end
+    bonuses = { GetTalentTreeEarlySpells(self.spec, false, false) };
+
+    for i = 1, #bonuses do
+        local bonusFrame = getBonusFrame(summary.spells, bonusFrameIndex)
+
+        if (bonusFrame) then
+            setBonusSpell(bonusFrame, bonuses[i], nil, nil, desaturated)
+        end
+        bonusFrameIndex = bonusFrameIndex + 1
+    end
+    local masterySpell, masterySpell2 = GetTalentTreeMasterySpells(self.spec);
+    if (UnitLevel("player") >= SHOW_MASTERY_LEVEL and masterySpell) then
+        local _, class = UnitClass("player");
+        local masteryKnown = IsSpellKnown(CLASS_MASTERY_SPELLS[class]);
+        local bonusFrame = getBonusFrame(summary.spells, bonusFrameIndex)
+
+        if (bonusFrame) then
+            setBonusSpell(bonusFrame, masterySpell, masterySpell2, TALENT_MASTERY_LABEL, desaturated)
+            --Override icon to Mastery icon
+            local _, _, masteryTexture = GetSpellInfo(CLASS_MASTERY_SPELLS[class]);
+            bonusFrame.icon:SetTexture(masteryTexture);
+            bonusFrame.icon:SetDesaturated(desaturateBonuses or not masteryKnown);
+        end
+    end
+end
+
 
 local function UpdateActiveSpec(activeTalentGroup)
     -- set the active spec
@@ -465,6 +654,7 @@ local function updateTalentTrees()
                 end
             end
         end
+        updateTalentSummary(TalentFrame)
     end
     -- Clean up unsuded slots
     for i = 1, GW.api.GetNumSpecializations(isPetTalents) do
@@ -479,165 +669,15 @@ local function updateTalentTrees()
     end
 end
 
-local function getRoleIcon(role)
-    local path = "Interface\\AddOns\\GW2_UI\\textures\\party\\roleicon-"
-    if (role == "TANK") then
-        return path .. "tank"
-    end
-    if (role == "HEALER") then
-        return path .. "healer"
-    end
-    if (role == "DAMAGER") then
-        return path .. "dps"
-    end
-end
-
-local function getBonusFrame(self, index)
-    if  self.bonus==nil then
-        self.bonus = {}
-    end
-    if  self.bonus[index] ==nil then
-        local x,y = 0,0
-        y = (index-1) * -44;
-
-        local f = CreateFrame("Button", nil, self,"GwSpellbookUnknownSpell")
-        f:SetSize(30,30)
-        f:SetPoint("TOPLEFT", self, "TOPLEFT", x, y)
-        f.outline:SetSize(f:GetWidth()*1.2,f:GetHeight()*1.2)
-        local mask = UIParent:CreateMaskTexture()
-        mask:SetPoint("CENTER", f, "CENTER", 0, 0)
-        mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE",
-            "CLAMPTOBLACKADDITIVE")
-        mask:SetSize(f:GetSize())
-
-        f.mask = mask
-        mask:SetParent(f);
-        self.bonus[index] = f;
-      
-        return f
-    end
-    return self.bonus[index]
-end
-
-local function setBonusSpell(self, spellID,spellID2, desaturated)
-    local name, subname, icon = GetSpellInfo(spellID);
-
-    self.icon:SetTexture(icon)
-    self.spellId = spellID
-    self.booktype = "spell"
-    self.isFuture = true
-    self.isFlyout = false
-    self.futureSpellOverrider = true
-    self.requiredLevel = 0
 
 
-    self.lock:Hide()
-    self.arrow:Hide()
-    self.autocast:Hide()
-
-    if ispassive then
-        self.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight')
-        self.icon:AddMaskTexture(self.mask)
-        self.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_outline')
-    else
-        self.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight')
-        self.icon:RemoveMaskTexture(self.mask)
-        self.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
-    end
-    self:SetScript("OnEnter", GW.spellbook.spell_buttonOnEnter)
-    self:SetScript("OnLeave", GameTooltip_Hide)
-    self:Show()
-end
-
-local function updateTalentSummary(self)
-    local activeTalentGroup = GetActiveTalentGroup();
-
-    local id, name, description, icon, pointsSpent, background, previewPointsSpent, isUnlocked = GetTalentTabInfo(
-    self.spec, false, false, activeTalentGroup);
-    local role1, role2 = GetTalentTreeRoles(self.spec, false, false);
-
-    local summary = self.summary
-
-    summary.specIcon:SetTexture(specIcons[icon])
-    if not summary.specIcon.mask then
-        local mask = UIParent:CreateMaskTexture()
-
-        mask:SetPoint("CENTER", summary.specIcon, 'CENTER', 0, 0)
-        mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE",
-            "CLAMPTOBLACKADDITIVE")
-        mask:SetSize(summary.specIcon:GetSize())
-        summary.specIcon:AddMaskTexture(mask);
-        mask:SetParent(summary)
-        summary.specIcon.mask = mask
-
-        --background mask 
-        summary.backgroundOverlay:AddMaskTexture(summary.backgroundMask)
-    end
-
-    summary.specName:SetText(name)
-    summary.specDesc:SetText(description)
-
-
-    if (role1 == "TANK" or role1 == "HEALER" or role1 == "DAMAGER") then
-        summary.roleIcon:SetTexture(getRoleIcon(role1))
-    end
-    if (role2 == "TANK" or role2 == "HEALER" or role2 == "DAMAGER") then
-        summary.roleIcon:SetPoint("CENTER", summary.specIcon, "BOTTOMRIGHT", -18, 12)
-        summary.roleIcon2:SetTexture(getRoleIcon(role2))
-        summary.roleIcon2:Show()
-    end
-
-    local bonuses = { GetMajorTalentTreeBonuses(self.spec, false, false) };
-    local bonusFrameIndex = 1
-    for i = 1, #bonuses do
-        local bonusFrame = getBonusFrame(summary.spells,bonusFrameIndex)
-
-        if (bonusFrame) then
-            setBonusSpell(bonusFrame,bonuses[i],nil, desaturated)
-        end
-        bonusFrameIndex = bonusFrameIndex + 1
-    end
-    bonuses = { GetMinorTalentTreeBonuses(self.spec, false, false) };
-
-    for i = 1, #bonuses do
-        local bonusFrame = getBonusFrame(summary.spells,bonusFrameIndex)
-        
-        if (bonusFrame) then
-            setBonusSpell(bonusFrame,bonuses[i],nil, desaturated)
-        end
-        bonusFrameIndex = bonusFrameIndex + 1
-    end
-    bonuses = { GetTalentTreeEarlySpells(self.spec, false, false) };
-
-    for i = 1, #bonuses do
-        local bonusFrame = getBonusFrame(summary.spells,bonusFrameIndex)
-
-        if (bonusFrame) then
-            setBonusSpell(bonusFrame,bonuses[i],nil, desaturated)
-        end
-        bonusFrameIndex = bonusFrameIndex + 1
-    end
-    local masterySpell, masterySpell2 = GetTalentTreeMasterySpells(self.spec);
-		if (UnitLevel("player") >= SHOW_MASTERY_LEVEL and masterySpell) then
-			local _, class = UnitClass("player");
-			local masteryKnown = IsSpellKnown(CLASS_MASTERY_SPELLS[class]);
-            local bonusFrame = getBonusFrame(summary.spells,bonusFrameIndex)
-
-			if (bonusFrame) then
-				setBonusSpell(bonusFrame,bonuses[i],masterySpell2, desaturated)
-				--Override icon to Mastery icon
-				local _, _, masteryTexture = GetSpellInfo(CLASS_MASTERY_SPELLS[class]);
-				bonusFrame.icon:SetTexture(masteryTexture);
-				bonusFrame.icon:SetDesaturated(desaturateBonuses or not masteryKnown);
-			end
-		end
-end
 
 local function loadTalentsFrames()
     local _, _, classID = UnitClass('player')
     local mask = UIParent:CreateMaskTexture()
 
     mask:SetPoint("TOPLEFT", GwCharacterWindow, 'TOPLEFT', 0, 0)
+    mask:SetParent(GwCharacterWindow)
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE",
         "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
@@ -646,17 +686,21 @@ local function loadTalentsFrames()
         TALENT_BRANCH_ARRAY[i] = {}
         local container = CreateFrame('Button', 'GwLegacyTalentTree' .. i, GwTalentFrame, 'GwLegacyTalentTree')
 
-        container:SetPoint('TOPLEFT', GwTalentFrame, 'TOPLEFT', (284 * (i - 1)) + 5, -92)
+        container:SetPoint('TOPLEFT', GwTalentFrame, 'TOPLEFT', (284 * (i - 1)), -92)
         container.spec = i
 
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
         container.summary.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.summary.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
-        container.summary.backgroundFx:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
+        container.summary.backgroundFx:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' ..
+        classID)
         container.summary.backgroundFx:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
-        
+
         container.background:AddMaskTexture(mask)
+        container.summary.backgroundFx:AddMaskTexture(mask)
+        container.summary.backgroundOverlay:AddMaskTexture(mask)
+        container.summary.background:AddMaskTexture(mask)
         container:HookScript('OnShow', function()
             if InCombatLockdown() then return end
             updateTalentTrees()
@@ -675,7 +719,30 @@ local function loadTalentsFrames()
 
     updateTalentTrees()
 end
-
+local function setNavigation(self)
+    GwTalentFrame.navigation.spec1Button.selected = false
+    GwTalentFrame.navigation.spec2Button.selected = false
+    GwTalentFrame.navigation.petTalentsButton.selected = false
+    GwTalentFrame.navigation.spec1Button.background:SetTexture(
+    "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
+    GwTalentFrame.navigation.spec2Button.background:SetTexture(
+    "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
+    GwTalentFrame.navigation.petTalentsButton.background:SetTexture(
+    "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
+    self.selected = true
+    self.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\button-selected")
+end
+local function toggleSummaryScreen()
+    if _G["GwLegacyTalentTree1"].summary:IsShown() then
+        _G["GwLegacyTalentTree1"].summary:Hide()
+        _G["GwLegacyTalentTree2"].summary:Hide()
+        _G["GwLegacyTalentTree3"].summary:Hide()
+        return
+    end
+    _G["GwLegacyTalentTree1"].summary:Show()
+    _G["GwLegacyTalentTree2"].summary:Show()
+    _G["GwLegacyTalentTree3"].summary:Show()
+end
 local function LoadTalents()
     TalentFrame_LoadUI()
 
@@ -689,6 +756,12 @@ local function LoadTalents()
     updateTalentSummary(_G["GwLegacyTalentTree2"])
     updateTalentSummary(_G["GwLegacyTalentTree3"])
 
+    GwTalentFrame.navigation.petTalentsButton.icon:SetTexture(
+    "Interface\\AddOns\\GW2_UI\\textures\\character\\tabicon_pet")
+    GwTalentFrame.navigation.petTalentsButton.icon:SetTexCoord(0.6796875, 0.96875, 0.046875, 0.625)
+
+    GwTalentFrame.bottomBarSummary.viewTalentTrees:SetScript("OnClick", toggleSummaryScreen)
+
     GwTalentFrame.bottomBar.prevCancel:SetScript("OnClick", function()
         ResetGroupPreviewTalentPoints(isPetTalents, openSpec)
         updateTalentTrees()
@@ -698,17 +771,20 @@ local function LoadTalents()
         updateTalentTrees()
     end)
 
-    GwTalentFrame.bottomBar.spec1Button:SetScript("OnClick", function()
+    GwTalentFrame.navigation.spec1Button:SetScript("OnClick", function(self)
+        setNavigation(self)
         openSpec = 1
         isPetTalents = false
         updateTalentTrees()
     end)
-    GwTalentFrame.bottomBar.spec2Button:SetScript("OnClick", function()
+    GwTalentFrame.navigation.spec2Button:SetScript("OnClick", function(self)
+        setNavigation(self)
         openSpec = 2
         isPetTalents = false
         updateTalentTrees()
     end)
-    GwTalentFrame.bottomBar.petTalentsButton:SetScript("OnClick", function()
+    GwTalentFrame.navigation.petTalentsButton:SetScript("OnClick", function(self)
+        setNavigation(self)
         openSpec = 1
         isPetTalents = not isPetTalents
         CleanUpTalentTrees()

@@ -140,7 +140,7 @@
             </OnLoad>
         </Scripts>
     </ScrollFrame>
-
+    
     <Button name="GwSpellbookUnknownSpell" enableMouse="true"  virtual="true">
         <Size x="40" y="40"/>
         <Layers>
@@ -200,6 +200,25 @@
                 PickupSpellBookItem(self.spellbookIndex,self.booktype)
             </OnDragStart>
         </Scripts>
+    </Button>
+
+    <Button name="GwTalentBonusSpell" inherits="GwSpellbookUnknownSpell" virtual="true">
+     <Size x="200" y="40"/>
+        <Layers>
+            <Layer level="BORDER">
+                  <FontString parentKey="name" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
+                   <Size x="200" y="40"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.icon" relativePoint="RIGHT" x="10" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+            </Layers>
+            <Scripts>
+                <OnLoad>
+                    self.name:SetFont(UNIT_NAME_FONT,14,"OUTLINE")
+                </OnLoad>
+            </Scripts>
     </Button>
 
     <Frame name="GwUnknownSpellCat" virtual="true">
