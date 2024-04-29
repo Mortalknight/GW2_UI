@@ -524,12 +524,142 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="5"/>
                     </Anchors>
                 </Frame>
+                <Frame parentKey="summary" FrameLevel="10" >
+                 <Size x="284" y="611"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                    </Anchors>
+                    <Layers>
+                  
+                        <Layer level="BACKGROUND" textureSubLevel="1">
+                            <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
+                               <Size x="284" y="611"/>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                                </Anchors>
+                                
+                                <TexCoords left="0.15625" right="0.4306640625" top="0.025390625" bottom="0.6220703125" />
+                            </Texture>
+                        </Layer>
+                               <Layer level="BACKGROUND" textureSubLevel="2">
+                            <Texture parentKey="backgroundOverlay" file="Interface\AddOns\GW2_UI\textures\character\windowbg-glyphs">
+                               <Size x="284" y="611"/>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                                </Anchors>
+                                <TexCoords left="0" right="0.27734375" top="0" bottom="0.5966796875" />
+                                 
+                                
+                            </Texture>
+                        </Layer>
+
+                        
+                        <Layer level="BACKGROUND" textureSubLevel="3">
+                            <Texture parentkey="specIconBorder" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                               <Size x="120" y="120"/>
+                             
+                                    <Anchors>
+                                    <Anchor point="CENTER" relativePoint="TOP" x="0" y="-120"/>
+                                </Anchors>
+                             
+                            </Texture>
+                            </Layer>
+                              <Layer level="BACKGROUND" textureSubLevel="4">
+                            <Texture parentKey="specIcon" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
+                               <Size x="100" y="100"/>
+                                  <Anchors>
+                                    <Anchor point="CENTER" relativeKey="$parent.specIconBorder" relativePoint="CENTER" x="0" y="0"/>
+                                </Anchors>
+                                <TexCoords left="0.05" right="0.95" top="0.05" bottom="0.95" />
+                            </Texture>
+                        </Layer>
+                           <Layer level="BACKGROUND" textureSubLevel="5">
+                            <Texture parentKey="roleIcon" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
+                               <Size x="32" y="32"/>
+                                <Anchors>
+                                    <Anchor point="CENTER" relativeKey="$parent.specIcon" relativePoint="BOTTOMRIGHT" x="-26" y="10"/>
+                                </Anchors>
+                                
+                            </Texture>
+                            <Texture parentKey="roleIcon2" file=""  hidden="true">
+                               <Size x="32" y="32"/>
+                                <Anchors>
+                                    <Anchor point="TOPRIGHT" relativeKey="$parent.roleIcon" relativePoint="BOTTOMLEFT" x="10" y="20"/>
+                                </Anchors>
+                                
+                            </Texture>
+                        </Layer>
+                               <Layer>
+                        <MaskTexture parentKey="backgroundMask" file="Interface\AddOns\GW2_UI\textures\talents\summarymask" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
+                            <Size x="256" y="256"/>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.specIcon" relativePoint="CENTER" x="0" y="0"></Anchor>
+                             
+                            </Anchors>
+                        </MaskTexture>
+                    </Layer>
+                            <Layer level="BORDER" >
+                       
+                            <FontString parentKey="specName" text="20" justifyH="CENTER" justifyV="MIDDLE">
+                                <Size x="50" y="80"/>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="10"/>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-10"/>
+                                </Anchors>
+                            </FontString>
+                             <FontString parentKey="specDesc" text="12" justifyH="CENTER" justifyV="TOP">
+                                <Size x="264" y="80"/>
+                                <Anchors>
+                                    <Anchor point="TOP" relativeKey="$parent.specIcon" relativePoint="BOTTOM" x="0" y="-20"/>
+                              
+                                </Anchors>
+                            </FontString>
+                        </Layer>
+                
+                    </Layers>
+                    <Frames>
+                        <Frame parentKey="spells">
+                          <Size x="264" y="120"/>
+                            <Anchors>
+                                <Anchor point="TOP" relativeKey="$parent.specDesc" relativePoint="BOTTOM" x="0" y="0"/>
+                            </Anchors>
+                        </Frame> 
+                    </Frames>
+                        <Scripts>
+          
+            <OnShow>
+                self:SetScript('OnUpdate', function(self, elapsed)
+                    if MouseIsOver(self) then
+                         local r = self.backgroundMask:GetWidth()
+                        r =  math.min(512,math.max(256,r + 2120 * elapsed))
+  
+                        self.backgroundMask:SetSize(r,r)
+                        return
+                    end
+                    self.backgroundMask:SetSize(256,256)
+                end)
+            </OnShow>
+            <OnHide>
+                self:SetScript('OnUpdate', nil)
+                self.backgroundMask:SetSize(256,256)
+            </OnHide>
+        </Scripts>
+                </Frame>
         </Frames>
         <Scripts>
             <OnLoad>
                 self.info.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
                 self.info.points:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
                 self.info.points:SetTextColor(0.87, 0.74, 0.29, 1)
+
+                self.summary.specName:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINE")
+                self.summary.specName:SetTextColor(1,1,1,1)
+                
+                self.summary.specDesc:SetFont(DAMAGE_TEXT_FONT, 14,"OUTLINE")
+                self.summary.specDesc:SetTextColor(1,1,1,1)
             </OnLoad>
             <OnShow>
                 self:SetScript('OnUpdate', function(self, elapsed)
