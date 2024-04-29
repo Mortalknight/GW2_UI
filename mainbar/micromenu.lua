@@ -438,40 +438,14 @@ local function setupMicroButtons(mbf)
     CollectionsMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- PVPMicroButton
-    local pvpref
-    if GetSetting("USE_CHARACTER_WINDOW") then
-        pvpref = CreateFrame("Button", "GwPvpMicroButton", mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
-        pvpref.tooltipText = MicroButtonTooltipText(PLAYER_V_PLAYER, "TOGGLECHARACTER4")
-        pvpref.newbieText = NEWBIE_TOOLTIP_PVP
-        reskinMicroButton(pvpref, "PvpMicroButton", mbf)
-        pvpref:ClearAllPoints()
-        pvpref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+    PVPMicroButton:ClearAllPoints()
+    PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+    PVPMicroButtonTexture:SetAlpha(0)
 
-        pvpref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-        pvpref:SetAttribute(
-            "_onclick",
-            [=[
-            local f = self:GetFrameRef("GwCharacterWindow")
-            f:SetAttribute("keytoggle", "1")
-            f:SetAttribute("windowpanelopen", "pvp")
-            ]=]
-        )
-
-        --disableMicroButton(PVPMicroButton, true)
-        PVPMicroButton:ClearAllPoints()
-        PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-        PVPMicroButton:SetAlpha(0)
-        PVPMicroButton:EnableMouse(false)
-    else
-        pvpref = PVPMicroButton
-        pvpref:ClearAllPoints()
-        pvpref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-        PVPMicroButtonTexture:SetAlpha(0)
-    end
 
     -- LFGMicroButton
     LFGMicroButton:ClearAllPoints()
-    LFGMicroButton:SetPoint("BOTTOMLEFT", pvpref, "BOTTOMRIGHT", 4, 0)
+    LFGMicroButton:SetPoint("BOTTOMLEFT", PVPMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- EJMicroButton
     EJMicroButton:ClearAllPoints()
