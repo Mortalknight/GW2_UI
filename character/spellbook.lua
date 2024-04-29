@@ -1,5 +1,6 @@
 local _, GW = ...
 local L = GW.L
+GW.spellbook = {}
 
 local function SpellButton_OnModifiedClick(self)
     local slot = self.spellbookIndex
@@ -57,6 +58,7 @@ local function spell_buttonOnEnter(self)
     end
     GameTooltip:Show()
 end
+GW.spellbook.spell_buttonOnEnter = spell_buttonOnEnter;
 
 local function spellbookButton_onEvent(self)
     if not GwSpellbook:IsShown() or not self.cooldown or not self.spellId then return end
