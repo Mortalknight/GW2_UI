@@ -141,6 +141,8 @@ local function powerCombo(self, event, ...)
 end
 
 local function setComboBar(f)
+    f:ClearAllPoints()
+    f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
     f.barType = "combo"
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
@@ -149,8 +151,8 @@ local function setComboBar(f)
 
     f:SetScript("OnEvent", powerCombo)
     powerCombo(f, "CLASS_POWER_INIT")
-    f:RegisterEvent("UNIT_MAXPOWER")
-    f:RegisterEvent("UNIT_POWER_UPDATE")
+    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
 
 local function powerMana(self, event, ...)
@@ -172,6 +174,14 @@ local function powerMana(self, event, ...)
     end
 end
 
+local function powerLittleMana(self, event, ...)
+    local ptype = select(2, ...)
+    if event == "CLASS_POWER_INIT" or ptype == "MANA" then
+        UpdatePowerData(self:GetParent().lmb, 0, "MANA")
+    end
+end
+GW.AddForProfiling("classpowers", "powerLittleMana", powerLittleMana)
+
 local function setManaBar(f)
     f.barType = "mana"
     f.background:SetTexture(nil)
@@ -180,7 +190,7 @@ local function setManaBar(f)
     f:SetHeight(14)
 
     f:ClearAllPoints()
-    if GW.settings.XPBAR_ENABLED or (f.isMoved and not CPF_HOOKED_TO_TARGETFRAME) then
+    if GW.GetSetting("XPBAR_ENABLED") or (f.isMoved and not CPF_HOOKED_TO_TARGETFRAME) then
         f:SetPoint("TOPLEFT", f.gwMover, 0, -13)
     else
         f:SetPoint("TOPLEFT", f.gwMover, 0, -3)
@@ -192,6 +202,17 @@ local function setManaBar(f)
     C_Timer.After(0.5, function() powerMana(f, "CLASS_POWER_INIT") end)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+end
+
+local function setLittleManaBar(f, barType)
+    f.barType = barType -- used in druid feral form and evoker ebon might bar
+    f.lmb:Show()
+    f.lmb.decay:Show()
+
+    f.littleManaBarEventFrame:SetScript("OnEvent", powerLittleMana)
+    powerLittleMana(f.littleManaBarEventFrame, "CLASS_POWER_INIT")
+    f.littleManaBarEventFrame:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f.littleManaBarEventFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
 
 -- ROGUE
@@ -421,18 +442,22 @@ local function setDruid(f)
     if form == CAT_FORM then -- cat
         barType = "combo|little_mana"
     elseif form == BEAR_FORM or form == 8 then --bear
-        barType = "little_mana"
+        barType = "mana"
     end
 
     if barType == "combo|little_mana" then
         setComboBar(f)
         if f.ourPowerBar then
-            setManaBar(f)
+            print("SET")
+            setLittleManaBar(f)
         end
         return true
     elseif barType == "little_mana" and f.ourPowerBar then
-        setManaBar(f)
+        setLittleManaBar(f)
         return false
+    elseif barType == "mana" then
+        setManaBar(f)
+        return true
     else
         f.barType = "none"
         return false
@@ -695,6 +720,8 @@ local function LoadClassPowers()
     cpf.unit = "player"
 
     cpf.gwPlayerForm = GetShapeshiftFormID()
+
+    cpf.ourPowerBar = GW.GetSetting("POWERBAR_ENABLED")
 
     updateVisibilitySetting(cpf, false)
     selectType(cpf)

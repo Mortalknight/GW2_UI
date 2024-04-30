@@ -344,6 +344,7 @@
                     </StatusBar>
                 </Frames>
             </Frame>
+            <Frame parentKey="littleManaBarEventFrame" hidden="true"/>
         </Frames>
     </Frame>
 
