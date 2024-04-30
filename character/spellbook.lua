@@ -37,13 +37,11 @@ local function spell_buttonOnEnter(self)
     if self.booktype == "pet" then isPet = true end
 
     if IsSpellKnown(self.spellId, isPet) and self.futureSpellOverrider == nil then
-        if not self.isFlyout then
-            GameTooltip:SetSpellBookItem(self.spellbookIndex, self.booktype)
-        else
-            local name, desc = GetFlyoutInfo(self.spellId)
-            GameTooltip:AddLine(name)
-            GameTooltip:AddLine(desc)
-        end
+         GameTooltip:SetSpellBookItem(self.spellbookIndex, self.booktype)
+    elseif self.isFlyout then
+        local name, desc = GetFlyoutInfo(self.spellId)
+        GameTooltip:AddLine(name)
+        GameTooltip:AddLine(desc)
     else
         GameTooltip:SetSpellByID(self.spellId)
         GameTooltip:AddLine(' ')
@@ -167,6 +165,8 @@ local function setButtonStyle(ispassive, spellID, skillType, icon, spellbookInde
         btn:SetAttribute("spell", spellID)
         btn:SetAttribute("flyout", spellID)
         btn:SetAttribute("flyoutDirection", 'RIGHT')
+        btn:SetAttribute("shift-type1", "modifiedClick")
+        btn:SetAttribute("shift-type2", "modifiedClick")
     elseif not btn.isFuture and booktype == BOOKTYPE_PET then
         btn:SetAttribute("type1", "spell")
         btn:SetAttribute("type2", "macro")
@@ -367,7 +367,7 @@ local function updateSpellbookTab()
 
         for i = 1, numSpells do
             local spellIndex = i + offset
-            local skillType = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
+            local skillType, flyoutId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
             local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
             local nameSpell, _, spellID = GetSpellBookItemName(spellIndex, BOOKTYPE)
             local ispassive = IsPassiveSpell(spellID)
@@ -381,7 +381,7 @@ local function updateSpellbookTab()
                     needNewHeader = false
                 end
 
-                local mainButton = setButtonStyle(ispassive, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, nameSpell, requiredLevel)
+                local mainButton = setButtonStyle(ispassive, spellID or flyoutId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, nameSpell, requiredLevel)
                 mainButton.modifiedClick = SpellButton_OnModifiedClick
                 if not ispassive then GW.RegisterCooldown(mainButton.cooldown) end
                 spellButtonIndex = spellButtonIndex + 1
