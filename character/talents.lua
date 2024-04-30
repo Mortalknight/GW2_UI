@@ -2,6 +2,7 @@ local _, GW = ...
 -- Default 8 but none uses 8 talent rows in classic
 local MAX_NUM_TALENT_TIERS = 8
 local TALENT_BRANCH_ARRAY = {}
+local TALENT_TOP_PADDING = 20
 
 local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
@@ -58,6 +59,69 @@ StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
     exclusive = 1,
     preferredIndex = 4
 }
+local function UpdatePreviewControls()
+    if _G["GwLegacyTalentTree1"].summary:IsShown() then
+        GwTalentFrame.bottomBar.prevLearn:Hide()
+        GwTalentFrame.bottomBar.prevCancel:Hide()
+        return
+    end
+
+    local preview = GetCVarBool("previewTalentsOption")
+    local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
+    local primaryTree = GetPreviewPrimaryTalentTree(false, false, openSpec)
+    if (isPetTalents or openSpec) and preview and activeSpec==openSpec then
+        GwTalentFrame.bottomBar.prevLearn:Show()
+        GwTalentFrame.bottomBar.prevCancel:Show()
+        -- enable accept/cancel buttons if preview talent points were spent
+        if GetGroupPreviewTalentPointsSpent(isPetTalents, openSpec) > 0 or primaryTree then
+            GwTalentFrame.bottomBar.prevLearn:Enable();
+            GwTalentFrame.bottomBar.prevCancel:Enable();
+        else
+            GwTalentFrame.bottomBar.prevLearn:Disable();
+            GwTalentFrame.bottomBar.prevCancel:Disable();
+        end
+    else
+        GwTalentFrame.bottomBar.prevLearn:Hide()
+        GwTalentFrame.bottomBar.prevCancel:Hide()
+    end
+end
+
+local function toggleSummaryScreen(self,button,buttonstate,forceState)
+
+    if forceState==nil then 
+        forceState =  not _G["GwLegacyTalentTree1"].summary:IsShown() 
+    end
+
+    if forceState then
+        GwTalentFrame.bottomBarSummary:Show()
+        GwTalentFrame.bottomBar:Hide()
+        _G["GwLegacyTalentTree1"].summary:Show()
+        _G["GwLegacyTalentTree2"].summary:Show()
+        _G["GwLegacyTalentTree3"].summary:Show()
+        UpdatePreviewControls()
+        return
+    end
+    GwTalentFrame.bottomBar:Show()
+    GwTalentFrame.bottomBarSummary:Hide()
+    _G["GwLegacyTalentTree1"].summary:Hide()
+    _G["GwLegacyTalentTree2"].summary:Hide()
+    _G["GwLegacyTalentTree3"].summary:Hide()
+
+    UpdatePreviewControls()
+
+    if isPetTalents then
+        GwTalentFrame.navigation.spec1Button:GetScript("OnClick")(GwTalentFrame.navigation.spec1Button)
+    end
+end
+local function selectSpecButton(self) 
+    if (GetCVarBool("previewTalentsOption")) then
+        SetPreviewPrimaryTalentTree(self:GetParent().spec,  GetActiveTalentGroup());
+    else
+        SetPrimaryTalentTree(self:GetParent().spec);
+    end
+    GW.updateTalentTrees()
+end
+
 local function getRoleIcon(role)
     local path = "Interface\\AddOns\\GW2_UI\\textures\\party\\roleicon-"
     if (role == "TANK") then
@@ -147,8 +211,8 @@ local function updateTalentSummary(self)
     local activeTalentGroup = GetActiveTalentGroup();
     local primaryTree = GetPreviewPrimaryTalentTree(false, false, openSpec)
         or GetPrimaryTalentTree(false, false, openSpec);
-    primaryTree = primaryTree == self.spec or false
 
+    self.summary.isPrimaryTree = (primaryTree and primaryTree == self.spec) and true or false
 
     local id, name, description, icon, pointsSpent, background, previewPointsSpent, isUnlocked = GetTalentTabInfo(
         self.spec, false, isPetTalents, openSpec);
@@ -186,17 +250,20 @@ local function updateTalentSummary(self)
         summary.roleIcon2:Show()
     end
 
-    if (not isPetTalents and ((not isUnlocked and primaryTree) or not (activeTalentGroup == openSpec))) then
+
+    if ((primaryTree and self.spec ~= primaryTree) or (openSpec ~= activeTalentGroup) or GetNumTalentPoints() == 0) then
         desaturated = true
     end
-    summary.primaryTree = primaryTree
+
     summary.specIcon:SetDesaturated(desaturated)
     summary.background:SetDesaturated(desaturated)
     summary.backgroundFx:SetDesaturated(desaturated)
-    if desaturated == true then
-        summary.interactable = false;
-    else
+    if (not primaryTree and GetNumTalentPoints() > 0) and activeSpec == openSpec then -- WIP if we can select a spec this should be interactable
         summary.interactable = true;
+        summary:SetScript("OnClick",selectSpecButton)
+    else
+        summary.interactable = false;
+        summary:SetScript("OnClick",nil)
     end
 
     local bonuses = { GetMajorTalentTreeBonuses(self.spec, false, false) };
@@ -243,6 +310,11 @@ local function updateTalentSummary(self)
             bonusFrame.icon:SetDesaturated(desaturateBonuses or not masteryKnown);
         end
     end
+    if primaryTree then 
+        toggleSummaryScreen(nil,nil,nil,false)
+    else 
+        toggleSummaryScreen(nil,nil,nil,true)
+    end 
 end
 
 
@@ -281,7 +353,7 @@ local function hookTalentButton(talentButton, container, row, index)
     local rowSize = h / MAX_NUM_TALENT_TIERS
 
     local x = (w / NUM_TALENT_COLUMNS) * (index - 1) + columnSize / 2
-    local y = (h / MAX_NUM_TALENT_TIERS) * (row - 1) + rowSize / 2
+    local y = (h / MAX_NUM_TALENT_TIERS) * (row - 1) + rowSize / 2 + TALENT_TOP_PADDING
 
     talentButton:RegisterForClicks("AnyUp")
     talentButton:ClearAllPoints();
@@ -391,7 +463,7 @@ local function drawLegacyLine(path, frame, teir, column, requirementsMet)
 
 
         local x = (columnSize * (cCol - 1) + columnSize / 2)
-        local y = (rowSize * (cTeir - 1) + rowSize / 2)
+        local y = (rowSize * (cTeir - 1) + rowSize / 2) + TALENT_TOP_PADDING
 
         arrow:SetPoint("CENTER", _G["GwLegacyTalentTree" .. frame].treeContainer, "TOPLEFT", x, -y);
         colorTalentArrow(arrow, requirementsMet)
@@ -492,32 +564,7 @@ local function CleanUpTalentTrees()
     end
 end
 
-local function UpdatePreviewControls()
-    if _G["GwLegacyTalentTree1"].summary:IsShown() then
-        GwTalentFrame.bottomBarSummary.prevLearn:Hide()
-        GwTalentFrame.bottomBarSummary.prevCancel:Hide()
-        return
-    end
 
-    local preview = GetCVarBool("previewTalentsOption")
-    local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
-
-    if (isPetTalents or openSpec) and talentPoints > 0 and preview then
-        GwTalentFrame.bottomBarSummary.prevLearn:Show()
-        GwTalentFrame.bottomBarSummary.prevCancel:Show()
-        -- enable accept/cancel buttons if preview talent points were spent
-        if GetGroupPreviewTalentPointsSpent(isPetTalents, openSpec) > 0 then
-            GwTalentFrame.bottomBarSummary.prevLearn:Enable();
-            GwTalentFrame.bottomBarSummary.prevCancel:Enable();
-        else
-            GwTalentFrame.bottomBarSummary.prevLearn:Disable();
-            GwTalentFrame.bottomBarSummary.prevCancel:Disable();
-        end
-    else
-        GwTalentFrame.bottomBarSummary.prevLearn:Hide()
-        GwTalentFrame.bottomBarSummary.prevCancel:Hide()
-    end
-end
 
 local function updateTalentTrees()
     if InCombatLockdown() then return end
@@ -532,27 +579,23 @@ local function updateTalentTrees()
     UpdateActiveSpec(activeTalentGroup)
 
     if isPetTalents then
-        GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:Hide()
-        GwTalentFrame.bottomBar.activateSpecGroup:Hide()
+
+        GwTalentFrame.navigation.activateSpecGroup:Hide()
     elseif hasDualSpec then
         GwTalentFrame.navigation.spec1Button:Show()
         GwTalentFrame.navigation.spec2Button:Show()
         GwTalentFrame.navigation.spec1Button:SetEnabled(openSpec == 2 or isPetTalents)
         GwTalentFrame.navigation.spec2Button:SetEnabled(openSpec == 1 or isPetTalents)
-
-        GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:SetShown(openSpec == activeTalentGroup)
-        GwTalentFrame.bottomBar.activateSpecGroup:SetShown(openSpec ~= activeTalentGroup)
+        GwTalentFrame.navigation.activateSpecGroup:SetShown(openSpec ~= activeTalentGroup)
     else
         GwTalentFrame.navigation.spec1Button:Show()
         GwTalentFrame.navigation.spec2Button:Hide()
-
-        GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:Hide()
-        GwTalentFrame.bottomBar.activateSpecGroup:Hide()
+        GwTalentFrame.navigation.activateSpecGroup:Hide()
     end
 
     GwTalentFrame.navigation.petTalentsButton:SetShown(hasPetTalents)
 
-    GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints())
+    GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints().." |TInterface/AddOns/GW2_UI/textures/icons/talent-icon: 24, 24, 0, 0, 0.1875, 0.828125 , 0.1875, 0.828125 |t ")
 
     for f = 1, GW.api.GetNumSpecializations(isPetTalents) do
         local forceDesaturated
@@ -668,6 +711,7 @@ local function updateTalentTrees()
         end
     end
 end
+GW.updateTalentTrees = updateTalentTrees -- HACK fix 
 
 
 
@@ -694,7 +738,7 @@ local function loadTalentsFrames()
         container.summary.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.summary.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
         container.summary.backgroundFx:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' ..
-        classID)
+            classID)
         container.summary.backgroundFx:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
 
         container.background:AddMaskTexture(mask)
@@ -724,41 +768,21 @@ local function setNavigation(self)
     GwTalentFrame.navigation.spec2Button.selected = false
     GwTalentFrame.navigation.petTalentsButton.selected = false
     GwTalentFrame.navigation.spec1Button.background:SetTexture(
-    "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
+        "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
     GwTalentFrame.navigation.spec2Button.background:SetTexture(
-    "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
+        "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
     GwTalentFrame.navigation.petTalentsButton.background:SetTexture(
-    "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
+        "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
     self.selected = true
     self.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\button-selected")
 end
-local function toggleSummaryScreen(self)
-    if _G["GwLegacyTalentTree1"].summary:IsShown() then
-        _G["GwLegacyTalentTree1"].summary:Hide()
-        _G["GwLegacyTalentTree2"].summary:Hide()
-        _G["GwLegacyTalentTree3"].summary:Hide()
-        self:SetText(TALENTS_SHOW_SUMMARIES)
 
-        UpdatePreviewControls()
-        return
-    end
-    _G["GwLegacyTalentTree1"].summary:Show()
-    _G["GwLegacyTalentTree2"].summary:Show()
-    _G["GwLegacyTalentTree3"].summary:Show()
-    self:SetText(TALENTS_HIDE_SUMMARIES)
-
-    UpdatePreviewControls()
-
-    if isPetTalents then
-        GwTalentFrame.navigation.spec1Button:GetScript("OnClick")(GwTalentFrame.navigation.spec1Button)
-    end
-end
 local function LoadTalents()
     TalentFrame_LoadUI()
 
     CreateFrame('Frame', 'GwTalentFrame', GwCharacterWindow, 'GwLegacyTalentFrame')
 
-    GwTalentFrame.bottomBar.activateSpecGroup:SetWidth(GwTalentFrame.bottomBar.activateSpecGroup:GetTextWidth() + 40)
+    GwTalentFrame.navigation.activateSpecGroup:SetWidth(GwTalentFrame.navigation.activateSpecGroup:GetTextWidth() + 40)
 
     loadTalentsFrames()
 
@@ -767,49 +791,51 @@ local function LoadTalents()
     updateTalentSummary(_G["GwLegacyTalentTree3"])
 
     GwTalentFrame.navigation.petTalentsButton.icon:SetTexture(
-    "Interface\\AddOns\\GW2_UI\\textures\\character\\tabicon_pet")
+        "Interface\\AddOns\\GW2_UI\\textures\\character\\tabicon_pet")
     GwTalentFrame.navigation.petTalentsButton.icon:SetTexCoord(0.6796875, 0.96875, 0.046875, 0.625)
 
     GwTalentFrame.bottomBarSummary.viewTalentTrees:SetScript("OnClick", toggleSummaryScreen)
+    GwTalentFrame.bottomBar.viewSummary:SetScript("OnClick", toggleSummaryScreen)
+    
 
-    GwTalentFrame.bottomBarSummary.prevCancel:SetScript("OnClick", function()
+    GwTalentFrame.bottomBar.prevCancel:SetScript("OnClick", function()
         ResetGroupPreviewTalentPoints(isPetTalents, openSpec)
         updateTalentTrees()
     end)
-    GwTalentFrame.bottomBarSummary.prevLearn:SetScript("OnClick", function()
+    GwTalentFrame.bottomBar.prevLearn:SetScript("OnClick", function()
         StaticPopup_Show("GW_CONFIRM_LEARN_PREVIEW_TALENTS")
         updateTalentTrees()
     end)
 
     GwTalentFrame.navigation.spec1Button:SetScript("OnClick", function(self)
         setNavigation(self)
-        openSpec = 1
-        isPetTalents = false
-        PlayerTalentFrame.pet = false
-        PlayerTalentFrame.talentGroup  = 1
+        openSpec                      = 1
+        isPetTalents                  = false
+        PlayerTalentFrame.pet         = false
+        PlayerTalentFrame.talentGroup = 1
         CleanUpTalentTrees()
         updateTalentTrees()
     end)
     GwTalentFrame.navigation.spec2Button:SetScript("OnClick", function(self)
         setNavigation(self)
-        openSpec = 2
-        isPetTalents = false
-        PlayerTalentFrame.pet = false
-        PlayerTalentFrame.talentGroup  = 2
+        openSpec                      = 2
+        isPetTalents                  = false
+        PlayerTalentFrame.pet         = false
+        PlayerTalentFrame.talentGroup = 2
         CleanUpTalentTrees()
         updateTalentTrees()
     end)
     GwTalentFrame.navigation.petTalentsButton:SetScript("OnClick", function(self)
         if _G["GwLegacyTalentTree1"].summary:IsShown() then return end
         setNavigation(self)
-        openSpec = 1
-        isPetTalents = not isPetTalents
-        PlayerTalentFrame.pet = isPetTalents
-        PlayerTalentFrame.talentGroup  = 1
+        openSpec                      = 1
+        isPetTalents                  = not isPetTalents
+        PlayerTalentFrame.pet         = isPetTalents
+        PlayerTalentFrame.talentGroup = 1
         CleanUpTalentTrees()
         updateTalentTrees()
     end)
-    GwTalentFrame.bottomBar.activateSpecGroup:SetScript("OnClick", function()
+    GwTalentFrame.navigation.activateSpecGroup:SetScript("OnClick", function()
         if openSpec then
             SetActiveTalentGroup(openSpec)
             updateTalentTrees()
@@ -822,7 +848,6 @@ local function LoadTalents()
         GwTalentFrame.navigation.spec2Button:GetScript("OnClick")(GwTalentFrame.navigation.spec2Button)
     end
 
-    GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:SetTextColor(63 / 255, 205 / 255, 75 / 255)
 
     GwTalentFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
     GwTalentFrame:RegisterEvent("PET_TALENT_UPDATE")
@@ -832,12 +857,12 @@ local function LoadTalents()
     GwTalentFrame:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED")
     GwTalentFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
     GwTalentFrame:SetScript('OnEvent', function(self, event)
-        GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
+        GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player").." |TInterface/AddOns/GW2_UI/textures/icons/talent-icon: 24, 24, 0, 0, 0.1875, 0.828125 , 0.1875, 0.828125 |t ")
 
         if event == "LEARNED_SPELL_IN_TAB" then
-            updateTalentSummary("GwLegacyTalentTree1")
-            updateTalentSummary("GwLegacyTalentTree2")
-            updateTalentSummary("GwLegacyTalentTree3")
+            updateTalentSummary(_G["GwLegacyTalentTree1"])
+            updateTalentSummary(_G["GwLegacyTalentTree2"])
+            updateTalentSummary(_G["GwLegacyTalentTree3"])
             return
         end
 
@@ -857,7 +882,7 @@ local function LoadTalents()
         GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
     end)
     GwTalentFrame:Hide()
-
+    PlayerTalentFrame:Show() --debug
     return GwTalentFrame
 end
 GW.LoadTalents = LoadTalents

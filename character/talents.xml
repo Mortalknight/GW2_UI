@@ -423,7 +423,7 @@
         </Layers>
         <Frames>
             <Frame parentKey="navigation">
-                <Size x="853" y="65"/>
+                <Size x="853" y="92"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                 </Anchors>
@@ -446,10 +446,16 @@
                             <Anchor point="LEFT" relativeKey="$parent.spec2Button" relativePoint="RIGHT" x="5" y="0"/>
                         </Anchors>
                     </Button>
+                       <Button parentKey="activateSpecGroup" text="TALENT_SPEC_ACTIVATE" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="80" y="22"/>
+                        <Anchors>
+                              <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-10" y="5"/>
+                        </Anchors>
+                    </Button>
                 </Frames>
             </Frame>
             <Frame parentKey="bottomBarSummary">
-                <Size x="853" y="65"/>
+                      <Size x="853" y="92"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                 </Anchors>
@@ -460,24 +466,13 @@
                             <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-15"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="prevLearn" hidden="true" text="LEARN" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
-                        <Size x="100" y="20"/>
-                        <Anchors>
-                            <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
-                        </Anchors>
-                    </Button>
-                    <Button parentKey="prevCancel" hidden="true" text="RESET" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
-                        <Size x="100" y="20"/>
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent.prevLearn" relativePoint="LEFT" x="0" y="0"/>
-                        </Anchors>
-                    </Button>
+           
 
 
                 </Frames>
             </Frame>
             <Frame parentKey="bottomBar" hidden="true">
-                <Size x="853" y="65"/>
+                <Size x="853" y="92"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                 </Anchors>
@@ -490,36 +485,26 @@
                                 <Anchor point="RIGHT" relativePoint="RIGHT" relativeKey="$parent.background" x="-10" y="0"/>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="dualSpecActiveTalentGroupe" text="TALENT_SPECTAB_TOOLTIP_ACTIVE" justifyH="LEFT" justifyV="MIDDLE">
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-13"/>
-                            </Anchors>
-                        </FontString>
+                      
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Button parentKey="spec1Button" registerForClicks="AnyDown" text="PRIMARY" enableMouse="true" inherits="GwStandardButton">
-                        <Size x="130" y="16"/>
-                        <Anchors>
-                            <Anchor point="CENTER" relativePoint="CENTER" x="-70" y="13"/>
-                        </Anchors>
-                    </Button>
-                    <Button parentKey="spec2Button" registerForClicks="AnyDown" text="SECONDARY" enableMouse="true" inherits="GwStandardButton">
-                        <Size x="130" y="16"/>
-                        <Anchors>
-                            <Anchor point="CENTER" relativePoint="CENTER" x="70" y="13"/>
-                        </Anchors>
-                    </Button>
-                    <Button parentKey="petTalentsButton" text="PETS" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
-                        <Size x="74" y="16"/>
-                        <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-5"/>
-                        </Anchors>
-                    </Button>
-                    <Button parentKey="activateSpecGroup" text="TALENT_SPEC_ACTIVATE" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
-                        <Size x="80" y="22"/>
+                 <Button parentKey="viewSummary" text="TALENTS_SHOW_SUMMARIES" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="140" y="22"/>
                         <Anchors>
                             <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-15"/>
+                        </Anchors>
+                    </Button>
+                     <Button parentKey="prevLearn" hidden="true" text="LEARN" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="100" y="20"/>
+                        <Anchors>
+                           <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-120" y="5"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="prevCancel" hidden="true" text="RESET" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="100" y="20"/>
+                        <Anchors>
+                               <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="-10" y="5"/>
                         </Anchors>
                     </Button>
                 </Frames>
@@ -529,9 +514,6 @@
             <OnLoad>
                 self.bottomBar.unspentPoints:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
                 self.bottomBar.unspentPoints:SetTextColor(0.87, 0.74, 0.29, 1)
-
-                self.bottomBar.dualSpecActiveTalentGroupe:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
-                self.bottomBar.dualSpecActiveTalentGroupe:SetTextColor(0.85, 0.70, 0.29, 1)
 
                 self:RegisterEvent("UNIT_MODEL_CHANGED")
                 self:RegisterEvent("UNIT_LEVEL")
@@ -565,11 +547,19 @@
             <Frame parentKey="info">
                 <Size x="284" y="32"/>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="32"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                 </Anchors>
                 <Layers>
-                    <Layer level="BACKGROUND"/>
-                    <Layer level="BORDER">
+                    <Layer level="BACKGROUND" >
+                    <Texture parentKey="headerbg" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
+                        <Size x="512" y="32"/>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                        </Anchors>
+                    </Texture>
+                    </Layer>
+                    <Layer level="BORDER" textureSubLevel="2">
                         <FontString parentKey="title" text="" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="10"/>
@@ -591,7 +581,7 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="5"/>
                 </Anchors>
             </Frame>
-            <Frame parentKey="summary" enableMouse="true" FrameLevel="10">
+            <Button parentKey="summary" enableMouse="true" registerForClicks="AnyDown" FrameLevel="10">
                 <Size x="284" y="611"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -694,12 +684,13 @@
                 <Scripts>
                     <OnShow>
                         self:SetScript('OnUpdate', function(self, elapsed)
-                            if self.interactable==nil or self.interactable==false then 
-                                return
-                            end
-                            if MouseIsOver(self) then
+                           
+                            local min =  256
+                            if self.isPrimaryTree then
+                                min = 512
+                            end 
+                            if self.interactable==true and MouseIsOver(self) then
                                 local r = self.backgroundMask:GetWidth()
-                                local min = self.primaryTree and 512 or 256
                                 r =  math.min(512,math.max(min,r + 2120 * elapsed))
                                 self.fx =math.max(0, (self.fx or 0) - (1 * elapsed))
                             
@@ -708,9 +699,9 @@
                                 self.backgroundMask:SetSize(r,r)
                                 return
                             end
-                            local min = self.primaryTree and 512 or 256
+                            
                             self.backgroundMask:SetSize(min,min)
-                            self.backgroundFx:SetAlpha( 0)
+                            self.backgroundFx:SetAlpha(0)
                             self.fx =1;
                         end)
                     </OnShow>
@@ -721,7 +712,7 @@
                         self.backgroundMask:SetSize(256,256)
                     </OnHide>
                 </Scripts>
-            </Frame>
+            </Button>
         </Frames>
         <Scripts>
             <OnLoad>
