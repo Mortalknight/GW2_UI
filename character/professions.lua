@@ -1,6 +1,5 @@
 local _, GW = ...
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
-local TalProfButton_OnModifiedClick = GW.TalProfButton_OnModifiedClick
 
 local profs = {
     ["185"] = {["tag"] = "cook", ["icon"] = 133971, ["atlas"] = "gather", ["idx"] = 6},
@@ -18,6 +17,32 @@ local profs = {
     ["186"] = {["tag"] = "mine", ["atlas"] = "gather", ["idx"] = 3},
     ["393"] = {["tag"] = "skin", ["atlas"] = "gather", ["idx"] = 1}
 }
+
+local function TalProfButton_OnModifiedClick(self)
+    local slot = self.spellbookIndex
+    local book = self.booktype
+    if IsModifiedClick("CHATLINK") then
+        if MacroFrameText and MacroFrameText:HasFocus() then
+            local spell, subSpell = GetSpellBookItemName(slot, book)
+            if spell and not IsPassiveSpell(slot, book) then
+                if subSpell and strlen(subSpell) > 0 then
+                    ChatEdit_InsertLink(spell .. "(" .. subSpell .. ")")
+                else
+                    ChatEdit_InsertLink(spell)
+                end
+            end
+        else
+            local profLink, profId = GetSpellTradeSkillLink(slot, book)
+            if profId then
+                ChatEdit_InsertLink(profLink)
+            else
+                ChatEdit_InsertLink(GetSpellLink(slot, book))
+            end
+        end
+    elseif IsModifiedClick("PICKUPACTION") and not InCombatLockdown() and not IsPassiveSpell(slot, book) then
+        PickupSpellBookItem(slot, book)
+    end
+end
 
 local function profButton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
@@ -46,7 +71,7 @@ local function updateButton(self, spellIdx, unlearn)
         self.icon:SetTexture(tex)
         self.name:SetText(name)
         self.modifiedClick = TalProfButton_OnModifiedClick
-        self:RegisterForClicks("AnyUp", "AnyDown")
+        self:RegisterForClicks("AnyDown")
         self:SetAttribute("type1", "spell")
         self:SetAttribute("type2", "spell")
         self:SetAttribute("shift-type1", "modifiedClick")
