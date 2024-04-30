@@ -460,6 +460,20 @@
                             <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-15"/>
                         </Anchors>
                     </Button>
+                    <Button parentKey="prevLearn" hidden="true" text="LEARN" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="100" y="20"/>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="prevCancel" hidden="true" text="RESET" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="100" y="20"/>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.prevLearn" relativePoint="LEFT" x="0" y="0"/>
+                        </Anchors>
+                    </Button>
+
+
                 </Frames>
             </Frame>
             <Frame parentKey="bottomBar" hidden="true">
@@ -484,18 +498,6 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Button parentKey="prevLearn" hidden="true" text="LEARN" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
-                        <Size x="100" y="20"/>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.unspentPoints" relativePoint="BOTTOMLEFT" x="0" y="-5"/>
-                        </Anchors>
-                    </Button>
-                    <Button parentKey="prevCancel" hidden="true" text="RESET" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
-                        <Size x="100" y="20"/>
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent.prevLearn" relativePoint="RIGHT" x="10" y="0"/>
-                        </Anchors>
-                    </Button>
                     <Button parentKey="spec1Button" registerForClicks="AnyDown" text="PRIMARY" enableMouse="true" inherits="GwStandardButton">
                         <Size x="130" y="16"/>
                         <Anchors>

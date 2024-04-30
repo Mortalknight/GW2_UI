@@ -493,23 +493,29 @@ local function CleanUpTalentTrees()
 end
 
 local function UpdatePreviewControls()
+    if _G["GwLegacyTalentTree1"].summary:IsShown() then
+        GwTalentFrame.bottomBarSummary.prevLearn:Hide()
+        GwTalentFrame.bottomBarSummary.prevCancel:Hide()
+        return
+    end
+
     local preview = GetCVarBool("previewTalentsOption")
     local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
 
     if (isPetTalents or openSpec) and talentPoints > 0 and preview then
-        GwTalentFrame.bottomBar.prevLearn:Show()
-        GwTalentFrame.bottomBar.prevCancel:Show()
+        GwTalentFrame.bottomBarSummary.prevLearn:Show()
+        GwTalentFrame.bottomBarSummary.prevCancel:Show()
         -- enable accept/cancel buttons if preview talent points were spent
         if GetGroupPreviewTalentPointsSpent(isPetTalents, openSpec) > 0 then
-            GwTalentFrame.bottomBar.prevLearn:Enable();
-            GwTalentFrame.bottomBar.prevCancel:Enable();
+            GwTalentFrame.bottomBarSummary.prevLearn:Enable();
+            GwTalentFrame.bottomBarSummary.prevCancel:Enable();
         else
-            GwTalentFrame.bottomBar.prevLearn:Disable();
-            GwTalentFrame.bottomBar.prevCancel:Disable();
+            GwTalentFrame.bottomBarSummary.prevLearn:Disable();
+            GwTalentFrame.bottomBarSummary.prevCancel:Disable();
         end
     else
-        GwTalentFrame.bottomBar.prevLearn:Hide()
-        GwTalentFrame.bottomBar.prevCancel:Hide()
+        GwTalentFrame.bottomBarSummary.prevLearn:Hide()
+        GwTalentFrame.bottomBarSummary.prevCancel:Hide()
     end
 end
 
@@ -526,31 +532,25 @@ local function updateTalentTrees()
     UpdateActiveSpec(activeTalentGroup)
 
     if isPetTalents then
-        GwTalentFrame.bottomBar.spec1Button:Hide()
-        GwTalentFrame.bottomBar.spec2Button:Hide()
-
         GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:Hide()
         GwTalentFrame.bottomBar.activateSpecGroup:Hide()
     elseif hasDualSpec then
-        GwTalentFrame.bottomBar.spec1Button:Show()
-        GwTalentFrame.bottomBar.spec2Button:Show()
-        GwTalentFrame.bottomBar.spec1Button:SetEnabled(openSpec == 2 or isPetTalents)
-        GwTalentFrame.bottomBar.spec2Button:SetEnabled(openSpec == 1 or isPetTalents)
+        GwTalentFrame.navigation.spec1Button:Show()
+        GwTalentFrame.navigation.spec2Button:Show()
+        GwTalentFrame.navigation.spec1Button:SetEnabled(openSpec == 2 or isPetTalents)
+        GwTalentFrame.navigation.spec2Button:SetEnabled(openSpec == 1 or isPetTalents)
 
         GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:SetShown(openSpec == activeTalentGroup)
         GwTalentFrame.bottomBar.activateSpecGroup:SetShown(openSpec ~= activeTalentGroup)
     else
-        GwTalentFrame.bottomBar.spec1Button:Hide()
-        GwTalentFrame.bottomBar.spec2Button:Hide()
+        GwTalentFrame.navigation.spec1Button:Show()
+        GwTalentFrame.navigation.spec2Button:Hide()
 
         GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:Hide()
         GwTalentFrame.bottomBar.activateSpecGroup:Hide()
     end
 
-    if hasPetTalents then
-        GwTalentFrame.bottomBar.petTalentsButton:SetText(isPetTalents and PLAYER or PETS)
-    end
-    GwTalentFrame.bottomBar.petTalentsButton:SetShown(hasPetTalents)
+    GwTalentFrame.navigation.petTalentsButton:SetShown(hasPetTalents)
 
     GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints())
 
@@ -738,12 +738,20 @@ local function toggleSummaryScreen(self)
         _G["GwLegacyTalentTree2"].summary:Hide()
         _G["GwLegacyTalentTree3"].summary:Hide()
         self:SetText(TALENTS_SHOW_SUMMARIES)
+
+        UpdatePreviewControls()
         return
     end
     _G["GwLegacyTalentTree1"].summary:Show()
     _G["GwLegacyTalentTree2"].summary:Show()
     _G["GwLegacyTalentTree3"].summary:Show()
     self:SetText(TALENTS_HIDE_SUMMARIES)
+
+    UpdatePreviewControls()
+
+    if isPetTalents then
+        GwTalentFrame.navigation.spec1Button:GetScript("OnClick")(GwTalentFrame.navigation.spec1Button)
+    end
 end
 local function LoadTalents()
     TalentFrame_LoadUI()
@@ -764,11 +772,11 @@ local function LoadTalents()
 
     GwTalentFrame.bottomBarSummary.viewTalentTrees:SetScript("OnClick", toggleSummaryScreen)
 
-    GwTalentFrame.bottomBar.prevCancel:SetScript("OnClick", function()
+    GwTalentFrame.bottomBarSummary.prevCancel:SetScript("OnClick", function()
         ResetGroupPreviewTalentPoints(isPetTalents, openSpec)
         updateTalentTrees()
     end)
-    GwTalentFrame.bottomBar.prevLearn:SetScript("OnClick", function()
+    GwTalentFrame.bottomBarSummary.prevLearn:SetScript("OnClick", function()
         StaticPopup_Show("GW_CONFIRM_LEARN_PREVIEW_TALENTS")
         updateTalentTrees()
     end)
@@ -807,6 +815,12 @@ local function LoadTalents()
             updateTalentTrees()
         end
     end)
+
+    if activeSpec == 1 then
+        GwTalentFrame.navigation.spec1Button:GetScript("OnClick")(GwTalentFrame.navigation.spec1Button)
+    elseif activeSpec == 2 then
+        GwTalentFrame.navigation.spec2Button:GetScript("OnClick")(GwTalentFrame.navigation.spec2Button)
+    end
 
     GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:SetTextColor(63 / 255, 205 / 255, 75 / 255)
 
