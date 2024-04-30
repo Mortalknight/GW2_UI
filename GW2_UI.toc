@@ -175,7 +175,6 @@ character\spellbook.lua
 character\spellbook.xml
 character\talents.lua
 character\talents.xml
-character\glyphData.lua
 character\glyphs.xml
 character\glyphs.lua
 character\currency.xml

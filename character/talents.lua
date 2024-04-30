@@ -732,16 +732,18 @@ local function setNavigation(self)
     self.selected = true
     self.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\button-selected")
 end
-local function toggleSummaryScreen()
+local function toggleSummaryScreen(self)
     if _G["GwLegacyTalentTree1"].summary:IsShown() then
         _G["GwLegacyTalentTree1"].summary:Hide()
         _G["GwLegacyTalentTree2"].summary:Hide()
         _G["GwLegacyTalentTree3"].summary:Hide()
+        self:SetText(TALENTS_SHOW_SUMMARIES)
         return
     end
     _G["GwLegacyTalentTree1"].summary:Show()
     _G["GwLegacyTalentTree2"].summary:Show()
     _G["GwLegacyTalentTree3"].summary:Show()
+    self:SetText(TALENTS_HIDE_SUMMARIES)
 end
 local function LoadTalents()
     TalentFrame_LoadUI()
@@ -775,18 +777,27 @@ local function LoadTalents()
         setNavigation(self)
         openSpec = 1
         isPetTalents = false
+        PlayerTalentFrame.pet = false
+        PlayerTalentFrame.talentGroup  = 1
+        CleanUpTalentTrees()
         updateTalentTrees()
     end)
     GwTalentFrame.navigation.spec2Button:SetScript("OnClick", function(self)
         setNavigation(self)
         openSpec = 2
         isPetTalents = false
+        PlayerTalentFrame.pet = false
+        PlayerTalentFrame.talentGroup  = 2
+        CleanUpTalentTrees()
         updateTalentTrees()
     end)
     GwTalentFrame.navigation.petTalentsButton:SetScript("OnClick", function(self)
+        if _G["GwLegacyTalentTree1"].summary:IsShown() then return end
         setNavigation(self)
         openSpec = 1
         isPetTalents = not isPetTalents
+        PlayerTalentFrame.pet = isPetTalents
+        PlayerTalentFrame.talentGroup  = 1
         CleanUpTalentTrees()
         updateTalentTrees()
     end)
