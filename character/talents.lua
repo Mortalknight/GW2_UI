@@ -129,7 +129,7 @@ local function setBonusSpell(self, spellID, spellID2, formatString, desaturated)
     self.arrow:Hide()
     self.autocast:Hide()
 
-    if ispassive then
+    if IsPassiveSpell(spellID) then
         self.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight')
         self.icon:AddMaskTexture(self.mask)
         self.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_outline')

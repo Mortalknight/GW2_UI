@@ -722,7 +722,7 @@
                          local r = self.backgroundMask:GetWidth()
                          local min = self.primaryTree and 512 or 256
                         r =  math.min(512,math.max(min,r + 2120 * elapsed))
-                        self.fx =math.max(0,self.fx - (1 *elapsed))
+                        self.fx =math.max(0, (self.fx or 1) - (1 *elapsed))
                       
                         self.backgroundFx:SetAlpha(self.fx)
   
