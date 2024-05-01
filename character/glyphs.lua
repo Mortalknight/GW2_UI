@@ -77,7 +77,10 @@ local function takeOverBlizzardsGlypheFrame()
     TalentFrame_LoadUI()
     GlyphFrame_LoadUI()
 
-    local glyphesFrame = CreateFrame("Frame", "GwGlyphesFrame", GwCharacterWindow, "GwCharacterTabContainer")
+    --Error message
+
+ 
+    local glyphesFrame = CreateFrame("Frame", "GwGlyphesFrame", GwCharacterWindow, "GwGlyphTempContainer")
     hooksecurefunc("GlyphFrame_OnEvent", function(self, event, ...)
         if ( event == "ADDON_LOADED" ) then
             local name = ...
@@ -91,6 +94,11 @@ local function takeOverBlizzardsGlypheFrame()
             updateGlyphListFrame()
         end
     end)
+
+    glyphesFrame.notice:SetFont(UNIT_NAME_FONT,12)
+
+    glyphesFrame.notice:SetText("Notice: You might encounter an error message when attempting to apply a glyph. This is because Blizzard has not re-implemented some of their glyph API functions. You can simply ignore this message and try again.")
+
 
     GlyphFrame_OnEvent(GlyphFrame, "ADDON_LOADED", "Blizzard_GlyphUI")
     GlyphFrame:Show()
