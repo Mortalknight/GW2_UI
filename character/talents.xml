@@ -542,6 +542,17 @@
                     <TexCoords left="0.15625" right="0.4306640625" top="0.025390625" bottom="0.6220703125" />
                 </Texture>
             </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="2">
+                <Texture parentKey="backgroundFx" file="Interface\AddOns\GW2_UI\textures\talents\talents_header" >
+                    <Size x="284" y="611"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="0"/>
+                      
+                    </Anchors>
+                    <Color r="1" g="1" b="1" a="0.5"></Color>
+                    <TexCoords left="0.15625" right="0.4306640625" top="0.025390625" bottom="0.6220703125" />
+                </Texture>
+            </Layer>
         </Layers>
         <Frames>
             <Frame parentKey="info">
@@ -730,11 +741,15 @@
                 self:SetScript('OnUpdate', function(self, elapsed)
                     if MouseIsOver(self) then
                         local r, g, b, a = self.background:GetVertexColor()
+                        local r2, g2, b2, a2 = self.backgroundFx:GetVertexColor()
                         r = math.min(0.8, r + (1 * elapsed))
+                        r2 = math.min(1, r2 + (1 * elapsed))
                         self.background:SetVertexColor(r, r, r, r)
+                        self.backgroundFx:SetVertexColor(r2, r2, r2, r2)
                         return
                     end
                     self.background:SetVertexColor(0.7, 0.7, 0.7, 0.5)
+                    self.backgroundFx:SetVertexColor(1,1,1, 0.5)
                 end)
             </OnShow>
             <OnHide>

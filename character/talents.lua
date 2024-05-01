@@ -1,6 +1,9 @@
 local _, GW = ...
+local AddToAnimation = GW.AddToAnimation
+local animations = GW.animations
+local lerp = GW.lerp
 -- Default 8 but none uses 8 talent rows in classic
-local MAX_NUM_TALENT_TIERS = 8
+local MAX_NUM__VISUAL_TALENT_TIERS = 8
 local TALENT_BRANCH_ARRAY = {}
 local TALENT_TOP_PADDING = 20
 
@@ -69,7 +72,7 @@ local function UpdatePreviewControls()
     local preview = GetCVarBool("previewTalentsOption")
     local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
     local primaryTree = GetPreviewPrimaryTalentTree(false, false, openSpec)
-    if (isPetTalents or openSpec) and preview and activeSpec==openSpec then
+    if (isPetTalents or openSpec) and preview and activeSpec == openSpec then
         GwTalentFrame.bottomBar.prevLearn:Show()
         GwTalentFrame.bottomBar.prevCancel:Show()
         -- enable accept/cancel buttons if preview talent points were spent
@@ -86,10 +89,9 @@ local function UpdatePreviewControls()
     end
 end
 
-local function toggleSummaryScreen(self,button,buttonstate,forceState)
-
-    if forceState==nil then 
-        forceState =  not _G["GwLegacyTalentTree1"].summary:IsShown() 
+local function toggleSummaryScreen(self, button, buttonstate, forceState)
+    if forceState == nil then
+        forceState = not _G["GwLegacyTalentTree1"].summary:IsShown()
     end
 
     if forceState then
@@ -110,12 +112,12 @@ local function toggleSummaryScreen(self,button,buttonstate,forceState)
     UpdatePreviewControls()
 
     if isPetTalents then
-        GwTalentFrame.navigation.spec1Button:GetScript("OnClick")(GwTalentFrame.navigation.spec1Button)
+   --     GwTalentFrame.navigation.spec1Button:GetScript("OnClick")(GwTalentFrame.navigation.spec1Button)
     end
 end
-local function selectSpecButton(self) 
+local function selectSpecButton(self)
     if (GetCVarBool("previewTalentsOption")) then
-        SetPreviewPrimaryTalentTree(self:GetParent().spec,  GetActiveTalentGroup());
+        SetPreviewPrimaryTalentTree(self:GetParent().spec, GetActiveTalentGroup());
     else
         SetPrimaryTalentTree(self:GetParent().spec);
     end
@@ -260,10 +262,10 @@ local function updateTalentSummary(self)
     summary.backgroundFx:SetDesaturated(desaturated)
     if (not primaryTree and GetNumTalentPoints() > 0) and activeSpec == openSpec then -- WIP if we can select a spec this should be interactable
         summary.interactable = true;
-        summary:SetScript("OnClick",selectSpecButton)
+        summary:SetScript("OnClick", selectSpecButton)
     else
         summary.interactable = false;
-        summary:SetScript("OnClick",nil)
+        summary:SetScript("OnClick", nil)
     end
 
     local bonuses = { GetMajorTalentTreeBonuses(self.spec, false, false) };
@@ -310,11 +312,11 @@ local function updateTalentSummary(self)
             bonusFrame.icon:SetDesaturated(desaturateBonuses or not masteryKnown);
         end
     end
-    if primaryTree then 
-        toggleSummaryScreen(nil,nil,nil,false)
-    else 
-        toggleSummaryScreen(nil,nil,nil,true)
-    end 
+    if primaryTree then
+        toggleSummaryScreen(nil, nil, nil, false)
+    else
+        toggleSummaryScreen(nil, nil, nil, true)
+    end
 end
 
 
@@ -345,15 +347,48 @@ local function talentBunnton_OnEnter(self)
     self.UpdateTooltip = talentBunnton_OnEnter
 end
 
+local function setBackgroundFxHeight(self, height,shouldBeHidden)
+    if shouldBeHidden or height<1 then
+        self.backgroundFx:Hide()
+        return 
+    end
+    self.backgroundFx:Show()
+    local maxHeight = self:GetHeight()
+    if self.fxHeight == nil then
+        self.fxHeight = self.backgroundFx:GetHeight()
+        self.fxOldHeight = self.fxHeight;
+        return
+    end
+
+    if self.fxHeight == nil or self.fxHeight > height then
+        self.backgroundFx:SetHeight(height)
+        self.backgroundFx:SetTexCoord(self.bgCoords.l,self.bgCoords.r,self.bgCoords.t,self.bgCoords.b*(height/maxHeight))
+        self.fxHeight = height
+        self.fxOldHeight = self.fxHeight;
+        return
+    end
+    local oldHeight = self.fxOldHeight
+    AddToAnimation(self:GetName(), 0, 1, GetTime(), 0.2,
+        function()
+            local p = animations[self:GetName()].progress
+            local height = lerp(oldHeight, height, p)
+            self.backgroundFx:SetHeight(height)
+            self.backgroundFx:SetTexCoord(self.bgCoords.l,self.bgCoords.r,self.bgCoords.t,self.bgCoords.b*(height/maxHeight))
+            self.fxOldHeight = height
+            self.fxHeight = height
+        end
+    )
+end
+
 local function hookTalentButton(talentButton, container, row, index)
     local w = container:GetWidth()
     local h = container:GetHeight()
 
     local columnSize = w / NUM_TALENT_COLUMNS
-    local rowSize = h / MAX_NUM_TALENT_TIERS
+    local rowSize = h / MAX_NUM__VISUAL_TALENT_TIERS
 
     local x = (w / NUM_TALENT_COLUMNS) * (index - 1) + columnSize / 2
-    local y = (h / MAX_NUM_TALENT_TIERS) * (row - 1) + rowSize / 2 + TALENT_TOP_PADDING
+    local y = (h / MAX_NUM__VISUAL_TALENT_TIERS) * (row - 1) + rowSize / 2 + TALENT_TOP_PADDING
 
     talentButton:RegisterForClicks("AnyUp")
     talentButton:ClearAllPoints();
@@ -429,7 +464,7 @@ local function drawLegacyLine(path, frame, teir, column, requirementsMet)
 
     for i = 1, #path do
         local columnSize = w / NUM_TALENT_COLUMNS
-        local rowSize = h / MAX_NUM_TALENT_TIERS
+        local rowSize = h / MAX_NUM__VISUAL_TALENT_TIERS
 
         local rowOffset = 0
         local columnOffset = 0
@@ -579,7 +614,6 @@ local function updateTalentTrees()
     UpdateActiveSpec(activeTalentGroup)
 
     if isPetTalents then
-
         GwTalentFrame.navigation.activateSpecGroup:Hide()
     elseif hasDualSpec then
         GwTalentFrame.navigation.spec1Button:Show()
@@ -595,26 +629,66 @@ local function updateTalentTrees()
 
     GwTalentFrame.navigation.petTalentsButton:SetShown(hasPetTalents)
 
-    GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints().." |TInterface/AddOns/GW2_UI/textures/icons/talent-icon: 24, 24, 0, 0, 0.1875, 0.828125 , 0.1875, 0.828125 |t ")
+    GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS,
+        UpdateTalentPoints() ..
+        " |TInterface/AddOns/GW2_UI/textures/icons/talent-icon: 24, 24, 0, 0, 0.1875, 0.828125 , 0.1875, 0.828125 |t ")
 
     for f = 1, GW.api.GetNumSpecializations(isPetTalents) do
         local forceDesaturated
         local talentPoints = UpdateTalentPoints()
-        local id, name, description, icon, pointsSpent, background, previewPointsSpent = GetTalentTabInfo(f, false,
+        local activeTalentGroup = GetActiveTalentGroup();
+        local primaryTree = GetPreviewPrimaryTalentTree(false, false, openSpec)
+            or GetPrimaryTalentTree(false, false, openSpec);
+        local id, name, description, icon, pointsSpent, background, previewPointsSpent, isUnlocked = GetTalentTabInfo(f,
+            false,
             isPetTalents, openSpec)
         --Blizzard  local id, name, description, icon, pointsSpent, background, previewPointsSpent, isUnlocked = GetTalentTabInfo(selectedTab, TalentFrame.inspect, TalentFrame.pet, TalentFrame.talentGroup);
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
         local preview = GetCVarBool("previewTalentsOption")
 
+
+        
+
+
+
+
         TalentFrame.pointsSpent = pointsSpent + previewPointsSpent
 
-        if pointsSpent < 1 then
+        if pointsSpent < 1 and previewPointsSpent<1 then
             TalentFrame.background:SetDesaturated(true)
         else
             TalentFrame.background:SetDesaturated(false)
         end
         TalentFrame.talentPoints = talentPoints
         TalentFrame.talentFrameId = f
+
+
+        local shouldBeHidden = false 
+        if (not isUnlocked and primaryTree) then
+            shouldBeHidden = true
+        elseif (primaryTree and primaryTree ~= TalentFrame.spec) then
+            shouldBeHidden = false
+        else 
+            shouldBeHidden = false
+        end
+
+
+
+        local numTiersUnlocked = math.floor(TalentFrame.pointsSpent /
+        (isPetTalents and PET_TALENTS_PER_TIER or PLAYER_TALENTS_PER_TIER)) +1
+
+        local tierHeight = TalentFrame.treeContainer:GetHeight() / MAX_NUM__VISUAL_TALENT_TIERS;
+        local totalHeight = (tierHeight * numTiersUnlocked) + TALENT_TOP_PADDING + (tierHeight / 2) - 10
+        if not isUnlocked then 
+            totalHeight = 0
+        end
+        if numTiersUnlocked>= MAX_NUM_TALENT_TIERS then 
+            totalHeight = TalentFrame.background:GetHeight()
+        end
+
+        
+        setBackgroundFxHeight(TalentFrame,totalHeight,shouldBeHidden)
+
 
 
         TalentFrame.info.title:SetText(name)
@@ -647,9 +721,11 @@ local function updateTalentTrees()
                     forceDesaturated = nil
                 end
                 -- If the player has spent at least 5 talent points in the previous tier
-                local tierUnlocked = nil
-                if (tier - 1) * 5 <= TalentFrame.pointsSpent then
-                    tierUnlocked = 1
+
+                if (isUnlocked and ((tier - 1) * (isPetTalents and PET_TALENTS_PER_TIER or PLAYER_TALENTS_PER_TIER) <= TalentFrame.pointsSpent)) then
+                    tierUnlocked = 1;
+                else
+                    tierUnlocked = nil;
                 end
 
                 local ispassive = not isExceptional
@@ -674,7 +750,7 @@ local function updateTalentTrees()
                 end
 
                 button:EnableMouse(true)
-                if Prereqs and ((preview and meetsPreviewPrereq) or (not preview and available)) then
+                if Prereqs and ((preview and meetsPreviewPrereq) or (not preview and meetsPrereq)) then
                     button.icon:SetDesaturated(openSpec ~= activeTalentGroup)
                     button.icon:SetVertexColor(1, 1, 1, 1)
                     button:SetAlpha(1)
@@ -683,7 +759,8 @@ local function updateTalentTrees()
                         button.points:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
                     else
                         button.highlight:Show()
-                        button.points:SetText("")
+                        button.points:SetText(maxRank .. " / " .. maxRank)
+                        button.points:SetTextColor(0.87, 0.74, 0.29, 1)
                     end
                 else
                     button.icon:SetDesaturated(true)
@@ -711,7 +788,7 @@ local function updateTalentTrees()
         end
     end
 end
-GW.updateTalentTrees = updateTalentTrees -- HACK fix 
+GW.updateTalentTrees = updateTalentTrees -- HACK fix
 
 
 
@@ -733,8 +810,12 @@ local function loadTalentsFrames()
         container:SetPoint('TOPLEFT', GwTalentFrame, 'TOPLEFT', (284 * (i - 1)), -92)
         container.spec = i
 
+        container.bgCoords = { l = 0.27734375 * (i - 1), r = 0.27734375 * i, t = 0, b = 0.611328125 }
+
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
+        container.backgroundFx:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
+        container.backgroundFx:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
         container.summary.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.summary.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
         container.summary.backgroundFx:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' ..
@@ -742,6 +823,7 @@ local function loadTalentsFrames()
         container.summary.backgroundFx:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
 
         container.background:AddMaskTexture(mask)
+        container.backgroundFx:AddMaskTexture(mask)
         container.summary.backgroundFx:AddMaskTexture(mask)
         container.summary.backgroundOverlay:AddMaskTexture(mask)
         container.summary.background:AddMaskTexture(mask)
@@ -796,7 +878,7 @@ local function LoadTalents()
 
     GwTalentFrame.bottomBarSummary.viewTalentTrees:SetScript("OnClick", toggleSummaryScreen)
     GwTalentFrame.bottomBar.viewSummary:SetScript("OnClick", toggleSummaryScreen)
-    
+
 
     GwTalentFrame.bottomBar.prevCancel:SetScript("OnClick", function()
         ResetGroupPreviewTalentPoints(isPetTalents, openSpec)
@@ -815,6 +897,7 @@ local function LoadTalents()
         PlayerTalentFrame.talentGroup = 1
         CleanUpTalentTrees()
         updateTalentTrees()
+        GwTalentFrame.bottomBar.viewSummary:Show()
     end)
     GwTalentFrame.navigation.spec2Button:SetScript("OnClick", function(self)
         setNavigation(self)
@@ -824,16 +907,19 @@ local function LoadTalents()
         PlayerTalentFrame.talentGroup = 2
         CleanUpTalentTrees()
         updateTalentTrees()
+        GwTalentFrame.bottomBar.viewSummary:Show()
     end)
     GwTalentFrame.navigation.petTalentsButton:SetScript("OnClick", function(self)
-        if _G["GwLegacyTalentTree1"].summary:IsShown() then return end
         setNavigation(self)
         openSpec                      = 1
-        isPetTalents                  = not isPetTalents
+        isPetTalents                  = true
         PlayerTalentFrame.pet         = isPetTalents
         PlayerTalentFrame.talentGroup = 1
         CleanUpTalentTrees()
         updateTalentTrees()
+        toggleSummaryScreen(self,nil,nil,false)
+        GwTalentFrame.bottomBar.viewSummary:Hide()
+
     end)
     GwTalentFrame.navigation.activateSpecGroup:SetScript("OnClick", function()
         if openSpec then
@@ -855,9 +941,12 @@ local function LoadTalents()
     GwTalentFrame:RegisterEvent("TALENT_GROUP_ROLE_CHANGED")
     GwTalentFrame:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
     GwTalentFrame:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED")
+    GwTalentFrame:RegisterEvent("PREVIEW_TALENT_PRIMARY_TREE_CHANGED")
     GwTalentFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
     GwTalentFrame:SetScript('OnEvent', function(self, event)
-        GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player").." |TInterface/AddOns/GW2_UI/textures/icons/talent-icon: 24, 24, 0, 0, 0.1875, 0.828125 , 0.1875, 0.828125 |t ")
+        GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS,
+            UnitCharacterPoints("player") ..
+            " |TInterface/AddOns/GW2_UI/textures/icons/talent-icon: 24, 24, 0, 0, 0.1875, 0.828125 , 0.1875, 0.828125 |t ")
 
         if event == "LEARNED_SPELL_IN_TAB" then
             updateTalentSummary(_G["GwLegacyTalentTree1"])
@@ -882,7 +971,6 @@ local function LoadTalents()
         GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
     end)
     GwTalentFrame:Hide()
-    PlayerTalentFrame:Show() --debug
     return GwTalentFrame
 end
 GW.LoadTalents = LoadTalents
