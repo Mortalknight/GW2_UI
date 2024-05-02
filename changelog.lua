@@ -9,6 +9,11 @@ local ct = {
 
 GW.CHANGELOGS_TYPES = ct
 
+
+addChange("1.0.1",{
+    {ct.change,[=[First round of fixes]=]},
+})
+
 addChange("1.0.0",{
     {ct.change,[=[Init version]=]},
 })
