@@ -1,21 +1,19 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local createNormalUnitFrame = GW.createNormalUnitFrame
 local IsIn = GW.IsIn
 local CommaValue = GW.CommaValue
-local Diff = GW.Diff
+
 
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
 
-    if self.healthTextSetting == "PREC" then
+    if GW.GetSetting("PLAYER_UNIT_HEALTH") == "PREC" then
         healthString = CommaValue(healthPrecentage * 100) .. "%"
-    elseif self.healthTextSetting == "VALUE" then
+    elseif GW.GetSetting("PLAYER_UNIT_HEALTH") == "VALUE" then
         healthString = CommaValue(health)
-    elseif self.healthTextSetting == "BOTH" then
+    elseif GW.GetSetting("PLAYER_UNIT_HEALTH") == "BOTH" then
         healthString = CommaValue(health) .. " - " .. CommaValue(healthPrecentage * 100) .. "%"
     end
 
@@ -26,69 +24,47 @@ GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextStrin
 local function updateHealthData(self)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
-    local healPredictionAmount = UnitGetIncomingHeals(self.unit) or 0
-    local healthPrecentage = 0
+    local absorb = UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(self.unit) or 0
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
+    local healAbsorb =  UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs(self.unit) or 0
+    local absorbPrecentage = 0
+    local absorbAmount = 0
+    local absorbAmount2 = 0
     local predictionPrecentage = 0
+    local healAbsorbPrecentage = 0
+    local healthPrecentage = 0
 
     if health > 0 and healthMax > 0 then
         healthPrecentage = health / healthMax
     end
 
-    if (healPredictionAmount ~= nil or healPredictionAmount == 0) and healthMax ~= 0 then
-        predictionPrecentage = healPredictionAmount / healthMax
+    if absorb > 0 and healthMax > 0 then
+        absorbPrecentage = absorb / healthMax
+        absorbAmount = healthPrecentage + absorbPrecentage
+        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
     end
 
-    local animationSpeed = math.min(1, math.max(0.2, 2 * Diff(self.healthValue, healthPrecentage)))
+    if prediction > 0 and healthMax > 0 then
+        predictionPrecentage = (prediction / healthMax) + healthPrecentage
+    end
+    if healAbsorb > 0 and healthMax > 0 then
+        healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+    end
+    self.healPrediction:SetFillAmount(predictionPrecentage)
 
-    --prediction calc
-    local predictionbar = self.predictionbar
-    if prediction == 0 then
-        predictionbar:SetAlpha(0)
-    else
-        local predictionAmount = healthPrecentage + predictionPrecentage
-
-        predictionbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * predictionAmount)))
-        predictionbar:SetTexCoord(0, math.min(1, 1 * predictionAmount), 0, 1)
-        predictionbar:SetAlpha(math.max(0, math.min(1, (1 * (predictionPrecentage / 0.1)))))
+    self.health.barOnUpdate = function()
+        updateHealthTextString(self, health, self.health:GetFillAmount())
     end
 
-    GW.healthBarAnimation(self, healthPrecentage, true)
-    if animationSpeed == 0 then
-        GW.healthBarAnimation(self, healthPrecentage)
-        updateHealthTextString(self, health, healthPrecentage)
-    else
-        self.healthValueStepCount = 0
-        AddToAnimation(
-            self:GetName() .. self.unit,
-            self.healthValue,
-            healthPrecentage,
-            GetTime(),
-            animationSpeed,
-            function(step)
-                GW.healthBarAnimation(self, step)
-
-                local hvsc = self.healthValueStepCount
-                if hvsc % 5 == 0 then
-                    updateHealthTextString(self, healthMax * step, step)
-                end
-                self.healthValueStepCount = hvsc + 1
-                self.healthValue = step
-            end,
-            nil,
-            function()
-                updateHealthTextString(self, health, healthPrecentage)
-            end
-        )
-    end
+    self.health:SetFillAmount(healthPrecentage)
+    self.absorbbg:SetFillAmount(absorbAmount)
+    self.absorbOverlay:SetFillAmount(absorbAmount2)
+    self.antiHeal:SetFillAmount(healAbsorbPrecentage)
 end
 
-local function unitFrameData(self, event, ...)
-    local level = UnitLevel(self.unit)
+local function unitFrameData(self, lvl)
+    local level = lvl or UnitLevel(self.unit)
     local name = UnitName(self.unit)
-
-    if event == "PLAYER_LEVEL_UP" then
-        level = ...
-    end
 
     if UnitIsGroupLeader(self.unit) then
         name = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:18:18|t" .. name
@@ -97,21 +73,14 @@ local function unitFrameData(self, event, ...)
     self.nameString:SetText(name)
     self.levelString:SetText(level)
 
-    if self.classColor then
+    if GW.GetSetting("player_CLASS_COLOR") then
         local _, englishClass = UnitClass(self.unit)
         local color = GW.GWGetClassColor(englishClass, true)
 
-        self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarFlash:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarFlashSpark:SetVertexColor(color.r, color.g, color.b, color.a)
-
+        self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
         self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
-        self.healthbar:SetVertexColor(0.207, 0.392, 0.16, 1)
-        self.healthbarSpark:SetVertexColor(0.207, 0.392, 0.16, 1)
-        self.healthbarFlash:SetVertexColor(0.207, 0.392, 0.16, 1)
-        self.healthbarFlashSpark:SetVertexColor(0.207, 0.392, 0.16, 1)
+        self.health:SetStatusBarColor(0.207, 0.392, 0.16, 1)
         self.nameString:SetTextColor(0.207, 0.392, 0.16, 1)
     end
 
@@ -124,28 +93,30 @@ local function player_OnEvent(self, event, ...)
         updateHealthData(self)
         GW.updatePowerValues(self, false)
     elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE") then
-        unitFrameData(self, event, ...)
-    elseif IsIn(event, "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
+        unitFrameData(self)
+    elseif event == "PLAYER_LEVEL_UP" then
+        local level = ...
+        unitFrameData(self, level)
+    elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         updateHealthData(self)
-    elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UPDATE_SHAPESHIFT_FORM") then
+    elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UPDATE_SHAPESHIFT_FORM", "ACTIVE_TALENT_GROUP_CHANGED") then
         GW.updatePowerValues(self, false)
-    elseif IsIn(event, "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
+    elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         GW.PlayerSelectPvp(self)
     elseif event == "RESURRECT_REQUEST" then
         PlaySound(SOUNDKIT.UI_70_BOOST_THANKSFORPLAYING_SMALLER, "Master")
     end
 end
 
-local function TogglePlayerFrameASettings()
-    if not GwPlayerUnitFrame then return end
-    GwPlayerUnitFrame.altBg:SetShown(GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
-    GwPlayerUnitFrame.classColor = GetSetting("player_CLASS_COLOR")
-    GwPlayerUnitFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
+local function UpdateSettings()
+    if GwPlayerUnitFrame then
+        GwPlayerUnitFrame.altBg:SetShown(GW.GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
 
-    updateHealthData(GwPlayerUnitFrame)
-    unitFrameData(GwPlayerUnitFrame)
+        updateHealthData(GwPlayerUnitFrame)
+        unitFrameData(GwPlayerUnitFrame)
+    end
 end
-GW.TogglePlayerFrameASettings = TogglePlayerFrameASettings
+GW.UpdatePlayerFrameSettings = UpdateSettings
 
 local function LoadPlayerFrame()
     local NewUnitFrame = createNormalUnitFrame("GwPlayerUnitFrame")
@@ -165,6 +136,7 @@ local function LoadPlayerFrame()
     NewUnitFrame:RegisterForClicks("AnyDown")
 
     NewUnitFrame.altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
+    NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
 
     NewUnitFrame.mask = UIParent:CreateMaskTexture()
     NewUnitFrame.mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
@@ -174,8 +146,6 @@ local function LoadPlayerFrame()
     NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.mask)
 
     AddToClique(NewUnitFrame)
-
-    NewUnitFrame.classColor = GetSetting("player_CLASS_COLOR")
 
     -- add pvp marker
     NewUnitFrame.pvp = CreateFrame("Frame", nil, NewUnitFrame)
@@ -198,20 +168,20 @@ local function LoadPlayerFrame()
     NewUnitFrame.pvp.horde:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 5)
     NewUnitFrame.pvp.horde:Hide()
 
-    --save settingsvalue for later use
-    NewUnitFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
-
     NewUnitFrame:SetScript("OnEvent", player_OnEvent)
 
     NewUnitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    --NewUnitFrame:RegisterEvent("WAR_MODE_STATUS_UPDATE")
     NewUnitFrame:RegisterEvent("PLAYER_FLAGS_CHANGED")
     NewUnitFrame:RegisterEvent("RESURRECT_REQUEST")
     NewUnitFrame:RegisterEvent("PLAYER_LEVEL_UP")
     NewUnitFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     NewUnitFrame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
     NewUnitFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    NewUnitFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+   -- NewUnitFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "player")
-    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "player")
@@ -225,9 +195,7 @@ local function LoadPlayerFrame()
     end)
 
     -- grab the TotemFramebuttons to our own Totem Frame
-    if PlayerFrame and TotemFrame then
-        GW.Create_Totem_Bar()
-    end
+    GW.Create_Totem_Bar()
 
     -- setup anim to flash the PvP marker
     local pvp = NewUnitFrame.pvp
@@ -259,9 +227,7 @@ local function LoadPlayerFrame()
         pagIn:Play()
     end
 
-    if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
-
-    PlayerFrame:GwKill()
+    if not GW.GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
 
     --hide unsed things from default target frame
     NewUnitFrame.castingbarBackground:Hide()
@@ -270,10 +236,11 @@ local function LoadPlayerFrame()
     NewUnitFrame.castingbar:Hide()
     NewUnitFrame.castingbarSpark:Hide()
     NewUnitFrame.castingbarNormal:Hide()
-    NewUnitFrame.castingbarNormalSpark:Hide()
     NewUnitFrame.raidmarker:Hide()
+    NewUnitFrame.prestigebg:Hide()
+    NewUnitFrame.prestigeString:Hide()
 
-    TogglePlayerFrameASettings()
+    UpdateSettings()
 
     return NewUnitFrame
 end
