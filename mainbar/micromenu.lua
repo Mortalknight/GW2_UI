@@ -77,7 +77,7 @@ end
 
 local function updateGuildButton(self, event)
     if event == "GUILD_ROSTER_UPDATE" then
-        local gmb = SocialsMicroButton
+        local gmb = GuildMicroButton
         if gmb == nil then
             return
         end
