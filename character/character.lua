@@ -877,7 +877,7 @@ local function LoadPaperDoll()
     if GW.myrace == "Human" then
         GwDressingRoom.model:SetPosition(0.4, 0, -0.05)
     elseif GW.myrace == "Worgen" then
-        GwDressingRoom:SetPosition(0.1, 0, -0.1)
+        GwDressingRoom.model:SetPosition(0.1, 0, -0.1)
     elseif GW.myrace == "Tauren" then
         GwDressingRoom.model:SetPosition(0.6, 0, 0)
     elseif GW.myrace == "BloodElf" then
@@ -893,7 +893,7 @@ local function LoadPaperDoll()
     elseif GW.myrace == "Dwarf" then
         GwDressingRoom.model:SetPosition(0.3, 0, 0)
     elseif GW.myrace == "Goblin" or GW.myrace == "Vulpera" then
-        GwDressingRoom:SetPosition(0.2, 0, -0.05)
+        GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
     elseif GW.myrace == "Gnome" then
         GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
     elseif GW.myrace == "Orc" then
