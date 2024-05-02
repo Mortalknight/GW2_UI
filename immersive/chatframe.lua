@@ -1473,11 +1473,6 @@ local function styleChatWindow(frame)
     frame:GwStripTextures(true)
     _G[name .. "ButtonFrame"]:Hide()
 
-    local a, b, c = select(6, editbox:GetRegions())
-    a:GwKill()
-    b:GwKill()
-    c:GwKill()
-
     editbox:ClearAllPoints()
     editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, 0)
     editbox:SetPoint("TOPRIGHT", background, "BOTTOMRIGHT", 0, 0)
