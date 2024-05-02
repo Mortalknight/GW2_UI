@@ -2,6 +2,7 @@ local _, GW = ...
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 
 local profs = {
+    ["100"] = {["tag"] = "firstAid", ["icon"] = 133678},
     ["185"] = {["tag"] = "cook", ["icon"] = 133971, ["atlas"] = "gather", ["idx"] = 6},
     ["356"] = {["tag"] = "fish", ["icon"] = 136245, ["atlas"] = "gather", ["idx"] = 5},
     ["794"] = {["tag"] = "arch", ["icon"] = 441139, ["atlas"] = "gather", ["idx"] = 4},
@@ -153,12 +154,12 @@ local function updateOverview(fmOverview)
     end
 
     local fmProfs = fmOverview.profs
-    local iProf1, iProf2, iArch, iFish, iCook = GetProfessions()
+    local iProf1, iProf2, iArch, iFish, iCook, iFirstAid = GetProfessions()
 
     local txR = 588 / 1024
     local txH = 110
 
-    for i = 1, 5, 1 do
+    for i = 1, 6, 1 do
         local fm = fmProfs[i]
         local idx
         if i == 1 then
@@ -171,6 +172,8 @@ local function updateOverview(fmOverview)
             idx = iFish
         elseif i == 5 then
             idx = iArch
+        elseif i == 6 then
+            idx = iFirstAid
         end
         if idx then
             local name, icon, skill, skillMax, num, offset, profId, skillMod, specId, specOff, skillDesc = GetProfessionInfo(idx)
@@ -244,11 +247,11 @@ local function updateOverview(fmOverview)
             end
         else
             if i == 1 then
-                fm.icon:SetTexture(1392955)
+                fm.icon:SetTexture("Interface\\Icons\\INV_Scroll_04")
                 fm.title:SetText(PROFESSIONS_FIRST_PROFESSION)
                 fm.desc:SetText(PROFESSIONS_MISSING_PROFESSION)
             elseif i == 2 then
-                fm.icon:SetTexture(1392955)
+                fm.icon:SetTexture("Interface\\Icons\\INV_Scroll_04")
                 fm.title:SetText(PROFESSIONS_SECOND_PROFESSION)
                 fm.desc:SetText(PROFESSIONS_MISSING_PROFESSION)
             elseif i == 3 then
@@ -263,6 +266,10 @@ local function updateOverview(fmOverview)
                 fm.icon:SetTexture(profs["794"].icon)
                 fm.title:SetText(PROFESSIONS_ARCHAEOLOGY)
                 fm.desc:SetText(PROFESSIONS_ARCHAEOLOGY_MISSING)
+            elseif i == 6 then
+                fm.icon:SetTexture(profs["100"].icon)
+                fm.title:SetText(PROFESSIONS_FIRST_AID)
+                fm.desc:SetText(PROFESSIONS_FIRST_AID_MISSING)
             else
                 fm.icon:SetTexture(nil)
                 fm.title:SetText(nil)
@@ -318,11 +325,26 @@ local function loadOverview(parent)
     local fmOverview = CreateFrame("Frame", nil, parent, "GwProfessionsOverview")
     fmOverview.profs = {}
 
-    for i = 1, 5, 1 do
+    for i = 1, 6, 1 do
         local fm = CreateFrame("Frame", nil, fmOverview, "GwProfessionsOverFrame")
-        if i > 1 then
+        if i == 3 then
             fm:ClearAllPoints()
             fm:SetPoint("TOPLEFT", fmOverview, "TOPLEFT", 10, -10 - ((i - 1) * 115))
+        elseif i == 4 then
+            fm:ClearAllPoints()
+            fm:SetPoint("TOPLEFT", fmOverview, "TOPLEFT", 10, -10 - ((i - 1) * 105))
+        elseif i > 4 then
+            fm:ClearAllPoints()
+            fm:SetPoint("TOPLEFT", fmOverview, "TOPLEFT", 10, -10 - ((i - 1) * 100))
+        elseif i > 1 then
+            fm:ClearAllPoints()
+            fm:SetPoint("TOPLEFT", fmOverview, "TOPLEFT", 10, -10 - ((i - 1) * 115))
+        end
+
+        if i >= 3 then
+            fm:SetHeight(90)
+            fm.background:SetHeight(90)
+            fm.art:SetHeight(90)
         end
 
         local mask = UIParent:CreateMaskTexture()

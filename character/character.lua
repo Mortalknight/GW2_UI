@@ -423,8 +423,6 @@ local function PaperDollSetStatIcon(self, stat)
         self.icon:SetTexCoord(GW.getSprite(statsIconsSprite,STATS_ICONS[stat].x,STATS_ICONS[stat].y))
     end
 
-    
-
     if newTexture ~= self.icon:GetTexture() then
         self.icon:SetTexture(newTexture)
         if stat == "DURABILITY" then

@@ -537,6 +537,7 @@ local function evPlayerLogin(self)
 
     -- Remove old debuffs from db
     GW.RemoveOldRaidDebuffsFormProfiles()
+    GW.DisableBlizzardFrames()
 
     loaded = true
     GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here

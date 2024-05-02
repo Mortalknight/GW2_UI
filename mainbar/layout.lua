@@ -47,6 +47,12 @@ function lm:RegisterPetFrame(f)
     l:SetFrameRef("pet", f)
     l:SetFrameRef("pet_mover", f.gwMover)
     self.petFrame = f
+
+    local up = self
+    GW.AddActionBarCallback(function()
+        up:onstate_None()
+    end)
+    self:onstate_None()
 end
 
 function lm:onstate_None()
@@ -88,15 +94,15 @@ local onstate_Barlayout = [=[
     if mbl and mbl:IsShown() and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
         if newstate == "incombat" then
             petmover:ClearAllPoints()
-            petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
+            petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -57 + (pfat and 54 or 0), 212)
         else
             if mbl and mbl:IsShown() then
                 if mbl:GetAttribute("gw_FadeShowing") then
                     petmover:ClearAllPoints()
-                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -57 + (pfat and 54 or 0), 212)
                 else
                     petmover:ClearAllPoints()
-                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 120)
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -57 + (pfat and 54 or 0), 120)
                 end
             end
         end
@@ -105,10 +111,8 @@ local onstate_Barlayout = [=[
     -- only set the dbarmover frame to the correct position, based on scaling
     if newstate == "outcombat" and dbarmover and bbar and not dbar:GetAttribute("isMoved") and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
         local buff_action = "none"
-        if mbr and mbr:IsShown() and not mbr:GetAttribute("isMoved") then
-            if mbr:GetAttribute("gw_FadeShowing") then
-                buff_action = "high"
-            end
+        if mbr:IsShown() and mbr:GetAttribute("gw_FadeShowing") then
+            buff_action = "high"
         end
         local y_off = (buff_action == "high" and 200 or 100)
         dbarmover:ClearAllPoints()
@@ -118,13 +122,13 @@ local onstate_Barlayout = [=[
     --mbrFrame
     if mbr and not mbr:GetAttribute("isMoved") and mbr_mover then
         mbr_mover:ClearAllPoints()
-        mbr_mover:SetPoint("BOTTOMRIGHT", uip, "BOTTOM", pfat and 318 or 372, epbar and 120 or 114)
+        mbr_mover:SetPoint("BOTTOMRIGHT", uip, "BOTTOM", pfat and 316 or 369, epbar and 120 or 114)
     end
 
     --mblFrame
     if mbl and not mbl:GetAttribute("isMoved") and mbl_mover then
         mbl_mover:ClearAllPoints()
-        mbl_mover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", pfat and -318 or -372, epbar and 120 or 114)
+        mbl_mover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", pfat and -316 or -369, epbar and 120 or 114)
     end
 
     if bbar and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then

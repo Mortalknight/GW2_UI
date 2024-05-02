@@ -125,7 +125,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture parentKey="art" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
                     <Size x="588" y="110"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>

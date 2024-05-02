@@ -296,7 +296,7 @@ GW_DEFAULT.MAINBAR_MARGIIN = 5
 GW_DEFAULT["MultiBarBottomLeft"] = {}
 GW_DEFAULT["MultiBarBottomLeft"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["MultiBarBottomLeft"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["MultiBarBottomLeft"]["xOfs"] = -372
+GW_DEFAULT["MultiBarBottomLeft"]["xOfs"] = -369
 GW_DEFAULT["MultiBarBottomLeft"]["yOfs"] = 120
 GW_DEFAULT["MultiBarBottomLeft_scale"] = 1
 
@@ -308,7 +308,7 @@ GW_DEFAULT["MultiBarBottomLeft"]["hideDefaultBackground"] = true
 GW_DEFAULT["MultiBarBottomRight"] = {}
 GW_DEFAULT["MultiBarBottomRight"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["MultiBarBottomRight"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["MultiBarBottomRight"]["xOfs"] = 372
+GW_DEFAULT["MultiBarBottomRight"]["xOfs"] = 369
 GW_DEFAULT["MultiBarBottomRight"]["yOfs"] = 120
 GW_DEFAULT["MultiBarBottomRight_scale"] = 1
 
@@ -384,14 +384,14 @@ GW_DEFAULT["HealthGlobe_pos"]["yOfs"] = 17
 GW_DEFAULT["PowerBar_pos"] = {}
 GW_DEFAULT["PowerBar_pos"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["PowerBar_pos"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["PowerBar_pos"]["xOfs"] = 53
+GW_DEFAULT["PowerBar_pos"]["xOfs"] = 56
 GW_DEFAULT["PowerBar_pos"]["yOfs"] = 86
 GW_DEFAULT["PowerBar_pos_scale"] = 1
 
 GW_DEFAULT["ClasspowerBar_pos"] = {}
 GW_DEFAULT["ClasspowerBar_pos"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["ClasspowerBar_pos"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["ClasspowerBar_pos"]["xOfs"] = -372
+GW_DEFAULT["ClasspowerBar_pos"]["xOfs"] = -369
 GW_DEFAULT["ClasspowerBar_pos"]["yOfs"] = 81
 GW_DEFAULT["ClasspowerBar_pos_scale"] = 1
 

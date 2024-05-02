@@ -1,0 +1,191 @@
+local _, GW = ...
+
+local isArenaHooked = false
+local lockedFrames = {}
+
+local MAX_PARTY = MEMBERS_PER_RAID_GROUP or MAX_PARTY_MEMBERS or 5
+local MAX_BOSS_FRAMES = 8
+
+-- lock Boss, Party, and Arena
+local function LockParent(frame, parent)
+    if parent ~= GW.HiddenFrame then
+        frame:SetParent(GW.HiddenFrame)
+    end
+end
+
+local function HandleFrame(frame, doNotReparent)
+    if type(frame) == "string" then
+        frame = _G[frame]
+    end
+
+    if not frame then return end
+
+    local lockParent = doNotReparent == 1
+
+    if lockParent or not doNotReparent then
+        frame:SetParent(GW.HiddenFrame)
+        if lockParent and not lockedFrames[frame] then
+            hooksecurefunc(frame, "SetParent", LockParent)
+            lockedFrames[frame] = true
+        end
+    end
+
+    frame:UnregisterAllEvents()
+    frame:Hide()
+
+    for _, child in next, {
+        frame.petFrame or frame.PetFrame,
+        frame.healthBar or frame.healthbar or frame.HealthBar,
+        frame.manabar or frame.ManaBar,
+        frame.castBar or frame.spellbar,
+        frame.powerBarAlt or frame.PowerBarAlt,
+        frame.totFrame,
+        frame.BuffFrame
+    } do
+        child:UnregisterAllEvents()
+    end
+end
+
+
+local function DisableBlizzardFrames()
+    local ourPartyFrames = GW.GetSetting("PARTY_FRAMES")
+    local ourRaidFrames = GW.GetSetting("RAID_FRAMES")
+    local ourBossFrames = GW.GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
+    local ourArenaFrames = not C_AddOns.IsAddOnLoaded("sArena") and GW.GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
+    local ourPetFrame = GW.GetSetting("PETBAR_ENABLED")
+    local ourTargetFrame = GW.GetSetting("TARGET_ENABLED")
+    local ourTargetTargetFrame = GW.GetSetting("target_TARGET_ENABLED")
+    local ourFocusFrame = GW.GetSetting("FOCUS_ENABLED")
+    local ourFocusTargetFrame = GW.GetSetting("focus_TARGET_ENABLED")
+    local ourPlayerFrame = GW.GetSetting("HEALTHGLOBE_ENABLED")
+    local ourCastBar = GW.GetSetting("CASTINGBAR_ENABLED")
+    local ourActionbars = GW.GetSetting("ACTIONBARS_ENABLED")
+    local ourInventory = GW.GetSetting("BAGS_ENABLED")
+
+    if ourPartyFrames or ourRaidFrames then
+        -- calls to UpdateRaidAndPartyFrames, which as of writing this is used to show/hide the
+        -- Raid Utility and update Party frames via PartyFrame.UpdatePartyFrames not raid frames.
+        UIParent:UnregisterEvent("GROUP_ROSTER_UPDATE")
+    end
+
+    -- shutdown some background updates on default unitframes
+    if ourPartyFrames and CompactPartyFrame then
+        CompactPartyFrame:UnregisterAllEvents()
+    end
+
+    if ourPartyFrames then
+        HandleFrame(PartyMemberBackground)
+
+        for i = 1, MAX_PARTY do
+            HandleFrame("PartyMemberFrame" .. i)
+            HandleFrame("CompactPartyFrameMember" .. i)
+        end
+    end
+
+    if ourRaidFrames then
+        if CompactRaidFrameContainer then
+            CompactRaidFrameContainer:UnregisterAllEvents()
+        end
+
+        -- Raid Utility
+        if not CompactRaidFrameManager_SetSetting then
+            StaticPopup_Show("WARNING_BLIZZARD_ADDONS")
+        else
+            CompactRaidFrameManager_SetSetting("IsShown", "0")
+        end
+
+        if CompactRaidFrameManager then
+            CompactRaidFrameManager:UnregisterAllEvents()
+            CompactRaidFrameManager:SetParent(GW.HiddenFrame)
+        end
+
+        CompactRaidFrameContainer:HookScript("OnShow", function() CompactRaidFrameContainer:Hide() end)
+    end
+
+    if ourArenaFrames then
+        hooksecurefunc("UnitFrameThreatIndicator_Initialize", function(_, unitFrame)
+            unitFrame:UnregisterAllEvents() -- Arena Taint Fix
+        end)
+
+        Arena_LoadUI = GW.NoOp
+
+        for i = 1, (MAX_ARENA_ENEMIES or 5) do
+            HandleFrame(_G['ArenaEnemyMatchFrame'..i], true)
+            HandleFrame(_G['ArenaEnemyPrepFrame'..i], true)
+        end
+    end
+
+    if ourBossFrames then
+        HandleFrame(BossTargetFrameContainer, 1)
+
+        for i = 1, MAX_BOSS_FRAMES do
+            HandleFrame("Boss" .. i .. "TargetFrame", true)
+        end
+    end
+
+    if ourPetFrame then
+        HandleFrame(PetFrame)
+    end
+
+    if ourTargetFrame then
+        HandleFrame(TargetFrame)
+        HandleFrame(ComboFrame)
+    end
+
+    if ourTargetFrame and ourTargetTargetFrame then
+        HandleFrame(TargetFrameToT)
+    end
+
+    if ourFocusFrame then
+        HandleFrame(FocusFrame)
+    end
+
+    if ourFocusFrame and ourFocusTargetFrame then
+        HandleFrame(TargetofFocusFrame)
+    end
+
+    if ourPlayerFrame then
+        HandleFrame(PlayerFrame)
+
+        -- for vehicle support
+        PlayerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        PlayerFrame:RegisterEvent("UNIT_ENTERING_VEHICLE")
+        PlayerFrame:RegisterEvent("UNIT_ENTERED_VEHICLE")
+        PlayerFrame:RegisterEvent("UNIT_EXITING_VEHICLE")
+        PlayerFrame:RegisterEvent("UNIT_EXITED_VEHICLE")
+
+        PlayerFrame:SetMovable(true)
+        PlayerFrame:SetUserPlaced(true)
+        PlayerFrame:SetDontSavePosition(true)
+    end
+
+    if ourInventory then
+        if MicroButtonAndBagsBar then
+            MicroButtonAndBagsBar:SetParent(GW.HiddenFrame)
+            MicroButtonAndBagsBar:UnregisterAllEvents()
+        end
+    end
+
+    if ourActionbars then
+        local untaint = {
+            MultiBar5 = true,
+            MultiBar6 = true,
+            MultiBar7 = true,
+            MultiBarLeft = true,
+            MultiBarRight = true,
+            MultiBarBottomLeft = true,
+            MultiBarBottomRight = true,
+            --MainMenuBar = true, -- this make the mainbar unvisible (HiddenFrame) we remove the events at the actionbars
+            StanceBar = true
+        }
+
+        for name in next, untaint do
+            local frame = _G[name]
+            if frame then
+                frame:SetParent(GW.HiddenFrame)
+                frame:UnregisterAllEvents()
+            end
+        end
+    end
+end
+GW.DisableBlizzardFrames = DisableBlizzardFrames
