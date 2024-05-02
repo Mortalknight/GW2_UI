@@ -472,6 +472,13 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 
+    if btn.cooldown then
+        btn.cooldown:ClearAllPoints()
+        btn.cooldown:SetAllPoints(btn)
+    end
+
+    btn:GetPushedTexture():SetSize(btn:GetWidth(), btn:GetWidth())
+
     if btn.Border then
         btn.Border:SetSize(btn:GetWidth(), btn:GetWidth())
         btn.Border:SetBlendMode("BLEND")
@@ -507,11 +514,35 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.SpellHighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
     end
 
+    if btn.HighlightTexture then
+        btn.HighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+    end
+
+    if btn.CooldownFlash then
+        btn.CooldownFlash:GwSetOutside(btn, 4, 4)
+    end
+
+    if btn.BottomDivider then
+        btn.BottomDivider:SetAlpha(0)
+    end
+
+    if btn.IconMask then
+        btn.icon:RemoveMaskTexture(btn.IconMask)
+    end
+
     btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
     btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
-    if btn.SetCheckedTexture then
-        btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+
+    if btn.HighlightTexture then
+        btn.HighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
     end
+    if btn.SetCheckedTexture then
+        btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+    end
+    if btn.CheckedTexture then
+        btn.CheckedTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+    end
+
     btn.Name:SetAlpha(0) --Hide Marco Name on Actionbutton
 
     updateMacroName(btn)
