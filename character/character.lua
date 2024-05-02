@@ -413,14 +413,17 @@ GW.PaperDollUpdatePetStats = PaperDollUpdatePetStats
 local function PaperDollSetStatIcon(self, stat)
     local newTexture = "Interface\\AddOns\\GW2_UI\\textures\\character\\statsicon"
 
-    if STATS_ICONS[stat] ~= nil then
-        self.icon:SetTexCoord(GW.getSprite(statsIconsSprite,STATS_ICONS[stat].x,STATS_ICONS[stat].y))
-    end
-
     if stat == "DURABILITY" then
         newTexture = "Interface\\AddOns\\GW2_UI\\textures\\globe\\repair"
         durabilityFrame = self
+    elseif stat == "MASTERY" then
+        GW.SetClassIcon(self.icon, GW.myClassID)
+        newTexture = "Interface/AddOns/GW2_UI/textures/party/classicons"
+    elseif STATS_ICONS[stat] then
+        self.icon:SetTexCoord(GW.getSprite(statsIconsSprite,STATS_ICONS[stat].x,STATS_ICONS[stat].y))
     end
+
+    
 
     if newTexture ~= self.icon:GetTexture() then
         self.icon:SetTexture(newTexture)

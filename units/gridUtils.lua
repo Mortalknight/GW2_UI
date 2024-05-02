@@ -186,7 +186,7 @@ GW.GridUpdateRaidMarkers = GridUpdateRaidMarkers
 
 local function GridSetAbsorbAmount(self)
     local healthMax = UnitHealthMax(self.unit)
-    local absorb = UnitGetTotalAbsorbs(self.unit)
+    local absorb = UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(self.unit) or 0
     local absorbPrecentage = 0
 
     if (absorb ~= nil or absorb == 0) and healthMax ~= 0 then

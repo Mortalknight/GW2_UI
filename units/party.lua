@@ -31,10 +31,10 @@ local function updateAwayData(self)
     local playerInstanceId = select(4, UnitPosition("player"))
     local instanceId = select(4, UnitPosition(self.unit))
     local readyCheckStatus = GetReadyCheckStatus(self.unit)
-    local phaseReason = UnitPhaseReason(self.unit)
+    local phaseReason = UnitInPhase(self.unit)
     local portraitIndex = 1
 
-    if not readyCheckStatus and not UnitHasIncomingResurrection(self.unit) and not C_IncomingSummon.HasIncomingSummon(self.unit) then 
+    if not readyCheckStatus and not UnitHasIncomingResurrection(self.unit) then
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
         SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
     end
@@ -50,18 +50,6 @@ local function updateAwayData(self)
     if UnitHasIncomingResurrection(self.unit) then
         self.classicon:SetTexture("Interface/RaidFrame/Raid-Icon-Rez")
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
-    end
-
-    if C_IncomingSummon.HasIncomingSummon(self.unit) then
-        local status = C_IncomingSummon.IncomingSummonStatus(self.unit)
-        self.classicon:SetTexCoord(unpack(GW.TexCoords))
-        if status == Enum.SummonStatus.Pending then
-            self.classicon:SetAtlas("Raid-Icon-SummonPending")
-        elseif status == Enum.SummonStatus.Accepted then
-            self.classicon:SetAtlas("Raid-Icon-SummonAccepted")
-        elseif status == Enum.SummonStatus.Declined then
-            self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
-        end
     end
 
     if not UnitIsConnected(self.unit) then
@@ -92,7 +80,7 @@ local function updateUnitPortrait(self)
         local playerInstanceId = select(4, UnitPosition("player"))
         local instanceId = select(4, UnitPosition(self.unit))
 
-        if playerInstanceId == instanceId and not UnitPhaseReason(self.unit) then
+        if playerInstanceId == instanceId and not UnitInPhase(self.unit) then
             SetPortraitTexture(self.portrait, self.unit)
         else
             self.portrait:SetTexture(nil)
@@ -397,7 +385,7 @@ GW.AddForProfiling("party", "setHealthValue", setHealthValue)
 local function setAbsorbAmount(self)
 local health = UnitHealth(self.unit)
   local healthMax = UnitHealthMax(self.unit)
-  local absorb = UnitGetTotalAbsorbs(self.unit)
+  local absorb = UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(self.unit) or 0
   local absorbPrecentage = 0
   local absorbAmount = 0
   local absorbAmount2 = 0
@@ -419,7 +407,7 @@ end
 GW.AddForProfiling("party", "setAbsorbAmount", setHealthValue)
 local function setUnitHealAbsorb(self)
     local healthMax = UnitHealthMax(self.unit)
-    local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+    local healAbsorb =  UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs(self.unit) or 0
     local healAbsorbPrecentage = 0
   
     if healAbsorb > 0 and healthMax > 0 then
