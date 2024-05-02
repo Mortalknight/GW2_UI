@@ -498,3 +498,66 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     end
 end
 GW.CreateFrameHeaderWithBody = CreateFrameHeaderWithBody
+
+do
+    local function handleButton(button, i, buttonNameTemplate)
+        local icon, texture = button.Icon or _G[buttonNameTemplate..i.."Icon"], ""
+        if icon then
+            icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            icon:GwSetInside(button)
+            texture = icon:GetTexture()
+        end
+
+        button:GwStripTextures()
+        button:GwStyleButton(nil, true)
+
+        if texture then
+            icon:SetTexture(texture)
+        end
+    end
+
+    local function HandleIconSelectionFrame(frame)
+        if frame.isSkinned then return end
+
+        local borderBox = frame.BorderBox
+        local editBox = borderBox.IconSelectorEditBox
+        local cancel = frame.CancelButton or (borderBox and borderBox.CancelButton)
+        local okay = frame.OkayButton or (borderBox and borderBox.OkayButton)
+
+        frame:GwStripTextures()
+        frame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+        frame:SetHeight(frame:GetHeight() + 10)
+
+        if borderBox then
+            borderBox:GwStripTextures()
+
+            local button = borderBox.SelectedIconArea and borderBox.SelectedIconArea.SelectedIconButton
+            if button then
+                button:DisableDrawLayer("BACKGROUND")
+                GW.HandleItemButton(button, true)
+            end
+        end
+
+        cancel:ClearAllPoints()
+        cancel:SetPoint("BOTTOMRIGHT", frame, -4, 4)
+        cancel:GwSkinButton(false, true)
+
+        okay:ClearAllPoints()
+        okay:SetPoint("RIGHT", cancel, "LEFT", -10, 0)
+        okay:GwSkinButton(false, true)
+
+        if editBox then
+            GW.SkinTextBox(editBox.IconSelectorPopupNameMiddle, editBox.IconSelectorPopupNameLeft, editBox.IconSelectorPopupNameRight, nil, nil, 5, 5)
+        end
+
+        GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar, true)
+        GW.HandleScrollControls(frame.IconSelector)
+
+        for _, button in next, {frame.IconSelector.ScrollBox.ScrollTarget:GetChildren()} do
+            handleButton(button)
+        end
+
+        frame.isSkinned = true
+    end
+    GW.HandleIconSelectionFrame = HandleIconSelectionFrame
+end

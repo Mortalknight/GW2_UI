@@ -467,7 +467,7 @@ local function Friends_OnClick(self, button)
         end
 
         GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-        GW.Libs.LibDD:EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+        EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
     end
 end
 GW.Friends_OnClick = Friends_OnClick

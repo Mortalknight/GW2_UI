@@ -154,6 +154,9 @@ local charSecure_OnClick = [=[
     elseif button == "GearSet" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "gearset")
+    elseif button == "Equipemnt" then
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "equipment")
     elseif button == "Professions" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "professions")
@@ -174,6 +177,7 @@ local charSecure_OnAttributeChanged = [=[
     local fmDollDress = self:GetFrameRef("GwDressingRoom")
     local fmDollTitles = self:GetFrameRef("GwPaperTitles")
     local fmDollGearSets = self:GetFrameRef("GwPaperGearSets")
+    local fmDollBagItemList = self:GetFrameRef("GwPaperDollBagItemList")
 
     local showDoll = false
     local showDollMenu = false
@@ -181,6 +185,7 @@ local charSecure_OnAttributeChanged = [=[
     local showDollSkills = false
     local showDollTitles = false
     local showDollGearSets = false
+    local showDollEquipment = false
     local showDollPetCont = false
     local fmSBM = self:GetFrameRef("GwSpellbook")
     local showSpell = false
@@ -251,7 +256,7 @@ local charSecure_OnAttributeChanged = [=[
             showProf = true
         end
     elseif fmDoll ~= nil and value == "paperdoll" then
-        if keytoggle and fmDoll:IsVisible() and (not fmDollSkills:IsVisible() and not fmDollPetCont:IsVisible() and not fmDollTitles:IsVisible() and not fmDollGearSets:IsVisible()) then
+        if keytoggle and fmDoll:IsVisible() and (not fmDollSkills:IsVisible() and not fmDollPetCont:IsVisible() and not fmDollTitles:IsVisible() and not fmDollGearSets:IsVisible() and not fmDollBagItemList:IsVisible()) then
             self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
@@ -290,6 +295,14 @@ local charSecure_OnAttributeChanged = [=[
         else
             showDollGearSets = true
         end
+    elseif fmDollBagItemList ~= nil and value == "equipment" then
+        if keytoggle and fmDollBagItemList:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showDollEquipment = true
+        end
     elseif fmDollPetCont ~= nil and value == "paperdollpet" and hasPetUI then
         if keytoggle and fmDollPetCont:IsVisible() then
             self:SetAttribute("keytoggle", nil)
@@ -317,6 +330,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollPetCont:Hide()
             fmDollTitles:Hide()
             fmDollGearSets:Hide()
+            fmDollBagItemList:Hide()
         else
             fmDoll:Hide()
         end
@@ -387,6 +401,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollPetCont:Hide()
             fmDollTitles:Hide()
             fmDollGearSets:Hide()
+            fmDollBagItemList:Hide()
         else
             fmDoll:Hide()
         end
@@ -401,6 +416,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollMenu:Hide()
             fmDollTitles:Hide()
             fmDollGearSets:Hide()
+            fmDollBagItemList:Hide()
         else
             fmDoll:Hide()
         end
@@ -429,6 +445,23 @@ local charSecure_OnAttributeChanged = [=[
             fmDollMenu:Hide()
             fmDollPetCont:Hide()
             fmDollTitles:Hide()
+            fmDollBagItemList:Hide()
+        else
+            fmDoll:Hide()
+        end
+    end
+
+    if fmDollBagItemList and showDollEquipment then
+        if showDollEquipment and not close then
+            fmDoll:Show()
+            fmDollBagItemList:Show()
+            fmDollDress:Show()
+
+            fmDollSkills:Hide()
+            fmDollMenu:Hide()
+            fmDollPetCont:Hide()
+            fmDollTitles:Hide()
+            fmDollGearSets:Hide()
         else
             fmDoll:Hide()
         end
@@ -807,17 +840,20 @@ local function LoadWindows()
                 fmGCW:SetFrameRef("GwPaperTitles", GwPaperTitles)
                 fmGCW:SetFrameRef("GwDressingRoom", GwDressingRoom)
                 fmGCW:SetFrameRef("GwPetContainer", GwPetContainer)
-                fmGCW:SetFrameRef("GwPaperGearSets", GwPaperGearSets)
+                fmGCW:SetFrameRef("GwPaperGearSets", GwPaperDollOutfits)
+                fmGCW:SetFrameRef("GwPaperDollBagItemList", GwPaperDollBagItemList)
 
                 CharacterMenuButton_OnLoad(GwHeroPanelMenu.skillsMenu, true, true)
                 CharacterMenuButton_OnLoad(GwHeroPanelMenu.titleMenu, false, true)
                 CharacterMenuButton_OnLoad(GwHeroPanelMenu.gearMenu, true, true)
                 CharacterMenuButton_OnLoad(GwHeroPanelMenu.petMenu, false, true)
+                CharacterMenuButton_OnLoad(GwHeroPanelMenu.equipmentMenu, false, true)
 
                 styleCharacterMenuBackButton(GwPaperSkills.backButton, CHARACTER .. ": " .. SKILLS)
                 styleCharacterMenuBackButton(GwPaperTitles.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
-                styleCharacterMenuBackButton(GwPaperGearSets.backButton, CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
+                styleCharacterMenuBackButton(GwPaperDollOutfits.backButton, CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
                 styleCharacterMenuBackButton(GwDressingRoomPet.backButton, CHARACTER .. ": " .. PET)
+                styleCharacterMenuBackButton(GwPaperDollBagItemList.backButton, CHARACTER .. ": " .. PET)
 
                 -- add addon buttons here
                 if GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6 then
@@ -846,6 +882,11 @@ local function LoadWindows()
                     f:SetAttribute("keytoggle", true)
                     f:SetAttribute("windowpanelopen", "gearset")
                 ]=])
+                GwHeroPanelMenu.equipmentMenu:SetAttribute("_onclick", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    f:SetAttribute("keytoggle", true)
+                    f:SetAttribute("windowpanelopen", "equipment")
+                ]=])
                 GwHeroPanelMenu.petMenu:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")
                     f:SetAttribute("keytoggle", true)
@@ -861,12 +902,17 @@ local function LoadWindows()
                     f:SetAttribute("keytoggle", true)
                     f:SetAttribute("windowpanelopen", "paperdoll")
                 ]=])
-                GwPaperGearSets.backButton:SetAttribute("_onclick", [=[
+                GwPaperDollOutfits.backButton:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")
                     f:SetAttribute("keytoggle", true)
                     f:SetAttribute("windowpanelopen", "paperdoll")
                 ]=])
                 GwDressingRoomPet.backButton:SetAttribute("_onclick", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    f:SetAttribute("keytoggle", true)
+                    f:SetAttribute("windowpanelopen", "paperdoll")
+                ]=])
+                GwPaperDollBagItemList.backButton:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")
                     f:SetAttribute("keytoggle", true)
                     f:SetAttribute("windowpanelopen", "paperdoll")

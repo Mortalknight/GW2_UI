@@ -161,8 +161,8 @@ inventory\lootframe.lua
 inventory\extendVendor.lua
 
 character\title.xml
-character\gearSets.xml
-character\gearSets.lua
+character\paperdoll_equipset.lua
+character\paperdoll_equipment.lua
 character\reputation.xml
 character\reputation_table.lua
 character\stats.lua

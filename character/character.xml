@@ -1,6 +1,82 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
+    <Frame name="GwPaperDollSelectedIndicator" frameStrata="DIALOG" toplevel="true" hidden="true" virtual="true">
+        <size x="16" y="32"></size>
+        <Anchors>
+            <Anchor point="LEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
+                    <Size x="16" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" x="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
+    <ItemButton name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true"/>
+
+   <ItemButton name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp, RightButtonUp" inherits="SecureHandlerClickTemplate" virtual="true">
+        <Size x="49" y="49"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
+                    <Size x="49" y="49"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="0.25" top="0" bottom="0.25"/>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="itemlevel" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="100" y="10"/>
+                    <Color r="1" g="1" b="1"></Color>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture name="$parentRepair" hidden="true" parentKey="repairIcon" file="Interface/AddOns/GW2_UI/textures/globe/repair">
+                    <Size x="20" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="0.5" bottom="1"/>
+                </Texture>
+            </Layer>
+        </Layers>
+    </ItemButton>
+
+    <Frame name="GwPaperDollBagItemList" hidden="true" virtual="true">
+        <Size x="231" y="498"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-70"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                    <Size x="256" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack,SecureHandlerClickTemplate" text="Character: Equipment">
+                <Size x="231" y="50"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="60"></Anchor>
+                </Anchors>
+            </Button>
+        </Frames>
+    </Frame>
+
     <Frame name="GwCharacterTabContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true">
         <Size x="853" y="627"></Size>
         <Anchors>
@@ -143,21 +219,38 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.titleMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET" >
+            <Button name="$parentEquipement" parentKey="equipmentMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="BAG_FILTER_EQUIPMENT" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.gearMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
+            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET" >
+                <Size x="231" y="36"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.equipmentMenu" relativePoint="BOTTOMLEFT"></Anchor>
+                </Anchors>
+            </Button>
+            
         </Frames>
         <Scripts>
             <OnLoad>
                 self.skillsMenu:SetText(SKILLS)
                 self.petMenu:SetText(PET)
                 self.gearMenu:SetText(EQUIPMENT_MANAGER)
+                self.equipmentMenu:SetText(BAG_FILTER_EQUIPMENT)
             </OnLoad>
         </Scripts>
     </Frame>
+
+    <CheckButton hidden="true" name="GWIgnoreSlotCheck" parentKey="ignoreSlotCheck" checked="false" virtual="true">
+        <Size x="16" y="16"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+        </Anchors>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
+    </CheckButton>
 
     <Frame name="GwPetPaperdoll" inherits="SecureHandlerBaseTemplate" virtual="true">
         <Anchors>

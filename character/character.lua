@@ -474,11 +474,11 @@ local function PaperDollSlotButton_Update(self)
 
     if self.IconBorder then
         local quality = GetInventoryItemQuality("player", slot)
-        GwSetItemButtonQuality(self, quality)
+        GW.setItemButtonQuality(self, quality)
     end
 end
 
-function GwSetItemButtonQuality(button, quality)
+local function setItemButtonQuality(button, quality)
     if quality then
         if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
             button.IconBorder:Show();
@@ -490,7 +490,7 @@ function GwSetItemButtonQuality(button, quality)
         button.IconBorder:Hide();
     end
 end
-
+GW.setItemButtonQuality = setItemButtonQuality
 
 local function getSkillElement(index)
     if _G["GwPaperSkillsItem" .. index] then return _G["GwPaperSkillsItem" .. index] end
@@ -723,8 +723,6 @@ local function grabDefaultSlots(slot, anchor, parent, size)
         slot.IconBorder:SetParent(slot)
     end
 
-
-
     slot:GetNormalTexture():SetTexture(nil)
 
     GW.RegisterCooldown(_G[slot:GetName() .. "Cooldown"])
@@ -747,6 +745,38 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.itemlevel:SetTextColor(1, 1, 1)
     slot.itemlevel:SetJustifyH("LEFT")
 
+    slot.ignoreSlotCheck = CreateFrame("CheckButton", nil, slot, "GWIgnoreSlotCheck")
+
+    slot.overlayButton = CreateFrame("Button", nil, slot)
+    slot.overlayButton:SetAllPoints()
+    slot.overlayButton:Hide()
+    slot.overlayButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    slot.overlayButton:GetHighlightTexture():SetBlendMode("ADD")
+    slot.overlayButton:GetHighlightTexture():SetAlpha(0.33)
+    slot.overlayButton.isEquipmentSelected = false
+    slot.overlayButton:SetScript("OnClick", function(self)
+        if self.isEquipmentSelected and GW.selectedInventorySlot  == self:GetParent():GetID() then
+            GwPaperDollSelectedIndicator:Hide()
+            GW.selectedInventorySlot = nil
+            GW.updateBagItemListAll()
+            self.isEquipmentSelected = false
+        else
+            GwPaperDollSelectedIndicator:ClearAllPoints()
+            GwPaperDollSelectedIndicator:SetPoint("LEFT", self:GetParent(), "LEFT", -16, 0)
+            GwPaperDollSelectedIndicator:Show()
+            GW.selectedInventorySlot = self:GetParent():GetID()
+            GW.updateBagItemList(self:GetParent())
+            self.isEquipmentSelected = true
+        end
+    end)
+    slot.overlayButton:SetScript("OnEnter", function() slot:GetScript("OnEnter")(slot) end)
+    slot.overlayButton:SetScript("OnLeave", function() slot:GetScript("OnLeave")(slot) end)
+
+    GW.equipSlotList[#GW.equipSlotList + 1] = slot:GetID()
+    GW.slotButtons[#GW.slotButtons + 1] = slot
+
+    GW.updateItemSlot(slot)
+
     slot.IsGW2Hooked = true
 end
 
@@ -764,6 +794,19 @@ local function LoadPaperDoll()
 
     GwDressingRoom.stats:SetScript("OnEvent", PaperDollStats_OnEvent)
     GwDressingRoomPet.stats:SetScript("OnEvent", PaperDollPetStats_OnEvent)
+
+     -- to prevent ALT click lua error
+    GwDressingRoom.flyoutSettings = {
+		onClickFunc = PaperDollFrameItemFlyoutButton_OnClick,
+		getItemsFunc = PaperDollFrameItemFlyout_GetItems,
+		postGetItemsFunc = PaperDollFrameItemFlyout_PostGetItems,
+		hasPopouts = true,
+		parent = PaperDollFrame,
+		anchorX = 0,
+		anchorY = -3,
+		verticalAnchorX = 0,
+		verticalAnchorY = 0,
+	};
 
     grabDefaultSlots(CharacterHeadSlot, {"TOPLEFT", GwDressingRoom.gear, "TOPLEFT", 0, 0}, GwDressingRoom, 50)
     grabDefaultSlots(CharacterShoulderSlot, {"TOPLEFT", CharacterHeadSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
@@ -825,13 +868,16 @@ local function LoadPaperDoll()
     GwPaperSkills.scroll.slider:SetValue(1)
 
     GW.LoadTitles()
-    GW.LoadGeatSets()
+    GW.LoadPDEquipset(GwHeroPanelMenu)
+    GW.LoadEquipments()
 
     GwDressingRoom.model:SetUnit("player")
     GwDressingRoom.model:SetPosition(0.8, 0, 0)
 
     if GW.myrace == "Human" then
         GwDressingRoom.model:SetPosition(0.4, 0, -0.05)
+    elseif GW.myrace == "Worgen" then
+        GwDressingRoom:SetPosition(0.1, 0, -0.1)
     elseif GW.myrace == "Tauren" then
         GwDressingRoom.model:SetPosition(0.6, 0, 0)
     elseif GW.myrace == "BloodElf" then
@@ -846,6 +892,8 @@ local function LoadPaperDoll()
         GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
     elseif GW.myrace == "Dwarf" then
         GwDressingRoom.model:SetPosition(0.3, 0, 0)
+    elseif GW.myrace == "Goblin" or GW.myrace == "Vulpera" then
+        GwDressingRoom:SetPosition(0.2, 0, -0.05)
     elseif GW.myrace == "Gnome" then
         GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
     elseif GW.myrace == "Orc" then

@@ -858,3 +858,31 @@ local function EscapeString(s)
     return gsub(s, "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")
 end
 GW.EscapeString = EscapeString
+
+local function getContainerItemLinkByNameOrId(itemName, id)
+    local itemLink = nil
+    for bag = 0, 4 do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local item = C_Container.GetContainerItemLink(bag, slot)
+            if item and (item:find(itemName) or item:find(id)) then
+                itemLink = item
+                break
+            end
+        end
+    end
+
+    return itemLink
+end
+GW.getContainerItemLinkByNameOrId = getContainerItemLinkByNameOrId
+
+local function getInventoryItemLinkByNameAndId(name, id)
+    for slot = 1, 17 do
+        local itemLink = GetInventoryItemLink("player", slot)
+        if itemLink and itemLink:find(name) and itemLink:find(id) then
+            return itemLink
+        end
+    end
+
+    return nil
+end
+GW.getInventoryItemLinkByNameAndId = getInventoryItemLinkByNameAndId
