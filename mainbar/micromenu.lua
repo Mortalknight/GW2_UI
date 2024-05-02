@@ -449,7 +449,7 @@ local function setupMicroButtons(mbf)
 
     -- EJMicroButton
     EJMicroButton:ClearAllPoints()
-    EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
+    EJMicroButton:SetPoint("BOTTOMLEFT", LFGMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
