@@ -8,6 +8,9 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+   addChange("3.3.3",{
+    {ct.bug,[=[Added a new spellbook container]=]},
+  })
 
 addChange("3.3.2",{
   {ct.bug,[=[Fix target frame and tooltip inspection errors]=]},

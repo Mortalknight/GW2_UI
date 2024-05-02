@@ -1,3 +1,6 @@
+3.3.3-Era
+   Added a new spellbook container
+
 3.3.2-Era
    Fix target frame and tooltip inspection errors
 

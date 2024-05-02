@@ -275,6 +275,7 @@ local function setUpPaging(self)
     self.attrDummy:SetFrameRef('container2', self.container2)
     self.attrDummy:SetFrameRef('container3', self.container3)
     self.attrDummy:SetFrameRef('container4', self.container4)
+    self.attrDummy:SetFrameRef('container5', self.container5)
     self.attrDummy:SetFrameRef('left', self.left)
     self.attrDummy:SetFrameRef('right', self.right)
     self.attrDummy:SetAttribute('_onattributechanged', ([=[
@@ -284,13 +285,18 @@ local function setUpPaging(self)
         local p2 = self:GetFrameRef('container2')
         local p3 = self:GetFrameRef('container3')
         local p4 = self:GetFrameRef('container4')
+        local p5 = self:GetFrameRef('container5')
         local left = self:GetFrameRef('left')
         local right = self:GetFrameRef('right')
         local numPages = %s
         local currentPage = 1
 
         if value == "left" then
-            if p4:IsVisible() then
+            if p5:IsVisible() then
+                p5:Hide()
+                p4:Show()
+                currentPage = 4
+            elseif p4:IsVisible() then
                 p4:Hide()
                 p3:Show()
                 currentPage = 3
@@ -317,6 +323,10 @@ local function setUpPaging(self)
                 p3:Hide()
                 p4:Show()
                 currentPage = 4
+            elseif p4:IsVisible() then
+                p4:Hide()
+                p5:Show()
+                currentPage = 5
             end
         end
 
