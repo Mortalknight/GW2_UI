@@ -118,6 +118,87 @@
                     </Layer>
                 </Layers>
             </Frame>
+            <Frame parentKey="eclips">
+             <Size x="314" y="18"></Size>
+        <Anchors>
+            <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+        </Anchors>
+               <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBackground" parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                    <Size x="318" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                    <Size x="318" y="2"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="2"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="1" y="2"/>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                    <Size x="318" y="2"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-1" y="-2"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="1" y="-2"/>
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="1" bottom="0" />
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+                    <Size x="2" y="2"/>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="2" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="2" y="0"/>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+                    <Size x="2" y="2"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="0"/>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-2" y="0"/>
+                    </Anchors>
+                    <TexCoords left="1" right="0" top="0" bottom="1" />
+                </Texture>
+            </Layer>
+              <Layer level="BACKGROUND" textureSubLevel="2">
+                <Texture name="$parentfill" parentKey="fill" file="Interface/AddOns/GW2_UI/textures/bartextures/eclips">
+                    <Size x="318" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+                    </Layer>
+                       <Layer level="BACKGROUND" textureSubLevel="3">
+                                  <Texture name="$parentfill" hidden="true" parentKey="lunar" file="Interface/AddOns/GW2_UI/textures/bartextures/lunareclips">
+                    <Size x="318" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentfill" parentKey="solar" hidden="true" file="Interface/AddOns/GW2_UI/textures/bartextures/solar">
+                    <Size x="318" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+                    </Layer>
+                       <Layer level="BACKGROUND" textureSubLevel="4">
+                <Texture name="$parentarrow" parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/uistuff/eclipsarrow">
+                    <Size x="18" y="18"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
+        
+                    </Anchors>
+                </Texture>
+                </Layer>
+        </Layers>
+            </Frame>
             <Frame parentKey="paladin" hidden="true">
                 <Size x="316" y="18"></Size>
                 <Anchors>

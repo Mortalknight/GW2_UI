@@ -77,6 +77,37 @@ local function animFlarePoint(f, point, to, from, duration)
     )
 end
 
+local function powerEclipsOnUpdate(self,event,...)
+    local pwrMax = UnitPowerMax(self.unit, Enum.PowerType.Balance)
+    local pwr = UnitPower(self.unit, Enum.PowerType.Balance)
+
+    local pwrP = pwr/pwrMax;
+    local segmentSize = self.eclips:GetWidth()/2
+    local arrowPosition = segmentSize*pwrP
+
+    arrowPosition = math.max(math.min(arrowPosition,segmentSize - 9),-segmentSize + 9)
+    self.eclips.arrow:SetPoint("CENTER",self.background,"CENTER",arrowPosition,0)
+    
+end
+local function powerEclips(self,event,...)
+ if event== "ECLIPSE_DIRECTION_CHANGE" then 
+    direction = ...
+    if direction=="sun" then 
+        self.eclips.lunar:Hide()
+        self.eclips.solar:Show()
+        self.eclips.arrow:SetTexCoord(0,1,0,1)
+    elseif direction=="moon" then  
+        self.eclips.lunar:Show()
+        self.eclips.solar:Hide()
+        self.eclips.arrow:SetTexCoord(1,0,0,1)
+    else 
+        self.eclips.lunar:Hide()
+        self.eclips.solar:Hide()
+    end
+ end
+    
+end
+
 local function powerCombo(self, event, ...)
     local pType = select(2, ...)
     if event ~= "CLASS_POWER_INIT" and pType ~= "COMBO_POINTS" then
@@ -140,6 +171,20 @@ local function powerCombo(self, event, ...)
     end
 end
 
+local function setEclips(f)
+   
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+    
+
+    f:SetScript("OnUpdate", powerEclipsOnUpdate)
+    f:SetScript("OnEvent",powerEclips)
+    powerEclips(f, "CLASS_POWER_INIT")
+    
+    f:RegisterUnitEvent("UNIT_AURA", "player")
+    f:RegisterEvent("ECLIPSE_DIRECTION_CHANGE")
+    
+end
 local function setComboBar(f)
     f:ClearAllPoints()
     f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
@@ -443,8 +488,12 @@ local function setDruid(f)
         barType = "combo|little_mana"
     elseif form == BEAR_FORM or form == 8 then --bear
         barType = "mana"
+    elseif form == MOONKIN_FORM then --Moonkin
+        barType = "eclips"
     end
-
+    
+    f.eclips:Hide()
+   
     if barType == "combo|little_mana" then
         setComboBar(f)
         if f.ourPowerBar then
@@ -457,6 +506,10 @@ local function setDruid(f)
         return false
     elseif barType == "mana" then
         setManaBar(f)
+        return true
+    elseif barType == "eclips" then
+        f.eclips:Show()
+        setEclips(f)
         return true
     else
         f.barType = "none"
