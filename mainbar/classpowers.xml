@@ -176,27 +176,42 @@
                     <Size x="318" y="20"></Size>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"/>
-                 
+
                     </Anchors>
                 </Texture>
                 <Texture name="$parentfill" parentKey="solar" hidden="true" file="Interface/AddOns/GW2_UI/textures/bartextures/solar">
                     <Size x="318" y="20"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"/>
-        
+
                     </Anchors>
                 </Texture>
                     </Layer>
-                       <Layer level="BACKGROUND" textureSubLevel="4">
-                <Texture name="$parentarrow" parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/uistuff/eclipsarrow">
-                    <Size x="18" y="18"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
-        
-                    </Anchors>
-                </Texture>
-                </Layer>
-        </Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="3">
+                        <Texture name="$parentfill" hidden="true" parentKey="lunar" file="Interface/AddOns/GW2_UI/textures/bartextures/lunareclips">
+                            <Size x="318" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"/>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentfill" parentKey="solar" hidden="true" file="Interface/AddOns/GW2_UI/textures/bartextures/solar">
+                            <Size x="318" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"/>
+                            </Anchors>
+                        </Texture>
+                            </Layer>
+                            <Layer level="BACKGROUND" textureSubLevel="4">
+                        <Texture name="$parentarrow" parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/uistuff/eclipsarrow">
+                            <Size x="18" y="18"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </Frame>
             <Frame parentKey="paladin" hidden="true">
                 <Size x="316" y="18"></Size>

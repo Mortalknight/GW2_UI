@@ -267,6 +267,7 @@ local function updateTalentSummary(self)
         summary.interactable = false;
         summary:SetScript("OnClick", nil)
     end
+    summary.selected = not desaturated
 
     local bonuses = { GetMajorTalentTreeBonuses(self.spec, false, false) };
     local bonusFrameIndex = 1
