@@ -213,6 +213,35 @@
                     </Layer>
                 </Layers>
             </Frame>
+                    <Frame parentKey="priest" hidden="true">
+                <Size x="316" y="18"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY" textureSubLevel="8">
+                      <Texture parentKey="1" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\shadoworbs\power" hidden="false">
+                            <Size x="64" y="64"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="4"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="2" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\shadoworbs\power" hidden="false">
+                            <Size x="64" y="64"></Size>
+                             <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="35" y="4"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="3" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\shadoworbs\power" hidden="false">
+                            <Size x="64" y="64"></Size>
+                             <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="70" y="4"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
             <Frame parentKey="paladin" hidden="true">
                 <Size x="316" y="18"></Size>
                 <Anchors>

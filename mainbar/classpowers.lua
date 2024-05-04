@@ -6,7 +6,7 @@ local UpdatePowerData = GW.UpdatePowerData
 
 local function UpdateVisibility(self, inCombat)
     if self.onlyShowInCombat then
-       self:SetShown(inCombat and self.shouldShowBar)
+        self:SetShown(inCombat and self.shouldShowBar)
     else
         self:SetShown(self.shouldShowBar)
     end
@@ -77,10 +77,10 @@ local function animFlarePoint(f, point, to, from, duration)
     )
 end
 
-local function powerEclipsOnUpdate(self,event,...)
+local function powerEclipsOnUpdate(self, event, ...)
     local pwrMax = UnitPowerMax(self.unit, Enum.PowerType.Balance)
     local pwr = UnitPower(self.unit, Enum.PowerType.Balance)
-    if self.oldEclipsPower ~= nil and self.oldEclipsPower==pwr then 
+    if self.oldEclipsPower ~= nil and self.oldEclipsPower == pwr then
         return
     end
 
@@ -92,45 +92,40 @@ local function powerEclipsOnUpdate(self,event,...)
         0.2,
         function()
             local p = animations["ECLIPS_BAR"].progress
-            local pwrP = p/pwrMax;
-            local pwrAbs = math.abs(p)/pwrMax;
-            local segmentSize = self.eclips:GetWidth()/2
-            local arrowPosition = segmentSize*pwrP
+            local pwrP = p / pwrMax;
+            local pwrAbs = math.abs(p) / pwrMax;
+            local segmentSize = self.eclips:GetWidth() / 2
+            local arrowPosition = segmentSize * pwrP
 
-            local clampedArrowPosition = math.max(math.min(arrowPosition,segmentSize - 9),-segmentSize + 9)
-            self.eclips.arrow:SetPoint("CENTER",self.background,"CENTER",clampedArrowPosition,0)
+            local clampedArrowPosition = math.max(math.min(arrowPosition, segmentSize - 9), -segmentSize + 9)
+            self.eclips.arrow:SetPoint("CENTER", self.background, "CENTER", clampedArrowPosition, 0)
             self.eclips.fill:ClearAllPoints()
-            if p>0 then 
-             self.eclips.fill:SetPoint("LEFT",self.background,"CENTER",0,0)
-             self.eclips.fill:SetPoint("RIGHT",self.background,"CENTER",arrowPosition,0)
-             self.eclips.fill:SetTexCoord(0,pwrAbs,0,1)
-            else 
-                self.eclips.fill:SetPoint("LEFT",self.background,"CENTER",arrowPosition,0)
-                self.eclips.fill:SetPoint("RIGHT",self.background,"CENTER",0,0)
-                self.eclips.fill:SetTexCoord(0,pwrAbs,0,1)
+            if p > 0 then
+                self.eclips.fill:SetPoint("LEFT", self.background, "CENTER", 0, 0)
+                self.eclips.fill:SetPoint("RIGHT", self.background, "CENTER", arrowPosition, 0)
+                self.eclips.fill:SetTexCoord(0, pwrAbs, 0, 1)
+            else
+                self.eclips.fill:SetPoint("LEFT", self.background, "CENTER", arrowPosition, 0)
+                self.eclips.fill:SetPoint("RIGHT", self.background, "CENTER", 0, 0)
+                self.eclips.fill:SetTexCoord(0, pwrAbs, 0, 1)
             end
             self.oldEclipsPower = p;
-        end       
+        end
     )
-   
-
-    
 end
-local function powerEclips(self,event,...)
- if event== "ECLIPSE_DIRECTION_CHANGE" then 
-    direction = ...
-    if direction=="sun" then 
-       
-        self.eclips.arrow:SetTexCoord(0,1,0,1)
-    elseif direction=="moon" then  
-      
-        self.eclips.arrow:SetTexCoord(1,0,0,1)
-    else 
-        self.eclips.lunar:Hide()
-        self.eclips.solar:Hide()
-    end
-    elseif event=="UNIT_AURA" then 
-        local aura= findBuff("player", ECLIPSE_BAR_LUNAR_BUFF_ID)
+local function powerEclips(self, event, ...)
+    if event == "ECLIPSE_DIRECTION_CHANGE" then
+        direction = ...
+        if direction == "sun" then
+            self.eclips.arrow:SetTexCoord(0, 1, 0, 1)
+        elseif direction == "moon" then
+            self.eclips.arrow:SetTexCoord(1, 0, 0, 1)
+        else
+            self.eclips.lunar:Hide()
+            self.eclips.solar:Hide()
+        end
+    elseif event == "UNIT_AURA" then
+        local aura = findBuff("player", ECLIPSE_BAR_LUNAR_BUFF_ID)
         if aura ~= nil then
             self.eclips.lunar:Show()
             self.eclips.solar:Hide()
@@ -141,7 +136,7 @@ local function powerEclips(self,event,...)
             self.eclips.lunar:Hide()
             self.eclips.solar:Show()
             return
-        end 
+        end
         self.eclips.lunar:Hide()
         self.eclips.solar:Hide()
     end
@@ -216,7 +211,7 @@ local function setEclips(f)
     f.fill:SetTexture(nil)
 
     f:SetScript("OnUpdate", powerEclipsOnUpdate)
-    f:SetScript("OnEvent",powerEclips)
+    f:SetScript("OnEvent", powerEclips)
     powerEclips(f, "CLASS_POWER_INIT")
 
     f:RegisterUnitEvent("UNIT_AURA", "player")
@@ -304,6 +299,47 @@ local function setRogue(f)
     setComboBar(f)
     return true
 end
+
+--priest
+local function shadowOrbs(self, event, ...)
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and event ~= "UNIT_AURA" then
+        return
+    end
+    local count = 0
+
+    local _, count, _, _ = findBuff("player", 77487)
+    if count == nil then
+        count = 0
+    end
+
+    local old_power = self.gwPower
+    --empty v:SetTexCoord(0,0.5,0,0.5)
+    --full  v:SetTexCoord(0.5,1,0,0.5)
+    --current  v:SetTexCoord(0,0.5,0.5,1)
+    local pwrMax = 3
+    local pwr = count
+    if pwr < 2 then
+        self.background:SetAlpha(0.2)
+    else
+        self.background:SetAlpha(1)
+    end
+    for k, v in pairs(self.priest.power) do
+        local id = tonumber(v:GetParentKey())
+        if old_power < id and pwr >= id then
+            animFlarePoint(self, v, 1, 0, 0.5)
+        end
+        if pwr >= 3 and id < 4 then
+            v:SetTexCoord(0, 0.5, 0.5, 1)
+        elseif pwr >= id then
+            v:SetTexCoord(0.5, 1, 0, 0.5)
+        elseif pwr < id then
+            v:SetTexCoord(0, 0.5, 0, 0.5)
+        end
+    end
+    self.gwPower = pwr;
+end
+GW.AddForProfiling("classpowers", "shadowOrbs", shadowOrbs)
 
 --PALADIN
 local function powerHoly(self, event, ...)
@@ -515,17 +551,40 @@ local function setDeathKnight(f)
     return true
 end
 GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
+local function setPriest(f)
+    f.priest:Show()
+
+    f.background:ClearAllPoints()
+    f.background:SetHeight(41)
+    f.background:SetWidth(181)
+    f.background:SetTexCoord(0, 0.70703125, 0, 0.640625)
+    f.priest:ClearAllPoints()
+    f.priest:SetPoint("TOPLEFT", GwPlayerClassPower.gwMover, 0, 0)
+    f.priest:SetPoint("BOTTOMLEFT", GwPlayerClassPower.gwMover, 0, 0)
+    f.background:SetPoint("LEFT", GwPlayerClassPower.gwMover, "LEFT", 0, 2)
+
+    f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/shadoworbs/background")
+
+    f.fill:Hide()
+
+    f:SetScript("OnEvent", shadowOrbs)
+    shadowOrbs(f, "CLASS_POWER_INIT")
+    f:RegisterUnitEvent("UNIT_AURA", "player")
+
+    return true
+end
+GW.AddForProfiling("classpowers", "setPriest", setPriest)
 
 -- DRUID
 local function setDruid(f)
     local form = f.gwPlayerForm
     local barType = "none"
 
-    if form == CAT_FORM then -- cat
+    if form == CAT_FORM then                   -- cat
         barType = "combo|little_mana"
     elseif form == BEAR_FORM or form == 8 then --bear
         barType = "mana"
-    elseif form == MOONKIN_FORM then --Moonkin
+    elseif form == MOONKIN_FORM then           --Moonkin
         barType = "eclips"
     end
 
@@ -600,6 +659,8 @@ local function selectType(f)
         showBar = setPaladin(f)
     elseif GW.myClassID == 4 then
         showBar = setRogue(f)
+    elseif GW.myClassID == 5 then
+        showBar = setPriest(f)
     elseif GW.myClassID == 6 then
         showBar = setDeathKnight(f)
     elseif GW.myClassID == 7 then
@@ -711,8 +772,10 @@ local function LoadClassPowers()
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
     if GW.GetSetting("POWERBAR_ENABLED") then
-        local anchorFrame = GW.GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame and GwPlayerUnitFrame or GwPlayerPowerBar
-        local barWidth = GW.GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame and GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
+        local anchorFrame = GW.GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame and GwPlayerUnitFrame or
+        GwPlayerPowerBar
+        local barWidth = GW.GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame and
+        GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
         local lmb = GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
         lmb.customMaskSize = 64
         lmb.bar = lmb
@@ -815,6 +878,5 @@ local function LoadClassPowers()
 
     updateVisibilitySetting(cpf, false)
     selectType(cpf)
-
 end
 GW.LoadClassPowers = LoadClassPowers
