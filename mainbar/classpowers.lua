@@ -552,26 +552,29 @@ local function setDeathKnight(f)
 end
 GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
 local function setPriest(f)
-    f.priest:Show()
+    if GW.myspec == 3 then
+        f.priest:Show()
 
-    f.background:ClearAllPoints()
-    f.background:SetHeight(41)
-    f.background:SetWidth(181)
-    f.background:SetTexCoord(0, 0.70703125, 0, 0.640625)
-    f.priest:ClearAllPoints()
-    f.priest:SetPoint("TOPLEFT", GwPlayerClassPower.gwMover, 0, 0)
-    f.priest:SetPoint("BOTTOMLEFT", GwPlayerClassPower.gwMover, 0, 0)
-    f.background:SetPoint("LEFT", GwPlayerClassPower.gwMover, "LEFT", 0, 2)
+        f.background:ClearAllPoints()
+        f.background:SetHeight(41)
+        f.background:SetWidth(181)
+        f.background:SetTexCoord(0, 0.70703125, 0, 0.640625)
+        f.priest:ClearAllPoints()
+        f.priest:SetPoint("TOPLEFT", GwPlayerClassPower.gwMover, 0, 0)
+        f.priest:SetPoint("BOTTOMLEFT", GwPlayerClassPower.gwMover, 0, 0)
+        f.background:SetPoint("LEFT", GwPlayerClassPower.gwMover, "LEFT", 0, 2)
 
-    f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/shadoworbs/background")
+        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/shadoworbs/background")
 
-    f.fill:Hide()
+        f.fill:Hide()
 
-    f:SetScript("OnEvent", shadowOrbs)
-    shadowOrbs(f, "CLASS_POWER_INIT")
-    f:RegisterUnitEvent("UNIT_AURA", "player")
+        f:SetScript("OnEvent", shadowOrbs)
+        shadowOrbs(f, "CLASS_POWER_INIT")
+        f:RegisterUnitEvent("UNIT_AURA", "player")
 
-    return true
+        return true
+    end
+    return false
 end
 GW.AddForProfiling("classpowers", "setPriest", setPriest)
 
@@ -773,9 +776,9 @@ local function LoadClassPowers()
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
     if GW.GetSetting("POWERBAR_ENABLED") then
         local anchorFrame = GW.GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame and GwPlayerUnitFrame or
-        GwPlayerPowerBar
+            GwPlayerPowerBar
         local barWidth = GW.GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame and
-        GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
+            GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
         local lmb = GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
         lmb.customMaskSize = 64
         lmb.bar = lmb
