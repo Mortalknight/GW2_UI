@@ -648,6 +648,7 @@ local function selectType(f)
     f.decay:Hide()
     f.exbar:Hide()
     f.eclips:Hide()
+    f.priest:Hide()
 
     if GW.GetSetting("POWERBAR_ENABLED") then
         f.lmb:Hide()

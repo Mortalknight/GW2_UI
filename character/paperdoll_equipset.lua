@@ -101,6 +101,7 @@ local function outfitEditButton_OnClick(self)
             GearSetButton_Edit(gearSetButton)
         end
     })
+    --[[
     tinsert(menuList,
     {
         text = EQUIPMENT_SET_ASSIGN_TO_SPEC,
@@ -129,6 +130,7 @@ local function outfitEditButton_OnClick(self)
             end
         })
     end
+    ]]
 
     GW.SetEasyMenuAnchor(GW.EasyMenu, self)
     EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
@@ -181,6 +183,9 @@ local function getNewEquipmentSetButton(i)
         GameTooltip:Show()
     end)
     f.deleteOutfit:SetScript("OnLeave", GameTooltip_Hide)
+
+    f.SpecRing:Hide()
+    f.SpecIcon:Hide()
 
     if i > 1 then
         _G["GwPaperDollOutfitsButton" .. i]:SetPoint("TOPLEFT", _G["GwPaperDollOutfitsButton" .. (i - 1)], "BOTTOMLEFT")
