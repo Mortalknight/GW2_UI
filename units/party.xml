@@ -128,7 +128,7 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-10"></Anchor>
                 </Anchors>
             </Frame>
-     
+
             <StatusBar parentKey="powerbar" name="$parentPowerBar" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="65" y="1"></Size>
                 <Anchors>
