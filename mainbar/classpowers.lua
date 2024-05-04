@@ -80,32 +80,71 @@ end
 local function powerEclipsOnUpdate(self,event,...)
     local pwrMax = UnitPowerMax(self.unit, Enum.PowerType.Balance)
     local pwr = UnitPower(self.unit, Enum.PowerType.Balance)
+    if self.oldEclipsPower ~= nil and self.oldEclipsPower==pwr then 
+        return
+    end
 
-    local pwrP = pwr/pwrMax;
-    local segmentSize = self.eclips:GetWidth()/2
-    local arrowPosition = segmentSize*pwrP
+    AddToAnimation(
+        "ECLIPS_BAR",
+        self.oldEclipsPower,
+        pwr,
+        GetTime(),
+        0.2,
+        function()
+            local p = animations["ECLIPS_BAR"].progress
+            local pwrP = p/pwrMax;
+            local pwrAbs = math.abs(p)/pwrMax;
+            local segmentSize = self.eclips:GetWidth()/2
+            local arrowPosition = segmentSize*pwrP
 
-    arrowPosition = math.max(math.min(arrowPosition,segmentSize - 9),-segmentSize + 9)
-    self.eclips.arrow:SetPoint("CENTER",self.background,"CENTER",arrowPosition,0)
+            local clampedArrowPosition = math.max(math.min(arrowPosition,segmentSize - 9),-segmentSize + 9)
+            self.eclips.arrow:SetPoint("CENTER",self.background,"CENTER",clampedArrowPosition,0)
+            self.eclips.fill:ClearAllPoints()
+            if p>0 then 
+             self.eclips.fill:SetPoint("LEFT",self.background,"CENTER",0,0)
+             self.eclips.fill:SetPoint("RIGHT",self.background,"CENTER",arrowPosition,0)
+             self.eclips.fill:SetTexCoord(0,pwrAbs,0,1)
+            else 
+                self.eclips.fill:SetPoint("LEFT",self.background,"CENTER",arrowPosition,0)
+                self.eclips.fill:SetPoint("RIGHT",self.background,"CENTER",0,0)
+                self.eclips.fill:SetTexCoord(0,pwrAbs,0,1)
+            end
+            self.oldEclipsPower = p;
+        end       
+    )
+   
+
     
 end
 local function powerEclips(self,event,...)
  if event== "ECLIPSE_DIRECTION_CHANGE" then 
     direction = ...
     if direction=="sun" then 
-        self.eclips.lunar:Hide()
-        self.eclips.solar:Show()
+       
         self.eclips.arrow:SetTexCoord(0,1,0,1)
     elseif direction=="moon" then  
-        self.eclips.lunar:Show()
-        self.eclips.solar:Hide()
+      
         self.eclips.arrow:SetTexCoord(1,0,0,1)
     else 
         self.eclips.lunar:Hide()
         self.eclips.solar:Hide()
     end
- end
-    
+    elseif event=="UNIT_AURA" then 
+        local aura= findBuff("player", ECLIPSE_BAR_LUNAR_BUFF_ID)
+        if aura ~= nil then
+            self.eclips.lunar:Show()
+            self.eclips.solar:Hide()
+            return
+        end
+        local aura = findBuff("player", ECLIPSE_BAR_SOLAR_BUFF_ID)
+        if aura ~= nil then
+            self.eclips.lunar:Hide()
+            self.eclips.solar:Show()
+            return
+        end 
+        self.eclips.lunar:Hide()
+        self.eclips.solar:Hide()
+    end
 end
 
 local function powerCombo(self, event, ...)
