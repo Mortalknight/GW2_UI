@@ -172,18 +172,16 @@ local function powerCombo(self, event, ...)
 end
 
 local function setEclips(f)
-   
+    f.eclips:Show()
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
-    
 
     f:SetScript("OnUpdate", powerEclipsOnUpdate)
     f:SetScript("OnEvent",powerEclips)
     powerEclips(f, "CLASS_POWER_INIT")
-    
+
     f:RegisterUnitEvent("UNIT_AURA", "player")
     f:RegisterEvent("ECLIPSE_DIRECTION_CHANGE")
-    
 end
 local function setComboBar(f)
     f:ClearAllPoints()
@@ -491,9 +489,9 @@ local function setDruid(f)
     elseif form == MOONKIN_FORM then --Moonkin
         barType = "eclips"
     end
-    
+
     f.eclips:Hide()
-   
+
     if barType == "combo|little_mana" then
         setComboBar(f)
         if f.ourPowerBar then
@@ -508,7 +506,6 @@ local function setDruid(f)
         setManaBar(f)
         return true
     elseif barType == "eclips" then
-        f.eclips:Show()
         setEclips(f)
         return true
     else
@@ -549,6 +546,7 @@ local function selectType(f)
     f.paladin:Hide()
     f.decay:Hide()
     f.exbar:Hide()
+    f.eclips:Hide()
 
     if GW.GetSetting("POWERBAR_ENABLED") then
         f.lmb:Hide()
