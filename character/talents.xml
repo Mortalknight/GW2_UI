@@ -695,22 +695,19 @@
                 <Scripts>
                     <OnShow>
                         self:SetScript('OnUpdate', function(self, elapsed)
-                           
                             local min =  256
                             if self.isPrimaryTree then
                                 min = 512
-                            end 
-                            if self.interactable==true and MouseIsOver(self) then
+                            end
+                            if (self.interactable == true or self.selected) and MouseIsOver(self) then
                                 local r = self.backgroundMask:GetWidth()
                                 r =  math.min(512,math.max(min,r + 2120 * elapsed))
                                 self.fx =math.max(0, (self.fx or 0) - (1 * elapsed))
-                            
                                 self.backgroundFx:SetAlpha(self.fx)
-        
                                 self.backgroundMask:SetSize(r,r)
                                 return
                             end
-                            
+
                             self.backgroundMask:SetSize(min,min)
                             self.backgroundFx:SetAlpha(0)
                             self.fx =1;

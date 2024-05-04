@@ -857,11 +857,11 @@ local function LoadWindows()
 
                 -- add addon buttons here
                 if GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6 then
-                    nextShadow = true
-                else
                     nextShadow = false
+                else
+                    nextShadow = true
                 end
-                nextAnchor = (GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6) and GwHeroPanelMenu.petMenu or GwHeroPanelMenu.gearMenu
+                nextAnchor = (GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6) and GwHeroPanelMenu.petMenu or GwHeroPanelMenu.equipmentMenu
                 addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end, true)
                 addAddonButton("GearQuipper-TBC", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() gearquipper:ToggleUI() end, false)
                 addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end, true)
