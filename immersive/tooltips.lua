@@ -503,7 +503,7 @@ local function GameTooltip_OnTooltipSetItem(self, data)
 
     local itemID, bagCount, bankCount
     local modKey = IsModKeyDown()
-    local GetItem = TooltipUtil and TooltipUtil.GetDisplayedItem or GetDisplayedItem or self.GetItem
+    local GetItem = TooltipUtil and TooltipUtil.GetDisplayedItem or self.GetItem
     if GetItem then
         local _, link = GetItem(self)
 
