@@ -121,6 +121,7 @@ mainbar\micromenu.lua
 mainbar\raidControl.xml
 mainbar\raidControl.lua
 mainbar\raidCounter.lua
+mainbar\worldmarkersKeybind.lua
 mainbar\experiencebar.xml
 mainbar\hudart.xml
 mainbar\hudelements.xml
