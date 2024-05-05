@@ -343,10 +343,8 @@ end
 GW.GridToggleFramesPreviewRaid = GridToggleFramesPreviewRaid
 
 local function LoadRaidFrames()
-    if not GwManageGroupButton then
-        -- load missing and ignored auras, do it here because this code is only triggered from one of the 3 grids
-        GW.UpdateGridSettings()
-    end
+    GW.CreateRaidControlFrame()
+    GW.UpdateGridSettings()
 
     hideBlizzardRaidFrame()
     UpdateSettings()
