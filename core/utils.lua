@@ -886,3 +886,30 @@ local function getInventoryItemLinkByNameAndId(name, id)
     return nil
 end
 GW.getInventoryItemLinkByNameAndId = getInventoryItemLinkByNameAndId
+
+-- tooltip function
+local function CompatibleTooltip(self)
+	if self.GetTooltipData then return end
+
+	local info = { name = self:GetName(), lines = {} }
+	info.leftTextName = info.name .. 'TextLeft'
+	info.rightTextName = info.name .. 'TextRight'
+
+	self.GetTooltipData = function()
+		wipe(info.lines)
+
+		for i = 1, self:NumLines() do
+			local left = _G[info.leftTextName..i]
+			local leftText = left and left:GetText() or nil
+
+			local right = _G[info.rightTextName..i]
+			local rightText = right and right:GetText() or nil
+
+			tinsert(info.lines, i, { lineIndex = i, leftText = leftText, rightText = rightText })
+		end
+
+		return info
+	end
+end
+CompatibleTooltip(GW.ScanTooltip)
+CompatibleTooltip(GameTooltip)

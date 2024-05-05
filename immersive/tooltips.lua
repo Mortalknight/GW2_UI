@@ -25,8 +25,8 @@ local genderTable = {
     " " .. FEMALE .. " "
 }
 
-local LEVEL1 = strlower(_G.TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?", ""))
-local LEVEL2 = strlower(_G.TOOLTIP_UNIT_LEVEL_CLASS:gsub("^%%2$s%s?(.-)%s?%%1$s", "%1"):gsub("^%-?г?о?%s?", ""):gsub("%s?%%s%s?%-?", ""))
+local LEVEL1 = strlower(TOOLTIP_UNIT_LEVEL:gsub('%s?%%s%s?%-?',''))
+local LEVEL2 = strlower((TOOLTIP_UNIT_LEVEL_RACE or TOOLTIP_UNIT_LEVEL_CLASS):gsub('^%%2$s%s?(.-)%s?%%1$s','%1'):gsub('^%-?г?о?%s?',''):gsub('%s?%%s%s?%-?',''))
 local IDLine = "|cffffedba%s|r %d"
 
 local TT = CreateFrame("Frame")
@@ -54,15 +54,20 @@ end
 
 local function RemoveTrashLines(self)
     if self:IsForbidden() then return end
-    for i = 3, self:NumLines() do
-        local tiptext = _G["GameTooltipTextLeft" .. i]
-        local linetext = tiptext:GetText()
 
-        if linetext == PVP or linetext == FACTION_ALLIANCE or linetext == FACTION_HORDE then
-            tiptext:SetText("")
-            tiptext:Hide()
-        end
-    end
+	local info = self:GetTooltipData()
+	if not (info and info.lines[3]) then return end
+
+	for i, line in next, info.lines, 3 do
+		local text = line and line.leftText
+		if not text or text == '' then
+			break
+		elseif text == PVP or text == FACTION_ALLIANCE or text == FACTION_HORDE then
+			local left = _G['GameTooltipTextLeft' .. i]
+			left:SetText('')
+			left:Hide()
+		end
+	end
 end
 
 local function SetUnitAura(self, unit, index, filter)
@@ -100,39 +105,48 @@ local function SetUnitAura(self, unit, index, filter)
     self:Show()
 end
 
-local function GameTooltip_OnTooltipSetSpell(self)
-    if self:IsForbidden() or not IsModKeyDown() then return end
+local function GameTooltip_OnTooltipSetSpell(self, data)
+    if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
 
-    local _, id = self:GetSpell()
-    if not id then return end
+	local id = (data and data.id) or select(2, self:GetSpell())
+	if not id then return end
 
-    local ID = format(IDLine, ID, id)
-    for i = 3, self:NumLines() do
-        local line = _G[format("GameTooltipTextLeft%d", i)]
-        local text = line and line:GetText()
-        if text and strfind(text, ID) then
-            return
-        end
-    end
+	local ID = format(IDLine, _G.ID, id)
+	local info = self:GetTooltipData()
+	if info and info.lines[3] then
+		for _, line in next, info.lines, 3 do
+			local text = line and line.leftText
+			if not text or text == '' then return end
 
-    self:AddLine(ID)
-    self:Show()
+			if strfind(text, ID) then
+				return -- this is called twice on talents for some reason?
+			end
+		end
+	end
+
+	self:AddLine(ID)
+	self:Show()
 end
 
-local function GetLevelLine(self, offset, guildName)
+local function GetLevelLine(self, offset, raw)
     if self:IsForbidden() then return end
 
-    if guildName then
-        offset = 3
-    end
+    local info = self:GetTooltipData()
+    if not (info and info.lines[offset]) then return end
 
-    for i = offset, self:NumLines() do
-        local tipLine = _G["GameTooltipTextLeft"..i]
-        local tipText = tipLine and tipLine:GetText() and strlower(tipLine:GetText())
-        if tipText and (strfind(tipText, LEVEL1) or strfind(tipText, LEVEL2)) then
-            return tipLine
-        end
-    end
+    for i, line in next, info.lines, offset do
+		local text = line and line.leftText
+		if not text or text == '' then return end
+
+		local lower = strlower(text)
+		if lower and (strfind(lower, LEVEL1) or strfind(lower, LEVEL2)) then
+			if raw then
+				return line, info.lines[i + 1]
+			else
+				return _G['GameTooltipTextLeft' .. i], _G['GameTooltipTextLeft' .. i + 1]
+			end
+		end
+	end
 end
 
 local function SetUnitText(self, unit, isPlayerUnit)
@@ -171,7 +185,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local awayText = UnitIsAFK(unit) and AFK_LABEL or UnitIsDND(unit) and DND_LABEL or ""
         GameTooltipTextLeft1:SetFormattedText("|c%s%s%s|r", nameColor.colorStr, name or UNKNOWN, awayText)
 
-        local levelLine = GetLevelLine(self, 2, guildName)
+        local levelLine = GetLevelLine(self, (guildName and 2) or 1)
         if guildName then
             if guildRealm and isShiftKeyDown then
                 guildName = guildName .. "-" .. guildRealm
@@ -197,7 +211,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
 
         return nameColor
     else
-        local levelLine = GetLevelLine(self, 2)
+        local levelLine = GetLevelLine(self, 1)
         if levelLine then
             local pvpFlag, diffColor, level = "", "", ""
             local creatureClassification = UnitClassification(unit)
@@ -388,8 +402,8 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
     end
 end
 
-local function GameTooltip_OnTooltipSetUnit(self)
-    if self:IsForbidden() then return end
+local function GameTooltip_OnTooltipSetUnit(self, data)
+    if self ~= GameTooltip or self:IsForbidden() then return end
 
     local _, unit = self:GetUnit()
     local isPlayerUnit = UnitIsPlayer(unit)
@@ -413,11 +427,11 @@ local function GameTooltip_OnTooltipSetUnit(self)
         AddTargetInfo(self, unit)
     end
 
-    if GW.GetSetting("ADVANCED_TOOLTIP_SHOW_MOUNT") and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown then
+    if GetSetting("ADVANCED_TOOLTIP_SHOW_MOUNT") and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown then
         AddMountInfo(self, unit)
     end
 
-    if GW.GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE") then
+    if GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE") then
         AddRoleInfo(self, unit)
     end
 
@@ -426,7 +440,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
     --end
 
     if unit and not isPlayerUnit and IsModKeyDown() then
-        local guid = UnitGUID(unit) or ""
+        local guid = (data and data.guid) or UnitGUID(unit) or ""
         local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
         if id then -- NPC ID"s
             self:AddLine(format(IDLine, ID, id))
@@ -439,11 +453,12 @@ local function GameTooltip_OnTooltipSetUnit(self)
         self.StatusBar:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
     end
 
-    local textWidth = self.StatusBar.text:GetStringWidth()
-    if textWidth then
-        self:SetMinimumWidth(textWidth)
+    if self.StatusBar.text then
+        local textWidth = self.StatusBar.text:GetStringWidth()
+        if textWidth then
+            self:SetMinimumWidth(textWidth)
+        end
     end
-
 end
 
 local function GameTooltipStatusBar_OnValueChanged(self, value)
@@ -488,7 +503,7 @@ local function GameTooltip_OnTooltipSetItem(self, data)
 
     local itemID, bagCount, bankCount
     local modKey = IsModKeyDown()
-    local GetItem = GetDisplayedItem or self.GetItem
+    local GetItem = TooltipUtil.GetDisplayedItem or GetDisplayedItem or self.GetItem
     if GetItem then
         local _, link = GetItem(self)
 
@@ -587,9 +602,33 @@ local function GameTooltip_ShowProgressBar(self)
     end
 end
 
+local function SkinItemRefTooltipCloseButton()
+    ItemRefCloseButton:GwSkinButton(true)
+    ItemRefCloseButton:SetSize(20, 20)
+    ItemRefCloseButton:ClearAllPoints()
+    ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
+
+    if C_AddOns.IsAddOnLoaded("Pawn") then
+        if ItemRefTooltip.PawnIconFrame then ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+    end
+end
+
+local function SkinQueueStatusFrame()
+    QueueStatusFrame:GwStripTextures()
+    QueueStatusFrame:GwCreateBackdrop({
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+        tile = false,
+        tileSize = 64,
+        edgeSize = 32,
+        insets = {left = 2, right = 2, top = 2, bottom = 2}
+    })
+end
+
 local function shouldHiddenInCombat(tooltip)
-    if tooltip:GetUnit() then
-        local unitReaction = UnitReaction("player", tooltip:GetUnit())
+    local _, unit = tooltip:GetUnit()
+    if unit then
+        local unitReaction = UnitReaction("player", unit)
         if not unitReaction then return false end
 
         local unitSetting = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
@@ -604,41 +643,18 @@ local function shouldHiddenInCombat(tooltip)
 end
 
 local function SetStyle(self, _, isEmbedded)
-    if not self or (self == GW.ScanTooltip or isEmbedded or self.IsEmbedded or not self.NineSlice) or self:IsForbidden() then return end
+    if not self or (isEmbedded or self.IsEmbedded or not self.NineSlice) or self:IsForbidden() then return end
 
     if self.Delimiter1 then self.Delimiter1:SetTexture() end
     if self.Delimiter2 then self.Delimiter2:SetTexture() end
 
-
-    if not self.NineSlice.SetBackdrop then
-        Mixin(self.NineSlice, BackdropTemplateMixin)
-        self.NineSlice:HookScript('OnSizeChanged', self.NineSlice.OnBackdropSizeChanged)
-    end
-
-    self.NineSlice:SetBackdrop({
+    self.NineSlice:Hide()
+    self:GwCreateBackdrop({
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-        edgeSize = GW.Scale(2)
+        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+        edgeSize = GW.Scale(32),
+        insets = {left = 2, right = 2, top = 2, bottom = 2}
     })
-
-    self.NineSlice:SetBackdropBorderColor(0, 0, 0, 0.6)
-    if not self.NineSlice.gwHookedBorderColor then
-        hooksecurefunc(self.NineSlice, "SetBackdropBorderColor", function(self, r, g, b, a)
-            if r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0.6 then
-                self:SetBackdropBorderColor(0, 0, 0, 0.6)
-            end
-        end)
-
-        if PawnSetTooltipBorderColor then
-            hooksecurefunc("PawnSetTooltipBorderColor", function(_, r, g, b, a)
-                if r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0.6 then
-                    self.NineSlice:SetBackdropBorderColor(0, 0, 0, 0.6)
-                end
-            end)
-        end
-
-        self.NineSlice.gwHookedBorderColor = true
-    end
 end
 
 local function StyleTooltips()
@@ -794,6 +810,8 @@ GW.SetTooltipFonts = SetTooltipFonts
 local function LoadTooltips()
     -- Style Tooltips first
     StyleTooltips()
+    SkinItemRefTooltipCloseButton()
+    SkinQueueStatusFrame()
 
     -- Skin GameTooltip Status Bar
     GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")

@@ -15,6 +15,7 @@
     <Script file="timeManager.lua"/>
     <Script file="socket.lua"/>
     <Script file="flightmap.lua"/>
+    <Script file="lfg_popup_frames.lua"/>
 
     <Script file="addons\gearQuipper.lua"/>
     <Script file="addons\detailsProfile.lua"/>
