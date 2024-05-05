@@ -97,26 +97,27 @@ local function loadCurrency(curwin)
                     link,
                     "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%]%[]*)%]?|?h?|?r?"
                 )
+                local cinfo = C_CurrencyInfo.GetCurrencyInfo(curid)
                 slot.item.CurrencyID = curid
                 slot.item.CurrencyIdx = idx
 
                 -- set currency item values
-                slot.item.spaceString:SetText(name)
-                if maxQuantity == 0 then
-                    slot.item.amount:SetText(CommaValue(count))
+                slot.item.spaceString:SetText(cinfo.name)
+                if cinfo.maxQuantity == 0 then
+                    slot.item.amount:SetText(CommaValue(cinfo.quantity))
                 else
-                    slot.item.amount:SetText(CommaValue(count) .. " / " .. CommaValue(maxQuantity))
+                    slot.item.amount:SetText(CommaValue(cinfo.quantity) .. " / " .. CommaValue(cinfo.maxQuantity))
                 end
-                if count == 0 then
+                if cinfo.quantity == 0 then
                     slot.item.amount:SetFontObject("GameFontDisable")
                     slot.item.spaceString:SetFontObject("GameFontDisable")
                 else
                     slot.item.amount:SetFontObject("GameFontHighlight")
                     slot.item.spaceString:SetFontObject("GameFontHighlight")
                 end
-                slot.item.icon:SetTexture(icon)
+                slot.item.icon:SetTexture(cinfo.iconFileID)
                 -- If is honor
-                if itemID == Constants.CurrencyConsts.CLASSIC_HONOR_CURRENCY_ID then
+                if curid == Constants.CurrencyConsts.CLASSIC_HONOR_CURRENCY_ID then
                     slot.item.icon:SetTexCoord( 0.03125, 0.59375, 0.03125, 0.59375 )
                 else
                     slot.item.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -142,9 +143,9 @@ GW.AddForProfiling("currency", "loadCurrency", loadCurrency)
 
 local function header_OnClick(self)
     if self.isHeaderExpanded then
-        ExpandCurrencyList(self.index, 0)
+        C_CurrencyInfo.ExpandCurrencyList(self.index, false)
     else
-        ExpandCurrencyList(self.index, 1)
+        C_CurrencyInfo.ExpandCurrencyList(self.index, true)
     end
 
     loadCurrency(self.curwin)
