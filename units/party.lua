@@ -351,7 +351,7 @@ end
 GW.AddForProfiling("party", "updatePartyAuras", updatePartyAuras)
 
 local function setUnitName(self)
-    --local role = UnitGroupRolesAssigned(self.unit)
+    local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
 
     if not nameString or nameString == UNKNOWNOBJECT then
@@ -360,9 +360,9 @@ local function setUnitName(self)
         self.nameNotLoaded = true
     end
 
-    --if nameRoleIcon[role] ~= nil then
-    --    nameString = nameRoleIcon[role] .. nameString
-    --end
+    if nameRoleIcon[role] ~= nil then
+        nameString = nameRoleIcon[role] .. nameString
+    end
 
     if UnitIsGroupLeader(self.unit) then
         nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:18:18:0:-3|t" .. nameString
