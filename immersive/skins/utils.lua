@@ -456,11 +456,12 @@ GW.HandlePortraitFrame = HandlePortraitFrame
 local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, yOffset)
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
+    frame.gwHeader = header
 
     header:SetWidth(frame:GetWidth() - 20)
     header.BGLEFT:SetWidth(frame:GetWidth() - 20)
     header.BGRIGHT:SetWidth(frame:GetWidth() - 20)
-    frame.gwHeader = header
+
 
     if titleText then
         if type(titleText) ~= "string" then
@@ -561,3 +562,60 @@ do
     end
     GW.HandleIconSelectionFrame = HandleIconSelectionFrame
 end
+
+local tabs = {
+    "LeftDisabled",
+    "MiddleDisabled",
+    "RightDisabled",
+    "Left",
+    "Middle",
+    "Right"
+}
+
+local function HandleTabs(tab, skinAsButton)
+    for _, object in pairs(tabs) do
+        local textureName = tab:GetName() and _G[tab:GetName() .. object]
+        if textureName then
+            textureName:SetTexture()
+        elseif tab[object] then
+            tab[object]:SetTexture()
+        end
+    end
+
+    local highlightTex = tab.GetHighlightTexture and tab:GetHighlightTexture()
+    if highlightTex then
+        highlightTex:SetTexture()
+    else
+        tab:GwStripTextures()
+    end
+
+    if skinAsButton then
+        tab:GwSkinButton(false, true)
+    end
+    tab:SetHitRectInsets(0, 0, 0, 0)
+    tab:GetFontString():SetTextColor(0, 0, 0)
+end
+GW.HandleTabs = HandleTabs
+
+local function HandleRotateButton(btn)
+    if btn.isSkinned then return end
+
+    btn:GwSkinButton(false, true)
+    btn:SetSize(btn:GetWidth() - 14, btn:GetHeight() - 14)
+
+    local normTex = btn:GetNormalTexture()
+    local pushTex = btn:GetPushedTexture()
+    local highlightTex = btn:GetHighlightTexture()
+
+    normTex:GwSetInside()
+    normTex:SetTexCoord(0.3, 0.29, 0.3, 0.65, 0.69, 0.29, 0.69, 0.65)
+
+    pushTex:SetAllPoints(normTex)
+    pushTex:SetTexCoord(0.3, 0.29, 0.3, 0.65, 0.69, 0.29, 0.69, 0.65)
+
+    highlightTex:SetAllPoints(normTex)
+    highlightTex:SetColorTexture(1, 1, 1, 0.3)
+
+    btn.isSkinned = true
+end
+GW.HandleRotateButton = HandleRotateButton
