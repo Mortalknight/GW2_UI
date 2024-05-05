@@ -854,6 +854,21 @@ local function Join(del, ...)
 end
 GW.Join = Join
 
+local function IsGroupMember(name)
+	if name then
+		if UnitInParty(name) then
+			return 1
+		elseif UnitInRaid(name) then
+			return 2
+		elseif name == GW.myname then
+			return 3
+		end
+	end
+
+	return false
+end
+GW.IsGroupMember = IsGroupMember
+
 local function EscapeString(s)
     return gsub(s, "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")
 end
