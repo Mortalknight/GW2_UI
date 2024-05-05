@@ -4,6 +4,8 @@
     <Script file="battlenet.lua"/>
     <Script file="gamemenu.lua"/>
     <Script file="staticpopup.lua"/>
+    <Script file="ghostframe.lua"/>
+    <Script file="timetracker.lua"/>
     <Script file="addonManager.lua"/>
     <Script file="macro.lua"/>
     <Script file="worldmap.lua"/>
@@ -16,6 +18,7 @@
     <Script file="socket.lua"/>
     <Script file="flightmap.lua"/>
     <Script file="lfg_popup_frames.lua"/>
+    <Script file="misc.lua"/>
 
     <Script file="addons\gearQuipper.lua"/>
     <Script file="addons\detailsProfile.lua"/>
