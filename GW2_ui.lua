@@ -553,6 +553,11 @@ local function evPlayerLogin(self)
     GW.LoadSettings()
     GW.LoadHoverBinds()
 
+    -- load alert settings
+    GW.LoadAlertSystem()
+    GW.SetupAlertFramePosition()
+    GW.LoadOurAlertSubSystem()
+
     -- disable Move Anything bag handling
     disableMABags()
     --disbale TitanPanelClaissc Adjustment

@@ -113,7 +113,7 @@ local function button1_OnClick()
                 ToggleChatColorNamesByClassGroup(true, v)
             end
 
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Complete"] .. ": " .. L["Setup Chat"]):gsub("*", GW.Gw2Color))
+            GW.AlertSystem:AddAlert(L["Complete"], nil, L["Setup Chat"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 2
             button1_OnClick()
@@ -148,7 +148,7 @@ local function button1_OnClick()
             SetCVar("fstack_preferParentKeys", 0)
             SetCVar("whisperMode", "inline")
 
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Complete"] .. ": " .. L["Setup CVars"]):gsub("*", GW.Gw2Color))
+            GW.AlertSystem:AddAlert(L["Complete"], nil, L["Setup CVars"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 3
             button1_OnClick()
@@ -170,7 +170,7 @@ local function button1_OnClick()
             SetSetting("PIXEL_PERFECTION", true)
             GW.PixelPerfection()
 
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Pixel Perfect Mode"] .. ": " .. L["Turn Pixel Perfect Mode On"]):gsub("*", GW.Gw2Color))
+            GW.AlertSystem:AddAlert(L["Pixel Perfect Mode"], nil, L["Turn Pixel Perfect Mode On"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 4
             button1_OnClick()

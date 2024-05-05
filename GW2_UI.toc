@@ -186,6 +186,9 @@ character\windowManager.lua
 immersive\skins\skins.xml
 immersive\tooltips.lua
 immersive\questview.xml
+immersive\toast.xml
+immersive\alertPosition.lua
+immersive\alerts.lua
 immersive\afk.lua
 immersive\questview.lua
 immersive\chatframe.lua

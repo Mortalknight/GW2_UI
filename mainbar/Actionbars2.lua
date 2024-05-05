@@ -1176,39 +1176,6 @@ actionBar_OnUpdate = function(self, elapsed)
 end
 GW.AddForProfiling("Actionbars2", "actionBar_OnUpdate", actionBar_OnUpdate)
 
--- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
-local function adjustFixedAnchors(self, relativeAlert)
-    if self.anchorFrame:IsShown() then
-        local pt, relTo, relPt, xOf, _ = self.anchorFrame:GetPoint()
-        local name = self.anchorFrame:GetName()
-        if pt == "BOTTOM" and relTo:GetName() == "UIParent" and relPt == "BOTTOM" then
-            if name == "TalkingHeadFrame" then
-                self.anchorFrame:ClearAllPoints()
-                self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
-            elseif name == "GroupLootContainer" then
-                self.anchorFrame:ClearAllPoints()
-                self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
-            end
-        end
-        return self.anchorFrame
-    end
-    return relativeAlert
-end
-GW.AddForProfiling("Actionbars2", "adjustFixedAnchors", adjustFixedAnchors)
-
-local function updateAnchors(self)
-    self:CleanAnchorPriorities()
-
-    local relativeFrame = GwAlertFrameOffsetter
-    for _, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
-        if alertFrameSubSystem.AdjustAnchors == AlertFrameExternallyAnchoredMixin.AdjustAnchors then
-            relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
-        else
-            relativeFrame = alertFrameSubSystem:AdjustAnchors(relativeFrame)
-        end
-    end
-end
-GW.AddForProfiling("Actionbars2", "updateAnchors", updateAnchors)
 
 local function UpdateMainBarHot()
     local fmActionbar = MainMenuBarArtFrame
@@ -1326,12 +1293,9 @@ local function LoadActionBars(lm)
     -- we can override the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
     -- doing it there avoids any taint issues
     -- we also exclude a few frames from the auto-positioning stuff regardless
-    GwAlertFrameOffsetter:SetHeight(205)
     UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
     UIPARENT_MANAGED_FRAME_POSITIONS["ZoneAbilityFrame"] = nil
     UIPARENT_MANAGED_FRAME_POSITIONS["GroupLootContainer"] = nil
     UIPARENT_MANAGED_FRAME_POSITIONS["TalkingHeadFrame"] = nil
-
-    AlertFrame.UpdateAnchors = updateAnchors
 end
 GW.LoadActionBars = LoadActionBars

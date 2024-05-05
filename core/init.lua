@@ -69,6 +69,8 @@ GW.InitLocationDataHandler()
 -- Init error handler
 GW.RegisterErrorHandler()
 
+GW.AlertContainerFrame = nil
+
 --register libs
 do
     GW.Libs = {}
