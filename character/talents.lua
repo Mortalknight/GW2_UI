@@ -210,6 +210,7 @@ local function setBonusSpell(self, spellID, spellID2, formatString, desaturated)
 end
 
 local function updateTalentSummary(self)
+    local desaturateBonuses = nil
     local activeTalentGroup = GetActiveTalentGroup();
     local primaryTree = GetPreviewPrimaryTalentTree(false, false, openSpec)
         or GetPrimaryTalentTree(false, false, openSpec);
@@ -255,6 +256,7 @@ local function updateTalentSummary(self)
 
     if ((primaryTree and self.spec ~= primaryTree) or (openSpec ~= activeTalentGroup) or GetNumTalentPoints() == 0) then
         desaturated = true
+        desaturateBonuses = 1
     end
 
     summary.specIcon:SetDesaturated(desaturated)
@@ -646,12 +648,6 @@ local function updateTalentTrees()
         --Blizzard  local id, name, description, icon, pointsSpent, background, previewPointsSpent, isUnlocked = GetTalentTabInfo(selectedTab, TalentFrame.inspect, TalentFrame.pet, TalentFrame.talentGroup);
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
         local preview = GetCVarBool("previewTalentsOption")
-
-
-        
-
-
-
 
         TalentFrame.pointsSpent = pointsSpent + previewPointsSpent
 
