@@ -10,6 +10,13 @@ local ct = {
 GW.CHANGELOGS_TYPES = ct
 
 
+addChange("1.1.0",{
+    {ct.feature,[=[Added eclipse bar]=]},
+    {ct.feature,[=[Added shadow orbs]=]},
+    {ct.bug,[=[Fix Pawn integration]=]},
+    {ct.change,[=[Update party and grid frames]=]},
+})
+
 addChange("1.0.1",{
     {ct.change,[=[First round of fixes]=]},
 })

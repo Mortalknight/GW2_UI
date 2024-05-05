@@ -1,3 +1,9 @@
+1.1.0-Cata
+    Added eclipse bar
+    Added shadow orbs
+    Fix Pawn integration
+    Update party and grid frames
+
 
 1.0.1-Cata
     First round of fixes
