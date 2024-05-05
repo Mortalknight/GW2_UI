@@ -70,10 +70,19 @@
                     <Color r="1" g="0.662" b="0.13" a="0.9"></Color>
                 </Texture>
             </Layer>
-            <Layer level="OVERLAY" textureSubLevel="2">
+              <Layer level="OVERLAY" textureSubLevel="2">
+                 <Texture parentKey="textBG" file="Interface\AddOns\GW2_UI\textures\bartextures\statusbar">
+                    <Size x="32" y="16"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="8"/>
+                    </Anchors>
+                    <Color r="0" b="0" g="0" a="0.8"></Color>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="3">
                 <FontString parentKey="points" text="10/10" justifyH="CENTER" justifyV="MIDDLE">
                     <Anchors>
-                        <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="0"/>
+                        <Anchor point="CENTER" relativeKey="$parent.textBG" relativePoint="CENTER" x="0" y="0"/>
                     </Anchors>
                 </FontString>
             </Layer>

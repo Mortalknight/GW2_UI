@@ -710,6 +710,7 @@ local function updateTalentTrees()
                 TALENT_BRANCH_ARRAY[f][tier][column].id = i
                 button.icon:SetTexture(texture)
                 button.points:SetText((preview and previewRank or rank) .. " / " .. maxRank)
+                button.textBG:Show()
                 button.talentid = i
                 button.talentFrameId = f
                 button:Show()
@@ -768,6 +769,7 @@ local function updateTalentTrees()
                     button.icon:SetVertexColor(1, 1, 1, 0.4)
                     button.highlight:Hide()
                     button.points:SetText("")
+                    button.textBG:Hide()
                 end
             else
                 if button and button.talentid == nil then
