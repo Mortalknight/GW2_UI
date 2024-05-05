@@ -1,19 +1,22 @@
 local _, GW = ...
 local L = GW.L
+local hookDone = false
 
 local BUTTONS = {
     {button = _G.GameMenuButtonHelp         , sprite = {1, 1}},
     {button = _G.GameMenuButtonStore        , sprite = {2, 1}},
+    {button = _G.GameMenuButtonWhatsNew     , sprite = {3, 1}},
     {button = _G.GameMenuButtonOptions      , sprite = {4, 1}},
-    {button = _G.GameMenuButtonUIOptions    , sprite = {1, 2}},
-    {button = _G.GameMenuButtonKeybindings  , sprite = {2, 2}},
+    {button = _G.GameMenuButtonEditMode     , sprite = {1, 2}},
     {button = _G.GameMenuButtonMacros       , sprite = {3, 2}},
     {button = _G.GameMenuButtonAddons       , sprite = {4, 2}},
     {button = _G.GameMenuButtonLogout       , sprite = {1, 3}},
     {button = _G.GameMenuButtonQuit         , sprite = {2, 3}},
     {button = _G.GameMenuButtonContinue     , sprite = {3, 3}},
     {button = _G.GameMenuButtonRatings      , sprite = {3, 1}},
-    {button = _G.GameMenuButtonMoveAnything , sprite = {4, 1}} -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
+    {button = _G.GameMenuButtonMoveAnything , sprite = {4, 1}}, -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
+    {button = btn163                        , sprite = {4, 2}, onHook = true, addOn = "!!!EaseAddonController"},
+    {button = _G.GameMenuFrame              , sprite = {4, 2}},
 }
 
 local ICON_SPRITES = {
@@ -49,8 +52,19 @@ GW.PositionGameMenuButton = PositionGameMenuButton
 
 local function applyButtonStyle()
     for _, f in pairs(BUTTONS) do
+        if f.onHook and not hookDone then
+            GameMenuFrame:HookScript("OnShow", function()
+                if not hookDone then
+                    applyButtonStyle()
+                    hookDone= true
+                end
+            end)
+        end
         local b = f.button
+        if b == _G.GameMenuFrame then b = b.ElvUI end
+        if b == btn163 and f.addOn and C_AddOns.IsAddOnLoaded(f.addOn) then b = GameMenuFrame.btn163 end
         if b then
+            if b == GameMenuFrame.btn163 then b.logo:Hide() end
             b.Right:Hide()
             b.Left:Hide()
             b.Middle:Hide()
@@ -93,7 +107,7 @@ local function SkinMainMenu()
     GameMenuFrame[GW.addonName] = GwMainMenuFrame
     BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3}}
 
-    if not IsAddOnLoaded("ConsolePortUI_Menu") then
+    if not C_AddOns.IsAddOnLoaded("ConsolePortUI_Menu") then
         GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
         GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
         hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", PositionGameMenuButton)
@@ -117,7 +131,7 @@ local function SkinMainMenu()
     applyButtonStyle()
 
     -- remove elvui transparent bg if ours is enabled
-    if IsAddOnLoaded("ElvUI") and GameMenuFrame.backdrop then
+    if C_AddOns.IsAddOnLoaded("ElvUI") and GameMenuFrame.backdrop then
         GameMenuFrame.backdrop:Hide()
     end
 end
