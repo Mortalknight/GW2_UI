@@ -1115,6 +1115,7 @@ local function LoadSettings()
     GW.LoadPartyPanel(sWindow)
     GW.LoadRaidPanel(sWindow)
     GW.LoadAurasPanel(sWindow)
+    GW.LoadNotificationsPanel(sWindow)
     GW.LoadSkinsPanel(sWindow)
     GW.LoadProfilesPanel(sWindow)
 
