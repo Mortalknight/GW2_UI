@@ -210,7 +210,6 @@ local function setBonusSpell(self, spellID, spellID2, formatString, desaturated)
 end
 
 local function updateTalentSummary(self)
-    local desaturateBonuses = nil
     local activeTalentGroup = GetActiveTalentGroup();
     local primaryTree = GetPreviewPrimaryTalentTree(false, false, openSpec)
         or GetPrimaryTalentTree(false, false, openSpec);
@@ -256,7 +255,6 @@ local function updateTalentSummary(self)
 
     if ((primaryTree and self.spec ~= primaryTree) or (openSpec ~= activeTalentGroup) or GetNumTalentPoints() == 0) then
         desaturated = true
-        desaturateBonuses = 1
     end
 
     summary.specIcon:SetDesaturated(desaturated)
@@ -312,7 +310,7 @@ local function updateTalentSummary(self)
             --Override icon to Mastery icon
             local _, _, masteryTexture = GetSpellInfo(CLASS_MASTERY_SPELLS[class]);
             bonusFrame.icon:SetTexture(masteryTexture);
-            bonusFrame.icon:SetDesaturated(desaturateBonuses or not masteryKnown);
+            bonusFrame.icon:SetDesaturated(desaturated or not masteryKnown);
         end
     end
     if primaryTree then

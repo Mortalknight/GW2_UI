@@ -846,8 +846,8 @@ local function LoadWindows()
                 CharacterMenuButton_OnLoad(GwHeroPanelMenu.skillsMenu, true, true)
                 CharacterMenuButton_OnLoad(GwHeroPanelMenu.titleMenu, false, true)
                 CharacterMenuButton_OnLoad(GwHeroPanelMenu.gearMenu, true, true)
-                CharacterMenuButton_OnLoad(GwHeroPanelMenu.petMenu, false, true)
                 CharacterMenuButton_OnLoad(GwHeroPanelMenu.equipmentMenu, false, true)
+                CharacterMenuButton_OnLoad(GwHeroPanelMenu.petMenu, true, true)
 
                 styleCharacterMenuBackButton(GwPaperSkills.backButton, CHARACTER .. ": " .. SKILLS)
                 styleCharacterMenuBackButton(GwPaperTitles.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
@@ -856,6 +856,7 @@ local function LoadWindows()
                 styleCharacterMenuBackButton(GwPaperDollBagItemList.backButton, CHARACTER .. ": " .. PET)
 
                 -- add addon buttons here
+                fmGCW:SetAttribute("myClassId", GW.myClassID)
                 if GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6 then
                     nextShadow = false
                 else
@@ -920,6 +921,13 @@ local function LoadWindows()
 
                 -- pet GwDressingRoom
                 GwHeroPanelMenu.petMenu:SetAttribute("_onstate-petstate", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    local myClassId = f:GetAttribute("myClassId")
+                    if myClassId == 3 or myClassId == 6 or myClassId == 9 then
+                        self:Show()
+                    else
+                        self:Hide()
+                    end
                     if newstate == "nopet" then
                         self:Disable()
                         self:GetFrameRef("GwCharacterWindow"):SetAttribute("HasPetUI", false)

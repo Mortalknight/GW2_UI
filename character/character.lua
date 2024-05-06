@@ -354,7 +354,6 @@ GW.PaperDollUpdateStats = PaperDollUpdateStats
 local function PaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
     local statText, tooltip1, tooltip2
-    GwHeroPanelMenu.petMenu:SetShown(GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6)
     if not hasUI then return end
 
     local numShownStats = 1
@@ -362,7 +361,6 @@ local function PaperDollUpdatePetStats()
     local x = 0
     local y = 0
 
-    GwHeroPanelMenu.petMenu:Enable()
     GwDressingRoomPet.model:SetUnit("pet")
     GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. GUILD_RECRUITMENT_LEVEL .. " " .. UnitLevel("pet"))
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
