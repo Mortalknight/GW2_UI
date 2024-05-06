@@ -176,15 +176,16 @@ local function CreateRaidControlFrame()
     GwGroupManage.inGroup.countdown:GetFontString():SetShadowColor(0, 0, 0, 1)
     GwGroupManage.inGroup.countdown:GetFontString():SetShadowOffset(1, -1)
     GwGroupManage.inGroup.countdown:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
+    GwGroupManage.inGroup.countdown:SetText(GW.L["Pull Timer"])
 
     GwGroupManage.inGroup.inputCountdownFrame.input:SetText(GW.GetSetting("pulltimerSeconds"))
 
     GwGroupManage.inGroup.inputCountdownFrame.input:SetScript("OnEscapePressed", TextBox_OnEscapePressed)
     GwGroupManage.inGroup.inputCountdownFrame.input:SetScript("OnEnterPressed", function(self)
-        local roundValue = GW.RoundDec(self:GetNumber(), 0) or GW.GetSetting("pulltimerSeconds") or 0
+        local roundValue = GW.RoundDec(self:GetText(), 0) or GW.GetSetting("pulltimerSeconds") or 0
         self:ClearFocus()
         if tonumber(roundValue) == 0 then
-            roundValue = GW.globalDefault.profile.pulltimerSeconds
+            roundValue = GW.GetDefault("pulltimerSeconds")
         end
         GW.SetSetting("pulltimerSeconds", tonumber(roundValue))
         self:SetText(roundValue)
