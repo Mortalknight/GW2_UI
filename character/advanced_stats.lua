@@ -43,14 +43,13 @@ local function updateValues(self)
     self.rangeSection.crit.TextL:SetText(RANGED_CRIT_CHANCE)
     self.rangeSection.crit.TextR:SetText(rngCrit)
 
-    self.spellSection.spellBonus.TextL:SetText(BONUS_DAMAGE)
-    self.spellSection.spellBonus.TextR:SetText(GW.stats.getSpellBonusDamage(self.spellSection.spellBonus))
+    local spellBonusText, spellBonusValue = GW.stats.getSpellBonusDamage(self.spellSection.spellBonus)
+    self.spellSection.spellBonus.TextL:SetText(spellBonusText)
+    self.spellSection.spellBonus.TextR:SetText(spellBonusValue)
 
-    local bonusHealing, tt1, tt2 = GW.stats.getBonusHealing()
-    self.spellSection.bonusHealing.tt1 = tt1
-    self.spellSection.bonusHealing.tt2 = tt2
-    self.spellSection.bonusHealing.TextL:SetText(BONUS_HEALING)
-    self.spellSection.bonusHealing.TextR:SetText(bonusHealing)
+    local spellBonusHealingText, spellBonusHealingValue = GW.stats.getBonusHealing(self.spellSection.bonusHealing)
+    self.spellSection.bonusHealing.TextL:SetText(spellBonusHealingText)
+    self.spellSection.bonusHealing.TextR:SetText(spellBonusHealingValue)
 
     local spellRating, tt1, tt2 = GW.stats.getRating(CR_HIT_SPELL)
     self.spellSection.rating.tt1 = tt1
@@ -188,7 +187,7 @@ local function CreateAdvancedChatStats(parent)
     as.spellSection =  CreateSection(200, 120, as, "TOP", as.rangeSection, "BOTTOM", -25)
     as.spellSection.Header.Text:SetText(PLAYERSTAT_SPELL_COMBAT)
     as.spellSection.spellBonus = CreateStatsFrame(as.spellSection, as.spellSection.Header, 180, CharacterSpellBonusDamage_OnEnter)
-    as.spellSection.bonusHealing = CreateStatsFrame(as.spellSection, as.spellSection.spellBonus, 180)
+    as.spellSection.bonusHealing = CreateStatsFrame(as.spellSection, as.spellSection.spellBonus, 180, CharacterSpellBonusDamage_OnEnter)
     as.spellSection.rating = CreateStatsFrame(as.spellSection, as.spellSection.bonusHealing, 180)
     as.spellSection.crit = CreateStatsFrame(as.spellSection, as.spellSection.rating, 180, CharacterSpellCritChance_OnEnter)
     as.spellSection.hast = CreateStatsFrame(as.spellSection, as.spellSection.crit, 180)

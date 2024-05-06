@@ -3,6 +3,8 @@ local _G, _M = getfenv(0), {}
 setfenv(1, setmetatable(_M, {__index=_G}))
 local GetSetting = GW.GetSetting
 
+local fuc = {}
+
 CreateFrame("GameTooltip", "SortBagsTooltip", nil, "GameTooltipTemplate")
 
 BAG_CONTAINERS = {0, 1, 2, 3, 4}
@@ -238,9 +240,10 @@ do
         patterns[text] = i
     end
 
-    function itemCharges(text)
+    function fuc:itemCharges(text)
         return patterns[text]
     end
+
 end
 
 function TooltipInfo(container, position)
@@ -250,7 +253,7 @@ function TooltipInfo(container, position)
     for i = 1, SortBagsTooltip:NumLines() do
         local text = getglobal("SortBagsTooltipTextLeft" .. i):GetText()
 
-        local extractedCharges = itemCharges(text)
+        local extractedCharges = fuc:itemCharges(text)
         if extractedCharges then
             charges = extractedCharges
         elseif strfind(text, "^" .. ITEM_SPELL_TRIGGER_ONUSE) then

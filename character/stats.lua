@@ -506,10 +506,15 @@ end
 GW.stats.getManaReg = getManaReg
 
 local function getSpellBonusDamage(frame)
+    local text
     local holySchool = 2;
     -- Start at 2 to skip physical damage
     local minModifier = GetSpellBonusDamage(holySchool)
-    frame.bonusDamage = frame.bonusDamage or {}
+    if (frame.bonusDamage) then
+        table.wipe(frame.bonusDamage)
+    else
+        frame.bonusDamage = {}
+    end
     frame.bonusDamage[holySchool] = minModifier
     local bonusDamage
     for i = (holySchool + 1), MAX_SPELL_SCHOOLS do
@@ -517,18 +522,43 @@ local function getSpellBonusDamage(frame)
         minModifier = min(minModifier, bonusDamage)
         frame.bonusDamage[i] = bonusDamage
     end
-    frame.minModifier = minModifier;
+    local spellHealing = GetSpellBonusHealing()
 
-    return minModifier
+    if (spellHealing == minModifier) then
+        text = format(STAT_FORMAT, STAT_SPELLPOWER)
+        frame.tooltip = STAT_SPELLPOWER
+        frame.tooltip2 = STAT_SPELLPOWER_TOOLTIP
+    else
+        text = format(STAT_FORMAT, STAT_SPELLDAMAGE)
+        frame.tooltip = STAT_SPELLDAMAGE
+        frame.tooltip2 = STAT_SPELLDAMAGE_TOOLTIP
+    end
+
+    frame.minModifier = minModifier
+    frame.unit = "player"
+
+    return text, minModifier
 end
 GW.stats.getSpellBonusDamage = getSpellBonusDamage
 
-local function getBonusHealing()
-    local bonusHealing = GetSpellBonusHealing();
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. BONUS_HEALING .. FONT_COLOR_CODE_CLOSE;
-    local tooltip2 =format(BONUS_HEALING_TOOLTIP, bonusHealing);
+local function getBonusHealing(frame)
+    local text
+    local minDamage = 0
+    local holySchool = 2
+    minDamage = GetSpellBonusDamage(holySchool)
+    for i=(holySchool+1), MAX_SPELL_SCHOOLS do
+        minDamage = min(minDamage, GetSpellBonusDamage(i))
+    end
+    frame.bonusDamage = nil
 
-    return bonusHealing, tooltip, tooltip2
+    local spellHealing = GetSpellBonusHealing()
+    text = format(STAT_FORMAT, STAT_SPELLHEALING)
+    frame.tooltip = STAT_SPELLHEALING
+    frame.tooltip2 = STAT_SPELLHEALING_TOOLTIP
+    frame.minModifier = spellHealing
+    frame.unit = "player"
+
+    return text, spellHealing
 end
 GW.stats.getBonusHealing = getBonusHealing
 
