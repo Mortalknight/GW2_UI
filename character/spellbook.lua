@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 GW.spellbook = {}
 
 local function SpellButton_OnModifiedClick(self)
@@ -497,13 +496,11 @@ local function LoadSpellBook()
         local x = 0
         local y = 0
         for i = 1, 300 do
-            local f = CreateFrame('Button', 'GwSpellbookTab' .. tab .. 'Actionbutton' .. i, container.container1,
-                'GwSpellbookActionbutton')
+            local f = CreateFrame('Button', 'GwSpellbookTab' .. tab .. 'Actionbutton' .. i, container.container1, 'GwSpellbookActionbutton')
             local mask = UIParent:CreateMaskTexture()
             mask:SetPoint("CENTER", f, 'CENTER', 0, 0)
 
-            mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE",
-                "CLAMPTOBLACKADDITIVE")
+            mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
             mask:SetSize(40, 40)
 
             f.mask = mask
