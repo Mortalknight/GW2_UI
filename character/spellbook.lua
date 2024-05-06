@@ -325,13 +325,24 @@ local function setUpPaging(self)
     self.attrDummy:SetAttribute('page', 'left')
 end
 
+local function resetSpellbookPage(spellBookTabs)
+    for i = 1, 300 do
+        _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:SetAlpha(0)
+        _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:EnableMouse(false)
+        _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:SetScript('OnEvent', nil)
+    end
+    for i = 1 , 300 do
+        if _G['GwSpellbookContainerTab' .. spellBookTabs .. 'GwSpellbookActionBackground' .. i] then
+            _G['GwSpellbookContainerTab' .. spellBookTabs .. 'GwSpellbookActionBackground' .. i]:Hide()
+        end
+    end
+end
+
 local function updateSpellbookTab()
     if InCombatLockdown() then
         GwSpellbookMenu:RegisterEvent("PLAYER_REGEN_ENABLED")
         return
     end
-
-    local knownSpellID = {}
 
     for spellBookTabs = 1, 5 do
         local name, texture, offset, numSpells = GetSpellTabInfo(spellBookTabs)
@@ -343,6 +354,7 @@ local function updateSpellbookTab()
 
         SpellbookHeaderIndex = 1
         spellButtonIndex = 1
+        resetSpellbookPage(spellBookTabs)
 
         if spellBookTabs == 5 then
             BOOKTYPE = 'pet'
@@ -374,8 +386,6 @@ local function updateSpellbookTab()
             local requiredLevel = GetSpellAvailableLevel(spellIndex, BOOKTYPE)
 
             if nameSpell then
-                knownSpellID[#knownSpellID + 1] = spellID
-
                 needNewHeader = true
                 if lastName == nameSpell then
                     needNewHeader = false
@@ -402,6 +412,7 @@ local function updateSpellbookTab()
                     header.title:SetText(nameSpell)
                     header.buttons = 1
                     header.height = 80
+                    header:Show()
                 end
 
                 mainButton:ClearAllPoints()
@@ -424,17 +435,6 @@ local function updateSpellbookTab()
                 lastButton = mainButton
             end
             setUpPaging(_G['GwSpellbookContainerTab' .. spellBookTabs])
-        end
-
-        for i = boxIndex, 300 do
-            _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:SetAlpha(0)
-            _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:EnableMouse(false)
-            _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. boxIndex]:SetScript('OnEvent', nil)
-        end
-        for i = SpellbookHeaderIndex + 1, 300 do
-            if _G['GwSpellbookContainerTab' .. spellBookTabs .. 'GwSpellbookActionBackground' .. i] then
-                _G['GwSpellbookContainerTab' .. spellBookTabs .. 'GwSpellbookActionBackground' .. i]:Hide()
-            end
         end
     end
 end
