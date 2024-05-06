@@ -95,7 +95,7 @@ do
 
         local info = data and tt:GetTooltipData()
         wipe(slotInfo)
-        if deepScan then
+        if deepScan and data then
             ScanTooltipTextures(data, slotInfo)
 
             if not slotInfo.enchantColors then slotInfo.enchantColors = {} else wipe(slotInfo.enchantColors) end
@@ -163,7 +163,7 @@ local function CalculateAverageItemLevel(iLevelDB, unit)
     link = GetInventoryItemLink(unit, 16)
     if link then
         mainItemLevel = iLevelDB[16]
-        _, _, mainQuality, _, _, _, _, _, mainEquipLoc, _, _, mainItemClass, mainItemSubClass = GetItemInfo(link)
+        _, _, mainQuality, _, _, _, _, _, mainEquipLoc, _, _, mainItemClass, mainItemSubClass = C_Item.GetItemInfo(link)
     elseif GetInventoryItemTexture(unit, 16) then
         isOK = false
     end
@@ -173,7 +173,7 @@ local function CalculateAverageItemLevel(iLevelDB, unit)
     link = GetInventoryItemLink(unit, 17)
     if link then
         offItemLevel = iLevelDB[17]
-        _, _, _, _, _, _, _, _, offEquipLoc = GetItemInfo(link)
+        _, _, _, _, _, _, _, _, offEquipLoc = C_Item.GetItemInfo(link)
     elseif GetInventoryItemTexture(unit, 17) then
         isOK = false
     end

@@ -181,7 +181,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
     local showItemLevel = button.itemlevel and itemIDOrLink and GetSetting("BAG_SHOW_ILVL") and not professionColors
 
     if itemIDOrLink then
-        local isQuestItem = select(12, GetItemInfo(itemIDOrLink))
+        local isQuestItem = select(12, C_Item.GetItemInfo(itemIDOrLink))
         if quality == nil then quality = 0 end
 
         if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
@@ -218,12 +218,12 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
 
         -- Show ilvl if active
         if showItemLevel then
-            local canShowItemLevel = IsItemEligibleForItemLevelDisplay(select(9, GetItemInfo(itemIDOrLink)), quality)
-            local iLvl = GetDetailedItemLevelInfo(itemIDOrLink)
+            local canShowItemLevel = IsItemEligibleForItemLevelDisplay(select(9, C_Item.GetItemInfo(itemIDOrLink)), quality)
+            local iLvl = C_Item.GetDetailedItemLevelInfo(itemIDOrLink)
             if canShowItemLevel and iLvl then
-                local r, g, b = GetItemQualityColor(quality or 1)
-                if quality >= LE_ITEM_QUALITY_COMMON and GetItemQualityColor(quality) then
-                    r, g, b = GetItemQualityColor(quality)
+                local r, g, b = C_Item.GetItemQualityColor(quality or 1)
+                if quality >= LE_ITEM_QUALITY_COMMON and C_Item.GetItemQualityColor(quality) then
+                    r, g, b = C_Item.GetItemQualityColor(quality)
                     button.itemlevel:SetTextColor(r, g, b, 1)
                 end
                 button.itemlevel:SetText(iLvl)

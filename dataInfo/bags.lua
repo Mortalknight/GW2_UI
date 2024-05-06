@@ -32,7 +32,7 @@ local function Bags_OnEnter(self)
             local r, g, b, icon
 
             if i > 0 then
-                r, g, b = GetItemQualityColor(GetInventoryItemQuality("player", sumNum) or 1)
+                r, g, b = C_Item.GetItemQualityColor(GetInventoryItemQuality("player", sumNum) or 1)
                 icon = GetInventoryItemTexture("player", sumNum)
             end
 

@@ -449,7 +449,7 @@ local function getBlock(blockIndex)
         if validTexture and isFound then
             self.itemID = tonumber(block.sourceItemId)
             self.questID = block.questID
-            self.charges = GetItemCount(self.itemID, nil, true)
+            self.charges = C_Item.GetItemCount(self.itemID, nil, true)
             self.rangeTimer = -1
 
             self:SetAttribute("item", "item:" .. tostring(self.itemID))
@@ -519,11 +519,11 @@ local function getBlock(blockIndex)
 
         local valid
         local rangeTimer = self.rangeTimer
-        local charges = GetItemCount(self.itemID, nil, true)
+        local charges = C_Item.GetItemCount(self.itemID, nil, true)
 
         if (not charges or charges ~= self.charges) then
             self.count:Hide()
-            self.charges = GetItemCount(self.itemID, nil, true)
+            self.charges = C_Item.GetItemCount(self.itemID, nil, true)
             if self.charges > 1 then
                 self.count:SetText(self.charges)
                 self.count:Show()
@@ -533,7 +533,7 @@ local function getBlock(blockIndex)
         if UnitExists("target") then
 
             if not self.itemName then
-                self.itemName = GetItemInfo(self.itemID)
+                self.itemName = C_Item.GetItemInfo(self.itemID)
             end
 
             if (rangeTimer) then
@@ -541,7 +541,7 @@ local function getBlock(blockIndex)
 
                 if (rangeTimer <= 0) then
 
-                    valid = IsItemInRange(self.itemName, "target")
+                    valid = C_Item.IsItemInRange(self.itemName, "target")
 
                     if valid == false then
                         self.HotKey:SetVertexColor(1.0, 0.1, 0.1)
@@ -1298,7 +1298,7 @@ local function LoadQuestTracker()
     fQuest.init = false
     tracker_OnEvent(fQuest)
 
-    if not IsAddOnLoaded("sArena") then
+    if not C_AddOns.IsAddOnLoaded("sArena") then
         GW.LoadArenaFrame()
     end
 

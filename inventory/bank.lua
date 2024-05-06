@@ -199,7 +199,7 @@ local function updateBagBar(f)
         local bagLink = GetInventoryItemLink("player", inv_id)
 
         if bagLink then
-            GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
+            GW.SetItemButtonQualityForBags(b, select(3, C_Item.GetItemInfo(bagLink)))
         else
             GW.SetItemButtonQualityForBags(b, 1)
         end

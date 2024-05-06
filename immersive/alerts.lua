@@ -465,7 +465,7 @@ local function skinLegendaryItemAlert(frame, itemLink)
         frame.isSkinned = true
     end
 
-    local _, _, itemRarity = GetItemInfo(itemLink)
+    local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
     local color = ITEM_QUALITY_COLORS[itemRarity]
     if color then
         frame.Icon.b:SetBackdropBorderColor(color.r, color.g, color.b)

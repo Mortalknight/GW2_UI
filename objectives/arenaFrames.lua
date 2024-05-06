@@ -110,7 +110,7 @@ end
 GW.AddForProfiling("arenaFrames", "updateArena_Power", updateArena_Power)
 
 local function updateArena_Name(self)
-    local inArena = GetZonePVPInfo()
+    local inArena = C_PvP.GetZonePVPInfo()
     local inBG = UnitInBattleground("player")
     local guidTarget = UnitGUID("target")
     local specID = GetArenaOpponentSpec and GetArenaOpponentSpec(self.id) or nil

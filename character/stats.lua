@@ -284,8 +284,7 @@ end
 GW.stats.getDamage = getDamage
 
 local function getRangeAttackSpeed()
-    local text = UnitRangedDamage("player")
-    text = format("%.2f", text);
+    local text = format("%.2f", UnitRangedDamage("player"))
     local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. ATTACK_SPEED .. " " .. text .. FONT_COLOR_CODE_CLOSE;
     local tooltip2 = format(CR_HASTE_RATING_TOOLTIP, GetCombatRating(CR_HASTE_RANGED), GetCombatRatingBonus(CR_HASTE_RANGED));
 
@@ -417,8 +416,7 @@ end
 GW.stats.getRating = getRating
 
 local function getMeleeCritChance()
-    local critChance = GetCritChance()
-    critChance = format("%.2f%%", critChance);
+    local critChance = format("%.2f%%", GetCritChance())
     local tooltip = HIGHLIGHT_FONT_COLOR_CODE..MELEE_CRIT_CHANCE.." "..critChance..FONT_COLOR_CODE_CLOSE;
     local tooltip2 = format(CR_CRIT_MELEE_TOOLTIP, GetCombatRating(CR_CRIT_MELEE), GetCombatRatingBonus(CR_CRIT_MELEE));
 
@@ -427,7 +425,7 @@ end
 GW.stats.getMeleeCritChance = getMeleeCritChance
 
 local function getSpellCritChance(frame)
-    local holySchool = 2;
+    local holySchool = 2
     -- Start at 2 to skip physical damage
     local minCrit = GetSpellCritChance(holySchool)
     frame.spellCrit = frame.spellCrit or {}
@@ -448,8 +446,7 @@ end
 GW.stats.getSpellCritChance = getSpellCritChance
 
 local function getRangedCritChance()
-    local critChance = GetRangedCritChance()
-    critChance = format("%.2f%%", critChance);
+    local critChance = format("%.2f%%", GetRangedCritChance());
     local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. RANGED_CRIT_CHANCE .. " " .. critChance .. FONT_COLOR_CODE_CLOSE;
     local tooltip2 = format(CR_CRIT_RANGED_TOOLTIP, GetCombatRating(CR_CRIT_RANGED), GetCombatRatingBonus(CR_CRIT_RANGED));
 

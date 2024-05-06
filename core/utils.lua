@@ -560,7 +560,7 @@ local function GetRealItemLevel(link)
         end
     end
 
-    return (GetDetailedItemLevelInfo(link))
+    return (C_Item.GetDetailedItemLevelInfo(link))
 end
 GW.GetRealItemLevel = GetRealItemLevel
 
@@ -708,16 +708,16 @@ end
 local function setItemLevel(button, quality, itemlink)
     button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     if quality then
-        local r, g, b = GetItemQualityColor(quality or 1)
-        if quality >= LE_ITEM_QUALITY_COMMON and GetItemQualityColor(quality) then
-            r, g, b = GetItemQualityColor(quality)
+        local r, g, b = C_Item.GetItemQualityColor(quality or 1)
+        if quality >= LE_ITEM_QUALITY_COMMON and C_Item.GetItemQualityColor(quality) then
+            r, g, b = C_Item.GetItemQualityColor(quality)
             button.itemlevel:SetTextColor(r, g, b, 1)
         end
-        local _, _, _, ItemLevel = GetItemInfo(itemlink)
+        local _, _, _, ItemLevel = C_Item.GetItemInfo(itemlink)
         button.itemlevel:SetText(ItemLevel)
         button.itemlevel:SetTextColor(r, g, b, 1)
     else
-        local r, g, b = GetItemQualityColor(1)
+        local r, g, b = C_Item.GetItemQualityColor(1)
         button.itemlevel:SetText("")
         button.itemlevel:SetTextColor(r, g, b, 1)
     end

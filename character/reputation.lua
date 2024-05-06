@@ -333,7 +333,7 @@ local function setDetailEx(
         frame.currentValue:SetText(CommaValue(currentValue))
         frame.nextValue:SetText(CommaValue(maxValueParagon))
 
-        local percent = math.floor(RoundDec(((currentValue - 0) / (maxValueParagon - 0)) * 100), 0)
+        local percent = math.floor(RoundDec(((currentValue - 0) / (maxValueParagon - 0)) * 100, 0))
         frame.percentage:SetText(percent .. "%")
 
         frame.StatusBar:SetMinMaxValues(0, 1)
@@ -349,7 +349,7 @@ local function setDetailEx(
         if ldiff == 0 then
             ldiff = 1
         end
-        local percent = math.floor(RoundDec(((earnedValue - bottomValue) / ldiff) * 100), 0)
+        local percent = math.floor(RoundDec(((earnedValue - bottomValue) / ldiff) * 100, 0))
         if percent == -1 then
             frame.percentage:SetText("0%")
         else
@@ -417,7 +417,7 @@ updateDetails = function()
     table.wipe(facOrder)
 
     -- run through factions to get data and total count for the selected category
-    local savedHeaderName = ""
+    local savedHeaderName = nil
     for idx = firstReputationCat + 1, lastReputationCat do
         local name, desc, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain = returnReputationData(idx)
 
@@ -693,7 +693,7 @@ updateReputations = function()
             cat.item.name:SetText(catagories[idx].name)
             if catagories[idx].standingCur and catagories[idx].standingCur > 0 and catagories[idx].standingMax and catagories[idx].standingMax > 0 then
                 cat.item.StatusBar:SetValue(catagories[idx].standingCur / catagories[idx].standingMax)
-                cat.item.StatusBar.percentage:SetText(math.floor(RoundDec(cat.item.StatusBar:GetValue() * 100), 0) .. "%")
+                cat.item.StatusBar.percentage:SetText(math.floor(RoundDec(cat.item.StatusBar:GetValue() * 100, 0)) .. "%")
                 if catagories[idx].standingCur / catagories[idx].standingMax >= 1 and catagories[idx].standingMax ~= 0 then
                     cat.item.StatusBar:SetStatusBarColor(171 / 255, 37 / 255, 240 / 255)
                     cat.item.StatusBar.Spark:Hide()
@@ -744,7 +744,7 @@ local function updateDetailsSearch(s)
     table.wipe(facOrder)
 
     -- run through factions to get data and total count for the selected category
-    local savedHeaderName = ""
+    local savedHeaderName
     for idx = 1, GetNumFactions() do
         local name,
             desc,
@@ -783,7 +783,7 @@ local function updateDetailsSearch(s)
                 savedHeaderName = ""
             end
 
-            if not facData[factionID] then
+            if not facData[factionID] and factionID then
                 facData[factionID] = {}
             end
             facOrder[#facOrder + 1] = factionID

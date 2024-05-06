@@ -19,8 +19,8 @@ StaticPopupDialogs["GW_CHANGE_BAG_HEADER"] = {
 
             if itemID then
                 local r, g, b = 1, 1, 1
-                local itemName, _, itemRarity = GetItemInfo(itemID)
-                if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
+                local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
+                if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
 
                 _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(itemName or UNKNOWN)
                 _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(r, g, b, 1)

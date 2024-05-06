@@ -107,16 +107,6 @@ end
 -- Locale doesn't exist yet, make it exist
 GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI")
 
-do
-	GW.UnlocalizedClasses = {}
-	for k, v in pairs(LOCALIZED_CLASS_NAMES_MALE) do GW.UnlocalizedClasses[v] = k end
-	for k, v in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do GW.UnlocalizedClasses[v] = k end
-
-	function GW.UnlocalizedClassName(className)
-		return (className and className ~= "") and GW.UnlocalizedClasses[className]
-	end
-end
-
 local function copyTable(newTable, tableToCopy)
     if type(newTable) ~= "table" then newTable = {} end
 

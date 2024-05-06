@@ -30,13 +30,6 @@ local  statsIconsSprite = {
     rows = 8
 }
 
-local  petStateSprite = {
-    width = 512,
-    height = 128,
-    colums = 4,
-    rows = 1
-}
-
 local STATS_ICONS ={
     STRENGTH = {x = 1, y = 5},
     AGILITY = {x = 2, y = 5},
@@ -576,8 +569,7 @@ function GWupdateSkills()
 
     for skillIndex = 1, GetNumSkillLines() do
         local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier,
-        skillMaxRank, isAbandonable, stepCost, rankCost, minLevel, skillCostType,
-        skillDescription = GetSkillLineInfo(skillIndex)
+        skillMaxRank, isAbandonable, _, _, _, _, skillDescription = GetSkillLineInfo(skillIndex)
 
         skillRank = skillRank + numTempPoints
 
@@ -635,7 +627,7 @@ function GWupdateSkills()
 end
 GW.GWupdateSkills = GWupdateSkills
 
-local CHARACTER_PANEL_OPEN = ""
+local CHARACTER_PANEL_OPEN = nil
 function GwToggleCharacter(tab, onlyShow)
     if InCombatLockdown() then
         return

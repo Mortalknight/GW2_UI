@@ -58,7 +58,7 @@ local function loadCurrency(curwin)
 
     local offset = HybridScrollFrame_GetOffset(curwin)
     local currencyCount = GetCurrencyListSize()
-    local name, isHeader, isExpanded, isUnused, isWatched, count, icon, maxQuantity, maxEarnable, quantityEarned, isTradeable, itemID
+    local name, isHeader, isExpanded, isWatched
 
     for i = 1, #curwin.buttons do
         local slot = curwin.buttons[i]
@@ -71,7 +71,7 @@ local function loadCurrency(curwin)
             slot.item.CurrencyIdx = nil
             slot.header:Hide()
         else
-            name, isHeader, isExpanded, isUnused, isWatched, count, icon, maxQuantity, maxEarnable, quantityEarned, isTradeable, itemID = GetCurrencyListInfo(idx)
+            name, isHeader, isExpanded, _, isWatched = GetCurrencyListInfo(idx)
             if isHeader then
                 slot.item:Hide()
                 slot.item.CurrencyID = nil

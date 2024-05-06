@@ -36,7 +36,7 @@ local function sellJunk()
         for slotID = 1, C_Container.GetContainerNumSlots(BagID) do
             ItemLink = C_Container.GetContainerItemLink(BagID, slotID)
             if ItemLink then
-                _, _, rarity, _, _, _, _, _, _, _, itemPrice, classID, _, bindType = GetItemInfo(ItemLink)
+                _, _, rarity, _, _, _, _, _, _, _, itemPrice, classID, _, bindType = C_Item.GetItemInfo(ItemLink)
                 local itemInfo = C_Container.GetContainerItemInfo(BagID, slotID)
                 local itemCount = itemInfo.stackCount or 1
 
@@ -137,8 +137,8 @@ local function setBagHeaders()
 
             if itemID then
                 local r, g, b = 1, 1, 1
-                local itemName, _, itemRarity = GetItemInfo(itemID)
-                if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
+                local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
+                if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
 
                 _G["GwBagFrameGwBagHeader" .. i].nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName and itemName or UNKNOWN)
                 _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(r, g, b, 1)
@@ -280,7 +280,7 @@ local function watchCurrency(self)
     local watchSlot = 1
     local currencyCount = GetCurrencyListSize()
     for i = 1, currencyCount do
-        local name, isHeader, _, _, isWatched, count, icon = GetCurrencyListInfo(i)
+        local _, isHeader, _, _, isWatched, count, icon = GetCurrencyListInfo(i)
         if not isHeader and isWatched and watchSlot < 4 then
             self["currency" .. tostring(watchSlot)]:SetText(CommaValue(count))
             self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(icon)
@@ -416,7 +416,7 @@ local function createBagBar(f)
         local invID = C_Container.ContainerIDToInventoryID(bag_idx)
         local bagLink = GetInventoryItemLink("player", invID)
         if bagLink then
-            GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
+            GW.SetItemButtonQualityForBags(b, select(3, C_Item.GetItemInfo(bagLink)))
         else
             GW.SetItemButtonQualityForBags(b, 1)
         end
@@ -478,10 +478,10 @@ local function updateBagBar(f)
         else
             b.icon:Hide()
         end
-        local invID = C_Container.ContainerIDToInventoryID(bag_idx)  
+        local invID = C_Container.ContainerIDToInventoryID(bag_idx)
         local bagLink = GetInventoryItemLink("player", invID)
         if bagLink then
-            GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
+            GW.SetItemButtonQualityForBags(b, select(3, C_Item.GetItemInfo(bagLink)))
         else
             b:SetChecked(false)
             GW.SetItemButtonQualityForBags(b, 1)

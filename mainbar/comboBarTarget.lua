@@ -16,7 +16,7 @@ local function ComboFrame_Update(self)
     if comboPoints > 0 then
         if not self:IsShown() then
 			self:Show();
-			UIFrameFadeIn(self, COMBOFRAME_FADE_IN)
+			UIFrameFadeIn(self, COMBOFRAME_FADE_IN, self:GetAlpha(), 1)
 		end
 
         local old_power = self.gwPower

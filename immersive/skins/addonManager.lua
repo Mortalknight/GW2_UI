@@ -33,7 +33,7 @@ local function SkinAddonList()
     AddonListScrollFrameScrollBar:GwSkinScrollBar()
 
     hooksecurefunc("AddonList_Update", function()
-        local numEntrys = GetNumAddOns()
+        local numEntrys = C_AddOns.GetNumAddOns()
 
         for i = 1, MAX_ADDONS_DISPLAYED do
             local addonIndex = AddonList.offset + i
@@ -47,12 +47,12 @@ local function SkinAddonList()
             if character == true then
                 character = nil
             else
-                checkall = GetAddOnEnableState(nil, addonIndex)
+                checkall = C_AddOns.GetAddOnEnableState(addonIndex)
             end
 
             entry.Reload:SetTextColor(1.0, 0.3, 0.3)
 
-            local checkstate = GetAddOnEnableState(character, addonIndex)
+            local checkstate = C_AddOns.GetAddOnEnableState(addonIndex, character)
             local enabledForSome = not character and checkstate == 1
             local enabled = checkstate > 0
             local disabled = not enabled or enabledForSome

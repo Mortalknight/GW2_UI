@@ -61,7 +61,6 @@ end
 
 local function animFlarePoint(f, point, to, from, duration)
     local ff = f.flare
-    local pwr = f.gwPower
     ff:ClearAllPoints()
     ff:SetPoint("CENTER", point, "CENTER", 0, 0)
     AddToAnimation(
@@ -115,7 +114,7 @@ local function powerEclipsOnUpdate(self, event, ...)
 end
 local function powerEclips(self, event, ...)
     if event == "ECLIPSE_DIRECTION_CHANGE" then
-        direction = ...
+        local direction = ...
         if direction == "sun" then
             self.eclips.arrow:SetTexCoord(0, 1, 0, 1)
         elseif direction == "moon" then
@@ -131,7 +130,7 @@ local function powerEclips(self, event, ...)
             self.eclips.solar:Hide()
             return
         end
-        local aura = findBuff("player", ECLIPSE_BAR_SOLAR_BUFF_ID)
+        aura = findBuff("player", ECLIPSE_BAR_SOLAR_BUFF_ID)
         if aura ~= nil then
             self.eclips.lunar:Hide()
             self.eclips.solar:Show()
@@ -302,11 +301,9 @@ end
 
 --priest
 local function shadowOrbs(self, event, ...)
-    local pType = select(2, ...)
     if event ~= "CLASS_POWER_INIT" and event ~= "UNIT_AURA" then
         return
     end
-    local count = 0
 
     local _, count, _, _ = findBuff("player", 77487)
     if count == nil then
@@ -314,17 +311,13 @@ local function shadowOrbs(self, event, ...)
     end
 
     local old_power = self.gwPower
-    --empty v:SetTexCoord(0,0.5,0,0.5)
-    --full  v:SetTexCoord(0.5,1,0,0.5)
-    --current  v:SetTexCoord(0,0.5,0.5,1)
-    local pwrMax = 3
     local pwr = count
     if pwr < 2 then
         self.background:SetAlpha(0.2)
     else
         self.background:SetAlpha(1)
     end
-    for k, v in pairs(self.priest.power) do
+    for _, v in pairs(self.priest.power) do
         local id = tonumber(v:GetParentKey())
         if old_power < id and pwr >= id then
             animFlarePoint(self, v, 1, 0, 0.5)
@@ -348,7 +341,7 @@ local function powerHoly(self, event, ...)
         return
     end
     if event == "UNIT_AURA" then
-        local _, count, duration, expires = findBuff("player", 132403)
+        local _, _, duration, expires = findBuff("player", 132403)
         if duration ~= nil then
             local remainingPrecantage = (expires - GetTime()) / duration
             local remainingTime = duration * remainingPrecantage
@@ -356,17 +349,13 @@ local function powerHoly(self, event, ...)
         end
     else
         local old_power = self.gwPower
-        --empty v:SetTexCoord(0,0.5,0,0.5)
-        --full  v:SetTexCoord(0.5,1,0,0.5)
-        --current  v:SetTexCoord(0,0.5,0.5,1)
-        local pwrMax = UnitPowerMax("player", 9)
         local pwr = UnitPower("player", 9)
         if pwr < 2 then
             self.background:SetAlpha(0.2)
         else
             self.background:SetAlpha(1)
         end
-        for k, v in pairs(self.paladin.power) do
+        for _, v in pairs(self.paladin.power) do
             local id = tonumber(v:GetParentKey())
             if old_power < id and pwr >= id then
                 animFlarePoint(self, v, 1, 0, 0.5)

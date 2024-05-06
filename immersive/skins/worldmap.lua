@@ -222,7 +222,7 @@ local function worldMapSkin()
     end
 
     -- Run function when Carbonite has loaded
-    if IsAddOnLoaded("Leatrix_Maps") then
+    if C_AddOns.IsAddOnLoaded("Leatrix_Maps") then
         LeatrixMapsFix()
     else
         local waitFrame = CreateFrame("FRAME")

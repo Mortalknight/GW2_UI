@@ -97,9 +97,9 @@ local function questQualityColors(frame, text, link)
         handleItemButton(frame)
     end
 
-    local quality = link and select(3, GetItemInfo(link))
+    local quality = link and select(3, C_Item.GetItemInfo(link))
     if quality and quality > 1 then
-        local r, g, b = GetItemQualityColor(quality)
+        local r, g, b = C_Item.GetItemQualityColor(quality)
 
         text:SetTextColor(r, g, b)
         frame.backdrop:SetBackdropBorderColor(r, g, b)
@@ -492,7 +492,7 @@ local function LoadQuestLogFrameSkin()
     QuestFrameCompleteQuestButton:GwSkinButton(false, true)
 
     QuestNPCModelTextFrame:GwStripTextures()
-    w, h = QuestNPCModelTextFrame:GetSize()
+    local w, h = QuestNPCModelTextFrame:GetSize()
     QuestNPCModelTextFrame:GwStripTextures()
     QuestNPCModelTextFrame.tex = QuestNPCModelTextFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     QuestNPCModelTextFrame.tex:SetPoint("TOP", QuestNPCModelTextFrame, "TOP", 0, 20)
