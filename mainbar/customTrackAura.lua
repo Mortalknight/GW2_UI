@@ -133,7 +133,6 @@ end
 
 local function UpdateTrackedAuras()
     trackedIds = GW.GetSetting("CUSTOM_AURA_TRACKER"):trim():gsub("%s*,%s*", ",")
-    GWtrackedIds = trackedIds
 
     if trackedIds then
         GWCustomAuraTracker:RegisterUnitEvent("UNIT_AURA", "player")
