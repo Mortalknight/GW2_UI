@@ -483,150 +483,6 @@ local function setItemButtonQuality(button, quality)
 end
 GW.setItemButtonQuality = setItemButtonQuality
 
-local function getSkillElement(index)
-    if _G["GwPaperSkillsItem" .. index] then return _G["GwPaperSkillsItem" .. index] end
-    local f = CreateFrame("Button", "GwPaperSkillsItem" .. index, GwPaperSkills.scroll.scrollchild, "GwPaperSkillsItem")
-    f.name:SetFont(DAMAGE_TEXT_FONT, 12, "")
-    f.name:SetText(UNKNOWN)
-    f.val:SetFont(DAMAGE_TEXT_FONT, 12, "")
-    f.val:SetText(UNKNOWN)
-    f:SetText("")
-    f.arrow:ClearAllPoints()
-    f.arrow:SetPoint("RIGHT", -5, 0)
-    f.arrow2:ClearAllPoints()
-    f.arrow2:SetPoint("RIGHT", -5, 0)
-
-    f:SetScript("OnClick", function()
-        if not f.isHeader then return end
-
-        if f.isExpanded then
-            CollapseSkillHeader(f.skillIndex)
-        else
-            ExpandSkillHeader(f.skillIndex)
-        end
-
-        GWupdateSkills()
-    end)
-
-    return f
-end
-
-local function updateSkillItem(self)
-    if self.isHeader then
-        self:SetHeight(30)
-        self.val:Hide()
-        self.StatusBar:Hide()
-        self.name:SetFont(DAMAGE_TEXT_FONT, 14, "")
-        self.bgheader:Show()
-        self.bg:Hide()
-        self.bgstatic:Hide()
-        if self.isExpanded then
-            self.arrow:Show()
-            self.arrow2:Hide()
-        else
-            self.arrow:Hide()
-            self.arrow2:Show()
-        end
-    else
-        self:SetHeight(50)
-        self.val:Show()
-        self.StatusBar:Show()
-        self.name:SetFont(DAMAGE_TEXT_FONT, 12, "")
-        self.arrow:Hide()
-        self.arrow2:Hide()
-        self.bgheader:Hide()
-        self.bg:Show()
-        self.bgstatic:Show()
-    end
-end
-
-local function abandonProffesionOnClick(self)
-    local skillIndex = self:GetParent().skillIndex
-    local skillName = self:GetParent().skillName
-
-    GW.WarningPrompt(
-        UNLEARN_SKILL:format(skillName),
-        function()
-            AbandonSkill(skillIndex)
-        end
-    )
-end
-
-local function abandonProffesionOnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText(UNLEARN_SKILL_TOOLTIP)
-    GameTooltip:Show()
-end
-
-function GWupdateSkills()
-    local height = 50
-    local y = 0
-    local LastElement = nil
-    local totlaHeight = 0
-
-    GwPaperSkills.scroll.scrollchild:SetSize(GwPaperSkills.scroll:GetSize())
-    GwPaperSkills.scroll.scrollchild:SetWidth(GwPaperSkills.scroll:GetWidth() - 20)
-
-    for skillIndex = 1, GetNumSkillLines() do
-        local skillName, isHeader, isExpanded, skillRank, numTempPoints, skillModifier,
-        skillMaxRank, isAbandonable, _, _, _, _, skillDescription = GetSkillLineInfo(skillIndex)
-
-        skillRank = skillRank + numTempPoints
-
-        local f = getSkillElement(skillIndex)
-        local zebra = skillIndex % 2
-
-        f.skillIndex = skillIndex
-        f.skillName = skillName
-        if LastElement==nil then
-            f:SetPoint("TOPLEFT", 0, -y)
-        else
-            f:SetPoint("TOPLEFT", LastElement, "BOTTOMLEFT", 0, 0)
-        end
-
-        if isAbandonable then
-            f.abandon:Show()
-            f.abandon:SetScript("OnClick", abandonProffesionOnClick)
-            f.abandon:SetScript("OnEnter", abandonProffesionOnEnter)
-            f.abandon:SetScript("OnLeave", GameTooltip_Hide)
-        else
-            f.abandon:Hide()
-            f.abandon:SetScript("OnClick", nil)
-            f.abandon:SetScript("OnEnter", nil)
-            f.abandon:SetScript("OnLeave", nil)
-        end
-
-        if skillMaxRank == 0 then skillMaxRank = 1 end
-
-        LastElement = f
-
-        if skillModifier == 0 then
-			f.val:SetText(skillRank .. " / " .. skillMaxRank)
-		else
-			local color = RED_FONT_COLOR_CODE
-			if skillModifier > 0 then
-				color = GREEN_FONT_COLOR_CODE .. "+"
-			end
-            f.val:SetText(skillRank .." (" .. color .. skillModifier .. FONT_COLOR_CODE_CLOSE .. ") /" .. skillMaxRank)
-		end
-
-        y = y + height
-        f.name:SetText(skillName)
-        f.tooltip = skillName
-        f.tooltip2 = skillDescription
-        f.StatusBar:SetValue(skillRank / skillMaxRank)
-        f.isHeader = isHeader
-        f.isExpanded = isExpanded
-        f:SetID(skillIndex)
-        f.bg:SetVertexColor(1, 1, 1, zebra)
-        updateSkillItem(f)
-        totlaHeight = totlaHeight + f:GetHeight()
-    end
-    GwPaperSkills.scroll.slider.thumb:SetHeight((GwPaperSkills.scroll:GetHeight()/totlaHeight) * GwPaperSkills.scroll.slider:GetHeight() )
-    GwPaperSkills.scroll.slider:SetMinMaxValues (0,math.max(0,totlaHeight - GwPaperSkills.scroll:GetHeight()))
-end
-GW.GWupdateSkills = GWupdateSkills
-
 local CHARACTER_PANEL_OPEN = nil
 function GwToggleCharacter(tab, onlyShow)
     if InCombatLockdown() then
@@ -637,7 +493,6 @@ function GwToggleCharacter(tab, onlyShow)
 
     CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwHeroPanelMenu
     CHARACTERFRAME_DEFAULTFRAMES["ReputationFrame"] = GwPaperReputation
-    CHARACTERFRAME_DEFAULTFRAMES["SkillFrame"] = GwPaperSkills
     CHARACTERFRAME_DEFAULTFRAMES["PetPaperDollFrame"] = GwPetContainer
     CHARACTERFRAME_DEFAULTFRAMES["TokenFrame"] = GwCurrencyDetailsFrame
 
@@ -648,16 +503,6 @@ function GwToggleCharacter(tab, onlyShow)
                 GwCharacterWindow:SetAttribute("keytoggle", true)
             end
             GwCharacterWindow:SetAttribute("windowpanelopen", "reputation")
-        elseif tab == "SkillFrame" then
-            if not onlyShow then
-                GwCharacterWindow:SetAttribute("keytoggle", true)
-            end
-            GwCharacterWindow:SetAttribute("windowpanelopen", "paperdollskills")
-        elseif tab == "HonorFrame" then
-            if not onlyShow then
-                GwCharacterWindow:SetAttribute("keytoggle", true)
-            end
-            GwCharacterWindow:SetAttribute("windowpanelopen", "paperdollhonor")
         elseif tab == "PetPaperDollFrame" then
             if not onlyShow then
                 GwCharacterWindow:SetAttribute("keytoggle", true)
@@ -776,7 +621,6 @@ local function LoadPaperDoll()
     CreateFrame("Frame", "GwHeroPanelMenu", GwCharacterWindowContainer, "GwCharacterMenuFilledTemplate")
     CreateFrame("Frame", "GwPaperHonor", GwCharacterWindowContainer, "GwPaperHonor")
     CreateFrame("Frame", "GwPaperBattleground", GwCharacterWindowContainer, "GwPaperBattleground")
-    CreateFrame("Frame", "GwPaperSkills", GwCharacterWindowContainer, "GwPaperSkills")
 
     --Legacy pet window
     CreateFrame("Frame", "GwPetContainer", GwCharacterWindowContainer, "GwPetContainer")
@@ -844,18 +688,6 @@ local function LoadPaperDoll()
             PaperDollSlotButton_Update(button)
         end
     end)
-
-    GwPaperSkills.scroll:SetScrollChild(GwPaperSkills.scroll.scrollchild)
-    GWupdateSkills()
-    GwPaperSkills.scroll:SetScript("OnMouseWheel", function(self, arg1)
-        arg1 = -arg1 * 15
-        local min, max = self.slider:GetMinMaxValues()
-        local s = math.min(max,math.max(self:GetVerticalScroll()+arg1,min))
-        self.slider:SetValue(s)
-        self:SetVerticalScroll(s)
-
-    end)
-    GwPaperSkills.scroll.slider:SetValue(1)
 
     GW.LoadTitles()
     GW.LoadPDEquipset(GwHeroPanelMenu)
