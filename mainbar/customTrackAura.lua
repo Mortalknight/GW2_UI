@@ -3,35 +3,34 @@ local _, GW = ...
 local trackedIds = {}
 local searchIDs = {}
 
-
 local function findBuffs(unit, ...)
-    local name, count, duration, expires, spellID, icon
+    local auraData
     table.wipe(searchIDs)
     for i = 1, select("#", ...) do
         searchIDs["ID" .. select(i, ...)] = true
     end
     local results = nil
     for i = 1, 40 do
-        name, icon, count, _, duration, expires, _, _, _, spellID = UnitBuff(unit, i)
-        if not spellID then
+        auraData = C_UnitAuras.GetAuraDataByIndex(unit, i)
+        if not auraData then
             break
-        elseif searchIDs["ID" .. spellID] then
+        elseif searchIDs["ID" .. auraData.spellId] then
             if results == nil then
                 results = {}
             end
-            results[#results + 1] = {name = name, icon = icon, count = count, duration = duration, expires = expires}
+            results[#results + 1] = {name = auraData.name, icon = auraData.icon, count = auraData.applications, duration = auraData.duration, expires = auraData.expirationTime}
         end
     end
 
     for i = 1, 40 do
-        name, icon, count, _, duration, expires, _, _, _, spellID = UnitDebuff(unit, i)
-        if not spellID then
+        auraData = C_UnitAuras.GetAuraDataByIndex(unit, i, "HARMFUL")
+        if not auraData then
             break
-        elseif searchIDs["ID" .. spellID] then
+        elseif searchIDs["ID" .. auraData.spellId] then
             if results == nil then
                 results = {}
             end
-            results[#results + 1] = {name = name, icon = icon, count = count, duration = duration, expires = expires}
+            results[#results + 1] = {name = auraData.name, icon = auraData.icon, count = auraData.applications, duration = auraData.duration, expires = auraData.expirationTime}
         end
     end
 
@@ -108,7 +107,6 @@ end
 
 local function OnEvent(self)
     local foundAuras = findBuffs("player", GW.splitString(trackedIds, ","))
-    GWfoundAuras = foundAuras
 
     for _, v in pairs(self.icons) do
         v:Hide()
