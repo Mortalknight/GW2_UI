@@ -1,9 +1,20 @@
+1.2.0-Cata
+    Added role icons back to grids
+    Update tooltips
+    Fix game menu settings button if game menu skin is disabled
+    Added GW2 alert system
+    Added Inspect skin
+    Added helper frame skin
+    Added back unitframe level coloring
+    Fix currency values
+    Fix raidcontrol
+    Added worldmarker keybinds
+
 1.1.0-Cata
     Added eclipse bar
     Added shadow orbs
     Fix Pawn integration
     Update party and grid frames
-
 
 1.0.1-Cata
     First round of fixes
