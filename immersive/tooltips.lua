@@ -24,7 +24,8 @@ local genderTable = {
     " " .. FEMALE .. " "
 }
 
-local LEVEL1 = strlower(TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?",""))
+local LEVEL1 = strlower(TOOLTIP_UNIT_LEVEL:gsub('%s?%%s%s?%-?',''))
+local LEVEL2 = strlower((TOOLTIP_UNIT_LEVEL_RACE or TOOLTIP_UNIT_LEVEL_CLASS):gsub('^%%2$s%s?(.-)%s?%%1$s','%1'):gsub('^%-?г?о?%s?',''):gsub('%s?%%s%s?%-?',''))
 local IDLine = "|cffffedba%s|r %d"
 
 local TT = CreateFrame("Frame")
@@ -53,16 +54,20 @@ end
 
 local function RemoveTrashLines(self)
     if self:IsForbidden() then return end
-    for i = 3, self:NumLines() do
-        local tiptext = _G["GameTooltipTextLeft" .. i]
-        local linetext = tiptext and tiptext:GetText()
 
-        if not tiptext then
-            break
-        elseif linetext == PVP or linetext == FACTION_ALLIANCE or linetext == FACTION_HORDE then
-            tiptext:SetText("")
-        end
-    end
+	local info = self:GetTooltipData()
+	if not (info and info.lines[3]) then return end
+
+	for i, line in next, info.lines, 3 do
+		local text = line and line.leftText
+		if not text or text == '' then
+			break
+		elseif text == PVP or text == FACTION_ALLIANCE or text == FACTION_HORDE then
+			local left = _G['GameTooltipTextLeft' .. i]
+			left:SetText('')
+			left:Hide()
+		end
+	end
 end
 
 local function SetUnitAura(self, unit, index, filter)
@@ -100,22 +105,26 @@ local function SetUnitAura(self, unit, index, filter)
 end
 
 local function GameTooltip_OnTooltipSetSpell(self, data)
-    if self ~= GameTooltip or self:IsForbidden() or not IsModKeyDown() then return end
+    if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
 
-    local id = (data and data.id) or select(2, self:GetSpell())
-    if not id then return end
+	local id = (data and data.id) or select(2, self:GetSpell())
+	if not id then return end
 
-    local ID = format(IDLine, ID, id)
-    for i = 3, self:NumLines() do
-        local line = _G[format("GameTooltipTextLeft%d", i)]
-        local text = line and line:GetText()
-        if text and strfind(text, ID) then
-            return
-        end
-    end
+	local ID = format(IDLine, _G.ID, id)
+	local info = self:GetTooltipData()
+	if info and info.lines[3] then
+		for _, line in next, info.lines, 3 do
+			local text = line and line.leftText
+			if not text or text == '' then return end
 
-    self:AddLine(ID)
-    self:Show()
+			if strfind(text, ID) then
+				return -- this is called twice on talents for some reason?
+			end
+		end
+	end
+
+	self:AddLine(ID)
+	self:Show()
 end
 
 local function GetKeystoneModifiers(linkType, ...)
@@ -304,16 +313,25 @@ local function GameTooltip_OnTooltipSetItem(self, data)
     if bankCount then self:AddDoubleLine(" ", bankCount) end
 end
 
-local function GetLevelLine(self, offset)
+local function GetLevelLine(self, offset, raw)
     if self:IsForbidden() then return end
 
-    for i = offset, self:NumLines() do
-        local tipLine = _G["GameTooltipTextLeft"..i]
-        local tipText = tipLine and tipLine:GetText() and strlower(tipLine:GetText())
-        if tipText and strfind(tipText, LEVEL1) then
-            return tipLine, _G["GameTooltipTextLeft" .. i + 1] or nil
-        end
-    end
+    local info = self:GetTooltipData()
+    if not (info and info.lines[offset]) then return end
+
+    for i, line in next, info.lines, offset do
+		local text = line and line.leftText
+		if not text or text == '' then return end
+
+		local lower = strlower(text)
+		if lower and (strfind(lower, LEVEL1) or strfind(lower, LEVEL2)) then
+			if raw then
+				return line, info.lines[i + 1]
+			else
+				return _G['GameTooltipTextLeft' .. i], _G['GameTooltipTextLeft' .. i + 1]
+			end
+		end
+	end
 end
 
 local function SetUnitText(self, unit, isPlayerUnit)
