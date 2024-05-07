@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.14.7",{
+    {ct.change, [=[Prepare for 10.2.7]=]},
+})
+
 addChange("6.14.6",{
     {ct.bug, [=[Fix GW2 slash commands]=]},
     {ct.bug, [=[Fix merchant frame next/prev page button position]=]},
