@@ -63,7 +63,6 @@ local function CreateRaidControlFrame()
 
     local GwGroupManage = CreateFrame("Frame", "GwGroupManage", UIParent, "GwGroupManage")
     local fmGMGB = CreateFrame("Button", "GwManageGroupButton", UIParent, "GwManageGroupButtonTmpl")
-    GwGroupManage.inGroup:SetProtected()
 
     fmGMGB:SetFrameRef("GroupManager", GwGroupManage)
     fmGMGB:SetAttribute("state", "closed")

@@ -110,7 +110,7 @@
         <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/stance-icon"/>
         <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/stance-icon"/>
         <Frames>
-            <Frame parentKey="container" hidden="true">
+            <Frame parentKey="container" protected="true" hidden="true">
                 <Size x="35" y="35"/>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="TOP"/>

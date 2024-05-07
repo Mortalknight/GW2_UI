@@ -67,23 +67,6 @@ local function Time_OnEnter(self)
         end
     end
 
-    for i = 1, GetNumWorldPVPAreas() do
-        local _, localizedName, isActive, _, startTime, canEnter = GetWorldPVPAreaInfo(i)
-
-        if isActive then
-            startTime = WINTERGRASP_IN_PROGRESS
-        elseif not startTime then
-            startTime = QUEUE_TIME_UNAVAILABLE
-        elseif startTime ~= 0 then
-            startTime = SecondsToTime(startTime, true, nil, 3)
-        end
-
-        if canEnter and startTime ~= 0 then
-            GameTooltip:AddLine(VOICE_CHAT_BATTLEGROUND)
-            GameTooltip:AddDoubleLine(format("%s: ", localizedName), startTime, 1, 1, 1, lockoutColorNormal.r, lockoutColorNormal.g, lockoutColorNormal.b)
-        end
-    end
-
     local lockedInstances = {raids = {}, dungeons = {}}
 
     for i = 1, GetNumSavedInstances() do

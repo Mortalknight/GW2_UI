@@ -107,7 +107,7 @@
                     <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.groupInviteBox" x="5" y="-10"></Anchor>
                 </Anchors>
             </Button>
-            <Frame parentKey="inGroup">
+            <Frame parentKey="inGroup" protected="true">
                 <Size x="80" y="240"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.inviteToParty" x="0" y="-10"></Anchor>
