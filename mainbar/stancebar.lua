@@ -210,7 +210,6 @@ local function CreateStanceBarButtonHolder()
     StanceButtonHolder:SetScript("OnEvent", StanceButton_OnEvent)
 
     GW.MixinHideDuringPetAndOverride(StanceButtonHolder)
-    StanceButtonHolder.container:SetProtected()
     return StanceButtonHolder
 end
 
