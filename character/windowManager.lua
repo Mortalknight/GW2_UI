@@ -105,7 +105,8 @@ windowsList[8] = {
     ["HeaderText"] = TRADE_SKILLS,
     ["TooltipText"] = TRADE_SKILLS,
     ["Bindings"] = {
-        ["TOGGLEPROFESSIONBOOK"] = "Professions"
+        ["TOGGLEPROFESSIONBOOK"] = "Professions",
+        ["TOGGLECHARACTER1"] = "Professions"
     },
     ["OnClick"] = [=[
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "professions")
