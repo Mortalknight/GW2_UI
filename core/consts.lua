@@ -278,10 +278,30 @@ GW.AURAS_INDICATORS = AURAS_INDICATORS
 
 -- Never show theses auras
 local AURAS_IGNORED = {
-    --57723, -- Sated
-    --57724, -- Exhaustion
-    --80354, -- Temporal Displacement
-    --264689 -- Fatigued
+    186403,	-- Sign of Battle
+    377749,	-- Joyous Journeys
+    24755, 	-- Tricked or Treated
+    6788,	-- Weakended Soul
+    8326,	-- Ghost
+    8733,	-- Blessing of Blackfathom
+    15007,	-- Resurrection Sickness
+    23445,	-- Evil Twin
+    24755,	-- Trick or Treat
+    25163,	-- Oozeling Disgusting Aura
+    25771,	-- Forbearance
+    26013,	-- Deserter
+    36032,	-- Arcane Blast
+    41425,	-- Hypothermia
+    46221,	-- Animal Blood
+    55711,	-- Weakened Heart
+    57723,	-- Exhaustion
+    57724,	-- Sated
+    58539,	-- Watchers Corpse
+    69438,	-- Sample Satisfaction
+    71041,	-- Dungeon Deserter
+    80354,	-- Timewarp
+    95809,	-- Insanity
+    95223	-- Group Res
 }
 GW.AURAS_IGNORED = AURAS_IGNORED
 
