@@ -27,203 +27,158 @@ end
 -------------------------------------------------
 -------------------- Dungeons -------------------
 -------------------------------------------------
-    -- Ahn'kahet: The Old Kingdom
-    -- Azjol-Nerub
-    -- Drak'Tharon Keep
-    -- Gundrak
-    -- Halls of Lightning
-    -- Halls of Reflection
-    -- Halls of Stone
-    -- Pit of Saron
-    -- The Culling of Stratholme
-    -- The Forge of Souls
-    -- The Nexus
-    -- The Oculus
-    -- The Violet Hold
-    -- Trial of the Champion
-    -- Utgarde Keep
-    -- Utgarde Pinnacle
+-- Blackrock Caverns
+-- Throne of the Tides
+-- The Stonecore
+-- The Vortex Pinnacle
+-- Grim Batol
+-- Halls of Origination
+-- Deadmines
+-- Shadowfang Keep
+-- Lost City of the Tol'vir
 -------------------------------------------------
 -------------------- Phase 1 --------------------
 -------------------------------------------------
--- Naxxramas
-    -- Anub'Rekhan
-    SetDefaultOnTheFly(54022) -- Locust Swarm
-    SetDefaultOnTheFly(56098) -- Acid Spit
-    -- Grand Widow Faerlina
-    SetDefaultOnTheFly(54099) -- Rain of Fire
-    SetDefaultOnTheFly(54098) -- Poison Bolt Volley
-    -- Maexxna
-    SetDefaultOnTheFly(54121) -- Necrotic Poison 1
-    SetDefaultOnTheFly(28776) -- Necrotic Poison 2
-    SetDefaultOnTheFly(28622) -- Web Wrap
-    SetDefaultOnTheFly(54125) -- Web Spray
-    -- Noth the Plaguebringer
-    SetDefaultOnTheFly(54835) -- Curse of the Plaguebringer
-    SetDefaultOnTheFly(54814) -- Cripple 1
-    SetDefaultOnTheFly(29212) -- Cripple 2
-    -- Heigan the Unclean
-    SetDefaultOnTheFly(55011) -- Decrepit Fever
-    -- Loatheb
-    SetDefaultOnTheFly(55052) -- Inevitable Doom
-    SetDefaultOnTheFly(55053) -- Deathbloom
-    -- Instructor Razuvious
-    SetDefaultOnTheFly(55550) -- Jagged Knife
-    SetDefaultOnTheFly(55470) -- Unbalancing Strike
-    -- Gothik the Harvester
-    SetDefaultOnTheFly(55646) -- Drain Life
-    SetDefaultOnTheFly(55645) -- Death Plague
-    SetDefaultOnTheFly(28679) -- Harvest Soul
-    -- The Four Horsemen
-    SetDefaultOnTheFly(57369) -- Unholy Shadow
-    SetDefaultOnTheFly(28832) -- Mark of Korth'azz
-    SetDefaultOnTheFly(28835) -- Mark of Zeliek
-    SetDefaultOnTheFly(28833) -- Mark of Blaumeux
-    SetDefaultOnTheFly(28834) -- Mark of Rivendare
-    -- Patchwerk
-    SetDefaultOnTheFly(28801) -- Slime / Not really Encounter related
-    -- Grobbulus
-    SetDefaultOnTheFly(28169) -- Mutating Injection
-    -- Gluth
-    SetDefaultOnTheFly(54378) -- Mortal Wound
-    SetDefaultOnTheFly(29306) -- Infected Wound
-    -- Thaddius
-    SetDefaultOnTheFly(28084) -- Negative Charge (-)
-    SetDefaultOnTheFly(28059) -- Positive Charge (+)
-    -- Sapphiron
-    SetDefaultOnTheFly(28522) -- Icebolt
-    SetDefaultOnTheFly(55665) -- Life Drain
-    SetDefaultOnTheFly(28547) -- Chill 1
-    SetDefaultOnTheFly(55699) -- Chill 2
-    -- Kel'Thuzad
-    SetDefaultOnTheFly(55807) -- Frostbolt 1
-    SetDefaultOnTheFly(55802) -- Frostbolt 2
-    SetDefaultOnTheFly(27808) -- Frost Blast
-    SetDefaultOnTheFly(28410) -- Chains of Kel'Thuzad
--- The Eye of Eternity
-    -- Malygos
-    SetDefaultOnTheFly(56272) -- Arcane Breath
-    SetDefaultOnTheFly(55853) -- Vortex 1
-    SetDefaultOnTheFly(56263) -- Vortex 2
-    SetDefaultOnTheFly(57407) -- Surge of Power
-    SetDefaultOnTheFly(57429) -- Static Field
--- The Obsidian Sanctum
-    -- Sartharion
-    SetDefaultOnTheFly(60708) -- Fade Armor
-    SetDefaultOnTheFly(58105) -- Power of Shadron
-    SetDefaultOnTheFly(61248) -- Power of Tenebron
-    SetDefaultOnTheFly(56910) -- Tail Lash
-    SetDefaultOnTheFly(57874) -- Twilight Shift
-    SetDefaultOnTheFly(57632) -- Magma
--------------------------------------------------
--------------------- Phase 2 --------------------
--------------------------------------------------
--- Ulduar
-    -- Flame Leviathan
-    SetDefaultOnTheFly(62376) -- Battering Ram
-    SetDefaultOnTheFly(62374) -- Pursued
-    -- Ignis the Furnace Master
-    SetDefaultOnTheFly(62717) -- Slag Pot
-    -- Razorscale
-    SetDefaultOnTheFly(64016) -- Flame Buffet
-    SetDefaultOnTheFly(64771) -- Fuse Armor
-    SetDefaultOnTheFly(64757) -- Stormstrike
-    -- XT-002 Deconstructor
-    SetDefaultOnTheFly(63018) -- Searing Light
-    SetDefaultOnTheFly(63024) -- Gravity Bomb
-    -- Assembly of Iron
-    SetDefaultOnTheFly(61886) -- Lightning Tendrils
-    SetDefaultOnTheFly(61878) -- Overload
-    SetDefaultOnTheFly(62269) -- Rune of Death
-    SetDefaultOnTheFly(61903) -- Fusion Punch
-    SetDefaultOnTheFly(61888) -- Overwhelming Power
-    SetDefaultOnTheFly(44008) -- Static Disruption
-    -- Kologarn
-    SetDefaultOnTheFly(63355) -- Crunch Armor
-    SetDefaultOnTheFly(64290) -- Stone Grip
-    SetDefaultOnTheFly(63978) -- Stone Nova
-    -- Auriaya
-    SetDefaultOnTheFly(64669) -- Feral Pounce
-    SetDefaultOnTheFly(64496) -- Feral Rush
-    SetDefaultOnTheFly(64396) -- Guardian Swarm
-    SetDefaultOnTheFly(64667) -- Rip Flesh
-    SetDefaultOnTheFly(64666) -- Savage Pounce
-    SetDefaultOnTheFly(64389) -- Sentinel Blast
-    -- Freya
-    SetDefaultOnTheFly(62243) -- Unstable Sun Beam
-    SetDefaultOnTheFly(62310) -- Impale
-    SetDefaultOnTheFly(62438) -- Iron Roots
-    SetDefaultOnTheFly(62354) -- Broken Bones
-    SetDefaultOnTheFly(62283) -- Iron Roots
-    SetDefaultOnTheFly(63571) -- Nature's Fury
-    -- Hodir
-    SetDefaultOnTheFly(62039) -- Biting Cold
-    SetDefaultOnTheFly(61969) -- Flash Freeze
-    SetDefaultOnTheFly(62469) -- Freeze
-    -- Mimiron
-    SetDefaultOnTheFly(63666) -- Napalm Shell
-    SetDefaultOnTheFly(64533) -- Heat Wave
-    SetDefaultOnTheFly(64616) -- Deafening Siren
-    SetDefaultOnTheFly(64668) -- Magnetic Field
-    -- Thorim
-    SetDefaultOnTheFly(62415) -- Acid Breath
-    SetDefaultOnTheFly(62318) -- Barbed Shot
-    SetDefaultOnTheFly(62576) -- Blizzard
-    SetDefaultOnTheFly(32323) -- Charge
-    SetDefaultOnTheFly(64971) -- Electro Shock
-    SetDefaultOnTheFly(62605) -- Frost Nova
-    SetDefaultOnTheFly(64970) -- Fuse Lightning
-    SetDefaultOnTheFly(62418) -- Impale
-    SetDefaultOnTheFly(35054) -- Mortal Strike
-    SetDefaultOnTheFly(62420) -- Shield Smash
-    SetDefaultOnTheFly(62042) -- Stormhammer
-    SetDefaultOnTheFly(57807) -- Sunder Armor
-    SetDefaultOnTheFly(62417) -- Sweep
-    SetDefaultOnTheFly(62130) -- Unbalancing Strike
-    SetDefaultOnTheFly(64151) -- Whirling Trip
-    SetDefaultOnTheFly(40652) -- Wing Clip
-    -- General Vezax
-    SetDefaultOnTheFly(63276) -- Mark of the Faceless
-    SetDefaultOnTheFly(63420) -- Profound Darkness
-    -- Yogg-Saron
-    SetDefaultOnTheFly(63802) -- Brain Link
-    SetDefaultOnTheFly(64157) -- Curse of Doom
-    SetDefaultOnTheFly(63830) -- Malady of the Mind
-    SetDefaultOnTheFly(63138) -- Sara's Fervor
-    SetDefaultOnTheFly(63134) -- Sara's Blessing
-    SetDefaultOnTheFly(64125) -- Squeeze
-    SetDefaultOnTheFly(64412) -- Phase Punch
+-- Baradin Hold
+SetDefaultOnTheFly(95173)	-- Consuming Darkness
+SetDefaultOnTheFly(96913)	-- Searing Shadows
+SetDefaultOnTheFly(104936)	-- Skewer
+SetDefaultOnTheFly(105067)	-- Seething Hate
+-- Blackwing Descent
+SetDefaultOnTheFly(91911)	-- Constricting Chains
+SetDefaultOnTheFly(94679)	-- Parasitic Infection
+SetDefaultOnTheFly(94617)	-- Mangle
+SetDefaultOnTheFly(78199)	-- Sweltering Armor
+SetDefaultOnTheFly(91433)	-- Lightning Conductor
+SetDefaultOnTheFly(91521)	-- Incineration Security Measure
+SetDefaultOnTheFly(80094)	-- Fixate
+SetDefaultOnTheFly(91535)	-- Flamethrower
+SetDefaultOnTheFly(80161)	-- Chemical Cloud
+SetDefaultOnTheFly(92035)	-- Acquiring Target
+SetDefaultOnTheFly(79835)	-- Poison Soaked Shell
+SetDefaultOnTheFly(91555)	-- Power Generator
+SetDefaultOnTheFly(92048)	-- Shadow Infusion
+SetDefaultOnTheFly(92053)	-- Shadow Conductor
+SetDefaultOnTheFly(77699)	-- Flash Freeze
+SetDefaultOnTheFly(77760)	-- Biting Chill
+SetDefaultOnTheFly(92754)	-- Engulfing Darkness
+SetDefaultOnTheFly(92971)	-- Consuming Flames
+SetDefaultOnTheFly(92989)	-- Rend
+SetDefaultOnTheFly(92423)	-- Searing Flame
+SetDefaultOnTheFly(92485)	-- Roaring Flame
+SetDefaultOnTheFly(92407)	-- Sonic Breath
+SetDefaultOnTheFly(78092)	-- Tracking
+SetDefaultOnTheFly(82881)	-- Break
+SetDefaultOnTheFly(89084)	-- Low Health
+SetDefaultOnTheFly(81114)	-- Magma
+SetDefaultOnTheFly(94128)	-- Tail Lash
+SetDefaultOnTheFly(79339)	-- Explosive Cinders
+SetDefaultOnTheFly(79318)	-- Dominion
+-- The Bastion of Twilight
+SetDefaultOnTheFly(39171)	-- Malevolent Strikes
+SetDefaultOnTheFly(83710)	-- Furious Roar
+SetDefaultOnTheFly(92878)	-- Blackout
+SetDefaultOnTheFly(86840)	-- Devouring Flames
+SetDefaultOnTheFly(95639)	-- Engulfing Magic
+SetDefaultOnTheFly(92886)	-- Twilight Zone
+SetDefaultOnTheFly(88518)	-- Twilight Meteorite
+SetDefaultOnTheFly(86505)	-- Fabulous Flames
+SetDefaultOnTheFly(93051)	-- Twilight Shift
+SetDefaultOnTheFly(92511)	-- Hydro Lance
+SetDefaultOnTheFly(82762)	-- Waterlogged
+SetDefaultOnTheFly(92505)	-- Frozen
+SetDefaultOnTheFly(92518)	-- Flame Torrent
+SetDefaultOnTheFly(83099)	-- Lightning Rod
+SetDefaultOnTheFly(92075)	-- Gravity Core
+SetDefaultOnTheFly(92488)	-- Gravity Crush
+SetDefaultOnTheFly(82660)	-- Burning Blood
+SetDefaultOnTheFly(82665)	-- Heart of Ice
+SetDefaultOnTheFly(83500)	-- Swirling Winds
+SetDefaultOnTheFly(83581)	-- Grounded
+SetDefaultOnTheFly(92067)	-- Static Overload
+SetDefaultOnTheFly(86028)	-- Cho's Blast
+SetDefaultOnTheFly(86029)	-- Gall's Blast
+SetDefaultOnTheFly(93187)	-- Corrupted Blood
+SetDefaultOnTheFly(82125)	-- Corruption: Malformation
+SetDefaultOnTheFly(82170)	-- Corruption: Absolute
+SetDefaultOnTheFly(93200)	-- Corruption: Sickness
+SetDefaultOnTheFly(82411)	-- Debilitating Beam
+SetDefaultOnTheFly(91317)	-- Worshipping
+SetDefaultOnTheFly(92956)	-- Wrack
+-- Throne of the Four Winds
+SetDefaultOnTheFly(93131)	-- Ice Patch
+SetDefaultOnTheFly(86206)	-- Soothing Breeze
+SetDefaultOnTheFly(93122)	-- Toxic Spores
+SetDefaultOnTheFly(93058)	-- Slicing Gale
+SetDefaultOnTheFly(93260)	-- Ice Storm
+SetDefaultOnTheFly(93295)	-- Lightning Rod
+SetDefaultOnTheFly(87873)	-- Static Shock
+SetDefaultOnTheFly(87856)	-- Squall Line
+SetDefaultOnTheFly(88427)	-- Electrocute
 -------------------------------------------------
 -------------------- Phase 3 --------------------
 -------------------------------------------------
--- Trial of the Crusader
-    -- The Northrend Beasts
-    -- Lord Jaraxxus
-    -- Champions of the Horde
-    -- Champions of the Alliance
-    -- Twin Val'kyr
-    -- Anub'arak
--- Onyxia’s Lair
-    -- Onyxia
+-- Zul'Aman (Dungeon)
+-- Zul'Gurub (Dungeon)
+-- Firelands
+SetDefaultOnTheFly(99506)	-- Widows Kiss
+SetDefaultOnTheFly(97202)	-- Fiery Web Spin
+SetDefaultOnTheFly(49026)	-- Fixate
+SetDefaultOnTheFly(97079)	-- Seeping Venom
+SetDefaultOnTheFly(99389)	-- Imprinted
+SetDefaultOnTheFly(101296)	-- Fiero Blast
+SetDefaultOnTheFly(100723)	-- Gushing Wound
+SetDefaultOnTheFly(101729)	-- Blazing Claw
+SetDefaultOnTheFly(100640)	-- Harsh Winds
+SetDefaultOnTheFly(100555)	-- Smouldering Roots
+SetDefaultOnTheFly(99837)	-- Crystal Prison
+SetDefaultOnTheFly(99937)	-- Jagged Tear
+SetDefaultOnTheFly(99403)	-- Tormented
+SetDefaultOnTheFly(99256)	-- Torment
+SetDefaultOnTheFly(99252)	-- Blaze of Glory
+SetDefaultOnTheFly(99516)	-- Countdown
+SetDefaultOnTheFly(98450)	-- Searing Seeds
+SetDefaultOnTheFly(98565)	-- Burning Orb
+SetDefaultOnTheFly(98313)	-- Magma Blast
+SetDefaultOnTheFly(99145)	-- Blazing Heat
+SetDefaultOnTheFly(99399)	-- Burning Wound
+SetDefaultOnTheFly(99613)	-- Molten Blast
+SetDefaultOnTheFly(100293)	-- Lava Wave
+SetDefaultOnTheFly(100675)	-- Dreadflame
+SetDefaultOnTheFly(100249)	-- Combustion
+SetDefaultOnTheFly(99532)	-- Melt Armor
 -------------------------------------------------
 -------------------- Phase 4 --------------------
 -------------------------------------------------
--- Icecrown Citadel
-    -- Lord Marrowgar
-    -- Lady Deathwhisper
-    -- Gunship Battle Alliance
-    -- Gunship Battle Horde
-    -- Deathbringer Saurfang
-    -- Festergut
-    -- Rotface
-    -- Professor Putricide
-    -- Blood Prince Council
-    -- Blood-Queen Lana'thel
-    -- Valithria Dreamwalker
-    -- Sindragosa
-    -- The Lich King
--------------------------------------------------
--------------------- Phase 5 --------------------
--------------------------------------------------
--- The Ruby Sanctum
-    -- Halion
+-- Dragon Soul
+SetDefaultOnTheFly(103541)	-- Safe
+SetDefaultOnTheFly(103536)	-- Warning
+SetDefaultOnTheFly(103534)	-- Danger
+SetDefaultOnTheFly(103687)	-- Crush Armor
+SetDefaultOnTheFly(108570)	-- Black Blood of the Earth
+SetDefaultOnTheFly(103434)	-- Disrupting Shadows
+SetDefaultOnTheFly(105171)	-- Deep Corruption
+SetDefaultOnTheFly(105465)	-- Lighting Storm
+SetDefaultOnTheFly(104451)	-- Ice Tomb
+SetDefaultOnTheFly(109325)	-- Frostflake
+SetDefaultOnTheFly(105289)	-- Shattered Ice
+SetDefaultOnTheFly(105285)	-- Target
+SetDefaultOnTheFly(105259)	-- Watery Entrenchment
+SetDefaultOnTheFly(107061)	-- Ice Lance
+SetDefaultOnTheFly(109075)	-- Fading Light
+SetDefaultOnTheFly(108043)	-- Sunder Armor
+SetDefaultOnTheFly(107558)	-- Degeneration
+SetDefaultOnTheFly(107567)	-- Brutal Strike
+SetDefaultOnTheFly(108046)	-- Shockwave
+SetDefaultOnTheFly(110214)	-- Shockwave
+SetDefaultOnTheFly(105479)	-- Searing Plasma
+SetDefaultOnTheFly(105490)	-- Fiery Grip
+SetDefaultOnTheFly(105563)	-- Grasping Tendrils
+SetDefaultOnTheFly(106199)	-- Blood Corruption: Death
+SetDefaultOnTheFly(105841)	-- Degenerative Bite
+SetDefaultOnTheFly(106385)	-- Crush
+SetDefaultOnTheFly(106730)	-- Tetanus
+SetDefaultOnTheFly(106444)	-- Impale
+SetDefaultOnTheFly(106794)	-- Shrapnel (Target)
+SetDefaultOnTheFly(105445)	-- Blistering Heat
+SetDefaultOnTheFly(108649)	-- Corrupting Parasite
