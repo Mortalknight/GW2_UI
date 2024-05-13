@@ -9,6 +9,10 @@ local ct = {
 GW.CHANGELOGS_TYPES = ct
 
 
+addChange("1.3.1",{
+    {ct.change,[=[Update advanced char stats]=]},
+})
+
 addChange("1.3.0",{
     {ct.feature,[=[Added warlock soulshards]=]},
     {ct.bug,[=[Fix inspection frame skin error]=]},
