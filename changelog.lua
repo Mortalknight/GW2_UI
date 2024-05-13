@@ -9,6 +9,13 @@ local ct = {
 GW.CHANGELOGS_TYPES = ct
 
 
+addChange("1.3.0",{
+    {ct.feature,[=[Added warlock soulshards]=]},
+    {ct.bug,[=[Fix inspection frame skin error]=]},
+    {ct.change,[=[Update aura watch]=]},
+    {ct.change,[=[Update ignored auras]=]},
+})
+
 addChange("1.2.0",{
     {ct.feature,[=[Added worldmarker keybindsr]=]},
     {ct.feature,[=[Added GW2 alert system]=]},
