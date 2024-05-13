@@ -427,6 +427,62 @@ local function setPaladin(f)
     --return false
 end
 
+-- WARLOCK
+local function powerSoulshard(self, event, ...)
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "SOUL_SHARDS" then
+        return
+    end
+
+    local pwrMax = UnitPowerMax("player", 7)
+    local pwr = UnitPower("player", 7)
+    local old_power = self.gwPower
+    self.gwPower = pwr
+
+    for i = 1, pwrMax do
+        if pwr >= i then
+            self.warlock["shard" .. i]:Show()
+            self.warlock.shardFlare:ClearAllPoints()
+            self.warlock.shardFlare:SetPoint("CENTER", self.warlock["shard" .. i], "CENTER", 0, 0)
+            if pwr > old_power then
+                self.warlock.shardFlare:Show()
+                AddToAnimation(
+                    "WARLOCK_SHARD_FLARE",
+                    0,
+                    5,
+                    GetTime(),
+                    0.7,
+                    function(p)
+                        p = GW.RoundInt(p)
+                        self.warlock.shardFlare:SetTexCoord(GW.getSpriteByIndex(self.warlock.flareMap, p))
+                    end,
+                    nil,
+                    function()
+                        self.warlock.shardFlare:Hide()
+                    end
+                )
+            end
+        else
+            self.warlock["shard" .. i]:Hide()
+        end
+    end
+end
+GW.AddForProfiling("classpowers", "powerSoulshard", powerSoulshard)
+
+local function setWarlock(f)
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+    f:SetHeight(32)
+    f.warlock:Show()
+    f.warlock.shardFragment:Hide()
+    f:SetScript("OnEvent", powerSoulshard)
+    powerSoulshard(f, "CLASS_POWER_INIT")
+    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+
+    return true
+end
+GW.AddForProfiling("classpowers", "setWarlock", setWarlock)
 
 -- DEATHKNIGHT
 local RUNETYPE_BLOOD = 1
@@ -637,6 +693,7 @@ local function selectType(f)
     f.exbar:Hide()
     f.eclips:Hide()
     f.priest:Hide()
+    f.warlock:Hide()
 
     if GW.GetSetting("POWERBAR_ENABLED") then
         f.lmb:Hide()
@@ -657,6 +714,8 @@ local function selectType(f)
         showBar = setDeathKnight(f)
     elseif GW.myClassID == 7 then
         showBar = setShaman(f)
+    elseif GW.myClassID == 9 then
+        showBar = setWarlock(f)
     elseif GW.myClassID == 11 then
         showBar = setDruid(f)
     end
