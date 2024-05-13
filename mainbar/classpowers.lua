@@ -585,7 +585,6 @@ local function setDruid(f)
     if barType == "combo|little_mana" then
         setComboBar(f)
         if f.ourPowerBar then
-            print("SET")
             setLittleManaBar(f)
         end
         return true
