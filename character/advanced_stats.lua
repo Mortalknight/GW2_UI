@@ -1,94 +1,83 @@
 local _, GW = ...
 
+local function setUpStatFrame(frame, func, header, yOffset, numShown, sectionHeight)
+    local isShown
+    func(frame, "player")
+    isShown = frame:IsShown()
+
+    frame:ClearAllPoints()
+    frame:SetPoint("TOP", header, "BOTTOM", 0, -((numShown * 15) + 5))
+
+    if isShown then
+        numShown = numShown + 1
+        sectionHeight = sectionHeight + frame:GetHeight()
+    end
+
+    return yOffset, numShown, sectionHeight
+end
+
 local function updateValues(self)
-    local attackspeed, tt1, tt2 = GW.stats.getAttackSpeed()
-    self.meeleSection.attackspeed.tt1 = tt1
-    self.meeleSection.attackspeed.tt2 = tt2
-    self.meeleSection.attackspeed.TextL:SetText(WEAPON_SPEED)
-    self.meeleSection.attackspeed.TextR:SetText(attackspeed)
+    -- Meele
+    local totalHeight = 0
+    local sectionHeight = 0
+    local yOffset = 0
+    local numShown = 0
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.meeleSection.damage, PaperDollFrame_SetDamage, self.meeleSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.meeleSection.dps, PaperDollFrame_SetMeleeDPS, self.meeleSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.meeleSection.attackPower, PaperDollFrame_SetAttackPower, self.meeleSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.meeleSection.attackSpeed, PaperDollFrame_SetAttackSpeed, self.meeleSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.meeleSection.haste, PaperDollFrame_SetMeleeHaste, self.meeleSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.meeleSection.hitChange, PaperDollFrame_SetMeleeHitChance, self.meeleSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.meeleSection.critChance, PaperDollFrame_SetMeleeCritChance, self.meeleSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.meeleSection.expertise, PaperDollFrame_SetExpertise, self.meeleSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.meeleSection.energyRegen, PaperDollFrame_SetEnergyRegen, self.meeleSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.meeleSection.runeRegen, PaperDollFrame_SetRuneRegen, self.meeleSection.Header, yOffset, numShown, sectionHeight)
+    self.meeleSection:SetHeight(sectionHeight)
+    totalHeight = totalHeight + sectionHeight
+    --Range
+    sectionHeight = 0
+    yOffset = 0
+    numShown = 0
 
-    local rating, tt1, tt2 = GW.stats.getRating(CR_HIT_MELEE)
-    self.meeleSection.rating.tt1 = tt1
-    self.meeleSection.rating.tt2 = tt2
-    self.meeleSection.rating.TextL:SetText(COMBAT_RATING_NAME6)
-    self.meeleSection.rating.TextR:SetText(rating)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.rangeSection.damage, PaperDollFrame_SetRangedDamage, self.rangeSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.rangeSection.dps, PaperDollFrame_SetRangedDPS, self.rangeSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.rangeSection.attackPower, PaperDollFrame_SetRangedAttackPower, self.rangeSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.rangeSection.attackSpeed, PaperDollFrame_SetRangedAttackSpeed, self.rangeSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.rangeSection.critChance, PaperDollFrame_SetRangedCritChance, self.rangeSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.rangeSection.hitChange, PaperDollFrame_SetRangedHitChance, self.rangeSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.rangeSection.haste, PaperDollFrame_SetRangedHaste, self.rangeSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.rangeSection.regen, PaperDollFrame_SetFocusRegen, self.rangeSection.Header, yOffset, numShown, sectionHeight)
+    self.rangeSection:SetHeight(sectionHeight)
+    totalHeight = totalHeight + sectionHeight
+    --Spell
+    sectionHeight = 0
+    yOffset = 0
+    numShown = 0
 
-    local meleeCrit, tt1, tt2 = GW.stats.getMeleeCritChance()
-    self.meeleSection.crit.tt1 = tt1
-    self.meeleSection.crit.tt2 = tt2
-    self.meeleSection.crit.TextL:SetText(MELEE_CRIT_CHANCE)
-    self.meeleSection.crit.TextR:SetText(meleeCrit)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.spellSection.spellBonus, PaperDollFrame_SetSpellBonusDamage, self.spellSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.spellSection.bonusHealing, PaperDollFrame_SetSpellBonusHealing, self.spellSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.spellSection.spellHaste, PaperDollFrame_SetSpellHaste, self.spellSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.spellSection.hitChance, PaperDollFrame_SetSpellHitChance, self.spellSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.spellSection.penetration, PaperDollFrame_SetSpellPenetration, self.spellSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.spellSection.regen, PaperDollFrame_SetManaRegen, self.spellSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.spellSection.combatManaRegen, PaperDollFrame_SetCombatManaRegen, self.spellSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.spellSection.critChance, PaperDollFrame_SetSpellCritChance, self.spellSection.Header, yOffset, numShown, sectionHeight)
+    self.spellSection:SetHeight(sectionHeight)
+    totalHeight = totalHeight + sectionHeight
+    --Defense
+    sectionHeight = 0
+    yOffset = 0
+    numShown = 0
 
-    local meleeExp, tt1, tt2 = GW.stats.getMeleeExpertise()
-    self.meeleSection.exp.tt1 = tt1
-    self.meeleSection.exp.tt2 = tt2
-    self.meeleSection.exp.TextL:SetText(STAT_EXPERTISE)
-    self.meeleSection.exp.TextR:SetText(meleeExp)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.defenseSection.dodge, PaperDollFrame_SetDodge, self.defenseSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.defenseSection.parry, PaperDollFrame_SetParry, self.defenseSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.defenseSection.block, PaperDollFrame_SetBlock, self.defenseSection.Header, yOffset, numShown, sectionHeight)
+    yOffset, numShown, sectionHeight = setUpStatFrame(self.defenseSection.resilReduction, PaperDollFrame_SetResilience, self.defenseSection.Header, yOffset, numShown, sectionHeight)
+    --yOffset, numShown, sectionHeight = setUpStatFrame(self.defenseSection.resilCrit, PaperDollFrame_SetResilience, self.defenseSection.Header, yOffset, numShown, sectionHeight)
+    self.defenseSection:SetHeight(sectionHeight)
+    totalHeight = totalHeight + sectionHeight
 
-    local rngSpeed, tt1, tt2 = GW.stats.getRangeAttackSpeed()
-    self.rangeSection.attackspeed.tt1 = tt1
-    self.rangeSection.attackspeed.tt2 = tt2
-    self.rangeSection.attackspeed.TextL:SetText(WEAPON_SPEED)
-    self.rangeSection.attackspeed.TextR:SetText(rngSpeed)
-
-    local rngRating, tt1, tt2 = GW.stats.getRating(CR_HIT_RANGED)
-    self.rangeSection.rating.tt1 = tt1
-    self.rangeSection.rating.tt2 = tt2
-    self.rangeSection.rating.TextL:SetText(COMBAT_RATING_NAME7)
-    self.rangeSection.rating.TextR:SetText(rngRating)
-
-    local rngCrit, tt1, tt2 = GW.stats.getRangedCritChance()
-    self.rangeSection.crit.tt1 = tt1
-    self.rangeSection.crit.tt2 = tt2
-    self.rangeSection.crit.TextL:SetText(RANGED_CRIT_CHANCE)
-    self.rangeSection.crit.TextR:SetText(rngCrit)
-
-    local spellBonusText, spellBonusValue = GW.stats.getSpellBonusDamage(self.spellSection.spellBonus)
-    self.spellSection.spellBonus.TextL:SetText(spellBonusText)
-    self.spellSection.spellBonus.TextR:SetText(spellBonusValue)
-
-    local spellBonusHealingText, spellBonusHealingValue = GW.stats.getBonusHealing(self.spellSection.bonusHealing)
-    self.spellSection.bonusHealing.TextL:SetText(spellBonusHealingText)
-    self.spellSection.bonusHealing.TextR:SetText(spellBonusHealingValue)
-
-    local spellRating, tt1, tt2 = GW.stats.getRating(CR_HIT_SPELL)
-    self.spellSection.rating.tt1 = tt1
-    self.spellSection.rating.tt2 = tt2
-    self.spellSection.rating.TextL:SetText(COMBAT_RATING_NAME8)
-    self.spellSection.rating.TextR:SetText(spellRating)
-
-    self.spellSection.crit.TextL:SetText(SPELL_CRIT_CHANCE)
-    self.spellSection.crit.TextR:SetText(GW.stats.getSpellCritChance(self.spellSection.crit))
-
-    local spellRating, tt1, tt2 = GW.stats.getSpellHaste()
-    self.spellSection.hast.tt1 = tt1
-    self.spellSection.hast.tt2 = tt2
-    self.spellSection.hast.TextL:SetText(SPELL_HASTE)
-    self.spellSection.hast.TextR:SetText(spellRating)
-
-    local manaReg, tt1, tt2 = GW.stats.getManaReg()
-    self.spellSection.reg.tt1 = tt1
-    self.spellSection.reg.tt2 = tt2
-    self.spellSection.reg.TextL:SetText(MANA_REGEN)
-    self.spellSection.reg.TextR:SetText(manaReg)
-
-    local dodge, tt1, tt2 = GW.stats.getDodge()
-    self.defenseSection.dodge.tt1 = tt1
-    self.defenseSection.dodge.tt2 = tt2
-    self.defenseSection.dodge.TextL:SetText(STAT_DODGE)
-    self.defenseSection.dodge.TextR:SetText(dodge)
-
-    local parry, tt1, tt2 = GW.stats.getParry()
-    self.defenseSection.parry.tt1 = tt1
-    self.defenseSection.parry.tt2 = tt2
-    self.defenseSection.parry.TextL:SetText(STAT_PARRY)
-    self.defenseSection.parry.TextR:SetText(parry)
-
-    local block, tt1, tt2 = GW.stats.getBlock()
-    self.defenseSection.block.tt1 = tt1
-    self.defenseSection.block.tt2 = tt2
-    self.defenseSection.block.TextL:SetText(STAT_BLOCK)
-    self.defenseSection.block.TextR:SetText(block)
+    self:SetHeight(totalHeight + 120)
 end
 
 local function CreateSection(width, height, parent, anchor1, anchorTo, anchor2, yOffset)
@@ -114,34 +103,34 @@ local function CreateSection(width, height, parent, anchor1, anchorTo, anchor2, 
     return section
 end
 
-local function CreateStatsFrame(parent, anchorTo, width, specialOnEnter)
-    local statFrame = CreateFrame("Frame", nil, parent)
+local function CreateStatsFrame(parent, anchorTo, width, globalName, specialOnEnter)
+    local statFrame = CreateFrame("Frame", "GwHeroPanelStats_" .. globalName, parent)
     statFrame:SetSize(width, 15)
     statFrame:SetPoint("TOP", anchorTo, "BOTTOM", 0, -5)
 
-    local textL = statFrame:CreateFontString(nil, "ARTWORK", "SystemFont_Outline")
+    local textL = statFrame:CreateFontString("GwHeroPanelStats_" .. globalName .. "Label", "ARTWORK", "SystemFont_Outline")
     textL:SetPoint("TOPLEFT", statFrame, "TOPLEFT", 0, 0)
     textL:SetJustifyH("LEFT")
     textL:SetJustifyV("MIDDLE")
-    statFrame.TextL = textL
+    statFrame.Label = textL
 
-    local textR = statFrame:CreateFontString(nil, "ARTWORK", "SystemFont_Outline")
+    local textR = statFrame:CreateFontString("GwHeroPanelStats_" .. globalName .. "StatText", "ARTWORK", "SystemFont_Outline")
     textR:SetPoint("TOPRIGHT", statFrame, "TOPRIGHT", -10, 0)
     textR:SetJustifyH("RIGHT")
     textR:SetJustifyV("MIDDLE")
-    statFrame.TextR = textR
+    statFrame.Value = textR
 
     statFrame:SetScript("OnLeave", GameTooltip_Hide)
     if specialOnEnter then
         statFrame:SetScript("OnEnter", specialOnEnter)
     else
         statFrame:SetScript("OnEnter", function(self)
-            if not self.tt1 then return end
+            if not self.tooltip then return end
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:ClearLines()
-            GameTooltip:SetText(self.tt1, nil, nil, nil, nil, true)
-            if self.tt2 then
-                GameTooltip:AddLine(self.tt2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+            GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true)
+            if self.tooltip2 then
+                GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
             end
             GameTooltip:Show()
         end)
@@ -152,15 +141,10 @@ end
 
 local function CreateAdvancedChatStats(parent)
     local as = CreateFrame("Frame", nil, parent)
-    as:SetPoint("TOPLEFT", parent, "TOPRIGHT", 40, 60)
+    as:SetPoint("TOPLEFT", parent, "TOPRIGHT", 19, 60)
     as:SetSize(200, parent:GetHeight() + 170)
 
-    local tex = as:CreateTexture("bg", "BACKGROUND")
-    tex:SetPoint("TOP", as, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = as:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    as.tex = tex
+    as:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 10, 10)
 
     as.header = as:CreateFontString(nil, "ARTWORK", "SystemFont_Outline")
     as.header:SetPoint("TOP")
@@ -173,33 +157,46 @@ local function CreateAdvancedChatStats(parent)
 
     as.meeleSection =  CreateSection(200, 80, as, "TOP", as.header, "TOP", -20)
     as.meeleSection.Header.Text:SetText(PLAYERSTAT_MELEE_COMBAT)
-    as.meeleSection.attackspeed = CreateStatsFrame(as.meeleSection, as.meeleSection.Header, 180)
-    as.meeleSection.rating = CreateStatsFrame(as.meeleSection, as.meeleSection.attackspeed, 180)
-    as.meeleSection.crit = CreateStatsFrame(as.meeleSection, as.meeleSection.rating, 180)
-    as.meeleSection.exp = CreateStatsFrame(as.meeleSection, as.meeleSection.crit, 180)
+    as.meeleSection.damage = CreateStatsFrame(as.meeleSection, as.meeleSection.Header, 180, "MEELE_DMG")
+    as.meeleSection.dps = CreateStatsFrame(as.meeleSection, as.meeleSection.damage, 180, "MEELE_DPS")
+    as.meeleSection.attackPower = CreateStatsFrame(as.meeleSection, as.meeleSection.dps, 180, "MEELE_AP")
+    as.meeleSection.attackSpeed = CreateStatsFrame(as.meeleSection, as.meeleSection.attackPower, 180, "MEELE_AS")
+    as.meeleSection.haste = CreateStatsFrame(as.meeleSection, as.meeleSection.attackSpeed, 180, "MEELE_HAST")
+    as.meeleSection.hitChange = CreateStatsFrame(as.meeleSection, as.meeleSection.haste, 180, "MEELE_HC")
+    as.meeleSection.critChance = CreateStatsFrame(as.meeleSection, as.meeleSection.hitChange, 180, "MEELE_CC")
+    as.meeleSection.expertise = CreateStatsFrame(as.meeleSection, as.meeleSection.critChance, 180, "MEELE_EXP")
+    as.meeleSection.energyRegen = CreateStatsFrame(as.meeleSection, as.meeleSection.expertise, 180, "MEELE_ER")
+    as.meeleSection.runeRegen = CreateStatsFrame(as.meeleSection, as.meeleSection.energyRegen, 180, "MEELE_RR")
 
     as.rangeSection =  CreateSection(200, 60, as, "TOP", as.meeleSection, "BOTTOM", -25)
     as.rangeSection.Header.Text:SetText(PLAYERSTAT_RANGED_COMBAT)
-    as.rangeSection.attackspeed = CreateStatsFrame(as.rangeSection, as.rangeSection.Header, 180)
-    as.rangeSection.rating = CreateStatsFrame(as.rangeSection, as.rangeSection.attackspeed, 180)
-    as.rangeSection.crit = CreateStatsFrame(as.rangeSection, as.rangeSection.rating, 180)
+    as.rangeSection.damage = CreateStatsFrame(as.rangeSection, as.rangeSection.Header, 180, "RANGE_DMG")
+    as.rangeSection.dps = CreateStatsFrame(as.rangeSection, as.rangeSection.damage, 180, "RANGE_DPS")
+    as.rangeSection.attackPower = CreateStatsFrame(as.rangeSection, as.rangeSection.dps, 180, "RANGE_AP")
+    as.rangeSection.attackSpeed = CreateStatsFrame(as.rangeSection, as.rangeSection.attackPower, 180, "RANGE_AS")
+    as.rangeSection.critChance = CreateStatsFrame(as.rangeSection, as.rangeSection.attackSpeed, 180, "RANGE_CC")
+    as.rangeSection.hitChange = CreateStatsFrame(as.rangeSection, as.rangeSection.critChance, 180, "RANGE_HT")
+    as.rangeSection.haste = CreateStatsFrame(as.rangeSection, as.rangeSection.hitChange, 180, "RANGE_HASTE")
+    as.rangeSection.regen = CreateStatsFrame(as.rangeSection, as.rangeSection.haste, 180, "RANGE_REGEN")
 
     as.spellSection =  CreateSection(200, 120, as, "TOP", as.rangeSection, "BOTTOM", -25)
     as.spellSection.Header.Text:SetText(PLAYERSTAT_SPELL_COMBAT)
-    as.spellSection.spellBonus = CreateStatsFrame(as.spellSection, as.spellSection.Header, 180, CharacterSpellBonusDamage_OnEnter)
-    as.spellSection.bonusHealing = CreateStatsFrame(as.spellSection, as.spellSection.spellBonus, 180, CharacterSpellBonusDamage_OnEnter)
-    as.spellSection.rating = CreateStatsFrame(as.spellSection, as.spellSection.bonusHealing, 180)
-    as.spellSection.crit = CreateStatsFrame(as.spellSection, as.spellSection.rating, 180, CharacterSpellCritChance_OnEnter)
-    as.spellSection.hast = CreateStatsFrame(as.spellSection, as.spellSection.crit, 180)
-    as.spellSection.reg = CreateStatsFrame(as.spellSection, as.spellSection.hast, 180)
+    as.spellSection.spellBonus = CreateStatsFrame(as.spellSection, as.spellSection.Header, 180, "SPELL_DMG", CharacterSpellBonusDamage_OnEnter)
+    as.spellSection.bonusHealing = CreateStatsFrame(as.spellSection, as.spellSection.spellBonus, 180, "SPELL_HEALING", CharacterSpellBonusDamage_OnEnter)
+    as.spellSection.spellHaste = CreateStatsFrame(as.spellSection, as.spellSection.bonusHealing, 180, "SPELL_HASTE")
+    as.spellSection.hitChance = CreateStatsFrame(as.spellSection, as.spellSection.spellHaste, 180, "SPELL_HC")
+    as.spellSection.penetration = CreateStatsFrame(as.spellSection, as.spellSection.hitChance, 180, "SPELL_PEN", CharacterSpellCritChance_OnEnter)
+    as.spellSection.regen = CreateStatsFrame(as.spellSection, as.spellSection.penetration, 180, "SPELL_REGEN")
+    as.spellSection.combatManaRegen = CreateStatsFrame(as.spellSection, as.spellSection.regen, 180, "SPELL_CMR")
+    as.spellSection.critChance = CreateStatsFrame(as.spellSection, as.spellSection.combatManaRegen, 180, "SPELL_CC")
 
     as.defenseSection =  CreateSection(200, 80, as, "TOP", as.spellSection, "BOTTOM", -20)
     as.defenseSection.Header.Text:SetText(PLAYERSTAT_DEFENSES)
-    as.defenseSection.dodge = CreateStatsFrame(as.defenseSection, as.defenseSection.Header, 180)
-    as.defenseSection.parry = CreateStatsFrame(as.defenseSection, as.defenseSection.dodge, 180)
-    as.defenseSection.block = CreateStatsFrame(as.defenseSection, as.defenseSection.parry, 180)
-    as.defenseSection.resil = CreateStatsFrame(as.defenseSection, as.defenseSection.block, 180)
-
+    as.defenseSection.dodge = CreateStatsFrame(as.defenseSection, as.defenseSection.Header, 180, "DEFENS_DODGE")
+    as.defenseSection.parry = CreateStatsFrame(as.defenseSection, as.defenseSection.dodge, 180, "DEFENS_PARRY")
+    as.defenseSection.block = CreateStatsFrame(as.defenseSection, as.defenseSection.parry, 180, "DEFENS_BLOCK")
+    as.defenseSection.resilReduction = CreateStatsFrame(as.defenseSection, as.defenseSection.block, 180, "DEFENS_RESIL")
+    as.defenseSection.resilCrit = CreateStatsFrame(as.defenseSection, as.defenseSection.resilReduction, 180, "DEFENS_RESILCRIT")
 
     parent.advancedStatsFrameCreated = true
     parent.advancedStatsFrame = as
