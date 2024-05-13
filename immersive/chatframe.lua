@@ -892,6 +892,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         --arg1 = gsub(arg1, "%%%d", "%%s")
         arg1 = gsub(arg1, "(%d%%)([^%%%a])", "%1%%%2")
         arg1 = gsub(arg1, "(%d%%)$", "%1%%")
+        arg1 = gsub(arg1, "^%%o", "%%s")
     else
         arg1 = gsub(arg1, "%%", "%%%%")
     end
