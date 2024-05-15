@@ -1,6 +1,17 @@
 local _, GW = ...
 
 local T = {}
+--Cata
+T[1204] = "Cataclysm/Avengers of Hyjal"
+T[1177] = "Cataclysm/Baradin"
+T[1172] = "Cataclysm/Dragonmaw Clan"
+T[1135] = "Cataclysm/Earthen Circle"
+T[1158] = "Cataclysm/Guardians of Hyjal"
+T[1178] = "Cataclysm/Hellscream's Reach"
+T[1173] = "Cataclysm/Ramkahen"
+T[1171] = "Cataclysm/Therazane"
+T[1174] = "Cataclysm/Wildhammer"
+
 --TLK
 T[1037] = "TLK/Alliance Vanguard"
 T[1106] = "TLK/Argent Crusade"
