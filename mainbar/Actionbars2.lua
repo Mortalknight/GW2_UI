@@ -34,6 +34,7 @@ local GW_BLIZZARD_FORCE_HIDE = {
     KeyRingButton,
     MainMenuBarTexture,
     MainMenuMaxLevelBar,
+    MainMenuBarMaxLevelBar,
     MainMenuXPBarTexture,
     ReputationWatchBarTexture,
     ReputationXPBarTexture,
