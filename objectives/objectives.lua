@@ -385,7 +385,10 @@ GW.AddForProfiling("objectives", "getObjectiveBlock", getObjectiveBlock)
 local function getBlock(blockIndex)
     if _G["GwQuestBlock" .. blockIndex] then
         local block = _G["GwQuestBlock" .. blockIndex]
-
+        -- set the correct block color for an existing block here
+        setBlockColor(block, isFrequency and "DAILY" or "QUEST")
+        block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
+        block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
         for i = 1, 20 do
             if _G[block:GetName() .. "GwQuestObjective" .. i] ~= nil then
                 _G[block:GetName() .. "GwQuestObjective" .. i].StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
@@ -410,187 +413,16 @@ local function getBlock(blockIndex)
     newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     newBlock.actionButton.NormalTexture:SetTexture(nil)
 
-    newBlock.actionButton:SetAttribute("type1", "item")
-    newBlock.actionButton:SetAttribute("type2", "stop")
-    newBlock.actionButton:Hide()
-
-    newBlock.actionButton.SetItem = function(self, block)
-        local validTexture
-        local isFound = false
-
-        for bag = -2 , 4 do
-            for slot = 1 , 24 do
-                local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
-                if itemInfo and block.sourceItemId == itemInfo.itemID then
-                    validTexture = itemInfo.iconFileID
-                    isFound = true
-                    break
-                end
-            end
-        end
-
-        -- Edge case to find "equipped" quest items since they will no longer be in the players bag
-        if (not validTexture) then
-            for j = 1, 19 do
-                local itemID = GetInventoryItemID("player", j)
-                if block.sourceItemId == itemID then
-                    validTexture = GetInventoryItemTexture("player", j)
-                    isFound = true
-                    break
-                end
-            end
-        end
-
-        if validTexture and isFound then
-            self.itemID = tonumber(block.sourceItemId)
-            self.questID = block.questID
-            self.charges = C_Item.GetItemCount(self.itemID, nil, true)
-            self.rangeTimer = -1
-
-            self:SetAttribute("item", "item:" .. tostring(self.itemID))
-            self:SetNormalTexture(validTexture)
-            self:SetPushedTexture(validTexture)
-            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
-            self:GetNormalTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
-            self:GetPushedTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
-
-            -- Cooldown Updates
-            self.cooldown:SetPoint("CENTER", self, "CENTER", 0, 0)
-            self.cooldown:Hide()
-
-            -- Range Updates
-            self.HotKey:SetText("●")
-            self.HotKey:Hide()
-
-            -- Charges Updates
-            self.count:Hide()
-            if self.charges > 1 then
-                self.count:SetText(self.charges)
-                self.count:Show()
-            end
-
-            self.UpdateButton(self)
-
-            self:Show()
-
-            return true
-        else
-            self:SetAttribute("item1", nil)
-            self:Hide()
-        end
-
-        return false
-    end
-
-    newBlock.actionButton.UpdateButton = function(self)
-        if not self.itemID or not self:IsVisible() then
-            return
-        end
-
-        local start, duration, enabled = C_Container.GetItemCooldown(self.itemID)
-
-        if enabled and duration > 3 and enabled == 1 then
-            self.cooldown:Show()
-            self.cooldown:SetCooldown(start, duration)
-        else
-            self.cooldown:Hide()
-        end
-    end
-
-    newBlock.actionButton.OnEvent = function(self, event, ...)
-        if (event == "PLAYER_TARGET_CHANGED") then
-            self.rangeTimer = -1
-            self.HotKey:Hide()
-
-        elseif (event == "BAG_UPDATE_COOLDOWN") then
-            self.UpdateButton(self)
-        end
-    end
-
-    newBlock.actionButton.OnUpdate = function(self, elapsed)
-        if not self.itemID or not self:IsVisible() then
-            return
-        end
-
-        local valid
-        local rangeTimer = self.rangeTimer
-        local charges = C_Item.GetItemCount(self.itemID, nil, true)
-
-        if (not charges or charges ~= self.charges) then
-            self.count:Hide()
-            self.charges = C_Item.GetItemCount(self.itemID, nil, true)
-            if self.charges > 1 then
-                self.count:SetText(self.charges)
-                self.count:Show()
-            end
-        end
-
-        if UnitExists("target") then
-
-            if not self.itemName then
-                self.itemName = C_Item.GetItemInfo(self.itemID)
-            end
-
-            if (rangeTimer) then
-                rangeTimer = rangeTimer - elapsed
-
-                if (rangeTimer <= 0) then
-
-                    valid = C_Item.IsItemInRange(self.itemName, "target")
-
-                    if valid == false then
-                        self.HotKey:SetVertexColor(1.0, 0.1, 0.1)
-                        self.HotKey:Show()
-
-                    elseif valid == true then
-                        self.HotKey:SetVertexColor(0.6, 0.6, 0.6)
-                        self.HotKey:Show()
-                    end
-
-                    rangeTimer = 0.3
-                end
-
-                self.rangeTimer = rangeTimer
-            end
-        end
-    end
-
-    newBlock.actionButton.OnShow = function(self)
-        self:SetScript("OnEnter", self.OnEnter)
-        self:SetScript("OnLeave", GameTooltip_Hide)
-        self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-        self:RegisterEvent("PLAYER_TARGET_CHANGED")
-        self:RegisterEvent("BAG_UPDATE_COOLDOWN")
-    end
-
-    newBlock.actionButton.OnHide = function(self)
-        self:UnregisterEvent("PLAYER_TARGET_CHANGED")
-        self:UnregisterEvent("BAG_UPDATE_COOLDOWN")
-    end
-
-    newBlock.actionButton.OnEnter = function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-        GameTooltip:SetHyperlink("item:"..tostring(self.itemID)..":0:0:0:0:0:0:0")
-        GameTooltip:Show()
-    end
-
-    newBlock.actionButton.FakeHide = function(self)
-        --self:RegisterForClicks(nil)
-        self:SetScript("OnEnter", nil)
-        self:SetScript("OnLeave", nil)
-
-        self:ClearNormalTexture()
-        self:ClearPushedTexture()
-        self:ClearHighlightTexture()
-    end
-
-    newBlock.actionButton:SetScript("OnEvent", newBlock.actionButton.OnEvent)
-    newBlock.actionButton:SetScript("OnShow", newBlock.actionButton.OnShow)
-    newBlock.actionButton:SetScript("OnHide", newBlock.actionButton.OnHide)
-
-    newBlock.actionButton:HookScript("OnUpdate", newBlock.actionButton.OnUpdate)
-
-    newBlock.actionButton:FakeHide()
+     -- quest item button here
+     newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
+     newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+     newBlock.actionButton.NormalTexture:SetTexture(nil)
+     newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
+     newBlock.actionButton:SetScript("OnShow", WatchFrameItem_OnShow)
+     newBlock.actionButton:SetScript("OnHide", WatchFrameItem_OnHide)
+     newBlock.actionButton:SetScript("OnEnter", WatchFrameItem_OnEnter)
+     newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
+     newBlock.actionButton:SetScript("OnEvent", WatchFrameItem_OnEvent)
 
     return newBlock
 end
@@ -657,25 +489,32 @@ end
 GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
 
 local function UpdateQuestItem(block)
-    if block.sourceItemId and not block.isComplete then
-        if block.actionButton:SetItem(block) and not GwQuesttrackerContainerQuests.collapsed then
-            block.actionButton:Show()
-            block.hasItem = true
-        else
-            block.actionButton:FakeHide()
-            block.hasItem = false
-            block.actionButton.itemID = nil
-            block.actionButton.questID = nil
-            block.actionButton.itemName = nil
-            block.actionButton:Hide()
-        end
+    local link, item, charges, showItemWhenComplete = nil, nil, nil, false
+
+    if block.questLogIndex then
+        link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(block.questLogIndex)
+    end
+
+    local shouldShowItem = item and (not block.isComplete or showItemWhenComplete)
+    if shouldShowItem then
+        block.hasItem = true
+        block.actionButton:SetID(block.questLogIndex)
+
+        block.actionButton:SetAttribute("type", "item")
+        block.actionButton:SetAttribute("item", link)
+
+        block.actionButton.charges = charges
+        block.actionButton.rangeTimer = -1
+        SetItemButtonTexture(block.actionButton, item)
+        SetItemButtonCount(block.actionButton, charges)
+
+        QuestObjectiveItem_UpdateCooldown(block.actionButton)
+        block.actionButton:SetScript("OnUpdate", WatchFrameItem_OnUpdate)
+        block.actionButton:Show()
     else
-        block.actionButton:FakeHide()
         block.hasItem = false
-        block.actionButton.itemID = nil
-        block.actionButton.questID = nil
-        block.actionButton.itemName = nil
         block.actionButton:Hide()
+        block.actionButton:SetScript("OnUpdate", nil)
     end
 end
 
@@ -799,7 +638,7 @@ end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
 local function AddQuestInfos(questId, questLogIndex, watchId)
-    local title, level, group, _, _, isComplete, _, _, startEvent = GetQuestLogTitle(questLogIndex)
+    local title, level, group, _, _, isComplete, frequency, _, startEvent = GetQuestLogTitle(questLogIndex)
     local sourceItemId = nil
     local isFailed = false
 
@@ -829,7 +668,8 @@ local function AddQuestInfos(questId, questLogIndex, watchId)
         requiredMoney = GetQuestLogRequiredMoney(questId),
         isAutoComplete = false,
         sourceItemId = sourceItemId,
-        isFailed = isFailed
+        isFailed = isFailed,
+        isFrequency = frequency and frequency > 1
     }
 end
 
@@ -1014,12 +854,7 @@ local function updateQuestLogLayout(self)
         end
         GwQuestHeader:Show()
         local block = getBlock(counter)
-        -- if questie is loaded check for daily quest
-        local isDaily = false
-        if Questie and Questie.started then
-            isDaily = QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(quest.questId)
-        end
-        setBlockColor(block, isDaily and "DAILY" or "QUEST")
+        setBlockColor(block, quest.isFrequency and "DAILY" or "QUEST")
         block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
         block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
         if block == nil then
