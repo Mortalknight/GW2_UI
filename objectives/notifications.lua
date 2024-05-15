@@ -137,12 +137,15 @@ local function getNearestQuestPOI()
     local minDist = math.huge
     local spawnInfo
     local questieQuest
+    local numQuests = GetNumQuestWatches()
     wipe(questCompass)
 
     if Questie and Questie.started then
-        for _, quest in pairs(GW.trackedQuests) do
-            if quest.questId then
-                questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(quest.questId)
+        for i = 1, numQuests do
+            local questLogIndex = GetQuestIndexForWatch(i)
+            if questLogIndex then
+                local questID = select(8, GetQuestLogTitle(questLogIndex))
+                questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questID)
                 if questieQuest then
                     -- do this to prevent a questie error
                     local shouldCheck = false
@@ -163,7 +166,7 @@ local function getNearestQuestPOI()
                                 local distance = _GetDistanceToClosestObjective(spawn, zone, name)
                                 if distance and distance < minDist then
                                     minDist = distance
-                                    closestQuestID = quest.questId
+                                    closestQuestID = questID
                                     spawnInfo = spawn
                                 end
                             end

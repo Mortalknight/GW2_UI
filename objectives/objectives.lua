@@ -52,11 +52,6 @@ local function UntrackQuest(questLogIndex)
             tremove(QUEST_WATCH_LIST, index)
         end
     end
-    if GetCVar("autoQuestWatch") == "0" then
-        GW2UI_QUEST_WATCH_DB.TrackedQuests[questID] = nil
-    else
-        GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questID] = true
-    end
     RemoveQuestWatch(questLogIndex)
     WatchFrame_Update()
     QuestLog_Update()
@@ -949,16 +944,16 @@ local function updateQuestLogLayout(self)
 
     local savedHeight = 1
     local counter = 1
-    local numQuests = GetNumQuestLogEntries()
+    local numQuests = GetNumQuestWatches()
 
     -- collect quests here
     local sorted = {}
 
     for i = 1, numQuests do
-        local questId, questLogIndex, questInfo
-        if select(8, GetQuestLogTitle(i)) > 0 then
-            questId = select(8, GetQuestLogTitle(i))
-            questLogIndex = i
+        local questId, questInfo
+        local questLogIndex = GetQuestIndexForWatch(i)
+        if select(8, GetQuestLogTitle(questLogIndex)) > 0 then
+            questId = select(8, GetQuestLogTitle(questLogIndex))
         end
 
         if questId then
@@ -1013,44 +1008,39 @@ local function updateQuestLogLayout(self)
         end
     end
 
-    wipe(GW.trackedQuests)
     for _, quest in pairs(sorted) do
-        if ((GetCVar("autoQuestWatch") == "1" and not GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[quest.questId]) or (GetCVar("autoQuestWatch") == "0" and GW2UI_QUEST_WATCH_DB.TrackedQuests[quest.questId])) then
-            if counter == 1 then
-                savedHeight = 20
-            end
-            GwQuestHeader:Show()
-            local block = getBlock(counter)
-            -- if questie is loaded check for daily quest
-            local isDaily = false
-            if Questie and Questie.started then
-                isDaily = QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(quest.questId)
-            end
-            setBlockColor(block, isDaily and "DAILY" or "QUEST")
-            block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
-            block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
-            if block == nil then
-                return
-            end
-            updateQuest(block, quest)
-            block:Show()
-            savedHeight = savedHeight + block.height
-            counter = counter + 1
-            GW.CombatQueue_Queue(updateQuestItemPositions, {savedHeight, block})
-            GW.trackedQuests[counter - 1] = quest
+        if counter == 1 then
+            savedHeight = 20
         end
+        GwQuestHeader:Show()
+        local block = getBlock(counter)
+        -- if questie is loaded check for daily quest
+        local isDaily = false
+        if Questie and Questie.started then
+            isDaily = QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(quest.questId)
+        end
+        setBlockColor(block, isDaily and "DAILY" or "QUEST")
+        block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
+        block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
+        if block == nil then
+            return
+        end
+        updateQuest(block, quest)
+        block:Show()
+        savedHeight = savedHeight + block.height
+        counter = counter + 1
     end
 
-    if #GW.trackedQuests == 0 then GwQuestHeader:Hide() end
+    if numQuests == 0 then GwQuestHeader:Hide() end
 
-    if GwQuesttrackerContainerQuests.collapsed and #GW.trackedQuests > 0 then
+    if GwQuesttrackerContainerQuests.collapsed and numQuests > 0 then
         GwQuestHeader:Show()
         savedHeight = 20
     end
 
     GwQuesttrackerContainerQuests.oldHeight = GW.RoundInt(GwQuesttrackerContainerQuests:GetHeight())
     GwQuesttrackerContainerQuests:SetHeight(savedHeight)
-    for i = (GwQuesttrackerContainerQuests.collapsed and 0 or #GW.trackedQuests + 1), 25 do
+    for i = (GwQuesttrackerContainerQuests.collapsed and 0 or numQuests + 1), 25 do
         if _G["GwQuestBlock" .. i] then
             _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i].questLogIndex = 0
@@ -1067,19 +1057,6 @@ end
 GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
 
 local function tracker_OnEvent(self, event, ...)
-    local questId
-    if event == "QUEST_ACCEPTED" then
-        questId = select(2, ...)
-    elseif event == "QUEST_REMOVED" then
-        questId = ...
-    end
-    if questId then
-        if "0" == GetCVar("autoQuestWatch") then
-            GW2UI_QUEST_WATCH_DB.TrackedQuests[questId] = nil
-        else
-            GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId] = nil
-        end
-    end
     updateQuestLogLayout(self)
 end
 GW.UpdateQuestTracker = tracker_OnEvent
@@ -1099,62 +1076,6 @@ end
 GW.forceCompassHeaderUpdate = tracker_OnUpdate
 GW.AddForProfiling("objectives", "tracker_OnUpdate", tracker_OnUpdate)
 
-local _RemoveQuestWatch = function(index, isGW2)
-    if not isGW2 then
-        local questId = select(8, GetQuestLogTitle(index))
-        if questId == 0 then
-            questId = index
-        end
-
-        if questId then
-            if "0" == GetCVar("autoQuestWatch") then
-                GW2UI_QUEST_WATCH_DB.TrackedQuests[questId] = nil
-            else
-                GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId] = true
-            end
-            tracker_OnEvent(GwQuesttrackerContainerQuests)
-        end
-    end
-end
-
-local _AQW_Insert = function(index)
-    if index == 0 then
-        return
-    end
-
-    local now = GetTime()
-    if index and index == GwQuestTracker._last_aqw and (now - lastAQW) < 0.1 then
-        -- this fixes double calling due to AQW+AQW_Insert (QuestGuru fix)
-        return
-    end
-
-    lastAQW = now
-    GwQuestTracker._last_aqw = index
-    RemoveQuestWatch(index, true) -- prevent hitting 5 quest watch limit
-
-    local questId = select(8, GetQuestLogTitle(index))
-    if questId == 0 then
-        questId = index
-    end
-
-    if questId > 0 then
-        if "0" == GetCVar("autoQuestWatch") then
-            if GW2UI_QUEST_WATCH_DB.TrackedQuests[questId] then
-                GW2UI_QUEST_WATCH_DB.TrackedQuests[questId] = nil
-            else
-                GW2UI_QUEST_WATCH_DB.TrackedQuests[questId] = true
-            end
-        else
-            if GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId] then
-                GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId] = nil
-            elseif IsShiftKeyDown() and (QuestLogFrame:IsShown() or (QuestLogExFrame and QuestLogExFrame:IsShown())) then--hack
-                GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId] = true
-            end
-        end
-
-        tracker_OnEvent(GwQuesttrackerContainerQuests)
-    end
-end
 
 local function AdjustQuestTracker(our_bars, our_minimap)
     if (not our_minimap) then
@@ -1195,12 +1116,6 @@ local function LoadQuestTracker()
             WatchFrame:Hide()
         end
     )
-
-    SetCVar("autoQuestWatch", "1")
-
-    GW2UI_QUEST_WATCH_DB = GW2UI_QUEST_WATCH_DB or {}
-    GW2UI_QUEST_WATCH_DB.TrackedQuests = GW2UI_QUEST_WATCH_DB.TrackedQuests or {}
-    GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests = GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests or {}
 
     -- create our tracker
     local fTracker = CreateFrame("Frame", "GwQuestTracker", UIParent, "GwQuestTracker")
@@ -1347,29 +1262,6 @@ local function LoadQuestTracker()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
     fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))
 
-    --hook functions
-    hooksecurefunc("AddQuestWatch", _AQW_Insert)
-    hooksecurefunc("RemoveQuestWatch", _RemoveQuestWatch)
-
-    IsQuestWatched = function(index)
-        local questId = select(8, GetQuestLogTitle(index))
-        local isHeader = select(4, GetQuestLogTitle(index))
-        if isHeader then return false end
-        if questId == 0 then
-            questId = index
-        end
-
-        if "0" == GetCVar("autoQuestWatch") then
-            return GW2UI_QUEST_WATCH_DB.TrackedQuests[questId or -1]
-        else
-            return questId and (not GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId])
-        end
-    end
-
-    GetNumQuestWatches = function()
-        return 0
-    end
-
     local baseQLTB_OnClick = QuestLogTitleButton_OnClick
     QuestLogTitleButton_OnClick = function(self, button) -- I wanted to use hooksecurefunc but this needs to be a pre-hook to work properly unfortunately
         if (not self) or self.isHeader or not IsShiftKeyDown() then baseQLTB_OnClick(self, button) return end
@@ -1380,7 +1272,6 @@ local function LoadQuestTracker()
             ChatEdit_InsertLink("["..gsub(self:GetText(), " *(.*)", "%1").." ("..questId..")]")
         else
             if GetNumQuestLeaderBoards(questLogLineIndex) == 0 and not IsQuestWatched(questLogLineIndex) then -- only call if we actually want to fix this quest (normal quests already call AQW_insert)
-                _AQW_Insert(questLogLineIndex)
                 WatchFrame_Update()
                 QuestLog_SetSelection(questLogLineIndex)
                 QuestLog_Update()
@@ -1388,11 +1279,6 @@ local function LoadQuestTracker()
                 baseQLTB_OnClick(self, button)
             end
         end
-    end
-
-    if not fQuest._IsQuestWatched then
-        fQuest._IsQuestWatched = IsQuestWatched
-        fQuest._GetNumQuestWatches = GetNumQuestWatches
     end
 
     -- some hooks to set the itembuttons correct

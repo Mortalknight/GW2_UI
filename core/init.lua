@@ -47,7 +47,6 @@ GW.MOVABLE_FRAMES = {}
 GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
 GW.animations = {}
-GW.trackedQuests = {}
 
 GW.ScanTooltip = CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "SharedTooltipTemplate")
 GW.HiddenFrame = CreateFrame("Frame")
