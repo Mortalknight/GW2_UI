@@ -345,6 +345,14 @@ local function loadOverview(parent)
             fm:SetHeight(90)
             fm.background:SetHeight(90)
             fm.art:SetHeight(90)
+
+            fm.btn2:ClearAllPoints()
+            fm.btn2:SetPoint("TOPLEFT", fm, "TOPLEFT", 350, -50)
+
+            fm.desc:SetJustifyV("TOP")
+
+            fm.StatusBar:ClearAllPoints()
+            fm.StatusBar:SetPoint("TOPLEFT", fm, "TOPLEFT", 102, -70)
         end
 
         local mask = UIParent:CreateMaskTexture()
