@@ -135,6 +135,9 @@ local function MapInfoWatcherOnEvent(self,event)
     GW.locationData.instanceMapID = select(8, GetInstanceInfo())
     GW.locationData.ZoneText = GetRealZoneText() or UNKNOWN
 
+    if GW.locationData.mapID then
+        GW.locationData.mapPosition = C_Map.GetPlayerMapPosition(GW.locationData.mapID, "player")
+    end
     CoordsUpdate()
 
     GW.Debug("Update location data: Instance mapID:", GW.locationData.instanceMapID)

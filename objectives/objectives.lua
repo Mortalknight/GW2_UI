@@ -639,12 +639,7 @@ GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
 local function AddQuestInfos(questId, questLogIndex, watchId)
     local title, level, group, _, _, isComplete, frequency, _, startEvent = GetQuestLogTitle(questLogIndex)
-    local sourceItemId = nil
     local isFailed = false
-
-    if Questie and Questie.started then
-        sourceItemId = QuestieLoader:ImportModule("QuestieDB").QueryQuestSingle(questId, "sourceItemId")
-    end
 
     if isComplete == nil then
         isComplete = false
@@ -667,7 +662,6 @@ local function AddQuestInfos(questId, questLogIndex, watchId)
         numObjectives = GetNumQuestLeaderBoards(questLogIndex),
         requiredMoney = GetQuestLogRequiredMoney(questId),
         isAutoComplete = false,
-        sourceItemId = sourceItemId,
         isFailed = isFailed,
         isFrequency = frequency and frequency > 1
     }
@@ -696,7 +690,6 @@ local function updateQuest(block, quest)
         end
         block.questID = quest.questId
         block.questLogIndex = quest.questLogIndex
-        block.sourceItemId = quest.sourceItemId
         block.isComplete = quest.isComplete
         block.Header:SetText(text .. quest.title)
 
@@ -879,7 +872,6 @@ local function updateQuestLogLayout(self)
         if _G["GwQuestBlock" .. i] then
             _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i].questLogIndex = 0
-            _G["GwQuestBlock" .. i].sourceItemId = nil
             _G["GwQuestBlock" .. i]:Hide()
             GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwQuestBlock" .. i]})
         end
@@ -978,6 +970,11 @@ local function LoadQuestTracker()
     fNotify.title:SetShadowOffset(1, -1)
     fNotify.desc:SetFont(UNIT_NAME_FONT, 12)
     fNotify.desc:SetShadowOffset(1, -1)
+    fNotify.bonusbar.bar:SetOrientation("VERTICAL")
+    fNotify.bonusbar.bar:SetMinMaxValues(0, 1)
+    fNotify.bonusbar.bar:SetValue(0.5)
+    fNotify.bonusbar:SetScript("OnEnter", bonus_OnEnter)
+    fNotify.bonusbar:SetScript("OnLeave", GameTooltip_Hide)
     fNotify.compass:SetScript("OnShow", NewQuestAnimation)
 
     local fBoss = CreateFrame("Frame", "GwQuesttrackerContainerBossFrames", fTracker, "GwQuesttrackerContainer")

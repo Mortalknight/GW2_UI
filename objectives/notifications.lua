@@ -8,15 +8,15 @@ local notifications = {}
 local questCompass = {}
 
 local icons = {
-    QUEST = {tex = "icons/icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
-    CAMPAIGN = {tex = "icons/icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
-    EVENT = {tex = "icons/icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
-    SCENARIO = {tex = "icons/icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
-    BOSS = {tex = "icons/icon-boss", l = 0, r = 1, t = 0, b = 1},
-    DEAD = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1},
-    ARENA = {tex = "icons/icon-arena", l = 0, r = 1, t = 0, b = 1},
-    DAILY = {tex = "icons/icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
-    TORGHAST = {tex = "icons/icon-objective", l = 0.5, r = 1, t = 0.5, b = 0.75},
+    QUEST = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
+    CAMPAIGN = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
+    EVENT = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
+    SCENARIO = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
+    BOSS = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
+    DEAD = {tex = "icon-dead", l = 0, r = 1, t = 0, b = 1},
+    ARENA = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
+    DAILY = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
+    TORGHAST = {tex = "icon-objective", l = 0.5, r = 1, t = 0.5, b = 0.75},
 }
 
 local notification_priority = {
@@ -26,58 +26,6 @@ local notification_priority = {
     ARENA = 4,
     BOSS = 5,
 }
-
-
---- QUESTIE HELPER
-local function _GetDistance(x1, y1, x2, y2)
-    -- Basic proximity distance calculation to compare two locs (normally player position and provided loc)
-    return math.sqrt( (x2-x1)^2 + (y2-y1)^2 );
-end
-
-local function _GetDistanceToClosestObjective(spawn, zone, name)
-    -- main function for proximity
-    if not GW.locationData.mapPosition or not GW.locationData.mapPosition.x or not GW.locationData.mapID then
-        return nil
-    end
-    local _, player = C_Map.GetWorldPosFromMapPos(GW.locationData.mapID, GW.locationData.mapPosition)
-
-    if not player then
-        return nil
-    end
-
-    if not spawn or not zone or not name then
-        return nil
-    end
-
-    local uiMapId = QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone)
-    if not uiMapId then
-        return nil
-    end
-    local _, worldPosition = C_Map.GetWorldPosFromMapPos(uiMapId, {
-        x = spawn[1] / 100,
-        y = spawn[2] / 100
-    })
-
-    local coordinates = {}
-    tinsert(coordinates, {
-        x = worldPosition.x,
-        y = worldPosition.y
-    })
-
-    if (not coordinates) then
-        return nil
-    end
-
-    local closestDistance
-    for _, _ in pairs(coordinates) do
-        local distance = _GetDistance(player.x, player.y, worldPosition.x, worldPosition.y)
-        if closestDistance == nil or distance < closestDistance then
-            closestDistance = distance;
-        end
-    end
-
-    return closestDistance
-end
 
 local function prioritys(a, b)
     if a == nil or a == "" then
@@ -127,67 +75,45 @@ local function getNearestQuestPOI()
         return nil
     end
 
+    local numQuests = GetNumQuestLogEntries()
     local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
 
-    if (x == nil or y == nil) then
+    if (x == nil or y == nil) and numQuests == 0 then
         return nil
     end
 
     local closestQuestID
-    local minDist = math.huge
-    local spawnInfo
-    local questieQuest
-    local numQuests = GetNumQuestWatches()
+    local minDistSqr = math.huge
+    local isFrequent = false
+    local title
     wipe(questCompass)
 
-    if Questie and Questie.started then
-        for i = 1, numQuests do
-            local questLogIndex = GetQuestIndexForWatch(i)
-            if questLogIndex then
-                local questID = select(8, GetQuestLogTitle(questLogIndex))
-                questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questID)
-                if questieQuest then
-                    -- do this to prevent a questie error
-                    local shouldCheck = false
-                    if questieQuest.Objectives then
-                        for _, objective in pairs(questieQuest.Objectives) do
-                            if objective.spawnList then --and next(objective.spawnList) then
-                                shouldCheck = true
-                                break
-                            else
-                                shouldCheck = false
-                            end
-                        end
-                    end
-                    if shouldCheck then
-                        local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questieQuest)
-                        if spawn and zone and name then
-                            if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
-                                local distance = _GetDistanceToClosestObjective(spawn, zone, name)
-                                if distance and distance < minDist then
-                                    minDist = distance
-                                    closestQuestID = questID
-                                    spawnInfo = spawn
-                                end
-                            end
-                        end
-                    end
-                end
+    for questLogIndex = 1, numQuests do
+        local questLogTitleText, _, _, _, _, _, frequency, questID, _, _, isOnMap, hasLocalPOI = GetQuestLogTitle(questLogIndex)
+        if questID and isOnMap and hasLocalPOI then
+            local _, poiX, poiY = QuestPOIGetIconInfo(questID)
+
+            local distance = CalculateDistance(x, y, poiX, poiY)
+            if distance and distance < minDistSqr then
+                minDistSqr = distance
+                closestQuestID = questID
+                isFrequent = frequency and frequency > 1
+                title = questLogTitleText
             end
         end
     end
+    if closestQuestID then
+        local _, poiX, poiY = QuestPOIGetIconInfo(closestQuestID)
 
-    if closestQuestID and spawnInfo and spawnInfo[1] then
-        local isDaily = QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(closestQuestID)
         questCompass.DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID))
-        questCompass.TITLE = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID))
+        questCompass.TITLE = title
         questCompass.ID = closestQuestID
-        questCompass.X = spawnInfo[1] / 100
-        questCompass.Y = spawnInfo[2] / 100
-        questCompass.TYPE = isDaily and "DAILY" or "QUEST"
-        questCompass.COLOR = isDaily and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST
+        questCompass.X = poiX
+        questCompass.Y = poiY
+        questCompass.QUESTID = closestQuestID
+        questCompass.TYPE = isFrequent and "DAILY" or "QUEST"
+        questCompass.COLOR = isFrequent and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST
         questCompass.COMPASS = true
-        questCompass.ID = closestQuestID
 
         return questCompass
     end
@@ -304,8 +230,8 @@ local function updateRadar(self)
 
     local pFacing = GetPlayerFacing()
     if pFacing == nil then pFacing = 0 end
-    local dir_x = self.data.X - GW.locationData.x
-    local dir_y = self.data.Y - GW.locationData.y
+    local dir_x = self.data.X - x
+    local dir_y = self.data.Y - y
     local a = math.atan2(dir_y, dir_x)
     a = rad_135 - a - pFacing
 
@@ -316,7 +242,10 @@ GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
 local currentCompassData
 local function SetObjectiveNotification()
-    if not GetSetting("SHOW_QUESTTRACKER_COMPASS") then return end
+    if not GetSetting("SHOW_QUESTTRACKER_COMPASS") then
+        GwObjectivesNotification.shouldDisplay = false
+        return
+    end
 
     local data, dataBefore
     for k, _ in pairs(notifications) do
@@ -330,8 +259,7 @@ local function SetObjectiveNotification()
             end
         end
     end
-
-    if UnitIsDeadOrGhost("PLAYER") then
+    if UnitIsDeadOrGhost("player") then
         dataBefore = data
         data = getBodyPOI()
         if data == nil then data = dataBefore end
@@ -356,11 +284,21 @@ local function SetObjectiveNotification()
     end
 
     if icons[data.TYPE] ~= nil then
-        GwObjectivesNotification.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
-        GwObjectivesNotification.icon:SetTexCoord(icons[data.TYPE].l, icons[data.TYPE].r, icons[data.TYPE].t, icons[data.TYPE].b)
+        GwObjectivesNotification.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
+        GwObjectivesNotification.icon:SetTexCoord(
+            icons[data.TYPE].l,
+            icons[data.TYPE].r,
+            icons[data.TYPE].t,
+            icons[data.TYPE].b
+        )
 
         if progress ~= nil and icons[data.TYPE] then
+            GwObjectivesNotification.bonusbar:Show()
+            GwObjectivesNotification.bonusbar.progress = progress
+            GwObjectivesNotification.bonusbar.bar:SetValue(progress)
             GwObjectivesNotification.icon:SetTexture(nil)
+        else
+            GwObjectivesNotification.bonusbar:Hide()
         end
     else
         GwObjectivesNotification.icon:SetTexture(nil)
@@ -372,8 +310,13 @@ local function SetObjectiveNotification()
         GwObjectivesNotification.compass.dataIndex = data.ID
 
         if icons[data.TYPE] ~= nil then
-            GwObjectivesNotification.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
-            GwObjectivesNotification.compass.icon:SetTexCoord(icons[data.TYPE].l, icons[data.TYPE].r, icons[data.TYPE].t, icons[data.TYPE].b)
+            GwObjectivesNotification.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
+            GwObjectivesNotification.compass.icon:SetTexCoord(
+                icons[data.TYPE].l,
+                icons[data.TYPE].r,
+                icons[data.TYPE].t,
+                icons[data.TYPE].b
+            )
         else
             GwObjectivesNotification.compass.icon:SetTexture(nil)
         end
@@ -402,6 +345,7 @@ local function SetObjectiveNotification()
 
     GwObjectivesNotification.title:SetText(title)
     GwObjectivesNotification.title:SetTextColor(color.r, color.g, color.b)
+    GwObjectivesNotification.compassBG:SetVertexColor(color.r, color.g, color.b, 0.3)
     GwObjectivesNotification.desc:SetText(desc)
 
     if desc == nil or desc == "" then
