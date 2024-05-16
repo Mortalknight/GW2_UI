@@ -83,9 +83,7 @@ do
     AddLib("Serializer", "AceSerializer-3.0", true)
     AddLib("LibBase64", "LibBase64-1.0", true)
     AddLib("AceLocale", "AceLocale-3.0", true)
-    AddLib("LibDetours", "LibDetours-1.0", true)
-    AddLib("CI", "LibClassicInspector", true)
-    AddLib("LibGearScore", "LibGearScore.1000", true)
+
     AddLib("Dispel", "LibDispel-1.0-GW", true)
     AddLib("GW2Lib", "LibGW2-1.0", true)
     AddLib("LCS", "LibClassicSpecs-GW2", true)

@@ -4,9 +4,6 @@ GW.api = {}
 local function GetAverageItemLevel()
     if GW.tocversion > 40000 then
         return _G.GetAverageItemLevel()
-    else
-        local _, gearScore = GW.Libs.LibGearScore:GetScore("player")
-        return gearScore.GearScore, gearScore.AvgItemLevel
     end
 end
 GW.api.GetAverageItemLevel = GetAverageItemLevel
@@ -17,14 +14,6 @@ local function GetItemLevelColor()
             return _G.GetItemLevelColor()
         else
             return 1, 1, 1
-        end
-    else
-        GW.Libs.LibGearScore:PLAYER_ENTERING_WORLD()
-        local _, gearScore = GW.Libs.LibGearScore:GetScore("player")
-        if gearScore.Color then
-            return gearScore.Color.r, gearScore.Color.g, gearScore.Color.b
-        else
-            return 0, 0, 0
         end
     end
 end
