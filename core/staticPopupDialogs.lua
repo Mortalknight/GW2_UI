@@ -144,7 +144,7 @@ StaticPopupDialogs["GW2_WOWHEAD_URL"] = {
         if langShort then
             langShort = langShort:gsub("%.", "/")
         end
-        wowheadLink = "https://" .. "wowhead.com/wotlk/" .. langShort .. "quest=" .. questID
+        wowheadLink = "https://" .. "wowhead.com/cata/" .. langShort .. "quest=" .. questID
 
         self.editBox:SetText(wowheadLink)
         self.editBox:SetFocus()

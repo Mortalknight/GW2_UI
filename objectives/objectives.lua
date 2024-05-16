@@ -8,9 +8,7 @@ local AddToAnimation = GW.AddToAnimation
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local savedQuests = {}
-local lastAQW = GetTime()
 local tomTomWaypoint = nil
-
 
 local function AddTomTomWaypoint(questId, objective)
     if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
@@ -578,7 +576,7 @@ local function OnBlockClick(self, button)
         end
 
         tinsert(menuList, {text = COMMUNITIES_INVITE_MANAGER_LINK_TO_CHAT, hasArrow = false, notCheckable = true, func = function() LinkQuestIntoChat(self.title, self.questID) end})
-        tinsert(menuList, {text = "Wowhead URL", hasArrow = false, notCheckable = true, func = function() StaticPopup_Show("QUESTIE_WOWHEAD_URL", self.questID, self.title) end})
+        tinsert(menuList, {text = "Wowhead URL", hasArrow = false, notCheckable = true, func = function() StaticPopup_Show("GW2_WOWHEAD_URL", self.questID, self.title) end})
         tinsert(menuList, {text = OBJECTIVES_VIEW_IN_QUESTLOG, notCheckable = true, func = function() QuestLogFrame:Show()
             QuestLog_SetSelection(self.questLogIndex)
             QuestLog_Update() end})
