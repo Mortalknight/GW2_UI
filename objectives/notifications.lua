@@ -78,7 +78,7 @@ local function getNearestQuestPOI()
     local numQuests = GetNumQuestLogEntries()
     local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
 
-    if (x == nil or y == nil) and numQuests == 0 then
+    if x == nil or y == nil or numQuests == 0 then
         return nil
     end
 
