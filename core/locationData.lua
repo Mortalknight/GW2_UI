@@ -135,9 +135,6 @@ local function MapInfoWatcherOnEvent(self,event)
     GW.locationData.instanceMapID = select(8, GetInstanceInfo())
     GW.locationData.ZoneText = GetRealZoneText() or UNKNOWN
 
-    if GW.locationData.mapID then
-        GW.locationData.mapPosition = C_Map.GetPlayerMapPosition(GW.locationData.mapID, "player")
-    end
     CoordsUpdate()
 
     GW.Debug("Update location data: Instance mapID:", GW.locationData.instanceMapID)
@@ -149,10 +146,10 @@ local function InitLocationDataHandler()
     mapInfoWatcher:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     mapInfoWatcher:RegisterEvent("ZONE_CHANGED")
     mapInfoWatcher:RegisterEvent("ZONE_CHANGED_INDOORS")
-    --mapInfoWatcher:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
+    mapInfoWatcher:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
     mapInfoWatcher:SetScript("OnEvent", MapInfoWatcherOnEvent)
 
-    --MapInfoWatcherOnEvent(mapInfoWatcher,"PLAYER_MOUNT_DISPLAY_CHANGED")
+    MapInfoWatcherOnEvent(mapInfoWatcher,"PLAYER_MOUNT_DISPLAY_CHANGED")
 
     coordsWatcher:RegisterEvent("CRITERIA_UPDATE")
     coordsWatcher:RegisterEvent("PLAYER_STARTED_MOVING")
