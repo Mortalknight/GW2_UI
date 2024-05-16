@@ -3,6 +3,10 @@ assert(LibStub, MAJOR.." requires LibStub")
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
+local Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+
 local DebuffColors = {}
 DebuffColors.none = {r = 220 / 255, g = 0, b = 0}
 DebuffColors.Curse = {r = 97 / 255, g = 72 / 255, b = 177 / 255}
@@ -18,17 +22,31 @@ lib.DebuffTypeColor = DebuffColors
 local DispelList = {} -- List of types the player can dispel
 lib.DispelList = DispelList
 
+local BlockList = {} -- Spells blocked from AuraHighlight
+lib.BlockList = BlockList
+
 local BleedList = {} -- Contains spells classified as Bleeds
 lib.BleedList = BleedList
 
 local BadList = {} -- Spells that backfire when dispelled
 lib.BadList = BadList
 
--- Bad to dispel spells
-BadList[34914] = "Vampiric Touch"		-- horrifies
-BadList[233490] = "Unstable Affliction"	-- silences
+if Retail then
+    -- Bad to dispel spells
+    BadList[34914] = "Vampiric Touch"		-- horrifies
+    BadList[233490] = "Unstable Affliction"	-- silences
 
--- Bleed spells updated July 11th 2023 by Simpy for Patch 10.1.5
+    -- Block spells from AuraHighlight
+    BlockList[140546] = "Fully Mutated"
+    BlockList[136184] = "Thick Bones"
+    BlockList[136186] = "Clear Mind"
+    BlockList[136182] = "Improved Synapses"
+    BlockList[136180] = "Keen Eyesight"
+    BlockList[105171] = "Deep Corruption"
+    BlockList[108220] = "Deep Corruption"
+    BlockList[116095] = "Disable" -- slow
+
+    -- Bleed spells updated March 30th 2024 by Simpy for Patch 10.2.6
     --- Combined lists (without duplicates, filter requiring either main or effect bleed):
     ----> Apply Aura
     -----> Mechanic Bleeding: https://www.wowhead.com/spells/mechanic:15?filter=109;6;0
@@ -207,7 +225,6 @@ BadList[233490] = "Unstable Affliction"	-- silences
     BleedList[76507] = "Claw Puncture"
     BleedList[76524] = "Grievous Whirl"
     BleedList[76594] = "Rend"
-    BleedList[76807] = "Lacerate"
     BleedList[78842] = "Carnivorous Bite"
     BleedList[78859] = "Elementium Spike Shield"
     BleedList[79444] = "Impale"
@@ -427,6 +444,7 @@ BadList[233490] = "Unstable Affliction"	-- silences
     BleedList[196497] = "Ravenous Leap"
     BleedList[197359] = "Shred"
     BleedList[197381] = "Exposed Wounds"
+    BleedList[197546] = "Brutal Glaive"
     BleedList[199108] = "Frantic Gore"
     BleedList[199146] = "Bucking Charge"
     BleedList[199337] = "Bear Trap"
@@ -529,6 +547,7 @@ BadList[233490] = "Unstable Affliction"	-- silences
     BleedList[254575] = "Rend"
     BleedList[254901] = "Blood Frenzy"
     BleedList[255299] = "Bloodletting"
+    BleedList[255434] = "Serrated Teeth"
     BleedList[255595] = "Chomp"
     BleedList[255814] = "Rending Maul"
     BleedList[256077] = "Gore"
@@ -588,7 +607,7 @@ BadList[233490] = "Unstable Affliction"	-- silences
     BleedList[266231] = "Severing Axe"
     BleedList[266505] = "Rending Claw"
     BleedList[267064] = "Bleeding"
-    BleedList[267080] = "Blight of G'huun"
+    BleedList[267080] = "Blight of G#huun"
     BleedList[267103] = "Blight of G'huun"
     BleedList[267441] = "Serrated Axe"
     BleedList[267523] = "Cutting Surge"
@@ -841,6 +860,7 @@ BadList[233490] = "Unstable Affliction"	-- silences
     BleedList[371472] = "Rake"
     BleedList[372224] = "Dragonbone Axe"
     BleedList[372397] = "Vicious Bite"
+    BleedList[372404] = "Rend"
     BleedList[372570] = "Bold Ambush"
     BleedList[372718] = "Earthen Shards"
     BleedList[372796] = "Blazing Rush"
@@ -860,6 +880,7 @@ BadList[233490] = "Unstable Affliction"	-- silences
     BleedList[377609] = "Dragon Rend"
     BleedList[377732] = "Jagged Bite"
     BleedList[378020] = "Gash Frenzy"
+    BleedList[378118] = "Knocked Down"
     BleedList[381575] = "Lacerate"
     BleedList[381628] = "Internal Bleeding"
     BleedList[381672] = "Mutilated Flesh"
@@ -952,16 +973,30 @@ BadList[233490] = "Unstable Affliction"	-- silences
     BleedList[411437] = "Brutal Lacerations"
     BleedList[411700] = "Slobbering Bite"
     BleedList[411924] = "Drilljaws"
+    BleedList[412172] = "Ceaseless Nibbling"
     BleedList[412285] = "Stonebolt"
     BleedList[412505] = "Rending Cleave"
     BleedList[413131] = "Whirling Dagger"
     BleedList[413136] = "Whirling Dagger"
+    BleedList[414340] = "Drenched Blades"
     BleedList[414466] = "Jagged Gills"
+    BleedList[414506] = "Lacerate"
     BleedList[414552] = "Stonecrack"
     BleedList[416258] = "Stonebolt"
     BleedList[418009] = "Serrated Arrows"
     BleedList[418160] = "Sawblade-Storm"
     BleedList[418624] = "Rending Slash"
+    BleedList[422466] = "Shadow Spines"
+    BleedList[422683] = "Thrash"
+    BleedList[423431] = "Crushing Blow"
+    BleedList[424065] = "Umbral Destruction"
+    BleedList[424493] = "Shadow Rupture"
+    BleedList[426284] = "Finishing Wound"
+    BleedList[426587] = "Bramble Burst"
+    BleedList[426660] = "Razor Jaws"
+    BleedList[427182] = "Bloody Pounce"
+    BleedList[429233] = "Rezan's Fury"
+end
 
 function lib:GetDebuffTypeColor()
     return DebuffColors
@@ -975,6 +1010,10 @@ function lib:GetBadList()
     return BadList
 end
 
+function lib:GetBlockList()
+    return BlockList
+end
+
 function lib:GetMyDispelTypes()
     return DispelList
 end
@@ -986,12 +1025,37 @@ end
 do
     local _, myClass = UnitClass("player")
 
+    local WarlockPetSpells = {
+        [89808] = "Singe"
+    }
+
+    if Retail then
+        WarlockPetSpells[132411] = "Singe Magic" -- Grimoire of Sacrifice
+    else
+        WarlockPetSpells[19505] = "Devour Magic Rank 1"
+        WarlockPetSpells[19731] = "Devour Magic Rank 2"
+        WarlockPetSpells[19734] = "Devour Magic Rank 3"
+        WarlockPetSpells[19736] = "Devour Magic Rank 4"
+        WarlockPetSpells[27276] = "Devour Magic Rank 5"
+        WarlockPetSpells[27277] = "Devour Magic Rank 6"
+        WarlockPetSpells[48011] = "Devour Magic Rank 7"
+    end
+
     local function CheckSpell(spellID, pet)
         return IsSpellKnownOrOverridesKnown(spellID, pet) and true or nil
     end
 
     local function CheckPetSpells()
-        return CheckSpell(89808, true)
+        for spellID in next, WarlockPetSpells do
+            if CheckSpell(spellID, true) then
+                return true
+            end
+        end
+    end
+
+    local function CheckTalentClassic(tabIndex, talentIndex)
+        local _, _, _, _, rank = GetTalentInfo(tabIndex, talentIndex)
+        return (rank and rank > 0) or nil
     end
 
     local function UpdateDispels(_, event, arg1)
@@ -1002,11 +1066,11 @@ do
         if event == "UNIT_PET" then
             DispelList.Magic = CheckPetSpells()
         elseif myClass == "DRUID" then
-            local cure = CheckSpell(88423) -- Nature"s Cure
+            local cure = Retail and CheckSpell(88423) -- Nature's Cure
             local corruption = CheckSpell(2782) -- Remove Corruption
-            DispelList.Magic = cure
+            DispelList.Magic = cure or (Cata and corruption and CheckTalentClassic(3, 15)) -- Nature's Cure Talent
+            DispelList.Poison = cure or (not Classic and corruption) or CheckSpell(2893) or CheckSpell(8946) -- Abolish Poison / Cure Poison
             DispelList.Curse = cure or corruption
-            DispelList.Poison = cure or corruption or CheckSpell(2893) or CheckSpell(8946) -- Abolish Poison / Cure Poison
         elseif myClass == "MAGE" then
             DispelList.Curse = CheckSpell(475) -- Remove Curse
         elseif myClass == "MONK" then
@@ -1019,21 +1083,25 @@ do
             local cleanse = CheckSpell(4987) -- Cleanse
             local purify = CheckSpell(1152) -- Purify
             local toxins = cleanse or purify or CheckSpell(213644) -- Cleanse Toxins
-            DispelList.Magic = cleanse
+            DispelList.Magic = cleanse and (not Cata or CheckTalentClassic(1, 7)) -- Sacred Cleansing
             DispelList.Poison = toxins
             DispelList.Disease = toxins
         elseif myClass == "PRIEST" then
             local dispel = CheckSpell(527) -- Dispel Magic
             DispelList.Magic = dispel or CheckSpell(32375)
-            DispelList.Disease = IsPlayerSpell(390632) or CheckSpell(213634)
+            DispelList.Disease = Retail and (IsPlayerSpell(390632) or CheckSpell(213634)) or not Retail and (CheckSpell(552) or CheckSpell(528)) -- Purify Disease / Abolish Disease / Cure Disease
         elseif myClass == "SHAMAN" then
-            local purify = CheckSpell(77130) -- Purify Spirit
-            local cleanse = purify or CheckSpell(51886) -- Cleanse Spirit
-            local toxins = CheckSpell(383013) -- Poison Cleansing Totem
+            local purify = Retail and CheckSpell(77130) -- Purify Spirit
+            local cleanse = purify or CheckSpell(51886) -- Cleanse Spirit (Retail/Cata)
+            local improvedCleanse = Cata and cleanse and CheckTalentClassic(3, 14) -- Improved Cleanse Spirit
+            local toxins = Retail and CheckSpell(383013) or CheckSpell(526) -- Poison Cleansing Totem (Retail), Cure Toxins (Classic)
+            local cureDisease = Classic and CheckSpell(2870) -- Cure Disease
+            local diseaseTotem = Classic and CheckSpell(8170) -- Disease Cleansing Totem
 
-            DispelList.Magic = purify
+            DispelList.Magic = purify or improvedCleanse
             DispelList.Curse = cleanse
             DispelList.Poison = toxins
+            DispelList.Disease = cureDisease or diseaseTotem
         elseif myClass == "EVOKER" then
             local naturalize = CheckSpell(360823) -- Naturalize (Preservation)
             local expunge = CheckSpell(365585) -- Expunge (Devastation)
@@ -1047,7 +1115,14 @@ do
         end
     end
 
-    local frame = CreateFrame("Frame")
+-- setup events
+    if not lib.frame then
+        lib.frame = CreateFrame("Frame")
+    else -- we are resetting it
+        lib.frame:UnregisterAllEvents()
+    end
+
+    local frame = lib.frame
     frame:SetScript("OnEvent", UpdateDispels)
     frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
     frame:RegisterEvent("PLAYER_LOGIN")
@@ -1056,6 +1131,10 @@ do
         frame:RegisterUnitEvent("UNIT_PET", "player")
     end
 
-    frame:RegisterEvent("PLAYER_TALENT_UPDATE")
-    frame:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+    if Cata then
+        frame:RegisterEvent("PLAYER_TALENT_UPDATE")
+    elseif Retail then
+        frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+        frame:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+    end
 end
