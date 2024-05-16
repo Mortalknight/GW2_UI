@@ -28,7 +28,7 @@ local function SetAFK(self, status)
 
         if IsInGuild() then
             local guildName, guildRankName = GetGuildInfo("player")
-            self.bottom.guild:SetFormattedText("%s-%s", guildName, guildRankName)
+            self.bottom.guild:SetFormattedText("<%s> [%s]", guildName, guildRankName)
         else
             self.bottom.guild:SetText(L["No Guild"])
         end
@@ -39,11 +39,13 @@ local function SetAFK(self, status)
         self.bottom.model:SetUnit("player")
         self.bottom.model.isIdle = nil
         self.bottom.model:SetAnimation(67)
-        self.bottom.model.idleDuration = 30
+        self.bottom.model:SetFacing(6)
+        self.bottom.model:SetCamDistanceScale(4.5)
+        self.bottom.model.idleDuration = 1
         self.startTime = GetTime()
         if self.timer then
             self.timer:Cancel()
-            self.timer =nil
+            self.timer = nil
         end
         self.timer = C_Timer.NewTicker(1, function() UpdateTimer(self) end)
 
@@ -64,16 +66,20 @@ local function SetAFK(self, status)
 
         self.chat:UnregisterAllEvents()
         self.chat:Clear()
+        if PVEFrame:IsShown() then
+            PVEFrame_ToggleFrame()
+            PVEFrame_ToggleFrame()
+        end
 
         self.isAFK = false
     end
 end
 
 local function AFKMode_OnEvent(self, event, arg1, ...)
-    if IsIn(event, "PLAYER_REGEN_DISABLED", "UPDATE_BATTLEFIELD_STATUS") then
+    if IsIn(event, "PLAYER_REGEN_DISABLED", "LFG_PROPOSAL_SHOW", "UPDATE_BATTLEFIELD_STATUS") then
         if event ~= "UPDATE_BATTLEFIELD_STATUS" or (GetBattlefieldStatus(arg1, ...) == "confirm") then
-            SetAFK(self, false)
-        end
+			SetAFK(self, false)
+		end
 
         if event == "PLAYER_REGEN_DISABLED" then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -97,6 +103,7 @@ end
 
 local function OnKeyDown(self, key)
     if ignoreKeys[key] then return end
+
     if printKeys[key] then
         Screenshot()
     else
@@ -119,8 +126,8 @@ end
 
 local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
     local coloredName = GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
-    local type = strsub(event, 10)
-    local info = ChatTypeInfo[type]
+    local chatType = strsub(event, 10)
+    local info = ChatTypeInfo[chatType]
 
     if event == "CHAT_MSG_BN_WHISPER" then
         coloredName = format("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, arg2)
@@ -128,8 +135,8 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
 
     arg1 = RemoveExtraSpaces(arg1)
 
-    local chatGroup = Chat_GetChatCategory(type)
-    local chatTarget, body
+    local chatGroup = Chat_GetChatCategory(chatType)
+    local chatTarget
     if chatGroup == "BN_CONVERSATION" then
         chatTarget = tostring(arg8)
     elseif chatGroup == "WHISPER" or chatGroup == "BN_WHISPER" then
@@ -141,25 +148,35 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
     end
 
     local playerLink
-    if type ~= "BN_WHISPER" and type ~= "BN_CONVERSATION" then
+    if chatType ~= "BN_WHISPER" and chatType ~= "BN_CONVERSATION" then
         playerLink = "|Hplayer:" .. arg2 .. ":" .. arg11 .. ":" .. chatGroup .. (chatTarget and ":" .. chatTarget or "") .. "|h"
     else
         playerLink = "|HBNplayer:" .. arg2 .. ":" .. arg13 .. ":" .. arg11 .. ":" .. chatGroup .. (chatTarget and ":" .. chatTarget or "") .. "|h"
     end
 
-    local message = arg1
-    if arg14 then --isMobile
-        message = ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b) .. message
+    --Escape any % characters, as it may otherwise cause an "invalid option in format" error in the next step
+    arg1 = gsub(arg1, "%%", "%%%%")
+
+    --Remove groups of many spaces
+    arg1 = RemoveExtraSpaces(arg1)
+
+    -- isMobile
+    if arg14 then
+        arg1 = ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b) .. arg1
     end
 
-    --Escape any % characters, as it may otherwise cause an "invalid option in format" error in the next step
-    message = gsub(message, "%%", "%%%%")
-
-    local success
-    success, body = pcall(format, _G["CHAT_" .. type .. "_GET"]..message, playerLink .. "[" .. coloredName .. "]" .. "|h")
+    local _, body = pcall(format, _G["CHAT_" .. chatType .. "_GET"] .. arg1, playerLink .. "[" .. coloredName .. "]" .. "|h")
 
     local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget)
-    local typeID = ChatHistory_GetAccessID(type, chatTarget, arg12 == "" and arg13 or arg12)
+    local typeID = ChatHistory_GetAccessID(chatType, chatTarget, arg12 == "" and arg13 or arg12)
+
+    if GW.settings.CHAT_SHORT_CHANNEL_NAMES then
+        body = body:gsub("|Hchannel:(.-)|h%[(.-)%]|h", GW.ShortChannel)
+        body = body:gsub("^(.-|h) " .. CHAT_WHISPER_GET:format("~"):gsub("~ ", ""):gsub(": ", ""), "%1")
+        body = body:gsub("<" .. AFK .. ">", "[|cffFF0000" .. AFK .. "|r] ")
+        body = body:gsub("<" .. DND .. ">", "[|cffE7E716" .. DND .. "|r] ")
+        body = body:gsub("%[BN_CONVERSATION:", "%[".."")
+    end
 
     self:AddMessage(body, info.r, info.g, info.b, info.id, false, accessID, typeID)
 end
@@ -170,6 +187,15 @@ local function LoopAnimations(self)
         self.curAnimation = "dance"
         self.startTime = GetTime()
         self.duration = 300
+        self.isIdle = false
+        self.idleDuration = 120
+    elseif self.curAnimation == "dance" then
+        self:SetAnimation(71)
+        self:SetCamDistanceScale(5.5)
+        self:SetFacing(1)
+        self.curAnimation = "sleep"
+        self.startTime = GetTime()
+        self.duration = 3000
         self.isIdle = false
         self.idleDuration = 120
     end
@@ -193,6 +219,7 @@ GW.ToggelAfkMode = ToggelAfkMode
 
 local function loadAFKAnimation()
     local classColor = GWGetClassColor(GW.myclass, true, true)
+    local playerName = GW.myname
 
     local BackdropFrame = {
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg",
@@ -227,37 +254,66 @@ local function loadAFKAnimation()
     AFKMode.chat:SetScript("OnMouseWheel", Chat_OnMouseWheel)
     AFKMode.chat:SetScript("OnEvent", Chat_OnEvent)
 
-    AFKMode.bottom = CreateFrame("Frame", nil, AFKMode)
+    AFKMode.bottom = CreateFrame("Frame", nil, AFKMode, "BackdropTemplate")
     AFKMode.bottom:SetFrameLevel(0)
     AFKMode.bottom:SetPoint("BOTTOM", AFKMode, "BOTTOM", 0, -5)
-    AFKMode.bottom:GwCreateBackdrop(BackdropFrame)
+    AFKMode.bottom:SetBackdrop(BackdropFrame)
     AFKMode.bottom:SetWidth(GetScreenWidth() + (GW.border * 2))
     AFKMode.bottom:SetHeight(GetScreenHeight() * (1.5 / 10))
+
+    local factionGroup, size, offsetX, offsetY, nameOffsetX, nameOffsetY = GW.myfaction, 140, -20, -8, -10, -36
+    if factionGroup == "Neutral" then
+        factionGroup, size, offsetX, offsetY, nameOffsetX, nameOffsetY = "Panda", 90, 15, 10, 20, -5
+    end
 
     local modelOffsetY = 205
     if GW.myrace == "Human" then
         modelOffsetY = 195
-    elseif GW.myrace == "Tauren" then
+    elseif GW.myrace == "Worgen" then
+        modelOffsetY = 280
+    elseif GW.myrace == "Tauren" or GW.myrace == "HighmountainTauren" then
         modelOffsetY = 250
-    elseif GW.myrace == "Troll" then
+    elseif GW.myrace == "Draenei" or GW.myrace == "LightforgedDraenei" then
+        if GW.mysex == 2 then modelOffsetY = 250 end
+    elseif GW.myrace == "Pandaren" then
+        if GW.mysex == 2 then
+            modelOffsetY = 220
+        elseif GW.mysex == 3 then
+            modelOffsetY = 280
+        end
+    elseif GW.myrace == "KulTiran" then
+        if GW.mysex == 2 then
+            modelOffsetY = 220
+        elseif GW.mysex == 3 then
+            modelOffsetY = 240
+        end
+    elseif GW.myrace == "Goblin" then
+        if GW.mysex == 2 then
+            modelOffsetY = 240
+        elseif GW.mysex == 3 then
+            modelOffsetY = 220
+        end
+    elseif GW.myrace == "Troll" or GW.myrace == "ZandalariTroll" then
         if GW.mysex == 2 then
             modelOffsetY = 250
         elseif GW.mysex == 3 then
             modelOffsetY = 280
         end
-    elseif GW.myrace == "Dwarf"then
+    elseif GW.myrace == "Dwarf" or GW.myrace == "DarkIronDwarf" then
         if GW.mysex == 2 then modelOffsetY = 250 end
+    elseif GW.myrace == "Vulpera" then
+        modelOffsetY = 140
     end
 
     AFKMode.bottom.faction = AFKMode.bottom:CreateTexture(nil, "OVERLAY")
-    AFKMode.bottom.faction:SetPoint("BOTTOMLEFT", AFKMode.bottom, "BOTTOMLEFT", -20, -8)
-    AFKMode.bottom.faction:SetTexture("Interface/Timer/" .. GW.myfaction .. "-Logo")
-    AFKMode.bottom.faction:SetSize(140, 140)
+    AFKMode.bottom.faction:SetPoint("BOTTOMLEFT", AFKMode.bottom, "BOTTOMLEFT", offsetX, offsetY)
+    AFKMode.bottom.faction:SetTexture("Interface/Timer/" .. factionGroup .. "-Logo")
+    AFKMode.bottom.faction:SetSize(size, size)
 
     AFKMode.bottom.name = AFKMode.bottom:CreateFontString(nil, "OVERLAY")
     AFKMode.bottom.name:SetFont(UNIT_NAME_FONT, 20, "")
-    AFKMode.bottom.name:SetFormattedText("%s-%s", GW.myname, GW.myname)
-    AFKMode.bottom.name:SetPoint("TOPLEFT", AFKMode.bottom.faction, "TOPRIGHT", -10, -36)
+    AFKMode.bottom.name:SetFormattedText("%s-%s", playerName, GW.myrealm)
+    AFKMode.bottom.name:SetPoint("TOPLEFT", AFKMode.bottom.faction, "TOPRIGHT", nameOffsetX, nameOffsetY)
     AFKMode.bottom.name:SetTextColor(classColor.r, classColor.g, classColor.b)
 
     AFKMode.bottom.guild = AFKMode.bottom:CreateFontString(nil, "OVERLAY")
@@ -290,12 +346,6 @@ local function loadAFKAnimation()
             AFKMode.animTimer = C_Timer.NewTimer(self.idleDuration, function() LoopAnimations(self) end)
         end
     end)
-
-    AFKMode:RegisterEvent("PLAYER_FLAGS_CHANGED")
-    AFKMode:RegisterEvent("PLAYER_REGEN_DISABLED")
-    AFKMode:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
-    AFKMode:SetScript("OnEvent", AFKMode_OnEvent)
-    SetCVar("autoClearAFK", "1")
 
     ToggelAfkMode()
 
