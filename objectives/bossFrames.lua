@@ -2,9 +2,8 @@ local _, GW = ...
 local AddTrackerNotification = GW.AddTrackerNotification
 local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
---local AddToClique = GW.AddToClique
+local AddToClique = GW.AddToClique
 local PowerBarColorCustom = GW.PowerBarColorCustom
-local GetSetting = GW.GetSetting
 local bossFrames = {}
 
 local function updateBossFrameHeight()
@@ -54,7 +53,7 @@ local function updateBoss_Power(self)
         local pwcolor = PowerBarColorCustom[powerToken]
         self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     else
-        self.power:SetStatusBarColor(altR, altG, altB)
+        self.power:SetStatusBarColor(altR or 0, altG or 0, altB or 0)
     end
 
     if power > 0 and powerMax > 0 then
@@ -63,7 +62,6 @@ local function updateBoss_Power(self)
 
     self.power:SetMinMaxValues(0, powerMax)
     self.power:SetValue(power)
-    self.power.name:SetText(getglobal(powerToken) or UNKNOWN)
     self.power.value:SetText(GW.RoundInt(powerPercentage * 100) .. "%")
 end
 GW.AddForProfiling("bossFrames", "updateBoss_Power", updateBoss_Power)
@@ -94,48 +92,68 @@ local function updateBoss_RaidMarkers(self)
         self.marker:Hide()
     end
 end
-GW.AddForProfiling("unitframes", "updateBoss_RaidMarkers", updateBoss_RaidMarkers)
+GW.AddForProfiling("bossFrames", "updateBoss_RaidMarkers", updateBoss_RaidMarkers)
 
-local function checkForExtraEnergyBar(self)
-    if not self.guid then return end
-    local showExtraEnergybar = false
-    local _, _, _, _, _, npc_id = strsplit("-", self.guid)
-    for encounterId, _ in pairs(GW.bossFrameExtraEnergyBar) do
-        for npcId, _ in pairs(GW.bossFrameExtraEnergyBar[encounterId].npcIds) do
-            if npcId == tonumber(npc_id) and GW.bossFrameExtraEnergyBar[encounterId].enable == true then
-                showExtraEnergybar = true
-                break
-            end
-        end
-        if showExtraEnergybar then break end
+local function updateHealthbarColor(self)
+    local unitReaction = UnitReaction(self.unit, "player")
+    local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
+
+    if unitReaction then
+        if unitReaction <= 3 then nameColor = GW.COLOR_FRIENDLY[2] end --Enemy
+        if unitReaction >= 5 then nameColor = GW.COLOR_FRIENDLY[1] end --Friend
     end
 
-    if showExtraEnergybar then
-        self.power:SetHeight(8)
-        self.health:SetHeight(10)
-        self.power:SetPoint("TOPRIGHT", self, "TOPRIGHT", -10, -45)
-        self.power.value:Show()
-        self.power.name:Show()
-        self.powerBarbg:Show()
-        self:SetHeight(60)
-    else
-        self.power:SetHeight(2)
-        self.health:SetHeight(8)
-        self.power:ClearAllPoints()
-        self.power:SetPoint("TOPRIGHT", self, "TOPRIGHT", -10, -28)
-        self.power.value:Hide()
-        self.power.name:Hide()
-        self.powerBarbg:Hide()
-        self:SetHeight(35)
+    if UnitIsTapDenied(self.unit) then
+        nameColor = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
+    end
+    self.health:SetStatusBarColor(nameColor.r, nameColor.g, nameColor.b, 1)
+end
+
+local function bossFrameOnShow(self)
+    local compassData = {}
+
+    compassData.TYPE = "BOSS"
+    compassData.ID = "boss_unknown"
+    compassData.QUESTID = "unknown"
+    compassData.COMPASS = false
+    compassData.DESC = ""
+
+    compassData.MAPID = nil
+    compassData.X = nil
+    compassData.Y = nil
+
+    compassData.COLOR = TRACKER_TYPE_COLOR.BOSS
+    compassData.TITLE = UnitName(self.unit)
+
+    AddTrackerNotification(compassData)
+    updateBoss_Name(self)
+    updateBoss_Health(self)
+    updateBoss_Power(self)
+    updateBoss_RaidMarkers(self)
+    updateBossFrameHeight()
+    updateHealthbarColor(self)
+end
+
+local function bossFrameOnHide(self)
+    updateBossFrameHeight()
+
+    if self.id == 1 then
+        RemoveTrackerNotificationOfType("BOSS")
+    end
+end
+
+local function bossFrame_OnEnter(self)
+    if self.unit ~= nil then
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetUnit(self.unit)
+        GameTooltip:Show()
     end
 end
 
 local function bossFrame_OnEvent(self, event)
-    if not self:IsShown() then
-        return
-    end
+    if not self:IsShown() then return end
 
-    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
+    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         updateBoss_Health(self)
     elseif event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT" then
         updateBoss_Power(self)
@@ -143,53 +161,54 @@ local function bossFrame_OnEvent(self, event)
         updateBoss_Name(self)
     elseif event == "RAID_TARGET_UPDATE" then
         updateBoss_RaidMarkers(self)
+    elseif event == "UNIT_FACTION" then
+        updateHealthbarColor(self)
     elseif event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" then
         updateBoss_Name(self)
-        checkForExtraEnergyBar(self)
         updateBoss_Health(self)
         updateBoss_Power(self)
         updateBoss_RaidMarkers(self)
         updateBossFrameHeight()
+        updateHealthbarColor(self)
     end
 end
 GW.AddForProfiling("bossFrames", "bossFrame_OnEvent", bossFrame_OnEvent)
 
+local function SetUpFramePosition()
+    local yOffset = GW.GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
+
+    for idx, frame in pairs(bossFrames) do
+        if idx == 1 then
+            frame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -yOffset)
+        else
+            frame:SetPoint("TOPRIGHT", bossFrames[idx - 1], "BOTTOMRIGHT", 0, 0)
+        end
+    end
+end
+GW.SetUpBossFramePosition = SetUpFramePosition
+
 local function registerFrame(i)
     local bossFrame = CreateFrame("Button", "GwBossFrame" .. i, GwQuestTracker, "GwQuestTrackerBossFrameTemp")
     local unit = "boss" .. i
-    local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
-    --local p = yOffset + ((35 * i) - 35)
-
-    if i == 1 then
-        bossFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -yOffset)
-    else
-        bossFrame:SetPoint("TOPRIGHT", _G["GwBossFrame" .. i - 1], "BOTTOMRIGHT", 0, 0)
-    end
-    --bossFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
     bossFrame.id = i
     bossFrame.unit = unit
     bossFrame.guid = UnitGUID(unit)
 
     bossFrame:SetAttribute("unit", unit)
-    --bossFrame:SetAttribute("*type1", "target")
-    --bossFrame:SetAttribute("*type2", "showmenu")
+    bossFrame:SetAttribute("*type1", "target")
+    bossFrame:SetAttribute("*type2", "togglemenu")
 
-    --AddToClique(bossFrame)
+    AddToClique(bossFrame)
 
     RegisterUnitWatch(bossFrame)
-    --bossFrame:EnableMouse(true)
-    --bossFrame:RegisterForClicks("AnyDown")
+    bossFrame:EnableMouse(true)
+    bossFrame:RegisterForClicks("AnyDown")
 
     bossFrame.name:SetFont(UNIT_NAME_FONT, 12)
     bossFrame.name:SetShadowOffset(1, -1)
     bossFrame.marker:Hide()
 
-    bossFrame.health:SetStatusBarColor(
-        TRACKER_TYPE_COLOR.BOSS.r,
-        TRACKER_TYPE_COLOR.BOSS.g,
-        TRACKER_TYPE_COLOR.BOSS.b
-    )
     bossFrame.icon:SetVertexColor(
         TRACKER_TYPE_COLOR.BOSS.r,
         TRACKER_TYPE_COLOR.BOSS.g,
@@ -201,52 +220,17 @@ local function registerFrame(i)
     bossFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     bossFrame:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
     bossFrame:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
-    bossFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", unit)
+    bossFrame:RegisterUnitEvent("UNIT_HEALTH", unit)
     bossFrame:RegisterUnitEvent("UNIT_MAXPOWER", unit)
     bossFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
     bossFrame:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
+    bossFrame:RegisterUnitEvent("UNIT_FACTION", unit)
 
-    bossFrame:SetScript(
-        "OnShow",
-        function(self)
-            local compassData = {}
-
-            compassData.TYPE = "BOSS"
-            compassData.ID = "boss_unknown"
-            compassData.QUESTID = "unknown"
-            compassData.COMPASS = false
-            compassData.DESC = ""
-
-            compassData.MAPID = nil
-            compassData.X = nil
-            compassData.Y = nil
-
-            compassData.COLOR = TRACKER_TYPE_COLOR.BOSS
-            compassData.TITLE = UnitName(self.unit)
-
-            AddTrackerNotification(compassData)
-            --self.extraEnergybar = GW.bossFrameExtraEnergyBar[encounterId]
-            updateBoss_Name(self)
-            checkForExtraEnergyBar(self)
-            updateBoss_Health(self)
-            updateBoss_Power(self)
-            updateBoss_RaidMarkers(self)
-            updateBossFrameHeight()
-        end
-    )
-
-    bossFrame:SetScript(
-        "OnHide",
-        function(self)
-            updateBossFrameHeight()
-
-            if self.id == 1 then
-                RemoveTrackerNotificationOfType("BOSS")
-            end
-        end
-    )
-
+    bossFrame:SetScript("OnShow", bossFrameOnShow)
+    bossFrame:SetScript("OnHide", bossFrameOnHide)
     bossFrame:SetScript("OnEvent", bossFrame_OnEvent)
+    bossFrame:SetScript("OnEnter", bossFrame_OnEnter)
+    bossFrame:SetScript("OnLeave", GameTooltip_Hide)
 
     return bossFrame
 end
@@ -255,8 +239,8 @@ GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 local function LoadBossFrame()
     for i = 1, MAX_BOSS_FRAMES do
         bossFrames[i] = registerFrame(i)
-        _G["Boss" .. i .. "TargetFrame"]:GwKill()
     end
+    SetUpFramePosition()
     C_Timer.After(0.01, function() updateBossFrameHeight() end)
 end
 GW.LoadBossFrame = LoadBossFrame
