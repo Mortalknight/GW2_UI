@@ -750,7 +750,7 @@ local function updateQuest(self, block, quest)
         if Questie and Questie.started then
             local xpReward = QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false)
 
-            if xpReward and GetSetting("QUESTTRACKER_SHOW_XP") and GW.mylevel < GetMaxPlayerLevel() then
+            if xpRewarda and xpReward > 0 and GetSetting("QUESTTRACKER_SHOW_XP") and GW.mylevel < GetMaxPlayerLevel() then
                 block.Header:SetText(text .. quest.title .. " |cFF888888(" .. CommaValue(xpReward) .. XP .. ")|r")
             end
         end
