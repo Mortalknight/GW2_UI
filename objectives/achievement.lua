@@ -201,7 +201,7 @@ local function updateAchievementLayout(self)
     local shownIndex = 1
     local trackedAchievements = {GetTrackedAchievements()}
 
-    self.header:Hide() 
+    self.header:Hide()
 
     local numQuests = #trackedAchievements
     if GwQuesttrackerContainerAchievement.collapsed then

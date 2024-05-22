@@ -7,7 +7,6 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
-local savedQuests = {}
 local tomTomWaypoint = nil
 
 local function AddTomTomWaypoint(questId, objective)
@@ -53,6 +52,17 @@ local function UntrackQuest(questLogIndex)
     RemoveQuestWatch(questLogIndex)
     WatchFrame_Update()
     QuestLog_Update()
+end
+
+local function IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)
+    for i = 1, GetNumAutoQuestPopUps() do
+        local questID, popUpType = GetAutoQuestPopUp(i)
+        if blockQuestID and questID and popUpType and popUpType == checkType and blockQuestID == questID then
+            return true
+        end
+    end
+
+    return false
 end
 
 local function wiggleAnim(self)
@@ -326,8 +336,6 @@ local function CreateTrackerObject(name, parent)
     f.SubHeader:SetShadowOffset(1, -1)
     f:SetScript("OnEnter", blockOnEnter)
     f:SetScript("OnLeave", blockOnLeave)
-    f.clickHeader:SetScript("OnEnter", blockOnEnter)
-    f.clickHeader:SetScript("OnLeave", blockOnLeave)
     f.turnin:SetScript(
         "OnShow",
         function(self)
@@ -340,10 +348,54 @@ local function CreateTrackerObject(name, parent)
             self:SetScript("OnUpdate", nil)
         end
     )
+    f.turnin:SetScript("OnClick",function(self)
+        ShowQuestComplete(self:GetParent().id)
+        RemoveAutoQuestPopUp(self:GetParent().id)
+        self:Hide()
+    end)
+    f.popupQuestAccept:SetScript(
+        "OnShow",
+        function(self)
+            self:SetScript("OnUpdate", wiggleAnim)
+        end
+    )
+    f.popupQuestAccept:SetScript(
+        "OnHide",
+        function(self)
+            self:SetScript("OnUpdate", nil)
+        end
+    )
+    f.popupQuestAccept:SetScript("OnClick", function(self)
+        ShowQuestOffer(self:GetParent().id)
+        RemoveAutoQuestPopUp(self:GetParent().id)
+        self:Hide()
+    end)
+
+    f.turnin:SetScale(GwQuestTracker:GetScale() * 0.9)
+    f.popupQuestAccept:SetScale(GwQuestTracker:GetScale() * 0.9)
+
+    -- hooks for scaling
+    hooksecurefunc(GwQuestTracker, "SetScale", function(_, scale)
+        f.turnin:SetScale(scale * 0.9)
+        f.popupQuestAccept:SetScale(scale * 0.9)
+    end)
 
     return f
 end
 GW.CreateTrackerObject = CreateTrackerObject
+
+local function getBlockById(questID)
+    for i = 1, 25 do
+        local block = _G["GwQuestBlock" .. i]
+        if block then
+            if block.questID == questID then
+                return block
+            end
+        end
+    end
+
+    return nil
+end
 
 local function getObjectiveBlock(self, index)
     if _G[self:GetName() .. "GwQuestObjective" .. index] ~= nil then
@@ -380,7 +432,7 @@ local function getObjectiveBlock(self, index)
 end
 GW.AddForProfiling("objectives", "getObjectiveBlock", getObjectiveBlock)
 
-local function getBlock(blockIndex)
+local function getBlockQuest(blockIndex, isFrequency)
     if _G["GwQuestBlock" .. blockIndex] then
         local block = _G["GwQuestBlock" .. blockIndex]
         -- set the correct block color for an existing block here
@@ -388,7 +440,7 @@ local function getBlock(blockIndex)
         block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
         block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
         for i = 1, 20 do
-            if _G[block:GetName() .. "GwQuestObjective" .. i] ~= nil then
+            if _G[block:GetName() .. "GwQuestObjective" .. i] then
                 _G[block:GetName() .. "GwQuestObjective" .. i].StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
             end
         end
@@ -404,27 +456,25 @@ local function getBlock(blockIndex)
         newBlock:SetPoint("TOPRIGHT", _G["GwQuestBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
     end
 
-    newBlock.clickHeader:Show()
+    newBlock.index = blockIndex
+    setBlockColor(newBlock, isFrequency and "DAILY" or "QUEST")
+    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
+    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
 
     -- quest item button here
     newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
     newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     newBlock.actionButton.NormalTexture:SetTexture(nil)
-
-     -- quest item button here
-     newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
-     newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-     newBlock.actionButton.NormalTexture:SetTexture(nil)
-     newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
-     newBlock.actionButton:SetScript("OnShow", WatchFrameItem_OnShow)
-     newBlock.actionButton:SetScript("OnHide", WatchFrameItem_OnHide)
-     newBlock.actionButton:SetScript("OnEnter", WatchFrameItem_OnEnter)
-     newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
-     newBlock.actionButton:SetScript("OnEvent", WatchFrameItem_OnEvent)
+    newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
+    newBlock.actionButton:SetScript("OnShow", QuestObjectiveItem_OnShow)
+    newBlock.actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
+    newBlock.actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
+    newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
+    newBlock.actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
 
     return newBlock
 end
-GW.AddForProfiling("objectives", "getBlock", getBlock)
+GW.AddForProfiling("objectives", "getBlockQuest", getBlockQuest)
 
 local function addObjective(block, text, finished, objectiveIndex, objectiveType)
     if finished == true then
@@ -473,13 +523,9 @@ local function updateQuestObjective(block, numObjectives)
     local addedObjectives = 1
     local objectives = {}
     for objectiveIndex = 1, numObjectives do
-        --local text, _, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
         objectives = C_QuestLog.GetQuestObjectives(block.questID)
-        local text = objectives[objectiveIndex].text
-        local objectiveType = objectives[objectiveIndex].type
-        local finished = objectives[objectiveIndex].finished
-        if not finished then
-            addObjective(block, text, finished, addedObjectives, objectiveType)
+        if not objectives[objectiveIndex].finished then
+            addObjective(block, objectives[objectiveIndex].text, objectives[objectiveIndex].finished, addedObjectives, objectives[objectiveIndex].type)
             addedObjectives = addedObjectives + 1
         end
     end
@@ -516,19 +562,28 @@ local function UpdateQuestItem(block)
     end
 end
 
-local function updateQuestItemPositions(height, block)
-    if not block.actionButton or not block.hasItem then
+local function updateQuestItemPositions(button, height, type, block)
+    if not button or not block.hasItem then
         return
     end
 
-    height = height + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight()
+    local height = height + (GwQuesttrackerContainerScenario and GwQuesttrackerContainerScenario:GetHeight() or 0) + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight()
     if GwObjectivesNotification:IsShown() then
         height = height + GwObjectivesNotification.desc:GetHeight()
     else
         height = height - 40
     end
+    if type == "SCENARIO" then
+        height = height - (GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight())
+    end
+    if type == "EVENT" then
+        height = height + GwQuesttrackerContainerQuests:GetHeight()
+    end
+    if (type == "QUEST" or type == "EVENT") and GwQuesttrackerContainerCampaign then
+        height = height + GwQuesttrackerContainerCampaign:GetHeight()
+    end
 
-    block.actionButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
+    button:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
 end
 GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPositions)
 
@@ -627,54 +682,55 @@ end
 GW.AddForProfiling("objectives", "OnBlockClick", OnBlockClick)
 
 local function OnBlockClickHandler(self, button)
-    if self.questID == nil then
-        OnBlockClick(self:GetParent(), button)
-    else
-        OnBlockClick(self, button)
-    end
+    OnBlockClick(self, button)
 end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
-local function AddQuestInfos(questId, questLogIndex, watchId)
-    local title, level, group, _, _, isComplete, frequency, _, startEvent = GetQuestLogTitle(questLogIndex)
-    local isFailed = false
+local function AddQuestInfos(questLogIndex, watchId)
+    local title, level, group, _, _, isComplete, frequency, questId, startEvent = GetQuestLogTitle(questLogIndex)
+    if title and questId then
+        local isFailed = false
 
-    if isComplete == nil then
-        isComplete = false
-    elseif isComplete == 1 then
-        isComplete = true
+        if isComplete == nil then
+            isComplete = false
+        elseif isComplete == 1 then
+            isComplete = true
+        else
+            isComplete = false
+            isFailed = true
+        end
+
+        return {
+            questId = questId,
+            questWatchedId = watchId or 0,
+            questLogIndex = questLogIndex,
+            questLevel = level,
+            questGroup = group,
+            title = title,
+            isComplete = isComplete,
+            startEvent = startEvent,
+            numObjectives = GetNumQuestLeaderBoards(questLogIndex),
+            requiredMoney = GetQuestLogRequiredMoney(questId),
+            isAutoComplete = false,
+            isFailed = isFailed,
+            isFrequency = frequency and frequency > 1
+        }
     else
-        isComplete = false
-        isFailed = true
+        return nil
     end
-
-    return {
-        questId = questId,
-        questWatchedId = watchId or 0,
-        questLogIndex = questLogIndex,
-        questLevel = level,
-        questGroup = group,
-        title = title,
-        isComplete = isComplete,
-        startEvent = startEvent,
-        numObjectives = GetNumQuestLeaderBoards(questLogIndex),
-        requiredMoney = GetQuestLogRequiredMoney(questId),
-        isAutoComplete = false,
-        isFailed = isFailed,
-        isFrequency = frequency and frequency > 1
-    }
 end
 
-local function updateQuest(block, quest)
+local function updateQuest(self, block, quest)
     block.height = 25
     block.numObjectives = 0
-    block.turnin:Hide()
+    block.turnin:SetShown(IsQuestAutoTurnInOrAutoAccept(quest.questId, "COMPLETE"))
+    block.popupQuestAccept:SetShown(IsQuestAutoTurnInOrAutoAccept(quest.questId, "OFFER"))
 
-    if quest.questId then
-        if savedQuests[quest.questId] == nil then
-            NewQuestAnimation(block)
-            savedQuests[quest.questId] = true
-        end
+    if quest.questId and quest.questLogIndex and quest.questLogIndex > 0 then
+        block.questID = quest.questId
+        block.id = quest.questId
+        block.questLogIndex = quest.questLogIndex
+        block.isComplete = quest.isComplete
         block.title = quest.title
         local text = ""
         if quest.questGroup == "Elite" then
@@ -686,13 +742,10 @@ local function updateQuest(block, quest)
         else
             text = "[" .. quest.questLevel .. "] "
         end
-        block.questID = quest.questId
-        block.questLogIndex = quest.questLogIndex
-        block.isComplete = quest.isComplete
         block.Header:SetText(text .. quest.title)
 
         --Quest item
-        GW.CombatQueue_Queue(UpdateQuestItem, {block})
+        GW.CombatQueue_Queue(nil, UpdateQuestItem, {block})
 
         if Questie and Questie.started then
             local xpReward = QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false)
@@ -704,12 +757,9 @@ local function updateQuest(block, quest)
 
         if quest.numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
             quest.isComplete = true
-            block.isComplete = true
         end
 
-        if not quest.isComplete then
-            updateQuestObjective(block, quest.numObjectives)
-        end
+        updateQuestObjective(block, quest.numObjectives)
 
         if quest.requiredMoney ~= nil and quest.requiredMoney > GetMoney() then
             addObjective(
@@ -724,20 +774,18 @@ local function updateQuest(block, quest)
         if quest.isComplete then
             if quest.isAutoComplete then
                 addObjective(block, QUEST_WATCH_CLICK_TO_COMPLETE, false, block.numObjectives + 1, nil)
-                block.turnin:Show()
-                block.turnin:SetScript(
-                    "OnClick",
-                    function()
-                        ShowQuestComplete(quest.questLogIndex)
-                    end
-                )
             else
-                addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1, nil)
+                local completionText = GetQuestLogCompletionText(quest.questLogIndex)
+
+                if (completionText) then
+                    addObjective(block, completionText, false, block.numObjectives + 1, nil)
+                else
+                    addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1, nil)
+                end
             end
         elseif quest.isFailed then
             addObjective(block, FAILED, false, block.numObjectives + 1, nil)
         end
-        block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
         block:SetScript("OnClick", OnBlockClickHandler)
     end
     if block.objectiveBlocks == nil then
@@ -773,23 +821,27 @@ local function updateQuestLogLayout(self)
     end
     self.isUpdating = true
 
-    local savedHeight = 1
-    local counter = 1
+    local savedHeightQuest = 1
+    local counterQuest = 0
+    local shouldShowQuests = true
     local numQuests = GetNumQuestWatches()
+
+    GwQuesttrackerContainerQuests.header:Hide()
+
+    if GwQuesttrackerContainerQuests.collapsed then
+        GwQuesttrackerContainerQuests.header:Show()
+        savedHeightQuest = 20
+        shouldShowQuests = false
+    end
 
     -- collect quests here
     local sorted = {}
 
     for i = 1, numQuests do
-        local questId, questInfo
         local questLogIndex = GetQuestIndexForWatch(i)
-        if select(8, GetQuestLogTitle(questLogIndex)) > 0 then
-            questId = select(8, GetQuestLogTitle(questLogIndex))
-        end
-
-        if questId then
-            questInfo = AddQuestInfos(questId, questLogIndex, i)
-            table.insert(sorted, questInfo)
+        if questLogIndex then
+            local quest = AddQuestInfos(questLogIndex, i)
+            if quest then table.insert(sorted, quest) end
         end
     end
 
@@ -840,52 +892,86 @@ local function updateQuestLogLayout(self)
     end
 
     for _, quest in pairs(sorted) do
-        if counter == 1 then
-            savedHeight = 20
-        end
-        GwQuestHeader:Show()
-        local block = getBlock(counter)
-        setBlockColor(block, quest.isFrequency and "DAILY" or "QUEST")
-        block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
-        block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
-        if block == nil then
-            return
-        end
-        updateQuest(block, quest)
-        block:Show()
-        savedHeight = savedHeight + block.height
-        counter = counter + 1
-    end
+        if shouldShowQuests then
+            GwQuesttrackerContainerQuests.header:Show()
+            counterQuest = counterQuest + 1
 
-    if numQuests == 0 then GwQuestHeader:Hide() end
+            if counterQuest == 1 then
+                savedHeightQuest = 20
+            end
 
-    if GwQuesttrackerContainerQuests.collapsed and numQuests > 0 then
-        GwQuestHeader:Show()
-        savedHeight = 20
+            local block = getBlockQuest(counterQuest, quest.isFrequency)
+            if block == nil then
+                return
+            end
+            updateQuest(self, block, quest)
+            block.isFrequency = quest.isFrequency
+            block:Show()
+            savedHeightQuest = savedHeightQuest + block.height
+
+            block.savedHeight = savedHeightQuest
+            GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, updateQuestItemPositions, {block.actionButton, savedHeightQuest, nil, block})
+        else
+            counterQuest = counterQuest + 1
+            if _G["GwQuestBlock" .. counterQuest] then
+                _G["GwQuestBlock" .. counterQuest]:Hide()
+                _G["GwQuestBlock" .. counterQuest].questLogIndex = 0
+                GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. counterQuest, UpdateQuestItem, {_G["GwQuestBlock" .. counterQuest]})
+            end
+        end
     end
 
     GwQuesttrackerContainerQuests.oldHeight = GW.RoundInt(GwQuesttrackerContainerQuests:GetHeight())
-    GwQuesttrackerContainerQuests:SetHeight(savedHeight)
-    for i = (GwQuesttrackerContainerQuests.collapsed and 0 or numQuests + 1), 25 do
+    GwQuesttrackerContainerQuests:SetHeight(counterQuest > 0 and savedHeightQuest or 1)
+
+    GwQuesttrackerContainerQuests.numQuests = counterQuest
+
+    for i = counterQuest + 1, 25 do
         if _G["GwQuestBlock" .. i] then
             _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i].questLogIndex = 0
             _G["GwQuestBlock" .. i]:Hide()
-            GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwQuestBlock" .. i]})
+            GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, UpdateQuestItem, {_G["GwQuestBlock" .. i]})
         end
     end
 
-    QuestTrackerLayoutChanged()
-
+    GwQuesttrackerContainerQuests.header.title:SetText(TRACKER_HEADER_QUESTS .. " (" .. counterQuest .. ")")
     self.isUpdating = false
 end
 GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
 
+local function checkForAutoQuests()
+    for i = 1, GetNumAutoQuestPopUps() do
+        local questID, popUpType = GetAutoQuestPopUp(i)
+        if questID and (popUpType == "OFFER" or popUpType == "COMPLETE") then
+            --find our block with that questId
+            local questBlock = getBlockById(questID)
+            if questBlock then
+                if popUpType == "OFFER" then
+                    questBlock.popupQuestAccept:Show()
+                elseif popUpType == "COMPLETE" then
+                    questBlock.turnin:Show()
+                end
+            end
+        end
+    end
+end
+
 local function tracker_OnEvent(self, event, ...)
-    updateQuestLogLayout(self)
+    if event == "LOAD" then
+        updateQuestLogLayout(self)
+        self.init = true
+    else
+        updateQuestLogLayout(self)
+    end
+
+    checkForAutoQuests()
+    QuestTrackerLayoutChanged()
 end
 GW.UpdateQuestTracker = tracker_OnEvent
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
+
+
 
 local function tracker_OnUpdate()
     local prevState = GwObjectivesNotification.shouldDisplay
@@ -901,6 +987,31 @@ end
 GW.forceCompassHeaderUpdate = tracker_OnUpdate
 GW.AddForProfiling("objectives", "tracker_OnUpdate", tracker_OnUpdate)
 
+local function AdjustItemButtonPositions()
+    for i = 1, 25 do
+        if _G["GwQuestBlock" .. i] then
+            if i <= GwQuesttrackerContainerQuests.numQuests then
+                GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. _G["GwQuestBlock" .. i].index, updateQuestItemPositions, {_G["GwQuestBlock" .. i].actionButton, _G["GwQuestBlock" .. i].savedHeight, "QUEST", _G["GwQuestBlock" .. i]})
+            else
+                GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, UpdateQuestItem, {_G["GwQuestBlock" .. i]})
+            end
+        end
+    end
+
+end
+
+local function CollapseHeader(self, forceCollapse, forceOpen)
+    if (not self.collapsed or forceCollapse) and not forceOpen then
+        self.collapsed = true
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+    else
+        self.collapsed = false
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end
+    updateQuestLogLayout(GwQuesttrackerContainerQuests)
+    QuestTrackerLayoutChanged()
+end
+GW.CollapseQuestHeader = CollapseHeader
 
 local function AdjustQuestTracker(our_bars, our_minimap)
     if (not our_minimap) then
@@ -1017,31 +1128,23 @@ local function LoadQuestTracker()
     fQuest:RegisterEvent("SUPER_TRACKED_QUEST_CHANGED")
     fQuest:RegisterEvent("PLAYER_REGEN_ENABLED")
 
-    local header = CreateFrame("Button", "GwQuestHeader", fQuest, "GwQuestTrackerHeader")
-    header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
-    header.title:SetFont(UNIT_NAME_FONT, 14)
-    header.title:SetShadowOffset(1, -1)
-    header.title:SetText(QUESTS_LABEL)
+    fQuest.header = CreateFrame("Button", nil, fQuest, "GwQuestTrackerHeader")
+    fQuest.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
+    fQuest.header.title:SetFont(UNIT_NAME_FONT, 14)
+    fQuest.header.title:SetShadowOffset(1, -1)
+    fQuest.header.title:SetText(TRACKER_HEADER_QUESTS)
 
-    header:SetScript(
-        "OnMouseDown",
+    fQuest.collapsed = false
+
+    fQuest.header:SetScript("OnMouseDown",
         function(self)
-            local p = self:GetParent()
-            if not p.collapsed then
-                p.collapsed = true
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            else
-                p.collapsed = false
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            end
-            updateQuestLogLayout(p)
-            QuestTrackerLayoutChanged()
+            CollapseHeader(self:GetParent(), false, false)
         end
     )
-    header.title:SetTextColor(TRACKER_TYPE_COLOR["QUEST"].r, TRACKER_TYPE_COLOR["QUEST"].g, TRACKER_TYPE_COLOR["QUEST"].b)
+    fQuest.header.title:SetTextColor(TRACKER_TYPE_COLOR.QUEST.r, TRACKER_TYPE_COLOR.QUEST.g, TRACKER_TYPE_COLOR.QUEST.b)
 
     fQuest.init = false
-    tracker_OnEvent(fQuest)
+    tracker_OnEvent(fQuest, "LOAD")
 
     if not C_AddOns.IsAddOnLoaded("sArena") then
         GW.LoadArenaFrame(fArenaBG)
@@ -1049,7 +1152,6 @@ local function LoadQuestTracker()
 
     GW.LoadBossFrame()
     GW.LoadAchievementFrame()
-    fQuest.init = true
 
     fNotify.shouldDisplay = false
 
@@ -1113,7 +1215,9 @@ local function LoadQuestTracker()
 
     -- some hooks to set the itembuttons correct
     local UpdateItemButtonPositionAndAdjustScrollFrame = function()
-        tracker_OnEvent(fQuest)
+        GW.Debug("Update Quest Buttons")
+        QuestTrackerLayoutChanged()
+        AdjustItemButtonPositions()
     end
 
     fBoss.oldHeight = 1
