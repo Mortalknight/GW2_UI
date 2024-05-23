@@ -700,6 +700,8 @@ local function AddQuestInfos(questLogIndex, watchId)
             end
             if (hiddenObjective and not uncompletedObjectives) then
                 isComplete = true
+            else
+                isComplete = false
             end
         elseif isComplete == 1 then
             isComplete = true
@@ -962,7 +964,6 @@ end
 local function tracker_OnEvent(self, event, ...)
     if event == "LOAD" then
         self.init = true
-        ExpandQuestHeader(0)
     end
 
     updateQuestLogLayout(self)
@@ -1256,5 +1257,7 @@ local function LoadQuestTracker()
             UpdateItemButtonPositionAndAdjustScrollFrame()
         end)
     end
+
+    ExpandQuestHeader(0)
 end
 GW.LoadQuestTracker = LoadQuestTracker

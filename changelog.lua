@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.4.1",{
+    {ct.feature,[=[Quest tracker fixes]=]},
+})
+
 addChange("1.4.0",{
     {ct.feature,[=[Added option to show equipment set name on bag items (Thanks to Gaboros)]=]},
     {ct.change,[=[Update bag sorting (Thanks to Gaboros)]=]},

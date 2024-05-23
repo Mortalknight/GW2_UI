@@ -1,3 +1,6 @@
+1.4.1-Cata
+    Quest tracker fixes
+
 1.4.0-Cata
     Added option to show equipment set name on bag items (Thanks to Gaboros)
     Update bag sorting (Thanks to Gaboros)
