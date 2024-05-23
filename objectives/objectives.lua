@@ -42,24 +42,17 @@ local function LinkQuestIntoChat(title, questId)
     end
 end
 
-local function UntrackQuest(questLogIndex)
-    local questID = GetQuestIDFromLogIndex(questLogIndex)
-    for index, value in ipairs(QUEST_WATCH_LIST) do
-        if value.id == questID then
-            tremove(QUEST_WATCH_LIST, index)
-        end
-    end
-    RemoveQuestWatch(questLogIndex)
-    WatchFrame_Update()
-    QuestLog_Update()
-end
-
-local function IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)
+local function IsQuestAutoTurnInOrAutoAccept(quest, checkType)
     for i = 1, GetNumAutoQuestPopUps() do
         local questID, popUpType = GetAutoQuestPopUp(i)
-        if blockQuestID and questID and popUpType and popUpType == checkType and blockQuestID == questID then
+        if quest.questId and questID and popUpType and popUpType == checkType then
             return true
         end
+    end
+
+    --fallback for cata
+    if checkType == "COMPLETE" and quest.isComplete and quest.isAutoComplete then
+        return true
     end
 
     return false
@@ -349,9 +342,8 @@ local function CreateTrackerObject(name, parent)
         end
     )
     f.turnin:SetScript("OnClick",function(self)
-        ShowQuestComplete(self:GetParent().id)
-        RemoveAutoQuestPopUp(self:GetParent().id)
-        self:Hide()
+        ShowQuestComplete(self:GetParent().questLogIndex)
+        RemoveAutoQuestPopUp(self:GetParent().questID)
     end)
     f.popupQuestAccept:SetScript(
         "OnShow",
@@ -366,8 +358,8 @@ local function CreateTrackerObject(name, parent)
         end
     )
     f.popupQuestAccept:SetScript("OnClick", function(self)
-        ShowQuestOffer(self:GetParent().id)
-        RemoveAutoQuestPopUp(self:GetParent().id)
+        ShowQuestOffer(self:GetParent().questLogIndex)
+        RemoveAutoQuestPopUp(self:GetParent().questID)
         self:Hide()
     end)
 
@@ -663,15 +655,17 @@ local function OnBlockClick(self, button)
         if button == "LeftButton" then
             AddTomTomWaypoint(self.questID, nil)
         else
-            UntrackQuest(self.questLogIndex)
+            WatchFrame_StopTrackingQuest(self, self.questWatchedId)
         end
         return
     end
 
     if button ~= "RightButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        if QuestLogFrame:IsShown() and QuestLogFrame.selectedButtonID == self.questLogIndex then
-            QuestLogFrame:Hide()
+
+        if self.isComplete and self.isAutoComplete then
+            ShowQuestComplete(self.questLogIndex)
+            WatchFrameAutoQuest_ClearPopUp(self.questID)
         else
             QuestLogFrame:Show()
             QuestLog_SetSelection(self.questLogIndex)
@@ -688,11 +682,25 @@ GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
 local function AddQuestInfos(questLogIndex, watchId)
     local title, level, group, _, _, isComplete, frequency, questId, startEvent = GetQuestLogTitle(questLogIndex)
+    local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
+    local requiredMoney = GetQuestLogRequiredMoney(questLogIndex)
     if title and questId then
         local isFailed = false
 
         if isComplete == nil then
-            isComplete = false
+            local hiddenObjective = nil
+			local uncompletedObjectives = nil
+            for j = 1, numObjectives do
+                local text, _, finished = GetQuestLogLeaderBoard(j, questLogIndex)
+                if not finished and text then
+                    uncompletedObjectives = true
+                elseif not finished and not text then
+                    hiddenObjective = true
+                end
+            end
+            if (hiddenObjective and not uncompletedObjectives) then
+                isComplete = true
+            end
         elseif isComplete == 1 then
             isComplete = true
         else
@@ -709,8 +717,8 @@ local function AddQuestInfos(questLogIndex, watchId)
             title = title,
             isComplete = isComplete,
             startEvent = startEvent,
-            numObjectives = GetNumQuestLeaderBoards(questLogIndex),
-            requiredMoney = GetQuestLogRequiredMoney(questId),
+            numObjectives = numObjectives,
+            requiredMoney = requiredMoney,
             isAutoComplete = GetQuestLogIsAutoComplete(questLogIndex),
             isFailed = isFailed,
             isFrequency = frequency and frequency > 1
@@ -723,14 +731,16 @@ end
 local function updateQuest(self, block, quest)
     block.height = 25
     block.numObjectives = 0
-    block.turnin:SetShown(IsQuestAutoTurnInOrAutoAccept(quest.questId, "COMPLETE"))
-    block.popupQuestAccept:SetShown(IsQuestAutoTurnInOrAutoAccept(quest.questId, "OFFER"))
+    block.turnin:SetShown(IsQuestAutoTurnInOrAutoAccept(quest, "COMPLETE"))
+    block.popupQuestAccept:SetShown(IsQuestAutoTurnInOrAutoAccept(quest, "OFFER"))
 
     if quest.questId and quest.questLogIndex and quest.questLogIndex > 0 then
         block.questID = quest.questId
         block.id = quest.questId
+        block.watchId = quest.questWatchedId
         block.questLogIndex = quest.questLogIndex
         block.isComplete = quest.isComplete
+        block.isAutoComplete = quest.isAutoComplete
         block.title = quest.title
         local text = ""
         if quest.questGroup == "Elite" then
@@ -951,12 +961,11 @@ end
 
 local function tracker_OnEvent(self, event, ...)
     if event == "LOAD" then
-        updateQuestLogLayout(self)
         self.init = true
-    else
-        updateQuestLogLayout(self)
+        ExpandQuestHeader(0)
     end
 
+    updateQuestLogLayout(self)
     checkForAutoQuests()
     QuestTrackerLayoutChanged()
 end
@@ -1106,19 +1115,10 @@ local function LoadQuestTracker()
     fQuest:SetScript("OnEvent", tracker_OnEvent)
     fQuest:RegisterEvent("QUEST_LOG_UPDATE")
     fQuest:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
-    fQuest:RegisterEvent("QUEST_ITEM_UPDATE")
-    fQuest:RegisterEvent("QUEST_REMOVED")
-    fQuest:RegisterEvent("TASK_PROGRESS_UPDATE")
     fQuest:RegisterEvent("QUEST_AUTOCOMPLETE")
     fQuest:RegisterEvent("QUEST_ACCEPTED")
-    fQuest:RegisterEvent("QUEST_GREETING")
-    fQuest:RegisterEvent("QUEST_DETAIL")
-    fQuest:RegisterEvent("QUEST_PROGRESS")
-    fQuest:RegisterEvent("QUEST_COMPLETE")
-    fQuest:RegisterEvent("QUEST_FINISHED")
     fQuest:RegisterEvent("PLAYER_MONEY")
-    fQuest:RegisterEvent("SUPER_TRACKED_QUEST_CHANGED")
-    fQuest:RegisterEvent("PLAYER_REGEN_ENABLED")
+    fQuest:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     fQuest.header = CreateFrame("Button", nil, fQuest, "GwQuestTrackerHeader")
     fQuest.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
