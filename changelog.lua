@@ -8,6 +8,11 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+
+addChange("1.3.3",{
+    {ct.bug,[=[ Fix quest tracker actionbutton]=]},
+})
+
 addChange("1.3.2",{
     {ct.change,[=[Update objectives tracker]=]},
 })

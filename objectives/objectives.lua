@@ -462,15 +462,15 @@ local function getBlockQuest(blockIndex, isFrequency)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
 
     -- quest item button here
-    newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
+    newBlock.actionButton = CreateFrame("Button", "GwTrackerActionButton" .. blockIndex, GwQuestTracker, "GwQuestItemTemplate")
     newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     newBlock.actionButton.NormalTexture:SetTexture(nil)
-    newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
-    newBlock.actionButton:SetScript("OnShow", QuestObjectiveItem_OnShow)
-    newBlock.actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
-    newBlock.actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
+    newBlock.actionButton:RegisterForClicks("AnyUp")
+    newBlock.actionButton:SetScript("OnShow", WatchFrameItem_OnShow)
+    newBlock.actionButton:SetScript("OnHide", WatchFrameItem_OnHide)
+    newBlock.actionButton:SetScript("OnEnter", WatchFrameItem_OnEnter)
     newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
-    newBlock.actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
+    newBlock.actionButton:SetScript("OnEvent", WatchFrameItem_OnEvent)
 
     return newBlock
 end
@@ -552,7 +552,7 @@ local function UpdateQuestItem(block)
         SetItemButtonTexture(block.actionButton, item)
         SetItemButtonCount(block.actionButton, charges)
 
-        QuestObjectiveItem_UpdateCooldown(block.actionButton)
+        WatchFrameItem_UpdateCooldown(block.actionButton)
         block.actionButton:SetScript("OnUpdate", WatchFrameItem_OnUpdate)
         block.actionButton:Show()
     else

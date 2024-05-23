@@ -4,16 +4,16 @@
         <Size x="26" y="26"/>
         <Layers>
             <Layer level="ARTWORK">
-                <FontString parentKey="HotKey" inherits="NumberFontNormalSmallGray" justifyH="LEFT" text="RANGE_INDICATOR">
+                <FontString name="$parentHotKey" parentKey="HotKey" inherits="NumberFontNormalSmallGray" justifyH="LEFT" text="RANGE_INDICATOR">
                     <Size x="29" y="10"/>
                     <Anchors>
                         <Anchor point="TOPRIGHT" x="16" y="-2"/>
                     </Anchors>
                 </FontString>
             </Layer>
-            <Layer level="ARTWORK">
+            <Layer level="BORDER">
                 <Texture parentKey="icon"/>
-                <FontString parentKey="count" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true">
+                <FontString parentKey="Count" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true">
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-3" y="2"/>
                     </Anchors>
@@ -21,10 +21,10 @@
             </Layer>
         </Layers>
         <Frames>
-            <Cooldown parentKey="cooldown" inherits="CooldownFrameTemplate"/>
+            <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
         <NormalTexture parentKey="NormalTexture" file="Interface\Buttons\UI-Quickslot2">
-            <Size x="26" y="26"/>
+            <Size x="42" y="42"/>
             <Anchors>
                 <Anchor point="CENTER"/>
             </Anchors>
