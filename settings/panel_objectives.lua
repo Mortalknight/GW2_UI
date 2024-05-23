@@ -18,7 +18,7 @@ local function LoadObjectivesPanel(sWindow)
     createCat(OBJECTIVES_TRACKER_LABEL, nil, p, {p})
     settingsMenuAddButton(OBJECTIVES_TRACKER_LABEL, p, {})
     addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", function() GW.SetUpBossFramePosition(); GW.SetUpArenaFramePosition(); GW.forceCompassHeaderUpdate() end, nil, {["QUESTTRACKER_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Show Objective Tracker progress bars"], L["If disabled, progress bars will not be shown for various objective tracker items such as quests, achievements, etc."], "QUESTTRACKER_STATUSBARS_ENABLED", function() GW.updateQuestLogLayout(GwQuesttrackerContainerQuests); GW.UpdateAchievementLayout(GwQuesttrackerContainerAchievement); GW.updateBonusObjective(GwQuesttrackerContainerBonusObjectives); GW.UpdateCollectionTrackingLayout(GwQuesttrackerContainerCollection); GW.UpdateMonthlyActivitesTracking(GwQuesttrackerContainerMonthlyActivity); GW.UpdateRecipeTrackingLayout(GwQuesttrackerContainerRecipe); GW.updateCurrentScenario(GwQuesttrackerContainerScenario); GW.QuestTrackerLayoutChanged() end, nil, {["QUESTTRACKER_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Show Objective Tracker progress bars"], L["If disabled, progress bars will not be shown for various objective tracker items such as quests, achievements, etc."], "QUESTTRACKER_STATUSBARS_ENABLED", function() GW.updateQuestLogLayout(GwQuesttrackerContainerQuests); GW.UpdateAchievementLayout(GwQuesttrackerContainerAchievement); GW.QuestTrackerLayoutChanged() end, nil, {["QUESTTRACKER_ENABLED"] = true})
 
     addOptionDropdown(
         p.scroll.scrollchild,

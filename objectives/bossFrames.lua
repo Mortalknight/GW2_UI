@@ -6,6 +6,8 @@ local AddToClique = GW.AddToClique
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local bossFrames = {}
 
+local container
+
 local function updateBossFrameHeight()
     local i = 0
     local height = 0
@@ -23,8 +25,8 @@ local function updateBossFrameHeight()
         end
     end
 
-    GwQuesttrackerContainerBossFrames.oldHeight = GW.RoundInt(GwQuesttrackerContainerBossFrames:GetHeight())
-    GwQuesttrackerContainerBossFrames:SetHeight(i > 0 and height or 1)
+    container.oldHeight = GW.RoundInt(container:GetHeight())
+    container:SetHeight(i > 0 and height or 1)
 end
 GW.AddForProfiling("bossFrames", "updateBossFrameHeight", updateBossFrameHeight)
 
@@ -236,7 +238,8 @@ local function registerFrame(i)
 end
 GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 
-local function LoadBossFrame()
+local function LoadBossFrame(bossContainer)
+    container = bossContainer
     for i = 1, MAX_BOSS_FRAMES do
         bossFrames[i] = registerFrame(i)
     end

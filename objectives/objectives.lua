@@ -711,7 +711,7 @@ local function AddQuestInfos(questLogIndex, watchId)
             startEvent = startEvent,
             numObjectives = GetNumQuestLeaderBoards(questLogIndex),
             requiredMoney = GetQuestLogRequiredMoney(questId),
-            isAutoComplete = false,
+            isAutoComplete = GetQuestLogIsAutoComplete(questLogIndex),
             isFailed = isFailed,
             isFrequency = frequency and frequency > 1
         }
@@ -1142,8 +1142,8 @@ local function LoadQuestTracker()
         GW.LoadArenaFrame(fArenaBG)
     end
 
-    GW.LoadBossFrame()
-    GW.LoadAchievementFrame()
+    GW.LoadBossFrame(fBoss)
+    GW.LoadAchievementFrame(fAchv)
 
     fNotify.shouldDisplay = false
 
