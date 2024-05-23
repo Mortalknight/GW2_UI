@@ -8,6 +8,9 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.3.2",{
+    {ct.change,[=[Update objectives tracker]=]},
+})
 
 addChange("1.3.1",{
     {ct.change,[=[Update advanced char stats]=]},
