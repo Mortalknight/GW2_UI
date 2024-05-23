@@ -75,7 +75,7 @@
             </Layer>
             <Layer level="OVERLAY">
                 <Texture name="$parenticon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
-                    <Size x="30" y="30"></Size>
+                    <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="-5" y="-10"></Anchor>
                     </Anchors>
