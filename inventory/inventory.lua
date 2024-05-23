@@ -166,6 +166,25 @@ local function IsItemEligibleForItemLevelDisplay(equipLoc, rarity)
     return false
 end
 
+local function GetItemEquipmentSetName(itemIDOrLink)
+    local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
+    if equipmentSetIDs then
+        for _, equipmentSetID in ipairs(equipmentSetIDs) do
+            local equipmentSetItems = C_EquipmentSet.GetItemIDs(equipmentSetID)
+            for _, equipmentSetItemId in pairs(equipmentSetItems) do
+              if equipmentSetItemId == itemIDOrLink then
+                local equipmentSetName = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID);
+                if string.len(equipmentSetName) > 5 then
+                    equipmentSetName = string.sub(equipmentSetName, 1, 5)
+                end
+                return equipmentSetName
+               end
+            end
+        end
+    end
+    return nil
+end
+
 local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
     if not button.gwBackdrop then
         return
@@ -179,6 +198,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
     local keyring = (bag_id == KEYRING_CONTAINER)
     local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GetSetting("BAG_SHOW_ILVL") and not professionColors
+    local showEquipmentSetName = GetSetting("BAG_SHOW_EQUIPMENT_SET_NAME")
 
     if itemIDOrLink then
         local isQuestItem = select(12, C_Item.GetItemInfo(itemIDOrLink))
@@ -232,6 +252,15 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
             end
         elseif button.itemlevel then
             button.itemlevel:SetText("")
+        end
+
+        -- Show equipment set name
+        if showEquipmentSetName then
+            local equipmentSetName = GetItemEquipmentSetName(itemIDOrLink)
+            if equipmentSetName then
+                button.itemlevel:SetTextColor(255, 255, 255, 1)
+                button.itemlevel:SetText(equipmentSetName)
+            end
         end
     else
         t:Hide()
