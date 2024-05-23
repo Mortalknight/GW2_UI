@@ -166,11 +166,11 @@ local function ParseCriteria(quantity, totalQuantity, criteriaString)
 end
 GW.ParseCriteria = ParseCriteria
 
-local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded)
+local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded, overrideShowStatusbarSetting)
     if objectiveType == "progressbar" then
         block.StatusBar:SetMinMaxValues(0, 100)
         block.StatusBar:SetValue(quantity or 0)
-        block.StatusBar:Show()
+        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.GetSetting("QUESTTRACKER_STATUSBARS_ENABLED"))
         block.StatusBar.precentage = true
         return true
     end
@@ -186,8 +186,8 @@ local function ParseObjectiveString(block, text, objectiveType, quantity, numIte
     numItems = tonumber(numItems)
     numNeeded = tonumber(numNeeded)
 
-    if numItems ~= nil and numNeeded ~= nil and numNeeded > 1 and numItems < numNeeded then
-        block.StatusBar:Show()
+    if numItems and numNeeded and numNeeded > 1 and numItems < numNeeded then
+        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.GetSetting("QUESTTRACKER_STATUSBARS_ENABLED"))
         block.StatusBar:SetMinMaxValues(0, numNeeded)
         block.StatusBar:SetValue(numItems)
         block.progress = numItems / numNeeded
@@ -494,7 +494,7 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
 
         if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
             if objectiveType == "progressbar" then
-                objectiveBlock.StatusBar:Show()
+                objectiveBlock.StatusBar:SetShown(GW.GetSetting("QUESTTRACKER_STATUSBARS_ENABLED"))
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
                 objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
                 objectiveBlock.progress = GetQuestProgressBarPercent(block.questID) / 100
@@ -747,14 +747,6 @@ local function updateQuest(self, block, quest)
         --Quest item
         GW.CombatQueue_Queue(nil, UpdateQuestItem, {block})
 
-        if Questie and Questie.started then
-            local xpReward = QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false)
-
-            if xpReward and xpReward > 0 and GetSetting("QUESTTRACKER_SHOW_XP") and GW.mylevel < GetMaxPlayerLevel() then
-                block.Header:SetText(text .. quest.title .. " |cFF888888(" .. CommaValue(xpReward) .. XP .. ")|r")
-            end
-        end
-
         if quest.numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
             quest.isComplete = true
         end
@@ -826,10 +818,10 @@ local function updateQuestLogLayout(self)
     local shouldShowQuests = true
     local numQuests = GetNumQuestWatches()
 
-    GwQuesttrackerContainerQuests.header:Hide()
+    self.header:Hide()
 
-    if GwQuesttrackerContainerQuests.collapsed then
-        GwQuesttrackerContainerQuests.header:Show()
+    if self.collapsed then
+        self.header:Show()
         savedHeightQuest = 20
         shouldShowQuests = false
     end
@@ -893,7 +885,7 @@ local function updateQuestLogLayout(self)
 
     for _, quest in pairs(sorted) do
         if shouldShowQuests then
-            GwQuesttrackerContainerQuests.header:Show()
+            self.header:Show()
             counterQuest = counterQuest + 1
 
             if counterQuest == 1 then
@@ -921,10 +913,10 @@ local function updateQuestLogLayout(self)
         end
     end
 
-    GwQuesttrackerContainerQuests.oldHeight = GW.RoundInt(GwQuesttrackerContainerQuests:GetHeight())
-    GwQuesttrackerContainerQuests:SetHeight(counterQuest > 0 and savedHeightQuest or 1)
+    self.oldHeight = GW.RoundInt(self:GetHeight())
+    self:SetHeight(counterQuest > 0 and savedHeightQuest or 1)
 
-    GwQuesttrackerContainerQuests.numQuests = counterQuest
+    self.numQuests = counterQuest
 
     for i = counterQuest + 1, 25 do
         if _G["GwQuestBlock" .. i] then
@@ -935,7 +927,7 @@ local function updateQuestLogLayout(self)
         end
     end
 
-    GwQuesttrackerContainerQuests.header.title:SetText(TRACKER_HEADER_QUESTS .. " (" .. counterQuest .. ")")
+    self.header.title:SetText(TRACKER_HEADER_QUESTS .. " (" .. counterQuest .. ")")
     self.isUpdating = false
 end
 GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
@@ -1008,7 +1000,7 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    updateQuestLogLayout(GwQuesttrackerContainerQuests)
+    updateQuestLogLayout(self)
     QuestTrackerLayoutChanged()
 end
 GW.CollapseQuestHeader = CollapseHeader
