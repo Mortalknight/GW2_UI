@@ -614,7 +614,7 @@ local function loadBaseFrame()
     end)
     -- set binding change handlers
     fmGCW.secure:HookScript("OnEvent", function(self, event)
-        GW.CombatQueue_Queue(click_OnEvent, {self, event})
+        GW.CombatQueue_Queue(nil, click_OnEvent, {self, event})
     end)
     fmGCW.secure:RegisterEvent("UPDATE_BINDINGS")
 end

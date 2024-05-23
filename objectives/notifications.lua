@@ -176,6 +176,7 @@ local function RemoveTrackerNotificationOfType(doType)
             notifications[k] = nil
         end
     end
+    GW.forceCompassHeaderUpdate()
 end
 GW.RemoveTrackerNotificationOfType = RemoveTrackerNotificationOfType
 
