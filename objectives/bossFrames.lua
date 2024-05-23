@@ -114,7 +114,7 @@ end
 local function bossFrameOnShow(self)
     local compassData = {}
 
-    compassData.TYPE = "BOSS"
+    compassData.TYPE = "TORGHAST"
     compassData.ID = "boss_unknown"
     compassData.QUESTID = "unknown"
     compassData.COMPASS = false
@@ -124,10 +124,10 @@ local function bossFrameOnShow(self)
     compassData.X = nil
     compassData.Y = nil
 
-    compassData.COLOR = TRACKER_TYPE_COLOR.BOSS
+    compassData.COLOR = TRACKER_TYPE_COLOR.TORGHAST
     compassData.TITLE = UnitName(self.unit)
 
-    AddTrackerNotification(compassData)
+    AddTrackerNotification(compassData, true)
     updateBoss_Name(self)
     updateBoss_Health(self)
     updateBoss_Power(self)
@@ -140,7 +140,7 @@ local function bossFrameOnHide(self)
     updateBossFrameHeight()
 
     if self.id == 1 then
-        RemoveTrackerNotificationOfType("BOSS")
+        RemoveTrackerNotificationOfType("TORGHAST")
     end
 end
 
