@@ -9,6 +9,17 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local tomTomWaypoint = nil
 
+local function WatchFrameItem_UpdateCooldown(self)
+    local itemCooldown = _G[self:GetName().."Cooldown"];
+	local start, duration, enable = GetQuestLogSpecialItemCooldown(self:GetID());
+	CooldownFrame_Set(itemCooldown, start, duration, enable);
+	if ( duration and duration > 0 and enable and enable == 0 ) then
+		SetItemButtonTextureVertexColor(self, 0.4, 0.4, 0.4);
+	else
+		SetItemButtonTextureVertexColor(self, 1, 1, 1);
+	end
+end
+
 local function AddTomTomWaypoint(questId, objective)
     if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
         local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questId)
