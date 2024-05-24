@@ -1,3 +1,6 @@
+1.4.3-Cata
+    Only force update quest tracker header if tracker is loaded
+
 1.4.2-Cata
     Fix grid aura indicator frame layer
     Fix wrong setting api

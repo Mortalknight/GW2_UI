@@ -176,7 +176,9 @@ local function RemoveTrackerNotificationOfType(doType)
             notifications[k] = nil
         end
     end
-    GW.forceCompassHeaderUpdate()
+    if GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
+        GW.forceCompassHeaderUpdate()
+    end
 end
 GW.RemoveTrackerNotificationOfType = RemoveTrackerNotificationOfType
 

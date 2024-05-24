@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.4.3",{
+    {ct.bug,[=[Only force update quest tracker header if tracker is loaded]=]},
+})
+
 addChange("1.4.2",{
     {ct.bug,[=[Fix grid aura indicator frame layer]=]},
     {ct.bug,[=[Fix wrong setting api]=]},
