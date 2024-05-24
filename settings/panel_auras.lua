@@ -109,7 +109,7 @@ local function LoadAurasPanel(sWindow)
         {L["Dispell > Important"], L["Important > Dispell"]}
     )
 
-    addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", GW.UpdateGridSettings, nil, nil, {["RAID_FRAMES"] = true})
     addOption(p_indicator.scroll.scrollchild, L["Show Remaining Time"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, nil, {["RAID_FRAMES"] = true})
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
@@ -132,6 +132,7 @@ local function LoadAurasPanel(sWindow)
             key,
             function()
                 SetSetting(key, tonumber(GetSetting(key, true)))
+                GW.UpdateGridSettings()
             end,
             auraKeys,
             auraVals,

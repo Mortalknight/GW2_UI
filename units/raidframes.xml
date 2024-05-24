@@ -8,7 +8,7 @@
         </Anchors>
     </Frame>
 
-    <Frame name="GwRaidFrameIndicator" frameLevel="6" hidden="true" virtual="true">
+    <Frame name="GwRaidFrameIndicator" frameLevel="20" hidden="true" virtual="true">
         <Size x="13" y="13"/>
         <Layers>
             <Layer level="BACKGROUND">
@@ -23,7 +23,7 @@
             <Layer level="ARTWORK">
                 <Texture parentKey="icon">
                     <Anchors>
-                        <Anchor point="TOPLEFT" x=".7" y="-0.7"></Anchor>
+                        <Anchor point="TOPLEFT" x="0.7" y="-0.7"></Anchor>
                         <Anchor point="BOTTOMRIGHT" x="-0.7" y="0.7"></Anchor>
                     </Anchors>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
