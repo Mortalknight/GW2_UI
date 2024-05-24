@@ -20,6 +20,14 @@ local function WatchFrameItem_UpdateCooldown(self)
 	end
 end
 
+function WatchFrameItem_OnEvent (self, event, ...)
+	if ( event == "PLAYER_TARGET_CHANGED" ) then
+		self.rangeTimer = -1;
+	elseif ( event == "BAG_UPDATE_COOLDOWN" ) then
+		WatchFrameItem_UpdateCooldown(self);
+	end
+end
+
 local function AddTomTomWaypoint(questId, objective)
     if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
         local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questId)
