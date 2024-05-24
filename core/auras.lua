@@ -286,9 +286,9 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 if GW.ImportendRaidDebuff[list[index].spellID] and list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
                     size = size * debuffScale
                 elseif GW.ImportendRaidDebuff[list[index].spellID] then
-                    size = size * tonumber(GW.GetSettings("RAIDDEBUFFS_Scale"))
+                    size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
                 elseif list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
-                    size = size * tonumber(GW.GetSettings("DISPELL_DEBUFFS_Scale"))
+                    size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
                 end
             end
 
