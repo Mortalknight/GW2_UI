@@ -1,3 +1,7 @@
+1.4.2-Cata
+    Fix grid aura indicator frame layer
+    Fix wrong setting api
+
 1.4.1-Cata
     Quest tracker fixes
 

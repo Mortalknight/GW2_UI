@@ -8,8 +8,13 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.4.2",{
+    {ct.bug,[=[Fix grid aura indicator frame layer]=]},
+    {ct.bug,[=[Fix wrong setting api]=]},
+})
+
 addChange("1.4.1",{
-    {ct.feature,[=[Quest tracker fixes]=]},
+    {ct.bug,[=[Quest tracker fixes]=]},
 })
 
 addChange("1.4.0",{
