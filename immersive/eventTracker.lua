@@ -483,7 +483,7 @@ local eventData = {
                         end
 
                         local lengthMap = {}
-                        local x, y = GW2_ADDON.Libs.GW2Lib:GetPlayerLocationCoords()
+                        local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
                         if not x or not y then return end
 
                         for i, netPos in ipairs(env.fishingNetPosition) do
@@ -1344,14 +1344,14 @@ SlashCmdList["GWSLASH"] = function(msg)
     end
 
     if msg == "findNet" then
-        local map = C_Map.GetBestMapForUnit("player")
+        local map = GW.Libs.GW2Lib:GetPlayerLocationMapID()
         if not map then
             return
         end
 
-        local position = C_Map.GetPlayerMapPosition(map, "player")
+        local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
 
-        if not position then
+        if not x or not y then
             return
         end
 
@@ -1366,7 +1366,7 @@ SlashCmdList["GWSLASH"] = function(msg)
                                 print("------------")
                                 print("mapID", map)
                                 print("mapName", C_Map.GetMapInfo(map).name)
-                                print("position", position.x, position.y)
+                                print("position", x, y)
                                 print("widgetID", id)
                                 print("timeLeft", widget.Bar.value, secondToTime(widget.Bar.value))
                                 print("------------")

@@ -74,7 +74,7 @@ local function CreateSlotStrings()
             slot.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
 
             for u = 1, 10 do
-                local offset = (u - 1) * 13
+                local offset = -((u - 1) * 13)
                 local offsetY = -2
                 local newX = u == 1 and 2 or (justify == "BOTTOMLEFT" and -offset) or offset
                 local newY = u == 4 and offsetY + 13 or u == 4 and offsetY + 26 or u == 7 and offsetY + 39 or offsetY
