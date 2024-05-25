@@ -1273,11 +1273,11 @@ local function LoadDragonFlightWorldEvents()
         WorldMapFrame:Show()
         UpdateTrackers()
         WorldMapFrame:Hide()
-    end)
 
-    for event in pairs(eventHandlers) do
-        mapFrame:RegisterEvent(event)
-    end
+        for event in pairs(eventHandlers) do
+            mapFrame:RegisterEvent(event)
+        end
+    end)
 end
 GW.LoadDragonFlightWorldEvents = LoadDragonFlightWorldEvents
 
