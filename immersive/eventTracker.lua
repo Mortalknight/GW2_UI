@@ -1282,9 +1282,9 @@ end
 GW.LoadDragonFlightWorldEvents = LoadDragonFlightWorldEvents
 
 
-_G["SLASH_GWSLASH1"] = "/gw2"
+_G["SLASH_GWDEBUGSLASH1"] = "/gw2debug"
 
-SlashCmdList["GWSLASH"] = function(msg)
+SlashCmdList["GWDEBUGSLASH"] = function(msg)
     if msg == "fnet forceUpdate" then
         local map = C_Map.GetBestMapForUnit("player")
         if not map then
