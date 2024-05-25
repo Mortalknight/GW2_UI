@@ -17,6 +17,8 @@ local function CheckRole()
 end
 GW.CheckRole = CheckRole
 
+assert(GW.oUF, 'GW2_UI was unable to locate oUF.')
+
 --Constants
 local gameLocale = GetLocale()
 GW.addonName = addonName:gsub("_", " ")

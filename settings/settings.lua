@@ -526,8 +526,6 @@ local function InitPanel(panel, hasScroll)
           of.displayName = v.name
           lastOptionName = v.name
         end
-        --need this for searchables
-        of.forceNewLine = v.forceNewLine
 
         optionReference[panelUniqueID].options[#optionReference[panelUniqueID].options + 1] = of
 
@@ -540,6 +538,8 @@ local function InitPanel(panel, hasScroll)
         of.newLine = newLine
         of.optionType = v.optionType
         of.groupHeaderName = v.groupHeaderName
+        --need this for searchables
+        of.forceNewLine = v.forceNewLine
 
         if (newLine and not first) or padding.x > maximumXSize then
             padding.y = padding.y + (pY + box_padding)
@@ -749,7 +749,7 @@ local function InitPanel(panel, hasScroll)
             )
         elseif v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
-            of.slider:SetValue(GetSetting(of.optionName))
+            of.slider:SetValue(RoundDec(GW.GetSetting(of.optionName)))
             if v.step then of.slider:SetValueStep(v.step) end
             of.slider:SetObeyStepOnDrag(true)
             of.slider:SetScript(
