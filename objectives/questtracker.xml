@@ -238,13 +238,13 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentClickToTurnIn" hidden="true" parentKey="turnin">
+            <Button name="$parentClickToTurnIn" frameStrata="HIGH" framelevel="200" hidden="true" parentKey="turnin">
                 <size x="90" y="90"></size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="10"></Anchor>
                 </Anchors>
                 <Layers>
-                    <Layer level="ARTWORK" textureSubLevel="-1">
+                    <Layer level="ARTWORK" textureSubLevel="8">
                         <Texture parentKey="flare" file="Interface/AddOns/GW2_UI/textures/icons/reward-icon-flare">
                             <size x="200" y="200"></size>
                             <Anchors>
@@ -252,7 +252,7 @@
                             </Anchors>
                         </Texture>
                     </Layer>
-                    <Layer level="ARTWORK">
+                    <Layer level="ARTWORK" textureSubLevel="7">
                         <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/icons/rewards-icon">
                             <size x="140" y="140"></size>
                             <Anchors>

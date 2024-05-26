@@ -76,10 +76,10 @@ local function animFlarePoint(f, point, to, from, duration)
     )
 end
 
-local function powerEclipsOnUpdate(self, event, ...)
+local function powerEclipsOnUpdate(self)
     local pwrMax = UnitPowerMax(self.unit, Enum.PowerType.Balance)
     local pwr = UnitPower(self.unit, Enum.PowerType.Balance)
-    if self.oldEclipsPower ~= nil and self.oldEclipsPower == pwr then
+    if (self.oldEclipsPower ~= nil and self.oldEclipsPower == pwr) then
         return
     end
 
@@ -89,10 +89,9 @@ local function powerEclipsOnUpdate(self, event, ...)
         pwr,
         GetTime(),
         0.2,
-        function()
-            local p = animations["ECLIPS_BAR"].progress
-            local pwrP = p / pwrMax;
-            local pwrAbs = math.abs(p) / pwrMax;
+        function(p)
+            local pwrP = p / pwrMax
+            local pwrAbs = math.abs(p) / pwrMax
             local segmentSize = self.eclips:GetWidth() / 2
             local arrowPosition = segmentSize * pwrP
 
@@ -108,10 +107,26 @@ local function powerEclipsOnUpdate(self, event, ...)
                 self.eclips.fill:SetPoint("RIGHT", self.background, "CENTER", 0, 0)
                 self.eclips.fill:SetTexCoord(0, pwrAbs, 0, 1)
             end
-            self.oldEclipsPower = p;
+            self.oldEclipsPower = p
         end
     )
 end
+
+local function eclipsUnitAura(self)
+    local hasLunarEclipse = C_UnitAuras.GetPlayerAuraBySpellID(ECLIPSE_BAR_LUNAR_BUFF_ID) ~= nil
+    local hasSolarEclipse = C_UnitAuras.GetPlayerAuraBySpellID(ECLIPSE_BAR_SOLAR_BUFF_ID) ~= nil
+    if hasLunarEclipse then
+        self.eclips.lunar:Show()
+        self.eclips.solar:Hide()
+    elseif hasSolarEclipse then
+        self.eclips.lunar:Hide()
+        self.eclips.solar:Show()
+    else
+        self.eclips.lunar:Hide()
+        self.eclips.solar:Hide()
+    end
+end
+
 local function powerEclips(self, event, ...)
     if event == "ECLIPSE_DIRECTION_CHANGE" then
         local direction = ...
@@ -124,20 +139,10 @@ local function powerEclips(self, event, ...)
             self.eclips.solar:Hide()
         end
     elseif event == "UNIT_AURA" then
-        local aura = findBuff("player", ECLIPSE_BAR_LUNAR_BUFF_ID)
-        if aura ~= nil then
-            self.eclips.lunar:Show()
-            self.eclips.solar:Hide()
-            return
-        end
-        aura = findBuff("player", ECLIPSE_BAR_SOLAR_BUFF_ID)
-        if aura ~= nil then
-            self.eclips.lunar:Hide()
-            self.eclips.solar:Show()
-            return
-        end
-        self.eclips.lunar:Hide()
-        self.eclips.solar:Hide()
+        eclipsUnitAura(self)
+    elseif event == "CLASS_POWER_INIT" then
+        eclipsUnitAura(self)
+        powerEclipsOnUpdate(self)
     end
 end
 
@@ -205,6 +210,7 @@ local function powerCombo(self, event, ...)
 end
 
 local function setEclips(f)
+    f.barType = "eclips"
     f.eclips:Show()
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
