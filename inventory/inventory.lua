@@ -195,8 +195,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
     button.IconOverlay:Hide()
 
     local bag_id = button:GetParent():GetID()
-    local keyring = (bag_id == KEYRING_CONTAINER)
-    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
+    local professionColors = BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GetSetting("BAG_SHOW_ILVL") and not professionColors
     local showEquipmentSetName = GetSetting("BAG_SHOW_EQUIPMENT_SET_NAME")
 
@@ -279,12 +278,6 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
-
-    --Keyring
-    if keyring then
-        t:Show()
-        t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
-    end
 end
 
 local bag_resize
@@ -345,20 +338,6 @@ local function takeItemButtons(p, bag_id)
     if bag_id == BANK_CONTAINER then
         iname = "BankFrameItem"
         cf.gw_source = nil -- we never have to give back the bank ItemButtons
-    elseif bag_id == KEYRING_CONTAINER then
-        if IsBagOpen(bag_id) then
-            local b = getContainerFrame(bag_id)
-            if not b then
-                return
-            end
-
-            cf.gw_source = b
-            iname = b:GetName() .. "Item"
-        else
-            cf.gw_source = nil
-            cf.gw_num_slots = 0
-            return
-        end
     else
         local b = getContainerFrame(bag_id)
         if not b then
@@ -576,7 +555,6 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
                 bags_equipped = bags_equipped + 1
             end
         end
-        bags_equipped = bags_equipped + 1 --Keyring
         f.finishedRow = f.finishedRow and f.finishedRow or 0
         f.unfinishedRow = f.unfinishedRow and f.unfinishedRow or 0
         rows = f.finishedRow + bags_equipped + 1 + f.unfinishedRow
@@ -585,7 +563,7 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     end
     f:SetHeight(max((isize * rows) + 75, min_height))
     f:SetWidth((isize * cols) + padding + 2)
-    for i = 0, 5 do
+    for i = 0, 4 do
         if _G["GwBagFrameGwBagHeader" .. i] and sep then
             _G["GwBagFrameGwBagHeader" .. i]:SetWidth((isize * cols) + padding + 2 - 5)
             _G["GwBagFrameGwBagHeader" .. i].background:SetWidth((isize * cols) + padding + 2 - 5)

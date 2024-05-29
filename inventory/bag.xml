@@ -315,39 +315,6 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="$parentGwBagHeader5" registerForClicks="LeftButtonUp,RightButtonUp" framelevel="50">
-                <Size x="512" y="32"></Size>
-                <Layers>
-                    <Layer>
-                        <Texture parentKey="background" name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep">
-                            <Size x="512" y="32"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                    <Layer textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down">
-                            <Size x="28" y="28"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down" rotation="90">
-                            <Size x="28" y="28"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                        <FontString parentKey="nameString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="28" y="-5" />
-                            </Anchors>
-                            <Size x="300" y="24" />
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Button>
             <Button parentKey="currency" framelevel="50">
                 <Size x="32" y="32"></Size>
                 <Anchors>
@@ -804,53 +771,5 @@
             </Layer>
         </Layers>
     </CheckButton>
-
-    <Button name="GwKeyRingButtonTemp" virtual="true">
-        <Size x="28" y="28"></Size>
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture parentKey="IconBorder" file="Interface\Common\WhiteIconFrame" hidden="true">
-                    <Size x="28" y="28"/>
-                    <Anchors>
-                        <Anchor point="CENTER"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="OVERLAY" textureSubLevel="1">
-                <Texture parentKey="IconOverlay" hidden="true">
-                    <Size x="28" y="28"/>
-                    <Anchors>
-                        <Anchor point="CENTER"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" file="Interface\ContainerFrame\KeyRing-Bag-Icon">
-                    <Size x="28" y="28"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                    </Anchors>
-                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
-                </Texture>
-                <Texture parentKey="border" file="Interface\AddOns\GW2_UI\textures\uistuff\UI-Quickslot-Depress" hidden="true">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" x="-1" y="1"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" x="1" y="-1"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-        <Scripts>
-            <OnEnter>
-                GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, 0)
-                GameTooltip:ClearLines()
-                GameTooltip:AddLine(KEYRING)
-                GameTooltip:Show()
-            </OnEnter>
-            <OnLeave>
-                GameTooltip:Hide()
-            </OnLeave>
-        </Scripts>
-    </Button>
 
 </Ui>
