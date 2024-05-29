@@ -76,7 +76,7 @@ local oUF = ns.oUF
 local function UpdateTooltip(self)
 	if(GameTooltip:IsForbidden()) then return end
 
-	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
+	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self.index, self.filter)
 end
 
 local function onEnter(self)
@@ -86,7 +86,6 @@ local function onEnter(self)
 	-- otherwise it'll inherit said restrictions which will cause issues with
 	-- its further positioning, clamping, etc
 	GameTooltip:SetOwner(self, self:GetParent().__restricted and 'ANCHOR_CURSOR' or self:GetParent().tooltipAnchor)
-	self:UpdateTooltip()
 end
 
 local function onLeave()
@@ -189,6 +188,8 @@ local function updateAura(element, unit, data, position)
 	-- for tooltips
 	button.auraInstanceID = data.auraInstanceID
 	button.isHarmful = data.isHarmful
+	button.filter = data.isHarmful and "HARMFUL" or "HELPFUL"
+	button.index = position
 
 	if(button.Cooldown and not element.disableCooldown) then
 		if(data.duration > 0) then
@@ -225,6 +226,7 @@ local function updateAura(element, unit, data, position)
 	local height = element.height or element.size or 16
 	button:SetSize(width, height)
 	button:EnableMouse(not element.disableMouse)
+	button:SetID(index)
 	button:Show()
 
 	--[[ Callback: Auras:PostUpdateButton(unit, button, data, position)
