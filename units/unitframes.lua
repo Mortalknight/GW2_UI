@@ -968,6 +968,8 @@ local function ToggleTargetFrameSettings()
     end
 
     target_OnEvent(GwTargetUnitFrame, "FORCE_UPDATE")
+
+    GW.LoadComboBarOnTargetFrame(GwTargetUnitFrame)
 end
 GW.ToggleTargetFrameSettings = ToggleTargetFrameSettings
 
