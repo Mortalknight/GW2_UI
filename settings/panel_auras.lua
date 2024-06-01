@@ -135,7 +135,7 @@ local function LoadAurasPanel(sWindow)
             L["Edit %s raid aura indicator."]:format(t),
             key,
             function()
-                GW.settings[key] = tonumber(GW.settings[key])
+                SetSetting(key, tonumber(GW.GetSetting(key)))
                 GW.UpdateGridSettings("ALL", false)
             end,
             auraKeys,

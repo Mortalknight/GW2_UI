@@ -502,8 +502,11 @@ local function LoadQuestview()
             UIFrameFadeIn(GwQuestviewFrame, 0.2, 0, 1)
             GwQuestviewFrame:EnableKeyboard(true)
             GwQuestviewFrame:SetScript("OnKeyDown", function(self, key)
+                local inCombat = InCombatLockdown()
                 if key == "SPACE" then
-                    self:SetPropagateKeyboardInput(false)
+                    if not inCombat then
+                        self:SetPropagateKeyboardInput(false)
+                    end
                     local Stringcount = #QUESTSTRING
 
                     if QUESTSTRINGINT < Stringcount then
@@ -512,7 +515,9 @@ local function LoadQuestview()
                         acceptQuest()
                     end
                 else
-                    self:SetPropagateKeyboardInput(true)
+                    if not inCombat then
+                        self:SetPropagateKeyboardInput(true)
+                    end
                 end
             end)
         end
