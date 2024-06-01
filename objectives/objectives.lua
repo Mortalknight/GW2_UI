@@ -658,7 +658,7 @@ local function OnBlockClick(self, button)
             end})
         end
 
-        tinsert(menuList, {text = UNTRACK_QUEST, hasArrow = false, notCheckable = true, func = function() UntrackQuest(self.questLogIndex) end})
+        tinsert(menuList, {text = UNTRACK_QUEST, hasArrow = false, notCheckable = true, func = function() WatchFrame_StopTrackingQuest(self, self.questLogIndex); GW.UpdateQuestTracker(GwQuesttrackerContainerQuests) end})
 
         GW.SetEasyMenuAnchor(GW.EasyMenu, self)
         EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
