@@ -8,6 +8,27 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.5.0",{
+    {ct.feature, [=[Redo all grids: Party, Raid, Raid Pet]=]},
+    {ct.feature, [=[Grids are now secure and can update during combat]=]},
+    {ct.feature, [=[Added new grids:
+        - Maintank
+        - Raid 10
+        - Raid 25
+        - Raid 40]=]},
+    {ct.feature, [=[Raid grids switch automaticly between the 3 raid grids, based on the number of players at the raid]=]},
+    {ct.feature, [=[Added new grouping and sorting settings to all grids:
+        - Group by: Role, Class, Group, Name, Index
+        - Sort direction
+        - Sortmethode: Name, Index
+        - Raidwaid sorting: If disabled the grouping and sorting settings are applyed per raid group]=]},
+    {ct.feature, [=[All grids have there individual settings (Raid 10, Raid 25, Raid 40, Maintank, Raid Pet, Group)]=]},
+
+    {ct.change, [=[Remove Keyring]=]},
+
+    {ct.bug, [=[Combopoints on target works again]=]},
+})
+
 addChange("1.4.3",{
     {ct.bug,[=[Only force update quest tracker header if tracker is loaded]=]},
 })
