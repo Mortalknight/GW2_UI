@@ -399,6 +399,33 @@ GW_DEFAULT["TotemBar_pos_scale"] = 1
 GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
 GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
 
+GW_DEFAULT["TopCenterWidget_pos"] = {
+    point= "TOP",
+    relativePoint= "TOP",
+    xOfs= 0,
+    yOfs= -30,
+    hasMoved= false,
+}
+GW_DEFAULT["TopCenterWidget_pos_scale"] = 1
+
+GW_DEFAULT["PowerBarContainer_pos"] = {
+    point= "TOP",
+    relativePoint= "TOP",
+    xOfs= 0,
+    yOfs= -75,
+    hasMoved= false,
+}
+GW_DEFAULT["PowerBarContainer_pos_scale"]= 1
+
+GW_DEFAULT["BelowMinimapContainer_pos"]= {
+    point= "TOPRIGHT",
+    relativePoint= "TOPRIGHT",
+    xOfs= -430,
+    yOfs= -130,
+    hasMoved= false,
+}
+GW_DEFAULT["BelowMinimapContainer_pos_scale"]= 1
+
 GW_DEFAULT["AlertPos"] = {
     point= "BOTTOMRIGHT",
     relativePoint= "BOTTOMRIGHT",

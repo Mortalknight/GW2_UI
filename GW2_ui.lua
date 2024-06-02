@@ -610,6 +610,8 @@ local function evPlayerLogin(self)
 
     GW.LoadCustomAuraTracker()
 
+    GW.WidgetUISetup()
+
 
     --Create hud art
     hudArtFrame = GW.LoadHudArt()
