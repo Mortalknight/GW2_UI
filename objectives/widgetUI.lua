@@ -107,7 +107,7 @@ local function WidgetUISetup()
             UIWidgetTopCenterContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
 
             UIWidgetPowerBarContainerFrame:ClearAllPoints()
-            UIWidgetPowerBarContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
+            UIWidgetPowerBarContainerFrame:SetPoint("CENTER", UIWidgetPowerBarContainerFrame.gwMover, "CENTER")
 
             UIWidgetBelowMinimapContainerFrame:ClearAllPoints()
             UIWidgetBelowMinimapContainerFrame:SetPoint("CENTER", UIWidgetBelowMinimapContainerFrame.gwMover, "CENTER")
