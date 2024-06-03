@@ -32,7 +32,7 @@ local function setCompass()
         end
     else
         for i = 1, GetMaxBattlefieldID() do
-            local status, mapName, _, _, _, _, _, _, _, shortDescription = GetBattlefieldStatus(i)
+            local status, mapName, _, _, _, _, _, _, _, _, _, _, _, shortDescription = GetBattlefieldStatus(i)
             if status and status == "active" then
                 compassTitle = mapName
                 compassDesc = shortDescription and shortDescription or ""
