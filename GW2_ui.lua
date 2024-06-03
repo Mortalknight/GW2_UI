@@ -611,6 +611,7 @@ local function evPlayerLogin(self)
     GW.LoadCustomAuraTracker()
 
     GW.WidgetUISetup()
+    GW.SetUpVehicleFrameMover()
 
 
     --Create hud art

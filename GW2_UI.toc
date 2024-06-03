@@ -228,3 +228,4 @@ objectives\achievement.lua
 objectives\bossFrames.lua
 objectives\arenaFrames.lua
 objectives\widgetUI.lua
+objectives\vehicle.lua
