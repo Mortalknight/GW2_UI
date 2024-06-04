@@ -37,7 +37,7 @@ local function reskinItemButton(iname, b)
     b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     b.Count:SetJustifyH("RIGHT")
 
-    local qtex = b.IconQuestTexture or _G[iname .. "IconQuestTexture"]
+    local qtex = b.IconQuestTexture or (iname and _G[iname .. "IconQuestTexture"])
     if qtex then
         qtex:SetSize(item_size + 2, item_size + 2)
         qtex:ClearAllPoints()
@@ -70,8 +70,15 @@ local function reskinItemButton(iname, b)
         b.itemlevel:SetText("")
     end
 
-    GW.RegisterCooldown(_G[b:GetName() .. "Cooldown"])
+    if iname then
+        GW.RegisterCooldown(_G[iname .. "Cooldown"])
+    elseif b.cooldown then
+        GW.RegisterCooldown(b.cooldown)
+    elseif b.Cooldown then
+        GW.RegisterCooldown(b.Cooldown)
+    end
 end
+GW.SkinBagItemButton = reskinItemButton
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
 local function reskinItemButtons()
@@ -193,6 +200,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     button:GetItemButtonIconTexture():Hide()
     end
 end
+GW.SetBagItemButtonQualitySkin = hookItemQuality
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
 
 local bag_resize
