@@ -3,7 +3,6 @@ local L = GW.L
 local EnableTooltip = GW.EnableTooltip
 local inv
 
-local BANK_ITEM_SIZE = 40
 local BANK_ITEM_LARGE_SIZE = 40
 local BANK_ITEM_COMPACT_SIZE = 32
 local BANK_ITEM_PADDING = 5
@@ -16,7 +15,7 @@ local function layoutBankItems(f)
     local col = 0
     local rev = GW.settings.BANK_REVERSE_SORT
 
-    local item_off = BANK_ITEM_SIZE + BANK_ITEM_PADDING
+    local item_off = GW.settings.BAG_ITEM_SIZE  + BANK_ITEM_PADDING
 
     local iS = NUM_TOTAL_EQUIPPED_BAG_SLOTS
     local iE = NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS
@@ -45,7 +44,7 @@ local function layoutReagentItems(f)
     local row = 0
     local col = 0
 
-    local item_off = BANK_ITEM_SIZE + BANK_ITEM_PADDING
+    local item_off = GW.settings.BAG_ITEM_SIZE  + BANK_ITEM_PADDING
 
     local cf = f.Containers[REAGENTBANK_CONTAINER]
     inv.layoutContainerFrame(cf, max_col, row, col, true, item_off)
@@ -70,7 +69,7 @@ local function snapFrameSize(f)
     elseif f.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
         cfs = f.ReagentFrame.Containers
     end
-    inv.snapFrameSize(f, cfs, BANK_ITEM_SIZE, BANK_ITEM_PADDING, 370)
+    inv.snapFrameSize(f, cfs, GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, 370)
 end
 GW.AddForProfiling("bank", "snapFrameSize", snapFrameSize)
 
@@ -271,14 +270,13 @@ end
 GW.AddForProfiling("bank", "updateBagBar", updateBagBar)
 
 local function onBankResizeStop(self)
-    BANK_WINDOW_SIZE = self:GetWidth()
-    GW.settings.BANK_WIDTH = BANK_WINDOW_SIZE
+    GW.settings.BANK_WIDTH = self:GetWidth()
     inv.onMoved(self, "BANK_POSITION", snapFrameSize)
 end
 GW.AddForProfiling("bank", "onBankResizeStop", onBankResizeStop)
 
 local function onBankFrameChangeSize(self, _, _, skip)
-    local cols = inv.colCount(BANK_ITEM_SIZE, BANK_ITEM_PADDING, self:GetWidth())
+    local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, self:GetWidth())
 
     if not self.gw_bank_cols or self.gw_bank_cols ~= cols then
         self.gw_bank_cols = cols
@@ -291,15 +289,13 @@ GW.AddForProfiling("bank", "onBankFrameChangeSize", onBankFrameChangeSize)
 
 -- toggles the setting for compact/large icons
 local function compactToggle()
-    if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
-        BANK_ITEM_SIZE = BANK_ITEM_COMPACT_SIZE
-        GW.settings.BAG_ITEM_SIZE = BANK_ITEM_SIZE
+    if GW.settings.BAG_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
+        GW.settings.BAG_ITEM_SIZE = BANK_ITEM_COMPACT_SIZE
         inv.resizeInventory()
         return true
     end
 
-    BANK_ITEM_SIZE = BANK_ITEM_LARGE_SIZE
-    GW.settings.BAG_ITEM_SIZE = BANK_ITEM_SIZE
+    GW.settings.BAG_ITEM_SIZE = BANK_ITEM_LARGE_SIZE
     inv.resizeInventory()
     return false
 end
@@ -451,10 +447,7 @@ GW.AddForProfiling("bank", "tab_OnLeave", tab_OnLeave)
 local function LoadBank(helpers)
     inv = helpers
 
-    BANK_WINDOW_SIZE = GW.settings.BANK_WIDTH
-    BANK_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE
-    if BANK_ITEM_SIZE > 40 then
-        BANK_ITEM_SIZE = 40
+    if GW.settings.BAG_ITEM_SIZE > 40 then
         GW.settings.BAG_ITEM_SIZE = 40
     end
 
@@ -462,7 +455,7 @@ local function LoadBank(helpers)
     local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrameTemplate")
     tinsert(UISpecialFrames, "GwBankFrame")
     f:ClearAllPoints()
-    f:SetWidth(BANK_WINDOW_SIZE)
+    f:SetWidth(GW.settings.BANK_WIDTH)
     onBankFrameChangeSize(f, nil, nil, true)
     f:SetClampedToScreen(true)
 
@@ -613,7 +606,7 @@ local function LoadBank(helpers)
         dd.compactBank.checkbutton:SetScript(
             "OnClick",
             function(self)
-                self:SetText(compactToggle())
+                self:SetChecked(compactToggle())
                 dd:Hide()
             end
         )
@@ -707,7 +700,6 @@ local function LoadBank(helpers)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()
-        BANK_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE
         reskinBankItemButtons()
         reskinReagentItemButtons()
         layoutItems(f)

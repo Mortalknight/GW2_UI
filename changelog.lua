@@ -15,6 +15,9 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.14.9",{
+    {ct.change, [=[Export some api]=]},
+})
 
 addChange("6.14.8",{
     {ct.change, [=[Update toc]=]},

@@ -5,11 +5,9 @@ local UpdateMoney = GW.UpdateMoney
 local EnableTooltip = GW.EnableTooltip
 local inv
 
-local BAG_ITEM_SIZE = 40
 local BAG_ITEM_LARGE_SIZE = 40
 local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
-local BAG_WINDOW_SIZE = 480
 
 local function setBagHeaders()
     for i = 1, 5 do
@@ -37,7 +35,7 @@ local function layoutBagItems(f)
     local rev = GW.settings.BAG_REVERSE_SORT
     local sep = GW.settings.BAG_SEPARATE_BAGS
     local row = sep and 1 or 0
-    local item_off = BAG_ITEM_SIZE + BAG_ITEM_PADDING
+    local item_off = GW.settings.BAG_ITEM_SIZE + BAG_ITEM_PADDING
     local unfinishedRow = false
     local finishedRows = 0
 
@@ -61,8 +59,8 @@ local function layoutBagItems(f)
             _G["GwBagFrameGwBagHeader" .. bag_id]:Show()
             _G["GwBagFrameGwBagHeader" .. bag_id]:ClearAllPoints()
             _G["GwBagFrameGwBagHeader" .. bag_id]:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off)
-            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(BAG_WINDOW_SIZE - BAG_ITEM_PADDING)
-            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(BAG_WINDOW_SIZE - BAG_ITEM_PADDING)
+            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(GW.settings.BAG_WIDTH - BAG_ITEM_PADDING)
+            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(GW.settings.BAG_WIDTH - BAG_ITEM_PADDING)
         else
             _G["GwBagFrameGwBagHeader" .. bag_id] :Hide()
         end
@@ -114,7 +112,7 @@ local function snapFrameSize(f)
     if f.ItemFrame:IsShown() then
         cfs = f.ItemFrame.Containers
     end
-    inv.snapFrameSize(f, cfs, BAG_ITEM_SIZE, BAG_ITEM_PADDING, 350)
+    inv.snapFrameSize(f, cfs, GW.settings.BAG_ITEM_SIZE, BAG_ITEM_PADDING, 350)
 end
 GW.AddForProfiling("bag", "snapFrameSize", snapFrameSize)
 
@@ -363,14 +361,13 @@ end
 GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
 
 local function onBagResizeStop(self)
-    BAG_WINDOW_SIZE = self:GetWidth()
-    GW.settings.BAG_WIDTH = BAG_WINDOW_SIZE
+    GW.settings.BAG_WIDTH = self:GetWidth()
     inv.onMoved(self, "BAG_POSITION", snapFrameSize)
 end
 GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
 
 local function onBagFrameChangeSize(self, _, _, skip)
-    local cols = inv.colCount(BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
+    local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
 
     if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
         self.gw_bag_cols = cols
@@ -383,16 +380,13 @@ GW.AddForProfiling("bag", "onBagFrameChangeSize", onBagFrameChangeSize)
 
 -- toggles the setting for compact/large icons
 local function compactToggle()
-    if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
-        BAG_ITEM_SIZE = BAG_ITEM_COMPACT_SIZE
-        GW.settings.BAG_ITEM_SIZE = BAG_ITEM_SIZE
+    if GW.settings.BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
+        GW.settings.BAG_ITEM_SIZE = BAG_ITEM_COMPACT_SIZE
         inv.resizeInventory()
         return true
     end
 
-    BAG_ITEM_SIZE = BAG_ITEM_LARGE_SIZE
-    GW.settings.BAG_ITEM_SIZE = BAG_ITEM_SIZE
-    GW.
+    GW.settings.BAG_ITEM_SIZE = BAG_ITEM_LARGE_SIZE
     inv.resizeInventory()
     return false
 end
@@ -574,10 +568,7 @@ local function LoadBag(helpers)
 
     inv = helpers
 
-    BAG_WINDOW_SIZE = GW.settings.BAG_WIDTH
-    BAG_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE
-    if BAG_ITEM_SIZE > 40 then
-        BAG_ITEM_SIZE = 40
+    if GW.settings.BAG_ITEM_SIZE > 40 then
         GW.settings.BAG_ITEM_SIZE = 40
     end
 
@@ -586,7 +577,7 @@ local function LoadBag(helpers)
     tinsert(UISpecialFrames, "GwBagFrame")
     f.gw_state = "closed"
     f:ClearAllPoints()
-    f:SetWidth(BAG_WINDOW_SIZE)
+    f:SetWidth(GW.settings.BAG_WIDTH)
     onBagFrameChangeSize(f, nil, nil, true)
     f:SetClampedToScreen(true)
 
@@ -973,7 +964,6 @@ local function LoadBag(helpers)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()
-        BAG_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE
         layoutItems(f)
         snapFrameSize(f)
     end
