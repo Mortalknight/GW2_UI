@@ -316,13 +316,7 @@ end
 
 local function UpdateActiveSpec(activeTalentGroup)
     -- set the active spec
-    activeSpec = 1
-    for i = 1, 2 do
-        if i == activeTalentGroup then
-            activeSpec = i
-            break
-        end
-    end
+    activeSpec = activeTalentGroup
 end
 
 local function UpdateTalentPoints()
@@ -607,8 +601,8 @@ local function updateTalentTrees()
     elseif hasDualSpec then
         talentFrame.navigation.spec1Button:Show()
         talentFrame.navigation.spec2Button:Show()
-        talentFrame.navigation.spec1Button:SetEnabled(openSpec == 2 or isPetTalents)
-        talentFrame.navigation.spec2Button:SetEnabled(openSpec == 1 or isPetTalents)
+        --talentFrame.navigation.spec1Button:SetEnabled(openSpec == 2 or isPetTalents)
+        --talentFrame.navigation.spec2Button:SetEnabled(openSpec == 1 or isPetTalents)
         talentFrame.navigation.activateSpecGroup:SetShown(openSpec ~= activeTalentGroup)
     else
         talentFrame.navigation.spec1Button:Show()
@@ -859,6 +853,12 @@ local function LoadTalents()
         updateTalentTrees()
         talentFrame.bottomBar.viewSummary:Show()
     end)
+    talentFrame.navigation.spec1Button:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
+        GameTooltip:SetText(TALENT_SPEC_PRIMARY, 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    talentFrame.navigation.spec1Button:SetScript("OnLeave", GameTooltip_Hide)
     talentFrame.navigation.spec2Button:SetScript("OnClick", function(self)
         setNavigation(self)
         openSpec                      = 2
@@ -869,6 +869,12 @@ local function LoadTalents()
         updateTalentTrees()
         talentFrame.bottomBar.viewSummary:Show()
     end)
+    talentFrame.navigation.spec2Button:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
+        GameTooltip:SetText(TALENT_SPEC_SECONDARY, 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    talentFrame.navigation.spec2Button:SetScript("OnLeave", GameTooltip_Hide)
     talentFrame.navigation.petTalentsButton:SetScript("OnClick", function(self)
         setNavigation(self)
         openSpec                      = 1

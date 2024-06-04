@@ -119,6 +119,7 @@ local gw2StaffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:24|t"
 local gw2StaffList = {
     -- Glow
     ["Zâmara-Everlook"] = gw2StaffIcon,
+    ["Zâmorâ-Everlook"] = gw2StaffIcon,
     -- SHOODOX
 
     -- Belazor
