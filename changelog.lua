@@ -8,6 +8,14 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.6.0",{
+    {ct.feature,[=[Added Gem info to hero panel]=]},
+    {ct.feature,[=[Added back ilvl to targetframes and tooltip (hold shift)]=]},
+    {ct.feature,[=[Add vehicle mover]=]},
+    {ct.feature,[=[Add minimap widget mover]=]},
+    {ct.feature,[=[Some lua errors]=]},
+})
+
 addChange("1.5.0",{
     {ct.feature, [=[Redo all grids: Party, Raid, Raid Pet]=]},
     {ct.feature, [=[Grids are now secure and can update during combat]=]},
