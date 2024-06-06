@@ -15,7 +15,11 @@ local function CombatQueue_Initialize()
         local func = tremove(afterCombatQueue, 1)
         local count = 0
         while func do
-            func.func(unpack(func.obj))
+            if func.obj then
+                func.func(unpack(func.obj))
+            else
+                func.func()
+            end
             if InCombatLockdown() or count >= maxUpdatesPerCircle then
                 break
             end
