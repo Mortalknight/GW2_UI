@@ -6,7 +6,6 @@ local inv
 local BANK_ITEM_LARGE_SIZE = 40
 local BANK_ITEM_COMPACT_SIZE = 32
 local BANK_ITEM_PADDING = 5
-local BANK_WINDOW_SIZE = 720
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutBankItems(f)

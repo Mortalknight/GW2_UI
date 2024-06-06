@@ -8,6 +8,10 @@ local NeedsRepositionExtraButtons = false
 local ExtraButtons = {}
 
 local function ExtraButtons_ZoneScale()
+    if InCombatLockdown() then
+        GW.CombatQueue_Queue("SetSizeForZoneAbilityFrame", GW.ExtraButtons_ZoneScale)
+        return
+    end
     local scale = GW.settings.ZoneAbilityFramePos_scale
     ZoneAbilityFrame.Style:SetScale(scale)
     ZoneAbilityFrame.SpellButtonContainer:SetScale(scale)
@@ -16,6 +20,7 @@ local function ExtraButtons_ZoneScale()
     ZoneAbilityHolder:SetSize(width * scale, height * scale)
     ZoneAbilityHolder.gwMover:SetSize(width * scale, height * scale)
 end
+GW.ExtraButtons_ZoneScale = ExtraButtons_ZoneScale
 
 local function ExtraButtons_UpdateScale()
     ExtraButtons_ZoneScale()
