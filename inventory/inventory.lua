@@ -43,7 +43,7 @@ local function reskinItemButton(iname, b)
     b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     b.Count:SetJustifyH("RIGHT")
 
-    local qtex = b.IconQuestTexture or _G[iname .. "IconQuestTexture"]
+    local qtex = b.IconQuestTexture or (iname and _G[iname .. "IconQuestTexture"])
     if qtex then
         qtex:SetSize(item_size + 2, item_size + 2)
         qtex:ClearAllPoints()
@@ -85,8 +85,15 @@ local function reskinItemButton(iname, b)
         b.itemlevel:SetText("")
     end
 
-    GW.RegisterCooldown(_G[b:GetName() .. "Cooldown"])
+    if iname then
+        GW.RegisterCooldown(_G[iname .. "Cooldown"])
+    elseif b.cooldown then
+        GW.RegisterCooldown(b.cooldown)
+    elseif b.Cooldown then
+        GW.RegisterCooldown(b.Cooldown)
+    end
 end
+GW.SkinBagItemButton = reskinItemButton
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
 local function getContainerFrame(bag_id)
@@ -189,15 +196,25 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
     if not button.gwBackdrop then
         return
     end
+
+    local bag_id = button:GetParent():GetID()
+    local showItemLevel = button.itemlevel and itemIDOrLink and GetSetting("BAG_SHOW_ILVL") and not professionColors
+    local showEquipmentSetName = GetSetting("BAG_SHOW_EQUIPMENT_SET_NAME")
+
     local t = button.IconBorder
     t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     t:SetAlpha(0.9)
     button.IconOverlay:Hide()
 
-    local bag_id = button:GetParent():GetID()
+    if not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
+        t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
+    end
+
     local professionColors = BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
-    local showItemLevel = button.itemlevel and itemIDOrLink and GetSetting("BAG_SHOW_ILVL") and not professionColors
-    local showEquipmentSetName = GetSetting("BAG_SHOW_EQUIPMENT_SET_NAME")
+    if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
+        t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
+        t:Show()
+    end
 
     if itemIDOrLink then
         local isQuestItem = select(12, C_Item.GetItemInfo(itemIDOrLink))
@@ -267,16 +284,6 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         if button.questIcon then button.questIcon:Hide() end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end
         if button.itemlevel then button.itemlevel:SetText("") end
-    end
-
-    if not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
-        t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-        t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
-    end
-
-    if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
-        t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
-        t:Show()
     end
 end
 

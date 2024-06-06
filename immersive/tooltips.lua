@@ -6,7 +6,6 @@ local RGBToHex = GW.RGBToHex
 local GWGetClassColor = GW.GWGetClassColor
 local Wait = GW.Wait
 local GetUnitItemLevel = GW.GetUnitItemLevel
-local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local nameRoleIcon = GW.nameRoleIcon
 
@@ -25,8 +24,8 @@ local genderTable = {
     " " .. FEMALE .. " "
 }
 
-local LEVEL1 = strlower(TOOLTIP_UNIT_LEVEL:gsub('%s?%%s%s?%-?',''))
-local LEVEL2 = strlower((TOOLTIP_UNIT_LEVEL_RACE or TOOLTIP_UNIT_LEVEL_CLASS):gsub('^%%2$s%s?(.-)%s?%%1$s','%1'):gsub('^%-?г?о?%s?',''):gsub('%s?%%s%s?%-?',''))
+local LEVEL1 = strlower(_G.TOOLTIP_UNIT_LEVEL:gsub('%s?%%s%s?%-?',''))
+local LEVEL2 = strlower((_G.TOOLTIP_UNIT_LEVEL_RACE or _G.TOOLTIP_UNIT_LEVEL_CLASS):gsub('^%%2$s%s?(.-)%s?%%1$s','%1'):gsub('^%-?г?о?%s?',''):gsub('%s?%%s%s?%-?',''))
 local IDLine = "|cffffedba%s|r %d"
 
 local TT = CreateFrame("Frame")
@@ -135,18 +134,18 @@ local function GetLevelLine(self, offset, raw)
     if not (info and info.lines[offset]) then return end
 
     for i, line in next, info.lines, offset do
-		local text = line and line.leftText
-		if not text or text == '' then return end
+        local text = line and line.leftText
+        if not text or text == '' then return end
 
-		local lower = strlower(text)
-		if lower and (strfind(lower, LEVEL1) or strfind(lower, LEVEL2)) then
-			if raw then
-				return line, info.lines[i + 1]
-			else
-				return _G['GameTooltipTextLeft' .. i], _G['GameTooltipTextLeft' .. i + 1]
-			end
-		end
-	end
+        local lower = strlower(text)
+        if lower and (strfind(lower, LEVEL1) or strfind(lower, LEVEL2)) then
+            if raw then
+                return line, info.lines[i + 1]
+            else
+                return _G['GameTooltipTextLeft'..i], _G['GameTooltipTextLeft'..i+1]
+            end
+        end
+    end
 end
 
 local function SetUnitText(self, unit, isPlayerUnit)
@@ -335,6 +334,47 @@ local function AddRoleInfo(self, unit)
     end
 end
 
+local inspectGUIDCache = {}
+
+local function GetItemLevelFromUnitFromCache(unitGUID)
+    if unitGUID and inspectGUIDCache[unitGUID] then
+        return inspectGUIDCache[unitGUID]
+    end
+    return nil
+end
+GW.GetItemLevelFromUnitFromCache = GetItemLevelFromUnitFromCache
+
+local function IsUnitGuidInInspectCache(unitGUID)
+    if unitGUID and inspectGUIDCache[unitGUID] then
+        return true
+    end
+    return false
+end
+GW.IsUnitGuidInInspectCache = IsUnitGuidInInspectCache
+
+local function AddUnitGuidColorToInspectCache(unitGUID, r, g, b)
+    if not inspectGUIDCache[unitGUID] then
+        inspectGUIDCache[unitGUID] = {unitColor = {r, g, b}}
+    end
+end
+GW.AddUnitGuidColorToInspectCache = AddUnitGuidColorToInspectCache
+
+local function PopulateUnitIlvlsCache(unitGUID, itemLevel, tooltip)
+    if itemLevel then
+        if inspectGUIDCache[unitGUID] then
+            inspectGUIDCache[unitGUID].time = GetTime()
+            inspectGUIDCache[unitGUID].itemLevel = itemLevel
+        end
+
+        if tooltip and not GameTooltip.ItemLevelShown then
+            GameTooltip.ItemLevelShown = true
+            GameTooltip:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", itemLevel, nil, nil, nil, 1, 1, 1)
+            GameTooltip:Show()
+        end
+    end
+end
+GW.PopulateUnitIlvlsCache = PopulateUnitIlvlsCache
+
 local function TT_OnEvent(_, event, unitGUID)
     if UnitExists("mouseover") and UnitGUID("mouseover") == unitGUID then
         local itemLevel, retryUnit, retryTable, iLevelDB = GetUnitItemLevel("mouseover")
@@ -347,7 +387,6 @@ local function TT_OnEvent(_, event, unitGUID)
                         canUpdate = false
                     else
                         iLevelDB[x] = slotInfo.iLvl
-                        slotInfo = nil --clear cache
                     end
                 end
 
@@ -368,27 +407,28 @@ end
 
 local lastGUID
 local function AddInspectInfo(self, unit, numTries, r, g, b)
-    if self.ItemLevelShown or (not unit) or (numTries > 3) or not CanInspect(unit) then return end
+    if self.ItemLevelShown or (not unit) or (numTries > 3) or not UnitIsPlayer(unit) or not CheckInteractDistance(unit, 4) or not CanInspect(unit) then return end
 
     local unitGUID = UnitGUID(unit)
     if not unitGUID then return end
+    local cache = inspectGUIDCache[unitGUID]
 
     if unitGUID == UnitGUID("player") then
         self.ItemLevelShown = true
         self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", GetUnitItemLevel(unit), nil, nil, nil, 1, 1, 1)
-    elseif GW.unitIlvlsCache[unitGUID] and GW.unitIlvlsCache[unitGUID].time then
-        local itemLevel = GW.unitIlvlsCache[unitGUID].itemLevel
-        if not itemLevel or (GetTime() - GW.unitIlvlsCache[unitGUID].time > 120) then
-            GW.unitIlvlsCache[unitGUID].time = nil
-            GW.unitIlvlsCache[unitGUID].itemLevel = nil
-            return Wait(0.33, AddInspectInfo(self, unit, numTries + 1, r, g, b))
+    elseif cache and cache.time then
+        local itemLevel = cache.itemLevel
+        if not itemLevel or (GetTime() - cache.time > 120) then
+            cache.time = nil
+            cache.itemLevel = nil
+            return Wait(0.33, AddInspectInfo, self, unit, numTries + 1, r, g, b)
         end
 
         self.ItemLevelShown = true
         self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", itemLevel, nil, nil, nil, 1, 1, 1)
     elseif unitGUID then
-        if not GW.unitIlvlsCache[unitGUID] then
-            GW.unitIlvlsCache[unitGUID] = {unitColor = {r, g, b}}
+        if not inspectGUIDCache[unitGUID] then
+            inspectGUIDCache[unitGUID] = {unitColor = {r, g, b}}
         end
 
         if lastGUID ~= unitGUID then
@@ -435,9 +475,13 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         AddRoleInfo(self, unit)
     end
 
-    --if isShiftKeyDown and color and not self.ItemLevelShown then
-    --    AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
-    --end
+    if isShiftKeyDown and isPlayerUnit and not InCombatLockdown() and not self.ItemLevelShown then
+        if color then
+            AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
+        else
+            AddInspectInfo(self, unit, 0, 0.9, 0.9, 0.9)
+        end
+    end
 
     if unit and not isPlayerUnit and IsModKeyDown() then
         local guid = (data and data.guid) or UnitGUID(unit) or ""

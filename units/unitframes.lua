@@ -14,7 +14,6 @@ local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local UpdateBuffLayout = GW.UpdateBuffLayout
-local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
 local fctf
 
@@ -294,7 +293,7 @@ local function setUnitPortraitFrame(self)
 
     local txt
     local border = "normal"
-    local showItemLevel =false --= (GW.GetSetting(self.unit .. "_SHOW_ILVL") and CanInspect(self.unit))
+    local showItemLevel = UnitIsPlayer(self.unit) and CheckInteractDistance(self.unit, 4) and CanInspect(self.unit) and GW.GetSetting(self.unit .. "_SHOW_ILVL")
     local honorLevel = showItemLevel and 0 or UnitHonorLevel and UnitHonorLevel(self.unit) or 0
 
     local unitClassIfication = UnitClassification(self.unit)
@@ -307,8 +306,9 @@ local function setUnitPortraitFrame(self)
 
     if showItemLevel then
         local guid = UnitGUID(self.unit)
-        if guid and GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel then
-            txt = RoundDec(GW.unitIlvlsCache[guid].itemLevel, 0)
+        local cache = GW.GetItemLevelFromUnitFromCache(guid)
+        if cache and cache.itemLevel then
+            txt = RoundDec(cache.itemLevel, 0)
         end
     elseif honorLevel > 9 then
         local plvl
@@ -374,7 +374,8 @@ end
 GW.AddForProfiling("unitframes", "setUnitPortraitFrame", setUnitPortraitFrame)
 
 local function updateAvgItemLevel(self, guid)
-    if guid == UnitGUID(self.unit) and CanInspect(self.unit) then
+    if not UnitIsPlayer(self.unit) or not CheckInteractDistance(self.unit, 4) or not CanInspect(self.unit) then return end
+    if guid == UnitGUID(self.unit) then
         local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel(self.unit)
         if itemLevel == "tooSoon" then
             C_Timer.After(0.05, function()
@@ -385,20 +386,18 @@ local function updateAvgItemLevel(self, guid)
                         canUpdate = false
                     else
                         iLevelDB[x] = slotInfo.iLvl
-                        slotInfo = nil -- clear cache
                     end
                 end
 
                 if canUpdate then
                     local calculateItemLevel = GW.CalculateAverageItemLevel(iLevelDB, retryUnit)
-                    PopulateUnitIlvlsCache(guid, calculateItemLevel)
-                    ClearInspectPlayer()
+                    GW.PopulateUnitIlvlsCache(guid, calculateItemLevel)
                     self:UnregisterEvent("INSPECT_READY")
                     setUnitPortraitFrame(self)
                 end
             end)
         else
-            PopulateUnitIlvlsCache(guid, itemLevel)
+            GW.PopulateUnitIlvlsCache(guid, itemLevel)
             self:UnregisterEvent("INSPECT_READY")
         end
         setUnitPortraitFrame(self)
@@ -761,13 +760,13 @@ local function target_OnEvent(self, event, unit)
     local ttf = GwTargetTargetUnitFrame
 
     if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED", "FORCE_UPDATE") then
-        if event == "PLAYER_TARGET_CHANGED" then -- and CanInspect(self.unit) and GW.GetSetting("target_SHOW_ILVL") then
+        if event == "PLAYER_TARGET_CHANGED" and UnitIsPlayer(self.unit) and  CheckInteractDistance(self.unit, 4) and CanInspect(self.unit) and GW.GetSetting("target_SHOW_ILVL") then
             local guid = UnitGUID(self.unit)
             if guid then
-                if not GW.unitIlvlsCache[guid] then
+                if not GW.IsUnitGuidInInspectCache(guid) then
                     local _, englishClass = UnitClass(self.unit)
                     local color = GWGetClassColor(englishClass, true, true)
-                    GW.unitIlvlsCache[guid] = {unitColor = {color.r, color.g, color.b}}
+                    GW.AddUnitGuidColorToInspectCache(guid, color.r, color.g, color.b)
                     self:RegisterEvent("INSPECT_READY")
                     NotifyInspect(self.unit)
                 end
@@ -815,7 +814,7 @@ local function target_OnEvent(self, event, unit)
             end
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
-        wipe(GW.unitIlvlsCache)
+        -- nothing atm
     elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end

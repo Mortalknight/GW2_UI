@@ -12,6 +12,8 @@ local openSpec = 1 -- Can be 1 or 2
 local isPetTalents = false
 local talentFrame
 
+local talentGroupContainer = {}
+
 
 local specIcons = {
     [461112] = "Interface/Addons/GW2_UI/Textures/talents/specIcons/ABILITY_HUNTER_BESTIALDISCIPLINE",
@@ -63,7 +65,7 @@ StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
     preferredIndex = 4
 }
 local function UpdatePreviewControls()
-    if _G["GwLegacyTalentTree1"].summary:IsShown() then
+    if talentGroupContainer[1].summary:IsShown() then
         talentFrame.bottomBar.prevLearn:Hide()
         talentFrame.bottomBar.prevCancel:Hide()
         return
@@ -90,23 +92,23 @@ end
 
 local function toggleSummaryScreen(self, button, buttonstate, forceState)
     if forceState == nil then
-        forceState = not _G["GwLegacyTalentTree1"].summary:IsShown()
+        forceState = not talentGroupContainer[1].summary:IsShown()
     end
 
     if forceState then
         talentFrame.bottomBarSummary:Show()
         talentFrame.bottomBar:Hide()
-        _G["GwLegacyTalentTree1"].summary:Show()
-        _G["GwLegacyTalentTree2"].summary:Show()
-        _G["GwLegacyTalentTree3"].summary:Show()
+        talentGroupContainer[1].summary:Show()
+        talentGroupContainer[2].summary:Show()
+        talentGroupContainer[3].summary:Show()
         UpdatePreviewControls()
         return
     end
     talentFrame.bottomBar:Show()
     talentFrame.bottomBarSummary:Hide()
-    _G["GwLegacyTalentTree1"].summary:Hide()
-    _G["GwLegacyTalentTree2"].summary:Hide()
-    _G["GwLegacyTalentTree3"].summary:Hide()
+    talentGroupContainer[1].summary:Hide()
+    talentGroupContainer[2].summary:Hide()
+    talentGroupContainer[3].summary:Hide()
 
     UpdatePreviewControls()
 end
@@ -426,7 +428,7 @@ end
 local function getArrow(frame, teir, column, i)
     local n = "GwLegacyTalentLine" .. "-" .. frame .. "-" .. teir .. "-" .. column .. "-" .. i
     if _G[n] == nil then
-        return CreateFrame('Frame', n, _G["GwLegacyTalentTree" .. frame].treeContainer, 'GwLegacyTalentLine')
+        return CreateFrame('Frame', n, talentGroupContainer[frame].treeContainer, 'GwLegacyTalentLine')
     end
     _G[n]:Show()
     return _G[n]
@@ -444,8 +446,8 @@ local function colorTalentArrow(self, active)
 end
 
 local function drawLegacyLine(path, frame, teir, column, requirementsMet)
-    local w = _G["GwLegacyTalentTree" .. frame].treeContainer:GetWidth()
-    local h = _G["GwLegacyTalentTree" .. frame].treeContainer:GetHeight()
+    local w = talentGroupContainer[frame].treeContainer:GetWidth()
+    local h = talentGroupContainer[frame].treeContainer:GetHeight()
     local cTeir = teir
     local cCol = column
 
@@ -479,11 +481,10 @@ local function drawLegacyLine(path, frame, teir, column, requirementsMet)
             end
         end
 
-
         local x = (columnSize * (cCol - 1) + columnSize / 2)
         local y = (rowSize * (cTeir - 1) + rowSize / 2) + TALENT_TOP_PADDING
 
-        arrow:SetPoint("CENTER", _G["GwLegacyTalentTree" .. frame].treeContainer, "TOPLEFT", x, -y)
+        arrow:SetPoint("CENTER", talentGroupContainer[frame].treeContainer, "TOPLEFT", x, -y)
         colorTalentArrow(arrow, requirementsMet)
         cTeir = cTeir + path[i].y
         cCol = cCol + path[i].x
@@ -621,7 +622,7 @@ local function updateTalentTrees()
         local primaryTree = GetPreviewPrimaryTalentTree(false, false, openSpec) or GetPrimaryTalentTree(false, false, openSpec)
         local _, name, _, _, pointsSpent, _, previewPointsSpent, isUnlocked = GetTalentTabInfo(f, false, isPetTalents, openSpec)
         --Blizzard  local id, name, description, icon, pointsSpent, background, previewPointsSpent, isUnlocked = GetTalentTabInfo(selectedTab, TalentFrame.inspect, TalentFrame.pet, TalentFrame.talentGroup)
-        local TalentFrame = _G["GwLegacyTalentTree" .. f]
+        local TalentFrame = talentGroupContainer[f]
         local preview = GetCVarBool("previewTalentsOption")
 
         TalentFrame.pointsSpent = pointsSpent + previewPointsSpent
@@ -797,6 +798,8 @@ local function loadTalentsFrames()
                 hookTalentButton(talentButton, container.treeContainer, y, j)
             end
         end
+
+        tinsert(talentGroupContainer, container)
     end
 
     updateTalentTrees()
@@ -824,9 +827,9 @@ local function LoadTalents()
 
     loadTalentsFrames()
 
-    updateTalentSummary(_G["GwLegacyTalentTree1"])
-    updateTalentSummary(_G["GwLegacyTalentTree2"])
-    updateTalentSummary(_G["GwLegacyTalentTree3"])
+    updateTalentSummary(talentGroupContainer[1])
+    updateTalentSummary(talentGroupContainer[2])
+    updateTalentSummary(talentGroupContainer[3])
 
     talentFrame.navigation.petTalentsButton.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\tabicon_pet")
     talentFrame.navigation.petTalentsButton.icon:SetTexCoord(0.6796875, 0.96875, 0.046875, 0.625)
@@ -915,9 +918,9 @@ local function LoadTalents()
             " |TInterface/AddOns/GW2_UI/textures/icons/talent-icon: 24, 24, 0, 0, 0.1875, 0.828125 , 0.1875, 0.828125 |t ")
 
         if event == "LEARNED_SPELL_IN_TAB" then
-            updateTalentSummary(_G["GwLegacyTalentTree1"])
-            updateTalentSummary(_G["GwLegacyTalentTree2"])
-            updateTalentSummary(_G["GwLegacyTalentTree3"])
+            updateTalentSummary(talentGroupContainer[1])
+            updateTalentSummary(talentGroupContainer[2])
+            updateTalentSummary(talentGroupContainer[3])
             return
         end
 
@@ -927,9 +930,9 @@ local function LoadTalents()
     talentFrame:SetScript('OnShow', function()
         if InCombatLockdown() then return end
         updateTalentTrees()
-        updateTalentSummary("GwLegacyTalentTree1")
-        updateTalentSummary("GwLegacyTalentTree2")
-        updateTalentSummary("GwLegacyTalentTree3")
+        updateTalentSummary(talentGroupContainer[1])
+        updateTalentSummary(talentGroupContainer[2])
+        updateTalentSummary(talentGroupContainer[3])
     end)
     hooksecurefunc('ToggleTalentFrame', function()
         if InCombatLockdown() then return end

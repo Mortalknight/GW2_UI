@@ -40,7 +40,6 @@ GW.tocversion = tonumber(GW.tocversion)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
 
 --Tables
-GW.unitIlvlsCache = {}
 GW.BackdropTemplates = {}
 GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}
@@ -50,7 +49,7 @@ GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
 GW.animations = {}
 
-GW.ScanTooltip = CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "SharedTooltipTemplate")
+GW.ScanTooltip = CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
 GW.HiddenFrame = CreateFrame("Frame")
 GW.HiddenFrame.HiddenString = GW.HiddenFrame:CreateFontString(nil, "OVERLAY")
 GW.HiddenFrame:Hide()
