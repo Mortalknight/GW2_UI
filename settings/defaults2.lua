@@ -1099,6 +1099,7 @@ GW.globalDefault = {
                     "ArkInventory",
                     "Bagnon",
                     "Sorted",
+                    "Baganator"
                 },
             },
             Minimap = {
