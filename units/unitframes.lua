@@ -293,7 +293,7 @@ local function setUnitPortraitFrame(self)
 
     local txt
     local border = "normal"
-    local showItemLevel = UnitIsPlayer(self.unit) and CheckInteractDistance(self.unit, 4) and CanInspect(self.unit) and GW.GetSetting(self.unit .. "_SHOW_ILVL")
+    local showItemLevel = UnitIsPlayer(self.unit) and not InCombatLockdown() and CheckInteractDistance(self.unit, 4) and CanInspect(self.unit) and GW.GetSetting(self.unit .. "_SHOW_ILVL")
     local honorLevel = showItemLevel and 0 or UnitHonorLevel and UnitHonorLevel(self.unit) or 0
 
     local unitClassIfication = UnitClassification(self.unit)
@@ -374,7 +374,7 @@ end
 GW.AddForProfiling("unitframes", "setUnitPortraitFrame", setUnitPortraitFrame)
 
 local function updateAvgItemLevel(self, guid)
-    if not UnitIsPlayer(self.unit) or not CheckInteractDistance(self.unit, 4) or not CanInspect(self.unit) then return end
+    if InCombatLockdown() or not UnitIsPlayer(self.unit) or not CheckInteractDistance(self.unit, 4) or not CanInspect(self.unit) then return end
     if guid == UnitGUID(self.unit) then
         local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel(self.unit)
         if itemLevel == "tooSoon" then
@@ -760,7 +760,7 @@ local function target_OnEvent(self, event, unit)
     local ttf = GwTargetTargetUnitFrame
 
     if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED", "FORCE_UPDATE") then
-        if event == "PLAYER_TARGET_CHANGED" and UnitIsPlayer(self.unit) and  CheckInteractDistance(self.unit, 4) and CanInspect(self.unit) and GW.GetSetting("target_SHOW_ILVL") then
+        if event == "PLAYER_TARGET_CHANGED" and not InCombatLockdown() and UnitIsPlayer(self.unit) and  CheckInteractDistance(self.unit, 4) and CanInspect(self.unit) and GW.GetSetting("target_SHOW_ILVL") then
             local guid = UnitGUID(self.unit)
             if guid then
                 if not GW.IsUnitGuidInInspectCache(guid) then
