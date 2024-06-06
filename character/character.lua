@@ -459,10 +459,6 @@ local function PaperDollSlotButton_Update(self)
         if self.repairIcon then self.repairIcon:Hide() end
     end
 
-    if self.itemlevel then
-        GW.setItemLevel(self, GetInventoryItemQuality("player", slot), GetInventoryItemLink("player", slot))
-    end
-
     if self.IconBorder then
         local quality = GetInventoryItemQuality("player", slot)
         GW.setItemButtonQuality(self, quality)

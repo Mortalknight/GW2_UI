@@ -875,6 +875,7 @@ GW_DEFAULT.IncompatibleAddons = {
             "ArkInventory",
             "Bagnon",
             "Sorted",
+            "Baganator"
         },
     },
     Minimap = {
