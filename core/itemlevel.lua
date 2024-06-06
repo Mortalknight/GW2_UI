@@ -22,6 +22,7 @@ local function InspectGearSlot(line, lineText, slotInfo)
 		local text = gsub(gsub(enchant, '%s?|A.-|a', ''), '|cn.-:(.-)|r', '%1')
 		slotInfo.enchantText = format('%s%s%s', color1 or '', text, color2 or '')
 		slotInfo.enchantTextShort = format('%s%s%s', color1 or '', string.utf8sub(text, 1, 18), color2 or '')
+		slotInfo.enchantTextShort2 = format("%s%s%s", color1 or "", string.utf8sub(text, 1, 11), color2 or "")
 		slotInfo.enchantTextReal = enchant -- unchanged, contains Atlas and color
 
 		local r, g, b = line:GetTextColor()

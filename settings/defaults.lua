@@ -838,6 +838,8 @@ GW_DEFAULT["ROLE_BAR"] = "IN_RAID"
 
 GW_DEFAULT["FADE_EXP_BAR"] = false
 
+GW_DEFAULT["SHOW_CHARACTER_ITEM_INFO"] = true
+
 GW_DEFAULT.pulltimerSeconds = 10
 
 -- incompatible addons

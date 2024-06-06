@@ -8,11 +8,9 @@ local EnableTooltip = GW.EnableTooltip
 local FormatMoneyForChat = GW.FormatMoneyForChat
 local inv
 
-local BAG_ITEM_SIZE = 40
 local BAG_ITEM_LARGE_SIZE = 40
 local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
-local BAG_WINDOW_SIZE = 480
 
 local IterationCount, totalPrice = 500, 0
 local SellJunkFrame = CreateFrame("FRAME")
@@ -156,7 +154,7 @@ local function layoutBagItems(f)
     local rev = GetSetting("BAG_REVERSE_SORT")
     local sep = GetSetting("BAG_SEPARATE_BAGS")
     local row = sep and 1 or 0
-    local item_off = BAG_ITEM_SIZE + BAG_ITEM_PADDING
+    local item_off = GetSetting("BAG_ITEM_SIZE") + BAG_ITEM_PADDING
     local unfinishedRow = false
     local finishedRows = 0
 
@@ -187,8 +185,8 @@ local function layoutBagItems(f)
             _G["GwBagFrameGwBagHeader" .. bag_id]:Show()
             _G["GwBagFrameGwBagHeader" .. bag_id]:ClearAllPoints()
             _G["GwBagFrameGwBagHeader" .. bag_id]:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off)
-            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(BAG_WINDOW_SIZE - BAG_ITEM_PADDING)
-            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(BAG_WINDOW_SIZE - BAG_ITEM_PADDING)
+            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(GetSetting("BAG_WIDTH") - BAG_ITEM_PADDING)
+            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(GetSetting("BAG_WIDTH") - BAG_ITEM_PADDING)
         else
             _G["GwBagFrameGwBagHeader" .. bag_id] :Hide()
         end
@@ -245,7 +243,7 @@ local function snapFrameSize(f)
     if f.ItemFrame:IsShown() then
         cfs = f.ItemFrame.Containers
     end
-    inv.snapFrameSize(f, cfs, BAG_ITEM_SIZE, BAG_ITEM_PADDING, 350)
+    inv.snapFrameSize(f, cfs, GetSetting("BAG_ITEM_SIZE"), BAG_ITEM_PADDING, 350)
 end
 GW.AddForProfiling("bag", "snapFrameSize", snapFrameSize)
 
@@ -456,15 +454,14 @@ end
 GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
 
 local function onBagResizeStop(self)
-    BAG_WINDOW_SIZE = self:GetWidth()
-    SetSetting("BAG_WIDTH", BAG_WINDOW_SIZE)
-    GwBagFrame.Header:SetWidth(BAG_WINDOW_SIZE)
+    SetSetting("BAG_WIDTH", self:GetWidth())
+    GwBagFrame.Header:SetWidth(GetSetting("BAG_WIDTH"))
     inv.onMoved(self, "BAG_POSITION", snapFrameSize)
 end
 GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
 
 local function onBagFrameChangeSize(self, _, _, skip)
-    local cols = inv.colCount(BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
+    local cols = inv.colCount(GetSetting("BAG_ITEM_SIZE"), BAG_ITEM_PADDING, self:GetWidth())
 
     self.Header:SetWidth(self:GetWidth())
     if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
@@ -478,15 +475,13 @@ GW.AddForProfiling("bag", "onBagFrameChangeSize", onBagFrameChangeSize)
 
 -- toggles the setting for compact/large icons
 local function compactToggle()
-    if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
-        BAG_ITEM_SIZE = BAG_ITEM_COMPACT_SIZE
-        SetSetting("BAG_ITEM_SIZE", BAG_ITEM_SIZE)
+    if GW.GetSettings("BAG_ITEM_SIZE") == BAG_ITEM_LARGE_SIZE then
+        GW.SetSetting("BAG_ITEM_SIZE", BAG_ITEM_COMPACT_SIZE)
         inv.resizeInventory()
         return true
     end
 
-    BAG_ITEM_SIZE = BAG_ITEM_LARGE_SIZE
-    SetSetting("BAG_ITEM_SIZE", BAG_ITEM_SIZE)
+    SetSetting("BAG_ITEM_SIZE", BAG_ITEM_LARGE_SIZE)
     inv.resizeInventory()
     return false
 end
@@ -648,10 +643,7 @@ end
 local function LoadBag(helpers)
     inv = helpers
 
-    BAG_WINDOW_SIZE = GetSetting("BAG_WIDTH")
-    BAG_ITEM_SIZE = GetSetting("BAG_ITEM_SIZE")
-    if BAG_ITEM_SIZE > 40 then
-        BAG_ITEM_SIZE = 40
+    if GetSetting("BAG_ITEM_SIZE") > 40 then
         SetSetting("BAG_ITEM_SIZE", 40)
     end
 
@@ -660,8 +652,8 @@ local function LoadBag(helpers)
     tinsert(UISpecialFrames, "GwBagFrame")
     f.gw_state = "closed"
     f:ClearAllPoints()
-    f:SetWidth(BAG_WINDOW_SIZE)
-    f.Header:SetWidth(BAG_WINDOW_SIZE)
+    f:SetWidth(GetSetting("BAG_WIDTH"))
+    f.Header:SetWidth(GetSetting("BAG_WIDTH"))
     onBagFrameChangeSize(f, nil, nil, true)
 
     -- setup show/hide
@@ -1023,7 +1015,6 @@ local function LoadBag(helpers)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()
-        BAG_ITEM_SIZE = GetSetting("BAG_ITEM_SIZE")
         layoutItems(f)
         snapFrameSize(f)
         -- TODO: update the text on the compact icons config option

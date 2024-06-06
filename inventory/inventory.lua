@@ -11,9 +11,9 @@ BAG_FILTER_LABELS = {
 };
 
 -- reskins an ItemButton to use GW2_UI styling
-local item_size
-local function reskinItemButton(iname, b)
-    b:SetSize(item_size, item_size)
+local function reskinItemButton(iname, b, overrideIconSize)
+    local iconSize = overrideIconSize or GW.GetSetting("BAG_ITEM_SIZE")
+    b:SetSize(iconSize, iconSize)
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b.icon:SetAllPoints(b)
@@ -45,7 +45,7 @@ local function reskinItemButton(iname, b)
 
     local qtex = b.IconQuestTexture or (iname and _G[iname .. "IconQuestTexture"])
     if qtex then
-        qtex:SetSize(item_size + 2, item_size + 2)
+        qtex:SetSize(iconSize + 2, iconSize + 2)
         qtex:ClearAllPoints()
         qtex:SetPoint("CENTER", b, "CENTER", 0, 0)
     end
@@ -109,7 +109,6 @@ local function getContainerFrame(bag_id)
     return nil
 end
 GW.AddForProfiling("inventory", "getContainerFrame", getContainerFrame)
-
 
 local function reskinItemButtons()
     for i = 1, NUM_CONTAINER_FRAMES do
@@ -192,12 +191,13 @@ local function GetItemEquipmentSetName(itemIDOrLink)
     return nil
 end
 
-local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
+local function hookItemQuality(button, quality, itemIDOrLink)
     if not button.gwBackdrop then
         return
     end
 
     local bag_id = button:GetParent():GetID()
+    local professionColors = BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GetSetting("BAG_SHOW_ILVL") and not professionColors
     local showEquipmentSetName = GetSetting("BAG_SHOW_EQUIPMENT_SET_NAME")
 
@@ -210,7 +210,6 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
     end
 
-    local professionColors = BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
@@ -286,13 +285,12 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         if button.itemlevel then button.itemlevel:SetText("") end
     end
 end
+GW.SetBagItemButtonQualitySkin = hookItemQuality
 
 local bag_resize
 local bank_resize
 local function resizeInventory()
-    item_size = GetSetting("BAG_ITEM_SIZE")
-    if item_size > 40 then
-        item_size = 40
+    if GetSetting("BAG_ITEM_SIZE") > 40 then
         SetSetting("BAG_ITEM_SIZE", 40)
     end
     reskinItemButtons()
@@ -339,7 +337,7 @@ local function takeItemButtons(p, bag_id)
     -- amazingly; this is probably brittle in the long-term though and we should
     -- someday re-implemenent all the ItemButton functionality ourselves
 
-    freeItemButtons(cf, p, bag_id)
+    freeItemButtons(cf, p)
 
     local iname
     if bag_id == BANK_CONTAINER then
@@ -659,7 +657,6 @@ local function LoadInventory()
     _G["BINDING_NAME_GW2UI_BAG_SORT"] = BAG_CLEANUP_BAGS
     _G["BINDING_NAME_GW2UI_BANK_SORT"] = BAG_CLEANUP_BANK
 
-    item_size = GetSetting("BAG_ITEM_SIZE")
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
     hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
@@ -668,7 +665,7 @@ local function LoadInventory()
     reskinItemButtons()
 
     -- whenever an ItemButton sets its quality ensure our custom border is being used
-    hooksecurefunc("SetItemButtonQuality", hookSetItemButtonQuality)
+    hooksecurefunc("SetItemButtonQuality", hookItemQuality)
 
     -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
     for i = 1, NUM_CONTAINER_FRAMES do
