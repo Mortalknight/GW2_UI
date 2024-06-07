@@ -410,7 +410,7 @@ local function createBagBar(f)
 
         f.bags[bag_idx] = b
     end
-    local x, y = setBagBarOrder(f)
+    setBagBarOrder(f)
 end
 GW.AddForProfiling("bag", "createBagBar", createBagBar)
 
