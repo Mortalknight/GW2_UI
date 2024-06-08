@@ -581,6 +581,13 @@ local function CleanUpTalentTrees()
             end
         end
     end
+
+    for f = 1, 3 do
+        local TalentFrame = talentGroupContainer[f]
+        TalentFrame.info.title:SetText("")
+        TalentFrame.info.points:SetText("")
+        TalentFrame:SetEnabled(false)
+    end
 end
 
 
@@ -624,6 +631,8 @@ local function updateTalentTrees()
         --Blizzard  local id, name, description, icon, pointsSpent, background, previewPointsSpent, isUnlocked = GetTalentTabInfo(selectedTab, TalentFrame.inspect, TalentFrame.pet, TalentFrame.talentGroup)
         local TalentFrame = talentGroupContainer[f]
         local preview = GetCVarBool("previewTalentsOption")
+
+        TalentFrame:SetEnabled(true)
 
         TalentFrame.pointsSpent = pointsSpent + previewPointsSpent
 
@@ -736,7 +745,9 @@ local function updateTalentTrees()
                 end
             end
         end
-        updateTalentSummary(TalentFrame)
+        if not isPetTalents then
+            updateTalentSummary(TalentFrame)
+        end
     end
     -- Clean up unsuded slots
     for i = 1, GW.api.GetNumSpecializations(isPetTalents) do
@@ -888,7 +899,6 @@ local function LoadTalents()
         updateTalentTrees()
         toggleSummaryScreen(self, nil, nil, false)
         talentFrame.bottomBar.viewSummary:Hide()
-
     end)
     talentFrame.navigation.activateSpecGroup:SetScript("OnClick", function()
         if openSpec then
