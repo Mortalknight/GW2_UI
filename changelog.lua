@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.6.1",{
+    {ct.bug,[=[Pet talents can not be set again]=]},
+})
+
 addChange("1.6.0",{
     {ct.feature,[=[Added Gem info to hero panel]=]},
     {ct.feature,[=[Added back ilvl to targetframes and tooltip (hold shift)]=]},

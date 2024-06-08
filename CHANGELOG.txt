@@ -1,3 +1,7 @@
+1.6.1-Cata
+FIXES
+    - Pet talents can not be set again
+
 1.6.0-Cata
 NEW
     - Added Gem info to hero panel
