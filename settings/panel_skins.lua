@@ -18,6 +18,7 @@ local function LoadSkinsPanel(sWindow)
 
     settingsMenuAddButton(L["Skins"],p,{})
 
+    addOption(p.scroll.scrollchild, L["Alert Frames"], nil, "ALERTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, MAINMENU_BUTTON, nil, "MAINMENU_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Popup notifications"], nil, "STATICPOPUP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, SHOW_BATTLENET_TOASTS, nil, "BNTOASTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
@@ -37,6 +38,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, FLIGHT_MAP, nil, "FLIGHTMAP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, HELP_FRAME_TITLE, nil, "HELPFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, INSPECT, nil, "INSPECTION_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, L["Loot Frame"], nil, "LOOTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
 
     InitPanel(p, true)
 end

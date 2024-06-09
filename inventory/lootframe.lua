@@ -10,6 +10,8 @@ local function updateLootFrameButtons()
 end
 
 local function LoadLootFrameSkin()
+    if not GW.GetSetting("LOOTFRAME_SKIN_ENABLED") then return end
+
     LootFrameBg:Hide()
     LootFrameBg:SetPoint("TOPLEFT", 0, -64)
     LootFrameBg:SetWidth(170)

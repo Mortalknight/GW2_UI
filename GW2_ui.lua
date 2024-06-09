@@ -596,6 +596,7 @@ local function evPlayerLogin(self)
     GW.LoadGossipSkin()
     GW.LoadQuestLogFrameSkin()
     GW.LoadMerchantFrameSkin()
+    GW.LoadLootFrameSkin()
     GW.LoadReadyCheckSkin()
     GW.LoadLFGSkins()
     GW.LoadTimeManagerSkin()
@@ -697,7 +698,6 @@ local function evPlayerLogin(self)
     if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("BAGS_ENABLED") then
             GW.LoadInventory()
-            GW.LoadLootFrameSkin()
         end
     else
         -- if not our bags, we need to cut the bagbar frame out of the micromenu
