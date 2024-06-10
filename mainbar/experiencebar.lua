@@ -16,7 +16,7 @@ local settings = {
 }
 
 local function UpdateSettings(forceFadeIn)
-    settings.fadeExpbar.enabled = GW.GetSetting("FADE_EXP_BAR")
+    settings.fadeExpbar.enabled = GW.settings.FADE_EXP_BAR
     settings.fadeExpbar.forceFadeIn = forceFadeIn
 end
 GW.UpdateExperiencebarSettings = UpdateSettings

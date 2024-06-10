@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
 local updateIcon
 
 do
@@ -284,7 +283,7 @@ local function setupMicroButtons(mbf)
     -- determine if we are using the default char button (for default charwin)
     -- or if we need to create our own char button for the custom hero panel
     local cref
-    if GetSetting("USE_CHARACTER_WINDOW") then
+    if GW.settings.USE_CHARACTER_WINDOW then
         cref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
@@ -342,7 +341,7 @@ local function setupMicroButtons(mbf)
     -- determine if we are using the default spell & talent buttons
     -- or if we need our custom talent button for the hero panel
     local sref
-    if GetSetting("USE_SPELLBOOK_WINDOW") then
+    if GW.settings.USE_SPELLBOOK_WINDOW then
         sref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         sref.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
@@ -373,7 +372,7 @@ local function setupMicroButtons(mbf)
     end
 
     local tref
-    if GetSetting("USE_TALENT_WINDOW") then
+    if GW.settings.USE_TALENT_WINDOW then
         tref = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
         tref.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS")
         tref.newbieText = NEWBIE_TOOLTIP_TALENTS
@@ -631,12 +630,12 @@ local function LoadMicroMenu()
     )
 
     -- hide bg if borders are off
-    if not GetSetting("BORDER_ENABLED") then
+    if not GW.settings.BORDER_ENABLED then
         mbf.cf.bg:Hide()
     end
 
     -- if set to fade micro menu, add fader
-    local shouldFade = GetSetting("FADE_MICROMENU")
+    local shouldFade = GW.settings.FADE_MICROMENU
     mbf.cf:SetAttribute("shouldFade", shouldFade)
     mbf.cf:SetAttribute("fadeTime", 0.15)
 
@@ -680,7 +679,7 @@ local function LoadMicroMenu()
         cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
     ]=])
     mbf.cf:HookScript("OnLeave", function(self)
-        if not self:IsMouseOver() and GetSetting("FADE_MICROMENU") then
+        if not self:IsMouseOver() and GW.settings.FADE_MICROMENU then
             self:fadeOut()
         end
     end)

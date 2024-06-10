@@ -13,7 +13,7 @@ end
 GW.ResetQuestRewardMostValueIcon = HideAllUpgradeIconsByPawn
 
 local function QuestRewardMostValueIcon()
-    if not GW.GetSetting("QUEST_REWARDS_MOST_VALUE_ICON") then return end
+    if not GW.settings.QUEST_REWARDS_MOST_VALUE_ICON then return end
 
     local firstItem = QuestInfoRewardsFrameQuestInfoItem1
     if not firstItem then return end

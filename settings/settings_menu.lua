@@ -1,13 +1,12 @@
 local _, GW = ...
 local GwSettingsMenuSearchable
 local AddToAnimation
-local animations
 
 local btnIndex = 0
 local newButtonAnchorPoint = nil
 local menuButtons = {}
 
-local GwSettingsSearchResultPanel;
+local GwSettingsSearchResultPanel
 local matchingOptionFrames = {}
 
 local function CharacterMenuButton_OnLoad(self, odd, hasArrow, margin, isSubCat)
@@ -24,10 +23,10 @@ local function CharacterMenuButton_OnLoad(self, odd, hasArrow, margin, isSubCat)
     self:GetFontString():SetShadowOffset(1, -1)
     self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
     self:GetFontString():SetJustifyH("LEFT")
-    self.arrow:ClearAllPoints();
-    self.arrow:SetPoint("LEFT",10,0)
+    self.arrow:ClearAllPoints()
+    self.arrow:SetPoint("LEFT", 10, 0)
     self.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
-    self.arrow:SetSize(16,16)
+    self.arrow:SetSize(16, 16)
     if not hasArrow then
         self.arrow:Hide()
         self:GetFontString():SetPoint("LEFT", self, "LEFT", margin + (isSubCat and 0 or 20), 0)
@@ -39,7 +38,7 @@ end
 --create pool for search result breadcrumbs
 local breadCrumbPool = {}
 local function createBreadCrumbFrame()
-    local f = CreateFrame("Frame", nil,GwSettingsSearchResultPanel.scroll.scrollchild,"GwSettingsSearchBreadCrumb")
+    local f = CreateFrame("Frame", nil, GwSettingsSearchResultPanel.scroll.scrollchild, "GwSettingsSearchBreadCrumb")
 
     f.header:SetFont(DAMAGE_TEXT_FONT, 20)
     f.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
@@ -49,26 +48,17 @@ local function createBreadCrumbFrame()
     breadCrumbPool[#breadCrumbPool + 1] = f
     return f
 end
-local function getBreadCrumbFrame()
-  for i=1,#breadCrumbPool do
-    local f = breadCrumbPool[i]
-      if not f:IsVisible() then
-        f:Show()
-        return f
-      end
-  end
-  return createBreadCrumbFrame();
-end
+
 local function hideBreadCrumbFrames()
-  for i=1,#breadCrumbPool do
-      local f = breadCrumbPool[i]
-      f:Hide()
-  end
+    for i = 1, #breadCrumbPool do
+        local f = breadCrumbPool[i]
+        f:Hide()
+    end
 end
 
 local function updateScrollFrame(self)
     local height = 0
-    for i=1,#menuButtons do
+    for i = 1, #menuButtons do
         local b = menuButtons[i]
         height = height + b:GetHeight()
         if b.content:IsVisible() then
@@ -78,7 +68,7 @@ local function updateScrollFrame(self)
 
     local scrollMax = max(0, height - self.scroll:GetHeight())
 
-    if scrollMax==0 then
+    if scrollMax == 0 then
         self.scroll.slider.thumb:Hide()
     else
         self.scroll.slider.thumb:Show()
@@ -94,19 +84,17 @@ local function updateScrollFrame(self)
 end
 
 local function toggleMenuItem(self,active)
-    if AddToAnimation==nil then
+    if AddToAnimation == nil then
         AddToAnimation = GW.AddToAnimation
-        animations = GW.animations
     end
     if active then
         self.content:Show()
         self.button.arrow:SetRotation(0)
         self.content:SetHeight(self.content.height)
         updateScrollFrame(GwSettingsMenuSearchable)
-        AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2, function()
-            local p = animations[self:GetName()].progress
-            self.button.arrow:SetRotation(-1.5707*p)
-        end, "noease")
+        AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2,
+            function(p) self.button.arrow:SetRotation(-1.5707 * p) end,
+            "noease")
 
         return
     end
@@ -114,31 +102,31 @@ local function toggleMenuItem(self,active)
     self.content:SetHeight(0)
     updateScrollFrame(GwSettingsMenuSearchable)
     --can be done with animation groups
-    AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2, function()
-        local p = animations[self:GetName()].progress
-        self.button.arrow:SetRotation(-1.5707*p)
-    end, "noease")
+    AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2,
+        function(p) self.button.arrow:SetRotation(-1.5707 * p) end,
+        "noease")
 
 end
 local function resetMenu(collapse)
-    for _,menuItem in pairs(menuButtons) do
-        if menuItem.content.buttonCount>0 then
+    for _, menuItem in pairs(menuButtons) do
+        if menuItem.content.buttonCount > 0 then
             for _, subButton in pairs(menuItem.content.buttons) do
             subButton.activeTexture:Hide()
             end
         end
         menuItem.button.activeTexture:Hide()
         if menuItem.content:IsVisible() and collapse then
-            toggleMenuItem(menuItem,false)
+            toggleMenuItem(menuItem, false)
         end
     end
 end
+GW.ResetSettingsMenuCategories = resetMenu
 
-local function  resetSearchables()
+local function resetSearchables()
     for _, of in pairs(matchingOptionFrames) do
         of:ClearAllPoints()
         of:SetParent(of.searchAble.og_parent)
-        of:SetPoint(of.searchAble.og_point ,of.searchAble.og_relativePoint, of.searchAble.og_x, of.searchAble.og_y)
+        of:SetPoint(of.searchAble.og_point, of.searchAble.og_relativePoint, of.searchAble.og_x, of.searchAble.og_y)
         if of.searchAble.og_dd_container_parent then
             of.container:SetParent(of.searchAble.og_dd_container_parent)
         end
@@ -147,49 +135,57 @@ local function  resetSearchables()
     matchingOptionFrames = {}
 end
 
+GW.lastSelectedSettingsMenuCategorie = {
+    button = nil,
+    basePanel = nil,
+    panelFrame = nil
+}
 local function switchCat(self, basePanel, panelFrame)
+    local settings_cat = GW.getSettingsCat()
+    resetSearchables()
+    if self then
+        self.activeTexture:Show()
+    end
 
-  local settings_cat = GW.getSettingsCat()
-  resetSearchables()
-  if self then
-    self.activeTexture:Show()
-  end
+    --hide search results
+    GwSettingsSearchResultPanel:Hide()
 
-  --hide search results
-  GwSettingsSearchResultPanel:Hide()
+    for _, l in ipairs(settings_cat) do
+        --  l.iconbg:Hide()
+        l.cat_panel:Hide()
 
-  for _, l in ipairs(settings_cat) do
-    --  l.iconbg:Hide()
-      l.cat_panel:Hide()
+        if l.cat_crollFrames then
+            for _, v in pairs(l.cat_crollFrames) do
+                v:Hide()
+            end
+        end
+        -- hide all profiles
+        if l.cat_profilePanels then
+            for _, pp in ipairs(l.cat_profilePanels) do
+                pp:Hide()
+            end
+        end
+    end
+    basePanel:Show()
 
-      if l.cat_crollFrames then
-          for _, v in pairs(l.cat_crollFrames) do
-            v:Hide()
-          end
-      end
-      -- hide all profiles
-      if l.cat_profilePanels then
-          for _, pp in ipairs(l.cat_profilePanels) do
-              pp:Hide()
-          end
-      end
-  end
-  basePanel:Show()
+    if panelFrame then
+        panelFrame:Show()
+    end
 
-  if panelFrame then
-    panelFrame:Show()
-  end
-
+    GW.lastSelectedSettingsMenuCategorie.button = self
+    GW.lastSelectedSettingsMenuCategorie.basePanel = basePanel
+    GW.lastSelectedSettingsMenuCategorie.panelFrame = panelFrame
 end
+GW.SwitchSettingsMenuCategorie = switchCat
 
 local function searchInputChanged(self)
     if not self:HasFocus() then return end
 
     local text = self:GetText()
-    if text==nil or text=="" then
+    if text == nil or text == "" then
         return
     end
-    if text==SEARCH then
+    if text == SEARCH then
         return
     end
     resetMenu(true)
@@ -257,7 +253,7 @@ local function searchInputChanged(self)
                 of:SetParent(GwSettingsSearchResultPanel.scroll.scrollchild)
                 of:SetPoint("TOPLEFT", GwSettingsSearchResultPanel.scroll.scrollchild, "TOPLEFT", padding.x, padding.y)
                 if of.optionType == "dropdown" then
-                  of.container:SetParent(GwSettingsSearchResultPanel.scroll)
+                of.container:SetParent(GwSettingsSearchResultPanel.scroll)
                 end
 
                 if not of.newLine then
@@ -390,7 +386,7 @@ local function settingMenuToggle(toggle)
 end
 GW.settingMenuToggle = settingMenuToggle
 
-local function loadSettingsSearchAbleMenu(sWindow)
+local function loadSettingsSearchAbleMenu()
     GwSettingsMenuSearchable = CreateFrame("Frame", "GwSettingsMenuSearchable",GwSettingsWindow,"GwSettingsMenuSearchable")
     GwSettingsMenuSearchable.scroll:SetScrollChild(GwSettingsMenuSearchable.scroll.scrollchild)
 

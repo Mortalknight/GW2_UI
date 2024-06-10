@@ -447,10 +447,10 @@ local function LoadPowerBar()
     playerPowerBar:SetPoint("TOPLEFT", playerPowerBar.gwMover)
 
     -- position mover
-    if (not GW.GetSetting("XPBAR_ENABLED") or GW.GetSetting("PLAYER_AS_TARGET_FRAME")) and not playerPowerBar.isMoved then
-        local framePoint = GW.GetSetting("PowerBar_pos")
-        local yOff = not GW.GetSetting("XPBAR_ENABLED") and 14 or 0
-        local xOff = GW.GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
+    if (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not playerPowerBar.isMoved then
+        local framePoint = GW.settings.PowerBar_pos
+        local yOff = not GW.settings.XPBAR_ENABLED and 14 or 0
+        local xOff = GW.settings.PLAYER_AS_TARGET_FRAME and 52 or 0
         playerPowerBar.gwMover:ClearAllPoints()
         playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs - xOff, framePoint.yOfs - yOff)
     end

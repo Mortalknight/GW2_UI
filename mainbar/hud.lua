@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local action_hud_auras = {}
 
@@ -14,7 +13,7 @@ local currentTexture = nil
 GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
 
 local function selectBg(self)
-    if not GetSetting("HUD_BACKGROUND") or not GetSetting("HUD_SPELL_SWAP") then
+    if not GW.settings.HUD_BACKGROUND or not GW.settings.HUD_SPELL_SWAP then
         return
     end
     local right = "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow"
@@ -59,7 +58,7 @@ end
 GW.AddForProfiling("hud", "selectBg", selectBg)
 
 local function combatHealthState(self)
-    if not GetSetting("HUD_BACKGROUND") then
+    if not GW.settings.HUD_BACKGROUND then
         return
     end
 
@@ -170,7 +169,7 @@ GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
 local function ToggleHudBackground()
     if Gw2_HudBackgroud.actionBarHud.HUDBG then
         for _, f in ipairs(Gw2_HudBackgroud.actionBarHud.HUDBG) do
-            if GetSetting("HUD_BACKGROUND") then
+            if GW.settings.HUD_BACKGROUND then
                 f:Show()
             else
                 f:Hide()
@@ -179,7 +178,7 @@ local function ToggleHudBackground()
     end
 
     if Gw2_HudBackgroud.edgeTint then
-        local showBorder = GetSetting("BORDER_ENABLED")
+        local showBorder = GW.settings.BORDER_ENABLED
         for _, f in ipairs(Gw2_HudBackgroud.edgeTint) do
             if showBorder then
                 f:Show()

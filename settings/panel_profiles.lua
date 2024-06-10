@@ -1,10 +1,7 @@
 local _, GW = ...
 local L = GW.L
 local createCat = GW.CreateCat
-local GetActiveProfile = GW.GetActiveProfile
-local SetSetting = GW.SetSetting
 local ResetToDefault = GW.ResetToDefault
-local GetSettingsProfiles = GW.GetSettingsProfiles
 local AddForProfiling = GW.AddForProfiling
 local settingMenuToggle = GW.settingMenuToggle
 
@@ -15,24 +12,13 @@ local ProfileWin = nil
 local function loadProfiles(profilewin)
     local USED_PROFILE_HEIGHT
     local offset = HybridScrollFrame_GetOffset(profilewin)
-    local profiles = GetSettingsProfiles()
-    local currentProfile = GetActiveProfile()
-    local validProfiles = {}
-    local validProfileIdx = 1
-
-    -- sort out nil tables and sort table by id
-    for k, _ in pairs(profiles) do
-        if profiles[k] then
-            validProfiles[validProfileIdx] = profiles[k]
-            validProfiles[validProfileIdx].realIdx = k
-            validProfileIdx = validProfileIdx + 1
-        end
-    end
+    local profiles, numProfiles = GW.globalSettings:GetProfiles()
+    local currentProfile = GW.globalSettings:GetCurrentProfile()
 
     table.sort(
-        validProfiles,
+        profiles,
         function(a, b)
-            return a.realIdx < b.realIdx
+            return a < b
         end
     )
 
@@ -40,13 +26,13 @@ local function loadProfiles(profilewin)
         local slot = profilewin.buttons[i]
 
         local idx = i + offset
-        if idx > #validProfiles then
+        if idx > numProfiles then
             -- empty row (blank starter row, final row, and any empty entries)
             slot.item:Hide()
-            slot.item.profileID = nil
+            slot.item.profileName = nil
         else
-            slot.item.profileID = validProfiles[idx].realIdx
-            slot.item.name:SetText(validProfiles[idx].profilename)
+            slot.item.profileName = profiles[idx]
+            slot.item.name:SetText(profiles[idx])
 
             slot.item.hasOptions = true
             slot.item.canDelete = true
@@ -56,36 +42,34 @@ local function loadProfiles(profilewin)
             slot.item.canActivate = true
             slot.item.activeProfile:Hide()
 
-            if currentProfile == validProfiles[idx].realIdx then
+            if currentProfile == profiles[idx] then
                 slot.item.canActivate = false
                 slot.item.canDelete = false
                 slot.item.activeProfile:Show()
             end
 
-            validProfiles[idx].profileCreatedDate = validProfiles[idx].profileCreatedDate or UNKNOWN
-            validProfiles[idx].profileCreatedCharacter = validProfiles[idx].profileCreatedCharacter or UNKNOWN
-            validProfiles[idx].profileLastUpdated = validProfiles[idx].profileLastUpdated or UNKNOWN
-            validProfiles[idx].profileIcon = validProfiles[idx].profileIcon or ICONS[math.random(1, #ICONS)]
+            GW.globalSettings.profiles[profiles[idx]].profileCreatedDate = GW.globalSettings.profiles[profiles[idx]].profileCreatedDate or UNKNOWN
+            GW.globalSettings.profiles[profiles[idx]].profileCreatedCharacter = GW.globalSettings.profiles[profiles[idx]].profileCreatedCharacter or UNKNOWN
+            GW.globalSettings.profiles[profiles[idx]].profileLastUpdated = GW.globalSettings.profiles[profiles[idx]].profileLastUpdated or UNKNOWN
+            GW.globalSettings.profiles[profiles[idx]].profileIcon = GW.globalSettings.profiles[profiles[idx]].profileIcon or ICONS[math.random(1, #ICONS)]
 
-            if(type(validProfiles[idx].profileIcon) == "number") then
-                slot.item.activateButton.icon:SetTexture(validProfiles[idx].profileIcon)
+            if(type(GW.globalSettings.profiles[profiles[idx]].profileIcon) == "number") then
+                slot.item.activateButton.icon:SetTexture(GW.globalSettings.profiles[profiles[idx]].profileIcon)
             else
-                slot.item.activateButton.icon:SetTexture("INTERFACE\\ICONS\\" .. validProfiles[idx].profileIcon)
+                slot.item.activateButton.icon:SetTexture("INTERFACE\\ICONS\\" .. GW.globalSettings.profiles[profiles[idx]].profileIcon)
             end
 
-            local description =
-                L["Created: "] ..
-                validProfiles[idx].profileCreatedDate .. "\n" ..
+            slot.item.desc:SetText(L["Created: "] ..
+                GW.globalSettings.profiles[profiles[idx]].profileCreatedDate .. "\n" ..
                 L["Created by: "] ..
-                validProfiles[idx].profileCreatedCharacter .. "\n" .. L["Last updated: "] .. validProfiles[idx].profileLastUpdated
-
-            slot.item.desc:SetText(description)
+                GW.globalSettings.profiles[profiles[idx]].profileCreatedCharacter .. "\n" .. L["Last updated: "] .. GW.globalSettings.profiles[profiles[idx]].profileLastUpdated
+            )
 
             slot.item:Show()
         end
     end
 
-    USED_PROFILE_HEIGHT = profilewin.buttons[1]:GetHeight() * #validProfiles
+    USED_PROFILE_HEIGHT = profilewin.buttons[1]:GetHeight() * numProfiles
     HybridScrollFrame_Update(profilewin, USED_PROFILE_HEIGHT, 433)
 end
 
@@ -157,9 +141,6 @@ local function createImportExportFrame()
         for _ = 1, max do
             ScrollFrameTemplate_OnMouseWheel(frame.scrollArea, -1)
         end
-        if strlen(self:GetText()) > 0 and string.sub(self:GetText(), -1) == "=" then
-            frame.decode:Enable()
-        end
     end)
 
     frame.close = CreateFrame("Button", nil, frame, "GwStandardButton")
@@ -195,47 +176,51 @@ local function createImportExportFrame()
     frame.decode:SetFrameLevel(frame.decode:GetFrameLevel() + 1)
     frame.decode:EnableMouse(true)
     frame.decode:SetSize(128, 28)
-    frame.decode:SetText(L["Decode"])
     frame.decode:SetScript("OnClick", function()
-        local profileName, profilePlayer, version, profileData = GW.DecodeProfile(frame.editBox:GetText())
+        -- if the frame header is L["Convert old profile String to new one"] then try to convert the string to the new format
+        if frame.header:GetText() == L["Convert old profile String to new one"] then
+            local result, dataString = GW.ConvertOldProfileString(frame.editBox:GetText())
 
-        frame.result:SetText("")
-        if not profileName or not profilePlayer or version ~= "Classic" then
-            frame.subheader:SetText("")
-            frame.result:SetFormattedText("|cffff0000%s|r", L["Error decoding profile: Invalid or corrupt string!"] )
+            if result then
+                frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully converted!"])
+                frame.editBox:SetText(dataString)
+            else
+                frame.result:SetFormattedText("|cffff0000%s|r", dataString)
+            end
         else
-            frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
+            if GW.GetImportStringType(frame.editBox:GetText()) == "Deflate" then
+                local profileName, profilePlayer, version, profileData = GW.DecodeProfile(frame.editBox:GetText())
 
-            local decodedString = (profileData and GW.TableToLuaString(profileData)) or nil
-            local importString = format("%s::%s::%s::%s", decodedString, profileName, profilePlayer, version)
-            frame.editBox:SetText(importString)
-            frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully decoded!"])
-            frame.decode:Disable()
+                frame.result:SetText("")
+                if not profileName or not profilePlayer or version ~= "Retail" then
+                    frame.subheader:SetText("")
+                    frame.result:SetFormattedText("|cffff0000%s|r", L["Error decoding profile: Invalid or corrupt string!"] )
+                else
+                    frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
+
+                    frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully decoded!"])
+                end
+            end
         end
     end)
 
     return frame
 end
 
-local function deleteProfile(index)
-    GW2UI_SETTINGS_PROFILES[index] = nil
-    if GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] ~= nil and GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] == index then
-        SetSetting("ACTIVE_PROFILE", nil)
-    end
+local function deleteProfile(name)
+    GW.globalSettings:DeleteProfile(name, true)
 
     -- delete also all "attached" layouts
     local allLayouts = GW.GetAllLayouts()
-    for i = 0, #allLayouts do
-        if allLayouts[i] and allLayouts[i].profileId == index then
-            GW2UI_LAYOUTS[i] = nil
-            break
-        end
+    local profileName = L["Profiles"] .. " - " .. name
+    if allLayouts[profileName] then
+        GW.global.layouts[profileName] = nil
     end
 end
 AddForProfiling("panel_profiles", "deleteProfile", deleteProfile)
 
-local function setProfile(index)
-    GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
+local function setProfile(profileName)
+    GW.globalSettings:SetProfile(profileName)
     C_UI.Reload()
 end
 AddForProfiling("panel_profiles", "setProfile", setProfile)
@@ -244,9 +229,9 @@ local function delete_OnClick(self)
     local p = self:GetParent().parentItem
     self:GetParent():Hide()
     GW.WarningPrompt(
-        L["Are you sure you want to delete this profile?"] .. "\n\n'" .. (GW2UI_SETTINGS_PROFILES[p.profileID].profilename or UNKNOWN) .. "'",
+        L["Are you sure you want to delete this profile?"] .. "\n\n'" .. (p.profileName or UNKNOWN) .. "'",
         function()
-            deleteProfile(p.profileID)
+            deleteProfile(p.profileName)
             loadProfiles(ProfileWin)
             GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll)
         end
@@ -307,11 +292,10 @@ AddForProfiling("panel_profiles", "buttons_OnLeave", buttons_OnLeave)
 local function activate_OnClick(self)
     local p = self:GetParent()
     if not p.canActivate then return end
-
     GW.WarningPrompt(
-        L["Do you want to activate profile"] .. "\n\n'" .. (GW2UI_SETTINGS_PROFILES[p.profileID].profilename or UNKNOWN) .."'?",
+        L["Do you want to activate profile"] .. "\n\n'" .. (p.profileName or UNKNOWN) .."'?",
         function()
-            setProfile(p.profileID) -- triggers a reload
+            setProfile(p.profileName) -- triggers a reload
         end
     )
 end
@@ -319,11 +303,11 @@ AddForProfiling("panel_profiles", "activate_OnClick", activate_OnClick)
 
 local function export_OnClick(self)
     local p = self:GetParent().parentItem
-    local exportString = GW.GetExportString(p.profileID, GW2UI_SETTINGS_PROFILES[p.profileID].profilename)
+    local exportString = GW.GetExportString(p.profileName)
 
     ImportExportFrame:Show()
     ImportExportFrame.header:SetText(L["Export Profile"])
-    ImportExportFrame.subheader:SetText(GW2UI_SETTINGS_PROFILES[p.profileID].profilename)
+    ImportExportFrame.subheader:SetText(p.profileName)
     ImportExportFrame.description:SetText(L["Profile string to share your settings:"])
     ImportExportFrame.import:Hide()
     ImportExportFrame.decode:Hide()
@@ -334,13 +318,52 @@ end
 AddForProfiling("panel_profiles", "export_OnClick", export_OnClick)
 
 local function rename_OnClick(self)
-    StaticPopup_Show("GW_CHANGE_PROFILE_NAME", nil, nil, self:GetParent().parentItem)
+    GW.InputPrompt(
+        GARRISON_SHIP_RENAME_LABEL,
+        function()
+            if GwWarningPrompt.input:GetText() == nil then return end
+            local profileName = GwWarningPrompt.input:GetText() or UNKNOWN
+            local profileOriginalName = self:GetParent().parentItem.profileName
+            if GW.globalSettings.profiles[profileName] then
+                GW.Notice("Profile with that name already exists")
+                GW.WarningPrompt("Profile with that name already exists")
+                return
+            end
+            GW.globalSettings.profiles[profileOriginalName].profilename = profileName
+            GW.globalSettings.profiles[profileName] = GW.copyTable(nil, GW.globalSettings.profiles[profileOriginalName])
+            GW.globalSettings.profiles[profileOriginalName] = nil
+
+            -- rename also the profile layout
+            if GW.global.layouts[profileOriginalName] then
+                GW.global.layouts[profileOriginalName].name = L["Profiles"] .. " - " .. profileName
+                GW.global.layouts[profileOriginalName].profileName = profileName
+
+                GW.global.layouts[profileName] = GW.copyTable(nil, GW.global.layouts[profileOriginalName])
+                GW.global.layouts[profileOriginalName] = nil
+                GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll)
+
+                --rename the assinged layouts
+                local privateLayouts = GW.GetAllPrivateLayouts()
+                for i = 0, #privateLayouts do
+                    if privateLayouts[i] and privateLayouts[i].layoutName == profileOriginalName then
+                        GW.private.Layouts[i].layoutName = profileName
+                    end
+                end
+            end
+
+            loadProfiles(ProfileWin)
+
+            GwWarningPrompt:Hide()
+        end,
+        self:GetParent().parentItem.profileName
+    )
+
     self:GetParent():Hide()
 end
 
 local function copy_OnClick(self)
-    local newProfil = GW.copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().parentItem.profileID])
-    GW.addProfile(L["Copy of"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().parentItem.profileID].profilename, newProfil, true)
+    local newProfil = GW.copyTable(nil, GW.globalSettings.profiles[self:GetParent().parentItem.profileName])
+    GW.addProfile(L["Copy of"] .. " " .. GW.globalSettings.profiles[self:GetParent().parentItem.profileName].profilename, newProfil, true)
     self:GetParent():Hide()
 end
 
@@ -431,20 +454,26 @@ end
 AddForProfiling("panel_profiles", "item_OnLeave", item_OnLeave)
 
 local function addProfile(name, profileData, copy)
-    local profileList = GetSettingsProfiles()
-    local newIdx = #profileList + 1
+    local profileList = GW.globalSettings:GetProfiles()
+    for _, v in pairs(profileList) do
+        if name == v then
+            GW.Notice("Profile with that name already exists")
+            GW.WarningPrompt("Profile with that name already exists")
+            return
+        end
+    end
 
     if copy then
-        GW2UI_SETTINGS_PROFILES[newIdx] = profileData
-        GW2UI_SETTINGS_PROFILES[newIdx]["profilename"] = name
+        GW.globalSettings.profiles[name] = profileData
+        GW.globalSettings.profiles[name].profilename = name
     elseif profileData then
-        GW2UI_SETTINGS_PROFILES[newIdx] = profileData
+        GW.globalSettings.profiles[name] = profileData
     else
-        GW2UI_SETTINGS_PROFILES[newIdx] = GW.copyTable(nil, GW2UI_SETTINGS_DB_03)
-        GW2UI_SETTINGS_PROFILES[newIdx].profilename = name
-        GW2UI_SETTINGS_PROFILES[newIdx].profileCreatedDate = date("%m/%d/%y %H:%M:%S")
-        GW2UI_SETTINGS_PROFILES[newIdx].profileCreatedCharacter = GetUnitName("player", true)
-        GW2UI_SETTINGS_PROFILES[newIdx].profileLastUpdated = date("%m/%d/%y %H:%M:%S")
+        local currentProfile = GW.globalSettings:GetCurrentProfile()
+        GW.globalSettings:SetProfile(name)
+        GW.globalSettings:ResetProfile(nil, true)
+        GW.CreateProfileLayout()
+        GW.globalSettings:SetProfile(currentProfile)
     end
 
     loadProfiles(ProfileWin)
@@ -550,7 +579,7 @@ local function collectAllIcons()
     end
 
     GetLooseMacroIcons(ICONS)
-    GetLooseMacroItemIcons( ICONS)
+    GetLooseMacroItemIcons(ICONS)
     GetMacroIcons(ICONS)
     GetMacroItemIcons(ICONS)
 end
@@ -577,6 +606,7 @@ local function LoadProfilesPanel(sWindow)
 
     CharacterMenuButton_OnLoad(p.menu.newProfile, true)
     CharacterMenuButton_OnLoad(p.menu.importProfile, false)
+    CharacterMenuButton_OnLoad(p.menu.convertOldProfileString, true)
 
     ProfileWin = p.profileScroll
 
@@ -636,7 +666,7 @@ local function LoadProfilesPanel(sWindow)
     p.menu.newProfile:SetScript("OnClick", fnGCNP_OnClick)
 
     p.menu.importProfile:SetText(L["Import Profile"])
-    local fnGCIP_OnClick = function()
+    p.menu.importProfile:SetScript("OnClick", function()
         ImportExportFrame:Show()
         ImportExportFrame.header:SetText(L["Import Profile"])
         ImportExportFrame.subheader:SetText("")
@@ -644,17 +674,30 @@ local function LoadProfilesPanel(sWindow)
         ImportExportFrame.editBox:SetText("")
         ImportExportFrame.import:Show()
         ImportExportFrame.decode:Show()
-        ImportExportFrame.decode:Disable()
         ImportExportFrame.result:SetText("")
         ImportExportFrame.editBox:SetFocus()
-    end
-    p.menu.importProfile:SetScript("OnClick", fnGCIP_OnClick)
+        ImportExportFrame.decode:SetText(L["Decode"])
+    end)
+
+    p.menu.convertOldProfileString:SetText(L["Convert old profile String"])
+    p.menu.convertOldProfileString:SetScript("OnClick", function()
+        ImportExportFrame:Show()
+        ImportExportFrame.header:SetText(L["Convert old profile String to new one"])
+        ImportExportFrame.subheader:SetText("")
+        ImportExportFrame.description:SetText(L["Paste your profile string here to convert to the new format."])
+        ImportExportFrame.editBox:SetText("")
+        ImportExportFrame.import:Hide()
+        ImportExportFrame.decode:Show()
+        ImportExportFrame.result:SetText("")
+        ImportExportFrame.editBox:SetFocus()
+        ImportExportFrame.decode:SetText(CONVERT)
+    end)
 
     ProfileWin.update = loadProfiles
     ProfileWin.scrollBar.doNotHide = false
     ProfileSetup(ProfileWin)
 
-    createCat(L["PROFILES"], L["Add and remove profiles."], p, nil, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_profiles")
+    createCat(L["PROFILES"], L["Add and remove profiles."], p, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_profiles")
 
     p:SetScript("OnShow", function()
         settingMenuToggle(false)

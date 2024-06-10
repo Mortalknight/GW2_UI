@@ -1,7 +1,6 @@
 local _, GW = ...
 local L = GW.L
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
-local GetSetting = GW.GetSetting
 local AddToAnimation = GW.AddToAnimation
 
 local notifications = {}
@@ -176,7 +175,7 @@ local function RemoveTrackerNotificationOfType(doType)
             notifications[k] = nil
         end
     end
-    if GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
+    if GW.settings.QUESTTRACKER_ENABLED and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
         GW.forceCompassHeaderUpdate()
     end
 end
@@ -245,7 +244,7 @@ GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
 local currentCompassData
 local function SetObjectiveNotification()
-    if not GetSetting("SHOW_QUESTTRACKER_COMPASS") then
+    if not GW.settings.SHOW_QUESTTRACKER_COMPASS then
         GwObjectivesNotification.shouldDisplay = false
         return
     end

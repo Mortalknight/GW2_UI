@@ -2,7 +2,7 @@ local _, GW = ...
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
 local function SkinBNToastFrame()
-    if not GW.GetSetting("BNTOASTFRAME_SKIN_ENABLED") then return end
+    if not GW.settings.BNTOASTFRAME_SKIN_ENABLED then return end
     local BNToastFrame = _G.BNToastFrame
 
     BNToastFrame:SetBackdrop(nil)

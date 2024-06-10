@@ -61,7 +61,7 @@ local function SkinLFGInvitePopup()
 end
 
 local function LoadLFGSkins()
-    if not GW.GetSetting("LFG_FRAMES_SKIN_ENABLED") then return end
+    if not GW.settings.LFG_FRAMES_SKIN_ENABLED then return end
 
     SkinLFGInvitePopup()
     SkinLFDRoleCheckPopup()

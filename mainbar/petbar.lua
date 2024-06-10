@@ -91,7 +91,7 @@ local function SetPetActionButtonPositionAndStyle(self)
             button:SetAttribute("_onreceivedrag", nil)
         end
 
-        button.showMacroName = GW.GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+        button.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
 
         GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
         GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
@@ -105,7 +105,7 @@ local function UpdatePetBarButtonsHot()
         local btn = _G["PetActionButton" .. i]
 
         if btn then
-            btn.showMacroName = GW.GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+            btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
             GW.updateMacroName(btn)
         end
     end
@@ -282,7 +282,7 @@ local function updatePetData(self, event, unit)
 end
 
 local function TogglePetAuraPosition()
-    GwPlayerPetFrame.auraPositionUnder = GW.GetSetting("PET_AURAS_UNDER")
+    GwPlayerPetFrame.auraPositionUnder = GW.settings.PET_AURAS_UNDER
 
     if GwPlayerPetFrame.auraPositionUnder then
         GwPlayerPetFrame.auras:ClearAllPoints()
@@ -292,7 +292,7 @@ end
 GW.TogglePetAuraPosition = TogglePetAuraPosition
 
 local function TogglePetFrameCombatFeedback()
-    if GW.GetSetting("PET_FLOATING_COMBAT_TEXT") then
+    if GW.settings.PET_FLOATING_COMBAT_TEXT then
         if not fctf then
             fctf = CreateFrame("Frame", nil, GwPlayerPetFrame)
             fctf:SetFrameLevel(GwPlayerPetFrame:GetFrameLevel() + 3)

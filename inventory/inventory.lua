@@ -1,6 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 local BAG_TYP_COLORS = GW.BAG_TYP_COLORS
 
 BAG_FILTER_LABELS = {
@@ -12,7 +10,7 @@ BAG_FILTER_LABELS = {
 
 -- reskins an ItemButton to use GW2_UI styling
 local function reskinItemButton(iname, b, overrideIconSize)
-    local iconSize = overrideIconSize or GW.GetSetting("BAG_ITEM_SIZE")
+    local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
     b:SetSize(iconSize, iconSize)
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -198,19 +196,19 @@ local function hookItemQuality(button, quality, itemIDOrLink)
 
     local bag_id = button:GetParent():GetID()
     local professionColors = BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
-    local showItemLevel = button.itemlevel and itemIDOrLink and GetSetting("BAG_SHOW_ILVL") and not professionColors
-    local showEquipmentSetName = GetSetting("BAG_SHOW_EQUIPMENT_SET_NAME")
+    local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
+    local showEquipmentSetName = GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME
 
     local t = button.IconBorder
     t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     t:SetAlpha(0.9)
     button.IconOverlay:Hide()
 
-    if not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
+    if not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW then
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
     end
 
-    if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
+    if GW.settings.BAG_PROFESSION_BAG_COLOR and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
@@ -239,7 +237,7 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         button.isJunk = itemInfo and ((itemInfo.quality and itemInfo.quality == Enum.ItemQuality.Poor) and not itemInfo.hasNoValue) or false
 
         if button.junkIcon then
-            if button.isJunk and GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
+            if button.isJunk and GW.settings.BAG_ITEM_JUNK_ICON_SHOW then
                 button.junkIcon:Show()
             else
                 button.junkIcon:Hide()
@@ -247,7 +245,7 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         end
 
         -- Show upgrade icon if active
-        if GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW") and button.UpgradeIcon and PawnShouldItemLinkHaveUpgradeArrow then
+        if GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon and PawnShouldItemLinkHaveUpgradeArrow then
             CheckUpdateIcon(button)
         end
 
@@ -290,8 +288,8 @@ GW.SetBagItemButtonQualitySkin = hookItemQuality
 local bag_resize
 local bank_resize
 local function resizeInventory()
-    if GetSetting("BAG_ITEM_SIZE") > 40 then
-        SetSetting("BAG_ITEM_SIZE", 40)
+    if GW.settings.BAG_ITEM_SIZE > 40 then
+        GW.settings.BAG_ITEM_SIZE = 40
     end
     reskinItemButtons()
     if bag_resize then
@@ -535,7 +533,7 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     end
 
     local cols = f == GwBagFrame and f.gw_bag_cols or f.gw_bank_cols
-    local sep = f == GwBagFrame and GetSetting("BAG_SEPARATE_BAGS") or false
+    local sep = f == GwBagFrame and GW.settings.BAG_SEPARATE_BAGS or false
 
     if not cfs then
         f:SetHeight(min_height)
@@ -596,7 +594,7 @@ local function onMoved(self, setting, snap_size)
 
     -- store the updated position
     if setting then
-        local pos = GetSetting(setting)
+        local pos = GW.settings[setting]
         if pos then
             wipe(pos)
         else
@@ -606,7 +604,7 @@ local function onMoved(self, setting, snap_size)
         pos.relativePoint = "BOTTOMLEFT"
         pos.xOfs = x
         pos.yOfs = y
-        SetSetting(setting, pos)
+        GW.settings[setting] = pos
     end
 
     -- apply our snap sizing, if necessary

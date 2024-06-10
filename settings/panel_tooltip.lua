@@ -167,6 +167,6 @@ local function LoadTooltipPanel(sWindow)
         {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
     )
 
-    InitPanel(p)
+    InitPanel(p, true)
 end
 GW.LoadTooltipPanel = LoadTooltipPanel

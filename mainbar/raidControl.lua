@@ -147,7 +147,7 @@ local function CreateRaidControlFrame()
     end)
 
     GwGroupManage.groupLeaveButton:SetScript("OnClick", function()
-        C_PartyInfo.LeaveParty()
+        LeaveParty()
     end)
 
     local fnGGRC_OnClick = function()
@@ -164,9 +164,9 @@ local function CreateRaidControlFrame()
     local fmGGCD_OnClick = function(_, button)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         if IsControlKeyDown() and button == "LeftButton" and C_AddOns.IsAddOnLoaded("DBM-Core") then
-            SlashCmdList.DEADLYBOSSMODSPULL(GW.GetSetting("pulltimerSeconds"))
+            SlashCmdList.DEADLYBOSSMODSPULL(GW.settings.pulltimerSeconds)
         else
-            C_PartyInfo.DoCountdown(GW.GetSetting("pulltimerSeconds"))
+            C_PartyInfo.DoCountdown(GW.settings.pulltimerSeconds)
         end
     end
 
@@ -178,16 +178,16 @@ local function CreateRaidControlFrame()
     GwGroupManage.inGroup.countdown:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
     GwGroupManage.inGroup.countdown:SetText(GW.L["Pull Timer"])
 
-    GwGroupManage.inGroup.inputCountdownFrame.input:SetText(GW.GetSetting("pulltimerSeconds"))
+    GwGroupManage.inGroup.inputCountdownFrame.input:SetText(GW.settings.pulltimerSeconds)
 
     GwGroupManage.inGroup.inputCountdownFrame.input:SetScript("OnEscapePressed", TextBox_OnEscapePressed)
     GwGroupManage.inGroup.inputCountdownFrame.input:SetScript("OnEnterPressed", function(self)
-        local roundValue = GW.RoundDec(self:GetText(), 0) or GW.GetSetting("pulltimerSeconds") or 0
+        local roundValue = GW.RoundDec(self:GetText(), 0) or GW.settings.pulltimerSeconds or 0
         self:ClearFocus()
         if tonumber(roundValue) == 0 then
-            roundValue = GW.GetDefault("pulltimerSeconds")
+            roundValue = GW.globalDefault.profile.pulltimerSeconds
         end
-        GW.SetSetting("pulltimerSeconds", tonumber(roundValue))
+        GW.settings.pulltimerSeconds = tonumber(roundValue)
         self:SetText(roundValue)
     end)
 
@@ -201,9 +201,9 @@ local function CreateRaidControlFrame()
 
     local fnGGMC_OnClick = function()
         if IsInRaid() then
-            C_PartyInfo.ConvertToParty()
+            ConvertToParty()
         else
-            C_PartyInfo.ConvertToRaid()
+            ConvertToRaid()
         end
     end
     GwGroupManage.inGroup.convert:SetScript("OnClick", fnGGMC_OnClick)
@@ -275,7 +275,7 @@ local function CreateRaidControlFrame()
 
     local fnGMGB_OnEnter = function(self)
         self.arrow:SetSize(21, 42)
-        if GW.GetSetting("FADE_GROUP_MANAGE_FRAME") then
+        if GW.settings.FADE_GROUP_MANAGE_FRAME then
             if GwGroupManage:IsShown() then
                 return
             end
@@ -284,7 +284,7 @@ local function CreateRaidControlFrame()
     end
     local fnGMGB_OnLeave = function(self)
         self.arrow:SetSize(16, 32)
-        if GW.GetSetting("FADE_GROUP_MANAGE_FRAME") then
+        if GW.settings.FADE_GROUP_MANAGE_FRAME then
             if GwGroupManage:IsShown() then
                 return
             end
@@ -296,7 +296,7 @@ local function CreateRaidControlFrame()
 
     fnGMIG_OnEvent(GwGroupManage.inGroup)
 
-    if GW.GetSetting("FADE_GROUP_MANAGE_FRAME") then
+    if GW.settings.FADE_GROUP_MANAGE_FRAME then
         local fo = fmGMGB:CreateAnimationGroup("fadeOut")
         local fi = fmGMGB:CreateAnimationGroup("fadeIn")
         local fadeOut = fo:CreateAnimation("Alpha")

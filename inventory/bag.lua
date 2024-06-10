@@ -1,8 +1,6 @@
 local _, GW = ...
 local L = GW.L
 local CommaValue = GW.CommaValue
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 local UpdateMoney = GW.UpdateMoney
 local EnableTooltip = GW.EnableTooltip
 local FormatMoneyForChat = GW.FormatMoneyForChat
@@ -130,7 +128,7 @@ local function setBagHeaders()
     for i = 1, 4 do
         local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
         local itemID = GetInventoryItemID("player", slotID)
-        local customBagHeaderName = GetSetting("BAG_HEADER_NAME" .. i)
+        local customBagHeaderName = GW.settings["BAG_HEADER_NAME" .. i]
 
         if itemID then
             local r, g, b = 1, 1, 1
@@ -143,7 +141,7 @@ local function setBagHeaders()
             _G["GwBagFrameGwBagHeader" .. i]:Hide()
         end
     end
-    local customBagHeaderName = GetSetting("BAG_HEADER_NAME0")
+    local customBagHeaderName = GW.settings.BAG_HEADER_NAME0
     _G["GwBagFrameGwBagHeader0"].nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or BACKPACK_TOOLTIP)
 end
 
@@ -151,10 +149,10 @@ end
 local function layoutBagItems(f)
     local max_col = f:GetParent().gw_bag_cols
     local col = 0
-    local rev = GetSetting("BAG_REVERSE_SORT")
-    local sep = GetSetting("BAG_SEPARATE_BAGS")
+    local rev = GW.settings.BAG_REVERSE_SORT
+    local sep = GW.settings.BAG_SEPARATE_BAGS
     local row = sep and 1 or 0
-    local item_off = GetSetting("BAG_ITEM_SIZE") + BAG_ITEM_PADDING
+    local item_off = GW.settings.BAG_ITEM_SIZE + BAG_ITEM_PADDING
     local unfinishedRow = false
     local finishedRows = 0
 
@@ -185,8 +183,8 @@ local function layoutBagItems(f)
             _G["GwBagFrameGwBagHeader" .. bag_id]:Show()
             _G["GwBagFrameGwBagHeader" .. bag_id]:ClearAllPoints()
             _G["GwBagFrameGwBagHeader" .. bag_id]:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off)
-            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(GetSetting("BAG_WIDTH") - BAG_ITEM_PADDING)
-            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(GetSetting("BAG_WIDTH") - BAG_ITEM_PADDING)
+            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(GW.settings.BAG_WIDTH - BAG_ITEM_PADDING)
+            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(GW.settings.BAG_WIDTH - BAG_ITEM_PADDING)
         else
             _G["GwBagFrameGwBagHeader" .. bag_id] :Hide()
         end
@@ -243,7 +241,7 @@ local function snapFrameSize(f)
     if f.ItemFrame:IsShown() then
         cfs = f.ItemFrame.Containers
     end
-    inv.snapFrameSize(f, cfs, GetSetting("BAG_ITEM_SIZE"), BAG_ITEM_PADDING, 350)
+    inv.snapFrameSize(f, cfs, GW.settings.BAG_ITEM_SIZE, BAG_ITEM_PADDING, 350)
 end
 GW.AddForProfiling("bag", "snapFrameSize", snapFrameSize)
 
@@ -324,7 +322,7 @@ local function setBagBarOrder(f)
     local x, y = -40, nil
     local bag_size = 28
     local bag_padding = 4
-    local rev = GetSetting("BAG_REVERSE_SORT")
+    local rev = GW.settings.BAG_REVERSE_SORT
     if rev then
         y = 5 - ((bag_size + bag_padding) * NUM_BAG_SLOTS)
     else
@@ -454,14 +452,14 @@ end
 GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
 
 local function onBagResizeStop(self)
-    SetSetting("BAG_WIDTH", self:GetWidth())
-    GwBagFrame.Header:SetWidth(GetSetting("BAG_WIDTH"))
+    GW.settingsBAG_WIDTH = self:GetWidth()
+    GwBagFrame.Header:SetWidth(GW.settings.BAG_WIDTH)
     inv.onMoved(self, "BAG_POSITION", snapFrameSize)
 end
 GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
 
 local function onBagFrameChangeSize(self, _, _, skip)
-    local cols = inv.colCount(GetSetting("BAG_ITEM_SIZE"), BAG_ITEM_PADDING, self:GetWidth())
+    local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
 
     self.Header:SetWidth(self:GetWidth())
     if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
@@ -475,13 +473,13 @@ GW.AddForProfiling("bag", "onBagFrameChangeSize", onBagFrameChangeSize)
 
 -- toggles the setting for compact/large icons
 local function compactToggle()
-    if GW.GetSettings("BAG_ITEM_SIZE") == BAG_ITEM_LARGE_SIZE then
-        GW.SetSetting("BAG_ITEM_SIZE", BAG_ITEM_COMPACT_SIZE)
+    if GW.settings.BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
+        GW.settings.BAG_ITEM_SIZE = BAG_ITEM_COMPACT_SIZE
         inv.resizeInventory()
         return true
     end
 
-    SetSetting("BAG_ITEM_SIZE", BAG_ITEM_LARGE_SIZE)
+    GW.settings.BAG_ITEM_SIZE = BAG_ITEM_LARGE_SIZE
     inv.resizeInventory()
     return false
 end
@@ -643,8 +641,8 @@ end
 local function LoadBag(helpers)
     inv = helpers
 
-    if GetSetting("BAG_ITEM_SIZE") > 40 then
-        SetSetting("BAG_ITEM_SIZE", 40)
+    if GW.settings.BAG_ITEM_SIZE > 40 then
+        GW.settings.BAG_ITEM_SIZE = 40
     end
 
     -- create bag frame, restore its saved size, and init its many pieces
@@ -652,8 +650,8 @@ local function LoadBag(helpers)
     tinsert(UISpecialFrames, "GwBagFrame")
     f.gw_state = "closed"
     f:ClearAllPoints()
-    f:SetWidth(GetSetting("BAG_WIDTH"))
-    f.Header:SetWidth(GetSetting("BAG_WIDTH"))
+    f:SetWidth(GW.settings.BAG_WIDTH)
+    f.Header:SetWidth(GW.settings.BAG_WIDTH)
     onBagFrameChangeSize(f, nil, nil, true)
 
     -- setup show/hide
@@ -662,7 +660,7 @@ local function LoadBag(helpers)
     f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
 
     -- setup movable stuff
-    local pos = GetSetting("BAG_POSITION")
+    local pos = GW.settings.BAG_POSITION
     f:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     f.mover:RegisterForDrag("LeftButton")
     f.mover.onMoveSetting = "BAG_POSITION"
@@ -797,9 +795,9 @@ local function LoadBag(helpers)
         dd.sortOrder:HookScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
+                local newStatus = not GW.settings.SORT_BAGS_RIGHT_TO_LEFT
                 dd.sortOrder.checkbutton:SetChecked(newStatus)
-                SetSetting("SORT_BAGS_RIGHT_TO_LEFT", newStatus)
+                GW.settingsSORT_BAGS_RIGHT_TO_LEFT = newStatus
                 dd:Hide()
             end
         )
@@ -807,9 +805,9 @@ local function LoadBag(helpers)
         dd.bagOrder.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("BAG_REVERSE_SORT")
+                local newStatus = not GW.settings.BAG_REVERSE_SORT
                 dd.bagOrder.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_REVERSE_SORT", newStatus)
+                GW.settingsBAG_REVERSE_SORT = newStatus
 
                 layoutItems(f)
                 snapFrameSize(f)
@@ -819,9 +817,9 @@ local function LoadBag(helpers)
         dd.itemBorder.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW")
+                local newStatus = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW
                 dd.itemBorder.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", newStatus)
+                GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = newStatus
 
                 ContainerFrame_UpdateAll()
             end
@@ -830,9 +828,9 @@ local function LoadBag(helpers)
         dd.junkIcon.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("BAG_ITEM_JUNK_ICON_SHOW")
+                local newStatus = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW
                 dd.junkIcon.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_ITEM_JUNK_ICON_SHOW", newStatus)
+                GW.settings.BAG_ITEM_JUNK_ICON_SHOW = newStatus
 
                 ContainerFrame_UpdateAll()
             end
@@ -841,9 +839,9 @@ local function LoadBag(helpers)
         dd.upgradeIcon.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW")
+                local newStatus = not GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW
                 dd.upgradeIcon.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", newStatus)
+                GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW = newStatus
 
                 ContainerFrame_UpdateAll()
             end
@@ -852,9 +850,9 @@ local function LoadBag(helpers)
         dd.professionColor.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("BAG_PROFESSION_BAG_COLOR")
+                local newStatus = not GW.settings.BAG_PROFESSION_BAG_COLOR
                 dd.professionColor.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_PROFESSION_BAG_COLOR", newStatus)
+                GW.settings.BAG_PROFESSION_BAG_COLOR = newStatus
                 ContainerFrame_UpdateAll()
             end
         )
@@ -862,9 +860,9 @@ local function LoadBag(helpers)
         dd.vendorGrays.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("BAG_VENDOR_GRAYS")
+                local newStatus = not GW.settings.BAG_VENDOR_GRAYS
                 dd.vendorGrays.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_VENDOR_GRAYS", newStatus)
+                GW.settings.BAG_VENDOR_GRAYS = newStatus
                 setupVendorJunk(newStatus)
             end
         )
@@ -872,9 +870,9 @@ local function LoadBag(helpers)
         dd.showItemLvl.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("BAG_SHOW_ILVL")
+                local newStatus = not GW.settings.BAG_SHOW_ILVL
                 dd.showItemLvl.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_SHOW_ILVL", newStatus)
+                GW.settings.BAG_SHOW_ILVL = newStatus
 
                 ContainerFrame_UpdateAll()
             end
@@ -883,9 +881,9 @@ local function LoadBag(helpers)
         dd.showEquipmentSetName.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("BAG_SHOW_EQUIPMENT_SET_NAME")
+                local newStatus = not GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME
                 dd.showEquipmentSetName.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_SHOW_EQUIPMENT_SET_NAME", newStatus)
+                GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME = newStatus
 
                 ContainerFrame_UpdateAll()
             end
@@ -895,9 +893,9 @@ local function LoadBag(helpers)
         dd.separateBags.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("BAG_SEPARATE_BAGS")
+                local newStatus = not GW.settings.BAG_SEPARATE_BAGS
                 dd.separateBags.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_SEPARATE_BAGS", newStatus)
+                GW.settings.BAG_SEPARATE_BAGS = newStatus
 
                 layoutItems(f)
                 snapFrameSize(f)
@@ -905,17 +903,17 @@ local function LoadBag(helpers)
             end
         )
 
-        dd.compactBags.checkbutton:SetChecked(GetSetting("BAG_ITEM_SIZE") == BAG_ITEM_COMPACT_SIZE)
-        dd.sortOrder.checkbutton:SetChecked(GetSetting("SORT_BAGS_RIGHT_TO_LEFT"))
-        dd.bagOrder.checkbutton:SetChecked(GetSetting("BAG_REVERSE_SORT"))
-        dd.itemBorder.checkbutton:SetChecked(GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW"))
-        dd.junkIcon.checkbutton:SetChecked(GetSetting("BAG_ITEM_JUNK_ICON_SHOW"))
-        dd.upgradeIcon.checkbutton:SetChecked(GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW"))
-        dd.professionColor.checkbutton:SetChecked(GetSetting("BAG_PROFESSION_BAG_COLOR"))
-        dd.vendorGrays.checkbutton:SetChecked(GetSetting("BAG_VENDOR_GRAYS"))
-        dd.showItemLvl.checkbutton:SetChecked(GetSetting("BAG_SHOW_ILVL"))
-        dd.showEquipmentSetName.checkbutton:SetChecked(GetSetting("BAG_SHOW_EQUIPMENT_SET_NAME"))
-        dd.separateBags.checkbutton:SetChecked(GetSetting("BAG_SEPARATE_BAGS"))
+        dd.compactBags.checkbutton:SetChecked(GW.settings.BAG_ITEM_SIZE == BAG_ITEM_COMPACT_SIZE)
+        dd.sortOrder.checkbutton:SetChecked(GW.settings.SORT_BAGS_RIGHT_TO_LEFT)
+        dd.bagOrder.checkbutton:SetChecked(GW.settings.BAG_REVERSE_SORT)
+        dd.itemBorder.checkbutton:SetChecked(GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW)
+        dd.junkIcon.checkbutton:SetChecked(GW.settings.BAG_ITEM_JUNK_ICON_SHOW)
+        dd.upgradeIcon.checkbutton:SetChecked(GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW)
+        dd.professionColor.checkbutton:SetChecked(GW.settings.BAG_PROFESSION_BAG_COLOR)
+        dd.vendorGrays.checkbutton:SetChecked(GW.settings.BAG_VENDOR_GRAYS)
+        dd.showItemLvl.checkbutton:SetChecked(GW.settings.BAG_SHOW_ILVL)
+        dd.showEquipmentSetName.checkbutton:SetChecked(GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME)
+        dd.separateBags.checkbutton:SetChecked(GW.settings.BAG_SEPARATE_BAGS)
 
         setupVendorJunk(dd.vendorGrays.checkbutton:GetChecked())
 
@@ -1036,7 +1034,7 @@ local function LoadBag(helpers)
     smsj.shadow:SetAllPoints()
     smsj.shadow:SetColorTexture(0.1, 0.1, 0.1, 1.0)
 
-    smsj.text = smsj:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge") 
+    smsj.text = smsj:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     smsj.text:SetAllPoints();
     smsj.text:SetText(L["Selling Junk"])
 

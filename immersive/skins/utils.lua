@@ -255,7 +255,7 @@ local function SkinDropDownList()
 end
 
 local function SkinDropDown()
-    if not GW.GetSetting("DROPDOWN_SKIN_ENABLED") then return end
+    if not GW.settings.DROPDOWN_SKIN_ENABLED then return end
     SkinDropDownList()
     SkinUIDropDownMenu()
 end
@@ -337,6 +337,21 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
     end
 end
 GW.SkinTextBox = SkinTextBox
+
+local function MutateInaccessableObject(frame, objType, func)
+    local r = {frame:GetRegions()}
+
+    if frame == nil or objType == nil or func == nil then
+        return
+    end
+
+    for _, c in pairs(r) do
+        if c:GetObjectType() == objType then
+            func(c)
+        end
+    end
+end
+GW.MutateInaccessableObject = MutateInaccessableObject
 
 do
     local function iconBorderColor(border, r, g, b, a)

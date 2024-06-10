@@ -9,7 +9,7 @@ local function UpdateRaidCounterVisibility()
         ["IN_RAID_IN_PARTY"] = "[petbattle] hide; [group] show; hide",
     }
 
-    RegisterStateDriver(GW_RaidCounter_Frame, "visibility", VisibilityStates[GW.GetSetting("ROLE_BAR")])
+    RegisterStateDriver(GW_RaidCounter_Frame, "visibility", VisibilityStates[GW.settings.ROLE_BAR])
     GW_RaidCounter_Frame:GetScript("OnEvent")(GW_RaidCounter_Frame)
 end
 GW.UpdateRaidCounterVisibility = UpdateRaidCounterVisibility
@@ -20,7 +20,7 @@ local function Create_Raid_Counter()
     if GwSocialWindow then
         raidCounterFrame:SetFrameRef("GwSocialWindow", GwSocialWindow)
     end
-    raidCounterFrame:SetAttribute("ourWindow", GW.GetSetting("USE_SOCIAL_WINDOW"))
+    raidCounterFrame:SetAttribute("ourWindow", GW.settings.USE_SOCIAL_WINDOW)
     raidCounterFrame:SetAttribute("ourWindow", false)
     raidCounterFrame.func = function() ToggleRaidFrame() end
     raidCounterFrame:SetAttribute(

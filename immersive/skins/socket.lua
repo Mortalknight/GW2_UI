@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local function ApplySocketUISkin()
-    if not GW.GetSetting("SOCKET_SKIN_ENABLED") then return end
+    if not GW.settings.SOCKET_SKIN_ENABLED then return end
 
     ItemSocketingFrame:GwStripTextures()
     ItemSocketingCloseButton:GwSkinButton(true)

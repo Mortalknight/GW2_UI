@@ -1,7 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
+
 local EnableTooltip = GW.EnableTooltip
 local inv
 
@@ -14,9 +13,9 @@ local function layoutBankItems(f)
     local max_col = f:GetParent().gw_bank_cols
     local row = 0
     local col = 0
-    local rev = GetSetting("BANK_REVERSE_SORT")
+    local rev = GW.settings.BANK_REVERSE_SORT
 
-    local item_off = GetSetting("BAG_ITEM_SIZE") + BANK_ITEM_PADDING
+    local item_off = GW.settings.BAG_ITEM_SIZE + BANK_ITEM_PADDING
 
     local iS = NUM_BAG_SLOTS
     local iE = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
@@ -68,7 +67,7 @@ local function snapFrameSize(f)
     if f.ItemFrame:IsShown() then
         cfs = f.ItemFrame.Containers
     end
-    inv.snapFrameSize(f, cfs, GetSetting("BAG_ITEM_SIZE"), BANK_ITEM_PADDING, 370)
+    inv.snapFrameSize(f, cfs, GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, 370)
 end
 GW.AddForProfiling("bank", "snapFrameSize", snapFrameSize)
 
@@ -113,7 +112,7 @@ local function setBagBarOrder(f)
     local x, y = -40, nil
     local bag_size = 28
     local bag_padding = 4
-    local rev = GetSetting("BANK_REVERSE_SORT")
+    local rev = GW.settings.BANK_REVERSE_SORT
     if rev then
         y = 5 - ((bag_size + bag_padding) * NUM_BANKBAGSLOTS)
     else
@@ -252,13 +251,13 @@ end
 GW.AddForProfiling("bank", "updateBagBar", updateBagBar)
 
 local function onBankResizeStop(self)
-    SetSetting("BANK_WIDTH", self:GetWidth())
+    GW.settings.BANK_WIDTH = self:GetWidth()
     inv.onMoved(self, "BANK_POSITION", snapFrameSize)
 end
 GW.AddForProfiling("bank", "onBankResizeStop", onBankResizeStop)
 
 local function onBankFrameChangeSize(self, _, _, skip)
-    local cols = inv.colCount(GetSetting("BAG_ITEM_SIZE"), BANK_ITEM_PADDING, self:GetWidth())
+    local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, self:GetWidth())
 
     if not self.gw_bank_cols or self.gw_bank_cols ~= cols then
         self.gw_bank_cols = cols
@@ -271,13 +270,13 @@ GW.AddForProfiling("bank", "onBankFrameChangeSize", onBankFrameChangeSize)
 
 -- toggles the setting for compact/large icons
 local function compactToggle()
-    if GetSetting("BAG_ITEM_SIZE") == BANK_ITEM_LARGE_SIZE then
-        SetSetting("BAG_ITEM_SIZE", BANK_ITEM_COMPACT_SIZE)
+    if GW.settings.BAG_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
+        GW.settings.BAG_ITEM_SIZE = BANK_ITEM_COMPACT_SIZE
         inv.resizeInventory()
         return true
     end
 
-    SetSetting("BAG_ITEM_SIZE", BANK_ITEM_LARGE_SIZE)
+    GW.settings.BAG_ITEM_SIZE = BANK_ITEM_LARGE_SIZE
     inv.resizeInventory()
     return false
 end
@@ -379,15 +378,15 @@ GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
 local function LoadBank(helpers)
     inv = helpers
 
-    if GetSetting("BAG_ITEM_SIZE") > 40 then
-        SetSetting("BAG_ITEM_SIZE", 40)
+    if GW.settings.BAG_ITEM_SIZE > 40 then
+        GW.settings.BAG_ITEM_SIZE = 40
     end
 
     -- create bank frame, restore its saved size, and init its many pieces
     local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrameTemplate")
     tinsert(UISpecialFrames, "GwBankFrame")
     f:ClearAllPoints()
-    f:SetWidth(GetSetting("BANK_WIDTH"))
+    f:SetWidth(GW.settings.BANK_WIDTH)
     onBankFrameChangeSize(f, nil, nil, true)
 
     -- setup show/hide
@@ -412,7 +411,7 @@ local function LoadBank(helpers)
     end)
 
     -- setup movable stuff
-    local pos = GetSetting("BANK_POSITION")
+    local pos = GW.settings.BANK_POSITION
     f:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     f.mover:RegisterForDrag("LeftButton")
     f.mover.onMoveSetting = "BANK_POSITION"
@@ -543,16 +542,16 @@ local function LoadBank(helpers)
         dd.bagOrder.checkbutton:SetScript(
             "OnClick",
             function()
-                local newStatus = not GetSetting("BANK_REVERSE_SORT")
+                local newStatus = not GW.settings.BANK_REVERSE_SORT
                 dd.bagOrder.checkbutton:SetChecked(newStatus)
-                SetSetting("BANK_REVERSE_SORT", newStatus)
+                GW.settings.BANK_REVERSE_SORT = newStatus
 
                 ContainerFrame_UpdateAll()
             end
         )
 
-        dd.compactBank.checkbutton:SetChecked(GetSetting("BAG_ITEM_SIZE") == BANK_ITEM_COMPACT_SIZE)
-        dd.bagOrder.checkbutton:SetChecked(GetSetting("BANK_REVERSE_SORT"))
+        dd.compactBank.checkbutton:SetChecked(GW.settings.BAG_ITEM_SIZE == BANK_ITEM_COMPACT_SIZE)
+        dd.bagOrder.checkbutton:SetChecked(GW.settings.BANK_REVERSE_SORT)
 
         -- setup bag setting title locals
         dd.compactBank.title:SetText(L["Compact Icons"])

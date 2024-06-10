@@ -1,7 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
+
 
 local windowsList = {}
 local hasBeenLoaded = false
@@ -477,7 +476,7 @@ local charCloseSecure_OnClick = [=[
 local function mover_SavePosition(self, x, y)
     local setting = self.onMoveSetting
     if setting then
-        local pos = GetSetting(setting)
+        local pos = GW.settings[setting]
         if pos then
             wipe(pos)
         else
@@ -487,7 +486,7 @@ local function mover_SavePosition(self, x, y)
         pos.relativePoint = "BOTTOMLEFT"
         pos.xOfs = x
         pos.yOfs = y
-        SetSetting(setting, pos)
+        GW.settings[setting] = pos
     end
 end
 
@@ -553,8 +552,8 @@ local function loadBaseFrame()
     fmGCW.close:SetAttribute("_onclick", charCloseSecure_OnClick)
 
     -- setup movable stuff
-    local pos = GetSetting("HERO_POSITION")
-    local scale = GetSetting("HERO_POSITION_SCALE")
+    local pos = GW.settings.HERO_POSITION
+    local scale = GW.settings.HERO_POSITION_SCALE
 
     fmGCW:SetScale(scale)
     fmGCW:ClearAllPoints()
@@ -599,16 +598,16 @@ local function loadBaseFrame()
     end)
     fmGCW.sizer:SetScript("OnMouseUp", function(self)
         self:SetScript("OnUpdate", nil)
-        SetSetting("HERO_POSITION_SCALE", GwCharacterWindow:GetScale())
+        GW.settings.HERO_POSITION_SCALE = GwCharacterWindow:GetScale()
         -- Save hero frame position
-        local pos = GetSetting("HERO_POSITION")
+        local pos = GW.settingsHERO_POSITION
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = GwCharacterWindow:GetPoint()
-        SetSetting("HERO_POSITION", pos)
+        GW.settings.HERO_POSITION = pos
         --Reset Model Camera
         GwDressingRoom.model:RefreshCamera()
     end)
@@ -756,7 +755,7 @@ local function LoadWindows()
 
     local anyThingToLoad = false
     for _, v in pairs(windowsList) do
-        if GetSetting(v.SettingName) then
+        if GW.settings[v.SettingName] then
             anyThingToLoad = true
         end
     end
@@ -769,7 +768,7 @@ local function LoadWindows()
     local fmGCW = GwCharacterWindow
     local tabIndex = 1
     for _, v in pairs(windowsList) do
-        if GetSetting(v.SettingName) then
+        if GW.settings[v.SettingName] then
             local container = GW[v.OnLoad](fmGCW)
             local tab = createTabIcon(v.TabIcon, tabIndex)
 
@@ -814,10 +813,10 @@ local function LoadWindows()
                     nextShadow = false
                 end
                 nextAnchor = (GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6) and GwHeroPanelMenu.petMenu or GwHeroPanelMenu.equipmentMenu
-                addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end, true)
-                addAddonButton("GearQuipper-TBC", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() gearquipper:ToggleUI() end, false)
-                addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end, true)
-                addAddonButton("Pawn", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, PawnUIShow, false)
+                addAddonButton("Outfitter", GW.settings.USE_CHARACTER_WINDOW, nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end, true)
+                addAddonButton("GearQuipper-TBC", GW.settings.USE_CHARACTER_WINDOW, nextShadow, nextAnchor, function() gearquipper:ToggleUI() end, false)
+                addAddonButton("Clique", GW.settings.USE_SPELLBOOK_WINDOW, nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end, true)
+                addAddonButton("Pawn", GW.settings.USE_CHARACTER_WINDOW, nextShadow, nextAnchor, PawnUIShow, false)
 
                 GW.ToggleCharacterItemInfo(true)
 
@@ -887,7 +886,7 @@ local function LoadWindows()
         end
     end
 
-    if GetSetting("USE_CHARACTER_WINDOW") then
+    if GW.settings.USE_CHARACTER_WINDOW then
         CharacterFrame:SetScript("OnShow", function()
             if hideCharframe then
                 HideUIPanel(CharacterFrame)

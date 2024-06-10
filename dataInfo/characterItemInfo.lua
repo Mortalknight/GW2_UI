@@ -150,7 +150,7 @@ do
 end
 
 local function UpdateCharacterInfo(self, event)
-    if not GW.GetSetting("SHOW_CHARACTER_ITEM_INFO") then return end
+    if not GW.settings.SHOW_CHARACTER_ITEM_INFO then return end
     -- set the values for the next time the char window gets open
     if event == "PLAYER_EQUIPMENT_CHANGED" then
         self.needsUpdate = true
@@ -171,7 +171,7 @@ local function ToggleCharacterItemInfo(setup)
         CreateSlotStrings()
     end
 
-    if GW.GetSetting("SHOW_CHARACTER_ITEM_INFO") then
+    if GW.settings.SHOW_CHARACTER_ITEM_INFO then
         f.needsUpdate = true
         f.lastUpdateTime = GetTime()
         f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")

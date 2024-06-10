@@ -23,8 +23,8 @@ local function gw_totem_bar_OnEvent(self)
 end
 
 local function PositionAndSize(self)
-    local growDirection = GW.GetSetting("TotemBar_GrowDirection")
-    local sortDirection = GW.GetSetting("TotemBar_SortDirection")
+    local growDirection = GW.settings.TotemBar_GrowDirection
+    local sortDirection = GW.settings.TotemBar_SortDirection
 
     for i = 1, MAX_TOTEMS do
         local button = self[i]

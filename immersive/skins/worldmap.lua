@@ -12,7 +12,7 @@ local function GetScaleDistance()
 end
 
 local function worldMapSkin()
-    if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
+    if not GW.settings.WORLDMAP_SKIN_ENABLED then return end
     WorldMapFrame:GwStripTextures()
     WorldMapFrame.BlackoutFrame:GwKill()
 
@@ -110,19 +110,19 @@ local function worldMapSkin()
         WorldMapFrame:StopMovingOrSizing()
         WorldMapFrame:SetUserPlaced(false)
         -- Save map frame position
-        local pos = GW.GetSetting("WORLDMAP_POSITION")
+        local pos = GW.settings.WORLDMAP_POSITION
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-        GW.SetSetting("WORLDMAP_POSITION", pos)
+        GW.settings.WORLDMAP_POSITION = pos
     end)
 
     -- Set position on startup
     WorldMapFrame:HookScript("OnShow", function()
-        local pos = GW.GetSetting("WORLDMAP_POSITION")
+        local pos = GW.settings.WORLDMAP_POSITION
         WorldMapFrame:ClearAllPoints()
         WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     end)
@@ -179,25 +179,25 @@ local function worldMapSkin()
     scaleMouse:SetScript("OnMouseUp", function(frame)
         frame:SetScript("OnUpdate", nil)
         frame:SetAllPoints(scaleHandle)
-        GW.SetSetting("WORLDMAP_SCALE", WorldMapFrame:GetScale())
+        GW.settings.WORLDMAP_SCALE = WorldMapFrame:GetScale()
         WorldMapFrame:SetScale(WorldMapFrame:GetScale())
         -- Save map frame position
-        local pos = GW.GetSetting("WORLDMAP_POSITION")
+        local pos = GW.settings.WORLDMAP_POSITION
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-        GW.SetSetting("WORLDMAP_POSITION", pos)
+        GW.settings.WORLDMAP_POSITION = pos
     end)
 
-    WorldMapFrame:SetScale(GW.GetSetting("WORLDMAP_SCALE"))
+    WorldMapFrame:SetScale(GW.settings.WORLDMAP_SCALE)
 
     -- Function to set position after Leatrix_Maps has loaded
     local function LeatrixMapsFix()
         hooksecurefunc(WorldMapFrame, "Show", function()
-            local pos = GW.GetSetting("WORLDMAP_POSITION")
+            local pos = GW.settings.WORLDMAP_POSITION
             WorldMapFrame:ClearAllPoints()
             WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
@@ -209,14 +209,14 @@ local function worldMapSkin()
                 WorldMapFrame:StopMovingOrSizing()
                 WorldMapFrame:SetUserPlaced(false)
                 -- Save map frame position
-                local pos = GW.GetSetting("WORLDMAP_POSITION")
+                local pos = GW.settings.WORLDMAP_POSITION
                 if pos then
                     wipe(pos)
                 else
                     pos = {}
                 end
                 pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-                GW.SetSetting("WORLDMAP_POSITION", pos)
+                GW.settings.WORLDMAP_POSITION = pos
             end)
         end)
     end
@@ -247,7 +247,7 @@ local function worldMapSkin()
 end
 
 local function LoadWorldMapSkin()
-    if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
+    if not GW.settings.WORLDMAP_SKIN_ENABLED then return end
 
     GW.RegisterLoadHook(worldMapSkin, "Blizzard_WorldMap", WorldMapFrame)
 end

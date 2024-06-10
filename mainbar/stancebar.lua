@@ -10,7 +10,7 @@ local function SetStanceButtons(stanceButton)
         StanceButton1:SetPoint("TOPLEFT", stanceButton.gwMover)
         StanceButton1:SetFrameLevel(stanceButton:GetFrameLevel() + 5)
     else
-        local growDirection = GW.GetSetting("StanceBar_GrowDirection")
+        local growDirection = GW.settings.StanceBar_GrowDirection
 
         stanceButton.container:ClearAllPoints()
         if growDirection == "UP" then
@@ -57,7 +57,7 @@ GW.SetStanceButtons = SetStanceButtons
 
 local function StanceButton_OnEvent(self, event)
     if event == "PLAYER_ENTERING_WORLD" and not InCombatLockdown() then
-        self.container:SetShown(GW.GetSetting("StanceBarContainerState") == "open" and true or false)
+        self.container:SetShown(GW.settings.StanceBarContainerState == "open" and true or false)
     end
     if InCombatLockdown() then
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -103,7 +103,7 @@ local function CreateStanceBar()
     ]=]
     )
     StanceBarButton:HookScript("OnClick", function(self)
-        GW.SetSetting("StanceBarContainerState", self.container:IsShown() and "open" or "close")
+        GW.settings.StanceBarContainerState =  self.container:IsShown() and "open" or "close"
     end)
 
     GW.RegisterMovableFrame(StanceBarButton, GW.L["StanceBar"], "StanceBar_pos", ALL .. ",Power,Blizzard", nil, {"default", "scaleable"})

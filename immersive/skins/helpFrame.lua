@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local function LoadHelperFrameSkin()
-    if not GW.GetSetting("HELPFRAME_SKIN_ENABLED") then return end
+    if not GW.settings.HELPFRAME_SKIN_ENABLED then return end
 
     HelpFrame.TitleContainer:Hide()
 

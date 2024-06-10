@@ -41,7 +41,7 @@ local function inviteClick(_, name, guid)
             if isBNet then
                 BNRequestInviteFriend(name)
             else
-                C_PartyInfo.RequestInviteFromUnit(name)
+                RequestInviteFromUnit(name)
             end
         end
     else

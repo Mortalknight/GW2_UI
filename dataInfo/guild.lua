@@ -175,7 +175,7 @@ local function inviteClick(_, name, guid)
         if inviteType == "INVITE" or inviteType == "SUGGEST_INVITE" then
             C_PartyInfo.InviteUnit(name)
         elseif inviteType == "REQUEST_INVITE" then
-            C_PartyInfo.RequestInviteFromUnit(name)
+            RequestInviteFromUnit(name)
         end
     end
 end

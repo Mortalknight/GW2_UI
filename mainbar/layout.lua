@@ -170,8 +170,8 @@ local onstate_Barlayout = [=[
 
 local function LoadMainbarLayout()
     local l = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
-    l:SetAttribute("playerFrameAsTarget", GW.GetSetting("PLAYER_AS_TARGET_FRAME"))
-    l:SetAttribute("isEpBarShown", GW.GetSetting("XPBAR_ENABLED"))
+    l:SetAttribute("playerFrameAsTarget", GW.settings.PLAYER_AS_TARGET_FRAME)
+    l:SetAttribute("isEpBarShown", GW.settings.XPBAR_ENABLED)
     l:SetAttribute("_onstate-barlayout", onstate_Barlayout)
     l.oocHandler = function()
         lm:onstate_None()

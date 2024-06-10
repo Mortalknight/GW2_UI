@@ -49,8 +49,8 @@ local function findBuffs(unit, ...)
 end
 
 local function Position(self, button, index)
-    local growDirection = GW.GetSetting("AuraTracker_GrowDirection")
-    local sortDirection = GW.GetSetting("AuraTracker_SortDirection")
+    local growDirection = GW.settings.AuraTracker_GrowDirection
+    local sortDirection = GW.settings.AuraTracker_SortDirection
 
     local prevButton = index > 1 and _G[self:GetName() .. "Icon" .. (index - 1)] or nil
 
@@ -132,7 +132,7 @@ local function OnEvent(self)
 end
 
 local function UpdateTrackedAuras()
-    trackedIds = GW.GetSetting("CUSTOM_AURA_TRACKER"):trim():gsub("%s*,%s*", ",")
+    trackedIds = tostring(GW.settings.CUSTOM_AURA_TRACKER):trim():gsub("%s*,%s*", ",")
 
     if trackedIds then
         GWCustomAuraTracker:RegisterUnitEvent("UNIT_AURA", "player")

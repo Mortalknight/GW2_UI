@@ -7,11 +7,11 @@ StaticPopupDialogs["GW_CHANGE_BAG_HEADER"] = {
     button2 = RESET,
     selectCallbackByIndex = true,
     OnButton1 = function(self, data)
-        GW.SetSetting("BAG_HEADER_NAME" .. data, self.editBox:GetText())
+        GW.settings["BAG_HEADER_NAME" .. data] = self.editBox:GetText()
         _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(self.editBox:GetText())
     end,
     OnButton2 = function(_, data)
-        GW.SetSetting("BAG_HEADER_NAME" .. data, "")
+         GW.settings["BAG_HEADER_NAME" .. data] = ""
 
         if tonumber(data) > 0 then
             local slotID = GetInventorySlotInfo("Bag" .. data - 1 .. "Slot")
@@ -50,7 +50,7 @@ StaticPopupDialogs["GW_CHANGE_PROFILE_NAME"] = {
             profileToRename["profileCreatedCharacter"] .. "\n" .. L["Last updated: "] .. changeDate
 
         -- Use hidden frame font object to calculate string width
-        GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, 14, "")
+        GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, 14)
         GW.HiddenFrame.HiddenString:SetText(text)
         profileToRename["profilename"] = text
         profileToRename["profileLastUpdated"] = changeDate
@@ -63,7 +63,7 @@ StaticPopupDialogs["GW_CHANGE_PROFILE_NAME"] = {
             if allLayouts[i] and allLayouts[i].profileId == data.profileID then
                 GW2UI_LAYOUTS[i].name = text
                 GW2UI_LAYOUTS[i].name = L["Profiles"] .. " - " .. text
-                GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll)
+                GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll)
                 break
             end
         end
@@ -94,7 +94,7 @@ StaticPopupDialogs["JOIN_DISCORD"] = {
         local editBox = _G[self:GetName() .. "EditBox"]
         editBox:SetText("https://discord.gg/MZZtRWt")
         editBox:SetFocus()
-        editBox:HighlightText(false)
+        editBox:HighlightText()
         local button = _G[self:GetName() .. "Button2"]
         button:ClearAllPoints()
         button:SetWidth(200)

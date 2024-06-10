@@ -2,7 +2,7 @@ local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 
 local function ApplyMacroOptionsSkin()
-    if not GW.GetSetting("MACRO_SKIN_ENABLED") then return end
+    if not GW.settings.MACRO_SKIN_ENABLED then return end
     local macroHeaderText
 
     local r = {MacroFrame:GetRegions()}

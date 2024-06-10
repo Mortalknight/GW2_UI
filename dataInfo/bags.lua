@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local iconString = "|T%s:14:14:0:0:64:64:4:60:4:60|t "
 
@@ -36,7 +35,7 @@ local function Bags_OnEnter(self)
                 icon = GetInventoryItemTexture("player", sumNum)
             end
 
-            bagName = GetSetting("BAG_SEPARATE_BAGS") and strlen(GetSetting("BAG_HEADER_NAME" .. i)) > 0 and GetSetting("BAG_HEADER_NAME" .. i) or bagName
+            bagName = GW.settings.BAG_SEPARATE_BAGS and strlen(GW.settings["BAG_HEADER_NAME" .. i]) > 0 and GW.settings["BAG_HEADER_NAME" .. i] or bagName
 
             GameTooltip:AddDoubleLine(format(iconString, icon or "Interface/Buttons/Button-Backpack-Up") .. bagName, format("%d/%d", usedSlots, numSlots), r or 1, g or 1, b or 1, r2, g2, b2)
         end

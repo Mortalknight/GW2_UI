@@ -6,9 +6,9 @@ local MOUSE_LABEL = MOUSE_LABEL:gsub("|[TA].-|[ta]","")
 local function UpdateSettings()
     -- set the position and toggle the frame
     CoordsFrame.Coords:ClearAllPoints()
-    CoordsFrame.Coords:SetPoint(GW.GetSetting("WORLDMAP_COORDS_POSITION"), WorldMapFrame.ScrollContainer, GW.GetSetting("WORLDMAP_COORDS_POSITION"), GW.GetSetting("WORLDMAP_COORDS_X_OFFSET"), GW.GetSetting("WORLDMAP_COORDS_Y_OFFSET"))
+    CoordsFrame.Coords:SetPoint(GW.settings.WORLDMAP_COORDS_POSITION, WorldMapFrame.ScrollContainer, GW.settings.WORLDMAP_COORDS_POSITION, GW.settings.WORLDMAP_COORDS_X_OFFSET, GW.settings.WORLDMAP_COORDS_Y_OFFSET)
 
-    if GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then
+    if GW.settings.WORLDMAP_COORDS_TOGGLE then
         CoordsFrame:Show()
     else
         CoordsFrame:Hide()
@@ -48,7 +48,7 @@ local function AddCoordsToWorldMap()
     CoordsFrame.Coords:SetFont(GW.L["FONT_NARROW"], 12, "")
 
     WorldMapFrame:HookScript("OnShow", function()
-        if not CoordsTimer and GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then
+        if not CoordsTimer and GW.settings.WORLDMAP_COORDS_TOGGLE then
             UpdateCoords()
             if CoordsTimer then
                 CoordsTimer:Cancel()

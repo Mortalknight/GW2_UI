@@ -11,13 +11,12 @@
 ## Author: deadend06, Nils89, nezroy
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03, GW2UI_QUEST_WATCH_DB, GW2UI_PRIVATE_SETTINGS, GW2UI_PRIVATE_LAYOUTS
-## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2, GW2UI_LAYOUTS
+## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2, GW2UI_LAYOUTS, GW2UI_DATABASE, GW2UI_PRIVATE_DB
 
 core/shared.xml
 core\migration.lua
 core/TaintLess.xml
 core/debug.lua
-core/incompatibleAddons.lua
 core/errorHandler.lua
 core/locationData.lua
 libs/libs.xml
@@ -37,7 +36,11 @@ locales\itIT.lua
 core\warningPrompt.xml
 core\warningPrompt.lua
 core\consts.lua
+settings\defaults2.lua
 core\init.lua
+core/incompatibleAddons.lua
+settings\api.lua
+
 core\staticPopupDialogs.lua
 core\raid_debuffs.lua
 core\toolkit.lua
@@ -57,7 +60,6 @@ core\statusbars.lua
 settings\settings_menu.lua
 settings\settings.xml
 settings\defaults.lua
-settings\api.lua
 settings\panel_modules.xml
 settings\panel_profiles.xml
 settings\panel_raid.xml
@@ -65,7 +67,7 @@ settings\panel_party.xml
 settings\settings.lua
 settings\panel_modules.lua
 settings\panel_player.lua
-settings\panel_target.lua
+settings\panel_unitframes.lua
 settings\panel_actionbar.lua
 settings\panel_hud.lua
 settings\panel_tooltip.lua
@@ -82,7 +84,6 @@ settings\welcome.xml
 settings\welcome.lua
 settings\layouts.lua
 settings\moveableFrameHandler.lua
-settings\credits.lua
 settings\versionApi.lua
 settings\panel_overview.lua
 settings\panel_overview.xml

@@ -36,38 +36,38 @@ GW.GW2_GridRaid40StyleRegister = GW2_GridRaid40StyleRegister
 
 local function UpdateGridRaid40Frame(frame)
     -- set frame settings
-    frame.useClassColor = GW.GetSetting("RAID_CLASS_COLOR")
-    frame.showResscoureBar = GW.GetSetting("RAID_POWER_BARS")
-    frame.healthStringFormat = GW.GetSetting("RAID_UNIT_HEALTH")
-    frame.showTargetmarker = GW.GetSetting("RAID_UNIT_MARKERS")
-    frame.unitWidth = tonumber(GW.GetSetting("RAID_WIDTH"))
-    frame.unitHeight = tonumber(GW.GetSetting("RAID_HEIGHT"))
-    frame.raidShowImportendInstanceDebuffs = GW.GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
-    frame.showAllDebuffs = GW.GetSetting("RAID_SHOW_DEBUFFS")
-    frame.showOnlyDispelDebuffs = GW.GetSetting("RAID_ONLY_DISPELL_DEBUFFS")
-    frame.showAuraTooltipInCombat = GW.GetSetting("RAID_AURA_TOOLTIP_INCOMBAT")
-    frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
-    frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
+    frame.useClassColor = GW.settings.RAID_CLASS_COLOR
+    frame.showResscoureBar = GW.settings.RAID_POWER_BARS
+    frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH
+    frame.showTargetmarker = GW.settings.RAID_UNIT_MARKERS
+    frame.unitWidth = tonumber(GW.settings.RAID_WIDTH)
+    frame.unitHeight = tonumber(GW.settings.RAID_HEIGHT)
+    frame.raidShowImportendInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF
+    frame.showAllDebuffs = GW.settings.RAID_SHOW_DEBUFFS
+    frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS
+    frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT
+    frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
+    frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do
-        frame.raidIndicators[pos] = GW.GetSetting("INDICATOR_" .. pos)
+        frame.raidIndicators[pos] = GW.settings["INDICATOR_" .. pos]
     end
-    frame.showRaidIndicatorIcon = GW.GetSetting("INDICATORS_ICON")
-    frame.showRaidIndicatorTimer = GW.GetSetting("INDICATORS_TIME")
-    frame.raidDebuffScale = GW.GetSetting("RAIDDEBUFFS_Scale")
-    frame.raidDispelDebuffScale = GW.GetSetting("DISPELL_DEBUFFS_Scale")
-    frame.showRoleIcon = GW.GetSetting("RAID_SHOW_ROLE_ICON")
-    frame.showTankIcon = GW.GetSetting("RAID_SHOW_TANK_ICON")
-    frame.showLeaderAssistIcon = GW.GetSetting("RAID_SHOW_LEADER_ICON")
+    frame.showRaidIndicatorIcon = GW.settings.INDICATORS_ICON
+    frame.showRaidIndicatorTimer = GW.settings.INDICATORS_TIME
+    frame.raidDebuffScale = GW.settings.RAIDDEBUFFS_Scale
+    frame.raidDispelDebuffScale = GW.settings.DISPELL_DEBUFFS_Scale
+    frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON
+    frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON
+    frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
         frame:ClearAllPoints()
 
-        if GW.GetSetting("RAID_FRAMES") and not frame:IsEnabled() then
+        if GW.settings.RAID_FRAMES and not frame:IsEnabled() then
             frame:Enable()
-        elseif not GW.GetSetting("RAID_FRAMES") and frame:IsEnabled() then
+        elseif not GW.settings.RAID_FRAMES and frame:IsEnabled() then
             frame:Disable()
         end
     end

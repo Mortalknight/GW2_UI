@@ -177,7 +177,7 @@ end
 GW.AddForProfiling("bossFrames", "bossFrame_OnEvent", bossFrame_OnEvent)
 
 local function SetUpFramePosition()
-    local yOffset = GW.GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
+    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
 
     for idx, frame in pairs(bossFrames) do
         if idx == 1 then

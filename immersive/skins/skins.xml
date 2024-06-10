@@ -12,6 +12,7 @@
     <Script file="colorPicker.lua"/>
     <Script file="questLog.lua"/>
     <Script file="gossip.lua"/>
+    <Script file="mail.lua"/>
     <Script file="merchant.lua"/>
     <Script file="readycheck.lua"/>
     <Script file="timeManager.lua"/>
@@ -25,4 +26,5 @@
     <Script file="addons\gearQuipper.lua"/>
     <Script file="addons\detailsProfile.lua"/>
     <Script file="addons\masqueSkin.lua"/>
+    <Script file="addons\postal.lua"/>
 </Ui>

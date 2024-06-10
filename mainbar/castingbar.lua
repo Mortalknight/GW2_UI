@@ -26,7 +26,7 @@ GW.CASTINGBAR_TEXTURES = CASTINGBAR_TEXTURES
 local settings = {}
 
 local function UpdateSettings()
-    settings.showSpellQueueWindow = GW.GetSetting("PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW")
+    settings.showSpellQueueWindow = GW.settings.PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW
 end
 GW.UpdateCastingBarSettings = UpdateSettings
 
@@ -394,7 +394,7 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     GwCastingBar.showTradeSkills = showTradeSkills
     GwCastingBar.StagePoints = {}
     GwCastingBar.numStages = 0
-    GwCastingBar.showDetails = GW.GetSetting("CASTINGBAR_DATA")
+    GwCastingBar.showDetails = GW.settings.CASTINGBAR_DATA
 
     GwCastingBar.segments = {}
 

@@ -49,17 +49,17 @@ end
 
 
 local function SetUpExtendedVendor()
-    if C_AddOns.IsAddOnLoaded("ExtVendor") or GW.GetSetting("EXTENDED_VENDOR_NUM_PAGES") == "1" then
+    if C_AddOns.IsAddOnLoaded("ExtVendor") or GW.settings.EXTENDED_VENDOR_NUM_PAGES == "1" then
         return
     end
 
-    MERCHANT_ITEMS_PER_PAGE = GW.GetSetting("EXTENDED_VENDOR_NUM_PAGES") * 10
-    MerchantFrame:SetWidth(30 + GW.GetSetting("EXTENDED_VENDOR_NUM_PAGES") * 330)
+    MERCHANT_ITEMS_PER_PAGE = GW.settings.EXTENDED_VENDOR_NUM_PAGES * 10
+    MerchantFrame:SetWidth(30 + GW.settings.EXTENDED_VENDOR_NUM_PAGES * 330)
 
     for i = 1, MERCHANT_ITEMS_PER_PAGE do
         if not _G["MerchantItem" .. i] then
             CreateFrame("Frame", "MerchantItem" .. i, MerchantFrame, "MerchantItemTemplate")
-            if GW.GetSetting("MERCHANT_SKIN_ENABLED") then
+            if GW.settings.MERCHANT_SKIN_ENABLED then
                 GW.SkinMerchantFrameItemButton(i)
             end
         end

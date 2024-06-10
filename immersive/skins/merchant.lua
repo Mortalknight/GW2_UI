@@ -32,7 +32,7 @@ end
 GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
 
 local function LoadMerchantFrameSkin()
-    if not GW.GetSetting("MERCHANT_SKIN_ENABLED") then return end
+    if not GW.settings.MERCHANT_SKIN_ENABLED then return end
 
     MerchantMoneyBg:GwStripTextures()
     MerchantMoneyInset:GwStripTextures()

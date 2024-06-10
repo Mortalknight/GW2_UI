@@ -7,10 +7,10 @@ local BadDispels = GW.Libs.Dispel:GetBadList()
 local function GetDebuffScaleBasedOnPrio()
     local scale = 1
 
-    if GW.GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO") == "DISPELL" then
-        return tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
-    elseif GW.GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO") == "IMPORTANT" then
-        return tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+    if GW.settings.RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO == "DISPELL" then
+        return tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
+    elseif GW.settings.RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO == "IMPORTANT" then
+        return tonumber(GW.settings.RAIDDEBUFFS_Scale)
     end
 
     return scale
@@ -221,8 +221,8 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local usedWidth = 0
     local usedHeight = 0
     local usedWidth2 = 2
-    local smallSize = self == GwTargetUnitFrame and tonumber(GW.GetSetting("target_ICON_SIZE")) or self == GwFocusUnitFrame and tonumber(GW.GetSetting("focus_ICON_SIZE")) or 20
-    local bigSize = self == GwTargetUnitFrame and tonumber(GW.GetSetting("target_ICON_SIZE")) * 1.4 or self == GwFocusUnitFrame and tonumber(GW.GetSetting("focus_ICON_SIZE")) * 1.4 or 28
+    local smallSize = self == GwTargetUnitFrame and tonumber(GW.settings.target_ICON_SIZE) or self == GwFocusUnitFrame and tonumber(GW.settings.focus_ICON_SIZE) or 20
+    local bigSize = self == GwTargetUnitFrame and tonumber(GW.settings.target_ICON_SIZE) * 1.4 or self == GwFocusUnitFrame and tonumber(GW.settings.focus_ICON_SIZE) * 1.4 or 28
     local maxSize = self.auras:GetWidth()
     local isBuff = false
     local auraList = getBuffs(self.unit, nil, self.frameInvert)
@@ -286,9 +286,9 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 if GW.ImportendRaidDebuff[list[index].spellID] and list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
                     size = size * debuffScale
                 elseif GW.ImportendRaidDebuff[list[index].spellID] then
-                    size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+                    size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
                 elseif list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
-                    size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+                    size = size * tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
                 end
             end
 

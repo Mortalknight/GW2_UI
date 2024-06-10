@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local function CheckIfNewIncompatibleAddonsAreAddedOrOldOnesRemoved(savedOnes)
-    local defaultIncompatibleAddons = GW.GetDefault("IncompatibleAddons")
+    local defaultIncompatibleAddons = GW.globalDefault.profile.IncompatibleAddons
     local shouldAddSetting = false
     local needUpdateSavedOnes = false
 
@@ -20,7 +20,7 @@ local function CheckIfNewIncompatibleAddonsAreAddedOrOldOnesRemoved(savedOnes)
         end
     end
     if needUpdateSavedOnes then
-        GW.SetSetting("IncompatibleAddons", savedOnes)
+        GW.settings.IncompatibleAddons = savedOnes
     end
 
     return savedOnes
@@ -30,7 +30,7 @@ local function IsIncompatibleAddonLoadedOrOverride(setting, LoadedAndOverride)
     local IncompatibleAddonLoaded = false
     local whichAddonsIsLoaded = ""
     local isOverride = false
-    local savedIncompatibleAddons = GW.GetSetting("IncompatibleAddons")
+    local savedIncompatibleAddons = GW.settings.IncompatibleAddons
     savedIncompatibleAddons = CheckIfNewIncompatibleAddonsAreAddedOrOldOnesRemoved(savedIncompatibleAddons)
     for settings, table in pairs(savedIncompatibleAddons) do
         if settings == setting then

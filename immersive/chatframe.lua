@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
 
 local FindURL_Events = {
     "CHAT_MSG_WHISPER",
@@ -177,7 +176,7 @@ end
 
 local function getLines(frame)
     local index = 1
-    local maxMessages, frameMessages = tonumber(GetSetting("CHAT_MAX_COPY_CHAT_LINES")), frame:GetNumMessages()
+    local maxMessages, frameMessages = tonumber(GW.settings.CHAT_MAX_COPY_CHAT_LINES), frame:GetNumMessages()
     local startLine = frameMessages <= maxMessages and 1 or frameMessages + 1 - maxMessages
 
     for i = startLine, frameMessages do
@@ -280,7 +279,7 @@ end
 GW.AddForProfiling("chatframe", "setChatBackgroundColor", setChatBackgroundColor)
 
 local function handleChatFrameFadeIn(chatFrame, force)
-    if not GetSetting("CHATFRAME_FADE") and not force then
+    if not GW.settings.CHATFRAME_FADE and not force then
         return
     end
 
@@ -331,7 +330,7 @@ end
 GW.AddForProfiling("chatframe", "handleChatFrameFadeIn", handleChatFrameFadeIn)
 
 local function handleChatFrameFadeOut(chatFrame, force)
-    if not GetSetting("CHATFRAME_FADE") and not force then
+    if not GW.settings.CHATFRAME_FADE and not force then
         return
     end
     setChatBackgroundColor(chatFrame)
@@ -483,7 +482,7 @@ GW.ToggleChatHyperlink = ToggleHyperlink
 local function UpdateChatKeywords()
     wipe(Keywords)
 
-    local keywords = GetSetting("CHAT_KEYWORDS")
+    local keywords = GW.settings.CHAT_KEYWORDS
     keywords = gsub(keywords, ",%s", ",")
 
     for stringValue in gmatch(keywords, "[^,]+") do
@@ -496,7 +495,7 @@ GW.UpdateChatKeywords = UpdateChatKeywords
 
 local protectLinks = {}
 local function CheckKeyword(message, author)
-    local letSound = not SoundTimer and author ~= PLAYER_NAME and GetSetting("CHAT_KEYWORDS_ALERT_NEW") ~= "None"
+    local letSound = not SoundTimer and author ~= PLAYER_NAME and GW.settings.CHAT_KEYWORDS_ALERT_NEW ~= "None"
 
     for hyperLink in gmatch(message, "|c%x-|H.-|h.-|h|r") do
         protectLinks[hyperLink] = gsub(hyperLink,"%s","|s")
@@ -505,7 +504,7 @@ local function CheckKeyword(message, author)
             for keyword in pairs(Keywords) do
                 if hyperLink == keyword then
                     SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
-                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("CHAT_KEYWORDS_ALERT_NEW")), "Master")
+                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.CHAT_KEYWORDS_ALERT_NEW), "Master")
                     letSound = false
                     break
                 end
@@ -526,18 +525,18 @@ local function CheckKeyword(message, author)
 
             for keyword in pairs(Keywords) do
                 if lowerCaseWord == strlower(keyword) or (lowerCaseWord == strlower(GW.myname) and keyword == "%MYNAME%") then
-                    local keywordColor = GetSetting("CHAT_KEYWORDS_ALERT_COLOR")
+                    local keywordColor = GW.settings.CHAT_KEYWORDS_ALERT_COLOR
                     word = gsub(word, tempWord, format("%s%s|r",GW.RGBToHex(keywordColor.r, keywordColor.g, keywordColor.b), tempWord))
 
                     if letSound then
                         SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
-                        PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("CHAT_KEYWORDS_ALERT_NEW")), "Master")
+                        PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.CHAT_KEYWORDS_ALERT_NEW), "Master")
                         letSound = false
                     end
                 end
             end
 
-            if GetSetting("CHAT_CLASS_COLOR_MENTIONS") then
+            if GW.settings.CHAT_CLASS_COLOR_MENTIONS then
                 tempWord = gsub(word, "^[%s%p]-([^%s%p]+)([%-]?[^%s%p]-)[%s%p]*$", "%1%2")
                 lowerCaseWord = strlower(tempWord)
                 GW_ClassNames = ClassNames
@@ -545,7 +544,7 @@ local function CheckKeyword(message, author)
                 local wordMatch = classMatch and lowerCaseWord
 
                 if wordMatch then
-                    local classColorTable = GW.GWGetClassColor(classMatch, true, true)
+                    local classColorTable = GW.GWGetClassColor(classMatch, true, true, true)
                     GW_classColorTable = classColorTable
                     if classColorTable then
                         word = gsub(word, gsub(tempWord, "%-","%%-"), format("\124cff%.2x%.2x%.2x%s\124r", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
@@ -585,7 +584,7 @@ local function InsertEmotions(msg)
 end
 
 local function GetSmileyReplacementText(msg)
-    if not msg or not GetSetting("CHAT_KEYWORDS_EMOJI") or strfind(msg, "/run") or strfind(msg, "/dump") or strfind(msg, "/script") then return msg end
+    if not msg or not GW.settings.CHAT_KEYWORDS_EMOJI or strfind(msg, "/run") or strfind(msg, "/dump") or strfind(msg, "/script") then return msg end
     local outstr = ""
     local origlen = strlen(msg)
     local startpos = 1
@@ -619,7 +618,7 @@ local function ReplaceProtocol(self, arg1, arg2)
 end
 
 local function FindURL(msg, author, ...)
-    if not GetSetting("CHAT_FIND_URL") then -- find url setting here
+    if not GW.settings.CHAT_FIND_URL then -- find url setting here
         msg = CheckKeyword(msg, author)
         msg = GetSmileyReplacementText(msg)
         return false, msg, author, ...
@@ -668,7 +667,7 @@ local function ChatThrottleHandler(author, message, when)
     local msg = PrepareMessage(author, message)
     if msg then
         for message, object in pairs(throttle) do
-            if difftime(when, object.time) >= tonumber(GetSetting("CHAT_SPAM_INTERVAL_TIMER")) then
+            if difftime(when, object.time) >= tonumber(GW.settings.CHAT_SPAM_INTERVAL_TIMER) then
                 throttle[message] = nil
             end
         end
@@ -682,11 +681,11 @@ local function ChatThrottleHandler(author, message, when)
 end
 
 local function ChatThrottleBlockFlag(author, message, when)
-    local msg = (author ~= PLAYER_NAME) and (tonumber(GetSetting("CHAT_SPAM_INTERVAL_TIMER")) ~= 0) and PrepareMessage(author, message)
+    local msg = (author ~= PLAYER_NAME) and (tonumber(GW.settings.CHAT_SPAM_INTERVAL_TIMER) ~= 0) and PrepareMessage(author, message)
 
     local object = msg and throttle[msg]
 
-    return object and object.time and object.count and object.count > 1 and (difftime(when, object.time) <= tonumber(GetSetting("CHAT_SPAM_INTERVAL_TIMER"))), object
+    return object and object.time and object.count and object.count > 1 and (difftime(when, object.time) <= tonumber(GW.settings.CHAT_SPAM_INTERVAL_TIMER)), object
 end
 
 local function ChatThrottleIntervalHandler(message, author, ...)
@@ -709,9 +708,9 @@ local function HandleChatMessageFilter(_, event, message, author, ...)
 end
 
 local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID, alwaysAddTimestamp)
-    local useGw2Style = GetSetting("CHAT_USE_GW2_STYLE")
+    local useGw2Style = GW.settings.CHAT_USE_GW2_STYLE
 
-    if CHAT_TIMESTAMP_FORMAT and (GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") or alwaysAddTimestamp) then
+    if CHAT_TIMESTAMP_FORMAT and (GW.settings.CHAT_ADD_TIMESTAMP_TO_ALL or alwaysAddTimestamp) then
         local timeStamp = BetterDate(CHAT_TIMESTAMP_FORMAT, time())
         timeStamp = gsub(timeStamp, " ", "")
         timeStamp = gsub(timeStamp, "AM", " AM")
@@ -794,7 +793,7 @@ local function GW_GetPlayerInfoByGUID(guid)
         GuidCache[guid] = data
     end
 
-    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true) end
+    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true, true) end
 
     return data
 end
@@ -1168,7 +1167,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 body = "|Hchannel:channel:" .. arg8 .. "|h[" .. ChatFrame_ResolvePrefixedChannelName(arg4) .. "]|h " .. body
             end
 
-            if GetSetting("CHAT_SHORT_CHANNEL_NAMES") and (chatType ~= "EMOTE" and chatType ~= "TEXT_EMOTE") then
+            if GW.settings.CHAT_SHORT_CHANNEL_NAMES and (chatType ~= "EMOTE" and chatType ~= "TEXT_EMOTE") then
                 if chatType == "RAID_LEADER" or chatType == "PARTY_LEADER" or chatType == "INSTANCE_CHAT_LEADER" then
                     body = gsub(body, "|Hchannel:(.-)|h%[(.-)%]|h", format("|Hchannel:%s|h[%s]|h", (chatType == "PARTY_LEADER" and "PARTY" or chatType == "RAID_LEADER" and "RAID" or chatType == "INSTANCE_CHAT_LEADER" and "INSTANCE_CHAT") , DEFAULT_STRINGS[strupper(chatType)] or gsub(chatType, "channel:", "")))
                 else
@@ -1186,7 +1185,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget)
             local typeID = ChatHistory_GetAccessID(infoType, chatTarget, arg12 or arg13)
 
-            frame:AddMessage(body, info.r, info.g, info.b, info.id, accessID, typeID, not GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL"))
+            frame:AddMessage(body, info.r, info.g, info.b, info.id, accessID, typeID, not GW.settings.CHAT_ADD_TIMESTAMP_TO_ALL)
         end
 
         if chatType == "WHISPER" or chatType == "BN_WHISPER" then
@@ -1229,7 +1228,7 @@ local function FloatingChatFrameOnEvent(...)
 end
 
 local function ChatFrame_OnMouseScroll(self, delta)
-    local numScrollMessages = GetSetting("CHAT_NUM_SCROLL_MESSAGES") or 3
+    local numScrollMessages = GW.settings.CHAT_NUM_SCROLL_MESSAGES or 3
     if delta < 0 then
         if IsShiftKeyDown() then
             self:ScrollToBottom()
@@ -1251,12 +1250,12 @@ local function ChatFrame_OnMouseScroll(self, delta)
             end
         end
 
-        if GetSetting("CHAT_SCROLL_DOWN_INTERVAL") ~= 0 then
+        if GW.settings.CHAT_SCROLL_DOWN_INTERVAL ~= 0 then
             if self.ScrollTimer then
                 self.ScrollTimer:Cancel()
             end
 
-            self.ScrollTimer = C_Timer.NewTimer(GetSetting("CHAT_SCROLL_DOWN_INTERVAL"), function() self:ScrollToBottom() end)
+            self.ScrollTimer = C_Timer.NewTimer(GW.settings.CHAT_SCROLL_DOWN_INTERVAL, function() self:ScrollToBottom() end)
         end
     end
 end
@@ -1285,8 +1284,8 @@ do
         local userInput = self:GetText()
         local len = strlen(userInput)
 
-        if tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT")) ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
-            local MIN_REPEAT_CHARACTERS = tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT"))
+        if tonumber(GW.settings.CHAT_INCOMBAT_TEXT_REPEAT) ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
+            local MIN_REPEAT_CHARACTERS = tonumber(GW.settings.CHAT_INCOMBAT_TEXT_REPEAT)
             if len > MIN_REPEAT_CHARACTERS then
                 local repeatChar = true
                 for i = 1, MIN_REPEAT_CHARACTERS, 1 do
@@ -1507,20 +1506,20 @@ local function styleChatWindow(frame)
         --frame:SetScript("OnUpdate", nil)
         frame.editboxHasFocus = false
         FCF_FadeOutChatFrame(frame)
-        if GetSetting("CHATFRAME_EDITBOX_HIDE") then
+        if GW.settings.CHATFRAME_EDITBOX_HIDE then
             editBox:Hide()
         end
     end)
 
     editbox:HookScript("OnTextChanged", GW.ChatFrameEditBoxOnTextChanged)
 
-    if GetSetting("CHAT_USE_GW2_STYLE") then
+    if GW.settings.CHAT_USE_GW2_STYLE then
         local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
         local _, fontHeight, fontFlags = frame:GetFont()
         frame:SetFont(chatFont, fontHeight or 12, fontFlags)
         editbox:SetFont(chatFont, fontHeight or 12, fontFlags)
         _G[editbox:GetName() .. "Header"]:SetFont(chatFont, fontHeight or 12, fontFlags)
-    elseif GetSetting("FONTS_ENABLED") and fontSize then
+    elseif GW.settings.FONTS_ENABLED and fontSize then
         if fontSize > 0 then
             frame:SetFont(STANDARD_TEXT_FONT, fontSize, "")
         elseif fontSize == 0 then
@@ -1554,7 +1553,7 @@ local function styleChatWindow(frame)
     end)
 
     --emote bar button
-    if GetSetting("CHAT_KEYWORDS_EMOJI") and (id ~= 2 and id ~= 3) then
+    if GW.settings.CHAT_KEYWORDS_EMOJI and (id ~= 2 and id ~= 3) then
         frame.buttonEmote = CreateFrame("Frame", nil, frame)
         frame.buttonEmote:EnableMouse(true)
         frame.buttonEmote:SetAlpha(0.35)
@@ -1657,7 +1656,7 @@ local function BuildCopyChatFrame()
     frame.editBox:EnableMouse(true)
     frame.editBox:SetAutoFocus(false)
     frame.editBox:SetFontObject(ChatFontNormal)
-    if GetSetting("CHAT_USE_GW2_STYLE") then
+    if GW.settings.CHAT_USE_GW2_STYLE then
         local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
         local _, fonzSize = frame.editBox:GetFont()
         frame.editBox:SetFont(chatFont, fonzSize or 12, "")
@@ -1750,7 +1749,7 @@ local function BuildEmoticonTableFrame()
         end
     end
 
-    if not GetSetting("CHAT_KEYWORDS_EMOJI") then
+    if not GW.settings.CHAT_KEYWORDS_EMOJI then
         frame:Hide()
     end
 end
@@ -1843,7 +1842,7 @@ local function SetupSmileys()
 end
 
 local function CollectLfgRolesForChatIcons()
-    if not GetSetting("CHAT_SHOW_LFG_ICONS") or not IsInGroup() then return end
+    if not GW.settings.CHAT_SHOW_LFG_ICONS or not IsInGroup() then return end
     wipe(lfgRoles)
 
     local playerRole = UnitGroupRolesAssigned("player")
@@ -1867,7 +1866,7 @@ end
 GW.CollectLfgRolesForChatIcons = CollectLfgRolesForChatIcons
 
 local function LoadChat()
-    local shouldFading = GetSetting("CHATFRAME_FADE")
+    local shouldFading = GW.settings.CHATFRAME_FADE
     local eventFrame = CreateFrame("Frame")
 
     if FriendsMicroButton then
@@ -1885,7 +1884,7 @@ local function LoadChat()
         FriendsMicroButtonCount:SetShadowOffset(1, 1)
         FriendsMicroButtonCount:SetPoint("TOP", FriendsMicroButton, "BOTTOM", 1, 1)
 
-        if GetSetting("CHAT_SOCIAL_LINK") then
+        if GW.settings.CHAT_SOCIAL_LINK then
             --FriendsMicroButton.Toast:GwKill()
             --FriendsMicroButton.Toast2:GwKill()
         end
@@ -1959,7 +1958,7 @@ local function LoadChat()
         end
     end)
 
-    ToggleHyperlink(GetSetting("CHAT_HYPERLINK_TOOLTIP"))
+    ToggleHyperlink(GW.settings.CHAT_HYPERLINK_TOOLTIP)
     UpdateChatKeywords()
     SetupSmileys()
 
@@ -2180,7 +2179,7 @@ local function LoadChat()
             end
             FloatingChatFrame_Update(3)
             FCF_DockUpdate()
-        elseif GW.loaded and (GetSetting("CHAT_SPAM_INTERVAL_TIMER") ~= 0 and (event == "CHAT_MSG_SAY" or event == "CHAT_MSG_YELL" or event == "CHAT_MSG_CHANNEL")) then
+        elseif GW.loaded and (GW.settings.CHAT_SPAM_INTERVAL_TIMER ~= 0 and (event == "CHAT_MSG_SAY" or event == "CHAT_MSG_YELL" or event == "CHAT_MSG_CHANNEL")) then
             local message, author = ...
             local when = time()
             ChatThrottleHandler(author, message, when)

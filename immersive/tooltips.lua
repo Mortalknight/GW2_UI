@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local RGBToHex = GW.RGBToHex
 local GWGetClassColor = GW.GWGetClassColor
@@ -31,7 +30,7 @@ local IDLine = "|cffffedba%s|r %d"
 local TT = CreateFrame("Frame")
 
 local function IsModKeyDown(setting)
-    local k = setting and GetSetting(setting) or GetSetting("ADVANCED_TOOLTIP_ID_MODIFIER")
+    local k = setting and GW.settings[setting] or GW.settings.ADVANCED_TOOLTIP_ID_MODIFIER
     return k == "ALWAYS" or ((k == "SHIFT" and IsShiftKeyDown()) or (k == "CTRL" and IsControlKeyDown()) or (k == "ALT" and IsAltKeyDown()))
 end
 
@@ -94,7 +93,7 @@ local function SetUnitAura(self, unit, index, filter)
 
         if auraData.sourceUnit then
             local _, class = UnitClass(auraData.sourceUnit)
-            local color = GWGetClassColor(class, GW.GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR"), true)
+            local color = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
             self:AddDoubleLine(format(IDLine, ID, auraData.spellId), format("|c%s%s|r", color.colorStr, UnitName(auraData.sourceUnit) or UNKNOWN))
         else
             self:AddLine(format(IDLine, ID, auraData.spellId))
@@ -160,12 +159,12 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local realLevel = UnitLevel(unit)
         local relationship = UnitRealmRelationship(unit)
         local isShiftKeyDown = IsShiftKeyDown()
-        local playerTitles = GetSetting("ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES")
-        local alwaysShowRealm = GetSetting("ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS")
-        local guildRanks = GetSetting("ADVANCED_TOOLTIP_SHOW_GUILD_RANKS")
-        local showGender = GetSetting("ADVANCED_TOOLTIP_SHOW_GENDER")
+        local playerTitles = GW.settings.ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES
+        local alwaysShowRealm = GW.settings.ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS
+        local guildRanks = GW.settings.ADVANCED_TOOLTIP_SHOW_GUILD_RANKS
+        local showGender = GW.settings.ADVANCED_TOOLTIP_SHOW_GENDER
 
-        local nameColor = GWGetClassColor(class, GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR"), true)
+        local nameColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
 
         if pvpName and playerTitles then
             name = pvpName
@@ -227,7 +226,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         end
 
         local unitReaction = UnitReaction(unit, "player")
-        local nameColor = unitReaction and GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR") and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
+        local nameColor = unitReaction and GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
         if unitReaction and unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
         local nameColorStr = nameColor.colorStr or RGBToHex(nameColor.r, nameColor.g, nameColor.b, "ff")
 
@@ -243,7 +242,7 @@ local function AddTargetInfo(self, unit)
         local targetColor
         if UnitIsPlayer(unitTarget) and not UnitHasVehicleUI(unitTarget) then
             local _, class = UnitClass(unitTarget)
-            targetColor = GWGetClassColor(class, GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR"), true)
+            targetColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
         else
             targetColor = GW.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
         end
@@ -257,7 +256,7 @@ local function AddTargetInfo(self, unit)
             local groupUnit = (isInRaid and "raid" or "party")..i
             if UnitIsUnit(groupUnit.."target", unit) and not UnitIsUnit(groupUnit,"player") then
                 local _, class = UnitClass(groupUnit)
-                local classColor = GWGetClassColor(class, GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR"), true)
+                local classColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
                 tinsert(targetList, format("|c%s%s|r", classColor.colorStr, UnitName(groupUnit)))
             end
         end
@@ -463,15 +462,15 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
     local isControlKeyDown = IsControlKeyDown()
     local color = SetUnitText(self, unit, isPlayerUnit)
 
-    if GetSetting("ADVANCED_TOOLTIP_SHOW_TARGET_INFO") and not isShiftKeyDown and not isControlKeyDown then
+    if GW.settings.ADVANCED_TOOLTIP_SHOW_TARGET_INFO and not isShiftKeyDown and not isControlKeyDown then
         AddTargetInfo(self, unit)
     end
 
-    if GetSetting("ADVANCED_TOOLTIP_SHOW_MOUNT") and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown then
+    if GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown then
         AddMountInfo(self, unit)
     end
 
-    if GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE") then
+    if GW.settings.ADVANCED_TOOLTIP_SHOW_ROLE then
         AddRoleInfo(self, unit)
     end
 
@@ -506,7 +505,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
 end
 
 local function GameTooltipStatusBar_OnValueChanged(self, value)
-    if self:IsForbidden() or not value or not self.text or not GetSetting("ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT") then return end
+    if self:IsForbidden() or not value or not self.text or not GW.settings.ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT then return end
 
     local _, unit = self:GetParent():GetUnit()
     if not unit then
@@ -557,14 +556,14 @@ local function GameTooltip_OnTooltipSetItem(self, data)
             itemID = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, (data and data.id) or strmatch(link, ":(%w+)"))
         end
 
-        if GW.GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT") then
+        if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT then
             local num = C_Item.GetItemCount(link)
             local numall = C_Item.GetItemCount(link, true)
-            if GW.GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT") == "BAG" then
+            if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BAG" then
                 bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
-            elseif GW.GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT") == "BANK" then
+            elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BANK" then
                 bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
-            elseif GW.GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT") == "BOTH" then
+            elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BOTH" then
                 bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
                 bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
             end
@@ -582,14 +581,14 @@ local function GameTooltip_OnTooltipSetItem(self, data)
 end
 
 local function movePlacement(self)
-    local settings = GetSetting("GameTooltipPos")
+    local settings = GW.settings.GameTooltipPos
     self:ClearAllPoints()
     self:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
 end
 GW.AddForProfiling("tooltips", "movePlacement", movePlacement)
 
 local function anchorTooltip(self, p)
-    self:SetOwner(p, GetSetting("CURSOR_ANCHOR_TYPE"), GetSetting("ANCHOR_CURSOR_OFFSET_X"), GetSetting("ANCHOR_CURSOR_OFFSET_Y"))
+    self:SetOwner(p, GW.settings.CURSOR_ANCHOR_TYPE, GW.settings.ANCHOR_CURSOR_OFFSET_X, GW.settings.ANCHOR_CURSOR_OFFSET_Y)
 end
 GW.AddForProfiling("tooltips", "anchorTooltip", anchorTooltip)
 
@@ -675,7 +674,7 @@ local function shouldHiddenInCombat(tooltip)
         local unitReaction = UnitReaction("player", unit)
         if not unitReaction then return false end
 
-        local unitSetting = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
+        local unitSetting = GW.settings.HIDE_TOOLTIP_IN_COMBAT_UNIT
         if unitSetting == "ALL" or
             (string.find(unitSetting, "HOSTILE") and unitReaction <= 3 or
             string.find(unitSetting, "NEUTRAL") and unitReaction == 4 or
@@ -767,7 +766,7 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
     if self:IsForbidden() or self:GetAnchorType() ~= "ANCHOR_NONE" then return end
 
     if self.StatusBar then
-        local healtBarPosition = GetSetting("TOOLTIP_HEALTHBAER_POSITION")
+        local healtBarPosition = GW.settings.TOOLTIP_HEALTHBAER_POSITION
         self.StatusBar:SetAlpha(healtBarPosition == "DISABLED" and 0 or 1)
         if healtBarPosition == "BOTTOM" then
             if self.StatusBar.anchoredToTop then
@@ -788,8 +787,8 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
         end
     end
 
-    if GetSetting("TOOLTIP_MOUSE") then
-        self:SetOwner(parent, GetSetting("CURSOR_ANCHOR_TYPE"), GetSetting("ANCHOR_CURSOR_OFFSET_X"), GetSetting("ANCHOR_CURSOR_OFFSET_Y"))
+    if GW.settings.TOOLTIP_MOUSE then
+        self:SetOwner(parent, GW.settings.CURSOR_ANCHOR_TYPE, GW.settings.ANCHOR_CURSOR_OFFSET_X, GW.settings.ANCHOR_CURSOR_OFFSET_Y)
         return
     else
         self:SetOwner(parent, "ANCHOR_NONE")
@@ -817,9 +816,9 @@ end
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
     local fontOutline = ""
-    local headerSize = tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
-    local smallTextSize = tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
-    local textSize = tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
+    local headerSize = tonumber(GW.settings.TOOLTIP_FONT_SIZE)
+    local smallTextSize = tonumber(GW.settings.TOOLTIP_FONT_SIZE)
+    local textSize = tonumber(GW.settings.TOOLTIP_FONT_SIZE)
 
     GameTooltipHeaderText:SetFont(font, headerSize, fontOutline)
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
@@ -890,7 +889,7 @@ local function LoadTooltips()
 
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 
-    if GetSetting("ADVANCED_TOOLTIP") then
+    if GW.settings.ADVANCED_TOOLTIP then
         GameTooltip.StatusBar = GameTooltipStatusBar
         GameTooltip.StatusBar:SetScript("OnValueChanged", nil)
         GameTooltip.StatusBar.text = GameTooltip.StatusBar:CreateFontString(nil, "OVERLAY")
@@ -929,7 +928,7 @@ local function LoadTooltips()
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     eventFrame:SetScript("OnEvent", function(_, event)
-        if not GetSetting("HIDE_TOOLTIP_IN_COMBAT") then return end
+        if not GW.settings.HIDE_TOOLTIP_IN_COMBAT then return end
 
         if event == "PLAYER_REGEN_DISABLED" and shouldHiddenInCombat(GameTooltip) and not IsModKeyDown("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE") then
             GameTooltip:Hide()
@@ -937,7 +936,7 @@ local function LoadTooltips()
     end)
 
     GameTooltip:HookScript("OnShow", function(self)
-        if GetSetting("HIDE_TOOLTIP_IN_COMBAT") and InCombatLockdown() and shouldHiddenInCombat(self) and not IsModKeyDown("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE") then
+        if GW.settings.HIDE_TOOLTIP_IN_COMBAT and InCombatLockdown() and shouldHiddenInCombat(self) and not IsModKeyDown("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE") then
             self:Hide()
         end
     end)

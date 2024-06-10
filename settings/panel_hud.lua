@@ -5,7 +5,6 @@ local addOptionSlider = GW.AddOptionSlider
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionButton = GW.AddOptionButton
 local createCat = GW.CreateCat
-local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton
 local addGroupHeader = GW.AddGroupHeader
@@ -97,11 +96,11 @@ local function LoadHudPanel(sWindow)
         2
     )
     addOptionButton(general.scroll.scrollchild, L["Apply UI scale to all scaleable frames"], L["Applies the UI scale to all frames, which can be scaled in 'Move HUD' mode."], nil, function()
-        local scale = GetSetting("HUD_SCALE")
+        local scale = GW.settings.HUD_SCALE
         for _, mf in pairs(GW.scaleableFrames) do
-            mf.gw_frame:SetScale(scale)
+            mf.parent:SetScale(scale)
             mf:SetScale(scale)
-            GW.SetSetting(mf.gw_Settings .."_scale", scale)
+            GW.settings[mf.setting .."_scale"] = scale
         end
     end)
     addOptionDropdown(
@@ -169,7 +168,7 @@ local function LoadHudPanel(sWindow)
         L["Change the Minimap size."],
         "MINIMAP_SCALE",
         function()
-            local size = GetSetting("MINIMAP_SCALE")
+            local size = GW.settings.MINIMAP_SCALE
             Minimap:SetSize(size, size)
             Minimap.gwMover:SetSize(size, size)
         end,
@@ -239,7 +238,7 @@ local function LoadHudPanel(sWindow)
         function(value)
             if value == "GW2" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
-                if GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS") then
+                if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
                     C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
                 else
                     C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")

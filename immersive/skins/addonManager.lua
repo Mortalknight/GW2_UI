@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local function SkinAddonList()
-    if not GW.GetSetting("ADDONLIST_SKIN_ENABLED") then return end
+    if not GW.settings.ADDONLIST_SKIN_ENABLED then return end
 
     GW.HandlePortraitFrame(AddonList)
 

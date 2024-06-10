@@ -13,7 +13,7 @@ local function Update_InspectPaperDollItemSlotButton(button)
 end
 
 local function SkinInspectFrameOnLoad()
-    if not GW.GetSetting("INSPECTION_SKIN_ENABLED") then return end
+    if not GW.settings.INSPECTION_SKIN_ENABLED then return end
 
     GW.CreateFrameHeaderWithBody(InspectFrame, InspectNameText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {}, 20)
     InspectFrame.gwHeader.windowIcon:SetSize(65, 65)

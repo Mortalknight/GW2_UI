@@ -48,19 +48,19 @@ end
 
 
 local function DisableBlizzardFrames()
-    local ourPartyFrames = GW.GetSetting("PARTY_FRAMES")
-    local ourRaidFrames = GW.GetSetting("RAID_FRAMES")
-    local ourBossFrames = GW.GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
-    local ourArenaFrames = not C_AddOns.IsAddOnLoaded("sArena") and GW.GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
-    local ourPetFrame = GW.GetSetting("PETBAR_ENABLED")
-    local ourTargetFrame = GW.GetSetting("TARGET_ENABLED")
-    local ourTargetTargetFrame = GW.GetSetting("target_TARGET_ENABLED")
-    local ourFocusFrame = GW.GetSetting("FOCUS_ENABLED")
-    local ourFocusTargetFrame = GW.GetSetting("focus_TARGET_ENABLED")
-    local ourPlayerFrame = GW.GetSetting("HEALTHGLOBE_ENABLED")
-    local ourCastBar = GW.GetSetting("CASTINGBAR_ENABLED")
-    local ourActionbars = GW.GetSetting("ACTIONBARS_ENABLED")
-    local ourInventory = GW.GetSetting("BAGS_ENABLED")
+    local ourPartyFrames = GW.settings.PARTY_FRAMES
+    local ourRaidFrames = GW.settings.RAID_FRAMES
+    local ourBossFrames = GW.settings.QUESTTRACKER_ENABLED and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
+    local ourArenaFrames = not C_AddOns.IsAddOnLoaded("sArena") and GW.settings.QUESTTRACKER_ENABLED and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
+    local ourPetFrame = GW.settings.PETBAR_ENABLED
+    local ourTargetFrame = GW.settings.TARGET_ENABLED
+    local ourTargetTargetFrame = GW.settings.target_TARGET_ENABLED
+    local ourFocusFrame = GW.settings.FOCUS_ENABLED
+    local ourFocusTargetFrame = GW.settings.focus_TARGET_ENABLED
+    local ourPlayerFrame = GW.settings.HEALTHGLOBE_ENABLED
+    local ourCastBar = GW.settings.CASTINGBAR_ENABLED
+    local ourActionbars = GW.settings.ACTIONBARS_ENABLED
+    local ourInventory = GW.settings.BAGS_ENABLED
 
     if ourPartyFrames or ourRaidFrames then
         -- calls to UpdateRaidAndPartyFrames, which as of writing this is used to show/hide the

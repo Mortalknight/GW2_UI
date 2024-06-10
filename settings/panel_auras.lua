@@ -5,8 +5,6 @@ local addOptionDropdown = GW.AddOptionDropdown
 local addOptionText = GW.AddOptionText
 local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton
 
@@ -50,7 +48,7 @@ local function LoadAurasPanel(sWindow)
     addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", function() GW.UpdateGridSettings("ALL", false) end, nil, nil, {["RAID_FRAMES"] = true})
 
     local raidDebuffKeys, raidDebuffVales = {}, {}
-    local settingstable = GetSetting("RAIDDEBUFFS")
+    local settingstable = GW.settings.RAIDDEBUFFS
     for spellID, _ in pairs(GW.ImportendRaidDebuff) do
 
         if spellID and GetSpellInfo(spellID) then
@@ -135,7 +133,7 @@ local function LoadAurasPanel(sWindow)
             L["Edit %s raid aura indicator."]:format(t),
             key,
             function()
-                SetSetting(key, tonumber(GW.GetSetting(key)))
+                GW.settings[key] = tonumber(GW.settings[key])
                 GW.UpdateGridSettings("ALL", false)
             end,
             auraKeys,

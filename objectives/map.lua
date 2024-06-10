@@ -1,7 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 local trackingTypes = GW.trackingTypes
 
@@ -195,14 +193,14 @@ local function MapCoordsMiniMap_OnClick(self, button)
             self.MapCoordsMiniMapPrecision = 0
         end
 
-        SetSetting("MINIMAP_COORDS_PRECISION", self.MapCoordsMiniMapPrecision)
+        GW.settings.MINIMAP_COORDS_PRECISION = self.MapCoordsMiniMapPrecision
         mapCoordsMiniMap_setCoords(self)
     end
 end
 GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
 
 local function hoverMiniMapIn()
-    for k, v in pairs(GW.GetSetting("MINIMAP_ALWAYS_SHOW_HOVER_DETAILS")) do
+    for k, v in pairs(GW.settings.MINIMAP_ALWAYS_SHOW_HOVER_DETAILS) do
         if v == false and minimapDetails[k] and _G[minimapDetails[k]] then
             --UIFrameFadeIn(_G[minimapDetails[k]], 0.2, _G[minimapDetails[k]]:GetAlpha(), 1) --bugged
             _G[minimapDetails[k]]:SetAlpha(1)
@@ -213,7 +211,7 @@ end
 GW.AddForProfiling("map", "hoverMiniMapIn", hoverMiniMapIn)
 
 local function hoverMiniMapOut()
-    for k, v in pairs(GW.GetSetting("MINIMAP_ALWAYS_SHOW_HOVER_DETAILS")) do
+    for k, v in pairs(GW.settings.MINIMAP_ALWAYS_SHOW_HOVER_DETAILS) do
         if v == false and minimapDetails[k] and _G[minimapDetails[k]] then
             --UIFrameFadeOut(_G[minimapDetails[k]], 0.2, _G[minimapDetails[k]]:GetAlpha(), 0) --bugged
             _G[minimapDetails[k]]:SetAlpha(0)
@@ -275,7 +273,7 @@ end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
 local function ToogleMinimapCoorsLable()
-    if GetSetting("MINIMAP_COORDS_TOGGLE") then
+    if GW.settings.MINIMAP_COORDS_TOGGLE then
         GwMapCoords:Show()
         GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
         GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
@@ -307,7 +305,7 @@ end
 GW.ToogleMinimapCoorsLable = ToogleMinimapCoorsLable
 
 local function ToogleMinimapFpsLable()
-    if GetSetting("MINIMAP_FPS") then
+    if GW.settings.MINIMAP_FPS then
         GW.BuildAddonList()
         GwMapFPS:SetScript("OnEnter", GW.FpsOnEnter)
         GwMapFPS:SetScript("OnUpdate", GW.FpsOnUpdate)
@@ -422,7 +420,7 @@ local function LoadMinimap()
     GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
     GwMapCoords.Coords:SetText(NOT_APPLICABLE)
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12, "")
-    GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
+    GwMapCoords.MapCoordsMiniMapPrecision = GW.settings.MINIMAP_COORDS_PRECISION
     ToogleMinimapCoorsLable()
 
     --FPS
@@ -543,7 +541,7 @@ local function LoadMinimap()
     Minimap:HookScript("OnShow", minimap_OnShow)
     Minimap:HookScript("OnHide", minimap_OnHide)
 
-    local size = GetSetting("MINIMAP_SCALE")
+    local size = GW.settings.MINIMAP_SCALE
     Minimap:SetSize(size, size)
 
     -- mobeable stuff

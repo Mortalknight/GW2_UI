@@ -111,7 +111,7 @@ end
 
 
 local function LoadQuestLogFrameSkin()
-    if not GW.GetSetting("QUESTLOG_SKIN_ENABLED") then return end
+    if not GW.settings.QUESTLOG_SKIN_ENABLED then return end
 
     local QuestStrip = {
 		EmptyQuestLogFrame,
@@ -241,7 +241,7 @@ local function LoadQuestLogFrameSkin()
 			end
 		end
 
-        if not GW.GetSetting("QUESTVIEW_ENABLED") then
+        if not GW.settings.QUESTVIEW_ENABLED then
             for i = 1, MAX_REQUIRED_ITEMS do
                 local item = _G['QuestProgressItem'..i]
                 local name = _G['QuestProgressItem'..i..'Name']

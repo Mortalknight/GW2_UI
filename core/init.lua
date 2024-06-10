@@ -21,6 +21,7 @@ assert(GW.oUF, 'GW2_UI was unable to locate oUF.')
 
 --Constants
 local gameLocale = GetLocale()
+GW.myguid = UnitGUID("player")
 GW.addonName = addonName:gsub("_", " ")
 GW.mylocal = gameLocale == "enGB" and "enUS" or gameLocale
 GW.NoOp = function() end
@@ -48,6 +49,7 @@ GW.MOVABLE_FRAMES = {}
 GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
 GW.animations = {}
+GW.CreditsList = {}
 
 GW.ScanTooltip = CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "GameTooltipTemplate")
 GW.HiddenFrame = CreateFrame("Frame")
@@ -63,9 +65,6 @@ GW.InMoveHudMode = false
 GW.earnedMoney = 0
 GW.spentMoney = 0
 
--- Init global function
-GW.InitLocationDataHandler()
-
 -- Init error handler
 GW.RegisterErrorHandler()
 
@@ -79,9 +78,11 @@ do
         GW.Libs[name] = _G.LibStub(libname, silent)
     end
 
+    AddLib("AceDB", "AceDB-3.0", true)
     AddLib("LSM", "LibSharedMedia-3.0", true)
     AddLib("Compress", "LibCompress", true)
     AddLib("Serializer", "AceSerializer-3.0", true)
+    AddLib("Deflate", "LibDeflate", true)
     AddLib("LibBase64", "LibBase64-1.0", true)
     AddLib("AceLocale", "AceLocale-3.0", true)
 

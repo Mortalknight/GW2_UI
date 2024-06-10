@@ -174,97 +174,97 @@ local headerGroupBy = {
 
 local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     --frame enabled settings -- needed for config mode
-    settings.enabled.RAID_PET = GW.GetSetting("RAID_PET_FRAMES")
-    settings.enabled.PARTY = GW.GetSetting("RAID_STYLE_PARTY")
-    settings.enabled.RAID40 = GW.GetSetting("RAID_FRAMES")
-    settings.enabled.RAID25 = GW.GetSetting("RAID25_ENABLED")
-    settings.enabled.RAID10 = GW.GetSetting("RAID10_ENABLED")
-    settings.enabled.TANK = GW.GetSetting("RAID_MAINTANK_FRAMES_ENABLED")
+    settings.enabled.RAID_PET = GW.settings.RAID_PET_FRAMES
+    settings.enabled.PARTY = GW.settings.RAID_STYLE_PARTY
+    settings.enabled.RAID40 = GW.settings.RAID_FRAMES
+    settings.enabled.RAID25 = GW.settings.RAID25_ENABLED
+    settings.enabled.RAID10 = GW.settings.RAID10_ENABLED
+    settings.enabled.TANK = GW.settings.RAID_MAINTANK_FRAMES_ENABLED
 
     -- profile settings for the header
-    settings.horizontalSpacing.PARTY = GW.GetSetting("RAID_UNITS_HORIZONTAL_SPACING_PARTY")
-    settings.horizontalSpacing.RAID_PET = GW.GetSetting("RAID_UNITS_HORIZONTAL_SPACING_PET")
-    settings.horizontalSpacing.RAID40 = GW.GetSetting("RAID_UNITS_HORIZONTAL_SPACING")
-    settings.horizontalSpacing.RAID25 = GW.GetSetting("RAID_UNITS_HORIZONTAL_SPACING_RAID25")
-    settings.horizontalSpacing.RAID10 = GW.GetSetting("RAID_UNITS_HORIZONTAL_SPACING_RAID10")
-    settings.horizontalSpacing.TANK = GW.GetSetting("RAID_UNITS_HORIZONTAL_SPACING_TANK")
+    settings.horizontalSpacing.PARTY = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_PARTY
+    settings.horizontalSpacing.RAID_PET = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_PET
+    settings.horizontalSpacing.RAID40 = GW.settings.RAID_UNITS_HORIZONTAL_SPACING
+    settings.horizontalSpacing.RAID25 = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_RAID25
+    settings.horizontalSpacing.RAID10 = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_RAID10
+    settings.horizontalSpacing.TANK = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_TANK
 
-    settings.verticalSpacing.PARTY = GW.GetSetting("RAID_UNITS_VERTICAL_SPACING_PARTY")
-    settings.verticalSpacing.RAID_PET = GW.GetSetting("RAID_UNITS_VERTICAL_SPACING_PET")
-    settings.verticalSpacing.RAID40 = GW.GetSetting("RAID_UNITS_VERTICAL_SPACING")
-    settings.verticalSpacing.RAID25 = GW.GetSetting("RAID_UNITS_VERTICAL_SPACING_RAID25")
-    settings.verticalSpacing.RAID10 = GW.GetSetting("RAID_UNITS_VERTICAL_SPACING_RAID10")
-    settings.verticalSpacing.TANK = GW.GetSetting("RAID_UNITS_VERTICAL_SPACING_TANK")
+    settings.verticalSpacing.PARTY = GW.settings.RAID_UNITS_VERTICAL_SPACING_PARTY
+    settings.verticalSpacing.RAID_PET = GW.settings.RAID_UNITS_VERTICAL_SPACING_PET
+    settings.verticalSpacing.RAID40 = GW.settings.RAID_UNITS_VERTICAL_SPACING
+    settings.verticalSpacing.RAID25 = GW.settings.RAID_UNITS_VERTICAL_SPACING_RAID25
+    settings.verticalSpacing.RAID10 = GW.settings.RAID_UNITS_VERTICAL_SPACING_RAID10
+    settings.verticalSpacing.TANK = GW.settings.RAID_UNITS_VERTICAL_SPACING_TANK
 
-    settings.groupSpacing.PARTY = GW.GetSetting("RAID_UNITS_GROUP_SPACING_PARTY")
-    settings.groupSpacing.RAID_PET = GW.GetSetting("RAID_UNITS_GROUP_SPACING_PET")
-    settings.groupSpacing.RAID40 = GW.GetSetting("RAID_UNITS_GROUP_SPACING")
-    settings.groupSpacing.RAID25 = GW.GetSetting("RAID_UNITS_GROUP_SPACING_RAID25")
-    settings.groupSpacing.RAID10 = GW.GetSetting("RAID_UNITS_GROUP_SPACING_RAID10")
-    settings.groupSpacing.TANK = GW.GetSetting("RAID_UNITS_GROUP_SPACING_TANK")
+    settings.groupSpacing.PARTY = GW.settings.RAID_UNITS_GROUP_SPACING_PARTY
+    settings.groupSpacing.RAID_PET = GW.settings.RAID_UNITS_GROUP_SPACING_PET
+    settings.groupSpacing.RAID40 = GW.settings.RAID_UNITS_GROUP_SPACING
+    settings.groupSpacing.RAID25 = GW.settings.RAID_UNITS_GROUP_SPACING_RAID25
+    settings.groupSpacing.RAID10 = GW.settings.RAID_UNITS_GROUP_SPACING_RAID10
+    settings.groupSpacing.TANK = GW.settings.RAID_UNITS_GROUP_SPACING_TANK
 
-    settings.raidWidth.PARTY = tonumber(GW.GetSetting("RAID_WIDTH_PARTY"))
-    settings.raidWidth.RAID_PET = tonumber(GW.GetSetting("RAID_WIDTH_PET"))
-    settings.raidWidth.RAID40 = tonumber(GW.GetSetting("RAID_WIDTH"))
-    settings.raidWidth.RAID25 = tonumber(GW.GetSetting("RAID_WIDTH_RAID25"))
-    settings.raidWidth.RAID10 = tonumber(GW.GetSetting("RAID_WIDTH_RAID10"))
-    settings.raidWidth.TANK = tonumber(GW.GetSetting("RAID_WIDTH_TANK"))
+    settings.raidWidth.PARTY = tonumber(GW.settings.RAID_WIDTH_PARTY)
+    settings.raidWidth.RAID_PET = tonumber(GW.settings.RAID_WIDTH_PET)
+    settings.raidWidth.RAID40 = tonumber(GW.settings.RAID_WIDTH)
+    settings.raidWidth.RAID25 = tonumber(GW.settings.RAID_WIDTH_RAID25)
+    settings.raidWidth.RAID10 = tonumber(GW.settings.RAID_WIDTH_RAID10)
+    settings.raidWidth.TANK = tonumber(GW.settings.RAID_WIDTH_TANK)
 
-    settings.raidHeight.PARTY = tonumber(GW.GetSetting("RAID_HEIGHT_PARTY"))
-    settings.raidHeight.RAID_PET = tonumber(GW.GetSetting("RAID_HEIGHT_PET"))
-    settings.raidHeight.RAID40 = tonumber(GW.GetSetting("RAID_HEIGHT"))
-    settings.raidHeight.RAID25 = tonumber(GW.GetSetting("RAID_HEIGHT_RAID25"))
-    settings.raidHeight.RAID10 = tonumber(GW.GetSetting("RAID_HEIGHT_RAID10"))
-    settings.raidHeight.TANK = tonumber(GW.GetSetting("RAID_HEIGHT_TANK"))
+    settings.raidHeight.PARTY = tonumber(GW.settings.RAID_HEIGHT_PARTY)
+    settings.raidHeight.RAID_PET = tonumber(GW.settings.RAID_HEIGHT_PET)
+    settings.raidHeight.RAID40 = tonumber(GW.settings.RAID_HEIGHT)
+    settings.raidHeight.RAID25 = tonumber(GW.settings.RAID_HEIGHT_RAID25)
+    settings.raidHeight.RAID10 = tonumber(GW.settings.RAID_HEIGHT_RAID10)
+    settings.raidHeight.TANK = tonumber(GW.settings.RAID_HEIGHT_TANK)
 
-    settings.startFromCenter.PARTY = GW.GetSetting("UNITFRAME_ANCHOR_FROM_CENTER_PARTY")
-    settings.startFromCenter.RAID_PET = GW.GetSetting("UNITFRAME_ANCHOR_FROM_CENTER_PET")
-    settings.startFromCenter.RAID40 = GW.GetSetting("UNITFRAME_ANCHOR_FROM_CENTER")
-    settings.startFromCenter.RAID25 = GW.GetSetting("UNITFRAME_ANCHOR_FROM_CENTER_RAID25")
-    settings.startFromCenter.RAID10 = GW.GetSetting("UNITFRAME_ANCHOR_FROM_CENTER_RAID10")
-    settings.startFromCenter.RAID10 = GW.GetSetting("UNITFRAME_ANCHOR_FROM_CENTER_TANK")
+    settings.startFromCenter.PARTY = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_PARTY
+    settings.startFromCenter.RAID_PET = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_PET
+    settings.startFromCenter.RAID40 = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER
+    settings.startFromCenter.RAID25 = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_RAID25
+    settings.startFromCenter.RAID10 = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_RAID10
+    settings.startFromCenter.RAID10 = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_TANK
 
-    settings.raidGrow.PARTY = GW.GetSetting("RAID_GROW_PARTY")
-    settings.raidGrow.RAID_PET = GW.GetSetting("RAID_GROW_PET")
-    settings.raidGrow.RAID40 = GW.GetSetting("RAID_GROW")
-    settings.raidGrow.RAID25 = GW.GetSetting("RAID_GROW_RAID25")
-    settings.raidGrow.RAID10 = GW.GetSetting("RAID_GROW_RAID10")
-    settings.raidGrow.TANK = GW.GetSetting("RAID_GROW_TANK")
+    settings.raidGrow.PARTY = GW.settings.RAID_GROW_PARTY
+    settings.raidGrow.RAID_PET = GW.settings.RAID_GROW_PET
+    settings.raidGrow.RAID40 = GW.settings.RAID_GROW
+    settings.raidGrow.RAID25 = GW.settings.RAID_GROW_RAID25
+    settings.raidGrow.RAID10 = GW.settings.RAID_GROW_RAID10
+    settings.raidGrow.TANK = GW.settings.RAID_GROW_TANK
 
-    settings.groupsPerColumnRow.PARTY = tonumber(GW.GetSetting("RAID_GROUPS_PER_COLUMN_PARTY"))
-    settings.groupsPerColumnRow.RAID_PET = tonumber(GW.GetSetting("RAID_GROUPS_PER_COLUMN_PET"))
-    settings.groupsPerColumnRow.RAID40 = tonumber(GW.GetSetting("RAID_GROUPS_PER_COLUMN"))
-    settings.groupsPerColumnRow.RAID25 = tonumber(GW.GetSetting("RAID_GROUPS_PER_COLUMN_RAID25"))
-    settings.groupsPerColumnRow.RAID10 = tonumber(GW.GetSetting("RAID_GROUPS_PER_COLUMN_RAID10"))
-    settings.groupsPerColumnRow.TANK = tonumber(GW.GetSetting("RAID_GROUPS_PER_COLUMN_TANK"))
+    settings.groupsPerColumnRow.PARTY = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN_PARTY)
+    settings.groupsPerColumnRow.RAID_PET = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN_PET)
+    settings.groupsPerColumnRow.RAID40 = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN)
+    settings.groupsPerColumnRow.RAID25 = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN_RAID25)
+    settings.groupsPerColumnRow.RAID10 = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN_RAID10)
+    settings.groupsPerColumnRow.TANK = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN_TANK)
 
-    settings.raidWideSorting.PARTY = GW.GetSetting("RAID_WIDE_SORTING_PARTY")
-    settings.raidWideSorting.RAID_PET = GW.GetSetting("RAID_WIDE_SORTING_PET")
-    settings.raidWideSorting.RAID40 = GW.GetSetting("RAID_WIDE_SORTING")
-    settings.raidWideSorting.RAID25 = GW.GetSetting("RAID_WIDE_SORTING_RAID25")
-    settings.raidWideSorting.RAID10 = GW.GetSetting("RAID_WIDE_SORTING_RAID10")
-    settings.raidWideSorting.TANK = GW.GetSetting("RAID_WIDE_SORTING_TANK")
+    settings.raidWideSorting.PARTY = GW.settings.RAID_WIDE_SORTING_PARTY
+    settings.raidWideSorting.RAID_PET = GW.settings.RAID_WIDE_SORTING_PET
+    settings.raidWideSorting.RAID40 = GW.settings.RAID_WIDE_SORTING
+    settings.raidWideSorting.RAID25 = GW.settings.RAID_WIDE_SORTING_RAID25
+    settings.raidWideSorting.RAID10 = GW.settings.RAID_WIDE_SORTING_RAID10
+    settings.raidWideSorting.TANK = GW.settings.RAID_WIDE_SORTING_TANK
 
-    settings.groupBy.PARTY = GW.GetSetting("RAID_GROUP_BY_PARTY")
-    settings.groupBy.RAID_PET = GW.GetSetting("RAID_GROUP_BY_PET")
-    settings.groupBy.RAID40 = GW.GetSetting("RAID_GROUP_BY")
-    settings.groupBy.RAID25 = GW.GetSetting("RAID_GROUP_BY_RAID25")
-    settings.groupBy.RAID10 = GW.GetSetting("RAID_GROUP_BY_RAID10")
-    settings.groupBy.TANK = GW.GetSetting("RAID_GROUP_BY_TANK")
+    settings.groupBy.PARTY = GW.settings.RAID_GROUP_BY_PARTY
+    settings.groupBy.RAID_PET = GW.settings.RAID_GROUP_BY_PET
+    settings.groupBy.RAID40 = GW.settings.RAID_GROUP_BY
+    settings.groupBy.RAID25 = GW.settings.RAID_GROUP_BY_RAID25
+    settings.groupBy.RAID10 = GW.settings.RAID_GROUP_BY_RAID10
+    settings.groupBy.TANK = GW.settings.RAID_GROUP_BY_TANK
 
-    settings.sortDirection.PARTY = GW.GetSetting("RAID_SORT_DIRECTION_PARTY")
-    settings.sortDirection.RAID_PET = GW.GetSetting("RAID_SORT_DIRECTION_PET")
-    settings.sortDirection.RAID40 = GW.GetSetting("RAID_SORT_DIRECTION")
-    settings.sortDirection.RAID25 = GW.GetSetting("RAID_SORT_DIRECTION_RAID25")
-    settings.sortDirection.RAID10 = GW.GetSetting("RAID_SORT_DIRECTION_RAID10")
-    settings.sortDirection.TANK = GW.GetSetting("RAID_SORT_DIRECTION_TANK")
+    settings.sortDirection.PARTY = GW.settings.RAID_SORT_DIRECTION_PARTY
+    settings.sortDirection.RAID_PET = GW.settings.RAID_SORT_DIRECTION_PET
+    settings.sortDirection.RAID40 = GW.settings.RAID_SORT_DIRECTION
+    settings.sortDirection.RAID25 = GW.settings.RAID_SORT_DIRECTION_RAID25
+    settings.sortDirection.RAID10 = GW.settings.RAID_SORT_DIRECTION_RAID10
+    settings.sortDirection.TANK = GW.settings.RAID_SORT_DIRECTION_TANK
 
-    settings.sortMethod.PARTY = GW.GetSetting("RAID_RAID_SORT_METHOD_PARTY")
-    settings.sortMethod.RAID_PET = GW.GetSetting("RAID_RAID_SORT_METHOD_PET")
-    settings.sortMethod.RAID40 = GW.GetSetting("RAID_RAID_SORT_METHOD")
-    settings.sortMethod.RAID25 = GW.GetSetting("RAID_RAID_SORT_METHOD_RAID25")
-    settings.sortMethod.RAID10 = GW.GetSetting("RAID_RAID_SORT_METHOD_RAID10")
-    settings.sortMethod.TANK = GW.GetSetting("RAID_RAID_SORT_METHOD_TANK")
+    settings.sortMethod.PARTY = GW.settings.RAID_RAID_SORT_METHOD_PARTY
+    settings.sortMethod.RAID_PET = GW.settings.RAID_RAID_SORT_METHOD_PET
+    settings.sortMethod.RAID40 = GW.settings.RAID_RAID_SORT_METHOD
+    settings.sortMethod.RAID25 = GW.settings.RAID_RAID_SORT_METHOD_RAID25
+    settings.sortMethod.RAID10 = GW.settings.RAID_RAID_SORT_METHOD_RAID10
+    settings.sortMethod.TANK = GW.settings.RAID_RAID_SORT_METHOD_TANK
 
     -- Update this settings on a spec switch
     if not settingsEventFrame.isSetup then
@@ -342,37 +342,37 @@ local function UpdateGroupVisibility(header, profile, enabled)
         local visibilityToUseForGroups
 
         if profile == "RAID40" then
-            if GW.GetSetting("RAID_FRAMES") and GW.GetSetting("RAID25_ENABLED") and GW.GetSetting("RAID10_ENABLED") then
+            if GW.settings.RAID_FRAMES and GW.settings.RAID25_ENABLED and GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID40.visibility)
                 visibilityToUseForGroups = profiles.RAID40.visibility
-            elseif GW.GetSetting("RAID_FRAMES") and not GW.GetSetting("RAID25_ENABLED") and GW.GetSetting("RAID10_ENABLED") then
+            elseif GW.settings.RAID_FRAMES and not GW.settings.RAID25_ENABLED and GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID40.visibilityIncl25)
                 visibilityToUseForGroups = profiles.RAID40.visibilityIncl25
-            elseif GW.GetSetting("RAID_FRAMES") and not GW.GetSetting("RAID25_ENABLED") and not GW.GetSetting("RAID10_ENABLED") then
+            elseif GW.settings.RAID_FRAMES and not GW.settings.RAID25_ENABLED and not GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID40.visibilityAll)
                 visibilityToUseForGroups = profiles.RAID40.visibilityAll
-            elseif not GW.GetSetting("RAID_FRAMES") then
+            elseif not GW.settings.RAID_FRAMES then
                 RegisterStateDriver(header, "visibility", "hide")
             end
         elseif profile == "RAID25" then
-            if GW.GetSetting("RAID25_ENABLED") and GW.GetSetting("RAID10_ENABLED") then
+            if GW.settings.RAID25_ENABLED and GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID25.visibility)
                 visibilityToUseForGroups = profiles.RAID25.visibility
-            elseif GW.GetSetting("RAID25_ENABLED") and not GW.GetSetting("RAID10_ENABLED") then
+            elseif GW.settings.RAID25_ENABLED and not GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID25.visibilityIncl10)
                 visibilityToUseForGroups = profiles.RAID25.visibilityIncl10
-            elseif not GW.GetSetting("RAID25_ENABLED") then
+            elseif not GW.settings.RAID25_ENABLED then
                 RegisterStateDriver(header, "visibility", "hide")
             end
         elseif profile == "RAID10" then
-            if GW.GetSetting("RAID10_ENABLED") then
+            if GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID10.visibility)
                 visibilityToUseForGroups = profiles.RAID10.visibility
             else
                 RegisterStateDriver(header, "visibility", "hide")
             end
         elseif profile == "RAID_PET" then
-            if GW.GetSetting("RAID_PET_FRAMES") then
+            if GW.settings.RAID_PET_FRAMES then
                 RegisterStateDriver(header, "visibility", profiles.RAID_PET.visibility)
                 visibilityToUseForGroups = profiles.RAID_PET.visibility
             else
@@ -489,7 +489,7 @@ local function UpdateGridHeader(profile)
 
             -- register the correct visibility state driver
             if profile == "PARTY" then
-                if not GW.GetSetting("RAID_STYLE_PARTY") and not GW.GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
+                if not GW.settings.RAID_STYLE_PARTY and not GW.settings.RAID_STYLE_PARTY_AND_FRAMES then
                     RegisterStateDriver(group, "visibility", "hide")
                 elseif not header.forceShow then -- we are in config mode
                     RegisterStateDriver(group, "visibility", profiles.PARTY.visibility)
@@ -545,37 +545,37 @@ local function UpdateGridHeader(profile)
             RegisterStateDriver(header, "visibility", profiles.RAID40.visibility)
             UpdateGroupVisibility(header, profile, true)
         elseif profile == "RAID25" then
-            GW.ToggleMover(header.gwMover, GW.GetSetting("RAID25_ENABLED"))
-            if not GW.GetSetting("RAID25_ENABLED") then
+            GW.ToggleMover(header.gwMover, GW.settings.RAID25_ENABLED)
+            if not GW.settings.RAID25_ENABLED then
                 RegisterStateDriver(header, "visibility", "hide")
             else
                 RegisterStateDriver(header, "visibility", profiles.RAID25.visibility)
             end
-            UpdateGroupVisibility(header, profile, GW.GetSetting("RAID25_ENABLED"))
+            UpdateGroupVisibility(header, profile, GW.settings.RAID25_ENABLED)
         elseif profile == "RAID10" then
-            GW.ToggleMover(header.gwMover, GW.GetSetting("RAID10_ENABLED"))
-            if not GW.GetSetting("RAID10_ENABLED") then
+            GW.ToggleMover(header.gwMover, GW.settings.RAID10_ENABLED)
+            if not GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", "hide")
             else
                 RegisterStateDriver(header, "visibility", profiles.RAID10.visibility)
             end
-            UpdateGroupVisibility(header, profile, GW.GetSetting("RAID10_ENABLED"))
+            UpdateGroupVisibility(header, profile, GW.settings.RAID10_ENABLED)
         elseif profile == "RAID_PET" then
-            GW.ToggleMover(header.gwMover, GW.GetSetting("RAID_PET_FRAMES"))
-            if not GW.GetSetting("RAID_PET_FRAMES") then
+            GW.ToggleMover(header.gwMover, GW.settings.RAID_PET_FRAMES)
+            if not GW.settings.RAID_PET_FRAMES then
                 RegisterStateDriver(header, "visibility", "hide")
             else
                 RegisterStateDriver(header, "visibility", profiles.RAID_PET.visibility)
             end
-            UpdateGroupVisibility(header, profile, GW.GetSetting("RAID_PET_FRAMES"))
+            UpdateGroupVisibility(header, profile, GW.settings.RAID_PET_FRAMES)
         elseif profile == "TANK" then
-            GW.ToggleMover(header.gwMover, GW.GetSetting("RAID_MAINTANK_FRAMES_ENABLED"))
-            if not GW.GetSetting("RAID_MAINTANK_FRAMES_ENABLED") then
+            GW.ToggleMover(header.gwMover, GW.settings.RAID_MAINTANK_FRAMES_ENABLED)
+            if not GW.settings.RAID_MAINTANK_FRAMES_ENABLED then
                 RegisterStateDriver(header, "visibility", "hide")
             else
                 RegisterStateDriver(header, "visibility", profiles.TANK.visibility)
             end
-            UpdateGroupVisibility(header, profile, GW.GetSetting("RAID_MAINTANK_FRAMES_ENABLED"))
+            UpdateGroupVisibility(header, profile, GW.settings.RAID_MAINTANK_FRAMES_ENABLED)
         end
     end
 

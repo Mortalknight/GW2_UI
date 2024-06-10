@@ -4,20 +4,18 @@ local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
 local StrUpper = GW.StrUpper
 local AddForProfiling = GW.AddForProfiling
 local settingsMenuAddButton = GW.settingsMenuAddButton
 
 local function setMultibarCols(barName, setting)
-    local mb = GetSetting(barName)
-    local cols = GetSetting(setting)
+    local mb = GW.settings[barName]
+    local cols = GW.settings[setting]
     GW:Debug("setting multibar colsfor bar ", barName, "to", cols)
 
     mb["ButtonsPerRow"] = cols
-    SetSetting(barName, mb)
+    GW.settings[barName] = mb
     --#regionto update the cols
     GW.UpdateMultibarButtons()
 end
@@ -159,7 +157,7 @@ local function LoadActionbarPanel(sWindow)
         "GW_SHOW_MULTI_ACTIONBAR_1",
         function(toSet)
             if toSet then SHOW_MULTI_ACTIONBAR_1 = "1" else SHOW_MULTI_ACTIONBAR_1 = nil end
-            SetActionBarToggles(GetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4"), GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED"))
+            SetActionBarToggles(GW.settings.GW_SHOW_MULTI_ACTIONBAR_1, GW.settings.GW_SHOW_MULTI_ACTIONBAR_2, GW.settings.GW_SHOW_MULTI_ACTIONBAR_3, GW.settings.GW_SHOW_MULTI_ACTIONBAR_4, GW.settings.HIDEACTIONBAR_BACKGROUND_ENABLED)
             InterfaceOptions_UpdateMultiActionBars()
         end,
         nil,
@@ -173,7 +171,7 @@ local function LoadActionbarPanel(sWindow)
         "GW_SHOW_MULTI_ACTIONBAR_2",
         function(toSet)
             if toSet then SHOW_MULTI_ACTIONBAR_2 = "1" else SHOW_MULTI_ACTIONBAR_2 = nil end
-            SetActionBarToggles(GetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4"), GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED"))
+            SetActionBarToggles(GW.settings.GW_SHOW_MULTI_ACTIONBAR_1, GW.settings.GW_SHOW_MULTI_ACTIONBAR_2, GW.settings.GW_SHOW_MULTI_ACTIONBAR_3, GW.settings.GW_SHOW_MULTI_ACTIONBAR_4, GW.settings.HIDEACTIONBAR_BACKGROUND_ENABLED)
             InterfaceOptions_UpdateMultiActionBars()
         end,
         nil,
@@ -187,7 +185,7 @@ local function LoadActionbarPanel(sWindow)
         "GW_SHOW_MULTI_ACTIONBAR_3",
         function(toSet)
             if toSet then SHOW_MULTI_ACTIONBAR_3 = "1" else SHOW_MULTI_ACTIONBAR_3 = nil end
-            SetActionBarToggles(GetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4"), GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED"))
+            SetActionBarToggles(GW.settings.GW_SHOW_MULTI_ACTIONBAR_1, GW.settings.GW_SHOW_MULTI_ACTIONBAR_2, GW.settings.GW_SHOW_MULTI_ACTIONBAR_3, GW.settings.GW_SHOW_MULTI_ACTIONBAR_4, GW.settings.HIDEACTIONBAR_BACKGROUND_ENABLED)
             InterfaceOptions_UpdateMultiActionBars()
         end,
         nil,
@@ -201,7 +199,7 @@ local function LoadActionbarPanel(sWindow)
         "GW_SHOW_MULTI_ACTIONBAR_4",
         function(toSet)
             if toSet then SHOW_MULTI_ACTIONBAR_4 = "1" else SHOW_MULTI_ACTIONBAR_4 = nil end
-            SetActionBarToggles(GetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4"), GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED"))
+            SetActionBarToggles(GW.settings.GW_SHOW_MULTI_ACTIONBAR_1, GW.settings.GW_SHOW_MULTI_ACTIONBAR_2, GW.settings.GW_SHOW_MULTI_ACTIONBAR_3, GW.settings.GW_SHOW_MULTI_ACTIONBAR_4, GW.settings.HIDEACTIONBAR_BACKGROUND_ENABLED)
             InterfaceOptions_UpdateMultiActionBars()
         end,
         nil,

@@ -61,7 +61,7 @@ local function displaySort(a, b)
 end
 
 local function FpsOnEnter(self, slow)
-    if GW.GetSetting("MINIMAP_FPS_TOOLTIP_DISABLED") then return end
+    if GW.settings.MINIMAP_FPS_TOOLTIP_DISABLED then return end
     enteredInfo = true
     GameTooltip:ClearLines()
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")

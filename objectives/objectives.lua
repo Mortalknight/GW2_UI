@@ -1,7 +1,6 @@
 local _, GW = ...
 local L = GW.L
 local lerp = GW.lerp
-local GetSetting = GW.GetSetting
 local CommaValue = GW.CommaValue
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
@@ -182,7 +181,7 @@ local function ParseObjectiveString(block, text, objectiveType, quantity, numIte
     if objectiveType == "progressbar" then
         block.StatusBar:SetMinMaxValues(0, 100)
         block.StatusBar:SetValue(quantity or 0)
-        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.GetSetting("QUESTTRACKER_STATUSBARS_ENABLED"))
+        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
         block.StatusBar.precentage = true
         return true
     end
@@ -199,7 +198,7 @@ local function ParseObjectiveString(block, text, objectiveType, quantity, numIte
     numNeeded = tonumber(numNeeded)
 
     if numItems and numNeeded and numNeeded > 1 and numItems < numNeeded then
-        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.GetSetting("QUESTTRACKER_STATUSBARS_ENABLED"))
+        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
         block.StatusBar:SetMinMaxValues(0, numNeeded)
         block.StatusBar:SetValue(numItems)
         block.progress = numItems / numNeeded
@@ -505,7 +504,7 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
 
         if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
             if objectiveType == "progressbar" then
-                objectiveBlock.StatusBar:SetShown(GW.GetSetting("QUESTTRACKER_STATUSBARS_ENABLED"))
+                objectiveBlock.StatusBar:SetShown(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
                 objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
                 objectiveBlock.progress = GetQuestProgressBarPercent(block.questID) / 100
@@ -828,7 +827,7 @@ GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 local function QuestTrackerLayoutChanged()
     local scroll = 0
     local height = GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 60
-    local trackerHeight = GetSetting("QuestTracker_pos_height") - GwObjectivesNotification:GetHeight()
+    local trackerHeight = GW.settings.QuestTracker_pos_height - GwObjectivesNotification:GetHeight()
 
     if height > tonumber(trackerHeight) then
         scroll = math.abs(trackerHeight - height)
@@ -868,12 +867,12 @@ local function updateQuestLogLayout(self)
         end
     end
 
-    if GetSetting("QUESTTRACKER_SORTING") == "LEVEL" then
+    if GW.settings.QUESTTRACKER_SORTING == "LEVEL" then
         -- Sort by level
         table.sort(sorted, function(a, b)
             return a and b and a.questLevel < b.questLevel
         end)
-    elseif GetSetting("QUESTTRACKER_SORTING") == "ZONE" then
+    elseif GW.settings.QUESTTRACKER_SORTING == "ZONE" then
         -- Sort by Zone
         if Questie and Questie.started and QuestieLoader then
             local QuestieTrackerUtils = QuestieLoader:ImportModule("TrackerUtils")
@@ -1204,7 +1203,7 @@ local function LoadQuestTracker()
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", ALL, nil, {"scaleable", "height"})
     fTracker:ClearAllPoints()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
-    fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))
+    fTracker:SetHeight(GW.settings.QuestTracker_pos_height)
 
     local baseQLTB_OnClick = QuestLogTitleButton_OnClick
     QuestLogTitleButton_OnClick = function(self, button) -- I wanted to use hooksecurefunc but this needs to be a pre-hook to work properly unfortunately

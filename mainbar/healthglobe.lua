@@ -4,7 +4,6 @@ local AddToClique = GW.AddToClique
 local Self_Hide = GW.Self_Hide
 local TimeParts = GW.TimeParts
 local IsIn = GW.IsIn
-local GetSetting = GW.GetSetting
 
 local function flashAnimation(self, delta, t)
     if t == nil then t = 0 end
@@ -132,7 +131,7 @@ GW.AddForProfiling("healthglobe", "updateHealthData", updateHealthData)
 
 local function selectPvp(self)
     local prevFlag = self.pvp.pvpFlag
-    if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and (GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
+    if GW.settings.PLAYER_SHOW_PVP_INDICATOR and (GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
         self.pvp.pvpFlag = true
         if prevFlag ~= true then
             if GW.myfaction == "Horde" then
@@ -209,7 +208,7 @@ local function globe_OnEnter(self)
     end
     GameTooltip:Show()
 
-    if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and self.pvp.pvpFlag then
+    if GW.settings.PLAYER_SHOW_PVP_INDICATOR and self.pvp.pvpFlag then
         self.pvp:fadeIn()
     end
 end
@@ -237,8 +236,8 @@ GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
 
 local function UpdateSettings()
     if not GW2_PlayerFrame then return end
-    GW2_PlayerFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
-    --GW2_PlayerFrame.absorbTextSetting = GetSetting("PLAYER_UNIT_ABSORB")
+    GW2_PlayerFrame.healthTextSetting = GW.settings.PLAYER_UNIT_HEALTH
+    --GW2_PlayerFrame.absorbTextSetting = GW.settings.PLAYER_UNIT_ABSORB
 
     updateHealthData(GW2_PlayerFrame)
 end
@@ -278,8 +277,8 @@ local function LoadHealthGlobe()
     GW.RegisterScaleFrame(hg, 1.1)
 
     -- position based on XP bar space and make it movable if your actionbars are off
-    if GetSetting("ACTIONBARS_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
-        if GetSetting("XPBAR_ENABLED") then
+    if GW.settings.ACTIONBARS_ENABLED and not GW.IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
+        if GW.settings.XPBAR_ENABLED then
             hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
         else
             hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
@@ -287,8 +286,8 @@ local function LoadHealthGlobe()
     else
         GW.RegisterMovableFrame(hg, GW.L["Health Globe"], "HealthGlobe_pos", ALL .. ",Unitframe", nil, {"default"}, false)
         hg:SetPoint("TOPLEFT", hg.gwMover)
-        if not GetSetting("XPBAR_ENABLED") and not hg.isMoved then
-            local framePoint = GetSetting("HealthGlobe_pos")
+        if not GW.settings.XPBAR_ENABLED and not hg.isMoved then
+            local framePoint = GW.settings.HealthGlobe_pos
             hg.gwMover:ClearAllPoints()
             hg.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, 0)
         end
@@ -305,7 +304,7 @@ local function LoadHealthGlobe()
 
     -- set text/font stuff
     hg.hSize = 14
-    if GW.GetSetting("PLAYER_UNIT_ABSORB") == "BOTH" then
+    if GW.settings.PLAYER_UNIT_ABSORB == "BOTH" then
         hg.aSize = 12
         hg.text_a:ClearAllPoints()
         hg.text_a:SetPoint("CENTER", hg, "CENTER", 0, 25)
@@ -335,7 +334,7 @@ local function LoadHealthGlobe()
     hg:SetScript("OnEnter", globe_OnEnter)
     hg:SetScript("OnLeave", function(self)
         GameTooltip_Hide()
-        if GW.GetSetting("PLAYER_SHOW_PVP_INDICATOR") and self.pvp.pvpFlag then
+        if GW.settings.PLAYER_SHOW_PVP_INDICATOR and self.pvp.pvpFlag then
             self.pvp:fadeOut()
         end
     end)
@@ -394,7 +393,7 @@ local function LoadHealthGlobe()
         pagIn:Play()
     end
 
-    if not GW.GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
+    if not GW.settings.PLAYER_SHOW_PVP_INDICATOR then pvp:Hide() end
 
     UpdateSettings()
 

@@ -1,7 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 local SetOverrideIncompatibleAddons = GW.SetOverrideIncompatibleAddons
 local RoundDec = GW.RoundDec
 local AddForProfiling = GW.AddForProfiling
@@ -14,60 +12,40 @@ local optionReference = {}
 
 --helper functions for settings
 local function getSettingsCat()
-    return settings_cat
+  return settings_cat
 end
 GW.getSettingsCat = getSettingsCat;
 
 local function getOptionReference()
-    return optionReference
+  return optionReference
 end
 GW.getOptionReference = getOptionReference;
 
 local function switchCat(index)
     for _, l in ipairs(settings_cat) do
         l.iconbg:SetTexCoord(0.505, 1, 0, 0.625)
-    --    l.iconbg:Hide()
         l.cat_panel:Hide()
-
-        -- hide all profiles
-        if l.cat_profilePanels then
-            for _, pp in ipairs(l.cat_profilePanels) do
-                pp:Hide()
-            end
-        end
     end
-
     local l = settings_cat[index]
     if l then
         l.iconbg:SetTexCoord(0, 0.5, 0, 0.625)
-    --  l.iconbg:Show()
-        l.cat_panel:Show()
-        if l.cat_crollFrames then
-            for _, v in pairs(l.cat_crollFrames) do
-                v.scroll.slider:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
-                v.scroll.scrollUp:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
-                v.scroll.scrollDown:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
-            end
-        end
+        if index == 2 and GW.lastSelectedSettingsMenuCategorie and GW.lastSelectedSettingsMenuCategorie.button and GW.lastSelectedSettingsMenuCategorie.basePanel then -- Index = 2 is Settings Panel
+            l.cat_panel:Show()
+            GW.ResetSettingsMenuCategories(false)
+            GW.SwitchSettingsMenuCategorie(GW.lastSelectedSettingsMenuCategorie.button, GW.lastSelectedSettingsMenuCategorie.basePanel, GW.lastSelectedSettingsMenuCategorie.panelFrame)
 
-        -- open the last shown profile
-        if l.cat_profilePanels then
-            l.cat_panel:Hide()
-            if l.cat_panel == l.cat_panel.selectProfile.active then
-                l.cat_panel:Show()
-                l.cat_panel.selectProfile.string:SetText(getglobal(l.cat_panel.selectProfile.type))
-                UIFrameFadeIn(l.cat_panel, 0.2, 0, 1)
-            else
-                for _, pp in ipairs(l.cat_profilePanels) do
-                    if pp == l.cat_panel.selectProfile.active then
-                        pp:Show()
-                        pp.selectProfile.string:SetText(getglobal(pp.selectProfile.type))
-                        UIFrameFadeIn(pp, 0.2, 0, 1)
-                        break
-                    end
+            UIFrameFadeIn(GW.lastSelectedSettingsMenuCategorie.basePanel, 0.2, 0, 1)
+        else
+            l.cat_panel:Show()
+
+            if l.cat_crollFrames then
+                for _, v in pairs(l.cat_crollFrames) do
+                    v.scroll.slider:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
+                    v.scroll.scrollUp:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
+                    v.scroll.scrollDown:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
                 end
             end
-        else
+
             UIFrameFadeIn(l.cat_panel, 0.2, 0, 1)
         end
     end
@@ -85,7 +63,7 @@ end
 AddForProfiling("settings", "fnF_OnEnter", fnF_OnEnter)
 
 local fnF_OnLeave = function(self)
-    --  self.icon:SetBlendMode("BLEND")
+  --  self.icon:SetBlendMode("BLEND")
     GameTooltip_Hide(self)
 end
 AddForProfiling("settings", "fnF_OnLeave", fnF_OnLeave)
@@ -96,18 +74,17 @@ end
 AddForProfiling("settings", "fnF_OnClick", fnF_OnClick)
 
 local visible_cat_button_id  = 0
-local function CreateCat(name, desc, panel, scrollFrames, profilePanles, visibleTabButton, icon)
+local function CreateCat(name, desc, panel, scrollFrames, visibleTabButton, icon)
     local i = #settings_cat + 1
     -- create and position a new button/label for this category
     local f = CreateFrame("Button", nil, GwSettingsWindow, "GwSettingsLabelTmpl")
     f.cat_panel = panel
-    f.cat_profilePanels = profilePanles
     f.cat_name = name
     f.cat_desc = desc
     f.cat_id = i
     f.cat_crollFrames = scrollFrames
     settings_cat[i] = f
-    f:SetPoint("TOPRIGHT", GwSettingsWindow,"TOPLEFT", 1, -32 + (-40 * visible_cat_button_id))
+    f:SetPoint("TOPRIGHT", GwSettingsWindow, "TOPLEFT", 1, -32 + (-40 * visible_cat_button_id))
 
     if not visibleTabButton then
         f:Hide()
@@ -338,13 +315,13 @@ local function checkDependenciesOnLoad()
                 if type(sv) == "table" then
                     for _, dv in ipairs(sv) do
                         allOptionsSet = false
-                        if GetSetting(sn) == dv then
+                        if GW.settings[sn] == dv then
                             allOptionsSet = true
                             break
                         end
                     end
                 else
-                    if GetSetting(sn) == sv then
+                    if GW.settings[sn] == sv then
                         allOptionsSet = true
                     else
                         allOptionsSet = false
@@ -395,7 +372,7 @@ local function loadDropDown(scrollFrame)
                 slot.optionDisplayName = scrollFrame.data.options_names[idx]
 
                 if scrollFrame.data.hasCheckbox then
-                    local settingstable = GetSetting(scrollFrame.data.optionName, scrollFrame.data.perSpec)
+                    local settingstable = GW.settings[scrollFrame.data.optionName]
                     if type(settingstable[scrollFrame.data.options[idx]]) == "table" then
                         slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]].enable)
                     else
@@ -415,10 +392,13 @@ local function loadDropDown(scrollFrame)
 end
 
 local function ShowColorPicker(r, g, b, a, changedCallback)
-    ColorPickerFrame:SetColorRGB(r, g, b)
-    ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), a
+    ColorPickerFrame.Content.ColorPicker:SetColorRGB(r, g, b)
+    ColorPickerFrame.hasOpacity = (a ~= nil)
+    ColorPickerFrame.opacity = a
     ColorPickerFrame.previousValues = {r, g, b, a}
-    ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = changedCallback, changedCallback, changedCallback
+    ColorPickerFrame.func = changedCallback
+    ColorPickerFrame.opacityFunc = changedCallback
+    ColorPickerFrame.cancelFunc = changedCallback
     ColorPickerFrame:Show()
     ColorPickerFrame:SetFrameStrata('FULLSCREEN_DIALOG')
     ColorPickerFrame:SetClampedToScreen(true)
@@ -431,7 +411,7 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting)
         for _, of in pairs(panel.options) do
             if of.optionName == setting then
                 if setSetting then
-                    GW.SetSetting(setting, value)
+                    GW.settings[setting] = value
                 end
                 if of.optionType == "slider" then
                     of.slider:SetValue(value)
@@ -529,7 +509,6 @@ local function InitPanel(panel, hasScroll)
 
         optionReference[panelUniqueID].options[#optionReference[panelUniqueID].options + 1] = of
 
-
         of.optionName = v.optionName
         of.perSpec = v.perSpec
         of.decimalNumbers = v.decimalNumbers
@@ -582,13 +561,13 @@ local function InitPanel(panel, hasScroll)
         of:SetScript("OnLeave", GameTooltip_Hide)
 
         if v.optionType == "colorPicker" then
-            local color = GetSetting(of.optionName)
+            local color = GW.settings[of.optionName]
             of.button.bg:SetColorTexture(color.r, color.g, color.b)
             of.button:SetScript("OnClick", function()
                 if ColorPickerFrame:IsShown() then
                     HideUIPanel(ColorPickerFrame)
                 else
-                    color = GetSetting(of.optionName)
+                    color = GW.settings[of.optionName]
                     ShowColorPicker(color.r, color.g, color.b, nil, function(restore)
                         if ColorPickerFrame.noColorCallback then return end
                         local newR, newG, newB
@@ -597,15 +576,15 @@ local function InitPanel(panel, hasScroll)
                          newR, newG, newB = unpack(restore)
                         else
                          -- Something changed
-                          newR, newG, newB = ColorPickerFrame:GetColorRGB()
+                          newR, newG, newB = ColorPickerFrame.Content.ColorPicker:GetColorRGB()
                         end
                         -- Update our internal storage.
 
-                        local color = GetSetting(of.optionName)
+                        local color = GW.settings[of.optionName]
                         color.r = newR
                         color.g = newG
                         color.b = newB
-                        SetSetting(of.optionName, color)
+                        GW.settings[of.optionName] = color
                         of.button.bg:SetColorTexture(newR, newG, newB)
                     end)
                 end
@@ -643,7 +622,7 @@ local function InitPanel(panel, hasScroll)
                             of.container:Show()
                         end
 
-                        SetSetting(self.optionName, self.option)
+                        GW.settings[self.optionName] = self.option
 
                         if v.callback then
                             v.callback(self.option)
@@ -657,7 +636,11 @@ local function InitPanel(panel, hasScroll)
                             toSet = true
                         end
 
-                        SetSetting(self:GetParent().optionName, toSet, self:GetParent().option)
+                        if type(GW.settings[self:GetParent().optionName][self:GetParent().option]) == "table" then
+                            GW.settings[self:GetParent().optionName][self:GetParent().option].enable = toSet
+                        else
+                            GW.settings[self:GetParent().optionName][self:GetParent().option] = toSet
+                        end
 
                         if v.callback then
                             v.callback(toSet, self:GetParent().option)
@@ -707,7 +690,7 @@ local function InitPanel(panel, hasScroll)
             loadDropDown(scrollFrame)
             -- set current settings value
             for key, val in pairs(v.options) do
-                if GetSetting(of.optionName, of.perSpec) == val then
+                if GW.settings[of.optionName] == val then
                     of.button.string:SetText(v.options_names[key])
                     break
                 end
@@ -749,7 +732,7 @@ local function InitPanel(panel, hasScroll)
             )
         elseif v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
-            of.slider:SetValue(RoundDec(GW.GetSetting(of.optionName)))
+            of.slider:SetValue(RoundDec(GW.settings[of.optionName]))
             if v.step then of.slider:SetValueStep(v.step) end
             of.slider:SetObeyStepOnDrag(true)
             of.slider:SetScript(
@@ -765,19 +748,19 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetValue(GetSetting(of.optionName))
+                        self:SetValue(GW.settings[of.optionName])
                         return
                     end
                     local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
-                    SetSetting(of.optionName, tonumber(roundValue))
+                    GW.settings[of.optionName] = tonumber(roundValue)
                     self:GetParent().inputFrame.input:SetText(roundValue)
                     if v.callback then
                         v.callback()
                     end
                 end
             )
-            of.inputFrame.input:SetText(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
+            of.inputFrame.input:SetText(RoundDec(GW.settings[of.optionName], of.decimalNumbers))
             of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
@@ -791,7 +774,7 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetText(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
+                        self:SetText(RoundDec(GW.settings[of.optionName], of.decimalNumbers))
                         return
                     end
                     local roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
@@ -806,14 +789,14 @@ local function InitPanel(panel, hasScroll)
                     end
                     self:GetParent():GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
-                    SetSetting(v.optionName, tonumber(roundValue))
+                    GW.settings[v.optionName] = tonumber(roundValue)
                     if v.callback then
                         v.callback()
                     end
                 end
             )
         elseif v.optionType == "text" then
-            of.inputFrame.input:SetText(GetSetting(of.optionName) or "")
+            of.inputFrame.input:SetText(GW.settings[of.optionName] or "")
             of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
@@ -827,18 +810,18 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetText(GetSetting(of.optionName, of.perSpec) or "")
+                        self:SetText(GW.settings[of.optionName] or "")
                         return
                     end
                     self:ClearFocus()
-                    SetSetting(of.optionName, self:GetText())
+                    GW.settings[of.optionName] = self:GetText()
                     if v.callback then
                         v.callback(self)
                     end
                 end
             )
         elseif v.optionType == "boolean" then
-            of.checkbutton:SetChecked(GetSetting(of.optionName))
+            of.checkbutton:SetChecked(GW.settings[of.optionName])
             of.checkbutton:SetScript(
                 "OnClick",
                 function(self, button)
@@ -860,9 +843,9 @@ local function InitPanel(panel, hasScroll)
                     if self:GetChecked() then
                         toSet = true
                     end
-                    SetSetting(of.optionName, toSet)
+                    GW.settings[of.optionName] = toSet
 
-                    if v.callback ~= nil then
+                    if v.callback then
                         v.callback(toSet, of.optionName)
                     end
                     --Check all dependencies on this option
@@ -889,7 +872,7 @@ local function InitPanel(panel, hasScroll)
                         toSet = false
                     end
                     self.checkbutton:SetChecked(toSet)
-                    SetSetting(of.optionName, toSet)
+                    GW.settings[of.optionName] = toSet
 
                     if v.callback ~= nil then
                         v.callback(toSet, of.optionName)
@@ -929,11 +912,10 @@ local function InitPanel(panel, hasScroll)
             --of.title:SetShadowColor(0, 0, 0, 1)
         end
 
---[[
         if of.perSpec then
             local onUpdate = function (self)
                 self:SetScript("OnUpdate", nil)
-                local val = GetSetting(of.optionName, true)
+                local val = GW.settings[of.optionName]
 
                 if v.optionType == "dropdown" then
                     for i,value in pairs(v.options) do
@@ -958,7 +940,7 @@ local function InitPanel(panel, hasScroll)
             end)
             of:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
         end
-]]
+
         if not newLine then
             padding.x = padding.x + of:GetWidth() + box_padding
         else
@@ -983,47 +965,12 @@ end
 GW.InitPanel = InitPanel
 
 local function LoadSettings()
-    local fmGWP = CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
-    fmGWP.string:SetFont(UNIT_NAME_FONT, 14)
-    fmGWP.string:SetTextColor(1, 1, 1)
-    local fnGWP_input_OnEscapePressed = function(self)
-        self:ClearFocus()
-    end
-    local fnGWP_input_OnEnterPressed = function(self)
-        if self:GetParent().method ~= nil then
-            self:GetParent().method()
-        end
-        self:GetParent():Hide()
-    end
-    fmGWP.input:SetScript("OnEscapePressed", fnGWP_input_OnEscapePressed)
-    fmGWP.input:SetScript("OnEditFocusGained", nil)
-    fmGWP.input:SetScript("OnEditFocusLost", nil)
-    fmGWP.input:SetScript("OnEnterPressed", fnGWP_input_OnEnterPressed)
-    local fnGWP_accept_OnClick = function(self)
-        if self:GetParent().method ~= nil then
-            self:GetParent().method()
-        end
-        self:GetParent():Hide()
-    end
-    local fnGWP_cancel_OnClick = function(self)
-        self:GetParent():Hide()
-    end
-    fmGWP.acceptButton:SetScript("OnClick", fnGWP_accept_OnClick)
-    fmGWP.cancelButton:SetScript("OnClick", fnGWP_cancel_OnClick)
-
-    tinsert(UISpecialFrames, "GwWarningPrompt")
-
-    local fnMf_OnDragStart = function(self)
-        self:StartMoving()
-    end
-    local fnMf_OnDragStop = function(self)
-        self:StopMovingOrSizing()
-    end
+    --GwSettingsWindow
     local mf = CreateFrame("Frame", "GwSettingsMoverFrame", UIParent, "GwSettingsMoverFrame")
     mf:SetClampedToScreen(true)
     mf:RegisterForDrag("LeftButton")
-    mf:SetScript("OnDragStart", fnMf_OnDragStart)
-    mf:SetScript("OnDragStop", fnMf_OnDragStop)
+    mf:SetScript("OnDragStart", function(self) self:StartMoving() end)
+    mf:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 
     local sWindow = CreateFrame("Frame", "GwSettingsWindow", UIParent, "GwSettingsWindowTmpl")
     GW.loadSettingsSearchAbleMenu()
@@ -1032,45 +979,34 @@ local function LoadSettings()
 
     mf:SetFrameLevel(sWindow:GetFrameLevel() + 100)
 
-    sWindow:SetScript(
-        "OnShow",
-        function()
-            mf:Show()
-            -- Check UI Scale
-            if GetCVarBool("useUiScale") then
-                _G["PIXEL_PERFECTION"].checkbutton:SetChecked(false)
-            end
+    sWindow:SetScript("OnShow", function()
+        mf:Show()
+        -- Check UI Scale
+        if GetCVarBool("useUiScale") then
+            _G["PIXEL_PERFECTION"].checkbutton:SetChecked(false)
+        end
 
-            checkDependenciesOnLoad()
+        checkDependenciesOnLoad()
+    end)
+    sWindow:SetScript("OnHide", function()
+        mf:Hide()
+        if not GW.InMoveHudMode and GW.ShowRlPopup then
+            StaticPopup_Show("CONFIG_RELOAD")
+            GW.ShowRlPopup = false
         end
-    )
-    sWindow:SetScript(
-        "OnHide",
-        function()
+    end)
+    sWindow:SetScript( "OnEvent", function(self, event)
+        if event == "PLAYER_REGEN_DISABLED" and self:IsShown() then
+            self:Hide()
             mf:Hide()
-            if not GW.InMoveHudMode then
-                if GW.ShowRlPopup then
-                    StaticPopup_Show("CONFIG_RELOAD")
-                    GW.ShowRlPopup = false
-                end
-            end
+            GW.Notice(L["Settings are not available in combat!"])
+            sWindow.wasOpen = true
+        elseif event == "PLAYER_REGEN_ENABLED" and self.wasOpen then
+            self:Show()
+            mf:Show()
+            sWindow.wasOpen = false
         end
-    )
-    sWindow:SetScript(
-        "OnEvent",
-        function(self, event)
-            if event == "PLAYER_REGEN_DISABLED" and self:IsShown() then
-                self:Hide()
-                mf:Hide()
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2GW2_UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
-                sWindow.wasOpen = true
-            elseif event == "PLAYER_REGEN_ENABLED" and self.wasOpen then
-                self:Show()
-                mf:Show()
-                sWindow.wasOpen = false
-            end
-        end
-    )
+    end)
     sWindow:RegisterEvent("PLAYER_REGEN_DISABLED")
     sWindow:RegisterEvent("PLAYER_REGEN_ENABLED")
     mf:Hide()
@@ -1078,20 +1014,20 @@ local function LoadSettings()
     sWindow.backgroundMask = UIParent:CreateMaskTexture()
     sWindow.backgroundMask:SetPoint("TOPLEFT", sWindow, "TOPLEFT", -64, 64)
     sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow, "BOTTOMLEFT",-64, 0)
-    sWindow.backgroundMask:SetTexture(
-        "Interface/AddOns/GW2_UI/textures/masktest",
-        "CLAMPTOBLACKADDITIVE",
-        "CLAMPTOBLACKADDITIVE"
-    )
+    sWindow.backgroundMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     sWindow.background:AddMaskTexture(sWindow.backgroundMask)
 
-    sWindow:HookScript("OnShow",function()
-        if AddToAnimation==nil then
+    sWindow:HookScript("OnShow", function()
+        if AddToAnimation == nil then
             AddToAnimation = GW.AddToAnimation
             lerp = GW.lerp
         end
 
-        AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
+        AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW",
+            0,
+            1,
+            GetTime(),
+            GW.WINDOW_FADE_DURATION,
             function(p)
                 sWindow:SetAlpha(p)
                 sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT", lerp(-64, sWindow.background:GetWidth(), p) , 0)
@@ -1121,12 +1057,9 @@ local function LoadSettings()
 
     checkDependenciesOnLoad()
 
-    local fnGSBC_OnClick = function(self)
-        self:GetParent():Hide()
-    end
-    sWindow.close:SetScript("OnClick", fnGSBC_OnClick)
+    sWindow.close:SetScript("OnClick", function(self) self:GetParent():Hide() end)
 
     switchCat(1)
-    GwSettingsWindow:Hide()
+    sWindow:Hide()
 end
 GW.LoadSettings = LoadSettings

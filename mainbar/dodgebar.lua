@@ -1,7 +1,6 @@
 local _, GW = ...
 local Debug = GW.Debug
 local FrameFlash = GW.FrameFlash
-local GetSetting = GW.GetSetting
 
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
@@ -85,7 +84,7 @@ GW.AddForProfiling("dodgebar", "updateAnim", updateAnim)
 
 local function initBar(self, pew)
     -- do everything required to make the dodge bar a secure clickable button
-    local overrideSpellID = tonumber(GetSetting("PLAYER_TRACKED_DODGEBAR_SPELL_ID"))
+    local overrideSpellID = GW.private.PLAYER_TRACKED_DODGEBAR_SPELL_ID
 
     self.gwMaxCharges = nil
     self.spellId = overrideSpellID and overrideSpellID > 0 and overrideSpellID or nil
@@ -283,7 +282,7 @@ local function LoadDodgeBar(hg, asTargetFrame)
         fmdb.border:SetSize(80, 72)
         fmdb:SetPoint("TOPLEFT", hg, "TOPLEFT", -9.5, 5)
         fmdb:SetFrameStrata("BACKGROUND")
-        hg:HookScript("OnSizeChanged", function() fmdb:SetScale(GetSetting("player_pos_scale")) end)
+        hg:HookScript("OnSizeChanged", function() fmdb:SetScale(GW.settings.player_pos_scale) end)
     else
         fmdb:SetPoint("CENTER", hg, "CENTER", 0, 41)
         GW.RegisterScaleFrame(fmdb, 1.1)

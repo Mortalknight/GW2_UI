@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local lerp = GW.lerp
@@ -429,7 +428,7 @@ local function loadPortraitDebugMode()
 end
 
 local function LoadGossipSkin()
-    if not GetSetting("GOSSIP_SKIN_ENABLED") then return end
+    if not GW.settings.GOSSIP_SKIN_ENABLED then return end
 
     ItemTextScrollFrameScrollBar:GwSkinScrollBar()
     ItemTextScrollFrame:GwSkinScrollFrame()

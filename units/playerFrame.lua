@@ -9,11 +9,11 @@ local CommaValue = GW.CommaValue
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
 
-    if GW.GetSetting("PLAYER_UNIT_HEALTH") == "PREC" then
+    if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
         healthString = CommaValue(healthPrecentage * 100) .. "%"
-    elseif GW.GetSetting("PLAYER_UNIT_HEALTH") == "VALUE" then
+    elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
         healthString = CommaValue(health)
-    elseif GW.GetSetting("PLAYER_UNIT_HEALTH") == "BOTH" then
+    elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
         healthString = CommaValue(health) .. " - " .. CommaValue(healthPrecentage * 100) .. "%"
     end
 
@@ -73,7 +73,7 @@ local function unitFrameData(self, lvl)
     self.nameString:SetText(name)
     self.levelString:SetText(level)
 
-    if GW.GetSetting("player_CLASS_COLOR") then
+    if GW.settings.player_CLASS_COLOR then
         local _, englishClass = UnitClass(self.unit)
         local color = GW.GWGetClassColor(englishClass, true)
 
@@ -110,7 +110,7 @@ end
 
 local function UpdateSettings()
     if GwPlayerUnitFrame then
-        GwPlayerUnitFrame.altBg:SetShown(GW.GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
+        GwPlayerUnitFrame.altBg:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
 
         updateHealthData(GwPlayerUnitFrame)
         unitFrameData(GwPlayerUnitFrame)
@@ -227,7 +227,7 @@ local function LoadPlayerFrame()
         pagIn:Play()
     end
 
-    if not GW.GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
+    if not GW.settings.PLAYER_SHOW_PVP_INDICATOR then pvp:Hide() end
 
     --hide unsed things from default target frame
     NewUnitFrame.castingbarBackground:Hide()

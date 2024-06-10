@@ -1,8 +1,7 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function LoadFlightMapSkin()
-    if not GetSetting("FLIGHTMAP_SKIN_ENABLED") then return end
+    if not GW.settings.FLIGHTMAP_SKIN_ENABLED then return end
 
     TaxiFrame:GwStripTextures()
 
