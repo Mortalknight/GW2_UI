@@ -608,10 +608,9 @@ local function evPlayerLogin(self)
 
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
-
-    GW.LoadCustomAuraTracker()
-
+    GW.MakeAltPowerBarMovable()
     GW.WidgetUISetup()
+    GW.LoadCustomAuraTracker()
     GW.SetUpVehicleFrameMover()
 
 

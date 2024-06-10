@@ -202,6 +202,15 @@ GW_DEFAULT["CHAT_SOCIAL_LINK"] = true
 GW_DEFAULT["CHAT_ADD_TIMESTAMP_TO_ALL"] = true
 GW_DEFAULT["CHATFRAME_EDITBOX_HIDE"] = true
 
+GW_DEFAULT["AltPowerBar_pos"] = {
+    point= "TOP",
+    relativePoint= "TOP",
+    xOfs= 0,
+    yOfs= -30,
+    hasMoved= false,
+}
+GW_DEFAULT["AltPowerBar_pos_scale"] = 1
+
 GW_DEFAULT["target_TARGET_ENABLED"] = true
 GW_DEFAULT["target_TARGET_SHOW_CASTBAR"] = true
 GW_DEFAULT["target_SHOW_CASTBAR"] = true
