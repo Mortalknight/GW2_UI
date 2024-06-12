@@ -97,32 +97,6 @@ local function lfgAnimPvP(elapse)
 end
 GW.AddForProfiling("map", "lfgAnimPvP", lfgAnimPvP)
 
-local function lfgAnimStop()
-    MiniMapLFGFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\LFDMicroButton-Down")
-    MiniMapLFGFrame.animationCircle:Hide()
-    MiniMapLFGFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
-end
-GW.AddForProfiling("map", "lfgAnimPvPStop", lfgAnimPvPStop)
-
-local function lfgAnim(_, elapse)
-    if Minimap:IsShown() then
-        MiniMapLFGFrameIcon:SetAlpha(1)
-    else
-        MiniMapLFGFrameIcon:SetAlpha(0)
-        return
-    end
-
-    MiniMapLFGFrame.animationCircle:Show()
-
-    MiniMapLFGFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\LFDMicroButton-Down")
-
-    local rot = MiniMapLFGFrame.animationCircle.background:GetRotation() + (1.5 * elapse)
-
-    MiniMapLFGFrame.animationCircle.background:SetRotation(rot)
-    MiniMapLFGFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
-end
-GW.AddForProfiling("map", "lfgAnim", lfgAnim)
-
 local function SetMinimapHover()
     -- show all and hide not needes
     for _, v in pairs(minimapDetails) do
@@ -328,13 +302,32 @@ local function LoadMinimap()
 
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
 
-    MiniMapLFGFrameIcon:HookScript("OnUpdate", lfgAnim)
-    MiniMapLFGFrame:HookScript("OnHide", lfgAnimStop)
-    MiniMapLFGFrameIconTexture:SetSize(20, 20)
-    MiniMapLFGFrameIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-    MiniMapLFGFrameIcon:SetSize(20, 20)
+    local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", MiniMapLFGFrame, "GwLfgQueueIcon")
+    GwLfgQueueIcon:SetAllPoints(MiniMapLFGFrame)
+    MiniMapLFGFrameBorder:GwKill()
+    MiniMapLFGFrame.eye:GwKill()
+    MiniMapLFGFrame:SetSize(26, 26)
+    MiniMapLFGFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
+    MiniMapLFGFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")
+    MiniMapLFGFrame:HookScript("OnShow", function()
+        if not Minimap:IsShown() then return end
+        GwLfgQueueIcon.animation:Play()
+    end)
+    MiniMapLFGFrame:HookScript("OnHide", function()
+        GwLfgQueueIcon.animation:Stop()
+    end)
 
-    --hooksecurefunc("BattlefieldFrame_OnUpdate", lfgAnimPvP)
+    local hookedTimerFrame = CreateFrame("Frame")
+    MiniMapBattlefieldFrame:HookScript("OnShow", function()
+        hookedTimerFrame:SetScript("OnUpdate", function(_, elapse)
+            lfgAnimPvP(elapse)
+        end)
+    end)
+    MiniMapBattlefieldFrame:HookScript("OnHide", function()
+        lfgAnimPvPStop()
+        hookedTimerFrame:SetScript("OnUpdate", nil)
+    end)
+
     hooksecurefunc("MiniMapBattlefieldFrame_isArena", function()
         local _, _, _, _, _, _, isRankedArena  = GetBattlefieldStatus(1)
         if isRankedArena then
@@ -350,7 +343,6 @@ local function LoadMinimap()
         end
     end)
     MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
-    MiniMapLFGFrame.animationCircle = CreateFrame("Frame", "GwLFGAnimation", MiniMapLFGFrame, "GwLFDAnimation")
 
     Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
     Minimap:SetParent(UIParent)
