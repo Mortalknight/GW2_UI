@@ -225,7 +225,7 @@ local function LoadRaid10Profile(panel)
         L["Enabling this allows raid-wide sorting however you will not be able to distinguish between groups."],
         "RAID_WIDE_SORTING_RAID10",
         function()
-            GW.UpdateGridSettings("RAID10", true)
+            GW.UpdateGridSettings("RAID10", false, true)
         end,
         nil,
         {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}
@@ -485,7 +485,7 @@ local function LoadRaid25Profile(panel)
         L["Enabling this allows raid-wide sorting however you will not be able to distinguish between groups."],
         "RAID_WIDE_SORTING_RAID25",
         function()
-            GW.UpdateGridSettings("RAID25", true)
+            GW.UpdateGridSettings("RAID25", false, true)
         end,
         nil,
         {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}
@@ -744,7 +744,7 @@ local function LoadRaid40Profile(panel)
         L["Enabling this allows raid-wide sorting however you will not be able to distinguish between groups."],
         "RAID_WIDE_SORTING",
         function()
-            GW.UpdateGridSettings("RAID40", true)
+            GW.UpdateGridSettings("RAID40", false, true)
         end,
         nil,
         {["RAID_FRAMES"] = true}
@@ -986,7 +986,7 @@ local function LoadRaidPetProfile(panel)
         L["Enabling this allows raid-wide sorting however you will not be able to distinguish between groups."],
         "RAID_WIDE_SORTING_PET",
         function()
-            GW.UpdateGridSettings("RAID_PET", true)
+            GW.UpdateGridSettings("RAID_PET", false, true)
         end,
         nil,
         {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
@@ -1218,7 +1218,7 @@ local function LoadPartyProfile(panel)
         L["Enabling this allows raid-wide sorting however you will not be able to distinguish between groups."],
         "RAID_WIDE_SORTING_PARTY",
         function()
-            GW.UpdateGridSettings("PARTY", true)
+            GW.UpdateGridSettings("PARTY", false, true)
         end,
         nil,
         {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}
