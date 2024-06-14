@@ -2,23 +2,24 @@ local _, GW = ...
 
 local f = CreateFrame("Frame")
 local InspectItems = {
-    "CharacterHeadSlot",
-    "CharacterNeckSlot",
-    "CharacterShoulderSlot",
-    "",
-    "CharacterChestSlot",
-    "CharacterWaistSlot",
-    "CharacterLegsSlot",
-    "CharacterFeetSlot",
-    "CharacterWristSlot",
-    "CharacterHandsSlot",
-    "CharacterFinger0Slot",
-    "CharacterFinger1Slot",
-    "CharacterTrinket0Slot",
-    "CharacterTrinket1Slot",
-    "CharacterBackSlot",
-    "CharacterMainHandSlot",
-    "CharacterSecondaryHandSlot",
+    CharacterHeadSlot = {id = 1, slotId = 1},
+    CharacterShoulderSlot = {id = 2, slotId = 3},
+    CharacterChestSlot = {id = 3, slotId = 5},
+    CharacterWaistSlot = {id = 4, slotId = 6},
+    CharacterLegsSlot = {id = 5, slotId = 7},
+    CharacterFeetSlot = {id = 6, slotId = 8},
+    CharacterWristSlot = {id = 7, slotId = 9},
+    CharacterHandsSlot = {id = 8, slotId = 10},
+    CharacterMainHandSlot = {id = 9, slotId = 16},
+    CharacterSecondaryHandSlot = {id = 10, slotId = 17},
+
+    CharacterNeckSlot = {id = 11, slotId = 2},
+    CharacterFinger0Slot = {id = 12, slotId = 11},
+    CharacterTrinket0Slot = {id = 13, slotId = 13},
+
+    CharacterFinger1Slot = {id = 14, slotId = 12},
+    CharacterTrinket1Slot = {id = 15, slotId = 14},
+    CharacterBackSlot = {id = 16, slotId = 15},
 }
 
 local function CreateInspectTexture(slot, x, y)
@@ -45,9 +46,9 @@ end
 local function GetInspectPoints(id)
     if not id then return end
 
-    if id == 1 or id == 3 or id == 16 or id == 17 or (id >= 5 and id <=10) then
-        return 47, 18, "BOTTOMLEFT" -- right sid
-    elseif id == 2 or id == 11 or id == 13 then
+    if id <= 10 then
+        return 47, 18, "BOTTOMLEFT"
+    elseif id >=11 and id <= 13 then
         return 0, 25, "TOP"
     else
         return 0, -25, "BOTTOM"
@@ -55,31 +56,29 @@ local function GetInspectPoints(id)
 end
 
 local function CreateSlotStrings()
-    for i, s in pairs(InspectItems) do
-        if i ~= 4 then
-            local slot = _G[s]
-            local x, z, justify = GetInspectPoints(i)
+    for name, tbl in pairs(InspectItems) do
+        local slot = _G[name]
+        local x, z, justify = GetInspectPoints(tbl.id)
 
-            slot.enchantText = slot:CreateFontString(nil, "OVERLAY")
-            if i ~= 1 and i ~= 3 and i ~= 16 and i ~= 17 and (i < 5 or i > 10) then
-                slot.enchantText:SetSize(40, 30)
-                slot.enchantText:SetFont(UNIT_NAME_FONT, 8, "OUTLINE")
-            else
-                slot.enchantText:SetJustifyH("LEFT")
-                slot.enchantText:SetSize(100, 30)
-                slot.enchantText:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
-            end
-            slot.enchantText:SetPoint(justify, slot, x + (justify == "BOTTOMLEFT" and 5 or 0), z)
+        slot.enchantText = slot:CreateFontString(nil, "OVERLAY")
+        if tbl.id >= 12 then
+            slot.enchantText:SetSize(40, 30)
+            slot.enchantText:SetFont(UNIT_NAME_FONT, 8, "OUTLINE")
+        else
+            slot.enchantText:SetJustifyH("LEFT")
+            slot.enchantText:SetSize(100, 30)
+            slot.enchantText:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
+        end
+        slot.enchantText:SetPoint(justify, slot, x + (justify == "BOTTOMLEFT" and 5 or 0), z)
 
-            slot.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+        slot.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
 
-            for u = 1, 10 do
-                local offset = -((u - 1) * 13)
-                local offsetY = -2
-                local newX = u == 1 and 2 or (justify == "BOTTOMLEFT" and -offset) or offset
-                local newY = u == 4 and offsetY + 13 or u == 4 and offsetY + 26 or u == 7 and offsetY + 39 or offsetY
-                slot["textureSlot" .. u], slot["textureSlotBackdrop" .. u] = CreateInspectTexture(slot, newX, newY)
-            end
+        for u = 1, 10 do
+            local offset = -((u - 1) * 13)
+            local offsetY = -2
+            local newX = u == 1 and 2 or -offset
+            local newY = u == 4 and offsetY + 13 or u == 4 and offsetY + 26 or u == 7 and offsetY + 39 or offsetY
+            slot["textureSlot" .. u], slot["textureSlotBackdrop" .. u] = CreateInspectTexture(slot, newX, newY)
         end
     end
 end
@@ -130,18 +129,16 @@ end
 
 do
     local function UpdatePageInfo()
-        for i = 1, 17 do
-            if i ~= 4 then
-                local inspectItem = _G[InspectItems[i]]
-                inspectItem.enchantText:SetText("")
+        for name, tbl in pairs(InspectItems) do
+            local inspectItem = _G[name]
+            inspectItem.enchantText:SetText("")
 
-                local slotInfo = GW.GetGearSlotInfo("player", i, nil, true)
-                if slotInfo == "tooSoon" then
-                    TryGearAgain(i, true, inspectItem)
-                else
-                    UpdatePageStrings(inspectItem, slotInfo)
-                    slotInfo = nil
-                end
+            local slotInfo = GW.GetGearSlotInfo("player", tbl.slotId, nil, true)
+            if slotInfo == "tooSoon" then
+                TryGearAgain(i, true, inspectItem)
+            else
+                UpdatePageStrings(inspectItem, slotInfo)
+                slotInfo = nil
             end
         end
     end
@@ -166,6 +163,7 @@ local function UpdateCharacterInfo(self, event)
 end
 
 local function ToggleCharacterItemInfo(setup)
+    DevTools_Dump(InspectItems)
     if setup then
         CreateSlotStrings()
     end
@@ -193,16 +191,14 @@ local function ToggleCharacterItemInfo(setup)
         f:UnregisterEvent("UPDATE_INVENTORY_DURABILITY")
         f.needsUpdate = false
         f.lastUpdateTime = 0
-        for i = 1, 17 do
-            if i ~= 4 then
-                local inspectItem = _G[InspectItems[i]]
-                inspectItem.enchantText:SetText("")
-                inspectItem.itemlevel:SetText("")
+        for name, _ in pairs(InspectItems) do
+            local inspectItem = _G[name]
+            inspectItem.enchantText:SetText("")
+            inspectItem.itemlevel:SetText("")
 
-                for y = 1, 10 do
-                    inspectItem["textureSlot" .. y]:SetTexture()
-                    inspectItem["textureSlotBackdrop" .. y]:Hide()
-                end
+            for y = 1, 10 do
+                inspectItem["textureSlot" .. y]:SetTexture()
+                inspectItem["textureSlotBackdrop" .. y]:Hide()
             end
         end
     end
