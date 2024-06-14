@@ -221,6 +221,7 @@ immersive\damagetext.xml
 immersive\damagetext.lua
 
 objectives\map.lua
+objectives\minimapInstanceDifficult.lua
 objectives\worldmap.lua
 objectives\questtracker.xml
 objectives\minimapButtons.lua
