@@ -48,7 +48,7 @@ local function GetInspectPoints(id)
 
     if id <= 10 then
         return 47, 18, "BOTTOMLEFT"
-    elseif id >=11 and id <= 13 then
+    elseif id >= 11 and id <= 13 then
         return 0, 25, "TOP"
     else
         return 0, -25, "BOTTOM"
@@ -135,7 +135,7 @@ do
 
             local slotInfo = GW.GetGearSlotInfo("player", tbl.slotId, nil, true)
             if slotInfo == "tooSoon" then
-                TryGearAgain(i, true, inspectItem)
+                TryGearAgain(tbl.slotId, true, inspectItem)
             else
                 UpdatePageStrings(inspectItem, slotInfo)
                 slotInfo = nil
@@ -163,7 +163,6 @@ local function UpdateCharacterInfo(self, event)
 end
 
 local function ToggleCharacterItemInfo(setup)
-    DevTools_Dump(InspectItems)
     if setup then
         CreateSlotStrings()
     end
