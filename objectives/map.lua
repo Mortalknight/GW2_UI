@@ -466,7 +466,7 @@ local function LoadMinimap()
     SetMinimapHover()
     C_Timer.After(0.2, hoverMiniMapOut)
 
-    GW.SkinMinimapInstanceDifficult()
+    --GW.SkinMinimapInstanceDifficult()
 
     MinimapZoomIn:Hide()
     MinimapZoomOut:Hide()

@@ -49,12 +49,12 @@ end
 local function GuildEmblem()
     local char = {}
     if GuildInstanceDifficulty then
-        char.guildTexCoord = {GuildInstanceDifficulty.Emblem:GetTexCoord()}
+        char.guildTexCoord = {GuildInstanceDifficulty.emblem:GetTexCoord()}
     else
         char.guildTexCoord = nil
     end
     if char.guildTexCoord ~= nil and IsInGuild() then
-        return "|TInterface\\GuildFrame\\GuildEmblems_01:16:16:0:0:32:32:" .. (char.guildTexCoord[1] * 32) .. ":" .. (char.guildTexCoord[7] * 32) .. ":" .. (char.guildTexCoord[2] * 32) .. ":" .. (char.guildTexCoord[8] * 32) .. "|t"
+        return "|TInterface\\GuildFrame\\GuildEmblems_01:16:16:0:0:16:16:" .. (char.guildTexCoord[1] * 16) .. ":" .. (char.guildTexCoord[7] * 16) .. ":" .. (char.guildTexCoord[2] * 16) .. ":" .. (char.guildTexCoord[8] * 16) .. "|t"
     else
         return ""
     end
@@ -62,6 +62,7 @@ end
 
 local function InstanceDifficultOnEvent(self)
     self.icon:SetText("")
+    print(IS_GUILD_GROUP)
 
     if not InstanceCheck() then
         self.text:SetText("")
@@ -79,7 +80,7 @@ local function InstanceDifficultOnEvent(self)
         end
 
         self.text:SetText(text)
-        if IS_GUILD_GROUP and not isChallengeMode then
+        if not isChallengeMode then
             local logo = GuildEmblem()
             self.icon:SetText(logo)
         end
@@ -114,6 +115,7 @@ local function SkinMinimapInstanceDifficult()
     GuildInstanceDifficulty:HookScript("OnShow", HideBlizzardIcon)
 
     hooksecurefunc("MiniMapInstanceDifficulty_OnEvent", function(_, event, ...)
+        print(event, ...)
         local shouldUpdate = false
         if event == "GUILD_PARTY_STATE_UPDATED" then
             local isGuildGroup = ...
