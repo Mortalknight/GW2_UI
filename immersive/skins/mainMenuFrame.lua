@@ -97,11 +97,9 @@ local function SkinMainMenu()
     GameMenuFrame[GW.addonName] = GwMainMenuFrame
     BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3}}
 
-    if not C_AddOns.IsAddOnLoaded("ConsolePortUI_Menu") then
-        GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
-        GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
-        hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", PositionGameMenuButton)
-    end
+    GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
+    GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
+    hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", PositionGameMenuButton)
 
     local r = {GameMenuFrame:GetRegions()}
     for _, c in pairs(r) do

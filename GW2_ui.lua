@@ -633,11 +633,9 @@ local function evPlayerLogin(self)
         GwMainMenuFrame:SetScript( "OnClick", GW.ToggleGw2Settings)
         GameMenuFrame[GW.addonName] = GwMainMenuFrame
 
-        if not C_AddOns.IsAddOnLoaded("ConsolePortUI_Menu") then
-            GwMainMenuFrame:SetSize(GameMenuButtonMacros:GetWidth(), GameMenuButtonMacros:GetHeight())
-            GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
-            hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
-        end
+        GwMainMenuFrame:SetSize(GameMenuButtonMacros:GetWidth(), GameMenuButtonMacros:GetHeight())
+        GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
+        hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
     end
 
     -- Skins: BLizzard & Addons
