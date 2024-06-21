@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.7.0",{
+    {ct.bug,[=[Update database]=]},
+})
+
 addChange("1.6.1",{
     {ct.bug,[=[Pet talents can not be set again]=]},
 })

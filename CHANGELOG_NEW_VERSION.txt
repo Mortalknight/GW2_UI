@@ -1,3 +1,7 @@
+1.7.0-Cata
+CHANGES
+    - Update databse
+
 1.6.1-Cata
 FIXES
     - Pet talents can not be set again
