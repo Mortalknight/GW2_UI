@@ -691,73 +691,69 @@ local function SetStyle(self, _, isEmbedded)
     if self.Delimiter1 then self.Delimiter1:SetTexture() end
     if self.Delimiter2 then self.Delimiter2:SetTexture() end
 
-    self.NineSlice:Hide()
-    self:GwCreateBackdrop({
+    if not self.NineSlice.SetBackdrop then
+        _G.Mixin(self.NineSlice, _G.BackdropTemplateMixin)
+        self.NineSlice:HookScript('OnSizeChanged', self.NineSlice.OnBackdropSizeChanged)
+    end
+
+    self.NineSlice:SetBackdrop({
+        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
-        edgeSize = GW.Scale(32),
-        insets = {left = 2, right = 2, top = 2, bottom = 2}
+        edgeSize = GW.Scale(1)
     })
+
+    local backdrop = {
+        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+        edgeSize = GW.Scale(1)
+    }
+
+    self.NineSlice:SetBackdropBorderColor(13/255, 13/255, 13/255, 1)
+
+    local level = self.NineSlice:GetFrameLevel()
+    if not self.NineSlice.iborder then
+        local border = CreateFrame('Frame', nil, self.NineSlice, 'BackdropTemplate')
+        border:SetBackdrop(backdrop)
+        border:SetBackdropBorderColor(0, 0, 0, 1)
+        border:SetFrameLevel(level)
+        border:GwSetInside(self.NineSlice, 1, 1)
+        self.NineSlice.iborder = border
+    end
+
+    if not self.NineSlice.oborder then
+        local border = CreateFrame('Frame', nil, self.NineSlice, 'BackdropTemplate')
+        border:SetBackdrop(backdrop)
+        border:SetBackdropBorderColor(0, 0, 0, 1)
+        border:SetFrameLevel(level)
+        border:GwSetOutside(self.NineSlice, 1, 1)
+        self.NineSlice.oborder = border
+    end
+
+    --self.NineSlice:Hide()
+    --self:GwCreateBackdrop({
+    --    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    --    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    --    edgeSize = GW.Scale(32),
+    --    insets = {left = 2, right = 2, top = 2, bottom = 2}
+    --})
 end
 
 local function StyleTooltips()
-    for _, tt in pairs({
-        ItemRefTooltip,
-        ItemRefShoppingTooltip1,
-        ItemRefShoppingTooltip2,
-        FriendsTooltip,
-        WarCampaignTooltip,
-        EmbeddedItemTooltip,
-        ReputationParagonTooltip,
-        GameTooltip,
-        ShoppingTooltip1,
-        ShoppingTooltip2,
-        QuickKeybindTooltip,
-        GameSmallHeaderTooltip,
-        PetJournalPrimaryAbilityTooltip,
-        GarrisonShipyardMapMissionTooltip,
-        BattlePetTooltip,
-        PetBattlePrimaryAbilityTooltip,
-        PetBattlePrimaryUnitTooltip,
-        FloatingBattlePetTooltip,
-        FloatingPetBattleAbilityTooltip,
-        ShoppingTooltip3,
-        ItemRefShoppingTooltip3,
-        WorldMapTooltip,
-        WorldMapCompareTooltip1,
-        WorldMapCompareTooltip2,
-        WorldMapCompareTooltip3,
-        AtlasLootTooltip,
-        QuestHelperTooltip,
-        QuestGuru_QuestWatchTooltip,
-        TRP2_MainTooltip,
-        TRP2_ObjetTooltip,
-        TRP2_StaticPopupPersoTooltip,
-        TRP2_PersoTooltip,
-        TRP2_MountTooltip,
-        AltoTooltip,
-        AltoScanningTooltip,
-        ArkScanTooltipTemplate,
-        NxTooltipItem,
-        NxTooltipD,
-        DBMInfoFrame,
-        DBMRangeCheck,
-        DatatextTooltip,
-        VengeanceTooltip,
-        FishingBuddyTooltip,
-        FishLibTooltip,
-        HealBot_ScanTooltip,
-        hbGameTooltip,
-        PlateBuffsTooltip,
-        LibGroupInSpecTScanTip,
-        RecountTempTooltip,
-        VuhDoScanTooltip,
-        XPerl_BottomTip,
-        EventTraceTooltip,
-        FrameStackTooltip,
-        LibDBIconTooltip,
-        RepurationParagonTooltip
-    }) do
+    for _, tt in next, {
+        _G.ItemRefTooltip,
+        _G.ItemRefShoppingTooltip1,
+        _G.ItemRefShoppingTooltip2,
+        _G.FriendsTooltip,
+        _G.EmbeddedItemTooltip,
+        _G.ReputationParagonTooltip,
+        _G.GameTooltip,
+        _G.WorldMapTooltip,
+        _G.ShoppingTooltip1,
+        _G.ShoppingTooltip2,
+        _G.QuickKeybindTooltip,
+        -- libs
+        _G.LibDBIconTooltip,
+        _G.SettingsTooltip,
+    } do
         SetStyle(tt)
     end
 end
@@ -877,12 +873,23 @@ local function LoadTooltips()
         local _, spellID = C_MountJournal.GetMountInfoByID(mountID)
         MountIDs[spellID] = mountID
     end
-    --Tooltip Fonts
-    if not GameTooltip.hasMoney then
-        SetTooltipMoney(GameTooltip, 1, nil, "", "")
-        SetTooltipMoney(GameTooltip, 1, nil, "", "")
-        GameTooltip_ClearMoney(GameTooltip)
-    end
+    -- hook here to avoid a taint
+    local moneyTooltipSetUp = false
+    hooksecurefunc("SetTooltipMoney", function()
+        if GameTooltip.hasMoney and not moneyTooltipSetUp then
+            local font = UNIT_NAME_FONT
+            local fontOutline = ""
+            local textSize = tonumber(GW.settings.TOOLTIP_FONT_SIZE)
+            for i = 1, GameTooltip.numMoneyFrames do
+                _G["GameTooltipMoneyFrame" .. i .. "PrefixText"]:SetFont(font, textSize, fontOutline)
+                _G["GameTooltipMoneyFrame" .. i .. "SuffixText"]:SetFont(font, textSize, fontOutline)
+                _G["GameTooltipMoneyFrame" .. i .. "GoldButtonText"]:SetFont(font, textSize, fontOutline)
+                _G["GameTooltipMoneyFrame" .. i .. "SilverButtonText"]:SetFont(font, textSize, fontOutline)
+                _G["GameTooltipMoneyFrame" .. i .. "CopperButtonText"]:SetFont(font, textSize, fontOutline)
+            end
+            moneyTooltipSetUp = true
+        end
+    end)
     SetTooltipFonts()
 
     RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", ALL .. ",Blizzard", {230, 80}, {"default"})
