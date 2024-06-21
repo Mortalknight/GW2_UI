@@ -192,7 +192,7 @@ local function createImportExportFrame()
                 local profileName, profilePlayer, version, profileData = GW.DecodeProfile(frame.editBox:GetText())
 
                 frame.result:SetText("")
-                if not profileName or not profilePlayer or version ~= "Retail" then
+                if not profileName or not profilePlayer or version ~= "Cata" then
                     frame.subheader:SetText("")
                     frame.result:SetFormattedText("|cffff0000%s|r", L["Error decoding profile: Invalid or corrupt string!"] )
                 else
