@@ -102,7 +102,7 @@ local function GetExportString(profileName)
     local profileTable = GW.globalSettings.profiles[profileName]
 
     local serialData = Serializer:Serialize(profileTable)
-    local exportString = format("%s::%s::%s::%s", serialData, profileName, GW.myname, "Retail")
+    local exportString = format("%s::%s::%s::%s", serialData, profileName, GW.myname, "Cata")
     local compressedData = Deflate:CompressDeflate(exportString, Deflate.compressLevel)
     local printableString = Deflate:EncodeForPrint(compressedData)
 
