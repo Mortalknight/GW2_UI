@@ -290,7 +290,7 @@ local function HoverKeyBinds()
         keyBindPrompt(L["Hover your mouse over any action button to bind it. Press the esc key or right click to clear the current action button's keybinding."])
     end
 end
-GW.HoverKeyBinds = HoverKeyBinds
+GW.DisplayHoverBinding = HoverKeyBinds
 
 local fmGWKB_accept_OnClick = function(self, button)
     bind:Deactivate(true)
