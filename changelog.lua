@@ -8,8 +8,16 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+
+
+addChange("1.7.1",{
+    {ct.bug ,[=[Hover binding settings menu is working again]=]},
+    {ct.bug ,[=[Move HUD saves the positions again]=]},
+    {ct.change ,[=[Better integration with addon tooltips]=]},
+})
+
 addChange("1.7.0",{
-    {ct.bug,[=[Update database]=]},
+    {ct.change ,[=[Update database]=]},
 })
 
 addChange("1.6.1",{

@@ -1,3 +1,11 @@
+1.7.1-Cata
+FIXES
+    - Hover binding settings menu is working again
+    - Move HUD saves the positions again
+
+CHANGES
+    - Better integration with addon tooltips
+
 1.7.0-Cata
 CHANGES
     - Update databse
