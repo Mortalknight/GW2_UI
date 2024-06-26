@@ -49,7 +49,7 @@ end
 
 
 local function SetUpExtendedVendor()
-    if C_AddOns.IsAddOnLoaded("ExtVendor") or GW.settings.EXTENDED_VENDOR_NUM_PAGES == "1" then
+    if C_AddOns.IsAddOnLoaded("ExtVendor") or GW.settings.EXTENDED_VENDOR_NUM_PAGES == 1 then
         return
     end
 
