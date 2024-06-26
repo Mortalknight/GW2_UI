@@ -8,7 +8,9 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
-
+addChange("1.7.2",{
+    {ct.bug ,[=[ Extended Vendor setting is working again]=]},
+})
 
 addChange("1.7.1",{
     {ct.bug ,[=[Hover binding settings menu is working again]=]},

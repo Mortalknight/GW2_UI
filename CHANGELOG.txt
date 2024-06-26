@@ -1,3 +1,7 @@
+1.7.2-Cata
+FIXES
+    - Extended Vendor setting is working again
+
 1.7.1-Cata
 FIXES
     - Hover binding settings menu is working again
