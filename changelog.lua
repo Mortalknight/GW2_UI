@@ -8,8 +8,13 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.8.0",{
+    {ct.feature ,[=[Added back enchant info to hero panel]=]},
+    {ct.bug ,[=[Target frame floating combat text setting is now working]=]},
+})
+
 addChange("1.7.2",{
-    {ct.bug ,[=[ Extended Vendor setting is working again]=]},
+    {ct.bug ,[=[Extended Vendor setting is working again]=]},
 })
 
 addChange("1.7.1",{
