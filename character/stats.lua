@@ -21,20 +21,20 @@ GW.stats.RESITANCE_STATS = RESITANCE_STATS
 
 local function formateStat(name, base, posBuff, negBuff)
     local effective = max(0, base + posBuff + negBuff)
-    local text = HIGHLIGHT_FONT_COLOR_CODE .. name .. " " .. effective
+    local text = HIGHLIGHT_FONT_COLOR_CODE .. name .. " " .. BreakUpLargeNumbers(effective)
     local stat
     if posBuff == 0 and negBuff == 0 then
         text = text .. FONT_COLOR_CODE_CLOSE
-        stat = effective
+        stat = BreakUpLargeNumbers(effective)
     else
         if posBuff > 0 or negBuff < 0 then
-            text = text .. " (" .. base .. FONT_COLOR_CODE_CLOSE
+            text = text .. " (" .. BreakUpLargeNumbers(base) .. FONT_COLOR_CODE_CLOSE
         end
         if posBuff > 0 then
-            text = text .. FONT_COLOR_CODE_CLOSE .. GREEN_FONT_COLOR_CODE .. "+" .. posBuff .. FONT_COLOR_CODE_CLOSE
+            text = text .. FONT_COLOR_CODE_CLOSE .. GREEN_FONT_COLOR_CODE .. "+" .. BreakUpLargeNumbers(posBuff) .. FONT_COLOR_CODE_CLOSE
         end
         if negBuff < 0 then
-            text = text .. RED_FONT_COLOR_CODE .. " " .. negBuff .. FONT_COLOR_CODE_CLOSE
+            text = text .. RED_FONT_COLOR_CODE .. " " .. BreakUpLargeNumbers(negBuff) .. FONT_COLOR_CODE_CLOSE
         end
         if posBuff > 0 or negBuff < 0 then
             text = text .. HIGHLIGHT_FONT_COLOR_CODE .. ")" .. FONT_COLOR_CODE_CLOSE
@@ -43,9 +43,9 @@ local function formateStat(name, base, posBuff, negBuff)
         -- if there is a negative buff then show the main number in red, even if there are
         -- positive buffs. Otherwise show the number in green
         if negBuff < 0 then
-            stat = RED_FONT_COLOR_CODE .. effective .. FONT_COLOR_CODE_CLOSE
+            stat = RED_FONT_COLOR_CODE .. BreakUpLargeNumbers(effective) .. FONT_COLOR_CODE_CLOSE
         else
-            stat = GREEN_FONT_COLOR_CODE .. effective .. FONT_COLOR_CODE_CLOSE
+            stat = GREEN_FONT_COLOR_CODE .. BreakUpLargeNumbers(effective) .. FONT_COLOR_CODE_CLOSE
         end
     end
     return stat, text
@@ -76,18 +76,18 @@ local function getPrimary(i, unit)
     end
 
     if posBuff == 0 and negBuff == 0 then
-        statText = effectiveStat
-        tooltip = tooltipText .. effectiveStat .. FONT_COLOR_CODE_CLOSE
+        statText = BreakUpLargeNumbers(effectiveStat)
+        tooltip = tooltipText .. BreakUpLargeNumbers(effectiveStat) .. FONT_COLOR_CODE_CLOSE
     else
-        tooltipText = tooltipText .. effectiveStat
+        tooltipText = tooltipText .. BreakUpLargeNumbers(effectiveStat)
         if posBuff > 0 or negBuff < 0 then
-            tooltipText = tooltipText .. " (" .. (stat - posBuff - negBuff) .. FONT_COLOR_CODE_CLOSE
+            tooltipText = tooltipText .. " (" .. BreakUpLargeNumbers(stat - posBuff - negBuff) .. FONT_COLOR_CODE_CLOSE
         end
         if posBuff > 0 then
-            tooltipText = tooltipText .. FONT_COLOR_CODE_CLOSE .. GREEN_FONT_COLOR_CODE .. "+" .. posBuff .. FONT_COLOR_CODE_CLOSE
+            tooltipText = tooltipText .. FONT_COLOR_CODE_CLOSE .. GREEN_FONT_COLOR_CODE .. "+" .. BreakUpLargeNumbers(posBuff) .. FONT_COLOR_CODE_CLOSE
         end
         if negBuff < 0 then
-            tooltipText = tooltipText .. RED_FONT_COLOR_CODE .. " " .. negBuff .. FONT_COLOR_CODE_CLOSE
+            tooltipText = tooltipText .. RED_FONT_COLOR_CODE .. " " .. BreakUpLargeNumbers(negBuff) .. FONT_COLOR_CODE_CLOSE
         end
         if posBuff > 0 or negBuff < 0 then
             tooltipText = tooltipText .. HIGHLIGHT_FONT_COLOR_CODE .. ")" .. FONT_COLOR_CODE_CLOSE
@@ -97,9 +97,9 @@ local function getPrimary(i, unit)
         -- If there are any negative buffs then show the main number in red even if there are
         -- positive buffs. Otherwise show in green.
         if negBuff < 0 then
-            statText = RED_FONT_COLOR_CODE .. effectiveStat .. FONT_COLOR_CODE_CLOSE
+            statText = RED_FONT_COLOR_CODE .. BreakUpLargeNumbers(effectiveStat) .. FONT_COLOR_CODE_CLOSE
         else
-            statText = GREEN_FONT_COLOR_CODE .. effectiveStat .. FONT_COLOR_CODE_CLOSE
+            statText = GREEN_FONT_COLOR_CODE .. BreakUpLargeNumbers(effectiveStat) .. FONT_COLOR_CODE_CLOSE
         end
     end
     tooltip2 = getglobal("DEFAULT_STAT"..i.."_TOOLTIP")
@@ -195,8 +195,8 @@ local function getDamage(unit, prefix)
     local baseDamage = (minDamage + maxDamage) * 0.5
     local fullDamage = (baseDamage + physicalBonusPos + physicalBonusNeg) * percent
     local totalBonus = (fullDamage - baseDamage)
-    local damagePerSecond = (max(fullDamage, 1) / speed)
-    local damageTooltip = max(floor(minDamage), 1) .. " - " .. max(ceil(maxDamage), 1)
+    local damagePerSecond = BreakUpLargeNumbers((max(fullDamage, 1) / speed))
+    local damageTooltip = BreakUpLargeNumbers(max(floor(minDamage), 1)) .. " - " .. BreakUpLargeNumbers(max(ceil(maxDamage), 1))
 
     local colorPos = "|cff20ff20"
     local colorNeg = "|cffff2020"
@@ -208,9 +208,9 @@ local function getDamage(unit, prefix)
 
     if totalBonus == 0 then
         if displayMin < 100 and displayMax < 100 then
-            stat = displayMin .. " - " .. displayMax
+            stat = BreakUpLargeNumbers(displayMin) .. " - " ..  BreakUpLargeNumbers(displayMax)
         else
-            stat = displayMin .. "-" .. displayMax
+            stat =  BreakUpLargeNumbers(displayMin) .. "-" ..  BreakUpLargeNumbers(displayMax)
         end
     else
         local color
@@ -220,9 +220,9 @@ local function getDamage(unit, prefix)
             color = colorNeg
         end
         if displayMin < 100 and displayMax < 100 then
-            stat = color .. displayMin .. " - " .. displayMax .. "|r"
+            stat = color ..  BreakUpLargeNumbers(displayMin) .. " - " ..  BreakUpLargeNumbers(displayMax) .. "|r"
         else
-            stat = color .. displayMin .. "-" .. displayMax .. "|r"
+            stat = color ..  BreakUpLargeNumbers(displayMin) .. "-" ..  BreakUpLargeNumbers(displayMax) .. "|r"
         end
         if physicalBonusPos > 0 then
             damageTooltip = damageTooltip .. colorPos .. " +" .. physicalBonusPos .. "|r"
@@ -283,37 +283,7 @@ local function getDamage(unit, prefix)
 end
 GW.stats.getDamage = getDamage
 
-local function getRangeAttackSpeed()
-    local text = format("%.2f", UnitRangedDamage("player"))
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. ATTACK_SPEED .. " " .. text .. FONT_COLOR_CODE_CLOSE;
-    local tooltip2 = format(CR_HASTE_RATING_TOOLTIP, GetCombatRating(CR_HASTE_RANGED), GetCombatRatingBonus(CR_HASTE_RANGED));
-
-    return text, tooltip, tooltip2
-end
-GW.stats.getRangeAttackSpeed = getRangeAttackSpeed
-
-local function getAttackSpeed()
-    local speed, offhandSpeed = UnitAttackSpeed("player")
-    speed = format("%.2f", speed)
-    if offhandSpeed then
-        offhandSpeed = format("%.2f", offhandSpeed)
-    end
-    local text;
-    if offhandSpeed then
-        text = speed .. " / " .. offhandSpeed
-    else
-        text = speed
-    end
-
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. ATTACK_SPEED .. " " .. text .. FONT_COLOR_CODE_CLOSE
-    local tooltip2 = format(CR_HASTE_RATING_TOOLTIP, GetCombatRating(CR_HASTE_MELEE), GetCombatRatingBonus(CR_HASTE_MELEE))
-
-    return text, tooltip, tooltip2
-end
-GW.stats.getAttackSpeed = getAttackSpeed
-
 local function getMastery()
-
 	if (UnitLevel("player") < SHOW_MASTERY_LEVEL) then
 		return format("N/A")
 	end
@@ -360,214 +330,9 @@ local function getMovementSpeed()
 end
 GW.stats.getMovementSpeed = getMovementSpeed
 
-local function getDodge()
-    local chance = GetDodgeChance();
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("DODGE_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
-    local tooltip2 = format(CR_DODGE_TOOLTIP, GetCombatRating(CR_DODGE), GetCombatRatingBonus(CR_DODGE));
-
-    return format("%.2f%%", chance), tooltip, tooltip2
-end
-GW.stats.getDodge = getDodge
-
-local function getParry()
-    local chance = GetParryChance();
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("PARRY_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
-    local tooltip2 = format(CR_PARRY_TOOLTIP, GetCombatRating(CR_PARRY), GetCombatRatingBonus(CR_PARRY));
-
-    return format("%.2f%%", chance), tooltip, tooltip2
-end
-GW.stats.getParry = getParry
-
-local function getBlock()
-    local chance = GetBlockChance();
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("BLOCK_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
-    local tooltip2 = format(CR_BLOCK_TOOLTIP, GetCombatRating(CR_BLOCK), GetCombatRatingBonus(CR_BLOCK));
-
-    return format("%.2f%%", chance), tooltip, tooltip2
-end
-GW.stats.getBlock = getBlock
-
-local function getRating(ratingIndex)
-    local rating = GetCombatRating(ratingIndex)
-    local ratingBonus = GetCombatRatingBonus(ratingIndex)
-    local statName = getglobal("COMBAT_RATING_NAME" .. ratingIndex)
-    local tooltip, tooltip2 = HIGHLIGHT_FONT_COLOR_CODE .. statName .. " " .. rating .. FONT_COLOR_CODE_CLOSE, nil
-    -- Can probably axe this if else tree if all rating tooltips follow the same format
-    if ( ratingIndex == CR_HIT_MELEE ) then
-        tooltip2 = format(CR_HIT_MELEE_TOOLTIP, UnitLevel("player"), ratingBonus, GetCombatRating(CR_ARMOR_PENETRATION), GetArmorPenetration());
-    elseif ( ratingIndex == CR_HIT_RANGED ) then
-        tooltip2 = format(CR_HIT_RANGED_TOOLTIP, UnitLevel("player"), ratingBonus, GetCombatRating(CR_ARMOR_PENETRATION), GetArmorPenetration());
-    elseif ( ratingIndex == CR_DODGE ) then
-        tooltip2 = format(CR_DODGE_TOOLTIP, ratingBonus);
-    elseif ( ratingIndex == CR_PARRY ) then
-        tooltip2 = format(CR_PARRY_TOOLTIP, ratingBonus);
-    elseif ( ratingIndex == CR_BLOCK ) then
-        tooltip2 = format(CR_PARRY_TOOLTIP, ratingBonus);
-    elseif ( ratingIndex == CR_HIT_SPELL ) then
-        tooltip2 = format(CR_HIT_SPELL_TOOLTIP, UnitLevel("player"), ratingBonus, GetSpellPenetration(), GetSpellPenetration());
-    elseif ( ratingIndex == CR_EXPERTISE ) then
-        tooltip2 = format(CR_EXPERTISE_TOOLTIP, ratingBonus);
-    else
-        tooltip2 = HIGHLIGHT_FONT_COLOR_CODE .. getglobal("COMBAT_RATING_NAME" .. ratingIndex) .. " " .. rating;
-    end
-
-    return rating, tooltip, tooltip2
-end
-GW.stats.getRating = getRating
-
-local function getMeleeCritChance()
-    local critChance = format("%.2f%%", GetCritChance())
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..MELEE_CRIT_CHANCE.." "..critChance..FONT_COLOR_CODE_CLOSE;
-    local tooltip2 = format(CR_CRIT_MELEE_TOOLTIP, GetCombatRating(CR_CRIT_MELEE), GetCombatRatingBonus(CR_CRIT_MELEE));
-
-    return critChance, tooltip, tooltip2
-end
-GW.stats.getMeleeCritChance = getMeleeCritChance
-
-local function getSpellCritChance(frame)
-    local holySchool = 2
-    -- Start at 2 to skip physical damage
-    local minCrit = GetSpellCritChance(holySchool)
-    frame.spellCrit = frame.spellCrit or {}
-    frame.spellCrit[holySchool] = minCrit;
-    local spellCrit;
-    for i = (holySchool + 1), MAX_SPELL_SCHOOLS do
-        spellCrit = GetSpellCritChance(i);
-        minCrit = min(minCrit, spellCrit);
-        frame.spellCrit[i] = spellCrit;
-    end
-    -- Add agility contribution
-    --minCrit = minCrit + GetSpellCritChanceFromIntellect();
-    minCrit = format("%.2f%%", minCrit);
-    frame.minCrit = minCrit;
-
-    return minCrit
-end
-GW.stats.getSpellCritChance = getSpellCritChance
-
-local function getRangedCritChance()
-    local critChance = format("%.2f%%", GetRangedCritChance());
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. RANGED_CRIT_CHANCE .. " " .. critChance .. FONT_COLOR_CODE_CLOSE;
-    local tooltip2 = format(CR_CRIT_RANGED_TOOLTIP, GetCombatRating(CR_CRIT_RANGED), GetCombatRatingBonus(CR_CRIT_RANGED));
-
-    return critChance, tooltip, tooltip2
-end
-GW.stats.getRangedCritChance = getRangedCritChance
-
-local function getMeleeExpertise()
-    local expertise, offhandExpertise = GetExpertise();
-    local _, offhandSpeed = UnitAttackSpeed("player");
-    local exp;
-    if( offhandSpeed ) then
-        exp = expertise .. " / " .. offhandExpertise;
-    else
-        exp = expertise;
-    end
-
-    local text
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. getglobal("COMBAT_RATING_NAME" .. CR_EXPERTISE) .. " " .. exp .. FONT_COLOR_CODE_CLOSE;
-
-    local expertisePercent, offhandExpertisePercent = GetExpertisePercent();
-    expertisePercent = format("%.2f", expertisePercent);
-    if( offhandSpeed ) then
-        offhandExpertisePercent = format("%.2f", offhandExpertisePercent);
-        text = expertisePercent.."% / "..offhandExpertisePercent.."%";
-    else
-        text = expertisePercent.."%";
-    end
-    local tooltip2 = format(CR_EXPERTISE_TOOLTIP, text, GetCombatRating(CR_EXPERTISE), GetCombatRatingBonus(CR_EXPERTISE));
-
-    return exp, tooltip, tooltip2
-end
-GW.stats.getMeleeExpertise = getMeleeExpertise
-
-local function getSpellHaste()
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. SPELL_HASTE .. FONT_COLOR_CODE_CLOSE;
-    local tooltip2 = format(SPELL_HASTE_TOOLTIP, GetCombatRatingBonus(CR_HASTE_SPELL));
-
-    return GetCombatRating(CR_HASTE_SPELL), tooltip, tooltip2
-end
-GW.stats.getSpellHaste = getSpellHaste
-
-local function getManaReg()
-    if ( not UnitHasMana("player") ) then
-        return NOT_APPLICABLE, nil, nil
-    end
-
-    local base, casting = GetManaRegen(); 
-    -- All mana regen stats are displayed as mana/5 sec.
-    base = floor( base * 5.0 );
-    casting = floor( casting * 5.0 );
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. MANA_REGEN .. FONT_COLOR_CODE_CLOSE;
-    local tooltip2 = format(MANA_REGEN_TOOLTIP, base, casting);
-
-    return base, tooltip, tooltip2
-end
-GW.stats.getManaReg = getManaReg
-
-local function getSpellBonusDamage(frame)
-    local text
-    local holySchool = 2;
-    -- Start at 2 to skip physical damage
-    local minModifier = GetSpellBonusDamage(holySchool)
-    if (frame.bonusDamage) then
-        table.wipe(frame.bonusDamage)
-    else
-        frame.bonusDamage = {}
-    end
-    frame.bonusDamage[holySchool] = minModifier
-    local bonusDamage
-    for i = (holySchool + 1), MAX_SPELL_SCHOOLS do
-        bonusDamage = GetSpellBonusDamage(i)
-        minModifier = min(minModifier, bonusDamage)
-        frame.bonusDamage[i] = bonusDamage
-    end
-    local spellHealing = GetSpellBonusHealing()
-
-    if (spellHealing == minModifier) then
-        text = format(STAT_FORMAT, STAT_SPELLPOWER)
-        frame.tooltip = STAT_SPELLPOWER
-        frame.tooltip2 = STAT_SPELLPOWER_TOOLTIP
-    else
-        text = format(STAT_FORMAT, STAT_SPELLDAMAGE)
-        frame.tooltip = STAT_SPELLDAMAGE
-        frame.tooltip2 = STAT_SPELLDAMAGE_TOOLTIP
-    end
-
-    frame.minModifier = minModifier
-    frame.unit = "player"
-
-    return text, minModifier
-end
-GW.stats.getSpellBonusDamage = getSpellBonusDamage
-
-local function getBonusHealing(frame)
-    local text
-    local minDamage = 0
-    local holySchool = 2
-    minDamage = GetSpellBonusDamage(holySchool)
-    for i=(holySchool+1), MAX_SPELL_SCHOOLS do
-        minDamage = min(minDamage, GetSpellBonusDamage(i))
-    end
-    frame.bonusDamage = nil
-
-    local spellHealing = GetSpellBonusHealing()
-    text = format(STAT_FORMAT, STAT_SPELLHEALING)
-    frame.tooltip = STAT_SPELLHEALING
-    frame.tooltip2 = STAT_SPELLHEALING_TOOLTIP
-    frame.minModifier = spellHealing
-    frame.unit = "player"
-
-    return text, spellHealing
-end
-GW.stats.getBonusHealing = getBonusHealing
-
-local function getAttackPower(unit, prefix)
+local function getAttackPower(unit)
     if not unit then
         unit = "player"
-    end
-    if not prefix then
-        prefix = "Character"
     end
 
     local base, posBuff, negBuff = UnitAttackPower(unit)
@@ -577,14 +342,11 @@ local function getAttackPower(unit, prefix)
 end
 GW.stats.getAttackPower = getAttackPower
 
-local function getRangedDamage(unit, prefix)
+local function getRangedDamage(unit)
     if not unit then
         unit = "player"
     elseif unit == "pet" then
         return
-    end
-    if not prefix then
-        prefix = "Character"
     end
 
     local stat
@@ -607,9 +369,9 @@ local function getRangedDamage(unit, prefix)
 
     if totalBonus == 0 then
         if (displayMin < 100) and (displayMax < 100) then
-            stat = displayMin .. " - ".. displayMax
+            stat = BreakUpLargeNumbers(displayMin) .. " - ".. BreakUpLargeNumbers(displayMax)
         else
-            stat = displayMin .. "-" .. displayMax
+            stat = BreakUpLargeNumbers(displayMin) .. "-" .. BreakUpLargeNumbers(displayMax)
         end
     else
         local colorPos = "|cff20ff20"
@@ -621,9 +383,9 @@ local function getRangedDamage(unit, prefix)
             color = colorNeg
         end
         if (displayMin < 100) and (displayMax < 100) then
-            stat = color .. displayMin .. " - " .. displayMax .. "|r"
+            stat = color .. BreakUpLargeNumbers(displayMin) .. " - " .. BreakUpLargeNumbers(displayMax) .. "|r"
         else
-            stat = color .. displayMin .. "-" .. displayMax .. "|r"
+            stat = color .. BreakUpLargeNumbers(displayMin) .. "-" .. BreakUpLargeNumbers(displayMax) .. "|r"
         end
         if physicalBonusPos > 0 then
             tooltip = tooltip .. colorPos .. " +" .. physicalBonusPos .. "|r"
@@ -646,7 +408,7 @@ local function getRangedDamage(unit, prefix)
 end
 GW.stats.getRangedDamage = getRangedDamage
 
-local function getRangedAttackPower(unit    )
+local function getRangedAttackPower(unit)
     if not unit then
         unit = "player"
     end
@@ -686,11 +448,11 @@ local function getResitance(i, unit)
 
     -- resistances can now be negative. Show Red if negative, Green if positive, white otherwise
     if abs(negative) > positive then
-        stat = RED_FONT_COLOR_CODE .. resistance .. FONT_COLOR_CODE_CLOSE
+        stat = RED_FONT_COLOR_CODE .. BreakUpLargeNumbers(resistance) .. FONT_COLOR_CODE_CLOSE
     elseif abs(negative) == positive then
         stat = resistance
     else
-        stat = GREEN_FONT_COLOR_CODE .. resistance .. FONT_COLOR_CODE_CLOSE
+        stat = GREEN_FONT_COLOR_CODE .. BreakUpLargeNumbers(resistance) .. FONT_COLOR_CODE_CLOSE
     end
 
     local resistanceName = _G["RESISTANCE" .. i .. "_NAME"]

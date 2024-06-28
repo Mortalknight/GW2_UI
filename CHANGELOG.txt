@@ -1,3 +1,9 @@
+1.8.0-Cata
+    NEW
+        - Added back enchant info to hero panel
+    FIXES
+        - Target frame floating combat text setting is now working
+
 1.7.2-Cata
 FIXES
     - Extended Vendor setting is working again
