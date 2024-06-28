@@ -11,7 +11,7 @@ local InspectItems = {
     CharacterFeetSlot = {id = 6, slotId = 8},
     CharacterWristSlot = {id = 7, slotId = 9},
     CharacterHandsSlot = {id = 8, slotId = 10},
-    CharacterMainHandSlot = {id = 9, slotId = 16},
+    CharacterMainHandSlot = {id = 50, slotId = 16},
     CharacterSecondaryHandSlot = {id = 10, slotId = 17},
     CharacterRangedSlot = {id = 11, slotId = 18},
 
@@ -49,8 +49,8 @@ local function GetInspectPoints(id)
     if not id then return end
 
     if id <= 11 then
-        return 47, 18, "BOTTOMLEFT"
-    elseif id >= 12 and id <= 14 then
+        return 47, 15, "BOTTOMLEFT"
+    elseif (id >= 12 and id <= 14) or id == 50 then
         return 0, 25, "TOP"
     else
         return 0, -25, "BOTTOM"
@@ -68,7 +68,7 @@ local function CreateSlotStrings()
             slot.enchantText:SetFont(UNIT_NAME_FONT, 8, "OUTLINE")
         else
             slot.enchantText:SetJustifyH("LEFT")
-            slot.enchantText:SetSize(100, 30)
+            slot.enchantText:SetSize(100, 40)
             slot.enchantText:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
         end
         slot.enchantText:SetPoint(justify, slot, x + (justify == "BOTTOMLEFT" and 5 or 0), z)
