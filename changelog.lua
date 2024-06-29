@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.8.1",{
+    {ct.bug ,[=[Fix lua error on start]=]},
+})
+
 addChange("1.8.0",{
     {ct.feature ,[=[Added back enchant info to hero panel]=]},
     {ct.bug ,[=[Target frame floating combat text setting is now working]=]},

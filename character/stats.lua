@@ -195,7 +195,7 @@ local function getDamage(unit, prefix)
     local baseDamage = (minDamage + maxDamage) * 0.5
     local fullDamage = (baseDamage + physicalBonusPos + physicalBonusNeg) * percent
     local totalBonus = (fullDamage - baseDamage)
-    local damagePerSecond = BreakUpLargeNumbers((max(fullDamage, 1) / speed))
+    local damagePerSecond = (max(fullDamage, 1) / speed)
     local damageTooltip = BreakUpLargeNumbers(max(floor(minDamage), 1)) .. " - " .. BreakUpLargeNumbers(max(ceil(maxDamage), 1))
 
     local colorPos = "|cff20ff20"
