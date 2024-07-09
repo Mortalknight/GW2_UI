@@ -1,3 +1,7 @@
+1.8.2-Cata
+MISC
+    - Change pet autocast button indicator
+
 1.8.1-Cata
 FIXES
     - Fix lua error on start

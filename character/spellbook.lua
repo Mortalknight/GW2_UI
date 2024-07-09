@@ -80,6 +80,7 @@ local function spellBookMenu_onLoad(self)
     self:RegisterEvent("SKILL_LINES_CHANGED")
     self:RegisterEvent("PLAYER_GUILD_UPDATE")
     self:RegisterEvent("PLAYER_LEVEL_UP")
+    self:RegisterEvent("PET_BAR_UPDATE")
 end
 
 local SpellbookHeaderIndex = 1
@@ -130,11 +131,11 @@ local function setHeaderLocation(self, pagingContainer)
 end
 
 local spellButtonIndex = 1
-local function setButtonStyle(ispassive, spellID, skillType, icon, spellbookIndex, booktype, tab, name, level)
-    local _, autostate = GetSpellAutocast(name, booktype)
+local function setButtonStyle(isPassive, spellID, skillType, icon, spellbookIndex, booktype, tab, name, level)
+    local _, autostate = GetSpellAutocast(spellbookIndex, booktype)
     local btn = _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]
 
-    btn.isPassive = ispassive
+    btn.isPassive = isPassive
     btn.isFuture = (skillType == 'FUTURESPELL')
     btn.isFlyout = (skillType == 'FLYOUT')
     btn.spellbookIndex = spellbookIndex
@@ -187,11 +188,10 @@ local function setButtonStyle(ispassive, spellID, skillType, icon, spellbookInde
         btn:SetAttribute("shift-type2", "modifiedClick")
     end
 
-
-    if skillType == 'FUTURESPELL' then
+    if btn.isFuture then
         btn.icon:SetDesaturated(true)
         btn.icon:SetAlpha(0.5)
-    elseif skillType == 'FLYOUT' then
+    elseif btn.isFlyout then
         btn.icon:SetDesaturated(false)
         btn.icon:SetAlpha(1)
     else
@@ -199,7 +199,7 @@ local function setButtonStyle(ispassive, spellID, skillType, icon, spellbookInde
         btn.icon:SetAlpha(1)
     end
 
-    if ispassive then
+    if btn.isPassive then
         btn.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight')
         btn.icon:AddMaskTexture(btn.mask)
         btn.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_outline')
@@ -381,7 +381,7 @@ local function updateSpellbookTab()
             local skillType, flyoutId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
             local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
             local nameSpell, _, spellID = GetSpellBookItemName(spellIndex, BOOKTYPE)
-            local ispassive = IsPassiveSpell(spellID)
+            local isPassive = IsPassiveSpell(spellID)
             local requiredLevel = GetSpellAvailableLevel(spellIndex, BOOKTYPE)
 
             if nameSpell then
@@ -390,9 +390,9 @@ local function updateSpellbookTab()
                     needNewHeader = false
                 end
 
-                local mainButton = setButtonStyle(ispassive, spellID or flyoutId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, nameSpell, requiredLevel)
+                local mainButton = setButtonStyle(isPassive, spellID or flyoutId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, nameSpell, requiredLevel)
                 mainButton.modifiedClick = SpellButton_OnModifiedClick
-                if not ispassive then GW.RegisterCooldown(mainButton.cooldown) end
+                if not isPassive then GW.RegisterCooldown(mainButton.cooldown) end
                 spellButtonIndex = spellButtonIndex + 1
                 boxIndex = boxIndex + 1
 
@@ -497,14 +497,12 @@ local function LoadSpellBook()
         local y = 0
         for i = 1, 300 do
             local f = CreateFrame('Button', 'GwSpellbookTab' .. tab .. 'Actionbutton' .. i, container.container1, 'GwSpellbookActionbutton')
-            local mask = UIParent:CreateMaskTexture()
-            mask:SetPoint("CENTER", f, 'CENTER', 0, 0)
+            f.mask = UIParent:CreateMaskTexture()
+            f.mask:SetPoint("CENTER", f, 'CENTER', 0, 0)
+            f.mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+            f.mask:SetSize(40, 40)
+            f.mask:SetParent(f)
 
-            mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-            mask:SetSize(40, 40)
-
-            f.mask = mask
-            mask:SetParent(f)
             f:SetPoint('TOPLEFT', container, 'TOPLEFT', (50 * x), (-70) + (-50 * y))
             f:RegisterForClicks("AnyUp")
             f:RegisterForDrag("LeftButton")

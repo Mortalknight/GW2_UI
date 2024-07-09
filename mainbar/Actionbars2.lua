@@ -457,6 +457,7 @@ GW.FixHotKeyPosition = FixHotKeyPosition
 
 local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPet, hideUnused)
     local btn = _G[buttonName]
+    local btnWidth = btn:GetWidth()
 
     if btn.icon then
         btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -477,10 +478,10 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.cooldown:SetAllPoints(btn)
     end
 
-    btn:GetPushedTexture():SetSize(btn:GetWidth(), btn:GetWidth())
+    btn:GetPushedTexture():SetSize(btnWidth, btnWidth)
 
     if btn.Border then
-        btn.Border:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.Border:SetSize(btnWidth, btnWidth)
         btn.Border:SetBlendMode("BLEND")
         if isStanceButton then
             btn.Border:Show()
@@ -496,26 +497,25 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
     if _G[buttonName .. "FloatingBG"] ~= nil then
         _G[buttonName .. "FloatingBG"]:SetTexture(nil)
     end
+    if _G[buttonName .. "NormalTexture"] then
+        _G[buttonName .. "NormalTexture"]:SetTexture(nil)
+        _G[buttonName .. "NormalTexture"]:SetAlpha(0)
+    end
     if _G[buttonName .. "NormalTexture2"] then
         _G[buttonName .. "NormalTexture2"]:SetTexture(nil)
-        _G[buttonName .. "NormalTexture2"]:Hide()
         _G[buttonName .. "NormalTexture2"]:SetAlpha(0)
     end
     if btn.AutoCastable then
-        btn.AutoCastable:SetSize(btn:GetWidth() * 2, btn:GetWidth() * 2)
+        btn.AutoCastable:SetSize(btnWidth * 2, btnWidth * 2)
     end
     if btn.AutoCastShine then
-        btn.AutoCastShine:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.AutoCastShine:SetSize(btnWidth, btnWidth)
     end
     if btn.NewActionTexture then
-        btn.NewActionTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.NewActionTexture:SetSize(btnWidth, btnWidth)
     end
     if btn.SpellHighlightTexture then
-        btn.SpellHighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
-    end
-
-    if btn.HighlightTexture then
-        btn.HighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.SpellHighlightTexture:SetSize(btnWidth, btnWidth)
     end
 
     if btn.CooldownFlash then
@@ -534,16 +534,14 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
     btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
 
     if btn.HighlightTexture then
-        btn.HighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.HighlightTexture:SetSize(btnWidth, btnWidth)
     end
     if btn.SetCheckedTexture then
         btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     end
     if btn.CheckedTexture then
-        btn.CheckedTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.CheckedTexture:SetSize(btnWidth, btnWidth)
     end
-
-    btn.Name:SetAlpha(0) --Hide Marco Name on Actionbutton
 
     updateMacroName(btn)
 

@@ -19,6 +19,7 @@ local function UpdatePetActionBarIcons()
     PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
 end
 GW.AddForProfiling("petbar", "UpdatePetActionBarIcons", UpdatePetActionBarIcons)
+
 local function SetPetActionButtonPositionAndStyle(self)
     local BUTTON_SIZE = 28
     local BUTTON_MARGIN = 3
@@ -66,6 +67,7 @@ local function SetPetActionButtonPositionAndStyle(self)
             end
         end)
 
+         --[[
         if buttonShine then
             buttonShine:SetSize(button:GetSize())
             for _, v in pairs(buttonShine.sparkles) do
@@ -82,6 +84,11 @@ local function SetPetActionButtonPositionAndStyle(self)
                     autoCast:SetWidth(autoCast.size)
                 end
             end)
+        end
+        ]]
+
+        if autoCast then
+            autoCast:SetAlpha(0)
         end
 
         if i <= 3 or i >= 8 then
@@ -113,14 +120,9 @@ end
 GW.UpdatePetBarButtonsHot = UpdatePetBarButtonsHot
 
 local function UpdateAutoCast()
-    for i, button in ipairs(GwPlayerPetFrame.buttons) do
-        local _, _, _, _, _, autoCastEnabled = GetPetActionInfo(i)
-
-        if autoCastEnabled then
-            button.AutoCastable:Show()
-        else
-            button.AutoCastable:Hide()
-        end
+    for i, _ in ipairs(GwPlayerPetFrame.buttons) do
+        local autocast = _G["PetActionButton" .. i .. "AutoCastable"]
+        autocast:Hide()
     end
 end
 
@@ -129,7 +131,6 @@ local function UpdatePetActionBar(self, event, unit)
 
     for i, button in ipairs(self.buttons) do
         local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(i)
-        local autoCast = button.AutoCastable
         button:SetAlpha(1)
         button.isToken = isToken
         button.icon:Show()

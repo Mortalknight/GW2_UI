@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.8.2",{
+    {ct.change ,[=[Change pet autocast button indicator]=]},
+})
+
 addChange("1.8.1",{
     {ct.bug ,[=[Fix lua error on start]=]},
 })
