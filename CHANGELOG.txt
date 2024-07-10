@@ -1,3 +1,6 @@
+3.3.4-Era
+   Fix for 1.15.3
+
 3.3.3-Era
    Added a new spellbook container
 

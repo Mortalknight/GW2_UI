@@ -1498,11 +1498,13 @@ local function styleChatWindow(frame)
     _G[name .. "ButtonFrameUpButton"]:SetHeight(24)
     _G[name .. "ButtonFrameUpButton"]:SetWidth(24)
 
-
-    frame.buttonFrame.minimizeButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
-    frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
-    frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
-    frame.buttonFrame.minimizeButton:SetSize(24, 24)
+    if frame.buttonFrame.minimizeButton then
+        frame.buttonFrame.minimizeButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
+        frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
+        frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
+        frame.buttonFrame.minimizeButton:SetSize(24, 24)
+    end
+    frame.buttonFrame:StripTextures()
 
     ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
     ChatFrameMenuButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_up")

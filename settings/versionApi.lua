@@ -49,7 +49,7 @@ local function GetSpecializationInfo(specIndex,isInspect,isPet,inspectTarget,sex
     if version>50000 then
         return _G.GetSpecializationInfo(specIndex,isInspect,isPet,inspectTarget,sex)
     end
-    local name, iconTexture, pointsSpent, background = GetTalentTabInfo(specIndex);
+    local _, name, _, iconTexture, pointsSpent, background = GetTalentTabInfo(specIndex);
     return specIndex, name, nil, iconTexture, background, nil, nil
 end
 GW.api.GetSpecializationInfo = GetSpecializationInfo

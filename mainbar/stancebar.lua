@@ -109,7 +109,7 @@ local function StyleStanceBarButtons()
                 button.icon:SetVertexColor(0.3, 0.3, 0.3)
             end
 
-            GW.setActionButtonStyle(button:GetName(), true, nil, true)
+            GW.setActionButtonStyle(button:GetName(), true ,true)
         end
     end
 end
@@ -208,8 +208,6 @@ local function CreateStanceBarButtonHolder()
     StanceButtonHolder:RegisterEvent("UPDATE_SHAPESHIFT_COOLDOWN")
     StanceButtonHolder:RegisterEvent("UPDATE_BINDINGS")
     StanceButtonHolder:SetScript("OnEvent", StanceButton_OnEvent)
-
-    StanceButtonHolder.container:SetProtected()
 
     return StanceButtonHolder
 end

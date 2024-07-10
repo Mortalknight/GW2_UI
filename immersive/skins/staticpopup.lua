@@ -52,7 +52,7 @@ local function LoadStaticPopupSkin()
 
     hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
     --Movie skip Frame
-    hooksecurefunc("CinematicFrame_OnDisplaySizeChanged", function(self)
+    hooksecurefunc("CinematicFrame_UpdateLettboxForAspectRatio", function(self)
         if self and self.closeDialog and not self.closeDialog.template then
             self.closeDialog:StripTextures()
 

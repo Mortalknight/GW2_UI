@@ -183,7 +183,9 @@ local function whisperClick(_, playerName)
 end
 
 local function Guild_OnClick(self, button)
-    if button == "RightButton" and IsInGuild() then
+    if button == "LeftButton" then
+        self:OnClick()
+    elseif button == "RightButton" and IsInGuild() then
         local menuCountWhispers = 0
         local menuCountInvites = 0
 
@@ -209,15 +211,6 @@ local function Guild_OnClick(self, button)
         end
         GW.SetEasyMenuAnchor(GW.EasyMenu, self)
         EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
-    elseif InCombatLockdown() then
-        UIErrorsFrame:AddMessage(ERR_NOT_IN_COMBAT)
-    else
-        --Workaround until blizz fixes ToggleGuildFrame correctly
-        if IsInGuild() then
-            ToggleFriendsFrame(3)
-        else
-            ToggleFriendsFrame()
-        end
     end
 end
 GW.Guild_OnClick = Guild_OnClick

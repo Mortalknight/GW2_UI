@@ -401,7 +401,7 @@ local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
 end
 GW.FixHotKeyPosition = FixHotKeyPosition
 
-local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
+local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPet, hideUnused)
     local btn = _G[buttonName]
 
     if btn.icon then
@@ -532,7 +532,7 @@ local function updateMainBar()
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
             btn.showMacroName = showName
 
-            setActionButtonStyle("ActionButton" .. i, true)
+            setActionButtonStyle("ActionButton" .. i)
             updateHotkey(btn)
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
@@ -680,7 +680,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             updateHotkey(btn)
             btn.showMacroName = showName
 
-            setActionButtonStyle(buttonName .. i, nil, hideActionBarBG)
+            setActionButtonStyle(buttonName .. i, nil, nil, nil, hideActionBarBG)
 
             btn:ClearAllPoints()
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)

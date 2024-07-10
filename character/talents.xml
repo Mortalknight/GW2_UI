@@ -39,14 +39,14 @@
     </Frame>
 
     <Button name="GwTalentButton" registerForClicks="AnyDown" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
-        <Size x="44" y="44"/>
+        <Size x="42" y="42"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"/>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
-                    <Size x="54" y="54"/>
+                    <Size x="52" y="52"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
                     </Anchors>
@@ -63,14 +63,14 @@
             </Layer>
             <Layer level="OVERLAY">
                 <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
-                    <Size x="44" y="44"/>
+                    <Size x="42" y="42"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
                     </Anchors>
                     <Color r="1" b="0.6" g="1" a="0.9"></Color>
                 </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="legendaryHighlight" hidden="true">
-                    <Size x="44" y="44"/>
+                    <Size x="42" y="42"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
                     </Anchors>
@@ -78,9 +78,18 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY" textureSubLevel="2">
+                 <Texture parentKey="textBG" file="Interface\AddOns\GW2_UI\textures\bartextures\statusbar">
+                    <Size x="32" y="16"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="8"/>
+                    </Anchors>
+                    <Color r="0" b="0" g="0" a="0.8"></Color>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="3">
                 <FontString parentKey="points" text="10/10" justifyH="CENTER" justifyV="MIDDLE">
                     <Anchors>
-                        <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="0"/>
+                        <Anchor point="CENTER" relativeKey="$parent.textBG" relativePoint="CENTER" x="0" y="0"/>
                     </Anchors>
                 </FontString>
             </Layer>

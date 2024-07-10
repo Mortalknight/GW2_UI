@@ -80,7 +80,7 @@ end
 
 local function updateGuildButton(self, event)
     if event == "GUILD_ROSTER_UPDATE" then
-        local gmb = SocialsMicroButton
+        local gmb = GuildMicroButton
         if gmb == nil then
             return
         end
@@ -395,21 +395,21 @@ local function setupMicroButtons(mbf)
     QuestLogMicroButton:ClearAllPoints()
     QuestLogMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
 
-    -- SocialsMicroButton
-    SocialsMicroButton:ClearAllPoints()
-    SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-    SocialsMicroButton.Ticker = C_Timer.NewTicker(15, function() GuildRoster() end)
-    SocialsMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
-    SocialsMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
-    SocialsMicroButton:RegisterEvent("GUILD_MOTD")
-    SocialsMicroButton:HookScript("OnEnter", GW.Guild_OnEnter)
-    SocialsMicroButton:SetScript("OnClick", GW.Guild_OnClick)
-    SocialsMicroButton:HookScript("OnEvent", updateGuildButton)
-    updateGuildButton(SocialsMicroButton, "GUILD_ROSTER_UPDATE")
+    -- GuildMicroButton
+    GuildMicroButton:ClearAllPoints()
+    GuildMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
+    GuildMicroButton.Ticker = C_Timer.NewTicker(15, function() GuildRoster() end)
+    GuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
+    GuildMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
+    GuildMicroButton:RegisterEvent("GUILD_MOTD")
+    GuildMicroButton:HookScript("OnEnter", GW.Guild_OnEnter)
+    GuildMicroButton:SetScript("OnClick", GW.Guild_OnClick)
+    GuildMicroButton:HookScript("OnEvent", updateGuildButton)
+    updateGuildButton(GuildMicroButton, "GUILD_ROSTER_UPDATE")
 
     -- WorldMapMicroButton
     WorldMapMicroButton:ClearAllPoints()
-    WorldMapMicroButton:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+    WorldMapMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
@@ -585,7 +585,7 @@ local function LoadMicroMenu()
         function()
             HelpMicroButton:Show()
             MicroButtonPortrait:Hide()
-            local m = SocialsMicroButton
+            local m = GuildMicroButton
             m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
             m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
             m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
