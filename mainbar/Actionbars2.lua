@@ -499,11 +499,6 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
     if btn.SpellHighlightTexture then
         btn.SpellHighlightTexture:SetSize(btnWidth, btnWidth)
     end
-
-    if btn.HighlightTexture then
-        btn.HighlightTexture:SetSize(btnWidth, btnWidth)
-    end
-
     if btn.CooldownFlash then
         btn.CooldownFlash:GwSetOutside(btn, 4, 4)
     end

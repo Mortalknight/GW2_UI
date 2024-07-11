@@ -128,7 +128,6 @@ local function UpdatePetActionBar(self, event, unit)
 
     for i, button in ipairs(self.buttons) do
         local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(i)
-        local autoCast = button.AutoCastable
         button:SetAlpha(1)
         button.isToken = isToken
         button.icon:Show()

@@ -6,6 +6,80 @@ local atlasToTex = {
     ["friendslist-invitebutton-default-normal"] = [[Interface\FriendsFrame\PlusManz-PlusManz]],
 }
 
+local MediaPath = 'Interface/AddOns/GW2_UI/Textures/social/'
+local ONE_MINUTE = 60;
+local ONE_HOUR = 60 * ONE_MINUTE;
+local ONE_DAY = 24 * ONE_HOUR;
+local ONE_MONTH = 30 * ONE_DAY;
+local ONE_YEAR = 12 * ONE_MONTH;
+local icons = {
+    Game = {
+        Alliance = { Name = _G.FACTION_ALLIANCE, Order = 1, Launcher = MediaPath..'GameIcons/Launcher/Alliance' },
+        Horde = { Name = _G.FACTION_HORDE, Order = 2,  Launcher = MediaPath..'GameIcons/Launcher/Horde' },
+        Neutral = { Name = _G.FACTION_STANDING_LABEL4, Order = 3, Launcher = MediaPath..'GameIcons/Launcher/WoW' },
+        App = { Name = GW.L['App'], Order = 4, Color = '82C5FF', Launcher = MediaPath..'GameIcons/Launcher/BattleNet' },
+        BSAp = { Name = GW.L['Mobile'], Order = 5, Color = '82C5FF', Launcher = MediaPath..'GameIcons/Launcher/Mobile' },
+        D3 = { Name = GW.L['Diablo 3'], Color = 'C41F3B', Launcher = MediaPath..'GameIcons/Launcher/D3' },
+        Fen = { Name = GW.L['Diablo 4'], Color = 'C41F3B', Launcher = MediaPath..'GameIcons/Launcher/D4' },
+        WTCG = { Name = GW.L['Hearthstone'], Color = 'FFB100', Launcher = MediaPath..'GameIcons/Launcher/Hearthstone' },
+        S1 = { Name = GW.L['Starcraft'], Color = 'C495DD', Launcher = MediaPath..'GameIcons/Launcher/SC' },
+        S2 = { Name = GW.L['Starcraft 2'], Color = 'C495DD', Launcher = MediaPath..'GameIcons/Launcher/SC2' },
+        Hero = { Name = GW.L['Hero of the Storm'], Color = '00CCFF', Launcher = MediaPath..'GameIcons/Launcher/Heroes' },
+        Pro = { Name = GW.L['Overwatch'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/Overwatch' },
+        VIPR = { Name = GW.L['Call of Duty 4'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/COD4' },
+        ODIN = { Name = GW.L['Call of Duty Modern Warfare'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/CODMW' },
+        W3 = { Name = GW.L['Warcraft 3 Reforged'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/WC3R' },
+        LAZR = { Name = GW.L['Call of Duty Modern Warfare 2'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/CODMW2' },
+        ZEUS = { Name = GW.L['Call of Duty Cold War'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/CODCW' },
+        WLBY = { Name = GW.L['Crash Bandicoot 4'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/CB4' },
+        OSI = { Name = GW.L['Diablo II Resurrected'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/D2' },
+        FORE = { Name = GW.L['Call of Duty Vanguard'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/CODVanguard' },
+        RTRO = { Name = GW.L['Arcade Collection'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/Arcade' },
+        ANBS = { Name = GW.L['Diablo Immortal'], Color = 'C41F3B', Launcher = MediaPath..'GameIcons/Launcher/DI' },
+        GRY = { Name = GW.L['Warcraft Arclight Rumble'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/Arclight' },
+    },
+    Status = {
+        Online = { Name = _G.FRIENDS_LIST_ONLINE, Order = 1, Default = _G.FRIENDS_TEXTURE_ONLINE, Square = MediaPath..'StatusIcons/Square/Online', D3 = MediaPath..'StatusIcons/D3/Online', Color = {.243, .57, 1} },
+        Offline = { Name = _G.FRIENDS_LIST_OFFLINE, Order = 2, Default = _G.FRIENDS_TEXTURE_OFFLINE, Square = MediaPath..'StatusIcons/Square/Offline', D3 = MediaPath..'StatusIcons/D3/Offline', Color = {.486, .518, .541} },
+        DND = { Name = _G.DEFAULT_DND_MESSAGE, Order = 3, Default = _G.FRIENDS_TEXTURE_DND, Square = MediaPath..'StatusIcons/Square/DND', D3 = MediaPath..'StatusIcons/D3/DND', Color = {1, 0, 0} },
+        AFK = { Name = _G.DEFAULT_AFK_MESSAGE, Order = 4, Default = _G.FRIENDS_TEXTURE_AFK, Square = MediaPath..'StatusIcons/Square/AFK', D3 = MediaPath..'StatusIcons/D3/AFK', Color = {1, 1, 0} },
+    }
+}
+
+local StatusColor = {}
+for name, info in next, icons.Status do
+    local r, g, b = unpack(info.Color)
+    StatusColor[name] = { Inside = CreateColor(r, g, b, .15), Outside = CreateColor(r, g, b, .0)}
+end
+
+local function SetGradientColor(button, color1, color2)
+    button.Left:SetGradient("Horizontal", color1, color2)
+    button.Right:SetGradient("Horizontal", color2, color1)
+end
+
+local function CreateTexture(button, type, layer)
+    if button.efl and button.efl[type] then
+        button.efl[type].Left:SetTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
+        button.efl[type].Right:SetTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
+        return
+    end
+
+    button.efl = button.efl or {}
+    button.efl[type] = {}
+
+    button.efl[type].Left = button:CreateTexture(nil, layer)
+    button.efl[type].Left:SetHeight(32)
+    button.efl[type].Left:SetPoint("LEFT", button, "CENTER")
+    button.efl[type].Left:SetPoint("TOPLEFT", button, "TOPLEFT")
+    button.efl[type].Left:SetTexture('Interface/Buttons/WHITE8X8')
+
+    button.efl[type].Right = button:CreateTexture(nil, layer)
+    button.efl[type].Right:SetHeight(32)
+    button.efl[type].Right:SetPoint("RIGHT", button, "CENTER")
+    button.efl[type].Right:SetPoint("TOPRIGHT", button, "TOPRIGHT")
+    button.efl[type].Right:SetTexture('Interface/Buttons/WHITE8X8')
+end
+
 local function HandleInviteTex(self, atlas)
     local tex = atlasToTex[atlas]
     if tex then
@@ -79,7 +153,7 @@ local function LoadFriendList(tabContainer)
             button.gameIcon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
             button.gameIcon:ClearAllPoints()
             button.gameIcon:SetPoint("RIGHT", button, "RIGHT", -24, 0)
-            button.gameIcon.SetPoint = GW.NoOp
+            --button.gameIcon.SetPoint = GW.NoOp
 
             button.name:SetFont(UNIT_NAME_FONT, 14)
 
@@ -111,6 +185,88 @@ local function LoadFriendList(tabContainer)
                 button.newIcon:SetVertexColor(.5, .5, .5)
             end
         end
+
+        -- game icon skin
+        local nameText, infoText
+        local status = 'Offline'
+        if button.buttonType == FRIENDS_BUTTON_TYPE_WOW then
+            local info = C_FriendList.GetFriendInfoByIndex(button.id)
+            if info.connected then
+                local name, class = info.name, info.className
+                local classTag, color = GW.UnlocalizedClassName(class), GW.GWGetClassColor(GW.UnlocalizedClassName(class))
+                status = info.dnd and 'DND' or info.afk and 'AFK' or 'Online'
+                nameText = format('%s |cFFFFFFFF(|r%s|cFFFFFFFF)|r', WrapTextInColorCode(name, color), class)
+                infoText = info.area
+
+                if classTag then
+                    button.gameIcon:Show()
+                    button.gameIcon:SetTexture('Interface/WorldStateFrame/Icons-Classes')
+                    button.gameIcon:SetTexCoord(unpack(CLASS_ICON_TCOORDS[classTag]))
+                end
+            else
+                nameText = info.name
+            end
+            button.status:SetTexture(icons.Status[status].Default)
+        elseif button.buttonType == FRIENDS_BUTTON_TYPE_BNET and BNConnected() then
+            local info = C_BattleNet.GetFriendAccountInfo(button.id)
+            if info then
+                nameText = info.accountName
+                infoText = info.gameAccountInfo.richPresence
+                if info.gameAccountInfo.isOnline then
+                    local client, diff = info.gameAccountInfo.clientProgram, 'FFFFE519'
+                    status = info.isDND and 'DND' or info.isAFK and 'AFK' or 'Online'
+
+                    if client == BNET_CLIENT_WOW then
+                        local level = info.gameAccountInfo.characterLevel
+                        local characterName = info.gameAccountInfo.characterName
+                        local classcolor = GW.GWGetClassColor(GW.UnlocalizedClassName(info.gameAccountInfo.className))
+                        if characterName then
+                            nameText = format('%s (%s - %s %s)', nameText, WrapTextInColorCode(characterName, classcolor.colorStr), LEVEL, WrapTextInColorCode(level, diff))
+                        end
+
+                        if info.gameAccountInfo.wowProjectID == _G.WOW_PROJECT_CLASSIC and info.gameAccountInfo.realmDisplayName ~= GW.myrealm then
+                            infoText = format('%s - %s', info.gameAccountInfo.areaName or _G.UNKNOWN, infoText)
+                        elseif info.gameAccountInfo.realmDisplayName == GW.myrealm then
+                            infoText = info.gameAccountInfo.areaName
+                        end
+
+                        local faction = info.gameAccountInfo.factionName
+                        button.gameIcon:SetTexture(faction and icons.Game[faction].Launcher or icons.Game.Neutral.Launcher)
+                    else
+                        if not icons.Game[client] then client = 'BSAp' end
+                        nameText = format('|cFF%s%s|r', icons.Game[client].Color or 'FFFFFF', nameText)
+                        button.gameIcon:SetTexture(icons.Game[client].Launcher)
+                    end
+
+                    button.gameIcon:SetTexCoord(0, 1, 0, 1)
+                    button.gameIcon:SetDrawLayer('ARTWORK')
+                    button.gameIcon:SetAlpha(1)
+                else
+                    local lastOnline = info.lastOnlineTime
+                    infoText = (not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR) and _G.FRIENDS_LIST_OFFLINE or format(_G.BNET_LAST_ONLINE_TIME, _G.FriendsFrame_GetLastOnline(lastOnline))
+                end
+                button.status:SetTexture(icons.Status[status].Default)
+            end
+
+        end
+        if nameText then button.name:SetText(nameText) end
+        if infoText then button.info:SetText(infoText) end
+
+        button.background:Hide()
+
+        CreateTexture(button, 'background', 'BACKGROUND')
+        SetGradientColor(button.efl.background, StatusColor[status].Inside, StatusColor[status].Outside)
+
+        button.highlight:SetVertexColor(0, 0, 0, 0)
+
+        CreateTexture(button, 'highlight', 'HIGHLIGHT')
+        SetGradientColor(button.efl.highlight, StatusColor[status].Inside, StatusColor[status].Outside)
+
+        if button.Favorite and button.Favorite:IsShown() then
+            button.Favorite:ClearAllPoints()
+            button.Favorite:SetPoint("TOPLEFT", button.name, "TOPLEFT", button.name:GetStringWidth(), 0);
+        end
+
     end)
 
     --View Friends BN Frame
