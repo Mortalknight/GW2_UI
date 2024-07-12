@@ -1336,8 +1336,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
     elseif event == "LEARNED_SPELL_IN_TAB" and GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL and not self.ignoreNewSpells then
         local spellID = ...
         if ignoreDragonRidingSpells[spellID] then return end
-        local name, _, icon = GetSpellInfo(spellID)
-        toastQueue[#toastQueue + 1] = {name = name, spellID = spellID, icon = icon, event = event}
+        local spellInfo = C_Spell.GetSpellInfo(spellID)
+        toastQueue[#toastQueue + 1] = {name = spellInfo.name, spellID = spellID, icon = spellInfo.iconID, event = event}
         C_Timer.After(1.5, function()
             for _, v in pairs(toastQueue) do
                 if v ~= nil then
@@ -1347,7 +1347,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             wipe(toastQueue)
             PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND), "Master")
         end)
-        -- /run GW2_ADDON.AlertSystem:AddAlert(GetSpellInfo(48181), nil, LEVEL_UP_ABILITY, false, select(3, GetSpellInfo(48181)), false, 48181)
+        -- /run GW2_ADDON.AlertSystem:AddAlert(C_Spell.GetSpellInfo(48181), nil, LEVEL_UP_ABILITY, false, select(3, C_Spell.GetSpellInfo(48181)), false, 48181)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" and GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL then
         C_Timer.After(0.5, function()
             for k, v in pairs(toastQueue) do
@@ -1472,26 +1472,26 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
         if subEvent == "SPELL_CAST_SUCCESS" then
             if GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE and spellID == 190336 then -- Refreshment Table
-                local name, _, icon = GetSpellInfo(190336)
-                -- /run GW.AlertSystem:AddAlert(format("%s created a table of Conjured Refreshments.", "Hansi"), nil, GetSpellInfo(190336), false, select(3, GetSpellInfo(190336)), false)
-                GW.AlertSystem:AddAlert(format(GW.L["%s created a table of Conjured Refreshments."], srcName), nil, name, false, icon, false)
+                local spellInfo = C_Spell.GetSpellInfo(190336)
+                -- /run GW.AlertSystem:AddAlert(format("%s created a table of Conjured Refreshments.", "Hansi"), nil, C_Spell.GetSpellInfo(190336), false, select(3, C_Spell.GetSpellInfo(190336)), false)
+                GW.AlertSystem:AddAlert(format(GW.L["%s created a table of Conjured Refreshments."], srcName), nil, spellInfo.name, false, spellInfo.iconID, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND), "Master")
             end
         elseif subEvent == "SPELL_CREATE" then
             if GW.settings.ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING and spellID == 698 then -- Ritual of Summoning
-                local name, _, icon = GetSpellInfo(698)
-                -- /run GW.AlertSystem:AddAlert(format("%s is performing a Ritual of Summoning.", "Hansi"), nil, GetSpellInfo(698), false, select(3, GetSpellInfo(698)), false)
-                GW.AlertSystem:AddAlert(format(GW.L["%s is performing a Ritual of Summoning."], srcName), nil, name, false, icon, false)
+                local spellInfo = C_Spell.GetSpellInfo(698)
+                -- /run GW.AlertSystem:AddAlert(format("%s is performing a Ritual of Summoning.", "Hansi"), nil, C_Spell.GetSpellInfo(698), false, select(3, C_Spell.GetSpellInfo(698)), false)
+                GW.AlertSystem:AddAlert(format(GW.L["%s is performing a Ritual of Summoning."], srcName), nil, spellInfo.name, false, spellInfo.iconID, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND), "Master")
             elseif GW.settings.ALERTFRAME_NOTIFICATION_SPOULWELL and spellID == 29893 then -- Soul Well
-                local name, _, icon = GetSpellInfo(29893)
-                -- /run GW.AlertSystem:AddAlert(format("%s created a Soulwell.", "Hansi"), nil, GetSpellInfo(29893), false, select(3, GetSpellInfo(29893)), false)
-                GW.AlertSystem:AddAlert(format(GW.L["%s created a Soulwell."], srcName), nil, name, false, icon, false)
+                local spellInfo = C_Spell.GetSpellInfo(29893)
+                -- /run GW.AlertSystem:AddAlert(format("%s created a Soulwell.", "Hansi"), nil, C_Spell.GetSpellInfo(29893), false, select(3, C_Spell.GetSpellInfo(29893)), false)
+                GW.AlertSystem:AddAlert(format(GW.L["%s created a Soulwell."], srcName), nil, spellInfo.name, false, spellInfo.iconID, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND), "Master")
             elseif GW.settings.ALERTFRAME_NOTIFICATION_MAGE_PORTAL and GW.MagePortals[spellID] then
-                local name, _, icon = GetSpellInfo(spellID)
-                -- /run GW.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", GetSpellInfo(224871):gsub("^.+:%s+", "")), nil, GetSpellInfo(224871), false, select(3, GetSpellInfo(224871)), false)
-                GW.AlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, name:gsub("^.+:%s+", "")), nil, name, false, icon, false)
+                local spellInfo = C_Spell.GetSpellInfo(spellID)
+                -- /run GW.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", C_Spell.GetSpellInfo(224871):gsub("^.+:%s+", "")), nil, C_Spell.GetSpellInfo(224871), false, select(3, C_Spell.GetSpellInfo(224871)), false)
+                GW.AlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, spellInfo.name:gsub("^.+:%s+", "")), nil, spellInfo.name, false, spellInfo.iconID, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND), "Master")
             end
         end

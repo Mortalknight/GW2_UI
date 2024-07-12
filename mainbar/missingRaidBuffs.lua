@@ -1,7 +1,7 @@
 local _, GW = ...
 local L = GW.L
 
-local LibCustomGlow = GW.Libs.CustomGlows
+--local LibCustomGlow = GW.Libs.CustomGlows
 local ALPHA = 0.3
 local classColor
 
@@ -97,15 +97,17 @@ local reminderBuffs = {
 }
 
 local function GetBuffInfos()
-    local name, textureId
+    local spellInfo
     for k, v in pairs(reminderBuffs) do
         buffInfos[k] = {}
         if type(v) == "table" then
             for sk, id in pairs(v) do
-                name, _, textureId = GetSpellInfo(id)
-                buffInfos[k][sk] = {name = name, texId = textureId, spellId = id, hasBuff = false}
-                if k == "Weapon" then
-                    buffInfos[k][sk].texId = GetInventoryItemTexture("player", 16)
+                spellInfo = C_Spell.GetSpellInfo(id)
+                if spellInfo then
+                    buffInfos[k][sk] = {name = spellInfo.name, texId = spellInfo.iconID, spellId = id, hasBuff = false}
+                    if k == "Weapon" then
+                        buffInfos[k][sk].texId = GetInventoryItemTexture("player", 16)
+                    end
                 end
             end
         end
@@ -171,9 +173,9 @@ local function setButtonStyle(button, haveBuff)
         button.icon:SetDesaturated(GW.settings.MISSING_RAID_BUFF_INVERT and GW.settings.MISSING_RAID_BUFF_grayed_out or false)
         button:SetAlpha(not GW.settings.MISSING_RAID_BUFF_INVERT and 1 or GW.settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1)
         if GW.settings.MISSING_RAID_BUFF_animated then
-            LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
+            --LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
         else
-            LibCustomGlow.PixelGlow_Stop(button)
+            --LibCustomGlow.PixelGlow_Stop(button)
         end
     else
         if GW.settings.MISSING_RAID_BUFF_INVERT then
@@ -183,7 +185,7 @@ local function setButtonStyle(button, haveBuff)
         end
 
         button:SetAlpha(GW.settings.MISSING_RAID_BUFF_INVERT and 1 or GW.settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1)
-        LibCustomGlow.PixelGlow_Stop(button)
+        --LibCustomGlow.PixelGlow_Stop(button)
     end
 end
 
@@ -218,22 +220,6 @@ local function OnAuraChange(self)
         self.foodButton.icon:SetTexture(buffInfos.Food[1].texId)
     end
     setButtonStyle(self.foodButton, foundBuff)
-
-    --Da Runes
-    --[[ -- gone with DF
-    foundBuff = false
-    for _, darunebuff in pairs(buffInfos.DefiledAugmentRune) do
-        if darunebuff.hasBuff then
-            self.daRuneButton.icon:SetTexture(darunebuff.texId)
-            foundBuff = true
-            break
-        end
-    end
-    if not foundBuff then
-        self.daRuneButton.icon:SetTexture(buffInfos.DefiledAugmentRune[1].texId)
-    end
-    setButtonStyle(self.daRuneButton, foundBuff)
-    ]]
 
     -- Int
     foundBuff = false
@@ -300,7 +286,7 @@ local function OnAuraChange(self)
             break
         end
     end
-    if not foundBuff then
+    if not foundBuff and buffInfos.Weapon and buffInfos.Weapon[1] then
         self.weaponButton.icon:SetTexture(buffInfos.Weapon[1].texId)
     end
     setButtonStyle(self.weaponButton, foundBuff)
@@ -370,8 +356,8 @@ local function UpdateMissingRaidBuffCustomSpell()
 
 	for stringValue in gmatch(keywords, "[^,]+") do
 		if stringValue ~= "" then
-            local name, _, textureId = GetSpellInfo(tonumber(stringValue))
-            buffInfos.Custom[1] = {name = name, texId = textureId, spellId = tonumber(stringValue), hasBuff = false}
+            local spellInfo = C_Spell.GetSpellInfo(tonumber(stringValue))
+            buffInfos.Custom[1] = {name = spellInfo.name, texId = spellInfo.iconID, spellId = tonumber(stringValue), hasBuff = false}
             break
 		end
 	end

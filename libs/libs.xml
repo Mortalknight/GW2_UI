@@ -13,7 +13,7 @@
     <Script file="AceLocale-3.0\AceLocale-3.0.lua"/>
     <Script file="LibDeflate\LibDeflate.lua"/>
     <Script file="LibBase64-1.0\LibBase64-1.0.lua"/>
-    <Script file="LibCustomGlow\LibCustomGlow-1.0.lua"/>
+    <!--<Script file="LibCustomGlow\LibCustomGlow-1.0.lua"/>-->
     <Script file="LibChatAnims\LibChatAnims.lua"/>
     <Script file="LibEditMode\LibEditModeOverride.lua"/>
     <Script file="LibDispel\LibDispel.lua"/>

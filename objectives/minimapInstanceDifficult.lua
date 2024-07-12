@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local difficulty = MinimapCluster.InstanceDifficulty
-local instance = difficulty.Instance
+local instance = difficulty.Default
 local guild = difficulty.Guild
 local challenge = difficulty.ChallengeMode
 

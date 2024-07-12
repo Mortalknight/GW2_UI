@@ -752,7 +752,7 @@ local function ApplyPvPUISkin()
             end
         end
         if rewardTexture then
-            local r, g, b = GetItemQualityColor(rewardQuaility)
+            local r, g, b = C_Item.GetItemQualityColor(rewardQuaility)
             rewardFrame.Icon:SetTexture(rewardTexture)
             if not rewardFrame.Icon.backdrop then
                 rewardFrame.Icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)

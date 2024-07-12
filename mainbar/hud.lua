@@ -176,10 +176,10 @@ local function xpbar_OnEvent(self, event)
 
     gw_reputation_vals = nil
 
-    local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
-    if factionID and factionID > 0 then
-        local _, _, standingId, bottomValue, topValue, earnedValue = GetFactionInfoByID(factionID)
-        local friendReputationInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+    local watchedFactionData = C_Reputation.GetWatchedFactionData()
+    if watchedFactionData and watchedFactionData.factionID and watchedFactionData.factionID > 0 then
+        --local _, _, standingId, bottomValue, topValue, earnedValue = GetFactionInfoByID(watchedFactionData.factionID)
+        local friendReputationInfo = C_GossipInfo.GetFriendshipReputation(watchedFactionData.factionID)
         local friendshipID = friendReputationInfo.friendshipFactionID
 
         local isParagon = false
@@ -189,13 +189,13 @@ local function xpbar_OnEvent(self, event)
 
         local MajorCurrentLevel = 0
         local MajorNextLevel = 0
-        if C_Reputation.IsFactionParagon(factionID) then
-            local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(factionID)
+        if C_Reputation.IsFactionParagon(watchedFactionData.factionID) then
+            local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(watchedFactionData.factionID)
 
             currentValue = currentValue % maxValueParagon;
             valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
 
-            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue(currentValue - 0) .. " / " .. CommaValue(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+            gw_reputation_vals = watchedFactionData.name .. " " .. REPUTATION .. " " .. CommaValue(currentValue - 0) .. " / " .. CommaValue(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
             isParagon = true
@@ -211,44 +211,44 @@ local function xpbar_OnEvent(self, event)
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
             self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
             isFriend = true
-        elseif C_Reputation.IsMajorFaction(factionID) then
-            local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
+        elseif C_Reputation.IsMajorFaction(watchedFactionData.factionID) then
+            local majorFactionData = C_MajorFactions.GetMajorFactionData(watchedFactionData.factionID)
 
             MajorCurrentLevel = majorFactionData.renownLevel
-            MajorNextLevel = C_MajorFactions.HasMaximumRenown(factionID) and MajorCurrentLevel or MajorCurrentLevel + 1
+            MajorNextLevel = C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) and MajorCurrentLevel or MajorCurrentLevel + 1
 
-            if C_MajorFactions.HasMaximumRenown(factionID) then
+            if C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) then
                 valPrecRepu = 1
             else
                 valPrecRepu = ((majorFactionData.renownReputationEarned or 0)) / majorFactionData.renownLevelThreshold
             end
-            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((majorFactionData.renownReputationEarned or 0)) .. " / " .. CommaValue(majorFactionData.renownLevelThreshold) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+            gw_reputation_vals = watchedFactionData.name .. " " .. REPUTATION .. " " .. CommaValue((majorFactionData.renownReputationEarned or 0)) .. " / " .. CommaValue(majorFactionData.renownLevelThreshold) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
             self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
             isMajor = true
         else
-            local currentRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 1))), GW.mysex)
-            local nextRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 1) + 1)), GW.mysex)
+            local currentRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (watchedFactionData.reaction or 1))), GW.mysex)
+            local nextRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (watchedFactionData.reaction or 1) + 1)), GW.mysex)
 
-            earnedValue = earnedValue or 0 --fallback
-            topValue = topValue or 0 --fallback
-            bottomValue = bottomValue or 0 --fallback
-            if currentRank == nextRank and earnedValue - bottomValue == 0 then
+            watchedFactionData.currentStanding = watchedFactionData.currentStanding or 0 --fallback
+            watchedFactionData.nextReactionThreshold = watchedFactionData.nextReactionThreshold or 0 --fallback
+            watchedFactionData.currentReactionThreshold = watchedFactionData.currentReactionThreshold or 0 --fallback
+            if currentRank == nextRank and watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold == 0 then
                 valPrecRepu = 1
-                gw_reputation_vals = name .. " " .. REPUTATION .. " 21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                gw_reputation_vals = watchedFactionData.name .. " " .. REPUTATION .. " 21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             else
-                valPrecRepu = (earnedValue - bottomValue) / (topValue - bottomValue)
-                gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((earnedValue - bottomValue)) .. " / " .. CommaValue((topValue - bottomValue)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                valPrecRepu = (watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold) / (watchedFactionData.nextReactionThreshold - watchedFactionData.currentReactionThreshold)
+                gw_reputation_vals = watchedFactionData.name .. " " .. REPUTATION .. " " .. CommaValue((watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold)) .. " / " .. CommaValue((watchedFactionData.nextReactionThreshold - watchedFactionData.currentReactionThreshold)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
-            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[watchedFactionData.reaction].r, FACTION_BAR_COLORS[watchedFactionData.reaction].g, FACTION_BAR_COLORS[watchedFactionData.reaction].b)
+            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[watchedFactionData.reaction].r, FACTION_BAR_COLORS[watchedFactionData.reaction].g, FACTION_BAR_COLORS[watchedFactionData.reaction].b)
             isNormal = true
         end
 
-        local nextId = standingId and standingId + 1 or 1
+        local nextId = watchedFactionData.reaction and watchedFactionData.reaction + 1 or 1 --standingId
         if not lockLevelTextUnderMaxLevel then
-            level = isMajor and MajorCurrentLevel or isFriend and friendReputationInfo.reaction or isParagon and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1)) or isNormal and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1))
+            level = isMajor and MajorCurrentLevel or isFriend and friendReputationInfo.reaction or isParagon and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1)) or isNormal and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1))
             Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isMajor and MajorNextLevel or isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
         end
 

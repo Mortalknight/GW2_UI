@@ -173,7 +173,7 @@ local function hook_EJSuggestFrame_UpdateRewards(sugg)
         if rewardData.itemID then
             local quality = select(3, GetItemInfo(rewardData.itemID))
             if quality and quality > 1 then
-                r, g, b = GetItemQualityColor(quality)
+                r, g, b = C_Item.GetItemQualityColor(quality)
             end
         end
         sugg.reward.icon.backdrop:SetBackdropBorderColor(r, g, b)

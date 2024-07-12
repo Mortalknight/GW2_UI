@@ -22,7 +22,7 @@ windowsList[1] = {
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "paperdoll")
     ]=]
 }
-
+--[[
 windowsList[2] = {
     ["OnLoad"] = "LoadSpellbook",
     ["FrameName"] = "GwSpellbookDetailsFrame",
@@ -41,6 +41,7 @@ windowsList[2] = {
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "spellbook")
     ]=]
 }
+    ]]
 
 windowsList[3] = {
     ["OnLoad"] = "LoadProfessions",

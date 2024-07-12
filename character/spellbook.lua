@@ -54,9 +54,9 @@ local function spellButton_OnEnter(self)
         if self.unlockLevel then
             GameTooltip:AddLine(" ")
             GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(self.unlockLevel), 1, 1, 1)
-        elseif GetSpellLevelLearned(self.spellId) > 0 then
+        elseif C_Spell.GetSpellLevelLearned(self.spellId) > 0 then
             GameTooltip:AddLine(" ")
-            GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(GetSpellLevelLearned(self.spellId)), 1, 1, 1)
+            GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(C_Spell.GetSpellLevelLearned(self.spellId)), 1, 1, 1)
         end
     end
     GameTooltip:Show()
@@ -149,7 +149,7 @@ local function TalProfButton_OnModifiedClick(self)
     local book = self.booktype
     if IsModifiedClick("CHATLINK") then
         if MacroFrameText and MacroFrameText:HasFocus() then
-            local spell, subSpell = GetSpellBookItemName(slot, book)
+            local spell, subSpell = C_SpellBook.GetSpellBookItemName(slot, book)
             if spell and not IsPassiveSpell(slot, book) then
                 if subSpell and strlen(subSpell) > 0 then
                     ChatEdit_InsertLink(spell .. "(" .. subSpell .. ")")
@@ -323,26 +323,28 @@ local function CreateActiveSpellButton(activeGroup, activeIndex, fmSpellbook, sp
 end
 
 local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
-    local _, _, offset, numSpells = GetSpellTabInfo(spellBookTabs)
+    local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(spellBookTabs)
     local btn
+    local isPetTab = false
+    local spellBank = Enum.SpellBookSpellBank.Player
 
-    local BOOKTYPE = BOOKTYPE_SPELL
-    if spellBookTabs == 3 and (numSpells < 1 or GetSpecialization() == 5) then
+    if spellBookTabs == 3 and (skillLineInfo.numSpellBookItems < 1 or GetSpecialization() == 5) then
         fmTab.groups["active"]:Hide()
         fmTab.groups["passive"]:Hide()
         fmTab.groups["lock"]:Show()
-    elseif spellBookTabs == 3 and (numSpells >= 1 or GetSpecialization() < 5) then
+    elseif spellBookTabs == 3 and (skillLineInfo.numSpellBookItems >= 1 or GetSpecialization() < 5) then
         fmTab.groups["active"]:Show()
         fmTab.groups["passive"]:Show()
         fmTab.groups["lock"]:Hide()
     elseif spellBookTabs == 5 then
-        BOOKTYPE = BOOKTYPE_PET
-        numSpells = HasPetSpells()
-        offset = 0
-        if numSpells == nil then
-            numSpells = 0
+        isPetTab = true
+        spellBank = Enum.SpellBookSpellBank.Pet
+        skillLineInfo.numSpellBookItems = HasPetSpells()
+        skillLineInfo.itemIndexOffset = 0
+        if skillLineInfo.numSpellBookItems == nil then
+            skillLineInfo.numSpellBookItems = 0
         end
-        if numSpells == 0 then
+        if skillLineInfo.numSpellBookItems == 0 then
             fmTab.groups["active"]:Hide()
             fmTab.groups["passive"]:Hide()
             fmTab.groups["lock"]:Show()
@@ -364,7 +366,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
 
     -- first add talent passives to not have spaces between
     local talentPassiveSkills = {}
-    if BOOKTYPE == BOOKTYPE_SPELL then
+    if not isPetTab then
         local configID = C_ClassTalents.GetActiveConfigID()
         if configID then
             local configInfo = C_Traits.GetConfigInfo(configID)
@@ -383,13 +385,13 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
                                 if entryInfo and entryInfo.definitionID then
                                     local definitionInfo = C_Traits.GetDefinitionInfo(entryInfo.definitionID)
                                     if definitionInfo.spellID and IsPlayerSpell(definitionInfo.spellID) and IsPassiveSpell(definitionInfo.spellID) then
-                                        local name, _, icon = GetSpellInfo(definitionInfo.spellID)
+                                        local spellInfo = C_Spell.GetSpellInfo(definitionInfo.spellID)
                                         local skillType = "TALENT"
                                         btn = passiveGroup.pool:Acquire()
                                         local row2 = math.floor((passiveIndex - 1) / 5)
                                         local col = (passiveIndex - 1) % 5
                                         btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row2))
-                                        setPassiveButton(btn, definitionInfo.spellID, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)
+                                        setPassiveButton(btn, definitionInfo.spellID, skillType, spellInfo.iconID, nil, spellBank, spellBookTabs, spellInfo.name)
                                         passiveIndex = passiveIndex + 1
                                         talentPassiveSkills[definitionInfo.spellID] = true
                                     end
@@ -402,25 +404,23 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
         end
     end
 
-    for i = 1, numSpells do
-        local spellIndex = i + offset
-        local name, _ = GetSpellBookItemName(spellIndex, BOOKTYPE)
+    for i = 1, skillLineInfo.numSpellBookItems do
+        local spellIndex = i + skillLineInfo.itemIndexOffset
+        local name, _ = C_SpellBook.GetSpellBookItemName(spellIndex, spellBank)
         if name == nil then
             name = ""
         end
 
-        local skillType, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
-        if BOOKTYPE == BOOKTYPE_PET then
-            _, _, _, _, _, _, spellId = GetSpellInfo(spellIndex, BOOKTYPE)
-        end
-        local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
+        local spellInfo
+        local spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(spellIndex, spellBank)
+        local icon = C_SpellBook.GetSpellBookItemTexture(spellIndex, Enum.SpellBookSpellBank.Player)
 
-        if IsPassiveSpell(spellIndex, BOOKTYPE) then
-            if not talentPassiveSkills[spellId] then
-                passiveIndex = CreatePassiveSpellButton(passiveGroup, passiveIndex, fmSpellbook, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+        if spellBookItemInfo.isPassive then
+            if not talentPassiveSkills[spellInfo.spellID] then
+                passiveIndex = CreatePassiveSpellButton(passiveGroup, passiveIndex, fmSpellbook, spellInfo.spellID, spellBookItemInfo.itemType, icon, spellIndex, spellBank, spellBookTabs, name)
             end
         else
-            activeIndex = CreateActiveSpellButton(activeGroup, activeIndex, fmSpellbook, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+            activeIndex = CreateActiveSpellButton(activeGroup, activeIndex, fmSpellbook, spellInfo.spellID, spellBookItemInfo.itemType, icon, spellIndex, spellBank, spellBookTabs, name)
         end
     end
     if spellBookTabs == 5 and GetSpecialization(false, true) then
@@ -429,14 +429,14 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
         for i = 1, #bonuses, 2 do
             if not IsSpellKnownOrOverridesKnown(bonuses[i], true) then
                 local isPassive = IsPassiveSpell(bonuses[i])
-                local name, _, icon = GetSpellInfo(bonuses[i])
+                local name, _, icon = C_Spell.GetSpellInfo(bonuses[i])
 
                 if isPassive then
                     if not talentPassiveSkills[bonuses[i]] then
-                        passiveIndex = CreatePassiveSpellButton(passiveGroup, passiveIndex, fmSpellbook, bonuses[i], "FUTURESPELL", icon, nil, BOOKTYPE, spellBookTabs, name)
+                        passiveIndex = CreatePassiveSpellButton(passiveGroup, passiveIndex, fmSpellbook, bonuses[i], "FUTURESPELL", icon, nil, spellBank, spellBookTabs, name)
                     end
                 else
-                    activeIndex = CreateActiveSpellButton(activeGroup, activeIndex, fmSpellbook, bonuses[i], "FUTURESPELL", icon, nil, BOOKTYPE, spellBookTabs, name)
+                    activeIndex = CreateActiveSpellButton(activeGroup, activeIndex, fmSpellbook, bonuses[i], "FUTURESPELL", icon, nil, spellBank, spellBookTabs, name)
                 end
             end
         end
@@ -582,10 +582,10 @@ GW.AddForProfiling("talents", "passivePool_Resetter", passivePool_Resetter)
 
 local function updateButton(self)
     if self.spellbookIndex and self.booktype then
-        local start, duration, _ = GetSpellCooldown(self.spellbookIndex, self.booktype)
+        local spellCooldownInfo = C_Spell.GetSpellCooldown(self.spellbookIndex, self.booktype)
 
-        if start ~= nil and duration ~= nil then
-            self.cooldown:SetCooldown(start, duration)
+        if spellCooldownInfo.startTime ~= nil and spellCooldownInfo.duration ~= nil then
+            self.cooldown:SetCooldown(spellCooldownInfo.startTime, spellCooldownInfo.duration)
         end
 
         local _, autostate = GetSpellAutocast(self.spellbookIndex, self.booktype)

@@ -10,7 +10,7 @@ local function UpdateSelection(frame)
     end
 end
 
-local r, g, b = GetItemQualityColor(Enum.ItemQuality.Epic or 4)
+local r, g, b = C_Item.GetItemQualityColor(Enum.ItemQuality.Epic or 4)
 local function SkinRewardIcon(itemFrame)
     if not itemFrame.IsSkinned then
         itemFrame:GwCreateBackdrop("Transparent")

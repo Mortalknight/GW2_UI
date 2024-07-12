@@ -637,7 +637,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
     local isPlayerUnit = UnitIsPlayer(unit)
 
     if not unit then
-        local GMF = GetMouseFocus()
+        local GMF = GetMouseFoci()
         local focusUnit = GMF and GMF.GetAttribute and GMF:GetAttribute("unit")
         if focusUnit then unit = focusUnit end
         if not unit or not UnitExists(unit) then
@@ -698,7 +698,7 @@ local function GameTooltipStatusBar_OnValueChanged(self, value)
 
     local _, unit = self:GetParent():GetUnit()
     if not unit then
-        local frame = GetMouseFocus()
+        local frame = GetMouseFoci()
         if frame and frame.GetAttribute then
             unit = frame:GetAttribute("unit")
         end

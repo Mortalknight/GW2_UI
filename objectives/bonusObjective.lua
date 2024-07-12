@@ -420,7 +420,7 @@ local function LoadBonusFrame()
         TRACKER_TYPE_COLOR.EVENT.b
     )
 
-    hooksecurefunc("BonusObjectiveTracker_UntrackWorldQuest", function(questID)
+    hooksecurefunc(QuestUtil, "UntrackWorldQuest", function(questID)
         savedQuests[questID] = nil
         if trackedEventIDs[questID] ~= nil then
             trackedEventIDs[questID].tracked = false

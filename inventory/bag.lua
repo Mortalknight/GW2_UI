@@ -17,7 +17,7 @@ local function setBagHeaders()
         if itemID then
             local r, g, b = 1, 1, 1
             local itemName, _, itemRarity = GetItemInfo(itemID)
-            if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
+            if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
 
             _G["GwBagFrameGwBagHeader" .. i].nameString:SetText(strlen(GW.settings["BAG_HEADER_NAME" .. i]) > 0 and GW.settings["BAG_HEADER_NAME" .. i] or itemName and itemName or UNKNOWN)
             _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(r, g, b, 1)

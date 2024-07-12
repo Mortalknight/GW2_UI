@@ -91,7 +91,7 @@ local function StyleStanceBarButtons()
         else
             local texture, isActive, isCastable, spellID = GetShapeshiftFormInfo(i)
 
-            button.icon:SetTexture((not isActive and spellID and GetSpellTexture(spellID)) or WispSplode)
+            button.icon:SetTexture((not isActive and spellID and C_Spell.GetSpellTexture(spellID)) or WispSplode)
             button.icon:GwSetInside()
             button:SetSize(30, 30)
             button.cooldown:SetAlpha(texture and 1 or 0)

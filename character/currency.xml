@@ -57,12 +57,32 @@
                         </FontString>
                         <FontString parentKey="amount" text="Amount Could not be loaded" justifyV="MIDDLE" justifyH="RIGHT">
                             <Anchors>
-                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-5" y="-5" />
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-25" y="-5" />
                             </Anchors>
                             <Size x="200" y="24" />
                         </FontString>
                     </Layer>
                 </Layers>
+                <Frames>
+                    <Button parentKey="accountWideIcon" hidden="false">
+                        <Size x="23" y="22"/>
+						<Anchors>
+							<Anchor point="RIGHT" x="2"/>
+						</Anchors>
+						<Layers>
+							<Layer level="BORDER">
+								<Texture parentKey="Icon" atlas="warbands-icon" useAtlasSize="true" scale="0.9">
+									<Anchors>
+										<Anchor point="CENTER"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+                        <Frames>
+                            <Frame parentKey="eventFrame"/>
+                        </Frames>
+                    </Button>
+                </Frames>
             </Button>
         </Frames>
     </Button>

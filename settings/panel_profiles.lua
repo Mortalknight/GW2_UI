@@ -544,26 +544,26 @@ local function collectAllIcons()
     -- We need to avoid adding duplicate spellIDs from the spellbook tabs for your other specs.
     local activeIcons = {}
 
-    for i = 1, GetNumSpellTabs() do
-        local _, _, offset, numSpells, _ = GetSpellTabInfo(i)
-        offset = offset + 1
-        local tabEnd = offset + numSpells
-        for j = offset, tabEnd - 1 do
+    for i = 1, C_SpellBook.GetNumSpellBookSkillLines() do
+        local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(i)
+        skillLineInfo.itemIndexOffset = skillLineInfo.itemIndexOffset + 1
+        local tabEnd = skillLineInfo.itemIndexOffset + skillLineInfo.numSpellBookItems
+        for j = skillLineInfo.itemIndexOffset, tabEnd - 1 do
             --to get spell info by slot, you have to pass in a pet argument
-            local spellType, ID = GetSpellBookItemInfo(j, "player")
-            if spellType ~= "FUTURESPELL" then
-                local fileID = GetSpellBookItemTexture(j, "player")
+            local spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(j, Enum.SpellBookSpellBank.Player)
+            if spellBookItemInfo.itemType ~= "FUTURESPELL" then
+                local fileID = C_SpellBook.GetSpellBookItemTexture(j, Enum.SpellBookSpellBank.Player)
                 if fileID then
                     activeIcons[fileID] = true
                 end
             end
-            if spellType == "FLYOUT" then
-                local _, _, numSlots, isKnown = GetFlyoutInfo(ID)
+            if spellBookItemInfo.itemType == "FLYOUT" then
+                local _, _, numSlots, isKnown = GetFlyoutInfo(spellBookItemInfo.actionID)
                 if (isKnown and numSlots > 0) then
                     for k = 1, numSlots do
-                        local spellID, _, isKnownSlot = GetFlyoutSlotInfo(ID, k)
+                        local spellID, _, isKnownSlot = GetFlyoutSlotInfo(spellBookItemInfo.actionID, k)
                         if isKnownSlot and spellID then
-                            local fileID = GetSpellTexture(spellID)
+                            local fileID = C_Spell.GetSpellTexture(spellID)
                             if fileID then
                                 activeIcons[fileID] = true
                             end

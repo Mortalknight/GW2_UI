@@ -25,7 +25,7 @@ local function HideTotem(self)
 end
 
 local function gw_totem_bar_OnEvent(self)
-    for totem in next, TotemFrame.totemPool.activeObjects do
+    for totem in TotemFrame.totemPool:EnumerateActive() do
         local i = priority[totem.layoutIndex]
         UpdateButton(self[i], totem, true)
 

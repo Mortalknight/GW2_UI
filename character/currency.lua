@@ -67,6 +67,65 @@ local function currency_OnEnter(self)
 end
 GW.AddForProfiling("currency", "currency_OnEnter", currency_OnEnter)
 
+local DISABLED_ERROR_MESSAGE = {
+	[Enum.AccountCurrencyTransferResult.MaxQuantity] = CURRENCY_TRANSFER_DISABLED_MAX_QUANTITY,
+	[Enum.AccountCurrencyTransferResult.NoValidSourceCharacter] = CURRENCY_TRANSFER_DISABLED_NO_VALID_SOURCES,
+	[Enum.AccountCurrencyTransferResult.CannotUseCurrency] = CURRENCY_TRANSFER_DISABLED_UNMET_REQUIREMENTS,
+};
+
+local CURRENCY_TRANSFER_TOGGLE_BUTTON_EVENTS = {
+	"CURRENCY_DISPLAY_UPDATE",
+	"CURRENCY_TRANSFER_FAILED",
+	"ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED",
+};
+
+local function GetDisabledErrorMessage(dataReady, failureReason)
+    if not dataReady then
+		return RETRIEVING_DATA
+	end
+
+	return DISABLED_ERROR_MESSAGE[failureReason]
+end
+
+local function accountWideIconOnEvent(self, event)
+    if event == "CURRENCY_DISPLAY_UPDATE" or event == "ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED" or event == "CURRENCY_TRANSFER_FAILED" then
+		if not self:GetParent():GetParent().CurrencyID then
+            self:GetParent().isEnabled = false
+            return
+        end
+
+        local dataReady = C_CurrencyInfo.IsAccountCharacterCurrencyDataReady()
+        local canTransfer, failureReason = C_CurrencyInfo.CanTransferCurrency(self:GetParent():GetParent().CurrencyID)
+        self:GetParent().isEnabled = dataReady and canTransfer
+        self:GetParent().disabledTooltip = GetDisabledErrorMessage(dataReady, failureReason) or nil
+
+        local isValidCurrency = failureReason ~= Enum.AccountCurrencyTransferResult.InvalidCurrency
+        local hasDisabledTooltip = self:GetParent().disabledTooltip ~= nil
+        self:GetParent():SetShown(self:GetParent().isEnabled or (isValidCurrency and hasDisabledTooltip))
+	end
+end
+
+local function accountWideIconOnEnter(self)
+    accountWideIconOnEvent(self.eventFrame, "CURRENCY_DISPLAY_UPDATE")
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+	local tooltipLine = self:GetParent().isAccountTransferable and ACCOUNT_TRANSFERRABLE_CURRENCY or ACCOUNT_LEVEL_CURRENCY
+	GameTooltip_AddNormalLine(GameTooltip, tooltipLine)
+
+    if not self.isEnabled and self.disabledTooltip then
+        GameTooltip_AddErrorLine(GameTooltip, self.disabledTooltip)
+    end
+
+	GameTooltip:Show()
+end
+
+local function accountWideIconOnClick(self)
+    if not self:GetParent().CurrencyID or not self.isEnabled then
+		return
+	end
+
+    CurrencyTransferMenu:TriggerEvent(CurrencyTransferMenuMixin.Event.CurrencyTransferRequested, self:GetParent().CurrencyID);
+end
+
 local function loadCurrency(curwin)
     local USED_CURRENCY_HEIGHT
     local zebra
@@ -83,6 +142,8 @@ local function loadCurrency(curwin)
             slot.item:Hide()
             slot.item.CurrencyID = nil
             slot.item.CurrencyIdx = nil
+            slot.item.isAccountWide = false
+            slot.item.isAccountTransferable = false
             slot.header:Hide()
         else
             local info = C_CurrencyInfo.GetCurrencyListInfo(idx)
@@ -130,6 +191,18 @@ local function loadCurrency(curwin)
                     slot.item.spaceString:SetFontObject("GameFontHighlight")
                 end
                 slot.item.icon:SetTexture(cinfo.iconFileID)
+                slot.item.isAccountTransferable = C_CurrencyInfo.IsAccountTransferableCurrency(curid)
+                slot.item.isAccountWide = C_CurrencyInfo.IsAccountWideCurrency(curid)
+
+                if  slot.item.isAccountWide then
+                    slot.item.accountWideIcon.Icon:SetAtlas("warbands-icon", TextureKitConstants.UseAtlasSize)
+                    slot.item.accountWideIcon.Icon:SetScale(0.9)
+                elseif  slot.item.isAccountTransferable then
+                    slot.item.accountWideIcon.Icon:SetAtlas("warbands-transferable-icon", TextureKitConstants.UseAtlasSize)
+                    slot.item.accountWideIcon.Icon:SetScale(0.9)
+                else
+                    slot.item.accountWideIcon.Icon:SetAtlas(nil)
+                end
 
                 -- set zebra color by idx or watch status
                 zebra = idx % 2
@@ -178,6 +251,17 @@ local function currencySetup(curwin)
             slot.item:HookScript("OnClick", currency_OnClick)
             slot.item:HookScript("OnEnter", currency_OnEnter)
             slot.item:HookScript("OnLeave", GameTooltip_Hide)
+            slot.item.accountWideIcon:SetScript("OnClick", accountWideIconOnClick)
+            slot.item.accountWideIcon:SetScript("OnEnter", accountWideIconOnEnter)
+            slot.item.accountWideIcon.eventFrame:SetScript("OnEvent", accountWideIconOnEvent)
+            slot.item.accountWideIcon:SetScript("OnLeave", GameTooltip_Hide)
+            slot.item.accountWideIcon:SetScript("OnShow", function(self)
+                FrameUtil.RegisterFrameForEvents(self.eventFrame, CURRENCY_TRANSFER_TOGGLE_BUTTON_EVENTS);
+                C_CurrencyInfo.RequestCurrencyDataForAccountCharacters()
+            end)
+            slot.item.accountWideIcon:SetScript("OnHide", function(self)
+                FrameUtil.UnregisterFrameForEvents(self.eventFrame, CURRENCY_TRANSFER_TOGGLE_BUTTON_EVENTS);
+            end)
             slot.item.ScriptsHooked = true
         end
         if not slot.header.ScriptsHooked then

@@ -96,7 +96,8 @@ local function LoadPlayerPanel(sWindow)
             local spellId = self:GetNumber()
             local name = ""
             if spellId > 0 and IsSpellKnown(spellId) then
-                name = GetSpellInfo(spellId)
+                local spellInfo = C_Spell.GetSpellInfo(spellId)
+                name = spellInfo.name
             end
             self:SetText(name)
             GW.private.PLAYER_TRACKED_DODGEBAR_SPELL = name

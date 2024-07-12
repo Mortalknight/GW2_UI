@@ -163,30 +163,33 @@ GW.AddForProfiling("dodgebar", "initBar", initBar)
 local function setupBar(self)
     -- get additional details about our dodge spell that often aren't available immediately on
     -- PLAYER_ENTERING_WORLD
-    if not self.spellId or not GetSpellInfo(self.spellId) then
+    if not self.spellId or not C_Spell.GetSpellInfo(self.spellId) then
         return
     end
 
-    local charges, maxCharges, start, duration = GetSpellCharges(self.spellId)
-    if charges == nil or maxCharges == nil or charges > maxCharges then
-        start, duration, _ = GetSpellCooldown(self.spellId)
-        if duration == 0 then
-            charges = 1
+    local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
+    local start, duration = spellChargeInfo.cooldownStarTime, spellChargeInfo.cooldownDuration
+    if spellChargeInfo.currentCharges == nil or spellChargeInfo.maxCharges == nil or spellChargeInfo.currentCharges > spellChargeInfo.maxCharges then
+        local spellCooldownInfo = C_Spell.GetSpellCooldown(self.spellId)
+        start = spellCooldownInfo.startTime
+        duration = spellCooldownInfo.duration
+        if spellCooldownInfo.duration == 0 then
+            spellChargeInfo.currentCharges = 1
         else
-            charges = 0
+            spellChargeInfo.currentCharges = 0
         end
-        maxCharges = 1
+        spellChargeInfo.maxCharges = 1
     end
-    self.gwMaxCharges = maxCharges or 0
+    self.gwMaxCharges = spellChargeInfo.maxCharges or 0
 
     -- sort out separators for multi charges
     local af = self.arcfill
-    if maxCharges == 2 then
+    if spellChargeInfo.maxCharges == 2 then
         af.sep50:Show()
     else
         af.sep50:Hide()
     end
-    if maxCharges == 3 then
+    if spellChargeInfo.maxCharges == 3 then
         af.sep33:Show()
         af.sep66:Show()
     else
@@ -197,7 +200,7 @@ local function setupBar(self)
     af.sep264:Hide()
     af.fillFractions:Hide()
 
-    updateAnim(self, start, duration, charges, maxCharges)
+    updateAnim(self, start, duration, spellChargeInfo.currentCharges, spellChargeInfo.maxCharges)
 end
 GW.setDodgebarSpell = setupBar
 GW.AddForProfiling("dodgebar", "setupBar", setupBar)
@@ -221,9 +224,9 @@ local function dodge_OnEvent(self, event, ...)
         if not GW.inWorld or not self.spellId then
             return
         end
-        local start, duration, _ = GetSpellCooldown(self.spellId)
-        if start ~= nil and start ~= 0 and duration ~= nil and duration ~= 0 then
-            updateAnim(self, start, duration, 0, 1)
+        local spellCooldownInfo = C_Spell.GetSpellCooldown(self.spellId)
+        if spellCooldownInfo.startTime ~= nil and spellCooldownInfo.startTime ~= 0 and spellCooldownInfo.duration ~= nil and spellCooldownInfo.duration ~= 0 then
+            updateAnim(self, spellCooldownInfo.startTime, spellCooldownInfo.duration, 0, 1)
         end
 
     elseif event == "SPELL_UPDATE_CHARGES" then
@@ -231,9 +234,9 @@ local function dodge_OnEvent(self, event, ...)
         if not GW.inWorld or not self.spellId then
             return
         end
-        local charges, maxCharges, start, duration = GetSpellCharges(self.spellId)
-        if start ~= nil and start ~= 0 and duration ~= nil and duration ~= 0 then
-            updateAnim(self, start, duration, charges, maxCharges)
+        local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
+        if spellChargeInfo.cooldownStartTime ~= nil and spellChargeInfo.cooldownStartTime ~= 0 and spellChargeInfo.cooldownDuration ~= nil and spellChargeInfo.cooldownDuration ~= 0 then
+            updateAnim(self, spellChargeInfo.cooldownStartTime, spellChargeInfo.cooldownDuration, spellChargeInfo.currentCharges, spellChargeInfo.maxCharges)
         end
 
     elseif event == "PLAYER_ENTERING_WORLD" then

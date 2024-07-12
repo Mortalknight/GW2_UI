@@ -361,7 +361,7 @@ function QuestViewMixin:showRewards(showObjective)
     local xp = GetRewardXP()
     local money = GetRewardMoney()
     local title = GetRewardTitle()
-    local currency = GetNumRewardCurrencies()
+    local currency = C_QuestInfoSystem.GetQuestRewardCurrencies(questID) or {};
     local _, _, skillPoints = GetRewardSkillPoints()
     local items = GetNumQuestRewards()
     local spells = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
@@ -377,7 +377,7 @@ function QuestViewMixin:showRewards(showObjective)
         UIFrameFadeIn(self.container.dialog.objectiveText, 0.1, 0, 1)
     end
 
-    if (xp > 0 or money > 0 or title or currency > 0 or skillPoints or items > 0 or #spells > 0 or choices > 0 or honor > 0) then
+    if (xp > 0 or money > 0 or title or #currency > 0 or skillPoints or items > 0 or #spells > 0 or choices > 0 or honor > 0) then
         local f = _G.QuestInfoRewardsFrame
         UIFrameFadeIn(f, 0.1, 0, 1)
         f:SetParent(self)

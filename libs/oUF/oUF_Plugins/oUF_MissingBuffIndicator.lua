@@ -37,7 +37,7 @@ end
 local function Update(self, event)
 	 -- missing buffs
      if not UnitIsDeadOrGhost(self.unit) and self.missingAuras then
-        local name, spellid, icon
+        local spellInfo
         local btnIndex, i, x, y = 1, 0, 0, 0
         -- do a reset
         for _, btn in pairs(self.MissingBuffFrame.createdButtons) do
@@ -55,9 +55,9 @@ local function Update(self, event)
         for mName, v in pairs(self.missingAuras) do
             if v then
                 if not chachedSpellInfo[mName] then
-                    name, _, icon, _, _, _, spellid = GetSpellInfo(mName)
-                    if name then
-                        chachedSpellInfo[name] = {spellId = spellid, iconId = icon}
+                    spellInfo = C_Spell.GetSpellInfo(mName)
+                    if spellInfo then
+                        chachedSpellInfo[spellInfo.name] = {spellId = spellInfo.spellID, iconId = spellInfo.iconID}
                     end
                 end
                 if chachedSpellInfo[mName] then

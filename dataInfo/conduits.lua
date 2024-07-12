@@ -31,8 +31,9 @@ local function LandingButton_OnEnter(self)
             if node.state == Enum.SoulbindNodeState.Selected then
                 if node.conduitID and node.conduitID > 0 and node.conduitRank and node.conduitType then
                     tinsert(conduits, {id = node.conduitID, rank = node.conduitRank, type = node.conduitType})
-                elseif node.icon and node.spellID and select(1, GetSpellInfo(node.spellID)) then
-                    tinsert(traits, {icon = node.icon, spellName = select(1, GetSpellInfo(node.spellID))})
+                elseif node.icon and node.spellID and C_Spell.GetSpellInfo(node.spellID) then
+                    local spellInfo = C_Spell.GetSpellInfo(node.spellID)
+                    tinsert(traits, {icon = node.icon, spellName = spellInfo.name})
                 end
             end
         end
@@ -41,12 +42,12 @@ local function LandingButton_OnEnter(self)
             GameTooltip:AddLine(" ")
             GameTooltip:AddLine(L["Conduits"], 1, 0.93, 0.73)
             for i = 1, #conduits do
-                local name, _, icon = GetSpellInfo(C_Soulbinds.GetConduitSpellID(conduits[i].id, conduits[i].rank))
+                local spellInfo = C_Spell.GetSpellInfo(C_Soulbinds.GetConduitSpellID(conduits[i].id, conduits[i].rank))
                 local conduitItemLevel = C_Soulbinds.GetConduitCollectionData(conduits[i].id).conduitItemLevel
                 local conduitQuality = C_Soulbinds.GetConduitQuality(conduits[i].id, conduits[i].rank)
                 local color = ITEM_QUALITY_COLORS[conduitQuality]
 
-                GameTooltip:AddLine(CreateAtlasMarkup(Soulbinds.GetConduitEmblemAtlas(conduits[i].type)) .. " [" .. conduitItemLevel .. "]  " .. AddTexture(icon) .. " " .. GW.RGBToHex(color.r, color.g, color.b) .. name .. "|r ")
+                GameTooltip:AddLine(CreateAtlasMarkup(Soulbinds.GetConduitEmblemAtlas(conduits[i].type)) .. " [" .. conduitItemLevel .. "]  " .. AddTexture(spellInfo.iconID) .. " " .. GW.RGBToHex(color.r, color.g, color.b) .. spellInfo.name .. "|r ")
             end
         end
 

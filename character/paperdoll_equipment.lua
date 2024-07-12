@@ -115,8 +115,8 @@ end
 
 local function setItemButtonQuality(button, quality)
     if quality then
-        if quality >= Enum.ItemQuality.Common and GetItemQualityColor(quality) then
-            local r, g, b = GetItemQualityColor(quality)
+        if quality >= Enum.ItemQuality.Common and C_Item.GetItemQualityColor(quality) then
+            local r, g, b = C_Item.GetItemQualityColor(quality)
             button.IconBorder:Show()
             button.IconBorder:SetVertexColor(r, g, b)
         else

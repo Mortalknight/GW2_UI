@@ -37,24 +37,26 @@ end
 GW.AddForProfiling("reputation", "detailFaction", detailFaction)
 
 local function updateSavedReputation()
-    for factionIndex = 1, GetNumFactions() do
-
+    for factionIndex = 1, C_Reputation.GetNumFactions() do
+        local factionData = C_Reputation.GetFactionDataByIndex(factionIndex)
         savedReputation[factionIndex] = {}
-        savedReputation[factionIndex].name,
-            savedReputation[factionIndex].description,
-            savedReputation[factionIndex].standingId,
-            savedReputation[factionIndex].bottomValue,
-            savedReputation[factionIndex].topValue,
-            savedReputation[factionIndex].earnedValue,
-            savedReputation[factionIndex].atWarWith,
-            savedReputation[factionIndex].canToggleAtWar,
-            savedReputation[factionIndex].isHeader,
-            savedReputation[factionIndex].isCollapsed,
-            savedReputation[factionIndex].hasRep,
-            savedReputation[factionIndex].isWatched,
-            savedReputation[factionIndex].isChild,
-            savedReputation[factionIndex].factionID,
-            savedReputation[factionIndex].hasBonusRepGain = GetFactionInfo(factionIndex)
+        savedReputation[factionIndex].name = factionData.name
+        savedReputation[factionIndex].description = factionData.description
+        savedReputation[factionIndex].standingId = factionData.reaction
+        savedReputation[factionIndex].bottomValue = factionData.currentReactionThreshold
+        savedReputation[factionIndex].topValue = factionData.nextReactionThreshold
+        savedReputation[factionIndex].earnedValue = factionData.currentStanding
+        savedReputation[factionIndex].atWarWith = factionData.atWarWith
+        savedReputation[factionIndex].canToggleAtWar = factionData.canToggleAtWar
+        savedReputation[factionIndex].isHeader = factionData.isHeader
+        savedReputation[factionIndex].isCollapsed = factionData.isCollapsed
+        savedReputation[factionIndex].hasRep = factionData.isHeaderWithRep
+        savedReputation[factionIndex].isWatched = factionData.isWatched
+        savedReputation[factionIndex].isChild = factionData.isChild
+        savedReputation[factionIndex].factionID = factionData.factionID
+        savedReputation[factionIndex].hasBonusRepGain = factionData.hasBonusRepGain
+        savedReputation[factionIndex].canSetInactive = factionData.canSetInactive
+        savedReputation[factionIndex].isAccountWide = factionData.isAccountWide
     end
 end
 GW.AddForProfiling("reputation", "updateSavedReputation", updateSavedReputation)
@@ -210,32 +212,16 @@ local function setDetailEx(
         frame.controles.atwar.icon:SetTexCoord(0, 0.5, 0, 0.5)
     end
 
-    if canToggleAtWar then
-        frame.controles.atwar.isShowAble = true
-    else
-        frame.controles.atwar.isShowAble = false
-    end
-
-    if isWatched then
-        frame.controles.showAsBar.checkbutton:SetChecked(true)
-    else
-        frame.controles.showAsBar.checkbutton:SetChecked(false)
-    end
-
-    if IsFactionInactive(factionIndex) then
-        frame.controles.inactive.checkbutton:SetChecked(true)
-    else
-        frame.controles.inactive.checkbutton:SetChecked(false)
-    end
+    frame.controles.atwar.isShowAble = canToggleAtWar
+    frame.controles.showAsBar.checkbutton:SetChecked(isWatched)
+    frame.controles.inactive.checkbutton:SetChecked(not C_Reputation.IsFactionActive(factionIndex))
 
     frame.controles.inactive:SetScript(
         "OnClick",
         function()
-            if IsFactionInactive(factionIndex) then
-                SetFactionActive(factionIndex)
-            else
-                SetFactionInactive(factionIndex)
-            end
+            local shouldBeActive = not C_Reputation.IsFactionActive(factionIndex)
+            C_Reputation.SetFactionActive(factionIndex, shouldBeActive)
+
             updateSavedReputation()
             updateReputations()
             updateOldData()
@@ -250,11 +236,9 @@ local function setDetailEx(
     frame.controles.inactive.checkbutton:SetScript(
         "OnClick",
         function()
-            if IsFactionInactive(factionIndex) then
-                SetFactionActive(factionIndex)
-            else
-                SetFactionInactive(factionIndex)
-            end
+            local shouldBeActive = not C_Reputation.IsFactionActive(factionIndex)
+            C_Reputation.SetFactionActive(factionIndex, shouldBeActive)
+
             updateSavedReputation()
             updateReputations()
             updateOldData()
@@ -269,7 +253,7 @@ local function setDetailEx(
     frame.controles.atwar:SetScript(
         "OnClick",
         function()
-            FactionToggleAtWar(factionIndex)
+            C_Reputation.ToggleFactionAtWar(factionIndex)
             if canToggleAtWar then
                 updateSavedReputation()
                 updateOldData()
@@ -281,9 +265,9 @@ local function setDetailEx(
         "OnClick",
         function()
             if isWatched then
-                SetWatchedFactionIndex(0)
+                C_Reputation.SetWatchedFactionByIndex(0)
             else
-                SetWatchedFactionIndex(factionIndex)
+                C_Reputation.SetWatchedFactionByIndex(factionIndex)
             end
             updateSavedReputation()
             updateOldData()
@@ -293,9 +277,9 @@ local function setDetailEx(
         "OnClick",
         function()
             if isWatched then
-                SetWatchedFactionIndex(0)
+                C_Reputation.SetWatchedFactionByIndex(0)
             else
-                SetWatchedFactionIndex(factionIndex)
+                C_Reputation.SetWatchedFactionByIndex(factionIndex)
             end
             updateSavedReputation()
             updateOldData()
@@ -681,7 +665,7 @@ local function sortFactionsStatus(tbl)
 end
 
 local function CollectCategories()
-    ExpandAllFactionHeaders()
+    C_Reputation.ExpandAllFactionHeaders()
 
     local catagories = {}
     local factionTbl
@@ -691,7 +675,7 @@ local function CollectCategories()
     local skipFirst = true
     local found = false
 
-    for factionIndex = 1, GetNumFactions() do
+    for factionIndex = 1, C_Reputation.GetNumFactions() do
         local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID = returnReputationData(factionIndex)
         if name then
             local friendInfo = C_GossipInfo.GetFriendshipReputation(factionID or 0)
@@ -761,7 +745,7 @@ local function CollectCategories()
     end
     -- insert the last header
     if factionTbl then
-        tinsert(catagories, {idx = idx, idxLast = GetNumFactions(), name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl)})
+        tinsert(catagories, {idx = idx, idxLast = C_Reputation.GetNumFactions(), name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl)})
     end
 
     return catagories
@@ -843,7 +827,7 @@ local function updateDetailsSearch(s)
 
     -- run through factions to get data and total count for the selected category
     local savedHeaderName = ""
-    for idx = 1, GetNumFactions() do
+    for idx = 1, C_Reputation.GetNumFactions() do
         local name,
             desc,
             standingId,

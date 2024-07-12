@@ -39,10 +39,12 @@ local profButtonSecure_OnDragStart =
 
 local function updateButton(self, spellIdx, unlearn)
     if spellIdx then
-        local tex = GetSpellBookItemTexture(spellIdx, BOOKTYPE_PROFESSION)
-        local name, _, spellId = GetSpellBookItemName(spellIdx, BOOKTYPE_PROFESSION)
+        local tex = C_SpellBook.GetSpellBookItemTexture(spellIdx, Enum.SpellBookSpellBank.Player)
+        local name = C_SpellBook.GetSpellBookItemName(spellIdx, Enum.SpellBookSpellBank.Player)
+        local spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(spellIdx, Enum.SpellBookSpellBank.Player)
+
         self.spellbookIndex = spellIdx
-        self.booktype = BOOKTYPE_PROFESSION
+        self.booktype = Enum.SpellBookSpellBank.Player
         self.skillName = name
         self.icon:SetTexture(tex)
         self.name:SetText(name)
@@ -52,7 +54,7 @@ local function updateButton(self, spellIdx, unlearn)
         self:SetAttribute("type2", "spell")
         self:SetAttribute("shift-type1", "modifiedClick")
         self:SetAttribute("shift-type2", "modifiedClick")
-        self:SetAttribute("spell", spellId)
+        self:SetAttribute("spell", spellBookItemInfo.spellID)
         self:SetAttribute("_ondragstart", profButtonSecure_OnDragStart)
         self:Enable()
         if unlearn then

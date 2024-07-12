@@ -65,7 +65,7 @@ local function GetSpellPreviewButton(self, index)
     spellButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
     spellButton:SetScript("OnEnter", function(self)
-        if not self.spellID or not GetSpellInfo(self.spellID) then
+        if not self.spellID or not C_Spell.GetSpellInfo(self.spellID) then
             return
         end
 
@@ -276,7 +276,7 @@ local function LoadSpecializations(parentContainer)
             for i, bonus in ipairs(bonuses) do
                 if i == BASIC_SPELL_INDEX then
                     local spellButton = GetSpellPreviewButton(container, spellIndex)
-                    local _, icon = GetSpellTexture(bonus)
+                    local _, icon = C_Spell.GetSpellTexture(bonus)
                     spellButton.icon:SetTexture(icon)
                     spellButton.spellID = bonus
                     spellButton:ClearAllPoints()
@@ -285,7 +285,7 @@ local function LoadSpecializations(parentContainer)
                     yOffset = yOffset + 33
                 elseif i == SIGNATURE_SPELL_INDEX then
                     local spellButton = GetSpellPreviewButton(container, spellIndex)
-                    local _, icon = GetSpellTexture(bonus)
+                    local _, icon = C_Spell.GetSpellTexture(bonus)
                     spellButton.icon:SetTexture(icon)
                     spellButton.spellID = bonus
                     spellButton:ClearAllPoints()

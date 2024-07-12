@@ -22,17 +22,17 @@ local function UpdateUpcomingSpells()
             totalUpcomingRewards[tIndex] = {}
             totalUpcomingRewards[tIndex].type = "SPELL"
             totalUpcomingRewards[tIndex].id = v
-            totalUpcomingRewards[tIndex].level = GetSpellLevelLearned(v)
+            totalUpcomingRewards[tIndex].level = C_Spell.GetSpellLevelLearned(v)
         end
     end
 
     for i = 1, 80 do
-        local skillType, spellId = GetSpellBookItemInfo(i, "spell")
+        local spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(i, Enum.SpellBookSpellBank.Player)
 
-        if skillType == "FUTURESPELL" and spellId then
+        if spellBookItemInfo.itemType == "FUTURESPELL" and spellBookItemInfo.spellID then
             local shouldAdd = true
             for _, v in pairs(totalUpcomingRewards) do
-                if v.type == "SPELL" and v.id == spellId then
+                if v.type == "SPELL" and v.id == spellBookItemInfo.spellID then
                     shouldAdd = false
                 end
             end
@@ -41,8 +41,8 @@ local function UpdateUpcomingSpells()
 
                 totalUpcomingRewards[tIndex] = {}
                 totalUpcomingRewards[tIndex].type = "SPELL"
-                totalUpcomingRewards[tIndex].id = spellId
-                totalUpcomingRewards[tIndex].level = GetSpellLevelLearned(spellId)
+                totalUpcomingRewards[tIndex].id = spellBookItemInfo.spellID
+                totalUpcomingRewards[tIndex].level = C_Spell.GetSpellLevelLearned(spellBookItemInfo.spellID)
             end
         end
     end
@@ -98,9 +98,9 @@ local function LoadUpcomingRewarsIntoScrollFrame(self)
             end
 
             if slot.item.type == "SPELL" then
-                local name, _, icon = GetSpellInfo(slot.item.id)
-                slot.item.icon:SetTexture(icon)
-                slot.item.name:SetText(name)
+                local spellInfo = C_Spell.GetSpellInfo(slot.item.id)
+                slot.item.icon:SetTexture(spellInfo.iconID)
+                slot.item.name:SetText(spellInfo.name)
                 if IsPassiveSpell(slot.item.id) then
                     if not slot.item.mask then
                         slot.item.mask = UIParent:CreateMaskTexture()

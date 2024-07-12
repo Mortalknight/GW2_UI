@@ -521,8 +521,8 @@ local function LoadScenarioFrame()
 
     -- JailersTower hook
     -- do it only here so we are sure we do not hook more than one time
-    hooksecurefunc("ScenarioBlocksFrame_ExtraBlocksSetShown", function(shown)
-        if shown and IsInJailersTower() then
+    hooksecurefunc(ScenarioObjectiveTracker, "SlideInContents", function(self)
+        if self:ShouldShowCriteria() and IsInJailersTower() then
             updateCurrentScenario(GwQuesttrackerContainerScenario)
         end
     end)
