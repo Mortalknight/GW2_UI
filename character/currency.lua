@@ -123,7 +123,9 @@ local function accountWideIconOnClick(self)
 		return
 	end
 
-    CurrencyTransferMenu:TriggerEvent(CurrencyTransferMenuMixin.Event.CurrencyTransferRequested, self:GetParent().CurrencyID);
+    CurrencyTransferMenu:TriggerEvent(CurrencyTransferMenuMixin.Event.CurrencyTransferRequested, self:GetParent().CurrencyID)
+    CurrencyTransferMenu:ClearAllPoints()
+    CurrencyTransferMenu:SetPoint("TOPLEFT", GwCharacterWindow, "TOPRIGHT", 0, 0)
 end
 
 local function loadCurrency(curwin)
@@ -194,10 +196,10 @@ local function loadCurrency(curwin)
                 slot.item.isAccountTransferable = C_CurrencyInfo.IsAccountTransferableCurrency(curid)
                 slot.item.isAccountWide = C_CurrencyInfo.IsAccountWideCurrency(curid)
 
-                if  slot.item.isAccountWide then
+                if slot.item.isAccountWide then
                     slot.item.accountWideIcon.Icon:SetAtlas("warbands-icon", TextureKitConstants.UseAtlasSize)
                     slot.item.accountWideIcon.Icon:SetScale(0.9)
-                elseif  slot.item.isAccountTransferable then
+                elseif slot.item.isAccountTransferable then
                     slot.item.accountWideIcon.Icon:SetAtlas("warbands-transferable-icon", TextureKitConstants.UseAtlasSize)
                     slot.item.accountWideIcon.Icon:SetScale(0.9)
                 else
@@ -274,6 +276,30 @@ local function currencySetup(curwin)
     loadCurrency(curwin)
 end
 GW.AddForProfiling("currency", "currencySetup", currencySetup)
+
+--TODO SKINNING
+local function transferHistorySetup(self)
+    self:InitializeFrameVisuals()
+	self:InitializeScrollBox()
+
+    self:GwStripTextures()
+    self.CloseButton:GwKill()
+    self.TitleContainer.TitleText:Hide()
+
+    local CURRENCY_TRANSFER_LOG_EVENTS = {
+        "CURRENCY_TRANSFER_LOG_UPDATE",
+    }
+
+    self:SetScript("OnShow", function()
+        FrameUtil.RegisterFrameForEvents(self, CURRENCY_TRANSFER_LOG_EVENTS);
+        self:Refresh()
+    end)
+    self:SetScript("OnHide", function()
+        FrameUtil.UnregisterFrameForEvents(self, CURRENCY_TRANSFER_LOG_EVENTS);
+    end)
+
+    self:Hide()
+end
 
 local function SetupRaidExtendButton(self)
     if self.extendButton.selectedRaidID then
@@ -504,6 +530,11 @@ local function LoadCurrency(tabContainer)
         end
     )
 
+    -- setup transfer history
+    local curHistroyWin = curwin_outer.CurrencyTransferHistoryScroll
+    curHistroyWin.update = function(self) self:Refresh() end
+    transferHistorySetup(curHistroyWin)
+
     -- setup the raid info window
     local raidinfo = curwin_outer.RaidScroll
     raidinfo.update = loadRaidInfo
@@ -533,15 +564,24 @@ local function LoadCurrency(tabContainer)
     item:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
     fmMenu.items.currency = item
 
+    item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+    item.ToggleMe = curHistroyWin
+    item:SetScript("OnClick", menuItem_OnClick)
+    item:SetText(CURRENCY_TRANSFER_LOG_TITLE)
+    item:ClearAllPoints()
+    item:SetPoint("TOPLEFT", fmMenu.items.currency, "BOTTOMLEFT")
+    fmMenu.items.currencyTransferHistory = item
+
     item = CreateFrame("Button", "GwRaidInfoFrame", fmMenu, "GwCharacterMenuButtonTemplate")
     item.ToggleMe = raidinfo
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(RAID_INFORMATION)
     item:ClearAllPoints()
-    item:SetPoint("TOPLEFT", fmMenu.items.currency, "BOTTOMLEFT")
+    item:SetPoint("TOPLEFT", fmMenu.items.currencyTransferHistory, "BOTTOMLEFT")
     fmMenu.items.raidinfo = item
 
     CharacterMenuButton_OnLoad(fmMenu.items.currency, false)
-    CharacterMenuButton_OnLoad(fmMenu.items.raidinfo, true)
+    CharacterMenuButton_OnLoad(fmMenu.items.currencyTransferHistory, true)
+    CharacterMenuButton_OnLoad(fmMenu.items.raidinfo, false)
 end
 GW.LoadCurrency = LoadCurrency

@@ -162,6 +162,12 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-10"></Anchor>
                 </Anchors>
             </ScrollFrame>
+            <ScrollFrame parentKey="CurrencyTransferHistoryScroll" mixin="CurrencyTransferLogMixin" inherits="CurrencyTransferLogTemplate">
+                <Size x="580" y="576"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-10"></Anchor>
+                </Anchors>
+            </ScrollFrame>
             <ScrollFrame parentKey="RaidScroll" inherits="GwHybridScrollFrameTemplate" hidden="true">
                 <Size x="580" y="576"></Size>
                 <Anchors>

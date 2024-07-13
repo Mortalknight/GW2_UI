@@ -133,7 +133,12 @@ local function getNearestQuestPOI()
         if isWQ then
             poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.Libs.GW2Lib:GetPlayerLocationMapID())
         else
-            poiX, poiY = C_QuestLog.GetNextWaypoint(closestQuestID)
+            local uiMapID = C_TaskQuest.GetQuestZoneID(closestQuestID)
+            if uiMapID then
+                poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, uiMapID)
+            else
+                poiX, poiY = C_QuestLog.GetNextWaypoint(closestQuestID)
+            end
         end
 
         if poiX then
