@@ -29,18 +29,19 @@ local function LoadTimeManagerSkin()
     TimeManagerFrame.CloseButton:GwSkinButton(true)
     TimeManagerFrame.CloseButton:SetSize(20, 20)
 
-    TimeManagerAlarmHourDropDown:ClearAllPoints()
-    TimeManagerAlarmHourDropDown:SetPoint("TOPLEFT", TimeManagerAlarmTimeLabel, "BOTTOMLEFT", -10, -4)
-    _G.TimeManagerAlarmHourDropDown:GwSkinDropDownMenu()
-    _G.TimeManagerAlarmMinuteDropDown:GwSkinDropDownMenu()
-    _G.TimeManagerAlarmAMPMDropDown:GwSkinDropDownMenu()
+    local Alarm = TimeManagerAlarmTimeFrame
+    Alarm.HourDropdown:ClearAllPoints()
+    Alarm.HourDropdown:SetPoint("TOPLEFT", TimeManagerAlarmTimeLabel, "BOTTOMLEFT", -10, -4)
+    Alarm.HourDropdown:GwHandleDropDownBox()
+    Alarm.MinuteDropdown:GwHandleDropDownBox()
+    Alarm.AMPMDropdown:GwHandleDropDownBox()
 
-    _G.TimeManagerAlarmHourDropDown:SetWidth(70)
-    _G.TimeManagerAlarmMinuteDropDown:SetWidth(70)
-    _G.TimeManagerAlarmAMPMDropDown:SetWidth(70)
+    Alarm.HourDropdown:SetWidth(70)
+    Alarm.MinuteDropdown:SetWidth(70)
+    Alarm.AMPMDropdown:SetWidth(70)
 
     TimeManagerAlarmMessageFrame:ClearAllPoints()
-    TimeManagerAlarmMessageFrame:SetPoint("TOPLEFT", TimeManagerAlarmHourDropDown, "BOTTOMLEFT", 6, 0)
+    TimeManagerAlarmMessageFrame:SetPoint("TOPLEFT", Alarm.HourDropdown, "BOTTOMLEFT", 6, 0)
 
     GW.SkinTextBox(_G.TimeManagerAlarmMessageEditBox.Middle, _G.TimeManagerAlarmMessageEditBox.Left, _G.TimeManagerAlarmMessageEditBox.Right, nil, nil, 5, 5)
     _G.TimeManagerAlarmEnabledButton:GwSkinCheckButton()

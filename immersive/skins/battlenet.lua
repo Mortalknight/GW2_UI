@@ -69,7 +69,7 @@ local function LoadBNToastSkin()
     GW.HandleBlizzardRegions(ReportFrame.Comment)
     ReportFrame.CloseButton:GwSkinButton(true)
     ReportFrame.ReportButton:GwSkinButton(false, true)
-    ReportFrame.ReportingMajorCategoryDropdown:GwSkinDropDownMenu()
+    ReportFrame.ReportingMajorCategoryDropdown:GwHandleDropDownBox()
 
     ReportFrame.CloseButton:SetSize(20, 20)
 
