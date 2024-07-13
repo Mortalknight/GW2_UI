@@ -634,14 +634,14 @@ local function evPlayerLogin(self)
     end
 
     -- Skins: BLizzard & Addons
-    --GW.LoadStaticPopupSkin()
+    GW.LoadStaticPopupSkin()
     --GW.LoadBNToastSkin()
     --GW.LoadDropDownSkin()
     --GW.LoadLFGSkins()
     --GW.LoadReadyCheckSkin()
     --GW.LoadTalkingHeadSkin()
     --GW.LoadMiscBlizzardFrameSkins()
-    --GW.LoadAddonListSkin()
+    GW.LoadAddonListSkin()
     --GW.LoadMailSkin()
     --GW.LoadDressUpFrameSkin()
     --GW.LoadHelperFrameSkin()
@@ -652,14 +652,14 @@ local function evPlayerLogin(self)
     --GW.LoadExpansionLadningPageSkin()
     --GW.LoadGenericTraitFrameSkin()
 
-    --GW.LoadDetailsSkin()
-    --GW.LoadImmersionAddonSkin()
-    --GW.AddMasqueSkin()
+    GW.LoadDetailsSkin()
+    GW.LoadImmersionAddonSkin()
+    GW.AddMasqueSkin()
 
-    --GW.SkinAndEnhanceColorPicker()
-    --GW.AddCoordsToWorldMap()
-    --GW.MakeAltPowerBarMovable()
-    --GW.WidgetUISetup()
+    GW.SkinAndEnhanceColorPicker()
+    GW.AddCoordsToWorldMap()
+    GW.MakeAltPowerBarMovable()
+    GW.WidgetUISetup()
 
     --Create hud art
     hudArtFrame = GW.LoadHudArt()
@@ -858,7 +858,6 @@ local function evPlayerLogin(self)
         GW.private.GW2_UI_VERSION = GW.VERSION_STRING
     elseif GW.private.GW2_UI_VERSION ~= GW.VERSION_STRING then
         ShowUIPanel(GwSettingsWindow)
-        --UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
         HideUIPanel(GameMenuFrame)
         GW.private.GW2_UI_VERSION = GW.VERSION_STRING
     end

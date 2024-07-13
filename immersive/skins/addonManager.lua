@@ -11,7 +11,7 @@ local function LoadAddonListSkin()
     AddonList.DisableAllButton:GwSkinButton(false, true)
     AddonList.OkayButton:GwSkinButton(false, true)
     AddonList.CancelButton:GwSkinButton(false, true)
-    AddonCharacterDropDown:GwSkinDropDownMenu()
+    AddonList.Dropdown:GwHandleDropDownBox()
     AddonListForceLoad:GwSkinCheckButton()
     AddonListForceLoad:SetSize(10, 10)
     AddonListForceLoad:ClearAllPoints()
@@ -29,7 +29,7 @@ local function LoadAddonListSkin()
             local id = entry:GetID()
 
             local checkall
-            local character = UIDropDownMenu_GetSelectedValue(AddonCharacterDropDown)
+            local character = UIDropDownMenu_GetSelectedValue(AddonList.Dropdown)
             if character == true then
                 character = nil
             else
