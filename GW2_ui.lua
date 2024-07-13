@@ -609,7 +609,7 @@ local function evPlayerLogin(self)
     GW.LoadSettings()
 
     -- load alert settings
-    --GW.LoadAlertSystem()
+    GW.LoadAlertSystem()
     GW.SetupAlertFramePosition()
     GW.LoadOurAlertSubSystem()
 

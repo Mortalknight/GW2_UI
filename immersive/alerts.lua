@@ -1315,7 +1315,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
     if event == "PLAYER_LEVEL_UP" and GW.settings.ALERTFRAME_NOTIFICATION_LEVEL_UP then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
         GW.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
-        -- /run GW.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+        -- /run GW2_ADDON.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
         if talentPoints and talentPoints > 0 then
             GW.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
@@ -1490,7 +1490,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND), "Master")
             elseif GW.settings.ALERTFRAME_NOTIFICATION_MAGE_PORTAL and GW.MagePortals[spellID] then
                 local spellInfo = C_Spell.GetSpellInfo(spellID)
-                -- /run GW.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", C_Spell.GetSpellInfo(224871):gsub("^.+:%s+", "")), nil, C_Spell.GetSpellInfo(224871), false, select(3, C_Spell.GetSpellInfo(224871)), false)
+                -- /run GW2_ADDON.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", C_Spell.GetSpellInfo(224871):gsub("^.+:%s+", "")), nil, "test", false, C_Spell.GetSpellInfo(224871).iconID, false)
                 GW.AlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, spellInfo.name:gsub("^.+:%s+", "")), nil, spellInfo.name, false, spellInfo.iconID, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND), "Master")
             end
