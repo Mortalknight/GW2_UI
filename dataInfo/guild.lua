@@ -121,11 +121,12 @@ local function Guild_OnEnter(self)
         GameTooltip:AddLine(GUILD_MOTD .. " |cffaaaaaa- |cffffffff" .. GetGuildRosterMOTD(), tthead.r, tthead.g, tthead.b, 1)
     end
 
-    local _, _, standingID, barMin, barMax, barValue = GetGuildFactionInfo()
+    local guildFactionData = C_Reputation.GetGuildFactionData()
     -- Show only if not on max rep
-    if standingID ~= 8 then
-        barMax = barMax - barMin
-        barValue = barValue - barMin
+    if guildFactionData.reaction ~= 8 then
+        local barMin, barMax, barValue = guildFactionData.currentReactionThreshold, guildFactionData.nextReactionThreshold, guildFactionData.currentStanding;
+        barMax = barMax - barMin;
+        barValue = barValue - barMin;
         GameTooltip:AddLine(GW.RGBToHex(ttsubh.r, ttsubh.g, ttsubh.b) .. COMBAT_FACTION_CHANGE .. ":|r |cFFFFFFFF" .. CommaValue(barValue) .. "/" .. CommaValue(barMax) .. "(" .. ceil((barValue / barMax) * 100) .. "%)")
     end
 
