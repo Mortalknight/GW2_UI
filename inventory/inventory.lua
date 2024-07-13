@@ -5,7 +5,7 @@ local setItemLevel = GW.setItemLevel
 local MAX_CONTAINER_ITEMS = 36
 
 -- reskins an ItemButton to use GW2_UI styling
-local function reskinItemButton(iname, b, overrideIconSize)
+local function reskinItemButton(b, overrideIconSize)
     local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
     b:SetSize(iconSize, iconSize)
 
@@ -17,7 +17,12 @@ local function reskinItemButton(iname, b, overrideIconSize)
     b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
 
     local norm = b:GetNormalTexture()
-    norm:SetTexture(nil)
+    norm:GwKill()
+    b:ClearNormalTexture()
+
+    if b.NormalTexture then
+        b.NormalTexture:SetTexture()
+    end
 
     local high = b:GetHighlightTexture()
     high:SetAllPoints(b)
@@ -37,11 +42,10 @@ local function reskinItemButton(iname, b, overrideIconSize)
     b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     b.Count:SetJustifyH("RIGHT")
 
-    local qtex = b.IconQuestTexture or (iname and _G[iname .. "IconQuestTexture"])
-    if qtex then
-        qtex:SetSize(iconSize + 2, iconSize + 2)
-        qtex:ClearAllPoints()
-        qtex:SetPoint("CENTER", b, "CENTER", 0, 0)
+    if b.IconQuestTexture then
+        b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
+        b.IconQuestTexture:ClearAllPoints()
+        b.IconQuestTexture:SetPoint("CENTER", b, "CENTER", 0, 0)
     end
 
     if b.flash then
@@ -70,9 +74,7 @@ local function reskinItemButton(iname, b, overrideIconSize)
         b.itemlevel:SetText("")
     end
 
-    if iname then
-        GW.RegisterCooldown(_G[iname .. "Cooldown"])
-    elseif b.cooldown then
+    if b.cooldown then
         GW.RegisterCooldown(b.cooldown)
     elseif b.Cooldown then
         GW.RegisterCooldown(b.Cooldown)
@@ -81,18 +83,37 @@ end
 GW.SkinBagItemButton = reskinItemButton
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
+
+-- is needed for first setup of the bag (skinniing)
+local function UpdateContainerItems(self)
+    for _, itemButton in self:EnumerateValidItems() do
+        if itemButton then
+            local bagID = itemButton:GetBagID();
+
+            local info = C_Container.GetContainerItemInfo(bagID, itemButton:GetID())
+            local texture = info and info.iconFileID
+            local quality = info and info.quality
+            local itemLink = info and info.hyperlink
+            local isBound = info and info.isBound
+
+            itemButton:SetHasItem(texture);
+            itemButton:SetItemButtonTexture(texture)
+            SetItemButtonQuality(itemButton, quality, itemLink, false, isBound);
+        end
+	end
+end
+
 local function reskinItemButtons()
     for i = 1, NUM_CONTAINER_FRAMES do
-        for j = 1, MAX_CONTAINER_ITEMS do
-            local iname = "ContainerFrame" .. i .. "Item" .. j
-            local b = _G[iname]
-            if b then
-                reskinItemButton(iname, b)
+        local container = _G["ContainerFrame" .. i]
+        for _, slot in next, container.Items do
+            if slot then
+                reskinItemButton(slot)
             end
         end
+        UpdateContainerItems(container)
     end
 end
-GW.AddForProfiling("inventory", "reskinItemButtons", reskinItemButtons)
 
 local function CheckUpdateIcon_OnUpdate(self, elapsed)
     self.timeSinceUpgradeCheck = (self.timeSinceUpgradeCheck or 0) + elapsed
@@ -270,31 +291,48 @@ local function takeItemButtons(p, bag_id)
     freeItemButtons(cf, p)
 
     local iname
+    local useItemsTable = true
     if bag_id == BANK_CONTAINER then
+        useItemsTable = false
         iname = "BankFrameItem"
         cf.gw_source = nil -- we never have to give back the bank ItemButtons
     elseif bag_id == REAGENTBANK_CONTAINER then
-        iname = "ReagentBankFrameItem"
+        useItemsTable = false
+        iname = "ReagentBankFrame"
         cf.gw_source = nil -- we never have to give back reagentbank ItemButtons
+        --TODO new Bank
     else
         local b = getContainerFrame(bag_id)
         if not b then
             return
         end
         cf.gw_source = b
-        iname = b:GetName() .. "Item"
+        iname = b:GetName()
     end
     cf.gw_owner = p
 
     local num_slots = ContainerFrame_GetContainerNumSlots(bag_id)
     cf.gw_num_slots = num_slots
 
-    for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
-        local item = _G[iname .. i]
-        if item then
-            item:SetParent(cf)
-            item.gw_owner = p
-            cf.gw_items[i] = item
+    if useItemsTable then
+        local container = _G[iname]
+        local idx = 1
+        for _, item in next, container.Items do
+            if item then
+                item:SetParent(cf)
+                item.gw_owner = p
+                cf.gw_items[idx] = item
+                idx = idx + 1
+            end
+        end
+    else
+        for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
+            local item = _G[iname .. i]
+            if item then
+                item:SetParent(cf)
+                item.gw_owner = p
+                cf.gw_items[i] = item
+            end
         end
     end
 end
@@ -755,18 +793,12 @@ local function LoadInventory()
         end
     end
 
-    --hooksecurefunc("ContainerFrameItemButton_UpdateItemUpgradeIcon", CheckUpdateIcon)
-
-    -- reskin all the multi-use ContainerFrame ItemButtons
-    reskinItemButtons()
-
     -- whenever an ItemButton sets its quality ensure our custom border is being used
     hooksecurefunc("SetItemButtonQuality", hookItemQuality)
 
-    --hooksecurefunc("ContainerFrame_Update", hookQuestItemBorder)
-
     local helpers = {}
     helpers.reskinItemButton = reskinItemButton
+    helpers.reskinItemButtons = reskinItemButtons
     helpers.resizeInventory = resizeInventory
     helpers.getContainerFrame = getContainerFrame
     helpers.takeItemButtons = takeItemButtons
@@ -786,7 +818,7 @@ local function LoadInventory()
     helpers.onMoverDragStop = onMoverDragStop
 
     bag_resize = GW.LoadBag(helpers)
-    bank_resize = GW.LoadBank(helpers) --TODO OpenAllBags() causes a taint
+    --bank_resize = GW.LoadBank(helpers) --TODO NEW Bank
 
     -- Skin StackSplit
     StackSplitFrame:GwStripTextures()

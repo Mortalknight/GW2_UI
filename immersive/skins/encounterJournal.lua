@@ -171,7 +171,7 @@ local function hook_EJSuggestFrame_UpdateRewards(sugg)
 
         local r, g, b = 1, 1, 1
         if rewardData.itemID then
-            local quality = select(3, GetItemInfo(rewardData.itemID))
+            local quality = select(3, C_Item.GetItemInfo(rewardData.itemID))
             if quality and quality > 1 then
                 r, g, b = C_Item.GetItemQualityColor(quality)
             end

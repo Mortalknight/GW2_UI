@@ -748,7 +748,7 @@ local function ApplyPvPUISkin()
         if not rewardTexture and itemRewards then
             local reward = itemRewards[1]
             if reward then
-                _, _, rewardQuaility, _, _, _, _, _, _, rewardTexture = GetItemInfo(reward.id)
+                _, _, rewardQuaility, _, _, _, _, _, _, rewardTexture = C_Item.GetItemInfo(reward.id)
             end
         end
         if rewardTexture then
@@ -857,7 +857,7 @@ local function ApplyChallengesUISkin()
 
     ChallengesKeystoneFrame.KeystoneSlot:HookScript("OnEvent", function(frame, event, itemID)
         if event == "CHALLENGE_MODE_KEYSTONE_SLOTTED" and frame.Texture then
-            local texture = select(10, GetItemInfo(itemID))
+            local texture = select(10, C_Item.GetItemInfo(itemID))
             if texture then
                 frame.Texture:SetTexture(texture)
             end

@@ -307,7 +307,7 @@ local function reskinBankItemButtons()
         local iname = "BankFrameItem" .. i
         local b = _G[iname]
         if b then
-            inv.reskinItemButton(iname, b)
+            inv.reskinItemButton(b)
         end
     end
 end
@@ -320,7 +320,7 @@ local function reskinReagentItemButtons()
         local iname = "ReagentBankFrameItem" .. i
         local b = _G[iname]
         if b then
-            inv.reskinItemButton(iname, b)
+            inv.reskinItemButton(b)
         end
     end
 end
@@ -350,7 +350,7 @@ local function bank_OnShow(self)
         self.gw_reagent_skinned = true
     end
 
-    --OpenAllBags(self) --taints
+    OpenAllBags(self) --taints
     updateBagBar(self.ItemFrame)
     updateBankContainers(self)
 end

@@ -123,7 +123,7 @@ local function HandleBlizzardEditMode()
     dialog.SaveAndProceedButton:SetScript("OnClick", OnSaveProceed)
 
     EditModeManagerFrame.onCloseCallback = OnClose
-    hooksecurefunc(GameMenuButtonEditMode, "SetEnabled", SetEnabled)
+    --hooksecurefunc(GameMenuButtonEditMode, "SetEnabled", SetEnabled) //TODO = need another hook
 
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD") -- needed for Lib EditMode
     eventFrame:RegisterEvent("EDIT_MODE_LAYOUTS_UPDATED") -- needed for Lib EditMode

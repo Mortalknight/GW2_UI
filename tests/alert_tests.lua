@@ -111,7 +111,7 @@ end
 
 tests.LegendaryLoot = function()
     Debug("expected: legendary loot drop alert appears")
-    local _, link, _ = GetItemInfo(18832)
+    local _, link, _ = C_Item.GetItemInfo(18832)
     Debug(link)
     C_Timer.After(
         1,
@@ -133,7 +133,7 @@ end
 
 tests.MultiLoot = function()
     Debug("expected: a combination of loot and upgrade alerts appear")
-    local _, link, _ = GetItemInfo(18832)
+    local _, link, _ = C_Item.GetItemInfo(18832)
     Debug(link)
     C_Timer.After(
         1,

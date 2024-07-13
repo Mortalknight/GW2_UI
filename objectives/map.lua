@@ -415,17 +415,17 @@ local function HandleExpansionButton()
     garrison.garrisonType = garrisonType
 
     if garrison.garrisonMode then
-        if (garrisonType == Enum.GarrisonType.Type_6_0) then
+        if (garrisonType == Enum.GarrisonType.Type_6_0_Garrison) then
             garrison.faction = UnitFactionGroup("player")
             garrison.title = GARRISON_LANDING_PAGE_TITLE;
             garrison.description = MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP
-        elseif (garrisonType == Enum.GarrisonType.Type_7_0) then
+        elseif (garrisonType == Enum.GarrisonType.Type_7_0_Garrison) then
             garrison.title = ORDER_HALL_LANDING_PAGE_TITLE;
             garrison.description = MINIMAP_ORDER_HALL_LANDING_PAGE_TOOLTIP
-        elseif (garrisonType == Enum.GarrisonType.Type_8_0) then
+        elseif (garrisonType == Enum.GarrisonType.Type_8_0_Garrison) then
             garrison.title = GARRISON_TYPE_8_0_LANDING_PAGE_TITLE;
             garrison.description = GARRISON_TYPE_8_0_LANDING_PAGE_TOOLTIP
-        elseif (garrisonType == Enum.GarrisonType.Type_9_0) then
+        elseif (garrisonType == Enum.GarrisonType.Type_9_0_Garrison) then
             garrison.title = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
             garrison.description = GARRISON_TYPE_9_0_LANDING_PAGE_TOOLTIP
         end

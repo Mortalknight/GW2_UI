@@ -58,10 +58,10 @@ local function orderBar_OnEvent(self, event)
         OrderHallCommandBar:SetScript("OnShow", GW.Self_Hide)
     end
 
-    local inOrderHall = C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_7_0)
+    local inOrderHall = C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_7_0_Garrison)
     self:SetShown(inOrderHall)
 
-    local primaryCurrency, _ = C_Garrison.GetCurrencyTypes(Enum.GarrisonType.Type_7_0)
+    local primaryCurrency, _ = C_Garrison.GetCurrencyTypes(Enum.GarrisonType.Type_7_0_Garrison)
 
     local cinfo = C_CurrencyInfo.GetCurrencyInfo(primaryCurrency)
     local amount = BreakUpLargeNumbers(cinfo.quantity)
@@ -81,7 +81,7 @@ local function LoadOrderBar()
     GwOrderhallBar:RegisterEvent("PLAYER_ALIVE")
     GwOrderhallBar:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    local inOrderHall = C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_7_0)
+    local inOrderHall = C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_7_0_Garrison)
     if inOrderHall then
         GwOrderhallBar:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
         GwOrderhallBar:RegisterEvent("DISPLAY_SIZE_CHANGED")

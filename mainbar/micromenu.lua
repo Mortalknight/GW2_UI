@@ -7,7 +7,7 @@ local PERFORMANCE_BAR_UPDATE_INTERVAL = 1
 
 local MICRO_BUTTONS = {
     "CharacterMicroButton",
-    "SpellbookMicroButton",
+    "PlayerSpellsMicroButton",
     "AchievementMicroButton",
     "TalentMicroButton",
     "QuestLogMicroButton",
@@ -493,7 +493,7 @@ local function setupMicroButtons(mbf)
 
     bref:ClearAllPoints()
     bref:SetPoint("BOTTOMLEFT", cref, "BOTTOMRIGHT", 4, 0)
-    --bref:HookScript("OnClick", ToggleAllBags) -- tainting TODO
+    bref:HookScript("OnClick", ToggleAllBags) -- tainting TODO
     bref.interval = 0
     bref:HookScript("OnUpdate", bag_OnUpdate)
     bref:HookScript("OnEnter", GW.Bags_OnEnter)
@@ -501,12 +501,13 @@ local function setupMicroButtons(mbf)
     -- determine if we are using the default spell & talent buttons
     -- or if we need our custom talent button for the hero panel
     local sref
-    if GW.settingsUSE_SPELLBOOK_WINDOW then
+    --[[
+    if GW.settings.USE_SPELLBOOK_WINDOW then
         sref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         sref.newbieText = NEWBIE_TOOLTIP_TALENTS
-        sref.textureName = "SpellbookMicroButton"
-        reskinMicroButton(sref, "SpellbookMicroButton", mbf, true)
+        sref.textureName = "PlayerSpellsMicroButton"
+        reskinMicroButton(sref, "PlayerSpellsMicroButton", mbf, true)
         sref:ClearAllPoints()
         sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
 
@@ -526,21 +527,18 @@ local function setupMicroButtons(mbf)
         sref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(sref); GameTooltip:Hide() end)
         sref:SetScript("OnHide", GameTooltip_Hide)
 
-        disableMicroButton(SpellbookMicroButton)
+        disableMicroButton(PlayerSpellsMicroButton)
     else
+        ]]
         -- SpellbookMicroButton
-        sref = SpellbookMicroButton
+        sref = PlayerSpellsMicroButton
         sref:ClearAllPoints()
         sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
-    end
-
-    -- TalentMicroButton -- adding things to that one taint the actionbars
-    TalentMicroButton:ClearAllPoints()
-    TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+    --end
 
     -- AchievementMicroButton
     AchievementMicroButton:ClearAllPoints()
-    AchievementMicroButton:SetPoint("BOTTOMLEFT", TalentMicroButton, "BOTTOMRIGHT", 4, 0)
+    AchievementMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
 
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()

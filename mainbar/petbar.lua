@@ -115,11 +115,12 @@ local function UpdateAutoCast()
     for i, button in ipairs(GwPlayerPetFrame.buttons) do
         local _, _, _, _, _, autoCastEnabled = GetPetActionInfo(i)
 
-        if autoCastEnabled then
-            button.AutoCastable:Show()
-        else
-            button.AutoCastable:Hide()
-        end
+        --TODO
+        --if autoCastEnabled then
+        --    button.AutoCastable:Show()
+        --else
+        --    button.AutoCastable:Hide()
+        --end
     end
 end
 

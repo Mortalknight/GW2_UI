@@ -232,7 +232,7 @@ gwMocks.GetLootRollItemInfo = function(_)
         _,
         _,
         itemTexture,
-        _ = GetItemInfo(18832)
+        _ = C_Item.GetItemInfo(18832)
     -- return itemTexture, itemName, 1, itemRarity, true, true, true, true, 0, 0, 1, true
     return itemTexture, itemName, 1, itemRarity, false, false, false, false, 1, 1, 1, true
 end

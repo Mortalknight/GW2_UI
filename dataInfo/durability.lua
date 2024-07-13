@@ -34,7 +34,6 @@ local function collectDurability(self)
                 totalDurability = perc
             end
             tooltipData = C_TooltipInfo.GetInventoryItem("player", idx)
-            TooltipUtil.SurfaceArgs(tooltipData)
 			totalRepairCost = totalRepairCost + (tooltipData and tooltipData.repairCost or 0)
         end
     end
