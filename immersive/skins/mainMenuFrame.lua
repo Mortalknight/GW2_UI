@@ -62,8 +62,6 @@ local function applyButtonStyle(b)
         tex:SetTexCoord(GW.getSprite(ICON_SPRITES, buttonSprint.sprite[1], buttonSprint.sprite[2]))
     end
     --TODO: MAYBE Remove PushedTextOffset:  current -2, -1
-
-    b.IsSkinned = true
 end
 
 local function SkinMainMenu()
@@ -98,12 +96,9 @@ local function SkinMainMenu()
         self:AddButton(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName), ToggleGw2Settings)
 
         for btn in self.buttonPool:EnumerateActive() do
-            if not btn.IsSkinned then
-                applyButtonStyle(btn)
-            end
+            applyButtonStyle(btn)
         end
     end)
-
 
     -- remove elvui transparent bg if ours is enabled
     if C_AddOns.IsAddOnLoaded("ElvUI") then
