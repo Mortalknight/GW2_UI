@@ -621,7 +621,7 @@ local function evPlayerLogin(self)
 
     -- Misc
     GW.InitializeMiscFunctions()
-    --GW.LoadRaidMarkerCircle()
+    GW.LoadRaidMarkerCircle()
 
     --Create general skins
     if GW.settings.MAINMENU_SKIN_ENABLED then
@@ -636,7 +636,7 @@ local function evPlayerLogin(self)
     -- Skins: BLizzard & Addons
     GW.LoadStaticPopupSkin()
     --GW.LoadBNToastSkin()
-    --GW.LoadDropDownSkin()
+    GW.LoadDropDownSkin()
     --GW.LoadLFGSkins()
     --GW.LoadReadyCheckSkin()
     --GW.LoadTalkingHeadSkin()
