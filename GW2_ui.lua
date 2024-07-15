@@ -472,7 +472,7 @@ local function evAddonLoaded(self, addonName)
 
     -- TODO: moving skinning from player login to here
     -- Skins: BLizzard & Addons
-    --GW.LoadWorldMapSkin()
+    GW.LoadWorldMapSkin()
     GW.LoadEncounterJournalSkin()
     GW.LoadAchivementSkin()
     GW.LoadAlliedRacesUISkin()
