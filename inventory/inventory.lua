@@ -457,11 +457,9 @@ do
         GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
 
         info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
-        local activeBagFilter = ContainerFrameSettingsManager:GetFilterFlag(bagID);
-
         for _, flag in ContainerFrameUtil_EnumerateBagGearFilters() do
             info.text = BAG_FILTER_LABELS[flag];
-            info.checked = activeBagFilter == flag;
+            info.checked = function() C_Container.GetBagSlotFlag(bagID, flag) end
             info.func = function(_, _, _, value)
                 return OnBagFilterClicked(bagID, flag, not value);
             end
