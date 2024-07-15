@@ -205,6 +205,7 @@ end
 AFP("modifyMicroAlert", modifyMicroAlert)
 
 local function reskinMicroButton(btn, name, mbf, hook)
+    if btn:IsProtected() and InCombatLockdown() then return end
     if not btn.gwSetParentHooked then
         if btn:GetParent() ~= mbf then
             btn:SetParent(mbf)
