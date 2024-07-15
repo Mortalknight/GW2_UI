@@ -451,7 +451,8 @@ local function GwSkinScrollBar(frame)
     end
 end
 
-local function GwHandleDropDownBox(frame, backdropTemplate)
+local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout)
+    local text = frame.Text
 	if frame.Arrow then frame.Arrow:SetAlpha(0) end
 
 	frame:SetWidth(155)
@@ -471,6 +472,20 @@ local function GwHandleDropDownBox(frame, backdropTemplate)
 	tex:SetPoint('RIGHT', frame.backdrop, -3, 0)
     tex:SetRotation(3.14)
 	tex:SetSize(14, 14)
+
+    if text then
+        text:ClearAllPoints()
+        text:SetPoint("LEFT", frame, "LEFT", 8, 0)
+        text:SetFont(UNIT_NAME_FONT, 12, "")
+        text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+        text:SetHeight(frame:GetHeight())
+        text:SetJustifyH("LEFT")
+        text:SetJustifyV("MIDDLE")
+    end
+
+    if hookLayout then
+        HandleBlizzardRegions(frame)
+    end
 end
 
 local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textBoxRightOffset)
