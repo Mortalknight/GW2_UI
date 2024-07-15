@@ -490,6 +490,8 @@ local function getBlockQuest(blockIndex, isFrequency)
     newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
     newBlock.actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
 
+    Mixin(newBlock.actionButton, QuestObjectiveItemButtonMixin)
+
     return newBlock
 end
 AFP("getBlockQuest", getBlockQuest)
@@ -649,7 +651,8 @@ local function UpdateQuestItem(block)
         SetItemButtonTexture(block.actionButton, item)
         SetItemButtonCount(block.actionButton, charges)
 
-        QuestObjectiveItem_UpdateCooldown(block.actionButton)
+        block.actionButton.questLogIndex = block.questLogIndex -- needed for the UpdateCooldown function
+        block.actionButton:UpdateCooldown()
         block.actionButton:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
         block.actionButton:Show()
     else

@@ -564,6 +564,11 @@ do
         if borderBox then
             borderBox:GwStripTextures()
 
+            local dropdown = borderBox.IconTypeDropdown
+			if dropdown then
+				dropdown:GwHandleDropDownBox()
+			end
+
             local button = borderBox.SelectedIconArea and borderBox.SelectedIconArea.SelectedIconButton
             if button then
                 button:DisableDrawLayer("BACKGROUND")

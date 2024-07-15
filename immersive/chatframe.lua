@@ -1490,7 +1490,7 @@ local function styleChatWindow(frame)
     scrollToBottom.Flash:GwKill()
     scrollToBottom:SetSize(24, 24)
     scrollToBottom:SetPoint("BOTTOMRIGHT", frame.ResizeButton, "TOPRIGHT", 7, -2)
-    GW.HandleTrimScrollBar(scroll, true)
+    GW.HandleTrimScrollBar(scroll)
     GW.HandleScrollControls(frame)
 
     ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")

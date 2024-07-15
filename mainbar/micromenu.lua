@@ -779,8 +779,6 @@ local function checkElvUI()
                 high.Show = normal.Show
                 high:Show()
             end
-
-            --btn.handleBackdrop = false
         end
     end
 

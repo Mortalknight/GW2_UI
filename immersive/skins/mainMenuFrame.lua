@@ -53,13 +53,16 @@ local function applyButtonStyle(b)
     b:HookScript("OnLeave", function()
         b:GetNormalTexture():SetBlendMode("BLEND")
     end)
-    local tex = b:CreateTexture(nil, "OVERLAY")
-    tex:SetPoint("LEFT", b, "LEFT", 0, 0)
-    tex:SetSize(32, 32)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons")
+    if not b.gw2IconTex then
+        local tex = b:CreateTexture(nil, "OVERLAY")
+        tex:SetPoint("LEFT", b, "LEFT", 0, 0)
+        tex:SetSize(32, 32)
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons")
+        b.gw2IconTex = tex
+    end
     local buttonSprint = BUTTONS[b:GetText()]
     if buttonSprint then
-        tex:SetTexCoord(GW.getSprite(ICON_SPRITES, buttonSprint.sprite[1], buttonSprint.sprite[2]))
+        b.gw2IconTex:SetTexCoord(GW.getSprite(ICON_SPRITES, buttonSprint.sprite[1], buttonSprint.sprite[2]))
     end
     --TODO: MAYBE Remove PushedTextOffset:  current -2, -1
 end

@@ -7,9 +7,9 @@ local function ApplyAlliedRacesUISkin()
     AlliedRacesFrame.NineSlice:SetAlpha(0)
     AlliedRacesFramePortrait:SetAlpha(0)
     AlliedRacesFrameBg:SetAlpha(0)
-    AlliedRacesFrame.ModelFrame:GwStripTextures()
+    AlliedRacesFrame.ModelScene:GwStripTextures()
 
-    select(2, AlliedRacesFrame.ModelFrame:GetRegions()):Hide()
+    select(2, AlliedRacesFrame.ModelScene:GetRegions()):Hide()
 
     local tex = AlliedRacesFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", AlliedRacesFrame, "TOP", 0, 25)
@@ -25,20 +25,16 @@ local function ApplyAlliedRacesUISkin()
     AlliedRacesFrameCloseButton:GwSkinButton(true)
     AlliedRacesFrameCloseButton:SetSize(20, 20)
 
-    local scrollFrame = AlliedRacesFrame.RaceInfoFrame.ScrollFrame
-    scrollFrame.ScrollBar.Border:Hide()
-    scrollFrame.ScrollBar.ScrollUpBorder:Hide()
-    scrollFrame.ScrollBar.ScrollDownBorder:Hide()
-    scrollFrame:GwSkinScrollFrame()
-    scrollFrame.ScrollBar:GwSkinScrollBar()
+    GW.HandleTrimScrollBar(AlliedRacesFrame.RaceInfoFrame.ScrollFrame.ScrollBar)
+    GW.HandleScrollControls(AlliedRacesFrame.RaceInfoFrame.ScrollFrame)
 
-    scrollFrame.Child:GwStripTextures()
-    scrollFrame.Child.ObjectivesFrame:GwStripTextures()
-    scrollFrame.Child.ObjectivesFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child:GwStripTextures()
+    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.ObjectivesFrame:GwStripTextures()
+    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.ObjectivesFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
     AlliedRacesFrame.RaceInfoFrame.AlliedRacesRaceName:SetTextColor(1, 0.8, 0)
-    scrollFrame.Child.RaceDescriptionText:SetTextColor(1, 1, 1)
-    scrollFrame.Child.RacialTraitsLabel:SetTextColor(1, 0.8, 0)
+    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RaceDescriptionText:SetTextColor(1, 1, 1)
+    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RacialTraitsLabel:SetTextColor(1, 0.8, 0)
 
 
     AlliedRacesFrame:HookScript("OnShow", function(self)

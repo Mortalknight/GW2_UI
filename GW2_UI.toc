@@ -254,9 +254,6 @@ character\paperdoll.xml
 character\reputation.xml
 character\currency.xml
 character\title.xml
-character\spellbook.xml
-character\specializations.xml
-character\talents.xml
 character\professions.xml
 character\specializations.lua
 character\character.lua
@@ -267,10 +264,13 @@ character\paperdoll_titles.lua
 character\reputation_table.lua
 character\reputation.lua
 character\currency.lua
-character\talents_pvp.lua
-character\spellbook.lua
 character\professions.lua
-character\talents.lua
+##character\talents_pvp.lua
+##character\spellbook.lua
+##character\talents.lua
+##character\spellbook.xml
+##character\specializations.xml
+##character\talents.xml
 
 battlegrounds\battlegrounds.xml
 battlegrounds\battlegrounds.lua
