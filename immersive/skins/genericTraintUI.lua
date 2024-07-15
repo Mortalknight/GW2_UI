@@ -8,8 +8,16 @@ local function ReplaceIconString(frame, text)
     if count > 0 then frame:SetFormattedText("%s", newText) end
 end
 
+local function RemoveTexture(self)
+    self.BorderOverlay:Hide()
+    self.Background:Hide()
+    self.NineSlice:Hide()
+end
+
 local function GenericTraitFrameSkin()
     GenericTraitFrame:GwStripTextures()
+    GenericTraitFrame.BorderOverlay:Hide()
+    GenericTraitFrame.Background:Hide()
     GW.CreateFrameHeaderWithBody(GenericTraitFrame, GenericTraitFrame.Header.Title, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon")
 
     GenericTraitFrame.CloseButton:GwSkinButton(true)
@@ -17,6 +25,7 @@ local function GenericTraitFrameSkin()
 
     ReplaceIconString(GenericTraitFrame.Currency.UnspentPointsCount)
     hooksecurefunc(GenericTraitFrame.Currency.UnspentPointsCount, 'SetText', ReplaceIconString)
+    hooksecurefunc(GenericTraitFrame, "ApplyLayout", RemoveTexture)
 end
 
 local function LoadGenericTraitFrameSkin()
