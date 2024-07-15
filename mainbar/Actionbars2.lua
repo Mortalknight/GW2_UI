@@ -289,7 +289,7 @@ local function fadeCheck(self, forceCombat)
             else
                 local inFocus = true
                 if fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT" then
-                    if f:IsMouseOver(100, -100, -100, 100) then
+                    if f:IsMouseMotionFocus(100, -100, -100, 100) then
                         inFocus = true
                     else
                         inFocus = false

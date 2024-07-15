@@ -222,21 +222,24 @@ local function updateCurrentScenario(self, event, ...)
     GW.CombatQueue_Queue(nil, UpdateQuestItem, {GwScenarioBlock})
 
     for criteriaIndex = 1, numCriteria do
-        local criteriaString, _, _, quantity, totalQuantity, _, _, mythicKeystoneCurrentValue, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
-        local objectiveType = not isWeightedProgress and "monster" or "progressbar"
+        local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
+        local objectiveType = not scenarioCriteriaInfo.isWeightedProgress and "monster" or "progressbar"
         if objectiveType == "progressbar" and not isMythicKeystone then
-            totalQuantity = 100
+            scenarioCriteriaInfo.totalQuantity = 100
         end
+
+        --TODO: mythicKeystoneCurrentValue
+        local mythicKeystoneCurrentValue = 0
         if isMythicKeystone then
             mythicKeystoneCurrentValue = strtrim(mythicKeystoneCurrentValue, "%") or 1
         end
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone, mythicKeystoneCurrentValue, isWeightedProgress),
+            ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress),
             false,
             criteriaIndex,
             objectiveType,
-            quantity,
+            scenarioCriteriaInfo.quantity,
             isMythicKeystone
         )
     end
@@ -255,20 +258,20 @@ local function updateCurrentScenario(self, event, ...)
         local _, _, numCriteria = C_Scenario.GetStepInfo(bonusStepIndex)
 
         for criteriaIndex = 1, numCriteria do
-            local criteriaString, _, criteriaCompleted, quantity, totalQuantity, _, _, _, _, duration, elapsed, criteriaFailed, isWeightedProgress = C_Scenario.GetCriteriaInfoByStep(bonusStepIndex, criteriaIndex)
+            local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
             local objectiveType = "progressbar"
-            if not isWeightedProgress then
+            if not scenarioCriteriaInfo.isWeightedProgress then
                 objectiveType = "monster"
             end
             -- timer bar
-            if (duration > 0 and elapsed <= duration and not (criteriaFailed or criteriaCompleted)) then
+            if (scenarioCriteriaInfo.duration > 0 and scenarioCriteriaInfo.elapsed <= scenarioCriteriaInfo.duration and not (scenarioCriteriaInfo.failed or scenarioCriteriaInfo.completed)) then
                 GwQuestTrackerTimer:SetScript(
                     "OnUpdate",
                     function()
-                        local elapsed = select(11, C_Scenario.GetCriteriaInfoByStep(bonusStepIndex, criteriaIndex))
-                        if elapsed and elapsed > 0 then
-                            GwQuestTrackerTimer.timer:SetValue(1 - (elapsed / duration))
-                            GwQuestTrackerTimer.timerString:SetText(SecondsToClock(duration - elapsed))
+                        local scenarioCriteriaInfoByStep = C_ScenarioInfo.GetCriteriaInfoByStep(bonusStepIndex, criteriaIndex)
+                        if scenarioCriteriaInfoByStep.elapsed and scenarioCriteriaInfoByStep.elapsed > 0 then
+                            GwQuestTrackerTimer.timer:SetValue(1 - (scenarioCriteriaInfoByStep.elapsed / scenarioCriteriaInfo.duration))
+                            GwQuestTrackerTimer.timerString:SetText(SecondsToClock(scenarioCriteriaInfo.duration - scenarioCriteriaInfoByStep.elapsed))
                         else
                             GwQuestTrackerTimer:SetScript("OnUpdate", nil)
                         end
@@ -284,11 +287,11 @@ local function updateCurrentScenario(self, event, ...)
 
                 addObjectiveBlock(
                     GwScenarioBlock,
-                    ParseCriteria(quantity, totalQuantity, criteriaString),
+                    ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description),
                     false,
                     numCriteriaPrev + criteriaIndex,
                     objectiveType,
-                    quantity
+                    scenarioCriteriaInfo.quantity
                 )
             end
         end

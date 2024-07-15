@@ -50,7 +50,7 @@ end
 local function OnEvent(self, event)
     if event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
         local combatLeave = event == "PLAYER_REGEN_ENABLED"
-        GameMenuButtonEditMode:SetEnabled(combatLeave)
+        --:SetEnabled(combatLeave)
 
         if combatLeave then
             if next(hideFrames) then

@@ -799,7 +799,7 @@ end
 AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)
 
 local function mbf_OnLeave(self)
-    if not self:IsMouseOver() and GW.settings.FADE_MICROMENU then
+    if not self:IsMouseMotionFocus() and GW.settings.FADE_MICROMENU then
         self:fadeOut()
     end
 end

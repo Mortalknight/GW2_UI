@@ -358,7 +358,7 @@ local function handleChatFrameFadeOut(chatFrame, force)
         return
     end
     setChatBackgroundColor(chatFrame)
-    if chatFrame.editboxHasFocus or (GW_EmoteFrame and GW_EmoteFrame:IsShown() and GW_EmoteFrame:IsMouseOver()) then
+    if chatFrame.editboxHasFocus or (GW_EmoteFrame and GW_EmoteFrame:IsShown() and GW_EmoteFrame:IsMouseMotionFocus()) then
         handleChatFrameFadeIn(chatFrame)
         return
     end
