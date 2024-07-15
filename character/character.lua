@@ -22,31 +22,11 @@ windowsList[1] = {
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "paperdoll")
     ]=]
 }
---[[
+
 windowsList[2] = {
-    ["OnLoad"] = "LoadSpellbook",
-    ["FrameName"] = "GwSpellbookDetailsFrame",
-    ["SettingName"] = "USE_SPELLBOOK_WINDOW",
-    ["RefName"] = "GwSpellbookFrame",
-    ["TabIcon"] = "tabicon_spellbook",
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
-    ["HeaderText"] = SPELLS,
-    ["TooltipText"] = SPELLS,
-    ["Bindings"] = {
-        ["TOGGLESPELLBOOK"] = "SpellBook",
-
-        ["TOGGLEPETBOOK"] = "PetBook"
-    },
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "spellbook")
-    ]=]
-}
-    ]]
-
-windowsList[3] = {
     ["OnLoad"] = "LoadProfessions",
     ["FrameName"] = "GwProfessionsDetailsFrame",
-    ["SettingName"] = "USE_TALENT_WINDOW",
+    ["SettingName"] = "USE_PROFESSION_WINDOW",
     ["RefName"] = "GwProfessionsFrame",
     ["TabIcon"] = "tabicon_professions",
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon",
@@ -60,7 +40,7 @@ windowsList[3] = {
     ]=]
 }
 
-windowsList[4] = {
+windowsList[3] = {
     ["OnLoad"] = "LoadCurrency",
     ["FrameName"] = "GwCurrencyDetailsFrame",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
@@ -77,7 +57,7 @@ windowsList[4] = {
     ]=]
 }
 
-windowsList[5] = {
+windowsList[4] = {
     ["OnLoad"] = "LoadReputation",
     ["FrameName"] = "GwReputationyDetailsFrame",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
@@ -93,25 +73,6 @@ windowsList[5] = {
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "reputation")
     ]=]
 }
-
---[[
-windowsList[6] = {
-    ["OnLoad"] = "LoadTalents",
-    ["FrameName"] = "GwTalentDetailsFrame",
-    ["SettingName"] = "USE_TALENT_WINDOW",
-    ["RefName"] = "GwTalentFrame",
-    ["TabIcon"] = "tabicon_spellbook",
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
-    ["HeaderText"] = TALENTS,
-    ["TooltipText"] = TALENTS_BUTTON,
-    ["Bindings"] = {
-
-    },
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
-    ]=]
-}
-]]
 
 -- turn click events (generated from key bind overrides) into the correct tab show/hide calls
 local charSecure_OnClick =
@@ -129,15 +90,6 @@ local charSecure_OnClick =
     elseif button == "Currency" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "currency")
-    elseif button == "SpellBook" then
-        f:SetAttribute("keytoggle", true)
-        f:SetAttribute("windowpanelopen", "spellbook")
-    elseif button == "Talents" then
-        f:SetAttribute("keytoggle", true)
-        f:SetAttribute("windowpanelopen", "talents")
-    elseif button == "PetBook" then
-        f:SetAttribute("keytoggle", true)
-        f:SetAttribute("windowpanelopen", "petbook")
     elseif button == "Professions" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "professions")
@@ -153,12 +105,6 @@ local charSecure_OnAttributeChanged =
 
     local fmDoll = self:GetFrameRef("GwPaperDoll")
     local showDoll = false
-    local fmSBM = self:GetFrameRef("GwSpellbookMenu")
-    local fmSpell = self:GetFrameRef("GwSpellbookFrame")
-    local showSpell = flase
-    local fmTaM = self:GetFrameRef("GwTalentsMenu")
-    local fmTal = self:GetFrameRef("GwTalentFrame")
-    local showTal = flase
     local fmRep = self:GetFrameRef("GwReputationFrame")
     local showRep = flase
     local fmCur = self:GetFrameRef("GwCurrencyFrame")
@@ -169,49 +115,13 @@ local charSecure_OnAttributeChanged =
     local close = false
     local keytoggle = self:GetAttribute("keytoggle")
 
-    if fmSpell ~= nil and value == "spellbook" then
-        if keytoggle and fmSpell:IsVisible() then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showSpell = true
-        end
-    elseif fmTal ~= nil and value == "talents" then
-        if keytoggle and fmTal:IsVisible() and fmTaM and fmTaM:GetAttribute("tabopen") == 1 then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showTal = true
-            fmTaM:SetAttribute("tabopen", 1)
-        end
-    elseif fmSpell ~= nil and value == "spellbook" then
-        if keytoggle and fmSpell:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 2 then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showSpell = true
-            fmSBM:SetAttribute("tabopen", 2)
-        end
-    elseif fmSpell ~= nil and value == "petbook" then
-        if keytoggle and fmSpell:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 5 then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showSpell = true
-            fmSBM:SetAttribute("tabopen", 5)
-        end
-    elseif fmProf ~= nil and value == "professions" then
-        if keytoggle and fmProf:IsVisible() then -- and fmSBM and fmSBM:GetAttribute("tabopen") == 4 then
+    if fmProf ~= nil and value == "professions" then
+        if keytoggle and fmProf:IsVisible() then
             self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
         else
             showProf = true
-            -- fmSBM:SetAttribute("tabopen", 4)
         end
     elseif fmDoll ~= nil and value == "paperdoll" then
         if keytoggle and fmDoll:IsVisible() then
@@ -250,20 +160,6 @@ local charSecure_OnAttributeChanged =
             fmDoll:Show()
         else
             fmDoll:Hide()
-        end
-    end
-    if fmSpell then
-        if showSpell and not close then
-            fmSpell:Show()
-        else
-            fmSpell:Hide()
-        end
-    end
-    if fmTal then
-        if showTal and not close then
-            fmTal:Show()
-        else
-            fmTal:Hide()
         end
     end
     if fmProf then

@@ -844,7 +844,7 @@ GW.globalDefault = {
         CASTINGBAR_DATA= false,
         USE_CHARACTER_WINDOW= true,
         USE_TALENT_WINDOW= true,
-        USE_SPELLBOOK_WINDOW= true,
+        USE_PROFESSION_WINDOW= true,
 
         USE_SOCIAL_WINDOW= true,
 

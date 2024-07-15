@@ -18,6 +18,7 @@ local MICRO_BUTTONS = {
     "MainMenuMicroButton",
     "HelpMicroButton",
     "StoreMicroButton",
+    "ProfessionMicroButton",
     }
 
 do
@@ -444,7 +445,6 @@ end
 GW.ToggleEventTimerMicroMenuIcon = ToggleEventTimerIcon
 
 local function setupMicroButtons(mbf)
-    local i = 1
     -- CharacterMicroButton
     -- determine if we are using the default char button (for default charwin)
     -- or if we need to create our own char button for the custom hero panel
@@ -498,47 +498,13 @@ local function setupMicroButtons(mbf)
     bref:HookScript("OnUpdate", bag_OnUpdate)
     bref:HookScript("OnEnter", GW.Bags_OnEnter)
 
-    -- determine if we are using the default spell & talent buttons
-    -- or if we need our custom talent button for the hero panel
-    local sref
-    --[[
-    if GW.settings.USE_SPELLBOOK_WINDOW then
-        sref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
-        sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
-        sref.newbieText = NEWBIE_TOOLTIP_TALENTS
-        sref.textureName = "PlayerSpellsMicroButton"
-        reskinMicroButton(sref, "PlayerSpellsMicroButton", mbf, true)
-        sref:ClearAllPoints()
-        sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
-
-        sref:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-        sref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-        sref:SetAttribute(
-            "_onclick",
-            [=[
-            if button == "LeftButton" then
-                local f = self:GetFrameRef("GwCharacterWindow")
-                f:SetAttribute("keytoggle", "1")
-                f:SetAttribute("windowpanelopen", "spellbook")
-            end
-            ]=]
-        )
-        sref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
-        sref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(sref); GameTooltip:Hide() end)
-        sref:SetScript("OnHide", GameTooltip_Hide)
-
-        disableMicroButton(PlayerSpellsMicroButton)
-    else
-        ]]
-        -- SpellbookMicroButton
-        sref = PlayerSpellsMicroButton
-        sref:ClearAllPoints()
-        sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
-    --end
+    -- SpellbookMicroButton
+    PlayerSpellsMicroButton:ClearAllPoints()
+    PlayerSpellsMicroButton:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
 
     -- AchievementMicroButton
     AchievementMicroButton:ClearAllPoints()
-    AchievementMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+    AchievementMicroButton:SetPoint("BOTTOMLEFT", PlayerSpellsMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()
@@ -569,7 +535,7 @@ local function setupMicroButtons(mbf)
         GuildMicroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
     end)
     updateGuildButton(GuildMicroButton, "GUILD_ROSTER_UPDATE")
-    --if i == 1 then return end
+
     -- LFDMicroButton
     LFDMicroButton:ClearAllPoints()
     LFDMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
@@ -581,7 +547,6 @@ local function setupMicroButtons(mbf)
     -- CollectionsMicroButton
     CollectionsMicroButton:ClearAllPoints()
     CollectionsMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
-
     hooksecurefunc("MicroButtonPulse", function(self)
         if self == CollectionsMicroButton or self == EJMicroButton then
             GW.FrameFlash(self, 1, 0.3, 1, true)
@@ -594,9 +559,39 @@ local function setupMicroButtons(mbf)
         end
     end)
 
+    --ProfessionMicroButton
+    local pref
+    if GW.settings.USE_PROFESSION_WINDOW then
+        pref = CreateFrame("Button", "GwProfessionMicroButton", CollectionsMicroButton, "SecureHandlerClickTemplate")
+        pref.tooltipText = MicroButtonTooltipText(PROFESSIONS_BUTTON, "TOGGLEPROFESSIONBOOK")
+        pref.newbieText = nil
+        pref.textureName = "Professions"
+        reskinMicroButton(pref, "ProfessionMicroButton", mbf, true)
+        pref:ClearAllPoints()
+        pref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+        pref:RegisterForClicks("AnyUp")
+        pref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+        pref:SetAttribute(
+            "_onclick",
+            [=[
+                if button ~= "LeftButton" then return end
+                local f = self:GetFrameRef("GwCharacterWindow")
+                f:SetAttribute("keytoggle", "1")
+                f:SetAttribute("windowpanelopen", "professions")
+            ]=]
+        )
+        pref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
+        pref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(pref); GameTooltip:Hide() end)
+        disableMicroButton(ProfessionMicroButton, true)
+    else
+        pref = ProfessionMicroButton
+        pref:ClearAllPoints()
+        pref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+    end
+
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
-    MainMenuMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+    MainMenuMicroButton:SetPoint("BOTTOMLEFT", pref, "BOTTOMRIGHT", 4, 0)
     MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
     MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
     MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)
@@ -699,8 +694,8 @@ local function SetupNotificationArea(mbf)
     workOrderIcon:RegisterEvent("PLAYER_ENTERING_WORLD")
     workOrderIcon.newbieText = nil
     workOrderIcon.tooltipText = ""
-    workOrderIcon.textureName = "WorkOrderMicroButton"
-    reskinMicroButton(workOrderIcon, "WorkOrderMicroButton", mbf)
+    workOrderIcon.textureName = "ProfessionMicroButton"
+    reskinMicroButton(workOrderIcon, "ProfessionMicroButton", mbf)
     workOrderIcon:ClearAllPoints()
     workOrderIcon:SetPoint("BOTTOMLEFT", mailIcon, "BOTTOMRIGHT", 4, 0)
     workOrderIcon:Hide()
