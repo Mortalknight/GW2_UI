@@ -44,13 +44,13 @@ local function ApplyItemUpgradeSkin()
     local holder = button.ButtonFrame
     holder:GwStripTextures()
 
-    hooksecurefunc(ItemUpgradeFrame, "Update", Update)
+    hooksecurefunc(ItemUpgradeFrame, "UpdateUpgradeItemInfo", Update)
 
     GW.HandleIconBorder(button.IconBorder)
 
     ItemUpgradeFrame.UpgradeButton:GwSkinButton(false, true)
 
-    ItemUpgradeFrame.ItemInfo.Dropdown:GwSkinDropDownMenu()
+    ItemUpgradeFrame.ItemInfo.Dropdown:GwHandleDropDownBox()
 
     ItemUpgradeFrame.CloseButton:GwSkinButton(true)
     ItemUpgradeFrame.CloseButton:SetSize(20, 20)

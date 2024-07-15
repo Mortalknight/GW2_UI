@@ -40,11 +40,9 @@ local function LoadDressUpFrameSkin()
         DressUpFrame.OutfitDetailsPanel:GwCreateBackdrop(GW.BackdropTemplates.Default)
     end
 
-    DressUpFrameOutfitDropDown:GwSkinDropDownMenu()
-    DressUpFrameOutfitDropDownText:ClearAllPoints()
-    DressUpFrameOutfitDropDownText:SetPoint("RIGHT", DressUpFrameOutfitDropDownButton, "LEFT", 25, 0)
-    DressUpFrameOutfitDropDown.SaveButton:GwSkinButton(false, true)
-    DressUpFrameOutfitDropDown.SaveButton:SetPoint("LEFT", DressUpFrameOutfitDropDown, "RIGHT", -7, 3)
+    DressUpFrame.OutfitDropdown:GwHandleDropDownBox()
+    DressUpFrame.OutfitDropdown.SaveButton:GwSkinButton(false, true)
+    DressUpFrame.OutfitDropdown.SaveButton:SetPoint("LEFT", DressUpFrame.OutfitDropdown, "RIGHT", -7, -1)
     DressUpFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
 
     local tex = DressUpFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -86,8 +84,8 @@ local function LoadDressUpFrameSkin()
     end
 
     -- Wardrobe edit frame
-    WardrobeOutfitFrame:GwStripTextures(true)
-    WardrobeOutfitFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+   -- WardrobeOutfitFrame:GwStripTextures(true)
+    --WardrobeOutfitFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     WardrobeOutfitEditFrame:GwStripTextures(true)
     WardrobeOutfitEditFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)

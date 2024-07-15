@@ -200,7 +200,7 @@ local function setupBar(self)
     af.sep264:Hide()
     af.fillFractions:Hide()
 
-    updateAnim(self, start, duration, spellChargeInfo.currentCharges, spellChargeInfo.maxCharges)
+    updateAnim(self, start or 0, duration or 0, spellChargeInfo.currentCharges or 0, spellChargeInfo.maxCharges or 0)
 end
 GW.setDodgebarSpell = setupBar
 GW.AddForProfiling("dodgebar", "setupBar", setupBar)

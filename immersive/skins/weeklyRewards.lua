@@ -27,7 +27,6 @@ local function SkinActivityFrame(frame, isObject)
         if isObject then
             frame.Border:SetAlpha(0)
             frame.SelectedTexture:SetAlpha(0)
-            frame.LockIcon:SetVertexColor(1, 1, 1)--???
             hooksecurefunc(frame, "SetSelectionState", UpdateSelection)
             hooksecurefunc(frame.ItemFrame, "SetDisplayedItem", SkinRewardIcon)
         else
@@ -72,7 +71,7 @@ local function ApplyWeeklyRewardsSkin()
     WeeklyRewardsFrame.HeaderFrame:SetPoint("TOP", 1, -42)
 
     WeeklyRewardsFrame.CloseButton:GwSkinButton(true)
-    WeeklyRewardsFrame.CloseButton:SetSize(20, 20)
+    WeeklyRewardsFrame.CloseButton:SetSize(25, 25)
     WeeklyRewardsFrame.SelectRewardButton:GwSkinButton(false, true)
 
     SkinActivityFrame(WeeklyRewardsFrame.RaidFrame)
