@@ -526,14 +526,12 @@ local function bag_OnMouseDown(self, button)
         if cf then
             self.menuMixin = GwDropDownStyleMixin
             MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-                local frame = self:GetParent()
-                local bagID = frame:GetBagID()
-                if not (ContainerFrame_IsHeldBag(bagID) or ContainerFrame_IsBankBag(bagID)) then
+                if not (ContainerFrame_IsHeldBag(bag_id) or ContainerFrame_IsBankBag(bag_id)) then
                     return
                 end
 
-                AddButtons_BagFilters(rootDescription, bagID);
-                AddButtons_BagCleanup(rootDescription, bagID);
+                AddButtons_BagFilters(rootDescription, bag_id);
+                AddButtons_BagCleanup(rootDescription, bag_id);
             end)
         end
     end
