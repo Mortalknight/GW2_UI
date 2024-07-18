@@ -53,7 +53,7 @@ local function AddSpecie(self, block, specie, quality, level)
             end
         end)
         block:SetScript("OnLeave", function()
-            if not block:GetParent():IsMouseMotionFocus() then
+            if not block:GetParent():IsMouseOver() then
                 block:GetParent():GetScript("OnLeave")(block:GetParent())
             end
         end)
@@ -92,7 +92,7 @@ local function setUpProgressbar(block, progress, counter)
         end
     end)
     progessbarObjective:SetScript("OnLeave", function()
-        if not progessbarObjective:GetParent():IsMouseMotionFocus() then
+        if not progessbarObjective:GetParent():IsMouseOver() then
             progessbarObjective:GetParent():GetScript("OnLeave")(progessbarObjective:GetParent())
         end
     end)
@@ -186,13 +186,22 @@ local function LoadPetTrackerAddonSkin()
         function(self, button)
             if button == "RightButton" then
                 if not self.collapsed then
-                    local menuList = {
-                        {text = AUCTION_CATEGORY_BATTLE_PETS, isTitle = true, notCheckable = true},
-                        {text = petTrackerLocals.TrackPets, checked = PetTracker.sets.trackPets, isNotRadio = true, func = PetTracker.Tracker.Toggle},
-                        {text = petTrackerLocals.CapturedPets, checked = PetTracker.sets.capturedPets, isNotRadio = true, func = PetTracker.Tracker.ToggleCaptured},
-                    }
-                    GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-                    GW.Libs.LibDD:EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+                    self.menuMixin = GwDropDownStyleMixin
+                    MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+                        rootDescription:CreateTitle(AUCTION_CATEGORY_BATTLE_PETS)
+                        rootDescription:CreateCheckbox(petTrackerLocals.TrackPets, function()
+                            return PetTracker.sets.trackPets()
+                        end,
+                        function()
+                            PetTracker.Tracker.Toggle()
+                        end)
+                        rootDescription:CreateCheckbox(petTrackerLocals.CapturedPets, function()
+                            return PetTracker.capturedPets.trackPets()
+                        end,
+                        function()
+                            PetTracker.Tracker.ToggleCaptured()
+                        end)
+                    end)
                 end
             else
                 CollapseHeader(self:GetParent(), false, false)

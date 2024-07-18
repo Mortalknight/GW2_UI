@@ -11,41 +11,13 @@ local NavigableContentTrackingTargets = {
 local blockIndex
 local savedHeight
 
-local function AdventureObjectiveTracker_OnOpenDropDown(self)
-    local block = self.activeFrame
-
-    local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-    info.notCheckable = 1
-    info.text = block.title
-	info.isTitle = 1
-    GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
-
-    info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-    info.notCheckable = 1
-
-    if block.trackableType == Enum.ContentTrackingType.Appearance then
-		info.text = CONTENT_TRACKING_OPEN_JOURNAL_OPTION
-		info.func = AdventureObjectiveTracker_OpenToAppearance
-		info.arg1 = block.trackableID
-		info.checked = false
-		GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
-	end
-
-    info.text = OBJECTIVES_STOP_TRACKING
-	info.func = AdventureObjectiveTracker_Untrack
-	info.arg1 = block.trackableType
-	info.arg2 = block.trackableID
-	info.checked = false;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
-end
-
 local function collection_OnClick(self, button)
     if not ContentTrackingUtil.ProcessChatLink(self.trackableType, self.trackableID) then
 		if button ~= "RightButton" then
 			CloseDropDownMenus()
 
 			if ContentTrackingUtil.IsTrackingModifierDown() then
-				C_ContentTracking.StopTracking(self.trackableType, self.trackableID)
+				C_ContentTracking.StopTracking(self.trackableType, self.trackableID, Enum.ContentTrackingStopType.Manual)
 			elseif (self.trackableType == Enum.ContentTrackingType.Appearance) and IsModifiedClick("DRESSUP") then
 				DressUpVisual(self.trackableID);
 			elseif self.targetType == Enum.ContentTrackingTargetType.Achievement then
@@ -58,7 +30,12 @@ local function collection_OnClick(self, button)
 
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 		else
-            GW.ObjectiveTracker_ToggleDropDown(self, AdventureObjectiveTracker_OnOpenDropDown)
+            self.menuMixin = GwDropDownStyleMixin
+            MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+                rootDescription:CreateTitle(self.title)
+                rootDescription:CreateButton(CONTENT_TRACKING_OPEN_JOURNAL_OPTION, function() TransmogUtil.OpenCollectionToItem(self.trackableID) end)
+                rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function() C_ContentTracking.StopTracking(self.trackableType, self.trackableID, Enum.ContentTrackingStopType.Manual) end)
+            end)
         end
     end
 end
@@ -252,7 +229,7 @@ local function StopTrackingCollectedItems(self)
 
 	local removingCollectedObjective = false;
 	for trackableId, trackableType in pairs(self.collectedIds) do
-		C_ContentTracking.StopTracking(trackableType, trackableId)
+		C_ContentTracking.StopTracking(trackableType, trackableId, Enum.ContentTrackingStopType.Manual)
 		removingCollectedObjective = true
 	end
 	if removingCollectedObjective then

@@ -115,7 +115,7 @@ end
 
 function lib:UIDropDownMenuButton_ShouldShowIconTooltip(self)
 	if self.Icon and (self.iconTooltipTitle or self.iconTooltipText) and (self.icon or self.mouseOverIcon) then
-		return self.Icon:IsMouseMotionFocus();
+		return DoesAncestryIncludeAny(self.Icon, GetMouseFoci())
 	end
 	return false;
 end
@@ -1858,13 +1858,13 @@ local function containsMouse()
 	
 	for i = 1, L_UIDROPDOWNMENU_MAXLEVELS do
 		local dropdown = _G["L_DropDownList"..i];
-		if dropdown:IsShown() and dropdown:IsMouseMotionFocus() then
+		if dropdown:IsShown() and dropdown:IsMouseOver() then
 			result = true;
 		end
 	end
 	for i = 1, UIDROPDOWNMENU_MAXLEVELS do
 		local dropdown = _G["DropDownList"..i];
-		if dropdown:IsShown() and dropdown:IsMouseMotionFocus() then
+		if dropdown:IsShown() and dropdown:IsMouseOver() then
 			result = true;
 		end
 	end
@@ -1872,7 +1872,7 @@ local function containsMouse()
 	--   If the menu is open, and you click the button to close it, 
 	--   the Global Mouse Down triggers to close it, but then the MouseDown for the button triggers to open it back up again.
 	--   I fixed this by adding a filter to the global mouse down check, don't count it if the mouse is still over the DropDownMenu's Button
-	if L_UIDROPDOWNMENU_OPEN_MENU and L_UIDROPDOWNMENU_OPEN_MENU.Button:IsMouseMotionFocus() then
+	if L_UIDROPDOWNMENU_OPEN_MENU and L_UIDROPDOWNMENU_OPEN_MENU.Button:IsMouseOver() then
 		result = true;
 	end
 

@@ -854,12 +854,16 @@ local function LoadGossipSkin()
     QuestFrameGoodbyeButton:GwSkinButton(false, true)
     QuestFrameCompleteQuestButton:GwSkinButton(false, true)
 
-    QuestModelScene.ModelTextFrame:GwStripTextures()
-    w, h = QuestModelScene.ModelTextFrame:GetSize()
-    QuestModelScene.ModelTextFrame.tex = QuestModelScene.ModelTextFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
-    QuestModelScene.ModelTextFrame.tex:SetPoint("TOP", QuestModelScene.ModelTextFrame, "TOP", 0, 20)
-    QuestModelScene.ModelTextFrame.tex:SetSize(w + 30, h + 60)
-    QuestModelScene.ModelTextFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    local modelSceneFrame = QuestNPCModelTextFrame or QuestModelScene.ModelTextFrame
+
+    if modelSceneFrame then
+        modelSceneFrame:GwStripTextures()
+        w, h = modelSceneFrame:GetSize()
+        modelSceneFrame.tex = modelSceneFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
+        modelSceneFrame.tex:SetPoint("TOP", modelSceneFrame, "TOP", 0, 20)
+        modelSceneFrame.tex:SetSize(w + 30, h + 60)
+        modelSceneFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    end
 
     -- mover
     GossipFrame.mover = CreateFrame("Frame", nil, GossipFrame)

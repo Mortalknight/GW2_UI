@@ -9,32 +9,6 @@ local setBlockColor = GW.setBlockColor
 
 local MAX_OBJECTIVES = 10
 
-local function AchievementObjectiveTracker_OnOpenDropDown(self)
-	local block = self.activeFrame;
-	local _, achievementName, _, completed, _, _, _, _, _, icon = GetAchievementInfo(block.id);
-
-	local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
-	info.text = achievementName;
-	info.isTitle = 1;
-	info.notCheckable = 1;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
-
-	info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
-	info.notCheckable = 1;
-
-	info.text = OBJECTIVES_VIEW_ACHIEVEMENT;
-	info.func = function (button, ...) OpenAchievementFrameToAchievement(...); end;
-	info.arg1 = block.id;
-	info.checked = false;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
-
-	info.text = OBJECTIVES_STOP_TRACKING;
-	info.func = AchievementObjectiveTracker_UntrackAchievement;
-	info.arg1 = block.id;
-	info.checked = false;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
-end
-
 local function achievement_OnClick(block, mouseButton)
     if (IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow()) then
         local achievementLink = GetAchievementLink(block.id)
@@ -42,12 +16,14 @@ local function achievement_OnClick(block, mouseButton)
             ChatEdit_InsertLink(achievementLink)
         end
     elseif (mouseButton ~= "RightButton") then
-        GW.Libs.LibDD:CloseDropDownMenus()
         if (not AchievementFrame) then
             AchievementFrame_LoadUI()
         end
         if (IsModifiedClick("QUESTWATCHTOGGLE")) then
-            AchievementObjectiveTracker_UntrackAchievement(_, block.id)
+            C_ContentTracking.StopTracking(Enum.ContentTrackingType.Achievement, block.id, Enum.ContentTrackingStopType.Manual);
+            if AchievementFrameAchievements_ForceUpdate then
+                AchievementFrameAchievements_ForceUpdate();
+            end
         elseif (not AchievementFrame:IsShown()) then
             AchievementFrame_ToggleAchievementFrame()
             AchievementFrame_SelectAchievement(block.id)
@@ -59,7 +35,17 @@ local function achievement_OnClick(block, mouseButton)
             end
         end
     else
-        GW.ObjectiveTracker_ToggleDropDown(block, AchievementObjectiveTracker_OnOpenDropDown)
+        block.menuMixin = GwDropDownStyleMixin
+        MenuUtil.CreateContextMenu(block, function(ownerRegion, rootDescription)
+            local _, achievementName = GetAchievementInfo(block.id);
+            rootDescription:CreateTitle(achievementName)
+            rootDescription:CreateButton(OBJECTIVES_VIEW_ACHIEVEMENT, function() OpenAchievementFrameToAchievement(block.id) end)
+            rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function() C_ContentTracking.StopTracking(Enum.ContentTrackingType.Achievement, block.id, Enum.ContentTrackingStopType.Manual);
+                if AchievementFrameAchievements_ForceUpdate then
+                    AchievementFrameAchievements_ForceUpdate();
+                end
+            end)
+        end)
     end
 end
 GW.AddForProfiling("achievement", "achievement_OnClick", achievement_OnClick)

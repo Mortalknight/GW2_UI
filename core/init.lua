@@ -76,6 +76,21 @@ GW.RegisterErrorHandler()
 
 GW.AlertContainerFrame = nil
 
+-- dropdown style mixin
+GwDropDownStyleMixin = CreateFromMixins(MenuStyleMixin);
+
+function GwDropDownStyleMixin:Generate()
+    self:GwCreateBackdrop(GW.BackdropTemplates.Default)
+end
+
+function GwDropDownStyleMixin:GetInset()
+	return 15, 8, 8, 15; -- L, T, R, B
+end
+
+function GwDropDownStyleMixin:GetChildExtentPadding()
+	return 15, 0;
+end
+
 -- Init Libs
 do
     GW.Libs = {}

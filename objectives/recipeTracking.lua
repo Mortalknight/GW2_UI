@@ -15,36 +15,6 @@ local function IsRecraftBlock(block)
     return block.isRecraft
 end
 
-local function RecipeObjectiveTracker_OnOpenDropDown(self)
-    local block = self.activeFrame
-
-    local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-    info.notCheckable = 1
-
-    if not IsRecraftBlock(block) then
-        info.text = PROFESSIONS_TRACKING_VIEW_RECIPE
-        info.func = function()
-            if not ProfessionsFrame then
-                ProfessionsFrame_LoadUI()
-                ProfessionsFrame_LoadUI()
-            end
-            C_TradeSkillUI.OpenRecipe(GetRecipeID(block))
-            C_Timer.After(0, function() C_TradeSkillUI.OpenRecipe(GetRecipeID(block)) end)
-        end
-        info.arg1 = block.id
-        info.checked = false
-        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
-    end
-
-    info.text = PROFESSIONS_UNTRACK_RECIPE
-    info.func = function()
-        C_TradeSkillUI.SetRecipeTracked(GetRecipeID(block), false, IsRecraftBlock(block))
-    end
-    info.arg1 = block.id
-    info.checked = false
-    GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
-end
-
 local function recipe_OnClick(self, button)
     if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
         local link = C_TradeSkillUI.GetRecipeLink(GetRecipeID(self))
@@ -52,7 +22,6 @@ local function recipe_OnClick(self, button)
             ChatEdit_InsertLink(link)
         end
     elseif button ~= "RightButton" then
-        GW.Libs.LibDD:CloseDropDownMenus()
         if not ProfessionsFrame then
             ProfessionsFrame_LoadUI()
             ProfessionsFrame_LoadUI()
@@ -66,7 +35,21 @@ local function recipe_OnClick(self, button)
             end
         end
     else
-        GW.ObjectiveTracker_ToggleDropDown(self, RecipeObjectiveTracker_OnOpenDropDown)
+        self.menuMixin = GwDropDownStyleMixin
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:CreateTitle(self.title)
+            if not IsRecraftBlock(self) then
+                rootDescription:CreateButton(PROFESSIONS_TRACKING_VIEW_RECIPE, function()
+                    if not ProfessionsFrame then
+                        ProfessionsFrame_LoadUI()
+                        ProfessionsFrame_LoadUI()
+                    end
+                    C_TradeSkillUI.OpenRecipe(GetRecipeID(self))
+                    C_Timer.After(0, function() C_TradeSkillUI.OpenRecipe(GetRecipeID(self)) end)
+                end)
+            end
+            rootDescription:CreateButton(PROFESSIONS_UNTRACK_RECIPE, function() C_TradeSkillUI.SetRecipeTracked(GetRecipeID(self), false, IsRecraftBlock(self)) end)
+        end)
     end
 end
 

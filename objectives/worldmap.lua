@@ -28,7 +28,7 @@ local function UpdateCoords()
         CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, NOT_APPLICABLE)
     end
 
-    if WorldMapFrame.ScrollContainer:IsMouseMotionFocus() then
+    if WorldMapFrame.ScrollContainer:IsMouseOver() then
         local x, y = WorldMapFrame.ScrollContainer:GetNormalizedCursorPosition()
         if x and y and x >= 0 and y >= 0 then
             CoordsFrame.Coords:SetFormattedText("%s - %s: %.2f, %.2f", CoordsFrame.Coords:GetText(), MOUSE_LABEL, x * 100, y * 100)

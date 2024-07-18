@@ -120,15 +120,15 @@ local function updateGuildButton(self, event)
 
         GW.FetchGuildMembers()
 
-        if self:IsMouseMotionFocus() then
+        if DoesAncestryIncludeAny(self, GetMouseFoci()) then
             GW.Guild_OnEnter(self)
         end
     elseif event == "MODIFIER_STATE_CHANGED" then
-        if not IsAltKeyDown() and self:IsMouseMotionFocus() then
+        if not IsAltKeyDown() and DoesAncestryIncludeAny(self, GetMouseFoci())  then
             GW.Guild_OnEnter(self)
         end
     elseif event == "GUILD_MOTD" then
-        if self:IsMouseMotionFocus() then
+        if DoesAncestryIncludeAny(self, GetMouseFoci())  then
             GW.Guild_OnEnter(self)
         end
     end
@@ -800,7 +800,7 @@ end
 AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)
 
 local function mbf_OnLeave(self)
-    if not self:IsMouseMotionFocus() and GW.settings.FADE_MICROMENU then
+    if not self:IsMouseOver() and GW.settings.FADE_MICROMENU then
         self:fadeOut()
     end
 end

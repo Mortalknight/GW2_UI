@@ -214,18 +214,6 @@ local function QuestInfo_Display(template, parentFrame)
 end
 GW.QuestInfo_Display = QuestInfo_Display
 
-local function hook_UpdateState(self, isCollapsed)
-    if isCollapsed then
-        self:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
-        self:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
-    else
-        self:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
-        self:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
-    end
-    self:SetSize(16, 16)
-end
-AFP("hook_UpdateState", hook_UpdateState)
-
 local sessionCommandToButtonAtlas = {
     [_G.Enum.QuestSessionCommand.Start] = "QuestSharing-DialogIcon",
     [_G.Enum.QuestSessionCommand.Stop] = "QuestSharing-Stop-DialogIcon"
@@ -266,8 +254,7 @@ local function hook_QuestLogQuests_Update()
 			if not button.IsSkinned then
 				button:GwStripTextures()
 				button:GwCreateBackdrop('Transparent')
-				button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
-
+				button:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
 				button.IsSkinned = true
 			end
 		end
@@ -291,34 +278,10 @@ local function hook_QuestLogQuests_Update()
 		if header.CollapseButton and not header.IsSkinned then
 			header:GwStripTextures()
 			header.Background:GwCreateBackdrop('Transparent')
-			header.Highlight:SetColorTexture(1, 1, 1, 0.75)
+			header.Highlight:SetColorTexture(1, 0.93, 0.73, 0.75)
 			header.IsSkinned = true
 		end
 	end
-
-    for header in QuestScrollFrame.campaignHeaderFramePool:EnumerateActive() do
-        print(123)
-        SkinHeaders(header)
-    end
-
-    for i = 1, _G.QuestMapFrame.QuestsFrame.Contents:GetNumChildren() do
-        local child = select(i, _G.QuestMapFrame.QuestsFrame.Contents:GetChildren())
-        if child and child.ButtonText and not child.questID then
-            child:SetSize(16, 16)
-
-            for x = 1, child:GetNumRegions() do
-                local tex = select(x, child:GetRegions())
-                if tex and tex.GetAtlas then
-                    local atlas = tex:GetAtlas()
-                    if atlas == "Campaign_HeaderIcon_Closed" or atlas == "Campaign_HeaderIcon_ClosedPressed" then
-                        tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
-                    elseif atlas == "Campaign_HeaderIcon_Open" or atlas == "Campaign_HeaderIcon_OpenPressed" then
-                        tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
-                    end
-                end
-            end
-        end
-    end
 end
 AFP("hook_QuestLogQuests_Update", hook_QuestLogQuests_Update)
 
@@ -384,39 +347,14 @@ local function worldMapSkin()
     QuestMapFrame:SetScript("OnHide", nil)
 
     QuestMapFrame.DetailsFrame:GwStripTextures(true)
-    QuestMapFrame.DetailsFrame.RewardsFrameContainer:GwStripTextures()
 
-    --hooksecurefunc(_G.CampaignCollapseButtonMixin, "UpdateState", hook_UpdateState) __TODO
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame:GwStripTextures()
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame:GwCreateBackdrop(GW.BackdropTemplates.DopwDown)
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetPoint('TOPLEFT', -3, -14)
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetPoint('BOTTOMRIGHT', -1, 1)
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetBackdropColor(0, 0, 0, 1)
 
-    for _, frame in pairs({"HonorFrame", "XPFrame", "SpellFrame", "SkillPointFrame", "ArtifactXPFrame", "TitleFrame", "WarModeBonusFrame"}) do
-        handleReward(_G.MapQuestInfoRewardsFrame[frame], true)
-    end
-    handleReward(_G.MapQuestInfoRewardsFrame.MoneyFrame, true)
-
-    if not GW.QuestInfo_Display_hooked then
-        hooksecurefunc("QuestInfo_Display", QuestInfo_Display)
-        GW.QuestInfo_Display_hooked = true
-    end
-
-    if QuestMapFrame.Background then
-        QuestMapFrame.Background:SetAlpha(0)
-    end
-
-    if QuestMapFrame.DetailsFrame.SealMaterialBG then
-        QuestMapFrame.DetailsFrame.SealMaterialBG:SetAlpha(0)
-    end
-
-    QuestScrollFrame.Contents.Separator.Divider:Hide()
-    QuestScrollFrame.Edge:SetAlpha(0)
-    QuestScrollFrame.BorderFrame:SetAlpha(0)
-    QuestScrollFrame.Background:SetAlpha(0)
-    GW.SkinTextBox(QuestScrollFrame.SearchBox.Middle, QuestScrollFrame.SearchBox.Left, QuestScrollFrame.SearchBox.Right)
-
-    SkinHeaders(QuestScrollFrame.Contents.StoryHeader)
-    QuestScrollFrame.ScrollBar:GwSkinScrollBar()
-    QuestScrollFrame:GwSkinScrollFrame()
-
-    QuestMapFrame.DetailsFrame.BackFrame.BackButton:GwStripTextures()
+    QuestMapFrame.DetailsFrame.BackFrame:GwStripTextures()
     QuestMapFrame.DetailsFrame.BackFrame.BackButton:GwSkinButton(false, true)
     QuestMapFrame.DetailsFrame.BackFrame.BackButton:SetFrameLevel(5)
     QuestMapFrame.DetailsFrame.AbandonButton:GwStripTextures()
@@ -430,15 +368,42 @@ local function worldMapSkin()
     QuestMapFrame.DetailsFrame.TrackButton:SetFrameLevel(5)
     QuestMapFrame.DetailsFrame.TrackButton:SetWidth(95)
 
+    if QuestMapFrame.DetailsFrame.SealMaterialBG then
+        QuestMapFrame.DetailsFrame.SealMaterialBG:SetAlpha(0)
+    end
+
+    if QuestMapFrame.Background then
+        QuestMapFrame.Background:SetAlpha(0)
+    end
+
+    for _, frame in pairs({"HonorFrame", "XPFrame", "SpellFrame", "SkillPointFrame", "ArtifactXPFrame", "TitleFrame", "WarModeBonusFrame"}) do
+        handleReward(_G.MapQuestInfoRewardsFrame[frame], true)
+    end
+    handleReward(_G.MapQuestInfoRewardsFrame.MoneyFrame, true)
+
+    if not GW.QuestInfo_Display_hooked then
+        hooksecurefunc("QuestInfo_Display", QuestInfo_Display)
+        GW.QuestInfo_Display_hooked = true
+    end
+
+    QuestScrollFrame.Contents.Separator.Divider:Hide()
+    QuestScrollFrame.Edge:SetAlpha(0)
+    QuestScrollFrame.BorderFrame:SetAlpha(0)
+    QuestScrollFrame.Background:SetAlpha(0)
+    GW.SkinTextBox(QuestScrollFrame.SearchBox.Middle, QuestScrollFrame.SearchBox.Left, QuestScrollFrame.SearchBox.Right)
+
+    SkinHeaders(QuestScrollFrame.Contents.StoryHeader)
+    QuestScrollFrame.ScrollBar:GwSkinScrollBar()
+    QuestScrollFrame:GwSkinScrollFrame()
+
     local CampaignOverview = QuestMapFrame.CampaignOverview
     SkinHeaders(CampaignOverview.Header)
     CampaignOverview.ScrollFrame:GwStripTextures()
     GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar, true)
     GW.HandleScrollControls(QuestScrollFrame)
 
-    _G.QuestMapDetailsScrollFrame.ScrollBar:SetWidth(3)
-    _G.QuestMapDetailsScrollFrame.ScrollBar:GwSkinScrollBar()
-    _G.QuestMapDetailsScrollFrame:GwSkinScrollFrame()
+    GW.HandleTrimScrollBar(QuestMapDetailsScrollFrame.ScrollBar, true)
+    GW.HandleScrollControls(QuestMapDetailsScrollFrame)
 
     GW.HandleNextPrevButton(WorldMapFrame.SidePanelToggle.CloseButton, "left")
     GW.HandleNextPrevButton(WorldMapFrame.SidePanelToggle.OpenButton, "right")

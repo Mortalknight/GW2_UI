@@ -5,61 +5,35 @@ local CreateObjectiveNormal = GW.CreateObjectiveNormal
 local CreateTrackerObject = GW.CreateTrackerObject
 local setBlockColor = GW.setBlockColor
 
-local function MonthlyActivitiesObjectiveTracker_OpenFrameToActivity(activityID)
-	if not EncounterJournal then
-		EncounterJournal_LoadUI()
-	end
-	MonthlyActivitiesFrame_OpenFrameToActivity(activityID)
-end
-
-local function MonthlyActivitiesObjectiveTracker_UntrackPerksActivity(_, perksActivityID)
-	C_PerksActivities.RemoveTrackedPerksActivity(perksActivityID)
-end
-
-
-local function MonthlyActivitiesObjectiveTracker_OnOpenDropDown(self)
-    local block = self.activeFrame;
-
-	local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-	info.text = block.title
-	info.isTitle = 1
-	info.notCheckable = 1
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
-
-	info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-	info.notCheckable = 1
-
-	info.text = OBJECTIVES_VIEW_IN_QUESTLOG;
-	info.func = function (button, ...) MonthlyActivitiesObjectiveTracker_OpenFrameToActivity(...) end
-	info.arg1 = block.id
-	info.checked = false
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
-
-	info.text = OBJECTIVES_STOP_TRACKING
-	info.func = MonthlyActivitiesObjectiveTracker_UntrackPerksActivity
-	info.arg1 = block.id
-	info.checked = false
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
-end
-
 local function monthlyActivities_OnClick(self, button)
     if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
 		local perksActivityLink = C_PerksActivities.GetPerksActivityChatLink(self.id)
 		ChatEdit_InsertLink(perksActivityLink)
 	elseif button ~= "RightButton" then
-		GW.Libs.LibDD:CloseDropDownMenus()
 		if not EncounterJournal then
 			EncounterJournal_LoadUI()
 		end
 		if IsModifiedClick("QUESTWATCHTOGGLE") then
-			MonthlyActivitiesObjectiveTracker_UntrackPerksActivity(_, self.id)
+			C_PerksActivities.RemoveTrackedPerksActivity(self.id)
 		else
 			MonthlyActivitiesFrame_OpenFrameToActivity(self.id)
 		end
 
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	else
-		GW.ObjectiveTracker_ToggleDropDown(self, MonthlyActivitiesObjectiveTracker_OnOpenDropDown)
+        self.menuMixin = GwDropDownStyleMixin
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:CreateTitle(self.title)
+            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function()
+                if not EncounterJournal then
+                    EncounterJournal_LoadUI()
+                end
+                MonthlyActivitiesFrame_OpenFrameToActivity(self.id)
+            end)
+            rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()
+                C_PerksActivities.RemoveTrackedPerksActivity(self.id)
+            end)
+        end)
 	end
 end
 
