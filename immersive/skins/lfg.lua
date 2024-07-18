@@ -680,7 +680,10 @@ local function ApplyPvPUISkin()
     GW.HandleScrollControls(HonorFrame, "SpecificScrollBar")
     HonorFrameTypeDropdown:GwHandleDropDownBox(nil, nil, "MENU_PVPUI_TYPE")
     HonorFrameQueueButton:GwSkinButton(false, true)
-    PVPUIHonorLevelDisplay.menuMixin = GwDropDownStyleMixin
+    PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay.menuMixin = GwDropDownStyleMixin
+    if PVPQueueFrame.HonorInset.RatedPanel.HonorLevelDisplay then
+        PVPQueueFrame.HonorInset.RatedPanel.HonorLevelDisplay.menuMixin = GwDropDownStyleMixin
+    end
 
     local BonusFrame = HonorFrame.BonusFrame
     BonusFrame:GwStripTextures()
