@@ -533,11 +533,18 @@ local function GWFriendsFrame_OnEvent(_, event, ...)
         end
     elseif ( event == "BN_CUSTOM_MESSAGE_LOADED" ) then
             FriendsFrameBattlenetFrame.BroadcastFrame:UpdateBroadcast();
+
+    elseif ( event == "NEW_MATCHMAKING_PARTY_INVITE" ) then
+        local collapsed = GetCVarBool("partyInvitesCollapsed_Glue");
+        if ( collapsed ) then
+            FriendsListFrame_SetInviteHeaderAnimPlaying(true, FRIENDS_BUTTON_TYPE_PARTY_INVITE_HEADER);
+        end
+        FriendsList_Update()
     elseif ( event == "BN_FRIEND_INVITE_ADDED" ) then
         -- flash the invites header if collapsed
         local collapsed = GetCVarBool("friendInvitesCollapsed");
         if ( collapsed ) then
-            FriendsListFrame_SetInviteHeaderAnimPlaying(true);
+            FriendsListFrame_SetInviteHeaderAnimPlaying(true, FRIENDS_BUTTON_TYPE_INVITE_HEADER);
         end
         FriendsList_Update();
     elseif ( event == "BN_FRIEND_INVITE_LIST_INITIALIZED" ) then
@@ -547,10 +554,11 @@ local function GWFriendsFrame_OnEvent(_, event, ...)
     elseif ( event == "IGNORELIST_UPDATE" or event == "BN_BLOCK_LIST_UPDATED" ) then
         IgnoreList_Update();
     elseif ( event == "WHO_LIST_UPDATE" ) then
+        WhoList_Update()
         FriendsFrame_Update();
     elseif ( event == "PLAYER_FLAGS_CHANGED" or event == "BN_INFO_CHANGED") then
-        FriendsFrameStatusDropDown_Update();
-        FriendsFrame_CheckBattlenetStatus();
+        FriendsFrameStatusDropdown:GenerateMenu();
+		FriendsFrame_CheckBattlenetStatus();
     elseif ( event == "PLAYER_ENTERING_WORLD" or event == "BN_CONNECTED" or event == "BN_DISCONNECTED") then
         FriendsFrame_CheckBattlenetStatus();
         -- We want to remove any friends from the frame so they don't linger when it's first re-opened.
@@ -571,8 +579,10 @@ local function GWFriendsFrame_OnEvent(_, event, ...)
                 C_GuildInfo.GuildRoster();
             end
         end
-    elseif ( event == "PLAYER_GUILD_UPDATE") then 
-        C_GuildInfo.GuildRoster();
+    elseif ( event == "PLAYER_GUILD_UPDATE") then
+        C_GuildInfo.GuildRoster()
+    elseif ( event == "FRAMES_LOADED" ) then
+		FriendsFrame_CheckBattlenetStatus();
     end
 end
 

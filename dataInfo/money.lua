@@ -30,31 +30,24 @@ end
 local function Money_OnClick(self, button)
     if button == "RightButton" then
         if IsShiftKeyDown() then
-            local menuList = {}
-            tinsert(menuList, { text = DELETE, isTitle = true, notCheckable = true })
+            self.menuMixin = GwDropDownStyleMixin
+            MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+                rootDescription:CreateTitle(DELETE)
 
-            local list = GetStorage(nil, "REALM")
-            if list then
-                for _, char in pairs(list) do
-                    if char and type(char) == "table" then
-                        if char.money and char.money >= 0 then
-                            tinsert(menuList,
-                            {
-                                text = format("%s - %s", char.name, char.faction),
-                                notCheckable = true,
-                                func = function()
+                local list = GetStorage(nil, "REALM")
+                if list then
+                    for _, char in pairs(list) do
+                        if char and type(char) == "table" then
+                            if char.money and char.money >= 0 then
+                                rootDescription:CreateButton(format("%s - %s", char.name, char.faction), function()
                                     ClearStorage(nil, char.name)
-                                    UpdateCharData()
-                                end
-                            })
+                                        UpdateCharData()
+                                end)
+                            end
                         end
-
                     end
                 end
-
-                GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-                GW.Libs.LibDD:EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
-            end
+            end)
         elseif IsControlKeyDown() then
             GW.earnedMoney = 0
             GW.spentMoney = 0

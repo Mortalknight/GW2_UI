@@ -438,101 +438,79 @@ local function ContainerFrame_IsBackpack(id)
     return id == Enum.BagIndex.Backpack;
 end
 
-local ContainerFrameFilterDropDown_Initialize = nil
-
-do
-    local function OnBagFilterClicked(bagID, filterID, value)
-        C_Container.SetBagSlotFlag(bagID, filterID, value);
-        ContainerFrameSettingsManager:SetFilterFlag(bagID, filterID, value);
-    end
-    local function AddButtons_BagFilters(bagID, level)
-        if not ContainerFrame_CanContainerUseFilterMenu(bagID) then
-            return;
-        end
-
-        local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
-        info.text = BAG_FILTER_ASSIGN_TO;
-        info.isTitle = 1;
-        info.notCheckable = 1;
-        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
-
-        info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
-        for _, flag in ContainerFrameUtil_EnumerateBagGearFilters() do
-            info.text = BAG_FILTER_LABELS[flag];
-            info.checked = function() C_Container.GetBagSlotFlag(bagID, flag) end
-            info.func = function(_, _, _, value)
-                return OnBagFilterClicked(bagID, flag, not value);
-            end
-
-            GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
-        end
+local function AddButtons_BagFilters(description, bagID)
+    if not ContainerFrame_CanContainerUseFilterMenu(bagID) then
+        return
     end
 
-    local function AddButtons_BagCleanup(bagID, level)
-        local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+    description:CreateTitle(BAG_FILTER_ASSIGN_TO)
 
-        info.text = BAG_FILTER_IGNORE;
-        info.isTitle = 1;
-        info.notCheckable = 1;
-        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
-
-        info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
-        info.text = BAG_FILTER_CLEANUP;
-        info.func = function(_, _, _, value)
-            if ContainerFrame_IsMainBank(bagID) then
-                C_Container.SetBankAutosortDisabled(not value);
-            elseif ContainerFrame_IsBackpack(bagID) then
-                C_Container.SetBackpackAutosortDisabled(not value);
-            else
-                C_Container.SetBagSlotFlag(bagID, Enum.BagSlotFlags.DisableAutoSort, not value);
-            end
-        end
-
-        if ContainerFrame_IsMainBank(bagID) then
-            info.checked = C_Container.GetBankAutosortDisabled();
-        elseif ContainerFrame_IsBackpack(bagID) then
-            info.checked = C_Container.GetBackpackAutosortDisabled();
-        else
-            info.checked = C_Container.GetBagSlotFlag(bagID, Enum.BagSlotFlags.DisableAutoSort);
-        end
-
-        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
-
-        -- ignore junk selling from this bag or backpack
-        if not ContainerFrame_IsMainBank(bagID) then
-            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
-            info.text = SELL_ALL_JUNK_ITEMS_EXCLUDE_FLAG;
-            info.func = function(_, _, _, value)
-                if ContainerFrame_IsBackpack(bagID) then
-                    C_Container.SetBackpackSellJunkDisabled(not value);
-                else
-                    C_Container.SetBagSlotFlag(bagID, Enum.BagSlotFlags.ExcludeJunkSell, not value);
-                end
-            end
-
-            if ContainerFrame_IsBackpack(bagID) then
-                info.checked = C_Container.GetBackpackSellJunkDisabled();
-            else
-                info.checked = C_Container.GetBagSlotFlag(bagID, Enum.BagSlotFlags.ExcludeJunkSell);
-            end
-
-            GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
-        end
+    local function IsSelected(flag)
+        return C_Container.GetBagSlotFlag(bagID, flag)
     end
 
-    ContainerFrameFilterDropDown_Initialize = function(self, level)
-        local frame = self:GetParent();
-        local bagID = frame:GetBagID();
-        if not (ContainerFrame_IsHeldBag(bagID) or ContainerFrame_IsBankBag(bagID)) then
-            return;
-        end
-
-        AddButtons_BagFilters(bagID, level);
-        AddButtons_BagCleanup(bagID, level);
+    local function SetSelected(flag)
+        local value = not IsSelected(flag)
+        C_Container.SetBagSlotFlag(bagID, flag, value)
+        ContainerFrameSettingsManager:SetFilterFlag(bagID, flag, value)
     end
 
+    for i, flag in ContainerFrameUtil_EnumerateBagGearFilters() do
+        local checkbox = description:CreateCheckbox(BAG_FILTER_LABELS[flag], IsSelected, SetSelected, flag)
+        checkbox:SetResponse(MenuResponse.Close)
+    end
 end
 
+local function AddButtons_BagCleanup(description, bagID)
+    description:CreateTitle(BAG_FILTER_IGNORE);
+
+    do
+        local function IsSelected()
+            if ContainerFrame_IsMainBank(bagID) then
+                return C_Container.GetBankAutosortDisabled();
+            elseif ContainerFrame_IsBackpack(bagID) then
+                return C_Container.GetBackpackAutosortDisabled();
+            end
+            return C_Container.GetBagSlotFlag(bagID, Enum.BagSlotFlags.DisableAutoSort);
+        end
+
+        local function SetSelected()
+            local value = not IsSelected();
+            if ContainerFrame_IsMainBank(bagID) then
+                C_Container.SetBankAutosortDisabled(value);
+            elseif ContainerFrame_IsBackpack(bagID) then
+                C_Container.SetBackpackAutosortDisabled(value);
+            else
+                C_Container.SetBagSlotFlag(bagID, Enum.BagSlotFlags.DisableAutoSort, value);
+            end
+        end
+
+        local checkbox = description:CreateCheckbox(BAG_FILTER_CLEANUP, IsSelected, SetSelected);
+        checkbox:SetResponse(MenuResponse.Close);
+    end
+
+    -- ignore junk selling from this bag or backpack
+    if not ContainerFrame_IsMainBank(bagID) then
+        local function IsSelected()
+            if ContainerFrame_IsBackpack(bagID) then
+                return C_Container.GetBackpackSellJunkDisabled();
+            end
+            return C_Container.GetBagSlotFlag(bagID, Enum.BagSlotFlags.ExcludeJunkSell);
+        end
+
+        local function SetSelected()
+            local value = not IsSelected();
+            if ContainerFrame_IsBackpack(bagID) then
+                C_Container.SetBackpackSellJunkDisabled(value);
+            else
+                C_Container.SetBagSlotFlag(bagID, Enum.BagSlotFlags.ExcludeJunkSell, value);
+            end
+        end
+
+        local checkbox = description:CreateCheckbox(SELL_ALL_JUNK_ITEMS_EXCLUDE_FLAG, IsSelected, SetSelected);
+        checkbox:SetResponse(MenuResponse.Close);
+    end
+end
 
 local function bag_OnMouseDown(self, button)
     if button ~= "RightButton" then
@@ -546,13 +524,17 @@ local function bag_OnMouseDown(self, button)
     if self.gwHasBag or bag_id == BACKPACK_CONTAINER then
         local cf = getContainerFrame(bag_id)
         if cf then
-            if not cf.FilterDopDownGw2 then
-                cf.FilterDopDownGw2 = CreateFrame("Frame", "$parentFilterDropDownGw2", cf, "UIDropDownMenuTemplate")
-                GW.Libs.LibDD:UIDropDownMenu_Initialize(cf.FilterDopDownGw2, ContainerFrameFilterDropDown_Initialize, "MENU")
-            end
+            self.menuMixin = GwDropDownStyleMixin
+            MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+                local frame = self:GetParent()
+                local bagID = frame:GetBagID()
+                if not (ContainerFrame_IsHeldBag(bagID) or ContainerFrame_IsBankBag(bagID)) then
+                    return
+                end
 
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            GW.Libs.LibDD:ToggleDropDownMenu(1, nil, cf.FilterDopDownGw2, "cursor")
+                AddButtons_BagFilters(rootDescription, bagID);
+                AddButtons_BagCleanup(rootDescription, bagID);
+            end)
         end
     end
 end

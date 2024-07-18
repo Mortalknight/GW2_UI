@@ -9,11 +9,7 @@ local Headers = {
     "ColumnHeader4",
 }
 
-local WHOFRAME_DROPDOWN_LIST = {
-    {name = ZONE, sortType = "zone"},
-    {name = GUILD, sortType = "guild"},
-    {name = RACE, sortType = "race"}
-}
+local whoSortValue = 1
 
 local function WhoList_Update()
     local scrollFrame = GwWhoWindow.list.ScrollFrame
@@ -52,7 +48,7 @@ local function WhoList_Update()
             button.Class:SetTextColor(classTextColor.r, classTextColor.g, classTextColor.b)
 
             local variableColumnTable = { info.area, info.fullGuildName, info.raceStr }
-            local variableText = variableColumnTable[GW.Libs.LibDD:UIDropDownMenu_GetSelectedID(GwWhoWindow.list.ColumnHeader2.DropDown)]
+            local variableText = variableColumnTable[whoSortValue]
             button.Variable:SetText(variableText)
 
             if button.Variable:IsTruncated() or button.Name:IsTruncated() then
@@ -100,19 +96,28 @@ local function WhoList_Update()
 end
 
 
-local function WhoWindowDropDownButton_OnClick(self)
-    GW.Libs.LibDD:UIDropDownMenu_SetSelectedID(GwWhoWindow.list.ColumnHeader2.DropDown, self:GetID())
-    WhoList_Update()
-end
+local function WhoFrameDropdown_OnLoad(self)
+    WowStyle1DropdownMixin.OnLoad(self)
+    if not IsOnGlueScreen() then
+		local function IsSelected(sortData)
+			return sortData.value == whoSortValue;
+		end
 
-local function WhoWindowDropDown_Initialize()
-    local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-    for i=1, getn(WHOFRAME_DROPDOWN_LIST), 1 do
-        info.text = WHOFRAME_DROPDOWN_LIST[i].name
-        info.func = WhoWindowDropDownButton_OnClick
-        info.checked = nil
-        GW.Libs.LibDD:UIDropDownMenu_AddButton(info)
-    end
+		local function SetSelected(sortData)
+			whoSortValue = sortData.value;
+			C_FriendList.SortWho(sortData.sortType);
+
+			WhoList_Update()
+		end
+
+		self:SetWidth(101)
+        self.menuMixin = GwDropDownStyleMixin
+		self:SetupMenu(function(dropdown, rootDescription)
+			rootDescription:CreateRadio(ZONE, IsSelected, SetSelected, {value = 1, sortType = "zone"});
+			rootDescription:CreateRadio(GUILD, IsSelected, SetSelected, {value = 2, sortType = "guild"});
+			rootDescription:CreateRadio(RACE, IsSelected, SetSelected, {value = 3, sortType = "race"});
+		end);
+	end
 end
 
 local function LoadWhoList(tabContainer)
@@ -125,36 +130,36 @@ local function LoadWhoList(tabContainer)
     WhoWindow:SetScript("OnEvent", WhoList_Update)
 
     -- Create Dropdown
-    WhoWindow.list.ColumnHeader2.DropDown = GW.Libs.LibDD:Create_UIDropDownMenu("", WhoWindow.list.ColumnHeader2)
-    WhoWindow.list.ColumnHeader2.DropDown:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2, "TOPLEFT", 0, 0)
-    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture = WhoWindow.list.ColumnHeader2.DropDown:CreateTexture(nil, "OVERLAY")
-    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture:SetTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight")
-    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture:SetBlendMode("ADD")
-    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture:Hide()
-    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture:SetPoint("TOPLEFT")
-    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture:SetPoint("BOTTOMRIGHT")
+    WhoWindow.list.ColumnHeader2.menuMixin = GwDropDownStyleMixin
+    WhoWindow.list.ColumnHeader2.Dropdown = CreateFrame("DropdownButton", nil, WhoWindow.list.ColumnHeader2, "WowStyle1DropdownTemplate")
+    WhoWindow.list.ColumnHeader2.Dropdown:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2, "TOPLEFT", 0, 0)
+    WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture = WhoWindow.list.ColumnHeader2.Dropdown:CreateTexture(nil, "OVERLAY")
+    WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:SetTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight")
+    WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:SetBlendMode("ADD")
+    WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:Hide()
+    WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:SetPoint("TOPLEFT")
+    WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:SetPoint("BOTTOMRIGHT")
+    WhoWindow.list.ColumnHeader2.Dropdown.Text:SetFont(UNIT_NAME_FONT, 12)
 
-    WhoWindow.list.ColumnHeader2.DropDown.Text:SetFont(UNIT_NAME_FONT, 12)
-    GW.Libs.LibDD:UIDropDownMenu_Initialize(WhoWindow.list.ColumnHeader2.DropDown, WhoWindowDropDown_Initialize)
-    GW.Libs.LibDD:UIDropDownMenu_SetWidth(WhoWindow.list.ColumnHeader2.DropDown, 80)
-    GW.Libs.LibDD:UIDropDownMenu_SetButtonWidth(WhoWindow.list.ColumnHeader2.DropDown, 24)
-    GW.Libs.LibDD:UIDropDownMenu_JustifyText(WhoWindow.list.ColumnHeader2.DropDown, "LEFT")
-
-    WhoWindow.list.ColumnHeader2.DropDown:SetScript("OnShow", function(self)
-        GW.Libs.LibDD:UIDropDownMenu_Initialize(self, WhoWindowDropDown_Initialize)
-        GW.Libs.LibDD:UIDropDownMenu_SetSelectedID(self, 1)
-    end)
-    WhoWindow.list.ColumnHeader2.DropDown:SetScript("OnEnter", function(self)
+    WhoFrameDropdown_OnLoad(WhoWindow.list.ColumnHeader2.Dropdown)
+    WhoWindow.list.ColumnHeader2.Dropdown:SetScript("OnShow", function() whoSortValue = 1 end)
+    WhoWindow.list.ColumnHeader2.Dropdown:SetScript("OnEnter", function(self)
         self.HighlightTexture:Show()
     end)
-    WhoWindow.list.ColumnHeader2.DropDown:SetScript("OnLeave", function(self)
+    WhoWindow.list.ColumnHeader2.Dropdown:SetScript("OnLeave", function(self)
         self.HighlightTexture:Hide()
     end)
-    WhoWindow.list.ColumnHeader2.DropDown:SetScript("OnMouseUp", function(self)
-        if WHOFRAME_DROPDOWN_LIST[GW.Libs.LibDD:UIDropDownMenu_GetSelectedID(self)].sortType then
-            C_FriendList.SortWho(WHOFRAME_DROPDOWN_LIST[GW.Libs.LibDD:UIDropDownMenu_GetSelectedID(self)].sortType)
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        end
+    WhoWindow.list.ColumnHeader2.Dropdown:HookScript("OnClick", function(self)
+        self.Text:SetFont(UNIT_NAME_FONT, 12)
+        self.Text:SetShadowOffset(0, 0)
+        self.Text:SetTextColor(0, 0, 0)
+        self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    end)
+    WhoWindow.list.ColumnHeader2.Dropdown:HookScript("OnMouseDown", function(self)
+        self.Text:SetFont(UNIT_NAME_FONT, 12)
+        self.Text:SetShadowOffset(0, 0)
+        self.Text:SetTextColor(0, 0, 0)
+        self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     end)
 
     for _, object in pairs(Headers) do
@@ -172,27 +177,23 @@ local function LoadWhoList(tabContainer)
         if object ~= "ColumnHeader2" then WhoWindow.list[object]:GwSkinButton(false, true) end
     end
 
-    WhoWindow.list.ColumnHeader2.DropDown:SetSize(135, 24)
-    WhoWindow.list.ColumnHeader2.DropDown:GwStripTextures()
-    WhoWindow.list.ColumnHeader2.DropDown.tex = WhoWindow.list.ColumnHeader2.DropDown:CreateTexture(nil, "ARTWORK")
-    WhoWindow.list.ColumnHeader2.DropDown.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
-    WhoWindow.list.ColumnHeader2.DropDown.tex:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2.DropDown, "TOPLEFT", 1, 0)
-    WhoWindow.list.ColumnHeader2.DropDown.tex:SetPoint("BOTTOMRIGHT", WhoWindow.list.ColumnHeader2.DropDown, "BOTTOMRIGHT", -2, 8)
-    WhoWindow.list.ColumnHeader2.DropDown.Button:ClearAllPoints()
-    WhoWindow.list.ColumnHeader2.DropDown.Button:SetPoint("RIGHT", WhoWindow.list.ColumnHeader2.DropDown, "RIGHT", -5, 5)
-    WhoWindow.list.ColumnHeader2.DropDown.Text:ClearAllPoints()
-    WhoWindow.list.ColumnHeader2.DropDown.Text:SetPoint("RIGHT", WhoWindow.list.ColumnHeader2.DropDown.Button, "RIGHT", -70, -1)
-    WhoWindow.list.ColumnHeader2.DropDown.Text:SetFont(UNIT_NAME_FONT, 12)
-    WhoWindow.list.ColumnHeader2.DropDown.Text:SetShadowOffset(0, 0)
-    WhoWindow.list.ColumnHeader2.DropDown.Text:SetTextColor(0, 0, 0)
-    WhoWindow.list.ColumnHeader2.DropDown.Button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    WhoWindow.list.ColumnHeader2.DropDown.Button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    WhoWindow.list.ColumnHeader2.DropDown.Button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    WhoWindow.list.ColumnHeader2.DropDown.Button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    WhoWindow.list.ColumnHeader2.DropDown:GwSkinButton(false, false, true)
-    WhoWindow.list.ColumnHeader2.DropDown.hover:ClearAllPoints()
-    WhoWindow.list.ColumnHeader2.DropDown.hover:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2.DropDown, "TOPLEFT", 1, 0)
-    WhoWindow.list.ColumnHeader2.DropDown.hover:SetPoint("BOTTOMRIGHT", WhoWindow.list.ColumnHeader2.DropDown, "BOTTOMRIGHT", -2, 8)
+    WhoWindow.list.ColumnHeader2.Dropdown:SetSize(135, 24)
+    WhoWindow.list.ColumnHeader2.Dropdown:GwStripTextures()
+    WhoWindow.list.ColumnHeader2.Dropdown.tex = WhoWindow.list.ColumnHeader2.Dropdown:CreateTexture(nil, "ARTWORK")
+    WhoWindow.list.ColumnHeader2.Dropdown.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
+    WhoWindow.list.ColumnHeader2.Dropdown.tex:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2.Dropdown, "TOPLEFT", 1, 0)
+    WhoWindow.list.ColumnHeader2.Dropdown.tex:SetPoint("BOTTOMRIGHT", WhoWindow.list.ColumnHeader2.Dropdown, "BOTTOMRIGHT", -2, 0)
+    WhoWindow.list.ColumnHeader2.Dropdown.Arrow:ClearAllPoints()
+    WhoWindow.list.ColumnHeader2.Dropdown.Arrow:SetPoint("RIGHT", WhoWindow.list.ColumnHeader2.Dropdown, "RIGHT", -5, -3)
+    WhoWindow.list.ColumnHeader2.Dropdown.Text:SetFont(UNIT_NAME_FONT, 12)
+    WhoWindow.list.ColumnHeader2.Dropdown.Text:SetShadowOffset(0, 0)
+    WhoWindow.list.ColumnHeader2.Dropdown.Text:SetTextColor(0, 0, 0)
+    WhoWindow.list.ColumnHeader2.Dropdown:GwSkinButton(false, false, true)
+    WhoWindow.list.ColumnHeader2.Dropdown.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+
+    WhoWindow.list.ColumnHeader2.Dropdown.hover:ClearAllPoints()
+    WhoWindow.list.ColumnHeader2.Dropdown.hover:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2.Dropdown, "TOPLEFT", 1, 0)
+    WhoWindow.list.ColumnHeader2.Dropdown.hover:SetPoint("BOTTOMRIGHT", WhoWindow.list.ColumnHeader2.Dropdown, "BOTTOMRIGHT", -2, 0)
 
     WhoWindow.list.InviteButton:SetScript("OnClick", function() C_PartyInfo.InviteUnit(WhoWindow.selectedName) end)
     WhoWindow.list.AddFriendButton:SetScript("OnClick", function() C_FriendList.AddFriend(WhoWindow.selectedName) end)

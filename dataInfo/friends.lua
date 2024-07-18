@@ -404,6 +404,8 @@ local function Friends_OnClick(self, button)
     if button == "RightButton" then
         self.menuMixin = GwDropDownStyleMixin
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            local tempTeble = {}
+
             rootDescription:CreateTitle(OPTIONS_MENU)
             local submenuInvite = rootDescription:CreateButton(INVITE)
             local submenuWisper = rootDescription:CreateButton(CHAT_MSG_WHISPER_INFORM)
@@ -428,9 +430,12 @@ local function Friends_OnClick(self, button)
                     local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
                     if not classc then classc = levelc end
 
-                    submenuWisper:CreateButton(format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name), function()
+                    local name = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name)
+                    submenuWisper:CreateButton(name, function()
                         whisperClick(info.name)
                     end)
+
+                    table.insert(tempTeble, name)
                     if inGroup(info.name) == "" then
                         submenuInvite:CreateButton(format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name), function()
                             inviteClick(info.name, info.guid)
@@ -443,12 +448,12 @@ local function Friends_OnClick(self, button)
                 if info.isOnline then
                     local realID, hasBnet = info.accountName, false
 
-                    --for _, z in ipairs(menuList[3].menuList) do
-                    --    if z and z.text and (z.text == realID) then
-                    --        hasBnet = true
-                    --        break
-                    --    end
-                    --end
+                    for _, name in ipairs(tempTeble) do
+                        if name and name == realID then
+                            hasBnet = true
+                            break
+                        end
+                    end
 
                     if not hasBnet then
                         submenuWisper:CreateButton(realID, function()

@@ -8,6 +8,44 @@ MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
 MAP_FRAMES_HIDE[3] = MiniMapTrackingButton
 MAP_FRAMES_HIDE[4] = MiniMapTracking
 
+local ALWAYS_ON_FILTERS = {
+	[Enum.MinimapTrackingFilter.QuestPoIs] = true,
+	[Enum.MinimapTrackingFilter.TaxiNode] = true,
+	[Enum.MinimapTrackingFilter.Innkeeper] = true,
+	[Enum.MinimapTrackingFilter.ItemUpgrade] = true,
+	[Enum.MinimapTrackingFilter.Battlemaster] = true,
+	[Enum.MinimapTrackingFilter.Stablemaster] = true,
+};
+
+local CONDITIONAL_FILTERS = {
+	[Enum.MinimapTrackingFilter.Target] = true,
+	[Enum.MinimapTrackingFilter.Digsites] = true,
+	[Enum.MinimapTrackingFilter.Repair] = true,
+};
+
+local OPTIONAL_FILTERS = {
+	[Enum.MinimapTrackingFilter.Banker] = true,
+	[Enum.MinimapTrackingFilter.Auctioneer] = true,
+	[Enum.MinimapTrackingFilter.Barber] = true,
+	[Enum.MinimapTrackingFilter.TrainerProfession] = true,
+	[Enum.MinimapTrackingFilter.AccountCompletedQuests] = true,
+	[Enum.MinimapTrackingFilter.TrivialQuests] = true,
+	[Enum.MinimapTrackingFilter.Transmogrifier] = true,
+	[Enum.MinimapTrackingFilter.Mailbox] = true,
+};
+
+local LOW_PRIORITY_TRACKING_SPELLS = {
+	[261764] = true; -- Track Warboards
+};
+
+local TRACKING_SPELL_OVERRIDE_TEXTURES = {
+	[43308] = "professions_tracking_fish";-- Find Fish
+	[2580] = "professions_tracking_ore"; -- Find Minerals 1
+	[8388] = "professions_tracking_ore"; -- Find Minerals 2
+	[2383] = "professions_tracking_herb"; -- Find Herbs 1
+	[8387] = "professions_tracking_herb"; -- Find Herbs 2
+};
+
 local M = CreateFrame("Frame")
 
 local minimapDetails = {
@@ -251,22 +289,188 @@ end
 GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
 
+--Copyed from blizzard code
+local function CreatePredictedTrackingState()
+	local tbl = {};
+	local state = {};
+
+	tbl.SetSelected = function(self, index, selected)
+		state[index] = selected;
+
+		MinimapUtil.SetTrackingFilterByFilterIndex(index, selected);
+	end
+
+	-- Some filters (like trivial quest tracking) can be changed from other places in the UI (like the Options panel or the World Map)
+	-- If a filter is changed from an external system, then all we need to do is update the predicted state
+	tbl.OverrideSelectedState = function(self, index, selected)
+		state[index] = selected;
+	end
+
+	tbl.IsSelected = function(self, index)
+		return state[index] == true;
+	end
+
+	tbl.ClearSelections = function(self)
+		state = {};
+
+		C_Minimap.ClearAllTracking();
+	end
+
+	tbl.Enumerate = function(self)
+		return ipairs(state);
+	end
+
+	return tbl;
+end
+
+local trackingState = CreatePredictedTrackingState()
+
+local function CanDisplayTrackingInfo(index)
+	local filter = C_Minimap.GetTrackingFilter(index);
+	if not filter then
+		return false;
+	end
+
+	return OPTIONAL_FILTERS[filter.filterID] or filter.spellID;
+end
+
+local function ToggleTrackingSelected(info)
+	local selected = trackingState:IsSelected(info.index);
+	local newSelected = not selected;
+	trackingState:SetSelected(info.index, newSelected);
+end
+
+local function IsTrackingActive(info)
+	return trackingState:IsSelected(info.index);
+end
+
+local function SetupMiniMapTrackingDropdown(self)
+    self.menuMixin = GwDropDownStyleMixin
+    MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+        local showAll = GetCVarBool("minimapTrackingShowAll")
+        local isHunterClass = GW.myclass == "HUNTER"
+
+        if not showAll then
+            rootDescription:CreateButton(UNCHECK_ALL, function()
+                trackingState:ClearSelections();
+
+                for index = 1, C_Minimap.GetNumTrackingTypes() do
+                    local filter = C_Minimap.GetTrackingFilter(index);
+                    if ALWAYS_ON_FILTERS[filter.filterID] or CONDITIONAL_FILTERS[filter.filterID] then
+                        trackingState:SetSelected(index, true);
+                    end
+                end
+
+                return MenuResponse.Refresh;
+            end);
+        end
+
+        local hunterInfo = {};
+        local townfolkInfo = {};
+        local regularInfo = {};
+
+        for index = 1, C_Minimap.GetNumTrackingTypes() do
+            if showAll or CanDisplayTrackingInfo(index) then
+                local trackingInfo = C_Minimap.GetTrackingInfo(index);
+                trackingInfo.index = index;
+
+                if isHunterClass and (trackingInfo.subType == HUNTER_TRACKING) then
+                    table.insert(hunterInfo, trackingInfo);
+                elseif trackingInfo.subType == TOWNSFOLK_TRACKING then
+                    table.insert(townfolkInfo, trackingInfo);
+                else
+                    table.insert(regularInfo, trackingInfo);
+                end
+            end
+        end
+
+        TableUtil.Execute({hunterInfo, townfolkInfo, regularInfo}, function(trackingInfo)
+            table.sort(trackingInfo, function(a, b)
+                -- Sort low priority tracking spells to the end
+                local filterA = C_Minimap.GetTrackingFilter(a.index);
+                local filterB = C_Minimap.GetTrackingFilter(b.index);
+                local lowPriorityA = LOW_PRIORITY_TRACKING_SPELLS[filterA.spellID] or false;
+                local lowPriorityB = LOW_PRIORITY_TRACKING_SPELLS[filterB.spellID] or false;
+                if lowPriorityA ~= lowPriorityB then
+                    return not lowPriorityA;
+                end
+                return a.index < b.index;
+            end);
+        end);
+
+        local function CreateCheckboxWithIcon(parentDescription, trackingInfo)
+            local name = trackingInfo.name;
+            trackingInfo.text = name;
+
+            local texture = TRACKING_SPELL_OVERRIDE_TEXTURES[trackingInfo.spellID] or trackingInfo.texture;
+            local desc = parentDescription:CreateCheckbox(
+                name,
+                IsTrackingActive,
+                ToggleTrackingSelected,
+                trackingInfo);
+
+            desc:AddInitializer(function(button, description, menu)
+                local rightTexture = button:AttachTexture();
+                rightTexture:SetSize(20, 20);
+                rightTexture:SetPoint("RIGHT");
+                rightTexture:SetTexture(texture);
+
+                local fontString = button.fontString;
+                fontString:SetPoint("RIGHT", rightTexture, "LEFT");
+
+                if trackingInfo.type == "spell" then
+                    local uv0, uv1 = .0625, .9;
+                    rightTexture:SetTexCoord(uv0, uv1, uv0, uv1);
+                end
+
+                -- The size is explicitly provided because this requires a right-justified icon.
+                local width, height = fontString:GetUnboundedStringWidth() + 60, 20;
+                return width, height;
+            end);
+
+            return desc;
+        end
+
+        local hunterCount = #hunterInfo;
+        if hunterCount > 0 then
+            if hunterCount > 1 then
+                local hunterMenuDesc = rootDescription:CreateButton(HUNTER_TRACKING_TEXT);
+                for index, info in ipairs(hunterInfo) do
+                    CreateCheckboxWithIcon(hunterMenuDesc, info);
+                end
+            else
+                CreateCheckboxWithIcon(rootDescription);
+            end
+        end
+        if #townfolkInfo > 0 then
+            local townfolkMenuDesc = rootDescription;
+            if showAll then
+                townfolkMenuDesc = rootDescription:CreateButton(TOWNSFOLK_TRACKING_TEXT);
+            end
+
+            for index, info in ipairs(townfolkInfo) do
+                CreateCheckboxWithIcon(townfolkMenuDesc, info);
+            end
+        end
+
+        for index, info in ipairs(regularInfo) do
+            CreateCheckboxWithIcon(rootDescription, info);
+        end
+    end)
+end
+
 local function Minimap_OnMouseDown(self, btn)
-    --TODO -- Need to add the dropdown open on cursor
-    if btn == "RightButton" and M.TrackingDropdown then
-        _G.MinimapCluster.Tracking.Button:OpenMenu()
+    if btn == "RightButton" then
+        SetupMiniMapTrackingDropdown(self)
     else
         Minimap.OnClick(self)
     end
 end
 
-local function MapCanvas_OnMouseDown(_, btn)
-    if M.TrackingDropdown then
-        GW.Libs.LibDD:HideDropDownMenu(1, nil, M.TrackingDropdown)
-    end
+local function MapCanvas_OnMouseDown(self, btn)--TODO
 
-    if btn == "RightButton" and M.TrackingDropdown then
-        GW.Libs.LibDD:ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
+    if btn == "RightButton" then
+        SetupMiniMapTrackingDropdown(self)
     end
 end
 
@@ -306,78 +510,40 @@ local function UpdateUxpansionLandingPageTable()
     for _, v in pairs(expansionLandingPageTable) do
         v.enabled = C_Garrison.GetNumFollowers(v.enumFollowerValue) > 0
     end
-
-    if M.ExpansionLandingPageDropDown then
-        GW.Libs.LibDD:UIDropDownMenu_RefreshAll(M.ExpansionLandingPageDropDown)
-    end
-end
-
-local function ExpansionLandingButtonDropDown_Initialize(self, level)
-    UpdateUxpansionLandingPageTable()
-
-    sort(expansionLandingPageTable, function(a, b)
-        return a.id < b.id
-    end)
-
-    local info
-    for _, v in pairs(expansionLandingPageTable) do
-        info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-        info.notCheckable = true
-        if not v.enabled then
-            info.disablecolor = "|cff666666"
-        end
-
-        info.text = v.text
-        info.notClickable = not v.enabled
-        info.func = function()
-            if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
-                HideUIPanel(GarrisonLandingPage)
-            end
-            local num = C_Garrison.GetAvailableMissions(GetPrimaryGarrisonFollowerType(v.enumValue))
-            if num == nil then return end
-            ShowGarrisonLandingPage(v.enumValue)
-            GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
-        end
-
-        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
-    end
-end
-
-local function CreateMinimapTrackingDropdown()
-    local dropdown = CreateFrame('Frame', 'GW2UIMiniMapTrackingDropDown', UIParent, 'UIDropDownMenuTemplate')
-    dropdown:SetID(1)
-    dropdown:SetClampedToScreen(true)
-    dropdown:Hide()
-
-    UIDropDownMenu_Initialize(dropdown, _G.MiniMapTrackingDropDown_Initialize, 'MENU')
-	dropdown.noResize = true
-
-    return dropdown
-end
-
-local function MinimapTracking_UpdateTracking()
-	if _G.UIDROPDOWNMENU_OPEN_MENU == M.TrackingDropdown then
-		UIDropDownMenu_RefreshAll(M.TrackingDropdown)
-	end
 end
 
 local function ExpansionLandingPageMinimapButtonDropdown(self)
-    local dropdown = GW.Libs.LibDD:Create_UIDropDownMenu("GW2UIMiniMapExpansionLandingButtonDropDown", UIParent)
-    dropdown:SetID(1)
-    dropdown:SetClampedToScreen(true)
-    dropdown:Hide()
-
-    GW.Libs.LibDD:UIDropDownMenu_Initialize(dropdown, ExpansionLandingButtonDropDown_Initialize, "MENU")
-    dropdown.noResize = true
-
-    M.ExpansionLandingPageDropDown = dropdown
-
     self:HookScript("OnClick", function(self, button)
         if button == "RightButton" then
             if ExpansionLandingPage:IsVisible() then
                 ToggleExpansionLandingPage()
             end
-            GW.Libs.LibDD:ToggleDropDownMenu(1, nil, dropdown, "cursor")
+
+            self.menuMixin = GwDropDownStyleMixin
+            MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+                UpdateUxpansionLandingPageTable()
+
+                sort(expansionLandingPageTable, function(a, b)
+                    return a.id < b.id
+                end)
+
+                for _, v in pairs(expansionLandingPageTable) do
+
+                    local btn = rootDescription:CreateButton(v.text, function()
+                        if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
+                            HideUIPanel(GarrisonLandingPage)
+                        end
+                        local num = C_Garrison.GetAvailableMissions(GetPrimaryGarrisonFollowerType(v.enumValue))
+                        if num == nil then return end
+                        ShowGarrisonLandingPage(v.enumValue)
+                        GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
+                    end)
+                    if not v.enabled then
+                        btn:SetEnabled(true)
+                    end
+                end
+            end)
+
             if C_AddOns.IsAddOnLoaded("WarPlan") then
                 HideDropDownMenu(1)
             end
@@ -588,8 +754,6 @@ local function LoadMinimap()
 
     QueueStatusFrame:SetClampedToScreen(true)
 
-    M.TrackingDropdown = CreateMinimapTrackingDropdown()
-
     if HybridMinimap then SetupHybridMinimap() end
 
     M:RegisterEvent("ADDON_LOADED")
@@ -597,7 +761,6 @@ local function LoadMinimap()
     M:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     M:RegisterEvent("ZONE_CHANGED_INDOORS")
     M:RegisterEvent("ZONE_CHANGED")
-    M:RegisterEvent('MINIMAP_UPDATE_TRACKING')
     M:SetScript("OnEvent", function(_, event, ...)
         if event == "ADDON_LOADED" then
             local addon = ...
@@ -615,8 +778,6 @@ local function LoadMinimap()
                     HideUIPanel(WorldMapFrame)
                 end)
             end
-        elseif event == "MINIMAP_UPDATE_TRACKING" then
-            MinimapTracking_UpdateTracking()
         else
             Update_ZoneText()
         end
