@@ -223,19 +223,14 @@ local function updateCurrentScenario(self, event, ...)
 
     for criteriaIndex = 1, numCriteria do
         local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
-        local objectiveType = not scenarioCriteriaInfo.isWeightedProgress and "monster" or "progressbar"
+        local objectiveType = scenarioCriteriaInfo.isWeightedProgress and "progressbar" or "monster"
         if objectiveType == "progressbar" and not isMythicKeystone then
             scenarioCriteriaInfo.totalQuantity = 100
         end
 
-        --TODO: mythicKeystoneCurrentValue
-        local mythicKeystoneCurrentValue = 0
-        if isMythicKeystone then
-            mythicKeystoneCurrentValue = strtrim(mythicKeystoneCurrentValue, "%") or 1
-        end
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress),
+            ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, scenarioCriteriaInfo.isWeightedProgress),
             false,
             criteriaIndex,
             objectiveType,
@@ -255,9 +250,9 @@ local function updateCurrentScenario(self, event, ...)
 
     for _, v in pairs(bonusSteps) do
         local bonusStepIndex = v
-        local _, _, numCriteria = C_Scenario.GetStepInfo(bonusStepIndex)
+        local _, _, numCriteriaForStep = C_Scenario.GetStepInfo(bonusStepIndex)
 
-        for criteriaIndex = 1, numCriteria do
+        for criteriaIndex = 1, numCriteriaForStep do
             local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
             local objectiveType = "progressbar"
             if not scenarioCriteriaInfo.isWeightedProgress then
@@ -295,7 +290,7 @@ local function updateCurrentScenario(self, event, ...)
                 )
             end
         end
-        numCriteriaPrev = numCriteriaPrev + numCriteria
+        numCriteriaPrev = numCriteriaPrev + numCriteriaForStep
     end
 
     for i = GwScenarioBlock.numObjectives + 1, 20 do

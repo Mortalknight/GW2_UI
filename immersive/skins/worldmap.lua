@@ -261,7 +261,43 @@ end
 AFP("hook_NotifyDialogShow", hook_NotifyDialogShow)
 
 local function hook_QuestLogQuests_Update()
+    for button in QuestScrollFrame.headerFramePool:EnumerateActive() do
+		if button.ButtonText then
+			if not button.IsSkinned then
+				button:GwStripTextures()
+				button:GwCreateBackdrop('Transparent')
+				button:GetHighlightTexture():SetColorTexture(1, 1, 1, .25)
+
+				button.IsSkinned = true
+			end
+		end
+	end
+
+	for button in QuestScrollFrame.titleFramePool:EnumerateActive() do
+		if not button.IsSkinned then
+			if button.CheckBox then
+				button.CheckBox:DisableDrawLayer('BACKGROUND')
+				button.CheckBox:GwCreateBackdrop()
+			end
+
+			if button.Check then
+				button.Check:SetAtlas('checkmark-minimal')
+			end
+			button.IsSkinned = true
+		end
+	end
+
+	for header in QuestScrollFrame.campaignHeaderMinimalFramePool:EnumerateActive() do
+		if header.CollapseButton and not header.IsSkinned then
+			header:GwStripTextures()
+			header.Background:GwCreateBackdrop('Transparent')
+			header.Highlight:SetColorTexture(1, 1, 1, 0.75)
+			header.IsSkinned = true
+		end
+	end
+
     for header in QuestScrollFrame.campaignHeaderFramePool:EnumerateActive() do
+        print(123)
         SkinHeaders(header)
     end
 
