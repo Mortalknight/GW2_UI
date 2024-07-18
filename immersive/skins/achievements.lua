@@ -1231,7 +1231,7 @@ local function skinAchevement()
         end
     end
 
-    AchievementFrameFilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+    AchievementFrameFilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true, "MENU_ACHIEVEMENT_FILTER")
     AchievementFrameFilterDropdown:ClearAllPoints()
     AchievementFrameFilterDropdown:SetPoint("BOTTOMLEFT", AchievementFrame.SearchBox, "TOPLEFT", 0, 10)
     AchievementFrameFilterDropdown:SetPoint("BOTTOMRIGHT", AchievementFrame.SearchBox, "TOPRIGHT", 0, 10)

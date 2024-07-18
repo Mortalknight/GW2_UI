@@ -451,7 +451,7 @@ local function GwSkinScrollBar(frame)
     end
 end
 
-local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout)
+local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdownTag)
     local text = frame.Text
 	if frame.Arrow then frame.Arrow:SetAlpha(0) end
 
@@ -485,6 +485,13 @@ local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout)
 
     if hookLayout then
         HandleBlizzardRegions(frame)
+    end
+
+    frame.menuMixin = GwDropDownStyleMixin
+    if dropdownTag then
+        Menu.ModifyMenu(dropdownTag, function(owner, rootDescription, contextData)
+            --owner.menuMixin = GwDropDownStyleMixin
+        end)
     end
 end
 

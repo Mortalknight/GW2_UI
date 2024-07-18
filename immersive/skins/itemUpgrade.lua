@@ -50,7 +50,7 @@ local function ApplyItemUpgradeSkin()
 
     ItemUpgradeFrame.UpgradeButton:GwSkinButton(false, true)
 
-    ItemUpgradeFrame.ItemInfo.Dropdown:GwHandleDropDownBox()
+    ItemUpgradeFrame.ItemInfo.Dropdown:GwHandleDropDownBox(nil, nil, "MENU_ITEM_UPGRADE")
 
     ItemUpgradeFrame.CloseButton:GwSkinButton(true)
     ItemUpgradeFrame.CloseButton:SetSize(20, 20)

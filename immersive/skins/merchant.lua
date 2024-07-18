@@ -113,7 +113,7 @@ local function LoadMerchantFrameSkin()
     MerchantExtraCurrencyInset:GwStripTextures()
     MerchantExtraCurrencyBg:GwStripTextures()
 
-    MerchantFrame.FilterDropdown:GwHandleDropDownBox()
+    MerchantFrame.FilterDropdown:GwHandleDropDownBox(nil, nil, "MENU_MERCHANT_FRAME")
 
     MerchantItem1:SetPoint("TOPLEFT", MerchantFrame, "TOPLEFT", 24, -69)
 

@@ -413,6 +413,7 @@ local function worldMapSkin()
     do
         local dropdown, Tracking, Pin = unpack(WorldMapFrame.overlayFrames)
         dropdown:GwHandleDropDownBox()
+        dropdown.menuMixin = GwDropDownStyleMixin
 
         Tracking:GwStripTextures()
         Tracking.Icon:SetTexture(136460) -- Interface\Minimap\Tracking/None

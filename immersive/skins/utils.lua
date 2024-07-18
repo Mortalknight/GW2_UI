@@ -85,6 +85,40 @@ local function LoadDropDownSkin()
 
     SkinDropDownList()
     SkinUIDropDownMenu()
+
+    -- skin new dropdowns
+    AddonCompartmentFrame.menuMixin = GwDropDownStyleMixin
+
+    -- unitframes
+    local units = {
+        "CHAT_ROSTER",
+        "GUILDS_GUILD",
+        "COMMUNITIES_COMMUNITY",
+        "GLUE_PARTY_MEMBER",
+        "PVP_SCOREBOARD",
+        "RAID",
+        "RAF_RECRUIT",
+        "PARTY",
+        "VEHICLE",
+        "SELF",
+        "PET",
+        "TARGET",
+        "PLAYER",
+        "ENEMY_PLAYER",
+        "RAID_PLAYER",
+        "OTHERPET",
+        "BATTLEPET",
+        "OTHERBATTLEPET",
+        "BOSS",
+        "FOCUS",
+        "BOSS",
+    }
+
+    for _, name in pairs(units) do
+        Menu.ModifyMenu("MENU_UNIT_" .. name, function(owner)
+            owner.menuMixin = GwDropDownStyleMixin
+        end)
+    end
 end
 GW.LoadDropDownSkin = LoadDropDownSkin
 --middle left right
@@ -494,6 +528,7 @@ do
             local dropdown = borderBox.IconTypeDropdown
 			if dropdown then
 				dropdown:GwHandleDropDownBox()
+                borderBox.IconTypeDropdown.menuMixin = GwDropDownStyleMixin
 			end
 
             local button = borderBox.SelectedIconArea and borderBox.SelectedIconArea.SelectedIconButton

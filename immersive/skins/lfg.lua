@@ -282,10 +282,10 @@ local function SkinLookingForGroupFrames()
         end
     end)
 
-    LFDQueueFrameTypeDropdown:GwHandleDropDownBox()
+    LFDQueueFrameTypeDropdown:GwHandleDropDownBox(nil, nil, "MENU_LFD_FRAME")
 
     RaidFinderFrameRoleInset:GwStripTextures()
-    RaidFinderQueueFrameSelectionDropdown:GwHandleDropDownBox()
+    RaidFinderQueueFrameSelectionDropdown:GwHandleDropDownBox(nil, nil, "MENU_RAID_FINDER_QUEUE_FRAME")
     RaidFinderFrameFindRaidButton:GwStripTextures()
     RaidFinderFrameFindRaidButton:GwSkinButton(false, true)
     RaidFinderQueueFrame:GwStripTextures()
@@ -334,9 +334,9 @@ local function SkinLookingForGroupFrames()
     EntryCreation.VoiceChat.EditBox:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
     GW.HandleBlizzardRegions(EntryCreation.VoiceChat.EditBox)
 
-    EntryCreation.GroupDropdown:GwHandleDropDownBox()
-    EntryCreation.ActivityDropdown:GwHandleDropDownBox()
-    EntryCreation.PlayStyleDropdown:GwHandleDropDownBox()
+    EntryCreation.GroupDropdown:GwHandleDropDownBox(nil, nil, "MENU_LFG_FRAME_GROUP")
+    EntryCreation.ActivityDropdown:GwHandleDropDownBox(nil, nil, "MENU_LFG_FRAME_GROUP_ACTIVITY")
+    EntryCreation.PlayStyleDropdown:GwHandleDropDownBox(nil, nil, "MENU_LFG_FRAME_GROUP_PLAYSTYLE")
 
     EntryCreation.CrossFactionGroup.CheckButton:GwSkinCheckButton()
     EntryCreation.ItemLevel.CheckButton:GwSkinCheckButton()
@@ -396,6 +396,7 @@ local function SkinLookingForGroupFrames()
 
     LFGListFrame.SearchPanel.FilterButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.FilterButton:SetPoint("LEFT", LFGListFrame.SearchPanel.SearchBox, "RIGHT", 5, 0)
+    LFGListFrame.SearchPanel.FilterButton.menuMixin = GwDropDownStyleMixin
     LFGListFrame.SearchPanel.RefreshButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.BackToGroupButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.RefreshButton:SetSize(24, 24)
@@ -677,8 +678,9 @@ local function ApplyPvPUISkin()
 
     GW.HandleTrimScrollBar(HonorFrame.SpecificScrollBar, true)
     GW.HandleScrollControls(HonorFrame, "SpecificScrollBar")
-    HonorFrameTypeDropdown:GwHandleDropDownBox()
+    HonorFrameTypeDropdown:GwHandleDropDownBox(nil, nil, "MENU_PVPUI_TYPE")
     HonorFrameQueueButton:GwSkinButton(false, true)
+    PVPUIHonorLevelDisplay.menuMixin = GwDropDownStyleMixin
 
     local BonusFrame = HonorFrame.BonusFrame
     BonusFrame:GwStripTextures()
@@ -968,7 +970,7 @@ end
 local function ApplyDelvesDifficultyPickerSkin()
     if not GW.settings.LFG_SKIN_ENABLED then return end
 
-	DelvesDifficultyPickerFrame.Dropdown:GwHandleDropDownBox()
+	DelvesDifficultyPickerFrame.Dropdown:GwHandleDropDownBox(nil, nil, "MENU_DELVES_DIFFICULTY")
 	DelvesDifficultyPickerFrame.EnterDelveButton:GwSkinButton(false, true)
 
 	hooksecurefunc(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame, "SetRewards", function(self)
