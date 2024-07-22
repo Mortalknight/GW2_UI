@@ -7,6 +7,12 @@ local BANK_ITEM_LARGE_SIZE = 40
 local BANK_ITEM_COMPACT_SIZE = 32
 local BANK_ITEM_PADDING = 5
 
+local PURCHASE_TAB_ID = -1
+
+local function fetchPurchasedBankTabData(f)
+    f.accountBankPurchasedBankTabData = C_Bank.FetchPurchasedBankTabData(Enum.BankType.Account)
+end
+
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutBankItems(f)
     local max_col = f:GetParent().gw_bank_cols
@@ -43,12 +49,25 @@ local function layoutReagentItems(f)
     local row = 0
     local col = 0
 
-    local item_off = GW.settings.BAG_ITEM_SIZE  + BANK_ITEM_PADDING
+    local item_off = GW.settings.BAG_ITEM_SIZE + BANK_ITEM_PADDING
 
     local cf = f.Containers[REAGENTBANK_CONTAINER]
     inv.layoutContainerFrame(cf, max_col, row, col, true, item_off)
 end
 GW.AddForProfiling("bank", "layoutReagentItems", layoutReagentItems)
+
+-- adjusts the ItemButton layout flow when the bank window size changes (or on open)
+local function layoutAccountBankItems(f)
+    local max_col = f:GetParent().gw_bank_cols
+    local row = 0
+    local col = 0
+
+    local item_off = GW.settings.BAG_ITEM_SIZE + BANK_ITEM_PADDING
+
+    local cf = f.Container
+    inv.layoutContainerFrame(cf, max_col, row, col, false, item_off)
+end
+GW.AddForProfiling("bank", "layoutAccountBankItems", layoutAccountBankItems)
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutItems(f)
@@ -67,6 +86,8 @@ local function snapFrameSize(f)
         cfs = f.ItemFrame.Containers
     elseif f.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
         cfs = f.ReagentFrame.Containers
+    elseif f.AccountFrame:IsShown() then
+        cfs = f.AccountFrame.Container
     end
     inv.snapFrameSize(f, cfs, GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, 370)
 end
@@ -134,9 +155,9 @@ local function setBagBarOrder(f)
     local bag_padding = 4
     local rev = GW.settings.BANK_REVERSE_SORT
     if rev then
-        y = -40 - ((bag_size + bag_padding) * NUM_BANKBAGSLOTS)
+        y = -80 - ((bag_size + bag_padding) * NUM_BANKBAGSLOTS)
     else
-        y = -40
+        y = -80
     end
 
     for bag_idx = 0, NUM_BANKBAGSLOTS do
@@ -199,7 +220,6 @@ local function createBagBar(f)
     -- create a fake bag frame for the base bank slots
     local b = CreateFrame("ItemButton", nil, f, "GwBankBaseBagTemplate")
     b:SetID(0)
-    --b.BagID = 0
     b.GetBagID = function()
         return BANK_CONTAINER
     end
@@ -267,6 +287,156 @@ local function updateBagBar(f)
     end
 end
 GW.AddForProfiling("bank", "updateBagBar", updateBagBar)
+
+local function takeOverAccountBankItemButtons(self)
+    local idx = 1
+    for itemButton in self:EnumerateValidItems() do
+        itemButton:SetParent(self.Container)
+        itemButton.gw_owner = self.Container
+        self.Container.gw_items[idx] = itemButton
+        inv.reskinItemButton(itemButton)
+
+        idx = idx + 1
+    end
+
+    self.Container.gw_num_slots = self.itemButtonPool:GetNumActive()
+    layoutAccountBankItems(self)
+    snapFrameSize(self:GetParent())
+end
+
+local function reskinAccountBagBar(b)
+    local bag_size = 28
+
+    b:SetSize(bag_size, bag_size)
+
+    b.Border:Hide()
+
+    if b.Icon then
+        b.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        b.Icon:SetAlpha(0.75)
+        b.Icon:Show()
+    end
+
+    if b.icon then
+        b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        b.icon:SetAlpha(0.75)
+        b.icon:Show()
+    end
+
+    local norm = b:GetNormalTexture()
+    if norm then
+        norm:SetTexture(nil)
+    end
+
+    if not b.IconBorder then
+        b.IconBorder = b:CreateTexture(nil, "ARTWORK")
+    end
+
+    b.IconBorder:SetAllPoints(b)
+    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    b.IconBorder:Show()
+    hooksecurefunc(b.IconBorder, "SetTexture", function()
+        if b.IconBorder:GetTexture() and b.IconBorder:GetTexture() > 0 and b.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
+            b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        end
+    end)
+
+    local high = b:GetHighlightTexture()
+    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    high:SetBlendMode("ADD")
+    high:SetAlpha(0.33)
+    high:SetSize(bag_size, bag_size)
+    high:ClearAllPoints()
+    high:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
+end
+
+local function accountTabOnClick(self, button)
+    if button == "RightButton" and not self:IsPurchaseTab() then
+        self:GetParent().TabSettingsMenu:OnOpenTabSettingsRequested(self.tabData.ID)
+    end
+
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+    if self:IsPurchaseTab() and C_Bank.CanPurchaseBankTab(Enum.BankType.Account) then
+        self:GetParent().Container:Hide()
+        self:GetParent():ShowPurchasePrompt()
+    else
+        self:GetParent().Container:Show()
+        self:GetParent().PurchasePrompt:Hide()
+        self:GetParent():OnBankTabClicked(self.tabData.ID)
+    end
+end
+
+local function refreshBankPanel(self)
+    if self:ShouldShowLockPrompt() then
+		self:ShowLockPrompt()
+        self.Container:Hide()
+		return
+	end
+
+    if self:ShouldShowPurchasePrompt() then
+		self:ShowPurchasePrompt();
+        self.Container:Hide()
+		return;
+	end
+
+    local noTabSelected = self.selectedTabID == nil;
+	if noTabSelected then
+		return;
+	end
+
+    self.Container:Show()
+end
+
+local function createAccountBagBar(f)
+    local x = -40
+    local y = -80
+    local bag_size = 28
+    local bag_padding = 4
+
+    fetchPurchasedBankTabData(f)
+    f.bankTabPool:ReleaseAll()
+
+    if f.accountBankPurchasedBankTabData then
+		for _, bankTabData in ipairs(f.accountBankPurchasedBankTabData) do
+            local b = f.bankTabPool:Acquire()
+            b:Init(bankTabData)
+
+            b:RegisterForClicks("AnyUp")
+            b.OnClick = accountTabOnClick
+            b:SetScript("OnClick", b.OnClick)
+
+            reskinAccountBagBar(b)
+
+            b:SetParent(f)
+            b:ClearAllPoints()
+            b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
+            b:Show()
+            y = y - bag_size - bag_padding
+        end
+    end
+
+    -- ...followed by the button to purchase a new tab (if applicable)
+	local showPurchaseTab = C_PlayerInfo.HasAccountInventoryLock() and not C_Bank.HasMaxBankTabs(Enum.BankType.Account)
+	if showPurchaseTab then
+
+        local purchaseTabData = {
+            ID = PURCHASE_TAB_ID,
+        }
+        f.PurchaseTab:Init(purchaseTabData)
+        reskinAccountBagBar(f.PurchaseTab)
+        f.PurchaseTab:SetParent(f)
+        f.PurchaseTab:RegisterForClicks("AnyUp")
+        f.PurchaseTab:SetScript("OnClick", accountTabOnClick)
+		f.PurchaseTab:SetEnabledState(C_Bank.CanPurchaseBankTab(Enum.BankType.Account))
+
+        f.PurchaseTab:ClearAllPoints()
+        f.PurchaseTab:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
+
+        f.PurchaseTab:Show()
+    else
+        f.PurchaseTab:Hide()
+	end
+end
 
 local function onBankResizeStop(self)
     GW.settings.BANK_WIDTH = self:GetWidth()
@@ -336,6 +506,11 @@ local function bank_OnShow(self)
     self:RegisterEvent("BAG_UPDATE")
     self:RegisterEvent("REAGENTBANK_PURCHASED")
 
+    --AccountBank
+    self:RegisterEvent("BANK_TAB_SETTINGS_UPDATED")
+    self:RegisterEvent("ACCOUNT_MONEY")
+    self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
+
     -- hide the bank frame off screen
     BankFrame:ClearAllPoints()
     BankFrame:SetClampedToScreen(false)
@@ -351,6 +526,7 @@ local function bank_OnShow(self)
     end
 
     OpenAllBags(self) --taints
+    createAccountBagBar(self.AccountFrame)
     updateBagBar(self.ItemFrame)
     updateBankContainers(self)
     inv.reskinItemButtons()
@@ -411,13 +587,17 @@ local function bank_OnEvent(self, event, ...)
         end
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
-        if bag_id == BANK_CONTAINER or bag_id > NUM_TOTAL_EQUIPPED_BAG_SLOTS then
+        if bag_id == BANK_CONTAINER or bag_id > NUM_TOTAL_EQUIPPED_BAG_SLOTS and not self.AccountFrame:IsShown() then
             if self.ItemFrame:IsShown() then
                 updateFreeBankSlots(self.ItemFrame)
             end
         elseif bag_id == REAGENTBANK_CONTAINER then
             if self.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
                 updateFreeReagentSlots()
+            end
+        elseif self.AccountFrame:IsShown() then
+            if self.AccountFrame.selectedTabID == bag_id then
+                self.AccountFrame:MarkDirty()
             end
         end
     elseif event == "PLAYERREAGENTBANKSLOTS_CHANGED" then
@@ -430,6 +610,8 @@ local function bank_OnEvent(self, event, ...)
         ReagentBankFrameUnlockInfo:SetParent(ReagentBankFrame)
         updateBankContainers(self)
         self.DepositAll:Show()
+    elseif event == "INVENTORY_SEARCH_UPDATE" then
+        self.AccountFrame:UpdateSearchResults()
     end
 end
 GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
@@ -520,6 +702,58 @@ local function LoadBank(helpers)
     cf.IsCombinedBagContainer = function() return true end
     f.ReagentFrame.Containers[REAGENTBANK_CONTAINER] = cf
 
+    --AccountBank Tab Settings
+    f.AccountFrame:OnLoad()
+    cf = CreateFrame("Frame", nil, f.AccountFrame)
+    cf:SetAllPoints(f.AccountFrame)
+    cf.gw_items = {}
+    cf.gw_num_slots = 0
+    f.AccountFrame.Container = cf
+
+    f.AccountFrame.TabSettingsMenu = CreateFrame("Frame", nil, f, "BankPanelTabSettingsMenuTemplate")
+    f.AccountFrame.TabSettingsMenu.SetSelectedTab = function(self, selectedTabID)
+        local alreadySelected = self:GetSelectedTabID() == selectedTabID;
+        if alreadySelected then
+            return;
+        end
+
+        fetchPurchasedBankTabData(f.AccountFrame)
+
+        if not f.AccountFrame.accountBankPurchasedBankTabData then
+            self.selectedTabData = nil
+        else
+            for _, tabData in ipairs(f.AccountFrame.accountBankPurchasedBankTabData) do
+                if tabData.ID == selectedTabID then
+                    self.selectedTabData = tabData
+                    break
+                end
+            end
+        end
+
+        if self:IsShown() then
+            self:Update()
+        end
+    end
+    f.AccountFrame.TabSettingsMenu:Hide()
+    f.AccountFrame.TabSettingsMenu:OnLoad()
+    f.AccountFrame.ItemDepositFrame.DepositButton:GwSkinButton(false, true)
+    f.AccountFrame.ItemDepositFrame.DepositButton:ClearAllPoints()
+    f.AccountFrame.ItemDepositFrame.DepositButton:SetPoint("BOTTOMLEFT", f.AccountFrame, "BOTTOMLEFT", -3, 5)
+    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:ClearAllPoints()
+    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:SetPoint("BOTTOMLEFT", f.AccountFrame, "BOTTOMLEFT", -3, 30)
+    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:GwSkinCheckButton()
+    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:SetSize(15, 15)
+    f.AccountFrame.MoneyFrame:GwStripTextures()
+    f.AccountFrame.MoneyFrame.WithdrawButton:GwSkinButton(false, true)
+    f.AccountFrame.MoneyFrame.DepositButton:GwSkinButton(false, true)
+    f.AccountFrame.MoneyFrame.MoneyDisplay:ClearAllPoints()
+    f.AccountFrame.MoneyFrame.MoneyDisplay:SetPoint("BOTTOMRIGHT", f.AccountFrame, "BOTTOMRIGHT", 3, -27)
+    hooksecurefunc(f.AccountFrame.Header, "SetShown", function(self) self:Hide() end)
+
+    hooksecurefunc(f.AccountFrame, "RefreshBankTabs", createAccountBagBar)
+    hooksecurefunc(f.AccountFrame, "RefreshBankPanel", refreshBankPanel)
+    hooksecurefunc(f.AccountFrame, "GenerateItemSlotsForSelectedTab", takeOverAccountBankItemButtons)
+
     -- reskin all the BankFrame ItemButtons
     reskinBankItemButtons()
 
@@ -550,6 +784,8 @@ local function LoadBank(helpers)
         end
     end)
 
+    hooksecurefunc(C_Bank, "PurchaseBankTab", function() createAccountBagBar(f.AccountFrame) end)
+
     -- create our bank bag slots
     createBagBar(f.ItemFrame)
 
@@ -574,6 +810,8 @@ local function LoadBank(helpers)
                 C_Container.SortBankBags()
             elseif self:GetParent().ReagentFrame:IsShown() and IsReagentBankUnlocked() then
                 C_Container.SortReagentBankBags()
+            elseif self:GetParent().AccountFrame:IsShown() and IsReagentBankUnlocked() then
+                C_Container.SortAccountBankBags()
             end
         end
     )
@@ -656,6 +894,7 @@ local function LoadBank(helpers)
             end
             bf.ItemFrame:Show()
             bf.ReagentFrame:Hide()
+            bf.AccountFrame:Hide()
             bf.buttonSort.tooltipText = BAG_CLEANUP_BANK
             updateBankContainers(bf)
         end
@@ -673,11 +912,31 @@ local function LoadBank(helpers)
             end
             bf.ItemFrame:Hide()
             bf.ReagentFrame:Show()
+            bf.AccountFrame:Hide()
             bf.buttonSort.tooltipText = BAG_CLEANUP_REAGENT_BANK
             updateBankContainers(bf)
         end
     )
     EnableTooltip(f.ReagentTab, REAGENT_BANK)
+
+    f.AccountTab:SetScript("OnEnter", tab_OnEnter)
+    f.AccountTab:SetScript("OnLeave", tab_OnLeave)
+    f.AccountTab:SetScript(
+        "OnClick",
+        function(self)
+            BankFrame.selectedTab = 2 -- for right-clicking things into bank
+            local bf = self:GetParent()
+            if bf.AccountFrame:IsShown() then
+                return
+            end
+            bf.ItemFrame:Hide()
+            bf.ReagentFrame:Hide()
+            bf.AccountFrame:Show()
+            bf.buttonSort.tooltipText = BAG_CLEANUP_REAGENT_BANK
+            updateBankContainers(bf)-- only account
+        end
+    )
+    EnableTooltip(f.AccountTab, ACCOUNT_BANK_PANEL_TITLE)
 
     -- setup reagent bank stuff
     f.DepositAll:SetText(REAGENTBANK_DEPOSIT)
@@ -704,6 +963,7 @@ local function LoadBank(helpers)
     local changeItemSize = function()
         reskinBankItemButtons()
         reskinReagentItemButtons()
+        takeOverAccountBankItemButtons(f.AccountFrame)
         layoutItems(f)
         snapFrameSize(f)
         -- TODO: update the text on the compact icons config option

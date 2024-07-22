@@ -29,6 +29,10 @@ local function reskinItemButton(b, overrideIconSize)
 		b.ItemSlotBackground:SetAllPoints(b)
     end
 
+    if b.Background then
+        b.Background:Hide()
+    end
+
     b.ItemSlotBackground:Hide()
     if not b.ItemSlotBackgroundHooked then
         hooksecurefunc(b.ItemSlotBackground, "SetShown", function()
@@ -271,7 +275,7 @@ local function freeItemButtons(cf, p)
     -- return all of the ItemButtons we previously took before taking new ones, as long as
     -- we are still the frame that took them to start with (bank/bag might have grabbed
     -- them from each other in the mean-time)
-    if cf.gw_source ~= nil then
+    if cf and cf.gw_source ~= nil then
         for i = 1, MAX_CONTAINER_ITEMS do
             local item = cf.gw_items[i]
             if item and item.gw_owner ~= nil and item.gw_owner == p then
@@ -633,9 +637,14 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     end
 
     local slots = 0
-    for _, cf in pairs(cfs) do
-        if cf.gw_num_slots then
-            slots = slots + cf.gw_num_slots
+
+    if f == GwBankFrame and f.AccountFrame:IsShown() then
+        slots = slots + cfs.gw_num_slots
+    else
+        for _, cf in pairs(cfs) do
+            if cf.gw_num_slots then
+                slots = slots + cf.gw_num_slots
+            end
         end
     end
 

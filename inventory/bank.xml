@@ -109,6 +109,23 @@
                     </Layer>
                 </Layers>
             </Button>
+            <Button parentKey="AccountTab">
+                <Size x="40" y="40"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-40" y="-100"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="Icon" file="Interface/AddOns/GW2_UI/textures/bag/bankicons">
+                            <TexCoords left="0" right="1" top="0" bottom="0.5" />
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
 
             <Frame parentkey="mover" enableMouse="true">
                 <Size y="40" />
@@ -289,10 +306,58 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
                 </Anchors>
             </Frame>
+
+            <Frame parentKey="AccountFrame" inherits="CallbackRegistrantTemplate" mixin="BankPanelMixin" hidden="true">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
+                </Anchors>
+                <Frames>
+
+                    <Frame parentKey="Header" inherits="BankPanelHeaderFrameTemplate" hidden="true">
+						<Anchors>
+							<Anchor point="TOP" y="50"/>
+						</Anchors>
+					</Frame>
+
+                    <Frame parentKey="MoneyFrame" inherits="BankPanelMoneyFrameTemplate" hidden="true">
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
+						</Anchors>
+					</Frame>
+
+                    <Frame parentKey="ItemDepositFrame" inherits="BankPanelItemDepositFrameTemplate">
+						<Anchors>
+							<Anchor point="BOTTOM" relativeKey="$parent.NineSlice" relativePoint="BOTTOM" y="10"/>
+						</Anchors>
+					</Frame>
+
+                    <ItemButton parentKey="PurchaseTab" inherits="BankPanelPurchaseTabTemplate" hidden ="true"/>
+
+                    <Frame parentKey="PurchasePrompt" inherits="BankPanelPurchasePromptTemplate" hidden="true" parentArray="Prompts">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
+							<Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+						</Anchors>
+					</Frame>
+
+					<Frame parentKey="LockPrompt" inherits="BankPanelLockPromptTemplate" hidden="true" parentArray="Prompts">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
+							<Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+						</Anchors>
+					</Frame>
+
+                </Frames>
+            </Frame>
         </Frames>
     </Frame>
 
     <ItemButton name="GwBankBagTemplate" inherits="BankItemButtonBagTemplate" virtual="true">
+        <Size x="28" y="28"></Size>
+    </ItemButton>
+
+    <ItemButton name="GwBankPanelTabTemplate" inherits="BankPanelTabTemplate" virtual="true">
         <Size x="28" y="28"></Size>
     </ItemButton>
 
