@@ -168,8 +168,9 @@ local function setupBar(self)
     end
 
     local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
-    local start, duration = spellChargeInfo.cooldownStarTime, spellChargeInfo.cooldownDuration
-    if spellChargeInfo.currentCharges == nil or spellChargeInfo.maxCharges == nil or spellChargeInfo.currentCharges > spellChargeInfo.maxCharges then
+    local start, duration = spellChargeInfo and spellChargeInfo.cooldownStarTime, spellChargeInfo and spellChargeInfo.cooldownDuration
+    if spellChargeInfo == nil or (spellChargeInfo and spellChargeInfo.currentCharges == nil or spellChargeInfo.maxCharges == nil or spellChargeInfo.currentCharges > spellChargeInfo.maxCharges) then
+        if spellChargeInfo == nil then spellChargeInfo = {} end
         local spellCooldownInfo = C_Spell.GetSpellCooldown(self.spellId)
         start = spellCooldownInfo.startTime
         duration = spellCooldownInfo.duration
