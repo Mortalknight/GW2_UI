@@ -512,7 +512,7 @@ local function UpdateUxpansionLandingPageTable()
 end
 
 local function ExpansionLandingPageMinimapButtonDropdown(self)
-    self:HookScript("OnClick", function(self, button)
+    self:SetScript("OnClick", function(self, button)
         if button == "RightButton" then
             if ExpansionLandingPage:IsVisible() then
                 ToggleExpansionLandingPage()
@@ -536,15 +536,16 @@ local function ExpansionLandingPageMinimapButtonDropdown(self)
                         ShowGarrisonLandingPage(v.enumValue)
                         GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
                     end)
-                    if not v.enabled then
-                        btn:SetEnabled(true)
-                    end
+                    btn:SetEnabled(v.enabled)
+
                 end
             end)
 
             if C_AddOns.IsAddOnLoaded("WarPlan") then
                 HideDropDownMenu(1)
             end
+        else
+            self:ToggleLandingPage()
         end
     end)
 end
