@@ -311,7 +311,7 @@ local function takeItemButtons(p, bag_id)
         cf.gw_source = nil -- we never have to give back the bank ItemButtons
     elseif bag_id == REAGENTBANK_CONTAINER then
         useItemsTable = false
-        iname = "ReagentBankFrame"
+        iname = "ReagentBankFrameItem"
         cf.gw_source = nil -- we never have to give back reagentbank ItemButtons
         --TODO new Bank
     else
