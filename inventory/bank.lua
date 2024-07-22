@@ -512,6 +512,9 @@ local function bank_OnShow(self)
     self:RegisterEvent("BANK_TAB_SETTINGS_UPDATED")
     self:RegisterEvent("ACCOUNT_MONEY")
     self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
+    self:RegisterEvent("BANK_TABS_CHANGED")
+    self:RegisterEvent("ITEM_LOCK_CHANGED")
+    self:RegisterEvent("ACCOUNT_MONEY")
 
     -- hide the bank frame off screen
     BankFrame:ClearAllPoints()
@@ -612,10 +615,28 @@ local function bank_OnEvent(self, event, ...)
         ReagentBankFrameUnlockInfo:SetParent(ReagentBankFrame)
         updateBankContainers(self)
         self.DepositAll:Show()
-    elseif event == "INVENTORY_SEARCH_UPDATE" then
+    elseif event == "INVENTORY_SEARCH_UPDATE" and self.AccountFrame:IsShown() then
         self.AccountFrame:UpdateSearchResults()
-    elseif event == "BANK_TAB_SETTINGS_UPDATED" then
+    elseif event == "BANK_TAB_SETTINGS_UPDATED" and self.AccountFrame:IsShown() then
         createAccountBagBar(self.AccountFrame)
+    elseif event == "BANK_TABS_CHANGED" and self.AccountFrame:IsShown() then
+        local bankType = ...
+		if bankType == self.AccountFrame.bankType then
+			self.AccountFrame:Reset()
+		end
+    elseif event == "ITEM_LOCK_CHANGED" and self.AccountFrame:IsShown() then
+        local bankTabID, containerSlotID = ...
+		local itemInSelectedTab = bankTabID == self.AccountFrame:GetSelectedTabID()
+		if not itemInSelectedTab then
+			return;
+		end
+
+		local itemButton = self.AccountFrame:FindItemButtonByContainerSlotID(containerSlotID)
+		if itemButton then
+			itemButton:Refresh()
+		end
+    elseif event == "ACCOUNT_MONEY" and self.AccountFrame:IsShown() then
+        self.AccountFrame.MoneyFrame:Refresh();
     end
 end
 GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
@@ -752,12 +773,11 @@ local function LoadBank(helpers)
     f.AccountFrame.MoneyFrame.DepositButton:GwSkinButton(false, true)
     f.AccountFrame.MoneyFrame.MoneyDisplay:ClearAllPoints()
     f.AccountFrame.MoneyFrame.MoneyDisplay:SetPoint("BOTTOMRIGHT", f.AccountFrame, "BOTTOMRIGHT", 3, -27)
-    hooksecurefunc(f.AccountFrame.Header, "SetShown", function(self) self:Hide() end)
 
+    hooksecurefunc(f.AccountFrame.Header, "SetShown", function(self) self:Hide() end)
     hooksecurefunc(f.AccountFrame, "RefreshBankTabs", createAccountBagBar)
     hooksecurefunc(f.AccountFrame, "RefreshBankPanel", refreshBankPanel)
     hooksecurefunc(f.AccountFrame, "GenerateItemSlotsForSelectedTab", takeOverAccountBankItemButtons)
-    hooksecurefunc(f.AccountFrame, "Clean", takeOverAccountBankItemButtons)
     hooksecurefunc(C_Bank, "PurchaseBankTab", function() createAccountBagBar(f.AccountFrame) end)
 
     -- reskin all the BankFrame ItemButtons
@@ -899,6 +919,7 @@ local function LoadBank(helpers)
             bf.ItemFrame:Show()
             bf.ReagentFrame:Hide()
             bf.AccountFrame:Hide()
+            bf.AccountFrame:OnHide()
             bf.buttonSort.tooltipText = BAG_CLEANUP_BANK
             updateBankContainers(bf)
         end
@@ -917,6 +938,7 @@ local function LoadBank(helpers)
             bf.ItemFrame:Hide()
             bf.ReagentFrame:Show()
             bf.AccountFrame:Hide()
+            bf.AccountFrame:OnHide()
             bf.buttonSort.tooltipText = BAG_CLEANUP_REAGENT_BANK
             updateBankContainers(bf)
         end
@@ -936,6 +958,7 @@ local function LoadBank(helpers)
             bf.ItemFrame:Hide()
             bf.ReagentFrame:Hide()
             bf.AccountFrame:Show()
+            bf.AccountFrame:OnShow()
             bf.buttonSort.tooltipText = BAG_CLEANUP_REAGENT_BANK
             updateBankContainers(bf)-- only account
         end
