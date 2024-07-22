@@ -21,7 +21,6 @@ local function monthlyActivities_OnClick(self, button)
 
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	else
-        self.menuMixin = GwDropDownStyleMixin
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
             rootDescription:CreateTitle(self.title)
             rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function()

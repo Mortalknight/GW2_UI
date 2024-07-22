@@ -30,7 +30,6 @@ local function collection_OnClick(self, button)
 
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 		else
-            self.menuMixin = GwDropDownStyleMixin
             MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
                 rootDescription:CreateTitle(self.title)
                 rootDescription:CreateButton(CONTENT_TRACKING_OPEN_JOURNAL_OPTION, function() TransmogUtil.OpenCollectionToItem(self.trackableID) end)

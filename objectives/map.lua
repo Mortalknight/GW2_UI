@@ -345,7 +345,6 @@ local function IsTrackingActive(info)
 end
 
 local function SetupMiniMapTrackingDropdown(self)
-    self.menuMixin = GwDropDownStyleMixin
     MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
         local showAll = GetCVarBool("minimapTrackingShowAll")
         local isHunterClass = GW.myclass == "HUNTER"
@@ -519,7 +518,6 @@ local function ExpansionLandingPageMinimapButtonDropdown(self)
                 ToggleExpansionLandingPage()
             end
 
-            self.menuMixin = GwDropDownStyleMixin
             MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
                 UpdateUxpansionLandingPageTable()
 

@@ -1353,6 +1353,7 @@ local function skinAchevement()
     skinAchievementSummaryStatusBar(AchievementFrameSummaryCategoriesCategory8)
     skinAchievementSummaryStatusBar(AchievementFrameSummaryCategoriesCategory9)
     skinAchievementSummaryStatusBar(AchievementFrameSummaryCategoriesCategory10)
+    skinAchievementSummaryStatusBar(AchievementFrameSummaryCategoriesCategory11)
 
     AchievementFrameSummaryCategoriesCategory1:ClearAllPoints()
     AchievementFrameSummaryCategoriesCategory1:SetPoint("TOPLEFT", AchievementFrameSummaryCategoriesStatusBar, "BOTTOMLEFT", 0, -25)
@@ -1370,6 +1371,7 @@ local function skinAchevement()
     reanchorSummaryCategoriy(8)
     reanchorSummaryCategoriy(9)
     reanchorSummaryCategoriy(10)
+    reanchorSummaryCategoriy(11)
 
     AchievementFrameComparison:GwStripTextures()
     for _, v in next, {AchievementFrameComparison:GetChildren()} do

@@ -186,7 +186,7 @@ local function LoadPetTrackerAddonSkin()
         function(self, button)
             if button == "RightButton" then
                 if not self.collapsed then
-                    self.menuMixin = GwDropDownStyleMixin
+
                     MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
                         rootDescription:CreateTitle(AUCTION_CATEGORY_BATTLE_PETS)
                         rootDescription:CreateCheckbox(petTrackerLocals.TrackPets, function()

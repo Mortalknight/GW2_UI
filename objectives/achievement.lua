@@ -35,7 +35,6 @@ local function achievement_OnClick(block, mouseButton)
             end
         end
     else
-        block.menuMixin = GwDropDownStyleMixin
         MenuUtil.CreateContextMenu(block, function(ownerRegion, rootDescription)
             local _, achievementName = GetAchievementInfo(block.id);
             rootDescription:CreateTitle(achievementName)

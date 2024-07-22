@@ -30,7 +30,6 @@ end
 local function Money_OnClick(self, button)
     if button == "RightButton" then
         if IsShiftKeyDown() then
-            self.menuMixin = GwDropDownStyleMixin
             MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
                 rootDescription:CreateTitle(DELETE)
 

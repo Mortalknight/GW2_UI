@@ -402,7 +402,6 @@ GW.Friends_OnEvent = Friends_OnEvent
 
 local function Friends_OnClick(self, button)
     if button == "RightButton" then
-        self.menuMixin = GwDropDownStyleMixin
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
             local tempTeble = {}
 

@@ -111,7 +111,6 @@ local function WhoFrameDropdown_OnLoad(self)
 		end
 
 		self:SetWidth(101)
-        self.menuMixin = GwDropDownStyleMixin
 		self:SetupMenu(function(dropdown, rootDescription)
 			rootDescription:CreateRadio(ZONE, IsSelected, SetSelected, {value = 1, sortType = "zone"});
 			rootDescription:CreateRadio(GUILD, IsSelected, SetSelected, {value = 2, sortType = "guild"});
@@ -130,7 +129,6 @@ local function LoadWhoList(tabContainer)
     WhoWindow:SetScript("OnEvent", WhoList_Update)
 
     -- Create Dropdown
-    WhoWindow.list.ColumnHeader2.menuMixin = GwDropDownStyleMixin
     WhoWindow.list.ColumnHeader2.Dropdown = CreateFrame("DropdownButton", nil, WhoWindow.list.ColumnHeader2, "WowStyle1DropdownTemplate")
     WhoWindow.list.ColumnHeader2.Dropdown:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2, "TOPLEFT", 0, 0)
     WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture = WhoWindow.list.ColumnHeader2.Dropdown:CreateTexture(nil, "OVERLAY")

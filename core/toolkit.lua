@@ -486,13 +486,6 @@ local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdown
     if hookLayout then
         HandleBlizzardRegions(frame)
     end
-
-    frame.menuMixin = GwDropDownStyleMixin
-    if dropdownTag then
-        Menu.ModifyMenu(dropdownTag, function(owner, rootDescription, contextData)
-            --owner.menuMixin = GwDropDownStyleMixin
-        end)
-    end
 end
 
 local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textBoxRightOffset)

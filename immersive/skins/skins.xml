@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file="menu.lua"/>
     <Script file="utils.lua"/>
     <Script file="battlenet.lua"/>
     <Script file="deathrecapframe.lua"/>

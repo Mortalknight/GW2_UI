@@ -396,7 +396,6 @@ local function SkinLookingForGroupFrames()
 
     LFGListFrame.SearchPanel.FilterButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.FilterButton:SetPoint("LEFT", LFGListFrame.SearchPanel.SearchBox, "RIGHT", 5, 0)
-    LFGListFrame.SearchPanel.FilterButton.menuMixin = GwDropDownStyleMixin
     LFGListFrame.SearchPanel.RefreshButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.BackToGroupButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.RefreshButton:SetSize(24, 24)
@@ -680,9 +679,7 @@ local function ApplyPvPUISkin()
     GW.HandleScrollControls(HonorFrame, "SpecificScrollBar")
     HonorFrameTypeDropdown:GwHandleDropDownBox(nil, nil, "MENU_PVPUI_TYPE")
     HonorFrameQueueButton:GwSkinButton(false, true)
-    PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay.menuMixin = GwDropDownStyleMixin
     if PVPQueueFrame.HonorInset.RatedPanel.HonorLevelDisplay then
-        PVPQueueFrame.HonorInset.RatedPanel.HonorLevelDisplay.menuMixin = GwDropDownStyleMixin
     end
 
     local BonusFrame = HonorFrame.BonusFrame

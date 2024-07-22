@@ -35,7 +35,6 @@ local function recipe_OnClick(self, button)
             end
         end
     else
-        self.menuMixin = GwDropDownStyleMixin
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
             rootDescription:CreateTitle(self.title)
             if not IsRecraftBlock(self) then

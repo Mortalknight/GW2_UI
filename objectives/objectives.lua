@@ -613,7 +613,6 @@ GW.UpdateQuestItem = UpdateQuestItem
 
 local function OnBlockClick(self, button, isHeader)
     if button == "RightButton" then
-        self.menuMixin = GwDropDownStyleMixin
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
             rootDescription:CreateTitle(C_QuestLog.GetTitleForQuestID(self.id))
             rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function()

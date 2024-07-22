@@ -93,7 +93,6 @@ end
 GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveButton_OnClick)
 
 local function outfitEditButton_OnClick(self)
-    self.menuMixin = GwDropDownStyleMixin
     MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
         rootDescription:CreateButton(EQUIPMENT_SET_EDIT, function()
             GearSetButton_Edit(self:GetParent())

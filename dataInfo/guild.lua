@@ -181,7 +181,6 @@ local function Guild_OnClick(self, button)
     if button == "LeftButton" then
         self:OnClick()
     elseif button == "RightButton" and IsInGuild() then
-        self.menuMixin = GwDropDownStyleMixin
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
             rootDescription:CreateTitle(OPTIONS)
             local submenuInvite = rootDescription:CreateButton(INVITE)

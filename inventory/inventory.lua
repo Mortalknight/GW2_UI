@@ -524,7 +524,6 @@ local function bag_OnMouseDown(self, button)
     if self.gwHasBag or bag_id == BACKPACK_CONTAINER then
         local cf = getContainerFrame(bag_id)
         if cf then
-            self.menuMixin = GwDropDownStyleMixin
             MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
                 if not (ContainerFrame_IsHeldBag(bag_id) or ContainerFrame_IsBankBag(bag_id)) then
                     return
