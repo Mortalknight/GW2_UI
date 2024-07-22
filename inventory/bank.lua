@@ -158,7 +158,7 @@ local function bag_OnClick(self, button)
     if button == "LeftButton" then
         if self.gwHasBag then
             if not IsBagOpen(self:GetBagID()) then
-                --OpenBag(self:GetBagID()) --taint atm
+                OpenBag(self:GetBagID()) --taint atm
             end
         elseif self.tooltipText == BANK_BAG_PURCHASE then
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
@@ -211,7 +211,7 @@ local function createBagBar(f)
     b.icon:SetTexture(413587)
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b:RegisterForClicks("LeftButtonUp")
-    b:SetScript("OnClick", CloseBankFrame)
+    b:SetScript("OnClick", C_Bank.CloseBankFrame)
     f.bags[0] = b
 
     setBagBarOrder(f)
@@ -234,9 +234,9 @@ local function updateBagBar(f)
         norm:SetVertexColor(1, 1, 1, 0.75)
         if bag_tex ~= nil then
             b.gwHasBag = true
-            --if not IsBagOpen(bag_id) then
-                --OpenBag(bag_id) -- default open valid bank bags immediately  --TAINT atm
-            --end
+            if not IsBagOpen(bag_id) then
+                OpenBag(bag_id) -- default open valid bank bags immediately  --TAINT atm
+            end
             b.icon:SetTexture(bag_tex)
             local quality = GetInventoryItemQuality("player", inv_id)
             if quality then
@@ -353,6 +353,7 @@ local function bank_OnShow(self)
     OpenAllBags(self) --taints
     updateBagBar(self.ItemFrame)
     updateBankContainers(self)
+    inv.reskinItemButtons()
 end
 GW.AddForProfiling("bank", "bank_OnShow", bank_OnShow)
 
@@ -361,7 +362,7 @@ local function bank_OnHide(self)
     self:UnregisterAllEvents()
     self:RegisterEvent("BANKFRAME_OPENED")
     self:RegisterEvent("BANKFRAME_CLOSED")
-    CloseBankFrame()
+    C_Bank.CloseBankFrame()
     if self.buttonSettings.dropdown:IsShown() then
         self.buttonSettings.dropdown:Hide()
     end
@@ -486,9 +487,6 @@ local function LoadBank(helpers)
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
 
-    -- reskin all the BankFrame ItemButtons
-    reskinBankItemButtons()
-
     -- take the original search box
     inv.reskinSearchBox(BankItemSearchBox)
     inv.relocateSearchBox(BankItemSearchBox, f)
@@ -509,6 +507,7 @@ local function LoadBank(helpers)
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
+        cf.IsCombinedBagContainer = function() return true end
         --cf.BagID = bag_id
         f.ItemFrame.Containers[bag_id] = cf
     end
@@ -518,7 +517,11 @@ local function LoadBank(helpers)
     cf.gw_num_slots = 0
     cf:SetAllPoints(f.ReagentFrame)
     cf:SetID(REAGENTBANK_CONTAINER)
+    cf.IsCombinedBagContainer = function() return true end
     f.ReagentFrame.Containers[REAGENTBANK_CONTAINER] = cf
+
+    -- reskin all the BankFrame ItemButtons
+    reskinBankItemButtons()
 
     -- anytime a ContainerFrame is populated with a bank bagId, we take its buttons
     hooksecurefunc("ContainerFrame_GenerateFrame", function(_, _, id)
@@ -616,7 +619,7 @@ local function LoadBank(helpers)
                 local newStatus = not GW.settings.BANK_REVERSE_SORT
                 dd.bagOrder.checkbutton:SetChecked(newStatus)
                 GW.settings.BANK_REVERSE_SORT = newStatus
-                --ContainerFrame_UpdateAll() this is tainting
+                ContainerFrame_UpdateAll() --this is tainting
             end
         )
 
@@ -626,7 +629,7 @@ local function LoadBank(helpers)
                 local newStatus = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW
                 dd.itemBorder.checkbutton:SetChecked(newStatus)
                 GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = newStatus
-                --ContainerFrame_UpdateAll() this is tainting
+                ContainerFrame_UpdateAll() --this is tainting
             end
         )
 

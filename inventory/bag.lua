@@ -312,11 +312,6 @@ local function createBagBar(f)
 
         inv.reskinBagBar(b)
 
-        -- Hide default bag bar
-        --CharacterReagentBag0Slot:GwKill()
-        --CharacterReagentBag0Slot:SetScale(0.0001)
-        --CharacterReagentBag0Slot:SetAlpha(0)
-
         f.bags[NUM_BAG_SLOTS + 1] = b
     end
 
@@ -460,7 +455,6 @@ local function bag_OnShow(self)
     end
 
     updateBagBar(self.ItemFrame)
-    --updateBagContainers(self) -- Already triggered in 'rescanBagContainers'
     rescanBagContainers(self)
     inv.reskinItemButtons()
 end
@@ -769,7 +763,7 @@ local function LoadBag(helpers)
                 local newStatus = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW
                 dd.itemBorder.checkbutton:SetChecked(newStatus)
                 GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = newStatus
-                --ContainerFrame_UpdateAll()  this is tainting
+                ContainerFrame_UpdateAll() -- this is tainting
             end
         )
 
@@ -779,7 +773,7 @@ local function LoadBag(helpers)
                 local newStatus = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW
                 dd.junkIcon.checkbutton:SetChecked(newStatus)
                 GW.settings.BAG_ITEM_JUNK_ICON_SHOW = newStatus
-                --ContainerFrame_UpdateAll()  this is tainting
+                ContainerFrame_UpdateAll()  --this is tainting
             end
         )
 
@@ -789,7 +783,7 @@ local function LoadBag(helpers)
                 local newStatus = not GW.settings.BAG_ITEM_SCRAP_ICON_SHOW
                 dd.scrapIcon.checkbutton:SetChecked(newStatus)
                 GW.settings.BAG_ITEM_SCRAP_ICON_SHOW = newStatus
-                --ContainerFrame_UpdateAll() -- this is tainting
+                ContainerFrame_UpdateAll() -- this is tainting
             end
         )
 
@@ -799,7 +793,7 @@ local function LoadBag(helpers)
                 local newStatus = not GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW
                 dd.upgradeIcon.checkbutton:SetChecked(newStatus)
                 GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW = newStatus
-                --ContainerFrame_UpdateAll()  this is tainting
+                ContainerFrame_UpdateAll()  --this is tainting
             end
         )
 
@@ -809,7 +803,7 @@ local function LoadBag(helpers)
                 local newStatus = not GW.settings.BAG_PROFESSION_BAG_COLOR
                 dd.professionColor.checkbutton:SetChecked(newStatus)
                 GW.settings.BAG_PROFESSION_BAG_COLOR = newStatus
-                --ContainerFrame_UpdateAll() this is tainting
+                ContainerFrame_UpdateAll() --this is tainting
             end
         )
 
@@ -829,7 +823,7 @@ local function LoadBag(helpers)
                 local newStatus = not GW.settings.BAG_SHOW_ILVL
                 dd.showItemLvl.checkbutton:SetChecked(newStatus)
                 GW.settings.BAG_SHOW_ILVL = newStatus
-                --ContainerFrame_UpdateAll() this is tainting
+                ContainerFrame_UpdateAll() --this is tainting
             end
         )
 

@@ -24,8 +24,17 @@ local function reskinItemButton(b, overrideIconSize)
         b.NormalTexture:SetTexture()
     end
 
-    if b.ItemSlotBackground then
-        b.ItemSlotBackground:Hide()
+    if not b.ItemSlotBackground then
+        b.ItemSlotBackground = b:CreateTexture(nil, "BACKGROUND", "ItemSlotBackgroundCombinedBagsTemplate", -6);
+		b.ItemSlotBackground:SetAllPoints(b)
+    end
+
+    b.ItemSlotBackground:Hide()
+    if not b.ItemSlotBackgroundHooked then
+        hooksecurefunc(b.ItemSlotBackground, "SetShown", function()
+            b.ItemSlotBackground:Hide()
+        end)
+        b.ItemSlotBackgroundHooked = true
     end
 
     local high = b:GetHighlightTexture()
@@ -799,7 +808,7 @@ local function LoadInventory()
     helpers.onMoverDragStop = onMoverDragStop
 
     bag_resize = GW.LoadBag(helpers)
-    --bank_resize = GW.LoadBank(helpers) --TODO NEW Bank
+    bank_resize = GW.LoadBank(helpers) --TODO NEW Bank
 
     -- Skin StackSplit
     StackSplitFrame:GwStripTextures()
