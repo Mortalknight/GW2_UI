@@ -167,6 +167,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     local t = button.IconBorder
     t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     t:SetAlpha(0.9)
+    t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
 
     if not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW then
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
@@ -226,6 +227,11 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button.itemlevel:SetText("")
         end
 
+        if GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW and quality and quality > 0 then
+            t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
+        end
+
+        t:Show()
         button:GetItemButtonIconTexture():Show()
     else
         if button.junkIcon then button.junkIcon:Hide() end
@@ -235,7 +241,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button:SetScript("OnUpdate", nil)
         end
         if button.itemlevel then button.itemlevel:SetText("") end
-    button:GetItemButtonIconTexture():Hide()
+        button:GetItemButtonIconTexture():Hide()
     end
 end
 GW.SetBagItemButtonQualitySkin = hookItemQuality
