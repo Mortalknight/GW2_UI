@@ -359,6 +359,7 @@ local function skinAchievementSummaryHeaders(self)
     setTitleText(text)
 end
 local function skinAchievementSummaryStatusBar(self)
+    if not self then return end
     self:GwStripTextures()
     local fname = self:GetName()
     local bar = _G[fname.."FillBar"]
@@ -405,6 +406,7 @@ end
 
 local function reanchorSummaryCategoriy(index)
     local self = _G["AchievementFrameSummaryCategoriesCategory"..index]
+    if not self then return end
     local odd =  (index % 2)==1 or false
     local relativeFrame
     if odd then
