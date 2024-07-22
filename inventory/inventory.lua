@@ -24,6 +24,10 @@ local function reskinItemButton(b, overrideIconSize)
         b.NormalTexture:SetTexture()
     end
 
+    if b.ItemSlotBackground then
+        b.ItemSlotBackground:Hide()
+    end
+
     local high = b:GetHighlightTexture()
     high:SetAllPoints(b)
     high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
