@@ -2257,22 +2257,13 @@ local function LoadChat()
         _G[frameName .. "Tab"]:SetScript("OnDoubleClick", nil)
     end
 
-    --Skin ChatMenus
-    local ChatMenus = {
-        "ChatMenu",
-        "EmoteMenu",
-        "LanguageMenu",
-        "VoiceMacroMenu",
-    }
-
-    for i = 1, #ChatMenus do
-        _G[ChatMenus[i]]:HookScript("OnShow",
+    for _, menu in next, { _G.ChatMenu, _G.EmoteMenu, _G.LanguageMenu, _G.VoiceMacroMenu } do
+        menu:HookScript("OnShow",
             function(self)
                 self:GwStripTextures()
                 self:GwCreateBackdrop(GW.BackdropTemplates.Default)
             end)
     end
-
 
     CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
 
