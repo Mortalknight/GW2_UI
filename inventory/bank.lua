@@ -296,7 +296,10 @@ local function takeOverAccountBankItemButtons(self)
     self.Container.gw_num_slots = self.itemButtonPool:GetNumActive()
     layoutAccountBankItems(self)
     snapFrameSize(self:GetParent())
-    inv.updateFreeSlots(self:GetParent().spaceString, self:GetSelectedTabID(), self:GetSelectedTabID())
+    local id = self:GetSelectedTabID()
+    if id and id > 0 then
+        inv.updateFreeSlots(self:GetParent().spaceString, id, id)
+    end
 end
 
 local function reskinAccountBagBar(b)
@@ -380,6 +383,8 @@ local function refreshBankPanel(self)
 		return;
 	end
 
+    takeOverAccountBankItemButtons(self)
+
     self.Container:Show()
 end
 
@@ -390,6 +395,7 @@ local function createAccountBagBar(f)
     local bag_padding = 4
 
     fetchPurchasedBankTabData(f)
+    takeOverAccountBankItemButtons(f)
     f.bankTabPool:ReleaseAll()
 
     if f.accountBankPurchasedBankTabData then
@@ -751,6 +757,8 @@ local function LoadBank(helpers)
     hooksecurefunc(f.AccountFrame, "RefreshBankTabs", createAccountBagBar)
     hooksecurefunc(f.AccountFrame, "RefreshBankPanel", refreshBankPanel)
     hooksecurefunc(f.AccountFrame, "GenerateItemSlotsForSelectedTab", takeOverAccountBankItemButtons)
+    hooksecurefunc(f.AccountFrame, "Clean", takeOverAccountBankItemButtons)
+    hooksecurefunc(C_Bank, "PurchaseBankTab", function() createAccountBagBar(f.AccountFrame) end)
 
     -- reskin all the BankFrame ItemButtons
     reskinBankItemButtons()
@@ -781,8 +789,6 @@ local function LoadBank(helpers)
             end
         end
     end)
-
-    hooksecurefunc(C_Bank, "PurchaseBankTab", function() createAccountBagBar(f.AccountFrame) end)
 
     -- create our bank bag slots
     createBagBar(f.ItemFrame)
