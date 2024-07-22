@@ -600,12 +600,6 @@ local function layoutContainerFrame(cf, max_col, row, col, rev, item_off)
 end
 GW.AddForProfiling("inventory", "layoutContainerFrame", layoutContainerFrame)
 
-local function updateFreeSpaceString(free, full)
-    local bank_space_string = free .. " / " .. full
-    GwBankFrame.spaceString:SetText(bank_space_string)
-end
-GW.AddForProfiling("inventory", "updateFreeSpaceString", updateFreeSpaceString)
-
 -- update the number of free bank slots available and set the display for it
 local function updateFreeSlots(sp_str, start_idx, end_idx, opt_container)
     if not sp_str or not sp_str.SetText then

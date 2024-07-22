@@ -93,12 +93,6 @@ local function snapFrameSize(f)
 end
 GW.AddForProfiling("bank", "snapFrameSize", snapFrameSize)
 
-local function updateFreeSpaceString(free, full)
-    local bank_space_string = free .. " / " .. full
-    GwBankFrame.spaceString:SetText(bank_space_string)
-end
-GW.AddForProfiling("bank", "updateFreeSpaceString", updateFreeSpaceString)
-
 -- update the number of free bank slots available and set the display for it
 local function updateFreeBankSlots(self)
     local free, _ = inv.updateFreeSlots(GwBankFrame.spaceString, NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS, BANK_CONTAINER)
@@ -302,6 +296,7 @@ local function takeOverAccountBankItemButtons(self)
     self.Container.gw_num_slots = self.itemButtonPool:GetNumActive()
     layoutAccountBankItems(self)
     snapFrameSize(self:GetParent())
+    inv.updateFreeSlots(self:GetParent().spaceString, self:GetSelectedTabID(), self:GetSelectedTabID())
 end
 
 local function reskinAccountBagBar(b)
@@ -363,6 +358,7 @@ local function accountTabOnClick(self, button)
         self:GetParent().Container:Show()
         self:GetParent().PurchasePrompt:Hide()
         self:GetParent():OnBankTabClicked(self.tabData.ID)
+        inv.updateFreeSlots(self:GetParent():GetParent().spaceString, self.tabData.ID, self.tabData.ID)
     end
 end
 
@@ -612,6 +608,8 @@ local function bank_OnEvent(self, event, ...)
         self.DepositAll:Show()
     elseif event == "INVENTORY_SEARCH_UPDATE" then
         self.AccountFrame:UpdateSearchResults()
+    elseif event == "BANK_TAB_SETTINGS_UPDATED" then
+        createAccountBagBar(self.AccountFrame)
     end
 end
 GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
