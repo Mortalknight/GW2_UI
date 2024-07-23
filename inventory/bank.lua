@@ -917,7 +917,7 @@ local function LoadBank(helpers)
     f.AccountTab:SetScript(
         "OnClick",
         function(self)
-            BankFrame.selectedTab = 2 -- for right-clicking things into bank
+            BankFrame.selectedTab = 3 -- for right-clicking things into bank
             local bf = self:GetParent()
             if bf.AccountFrame:IsShown() then
                 return
