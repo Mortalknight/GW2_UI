@@ -137,7 +137,7 @@ local function getNearestQuestPOI()
             if uiMapID then
                 poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, uiMapID)
             else
-                poiX, poiY = C_QuestLog.GetNextWaypoint(closestQuestID)
+                _, poiX, poiY = C_QuestLog.GetNextWaypoint(closestQuestID)
             end
         end
 
