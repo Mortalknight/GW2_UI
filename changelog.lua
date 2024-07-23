@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.0.0",{
+    {ct.change, [=[Update for TWW]=]},
+})
+
 addChange("6.14.10",{
     {ct.bug, [=[Show character item info now works correctly]=]},
     {ct.change, [=[Export some api]=]},
