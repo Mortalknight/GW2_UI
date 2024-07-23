@@ -28,6 +28,9 @@ local function ApplyAlliedRacesUISkin()
     GW.HandleTrimScrollBar(AlliedRacesFrame.RaceInfoFrame.ScrollFrame.ScrollBar)
     GW.HandleScrollControls(AlliedRacesFrame.RaceInfoFrame.ScrollFrame)
 
+    AlliedRacesFrame.FrameBackground:GwStripTextures()
+    AlliedRacesFrame.FrameBackground:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+
     AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child:GwStripTextures()
     AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.ObjectivesFrame:GwStripTextures()
     AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.ObjectivesFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
