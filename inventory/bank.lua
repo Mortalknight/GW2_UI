@@ -508,14 +508,6 @@ local function bank_OnShow(self)
     self:RegisterEvent("BAG_UPDATE")
     self:RegisterEvent("REAGENTBANK_PURCHASED")
 
-    --AccountBank
-    self:RegisterEvent("BANK_TAB_SETTINGS_UPDATED")
-    self:RegisterEvent("ACCOUNT_MONEY")
-    self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
-    self:RegisterEvent("BANK_TABS_CHANGED")
-    self:RegisterEvent("ITEM_LOCK_CHANGED")
-    self:RegisterEvent("ACCOUNT_MONEY")
-
     -- hide the bank frame off screen
     BankFrame:ClearAllPoints()
     BankFrame:SetClampedToScreen(false)
@@ -602,7 +594,7 @@ local function bank_OnEvent(self, event, ...)
             end
         elseif self.AccountFrame:IsShown() then
             if self.AccountFrame.selectedTabID == bag_id then
-                self.AccountFrame:MarkDirty()
+                inv.updateFreeSlots(self.spaceString, bag_id, bag_id)
             end
         end
     elseif event == "PLAYERREAGENTBANKSLOTS_CHANGED" then
@@ -615,28 +607,6 @@ local function bank_OnEvent(self, event, ...)
         ReagentBankFrameUnlockInfo:SetParent(ReagentBankFrame)
         updateBankContainers(self)
         self.DepositAll:Show()
-    elseif event == "INVENTORY_SEARCH_UPDATE" and self.AccountFrame:IsShown() then
-        self.AccountFrame:UpdateSearchResults()
-    elseif event == "BANK_TAB_SETTINGS_UPDATED" and self.AccountFrame:IsShown() then
-        createAccountBagBar(self.AccountFrame)
-    elseif event == "BANK_TABS_CHANGED" and self.AccountFrame:IsShown() then
-        local bankType = ...
-		if bankType == self.AccountFrame.bankType then
-			self.AccountFrame:Reset()
-		end
-    elseif event == "ITEM_LOCK_CHANGED" and self.AccountFrame:IsShown() then
-        local bankTabID, containerSlotID = ...
-		local itemInSelectedTab = bankTabID == self.AccountFrame:GetSelectedTabID()
-		if not itemInSelectedTab then
-			return;
-		end
-
-		local itemButton = self.AccountFrame:FindItemButtonByContainerSlotID(containerSlotID)
-		if itemButton then
-			itemButton:Refresh()
-		end
-    elseif event == "ACCOUNT_MONEY" and self.AccountFrame:IsShown() then
-        self.AccountFrame.MoneyFrame:Refresh();
     end
 end
 GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
@@ -728,7 +698,6 @@ local function LoadBank(helpers)
     f.ReagentFrame.Containers[REAGENTBANK_CONTAINER] = cf
 
     --AccountBank Tab Settings
-    f.AccountFrame:OnLoad()
     cf = CreateFrame("Frame", nil, f.AccountFrame)
     cf:SetAllPoints(f.AccountFrame)
     cf.gw_items = {}
@@ -919,7 +888,6 @@ local function LoadBank(helpers)
             bf.ItemFrame:Show()
             bf.ReagentFrame:Hide()
             bf.AccountFrame:Hide()
-            bf.AccountFrame:OnHide()
             bf.buttonSort.tooltipText = BAG_CLEANUP_BANK
             updateBankContainers(bf)
         end
@@ -938,7 +906,6 @@ local function LoadBank(helpers)
             bf.ItemFrame:Hide()
             bf.ReagentFrame:Show()
             bf.AccountFrame:Hide()
-            bf.AccountFrame:OnHide()
             bf.buttonSort.tooltipText = BAG_CLEANUP_REAGENT_BANK
             updateBankContainers(bf)
         end
@@ -958,9 +925,8 @@ local function LoadBank(helpers)
             bf.ItemFrame:Hide()
             bf.ReagentFrame:Hide()
             bf.AccountFrame:Show()
-            bf.AccountFrame:OnShow()
-            bf.buttonSort.tooltipText = BAG_CLEANUP_REAGENT_BANK
-            updateBankContainers(bf)-- only account
+            bf.buttonSort.tooltipText = BAG_CLEANUP_ACCOUNT_BANK
+            updateBankContainers(bf)
         end
     )
     EnableTooltip(f.AccountTab, ACCOUNT_BANK_PANEL_TITLE)
@@ -993,7 +959,6 @@ local function LoadBank(helpers)
         takeOverAccountBankItemButtons(f.AccountFrame)
         layoutItems(f)
         snapFrameSize(f)
-        -- TODO: update the text on the compact icons config option
     end
     return changeItemSize
 end
