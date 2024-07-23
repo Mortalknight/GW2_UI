@@ -13,7 +13,8 @@ myBar          - A `StatusBar` used to represent incoming heals from the player.
 otherBar       - A `StatusBar` used to represent incoming heals from others.
 absorbBar      - A `StatusBar` used to represent damage absorbs.
 healAbsorbBar  - A `StatusBar` used to represent heal absorbs.
-overAbsorb     - A `Texture` used to signify that the amount of damage absorb is greater than the unit's missing health.
+overAbsorb     - A `Texture` used to signify that the amount of damage absorb is greater than either the unit's missing
+                 health or the unit's maximum health, if .showRawAbsorb is enabled.
 overHealAbsorb - A `Texture` used to signify that the amount of heal absorb is greater than the unit's current health.
 
 ## Notes
@@ -23,8 +24,9 @@ A default texture will be applied to the Texture widgets if they don't have a te
 
 ## Options
 
-.maxOverflow - The maximum amount of overflow past the end of the health bar. Set this to 1 to disable the overflow.
-               Defaults to 1.05 (number)
+.maxOverflow   - The maximum amount of overflow past the end of the health bar. Set this to 1 to disable the overflow.
+                 Defaults to 1.05 (number)
+.showRawAbsorb - Makes the element show the raw amount of damage absorb (boolean)
 
 ## Examples
 
@@ -81,6 +83,26 @@ A default texture will be applied to the Texture widgets if they don't have a te
 local _, ns = ...
 local oUF = ns.oUF
 
+local function UpdateSize(self, event, unit)
+	local element = self.HealthPrediction
+
+	if(element.myBar) then
+		element.myBar[element.isHoriz and 'SetWidth' or 'SetHeight'](element.myBar, element.size)
+	end
+
+	if(element.otherBar) then
+		element.otherBar[element.isHoriz and 'SetWidth' or 'SetHeight'](element.otherBar, element.size)
+	end
+
+	if(element.absorbBar) then
+		element.absorbBar[element.isHoriz and 'SetWidth' or 'SetHeight'](element.absorbBar, element.size)
+	end
+
+	if(element.healAbsorbBar) then
+		element.healAbsorbBar[element.isHoriz and 'SetWidth' or 'SetHeight'](element.healAbsorbBar, element.size)
+	end
+end
+
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
@@ -129,7 +151,11 @@ local function Update(self, event, unit)
 	end
 
 	local hasOverAbsorb = false
-	if(health + allIncomingHeal + absorb >= maxHealth) then
+	if(element.showRawAbsorb) then
+		if(absorb > maxHealth) then
+			hasOverAbsorb = true
+		end
+	elseif(health + allIncomingHeal + absorb >= maxHealth) then
 		if(absorb > 0) then
 			hasOverAbsorb = true
 		end
@@ -186,7 +212,7 @@ local function Update(self, event, unit)
 	* otherIncomingHeal - the amount of incoming healing done by others (number)
 	* absorb            - the amount of damage the unit can absorb without losing health (number)
 	* healAbsorb        - the amount of healing the unit can absorb without gaining health (number)
-	* hasOverAbsorb     - indicates if the amount of damage absorb is higher than the unit's missing health (boolean)
+	* hasOverAbsorb     - indicates if the amount of damage absorb is higher than either the unit's missing health or the unit's maximum health, if .showRawAbsorb is enabled (boolean)
 	* hasOverHealAbsorb - indicates if the amount of heal absorb is higher than the unit's current health (boolean)
 	--]]
 	if(element.PostUpdate) then
@@ -194,7 +220,30 @@ local function Update(self, event, unit)
 	end
 end
 
+local function shouldUpdateSize(self)
+	if(not self.Health) then return end
+
+	local isHoriz = self.Health:GetOrientation() == 'HORIZONTAL'
+	local newSize = self.Health[isHoriz and 'GetWidth' or 'GetHeight'](self.Health)
+	if(isHoriz ~= self.HealthPrediction.isHoriz or newSize ~= self.HealthPrediction.size) then
+		self.HealthPrediction.isHoriz = isHoriz
+		self.HealthPrediction.size = newSize
+
+		return true
+	end
+end
+
 local function Path(self, ...)
+	--[[ Override: HealthPrediction.UpdateSize(self, event, unit, ...)
+	Used to completely override the internal function for updating the widgets' size.
+	* self  - the parent object
+	* event - the event triggering the update (string)
+	* unit  - the unit accompanying the event (string)
+	* ...   - the arguments accompanying the event
+	--]]
+	if(shouldUpdateSize(self)) then
+		(self.HealthPrediction.UpdateSize or UpdateSize) (self, ...)
+	end
 	--[[ Override: HealthPrediction.Override(self, event, unit)
 	Used to completely override the internal update function.
 
@@ -206,6 +255,9 @@ local function Path(self, ...)
 end
 
 local function ForceUpdate(element)
+	element.isHoriz = nil
+	element.size = nil
+
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
@@ -220,6 +272,7 @@ local function Enable(self)
 		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 		self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
+		self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
 
 		if(not element.maxOverflow) then
 			element.maxOverflow = 1.05
@@ -299,6 +352,7 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
 		self:UnregisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 		self:UnregisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
+		self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
 	end
 end
 
