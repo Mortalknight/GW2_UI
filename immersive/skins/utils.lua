@@ -374,7 +374,7 @@ GW.HandleItemButton = HandleItemButton
 
 do
     local function handleButton(button, i, buttonNameTemplate)
-        local icon, texture = button.Icon or _G[buttonNameTemplate..i.."Icon"], ""
+        local icon, texture = button.Icon or _G[buttonNameTemplate..i.."Icon"]
         if icon then
             icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             icon:GwSetInside(button)
@@ -428,7 +428,7 @@ do
             GW.SkinTextBox(editBox.IconSelectorPopupNameMiddle, editBox.IconSelectorPopupNameLeft, editBox.IconSelectorPopupNameRight, nil, nil, 5, 5)
         end
 
-        GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar, true)
+        GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar)
         GW.HandleScrollControls(frame.IconSelector)
 
         for _, button in next, {frame.IconSelector.ScrollBox.ScrollTarget:GetChildren()} do

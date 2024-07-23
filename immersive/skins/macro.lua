@@ -89,7 +89,7 @@ local function ApplyMacroOptionsSkin()
         self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
 
         if not self.isSkinned then
-            GW.HandleIconSelectionFrame(self, "MacroPopup")
+            GW.HandleIconSelectionFrame(self)
         end
     end)
 end

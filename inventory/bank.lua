@@ -621,6 +621,34 @@ local function tab_OnLeave(self)
 end
 GW.AddForProfiling("bank", "tab_OnLeave", tab_OnLeave)
 
+local function SkinAccountBankTabMenu(self)
+    if self.isSkinned then return end
+    -- skin tab menu
+    local checkBoxes = {
+        self.DepositSettingsMenu.AssignEquipmentCheckbox,
+        self.DepositSettingsMenu.AssignConsumablesCheckbox,
+        self.DepositSettingsMenu.AssignProfessionGoodsCheckbox,
+        self.DepositSettingsMenu.AssignReagentsCheckbox,
+        self.DepositSettingsMenu.AssignJunkCheckbox,
+        self.DepositSettingsMenu.IgnoreCleanUpCheckbox,
+    }
+
+    self:GwStripTextures()
+    self:EnableMouse(true)
+    GW.HandleIconSelectionFrame(self)
+
+    self.DepositSettingsMenu.ExpansionFilterDropdown:GwHandleDropDownBox()
+    self.DepositSettingsMenu.ExpansionFilterDropdown:SetWidth(120)
+    for _, checkBox in pairs(checkBoxes) do
+        if checkBox then
+            checkBox:GwSkinCheckButton()
+            checkBox:SetSize(15, 15)
+        end
+    end
+
+    self.isSkinned = true
+end
+
 local function LoadBank(helpers)
     inv = helpers
 
@@ -730,6 +758,12 @@ local function LoadBank(helpers)
     end
     f.AccountFrame.TabSettingsMenu:Hide()
     f.AccountFrame.TabSettingsMenu:OnLoad()
+    f.AccountFrame.TabSettingsMenu:SetScript("OnShow", function()
+        f.AccountFrame.TabSettingsMenu:OnShow()
+        SkinAccountBankTabMenu(f.AccountFrame.TabSettingsMenu)
+    end)
+    f.AccountFrame.TabSettingsMenu:SetScript("OnHide", f.AccountFrame.TabSettingsMenu.OnHide)
+
     f.AccountFrame.ItemDepositFrame.DepositButton:GwSkinButton(false, true)
     f.AccountFrame.ItemDepositFrame.DepositButton:ClearAllPoints()
     f.AccountFrame.ItemDepositFrame.DepositButton:SetPoint("BOTTOMLEFT", f.AccountFrame, "BOTTOMLEFT", -3, 5)
