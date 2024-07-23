@@ -129,6 +129,8 @@ local function Money_OnEnter(self)
         end
 
         GameTooltip:AddDoubleLine(TOTAL .. ":", FormatMoneyForChat(totalAlliance + totalHorde + totalFactionless), 1, 1, 1, 1, 1, 1)
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddDoubleLine(L["Warband:"], FormatMoneyForChat(C_Bank.FetchDepositedMoney(Enum.BankType.Account) or 0), 1, 1, 1, 1, 1, 1)
 
         GameTooltip:AddLine(" ")
         C_WowTokenPublic.UpdateMarketPrice()
