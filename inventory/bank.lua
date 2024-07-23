@@ -606,7 +606,7 @@ local function bank_OnEvent(self, event, ...)
         ReagentBankFrameUnlockInfo:ClearAllPoints()
         ReagentBankFrameUnlockInfo:SetParent(ReagentBankFrame)
         updateBankContainers(self)
-        self.DepositAll:Show()
+        self.ReagentFrame.DepositAll:Show()
     end
 end
 GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
@@ -766,11 +766,16 @@ local function LoadBank(helpers)
 
     f.AccountFrame.ItemDepositFrame.DepositButton:GwSkinButton(false, true)
     f.AccountFrame.ItemDepositFrame.DepositButton:ClearAllPoints()
-    f.AccountFrame.ItemDepositFrame.DepositButton:SetPoint("BOTTOMLEFT", f.AccountFrame, "BOTTOMLEFT", -3, 5)
+    f.AccountFrame.ItemDepositFrame.DepositButton:SetPoint("TOPLEFT", f.AccountFrame, "BOTTOMLEFT", 5, -6)
     f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:ClearAllPoints()
-    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:SetPoint("BOTTOMLEFT", f.AccountFrame, "BOTTOMLEFT", -3, 30)
+    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:SetPoint("TOPLEFT", f.AccountFrame, "BOTTOMLEFT", 5, 20)
     f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:GwSkinCheckButton()
     f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:SetSize(15, 15)
+    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox.Text:SetTextColor(1, 1, 1)
+    hooksecurefunc(f.AccountFrame.ItemDepositFrame, "SetEnabled", function(_, enabled)
+        local fontColor = enabled and WHITE_FONT_COLOR or GRAY_FONT_COLOR
+        f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox.Text:SetTextColor(fontColor:GetRGB())
+    end)
     f.AccountFrame.MoneyFrame:GwStripTextures()
     f.AccountFrame.MoneyFrame.WithdrawButton:GwSkinButton(false, true)
     f.AccountFrame.MoneyFrame.DepositButton:GwSkinButton(false, true)
@@ -966,15 +971,15 @@ local function LoadBank(helpers)
     EnableTooltip(f.AccountTab, ACCOUNT_BANK_PANEL_TITLE)
 
     -- setup reagent bank stuff
-    f.DepositAll:SetText(REAGENTBANK_DEPOSIT)
-    f.DepositAll:SetScript(
+    f.ReagentFrame.DepositAll:SetText(REAGENTBANK_DEPOSIT)
+    f.ReagentFrame.DepositAll:SetScript(
         "OnClick",
         function()
             DepositReagentBank()
         end
     )
     if IsReagentBankUnlocked() then
-        f.DepositAll:Show()
+        f.ReagentFrame.DepositAll:Show()
     else
         -- steal the original help/purchase window
         local hf = ReagentBankFrame.UnlockInfo

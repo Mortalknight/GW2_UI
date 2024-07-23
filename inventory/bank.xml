@@ -286,13 +286,6 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
 
-            <Button parentKey="DepositAll" hidden="true" inherits="GwStandardButton" text="Deposit All">
-                <Size x="180" y="24" />
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="5" y="-6"></Anchor>
-                </Anchors>
-            </Button>
-
             <Frame parentKey="ItemFrame">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
@@ -305,6 +298,14 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
                 </Anchors>
+                <Frames>
+                    <Button parentKey="DepositAll" hidden="true" inherits="GwStandardButton" text="Deposit All">
+                        <Size x="180" y="24" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="5" y="-6"></Anchor>
+                        </Anchors>
+                    </Button>
+                </Frames>
             </Frame>
 
             <Frame parentKey="AccountFrame" inherits="CallbackRegistrantTemplate" mixin="BankPanelMixin" hidden="true">
