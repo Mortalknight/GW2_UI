@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("3.3.5",{
+  {ct.change,[=[Bagnator support]=]},
+})
+
 addChange("3.3.4",{
   {ct.change,[=[Fix for 1.15.3]=]},
 })

@@ -1,3 +1,6 @@
+3.3.5-Era
+   Bagnator support
+
 3.3.4-Era
    Fix for 1.15.3
 

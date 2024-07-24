@@ -87,6 +87,7 @@ local function reskinItemButton(iname, b)
 
     GW.RegisterCooldown(_G[b:GetName() .. "Cooldown"])
 end
+GW.SkinBagItemButton = reskinItemButton
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
 local function getContainerFrame(bag_id)
@@ -257,6 +258,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
     end
 end
+GW.SetBagItemButtonQualitySkin = hookSetItemButtonQuality
 
 local bag_resize
 local bank_resize
