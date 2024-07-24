@@ -2,285 +2,13 @@ local _, GW = ...
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 local CommaValue = GW.CommaValue
 
-local BAG_CURRENCY_SIZE = 32
-local MAX_WATCHED_TOKENS = 4
 local selectedLongInstanceID = nil
 
-local function checkNumWatched()
-    local numWatched = 0
-
-    for i = 1, C_CurrencyInfo.GetCurrencyListSize() do
-        local info = C_CurrencyInfo.GetCurrencyListInfo(i)
-        if info.isShowInBackpack then
-            numWatched = numWatched + 1
-        end
-    end
-
-    return numWatched
-end
-GW.AddForProfiling("currency", "checkNumWatched", checkNumWatched)
-
-local function currency_OnClick(self, button)
-    if IsModifiedClick("TOKENWATCHTOGGLE") then
-        if not self.CurrencyID or not self.CurrencyIdx then
-            return
-        end
-        local info = C_CurrencyInfo.GetCurrencyListInfo(self.CurrencyIdx)
-        if not info.isShowInBackpack then
-            if checkNumWatched() >= MAX_WATCHED_TOKENS then
-                UIErrorsFrame:AddMessage(format(TOO_MANY_WATCHED_TOKENS, MAX_WATCHED_TOKENS), 1.0, 0.1, 0.1, 1.0)
-                return
-            end
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            C_CurrencyInfo.SetCurrencyBackpack(self.CurrencyIdx, true)
-        else
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            C_CurrencyInfo.SetCurrencyBackpack(self.CurrencyIdx, false)
-        end
-    elseif button == "LeftButton" and IsAltKeyDown() then
-        local info = C_CurrencyInfo.GetCurrencyListInfo(self.CurrencyIdx)
-
-        if info.isTypeUnused then
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            C_CurrencyInfo.SetCurrencyUnused(self.CurrencyIdx, false)
-        else
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            C_CurrencyInfo.SetCurrencyUnused(self.CurrencyIdx, true)
-        end
-
-        GWCharacterCurrenyRaidInfoFrame.CurrencyScroll.update(GWCharacterCurrenyRaidInfoFrame.CurrencyScroll)
-    end
-end
-GW.AddForProfiling("currency", "currency_OnClick", currency_OnClick)
-
-local function currency_OnEnter(self)
-    if not self.CurrencyID or not self.CurrencyIdx then
-        return
-    end
-    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-    GameTooltip:ClearLines()
-    GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-    GameTooltip:AddLine(" ")
-    GameTooltip:AddDoubleLine(SHOW_ON_BACKPACK, GW.L["Shift + Left Click"], nil, nil, nil, 1, 1, 1)
-    GameTooltip:AddDoubleLine(UNUSED, GW.L["Alt + Left Click"], nil, nil, nil, 1, 1, 1)
-    GameTooltip:Show()
-end
-GW.AddForProfiling("currency", "currency_OnEnter", currency_OnEnter)
-
-local DISABLED_ERROR_MESSAGE = {
-	[Enum.AccountCurrencyTransferResult.MaxQuantity] = CURRENCY_TRANSFER_DISABLED_MAX_QUANTITY,
-	[Enum.AccountCurrencyTransferResult.NoValidSourceCharacter] = CURRENCY_TRANSFER_DISABLED_NO_VALID_SOURCES,
-	[Enum.AccountCurrencyTransferResult.CannotUseCurrency] = CURRENCY_TRANSFER_DISABLED_UNMET_REQUIREMENTS,
-};
-
-local CURRENCY_TRANSFER_TOGGLE_BUTTON_EVENTS = {
-	"CURRENCY_DISPLAY_UPDATE",
-	"CURRENCY_TRANSFER_FAILED",
-	"ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED",
-};
-
-local function GetDisabledErrorMessage(dataReady, failureReason)
-    if not dataReady then
-		return RETRIEVING_DATA
-	end
-
-	return DISABLED_ERROR_MESSAGE[failureReason]
-end
-
-local function accountWideIconOnEvent(self, event)
-    if event == "CURRENCY_DISPLAY_UPDATE" or event == "ACCOUNT_CHARACTER_CURRENCY_DATA_RECEIVED" or event == "CURRENCY_TRANSFER_FAILED" then
-		if not self:GetParent():GetParent().CurrencyID then
-            self:GetParent().isEnabled = false
-            return
-        end
-
-        local dataReady = C_CurrencyInfo.IsAccountCharacterCurrencyDataReady()
-        local canTransfer, failureReason = C_CurrencyInfo.CanTransferCurrency(self:GetParent():GetParent().CurrencyID)
-        self:GetParent().isEnabled = dataReady and canTransfer
-        self:GetParent().disabledTooltip = GetDisabledErrorMessage(dataReady, failureReason) or nil
-
-        local isValidCurrency = failureReason ~= Enum.AccountCurrencyTransferResult.InvalidCurrency
-        local hasDisabledTooltip = self:GetParent().disabledTooltip ~= nil
-        self:GetParent():SetShown(self:GetParent().isEnabled or (isValidCurrency and hasDisabledTooltip))
-	end
-end
-
-local function accountWideIconOnEnter(self)
-    accountWideIconOnEvent(self.eventFrame, "CURRENCY_DISPLAY_UPDATE")
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	local tooltipLine = self:GetParent().isAccountTransferable and ACCOUNT_TRANSFERRABLE_CURRENCY or ACCOUNT_LEVEL_CURRENCY
-	GameTooltip_AddNormalLine(GameTooltip, tooltipLine)
-
-    if not self.isEnabled and self.disabledTooltip then
-        GameTooltip_AddErrorLine(GameTooltip, self.disabledTooltip)
-    end
-
-	GameTooltip:Show()
-end
-
-local function accountWideIconOnClick(self)
-    if not self:GetParent().CurrencyID or not self.isEnabled then
-		return
-	end
-
-    CurrencyTransferMenu:TriggerEvent(CurrencyTransferMenuMixin.Event.CurrencyTransferRequested, self:GetParent().CurrencyID)
-    CurrencyTransferMenu:ClearAllPoints()
-    CurrencyTransferMenu:SetPoint("TOPLEFT", GwCharacterWindow, "TOPRIGHT", 0, 0)
-end
-
-local function loadCurrency(curwin)
-    local USED_CURRENCY_HEIGHT
-    local zebra
-
-    local offset = HybridScrollFrame_GetOffset(curwin)
-    local currencyCount = C_CurrencyInfo.GetCurrencyListSize()
-
-    for i = 1, #curwin.buttons do
-        local slot = curwin.buttons[i]
-
-        local idx = i + offset
-        if idx > currencyCount then
-            -- empty row (blank starter row, final row, and any empty entries)
-            slot.item:Hide()
-            slot.item.CurrencyID = nil
-            slot.item.CurrencyIdx = nil
-            slot.item.isAccountWide = false
-            slot.item.isAccountTransferable = false
-            slot.header:Hide()
-        else
-            local info = C_CurrencyInfo.GetCurrencyListInfo(idx)
-            if info.isHeader then
-                slot.item:Hide()
-                slot.item.CurrencyID = nil
-                slot.item.CurrencyIdx = nil
-                slot.header.spaceString:SetText(info.name)
-                slot.header.isHeaderExpanded = info.isHeaderExpanded
-                slot.header.index = idx
-                if slot.header.isHeaderExpanded then
-                    slot.header.icon:Show()
-                    slot.header.icon2:Hide()
-                else
-                    slot.header.icon:Hide()
-                    slot.header.icon2:Show()
-                end
-                slot.header:Show()
-            else
-                slot.header:Hide()
-
-                -- parse out the currency ID to get more accurate info
-                local link = C_CurrencyInfo.GetCurrencyListLink(idx)
-                local _, _, _, _, curid, _ =
-                    string.find(
-                    link,
-                    "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%]%[]*)%]?|?h?|?r?"
-                )
-                local cinfo = C_CurrencyInfo.GetCurrencyInfo(curid)
-                slot.item.CurrencyID = curid
-                slot.item.CurrencyIdx = idx
-
-                -- set currency item values
-                slot.item.spaceString:SetText(cinfo.name)
-                if cinfo.maxQuantity == 0 then
-                    slot.item.amount:SetText(CommaValue(cinfo.quantity))
-                else
-                    slot.item.amount:SetText(CommaValue(cinfo.quantity) .. " / " .. CommaValue(cinfo.maxQuantity))
-                end
-                if cinfo.quantity == 0 then
-                    slot.item.amount:SetFontObject("GameFontDisable")
-                    slot.item.spaceString:SetFontObject("GameFontDisable")
-                else
-                    slot.item.amount:SetFontObject("GameFontHighlight")
-                    slot.item.spaceString:SetFontObject("GameFontHighlight")
-                end
-                slot.item.icon:SetTexture(cinfo.iconFileID)
-                slot.item.isAccountTransferable = C_CurrencyInfo.IsAccountTransferableCurrency(curid)
-                slot.item.isAccountWide = C_CurrencyInfo.IsAccountWideCurrency(curid)
-
-                if slot.item.isAccountWide then
-                    slot.item.accountWideIcon.Icon:SetAtlas("warbands-icon", TextureKitConstants.UseAtlasSize)
-                    slot.item.accountWideIcon.Icon:SetScale(0.9)
-                elseif slot.item.isAccountTransferable then
-                    slot.item.accountWideIcon.Icon:SetAtlas("warbands-transferable-icon", TextureKitConstants.UseAtlasSize)
-                    slot.item.accountWideIcon.Icon:SetScale(0.9)
-                else
-                    slot.item.accountWideIcon.Icon:SetAtlas(nil)
-                end
-
-                -- set zebra color by idx or watch status
-                zebra = idx % 2
-                if info.isShowInBackpack then
-                    slot.item.zebra:SetVertexColor(1, 1, 0.5, 0.15)
-                else
-                    slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
-                end
-
-                slot.item:Show()
-            end
-        end
-    end
-
-    USED_CURRENCY_HEIGHT = BAG_CURRENCY_SIZE * currencyCount
-    HybridScrollFrame_Update(curwin, USED_CURRENCY_HEIGHT, 576)
-end
-GW.AddForProfiling("currency", "loadCurrency", loadCurrency)
-
-local function header_OnClick(self)
-    if self.isHeaderExpanded then
-        C_CurrencyInfo.ExpandCurrencyList(self.index, false)
-    else
-        C_CurrencyInfo.ExpandCurrencyList(self.index, true)
-    end
-
-    loadCurrency(self.curwin)
-end
-
-local function currencySetup(curwin)
-    HybridScrollFrame_CreateButtons(curwin, "GwCurrencyRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
-    for i = 1, #curwin.buttons do
-        local slot = curwin.buttons[i]
-        slot:SetWidth(curwin:GetWidth() - 12)
-        slot.header.spaceString:SetFont(DAMAGE_TEXT_FONT, 14)
-        slot.header.spaceString:SetTextColor(1, 1, 1)
-        slot.header.icon:ClearAllPoints()
-        slot.header.icon:SetPoint("LEFT", 0, 0)
-        slot.header.icon2:ClearAllPoints()
-        slot.header.icon2:SetPoint("LEFT", 0, 0)
-        slot.item.spaceString:SetFont(UNIT_NAME_FONT, 12)
-        slot.item.amount:SetFont(UNIT_NAME_FONT, 12)
-        slot.item.icon:ClearAllPoints()
-        slot.item.icon:SetPoint("LEFT", 0, 0)
-        if not slot.item.ScriptsHooked then
-            slot.item:HookScript("OnClick", currency_OnClick)
-            slot.item:HookScript("OnEnter", currency_OnEnter)
-            slot.item:HookScript("OnLeave", GameTooltip_Hide)
-            slot.item.accountWideIcon:SetScript("OnClick", accountWideIconOnClick)
-            slot.item.accountWideIcon:SetScript("OnEnter", accountWideIconOnEnter)
-            slot.item.accountWideIcon.eventFrame:SetScript("OnEvent", accountWideIconOnEvent)
-            slot.item.accountWideIcon:SetScript("OnLeave", GameTooltip_Hide)
-            slot.item.accountWideIcon:SetScript("OnShow", function(self)
-                FrameUtil.RegisterFrameForEvents(self.eventFrame, CURRENCY_TRANSFER_TOGGLE_BUTTON_EVENTS);
-                C_CurrencyInfo.RequestCurrencyDataForAccountCharacters()
-            end)
-            slot.item.accountWideIcon:SetScript("OnHide", function(self)
-                FrameUtil.UnregisterFrameForEvents(self.eventFrame, CURRENCY_TRANSFER_TOGGLE_BUTTON_EVENTS);
-            end)
-            slot.item.ScriptsHooked = true
-        end
-        if not slot.header.ScriptsHooked then
-            slot.header:HookScript("OnClick", header_OnClick)
-            slot.header.curwin = curwin
-            slot.header.ScriptsHooked = true
-        end
-    end
-
-    loadCurrency(curwin)
-end
-GW.AddForProfiling("currency", "currencySetup", currencySetup)
 
 --TODO SKINNING
 local function transferHistorySetup(self)
     self:InitializeFrameVisuals()
-	self:InitializeScrollBox()
+    self:InitializeScrollBox()
 
     self:GwStripTextures()
     self.CloseButton:GwKill()
@@ -299,6 +27,8 @@ local function transferHistorySetup(self)
     end)
 
     self:Hide()
+
+    GW.HandlePortraitFrame(self)
 end
 
 local function SetupRaidExtendButton(self)
@@ -500,35 +230,214 @@ local function menuItem_OnClick(self)
 end
 GW.AddForProfiling("currency", "menuItem_OnClick", menuItem_OnClick)
 
+local oldAtlas = {
+    Options_ListExpand_Right = 1,
+    Options_ListExpand_Right_Expanded = 1
+}
+
+local function updateCollapse(texture, atlas)
+    if not atlas or oldAtlas[atlas] then
+        local parent = texture:GetParent()
+        if parent:IsCollapsed() then
+            if texture.SetTexture then
+                texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:SetRotation(-1.570796325)
+            else
+                texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetNormalTexture():SetRotation(-1.570796325)
+            end
+        else
+            if texture.SetTexture then
+                texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:SetRotation(0)
+            else
+                texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetNormalTexture():SetRotation(0)
+            end
+        end
+    end
+end
+
+local function RefreshAccountCurrencyIcon(self)
+    if self.Content then
+        if self.elementData.isAccountWide then
+            self.Content.AccountWideIcon.Icon:SetAtlas("warbands-icon", TextureKitConstants.UseAtlasSize);
+            self.Content.AccountWideIcon.Icon:SetScale(0.9);
+        elseif self.elementData.isAccountTransferable then
+            self.Content.AccountWideIcon.Icon:SetAtlas("warbands-transferable-icon", TextureKitConstants.UseAtlasSize);
+            self.Content.AccountWideIcon.Icon:SetScale(0.9);
+        else
+            self.Content.AccountWideIcon.Icon:SetAtlas(nil);
+        end
+
+        self.Content.AccountWideIcon:SetShown(self.Content.AccountWideIcon.Icon:GetAtlas() ~= nil)
+    end
+end
+
+local function UpdateTokenSkins(frame)
+    local zebra
+
+    for idx, child in next, { frame.ScrollTarget:GetChildren() } do
+        if not child.IsSkinned then
+            if child.Right then
+                child:GwStripTextures()
+                child:GwCreateBackdrop()
+                child.backdrop:GwSetInside(child)
+
+                updateCollapse(child.Right)
+                updateCollapse(child.HighlightRight)
+
+                hooksecurefunc(child.Right, "SetAtlas", updateCollapse)
+                hooksecurefunc(child.HighlightRight, "SetAtlas", updateCollapse)
+            end
+
+            if child.ToggleCollapseButton then
+                updateCollapse(child.ToggleCollapseButton)
+                hooksecurefunc(child.ToggleCollapseButton, "RefreshIcon", updateCollapse)
+            end
+
+            if child.Name then
+                child.Name:SetFont(DAMAGE_TEXT_FONT, 14)
+                child.Name:SetTextColor(1, 1, 1)
+            end
+
+            if child.Text then
+                child.Text:SetFont(DAMAGE_TEXT_FONT, 13)
+                child.Text:SetTextColor(1, 1, 1)
+            end
+
+            if child.Name then
+                child.Name:SetFont(DAMAGE_TEXT_FONT, 14)
+                child.Name:SetTextColor(1, 1, 1)
+            end
+
+            if child.Content then
+                child.Content.Name:SetFont(UNIT_NAME_FONT, 12)
+                child.Content.Count:SetFont(UNIT_NAME_FONT, 12)
+            end
+
+            if child.elementData then
+                if child.elementData.isHeader then
+                    child.gwBackground = child:CreateTexture(nil, "BACKGROUND")
+                    child.gwBackground:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+                    child.gwBackground:SetSize(512, child:GetHeight())
+                    child.gwBackground:SetPoint("TOPLEFT")
+                else
+                    child.gwZebra = child:CreateTexture(nil, "BACKGROUND")
+                    child.gwZebra:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+                    child.gwZebra:SetSize(32, 32)
+                    child.gwZebra:SetPoint("TOPLEFT", child, "TOPLEFT")
+                    child.gwZebra:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT")
+
+                    child.Content.Name:SetFont(UNIT_NAME_FONT, 12)
+                    child.Content.Count:SetFont(UNIT_NAME_FONT, 12)
+                end
+            end
+
+            local icon = child.Content and child.Content.CurrencyIcon
+            if icon then
+                GW.HandleIcon(icon)
+
+                hooksecurefunc(child, "RefreshAccountCurrencyIcon", RefreshAccountCurrencyIcon)
+            end
+
+            child.IsSkinned = true
+        end
+
+        -- update zebra
+        if child.elementData and not child.elementData.isHeader then
+            zebra = idx % 2
+            child.gwZebra:SetVertexColor(zebra, zebra, zebra, 0.05)
+        end
+        RefreshAccountCurrencyIcon(child)
+    end
+end
+
+local function SkinTokenFrame()
+    TokenFramePopup:GwStripTextures()
+    TokenFramePopup:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    TokenFramePopup:SetPoint("TOPLEFT", _G.TokenFrame, "TOPRIGHT", 3, -28)
+    TokenFrame.CurrencyTransferLogToggleButton:Hide()
+
+    TokenFramePopup.InactiveCheckbox:GwSkinCheckButton()
+    TokenFramePopup.BackpackCheckbox:GwSkinCheckButton()
+    TokenFramePopup.InactiveCheckbox:SetSize(15, 15)
+    TokenFramePopup.BackpackCheckbox:SetSize(15, 15)
+    TokenFramePopup.CurrencyTransferToggleButton:GwSkinButton(false, true)
+
+    TokenFramePopup.InactiveCheckbox:ClearAllPoints()
+    TokenFramePopup.InactiveCheckbox:SetPoint("TOPLEFT", TokenFramePopup, 32, -38)
+
+    TokenFramePopup.BackpackCheckbox:ClearAllPoints()
+    TokenFramePopup.BackpackCheckbox:SetPoint("TOPLEFT", TokenFramePopup.InactiveCheckbox, "BOTTOMLEFT", 0, -10)
+
+    TokenFramePopup.Title:SetFont(DAMAGE_TEXT_FONT, 14)
+    TokenFramePopup.Title:SetTextColor(1, 1, 1)
+
+    local TokenPopupClose = TokenFramePopup["$parent.CloseButton"]
+    if TokenPopupClose then
+        TokenPopupClose:GwSkinButton(true)
+    end
+
+    CurrencyTransferMenuTitleText:SetFont(DAMAGE_TEXT_FONT, 14)
+    CurrencyTransferMenuTitleText:SetTextColor(1, 1, 1)
+
+    CurrencyTransferMenu.SourceSelector.SourceLabel:SetFont(UNIT_NAME_FONT, 13)
+    CurrencyTransferMenu.SourceSelector.SourceLabel:SetTextColor(1, 1, 1)
+    CurrencyTransferMenu.SourceSelector.PlayerName:SetFont(UNIT_NAME_FONT, 13)
+    CurrencyTransferMenu.SourceSelector.PlayerName:SetTextColor(1, 1, 1)
+    CurrencyTransferMenu.AmountSelector.TransferAmountLabel:SetFont(UNIT_NAME_FONT, 12)
+    CurrencyTransferMenu.AmountSelector.TransferAmountLabel:SetTextColor(1, 1, 1)
+    CurrencyTransferMenu.SourceBalancePreview.Label:SetFont(UNIT_NAME_FONT, 12)
+    CurrencyTransferMenu.SourceBalancePreview.Label:SetTextColor(1, 1, 1)
+    CurrencyTransferMenu.PlayerBalancePreview.Label:SetFont(UNIT_NAME_FONT, 12)
+    CurrencyTransferMenu.PlayerBalancePreview.Label:SetTextColor(1, 1, 1)
+
+    CurrencyTransferMenu:GwStripTextures()
+    CurrencyTransferMenu:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    CurrencyTransferMenu.CloseButton:GwSkinButton(true)
+    CurrencyTransferMenu.SourceSelector.Dropdown:GwHandleDropDownBox()
+    GW.SkinTextBox(CurrencyTransferMenu.AmountSelector.InputBox.Middle, CurrencyTransferMenu.AmountSelector.InputBox.Left, CurrencyTransferMenu.AmountSelector.InputBox.Right)
+    CurrencyTransferMenu.ConfirmButton:GwSkinButton(false, true)
+    CurrencyTransferMenu.CancelButton:GwSkinButton(false, true)
+
+    --GW.HandleTrimScrollBar(TokenFrame.ScrollBar) -- taints
+    --GW.HandleScrollControls(TokenFrame)
+    hooksecurefunc(TokenFrame.ScrollBox, "Update", UpdateTokenSkins)
+end
+
 local function LoadCurrency(tabContainer)
     -- setup the currency window as a HybridScrollFrame and init each of the faux frame buttons
     local curwin_outer = CreateFrame("Frame", "GWCharacterCurrenyRaidInfoFrame", tabContainer, "GwCurrencyWindow")
-    local curwin = curwin_outer.CurrencyScroll
 
-    curwin.update = loadCurrency
-    curwin.scrollBar.doNotHide = true
-    currencySetup(curwin)
+    --take over TokenFrame
+    TokenFrame:Show()
+    TokenFrame:SetParent(curwin_outer.Currency)
+    TokenFrame:ClearAllPoints()
+    TokenFrame:SetPoint("TOPLEFT", curwin_outer.Currency, "TOPLEFT", 0, 0)
+    TokenFrame:SetSize(580, 576)
+    TokenFrame.ScrollBox:SetParent(TokenFrame)
+    TokenFrame.ScrollBox:ClearAllPoints()
+    TokenFrame.ScrollBox:SetPoint("TOPLEFT", TokenFrame, 4, -4)
+    TokenFrame.ScrollBox:SetPoint("BOTTOMRIGHT", TokenFrame, -22, 2)
 
-    -- update currency window when a currency update event occurs
-    curwin:SetScript(
-        "OnEvent",
-        function(self)
-            if GW.inWorld and self:IsShown() then
-                loadCurrency(self)
-            end
+    --skin that frame here
+    SkinTokenFrame()
+
+    hooksecurefunc(TokenFrame, "SetShown", function(self)
+        self:Show()
+    end)
+    hooksecurefunc(TokenFrame, "SetParent", function(self, parent)
+        if parent ~= curwin_outer.Currency then
+            self:SetParent(curwin_outer.Currency)
         end
-    )
-    curwin:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-
-    -- update currency window when anyone adds a watch currency
-    hooksecurefunc(
-        C_CurrencyInfo, "SetCurrencyBackpack",
-        function()
-            if curwin:IsShown() then
-                loadCurrency(curwin)
-            end
+    end)
+    hooksecurefunc(TokenFrame, "SetPoint", function(self, _, parent)
+        if parent ~= curwin_outer.Currency then
+            self:ClearAllPoints()
+            self:SetPoint("TOPLEFT", curwin_outer.Currency, "TOPLEFT", 0, 0)
         end
-    )
+    end)
 
     -- setup transfer history
     local curHistroyWin = curwin_outer.CurrencyTransferHistoryScroll
@@ -557,7 +466,7 @@ local function LoadCurrency(tabContainer)
     fmMenu.items = {}
 
     local item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
-    item.ToggleMe = curwin
+    item.ToggleMe = curwin_outer.Currency
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(CURRENCY)
     item:ClearAllPoints()
