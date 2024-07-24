@@ -405,6 +405,37 @@ local function SkinTokenFrame()
     --GW.HandleScrollControls(TokenFrame)
     hooksecurefunc(TokenFrame.ScrollBox, "Update", UpdateTokenSkins)
 
+    --[[
+    local frame = CreateFrame("Frame")
+    local gwSetEnabled = false
+    frame.transferInProgress = false
+
+    CurrencyTransferMenu.ConfirmButton:HookScript("OnClick", function()
+        gwSetEnabled = true
+        CurrencyTransferMenu.ConfirmButton:SetEnabled(false)
+        gwSetEnabled = false
+        frame.transferInProgress = true
+    end)
+    CurrencyTransferMenu:HookScript("OnShow", function()
+        if gwSetEnabled then return end
+        CurrencyTransferMenu.ConfirmButton:SetEnabled(not frame.transferInProgress)
+    end)
+    hooksecurefunc(CurrencyTransferMenu.ConfirmButton, "SetEnabled", function()
+        print(gwSetEnabled)
+        if gwSetEnabled then return end
+        CurrencyTransferMenu.ConfirmButton:SetEnabled(not frame.transferInProgress) -- stackoverlow -- why?
+    end)
+
+    frame:RegisterEvent("CURRENCY_TRANSFER_LOG_UPDATE")
+    frame:SetScript("OnEvent", function()
+        frame.transferInProgress = false
+        gwSetEnabled = true
+        CurrencyTransferMenu.ConfirmButton:SetEnabled(true)
+        gwSetEnabled = false
+        TokenFrame:Update()
+    end)
+    ]]
+
     CurrencyTransferMenu:SetFrameStrata("FULLSCREEN_DIALOG")
 end
 
@@ -420,8 +451,8 @@ local function LoadCurrency(tabContainer)
     TokenFrame:SetSize(580, 576)
     TokenFrame.ScrollBox:SetParent(TokenFrame)
     TokenFrame.ScrollBox:ClearAllPoints()
-    TokenFrame.ScrollBox:SetPoint("TOPLEFT", TokenFrame, 4, -4)
-    TokenFrame.ScrollBox:SetPoint("BOTTOMRIGHT", TokenFrame, -22, 2)
+    TokenFrame.ScrollBox:SetPoint("TOPLEFT", TokenFrame, 4, 0)
+    TokenFrame.ScrollBox:SetPoint("BOTTOMRIGHT", TokenFrame, -22, 0)
 
     --skin that frame here
     SkinTokenFrame()
