@@ -83,7 +83,7 @@
                 <Layers>
                     <Layer level="OVERLAY">
                         <Texture parentKey="Icon" file="Interface/AddOns/GW2_UI/textures/bag/bankicons">
-                            <TexCoords left="0" right="1" top="0.5" bottom="1" />
+                            <TexCoords left="0" right="0.5" top="0.5" bottom="1" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" x="0" y="0"></Anchor>
@@ -100,7 +100,7 @@
                 <Layers>
                     <Layer level="OVERLAY">
                         <Texture parentKey="Icon" file="Interface/AddOns/GW2_UI/textures/bag/bankicons">
-                            <TexCoords left="0" right="1" top="0" bottom="0.5" />
+                            <TexCoords left="0" right="0.5" top="0" bottom="0.5" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" x="0" y="0"></Anchor>
@@ -117,7 +117,7 @@
                 <Layers>
                     <Layer level="OVERLAY">
                         <Texture parentKey="Icon" file="Interface/AddOns/GW2_UI/textures/bag/bankicons">
-                            <TexCoords left="0" right="1" top="0" bottom="0.5" />
+                            <TexCoords left="0.5" right="1" top="0" bottom="0.5" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" x="0" y="0"></Anchor>
