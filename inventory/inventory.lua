@@ -6,6 +6,7 @@ local MAX_CONTAINER_ITEMS = 36
 
 -- reskins an ItemButton to use GW2_UI styling
 local function reskinItemButton(b, overrideIconSize)
+    if not b then return end
     local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
     b:SetSize(iconSize, iconSize)
 
