@@ -77,6 +77,7 @@ local CUSTOM_ATLAS = {
     ["CampaignAvailableDailyQuestIcon"]= true,
     ["CampaignAvailableQuestIcon"]= true,
     ["CampaignIncompleteQuestIcon"]= true,
+    ["Recurringavailablequesticon"] = true,
 }
 
 local DEBUG_ENABLED = false
