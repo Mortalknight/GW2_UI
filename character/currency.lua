@@ -404,6 +404,8 @@ local function SkinTokenFrame()
     --GW.HandleTrimScrollBar(TokenFrame.ScrollBar) -- taints
     --GW.HandleScrollControls(TokenFrame)
     hooksecurefunc(TokenFrame.ScrollBox, "Update", UpdateTokenSkins)
+
+    CurrencyTransferMenu:SetFrameStrata("FULLSCREEN_DIALOG")
 end
 
 local function LoadCurrency(tabContainer)

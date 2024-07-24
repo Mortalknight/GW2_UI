@@ -2,6 +2,8 @@ local _, GW = ...
 local function ApplySocketUISkin()
     if not GW.settings.SOCKET_SKIN_ENABLED then return end
 
+    ItemSocketingFrame:SetFrameStrata("FULLSCREEN_DIALOG")
+
     ItemSocketingFramePortrait:Hide()
     ItemSocketingFrame:GwStripTextures()
     ItemSocketingFrameCloseButton:GwSkinButton(true)
