@@ -271,7 +271,7 @@ local function blockOnEnter(self)
         end
     )
     if self.event then
-        BonusObjectiveTracker_ShowRewardsTooltip(self)
+        self:TryShowRewardsTooltip()
     end
 end
 AFP("blockOnEnter", blockOnEnter)

@@ -166,6 +166,7 @@ local function QuestInfo_Display(template, parentFrame)
     select(1, _G.QuestInfoItemHighlight:GetRegions()):SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/questitemhighlight")
     fRwd.ItemChooseText:SetTextColor(1, 1, 1)
     fRwd.ItemReceiveText:SetTextColor(1, 1, 1)
+    QuestInfoAccountCompletedNotice:SetTextColor(0, 0.9, 0.6)
 
     if not isMapStyle and GW.settings.QUESTVIEW_ENABLED then
         fRwd.Header:SetTextColor(1, 1, 1)

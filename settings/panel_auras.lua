@@ -132,9 +132,11 @@ local function LoadAurasPanel(sWindow)
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
         if not indicator[4] then
             local spellInfo = C_Spell.GetSpellInfo(spellID)
-            local name = format("%s |cFF888888(%d)|r", spellInfo.name, spellID)
-            tinsert(auraKeys, spellID)
-            tinsert(auraVals, name)
+            if spellInfo then
+                local name = format("%s |cFF888888(%d)|r", spellInfo.name, spellID)
+                tinsert(auraKeys, spellID)
+                tinsert(auraVals, name)
+            end
         end
     end
 

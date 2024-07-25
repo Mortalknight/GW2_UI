@@ -107,24 +107,21 @@ end
 local function GameTooltip_OnTooltipSetSpell(self, data)
     if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
 
-	local id = (data and data.id) or select(2, self:GetSpell())
-	if not id then return end
+    local spellID
+    if data and data.type then
+        if data.type == Enum.TooltipDataType.Spell then
+            spellID = data.id
+        elseif data.type == Enum.TooltipDataType.Macro then
+            local info = self:GetTooltipData()
+            local line = info and info.lines[1]
+            spellID = line and line.tooltipID
+        end
+    end
 
-	local ID = format(IDLine, _G.ID, id)
-	local info = self:GetTooltipData()
-	if info and info.lines[3] then
-		for _, line in next, info.lines, 3 do
-			local text = line and line.leftText
-			if not text or text == '' then return end
-
-			if strfind(text, ID) then
-				return -- this is called twice on talents for some reason?
-			end
-		end
-	end
-
-	self:AddLine(ID)
-	self:Show()
+    if spellID then
+        self:AddLine(format(IDLine, ID, spellID))
+        self:Show()
+    end
 end
 
 local function GetKeystoneModifiers(linkType, ...)
@@ -1007,23 +1004,61 @@ end
 
 local function StyleTooltips()
     for _, tt in next, {
-        _G.ItemRefTooltip,
-        _G.ItemRefShoppingTooltip1,
-        _G.ItemRefShoppingTooltip2,
-        _G.FriendsTooltip,
-        _G.WarCampaignTooltip,
-        _G.EmbeddedItemTooltip,
-        _G.ReputationParagonTooltip,
-        _G.GameTooltip,
-        _G.ShoppingTooltip1,
-        _G.ShoppingTooltip2,
-        _G.QuickKeybindTooltip,
-        _G.GameSmallHeaderTooltip,
-        _G.QuestScrollFrame.StoryTooltip,
-        _G.QuestScrollFrame.CampaignTooltip,
-        -- libs
-        _G.LibDBIconTooltip,
-        _G.SettingsTooltip,
+        ItemRefTooltip,
+        ItemRefShoppingTooltip1,
+        ItemRefShoppingTooltip2,
+        FriendsTooltip,
+        WarCampaignTooltip,
+        EmbeddedItemTooltip,
+        ReputationParagonTooltip,
+        GameTooltip,
+        ShoppingTooltip1,
+        ShoppingTooltip2,
+        QuickKeybindTooltip,
+        GameSmallHeaderTooltip,
+        PetJournalPrimaryAbilityTooltip,
+        GarrisonShipyardMapMissionTooltip,
+        BattlePetTooltip,
+        PetBattlePrimaryAbilityTooltip,
+        PetBattlePrimaryUnitTooltip,
+        FloatingBattlePetTooltip,
+        FloatingPetBattleAbilityTooltip,
+        ShoppingTooltip3,
+        ItemRefShoppingTooltip3,
+        WorldMapTooltip,
+        WorldMapCompareTooltip1,
+        WorldMapCompareTooltip2,
+        WorldMapCompareTooltip3,
+        AtlasLootTooltip,
+        QuestHelperTooltip,
+        QuestGuru_QuestWatchTooltip,
+        TRP2_MainTooltip,
+        TRP2_ObjetTooltip,
+        TRP2_StaticPopupPersoTooltip,
+        TRP2_PersoTooltip,
+        TRP2_MountTooltip,
+        AltoTooltip,
+        AltoScanningTooltip,
+        ArkScanTooltipTemplate,
+        NxTooltipItem,
+        NxTooltipD,
+        DBMInfoFrame,
+        DBMRangeCheck,
+        DatatextTooltip,
+        VengeanceTooltip,
+        FishingBuddyTooltip,
+        FishLibTooltip,
+        HealBot_ScanTooltip,
+        hbGameTooltip,
+        PlateBuffsTooltip,
+        LibGroupInSpecTScanTip,
+        RecountTempTooltip,
+        VuhDoScanTooltip,
+        XPerl_BottomTip,
+        EventTraceTooltip,
+        FrameStackTooltip,
+        LibDBIconTooltip,
+        RepurationParagonTooltip
     } do
         SetStyle(tt)
     end
@@ -1134,6 +1169,7 @@ local function LoadTooltips()
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetItem)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, GameTooltip_OnTooltipSetSpell)
 
         GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
         GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)

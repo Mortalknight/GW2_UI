@@ -166,7 +166,7 @@ do
             local updateInfo = select(2, ...)
             if updateInfo.addedAuras then
                 for _, data in next, updateInfo.addedAuras do
-                    if data.spellId == 369536 then --soar from evoker
+                    if data.spellId == 430747 or data.spellId == 783 then --soar from evoker
                         activeDragonridingBuffs[data.auraInstanceID] = data
                         UpdateDragonRidingState(nil, nil, true)
                         break

@@ -210,7 +210,8 @@ GW.AURAS_INDICATORS = {
         [47788] =   {0.86, 0.45, 0},    -- Guardian Spirit
         [33206] =   {0.47, 0.35, 0.74}, -- Pain Suppression
         [6788]   =  {0.89, 0.1, 0.1},   -- Weakened Soul
-        [10060]   =  {1, 0.81, 0.11},  -- Power Infusion
+        [10060]   =  {1, 0.81, 0.11},   -- Power Infusion
+        [77489]   =  {0.75, 1, 0.3},    -- Echo of Light
     },
     DRUID = {
         [774] =     {0.8, 0.4, 0.8},    -- Rejuvenation
@@ -242,10 +243,12 @@ GW.AURAS_INDICATORS = {
         [395180] =  {0.93, 0.8, 0.36},  -- Barrier of Faith (absorbtion)
     },
     SHAMAN = {
-        [61295] =   {0, 0.4, 0.53},     -- Riptide
-        [974] =     {0.42, 0.74, 0},    -- Earth Shield
+        [61295] =   {0.7, 0.3, 0.7},     -- Riptide
+        [974] =     {0.91, 0.8, 0.44},    -- Earth Shield
+        [383648] =     {0.91, 0.8, 0.44},    -- Earth Shield (Elemental Orbit)
     },
     MONK = {
+        [115175] =  {0.6, 0.9, 0.9},    -- Soothing Mist
         [119611] =  {0.3, 0.8, 0.6},    -- Renewing Mist
         [116849] =  {0.2, 0.8, 0.2},    -- Life Cocoon
         [124682] =  {0.8, 0.8, 0.25},   -- Enveloping Mist
@@ -257,7 +260,6 @@ GW.AURAS_INDICATORS = {
         [57934] =   {0.89, 0.09, 0.05}  -- Tricks of the Trade
     },
     WARRIOR = {
-        [114030] =  {0.2, 0.2, 1},      -- Vigilance
         [3411] =    {0.89, 0.09, 0.05}  -- Intervene
     },
     HUNTER = {

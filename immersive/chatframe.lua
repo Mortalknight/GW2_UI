@@ -1935,26 +1935,24 @@ local function SocialQueueIsLeader(playerName, leaderName)
     end
 
     for i = 1, BNGetNumFriends() do
-        local accountInfo = C_BattleNet.GetFriendAccountInfo(i)
-        if accountInfo and accountInfo.gameAccountInfo and accountInfo.gameAccountInfo.isOnline then
-            local numGameAccounts = C_BattleNet.GetFriendNumGameAccounts(i)
-            if numGameAccounts then
-                for y = 1, numGameAccounts do
-                    local gameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(i, y)
-                    if gameAccountInfo and (gameAccountInfo.clientProgram == BNET_CLIENT_WOW) and (accountInfo.accountName == playerName) then
-                        playerName = gameAccountInfo.characterName
-                        if gameAccountInfo.realmName and gameAccountInfo.realmName ~= GW.myrealm then
-                            playerName = format("%s-%s", playerName, gsub(gameAccountInfo.realmName, "[%s%-]", ""))
-                        end
-                        if leaderName == playerName then
-                            return true
-                        end
+        local info = C_BattleNet.GetAccountInfoByID(i)
+        if info and info.accountName  then
+            for y = 1, C_BattleNet.GetFriendNumGameAccounts(i) do
+                local gameInfo = C_BattleNet.GetFriendGameAccountInfo(i, y)
+                if gameInfo and gameInfo.clientProgram == BNET_CLIENT_WOW and info.accountName == playerName then
+                    playerName = gameInfo.characterName
+
+                    if gameInfo.realmName and gameInfo.realmName ~= GW.myrealm then
+                        playerName = format("%s-%s", playerName, gsub(gameInfo.realmName, "[%s%-]", ""))
+                    end
+
+                    if leaderName == playerName then
+                        return true
                     end
                 end
             end
         end
     end
-    return false
 end
 
 local function RecentSocialQueue(currentTime, msg)

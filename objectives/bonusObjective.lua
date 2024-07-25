@@ -140,6 +140,11 @@ local function createNewBonusObjectiveBlock(blockIndex)
     local newBlock = CreateTrackerObject("GwBonusObjectiveBlock" .. blockIndex, GwQuesttrackerContainerBonusObjectives)
     newBlock:SetParent(GwQuesttrackerContainerBonusObjectives)
 
+    Mixin(newBlock, BonusObjectiveBlockMixin)
+
+    newBlock.parentModule = {}
+    newBlock.parentModule.showWorldQuests = true
+
     if blockIndex == 1 then
         newBlock:SetPoint("TOPRIGHT", GwQuesttrackerContainerBonusObjectives, "TOPRIGHT", 0, -20)
     else
@@ -228,10 +233,6 @@ local function setUpBlock(questIDs, collapsed)
                 GwBonusObjectiveBlock.hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
 
                 GwBonusObjectiveBlock.groupButton:SetShown(GwBonusObjectiveBlock.hasGroupFinderButton)
-
-                local module = CreateBonusObjectiveTrackerModule()
-                module.ShowWorldQuests = true
-                GwBonusObjectiveBlock.module = module
 
                 GW.CombatQueue_Queue(nil, UpdateQuestItem, {GwBonusObjectiveBlock})
 

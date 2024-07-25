@@ -101,7 +101,7 @@ local function LoadUpcomingRewarsIntoScrollFrame(self)
                 local spellInfo = C_Spell.GetSpellInfo(slot.item.id)
                 slot.item.icon:SetTexture(spellInfo.iconID)
                 slot.item.name:SetText(spellInfo.name)
-                if IsPassiveSpell(slot.item.id) then
+                if C_Spell.IsSpellPassive(slot.item.id) then
                     if not slot.item.mask then
                         slot.item.mask = UIParent:CreateMaskTexture()
                         slot.item.mask:SetPoint("CENTER", slot.item.icon, "CENTER", 0, 0)

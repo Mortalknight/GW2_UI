@@ -23,7 +23,7 @@ local function SkinPerksProgram()
     PerksProgramFrame.ThemeContainer:SetAlpha(0)
 
     if PerksProgramFrame.ProductsFrame then
-        PerksProgramFrame.ProductsFrame.PerksProgramFilter.FilterDropDownButton:GwSkinButton(false, true)
+        PerksProgramFrame.ProductsFrame.PerksProgramFilter:GwSkinButton(false, true)
         PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Text:SetFont("UNIT_NAME_FONT", 30)
         GW.HandleIcon(PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Icon)
         PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Icon:SetSize(30, 30)
