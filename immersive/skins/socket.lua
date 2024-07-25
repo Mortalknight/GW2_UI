@@ -2,7 +2,7 @@ local _, GW = ...
 local function ApplySocketUISkin()
     if not GW.settings.SOCKET_SKIN_ENABLED then return end
 
-    ItemSocketingFrame:SetFrameStrata("FULLSCREEN_DIALOG")
+    ItemSocketingFrame:SetFrameStrata("DIALOG")
 
     ItemSocketingFramePortrait:Hide()
     ItemSocketingFrame:GwStripTextures()

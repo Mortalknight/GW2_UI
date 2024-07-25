@@ -85,14 +85,14 @@ local function SkinMainMenu()
     GameMenuFrame:GwCreateBackdrop(nil)
 
     local tex = GameMenuFrame:CreateTexture(nil, "BACKGROUND")
-    tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -10)
+    tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -30)
     tex:SetSize(286, 525)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubg")
 
     GameMenuFrame.Border:Hide()
     GameMenuFrame.Header:Hide()
 
-    GameMenuFrame:SetScale(0.8)
+    GameMenuFrame:SetScale(0.9)
 
     for _, Button in next, { _G.GameMenuFrame:GetChildren() } do
         if Button.IsObjectType and Button:IsObjectType('Button') then

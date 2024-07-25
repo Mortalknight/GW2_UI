@@ -431,7 +431,7 @@ local function SkinTokenFrame()
         TokenFrame:Update()
     end)
 
-    CurrencyTransferMenu:SetFrameStrata("FULLSCREEN_DIALOG")
+    CurrencyTransferMenu:SetFrameStrata("DIALOG")
 end
 
 local function LoadCurrency(tabContainer)
