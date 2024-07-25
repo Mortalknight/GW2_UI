@@ -8,6 +8,11 @@ local CoordsStopTimer = nil
 local CoordsTicker = nil
 local activeDragonridingBuffs = {}
 
+local dragonridingBuffIds = {
+    [430747] = true,    -- evoker
+    [783] = true,       -- druid
+}
+
 lib.callbacks = CallbackHandler:New(lib)
 
 lib.locationData = {
@@ -126,6 +131,17 @@ do
         end
     end
 
+    local function CheckDragonridingBuffsOnLogin()
+        for id, _ in pairs(dragonridingBuffIds) do
+            local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(id)
+            if auraInfo then
+                activeDragonridingBuffs[auraInfo.auraInstanceID] = auraInfo
+                return true
+            end
+        end
+        return false
+    end
+
     local function UpdateDragonRidingState(isLogin, useDelay, dragonridingBuffActive)
         if dragonridingBuffActive then
             lib.isDragonRiding = true
@@ -139,6 +155,8 @@ do
                     break
                 end
             end
+        elseif isLogin then
+            lib.isDragonRiding = CheckDragonridingBuffsOnLogin()
         else
             lib.isDragonRiding = false
         end
@@ -159,14 +177,13 @@ do
         elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
             UpdateDragonRidingState()
         elseif event == "PLAYER_ENTERING_WORLD" then
-            local isLogin, isReload = ...do
-                UpdateDragonRidingState(isLogin or isReload, true)
-            end
+            local isLogin, isReload = ...
+            UpdateDragonRidingState(isLogin or isReload, true)
         elseif event == "UNIT_AURA" then
             local updateInfo = select(2, ...)
             if updateInfo.addedAuras then
                 for _, data in next, updateInfo.addedAuras do
-                    if data.spellId == 430747 or data.spellId == 783 then --soar from evoker
+                    if dragonridingBuffIds[data.spellId] then
                         activeDragonridingBuffs[data.auraInstanceID] = data
                         UpdateDragonRidingState(nil, nil, true)
                         break
