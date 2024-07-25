@@ -405,36 +405,25 @@ local function SkinTokenFrame()
     --GW.HandleScrollControls(TokenFrame)
     hooksecurefunc(TokenFrame.ScrollBox, "Update", UpdateTokenSkins)
 
-    --[[
     local frame = CreateFrame("Frame")
-    local gwSetEnabled = false
     frame.transferInProgress = false
 
     CurrencyTransferMenu.ConfirmButton:HookScript("OnClick", function()
-        gwSetEnabled = true
-        CurrencyTransferMenu.ConfirmButton:SetEnabled(false)
-        gwSetEnabled = false
         frame.transferInProgress = true
+        CurrencyTransferMenu.ConfirmButton:SetEnabled(false)
     end)
-    CurrencyTransferMenu:HookScript("OnShow", function()
-        if gwSetEnabled then return end
-        CurrencyTransferMenu.ConfirmButton:SetEnabled(not frame.transferInProgress)
-    end)
-    hooksecurefunc(CurrencyTransferMenu.ConfirmButton, "SetEnabled", function()
-        print(gwSetEnabled)
-        if gwSetEnabled then return end
-        CurrencyTransferMenu.ConfirmButton:SetEnabled(not frame.transferInProgress) -- stackoverlow -- why?
+    hooksecurefunc(CurrencyTransferMenu.ConfirmButton, "SetEnabled", function(self, enabled)
+        if frame.transferInProgress and enabled == true then
+            CurrencyTransferMenu.ConfirmButton:SetEnabled(false)
+        end
     end)
 
     frame:RegisterEvent("CURRENCY_TRANSFER_LOG_UPDATE")
     frame:SetScript("OnEvent", function()
         frame.transferInProgress = false
-        gwSetEnabled = true
         CurrencyTransferMenu.ConfirmButton:SetEnabled(true)
-        gwSetEnabled = false
         TokenFrame:Update()
     end)
-    ]]
 
     CurrencyTransferMenu:SetFrameStrata("FULLSCREEN_DIALOG")
 end
