@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.0.1",{
+    {ct.bug, [=[First round of fixes]=]},
+})
+
 addChange("7.0.0",{
     {ct.change, [=[Update for TWW]=]},
 })
