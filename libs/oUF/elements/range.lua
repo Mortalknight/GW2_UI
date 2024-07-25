@@ -102,4 +102,4 @@ local function Disable(self)
 	end
 end
 
-oUF:AddElement('Range', nil, Enable, Disable)
+oUF:AddElement('Range', Path, Enable, Disable)
