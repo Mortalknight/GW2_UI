@@ -368,8 +368,14 @@ local function SkinTokenFrame()
     TokenFramePopup.InactiveCheckbox:ClearAllPoints()
     TokenFramePopup.InactiveCheckbox:SetPoint("TOPLEFT", TokenFramePopup, 32, -38)
 
+    TokenFramePopup.InactiveCheckbox.Text:ClearAllPoints()
+    TokenFramePopup.InactiveCheckbox.Text:SetPoint("LEFT", TokenFramePopup.InactiveCheckbox, "RIGHT", 5, 0)
+
     TokenFramePopup.BackpackCheckbox:ClearAllPoints()
     TokenFramePopup.BackpackCheckbox:SetPoint("TOPLEFT", TokenFramePopup.InactiveCheckbox, "BOTTOMLEFT", 0, -10)
+
+    TokenFramePopup.BackpackCheckbox.Text:ClearAllPoints()
+    TokenFramePopup.BackpackCheckbox.Text:SetPoint("LEFT", TokenFramePopup.BackpackCheckbox, "RIGHT", 5, 0)
 
     TokenFramePopup.Title:SetFont(DAMAGE_TEXT_FONT, 14)
     TokenFramePopup.Title:SetTextColor(1, 1, 1)
