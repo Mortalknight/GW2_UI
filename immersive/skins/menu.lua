@@ -89,11 +89,11 @@ local function SkinFrame(frame)
     else
         frame:GwCreateBackdrop(GW.BackdropTemplates.Default)
         backdrops[frame] = frame.backdrop
-    end
 
-    if frame.ScrollBar then
-		GW.HandleTrimScrollBar(frame.ScrollBar)
-	end
+        if frame.ScrollBar then
+            GW.HandleTrimScrollBar(frame.ScrollBar)
+        end
+    end
 end
 
 local function OpenMenu(manager)
