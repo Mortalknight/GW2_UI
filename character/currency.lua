@@ -354,6 +354,7 @@ local function UpdateTokenSkins(frame)
 end
 
 local function SkinTokenFrame()
+    --[[]]
     TokenFramePopup:GwStripTextures()
     TokenFramePopup:GwCreateBackdrop(GW.BackdropTemplates.Default)
     TokenFramePopup:SetPoint("TOPLEFT", _G.TokenFrame, "TOPRIGHT", 3, -28)
@@ -410,26 +411,6 @@ local function SkinTokenFrame()
     --GW.HandleTrimScrollBar(TokenFrame.ScrollBar) -- taints
     --GW.HandleScrollControls(TokenFrame)
     hooksecurefunc(TokenFrame.ScrollBox, "Update", UpdateTokenSkins)
-
-    local frame = CreateFrame("Frame")
-    frame.transferInProgress = false
-
-    CurrencyTransferMenu.ConfirmButton:HookScript("OnClick", function()
-        frame.transferInProgress = true
-        CurrencyTransferMenu.ConfirmButton:SetEnabled(false)
-    end)
-    hooksecurefunc(CurrencyTransferMenu.ConfirmButton, "SetEnabled", function(self, enabled)
-        if frame.transferInProgress and enabled == true then
-            CurrencyTransferMenu.ConfirmButton:SetEnabled(false)
-        end
-    end)
-
-    frame:RegisterEvent("CURRENCY_TRANSFER_LOG_UPDATE")
-    frame:SetScript("OnEvent", function()
-        frame.transferInProgress = false
-        CurrencyTransferMenu.ConfirmButton:SetEnabled(true)
-        TokenFrame:Update()
-    end)
 
     CurrencyTransferMenu:SetFrameStrata("DIALOG")
 end

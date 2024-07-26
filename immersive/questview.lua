@@ -600,7 +600,7 @@ function QuestViewMixin:acceptQuest()
         CloseQuest()
     else
         if (GetNumQuestChoices() == 0) then
-            GetQuestReward()
+            GetQuestReward(0)
             CloseQuest()
         elseif (GetNumQuestChoices() == 1) then
             GetQuestReward(1)
