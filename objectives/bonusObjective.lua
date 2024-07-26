@@ -132,6 +132,40 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
 end
 GW.AddForProfiling("bonusObjective", "addObjectiveBlock", addObjectiveBlock)
 
+local function blockOnClick(self, button)
+    local isThreatQuest = C_QuestLog.IsThreatQuest(self.questID)
+    if self.parentModule.showWorldQuests or isThreatQuest then
+        if button == "LeftButton" then
+            if not ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
+                if IsShiftKeyDown() then
+                    if QuestUtils_IsQuestWatched(self.questID) and not isThreatQuest then
+                        QuestUtil.UntrackWorldQuest(self.questID);
+                    end
+                else
+                    local mapID = C_TaskQuest.GetQuestZoneID(self.questID)
+                    if mapID then
+                        OpenQuestLog(mapID)
+                        WorldMapPing_StartPingQuest(self.questID)
+                    end
+                end
+            end
+        elseif button == "RightButton" and not isThreatQuest then
+            -- Ensure at least one option will appear before showing the dropdown.
+            if not QuestUtils_IsQuestWatched(self.questID) then
+                return
+            end
+
+            MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
+                local title = C_TaskQuest.GetQuestInfoByQuestID(self.questID)
+                rootDescription:CreateTitle(title)
+                rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()
+                    QuestUtil.UntrackWorldQuest(self.questID)
+                end)
+            end)
+        end
+    end
+end
+
 local function createNewBonusObjectiveBlock(blockIndex)
     if _G["GwBonusObjectiveBlock" .. blockIndex] ~= nil then
         return _G["GwBonusObjectiveBlock" .. blockIndex]
@@ -142,8 +176,10 @@ local function createNewBonusObjectiveBlock(blockIndex)
 
     Mixin(newBlock, BonusObjectiveBlockMixin)
 
+    -- needed for tooltip
     newBlock.parentModule = {}
     newBlock.parentModule.showWorldQuests = true
+    newBlock.event = true
 
     if blockIndex == 1 then
         newBlock:SetPoint("TOPRIGHT", GwQuesttrackerContainerBonusObjectives, "TOPRIGHT", 0, -20)
@@ -152,8 +188,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
     end
 
     newBlock.Header:SetText("")
-    newBlock.event = true -- needed for tooltip
-    newBlock:SetScript("OnClick", BonusObjectiveTracker_OnBlockClick)
+    newBlock:SetScript("OnClick", blockOnClick)
 
     newBlock.color = TRACKER_TYPE_COLOR["EVENT"]
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)

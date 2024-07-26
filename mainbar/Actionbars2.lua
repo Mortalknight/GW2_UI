@@ -168,10 +168,9 @@ local function FlyoutDirection(actionbar)
 
     for i = 1, 12 do
         local button = actionbar.gw_Buttons[i]
-        if button.FlyoutArrow then
+        if button.FlyoutArrowContainer then
             --Change arrow direction depending on what bar the button is on
             local point = GW.GetScreenQuadrant(actionbar)
-
             if point ~= "UNKNOWN" then
                 if strfind(point, "TOP") then
                     button:SetAttribute("flyoutDirection", "DOWN")
