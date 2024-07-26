@@ -196,14 +196,17 @@ local function createNewBonusObjectiveBlock(blockIndex)
 
     -- quest item button here
     newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
+
     newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     newBlock.actionButton.NormalTexture:SetTexture(nil)
     newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
-    newBlock.actionButton:SetScript("OnShow", QuestObjectiveItem_OnShow)
-    newBlock.actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
-    newBlock.actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
+    newBlock.actionButton:SetScript("OnShow", function(self) self:OnShow() end)
+    newBlock.actionButton:SetScript("OnHide", function(self) self:OnHide() end)
+    newBlock.actionButton:SetScript("OnEnter", function(self) self:OnEnter() end)
     newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
-    newBlock.actionButton:SetScript("OnEvent", QuestObjectiveItem_OnEvent)
+    newBlock.actionButton:SetScript("OnEvent", function(self) self:OnEvent() end)
+
+    newBlock.actionButton:OnLoad()
 
     newBlock.height = 20
     newBlock.numObjectives = 0
