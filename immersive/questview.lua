@@ -54,7 +54,8 @@ local emotes = {
     ["Salute"] = 113,
     ["Drowned"] = 132,
     ["Yes"] = 185,
-    ["No"] = 186
+    ["No"] = 186,
+    ["Read"] = 520
 }
 local mid_set = {"Idle", "Talk", "Yes", "No", "Point"}
 local end_set = {"Bow", "Salute"}
@@ -473,31 +474,39 @@ function QuestViewMixin:showQuestFrame()
 
     self.container.playerModel:setPMUnit("player", 0)
 
-    local npc_name = GetUnitName("npc")
-    local npc_type = UnitCreatureType("npc")
+    local npc_name = GetUnitName("questnpc")
+    local npc_type = UnitCreatureType("questnpc")
+    Debug("NPC info: ", npc_name, npc_type)
 
-    if UnitIsUnit("npc", "player") then
-        --local board = "World/Expansion06/Doodads/Artifact/7AF_Paladin_MissionBoard01.m2" -- TODO need new files, this one does not exist anymore
+    self.questNPCType = 0
+    local gm = self.container.giverModel
+    gm:ClearModel()
+    gm:SetUnit("none")
+    if UnitIsUnit("questnpc", "player") then
+        -- quest giver is the player; typically for auto-accepted quests, story pushes, etc.
         self.questNPCType = 1
-        self.container.giverModel:ClearModel()
-        self.container.giverModel:SetUnit("none")
-        --GwQuestviewFrameContainerGiverModel:SetModel(board)
-        --GwQuestviewFrameContainerGiverModel:SetFacing(-0.5)
-        --GwQuestviewFrameContainerGiverModel:SetPosition(-15, 1.9, -0.8)
+        gm:SetModel(1822634)
+        gm:SetFacing(-1)
+        gm:SetPosition(-12, 1.5, -2.8)
+        gm:SetRoll(0.25)
+        gm:SetPitch(-0.15)
     elseif npc_name and npc_type then
-        if UnitIsDead("npc") then
+        -- quest giver has a creature type; some kind of entity with a normal model
+        if UnitIsDead("questnpc") then
             self.questNPCType = 2
-            self.container.giverModel:setPMUnit("npc", 1, true)
+            gm:setPMUnit("questnpc", 1, true)
         else
             self.questNPCType = 3
-            self.container.giverModel:setPMUnit("npc", 1)
+            gm:setPMUnit("questnpc", 1)
         end
-    else
-        self.questNPCType = 0
-        self.container.giverModel:ClearModel()
-        self.container.giverModel:SetUnit("none")
+    elseif npc_name then
+        -- quest giver has a name but no type; probably an item or letter; giver player reading anim
+        self.questNPCType = 4
+        self.container.playerModel:SetAnimation(emotes.Read)
+        self.container.playerModel:ApplySpellVisualKit(29521, false)
     end
-    PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg", "SFX")
+    Debug("quest NPC type", self.questNPCType)
+    PlaySoundFile("Interface/AddOns/GW2_UI/sounds/dialog_open.ogg", "SFX")
 end
 
 function QuestViewMixin:clearRequired()
