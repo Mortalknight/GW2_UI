@@ -284,25 +284,30 @@ local function hook_QuestLogQuests_Update()
 
 	for button in QuestScrollFrame.titleFramePool:EnumerateActive() do
 		if not button.IsSkinned then
-			if button.CheckBox then
-				button.CheckBox:DisableDrawLayer('BACKGROUND')
-				button.CheckBox:GwCreateBackdrop()
+			if button.Checkbox then
+				button.Checkbox:DisableDrawLayer('BACKGROUND')
+                hooksecurefunc(button.Checkbox.CheckMark, "SetShown", function(self, isTracked)
+                    self:Show()
+                    if isTracked then
+                        self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked")
+                    else
+                        self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox")
+                    end
+                end)
 			end
 
-			if button.Check then
-				button.Check:SetAtlas('checkmark-minimal')
-			end
 			button.IsSkinned = true
 		end
 	end
 
 	for header in QuestScrollFrame.campaignHeaderMinimalFramePool:EnumerateActive() do
 		if header.CollapseButton and not header.IsSkinned then
-			header:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
-            header.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-            header:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
-            header:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
-            header:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
+            header.minimumCollapsedHeight = 25
+			header.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+            header.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+            header.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+            header.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+            header.Highlight:SetColorTexture(1, 0.93, 0.73, 0.25)
             hooksecurefunc(header.CollapseButton, "UpdateCollapsedState", updateCollapse)
 			header.IsSkinned = true
 		end
