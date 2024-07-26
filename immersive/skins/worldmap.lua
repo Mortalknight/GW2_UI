@@ -249,13 +249,34 @@ local function hook_NotifyDialogShow(_, dialog)
 end
 AFP("hook_NotifyDialogShow", hook_NotifyDialogShow)
 
+local function updateCollapse(self, collapsed)
+    if collapsed then
+        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+        self.Icon:SetRotation(1.570796325)
+        self:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+        self:GetHighlightTexture():SetRotation(1.570796325)
+    else
+        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+        self.Icon:SetRotation(0)
+        self:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+        self:GetHighlightTexture():SetRotation(0)
+    end
+end
+
 local function hook_QuestLogQuests_Update()
     for button in QuestScrollFrame.headerFramePool:EnumerateActive() do
 		if button.ButtonText then
 			if not button.IsSkinned then
-				button:GwStripTextures()
-				button:GwCreateBackdrop('Transparent')
+				button:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+                button.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+                button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
 				button:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
+
+                if button.CollapseButton then
+                    hooksecurefunc(button.CollapseButton, "UpdateCollapsedState", updateCollapse)
+                end
+
 				button.IsSkinned = true
 			end
 		end
@@ -277,9 +298,12 @@ local function hook_QuestLogQuests_Update()
 
 	for header in QuestScrollFrame.campaignHeaderMinimalFramePool:EnumerateActive() do
 		if header.CollapseButton and not header.IsSkinned then
-			header:GwStripTextures()
-			header.Background:GwCreateBackdrop('Transparent')
-			header.Highlight:SetColorTexture(1, 0.93, 0.73, 0.75)
+			header:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+            header.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+            header:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+            header:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+            header:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
+            hooksecurefunc(header.CollapseButton, "UpdateCollapsedState", updateCollapse)
 			header.IsSkinned = true
 		end
 	end
