@@ -492,6 +492,10 @@ function QuestViewMixin:showQuestFrame()
             self.questNPCType = 3
             self.container.giverModel:setPMUnit("npc", 1)
         end
+    else
+        self.questNPCType = 0
+        self.container.giverModel:ClearModel()
+        self.container.giverModel:SetUnit("none")
     end
     PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg", "SFX")
 end
