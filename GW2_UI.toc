@@ -216,6 +216,7 @@ immersive\toast.xml
 immersive\alertPosition.lua
 immersive\alerts.lua
 immersive\afk.lua
+immersive\questviewData.lua
 immersive\questview.lua
 immersive\chatframe.lua
 immersive\chatbubbles.lua

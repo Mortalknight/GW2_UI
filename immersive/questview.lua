@@ -5,74 +5,8 @@ local HandleReward = GW.HandleReward
 local Debug = GW.Debug
 local AFP = GW.AddProfiling
 
--- NPC position tweaks to fix model issues in questview frame
-local model_tweaks = {
-    [1980608] = {["y"] = 0.6, ["z"] = -0.3}, -- Ulfar
-    [2021536] = {["z"] = -0.55}, -- Kivar
-    [3730970] = {["x"] = 0, ["y"] = 0.25, ["z"] = -0.04}, -- Nika
-    [2139079] = {["z"] = -0.2}, -- Alpaca soulshape
-    [3071370] = {["x"] = 1.0, ["y"] = -0.5, ["z"] = -0.15, ["f"] = 2.5}, -- Vulpin soulshape
-    [3148995] = {["x"] = 0, ["y"] = -1.25, ["z"] = -0.3}, -- horned horse soulshape
-    [1886694] = {["x"] = -0.5, ["y"] = -1.75, ["z"] = -0.3}, -- raptor soulshape
-    [2343653] = {["x"] = -1.25, ["y"] = -1.25, ["z"] = -0.5}, -- shadowstalker soulshape
-    [3483612] = {["x"] = -0.25, ["y"] = 0.50, ["z"] = -0.1}, -- Ysera
-    [3762412] = {["x"] = -0.25, ["y"] = 4.25}, -- primus
-    [1717164] = {["z"] = -0.35},
-    [415230] = {["z"] = 0},
-    [3023013] = {["x"] = -4, ["y"] = 1, ["z"] = -0.33},
-    [2974101] = {["x"] = -0.5, ["y"] = 0.55, ["z"] = 0},
-    [3307974] = {["x"] = -16, ["y"] = 0, ["z"] = 12},
-    [3284341] = {["x"] = 1, ["y"] = 1, ["z"] = 0},
-    [3058051] = {["z"] = 0.2},
-    [926251] = {["z"] = -0.3},
-    [3052707] = {["x"] = 0, ["y"] = 3, ["z"] = 0},
-    [1129448] = {["x"] = -1, ["y"] = 0, ["z"] = -0.37},
-    [1272605] = {["x"] = -1, ["y"] = 0.5, ["z"] = -0.15},
-    [3446018] = {["z"] = -0.4},
-    [3049899] = {["x"] = -1.75, ["y"] = 0.5},
-    [3449671] = {["x"] = 0, ["y"] = 0.5, ["z"] = 0.05},
-    [3492361] = {["x"] = 0, ["y"] = 1.5, ["z"] = 0.05},
-    [2529386] = {["x"] = 0, ["y"] = 1.5, ["z"] = 0},
-    [3387000] = {["x"] = 0, ["y"] = 2.75, ["z"] = 0},
-    [3067262] = {["z"] = -0.05},
-    [3483610] = {["x"] = -0.5, ["y"] = 4, ["z"] = 0.25},
-    [3492867] = {["x"] = 5, ["y"] = 10, ["z"] = 2.5},
-    [3670316] = {["x"] = -40, ["y"] = 4, ["z"] = 3},
-    [577134] = {["z"] = -0.8},
-    [1349623] = {["z"] = -0.4},
-    [3024835] = {["z"] = -0.1},
-    [3208389] = {["z"] = -0.1}
-}
-
--- background textures to use in questview frame for various map IDs
-local mapBGs = {
-    [627] = "Legion/dalaran",
-    [896] = "BFA/drustvar",
-    [1409] = "starter_isle",
-    [1525] = "SL/revendreth",
-    [1533] = "SL/bastion",
-    [1543] = "SL/maw",
-    [1565] = "SL/ardenweald",
-    [1670] = "SL/oribos", [1671] = "SL/oribos", [1672] = "SL/oribos",
-    [1961] = "SL/korthia",
-    [1970] = "SL/zerethmortis",
-    [2016] = "SL/tazavesh"
-}
-
--- known emote IDs used for SetAnimation
-local emotes = {
-    ["Idle"] = 0,
-    ["Dead"] = 6,
-    ["Talk"] = 60,
-    ["TalkExclamation"] = 64,
-    ["TalkQuestion"] = 65,
-    ["Bow"] = 66,
-    ["Point"] = 84,
-    ["Salute"] = 113,
-    ["Drowned"] = 132,
-    ["Yes"] = 185,
-    ["No"] = 186
-}
+local model_tweaks = GW.QUESTVIEW_MODEL_TWEAKS
+local mapBGs = GW.QUESTVIEW_MAP_BGS
 
 local function splitIter(inputstr, pat)
     local st, g = 1, string.gmatch(inputstr, "()(" .. pat .. ")")
@@ -108,6 +42,20 @@ AFP("splitQuest", splitQuest)
 local QuestGiverMixin = {}
 AFP("QuestGiverMixin", QuestGiverMixin)
 
+-- emote IDs used for SetAnimation
+local emotes = {
+    ["Idle"] = 0,
+    ["Dead"] = 6,
+    ["Talk"] = 60,
+    ["TalkExclamation"] = 64,
+    ["TalkQuestion"] = 65,
+    ["Bow"] = 66,
+    ["Point"] = 84,
+    ["Salute"] = 113,
+    ["Drowned"] = 132,
+    ["Yes"] = 185,
+    ["No"] = 186
+}
 local mid_set = {"Idle", "Talk", "Yes", "No", "Point"}
 local end_set = {"Bow", "Salute"}
 function QuestGiverMixin:OnAnimFinished()
@@ -313,44 +261,52 @@ function QuestViewMixin:UnhideQuestFrame()
 end
 
 function QuestViewMixin:showRequired()
-    local itemReqOffset = 9
     local qReq = self.questReq
-    if (qReq["money"] > 0 or #qReq["currency"] > 0 or #qReq["stuff"] > 0) then
-        UIFrameFadeIn(self.container.dialog.required, 0.1, 0, 1)
+    if (not (qReq["money"] > 0 or #qReq["currency"] > 0 or #qReq["stuff"] > 0)) then
+        return
+    end
+    UIFrameFadeIn(self.container.dialog.required, 0.1, 0, 1)
 
-        if qReq["money"] > 0 then
-            local f = QuestProgressRequiredMoneyFrame
-            UIFrameFadeIn(f, 0.1, 0, 1)
-            f:SetParent(self)
-            f:ClearAllPoints()
-            f:SetPoint("CENTER", self, "CENTER", 0, -30)
-            f:SetFrameLevel(5)
+    if qReq["money"] > 0 then
+        local f = self.container.dialog.reqMoney
+        MoneyFrame_Update(f, qReq["money"])
+        UIFrameFadeIn(f, 0.1, 0, 1)
+        self.container.dialog.reqItem1:ClearAllPoints()
+        self.container.dialog.reqItem1:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, -5)
+    else
+        self.container.dialog.reqItem1:ClearAllPoints()
+        self.container.dialog.reqItem1:SetPoint("TOPLEFT", self.container.dialog.required, "BOTTOMLEFT", 5, -10)
+    end
+
+    for i = 1, #qReq["stuff"], 1 do
+        local f = self.container.dialog["reqItem" .. i]
+        f.type = "required"
+        f.objectType = "item"
+        f:SetID(i)
+        local name = qReq["stuff"][i][1]
+        local texture = qReq["stuff"][i][2]
+        local numItems = qReq["stuff"][i][3]
+        SetItemButtonCount(f, numItems)
+        SetItemButtonTexture(f, texture)
+        _G["GwReqQuestItem" .. i .. "Name"]:SetText(name)
+        UIFrameFadeIn(f, 0.1, 0, 1)
+    end
+
+    local btnOffset = #qReq["stuff"]
+    for i = 1, #qReq["currency"], 1 do
+        local btnIdx = i + btnOffset
+        if btnIdx > 6 then
+            break
         end
-        local itemReq = #qReq["currency"] + #qReq["stuff"]
-        local itemHeight = 0
-        local itemWidth = 0
-        for i = 1, itemReq, 1 do
-            local frame = _G["QuestProgressItem" .. i]
-            if frame then
-                if itemHeight == 0 then
-                    itemHeight = math.ceil(frame:GetHeight())
-                end
-                if itemWidth == 0 then
-                    itemWidth = math.ceil(frame:GetWidth())
-                end
-                UIFrameFadeIn(frame, 0.1, 0, 1)
-                if i > 2 and itemReqOffset == 50 then itemReqOffset = (itemHeight - 9) end -- reset yOffset if itemReq > 2
-                frame:SetParent(self)
-                frame:ClearAllPoints()
-                frame:SetPoint(
-                    "TOPLEFT",
-                    self,
-                    "CENTER",
-                    (((i + 1) % 2) * (itemWidth + 20) - 160),
-                    -(itemHeight + itemReqOffset) * (math.ceil(i / 2))
-                )
-                frame:SetFrameLevel(5)
-            end
+        local f = self.container.dialog["reqItem" .. btnIdx]
+        f.type = "required"
+        f.objectType = "currency"
+        f:SetID(i)
+        if qReq["currency"][i] then
+            SetItemButtonCount(f, qReq["currency"][i].requiredAmount)
+            SetItemButtonTexture(f, qReq["currency"][i].texture)
+            _G["GwReqQuestItem" .. btnIdx .. "Name"]:SetText(qReq["currency"][i].name)
+            UIFrameFadeIn(f, 0.1, 0, 1)
         end
     end
 end
@@ -541,12 +497,6 @@ function QuestViewMixin:showQuestFrame()
 end
 
 function QuestViewMixin:clearRequired()
-    for i = 1, 32, 1 do
-        local frame = _G["QuestProgressItem" .. i]
-        if (frame) then
-            frame:Hide()
-        end
-    end
     if (self.questReq) then
         wipe(self.questReq.stuff)
         wipe(self.questReq.currency)
@@ -560,7 +510,11 @@ function QuestViewMixin:clearRequired()
             ["money"] = 0
         }
     end
-    QuestProgressRequiredMoneyFrame:Hide()
+    self.container.dialog.reqMoney:Hide()
+    for i = 1, 6, 1 do
+        local f = self.container.dialog["reqItem" .. i]
+        f:Hide()
+    end
     self.container.dialog.required:Hide()
     self.container.dialog.objectiveHeader:Hide()
     self.container.dialog.objectiveText:Hide()
@@ -664,7 +618,7 @@ function QuestViewMixin:evQuestProgress()
         end
     end
     for i = GetNumQuestCurrencies(), 1, -1 do
-        tinsert(self.questReq["currency"], 1, {GetQuestCurrencyInfo("required", i)})
+        tinsert(self.questReq["currency"], 1, C_QuestOffer.GetQuestRequiredCurrencyInfo(i))
     end
     if (self.questReq["money"] > 0 or #self.questReq["currency"] > 0 or #self.questReq["stuff"] > 0) then
         self.questReq["text"] = splitQuest(GetProgressText())
@@ -727,13 +681,11 @@ end
 
 function QuestViewMixin:evQuestFinished()
     QuestInfoRewardsFrame:Hide()
-    QuestProgressRequiredMoneyFrame:Hide()
-    self.container.dialog.required:Hide()
+    self:clearQuestReq()
     self:Hide()
     if (self.questState ~= "PROGRESS") then
         PlaySoundFile("Interface/AddOns/GW2_UI/sounds/dialog_close.ogg", "SFX")
     end
-    self:clearQuestReq()
 end
 
 function QuestViewMixin:OnEvent(event, ...)
@@ -749,7 +701,10 @@ function QuestViewMixin:OnEvent(event, ...)
     end
 end
 
-local function dialog_OnClick(self, button)
+local function dialog_OnMouseUp(self, button, isInside)
+    if not isInside or not (button == "LeftButton" or button == "RightButton") then
+        return
+    end
     local qview = self:GetParent():GetParent()
     if button == "RightButton" then
         qview:lastGossip()
@@ -757,7 +712,7 @@ local function dialog_OnClick(self, button)
         qview:nextGossip()
     end
 end
-AFP("dialog_OnClick", dialog_OnClick)
+AFP("dialog_OnMouseUp", dialog_OnMouseUp)
 
 local function decline_OnClick()
     CloseQuest()
@@ -811,9 +766,7 @@ local function LoadQuestview()
     f:RegisterEvent("QUEST_COMPLETE")
     f:RegisterEvent("QUEST_PROGRESS")
 
-    f.container.dialog:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-
-    f.container.dialog:SetScript("OnClick", dialog_OnClick)
+    f.container.dialog:SetScript("OnMouseUp", dialog_OnMouseUp)
     f.container.declineButton:SetScript("OnClick", decline_OnClick)
     f.container.acceptButton:SetScript("OnClick", accept_OnClick)
 
@@ -831,7 +784,7 @@ local function LoadQuestview()
 
     -- style required items
     for i = 1, 6 do
-        local button = _G["QuestProgressItem" .. i]
+        local button = f.container.dialog["reqItem" .. i]
         if button then
             HandleReward(button, false)
             if button.IconBorder then
