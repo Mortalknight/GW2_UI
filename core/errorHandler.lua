@@ -99,7 +99,7 @@ local function ShouldHandleError()
 end
 
 local function cleanFilePaths(msg)
-    return strtrim(tostring(msg or ""), "\n"):gsub("@?Interface\\AddOns\\", "")
+    return strtrim(tostring(msg or ""), "\n"):gsub("@?Interface/AddOns/", "")
 end
 
 -- Check for GW2 errors and log them
@@ -109,8 +109,8 @@ local function HandleError(msg, stack)
         stack = cleanFilePaths(stack)
 
         -- Just print the error message if HandleError or LogExport caused it
-        local file = Name .. "\\core\\errorHandler.lua[^\n]*"
-        if stack:match(file .. "HandleError") then
+        local file = Name .. "/core/errorHandler.lua[^\n]*"
+        if stack:match(file .. "errorHandler") then
             ErrorHandler.errors = math.huge
             GW.Notice("|cffff0000[ERROR]|r " .. msg .. "\n\nThis is an error in the error-handling system itself. Please create a new ticket on Curse, Discord or GitHub, copy & paste the error message in there and add any additional info you might have. Thank you! =)")
         -- Log error message and stack as well as printing the error message
@@ -118,7 +118,7 @@ local function HandleError(msg, stack)
             ErrorHandler.errorRate = max(0, ErrorHandler.errorRate - ErrorHandler.LOG_MAX_ERROR_RATE * (GetTime() - ErrorHandler.errorPrev)) + 1
             ErrorHandler.errorPrev = GetTime()
 
-            for match in stack:gmatch(Name .. "\\([^\n]+)") do
+            for match in stack:gmatch(Name .. "/([^\n]+)") do
                 if match and (not StartsWith(match, "Libs") or StartsWith(match, "libs")) then
                     ErrorHandler.errors = ErrorHandler.errors + 1
 
