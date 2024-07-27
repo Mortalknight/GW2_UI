@@ -59,7 +59,7 @@ local function DisableBlizzardFrames()
     local ourFocusTargetFrame = GW.settings.focus_TARGET_ENABLED
     local ourPlayerFrame = GW.settings.HEALTHGLOBE_ENABLED
     local ourCastBar = GW.settings.CASTINGBAR_ENABLED
-    local ourActionbars = GW.settings.ACTIONBARS_ENABLED
+    local ourActionbars = GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED
     local ourInventory = GW.settings.BAGS_ENABLED
 
     if ourPartyFrames or ourRaidFrames then

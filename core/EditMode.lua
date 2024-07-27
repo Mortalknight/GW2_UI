@@ -1,7 +1,7 @@
 local _, GW = ...
 local LEMO = GW.Libs.LEMO
 
-local CheckActionBar = function() return GW.settings.ACTIONBARS_ENABLED end
+local CheckActionBar = function() return (GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED) end
 
 local eventFrame = CreateFrame("Frame")
 local hideFrames = {}

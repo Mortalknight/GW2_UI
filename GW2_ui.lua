@@ -800,8 +800,12 @@ local function evPlayerLogin(self)
 
     -- create action bars
     if GW.settings.ACTIONBARS_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
-        GW.LoadActionBars(lm)
-        GW.ExtraAB_BossAB_Setup()
+        if GW.settings.BAR_LAYOUT_ENABLED then
+            GW.LoadActionBars(lm, false)
+            GW.ExtraAB_BossAB_Setup()
+        else
+            GW.LoadActionBars(lm, true)
+        end
     end
 
     -- create pet frame

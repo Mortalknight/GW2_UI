@@ -90,6 +90,7 @@ local function LoadActionbarPanel(sWindow)
     settingsMenuAddButton(BINDING_HEADER_ACTIONBAR, p, {general, mainBar, extraBars, totemBar, stanceBar})
 
     -- GENERAL
+    addOption(general.scroll.scrollchild, L["Automatic Bar Layout"], L["Enable or disable the automatic layout management of the primary action bars and associated frames (pet, buffs); required for auto bar fading and some other features"], "BAR_LAYOUT_ENABLED", function() GW.ShowRlPopup = true end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
     addOptionSlider(
         general.scroll.scrollchild,
         L["Empty slots alpha"],
@@ -121,7 +122,7 @@ local function LoadActionbarPanel(sWindow)
         10,
         nil,
         1,
-        {["ACTIONBARS_ENABLED"] = true}
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}
     )
     addOptionDropdown(
         mainBar.scroll.scrollchild,
@@ -147,7 +148,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -166,7 +167,7 @@ local function LoadActionbarPanel(sWindow)
         10,
         nil,
         1,
-        {["ACTIONBARS_ENABLED"] = true}
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}
     )
     addOptionDropdown(
         extraBars.scroll.scrollchild,
@@ -177,7 +178,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -190,7 +191,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -203,7 +204,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -218,7 +219,7 @@ local function LoadActionbarPanel(sWindow)
         {1, 2, 3, 4, 6, 12},
         {"1", "2", "3", "4", "6", "12"},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -231,7 +232,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -246,7 +247,7 @@ local function LoadActionbarPanel(sWindow)
         {1, 2, 3, 4, 6, 12},
         {"1", "2", "3", "4", "6", "12"},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -259,7 +260,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -274,7 +275,7 @@ local function LoadActionbarPanel(sWindow)
         {1, 2, 3, 4, 6, 12},
         {"1", "2", "3", "4", "6", "12"},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -287,7 +288,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -302,7 +303,7 @@ local function LoadActionbarPanel(sWindow)
         {1, 2, 3, 4, 6, 12},
         {"1", "2", "3", "4", "6", "12"},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -315,7 +316,7 @@ local function LoadActionbarPanel(sWindow)
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -330,7 +331,7 @@ local function LoadActionbarPanel(sWindow)
         {1, 2, 3, 4, 6, 12},
         {"1", "2", "3", "4", "6", "12"},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )
@@ -371,7 +372,7 @@ local function LoadActionbarPanel(sWindow)
         {"UP", "DOWN", "LEFT", "RIGHT"},
         {StrUpper(L["Up"], 1, 1), StrUpper(L["Down"], 1, 1), L["Left"], L["Right"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )

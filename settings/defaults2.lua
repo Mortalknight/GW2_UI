@@ -31,6 +31,7 @@ GW.globalDefault = {
         HEALTHGLOBE_ENABLED = true,
         PLAYER_BUFFS_ENABLED = true,
         ACTIONBARS_ENABLED = true,
+        BAR_LAYOUT_ENABLED = true,
         BAGS_ENABLED = true,
         NPC_CAM_ENABLED = false,
         FONTS_ENABLED = true,
