@@ -15,6 +15,15 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.0.2",{
+    {ct.change, [=[Added self reading animation to immersive questing]=]},
+    {ct.bug, [=[Fix error handler]=]},
+    {ct.bug, [=[Fix objective tracker action button handling]=]},
+    {ct.bug, [=[Fix event objectives click functions]=]},
+    {ct.bug, [=[Fix currency transfer taint error]=]},
+    {ct.bug, [=[Fix ouf range indicator]=]},
+})
+
 addChange("7.0.1",{
     {ct.bug, [=[First round of fixes]=]},
 })

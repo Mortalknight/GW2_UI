@@ -1,3 +1,14 @@
+7.0.2
+CHANGES
+    - Added self reading animation to immersive questing
+
+FIXES
+    - Fix error handler
+    - Fix objective tracker action button handling
+    - Fix event objectives click functions
+    - Fix currency transfer taint error
+    - Fix ouf range indicator
+
 7.0.1
 FIXES
     - First round of fixes
