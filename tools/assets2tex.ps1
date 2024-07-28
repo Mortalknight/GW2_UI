@@ -7,7 +7,7 @@ param (
 # in the tools directory because licensing & size limitations
 
 $assetPath = "$PSScriptRoot/../assets/"
-$convCmd = "C:/Program Files/ImageMagick-7.0.10-Q16-HDRI/magick.exe"
+$convCmd = "C:/dev/ImageMagick-7.1.1-36-portable-Q16-HDRI-x64/magick.exe"
 $blpCmd = "$PSScriptRoot/BLPConverter.exe"
 $srcFiles = Get-ChildItem -Recurse -File -Exclude *.unused.* -Include *.png -Path $assetPath
 if (-not $quiet) {
@@ -53,6 +53,6 @@ foreach ($srcItem in $srcFiles) {
         & $blpCmd /FBLP_PAL_A0 $srcItem.FullName $texPath
     }
     else {
-        & $convCmd convert $srcItem.FullName -strip -orient bottom-left -define colorspace:auto-grayscale=off -compress RLE -flip -type $outType $texPath
+        & $convCmd $srcItem.FullName -strip -orient bottom-left -define colorspace:auto-grayscale=off -compress RLE -flip -type $outType $texPath
     }
 }

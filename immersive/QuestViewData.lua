@@ -40,6 +40,15 @@ local T = {
     [1522882] = {["z"] = -0.05}, -- titan maiden
     [4423740] = {["z"] = -1, ["y"] = 2, ["x"] = -5.0}, -- draconid
     [4416923] = {["x"] = -1, ["y"] = 3, ["z"] = 0}, -- dragonkin
+    [1239969] = {["x"] = -0.65, ["y"] = 0.6, ["z"] = -0.025}, -- maiev
+    [950080] = {["z"] = -0.3}, -- toddy whiskers
+    [1000764] = {["z"] = -0.22}, -- captain garrick
+    [3055446] = {["z"] = -0.1}, -- wrathion visage
+    [1273658] = {["z"] = -0.65}, -- catform
+    [3084654] = {["z"] = -0.55}, -- wrathion
+    [4227968] = {["z"] = -0.5}, -- selistra
+    [4216711] = {["z"] = 0.25}, -- ventraz
+    [4218362] = {["x"] = -0.5, ["y"] = 0.5, ["z"] = -0.05}, -- bae
 }
 GW.QUESTVIEW_MODEL_TWEAKS = T
 
@@ -55,6 +64,8 @@ local M = {
     [1670] = "SL/oribos", [1671] = "SL/oribos", [1672] = "SL/oribos",
     [1961] = "SL/korthia",
     [1970] = "SL/zerethmortis",
-    [2016] = "SL/tazavesh"
+    [2016] = "SL/tazavesh",
+    [1978] = "DF/default",
+    [2022] = "DF/waking_shore",
 }
 GW.QUESTVIEW_MAP_BGS = M
