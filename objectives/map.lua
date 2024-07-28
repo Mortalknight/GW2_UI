@@ -297,7 +297,7 @@ local function CreatePredictedTrackingState()
 	tbl.SetSelected = function(self, index, selected)
 		state[index] = selected;
 
-		MinimapUtil.SetTrackingFilterByFilterIndex(index, selected);
+        C_Minimap.SetTracking(index, selected);
 	end
 
 	-- Some filters (like trivial quest tracking) can be changed from other places in the UI (like the Options panel or the World Map)
