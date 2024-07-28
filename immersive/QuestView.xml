@@ -1,0 +1,126 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/../../Blizzard_SharedXML/UI.xsd">
+    <Frame name="GwQuestViewFrameTemplate" hidden="true" mixin="GwQuestViewFrameMixin" frameStrata="DIALOG" enableMouse="true" virtual="true">
+        <Size x="1024" y="512"></Size>
+        <Anchors>
+            <Anchor point="center" x="0" y="0" />
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="1">
+                <Texture file="Interface/AddOns/GW2_UI/textures/questview/border">
+                    <Size x="1024" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="center" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="2">
+                <Texture parentKey="mapBG" file="Interface/AddOns/GW2_UI/textures/questview/backgrounds/default">
+                    <Size x="950" y="475"></Size>
+                    <Anchors>
+                        <Anchor point="center" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="3">
+                <Texture file="Interface/AddOns/GW2_UI/textures/questview/overlay_top">
+                    <Size x="950" y="237"></Size>
+                    <Anchors>
+                        <Anchor point="center" x="0" y="119"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="title" inherits="GameFontNormal" justifyV="MIDDLE">
+                    <Size x="950" y="100"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Frame parentKey="container">
+                <Size x="950" y="474"></Size>
+                <Anchors>
+                    <Anchor point="center" x="0" y="0"/>
+                </Anchors>
+                <Frames>
+                    <PlayerModel parentKey="playerModel" frameStrata="DIALOG">
+                        <Size x="750" y="474"></Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="1"/>
+                        </Anchors>
+                    </PlayerModel>
+                    <PlayerModel parentKey="giverModel">
+                        <Size x="750" y="474"></Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="1"/>
+                        </Anchors>
+                    </PlayerModel>
+
+                    <Frame parentKey="dialog" frameStrata="DIALOG" enableMouse="true">
+                        <Size x="950" y="374"></Size>
+                        <Anchors>
+                            <Anchor point="center" x="0" y="-50"/>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/questview/overlay_bottom">
+                                    <Size x="952" y="475"></Size>
+                                    <Anchors>
+                                        <Anchor point="bottom" x="0" y="-1"/>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="text" inherits="GameFontNormal" justifyV="MIDDLE">
+                                    <Size x="850" y="100"></Size>
+                                    <Anchors>
+                                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"/>
+                                    </Anchors>
+                                </FontString>
+                                <FontString parentKey="objectiveHeader" inherits="QuestTitleFont" justifyH="LEFT" hidden="true">
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="CENTER" x="-150" y="160"/>
+                                    </Anchors>
+                                </FontString>
+                                <FontString parentKey="objectiveText" inherits="QuestFont" justifyH="LEFT" hidden="true">
+                                    <Size x="300" y="0"/>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.objectiveHeader" x="0" y="-5"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Frames>
+                            <Frame inherits="GwQuestReqItemsFrameTemplate" parentKey="reqItems" hidden="true">
+                                <Anchors>
+                                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="100"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
+                    </Frame>
+
+                    <Button parentKey="acceptButton" inherits="GwStandardButton">
+                        <Size x="120" y="24"/>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="declineButton" text="Decline" inherits="GwStandardButton">
+                        <Size x="120" y="24"/>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                        </Anchors>
+                    </Button>
+
+                </Frames>
+            </Frame>
+
+        </Frames>
+		<Scripts>
+			<OnLoad method="OnLoad"/>
+		</Scripts>
+    </Frame>
+</Ui>

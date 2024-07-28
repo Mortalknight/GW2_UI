@@ -1,0 +1,60 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/../../Blizzard_SharedXML/UI.xsd">
+    <Frame name="GwQuestReqItemsFrameTemplate" enableMouse="true" mixin="GwQuestReqItemsFrameMixin" virtual="true">
+        <Size x="295" y="190"></Size>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="required" inherits="QuestTitleFont" text="TURN_IN_ITEMS" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame inherits="MoneyFrameTemplate" parentKey="reqMoney">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.required" relativePoint="BOTTOMLEFT" x="5" y="-5"/>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        SmallMoneyFrame_OnLoad(self);
+                        MoneyFrame_SetType(self, "STATIC");
+                    </OnLoad>
+                </Scripts>
+            </Frame>
+            <Button name="$parentReqItem1" inherits="QuestItemTemplate" parentKey="reqItem1">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.reqMoney" relativePoint="BOTTOMLEFT" x="0" y="-5"/>
+                </Anchors>
+            </Button>
+            <Button name="$parentReqItem2" inherits="QuestItemTemplate" parentKey="reqItem2">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.reqItem1" relativePoint="RIGHT" x="2" y="0"/>
+                </Anchors>
+            </Button>
+            <Button name="$parentReqItem3" inherits="QuestItemTemplate" parentKey="reqItem3">
+                <Anchors>
+                    <Anchor point="TOP" relativeKey="$parent.reqItem1" relativePoint="BOTTOM" x="0" y="-3"/>
+                </Anchors>
+            </Button>
+            <Button name="$parentReqItem4" inherits="QuestItemTemplate" parentKey="reqItem4">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.reqItem3" relativePoint="RIGHT" x="2" y="0"/>
+                </Anchors>
+            </Button>
+            <Button name="$parentReqItem5" inherits="QuestItemTemplate" parentKey="reqItem5">
+                <Anchors>
+                    <Anchor point="TOP" relativeKey="$parent.reqItem3" relativePoint="BOTTOM" x="0" y="-3"/>
+                </Anchors>
+            </Button>
+            <Button name="$parentReqItem6" inherits="QuestItemTemplate" parentKey="reqItem6">
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.reqItem5" relativePoint="RIGHT" x="2" y="0"/>
+                </Anchors>
+            </Button>
+        </Frames>
+		<Scripts>
+			<OnLoad method="OnLoad"/>
+		</Scripts>
+    </Frame>
+</Ui>
