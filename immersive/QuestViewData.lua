@@ -1,56 +1,51 @@
 local _, GW = ...
 
--- NPC position tweaks to fix model issues in questview frame
+-- model scale factors for questview
 local T = {
-    [1980608] = {["y"] = 0.6, ["z"] = -0.3}, -- Ulfar
-    [2021536] = {["z"] = -0.55}, -- Kivar
-    [3730970] = {["x"] = 0, ["y"] = 0.25, ["z"] = -0.04}, -- Nika
-    [2139079] = {["z"] = -0.2}, -- Alpaca soulshape
-    [3071370] = {["x"] = 1.0, ["y"] = -0.5, ["z"] = -0.15, ["f"] = 2.5}, -- Vulpin soulshape
-    [3148995] = {["x"] = 0, ["y"] = -1.25, ["z"] = -0.3}, -- horned horse soulshape
-    [1886694] = {["x"] = -0.5, ["y"] = -1.75, ["z"] = -0.3}, -- raptor soulshape
-    [2343653] = {["x"] = -1.25, ["y"] = -1.25, ["z"] = -0.5}, -- shadowstalker soulshape
-    [3483612] = {["x"] = -0.25, ["y"] = 0.50, ["z"] = -0.1}, -- Ysera
-    [3762412] = {["x"] = -0.25, ["y"] = 4.25}, -- primus
-    [1717164] = {["z"] = -0.35},
-    [415230] = {["z"] = 0},
-    [3023013] = {["x"] = -4, ["y"] = 1, ["z"] = -0.33},
-    [2974101] = {["x"] = -0.5, ["y"] = 0.55, ["z"] = 0},
-    [3307974] = {["x"] = -16, ["y"] = 0, ["z"] = 12},
-    [3284341] = {["x"] = 1, ["y"] = 1, ["z"] = 0},
-    [3058051] = {["z"] = 0.2},
-    [926251] = {["z"] = -0.3},
-    [3052707] = {["x"] = 0, ["y"] = 3, ["z"] = 0},
-    [1129448] = {["x"] = -1, ["y"] = 0, ["z"] = -0.37},
-    [1272605] = {["x"] = -1, ["y"] = 0.5, ["z"] = -0.15},
-    [3446018] = {["z"] = -0.4},
-    [3049899] = {["x"] = -1.75, ["y"] = 0.5},
-    [3449671] = {["x"] = 0, ["y"] = 0.5, ["z"] = 0.05},
-    [3492361] = {["x"] = 0, ["y"] = 1.5, ["z"] = 0.05},
-    [2529386] = {["x"] = 0, ["y"] = 1.5, ["z"] = 0},
-    [3387000] = {["x"] = 0, ["y"] = 2.75, ["z"] = 0},
-    [3067262] = {["z"] = -0.05},
-    [3483610] = {["x"] = -0.5, ["y"] = 4, ["z"] = 0.25},
-    [3492867] = {["x"] = 5, ["y"] = 10, ["z"] = 2.5},
-    [3670316] = {["x"] = -40, ["y"] = 4, ["z"] = 3},
-    [577134] = {["z"] = -0.8},
-    [1349623] = {["z"] = -0.4},
-    [3024835] = {["z"] = -0.1},
-    [3208389] = {["z"] = -0.1},
-    [1522882] = {["z"] = -0.05}, -- titan maiden
-    [4423740] = {["z"] = -1, ["y"] = 2, ["x"] = -5.0}, -- draconid
-    [4416923] = {["x"] = -1, ["y"] = 3, ["z"] = 0}, -- dragonkin
-    [1239969] = {["x"] = -0.65, ["y"] = 0.6, ["z"] = -0.025}, -- maiev
-    [950080] = {["z"] = -0.3}, -- toddy whiskers
-    [1000764] = {["z"] = -0.22}, -- captain garrick
-    [3055446] = {["z"] = -0.1}, -- wrathion visage
-    [1273658] = {["z"] = -0.65}, -- catform
-    [3084654] = {["z"] = -0.55}, -- wrathion
-    [4227968] = {["z"] = -0.5}, -- selistra
-    [4216711] = {["z"] = 0.25}, -- ventraz
-    [4218362] = {["x"] = -0.5, ["y"] = 0.5, ["z"] = -0.05}, -- bae
+    [1980608] = 1.2, -- Ulfar
+    [3762412] = 1.0, -- primus
+    [4423740] = 1.5, -- herald flaps
+    [950080] = 1.4, -- toddy whiskers, moira
+    [3084654] = 0.69, -- big wrathion
+    [4227968] = 0.69, -- big selistra
+    [1249799] = 0.71, -- malfurion
+    [4218359] = 1.7, -- chromie
+    [1890759] = 1.5, -- selistra
+    [4496906] = 0.6, -- big kalec
+    [4498270] = 0.6, -- big dormu
+    [4495214] = 0.6, -- big alexstrasza
+    [921844] = 1.05, -- shandris
+    [4216711] = 0.9, -- therazal
+    [1890765] = 1.4, -- thaelin
 }
 GW.QUESTVIEW_MODEL_TWEAKS = T
+
+-- NPC scale factors for questview (takes priority over model tweaks)
+local N = {
+}
+GW.QUESTVIEW_NPC_TWEAKS = N
+
+-- player scale factors for questview
+local P = {
+    [0] = 1.1, -- default
+    [3] = 1.5, -- dwarf
+    [4] = 1.05, -- night elf
+    [6] = 1.0, -- tauren
+    [7] = 1.5, -- gnome
+    [8] = 1.05, -- troll
+    [9] = 1.5, -- goblin
+    [11] = 1.0, -- draenei
+    [27] = 1.05, -- nightborne
+    [28] = 1.0, -- highmountain
+    [30] = 1.0, -- lightforged
+    [31] = 1.05, -- zandalari
+    [34] = 1.5, -- dark iron
+    [35] = 1.5, -- vulpera
+    [37] = 1.5, -- mechagnome
+    [84] = 1.5, -- earthen
+    [85] = 1.5, -- earthen
+}
+GW.QUESTVIEW_PLAYER_SCALES = P
 
 -- background textures to use in questview frame for various map IDs
 local M = {

@@ -1,11 +1,11 @@
 local _, GW = ...
 local L = GW.L
 
-local HandleReward = GW.HandleReward
 local Debug = GW.Debug
 local AFP = GW.AddProfiling
 
 local model_tweaks = GW.QUESTVIEW_MODEL_TWEAKS
+local npc_tweaks = GW.QUESTVIEW_NPC_TWEAKS
 local mapBGs = GW.QUESTVIEW_MAP_BGS
 
 local function splitIter(inputstr, pat)
@@ -117,120 +117,93 @@ function QuestGiverMixin:setQuestGiverAnimation(count)
     end
 end
 
-local QuestModelMixin = {}
-AFP("QuestModelMixin", QuestModelMixin)
-
-function QuestModelMixin:setPMUnit(unit, side, is_dead, crace, cgender)
-    local uX, uY, uZ, uF = -1.25, -0.65, -0.2, 0.7 -- fac 0.7
-    if side > 0 then
-        uY = -uY
-        uF = -uF
-    end
-
-    -- Reset camera each time because it can bug out when the frame is hidden
+local MODEL_FACING = 0.5
+function QuestGiverMixin:setPMUnit(unit, is_dead, npc_name, npc_type)
+    -- reset previous model/unit
     self:ClearModel()
-    self:SetUnit("none")
+    self:RefreshCamera()
 
-    -- SetUnit does magical camera work to get things in frame so set facing & position first
-    self:SetFacing(uF)
-    self:SetPosition(uX, uY, uZ)
+    -- set new model/unit
+    local scaleFactor = 1.1 -- can we figure this out programmatically without lookups?
     self:SetUnit(unit)
-    if crace then
-        self:SetCustomRace(crace, cgender)
+    --self:SetCreature(216069)
+    local creatureID = TutorialHelper:GetCreatureIDFromGUID(UnitGUID(unit))
+    local fileID = self:GetModelFileID()
+    if creatureID and npc_tweaks[creatureID] then
+        scaleFactor = npc_tweaks[creatureID]
+    elseif fileID and model_tweaks[fileID] then
+        scaleFactor = model_tweaks[fileID]
     end
 
-    -- Check the auto camera alignment, adjust if needed; larger units tend to be placed
-    -- too high and too inward and smaller units vice-versa; this is hacky normalization
-    -- but is much more light-weight than analyzing model paths/categories
-    local cpos = {self:GetCameraPosition()}
-    local ctar = {self:GetCameraTarget()}
-    local fileid = self:GetModelFileID()
+    Debug("NPC:", npc_name, "type:", npc_type, "fileID:", fileID, "creatureID:", creatureID, "is_dead:", is_dead)
+    self:InitializeCamera(scaleFactor)
 
-    if not fileid or not cpos or not ctar or not cpos[1] or not cpos[3] or not ctar[1] or not ctar[3] then
-        return
+    local offsetX = -175
+    local offsetZ = 20
+    if scaleFactor < 0.7 then
+        -- static tweak for some big models like dragons
+        offsetX = 30
+        offsetZ = 0
+    elseif scaleFactor > 1.2 then
+        -- static tweak for most smaller models
+        offsetZ = 0
     end
+    self:SetViewTranslation(offsetX, offsetZ)
 
-    local zdiff = (cpos[3] / ctar[3]) ^ 4 / (cpos[1] - ctar[1])
-    local ydiff = (cpos[1] - ctar[1])
-    local dirty = 0
-
-    if zdiff > 0.6 then
-        local adj = 0.04 * zdiff ^ 2
-        if adj > 1 then
-            adj = 1
-        end
-        uZ = uZ - adj
-        dirty = 1
-    elseif zdiff < 0.4 then
-        local adj = 0.02 / zdiff ^ 1.5
-        if adj > 1 then
-            adj = 1
-        end
-        uZ = uZ + adj
-        dirty = 1
-    end
-    if ydiff < 1.4 then
-        local adj = 0.15 * ydiff / 1.4
-        if adj > 1 then
-            adj = 1
-        end
-        if side > 0 then
-            uY = uY - adj
-        else
-            uY = uY + adj
-        end
-        dirty = 1
-    elseif ydiff > 2 then
-        local adj = 0.15 * ydiff / 2
-        if adj > 1 then
-            adj = 1
-        end
-        if side > 0 then
-            uY = uY + adj
-        else
-            uY = uY - adj
-        end
-        dirty = 1
-    end
-    if is_dead then
-        uZ = uZ + 0.3
-        dirty = 1
-    end
-
-    local twk = model_tweaks[fileid]
-    if twk then
-        if twk.x then
-            uX = twk.x
-            dirty = 1
-        end
-        if twk.y then
-            uY = twk.y
-            dirty = 1
-        end
-        if twk.z then
-            uZ = twk.z
-            dirty = 1
-        end
-        if twk.f then
-            uF = twk.f
-            if side > 0 then
-                uF = -uF
-            end
-            dirty = 1
-        end
-    end
-
-    if dirty then
-        self:SetPosition(uX, uY, uZ)
-        self:SetFacing(uF)
-        Debug("set pos:", unit, "id:", fileid, "x:", uX, "y:", uY, "z:", uZ, "f:", uF, "is_dead:", is_dead)
-        self:SetUnit(unit)
-        if crace then
-            self:SetCustomRace(crace, cgender)
-        end
-    end
     if is_dead then
         self:SetAnimation(emotes.Dead)
+    end
+end
+
+function QuestGiverMixin:setBoardUnit()
+    self:ClearModel()
+    self:RefreshCamera()
+    self:SetModel(1822634)
+    self:InitializeCamera(1.7)
+    self:SetViewTranslation(-400, 10)
+end
+
+function QuestGiverMixin:SetupModel()
+    self:SetFacing(-MODEL_FACING)
+    self:SetFacingLeft(true)
+end
+
+local QuestPlayerMixin = {}
+AFP("QuestPlayerMixin", QuestPlayerMixin)
+
+local player_scales = GW.QUESTVIEW_PLAYER_SCALES
+function QuestPlayerMixin:SetupModel()
+    local _, _, raceID = UnitRace("player")
+    local heightScale = player_scales[raceID]
+    if not heightScale then
+        heightScale = player_scales[0] -- default
+    end
+    local foot_offset = floor((heightScale - 1.0) * -100)
+    local offsetX = -35
+
+    if raceID == 52 or raceID == 70 then
+        -- adjust for dracthyr weirdness; proper fix would check visage form
+        -- and reset these params based on current form
+        foot_offset = foot_offset - 10
+        offsetX = -90
+    elseif raceID == 1 then
+        -- tweaks for humans        
+        foot_offset = foot_offset - 15
+        offsetX = -55
+    end
+
+    Debug("player frame scale:", heightScale, "foot_offset:", foot_offset)
+
+    self:SetFacing(MODEL_FACING)
+    self:SetUnit("player", true, true)
+    self:SetCamDistanceScale(heightScale)
+    self:SetViewTranslation(offsetX, foot_offset)
+end
+
+function QuestPlayerMixin:setPMUnit()
+    self:RefreshUnit()
+    if not self:GetSheathed() then
+        self:SetSheathed(true, false)
     end
 end
 
@@ -302,14 +275,12 @@ function QuestViewMixin:questTextCompleted()
     if self.questStateSet then
         return
     end
-    Debug("quest text completed", self.questState)
     if self.questState == "COMPLETE" then
         self:showRewards(false)
         self.container.acceptButton:SetText(COMPLETE_QUEST)
         self.container.acceptButton:Show()
     elseif self.questState == "PROGRESS" then
         if IsQuestCompletable() then
-            Debug("in progress completable state")
             self.container.acceptButton:SetText(CONTINUE)
             self.questState = "NEEDCOMPLETE"
         else
@@ -418,43 +389,36 @@ function QuestViewMixin:showQuestFrame()
     end
     self.mapBG:SetTexture("Interface/AddOns/GW2_UI/textures/questview/backgrounds/" .. mapTex)
 
-    self.title:SetText(GetTitleText())
+    self.container.floaty.title:SetText(GetTitleText())
     self:Show()
 
-    self.container.playerModel:setPMUnit("player", 0)
+    self.container.playerModel:setPMUnit()
 
     local npc_name = GetUnitName("questnpc")
     local npc_type = UnitCreatureType("questnpc")
-    Debug("NPC info: ", npc_name, npc_type)
-
     self.questNPCType = 0
     local gm = self.container.giverModel
-    gm:ClearModel()
-    gm:SetUnit("none")
     if UnitIsUnit("questnpc", "player") then
         -- quest giver is the player; typically for auto-accepted quests, story pushes, etc.
         self.questNPCType = 1
-        gm:SetModel(1822634)
-        gm:SetFacing(-1)
-        gm:SetPosition(-12, 1.5, -2.8)
-        gm:SetRoll(0.25)
-        gm:SetPitch(-0.15)
+        gm:setBoardUnit()
     elseif npc_name and npc_type then
         -- quest giver has a creature type; some kind of entity with a normal model
         if UnitIsDead("questnpc") then
             self.questNPCType = 2
-            gm:setPMUnit("questnpc", 1, true)
+            gm:setPMUnit("questnpc", true, npc_name, npc_type)
         else
             self.questNPCType = 3
-            gm:setPMUnit("questnpc", 1)
+            gm:setPMUnit("questnpc", false, npc_name, npc_type)
         end
     elseif npc_name then
-        -- quest giver has a name but no type; probably an item or letter; giver player reading anim
+        -- quest giver has a name but no type; probably an item or letter; give player a reading anim
         self.questNPCType = 4
+        gm:ClearModel()
+        gm:RefreshCamera()
         self.container.playerModel:SetAnimation(emotes.Read)
         self.container.playerModel:ApplySpellVisualKit(29521, false)
     end
-    Debug("quest NPC type", self.questNPCType)
     PlaySoundFile("Interface/AddOns/GW2_UI/sounds/dialog_open.ogg", "SFX")
 end
 
@@ -562,7 +526,6 @@ function QuestViewMixin:evQuestProgress()
     self.questString = splitQuest(GetProgressText())
     self.questState = "PROGRESS"
     self:nextGossip()
-    Debug("quest progress", self.questState)
 end
 
 function QuestViewMixin:evQuestDetail(questStartItemID)
@@ -585,7 +548,6 @@ function QuestViewMixin:evQuestDetail(questStartItemID)
     self:showQuestFrame()
     self.questString = splitQuest(GetQuestText())
     if self.questState ~= "COMPLETING" then
-        --Debug("adding end row")
         tinsert(self.questString, "")
     end
     self:nextGossip()
@@ -629,7 +591,6 @@ function QuestViewMixin:evQuestFinished()
 end
 
 function QuestViewMixin:OnEvent(event, ...)
-    Debug("OnEvent", event)
     if event == "QUEST_PROGRESS" then
         self:evQuestProgress()
     elseif event == "QUEST_DETAIL" then
@@ -677,13 +638,14 @@ end
 AFP("accept_OnClick", accept_OnClick)
 
 function QuestViewMixin:OnLoad()
-    Debug("QuestViewMixin:OnLoad")
-    Mixin(self.container.playerModel, QuestModelMixin)
-    Mixin(self.container.giverModel, QuestModelMixin)
+    Mixin(self.container.playerModel, QuestPlayerMixin)
     Mixin(self.container.giverModel, QuestGiverMixin)
 
-    self.title:SetTextColor(255 / 255, 197 / 255, 39 / 255)
-    self.title:SetFont(DAMAGE_TEXT_FONT, 24)
+    self.container.playerModel:SetupModel()
+    self.container.giverModel:SetupModel()
+
+    self.container.floaty.title:SetTextColor(255 / 255, 197 / 255, 39 / 255)
+    self.container.floaty.title:SetFont(DAMAGE_TEXT_FONT, 24)
     self.container.dialog.text:SetFont(STANDARD_TEXT_FONT, 14)
     self.container.dialog.text:SetTextColor(1, 1, 1)
     self.container.dialog.objectiveHeader:SetTextColor(1, 1, 1)
@@ -716,7 +678,6 @@ function QuestViewMixin:OnLoad()
         hooksecurefunc("QuestInfo_Display", GW.QuestInfo_Display)
         GW.QuestInfo_Display_hooked = true
     end
-
 end
 
 local function LoadQuestview()
