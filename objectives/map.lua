@@ -9,41 +9,41 @@ MAP_FRAMES_HIDE[3] = MiniMapTrackingButton
 MAP_FRAMES_HIDE[4] = MiniMapTracking
 
 local ALWAYS_ON_FILTERS = {
-	[Enum.MinimapTrackingFilter.QuestPoIs] = true,
-	[Enum.MinimapTrackingFilter.TaxiNode] = true,
-	[Enum.MinimapTrackingFilter.Innkeeper] = true,
-	[Enum.MinimapTrackingFilter.ItemUpgrade] = true,
-	[Enum.MinimapTrackingFilter.Battlemaster] = true,
-	[Enum.MinimapTrackingFilter.Stablemaster] = true,
+    [Enum.MinimapTrackingFilter.QuestPoIs] = true,
+    [Enum.MinimapTrackingFilter.TaxiNode] = true,
+    [Enum.MinimapTrackingFilter.Innkeeper] = true,
+    [Enum.MinimapTrackingFilter.ItemUpgrade] = true,
+    [Enum.MinimapTrackingFilter.Battlemaster] = true,
+    [Enum.MinimapTrackingFilter.Stablemaster] = true,
 };
 
 local CONDITIONAL_FILTERS = {
-	[Enum.MinimapTrackingFilter.Target] = true,
-	[Enum.MinimapTrackingFilter.Digsites] = true,
-	[Enum.MinimapTrackingFilter.Repair] = true,
+    [Enum.MinimapTrackingFilter.Target] = true,
+    [Enum.MinimapTrackingFilter.Digsites] = true,
+    [Enum.MinimapTrackingFilter.Repair] = true,
 };
 
 local OPTIONAL_FILTERS = {
-	[Enum.MinimapTrackingFilter.Banker] = true,
-	[Enum.MinimapTrackingFilter.Auctioneer] = true,
-	[Enum.MinimapTrackingFilter.Barber] = true,
-	[Enum.MinimapTrackingFilter.TrainerProfession] = true,
-	[Enum.MinimapTrackingFilter.AccountCompletedQuests] = true,
-	[Enum.MinimapTrackingFilter.TrivialQuests] = true,
-	[Enum.MinimapTrackingFilter.Transmogrifier] = true,
-	[Enum.MinimapTrackingFilter.Mailbox] = true,
+    [Enum.MinimapTrackingFilter.Banker] = true,
+    [Enum.MinimapTrackingFilter.Auctioneer] = true,
+    [Enum.MinimapTrackingFilter.Barber] = true,
+    [Enum.MinimapTrackingFilter.TrainerProfession] = true,
+    [Enum.MinimapTrackingFilter.AccountCompletedQuests] = true,
+    [Enum.MinimapTrackingFilter.TrivialQuests] = true,
+    [Enum.MinimapTrackingFilter.Transmogrifier] = true,
+    [Enum.MinimapTrackingFilter.Mailbox] = true,
 };
 
 local LOW_PRIORITY_TRACKING_SPELLS = {
-	[261764] = true; -- Track Warboards
+    [261764] = true; -- Track Warboards
 };
 
 local TRACKING_SPELL_OVERRIDE_TEXTURES = {
-	[43308] = "professions_tracking_fish";-- Find Fish
-	[2580] = "professions_tracking_ore"; -- Find Minerals 1
-	[8388] = "professions_tracking_ore"; -- Find Minerals 2
-	[2383] = "professions_tracking_herb"; -- Find Herbs 1
-	[8387] = "professions_tracking_herb"; -- Find Herbs 2
+    [43308] = "professions_tracking_fish";-- Find Fish
+    [2580] = "professions_tracking_ore"; -- Find Minerals 1
+    [8388] = "professions_tracking_ore"; -- Find Minerals 2
+    [2383] = "professions_tracking_herb"; -- Find Herbs 1
+    [8387] = "professions_tracking_herb"; -- Find Herbs 2
 };
 
 local M = CreateFrame("Frame")
@@ -289,59 +289,90 @@ end
 GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
 
---Copyed from blizzard code
+--Copyed from blizzard code 
+
+--- this part can be removed with 11.0.2
+local MINIMAP_FILTER_SETTINGS_ENTRY = {
+    [Enum.MinimapTrackingFilter.AccountCompletedQuests] = "PROXY_ACCOUNT_COMPLETED_QUEST_FILTERING",
+    [Enum.MinimapTrackingFilter.TrivialQuests] = "PROXY_TRIVIAL_QUEST_FILTERING",
+};
+
+local function HasSettingsEntry(filterID)
+    return MINIMAP_FILTER_SETTINGS_ENTRY[filterID] ~= nil;
+end
+
+local function SetSettingsEntry(filterID, selected)
+    local settingsEntry = MINIMAP_FILTER_SETTINGS_ENTRY[filterID];
+    if not settingsEntry or not Settings.GetSetting(settingsEntry) then
+        return;
+    end
+
+    Settings.SetValue(settingsEntry, selected);
+end
+
+local function SetTrackingFilterByFilterIndex(filterIndex, set)
+    local filter = C_Minimap.GetTrackingFilter(filterIndex);
+    if filter and filter.filterID and HasSettingsEntry(filter.filterID) then
+        SetSettingsEntry(filter.filterID, set);
+    end
+
+    C_Minimap.SetTracking(filterIndex, set);
+end
+---end
+
 local function CreatePredictedTrackingState()
-	local tbl = {};
-	local state = {};
+    local tbl = {};
+    local state = {};
 
-	tbl.SetSelected = function(self, index, selected)
-		state[index] = selected;
+    tbl.SetSelected = function(self, index, selected)
+        state[index] = selected;
 
-        C_Minimap.SetTracking(index, selected);
-	end
+        --MinimapUtil.SetTrackingFilterByFilterIndex(index, selected); -- 11.0.2
+        SetTrackingFilterByFilterIndex(index, selected)
+    end
 
-	-- Some filters (like trivial quest tracking) can be changed from other places in the UI (like the Options panel or the World Map)
-	-- If a filter is changed from an external system, then all we need to do is update the predicted state
-	tbl.OverrideSelectedState = function(self, index, selected)
-		state[index] = selected;
-	end
+    -- Some filters (like trivial quest tracking) can be changed from other places in the UI (like the Options panel or the World Map)
+    -- If a filter is changed from an external system, then all we need to do is update the predicted state
+    tbl.OverrideSelectedState = function(self, index, selected)
+        state[index] = selected;
+    end
 
-	tbl.IsSelected = function(self, index)
-		return state[index] == true;
-	end
+    tbl.IsSelected = function(self, index)
+        return state[index] == true;
+    end
 
-	tbl.ClearSelections = function(self)
-		state = {};
+    tbl.ClearSelections = function(self)
+        state = {};
 
-		C_Minimap.ClearAllTracking();
-	end
+        C_Minimap.ClearAllTracking();
+    end
 
-	tbl.Enumerate = function(self)
-		return ipairs(state);
-	end
+    tbl.Enumerate = function(self)
+        return ipairs(state);
+    end
 
-	return tbl;
+    return tbl;
 end
 
 local trackingState = CreatePredictedTrackingState()
 
 local function CanDisplayTrackingInfo(index)
-	local filter = C_Minimap.GetTrackingFilter(index);
-	if not filter then
-		return false;
-	end
+    local filter = C_Minimap.GetTrackingFilter(index);
+    if not filter then
+        return false;
+    end
 
-	return OPTIONAL_FILTERS[filter.filterID] or filter.spellID;
+    return OPTIONAL_FILTERS[filter.filterID] or filter.spellID;
 end
 
 local function ToggleTrackingSelected(info)
-	local selected = trackingState:IsSelected(info.index);
-	local newSelected = not selected;
-	trackingState:SetSelected(info.index, newSelected);
+    local selected = trackingState:IsSelected(info.index);
+    local newSelected = not selected;
+    trackingState:SetSelected(info.index, newSelected);
 end
 
 local function IsTrackingActive(info)
-	return trackingState:IsSelected(info.index);
+    return trackingState:IsSelected(info.index);
 end
 
 local function SetupMiniMapTrackingDropdown(self)
