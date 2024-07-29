@@ -7,6 +7,17 @@ local eventFrame = CreateFrame("Frame")
 local hideFrames = {}
 eventFrame.hideFrames = hideFrames
 
+local function getGameMenuEditModeButton() -- MenuButton get saved while adding gw2 setting button
+	local menu = GameMenuFrame
+	return menu and menu.GwMenuButtons and GameMenuFrame.GwMenuButtons[HUD_EDIT_MODE_MENU]
+end
+
+local function SetEnabled(self, enabled)
+    if InCombatLockdown() and enabled then
+        self:Disable()
+    end
+end
+
 local function ApplyBlizzardEditModeChanges(self)
     if InCombatLockdown() then
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -44,13 +55,16 @@ local function ApplyBlizzardEditModeChanges(self)
     LEMO:ApplyChanges()
 
     LEMO:RegisterForLayoutChangeBackToGW2Layout()
-    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
 end
 
 local function OnEvent(self, event)
     if event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
         local combatLeave = event == "PLAYER_REGEN_ENABLED"
-        --:SetEnabled(combatLeave)
+
+        local button = getGameMenuEditModeButton()
+        if button then
+            button:SetEnabled(combatLeave)
+        end
 
         if combatLeave then
             if next(hideFrames) then
@@ -112,18 +126,21 @@ local function OnClose()
     end
 end
 
-local function SetEnabled(self, enabled)
-    if InCombatLockdown() and enabled then
-        self:Disable()
-    end
-end
 local function HandleBlizzardEditMode()
     local dialog = EditModeUnsavedChangesDialog
     dialog.ProceedButton:SetScript("OnClick", OnProceed)
     dialog.SaveAndProceedButton:SetScript("OnClick", OnSaveProceed)
 
     EditModeManagerFrame.onCloseCallback = OnClose
-    --hooksecurefunc(GameMenuButtonEditMode, "SetEnabled", SetEnabled) //TODO = need another hook
+
+    hooksecurefunc(GameMenuFrame, "Layout", function()
+        for button in GameMenuFrame.buttonPool:EnumerateActive() do
+            local text = button:GetText()
+            if text == HUD_EDIT_MODE_MENU then
+                SetEnabled(button, InCombatLockdown())
+            end
+        end
+    end)
 
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD") -- needed for Lib EditMode
     eventFrame:RegisterEvent("EDIT_MODE_LAYOUTS_UPDATED") -- needed for Lib EditMode

@@ -43,6 +43,17 @@ local function CombatQueue_Queue(key, func, obj)
 end
 GW.CombatQueue_Queue = CombatQueue_Queue
 
+local function StoreGameMenuButton()
+    GameMenuFrame.GwMenuButtons = {}
+    hooksecurefunc(GameMenuFrame, "Layout", function()
+        for button in GameMenuFrame.buttonPool:EnumerateActive() do
+            local text = button:GetText()
+            GameMenuFrame.GwMenuButtons[text] = button
+        end
+    end)
+end
+GW.StoreGameMenuButton = StoreGameMenuButton
+
 if UnitIsTapDenied == nil then
     function UnitIsTapDenied()
         if (UnitIsTapped("target")) and (not UnitIsTappedByPlayer("target")) then

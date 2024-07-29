@@ -622,6 +622,7 @@ local function evPlayerLogin(self)
     GW.LoadRaidMarkerCircle()
 
     --Create general skins
+    GW.StoreGameMenuButton()
     if GW.settings.MAINMENU_SKIN_ENABLED then
         GW.SkinMainMenu()
     else
