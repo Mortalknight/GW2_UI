@@ -17,6 +17,11 @@ local T = {
     [921844] = 1.05, -- shandris
     [4216711] = 0.9, -- therazal
     [1890765] = 1.4, -- thaelin
+    [4036647] = 1.3, --- huseng
+    [4081379] = 1.3, -- tomul
+    [4207724] = 1.2, -- vaskarn
+    [4498203] = 1.3, -- emberthal
+    [900914] = 1.5, -- wulferd
 }
 GW.QUESTVIEW_MODEL_TWEAKS = T
 
