@@ -732,6 +732,11 @@ local function LoadBank(helpers)
     cf.gw_num_slots = 0
     f.AccountFrame.Container = cf
 
+    f.AccountFrame.ShouldShowPurchasePrompt = function(self)
+        fetchPurchasedBankTabData(self)
+        return C_Bank.CanPurchaseBankTab(Enum.BankType.Account) and (not self.accountBankPurchasedBankTabData or (self.accountBankPurchasedBankTabData and #self.accountBankPurchasedBankTabData == 0))
+    end
+
     f.AccountFrame.TabSettingsMenu = CreateFrame("Frame", nil, f, "BankPanelTabSettingsMenuTemplate")
     f.AccountFrame.TabSettingsMenu.SetSelectedTab = function(self, selectedTabID)
         local alreadySelected = self:GetSelectedTabID() == selectedTabID;
