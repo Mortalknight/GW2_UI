@@ -124,9 +124,9 @@ function QuestGiverMixin:setPMUnit(unit, is_dead, npc_name, npc_type)
     self:RefreshCamera()
 
     -- set new model/unit
-    local scaleFactor = 1.1 -- can we figure this out programmatically without lookups?
+    local scaleFactor = 1.25 -- can we figure this out programmatically without lookups?
     self:SetUnit(unit)
-    --self:SetCreature(216069)
+    --self:SetCreature(191485)
     local creatureID = TutorialHelper:GetCreatureIDFromGUID(UnitGUID(unit))
     local fileID = self:GetModelFileID()
     if creatureID and npc_tweaks[creatureID] then
@@ -135,18 +135,18 @@ function QuestGiverMixin:setPMUnit(unit, is_dead, npc_name, npc_type)
         scaleFactor = model_tweaks[fileID]
     end
 
-    Debug("NPC:", npc_name, "type:", npc_type, "fileID:", fileID, "creatureID:", creatureID, "is_dead:", is_dead)
+    Debug("NPC:", npc_name, "type:", npc_type, "fileID:", fileID, "creatureID:", creatureID, "is_dead:", is_dead, "sf:", scaleFactor)
     self:InitializeCamera(scaleFactor)
 
-    local offsetX = -175
-    local offsetZ = 20
-    if scaleFactor < 0.7 then
+    local offsetX = -110
+    local offsetZ = 50
+    if scaleFactor < 0.8 then
         -- static tweak for some big models like dragons
         offsetX = 30
-        offsetZ = 0
-    elseif scaleFactor > 1.2 then
+        --offsetZ = 0
+    elseif scaleFactor > 2.1 then
         -- static tweak for most smaller models
-        offsetZ = 0
+        offsetZ = 100
     end
     self:SetViewTranslation(offsetX, offsetZ)
 
@@ -159,7 +159,7 @@ function QuestGiverMixin:setBoardUnit()
     self:ClearModel()
     self:RefreshCamera()
     self:SetModel(1822634)
-    self:InitializeCamera(1.7)
+    self:InitializeCamera(2.0)
     self:SetViewTranslation(-400, 10)
 end
 
