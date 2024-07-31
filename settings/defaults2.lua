@@ -864,6 +864,7 @@ GW.globalDefault = {
         INDICATOR_CENTER= 0,
         INDICATOR_RIGHT= 0,
 
+        ADVENTURE_MAP_SKIN_ENABLED = true,
         ACHIEVEMENT_SKIN_ENABLED= true,
         MAINMENU_SKIN_ENABLED= true,
         STATICPOPUP_SKIN_ENABLED= true,

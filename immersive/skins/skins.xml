@@ -38,6 +38,7 @@
     <Script file="perksProgram.lua"/>
     <Script file="expansionLandingPage.lua"/>
     <Script file="genericTraintUI.lua"/>
+    <Script file="AdventureMap.lua"/>
 
     <Script file="addons\immersion.lua"/>
     <Script file="addons\postal.lua"/>
