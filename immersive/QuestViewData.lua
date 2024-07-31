@@ -2,31 +2,43 @@ local _, GW = ...
 
 -- model scale factors for questview
 local T = {
-    [1980608] = 1.2, -- Ulfar
-    [3762412] = 1.0, -- primus
-    [4423740] = 1.5, -- herald flaps
-    [950080] = 1.4, -- toddy whiskers, moira
-    [3084654] = 0.69, -- big wrathion
-    [4227968] = 0.69, -- big selistra
-    [1249799] = 0.71, -- malfurion
-    [4218359] = 1.7, -- chromie
-    [1890759] = 1.5, -- selistra
-    [4496906] = 0.6, -- big kalec
-    [4498270] = 0.6, -- big dormu
-    [4495214] = 0.6, -- big alexstrasza
-    [921844] = 1.05, -- shandris
-    [4216711] = 0.9, -- therazal
-    [1890765] = 1.4, -- thaelin
-    [4036647] = 1.3, --- huseng
-    [4081379] = 1.3, -- tomul
-    [4207724] = 1.2, -- vaskarn
-    [4498203] = 1.3, -- emberthal
-    [900914] = 1.5, -- wulferd
+    [1980608] = 1.3, -- Ulfar
+    [3762412] = 1.1, -- primus
+    [950080] = 1.8, -- toddy whiskers, moira
+    [3084654] = 0.79, -- big wrathion
+    [4227968] = 0.79, -- big selistra
+    [1249799] = 0.9, -- malfurion
+    [4218359] = 2.0, -- chromie
+    [1890759] = 1.8, -- selistra
+    [4496906] = 0.7, -- big kalec
+    [4498270] = 0.7, -- big dormu
+    [4495214] = 0.7, -- big alexstrasza
+    [1259122] = 0.7, -- big senegos
+    [4216711] = 1.0, -- therazal
+    [1890765] = 1.8, -- thaelin
+    [4036647] = 1.6, --- huseng
+    [4081379] = 1.6, -- tomul
+    [4207724] = 1.4, -- vaskarn
+    [4498203] = 1.4, -- emberthal
+    [900914] = 2.0, -- wulferd
+    [1022938] = 1.3, -- senegos
+    [119376] = 1.7, -- blixrez
+    [4416923] = 1.0, -- surigosa
+    [917116] = 1.3, -- warchief's herald
+    [1011653] = 1.3, -- hero's herald
+    [4186587] = 1.6, -- rowie
+    [878772] = 1.7, -- sully
+    [3947971] = 2.0, -- nostwin
+    [3950118] = 1.6, -- honeypelt
+    [4575036] = 2.6, -- newsy
+    [1890761] = 1.7, -- veeno
+
 }
 GW.QUESTVIEW_MODEL_TWEAKS = T
 
 -- NPC scale factors for questview (takes priority over model tweaks)
 local N = {
+    [197478] = 2.8, -- herald flaps
 }
 GW.QUESTVIEW_NPC_TWEAKS = N
 
@@ -67,5 +79,6 @@ local M = {
     [2016] = "SL/tazavesh",
     [1978] = "DF/default",
     [2022] = "DF/waking_shore",
+    [2133] = "DF/zaralek"
 }
 GW.QUESTVIEW_MAP_BGS = M
