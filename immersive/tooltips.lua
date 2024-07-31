@@ -55,19 +55,19 @@ end
 local function RemoveTrashLines(self)
     if self:IsForbidden() then return end
 
-	local info = self:GetTooltipData()
-	if not (info and info.lines[3]) then return end
+    local info = self:GetTooltipData()
+    if not (info and info.lines[3]) then return end
 
-	for i, line in next, info.lines, 3 do
-		local text = line and line.leftText
-		if not text or text == '' then
-			break
-		elseif text == PVP or text == FACTION_ALLIANCE or text == FACTION_HORDE then
-			local left = _G['GameTooltipTextLeft' .. i]
-			left:SetText('')
-			left:Hide()
-		end
-	end
+    for i, line in next, info.lines, 3 do
+        local text = line and line.leftText
+        if not text or text == '' then
+            break
+        elseif text == PVP or text == FACTION_ALLIANCE or text == FACTION_HORDE then
+            local left = _G['GameTooltipTextLeft' .. i]
+            left:SetText('')
+            left:Hide()
+        end
+    end
 end
 
 local function SetUnitAura(self, unit, index, filter)
@@ -317,18 +317,18 @@ local function GetLevelLine(self, offset, raw)
     if not (info and info.lines[offset]) then return end
 
     for i, line in next, info.lines, offset do
-		local text = line and line.leftText
-		if not text or text == '' then return end
+        local text = line and line.leftText
+        if not text or text == '' then return end
 
-		local lower = strlower(text)
-		if lower and (strfind(lower, LEVEL1) or strfind(lower, LEVEL2)) then
-			if raw then
-				return line, info.lines[i + 1]
-			else
-				return _G['GameTooltipTextLeft' .. i], _G['GameTooltipTextLeft' .. i + 1]
-			end
-		end
-	end
+        local lower = strlower(text)
+        if lower and (strfind(lower, LEVEL1) or strfind(lower, LEVEL2)) then
+            if raw then
+                return line, info.lines[i + 1]
+            else
+                return _G['GameTooltipTextLeft' .. i], _G['GameTooltipTextLeft' .. i + 1]
+            end
+        end
+    end
 end
 
 local function SetUnitText(self, unit, isPlayerUnit)
@@ -948,7 +948,25 @@ local function SetStyle(self, _, isEmbedded)
         edgeSize = GW.Scale(1)
     }
 
-    self.NineSlice:SetBackdropBorderColor(13/255, 13/255, 13/255, 1)
+    self.NineSlice:SetBackdropBorderColor(0.05, 0.05, 0.05, 1)
+
+    if not self.NineSlice.gwHookedBorderColor then
+        hooksecurefunc(self.NineSlice, "SetBackdropBorderColor", function(self, r, g, b, a)
+            if r ~= 0.05 or g ~= 0.05 or b ~= 0.05 or a ~= 1 then
+                self:SetBackdropBorderColor(0.05, 0.05, 0.05, 1)
+            end
+        end)
+
+        if PawnSetTooltipBorderColor then
+            hooksecurefunc("PawnSetTooltipBorderColor", function(_, r, g, b, a)
+                if r ~= 0.05 or g ~= 0.05 or b ~= 0.05 or a ~= 1 then
+                    self.NineSlice:SetBackdropBorderColor(0.05, 0.05, 0.05, 1)
+                end
+            end)
+        end
+
+        self.NineSlice.gwHookedBorderColor = true
+    end
 
     local level = self.NineSlice:GetFrameLevel()
     if not self.NineSlice.iborder then
@@ -968,14 +986,6 @@ local function SetStyle(self, _, isEmbedded)
         border:GwSetOutside(self.NineSlice, 1, 1)
         self.NineSlice.oborder = border
     end
-
-    --self.NineSlice:Hide()
-    --self:GwCreateBackdrop({
-    --    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-    --    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
-    --    edgeSize = GW.Scale(32),
-    --    insets = {left = 2, right = 2, top = 2, bottom = 2}
-    --})
 end
 
 local function AddPremadeGroupInfo(tooltip, resultID)
@@ -1037,6 +1047,12 @@ local function StyleTooltips()
         TRP2_StaticPopupPersoTooltip,
         TRP2_PersoTooltip,
         TRP2_MountTooltip,
+        TRP3_MainTooltip,
+        TRP3_CompanionTooltip,
+        TRP3_ItemTooltip,
+        TRP3_NPCTooltip,
+        TRP3_TargetTooltip,
+        TRP3_CharacterTooltip,
         AltoTooltip,
         AltoScanningTooltip,
         ArkScanTooltipTemplate,
