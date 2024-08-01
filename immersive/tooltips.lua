@@ -1018,6 +1018,8 @@ local function StyleTooltips()
         ItemRefShoppingTooltip1,
         ItemRefShoppingTooltip2,
         FriendsTooltip,
+        QuestScrollFrame.CampaignTooltip,
+        QuestScrollFrame.StoryTooltip,
         WarCampaignTooltip,
         EmbeddedItemTooltip,
         ReputationParagonTooltip,
