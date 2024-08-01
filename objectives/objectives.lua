@@ -432,11 +432,11 @@ local function getBlockQuest(blockIndex, isFrequency)
     newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     newBlock.actionButton.NormalTexture:SetTexture(nil)
     newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
-    newBlock.actionButton:SetScript("OnShow", function(self) self:OnShow() end)
-    newBlock.actionButton:SetScript("OnHide", function(self) self:OnHide() end)
-    newBlock.actionButton:SetScript("OnEnter", function(self) self:OnEnter() end)
+    newBlock.actionButton:SetScript("OnShow", newBlock.actionButton.OnShow)
+    newBlock.actionButton:SetScript("OnHide", newBlock.actionButton.OnHide)
+    newBlock.actionButton:SetScript("OnEnter", newBlock.actionButton.OnEnter)
     newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
-    newBlock.actionButton:SetScript("OnEvent", function(self) self:OnEvent() end)
+    newBlock.actionButton:SetScript("OnEvent", newBlock.actionButton.OnEvent)
 
     return newBlock
 end
@@ -466,11 +466,11 @@ local function getBlockCampaign(blockIndex)
     newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     newBlock.actionButton.NormalTexture:SetTexture(nil)
     newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
-    newBlock.actionButton:SetScript("OnShow", function(self) self:OnShow() end)
-    newBlock.actionButton:SetScript("OnHide", function(self) self:OnHide() end)
-    newBlock.actionButton:SetScript("OnEnter", function(self) self:OnEnter() end)
+    newBlock.actionButton:SetScript("OnShow", newBlock.actionButton.OnShow)
+    newBlock.actionButton:SetScript("OnHide", newBlock.actionButton.OnHide)
+    newBlock.actionButton:SetScript("OnEnter", newBlock.actionButton.OnEnter)
     newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
-    newBlock.actionButton:SetScript("OnEvent", function(self) self:OnEvent() end)
+    newBlock.actionButton:SetScript("OnEvent", newBlock.actionButton.OnEvent)
 
     return newBlock
 end
@@ -592,7 +592,7 @@ local function UpdateQuestItem(block)
         block.actionButton:SetAttribute("type", "item")
         block.actionButton:SetAttribute("item", link)
 
-        block.actionButton:SetScript("OnUpdate", function(self, elapsed) self:OnUpdate(elapsed) end)
+        block.actionButton:SetScript("OnUpdate", block.actionButton.OnUpdate)
         block.actionButton:Show()
     else
         block.hasItem = false

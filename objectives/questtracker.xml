@@ -23,15 +23,16 @@
         <Frames>
             <Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
-        <NormalTexture parentKey="NormalTexture" file="Interface\Buttons\UI-Quickslot2">
+        <NormalTexture parentKey="NormalTexture" file="Interface\AddOns\GW2_UI\textures\bag\bagnormal">
             <Size x="42" y="42"/>
             <Anchors>
                 <Anchor point="CENTER"/>
             </Anchors>
         </NormalTexture>
-        <PushedTexture file="Interface\Buttons\UI-Quickslot-Depress"/>
-        <HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+        <PushedTexture file="Interface\AddOns\GW2_UI\textures\uistuff\actionbutton-pressed"/>
+        <HighlightTexture file="Interface\AddOns\GW2_UI\textures\uistuff\UI-Quickslot-Depress" alphaMode="ADD"/>
     </Button>
+
     <Button name="GwQuestTrackerHeader" virtual="true">
         <Size x="300" y="20"></Size>
         <Anchors>
