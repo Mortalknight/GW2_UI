@@ -15,6 +15,18 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.1.0",{
+    {ct.feature, [=[Added option to skin blizzards default actionbars
+        That function disabled our managed actionbars and there hooked features]=]},
+    {ct.feature, [=[Adventuremap skin]=]},
+    {ct.bug, [=[Objectives tracker actionbutton works again]=]},
+    {ct.bug, [=[Error handler shows only GW2 errors]=]},
+    {ct.bug, [=[M+ progess counter should show correect % again (raw value is not possible atm)]=]},
+    {ct.bug, [=[Fix minimap lua error]=]},
+    {ct.change, [=[Added TRP3 tooltips support]=]},
+    {ct.change, [=[Immersive Question changes and improvments]=]},
+})
+
 addChange("7.0.2",{
     {ct.change, [=[Added self reading animation to immersive questing]=]},
     {ct.bug, [=[Fix error handler]=]},
