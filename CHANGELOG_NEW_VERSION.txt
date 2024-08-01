@@ -12,4 +12,4 @@ FIXES
 
 CHANGES
     - Added TRP3 tooltips support
-    - Immersive Question changes and improvments
+    - Immersive Question changes and improvements

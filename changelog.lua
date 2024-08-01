@@ -24,7 +24,7 @@ addChange("7.1.0",{
     {ct.bug, [=[M+ progess counter should show correect % again (raw value is not possible atm)]=]},
     {ct.bug, [=[Fix minimap lua error]=]},
     {ct.change, [=[Added TRP3 tooltips support]=]},
-    {ct.change, [=[Immersive Question changes and improvments]=]},
+    {ct.change, [=[Immersive Question changes and improvements]=]},
 })
 
 addChange("7.0.2",{
