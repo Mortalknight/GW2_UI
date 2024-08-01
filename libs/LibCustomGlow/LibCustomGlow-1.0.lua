@@ -6,7 +6,7 @@ https://www.wowace.com/projects/libbuttonglow-1-0
 -- luacheck: globals CreateFromMixins ObjectPoolMixin CreateTexturePool CreateFramePool
 
 local MAJOR_VERSION = "LibCustomGlow-1.0"
-local MINOR_VERSION = 17
+local MINOR_VERSION = 19
 if not LibStub then error(MAJOR_VERSION .. " requires LibStub.") end
 local lib, oldversion = LibStub:NewLibrary(MAJOR_VERSION, MINOR_VERSION)
 if not lib then return end
@@ -34,20 +34,50 @@ lib.startList = {}
 lib.stopList = {}
 
 local GlowParent = UIParent
-
-local GlowMaskPool = CreateFromMixins(ObjectPoolMixin)
-lib.GlowMaskPool = GlowMaskPool
-local function MaskPoolFactory(maskPool)
-    return maskPool.parent:CreateMaskTexture()
-end
-
-local MaskPoolResetter = function(maskPool,mask)
-    mask:Hide()
-    mask:ClearAllPoints()
-end
-
-ObjectPoolMixin.OnLoad(GlowMaskPool,MaskPoolFactory,MaskPoolResetter)
-GlowMaskPool.parent =  GlowParent
+local GlowMaskPool = {
+    createFunc = function(self)
+        return self.parent:CreateMaskTexture()
+    end,
+    resetFunc = function(self, mask)
+        mask:Hide()
+        mask:ClearAllPoints()
+    end,
+    AddObject = function(self, object)
+        local dummy = true
+        self.activeObjects[object] = dummy
+        self.activeObjectCount = self.activeObjectCount + 1
+    end,
+    ReclaimObject = function(self, object)
+        tinsert(self.inactiveObjects, object)
+        self.activeObjects[object] = nil
+        self.activeObjectCount = self.activeObjectCount - 1
+    end,
+    Release = function(self, object)
+        local active = self.activeObjects[object] ~= nil
+        if active then
+            self:resetFunc(object)
+            self:ReclaimObject(object)
+        end
+        return active
+    end,
+    Acquire = function(self)
+        local object = tremove(self.inactiveObjects)
+        local new = object == nil
+        if new then
+            object = self:createFunc()
+            self:resetFunc(object, new)
+        end
+        self:AddObject(object)
+        return object, new
+    end,
+    Init = function(self, parent)
+        self.activeObjects = {}
+        self.inactiveObjects = {}
+        self.activeObjectCount = 0
+        self.parent = parent
+    end
+}
+GlowMaskPool:Init(GlowParent)
 
 local TexPoolResetter = function(pool,tex)
     local maskNum = tex:GetNumMaskTextures()
@@ -326,7 +356,7 @@ lib.startList["Pixel Glow"] = lib.PixelGlow_Start
 lib.stopList["Pixel Glow"] = lib.PixelGlow_Stop
 
 
---Autocast Glow Funcitons--
+--Autocast Glow Functions--
 local function acUpdate(self,elapsed)
     local width,height = self:GetSize()
     if width ~= self.info.width or height ~= self.info.height then
@@ -609,6 +639,14 @@ end
 
 local ButtonGlowTextures = {["spark"] = true,["innerGlow"] = true,["innerGlowOver"] = true,["outerGlow"] = true,["outerGlowOver"] = true,["ants"] = true}
 
+local function noZero(num)
+    if num == 0 then
+        return 0.001
+    else
+        return num
+    end
+end
+
 function lib.ButtonGlow_Start(r,color,frequency,frameLevel)
     if not r then
         return
@@ -638,7 +676,7 @@ function lib.ButtonGlow_Start(r,color,frequency,frameLevel)
             for texture in pairs(ButtonGlowTextures) do
                 f[texture]:SetDesaturated(nil)
                 f[texture]:SetVertexColor(1,1,1)
-                local alpha = math.min(f[texture]:GetAlpha()/(f.color and f.color[4] or 1), 1)
+                local alpha = math.min(f[texture]:GetAlpha()/noZero(f.color and f.color[4] or 1), 1)
                 f[texture]:SetAlpha(alpha)
                 updateAlphaAnim(f, 1)
             end
@@ -647,7 +685,7 @@ function lib.ButtonGlow_Start(r,color,frequency,frameLevel)
             for texture in pairs(ButtonGlowTextures) do
                 f[texture]:SetDesaturated(1)
                 f[texture]:SetVertexColor(color[1],color[2],color[3])
-                local alpha = math.min(f[texture]:GetAlpha()/(f.color and f.color[4] or 1)*color[4], 1)
+                local alpha = math.min(f[texture]:GetAlpha()/noZero(f.color and f.color[4] or 1)*color[4], 1)
                 f[texture]:SetAlpha(alpha)
                 updateAlphaAnim(f,color and color[4] or 1)
             end
@@ -757,7 +795,7 @@ local function InitProcGlow(f)
     local flipbookRepeat = f.ProcLoopAnim:CreateAnimation("FlipBook")
     flipbookRepeat:SetChildKey("ProcLoop")
     flipbookRepeat:SetDuration(1)
-    flipbookRepeat:SetOrder(1)
+    flipbookRepeat:SetOrder(0)
     flipbookRepeat:SetFlipBookRows(6)
     flipbookRepeat:SetFlipBookColumns(5)
     flipbookRepeat:SetFlipBookFrames(30)

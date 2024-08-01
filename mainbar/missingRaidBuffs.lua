@@ -1,7 +1,7 @@
 local _, GW = ...
 local L = GW.L
 
---local LibCustomGlow = GW.Libs.CustomGlows
+local LibCustomGlow = GW.Libs.CustomGlows
 local ALPHA = 0.3
 local classColor
 
@@ -61,6 +61,9 @@ local reminderBuffs = {
         [1] = 6673, -- Battle Shout
         [2] = 264761, -- War-Scroll of Battle
     },
+    Versatility = {
+		1126, -- Mark of the Wild
+	},
     MovementBuff = {
         [1] = 381752, -- Evoker
         [2] = 381732, -- Evoker
@@ -77,19 +80,7 @@ local reminderBuffs = {
         [13] = 381758, -- Evoker
     },
     Weapon = { -- EnchantsID
-        [1] = 6188, -- Shadowcore Oil
-        [2] = 6190, -- Embalmer's Oil
-        [3] = 6200, -- Shaded Sharpening Stone -- just a fallback
-        [4] = 6201, -- Shaded Weightstone
-        [5] = 396147, -- chirping rune
-        [6] = 385330, -- chirping rune
-        [7] = 396148, -- chirping rune
-        [8] = 385326, -- buzzing rune
-        [9] = 385325, -- buzzing rune
-        [10] = 385327, -- buzzing rune
-        [11] = 385575, -- howling-rune
-        [12] = 385576, -- howling-rune
-        [13] = 385577, -- howling-rune
+        [1] = nil,
     },
     Custom = {
         -- spellID,	-- Spell Info
@@ -173,9 +164,9 @@ local function setButtonStyle(button, haveBuff)
         button.icon:SetDesaturated(GW.settings.MISSING_RAID_BUFF_INVERT and GW.settings.MISSING_RAID_BUFF_grayed_out or false)
         button:SetAlpha(not GW.settings.MISSING_RAID_BUFF_INVERT and 1 or GW.settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1)
         if GW.settings.MISSING_RAID_BUFF_animated then
-            --LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
+            LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
         else
-            --LibCustomGlow.PixelGlow_Stop(button)
+            LibCustomGlow.PixelGlow_Stop(button)
         end
     else
         if GW.settings.MISSING_RAID_BUFF_INVERT then
@@ -185,7 +176,7 @@ local function setButtonStyle(button, haveBuff)
         end
 
         button:SetAlpha(GW.settings.MISSING_RAID_BUFF_INVERT and 1 or GW.settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1)
-        --LibCustomGlow.PixelGlow_Stop(button)
+        LibCustomGlow.PixelGlow_Stop(button)
     end
 end
 
@@ -263,6 +254,20 @@ local function OnAuraChange(self)
     end
     setButtonStyle(self.attackPowerButton, foundBuff)
 
+    -- Versatility
+    foundBuff = false
+    for _, versatilityBuff in pairs(buffInfos.Versatility) do
+        if versatilityBuff.hasBuff then
+            self.versatilityButton.icon:SetTexture(versatilityBuff.texId)
+            foundBuff = true
+            break
+        end
+    end
+    if not foundBuff then
+        self.versatilityButton.icon:SetTexture(GetSpellTexture(1126))
+    end
+    setButtonStyle(self.versatilityButton, foundBuff)
+
     -- MovementBuff
     foundBuff = false
     for _, movementBuff in pairs(buffInfos.MovementBuff) do
@@ -277,7 +282,22 @@ local function OnAuraChange(self)
     end
     setButtonStyle(self.movementButton, foundBuff)
 
+    -- runes
+    foundBuff = false
+    for _, runebuff in pairs(buffInfos.DefiledAugmentRune) do
+        if runebuff.hasBuff then
+            self.daRuneButton.icon:SetTexture(runebuff.texId)
+            foundBuff = true
+            break
+        end
+    end
+    if not foundBuff and buffInfos.DefiledAugmentRune and buffInfos.DefiledAugmentRune[1] then
+        self.daRuneButton.icon:SetTexture(buffInfos.DefiledAugmentRune[1].texId)
+    end
+    setButtonStyle(self.daRuneButton, foundBuff)
+
     -- Weapon
+    --[[
     foundBuff = false
     for _, weaponbuff in pairs(buffInfos.Weapon) do
         if weaponbuff.hasBuff then
@@ -290,18 +310,19 @@ local function OnAuraChange(self)
         self.weaponButton.icon:SetTexture(buffInfos.Weapon[1].texId)
     end
     setButtonStyle(self.weaponButton, foundBuff)
+    ]]
 
     -- Custom
     if #buffInfos.Custom > 0 then
-        self:SetSize(249, 32)
+        self:SetSize(280, 32)
         self.customButton.icon:SetTexture(buffInfos.Custom[1].texId)
 
         if not self.customButton:IsShown() then self.customButton:Show() end
         setButtonStyle(self.customButton, buffInfos.Custom[1].hasBuff)
     else
-        self:SetSize(218, 32)
+        self:SetSize(249, 32)
         self.customButton:Hide()
-        --LibCustomGlow.PixelGlow_Stop(self.customButton)
+        LibCustomGlow.PixelGlow_Stop(self.customButton)
     end
 end
 GW.UpdateMissingRaidBuffs = OnAuraChange
@@ -373,7 +394,7 @@ local function LoadRaidbuffReminder()
 
     rbr:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
-    rbr:SetSize(190, 32)
+    rbr:SetSize(210, 32)
 
     GW.RegisterMovableFrame(rbr, L["Missing Raid Buffs Bar"], "MISSING_RAID_BUFF_pos", ALL .. ",Raid,Aura", nil, {"default", "scaleable"})
     rbr:ClearAllPoints()
@@ -382,12 +403,13 @@ local function LoadRaidbuffReminder()
     rbr.intButton = CreateIconBuff(rbr, true, rbr)
     rbr.staminaButton = CreateIconBuff(rbr.intButton, false, rbr)
     rbr.attackPowerButton = CreateIconBuff(rbr.staminaButton, false, rbr)
-    rbr.movementButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
+    rbr.versatilityButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
+    rbr.movementButton = CreateIconBuff(rbr.versatilityButton, false, rbr)
     rbr.flaskButton = CreateIconBuff(rbr.movementButton, false, rbr)
     rbr.foodButton = CreateIconBuff(rbr.flaskButton, false, rbr)
-    --rbr.daRuneButton = CreateIconBuff(rbr.foodButton, false, rbr)
-    rbr.weaponButton = CreateIconBuff(rbr.foodButton, false, rbr)
-    rbr.customButton = CreateIconBuff(rbr.weaponButton, false, rbr)
+    rbr.daRuneButton = CreateIconBuff(rbr.foodButton, false, rbr)
+    --rbr.weaponButton = CreateIconBuff(rbr.foodButton, false, rbr)
+    rbr.customButton = CreateIconBuff(rbr.daRuneButton, false, rbr)
 
     GetBuffInfos()
     UpdateMissingRaidBuffVisibility()
