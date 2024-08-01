@@ -1,7 +1,6 @@
 local _, GW = ...
 
 -- Thanks to Windtools
-
 GW.LFGPI = {}
 -- Variables
 local roleOrder = {
@@ -9,6 +8,7 @@ local roleOrder = {
     [2] = "HEALER",
     [3] = "DAMAGER"
 }
+local cache = {}
 
 local function GetRoleOrder()
     return roleOrder
@@ -42,12 +42,9 @@ for classID = 1, 13 do
     end
 end
 
--- Cache
-GW.LFGPI.cache = {}
-
 local function ClearCache()
     for _, role in ipairs(roleOrder) do
-        GW.LFGPI.cache[role] = {
+        cache[role] = {
             totalAmount = 0,
             playerList = {}
         }
@@ -55,20 +52,20 @@ local function ClearCache()
 end
 
 local function AddPlayer(role, class, spec)
-    if not GW.LFGPI.cache[role] then
+    if not cache[role] then
         GW.Debug("warning", format("cache not been initialized correctly, the role:%s is nil.", role))
     end
 
-    if not GW.LFGPI.cache[role].playerList[class] then
-        GW.LFGPI.cache[role].playerList[class] = {}
+    if not cache[role].playerList[class] then
+        cache[role].playerList[class] = {}
     end
 
-    if not GW.LFGPI.cache[role].playerList[class][spec] then
-        GW.LFGPI.cache[role].playerList[class][spec] = 0
+    if not cache[role].playerList[class][spec] then
+        cache[role].playerList[class][spec] = 0
     end
 
-    GW.LFGPI.cache[role].playerList[class][spec] = GW.LFGPI.cache[role].playerList[class][spec] + 1
-    GW.LFGPI.cache[role].totalAmount = GW.LFGPI.cache[role].totalAmount + 1
+    cache[role].playerList[class][spec] = cache[role].playerList[class][spec] + 1
+    cache[role].totalAmount = cache[role].totalAmount + 1
 end
 
 -- Main logic
@@ -123,7 +120,7 @@ local function GetPartyInfo(resultId)
     for _, role in ipairs(roleOrder) do
         dataTable[role] = {}
 
-        local members = GW.LFGPI.cache[role]
+        local members = cache[role]
 
         for class, numberOfPlayersSortBySpec in pairs(members.playerList) do
             for spec, numberOfPlayers in pairs(numberOfPlayersSortBySpec) do
