@@ -53,7 +53,6 @@ local hyperlinkTypes = {
     unit = true
 }
 
-
 local CHAT_FRAME_TEXTURES = {
     "TopLeftTexture",
     "BottomLeftTexture",
@@ -182,7 +181,7 @@ do
     end
     local hyperLinkFunc = function(w, x, y)
         if w ~= "" then return end
-        local emoji = (x~="" and x) and strmatch(x, 'gwuimoji:%%(.+)')
+        local emoji = (x~="" and x) and strmatch(x, "gwuimoji:%%(.+)")
         return (emoji and GW.Libs.Deflate:DecodeForPrint(emoji)) or y
     end
     local fourString = function(v, w, x, y)
@@ -193,7 +192,7 @@ do
         text = gsub(text, [[|TInterface\TargetingFrame\UI%-RaidTargetingIcon_(%d+):0|t]], raidIconFunc) --converts raid icons into {star} etc, if possible.
         text = gsub(text, "(%s?)(|?)|[TA].-|[ta](%s?)", stripTextureFunc) --strip any other texture out but keep a single space from the side(s).
         text = gsub(text, "(|?)|H(.-)|h(.-)|h", hyperLinkFunc) --strip hyperlink data only keeping the actual text.
-        text = gsub(text, "(%d+)(.-)|4(.-):(.-);", fourString) --stuff where it goes 'day' or 'days' like played; tech this is wrong but okayish
+        text = gsub(text, "(%d+)(.-)|4(.-):(.-);", fourString) --stuff where it goes "day" or "days" like played; tech this is wrong but okayish
         return text
     end
 end
@@ -219,18 +218,36 @@ end
 
 local function ShowCopyChatFrame(frame)
     if not GW2_UICopyChatFrame:IsShown() then
-        frame = frame:GetParent()
-        local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
-
-        if fontSize < 10 then fontSize = 12 end
-        FCF_SetChatWindowFontSize(frame, frame, 0.01)
+        local count = getLines(frame)
+        local text = table.concat(copyLines, " \n", 1, count)
+        GW2_UICopyChatFrameEditBox:SetText(text)
         GW2_UICopyChatFrame:Show()
-        local lineCount = getLines(frame)
-        local text = table.concat(copyLines, " \n", 1, lineCount)
-        FCF_SetChatWindowFontSize(frame, frame, fontSize)
-        GW2_UICopyChatFrame.editBox:SetText(text)
     else
+        GW2_UICopyChatFrameEditBox:SetText("")
         GW2_UICopyChatFrame:Hide()
+    end
+end
+
+local function CopyButtonOnMouseUp(self, btn)
+    local chat = self:GetParent()
+    if btn == "RightButton" and chat:GetID() == 1 then
+        local menu = ChatMenu
+        if menu then
+            menu:ClearAllPoints()
+
+            local point = GW.GetScreenQuadrant(self)
+            if strfind(point, "LEFT") then
+                menu:SetPoint("BOTTOMLEFT", self, "TOPRIGHT")
+            else
+                menu:SetPoint("BOTTOMRIGHT", self, "TOPLEFT")
+            end
+
+            ToggleFrame(menu)
+        else
+            ChatFrameMenuButton:OpenMenu()
+        end
+    else
+        ShowCopyChatFrame(chat)
     end
 end
 
@@ -948,7 +965,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
     local pflag = GetPFlag(arg6, arg7, arg8)
 
     -- LFG Role Flags
-    local lfgRole = (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == 'RAID_LEADER' or chatType == 'INSTANCE_CHAT' or chatType == 'INSTANCE_CHAT_LEADER') and lfgRoles[playerName]
+    local lfgRole = (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == "RAID_LEADER" or chatType == "INSTANCE_CHAT" or chatType == "INSTANCE_CHAT_LEADER") and lfgRoles[playerName]
     if lfgRole then
         pflag = pflag..lfgRole
     end
@@ -1606,7 +1623,7 @@ local function styleChatWindow(frame)
     frame.button.tex:SetAllPoints()
     frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
 
-    frame.button:SetScript("OnMouseUp", ShowCopyChatFrame)
+    frame.button:SetScript("OnMouseUp", CopyButtonOnMouseUp)
 
     frame.button:SetScript("OnEnter", function(button) button:SetAlpha(1) end)
     frame.button:SetScript("OnLeave", function(button)
@@ -1702,40 +1719,43 @@ local function BuildCopyChatFrame()
     end)
     frame:SetFrameStrata("DIALOG")
 
-    frame.scrollArea = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-    frame.scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -30)
-    frame.scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 8)
-    frame.scrollArea.ScrollBar:GwSkinScrollBar()
-    frame.scrollArea:SetScript("OnSizeChanged", function(scroll)
-        frame.editBox:SetWidth(scroll:GetWidth())
-        frame.editBox:SetHeight(scroll:GetHeight())
-    end)
-    frame.scrollArea:HookScript("OnVerticalScroll", function(scroll, offset)
-        frame.editBox:SetHitRectInsets(0, 0, offset, (frame.editBox:GetHeight() - offset - scroll:GetHeight()))
-    end)
-
-    frame.editBox = CreateFrame("EditBox", nil, frame)
-    frame.editBox:SetMultiLine(true)
-    frame.editBox:SetMaxLetters(99999)
-    frame.editBox:EnableMouse(true)
-    frame.editBox:SetAutoFocus(false)
-    frame.editBox:SetFontObject(ChatFontNormal)
+    local editBox = CreateFrame("EditBox", "GW2_UICopyChatFrameEditBox", frame)
+    editBox:SetHeight(200)
+    editBox:SetMultiLine(true)
+    editBox:SetMaxLetters(99999)
+    editBox:EnableMouse(true)
+    editBox:SetAutoFocus(false)
+    editBox:SetFontObject("ChatFontNormal")
     if GW.settings.CHAT_USE_GW2_STYLE then
         local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
-        local _, fonzSize = frame.editBox:GetFont()
-        frame.editBox:SetFont(chatFont, fonzSize or 12, "")
+        local _, fonzSize = editBox:GetFont()
+        editBox:SetFont(chatFont, fonzSize or 12, "")
     end
-    frame.editBox:SetWidth(frame.scrollArea:GetWidth())
-    frame.editBox:SetHeight(200)
-    frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
-    frame.scrollArea:SetScrollChild(frame.editBox)
-    frame.editBox:SetScript("OnTextChanged", function(_, userInput)
+    editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
+    editBox:SetScript("OnTextChanged", function(_, userInput)
         if userInput then return end
-        local _, max = frame.scrollArea.ScrollBar:GetMinMaxValues()
-        for _ = 1, max do
-            ScrollFrameTemplate_OnMouseWheel(frame.scrollArea, -1)
+        local _, maxValue = GW2_UICopyChatFrameScrollFrame.ScrollBar:GetMinMaxValues()
+        for _ = 1, maxValue do
+            ScrollFrameTemplate_OnMouseWheel(GW2_UICopyChatFrameScrollFrame, -1)
         end
     end)
+    frame.editBox = editBox
+
+    local scrollFrame = CreateFrame("ScrollFrame", "GW2_UICopyChatFrameScrollFrame", frame, "UIPanelScrollFrameTemplate")
+    scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -30)
+    scrollFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 8)
+    scrollFrame:SetScript("OnSizeChanged", function(_, width, height)
+        GW2_UICopyChatFrameEditBox:SetSize(width, height)
+    end)
+    scrollFrame:HookScript("OnVerticalScroll", function(scroll, offset)
+        GW2_UICopyChatFrameEditBox:SetHitRectInsets(0, 0, offset, (GW2_UICopyChatFrameEditBox:GetHeight() - offset - scroll:GetHeight()))
+    end)
+    frame.scrollFrame = scrollFrame
+
+    scrollFrame:SetScrollChild(editBox)
+    editBox:SetWidth(scrollFrame:GetWidth())
+    scrollFrame.ScrollBar:GwSkinScrollBar()
+    scrollFrame:GwSkinScrollFrame()
 
     frame.close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     frame.close:SetPoint("TOPRIGHT")
