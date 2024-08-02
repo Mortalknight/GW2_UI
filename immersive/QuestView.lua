@@ -144,7 +144,7 @@ function QuestGiverMixin:setPMUnit(unit, is_dead, npc_name, npc_type)
         -- static tweak for some big models like dragons
         offsetX = 30
         --offsetZ = 0
-    elseif scaleFactor > 2.1 then
+    elseif scaleFactor > 2.5 then
         -- static tweak for most smaller models
         offsetZ = 100
     end

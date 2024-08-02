@@ -4,7 +4,7 @@ local _, GW = ...
 local T = {
     [1980608] = 1.3, -- Ulfar
     [3762412] = 1.1, -- primus
-    [950080] = 1.8, -- toddy whiskers, moira
+    [950080] = 1.7, -- toddy whiskers, moira
     [3084654] = 0.79, -- big wrathion
     [4227968] = 0.79, -- big selistra
     [1249799] = 0.9, -- malfurion
@@ -19,11 +19,11 @@ local T = {
     [4036647] = 1.6, --- huseng
     [4081379] = 1.6, -- tomul
     [4207724] = 1.4, -- vaskarn
-    [4498203] = 1.4, -- emberthal
+    [4498203] = 1.65, -- emberthal
     [900914] = 2.0, -- wulferd
     [1022938] = 1.3, -- senegos
     [119376] = 1.7, -- blixrez
-    [4416923] = 1.0, -- surigosa
+    [4416923] = 0.79, -- big ebyssian, big surigosa
     [917116] = 1.3, -- warchief's herald
     [1011653] = 1.3, -- hero's herald
     [4186587] = 1.6, -- rowie
@@ -32,13 +32,30 @@ local T = {
     [3950118] = 1.6, -- honeypelt
     [4575036] = 2.6, -- newsy
     [1890761] = 1.7, -- veeno
-
+    [1135341] = 0.85, -- brogg
+    [4183015] = 1.0, -- ignax
+    [940356] = 1.9, -- sprocketspark
+    [1261840] = 1.0, -- cenarius
+    [5151105] = 0.75, -- big merithra
+    [3024835] = 2.0, -- moonberry
+    [5011146] = 1.6, -- amrymn
+    [4278602] = 0.3, -- buri
+    [5154480] = 0.95, -- dreamkin
+    [4883916] = 2.49, -- Q'onzu
+    [1120702] = 1.0, -- aviana
+    [4492766] = 0.55, -- big vyranoth
+    [1572377] = 0.8, -- locus walker
+    [1000764] = 1.35, -- tess greymane
+    [1817113] = 1.35, -- wolf genn
+    [5353632] = 1.3, -- magni
+    [5492980] = 1.5, -- moira
 }
 GW.QUESTVIEW_MODEL_TWEAKS = T
 
 -- NPC scale factors for questview (takes priority over model tweaks)
 local N = {
     [197478] = 2.8, -- herald flaps
+    [201648] = 0.79, -- big somnikus
 }
 GW.QUESTVIEW_NPC_TWEAKS = N
 
