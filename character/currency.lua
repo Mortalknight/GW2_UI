@@ -241,10 +241,14 @@ local function updateCollapse(texture, atlas)
         if parent:IsCollapsed() then
             if texture.SetTexture then
                 texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
-                texture:SetRotation(-1.570796325)
+                texture:SetRotation(1.570796325)
             else
                 texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
-                texture:GetNormalTexture():SetRotation(-1.570796325)
+                texture:GetNormalTexture():SetRotation(1.570796325)
+            end
+            if texture.GetPushedTexture then
+                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetPushedTexture():SetRotation(1.570796325)
             end
         else
             if texture.SetTexture then
@@ -253,6 +257,10 @@ local function updateCollapse(texture, atlas)
             else
                 texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
                 texture:GetNormalTexture():SetRotation(0)
+            end
+            if texture.GetPushedTexture then
+                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetPushedTexture():SetRotation(0)
             end
         end
     end

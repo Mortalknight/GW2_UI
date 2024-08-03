@@ -97,7 +97,7 @@ local function FilterAura(self, unit, data)
             shouldDisplay = (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle") and (data.canApplyAura or data.isPlayerAura) and not SpellIsSelfBuff(data.spellId)
         end
 
-        if shouldDisplay then
+        if shouldDisplay and parent.ignoredAuras then
             shouldDisplay = data.name and not parent.ignoredAuras[data.name]
         end
 
@@ -171,10 +171,10 @@ local function FilterAura(self, unit, data)
         if parent.showAllDebuffs then
             if parent.showOnlyDispelDebuffs then
                 if isDispellable then
-                    shouldDisplay = data.name and not (parent.ignoredAuras[data.name] or data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
+                    shouldDisplay = data.name and not (parent.ignoredAuras and parent.ignoredAuras[data.name] or data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
                 end
             else
-                shouldDisplay = data.name and not (parent.ignoredAuras[data.name] or data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
+                shouldDisplay = data.name and not (parent.ignoredAuras and parent.ignoredAuras[data.name] or data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
             end
         end
 
