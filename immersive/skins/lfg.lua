@@ -422,9 +422,8 @@ local function SkinLookingForGroupFrames()
     end)
 
     hooksecurefunc("LFGListSearchPanel_UpdateAutoComplete", function(panel)
-        for i = 1, LFGListFrame.SearchPanel.AutoCompleteFrame:GetNumChildren() do
-            local child = select(i, LFGListFrame.SearchPanel.AutoCompleteFrame:GetChildren())
-            if child and not child.isSkinned and child:IsObjectType("Button") then
+        for _, child in next, { LFGListFrame.SearchPanel.AutoCompleteFrame:GetChildren() } do
+            if not child.isSkinned and child:IsObjectType("Button") then
                 child:GwSkinButton(false, true)
                 child.isSkinned = true
             end

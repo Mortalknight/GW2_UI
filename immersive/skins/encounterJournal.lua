@@ -282,6 +282,8 @@ local function encounterJournalSkin()
     EncounterJournalMonthlyActivitiesFrame.Bg:SetAlpha(0)
     GW.HandleTrimScrollBar(EncounterJournalMonthlyActivitiesFrame.ScrollBar)
     GW.HandleScrollControls(EncounterJournalMonthlyActivitiesFrame)
+    GW.HandleTrimScrollBar(EncounterJournalMonthlyActivitiesFrame.FilterList.ScrollBar)
+    GW.HandleScrollControls(EncounterJournalMonthlyActivitiesFrame.FilterList)
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
     GW.HandleScrollControls(InstanceSelect)
