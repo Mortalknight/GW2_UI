@@ -97,6 +97,10 @@ local function FilterAura(self, unit, data)
             shouldDisplay = (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle") and (data.canApplyAura or data.isPlayerAura) and not SpellIsSelfBuff(data.spellId)
         end
 
+        if shouldDisplay then
+            shouldDisplay = data.name and not parent.ignoredAuras[data.name]
+        end
+
         -- check here for indicators
         -- indicators
         local indicators = GW.AURAS_INDICATORS[GW.myclass]
