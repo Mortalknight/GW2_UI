@@ -503,9 +503,26 @@ local function LoadCurrency(tabContainer)
 
     -- setup transfer history
     local curHistroyWin = curwin_outer.CurrencyTransferHistoryScroll
+    curHistroyWin.Refresh = function(self)
+        local dataReady = C_CurrencyInfo.IsCurrencyTransferTransactionDataReady();
+        self.LoadingSpinner:SetShown(not dataReady);
+        if not dataReady then
+            return;
+        end
+
+        local dataProvider = CreateDataProvider();
+        for _, transaction in ipairs(C_CurrencyInfo.FetchCurrencyTransferTransactions()) do -- change the order to that the newest transactions are at the top
+            dataProvider:Insert(transaction);
+        end
+
+        local hasTransactionHistory = dataProvider:GetSize() > 0;
+        self.EmptyLogMessage:SetShown(not hasTransactionHistory);
+        self.ScrollBar:SetShown(hasTransactionHistory);
+        self.ScrollBox:SetDataProvider(dataProvider);
+    end
     curHistroyWin.update = function(self) self:Refresh() end
     transferHistorySetup(curHistroyWin)
-    GW.HandleTrimScrollBar(curHistroyWin.ScrollBar) -- taints
+    GW.HandleTrimScrollBar(curHistroyWin.ScrollBar)
     GW.HandleScrollControls(curHistroyWin)
     hooksecurefunc(curHistroyWin.ScrollBox, "Update", UpdateTransferHistorySkins)
 
