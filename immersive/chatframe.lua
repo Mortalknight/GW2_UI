@@ -353,8 +353,8 @@ local function handleChatFrameFadeIn(chatFrame, force)
         end
     end
 
-    if chatFrame.button then
-        UIFrameFadeIn(chatFrame.button, 0.5, chatFrame.button:GetAlpha(), 0.35)
+    if chatFrame.copyButton then
+        UIFrameFadeIn(chatFrame.copyButton, 0.5, chatFrame.copyButton:GetAlpha(), 0.35)
     end
     if chatFrame.buttonEmote then
         UIFrameFadeIn(chatFrame.buttonEmote, 0.5, chatFrame.buttonEmote:GetAlpha(), 0.35)
@@ -410,8 +410,8 @@ local function handleChatFrameFadeOut(chatFrame, force)
         end
     end
 
-    if chatFrame.button then
-        UIFrameFadeOut(chatFrame.button, 2, chatFrame.button:GetAlpha(), 0)
+    if chatFrame.copyButton then
+        UIFrameFadeOut(chatFrame.copyButton, 2, chatFrame.copyButton:GetAlpha(), 0)
     end
     if chatFrame.buttonEmote then
         UIFrameFadeOut(chatFrame.buttonEmote, 2, chatFrame.buttonEmote:GetAlpha(), 0)
@@ -1612,25 +1612,25 @@ local function styleChatWindow(frame)
     if frame.hasContainer then setButtonPosition(frame) end
 
     --copy chat button
-    frame.button = CreateFrame("Frame", nil, frame)
-    frame.button:EnableMouse(true)
-    frame.button:SetAlpha(0.35)
-    frame.button:SetSize(20, 22)
-    frame.button:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 20, 0)
-    frame.button:SetFrameLevel(frame:GetFrameLevel() + 5)
+    frame.copyButton = CreateFrame("Frame", nil, frame)
+    frame.copyButton:EnableMouse(true)
+    frame.copyButton:SetAlpha(0.35)
+    frame.copyButton:SetSize(20, 22)
+    frame.copyButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 20, 26)
+    frame.copyButton:SetFrameLevel(frame:GetFrameLevel() + 5)
 
-    frame.button.tex = frame.button:CreateTexture(nil, "OVERLAY")
-    frame.button.tex:SetAllPoints()
-    frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
+    frame.copyButton.tex = frame.copyButton:CreateTexture(nil, "OVERLAY")
+    frame.copyButton.tex:SetAllPoints()
+    frame.copyButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
 
-    frame.button:SetScript("OnMouseUp", CopyButtonOnMouseUp)
+    frame.copyButton:SetScript("OnMouseUp", CopyButtonOnMouseUp)
 
-    frame.button:SetScript("OnEnter", function(button) button:SetAlpha(1) end)
-    frame.button:SetScript("OnLeave", function(button)
-        if GetTab(button:GetParent()).Text:IsShown() then
-            button:SetAlpha(0.35)
+    frame.copyButton:SetScript("OnEnter", function(self) self:SetAlpha(1) end)
+    frame.copyButton:SetScript("OnLeave", function(self)
+        if GetTab(self:GetParent()).Text:IsShown() then
+            self:SetAlpha(0.35)
         else
-            button:SetAlpha(0)
+            self:SetAlpha(0)
         end
     end)
 
@@ -1640,7 +1640,7 @@ local function styleChatWindow(frame)
         frame.buttonEmote:EnableMouse(true)
         frame.buttonEmote:SetAlpha(0.35)
         frame.buttonEmote:SetSize(12, 12)
-        frame.buttonEmote:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, -5)
+        frame.buttonEmote:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, 22)
         frame.buttonEmote:SetFrameLevel(frame:GetFrameLevel() + 5)
 
         frame.buttonEmote.tex = frame.buttonEmote:CreateTexture(nil, "OVERLAY")
