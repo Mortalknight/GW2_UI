@@ -278,6 +278,7 @@ local function encounterJournalSkin()
 
     InstanceSelect.ExpansionDropdown:GwHandleDropDownBox()
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
+
     EncounterJournalInstanceSelectBG:SetAlpha(0)
     EncounterJournalMonthlyActivitiesFrame.Bg:SetAlpha(0)
     GW.HandleTrimScrollBar(EncounterJournalMonthlyActivitiesFrame.ScrollBar)
@@ -330,7 +331,7 @@ local function encounterJournalSkin()
     EncounterInfo.difficulty:ClearAllPoints()
     EncounterInfo.difficulty:SetPoint("BOTTOMRIGHT", EncounterJournalEncounterFrameInfoBG, "TOPRIGHT", -5, 7)
     HandleButton(EncounterInfo.reset)
-    EncounterInfo.difficulty:GwHandleDropDownBox(true, 120)
+    EncounterInfo.difficulty:GwHandleDropDownBox(nil, true, nil, 120)
 
     EncounterInfo.reset:ClearAllPoints()
     EncounterInfo.reset:SetPoint("TOPRIGHT",EncounterInfo.difficulty, "TOPLEFT", -10, 0)
@@ -339,8 +340,8 @@ local function encounterJournalSkin()
 
     EncounterInfo.LootContainer.filter:ClearAllPoints()
     EncounterInfo.LootContainer.filter:SetPoint('RIGHT', EncounterInfo.difficulty, 'LEFT', -120, 0)
-    EncounterInfo.LootContainer.filter:GwHandleDropDownBox(false, 120)
-    EncounterInfo.LootContainer.slotFilter:GwHandleDropDownBox(false, 100)
+    EncounterInfo.LootContainer.filter:GwHandleDropDownBox(nil, false, nil, 120)
+    EncounterInfo.LootContainer.slotFilter:GwHandleDropDownBox(nil, false, nil, 100)
 
     GW.HandleTrimScrollBar(EncounterInfo.BossesScrollBar, true)
     GW.HandleScrollControls(EncounterInfo, "BossesScrollBar")

@@ -451,26 +451,32 @@ local function GwSkinScrollBar(frame)
     end
 end
 
-local function GwHandleDropDownBox(frame, hookLayout, width)
+local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdownTag, width)
     local text = frame.Text
-	if frame.Arrow then frame.Arrow:SetAlpha(0) end
+    if frame.Arrow then frame.Arrow:SetAlpha(0) end
 
-    if not width then
-		width = 155
-	end
+    if not width or width == nil then
+        width = 155
+    end
 
-	frame:SetWidth(width)
-	frame:GwStripTextures()
-    frame:GwCreateBackdrop(GW.BackdropTemplates.StatusBar)
+    frame:SetWidth(width)
+    frame:GwStripTextures()
+
+    if backdropTemplate then
+        frame:GwCreateBackdrop(backdropTemplate, true)
+        frame.backdrop:SetBackdropColor(0, 0, 0)
+    else
+        frame:GwCreateBackdrop(GW.BackdropTemplates.StatusBar)
+    end
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
     frame.backdrop:SetPoint("TOPLEFT", 5, -2)
     frame.backdrop:SetPoint("BOTTOMRIGHT", -2, -2)
 
-	local tex = frame:CreateTexture(nil, 'ARTWORK')
-	tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
-	tex:SetPoint('RIGHT', frame.backdrop, -3, 0)
+    local tex = frame:CreateTexture(nil, 'ARTWORK')
+    tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
+    tex:SetPoint('RIGHT', frame.backdrop, -3, 0)
     tex:SetRotation(3.14)
-	tex:SetSize(14, 14)
+    tex:SetSize(14, 14)
 
     if text then
         text:ClearAllPoints()
