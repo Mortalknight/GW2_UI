@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("3.3.7",{
+    {ct.change,[=[Bagnator support]=]},
+})
+
 addChange("3.3.6",{
     {ct.change,[=[Fix for Blizzards QuestTimer change]=]},
 })

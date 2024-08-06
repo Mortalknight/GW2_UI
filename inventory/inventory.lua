@@ -12,8 +12,10 @@ BAG_FILTER_LABELS = {
 
 -- reskins an ItemButton to use GW2_UI styling
 local item_size
-local function reskinItemButton(iname, b)
-    b:SetSize(item_size, item_size)
+local function reskinItemButton(b, overrideIconSize)
+    if not b then return end
+    local iconSize = overrideIconSize or item_size
+    b:SetSize(iconSize, iconSize)
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b.icon:SetAllPoints(b)
@@ -43,11 +45,10 @@ local function reskinItemButton(iname, b)
     b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     b.Count:SetJustifyH("RIGHT")
 
-    local qtex = b.IconQuestTexture or _G[iname .. "IconQuestTexture"]
-    if qtex then
-        qtex:SetSize(item_size + 2, item_size + 2)
-        qtex:ClearAllPoints()
-        qtex:SetPoint("CENTER", b, "CENTER", 0, 0)
+    if b.IconQuestTexture then
+        b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
+        b.IconQuestTexture:ClearAllPoints()
+        b.IconQuestTexture:SetPoint("CENTER", b, "CENTER", 0, 0)
     end
 
     if b.flash then
@@ -85,7 +86,11 @@ local function reskinItemButton(iname, b)
         b.itemlevel:SetText("")
     end
 
-    GW.RegisterCooldown(_G[b:GetName() .. "Cooldown"])
+    if b.cooldown then
+        GW.RegisterCooldown(b.cooldown)
+    elseif b.Cooldown then
+        GW.RegisterCooldown(b.Cooldown)
+    end
 end
 GW.SkinBagItemButton = reskinItemButton
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
@@ -94,7 +99,7 @@ local function getContainerFrame(bag_id)
     -- ContainerFrame assignment is not guaranteed; only safe approach is to
     -- search every ContainerFrame and check its ID for a match.
     for i = 1, NUM_CONTAINER_FRAMES do
-        local cf = _G["ContainerFrame" .. i] 
+        local cf = _G["ContainerFrame" .. i]
         if cf and cf:GetID() == bag_id then
             return cf
         end
@@ -111,7 +116,7 @@ local function reskinItemButtons()
             local iname = "ContainerFrame" .. i .. "Item" .. j
             local b = _G[iname]
             if b then
-                reskinItemButton(iname, b)
+                reskinItemButton(b)
             end
         end
     end
