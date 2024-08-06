@@ -42,6 +42,8 @@ local function SkinMerchantFrameItemButton(i)
     item:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
 
     button:GwStripTextures()
+    button:GwStyleButton()
+    button:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
     button:SetPoint("TOPLEFT", item, "TOPLEFT", 4, -4)
 
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -53,9 +55,8 @@ local function SkinMerchantFrameItemButton(i)
     iconBorder:SetAllPoints(button)
     iconBorder:SetParent(button)
 
-    hooksecurefunc(iconBorder, "SetVertexColor", function(self)
-        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-    end)
+    GW.HandleIcon(icon, true, GW.BackdropTemplates.ColorableBorderOnly)
+    GW.HandleIconBorder(iconBorder, icon.backdrop)
 
     _G["MerchantItem" .. i .. "MoneyFrame"]:ClearAllPoints()
     _G["MerchantItem" .. i .. "MoneyFrame"]:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
