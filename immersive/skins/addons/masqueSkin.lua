@@ -12,7 +12,7 @@ local function AddMasqueSkin()
         Discord = "https://discord.gg/MZZtRWt",
         Version = "1.0.0",
         Shape = "Square",
-        Masque_Version = 100105,
+        Masque_Version = 110000,
         Backdrop = {
             Texture = [[Interface/AddOns/GW2_UI/textures/addonSkins/Backdrop]],
             Color = {1,1,1,1},
