@@ -73,17 +73,8 @@ local function LoadMerchantFrameSkin()
     MerchantFrame.TopTileStreaks:Hide()
     MerchantFrame:GwCreateBackdrop()
 
-    local r = {MerchantFrame:GetRegions()}
-    local i = 1
-    local headerText
-    for _, c in pairs(r) do
-        if c:GetObjectType() == "FontString" then
-            if i == 2 then headerText = c break end
-            i = i + 1
-        end
-    end
 
-    GW.CreateFrameHeaderWithBody(MerchantFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MerchantFrameInset, MerchantMoneyInset})
+    GW.CreateFrameHeaderWithBody(MerchantFrame, MerchantFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MerchantFrameInset, MerchantMoneyInset})
     MerchantFrame.gwHeader.windowIcon:SetSize(65, 65)
     MerchantFrame.gwHeader.windowIcon:ClearAllPoints()
     MerchantFrame.gwHeader.windowIcon:SetPoint("CENTER", MerchantFrame.gwHeader.BGLEFT, "LEFT", 25, -5)
