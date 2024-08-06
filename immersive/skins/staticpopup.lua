@@ -16,6 +16,12 @@ local function gwSetStaticPopupSize()
     end
 end
 
+local function ClearSetTexture(texture, tex)
+    if tex ~= nil then
+        texture:SetTexture()
+    end
+end
+
 local function LoadStaticPopupSkin()
     if not GW.settings.STATICPOPUP_SKIN_ENABLED then return end
 
@@ -42,13 +48,28 @@ local function LoadStaticPopupSkin()
             end
         end
 
-        --Change EditBox
-        _G["StaticPopup" .. i .. "EditBoxLeft"]:Hide()
-        _G["StaticPopup" .. i .. "EditBoxRight"]:Hide()
-        _G["StaticPopup" .. i .. "EditBoxMid"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-        _G["StaticPopup" .. i .. "EditBoxMid"]:ClearAllPoints()
-        _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("TOPLEFT", _G["StaticPopup" .. i .. "EditBoxLeft"], "BOTTOMRIGHT", -25, 3)
-        _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("BOTTOMRIGHT", _G["StaticPopup" .. i .. "EditBoxRight"], "TOPLEFT", 25, -3)
+        GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameGoldMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameGoldLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameGoldRight"], nil, nil, 5)
+        GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameSilverMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameSilverLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameSilverRight"], nil, nil, 5, -10)
+        GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameCopperMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameCopperLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameCopperRight"], nil, nil, 5, -10)
+        GW.SkinTextBox(_G["StaticPopup" .. i .. "EditBoxMid"], _G["StaticPopup" .. i .. "EditBoxLeft"], _G["StaticPopup" .. i .. "EditBoxRight"], nil, nil, 5)
+        _G["StaticPopup" .. i .. "EditBox"]:SetFrameLevel(_G["StaticPopup" .. i .. "EditBox"]:GetFrameLevel() + 1)
+        _G["StaticPopup" .. i .. "EditBox"]:SetPoint("TOPLEFT", -2, -4)
+        _G["StaticPopup" .. i .. "EditBox"]:SetPoint("BOTTOMRIGHT", 2, 4)
+
+        _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:GwKill()
+        _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.9, 0.1, 0.9, 0.1)
+        _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:GwSetInside()
+
+        local itemFrame = _G["StaticPopup" .. i .. "ItemFrame"]
+        itemFrame:GwStyleButton()
+        GW.HandleIcon(itemFrame.icon, true, GW.BackdropTemplates.ColorableBorderOnly)
+        GW.HandleIconBorder(itemFrame.IconBorder, itemFrame.icon.backdrop)
+
+        local normTex = itemFrame:GetNormalTexture()
+        if normTex then
+            normTex:SetTexture()
+            hooksecurefunc(normTex, "SetTexture", ClearSetTexture)
+        end
     end
 
     hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
@@ -67,7 +88,7 @@ local function LoadStaticPopupSkin()
             local dialogName = self.closeDialog.GetName and self.closeDialog:GetName()
             local closeButton = self.closeDialog.ConfirmButton or (dialogName and _G[dialogName .. "ConfirmButton"])
             local resumeButton = self.closeDialog.ResumeButton or (dialogName and _G[dialogName .. "ResumeButton"])
-            if closeButton then 
+            if closeButton then
                 closeButton:GwSkinButton(false, true)
             end
             if resumeButton then
