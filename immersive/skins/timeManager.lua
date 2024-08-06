@@ -32,9 +32,9 @@ local function LoadTimeManagerSkin()
     local Alarm = TimeManagerAlarmTimeFrame
     Alarm.HourDropdown:ClearAllPoints()
     Alarm.HourDropdown:SetPoint("TOPLEFT", TimeManagerAlarmTimeLabel, "BOTTOMLEFT", -10, -4)
-    Alarm.HourDropdown:GwHandleDropDownBox(nil, nil, "MENU_TIME_MANAGER_HOUR")
-    Alarm.MinuteDropdown:GwHandleDropDownBox(nil, nil, "MENU_TIME_MANAGER_MINUTE")
-    Alarm.AMPMDropdown:GwHandleDropDownBox(nil, nil, "MENU_TIME_MANAGER_AMPM")
+    Alarm.HourDropdown:GwHandleDropDownBox()
+    Alarm.MinuteDropdown:GwHandleDropDownBox()
+    Alarm.AMPMDropdown:GwHandleDropDownBox()
 
     Alarm.HourDropdown:SetWidth(70)
     Alarm.MinuteDropdown:SetWidth(70)

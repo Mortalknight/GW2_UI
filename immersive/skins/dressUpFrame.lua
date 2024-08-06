@@ -40,7 +40,7 @@ local function LoadDressUpFrameSkin()
         DressUpFrame.OutfitDetailsPanel:GwCreateBackdrop(GW.BackdropTemplates.Default)
     end
 
-    DressUpFrame.OutfitDropdown:GwHandleDropDownBox(nil, nil, "MENU_DRESS_UP_MODEL")
+    DressUpFrame.OutfitDropdown:GwHandleDropDownBox()
     DressUpFrame.OutfitDropdown.SaveButton:GwSkinButton(false, true)
     DressUpFrame.OutfitDropdown.SaveButton:SetPoint("LEFT", DressUpFrame.OutfitDropdown, "RIGHT", -7, -1)
     DressUpFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()

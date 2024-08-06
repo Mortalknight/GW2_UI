@@ -451,18 +451,17 @@ local function GwSkinScrollBar(frame)
     end
 end
 
-local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdownTag)
+local function GwHandleDropDownBox(frame, hookLayout, width)
     local text = frame.Text
 	if frame.Arrow then frame.Arrow:SetAlpha(0) end
 
-	frame:SetWidth(155)
+    if not width then
+		width = 155
+	end
+
+	frame:SetWidth(width)
 	frame:GwStripTextures()
-	if backdropTemplate then
-        frame:GwCreateBackdrop(backdropTemplate, true)
-        frame.backdrop:SetBackdropColor(0, 0, 0)
-    else
-        frame:GwCreateBackdrop(GW.BackdropTemplates.StatusBar)
-    end
+    frame:GwCreateBackdrop(GW.BackdropTemplates.StatusBar)
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
     frame.backdrop:SetPoint("TOPLEFT", 5, -2)
     frame.backdrop:SetPoint("BOTTOMRIGHT", -2, -2)

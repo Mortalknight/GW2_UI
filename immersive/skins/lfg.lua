@@ -282,10 +282,10 @@ local function SkinLookingForGroupFrames()
         end
     end)
 
-    LFDQueueFrameTypeDropdown:GwHandleDropDownBox(nil, nil, "MENU_LFD_FRAME")
+    LFDQueueFrameTypeDropdown:GwHandleDropDownBox()
 
     RaidFinderFrameRoleInset:GwStripTextures()
-    RaidFinderQueueFrameSelectionDropdown:GwHandleDropDownBox(nil, nil, "MENU_RAID_FINDER_QUEUE_FRAME")
+    RaidFinderQueueFrameSelectionDropdown:GwHandleDropDownBox()
     RaidFinderFrameFindRaidButton:GwStripTextures()
     RaidFinderFrameFindRaidButton:GwSkinButton(false, true)
     RaidFinderQueueFrame:GwStripTextures()
@@ -334,9 +334,9 @@ local function SkinLookingForGroupFrames()
     EntryCreation.VoiceChat.EditBox:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
     GW.HandleBlizzardRegions(EntryCreation.VoiceChat.EditBox)
 
-    EntryCreation.GroupDropdown:GwHandleDropDownBox(nil, nil, "MENU_LFG_FRAME_GROUP")
-    EntryCreation.ActivityDropdown:GwHandleDropDownBox(nil, nil, "MENU_LFG_FRAME_GROUP_ACTIVITY")
-    EntryCreation.PlayStyleDropdown:GwHandleDropDownBox(nil, nil, "MENU_LFG_FRAME_GROUP_PLAYSTYLE")
+    EntryCreation.GroupDropdown:GwHandleDropDownBox()
+    EntryCreation.ActivityDropdown:GwHandleDropDownBox()
+    EntryCreation.PlayStyleDropdown:GwHandleDropDownBox()
 
     EntryCreation.CrossFactionGroup.CheckButton:GwSkinCheckButton()
     EntryCreation.ItemLevel.CheckButton:GwSkinCheckButton()
@@ -676,7 +676,7 @@ local function ApplyPvPUISkin()
 
     GW.HandleTrimScrollBar(HonorFrame.SpecificScrollBar, true)
     GW.HandleScrollControls(HonorFrame, "SpecificScrollBar")
-    HonorFrameTypeDropdown:GwHandleDropDownBox(nil, nil, "MENU_PVPUI_TYPE")
+    HonorFrameTypeDropdown:GwHandleDropDownBox()
     HonorFrameQueueButton:GwSkinButton(false, true)
     if PVPQueueFrame.HonorInset.RatedPanel.HonorLevelDisplay then
     end
@@ -969,7 +969,7 @@ end
 local function ApplyDelvesDifficultyPickerSkin()
     if not GW.settings.LFG_SKIN_ENABLED then return end
 
-	DelvesDifficultyPickerFrame.Dropdown:GwHandleDropDownBox(nil, nil, "MENU_DELVES_DIFFICULTY")
+	DelvesDifficultyPickerFrame.Dropdown:GwHandleDropDownBox()
 	DelvesDifficultyPickerFrame.EnterDelveButton:GwSkinButton(false, true)
 
 	hooksecurefunc(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame, "SetRewards", function(self)
