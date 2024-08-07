@@ -209,22 +209,32 @@ local function SetHyperlink(self, link)
     ScanKeystone(self, link)
 end
 
-local function SetToyByItemID(self, id)
-    if self:IsForbidden() then return end
-    if id and IsModKeyDown() then
-        self:AddLine(format(IDLine, ID, id))
+local function GameTooltip_OnTooltipSetToy(self, data)
+    if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
+
+    local spellID
+    if data then
+        spellID = data.id
+    end
+
+    if spellID then
+        self:AddLine(format(IDLine, ID, spellID))
         self:Show()
     end
 end
 
-local function SetCurrencyToken(self, index)
-    if self:IsForbidden() then return end
+local function GameTooltip_OnTooltipSetCurrency(self, data)
+    if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
 
-    local id = IsModKeyDown() and tonumber(strmatch(C_CurrencyInfo.GetCurrencyListLink(index), "currency:(%d+)"))
-    if not id then return end
+    local spellID
+    if data then
+        spellID = data.id
+    end
 
-    self:AddLine(format(IDLine, ID, id))
-    self:Show()
+    if spellID then
+        self:AddLine(format(IDLine, ID, spellID))
+        self:Show()
+    end
 end
 
 local function AddQuestID(frame)
@@ -240,17 +250,6 @@ local function AddQuestID(frame)
     end
 
     GameTooltip:Show()
-end
-
-local function SetBackpackToken(self, id)
-    if self:IsForbidden() then return end
-    if id and IsModKeyDown() then
-        local info = C_CurrencyInfo.GetBackpackCurrencyInfo(id)
-        if info and info.currencyTypesID then
-            self:AddLine(format(IDLine, ID, info.currencyTypesID))
-            self:Show()
-        end
-    end
 end
 
 local function GameTooltip_OnTooltipCleared(self)
@@ -1165,9 +1164,6 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitAura)
         hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitAura)
 
-        hooksecurefunc(GameTooltip, "SetToyByItemID", SetToyByItemID)
-        hooksecurefunc(GameTooltip, "SetCurrencyToken", SetCurrencyToken)
-        hooksecurefunc(GameTooltip, "SetBackpackToken", SetBackpackToken)
         hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
         hooksecurefunc("TaskPOI_OnEnter", AddQuestID)
         hooksecurefunc(GameTooltip, "SetHyperlink", SetHyperlink)
@@ -1188,6 +1184,9 @@ local function LoadTooltips()
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, GameTooltip_OnTooltipSetSpell)
+
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Currency, GameTooltip_OnTooltipSetCurrency)
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Toy, GameTooltip_OnTooltipSetToy)
 
         GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
         GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
