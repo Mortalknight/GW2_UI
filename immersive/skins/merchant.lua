@@ -43,7 +43,6 @@ local function SkinMerchantFrameItemButton(i)
 
     button:GwStripTextures()
     button:GwStyleButton()
-    button:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
     button:SetPoint("TOPLEFT", item, "TOPLEFT", 4, -4)
 
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
