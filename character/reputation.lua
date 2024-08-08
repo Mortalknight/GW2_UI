@@ -39,24 +39,26 @@ GW.AddForProfiling("reputation", "detailFaction", detailFaction)
 local function updateSavedReputation()
     for factionIndex = 1, C_Reputation.GetNumFactions() do
         local factionData = C_Reputation.GetFactionDataByIndex(factionIndex)
-        savedReputation[factionIndex] = {}
-        savedReputation[factionIndex].name = factionData.name
-        savedReputation[factionIndex].description = factionData.description
-        savedReputation[factionIndex].standingId = factionData.reaction
-        savedReputation[factionIndex].bottomValue = factionData.currentReactionThreshold
-        savedReputation[factionIndex].topValue = factionData.nextReactionThreshold
-        savedReputation[factionIndex].earnedValue = factionData.currentStanding
-        savedReputation[factionIndex].atWarWith = factionData.atWarWith
-        savedReputation[factionIndex].canToggleAtWar = factionData.canToggleAtWar
-        savedReputation[factionIndex].isHeader = factionData.isHeader
-        savedReputation[factionIndex].isCollapsed = factionData.isCollapsed
-        savedReputation[factionIndex].hasRep = factionData.isHeaderWithRep
-        savedReputation[factionIndex].isWatched = factionData.isWatched
-        savedReputation[factionIndex].isChild = factionData.isChild
-        savedReputation[factionIndex].factionID = factionData.factionID
-        savedReputation[factionIndex].hasBonusRepGain = factionData.hasBonusRepGain
-        savedReputation[factionIndex].canSetInactive = factionData.canSetInactive
-        savedReputation[factionIndex].isAccountWide = factionData.isAccountWide
+        if factionData then
+            savedReputation[factionIndex] = {}
+            savedReputation[factionIndex].name = factionData.name
+            savedReputation[factionIndex].description = factionData.description
+            savedReputation[factionIndex].standingId = factionData.reaction
+            savedReputation[factionIndex].bottomValue = factionData.currentReactionThreshold
+            savedReputation[factionIndex].topValue = factionData.nextReactionThreshold
+            savedReputation[factionIndex].earnedValue = factionData.currentStanding
+            savedReputation[factionIndex].atWarWith = factionData.atWarWith
+            savedReputation[factionIndex].canToggleAtWar = factionData.canToggleAtWar
+            savedReputation[factionIndex].isHeader = factionData.isHeader
+            savedReputation[factionIndex].isCollapsed = factionData.isCollapsed
+            savedReputation[factionIndex].hasRep = factionData.isHeaderWithRep
+            savedReputation[factionIndex].isWatched = factionData.isWatched
+            savedReputation[factionIndex].isChild = factionData.isChild
+            savedReputation[factionIndex].factionID = factionData.factionID
+            savedReputation[factionIndex].hasBonusRepGain = factionData.hasBonusRepGain
+            savedReputation[factionIndex].canSetInactive = factionData.canSetInactive
+            savedReputation[factionIndex].isAccountWide = factionData.isAccountWide
+        end
     end
 end
 GW.AddForProfiling("reputation", "updateSavedReputation", updateSavedReputation)
@@ -463,47 +465,49 @@ updateDetails = function()
     for idx = firstReputationCat + 1, lastReputationCat do
         local name, desc, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain = returnReputationData(idx)
 
-        if not factionID or (isHeader and not isChild) then
-            break
-        end
+        if name ~= nil then
+            if not factionID or (isHeader and not isChild) then
+                break
+            end
 
-        if expandedFactions[factionID] then
-            expCount = expCount + 1
-        end
+            if expandedFactions[factionID] then
+                expCount = expCount + 1
+            end
 
-        if isHeader and isChild and name then
-            savedHeaderName = name
-        end
+            if isHeader and isChild and name then
+                savedHeaderName = name
+            end
 
-        if not isChild then
-            savedHeaderName = ""
-        end
+            if not isChild then
+                savedHeaderName = ""
+            end
 
-        if not facData[factionID] and (not isHeader or hasRep) then
-            facData[factionID] = {}
-        end
-        if not isHeader or hasRep then
-            repCount = repCount + 1
+            if not facData[factionID] and (not isHeader or hasRep) then
+                facData[factionID] = {}
+            end
+            if not isHeader or hasRep then
+                repCount = repCount + 1
 
-            facOrder[#facOrder + 1] = factionID
-            facData[factionID].loaded = true
-            facData[factionID].factionIndex = idx
-            facData[factionID].name = name
-            facData[factionID].desc = desc
-            facData[factionID].standingId = standingId
-            facData[factionID].bottomValue = bottomValue
-            facData[factionID].topValue = topValue
-            facData[factionID].earnedValue = earnedValue
-            facData[factionID].atWarWith = atWarWith
-            facData[factionID].canToggleAtWar = canToggleAtWar
-            facData[factionID].isHeader = isHeader
-            facData[factionID].isCollapsed = isCollapsed
-            facData[factionID].hasRep = hasRep
-            facData[factionID].isWatched = isWatched
-            facData[factionID].isChild = isChild
-            facData[factionID].factionID = factionID
-            facData[factionID].hasBonusRepGain = hasBonusRepGain
-            facData[factionID].savedHeaderName = savedHeaderName
+                facOrder[#facOrder + 1] = factionID
+                facData[factionID].loaded = true
+                facData[factionID].factionIndex = idx
+                facData[factionID].name = name
+                facData[factionID].desc = desc
+                facData[factionID].standingId = standingId
+                facData[factionID].bottomValue = bottomValue
+                facData[factionID].topValue = topValue
+                facData[factionID].earnedValue = earnedValue
+                facData[factionID].atWarWith = atWarWith
+                facData[factionID].canToggleAtWar = canToggleAtWar
+                facData[factionID].isHeader = isHeader
+                facData[factionID].isCollapsed = isCollapsed
+                facData[factionID].hasRep = hasRep
+                facData[factionID].isWatched = isWatched
+                facData[factionID].isChild = isChild
+                facData[factionID].factionID = factionID
+                facData[factionID].hasBonusRepGain = hasBonusRepGain
+                facData[factionID].savedHeaderName = savedHeaderName
+            end
         end
     end
 
@@ -1022,9 +1026,9 @@ local function LoadReputation(tabContainer)
             return
         end
         updateSavedReputation()
-        if self:GetParent():IsShown() then
+       -- if self:GetParent():IsShown() then
             updateOldData()
-        end
+        --end
     end
     fmGPR.categories:SetScript("OnEvent", fnGPR_OnEvent)
     fmGPR.input:SetText(SEARCH .. "...")
