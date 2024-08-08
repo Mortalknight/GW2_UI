@@ -571,7 +571,7 @@ local function CheckKeyword(message, author)
 
             for keyword in pairs(Keywords) do
                 if lowerCaseWord == strlower(keyword) or (lowerCaseWord == strlower(GW.myname) and keyword == "%MYNAME%") then
-                    local keywordColor = GW.settings.CHAT_KEYWORDS_ALERT_COLOR
+                    local keywordColor = GW.private.CHAT_KEYWORDS_ALERT_COLOR
                     word = gsub(word, tempWord, format("%s%s|r",GW.RGBToHex(keywordColor.r, keywordColor.g, keywordColor.b), tempWord))
 
                     if letSound then

@@ -100,7 +100,7 @@ local function CreateCat(name, desc, panel, scrollFrames, visibleTabButton, icon
 end
 GW.CreateCat = CreateCat
 
-local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
     if not panel then
         return
     end
@@ -120,6 +120,7 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
     opt.isIncompatibleAddonLoaded = false
     opt.isIncompatibleAddonLoadedButOverride = false
     opt.groupHeaderName = groupHeaderName
+    opt.isPrivateSetting = isPrivateSetting
 
     if params then
         for k, v in pairs(params) do opt[k] = v end
@@ -144,7 +145,7 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
 end
 GW.AddOption = AddOption
 
-local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, groupHeaderName)
+local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, groupHeaderName, isPrivateSetting)
     if not panel then
         return
     end
@@ -163,6 +164,7 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
     opt.isIncompatibleAddonLoaded = false
     opt.isIncompatibleAddonLoadedButOverride = false
     opt.groupHeaderName = groupHeaderName
+    opt.isPrivateSetting = isPrivateSetting
 
     if params then
         for k, v in pairs(params) do opt[k] = v end
@@ -196,8 +198,8 @@ local function AddGroupHeader(panel, name)
 end
 GW.AddGroupHeader = AddGroupHeader
 
-local function AddOptionColorPicker(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+local function AddOptionColorPicker(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
 
     opt.optionType = "colorPicker"
 
@@ -205,8 +207,8 @@ local function AddOptionColorPicker(panel, name, desc, optionName, callback, par
 end
 GW.AddOptionColorPicker = AddOptionColorPicker
 
-local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons, forceNewLine, groupHeaderName)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
 
     opt.min = min
     opt.max = max
@@ -218,16 +220,16 @@ local function AddOptionSlider(panel, name, desc, optionName, callback, min, max
 end
 GW.AddOptionSlider = AddOptionSlider
 
-local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
 
     opt.multiline = multiline
     opt.optionType = "text"
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, isSound, noNewLine, forceNewLine, groupHeaderName)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, isSound, noNewLine, forceNewLine, groupHeaderName, isPrivateSetting)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
 
     opt.options = {}
     opt.options = options_list
@@ -315,13 +317,15 @@ local function checkDependenciesOnLoad()
                 if type(sv) == "table" then
                     for _, dv in ipairs(sv) do
                         allOptionsSet = false
-                        if GW.settings[sn] == dv then
+                        local isPrivateDependecy = GW.private[sn] ~= nil
+                        if isPrivateDependecy and GW.private[sn] == dv or GW.settings[sn] == dv then
                             allOptionsSet = true
                             break
                         end
                     end
                 else
-                    if GW.settings[sn] == sv then
+                    local isPrivateDependecy = GW.private[sn] ~= nil
+                    if isPrivateDependecy and GW.private[sn] == sv or GW.settings[sn] == sv then
                         allOptionsSet = true
                     else
                         allOptionsSet = false
@@ -372,7 +376,7 @@ local function loadDropDown(scrollFrame)
                 slot.optionDisplayName = scrollFrame.data.options_names[idx]
 
                 if scrollFrame.data.hasCheckbox then
-                    local settingstable = GW.settings[scrollFrame.data.optionName]
+                    local settingstable = scrollFrame.of.isPrivateSetting and GW.private[scrollFrame.data.optionName] or GW.settings[scrollFrame.data.optionName]
                     if type(settingstable[scrollFrame.data.options[idx]]) == "table" then
                         slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]].enable)
                     else
@@ -411,7 +415,11 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting)
         for _, of in pairs(panel.options) do
             if of.optionName == setting then
                 if setSetting then
-                    GW.settings[setting] = value
+                    if of.isPrivateSetting then
+                        GW.private[setting] = value
+                    else
+                        GW.settings[setting] = value
+                    end
                 end
                 if of.optionType == "slider" then
                     of.slider:SetValue(value)
@@ -517,6 +525,7 @@ local function InitPanel(panel, hasScroll)
         of.newLine = newLine
         of.optionType = v.optionType
         of.groupHeaderName = v.groupHeaderName
+        of.isPrivateSetting = v.isPrivateSetting
         --need this for searchables
         of.forceNewLine = v.forceNewLine
 
@@ -561,13 +570,13 @@ local function InitPanel(panel, hasScroll)
         of:SetScript("OnLeave", GameTooltip_Hide)
 
         if v.optionType == "colorPicker" then
-            local color = GW.settings[of.optionName]
+            local color = of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]
             of.button.bg:SetColorTexture(color.r, color.g, color.b)
             of.button:SetScript("OnClick", function()
                 if ColorPickerFrame:IsShown() then
                     HideUIPanel(ColorPickerFrame)
                 else
-                    color = GW.settings[of.optionName]
+                    color = of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]
                     ShowColorPicker(color.r, color.g, color.b, nil, function(restore)
                         if ColorPickerFrame.noColorCallback then return end
                         local newR, newG, newB
@@ -580,11 +589,15 @@ local function InitPanel(panel, hasScroll)
                         end
                         -- Update our internal storage.
 
-                        local color = GW.settings[of.optionName]
+                        local color = of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]
                         color.r = newR
                         color.g = newG
                         color.b = newB
-                        GW.settings[of.optionName] = color
+                        if of.isPrivateSetting then
+                            GW.private[of.optionName] = color
+                        else
+                            GW.settings[of.optionName] = color
+                        end
                         of.button.bg:SetColorTexture(newR, newG, newB)
                     end)
                 end
@@ -622,7 +635,11 @@ local function InitPanel(panel, hasScroll)
                             of.container:Show()
                         end
 
-                        GW.settings[self.optionName] = self.option
+                        if of.isPrivateSetting then
+                            GW.private[self.optionName] = self.option
+                        else
+                            GW.settings[self.optionName] = self.option
+                        end
 
                         if v.callback then
                             v.callback(self.option)
@@ -636,10 +653,18 @@ local function InitPanel(panel, hasScroll)
                             toSet = true
                         end
 
-                        if type(GW.settings[self:GetParent().optionName][self:GetParent().option]) == "table" then
-                            GW.settings[self:GetParent().optionName][self:GetParent().option].enable = toSet
+                        if of.isPrivateSetting then
+                            if type(GW.private[self:GetParent().optionName][self:GetParent().option]) == "table" then
+                                GW.private[self:GetParent().optionName][self:GetParent().option].enable = toSet
+                            else
+                                GW.private[self:GetParent().optionName][self:GetParent().option] = toSet
+                            end
                         else
-                            GW.settings[self:GetParent().optionName][self:GetParent().option] = toSet
+                            if type(GW.settings[self:GetParent().optionName][self:GetParent().option]) == "table" then
+                                GW.settings[self:GetParent().optionName][self:GetParent().option].enable = toSet
+                            else
+                                GW.settings[self:GetParent().optionName][self:GetParent().option] = toSet
+                            end
                         end
 
                         if v.callback then
@@ -690,9 +715,16 @@ local function InitPanel(panel, hasScroll)
             loadDropDown(scrollFrame)
             -- set current settings value
             for key, val in pairs(v.options) do
-                if GW.settings[of.optionName] == val then
-                    of.button.string:SetText(v.options_names[key])
-                    break
+                if of.isPrivateSetting then
+                    if GW.private[of.optionName] == val then
+                        of.button.string:SetText(v.options_names[key])
+                        break
+                    end
+                else
+                    if GW.settings[of.optionName] == val then
+                        of.button.string:SetText(v.options_names[key])
+                        break
+                    end
                 end
             end
 
@@ -732,7 +764,7 @@ local function InitPanel(panel, hasScroll)
             )
         elseif v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
-            of.slider:SetValue(RoundDec(GW.settings[of.optionName]))
+            of.slider:SetValue(RoundDec((of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName])))
             if v.step then of.slider:SetValueStep(v.step) end
             of.slider:SetObeyStepOnDrag(true)
             of.slider:SetScript(
@@ -748,19 +780,24 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetValue(GW.settings[of.optionName])
+                        self:SetValue(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName])
                         return
                     end
                     local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
-                    GW.settings[of.optionName] = tonumber(roundValue)
+                    if of.isPrivateSetting then
+                        GW.private[of.optionName] = tonumber(roundValue)
+                    else
+                        GW.settings[of.optionName] = tonumber(roundValue)
+                    end
+
                     self:GetParent().inputFrame.input:SetText(roundValue)
                     if v.callback then
                         v.callback()
                     end
                 end
             )
-            of.inputFrame.input:SetText(RoundDec(GW.settings[of.optionName], of.decimalNumbers))
+            of.inputFrame.input:SetText(RoundDec(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName], of.decimalNumbers))
             of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
@@ -774,7 +811,7 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetText(RoundDec(GW.settings[of.optionName], of.decimalNumbers))
+                        self:SetText(RoundDec(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName], of.decimalNumbers))
                         return
                     end
                     local roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
@@ -789,14 +826,18 @@ local function InitPanel(panel, hasScroll)
                     end
                     self:GetParent():GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
-                    GW.settings[v.optionName] = tonumber(roundValue)
+                    if of.isPrivateSetting then
+                        GW.private[of.optionName] = tonumber(roundValue)
+                    else
+                        GW.settings[of.optionName] = tonumber(roundValue)
+                    end
                     if v.callback then
                         v.callback()
                     end
                 end
             )
         elseif v.optionType == "text" then
-            of.inputFrame.input:SetText(GW.settings[of.optionName] or "")
+            of.inputFrame.input:SetText(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName] or "")
             of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
@@ -810,18 +851,22 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetText(GW.settings[of.optionName] or "")
+                        self:SetText(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName] or "")
                         return
                     end
                     self:ClearFocus()
-                    GW.settings[of.optionName] = self:GetText()
+                    if of.isPrivateSetting then
+                        GW.private[of.optionName] = self:GetText()
+                    else
+                        GW.settings[of.optionName] = self:GetText()
+                    end
                     if v.callback then
                         v.callback(self)
                     end
                 end
             )
         elseif v.optionType == "boolean" then
-            of.checkbutton:SetChecked(GW.settings[of.optionName])
+            of.checkbutton:SetChecked(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName])
             of.checkbutton:SetScript(
                 "OnClick",
                 function(self, button)
@@ -843,7 +888,11 @@ local function InitPanel(panel, hasScroll)
                     if self:GetChecked() then
                         toSet = true
                     end
-                    GW.settings[of.optionName] = toSet
+                    if of.isPrivateSetting then
+                        GW.private[of.optionName] = toSet
+                    else
+                        GW.settings[of.optionName] = toSet
+                    end
 
                     if v.callback then
                         v.callback(toSet, of.optionName)
@@ -872,7 +921,11 @@ local function InitPanel(panel, hasScroll)
                         toSet = false
                     end
                     self.checkbutton:SetChecked(toSet)
-                    GW.settings[of.optionName] = toSet
+                    if of.isPrivateSetting then
+                        GW.private[of.optionName] = toSet
+                    else
+                        GW.settings[of.optionName] = toSet
+                    end
 
                     if v.callback ~= nil then
                         v.callback(toSet, of.optionName)
@@ -915,7 +968,7 @@ local function InitPanel(panel, hasScroll)
         if of.perSpec then
             local onUpdate = function (self)
                 self:SetScript("OnUpdate", nil)
-                local val = GW.settings[of.optionName]
+                local val = of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]
 
                 if v.optionType == "dropdown" then
                     for i,value in pairs(v.options) do

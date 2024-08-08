@@ -7,7 +7,8 @@ GW.privateDefaults = {
         Layouts = {},
         PLAYER_TRACKED_DODGEBAR_SPELL = "",
         PLAYER_TRACKED_DODGEBAR_SPELL_ID = 0,
-        ISKAARAN_FISHING_NET_DATA = {}
+        ISKAARAN_FISHING_NET_DATA = {},
+        CHAT_KEYWORDS_ALERT_COLOR= {r = .5, g = .5, b = .5},
     },
 }
 
@@ -519,7 +520,6 @@ GW.globalDefault = {
         CHAT_CLASS_COLOR_MENTIONS= true,
         CHAT_KEYWORDS= "%MYNAME%",
         CHAT_KEYWORDS_ALERT_NEW= "GW2_UI: Ping",
-        CHAT_KEYWORDS_ALERT_COLOR= {r = .5, g = .5, b = .5},
         CHAT_KEYWORDS_EMOJI= true,
         CHAT_SOCIAL_LINK= true,
         CHAT_ADD_TIMESTAMP_TO_ALL= true,
