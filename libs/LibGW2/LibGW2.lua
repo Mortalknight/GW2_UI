@@ -6,12 +6,7 @@ if not lib then return end
 local CallbackHandler = LibStub:GetLibrary("CallbackHandler-1.0")
 local CoordsStopTimer = nil
 local CoordsTicker = nil
-local activeDragonridingBuffs = {}
-
-local dragonridingBuffIds = {
-    [430747] = true,    -- evoker
-    [783] = true,       -- druid
-}
+local VIGOR_BAR_ID = 631
 
 lib.callbacks = CallbackHandler:New(lib)
 
@@ -26,8 +21,9 @@ lib.locationData = {
     xText = nil,
     yText = nil
 }
-lib.isDragonRiding = false
+lib.isDragonRiding = nil
 
+--/dump GW2_ADDON.Libs.GW2Lib:IsPlayerDragonRiding()
 function lib:IsPlayerDragonRiding()
     return lib.isDragonRiding
 end
@@ -131,75 +127,26 @@ do
         end
     end
 
-    local function CheckDragonridingBuffsOnLogin()
-        for id, _ in pairs(dragonridingBuffIds) do
-            local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(id)
-            if auraInfo then
-                activeDragonridingBuffs[auraInfo.auraInstanceID] = auraInfo
-                return true
-            end
+    local function IsSkyriding(canSkyriding, isLogin)
+        if canSkyriding == nil then
+            canSkyriding = select(2, C_PlayerInfo.GetGlidingInfo())
         end
-        return false
-    end
-
-    local function UpdateDragonRidingState(isLogin, useDelay, dragonridingBuffActive)
-        if dragonridingBuffActive then
-            lib.isDragonRiding = true
-        elseif IsMounted() then
-            local dragonridingSpellIds = C_MountJournal.GetCollectedDragonridingMounts()
-            lib.isDragonRiding = false
-            for _, mountId in ipairs(dragonridingSpellIds) do
-                local spellId = select(2, C_MountJournal.GetMountInfoByID(mountId))
-                if C_UnitAuras.GetPlayerAuraBySpellID(spellId) then
-                    lib.isDragonRiding = true
-                    break
-                end
-            end
-        elseif isLogin then
-            lib.isDragonRiding = CheckDragonridingBuffsOnLogin()
-        else
-            lib.isDragonRiding = false
-        end
-        if useDelay then
-            C_Timer.After(1, function()
-                UpdateDragonRidingState(true)
-            end)
-        else
+        if canSkyriding ~= lib.isDragonRiding then
+            lib.isDragonRiding = canSkyriding
             lib.callbacks:Fire("GW2_PLAYER_DRAGONRIDING_STATE_CHANGE", lib.isDragonRiding, isLogin)
         end
     end
-
     local function HandleEvents(_, event, ...)
         if event == "CRITERIA_UPDATE" or event == "PLAYER_STOPPED_MOVING" or event == "PLAYER_CONTROL_GAINED" then
             CoordsWatcherStop(event)
         elseif event == "PLAYER_STARTED_MOVING" or event == "PLAYER_CONTROL_LOST" then
             CoordsWatcherStart()
-        elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
-            UpdateDragonRidingState()
+        elseif event == "PLAYER_CAN_GLIDE_CHANGED" then
+            local canSkyriding = ...
+            IsSkyriding(canSkyriding)
         elseif event == "PLAYER_ENTERING_WORLD" then
             local isLogin, isReload = ...
-            UpdateDragonRidingState(isLogin or isReload, true)
-        elseif event == "UNIT_AURA" then
-            local updateInfo = select(2, ...)
-            if updateInfo.addedAuras then
-                for _, data in next, updateInfo.addedAuras do
-                    if dragonridingBuffIds[data.spellId] then
-                        activeDragonridingBuffs[data.auraInstanceID] = data
-                        UpdateDragonRidingState(nil, nil, true)
-                        break
-                    end
-                end
-            end
-
-            if updateInfo.removedAuraInstanceIDs then
-				for _, auraInstanceID in next, updateInfo.removedAuraInstanceIDs do
-                    if activeDragonridingBuffs[auraInstanceID] then
-                        activeDragonridingBuffs[auraInstanceID] = nil
-                        UpdateDragonRidingState(nil, nil, false)
-                        break
-                    end
-                end
-            end
+            IsSkyriding(nil, isLogin or isReload)
         else
             MapInfoUpdateMapId()
             lib.locationData.instanceMapID = select(8, GetInstanceInfo())
@@ -213,13 +160,12 @@ do
     frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     frame:RegisterEvent("ZONE_CHANGED")
     frame:RegisterEvent("ZONE_CHANGED_INDOORS")
-    frame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
     frame:RegisterEvent("CRITERIA_UPDATE")
     frame:RegisterEvent("PLAYER_STARTED_MOVING")
     frame:RegisterEvent("PLAYER_STOPPED_MOVING")
     frame:RegisterEvent("PLAYER_CONTROL_LOST")
     frame:RegisterEvent("PLAYER_CONTROL_GAINED")
-    frame:RegisterUnitEvent("UNIT_AURA", "player")
+    frame:RegisterEvent("PLAYER_CAN_GLIDE_CHANGED")
     frame:SetScript("OnEvent", HandleEvents)
 end
