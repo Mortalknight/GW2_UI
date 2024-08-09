@@ -186,6 +186,9 @@ function QuestPlayerMixin:SetupModel()
         -- and reset these params based on current form
         foot_offset = foot_offset - 10
         offsetX = -90
+    elseif raceID == 10 then
+        -- tweak for blood elf
+        foot_offset = foot_offset - 15
     elseif raceID == 1 then
         -- tweaks for humans        
         foot_offset = foot_offset - 15

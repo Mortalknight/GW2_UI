@@ -49,6 +49,14 @@ local T = {
     [1817113] = 1.35, -- wolf genn
     [5353632] = 1.3, -- magni
     [5492980] = 1.5, -- moira
+    [2168127] = 1.1, -- memory of a duke
+    [3952870] = 1.1, -- thrall
+    [1100258] = 1.35, -- liadrin
+    [119369] = 1.8, -- izzy
+    [1022598]= 1.15, -- zenata
+    [959310] = 1.35, -- dalyngrigge
+    [3730980] = 2.6, -- reese
+    [5165026] = 2.6, -- squally
 }
 GW.QUESTVIEW_MODEL_TWEAKS = T
 
