@@ -264,7 +264,7 @@ local function OnAuraChange(self)
         end
     end
     if not foundBuff then
-        self.versatilityButton.icon:SetTexture(GetSpellTexture(1126))
+        self.versatilityButton.icon:SetTexture(C_Spell.GetSpellTexture(1126))
     end
     setButtonStyle(self.versatilityButton, foundBuff)
 
