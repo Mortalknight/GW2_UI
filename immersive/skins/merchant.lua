@@ -123,7 +123,7 @@ local function LoadMerchantFrameSkin()
         text:SetPoint("CENTER", tab, "CENTER", (tab.deselectedTextX or 0), (tab.deselectedTextY or 2))
     end)
 
-    for i = 1, BUYBACK_ITEMS_PER_PAGE do
+    for i = 1, MERCHANT_ITEMS_PER_PAGE do
         SkinMerchantFrameItemButton(i)
     end
 
