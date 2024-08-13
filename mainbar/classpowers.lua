@@ -10,7 +10,7 @@ local CPF_HOOKED_TO_TARGETFRAME = false
 
 local function UpdateVisibility(self, inCombat)
     if self.onlyShowInCombat then
-       self:SetShown(inCombat and self.shouldShowBar)
+        self:SetShown(inCombat and self.shouldShowBar)
     else
         self:SetShown(self.shouldShowBar)
     end
@@ -728,7 +728,7 @@ local function setWarrior(f)
         f:SetScript("OnEvent", powerEnrage)
         powerEnrage(f)
         f:RegisterUnitEvent("UNIT_AURA", "player")
-    elseif GW.myspec == 3 then     -- prot
+    elseif GW.myspec == 3 then -- prot
         -- determine if bolster talent is selected
         setPowerTYpeBolster(f.customResourceBar)
         f.gw_BolsterSelected = GW.IsSpellTalented(12975)
@@ -962,42 +962,65 @@ RUNE_TIMER_ANIMATIONS[3] = 0
 RUNE_TIMER_ANIMATIONS[4] = 0
 RUNE_TIMER_ANIMATIONS[5] = 0
 RUNE_TIMER_ANIMATIONS[6] = 0
+
+-- cache rune data table
+local RUNE_PROGRESS = {
+    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
+    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
+    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
+    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
+    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
+    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
+}
+
+
+
 local function powerRune(self)
     local f = self
     local fr = self.runeBar
+
+    --cache the rune data so we can sort it
     for i = 1, 6 do
-        local rune_start, rune_duration, rune_ready = GetRuneCooldown(i)
-        if rune_start == nil then
-            rune_start = GetTime()
-            rune_duration = 0
+        RUNE_PROGRESS[i].rune_start, RUNE_PROGRESS[i].rune_duration, RUNE_PROGRESS[i].rune_ready = GetRuneCooldown(i)
+        if RUNE_PROGRESS[i].rune_start ~= nil then
+            RUNE_PROGRESS[i].progress = (GetTime() - RUNE_PROGRESS[i].rune_start) / RUNE_PROGRESS[i].rune_duration
+        else
+            RUNE_PROGRESS[i].progress = 1
         end
+       
+   
+    end
+    table.sort(RUNE_PROGRESS, function(a, b) return a.progress > b.progress end)
+    for i = 1, 6 do
         local fFill = fr["runeTexFill" .. i]
         local fTex = fr["runeTex" .. i]
         local animId = "RUNE_TIMER_ANIMATIONS" .. i
-        if rune_ready and fFill then
+        if RUNE_PROGRESS[i].rune_ready and fFill then
             fFill:SetTexCoord(0.5, 1, 0, 1)
             fFill:SetHeight(32)
-            fFill:SetVertexColor(1, 1, 1)
+            fFill:SetVertexColor(1, 1, 1, 1)
+            fFill:SetDesaturated(false)
             if animations[animId] then
                 animations[animId].completed = true
                 animations[animId].duration = 0
             end
         else
-            if rune_start == 0 then
+            if RUNE_PROGRESS[i].rune_start == 0 then
                 return
             end
 
             AddToAnimation(
                 animId,
-                RUNE_TIMER_ANIMATIONS[i],
+                RUNE_PROGRESS[i].progress,
                 1,
-                rune_start,
-                rune_duration,
+                RUNE_PROGRESS[i].rune_start,
+                RUNE_PROGRESS[i].rune_duration,
                 function()
                     local value = math.min(1, math.max(0, 0.6 * animations[animId].progress))
                     fFill:SetTexCoord(0.5, 1, 1 - animations[animId].progress, 1)
                     fFill:SetHeight(32 * animations[animId].progress)
-                    fFill:SetVertexColor(1, value, value)
+                    fFill:SetVertexColor(1, 1, 1, 0.5)
+                    fFill:SetDesaturated(true)
                 end,
                 "noease",
                 function()
@@ -1015,10 +1038,11 @@ local function powerRune(self)
                     )
                 end
             )
-            RUNE_TIMER_ANIMATIONS[i] = 0
+            
         end
         fTex:SetTexCoord(0, 0.5, 0, 1)
     end
+
 end
 GW.AddForProfiling("classpowers", "powerRune", powerRune)
 
@@ -1043,6 +1067,7 @@ local function setDeathKnight(f)
     for i = 1, 6 do
         local fFill = fr["runeTexFill" .. i]
         local fTex = fr["runeTex" .. i]
+        
         fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
         fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
     end
@@ -1717,8 +1742,10 @@ local function LoadClassPowers()
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
     if GW.settings.POWERBAR_ENABLED then
-        local anchorFrame = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame or GwPlayerPowerBar
-        local barWidth = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
+        local anchorFrame = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame or
+            GwPlayerPowerBar
+        local barWidth = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and
+            GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
         local lmb = GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
         lmb.customMaskSize = 64
         lmb.bar = lmb
