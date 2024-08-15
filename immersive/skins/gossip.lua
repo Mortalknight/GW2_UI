@@ -686,7 +686,6 @@ local function LoadGossipSkin()
         local numKey = tonumber(key)
         local foundUsableKey = false
         if numKey~=nil and  gossipOptionPointer[numKey]~=nil then 
-            gossipOptionPointer[numKey]:GetHighlightTexture():SetAlpha(1)
             gossipOptionPointer[numKey]:Click()
             foundUsableKey = true
         end
