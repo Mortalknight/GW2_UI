@@ -481,7 +481,7 @@ end
 function QuestViewMixin:OnKeyDown(key)
     local inCombat = InCombatLockdown()
     local interact1,interact2 = GetBindingKey("INTERACTTARGET")
-    if key == "SPACE" or ((key == interact1 and interact1 ~= nil) or (key == interact2 and interact1 ~= nil)) then
+    if key == "SPACE" or ((key == interact1 and interact1 ~= nil) or (key == interact2 and interact2 ~= nil)) then
         if not inCombat then
             self:SetPropagateKeyboardInput(false)
         end
