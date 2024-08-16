@@ -411,13 +411,13 @@ local function UpdateAuraHeader(header, settingName)
         header:SetAttribute("weaponTemplate", aura_tmpl)
     end
 
-    local index = 1
-    local child = select(index, header:GetChildren())
-    while child do
+    for index, child in next, {header:GetChildren()} do
         child:SetSize(size, size)
 
-        index = index + 1
-        child = select(index, header:GetChildren())
+        --icons arent being hidden when you reduce the amount of maximum buttons
+        if index > (maxWraps * wrapAfter) and child:IsShown() then
+            child:Hide()
+        end
     end
 
     -- set anchoring
