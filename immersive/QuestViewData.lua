@@ -57,6 +57,7 @@ local T = {
     [959310] = 1.35, -- dalyngrigge
     [3730980] = 2.6, -- reese
     [5165026] = 2.6, -- squally
+    [4066013] = 0.9, -- garz
 }
 GW.QUESTVIEW_MODEL_TWEAKS = T
 
