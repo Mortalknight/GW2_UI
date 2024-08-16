@@ -58,6 +58,13 @@ local T = {
     [3730980] = 2.6, -- reese
     [5165026] = 2.6, -- squally
     [4066013] = 0.9, -- garz
+    [5548261] = 1.4, -- baelgrim
+    [5484812] = 1.35, -- brinthe
+    [5548259] = 1.35, -- rannida
+    [5339030] = 1.4, -- skitter
+    [5767091] = 1.5, -- dagan
+    [5482015] = 1.0, -- sum'latha
+    [5221517] = 0.95, -- kish'nal
 }
 GW.QUESTVIEW_MODEL_TWEAKS = T
 
@@ -105,6 +112,11 @@ local M = {
     [2016] = "SL/tazavesh",
     [1978] = "DF/default",
     [2022] = "DF/waking_shore",
-    [2133] = "DF/zaralek"
+    [2133] = "DF/zaralek",
+    [2248] = "TWW/isle_of_dorn",
+    [2339] = "TWW/dornogal",
+    [2214] = "TWW/ringing_deeps",
+    [2215] = "TWW/hallowfall",
+    [2255] = "TWW/azj_kahet",
 }
 GW.QUESTVIEW_MAP_BGS = M
