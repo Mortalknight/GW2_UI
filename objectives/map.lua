@@ -288,38 +288,6 @@ local function ToogleMinimapFpsLable()
 end
 GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
-
---Copyed from blizzard code 
-
---- this part can be removed with 11.0.2
-local MINIMAP_FILTER_SETTINGS_ENTRY = {
-    [Enum.MinimapTrackingFilter.AccountCompletedQuests] = "PROXY_ACCOUNT_COMPLETED_QUEST_FILTERING",
-    [Enum.MinimapTrackingFilter.TrivialQuests] = "PROXY_TRIVIAL_QUEST_FILTERING",
-};
-
-local function HasSettingsEntry(filterID)
-    return MINIMAP_FILTER_SETTINGS_ENTRY[filterID] ~= nil;
-end
-
-local function SetSettingsEntry(filterID, selected)
-    local settingsEntry = MINIMAP_FILTER_SETTINGS_ENTRY[filterID];
-    if not settingsEntry or not Settings.GetSetting(settingsEntry) then
-        return;
-    end
-
-    Settings.SetValue(settingsEntry, selected);
-end
-
-local function SetTrackingFilterByFilterIndex(filterIndex, set)
-    local filter = C_Minimap.GetTrackingFilter(filterIndex);
-    if filter and filter.filterID and HasSettingsEntry(filter.filterID) then
-        SetSettingsEntry(filter.filterID, set);
-    end
-
-    C_Minimap.SetTracking(filterIndex, set);
-end
----end
-
 local function CreatePredictedTrackingState()
     local tbl = {};
     local state = {};
@@ -327,8 +295,7 @@ local function CreatePredictedTrackingState()
     tbl.SetSelected = function(self, index, selected)
         state[index] = selected;
 
-        --MinimapUtil.SetTrackingFilterByFilterIndex(index, selected); -- 11.0.2
-        SetTrackingFilterByFilterIndex(index, selected)
+        MinimapUtil.SetTrackingFilterByFilterIndex(index, selected); -- 11.0.2
     end
 
     -- Some filters (like trivial quest tracking) can be changed from other places in the UI (like the Options panel or the World Map)
