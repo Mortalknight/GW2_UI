@@ -38,6 +38,7 @@ local function SkinMerchantFrameItemButton(i)
     local icon = button.icon
     local iconBorder = button.IconBorder
     local item = _G["MerchantItem" .. i]
+
     item:GwStripTextures(true)
     item:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
 
@@ -59,6 +60,8 @@ local function SkinMerchantFrameItemButton(i)
 
     _G["MerchantItem" .. i .. "MoneyFrame"]:ClearAllPoints()
     _G["MerchantItem" .. i .. "MoneyFrame"]:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
+
+    item.isGw2Skinned = true
 end
 GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
 
@@ -124,7 +127,9 @@ local function LoadMerchantFrameSkin()
     end)
 
     for i = 1, MERCHANT_ITEMS_PER_PAGE do
-        SkinMerchantFrameItemButton(i)
+        if not _G["MerchantItem" .. i].isGw2Skinned then
+            SkinMerchantFrameItemButton(i)
+        end
     end
 
     MerchantBuyBackItemItemButton:GwStripTextures()

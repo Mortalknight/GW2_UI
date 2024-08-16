@@ -59,9 +59,9 @@ local function SetUpExtendedVendor()
     for i = 1, MERCHANT_ITEMS_PER_PAGE do
         if not _G["MerchantItem" .. i] then
             CreateFrame("Frame", "MerchantItem" .. i, MerchantFrame, "MerchantItemTemplate")
-            if GW.settings.MERCHANT_SKIN_ENABLED then
-                GW.SkinMerchantFrameItemButton(i)
-            end
+        end
+        if GW.settings.MERCHANT_SKIN_ENABLED and not _G["MerchantItem" .. i].isGw2Skinned then
+            GW.SkinMerchantFrameItemButton(i)
         end
     end
 
