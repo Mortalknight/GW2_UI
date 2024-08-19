@@ -4,11 +4,18 @@ local NeedStanceButtonStyling = false
 local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10
 local WispSplode = [[Interface\Icons\Spell_Nature_WispSplode]]
 
-local function UpdateCooldown()
+local function UpdateVisibility(self)
+    if not self then return end
+    RegisterStateDriver(self, "visibility", (not GW.settings.StanceBarEnabled or GetNumShapeshiftForms() == 0) and "hide" or "[vehicleui][petbattle] hide; show")
+end
+GW.UpdateStanceBarVisibility = UpdateVisibility
+
+local function UpdateCooldown(self)
     local numForms = GetNumShapeshiftForms()
     for i = 1, NUM_STANCE_SLOTS do
         if i <= numForms then
-            local cooldown = _G["GwStanceBarButton" .. i .. "Cooldown"]
+            local button = self.buttons[i]
+            local cooldown = button and button.cooldown
             local start, duration, active = GetShapeshiftFormCooldown(i)
             if (active and active ~= 0) and start > 0 and duration > 0 then
                 cooldown:SetCooldown(start, duration)
@@ -116,13 +123,13 @@ end
 
 local function UpdateKeybinds()
     for i = 1, NUM_STANCE_SLOTS do
-		local button = _G['GwStanceBarButton'..i]
-		if not button then break end
+        local button = _G['GwStanceBarButton'..i]
+        if not button then break end
 
-		button.HotKey:SetText(GetBindingKey('SHAPESHIFTBUTTON'..i))
+        button.HotKey:SetText(GetBindingKey('SHAPESHIFTBUTTON'..i))
         GW.updateHotkey(button)
         GW.FixHotKeyPosition(button, true)
-	end
+    end
 end
 
 local function AdjustMaxStanceButtons(self)
@@ -155,12 +162,7 @@ local function AdjustMaxStanceButtons(self)
     PositionsAndSize(self)
     StyleStanceBarButtons()
     UpdateKeybinds()
-
-    if numButtons == 0 then
-        self:Hide()
-    else
-        self:Show()
-    end
+    UpdateVisibility(self)
 end
 
 local function StanceButton_OnEvent(self, event)
@@ -182,7 +184,7 @@ local function StanceButton_OnEvent(self, event)
             NeedStanceButtonStyling = false
         end
     elseif event == "UPDATE_SHAPESHIFT_COOLDOWN" then
-        UpdateCooldown()
+        UpdateCooldown(self)
     elseif event == "UPDATE_BINDINGS" then
         UpdateKeybinds()
     end
@@ -209,7 +211,8 @@ local function CreateStanceBarButtonHolder()
     StanceButtonHolder:RegisterEvent("UPDATE_BINDINGS")
     StanceButtonHolder:SetScript("OnEvent", StanceButton_OnEvent)
 
-    GW.MixinHideDuringPetAndOverride(StanceButtonHolder)
+    UpdateVisibility(StanceButtonHolder)
+
     return StanceButtonHolder
 end
 

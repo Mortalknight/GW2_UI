@@ -361,6 +361,7 @@ local function LoadActionbarPanel(sWindow)
     )
 
     -- STANCEBAR
+    addOption(stanceBar.scroll.scrollchild, ENABLE, nil, "StanceBarEnabled", function() GW.UpdateStanceBarVisibility(GwStanceBar) end, nil, {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, "Actionbars")    
     addOptionDropdown(
         stanceBar.scroll.scrollchild,
         L["Stance Bar Growth Direction"],
@@ -372,7 +373,7 @@ local function LoadActionbarPanel(sWindow)
         {"UP", "DOWN", "LEFT", "RIGHT"},
         {StrUpper(L["Up"], 1, 1), StrUpper(L["Down"], 1, 1), L["Left"], L["Right"]},
         nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
+        {["StanceBarEnabled"] = true, ["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
         nil,
         "Actionbars"
     )

@@ -476,6 +476,7 @@ GW.globalDefault = {
         StanceBar_pos_scale= 1,
         StanceBar_GrowDirection= "UP",
         StanceBarContainerState= "close",
+        StanceBarEnabled = true,
 
         PowerBar_pos= {
             point= "BOTTOMLEFT",
