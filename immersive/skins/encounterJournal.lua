@@ -325,18 +325,11 @@ local function encounterJournalSkin()
     EncounterInfo.instanceTitle:SetPoint("BOTTOM", EncounterInfo.bossesScroll, "TOP", 10, 15)
 
     EncounterInfo.difficulty:GwStripTextures()
-    EncounterInfo.reset:GwStripTextures()
 
     -- buttons
     EncounterInfo.difficulty:ClearAllPoints()
     EncounterInfo.difficulty:SetPoint("BOTTOMRIGHT", EncounterJournalEncounterFrameInfoBG, "TOPRIGHT", -5, 7)
-    HandleButton(EncounterInfo.reset)
     EncounterInfo.difficulty:GwHandleDropDownBox(nil, true, nil, 120)
-
-    EncounterInfo.reset:ClearAllPoints()
-    EncounterInfo.reset:SetPoint("TOPRIGHT",EncounterInfo.difficulty, "TOPLEFT", -10, 0)
-    EncounterJournalEncounterFrameInfoResetButtonTexture:SetTexture([[Interface\EncounterJournal\UI-EncounterJournalTextures]])
-    EncounterJournalEncounterFrameInfoResetButtonTexture:SetTexCoord(0.90625000, 0.94726563, 0.00097656, 0.02050781)
 
     EncounterInfo.LootContainer.filter:ClearAllPoints()
     EncounterInfo.LootContainer.filter:SetPoint('RIGHT', EncounterInfo.difficulty, 'LEFT', -120, 0)
