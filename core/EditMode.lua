@@ -24,6 +24,11 @@ local function ApplyBlizzardEditModeChanges(self)
         return
     end
     -- do that in the users profile, if this is not editable we create a gw2 profile with needed actionbar settings
+    if not LEMO:IsReady() then
+        C_Timer.After(0, function() ApplyBlizzardEditModeChanges(self) end)
+        return
+    end
+
     LEMO:LoadLayouts()
     local doesGw2LayoutExists = LEMO:DoesLayoutExist("GW2_Layout")
     if not LEMO:CanEditActiveLayout() or not doesGw2LayoutExists then
