@@ -146,8 +146,16 @@ local function addTimer(block, duration, startTime)
 
     block:SetHeight(block:GetHeight() + 15)
 
+    block.TimerBar:ClearAllPoints()
+    if block.StatusBar:IsShown() then
+        block.TimerBar:SetPoint("BOTTOMRIGHT", block.StatusBar, 0, -20)
+    else
+        block.TimerBar:SetPoint("BOTTOMRIGHT", block.ObjectiveText)
+    end
+
     block:SetScript("OnUpdate", TimerBarOnUpdate)
 end
+
 
 local function addObjective(block, text, finished, firstunfinishedobjectiv, qty, totalqty, eligible, timerShown, duration, starTime)
     if finished or not text then
