@@ -76,6 +76,8 @@ local function getObjectiveBlock(self, firstunfinishedobjectiv)
     end
 
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
+    newBlock.TimerBar:Hide()
+    newBlock.TimerBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
 
     return newBlock
 end
@@ -102,7 +104,52 @@ local function getBlock(blockIndex)
 end
 GW.AddForProfiling("achievement", "getBlock", getBlock)
 
-local function addObjective(block, text, finished, firstunfinishedobjectiv, qty, totalqty, eligible)
+
+local START_PERCENTAGE_YELLOW = .66;
+local START_PERCENTAGE_RED = .33;
+local function GetTextColor(self, timeRemaining)
+	local elapsed = self.duration - timeRemaining;
+	local percentageLeft = 1 - ( elapsed / self.duration )
+	if percentageLeft > START_PERCENTAGE_YELLOW then
+		return 1, 1, 1;
+	elseif percentageLeft > START_PERCENTAGE_RED then -- Start fading to yellow by eliminating blue
+		local blueOffset = (percentageLeft - START_PERCENTAGE_RED) / (START_PERCENTAGE_YELLOW - START_PERCENTAGE_RED);
+		return 1, 1, blueOffset;
+	else
+		local greenOffset = percentageLeft / START_PERCENTAGE_RED; -- Fade to red by eliminating green
+		return 1, greenOffset, 0;
+	end
+end
+
+local function TimerBarOnUpdate(self)
+    local timeNow = GetTime()
+	local timeRemaining = self.duration - (timeNow - self.startTime)
+	self.TimerBar:SetValue(timeRemaining)
+    if timeRemaining < 0 then
+		-- hold at 0 for a moment
+		if timeRemaining > -1 then
+			timeRemaining = 0;
+        else
+            self.TimerBar:Hide()
+            GW.UpdateAchievementLayout(GwQuesttrackerContainerAchievement)
+		end
+	end
+	self.TimerBar.Label:SetText(SecondsToClock(timeRemaining))
+	self.TimerBar.Label:SetTextColor(GetTextColor(self, timeRemaining))
+end
+
+local function addTimer(block, duration, startTime)
+    block.TimerBar:Show()
+    block.TimerBar:SetMinMaxValues(0, duration)
+    block.startTime = startTime;
+    block.duration = duration;
+
+    block:SetHeight(block:GetHeight() + 15)
+
+    block:SetScript("OnUpdate", TimerBarOnUpdate)
+end
+
+local function addObjective(block, text, finished, firstunfinishedobjectiv, qty, totalqty, eligible, timerShown, duration, starTime)
     if finished or not text then
         return
     end
@@ -134,11 +181,15 @@ local function addObjective(block, text, finished, firstunfinishedobjectiv, qty,
         end
         objectiveBlock:SetHeight(h)
     end
+
+    if timerShown then
+        addTimer(objectiveBlock, duration, starTime)
+    end
     block.height = block.height + objectiveBlock:GetHeight()
 end
 GW.AddForProfiling("achievement", "addObjective", addObjective)
 
-local function updateAchievementObjectives(block)
+local function updateAchievementObjectives(block, parent)
     local numIncomplete = 0
     local numCriteria = GetAchievementNumCriteria(block.id)
     local description = select(8, GetAchievementInfo(block.id))
@@ -149,7 +200,7 @@ local function updateAchievementObjectives(block)
 
     if numCriteria > 0 then
         for criteriaIndex = 1, numCriteria do
-            local criteriaString, criteriaType, criteriaCompleted, quantity, totalQuantity, _, flags, assetID, quantityString, _, eligible = GetAchievementCriteriaInfo(block.id, criteriaIndex)
+            local criteriaString, criteriaType, criteriaCompleted, quantity, totalQuantity, _, flags, assetID, quantityString, _, eligible, duration, elapsed = GetAchievementCriteriaInfo(block.id, criteriaIndex)
 
             if not criteriaCompleted then
                 numIncomplete = numIncomplete + 1
@@ -179,7 +230,8 @@ local function updateAchievementObjectives(block)
                 end
             end
 
-            addObjective(block, criteriaString, criteriaCompleted, firstunfinishedobjectiv, quantity, totalQuantity, eligible)
+            local needTimer = duration and elapsed and elapsed < duration
+            addObjective(block, criteriaString, criteriaCompleted, firstunfinishedobjectiv, quantity, totalQuantity, eligible, needTimer, duration, GetTime() - elapsed)
 
             if numIncomplete == MAX_OBJECTIVES then
                 addObjective(block, "...", false, firstunfinishedobjectiv, nil, nil, true)
@@ -187,7 +239,28 @@ local function updateAchievementObjectives(block)
             end
         end
     else
-        addObjective(block, description, false, true, nil, nil, true)
+        -- single criteria type of achievement
+		-- check if we're supposed to show a timer bar for this
+		local timerShown = false;
+		local timerFailed = false;
+		local timerCriteriaDuration = 0;
+		local timerCriteriaStartTime = 0;
+		for _, timedCriteria in pairs(parent.timedCriteria) do
+			if timedCriteria.achievementID == block.id then
+				local elapsed = GetTime() - timedCriteria.startTime;
+				if elapsed <= timedCriteria.duration then
+					timerCriteriaDuration = timedCriteria.duration;
+					timerCriteriaStartTime = timedCriteria.startTime;
+					timerShown = true;
+				else
+					timerFailed = true;
+				end
+				break;
+			end
+		end
+        local eligible = (not timerFailed and IsAchievementEligible(block.id)) and true or false
+
+        addObjective(block, description, false, true, nil, nil, eligible, timerShown, timerCriteriaDuration, timerCriteriaStartTime)
     end
 
     for i = block.numObjectives + 1, 20 do
@@ -200,7 +273,7 @@ local function updateAchievementObjectives(block)
 end
 GW.AddForProfiling("achievement", "updateAchievementObjectives", updateAchievementObjectives)
 
-local function updateAchievementLayout(self)
+local function updateAchievementLayout(self, event, ...)
     local savedHeight = 1
     local shownIndex = 1
     local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
@@ -212,6 +285,22 @@ local function updateAchievementLayout(self)
         self.header:Show()
         numQuests = 0
         savedHeight = 20
+    end
+
+    if event == "TRACKED_ACHIEVEMENT_UPDATE" then
+        local achievementID, criteriaID, elapsed, duration = ...;
+		if elapsed and duration then
+			-- we're already handling timer bars for achievements with visible criteria
+			-- we use this system to handle timer bars for the rest
+			local numCriteria = GetAchievementNumCriteria(achievementID)
+			if numCriteria == 0 then
+				local timedCriteria = self.timedCriteria[criteriaID] or {}
+				timedCriteria.achievementID = achievementID
+				timedCriteria.startTime = GetTime() - elapsed
+				timedCriteria.duration = duration
+				self.timedCriteria[criteriaID] = timedCriteria
+			end
+		end
     end
 
     for i = 1, numQuests do
@@ -230,7 +319,7 @@ local function updateAchievementLayout(self)
                 return
             end
             block.id = achievementID
-            updateAchievementObjectives(block)
+            updateAchievementObjectives(block, self)
 
             block.Header:SetText(achievementName)
 
@@ -250,6 +339,7 @@ local function updateAchievementLayout(self)
     for i = shownIndex, 25 do
         if _G["GwAchivementBlock" .. i] ~= nil then
             _G["GwAchivementBlock" .. i]:Hide()
+            _G["GwAchivementBlock" .. i]:SetScript("OnUpdate", nil)
         end
     end
 
@@ -294,6 +384,8 @@ local function LoadAchievementFrame()
         TRACKER_TYPE_COLOR.ACHIEVEMENT.g,
         TRACKER_TYPE_COLOR.ACHIEVEMENT.b
     )
+
+    GwQuesttrackerContainerAchievement.timedCriteria = {}
 
     updateAchievementLayout(GwQuesttrackerContainerAchievement)
 end

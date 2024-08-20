@@ -232,6 +232,8 @@ local function CreateObjectiveNormal(name, parent)
     f.ObjectiveText:SetShadowOffset(-1, 1)
     f.StatusBar.progress:SetFont(UNIT_NAME_FONT, 11)
     f.StatusBar.progress:SetShadowOffset(-1, 1)
+    f.TimerBar.Label:SetFont(UNIT_NAME_FONT, 11)
+    f.TimerBar.Label:SetShadowOffset(-1, 1)
     if f.StatusBar.animationOld == nil then
         f.StatusBar.animationOld = 0
     end
@@ -362,6 +364,8 @@ local function CreateTrackerObject(name, parent)
         f.groupButton:SetScale(scale * 0.9)
     end)
 
+    --Mixin(f, QuestObjectiveTrackerMixin)
+    --f:SetScript("OnClick", function(_, button) print(111, f.id) f:OnBlockHeaderClick(f,button) end)
     return f
 end
 GW.CreateTrackerObject = CreateTrackerObject
@@ -603,45 +607,69 @@ end
 GW.UpdateQuestItem = UpdateQuestItem
 
 local function OnBlockClick(self, button, isHeader)
-    if button == "RightButton" then
-        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-            rootDescription:CreateTitle(C_QuestLog.GetTitleForQuestID(self.id))
-            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function()
-                QuestUtil.OpenQuestDetails(self.id)
-            end)
-            rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()
-                C_QuestLog.RemoveQuestWatch(self.id)
-            end)
-            if C_QuestLog.IsPushableQuest(self.id) and IsInGroup() then
-                rootDescription:CreateButton(SHARE_QUEST, function()
-                    QuestUtil.ShareQuest(self.id)
-                end)
-            end
-            rootDescription:CreateButton(OBJECTIVES_SHOW_QUEST_MAP, function()
-                QuestMapFrame_OpenToQuestDetails(self.id)
-            end)
-        end)
-
-        return
-    end
-
     if ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
         return
     end
 
-    if isHeader and not IsModifiedClick("QUESTWATCHTOGGLE") then
+    if isHeader and button ~= "RightButton" and not IsModifiedClick("QUESTWATCHTOGGLE") then
         C_SuperTrack.SetSuperTrackedQuestID(self.questID)
         return
     end
 
     if button ~= "RightButton" then
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        if IsModifiedClick("QUESTWATCHTOGGLE") then
-            C_QuestLog.RemoveQuestWatch(self.questID)
-        else
-            QuestMapFrame_OpenToQuestDetails(self.questID)
-        end
-    end
+		local questID = self.id;
+		if IsModifiedClick("QUESTWATCHTOGGLE") then
+			C_QuestLog.RemoveQuestWatch(questID);
+		else
+			local quest = QuestCache:Get(questID);
+			if quest.isAutoComplete and quest:IsComplete() then
+				self:RemoveAutoQuestPopUp(questID);
+				ShowQuestComplete(questID);
+			else
+				QuestMapFrame_OpenToQuestDetails(questID);
+			end
+		end
+	else
+		MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
+			rootDescription:SetTag("MENU_QUEST_OBJECTIVE_TRACKER");
+
+			local questID = self.id;
+			rootDescription:CreateTitle(C_QuestLog.GetTitleForQuestID(questID));
+
+			if C_SuperTrack.GetSuperTrackedQuestID() ~= questID then
+				rootDescription:CreateButton(SUPER_TRACK_QUEST, function()
+					C_SuperTrack.SetSuperTrackedQuestID(questID);
+				end);
+			else
+				rootDescription:CreateButton(STOP_SUPER_TRACK_QUEST, function()
+					C_SuperTrack.SetSuperTrackedQuestID(0);
+				end);
+			end
+
+			local toggleDetailsText = QuestUtil.IsShowingQuestDetails(questID) and OBJECTIVES_HIDE_VIEW_IN_QUESTLOG or OBJECTIVES_VIEW_IN_QUESTLOG;
+
+			rootDescription:CreateButton(toggleDetailsText, function()
+				QuestUtil.OpenQuestDetails(questID);
+			end);
+
+			rootDescription:CreateButton(OBJECTIVES_SHOW_QUEST_MAP, function()
+				QuestMapFrame_OpenToQuestDetails(questID);
+			end);
+
+			rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()
+				C_QuestLog.RemoveQuestWatch(questID);
+			end);
+
+			if C_QuestLog.IsPushableQuest(questID) and IsInGroup() then
+				rootDescription:CreateButton(SHARE_QUEST, function()
+					QuestUtil.ShareQuest(questID);
+				end);
+			end
+			rootDescription:CreateButton(ABANDON_QUEST_ABBREV, function()
+				QuestMapQuestOptions_AbandonQuest(questID);
+			end);
+		end);
+	end
 end
 AFP("OnBlockClick", OnBlockClick)
 
