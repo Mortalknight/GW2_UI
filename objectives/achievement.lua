@@ -102,7 +102,7 @@ local function getBlock(blockIndex)
 end
 GW.AddForProfiling("achievement", "getBlock", getBlock)
 
-local function addObjective(block, text, finished, firstunfinishedobjectiv, qty, totalqty)
+local function addObjective(block, text, finished, firstunfinishedobjectiv, qty, totalqty, eligible)
     if finished or not text then
         return
     end
@@ -113,7 +113,11 @@ local function addObjective(block, text, finished, firstunfinishedobjectiv, qty,
     objectiveBlock:Show()
     objectiveBlock.ObjectiveText:SetText(FormatObjectiveNumbers(text))
     objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
-    objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
+    if eligible then
+        objectiveBlock.ObjectiveText:SetTextColor(DIM_RED_FONT_COLOR.r, DIM_RED_FONT_COLOR.g, DIM_RED_FONT_COLOR.b)
+    else
+        objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
+    end
 
     if ParseObjectiveString(objectiveBlock, text, nil, nil, qty, totalqty) then
         --added progressbar in ParseObjectiveString
@@ -145,21 +149,13 @@ local function updateAchievementObjectives(block)
 
     if numCriteria > 0 then
         for criteriaIndex = 1, numCriteria do
-            local criteriaString,
-                criteriaType,
-                criteriaCompleted,
-                quantity,
-                totalQuantity,
-                _,
-                flags,
-                assetID,
-                quantityString = GetAchievementCriteriaInfo(block.id, criteriaIndex)
+            local criteriaString, criteriaType, criteriaCompleted, quantity, totalQuantity, _, flags, assetID, quantityString, _, eligible = GetAchievementCriteriaInfo(block.id, criteriaIndex)
 
             if not criteriaCompleted then
                 numIncomplete = numIncomplete + 1
             end
 
-            if numIncomplete == 1 then 
+            if numIncomplete == 1 then
                 firstunfinishedobjectiv = true
             else
                 firstunfinishedobjectiv = false
@@ -182,7 +178,8 @@ local function updateAchievementObjectives(block)
                     _, criteriaString = GetAchievementInfo(assetID)
                 end
             end
-            addObjective(block, criteriaString, criteriaCompleted, firstunfinishedobjectiv, quantity, totalQuantity)
+
+            addObjective(block, criteriaString, criteriaCompleted, firstunfinishedobjectiv, quantity, totalQuantity, eligible)
 
             if numIncomplete == MAX_OBJECTIVES then
                 addObjective(block, "...", false, firstunfinishedobjectiv)
