@@ -114,9 +114,9 @@ local function addObjective(block, text, finished, firstunfinishedobjectiv, qty,
     objectiveBlock.ObjectiveText:SetText(FormatObjectiveNumbers(text))
     objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
     if eligible then
-        objectiveBlock.ObjectiveText:SetTextColor(DIM_RED_FONT_COLOR.r, DIM_RED_FONT_COLOR.g, DIM_RED_FONT_COLOR.b)
-    else
         objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
+    else
+        objectiveBlock.ObjectiveText:SetTextColor(DIM_RED_FONT_COLOR.r, DIM_RED_FONT_COLOR.g, DIM_RED_FONT_COLOR.b)
     end
 
     if ParseObjectiveString(objectiveBlock, text, nil, nil, qty, totalqty) then
@@ -182,12 +182,12 @@ local function updateAchievementObjectives(block)
             addObjective(block, criteriaString, criteriaCompleted, firstunfinishedobjectiv, quantity, totalQuantity, eligible)
 
             if numIncomplete == MAX_OBJECTIVES then
-                addObjective(block, "...", false, firstunfinishedobjectiv)
+                addObjective(block, "...", false, firstunfinishedobjectiv, nil, nil, true)
                 break
             end
         end
     else
-        addObjective(block, description, false, true)
+        addObjective(block, description, false, true, nil, nil, true)
     end
 
     for i = block.numObjectives + 1, 20 do
