@@ -1,3 +1,24 @@
+7.2.0
+NEW
+    - Talent frame skin
+    - Tooltip Item Count now has options Include Reagents and Include Warband
+    - Keybind support for immersive questing
+    - Keybind support for gossip skin
+    - Stancebar can now be disabled
+    - DK runes now get sorted based on there progress
+    - Add timer to tracked achievements
+    - New immersive questing backgrounds for TWW
+
+CHANGES
+    - Chat frame alert color is now saved per character
+    - Update some skins
+    - Update imported debuffs
+
+FIXES
+    - EJ skin error
+    - Raid frame ignored auras works again
+    - Fix GW2_Layout creation process
+
 7.1.0
 NEW
     - Added option to skin blizzards default actionbars
