@@ -322,6 +322,7 @@ local function UpdateTokenSkins(frame)
             if child.Content then
                 child.Content.Name:SetFont(UNIT_NAME_FONT, 12)
                 child.Content.Count:SetFont(UNIT_NAME_FONT, 12)
+                child.Content.WatchedCurrencyCheck:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon")
             end
 
             if child.elementData then
