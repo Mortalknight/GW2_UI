@@ -237,14 +237,7 @@ local function SkinLookingForGroupFrames()
 
     local tabs = {PVEFrameTab1, PVEFrameTab2, PVEFrameTab3, PVEFrameTab4}
     for _, tab in pairs(tabs) do
-        GW.HandleTabs(tab, true)
-        tab:HookScript("OnClick", function(self)
-            for _, t in pairs(tabs) do
-                if t:GetName() ~= self:GetName() then
-                    t.hover:SetAlpha(0)
-                end
-            end
-        end)
+        GW.HandleTabs(tab)
     end
 
 	if ScenarioQueueFrame then

@@ -291,14 +291,7 @@ local function encounterJournalSkin()
 
     local tabs = {EncounterJournalMonthlyActivitiesTab, EncounterJournalSuggestTab, EncounterJournalDungeonTab, EncounterJournalRaidTab, EncounterJournalLootJournalTab}
     for _, tab in pairs(tabs) do
-        GW.HandleTabs(tab, true)
-        tab:HookScript("OnClick", function(self)
-            for _, t in pairs(tabs) do
-                if t:GetName() ~= self:GetName() then
-                    t.hover:SetAlpha(0)
-                end
-            end
-        end)
+        GW.HandleTabs(tab)
     end
 
     EncounterJournalMonthlyActivitiesFrame.HelpButton:GwKill()

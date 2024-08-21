@@ -210,7 +210,6 @@ inventory\extendVendor.lua
 
 immersive\skins\skins.xml
 immersive\skins\achievements.xml
-immersive\skins\worldmap.xml
 immersive\toast.xml
 immersive\alertPosition.lua
 immersive\alerts.lua

@@ -128,18 +128,11 @@ local function skinPlayerSpells()
     TalentsFrame.PvPTalentList.backdrop:SetFrameLevel(2000)
 
     for _, tab in next, { PlayerSpellsFrame.TabSystem:GetChildren() } do
-        GW.HandleTabs(tab, true)
-        tab:HookScript("OnClick", function(self)
-            for _, t in next, { PlayerSpellsFrame.TabSystem:GetChildren() } do
-                if t ~= self then
-                    t.hover:SetAlpha(0)
-                end
-            end
-        end)
+        GW.HandleTabs(tab)
     end
 
     PlayerSpellsFrame.TabSystem:ClearAllPoints()
-    PlayerSpellsFrame.TabSystem:SetPoint("TOPLEFT", PlayerSpellsFrame, "BOTTOMLEFT", -3, 0)
+    PlayerSpellsFrame.TabSystem:SetPoint("TOPLEFT", PlayerSpellsFrame, "BOTTOMLEFT", 0, 0)
 
     if ClassTalentLoadoutImportDialog then
         HandleTalentFrameDialog(ClassTalentLoadoutImportDialog)
@@ -200,13 +193,6 @@ local function skinPlayerSpells()
 
         for _, tab in next, { SpellBookFrame.CategoryTabSystem:GetChildren() } do
             GW.HandleTabs(tab, true)
-            tab:HookScript("OnClick", function(self)
-                for _, t in next, { SpellBookFrame.CategoryTabSystem:GetChildren() } do
-                    if t ~= self then
-                        t.hover:SetAlpha(0)
-                    end
-                end
-            end)
         end
 
         local PagedSpellsFrame = PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame

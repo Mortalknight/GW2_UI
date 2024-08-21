@@ -449,28 +449,37 @@ local tabs = {
     "Right"
 }
 
-local function HandleTabs(tab, skinAsButton)
-    for _, object in pairs(tabs) do
-        local textureName = tab:GetName() and _G[tab:GetName() .. object]
-        if textureName then
-            textureName:SetTexture()
-        elseif tab[object] then
-            tab[object]:SetTexture()
+local function HandleTabs(self, isTop)
+    if self and not self.isSkinned then
+        self:GwStripTextures()
+        self:GetFontString():SetTextColor(1, 1, 1, 1)
+        self:GetFontString():SetShadowOffset(0, 0)
+
+        local tex = self:CreateTexture(nil, "BACKGROUND")
+        tex:SetPoint("LEFT", self, "LEFT")
+        tex:SetPoint("TOP", self, "TOP")
+        tex:SetPoint("BOTTOM", self, "BOTTOM")
+        tex:SetPoint("RIGHT", self, "RIGHT")
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
+        self.tex = tex
+        self.tex:SetAlpha(1)
+
+        self.borderFrame = CreateFrame("Frame", nil, self, "GwLightButtonBorder")
+
+        self.background = self:CreateTexture(nil, "BACKGROUND", nil, -7)
+        self.background:SetAllPoints(self)
+        self.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
+        if not isTop then
+            self.background:SetTexCoord(0, 1, 1, 0)
+            self.borderFrame.bottom:Show()
+            self.borderFrame.top:Hide()
+        else
+            self.borderFrame.bottom:Hide()
+            self.borderFrame.top:Show()
         end
-    end
 
-    local highlightTex = tab.GetHighlightTexture and tab:GetHighlightTexture()
-    if highlightTex then
-        highlightTex:SetTexture()
-    else
-        tab:GwStripTextures()
+        self.isSkinned = true
     end
-
-    if skinAsButton then
-        tab:GwSkinButton(false, true)
-    end
-    tab:SetHitRectInsets(0, 0, 0, 0)
-    tab:GetFontString():SetTextColor(0, 0, 0)
 end
 GW.HandleTabs = HandleTabs
 
