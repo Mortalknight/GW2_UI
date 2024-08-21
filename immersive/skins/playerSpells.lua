@@ -1,5 +1,11 @@
 local _, GW = ...
 
+local LFGRoleEnumToString = {
+	[Enum.LFGRole.Tank] = "TANK",
+	[Enum.LFGRole.Healer] = "HEALER",
+	[Enum.LFGRole.Damage] = "DAMAGER",
+};
+
 local function SkinAddonButtons()
     if PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_LinkToChatButton then
         PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_LinkToChatButton:GwSkinButton(false, true)
@@ -24,6 +30,14 @@ local function SkinAddonButtons()
         PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.Forward:Hide()
         PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.LeftText:SetTextColor(1, 1, 1)
         PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.RightText:SetTextColor(1, 1, 1)
+    end
+
+    if PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider then
+        PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.Slider:GwSkinSliderFrame()
+        PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.Back:Hide()
+        PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.Forward:Hide()
+        PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.LeftText:SetTextColor(1, 1, 1)
+        PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.RightText:SetTextColor(1, 1, 1)
     end
 end
 
@@ -52,6 +66,18 @@ local function UpdateSpecFrame(frame)
         if not specContentFrame.IsSkinned then
             specContentFrame.ActivateButton:GwSkinButton(false, true)
 
+            local role = LFGRoleEnumToString[GetSpecializationRoleEnum(specContentFrame.specIndex, false, false)]
+            specContentFrame.Description:SetTextColor(1, 1, 1)
+            specContentFrame.RoleName:SetTextColor(1, 1, 1)
+            specContentFrame.RoleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
+
+            if role == "DAMAGER" then
+                specContentFrame.RoleIcon:SetTexCoord(0.75, 1, 0.75, 1)
+            elseif role == "TANK" then
+                specContentFrame.RoleIcon:SetTexCoord(0.75, 1, 0.5, 0.75)
+            elseif role == "HEALER" then
+                specContentFrame.RoleIcon:SetTexCoord(0.25, 0.5, 0.75, 1)
+            end
             if specContentFrame.SpellButtonPool then
                 for button in specContentFrame.SpellButtonPool:EnumerateActive() do
                     if button.Ring then
@@ -188,6 +214,7 @@ local function skinPlayerSpells()
         SpellBookFrame.SearchBox:SetHeight(20)
         SpellBookFrame.HidePassivesCheckButton.Button:GwSkinCheckButton()
         SpellBookFrame.HidePassivesCheckButton.Button:SetSize(20, 20)
+        SpellBookFrame.HidePassivesCheckButton.Label:SetTextColor(1, 1, 1)
 
         SpellBookFrame.HelpPlateButton:GwKill()
 
