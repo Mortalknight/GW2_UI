@@ -50,7 +50,9 @@ end
 GW.AddForProfiling("achievement", "achievement_OnClick", achievement_OnClick)
 
 local function getObjectiveBlock(self, firstunfinishedobjectiv)
-    if _G[self:GetName() .. "GwAchievementObjective" .. self.numObjectives] ~= nil then
+    if _G[self:GetName() .. "GwAchievementObjective" .. self.numObjectives] then
+        _G[self:GetName() .. "GwAchievementObjective" .. self.numObjectives]:SetScript("OnUpdate", nil)
+
         return _G[self:GetName() .. "GwAchievementObjective" .. self.numObjectives]
     end
 
@@ -192,6 +194,8 @@ local function addObjective(block, text, finished, firstunfinishedobjectiv, qty,
 
     if timerShown then
         addTimer(objectiveBlock, duration, starTime)
+    else
+        objectiveBlock.TimerBar:Hide()
     end
     block.height = block.height + objectiveBlock:GetHeight()
 end
@@ -347,7 +351,6 @@ local function updateAchievementLayout(self, event, ...)
     for i = shownIndex, 25 do
         if _G["GwAchivementBlock" .. i] ~= nil then
             _G["GwAchivementBlock" .. i]:Hide()
-            _G["GwAchivementBlock" .. i]:SetScript("OnUpdate", nil)
         end
     end
 
