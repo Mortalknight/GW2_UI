@@ -1,13 +1,8 @@
 local _, GW = ...
 
-local function UpdateSelection(frame)
-    if not frame.backdrop then return end
-
-    if frame.SelectedTexture:IsShown() then
-        frame.backdrop:SetBackdropBorderColor(1, 0.8, 0)
-    else
-        frame.backdrop:SetBackdropBorderColor(0, 0, 0)
-    end
+local function ReskinConfirmIcon(frame)
+    GW.HandleIcon(frame.Icon, true)
+    GW.HandleIconBorder(frame.IconBorder, frame.Icon.backdrop)
 end
 
 local r, g, b = C_Item.GetItemQualityColor(Enum.ItemQuality.Epic or 4)
@@ -22,22 +17,83 @@ local function SkinRewardIcon(itemFrame)
     end
 end
 
-local function SkinActivityFrame(frame, isObject)
-    if frame.Border then
-        if isObject then
-            frame.Border:SetAlpha(0)
-            frame.SelectedTexture:SetAlpha(0)
-            hooksecurefunc(frame, "SetSelectionState", UpdateSelection)
-            hooksecurefunc(frame.ItemFrame, "SetDisplayedItem", SkinRewardIcon)
-        else
-            frame.Border:SetTexCoord(0.926, 1, 0, 1)
-            frame.Border:SetSize(25, 137)
-            frame.Border:SetPoint("LEFT", frame, "RIGHT", 3, 0)
+local function SelectReward(reward)
+    local selection = reward.confirmSelectionFrame
+    if selection then
+        WeeklyRewardsFrameNameFrame:Hide()
+        ReskinConfirmIcon(selection.ItemFrame)
+
+        local alsoItems = selection.AlsoItemsFrame
+        if alsoItems and alsoItems.pool then
+            for items in alsoItems.pool:EnumerateActive() do
+                ReskinConfirmIcon(items)
+            end
         end
     end
+end
 
-    if frame.Background then
-        frame.Background:GwCreateBackdrop()
+local function UpdateOverlay(frame)
+    local overlay = frame.Overlay
+    if overlay then
+        overlay:GwStripTextures()
+        if not overlay.SetBackdrop then
+            _G.Mixin(overlay, _G.BackdropTemplateMixin)
+            overlay:HookScript("OnSizeChanged", overlay.OnBackdropSizeChanged)
+        end
+        overlay:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+        overlay:SetBackdropBorderColor(1, 0.99, 0.85)
+    end
+end
+
+local function HandleWarning(frame)
+    frame:GwStripTextures()
+    frame:GwCreateBackdrop("Transparent")
+    frame.ExtraBG:Hide()
+end
+
+local function UpdateSelection(frame)
+    if not frame.backdrop then return end
+
+    if frame.SelectedTexture:IsShown() then
+        frame.backdrop:SetBackdropBorderColor(1, 0.8, 0)
+    else
+        frame.backdrop:SetBackdropBorderColor(0, 0, 0)
+    end
+end
+
+
+local function SkinActivityFrame(frame, isObject)
+    if not frame then return end
+
+
+    if isObject then
+        if frame.Border then
+            frame.Border:SetAlpha(0)
+        end
+
+        if frame.ItemFrame then
+            hooksecurefunc(frame.ItemFrame, "SetDisplayedItem", SkinRewardIcon)
+        elseif frame.UnselectedFrame then
+            frame:GwCreateBackdrop("Transparent")
+            frame.SelectedTexture:SetAlpha(0)
+            frame.UnselectedFrame:SetAlpha(0)
+
+            hooksecurefunc(frame, "SetSelectionState", UpdateSelection)
+        end
+    else
+        if frame.Border then
+            frame.Border:SetTexCoord(.926, 1, 0, 1)
+            frame.Border:SetPoint("LEFT", frame, "RIGHT", 3, 0)
+            frame.Border:SetSize(25, 137)
+        end
+
+        if frame.Background and frame.Name then
+            frame.Background:SetSize(390, 140)
+            frame.Background:SetDrawLayer("ARTWORK", 2)
+
+            frame.Background:GwCreateBackdrop("Transparent")
+            frame.Background.backdrop.Center:SetDrawLayer("ARTWORK", 1)
+        end
     end
 end
 
@@ -49,26 +105,23 @@ local function ReplaceIconString(self, text)
     if count > 0 then self:SetFormattedText("%s", newText) end
 end
 
-local function ReskinConfirmIcon(frame)
-    GW.HandleIcon(frame.Icon, true)
-    GW.HandleIconBorder(frame.IconBorder, frame.Icon.backdrop)
-end
-
 local function ApplyWeeklyRewardsSkin()
     if not GW.settings.WEEKLY_REWARDS_SKIN_ENABLED then return end
 
     WeeklyRewardsFrame:GwStripTextures()
-    local tex = WeeklyRewardsFrame:CreateTexture(nil, "BACKGROUND")
-    tex:SetPoint("TOP", WeeklyRewardsFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = WeeklyRewardsFrame:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    WeeklyRewardsFrame.tex = tex
+    GW.CreateFrameHeaderWithBody(WeeklyRewardsFrame, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {WeeklyRewardsFrame})
+
+
+    WeeklyRewardsFrame.BorderContainer:GwStripTextures()
+    WeeklyRewardsFrame.ConcessionFrame:GwStripTextures()
 
     WeeklyRewardsFrame.HeaderFrame:GwStripTextures()
     WeeklyRewardsFrame.HeaderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    WeeklyRewardsFrame.HeaderFrame.backdrop:SetFrameLevel(WeeklyRewardsFrame:GetFrameLevel() + 1)
     WeeklyRewardsFrame.HeaderFrame:ClearAllPoints()
     WeeklyRewardsFrame.HeaderFrame:SetPoint("TOP", 1, -42)
+    WeeklyRewardsFrame.HeaderFrame.Text:ClearAllPoints()
+    WeeklyRewardsFrame.HeaderFrame.Text:SetPoint("CENTER")
 
     WeeklyRewardsFrame.CloseButton:GwSkinButton(true)
     WeeklyRewardsFrame.CloseButton:SetSize(25, 25)
@@ -77,42 +130,25 @@ local function ApplyWeeklyRewardsSkin()
     SkinActivityFrame(WeeklyRewardsFrame.RaidFrame)
     SkinActivityFrame(WeeklyRewardsFrame.MythicFrame)
     SkinActivityFrame(WeeklyRewardsFrame.PVPFrame)
+    SkinActivityFrame(WeeklyRewardsFrame.WorldFrame)
 
     for _, activity in pairs(WeeklyRewardsFrame.Activities) do
         SkinActivityFrame(activity, true)
     end
 
-    hooksecurefunc(WeeklyRewardsFrame, "SelectReward", function(reward)
-        local selection = reward.confirmSelectionFrame
-        if selection then
-            _G.WeeklyRewardsFrameNameFrame:Hide()
-            ReskinConfirmIcon(selection.ItemFrame)
-
-            local alsoItems = selection.AlsoItemsFrame
-            if alsoItems and alsoItems.pool then
-                for items in alsoItems.pool:EnumerateActive() do
-                    ReskinConfirmIcon(items)
-                end
-            end
-        end
-    end)
-
-    hooksecurefunc(WeeklyRewardsFrame, "UpdateOverlay", function()
-        local overlay = WeeklyRewardsFrame.Overlay
-        if overlay then
-            overlay:GwStripTextures()
-            if not overlay.SetBackdrop then
-                _G.Mixin(overlay, _G.BackdropTemplateMixin)
-                overlay:HookScript("OnSizeChanged", overlay.OnBackdropSizeChanged)
-            end
-            overlay:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-            overlay:SetBackdropBorderColor(1, 0.99, 0.85)
-        end
-    end)
-
     local rewardText = WeeklyRewardsFrame.ConcessionFrame.RewardsFrame.Text
-    ReplaceIconString(rewardText)
-    hooksecurefunc(rewardText, "SetText", ReplaceIconString)
+    if rewardText then
+        ReplaceIconString(rewardText)
+        hooksecurefunc(rewardText, "SetText", ReplaceIconString)
+    end
+
+    if WeeklyRewardExpirationWarningDialog then
+        WeeklyRewardExpirationWarningDialog:SetPoint("TOP", WeeklyRewardsFrame, "BOTTOM", 0, -1)
+        WeeklyRewardExpirationWarningDialog.NineSlice:HookScript("OnShow", HandleWarning)
+    end
+
+    hooksecurefunc(WeeklyRewardsFrame, "SelectReward", SelectReward)
+    hooksecurefunc(WeeklyRewardsFrame, "UpdateOverlay", UpdateOverlay)
 end
 
 local function LoadWeeklyRewardsSkin()
