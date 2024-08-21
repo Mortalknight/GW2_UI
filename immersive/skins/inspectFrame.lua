@@ -55,7 +55,7 @@ local function SkinInspectFrameOnLoad()
         _G["InspectFrameTab" .. i]:SetSize(80, 24)
         if i > 1 then
             _G["InspectFrameTab" .. i]:ClearAllPoints()
-            _G["InspectFrameTab" .. i]:SetPoint("RIGHT",  _G["InspectFrameTab" .. i - 1], "RIGHT", 75, 0)
+            _G["InspectFrameTab" .. i]:SetPoint("LEFT",  _G["InspectFrameTab" .. i - 1], "RIGHT", 0, 0)
         end
     end
 

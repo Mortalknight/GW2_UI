@@ -236,8 +236,14 @@ local function SkinLookingForGroupFrames()
     end)
 
     local tabs = {PVEFrameTab1, PVEFrameTab2, PVEFrameTab3, PVEFrameTab4}
-    for _, tab in pairs(tabs) do
+    for id, tab in pairs(tabs) do
         GW.HandleTabs(tab)
+        tab:ClearAllPoints()
+        if id == 1 then
+            tab:SetPoint('BOTTOMLEFT', PVEFrame, 'BOTTOMLEFT', 0, -32)
+        else
+            tab:SetPoint('TOPLEFT', _G["PVEFrameTab" .. id - 1], 'TOPRIGHT', 0, 0)
+        end
     end
 
 	if ScenarioQueueFrame then

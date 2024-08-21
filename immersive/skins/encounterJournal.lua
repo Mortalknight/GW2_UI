@@ -289,10 +289,32 @@ local function encounterJournalSkin()
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
     GW.HandleScrollControls(InstanceSelect)
 
-    local tabs = {EncounterJournalMonthlyActivitiesTab, EncounterJournalSuggestTab, EncounterJournalDungeonTab, EncounterJournalRaidTab, EncounterJournalLootJournalTab}
-    for _, tab in pairs(tabs) do
-        GW.HandleTabs(tab)
-    end
+    for _, tab in next, {
+		EncounterJournalSuggestTab,
+		EncounterJournalDungeonTab,
+		EncounterJournalRaidTab,
+		EncounterJournalLootJournalTab,
+		EncounterJournalMonthlyActivitiesTab
+	} do
+		GW.HandleTabs(tab)
+	end
+
+    EncounterJournalMonthlyActivitiesTab:ClearAllPoints()
+	EncounterJournalMonthlyActivitiesTab:SetPoint('TOPLEFT', EncounterJournal, 'BOTTOMLEFT', 0, 0)
+
+	EncounterJournalSuggestTab:ClearAllPoints()
+	EncounterJournalSuggestTab:SetPoint('LEFT', EncounterJournalMonthlyActivitiesTab, 'RIGHT', 0, 0)
+    EncounterJournalSuggestTab.SetPoint = GW.NoOp
+
+	EncounterJournalDungeonTab:ClearAllPoints()
+	EncounterJournalDungeonTab:SetPoint('LEFT', EncounterJournalSuggestTab, 'RIGHT', 0, 0)
+    EncounterJournalDungeonTab.SetPoint = GW.NoOp
+
+	EncounterJournalRaidTab:ClearAllPoints()
+	EncounterJournalRaidTab:SetPoint('LEFT', EncounterJournalDungeonTab, 'RIGHT', 0, 0)
+
+	EncounterJournalLootJournalTab:ClearAllPoints()
+	EncounterJournalLootJournalTab:SetPoint('LEFT', EncounterJournalRaidTab, 'RIGHT', 0, 0)
 
     EncounterJournalMonthlyActivitiesFrame.HelpButton:GwKill()
 
