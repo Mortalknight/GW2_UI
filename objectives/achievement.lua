@@ -243,7 +243,7 @@ local function updateAchievementObjectives(block, parent)
             end
 
             local needTimer = duration and elapsed and elapsed < duration
-            addObjective(block, criteriaString, criteriaCompleted, firstunfinishedobjectiv, quantity, totalQuantity, eligible, needTimer, duration, GetTime() - elapsed)
+            addObjective(block, criteriaString, criteriaCompleted, firstunfinishedobjectiv, quantity, totalQuantity, eligible, needTimer, duration, GetTime() - (elapsed or 0))
 
             if numIncomplete == MAX_OBJECTIVES then
                 addObjective(block, "...", false, firstunfinishedobjectiv, nil, nil, true)

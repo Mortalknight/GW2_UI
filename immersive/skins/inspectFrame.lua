@@ -1,5 +1,14 @@
 local _, GW = ...
 
+local function SkinPvpTalents(slot)
+    local icon = slot.Texture
+    slot:GwStripTextures()
+    slot.Border:Hide()
+
+    GW.HandleIcon(icon, true)
+    icon.backdrop:SetFrameLevel(2)
+end
+
 local function SkinInspectFrameOnLoad()
     if not GW.settings.INSPECTION_SKIN_ENABLED then return end
 
@@ -35,6 +44,11 @@ local function SkinInspectFrameOnLoad()
 
         self:StopMovingOrSizing()
     end)
+
+    -- PvP Talents
+    for i = 1, 3 do
+        SkinPvpTalents(InspectPVPFrame["TalentSlot" .. i])
+    end
 
     for i = 1, 3 do
         GW.HandleTabs(_G["InspectFrameTab" .. i], true)
