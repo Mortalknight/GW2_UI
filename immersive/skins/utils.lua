@@ -1,7 +1,7 @@
 local _, GW = ...
 
 --middle left right
-local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, leftOffset, rightOffset)
+local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, leftOffset, rightOffset, noTop)
     if middleTex then
         middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
         middleTex:SetAlpha(0.5)
@@ -36,7 +36,7 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
             topTex:SetPoint("BOTTOMRIGHT", pframe, "TOPRIGHT", (rightOffset or 0), 0)
             topTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
             topTex:SetAlpha(1)
-        else
+        elseif not noTop then
             local top = pframe:CreateTexture(nil, "BACKGROUND", nil, 0)
             pframe.top = top
             top:ClearAllPoints()
@@ -49,12 +49,12 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
         if bottomTex then
             bottomTex:ClearAllPoints()
             bottomTex:SetHeight(2)
-            bottomTex:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT",-(leftOffset or 0),0)
-            bottomTex:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",(rightOffset or 0),0)
+            bottomTex:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT", -(leftOffset or 0), 0)
+            bottomTex:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",( rightOffset or 0), 0)
             bottomTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
             bottomTex:SetTexCoord(0, 1, 1, 0)
             bottomTex:SetAlpha(1)
-        else
+        elseif not noTop then
             local bottom = pframe:CreateTexture(nil, "BACKGROUND", nil, 0)
             pframe.bottom = bottom
             bottom:ClearAllPoints()
