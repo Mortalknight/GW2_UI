@@ -244,7 +244,6 @@ local function GridOnLoad(self)
 end
 
 local function createGrid()
-    print("Creating 2")
     grid = CreateFrame("Frame", "GW2_Grid", UIParent)
     grid:SetFrameStrata("BACKGROUND")
     grid:SetPoint("TOPLEFT", UIParent)
