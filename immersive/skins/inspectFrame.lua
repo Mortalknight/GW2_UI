@@ -14,19 +14,19 @@ local function SkinInspectFrameOnLoad()
 
     local w, h = InspectFrame:GetSize()
     InspectFrame:GwStripTextures()
-    InspectFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     InspectFrameCloseButton:GwSkinButton(true)
     InspectFrameCloseButton:SetSize(20, 20)
     InspectPaperDollFrame.ViewButton:GwSkinButton(false, true)
-    if not InspectFrame.tex then
-        local tex = InspectFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
-        tex:SetPoint("TOP", InspectFrame, "TOP", 0, 20)
-        tex:SetSize(w + 50, h + 70)
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-        InspectFrame.tex = tex
-    else
-        InspectFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    end
+
+    GW.CreateFrameHeaderWithBody(InspectFrame, InspectFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {InspectPaperDollItemsFrame})
+    InspectFrame.gwHeader.windowIcon:SetSize(65, 65)
+    InspectFrame.gwHeader.windowIcon:ClearAllPoints()
+    InspectFrame.gwHeader.windowIcon:SetPoint("CENTER", InspectFrame.gwHeader.BGLEFT, "LEFT", 25, -5)
+
+    hooksecurefunc(InspectFrame, "SetPortraitToUnit", function(self, unit)
+        SetPortraitTexture(InspectFrame.gwHeader.windowIcon, unit);
+    end)
+    InspectFramePortrait:Hide()
 
     InspectFrame.mover = CreateFrame("Frame", nil, InspectFrame)
     InspectFrame.mover:EnableMouse(true)
@@ -53,9 +53,11 @@ local function SkinInspectFrameOnLoad()
     for i = 1, 3 do
         GW.HandleTabs(_G["InspectFrameTab" .. i])
         _G["InspectFrameTab" .. i]:SetSize(80, 24)
-        if i > 1 then
-            _G["InspectFrameTab" .. i]:ClearAllPoints()
-            _G["InspectFrameTab" .. i]:SetPoint("LEFT",  _G["InspectFrameTab" .. i - 1], "RIGHT", 0, 0)
+        _G["InspectFrameTab" .. i]:ClearAllPoints()
+        if i == 1 then
+            _G["InspectFrameTab" .. i]:SetPoint("TOPLEFT", InspectFrame, "BOTTOMLEFT", 0, 2)
+        else
+            _G["InspectFrameTab" .. i]:SetPoint("LEFT", _G["InspectFrameTab" .. i - 1], "RIGHT", 0, 0)
         end
     end
 
