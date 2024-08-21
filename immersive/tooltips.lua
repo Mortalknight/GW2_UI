@@ -284,15 +284,16 @@ local function GameTooltip_OnTooltipSetItem(self, data)
         end
 
         if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT then
-            local num = C_Item.GetItemCount(link)
-            local numall = C_Item.GetItemCount(link, true)
+            local count = C_Item.GetItemCount(link)
+            local bank = C_Item.GetItemCount(link, true, nil, GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_REAGENTS, GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_WARBAND)
+
             if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BAG" then
-                bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
+                bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, count)
             elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BANK" then
-                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
+                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (bank - count))
             elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BOTH" then
-                bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
-                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
+                bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, count)
+                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (bank - count))
             end
         end
 

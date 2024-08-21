@@ -134,6 +134,8 @@ local function LoadTooltipPanel(sWindow)
         nil,
         {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true}
     )
+    addOption(p.scroll.scrollchild, GW.NewSign .. L["Include Reagents"], nil, "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_REAGENTS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true, ["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = {"BANK", "BOTH"}})
+    addOption(p.scroll.scrollchild, GW.NewSign .. L["Include Warband"], nil, "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_WARBAND", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true, ["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = {"BANK", "BOTH"}})
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Cursor Anchor Type"],
