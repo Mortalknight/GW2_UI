@@ -1,5 +1,32 @@
 local _, GW = ...
 
+local function SkinAddonButtons()
+    if PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_LinkToChatButton then
+        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_LinkToChatButton:GwSkinButton(false, true)
+        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_LinkToChatButton:ClearAllPoints()
+        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_LinkToChatButton:SetPoint("BOTTOMLEFT", 55, 5)
+    end
+
+    if PlayerSpellsFrame.TalentTreeViewer_OpenViewerButton then
+        PlayerSpellsFrame.TalentTreeViewer_OpenViewerButton:GwSkinButton(false, true)
+    end
+
+    if PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_RespecButtonContainer then
+        for i = 1, GetNumSpecializations() do
+            if PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_RespecButtonContainer["RespecButton" .. i] then
+                PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_RespecButtonContainer["RespecButton" .. i]:GetNormalTexture():SetTexCoord(0.07, 0.93, 0.07, 0.93)
+            end
+        end
+    end
+    if PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider then
+        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.Slider:GwSkinSliderFrame()
+        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.Back:Hide()
+        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.Forward:Hide()
+        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.LeftText:SetTextColor(1, 1, 1)
+        PlayerSpellsFrame.TalentsFrame.TalentTreeTweaks_TransparencySlider.RightText:SetTextColor(1, 1, 1)
+    end
+end
+
 local function HandleTalentFrameDialog(dialog)
     if not dialog then return end
 
@@ -141,6 +168,9 @@ local function skinPlayerSpells()
             check.Label:SetTextColor(1, 1, 1)
         end
     end
+
+    -- Addon buttons
+    C_Timer.After(0, SkinAddonButtons)
 
     -- Hero Talents
     local HeroTalentContainer = TalentsFrame.HeroTalentsContainer

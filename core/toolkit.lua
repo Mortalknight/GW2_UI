@@ -174,16 +174,16 @@ local function GwSkinSliderFrame(frame)
     local orientation = frame:GetOrientation()
     local SIZE = 12
 
-    if not frame.SetBackdrop then
-        _G.Mixin(frame, _G.BackdropTemplateMixin)
-        frame:HookScript("OnSizeChanged", frame.OnBackdropSizeChanged)
+    if frame.SetBackdrop then
+        frame:SetBackdrop()
     end
-    frame:SetBackdrop(nil)
+
+    frame:GwStripTextures()
+    frame:SetThumbTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle")
+
     if not frame.backdrop then
         frame:GwCreateBackdrop()
     end
-
-    frame:SetThumbTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle")
 
     local thumb = frame:GetThumbTexture()
     thumb:SetSize(SIZE - 2, SIZE - 2)
@@ -194,18 +194,15 @@ local function GwSkinSliderFrame(frame)
 
     if orientation == "VERTICAL" then
         frame:SetWidth(SIZE)
-        --frame.tex:SetPoint("TOP", frame, "TOP")
-        --frame.tex:SetPoint("BOTTOM", frame, "BOTTOM")
     else
         frame:SetHeight(SIZE)
         frame.tex:SetPoint("TOPLEFT", frame, "TOPLEFT")
         frame.tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
 
-        for i = 1, frame:GetNumRegions() do
-            local region = select(i, frame:GetRegions())
-            if region and region:IsObjectType("FontString") then
+        for _, region in next, { frame:GetRegions() } do
+            if region:IsObjectType('FontString') then
                 local point, anchor, anchorPoint, x, y = region:GetPoint()
-                if strfind(anchorPoint, "BOTTOM") then
+                if strfind(anchorPoint, 'BOTTOM') then
                     region:SetPoint(point, anchor, anchorPoint, x, y - 4)
                 end
             end

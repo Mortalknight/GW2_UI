@@ -65,11 +65,6 @@ local function SkinDropDownList()
                 button.backdrop:Hide()
             end
         end
-        --Check if Raider.IO Entry is added
-        if C_AddOns.IsAddOnLoaded("RaiderIO") and _G.RaiderIO_CustomDropDownList then
-            _G["RaiderIO_CustomDropDownListMenuBackdrop"]:Hide()
-            _G["RaiderIO_CustomDropDownList"]:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        end
     end)
 
     hooksecurefunc("UIDropDownMenu_SetIconImage", function(icon, texture)
