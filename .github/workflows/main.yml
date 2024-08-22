@@ -5,8 +5,6 @@ on:
   push:
     tags:
       - '**'
-    branches:
-      - master
 
 env:
   # for github releases, this secret is automatically provided to the workflow
