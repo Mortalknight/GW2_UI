@@ -276,8 +276,13 @@ local function updateGossipOption(self)
         else
             if elementData.info then
                 --save button reference so we can use it for keyboard
+                if not elementData.info.orderIndex then
+                    local idx = #gossipOptionPointer
+                    if gossipOptionPointer[idx] then idx = 1 end
+                    elementData.info.orderIndex = idx
+                end
                 gossipOptionPointer[elementData.info.orderIndex] = self
-                self:GetFontString():SetText("[" .. elementData.info.orderIndex + 1 .. "] " .. elementData.info.name)
+                self:GetFontString():SetText("[" .. elementData.info.orderIndex + 1 .. "] " .. (elementData.info.name or elementData.info.title))
             end
         end
     end
@@ -713,7 +718,7 @@ local function LoadGossipSkin()
     local GreetingPanelFirstLoad = true
     hooksecurefunc(GossipFrame.GreetingPanel.ScrollBox, "Update", function(frame)
         --Reset pointers for buttons
-        wipe(gossipOptionPointer)
+        gossipOptionPointer = {}
         for _, button in next, { frame.ScrollTarget:GetChildren() } do
             updateGossipOption(button)
         end
