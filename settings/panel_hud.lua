@@ -186,7 +186,7 @@ local function LoadHudPanel(sWindow)
     --WORLDMAP
     -- world map coordinates
     addGroupHeader(worldmap.scroll.scrollchild, L["World Map Coordinates"])
-    addOption(worldmap.scroll.scrollchild, L["Enable"], nil, "WORLDMAP_COORDS_TOGGLE", GW.UpdateWorldMapCoordinateSettings, nil, nil, nil, nil, L["World Map Coordinates"])
+    addOption(worldmap.scroll.scrollchild, ENABLE, nil, "WORLDMAP_COORDS_TOGGLE", GW.UpdateWorldMapCoordinateSettings, nil, nil, nil, nil, L["World Map Coordinates"])
     addOptionDropdown(
         worldmap.scroll.scrollchild,
         GW.NewSign .. L["Position"],
