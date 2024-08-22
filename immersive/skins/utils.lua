@@ -440,15 +440,6 @@ do
     GW.HandleIconSelectionFrame = HandleIconSelectionFrame
 end
 
-local tabs = {
-    "LeftDisabled",
-    "MiddleDisabled",
-    "RightDisabled",
-    "Left",
-    "Middle",
-    "Right"
-}
-
 local function HandleTabs(self, isTop)
     if self and not self.isSkinned then
         self:GwStripTextures()
@@ -483,7 +474,7 @@ local function HandleTabs(self, isTop)
 end
 GW.HandleTabs = HandleTabs
 
-local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds)
+local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, detailBackgroundsXOffset)
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
     frame.gwHeader = header
@@ -505,7 +496,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     if detailBackgrounds then
         for _, v in pairs(detailBackgrounds) do
             local detailBg = v:CreateTexture(nil, "BACKGROUND", nil, 0)
-            detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", 0,0)
+            detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", detailBackgroundsXOffset or 0, 0)
             detailBg:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", 0, 0)
             detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
             detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)

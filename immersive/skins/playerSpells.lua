@@ -71,6 +71,11 @@ local function UpdateSpecFrame(frame)
             specContentFrame.RoleName:SetTextColor(1, 1, 1)
             specContentFrame.RoleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
 
+            --SpecName
+            specContentFrame.SpecName:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+            specContentFrame.SampleAbilityText:SetFont(UNIT_NAME_FONT, 16)
+            specContentFrame.SampleAbilityText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+
             if role == "DAMAGER" then
                 specContentFrame.RoleIcon:SetTexCoord(0.75, 1, 0.75, 1)
             elseif role == "TANK" then
@@ -78,6 +83,11 @@ local function UpdateSpecFrame(frame)
             elseif role == "HEALER" then
                 specContentFrame.RoleIcon:SetTexCoord(0.25, 0.5, 0.75, 1)
             end
+
+            specContentFrame.SpecImageBorderOff:SetAlpha(0)
+            specContentFrame.SpecImageBorderOn:SetAlpha(0)
+            specContentFrame.SpecImage:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+
             if specContentFrame.SpellButtonPool then
                 for button in specContentFrame.SpellButtonPool:EnumerateActive() do
                     if button.Ring then
@@ -91,13 +101,22 @@ local function UpdateSpecFrame(frame)
                         end
                     end
 
-                    GW.HandleIcon(button.Icon, true)
+                    GW.HandleIcon(button.Icon, true, GW.BackdropTemplates.DefaultWithColorableBorder, true)
                 end
             end
 
             specContentFrame.IsSkinned = true
         end
+
+        if specContentFrame.isInGlowState then
+            specContentFrame.SpecImage.backdrop:SetBackdropBorderColor(247/255, 203/255, 96/255)
+        else
+            specContentFrame.SpecImage.backdrop:SetBackdropBorderColor(1, 1, 1)
+        end
     end
+
+    PlayerSpellsFrame.SpecFrame.BlackBG:SetAlpha(0)
+    PlayerSpellsFrame.SpecFrame.Background:SetAlpha(0)
 end
 
 local function HandleHeroTalents(frame)
@@ -121,10 +140,11 @@ end
 
 local function skinPlayerSpells()
     GW.HandlePortraitFrame(PlayerSpellsFrame)
-    GW.CreateFrameHeaderWithBody(PlayerSpellsFrame, PlayerSpellsFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {PlayerSpellsFrame})
+    GW.CreateFrameHeaderWithBody(PlayerSpellsFrame, PlayerSpellsFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {PlayerSpellsFrame.SpecFrame, PlayerSpellsFrame.TalentsFrame, PlayerSpellsFrame.SpellBookFrame}, -3)
 
     -- Specialisation
     hooksecurefunc(PlayerSpellsFrame.SpecFrame, "UpdateSpecFrame", UpdateSpecFrame)
+
 
     -- TalentsFrame
     local TalentsFrame = PlayerSpellsFrame.TalentsFrame
