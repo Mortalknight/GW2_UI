@@ -140,7 +140,7 @@ end
 
 local function skinPlayerSpells()
     GW.HandlePortraitFrame(PlayerSpellsFrame)
-    GW.CreateFrameHeaderWithBody(PlayerSpellsFrame, PlayerSpellsFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {PlayerSpellsFrame.SpecFrame, PlayerSpellsFrame.TalentsFrame, PlayerSpellsFrame.SpellBookFrame}, -3)
+    GW.CreateFrameHeaderWithBody(PlayerSpellsFrame, PlayerSpellsFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {PlayerSpellsFrame.SpecFrame, PlayerSpellsFrame.TalentsFrame}, -3)
 
     -- Specialisation
     hooksecurefunc(PlayerSpellsFrame.SpecFrame, "UpdateSpecFrame", UpdateSpecFrame)
