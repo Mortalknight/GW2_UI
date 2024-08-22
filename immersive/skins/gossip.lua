@@ -274,12 +274,10 @@ local function updateGossipOption(self)
         if elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER or elementData.buttonType == GOSSIP_BUTTON_TYPE_TITLE then
             self:SetHeight(0)
         else
-          
-            --save button reference so we can use it for keyboard
-            gossipOptionPointer[#gossipOptionPointer + 1] = self;
-            -- Temp this has no relation to the actual trigger key, should be displayed some other way later.
-            if elementData.info ~= nil then
-                self:GetFontString():SetText("[" .. #gossipOptionPointer .. "] " .. self:GetFontString():GetText())
+            if elementData.info then
+                --save button reference so we can use it for keyboard
+                gossipOptionPointer[elementData.info.orderIndex] = self
+                self:GetFontString():SetText("[" .. elementData.info.orderIndex + 1 .. "] " .. elementData.info.name)
             end
         end
     end
@@ -679,20 +677,20 @@ local function LoadGossipSkin()
         setGreetingsTextPaging(-1)
     end)
 
-    GossipFrame:SetPropagateKeyboardInput(true);
-    GossipFrame:HookScript("OnKeyDown", function(self,key)
+    GossipFrame:SetPropagateKeyboardInput(true)
+    GossipFrame:HookScript("OnKeyDown", function(_, key)
         --Brut force the key to number.
         --Downside if butto name contains a number it will be used. example JoyStick1
         local numKey = tonumber(key)
         local foundUsableKey = false
-        if numKey~=nil and  gossipOptionPointer[numKey]~=nil then 
+        if numKey then numKey = numKey - 1 end -- we store it index based and start with 0
+        if numKey and gossipOptionPointer[numKey] then
             gossipOptionPointer[numKey]:Click()
             foundUsableKey = true
         end
-        if not InCombatLockdown() then 
-            GossipFrame:SetPropagateKeyboardInput(not foundUsableKey);
+        if not InCombatLockdown() then
+            GossipFrame:SetPropagateKeyboardInput(not foundUsableKey)
         end
-            
     end)
 
     GossipFrame:HookScript("OnShow", function()
@@ -715,7 +713,7 @@ local function LoadGossipSkin()
     local GreetingPanelFirstLoad = true
     hooksecurefunc(GossipFrame.GreetingPanel.ScrollBox, "Update", function(frame)
         --Reset pointers for buttons
-        gossipOptionPointer = {}
+        wipe(gossipOptionPointer)
         for _, button in next, { frame.ScrollTarget:GetChildren() } do
             updateGossipOption(button)
         end
