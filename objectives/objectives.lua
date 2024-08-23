@@ -623,7 +623,7 @@ local function OnBlockClick(self, button, isHeader)
 		else
 			local quest = QuestCache:Get(questID);
 			if quest.isAutoComplete and quest:IsComplete() then
-				self:RemoveAutoQuestPopUp(questID);
+				RemoveAutoQuestPopUp(questID)
 				ShowQuestComplete(questID);
 			else
 				QuestMapFrame_OpenToQuestDetails(questID);
