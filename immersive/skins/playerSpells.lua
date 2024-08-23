@@ -124,8 +124,15 @@ local function HandleHeroTalents(frame)
 
     for specFrame in frame.SpecContentFramePool:EnumerateActive() do
         if specFrame and not specFrame.IsSkinned then
-            if specFrame.SpecName then specFrame.SpecName:SetFont(UNIT_NAME_FONT, 18) end
-            if specFrame.Description then specFrame.Description:SetFont(UNIT_NAME_FONT, 14) end
+            if specFrame.SpecName then
+                specFrame.SpecName:SetFont(UNIT_NAME_FONT, 18)
+                specFrame.SpecName:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+                end
+            if specFrame.Description then
+                specFrame.Description:SetFont(UNIT_NAME_FONT, 14)
+                specFrame.Description:SetTextColor(1, 1, 1)
+                end
+
             if specFrame.CurrencyFrame then
                 specFrame.CurrencyFrame.LabelText:SetFont(UNIT_NAME_FONT, 12)
                 specFrame.CurrencyFrame.AmountText:SetFont(UNIT_NAME_FONT, 18)
@@ -159,8 +166,12 @@ local function skinPlayerSpells()
     TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:SetFont(UNIT_NAME_FONT, 18)
     TalentsFrame.ClassCurrencyDisplay.CurrencyAmount:SetFont(UNIT_NAME_FONT, 26)
 
+    TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+
     TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:SetFont(UNIT_NAME_FONT, 18)
     TalentsFrame.SpecCurrencyDisplay.CurrencyAmount:SetFont(UNIT_NAME_FONT, 26)
+
+    TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
     GW.SkinTextBox(TalentsFrame.SearchBox.Middle, TalentsFrame.SearchBox.Left, TalentsFrame.SearchBox.Right)
     TalentsFrame.SearchBox:SetHeight(20)
