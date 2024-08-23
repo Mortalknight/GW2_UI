@@ -41,6 +41,11 @@ local function updateSavedReputation()
         local factionData = C_Reputation.GetFactionDataByIndex(factionIndex)
         if factionData then
             savedReputation[factionIndex] = {}
+
+            if factionData.name == GUILD then
+                factionData  = C_Reputation.GetGuildFactionData()
+            end
+
             savedReputation[factionIndex].name = factionData.name
             savedReputation[factionIndex].description = factionData.description
             savedReputation[factionIndex].standingId = factionData.reaction
@@ -464,7 +469,6 @@ updateDetails = function()
     local savedHeaderName = ""
     for idx = firstReputationCat + 1, lastReputationCat do
         local name, desc, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain = returnReputationData(idx)
-
         if name ~= nil then
             if not factionID or (isHeader and not isChild) then
                 break
