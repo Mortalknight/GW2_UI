@@ -57,6 +57,7 @@ GW.TRACKER_TYPE_COLOR = {
     TORGHAST = {r = 109 / 255, g = 161 / 255, b = 207 / 255},
     RECIPE = {r = 228 / 255, g = 157 / 255, b = 0 / 255},
     MONTHLYACTIVITY = {r = 228 / 255, g = 157 / 255, b = 0 / 255},
+    DELVE = {r = 171 / 255, g = 37 / 255, b = 240 / 255}
 }
 
 GW.FACTION_BAR_COLORS = {

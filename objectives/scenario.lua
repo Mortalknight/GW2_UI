@@ -97,12 +97,13 @@ local function updateCurrentScenario(self, event, ...)
     if event == "UPDATE_UI_WIDGET" then
         -- we need this event only for torghast atm, so only update this we it is the torghast widget
         local w = ...
-        if not w or (w and w.widgetID ~= 3302) then
+        if not w or (w and w.widgetID ~= 3302 and w.widgetID ~= 6183) then
             return
         end
     end
     GW.RemoveTrackerNotificationOfType("SCENARIO")
     GW.RemoveTrackerNotificationOfType("TORGHAST")
+    GW.RemoveTrackerNotificationOfType("DELVE")
 
     local compassData = {}
     local showTimerAsBonus = false
@@ -210,6 +211,63 @@ local function updateCurrentScenario(self, event, ...)
         compassData.COLOR = TRACKER_TYPE_COLOR.TORGHAST
         compassData.TYPE = "TORGHAST"
     end
+
+    if C_DelvesUI.HasActiveDelve(GW.Libs.GW2Lib:GetPlayerInstanceMapID()) then
+        local widgetInfo = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(6183)
+
+        if widgetInfo then
+            local tierLevel = widgetInfo.tierText or ""
+
+            if GwObjectivesNotification then
+                GwObjectivesNotification.iconFrame.tooltipSpellID = widgetInfo.tierTooltipSpellID
+            end
+
+            compassData.TITLE = difficultyName .. " |cFFFFFFFF(" .. tierLevel .. ")|r - " .. widgetInfo.headerText
+
+            GwScenarioBlock.delvesFrame:Show()
+            GwScenarioBlock.delvesFrame.reward:Show()
+
+            local id = 1
+            for _, spellInfo in ipairs(widgetInfo.spells) do
+                if spellInfo.shownState ~= Enum.WidgetShownState.Hidden then
+                    local spellData = C_Spell.GetSpellInfo(spellInfo.spellID)
+
+                    SetPortraitToTexture(GwScenarioBlock.delvesFrame.spell[id].icon, spellData.iconID)
+                    GwScenarioBlock.delvesFrame.spell[id].icon:SetDesaturated(spellInfo.enabledState == Enum.WidgetEnabledState.Disabled)
+
+                    GwScenarioBlock.delvesFrame.spell[id].spellID = spellData.spellID
+                    GwScenarioBlock.delvesFrame.spell[id]:Show()
+
+                    id = id + 1
+                end
+            end
+
+            for i = id, 5 do
+                GwScenarioBlock.delvesFrame.spell[i].spellID = nil
+                GwScenarioBlock.delvesFrame.spell[i]:Hide()
+            end
+
+            -- handle rewards
+            if widgetInfo.rewardInfo.shownState ~= Enum.UIWidgetRewardShownState.Hidden then
+                local rewardTooltip = (widgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownEarned) and widgetInfo.rewardInfo.earnedTooltip or widgetInfo.rewardInfo.unearnedTooltip
+                GwScenarioBlock.delvesFrame.reward.tooltip = rewardTooltip
+
+                GwScenarioBlock.delvesFrame.reward.earned:SetShown(widgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownEarned)
+                GwScenarioBlock.delvesFrame.reward.unearned:SetShown(widgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownUnearned)
+
+                GwScenarioBlock.delvesFrame.reward:Show()
+            else
+                GwScenarioBlock.delvesFrame.reward:Hide()
+            end
+
+            compassData.COLOR = TRACKER_TYPE_COLOR.DELVE
+            compassData.TYPE = "DELVE"
+        end
+    else
+        GwScenarioBlock.delvesFrame:Hide()
+    end
+
+
     setBlockColor(GwScenarioBlock, compassData.TYPE)
     GwScenarioBlock.Header:SetTextColor(GwScenarioBlock.color.r, GwScenarioBlock.color.g, GwScenarioBlock.color.b)
     GwScenarioBlock.hover:SetVertexColor(GwScenarioBlock.color.r, GwScenarioBlock.color.g, GwScenarioBlock.color.b)
@@ -233,7 +291,7 @@ local function updateCurrentScenario(self, event, ...)
         -- temp till blizzard fix
         local mythicKeystoneCurrentValue = 0
         if isMythicKeystone then
-           mythicKeystoneCurrentValue = strtrim(mythicKeystoneCurrentValue, "%") or 1
+        mythicKeystoneCurrentValue = strtrim(mythicKeystoneCurrentValue, "%") or 1
         end
 
         ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress),
@@ -649,6 +707,68 @@ local function LoadScenarioFrame()
     setBlockColor(newBlock, "SCENARIO")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
+
+    newBlock.delvesFrame:ClearAllPoints()
+    newBlock.delvesFrame:SetPoint("TOPRIGHT", GwObjectivesNotification, "BOTTOMRIGHT", 0, 35)
+
+    for _, v in ipairs(newBlock.delvesFrame.spell) do
+        v:SetScript(
+            "OnEnter",
+            function(self)
+                if self.spellID then
+                    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+                    GameTooltip:SetSpellByID(self.spellID)
+                    GameTooltip:Show()
+                end
+            end
+        )
+        v:SetScript("OnLeave", GameTooltip_Hide)
+    end
+
+    newBlock.delvesFrame.reward:SetScript("OnEnter", function(self)
+        if self.tooltip then
+            self.tooltipContainsHyperLink = false
+            self.preString = nil
+            self.hyperLinkString = nil
+            self.postString = nil
+            self.tooltipContainsHyperLink, self.preString, self.hyperLinkString, self.postString = ExtractHyperlinkString(self.tooltip)
+
+            EmbeddedItemTooltip:SetOwner(self, "ANCHOR_LEFT")
+
+            if self.tooltipContainsHyperLink then
+                local clearTooltip = true
+                if self.preString and self.preString:len() > 0 then
+                    GameTooltip_AddNormalLine(EmbeddedItemTooltip, self.preString, true)
+                    clearTooltip = false
+                end
+
+                GameTooltip_ShowHyperlink(EmbeddedItemTooltip, self.hyperLinkString, 0, 0, clearTooltip)
+
+                if self.postString and self.postString:len() > 0 then
+                    GameTooltip_AddColoredLine(EmbeddedItemTooltip, self.postString, self.tooltipColor or HIGHLIGHT_FONT_COLOR, true)
+                end
+
+                self.UpdateTooltip = self.OnEnter
+
+                EmbeddedItemTooltip:Show()
+            else
+                local header, nonHeader = SplitTextIntoHeaderAndNonHeader(self.tooltip)
+                if header then
+                    GameTooltip_AddColoredLine(EmbeddedItemTooltip, header, self.tooltipColor or NORMAL_FONT_COLOR, true)
+                end
+                if nonHeader then
+                    GameTooltip_AddColoredLine(EmbeddedItemTooltip, nonHeader, self.tooltipColor or NORMAL_FONT_COLOR, true)
+                end
+                self.UpdateTooltip = nil
+
+                EmbeddedItemTooltip:SetShown(header ~= nil)
+            end
+        end
+    end)
+    newBlock.delvesFrame.reward:SetScript("OnLeave", function()
+        EmbeddedItemTooltip:Hide()
+    end)
+
 
     C_Timer.After(0.8, function() updateCurrentScenario(GwQuesttrackerContainerScenario) end)
 

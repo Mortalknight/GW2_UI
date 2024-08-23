@@ -73,12 +73,6 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture name="$parenticon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
-                    <Size x="30" y="30"></Size>
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="-5" y="-10"></Anchor>
-                    </Anchors>
-                </Texture>
                 <FontString name="$parentString" text="Quest name" parentKey="title" justifyH="LEFT" justifyV="TOP">
                     <Size x="300" y="20"></Size>
                     <Anchors>
@@ -94,6 +88,22 @@
             </Layer>
         </Layers>
         <Frames>
+            <Frame parentKey="iconFrame">
+                <Size x="30" y="30"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="-5" y="-10"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parenticon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
+                            <Size x="30" y="30"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
             <Frame parentKey="bonusbar" hidden="true">
                 <Size x="40" y="40"></Size>
                 <Anchors>
@@ -159,29 +169,34 @@
             </Frame>
         </Frames>
     </Frame>
+
     <ScrollFrame name="GwQuestTrackerScroll" virtual="true">
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </ScrollFrame>
+
     <Frame name="GwQuestTracker" parent="UIParent" virtual="true" frameStrata="LOW">
         <Size x="400" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </Frame>
+
     <Frame name="GwQuesttrackerContainer" parent="GwQuestTracker" virtual="true" frameStrata="LOW">
         <Size x="300" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </Frame>
+
     <Frame name="GwQuesttrackerContainerProtected" inherits="SecureHandlerStateTemplate" protected="true" parent="UIParent" virtual="true">
         <Size x="300" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
     </Frame>
+
     <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" parent="GwQuestTracker" virtual="true">
         <Size x="300" y="1"></Size>
         <Anchors>
@@ -229,10 +244,116 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="-25"></Anchor>
                     </Anchors>
                 </FontString>
-
             </Layer>
         </Layers>
         <Frames>
+            <Frame parentKey="delvesFrame" hidden="true">
+                <Size x="280" y="30"></Size>
+                <Frames>
+                    <Frame parentArray="spell" hidden="true">
+                        <Size x="30" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer>
+                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
+                                    <Size x="30" y="30"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </layer>
+                        </Layers>
+                    </Frame>
+                    <Frame parentArray="spell" hidden="true">
+                        <Size x="30" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="40" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer>
+                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
+                                    <Size x="30" y="30"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </layer>
+                        </Layers>
+                    </Frame>
+                    <Frame parentArray="spell" hidden="true">
+                        <Size x="30" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="80" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer>
+                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
+                                    <Size x="30" y="30"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </layer>
+                        </Layers>
+                    </Frame>
+                    <Frame parentArray="spell" hidden="true">
+                        <Size x="30" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="120" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer>
+                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
+                                    <Size x="30" y="30"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </layer>
+                        </Layers>
+                    </Frame>
+                    <Frame parentArray="spell" hidden="true">
+                        <Size x="30" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="160" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer>
+                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
+                                    <Size x="30" y="30"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </layer>
+                        </Layers>
+                    </Frame>
+                    <Frame parentKey="reward" hidden="true">
+                        <Size x="30" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="220" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="earned" file="Interface/AddOns/GW2_UI/textures/icons/rewards-icon">
+                                    <size x="70" y="70"></size>
+                                    <Anchors>
+                                        <Anchor point="CENTER"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                                <Texture parentKey="unearned" file="Interface/AddOns/GW2_UI/textures/icons/rewards-closed-icon">
+                                    <size x="70" y="70"></size>
+                                    <Anchors>
+                                        <Anchor point="CENTER"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                </Frames>
+            </Frame>
             <Button name="$parentClickToTurnIn" hidden="true" parentKey="turnin">
                 <size x="90" y="90"></size>
                 <Anchors>
@@ -293,6 +414,7 @@
             </Button>
         </Frames>
     </Button>
+
     <Frame name="GwQuesttrackerObjectiveNormal" enableMouse="false" virtual="true">
         <Size x="300" y="20"></Size>
         <Anchors>

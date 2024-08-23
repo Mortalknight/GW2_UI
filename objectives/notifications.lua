@@ -17,9 +17,11 @@ local icons = {
     ARENA = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
     DAILY = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
     TORGHAST = {tex = "icon-objective", l = 0.5, r = 1, t = 0.5, b = 0.75},
+    DELVE = {tex = "icon-delve", l = 0, r = 1, t = 0, b = 1},
 }
 
 local notification_priority = {
+    DELVE = 1,
     TORGHAST = 1,
     SCENARIO = 2,
     EVENT = 3,
@@ -349,24 +351,37 @@ local function SetObjectiveNotification()
     end
 
     if icons[data.TYPE] ~= nil then
-        GwObjectivesNotification.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
-        GwObjectivesNotification.icon:SetTexCoord(
+        GwObjectivesNotification.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
+        GwObjectivesNotification.iconFrame.icon:SetTexCoord(
             icons[data.TYPE].l,
             icons[data.TYPE].r,
             icons[data.TYPE].t,
             icons[data.TYPE].b
         )
 
+        if data.TYPE == "DELVE" then
+            GwObjectivesNotification.iconFrame:SetScript("OnEnter", function()
+                GameTooltip:SetOwner(GwObjectivesNotification.iconFrame, "ANCHOR_LEFT")
+                GameTooltip:SetSpellByID(GwObjectivesNotification.iconFrame.tooltipSpellID)
+            end)
+            GwObjectivesNotification.iconFrame:SetScript("OnLeave", function()
+                GameTooltip:Hide()
+            end)
+        else
+            GwObjectivesNotification.iconFrame:SetScript("OnLeave", nil)
+            GwObjectivesNotification.iconFrame:SetScript("OnLeave", nil)
+        end
+
         if progress ~= nil and icons[data.TYPE] then
             GwObjectivesNotification.bonusbar:Show()
             GwObjectivesNotification.bonusbar.progress = progress
             GwObjectivesNotification.bonusbar.bar:SetValue(progress)
-            GwObjectivesNotification.icon:SetTexture(nil)
+            GwObjectivesNotification.iconFrame.icon:SetTexture(nil)
         else
             GwObjectivesNotification.bonusbar:Hide()
         end
     else
-        GwObjectivesNotification.icon:SetTexture(nil)
+        GwObjectivesNotification.iconFrame.icon:SetTexture(nil)
     end
 
     if useRadar then
@@ -399,7 +414,7 @@ local function SetObjectiveNotification()
             end
             GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
         end
-        GwObjectivesNotification.icon:SetTexture(nil)
+        GwObjectivesNotification.iconFrame.icon:SetTexture(nil)
     else
         GwObjectivesNotification.compass:Hide()
         if GwObjectivesNotification.compass.Timer then
