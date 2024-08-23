@@ -469,6 +469,28 @@ local function HandleTabs(self, isTop)
             self.borderFrame.top:Show()
         end
 
+        if self.SetTabSelected then
+            hooksecurefunc(self, "SetTabSelected", function(tab)
+                if tab.isSelected then
+                    tab.background:SetBlendMode("MOD")
+                else
+                    tab.background:SetBlendMode("BLEND")
+                end
+
+            end)
+        else
+            hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
+                if self == tab then
+                    tab.background:SetBlendMode("BLEND")
+                end
+            end)
+            hooksecurefunc("PanelTemplates_SelectTab", function(tab)
+                if self == tab then
+                    tab.background:SetBlendMode("MOD")
+                end
+            end)
+        end
+
         self.isSkinned = true
     end
 end
