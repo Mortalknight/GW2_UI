@@ -234,7 +234,7 @@ local function setUpBlock(questIDs, collapsed)
         if numObjectives == nil then
             numObjectives = 0
         end
-        if isInArea or v.tracked then
+        if isInArea or (v.tracked and text) then
             if not collapsed then
                 compassData.TITLE = text
 
@@ -283,7 +283,7 @@ local function setUpBlock(questIDs, collapsed)
                 local objectiveProgress = 0
                 for objectiveIndex = 1, numObjectives do
                     local txt, objectiveType, finished = GetQuestObjectiveInfo(questID, objectiveIndex, false)
-                    local txt = txt and txt or ""
+                    txt = txt and txt or ""
                     compassData.TYPE = "EVENT"
                     compassData.ID = questID
                     compassData.COLOR = TRACKER_TYPE_COLOR.EVENT
