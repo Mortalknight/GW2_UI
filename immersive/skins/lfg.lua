@@ -990,7 +990,6 @@ local function ApplyDelvesDifficultyPickerSkin()
     DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.RewardText:SetTextColor(1, 1, 1)
 
 	hooksecurefunc(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame, "SetRewards", function(self)
-        print("triggered")
         C_Timer.After(0, function()
             for rewardFrame in self.rewardPool:EnumerateActive() do
                 if not rewardFrame.IsSkinned then
