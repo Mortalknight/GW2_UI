@@ -968,20 +968,41 @@ end
 local function ApplyDelvesDifficultyPickerSkin()
     if not GW.settings.LFG_SKIN_ENABLED then return end
 
+    local backround = DelvesDifficultyPickerFrame.DelveBackgroundWidgetContainer
+    DelvesDifficultyPickerFrame:GwStripTextures()
+
+    local tex = backround:CreateTexture(nil, "BACKGROUND", nil, -7)
+    tex:SetPoint("TOP", DelvesDifficultyPickerFrame, "TOP", 0, 25)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    local w, h = DelvesDifficultyPickerFrame:GetSize()
+    tex:SetSize(w + 50, h + 50)
+    backround.tex = tex
+
+
 	DelvesDifficultyPickerFrame.Dropdown:GwHandleDropDownBox()
 	DelvesDifficultyPickerFrame.EnterDelveButton:GwSkinButton(false, true)
+    DelvesDifficultyPickerFrame.CloseButton:GwSkinButton(true)
+    DelvesDifficultyPickerFrame.CloseButton:SetSize(20, 20)
+
+    DelvesDifficultyPickerFrame.ScenarioLabel:SetFont(UNIT_NAME_FONT, 14)
+    DelvesDifficultyPickerFrame.Description:SetTextColor(1, 1, 1)
+
+    DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.RewardText:SetTextColor(1, 1, 1)
 
 	hooksecurefunc(DelvesDifficultyPickerFrame.DelveRewardsContainerFrame, "SetRewards", function(self)
-		for rewardFrame in self.rewardPool:EnumerateActive() do
-			if not rewardFrame.IsSkinned then
-				rewardFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-				rewardFrame.NameFrame:SetAlpha(0)
-				rewardFrame.IconBorder:SetAlpha(0)
-				GW.HandleIcon(rewardFrame.Icon)
+        print("triggered")
+        C_Timer.After(0, function()
+            for rewardFrame in self.rewardPool:EnumerateActive() do
+                if not rewardFrame.IsSkinned then
+                    rewardFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+                    rewardFrame.NameFrame:SetAlpha(0)
+                    rewardFrame.IconBorder:SetAlpha(0)
+                    GW.HandleIcon(rewardFrame.Icon)
 
-				rewardFrame.IsSkinned = true
-			end
-		end
+                    rewardFrame.IsSkinned = true
+                end
+            end
+        end)
 	end)
 end
 
