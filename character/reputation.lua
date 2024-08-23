@@ -43,26 +43,27 @@ local function updateSavedReputation()
             savedReputation[factionIndex] = {}
 
             if factionData.name == GUILD then
-                factionData  = C_Reputation.GetGuildFactionData()
+                factionData = C_Reputation.GetGuildFactionData()
             end
-
-            savedReputation[factionIndex].name = factionData.name
-            savedReputation[factionIndex].description = factionData.description
-            savedReputation[factionIndex].standingId = factionData.reaction
-            savedReputation[factionIndex].bottomValue = factionData.currentReactionThreshold
-            savedReputation[factionIndex].topValue = factionData.nextReactionThreshold
-            savedReputation[factionIndex].earnedValue = factionData.currentStanding
-            savedReputation[factionIndex].atWarWith = factionData.atWarWith
-            savedReputation[factionIndex].canToggleAtWar = factionData.canToggleAtWar
-            savedReputation[factionIndex].isHeader = factionData.isHeader
-            savedReputation[factionIndex].isCollapsed = factionData.isCollapsed
-            savedReputation[factionIndex].hasRep = factionData.isHeaderWithRep
-            savedReputation[factionIndex].isWatched = factionData.isWatched
-            savedReputation[factionIndex].isChild = factionData.isChild
-            savedReputation[factionIndex].factionID = factionData.factionID
-            savedReputation[factionIndex].hasBonusRepGain = factionData.hasBonusRepGain
-            savedReputation[factionIndex].canSetInactive = factionData.canSetInactive
-            savedReputation[factionIndex].isAccountWide = factionData.isAccountWide
+            if factionData then
+                savedReputation[factionIndex].name = factionData.name
+                savedReputation[factionIndex].description = factionData.description
+                savedReputation[factionIndex].standingId = factionData.reaction
+                savedReputation[factionIndex].bottomValue = factionData.currentReactionThreshold
+                savedReputation[factionIndex].topValue = factionData.nextReactionThreshold
+                savedReputation[factionIndex].earnedValue = factionData.currentStanding
+                savedReputation[factionIndex].atWarWith = factionData.atWarWith
+                savedReputation[factionIndex].canToggleAtWar = factionData.canToggleAtWar
+                savedReputation[factionIndex].isHeader = factionData.isHeader
+                savedReputation[factionIndex].isCollapsed = factionData.isCollapsed
+                savedReputation[factionIndex].hasRep = factionData.isHeaderWithRep
+                savedReputation[factionIndex].isWatched = factionData.isWatched
+                savedReputation[factionIndex].isChild = factionData.isChild
+                savedReputation[factionIndex].factionID = factionData.factionID
+                savedReputation[factionIndex].hasBonusRepGain = factionData.hasBonusRepGain
+                savedReputation[factionIndex].canSetInactive = factionData.canSetInactive
+                savedReputation[factionIndex].isAccountWide = factionData.isAccountWide
+            end
         end
     end
 end
