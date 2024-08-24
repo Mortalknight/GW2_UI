@@ -19,8 +19,14 @@ end
 local function ExpansionLadningPageSkin()
     GW.CreateFrameHeaderWithBody(ExpansionLandingPage, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon")
 
-    if ExpansionLandingPage.Overlay then
-        for _, child in next, {ExpansionLandingPage.Overlay:GetChildren()} do
+    local factionList = LandingPageMajorFactionList
+    if factionList then
+        hooksecurefunc(factionList, "Create", DelayedMajorFactionList)
+    end
+
+    local overlay = ExpansionLandingPage.Overlay
+    if overlay then
+        for _, child in next, { overlay:GetChildren() } do
             child:GwStripTextures()
 
             if child.ScrollFadeOverlay then
@@ -30,10 +36,12 @@ local function ExpansionLadningPageSkin()
             if child.DragonridingPanel then
                 HandlePanel(child)
             end
+        end
 
-            if child.MajorFactionList then
-                DelayedMajorFactionList(child)
-            end
+        local landingOverlay = overlay.WarWithinLandingOverlay
+        if landingOverlay then
+            landingOverlay.CloseButton:GwSkinButton(true)
+            landingOverlay.CloseButton:SetPoint("TOPRIGHT", 35, 30)
         end
     end
 end
