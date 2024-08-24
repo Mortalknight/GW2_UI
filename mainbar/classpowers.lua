@@ -994,6 +994,7 @@ local function powerRune(self)
     for i = 1, 6 do
         local fFill = fr["runeTexFill" .. i]
         local fTex = fr["runeTex" .. i]
+        local fFlare = fr["flare" .. i]
         local animId = "RUNE_TIMER_ANIMATIONS" .. i
         if RUNE_PROGRESS[i].rune_ready and fFill then
             fFill:SetTexCoord(0.5, 1, 0, 1)
@@ -1021,19 +1022,26 @@ local function powerRune(self)
                     fFill:SetHeight(32 * animations[animId].progress)
                     fFill:SetVertexColor(1, 1, 1, 0.5)
                     fFill:SetDesaturated(true)
+                    fFill:SetBlendMode("BLEND")
+                    fFlare:SetVertexColor(1,1,1,0)
                 end,
                 "noease",
                 function()
                     f.flare:ClearAllPoints()
                     f.flare:SetPoint("CENTER", fFill, "CENTER", 0, 0)
                     AddToAnimation(
-                        "HOLY_POWER_FLARE_ANIMATION",
+                        "RUNE_FLARE_ANIMATIONS" .. i,
                         1,
                         0,
                         GetTime(),
                         0.5,
                         function(p)
-                            f.flare:SetAlpha(math.min(1, math.max(0, p)))
+                            fFlare:SetVertexColor(1,1,1,p)
+                            fFlare:SetSize(512 *  math.sin(p * math.pi * 0.5),256)
+                            fFlare:SetBlendMode("ADD")
+                           -- fFill:SetVertexColor(1, 1, 1, 1)
+                            --fFill:SetBlendMode("ADD")
+                            --f.flare:SetAlpha(math.min(1, math.max(0, p)))
                         end
                     )
                 end
@@ -1067,9 +1075,13 @@ local function setDeathKnight(f)
     for i = 1, 6 do
         local fFill = fr["runeTexFill" .. i]
         local fTex = fr["runeTex" .. i]
+        local fFlare = fr["flare" .. i]
         
         fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
         fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
+        fFlare:SetRotation(1.5708)
+        fFlare:SetVertexColor(1,1,1,0)
+        fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
     end
 
     f:SetScript("OnEvent", powerRune)

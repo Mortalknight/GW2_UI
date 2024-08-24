@@ -347,6 +347,44 @@
                             </Anchors>
                         </Texture>
                     </Layer>
+                    <Layer level="OVERLAY" textureSubLevel="2">
+                        <Texture parentKey="flare1" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                            <Size x="256" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.runeTexFill1" relativePoint="CENTER" x="0" y="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="flare2" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                            <Size x="256" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.runeTexFill2" relativePoint="CENTER" x="0" y="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="flare3" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                             <Size x="256" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.runeTexFill3" relativePoint="CENTER" x="0" y="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="flare4" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                           <Size x="256" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER"  relativeKey="$parent.runeTexFill4" relativePoint="CENTER" x="0" y="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="flare5"  file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                            <Size x="256" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.runeTexFill5" relativePoint="CENTER" x="0" y="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="flare6" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                            <Size x="256" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.runeTexFill6" relativePoint="CENTER" x="0" y="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
                 </Layers>
             </Frame>
 
