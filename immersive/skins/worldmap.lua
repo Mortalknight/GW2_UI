@@ -448,14 +448,12 @@ local function worldMapSkin()
         local dropdown, Tracking, Pin = unpack(WorldMapFrame.overlayFrames)
         dropdown:GwHandleDropDownBox()
 
-        Tracking:GwStripTextures()
         Tracking.Icon:SetTexture(136460) -- Interface\Minimap\Tracking/None
         Tracking:SetHighlightTexture(136460, 'ADD')
 
         local TrackingHighlight = Tracking:GetHighlightTexture()
         TrackingHighlight:SetAllPoints(Tracking.Icon)
 
-        Pin:GwStripTextures()
         Pin.Icon:SetAtlas('Waypoint-MapPin-Untracked')
         Pin.ActiveTexture:SetAtlas('Waypoint-MapPin-Tracked')
         Pin.ActiveTexture:SetAllPoints(Pin.Icon)
