@@ -2,36 +2,35 @@ local _, GW = ...
 local TOTEM_BAR_BUTTON_SIZE = 48
 local TOTEM_BAR_BUTTON_MARGIN = 3
 
-local priority = GW.myclass == "SHAMAN" and {[1]=1, [2]=2, [3]=4, [4]=3} or STANDARD_TOTEM_PRIORITIES
+local function UpdateButton(button, totem)
+    if not (button and totem) then return end
 
-local function UpdateButton(button, totem, show)
-    if show and totem then
-        local _, _, startTime, duration, icon = GetTotemInfo(totem.slot)
+    local haveTotem, _, startTime, duration, icon = GetTotemInfo(totem.slot)
+    button:SetShown(haveTotem and duration > 0)
 
-        button.iconTexture:SetTexture(icon)
+    if haveTotem then
+        button.icon:SetTexture(icon)
         button.cooldown:SetCooldown(startTime, duration)
 
-        totem:ClearAllPoints()
-        totem:SetParent(button.holder)
-        totem:SetAllPoints(button.holder)
+        if totem:GetParent() ~= button.holder then
+            totem:ClearAllPoints()
+            totem:SetParent(button.holder)
+            totem:SetAllPoints(button.holder)
+        end
+    end
+end
+
+local function OnEvent(self)
+    local priority = STANDARD_TOTEM_PRIORITIES
+
+    for _, button in ipairs(self) do
+        if button:IsShown() then
+            button:SetShown(false)
+        end
     end
 
-    button:SetShown(show)
-end
-
-local function HideTotem(self)
-    local i = priority[self.layoutIndex]
-    UpdateButton(GW_TotemBar[i], self, false)
-end
-
-local function gw_totem_bar_OnEvent(self)
     for totem in TotemFrame.totemPool:EnumerateActive() do
-        local i = priority[totem.layoutIndex]
-        UpdateButton(self[i], totem, true)
-
-        if totem:GetScript("OnHide") ~= HideTotem then
-            totem:SetScript("OnHide", HideTotem)
-        end
+        UpdateButton(self[priority[totem.layoutIndex]], totem)
     end
 end
 
@@ -84,15 +83,15 @@ local function PositionAndSize(self)
         self.gwMover:SetSize(self:GetSize())
     end
 
-    gw_totem_bar_OnEvent(self)
+    OnEvent(self)
 end
 GW.UpdateTotembar = PositionAndSize
 
-local function Create_Totem_Bar()
-    local gw_totem_bar = CreateFrame("Frame", "GW_TotemBar", UIParent)
+local function CreateTotemBar()
+    local totemBar = CreateFrame("Frame", "GW_TotemBar", UIParent)
 
     for i = 1, MAX_TOTEMS do
-        local button = CreateFrame("Button", gw_totem_bar:GetName() .. "Totem" .. i, gw_totem_bar)
+        local button = CreateFrame("Button", totemBar:GetName() .. "Totem" .. i, totemBar)
 
         button:SetID(i)
         button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
@@ -121,17 +120,20 @@ local function Create_Totem_Bar()
         button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", GW.border, -GW.border)
         button.cooldown:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -GW.border, GW.border)
 
-        gw_totem_bar[i] = button
+        GW.RegisterCooldown(button.cooldown)
+
+        totemBar[i] = button
     end
 
-    PositionAndSize(gw_totem_bar)
+    PositionAndSize(totemBar)
 
-    gw_totem_bar:RegisterEvent("PLAYER_TOTEM_UPDATE")
-    gw_totem_bar:RegisterEvent("PLAYER_ENTERING_WORLD")
-    gw_totem_bar:SetScript("OnEvent", gw_totem_bar_OnEvent)
+    totemBar:RegisterEvent("PLAYER_TOTEM_UPDATE")
+    totemBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+    totemBar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    totemBar:SetScript("OnEvent", OnEvent)
 
-    GW.RegisterMovableFrame(gw_totem_bar, GW.L["Class Totems"], "TotemBar_pos", ALL .. ",Blizzard,Widgets", nil, {"default", "scaleable"})
-    gw_totem_bar:ClearAllPoints()
-    gw_totem_bar:SetPoint("TOPLEFT", gw_totem_bar.gwMover)
+    GW.RegisterMovableFrame(totemBar, GW.L["Class Totems"], "TotemBar_pos", ALL .. ",Blizzard,Widgets", nil, {"default", "scaleable"})
+    totemBar:ClearAllPoints()
+    totemBar:SetPoint("TOPLEFT", totemBar.gwMover)
 end
-GW.Create_Totem_Bar = Create_Totem_Bar
+GW.CreateTotemBar = CreateTotemBar
