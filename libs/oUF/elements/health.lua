@@ -22,7 +22,7 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
 
-The following options are listed by priority. The first check that returns true decides the color of the bar. 
+The following options are listed by priority. The first check that returns true decides the color of the bar.
 
 .colorDisconnected - Use `self.colors.disconnected` to color the bar if the unit is offline (boolean)
 .colorTapping      - Use `self.colors.tapping` to color the bar if the unit isn't tapped by the player (boolean)
@@ -76,7 +76,7 @@ The following options are listed by priority. The first check that returns true 
     Health.bg = Background
     self.Health = Health
 
-	-- Alternatively, if .TempLoss is being used
+    -- Alternatively, if .TempLoss is being used
     local TempLoss = CreateFrame('StatusBar', nil, self)
     TempLoss:SetReverseFill(true)
     TempLoss:SetHeight(20)
@@ -120,8 +120,6 @@ local function UpdateColor(self, event, unit)
 	if(not unit or self.unit ~= unit) then return end
 	local element = self.Health
 
-	local isPlayer = UnitIsPlayer(unit) or UnitInPartyIsAI(unit)
-
 	local r, g, b, color
 	if(element.colorDisconnected and not UnitIsConnected(unit)) then
 		color = self.colors.disconnected
@@ -129,9 +127,9 @@ local function UpdateColor(self, event, unit)
 		color = self.colors.tapped
 	elseif(element.colorThreat and not UnitPlayerControlled(unit) and UnitThreatSituation('player', unit)) then
 		color =  self.colors.threat[UnitThreatSituation('player', unit)]
-	elseif(element.colorClass and isPlayer)
-		or (element.colorClassNPC and not isPlayer)
-		or (element.colorClassPet and UnitPlayerControlled(unit) and not isPlayer) then
+	elseif(element.colorClass and (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
+		or (element.colorClassNPC and not (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
+		or (element.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
 		local _, class = UnitClass(unit)
 		color = self.colors.class[class]
 	elseif(element.colorSelection and unitSelectionType(unit, element.considerSelectionInCombatHostile)) then
