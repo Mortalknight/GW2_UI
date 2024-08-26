@@ -189,6 +189,12 @@ function QuestPlayerMixin:SetupModel()
     elseif raceID == 10 then
         -- tweak for blood elf
         foot_offset = foot_offset - 15
+    elseif raceID == 22 then
+        -- tweak for worgen
+        -- TODO: would be really nice if we could figure out if we're in worgen
+        -- or human form on model refresh and adjust from that
+        foot_offset = foot_offset - 15
+        offsetX = -55
     elseif raceID == 1 then
         -- tweaks for humans        
         foot_offset = foot_offset - 15

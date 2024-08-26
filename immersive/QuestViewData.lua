@@ -65,6 +65,9 @@ local T = {
     [5767091] = 1.5, -- dagan
     [5482015] = 1.0, -- sum'latha
     [5221517] = 0.95, -- kish'nal
+    [1886724] = 1.4, -- Dolena
+    [5333438] = 2.6, -- spindle
+    [5348707] = 0.8, -- anub'azal
 }
 GW.QUESTVIEW_MODEL_TWEAKS = T
 
@@ -85,6 +88,7 @@ local P = {
     [8] = 1.05, -- troll
     [9] = 1.5, -- goblin
     [11] = 1.0, -- draenei
+    [22] = 1.05, -- worgen
     [27] = 1.05, -- nightborne
     [28] = 1.0, -- highmountain
     [30] = 1.0, -- lightforged
