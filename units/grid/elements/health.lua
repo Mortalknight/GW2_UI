@@ -10,15 +10,15 @@ local function UnitClassRnd(unit)
 end
 
 local function PostUpdateHealth(self)
-	local parent = self:GetParent():GetParent():GetParent()
-	if parent.isForced then
-		self.cur = self.fakeValue or random(1, 100)
-		self.max = 100
-		self:ForceFillAmount(self.cur / self.max)
+    local parent = self:GetParent():GetParent():GetParent()
+    if parent.isForced then
+        self.cur = self.fakeValue or random(1, 100)
+        self.max = 100
+        self:ForceFillAmount(self.cur / self.max)
         self.fakeValue = self.cur
     else
         self.fakeValue = nil
-	end
+    end
 
 end
 
@@ -34,12 +34,6 @@ local function PostUpdateHealthColor(self, unit)
             self.fakeColor = color
         end
     else
-        if parent.useClassColor then
-            --if we are here we need to class color the frame
-            local _, englishClass = UnitClass(unit)
-            local color = GW.GWGetClassColor(englishClass, true)
-            self:SetStatusBarColor(color.r, color.g, color.b)
-        end
         self.fakeColor = nil
     end
 
@@ -49,25 +43,25 @@ end
 local function UpdateHealthOverride(self, event, unit)
     if (self.isForced and event ~= 'Gw2_UpdateAllElements') then return end -- GW2 changed
     if(not unit or self.unit ~= unit) then return end
-	local element = self.Health
+    local element = self.Health
 
     if(element.PreUpdate) then
-		element:PreUpdate(unit)
-	end
+        element:PreUpdate(unit)
+    end
 
-	local cur, max = UnitHealth(unit), UnitHealthMax(unit)
+    local cur, max = UnitHealth(unit), UnitHealthMax(unit)
 
     if not self.Forced then
         element:SetFillAmount(cur/max)
     else
         element:ForceFillAmount(cur/max)
     end
-	element.cur = cur
-	element.max = max
+    element.cur = cur
+    element.max = max
 
     if(element.PostUpdate) then
-		element:PostUpdate(unit, cur, max)
-	end
+        element:PostUpdate(unit, cur, max)
+    end
 end
 
 local function Construct_HealthBar(frame)
@@ -140,10 +134,10 @@ local function Construct_HealthBar(frame)
     health.healthPredictionbar = healthPredictionbar
 
     health.Override = UpdateHealthOverride
-	health.PostUpdateColor = PostUpdateHealthColor
+    health.PostUpdateColor = PostUpdateHealthColor
     health.PostUpdate = PostUpdateHealth
 
-	return health
+    return health
 end
 GW.Construct_HealthBar = Construct_HealthBar
 
@@ -179,9 +173,10 @@ local function Update_Healtbar(frame)
     --settings
     health.statusBarColor = health.statusBarColor or {}
     health.colorClass = frame.useClassColor
+    health.colorDisconnected = true
 
     if not frame.useClassColor then
-        health:SetStatusBarColor(0.207, 0.392, 0.168)
+        health.colorHealth = true
     end
 
     if not frame.isForced then

@@ -61,8 +61,8 @@ local colors = {
 		1, 1, 0,
 		0, 1, 0
 	},
-	health = oUF:CreateColor(49, 207, 37),
-	disconnected = oUF:CreateColor(0.6, 0.6, 0.6),
+	health = oUF:CreateColor(0.207, 0.392, 0.168), -- GW2 CHANGES: default green raidframes without calss icons
+	disconnected = oUF:CreateColor(0.3, 0.3, 0.3, 1), -- GW2_Changed
 	tapped = oUF:CreateColor(0.6, 0.6, 0.6),
 	runes = {
 		oUF:CreateColor(247, 65, 57), -- blood
@@ -95,9 +95,9 @@ local colors = {
 -- We do this because people edit the vars directly, and changing the default
 -- globals makes SPICE FLOW!
 local function customClassColors()
-	if(_G.CUSTOM_CLASS_COLORS) then
+	if(ns.GW_CLASS_COLORS and not ns.settings.BLIZZARDCLASSCOLOR_ENABLED) then
 		local function updateColors()
-			for classToken, color in next, _G.CUSTOM_CLASS_COLORS do
+			for classToken, color in next, ns.GW_CLASS_COLORS do
 				colors.class[classToken] = oUF:CreateColor(color.r, color.g, color.b)
 			end
 
@@ -107,25 +107,30 @@ local function customClassColors()
 		end
 
 		updateColors()
-		_G.CUSTOM_CLASS_COLORS:RegisterCallback(updateColors)
+		--_G.CUSTOM_CLASS_COLORS:RegisterCallback(updateColors) -- GW2 Change
 
 		return true
 	end
 end
 
-if(not customClassColors()) then
+
+
+if(ns.settings or not customClassColors()) then
 	for classToken, color in next, _G.RAID_CLASS_COLORS do
 		colors.class[classToken] = oUF:CreateColor(color.r, color.g, color.b)
 	end
 
-	local eventHandler = CreateFrame('Frame')
-	eventHandler:RegisterEvent('ADDON_LOADED')
-	eventHandler:SetScript('OnEvent', function(self)
-		if(customClassColors()) then
-			self:UnregisterEvent('ADDON_LOADED')
-			self:SetScript('OnEvent', nil)
-		end
-	end)
+	-- GW2 Change
+	C_Timer.After(0.5, customClassColors)
+
+	--local eventHandler = CreateFrame('Frame')
+	--eventHandler:RegisterEvent('ADDON_LOADED')
+	--eventHandler:SetScript('OnEvent', function(self)
+	--	if(customClassColors()) then
+	--		self:UnregisterEvent('ADDON_LOADED')
+	--		self:SetScript('OnEvent', nil)
+	--	end
+	--end)
 end
 
 for debuffType, color in next, _G.DebuffTypeColor do
