@@ -9,7 +9,7 @@ local function UpdateButton(button, totem)
     button:SetShown(haveTotem and duration > 0)
 
     if haveTotem then
-        button.icon:SetTexture(icon)
+        button.iconTexture:SetTexture(icon)
         button.cooldown:SetCooldown(startTime, duration)
 
         if totem:GetParent() ~= button.holder then
