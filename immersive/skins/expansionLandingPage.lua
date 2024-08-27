@@ -12,8 +12,12 @@ local function HandlePanel(panel)
 end
 
 local function DelayedMajorFactionList(frame)
-    GW.HandleTrimScrollBar(frame.MajorFactionList.ScrollBar, true)
-    GW.HandleScrollControls(frame.MajorFactionList)
+    C_Timer.After(0.1, function(frame)
+        if frame.MajorFactionList then
+            GW.HandleTrimScrollBar(frame.MajorFactionList.ScrollBar)
+            GW.HandleScrollControls(frame.MajorFactionList)
+        end
+    end)
 end
 
 local function ExpansionLadningPageSkin()
