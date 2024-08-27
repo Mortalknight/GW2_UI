@@ -276,6 +276,14 @@ local function blockOnEnter(self)
     )
     if self.event then
         self:TryShowRewardsTooltip()
+    else
+        if IsInGroup() then
+            GameTooltip:ClearAllPoints()
+            GameTooltip:SetPoint("TOPRIGHT", self, "TOPLEFT", 0, 0)
+            GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
+            GameTooltip:SetQuestPartyProgress(self.id)
+            EventRegistry:TriggerEvent("OnQuestBlockHeader.OnEnter", self, self.id, true)
+        end
     end
 end
 AFP("blockOnEnter", blockOnEnter)
@@ -364,8 +372,6 @@ local function CreateTrackerObject(name, parent)
         f.groupButton:SetScale(scale * 0.9)
     end)
 
-    --Mixin(f, QuestObjectiveTrackerMixin)
-    --f:SetScript("OnClick", function(_, button) print(111, f.id) f:OnBlockHeaderClick(f,button) end)
     return f
 end
 GW.CreateTrackerObject = CreateTrackerObject
@@ -631,8 +637,6 @@ local function OnBlockClick(self, button, isHeader)
 		end
 	else
 		MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
-			rootDescription:SetTag("MENU_QUEST_OBJECTIVE_TRACKER");
-
 			local questID = self.id;
 			rootDescription:CreateTitle(C_QuestLog.GetTitleForQuestID(questID));
 
