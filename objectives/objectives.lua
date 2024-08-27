@@ -277,7 +277,7 @@ local function blockOnEnter(self)
     if self.event then
         self:TryShowRewardsTooltip()
     else
-        if IsInGroup() then
+        if IsInGroup() and self.id then
             GameTooltip:ClearAllPoints()
             GameTooltip:SetPoint("TOPRIGHT", self, "TOPLEFT", 0, 0)
             GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
