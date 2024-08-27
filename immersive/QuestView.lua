@@ -293,7 +293,7 @@ function QuestViewMixin:questTextCompleted()
             self.container.acceptButton:SetText(CONTINUE)
             self.questState = "NEEDCOMPLETE"
         else
-            local s = string.sub(self.questString[self.questStringInt], -1)
+            local s = self.questString[self.questStringInt] and string.sub(self.questString[self.questStringInt], -1) or ""
             if s == "?" then
                 self.container.playerModel:SetAnimation(emotes.No)
             end
