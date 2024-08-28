@@ -1,3 +1,15 @@
+7.3.0
+NEW
+    - Delves support for objectives tracker
+    - Added group progress to objectives tooltip
+
+FIXES
+    - Objectives tracker auto turn in quests
+    - Totem tracker should work again
+
+CHANGES
+    - Update some skins
+
 7.2.0
 NEW
     - Talent frame skin

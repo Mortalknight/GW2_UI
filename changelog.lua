@@ -15,6 +15,14 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.3.0",{
+    {ct.feature, [=[Delves support for objectives tracker]=]},
+    {ct.feature, [=[Added group progress to objectives tooltip]=]},
+    {ct.change, [=[Update some skins]=]},
+    {ct.bug, [=[Objectives tracker auto turn in quests]=]},
+    {ct.bug, [=[Totem tracker should work again]=]},
+})
+
 addChange("7.2.0",{
     {ct.feature, [=[Talent frame skin]=]},
     {ct.feature, [=[Tooltip Item Count now has options Include Reagents and Include Warband]=]},
