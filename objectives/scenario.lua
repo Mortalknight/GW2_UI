@@ -212,57 +212,55 @@ local function updateCurrentScenario(self, event, ...)
         compassData.TYPE = "TORGHAST"
     end
 
-    if C_DelvesUI.HasActiveDelve(GW.Libs.GW2Lib:GetPlayerInstanceMapID()) then
-        local widgetInfo = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(6183)
+    -- check for active delves
+    local delvesWidgetInfo = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(6183)
+    if delvesWidgetInfo and delvesWidgetInfo.frameTextureKit and delvesWidgetInfo.frameTextureKit == "delves-scenario" then
+        local tierLevel = delvesWidgetInfo.tierText or ""
 
-        if widgetInfo then
-            local tierLevel = widgetInfo.tierText or ""
-
-            if GwObjectivesNotification then
-                GwObjectivesNotification.iconFrame.tooltipSpellID = widgetInfo.tierTooltipSpellID
-            end
-
-            compassData.TITLE = difficultyName .. " |cFFFFFFFF(" .. tierLevel .. ")|r - " .. widgetInfo.headerText
-
-            GwScenarioBlock.delvesFrame:Show()
-            GwScenarioBlock.delvesFrame.reward:Show()
-
-            local id = 1
-            for _, spellInfo in ipairs(widgetInfo.spells) do
-                if spellInfo.shownState ~= Enum.WidgetShownState.Hidden then
-                    local spellData = C_Spell.GetSpellInfo(spellInfo.spellID)
-
-                    SetPortraitToTexture(GwScenarioBlock.delvesFrame.spell[id].icon, spellData.iconID)
-                    GwScenarioBlock.delvesFrame.spell[id].icon:SetDesaturated(spellInfo.enabledState == Enum.WidgetEnabledState.Disabled)
-
-                    GwScenarioBlock.delvesFrame.spell[id].spellID = spellData.spellID
-                    GwScenarioBlock.delvesFrame.spell[id]:Show()
-
-                    id = id + 1
-                end
-            end
-
-            for i = id, 5 do
-                GwScenarioBlock.delvesFrame.spell[i].spellID = nil
-                GwScenarioBlock.delvesFrame.spell[i]:Hide()
-            end
-
-            -- handle rewards
-            if widgetInfo.rewardInfo.shownState ~= Enum.UIWidgetRewardShownState.Hidden then
-                local rewardTooltip = (widgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownEarned) and widgetInfo.rewardInfo.earnedTooltip or widgetInfo.rewardInfo.unearnedTooltip
-                GwScenarioBlock.delvesFrame.reward.tooltip = rewardTooltip
-
-                GwScenarioBlock.delvesFrame.reward.earned:SetShown(widgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownEarned)
-                GwScenarioBlock.delvesFrame.reward.unearned:SetShown(widgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownUnearned)
-
-                GwScenarioBlock.delvesFrame.reward:Show()
-            else
-                GwScenarioBlock.delvesFrame.reward:Hide()
-            end
-
-            compassData.COLOR = TRACKER_TYPE_COLOR.DELVE
-            compassData.TYPE = "DELVE"
+        if GwObjectivesNotification then
+            GwObjectivesNotification.iconFrame.tooltipSpellID = delvesWidgetInfo.tierTooltipSpellID
         end
+
+        compassData.TITLE = difficultyName .. " |cFFFFFFFF(" .. tierLevel .. ")|r - " .. delvesWidgetInfo.headerText
+
+        GwScenarioBlock.delvesFrame:Show()
+        GwScenarioBlock.delvesFrame.reward:Show()
+
+        local id = 1
+        for _, spellInfo in ipairs(delvesWidgetInfo.spells) do
+            if spellInfo.shownState ~= Enum.WidgetShownState.Hidden then
+                local spellData = C_Spell.GetSpellInfo(spellInfo.spellID)
+
+                SetPortraitToTexture(GwScenarioBlock.delvesFrame.spell[id].icon, spellData.iconID)
+                GwScenarioBlock.delvesFrame.spell[id].icon:SetDesaturated(spellInfo.enabledState == Enum.WidgetEnabledState.Disabled)
+
+                GwScenarioBlock.delvesFrame.spell[id].spellID = spellData.spellID
+                GwScenarioBlock.delvesFrame.spell[id]:Show()
+
+                id = id + 1
+            end
+        end
+
+        for i = id, 5 do
+            GwScenarioBlock.delvesFrame.spell[i].spellID = nil
+            GwScenarioBlock.delvesFrame.spell[i]:Hide()
+        end
+
+        -- handle rewards
+        if delvesWidgetInfo.rewardInfo.shownState ~= Enum.UIWidgetRewardShownState.Hidden then
+            local rewardTooltip = (delvesWidgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownEarned) and delvesWidgetInfo.rewardInfo.earnedTooltip or delvesWidgetInfo.rewardInfo.unearnedTooltip
+            GwScenarioBlock.delvesFrame.reward.tooltip = rewardTooltip
+
+            GwScenarioBlock.delvesFrame.reward.earned:SetShown(delvesWidgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownEarned)
+            GwScenarioBlock.delvesFrame.reward.unearned:SetShown(delvesWidgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownUnearned)
+
+            GwScenarioBlock.delvesFrame.reward:Show()
+        else
+            GwScenarioBlock.delvesFrame.reward:Hide()
+        end
+
+        compassData.COLOR = TRACKER_TYPE_COLOR.DELVE
+        compassData.TYPE = "DELVE"
     else
         GwScenarioBlock.delvesFrame:Hide()
     end
