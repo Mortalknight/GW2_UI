@@ -172,7 +172,7 @@
           <StatusBar parentKey="powerbar" inherits="GwStatusBarTemplate">
             <Size x="213" y="3"/>
             <Anchors>
-                <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="1" y="-2"></Anchor>
+                <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="1" y="-1"></Anchor>
             </Anchors>
           </StatusBar>
           <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
@@ -301,7 +301,7 @@
           <StatusBar parentKey="powerbar" inherits="GwStatusBarTemplate">
             <Size x="148" y="3"/>
             <Anchors>
-                <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="1" y="-2"></Anchor>
+                <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="1" y="-1"></Anchor>
             </Anchors>
           </StatusBar>
           <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
@@ -496,7 +496,7 @@
           <StatusBar parentKey="powerbar" inherits="GwStatusBarTemplate">
             <Size x="213" y="3"/>
             <Anchors>
-                <Anchor point="TOPRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMRIGHT" x="-1" y="-2"></Anchor>
+                <Anchor point="TOPRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMRIGHT" x="-1" y="-1"></Anchor>
             </Anchors>
           </StatusBar>
           <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
