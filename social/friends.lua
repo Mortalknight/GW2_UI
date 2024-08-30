@@ -149,13 +149,11 @@ local function LoadFriendList(tabContainer)
         if not button.IsSkinned then
             button:SetSize(460, 34)
 
-            button.gameIcon:SetSize(22, 22)
-            button.gameIcon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+            button.gameIcon:SetSize(24, 24)
             button.gameIcon:ClearAllPoints()
-            button.gameIcon:SetPoint("RIGHT", button, "RIGHT", -24, 0)
-            --button.gameIcon.SetPoint = GW.NoOp
 
             button.name:SetFont(UNIT_NAME_FONT, 14)
+            button.name:SetWidth(400)
 
             local travelPass = button.travelPassButton
             travelPass:SetSize(22, 22)
@@ -166,7 +164,7 @@ local function LoadFriendList(tabContainer)
             travelPass.DisabledTexture:SetAlpha(0)
             travelPass.HighlightTexture:SetColorTexture(1, 1, 1, .25)
             travelPass.HighlightTexture:SetAllPoints()
-            button.gameIcon:SetPoint("TOPRIGHT", travelPass, "TOPLEFT", -4, 0)
+            button.gameIcon:SetPoint("RIGHT", travelPass, "LEFT", -6, 0)
 
             local icon = travelPass:CreateTexture(nil, "ARTWORK")
             icon:SetTexCoord(.1, .9, .1, .9)
@@ -193,7 +191,7 @@ local function LoadFriendList(tabContainer)
             local info = C_FriendList.GetFriendInfoByIndex(button.id)
             if info.connected then
                 local name, class = info.name, info.className
-                local classTag, color = GW.UnlocalizedClassName(class), GW.GWGetClassColor(GW.UnlocalizedClassName(class))
+                local classTag, color = GW.UnlocalizedClassName(class), GW.GWGetClassColor(GW.UnlocalizedClassName(class), true, true, true)
                 status = info.dnd and 'DND' or info.afk and 'AFK' or 'Online'
                 nameText = format('%s |cFFFFFFFF(|r%s|cFFFFFFFF)|r', WrapTextInColorCode(name, color), class)
                 infoText = info.area
@@ -219,7 +217,7 @@ local function LoadFriendList(tabContainer)
                     if client == BNET_CLIENT_WOW then
                         local level = info.gameAccountInfo.characterLevel
                         local characterName = info.gameAccountInfo.characterName
-                        local classcolor = GW.GWGetClassColor(GW.UnlocalizedClassName(info.gameAccountInfo.className))
+                        local classcolor = GW.GWGetClassColor(GW.UnlocalizedClassName(info.gameAccountInfo.className), true, true, true)
                         if characterName then
                             nameText = format('%s (%s - %s %s)', nameText, WrapTextInColorCode(characterName, classcolor.colorStr), LEVEL, WrapTextInColorCode(level, diff))
                         end
