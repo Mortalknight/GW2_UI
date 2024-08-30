@@ -11,6 +11,8 @@ local settings = {
     }
 }
 
+local LeftButtonIcon = "|TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:13:11:0:-1:512:512:12:66:230:307|t"
+
 local function UpdateSettings()
     settings.communityFeast = {
         enabled = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ENABLED,
@@ -220,6 +222,17 @@ local function getGradientText(text, colorTable)
     )
 end
 
+local function worldMapIDSetter(idOrFunc)
+    return function(...)
+        if not WorldMapFrame or not WorldMapFrame:IsShown() or not WorldMapFrame.SetMapID then
+            return
+        end
+
+        local id = type(idOrFunc) == "function" and idOrFunc(...) or idOrFunc
+        WorldMapFrame:SetMapID(id)
+    end
+end
+
 local eventData = {
     CommunityFeast = {
         dbKey = "communityFeast",
@@ -257,7 +270,9 @@ local eventData = {
                 end
 
                 return timestampTable[region]
-            end)()
+            end)(),
+            onClick = worldMapIDSetter(2024),
+            onClickHelpText = L["Click to show location"]
         }
     },
     SiegeOnDragonbaneKeep = {
@@ -296,7 +311,9 @@ local eventData = {
                 end
 
                 return timestampTable[region]
-            end)()
+            end)(),
+            onClick = worldMapIDSetter(2022),
+            onClickHelpText = L["Click to show location"]
         }
     },
     ResearchersUnderFire = {
@@ -334,7 +351,9 @@ local eventData = {
                 end
 
             return timestampTable[region]
-            end)()
+            end)(),
+            onClick = worldMapIDSetter(2133),
+            onClickHelpText = L["Click to show location"]
         }
     },
     TimeRiftThaldraszus = {
@@ -372,7 +391,9 @@ local eventData = {
                 end
 
             return timestampTable[region]
-            end)()
+            end)(),
+            onClick = worldMapIDSetter(2025),
+            onClickHelpText = L["Click to show location"]
         }
     },
     SuperBloom = {
@@ -449,7 +470,9 @@ local eventData = {
                 end
 
                 return timestampTable[region]
-            end)()
+            end)(),
+            onClick = worldMapIDSetter(2024),
+            onClickHelpText = L["Click to show location"]
         }
     },
     IskaaranFishingNet = {
@@ -532,7 +555,9 @@ local eventData = {
                         end
                     end
                 }
-            }
+            },
+            onClick = worldMapIDSetter(2024),
+            onClickHelpText = L["Click to show location"]
         }
     }
 }
@@ -647,6 +672,15 @@ local functionFactory = {
             self.statusBar.spark:SetBlendMode("ADD")
             self.statusBar.spark:SetPoint("CENTER", self.statusBar:GetStatusBarTexture(), "RIGHT", 0, 0)
             self.statusBar.spark:SetSize(4, 26)
+
+            self:SetScript(
+                "OnMouseDown",
+                function()
+                    if self.args.onClick then
+                        self.args:onClick()
+                    end
+                end
+            )
         end,
         setup = function(self)
             self.icon:SetTexture(self.args.icon)
@@ -709,7 +743,11 @@ local functionFactory = {
                     self.statusBar:SetMinMaxValues(0, self.args.duration)
                     self.statusBar:SetValue(self.timeOver)
                     local tex = self.statusBar:GetStatusBarTexture()
-                    tex:SetGradient("HORIZONTAL", CreateColorFromTable(colorPlatte.running[1]), CreateColorFromTable(colorPlatte.running[2]))
+                    local platte = self.args.runningBarColor or colorPlatte.running
+                    tex:SetGradient("HORIZONTAL", CreateColorFromTable(platte[1]), CreateColorFromTable(platte[2]))
+                    if self.args.runningTextUpdater then
+                        self.runningTip:SetText(self.args:runningTextUpdater())
+                    end
                     self.runningTip:Show()
                     GW.FrameFlash(self.runningTip, 1, 0.3, 1, true)
                 else
@@ -802,6 +840,11 @@ local functionFactory = {
                             1
                         )
                     end
+                end
+
+                if self.args.onClickHelpText then
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine(LeftButtonIcon .. " " .. self.args.onClickHelpText, 1, 1, 1)
                 end
 
                 GameTooltip:Show()
@@ -1090,6 +1133,11 @@ local functionFactory = {
                     GameTooltip:AddDoubleLine(L["Bonus Net"], StringByTemplate(L["Not Set"], "danger"))
                 end
 
+                if self.args.onClickHelpText then
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine(LeftButtonIcon .. " " .. self.args.onClickHelpText, 1, 1, 1)
+                end
+
                 GameTooltip:Show()
             end,
             onLeave = function()
@@ -1272,6 +1320,13 @@ local function LoadDragonFlightWorldEvents()
             mapFrame:RegisterEvent(event)
         end
     end)
+
+    EventRegistry:RegisterCallback("WorldMapOnShow", UpdateTrackers)
+    EventRegistry:RegisterCallback("WorldMapMinimized", function() C_Timer.After(0.1, UpdateTrackers) end)
+    EventRegistry:RegisterCallback("WorldMapMaximized", function() C_Timer.After(0.1, UpdateTrackers) end)
+    QuestMapFrame:HookScript("OnShow", UpdateTrackers)
+    QuestMapFrame:HookScript("OnHide", UpdateTrackers)
+
 end
 GW.LoadDragonFlightWorldEvents = LoadDragonFlightWorldEvents
 

@@ -583,7 +583,6 @@ L["Show a separate grid for raid pets"] = true
 L["Enable Maintank grid"] = true
 L["Size and Positions"] = true
 L["Grouping & Sorting"] = true
-
 L["World Map Coordinates"] = true
 L["Position"] = true
 L["X-Offset"] = true
@@ -599,3 +598,5 @@ L["Big Dig"] = true
 L["Warband:"] = true
 L["Include Reagents"] = true
 L["Include Warband"] = true
+
+L["Click to show location"] = true
