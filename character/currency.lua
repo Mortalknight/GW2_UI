@@ -354,9 +354,12 @@ local function UpdateTokenSkins(frame)
         end
 
         -- update zebra
-        if child.elementData and not child.elementData.isHeader then
-            zebra = idx % 2
-            child.gwZebra:SetVertexColor(zebra, zebra, zebra, 0.05)
+        if not child.elementData.isHeader then
+            if child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 then
+                child.gwZebra:SetVertexColor(1, 1, 1, 0.05)
+            else
+                child.gwZebra:SetVertexColor(0, 0, 0, 0.05)
+            end
         end
         RefreshAccountCurrencyIcon(child)
     end
