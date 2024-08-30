@@ -190,10 +190,13 @@ local function LoadFriendList(tabContainer)
         if button.buttonType == FRIENDS_BUTTON_TYPE_WOW then
             local info = C_FriendList.GetFriendInfoByIndex(button.id)
             if info.connected then
-                local name, class = info.name, info.className
+                local name, level, class = info.name, info.level, info.className
                 local classTag, color = GW.UnlocalizedClassName(class), GW.GWGetClassColor(GW.UnlocalizedClassName(class), true, true, true)
                 status = info.dnd and 'DND' or info.afk and 'AFK' or 'Online'
-                nameText = format('%s |cFFFFFFFF(|r%s|cFFFFFFFF)|r', WrapTextInColorCode(name, color), class)
+                local diffColor = GetQuestDifficultyColor(level)
+                local diff = level ~= 0 and format("FF%02x%02x%02x", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255) or "FFFFFFFF"
+
+                nameText = format('%s |cFFFFFFFF(|r%s - %s %s|cFFFFFFFF)|r', WrapTextInColorCode(name, color), class, LEVEL, WrapTextInColorCode(level, diff))
                 infoText = info.area
 
                 if classTag then
@@ -211,7 +214,7 @@ local function LoadFriendList(tabContainer)
                 nameText = info.accountName
                 infoText = info.gameAccountInfo.richPresence
                 if info.gameAccountInfo.isOnline then
-                    local client, diff = info.gameAccountInfo.clientProgram, 'FFFFE519'
+                    local client = info.gameAccountInfo.clientProgram
                     status = info.isDND and 'DND' or info.isAFK and 'AFK' or 'Online'
 
                     if client == BNET_CLIENT_WOW then
@@ -219,6 +222,8 @@ local function LoadFriendList(tabContainer)
                         local characterName = info.gameAccountInfo.characterName
                         local classcolor = GW.GWGetClassColor(GW.UnlocalizedClassName(info.gameAccountInfo.className), true, true, true)
                         if characterName then
+                            local diffColor = GetQuestDifficultyColor(level)
+                            local diff = level ~= 0 and format('FF%02x%02x%02x', diffColor.r * 255, diffColor.g * 255, diffColor.b * 255) or 'FFFFFFFF'
                             nameText = format('%s (%s - %s %s)', nameText, WrapTextInColorCode(characterName, classcolor.colorStr), LEVEL, WrapTextInColorCode(level, diff))
                         end
 
