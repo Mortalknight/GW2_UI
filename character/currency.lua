@@ -283,9 +283,7 @@ local function RefreshAccountCurrencyIcon(self)
 end
 
 local function UpdateTokenSkins(frame)
-    local zebra
-
-    for idx, child in next, { frame.ScrollTarget:GetChildren() } do
+    for _, child in next, { frame.ScrollTarget:GetChildren() } do
         if not child.IsSkinned then
             if child.Right then
                 child:GwStripTextures()
@@ -428,9 +426,7 @@ local function SkinTokenFrame()
 end
 
 local function UpdateTransferHistorySkins(self)
-    local zebra
-
-    for idx, child in next, { self.ScrollTarget:GetChildren() } do
+    for _, child in next, { self.ScrollTarget:GetChildren() } do
         if not child.IsSkinned then
 
             if child.SourceName then
@@ -467,8 +463,11 @@ local function UpdateTransferHistorySkins(self)
         end
 
         -- update zebra
-        zebra = idx % 2
-        child.gwZebra:SetVertexColor(zebra, zebra, zebra, 0.05)
+        if child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 then
+            child.gwZebra:SetVertexColor(1, 1, 1, 0.05)
+        else
+            child.gwZebra:SetVertexColor(0, 0, 0, 0.05)
+        end
     end
 end
 
