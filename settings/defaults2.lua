@@ -913,6 +913,7 @@ GW.globalDefault = {
         EXPANSION_LANDING_PAGE_SKIN_ENABLED= true,
         GENERIC_TRAINT_SKIN_ENABLED= true,
         PLAYER_SPELLS_SKIN_ENABLED = true,
+        AuctionHouseSkinEnabled = true,
 
         ALERTFRAME_NOTIFICATION_LEVEL_UP= true,
         ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND= "None",

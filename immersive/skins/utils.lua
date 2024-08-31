@@ -200,9 +200,30 @@ end
 GW.HandleIcon = HandleIcon
 
 do
-    local function iconBorderColor(border, r, g, b, a)
-        border:GwStripTextures()
+    local iconColors = {
+        ['auctionhouse-itemicon-border-gray']		= {r = .61, g = .61, b = .61},
+        ['auctionhouse-itemicon-border-white']		= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common],
+        ['auctionhouse-itemicon-border-green']		= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Uncommon],
+        ['auctionhouse-itemicon-border-blue']		= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Rare],
+        ['auctionhouse-itemicon-border-purple']		= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Epic],
+        ['auctionhouse-itemicon-border-orange']		= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Legendary],
+        ['auctionhouse-itemicon-border-artifact']	= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Artifact],
+        ['auctionhouse-itemicon-border-account']	= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Heirloom]
+    }
 
+    local function iconBorderColorAtlas(border, atlas)
+        local color = iconColors[atlas]
+        if not color then return end
+
+        if border.customFunc then
+            local br, bg, bb = 1, 1, 1
+            border.customFunc(border, color.r, color.g, color.b, 1, br, bg, bb)
+        elseif border.customBackdrop then
+            border.customBackdrop:SetBackdropBorderColor(color.r, color.g, color.b)
+        end
+    end
+
+    local function iconBorderColorVertex(border, r, g, b, a)
         if border.customFunc then
             local br, bg, bb = 1, 1, 1
             border.customFunc(border, r, g, b, a, br, bg, bb)
@@ -211,7 +232,9 @@ do
         end
     end
 
-    local function iconBorderHide(border)
+    local function iconBorderHide(border, value)
+        if value == 0 then return end -- hiding blizz border
+
         local br, bg, bb = 1, 1, 1
         if border.customFunc then
             local r, g, b, a = border:GetVertexColor()
@@ -221,33 +244,49 @@ do
         end
     end
 
+    local function iconBorderShown(border, show)
+        if show then
+            border:Hide(0)
+        else
+            iconBorderHide(border)
+        end
+    end
+
     local function HandleIconBorder(border, backdrop, customFunc)
         if not backdrop then
             local parent = border:GetParent()
             backdrop = parent.backdrop or parent
         end
 
-        border.customBackdrop = backdrop
-
-        if not border.IconBorderHooked then
-            border:GwStripTextures()
-
-            hooksecurefunc(border, "SetVertexColor", iconBorderColor)
-            hooksecurefunc(border, "Hide", iconBorderHide)
-
-            border.IconBorderHooked = true
+        if border.customBackdrop ~= backdrop then
+            border.customBackdrop = backdrop
         end
 
         local r, g, b, a = border:GetVertexColor()
+        local atlas = iconColors[border.GetAtlas and border:GetAtlas()]
         if customFunc then
             border.customFunc = customFunc
             local br, bg, bb = 1, 1, 1
             customFunc(border, r, g, b, a, br, bg, bb)
+        elseif atlas then
+            backdrop:SetBackdropBorderColor(atlas.r, atlas.g, atlas.b, 1)
         elseif r then
             backdrop:SetBackdropBorderColor(r, g, b, a)
         else
             local br, bg, bb = 1, 1, 1
             backdrop:SetBackdropBorderColor(br, bg, bb)
+        end
+
+        if not border.IconBorderHooked then
+            border.IconBorderHooked = true
+            border:Hide()
+
+            hooksecurefunc(border, 'SetAtlas', iconBorderColorAtlas)
+            hooksecurefunc(border, "SetVertexColor", iconBorderColorVertex)
+            hooksecurefunc(border, "Hide", iconBorderHide)
+            hooksecurefunc(border, 'SetShown', iconBorderShown)
+            hooksecurefunc(border, 'Show', iconBorderShown)
+
         end
     end
     GW.HandleIconBorder = HandleIconBorder
@@ -405,9 +444,9 @@ do
             borderBox:GwStripTextures()
 
             local dropdown = borderBox.IconTypeDropdown
-			if dropdown then
-				dropdown:GwHandleDropDownBox()
-			end
+            if dropdown then
+                dropdown:GwHandleDropDownBox()
+            end
 
             local button = borderBox.SelectedIconArea and borderBox.SelectedIconArea.SelectedIconButton
             if button then

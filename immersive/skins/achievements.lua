@@ -269,7 +269,7 @@ local function HandleAchivementsScrollControls(self)
     bg:SetTexCoord(0,1,1,0)
 end
 
-local function catMenuButtonState(self,selected)
+local function catMenuButtonState(self, selected)
     if selected then
         selectedCategoryID = self.categoryID
         if hackingBlizzardFunction then

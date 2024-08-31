@@ -40,6 +40,7 @@
     <Script file="genericTraintUI.lua"/>
     <Script file="AdventureMap.lua"/>
     <Script file="playerSpells.lua"/>
+    <Script file="auctionHouse.lua"/>
 
     <Script file="addons\immersion.lua"/>
     <Script file="addons\postal.lua"/>
