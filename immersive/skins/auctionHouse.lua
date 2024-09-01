@@ -295,7 +295,7 @@ local function ApplyAuctionHouseSkin()
 	AuctionHouseFrameAuctionsFrame.BidsList:GwStripTextures()
 	AuctionHouseFrame.WoWTokenResults:GwStripTextures()
 
-	GW.CreateFrameHeaderWithBody(AuctionHouseFrame, AuctionHouseFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {AuctionHouseFrame.CategoriesList,
+	GW.CreateFrameHeaderWithBody(AuctionHouseFrame, AuctionHouseFrameTitleText, "Interface/AddOns/GW2_UI/textures/icons/auction-window-icon", {AuctionHouseFrame.CategoriesList,
 								AuctionHouseFrame.BrowseResultsFrame,
 								AuctionHouseFrame.CommoditiesBuyFrame,
 								AuctionHouseFrame.CommoditiesBuyFrame.ItemList,
