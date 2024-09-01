@@ -233,6 +233,30 @@ local function LoadHudPanel(sWindow)
         L["World Map Coordinates"]
     )
 
+    -- Theater Troupe
+    addGroupHeader(worldmap.scroll.scrollchild,L["Theater Troupe"])
+    addOption(worldmap.scroll.scrollchild, L["Theater Troupe"], nil, "WORLD_EVENTS_THEATER_TROUPE_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Theater Troupe"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_THEATER_TROUPE_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true}, nil, nil, L["Theater Troupe"])
+    addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_THEATER_TROUPE_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true}, nil, nil, L["Theater Troupe"])
+    addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_THEATER_TROUPE_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true, ["WORLD_EVENTS_THEATER_TROUPE_ALERT"] = true}, nil, nil, L["Theater Troupe"])
+    addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_THEATER_TROUPE_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true, ["WORLD_EVENTS_THEATER_TROUPE_ALERT"] = true}, nil, nil, L["Theater Troupe"])
+    addOptionSlider(
+        worldmap.scroll.scrollchild,
+        L["Alert Second"],
+        L["Alert will be triggered when the remaining time is less than the set value."],
+        "WORLD_EVENTS_THEATER_TROUPE_ALERT_SECONDS",
+        GW.UpdateWorldEventTrackers,
+        0,
+        3600,
+        nil,
+        0,
+        {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true, ["WORLD_EVENTS_THEATER_TROUPE_ALERT"] = true},
+        1,
+        nil,
+        nil,
+        L["Theater Troupe"]
+    )
+
     -- Community Feast
     addGroupHeader(worldmap.scroll.scrollchild, L["Community Feast"])
     addOption(worldmap.scroll.scrollchild, L["Community Feast"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Community Feast"])

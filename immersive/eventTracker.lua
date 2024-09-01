@@ -14,6 +14,15 @@ local settings = {
 local LeftButtonIcon = "|TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:13:11:0:-1:512:512:12:66:230:307|t"
 
 local function UpdateSettings()
+    settings.theaterTroupe = {
+        enabled = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ENABLED,
+        desaturate = GW.settings.WORLD_EVENTS_THEATER_TROUPE_DESATURATE,
+        alert = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ALERT,
+        alertSeconds = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ALERT_SECONDS,
+        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_THEATER_TROUPE_STOP_ALERT_IF_COMPLETED,
+        flashTaskbar = GW.settings.WORLD_EVENTS_THEATER_TROUPE_FLASH_TASKBAR
+    }
+
     settings.communityFeast = {
         enabled = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ENABLED,
         desaturate = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE,
@@ -92,6 +101,7 @@ local mapFrame
 local eventHandlers = {}
 
 local eventList = {
+    "TheaterTroupe",
     "CommunityFeast",
     "SiegeOnDragonbaneKeep",
     "ResearchersUnderFire",
@@ -234,6 +244,44 @@ local function worldMapIDSetter(idOrFunc)
 end
 
 local eventData = {
+    TheaterTroupe = {
+        dbKey = "theaterTroupe",
+        args = {
+            icon = 5788303,
+            type = "loopTimer",
+            questIDs = {83240},
+            hasWeeklyReward = true,
+            duration = 120,
+            interval = 3600,
+            barColor = colorPlatte.bronze,
+            flash = true,
+            runningBarColor = colorPlatte.green,
+            eventName = L["Theater Troupe"],
+            location = C_Map.GetMapInfo(2248).name,
+            label = L["Theater"],
+            runningText = L["Performing"],
+            startTimestamp = (function()
+                local timestampTable = {
+                    [1] = 1724976005, -- NA
+                    [2] = 1724976005, -- KR
+                    [3] = 1724976005, -- EU
+                    [4] = 1724976005, -- TW
+                    [5] = 1724976005, -- CN
+                    [72] = 1724976000,
+                }
+
+                local region = GetCurrentRegion()
+                -- TW is not a real region, so we need to check the client language if player in KR
+                if region == 2 and GW.mylocal ~= "koKR" then
+                    region = 4
+                end
+
+                return timestampTable[region]
+            end)(),
+            onClick = worldMapIDSetter(2248),
+            onClickHelpText = L["Click to show location"],
+        },
+    },
     CommunityFeast = {
         dbKey = "communityFeast",
         args = {
@@ -1203,7 +1251,9 @@ function trackers:get(event)
             end
             frame.tickerInstance = C_Timer.NewTicker(functions.ticker.interval, function()
                 if not settings.communityFeast.enabled and not settings.dragonbaneKeep.enabled and not settings.iskaaranFishingNet.enabled
-                    and not settings.researchersUnderFire.enabled and not settings.timeRiftThaldraszus.enabled and not settings.superBloom.enabled then
+                    and not settings.researchersUnderFire.enabled and not settings.timeRiftThaldraszus.enabled and not settings.superBloom.enabled 
+                    and not settings.bigDig.enabled and not settings.theaterTroupe.enabled then
+
                     return
                 end
                 functions.ticker.dateUpdater(frame)
@@ -1305,7 +1355,7 @@ local function UpdateTrackers()
         end
     end
     mapFrame:SetHeight(mapFrame.heightPerRow * rowIdx)
-    mapFrame:SetShown(settings.communityFeast.enabled or settings.dragonbaneKeep.enable or settings.iskaaranFishingNet.enabled or settings.researchersUnderFire.enabled or settings.timeRiftThaldraszus.enabled or settings.superBloom.enabled)
+    mapFrame:SetShown(settings.bigDig.enabled or settings.theaterTroupe.enabled or settings.communityFeast.enabled or settings.dragonbaneKeep.enable or settings.iskaaranFishingNet.enabled or settings.researchersUnderFire.enabled or settings.timeRiftThaldraszus.enabled or settings.superBloom.enabled)
 end
 GW.UpdateWorldEventTrackers = UpdateTrackers
 

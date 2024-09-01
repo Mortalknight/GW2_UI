@@ -600,3 +600,6 @@ L["Include Reagents"] = true
 L["Include Warband"] = true
 
 L["Click to show location"] = true
+L["Theater"] = true
+L["Performing"] = true
+L["Theater Troupe"] = true
