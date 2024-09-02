@@ -273,6 +273,186 @@ local function HandleSellList(frame, hasHeader, fitScrollBar)
 	end
 end
 
+local function AddDetailsBackground(frame)
+	local detailBg = frame:CreateTexture(nil, "BACKGROUND", nil, 7)
+	detailBg:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
+	detailBg:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+	detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+	detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+	frame.tex = detailBg
+end
+
+local function SkinItem(item)
+	if item.Icon and not item.backdrop then
+		GW.HandleIcon(item.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
+		GW.HandleIconBorder(item.IconBorder, item.Icon.backdrop)
+		item.Icon:GwSetInside(item.backdrop)
+		item.EmptySlot:Hide()
+		item:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
+		item:GetHighlightTexture():Hide()
+		item:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+	end
+end
+
+local function SetItemInfo(item, info)
+	if info then
+		SkinItem(item)
+	end
+end
+
+local function SetGroupTitleFrame(header)
+	local button = header.GroupTitle
+	if button and not button.IsSkinned then
+		button:DisableDrawLayer("BACKGROUND")
+
+		if not button.backdrop then
+			button:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
+			button.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+			button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+			button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+			button:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
+			button.HighlightTexture:GwKill()
+			button:GetNormalTexture():GwSetInside()
+			button:GetHighlightTexture():GwSetInside()
+			button.Text:SetTextColor(1, 1, 1)
+		end
+
+		button.IsSkinned = true
+	end
+end
+
+local function SkinAuctioneer()
+	local lastTab = AuctionHouseFrameAuctionsTab
+
+	C_Timer.After(0.2, function()
+		local libAhTab = LibStub:GetLibrary("LibAHTab-1-0", true)
+		-- skin tabs
+		if Auctionator then
+			if libAhTab then
+				for _, details in ipairs(Auctionator.Tabs.State.knownTabs) do
+					local tab = libAhTab:GetButton("AuctionatorTabs_" .. details.name)
+					GW.HandleTabs(tab)
+
+					-- tab positions
+					tab:ClearAllPoints()
+					tab:SetPoint("TOPLEFT", lastTab, "TOPRIGHT", (tab.backdrop or tab.Backdrop) and -5 or 0, 0)
+
+					lastTab = tab
+				end
+			end
+
+			-- AuctionatorConfigFrame
+			AuctionatorConfigFrame:GwStripTextures()
+			AddDetailsBackground(AuctionatorConfigFrame)
+			AuctionatorConfigFrame.OptionsButton:GwSkinButton(false, true)
+			AuctionatorConfigFrame.ScanButton:GwSkinButton(false, true)
+			GW.SkinTextBox(AuctionatorConfigFrame.DiscordLink.InputBox.Middle, AuctionatorConfigFrame.DiscordLink.InputBox.Left, AuctionatorConfigFrame.DiscordLink.InputBox.Right)
+			GW.SkinTextBox(AuctionatorConfigFrame.BugReportLink.InputBox.Middle, AuctionatorConfigFrame.BugReportLink.InputBox.Left, AuctionatorConfigFrame.BugReportLink.InputBox.Right)
+			AuctionatorConfigFrame.AuthorHeading.HeadingText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+			AuctionatorConfigFrame.ContributorsHeading.HeadingText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+			AuctionatorConfigFrame.VersionHeading.HeadingText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+			AuctionatorConfigFrame.EngageHeading.HeadingText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+			AuctionatorConfigFrame.TranslatorsHeading.HeadingText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+
+			-- AuctionatorCancellingFrame
+			AuctionatorCancellingFrame:GwStripTextures()
+			AuctionatorCancellingFrame.ResultsListing:GwStripTextures()
+			AuctionatorCancellingFrame.HistoricalPriceInset:GwStripTextures()
+			AddDetailsBackground(AuctionatorCancellingFrame.HistoricalPriceInset)
+			AuctionatorCancellingFrame.UndercutScanContainer.StartScanButton:GwSkinButton(false, true)
+			AuctionatorCancellingFrame.UndercutScanContainer.CancelNextButton:GwSkinButton(false, true)
+			AuctionatorCancelUndercutButton:GwSkinButton(false, true)
+			GW.SkinTextBox(AuctionatorCancellingFrame.SearchFilter.Middle, AuctionatorCancellingFrame.SearchFilter.Left, AuctionatorCancellingFrame.SearchFilter.Right)
+			HandleHeaders(AuctionatorCancellingFrame.ResultsListing)
+
+			GW.HandleTrimScrollBar(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar)
+    		GW.HandleScrollControls(AuctionatorCancellingFrame.ResultsListing.ScrollArea)
+			hooksecurefunc(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBox, "Update", HandleItemListScrollBoxHover)
+
+			AuctionatorCancellingFrame.ResultsListing.ScrollArea.NoResultsText:SetTextColor(1, 1, 1)
+			AuctionatorCancellingFrame.ResultsListing.ScrollArea.ResultsText:SetTextColor(1, 1, 1)
+
+			-- undercut butttons, refresh button
+			for _, child in next, {AuctionatorCancellingFrame:GetChildren()} do
+				if child.iconAtlas == 'UI-RefreshButton' then
+					child:GwSkinButton(false, true)
+					child.Icon:SetDesaturated(true)
+				end
+			end
+
+			-- Selling
+			local selling = AuctionatorSellingFrame
+			selling.HistoricalPriceInset:GwStripTextures()
+			selling.BagInset:GwStripTextures()
+			GW.HandleTrimScrollBar(selling.BagListing.View.ScrollBar)
+    		GW.HandleScrollControls(selling.BagListing.View)
+			AddDetailsBackground(selling.HistoricalPriceInset)
+			AddDetailsBackground(selling.BagListing)
+			selling.SaleItemFrame.MaxButton:GwSkinButton(false, true)
+			selling.SaleItemFrame.PostButton:GwSkinButton(false, true)
+			selling.SaleItemFrame.SkipButton:GwSkinButton(false, true)
+			SkinItem(selling.SaleItemFrame.Icon)
+
+			-- handle bag item icons
+			hooksecurefunc(AuctionatorGroupsViewItemMixin, 'SetItemInfo', SetItemInfo)
+			hooksecurefunc(AuctionatorGroupsViewGroupMixin, 'AddButton', SetGroupTitleFrame)
+
+			GW.HandleTabs(selling.PricesTabsContainer.CurrentPricesTab)
+			GW.HandleTabs(selling.PricesTabsContainer.RealmHistoryTab)
+			GW.HandleTabs(selling.PricesTabsContainer.YourHistoryTab)
+			GW.HandleTabs(selling.PricesTabsContainer.PriceHistoryTab)
+
+			HandleHeaders(selling.CurrentPricesListing)
+			HandleHeaders(selling.HistoricalPriceListing)
+			HandleHeaders(selling.ResultsListing)
+
+			GW.HandleTrimScrollBar(selling.CurrentPricesListing.ScrollArea.ScrollBar)
+    		GW.HandleScrollControls(selling.CurrentPricesListing.ScrollArea)
+			hooksecurefunc(selling.CurrentPricesListing.ScrollArea.ScrollBox, "Update", HandleItemListScrollBoxHover)
+
+			GW.HandleTrimScrollBar(selling.HistoricalPriceListing.ScrollArea.ScrollBar)
+    		GW.HandleScrollControls(selling.HistoricalPriceListing.ScrollArea)
+			hooksecurefunc(selling.HistoricalPriceListing.ScrollArea.ScrollBox, "Update", HandleItemListScrollBoxHover)
+
+			GW.HandleTrimScrollBar(selling.ResultsListing.ScrollArea.ScrollBar)
+    		GW.HandleScrollControls(selling.ResultsListing.ScrollArea)
+			hooksecurefunc(selling.ResultsListing.ScrollArea.ScrollBox, "Update", HandleItemListScrollBoxHover)
+
+			selling.CurrentPricesListing.ScrollArea.ResultsText:SetTextColor(1, 1, 1)
+			selling.HistoricalPriceListing.ScrollArea.ResultsText:SetTextColor(1, 1, 1)
+			selling.ResultsListing.ScrollArea.ResultsText:SetTextColor(1, 1, 1)
+
+			selling.CurrentPricesListing.ScrollArea.NoResultsText:SetTextColor(1, 1, 1)
+			selling.HistoricalPriceListing.ScrollArea.NoResultsText:SetTextColor(1, 1, 1)
+			selling.ResultsListing.ScrollArea.NoResultsText:SetTextColor(1, 1, 1)
+
+			selling.SaleItemFrame.Deposit:SetTextColor(1, 1, 1)
+			selling.SaleItemFrame.Total:SetTextColor(1, 1, 1)
+
+			GW.SkinTextBox(selling.SaleItemFrame.Quantity.InputBox.Middle, selling.SaleItemFrame.Quantity.InputBox.Left, selling.SaleItemFrame.Quantity.InputBox.Right)
+			GW.SkinTextBox(selling.SaleItemFrame.Price.MoneyInput.GoldBox.Middle, selling.SaleItemFrame.Price.MoneyInput.GoldBox.Left, selling.SaleItemFrame.Price.MoneyInput.GoldBox.Right)
+			GW.SkinTextBox(selling.SaleItemFrame.Price.MoneyInput.SilverBox.Middle, selling.SaleItemFrame.Price.MoneyInput.SilverBox.Left, selling.SaleItemFrame.Price.MoneyInput.SilverBox.Right)
+			GW.SkinTextBox(selling.SaleItemFrame.Price.MoneyInput.CopperBox.Middle, selling.SaleItemFrame.Price.MoneyInput.CopperBox.Left, selling.SaleItemFrame.Price.MoneyInput.CopperBox.Right)
+
+			for _, child in next, {selling.AuctionatorSaleItem:GetChildren()} do
+				if child.iconAtlas == 'UI-RefreshButton' then
+					child:GwSkinButton(false, true)
+					child.Icon:SetDesaturated(true)
+				end
+			end
+
+			for _, duration in next, selling.AuctionatorSaleItem.Duration.radioButtons do
+				if duration.RadioButton then
+					duration.RadioButton:GwSkinCheckButton(true)
+					duration.RadioButton:SetSize(15, 15)
+				end
+			end
+		
+
+		end
+	end)
+end
+
 local function ApplyAuctionHouseSkin()
 	if not GW.settings.AuctionHouseSkinEnabled then return end
 
@@ -572,6 +752,9 @@ local function ApplyAuctionHouseSkin()
 
 	multisellFrame.CancelButton:GwSkinButton(true)
 	GW.HandleIcon(progressBar.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
+
+	-- Addmon Skins
+	SkinAuctioneer()
 end
 
 local function LoadAuctionHouseSkin()
