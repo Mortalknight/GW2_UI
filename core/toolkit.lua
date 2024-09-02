@@ -160,12 +160,27 @@ local function GwAddHover(self)
     end
 end
 
-local function GwSkinCheckButton(button)
+local function buttonHighlightTexture(frame, texture) if texture ~= nil then frame:SetHighlightTexture(nil) end end
+
+local function GwSkinCheckButton(button, isRadio)
     if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox") end
     if button.SetCheckedTexture then button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked") end
     if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked") end
     if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox") end
     if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal") end
+
+    if isRadio then
+        local Check = button:GetCheckedTexture()
+        if Check then Check:SetTexCoord(0, 1, 0, 1) end
+
+        local Normal = button:GetNormalTexture()
+        if Normal then Normal:SetTexCoord(0, 1, 0, 1) end
+
+        local Disabled = button:GetDisabledTexture()
+        if Disabled then Disabled:SetTexCoord(0, 1, 0, 1) end
+
+        hooksecurefunc(button, 'SetHighlightTexture', buttonHighlightTexture)
+    end
 
     button.isSkinnedGW2_UI = true
 end
