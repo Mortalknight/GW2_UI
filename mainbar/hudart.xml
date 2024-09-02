@@ -82,6 +82,12 @@
             </Layer>
         </Layers>
         <Frames>
+           <PlayerModel parentKey="actionBarHudFX" frameStrata="BACKGROUND" frameLevel="-8">
+               <Size x="500" y="500"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="14" />
+                </Anchors>
+            </PlayerModel>
             <Frame parentKey="actionBarHud" frameStrata="BACKGROUND">
                 <Size x="1024" y="256"></Size>
                 <Anchors>

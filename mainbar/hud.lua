@@ -35,10 +35,10 @@ local function xpbar_OnEnter(self)
     if not IsPlayerAtEffectiveMaxLevel() then
         GameTooltip:AddLine(
             COMBAT_XP_GAIN ..
-                " " ..
-                    CommaValue(valCurrent) ..
-                        " / " ..
-                            CommaValue(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r",
+            " " ..
+            CommaValue(valCurrent) ..
+            " / " ..
+            CommaValue(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r",
             1,
             1,
             1
@@ -48,7 +48,7 @@ local function xpbar_OnEnter(self)
     if rested ~= nil and rested ~= 0 then
         GameTooltip:AddLine(
             L["Rested "] ..
-                CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
+            CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
             1,
             1,
             1
@@ -66,7 +66,8 @@ local function xpbar_OnEnter(self)
     end
 
     local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
+    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and
+        C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
 
     if shouldShowAzeritBar then
         local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
@@ -144,7 +145,8 @@ local function xpbar_OnEvent(self, event)
     end
 
     local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
+    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and
+        C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
     local AzeritVal = 0
     local AzeritLevel = 0
 
@@ -162,7 +164,8 @@ local function xpbar_OnEvent(self, event)
     local showBar1 = level < Nextlevel
     local showBar2 = false
     local showBar3 = false
-    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or ""
+    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or
+        ""
 
     if rested == nil or (rested / valMax) == 0 then
         rested = 0
@@ -195,61 +198,106 @@ local function xpbar_OnEvent(self, event)
             currentValue = currentValue % maxValueParagon;
             valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
 
-            gw_reputation_vals = watchedFactionData.name .. " " .. REPUTATION .. " " .. CommaValue(currentValue - 0) .. " / " .. CommaValue(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+            gw_reputation_vals = watchedFactionData.name ..
+                " " ..
+                REPUTATION ..
+                " " ..
+                CommaValue(currentValue - 0) ..
+                " / " .. CommaValue(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
             isParagon = true
             isFriend = friendshipID > 0
         elseif friendshipID > 0 then
             if friendReputationInfo.nextThreshold then
-                valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) / (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
-                gw_reputation_vals = friendReputationInfo.name .. " " .. REPUTATION .. " " .. CommaValue(friendReputationInfo.standing - friendReputationInfo.reactionThreshold) .. " / " .. CommaValue(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) /
+                    (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
+                gw_reputation_vals = friendReputationInfo.name ..
+                    " " ..
+                    REPUTATION ..
+                    " " ..
+                    CommaValue(friendReputationInfo.standing - friendReputationInfo.reactionThreshold) ..
+                    " / " ..
+                    CommaValue(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold) ..
+                    " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             else
                 valPrecRepu = 1
-                gw_reputation_vals = friendReputationInfo.name .. " " .. REPUTATION .. " " .. CommaValue(friendReputationInfo.maxRep) .. " / " .. CommaValue(friendReputationInfo.maxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                gw_reputation_vals = friendReputationInfo.name ..
+                    " " ..
+                    REPUTATION ..
+                    " " ..
+                    CommaValue(friendReputationInfo.maxRep) ..
+                    " / " ..
+                    CommaValue(friendReputationInfo.maxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
-            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5]
+                .b)
             isFriend = true
         elseif C_Reputation.IsMajorFaction(watchedFactionData.factionID) then
             local majorFactionData = C_MajorFactions.GetMajorFactionData(watchedFactionData.factionID)
 
             MajorCurrentLevel = majorFactionData.renownLevel
-            MajorNextLevel = C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) and MajorCurrentLevel or MajorCurrentLevel + 1
+            MajorNextLevel = C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) and MajorCurrentLevel or
+                MajorCurrentLevel + 1
 
             if C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) then
                 valPrecRepu = 1
             else
                 valPrecRepu = ((majorFactionData.renownReputationEarned or 0)) / majorFactionData.renownLevelThreshold
             end
-            gw_reputation_vals = watchedFactionData.name .. " " .. REPUTATION .. " " .. CommaValue((majorFactionData.renownReputationEarned or 0)) .. " / " .. CommaValue(majorFactionData.renownLevelThreshold) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+            gw_reputation_vals = watchedFactionData.name ..
+                " " ..
+                REPUTATION ..
+                " " ..
+                CommaValue((majorFactionData.renownReputationEarned or 0)) ..
+                " / " ..
+                CommaValue(majorFactionData.renownLevelThreshold) ..
+                " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
-            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g,
+                FACTION_BAR_COLORS[11].b)
             isMajor = true
         else
-            local currentRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (watchedFactionData.reaction or 1))), GW.mysex)
-            local nextRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (watchedFactionData.reaction or 1) + 1)), GW.mysex)
+            local currentRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (watchedFactionData.reaction or 1))),
+                GW.mysex)
+            local nextRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (watchedFactionData.reaction or 1) + 1)),
+                GW.mysex)
 
-            watchedFactionData.currentStanding = watchedFactionData.currentStanding or 0 --fallback
-            watchedFactionData.nextReactionThreshold = watchedFactionData.nextReactionThreshold or 0 --fallback
+            watchedFactionData.currentStanding = watchedFactionData.currentStanding or 0                   --fallback
+            watchedFactionData.nextReactionThreshold = watchedFactionData.nextReactionThreshold or 0       --fallback
             watchedFactionData.currentReactionThreshold = watchedFactionData.currentReactionThreshold or 0 --fallback
             if currentRank == nextRank and watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold == 0 then
                 valPrecRepu = 1
-                gw_reputation_vals = watchedFactionData.name .. " " .. REPUTATION .. " 21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                gw_reputation_vals = watchedFactionData.name ..
+                    " " .. REPUTATION .. " 21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             else
-                valPrecRepu = (watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold) / (watchedFactionData.nextReactionThreshold - watchedFactionData.currentReactionThreshold)
-                gw_reputation_vals = watchedFactionData.name .. " " .. REPUTATION .. " " .. CommaValue((watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold)) .. " / " .. CommaValue((watchedFactionData.nextReactionThreshold - watchedFactionData.currentReactionThreshold)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                valPrecRepu = (watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold) /
+                    (watchedFactionData.nextReactionThreshold - watchedFactionData.currentReactionThreshold)
+                gw_reputation_vals = watchedFactionData.name ..
+                    " " ..
+                    REPUTATION ..
+                    " " ..
+                    CommaValue((watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold)) ..
+                    " / " ..
+                    CommaValue((watchedFactionData.nextReactionThreshold - watchedFactionData.currentReactionThreshold)) ..
+                    " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[watchedFactionData.reaction].r, FACTION_BAR_COLORS[watchedFactionData.reaction].g, FACTION_BAR_COLORS[watchedFactionData.reaction].b)
-            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[watchedFactionData.reaction].r, FACTION_BAR_COLORS[watchedFactionData.reaction].g, FACTION_BAR_COLORS[watchedFactionData.reaction].b)
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[watchedFactionData.reaction].r,
+                FACTION_BAR_COLORS[watchedFactionData.reaction].g, FACTION_BAR_COLORS[watchedFactionData.reaction].b)
+            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[watchedFactionData.reaction].r,
+                FACTION_BAR_COLORS[watchedFactionData.reaction].g, FACTION_BAR_COLORS[watchedFactionData.reaction].b)
             isNormal = true
         end
 
         local nextId = watchedFactionData.reaction and watchedFactionData.reaction + 1 or 1 --standingId
         if not lockLevelTextUnderMaxLevel then
-            level = isMajor and MajorCurrentLevel or isFriend and friendReputationInfo.reaction or isParagon and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1)) or isNormal and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1))
-            Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isMajor and MajorNextLevel or isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
+            level = isMajor and MajorCurrentLevel or isFriend and friendReputationInfo.reaction or
+                isParagon and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1)) or
+                isNormal and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1))
+            Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isMajor and MajorNextLevel or
+                isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
         end
 
         showBar3 = true
@@ -305,7 +353,8 @@ local function xpbar_OnEvent(self, event)
             self.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
         end
     else
-        local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or "Interface/AddOns/GW2_UI/textures/hud/level-label"
+        local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or
+            "Interface/AddOns/GW2_UI/textures/hud/level-label"
         self.NextLevel:SetTextColor(1, 1, 1)
         self.CurrentLevel:SetTextColor(1, 1, 1)
         self.labelRight:SetTexture(texture)
@@ -326,10 +375,10 @@ local function xpbar_OnEvent(self, event)
 
         gw_honor_vals =
             HONOR ..
-                " " ..
-                    CommaValue(currentHonor) ..
-                        " / " .. CommaValue(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
-            self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
+            " " ..
+            CommaValue(currentHonor) ..
+            " / " .. CommaValue(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
+        self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
     end
 
     if showBar1 then
@@ -361,7 +410,7 @@ local function xpbar_OnEvent(self, event)
                 self.ExpBar.Spark:SetWidth(
                     math.max(
                         8,
-                        math.min(9,self.ExpBar:GetWidth() * step)
+                        math.min(9, self.ExpBar:GetWidth() * step)
                     )
                 )
 
@@ -379,8 +428,8 @@ local function xpbar_OnEvent(self, event)
                     expSoundCooldown =
                         math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
 
-                        self.ExpBar:SetValue(step)
-                        self.ExpBar.Spark:SetPoint(
+                    self.ExpBar:SetValue(step)
+                    self.ExpBar.Spark:SetPoint(
                         "LEFT",
                         self.ExpBar:GetWidth() * step - 8,
                         0
@@ -435,7 +484,8 @@ local function xpbar_OnEvent(self, event)
     experiencebarAnimation = valPrec
 
     if GW.IsUpcomingSpellAvalible() then
-        Nextlevel = Nextlevel and Nextlevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:20:20:0:0|t" or ""
+        Nextlevel = Nextlevel and Nextlevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:20:20:0:0|t" or
+            ""
     end
 
     if GW.mylevel ~= UnitEffectiveLevel("player") then
@@ -716,22 +766,60 @@ GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
 local actionHudPlayerAuras = {}
 local actionHudPlayerPetAuras = {}
 
-local function registerActionHudAura(auraID, left, right, unit)
+local function registerActionHudAura(auraID, left, right, unit, modelFX)
     if unit == "player" then
         actionHudPlayerAuras[auraID] = {}
         actionHudPlayerAuras[auraID].auraID = auraID
         actionHudPlayerAuras[auraID].left = left
         actionHudPlayerAuras[auraID].right = right
         actionHudPlayerAuras[auraID].unit = unit
+        actionHudPlayerAuras[auraID].modelFX = modelFX
     elseif unit == "pet" then
         actionHudPlayerPetAuras[auraID] = {}
         actionHudPlayerPetAuras[auraID].auraID = auraID
         actionHudPlayerPetAuras[auraID].left = left
         actionHudPlayerPetAuras[auraID].right = right
         actionHudPlayerPetAuras[auraID].unit = unit
+        actionHudPlayerPetAuras[auraID].modelFX = modelFX
     end
 end
 GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
+
+
+
+-- For creates a model effect somewhere on the hud with a trigger buff
+local function createModelFx(modelFX)
+    local anchor = modelFX.anchor
+    local modelID = modelFX.modelID
+    local modelPosition = modelFX.modelPosition
+
+    if modelID==Gw2_HudBackgroud.actionBarHudFX.currentModelID and Gw2_HudBackgroud.actionBarHudFX:IsShown() then 
+        return
+    end
+
+    if _G[anchor.target] == nil then
+        return
+    end
+    Gw2_HudBackgroud.actionBarHudFX.currentModelID = modelID
+    Gw2_HudBackgroud.actionBarHudFX:MakeCurrentCameraCustom()
+    Gw2_HudBackgroud.actionBarHudFX:SetParent(UIParent)
+    Gw2_HudBackgroud.actionBarHudFX:SetFrameStrata(Gw2_HudBackgroud:GetFrameStrata())
+    Gw2_HudBackgroud.actionBarHudFX:SetFrameLevel(Gw2_HudBackgroud:GetFrameLevel() - 1)
+    Gw2_HudBackgroud.actionBarHudFX:SetModel(modelID)
+    Gw2_HudBackgroud.actionBarHudFX:SetPosition(modelPosition.x, modelPosition.y, modelPosition.z)
+    Gw2_HudBackgroud.actionBarHudFX:SetFacing(modelPosition.rotation)
+    Gw2_HudBackgroud.actionBarHudFX:ClearAllPoints()
+    Gw2_HudBackgroud.actionBarHudFX:SetPoint(anchor.point, anchor.target, anchor.relPoint, anchor.x, anchor.y)
+    Gw2_HudBackgroud.actionBarHudFX:Show()
+
+    if GwHudFXDebug then
+        GwHudFXDebug.x:SetText(modelPosition.x)
+        GwHudFXDebug.y:SetText(modelPosition.y)
+        GwHudFXDebug.z:SetText(modelPosition.z)
+        GwHudFXDebug.rotation:SetText(modelPosition.rotation)
+    end
+end
+GW.AddForProfiling("hud", "createModelFx", createModelFx)
 
 local currentTexture = nil
 
@@ -742,6 +830,7 @@ local function selectBg(self)
 
     local right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow"
     local left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow"
+    local modelFX = nil
 
     if UnitIsDeadOrGhost("player") then
         right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_dead"
@@ -775,6 +864,7 @@ local function selectBg(self)
             if auraData then
                 right = v.right
                 left = v.left
+                modelFX = v.modelFX
                 bolFound = true
                 break
             end
@@ -786,16 +876,34 @@ local function selectBg(self)
                 if auraData and actionHudPlayerPetAuras[auraData.spellId] and actionHudPlayerPetAuras[auraData.spellId].unit == "pet" then
                     right = actionHudPlayerPetAuras[auraData.spellId].right
                     left = actionHudPlayerPetAuras[auraData.spellId].left
+                    modelFX = actionHudPlayerPetAuras[auraData.spellId].modelFX
                     break
                 end
             end
         end
     end
 
+    if modelFX ~= nil then
+        createModelFx(modelFX)
+    elseif modelFX == nil and self.actionBarHudFX:IsShown() and GwHudFXDebug == nil then
+        self.actionBarHudFX:Hide()
+    end
+
     if currentTexture ~= left then
         currentTexture = left
         self.actionBarHud.Right:SetTexture(right)
         self.actionBarHud.Left:SetTexture(left)
+
+        AddToAnimation(
+            "DynamicHud",
+            0,
+            1,
+            GetTime(),
+            0.2,
+            function(prog)
+                self.actionBarHud.Right:SetAlpha(prog)
+                self.actionBarHud.Left:SetAlpha(prog)
+            end)
     end
 end
 GW.AddForProfiling("hud", "selectBg", selectBg)
@@ -894,6 +1002,133 @@ registerActionHudAura(
     "Interface/AddOns/GW2_UI/textures/hud/evokerdpsRight",
     "player"
 )
+-- Lunar Eclipse
+registerActionHudAura(
+    48518,
+    "Interface/AddOns/GW2_UI/textures/hud/left_lunareclipse",
+    "Interface/AddOns/GW2_UI/textures/hud/right_lunareclipse",
+    "player",
+    {
+        anchor = {
+            point = "BOTTOM",
+            relPoint = "BOTTOM",
+            target = "Gw2_HudBackgroud",
+            x = 0,
+            y = 100
+
+        },
+        modelID = 1513212,
+
+        modelPosition =
+        {
+            x = -2.5,
+            y = 0,
+            z = -3.4,
+            rotation = 0
+        }
+    }
+)
+--Solar Eclipse
+registerActionHudAura(
+    48517,
+    "Interface/AddOns/GW2_UI/textures/hud/left_solareclips",
+    "Interface/AddOns/GW2_UI/textures/hud/right_solareclips",
+    "player",
+    {
+        anchor = {
+            point = "BOTTOM",
+            relPoint = "BOTTOM",
+            target = "Gw2_HudBackgroud",
+            x = 0,
+            y = 100
+
+        },
+        modelID = 530798,
+
+        modelPosition =
+        {
+            x = 2,
+            y = 0,
+            z = -0.1,
+            rotation = 0
+        }
+    }
+)
+
+
+
+local function updateDebugPosition()
+    local x = tonumber(GwHudFXDebug.x:GetText())
+    local y = tonumber(GwHudFXDebug.y:GetText())
+    local z = tonumber(GwHudFXDebug.z:GetText())
+    local rotation = tonumber(GwHudFXDebug.rotation:GetText())
+    if x ~= nil and y ~= nil and z ~= nil and rotation ~= nil then
+        Gw2_HudBackgroud.actionBarHudFX:SetPosition(x, y, z)
+        Gw2_HudBackgroud.actionBarHudFX:SetFacing(rotation)
+        GwHudFXDebug.editbox:SetText(
+            "{ x = " .. x .. ", y = " .. y .. ", z = " .. z .. ", rotation = " .. rotation .. " }"
+        );
+    end
+end
+
+local function createCoordDebugInput(self, labelText, index)
+    local f = CreateFrame("EditBox", nil, self)
+    f:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, -(22 * index))
+    f:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", 0, 0 - (22 * index))
+    f:SetSize(20, 20)
+    f:SetAutoFocus(false)
+    f:SetMultiLine(false)
+    f:SetMaxLetters(50)
+    f:SetFontObject(ChatFontNormal)
+    f:SetText("")
+
+    f.bg = f:CreateTexture(nil, "ARTWORK", nil, 1)
+    f.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg") -- add custom overlay texture here
+    f.bg:SetAllPoints()
+
+    f.label = f:CreateFontString(nil, "ARTWORK")
+    f.label:SetPoint("RIGHT", f, "LEFT", 0, 0)
+    f.label:SetJustifyH("LEFT")
+    f.label:SetJustifyV("MIDDLE")
+    f.label:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
+    f.label:SetText(labelText)
+
+    f:SetScript("OnTextChanged", function() updateDebugPosition() end)
+    return f
+end
+
+local function loadFXModelDebug()
+    --debug stuff
+    local debugModelPositionData = CreateFrame("Frame", "GwHudFXDebug", UIParent)
+    debugModelPositionData:SetSize(300, 300)
+    debugModelPositionData:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    debugModelPositionData.bg = debugModelPositionData:CreateTexture(nil, "ARTWORK", nil, 1)
+    debugModelPositionData.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg") -- add custom overlay texture here
+    debugModelPositionData.bg:SetAllPoints()
+    debugModelPositionData.bg:SetSize(300, 300)
+
+    debugModelPositionData.editbox = CreateFrame("EditBox", nil, debugModelPositionData)
+    debugModelPositionData.editbox:SetPoint("TOPLEFT", debugModelPositionData, "TOPLEFT", 5, -5)
+    debugModelPositionData.editbox:SetPoint("BOTTOMRIGHT", debugModelPositionData, "BOTTOMRIGHT", -5, 5)
+    debugModelPositionData.editbox:SetAutoFocus(false)
+    debugModelPositionData.editbox:SetMultiLine(true)
+    debugModelPositionData.editbox:SetMaxLetters(2000)
+    debugModelPositionData.editbox:SetFontObject(ChatFontNormal)
+    debugModelPositionData.editbox:SetText("")
+
+    debugModelPositionData.x = createCoordDebugInput(debugModelPositionData, "X:", 1)
+    debugModelPositionData.y = createCoordDebugInput(debugModelPositionData, "Y:", 2)
+    debugModelPositionData.z = createCoordDebugInput(debugModelPositionData, "Z:", 3)
+    debugModelPositionData.rotation = createCoordDebugInput(debugModelPositionData, "Rotation:", 4)
+end
+
+--[[
+    C_Timer.After(1, function()
+        loadFXModelDebug()
+    end)
+
+]]
+
 
 local function hud_OnEvent(self, event, ...)
     if event == "UNIT_AURA" then
@@ -946,6 +1181,7 @@ local function LoadHudArt()
     GW.RegisterScaleFrame(hudArtFrame.actionBarHud)
 
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)
+    hud_OnEvent(hudArtFrame, "INIT")
 
     GW.Libs.GW2Lib.RegisterCallback(hudArtFrame, "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE", function()
         selectBg(hudArtFrame)
@@ -968,7 +1204,6 @@ end
 GW.LoadHudArt = LoadHudArt
 
 local function LoadXPBar()
-
     StatusTrackingBarManager:GwKill()
     GW.LoadUpcomingSpells()
 
