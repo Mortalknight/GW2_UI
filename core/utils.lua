@@ -147,6 +147,13 @@ local function RGBToHex(r, g, b, header, ending)
 end
 GW.RGBToHex = RGBToHex
 
+local function HexToRGB(hex)
+    local rhex, ghex, bhex = strsub(hex, 1, 2), strsub(hex, 3, 4), strsub(hex, 5, 6)
+	return tonumber(rhex, 16) / 255, tonumber(ghex, 16) / 255, tonumber(bhex, 16) / 255
+end
+GW.HexToRGB = HexToRGB
+
+
 local function GetUnitBattlefieldFaction(unit)
     local englishFaction, localizedFaction = UnitFactionGroup(unit)
 

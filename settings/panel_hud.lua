@@ -234,6 +234,36 @@ local function LoadHudPanel(sWindow)
     )
 
     -- Theater Troupe
+    addGroupHeader(worldmap.scroll.scrollchild,L["Professions Weekly"])
+    addOption(worldmap.scroll.scrollchild, L["Professions Weekly"], nil, "WORLD_EVENTS_TWW_PROFESSIONS_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Professions Weekly"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_TWW_PROFESSIONS_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TWW_PROFESSIONS_ENABLED"] = true}, nil, nil, L["Professions Weekly"])
+
+    -- Theater Troupe
+    addGroupHeader(worldmap.scroll.scrollchild,L["World Soul"])
+    addOption(worldmap.scroll.scrollchild, L["World Soul"], nil, "WORLD_EVENTS_WORLD_SOUL_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["World Soul"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_WORLD_SOUL_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_WORLD_SOUL_ENABLED"] = true}, nil, nil, L["World Soul"])
+
+    -- Theater Troupe
+    addGroupHeader(worldmap.scroll.scrollchild,L["Khaz Algar Emissary"])
+    addOption(worldmap.scroll.scrollchild, L["Khaz Algar Emissary"], nil, "WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Khaz Algar Emissary"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_ENABLED"] = true}, nil, nil, L["Khaz Algar Emissary"])
+
+    -- Theater Troupe
+    addGroupHeader(worldmap.scroll.scrollchild,L["Ringing Deeps"])
+    addOption(worldmap.scroll.scrollchild, L["Ringing Deeps"], nil, "WORLD_EVENTS_RINGING_DEEPS_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Ringing Deeps"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_RINGING_DEEPS_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RINGING_DEEPS_ENABLED"] = true}, nil, nil, L["Ringing Deeps"])
+
+    -- Theater Troupe
+    addGroupHeader(worldmap.scroll.scrollchild,L["Spreading The Light"])
+    addOption(worldmap.scroll.scrollchild, L["Spreading The Light"], nil, "WORLD_EVENTS_SPREADING_THE_LIGHT_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Spreading The Light"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_SPREADING_THE_LIGHT_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_SPREADING_THE_LIGHT_ENABLED"] = true}, nil, nil, L["Spreading The Light"])
+
+    -- Theater Troupe
+    addGroupHeader(worldmap.scroll.scrollchild,L["Underworld Operative"])
+    addOption(worldmap.scroll.scrollchild, L["Underworld Operative"], nil, "WORLD_EVENTS_UNDERWORLD_OPERATIVE_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Underworld Operative"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_UNDERWORLD_OPERATIVE_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_UNDERWORLD_OPERATIVE_ENABLED"] = true}, nil, nil, L["Underworld Operative"])
+
+    -- Theater Troupe
     addGroupHeader(worldmap.scroll.scrollchild,L["Theater Troupe"])
     addOption(worldmap.scroll.scrollchild, L["Theater Troupe"], nil, "WORLD_EVENTS_THEATER_TROUPE_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Theater Troupe"])
     addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_THEATER_TROUPE_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true}, nil, nil, L["Theater Troupe"])
