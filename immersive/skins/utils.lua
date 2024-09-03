@@ -508,6 +508,8 @@ local function HandleTabs(self, isTop)
             self.borderFrame.top:Show()
         end
 
+        self.Text:SetPoint("CENTER", self, "CENTER", 0, 0)
+
         if self.SetTabSelected then
             hooksecurefunc(self, "SetTabSelected", function(tab)
                 if tab.isSelected then
@@ -515,17 +517,19 @@ local function HandleTabs(self, isTop)
                 else
                     tab.background:SetBlendMode("BLEND")
                 end
-
+                tab.Text:SetPoint("CENTER", self, "CENTER", 0, 0)
             end)
         else
             hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
                 if self == tab then
                     tab.background:SetBlendMode("BLEND")
+                    tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
                 end
             end)
             hooksecurefunc("PanelTemplates_SelectTab", function(tab)
                 if self == tab then
                     tab.background:SetBlendMode("MOD")
+                    tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
                 end
             end)
         end
