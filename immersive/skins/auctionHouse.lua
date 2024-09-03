@@ -36,25 +36,79 @@ local function SkinItemDisplay(frame)
 	ItemButton:GetHighlightTexture():Hide()
 end
 
+local function SkinFrameTab(self, id, tooltipText)
+    self.isSkinned = true
+    self:GwStripTextures()
+    self:SetSize(64, 40)
+    self.Text:Hide()
+
+    self.icon = self:CreateTexture(nil, "BACKGROUND", nil, 0)
+    self.icon:SetAllPoints()
+
+    if id == "buy" then
+        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_buy")
+    elseif id == "sell" then
+        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_sell")
+    elseif id == "listings" then
+        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_listings")
+	elseif id == "auctionator" then
+		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_auctionator")
+	elseif id == "cancel" then
+		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_cancel")
+    end
+    self.icon:SetTexCoord(0.5, 1, 0, 0.625)
+
+	if tooltipText then
+		self:HookScript("OnEnter", function()
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:ClearLines()
+			GameTooltip:AddLine(tooltipText)
+			GameTooltip:Show()
+		end)
+		self:HookScript("OnLeave", GameTooltip_Hide)
+	end
+
+	if self.SetTabSelected then
+		hooksecurefunc(self, "SetTabSelected", function(tab)
+			if tab.isSelected then
+				tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
+			else
+				tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
+			end
+		end)
+	else
+		hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
+			if self == tab then
+				tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
+			end
+		end)
+		hooksecurefunc("PanelTemplates_SelectTab", function(tab)
+			if self == tab then
+				tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
+			end
+		end)
+		hooksecurefunc("PanelTemplates_TabResize", function(tab)
+			if self == tab then
+				tab:SetSize(64, 40)
+			end
+		end)
+	end
+end
+GW.SkinAuctionsHouseFrameTab = SkinFrameTab
+
 local function HandleTabs(arg1)
 	if not arg1 or arg1 ~= AuctionHouseFrame then return end
 
-	local lastTab = AuctionHouseFrameBuyTab
 	for index, tab in next, AuctionHouseFrame.Tabs do
 		if not tab.isSkinned then
-			GW.HandleTabs(tab)
+			local id = index == 1 and "buy" or index == 2 and "sell" or "listings"
+			SkinFrameTab(tab, id)
 		end
 
-		-- tab positions
 		tab:ClearAllPoints()
-
-		if index == 1 then
-			tab:SetPoint("BOTTOMLEFT", AuctionHouseFrame, "BOTTOMLEFT", 0, -32)
-		else -- skinned ones can be closer together
-			tab:SetPoint("TOPLEFT", lastTab, "TOPRIGHT", (tab.backdrop or tab.Backdrop) and -5 or 0, 0)
-		end
-
-		lastTab = tab
+		tab:SetPoint("TOPRIGHT", GwAuctionsHouseFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * (index - 1)))
+		tab:SetParent(GwAuctionsHouseFrameLeftPanel)
+		tab:SetSize(64, 40)
 	end
 end
 
@@ -233,7 +287,14 @@ local function ApplyAuctionHouseSkin()
 								AuctionHouseFrame.WoWTokenResults,
 								})
 	AuctionHouseFrame:SetWidth(810)
+	AuctionHouseFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/windowbg")
+	AuctionHouseFrame.tex:SetTexCoord(0, 1, 0, 0.74)
+	AuctionHouseFrame.gwHeader.windowIcon:ClearAllPoints()
+    AuctionHouseFrame.gwHeader.windowIcon:SetPoint("CENTER", AuctionHouseFrame.gwHeader, "BOTTOMLEFT", -26, 35)
+	AuctionHouseFrameTitleText:ClearAllPoints()
+    AuctionHouseFrameTitleText:SetPoint("BOTTOMLEFT", AuctionHouseFrame.gwHeader, "BOTTOMLEFT", 25, 10)
 
+	CreateFrame("Frame", "GwAuctionsHouseFrameLeftPanel", AuctionHouseFrame, "GwWindowLeftPanel")
 	hooksecurefunc("PanelTemplates_SetNumTabs", HandleTabs)
 	HandleTabs(AuctionHouseFrame) -- call it once to setup our tabs
 
@@ -276,7 +337,7 @@ local function ApplyAuctionHouseSkin()
 		button.Text:SetJustifyV("MIDDLE")
 		button.Text:ClearAllPoints()
 		if not button.IsSkinned then
-			button.Background = button:CreateTexture(nil, "BACKGROUND", nil, 7)
+			button.Background = button:CreateTexture(nil, "BACKGROUND", nil, 0)
 			button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
 			button.Background:ClearAllPoints()
 			button.Background:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
@@ -292,7 +353,7 @@ local function ApplyAuctionHouseSkin()
 			end)
 
 			-- add arrows
-			button.arrow = button:CreateTexture(nil, "BACKGROUND", nil, 0)
+			button.arrow = button:CreateTexture(nil, "BACKGROUND", nil, 1)
 			button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
 			button.arrow:SetSize(16,16)
 			button.arrow:Hide()

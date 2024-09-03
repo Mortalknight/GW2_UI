@@ -293,9 +293,9 @@ local function catMenuButtonState(self, selected)
         self.Button.arrow:Show()
         self.Button.arrow:SetSize(16,16)
         if not elementData.collapsed then
-        self.Button.arrow:SetRotation(-1.5707)
+            self.Button.arrow:SetRotation(-1.5707)
         else
-        self.Button.arrow:SetRotation(0)
+            self.Button.arrow:SetRotation(0)
         end
     else
         self.Button.Label:SetPoint("LEFT", self, "LEFT", 30, 0)
