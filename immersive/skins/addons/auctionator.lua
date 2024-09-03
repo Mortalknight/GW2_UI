@@ -197,8 +197,31 @@ local function SkinAuctionator()
     GW.HandleTrimScrollBar(list.ListsContainer.ScrollBar)
     GW.HandleScrollControls(list.ListsContainer)
     hooksecurefunc(list.ListsContainer.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
-    hooksecurefunc(list.ListsContainer.ScrollBox, "Update", function()
-    print("1231")
+
+    hooksecurefunc(list.ListsContainer.ScrollBox, "Update", function(frame)
+        for _, child in next, { frame.ScrollTarget:GetChildren() } do
+            child.Text:SetTextColor(1, 1, 1)
+            child.Text:SetShadowColor(0, 0, 0, 0)
+            child.Text:SetShadowOffset(1, -1)
+            child.Text:SetFont(DAMAGE_TEXT_FONT, 12)
+            child.Text:SetJustifyH("LEFT")
+            child.Text:SetJustifyV("MIDDLE")
+
+            if child.elementData.type == RowType.List then
+                local color = {r = 255 / 255, g = 241 / 255, b = 209 / 255}
+                color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
+                if child.elementData.list:IsTemporary() then
+                    color = ORANGE_FONT_COLOR
+                end
+                local icon = ""
+                if not list.ListsContainer:IsListExpanded(child.elementData.list) then
+                    icon = "|TInterface/AddOns/GW2_UI/textures/uistuff/arrow_right:16:16:0:0:0:0:0:1:0:1|t"
+                else
+                    icon = "|TInterface/AddOns/GW2_UI/textures/uistuff/arrow_right:16:16:0:0:64:64:0:64:64:0|t"
+                end
+                child.Text:SetText(icon .. "  " .. WrapTextInColorCode(child.elementData.list:GetName(), color.colorStr))
+            end
+        end
     end)
 
     GW.HandleTrimScrollBar(list.ResultsListing.ScrollArea.ScrollBar)

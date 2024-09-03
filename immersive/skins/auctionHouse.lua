@@ -304,6 +304,8 @@ local function ApplyAuctionHouseSkin()
     AuctionHouseFrameTitleText:SetPoint("BOTTOMLEFT", AuctionHouseFrame.gwHeader, "BOTTOMLEFT", 25, 10)
 
 	CreateFrame("Frame", "GwAuctionsHouseFrameLeftPanel", AuctionHouseFrame, "GwWindowLeftPanel")
+	GwAuctionsHouseFrameLeftPanel:SetClampedToScreen(true)
+
 	hooksecurefunc("PanelTemplates_SetNumTabs", HandleTabs)
 	HandleTabs(AuctionHouseFrame) -- call it once to setup our tabs
 

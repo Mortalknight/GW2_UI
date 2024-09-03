@@ -552,6 +552,8 @@ GW.HandleTabs = HandleTabs
 local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, detailBackgroundsXOffset)
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
+    header:SetClampedToScreen(true)
+    header:SetMovable(true)
     frame.gwHeader = header
 
     if titleText then
