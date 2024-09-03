@@ -2,9 +2,9 @@ local _, GW = ...
 
 local skinLoaded = false
 
-local function AddDetailsBackground(frame)
+local function AddDetailsBackground(frame, detailBackgroundsXOffset)
     local detailBg = frame:CreateTexture(nil, "BACKGROUND", nil, 7)
-    detailBg:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
+    detailBg:SetPoint("TOPLEFT", frame, "TOPLEFT", detailBackgroundsXOffset or 0, 0)
     detailBg:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
     detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
     detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
@@ -59,7 +59,7 @@ local function SkinAuctionator()
         for index, details in ipairs(Auctionator.Tabs.State.knownTabs) do
             local tab = libAhTab:GetButton("AuctionatorTabs_" .. details.name)
             if not tab.isSkinned then
-                local id = details.name == "Shopping" and "buy" or details.name == "Selling" and "sell" or details.name == "Cancelling" and "cancel" or details.name == "Auctionator" and "auctionator"
+                local id = details.name == "Shopping" and "addon_buy" or details.name == "Selling" and "addon_sell" or details.name == "Cancelling" and "addon_cancel" or details.name == "Auctionator" and "auctionator"
                 GW.SkinAuctionsHouseFrameTab(tab, id, details.tabHeader)
             end
 
@@ -115,7 +115,7 @@ local function SkinAuctionator()
     selling.BagInset:GwStripTextures()
     GW.HandleTrimScrollBar(selling.BagListing.View.ScrollBar)
     GW.HandleScrollControls(selling.BagListing.View)
-    AddDetailsBackground(selling.HistoricalPriceInset)
+    AddDetailsBackground(selling.HistoricalPriceInset, -1)
     AddDetailsBackground(selling.BagListing)
     selling.SaleItemFrame.MaxButton:GwSkinButton(false, true)
     selling.SaleItemFrame.PostButton:GwSkinButton(false, true)
@@ -187,14 +187,31 @@ local function SkinAuctionator()
     buyingFrame:GwStripTextures()
     buyingFrame.ResultsListing:GwStripTextures()
 
+    list.ListsContainer:ClearAllPoints()
+    list.ListsContainer:SetPoint("TOP", 3, -50)
+    list.ListsContainer:SetPoint("BOTTOM", 3, 35)
+    list.ListsContainer:SetPoint("LEFT", 3, 0)
+
+    local point, anchor, anchorPoint, x, y = list.ListsContainer.ScrollBox:GetPoint()
+    list.ListsContainer.ScrollBox:SetPoint(point, anchor, anchorPoint, 5, y)
     GW.HandleTrimScrollBar(list.ListsContainer.ScrollBar)
     GW.HandleScrollControls(list.ListsContainer)
     hooksecurefunc(list.ListsContainer.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
+    hooksecurefunc(list.ListsContainer.ScrollBox, "Update", function()
+    print("1231")
+    end)
 
     GW.HandleTrimScrollBar(list.ResultsListing.ScrollArea.ScrollBar)
     GW.HandleScrollControls(list.ResultsListing.ScrollArea)
     hooksecurefunc(list.ResultsListing.ScrollArea.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 
+    list.RecentsContainer:ClearAllPoints()
+    list.RecentsContainer:SetPoint("TOP", 3, -50)
+    list.RecentsContainer:SetPoint("BOTTOM", 3, 35)
+    list.RecentsContainer:SetPoint("LEFT", 3, 0)
+
+    point, anchor, anchorPoint, x, y = list.RecentsContainer.ScrollBox:GetPoint()
+    list.RecentsContainer.ScrollBox:SetPoint(point, anchor, anchorPoint, 5, y)
     GW.HandleTrimScrollBar(list.RecentsContainer.ScrollBar)
     GW.HandleScrollControls(list.RecentsContainer)
     hooksecurefunc(list.RecentsContainer.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
@@ -203,9 +220,9 @@ local function SkinAuctionator()
     GW.HandleScrollControls(buyingFrame.ResultsListing.ScrollArea)
     hooksecurefunc(buyingFrame.ResultsListing.ScrollArea.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 
-    AddDetailsBackground(list.ShoppingResultsInset)
-    AddDetailsBackground(list.ListsContainer.Inset)
-    AddDetailsBackground(list.RecentsContainer.Inset)
+    AddDetailsBackground(list.ShoppingResultsInset, 2)
+    AddDetailsBackground(list.ListsContainer.Inset, 2)
+    AddDetailsBackground(list.RecentsContainer.Inset, 2)
     AddDetailsBackground(buyingFrame)
     AddDetailsBackground(buyingFrame.ResultsListing)
 

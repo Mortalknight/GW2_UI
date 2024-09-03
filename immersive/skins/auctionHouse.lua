@@ -53,6 +53,14 @@ local function SkinFrameTab(self, id, tooltipText)
         self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_listings")
 	elseif id == "auctionator" then
 		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_auctionator")
+	elseif id == "addon_buy" then
+		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_buy")
+	elseif id == "addon_sell" then
+		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_sell")
+	elseif id == "addon_listings" then
+		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_listings")
+	elseif id == "addon_cancel" then
+		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_cancel")
 	elseif id == "cancel" then
 		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_cancel")
     end
@@ -62,7 +70,7 @@ local function SkinFrameTab(self, id, tooltipText)
 		self:HookScript("OnEnter", function()
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			GameTooltip:ClearLines()
-			GameTooltip:AddLine(tooltipText)
+			GameTooltip:AddLine(tooltipText, 1, 1, 1)
 			GameTooltip:Show()
 		end)
 		self:HookScript("OnLeave", GameTooltip_Hide)
@@ -250,6 +258,7 @@ local function ApplyAuctionHouseSkin()
 	if not GW.settings.AuctionHouseSkinEnabled then return end
 
 	GW.HandlePortraitFrame(AuctionHouseFrame)
+	AuctionHouseFrame.CloseButton:SetPoint("TOPRIGHT", -5, -2)
 
 	AuctionHouseFrame.CategoriesList:GwStripTextures()
 	AuctionHouseFrame.BrowseResultsFrame.ItemList:GwStripTextures()
@@ -407,6 +416,9 @@ local function ApplyAuctionHouseSkin()
 	BrowseList.ScrollBar:ClearAllPoints()
 	BrowseList.ScrollBar:SetPoint("TOPRIGHT", BrowseList, -6, -16)
 	BrowseList.ScrollBar:SetPoint("BOTTOMRIGHT", BrowseList, -6, 16)
+	Browse.tex:ClearAllPoints()
+	Browse.tex:SetPoint("TOPLEFT", Browse, "TOPLEFT", 2, 0)
+    Browse.tex:SetPoint("BOTTOMRIGHT", Browse, "BOTTOMRIGHT", 0, 0)
 
 	BrowseList.LoadingSpinner.SearchingText:SetTextColor(1, 1, 1)
 
@@ -470,6 +482,9 @@ local function ApplyAuctionHouseSkin()
 
 	local ItemSellList = AuctionHouseFrame.ItemSellList
 	HandleSellList(ItemSellList, true, true)
+	ItemSellList.tex:ClearAllPoints()
+	ItemSellList.tex:SetPoint("TOPLEFT", ItemSellList, "TOPLEFT", 2, 0)
+    ItemSellList.tex:SetPoint("BOTTOMRIGHT", ItemSellList, "BOTTOMRIGHT", 0, 0)
 
 	local CommoditiesSellFrame = AuctionHouseFrame.CommoditiesSellFrame
 	HandleSellFrame(CommoditiesSellFrame)
@@ -515,6 +530,9 @@ local function ApplyAuctionHouseSkin()
 
 	local AllAuctionsList = AuctionHouseFrameAuctionsFrame.AllAuctionsList
 	HandleSellList(AllAuctionsList, true, true)
+	AllAuctionsList.tex:ClearAllPoints()
+	AllAuctionsList.tex:SetPoint("TOPLEFT", AllAuctionsList, "TOPLEFT", 2, 0)
+    AllAuctionsList.tex:SetPoint("BOTTOMRIGHT", AllAuctionsList, "BOTTOMRIGHT", 0, 0)
 	AllAuctionsList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
 	hooksecurefunc(AllAuctionsList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end)
 	AllAuctionsList.ResultsText:SetParent(AllAuctionsList.ScrollFrame)
@@ -525,6 +543,9 @@ local function ApplyAuctionHouseSkin()
 
 	local BidsList = AuctionHouseFrameAuctionsFrame.BidsList
 	HandleSellList(BidsList, true, true)
+	BidsList.tex:ClearAllPoints()
+	BidsList.tex:SetPoint("TOPLEFT", BidsList, "TOPLEFT", 2, 0)
+    BidsList.tex:SetPoint("BOTTOMRIGHT", BidsList, "BOTTOMRIGHT", 0, 0)
 	BidsList.ResultsText:SetParent(BidsList.ScrollFrame)
 	BidsList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
 	hooksecurefunc(BidsList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end)
@@ -590,6 +611,28 @@ local function ApplyAuctionHouseSkin()
 
 	multisellFrame.CancelButton:GwSkinButton(true)
 	GW.HandleIcon(progressBar.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
+
+	local bgMask = UIParent:CreateMaskTexture()
+    bgMask:SetPoint("TOPLEFT", AuctionHouseFrame, "TOPLEFT", -64, 64)
+    bgMask:SetPoint("BOTTOMRIGHT", AuctionHouseFrame, "BOTTOMLEFT", -64, 0)
+    bgMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    AuctionHouseFrame.tex:AddMaskTexture(bgMask)
+    AuctionHouseFrame.gwHeader.BGLEFT:AddMaskTexture(bgMask)
+    AuctionHouseFrame.gwHeader.BGRIGHT:AddMaskTexture(bgMask)
+    GwAuctionsHouseFrameLeftPanel.background:AddMaskTexture(bgMask)
+    AuctionHouseFrame.backgroundMask = bgMask
+
+	AuctionHouseFrame:HookScript("OnShow",function()
+		GW.AddToAnimation("ACHIVEMENTFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
+			function(p)
+				AuctionHouseFrame:SetAlpha(p)
+				bgMask:SetPoint("BOTTOMRIGHT", AuctionHouseFrame.tex, "BOTTOMLEFT", GW.lerp(-64, AuctionHouseFrame.tex:GetWidth(), p), 0)
+			end,
+			1,
+			function()
+				bgMask:SetPoint("BOTTOMRIGHT", AuctionHouseFrame.tex, "BOTTOMLEFT", AuctionHouseFrame.tex:GetWidth() + 200 , 0)
+			end)
+	end)
 end
 
 local function LoadAuctionHouseSkin()
