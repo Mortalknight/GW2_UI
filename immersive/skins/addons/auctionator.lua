@@ -252,6 +252,9 @@ local function SkinAuctionator()
     GW.HandleTabs(list.ContainerTabs.ListsTab, true)
     GW.HandleTabs(list.ContainerTabs.RecentsTab, true)
 
+    list.ContainerTabs.ListsTab:SetHeight(28)
+    list.ContainerTabs.RecentsTab:SetHeight(28)
+
     -- import export
     local export = AuctionatorExportListFrame
     local import = AuctionatorImportListFrame
