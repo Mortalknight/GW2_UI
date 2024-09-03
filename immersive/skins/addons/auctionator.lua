@@ -60,7 +60,7 @@ local function SkinAuctionator()
             local tab = libAhTab:GetButton("AuctionatorTabs_" .. details.name)
             if not tab.isSkinned then
                 local id = details.name == "Shopping" and "buy" or details.name == "Selling" and "sell" or details.name == "Cancelling" and "cancel" or details.name == "Auctionator" and "auctionator"
-                GW.SkinAuctionsHouseFrameTab(tab, id)
+                GW.SkinAuctionsHouseFrameTab(tab, id, details.tabHeader)
             end
 
             tab:ClearAllPoints()

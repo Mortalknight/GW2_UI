@@ -36,7 +36,7 @@ local function SkinItemDisplay(frame)
 	ItemButton:GetHighlightTexture():Hide()
 end
 
-local function SkinFrameTab(self, id)
+local function SkinFrameTab(self, id, tooltipText)
     self.isSkinned = true
     self:GwStripTextures()
     self:SetSize(64, 40)
@@ -57,6 +57,16 @@ local function SkinFrameTab(self, id)
 		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_cancel")
     end
     self.icon:SetTexCoord(0.5, 1, 0, 0.625)
+
+	if tooltipText then
+		self:HookScript("OnEnter", function()
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:ClearLines()
+			GameTooltip:AddLine(tooltipText)
+			GameTooltip:Show()
+		end)
+		self:HookScript("OnLeave", GameTooltip_Hide)
+	end
 
 	if self.SetTabSelected then
 		hooksecurefunc(self, "SetTabSelected", function(tab)
