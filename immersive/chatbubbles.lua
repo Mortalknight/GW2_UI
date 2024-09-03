@@ -143,7 +143,7 @@ local function SkinBubble(frame, backdrop)
         UpdateBubbleBorder(frame)
     end
 
-    frame.isSkinnedGW2_UI = true
+    frame.isSkinned = true
 end
 
 local function ChatBubble_OnEvent(_, event, msg, sender)
@@ -167,7 +167,7 @@ local function ChatBubble_OnUpdate(self, elapsed)
 
     for _, chatBubble in pairs(C_ChatBubbles.GetAllChatBubbles()) do
         local backdrop = chatBubble:GetChildren()
-        if backdrop and not backdrop:IsForbidden() and not chatBubble.isSkinnedGW2_UI then
+        if backdrop and not backdrop:IsForbidden() and not chatBubble.isSkinned then
             SkinBubble(chatBubble, backdrop)
         end
     end

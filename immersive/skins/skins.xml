@@ -48,4 +48,5 @@
     <Script file="addons\petTracker.lua"/>
     <Script file="addons\detailsProfile.lua"/>
     <Script file="addons\masqueSkin.lua"/>
+    <Script file="addons\auctionator.lua"/>
 </Ui>

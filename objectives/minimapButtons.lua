@@ -71,7 +71,7 @@ local buttonFunctions = {
 }
 
 local function SkinMinimapButton(button)
-    if button.isSkinnedGW2_UI then return end
+    if button.isSkinned then return end
 
     local name = button.GetName and button:GetName()
 
@@ -122,7 +122,7 @@ local function SkinMinimapButton(button)
         if self.texture then self.texture:SetBlendMode("BLEND") end
     end)
 
-    button.isSkinnedGW2_UI = true
+    button.isSkinned = true
     tinsert(buttons, button)
 end
 

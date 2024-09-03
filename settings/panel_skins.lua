@@ -63,6 +63,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r World Quest Tracker", nil, "SKIN_WQT_ENABLED", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true}, "Objectives")
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Immersion", nil, "IMMERSIONADDON_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r PetTracker", nil, "SKIN_PETTRACKER_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Auctionator", nil, "AUCTIONATOR_SKIN_ENABLED", function() GW.ShowRlPopup = true end, nil, {["AuctionHouseSkinEnabled"] = true})
 
     InitPanel(p, true)
 end

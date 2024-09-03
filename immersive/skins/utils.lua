@@ -566,3 +566,105 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     end
 end
 GW.CreateFrameHeaderWithBody = CreateFrameHeaderWithBody
+
+
+local function HandleListIcon(frame)
+	if not frame.tableBuilder then return end
+
+	for i = 1, 22 do
+		local row = frame.tableBuilder.rows[i]
+		if row then
+			for j = 1, 4 do
+				local cell = row.cells and row.cells[j]
+				if cell and cell.Icon then
+					if not cell.IsSkinned then
+						GW.HandleIcon(cell.Icon)
+
+						if cell.IconBorder then
+							cell.IconBorder:GwKill()
+						end
+
+						cell.IsSkinned = true
+					end
+				end
+			end
+		end
+	end
+end
+
+local function HandleHeaders(frame)
+	local maxHeaders = frame.HeaderContainer:GetNumChildren()
+	for i, header in next, { frame.HeaderContainer:GetChildren() } do
+		if not header.IsSkinned then
+			header:DisableDrawLayer("BACKGROUND")
+
+			if not header.backdrop then
+				header:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
+				header.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+			end
+
+			header.IsSkinned = true
+		end
+
+		if header.backdrop then
+			header.backdrop:SetPoint("BOTTOMRIGHT", i < maxHeaders and -5 or 0, -2)
+		end
+	end
+
+	HandleListIcon(frame)
+end
+GW.HandleSrollBoxHeaders = HandleHeaders
+
+local function AddListItemChildHoverTexture(child)
+	child.Background = child:CreateTexture(nil, "BACKGROUND", nil, 7)
+	child.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+	child.Background:ClearAllPoints()
+	child.Background:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
+	child.Background:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
+	child.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
+	if child.HighlightTexture then
+		child.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+		child.HighlightTexture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+		child.HighlightTexture:GwSetInside(child.Background)
+		child:HookScript("OnEnter",function()
+			GW.TriggerButtonHoverAnimation(child, child.HighlightTexture)
+		end)
+	elseif child.Highlight then
+		child.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+		child.Highlight:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+		child.Highlight:GwSetInside(child.Background)
+		child:HookScript("OnEnter",function()
+			GW.TriggerButtonHoverAnimation(child, child.Highlight)
+		end)
+	end
+end
+GW.AddListItemChildHoverTexture = AddListItemChildHoverTexture
+
+local function HandleItemListScrollBoxHover(self)
+	for _, child in next, { self.ScrollTarget:GetChildren() } do
+		if not child.IsSkinned then
+			AddListItemChildHoverTexture(child)
+
+			child.IsSkinned = true
+		end
+
+		--zebra
+		local zebra = child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 or false
+		if zebra then
+			child.Background:SetVertexColor(1, 1, 1, 1)
+		else
+			child.Background:SetVertexColor(0, 0, 0, 0)
+		end
+
+		if child.NormalTexture then
+			child.NormalTexture:SetAlpha(0)
+		end
+		if child.SelectedHighlight then
+			child.SelectedHighlight:SetColorTexture(0.5, 0.5, 0.5, .25)
+		end
+		if child.Selected then
+			child.Selected:SetColorTexture(0.5, 0.5, 0.5, .25)
+		end
+	end
+end
+GW.HandleItemListScrollBoxHover = HandleItemListScrollBoxHover

@@ -880,6 +880,7 @@ GW.globalDefault = {
         TALKINGHEAD_SKIN_ENABLED= true,
         MISC_SKIN_ENABLED= true,
         IMMERSIONADDON_SKIN_ENABLED= true,
+        AUCTIONATOR_SKIN_ENABLED = true,
         FLIGHTMAP_SKIN_ENABLED= true,
         BLIZZARDCLASSCOLOR_ENABLED= false,
         ADDONLIST_SKIN_ENABLED= true,

@@ -135,7 +135,7 @@ local function SkinLookingForGroupFrames()
     end
 
     hooksecurefunc("SetCheckButtonIsRadio", function(self)
-        if not self.isSkinnedGW2_UI then
+        if not self.isSkinned then
             self:GwSkinCheckButton()
             self:SetSize(15, 15)
         end

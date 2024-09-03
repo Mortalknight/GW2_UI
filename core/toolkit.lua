@@ -182,7 +182,7 @@ local function GwSkinCheckButton(button, isRadio)
         hooksecurefunc(button, 'SetHighlightTexture', buttonHighlightTexture)
     end
 
-    button.isSkinnedGW2_UI = true
+    button.isSkinned = true
 end
 
 local function GwSkinSliderFrame(frame)
