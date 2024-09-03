@@ -333,7 +333,7 @@ local function ApplyAuctionHouseSkin()
 	end)
 	Categories.ScrollBox:Update()
 
-	hooksecurefunc("AuctionHouseFilterButton_SetUp", function(button, info) --TODO
+	hooksecurefunc("AuctionHouseFilterButton_SetUp", function(button, info)
 		local r, g, b = 0.5, 0.5, 0.5
 		button:SetHeight(28)
 		button.NormalTexture:SetAlpha(0)
@@ -341,12 +341,14 @@ local function ApplyAuctionHouseSkin()
 		button.SelectedTexture:SetHeight(28)
 		button.HighlightTexture:SetHeight(28)
 		button.SelectedTexture:SetColorTexture(r, g, b, .25)
+		button.SelectedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
 		button.HighlightTexture:SetColorTexture(1, 1, 1, .1)
+		button.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
 
 		button.Text:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 		button.Text:SetShadowColor(0, 0, 0, 0)
 		button.Text:SetShadowOffset(1, -1)
-		button.Text:SetFont(DAMAGE_TEXT_FONT, 14)
+		button.Text:SetFont(DAMAGE_TEXT_FONT, 13)
 		button.Text:SetJustifyH("LEFT")
 		button.Text:SetJustifyV("MIDDLE")
 		button.Text:ClearAllPoints()
@@ -357,8 +359,6 @@ local function ApplyAuctionHouseSkin()
 			button.Background:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
 			button.Background:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
 			button.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
-			button.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
-
 			button.HighlightTexture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
 			button.HighlightTexture:GwSetInside(button.Background)
 
@@ -392,12 +392,29 @@ local function ApplyAuctionHouseSkin()
 		else
 			button.arrow:SetRotation(0)
 		end
-
-		if info.type == "category" or info.type == "subCategory" then
-			button.arrow:Show()
-		else
-			button.arrow:Hide()
+		-- show the arrow only if there are sub categories
+		local shouldShowArrow = false
+		for _, categoryInfo in ipairs(AuctionCategories) do
+			if categoryInfo.name == info.name and categoryInfo.subCategories and #categoryInfo.subCategories > 0 then
+				shouldShowArrow = true
+				break
+			elseif categoryInfo.subCategories and #categoryInfo.subCategories > 0 then
+				for _, subCategoryInfo in ipairs(categoryInfo.subCategories) do
+					if subCategoryInfo.name == info.name and subCategoryInfo.subCategories and #subCategoryInfo.subCategories > 0 then
+						shouldShowArrow = true
+						break
+					elseif subCategoryInfo.subCategories and #subCategoryInfo.subCategories > 0 then
+						for _, subSubCategoryInfo in ipairs(subCategoryInfo.subCategories) do
+							if subSubCategoryInfo.name == info.name and subSubCategoryInfo.subCategories and #subSubCategoryInfo.subCategories > 0 then
+								shouldShowArrow = true
+								break
+							end
+						end
+					end
+				end
+			end
 		end
+		button.arrow:SetShown(shouldShowArrow)
 		button.Lines:Hide()
 
 		--zebra
