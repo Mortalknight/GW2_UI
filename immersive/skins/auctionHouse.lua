@@ -1,19 +1,23 @@
 local _, GW = ...
 
-local function SkinFilterButton(Button)
-	Button:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
-	Button.ClearFiltersButton:GwSkinButton(true)
-end
-
 local function HandleSearchBarFrame(Frame)
-	SkinFilterButton(Frame.FilterButton)
+	Frame.FilterButton:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+	Frame.FilterButton:SetSize(155, 23)
+	Frame.FilterButton.ClearFiltersButton:GwSkinButton(true)
+	Frame.FilterButton:ClearAllPoints()
+	Frame.FilterButton:SetPoint("LEFT", Frame.SearchBox, "RIGHT", 5, 2)
+
+	Frame.SearchBox:ClearAllPoints()
+	Frame.SearchBox:SetPoint("LEFT", Frame.FavoritesSearchButton, "RIGHT", 9, -1)
 
 	Frame.SearchButton:GwSkinButton(false, true)
 	GW.SkinTextBox(Frame.SearchBox.Middle, Frame.SearchBox.Left, Frame.SearchBox.Right)
 	Frame.FavoritesSearchButton:GwSkinButton(false, true)
 	Frame.FavoritesSearchButton.Icon:SetDesaturated(true)
 	hooksecurefunc(Frame.FavoritesSearchButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end) --TODO
-	Frame.FavoritesSearchButton:SetSize(22, 22)
+	Frame.FavoritesSearchButton:SetSize(22, 23)
+	Frame.FavoritesSearchButton:ClearAllPoints()
+	Frame.FavoritesSearchButton:SetPoint("LEFT", 0, 0)
 end
 
 
@@ -254,7 +258,7 @@ local function ApplyAuctionHouseSkin()
 	end)
 	Categories.ScrollBox:Update()
 
-	hooksecurefunc("AuctionHouseFilterButton_SetUp", function(button) --TODO
+	hooksecurefunc("AuctionHouseFilterButton_SetUp", function(button, info) --TODO
 		local r, g, b = 0.5, 0.5, 0.5
 		button:SetHeight(28)
 		button.NormalTexture:SetAlpha(0)
@@ -263,7 +267,14 @@ local function ApplyAuctionHouseSkin()
 		button.HighlightTexture:SetHeight(28)
 		button.SelectedTexture:SetColorTexture(r, g, b, .25)
 		button.HighlightTexture:SetColorTexture(1, 1, 1, .1)
+
 		button.Text:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+		button.Text:SetShadowColor(0, 0, 0, 0)
+		button.Text:SetShadowOffset(1, -1)
+		button.Text:SetFont(DAMAGE_TEXT_FONT, 14)
+		button.Text:SetJustifyH("LEFT")
+		button.Text:SetJustifyV("MIDDLE")
+		button.Text:ClearAllPoints()
 		if not button.IsSkinned then
 			button.Background = button:CreateTexture(nil, "BACKGROUND", nil, 7)
 			button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
@@ -280,8 +291,39 @@ local function ApplyAuctionHouseSkin()
 				GW.TriggerButtonHoverAnimation(button, button.HighlightTexture)
 			end)
 
+			-- add arrows
+			button.arrow = button:CreateTexture(nil, "BACKGROUND", nil, 0)
+			button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+			button.arrow:SetSize(16,16)
+			button.arrow:Hide()
+
 			button.IsSkinned = true
 		end
+
+		if info.type == "category" then
+			button.arrow:ClearAllPoints()
+			button.arrow:SetPoint("LEFT", 0, 0)
+			button.Text:SetPoint("LEFT", 15, 0)
+		elseif info.type == "subCategory" then
+			button.arrow:ClearAllPoints()
+			button.arrow:SetPoint("LEFT", 10, 0)
+			button.Text:SetPoint("LEFT", 25, 0)
+		else
+			button.Text:SetPoint("LEFT", 30, 0)
+		end
+
+		if info.selected then
+			button.arrow:SetRotation(-1.5707)
+		else
+			button.arrow:SetRotation(0)
+		end
+
+		if info.type == "category" or info.type == "subCategory" then
+			button.arrow:Show()
+		else
+			button.arrow:Hide()
+		end
+		button.Lines:Hide()
 
 		--zebra
 		local zebra = (button:GetOrderIndex() % 2) == 1 or false
