@@ -632,7 +632,7 @@ end
 GW.HandleSrollBoxHeaders = HandleHeaders
 
 local function AddListItemChildHoverTexture(child)
-	child.Background = child:CreateTexture(nil, "BACKGROUND", nil, 7)
+	child.Background = child:CreateTexture(nil, "BACKGROUND", nil, 0)
 	child.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
 	child.Background:ClearAllPoints()
 	child.Background:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)

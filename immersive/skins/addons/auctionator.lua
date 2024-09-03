@@ -56,7 +56,7 @@ local function SkinAuctionator()
 
     local libAhTab = LibStub:GetLibrary("LibAHTab-1-0", true)
     if libAhTab then
-        for index, details in ipairs(Auctionator.Tabs.State.knownTabs) do
+        for _, details in ipairs(Auctionator.Tabs.State.knownTabs) do
             local tab = libAhTab:GetButton("AuctionatorTabs_" .. details.name)
             if not tab.isSkinned then
                 local id = details.name == "Shopping" and "addon_buy" or details.name == "Selling" and "addon_sell" or details.name == "Cancelling" and "addon_cancel" or details.name == "Auctionator" and "auctionator"
@@ -64,9 +64,10 @@ local function SkinAuctionator()
             end
 
             tab:ClearAllPoints()
-            tab:SetPoint("TOPRIGHT", GwAuctionsHouseFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * (index - 1 + 3)))
+            tab:SetPoint("TOPRIGHT", GwAuctionsHouseFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * GW.ActionHouseTabsAdded))
             tab:SetParent(GwAuctionsHouseFrameLeftPanel)
             tab:SetSize(64, 40)
+            GW.ActionHouseTabsAdded = GW.ActionHouseTabsAdded + 1
         end
     end
 
@@ -201,11 +202,25 @@ local function SkinAuctionator()
     hooksecurefunc(list.ListsContainer.ScrollBox, "Update", function(frame)
         for _, child in next, { frame.ScrollTarget:GetChildren() } do
             child.Text:SetTextColor(1, 1, 1)
-            child.Text:SetShadowColor(0, 0, 0, 0)
-            child.Text:SetShadowOffset(1, -1)
-            child.Text:SetFont(DAMAGE_TEXT_FONT, 12)
-            child.Text:SetJustifyH("LEFT")
-            child.Text:SetJustifyV("MIDDLE")
+
+            if not child.IsSkinned then
+                child.Text:SetShadowColor(0, 0, 0, 0)
+                child.Text:SetShadowOffset(1, -1)
+                child.Text:SetFont(DAMAGE_TEXT_FONT, 12)
+                child.Text:SetJustifyH("LEFT")
+                child.Text:SetJustifyV("MIDDLE")
+                child.IsSkinned = true
+            end
+
+            if not child.arrow then
+                -- add arrows
+                child.arrow = child:CreateTexture(nil, "BACKGROUND", nil, 1)
+                child.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+                child.arrow:SetSize(16, 16)
+                child.arrow:ClearAllPoints()
+			    child.arrow:SetPoint("LEFT", 0, 0)
+            end
+            child.Text:SetPoint("LEFT", 15, 0)
 
             if child.elementData.type == RowType.List then
                 local color = {r = 255 / 255, g = 241 / 255, b = 209 / 255}
@@ -213,13 +228,15 @@ local function SkinAuctionator()
                 if child.elementData.list:IsTemporary() then
                     color = ORANGE_FONT_COLOR
                 end
-                local icon = ""
                 if not list.ListsContainer:IsListExpanded(child.elementData.list) then
-                    icon = "|TInterface/AddOns/GW2_UI/textures/uistuff/arrow_right:16:16:0:0:0:0:0:1:0:1|t"
+                    child.arrow:SetRotation(0)
                 else
-                    icon = "|TInterface/AddOns/GW2_UI/textures/uistuff/arrow_right:16:16:0:0:64:64:0:64:64:0|t"
+                    child.arrow:SetRotation(-1.5707)
                 end
-                child.Text:SetText(icon .. "  " .. WrapTextInColorCode(child.elementData.list:GetName(), color.colorStr))
+                child.Text:SetText(WrapTextInColorCode(child.elementData.list:GetName(), color.colorStr))
+                child.arrow:Show()
+            else
+                child.arrow:Hide()
             end
         end
     end)

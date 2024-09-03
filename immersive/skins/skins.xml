@@ -49,4 +49,5 @@
     <Script file="addons\detailsProfile.lua"/>
     <Script file="addons\masqueSkin.lua"/>
     <Script file="addons\auctionator.lua"/>
+    <Script file="addons\tsm.lua"/>
 </Ui>

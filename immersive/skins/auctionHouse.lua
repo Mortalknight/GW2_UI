@@ -1,5 +1,7 @@
 local _, GW = ...
 
+GW.ActionHouseTabsAdded = 0
+
 local function HandleSearchBarFrame(Frame)
 	Frame.FilterButton:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
 	Frame.FilterButton:SetSize(155, 23)
@@ -110,13 +112,14 @@ local function HandleTabs(arg1)
 	for index, tab in next, AuctionHouseFrame.Tabs do
 		if not tab.isSkinned then
 			local id = index == 1 and "buy" or index == 2 and "sell" or "listings"
-			SkinFrameTab(tab, id)
+			SkinFrameTab(tab, id, tab:GetText())
 		end
 
 		tab:ClearAllPoints()
-		tab:SetPoint("TOPRIGHT", GwAuctionsHouseFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * (index - 1)))
+		tab:SetPoint("TOPRIGHT", GwAuctionsHouseFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * GW.ActionHouseTabsAdded))
 		tab:SetParent(GwAuctionsHouseFrameLeftPanel)
 		tab:SetSize(64, 40)
+		GW.ActionHouseTabsAdded = GW.ActionHouseTabsAdded + 1
 	end
 end
 
