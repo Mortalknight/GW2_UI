@@ -793,7 +793,7 @@ local function createModelFx(modelFX)
     local modelID = modelFX.modelID
     local modelPosition = modelFX.modelPosition
 
-    if modelID==Gw2_HudBackgroud.actionBarHudFX.currentModelID and Gw2_HudBackgroud.actionBarHudFX:IsShown() then 
+    if modelID == Gw2_HudBackgroud.actionBarHudFX.currentModelID and Gw2_HudBackgroud.actionBarHudFX:IsShown() then
         return
     end
 
@@ -1000,7 +1000,20 @@ registerActionHudAura(
     375087,
     "Interface/AddOns/GW2_UI/textures/hud/evokerdpsLeft",
     "Interface/AddOns/GW2_UI/textures/hud/evokerdpsRight",
-    "player"
+    "player", {
+        anchor = {
+            point = "BOTTOM",
+            relPoint = "BOTTOM",
+            target = "Gw2_HudBackgroud",
+            x = 0,
+            y = 50
+
+        },
+        modelID = 4697927,
+
+        modelPosition =
+        { x = 2, y = 0, z = 0, rotation = 0 }
+    }
 )
 -- Lunar Eclipse
 registerActionHudAura(
@@ -1123,11 +1136,13 @@ local function loadFXModelDebug()
 end
 
 --[[
-    C_Timer.After(1, function()
-        loadFXModelDebug()
-    end)
-
+C_Timer.After(1, function()
+    loadFXModelDebug()
+end)
 ]]
+
+
+
 
 
 local function hud_OnEvent(self, event, ...)
