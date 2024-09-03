@@ -54,18 +54,19 @@ local function SkinAuctionator()
     if skinLoaded then return end
     skinLoaded = true
 
-    local lastTab = AuctionHouseFrameAuctionsTab
     local libAhTab = LibStub:GetLibrary("LibAHTab-1-0", true)
     if libAhTab then
-        for _, details in ipairs(Auctionator.Tabs.State.knownTabs) do
+        for index, details in ipairs(Auctionator.Tabs.State.knownTabs) do
             local tab = libAhTab:GetButton("AuctionatorTabs_" .. details.name)
-            GW.HandleTabs(tab)
+            if not tab.isSkinned then
+                local id = details.name == "Shopping" and "buy" or details.name == "Selling" and "sell" or details.name == "Cancelling" and "cancel" or details.name == "Auctionator" and "auctionator"
+                GW.SkinAuctionsHouseFrameTab(tab, id)
+            end
 
-            -- tab positions
             tab:ClearAllPoints()
-            tab:SetPoint("TOPLEFT", lastTab, "TOPRIGHT", (tab.backdrop or tab.Backdrop) and -5 or 0, 0)
-
-            lastTab = tab
+            tab:SetPoint("TOPRIGHT", GwAuctionsHouseFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * (index - 1 + 3)))
+            tab:SetParent(GwAuctionsHouseFrameLeftPanel)
+            tab:SetSize(64, 40)
         end
     end
 
