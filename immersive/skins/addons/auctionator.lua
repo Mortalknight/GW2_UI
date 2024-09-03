@@ -219,6 +219,9 @@ local function SkinAuctionator()
     buyingFrame.DetailsContainer.BuyButton:GwSkinButton(false, true)
     buyingFrame.BackButton:GwSkinButton(false, true)
 
+
+    list.SearchOptions.ResetSearchStringButton.texture:SetDrawLayer("ARTWORK", 7)
+
     for _, child in next, {buyingFrame:GetChildren()} do
         if child.iconAtlas == "UI-RefreshButton" then
             child:GwSkinButton(false, true)

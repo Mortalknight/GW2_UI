@@ -147,7 +147,7 @@ end
 
 local function GwAddHover(self)
     if not self.hover then
-        self.hover = self:CreateTexture(nil, "ARTWORK", nil, 7)
+        self.hover = self:CreateTexture(nil, "ARTWORK", nil, 6)
         self.hover:SetPoint("LEFT", self, "LEFT")
         self.hover:SetPoint("TOP", self, "TOP")
         self.hover:SetPoint("BOTTOM", self, "BOTTOM")
