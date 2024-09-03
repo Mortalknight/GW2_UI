@@ -519,6 +519,11 @@ local function HandleTabs(self, isTop)
                 end
                 tab.Text:SetPoint("CENTER", self, "CENTER", 0, 0)
             end)
+            if self.isSelected then
+                self.background:SetBlendMode("MOD")
+            else
+                self.background:SetBlendMode("BLEND")
+            end
         else
             hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
                 if self == tab then
@@ -532,6 +537,11 @@ local function HandleTabs(self, isTop)
                     tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
                 end
             end)
+            if self.LeftActive:IsShown() then -- selected
+                self.background:SetBlendMode("MOD")
+            else
+                self.background:SetBlendMode("BLEND")
+            end
         end
 
         self.isSkinned = true
