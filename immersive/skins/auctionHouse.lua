@@ -629,6 +629,9 @@ local function ApplyAuctionHouseSkin()
 				bgMask:SetPoint("BOTTOMRIGHT", AuctionHouseFrame.tex, "BOTTOMLEFT", AuctionHouseFrame.tex:GetWidth() + 200 , 0)
 			end)
 	end)
+
+	-- make the frame movable
+    GW.MakeFrameMovable(AuctionHouseFrame, nil, "AuctionHouseWindow", true)
 end
 
 local function LoadAuctionHouseSkin()

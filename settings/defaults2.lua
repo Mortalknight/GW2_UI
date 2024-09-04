@@ -992,6 +992,12 @@ GW.globalDefault = {
             xOfs= 96,
             yOfs= -115,
         },
+        AuctionHouseWindow = {
+            point= "TOPLEFT",
+            relativePoint= "TOPLEFT",
+            xOfs= 96,
+            yOfs= -115,
+        },
 
         PlayerBuffFrame_Seperate= 0,
         PlayerDebuffFrame_Seperate= 0,

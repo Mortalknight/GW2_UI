@@ -1062,54 +1062,6 @@ local function updatePointsDisplay()
     AchievementFrame.Header.Shield:SetTexCoord(0, 1, 0, 1);
 end
 
-local function moveFrameToPosition(frame, x, y)
-    local pos = GW.settings["AchievementWindow"]
-
-    if x and y then
-        if pos then
-            wipe(pos)
-        else
-            pos = {}
-        end
-        pos.point = "TOPLEFT"
-        pos.relativePoint = "TOPLEFT"
-        pos.xOfs = x
-        pos.yOfs = y
-        GW.settings.AchievementWindow = pos
-    end
-
-    frame:ClearAllPoints()
-    frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-end
-
-local function MakeMovable(frame, target)
-    if frame:IsMovable() then
-        return
-    end
-
-    if not target then
-        local point = GW.settings.AchievementWindow
-        frame:ClearAllPoints()
-        frame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point. yOfs)
-    end
-
-    target = target or frame
-
-    frame:SetMovable(true)
-    frame:EnableMouse(true)
-    frame:SetScript("OnMouseDown", function(_, button)
-        if button == "LeftButton" then
-            target:StartMoving()
-        end
-    end)
-    frame:SetScript("OnMouseUp", function()
-        target:StopMovingOrSizing()
-
-        local x, y = target:GetLeft(), target:GetTop() - UIParent:GetTop()
-
-        moveFrameToPosition(target, x, y)
-    end)
-end
 local function skinAchevement()
     AchievementFrameCategories_OnLoad(AchievementFrameCategories)
     -- function to "hack" the blizzard functions
@@ -1189,7 +1141,6 @@ local function skinAchevement()
     AchievementFrame:HookScript("OnShow",function()
         AchievementFrame:SetSize(853, 627)
         updateAchievementFrameTabLayout()
-        moveFrameToPosition(AchievementFrame)
     end)
 
     AchievementFrameHeader:ClearAllPoints()
@@ -1584,8 +1535,8 @@ local function skinAchevement()
     end)
 
     -- make the frame movable
-    MakeMovable(AchievementFrame)
-    MakeMovable(AchievementFrame.Header, AchievementFrame)
+    GW.MakeFrameMovable(AchievementFrame, nil, "AchievementWindow", true)
+    GW.MakeFrameMovable(AchievementFrame.Header, AchievementFrame, "AchievementWindow")
 end
 
 local function LoadAchivementSkin()

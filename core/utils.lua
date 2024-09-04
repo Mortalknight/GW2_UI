@@ -938,3 +938,60 @@ local function IsSpellTalented(spellID) -- this could be made to be a lot more e
     return false
 end
 GW.IsSpellTalented = IsSpellTalented
+
+local function moveFrameToPosition(frame, x, y)
+    local pos = GW.settings[frame.gwSetting]
+
+    if x and y then
+        if pos then
+            wipe(pos)
+        else
+            pos = {}
+        end
+        pos.point = "TOPLEFT"
+        pos.relativePoint = "TOPLEFT"
+        pos.xOfs = x
+        pos.yOfs = y
+
+        GW.settings[frame.gwSetting] = pos
+    end
+
+    frame:ClearAllPoints()
+    frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+end
+
+local function MakeFrameMovable(frame, target, setting, moveFrameOnShow)
+    if frame:IsMovable() then
+        return
+    end
+
+    if not target then
+        local point = GW.settings[setting]
+        frame:ClearAllPoints()
+        frame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point. yOfs)
+    end
+
+    target = target or frame
+
+    frame.gwSetting = setting
+    frame:SetMovable(true)
+    frame:EnableMouse(true)
+    frame:SetScript("OnMouseDown", function(_, button)
+        if button == "LeftButton" then
+            target:StartMoving()
+        end
+    end)
+    frame:SetScript("OnMouseUp", function()
+        target:StopMovingOrSizing()
+
+        local x, y = target:GetLeft(), target:GetTop() - UIParent:GetTop()
+
+        moveFrameToPosition(target, x, y)
+    end)
+    if moveFrameOnShow then
+        frame:HookScript("OnShow", function()
+            moveFrameToPosition(target)
+        end)
+    end
+end
+GW.MakeFrameMovable = MakeFrameMovable
