@@ -39,17 +39,17 @@ local function SkinItemDisplay(frame)
 end
 
 local function SkinFrameTab(self, id, tooltipText)
-    self.isSkinned = true
-    self:GwStripTextures()
-    self:SetSize(64, 40)
-    self.Text:Hide()
+	self.isSkinned = true
+	self:GwStripTextures()
+	self:SetSize(64, 40)
+	self.Text:Hide()
 
-    self.icon = self:CreateTexture(nil, "BACKGROUND", nil, 0)
-    self.icon:SetAllPoints()
+	self.icon = self:CreateTexture(nil, "BACKGROUND", nil, 0)
+	self.icon:SetAllPoints()
 
 	self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id)
 
-    self.icon:SetTexCoord(0.5, 1, 0, 0.625)
+	self.icon:SetTexCoord(0.5, 1, 0, 0.625)
 
 	if tooltipText then
 		self:HookScript("OnEnter", function()
@@ -285,9 +285,9 @@ local function ApplyAuctionHouseSkin()
 	AuctionHouseFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/windowbg")
 	AuctionHouseFrame.tex:SetTexCoord(0, 1, 0, 0.74)
 	AuctionHouseFrame.gwHeader.windowIcon:ClearAllPoints()
-    AuctionHouseFrame.gwHeader.windowIcon:SetPoint("CENTER", AuctionHouseFrame.gwHeader, "BOTTOMLEFT", -26, 35)
+	AuctionHouseFrame.gwHeader.windowIcon:SetPoint("CENTER", AuctionHouseFrame.gwHeader, "BOTTOMLEFT", -26, 35)
 	AuctionHouseFrameTitleText:ClearAllPoints()
-    AuctionHouseFrameTitleText:SetPoint("BOTTOMLEFT", AuctionHouseFrame.gwHeader, "BOTTOMLEFT", 25, 10)
+	AuctionHouseFrameTitleText:SetPoint("BOTTOMLEFT", AuctionHouseFrame.gwHeader, "BOTTOMLEFT", 25, 10)
 
 	CreateFrame("Frame", "GwAuctionsHouseFrameLeftPanel", AuctionHouseFrame, "GwWindowLeftPanel")
 	GwAuctionsHouseFrameLeftPanel:SetClampedToScreen(true)
@@ -316,25 +316,19 @@ local function ApplyAuctionHouseSkin()
 	end)
 	Categories.ScrollBox:Update()
 
+	local HasCategorySubCategories = function (catIdx, catType)
+		local selectedCategoryIndex = Categories:GetSelectedCategory()
+		if catType == "category" then
+			return AuctionCategories[catIdx] and AuctionCategories[catIdx].subCategories and #AuctionCategories[catIdx].subCategories > 0
+		elseif catType == "subCategory" then
+			return AuctionCategories[selectedCategoryIndex].subCategories[catIdx] and AuctionCategories[selectedCategoryIndex].subCategories[catIdx].subCategories and #AuctionCategories[selectedCategoryIndex].subCategories[catIdx] .subCategories > 0
+		end
+		return false
+	end
+
 	hooksecurefunc("AuctionHouseFilterButton_SetUp", function(button, info)
 		local r, g, b = 0.5, 0.5, 0.5
-		button:SetHeight(28)
-		button.NormalTexture:SetAlpha(0)
-		button.NormalTexture:SetHeight(28)
-		button.SelectedTexture:SetHeight(28)
-		button.HighlightTexture:SetHeight(28)
-		button.SelectedTexture:SetColorTexture(r, g, b, .25)
-		button.SelectedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
-		button.HighlightTexture:SetColorTexture(1, 1, 1, .1)
-		button.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
 
-		button.Text:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-		button.Text:SetShadowColor(0, 0, 0, 0)
-		button.Text:SetShadowOffset(1, -1)
-		button.Text:SetFont(DAMAGE_TEXT_FONT, 13)
-		button.Text:SetJustifyH("LEFT")
-		button.Text:SetJustifyV("MIDDLE")
-		button.Text:ClearAllPoints()
 		if not button.IsSkinned then
 			button.Background = button:CreateTexture(nil, "BACKGROUND", nil, 0)
 			button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
@@ -358,6 +352,24 @@ local function ApplyAuctionHouseSkin()
 			button.IsSkinned = true
 		end
 
+		button:SetHeight(28)
+		button.NormalTexture:SetAlpha(0)
+		button.NormalTexture:SetHeight(28)
+		button.SelectedTexture:SetHeight(28)
+		button.HighlightTexture:SetHeight(28)
+		button.SelectedTexture:SetColorTexture(r, g, b, .25)
+		button.SelectedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+		button.HighlightTexture:SetColorTexture(1, 1, 1, .1)
+		button.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+
+		button.Text:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+		button.Text:SetShadowColor(0, 0, 0, 0)
+		button.Text:SetShadowOffset(1, -1)
+		button.Text:SetFont(DAMAGE_TEXT_FONT, 13)
+		button.Text:SetJustifyH("LEFT")
+		button.Text:SetJustifyV("MIDDLE")
+		button.Text:ClearAllPoints()
+
 		if info.type == "category" then
 			button.arrow:ClearAllPoints()
 			button.arrow:SetPoint("LEFT", 0, 0)
@@ -376,28 +388,7 @@ local function ApplyAuctionHouseSkin()
 			button.arrow:SetRotation(0)
 		end
 		-- show the arrow only if there are sub categories
-		local shouldShowArrow = false
-		for _, categoryInfo in ipairs(AuctionCategories) do -- name does not work
-			if categoryInfo.name == info.name and info.type == "category" and categoryInfo.subCategories and #categoryInfo.subCategories > 0 then
-				shouldShowArrow = true
-				break
-			elseif categoryInfo.subCategories and #categoryInfo.subCategories > 0 then
-				for _, subCategoryInfo in ipairs(categoryInfo.subCategories) do
-					if subCategoryInfo.name == info.name and info.type == "subCategory" and subCategoryInfo.subCategories and #subCategoryInfo.subCategories > 0 then
-						shouldShowArrow = true
-						break
-					elseif subCategoryInfo.subCategories and #subCategoryInfo.subCategories > 0 then
-						for _, subSubCategoryInfo in ipairs(subCategoryInfo.subCategories) do
-							if subSubCategoryInfo.name == info.name and info.type == "subSubCategory" and subSubCategoryInfo.subCategories and #subSubCategoryInfo.subCategories > 0 then
-								shouldShowArrow = true
-								break
-							end
-						end
-					end
-				end
-			end
-		end
-		button.arrow:SetShown(shouldShowArrow)
+		button.arrow:SetShown(HasCategorySubCategories((info.categoryIndex or info.subCategoryIndex), info.type))
 		button.Lines:Hide()
 
 		--zebra
@@ -423,7 +414,7 @@ local function ApplyAuctionHouseSkin()
 	BrowseList.ScrollBar:SetPoint("BOTTOMRIGHT", BrowseList, -6, 16)
 	Browse.tex:ClearAllPoints()
 	Browse.tex:SetPoint("TOPLEFT", Browse, "TOPLEFT", 2, 0)
-    Browse.tex:SetPoint("BOTTOMRIGHT", Browse, "BOTTOMRIGHT", 0, 0)
+	Browse.tex:SetPoint("BOTTOMRIGHT", Browse, "BOTTOMRIGHT", 0, 0)
 
 	BrowseList.LoadingSpinner.SearchingText:SetTextColor(1, 1, 1)
 
@@ -489,7 +480,7 @@ local function ApplyAuctionHouseSkin()
 	HandleSellList(ItemSellList, true, true)
 	ItemSellList.tex:ClearAllPoints()
 	ItemSellList.tex:SetPoint("TOPLEFT", ItemSellList, "TOPLEFT", 2, 0)
-    ItemSellList.tex:SetPoint("BOTTOMRIGHT", ItemSellList, "BOTTOMRIGHT", 0, 0)
+	ItemSellList.tex:SetPoint("BOTTOMRIGHT", ItemSellList, "BOTTOMRIGHT", 0, 0)
 
 	local CommoditiesSellFrame = AuctionHouseFrame.CommoditiesSellFrame
 	HandleSellFrame(CommoditiesSellFrame)
@@ -537,7 +528,7 @@ local function ApplyAuctionHouseSkin()
 	HandleSellList(AllAuctionsList, true, true)
 	AllAuctionsList.tex:ClearAllPoints()
 	AllAuctionsList.tex:SetPoint("TOPLEFT", AllAuctionsList, "TOPLEFT", 2, 0)
-    AllAuctionsList.tex:SetPoint("BOTTOMRIGHT", AllAuctionsList, "BOTTOMRIGHT", 0, 0)
+	AllAuctionsList.tex:SetPoint("BOTTOMRIGHT", AllAuctionsList, "BOTTOMRIGHT", 0, 0)
 	AllAuctionsList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
 	hooksecurefunc(AllAuctionsList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end)
 	AllAuctionsList.ResultsText:SetParent(AllAuctionsList.ScrollFrame)
@@ -550,7 +541,7 @@ local function ApplyAuctionHouseSkin()
 	HandleSellList(BidsList, true, true)
 	BidsList.tex:ClearAllPoints()
 	BidsList.tex:SetPoint("TOPLEFT", BidsList, "TOPLEFT", 2, 0)
-    BidsList.tex:SetPoint("BOTTOMRIGHT", BidsList, "BOTTOMRIGHT", 0, 0)
+	BidsList.tex:SetPoint("BOTTOMRIGHT", BidsList, "BOTTOMRIGHT", 0, 0)
 	BidsList.ResultsText:SetParent(BidsList.ScrollFrame)
 	BidsList.RefreshFrame.RefreshButton:GwSkinButton(false, true)
 	hooksecurefunc(BidsList.RefreshFrame.RefreshButton.Icon, "SetDesaturated", function(self, value) if value == false then self:SetDesaturated(true) end end)
@@ -618,14 +609,14 @@ local function ApplyAuctionHouseSkin()
 	GW.HandleIcon(progressBar.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
 
 	local bgMask = UIParent:CreateMaskTexture()
-    bgMask:SetPoint("TOPLEFT", AuctionHouseFrame, "TOPLEFT", -64, 64)
-    bgMask:SetPoint("BOTTOMRIGHT", AuctionHouseFrame, "BOTTOMLEFT", -64, 0)
-    bgMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    AuctionHouseFrame.tex:AddMaskTexture(bgMask)
-    AuctionHouseFrame.gwHeader.BGLEFT:AddMaskTexture(bgMask)
-    AuctionHouseFrame.gwHeader.BGRIGHT:AddMaskTexture(bgMask)
-    GwAuctionsHouseFrameLeftPanel.background:AddMaskTexture(bgMask)
-    AuctionHouseFrame.backgroundMask = bgMask
+	bgMask:SetPoint("TOPLEFT", AuctionHouseFrame, "TOPLEFT", -64, 64)
+	bgMask:SetPoint("BOTTOMRIGHT", AuctionHouseFrame, "BOTTOMLEFT", -64, 0)
+	bgMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+	AuctionHouseFrame.tex:AddMaskTexture(bgMask)
+	AuctionHouseFrame.gwHeader.BGLEFT:AddMaskTexture(bgMask)
+	AuctionHouseFrame.gwHeader.BGRIGHT:AddMaskTexture(bgMask)
+	GwAuctionsHouseFrameLeftPanel.background:AddMaskTexture(bgMask)
+	AuctionHouseFrame.backgroundMask = bgMask
 
 	AuctionHouseFrame:HookScript("OnShow",function()
 		GW.AddToAnimation("ACHIVEMENTFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
