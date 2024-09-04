@@ -362,7 +362,6 @@ local function LoadMailSkin()
     local newWidth, newHeight = MailFrame:GetSize()
     newWidth = (newWidth * 2.0) + 50
     newHeight = newHeight + 30
-    print(newWidth, newHeight)
     MailFrame:SetSize(newWidth, newHeight)
 
     -- override max tabsize for the "compose" button (as it's just the send mail tab)
@@ -411,7 +410,6 @@ local function LoadMailSkin()
     MailFrame.footer:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagfooter")
 
     InboxFrame:SetWidth(331)
-    print(InboxFrame:GetWidth())
 
     _G.AutoCompleteBox:GwStripTextures()
     _G.AutoCompleteBox:GwCreateBackdrop(GW.BackdropTemplates.Default)
