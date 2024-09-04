@@ -138,7 +138,7 @@
         </Anchors>
     </Frame>
 
-    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" virtual="true">
+    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButtonNoOutline" virtual="true">
         <Size x="231" y="36"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
