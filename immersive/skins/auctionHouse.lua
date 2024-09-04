@@ -47,25 +47,8 @@ local function SkinFrameTab(self, id, tooltipText)
     self.icon = self:CreateTexture(nil, "BACKGROUND", nil, 0)
     self.icon:SetAllPoints()
 
-    if id == "buy" then
-        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_buy")
-    elseif id == "sell" then
-        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_sell")
-    elseif id == "listings" then
-        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_listings")
-	elseif id == "auctionator" then
-		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_auctionator")
-	elseif id == "addon_buy" then
-		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_buy")
-	elseif id == "addon_sell" then
-		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_sell")
-	elseif id == "addon_listings" then
-		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_listings")
-	elseif id == "addon_cancel" then
-		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_cancel")
-	elseif id == "cancel" then
-		self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_cancel")
-    end
+	self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id)
+
     self.icon:SetTexCoord(0.5, 1, 0, 0.625)
 
 	if tooltipText then
@@ -394,18 +377,18 @@ local function ApplyAuctionHouseSkin()
 		end
 		-- show the arrow only if there are sub categories
 		local shouldShowArrow = false
-		for _, categoryInfo in ipairs(AuctionCategories) do
-			if categoryInfo.name == info.name and categoryInfo.subCategories and #categoryInfo.subCategories > 0 then
+		for _, categoryInfo in ipairs(AuctionCategories) do -- name does not work
+			if categoryInfo.name == info.name and info.type == "category" and categoryInfo.subCategories and #categoryInfo.subCategories > 0 then
 				shouldShowArrow = true
 				break
 			elseif categoryInfo.subCategories and #categoryInfo.subCategories > 0 then
 				for _, subCategoryInfo in ipairs(categoryInfo.subCategories) do
-					if subCategoryInfo.name == info.name and subCategoryInfo.subCategories and #subCategoryInfo.subCategories > 0 then
+					if subCategoryInfo.name == info.name and info.type == "subCategory" and subCategoryInfo.subCategories and #subCategoryInfo.subCategories > 0 then
 						shouldShowArrow = true
 						break
 					elseif subCategoryInfo.subCategories and #subCategoryInfo.subCategories > 0 then
 						for _, subSubCategoryInfo in ipairs(subCategoryInfo.subCategories) do
-							if subSubCategoryInfo.name == info.name and subSubCategoryInfo.subCategories and #subSubCategoryInfo.subCategories > 0 then
+							if subSubCategoryInfo.name == info.name and info.type == "subSubCategory" and subSubCategoryInfo.subCategories and #subSubCategoryInfo.subCategories > 0 then
 								shouldShowArrow = true
 								break
 							end
