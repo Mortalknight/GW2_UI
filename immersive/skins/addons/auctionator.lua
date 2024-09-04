@@ -102,6 +102,8 @@ local function SkinAuctionator()
     AuctionatorCancellingFrame.ResultsListing.ScrollArea.NoResultsText:SetTextColor(1, 1, 1)
     AuctionatorCancellingFrame.ResultsListing.ScrollArea.ResultsText:SetTextColor(1, 1, 1)
 
+    AuctionatorCancellingFrame.UndercutScanContainer.StartScanButton:SetPoint("TOPRIGHT", AuctionatorCancellingFrame.UndercutScanContainer.CancelNextButton, "TOPLEFT", 0, 0)
+
     -- undercut butttons, refresh button
     for _, child in next, {AuctionatorCancellingFrame:GetChildren()} do
         if child.iconAtlas == "UI-RefreshButton" then

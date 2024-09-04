@@ -551,8 +551,8 @@ local function ApplyAuctionHouseSkin()
 		AuctionHouseFrameAuctionsFrameSilver,
 	}
 
-	for _, EditBox in pairs(EditBoxes) do
-		GW.SkinTextBox(_G[EditBox:GetName() .. "Middle"], _G[EditBox:GetName() .. "Left"], _G[EditBox:GetName() .. "Right"])
+	for idx, EditBox in pairs(EditBoxes) do
+		GW.SkinTextBox(_G[EditBox:GetName() .. "Middle"], _G[EditBox:GetName() .. "Left"], _G[EditBox:GetName() .. "Right"], nil, nil, nil, (idx == 2 and -5 or 0))
 	end
 
 	AuctionHouseFrameAuctionsFrame.BidFrame.BidButton:GwSkinButton(false, true)
