@@ -9,7 +9,8 @@ local function AddTsmTab(_, tabId)
 
     local tab = libAhTab:GetButton("TSM_AH_TAB")
     if not tab.isSkinned then
-        GW.SkinAuctionsHouseFrameTab(tab, "addon_tsm", "TSM")
+        local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_tsm"
+        GW.SkinSideTabButton(tab, iconTexture, "TSM")
     end
 
     tab:ClearAllPoints()

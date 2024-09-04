@@ -38,64 +38,14 @@ local function SkinItemDisplay(frame)
 	ItemButton:GetHighlightTexture():Hide()
 end
 
-local function SkinFrameTab(self, id, tooltipText)
-	self.isSkinned = true
-	self:GwStripTextures()
-	self:SetSize(64, 40)
-	self.Text:Hide()
-
-	self.icon = self:CreateTexture(nil, "BACKGROUND", nil, 0)
-	self.icon:SetAllPoints()
-
-	self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id)
-
-	self.icon:SetTexCoord(0.5, 1, 0, 0.625)
-
-	if tooltipText then
-		self:HookScript("OnEnter", function()
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:ClearLines()
-			GameTooltip:AddLine(tooltipText, 1, 1, 1)
-			GameTooltip:Show()
-		end)
-		self:HookScript("OnLeave", GameTooltip_Hide)
-	end
-
-	if self.SetTabSelected then
-		hooksecurefunc(self, "SetTabSelected", function(tab)
-			if tab.isSelected then
-				tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
-			else
-				tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
-			end
-		end)
-	else
-		hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
-			if self == tab then
-				tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
-			end
-		end)
-		hooksecurefunc("PanelTemplates_SelectTab", function(tab)
-			if self == tab then
-				tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
-			end
-		end)
-		hooksecurefunc("PanelTemplates_TabResize", function(tab)
-			if self == tab then
-				tab:SetSize(64, 40)
-			end
-		end)
-	end
-end
-GW.SkinAuctionsHouseFrameTab = SkinFrameTab
-
 local function HandleTabs(arg1)
 	if not arg1 or arg1 ~= AuctionHouseFrame then return end
 
 	for index, tab in next, AuctionHouseFrame.Tabs do
 		if not tab.isSkinned then
 			local id = index == 1 and "buy" or index == 2 and "sell" or "listings"
-			SkinFrameTab(tab, id, tab:GetText())
+			local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id
+			GW.SkinSideTabButton(tab, iconTexture, tab:GetText())
 		end
 
 		tab:ClearAllPoints()
