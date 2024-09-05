@@ -726,6 +726,9 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
                 tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
             end
         end)
+        if self.isSelected then
+            self.icon:SetTexCoord(0, 0.5, 0, 0.625)
+        end
     else
         hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
             if self == tab then
@@ -742,6 +745,10 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
                 tab:SetSize(64, 40)
             end
         end)
+
+        if not self:IsEnabled() then -- selected tab
+            self.icon:SetTexCoord(0, 0.5, 0, 0.625)
+        end
     end
 end
 GW.SkinSideTabButton = SkinSideTabButton
