@@ -145,12 +145,12 @@ end
 GW.getSpriteByIndex = getSpriteByIndex
 
 local function TriggerButtonHoverAnimation(self, hover, to, duration)
-    local name = tostring(self)
+    local name = self.animationName or self.GetName and self:GetName() or tostring(self)
     hover:SetAlpha(1)
     duration = duration or math.min(1, self:GetWidth() * 0.002)
     AddToAnimation(
         name,
-        self.animationValue,
+        self.animationValue or 0,
         (to or 1),
         GetTime(),
         duration,

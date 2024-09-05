@@ -585,153 +585,165 @@ GW.CreateFrameHeaderWithBody = CreateFrameHeaderWithBody
 
 
 local function HandleListIcon(frame)
-	if not frame.tableBuilder then return end
+    if not frame.tableBuilder then return end
 
-	for i = 1, 22 do
-		local row = frame.tableBuilder.rows[i]
-		if row then
-			for j = 1, 4 do
-				local cell = row.cells and row.cells[j]
-				if cell and cell.Icon then
-					if not cell.IsSkinned then
-						GW.HandleIcon(cell.Icon)
+    for i = 1, 22 do
+        local row = frame.tableBuilder.rows[i]
+        if row then
+            for j = 1, 4 do
+                local cell = row.cells and row.cells[j]
+                if cell and cell.Icon then
+                    if not cell.IsSkinned then
+                        GW.HandleIcon(cell.Icon)
 
-						if cell.IconBorder then
-							cell.IconBorder:GwKill()
-						end
+                        if cell.IconBorder then
+                            cell.IconBorder:GwKill()
+                        end
 
-						cell.IsSkinned = true
-					end
-				end
-			end
-		end
-	end
+                        cell.IsSkinned = true
+                    end
+                end
+            end
+        end
+    end
 end
 
 local function HandleHeaders(frame)
-	local maxHeaders = frame.HeaderContainer:GetNumChildren()
-	for i, header in next, { frame.HeaderContainer:GetChildren() } do
-		if not header.IsSkinned then
-			header:DisableDrawLayer("BACKGROUND")
+    local maxHeaders = frame.HeaderContainer:GetNumChildren()
+    for i, header in next, { frame.HeaderContainer:GetChildren() } do
+        if not header.IsSkinned then
+            header:DisableDrawLayer("BACKGROUND")
 
-			if not header.backdrop then
-				header:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
-				header.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-			end
+            if not header.backdrop then
+                header:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
+                header.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+            end
 
-			header.IsSkinned = true
-		end
+            header.IsSkinned = true
+        end
 
-		if header.backdrop then
-			header.backdrop:SetPoint("BOTTOMRIGHT", i < maxHeaders and -5 or 0, -2)
-		end
-	end
+        if header.backdrop then
+            header.backdrop:SetPoint("BOTTOMRIGHT", i < maxHeaders and -5 or 0, -2)
+        end
+    end
 
-	HandleListIcon(frame)
+    HandleListIcon(frame)
 end
 GW.HandleSrollBoxHeaders = HandleHeaders
 
+local function AddMouseMotionPropagationToChildFrames(self)
+    for _, child in next, { self:GetChildren() } do
+        child:SetPropagateMouseMotion(true)
+        AddMouseMotionPropagationToChildFrames(child)
+    end
+end
+
 local function AddListItemChildHoverTexture(child)
-	child.Background = child:CreateTexture(nil, "BACKGROUND", nil, 0)
-	child.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
-	child.Background:ClearAllPoints()
-	child.Background:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
-	child.Background:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
-	child.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
-	if child.HighlightTexture then
-		child.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
-		child.HighlightTexture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
-		child.HighlightTexture:GwSetInside(child.Background)
-		child:HookScript("OnEnter",function()
-			GW.TriggerButtonHoverAnimation(child, child.HighlightTexture)
-		end)
-	elseif child.Highlight then
-		child.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
-		child.Highlight:SetVertexColor(0.8, 0.8, 0.8, 0.8)
-		child.Highlight:GwSetInside(child.Background)
-		child:HookScript("OnEnter",function()
-			GW.TriggerButtonHoverAnimation(child, child.Highlight)
-		end)
-	end
+    child.Background = child:CreateTexture(nil, "BACKGROUND", nil, 0)
+    child.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+    child.Background:ClearAllPoints()
+    child.Background:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
+    child.Background:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
+    child.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
+    if child.HighlightTexture then
+        child.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        child.HighlightTexture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+        child.HighlightTexture:GwSetInside(child.Background)
+        child:HookScript("OnEnter", function()
+            print("OnEnter")
+            GW.TriggerButtonHoverAnimation(child, child.HighlightTexture)
+        end)
+    elseif child.Highlight then
+        child.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        child.Highlight:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+        child.Highlight:GwSetInside(child.Background)
+        child:HookScript("OnEnter", function()
+            print("OnEnter")
+            GW.TriggerButtonHoverAnimation(child, child.Highlight)
+        end)
+    end
+
+    AddMouseMotionPropagationToChildFrames(child)
 end
 GW.AddListItemChildHoverTexture = AddListItemChildHoverTexture
 
 local function HandleItemListScrollBoxHover(self)
-	for _, child in next, { self.ScrollTarget:GetChildren() } do
-		if not child.IsSkinned then
-			AddListItemChildHoverTexture(child)
+    for _, child in next, { self.ScrollTarget:GetChildren() } do
+        if not child.IsSkinned then
+            AddListItemChildHoverTexture(child)
 
-			child.IsSkinned = true
-		end
+            child.IsSkinned = true
+        end
+        child:SetPropagateMouseMotion(true)
 
-		--zebra
-		local zebra = child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 or false
-		if zebra then
-			child.Background:SetVertexColor(1, 1, 1, 1)
-		else
-			child.Background:SetVertexColor(0, 0, 0, 0)
-		end
+        --zebra
+        local zebra = child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 or false
+        if zebra then
+            child.Background:SetVertexColor(1, 1, 1, 1)
+        else
+            child.Background:SetVertexColor(0, 0, 0, 0)
+        end
 
-		if child.NormalTexture then
-			child.NormalTexture:SetAlpha(0)
-		end
-		if child.SelectedHighlight then
-			child.SelectedHighlight:SetColorTexture(0.5, 0.5, 0.5, .25)
-		end
-		if child.Selected then
-			child.Selected:SetColorTexture(0.5, 0.5, 0.5, .25)
-		end
-	end
+        if child.NormalTexture then
+            child.NormalTexture:SetAlpha(0)
+        end
+        if child.SelectedHighlight then
+            child.SelectedHighlight:SetColorTexture(0.5, 0.5, 0.5, .25)
+        end
+        if child.Selected then
+            child.Selected:SetColorTexture(0.5, 0.5, 0.5, .25)
+        end
+    end
 end
 GW.HandleItemListScrollBoxHover = HandleItemListScrollBoxHover
 
 local function SkinSideTabButton(self, iconTexture, tooltipText)
-	self.isSkinned = true
-	self:GwStripTextures()
-	self:SetSize(64, 40)
-	self.Text:Hide()
+    self.isSkinned = true
+    self:GwStripTextures()
+    self:SetSize(64, 40)
+    self.Text:Hide()
 
-	self.icon = self:CreateTexture(nil, "BACKGROUND", nil, 0)
-	self.icon:SetAllPoints()
+    self.icon = self:CreateTexture(nil, "BACKGROUND", nil, 0)
+    self.icon:SetAllPoints()
 
     self.icon:SetTexture(iconTexture)
 
-	self.icon:SetTexCoord(0.5, 1, 0, 0.625)
+    self.icon:SetTexCoord(0.5, 1, 0, 0.625)
 
-	if tooltipText then
-		self:HookScript("OnEnter", function()
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:ClearLines()
-			GameTooltip:AddLine(tooltipText, 1, 1, 1)
-			GameTooltip:Show()
-		end)
-		self:HookScript("OnLeave", GameTooltip_Hide)
-	end
+    if tooltipText then
+        self:HookScript("OnEnter", function()
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:ClearLines()
+            GameTooltip:AddLine(tooltipText, 1, 1, 1)
+            GameTooltip:Show()
+        end)
+        self:HookScript("OnLeave", GameTooltip_Hide)
+    end
 
-	if self.SetTabSelected then
-		hooksecurefunc(self, "SetTabSelected", function(tab)
-			if tab.isSelected then
-				tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
-			else
-				tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
-			end
-		end)
-	else
-		hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
-			if self == tab then
-				tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
-			end
-		end)
-		hooksecurefunc("PanelTemplates_SelectTab", function(tab)
-			if self == tab then
-				tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
-			end
-		end)
-		hooksecurefunc("PanelTemplates_TabResize", function(tab)
-			if self == tab then
-				tab:SetSize(64, 40)
-			end
-		end)
-	end
+    if self.SetTabSelected then
+        hooksecurefunc(self, "SetTabSelected", function(tab)
+            if tab.isSelected then
+                tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
+            else
+                tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
+            end
+        end)
+    else
+        hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
+            if self == tab then
+                tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
+            end
+        end)
+        hooksecurefunc("PanelTemplates_SelectTab", function(tab)
+            if self == tab then
+                tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
+            end
+        end)
+        hooksecurefunc("PanelTemplates_TabResize", function(tab)
+            if self == tab then
+                tab:SetSize(64, 40)
+            end
+        end)
+    end
 end
 GW.SkinSideTabButton = SkinSideTabButton
