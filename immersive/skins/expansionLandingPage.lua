@@ -12,8 +12,8 @@ local function HandlePanel(panel)
 end
 
 local function DelayedMajorFactionList(frame)
-    C_Timer.After(0.1, function(frame)
-        if frame.MajorFactionList then
+    C_Timer.After(0.1, function()
+        if frame and frame.MajorFactionList then
             GW.HandleTrimScrollBar(frame.MajorFactionList.ScrollBar)
             GW.HandleScrollControls(frame.MajorFactionList)
         end
