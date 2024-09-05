@@ -58,8 +58,8 @@ local function SkinAuctionator()
     if libAhTab then
         for _, details in ipairs(Auctionator.Tabs.State.knownTabs) do
             local tab = libAhTab:GetButton("AuctionatorTabs_" .. details.name)
-            if not tab.isSkinned then
-                local id = details.name == "Shopping" and "addon_buy" or details.name == "Selling" and "addon_sell" or details.name == "Cancelling" and "addon_cancel" or details.name == "Auctionator" and "auctionator"
+            if not tab.isSkinned and details.name ~= nil then
+                local id = details.name == "Shopping" and "addon_buy" or details.name == "Selling" and "addon_sell" or details.name == "Cancelling" and "addon_cancel" or details.name == "Auctionator" and "auctionator" or ""
                 local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id
                 GW.SkinSideTabButton(tab, iconTexture, details.tabHeader)
             end
