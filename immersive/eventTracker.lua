@@ -132,7 +132,7 @@ local eventHandlers = {}
 
 local eventList = {
     -- TWW
-    "TWWProfessions",
+    --"TWWProfessions",
     "WorldSoul",
     "KhazAlgarEmissary",
     "TheaterTroupe",
