@@ -230,12 +230,18 @@ end
 local function encounterJournalSkin()
     local EJ = EncounterJournal
     GW.HandlePortraitFrame(EJ)
-    GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon")
+    EJ.LootJournalItems:GwStripTextures()
+    EncounterJournalMonthlyActivitiesFrame.FilterList:GwStripTextures()
+
+    GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {EJ.LootJournalItems, EncounterJournalMonthlyActivitiesFrame.FilterList})
+
+    EJ.instanceSelect.Title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    EJ.instanceSelect.Title:SetShadowColor(0, 0, 0, 0)
+    EJ.instanceSelect.Title:SetShadowOffset(1, -1)
 
     EJ.navBar:GwStripTextures(true)
     EJ.navBar.overlay:GwStripTextures(true)
     EJ.navBar:SetPoint("TOPLEFT", 0, -33)
-    --EJ.navBar.SetPoint = GW.NoOp
 
     EJ.navBar.tex = EJ.navBar:CreateTexture(nil, "BACKGROUND", nil, 0)
     EJ.navBar.tex:SetPoint("TOPLEFT", EJ.navBar, "TOPLEFT", 0, 20)
@@ -285,6 +291,13 @@ local function encounterJournalSkin()
     GW.HandleScrollControls(EncounterJournalMonthlyActivitiesFrame)
     GW.HandleTrimScrollBar(EncounterJournalMonthlyActivitiesFrame.FilterList.ScrollBar)
     GW.HandleScrollControls(EncounterJournalMonthlyActivitiesFrame.FilterList)
+
+    EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetShadowColor(0, 0, 0, 0)
+    EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetShadowOffset(1, -1)
+
+    hooksecurefunc(EncounterJournalMonthlyActivitiesFrame.FilterList.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
+    hooksecurefunc(EncounterJournalMonthlyActivitiesFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
     GW.HandleScrollControls(InstanceSelect)
@@ -508,6 +521,9 @@ local function encounterJournalSkin()
                 child.bgImage:GwSetInside(2, 2)
                 child.bgImage:SetTexCoord(.08, .6, .08, .6)
                 child.bgImage:SetDrawLayer("ARTWORK", 5)
+                child.name:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+                child.name:SetShadowColor(0, 0, 0, 0)
+                child.name:SetShadowOffset(1, -1)
                 child.isSkinned = true
             end
         end
@@ -632,9 +648,6 @@ local function encounterJournalSkin()
         GW.HandleTrimScrollBar(ItemSetsFrame.ScrollBar, true)
         GW.HandleScrollControls(ItemSetsFrame)
         ItemSetsFrame.ClassDropdown:GwHandleDropDownBox()
-
-        EJ.LootJournalItems:GwStripTextures()
-        EJ.LootJournalItems:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
         hooksecurefunc(ItemSetsFrame.ScrollBox, "Update", HandleItemSetsElements)
     end
