@@ -291,7 +291,7 @@ local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xSh
     end
 end
 
-local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover, strip, transparent)
+local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover, strip, transparent, desaturatedIcon)
     if not button then return end
     if button.isSkinned then return end
 
@@ -302,6 +302,8 @@ local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover,
     if isXButton then
         button:GwStripTextures()
     end
+
+    if button.Texture then button.Texture:SetAlpha(0) end
 
     if not onlyHover then
         if isXButton then
@@ -318,6 +320,10 @@ local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover,
             if button.SetHighlightTexture then button:SetHighlightTexture("") end
             if button.SetPushedTexture then button:SetPushedTexture("") end
             if button.SetDisabledTexture then button:SetDisabledTexture("") end
+            if button.NormalTexture then button.NormalTexture:SetTexture("") end
+            if button.HighlightTexture then button.HighlightTexture:SetTexture("") end
+            if button.PushedTexture then button.PushedTexture:SetTexture("") end
+            if button.DisabledTexture then button.DisabledTexture:SetTexture("") end
         else
             if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/button") end
             if button.SetHighlightTexture then
@@ -342,17 +348,25 @@ local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover,
         end
 
         if setTextColor then
-            local r = { button:GetRegions() }
-            for _, c in pairs(r) do
-                if c:GetObjectType() == "FontString" then
-                    c:SetTextColor(0, 0, 0, 1)
-                    c:SetShadowOffset(0, 0)
+            if button.Text then
+                button.Text:SetTextColor(0, 0, 0, 1)
+                button.Text:SetShadowOffset(0, 0)
+            else
+                local r = { button:GetRegions() }
+                for _, c in pairs(r) do
+                    if c:GetObjectType() == "FontString" then
+                        c:SetTextColor(0, 0, 0, 1)
+                        c:SetShadowOffset(0, 0)
+                    end
                 end
             end
         end
     end
 
 
+    if desaturatedIcon and button.Icon then
+        button.Icon:SetDesaturated(true)
+    end
 
     if (not isXButton or onlyHover) and not noHover then
         GwAddHover(button)
