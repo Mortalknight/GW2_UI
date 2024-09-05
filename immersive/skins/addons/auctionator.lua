@@ -51,6 +51,9 @@ local function SetGroupTitleFrame(header)
 end
 
 local function SkinAuctionator()
+    if AuctionHouseFrame:GetScale() < 0.5 then
+        return
+    end
     if skinLoaded then return end
     skinLoaded = true
 
