@@ -58,28 +58,30 @@ local function SkinAuctionator()
     if libAhTab then
         for _, details in ipairs(Auctionator.Tabs.State.knownTabs) do
             local tab = libAhTab:GetButton("AuctionatorTabs_" .. details.name)
-            if not tab.isSkinned and details.name ~= nil then
-                local id = ""
-                if details.name == "Shopping" then
-                    id = "addon_buy"
-                elseif details.name == "Selling" then
-                    id = "addon_sell"
-                elseif details.name == "Cancelling" then
-                    id = "addon_cancel"
-                elseif details.name == "Auctionator" then
-                    id = "auctionator"
-                elseif details.name == "Collecting(s)" then
-                    id = "addon_collecting"
+            if tab then
+                if not tab.isSkinned and details.name ~= nil then
+                    local id = ""
+                    if details.name == "Shopping" then
+                        id = "addon_buy"
+                    elseif details.name == "Selling" then
+                        id = "addon_sell"
+                    elseif details.name == "Cancelling" then
+                        id = "addon_cancel"
+                    elseif details.name == "Auctionator" then
+                        id = "auctionator"
+                    elseif details.name == "Collecting(s)" then
+                        id = "addon_collecting"
+                    end
+                    local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id
+                    GW.SkinSideTabButton(tab, iconTexture, details.tabHeader)
                 end
-                local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id
-                GW.SkinSideTabButton(tab, iconTexture, details.tabHeader)
-            end
 
-            tab:ClearAllPoints()
-            tab:SetPoint("TOPRIGHT", GwAuctionsHouseFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * GW.ActionHouseTabsAdded))
-            tab:SetParent(GwAuctionsHouseFrameLeftPanel)
-            tab:SetSize(64, 40)
-            GW.ActionHouseTabsAdded = GW.ActionHouseTabsAdded + 1
+                tab:ClearAllPoints()
+                tab:SetPoint("TOPRIGHT", GwAuctionsHouseFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * GW.ActionHouseTabsAdded))
+                tab:SetParent(GwAuctionsHouseFrameLeftPanel)
+                tab:SetSize(64, 40)
+                GW.ActionHouseTabsAdded = GW.ActionHouseTabsAdded + 1
+            end
         end
     end
 
@@ -416,10 +418,6 @@ end
 
 local function LoadAuctionatorAddonSkin()
     if not GW.settings.AUCTIONATOR_SKIN_ENABLED or not Auctionator then return end
-    local eventFrame = CreateFrame("Frame")
-    eventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
-    eventFrame:SetScript("OnEvent", function()
-        hooksecurefunc(AuctionatorAHFrameMixin, "OnShow", SkinAuctionator)
-    end)
+    hooksecurefunc(AuctionatorAHFrameMixin, "OnShow", SkinAuctionator)
 end
 GW.LoadAuctionatorAddonSkin = LoadAuctionatorAddonSkin
