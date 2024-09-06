@@ -123,7 +123,7 @@ local gw_fade_frames = {
     ChatFrameToggleVoiceMuteButton
 }
 
-local gw2StaffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:24|t"
+local gw2StaffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:14|t"
 local gw2StaffList = {
     -- Glow
     ["Zâmarâ-Antonidas"] = gw2StaffIcon,
