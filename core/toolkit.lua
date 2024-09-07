@@ -341,10 +341,10 @@ local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover,
                 if button.SetPushedTexture then button:GetPushedTexture():Show() end
                 if button.SetDisabledTexture then button:GetDisabledTexture():Show() end
             end
-            --button:DisableDrawLayer("BACKGROUND")
             local borderFrame = CreateFrame("Frame", nil, button, "GwButtonBorder")
             borderFrame:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
             borderFrame:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+            button.gwBorderFrame = borderFrame
         end
 
         if setTextColor then
@@ -359,6 +359,11 @@ local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover,
                         c:SetShadowOffset(0, 0)
                     end
                 end
+            end
+
+            if button.ButtonText then
+                button.ButtonText:SetTextColor(0, 0, 0, 1)
+                button.ButtonText:SetShadowOffset(0, 0)
             end
         end
     end

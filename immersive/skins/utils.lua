@@ -752,3 +752,17 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
     end
 end
 GW.SkinSideTabButton = SkinSideTabButton
+
+local function LockBlackButtonColor(button, r, g, b)
+    if r ~= 0 or g ~= 0 or b ~= 0 then
+        button:SetTextColor(0, 0, 0)
+    end
+end
+GW.LockBlackButtonColor = LockBlackButtonColor
+
+local function LockWhiteButtonColor(button, r, g, b)
+    if r ~= 1 or g ~= 1 or b ~= 1 then
+        button:SetTextColor(1, 1, 1)
+    end
+end
+GW.LockWhiteButtonColor = LockWhiteButtonColor

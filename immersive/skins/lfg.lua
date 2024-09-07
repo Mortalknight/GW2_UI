@@ -90,22 +90,56 @@ local function SkinLookingForGroupFrames()
     if not GW.settings.LFG_SKIN_ENABLED then return end
 
     GW.HandlePortraitFrame(PVEFrame, false)
+    PVEFrame.CloseButton:SetPoint("TOPRIGHT", -5, -2)
 
     LFDQueueFrame:GwStripTextures(true)
     RaidFinderFrame:GwStripTextures()
     RaidFinderQueueFrame:GwStripTextures(true)
 
-    GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {LFDQueueFrame, RaidFinderFrame, LFGListFrame})
+    GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon", {
+        LFDQueueFrame,
+        RaidFinderFrame,
+        LFGListFrame
+    })
+    CreateFrame("Frame", "GwPVEFrameLeftPanel", PVEFrame, "GwWindowLeftPanel")
+
+    local tabs = {PVEFrameTab1, PVEFrameTab2, PVEFrameTab3, PVEFrameTab4}
+    for idx, tab in pairs(tabs) do
+        if not tab.isSkinned then
+			local id = idx == 1 and "dungeon" or idx == 2 and "pvp" or idx == 3 and "mythic" or idx == 4 and "delve" or "dungeon"
+			local iconTexture = "Interface/AddOns/GW2_UI/Textures/Groups/tabicon_" .. id
+
+            tab:HookScript("OnClick", function()
+                if idx == 1 then
+                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon")
+                elseif idx == 2 then
+                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/pvp-window-icon")
+                elseif idx == 3 then
+                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/mythic-window-icon")
+                elseif idx == 4 then
+                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/delve-window-icon")
+                end
+            end)
+
+			GW.SkinSideTabButton(tab, iconTexture, tab:GetText())
+		end
+
+		tab:ClearAllPoints()
+		tab:SetPoint("TOPRIGHT", GwPVEFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * (idx - 1)))
+		tab:SetParent(GwPVEFrameLeftPanel)
+		tab:SetSize(64, 40)
+    end
+
+	PVEFrame.gwHeader.windowIcon:ClearAllPoints()
+	PVEFrame.gwHeader.windowIcon:SetPoint("CENTER", PVEFrame.gwHeader, "BOTTOMLEFT", -26, 35)
+	PVEFrameTitleText:ClearAllPoints()
+	PVEFrameTitleText:SetPoint("BOTTOMLEFT", PVEFrame.gwHeader, "BOTTOMLEFT", 25, 10)
 
     PVEFrameBg:Hide()
     PVEFrame.shadows:GwKill()
 
     LFDQueueFramePartyBackfillBackfillButton:GwSkinButton(false, true)
     LFDQueueFramePartyBackfillNoBackfillButton:GwSkinButton(false, true)
-
-    GroupFinderFrame.groupButton1.icon:SetTexture(133076) -- interface/icons/inv_helmet_08.blp
-    GroupFinderFrame.groupButton2.icon:SetTexture(133074) -- interface/icons/inv_helmet_06.blp
-    GroupFinderFrame.groupButton3.icon:SetTexture(464820) -- interface/icons/achievement_general_stayclassy.blp
 
     LFDQueueFrameRoleButtonTankIncentiveIcon:SetAlpha(0)
     LFDQueueFrameRoleButtonHealerIncentiveIcon:SetAlpha(0)
@@ -207,20 +241,57 @@ local function SkinLookingForGroupFrames()
         end
     end)
 
-    for i = 1, 3 do
+    for i = 1, 4 do
         local bu = GroupFinderFrame["groupButton" .. i]
+        GroupFinderFrame.groupButton1:GetText()
         bu.ring:GwKill()
         bu.bg:GwKill()
         bu:GwSkinButton(false, true)
 
-        bu.icon:SetSize(45, 45)
-        bu.icon:ClearAllPoints()
-        bu.icon:SetPoint("LEFT", 10, 0)
-        GW.HandleIcon(bu.icon)
-        bu.icon:SetDrawLayer("OVERLAY")
+        bu:SetHeight(36)
+
+        bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+        bu.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        bu.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
+        if i % 2 == 1 then
+            bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+        else
+            bu:ClearNormalTexture()
+        end
+
+        bu.arrow = bu:CreateTexture(nil, "OVERLAY")
+        bu.arrow:SetSize(10, 20)
+        bu.arrow:SetPoint("RIGHT", bu, "RIGHT", 0, 0)
+        bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow")
+
+        bu.name:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+        bu.name:SetShadowColor(0, 0, 0, 0)
+        bu.name:SetShadowOffset(1, -1)
+        bu.name:SetFont(DAMAGE_TEXT_FONT, 14)
+        bu.name:SetJustifyH("LEFT")
+        bu.name:SetPoint("LEFT", bu, "LEFT", 5, 0)
+        bu.name:SetWidth(bu:GetWidth())
+        hooksecurefunc(bu.name, "SetText", function()
+            if not bu.name.SetTextGw2 then
+                bu.name.SetTextGw2 = true
+                bu.name:SetText(bu.name:GetText():gsub("-\n", ""):gsub("\n", ""))
+                bu.name.SetTextGw2 = false
+            end
+        end)
+
+        bu.gwBorderFrame:Hide()
+
+        bu.icon:Hide()
+
+        bu:ClearAllPoints()
+        if i == 1 then
+            bu:SetPoint("TOPLEFT", 10, -40)
+        else
+            bu:SetPoint("TOP", GroupFinderFrame["groupButton" .. i - 1], "BOTTOM", 0, 0)
+        end
     end
     hooksecurefunc("GroupFinderFrame_SelectGroupButton", function(idx)
-        for i = 1, 3 do
+        for i = 1, 4 do
             local bu = GroupFinderFrame["groupButton" .. i]
             if i == idx then
                 bu.hover.skipHover = true
@@ -234,17 +305,6 @@ local function SkinLookingForGroupFrames()
 
         end
     end)
-
-    local tabs = {PVEFrameTab1, PVEFrameTab2, PVEFrameTab3, PVEFrameTab4}
-    for id, tab in pairs(tabs) do
-        GW.HandleTabs(tab)
-        tab:ClearAllPoints()
-        if id == 1 then
-            tab:SetPoint('BOTTOMLEFT', PVEFrame, 'BOTTOMLEFT', 0, -32)
-        else
-            tab:SetPoint('TOPLEFT', _G["PVEFrameTab" .. id - 1], 'TOPRIGHT', 0, 0)
-        end
-    end
 
 	if ScenarioQueueFrame then
 		ScenarioQueueFrame:GwStripTextures()
@@ -271,6 +331,14 @@ local function SkinLookingForGroupFrames()
     HandleGoldIcon("LFDQueueFrameRandomScrollFrameChildFrameMoneyReward")
     HandleGoldIcon("RaidFinderQueueFrameScrollFrameChildFrameMoneyReward")
 
+    LFDQueueFrameRandomScrollFrameChildFrameTitle:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    LFDQueueFrameRandomScrollFrameChildFrameTitle:SetShadowColor(0, 0, 0, 0)
+    LFDQueueFrameRandomScrollFrameChildFrameTitle:SetShadowOffset(1, -1)
+
+    LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel:SetShadowColor(0, 0, 0, 0)
+    LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel:SetShadowOffset(1, -1)
+
     hooksecurefunc("LFGDungeonListButton_SetDungeon", function(button)
         if button and button.expandOrCollapseButton:IsShown() then
             if button.isCollapsed then
@@ -282,6 +350,10 @@ local function SkinLookingForGroupFrames()
     end)
 
     LFDQueueFrameTypeDropdown:GwHandleDropDownBox()
+    LFDQueueFrameTypeDropdown:ClearAllPoints()
+    LFDQueueFrameTypeDropdown:SetPoint("BOTTOMLEFT", 40, 287)
+    LFDQueueFrameTypeDropdown:SetWidth(300)
+    LFDQueueFrameTypeDropdownName:SetTextColor(1, 1, 1)
 
     RaidFinderFrameRoleInset:GwStripTextures()
     RaidFinderQueueFrameSelectionDropdown:GwHandleDropDownBox()
@@ -308,6 +380,13 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.CategorySelection.FindGroupButton:GwSkinButton(false, true)
     LFGListFrame.CategorySelection.FindGroupButton:ClearAllPoints()
     LFGListFrame.CategorySelection.FindGroupButton:SetPoint("BOTTOMRIGHT", -6, 3)
+
+    LFGListFrame.CategorySelection.Label:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    LFGListFrame.CategorySelection.Label:SetShadowColor(0, 0, 0, 0)
+    LFGListFrame.CategorySelection.Label:SetShadowOffset(1, -1)
+    LFGListFrame.CategorySelection.Label:SetFont(UNIT_NAME_FONT, 16)
+    LFGListFrame.CategorySelection.Label:ClearAllPoints()
+    LFGListFrame.CategorySelection.Label:SetPoint("TOP", -3, -45)
 
     local EntryCreation = LFGListFrame.EntryCreation
     EntryCreation.Inset:GwStripTextures()
@@ -383,8 +462,19 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.SearchPanel.SignUpButton:ClearAllPoints()
     LFGListFrame.SearchPanel.SignUpButton:SetPoint("BOTTOMRIGHT", -6, 3)
     LFGListFrame.SearchPanel.ResultsInset:GwStripTextures()
+    LFGListFrame.SearchPanel.CategoryName:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     GW.HandleTrimScrollBar(LFGListFrame.SearchPanel.ScrollBar, true)
     GW.HandleScrollControls(LFGListFrame.SearchPanel)
+
+    hooksecurefunc(LFGListFrame.SearchPanel.ScrollBox, "Update", function(self)
+        for _, child in next, { self.ScrollTarget:GetChildren()} do
+            if not child.IsSkinned then
+                child.Name:SetTextColor(1, 1, 1)
+                hooksecurefunc(child.Name, "SetTextColor", GW.LockWhiteButtonColor)
+                child.IsSkinned = true
+            end
+        end
+    end)
 
     if not LFGListFrame.SearchPanel.ResultsInset.SetBackdrop then
         Mixin(LFGListFrame.SearchPanel.ResultsInset, _G.BackdropTemplateMixin)
@@ -525,6 +615,19 @@ local function SkinLookingForGroupFrames()
                 button.HighlightTexture:GwSetInside()
 
                 button.Label:SetFontObject("GameFontNormal")
+
+                button.Label:SetTextColor(1, 1, 1)
+                button.Label:SetShadowColor(0, 0, 0, 0)
+                button.Label:SetShadowOffset(1, -1)
+
+                hooksecurefunc(button.Label, "SetText", function()
+                    if not button.Label.SetTextGw2 then
+                        button.Label.SetTextGw2 = true
+                        button.Label:SetText(button.Label:GetText():gsub("-\n", ""):gsub("\n", ""))
+                        button.Label.SetTextGw2 = false
+                    end
+                end)
+
                 button.isSkinned = true
             end
 
@@ -625,11 +728,49 @@ local function ApplyPvPUISkin()
         bu.Background:GwKill()
         bu:GwSkinButton(false, true)
 
-        bu.Icon:SetSize(45, 45)
-        bu.Icon:ClearAllPoints()
-        bu.Icon:SetPoint("LEFT", 10, 0)
-        GW.HandleIcon(bu.Icon)
-        bu.Icon:SetDrawLayer("OVERLAY")
+        bu:SetHeight(36)
+
+        bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+        bu.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        bu.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
+        if i % 2 == 1 then
+            bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+        else
+            bu:ClearNormalTexture()
+        end
+
+        bu.arrow = bu:CreateTexture(nil, "OVERLAY")
+        bu.arrow:SetSize(10, 20)
+        bu.arrow:SetPoint("RIGHT", bu, "RIGHT", 0, 0)
+        bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow")
+
+        bu.Name:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+        bu.Name:SetShadowColor(0, 0, 0, 0)
+        bu.Name:SetShadowOffset(1, -1)
+        bu.Name:SetFont(DAMAGE_TEXT_FONT, 14)
+        bu.Name:SetJustifyH("LEFT")
+        bu.Name:SetPoint("LEFT", bu, "LEFT", 5, 0)
+        bu.Name:SetWidth(bu:GetWidth())
+        bu.Name:SetText(bu.Name:GetText():gsub("-|n", ""):gsub("|n", ""))
+
+        hooksecurefunc(bu.Name, "SetText", function()
+            if not bu.Name.SetTextGw2 then
+                bu.Name.SetTextGw2 = true
+                bu.Name:SetText(bu.Name:GetText():gsub("-|n", ""):gsub("|n", ""))
+                bu.Name.SetTextGw2 = false
+            end
+        end)
+
+        bu.gwBorderFrame:Hide()
+
+        bu.Icon:Hide()
+
+        bu:ClearAllPoints()
+        if i == 1 then
+            bu:SetPoint("TOPLEFT", 10, -40)
+        else
+            bu:SetPoint("TOP", _G["PVPQueueFrameCategoryButton" .. i - 1], "BOTTOM", 0, 0)
+        end
     end
     hooksecurefunc("PVPQueueFrame_SelectButton", function(idx)
         for i = 1, 3 do
@@ -647,10 +788,6 @@ local function ApplyPvPUISkin()
     end)
 
     PVPQueueFrame.HonorInset:GwStripTextures()
-
-    PVPQueueFrame.CategoryButton1.Icon:SetTexture(236396) -- interface/icons/achievement_bg_winwsg.blp
-    PVPQueueFrame.CategoryButton2.Icon:SetTexture(236368) -- interface/icons/achievement_bg_killxenemies_generalsroom.blp
-    PVPQueueFrame.CategoryButton3.Icon:SetTexture(464820) -- interface/icons/achievement_general_stayclassy.blp
 
     local SeasonReward = PVPQueueFrame.HonorInset.RatedPanel.SeasonRewardFrame
     SeasonReward:GwCreateBackdrop()
@@ -677,8 +814,6 @@ local function ApplyPvPUISkin()
     GW.HandleScrollControls(HonorFrame, "SpecificScrollBar")
     HonorFrameTypeDropdown:GwHandleDropDownBox()
     HonorFrameQueueButton:GwSkinButton(false, true)
-    if PVPQueueFrame.HonorInset.RatedPanel.HonorLevelDisplay then
-    end
 
     local BonusFrame = HonorFrame.BonusFrame
     BonusFrame:GwStripTextures()
@@ -963,6 +1098,7 @@ local function ApplyDelvesDashboardUISkin()
 
     DelvesDashboardFrame.DashboardBackground:SetAlpha(0)
     DelvesDashboardFrame.ButtonPanelLayoutFrame.CompanionConfigButtonPanel.CompanionConfigButton:GwSkinButton(false, true)
+    hooksecurefunc(DelvesDashboardFrame.ButtonPanelLayoutFrame.CompanionConfigButtonPanel.CompanionConfigButton.ButtonText, "SetTextColor", GW.LockBlackButtonColor)
 end
 
 local function ApplyDelvesDifficultyPickerSkin()
