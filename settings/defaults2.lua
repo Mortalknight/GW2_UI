@@ -915,6 +915,7 @@ GW.globalDefault = {
         GENERIC_TRAINT_SKIN_ENABLED= true,
         PLAYER_SPELLS_SKIN_ENABLED = true,
         AuctionHouseSkinEnabled = true,
+        BattlefieldMapSkinEnabled = true,
 
         ALERTFRAME_NOTIFICATION_LEVEL_UP= true,
         ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND= "None",

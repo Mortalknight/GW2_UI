@@ -208,18 +208,27 @@ local function GwSkinSliderFrame(frame)
     local tex = frame:CreateTexture(nil, "BACKGROUND")
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderbg")
     frame.tex = tex
+    frame.tex:SetPoint("TOPLEFT", frame, "TOPLEFT")
+    frame.tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
+
+    if frame.Text then
+        frame.Text:SetTextColor(1, 1, 1)
+    end
+    if frame.GetName and _G[frame:GetName() .. "Text"] then
+        _G[frame:GetName() .. "Text"]:SetTextColor(1, 1, 1)
+    end
 
     if orientation == "VERTICAL" then
         frame:SetWidth(SIZE)
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderbg_vertical")
     else
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderbg")
         frame:SetHeight(SIZE)
-        frame.tex:SetPoint("TOPLEFT", frame, "TOPLEFT")
-        frame.tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
 
         for _, region in next, { frame:GetRegions() } do
-            if region:IsObjectType('FontString') then
+            if region:IsObjectType("FontString") then
                 local point, anchor, anchorPoint, x, y = region:GetPoint()
-                if strfind(anchorPoint, 'BOTTOM') then
+                if strfind(anchorPoint, "BOTTOM") then
                     region:SetPoint(point, anchor, anchorPoint, x, y - 4)
                 end
             end

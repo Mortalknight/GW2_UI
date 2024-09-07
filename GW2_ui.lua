@@ -493,6 +493,7 @@ local function evAddonLoaded(self, addonName)
     GW.LoadAdventureMapSkin()
     GW.LoadPlayerSpellsSkin()
     GW.LoadAuctionHouseSkin()
+    GW.LoadBattlefieldMapSkin()
     GW.preLoadStatusBarMaskTextures()
 end
 AFP("evAddonLoaded", evAddonLoaded)

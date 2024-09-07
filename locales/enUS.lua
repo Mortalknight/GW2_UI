@@ -609,3 +609,4 @@ L["Ringing Deeps"] = true
 L["Spreading The Light"] = true
 L["Underworld Operative"] = true
 L["World Soul"] = true
+L["BG Map"] = ""

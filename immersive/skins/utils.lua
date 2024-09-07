@@ -537,7 +537,7 @@ local function HandleTabs(self, isTop)
                     tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
                 end
             end)
-            if self.LeftActive:IsShown() then -- selected
+            if self.LeftActive and self.LeftActive:IsShown() then -- selected
                 self.background:SetBlendMode("MOD")
             else
                 self.background:SetBlendMode("BLEND")
