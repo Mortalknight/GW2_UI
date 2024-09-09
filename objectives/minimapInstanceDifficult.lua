@@ -106,8 +106,8 @@ local function SkinMinimapInstanceDifficult()
     d.icon = d:CreateFontString(nil, "OVERLAY")
     d.icon:SetPoint("LEFT", d.text, "RIGHT", 4, 0)
 
-    d.text:SetFont(UNIT_NAME_FONT, 12, "OUTLINE")
-    d.icon:SetFont(UNIT_NAME_FONT, 12, "OUTLINE")
+    d.text:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
+    d.icon:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
 
     d:RegisterEvent("LOADING_SCREEN_DISABLED")
     d:RegisterEvent("GROUP_ROSTER_UPDATE")
