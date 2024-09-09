@@ -315,7 +315,7 @@ AFP("blockOnLeave", blockOnLeave)
 
 local function CreateTrackerObject(name, parent)
     local f = CreateFrame("Button", name, parent, "GwQuesttrackerObject")
-    f.Header:SetFont(UNIT_NAME_FONT, 14)
+    f.Header:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
     f.SubHeader:SetFont(UNIT_NAME_FONT, 12)
     f.Header:SetShadowOffset(1, -1)
     f.SubHeader:SetShadowOffset(1, -1)
@@ -1324,7 +1324,7 @@ local function LoadQuestTracker()
     local fNotify = CreateFrame("Frame", "GwObjectivesNotification", fTracker, "GwObjectivesNotification")
     fNotify.animatingState = false
     fNotify.animating = false
-    fNotify.title:SetFont(UNIT_NAME_FONT, 14)
+    fNotify.title:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
     fNotify.title:SetShadowOffset(1, -1)
     fNotify.desc:SetFont(UNIT_NAME_FONT, 12)
     fNotify.desc:SetShadowOffset(1, -1)
@@ -1390,7 +1390,7 @@ local function LoadQuestTracker()
 
     fCampaign.header = CreateFrame("Button", nil, fCampaign, "GwQuestTrackerHeader")
     fCampaign.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
-    fCampaign.header.title:SetFont(UNIT_NAME_FONT, 14)
+    fCampaign.header.title:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
     fCampaign.header.title:SetShadowOffset(1, -1)
     fCampaign.header.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS)
 
@@ -1404,7 +1404,7 @@ local function LoadQuestTracker()
 
     fQuest.header = CreateFrame("Button", nil, fQuest, "GwQuestTrackerHeader")
     fQuest.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
-    fQuest.header.title:SetFont(UNIT_NAME_FONT, 14)
+    fQuest.header.title:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
     fQuest.header.title:SetShadowOffset(1, -1)
     fQuest.header.title:SetText(TRACKER_HEADER_QUESTS)
 
