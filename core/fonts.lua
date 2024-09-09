@@ -38,8 +38,8 @@ local function LoadFonts()
     local damage = L["FONT_DAMAGE"]
 
     -- game engine fonts
-    UNIT_NAME_FONT = damage
-    DAMAGE_TEXT_FONT = bold
+    UNIT_NAME_FONT = normal
+    DAMAGE_TEXT_FONT = normal
     STANDARD_TEXT_FONT = normal
 
     -- default values
@@ -47,7 +47,7 @@ local function LoadFonts()
     CHAT_FONT_HEIGHTS = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
 
     setFont(ChatFontNormal, narrow, nil, nil, 0.75, -0.75, 1)
-    setFont(NumberFontNormal, narrow, 12, "", 1.25, -1.25, 1)
+    setFont(NumberFontNormal, narrow, 14, "", 1.25, -1.25, 1)
     setFont(SystemFont_Tiny, normal)
     setFont(SystemFont_Small, narrow)
     setFont(SystemFont_Small2, narrow)

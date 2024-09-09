@@ -1267,8 +1267,8 @@ local function LoadXPBar()
 
     experiencebar.RepuBar.repuBarAnimation = 0
     experiencebar.AzeritBar.AzeritBarAnimation = 0
-    experiencebar.NextLevel:SetFont(UNIT_NAME_FONT, 12)
-    experiencebar.CurrentLevel:SetFont(UNIT_NAME_FONT, 12)
+    experiencebar.NextLevel:SetFont(UNIT_NAME_FONT, 14)
+    experiencebar.CurrentLevel:SetFont(UNIT_NAME_FONT, 14)
 
     updateBarSize(experiencebar)
     xpbar_OnEvent(experiencebar)

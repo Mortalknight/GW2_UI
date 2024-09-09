@@ -639,7 +639,7 @@ local function HandleAddonCompartmentButton()
         if not AddonCompartmentFrame.gw2Handled then
             AddonCompartmentFrame:GwStripTextures()
             AddonCompartmentFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
-            AddonCompartmentFrame.Text:SetFont(UNIT_NAME_FONT, 12, "NONE")
+            AddonCompartmentFrame.Text:SetFont(UNIT_NAME_FONT, 14, "NONE")
             AddonCompartmentFrame:SetSize(18, 18)
             AddonCompartmentFrame.gw2Handled = true
         end
@@ -803,14 +803,14 @@ local function LoadMinimap()
     --coords
     GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
     GwMapCoords.Coords:SetText(NOT_APPLICABLE)
-    GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12, "")
+    GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 14, "")
     GwMapCoords.MapCoordsMiniMapPrecision = GW.settings.MINIMAP_COORDS_PRECISION
     ToogleMinimapCoorsLable()
 
     --FPS
     GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
     GwMapFPS.fps:SetText(NOT_APPLICABLE)
-    GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
+    GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 14)
     ToogleMinimapFpsLable()
 
     --CalenderIcon

@@ -1790,7 +1790,7 @@ local function LoadClassPowers()
             lmb:SetSize(barWidth, 5)
         end
         lmb:SetFrameStrata("MEDIUM")
-        lmb.label:SetFont(DAMAGE_TEXT_FONT, 12)
+        lmb.label:SetFont(DAMAGE_TEXT_FONT, 14)
         lmb.label:SetShadowColor(0, 0, 0, 1)
         lmb.label:SetShadowOffset(1, -1)
 
@@ -1824,15 +1824,15 @@ local function LoadClassPowers()
     exbar:SetPoint("TOPLEFT", cpf)
 
     exbar:SetFrameStrata("MEDIUM")
-    exbar.label:SetFont(DAMAGE_TEXT_FONT, 12)
+    exbar.label:SetFont(DAMAGE_TEXT_FONT, 14)
     exbar.label:SetShadowColor(0, 0, 0, 1)
     exbar.label:SetShadowOffset(1, -1)
 
     -- set a bunch of other init styling stuff
     cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
     cpf.brewmaster.debugpre = 0
-    cpf.brewmaster.stagger.indicatorText:SetFont(UNIT_NAME_FONT, 11)
-    cpf.brewmaster.ironskin.indicatorText:SetFont(UNIT_NAME_FONT, 11)
+    cpf.brewmaster.stagger.indicatorText:SetFont(UNIT_NAME_FONT, 14)
+    cpf.brewmaster.ironskin.indicatorText:SetFont(UNIT_NAME_FONT, 14)
     cpf.brewmaster.ironskin.expires = 0
     cpf.staggerBar.value = 0
     cpf.staggerBar.spark = cpf.staggerBar.bar.spark

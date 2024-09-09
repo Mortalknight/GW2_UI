@@ -51,13 +51,13 @@ end
 
 local function SkinMoneyFrame()
     -- setup money frame
-    SendMailMoneyFrameCopperButtonText:SetFont(UNIT_NAME_FONT, 12)
+    SendMailMoneyFrameCopperButtonText:SetFont(UNIT_NAME_FONT, 14)
     SendMailMoneyFrameCopperButtonText:SetTextColor(177 / 255, 97 / 255, 34 / 255)
 
-    SendMailMoneyFrameSilverButtonText:SetFont(UNIT_NAME_FONT, 12)
+    SendMailMoneyFrameSilverButtonText:SetFont(UNIT_NAME_FONT, 14)
     SendMailMoneyFrameSilverButtonText:SetTextColor(170 / 255, 170 / 255, 170 / 255)
 
-    SendMailMoneyFrameGoldButtonText:SetFont(UNIT_NAME_FONT, 12)
+    SendMailMoneyFrameGoldButtonText:SetFont(UNIT_NAME_FONT, 14)
     SendMailMoneyFrameGoldButtonText:SetTextColor(221 / 255, 187 / 255, 68 / 255)
 end
 

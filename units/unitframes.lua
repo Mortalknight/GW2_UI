@@ -74,7 +74,7 @@ local function createNormalUnitFrame(ftype, revert)
         --f.powerbar:SetReverseFill(true)
     end
 
-    f.healthString:SetFont(UNIT_NAME_FONT, 11)
+    f.healthString:SetFont(UNIT_NAME_FONT, 14)
     f.healthString:SetShadowOffset(1, -1)
 
     if GW.settings.FONTS_ENABLED then -- for any reason blizzard is not supporting UTF8 if we set this font
@@ -82,25 +82,25 @@ local function createNormalUnitFrame(ftype, revert)
     end
     f.nameString:SetShadowOffset(1, -1)
 
-    f.threatString:SetFont(STANDARD_TEXT_FONT, 11)
+    f.threatString:SetFont(STANDARD_TEXT_FONT, 12)
     f.threatString:SetShadowOffset(1, -1)
 
-    f.levelString:SetFont(UNIT_NAME_FONT, 14)
+    f.levelString:SetFont(UNIT_NAME_FONT, 16)
     f.levelString:SetShadowOffset(1, -1)
 
-    f.castingString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingString:SetFont(UNIT_NAME_FONT, 14)
     f.castingString:SetShadowOffset(1, -1)
 
-    f.castingbarNormal.castingString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingString:SetFont(UNIT_NAME_FONT, 14)
     f.castingbarNormal.castingString:SetShadowOffset(1, -1)
 
-    f.castingbarNormal.castingTimeString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingTimeString:SetFont(UNIT_NAME_FONT, 14)
     f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
 
-    f.castingTimeString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingTimeString:SetFont(UNIT_NAME_FONT, 14)
     f.castingTimeString:SetShadowOffset(1, -1)
 
-    f.prestigeString:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
+    f.prestigeString:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
 
     f.prestigebg:SetPoint("CENTER", f.prestigeString, "CENTER", -1, 1)
 
@@ -148,7 +148,7 @@ local function createNormalUnitFrameSmall(ftype)
     f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
 
-    f.healthString:SetFont(UNIT_NAME_FONT, 11)
+    f.healthString:SetFont(UNIT_NAME_FONT, 12)
     f.healthString:SetShadowOffset(1, -1)
 
     if GW.settings.FONTS_ENABLED then -- for any reason blizzard is not supporting UTF8 if we set this font
@@ -156,16 +156,16 @@ local function createNormalUnitFrameSmall(ftype)
     end
     f.nameString:SetShadowOffset(1, -1)
 
-    f.levelString:SetFont(UNIT_NAME_FONT, 14)
+    f.levelString:SetFont(UNIT_NAME_FONT, 16)
     f.levelString:SetShadowOffset(1, -1)
 
-    f.castingString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingString:SetFont(UNIT_NAME_FONT, 14)
     f.castingString:SetShadowOffset(1, -1)
 
-    f.castingbarNormal.castingString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingString:SetFont(UNIT_NAME_FONT, 14)
     f.castingbarNormal.castingString:SetShadowOffset(1, -1)
 
-    f.castingbarNormal.castingTimeString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingTimeString:SetFont(UNIT_NAME_FONT, 14)
     f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
 
     f.healthValue = 0
