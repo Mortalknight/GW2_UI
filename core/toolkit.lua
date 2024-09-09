@@ -214,7 +214,7 @@ local function GwSkinSliderFrame(frame)
     if frame.Text then
         frame.Text:SetTextColor(1, 1, 1)
     end
-    if frame.GetName and _G[frame:GetName() .. "Text"] then
+    if frame.GetName and frame:GetName() and _G[frame:GetName() .. "Text"] then
         _G[frame:GetName() .. "Text"]:SetTextColor(1, 1, 1)
     end
 
