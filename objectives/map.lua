@@ -550,7 +550,7 @@ local function LoadMinimap()
     GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
     GwMapCoords.Coords:SetText(NOT_APPLICABLE)
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 14, "")
-    GwMapCoords.MapCoordsMiniMapPrecision = GW.settings.MINIMAP_COORDS_PRECISION
+    GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
     ToogleMinimapCoorsLable()
 
     --FPS

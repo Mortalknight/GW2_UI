@@ -395,9 +395,7 @@ local function LoadCastingBar(name, unit, showTradeSkills)
 
     local GwCastingBar = CreateFrame("Frame", name, UIParent, "GwCastingBar")
     GW.hookStatusbarBehaviour(GwCastingBar.progress,false);
-    GwCastingBar.progress.customMaskSize = 64;
-    GwCastingBar.highlight = GwCastingBar.progress.highlight;
-    GwCastingBar.latency = GwCastingBar.progress.latency;
+
    
 
     GwCastingBar.name:SetFont(UNIT_NAME_FONT, 14)

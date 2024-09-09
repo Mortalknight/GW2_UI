@@ -1451,10 +1451,34 @@ local function styleChatWindow(frame)
         end
     end)
     local repeatedText
+    editbox:HookScript("OnTextChanged", function(self)
+        local userInput = self:GetText()
 
-    editbox:HookScript("OnTextChanged", GW.ChatFrameEditBoxOnTextChanged)
+        if tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT")) ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
+            local MIN_REPEAT_CHARACTERS = tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT"))
+            if strlen(userInput) > MIN_REPEAT_CHARACTERS then
+                local repeatChar = true
+                for i = 1, MIN_REPEAT_CHARACTERS, 1 do
+                    local first = -1 - i
+                    if strsub(userInput, -i, -i) ~= strsub(userInput, first, first) then
+                        repeatChar = false
+                        break
+                    end
+                end
+                if repeatChar then
+                    repeatedText = userInput
+                    self:Hide()
+                    return
+                end
+            end
+        end
 
-    if GW.settings.CHAT_USE_GW2_STYLE then
+        if repeatedText then
+            repeatedText = nil
+        end
+    end)
+
+    if GetSetting("CHAT_USE_GW2_STYLE") then
         local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
         local _, fontHeight, fontFlags = frame:GetFont()
         frame:SetFont(chatFont, fontHeight or 14, fontFlags)

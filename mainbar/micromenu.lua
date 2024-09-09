@@ -300,7 +300,7 @@ local function reskinMicroButton(btn, name, mbf)
         btn.GwNotifyText:SetTextColor(1, 1, 1, 1)
         btn.GwNotifyText:SetShadowColor(0, 0, 0, 0)
         btn.GwNotifyText:Hide()
-    end
+    
 end
 AFP("reskinMicroButton", reskinMicroButton)
 

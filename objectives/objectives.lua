@@ -235,8 +235,7 @@ local function CreateObjectiveNormal(name, parent)
     f.ObjectiveText:SetShadowOffset(-1, 1)
     f.StatusBar.progress:SetFont(UNIT_NAME_FONT, 14)
     f.StatusBar.progress:SetShadowOffset(-1, 1)
-    f.TimerBar.Label:SetFont(UNIT_NAME_FONT, 14)
-    f.TimerBar.Label:SetShadowOffset(-1, 1)
+
     if f.StatusBar.animationOld == nil then
         f.StatusBar.animationOld = 0
     end
