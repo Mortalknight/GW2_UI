@@ -242,8 +242,7 @@ local function SkinAuctionator()
             child.Text:SetPoint("LEFT", 15, 0)
 
             if child.elementData.type == RowType.List then
-                local color = {r = 255 / 255, g = 241 / 255, b = 209 / 255}
-                color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
+                local color = CreateColor(255 / 255, 241 / 255, 209 / 255)
                 if child.elementData.list:IsTemporary() then
                     color = ORANGE_FONT_COLOR
                 end
@@ -252,7 +251,7 @@ local function SkinAuctionator()
                 else
                     child.arrow:SetRotation(-1.5707)
                 end
-                child.Text:SetText(WrapTextInColorCode(child.elementData.list:GetName(), color.colorStr))
+                child.Text:SetText(color:WrapTextInColorCode(child.elementData.list:GetName()))
                 child.arrow:Show()
             else
                 child.arrow:Hide()
