@@ -239,11 +239,6 @@ local function LoadHudPanel(sWindow)
     addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_TWW_PROFESSIONS_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TWW_PROFESSIONS_ENABLED"] = true}, nil, nil, L["Professions Weekly"])
 
     -- Theater Troupe
-    addGroupHeader(worldmap.scroll.scrollchild,L["World Soul"])
-    addOption(worldmap.scroll.scrollchild, L["World Soul"], nil, "WORLD_EVENTS_WORLD_SOUL_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["World Soul"])
-    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_WORLD_SOUL_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_WORLD_SOUL_ENABLED"] = true}, nil, nil, L["World Soul"])
-
-    -- Theater Troupe
     addGroupHeader(worldmap.scroll.scrollchild,L["Khaz Algar Emissary"])
     addOption(worldmap.scroll.scrollchild, L["Khaz Algar Emissary"], nil, "WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Khaz Algar Emissary"])
     addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_ENABLED"] = true}, nil, nil, L["Khaz Algar Emissary"])
