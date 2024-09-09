@@ -956,8 +956,12 @@ local function moveFrameToPosition(frame, x, y)
         GW.settings[frame.gwSetting] = pos
     end
 
+    frame.ClearAllPoints = nil
+    frame.SetPoint = nil
     frame:ClearAllPoints()
     frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    frame.SetPoint = GW.NoOp
+    frame.ClearAllPoints = GW.NoOp
 end
 
 local function MakeFrameMovable(frame, target, setting, moveFrameOnShow)
@@ -973,7 +977,7 @@ local function MakeFrameMovable(frame, target, setting, moveFrameOnShow)
 
     target = target or frame
 
-    frame.gwSetting = setting
+    target.gwSetting = setting
     frame:SetMovable(true)
     frame:EnableMouse(true)
     frame:SetScript("OnMouseDown", function(_, button)

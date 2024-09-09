@@ -997,15 +997,15 @@ GW.globalDefault = {
         AuctionHouseWindow = {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",
-            xOfs= 96,
-            yOfs= -115,
+            xOfs= 70,
+            yOfs= -150,
         },
 
         PvEWindow = {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",
-            xOfs= 96,
-            yOfs= -115,
+            xOfs= 70,
+            yOfs= -150,
         },
 
         PlayerBuffFrame_Seperate= 0,
