@@ -569,7 +569,7 @@ local function ApplyAuctionHouseSkin()
 	AuctionHouseFrame.backgroundMask = bgMask
 
 	AuctionHouseFrame:HookScript("OnShow",function()
-		GW.AddToAnimation("ACHIVEMENTFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
+		GW.AddToAnimation("AUCTIONHOUSEFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
 			function(p)
 				AuctionHouseFrame:SetAlpha(p)
 				bgMask:SetPoint("BOTTOMRIGHT", AuctionHouseFrame.tex, "BOTTOMLEFT", GW.lerp(-64, AuctionHouseFrame.tex:GetWidth(), p), 0)

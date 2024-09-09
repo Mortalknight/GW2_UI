@@ -380,7 +380,7 @@ local function LoadAchievementFrame()
 
     GwQuesttrackerContainerAchievement.header = CreateFrame("Button", nil, GwQuesttrackerContainerAchievement, "GwQuestTrackerHeader")
     GwQuesttrackerContainerAchievement.header.icon:SetTexCoord(0, 0.5, 0, 0.25)
-    GwQuesttrackerContainerAchievement.header.title:SetFont(UNIT_NAME_FONT, 14)
+    GwQuesttrackerContainerAchievement.header.title:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
     GwQuesttrackerContainerAchievement.header.title:SetShadowOffset(1, -1)
     GwQuesttrackerContainerAchievement.header.title:SetText(TRACKER_HEADER_ACHIEVEMENTS)
 
