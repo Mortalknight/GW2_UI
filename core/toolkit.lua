@@ -491,8 +491,8 @@ local function GwSkinDropDownMenu(frame, buttonPaddindX)
 
     if text then
         text:ClearAllPoints()
-        text:SetPoint("LEFT", frame, "LEFT", 10, 0)
-        text:SetFont(UNIT_NAME_FONT, 12, "")
+        text:SetPoint("RIGHT", button, "LEFT", -2, 0)
+        text:SetFont(UNIT_NAME_FONT, 14, "")
         text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
         text:SetHeight(frame:GetHeight())
         text:SetJustifyV("MIDDLE")

@@ -1419,6 +1419,17 @@ local function styleChatWindow(frame)
     editbox:SetAltArrowKeyMode(false)
     editbox.editboxHasFocus = false
     editbox:Hide()
+    GW.SkinTextBox(_G[name .. "EditBoxMid"], _G[name .. "EditBoxLeft"], _G[name .. "EditBoxRight"])
+
+    --Character count
+    local charCount = editbox:CreateFontString(nil, "ARTWORK")
+    charCount:SetFont(UNIT_NAME_FONT, 11, "")
+    charCount:SetTextColor(190, 190, 190, 0.4)
+    charCount:SetPoint("TOPRIGHT", editbox, "TOPRIGHT", -5, 0)
+    charCount:SetPoint("BOTTOMRIGHT", editbox, "BOTTOMRIGHT", -5, 0)
+    charCount:SetJustifyH("CENTER")
+    charCount:SetWidth(40)
+    editbox.characterCount = charCount
 
     editbox:HookScript("OnEditFocusGained", function(editBox)
         frame.editboxHasFocus = true
@@ -1441,34 +1452,15 @@ local function styleChatWindow(frame)
     end)
     local repeatedText
 
-    editbox:HookScript("OnTextChanged", function(self)
-        local userInput = self:GetText()
+    editbox:HookScript("OnTextChanged", GW.ChatFrameEditBoxOnTextChanged)
 
-        if tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT")) ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
-            local MIN_REPEAT_CHARACTERS = tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT"))
-            if strlen(userInput) > MIN_REPEAT_CHARACTERS then
-                local repeatChar = true
-                for i = 1, MIN_REPEAT_CHARACTERS, 1 do
-                    local first = -1 - i
-                    if strsub(userInput, -i, -i) ~= strsub(userInput, first, first) then
-                        repeatChar = false
-                        break
-                    end
-                end
-                if repeatChar then
-                    repeatedText = userInput
-                    self:Hide()
-                    return
-                end
-            end
-        end
-
-        if repeatedText then
-            repeatedText = nil
-        end
-    end)
-
-    if GetSetting("FONTS_ENABLED") and fontSize then
+    if GW.settings.CHAT_USE_GW2_STYLE then
+        local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
+        local _, fontHeight, fontFlags = frame:GetFont()
+        frame:SetFont(chatFont, fontHeight or 14, fontFlags)
+        editbox:SetFont(chatFont, fontHeight or 14, fontFlags)
+        _G[editbox:GetName() .. "Header"]:SetFont(chatFont, fontHeight or 14, fontFlags)
+    elseif GW.settings.FONTS_ENABLED and fontSize then
         if fontSize > 0 then
             frame:SetFont(STANDARD_TEXT_FONT, fontSize)
         elseif fontSize == 0 then
@@ -1937,7 +1929,10 @@ local function LoadChat()
         QuickJoinToastButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
         QuickJoinToastButton:SetSize(25, 25)
         QuickJoinToastButton:ClearAllPoints()
-        QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
+        QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
+        QuickJoinToastButton.QueueCount:GwKill()
+        local _, _, fontFlags = QuickJoinToastButton.FriendCount:GetFont()
+        QuickJoinToastButton.FriendCount:SetFont(_, 14, fontFlags)
         QuickJoinToastButton.FriendsButton:GwStripTextures(true)
         QuickJoinToastButton.QueueButton:GwStripTextures(true)
         QuickJoinToastButton.FriendCount:SetTextColor(0, 0, 0)

@@ -38,16 +38,16 @@ local barColors = {
 
 -- Text Helper functions
 local function setSmallText(self)
-  self:SetFont(UNIT_NAME_FONT,11)
-  self:SetTextColor(0.7,0.7,0.7)
+    self:SetFont(UNIT_NAME_FONT, 12)
+    self:SetTextColor(0.7, 0.7, 0.7)
 end
 local function setNormalText(self)
-  self:SetFont(UNIT_NAME_FONT,12)
-  self:SetTextColor(1,1,1)
+    self:SetFont(UNIT_NAME_FONT, 14)
+    self:SetTextColor(1, 1, 1)
 end
 local function setTitleText(self)
-  self:SetFont(DAMAGE_TEXT_FONT, 14)
-  self:SetTextColor(1,1,1)
+    self:SetFont(DAMAGE_TEXT_FONT, 16)
+    self:SetTextColor(1, 1, 1)
 end
 
 -- Blizzard hacking starts here for overwriting functions to allow our own custom categories
@@ -331,7 +331,7 @@ local function CatMenuButton(self, button, odd,hasArrow, margin)
     button.Label:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     button.Label:SetShadowColor(0, 0, 0, 0)
     button.Label:SetShadowOffset(1, -1)
-    button.Label:SetFont(DAMAGE_TEXT_FONT, 14)
+    button.Label:SetFont(DAMAGE_TEXT_FONT, 16)
     button.Label:SetJustifyH("LEFT")
     button.Label:SetJustifyV("MIDDLE")
 end
@@ -396,7 +396,7 @@ local function skinAchievementSummaryStatusBar(self)
 
     text:ClearAllPoints()
     text:SetPoint("RIGHT",self,"RIGHT",-5,0)
-    text:SetFont(DAMAGE_TEXT_FONT,11)
+    text:SetFont(DAMAGE_TEXT_FONT,12)
     text:SetTextColor(1,1,1)
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
@@ -452,7 +452,7 @@ local function skinCriteriaStatusbar(parentFrame,self)
         bColor.b
     )
 
-    text:SetFont(DAMAGE_TEXT_FONT,11)
+    text:SetFont(DAMAGE_TEXT_FONT,12)
     text:SetTextColor(1,1,1)
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
@@ -1073,18 +1073,18 @@ local function skinAchievementCompareSummaryStatusBar(self,isPlayer)
     self:SetStatusBarColor(color.r,color.g,color.b,1)
   end
 
-  bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/StatusBar")
-  bar:SetVertexColor(1,1,1,0.5)
-  self:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
-  title:ClearAllPoints()
-  title:SetPoint("BOTTOMLEFT",self,"TOPLEFT",0,5)
-  setNormalText(title)
-  text:ClearAllPoints()
-  text:SetPoint("RIGHT",self,"RIGHT",-5,0)
-  text:SetFont(DAMAGE_TEXT_FONT,11)
-  text:SetTextColor(1,1,1)
-  text:SetHeight(bar:GetHeight())
-  text:SetJustifyV("MIDDLE")
+    bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/StatusBar")
+    bar:SetVertexColor(1,1,1,0.5)
+    self:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    title:ClearAllPoints()
+    title:SetPoint("BOTTOMLEFT",self,"TOPLEFT",0,5)
+    setNormalText(title)
+    text:ClearAllPoints()
+    text:SetPoint("RIGHT",self,"RIGHT",-5,0)
+    text:SetFont(DAMAGE_TEXT_FONT,12)
+    text:SetTextColor(1,1,1)
+    text:SetHeight(bar:GetHeight())
+    text:SetJustifyV("MIDDLE")
 end
 
 
@@ -1159,7 +1159,7 @@ local function skinAchevement()
     AchievementFrameHeader.header:SetPoint("BOTTOMLEFT",20,8)
     AchievementFrameHeader.breadCrumb:SetPoint("LEFT",AchievementFrameHeader.header,"RIGHT",20,0)
     AchievementFrameHeader.header:SetFont(DAMAGE_TEXT_FONT, 24)
-    AchievementFrameHeader.breadCrumb:SetFont(DAMAGE_TEXT_FONT, 14)
+    AchievementFrameHeader.breadCrumb:SetFont(DAMAGE_TEXT_FONT, 16)
     AchievementFrameHeader.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     AchievementFrameHeader.breadCrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     AchievementFrameHeader.header:SetWidth(AchievementFrameHeader.header:GetStringWidth())
@@ -1226,7 +1226,7 @@ local function skinAchevement()
         local sp = AchievementFrame.SearchPreviewContainer["SearchPreview"..i]
         if sp then
             sp:SetWidth(AchievementFrame.SearchPreviewContainer:GetWidth())
-            sp.Name:SetFont(UNIT_NAME_FONT, 12, "")
+            sp.Name:SetFont(UNIT_NAME_FONT, 14, "")
         end
     end
 

@@ -517,14 +517,14 @@ local function LoadPowerBar()
         end
     )
 
-    playerPowerBar.label:SetFont(DAMAGE_TEXT_FONT, 12)
-    playerPowerBar.label:SetShadowColor(0, 0, 0, 1)
-    playerPowerBar.label:SetShadowOffset(1, -1)
-    playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
-    playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-    playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-    playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
-    playerPowerBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+  playerPowerBar.label:SetFont(DAMAGE_TEXT_FONT, 14)
+  playerPowerBar.label:SetShadowColor(0, 0, 0, 1)
+  playerPowerBar.label:SetShadowOffset(1, -1)
+  playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+  playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+  playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+  playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+  playerPowerBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
     UpdatePowerData(playerPowerBar)
 end

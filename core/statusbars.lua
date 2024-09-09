@@ -257,7 +257,7 @@ local function SetOrientation(self,direction)
 end
 
 local function hookStatusbarBehaviour(statusBar,smooth,animationType)
-
+  if statusBar==nil then return end
   if not AddToAnimation then
     AddToAnimation = GW.AddToAnimation
      round = GW.RoundInt
