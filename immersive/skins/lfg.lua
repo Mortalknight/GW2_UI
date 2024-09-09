@@ -583,9 +583,6 @@ local function SkinLookingForGroupFrames()
 
     GW.HandleTrimScrollBar(LFGListFrame.ApplicationViewer.ScrollBar, true)
     GW.HandleScrollControls(LFGListFrame.ApplicationViewer)
-    --LFGListFrame.ApplicationViewer.ScrollBar:ClearAllPoints()
-    --LFGListFrame.ApplicationViewer.ScrollBar:SetPoint("TOPLEFT", LFGListFrame.ApplicationViewer.Inset, "TOPRIGHT", 0, -16)
-    --LFGListFrame.ApplicationViewer.ScrollBar:SetPoint("BOTTOMLEFT", LFGListFrame.ApplicationViewer.Inset, "BOTTOMRIGHT", 0, 16)
 
     hooksecurefunc("LFGListApplicationViewer_UpdateInfo", function(frame)
         frame.RemoveEntryButton:ClearAllPoints()
@@ -713,8 +710,9 @@ local function SkinLookingForGroupFrames()
                 end
             end)
         end
-
     end)
+
+    GW.MakeFrameMovable(PVEFrame, nil, "PvEWindow", true)
 end
 
 local function ApplyPvPUISkin()
