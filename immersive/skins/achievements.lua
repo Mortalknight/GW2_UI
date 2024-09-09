@@ -42,7 +42,7 @@ GW.AchievementFrameSkinFunction.SetTitleText = setTitleText
 -- Blizzard hacking starts here for overwriting functions to allow our own custom categories
 -- is there a less hacky way of doing this?
 -- DO NOT DELETE THINGS HERE IF DISABLE CUSTOM CATEGORIES
--- INSTED DON"T RUN AchievementFrameCategories_OnLoad
+-- INSTED DON'T RUN AchievementFrameCategories_OnLoad
 
 --Blizzard data values
 local hackingBlizzardFunction = false
@@ -65,7 +65,7 @@ local selectedCategoryID = 0
 -- this function overwrites AchievementCategoryTemplateMixin:Init(elementData)
 -- we need to replace it since custom categories are hard coded into the function
 -- Any changes made to AchievementCategoryTemplateMixin:Init needs to be reflected here
-local function customCategorieInit(self,elementData)
+local function customCategorieInit(self, elementData)
     if ( elementData.isChild ) then
         self.Button:SetWidth(ACHIEVEMENTUI_CATEGORIESWIDTH - 25);
         self.Button.Label:SetFontObject("GameFontHighlight");
@@ -88,10 +88,8 @@ local function customCategorieInit(self,elementData)
         categoryName = ACHIEVEMENT_SUMMARY_CATEGORY;
         numAchievements, numCompleted = GetNumCompletedAchievements(InGuildView());
     elseif ( id == "watchlist" ) then -- custom watchlist category
-        categoryName = L["Watch list"];
-        local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
-
-        numAchievements = #trackedAchievements
+        categoryName = L["Watch list"]
+        numAchievements = #C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
         numCompleted = 0 -- might need to change or only used for bars?
     else
         categoryName, _, flags = GetCategoryInfo(id);
@@ -105,7 +103,7 @@ local function customCategorieInit(self,elementData)
     -- For the tooltip
     self.Button.name = categoryName;
     if ( id == FEAT_OF_STRENGTH_ID ) then
-        -- This is the feat of strength category since it"s sorted to the end of the list
+        -- This is the feat of strength category since it's sorted to the end of the list
         self.Button.text = FEAT_OF_STRENGTH_DESCRIPTION;
         self.Button.showTooltipFunc = AchievementFrameCategory_FeatOfStrengthTooltip;
     elseif ( id == GUILD_FEAT_OF_STRENGTH_ID ) then
@@ -161,7 +159,7 @@ end
 
 --- overrider for blizzard function
 -- AchievementFrameAchievements_UpdateDataProvider
-local oldFilter
+local wasPrevCatCustom = false
 local function UpdateCategoriesDataProvider()
 -- hackfix for AchievementFrame_GetOrSelectCurrentCategory()
 -- no other way of emulate its behaviour
@@ -174,14 +172,15 @@ local function UpdateCategoriesDataProvider()
     local customCat = category == "watchlist" or false
     local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
     if customCat then
-        oldFilter = ACHIEVEMENTUI_SELECTEDFILTER
-        ACHIEVEMENTUI_SELECTEDFILTER = function()
+        ACHIEVEMENTUI_SELECTEDFILTER = function(cat)
             return #trackedAchievements, 0, 0
         end
-    elseif oldFilter ~= nil then
-        ACHIEVEMENTUI_SELECTEDFILTER = oldFilter
-        oldFilter = nil
+    else
+        if wasPrevCatCustom then
+            ACHIEVEMENTUI_SELECTEDFILTER = AchievementFrame_GetCategoryNumAchievements_All
+        end
     end
+    wasPrevCatCustom = customCat
 
     local numAchievements, numCompleted, completedOffset = ACHIEVEMENTUI_SELECTEDFILTER(category);
     local fosShown = numAchievements == 0 and IsCategoryFeatOfStrength(category);
@@ -196,13 +195,13 @@ local function UpdateCategoriesDataProvider()
         if index <= numAchievements then
             local filteredIndex = index + completedOffset;
             local id = 0
-    if customCat then
-        id = trackedAchievements[index]
-        newDataProvider:Insert({category = category, id = id}); -- we use blizzard built in id look up insted of index (thank you twitter intigration)
-    else
-        id = GetAchievementInfo(category, filteredIndex);
-        newDataProvider:Insert({category = category, index = filteredIndex, id = id});
-    end
+            if customCat then
+                id = trackedAchievements[index]
+                newDataProvider:Insert({category = category, id = id}); -- we use blizzard built in id look up insted of index (thank you twitter intigration)
+            else
+                id = GetAchievementInfo(category, filteredIndex);
+                newDataProvider:Insert({category = category, index = filteredIndex, id = id});
+            end
         end
     end
     AchievementFrameAchievements.ScrollBox:SetDataProvider(newDataProvider);
@@ -225,7 +224,7 @@ local function AchievementFrameCategories_OnLoad(self)
     -- re build the scroll frame with our init function
     local view = CreateScrollBoxListLinearView();
     view:SetElementInitializer("AchievementCategoryTemplate", function(frame, elementData)
-        customCategorieInit(frame,elementData);
+        customCategorieInit(frame, elementData);
     end);
     ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view);
 
@@ -273,7 +272,7 @@ local function catMenuButtonState(self, selected)
     if selected then
         selectedCategoryID = self.categoryID
         if hackingBlizzardFunction then
-           -- UpdateCategoriesDataProvider()
+            UpdateCategoriesDataProvider()
         end
     end
     ---zeeeebra
