@@ -785,9 +785,9 @@ end
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
     local fontOutline = ""
-    local headerSize = max(5,tonumber(GW.settings.TOOLTIP_FONT_SIZE) + 2)
-    local smallTextSize = max(5,tonumber(GW.settings.TOOLTIP_FONT_SIZE) - 2)
-    local textSize = tonumber(GW.settings.TOOLTIP_FONT_SIZE)
+    local headerSize = max(5, GW.settings.TOOLTIP_HEADER_FONT_SIZE)
+    local smallTextSize = max(5, GW.settings.TOOLTIP_SMALL_FONT_SIZE)
+    local textSize = GW.settings.TOOLTIP_FONT_SIZE
 
     GameTooltipHeaderText:SetFont(font, headerSize, fontOutline)
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
@@ -809,8 +809,7 @@ local function SetTooltipFonts()
     end
 
     for _, tt in ipairs(GameTooltip.shoppingTooltips) do
-        for i = 1, tt:GetNumRegions() do
-            local region = select(i, tt:GetRegions())
+        for _, region in next, { tt:GetRegions() } do
             if region:IsObjectType("FontString") then
                 region:SetFont(font, smallTextSize, fontOutline)
             end

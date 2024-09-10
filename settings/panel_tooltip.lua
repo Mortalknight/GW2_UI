@@ -88,9 +88,39 @@ local function LoadTooltipPanel(sWindow)
     )
     addOptionSlider(
         p.scroll.scrollchild,
-        FONT_SIZE,
+        FONT_SIZE .. ": " .. L["Tooltip Header"],
+        nil,
+        "TOOLTIP_HEADER_FONT_SIZE",
+        function()
+            GW.SetTooltipFonts()
+        end,
+        5,
+        42,
+        nil,
+        0,
+        {["TOOLTIPS_ENABLED"] = true},
+        1
+    )
+    addOptionSlider(
+        p.scroll.scrollchild,
+        FONT_SIZE .. ": " .. L["Tooltip Body"],
         nil,
         "TOOLTIP_FONT_SIZE",
+        function()
+            GW.SetTooltipFonts()
+        end,
+        5,
+        42,
+        nil,
+        0,
+        {["TOOLTIPS_ENABLED"] = true},
+        1
+    )
+    addOptionSlider(
+        p.scroll.scrollchild,
+        FONT_SIZE .. ": " .. L["Comparison"],
+        L["This setting controls the size of text in item comparison tooltips"],
+        "TOOLTIP_SMALL_FONT_SIZE",
         function()
             GW.SetTooltipFonts()
         end,
