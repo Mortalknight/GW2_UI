@@ -803,9 +803,9 @@ end
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
     local fontOutline = ""
-    local headerSize = tonumber(settings.tooltipFontSize)
-    local smallTextSize = tonumber(settings.tooltipFontSize)
-    local textSize = tonumber(settings.tooltipFontSize)
+    local headerSize = max(5,tonumber(GW.settings.TOOLTIP_FONT_SIZE) + 2)
+    local smallTextSize = max(5,tonumber(GW.settings.TOOLTIP_FONT_SIZE) - 2)
+    local textSize = tonumber(GW.settings.TOOLTIP_FONT_SIZE)
 
     GameTooltipHeaderText:SetFont(font, headerSize, fontOutline)
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
