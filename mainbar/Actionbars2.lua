@@ -6,6 +6,7 @@ local Self_Hide = GW.Self_Hide
 local IsFrameModified = GW.IsFrameModified
 local CountTable = GW.CountTable
 local AddUpdateCB = GW.AddUpdateCB
+local AFP = GW.AddProfiling
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 
