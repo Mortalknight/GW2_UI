@@ -312,12 +312,6 @@ local function UpdateTokenSkins(frame)
                 child.Text:SetTextColor(1, 1, 1)
             end
 
-            --we need to do this twice?
-            if child.Name then
-                child.Name:SetFont(DAMAGE_TEXT_FONT, 16)
-                child.Name:SetTextColor(1, 1, 1)
-            end
-
             if child.Content then
                 child.Content.Name:SetFont(UNIT_NAME_FONT, 14)
                 child.Content.Count:SetFont(UNIT_NAME_FONT, 14)
