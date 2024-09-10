@@ -391,6 +391,248 @@ local function menuItem_OnClick(self)
 end
 GW.AddForProfiling("currency", "menuItem_OnClick", menuItem_OnClick)
 
+local oldAtlas = {
+    Options_ListExpand_Right = 1,
+    Options_ListExpand_Right_Expanded = 1
+}
+
+local function updateCollapse(texture, atlas)
+    if not atlas or oldAtlas[atlas] then
+        local parent = texture:GetParent()
+        if parent:IsCollapsed() then
+            if texture.SetTexture then
+                texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:SetRotation(1.570796325)
+            else
+                texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetNormalTexture():SetRotation(1.570796325)
+            end
+            if texture.GetPushedTexture then
+                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetPushedTexture():SetRotation(1.570796325)
+            end
+        else
+            if texture.SetTexture then
+                texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:SetRotation(0)
+            else
+                texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetNormalTexture():SetRotation(0)
+            end
+            if texture.GetPushedTexture then
+                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetPushedTexture():SetRotation(0)
+            end
+        end
+    end
+end
+
+local function RefreshAccountCurrencyIcon(self)
+    if self.Content then
+        if self.elementData.isAccountWide then
+            self.Content.AccountWideIcon.Icon:SetAtlas("warbands-icon", TextureKitConstants.UseAtlasSize);
+            self.Content.AccountWideIcon.Icon:SetScale(0.9);
+        elseif self.elementData.isAccountTransferable then
+            self.Content.AccountWideIcon.Icon:SetAtlas("warbands-transferable-icon", TextureKitConstants.UseAtlasSize);
+            self.Content.AccountWideIcon.Icon:SetScale(0.9);
+        else
+            self.Content.AccountWideIcon.Icon:SetAtlas(nil);
+        end
+
+        self.Content.AccountWideIcon:SetShown(self.Content.AccountWideIcon.Icon:GetAtlas() ~= nil)
+    end
+end
+
+local function UpdateTokenSkins(frame)
+    for _, child in next, { frame.ScrollTarget:GetChildren() } do
+        if not child.IsSkinned then
+            if child.Right then
+                child:GwStripTextures()
+                child:GwCreateBackdrop()
+                child.backdrop:GwSetInside(child)
+
+                updateCollapse(child.Right)
+                updateCollapse(child.HighlightRight)
+
+                hooksecurefunc(child.Right, "SetAtlas", updateCollapse)
+                hooksecurefunc(child.HighlightRight, "SetAtlas", updateCollapse)
+            end
+
+            if child.ToggleCollapseButton then
+                updateCollapse(child.ToggleCollapseButton)
+                hooksecurefunc(child.ToggleCollapseButton, "RefreshIcon", updateCollapse)
+            end
+
+            if child.Name then
+                child.Name:SetFont(DAMAGE_TEXT_FONT, 16)
+                child.Name:SetTextColor(1, 1, 1)
+            end
+
+            if child.Text then
+                child.Text:SetFont(DAMAGE_TEXT_FONT, 14)
+                child.Text:SetTextColor(1, 1, 1)
+            end
+
+            --we need to do this twice?
+            if child.Name then
+                child.Name:SetFont(DAMAGE_TEXT_FONT, 16)
+                child.Name:SetTextColor(1, 1, 1)
+            end
+
+            if child.Content then
+                child.Content.Name:SetFont(UNIT_NAME_FONT, 14)
+                child.Content.Count:SetFont(UNIT_NAME_FONT, 14)
+                child.Content.WatchedCurrencyCheck:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon")
+            end
+
+            if child.elementData then
+                if child.elementData.isHeader then
+                    child.gwBackground = child:CreateTexture(nil, "BACKGROUND")
+                    child.gwBackground:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+                    child.gwBackground:SetSize(512, child:GetHeight())
+                    child.gwBackground:SetPoint("TOPLEFT")
+                else
+                    child.gwZebra = child:CreateTexture(nil, "BACKGROUND")
+                    child.gwZebra:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+                    child.gwZebra:SetSize(32, 32)
+                    child.gwZebra:SetPoint("TOPLEFT", child, "TOPLEFT")
+                    child.gwZebra:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT")
+
+                    child.Content.Name:SetFont(UNIT_NAME_FONT, 14)
+                    child.Content.Count:SetFont(UNIT_NAME_FONT, 14)
+                end
+            end
+
+            local icon = child.Content and child.Content.CurrencyIcon
+            if icon then
+                GW.HandleIcon(icon)
+
+                hooksecurefunc(child, "RefreshAccountCurrencyIcon", RefreshAccountCurrencyIcon)
+            end
+
+            child.IsSkinned = true
+        end
+
+        -- update zebra
+        if not child.elementData.isHeader then
+            if child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 then
+                child.gwZebra:SetVertexColor(1, 1, 1, 0.05)
+            else
+                child.gwZebra:SetVertexColor(0, 0, 0, 0.05)
+            end
+        end
+        RefreshAccountCurrencyIcon(child)
+    end
+end
+
+local function SkinTokenFrame()
+    --[[]]
+    TokenFramePopup:GwStripTextures()
+    TokenFramePopup:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    TokenFramePopup:SetPoint("TOPLEFT", _G.TokenFrame, "TOPRIGHT", 3, -28)
+    TokenFrame.CurrencyTransferLogToggleButton:SetAlpha(0)
+
+    TokenFramePopup.InactiveCheckbox:GwSkinCheckButton()
+    TokenFramePopup.BackpackCheckbox:GwSkinCheckButton()
+    TokenFramePopup.InactiveCheckbox:SetSize(15, 15)
+    TokenFramePopup.BackpackCheckbox:SetSize(15, 15)
+    TokenFramePopup.CurrencyTransferToggleButton:GwSkinButton(false, true)
+
+    TokenFramePopup.InactiveCheckbox:ClearAllPoints()
+    TokenFramePopup.InactiveCheckbox:SetPoint("TOPLEFT", TokenFramePopup, 32, -38)
+
+    TokenFramePopup.InactiveCheckbox.Text:ClearAllPoints()
+    TokenFramePopup.InactiveCheckbox.Text:SetPoint("LEFT", TokenFramePopup.InactiveCheckbox, "RIGHT", 5, 0)
+
+    TokenFramePopup.BackpackCheckbox:ClearAllPoints()
+    TokenFramePopup.BackpackCheckbox:SetPoint("TOPLEFT", TokenFramePopup.InactiveCheckbox, "BOTTOMLEFT", 0, -10)
+
+    TokenFramePopup.BackpackCheckbox.Text:ClearAllPoints()
+    TokenFramePopup.BackpackCheckbox.Text:SetPoint("LEFT", TokenFramePopup.BackpackCheckbox, "RIGHT", 5, 0)
+
+    TokenFramePopup.Title:SetFont(DAMAGE_TEXT_FONT, 14)
+    TokenFramePopup.Title:SetTextColor(1, 1, 1)
+
+    local TokenPopupClose = TokenFramePopup["$parent.CloseButton"]
+    if TokenPopupClose then
+        TokenPopupClose:GwSkinButton(true)
+    end
+
+    CurrencyTransferMenuTitleText:SetFont(DAMAGE_TEXT_FONT, 14)
+    CurrencyTransferMenuTitleText:SetTextColor(1, 1, 1)
+
+    CurrencyTransferMenu.SourceSelector.SourceLabel:SetFont(UNIT_NAME_FONT, 13)
+    CurrencyTransferMenu.SourceSelector.SourceLabel:SetTextColor(1, 1, 1)
+    CurrencyTransferMenu.SourceSelector.PlayerName:SetFont(UNIT_NAME_FONT, 13)
+    CurrencyTransferMenu.SourceSelector.PlayerName:SetTextColor(1, 1, 1)
+    CurrencyTransferMenu.AmountSelector.TransferAmountLabel:SetFont(UNIT_NAME_FONT, 12)
+    CurrencyTransferMenu.AmountSelector.TransferAmountLabel:SetTextColor(1, 1, 1)
+    CurrencyTransferMenu.SourceBalancePreview.Label:SetFont(UNIT_NAME_FONT, 12)
+    CurrencyTransferMenu.SourceBalancePreview.Label:SetTextColor(1, 1, 1)
+    CurrencyTransferMenu.PlayerBalancePreview.Label:SetFont(UNIT_NAME_FONT, 12)
+    CurrencyTransferMenu.PlayerBalancePreview.Label:SetTextColor(1, 1, 1)
+
+    CurrencyTransferMenu:GwStripTextures()
+    CurrencyTransferMenu:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    CurrencyTransferMenu.CloseButton:GwSkinButton(true)
+    CurrencyTransferMenu.SourceSelector.Dropdown:GwHandleDropDownBox()
+    GW.SkinTextBox(CurrencyTransferMenu.AmountSelector.InputBox.Middle, CurrencyTransferMenu.AmountSelector.InputBox.Left, CurrencyTransferMenu.AmountSelector.InputBox.Right)
+    CurrencyTransferMenu.ConfirmButton:GwSkinButton(false, true)
+    CurrencyTransferMenu.CancelButton:GwSkinButton(false, true)
+
+    --GW.HandleTrimScrollBar(TokenFrame.ScrollBar) -- taints
+    --GW.HandleScrollControls(TokenFrame)
+    hooksecurefunc(TokenFrame.ScrollBox, "Update", UpdateTokenSkins)
+
+    CurrencyTransferMenu:SetFrameStrata("DIALOG")
+end
+
+local function UpdateTransferHistorySkins(self)
+    for _, child in next, { self.ScrollTarget:GetChildren() } do
+        if not child.IsSkinned then
+
+            if child.SourceName then
+                child.SourceName:SetFont(DAMAGE_TEXT_FONT, 12)
+                child.SourceName:SetTextColor(1, 1, 1)
+            end
+
+            if child.DestinationName then
+                child.DestinationName:SetFont(DAMAGE_TEXT_FONT, 12)
+                child.DestinationName:SetTextColor(1, 1, 1)
+            end
+
+            if child.CurrencyQuantity then
+                child.CurrencyQuantity:SetFont(DAMAGE_TEXT_FONT, 12)
+                child.CurrencyQuantity:SetTextColor(1, 1, 1)
+            end
+
+            if child.CurrencyIcon then
+                GW.HandleIcon(child.CurrencyIcon)
+            end
+
+            if child.Arrow then
+                child.Arrow:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                child.Arrow:SetRotation(1.570796325)
+            end
+
+            child.gwZebra = child:CreateTexture(nil, "BACKGROUND")
+            child.gwZebra:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+            child.gwZebra:SetSize(32, 32)
+            child.gwZebra:SetPoint("TOPLEFT", child, "TOPLEFT")
+            child.gwZebra:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT")
+
+            child.IsSkinned = true
+        end
+
+        -- update zebra
+        if child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 then
+            child.gwZebra:SetVertexColor(1, 1, 1, 0.05)
+        else
+            child.gwZebra:SetVertexColor(0, 0, 0, 0.05)
+        end
+    end
+end
+
 local function LoadCurrency(tabContainer)
     -- setup the currency window as a HybridScrollFrame and init each of the faux frame buttons
     local curwin_outer = CreateFrame("Frame", "GWCharacterCurrenyRaidInfoFrame", tabContainer, "GwCurrencyWindow")
