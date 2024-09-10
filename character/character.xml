@@ -78,7 +78,7 @@
                     <Size x="512" y="40"></Size>
                     <Color r="1" b="0.73" g="0.93"></Color>
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="10" y="38"></Anchor>
+                        <Anchor point="TOPLEFT" x="31" y="38"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
