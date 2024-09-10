@@ -52,11 +52,12 @@ local function UpdateSettings()
     settings.tooltipMouseAnchor = GetSetting("CURSOR_ANCHOR_TYPE")
     settings.tooltipMouseAnchotX = GetSetting("ANCHOR_CURSOR_OFFSET_X")
     settings.tooltipMouseAnchotY = GetSetting("ANCHOR_CURSOR_OFFSET_Y")
-    settings.tooltipFontSize = GetSetting("TOOLTIP_FONT_SIZE")
+    settings.TOOLTIP_FONT_SIZE = GetSetting("TOOLTIP_FONT_SIZE")
     settings.hideUnitTooltipInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
     settings.hideTooltipInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT")
     settings.hideTooltipInCombatOverride = GetSetting("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE")
     settings.showPremadeGroupInfo = GetSetting("TOOLTIP_SHOW_PREMADE_GROUP_INFO")
+    
 end
 GW.UpdateTooltipSettings = UpdateSettings
 
@@ -803,9 +804,9 @@ end
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
     local fontOutline = ""
-    local headerSize = max(5,tonumber(GW.settings.TOOLTIP_FONT_SIZE) + 2)
-    local smallTextSize = max(5,tonumber(GW.settings.TOOLTIP_FONT_SIZE) - 2)
-    local textSize = tonumber(GW.settings.TOOLTIP_FONT_SIZE)
+    local headerSize = max(5,tonumber(settings.TOOLTIP_FONT_SIZE) + 2)
+    local smallTextSize = max(5,tonumber(settings.TOOLTIP_FONT_SIZE) - 2)
+    local textSize = tonumber(settings.TOOLTIP_FONT_SIZE)
 
     GameTooltipHeaderText:SetFont(font, headerSize, fontOutline)
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)

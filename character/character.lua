@@ -633,10 +633,7 @@ local function CharacterMenuButton_OnLoad(self, odd)
     else
         self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
     end
-    self:GetFontString():SetTextColor(1, 1, 1, 1)
-    self:GetFontString():SetShadowColor(0, 0, 0, 0)
-    self:GetFontString():SetShadowOffset(1, -1)
-    self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
+   
     self:GetFontString():SetJustifyH("LEFT")
     self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
 end
@@ -644,11 +641,8 @@ GW.CharacterMenuButton_OnLoad = CharacterMenuButton_OnLoad
 
 local function CharacterMenuButtonBack_OnLoad(self)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-    self:SetNormalTexture(nil)
-    local fontString = self:GetFontString()
-    fontString:SetTextColor(1, 1, 1, 1)
-    fontString:SetShadowColor(0, 0, 0, 0)
-    fontString:SetShadowOffset(1, -1)
-    fontString:SetFont(DAMAGE_TEXT_FONT, 14)
+    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
+    self:ClearNormalTexture()
+
 end
 GW.CharacterMenuButtonBack_OnLoad = CharacterMenuButtonBack_OnLoad

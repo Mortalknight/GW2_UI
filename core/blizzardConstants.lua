@@ -35,6 +35,7 @@ C_DateAndTime                                               = {}
 --C_MountJournal = {}
 C_TooltipInfo                                               = {}
 C_SpecializationInfo                                        = {}
+C_Spell                                                     = {}
 
 BACKPACK_CONTAINER                                          = 0
 NUM_TOTAL_EQUIPPED_BAG_SLOTS                                = 4
@@ -462,6 +463,9 @@ end
 
 function C_SpecializationInfo.GetSpellsDisplay(specializationID)
     return nil --NYI
+end
+function C_Spell.GetSpellInfo(spellID)
+    return GetSpellInfo(spellID)
 end
 
 local function getNumberFirends()
