@@ -303,23 +303,24 @@ local function UpdateTokenSkins(frame)
             end
 
             if child.Name then
-                child.Name:SetFont(DAMAGE_TEXT_FONT, 14)
+                child.Name:SetFont(DAMAGE_TEXT_FONT, 16)
                 child.Name:SetTextColor(1, 1, 1)
             end
 
             if child.Text then
-                child.Text:SetFont(DAMAGE_TEXT_FONT, 13)
+                child.Text:SetFont(DAMAGE_TEXT_FONT, 14)
                 child.Text:SetTextColor(1, 1, 1)
             end
 
+            --we need to do this twice?
             if child.Name then
-                child.Name:SetFont(DAMAGE_TEXT_FONT, 14)
+                child.Name:SetFont(DAMAGE_TEXT_FONT, 16)
                 child.Name:SetTextColor(1, 1, 1)
             end
 
             if child.Content then
-                child.Content.Name:SetFont(UNIT_NAME_FONT, 12)
-                child.Content.Count:SetFont(UNIT_NAME_FONT, 12)
+                child.Content.Name:SetFont(UNIT_NAME_FONT, 14)
+                child.Content.Count:SetFont(UNIT_NAME_FONT, 14)
                 child.Content.WatchedCurrencyCheck:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon")
             end
 
@@ -336,8 +337,8 @@ local function UpdateTokenSkins(frame)
                     child.gwZebra:SetPoint("TOPLEFT", child, "TOPLEFT")
                     child.gwZebra:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT")
 
-                    child.Content.Name:SetFont(UNIT_NAME_FONT, 12)
-                    child.Content.Count:SetFont(UNIT_NAME_FONT, 12)
+                    child.Content.Name:SetFont(UNIT_NAME_FONT, 14)
+                    child.Content.Count:SetFont(UNIT_NAME_FONT, 14)
                 end
             end
 
