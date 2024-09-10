@@ -631,7 +631,7 @@ end
 GW.FrameFlash = FrameFlash
 
 local function setItemLevel(button, quality, itemlink, slot)
-    button.itemlevel:SetFont(UNIT_NAME_FONT, 14, "THINOUTLINED")
+    button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     if quality then
         local r, g, b = C_Item.GetItemQualityColor(quality or 1)
         if quality >= Enum.ItemQuality.Common and C_Item.GetItemQualityColor(quality) then
