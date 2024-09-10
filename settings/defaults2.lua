@@ -79,6 +79,8 @@ GW.globalDefault = {
         ALERTFRAME_ENABLED = true,
         HIDE_BLIZZARD_VIGOR_BAR = true,
 
+        interruptAnnounce = "NONE",
+
         GW_COMBAT_TEXT_MODE= "GW2",
         GW_COMBAT_TEXT_BLIZZARD_COLOR= false,
         GW_COMBAT_TEXT_COMMA_FORMAT= false,

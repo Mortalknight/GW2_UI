@@ -225,6 +225,7 @@ immersive\tooltips.lua
 immersive\damagetext.xml
 immersive\damagetext.lua
 immersive\eventTracker.lua
+immersive\interruptAnnouncement.lua
 
 objectives\scenarioWidgets\heroicVisions.lua
 objectives\scenarioWidgets\jailersTower.lua

@@ -609,4 +609,13 @@ L["Ringing Deeps"] = true
 L["Spreading The Light"] = true
 L["Underworld Operative"] = true
 L["World Soul"] = true
-L["BG Map"] = ""
+L["BG Map"] = true
+
+L["Party Only"] = true
+L["Party / Raid"] = true
+L["Raid Only"] = true
+L["Tooltip Header"] = true
+L["Tooltip Body"] = true
+L["Comparison"] = true
+L["This setting controls the size of text in item comparison tooltips"] = true
+L["Interrupted %s's |cff71d5ff|Hspell:%d:0|h[%s]|h|r!"] = true

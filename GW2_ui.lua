@@ -771,6 +771,7 @@ local function evPlayerLogin(self)
     GW.LoadMirrorTimers()
     GW.LoadAutoRepair()
     GW.LoadDragonFlightWorldEvents()
+    GW.ToggleInterruptAnncouncement()
 
     --Create unitframes
     if GW.settings.FOCUS_ENABLED then

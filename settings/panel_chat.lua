@@ -32,6 +32,16 @@ local function LoadChatPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Quick Join Messages"], L["Show clickable Quick Join messages inside of the chat."], "CHAT_SOCIAL_LINK", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Add timestamp to all messages"], nil, "CHAT_ADD_TIMESTAMP_TO_ALL", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
 
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["Announce Interrupts"],
+        L["Announce when you interrupt a spell to the specified chat channel"],
+        "interruptAnnounce",
+        GW.ToggleInterruptAnncouncement,
+        {"NONE", "SAY", "YELL", "PARTY", "RAID", "RAID_ONLY", "EMOTE"},
+        {NONE, SAY, YELL, L["Party Only"], L["Party / Raid"], L["Raid Only"], EMOTE}
+    )
+
     local soundKeys = {}
     for _, sound in next, GW.Libs.LSM:List("sound") do
         tinsert(soundKeys, sound)
