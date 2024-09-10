@@ -212,11 +212,45 @@ local function SkinLookingForGroupFrames()
         bu.bg:GwKill()
         bu:GwSkinButton(false, true)
 
-        bu.icon:SetSize(45, 45)
-        bu.icon:ClearAllPoints()
-        bu.icon:SetPoint("LEFT", 10, 0)
-        GW.HandleIcon(bu.icon)
-        bu.icon:SetDrawLayer("OVERLAY")
+        bu:SetHeight(36)
+
+        bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+        bu.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        bu.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
+        if i % 2 == 1 then
+            bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+        else
+            bu:ClearNormalTexture()
+        end
+
+        bu.arrow = bu:CreateTexture(nil, "OVERLAY")
+        bu.arrow:SetSize(10, 20)
+        bu.arrow:SetPoint("RIGHT", bu, "RIGHT", 0, 0)
+        bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow")
+
+        bu.name:SetFontObject(gw_button_font_menu_light)
+        bu.name:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+        bu.name:SetJustifyH("LEFT")
+        bu.name:SetPoint("LEFT", bu, "LEFT", 5, 0)
+        bu.name:SetWidth(bu:GetWidth())
+        hooksecurefunc(bu.name, "SetText", function()
+            if not bu.name.SetTextGw2 then
+                bu.name.SetTextGw2 = true
+                bu.name:SetText(bu.name:GetText():gsub("-\n", ""):gsub("\n", ""))
+                bu.name.SetTextGw2 = false
+            end
+        end)
+
+        bu.gwBorderFrame:Hide()
+
+        bu.icon:Hide()
+
+        bu:ClearAllPoints()
+        if i == 1 then
+            bu:SetPoint("TOPLEFT", 10, -40)
+        else
+            bu:SetPoint("TOP", GroupFinderFrame["groupButton" .. i - 1], "BOTTOM", 0, 0)
+        end
     end
     hooksecurefunc("GroupFinderFrame_SelectGroupButton", function(idx)
         for i = 1, 3 do
