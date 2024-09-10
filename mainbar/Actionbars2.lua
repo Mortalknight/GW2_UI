@@ -363,7 +363,23 @@ GW.AddForProfiling("Actionbars2", "hideBackdrop", hideBackdrop)
 local function showBackdrop(self)
     self.gwBackdrop:Show()
 end
-GW.AddForProfiling("Actionbars2", "showBackdrop", showBackdrop)
+AFP("showBackdrop", showBackdrop)
+
+local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
+    button.HotKey:ClearAllPoints()
+    if isPetButton or isStanceButton then
+        button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 5)
+    elseif isMainBar then
+        button.HotKey:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
+        button.HotKey:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+        button.HotKey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINED")
+        button.HotKey:SetTextColor(1, 1, 1)
+    else
+        button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 0)
+    end
+    button.HotKey:SetJustifyH("CENTER")
+end
+GW.FixHotKeyPosition = FixHotKeyPosition
 
 local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
     local btn = _G[buttonName]
@@ -384,7 +400,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn.Count:ClearAllPoints()
         btn.Count:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
         btn.Count:SetJustifyH("RIGHT")
-        btn.Count:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
+        btn.Count:SetFont(UNIT_NAME_FONT, 16, "OUTLINED")
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 
@@ -464,11 +480,116 @@ local function main_OnEvent(self, event)
     if event == "PLAYER_EQUIPMENT_CHANGED" then
         actionBarEquipUpdate()
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
-        local forceCombat = (event == "PLAYER_REGEN_DISABLED")
-        fadeCheck(self, forceCombat)
+        local forceCombat = event == "PLAYER_REGEN_DISABLED"
+        fadeCheck(MainMenuBar, forceCombat)
+    elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
+        C_Timer.After(1.1, function()
+            local createdLayout = false
+            GW.Libs.LEMO:LoadLayouts()
+            if GW.Libs.LEMO:GetActiveLayout() ~= "GW2_Layout" then
+                if not GW.Libs.LEMO:DoesLayoutExist("GW2_Layout") then
+                    GW.Libs.LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
+                    createdLayout = true
+                end
+                GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
+                if createdLayout then
+                    GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.IconSize, 5)
+                    GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.HideBarArt, 1)
+                    GW.Libs.LEMO:SetFrameSetting(MultiBarBottomLeft, Enum.EditModeActionBarSetting.IconSize, 5)
+                    GW.Libs.LEMO:SetFrameSetting(MultiBarBottomRight, Enum.EditModeActionBarSetting.IconSize, 5)
+                    GW.Libs.LEMO:SetFrameSetting(MultiBarRight, Enum.EditModeActionBarSetting.IconSize, 5)
+                    GW.Libs.LEMO:SetFrameSetting(MultiBarLeft, Enum.EditModeActionBarSetting.IconSize, 5)
+                    GW.Libs.LEMO:SetFrameSetting(MultiBar5, Enum.EditModeActionBarSetting.IconSize, 5)
+                    GW.Libs.LEMO:SetFrameSetting(MultiBar6, Enum.EditModeActionBarSetting.IconSize, 5)
+                    GW.Libs.LEMO:SetFrameSetting(MultiBar7, Enum.EditModeActionBarSetting.IconSize, 5)
+                    -- Main Actionbar
+                    GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal)
+                    GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumRows, 1)
+                    GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumIcons, 12)
+                    GW.Libs.LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.HUD_SCALE) or 1)))
+
+                    -- PossessActionBar
+                    GW.Libs.LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)
+                end
+                GW.Libs.LEMO:ApplyChanges()
+            end
+        end)
+    end
+
+    -- keep actionbutton style
+    if event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_LEVEL_UP" then
+        for i = 1, 12 do
+            setActionButtonStyle("ActionButton" .. i)
+        end
     end
 end
-GW.AddForProfiling("Actionbars2", "main_OnEvent", main_OnEvent)
+AFP("main_OnEvent", main_OnEvent)
+
+local function helper_OnEvent(_, event, ...)
+    --Debug("helper event", event, ...)
+    if (event == "ACTION_RANGE_CHECK_UPDATE") then
+        helper_RangeUpdate(...)
+    end
+end
+
+local function skinMainBar()
+    local bar = MainMenuBar
+
+    bar.gw_Buttons = {}
+    for i = 1, 12 do
+        local btn = _G["ActionButton" .. i]
+        bar.gw_Buttons[i] = btn
+
+        if btn then
+            btn.SlotArt = nil
+
+            local hotkey = _G["ActionButton" .. i .. "HotKey"]
+            btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+
+            btn.hkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(), "GwActionHotkeyBackdropTmpl")
+            btn.hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
+            btn.hkBg.texture:SetParent(hotkey:GetParent())
+            setActionButtonStyle("ActionButton" .. i)
+            updateHotkey(btn)
+            saveVertexColor(btn.icon, btn.icon:GetVertexColor())
+            hooksecurefunc(btn.icon, "SetVertexColor", saveVertexColor)
+            updateActionbarBorders(btn)
+
+            hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
+            hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
+            hotkey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINED")
+            hotkey:SetTextColor(1, 1, 1)
+
+            if IsEquippedAction(btn.action) then
+                local borname = "ActionButton" .. i .. "Border"
+                if _G[borname] then
+                    _G[borname]:SetVertexColor(0, 1, 0, 1)
+                end
+            end
+
+            local rangeIndicator = CreateFrame("FRAME", nil, hotkey:GetParent(), "GwActionRangeIndicatorTmpl")
+            rangeIndicator:SetFrameStrata("BACKGROUND")
+            rangeIndicator:SetPoint("TOPLEFT", btn, "BOTTOMLEFT", -1, -2)
+            rangeIndicator:SetPoint("TOPRIGHT", btn, "BOTTOMRIGHT", 1, -2)
+            rangeIndicator.texture:SetVertexColor(147 / 255, 19 / 255, 2 / 255)
+            rangeIndicator:Hide()
+
+            btn.gw_RangeIndicator = rangeIndicator
+        end
+    end
+
+   -- event/update handlers
+    --AddUpdateCB(actionBar_OnUpdate, fmActionbar)
+    local f = CreateFrame("Frame")
+    GW.actionbar_helper_frame = f
+    f:SetScript("OnEvent", helper_OnEvent)
+    --f:RegisterEvent("ACTION_USABLE_CHANGED")
+    f:RegisterEvent("ACTION_RANGE_CHECK_UPDATE")
+    --helperFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+    --helperFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    --helperFrame:RegisterEvent("PLAYER_LEVEL_UP")
+end
+AFP("skinMainBar", skinMainBar)
 
 local function updateMainBar()
     local fmActionbar = MainMenuBarArtFrame
@@ -511,7 +632,7 @@ local function updateMainBar()
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
-            hotkey:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
+            hotkey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINED")
             hotkey:SetTextColor(1, 1, 1)
             btn.changedColor = false
             btn.rangeIndicatorSetting = rangeIndicatorSetting
