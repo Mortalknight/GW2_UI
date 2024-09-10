@@ -231,9 +231,9 @@ AFP("statusBarSetValue", statusBarSetValue)
 
 local function CreateObjectiveNormal(name, parent)
     local f = CreateFrame("Frame", name, parent, "GwQuesttrackerObjectiveNormal")
-    f.ObjectiveText:SetFont(UNIT_NAME_FONT, 16)
+    f.ObjectiveText:SetFont(UNIT_NAME_FONT, 14)
     f.ObjectiveText:SetShadowOffset(-1, 1)
-    f.StatusBar.progress:SetFont(UNIT_NAME_FONT, 14)
+    f.StatusBar.progress:SetFont(UNIT_NAME_FONT, 12)
     f.StatusBar.progress:SetShadowOffset(-1, 1)
 
     if f.StatusBar.animationOld == nil then
@@ -305,7 +305,7 @@ AFP("blockOnLeave", blockOnLeave)
 
 local function CreateTrackerObject(name, parent)
     local f = CreateFrame("Button", name, parent, "GwQuesttrackerObject")
-    f.Header:SetFont(UNIT_NAME_FONT, 16)
+    f.Header:SetFont(UNIT_NAME_FONT, 14)
     f.SubHeader:SetFont(UNIT_NAME_FONT, 14)
     f.Header:SetShadowOffset(1, -1)
     f.SubHeader:SetShadowOffset(1, -1)

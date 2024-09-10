@@ -460,7 +460,49 @@ local function GwSkinScrollBar(frame)
     end
 end
 
-local function GwSkinDropDownMenu(frame, buttonPaddindX)
+local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdownTag, width)
+    local text = frame.Text
+    if frame.Arrow then frame.Arrow:SetAlpha(0) end
+
+    if not width or width == nil then
+        width = 155
+    end
+
+    frame:SetWidth(width)
+    frame:GwStripTextures()
+
+    if backdropTemplate then
+        frame:GwCreateBackdrop(backdropTemplate, true)
+        frame.backdrop:SetBackdropColor(0, 0, 0)
+    else
+        frame:GwCreateBackdrop(GW.BackdropTemplates.StatusBar)
+    end
+    frame:SetFrameLevel(frame:GetFrameLevel() + 2)
+    frame.backdrop:SetPoint("TOPLEFT", 5, -2)
+    frame.backdrop:SetPoint("BOTTOMRIGHT", -2, -2)
+
+    local tex = frame:CreateTexture(nil, 'ARTWORK')
+    tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
+    tex:SetPoint('RIGHT', frame.backdrop, -3, 0)
+    tex:SetRotation(3.14)
+    tex:SetSize(14, 14)
+
+    if text then
+        text:ClearAllPoints()
+        text:SetPoint("LEFT", frame, "LEFT", 8, 0)
+        text:SetFont(UNIT_NAME_FONT, 12, "")
+        text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+        text:SetHeight(frame:GetHeight())
+        text:SetJustifyH("LEFT")
+        text:SetJustifyV("MIDDLE")
+    end
+
+    if hookLayout then
+        HandleBlizzardRegions(frame)
+    end
+end
+
+local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textBoxRightOffset)
     local frameName = frame.GetName and frame:GetName()
     local button = frame.Button or frameName and (_G[frameName .. "Button"] or _G[frameName .. "_Button"])
     local text = frameName and _G[frameName .. "Text"] or frame.Text
@@ -492,7 +534,7 @@ local function GwSkinDropDownMenu(frame, buttonPaddindX)
     if text then
         text:ClearAllPoints()
         text:SetPoint("RIGHT", button, "LEFT", -2, 0)
-        text:SetFont(UNIT_NAME_FONT, 14, "")
+        text:SetFont(UNIT_NAME_FONT, 12, "")
         text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
         text:SetHeight(frame:GetHeight())
         text:SetJustifyV("MIDDLE")
