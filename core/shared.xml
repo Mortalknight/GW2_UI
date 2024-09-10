@@ -15,7 +15,7 @@
             <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="14"/>
         </Member>
         <Member alphabet="russian">
-            <Font font="Interface/AddOns/GW2_UI/fonts/menomonia.ttf" height="14"/>
+            <Font font="Interface/AddOns/GW2_UI/fonts/menomonia_old.ttf" height="14"/>
         </Member>
     </FontFamily>
 
@@ -33,7 +33,7 @@
             <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="10"/>
         </Member>
         <Member alphabet="russian">
-            <Font font="Interface/AddOns/GW2_UI/fonts/menomonia.ttf" height="10"/>
+            <Font font="Interface/AddOns/GW2_UI/fonts/menomonia_old.ttf" height="10"/>
         </Member>
     </FontFamily>
 
@@ -59,7 +59,7 @@
             <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="16"/>
         </Member>
         <Member alphabet="russian">
-            <Font font="Interface/AddOns/GW2_UI/fonts/menomonia.ttf" height="16"/>
+            <Font font="Interface/AddOns/GW2_UI/fonts/menomonia_old.ttf" height="16"/>
         </Member>
     </FontFamily>
     <Font name="gw_button_font_menu_light" inherits="GW_Menu_Button_Font" virtual="true">
