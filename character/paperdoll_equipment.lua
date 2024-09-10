@@ -918,8 +918,8 @@ local function LoadPDBagList(fmMenu)
     fmGPDS:RegisterEvent("CHARACTER_ITEM_FIXUP_NOTIFICATION")
     fmGPDS:RegisterEvent("UNIT_NAME_UPDATE")
 
-    fmGDR.characterName:SetFont(UNIT_NAME_FONT, 14)
-    fmGDR.characterData:SetFont(UNIT_NAME_FONT, 12)
+    fmGDR.characterName:SetFont(UNIT_NAME_FONT, 16)
+    fmGDR.characterData:SetFont(UNIT_NAME_FONT, 14)
     fmGDR.itemLevel:SetFont(UNIT_NAME_FONT, 24)
     local color = GWGetClassColor(GW.myclass, true)
 
