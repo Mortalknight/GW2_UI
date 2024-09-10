@@ -325,7 +325,7 @@ local function LoadHealthGlobe()
 
 
     -- set text/font stuff
-    hg.hSize = 14
+    hg.hSize = 16
     if hg.absorbTextSetting == "BOTH" then
         hg.aSize = 12
         hg.text_a:ClearAllPoints()
@@ -337,7 +337,7 @@ local function LoadHealthGlobe()
     hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
     hg.text_h.value:SetShadowColor(1, 1, 1, 0)
 
-    hg.text_a.value:SetFont(DAMAGE_TEXT_FONT, hg.aSize)
+    hg.text_a.value:SetFont(DAMAGE_TEXT_FONT, 18)
     hg.text_a.value:SetShadowColor(1, 1, 1, 0)
 
     for i, v in ipairs(hg.text_h.shadow) do
