@@ -274,6 +274,7 @@ local function SkinLookingForGroupFrames()
         bu.arrow:SetPoint("RIGHT", bu, "RIGHT", 0, 0)
         bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow")
 
+        bu.name:SetFont(UNIT_NAME_FONT, 16)
         bu.name:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
         bu.name:SetJustifyH("LEFT")
         bu.name:SetPoint("LEFT", bu, "LEFT", 5, 0)
