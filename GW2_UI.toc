@@ -91,6 +91,7 @@ settings\moveableFrameHandler.lua
 settings\credits.lua
 settings\panel_overview.lua
 settings\panel_overview.xml
+settings\panel_fonts.lua
 
 core\EditMode.lua
 

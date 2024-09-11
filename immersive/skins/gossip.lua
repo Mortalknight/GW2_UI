@@ -214,7 +214,7 @@ local function skinGossipOption(self)
             hl:SetAlpha(0.2)
             AddToAnimation("GOSSIP_OPTIONHOVER", 0, 1, GetTime(), 0.2,
                 function()
-                    local p = animations["GOSSIP_OPTIONHOVER"].progress
+                    local p = GW.animations["GOSSIP_OPTIONHOVER"].progress
                     p = math.max(0.2, p)
                     hl:SetAlpha(p)
                 end
@@ -363,7 +363,7 @@ local function updateModelFrame(self, unit, isDebugUpdate) -- needs to be tested
         if not isDebugUpdate then
             AddToAnimation("GOSSIP_MODEL", 0, 1, GetTime(), 0.8,
                 function()
-                    local p = animations["GOSSIP_MODEL"].progress
+                    local p = GW.animations["GOSSIP_MODEL"].progress
                     p = math.min(1, math.max(0, (p - 0.5) / 0.5))
                     self.modelFrame:SetAlpha(p)
                 end
@@ -653,7 +653,7 @@ local function LoadGossipSkin()
 
         AddToAnimation("GOSSIP_FRAME_FADE", 0, 1, GetTime(), 0.4,
             function()
-                local p = animations["GOSSIP_FRAME_FADE"].progress
+                local p = GW.animations["GOSSIP_FRAME_FADE"].progress
                 GossipFrame:SetAlpha(math.max(0.5, p))
                 portraitFrame.npcNameLabel:SetWidth(200 * p)
                 portraitFrame.npcNameLabel:SetTexCoord(0, p, 0, 1)
