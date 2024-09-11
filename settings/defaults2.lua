@@ -51,7 +51,7 @@ GW.globalDefault = {
 
         FONT_STYLE_TEMPLATE = "GW2",
         FONT_NORMAL = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf",
-        CUSTOM_FONT_NORMAL = false,
+        CUSTOM_FONT_NORMAL = "NONE",
         FONTS_BIG_HEADER_SIZE = 18,
         FONTS_HEADER_SIZE = 16,
         FONTS_NORMAL_SIZE = 14,

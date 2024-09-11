@@ -22,9 +22,13 @@ local function LoadFontsPanel(sWindow)
     createCat(L["Fonts"], nil, p, { p })
     settingsMenuAddButton(L["Fonts"], p, {})
 
-    local fonts = {}
+    local fontsKeys = {}
+    local fontsValues = {}
+    tinsert(fontsKeys, "NONE")
+    tinsert(fontsValues, L["Use GW2 Text Style Template"])
     for _, font in next, GW.Libs.LSM:List("font") do
-        tinsert(fonts, font)
+        tinsert(fontsKeys, font)
+        tinsert(fontsValues, font)
     end
 
     addOptionDropdown(
@@ -62,11 +66,13 @@ local function LoadFontsPanel(sWindow)
                 GW.settings["FONTS_OUTLINE"] = ""
                 GW.settings["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
             end
-            GW.settings.CUSTOM_FONT_NORMAL = false
+            GW.settings.CUSTOM_FONT_NORMAL = "NONE"
             GW.updateSettingsFrameSettingsValue("FONTS_BIG_HEADER_SIZE", GW.settings["FONTS_BIG_HEADER_SIZE"], false)
             GW.updateSettingsFrameSettingsValue("FONTS_HEADER_SIZE", GW.settings["FONTS_HEADER_SIZE"], false)
             GW.updateSettingsFrameSettingsValue("FONTS_NORMAL_SIZE", GW.settings["FONTS_NORMAL_SIZE"], false)
             GW.updateSettingsFrameSettingsValue("FONTS_SMALL_SIZE", GW.settings["FONTS_SMALL_SIZE"], false)
+
+            GW.ShowRlPopup = true -- triggers reload window
         end,
         { "GW2", "GW2_LEGACY", "BLIZZARD", "HIGH_CONTRAST" },
         {
@@ -74,7 +80,9 @@ local function LoadFontsPanel(sWindow)
             "GW 2 Legacy",
             "Blizzard",
             "Hight Contrast",
-        }
+        },
+        nil,
+        {["CUSTOM_FONT_NORMAL"] = {"NONE"}}
     )
 
     addGroupHeader(p.scroll.scrollchild, L["Custom Font Settings"])
@@ -85,16 +93,21 @@ local function LoadFontsPanel(sWindow)
         nil,
         "CUSTOM_FONT_NORMAL",
         function()
-
+            GW.ShowRlPopup = true -- triggers reload window
         end,
-        fonts,
-        fonts,
+        fontsKeys,
+        fontsValues,
         nil,
         nil,
         nil,
         nil,
         nil,
-        false
+        false,
+        nil,
+        nil,
+        nil,
+        nil,
+        true
     )
     addOptionSlider(
         p.scroll.scrollchild,
