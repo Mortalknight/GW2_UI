@@ -103,14 +103,23 @@ local function SkinLookingForGroupFrames()
     })
     CreateFrame("Frame", "GwPVEFrameLeftPanel", PVEFrame, "GwWindowLeftPanel")
 
+    -- copied from blizzard need to icon switching
+    local panels = {
+        { name = "GroupFinderFrame", addon = nil },
+        { name = "PVPUIFrame", addon = "Blizzard_PVPUI" },
+        { name = "ChallengesFrame", addon = "Blizzard_ChallengesUI", check = function() return UnitLevel("player") >= GetMaxLevelForPlayerExpansion(); end, hideLeftInset = true },
+        { name = "DelvesDashboardFrame", addon = "Blizzard_DelvesDashboardUI", check = function() return GetExpansionLevel() >= LE_EXPANSION_WAR_WITHIN end, hideLeftInset = true },
+    }
+
     local tabs = {PVEFrameTab1, PVEFrameTab2, PVEFrameTab3, PVEFrameTab4}
     for idx, tab in pairs(tabs) do
         if not tab.isSkinned then
-			local id = idx == 1 and "dungeon" or idx == 2 and "pvp" or idx == 3 and "mythic" or idx == 4 and "delve" or "dungeon"
-			local iconTexture = "Interface/AddOns/GW2_UI/Textures/Groups/tabicon_" .. id
+            local id = idx == 1 and "dungeon" or idx == 2 and "pvp" or idx == 3 and "mythic" or idx == 4 and "delve" or "dungeon"
+            local iconTexture = "Interface/AddOns/GW2_UI/Textures/Groups/tabicon_" .. id
+
 
             tab:HookScript("OnClick", function(self)
-                if self:IsEnabled() then return end -- wird, disabled tabs are marked as enabled and other way round
+                if panels[self:GetID()].check and not  panels[self:GetID()].check() then return end
                 if idx == 1 then
                     PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon")
                 elseif idx == 2 then
