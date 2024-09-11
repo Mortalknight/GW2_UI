@@ -228,7 +228,7 @@ local function AddOptionText(panel, name, desc, optionName, callback, multiline,
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, isSound, noNewLine, forceNewLine, groupHeaderName, isPrivateSetting)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, isSound, noNewLine, forceNewLine, groupHeaderName, isPrivateSetting, isFont)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
 
     opt.options = {}
@@ -239,6 +239,7 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
     opt.tooltipType = tooltipType
     opt.hasSound = isSound
     opt.noNewLine = noNewLine
+    opt.isFont = isFont
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
@@ -368,6 +369,10 @@ local function loadDropDown(scrollFrame)
                     slot.soundButton:Hide()
                 else
                     slot.soundButton:Show()
+                end
+
+                if scrollFrame.data.isFont then
+                    slot.string:SetFont(GW.Libs.LSM:Fetch("font", scrollFrame.data.options[idx]), 10, "")
                 end
 
                 slot.string:SetText(scrollFrame.data.options_names[idx])

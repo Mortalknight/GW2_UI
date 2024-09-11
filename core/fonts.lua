@@ -35,12 +35,9 @@ local function getNormalFontFamily()
     -- get our saved font
     local activeFont = GW.settings.FONT_NORMAL
     -- if we use a custom font, fetch it from shared media
-    if GW.settings.CUSTOM_FONT_NORMAL~=nil and GW.settings.CUSTOM_FONT_NORMAL~=false then 
-        activeFont =  GW.Libs.LSM:Fetch("font", GW.settings.CUSTOM_FONT_NORMAL)
-    end
-    -- if we the user has not selected a custom font or if we are using the blizzard template;
-    -- we replace the font with the supported one
-    if not GW.settings.CUSTOM_FONT_NORMAL and GW.settings.FONT_STYLE_TEMPLATE ~= "BLIZZARD" then
+    if GW.settings.CUSTOM_FONT_NORMAL ~= "NONE" then
+        activeFont = GW.Libs.LSM:Fetch("font", GW.settings.CUSTOM_FONT_NORMAL)
+    elseif GW.settings.FONT_STYLE_TEMPLATE ~= "BLIZZARD" then
         if locale == "koKR" then
             activeFont = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
         elseif locale == "zhCN" or locale == "zhTW" then
@@ -163,6 +160,7 @@ local function LoadFonts()
     setFont(GameFontNormalMed1, normal)
     setFont(GameFontNormalMed2, normal)
     setFont(GameFontNormalMed3, normal)
+    setFont(GameFontNormalSmall, normal)
     setFont(GameFontNormalSmall2, normal)
     setFont(Number11Font, narrow)
     setFont(Number11Font, narrow)
