@@ -296,8 +296,34 @@ local function encounterJournalSkin()
     EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetShadowColor(0, 0, 0, 0)
     EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetShadowOffset(1, -1)
 
-    hooksecurefunc(EncounterJournalMonthlyActivitiesFrame.FilterList.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
-    hooksecurefunc(EncounterJournalMonthlyActivitiesFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
+    local loaded
+    hooksecurefunc(EncounterJournalMonthlyActivitiesFrame.FilterList.ScrollBox, "Update", function(frame)
+        GW.HandleItemListScrollBoxHover(frame)
+        if not loaded then
+            loaded = true
+            frame.view:SetElementExtent(28)
+        end
+        for _, child in next, {frame.ScrollTarget:GetChildren()} do
+            if not child.gwHooked then
+                child.Label:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+                child:SetHeight(28)
+                child.Texture:SetAlpha(0)
+                child.gwHooked = true
+                hooksecurefunc(child, "UpdateStateInternal", function(_, selected)
+                    child.Selected:SetShown(selected)
+                    child.Label:SetFontObject(gw_button_font_menu_light)
+                end)
+            end
+
+        end
+    end)
+    EncounterJournalMonthlyActivitiesFrame.FilterList.ScrollBox:Update()
+    hooksecurefunc(EncounterJournalMonthlyActivitiesFrame.ScrollBox, "Update", function(frame)
+        GW.HandleItemListScrollBoxHover(frame)
+        for _, child in next, {frame.ScrollTarget:GetChildren()} do
+           child.TextContainer.NameText:SetTextColor(1, 1, 1)
+        end
+    end)
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
     GW.HandleScrollControls(InstanceSelect)
