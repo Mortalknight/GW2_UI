@@ -99,7 +99,7 @@ local function SkinLookingForGroupFrames()
     GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon", {
         LFDQueueFrame,
         RaidFinderQueueFrame,
-        LFGListFrame
+        LFGListPVEStub
     })
     CreateFrame("Frame", "GwPVEFrameLeftPanel", PVEFrame, "GwWindowLeftPanel")
 
@@ -833,7 +833,7 @@ local function ApplyPvPUISkin()
     HonorFrame:GwStripTextures()
     ConquestFrame:GwStripTextures()
 
-    for _, v in pairs({HonorFrame, ConquestFrame  }) do
+    for _, v in pairs({ HonorFrame, ConquestFrame, LFGListPVPStub }) do
         local detailBg = v:CreateTexture(nil, "BACKGROUND", nil, 0)
         detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", 0, -10)
         detailBg:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", 0, 0)
@@ -841,6 +841,10 @@ local function ApplyPvPUISkin()
         detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
         v.tex = detailBg
     end
+
+    LFGListPVPStub.tex:ClearAllPoints()
+    LFGListPVPStub.tex:SetPoint("TOPLEFT", LFGListPVPStub, "TOPLEFT", 0, -31)
+    LFGListPVPStub.tex:SetPoint("BOTTOMRIGHT", LFGListPVPStub, "BOTTOMRIGHT", 0, 0)
 
     GW.HandleTrimScrollBar(HonorFrame.SpecificScrollBar, true)
     GW.HandleScrollControls(HonorFrame, "SpecificScrollBar")
@@ -1021,6 +1025,8 @@ local function ApplyChallengesUISkin()
 
     ChallengesFrame:DisableDrawLayer("BACKGROUND")
     ChallengesFrameInset:GwStripTextures()
+
+    ChallengesFrame.WeeklyInfo.Child.Description:SetTextColor(1, 1, 1)
 
     -- Mythic+ KeyStoneFrame
     local tex = ChallengesKeystoneFrame:CreateTexture(nil, "BACKGROUND")
