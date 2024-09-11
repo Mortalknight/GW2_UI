@@ -16,7 +16,7 @@ GW.AddForProfiling("orderbar", "orderFollower_OnEnter", orderFollower_OnEnter)
 
 local function createFollower(self, i)
     local newFrame = CreateFrame("FRAME", "GwOrderHallFollower" .. i, self, "GwOrderHallFollower")
-    newFrame.Count:SetFont(UNIT_NAME_FONT, 14)
+    newFrame.Count:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     newFrame.Count:SetShadowOffset(1, -1)
     newFrame:SetScript("OnEnter", orderFollower_OnEnter)
     newFrame:SetScript("OnLeave", GameTooltip_Hide)
@@ -73,7 +73,7 @@ GW.AddForProfiling("orderbar", "orderBar_OnEvent", orderBar_OnEvent)
 
 local function LoadOrderBar()
     CreateFrame("FRAME", "GwOrderhallBar", UIParent, "GwOrderhallBar")
-    GwOrderhallBar.currency:SetFont(UNIT_NAME_FONT, 14)
+    GwOrderhallBar.currency:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     GwOrderhallBar.currency:SetShadowOffset(1, -1)
 
     GwOrderhallBar:RegisterUnitEvent("UNIT_AURA", "player")

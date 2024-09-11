@@ -137,7 +137,7 @@ local function LoadWhoList(tabContainer)
     WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:Hide()
     WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:SetPoint("TOPLEFT")
     WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:SetPoint("BOTTOMRIGHT")
-    WhoWindow.list.ColumnHeader2.Dropdown.Text:SetFont(UNIT_NAME_FONT, 12)
+    WhoWindow.list.ColumnHeader2.Dropdown.Text:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
 
     WhoFrameDropdown_OnLoad(WhoWindow.list.ColumnHeader2.Dropdown)
     WhoWindow.list.ColumnHeader2.Dropdown:SetScript("OnShow", function() whoSortValue = 1 end)
@@ -148,13 +148,13 @@ local function LoadWhoList(tabContainer)
         self.HighlightTexture:Hide()
     end)
     WhoWindow.list.ColumnHeader2.Dropdown:HookScript("OnClick", function(self)
-        self.Text:SetFont(UNIT_NAME_FONT, 12)
+        self.Text:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         self.Text:SetShadowOffset(0, 0)
         self.Text:SetTextColor(0, 0, 0)
         self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     end)
     WhoWindow.list.ColumnHeader2.Dropdown:HookScript("OnMouseDown", function(self)
-        self.Text:SetFont(UNIT_NAME_FONT, 12)
+        self.Text:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         self.Text:SetShadowOffset(0, 0)
         self.Text:SetTextColor(0, 0, 0)
         self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
@@ -166,7 +166,7 @@ local function LoadWhoList(tabContainer)
         local r = {frame:GetRegions()}
         for _,c in pairs(r) do
             if c:GetObjectType() == "FontString" then
-                c:SetFont(UNIT_NAME_FONT, 12)
+                c:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
             end
         end
     end
@@ -183,7 +183,7 @@ local function LoadWhoList(tabContainer)
     WhoWindow.list.ColumnHeader2.Dropdown.tex:SetPoint("BOTTOMRIGHT", WhoWindow.list.ColumnHeader2.Dropdown, "BOTTOMRIGHT", -2, 0)
     WhoWindow.list.ColumnHeader2.Dropdown.Arrow:ClearAllPoints()
     WhoWindow.list.ColumnHeader2.Dropdown.Arrow:SetPoint("RIGHT", WhoWindow.list.ColumnHeader2.Dropdown, "RIGHT", -5, -3)
-    WhoWindow.list.ColumnHeader2.Dropdown.Text:SetFont(UNIT_NAME_FONT, 12)
+    WhoWindow.list.ColumnHeader2.Dropdown.Text:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     WhoWindow.list.ColumnHeader2.Dropdown.Text:SetShadowOffset(0, 0)
     WhoWindow.list.ColumnHeader2.Dropdown.Text:SetTextColor(0, 0, 0)
     WhoWindow.list.ColumnHeader2.Dropdown:GwSkinButton(false, false, true)
@@ -211,7 +211,7 @@ local function LoadWhoList(tabContainer)
 
     for i = 1, #WhoWindow.list.ScrollFrame.buttons do
         local slot = WhoWindow.list.ScrollFrame.buttons[i]
-        slot.Name:SetFont(UNIT_NAME_FONT, 12)
+        slot.Name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         slot.Variable:SetFont(UNIT_NAME_FONT, 11)
         slot.Level:SetFont(UNIT_NAME_FONT, 11)
         slot.Class:SetFont(UNIT_NAME_FONT, 11)

@@ -193,11 +193,11 @@ local function raidInfoSetup(raidinfo)
         slot:SetWidth(raidinfo:GetWidth() - 12)
         slot.item.name:SetFont(DAMAGE_TEXT_FONT, 14)
         slot.item.name:SetTextColor(1, 1, 1)
-        slot.item.difficult:SetFont(UNIT_NAME_FONT, 12)
+        slot.item.difficult:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         slot.item.difficult:SetTextColor(1, 1, 1)
         slot.item.reset:SetFont(DAMAGE_TEXT_FONT, 12)
         slot.item.reset:SetTextColor(1, 1, 1)
-        slot.item.extended:SetFont(UNIT_NAME_FONT, 12)
+        slot.item.extended:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         slot.item.extended:SetTextColor(1, 1, 1)
         slot.item.extendButton:SetNormalFontObject(gw_button_font_black_small)
         slot.item.extendButton:SetHighlightFontObject(gw_button_font_black_small)
@@ -313,8 +313,8 @@ local function UpdateTokenSkins(frame)
             end
 
             if child.Content then
-                child.Content.Name:SetFont(UNIT_NAME_FONT, 14)
-                child.Content.Count:SetFont(UNIT_NAME_FONT, 14)
+                child.Content.Name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+                child.Content.Count:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
                 child.Content.WatchedCurrencyCheck:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon")
             end
 
@@ -331,8 +331,8 @@ local function UpdateTokenSkins(frame)
                     child.gwZebra:SetPoint("TOPLEFT", child, "TOPLEFT")
                     child.gwZebra:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT")
 
-                    child.Content.Name:SetFont(UNIT_NAME_FONT, 14)
-                    child.Content.Count:SetFont(UNIT_NAME_FONT, 14)
+                    child.Content.Name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+                    child.Content.Count:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
                 end
             end
 
@@ -398,11 +398,11 @@ local function SkinTokenFrame()
     CurrencyTransferMenu.SourceSelector.SourceLabel:SetTextColor(1, 1, 1)
     CurrencyTransferMenu.SourceSelector.PlayerName:SetFont(UNIT_NAME_FONT, 13)
     CurrencyTransferMenu.SourceSelector.PlayerName:SetTextColor(1, 1, 1)
-    CurrencyTransferMenu.AmountSelector.TransferAmountLabel:SetFont(UNIT_NAME_FONT, 12)
+    CurrencyTransferMenu.AmountSelector.TransferAmountLabel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     CurrencyTransferMenu.AmountSelector.TransferAmountLabel:SetTextColor(1, 1, 1)
-    CurrencyTransferMenu.SourceBalancePreview.Label:SetFont(UNIT_NAME_FONT, 12)
+    CurrencyTransferMenu.SourceBalancePreview.Label:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     CurrencyTransferMenu.SourceBalancePreview.Label:SetTextColor(1, 1, 1)
-    CurrencyTransferMenu.PlayerBalancePreview.Label:SetFont(UNIT_NAME_FONT, 12)
+    CurrencyTransferMenu.PlayerBalancePreview.Label:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     CurrencyTransferMenu.PlayerBalancePreview.Label:SetTextColor(1, 1, 1)
 
     CurrencyTransferMenu:GwStripTextures()

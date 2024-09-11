@@ -126,12 +126,12 @@ local function setAuraType(self, typeAura)
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 1, -1)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, 1)
         self.duration:SetFont(UNIT_NAME_FONT, 11)
-        self.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
+        self.stacks:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "OUTLINED")
     elseif typeAura == "bigBuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -3, 3)
-        self.duration:SetFont(UNIT_NAME_FONT, 14)
-        self.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
+        self.duration:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+        self.stacks:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE, "OUTLINED")
     end
 
     self.typeAura = typeAura

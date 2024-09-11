@@ -56,7 +56,7 @@ GW.globalDefault = {
         FONTS_HEADER_SIZE = 16,
         FONTS_NORMAL_SIZE = 14,
         FONTS_SMALL_SIZE = 12,
-        FONTS_OUTLINE = nil,
+        FONTS_OUTLINE = "",
 
         TOOLTIP_MOUSE = false,
         ADVANCED_TOOLTIP = true,

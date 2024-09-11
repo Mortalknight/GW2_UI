@@ -35,7 +35,7 @@ GW.UpdateCastingBarSettings = UpdateSettings
 local function createNewBarSegment(self)
     local segment = CreateFrame("Frame", self:GetName() .. "Segment" .. #self.segments + 1, self, "GwCastingBarSegmentSep")
 
-    segment.rank:SetFont(UNIT_NAME_FONT, 14, "")
+    segment.rank:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     segment.rank:SetShadowOffset(1, -1)
     self.segments[#self.segments + 1] = segment
 
@@ -380,9 +380,9 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     GwCastingBar.latency = GwCastingBar.progress.latency;
    
 
-    GwCastingBar.name:SetFont(UNIT_NAME_FONT, 14)
+    GwCastingBar.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     GwCastingBar.name:SetShadowOffset(1, -1)
-    GwCastingBar.time:SetFont(UNIT_NAME_FONT, 14)
+    GwCastingBar.time:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     GwCastingBar.time:SetShadowOffset(1, -1)
 
     GwCastingBar:SetAlpha(0)

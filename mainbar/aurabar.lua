@@ -37,7 +37,7 @@ local function setLongCD(self, stackCount)
     if stackCount and stackCount > 99 then
         self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINED")
     else
-        self.status.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
+        self.status.stacks:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "OUTLINED")
     end
 
     self.status:ClearAllPoints()
@@ -59,7 +59,7 @@ local function setShortCD(self, expires, duration, stackCount)
     if stackCount and stackCount > 99 then
         self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINED")
     else
-        self.status.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
+        self.status.stacks:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE, "OUTLINED")
     end
 
     self.status:ClearAllPoints()

@@ -95,7 +95,7 @@ local function UpdateAzeriteItem(self)
 
         self.AzeriteTexture:SetAlpha(0)
         self.RankFrame.Texture:SetTexture()
-        self.RankFrame.Label:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+        self.RankFrame.Label:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "THINOUTLINED")
     end
 end
 
@@ -461,7 +461,7 @@ local function getStatListFrame(self, i)
     end
 
     local fm = CreateFrame("Frame", "GwPaperDollStat" .. i, self, "GwPaperDollStat")
-    fm.Value:SetFont(UNIT_NAME_FONT, 14)
+    fm.Value:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     fm.Value:SetText(ERRORS)
     fm.Label:SetFont(UNIT_NAME_FONT, 1)
     fm.Label:SetTextColor(0, 0, 0, 0)
@@ -479,7 +479,7 @@ local function getDurabilityListFrame(self)
     end
 
     local fm = CreateFrame("Frame", "GwPaperDollStatDurability", self, "GwPaperDollStat")
-    fm.Value:SetFont(UNIT_NAME_FONT, 14)
+    fm.Value:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     fm.Value:SetText(ERRORS)
     fm.Label:SetFont(UNIT_NAME_FONT, 1)
     fm.Label:SetTextColor(0, 0, 0, 0)
@@ -918,8 +918,8 @@ local function LoadPDBagList(fmMenu)
     fmGPDS:RegisterEvent("CHARACTER_ITEM_FIXUP_NOTIFICATION")
     fmGPDS:RegisterEvent("UNIT_NAME_UPDATE")
 
-    fmGDR.characterName:SetFont(UNIT_NAME_FONT, 16)
-    fmGDR.characterData:SetFont(UNIT_NAME_FONT, 14)
+    fmGDR.characterName:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    fmGDR.characterData:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     fmGDR.itemLevel:SetFont(UNIT_NAME_FONT, 24)
     local color = GWGetClassColor(GW.myclass, true)
 

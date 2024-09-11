@@ -72,9 +72,9 @@ local function updateBoss_Name(self)
     self.name:SetText(name)
     self.guid = UnitGUID(self.unit)
     if self.guid == UnitGUID("target") then
-        self.name:SetFont(UNIT_NAME_FONT, 14)
+        self.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     else
-        self.name:SetFont(UNIT_NAME_FONT, 12)
+        self.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     end
 end
 GW.AddForProfiling("bossFrames", "updateBoss_Name", updateBoss_Name)
@@ -205,7 +205,7 @@ local function registerFrame(i)
     bossFrame:EnableMouse(true)
     bossFrame:RegisterForClicks("AnyDown")
 
-    bossFrame.name:SetFont(UNIT_NAME_FONT, 12)
+    bossFrame.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     bossFrame.name:SetShadowOffset(1, -1)
     bossFrame.marker:Hide()
 

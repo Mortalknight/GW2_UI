@@ -450,7 +450,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.Count:ClearAllPoints()
         btn.Count:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
         btn.Count:SetJustifyH("RIGHT")
-        btn.Count:SetFont(UNIT_NAME_FONT, 16, "OUTLINED")
+        btn.Count:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE, "OUTLINED")
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 

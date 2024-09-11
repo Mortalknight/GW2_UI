@@ -1831,8 +1831,8 @@ local function LoadClassPowers()
     -- set a bunch of other init styling stuff
     cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
     cpf.brewmaster.debugpre = 0
-    cpf.brewmaster.stagger.indicatorText:SetFont(UNIT_NAME_FONT, 14)
-    cpf.brewmaster.ironskin.indicatorText:SetFont(UNIT_NAME_FONT, 14)
+    cpf.brewmaster.stagger.indicatorText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    cpf.brewmaster.ironskin.indicatorText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     cpf.brewmaster.ironskin.expires = 0
     cpf.staggerBar.value = 0
     cpf.staggerBar.spark = cpf.staggerBar.bar.spark

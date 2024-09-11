@@ -544,7 +544,7 @@ local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdown
     if text then
         text:ClearAllPoints()
         text:SetPoint("LEFT", frame, "LEFT", 8, 0)
-        text:SetFont(UNIT_NAME_FONT, 12, "")
+        text:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
         text:SetHeight(frame:GetHeight())
         text:SetJustifyH("LEFT")
@@ -590,7 +590,7 @@ local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textB
     if text then
         text:ClearAllPoints()
         text:SetPoint("RIGHT", button, "LEFT", -2, 0)
-        text:SetFont(UNIT_NAME_FONT, 12, "")
+        text:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
         text:SetHeight(frame:GetHeight())
         text:SetJustifyV("MIDDLE")

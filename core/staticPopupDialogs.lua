@@ -68,7 +68,7 @@ StaticPopupDialogs["GW_CHANGE_PROFILE_NAME"] = {
             profileToRename["profileCreatedCharacter"] .. "\n" .. L["Last updated: "] .. changeDate
 
         -- Use hidden frame font object to calculate string width
-        GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, 14)
+        GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
         GW.HiddenFrame.HiddenString:SetText(text)
         profileToRename["profilename"] = text
         profileToRename["profileLastUpdated"] = changeDate

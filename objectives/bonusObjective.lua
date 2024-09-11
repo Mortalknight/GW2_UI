@@ -441,7 +441,7 @@ local function LoadBonusFrame()
 
     GwQuesttrackerContainerBonusObjectives.header = CreateFrame("Button", nil, GwQuesttrackerContainerBonusObjectives, "GwQuestTrackerHeader")
     GwQuesttrackerContainerBonusObjectives.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    GwQuesttrackerContainerBonusObjectives.header.title:SetFont(UNIT_NAME_FONT, 16)
+    GwQuesttrackerContainerBonusObjectives.header.title:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
     GwQuesttrackerContainerBonusObjectives.header.title:SetShadowOffset(1, -1)
     GwQuesttrackerContainerBonusObjectives.header.title:SetText(EVENTS_LABEL)
 

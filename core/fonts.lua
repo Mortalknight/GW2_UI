@@ -34,8 +34,6 @@ local function getNormalFontFamily()
     local locale = GW.mylocal
     -- get our saved font
     local activeFont = GW.settings.FONT_NORMAL
-    print(activeFont)
-
     -- if we use a custom font, fetch it from shared media
     if GW.settings.CUSTOM_FONT_NORMAL~=nil and GW.settings.CUSTOM_FONT_NORMAL~=false then 
         activeFont =  GW.Libs.LSM:Fetch("font", GW.settings.CUSTOM_FONT_NORMAL)
