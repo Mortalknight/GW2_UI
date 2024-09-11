@@ -98,7 +98,7 @@ local function SkinLookingForGroupFrames()
 
     GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon", {
         LFDQueueFrame,
-        RaidFinderFrame,
+        RaidFinderQueueFrame,
         LFGListFrame
     })
     CreateFrame("Frame", "GwPVEFrameLeftPanel", PVEFrame, "GwWindowLeftPanel")
@@ -352,12 +352,26 @@ local function SkinLookingForGroupFrames()
     LFDQueueFrameTypeDropdown:SetPoint("BOTTOMLEFT", 40, 287)
     LFDQueueFrameTypeDropdown:SetWidth(300)
     LFDQueueFrameTypeDropdownName:SetTextColor(1, 1, 1)
+    LFDQueueFrameTypeDropdownName:ClearAllPoints()
+    LFDQueueFrameTypeDropdownName:SetPoint("RIGHT", LFDQueueFrameTypeDropdown, "LEFT", 0, 0)
 
     RaidFinderFrameRoleInset:GwStripTextures()
     RaidFinderQueueFrameSelectionDropdown:GwHandleDropDownBox()
+    RaidFinderQueueFrameSelectionDropdown:ClearAllPoints()
+    RaidFinderQueueFrameSelectionDropdown:SetPoint("BOTTOMLEFT", 90, 287)
+    RaidFinderQueueFrameSelectionDropdown:SetWidth(250)
+    RaidFinderQueueFrameSelectionDropdownName:SetTextColor(1, 1, 1)
+    RaidFinderQueueFrameSelectionDropdownName:ClearAllPoints()
+    RaidFinderQueueFrameSelectionDropdownName:SetPoint("RIGHT", RaidFinderQueueFrameSelectionDropdown, "LEFT", 0, 0)
+
+
     RaidFinderFrameFindRaidButton:GwStripTextures()
     RaidFinderFrameFindRaidButton:GwSkinButton(false, true)
-    RaidFinderQueueFrame:GwStripTextures()
+
+    RaidFinderQueueFrameSelectionDropdownName:SetTextColor(1, 1, 1)
+
+    RaidFinderQueueFrameScrollFrameChildFrameTitle:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    RaidFinderQueueFrameScrollFrameChildFrameRewardsLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     --Skin Reward Items (This works for all frames, LFD, Raid, Scenario)
     hooksecurefunc("LFGRewardsFrame_SetItemButton", SkinItemButton)
@@ -466,7 +480,7 @@ local function SkinLookingForGroupFrames()
 
     hooksecurefunc(LFGListFrame.SearchPanel.ScrollBox, "Update", function(self)
         for _, child in next, { self.ScrollTarget:GetChildren()} do
-            if not child.IsSkinned then
+            if not child.IsSkinned and child.Name then
                 child.Name:SetTextColor(1, 1, 1)
                 hooksecurefunc(child.Name, "SetTextColor", GW.LockWhiteButtonColor)
                 child.IsSkinned = true
