@@ -48,63 +48,63 @@
                                   </Anchors>
                                   <Frames>
                                     <Frame parentKey="text_h" enableMouse="false">
-                                        <Size x="80" y="30"></Size>
+                                        <Size x="80" y="35"></Size>
                                         <Anchors>
                                             <Anchor point="CENTER" x="0" y="0"/>
                                         </Anchors>
                                         <Layers>
                                             <Layer level="OVERLAY">
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="80" y="30"/>
+                                                    <Size x="80" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="80" y="30"/>
+                                                    <Size x="80" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="80" y="30"/>
+                                                    <Size x="80" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="1" y="0"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString text="100,000" inherits="GameFontNormalSmall" parentArray="shadow" justifyH="CENTER">
-                                                    <Size x="80" y="30"/>
+                                                    <Size x="80" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="1"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString text="100,000" inherits="GameFontNormalSmall" parentArray="shadow" justifyH="CENTER">
-                                                    <Size x="80" y="30"/>
+                                                    <Size x="80" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="-2" y="0"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="80" y="30"/>
+                                                    <Size x="80" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="80" y="30"/>
+                                                    <Size x="80" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="2" y="0"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="80" y="30"/>
+                                                    <Size x="80" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
@@ -113,7 +113,7 @@
                                             </Layer>
                                             <Layer textureSubLevel="2" level="OVERLAY">
                                                 <FontString parentKey="value" text="100,000" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="CENTER">
-                                                    <Size x="80" y="30"/>
+                                                    <Size x="80" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER"/>
@@ -124,63 +124,63 @@
                                         </Layers>
                                     </Frame>
                                     <Frame parentKey="text_a" enableMouse="false">
-                                        <Size x="70" y="30"></Size>
+                                        <Size x="70" y="35"></Size>
                                         <Anchors>
                                             <Anchor point="CENTER" x="0" y="20"/>
                                         </Anchors>
                                         <Layers>
                                             <Layer level="OVERLAY">
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="70" y="30"/>
+                                                    <Size x="70" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="70" y="30"/>
+                                                    <Size x="70" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="70" y="30"/>
+                                                    <Size x="70" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="1" y="0"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="70" y="30"/>
+                                                    <Size x="70" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="1"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="70" y="30"/>
+                                                    <Size x="70" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="-2" y="0"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="70" y="30"/>
+                                                    <Size x="70" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="70" y="30"/>
+                                                    <Size x="70" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="2" y="0"></Anchor>
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                                                    <Size x="70" y="30"/>
+                                                    <Size x="70" y="35"/>
                                                     <Color r="1" b="1" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="2"></Anchor>
@@ -190,7 +190,7 @@
                                             </Layer>
                                             <Layer textureSubLevel="2" level="OVERLAY">
                                                 <FontString parentKey="value" text="100,000" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="CENTER">
-                                                    <Size x="70" y="30"/>
+                                                    <Size x="70" y="35"/>
                                                     <Color r="1" b="0.2" g="1"></Color>
                                                     <Anchors>
                                                         <Anchor point="CENTER"/>
