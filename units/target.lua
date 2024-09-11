@@ -15,10 +15,10 @@ end
 function GwDeBuffIcon_OnLoad(self)
     self.icon = self.debuffIcon.icon
 
-    self.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
+    self.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE, "OUTLINE")
     self.debuffIcon.stacks:SetTextColor(255, 255, 255)
 
-    self.cooldown.duration:SetFont(UNIT_NAME_FONT, 14)
+    self.cooldown.duration:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     self.cooldown.duration:SetTextColor(255, 255, 255)
 end
 

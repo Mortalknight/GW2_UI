@@ -115,7 +115,7 @@ local function LoadWQTAddonSkin()
 
     fWQT.header = CreateFrame("Button", nil, fWQT, "GwQuestTrackerHeader")
     fWQT.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    fWQT.header.title:SetFont(UNIT_NAME_FONT, 14)
+    fWQT.header.title:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     fWQT.header.title:SetShadowOffset(1, -1)
     fWQT.header.title:SetText("World Quest Tracker")
     fWQT.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)

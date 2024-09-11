@@ -38,11 +38,11 @@ local barColors = {
 
 -- Text Helper functions
 local function setSmallText(self)
-    self:SetFont(UNIT_NAME_FONT, 12)
+    self:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     self:SetTextColor(0.7, 0.7, 0.7)
 end
 local function setNormalText(self)
-    self:SetFont(UNIT_NAME_FONT, 14)
+    self:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     self:SetTextColor(1, 1, 1)
 end
 local function setTitleText(self)
@@ -1208,12 +1208,12 @@ local function skinAchevement()
     AchievementFrame.SearchBox:ClearAllPoints()
     AchievementFrame.SearchBox:SetPoint('BOTTOMLEFT', AchievementFrameCategories, 'TOPLEFT', 0, 10)
     AchievementFrame.SearchBox:SetWidth(237)
-    AchievementFrame.SearchBox:SetFont(UNIT_NAME_FONT, 14, "")
+    AchievementFrame.SearchBox:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     GW.SkinTextBox(AchievementFrame.SearchBox.Middle, AchievementFrame.SearchBox.Left, AchievementFrame.SearchBox.Right)
     AchievementFrame.SearchBox:SetHeight(26)
     AchievementFrame.SearchBox.searchIcon:Hide()
-    AchievementFrame.SearchBox:SetFont(UNIT_NAME_FONT, 14, "")
-    AchievementFrame.SearchBox.Instructions:SetFont(UNIT_NAME_FONT, 14, "")
+    AchievementFrame.SearchBox:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    AchievementFrame.SearchBox.Instructions:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     AchievementFrame.SearchBox.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
 
@@ -1226,7 +1226,7 @@ local function skinAchevement()
         local sp = AchievementFrame.SearchPreviewContainer["SearchPreview"..i]
         if sp then
             sp:SetWidth(AchievementFrame.SearchPreviewContainer:GetWidth())
-            sp.Name:SetFont(UNIT_NAME_FONT, 14, "")
+            sp.Name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
         end
     end
 

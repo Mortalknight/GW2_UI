@@ -157,10 +157,10 @@ local function updateArena_Name(self)
             color.a
         )
     end
-    if self.guid == guidTarget then
-        self.name:SetFont(UNIT_NAME_FONT, 14)
+    if self.guid == UnitGUID("target") then
+        self.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     else
-        self.name:SetFont(UNIT_NAME_FONT, 12)
+        self.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     end
 end
 GW.AddForProfiling("arenaFrames", "updateArena_Name", updateArena_Name)
@@ -207,7 +207,7 @@ local function registerFrame(i, container)
     arenaFrame:EnableMouse(true)
     arenaFrame:RegisterForClicks("AnyDown")
 
-    arenaFrame.name:SetFont(UNIT_NAME_FONT, 12)
+    arenaFrame.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     arenaFrame.name:SetShadowOffset(1, -1)
     arenaFrame.marker:Hide()
     arenaFrame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
@@ -275,7 +275,7 @@ local function registerPrepFrame(i, container)
     arenaPrepFrame:EnableMouse(true)
     arenaPrepFrame:RegisterForClicks("AnyDown")
 
-    arenaPrepFrame.name:SetFont(UNIT_NAME_FONT, 12)
+    arenaPrepFrame.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     arenaPrepFrame.name:SetShadowOffset(1, -1)
 
     arenaPrepFrame:SetScript(

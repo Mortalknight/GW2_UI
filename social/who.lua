@@ -155,7 +155,7 @@ local function LoadWhoList(tabContainer)
         local r = {frame:GetRegions()}
         for _,c in pairs(r) do
             if c:GetObjectType() == "FontString" then
-                c:SetFont(UNIT_NAME_FONT, 12)
+                c:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
             end
         end
     end
@@ -204,7 +204,7 @@ local function LoadWhoList(tabContainer)
 
     for i = 1, #WhoWindow.list.ScrollFrame.buttons do
         local slot = WhoWindow.list.ScrollFrame.buttons[i]
-        slot.Name:SetFont(UNIT_NAME_FONT, 12)
+        slot.Name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         slot.Variable:SetFont(UNIT_NAME_FONT, 11)
         slot.Level:SetFont(UNIT_NAME_FONT, 11)
         slot.Class:SetFont(UNIT_NAME_FONT, 11)

@@ -269,7 +269,7 @@ local function LoadCollectionTracking(self)
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    self.header.title:SetFont(UNIT_NAME_FONT, 16)
+    self.header.title:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText(ADVENTURE_TRACKING_MODULE_HEADER_TEXT)
 
