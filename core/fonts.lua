@@ -48,7 +48,6 @@ end
 
 local function LoadFonts()
     local addonFont = getNormalFontFamily()
-    print(addonFont)
     if addonFont == nil or addonFont == "" then 
         return
     end
