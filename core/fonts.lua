@@ -21,7 +21,8 @@ local function setFont(fontObject, font, size, style, shadowX, shadowY, shadowA,
     end
 
     fontObject:SetFont(font, size, newStyle or style)
-    fontObject:SetShadowColor(shadowR or 0, shadowG or 0, shadowB or 0, shadowA or (shadow and (style == "" and 1 or 0.6)) or 0)
+    fontObject:SetShadowColor(shadowR or 0, shadowG or 0, shadowB or 0,
+        shadowA or (shadow and (style == "" and 1 or 0.6)) or 0)
     fontObject:SetShadowOffset(shadowX or (shadow and 1) or 0, shadowY or (shadow and -1) or 0)
 
     if r and g and b then
@@ -29,13 +30,42 @@ local function setFont(fontObject, font, size, style, shadowX, shadowY, shadowA,
     end
 end
 
+local function getNormalFontFamily()
+    local locale = GW.mylocal
+    -- get our saved font
+    local activeFont = GW.settings.FONT_NORMAL
+    print(activeFont)
+
+    -- if we use a custom font, fetch it from shared media
+    if GW.settings.CUSTOM_FONT_NORMAL~=nil and GW.settings.CUSTOM_FONT_NORMAL~=false then 
+        activeFont =  GW.Libs.LSM:Fetch("font", GW.settings.CUSTOM_FONT_NORMAL)
+    end
+    -- if we the user has not selected a custom font or if we are using the blizzard template;
+    -- we replace the font with the supported one
+    if not GW.settings.CUSTOM_FONT_NORMAL and GW.settings.FONT_STYLE_TEMPLATE ~= "BLIZZARD" then
+        if locale == "koKR" then
+            activeFont = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
+        elseif locale == "zhCN" or locale == "zhTW" then
+            activeFont = "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
+        elseif locale == "ruRU" then
+            activeFont = "Interface/AddOns/GW2_UI/fonts/menomonia_old.ttf"
+        end
+    end
+    return activeFont
+end
+
 local function LoadFonts()
-    local normal = L["FONT_NORMAL"]
-    local bold = L["FONT_BOLD"]
-    local narrow = L["FONT_NARROW"]
-    local narrowBold = L["FONT_NARROW_BOLD"]
+    local addonFont = getNormalFontFamily()
+    print(addonFont)
+    if addonFont == nil or addonFont == "" then 
+        return
+    end
+    local normal = addonFont
+    local bold = addonFont
+    local narrow = addonFont
+    local narrowBold = addonFont
     --local light = L["FONT_LIGHT"]
-    local damage = L["FONT_DAMAGE"]
+    local damage = addonFont
 
     -- game engine fonts
     UNIT_NAME_FONT = normal
@@ -44,7 +74,7 @@ local function LoadFonts()
 
     -- default values
     UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT = 14
-    CHAT_FONT_HEIGHTS = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
+    CHAT_FONT_HEIGHTS = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 }
 
     setFont(ChatFontNormal, narrow, nil, nil, 0.75, -0.75, 1)
     setFont(NumberFontNormal, narrow, 14, "", 1.25, -1.25, 1)

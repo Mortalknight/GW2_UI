@@ -619,3 +619,14 @@ L["Tooltip Body"] = true
 L["Comparison"] = true
 L["This setting controls the size of text in item comparison tooltips"] = true
 L["Interrupted %s's |cff71d5ff|Hspell:%d:0|h[%s]|h|r!"] = true
+
+L["Fonts"] = true  -- Text fonts
+L["Custom Font Settings"] = true
+L["Edit font settings."] = true
+L["Text Style Templates"] = true
+L["Choose from predefined options to customize fonts and text styles, adjusting the appearance of your text."] = true
+
+L["Big Headers"] = true
+L["Headers"] = true
+L["Normal"] = true
+L["Small"] = true

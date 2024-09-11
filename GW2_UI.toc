@@ -92,6 +92,7 @@ settings\layouts.lua
 settings\moveableFrameHandler.lua
 settings\panel_overview.lua
 settings\panel_overview.xml
+settings\panel_fonts.lua
 
 core\EditMode.lua
 

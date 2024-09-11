@@ -48,6 +48,16 @@ GW.globalDefault = {
         PARTY_FRAMES = true,
         PETBAR_ENABLED = true,
         BORDER_ENABLED = true,
+
+        FONT_STYLE_TEMPLATE = "GW2",
+        FONT_NORMAL = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf",
+        CUSTOM_FONT_NORMAL = false,
+        FONTS_BIG_HEADER_SIZE = 18,
+        FONTS_HEADER_SIZE = 16,
+        FONTS_NORMAL_SIZE = 14,
+        FONTS_SMALL_SIZE = 12,
+        FONTS_OUTLINE = nil,
+
         TOOLTIP_MOUSE = false,
         ADVANCED_TOOLTIP = true,
         TOOLTIP_HEADER_FONT_SIZE = 16,
