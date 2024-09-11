@@ -109,7 +109,8 @@ local function SkinLookingForGroupFrames()
 			local id = idx == 1 and "dungeon" or idx == 2 and "pvp" or idx == 3 and "mythic" or idx == 4 and "delve" or "dungeon"
 			local iconTexture = "Interface/AddOns/GW2_UI/Textures/Groups/tabicon_" .. id
 
-            tab:HookScript("OnClick", function()
+            tab:HookScript("OnClick", function(self)
+                if self:IsEnabled() then return end -- wird, disabled tabs are marked as enabled and other way round
                 if idx == 1 then
                     PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon")
                 elseif idx == 2 then

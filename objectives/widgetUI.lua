@@ -54,6 +54,10 @@ local function UIWidgetTemplateStatusBar(self)
         return
     end
 
+    if self.Text then
+        self.Text:SetTextColor(1, 1, 1)
+    end
+
     if not bar.backdrop then
         bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
