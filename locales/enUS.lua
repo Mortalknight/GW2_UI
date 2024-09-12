@@ -598,7 +598,6 @@ L["Big Dig"] = true
 L["Warband:"] = true
 L["Include Reagents"] = true
 L["Include Warband"] = true
-
 L["Click to show location"] = true
 L["Theater"] = true
 L["Performing"] = true
@@ -608,9 +607,7 @@ L["Khaz Algar Emissary"] = true
 L["Ringing Deeps"] = true
 L["Spreading The Light"] = true
 L["Underworld Operative"] = true
-L["World Soul"] = true
 L["BG Map"] = true
-
 L["Party Only"] = true
 L["Party / Raid"] = true
 L["Raid Only"] = true
@@ -619,14 +616,12 @@ L["Tooltip Body"] = true
 L["Comparison"] = true
 L["This setting controls the size of text in item comparison tooltips"] = true
 L["Interrupted %s's |cff71d5ff|Hspell:%d:0|h[%s]|h|r!"] = true
-
-L["Fonts"] = true  -- Text fonts
 L["Custom Font Settings"] = true
 L["Edit font settings."] = true
 L["Text Style Templates"] = true
 L["Choose from predefined options to customize fonts and text styles, adjusting the appearance of your text."] = true
-
 L["Big Headers"] = true
 L["Headers"] = true
-L["Normal"] = true
-L["Small"] = true
+L["Normal text"] = true
+L["Small text"] = true
+L["Use GW2 Text Style Template"] = true

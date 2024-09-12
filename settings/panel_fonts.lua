@@ -137,7 +137,7 @@ local function LoadFontsPanel(sWindow)
     )
     addOptionSlider(
         p.scroll.scrollchild,
-        L["Normal"],
+        L["Normal texts"],
         nil,
         "FONTS_NORMAL_SIZE",
         nil,
@@ -150,7 +150,7 @@ local function LoadFontsPanel(sWindow)
     )
     addOptionSlider(
         p.scroll.scrollchild,
-        L["Small"],
+        L["Small texts"],
         nil,
         "FONTS_SMALL_SIZE",
         nil,
