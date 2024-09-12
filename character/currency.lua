@@ -191,11 +191,11 @@ local function raidInfoSetup(raidinfo)
     for i = 1, #raidinfo.buttons do
         local slot = raidinfo.buttons[i]
         slot:SetWidth(raidinfo:GetWidth() - 12)
-        slot.item.name:SetFont(DAMAGE_TEXT_FONT, 14)
+        slot.item.name:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
         slot.item.name:SetTextColor(1, 1, 1)
         slot.item.difficult:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         slot.item.difficult:SetTextColor(1, 1, 1)
-        slot.item.reset:SetFont(DAMAGE_TEXT_FONT, 12)
+        slot.item.reset:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         slot.item.reset:SetTextColor(1, 1, 1)
         slot.item.extended:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         slot.item.extended:SetTextColor(1, 1, 1)
@@ -303,12 +303,12 @@ local function UpdateTokenSkins(frame)
             end
 
             if child.Name then
-                child.Name:SetFont(DAMAGE_TEXT_FONT, 16)
+                child.Name:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
                 child.Name:SetTextColor(1, 1, 1)
             end
 
             if child.Text then
-                child.Text:SetFont(DAMAGE_TEXT_FONT, 14)
+                child.Text:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
                 child.Text:SetTextColor(1, 1, 1)
             end
 
@@ -383,7 +383,7 @@ local function SkinTokenFrame()
     TokenFramePopup.BackpackCheckbox.Text:ClearAllPoints()
     TokenFramePopup.BackpackCheckbox.Text:SetPoint("LEFT", TokenFramePopup.BackpackCheckbox, "RIGHT", 5, 0)
 
-    TokenFramePopup.Title:SetFont(DAMAGE_TEXT_FONT, 14)
+    TokenFramePopup.Title:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     TokenFramePopup.Title:SetTextColor(1, 1, 1)
 
     local TokenPopupClose = TokenFramePopup["$parent.CloseButton"]
@@ -391,7 +391,7 @@ local function SkinTokenFrame()
         TokenPopupClose:GwSkinButton(true)
     end
 
-    CurrencyTransferMenuTitleText:SetFont(DAMAGE_TEXT_FONT, 14)
+    CurrencyTransferMenuTitleText:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     CurrencyTransferMenuTitleText:SetTextColor(1, 1, 1)
 
     CurrencyTransferMenu.SourceSelector.SourceLabel:SetFont(UNIT_NAME_FONT, 13)
@@ -425,17 +425,17 @@ local function UpdateTransferHistorySkins(self)
         if not child.IsSkinned then
 
             if child.SourceName then
-                child.SourceName:SetFont(DAMAGE_TEXT_FONT, 12)
+                child.SourceName:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
                 child.SourceName:SetTextColor(1, 1, 1)
             end
 
             if child.DestinationName then
-                child.DestinationName:SetFont(DAMAGE_TEXT_FONT, 12)
+                child.DestinationName:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
                 child.DestinationName:SetTextColor(1, 1, 1)
             end
 
             if child.CurrencyQuantity then
-                child.CurrencyQuantity:SetFont(DAMAGE_TEXT_FONT, 12)
+                child.CurrencyQuantity:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
                 child.CurrencyQuantity:SetTextColor(1, 1, 1)
             end
 

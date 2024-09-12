@@ -1790,7 +1790,7 @@ local function LoadClassPowers()
             lmb:SetSize(barWidth, 5)
         end
         lmb:SetFrameStrata("MEDIUM")
-        lmb.label:SetFont(DAMAGE_TEXT_FONT, 14)
+        lmb.label:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
         lmb.label:SetShadowColor(0, 0, 0, 1)
         lmb.label:SetShadowOffset(1, -1)
 
@@ -1824,7 +1824,7 @@ local function LoadClassPowers()
     exbar:SetPoint("TOPLEFT", cpf)
 
     exbar:SetFrameStrata("MEDIUM")
-    exbar.label:SetFont(DAMAGE_TEXT_FONT, 14)
+    exbar.label:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     exbar.label:SetShadowColor(0, 0, 0, 1)
     exbar.label:SetShadowOffset(1, -1)
 

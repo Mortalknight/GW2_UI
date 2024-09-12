@@ -320,7 +320,7 @@ local function LoadHealthGlobe()
     hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
     hg.text_h.value:SetShadowColor(1, 1, 1, 0)
 
-    hg.text_a.value:SetFont(DAMAGE_TEXT_FONT, 18)
+    hg.text_a.value:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_BIG_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
     hg.text_a.value:SetShadowColor(1, 1, 1, 0)
 
     for i, v in ipairs(hg.text_h.shadow) do

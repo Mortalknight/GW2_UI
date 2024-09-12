@@ -878,7 +878,7 @@ local function LoadPDBagList(fmMenu)
     fmPD3M:SetScript("OnReceiveDrag", EquipCursorItem)
     fmPD3M:HookScript("OnMouseDown", EquipCursorItem)
 
-    fmGPDS.header:SetFont(DAMAGE_TEXT_FONT, 14)
+    fmGPDS.header:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     fmGPDS.header:SetText(STAT_CATEGORY_ATTRIBUTES)
     fmGPDS:SetScript("OnEvent", stats_OnEvent)
     fmGPDS:RegisterEvent("PLAYER_ENTERING_WORLD")

@@ -1421,7 +1421,7 @@ end
 local function styleChatWindow(frame)
     local name = frame:GetName()
     local tab = GetTab(frame)
-    tab.Text:SetFont(DAMAGE_TEXT_FONT, 14, "")
+    tab.Text:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     tab.Text:SetTextColor(1, 1, 1)
 
     if frame.styled then return end
