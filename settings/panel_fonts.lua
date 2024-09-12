@@ -44,6 +44,7 @@ local function LoadFontsPanel(sWindow)
                 GW.settings["FONTS_SMALL_SIZE"] = 11
                 GW.settings["FONTS_OUTLINE"] = ""
                 GW.settings["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia_old.ttf"
+                GW.settings["FONT_HEADERS"] = "Interface/AddOns/GW2_UI/fonts/headlines_old.ttf"
             elseif GW.settings.FONT_STYLE_TEMPLATE == "BLIZZARD" then
                 GW.settings["FONTS_BIG_HEADER_SIZE"] = 16
                 GW.settings["FONTS_HEADER_SIZE"] = 14
@@ -51,6 +52,7 @@ local function LoadFontsPanel(sWindow)
                 GW.settings["FONTS_SMALL_SIZE"] = 11
                 GW.settings["FONTS_OUTLINE"] = ""
                 GW.settings["FONT_NORMAL"] = ""
+                GW.settings["FONT_HEADERS"] = ""
             elseif GW.settings.FONT_STYLE_TEMPLATE == "HIGH_CONTRAST" then
                 GW.settings["FONTS_BIG_HEADER_SIZE"] = 18
                 GW.settings["FONTS_HEADER_SIZE"] = 16
@@ -58,6 +60,7 @@ local function LoadFontsPanel(sWindow)
                 GW.settings["FONTS_SMALL_SIZE"] = 12
                 GW.settings["FONTS_OUTLINE"] = "OUTLINE"
                 GW.settings["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+                GW.settings["FONT_HEADERS"] = ""
             else -- "GW2" standard
                 GW.settings["FONTS_BIG_HEADER_SIZE"] = 18
                 GW.settings["FONTS_HEADER_SIZE"] = 16
@@ -65,8 +68,11 @@ local function LoadFontsPanel(sWindow)
                 GW.settings["FONTS_SMALL_SIZE"] = 12
                 GW.settings["FONTS_OUTLINE"] = ""
                 GW.settings["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
+                GW.settings["FONT_HEADERS"] = ""
+                
             end
             GW.settings.CUSTOM_FONT_NORMAL = "NONE"
+            GW.settings.CUSTOM_FONT_HEADER = "NONE"
             GW.updateSettingsFrameSettingsValue("FONTS_BIG_HEADER_SIZE", GW.settings["FONTS_BIG_HEADER_SIZE"], false)
             GW.updateSettingsFrameSettingsValue("FONTS_HEADER_SIZE", GW.settings["FONTS_HEADER_SIZE"], false)
             GW.updateSettingsFrameSettingsValue("FONTS_NORMAL_SIZE", GW.settings["FONTS_NORMAL_SIZE"], false)
@@ -82,11 +88,32 @@ local function LoadFontsPanel(sWindow)
             "Hight Contrast",
         },
         nil,
-        {["CUSTOM_FONT_NORMAL"] = {"NONE"}}
+        {["CUSTOM_FONT_NORMAL"] = {"NONE"},["CUSTOM_FONT_HEADER"] = {"NONE"}}
     )
 
     addGroupHeader(p.scroll.scrollchild, L["Custom Font Settings"])
-
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["Header Font"],
+        nil,
+        "FONT_HEADERS",
+        function()
+            GW.ShowRlPopup = true -- triggers reload window
+        end,
+        fontsKeys,
+        fontsValues,
+        nil,
+        nil,
+        nil,
+        nil,
+        nil,
+        false,
+        nil,
+        nil,
+        nil,
+        nil,
+        true
+    )
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Fonts"],
