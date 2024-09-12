@@ -787,7 +787,7 @@ local function LoadScenarioFrame()
     newBlock.delvesFrame.deathCounter:SetScript("OnLeave", function()
         UIWidgetTemplateTooltipFrameMixin:OnLeave()
     end)
-    newBlock.delvesFrame.deathCounter.counter:SetFont(UNIT_NAME_FONT, 12, "")
+    newBlock.delvesFrame.deathCounter.counter:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE, GW.settings.FONTS_OUTLINE)
 
     C_Timer.After(0.8, function() updateCurrentScenario(GwQuesttrackerContainerScenario) end)
 
