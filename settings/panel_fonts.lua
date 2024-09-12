@@ -96,7 +96,7 @@ local function LoadFontsPanel(sWindow)
         p.scroll.scrollchild,
         L["Header Font"],
         nil,
-        "FONT_HEADERS",
+        "CUSTOM_FONT_HEADER",
         function()
             GW.ShowRlPopup = true -- triggers reload window
         end,

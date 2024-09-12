@@ -86,7 +86,7 @@ local function LoadFonts()
     local narrowBold = addonFont
     --local light = L["FONT_LIGHT"]
     local damage = addonFont
-    print(addonFontHeader)
+ 
     -- game engine fonts
     UNIT_NAME_FONT = normal
     DAMAGE_TEXT_FONT = addonFontHeader
