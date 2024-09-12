@@ -372,7 +372,7 @@ local function loadDropDown(scrollFrame)
                 end
 
                 if scrollFrame.data.isFont then
-                    slot.string:SetFont(GW.Libs.LSM:Fetch("font", scrollFrame.data.options[idx]), 10, "")
+                    slot.string:SetFont(GW.Libs.LSM:Fetch("font", scrollFrame.data.options[idx]), 12, "")
                 end
 
                 slot.string:SetText(scrollFrame.data.options_names[idx])
@@ -646,6 +646,10 @@ local function InitPanel(panel, hasScroll)
                             GW.settings[self.optionName] = self.option
                         end
 
+                        if v.isFont then
+                            of.button.string:SetFont(GW.Libs.LSM:Fetch("font", self.optionDisplayName), 12, "")
+                        end
+
                         if v.callback then
                             v.callback(self.option)
                         end
@@ -732,8 +736,12 @@ local function InitPanel(panel, hasScroll)
                     end
                 end
             end
+            if v.isFont then
+                of.button.string:SetFont(GW.Libs.LSM:Fetch("font", of.button.string:GetText()), 12, "")
+            else
+                of.button.string:SetFont(UNIT_NAME_FONT, 12)
+            end
 
-            of.button.string:SetFont(UNIT_NAME_FONT, 12)
             of.button:SetScript(
                 "OnClick",
                 function(self, button) -- if incompatible addons is loaded, check for override click
