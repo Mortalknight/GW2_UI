@@ -308,19 +308,19 @@ local function LoadHealthGlobe()
     AddToClique(hg)
 
     -- set text/font stuff
-    hg.hSize = 16
+    hg.hSize = GW.settings.FONTS_HEADER_SIZE
     if GW.settings.PLAYER_UNIT_ABSORB == "BOTH" then
-        hg.aSize = 12
+        hg.aSize = GW.settings.FONTS_SMALL_SIZE
         hg.text_a:ClearAllPoints()
         hg.text_a:SetPoint("CENTER", hg, "CENTER", 0, 25)
     else
-        hg.aSize = 14
+        hg.aSize = GW.settings.FONTS_NORMAL_SIZE
     end
 
     hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
     hg.text_h.value:SetShadowColor(1, 1, 1, 0)
 
-    hg.text_a.value:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_BIG_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    hg.text_a.value:SetFont(DAMAGE_TEXT_FONT, hg.aSize)
     hg.text_a.value:SetShadowColor(1, 1, 1, 0)
 
     for i, v in ipairs(hg.text_h.shadow) do
