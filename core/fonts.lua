@@ -45,6 +45,8 @@ local function getNormalFontFamily()
         elseif locale == "ruRU" then
             activeFont = "Interface/AddOns/GW2_UI/fonts/menomonia_old.ttf"
         end
+    elseif GW.settings.FONT_STYLE_TEMPLATE == "BLIZZARD" then
+        activeFont = ""
     end
     return activeFont
 end
