@@ -330,10 +330,32 @@
                             </layer>
                         </Layers>
                     </Frame>
-                    <Frame parentKey="reward" hidden="true">
+                     <Frame parentKey="deathCounter" hidden="true">
                         <Size x="30" y="30"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="220" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <layer>
+                                <FontString parentKey="counter">
+                                    <Size x="30" y="40"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                                <Texture parentKey="icon">
+                                    <Size x="30" y="30"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent.counter" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </layer>
+                        </Layers>
+                    </Frame>
+                    <Frame parentKey="reward" hidden="true">
+                        <Size x="30" y="30"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="190" y="0"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="ARTWORK">

@@ -246,6 +246,20 @@ local function updateCurrentScenario(self, event, ...)
             GwScenarioBlock.delvesFrame.spell[i]:Hide()
         end
 
+        -- handle death
+        if delvesWidgetInfo.currencies and #delvesWidgetInfo.currencies > 0 and delvesWidgetInfo.currencies[1].textEnabledState > 0 then
+            GwScenarioBlock.delvesFrame.deathCounter.tooltip = delvesWidgetInfo.currencies[1].tooltip
+            GwScenarioBlock.delvesFrame.deathCounter.counter:SetText(delvesWidgetInfo.currencies[1].text)
+            GwScenarioBlock.delvesFrame.deathCounter.icon:SetTexture(delvesWidgetInfo.currencies[1].iconFileID)
+
+            GwScenarioBlock.delvesFrame.deathCounter:Show()
+        else
+            GwScenarioBlock.delvesFrame.deathCounter:Show()
+        end
+
+            --[11:38:34]       textEnabledState=2, 
+            --[11:38:34]       iconFileID=6013778, 
+
         -- handle rewards
         if delvesWidgetInfo.rewardInfo.shownState ~= Enum.UIWidgetRewardShownState.Hidden then
             local rewardTooltip = (delvesWidgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownEarned) and delvesWidgetInfo.rewardInfo.earnedTooltip or delvesWidgetInfo.rewardInfo.unearnedTooltip
@@ -568,6 +582,47 @@ local function scenarioTimerOnEvent(_, event, ...)
 end
 GW.AddForProfiling("scenario", "scenarioTimerOnEvent", scenarioTimerOnEvent)
 
+local function UIWidgetTemplateTooltipFrameOnEnter(self)
+    if self.tooltip then
+        self.tooltipContainsHyperLink = false
+        self.preString = nil
+        self.hyperLinkString = nil
+        self.postString = nil
+        self.tooltipContainsHyperLink, self.preString, self.hyperLinkString, self.postString = ExtractHyperlinkString(self.tooltip)
+
+        EmbeddedItemTooltip:SetOwner(self, "ANCHOR_LEFT")
+
+        if self.tooltipContainsHyperLink then
+            local clearTooltip = true
+            if self.preString and self.preString:len() > 0 then
+                GameTooltip_AddNormalLine(EmbeddedItemTooltip, self.preString, true)
+                clearTooltip = false
+            end
+
+            GameTooltip_ShowHyperlink(EmbeddedItemTooltip, self.hyperLinkString, 0, 0, clearTooltip)
+
+            if self.postString and self.postString:len() > 0 then
+                GameTooltip_AddColoredLine(EmbeddedItemTooltip, self.postString, self.tooltipColor or HIGHLIGHT_FONT_COLOR, true)
+            end
+
+            self.UpdateTooltip = self.OnEnter
+
+            EmbeddedItemTooltip:Show()
+        else
+            local header, nonHeader = SplitTextIntoHeaderAndNonHeader(self.tooltip)
+            if header then
+                GameTooltip_AddColoredLine(EmbeddedItemTooltip, header, self.tooltipColor or NORMAL_FONT_COLOR, true)
+            end
+            if nonHeader then
+                GameTooltip_AddColoredLine(EmbeddedItemTooltip, nonHeader, self.tooltipColor or NORMAL_FONT_COLOR, true)
+            end
+            self.UpdateTooltip = nil
+
+            EmbeddedItemTooltip:SetShown(header ~= nil)
+        end
+    end
+end
+
 local function LoadScenarioFrame()
     GwQuesttrackerContainerScenario:SetScript("OnEvent", updateCurrentScenario)
 
@@ -723,50 +778,16 @@ local function LoadScenarioFrame()
         v:SetScript("OnLeave", GameTooltip_Hide)
     end
 
-    newBlock.delvesFrame.reward:SetScript("OnEnter", function(self)
-        if self.tooltip then
-            self.tooltipContainsHyperLink = false
-            self.preString = nil
-            self.hyperLinkString = nil
-            self.postString = nil
-            self.tooltipContainsHyperLink, self.preString, self.hyperLinkString, self.postString = ExtractHyperlinkString(self.tooltip)
-
-            EmbeddedItemTooltip:SetOwner(self, "ANCHOR_LEFT")
-
-            if self.tooltipContainsHyperLink then
-                local clearTooltip = true
-                if self.preString and self.preString:len() > 0 then
-                    GameTooltip_AddNormalLine(EmbeddedItemTooltip, self.preString, true)
-                    clearTooltip = false
-                end
-
-                GameTooltip_ShowHyperlink(EmbeddedItemTooltip, self.hyperLinkString, 0, 0, clearTooltip)
-
-                if self.postString and self.postString:len() > 0 then
-                    GameTooltip_AddColoredLine(EmbeddedItemTooltip, self.postString, self.tooltipColor or HIGHLIGHT_FONT_COLOR, true)
-                end
-
-                self.UpdateTooltip = self.OnEnter
-
-                EmbeddedItemTooltip:Show()
-            else
-                local header, nonHeader = SplitTextIntoHeaderAndNonHeader(self.tooltip)
-                if header then
-                    GameTooltip_AddColoredLine(EmbeddedItemTooltip, header, self.tooltipColor or NORMAL_FONT_COLOR, true)
-                end
-                if nonHeader then
-                    GameTooltip_AddColoredLine(EmbeddedItemTooltip, nonHeader, self.tooltipColor or NORMAL_FONT_COLOR, true)
-                end
-                self.UpdateTooltip = nil
-
-                EmbeddedItemTooltip:SetShown(header ~= nil)
-            end
-        end
-    end)
+    newBlock.delvesFrame.reward:SetScript("OnEnter", UIWidgetTemplateTooltipFrameOnEnter)
     newBlock.delvesFrame.reward:SetScript("OnLeave", function()
-        EmbeddedItemTooltip:Hide()
+        UIWidgetTemplateTooltipFrameMixin:OnLeave()
     end)
 
+    newBlock.delvesFrame.deathCounter:SetScript("OnEnter", UIWidgetTemplateTooltipFrameOnEnter)
+    newBlock.delvesFrame.deathCounter:SetScript("OnLeave", function()
+        UIWidgetTemplateTooltipFrameMixin:OnLeave()
+    end)
+    newBlock.delvesFrame.deathCounter.counter:SetFont(UNIT_NAME_FONT, 12, "")
 
     C_Timer.After(0.8, function() updateCurrentScenario(GwQuesttrackerContainerScenario) end)
 
