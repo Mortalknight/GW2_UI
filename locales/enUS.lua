@@ -625,3 +625,5 @@ L["Headers"] = true
 L["Normal text"] = true
 L["Small text"] = true
 L["Use GW2 Text Style Template"] = true
+
+L["Header Font"] = true

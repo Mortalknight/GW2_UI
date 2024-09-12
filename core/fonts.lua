@@ -50,22 +50,46 @@ local function getNormalFontFamily()
     end
     return activeFont
 end
+local function getHeaderFontFamily()
+    local locale = GW.mylocal
+    -- get our saved font
+    local activeFont = GW.settings.FONT_HEADERS
+    -- if we use a custom font, fetch it from shared media
+    if GW.settings.CUSTOM_FONT_HEADER ~= "NONE" then
+        activeFont = GW.Libs.LSM:Fetch("font", GW.settings.CUSTOM_FONT_HEADER)
+    elseif GW.settings.FONT_STYLE_TEMPLATE ~= "BLIZZARD" then
+        if locale == "koKR" then
+            activeFont = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
+        elseif locale == "zhCN" or locale == "zhTW" then
+            activeFont = "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
+        elseif locale == "ruRU" then
+            activeFont = "Interface/AddOns/GW2_UI/fonts/headlines_old.ttf"
+        end
+    elseif GW.settings.FONT_STYLE_TEMPLATE == "BLIZZARD" then
+        activeFont = ""
+    end
+    return activeFont
+end
 
 local function LoadFonts()
     local addonFont = getNormalFontFamily()
+    local addonFontHeader = getHeaderFontFamily()
     if addonFont == nil or addonFont == "" then 
         return
     end
+    if addonFontHeader==nil or addonFontHeader==""then 
+        addonFontHeader = addonFont
+    end
     local normal = addonFont
-    local bold = addonFont
+    local bold = addonFontHeader
     local narrow = addonFont
     local narrowBold = addonFont
     --local light = L["FONT_LIGHT"]
     local damage = addonFont
-
+    print(addonFontHeader)
     -- game engine fonts
     UNIT_NAME_FONT = normal
-    DAMAGE_TEXT_FONT = normal
+    DAMAGE_TEXT_FONT = addonFontHeader
     STANDARD_TEXT_FONT = normal
 
     -- default values
