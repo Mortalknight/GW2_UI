@@ -46,7 +46,6 @@ local function setNormalText(self)
     self:SetTextColor(1, 1, 1)
 end
 local function setTitleText(self)
-    print(self:GetText())
     self:SetFont(DAMAGE_TEXT_FONT, GW.settings.FONTS_HEADER_SIZE, GW.settings.FONTS_OUTLINE)
     self:SetTextColor(1, 1, 1)
 end
@@ -351,17 +350,17 @@ local function SetupButtonHighlight(button, background)
 end
 
 local function skinAchievementSummaryHeaders(self)
-  local fname = self:GetName()
-  local texture = _G[fname.."Header"] or _G[fname.."Texture"]
-  local text = _G[fname.."Title"]
-  self:SetHeight(32)
-  texture:SetTexture("Interface/AddOns/GW2_UI/textures/talents/talents_header")
-  texture:ClearAllPoints()
-  texture:SetPoint("TOPLEFT")
-  texture:SetPoint("BOTTOMRIGHT")
-  text:ClearAllPoints()
-  text:SetPoint("LEFT",10,0)
-  setTitleText(text)
+    local fname = self:GetName()
+    local texture = _G[fname.."Header"] or _G[fname.."Texture"]
+    local text = _G[fname.."Title"]
+    self:SetHeight(32)
+    texture:SetTexture("Interface/AddOns/GW2_UI/textures/talents/talents_header")
+    texture:ClearAllPoints()
+    texture:SetPoint("TOPLEFT")
+    texture:SetPoint("BOTTOMRIGHT")
+    text:ClearAllPoints()
+    text:SetPoint("LEFT",10,0)
+    setTitleText(text)
 end
 local function skinAchievementSummaryStatusBar(self)
     self:GwStripTextures()
