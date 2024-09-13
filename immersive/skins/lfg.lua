@@ -573,13 +573,14 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.ApplicationViewer.AutoAcceptButton:GwSkinCheckButton()
 
     LFGListFrame.ApplicationViewer.Inset:GwStripTextures()
+    LFGListFrame.ApplicationViewer.UnempoweredCover.Background:SetAlpha(0)
 
-    local detailBg = LFGListFrame.ApplicationViewer.Inset:CreateTexture(nil, "BACKGROUND", nil, 7)
-    detailBg:SetPoint("TOPLEFT", LFGListFrame.ApplicationViewer.Inset, "TOPLEFT", 0, 0)
-    detailBg:SetPoint("BOTTOMRIGHT", LFGListFrame.ApplicationViewer.Inset, "BOTTOMRIGHT", 0, 0)
+    local detailBg = LFGListFrame.ApplicationViewer.UnempoweredCover:CreateTexture(nil, "BACKGROUND", nil, 7)
+    detailBg:SetPoint("TOPLEFT", LFGListFrame.ApplicationViewer.UnempoweredCover, "TOPLEFT", 0, 0)
+    detailBg:SetPoint("BOTTOMRIGHT", LFGListFrame.ApplicationViewer.UnempoweredCover, "BOTTOMRIGHT", 0, 0)
     detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
     detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
-    LFGListFrame.ApplicationViewer.Inset.tex = detailBg
+    LFGListFrame.ApplicationViewer.UnempoweredCover.tex = detailBg
 
     LFGListFrame.ApplicationViewer.NameColumnHeader:GwSkinButton(false, true)
     LFGListFrame.ApplicationViewer.RoleColumnHeader:GwSkinButton(false, true)
