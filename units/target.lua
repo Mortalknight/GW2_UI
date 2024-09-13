@@ -1,4 +1,4 @@
-
+local _, GW = ...
 function GwTargetFrameTemplateHealthBar_OnLoad(self)
     self:GetParent().bar = self.bar
 end
@@ -23,31 +23,31 @@ function GwDeBuffIcon_OnLoad(self)
 end
 
 function GwTargetFrameTemplateDummy_OnLoad(self)
-    self.frameName:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    self.frameName:SetFont(UNIT_NAME_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     self.frameName:SetShadowColor(0, 0, 0, 1)
     self.frameName:SetShadowOffset(1, -1)
 end
 
 function GwTargetFrameSmallTemplateDummy_OnLoad(self)
-    self.frameName:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    self.frameName:SetFont(UNIT_NAME_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     self.frameName:SetShadowColor(0, 0, 0, 1)
     self.frameName:SetShadowOffset(1, -1)
 end
 
 function GwPetFrameDummy_OnLoad(self)
-    self.frameName:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    self.frameName:SetFont(UNIT_NAME_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     self.frameName:SetShadowColor(0, 0, 0, 1)
     self.frameName:SetShadowOffset(1, -1)
 end
 
 function GwCastFrameDummy_OnLoad(self)
-    self.frameName:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    self.frameName:SetFont(UNIT_NAME_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     self.frameName:SetShadowColor(0, 0, 0, 1)
     self.frameName:SetShadowOffset(1, -1)
 end
 
 function GwVerticalActionBarDummy_OnLoad(self)
-    self.frameName:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    self.frameName:SetFont(UNIT_NAME_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
     self.frameName:SetShadowColor(0, 0, 0, 1)
     self.frameName:SetShadowOffset(1, -1)
 end

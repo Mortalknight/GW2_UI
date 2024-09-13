@@ -46,7 +46,8 @@ local function setNormalText(self)
     self:SetTextColor(1, 1, 1)
 end
 local function setTitleText(self)
-    self:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    print(self:GetText())
+    self:SetFont(DAMAGE_TEXT_FONT, GW.settings.FONTS_HEADER_SIZE, GW.settings.FONTS_OUTLINE)
     self:SetTextColor(1, 1, 1)
 end
 
@@ -1587,6 +1588,7 @@ end
 local function LoadAchivementSkin()
     if GW.IsIncompatibleAddonLoadedOrOverride("AchievementSkin", true) then return end
     if not GW.settings.ACHIEVEMENT_SKIN_ENABLED then return end
-    GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI")
+
+    GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI", AchievementFrame)
 end
 GW.LoadAchivementSkin = LoadAchivementSkin

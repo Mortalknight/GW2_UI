@@ -65,22 +65,24 @@ GW.AddForProfiling("paperdoll", "menuItem_OnClick", menuItem_OnClick)
 
 local function menu_SetupBackButton(_, fmBtn, key)
     fmBtn:SetText(key)
+    fmBtn:GetFontString():SetFont(UNIT_NAME_FONT, 16)
     CharacterMenuButtonBack_OnLoad(fmBtn)
     fmBtn:SetScript("OnClick", back_OnClick)
 end
 GW.AddForProfiling("paperdoll", "menu_SetupBackButton", menu_SetupBackButton)
 
-local nextShadow, nextAnchor
-local function addAddonButton(name, setting, shadow, anchor, showFunction)
-    if IsAddOnLoaded(name) and (setting == nil or setting == true) then
-        fmMenu.buttonName = CreateFrame("Button", nil, fmMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
-        fmMenu.buttonName:SetText(select(2, GetAddOnInfo(name)))
-        fmMenu.buttonName:ClearAllPoints()
-        fmMenu.buttonName:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
-        CharacterMenuButton_OnLoad(fmMenu.buttonName, shadow)
-        fmMenu.buttonName:SetFrameRef("charwin", GwCharacterWindow)
-        fmMenu.buttonName.ui_show = showFunction
-        fmMenu.buttonName:SetAttribute("_onclick", [=[
+local isFirstAddonButton = true
+local function addAddonButton(name, setting, showFunction)
+    if C_AddOns.IsAddOnLoaded(name) and (setting == nil or setting == true) then
+        fmMenu[name] = CreateFrame("Button", nil, fmMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
+        fmMenu[name]:SetText(select(2, C_AddOns.GetAddOnInfo(name)))
+        fmMenu[name]:GetFontString():SetFont(UNIT_NAME_FONT, 16)
+        fmMenu[name]:ClearAllPoints()
+        fmMenu[name]:SetPoint("TOPLEFT", isFirstAddonButton and firstAddonMenuButtonAnchor or prevAddonButtonAnchor, "BOTTOMLEFT")
+        CharacterMenuButton_OnLoad(fmMenu[name])
+        fmMenu[name]:SetFrameRef("charwin", GwCharacterWindow)
+        fmMenu[name].ui_show = showFunction
+        fmMenu[name]:SetAttribute("_onclick", [=[
             local fchar = self:GetFrameRef("charwin")
             if fchar then
                 fchar:SetAttribute("windowpanelopen", nil)
@@ -107,6 +109,7 @@ local function LoadPaperDoll(tabContainer)
     fmMenu.equipmentMenu.ToggleMe = GwPaperDollBagItemList
     fmMenu.equipmentMenu:SetScript("OnClick", menuItem_OnClick)
     fmMenu.equipmentMenu:SetText(BAG_FILTER_EQUIPMENT)
+    fmMenu.equipmentMenu:GetFontString():SetFont(UNIT_NAME_FONT, 16)
     fmMenu.equipmentMenu:ClearAllPoints()
     fmMenu.equipmentMenu:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
 
@@ -114,6 +117,7 @@ local function LoadPaperDoll(tabContainer)
     fmMenu.outfitsMenu.ToggleMe = GwPaperDollOutfits
     fmMenu.outfitsMenu:SetScript("OnClick", menuItem_OnClick)
     fmMenu.outfitsMenu:SetText(EQUIPMENT_MANAGER)
+    fmMenu.outfitsMenu:GetFontString():SetFont(UNIT_NAME_FONT, 16)
     fmMenu.outfitsMenu:ClearAllPoints()
     fmMenu.outfitsMenu:SetPoint("TOPLEFT", fmMenu.equipmentMenu, "BOTTOMLEFT")
 
@@ -121,6 +125,7 @@ local function LoadPaperDoll(tabContainer)
     fmMenu.titlesMenu.ToggleMe = GwTitleWindow
     fmMenu.titlesMenu:SetScript("OnClick", menuItem_OnClick)
     fmMenu.titlesMenu:SetText(PAPERDOLL_SIDEBAR_TITLES)
+    fmMenu.titlesMenu:GetFontString():SetFont(UNIT_NAME_FONT, 16)
     fmMenu.titlesMenu:ClearAllPoints()
     fmMenu.titlesMenu:SetPoint("TOPLEFT", fmMenu.outfitsMenu, "BOTTOMLEFT")
 

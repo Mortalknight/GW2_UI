@@ -84,6 +84,7 @@ local function SkinAbilitiesInfo()
 
             header.description:SetTextColor(1, 1, 1)
             header.button.title:SetTextColor(0, 0, 0)
+            header.button.title:SetFont(DAMAGE_TEXT_FONT, 12, "")
             header.button.title.SetTextColor = GW.NoOp
             header.button.expandedIcon:SetTextColor(0, 0, 0)
             header.button.expandedIcon.SetTextColor = GW.NoOp
@@ -163,6 +164,15 @@ end
 local function encounterJournalSkin()
     local EJ = EncounterJournal
     GW.HandlePortraitFrame(EJ)
+    EJ.LootJournalItems:GwStripTextures()
+    EncounterJournalMonthlyActivitiesFrame.FilterList:GwStripTextures()
+
+    GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {EJ.LootJournalItems, EncounterJournalMonthlyActivitiesFrame.FilterList})
+
+    EJ.instanceSelect.Title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    EJ.instanceSelect.Title:SetFont(DAMAGE_TEXT_FONT, 16, "")
+    EJ.instanceSelect.Title:SetShadowColor(0, 0, 0, 0)
+    EJ.instanceSelect.Title:SetShadowOffset(1, -1)
     GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText,
         "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon")
 
@@ -359,6 +369,7 @@ local function encounterJournalSkin()
 
     local centerDisplay = suggestion.centerDisplay
     centerDisplay.title.text:SetTextColor(1, 1, 1)
+    centerDisplay.title.text:SetFont(DAMAGE_TEXT_FONT, 20, "")
     centerDisplay.description.text:SetTextColor(0.9, 0.9, 0.9)
 
     local reward = suggestion.reward
@@ -382,6 +393,7 @@ local function encounterJournalSkin()
         centerDisplay:ClearAllPoints()
         centerDisplay:SetPoint("TOPLEFT", 85, -10)
         centerDisplay.title.text:SetTextColor(1, 1, 1)
+        centerDisplay.title.text:SetFont(DAMAGE_TEXT_FONT, 18, "")
         centerDisplay.description.text:SetTextColor(0.9, 0.9, 0.9)
 
         reward = suggestion.reward
@@ -443,6 +455,10 @@ local function encounterJournalSkin()
                 child.bgImage:GwSetInside(2, 2)
                 child.bgImage:SetTexCoord(.08, .6, .08, .6)
                 child.bgImage:SetDrawLayer("ARTWORK", 5)
+                child.name:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+                child.name:SetFont(DAMAGE_TEXT_FONT, 16)
+                child.name:SetShadowColor(0, 0, 0, 0)
+                child.name:SetShadowOffset(1, -1)
                 child.isSkinned = true
             end
         end

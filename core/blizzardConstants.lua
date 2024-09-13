@@ -14,6 +14,7 @@ OPTION_SHOW_ACTION_BAR                                      = "Action Bar %d";
 local HBD
 QuestCache                                                  = {}
 QuestCache.quests                                           = {}
+C_AddOns                                                    = {}
 C_CVar                                                      = {}
 C_Map                                                       = {}
 C_AzeriteItem                                               = {}
@@ -163,6 +164,10 @@ end
 
 function IsPlayerAtEffectiveMaxLevel()
     return (UnitLevel("player") >= GetMaxLevelForPlayerExpansion())
+end
+
+function C_AddOns.IsAddOnLoaded(name)
+    return IsAddOnLoaded(name)
 end
 
 function C_CVar.SetCVar(k, v)

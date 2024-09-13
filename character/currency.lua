@@ -360,8 +360,6 @@ local function raidInfoSetup(raidinfo)
         slot.item.reset:SetTextColor(1, 1, 1)
         slot.item.extended:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         slot.item.extended:SetTextColor(1, 1, 1)
-        slot.item.extendButton:SetNormalFontObject(gw_button_font_black_small)
-        slot.item.extendButton:SetHighlightFontObject(gw_button_font_black_small)
         if not slot.item.ScriptsHooked then
             slot.item:HookScript("OnClick", raidInfo_OnClick)
             slot.item:HookScript("OnEnter", raidInfo_OnEnter)
@@ -696,6 +694,7 @@ local function LoadCurrency(tabContainer)
     item.ToggleMe = curwin
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(CURRENCY)
+    item:GetFontString():SetFont(UNIT_NAME_FONT, 16)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
     fmMenu.items["currency"] = item
@@ -704,6 +703,7 @@ local function LoadCurrency(tabContainer)
     item.ToggleMe = raidinfo
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(RAID_INFORMATION)
+    item:GetFontString():SetFont(UNIT_NAME_FONT, 16)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu.items["currency"], "BOTTOMLEFT")
     fmMenu.items["raidinfo"] = item
