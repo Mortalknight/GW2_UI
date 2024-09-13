@@ -232,6 +232,7 @@ local function PopulateBNTable(bnIndex, bnetIDAccount, accountName, battleTag, c
     return bnIndex
 end
 
+local isBNOnline
 local function BuildBNTable(total)
     for _, v in pairs(tableList) do
         wipe(v)
@@ -315,7 +316,7 @@ local function Friends_OnEnter(self)
 
     if not dataValid then
         if numberOfFriends > 0 then BuildFriendTable(numberOfFriends) end
-        if totalBNet > 0 then BuildBNTable(totalBNet) end
+        if totalBNet > 0 and isBNOnline then BuildBNTable(totalBNet) end
         dataValid = true
     end
 
@@ -389,6 +390,8 @@ end
 GW.Friends_OnEnter = Friends_OnEnter
 
 local function Friends_OnEvent(self, event, message)
+    isBNOnline = BNConnected()
+
     if event == "CHAT_MSG_SYSTEM" then
         if not (strfind(message, gsub(ERR_FRIEND_ONLINE_SS, "|Hplayer:%%s|h%[%%s%]|h","")) or strfind(message, gsub(ERR_FRIEND_OFFLINE_S, "%%s", ""))) then return end
     end
