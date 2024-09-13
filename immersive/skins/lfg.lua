@@ -562,6 +562,8 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.SearchPanel.AutoCompleteFrame:SetPoint("TOPRIGHT", LFGListFrame.SearchPanel.SearchBox, "BOTTOMRIGHT", -4, -8)
 
     --ApplicationViewer (Custom Groups)
+    LFGListFrame.ApplicationViewer.EntryName:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    LFGListFrame.ApplicationViewer.EntryName:SetFont(DAMAGE_TEXT_FONT, 16)
     LFGListFrame.ApplicationViewer.InfoBackground:Hide()
     --LFGListFrame.ApplicationViewer.InfoBackground:GwCreateBackdrop("Transparent")
     LFGListFrame.ApplicationViewer.AutoAcceptButton:GwSkinCheckButton()
