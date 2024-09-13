@@ -87,9 +87,6 @@ local function LoadFonts()
     --local light = L["FONT_LIGHT"]
     local damage = addonFont
 
-    print(addonFont)
-    print(addonFontHeader)
- 
     -- game engine fonts
     UNIT_NAME_FONT = normal
     DAMAGE_TEXT_FONT = addonFontHeader

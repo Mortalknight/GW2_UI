@@ -34,7 +34,6 @@ local function setNormalText(self)
 end
 GW.AchievementFrameSkinFunction.SetNormalText = setNormalText
 local function setTitleText(self)
-    print(self:GetText())
     self:SetFont(DAMAGE_TEXT_FONT, GW.settings.FONTS_HEADER_SIZE, GW.settings.FONTS_OUTLINE)
     self:SetTextColor(1, 1, 1)
 end
@@ -356,7 +355,6 @@ local function skinAchievementSummaryHeaders(self)
     texture:SetPoint("BOTTOMRIGHT")
     text:ClearAllPoints()
     text:SetPoint("LEFT",10,0)
-    print(text:GetText())
     setTitleText(text)
 end
 local function skinAchievementSummaryStatusBar(self)
