@@ -86,6 +86,9 @@ local function LoadFonts()
     local narrowBold = addonFont
     --local light = L["FONT_LIGHT"]
     local damage = addonFont
+
+    print(addonFont)
+    print(addonFontHeader)
  
     -- game engine fonts
     UNIT_NAME_FONT = normal
@@ -112,7 +115,7 @@ local function LoadFonts()
     setFont(SystemFont_Shadow_Med2, normal)
     setFont(SystemFont_Med3, normal)
     setFont(SystemFont_Shadow_Med3, normal)
-    setFont(SystemFont_Large, bold)
+    setFont(SystemFont_Large, normal)
     setFont(SystemFont_Shadow_Large, bold)
     setFont(SystemFont_Shadow_Large_Outline, bold)
     setFont(SystemFont_Huge1, normal)
@@ -130,7 +133,7 @@ local function LoadFonts()
     setFont(ReputationDetailFont, normal)
     setFont(FriendsFont_Normal, normal)
     setFont(FriendsFont_Small, normal)
-    setFont(FriendsFont_Large, bold)
+    setFont(FriendsFont_Large, damage)
     setFont(FriendsFont_UserText, narrow)
     setFont(GameFont_Gigantic, normal)
     setFont(ChatBubbleFont, normal)
@@ -178,6 +181,7 @@ local function LoadFonts()
     setFont(Game48FontShadow, normal)
     setFont(Game60Font, normal)
     setFont(Game72Font, normal)
+    setFont(GameFontHighlight, normal)
     setFont(GameFontHighlightMedium, normal)
     setFont(GameFontHighlightSmall2, normal)
     setFont(GameFontNormalHuge2, normal)

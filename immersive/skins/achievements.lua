@@ -34,7 +34,8 @@ local function setNormalText(self)
 end
 GW.AchievementFrameSkinFunction.SetNormalText = setNormalText
 local function setTitleText(self)
-    self:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    print(self:GetText())
+    self:SetFont(DAMAGE_TEXT_FONT, GW.settings.FONTS_HEADER_SIZE, GW.settings.FONTS_OUTLINE)
     self:SetTextColor(1, 1, 1)
 end
 GW.AchievementFrameSkinFunction.SetTitleText = setTitleText
@@ -355,6 +356,7 @@ local function skinAchievementSummaryHeaders(self)
     texture:SetPoint("BOTTOMRIGHT")
     text:ClearAllPoints()
     text:SetPoint("LEFT",10,0)
+    print(text:GetText())
     setTitleText(text)
 end
 local function skinAchievementSummaryStatusBar(self)
@@ -1541,6 +1543,6 @@ end
 local function LoadAchivementSkin()
     if not GW.settings.ACHIEVEMENT_SKIN_ENABLED then return end
 
-    GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI")
+    GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI", AchievementFrame)
 end
 GW.LoadAchivementSkin = LoadAchivementSkin

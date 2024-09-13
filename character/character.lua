@@ -534,7 +534,7 @@ local function CharacterMenuButton_OnLoad(self, odd)
     else
         self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
     end
-   
+
     self:GetFontString():SetJustifyH("LEFT")
     self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
     GW.nextHeroPanelMenuButtonShadowOdd = not GW.nextHeroPanelMenuButtonShadowOdd

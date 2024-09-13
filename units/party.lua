@@ -738,7 +738,7 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
-    frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
+    frame.level:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
 
     frame.healthString:SetFontObject(GameFontNormalSmall)
 

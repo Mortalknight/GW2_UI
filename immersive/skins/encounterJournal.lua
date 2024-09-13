@@ -118,6 +118,7 @@ local function SkinAbilitiesInfo()
 
             header.description:SetTextColor(1, 1, 1)
             header.button.title:SetTextColor(0, 0, 0)
+            header.button.title:SetFont(DAMAGE_TEXT_FONT, 12, "")
             header.button.title.SetTextColor = GW.NoOp
             header.button.expandedIcon:SetTextColor(0, 0, 0)
             header.button.expandedIcon.SetTextColor = GW.NoOp
@@ -235,7 +236,8 @@ local function encounterJournalSkin()
 
     GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {EJ.LootJournalItems, EncounterJournalMonthlyActivitiesFrame.FilterList})
 
-    EJ.instanceSelect.Title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    EJ.instanceSelect.Title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    EJ.instanceSelect.Title:SetFont(DAMAGE_TEXT_FONT, 16, "")
     EJ.instanceSelect.Title:SetShadowColor(0, 0, 0, 0)
     EJ.instanceSelect.Title:SetShadowOffset(1, -1)
 
@@ -292,7 +294,8 @@ local function encounterJournalSkin()
     GW.HandleTrimScrollBar(EncounterJournalMonthlyActivitiesFrame.FilterList.ScrollBar)
     GW.HandleScrollControls(EncounterJournalMonthlyActivitiesFrame.FilterList)
 
-    EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetFont(DAMAGE_TEXT_FONT, 16, "")
     EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetShadowColor(0, 0, 0, 0)
     EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetShadowOffset(1, -1)
 
@@ -474,6 +477,7 @@ local function encounterJournalSkin()
 
     local centerDisplay = suggestion.centerDisplay
     centerDisplay.title.text:SetTextColor(1, 1, 1)
+    centerDisplay.title.text:SetFont(DAMAGE_TEXT_FONT, 20, "")
     centerDisplay.description.text:SetTextColor(0.9, 0.9, 0.9)
 
     local reward = suggestion.reward
@@ -497,6 +501,7 @@ local function encounterJournalSkin()
         centerDisplay:ClearAllPoints()
         centerDisplay:SetPoint("TOPLEFT", 85, -10)
         centerDisplay.title.text:SetTextColor(1, 1, 1)
+        centerDisplay.title.text:SetFont(DAMAGE_TEXT_FONT, 18, "")
         centerDisplay.description.text:SetTextColor(0.9, 0.9, 0.9)
 
         reward = suggestion.reward
@@ -547,7 +552,8 @@ local function encounterJournalSkin()
                 child.bgImage:GwSetInside(2, 2)
                 child.bgImage:SetTexCoord(.08, .6, .08, .6)
                 child.bgImage:SetDrawLayer("ARTWORK", 5)
-                child.name:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+                child.name:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+                child.name:SetFont(DAMAGE_TEXT_FONT, 16)
                 child.name:SetShadowColor(0, 0, 0, 0)
                 child.name:SetShadowOffset(1, -1)
                 child.isSkinned = true
@@ -656,7 +662,7 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInstanceFrameBG:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
     EncounterJournalEncounterFrameInstanceFrame.titleBG:SetAlpha(0)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetTextColor(1, 1, 1)
-    EncounterJournalEncounterFrameInstanceFrameTitle:SetFont(UNIT_NAME_FONT, 25, "")
+    EncounterJournalEncounterFrameInstanceFrameTitle:SetFont(DAMAGE_TEXT_FONT, 25, "")
 
     for _, child in next, {EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.ScrollTarget:GetChildren()} do
         if child.FontString then

@@ -474,7 +474,7 @@ local function createTabIcon(iconName, tabIndex, notify)
 
         f.GwNotifyText:SetSize(24, 24)
         f.GwNotifyText:SetPoint("CENTER", f, "BOTTOM", 23, 7)
-        f.GwNotifyText:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+        f.GwNotifyText:SetFont(UNIT_NAME_FONT,GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
         f.GwNotifyText:SetTextColor(1, 1, 1, 1)
         f.GwNotifyText:SetShadowColor(0, 0, 0, 0)
         f.GwNotifyText:Hide()

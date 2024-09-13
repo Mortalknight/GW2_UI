@@ -610,6 +610,10 @@ local function evPlayerLogin(self)
     GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
 
+    if GW.settings.FONTS_ENABLED then
+        GW.LoadFonts()
+    end
+
     -- load alert settings
     GW.LoadAlertSystem()
     GW.SetupAlertFramePosition()
@@ -680,10 +684,6 @@ local function evPlayerLogin(self)
         hudArtFrame.edgeTintBottomCornerLeft:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
         hudArtFrame.edgeTintBottomCornerRight:ClearAllPoints()
         hudArtFrame.edgeTintBottomCornerRight:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
-    end
-
-    if GW.settings.FONTS_ENABLED then
-        GW.LoadFonts()
     end
 
     if not IsIncompatibleAddonLoadedOrOverride("FloatingCombatText", true) then -- Only touch this setting if no other addon for this is loaded
