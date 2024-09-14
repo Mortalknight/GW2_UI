@@ -12,7 +12,7 @@ end
 local function SkinInspectFrameOnLoad()
     if not GW.settings.INSPECTION_SKIN_ENABLED then return end
 
-    local w, h = InspectFrame:GetSize()
+    local w, _ = InspectFrame:GetSize()
     InspectFrame:GwStripTextures()
     InspectFrameCloseButton:GwSkinButton(true)
     InspectFrameCloseButton:SetSize(20, 20)
@@ -22,6 +22,12 @@ local function SkinInspectFrameOnLoad()
     InspectFrame.gwHeader.windowIcon:SetSize(65, 65)
     InspectFrame.gwHeader.windowIcon:ClearAllPoints()
     InspectFrame.gwHeader.windowIcon:SetPoint("CENTER", InspectFrame.gwHeader.BGLEFT, "LEFT", 25, -5)
+    InspectFrame.gwHeader.BGLEFT:ClearAllPoints()
+    InspectFrame.gwHeader.BGLEFT:SetPoint("BOTTOMLEFT", InspectFrame.gwHeader, "BOTTOMLEFT", 0, 0)
+    InspectFrame.gwHeader.BGLEFT:SetPoint("TOPRIGHT", InspectFrame.gwHeader, "TOPRIGHT", 0, 0)
+    InspectFrame.gwHeader.BGRIGHT:ClearAllPoints()
+    InspectFrame.gwHeader.BGRIGHT:SetPoint("BOTTOMRIGHT", InspectFrame.gwHeader, "BOTTOMRIGHT", 0, 0)
+    InspectFrame.gwHeader.BGRIGHT:SetPoint("TOPLEFT", InspectFrame.gwHeader, "TOPLEFT", 0, 0)
 
     hooksecurefunc(InspectFrame, "SetPortraitToUnit", function(self, unit)
         SetPortraitTexture(InspectFrame.gwHeader.windowIcon, unit);
