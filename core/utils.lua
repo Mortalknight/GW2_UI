@@ -1010,3 +1010,10 @@ local function UpdateFontSettings()
     end
 end
 GW.UpdateFontSettings = UpdateFontSettings
+
+local function IsBeledarsActive()
+    local timeLeft = (GetQuestResetTime() + 3660) % 10800
+
+    return timeLeft <= 60
+end
+GW.IsBeledarsActive = IsBeledarsActive
