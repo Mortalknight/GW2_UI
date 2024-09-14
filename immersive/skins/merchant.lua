@@ -1,5 +1,4 @@
 local _, GW = ...
-local constBackdropFrameBorder = GW.BackdropTemplates.OnlyBorder
 local constBackdropFrameSmallerBorder = GW.BackdropTemplates.DefaultWithSmallBorder
 
 local function UpdateRepairButtons()
@@ -41,6 +40,7 @@ local function SkinMerchantFrameItemButton(i)
 
     item:GwStripTextures(true)
     item:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
+    item.backdrop:SetFrameLevel(item:GetFrameLevel())
 
     button:GwStripTextures()
     button:GwStyleButton()
@@ -73,8 +73,6 @@ local function LoadMerchantFrameSkin()
     MerchantFrame:GwStripTextures()
     MerchantFrame.NineSlice:Hide()
     MerchantFrame.TopTileStreaks:Hide()
-    MerchantFrame:GwCreateBackdrop()
-
 
     GW.CreateFrameHeaderWithBody(MerchantFrame, MerchantFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MerchantFrameInset, MerchantMoneyInset})
     MerchantFrame.gwHeader.windowIcon:SetSize(65, 65)
@@ -101,6 +99,7 @@ local function LoadMerchantFrameSkin()
     MerchantBuyBackItem:SetPoint("TOPLEFT", MerchantItem10, "BOTTOMLEFT", 0, -50)
     MerchantBuyBackItem:GwStripTextures(true)
     MerchantBuyBackItem:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
+    MerchantBuyBackItem.backdrop:SetFrameLevel(MerchantBuyBackItem:GetFrameLevel())
     MerchantBuyBackItem.backdrop:SetPoint("TOPLEFT", -6, 6)
     MerchantBuyBackItem.backdrop:SetPoint("BOTTOMRIGHT", 6, -6)
 
@@ -111,14 +110,17 @@ local function LoadMerchantFrameSkin()
 
     MerchantItem1:SetPoint("TOPLEFT", MerchantFrame, "TOPLEFT", 24, -69)
 
-    MerchantFrameTab1:GwSkinButton(false, true, nil, nil, true)
-    MerchantFrameTab2:GwSkinButton(false, true, nil, nil, true)
+    GW.HandleTabs(MerchantFrameTab1)
+    GW.HandleTabs(MerchantFrameTab2)
 
     MerchantFrameTab1:SetSize(80, 24)
     MerchantFrameTab2:SetSize(80, 24)
 
+    MerchantFrameTab1:ClearAllPoints()
+    MerchantFrameTab1:SetPoint("TOPLEFT", MerchantFrame, "BOTTOMLEFT", 0, 0)
+
     MerchantFrameTab2:ClearAllPoints()
-    MerchantFrameTab2:SetPoint("RIGHT",  MerchantFrameTab1, "RIGHT", 75, 0)
+    MerchantFrameTab2:SetPoint("LEFT", MerchantFrameTab1, "RIGHT", 0, 0)
 
     hooksecurefunc("PanelTemplates_SelectTab", function(tab)
         local name = tab:GetName()
