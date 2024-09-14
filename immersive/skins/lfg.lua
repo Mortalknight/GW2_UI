@@ -341,10 +341,15 @@ local function SkinLookingForGroupFrames()
     LFDQueueFrameRandomScrollFrameChildFrameTitle:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     LFDQueueFrameRandomScrollFrameChildFrameTitle:SetShadowColor(0, 0, 0, 0)
     LFDQueueFrameRandomScrollFrameChildFrameTitle:SetShadowOffset(1, -1)
+    LFDQueueFrameRandomScrollFrameChildFrameTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
 
     LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel:SetShadowColor(0, 0, 0, 0)
     LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel:SetShadowOffset(1, -1)
+    LFDQueueFrameRandomScrollFrameChildFrameRewardsLabel:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
+
+    LFDQueueFrameRandomScrollFrameChildFrameDescription:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    LFDQueueFrameRandomScrollFrameChildFrameRewardsDescription:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
     hooksecurefunc("LFGDungeonListButton_SetDungeon", function(button)
         if button and button.expandOrCollapseButton:IsShown() then
@@ -381,6 +386,10 @@ local function SkinLookingForGroupFrames()
 
     RaidFinderQueueFrameScrollFrameChildFrameTitle:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     RaidFinderQueueFrameScrollFrameChildFrameRewardsLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    RaidFinderQueueFrameScrollFrameChildFrameTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
+    RaidFinderQueueFrameScrollFrameChildFrameRewardsLabel:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
+    RaidFinderQueueFrameScrollFrameChildFrameDescription:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    RaidFinderQueueFrameScrollFrameChildFrameRewardsDescription:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
     --Skin Reward Items (This works for all frames, LFD, Raid, Scenario)
     hooksecurefunc("LFGRewardsFrame_SetItemButton", SkinItemButton)
