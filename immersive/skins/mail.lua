@@ -382,7 +382,7 @@ local function LoadMailSkin()
 
     MailFrame.heading.Title = MailFrame:CreateFontString("MailFrameTitle", "ARTWORK")
     MailFrame.heading.Title:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 50, 30)
-    MailFrame.heading.Title:SetFont(DAMAGE_TEXT_FONT, 20)
+    MailFrame.heading.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
     MailFrame.heading.Title:SetText(MAIL_LABEL)
     MailFrame.heading.Title:SetTextColor(1, .93, .73)
 

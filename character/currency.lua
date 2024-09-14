@@ -389,12 +389,12 @@ local function SkinTokenFrame()
         TokenPopupClose:GwSkinButton(true)
     end
 
-    CurrencyTransferMenuTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    CurrencyTransferMenuTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     CurrencyTransferMenuTitleText:SetTextColor(1, 1, 1)
 
-    CurrencyTransferMenu.SourceSelector.SourceLabel:SetFont(UNIT_NAME_FONT, 13)
+    CurrencyTransferMenu.SourceSelector.SourceLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     CurrencyTransferMenu.SourceSelector.SourceLabel:SetTextColor(1, 1, 1)
-    CurrencyTransferMenu.SourceSelector.PlayerName:SetFont(UNIT_NAME_FONT, 13)
+    CurrencyTransferMenu.SourceSelector.PlayerName:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     CurrencyTransferMenu.SourceSelector.PlayerName:SetTextColor(1, 1, 1)
     CurrencyTransferMenu.AmountSelector.TransferAmountLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     CurrencyTransferMenu.AmountSelector.TransferAmountLabel:SetTextColor(1, 1, 1)
@@ -560,7 +560,7 @@ local function LoadCurrency(tabContainer)
     item.ToggleMe = curwin_outer.Currency
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(CURRENCY)
-    item:GetFontString():SetFont(UNIT_NAME_FONT, 16)
+    item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
     fmMenu.items.currency = item
@@ -569,7 +569,7 @@ local function LoadCurrency(tabContainer)
     item.ToggleMe = curHistroyWin
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(CURRENCY_TRANSFER_LOG_TITLE)
-    item:GetFontString():SetFont(UNIT_NAME_FONT, 16)
+    item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu.items.currency, "BOTTOMLEFT")
     fmMenu.items.currencyTransferHistory = item
@@ -578,7 +578,7 @@ local function LoadCurrency(tabContainer)
     item.ToggleMe = raidinfo
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(RAID_INFORMATION)
-    item:GetFontString():SetFont(UNIT_NAME_FONT, 16)
+    item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu.items.currencyTransferHistory, "BOTTOMLEFT")
     fmMenu.items.raidinfo = item

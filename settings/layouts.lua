@@ -432,15 +432,15 @@ end
 
 local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     smallSettingsFrame.layoutView = CreateFrame("Frame", nil, smallSettingsFrame, "GwLayoutView")
-    smallSettingsFrame.layoutView.desc:SetFont(UNIT_NAME_FONT, 12)
+    smallSettingsFrame.layoutView.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     smallSettingsFrame.layoutView.desc:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     smallSettingsFrame.layoutView.desc:SetText(L["Assign layouts to a spec. The layout will be automatically changed on a spec switch.\n\nLayouts has always priority for profile settings."])
 
-    smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetFont(DAMAGE_TEXT_FONT, 12)
+    smallSettingsFrame.layoutView.savedLayoutDropDown.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
     smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetText("Layouts")
 
-    smallSettingsFrame.layoutView.specsDropDown.title:SetFont(DAMAGE_TEXT_FONT, 12)
+    smallSettingsFrame.layoutView.specsDropDown.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
     smallSettingsFrame.layoutView.specsDropDown.title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     smallSettingsFrame.layoutView.specsDropDown.title:SetText(SPECIALIZATION)
 

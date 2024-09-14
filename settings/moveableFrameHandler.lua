@@ -737,7 +737,7 @@ local function LoadMovers(layoutManager)
     local cos, sin = math.cos(angle), math.sin(angle)
     smallSettingsContainer.seperator:SetTexCoord((sin - cos), -(cos + sin), -cos, -sin, sin, -cos, 0, 0)
 
-    smallSettingsContainer.headerString:SetFont(UNIT_NAME_FONT, 14, "")
+    smallSettingsContainer.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     smallSettingsContainer.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     smallSettingsContainer.headerString:SetText(L["Extra Frame Options"] .. " & Layouts")
 

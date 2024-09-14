@@ -759,21 +759,21 @@ local function GwKillEditMode(object)
     object.Selection:EnableMouse(false)
 end
 
-local function GwSetFontTemplate(object, font, textSizeType, style, skip)
+local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddition, skip)
     if not object or not font or not object.SetFont or not textSizeType then return end
 
     if not skip then -- can be used for ignoring setting updates and used for update function
-        object.gwFont, object.gwTextSizeType, object.gwStyle = font, textSizeType, style
+        object.gwFont, object.gwTextSizeType, object.gwStyle, object.gwTextSizeAddition = font, textSizeType, style, textSizeAddition
     end
 
     if textSizeType == GW.TextSizeType.BIG_HEADER then
-        object:SetFont(font, GW.settings.FONTS_BIG_HEADER_SIZE, style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, GW.settings.FONTS_BIG_HEADER_SIZE + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
     elseif textSizeType == GW.TextSizeType.HEADER then
-        object:SetFont(font, GW.settings.FONTS_HEADER_SIZE, style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, GW.settings.FONTS_HEADER_SIZE + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
     elseif textSizeType == GW.TextSizeType.NORMAL then
-        object:SetFont(font, GW.settings.FONTS_NORMAL_SIZE, style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, GW.settings.FONTS_NORMAL_SIZE + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
     elseif textSizeType == GW.TextSizeType.SMALL then
-        object:SetFont(font, GW.settings.FONTS_SMALL_SIZE, style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, GW.settings.FONTS_SMALL_SIZE + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
     end
 
     -- register font for size changes

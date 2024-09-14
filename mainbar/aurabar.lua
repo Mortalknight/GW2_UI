@@ -28,14 +28,14 @@ local DIRECTION_TO_POINT = {
 
 local function setLongCD(self, stackCount)
     self.cooldown:Hide()
-    self.status.duration:SetFont(UNIT_NAME_FONT, 11)
+    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
     self.status.duration:SetShadowColor(0, 0, 0, 1)
     self.status.duration:SetShadowOffset(1, -1)
     self.status.stacks:SetShadowColor(0, 0, 0, 1)
     self.status.stacks:SetShadowOffset(1, -1)
 
     if stackCount and stackCount > 99 then
-        self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE", -2)
     else
         self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE")
     end
@@ -50,14 +50,14 @@ end
 
 local function setShortCD(self, expires, duration, stackCount)
     self.cooldown:SetCooldown(expires - duration, duration)
-    self.status.duration:SetFont(UNIT_NAME_FONT, 13)
+    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, nil, -1)
     self.status.duration:SetShadowColor(0, 0, 0, 1)
     self.status.duration:SetShadowOffset(1, -1)
     self.status.stacks:SetShadowColor(0, 0, 0, 1)
     self.status.stacks:SetShadowOffset(1, -1)
 
     if stackCount and stackCount > 99 then
-        self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE", -2)
     else
         self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     end

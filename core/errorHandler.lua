@@ -33,13 +33,13 @@ local function CreateErrorLogWindow()
     frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg")
 
     frame.header = frame:CreateFontString(nil, "OVERLAY")
-    frame.header:SetFont(DAMAGE_TEXT_FONT, 30, "OUTLINE")
+    frame.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 12)
     frame.header:SetTextColor(1, 0.95, 0.8, 1)
     frame.header:SetPoint("TOP", 0, -20)
     frame.header:SetText("GW2 Error Log")
 
     frame.result = frame:CreateFontString(nil, "OVERLAY")
-    frame.result:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
+    frame.result:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     frame.result:SetTextColor(0.9, 0.85, 0.7, 1)
     frame.result:SetPoint("TOP", frame.subheader, "BOTTOM", 0, -40)
 

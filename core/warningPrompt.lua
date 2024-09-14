@@ -33,8 +33,8 @@ end
 GW.InputPrompt = InputPrompt
 
 local function CreateWarningPrompt()
-    warningPrompt= CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
-    warningPrompt.string:SetFont(UNIT_NAME_FONT, 14)
+    warningPrompt = CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
+    warningPrompt.string:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     warningPrompt.string:SetTextColor(1, 1, 1)
 
     warningPrompt.input:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)

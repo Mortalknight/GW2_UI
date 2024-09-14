@@ -1003,7 +1003,7 @@ GW.MakeFrameMovable = MakeFrameMovable
 local function UpdateFontSettings()
     for text in pairs(GW.texts) do
         if text then
-            text:GwSetFontTemplate(text.gwFont, text.gwTextSizeType, text.gwStyle, true)
+            text:GwSetFontTemplate(text.gwFont, text.gwTextSizeType, text.gwStyle, nil, true)
         else
             GW.texts[text] = nil
         end

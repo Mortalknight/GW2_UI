@@ -20,7 +20,7 @@ local function ApplyAlliedRacesUISkin()
 
     AlliedRacesFrame.Banner:Hide()
 
-    AlliedRacesFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    AlliedRacesFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
 
     AlliedRacesFrameCloseButton:GwSkinButton(true)
     AlliedRacesFrameCloseButton:SetSize(20, 20)

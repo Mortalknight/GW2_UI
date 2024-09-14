@@ -520,7 +520,7 @@ local function worldMapSkin()
 
     -- 11.0 Map Legend
     QuestMapFrame.MapLegend.BackButton:GwSkinButton(false, true)
-    QuestMapFrame.MapLegend.TitleText:SetFont(STANDARD_TEXT_FONT, 16) -- 16 is okayish
+    QuestMapFrame.MapLegend.TitleText:SetFont(STANDARD_TEXT_FONT, 16)
     QuestMapFrame.MapLegend.BorderFrame:SetAlpha(0)
     MapLegendScrollFrame:GwStripTextures()
     MapLegendScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)

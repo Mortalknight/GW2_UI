@@ -348,7 +348,7 @@ local function LoadPetFrame(lm)
     RegisterStateDriver(playerPetFrame, "visibility", "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
 
     playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-    playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11)
+    playerPetFrame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
 
     TogglePetAuraPosition()
 

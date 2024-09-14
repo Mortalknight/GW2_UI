@@ -13,7 +13,7 @@ local function ApplyItemUpgradeSkin()
     ItemUpgradeFrameBg:Hide()
     ItemUpgradeFramePortrait:Hide()
     ItemUpgradeFramePlayerCurrenciesBorder:GwStripTextures()
-    ItemUpgradeFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    ItemUpgradeFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
 
     ItemUpgradeFrame:GwStripTextures()
 

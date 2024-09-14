@@ -28,10 +28,10 @@ AddForProfiling("welcome", "settings_OnClick", settings_OnClick)
 
 local function button1_OnClick()
     -- reset font settings
-    wpanel.welcome.header:SetFont(DAMAGE_TEXT_FONT,24)
+    wpanel.welcome.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
     wpanel.welcome.header:SetTextColor(0.8,0.75,0.6,1)
 
-    wpanel.welcome.subHeader:SetFont(DAMAGE_TEXT_FONT,14)
+    wpanel.welcome.subHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     wpanel.welcome.subHeader:SetTextColor(0.9,0.85,0.7,1)
 
     -- hide buttons
@@ -210,10 +210,10 @@ end
 AddForProfiling("welcome", "button1_OnClick", button1_OnClick)
 
 local function setDefaultOpenLayout()
-    wpanel.welcome.header:SetFont(DAMAGE_TEXT_FONT,14)
+    wpanel.welcome.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     wpanel.welcome.header:SetTextColor(0.9,0.85,0.7,1)
 
-    wpanel.welcome.subHeader:SetFont(DAMAGE_TEXT_FONT,22,"OUTLINE")
+    wpanel.welcome.subHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 4)
     wpanel.welcome.subHeader:SetTextColor(0.8,0.75,0.6,1)
 
     wpanel.header:SetText(L["Welcome to GW2 UI"])
@@ -232,10 +232,10 @@ end
 local function createPanel()
     wpanel = CreateFrame("Frame", nil, UIParent, "GwWelcomePageTmpl")
 
-    wpanel.header:SetFont(DAMAGE_TEXT_FONT,30,"OUTLINE")
+    wpanel.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 12)
     wpanel.header:SetTextColor(1,0.95,0.8,1)
 
-    wpanel.subHeader:SetFont(DAMAGE_TEXT_FONT,16,"OUTLINE")
+    wpanel.subHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
     wpanel.subHeader:SetTextColor(0.9,0.85,0.7,1)
 
     wpanel.subHeader:SetText(GW.VERSION_STRING)

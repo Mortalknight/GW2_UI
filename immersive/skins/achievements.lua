@@ -1099,7 +1099,7 @@ local function skinAchevement()
 
     AchievementFrame.Header.Points:ClearAllPoints()
     AchievementFrame.Header.Points:SetPoint("LEFT", AchievementFrame.Header.Shield, "RIGHT", 10, 0)
-    AchievementFrame.Header.Points:SetFont(DAMAGE_TEXT_FONT, 24)
+    AchievementFrame.Header.Points:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     AchievementFrame.Header.Title:Hide()
 
@@ -1112,7 +1112,7 @@ local function skinAchevement()
     AchievementFrameHeader.breadCrumb = AchievementFrameHeader:CreateFontString(nil, "OVERLAY")
     AchievementFrameHeader.header:SetPoint("BOTTOMLEFT", 20, 8)
     AchievementFrameHeader.breadCrumb:SetPoint("LEFT", AchievementFrameHeader.header, "RIGHT", 20, 0)
-    AchievementFrameHeader.header:SetFont(DAMAGE_TEXT_FONT, 24)
+    AchievementFrameHeader.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
     AchievementFrameHeader.breadCrumb:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     AchievementFrameHeader.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     AchievementFrameHeader.breadCrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)

@@ -295,7 +295,7 @@ local function encounterJournalSkin()
     GW.HandleScrollControls(EncounterJournalMonthlyActivitiesFrame.FilterList)
 
     EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
-    EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetFont(DAMAGE_TEXT_FONT, 16, "")
+    EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetShadowColor(0, 0, 0, 0)
     EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetShadowOffset(1, -1)
 
@@ -664,7 +664,7 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInstanceFrameBG:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
     EncounterJournalEncounterFrameInstanceFrame.titleBG:SetAlpha(0)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetTextColor(1, 1, 1)
-    EncounterJournalEncounterFrameInstanceFrameTitle:SetFont(DAMAGE_TEXT_FONT, 25, "")
+    EncounterJournalEncounterFrameInstanceFrameTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     for _, child in next, {EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.ScrollTarget:GetChildren()} do
         if child.FontString then

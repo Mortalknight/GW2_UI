@@ -165,14 +165,14 @@ GW.AddForProfiling("hud", "UpcomingSpellsFrameOnShow", UpcomingSpellsFrameOnShow
 local function LoadUpcomingSpells()
     local upcomingSpellsFrame = CreateFrame("Frame", "GwLevelingRewards", UIParent, "GwLevelingRewards")
 
-    upcomingSpellsFrame.header:SetFont(DAMAGE_TEXT_FONT, 24)
+    upcomingSpellsFrame.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
     upcomingSpellsFrame.header:SetText(L["Upcoming Level Rewards"])
 
-    upcomingSpellsFrame.rewardHeader:SetFont(DAMAGE_TEXT_FONT, 11)
+    upcomingSpellsFrame.rewardHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL, nil, -1)
     upcomingSpellsFrame.rewardHeader:SetTextColor(0.6, 0.6, 0.6)
     upcomingSpellsFrame.rewardHeader:SetText(REWARD)
 
-    upcomingSpellsFrame.levelHeader:SetFont(DAMAGE_TEXT_FONT, 11)
+    upcomingSpellsFrame.levelHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL, nil, -1)
     upcomingSpellsFrame.levelHeader:SetTextColor(0.6, 0.6, 0.6)
     upcomingSpellsFrame.levelHeader:SetText(LEVEL)
 

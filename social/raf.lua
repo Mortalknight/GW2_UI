@@ -72,7 +72,7 @@ local function LoadRecruitAFriendList(tabContainer)
 
     RecruitAFriendFrame.RecruitList.Header:SetSize(450, 20)
     RecruitAFriendFrame.RecruitList.Header.Background:Hide()
-    RecruitAFriendFrame.RecruitList.Header.RecruitedFriends:SetFont(DAMAGE_TEXT_FONT, 20)
+    RecruitAFriendFrame.RecruitList.Header.RecruitedFriends:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
     RecruitAFriendFrame.RecruitList.Header.RecruitedFriends:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
     RecruitAFriendFrame.RecruitmentButton:SetParent(RAFFrame.RecruitList)

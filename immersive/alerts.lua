@@ -924,9 +924,9 @@ local function skinGarrisonShipFollowerAlert(frame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 
-        frame.Name:SetFont(UNIT_NAME_FONT, 10)
+        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
         frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        frame.Class:SetFont(UNIT_NAME_FONT, 10)
+        frame.Class:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
 
         frame.isSkinned = true
     end

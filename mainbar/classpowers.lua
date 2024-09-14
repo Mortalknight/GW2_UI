@@ -1829,7 +1829,7 @@ local function LoadClassPowers()
     exbar.label:SetShadowOffset(1, -1)
 
     -- set a bunch of other init styling stuff
-    cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINE")
+    cpf.decayCounter.count:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 6)
     cpf.brewmaster.debugpre = 0
     cpf.brewmaster.stagger.indicatorText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     cpf.brewmaster.ironskin.indicatorText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)

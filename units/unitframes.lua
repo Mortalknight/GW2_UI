@@ -82,7 +82,7 @@ local function createNormalUnitFrame(ftype, revert)
     end
     f.nameString:SetShadowOffset(1, -1)
 
-    f.threatString:SetFont(STANDARD_TEXT_FONT, 12)
+    f.threatString:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.SMALL)
     f.threatString:SetShadowOffset(1, -1)
 
     f.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)

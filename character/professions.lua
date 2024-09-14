@@ -382,7 +382,7 @@ local function LoadProfessions(tabContainer)
 
     fmMenu.overviewMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
     fmMenu.overviewMenu:SetText(TRADESKILLS)
-    fmMenu.overviewMenu:GetFontString():SetFont(UNIT_NAME_FONT, 16)
+    fmMenu.overviewMenu:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
     fmMenu.overviewMenu:ClearAllPoints()
     fmMenu.overviewMenu:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
 

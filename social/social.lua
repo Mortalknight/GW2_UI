@@ -359,7 +359,7 @@ local function loadBaseFrame()
 
     table.insert(UISpecialFrames, fmGSW:GetName())
     fmGSW:SetClampedToScreen(true)
-    fmGSW.WindowHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    fmGSW.WindowHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
     fmGSW.WindowHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     fmGSW:SetAttribute("windowpanelopen", nil)
     fmGSW.secure:SetAttribute("_onclick", socialSecure_OnClick)
