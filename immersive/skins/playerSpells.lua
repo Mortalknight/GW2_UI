@@ -179,7 +179,7 @@ local function skinPlayerSpells()
     TalentsFrame.SearchPreviewContainer:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
     TalentsFrame.PvPTalentList:GwStripTextures()
-    TalentsFrame.PvPTalentList:GwCreateBackdrop()
+    TalentsFrame.PvPTalentList:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     TalentsFrame.PvPTalentList.backdrop:SetFrameStrata(PlayerSpellsFrame.TalentsFrame.PvPTalentList:GetFrameStrata())
     TalentsFrame.PvPTalentList.backdrop:SetFrameLevel(2000)
 
