@@ -77,9 +77,7 @@ local function createNormalUnitFrame(ftype, revert)
     f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.healthString:SetShadowOffset(1, -1)
 
-    if GW.settings.FONTS_ENABLED then -- for any reason blizzard is not supporting UTF8 if we set this font
-        f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    end
+    f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     f.nameString:SetShadowOffset(1, -1)
 
     f.threatString:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.SMALL)
@@ -151,9 +149,7 @@ local function createNormalUnitFrameSmall(ftype)
     f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     f.healthString:SetShadowOffset(1, -1)
 
-    if GW.settings.FONTS_ENABLED then -- for any reason blizzard is not supporting UTF8 if we set this font
-        f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    end
+    f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     f.nameString:SetShadowOffset(1, -1)
 
     f.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)

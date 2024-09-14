@@ -1601,7 +1601,7 @@ local function styleChatWindow(frame)
         frame:SetFont(chatFont, fontHeight or 14, fontFlags)
         editbox:SetFont(chatFont, fontHeight or 14, fontFlags)
         _G[editbox:GetName() .. "Header"]:SetFont(chatFont, fontHeight or 14, fontFlags)
-    elseif GW.settings.FONTS_ENABLED and fontSize then
+    elseif GW.settings.FONT_STYLE_TEMPLATE ~= "BLIZZARD" and fontSize then
         if fontSize > 0 then
             frame:SetFont(STANDARD_TEXT_FONT, fontSize, "")
         elseif fontSize == 0 then
