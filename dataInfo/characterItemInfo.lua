@@ -71,7 +71,7 @@ local function CreateSlotStrings()
         end
         slot.enchantText:SetPoint(justify, slot, x + (justify == "BOTTOMLEFT" and 5 or 0), z)
 
-        slot.itemlevel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "THINOUTLINED")
+        slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
 
         for u = 1, 10 do
             local offset = -((u - 1) * 13)

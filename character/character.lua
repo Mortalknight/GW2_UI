@@ -518,7 +518,7 @@ local function CharacterMenuBlank_OnLoad(self)
     fontString:SetTextColor(1, 1, 1, 1)
     fontString:SetShadowColor(0, 0, 0, 0)
     fontString:SetShadowOffset(1, -1)
-    fontString:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    fontString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
 end
 GW.CharacterMenuBlank_OnLoad = CharacterMenuBlank_OnLoad
 

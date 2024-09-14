@@ -1103,7 +1103,7 @@ local function createCoordDebugInput(self, labelText, index)
     f.label:SetPoint("RIGHT", f, "LEFT", 0, 0)
     f.label:SetJustifyH("LEFT")
     f.label:SetJustifyV("MIDDLE")
-    f.label:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE, "OUTLINE")
+    f.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     f.label:SetText(labelText)
 
     f:SetScript("OnTextChanged", function() updateDebugPosition() end)
@@ -1267,8 +1267,8 @@ local function LoadXPBar()
 
     experiencebar.RepuBar.repuBarAnimation = 0
     experiencebar.AzeritBar.AzeritBarAnimation = 0
-    experiencebar.NextLevel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
-    experiencebar.CurrentLevel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    experiencebar.NextLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    experiencebar.CurrentLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
     updateBarSize(experiencebar)
     xpbar_OnEvent(experiencebar)

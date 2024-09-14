@@ -35,7 +35,7 @@ local function updateLootFrameButtons(self)
         end
 
         if button.Text then
-            button.Text:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+            button.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
         end
     end
 end
@@ -49,7 +49,7 @@ local function LoadLootFrameSkin()
 
     local GwLootFrameTitle = CreateFrame("Frame", nil, LootFrame, "GwLootFrameTitleTemp")
     GwLootFrameTitle:SetPoint("BOTTOMLEFT", LootFrame, "TOPLEFT", 0, -25)
-    GwLootFrameTitle.headerString:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    GwLootFrameTitle.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     GwLootFrameTitle.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
     local w, _ = LootFrame:GetSize()

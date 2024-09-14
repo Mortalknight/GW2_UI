@@ -76,7 +76,7 @@ local function ignoreSetup(ignorewin)
     for i = 1, #ignorewin.buttons do
         local slot = ignorewin.buttons[i]
         slot:SetWidth(ignorewin:GetWidth() - 12)
-        slot.item.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+        slot.item.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
         slot.item.name:SetTextColor(1, 1, 1)
         if not slot.item.ScriptsHooked then
             slot.item:HookScript("OnClick", item_OnClick)

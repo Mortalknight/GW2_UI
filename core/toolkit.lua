@@ -544,7 +544,7 @@ local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdown
     if text then
         text:ClearAllPoints()
         text:SetPoint("LEFT", frame, "LEFT", 8, 0)
-        text:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+        text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
         text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
         text:SetHeight(frame:GetHeight())
         text:SetJustifyH("LEFT")
@@ -590,7 +590,7 @@ local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textB
     if text then
         text:ClearAllPoints()
         text:SetPoint("RIGHT", button, "LEFT", -2, 0)
-        text:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+        text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
         text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
         text:SetHeight(frame:GetHeight())
         text:SetJustifyV("MIDDLE")
@@ -759,6 +759,27 @@ local function GwKillEditMode(object)
     object.Selection:EnableMouse(false)
 end
 
+local function GwSetFontTemplate(object, font, textSizeType, style, skip)
+    if not object or not font or not object.SetFont or not textSizeType then return end
+
+    if not skip then -- can be used for ignoring setting updates and used for update function
+        object.gwFont, object.gwTextSizeType, object.gwStyle = font, textSizeType, style
+    end
+
+    if textSizeType == GW.TextSizeType.BIG_HEADER then
+        object:SetFont(font, GW.settings.FONTS_BIG_HEADER_SIZE, style or GW.settings.FONTS_OUTLINE)
+    elseif textSizeType == GW.TextSizeType.HEADER then
+        object:SetFont(font, GW.settings.FONTS_HEADER_SIZE, style or GW.settings.FONTS_OUTLINE)
+    elseif textSizeType == GW.TextSizeType.NORMAL then
+        object:SetFont(font, GW.settings.FONTS_NORMAL_SIZE, style or GW.settings.FONTS_OUTLINE)
+    elseif textSizeType == GW.TextSizeType.SMALL then
+        object:SetFont(font, GW.settings.FONTS_SMALL_SIZE, style or GW.settings.FONTS_OUTLINE)
+    end
+
+    -- register font for size changes
+    GW.texts[object] = true
+end
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.GwKill then mt.GwKill = GwKill end
@@ -778,6 +799,7 @@ local function addapi(object)
     if not object.GwStyleButton then mt.GwStyleButton = GwStyleButton end
     if not object.GwKillEditMode then mt.GwKillEditMode = GwKillEditMode end
     if not object.GwHandleDropDownBox then mt.GwHandleDropDownBox = GwHandleDropDownBox end
+    if not object.GwSetFontTemplate then mt.GwSetFontTemplate = GwSetFontTemplate end
 end
 
 local handled = { Frame = true }

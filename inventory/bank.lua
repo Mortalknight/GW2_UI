@@ -829,7 +829,7 @@ local function LoadBank(helpers)
     -- skin some things not done in XML
     f.headerString:SetFont(DAMAGE_TEXT_FONT, 20, "")
     f.headerString:SetText(BANK)
-    f.spaceString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.spaceString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 

@@ -639,7 +639,7 @@ local function HandleAddonCompartmentButton()
         if not AddonCompartmentFrame.gw2Handled then
             AddonCompartmentFrame:GwStripTextures()
             AddonCompartmentFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
-            AddonCompartmentFrame.Text:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE, "NONE")
+            AddonCompartmentFrame.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
             AddonCompartmentFrame:SetSize(18, 18)
             AddonCompartmentFrame.gw2Handled = true
         end

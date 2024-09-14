@@ -24,17 +24,17 @@ local barColors = {
 GW.AchievementFrameSkinFunction.BarColors = barColors
 -- Text Helper functions
 local function setSmallText(self)
-    self:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+    self:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     self:SetTextColor(0.7, 0.7, 0.7)
 end
 GW.AchievementFrameSkinFunction.SetSmallText = setSmallText
 local function setNormalText(self)
-    self:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    self:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     self:SetTextColor(1, 1, 1)
 end
 GW.AchievementFrameSkinFunction.SetNormalText = setNormalText
 local function setTitleText(self)
-    self:SetFont(DAMAGE_TEXT_FONT, GW.settings.FONTS_HEADER_SIZE, GW.settings.FONTS_OUTLINE)
+    self:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     self:SetTextColor(1, 1, 1)
 end
 GW.AchievementFrameSkinFunction.SetTitleText = setTitleText
@@ -326,7 +326,7 @@ local function CatMenuButton(_, button)
     button.Label:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     button.Label:SetShadowColor(0, 0, 0, 0)
     button.Label:SetShadowOffset(1, -1)
-    button.Label:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    button.Label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     button.Label:SetJustifyH("LEFT")
     button.Label:SetJustifyV("MIDDLE")
 end
@@ -392,7 +392,7 @@ local function skinAchievementSummaryStatusBar(self)
 
     text:ClearAllPoints()
     text:SetPoint("RIGHT",self,"RIGHT",-5,0)
-    text:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
     text:SetTextColor(1,1,1)
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
@@ -453,7 +453,7 @@ local function skinCriteriaStatusbar(parentFrame,self)
         bColor.b
     )
 
-    text:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
     text:SetTextColor(1,1,1)
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
@@ -1032,7 +1032,7 @@ local function skinAchievementCompareSummaryStatusBar(self,isPlayer)
     setNormalText(title)
     text:ClearAllPoints()
     text:SetPoint("RIGHT",self,"RIGHT",-5,0)
-    text:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
     text:SetTextColor(1,1,1)
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
@@ -1113,7 +1113,7 @@ local function skinAchevement()
     AchievementFrameHeader.header:SetPoint("BOTTOMLEFT", 20, 8)
     AchievementFrameHeader.breadCrumb:SetPoint("LEFT", AchievementFrameHeader.header, "RIGHT", 20, 0)
     AchievementFrameHeader.header:SetFont(DAMAGE_TEXT_FONT, 24)
-    AchievementFrameHeader.breadCrumb:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    AchievementFrameHeader.breadCrumb:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     AchievementFrameHeader.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     AchievementFrameHeader.breadCrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     AchievementFrameHeader.header:SetWidth(AchievementFrameHeader.header:GetStringWidth())
@@ -1162,12 +1162,12 @@ local function skinAchevement()
     AchievementFrame.SearchBox:ClearAllPoints()
     AchievementFrame.SearchBox:SetPoint("BOTTOMLEFT", AchievementFrameCategories, "TOPLEFT", 0, 10)
     AchievementFrame.SearchBox:SetWidth(237)
-    AchievementFrame.SearchBox:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    AchievementFrame.SearchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     GW.SkinTextBox(AchievementFrame.SearchBox.Middle, AchievementFrame.SearchBox.Left, AchievementFrame.SearchBox.Right)
     AchievementFrame.SearchBox:SetHeight(26)
     AchievementFrame.SearchBox.searchIcon:Hide()
-    AchievementFrame.SearchBox:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
-    AchievementFrame.SearchBox.Instructions:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    AchievementFrame.SearchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    AchievementFrame.SearchBox.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     AchievementFrame.SearchBox.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
     AchievementFrame.SearchPreviewContainer:GwStripTextures()
@@ -1179,7 +1179,7 @@ local function skinAchevement()
         local sp = AchievementFrame.SearchPreviewContainer["SearchPreview" ..i ]
         if sp then
             sp:SetWidth(AchievementFrame.SearchPreviewContainer:GetWidth())
-            sp.Name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+            sp.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
         end
     end
 

@@ -129,8 +129,8 @@ local function scrollFrameSetup(self)
     for i = 1, #self.buttons do
         local slot = self.buttons[i]
         slot:SetWidth(self:GetWidth() - 12)
-        slot.item.name:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
-        slot.item.levelString:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+        slot.item.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        slot.item.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
 
         if not slot.item.ScriptsHooked then
             slot.item:HookScript("OnEnter", UpcomingSpellOnEnter)

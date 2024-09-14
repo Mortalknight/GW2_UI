@@ -231,7 +231,7 @@ local function LoadMonthlyActivitiesTracking(self)
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    self.header.title:SetFont(DAMAGE_TEXT_FONT, GW.settings.FONTS_HEADER_SIZE )
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText(TRACKER_HEADER_MONTHLY_ACTIVITIES)
 

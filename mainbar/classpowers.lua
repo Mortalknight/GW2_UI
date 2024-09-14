@@ -1790,7 +1790,7 @@ local function LoadClassPowers()
             lmb:SetSize(barWidth, 5)
         end
         lmb:SetFrameStrata("MEDIUM")
-        lmb.label:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+        lmb.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
         lmb.label:SetShadowColor(0, 0, 0, 1)
         lmb.label:SetShadowOffset(1, -1)
 
@@ -1824,15 +1824,15 @@ local function LoadClassPowers()
     exbar:SetPoint("TOPLEFT", cpf)
 
     exbar:SetFrameStrata("MEDIUM")
-    exbar.label:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    exbar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     exbar.label:SetShadowColor(0, 0, 0, 1)
     exbar.label:SetShadowOffset(1, -1)
 
     -- set a bunch of other init styling stuff
-    cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
+    cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINE")
     cpf.brewmaster.debugpre = 0
-    cpf.brewmaster.stagger.indicatorText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
-    cpf.brewmaster.ironskin.indicatorText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    cpf.brewmaster.stagger.indicatorText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    cpf.brewmaster.ironskin.indicatorText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     cpf.brewmaster.ironskin.expires = 0
     cpf.staggerBar.value = 0
     cpf.staggerBar.spark = cpf.staggerBar.bar.spark

@@ -405,7 +405,7 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.CategorySelection.Label:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     LFGListFrame.CategorySelection.Label:SetShadowColor(0, 0, 0, 0)
     LFGListFrame.CategorySelection.Label:SetShadowOffset(1, -1)
-    LFGListFrame.CategorySelection.Label:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    LFGListFrame.CategorySelection.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
     LFGListFrame.CategorySelection.Label:ClearAllPoints()
     LFGListFrame.CategorySelection.Label:SetPoint("TOP", -3, -45)
 
@@ -1174,7 +1174,7 @@ local function ApplyDelvesDifficultyPickerSkin()
     DelvesDifficultyPickerFrame.CloseButton:GwSkinButton(true)
     DelvesDifficultyPickerFrame.CloseButton:SetSize(20, 20)
 
-    DelvesDifficultyPickerFrame.ScenarioLabel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    DelvesDifficultyPickerFrame.ScenarioLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     DelvesDifficultyPickerFrame.Description:SetTextColor(1, 1, 1)
 
     DelvesDifficultyPickerFrame.DelveRewardsContainerFrame.RewardText:SetTextColor(1, 1, 1)

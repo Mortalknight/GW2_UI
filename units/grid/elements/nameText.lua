@@ -6,7 +6,7 @@ local function Construct_NameText(frame)
     name:SetShadowOffset(-1, -1)
     name:SetShadowColor(0, 0, 0, 1)
     name:SetJustifyH("LEFT")
-    name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+    name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
 
 
     return name

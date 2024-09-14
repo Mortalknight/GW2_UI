@@ -631,7 +631,7 @@ end
 GW.FrameFlash = FrameFlash
 
 local function setItemLevel(button, quality, itemlink, slot)
-    button.itemlevel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "THINOUTLINED")
+    button.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
     if quality then
         local r, g, b = C_Item.GetItemQualityColor(quality or 1)
         if quality >= Enum.ItemQuality.Common and C_Item.GetItemQualityColor(quality) then
@@ -999,3 +999,14 @@ local function MakeFrameMovable(frame, target, setting, moveFrameOnShow)
     end
 end
 GW.MakeFrameMovable = MakeFrameMovable
+
+local function UpdateFontSettings()
+    for text in pairs(GW.texts) do
+        if text then
+            text:GwSetFontTemplate(text.gwFont, text.gwTextSizeType, text.gwStyle, true)
+        else
+            GW.texts[text] = nil
+        end
+    end
+end
+GW.UpdateFontSettings = UpdateFontSettings

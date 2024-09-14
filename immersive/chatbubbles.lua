@@ -127,7 +127,7 @@ local function SkinBubble(frame, backdrop)
     if not frame.Name then
         frame.Name = frame:CreateFontString(nil, "OVERLAY")
         frame.Name:SetPoint("BOTTOMLEFT", frame.background, "TOPLEFT", 0, 0)
-        frame.Name:SetFont(UNIT_NAME_FONT, 10, "OUTLINED")
+        frame.Name:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
         frame.Name:SetTextColor(0, 0, 0, 1)
         frame.Name:SetJustifyH("LEFT")
     end

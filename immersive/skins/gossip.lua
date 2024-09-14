@@ -467,7 +467,7 @@ local function createCoordDebugInput(self, labelText, index)
     f.label:SetPoint("RIGHT", f, "LEFT", 0, 0)
     f.label:SetJustifyH("LEFT")
     f.label:SetJustifyV("MIDDLE")
-    f.label:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE, "OUTLINE")
+    f.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER, "OUTLINE")
     f.label:SetText(labelText)
 
     f:SetScript("OnTextChanged", function() updateModelFrame(GwGossipModelFrame, nil, true) end)
@@ -615,7 +615,7 @@ local function LoadGossipSkin()
     greetings:SetPoint("BOTTOMRIGHT", portraitFrame.maskLayer, "TOPLEFT", 545, -165)
     greetings:SetJustifyH("LEFT")
     greetings:SetJustifyV("MIDDLE")
-    greetings:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE, "OUTLINE")
+    greetings:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER, "OUTLINE")
     greetings:SetText("")
     GossipFrame.customGossipText = greetings
 

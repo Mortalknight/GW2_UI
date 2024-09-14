@@ -51,13 +51,13 @@ end
 
 local function SkinMoneyFrame()
     -- setup money frame
-    SendMailMoneyFrameCopperButtonText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    SendMailMoneyFrameCopperButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     SendMailMoneyFrameCopperButtonText:SetTextColor(177 / 255, 97 / 255, 34 / 255)
 
-    SendMailMoneyFrameSilverButtonText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    SendMailMoneyFrameSilverButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     SendMailMoneyFrameSilverButtonText:SetTextColor(170 / 255, 170 / 255, 170 / 255)
 
-    SendMailMoneyFrameGoldButtonText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    SendMailMoneyFrameGoldButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     SendMailMoneyFrameGoldButtonText:SetTextColor(221 / 255, 187 / 255, 68 / 255)
 end
 
@@ -100,12 +100,12 @@ local function SkinOpenMailFrame()
 
     OpenMailSenderLabel:Hide()
     OpenMailSender.Name:SetPoint("TOPLEFT", OpenMailScrollFrame, "TOPLEFT", 0, 50)
-    OpenMailSender.Name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    OpenMailSender.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     OpenMailSender.Name:SetTextColor(1, 1, 1, 1)
 
     OpenMailSubjectLabel:Hide()
     OpenMailSubject:SetPoint("TOPLEFT", OpenMailSender.Name, "BOTTOMLEFT", 0, -10)
-    OpenMailSubject:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+    OpenMailSubject:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     OpenMailSubject:SetTextColor(1, 1, 1, 1)
 
     OpenMailReportSpamButton:GwSkinButton(false, true)

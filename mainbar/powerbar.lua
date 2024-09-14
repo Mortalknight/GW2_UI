@@ -471,7 +471,7 @@ local function LoadPowerBar()
       end
   )
 
-  playerPowerBar.label:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+  playerPowerBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
   playerPowerBar.label:SetShadowColor(0, 0, 0, 1)
   playerPowerBar.label:SetShadowOffset(1, -1)
   playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")

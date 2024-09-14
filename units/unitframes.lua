@@ -74,33 +74,33 @@ local function createNormalUnitFrame(ftype, revert)
         --f.powerbar:SetReverseFill(true)
     end
 
-    f.healthString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.healthString:SetShadowOffset(1, -1)
 
     if GW.settings.FONTS_ENABLED then -- for any reason blizzard is not supporting UTF8 if we set this font
-        f.nameString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+        f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     end
     f.nameString:SetShadowOffset(1, -1)
 
     f.threatString:SetFont(STANDARD_TEXT_FONT, 12)
     f.threatString:SetShadowOffset(1, -1)
 
-    f.levelString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    f.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     f.levelString:SetShadowOffset(1, -1)
 
-    f.castingString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.castingString:SetShadowOffset(1, -1)
 
-    f.castingbarNormal.castingString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.castingbarNormal.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.castingbarNormal.castingString:SetShadowOffset(1, -1)
 
-    f.castingbarNormal.castingTimeString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.castingbarNormal.castingTimeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
 
-    f.castingTimeString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.castingTimeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.castingTimeString:SetShadowOffset(1, -1)
 
-    f.prestigeString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE, "OUTLINED")
+    f.prestigeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
 
     f.prestigebg:SetPoint("CENTER", f.prestigeString, "CENTER", -1, 1)
 
@@ -148,24 +148,24 @@ local function createNormalUnitFrameSmall(ftype)
     f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
 
-    f.healthString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     f.healthString:SetShadowOffset(1, -1)
 
     if GW.settings.FONTS_ENABLED then -- for any reason blizzard is not supporting UTF8 if we set this font
-        f.nameString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+        f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     end
     f.nameString:SetShadowOffset(1, -1)
 
-    f.levelString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    f.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     f.levelString:SetShadowOffset(1, -1)
 
-    f.castingString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.castingString:SetShadowOffset(1, -1)
 
-    f.castingbarNormal.castingString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.castingbarNormal.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.castingbarNormal.castingString:SetShadowOffset(1, -1)
 
-    f.castingbarNormal.castingTimeString:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.castingbarNormal.castingTimeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
 
     f.healthValue = 0

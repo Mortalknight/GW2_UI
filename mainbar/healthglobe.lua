@@ -308,29 +308,33 @@ local function LoadHealthGlobe()
     AddToClique(hg)
 
     -- set text/font stuff
-    hg.hSize = GW.settings.FONTS_HEADER_SIZE
     if GW.settings.PLAYER_UNIT_ABSORB == "BOTH" then
-        hg.aSize = GW.settings.FONTS_SMALL_SIZE
         hg.text_a:ClearAllPoints()
         hg.text_a:SetPoint("CENTER", hg, "CENTER", 0, 25)
-    else
-        hg.aSize = GW.settings.FONTS_NORMAL_SIZE
-    end
 
-    hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
+        hg.text_a.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+        hg.text_a.value:SetShadowColor(1, 1, 1, 0)
+
+        for i, v in ipairs(hg.text_a.shadow) do
+            v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+            v:SetShadowColor(1, 1, 1, 0)
+            v:SetTextColor(0, 0, 0, 1 / i)
+        end
+    else
+        hg.text_a.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        hg.text_a.value:SetShadowColor(1, 1, 1, 0)
+
+        for i, v in ipairs(hg.text_a.shadow) do
+            v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+            v:SetShadowColor(1, 1, 1, 0)
+            v:SetTextColor(0, 0, 0, 1 / i)
+        end
+    end
+    hg.text_h.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     hg.text_h.value:SetShadowColor(1, 1, 1, 0)
 
-    hg.text_a.value:SetFont(DAMAGE_TEXT_FONT, hg.aSize)
-    hg.text_a.value:SetShadowColor(1, 1, 1, 0)
-
     for i, v in ipairs(hg.text_h.shadow) do
-        v:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
-        v:SetShadowColor(1, 1, 1, 0)
-        v:SetTextColor(0, 0, 0, 1 / i)
-    end
-
-    for i, v in ipairs(hg.text_a.shadow) do
-        v:SetFont(DAMAGE_TEXT_FONT, hg.aSize)
+        v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
         v:SetShadowColor(1, 1, 1, 0)
         v:SetTextColor(0, 0, 0, 1 / i)
     end

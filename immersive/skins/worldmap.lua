@@ -38,7 +38,7 @@ local function handleReward(frame, isMap)
         frame.Count:SetDrawLayer("OVERLAY")
         frame.Count:ClearAllPoints()
         frame.Count:SetPoint("TOPRIGHT", frame.Icon, "TOPRIGHT", 0, -3)
-        frame.Count:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "THINOUTLINED")
+        frame.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
         frame.Count:SetJustifyH("RIGHT")
     end
 

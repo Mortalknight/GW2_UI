@@ -126,12 +126,12 @@ local function setAuraType(self, typeAura)
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 1, -1)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, 1)
         self.duration:SetFont(UNIT_NAME_FONT, 11)
-        self.stacks:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "OUTLINED")
+        self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE")
     elseif typeAura == "bigBuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -3, 3)
-        self.duration:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
-        self.stacks:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE, "OUTLINED")
+        self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     end
 
     self.typeAura = typeAura
@@ -379,7 +379,7 @@ local function CreateAuraFrame(name, parent)
     f.cooldown:SetHideCountdownNumbers(true)
     f.nextUpdate = 0
 
-    f.status.stacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
+    f.status.stacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINE")
     f.status.duration:SetFont(UNIT_NAME_FONT, 10)
     f.status.duration:SetShadowOffset(1, -1)
 

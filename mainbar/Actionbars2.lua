@@ -401,7 +401,7 @@ local function updateMacroName(self)
             self.Name:SetJustifyH("LEFT")
             self.Name:SetWidth(self:GetWidth())
             local font, fontHeight = self.Name:GetFont()
-            self.Name:SetFont(font, fontHeight, "OUTLINED")
+            self.Name:SetFont(font, fontHeight, "OUTLINE")
             self.Name:SetAlpha(1)
         else
             self.Name:SetAlpha(0)
@@ -427,7 +427,7 @@ local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
     elseif isMainBar then
         button.HotKey:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
         button.HotKey:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
-        button.HotKey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINED")
+        button.HotKey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
         button.HotKey:SetTextColor(1, 1, 1)
     else
         button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 0)
@@ -450,7 +450,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.Count:ClearAllPoints()
         btn.Count:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
         btn.Count:SetJustifyH("RIGHT")
-        btn.Count:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE, "OUTLINED")
+        btn.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER, "OUTLINE")
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 
@@ -755,7 +755,7 @@ local function skinMainBar()
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
-            hotkey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINED")
+            hotkey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
             hotkey:SetTextColor(1, 1, 1)
 
             if IsEquippedAction(btn.action) then
@@ -829,7 +829,7 @@ local function updateMainBar()
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
-            hotkey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINED")
+            hotkey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
             hotkey:SetTextColor(1, 1, 1)
             btn.changedColor = false
             btn.rangeIndicatorSetting = GW.settings.MAINBAR_RANGEINDICATOR

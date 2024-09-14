@@ -66,6 +66,7 @@ GW.animations = {}
 GW.BackdropTemplates = {}
 GW.AchievementFrameSkinFunction = {}
 GW.CreditsList = {}
+GW.texts = {}
 
 -- money
 GW.earnedMoney = 0

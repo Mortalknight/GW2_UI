@@ -73,7 +73,7 @@ local function UpdateSpecFrame(frame)
 
             --SpecName
             specContentFrame.SpecName:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-            specContentFrame.SampleAbilityText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+            specContentFrame.SampleAbilityText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
             specContentFrame.SampleAbilityText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
             if role == "DAMAGER" then
@@ -125,17 +125,17 @@ local function HandleHeroTalents(frame)
     for specFrame in frame.SpecContentFramePool:EnumerateActive() do
         if specFrame and not specFrame.IsSkinned then
             if specFrame.SpecName then
-                specFrame.SpecName:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_BIG_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+                specFrame.SpecName:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
                 specFrame.SpecName:SetTextColor(255 / 255, 241 / 255, 209 / 255)
                 end
             if specFrame.Description then
-                specFrame.Description:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+                specFrame.Description:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
                 specFrame.Description:SetTextColor(1, 1, 1)
                 end
 
             if specFrame.CurrencyFrame then
-                specFrame.CurrencyFrame.LabelText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
-                specFrame.CurrencyFrame.AmountText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_BIG_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+                specFrame.CurrencyFrame.LabelText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+                specFrame.CurrencyFrame.AmountText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
             end
             specFrame.ActivateButton:GwSkinButton(false, true)
             specFrame.ApplyChangesButton:GwSkinButton(false, true)
@@ -163,12 +163,12 @@ local function skinPlayerSpells()
 
     TalentsFrame.InspectCopyButton:GwSkinButton(false, true)
 
-    TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_BIG_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
     TalentsFrame.ClassCurrencyDisplay.CurrencyAmount:SetFont(UNIT_NAME_FONT, 26)
 
     TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
-    TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_BIG_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
     TalentsFrame.SpecCurrencyDisplay.CurrencyAmount:SetFont(UNIT_NAME_FONT, 26)
 
     TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:SetTextColor(255 / 255, 241 / 255, 209 / 255)
@@ -223,7 +223,7 @@ local function skinPlayerSpells()
 
     -- Hero Talents
     local HeroTalentContainer = TalentsFrame.HeroTalentsContainer
-    HeroTalentContainer.HeroSpecLabel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    HeroTalentContainer.HeroSpecLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
 
     local TalentsSelect = HeroTalentsSelectionDialog
     if TalentsSelect then

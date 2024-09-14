@@ -152,7 +152,7 @@ local function LoadFriendList(tabContainer)
             button.gameIcon:SetSize(24, 24)
             button.gameIcon:ClearAllPoints()
 
-            button.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+            button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
             button.name:SetWidth(400)
 
             local travelPass = button.travelPassButton

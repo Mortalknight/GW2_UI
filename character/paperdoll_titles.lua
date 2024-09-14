@@ -54,7 +54,7 @@ local function titleSetup(titlewin)
     for i = 1, #titlewin.buttons do
         local slot = titlewin.buttons[i]
         slot:SetWidth(titlewin:GetWidth() - 12)
-        slot.item.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+        slot.item.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
         slot.item.name:SetTextColor(1, 1, 1)
         if not slot.item.ScriptsHooked then
             slot.item:HookScript("OnClick", title_OnClick)

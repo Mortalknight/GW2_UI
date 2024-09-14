@@ -225,7 +225,7 @@ local function SkinAuctionator()
             if not child.IsSkinned then
                 child.Text:SetShadowColor(0, 0, 0, 0)
                 child.Text:SetShadowOffset(1, -1)
-                child.Text:SetFont(DAMAGE_TEXT_FONT,GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+                child.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
                 child.Text:SetJustifyH("LEFT")
                 child.Text:SetJustifyV("MIDDLE")
                 child.IsSkinned = true

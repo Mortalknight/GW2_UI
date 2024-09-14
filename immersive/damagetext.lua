@@ -876,19 +876,19 @@ AFP("getFontElement", getFontElement)
 local function setElementData(self, critical, source, missType, blocked, absorbed, periodic, school)
     if missType then
         self.critTexture:Hide()
-        self.string:SetFont(DAMAGE_TEXT_FONT, GW.settings.GW_COMBAT_TEXT_FONT_SIZE_MISS, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, GW.settings.GW_COMBAT_TEXT_FONT_SIZE_MISS, "OUTLINE")
         self.crit = false
     elseif blocked or absorbed then
         self.critTexture:Hide()
-        self.string:SetFont(DAMAGE_TEXT_FONT, GW.settings.GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, GW.settings.GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE, "OUTLINE")
         self.crit = false
     elseif critical then
         self.critTexture:Show()
-        self.string:SetFont(DAMAGE_TEXT_FONT, GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT, "OUTLINE")
         self.crit = true
     else
         self.critTexture:Hide()
-        self.string:SetFont(DAMAGE_TEXT_FONT, GW.settings.GW_COMBAT_TEXT_FONT_SIZE, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, GW.settings.GW_COMBAT_TEXT_FONT_SIZE, "OUTLINE")
         self.crit = false
     end
 

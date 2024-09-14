@@ -35,9 +35,9 @@ local function setLongCD(self, stackCount)
     self.status.stacks:SetShadowOffset(1, -1)
 
     if stackCount and stackCount > 99 then
-        self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINED")
+        self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
     else
-        self.status.stacks:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "OUTLINED")
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE")
     end
 
     self.status:ClearAllPoints()
@@ -57,9 +57,9 @@ local function setShortCD(self, expires, duration, stackCount)
     self.status.stacks:SetShadowOffset(1, -1)
 
     if stackCount and stackCount > 99 then
-        self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINED")
+        self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
     else
-        self.status.stacks:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE, "OUTLINED")
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     end
 
     self.status:ClearAllPoints()

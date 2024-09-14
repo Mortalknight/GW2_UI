@@ -57,7 +57,7 @@ local function reskinItemButton(b, overrideIconSize)
 
     b.Count:ClearAllPoints()
     b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
-    b.Count:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "THINOUTLINED")
+    b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
     b.Count:SetJustifyH("RIGHT")
 
     if b.IconQuestTexture then
@@ -87,7 +87,7 @@ local function reskinItemButton(b, overrideIconSize)
 
     if not b.itemlevel then
         b.itemlevel = b:CreateFontString(nil, "OVERLAY")
-        b.itemlevel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+        b.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
         b.itemlevel:SetPoint("BOTTOMRIGHT", 0, 0)
         b.itemlevel:SetText("")
     end
@@ -372,7 +372,7 @@ local function reskinBagBar(b, ha)
 
     b.Count:ClearAllPoints()
     b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
-    b.Count:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "THINOUTLINED")
+    b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
     b.Count:SetJustifyH("RIGHT")
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -411,8 +411,8 @@ local function reskinSearchBox(sb)
         return
     end
 
-    sb:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
-    sb.Instructions:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    sb:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    sb.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
     sb.Left:SetPoint("LEFT", 0, 0)

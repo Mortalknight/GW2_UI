@@ -9,7 +9,7 @@ local function Construct_AuraIcon(self, button)
     button.Count:ClearAllPoints()
     button.Count:SetPoint("TOPLEFT")
     button.Count:SetPoint("BOTTOMRIGHT")
-    button.Count:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
+    button.Count:SetFont(UNIT_NAME_FONT, 11, "OUTLINE")
     button.Count:SetTextColor(1, 1, 1)
     button.Count:SetJustifyH("CENTER")
 

@@ -207,11 +207,11 @@ local function CreateRaidControlFrame()
     GwGroupManage.inGroup.convert:SetScript("OnClick", fnGGMC_OnClick)
     GwGroupManage.inGroup.convert:GetFontString():SetShadowColor(0, 0, 0, 1)
 
-    GwGroupManage.inGroup.header:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
-    GwGroupManage.inGroup.header2:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    GwGroupManage.inGroup.header:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    GwGroupManage.inGroup.header2:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     GwGroupManage.inGroup.header2:SetText(WORLD_MARKER:format(0):gsub("%d", ""))
 
-    GwGroupManage.inGroup.groupCounter:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    GwGroupManage.inGroup.groupCounter:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
     GwGroupManage.inGroup:RegisterEvent("GROUP_ROSTER_UPDATE")
     GwGroupManage.inGroup:RegisterEvent("RAID_ROSTER_UPDATE")
