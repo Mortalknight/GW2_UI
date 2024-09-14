@@ -93,7 +93,7 @@ local function LoadFriendList(tabContainer)
 
     GWFriendFrame:SetScript("OnShow", function()
         FriendsList_Update(true)
-        UpdateMicroButtons()
+        if not InCombatLockdown() then UpdateMicroButtons() end
         FriendsFrame_CheckQuickJoinHelpTip();
         FriendsFrame_UpdateQuickJoinTab(#C_SocialQueue.GetAllGroups())
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
