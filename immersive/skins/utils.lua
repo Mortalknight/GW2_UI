@@ -631,6 +631,25 @@ local function HandleHeaders(frame)
 end
 GW.HandleSrollBoxHeaders = HandleHeaders
 
+local function HandleScrollFrameHeaderButton(button, isLastButton)
+    if not button.IsSkinned then
+        button:DisableDrawLayer("BACKGROUND")
+
+        if not button.backdrop then
+            button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
+            button.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+            button.backdrop:SetFrameLevel(button:GetFrameLevel())
+        end
+
+        button.IsSkinned = true
+    end
+
+    if button.backdrop then
+        button.backdrop:SetPoint("BOTTOMRIGHT", isLastButton and 0 or -5, -2)
+    end
+end
+GW.HandleScrollFrameHeaderButton = HandleScrollFrameHeaderButton
+
 local function AddMouseMotionPropagationToChildFrames(self)
     for _, child in next, { self:GetChildren() } do
         child:SetPropagateMouseMotion(true)
