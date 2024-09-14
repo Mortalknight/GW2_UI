@@ -4,6 +4,10 @@ local L = GW.L
 local frame = CreateFrame("Frame")
 local INTERRUPT_MSG = L["Interrupted %s's |cff71d5ff|Hspell:%d:0|h[%s]|h|r!"]
 
+local function IsRandomGroup()
+    return IsPartyLFG() or C_PartyInfo.IsPartyWalkIn() -- This is the API for Delves
+end
+
 local function OnEvent()
     local inGroup = IsInGroup()
     if not inGroup then return end
@@ -12,7 +16,7 @@ local function OnEvent()
     local announce = spellName and (destGUID ~= GW.myguid) and (sourceGUID == GW.myguid or sourceGUID == UnitGUID("pet")) and strmatch(event, "_INTERRUPT")
     if not announce then return end
 
-    local inRaid, inPartyLFG = IsInRaid(), IsPartyLFG()
+    local inRaid, inPartyLFG = IsInRaid(), IsRandomGroup()
 
     local _, instanceType = GetInstanceInfo()
     if instanceType == "arena" then
