@@ -87,8 +87,8 @@ local function LoadFriendList(tabContainer)
         icon:SetSize(22, 22)
         icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
 
-        name:SetFont(UNIT_NAME_FONT, 14)
-        info:SetFont(UNIT_NAME_FONT, 12)
+        name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
+        info:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
         icon:ClearAllPoints()
         icon:SetPoint("RIGHT", button, "RIGHT", -24, 0)
@@ -129,7 +129,7 @@ local function LoadFriendList(tabContainer)
     button.Tag = button:CreateFontString(nil, "OVERLAY")
     button.Tag:SetPoint("CENTER", button, "CENTER")
     button.Tag:SetTextColor(0.345, 0.667, 0.867)
-    button.Tag:SetFont(UNIT_NAME_FONT, 15)
+    button.Tag:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
     button.hover.r = FRIENDS_BNET_BACKGROUND_COLOR.r
     button.hover.g = FRIENDS_BNET_BACKGROUND_COLOR.g
     button.hover.b = FRIENDS_BNET_BACKGROUND_COLOR.b

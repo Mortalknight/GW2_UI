@@ -1,6 +1,13 @@
 local _, GW = ...
 
 
+GW.TextSizeType = {
+    BIG_HEADER = 1,
+    HEADER = 2,
+    NORMAL = 3,
+    SMALL = 4,
+}
+
 GW.TextColors = {
     LIGHT_HEADER = { r = 1, g = 0.9450, b = 0.8196 }
 }

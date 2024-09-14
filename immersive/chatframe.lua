@@ -1283,7 +1283,7 @@ end
 
 local function styleChatWindow(frame)
     local name = frame:GetName()
-    _G[name .. "TabText"]:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G[name .. "TabText"]:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     _G[name .. "TabText"]:SetTextColor(1, 1, 1)
 
     if frame.styled then return end

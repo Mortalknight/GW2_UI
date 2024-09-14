@@ -62,7 +62,10 @@ GW.MOVABLE_FRAMES = {}
 GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
 GW.animations = {}
-GW.oUF = {}
+GW.BackdropTemplates = {}
+GW.AchievementFrameSkinFunction = {}
+GW.CreditsList = {}
+GW.texts = {}
 
 -- money
 GW.earnedMoney = 0

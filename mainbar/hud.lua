@@ -1061,8 +1061,8 @@ local function LoadXPBar()
 
     experiencebar.RepuBar.repuBarAnimation = 0
     experiencebar.AzeritBar.AzeritBarAnimation = 0
-    experiencebar.NextLevel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
-    experiencebar.CurrentLevel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    experiencebar.NextLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    experiencebar.CurrentLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
     updateBarSize(experiencebar)
     UIParent:HookScript("OnSizeChanged", function(self, width, height)

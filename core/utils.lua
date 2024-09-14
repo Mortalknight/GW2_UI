@@ -624,7 +624,7 @@ end
 GW.FrameFlash = FrameFlash
 
 local function setItemLevel(button, quality, itemlink, slot)
-    button.itemlevel:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "THINOUTLINED")
+    button.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
     if quality then
         local r, g, b = GetItemQualityColor(quality or 1)
         if quality >= Enum.ItemQuality.Common and GetItemQualityColor(quality) then
@@ -905,3 +905,101 @@ local function IsGroupMember(name)
 	return false
 end
 GW.IsGroupMember = IsGroupMember
+
+local function IsSpellTalented(spellID) -- this could be made to be a lot more efficient, if you already know the relevant nodeID and entryID
+    local configID = C_ClassTalents.GetActiveConfigID()
+    if configID == nil then return end
+
+    local configInfo = C_Traits.GetConfigInfo(configID)
+    if configInfo == nil then return end
+
+    for _, treeID in ipairs(configInfo.treeIDs) do -- in the context of talent trees, there is only 1 treeID
+        local nodes = C_Traits.GetTreeNodes(treeID)
+        for i, nodeID in ipairs(nodes) do
+            local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
+            for _, entryID in ipairs(nodeInfo.entryIDsWithCommittedRanks) do -- there should be 1 or 0
+                local entryInfo = C_Traits.GetEntryInfo(configID, entryID)
+                if entryInfo and entryInfo.definitionID then
+                    local definitionInfo = C_Traits.GetDefinitionInfo(entryInfo.definitionID)
+                    if definitionInfo.spellID == spellID then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+GW.IsSpellTalented = IsSpellTalented
+
+local function moveFrameToPosition(frame, x, y)
+    local pos = GW.settings[frame.gwSetting]
+
+    if x and y then
+        if pos then
+            wipe(pos)
+        else
+            pos = {}
+        end
+        pos.point = "TOPLEFT"
+        pos.relativePoint = "TOPLEFT"
+        pos.xOfs = x
+        pos.yOfs = y
+
+        GW.settings[frame.gwSetting] = pos
+    end
+
+    frame.ClearAllPoints = nil
+    frame.SetPoint = nil
+    frame:ClearAllPoints()
+    frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    frame.SetPoint = GW.NoOp
+    frame.ClearAllPoints = GW.NoOp
+end
+
+local function MakeFrameMovable(frame, target, setting, moveFrameOnShow)
+    if frame:IsMovable() then
+        return
+    end
+
+    if not target then
+        local point = GW.settings[setting]
+        frame:ClearAllPoints()
+        frame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point. yOfs)
+    end
+
+    target = target or frame
+
+    target.gwSetting = setting
+    frame:SetMovable(true)
+    frame:EnableMouse(true)
+    frame:SetScript("OnMouseDown", function(_, button)
+        if button == "LeftButton" then
+            target:StartMoving()
+        end
+    end)
+    frame:SetScript("OnMouseUp", function()
+        target:StopMovingOrSizing()
+
+        local x, y = target:GetLeft(), target:GetTop() - UIParent:GetTop()
+
+        moveFrameToPosition(target, x, y)
+    end)
+    if moveFrameOnShow then
+        frame:HookScript("OnShow", function()
+            moveFrameToPosition(target)
+        end)
+    end
+end
+GW.MakeFrameMovable = MakeFrameMovable
+
+local function UpdateFontSettings()
+    for text in pairs(GW.texts) do
+        if text then
+            text:GwSetFontTemplate(text.gwFont, text.gwTextSizeType, text.gwStyle, true)
+        else
+            GW.texts[text] = nil
+        end
+    end
+end
+GW.UpdateFontSettings = UpdateFontSettings

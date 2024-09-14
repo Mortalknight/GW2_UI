@@ -231,9 +231,9 @@ AFP("statusBarSetValue", statusBarSetValue)
 
 local function CreateObjectiveNormal(name, parent)
     local f = CreateFrame("Frame", name, parent, "GwQuesttrackerObjectiveNormal")
-    f.ObjectiveText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.ObjectiveText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.ObjectiveText:SetShadowOffset(-1, 1)
-    f.StatusBar.progress:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.StatusBar.progress:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     f.StatusBar.progress:SetShadowOffset(-1, 1)
 
     if f.StatusBar.animationOld == nil then
@@ -305,8 +305,8 @@ AFP("blockOnLeave", blockOnLeave)
 
 local function CreateTrackerObject(name, parent)
     local f = CreateFrame("Button", name, parent, "GwQuesttrackerObject")
-    f.Header:SetFont(DAMAGE_TEXT_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
-    f.SubHeader:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    f.Header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    f.SubHeader:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.Header:SetShadowOffset(1, -1)
     f.SubHeader:SetShadowOffset(1, -1)
     f:SetScript("OnEnter", blockOnEnter)
@@ -1288,9 +1288,9 @@ local function LoadQuestTracker()
     local fNotify = CreateFrame("Frame", "GwObjectivesNotification", fTracker, "GwObjectivesNotification")
     fNotify.animatingState = false
     fNotify.animating = false
-    fNotify.title:SetFont(DAMAGE_TEXT_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    fNotify.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     fNotify.title:SetShadowOffset(1, -1)
-    fNotify.desc:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_NORMAL_SIZE,GW.settings.FONTS_OUTLINE)
+    fNotify.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     fNotify.desc:SetShadowOffset(1, -1)
     fNotify.bonusbar.bar:SetOrientation("VERTICAL")
     fNotify.bonusbar.bar:SetMinMaxValues(0, 1)
@@ -1351,7 +1351,7 @@ local function LoadQuestTracker()
 
     fCampaign.header = CreateFrame("Button", nil, fCampaign, "GwQuestTrackerHeader")
     fCampaign.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
-    fCampaign.header.title:SetFont(DAMAGE_TEXT_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    fCampaign.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     fCampaign.header.title:SetShadowOffset(1, -1)
     fCampaign.header.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS)
 
@@ -1365,7 +1365,7 @@ local function LoadQuestTracker()
 
     fQuest.header = CreateFrame("Button", nil, fQuest, "GwQuestTrackerHeader")
     fQuest.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
-    fQuest.header.title:SetFont(DAMAGE_TEXT_FONT, GW.settings.FONTS_HEADER_SIZE,GW.settings.FONTS_OUTLINE)
+    fQuest.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     fQuest.header.title:SetShadowOffset(1, -1)
     fQuest.header.title:SetText(TRACKER_HEADER_QUESTS)
 

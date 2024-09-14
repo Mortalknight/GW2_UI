@@ -459,11 +459,11 @@ local functionFactory = {
             self.statusBar:SetPoint("TOPLEFT", self, "LEFT", 26, 2)
             self.statusBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 6)
 
-            self.timerText:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "OUTLINE")
+            self.timerText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE")
             self.timerText:ClearAllPoints()
             self.timerText:SetPoint("TOPRIGHT", self, "TOPRIGHT", -2, -6)
 
-            self.name:SetFont(UNIT_NAME_FONT, GW.settings.FONTS_SMALL_SIZE, "OUTLINE")
+            self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE")
             self.name:ClearAllPoints()
             self.name:SetPoint("TOPLEFT", self, "TOPLEFT", 30, -6)
             self.name:SetText(self.args.label)

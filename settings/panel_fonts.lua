@@ -1,14 +1,11 @@
 local _, GW = ...
 local L = GW.L
-local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local addGroupHeader = GW.AddGroupHeader
 local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton;
-
-
 
 local function LoadFontsPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
@@ -69,7 +66,6 @@ local function LoadFontsPanel(sWindow)
                 GW.settings["FONTS_OUTLINE"] = ""
                 GW.settings["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
                 GW.settings["FONT_HEADERS"] = ""
-                
             end
             GW.settings.CUSTOM_FONT_NORMAL = "NONE"
             GW.settings.CUSTOM_FONT_HEADER = "NONE"
@@ -141,7 +137,7 @@ local function LoadFontsPanel(sWindow)
         L["Big Headers"],
         nil,
         "FONTS_BIG_HEADER_SIZE",
-        nil,
+        GW.UpdateFontSettings,
         5,
         42,
         nil,
@@ -154,7 +150,7 @@ local function LoadFontsPanel(sWindow)
         L["Headers"],
         nil,
         "FONTS_HEADER_SIZE",
-        nil,
+        GW.UpdateFontSettings,
         5,
         42,
         nil,
@@ -167,7 +163,7 @@ local function LoadFontsPanel(sWindow)
         L["Normal text"],
         nil,
         "FONTS_NORMAL_SIZE",
-        nil,
+        GW.UpdateFontSettings,
         5,
         42,
         nil,
@@ -180,7 +176,7 @@ local function LoadFontsPanel(sWindow)
         L["Small text"],
         nil,
         "FONTS_SMALL_SIZE",
-        nil,
+        GW.UpdateFontSettings,
         5,
         42,
         nil,
