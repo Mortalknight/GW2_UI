@@ -497,6 +497,19 @@ local function LoadCurrency(tabContainer)
         end
     end)
 
+    hooksecurefunc(TokenFrame.ScrollBox, "SetParent", function(self, parent)
+        if parent ~= TokenFrame then
+            self:SetParent(TokenFrame)
+        end
+    end)
+    hooksecurefunc(TokenFrame.ScrollBox, "SetPoint", function(self, _, parent)
+        if parent ~= TokenFrame then
+            self:ClearAllPoints()
+            self:SetPoint("TOPLEFT", TokenFrame, 4, 0)
+            self:SetPoint("BOTTOMRIGHT", TokenFrame, -22, 0)
+        end
+    end)
+
     -- setup transfer history
     local curHistroyWin = curwin_outer.CurrencyTransferHistoryScroll
     curHistroyWin.Refresh = function(self)
