@@ -35,7 +35,6 @@ GW.globalDefault = {
         BAR_LAYOUT_ENABLED = true,
         BAGS_ENABLED = true,
         NPC_CAM_ENABLED = false,
-        FONTS_ENABLED = true,
         CASTINGBAR_ENABLED = true,
         ACTIONBAR_BACKGROUND_ALPHA = 0.3,
         SHOWACTIONBAR_MACRO_NAME_ENABLED = false,
