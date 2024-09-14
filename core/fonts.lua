@@ -74,10 +74,10 @@ end
 local function LoadFonts()
     local addonFont = getNormalFontFamily()
     local addonFontHeader = getHeaderFontFamily()
-    if addonFont == nil or addonFont == "" then 
+    if addonFont == nil or addonFont == "" then
         return
     end
-    if addonFontHeader==nil or addonFontHeader==""then 
+    if addonFontHeader==nil or addonFontHeader==""then
         addonFontHeader = addonFont
     end
     local normal = addonFont
