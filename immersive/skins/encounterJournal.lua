@@ -565,8 +565,7 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInstanceFrameBG:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
     EncounterJournalEncounterFrameInstanceFrame.titleBG:SetAlpha(0)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetTextColor(1, 1, 1)
-    EncounterJournalEncounterFrameInstanceFrameTitle:SetFont(UNIT_NAME_FONT, 25, "")
-
+    EncounterJournalEncounterFrameInstanceFrameTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     for _, child in next, { EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.ScrollTarget:GetChildren() } do
         if child.FontString then

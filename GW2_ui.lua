@@ -592,6 +592,9 @@ local function evPlayerLogin(self)
         GW.LoadFonts()
     end
 
+    -- Create Warning Prompt
+    GW.CreateWarningPrompt()
+
     -- load alert settings
     GW.LoadAlertSystem()
     GW.SetupAlertFramePosition()

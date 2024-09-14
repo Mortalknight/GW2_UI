@@ -99,7 +99,7 @@ local function LoadIgnoreList(tabContainer)
     ignorewin.scrollBar.doNotHide = true
     ignoreSetup(ignorewin)
 
-    ignorewin_outer.ignoreHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    ignorewin_outer.ignoreHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
     ignorewin_outer.ignoreHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
     -- update ignore window when a ignore update event occurs

@@ -164,12 +164,12 @@ local function skinPlayerSpells()
     TalentsFrame.InspectCopyButton:GwSkinButton(false, true)
 
     TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
-    TalentsFrame.ClassCurrencyDisplay.CurrencyAmount:SetFont(UNIT_NAME_FONT, 26)
+    TalentsFrame.ClassCurrencyDisplay.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 8)
 
     TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
     TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
-    TalentsFrame.SpecCurrencyDisplay.CurrencyAmount:SetFont(UNIT_NAME_FONT, 26)
+    TalentsFrame.SpecCurrencyDisplay.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 8)
 
     TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 

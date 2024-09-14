@@ -576,7 +576,7 @@ local function LoadGossipSkin()
     greetings:SetPoint("BOTTOMRIGHT", portraitFrame.maskLayer, "TOPLEFT", 545, -165)
     greetings:SetJustifyH("LEFT")
     greetings:SetJustifyV("MIDDLE")
-    greetings:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+    greetings:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     greetings:SetText("")
     GossipFrame.customGossipText = greetings
 
@@ -592,7 +592,7 @@ local function LoadGossipSkin()
     end)
 
 
-    GossipFrameNpcNameText:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
+    GossipFrameNpcNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     GossipFrameNpcNameText:ClearAllPoints()
     GossipFrameNpcNameText:SetPoint("TOPLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 0)
     GossipFrameNpcNameText:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "BOTTOMRIGHT", -10, 0)
@@ -726,7 +726,7 @@ local function LoadGossipSkin()
 
     --QuestFrame
     local QuestFrame = QuestFrame
-    QuestFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    QuestFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
     QuestFrame:GwStripTextures()
     QuestFrame:GwCreateBackdrop()
     QuestFrame.tex = QuestFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
