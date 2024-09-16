@@ -959,6 +959,7 @@
                             <Layer>
                                 <FontString parentKey="text" text="GRID ALIGN" inherits="gw_button_font_black" justifyH="LEFT">
                                     <Size x="130" y="20"/>
+                                    <Color r="1" g="1" b="1"/>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="LEFT" x="-5" y="0"/>
                                     </Anchors>

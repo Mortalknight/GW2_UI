@@ -102,7 +102,7 @@ local function lockHudObjects(_, _, inCombatLockdown)
         mf:Hide()
     end
 
-    GW.GridToggle(GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.showGrid)
+    GW.GridToggle(GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.showGrid, _, true)
 
     -- enable main bar layout manager and trigger the changes
     GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
@@ -259,9 +259,9 @@ local function createGrid()
     grid:Hide()
 end
 
-local function GridToggle(self)
+local function GridToggle(self, _, forceHide)
     self = self:GetParent()
-    if grid:IsShown() then
+    if grid:IsShown() or forceHide then
         grid:Hide()
         self.gridAlign:Hide()
         self.showGrid:SetText(L["Show grid"])
