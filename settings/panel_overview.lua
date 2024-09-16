@@ -272,6 +272,7 @@ end
 local function LoadOverviewPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsSplashPanelTmpl")
 
+    sWindow.splashart = p.splashart
     p.splashart:AddMaskTexture(sWindow.backgroundMask)
 
     CharacterMenuButton_OnLoad(p.menu.welcomebtn, true)
@@ -357,14 +358,9 @@ local function LoadOverviewPanel(sWindow)
         settingMenuToggle(false)
         sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
         sWindow.headerBreadcrumb:SetText(OVERVIEW)
-
-        -- easter egg: if Beledars is active we change the splash screen
-        if GW.IsBeledarsActive() then
-            p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/settingartwork2")
-        else
-            p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/settingartwork")
-        end
     end)
+
+    GW.InitBeledarsSplashScreen(p)
 
     ShowChangelog(scroll)
 end

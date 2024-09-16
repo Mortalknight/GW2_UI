@@ -64,6 +64,7 @@ core\LFGPlayerInfo.lua
 core\statusbars.xml
 core\statusbars.lua
 
+settings\splashScreen.lua
 settings\settings_menu.lua
 settings\settings.xml
 settings\panel_modules.xml
