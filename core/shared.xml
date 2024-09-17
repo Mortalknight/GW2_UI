@@ -60,8 +60,8 @@
                 <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
                     <Size x="2" y="2"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="3"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="1" y="3"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="2"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="1" y="2"/>
                     </Anchors>
                 </Texture>
                 <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
