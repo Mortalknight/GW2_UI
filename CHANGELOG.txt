@@ -1,3 +1,24 @@
+7.4.0
+NEW
+    - New Font system
+        - You can now select between multiple different font styles (to select the font like before this update, use 'GW2 Legacy')
+        - You can select your own fonts for texts and header texts
+        - You can adjust the font size for: Big Headers, Header, Normal and Small texts
+    - Tooltips gets font size option for all 3 types
+    - Added TWW events to the event tracker
+    - Added auction house skin
+    - Added fx animation to the dynamic hud (not all classes yet)
+    - Added remaning live to delve tracker
+    - Find an small easter agg with the GW2 settings splash screen
+
+FIXES
+    - Fix barber shop skin
+
+CHANGES
+    - Add DK hero talent to dodgebar
+    - Update some textures
+    - Update some skins
+
 7.3.0
 NEW
     - Delves support for objectives tracker

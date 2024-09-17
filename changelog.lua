@@ -15,6 +15,25 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.4.0",{
+    {ct.feature, [=[New Font system
+        - You can now select between multiple different font styles
+        - You can select your own fonts for texts and header texts
+        - You can adjust the font size for: Big Headers, Header, Normal and Small texts
+
+        - To select the font like before this update, use 'GW2 Legacy']=]},
+    {ct.feature, [=[Tooltips gets font size option for all 3 types]=]},
+    {ct.feature, [=[Added TWW events to the event tracker]=]},
+    {ct.feature, [=[Added auction house skin]=]},
+    {ct.feature, [=[Added fx animation to the dynamic hud (not all classes yet)]=]},
+    {ct.feature, [=[Added remaning live to delve tracker]=]},
+    {ct.feature, [=[Find an small easter agg with the GW2 settings splash screen]=]},
+    {ct.change, [=[Add DK hero talent to dodgebar]=]},
+    {ct.change, [=[Update some textures]=]},
+    {ct.change, [=[Update some skins]=]},
+    {ct.bug, [=[Fix barber shop skin]=]},
+})
+
 addChange("7.3.0",{
     {ct.feature, [=[Delves support for objectives tracker]=]},
     {ct.feature, [=[Added group progress to objectives tooltip]=]},
