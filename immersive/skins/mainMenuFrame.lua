@@ -51,6 +51,7 @@ local function applyButtonStyle(b)
     if b.GetFontString and b:GetFontString() then
         b:GetFontString():ClearAllPoints()
         b:GetFontString():SetPoint("LEFT", b, "LEFT", 32,0)
+        b:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     end
     b:SetSize(180, 25)
     b:HookScript("OnEnter", function()
