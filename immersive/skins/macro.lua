@@ -13,7 +13,7 @@ local function ApplyMacroOptionsSkin()
         end
     end
     GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox})
-
+    macroHeaderText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
     MacroFrameBg:Hide()
 
     MacroFrame.NineSlice:Hide()

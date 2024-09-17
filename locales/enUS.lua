@@ -625,3 +625,4 @@ L["Shorten health values"] = true
 L["Shorten value prefix style"] = true
 L["Shorten values decimal length"] = true
 L["Controls the amount of decimals used for shorted values"] = true
+L["Major Factions"] = true

@@ -6,6 +6,7 @@ local function LoadAddonListSkin()
 
     GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {AddonList.ScrollBox})
 
+    AddonListTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
     AddonList.CloseButton:GwSkinButton(true)
     AddonList.EnableAllButton:GwSkinButton(false, true)
     AddonList.DisableAllButton:GwSkinButton(false, true)

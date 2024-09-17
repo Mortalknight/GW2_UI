@@ -102,6 +102,7 @@ local function SkinLookingForGroupFrames()
         LFGListPVEStub
     })
     CreateFrame("Frame", "GwPVEFrameLeftPanel", PVEFrame, "GwWindowLeftPanel")
+    PVEFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     -- copied from blizzard need to icon switching
     local panels = {

@@ -19,6 +19,7 @@ local function GenericTraitFrameSkin()
     GenericTraitFrame.BorderOverlay:Hide()
     GenericTraitFrame.Background:Hide()
     GW.CreateFrameHeaderWithBody(GenericTraitFrame, GenericTraitFrame.Header.Title, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon")
+    GenericTraitFrame.Header.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     GenericTraitFrame.CloseButton:GwSkinButton(true)
     GenericTraitFrame.CloseButton:SetPoint("TOPRIGHT", -3, -2)

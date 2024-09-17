@@ -164,7 +164,7 @@ local function SkinAndEnhanceColorPicker()
     ColorPickerFrame.Border:Hide()
     ColorPickerFrame.Header:GwStripTextures()
     GW.CreateFrameHeaderWithBody(ColorPickerFrame, ColorPickerFrame.Header.Text, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon")
-
+    ColorPickerFrame.Header.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
     ColorPickerFrame.Footer.CancelButton:ClearAllPoints()
     ColorPickerFrame.Footer.OkayButton:ClearAllPoints()
     ColorPickerFrame.Footer.CancelButton:SetPoint("BOTTOMRIGHT", ColorPickerFrame, "BOTTOMRIGHT", -6, 6)

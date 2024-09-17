@@ -42,6 +42,7 @@
     <Script file="playerSpells.lua"/>
     <Script file="auctionHouse.lua"/>
     <Script file="battlefieldMap.lua"/>
+    <Script file="majorFaction.lua"/>
 
     <Script file="addons\immersion.lua"/>
     <Script file="addons\postal.lua"/>

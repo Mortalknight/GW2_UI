@@ -235,6 +235,7 @@ local function encounterJournalSkin()
     EncounterJournalMonthlyActivitiesFrame.FilterList:GwStripTextures()
 
     GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {EJ.LootJournalItems, EncounterJournalMonthlyActivitiesFrame.FilterList})
+    EncounterJournalTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     EJ.instanceSelect.Title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     EJ.instanceSelect.Title:SetFont(DAMAGE_TEXT_FONT, 16, "")
