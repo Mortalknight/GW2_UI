@@ -827,19 +827,13 @@ local function LoadInventory()
     StackSplitFrame.OkayButton:GwSkinButton(false, true)
     StackSplitFrame.CancelButton:GwSkinButton(false, true)
 
-    StackSplitFrame.RightButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
-    StackSplitFrame.RightButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
-    StackSplitFrame.RightButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+    GW.HandleNextPrevButton(StackSplitFrame.RightButton, "right")
+    GW.HandleNextPrevButton(StackSplitFrame.LeftButton, "left")
+
     StackSplitFrame.RightButton:SetSize(25, 25)
     StackSplitFrame.RightButton:SetPoint("LEFT", StackSplitFrame, "CENTER", 51, 18)
 
-    StackSplitFrame.LeftButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
-    StackSplitFrame.LeftButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
-    StackSplitFrame.LeftButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
     StackSplitFrame.LeftButton:SetSize(25, 25)
-    StackSplitFrame.LeftButton:GetNormalTexture():SetTexCoord(1, 0, 1, 0)
-    StackSplitFrame.LeftButton:GetPushedTexture():SetTexCoord(1, 0, 1, 0)
-    StackSplitFrame.LeftButton:GetDisabledTexture():SetTexCoord(1, 0, 1, 0)
     StackSplitFrame.LeftButton:SetPoint("RIGHT", StackSplitFrame, "CENTER", -50, 18)
 
     StackSplitFrame.textboxbg = StackSplitFrame:CreateTexture(nil, "BACKGROUND")
