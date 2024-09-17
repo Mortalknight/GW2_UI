@@ -123,6 +123,7 @@ WARNING: Although FRIZQT___CYR is available on western clients, it doesn't suppo
 Due to this, we cannot use it as a replacement for FRIZQT__.TTF
 ]]
 
+
 if locale == "koKR" then
     LOCALE_MASK = lib.LOCALE_BIT_koKR
 --

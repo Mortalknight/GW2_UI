@@ -206,6 +206,48 @@ local function UpdatePetCooldown(self)
     end
 end
 
+local function updatePowerData(self)
+    local powerType, powerToken = UnitPowerType("pet")
+    local resource = UnitPower("pet", powerType)
+    local resourceMax = UnitPowerMax("pet", powerType)
+    local resourcePrec = 0
+
+    if resource ~= nil and resource > 0 and resourceMax > 0 then
+        resourcePrec = resource / resourceMax
+    end
+
+    if PowerBarColorCustom[powerToken] then
+        local pwcolor = PowerBarColorCustom[powerToken]
+        self.resource:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+    end
+
+    self.resource:SetFillAmount(resourcePrec)
+end
+
+local function updateHealthData(self)
+    local health = UnitHealth("pet")
+    local healthMax = UnitHealthMax("pet")
+    local healthprec = 0
+    local formatFunction
+
+    if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
+        formatFunction = GW.ShortValue
+    else
+        formatFunction = CommaValue
+    end
+
+    if health > 0 and healthMax > 0 then
+        healthprec = health / healthMax
+    end
+
+    self.health:SetFillAmount(healthprec)
+
+    self.health.barOnUpdate = function()
+        self.health.text:SetText(formatFunction(health))
+    end
+end
+GW.UpdatePlayerPetHealthValues = updateHealthData
+
 local function updatePetData(self, event, unit)
     if not UnitExists("pet") then
         return

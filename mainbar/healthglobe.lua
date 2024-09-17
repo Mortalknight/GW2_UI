@@ -69,6 +69,7 @@ local function updateHealthData(self, anims)
     local healAbsorbPrecentage = 0
 
     local healthPrecentage = health/healthMax
+    local formatFunction
 
     self.healthPrecentage = healthPrecentage -- used for animation
     self.health:SetFillAmount(healthPrecentage - 0.035)
@@ -98,12 +99,18 @@ local function updateHealthData(self, anims)
     local hv = ""
     local av = ""
 
-    if self.healthTextSetting == "PREC" then
+    if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
+        formatFunction = GW.ShortValue
+    else
+        formatFunction = CommaValue
+    end
+
+    if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
         hv = CommaValue(health / healthMax * 100) .. "%"
-    elseif self.healthTextSetting == "VALUE" then
-        hv = CommaValue(health)
-    elseif self.healthTextSetting == "BOTH" then
-        hv = CommaValue(health) .. "\n" .. CommaValue(health / healthMax * 100) .. "%"
+    elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
+        hv = formatFunction(health)
+    elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
+        hv = formatFunction(health) .. "\n" .. CommaValue(health / healthMax * 100) .. "%"
     end
 
     if self.absorbTextSetting == "PREC" then

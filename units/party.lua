@@ -352,7 +352,7 @@ GW.AddForProfiling("party", "updatePartyAuras", updatePartyAuras)
 
 local function setUnitName(self)
     local role = UnitGroupRolesAssigned(self.unit)
-    local nameString = UnitName(self.unit)
+    local nameString = UnitName(self.unit) or UNKNOWNOBJECT
 
     if not nameString or nameString == UNKNOWNOBJECT then
         self.nameNotLoaded = false
@@ -374,8 +374,15 @@ GW.AddForProfiling("party", "setUnitName", setUnitName)
 
 local function setHealthValue(self, healthCur, healthMax, healthPrec)
     local healthstring = ""
+    local formatFunction
 
-    if settings.unitNameString == "NONE" then
+    if GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES then
+        formatFunction = GW.ShortValue
+    else
+        formatFunction = CommaValue
+    end
+
+    if GW.settings.PARTY_UNIT_HEALTH == "NONE" then
         self.healthString:Hide()
         return
     end
@@ -383,11 +390,11 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
     if settings.unitNameString == "PREC" then
         self.healthString:SetText(RoundDec(healthPrec * 100,0) .. "%")
         self.healthString:SetJustifyH("LEFT")
-    elseif settings.unitNameString == "HEALTH" then
-        self.healthString:SetText(CommaValue(healthCur))
+    elseif GW.settings.PARTY_UNIT_HEALTH == "HEALTH" then
+        self.healthString:SetText(formatFunction(healthCur))
         self.healthString:SetJustifyH("LEFT")
-    elseif settings.unitNameString == "LOSTHEALTH" then
-        if healthMax - healthCur > 0 then healthstring = CommaValue(healthMax - healthCur) end
+    elseif GW.settings.PARTY_UNIT_HEALTH == "LOSTHEALTH" then
+        if healthMax - healthCur > 0 then healthstring = formatFunction(healthMax - healthCur) end
         self.healthString:SetText(healthstring)
         self.healthString:SetJustifyH("RIGHT")
     end
@@ -399,19 +406,19 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
     self.healthString:Show()
 end
 GW.AddForProfiling("party", "setHealthValue", setHealthValue)
+
 local function setAbsorbAmount(self)
-local health = UnitHealth(self.unit)
-  local healthMax = UnitHealthMax(self.unit)
-  local absorb = UnitGetTotalAbsorbs(self.unit)
-  local absorbPrecentage = 0
-  local absorbAmount = 0
-  local absorbAmount2 = 0
-  local healthPrecentage = 0
+    local health = UnitHealth(self.unit)
+    local healthMax = UnitHealthMax(self.unit)
+    local absorb = UnitGetTotalAbsorbs(self.unit)
+    local absorbPrecentage = 0
+    local absorbAmount = 0
+    local absorbAmount2 = 0
+    local healthPrecentage = 0
 
     if health > 0 and healthMax > 0 then
         healthPrecentage = health / healthMax
     end
-
 
     if absorb > 0 and healthMax > 0 then
         absorbPrecentage = absorb / healthMax
@@ -421,19 +428,18 @@ local health = UnitHealth(self.unit)
     self.absorbbg:SetFillAmount(absorbAmount)
     self.absorbOverlay:SetFillAmount(absorbAmount2)
 end
-GW.AddForProfiling("party", "setAbsorbAmount", setHealthValue)
+GW.AddForProfiling("party", "setAbsorbAmount", setAbsorbAmount)
 local function setUnitHealAbsorb(self)
     local healthMax = UnitHealthMax(self.unit)
-    local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+    local healAbsorb = UnitGetTotalHealAbsorbs(self.unit)
     local healAbsorbPrecentage = 0
-  
+
     if healAbsorb > 0 and healthMax > 0 then
         healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
     end
     self.antiHeal:SetFillAmount(healAbsorbPrecentage)
 end
 local function setHealPrediction(self, predictionPrecentage)
-    
     self.healPrediction:SetFillAmount(predictionPrecentage)
 end
 GW.AddForProfiling("party", "setHealPrediction", setHealPrediction)
@@ -517,7 +523,7 @@ end
 GW.AddForProfiling("party", "updatePartyData", updatePartyData)
 
 local function party_OnEvent(self, event, unit)
-    if not UnitExists(self.unit) or IsInRaid() then
+    if (not UnitExists(self.unit) or IsInRaid()) and not event == "load" then
         return
     end
 
@@ -566,6 +572,64 @@ local function party_OnEvent(self, event, unit)
     end
 end
 GW.AddForProfiling("party", "party_OnEvent", party_OnEvent)
+
+local function UpdatePartyFrames()
+    for i = 1, MAX_PARTY_MEMBERS + (GW.settings.PARTY_PLAYER_FRAME and 1 or 0) do
+        local frame = _G["GwPartyFrame" .. i]
+        party_OnEvent(frame, "load")
+    end
+end
+GW.UpdatePartyFrames = UpdatePartyFrames
+
+local function UpdatePetVisibility()
+    for i = 1, MAX_PARTY_MEMBERS + (GW.settings.PARTY_PLAYER_FRAME and 1 or 0) do
+        local frame = _G["GwPartyPetFrame" .. i]
+        if GW.settings.PARTY_SHOW_PETS then
+            RegisterStateDriver(frame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))))
+        else
+            RegisterStateDriver(frame, "visibility", "hide")
+        end
+    end
+end
+GW.UpdatePartyPetVisibility = UpdatePetVisibility
+
+local function UpdatePlayerInPartySetting()
+    local isFirstFrame = true
+    for i = 1, MAX_PARTY_MEMBERS + 1 do
+        local frame = _G["GwPartyFrame" .. i]
+
+        frame:ClearAllPoints()
+        if GW.settings.PARTY_PLAYER_FRAME and isFirstFrame then
+            frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)
+        else
+            if isFirstFrame then
+                frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)
+            else
+                frame:SetPoint("BOTTOMLEFT", _G["GwPartyPetFrame" .. (i - 1)], "BOTTOMLEFT", -15, -90)
+            end
+        end
+
+        frame.unit = i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
+        frame.guid = UnitGUID(frame.unit)
+        frame:SetAttribute("unit", frame.unit)
+        party_OnEvent(frame, "load")
+        updatePartyData(frame)
+
+        if frame.unit == "player" then
+            RegisterStateDriver(frame, "visibility", ("[@raid1,exists][@%s,noexists] hide;show"):format("party1"))
+        else
+            RegisterStateDriver(frame, "visibility", ("[@raid1,exists][@%s,noexists] hide;show"):format(frame.unit))
+        end
+
+        isFirstFrame = false
+    end
+
+    if not GW.settings.PARTY_PLAYER_FRAME then
+        RegisterStateDriver(_G["GwPartyFrame" .. MAX_PARTY_MEMBERS + 1], "visibility", "hide")
+        RegisterStateDriver(_G["GwPartyPetFrame" .. MAX_PARTY_MEMBERS + 1], "visibility", "hide")
+    end
+end
+GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
 
 local function CreatePartyPetFrame(frame, i)
     local unit = frame.unit == "player" and "pet" or "partypet" .. (i - (settings.showPlayer and 1 or 0))
@@ -616,7 +680,6 @@ local function CreatePartyPetFrame(frame, i)
     AddToClique(f)
 
     f.health:SetStatusBarColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
-
 
     f:SetScript("OnEvent", party_OnEvent)
 
@@ -672,8 +735,8 @@ local function CreatePartyPetFrame(frame, i)
     updatePartyData(f)
 end
 
-local function createPartyFrame(i, isFirstFrame, isPlayer)
-    local registerUnit = isPlayer and "player" or "party" .. (i - (settings.showPlayer and 1 or 0))
+local function createPartyFrame(i, isPlayer)
+    local registerUnit = isPlayer and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, "GwPartyFrame")
 
     local hg = frame.healthContainer
@@ -818,11 +881,11 @@ local function LoadPartyFrames()
     local addCounter = settings.showPlayer and 1 or 0
     local index = 1
     local isFirstFrame = true
-    for _ = 1, MAX_PARTY_MEMBERS + addCounter do
-        if settings.showPlayer and isFirstFrame then
-            createPartyFrame(index, isFirstFrame, true)
+    for _ = 1, MAX_PARTY_MEMBERS + 1 do
+        if GW.settings.PARTY_PLAYER_FRAME and isFirstFrame then
+            createPartyFrame(index, true)
         else
-            createPartyFrame(index, isFirstFrame, false)
+            createPartyFrame(index, false)
         end
         isFirstFrame = false
         index = index + 1

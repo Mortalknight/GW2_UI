@@ -605,6 +605,7 @@ local function evPlayerLogin(self)
     --GW.UpdateObjectivesNotificationSettings()
     --GW.UpdateDoddgeBarSettings()
     --GW.UpdateMinimapSystemDataInfoSettings()
+    GW.BuildPrefixValues()
 
     if GW.settings.FONTS_ENABLED then
         GW.LoadFonts()

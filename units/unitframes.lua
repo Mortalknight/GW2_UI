@@ -179,16 +179,24 @@ GW.AddForProfiling("unitframes", "createNormalUnitFrameSmall", createNormalUnitF
 
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
+    local formatFunction
 
-    if self.showHealthValue == true then
-        healthString = CommaValue(health)
-        if self.showHealthPrecentage == true then
-            healthString = healthString .. " - "
-        end
+    if self.shortendHealthValues then
+        formatFunction = GW.ShortValue
+    else
+        formatFunction = CommaValue
     end
 
-    if self.showHealthPrecentage == true then
-        healthString = healthString .. CommaValue(healthPrecentage * 100) .. "%"
+    if self.showHealthValue and self.showHealthPrecentage then
+        if not self.frameInvert then
+            healthString = formatFunction(health) .. " - " .. CommaValue(healthPrecentage * 100) .. "%"
+        else
+            healthString = CommaValue(healthPrecentage * 100) .. "% - " .. formatFunction(health)
+        end
+    elseif self.showHealthValue and not self.showHealthPrecentage then
+        healthString = formatFunction(health)
+    elseif not self.showHealthValue and self.showHealthPrecentage then
+        healthString = CommaValue(healthPrecentage * 100) .. "%"
     end
 
     self.healthString:SetText(healthString)
@@ -201,10 +209,6 @@ local function updateHealthbarColor(self)
         local color = GWGetClassColor(englishClass, true)
 
         self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
-      --  self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
-      -- self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
-      --  self.healthbarFlash:SetVertexColor(color.r, color.g, color.b, color.a)
-      --  self.healthbarFlashSpark:SetVertexColor(color.r, color.g, color.b, color.a)
 
         self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
@@ -961,6 +965,8 @@ local function ToggleTargetFrameSettings()
     GwTargetUnitFrame.displayBuffs = GW.settings.target_BUFFS
     GwTargetUnitFrame.displayDebuffs = GW.settings.target_DEBUFFS
 
+    GwTargetUnitFrame.shortendHealthValues = GW.settings.TARGET_UNIT_HEALTH_SHORT_VALUES
+
     GwTargetUnitFrame.showThreat = GW.settings.target_THREAT_VALUE_ENABLED
 
     GwTargetUnitFrame.auraPositionTop = GW.settings.target_AURAS_ON_TOP
@@ -1101,6 +1107,10 @@ local function ToggleFocusFrameSettings()
 
     GwFocusUnitFrame.displayBuffs = GW.settings.focus_BUFFS
     GwFocusUnitFrame.displayDebuffs = GW.settings.focus_DEBUFFS
+
+    GwFocusUnitFrame.shortendHealthValues = GW.settings.FOCUS_UNIT_HEALTH_SHORT_VALUES
+
+    GwFocusUnitFrame.auraPositionTop = GW.settings.focus_AURAS_ON_TOP
 
     GwFocusUnitFrame.altBg:SetShown(GW.settings.focus_FRAME_ALT_BACKGROUND)
 
