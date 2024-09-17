@@ -330,11 +330,11 @@ local function LoadHealthGlobe()
             v:SetTextColor(0, 0, 0, 1 / i)
         end
     end
-    hg.text_h.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    hg.text_h.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, nil, -1)
     hg.text_h.value:SetShadowColor(1, 1, 1, 0)
 
     for i, v in ipairs(hg.text_h.shadow) do
-        v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+        v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, nil, -1)
         v:SetShadowColor(1, 1, 1, 0)
         v:SetTextColor(0, 0, 0, 1 / i)
     end
