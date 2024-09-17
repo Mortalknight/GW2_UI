@@ -388,7 +388,7 @@ local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
     elseif isMainBar then
         button.HotKey:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
         button.HotKey:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
-        button.HotKey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
+        button.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
         button.HotKey:SetTextColor(1, 1, 1)
     else
         button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 0)
@@ -573,7 +573,7 @@ local function skinMainBar()
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
-            hotkey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
+            hotkey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
             hotkey:SetTextColor(1, 1, 1)
 
             if IsEquippedAction(btn.action) then
@@ -648,7 +648,7 @@ local function updateMainBar()
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
-            hotkey:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
+            hotkey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
             hotkey:SetTextColor(1, 1, 1)
             btn.changedColor = false
             btn.rangeIndicatorSetting = rangeIndicatorSetting
