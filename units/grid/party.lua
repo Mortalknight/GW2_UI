@@ -48,6 +48,7 @@ local function UpdateGridPartyFrame(frame)
     frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PARTY
     frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
     frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
+    frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_PARTY
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do

@@ -207,6 +207,15 @@ GW.REALM_FLAGS = {
     zhCN = "|TInterface/AddOns/GW2_UI/textures/flags/cn:10:12:0:0|t"
 }
 
+GW.ShortPrefixStyles = {
+	TCHINESE = {{1e8, "億"}, {1e4, "萬"}},
+	CHINESE = {{1e8, "亿"}, {1e4, "万"}},
+	ENGLISH = {{1e12, "T"}, {1e9, "B"}, {1e6, "M"}, {1e3, "K"}},
+	GERMAN = {{1e12, "Bio"}, {1e9, "Mrd"}, {1e6, "Mio"}, {1e3, "Tsd"}},
+	KOREAN = {{1e8, "억"}, {1e4, "만"}, {1e3, "천"}},
+	METRIC = {{1e12, "T"}, {1e9, "G"}, {1e6, "M"}, {1e3, "k"}}
+}
+
 GW.INDICATORS = { "BAR", "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT" }
 GW.indicatorsText = { "Bar", "Top Left", "Top", "Top Right", "Left", "Center", "Right" }
 

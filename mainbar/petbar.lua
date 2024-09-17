@@ -226,6 +226,13 @@ local function updateHealthData(self)
     local health = UnitHealth("pet")
     local healthMax = UnitHealthMax("pet")
     local healthprec = 0
+    local formatFunction
+
+    if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
+        formatFunction = GW.ShortValue
+    else
+        formatFunction = CommaValue
+    end
 
     if health > 0 and healthMax > 0 then
         healthprec = health / healthMax
@@ -234,9 +241,10 @@ local function updateHealthData(self)
     self.health:SetFillAmount(healthprec)
 
     self.health.barOnUpdate = function()
-        self.health.text:SetText(CommaValue(health))
+        self.health.text:SetText(formatFunction(health))
     end
 end
+GW.UpdatePlayerPetHealthValues = updateHealthData
 
 local function updatePetData(self, event, unit)
     if not UnitExists("pet") then

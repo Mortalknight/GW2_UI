@@ -95,6 +95,7 @@ GW.globalDefault = {
         GW_COMBAT_TEXT_MODE= "GW2",
         GW_COMBAT_TEXT_BLIZZARD_COLOR= false,
         GW_COMBAT_TEXT_COMMA_FORMAT= false,
+        GW_COMBAT_TEXT_SHORT_VALUES = false,
         GW_COMBAT_TEXT_STYLE= "Default",
         GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR= "Center",
         GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS= false,
@@ -649,6 +650,7 @@ GW.globalDefault = {
         RAID_SHOW_ROLE_ICON_TANK= true,
         RAID_SHOW_TANK_ICON_TANK= true,
         RAID_SHOW_LEADER_ICON_TANK= true,
+        RAID_SHORT_HEALTH_VALUES_TANK = false,
 
         raidMaintank_pos= {
             point= "TOPLEFT",
@@ -684,6 +686,7 @@ GW.globalDefault = {
         RAID_SHOW_ROLE_ICON_PET= false, -- always
         RAID_SHOW_TANK_ICON_PET= false, -- always
         RAID_SHOW_LEADER_ICON_PET= false, -- always
+        RAID_SHORT_HEALTH_VALUES_PET = false,
 
         raid_pet_pos= {
             point= "TOPLEFT",
@@ -718,6 +721,7 @@ GW.globalDefault = {
         RAID_SHOW_ROLE_ICON= true,
         RAID_SHOW_TANK_ICON= true,
         RAID_SHOW_LEADER_ICON= true,
+        RAID_SHORT_HEALTH_VALUES = false,
 
         raid_pos= {
             point= "TOPLEFT",
@@ -753,6 +757,7 @@ GW.globalDefault = {
         RAID_SHOW_ROLE_ICON_RAID25= true,
         RAID_SHOW_TANK_ICON_RAID25= true,
         RAID_SHOW_LEADER_ICON_RAID25= true,
+        RAID_SHORT_HEALTH_VALUES_RAID25 = false,
 
         raid25_pos= {
             point= "TOPLEFT",
@@ -788,6 +793,7 @@ GW.globalDefault = {
         RAID_SHOW_ROLE_ICON_RAID10= true,
         RAID_SHOW_TANK_ICON_RAID10= true,
         RAID_SHOW_LEADER_ICON_RAID10= true,
+        RAID_SHORT_HEALTH_VALUES_RAID10 = false,
 
         raid10_pos= {
             point= "TOPLEFT",
@@ -822,6 +828,7 @@ GW.globalDefault = {
         RAID_SHOW_ROLE_ICON_PARTY= true,
         RAID_SHOW_TANK_ICON_PARTY= true,
         RAID_SHOW_LEADER_ICON_PARTY= true,
+        RAID_SHORT_HEALTH_VALUES_PARTY = false,
 
         raid_party_pos= {
             point= "TOPLEFT",
@@ -1053,6 +1060,15 @@ GW.globalDefault = {
             hasMoved= false,
         },
         player_pos_scale= 1,
+
+        -- short healthvalue settings
+        ShortHealthValuePrefixStyle = "ENGLISH",
+        ShortHealthValuesDecimalLength = 0,
+        PLAYER_UNIT_HEALTH_SHORT_VALUES = false,
+        TARGET_UNIT_HEALTH_SHORT_VALUES = false,
+        FOCUS_UNIT_HEALTH_SHORT_VALUES = false,
+        PET_UNIT_HEALTH_SHORT_VALUES = false,
+        PARTY_UNIT_HEALTH_SHORT_VALUES = false,
 
         -- TWW
         WORLD_EVENTS_TWW_PROFESSIONS_ENABLED = true,

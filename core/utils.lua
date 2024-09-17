@@ -82,6 +82,34 @@ local function CountTable(T)
 end
 GW.CountTable = CountTable
 
+GW.ShortPrefixValues = {}
+local function BuildPrefixValues()
+    if next(GW.ShortPrefixValues) then wipe(GW.ShortPrefixValues) end
+
+    GW.ShortPrefixValues = GW.copyTable(GW.ShortPrefixValues, GW.ShortPrefixStyles[GW.settings.ShortHealthValuePrefixStyle])
+    local shortValueDec = format("%%.%df", GW.settings.ShortHealthValuesDecimalLength or 1)
+
+    for _, style in ipairs(GW.ShortPrefixValues) do
+        style[3] = shortValueDec .. style[2]
+    end
+end
+GW.BuildPrefixValues = BuildPrefixValues
+
+local function ShortValue(value)
+    local abs_value = value<0 and -value or value
+    local values = GW.ShortPrefixValues
+
+    for i = 1, #values do
+        local arg1, arg2, arg3 = unpack(values[i])
+        if abs_value >= arg1 then
+            return format(arg3, value / arg1)
+        end
+    end
+
+    return format("%.0f", value)
+end
+GW.ShortValue = ShortValue
+
 local function SetPointsRestricted(frame)
 	if frame and not pcall(frame.GetPoint, frame) then
 		return true
@@ -1010,12 +1038,3 @@ local function UpdateFontSettings()
     end
 end
 GW.UpdateFontSettings = UpdateFontSettings
-
-local function IsBeledarsActive()
-    local timeLeft = (GetQuestResetTime() + 3660) % 10800
-    local nextSpawn = timeLeft + time()
-    local duration = 10800 -- 3 hours (10800 seconds)
-
-    return timeLeft <= 60
-end
-GW.IsBeledarsActive = IsBeledarsActive

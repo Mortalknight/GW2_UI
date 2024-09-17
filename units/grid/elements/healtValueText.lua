@@ -16,6 +16,6 @@ GW.Construct_HealtValueText = Construct_HealtValueText
 
 local function UpdateHealtValueTextSettings(frame)
     local name = frame.HealthValueText
-    frame:Tag(name, ("[GW2_Grid:healtValue(%s)]"):format(frame.healthStringFormat))
+    frame:Tag(name, ("[GW2_Grid:healtValue(%s,%s)]"):format(frame.healthStringFormat, tostring(frame.shortendHealthValue)))
 end
 GW.UpdateHealtValueTextSettings = UpdateHealtValueTextSettings

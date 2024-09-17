@@ -627,6 +627,7 @@ local function evPlayerLogin(self)
     --Create Settings window
     GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
+    GW.BuildPrefixValues()
 
     if GW.settings.FONTS_ENABLED then
         GW.LoadFonts()

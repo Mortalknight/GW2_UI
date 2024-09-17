@@ -228,7 +228,7 @@ local function AddOptionText(panel, name, desc, optionName, callback, multiline,
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, isSound, noNewLine, forceNewLine, groupHeaderName, isPrivateSetting, isFont)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, isSound, noNewLine, forceNewLine, groupHeaderName, isPrivateSetting, isFont, customFont)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
 
     opt.options = {}
@@ -240,6 +240,7 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
     opt.hasSound = isSound
     opt.noNewLine = noNewLine
     opt.isFont = isFont
+    opt.customFont = customFont
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
@@ -373,6 +374,8 @@ local function loadDropDown(scrollFrame)
 
                 if scrollFrame.data.isFont then
                     slot.string:SetFont(GW.Libs.LSM:Fetch("font", scrollFrame.data.options[idx]), 12, "")
+                elseif scrollFrame.data.customFont then
+                    slot.string:SetFont(scrollFrame.data.customFont, 12, "")
                 end
 
                 slot.string:SetText(scrollFrame.data.options_names[idx])
@@ -648,6 +651,8 @@ local function InitPanel(panel, hasScroll)
 
                         if v.isFont then
                             of.button.string:SetFont(GW.Libs.LSM:Fetch("font", self.optionDisplayName), 12, "")
+                        elseif v.customFont then
+                            of.button.string:SetFont(v.customFont, 12, "")
                         end
 
                         if v.callback then
@@ -738,6 +743,8 @@ local function InitPanel(panel, hasScroll)
             end
             if v.isFont then
                 of.button.string:SetFont(GW.Libs.LSM:Fetch("font", of.button.string:GetText()), 12, "")
+            elseif v.customFont then
+                of.button.string:SetFont(v.customFont, 12, "")
             else
                 of.button.string:SetFont(UNIT_NAME_FONT, 12)
             end

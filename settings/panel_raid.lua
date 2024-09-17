@@ -50,6 +50,7 @@ local function LoadRaid10Profile(panel)
     addOption(raid10.scroll.scrollchild, L["Tank Icon"], nil, "RAID_SHOW_TANK_ICON_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
     addOption(raid10.scroll.scrollchild, L["Leader/Assist Icon"], nil, "RAID_SHOW_LEADER_ICON_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
     addOption(raid10.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_RAID10", function() GW.UpdateGridSettings("RAID10", true) end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
+    addOption(raid10.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
     addOptionDropdown(
         raid10.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -310,6 +311,7 @@ local function LoadRaid25Profile(panel)
     addOption(raid25.scroll.scrollchild, L["Tank Icon"], nil, "RAID_SHOW_TANK_ICON_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
     addOption(raid25.scroll.scrollchild, L["Leader/Assist Icon"], nil, "RAID_SHOW_LEADER_ICON_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
     addOption(raid25.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_RAID25", function() GW.UpdateGridSettings("RAID25", true) end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
+    addOption(raid25.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
     addOptionDropdown(
         raid25.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -569,6 +571,7 @@ local function LoadRaid40Profile(panel)
     addOption(raid40.scroll.scrollchild, L["Tank Icon"], nil, "RAID_SHOW_TANK_ICON", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
     addOption(raid40.scroll.scrollchild, L["Leader/Assist Icon"], nil, "RAID_SHOW_LEADER_ICON", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
     addOption(raid40.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER", function() GW.UpdateGridSettings("RAID40", true) end, nil, {["RAID_FRAMES"] = true})
+    addOption(raid40.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
     addOptionDropdown(
         raid40.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -824,7 +827,7 @@ local function LoadRaidPetProfile(panel)
     addOption(p.scroll.scrollchild, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOption(p.scroll.scrollchild, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOption(p.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_PET", function() GW.UpdateGridSettings("RAID_PET", true) end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
-
+    addOption(p.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -1058,7 +1061,7 @@ local function LoadPartyProfile(panel)
     addOption(party.scroll.scrollchild, L["Tank Icon"], nil, "RAID_SHOW_TANK_ICON_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
     addOption(party.scroll.scrollchild, L["Leader/Assist Icon"], nil, "RAID_SHOW_LEADER_ICON_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
     addOption(party.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_PARTY", function() GW.UpdateGridSettings("PARTY", true) end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
-
+    addOption(party.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
     addOptionDropdown(
         party.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -1303,6 +1306,7 @@ local function LoadMaintankProfile(panel)
     addOption(tank.scroll.scrollchild, L["Role Icon"], nil, "RAID_SHOW_ROLE_ICON_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
     addOption(tank.scroll.scrollchild, L["Tank Icon"], nil, "RAID_SHOW_TANK_ICON_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
     addOption(tank.scroll.scrollchild, L["Leader/Assist Icon"], nil, "RAID_SHOW_LEADER_ICON_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
+    addOption(tank.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_TANK", function() GW.UpdateGridSettings("TANK") end, nil,  {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
     addOptionDropdown(
         tank.scroll.scrollchild,
         L["Show Aura Tooltips"],

@@ -74,23 +74,33 @@ local function Create_Tags()
 
     AddTag("GW2_Grid:healtValue", "UNIT_HEALTH UNIT_MAXHEALTH", function(unit, realUnit, ...)
         local healthstring = ""
-        local setting = ...
+        local healthDisplaySetting, shortendHealthValue = ...
         local health = UnitHealth(unit)
         local healthMax = UnitHealthMax(unit)
         local healthPrec = 0
+        local formatFunction
+
+        shortendHealthValue = stringtoboolean[shortendHealthValue]
+
+        if shortendHealthValue then
+            formatFunction = GW.ShortValue
+        else
+            formatFunction = GW.CommaValue
+        end
+
         if healthMax > 0 then
             healthPrec = health / healthMax
         end
 
-        if setting == "NONE" then
+        if healthDisplaySetting == "NONE" then
             return ""
         end
-        if setting == "PREC" then
+        if healthDisplaySetting == "PREC" then
             return GW.RoundDec(healthPrec * 100, 0) .. "%"
-        elseif setting == "HEALTH" then
-            return GW.CommaValue(health)
-        elseif setting == "LOSTHEALTH" then
-            if healthMax - health > 0 then healthstring = GW.CommaValue(healthMax - health) end
+        elseif healthDisplaySetting == "HEALTH" then
+            return formatFunction(health)
+        elseif healthDisplaySetting == "LOSTHEALTH" then
+            if healthMax - health > 0 then healthstring = formatFunction(healthMax - health) end
             return healthstring
         end
     end)

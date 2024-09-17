@@ -620,3 +620,8 @@ L["Small text"] = true
 L["Use GW2 Text Style Template"] = true
 
 L["Header Font"] = true
+L["Shorten values"] = true
+L["Shorten health values"] = true
+L["Shorten value prefix style"] = true
+L["Shorten values decimal length"] = true
+L["Controls the amount of decimals used for shorted values"] = true

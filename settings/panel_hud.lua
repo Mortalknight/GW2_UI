@@ -66,6 +66,41 @@ local function LoadHudPanel(sWindow)
     settingsMenuAddButton(UIOPTIONS_MENU, p, {general, minimap, worldmap, fct})
 
     --GENERAL
+    addOptionSlider(
+        general.scroll.scrollchild,
+        L["Shorten values decimal length"],
+        L["Controls the amount of decimals used for shorted values"],
+        "ShortHealthValuesDecimalLength",
+        GW.BuildPrefixValues,
+        0,
+        4,
+        nil,
+        0,
+        nil,
+        1
+    )
+    addOptionDropdown(
+        general.scroll.scrollchild,
+        L["Shorten value prefix style"],
+        nil,
+        "ShortHealthValuePrefixStyle",
+        GW.BuildPrefixValues,
+        {"TCHINESE", "CHINESE", "ENGLISH", "GERMAN", "KOREAN", "METRIC"},
+        {"萬, 億", "万, 亿", "K, M, B, T", "Tsd, Mio, Mrd, Bio", "천, 만, 억", "k, M, G, T"},
+        nil,
+        nil,
+        nil,
+        nil,
+        nil,
+        false,
+        nil,
+        nil,
+        nil,
+        nil,
+        nil,
+        "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
+    )
+
     addOption(general.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND", function() GW.ToggleHudBackground() end)
     addOption(general.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
     addOption(general.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
@@ -484,6 +519,7 @@ local function LoadHudPanel(sWindow)
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. ": " .. L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, L["Shorten values"], nil, "GW_COMBAT_TEXT_SHORT_VALUES", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
 
     addOptionDropdown(
         fct.scroll.scrollchild,

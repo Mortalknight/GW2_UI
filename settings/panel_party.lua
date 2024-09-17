@@ -24,12 +24,14 @@ local function LoadPartyPanel(sWindow)
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
     addOption(p, L["Player frame in group"], L["Show your player frame as part of the group"], "PARTY_PLAYER_FRAME", GW.UpdatePlayerInPartySetting, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
     addOption(p, COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS, nil, "PARTY_SHOW_PETS", GW.UpdatePartyPetVisibility, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, L["Shorten health values"], nil, "PARTY_UNIT_HEALTH_SHORT_VALUES", GW.UpdatePartyFrames, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+
     addOptionDropdown(
         p,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "PARTY_UNIT_HEALTH",
-        nil,
+        GW.UpdatePartyFrames,
         {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
         {
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE,
