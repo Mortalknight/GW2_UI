@@ -13,6 +13,12 @@ local function ApplyMacroOptionsSkin()
         end
     end
     GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox})
+    MacroFrame.gwHeader.BGLEFT:ClearAllPoints()
+    MacroFrame.gwHeader.BGLEFT:SetPoint("BOTTOMLEFT", MacroFrame.gwHeader, "BOTTOMLEFT", 0, 0)
+    MacroFrame.gwHeader.BGLEFT:SetPoint("TOPRIGHT", MacroFrame.gwHeader, "TOPRIGHT", 0, 0)
+    MacroFrame.gwHeader.BGRIGHT:ClearAllPoints()
+    MacroFrame.gwHeader.BGRIGHT:SetPoint("BOTTOMRIGHT", MacroFrame.gwHeader, "BOTTOMRIGHT", 0, 0)
+    MacroFrame.gwHeader.BGRIGHT:SetPoint("TOPLEFT", MacroFrame.gwHeader, "TOPLEFT", 0, 0)
     macroHeaderText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
     MacroFrameBg:Hide()
 
