@@ -16,7 +16,8 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 
-addChange("7.4.1",{
+addChange("7.5.0",{
+    {ct.feature, [=[Add option to shorten values, like health values or damage text]=]},
     {ct.bug, [=[Fix new font settings]=]},
     {ct.bug, [=[fix LSM with new fonts]=]},
 })

@@ -1,7 +1,10 @@
-7.4.1
-    FIXES
-        - Fix new font settings
-        - fix LSM with new fonts
+7.5.0
+NEW
+    - Add option to shorten values, like health values or damage text
+
+FIXES
+    - Fix new font settings
+    - fix LSM with new fonts
 
 7.4.0
 NEW
