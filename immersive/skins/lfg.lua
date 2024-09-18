@@ -548,7 +548,7 @@ local function SkinLookingForGroupFrames()
     end)
 
     hooksecurefunc("LFGListSearchEntry_Update", function(button)
-        if not button.CancelButton.template then
+        if not button.CancelButton.isSkinned then
             button.CancelButton:GwSkinButton(true)
             button.CancelButton:SetSize(18, 18)
         end
@@ -1092,7 +1092,7 @@ local function ApplyChallengesUISkin()
 
     hooksecurefunc(ChallengesFrame, "Update", function(frame)
         for _, child in ipairs(frame.DungeonIcons) do
-            if not child.template then
+            if not child.isSkinned then
                 child:GetRegions():SetAlpha(0)
                 if not child.SetBackdrop then
                     _G.Mixin(child, _G.BackdropTemplateMixin)
@@ -1113,6 +1113,8 @@ local function ApplyChallengesUISkin()
                 child.Icon:SetDrawLayer("ARTWORK")
                 child.HighestLevel:SetDrawLayer("OVERLAY")
                 child.Icon:GwSetInside()
+
+                child.isSkinned = true
             end
         end
     end)
