@@ -15,6 +15,12 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("7.4.1",{
+    {ct.bug, [=[Fix new font settings]=]},
+    {ct.bug, [=[fix LSM with new fonts]=]},
+})
+
 addChange("7.4.0",{
     {ct.feature, [=[New Font system
         - You can now select between multiple different font styles

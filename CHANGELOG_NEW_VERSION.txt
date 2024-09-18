@@ -1,3 +1,8 @@
+7.4.1
+    FIXES
+        - Fix new font settings
+        - fix LSM with new fonts
+
 7.4.0
 NEW
     - New Font system
