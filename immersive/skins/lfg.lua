@@ -527,14 +527,23 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.SearchPanel.RefreshButton.Icon:SetPoint("CENTER")
 
     hooksecurefunc("LFGListApplicationViewer_UpdateApplicant", function(button)
-        if not button.DeclineButton.template then
+        if not button.DeclineButton.isSkinned then
             button.DeclineButton:GwSkinButton(false, true)
+            if button.DeclineButton.Icon then
+                button.DeclineButton.Icon:SetDrawLayer("ARTWORK", 7)
+            end
         end
-        if not button.InviteButton.template then
+        if not button.InviteButton.isSkinned then
             button.InviteButton:GwSkinButton(false, true)
+            if button.InviteButton.Icon then
+                button.InviteButton.Icon:SetDrawLayer("ARTWORK", 7)
+            end
         end
-        if not button.InviteButtonSmall.template then
+        if not button.InviteButtonSmall.isSkinned then
             button.InviteButtonSmall:GwSkinButton(false, true)
+            if button.InviteButtonSmall.Icon then
+                button.InviteButtonSmall.Icon:SetDrawLayer("ARTWORK", 7)
+            end
         end
     end)
 
