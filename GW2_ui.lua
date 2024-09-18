@@ -629,10 +629,7 @@ local function evPlayerLogin(self)
     GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
     GW.BuildPrefixValues()
-
-    if GW.settings.FONTS_ENABLED then
-        GW.LoadFonts()
-    end
+    GW.LoadFonts()
 
     -- Create Warning Prompt
     GW.CreateWarningPrompt()

@@ -13,7 +13,7 @@ local function LoadDetailsSkin()
     details:InstallSkin("GW2 UI Default", {
         file = "Interface/AddOns/GW2_UI/textures/addonSkins/details_skin",
         author = "GW2 UI",
-        version = "1.0.2",
+        version = "1.1.0",
         site = "unknown",
         desc = "Skin to match the GW2 UI",
 
@@ -53,7 +53,7 @@ local function LoadDetailsSkin()
                 ["shadow"] = false,
                 ["side"] = 1,
                 ["text_size"] = 13,
-                ["text_face"] = "GW2_UI Headlines",
+                ["text_face"] = GW.Libs.LSM:Fetch("font", "GW2_UI Headlines"),
                 ["anchor"] = {
                     -12, -- [1]
                     2, -- [2]
@@ -97,7 +97,7 @@ local function LoadDetailsSkin()
                     ["between"] = 2,
                 },
                 ["texture"] = "GW2_UI_Details",
-                ["texture_file"] = "Interface/Addons/GW2_UI/textures/addonSkins/details_statusbar",
+                ["texture_file"] = GW.Libs.LSM:Fetch("statusbar", "GW2_UI_Details"),
                 ["texture_class_colors"] = true,
                 ["fixed_texture_color"] = {
                     0, -- [1]
@@ -106,7 +106,7 @@ local function LoadDetailsSkin()
                     0, -- [4]
                 },
                 ["texture_background"] = "GW2_UI",
-                ["texture_background_file"] = "Interface/Addons/GW2_UI/textures/hud/castinbar-white",
+                ["texture_background_file"] = GW.Libs.LSM:Fetch("statusbar", "GW2_UI"),
                 ["texture_background_class_color"] = false,
                 ["fixed_texture_background_color"] = {
                     0, -- [1]
@@ -127,7 +127,7 @@ local function LoadDetailsSkin()
                 ["icon_size_offset"] = 1.5,
                 ["font_size"] = 12,
                 ["font_face"] = "GW2_UI_Chat",
-                ["font_face_file"] = "Interface/AddOns/GW2_UI/fonts/trebuchet_ms.ttf",
+                ["font_face_file"] = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat"),
                 ["fixed_text_color"] = {
                     1, -- [1]
                     1, -- [2]
@@ -163,7 +163,7 @@ local function LoadDetailsSkin()
     details:InstallSkin("GW2 UI Colored", {
         file = "Interface/AddOns/GW2_UI/textures/addonSkins/details_skin",
         author = "GW2 UI",
-        version = "1.0.1",
+        version = "1.1.0",
         site = "unknown",
         desc = "Skin to match the GW2 UI",
 
@@ -203,7 +203,7 @@ local function LoadDetailsSkin()
                 ["shadow"] = false,
                 ["side"] = 1,
                 ["text_size"] = 13,
-                ["text_face"] = "GW2_UI Headlines",
+                ["text_face"] = GW.Libs.LSM:Fetch("font", "GW2_UI Headlines"),
                 ["anchor"] = {
                     -12, -- [1]
                     2, -- [2]
@@ -247,7 +247,7 @@ local function LoadDetailsSkin()
                     ["between"] = 2,
                 },
                 ["texture"] = "GW2_UI_Details",
-                ["texture_file"] = "Interface/Addons/GW2_UI/textures/addonSkins/details_statusbar",
+                ["texture_file"] = GW.Libs.LSM:Fetch("statusbar", "GW2_UI_Details"),
                 ["texture_class_colors"] = true,
                 ["fixed_texture_color"] = {
                     0, -- [1]
@@ -256,7 +256,7 @@ local function LoadDetailsSkin()
                     0, -- [4]
                 },
                 ["texture_background"] = "GW2_UI",
-                ["texture_background_file"] = "Interface/Addons/GW2_UI/textures/hud/castinbar-white",
+                ["texture_background_file"] = GW.Libs.LSM:Fetch("statusbar", "GW2_UI"),
                 ["texture_background_class_color"] = false,
                 ["fixed_texture_background_color"] = {
                     0, -- [1]
@@ -277,7 +277,7 @@ local function LoadDetailsSkin()
                 ["icon_size_offset"] = 1.5,
                 ["font_size"] = 12,
                 ["font_face"] = "GW2_UI_Chat",
-                ["font_face_file"] = "Interface/AddOns/GW2_UI/fonts/trebuchet_ms.ttf",
+                ["font_face_file"] = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat"),
                 ["fixed_text_color"] = {
                     1, -- [1]
                     1, -- [2]
