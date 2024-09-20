@@ -480,14 +480,6 @@ local function worldMapSkin()
     hooksecurefunc(_G.QuestSessionManager, "NotifyDialogShow", hook_NotifyDialogShow)
     hooksecurefunc("QuestLogQuests_Update", hook_QuestLogQuests_Update)
 
-    local qms = _G.QuestModelScene
-    local w, h = qms:GetSize()
-    qms:GwStripTextures()
-    qms.tex = qms:CreateTexture(nil, "BACKGROUND", nil, 0)
-    qms.tex:SetPoint("TOP", qms, "TOP", 0, 20)
-    qms.tex:SetSize(w + 30, h + 60)
-    qms.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-
     -- Addons
     if _G["AtlasLootToggleFromWorldMap2"] then
         local button = _G["AtlasLootToggleFromWorldMap2"]

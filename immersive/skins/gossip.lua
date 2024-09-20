@@ -890,16 +890,33 @@ local function LoadGossipSkin()
     QuestFrameGoodbyeButton:GwSkinButton(false, true)
     QuestFrameCompleteQuestButton:GwSkinButton(false, true)
 
-    local modelSceneFrame = QuestNPCModelTextFrame or QuestModelScene.ModelTextFrame
+    QuestModelScene.ModelTextFrame:GwStripTextures()
+    QuestNPCModelText:SetTextColor(1, 1, 1)
 
-    if modelSceneFrame then
-        modelSceneFrame:GwStripTextures()
-        w, h = modelSceneFrame:GetSize()
-        modelSceneFrame.tex = modelSceneFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
-        modelSceneFrame.tex:SetPoint("TOP", modelSceneFrame, "TOP", 0, 20)
-        modelSceneFrame.tex:SetSize(w + 30, h + 60)
-        modelSceneFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    end
+    QuestModelScene:SetHeight(253)
+    QuestModelScene:GwStripTextures()
+    QuestModelScene:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    QuestModelScene.ModelTextFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, nil, 10)
+
+    QuestNPCModelNameText:ClearAllPoints()
+    QuestNPCModelNameText:SetPoint("TOP", QuestModelScene, 0, -10)
+    QuestNPCModelNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+    QuestNPCModelNameText:SetTextColor(1, 1, 1)
+
+    QuestNPCModelText:SetJustifyH("CENTER")
+    QuestNPCModelTextScrollFrame:ClearAllPoints()
+    QuestNPCModelTextScrollFrame:SetPoint("TOPLEFT", QuestModelScene.ModelTextFrame, 2, -2)
+    QuestNPCModelTextScrollFrame:SetPoint("BOTTOMRIGHT", QuestModelScene.ModelTextFrame, -10, 6)
+    QuestNPCModelTextScrollChildFrame:GwSetInside(QuestNPCModelTextScrollFrame)
+
+    GW.HandleTrimScrollBar(QuestNPCModelTextScrollFrame.ScrollBar)
+    GW.HandleScrollControls(QuestNPCModelTextScrollFrame)
+    hooksecurefunc("QuestFrame_ShowQuestPortrait", function(frame, _, _, _, _, _, x, y)
+        local mapFrame = QuestMapFrame:GetParent()
+
+        QuestModelScene:ClearAllPoints()
+        QuestModelScene:SetPoint("TOPLEFT", frame, "TOPRIGHT", (x or 0) + (frame == mapFrame and 0 or 6), y or 0)
+    end)
 
     -- mover
     GossipFrame.mover = CreateFrame("Frame", nil, GossipFrame)
