@@ -229,11 +229,11 @@ immersive\damagetext.lua
 immersive\eventTracker.lua
 immersive\interruptAnnouncement.lua
 
+objectives\scenarioWidgets\eventTimerBarSetupByWidgetId.lua
 objectives\scenarioWidgets\heroicVisions.lua
 objectives\scenarioWidgets\jailersTower.lua
 objectives\scenarioWidgets\warfronts.lua
 objectives\scenarioWidgets\emberCourt.lua
-objectives\scenarioWidgets\dragonflightCookingEvent.lua
 objectives\questtracker.xml
 objectives\minimapButtons.lua
 objectives\minimapInstanceDifficult.lua

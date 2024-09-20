@@ -97,7 +97,7 @@ local function updateCurrentScenario(self, event, ...)
     if event == "UPDATE_UI_WIDGET" then
         -- we need this event only for torghast atm, so only update this we it is the torghast widget
         local w = ...
-        if not w or (w and w.widgetID ~= 3302 and w.widgetID ~= 6183) then
+        if not w or (w and w.widgetID ~= 3302 and w.widgetID ~= 6183 and w.widgetID ~= 5483) then
             return
         end
     end
@@ -109,7 +109,7 @@ local function updateCurrentScenario(self, event, ...)
     local showTimerAsBonus = false
     local GwQuestTrackerTimerSavedHeight = 1
     local isEmberCourtWidget = false
-    local isDragonflightCookingEventWidget = false
+    local isEventTimerBarByWidgetId = false
 
     compassData.TYPE = "SCENARIO"
     compassData.TITLE = "Unknown Scenario"
@@ -257,9 +257,6 @@ local function updateCurrentScenario(self, event, ...)
             GwScenarioBlock.delvesFrame.deathCounter:Show()
         end
 
-            --[11:38:34]       textEnabledState=2, 
-            --[11:38:34]       iconFileID=6013778, 
-
         -- handle rewards
         if delvesWidgetInfo.rewardInfo.shownState ~= Enum.UIWidgetRewardShownState.Hidden then
             local rewardTooltip = (delvesWidgetInfo.rewardInfo.shownState == Enum.UIWidgetRewardShownState.ShownEarned) and delvesWidgetInfo.rewardInfo.earnedTooltip or delvesWidgetInfo.rewardInfo.unearnedTooltip
@@ -327,7 +324,8 @@ local function updateCurrentScenario(self, event, ...)
     numCriteria = GW.addHeroicVisionsData(GwScenarioBlock, numCriteria)
     numCriteria = GW.addJailersTowerData(GwScenarioBlock, numCriteria)
     numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget = GW.addEmberCourtData(GwScenarioBlock, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
-    GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget = GW.addDragonflightCookingEventData(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget)
+    GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId = GW.addEventTimerBarByWidgetId(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId, 4324) -- DF cooking event
+    GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId = GW.addEventTimerBarByWidgetId(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId, 5483) -- TWW Theather event
 
     local bonusSteps = C_Scenario.GetBonusSteps() or {}
     local numCriteriaPrev = numCriteria
@@ -398,7 +396,7 @@ local function updateCurrentScenario(self, event, ...)
         intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     end
 
-    if showTimerAsBonus or isEmberCourtWidget or isDragonflightCookingEventWidget then
+    if showTimerAsBonus or isEmberCourtWidget or isEventTimerBarByWidgetId then
         GwQuestTrackerTimer.height = GwQuestTrackerTimerSavedHeight
     end
 
