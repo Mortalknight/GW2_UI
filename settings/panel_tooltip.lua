@@ -33,7 +33,7 @@ local function LoadTooltipPanel(sWindow)
     addOption(p.scroll.scrollchild, CHALLENGE_MODE_KEYSTONE_NAME:format("_"):gsub(": _", ""), L["Adds descriptions for mythic keystone properties to their tooltips."], "ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p.scroll.scrollchild, L["Show Health bar text"], nil, "ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT", function(value) GW.UpdateTooltipSettings(); if not GameTooltip:IsForbidden() then if value then GameTooltipStatusBar.text:Show(); else GameTooltipStatusBar.text:Hide() end end end, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p.scroll.scrollchild, L["Hide in combat"], L["Hide different kind of tooltips during combat."], "HIDE_TOOLTIP_IN_COMBAT", nil, nil, {["TOOLTIPS_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, GW.NewSign .. L["Show premade group info"], L["Add LFG group info to tooltip."], "TOOLTIP_SHOW_PREMADE_GROUP_INFO", nil, nil, {["TOOLTIPS_ENABLED"] = true}, "LfgInfo")
+    addOption(p.scroll.scrollchild, L["Show premade group info"], L["Add LFG group info to tooltip."], "TOOLTIP_SHOW_PREMADE_GROUP_INFO", nil, nil, {["TOOLTIPS_ENABLED"] = true}, "LfgInfo")
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Health Bar Position"],
@@ -88,7 +88,7 @@ local function LoadTooltipPanel(sWindow)
     )
     addOptionSlider(
         p.scroll.scrollchild,
-        FONT_SIZE .. ": " .. L["Tooltip Header"],
+        GW.NewSign .. FONT_SIZE .. ": " .. L["Tooltip Header"],
         nil,
         "TOOLTIP_HEADER_FONT_SIZE",
         function()
@@ -103,7 +103,7 @@ local function LoadTooltipPanel(sWindow)
     )
     addOptionSlider(
         p.scroll.scrollchild,
-        FONT_SIZE .. ": " .. L["Tooltip Body"],
+        GW.NewSign .. FONT_SIZE .. ": " .. L["Tooltip Body"],
         nil,
         "TOOLTIP_FONT_SIZE",
         function()
@@ -118,7 +118,7 @@ local function LoadTooltipPanel(sWindow)
     )
     addOptionSlider(
         p.scroll.scrollchild,
-        FONT_SIZE .. ": " .. L["Comparison"],
+        GW.NewSign .. FONT_SIZE .. ": " .. L["Comparison"],
         L["This setting controls the size of text in item comparison tooltips"],
         "TOOLTIP_SMALL_FONT_SIZE",
         function()
@@ -164,8 +164,8 @@ local function LoadTooltipPanel(sWindow)
         nil,
         {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true}
     )
-    addOption(p.scroll.scrollchild, GW.NewSign .. L["Include Reagents"], nil, "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_REAGENTS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true, ["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = {"BANK", "BOTH"}})
-    addOption(p.scroll.scrollchild, GW.NewSign .. L["Include Warband"], nil, "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_WARBAND", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true, ["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = {"BANK", "BOTH"}})
+    addOption(p.scroll.scrollchild, L["Include Reagents"], nil, "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_REAGENTS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true, ["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = {"BANK", "BOTH"}})
+    addOption(p.scroll.scrollchild, L["Include Warband"], nil, "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_WARBAND", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true, ["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = {"BANK", "BOTH"}})
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Cursor Anchor Type"],

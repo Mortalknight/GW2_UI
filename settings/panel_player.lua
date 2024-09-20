@@ -66,7 +66,7 @@ local function LoadPlayerPanel(sWindow)
     addOption(p_player.scroll.scrollchild, L["Show character item info"], L["Display gems and enchants on the GW2 character panel"], "SHOW_CHARACTER_ITEM_INFO", function() GW.ToggleCharacterItemInfo() end, nil, {["USE_CHARACTER_WINDOW"] = true})
     addOption(p_player.scroll.scrollchild, L["Hide Blizzard dragon riding vigor"], nil, "HIDE_BLIZZARD_VIGOR_BAR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Show classpower bar only in combat"], nil, "CLASSPOWER_ONLY_SHOW_IN_COMBAT", function() GW.UpdateClassPowerVisibilitySetting(GwPlayerClassPower, true) end, nil, {["CLASS_POWER"] = true})
-    addOption(p_player.scroll.scrollchild,  L["Shorten health values"], nil, "PLAYER_UNIT_HEALTH_SHORT_VALUES", function() GW.UpdateHealthglobeSettings(); GW.UpdatePlayerFrameSettings() end, nil, {["HEALTHGLOBE_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "PLAYER_UNIT_HEALTH_SHORT_VALUES", function() GW.UpdateHealthglobeSettings(); GW.UpdatePlayerFrameSettings() end, nil, {["HEALTHGLOBE_ENABLED"] = true})
 
     addOptionDropdown(
         p_player.scroll.scrollchild,
@@ -197,7 +197,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p_player_aura.scroll.scrollchild,
-        GW.NewSign .. L["Horizontal Spacing"],
+        L["Horizontal Spacing"],
         nil,
         "PlayerBuffFrame_HorizontalSpacing",
         function()
@@ -211,7 +211,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p_player_aura.scroll.scrollchild,
-        GW.NewSign .. L["Vertical Spacing"],
+        L["Vertical Spacing"],
         nil,
         "PlayerBuffFrame_VerticalSpacing",
         function()
@@ -225,7 +225,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p_player_aura.scroll.scrollchild,
-        GW.NewSign .. L["Max Wraps"],
+        L["Max Wraps"],
         L["Limit the number of rows"],
         "PlayerBuffFrame_MaxWraps",
         function()
@@ -338,7 +338,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p_player_debuff.scroll.scrollchild,
-        GW.NewSign .. L["Horizontal Spacing"],
+        L["Horizontal Spacing"],
         nil,
         "PlayerDebuffFrame_HorizontalSpacing",
         function()
@@ -352,7 +352,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p_player_debuff.scroll.scrollchild,
-        GW.NewSign .. L["Vertical Spacing"],
+        L["Vertical Spacing"],
         nil,
         "PlayerDebuffFrame_VerticalSpacing",
         function()
@@ -366,7 +366,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p_player_debuff.scroll.scrollchild,
-        GW.NewSign .. L["Max Wraps"],
+        L["Max Wraps"],
         L["Limit the number of rows"],
         "PlayerDebuffFrame_MaxWraps",
         function()

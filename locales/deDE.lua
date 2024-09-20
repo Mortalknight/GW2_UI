@@ -656,3 +656,7 @@ L["Shorten value prefix style"] = "Verkürzte Werte Präfix Stil"
 L["Shorten values decimal length"] = "Dezimallänge der Werte verkürzen"
 L["Controls the amount of decimals used for shorted values"] = "Steuert die Anzahl der Dezimalstellen, die für verkürzte Werte verwendet werden"
 L["Major Factions"] = "Hauptfraktionen"
+L["Adjust the scale of the minimap and also the pins. Eg: Quests, Resource nodes, Group members"] = "Passe den Maßstab der Minimap und Stecknadeln an. Bsp.: Quests, Ressourcenknoten, Gruppenmitglieder"
+L["Minimap Size"] = "Minimapgröße"
+L["Reset Zoom"] = true
+L["Reset Minimap Zoom to default value. Set 0 to disable it"] = true

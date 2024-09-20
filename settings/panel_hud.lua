@@ -68,7 +68,7 @@ local function LoadHudPanel(sWindow)
     --GENERAL
     addOptionSlider(
         general.scroll.scrollchild,
-        L["Shorten values decimal length"],
+        GW.NewSign .. L["Shorten values decimal length"],
         L["Controls the amount of decimals used for shorted values"],
         "ShortHealthValuesDecimalLength",
         GW.BuildPrefixValues,
@@ -81,24 +81,12 @@ local function LoadHudPanel(sWindow)
     )
     addOptionDropdown(
         general.scroll.scrollchild,
-        L["Shorten value prefix style"],
+        GW.NewSign .. L["Shorten value prefix style"],
         nil,
         "ShortHealthValuePrefixStyle",
         GW.BuildPrefixValues,
         {"TCHINESE", "CHINESE", "ENGLISH", "GERMAN", "KOREAN", "METRIC"},
-        {"萬, 億", "万, 亿", "K, M, B, T", "Tsd, Mio, Mrd, Bio", "천, 만, 억", "k, M, G, T"},
-        nil,
-        nil,
-        nil,
-        nil,
-        nil,
-        false,
-        nil,
-        nil,
-        nil,
-        nil,
-        nil,
-        "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
+        {"萬, 億", "万, 亿", "K, M, B, T", "Tsd, Mio, Mrd, Bio", "천, 만, 억", "k, M, G, T"}
     )
 
     addOption(general.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND", function() GW.ToggleHudBackground() end)
@@ -203,11 +191,11 @@ local function LoadHudPanel(sWindow)
     )
     addOptionSlider(
         minimap.scroll.scrollchild,
-        L["Minimap Scale"],
+        GW.NewSign .. L["Minimap Size"],
         L["Change the Minimap size."],
-        "MINIMAP_SCALE",
+        "MINIMAP_SIZE",
         function()
-            local size = GW.settings.MINIMAP_SCALE
+            local size = GW.settings.MINIMAP_SIZE
             Minimap:SetSize(size, size)
             Minimap.gwMover:SetSize(size, size)
         end,
@@ -218,13 +206,43 @@ local function LoadHudPanel(sWindow)
         {["MINIMAP_ENABLED"] = true},
         1
     )
+    addOptionSlider(
+        minimap.scroll.scrollchild,
+        GW.NewSign .. L["Minimap Scale"],
+        L["Adjust the scale of the minimap and also the pins. Eg: Quests, Resource nodes, Group members"],
+        "MinimapScale",
+        function()
+            Minimap:SetScale(GW.settings.MinimapScale)
+            Minimap.gwMover:SetScale(GW.settings.MinimapScale)
+        end,
+        0.1,
+        2,
+        nil,
+        2,
+        {["MINIMAP_ENABLED"] = true},
+        0.01
+    )
+    addOptionSlider(
+        minimap.scroll.scrollchild,
+        GW.NewSign .. L["Reset Zoom"],
+        L["Reset Minimap Zoom to default value. Set 0 to disable it"],
+        "MinimapResetZoom",
+        nil,
+        0,
+        15,
+        nil,
+        0,
+        {["MINIMAP_ENABLED"] = true},
+        1
+    )
+
     --WORLDMAP
     -- world map coordinates
     addGroupHeader(worldmap.scroll.scrollchild, L["World Map Coordinates"])
     addOption(worldmap.scroll.scrollchild, ENABLE, nil, "WORLDMAP_COORDS_TOGGLE", GW.UpdateWorldMapCoordinateSettings, nil, nil, nil, nil, L["World Map Coordinates"])
     addOptionDropdown(
         worldmap.scroll.scrollchild,
-        GW.NewSign .. L["Position"],
+        L["Position"],
         nil,
         "WORLDMAP_COORDS_POSITION",
         GW.UpdateWorldMapCoordinateSettings,
@@ -237,7 +255,7 @@ local function LoadHudPanel(sWindow)
     )
     addOptionSlider(
         worldmap.scroll.scrollchild,
-        GW.NewSign .. L["X-Offset"],
+        L["X-Offset"],
         nil,
         "WORLDMAP_COORDS_X_OFFSET",
         GW.UpdateWorldMapCoordinateSettings,
@@ -253,7 +271,7 @@ local function LoadHudPanel(sWindow)
     )
     addOptionSlider(
         worldmap.scroll.scrollchild,
-        GW.NewSign .. L["Y-Offset"],
+        L["Y-Offset"],
         nil,
         "WORLDMAP_COORDS_Y_OFFSET",
         GW.UpdateWorldMapCoordinateSettings,
@@ -269,9 +287,9 @@ local function LoadHudPanel(sWindow)
     )
 
     -- Theater Troupe
-    addGroupHeader(worldmap.scroll.scrollchild,L["Professions Weekly"])
-    addOption(worldmap.scroll.scrollchild, L["Professions Weekly"], nil, "WORLD_EVENTS_TWW_PROFESSIONS_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Professions Weekly"])
-    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_TWW_PROFESSIONS_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TWW_PROFESSIONS_ENABLED"] = true}, nil, nil, L["Professions Weekly"])
+    --addGroupHeader(worldmap.scroll.scrollchild,L["Professions Weekly"])
+    --addOption(worldmap.scroll.scrollchild, L["Professions Weekly"], nil, "WORLD_EVENTS_TWW_PROFESSIONS_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Professions Weekly"])
+    --addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_TWW_PROFESSIONS_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TWW_PROFESSIONS_ENABLED"] = true}, nil, nil, L["Professions Weekly"])
 
     -- Theater Troupe
     addGroupHeader(worldmap.scroll.scrollchild,L["Khaz Algar Emissary"])
@@ -438,7 +456,7 @@ local function LoadHudPanel(sWindow)
     )
 
      -- Big Dig
-     addGroupHeader(worldmap.scroll.scrollchild, GW.NewSign .. L["Big Dig"])
+     addGroupHeader(worldmap.scroll.scrollchild, L["Big Dig"])
      addOption(worldmap.scroll.scrollchild, L["Big Dig"], nil, "WORLD_EVENTS_BIG_DIG_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Big Dig"])
      addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_BIG_DIG_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true}, nil, nil, L["Big Dig"])
      addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_BIG_DIG_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true}, nil, nil, L["Big Dig"])
@@ -519,7 +537,7 @@ local function LoadHudPanel(sWindow)
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. ": " .. L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
-    addOption(fct.scroll.scrollchild, L["Shorten values"], nil, "GW_COMBAT_TEXT_SHORT_VALUES", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, GW.NewSign .. L["Shorten values"], nil, "GW_COMBAT_TEXT_SHORT_VALUES", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
 
     addOptionDropdown(
         fct.scroll.scrollchild,
@@ -552,7 +570,7 @@ local function LoadHudPanel(sWindow)
     )
     addOptionSlider(
         fct.scroll.scrollchild,
-        GW.NewSign .. FONT_SIZE,
+        FONT_SIZE,
         nil,
         "GW_COMBAT_TEXT_FONT_SIZE",
         GW.UpdateDameTextSettings,
@@ -568,7 +586,7 @@ local function LoadHudPanel(sWindow)
     )
     addOptionSlider(
         fct.scroll.scrollchild,
-        GW.NewSign .. FONT_SIZE .. ": " .. MISS,
+        FONT_SIZE .. ": " .. MISS,
         nil,
         "GW_COMBAT_TEXT_FONT_SIZE_MISS",
         GW.UpdateDameTextSettings,
@@ -584,7 +602,7 @@ local function LoadHudPanel(sWindow)
     )
     addOptionSlider(
         fct.scroll.scrollchild,
-        GW.NewSign .. FONT_SIZE .. ": " .. CRIT_ABBR,
+        FONT_SIZE .. ": " .. CRIT_ABBR,
         nil,
         "GW_COMBAT_TEXT_FONT_SIZE_CRIT",
         GW.UpdateDameTextSettings,
@@ -600,7 +618,7 @@ local function LoadHudPanel(sWindow)
     )
     addOptionSlider(
         fct.scroll.scrollchild,
-        GW.NewSign .. FONT_SIZE .. ": " .. BLOCK .. "/" .. ABSORB,
+        FONT_SIZE .. ": " .. BLOCK .. "/" .. ABSORB,
         nil,
         "GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE",
         GW.UpdateDameTextSettings,
@@ -616,7 +634,7 @@ local function LoadHudPanel(sWindow)
     )
     addOptionSlider(
         fct.scroll.scrollchild,
-        GW.NewSign .. FONT_SIZE .. ": " .. L["Crit modifier"],
+        FONT_SIZE .. ": " .. L["Crit modifier"],
         L["Used for animations"],
         "GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER",
         GW.UpdateDameTextSettings,
@@ -632,7 +650,7 @@ local function LoadHudPanel(sWindow)
     )
     addOptionSlider(
         fct.scroll.scrollchild,
-        GW.NewSign .. FONT_SIZE .. ": " .. L["Pet number modifier"],
+        FONT_SIZE .. ": " .. L["Pet number modifier"],
         nil,
         "GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER",
         GW.UpdateDameTextSettings,

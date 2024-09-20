@@ -653,14 +653,35 @@ local function HandleAddonCompartmentButton()
 end
 GW.HandleAddonCompartmentButton = HandleAddonCompartmentButton
 
+do
+    local isResetting
+
+    local function ResetZoom()
+        Minimap:SetZoom(0)
+        Minimap.ZoomIn:Enable()
+        Minimap.ZoomOut:Disable()
+
+        isResetting = false
+    end
+
+    local function SetupZoomReset()
+        if GW.settings.MinimapResetZoom > 0 and not isResetting then
+            isResetting = true
+
+            GW.Wait(GW.settings.MinimapResetZoom, ResetZoom)
+        end
+    end
+    GW.SetupZoomReset = SetupZoomReset
+end
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = GetMinimapShape
 
     Minimap:SetMaskTexture(130937)
-    Minimap:SetScale(1.2)
+    Minimap:SetScale(GW.settings.MinimapScale)
 
-    local size = GW.settings.MINIMAP_SCALE
+    local size = GW.settings.MINIMAP_SIZE
     Minimap:SetSize(size, size)
 
     GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", ALL .. ",Blizzard,Map", {Minimap:GetSize()}, {"default"}, nil, MinimapPostDrag)
@@ -720,6 +741,9 @@ local function LoadMinimap()
     Minimap:HookScript("OnShow", minimap_OnShow)
     Minimap:HookScript("OnHide", minimap_OnHide)
 
+    --Reset Zoom function
+    hooksecurefunc(Minimap, "SetZoom", GW.SetupZoomReset)
+
     MinimapCluster.ZoneTextButton:GwKill()
     TimeManagerClockButton:GwKill()
     MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
@@ -735,8 +759,6 @@ local function LoadMinimap()
     local killFrames = {
         MinimapBorder,
         MinimapBorderTop,
-        MinimapZoomIn,
-        MinimapZoomOut,
         MinimapNorthTag,
         MinimapZoneTextButton,
         MiniMapWorldMapButton,

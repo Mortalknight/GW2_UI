@@ -595,6 +595,14 @@ local function evPlayerEnteringWorld()
 
         GW.settings.fontModuleMigrationDone = true
     end
+
+    -- migration minimap scale setting
+    if not GW.settings.MinimapScaleSetting then
+        GW.settings.MINIMAP_SIZE = GW.settings.MINIMAP_SCALE
+        GW.settings.MINIMAP_SCALE = nil
+
+        GW.settings.MinimapScaleSetting = true
+    end
 end
 AFP("evPlayerEnteringWorld", evPlayerEnteringWorld)
 
