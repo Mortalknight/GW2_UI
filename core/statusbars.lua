@@ -134,9 +134,9 @@ local function SetFillAmount(self, value, forced)
         else
             self.maskContainer:SetPoint("LEFT", self.internalBar, "LEFT", currentSegmentPosition, 0)
         end
-        --if not GW.IsNAN(barPosition) then
+        if not GW.IsNaN(barPosition) and not not GW.IsInf(barPosition) then
             self:SetValue(barPosition)
-        --end
+        end
         self.fill_threshold = barPosition
     end
     if self.barOnUpdate then

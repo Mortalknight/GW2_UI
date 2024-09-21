@@ -12,6 +12,9 @@ local function ApplyMacroOptionsSkin()
             break
         end
     end
+
+    MacroFrameInset:GwStripTextures()
+    MacroFrame.MacroSelector.ScrollBox:GwStripTextures()
     GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox})
     MacroFrame.gwHeader.BGLEFT:ClearAllPoints()
     MacroFrame.gwHeader.BGLEFT:SetPoint("BOTTOMLEFT", MacroFrame.gwHeader, "BOTTOMLEFT", 0, 0)
@@ -61,16 +64,19 @@ local function ApplyMacroOptionsSkin()
     for i = 1, #buttons do
         buttons[i]:GwSkinButton(false, true)
     end
+    MacroNewButton:SetPoint("BOTTOMRIGHT", -86, 4)
 
     MacroFrameCloseButton:GwSkinButton(true)
     MacroFrameCloseButton:SetSize(25, 25)
     MacroFrameCloseButton:ClearAllPoints()
     MacroFrameCloseButton:SetPoint("TOPRIGHT", 0, 0)
-    MacroFrameTab1:GwSkinTab()
-    MacroFrameTab2:GwSkinTab()
+    GW.HandleTabs(MacroFrameTab1, true)
+    GW.HandleTabs(MacroFrameTab2, true)
+    MacroFrameTab1:SetHeight(25)
+    MacroFrameTab2:SetHeight(25)
 
-    MacroFrameTab1:SetPoint("TOPLEFT", MacroFrame, "TOPLEFT", 12, -30)
-    MacroFrameTab2:SetPoint("LEFT", MacroFrameTab1, "RIGHT", 4, 0)
+    MacroFrameTab1:SetPoint("TOPLEFT", MacroFrame, "TOPLEFT", 4, -35)
+    MacroFrameTab2:SetPoint("LEFT", MacroFrameTab1, "RIGHT", 0, 0)
     MacroFrameTab1.Text:SetAllPoints(MacroFrameTab1)
     MacroFrameTab2.Text:SetAllPoints(MacroFrameTab2)
 
@@ -81,6 +87,8 @@ local function ApplyMacroOptionsSkin()
     MacroFrameSelectedMacroButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     MacroFrameSelectedMacroBackground:GwKill()
     MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+
+    MacroFrameSelectedMacroName:SetTextColor(1, 1, 1)
 
     hooksecurefunc(MacroFrame.MacroSelector.ScrollBox, "Update", function()
         for _, button in next, {MacroFrame.MacroSelector.ScrollBox.ScrollTarget:GetChildren()} do
