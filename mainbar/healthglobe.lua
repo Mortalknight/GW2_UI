@@ -106,12 +106,18 @@ local function updateHealthData(self)
         hv = formatFunction(health) .. "\n" .. CommaValue(health / healthMax * 100) .. "%"
     end
 
+    if GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES then
+        formatFunction = GW.ShortValue
+    else
+        formatFunction = CommaValue
+    end
+
     if GW.settings.PLAYER_UNIT_ABSORB == "PREC" then
         av = CommaValue(absorb / healthMax * 100) .. "%"
     elseif GW.settings.PLAYER_UNIT_ABSORB == "VALUE" then
-        av = CommaValue(absorb)
+        av = formatFunction(absorb)
     elseif GW.settings.PLAYER_UNIT_ABSORB == "BOTH" then
-        av = CommaValue(absorb) .. "\n" .. CommaValue(absorb / healthMax * 100) .. "%"
+        av = formatFunction(absorb) .. "\n" .. CommaValue(absorb / healthMax * 100) .. "%"
     end
 
     self.text_h.value:SetText(hv)

@@ -10,6 +10,12 @@ local setBlockColor = GW.setBlockColor
 local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
 
+local allowedWidgetUpdateIds = {
+    [3302] = true, -- DF cooking event
+    [6183] = true, -- TWW delve
+    [5483] = true, -- TWW theather event
+}
+
 local function getObjectiveBlock(self, index)
     local block = _G[self:GetName() .. "GwQuestObjective" .. index]
     if block then
@@ -95,9 +101,8 @@ GW.AddForProfiling("scenario", "addObjectiveBlock", addObjectiveBlock)
 
 local function updateCurrentScenario(self, event, ...)
     if event == "UPDATE_UI_WIDGET" then
-        -- we need this event only for torghast atm, so only update this we it is the torghast widget
         local w = ...
-        if not w or (w and w.widgetID ~= 3302 and w.widgetID ~= 6183 and w.widgetID ~= 5483) then
+        if not w or (w and allowedWidgetUpdateIds[w.widgetID] == nil) then
             return
         end
     end
@@ -276,7 +281,6 @@ local function updateCurrentScenario(self, event, ...)
         GwScenarioBlock.delvesFrame:Hide()
     end
 
-
     setBlockColor(GwScenarioBlock, compassData.TYPE)
     GwScenarioBlock.Header:SetTextColor(GwScenarioBlock.color.r, GwScenarioBlock.color.g, GwScenarioBlock.color.b)
     GwScenarioBlock.hover:SetVertexColor(GwScenarioBlock.color.r, GwScenarioBlock.color.g, GwScenarioBlock.color.b)
@@ -292,26 +296,18 @@ local function updateCurrentScenario(self, event, ...)
         local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
         local objectiveType = scenarioCriteriaInfo.isWeightedProgress and "progressbar" or "monster"
 
-        --[[
-        -- disable that till blizzard added back the raw value to the api
         if objectiveType == "progressbar" and not isMythicKeystone then
             scenarioCriteriaInfo.totalQuantity = 100
         end
-        -- temp till blizzard fix
+
         local mythicKeystoneCurrentValue = 0
         if isMythicKeystone then
-        mythicKeystoneCurrentValue = strtrim(mythicKeystoneCurrentValue, "%") or 1
-        end
-
-        ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress),
-        ]]
-        if objectiveType == "progressbar" then
-            scenarioCriteriaInfo.totalQuantity = 100
+            mythicKeystoneCurrentValue = tonumber(string.match(scenarioCriteriaInfo.quantityString, "%d+")) or 1
         end
 
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone),
+            ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress),
             false,
             criteriaIndex,
             objectiveType,
@@ -355,6 +351,7 @@ local function updateCurrentScenario(self, event, ...)
                     end
                 )
                 GwQuestTrackerTimer.timer:Show()
+                GwQuestTrackerTimer.needToShowTimer = true
                 GwQuestTrackerTimerSavedHeight = GwQuestTrackerTimerSavedHeight + 40
                 showTimerAsBonus = true
             elseif not showTimerAsBonus then
@@ -388,7 +385,7 @@ local function updateCurrentScenario(self, event, ...)
 
     local intGWQuestTrackerHeight = 0
 
-    if GwQuestTrackerTimer.affixes:IsShown() then
+    if GwQuestTrackerTimer.affixeFrame:IsShown() then
         intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     end
 
@@ -423,31 +420,31 @@ local function scenarioAffixes()
     local i = 1
     for _, v in pairs(affixes) do
         if i == 1 then
-            _G.GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+            GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
             GwQuestTrackerTimer.timer:ClearAllPoints()
-            GwQuestTrackerTimer.timer:SetPoint("TOPLEFT", GwQuestTrackerTimer.affixes, "BOTTOMLEFT", -10, -15)
+            GwQuestTrackerTimer.timer:SetPoint("TOPLEFT", GwQuestTrackerTimer.affixeFrame, "BOTTOMLEFT", -10, -15)
         end
         local affixID = v
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID)
 
-        if filedataid ~= nil then
-            SetPortraitToTexture(GwQuestTrackerTimer.affixes.affixes[i].icon, filedataid)
+        if filedataid then
+            SetPortraitToTexture(GwQuestTrackerTimer.affixeFrame.affixes[i].icon, filedataid)
         end
-        GwQuestTrackerTimer.affixes.affixes[i].affixID = affixID
-        GwQuestTrackerTimer.affixes.affixes[i]:Show()
-        GwQuestTrackerTimer.affixes.affixes[i].icon:Show()
-        GwQuestTrackerTimer.affixes:Show()
+        GwQuestTrackerTimer.affixeFrame.affixes[i].affixID = affixID
+        GwQuestTrackerTimer.affixeFrame.affixes[i]:Show()
+        GwQuestTrackerTimer.affixeFrame.affixes[i].icon:Show()
+        GwQuestTrackerTimer.affixeFrame:Show()
         i = i + 1
     end
 
     if i == 1 then
         GwQuestTrackerTimer.timer:ClearAllPoints()
-        GwQuestTrackerTimer.timer:SetPoint("TOPRIGHT", GwQuestTrackerTimer.affixes, "BOTTOMRIGHT", -10, 20)
-        for _, v in ipairs(GwQuestTrackerTimer.affixes.affixes) do
+        GwQuestTrackerTimer.timer:SetPoint("TOPRIGHT", GwQuestTrackerTimer.affixeFrame, "BOTTOMRIGHT", -10, 20)
+        for _, v in ipairs(GwQuestTrackerTimer.affixeFrame.affixes) do
             v.affixID = nil
             v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
         end
-        GwQuestTrackerTimer.affixes:Hide()
+        GwQuestTrackerTimer.affixeFrame:Hide()
     end
 end
 GW.AddForProfiling("scenario", "scenarioAffixes", scenarioAffixes)
@@ -473,7 +470,7 @@ local function scenarioTimerUpdate(...)
         local _, _, wtype = GetWorldElapsedTime(timerID)
         if (wtype == LE_WORLD_ELAPSED_TIMER_TYPE_CHALLENGE_MODE) then
             local mapID = C_ChallengeMode.GetActiveChallengeMapID()
-            if (mapID) then
+            if mapID then
                 local _, _, timeLimit = C_ChallengeMode.GetMapUIInfo(mapID)
                 local time3 = timeLimit * TIME_FOR_3
                 local time2 = timeLimit * TIME_FOR_2
@@ -514,6 +511,7 @@ local function scenarioTimerUpdate(...)
                     end
                 )
                 GwQuestTrackerTimer.timer:Show()
+                GwQuestTrackerTimer.needToShowTimer = true
                 GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 50
                 scenarioAffixes()
                 scenarioTimerUpdateDeathCounter(GwQuestTrackerTimer)
@@ -532,6 +530,7 @@ local function scenarioTimerUpdate(...)
                     end
                 )
                 GwQuestTrackerTimer.timer:Show()
+                GwQuestTrackerTimer.needToShowTimer = true
                 GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
                 return
             end
@@ -543,12 +542,13 @@ local function scenarioTimerUpdate(...)
     GwQuestTrackerTimer.chestoverlay:Hide()
     GwQuestTrackerTimer.deathcounter:Hide()
     GwQuestTrackerTimer:SetScript("OnUpdate", nil)
+    GwQuestTrackerTimer.needToShowTimer = false
 
-    for _, v in ipairs(GwQuestTrackerTimer.affixes.affixes) do
+    for _, v in ipairs(GwQuestTrackerTimer.affixeFrame.affixes) do
         v.affixID = nil
         v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
     end
-    GwQuestTrackerTimer.affixes:Hide()
+    GwQuestTrackerTimer.affixeFrame:Hide()
 end
 GW.AddForProfiling("scenario", "scenarioTimerUpdate", scenarioTimerUpdate)
 
@@ -649,6 +649,7 @@ local function LoadScenarioFrame()
     end)
 
     local timerBlock = CreateFrame("Button", "GwQuestTrackerTimer", GwQuesttrackerContainerScenario, "GwQuesttrackerScenarioBlock")
+    timerBlock.needToShowTimer = false
     timerBlock.height = timerBlock:GetHeight()
     timerBlock.timerlabel = timerBlock.timer.timerlabel
     timerBlock.timerString = timerBlock.timer.timerString
@@ -694,7 +695,7 @@ local function LoadScenarioFrame()
             self:GetParent().timerBackground:Hide()
         end
     )
-    for _, v in ipairs(timerBlock.affixes.affixes) do
+    for _, v in ipairs(timerBlock.affixeFrame.affixes) do
         v:SetScript(
             "OnEnter",
             function(self)
@@ -731,7 +732,6 @@ local function LoadScenarioFrame()
     timerBlock:RegisterEvent("WORLD_STATE_TIMER_START")
     timerBlock:RegisterEvent("WORLD_STATE_TIMER_STOP")
     timerBlock:RegisterEvent("PROVING_GROUNDS_SCORE_UPDATE")
-    --timerBlock:RegisterEvent("SPELL_UPDATE_COOLDOWN")
     timerBlock:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
     timerBlock:RegisterEvent("CHALLENGE_MODE_START")
     timerBlock:RegisterEvent("CHALLENGE_MODE_COMPLETED")

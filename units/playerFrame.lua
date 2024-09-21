@@ -5,17 +5,22 @@ local createNormalUnitFrame = GW.createNormalUnitFrame
 local IsIn = GW.IsIn
 local CommaValue = GW.CommaValue
 
-local settings = {}
-
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
+    local formatFunction
+
+    if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
+        formatFunction = GW.ShortValue
+    else
+        formatFunction = CommaValue
+    end
 
     if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
         healthString = CommaValue(healthPrecentage * 100) .. "%"
     elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
-        healthString = CommaValue(health)
+        healthString = formatFunction(health)
     elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
-        healthString = CommaValue(health) .. " - " .. CommaValue(healthPrecentage * 100) .. "%"
+        healthString = formatFunction(health) .. " - " .. CommaValue(healthPrecentage * 100) .. "%"
     end
 
     self.healthString:SetText(healthString)

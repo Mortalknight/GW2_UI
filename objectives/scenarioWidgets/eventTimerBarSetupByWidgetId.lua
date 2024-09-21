@@ -37,8 +37,10 @@ local function addEventTimerBarByWidgetId(gwQuestTrackerTimerSavedHeight, showTi
         isEventTimerBarByWidgetId = true
     else
         gwQuestTrackerTimerSavedHeight = 1
-        GwQuestTrackerTimer.height = 1
-        GwQuestTrackerTimer.timer:Hide()
+        GwQuestTrackerTimer.timer:SetShown(GwQuestTrackerTimer.needToShowTimer)
+        if not GwQuestTrackerTimer.needToShowTimer then
+            GwQuestTrackerTimer.height = 1
+        end
         showTimerAsBonus = false
         if timer then
             timer:Cancel()

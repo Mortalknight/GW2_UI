@@ -650,7 +650,7 @@
                     </Layer>
                 </Layers>
             </Frame>
-            <Frame parentKey="affixes" hidden="true">
+            <Frame parentKey="affixeFrame" hidden="true">
                 <Size x="280" y="40"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"></Anchor>

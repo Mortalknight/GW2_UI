@@ -1068,6 +1068,7 @@ GW.globalDefault = {
         ShortHealthValuePrefixStyle = "ENGLISH",
         ShortHealthValuesDecimalLength = 0,
         PLAYER_UNIT_HEALTH_SHORT_VALUES = false,
+        PLAYER_UNIT_SHIELD_SHORT_VALUES = false,
         TARGET_UNIT_HEALTH_SHORT_VALUES = false,
         FOCUS_UNIT_HEALTH_SHORT_VALUES = false,
         PET_UNIT_HEALTH_SHORT_VALUES = false,
