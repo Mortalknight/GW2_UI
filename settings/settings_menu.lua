@@ -37,9 +37,9 @@ local function createBreadCrumbFrame()
     local f = CreateFrame("Frame", nil, GwSettingsSearchResultPanel.scroll.scrollchild, "GwSettingsSearchBreadCrumb")
 
     f.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    f.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    f.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     f.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
-    f.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    f.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     breadCrumbPool[#breadCrumbPool + 1] = f
     return f
@@ -388,7 +388,7 @@ local function loadSettingsSearchAbleMenu()
 
     GwSettingsSearchResultPanel = CreateFrame("Frame", "GwSettingsSearchResultPanel",GwSettingsWindow.panels,"GwSettingsSearchResultPanel")
     GwSettingsSearchResultPanel.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    GwSettingsSearchResultPanel.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwSettingsSearchResultPanel.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     GwSettingsSearchResultPanel.header:SetText(SEARCH)
     GwSettingsSearchResultPanel.sub:SetFont(UNIT_NAME_FONT, 12)
     GwSettingsSearchResultPanel.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)

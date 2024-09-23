@@ -166,13 +166,13 @@ local function blockOnClick(self, button)
     end
 end
 
-local function createNewBonusObjectiveBlock(blockIndex)
+local function createNewBonusObjectiveBlock(container, blockIndex)
     if _G["GwBonusObjectiveBlock" .. blockIndex] ~= nil then
         return _G["GwBonusObjectiveBlock" .. blockIndex]
     end
 
-    local newBlock = CreateTrackerObject("GwBonusObjectiveBlock" .. blockIndex, GwQuesttrackerContainerBonusObjectives)
-    newBlock:SetParent(GwQuesttrackerContainerBonusObjectives)
+    local newBlock = CreateTrackerObject("GwBonusObjectiveBlock" .. blockIndex, container)
+    newBlock:SetParent(container)
 
     Mixin(newBlock, BonusObjectiveBlockMixin)
 
@@ -182,7 +182,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
     newBlock.event = true
 
     if blockIndex == 1 then
-        newBlock:SetPoint("TOPRIGHT", GwQuesttrackerContainerBonusObjectives, "TOPRIGHT", 0, -20)
+        newBlock:SetPoint("TOPRIGHT", container, "TOPRIGHT", 0, -20)
     else
         newBlock:SetPoint("TOPRIGHT", _G["GwBonusObjectiveBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
     end
@@ -213,7 +213,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
     return newBlock
 end
 
-local function setUpBlock(questIDs, collapsed)
+local function setUpBlock(container, questIDs, collapsed)
     local savedContainerHeight = 1
     local shownBlocks = 0
     local blockIndex = 1
@@ -241,7 +241,7 @@ local function setUpBlock(questIDs, collapsed)
                 if text == nil then
                     text = ""
                 end
-                local GwBonusObjectiveBlock = createNewBonusObjectiveBlock(blockIndex)
+                local GwBonusObjectiveBlock = createNewBonusObjectiveBlock(container, blockIndex)
                 if GwBonusObjectiveBlock == nil then
                     return
                 end
@@ -299,7 +299,7 @@ local function setUpBlock(questIDs, collapsed)
                         simpleDesc = simpleDesc .. ", " .. ParseSimpleObjective(txt)
                     end
 
-                    if not GwQuesttrackerContainerBonusObjectives.collapsed == true then
+                    if not container.collapsed == true then
                         local progressValue = addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType)
                         if finished then
                             objectiveProgress = objectiveProgress + (1 / numObjectives)
@@ -317,7 +317,7 @@ local function setUpBlock(questIDs, collapsed)
                         GwBonusObjectiveBlock.ticker = nil
                     end
                     GwBonusObjectiveBlock.ticker = C_Timer.NewTicker(GwBonusObjectiveBlock.tickerSeconds, function()
-                        GW.updateBonusObjective(GwQuesttrackerContainerBonusObjectives)
+                        GW.updateBonusObjective(container)
                     end)
                 end
 
@@ -337,7 +337,7 @@ local function setUpBlock(questIDs, collapsed)
                     GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. blockIndex, GW.updateQuestItemPositions, {GwBonusObjectiveBlock.actionButton, savedContainerHeight, "EVENT", GwBonusObjectiveBlock})
                 end
 
-                if not GwQuesttrackerContainerBonusObjectives.collapsed then
+                if not container.collapsed then
                     GwBonusObjectiveBlock:Show()
                 end
                 for i = GwBonusObjectiveBlock.numObjectives + 1, 20 do
@@ -355,7 +355,7 @@ local function setUpBlock(questIDs, collapsed)
             end
         end
     end
-    GwQuesttrackerContainerBonusObjectives:SetHeight(savedContainerHeight)
+    container:SetHeight(savedContainerHeight)
 
     return foundEvent, shownBlocks
 end
@@ -392,8 +392,8 @@ local function updateBonusObjective(self)
         end
     end
 
-    local foundEvent, shownBlocks = setUpBlock(trackedEventIDs, self.collapsed)
-    GwQuesttrackerContainerBonusObjectives.numEvents = shownBlocks
+    local foundEvent, shownBlocks = setUpBlock(self, trackedEventIDs, self.collapsed)
+    self.numEvents = shownBlocks
 
     for i = (shownBlocks > 0 and not self.collapsed and shownBlocks + 1) or 1, 20 do
         if _G["GwBonusObjectiveBlock" .. i] then
@@ -429,29 +429,29 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    updateBonusObjective(GwQuesttrackerContainerBonusObjectives)
+    updateBonusObjective(self)
 end
 GW.CollapseBonusObjectivesHeader = CollapseHeader
 
-local function LoadBonusFrame()
-    GwQuesttrackerContainerBonusObjectives:SetScript("OnEvent", updateBonusObjective)
-    GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_LOG_UPDATE")
-    GwQuesttrackerContainerBonusObjectives:RegisterEvent("TASK_PROGRESS_UPDATE")
-    GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
+local function LoadBonusFrame(container)
+    container:SetScript("OnEvent", updateBonusObjective)
+    container:RegisterEvent("QUEST_LOG_UPDATE")
+    container:RegisterEvent("TASK_PROGRESS_UPDATE")
+    container:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
 
-    GwQuesttrackerContainerBonusObjectives.header = CreateFrame("Button", nil, GwQuesttrackerContainerBonusObjectives, "GwQuestTrackerHeader")
-    GwQuesttrackerContainerBonusObjectives.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    GwQuesttrackerContainerBonusObjectives.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    GwQuesttrackerContainerBonusObjectives.header.title:SetShadowOffset(1, -1)
-    GwQuesttrackerContainerBonusObjectives.header.title:SetText(EVENTS_LABEL)
+    container.header = CreateFrame("Button", nil, container, "GwQuestTrackerHeader")
+    container.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
+    container.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    container.header.title:SetShadowOffset(1, -1)
+    container.header.title:SetText(EVENTS_LABEL)
 
-    GwQuesttrackerContainerBonusObjectives.collapsed = false
-    GwQuesttrackerContainerBonusObjectives.header:SetScript("OnMouseDown",
+    container.collapsed = false
+    container.header:SetScript("OnMouseDown",
         function(self)
             CollapseHeader(self:GetParent(), false, false)
         end
     )
-    GwQuesttrackerContainerBonusObjectives.header.title:SetTextColor(
+    container.header.title:SetTextColor(
         TRACKER_TYPE_COLOR.EVENT.r,
         TRACKER_TYPE_COLOR.EVENT.g,
         TRACKER_TYPE_COLOR.EVENT.b
@@ -464,6 +464,6 @@ local function LoadBonusFrame()
         end
     end)
 
-    updateBonusObjective(GwQuesttrackerContainerBonusObjectives)
+    updateBonusObjective(container)
 end
 GW.LoadBonusFrame = LoadBonusFrame

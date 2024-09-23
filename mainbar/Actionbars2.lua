@@ -492,6 +492,9 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
     if btn.AutoCastShine then
         btn.AutoCastShine:SetSize(btnWidth, btnWidth)
     end
+    if btn.AutoCastOverlay then
+        btn.AutoCastOverlay:SetSize(btnWidth, btnWidth)
+    end
     if btn.NewActionTexture then
         btn.NewActionTexture:SetSize(btnWidth, btnWidth)
     end

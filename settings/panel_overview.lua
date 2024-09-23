@@ -262,7 +262,7 @@ local function SetUpScrollFrame(frame)
         local slot = frame.buttons[i]
         slot:SetWidth(frame:GetWidth() - 12)
         slot.title.text:SetFont(DAMAGE_TEXT_FONT, 14)
-        slot.title.text:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+        slot.title.text:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
         slot.content.text:SetFont(UNIT_NAME_FONT, 12)
         slot.content.text:SetTextColor(181 / 255, 160 / 255, 128 / 255)

@@ -610,7 +610,7 @@ local function LoadProfilesPanel(sWindow)
     collectAllIcons()
 
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.header:SetTextColor(255 / 255, 255 / 255, 255 / 255)
+    p.header:SetTextColor(1, 1, 1)
     p.header:SetText(L["Profiles"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(125 / 255, 125 / 255, 125 / 255)

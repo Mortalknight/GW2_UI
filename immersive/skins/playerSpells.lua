@@ -72,9 +72,9 @@ local function UpdateSpecFrame(frame)
             specContentFrame.RoleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
 
             --SpecName
-            specContentFrame.SpecName:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+            specContentFrame.SpecName:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
             specContentFrame.SampleAbilityText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
-            specContentFrame.SampleAbilityText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+            specContentFrame.SampleAbilityText:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
             if role == "DAMAGER" then
                 specContentFrame.RoleIcon:SetTexCoord(0.75, 1, 0.75, 1)
@@ -126,7 +126,7 @@ local function HandleHeroTalents(frame)
         if specFrame and not specFrame.IsSkinned then
             if specFrame.SpecName then
                 specFrame.SpecName:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
-                specFrame.SpecName:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+                specFrame.SpecName:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
                 end
             if specFrame.Description then
                 specFrame.Description:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
@@ -166,12 +166,12 @@ local function skinPlayerSpells()
     TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
     TalentsFrame.ClassCurrencyDisplay.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 8)
 
-    TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
     TalentsFrame.SpecCurrencyDisplay.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 8)
 
-    TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     GW.SkinTextBox(TalentsFrame.SearchBox.Middle, TalentsFrame.SearchBox.Left, TalentsFrame.SearchBox.Right)
     TalentsFrame.SearchBox:SetHeight(20)

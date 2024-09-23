@@ -738,7 +738,7 @@ local function LoadMovers(layoutManager)
     smallSettingsContainer.seperator:SetTexCoord((sin - cos), -(cos + sin), -cos, -sin, sin, -cos, 0, 0)
 
     smallSettingsContainer.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-    smallSettingsContainer.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    smallSettingsContainer.headerString:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     smallSettingsContainer.headerString:SetText(L["Extra Frame Options"] .. " & Layouts")
 
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.5, 1.5)
@@ -826,7 +826,7 @@ local function LoadMovers(layoutManager)
 
     --load tag dropdown
     smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.title:SetFont(DAMAGE_TEXT_FONT, 12)
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.title:SetText(L["Filter"])
     local tagScrollFrame = smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.container.contentScroll
     tagScrollFrame.scrollBar.thumbTexture:SetSize(12, 30)

@@ -50,7 +50,7 @@ local function LoadLootFrameSkin()
     local GwLootFrameTitle = CreateFrame("Frame", nil, LootFrame, "GwLootFrameTitleTemp")
     GwLootFrameTitle:SetPoint("BOTTOMLEFT", LootFrame, "TOPLEFT", 0, -25)
     GwLootFrameTitle.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-    GwLootFrameTitle.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwLootFrameTitle.headerString:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     local w, _ = LootFrame:GetSize()
     GwLootFrameTitle:SetWidth(w)

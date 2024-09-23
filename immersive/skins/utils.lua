@@ -561,7 +561,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
         titleText:SetParent(header)
         titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
         titleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
-        titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+        titleText:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     end
 
     local tex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)

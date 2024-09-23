@@ -298,36 +298,36 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    updateRecipeLayout(GwQuesttrackerContainerRecipe)
+    updateRecipeLayout(self)
 end
 GW.CollapseRecipeHeader = CollapseHeader
 
-local function LoadRecipeTracking(self)
-    self:RegisterEvent("TRACKED_RECIPE_UPDATE")
-    self:RegisterEvent("SKILL_LINES_CHANGED")
-    self:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-    self:RegisterEvent("UPDATE_PENDING_MAIL")
-    self:RegisterEvent("BAG_UPDATE_DELAYED")
-    self:SetScript("OnEvent", OnEvent)
+local function LoadRecipeTracking(container)
+    container:RegisterEvent("TRACKED_RECIPE_UPDATE")
+    container:RegisterEvent("SKILL_LINES_CHANGED")
+    container:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+    container:RegisterEvent("UPDATE_PENDING_MAIL")
+    container:RegisterEvent("BAG_UPDATE_DELAYED")
+    container:SetScript("OnEvent", OnEvent)
 
-    self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
-    self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    self.header.title:SetShadowOffset(1, -1)
-    self.header.title:SetText(PROFESSIONS_TRACKER_HEADER_PROFESSION)
+    container.header = CreateFrame("Button", nil, container, "GwQuestTrackerHeader")
+    container.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
+    container.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    container.header.title:SetShadowOffset(1, -1)
+    container.header.title:SetText(PROFESSIONS_TRACKER_HEADER_PROFESSION)
 
-    self.collapsed = false
-    self.header:SetScript("OnMouseDown",
+    container.collapsed = false
+    container.header:SetScript("OnMouseDown",
         function(self)
             CollapseHeader(self:GetParent(), false, false)
         end
     )
-    self.header.title:SetTextColor(
+    container.header.title:SetTextColor(
         TRACKER_TYPE_COLOR.RECIPE.r,
         TRACKER_TYPE_COLOR.RECIPE.g,
         TRACKER_TYPE_COLOR.RECIPE.b
     )
 
-    updateRecipeLayout(self)
+    updateRecipeLayout(container)
 end
 GW.LoadRecipeTracking = LoadRecipeTracking

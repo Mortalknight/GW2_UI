@@ -8,7 +8,7 @@ local settingsMenuAddButton = GW.settingsMenuAddButton;
 local function LoadSkinsPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p.header:SetText(L["Skins"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)

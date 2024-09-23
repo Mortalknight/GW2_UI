@@ -1,15 +1,16 @@
 local _, GW = ...
 
 local function SkinRewards()
-    local pool = AdventureMapQuestChoiceDialog.rewardPool
-    local objects = pool and pool.activeObjects
-    if not objects then return end
-
-    for reward in pairs(objects) do
+    for reward in AdventureMapQuestChoiceDialog.rewardPool:EnumerateActive() do
         if not reward.IsSkinned then
+            reward.ItemNameBG:GwStripTextures()
+            reward.ItemNameBG:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+
+
             GW.HandleItemButton(reward)
             GW.HandleIcon(reward.Icon)
             reward.Icon:SetDrawLayer('OVERLAY')
+
             reward.IsSkinned = true
         end
     end
@@ -24,14 +25,14 @@ local function ApplyAdventureMapSkin()
     -- Rewards
     hooksecurefunc(AdventureMapQuestChoiceDialog, 'RefreshRewards', SkinRewards)
     -- Quick Fix for the Font Color
-    AdventureMapQuestChoiceDialog.Details.Child.TitleHeader:SetTextColor(1, 1, 1)
+    AdventureMapQuestChoiceDialog.Details.Child.TitleHeader:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     AdventureMapQuestChoiceDialog.Details.Child.DescriptionText:SetTextColor(1, 1, 1)
-    AdventureMapQuestChoiceDialog.Details.Child.ObjectivesHeader:SetTextColor(1, 1, 1)
+    AdventureMapQuestChoiceDialog.Details.Child.ObjectivesHeader:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     AdventureMapQuestChoiceDialog.Details.Child.ObjectivesText:SetTextColor(1, 1, 1)
     --Buttons
+    GW.HandleTrimScrollBar(AdventureMapQuestChoiceDialog.Details.ScrollBar)
+    GW.HandleScrollControls(AdventureMapQuestChoiceDialog.Details)
     AdventureMapQuestChoiceDialog.CloseButton:GwSkinButton(true)
-    AdventureMapQuestChoiceDialog.Details:GwSkinScrollFrame()
-    AdventureMapQuestChoiceDialog.Details.ScrollBar:GwSkinScrollBar()
     AdventureMapQuestChoiceDialog.AcceptButton:GwSkinButton(false, true)
     AdventureMapQuestChoiceDialog.DeclineButton:GwSkinButton(false, true)
 end

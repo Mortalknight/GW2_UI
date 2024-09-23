@@ -122,7 +122,7 @@ local function HandleSummaryIcons(frame)
 			if not child.IsSkinned then
 				GW.HandleIcon(child.Icon, true)
 
-				child.Text:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+				child.Text:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
 				if child.IconBorder then
 					child.IconBorder:GwKill()
@@ -314,7 +314,7 @@ local function ApplyAuctionHouseSkin()
 		button.HighlightTexture:SetColorTexture(1, 1, 1, .1)
 		button.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
 
-		button.Text:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+		button.Text:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 		button.Text:SetShadowColor(0, 0, 0, 0)
 		button.Text:SetShadowOffset(1, -1)
 		button.Text:SetFont(DAMAGE_TEXT_FONT, 13)

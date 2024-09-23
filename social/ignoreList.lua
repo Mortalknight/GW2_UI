@@ -100,7 +100,7 @@ local function LoadIgnoreList(tabContainer)
     ignoreSetup(ignorewin)
 
     ignorewin_outer.ignoreHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
-    ignorewin_outer.ignoreHeader:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    ignorewin_outer.ignoreHeader:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     -- update ignore window when a ignore update event occurs
     ignorewin:SetScript(

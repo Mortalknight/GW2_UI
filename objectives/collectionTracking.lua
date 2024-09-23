@@ -261,31 +261,31 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
 end
 GW.CollapseCollectionHeader = CollapseHeader
 
-local function LoadCollectionTracking(self)
-    self:RegisterEvent("TRANSMOG_COLLECTION_SOURCE_ADDED")
-    self:RegisterEvent("CONTENT_TRACKING_UPDATE")
-    self:RegisterEvent("TRACKING_TARGET_INFO_UPDATE")
-    self:SetScript("OnEvent", OnEvent)
+local function LoadCollectionTracking(container)
+    container:RegisterEvent("TRANSMOG_COLLECTION_SOURCE_ADDED")
+    container:RegisterEvent("CONTENT_TRACKING_UPDATE")
+    container:RegisterEvent("TRACKING_TARGET_INFO_UPDATE")
+    container:SetScript("OnEvent", OnEvent)
 
-    self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
-    self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    self.header.title:SetShadowOffset(1, -1)
-    self.header.title:SetText(ADVENTURE_TRACKING_MODULE_HEADER_TEXT)
+    container.header = CreateFrame("Button", nil, container, "GwQuestTrackerHeader")
+    container.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
+    container.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    container.header.title:SetShadowOffset(1, -1)
+    container.header.title:SetText(ADVENTURE_TRACKING_MODULE_HEADER_TEXT)
 
-    self.collapsed = false
-    self.header:SetScript("OnMouseDown",
+    container.collapsed = false
+    container.header:SetScript("OnMouseDown",
         function(self)
             CollapseHeader(self:GetParent(), false, false)
         end
     )
-    self.header.title:SetTextColor(
+    container.header.title:SetTextColor(
         TRACKER_TYPE_COLOR.RECIPE.r,
         TRACKER_TYPE_COLOR.RECIPE.g,
         TRACKER_TYPE_COLOR.RECIPE.b
     )
 
-    StopTrackingCollectedItems(self)
-    EnumerateTrackables(self, GenerateClosure(updateCollectionLayout, self))
+    StopTrackingCollectedItems(container)
+    EnumerateTrackables(container, GenerateClosure(updateCollectionLayout, container))
 end
 GW.LoadCollectionTracking = LoadCollectionTracking

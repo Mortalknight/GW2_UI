@@ -16,10 +16,10 @@ function GwDeBuffIcon_OnLoad(self)
     self.icon = self.debuffIcon.icon
 
     self.debuffIcon.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
-    self.debuffIcon.stacks:SetTextColor(255, 255, 255)
+    self.debuffIcon.stacks:SetTextColor(1, 1, 1)
 
     self.cooldown.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-    self.cooldown.duration:SetTextColor(255, 255, 255)
+    self.cooldown.duration:SetTextColor(1, 1, 1)
 end
 
 function GwTargetFrameTemplateDummy_OnLoad(self)

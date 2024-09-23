@@ -437,11 +437,11 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     smallSettingsFrame.layoutView.desc:SetText(L["Assign layouts to a spec. The layout will be automatically changed on a spec switch.\n\nLayouts has always priority for profile settings."])
 
     smallSettingsFrame.layoutView.savedLayoutDropDown.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
-    smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetText("Layouts")
 
     smallSettingsFrame.layoutView.specsDropDown.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
-    smallSettingsFrame.layoutView.specsDropDown.title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    smallSettingsFrame.layoutView.specsDropDown.title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     smallSettingsFrame.layoutView.specsDropDown.title:SetText(SPECIALIZATION)
 
     -- start with the current profile layout add it at the timer function in case this is the first login

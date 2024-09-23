@@ -533,6 +533,7 @@ local function LoadCurrency(tabContainer)
     transferHistorySetup(curHistroyWin)
     GW.HandleTrimScrollBar(curHistroyWin.ScrollBar)
     GW.HandleScrollControls(curHistroyWin)
+    curHistroyWin.EmptyLogMessage:SetTextColor(1, 1, 1)
     hooksecurefunc(curHistroyWin.ScrollBox, "Update", UpdateTransferHistorySkins)
 
     -- setup the raid info window

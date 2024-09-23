@@ -220,33 +220,33 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    Update(GwQuesttrackerContainerMonthlyActivity)
+    Update(self)
 end
 GW.CollapseonthlyActivitiesHeader = CollapseHeader
 
-local function LoadMonthlyActivitiesTracking(self)
-    self:RegisterEvent("PERKS_ACTIVITIES_TRACKED_UPDATED")
-    self:RegisterEvent("PERKS_ACTIVITY_COMPLETED")
-    self:SetScript("OnEvent", OnEvent)
+local function LoadMonthlyActivitiesTracking(container)
+    container:RegisterEvent("PERKS_ACTIVITIES_TRACKED_UPDATED")
+    container:RegisterEvent("PERKS_ACTIVITY_COMPLETED")
+    container:SetScript("OnEvent", OnEvent)
 
-    self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
-    self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    self.header.title:SetShadowOffset(1, -1)
-    self.header.title:SetText(TRACKER_HEADER_MONTHLY_ACTIVITIES)
+    container.header = CreateFrame("Button", nil, container, "GwQuestTrackerHeader")
+    container.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
+    container.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    container.header.title:SetShadowOffset(1, -1)
+    container.header.title:SetText(TRACKER_HEADER_MONTHLY_ACTIVITIES)
 
-    self.collapsed = false
-    self.header:SetScript("OnMouseDown",
+    container.collapsed = false
+    container.header:SetScript("OnMouseDown",
         function(self)
             CollapseHeader(self:GetParent(), false, false)
         end
     )
-    self.header.title:SetTextColor(
+    container.header.title:SetTextColor(
         TRACKER_TYPE_COLOR.MONTHLYACTIVITY.r,
         TRACKER_TYPE_COLOR.MONTHLYACTIVITY.g,
         TRACKER_TYPE_COLOR.MONTHLYACTIVITY.b
     )
 
-    Update(self)
+    Update(container)
 end
 GW.LoadMonthlyActivitiesTracking = LoadMonthlyActivitiesTracking
