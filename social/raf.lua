@@ -26,6 +26,11 @@ end
 
 local function LoadRecruitAFriendList(tabContainer)
     local RAFFrame = CreateFrame("Frame", "GwRAFWindow", tabContainer, "GwRAFWindow")
+    for tab in RecruitAFriendRewardsFrame.rewardTabPool:EnumerateActive() do
+        tab:HookScript("OnClick", function(self)
+            RecruitAFriendFrame:SetSelectedRAFVersion(self.rafVersion);
+        end)
+    end
 
     RecruitAFriendFrame.RewardClaiming:SetParent(RAFFrame.claming)
     RecruitAFriendFrame.RewardClaiming:ClearAllPoints()
