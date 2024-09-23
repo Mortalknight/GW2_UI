@@ -83,6 +83,7 @@ local function ignoreSetup(ignorewin)
             slot.item.remove:HookScript("OnEnter", removeIgnore_OnEnter)
             slot.item.remove:HookScript("OnLeave", removeIgnore_OnLeave)
             slot.item.remove:HookScript("OnClick", removeFromeIgnore)
+            GW.AddListItemChildHoverTexture(slot)
             slot.item.ScriptsHooked = true
         end
     end

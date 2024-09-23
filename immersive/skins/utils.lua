@@ -633,7 +633,9 @@ GW.HandleSrollBoxHeaders = HandleHeaders
 
 local function HandleScrollFrameHeaderButton(button, isLastButton)
     if not button.IsSkinned then
-        button:DisableDrawLayer("BACKGROUND")
+        if button.DisableDrawLayer then
+            button:DisableDrawLayer("BACKGROUND")
+        end
 
         if not button.backdrop then
             button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)

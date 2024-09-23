@@ -12,6 +12,14 @@
                     </Anchors>
                 </Texture>
             </Layer>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Selected" file="Interface\QuestFrame\UI-QuestTitleHighlight" hidden="true" >
+                    <Size x="460" y="20"/>
+                    <Anchors>
+                        <Anchor point="TOP" x="5" y="-2"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer level="BORDER">
                 <FontString parentKey="Name" inherits="GameFontHighlightSmall" justifyH="LEFT">
                     <Size x="126" y="14"/>
@@ -39,12 +47,6 @@
                 </FontString>
             </Layer>
         </Layers>
-        <HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
-            <Size x="460" y="20"/>
-            <Anchors>
-                <Anchor point="TOP" x="5" y="-2"/>
-            </Anchors>
-        </HighlightTexture>
     </Button>
 
     <Frame name="GwWhoWindow" virtual="true" hidden ="false">

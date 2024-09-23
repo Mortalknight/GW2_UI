@@ -69,11 +69,8 @@ local function WhoList_Update()
             button:Hide()
         end
 
-        if GwWhoWindow.selectedWho == index then
-            button:LockHighlight()
-        else
-            button:UnlockHighlight()
-        end
+
+        button.Selected:SetShown(GwWhoWindow.selectedWho == index)
     end
 
     local totalHeight = numWhos * FRIENDS_FRAME_WHO_HEIGHT
@@ -128,6 +125,8 @@ local function LoadWhoList(tabContainer)
     WhoWindow:RegisterEvent("WHO_LIST_UPDATE")
     WhoWindow:SetScript("OnEvent", WhoList_Update)
 
+    WhoWindow.list.Totals:SetTextColor(1, 1, 1)
+
     -- Create Dropdown
     WhoWindow.list.ColumnHeader2.Dropdown = CreateFrame("DropdownButton", nil, WhoWindow.list.ColumnHeader2, "WowStyle1DropdownTemplate")
     WhoWindow.list.ColumnHeader2.Dropdown:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2, "TOPLEFT", 0, 0)
@@ -150,13 +149,13 @@ local function LoadWhoList(tabContainer)
     WhoWindow.list.ColumnHeader2.Dropdown:HookScript("OnClick", function(self)
         self.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
         self.Text:SetShadowOffset(0, 0)
-        self.Text:SetTextColor(0, 0, 0)
+        self.Text:SetTextColor(1, 1, 1)
         self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     end)
     WhoWindow.list.ColumnHeader2.Dropdown:HookScript("OnMouseDown", function(self)
         self.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
         self.Text:SetShadowOffset(0, 0)
-        self.Text:SetTextColor(0, 0, 0)
+        self.Text:SetTextColor(1, 1, 1)
         self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     end)
 
@@ -172,26 +171,17 @@ local function LoadWhoList(tabContainer)
     end
 
     for _, object in pairs(Headers) do
-        if object ~= "ColumnHeader2" then WhoWindow.list[object]:GwSkinButton(false, true) end
+        GW.HandleScrollFrameHeaderButton(WhoWindow.list[object])
     end
 
     WhoWindow.list.ColumnHeader2.Dropdown:SetSize(135, 24)
     WhoWindow.list.ColumnHeader2.Dropdown:GwStripTextures()
-    WhoWindow.list.ColumnHeader2.Dropdown.tex = WhoWindow.list.ColumnHeader2.Dropdown:CreateTexture(nil, "ARTWORK")
-    WhoWindow.list.ColumnHeader2.Dropdown.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
-    WhoWindow.list.ColumnHeader2.Dropdown.tex:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2.Dropdown, "TOPLEFT", 1, 0)
-    WhoWindow.list.ColumnHeader2.Dropdown.tex:SetPoint("BOTTOMRIGHT", WhoWindow.list.ColumnHeader2.Dropdown, "BOTTOMRIGHT", -2, 0)
     WhoWindow.list.ColumnHeader2.Dropdown.Arrow:ClearAllPoints()
     WhoWindow.list.ColumnHeader2.Dropdown.Arrow:SetPoint("RIGHT", WhoWindow.list.ColumnHeader2.Dropdown, "RIGHT", -5, -3)
     WhoWindow.list.ColumnHeader2.Dropdown.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     WhoWindow.list.ColumnHeader2.Dropdown.Text:SetShadowOffset(0, 0)
-    WhoWindow.list.ColumnHeader2.Dropdown.Text:SetTextColor(0, 0, 0)
-    WhoWindow.list.ColumnHeader2.Dropdown:GwSkinButton(false, false, true)
+    WhoWindow.list.ColumnHeader2.Dropdown.Text:SetTextColor(1, 1, 1)
     WhoWindow.list.ColumnHeader2.Dropdown.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-
-    WhoWindow.list.ColumnHeader2.Dropdown.hover:ClearAllPoints()
-    WhoWindow.list.ColumnHeader2.Dropdown.hover:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2.Dropdown, "TOPLEFT", 1, 0)
-    WhoWindow.list.ColumnHeader2.Dropdown.hover:SetPoint("BOTTOMRIGHT", WhoWindow.list.ColumnHeader2.Dropdown, "BOTTOMRIGHT", -2, 0)
 
     WhoWindow.list.InviteButton:SetScript("OnClick", function() C_PartyInfo.InviteUnit(WhoWindow.selectedName) end)
     WhoWindow.list.AddFriendButton:SetScript("OnClick", function() C_FriendList.AddFriend(WhoWindow.selectedName) end)
@@ -215,6 +205,7 @@ local function LoadWhoList(tabContainer)
         slot.Variable:SetFont(UNIT_NAME_FONT, 11)
         slot.Level:SetFont(UNIT_NAME_FONT, 11)
         slot.Class:SetFont(UNIT_NAME_FONT, 11)
+        slot.Selected:SetColorTexture(0.5, 0.5, 0.5, .5)
 
         if not slot.ScriptsHooked then
             slot:HookScript("OnClick", function(self, button)
@@ -237,6 +228,7 @@ local function LoadWhoList(tabContainer)
                 end
             end)
             slot:HookScript("OnLeave", GameTooltip_Hide)
+            GW.AddListItemChildHoverTexture(slot)
             slot.ScriptsHooked = true
         end
     end

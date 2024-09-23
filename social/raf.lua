@@ -47,6 +47,7 @@ local function LoadRecruitAFriendList(tabContainer)
 
     RecruitAFriendFrame.RewardClaiming.MonthCount:ClearAllPoints()
     RecruitAFriendFrame.RewardClaiming.MonthCount:SetPoint("TOPLEFT", 120, -15)
+    RecruitAFriendFrame.RewardClaiming.MonthCount:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     RecruitAFriendFrame.RewardClaiming.NextRewardName:ClearAllPoints()
     RecruitAFriendFrame.RewardClaiming.NextRewardName:SetPoint("TOPLEFT", 120, -48)
@@ -93,6 +94,7 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendRewardsFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     RecruitAFriendRewardsFrame.Background:SetAlpha(0)
     RecruitAFriendRewardsFrame.Watermark:SetAlpha(0)
+    RecruitAFriendRewardsFrame.Title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     hooksecurefunc(RecruitAFriendRewardsFrame, "UpdateRewards", RAFRewards)
     RAFRewards()
