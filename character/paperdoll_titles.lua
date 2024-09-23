@@ -1,70 +1,44 @@
 local _, GW = ...
 
-local BAG_TITLE_SIZE = 32
 local savedPlayerTitles = {}
 
 local function title_OnClick(self)
-    if not self.TitleID or not self.TitleIdx then
+    if not self.titleId then
         return
     end
-    SetCurrentTitle(self.TitleID)
+    SetCurrentTitle(self.titleId)
 end
 GW.AddForProfiling("paperdoll_titles", "title_OnClick", title_OnClick)
+local function UpdateScrollBox(self)
+    local dataProvider = CreateDataProvider();
+    for index, playerTitle in ipairs(savedPlayerTitles) do
+        dataProvider:Insert({index = index, playerTitle = playerTitle})
+    end
+    self.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
+end
 
-local function loadTitle(titlewin)
-    local USED_TITLE_HEIGHT
-    local zebra
+local function Titles_InitButton(button, elementData)
+    local playerTitle = elementData.playerTitle
 
-    local offset = HybridScrollFrame_GetOffset(titlewin)
+    if not button.isSkinned then
+        button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        button.name:SetTextColor(1, 1, 1)
+        button:HookScript("OnClick", title_OnClick)
+        GW.AddListItemChildHoverTexture(button)
 
-    for i = 1, #titlewin.buttons do
-        local slot = titlewin.buttons[i]
-
-        local idx = i + offset
-        if idx > #savedPlayerTitles then
-            -- empty row (blank starter row, final row, and any empty entries)
-            slot.item:Hide()
-            slot.item.TitleID = nil
-            slot.item.TitleIdx = nil
-        else
-            slot.item.TitleID = savedPlayerTitles[idx].id
-            slot.item.TitleIdx = idx
-            slot.item.name:SetText(savedPlayerTitles[idx].name)
-
-            -- set zebra color by idx or watch status
-            local currentTitleId = GetCurrentTitle()
-            zebra = idx % 2
-            if currentTitleId == savedPlayerTitles[idx].id then
-                slot.item.zebra:SetVertexColor(1, 1, 0.5, 0.15)
-            else
-                slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
-            end
-
-            slot.item:Show()
-        end
+        button.isSkinned = true
     end
 
-    USED_TITLE_HEIGHT = BAG_TITLE_SIZE * #savedPlayerTitles
-    HybridScrollFrame_Update(titlewin, USED_TITLE_HEIGHT, 433)
-end
-GW.AddForProfiling("paperdoll_titles", "loadTitle", loadTitle)
+    button.name:SetText(playerTitle.name)
+    button.titleId = playerTitle.id
 
-local function titleSetup(titlewin)
-    HybridScrollFrame_CreateButtons(titlewin, "GwTitleRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
-    for i = 1, #titlewin.buttons do
-        local slot = titlewin.buttons[i]
-        slot:SetWidth(titlewin:GetWidth() - 12)
-        slot.item.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        slot.item.name:SetTextColor(1, 1, 1)
-        if not slot.item.ScriptsHooked then
-            slot.item:HookScript("OnClick", title_OnClick)
-            slot.item.ScriptsHooked = true
-        end
+    -- set zebra color by idx or watch status
+    if (GetCurrentTitle() == button.titleId) or ((elementData.index % 2) == 1) then
+        button.zebra:SetVertexColor(1, 1, 1, 1)
+    else
+        button.zebra:SetVertexColor(0, 0, 0, 0)
     end
-
-    loadTitle(titlewin)
 end
-GW.AddForProfiling("paperdoll_titles", "titleSetup", titleSetup)
 
 local function saveKnowenTitles()
     savedPlayerTitles[1] = {}
@@ -78,7 +52,7 @@ local function saveKnowenTitles()
             local tempName, playerTitle = GetTitleName(i)
             if (tempName and playerTitle) then
                 tableIndex = tableIndex + 1
-                savedPlayerTitles[tableIndex] = {}
+                savedPlayerTitles[tableIndex] = savedPlayerTitles[tableIndex] or {}
                 savedPlayerTitles[tableIndex].name = strtrim(tempName)
                 savedPlayerTitles[tableIndex].id = i
             end
@@ -97,26 +71,32 @@ GW.AddForProfiling("paperdoll_titles", "saveKnowenTitles", saveKnowenTitles)
 
 local function LoadPDTitles(fmMenu)
     local titlewin_outer = CreateFrame("Frame", "GwTitleWindow", GwPaperDoll, "GwTitleWindow")
-    local titlewin = titlewin_outer.TitleScroll
 
     saveKnowenTitles()
-    titlewin.update = loadTitle
-    titlewin.scrollBar.doNotHide = true
-    titleSetup(titlewin)
+
+    local view = CreateScrollBoxListLinearView()
+    view:SetElementInitializer("GwTitleButtonTemplate", function(button, elementData)
+        Titles_InitButton(button, elementData);
+    end)
+    ScrollUtil.InitScrollBoxListWithScrollBar(titlewin_outer.ScrollBox, titlewin_outer.ScrollBar, view)
+    GW.HandleTrimScrollBar(titlewin_outer.ScrollBar)
+    GW.HandleScrollControls(titlewin_outer)
+
+    UpdateScrollBox(titlewin_outer)
 
     -- update title window when a title update event occurs
-    titlewin:SetScript(
+    titlewin_outer:SetScript(
         "OnEvent",
         function(self)
             if GW.inWorld and self:IsShown() then
                 saveKnowenTitles()
-                loadTitle(self)
+                UpdateScrollBox(titlewin_outer)
             end
         end
     )
-    titlewin:RegisterEvent("KNOWN_TITLES_UPDATE")
-    titlewin:RegisterEvent("UNIT_NAME_UPDATE")
+    titlewin_outer:RegisterEvent("KNOWN_TITLES_UPDATE")
+    titlewin_outer:RegisterEvent("UNIT_NAME_UPDATE")
 
-    fmMenu:SetupBackButton(titlewin:GetParent().backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
+    fmMenu:SetupBackButton(titlewin_outer.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
 end
 GW.LoadPDTitles = LoadPDTitles

@@ -375,7 +375,6 @@ local function HandleTrimScrollBar(frame)
         thumb.backdrop:SetFrameLevel(thumb:GetFrameLevel() + 1)
         local h = thumb:GetHeight()
         thumb:SetSize(12, h)
-        --thumb:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
     end
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
