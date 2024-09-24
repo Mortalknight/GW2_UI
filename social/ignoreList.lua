@@ -22,7 +22,7 @@ local function removeFromeIgnore(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 end
 
-function IgnoreList_Update()
+local function IgnoreList_Update()
     local dataProvider = CreateDataProvider()
 
     local numIgnores = C_FriendList.GetNumIgnores();
