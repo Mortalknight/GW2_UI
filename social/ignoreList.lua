@@ -22,7 +22,7 @@ local function removeFromeIgnore(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 end
 
-local function IgnoreList_Update()
+local function IgnoreList_Update(self)
     local dataProvider = CreateDataProvider()
 
     local numIgnores = C_FriendList.GetNumIgnores();
@@ -38,7 +38,7 @@ local function IgnoreList_Update()
             dataProvider:Insert({squelchType=SQUELCH_TYPE_BLOCK_INVITE, index=index});
         end
     end
-    GwIgnoreWindow.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
+    self.ScrollBox:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition);
 end
 
 local function IgnoreList_InitButton(button, elementData)
@@ -87,7 +87,7 @@ local function LoadIgnoreList(tabContainer)
     GW.HandleTrimScrollBar(ignorewin_outer.ScrollBar)
     GW.HandleScrollControls(ignorewin_outer)
 
-    IgnoreList_Update()
+    IgnoreList_Update(ignorewin_outer)
 
     ignorewin_outer.ignoreHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
     ignorewin_outer.ignoreHeader:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
@@ -97,7 +97,7 @@ local function LoadIgnoreList(tabContainer)
         "OnEvent",
         function(self)
             if GW.inWorld and self:IsShown() then
-                IgnoreList_Update()
+                IgnoreList_Update(ignorewin_outer)
             end
         end
     )
