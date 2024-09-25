@@ -136,10 +136,6 @@ local function LoadRaidList(tabContainer)
     RaidFrame:ClearAllPoints()
     RaidFrame:SetPoint("TOPLEFT", raidFrame, "TOPLEFT", 0, 0)
     RaidFrame:SetPoint("BOTTOMRIGHT", raidFrame, "BOTTOMRIGHT", 0, 0)
-    --RaidFrame.SetParent = GW.NoOp
-    --RaidFrame.ClearAllPoints = GW.NoOp
-    --RaidFrame.SetAllPoints = GW.NoOp
-    --RaidFrame.SetPoint = GW.NoOp
 
     RaidFrame:SetScript("OnShow", function(self)
         ButtonFrameTemplate_ShowAttic(self:GetParent())
@@ -157,6 +153,7 @@ local function LoadRaidList(tabContainer)
     RaidFrameRaidDescription:SetPoint("BOTTOMRIGHT", RaidFrameNotInRaid, "BOTTOMRIGHT", 0, 0)
     RaidFrameRaidDescription:SetJustifyH("CENTER")
     RaidFrameRaidDescription:SetJustifyV("TOP")
+    RaidFrameRaidDescription:SetTextColor(1, 1, 1)
 
     RaidFrameAllAssistCheckButton:ClearAllPoints()
     RaidFrameAllAssistCheckButton:SetPoint("TOPLEFT", 10, -23)
