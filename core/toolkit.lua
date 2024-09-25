@@ -4,6 +4,43 @@ local _, GW = ...
 local STRIP_TEX = "Texture"
 local STRIP_FONT = "FontString"
 
+local BlizzardRegions = {
+    "Left",
+    "Middle",
+    "Right",
+    "Mid",
+    "LeftDisabled",
+    "MiddleDisabled",
+    "RightDisabled",
+    "TopLeft",
+    "TopRight",
+    "BottomLeft",
+    "BottomRight",
+    "TopMiddle",
+    "MiddleLeft",
+    "MiddleRight",
+    "BottomMiddle",
+    "MiddleMiddle",
+    "TabSpacer",
+    "TabSpacer1",
+    "TabSpacer2",
+    "_RightSeparator",
+    "_LeftSeparator",
+    "Cover",
+    "Border",
+    "Background",
+    "TopTex",
+    "TopLeftTex",
+    "TopRightTex",
+    "LeftTex",
+    "BottomTex",
+    "BottomLeftTex",
+    "BottomRightTex",
+    "RightTex",
+    "MiddleTex",
+    "Center",
+}
+
 local ArrowRotation = {
     up = 0,
     down = 3.14,
@@ -43,14 +80,16 @@ local StripTexturesBlizzFrames = {
     "ScrollFrameBorder",
 }
 
-local constBackdropDropDown = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/gwstatusbar",
-    edgeFile = "",
-    tile = false,
-    tileSize = 64,
-    edgeSize = 32,
-    insets = {left = 2, right = 2, top = 2, bottom = 2}
-}
+local function HandleBlizzardRegions(frame)
+    local name = frame.GetName and frame:GetName()
+    for _, area in pairs(BlizzardRegions) do
+        local object = (name and _G[name .. area]) or frame[area]
+        if object then
+            object:SetAlpha(0)
+        end
+    end
+end
+GW.HandleBlizzardRegions = HandleBlizzardRegions
 
 local function GrabScrollBarElement(frame, element)
     local FrameName = frame:GetDebugName()
@@ -384,6 +423,46 @@ local function SkinScrollBar(frame)
     end
 end
 
+local function GwHandleDropDownBox(frame, backdropTemplate, width)
+    local text = frame.Text
+    if frame.Arrow then frame.Arrow:SetAlpha(0) end
+
+    if not width or width == nil then
+        width = 155
+    end
+
+    frame:SetWidth(width)
+    frame:StripTextures()
+
+    if backdropTemplate then
+        frame:CreateBackdrop(backdropTemplate, true)
+        frame.backdrop:SetBackdropColor(0, 0, 0)
+    else
+        frame:CreateBackdrop(GW.skins.constBackdropStatusBar)
+    end
+    frame:SetFrameLevel(frame:GetFrameLevel() + 2)
+    frame.backdrop:SetPoint("TOPLEFT", 5, -2)
+    frame.backdrop:SetPoint("BOTTOMRIGHT", -2, -2)
+
+    local tex = frame:CreateTexture(nil, 'ARTWORK')
+    tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
+    tex:SetPoint('RIGHT', frame.backdrop, -3, 0)
+    tex:SetRotation(3.14)
+    tex:SetSize(14, 14)
+
+    if text then
+        text:ClearAllPoints()
+        text:SetPoint("LEFT", frame, "LEFT", 8, 0)
+        text:SetFont(UNIT_NAME_FONT, 12)
+        text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+        text:SetHeight(frame:GetHeight())
+        text:SetJustifyH("LEFT")
+        text:SetJustifyV("MIDDLE")
+    end
+
+    HandleBlizzardRegions(frame)
+end
+
 local function SkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textBoxRightOffset)
     local frameName = frame.GetName and frame:GetName()
     local button = frame.Button or frameName and (_G[frameName .. "Button"] or _G[frameName .. "_Button"])
@@ -583,6 +662,7 @@ local function addapi(object)
     if not object.SetInside then mt.SetInside = SetInside end
     if not object.StyleButton then mt.StyleButton = StyleButton end
     if not object.GwHandleMaxMinFrame then mt.GwHandleMaxMinFrame = GwHandleMaxMinFrame end
+    if not object.GwHandleDropDownBox then mt.GwHandleDropDownBox = GwHandleDropDownBox end
 end
 
 local handled = {["Frame"] = true}

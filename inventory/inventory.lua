@@ -438,17 +438,36 @@ end
 GW.AddForProfiling("inventory", "relocateSearchBox", relocateSearchBox)
 
 -- on right click, open the bag filter dropdown (if valid) for this bag slot
+
+
+local function AddButtons_BagFilters(description, bagID)
+
+    description:CreateTitle(BAG_FILTER_ASSIGN_TO)
+
+    local function IsSelected(flag)
+        return C_Container.GetBagSlotFlag(bagID, flag)
+    end
+
+    local function SetSelected(flag)
+        local value = not IsSelected(flag)
+        C_Container.SetBagSlotFlag(bagID, flag, value)
+    end
+
+    local checkbox = description:CreateCheckbox(BAG_FILTER_IGNORE, IsSelected, SetSelected, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+    checkbox:SetResponse(MenuResponse.Close)
+end
 local function bag_OnMouseDown(self, button)
     if button ~= "RightButton" or not self.gwHasBag or not ((self:GetID() - CharacterBag0Slot:GetID() + 1) > 0 and (self:GetID() - CharacterBag0Slot:GetID() + 1) < 5) then
         return
     end
 
     local bag_id = self:GetID() - CharacterBag0Slot:GetID() + 1
-    local menuList = {}
-    tinsert(menuList, { text = BAG_FILTER_ASSIGN_TO, isTitle = true, notCheckable = true })
-    tinsert(menuList, { text = BAG_FILTER_IGNORE, checked = function() return C_Container.GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) end, func = function() C_Container.SetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not C_Container.GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)) end })
-    GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-    _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+    local cf = getContainerFrame(bag_id)
+    if cf then
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            AddButtons_BagFilters(rootDescription, bag_id)
+        end)
+    end
 end
 GW.AddForProfiling("inventory", "bag_OnMouseDown", bag_OnMouseDown)
 

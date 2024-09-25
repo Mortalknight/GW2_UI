@@ -163,8 +163,6 @@ end
 GW.Guild_OnEnter = Guild_OnEnter
 
 local function inviteClick(_, name, guid)
-    GW.EasyMenu:Hide()
-
     if not (name and name ~= "") then return end
 
     if guid then
@@ -178,7 +176,6 @@ local function inviteClick(_, name, guid)
 end
 
 local function whisperClick(_, playerName)
-    GW.EasyMenu:Hide()
     SetItemRef("player:" .. playerName, format("|Hplayer:%1$s|h[%1$s]|h", playerName), "LeftButton")
 end
 
@@ -186,31 +183,31 @@ local function Guild_OnClick(self, button)
     if button == "LeftButton" then
         self:OnClick()
     elseif button == "RightButton" and IsInGuild() then
-        local menuCountWhispers = 0
-        local menuCountInvites = 0
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:CreateTitle(OPTIONS)
+            local submenuInvite = rootDescription:CreateButton(INVITE)
+            local submenuWisper = rootDescription:CreateButton(CHAT_MSG_WHISPER_INFORM)
 
-        menuList[2].menuList = {}
-        menuList[3].menuList = {}
+            for _, info in ipairs(guildTable) do
+                if (info.online or info.isMobile) and strmatch(info.name, "([^%-]+).*") ~= GW.myname then
+                    local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
+                    if not classc then classc = levelc end
 
-        for _, info in ipairs(guildTable) do
-            if (info.online or info.isMobile) and info.name ~= GW.myname then
-                local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
-                if not classc then classc = levelc end
+                    local name = format("|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, strmatch(info.name, "([^%-]+).*"))
+                    if inGroup(strmatch(info.name, "([^%-]+).*")) ~= "" then
+                        name = name .. " |cffaaaaaa*|r"
+                    elseif not (info.isMobile and info.zone == REMOTE_CHAT) then
+                        submenuInvite:CreateButton(name, function()
+                            inviteClick(strmatch(info.name, "([^%-]+).*"), info.guid)
+                        end)
+                    end
 
-                local name = format("|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name)
-                if inGroup(info.name) ~= "" then
-                    name = name .. " |cffaaaaaa*|r"
-                elseif not (info.isMobile and info.zone == REMOTE_CHAT) then
-                    menuCountInvites = menuCountInvites + 1
-                    menuList[2].menuList[menuCountInvites] = {text = name, arg1 = info.name, arg2 = info.guid, notCheckable = true, func = inviteClick}
+                    submenuWisper:CreateButton(name, function()
+                        whisperClick(strmatch(info.name, "([^%-]+).*"))
+                    end)
                 end
-
-                menuCountWhispers = menuCountWhispers + 1
-                menuList[3].menuList[menuCountWhispers] = {text = name, arg1 = info.name, notCheckable = true, func = whisperClick}
             end
-        end
-        GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-        EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+        end)
     end
 end
 GW.Guild_OnClick = Guild_OnClick

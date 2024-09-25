@@ -106,7 +106,7 @@ local function FlyoutDirection(actionbar)
 
             --Change arrow direction depending on what bar the button is on
             local arrowDistance = 2
-            if ((SpellFlyout:IsShown() and SpellFlyout:GetParent() == button) or GetMouseFocus() == button) then
+            if ((SpellFlyout:IsShown() and SpellFlyout:GetParent() == button) or GetMouseFoci() == button) then
                 arrowDistance = 5
             end
 

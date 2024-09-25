@@ -715,6 +715,11 @@ local function LoadCharacter()
 
                 -- add addon buttons here
                 firstAddonMenuButtonAnchor = GW.myClassID == ClassIndex.WARLOCK and GwCharacterMenu.petMenu or GW.myClassID  == ClassIndex.HUNTER and GwCharacterMenu.petMenu or GW.ClassicSOD and GwCharacterMenu.runeMenu or GwCharacterMenu.honorMenu
+
+                if firstAddonMenuButtonAnchor ~= GwCharacterMenu.petMenu then
+                    nextHeroPanelMenuButtonShadowOdd = not nextHeroPanelMenuButtonShadowOdd
+                end
+
                 addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), function() hideCharframe = false Outfitter:OpenUI() end, true)
                 addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), function() ShowUIPanel(CliqueConfig) end, true)
                 addAddonButton("Pawn", GetSetting("USE_CHARACTER_WINDOW"), PawnUIShow, false)

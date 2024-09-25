@@ -380,9 +380,9 @@ local function LoadMinimap()
     end
 
     GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
-    MiniMapTrackingFrame:UnregisterAllEvents()
-    MiniMapTrackingFrame:SetScript("OnEvent", nil)
-    MiniMapTrackingFrame:Hide()
+    MiniMapTracking:UnregisterAllEvents()
+    MiniMapTracking:SetScript("OnEvent", nil)
+    MiniMapTracking:Hide()
     local icontype = MiniMapTrackingIcon:GetTexture()
     if icontype == 132328 then icontype = icontype .. GW.myClassID end
     if icontype and trackingTypes[icontype] then
