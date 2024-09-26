@@ -237,6 +237,9 @@ local function encounterJournalSkin()
     GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {EJ.LootJournalItems, EncounterJournalMonthlyActivitiesFrame.FilterList})
     EncounterJournalTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
+    EJ:SetClampedToScreen(true)
+    EJ:SetClampRectInsets(0, 0, EJ.gwHeader:GetHeight() - 20, 0)
+
     EJ.instanceSelect.Title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     EJ.instanceSelect.Title:SetFont(DAMAGE_TEXT_FONT, 16, "")
     EJ.instanceSelect.Title:SetShadowColor(0, 0, 0, 0)
@@ -346,20 +349,28 @@ local function encounterJournalSkin()
 
     EncounterJournalMonthlyActivitiesTab:ClearAllPoints()
 	EncounterJournalMonthlyActivitiesTab:SetPoint('TOPLEFT', EncounterJournal, 'BOTTOMLEFT', 0, 0)
+    EncounterJournalMonthlyActivitiesTab.ClearAllPoints = GW.NoOp
+    EncounterJournalMonthlyActivitiesTab.SetPoint = GW.NoOp
 
 	EncounterJournalSuggestTab:ClearAllPoints()
 	EncounterJournalSuggestTab:SetPoint('LEFT', EncounterJournalMonthlyActivitiesTab, 'RIGHT', 0, 0)
+    EncounterJournalSuggestTab.ClearAllPoints = GW.NoOp
     EncounterJournalSuggestTab.SetPoint = GW.NoOp
 
 	EncounterJournalDungeonTab:ClearAllPoints()
 	EncounterJournalDungeonTab:SetPoint('LEFT', EncounterJournalSuggestTab, 'RIGHT', 0, 0)
+    EncounterJournalDungeonTab.ClearAllPoints = GW.NoOp
     EncounterJournalDungeonTab.SetPoint = GW.NoOp
 
 	EncounterJournalRaidTab:ClearAllPoints()
 	EncounterJournalRaidTab:SetPoint('LEFT', EncounterJournalDungeonTab, 'RIGHT', 0, 0)
+    EncounterJournalRaidTab.ClearAllPoints = GW.NoOp
+    EncounterJournalRaidTab.SetPoint = GW.NoOp
 
 	EncounterJournalLootJournalTab:ClearAllPoints()
 	EncounterJournalLootJournalTab:SetPoint('LEFT', EncounterJournalRaidTab, 'RIGHT', 0, 0)
+    EncounterJournalLootJournalTab.ClearAllPoints = GW.NoOp
+    EncounterJournalLootJournalTab.SetPoint = GW.NoOp
 
     EncounterJournalMonthlyActivitiesFrame.HelpButton:GwKill()
 
