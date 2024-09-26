@@ -1034,7 +1034,6 @@ GW.InitPanel = InitPanel
 local function LoadSettings()
     --GwSettingsWindow
     local mf = CreateFrame("Frame", "GwSettingsMoverFrame", UIParent, "GwSettingsMoverFrame")
-    mf:SetClampedToScreen(true)
     mf:RegisterForDrag("LeftButton")
     mf:SetScript("OnDragStart", function(self) self:StartMoving() end)
     mf:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
@@ -1045,6 +1044,8 @@ local function LoadSettings()
     tinsert(UISpecialFrames, "GwSettingsWindow")
 
     mf:SetFrameLevel(sWindow:GetFrameLevel() + 100)
+    mf:SetClampedToScreen(true)
+    mf:SetClampRectInsets(0, 0, 0, -sWindow:GetHeight())
 
     sWindow:SetScript("OnShow", function()
         mf:Show()
