@@ -816,7 +816,7 @@ local function UpdateMultibarButtons()
     end
     ALWAYS_SHOW_MULTIBARS = HIDE_ACTIONBARS_CVAR
     MultiActionBar_UpdateGridVisibility()
-    InterfaceOptions_UpdateMultiActionBars()
+    MultiActionBar_Update()
 end
 GW.UpdateMultibarButtons = UpdateMultibarButtons
 
