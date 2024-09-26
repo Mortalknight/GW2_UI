@@ -313,51 +313,65 @@ local function UpdateTokenSkins(frame)
             if child.Content then
                 child.Content.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
                 child.Content.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+                child.Content.Name:SetJustifyH("LEFT")
+                child.Content.Count:SetJustifyH("RIGHT")
+                child.Content.Name:SetJustifyV("MIDDLE")
+                child.Content.Count:SetJustifyV("MIDDLE")
                 child.Content.WatchedCurrencyCheck:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon")
+
+                if child.Content.BackgroundHighlight then
+                    child.Content.BackgroundHighlight:GwKill()
+                end
+
+                hooksecurefunc(child, "RefreshBackgroundHighlight", function()
+                    child.gwSelected:SetShown(child:IsSelected())
+                end)
+
+                child.Content.Name:ClearAllPoints()
+                child.Content.Count:ClearAllPoints()
+                child.Content.AccountWideIcon:ClearAllPoints()
+                child.Content.Name:SetPoint("LEFT", child.Content, "LEFT", 32, 0)
+                child.Content.Count:SetPoint("RIGHT", child.Content, "RIGHT", -25, 0)
+                child.Content.AccountWideIcon:SetPoint("RIGHT", child.Content, "RIGHT", 2, 0)
             end
 
-            if child.elementData then
-                if child.elementData.isHeader then
-                    child.gwBackground = child:CreateTexture(nil, "BACKGROUND")
-                    child.gwBackground:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
-                    child.gwBackground:SetSize(512, child:GetHeight())
-                    child.gwBackground:SetPoint("TOPLEFT")
-                else
-                    child.gwZebra = child:CreateTexture(nil, "BACKGROUND")
-                    child.gwZebra:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
-                    child.gwZebra:SetSize(32, 32)
-                    child.gwZebra:SetPoint("TOPLEFT", child, "TOPLEFT")
-                    child.gwZebra:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT")
-
-                    child.Content.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-                    child.Content.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-                end
+            if child.elementData and child.elementData.isHeader then
+                child.gwBackground = child:CreateTexture(nil, "BACKGROUND")
+                child.gwBackground:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+                child.gwBackground:SetAllPoints(child)
+                child.gwBackground:SetPoint("TOPLEFT")
             end
 
             local icon = child.Content and child.Content.CurrencyIcon
             if icon then
+                icon:SetSize(22, 22)
+                icon:ClearAllPoints()
+                icon:SetPoint("LEFT", child.Content, "LEFT")
                 GW.HandleIcon(icon)
 
                 hooksecurefunc(child, "RefreshAccountCurrencyIcon", RefreshAccountCurrencyIcon)
             end
 
+            GW.AddListItemChildHoverTexture(child)
+
             child.IsSkinned = true
         end
 
-        -- update zebra
-        if not child.elementData.isHeader then
-            if child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 then
-                child.gwZebra:SetVertexColor(1, 1, 1, 0.05)
-            else
-                child.gwZebra:SetVertexColor(0, 0, 0, 0.05)
-            end
+        if child.elementData.maxQuantity and child.elementData.maxQuantity > 0 then
+            child.Content.Count:SetText(CommaValue(child.elementData.quantity) .. " / " .. CommaValue(child.elementData.maxQuantity))
         end
+
+        if child.Content and child.Content.WatchedCurrencyCheck then
+            child.Content.WatchedCurrencyCheck:ClearAllPoints()
+            child.Content.WatchedCurrencyCheck:SetPoint("RIGHT", child.Content.Name, "RIGHT", 20, 0)
+        end
+
         RefreshAccountCurrencyIcon(child)
     end
+    GW.HandleItemListScrollBoxHover(frame)
 end
 
 local function SkinTokenFrame()
-    --[[]]
     TokenFramePopup:GwStripTextures()
     TokenFramePopup:GwCreateBackdrop(GW.BackdropTemplates.Default)
     TokenFramePopup:SetPoint("TOPLEFT", _G.TokenFrame, "TOPRIGHT", 3, -28)
@@ -411,57 +425,69 @@ local function SkinTokenFrame()
     CurrencyTransferMenu.ConfirmButton:GwSkinButton(false, true)
     CurrencyTransferMenu.CancelButton:GwSkinButton(false, true)
 
-    --GW.HandleTrimScrollBar(TokenFrame.ScrollBar) -- taints
-    --GW.HandleScrollControls(TokenFrame)
+
+    GW.HandleTrimScrollBar(TokenFrame.ScrollBar)
+    GW.HandleScrollControls(TokenFrame)
     hooksecurefunc(TokenFrame.ScrollBox, "Update", UpdateTokenSkins)
 
     CurrencyTransferMenu:SetFrameStrata("DIALOG")
 end
 
+local currencyTransferLoaded
 local function UpdateTransferHistorySkins(self)
+    if not currencyTransferLoaded then
+        currencyTransferLoaded = true
+        self.view:SetElementExtent(32)
+    end
     for _, child in next, { self.ScrollTarget:GetChildren() } do
         if not child.IsSkinned then
+            child:SetHeight(32)
 
             if child.SourceName then
-                child.SourceName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+                child.SourceName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
                 child.SourceName:SetTextColor(1, 1, 1)
+                child.SourceName:ClearAllPoints()
+                child.SourceName:SetPoint("LEFT", child, "LEFT", 42, 0)
             end
 
             if child.DestinationName then
-                child.DestinationName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+                child.DestinationName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
                 child.DestinationName:SetTextColor(1, 1, 1)
+                child.DestinationName:ClearAllPoints()
+                child.DestinationName:SetPoint("LEFT", child.Arrow, "RIGHT", 3, 0)
             end
 
             if child.CurrencyQuantity then
-                child.CurrencyQuantity:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+                child.CurrencyQuantity:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
                 child.CurrencyQuantity:SetTextColor(1, 1, 1)
+                child.CurrencyQuantity:ClearAllPoints()
+                child.CurrencyQuantity:SetPoint("RIGHT", child, "RIGHT", -25, 0)
             end
 
             if child.CurrencyIcon then
+                child.CurrencyIcon:SetSize(32, 32)
+                child.CurrencyIcon:ClearAllPoints()
+                child.CurrencyIcon:SetPoint("LEFT", child, "LEFT")
                 GW.HandleIcon(child.CurrencyIcon)
             end
 
             if child.Arrow then
                 child.Arrow:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
                 child.Arrow:SetRotation(1.570796325)
+                child.Arrow:ClearAllPoints()
+                child.Arrow:SetPoint("LEFT", child.SourceName, "RIGHT", 3, 0)
             end
 
-            child.gwZebra = child:CreateTexture(nil, "BACKGROUND")
-            child.gwZebra:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
-            child.gwZebra:SetSize(32, 32)
-            child.gwZebra:SetPoint("TOPLEFT", child, "TOPLEFT")
-            child.gwZebra:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT")
+            if child.BackgroundHighlight then
+                child.BackgroundHighlight:GwKill()
+            end
+
+            GW.AddListItemChildHoverTexture(child)
 
             child.IsSkinned = true
         end
-
-        -- update zebra
-        if child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 then
-            child.gwZebra:SetVertexColor(1, 1, 1, 0.05)
-        else
-            child.gwZebra:SetVertexColor(0, 0, 0, 0.05)
-        end
     end
+    GW.HandleItemListScrollBoxHover(self)
 end
 
 local function LoadCurrency(tabContainer)
@@ -512,29 +538,15 @@ local function LoadCurrency(tabContainer)
 
     -- setup transfer history
     local curHistroyWin = curwin_outer.CurrencyTransferHistoryScroll
-    curHistroyWin.Refresh = function(self)
-        local dataReady = C_CurrencyInfo.IsCurrencyTransferTransactionDataReady();
-        self.LoadingSpinner:SetShown(not dataReady);
-        if not dataReady then
-            return;
-        end
-
-        local dataProvider = CreateDataProvider();
-        for _, transaction in ipairs(C_CurrencyInfo.FetchCurrencyTransferTransactions()) do -- change the order to that the newest transactions are at the top
-            dataProvider:Insert(transaction);
-        end
-
-        local hasTransactionHistory = dataProvider:GetSize() > 0;
-        self.EmptyLogMessage:SetShown(not hasTransactionHistory);
-        self.ScrollBar:SetShown(hasTransactionHistory);
-        self.ScrollBox:SetDataProvider(dataProvider);
-    end
     curHistroyWin.update = function(self) self:Refresh() end
     transferHistorySetup(curHistroyWin)
     GW.HandleTrimScrollBar(curHistroyWin.ScrollBar)
     GW.HandleScrollControls(curHistroyWin)
     curHistroyWin.EmptyLogMessage:SetTextColor(1, 1, 1)
     hooksecurefunc(curHistroyWin.ScrollBox, "Update", UpdateTransferHistorySkins)
+    curHistroyWin.ScrollBox:ClearAllPoints()
+    curHistroyWin.ScrollBox:SetPoint("TOPLEFT", curHistroyWin, 4, 0)
+    curHistroyWin.ScrollBox:SetPoint("BOTTOMRIGHT", curHistroyWin, -22, 0)
 
     -- setup the raid info window
     local raidinfo = curwin_outer.RaidScroll

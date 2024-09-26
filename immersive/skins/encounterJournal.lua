@@ -319,7 +319,7 @@ local function encounterJournalSkin()
                 child.Texture:SetAlpha(0)
                 child.gwHooked = true
                 hooksecurefunc(child, "UpdateStateInternal", function(_, selected)
-                    child.Selected:SetShown(selected)
+                    child.gwSelected:SetShown(selected)
                     child.Label:SetFont(UNIT_NAME_FONT, 16)
                 end)
             end

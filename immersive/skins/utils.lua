@@ -369,12 +369,14 @@ local function HandleTrimScrollBar(frame)
 
     local thumb = frame:GetThumb()
     if thumb then
-        thumb:DisableDrawLayer("ARTWORK")
+        thumb.Begin:Hide()
+        thumb.End:Hide()
+        thumb.Middle:Hide()
         thumb:DisableDrawLayer("BACKGROUND")
-        thumb:GwCreateBackdrop("ScrollBar")
-        thumb.backdrop:SetFrameLevel(thumb:GetFrameLevel() + 1)
-        local h = thumb:GetHeight()
-        thumb:SetSize(12, h)
+        thumb.gwTex = thumb:CreateTexture(nil, "ARTWORK")
+        thumb.gwTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
+        thumb.gwTex:SetAllPoints(thumb)
+        thumb:SetWidth(12)
     end
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
@@ -694,12 +696,12 @@ local function AddListItemChildHoverTexture(child)
             child.gwHoverTexture:Hide()
         end)
 
-        child.Selected = child:CreateTexture(nil, "ARTWORK", nil, 0)
-        child.Selected:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
-        child.Selected:SetVertexColor(0.8, 0.8, 0.8, 0.8)
-        child.Selected:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
-        child.Selected:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
-        child.Selected:Hide()
+        child.gwSelected = child:CreateTexture(nil, "ARTWORK", nil, 0)
+        child.gwSelected:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        child.gwSelected:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+        child.gwSelected:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
+        child.gwSelected:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
+        child.gwSelected:Hide()
     end
 
     AddMouseMotionPropagationToChildFrames(child)
@@ -725,6 +727,9 @@ local function HandleItemListScrollBoxHover(self)
 
         if child.NormalTexture then
             child.NormalTexture:SetAlpha(0)
+        end
+        if child.BackgroundHighlight then
+            child.BackgroundHighlight:SetAlpha(0)
         end
         if child.SelectedHighlight then
             child.SelectedHighlight:SetColorTexture(0.5, 0.5, 0.5, .25)
