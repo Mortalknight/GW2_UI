@@ -39,7 +39,7 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader">
+                <Texture parentKey="Header" name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader">
                     <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -51,7 +51,7 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
+                <Texture parentKey="Left" name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
                     <Size x="40" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="20" />

@@ -242,7 +242,8 @@ local function ApplyAuctionHouseSkin()
 	AuctionHouseFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
 	CreateFrame("Frame", "GwAuctionsHouseFrameLeftPanel", AuctionHouseFrame, "GwWindowLeftPanel")
-	GwAuctionsHouseFrameLeftPanel:SetClampedToScreen(true)
+	AuctionHouseFrame:SetClampedToScreen(true)
+	AuctionHouseFrame:SetClampRectInsets(-40, 0, AuctionHouseFrame.gwHeader:GetHeight() - 30, 0)
 
 	hooksecurefunc("PanelTemplates_SetNumTabs", HandleTabs)
 	HandleTabs(AuctionHouseFrame) -- call it once to setup our tabs

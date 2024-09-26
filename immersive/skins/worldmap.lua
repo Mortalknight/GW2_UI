@@ -506,10 +506,12 @@ local function worldMapSkin()
         WorldMapFrame.mover:SetPoint("BOTTOMLEFT", WorldMapFrame, "TOPLEFT", 0, -20)
         WorldMapFrame.mover:SetPoint("BOTTOMRIGHT", WorldMapFrame, "TOPRIGHT", 0, 20)
         WorldMapFrame.mover:RegisterForDrag("LeftButton")
-        WorldMapFrame:SetClampedToScreen(true)
         WorldMapFrame.mover:SetScript("OnDragStart", mover_OnDragStart)
         WorldMapFrame.mover:SetScript("OnDragStop", mover_OnDragStop)
     end
+
+    WorldMapFrame:SetClampedToScreen(true)
+    WorldMapFrame:SetClampRectInsets(0, 0, WorldMapFrameHeader:GetHeight() - 30, 0)
 
     -- 11.0 Map Legend
     QuestMapFrame.MapLegend.BackButton:GwSkinButton(false, true)

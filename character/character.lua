@@ -301,6 +301,7 @@ local function loadBaseFrame()
     -- create the character window and secure bind its tab open/close functions
     local fmGCW = CreateFrame("Frame", "GwCharacterWindow", UIParent, "GwCharacterWindowTemplate")
     fmGCW:SetClampedToScreen(true)
+    fmGCW:SetClampRectInsets(-GwCharacterWindowLeft:GetWidth(), 0, GwCharacterWindowHeader:GetHeight(), 0)
     fmGCW.WindowHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
     fmGCW.WindowHeader:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     fmGCW:SetAttribute("windowpanelopen", nil)

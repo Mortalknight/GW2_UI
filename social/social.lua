@@ -358,13 +358,15 @@ local function loadBaseFrame()
     FriendsFrame.Show = FriendsFrame.Hide
 
     table.insert(UISpecialFrames, fmGSW:GetName())
-    fmGSW:SetClampedToScreen(true)
     fmGSW.WindowHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
     fmGSW.WindowHeader:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     fmGSW:SetAttribute("windowpanelopen", nil)
     fmGSW.secure:SetAttribute("_onclick", socialSecure_OnClick)
     fmGSW.secure:SetFrameRef("GwSocialWindow", fmGSW)
     fmGSW:SetAttribute("_onattributechanged", socialSecure_OnAttributeChanged)
+
+    fmGSW:SetClampedToScreen(true)
+	fmGSW:SetClampRectInsets(-fmGSW.Left:GetWidth(), 0, fmGSW.Header:GetHeight() - 10, 0)
 
     fmGSW.SoundOpen = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)

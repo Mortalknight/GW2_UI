@@ -1536,6 +1536,9 @@ local function skinAchevement()
     -- make the frame movable
     GW.MakeFrameMovable(AchievementFrame, nil, "AchievementWindow", true)
     GW.MakeFrameMovable(AchievementFrame.Header, AchievementFrame, "AchievementWindow")
+
+    AchievementFrame:SetClampedToScreen(true)
+    AchievementFrame:SetClampRectInsets(-40, 0, AchievementFrame.Header:GetHeight() - 40, 0)
 end
 
 local function LoadAchivementSkin()

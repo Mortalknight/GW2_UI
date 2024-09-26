@@ -783,6 +783,8 @@ local function SkinLookingForGroupFrames()
 	end)
 
     GW.MakeFrameMovable(PVEFrame, nil, "PvEWindow", true)
+    PVEFrame:SetClampedToScreen(true)
+    PVEFrame:SetClampRectInsets(-40, 0, PVEFrameHeader:GetHeight() - 30, 0)
 end
 
 local function ApplyPvPUISkin()
