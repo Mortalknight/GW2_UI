@@ -631,3 +631,6 @@ L["Adjust the scale of the minimap and also the pins. Eg: Quests, Resource nodes
 L["Minimap Size"] = true
 L["Reset Zoom"] = true
 L["Reset Minimap Zoom to default value. Set 0 to disable it"] = true
+L["Hide class icon"] = true
+L["Announce Interrupts"] = true
+L["Announce when you interrupt a spell to the specified chat channel"] = true

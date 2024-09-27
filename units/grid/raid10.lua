@@ -37,6 +37,7 @@ GW.GW2_GridRaid10StyleRegister = GW2_GridRaid10StyleRegister
 local function UpdateGridRaid10Frame(frame)
     -- set frame settings
     frame.useClassColor = GW.settings.RAID_CLASS_COLOR_RAID10
+    frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON_RAID10
     frame.showResscoureBar = GW.settings.RAID_POWER_BARS_RAID10
     frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_RAID10
     frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_RAID10

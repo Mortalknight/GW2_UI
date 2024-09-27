@@ -142,7 +142,7 @@ local headerGroupBy = {
 		header:SetAttribute("sortMethod", sortMethod or "NAME")
 		header:SetAttribute("groupBy", "ASSIGNEDROLE")
 	end,
-	NAME = function(header)
+	NAME = function(header, profile)
 		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
 		header:SetAttribute("sortMethod", "NAME")
 		header:SetAttribute("groupBy", nil)
@@ -153,18 +153,18 @@ local headerGroupBy = {
 		header:SetAttribute("sortMethod", sortMethod or "INDEX")
 		header:SetAttribute("groupBy", "GROUP")
 	end,
-	PETNAME = function(header)
+	PETNAME = function(header, profile)
 		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
 		header:SetAttribute("sortMethod", "NAME")
 		header:SetAttribute("groupBy", nil)
 		header:SetAttribute("filterOnPet", true) --This is the line that matters. Without this, it sorts based on the owners name
 	end,
-	INDEX = function(header)
+	INDEX = function(header, profile)
 		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
 		header:SetAttribute("sortMethod", "INDEX")
 		header:SetAttribute("groupBy", nil)
 	end,
-    TANK = function(header)
+    TANK = function(header, profile)
         header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
 		header:SetAttribute("sortMethod", "INDEX")
 		header:SetAttribute("groupBy", nil)
@@ -265,6 +265,9 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     settings.sortMethod.RAID25 = GW.settings.RAID_RAID_SORT_METHOD_RAID25
     settings.sortMethod.RAID10 = GW.settings.RAID_RAID_SORT_METHOD_RAID10
     settings.sortMethod.TANK = GW.settings.RAID_RAID_SORT_METHOD_TANK
+
+    -- grid specific settings
+    settings.partyGridShowPlayer = GW.settings.RAID_SHOW_PLAYER_PARTY
 
     -- Update this settings on a spec switch
     if not settingsEventFrame.isSetup then
@@ -424,6 +427,11 @@ local function UpdateGridHeader(profile)
     local groupBy = settings.groupBy[profile]
     local sortDirection = settings.sortDirection[profile]
     local raidWideSorting = settings.raidWideSorting[profile]
+    local showPlayer = true
+
+    if isParty then
+        showPlayer = settings.partyGridShowPlayer
+    end
 
     for i = 1, numGroups do
         local group = header.groups[i]
@@ -469,7 +477,7 @@ local function UpdateGridHeader(profile)
             if not group.isForced then
                 group:SetAttribute("maxColumns", raidWideSorting and numGroups or 1)
                 group:SetAttribute("unitsPerColumn", raidWideSorting and (groupsPerRowCol * 5) or 5)
-                group:SetAttribute("showPlayer", true)
+                group:SetAttribute("showPlayer", showPlayer)
                 group:SetAttribute("sortDir", sortDirection)
                 -- sorting
                 if profile == "RAID_PET" then

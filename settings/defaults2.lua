@@ -627,6 +627,7 @@ GW.globalDefault = {
         -- Maintank
         RAID_MAINTANK_FRAMES_ENABLED= true,
         RAID_CLASS_COLOR_TANK= true,
+        RAID_HIDE_CLASS_ICON_TANK = false,
         RAID_UNIT_FLAGS_TANK= "NONE",
         RAID_UNIT_MARKERS_TANK= false,
         RAID_WIDTH_TANK= 120,
@@ -663,6 +664,7 @@ GW.globalDefault = {
         -- Raid Pet
         RAID_PET_FRAMES= false,
         RAID_CLASS_COLOR_PET= true, -- always
+        RAID_HIDE_CLASS_ICON_PET = false, -- always
         RAID_UNIT_FLAGS_PET= "NONE", -- always
         RAID_UNIT_MARKERS_PET= false,
         RAID_WIDTH_PET= 50,
@@ -698,6 +700,7 @@ GW.globalDefault = {
 
         -- RAID40
         RAID_CLASS_COLOR= false,
+        RAID_HIDE_CLASS_ICON = false,
         RAID_UNIT_FLAGS= "NONE",
         RAID_UNIT_MARKERS= false,
         RAID_WIDTH= 55,
@@ -734,6 +737,7 @@ GW.globalDefault = {
         -- RAID25
         RAID25_ENABLED= true,
         RAID_CLASS_COLOR_RAID25= false,
+        RAID_HIDE_CLASS_ICON_RAID25 = false,
         RAID_UNIT_FLAGS_RAID25= "NONE",
         RAID_UNIT_MARKERS_RAID25= false,
         RAID_WIDTH_RAID25= 55,
@@ -770,6 +774,7 @@ GW.globalDefault = {
         -- RAID10
         RAID10_ENABLED= true,
         RAID_CLASS_COLOR_RAID10= false,
+        RAID_HIDE_CLASS_ICON_RAID10 = false,
         RAID_UNIT_FLAGS_RAID10= "NONE",
         RAID_UNIT_MARKERS_RAID10= false,
         RAID_WIDTH_RAID10= 55,
@@ -805,6 +810,7 @@ GW.globalDefault = {
 
         -- Party Grid
         RAID_CLASS_COLOR_PARTY= true,
+        RAID_HIDE_CLASS_ICON_PARTY = false,
         RAID_UNIT_FLAGS_PARTY= "NONE",
         RAID_UNIT_MARKERS_PARTY= false,
         RAID_WIDTH_PARTY= 500,
@@ -829,6 +835,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON_PARTY= true,
         RAID_SHOW_LEADER_ICON_PARTY= true,
         RAID_SHORT_HEALTH_VALUES_PARTY = false,
+        RAID_SHOW_PLAYER_PARTY = true, -- only for party grid
 
         raid_party_pos= {
             point= "TOPLEFT",

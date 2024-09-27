@@ -36,6 +36,7 @@ GW.GW2_GridPartyStyleRegister = GW2_GridPartyStyleRegister
 local function UpdateGridPartyFrame(frame)
     -- set frame settings
     frame.useClassColor = GW.settings.RAID_CLASS_COLOR_PARTY
+    frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON_PARTY
     frame.showResscoureBar = GW.settings.RAID_POWER_BARS_PARTY
     frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_PARTY
     frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_PARTY

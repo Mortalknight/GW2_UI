@@ -37,6 +37,7 @@ GW.GW2_GridRaid40StyleRegister = GW2_GridRaid40StyleRegister
 local function UpdateGridRaid40Frame(frame)
     -- set frame settings
     frame.useClassColor = GW.settings.RAID_CLASS_COLOR
+    frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON
     frame.showResscoureBar = GW.settings.RAID_POWER_BARS
     frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS
     frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH

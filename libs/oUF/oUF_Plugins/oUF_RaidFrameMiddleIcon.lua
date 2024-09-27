@@ -41,7 +41,7 @@ local function Update(self)
 
             shouldShowIcon = true
         end
-    elseif not self.useClassColor then -- class icon
+    elseif not self.useClassColor and not self.hideClassIcon then -- class icon only if option is active
 
         local _, _, classIndex = UnitClass(self.unit)
         element:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")

@@ -43,6 +43,7 @@ GW.GW2_GridMaintankStyleRegister = GW2_GridMaintankStyleRegister
 local function UpdateGridMaintankFrame(frame)
     -- set frame settings
     frame.useClassColor = GW.settings.RAID_CLASS_COLOR_TANK
+    frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON_TANK
     frame.showResscoureBar = GW.settings.RAID_POWER_BARS_TANK
     frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_TANK
     frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_TANK
