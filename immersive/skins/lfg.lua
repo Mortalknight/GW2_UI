@@ -506,17 +506,12 @@ local function SkinLookingForGroupFrames()
             if not child.IsSkinned and child.Name then
                 child.Name:SetTextColor(1, 1, 1)
                 hooksecurefunc(child.Name, "SetTextColor", GW.LockWhiteButtonColor)
+                GW.AddListItemChildHoverTexture(child)
                 child.IsSkinned = true
             end
         end
+        GW.HandleItemListScrollBoxHover(self)
     end)
-
-    if not LFGListFrame.SearchPanel.ResultsInset.SetBackdrop then
-        Mixin(LFGListFrame.SearchPanel.ResultsInset, _G.BackdropTemplateMixin)
-        LFGListFrame.SearchPanel.ResultsInset:HookScript("OnSizeChanged", LFGListFrame.SearchPanel.ResultsInset.OnBackdropSizeChanged)
-    end
-    LFGListFrame.SearchPanel.ResultsInset:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
-    LFGListFrame.SearchPanel.ResultsInset:SetBackdropBorderColor(0, 0, 0, 1)
 
     LFGListFrame.SearchPanel.FilterButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.FilterButton:SetPoint("LEFT", LFGListFrame.SearchPanel.SearchBox, "RIGHT", 5, 0)
@@ -593,6 +588,10 @@ local function SkinLookingForGroupFrames()
 
     LFGListFrame.ApplicationViewer.Inset:GwStripTextures()
     LFGListFrame.ApplicationViewer.UnempoweredCover.Background:SetAlpha(0)
+    LFGListFrame.ApplicationViewer.UnempoweredCover.Label:SetTextColor(1, 1, 1)
+    LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot1:SetVertexColor(1, 1, 1)
+    LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot2:SetVertexColor(1, 1, 1)
+    LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot3:SetVertexColor(1, 1, 1)
 
     local detailBg = LFGListFrame.ApplicationViewer.UnempoweredCover:CreateTexture(nil, "BACKGROUND", nil, 7)
     detailBg:SetPoint("TOPLEFT", LFGListFrame.ApplicationViewer.UnempoweredCover, "TOPLEFT", 0, 0)
@@ -631,6 +630,8 @@ local function SkinLookingForGroupFrames()
 
     GW.HandleTrimScrollBar(LFGListFrame.ApplicationViewer.ScrollBar, true)
     GW.HandleScrollControls(LFGListFrame.ApplicationViewer)
+
+    hooksecurefunc(LFGListFrame.ApplicationViewer.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 
     hooksecurefunc("LFGListApplicationViewer_UpdateInfo", function(frame)
         frame.RemoveEntryButton:ClearAllPoints()
