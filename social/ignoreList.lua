@@ -86,6 +86,7 @@ local function LoadIgnoreList(tabContainer)
     ScrollUtil.InitScrollBoxListWithScrollBar(ignorewin_outer.ScrollBox, ignorewin_outer.ScrollBar, view)
     GW.HandleTrimScrollBar(ignorewin_outer.ScrollBar)
     GW.HandleScrollControls(ignorewin_outer)
+    ignorewin_outer.ScrollBar:SetHideIfUnscrollable(true)
 
     IgnoreList_Update(ignorewin_outer)
 

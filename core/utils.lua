@@ -1043,3 +1043,29 @@ local function UpdateFontSettings()
     end
 end
 GW.UpdateFontSettings = UpdateFontSettings
+
+
+local InstanceNameByID = {
+    -- List of not matching instanceID from EJ_GetInstanceByIndex and from GetInstanceInfo
+    [749] = C_Map.GetAreaInfo(3845) -- "The Eye" vs. "Tempest Keep"
+}
+
+if GW.mylocal == "deDE" then
+    InstanceNameByID[741] = "Geschmolzener Kern"        -- "Der Geschmolzene Kern"
+    InstanceNameByID[1023] = "Belagerung von Boralus"   -- "Die Belagerung von Boralus"
+    InstanceNameByID[1041] = "Königsruh"                -- "Die Königsruh"
+    InstanceNameByID[1021] = "Kronsteiganwesen"	        -- "Das Kronsteiganwesen"
+    InstanceNameByID[1186] = "Spitzen des Aufstiegs"    -- "Die Spitzen des Aufstiegs"
+    InstanceNameByID[1198] = "Angriff der Nokhud"		-- "Der Angriff der Nokhud"
+    InstanceNameByID[1203] = "Azurblaues Gewölbe"		-- "Das Azurblaube Gewölbe"
+end
+local function GetInstanceImages(raid)
+    local index = 1
+    local instanceID, name, _, _, buttonImage = EJ_GetInstanceByIndex(index, raid)
+    while instanceID do
+        GW.instanceIconByName[InstanceNameByID[instanceID] or name] = buttonImage
+        index = index + 1
+        instanceID, name, _, _, buttonImage = EJ_GetInstanceByIndex(index, raid)
+    end
+end
+GW.GetInstanceImages = GetInstanceImages

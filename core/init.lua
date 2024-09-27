@@ -67,6 +67,7 @@ GW.BackdropTemplates = {}
 GW.AchievementFrameSkinFunction = {}
 GW.CreditsList = {}
 GW.texts = {}
+GW.instanceIconByName = {}
 
 -- money
 GW.earnedMoney = 0

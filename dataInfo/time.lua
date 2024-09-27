@@ -2,35 +2,8 @@ local _, GW = ...
 local L = GW.L
 
 local mouseOver = false
-local collectedInstanceImages = false
 local lockoutColorExtended = {r = 0.3, g = 1, b = 0.3}
 local lockoutColorNormal = {r = 0.8, g = 0.8, b = 0.8}
-
-local InstanceNameByID = {
-    -- List of not matching instanceID from EJ_GetInstanceByIndex and from GetInstanceInfo
-    [749] = C_Map.GetAreaInfo(3845) -- "The Eye" vs. "Tempest Keep"
-}
-
-if GW.mylocal == "deDE" then
-    InstanceNameByID[741] = "Geschmolzener Kern"        -- "Der Geschmolzene Kern"
-    InstanceNameByID[1023] = "Belagerung von Boralus"   -- "Die Belagerung von Boralus"
-    InstanceNameByID[1041] = "Königsruh"                -- "Die Königsruh"
-    InstanceNameByID[1021] = "Kronsteiganwesen"	        -- "Das Kronsteiganwesen"
-    InstanceNameByID[1186] = "Spitzen des Aufstiegs"    -- "Die Spitzen des Aufstiegs"
-    InstanceNameByID[1198] = "Angriff der Nokhud"		-- "Der Angriff der Nokhud"
-    InstanceNameByID[1203] = "Azurblaues Gewölbe"		-- "Das Azurblaube Gewölbe"
-end
-
-local instanceIconByName = {}
-local function GetInstanceImages(raid)
-    local index = 1
-    local instanceID, name, _, _, buttonImage = EJ_GetInstanceByIndex(index, raid)
-    while instanceID do
-        instanceIconByName[InstanceNameByID[instanceID] or name] = buttonImage
-        index = index + 1
-        instanceID, name, _, _, buttonImage = EJ_GetInstanceByIndex(index, raid)
-    end
-end
 
 local function sortFunc(a, b)
     return a[1] < b[1]
@@ -46,27 +19,6 @@ local function Time_OnEnter(self)
         RequestRaidInfo()
     end
 
-    if not collectedInstanceImages then
-        local numTiers = (EJ_GetNumTiers() or 0)
-        if numTiers > 0 then
-            local currentTier = EJ_GetCurrentTier()
-
-            -- Loop through the expansions to collect the textures
-            for i = 1, numTiers do
-                EJ_SelectTier(i)
-                GetInstanceImages(false)
-                GetInstanceImages(true)
-            end
-
-            -- Set it back to the previous tier
-            if currentTier then
-                EJ_SelectTier(currentTier)
-            end
-
-            collectedInstanceImages = true
-        end
-    end
-
     local lockedInstances = {raids = {}, dungeons = {}}
 
     for i = 1, GetNumSavedInstances() do
@@ -77,7 +29,7 @@ local function Time_OnEnter(self)
             local _, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficulty)
             local sortName = name .. (displayMythic and 4 or (isHeroic or displayHeroic) and 3 or isLFR and 1 or 2)
             local difficulty = (displayMythic and PLAYER_DIFFICULTY6 or (isHeroic or displayHeroic) and PLAYER_DIFFICULTY2 or isLFR and PLAYER_DIFFICULTY3 or PLAYER_DIFFICULTY1)
-            local buttonImg = instanceIconByName[name] and format("|T%s:16:16:0:0:96:96:0:64:0:64|t ", instanceIconByName[name]) or ""
+            local buttonImg = GW.instanceIconByName[name] and format("|T%s:16:16:0:0:96:96:0:64:0:64|t ", GW.instanceIconByName[name]) or ""
 
             if isRaid then
                 tinsert(lockedInstances.raids, {sortName, difficulty, buttonImg, {GetSavedInstanceInfo(i)}})

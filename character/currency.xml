@@ -1,55 +1,57 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Button name="GwRaidInfoRow" virtual="true">
+    <Button name="GwRaidInfoButtonTemplate" virtual="true">
         <Size x="512" y="55"></Size>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/character/menu-bg">
+                    <Size x="32" y="55"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="2">
+                <Texture parentKey="icon">
+                    <Size x="55" y="55"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="name" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="TOP" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="60" y="-5" />
+                    </Anchors>
+                    <Size x="300" y="22" />
+                </FontString>
+                <FontString parentKey="difficult" text="Heroic" inherits="GameFontNormalSmall" justifyV="BOTTOM" justifyH="Left">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="70" y="20" />
+                    </Anchors>
+                    <Size x="200" y="22" />
+                </FontString>
+                <FontString parentKey="reset" text="????" inherits="GameFontNormalSmall" justifyV="TOP" justifyH="RIGHT">
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-15" y="-5" />
+                    </Anchors>
+                    <Size x="200" y="22" />
+                </FontString>
+                <FontString parentKey="extended" text="" inherits="GameFontNormalSmall" justifyV="BOTTOM" justifyH="RIGHT">
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="20" />
+                    </Anchors>
+                    <Size x="200" y="22" />
+                </FontString>
+            </Layer>
+        </Layers>
         <Frames>
-            <Button parentKey="item" setAllPoints="true" hidden="true">
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
-                            <Size x="32" y="55"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                    <Layer textureSubLevel="2">
-                        <FontString parentKey="name" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="TOP" justifyH="LEFT">
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5" />
-                            </Anchors>
-                            <Size x="300" y="22" />
-                        </FontString>
-                        <FontString parentKey="difficult" text="Heroic" inherits="GameFontNormalSmall" justifyV="BOTTOM" justifyH="Left">
-                            <Anchors>
-                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="15" y="20" />
-                            </Anchors>
-                            <Size x="200" y="22" />
-                        </FontString>
-                        <FontString parentKey="reset" text="????" inherits="GameFontNormalSmall" justifyV="TOP" justifyH="RIGHT">
-                            <Anchors>
-                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-15" y="-5" />
-                            </Anchors>
-                            <Size x="200" y="22" />
-                        </FontString>
-                        <FontString parentKey="extended" text="" inherits="GameFontNormalSmall" justifyV="BOTTOM" justifyH="RIGHT">
-                            <Anchors>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="20" />
-                            </Anchors>
-                            <Size x="200" y="22" />
-                        </FontString>
-                    </Layer>
-                </Layers>
-                <Frames>
-                    <Button parentKey="extendButton" inherits="GwStandardButton" text="???" hidden="true">
-                        <Size x="210" y="13"/>
-                        <Anchors>
-                            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="15" y="5"/>
-                        </Anchors>
-                    </Button>
-                </Frames>
+            <Button parentKey="extendButton" inherits="GwStandardButton" text="???" hidden="true">
+                <Size x="210" y="13"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="70" y="5"/>
+                </Anchors>
             </Button>
         </Frames>
     </Button>
@@ -82,12 +84,19 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-10"></Anchor>
                 </Anchors>
             </ScrollFrame>
-            <ScrollFrame parentKey="RaidScroll" inherits="GwHybridScrollFrameTemplate" hidden="true">
+
+            <Frame parentKey="RaidScroll" inherits="WowScrollBoxList" hidden="true">
                 <Size x="580" y="576"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-10"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-10"></Anchor>
                 </Anchors>
-            </ScrollFrame>
+            </Frame>
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.RaidScroll" relativePoint="TOPRIGHT" x="-18" y="0"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.RaidScroll" relativePoint="BOTTOMRIGHT" x="-18" y="0"/>
+                </Anchors>
+            </EventFrame>
         </Frames>
     </Frame>
 

@@ -121,6 +121,7 @@ local function LoadWhoList(tabContainer)
     ScrollUtil.InitScrollBoxListWithScrollBar(WhoWindow.list.ScrollBox, WhoWindow.list.ScrollBar, view)
     GW.HandleTrimScrollBar(WhoWindow.list.ScrollBar)
     GW.HandleScrollControls(WhoWindow.list)
+    WhoWindow.list.ScrollBar:SetHideIfUnscrollable(true)
 
     WhoWindow:SetScript("OnLoad", function() C_FriendList.SetWhoToUi(false) end)
     WhoWindow:SetScript("OnShow", function() C_FriendList.SetWhoToUi(true) end)

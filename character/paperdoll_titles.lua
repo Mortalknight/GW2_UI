@@ -81,6 +81,7 @@ local function LoadPDTitles(fmMenu)
     ScrollUtil.InitScrollBoxListWithScrollBar(titlewin_outer.ScrollBox, titlewin_outer.ScrollBar, view)
     GW.HandleTrimScrollBar(titlewin_outer.ScrollBar)
     GW.HandleScrollControls(titlewin_outer)
+    titlewin_outer.ScrollBar:SetHideIfUnscrollable(true)
 
     UpdateScrollBox(titlewin_outer)
 

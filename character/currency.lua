@@ -63,89 +63,25 @@ local function SetupRaidExtendButton(self)
 end
 GW.AddForProfiling("currency", "SetupRaidExtendButton", SetupRaidExtendButton)
 
-local function loadRaidInfo(raidinfo)
-    local USED_RAID_INFO_HEIGHT
-    local zebra
 
-    local offset = HybridScrollFrame_GetOffset(raidinfo)
+local function UpdateRaidInfoScrollBox(self)
+    local dataProvider = CreateDataProvider()
+
     local raidInfoCount1 = GetNumSavedInstances()
-    local raidInfoCount2 = GetNumSavedWorldBosses()
-    local raidInfoCount = raidInfoCount1 + raidInfoCount2
-
-    for i = 1, #raidinfo.buttons do
-        local slot = raidinfo.buttons[i]
-        local instanceName, instanceID, instanceReset, locked, extended, instanceIDMostSig, difficultyName, _, _, extendDisabled
-
-        local idx = i + offset
-        if idx > raidInfoCount then
-            -- empty row (blank starter row, final row, and any empty entries)
-            slot.item:Hide()
-            slot.item.instanceID = nil
-            slot.item.RaidInfoIdx = nil
-            slot.item.longInstanceID = nil
-            slot.item.extendedValue = nil
-            slot.item.locked = nil
-            slot.item.worldBossID = nil
-            slot.item.extendDisabled = nil
-        else
-            if idx <= raidInfoCount1 then
-                instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled = GetSavedInstanceInfo(idx)
-                slot.item.instanceID = instanceID
-                slot.item.worldBossID = nil
-                slot.item.RaidInfoIdx = idx
-                slot.item.longInstanceID = string.format("%s_%s", instanceIDMostSig, instanceID)
-                slot.item.extendedValue = extended
-                slot.item.locked = locked
-                slot.item.extendDisabled = extendDisabled
-            else
-                instanceName, instanceID, instanceReset = GetSavedWorldBossInfo(idx - raidInfoCount1)
-                difficultyName = RAID_INFO_WORLD_BOSS
-                slot.item.worldBossID = instanceID
-                slot.item.RaidInfoIdx = idx - raidInfoCount1
-                slot.item.instanceID = nil
-                slot.item.longInstanceID = nil
-                slot.item.extendedValue = false
-                slot.item.locked = true
-                slot.item.extendDisabled = nil
-            end
-
-            -- set raidInfo values
-            if (slot.item.extendedValue or slot.item.locked) then
-                slot.item.reset:SetText(SecondsToTime(instanceReset, true, nil, 3))
-                slot.item.name:SetText(instanceName)
-            else
-                slot.item.reset:SetFormattedText("|cff808080%s|r", RAID_INSTANCE_EXPIRES_EXPIRED)
-                slot.item.name:SetFormattedText("|cff808080%s|r", instanceName)
-            end
-
-            if slot.item.extendedValue then
-                slot.item.extended:SetText(EXTENDED)
-            else
-                slot.item.extended:SetText("")
-            end
-            slot.item.difficult:SetText(difficultyName)
-
-            -- set zebra color by idx or watch status and show extended button
-            zebra = idx % 2
-            if selectedLongInstanceID == slot.item.longInstanceID then
-                slot.item.zebra:SetVertexColor(1, 1, 0.5, 0.15)
-                slot.item.extendButton:Show()
-                slot.item.extendButton.selectedRaidID = selectedLongInstanceID
-                slot.item.extendButton.selectedWorldBossID = slot.item.worldBossID
-                SetupRaidExtendButton(slot.item)
-            else
-                slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
-                slot.item.extendButton:Hide()
-            end
-
-            slot.item:Show()
+    if raidInfoCount1 and raidInfoCount1 > 0 then
+        for index = 1, raidInfoCount1 do
+            dataProvider:Insert({type="SAVED_INSTANCE", index=index})
         end
     end
 
-    USED_RAID_INFO_HEIGHT = 55 * raidInfoCount
-    HybridScrollFrame_Update(raidinfo, USED_RAID_INFO_HEIGHT, 576)
+    local raidInfoCount2 = GetNumSavedWorldBosses()
+    if raidInfoCount2 and raidInfoCount2 > 0 then
+        for index = 1, raidInfoCount2 do
+            dataProvider:Insert({type="SAVED_WORLD_BOSS", index=index})
+        end
+    end
+    self.RaidScroll:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
 end
-GW.AddForProfiling("currency", "loadRaidInfo", loadRaidInfo)
 
 local function raidInfo_OnEnter(self)
     if self.instanceID then
@@ -172,7 +108,7 @@ local function raidInfo_OnClick(self)
         self.extendButton.selectedRaidID = self.longInstanceID
         self.extendButton.selectedWorldBossID = self.worldBossID
         selectedLongInstanceID = self.longInstanceID
-        loadRaidInfo(self.frame)
+        UpdateRaidInfoScrollBox(GWCharacterCurrenyRaidInfoFrame)
     end
 end
 GW.AddForProfiling("currency", "raidInfo_OnClick", raidInfo_OnClick)
@@ -186,33 +122,87 @@ local function raidInfoExtended_OnClick(self)
 end
 GW.AddForProfiling("currency", "raidInfoExtended_OnClick", raidInfoExtended_OnClick)
 
-local function raidInfoSetup(raidinfo)
-    HybridScrollFrame_CreateButtons(raidinfo, "GwRaidInfoRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
-    for i = 1, #raidinfo.buttons do
-        local slot = raidinfo.buttons[i]
-        slot:SetWidth(raidinfo:GetWidth() - 12)
-        slot.item.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-        slot.item.name:SetTextColor(1, 1, 1)
-        slot.item.difficult:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        slot.item.difficult:SetTextColor(1, 1, 1)
-        slot.item.reset:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
-        slot.item.reset:SetTextColor(1, 1, 1)
-        slot.item.extended:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        slot.item.extended:SetTextColor(1, 1, 1)
-        if not slot.item.ScriptsHooked then
-            slot.item:HookScript("OnClick", raidInfo_OnClick)
-            slot.item:HookScript("OnEnter", raidInfo_OnEnter)
-            slot.item:HookScript("OnLeave", GameTooltip_Hide)
-            slot.item.extendButton:HookScript("OnClick", raidInfoExtended_OnClick)
-            slot.item.ScriptsHooked = true
+local function RaidInfo_InitButton(button, elementData)
+    local instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled
+    if not button.isSkinned then
+        button.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+        button.name:SetTextColor(1, 1, 1)
+        button.difficult:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        button.difficult:SetTextColor(1, 1, 1)
+        button.reset:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        button.reset:SetTextColor(1, 1, 1)
+        button.extended:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        button.extended:SetTextColor(1, 1, 1)
+        if not button.ScriptsHooked then
+            button:SetScript("OnClick", raidInfo_OnClick)
+            button:SetScript("OnEnter", raidInfo_OnEnter)
+            button:SetScript("OnLeave", GameTooltip_Hide)
+            button.extendButton:SetScript("OnClick", raidInfoExtended_OnClick)
+            button.ScriptsHooked = true
         end
-        --save frame
-        slot.item.frame = raidinfo
+        GW.AddListItemChildHoverTexture(button)
+
+        button.isSkinned = true
     end
 
-    loadRaidInfo(raidinfo)
+    if elementData.type == "SAVED_INSTANCE" then
+        instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled = GetSavedInstanceInfo(elementData.index)
+        button.instanceID = instanceID
+        button.worldBossID = nil
+        button.RaidInfoIdx = elementData.index
+        button.longInstanceID = string.format("%s_%s", instanceIDMostSig, instanceID)
+        button.extendedValue = extended
+        button.locked = locked
+        button.extendDisabled = extendDisabled
+    elseif elementData.type == "SAVED_WORLD_BOSS" then
+        instanceName, instanceID, instanceReset = GetSavedWorldBossInfo(elementData.index)
+        difficultyName = RAID_INFO_WORLD_BOSS
+        button.worldBossID = instanceID
+        button.RaidInfoIdx = elementData.index
+        button.instanceID = nil
+        button.longInstanceID = nil
+        button.extendedValue = false
+        button.locked = true
+        button.extendDisabled = nil
+    end
+
+    -- set raidInfo values
+    button.icon:SetTexture(GW.instanceIconByName[instanceName] and GW.instanceIconByName[instanceName] or nil)
+    button.icon:SetTexCoord(0, 0.75, 0, 0.75)
+    if (button.extendedValue or button.locked) then
+        button.reset:SetText(SecondsToTime(instanceReset, true, nil, 3))
+        button.name:SetText(instanceName)
+    else
+        button.reset:SetFormattedText("|cff808080%s|r", RAID_INSTANCE_EXPIRES_EXPIRED)
+        button.name:SetFormattedText("|cff808080%s|r", instanceName)
+    end
+
+    if button.extendedValue then
+        button.extended:SetText(EXTENDED)
+    else
+        button.extended:SetText("")
+    end
+    button.difficult:SetText(difficultyName)
+
+    -- set zebra color by idx or watch status and show extended button
+    local isSelected = selectedLongInstanceID == button.longInstanceID
+    button.gwSelected:SetShown(isSelected)
+    if isSelected or ((elementData.index % 2) == 1) then
+        button.zebra:SetVertexColor(1, 1, 1, 1)
+        if isSelected then
+            button.extendButton:Show()
+            button.extendButton.selectedRaidID = selectedLongInstanceID
+            button.extendButton.selectedWorldBossID = button.worldBossID
+            SetupRaidExtendButton(button)
+        else
+            button.extendButton:Hide()
+        end
+    else
+        button.zebra:SetVertexColor(0, 0, 0, 0)
+        button.extendButton:Hide()
+    end
 end
-GW.AddForProfiling("currency", "raidInfoSetup", raidInfoSetup)
+GW.AddForProfiling("currency", "raidInfoSetup", RaidInfo_InitButton)
 
 local function menuItem_OnClick(self)
     local menuItems = self:GetParent().items
@@ -542,6 +532,7 @@ local function LoadCurrency(tabContainer)
     transferHistorySetup(curHistroyWin)
     GW.HandleTrimScrollBar(curHistroyWin.ScrollBar)
     GW.HandleScrollControls(curHistroyWin)
+    curHistroyWin.ScrollBar:SetHideIfUnscrollable(true)
     curHistroyWin.EmptyLogMessage:SetTextColor(1, 1, 1)
     hooksecurefunc(curHistroyWin.ScrollBox, "Update", UpdateTransferHistorySkins)
     curHistroyWin.ScrollBox:ClearAllPoints()
@@ -549,21 +540,27 @@ local function LoadCurrency(tabContainer)
     curHistroyWin.ScrollBox:SetPoint("BOTTOMRIGHT", curHistroyWin, -22, 0)
 
     -- setup the raid info window
-    local raidinfo = curwin_outer.RaidScroll
-    raidinfo.update = loadRaidInfo
-    raidinfo.scrollBar.doNotHide = true
-    raidInfoSetup(raidinfo)
+    local view = CreateScrollBoxListLinearView()
+    view:SetElementInitializer("GwRaidInfoButtonTemplate", function(button, elementData)
+        RaidInfo_InitButton(button, elementData)
+    end)
+    ScrollUtil.InitScrollBoxListWithScrollBar(curwin_outer.RaidScroll, curwin_outer.ScrollBar, view)
+    GW.HandleTrimScrollBar(curwin_outer.ScrollBar)
+    GW.HandleScrollControls(curwin_outer)
+    curwin_outer.ScrollBar:SetHideIfUnscrollable(true)
+
+    UpdateRaidInfoScrollBox(curwin_outer)
 
     -- update currency window when a currency update event occurs
-    raidinfo:SetScript(
+    curwin_outer:SetScript(
         "OnEvent",
         function(self)
             if GW.inWorld and self:IsShown() then
-                loadRaidInfo(self)
+                UpdateRaidInfoScrollBox(self)
             end
         end
     )
-    raidinfo:RegisterEvent("UPDATE_INSTANCE_INFO")
+    curwin_outer:RegisterEvent("UPDATE_INSTANCE_INFO")
 
     -- setup a menu frame
     local fmMenu = CreateFrame("Frame", "GWCurrencyMenu", tabContainer, "GwCharacterMenu")
@@ -588,7 +585,7 @@ local function LoadCurrency(tabContainer)
     fmMenu.items.currencyTransferHistory = item
 
     item = CreateFrame("Button", "GwRaidInfoFrame", fmMenu, "GwCharacterMenuButtonTemplate")
-    item.ToggleMe = raidinfo
+    item.ToggleMe = curwin_outer.RaidScroll
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(RAID_INFORMATION)
     item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
