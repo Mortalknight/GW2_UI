@@ -182,8 +182,18 @@ local function LoadMerchantFrameSkin()
         MerchantSellAllJunkButton:GetRegions():GwSetInside()
     end
 
-    GW.HandleNextPrevButton(MerchantNextPageButton, nil, true)
-    GW.HandleNextPrevButton(MerchantPrevPageButton, nil, true)
+
+    for _, btn in next, {MerchantNextPageButton, MerchantPrevPageButton} do
+        GW.HandleNextPrevButton(btn, nil, true)
+        for _, c in pairs( {btn:GetRegions()} ) do
+            if c:GetObjectType() == "FontString" then
+                c:SetTextColor(1, 1, 1)
+                break
+            end
+        end
+    end
+    MerchantPageText:SetTextColor(1, 1, 1)
+
     MerchantNextPageButton:ClearAllPoints()
     MerchantNextPageButton:SetPoint("LEFT", MerchantPageText, "RIGHT", 100, 4)
 
