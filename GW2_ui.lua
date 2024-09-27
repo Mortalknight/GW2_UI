@@ -749,6 +749,9 @@ local function evPlayerLogin(self)
     -- create action bars
     if GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         GW.LoadActionBars(lm)
+        -- to update our bars
+        SetActionBarToggles(GetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4"), GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED"))
+        MultiActionBar_Update()
     end
 
     -- create pet frame
