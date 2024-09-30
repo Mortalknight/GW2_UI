@@ -593,12 +593,7 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot2:SetVertexColor(1, 1, 1)
     LFGListFrame.ApplicationViewer.UnempoweredCover.Waitdot3:SetVertexColor(1, 1, 1)
 
-    local detailBg = LFGListFrame.ApplicationViewer.UnempoweredCover:CreateTexture(nil, "BACKGROUND", nil, 7)
-    detailBg:SetPoint("TOPLEFT", LFGListFrame.ApplicationViewer.UnempoweredCover, "TOPLEFT", 0, 0)
-    detailBg:SetPoint("BOTTOMRIGHT", LFGListFrame.ApplicationViewer.UnempoweredCover, "BOTTOMRIGHT", 0, 0)
-    detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
-    detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
-    LFGListFrame.ApplicationViewer.UnempoweredCover.tex = detailBg
+    GW.AddDetailsBackground(LFGListFrame.ApplicationViewer.UnempoweredCover)
 
     GW.HandleScrollFrameHeaderButton(LFGListFrame.ApplicationViewer.NameColumnHeader)
     GW.HandleScrollFrameHeaderButton(LFGListFrame.ApplicationViewer.RoleColumnHeader)
@@ -872,12 +867,7 @@ local function ApplyPvPUISkin()
     ConquestFrame:GwStripTextures()
 
     for _, v in pairs({ HonorFrame, ConquestFrame, LFGListPVPStub }) do
-        local detailBg = v:CreateTexture(nil, "BACKGROUND", nil, 0)
-        detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", 0, -10)
-        detailBg:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", 0, 0)
-        detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
-        detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
-        v.tex = detailBg
+        GW.AddDetailsBackground(v, nil, -10)
     end
 
     LFGListPVPStub.tex:ClearAllPoints()

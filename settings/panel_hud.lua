@@ -140,8 +140,8 @@ local function LoadHudPanel(sWindow)
             ALWAYS,
             NEVER,
             AGGRO_WARNING_IN_PARTY,
-            L["In raid"],
-            L["In group or in raid"],
+            L["Raid Only"],
+            L["Party / Raid"],
         }
     )
     addOptionDropdown(

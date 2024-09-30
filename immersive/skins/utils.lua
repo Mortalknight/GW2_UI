@@ -584,6 +584,15 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
 end
 GW.CreateFrameHeaderWithBody = CreateFrameHeaderWithBody
 
+local function AddDetailsBackground(frame, detailBackgroundsXOffset, detailBackgroundsYOffset)
+    local detailBg = frame:CreateTexture(nil, "BACKGROUND", nil, 7)
+    detailBg:SetPoint("TOPLEFT", frame, "TOPLEFT", detailBackgroundsXOffset or 0, detailBackgroundsYOffset or 0)
+    detailBg:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+    detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+    frame.tex = detailBg
+end
+GW.AddDetailsBackground = AddDetailsBackground
 
 local function HandleListIcon(frame)
     if not frame.tableBuilder then return end

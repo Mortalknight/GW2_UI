@@ -252,6 +252,14 @@ local function AddQuestID(frame)
     GameTooltip:Show()
 end
 
+local function AddBattlePetID()
+    if not BattlePetTooltip or not BattlePetTooltip.speciesID or not IsModKeyDown() then return end
+
+    BattlePetTooltip:AddLine(" ")
+    BattlePetTooltip:AddLine(format(IDLine, ID, BattlePetTooltip.speciesID))
+    BattlePetTooltip:Show()
+end
+
 local function GameTooltip_OnTooltipCleared(self)
     if self:IsForbidden() then return end
 
@@ -664,11 +672,15 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         AddMythicInfo(self, unit)
     end
 
-    if isShiftKeyDown and color and not self.ItemLevelShown then
-        AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
+    if isShiftKeyDown and isPlayerUnit and not InCombatLockdown() and not self.ItemLevelShown then
+        if color then
+            AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
+        else
+            AddInspectInfo(self, unit, 0, 0.9, 0.9, 0.9)
+        end
     end
 
-    if unit and not isPlayerUnit and IsModKeyDown() and not C_PetBattles.IsInBattle() then
+    if not isPlayerUnit and IsModKeyDown() and not C_PetBattles.IsInBattle() then
         local guid = (data and data.guid) or UnitGUID(unit) or ""
         local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
         if id then -- NPC ID"s
@@ -880,45 +892,6 @@ local function SkinQueueStatusFrame()
     })
 end
 
-local function SkinBattlePetTooltip()
-    local skin_battle_pet_tt = function(self)
-        self.NineSlice:Hide()
-        self:GwCreateBackdrop({
-            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
-            tile = false,
-            tileSize = 64,
-            edgeSize = 32,
-            insets = {left = 2, right = 2, top = 2, bottom = 2}
-        })
-    end
-
-    hooksecurefunc("SharedPetBattleAbilityTooltip_SetAbility", function(self) skin_battle_pet_tt(self) end)
-    hooksecurefunc("FloatingBattlePet_Show", function()
-        if FloatingBattlePetTooltip:IsShown() then
-            FloatingBattlePetTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
-            FloatingBattlePetTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
-            FloatingBattlePetTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
-            FloatingBattlePetTooltip.CloseButton:SetSize(20, 20)
-            FloatingBattlePetTooltip.CloseButton:ClearAllPoints()
-            FloatingBattlePetTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
-
-            skin_battle_pet_tt(FloatingBattlePetTooltip)
-        end
-    end)
-
-    hooksecurefunc("BattlePetToolTip_Show", function()
-        if not BattlePetTooltip then return end
-        skin_battle_pet_tt(BattlePetTooltip)
-
-        if not BattlePetTooltip.speciesID or not IsModKeyDown() then return end
-
-        BattlePetTooltip:AddLine(" ")
-        BattlePetTooltip:AddLine(format(IDLine, ID, BattlePetTooltip.speciesID))
-        BattlePetTooltip:Show()
-    end)
-end
-
 local function shouldHiddenInCombat(tooltip)
     local _, unit = tooltip:GetUnit()
     if unit then
@@ -1020,7 +993,6 @@ local function AddPremadeGroupInfo(tooltip, resultID)
 
     tooltip:Show()
 end
-
 local function StyleTooltips()
     for _, tt in next, {
         ItemRefTooltip,
@@ -1038,6 +1010,7 @@ local function StyleTooltips()
         QuickKeybindTooltip,
         GameSmallHeaderTooltip,
         PetJournalPrimaryAbilityTooltip,
+        PetJournalSecondaryAbilityTooltip,
         GarrisonShipyardMapMissionTooltip,
         BattlePetTooltip,
         PetBattlePrimaryAbilityTooltip,
@@ -1085,7 +1058,12 @@ local function StyleTooltips()
         EventTraceTooltip,
         FrameStackTooltip,
         LibDBIconTooltip,
-        RepurationParagonTooltip
+        RepurationParagonTooltip,
+        BattlePetTooltip,
+        PetBattlePrimaryAbilityTooltip,
+        PetBattlePrimaryUnitTooltip,
+        FloatingBattlePetTooltip,
+        FloatingPetBattleAbilityTooltip
     } do
         SetStyle(tt)
     end
@@ -1095,9 +1073,16 @@ local function LoadTooltips()
     StyleTooltips()
     SkinItemRefTooltipCloseButton()
     SkinQueueStatusFrame()
-    SkinBattlePetTooltip()
 
     QuestScrollFrame.StoryTooltip:SetFrameLevel(4)
+
+    FloatingBattlePetTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
+    FloatingBattlePetTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
+    FloatingBattlePetTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
+    FloatingBattlePetTooltip.CloseButton:SetSize(20, 20)
+    FloatingBattlePetTooltip.CloseButton:ClearAllPoints()
+    FloatingBattlePetTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
+    hooksecurefunc("SharedPetBattleAbilityTooltip_SetAbility", SetStyle)
 
     local ItemTT = GameTooltip.ItemTooltip
     GW.HandleIcon(ItemTT.Icon, true)
@@ -1159,6 +1144,7 @@ local function LoadTooltips()
 
         hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
         hooksecurefunc("TaskPOI_OnEnter", AddQuestID)
+        hooksecurefunc("BattlePetToolTip_Show", AddBattlePetID)
         hooksecurefunc(GameTooltip, "SetHyperlink", SetHyperlink)
         hooksecurefunc(ItemRefTooltip, "SetHyperlink", SetHyperlink)
 
@@ -1167,8 +1153,8 @@ local function LoadTooltips()
         eventFrame:SetScript("OnEvent", function()
             if not GameTooltip:IsForbidden() and GameTooltip:IsShown() then
                 local owner = GameTooltip:GetOwner()
-                if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame)) and UnitExists("mouseover") then
-                    GameTooltip:SetUnit("mouseover")
+                if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame) or (GwPlayerUnitFrame and owner == GwPlayerUnitFrame)) and UnitExists("mouseover") then
+                    GameTooltip:RefreshData()
                 end
             end
         end)

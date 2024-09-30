@@ -8,19 +8,18 @@ local function ApplyAlliedRacesUISkin()
     AlliedRacesFramePortrait:SetAlpha(0)
     AlliedRacesFrameBg:SetAlpha(0)
     AlliedRacesFrame.ModelScene:GwStripTextures()
+    AlliedRacesFrame.ModelScene:ClearAllPoints()
+    AlliedRacesFrame.ModelScene:SetPoint("LEFT", 0, -9)
+    AlliedRacesFrame.ModelScene:SetHeight(565)
 
     select(2, AlliedRacesFrame.ModelScene:GetRegions()):Hide()
 
-    local tex = AlliedRacesFrame:CreateTexture(nil, "BACKGROUND")
-    tex:SetPoint("TOP", AlliedRacesFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = AlliedRacesFrame:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    AlliedRacesFrame.tex = tex
+    GW.CreateFrameHeaderWithBody(AlliedRacesFrame, AlliedRacesFrameTitleText, "Interface/AddOns/GW2_UI/textures/icons/auction-window-icon", {AlliedRacesFrame.RaceInfoFrame})
 
     AlliedRacesFrame.Banner:Hide()
-
-    AlliedRacesFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
+    AlliedRacesFrame.RaceInfoFrame.tex:ClearAllPoints()
+    AlliedRacesFrame.RaceInfoFrame.tex:SetPoint("TOPLEFT", AlliedRacesFrame.RaceInfoFrame, "TOPLEFT", -35, -30)
+    AlliedRacesFrame.RaceInfoFrame.tex:SetPoint("BOTTOMRIGHT", AlliedRacesFrame.RaceInfoFrame, "BOTTOMRIGHT", 0, 0)
 
     AlliedRacesFrameCloseButton:GwSkinButton(true)
     AlliedRacesFrameCloseButton:SetSize(20, 20)
@@ -29,16 +28,14 @@ local function ApplyAlliedRacesUISkin()
     GW.HandleScrollControls(AlliedRacesFrame.RaceInfoFrame.ScrollFrame)
 
     AlliedRacesFrame.FrameBackground:GwStripTextures()
-    AlliedRacesFrame.FrameBackground:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
     AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child:GwStripTextures()
     AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.ObjectivesFrame:GwStripTextures()
-    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.ObjectivesFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
-    AlliedRacesFrame.RaceInfoFrame.AlliedRacesRaceName:SetTextColor(1, 0.8, 0)
+    GW.AddDetailsBackground(AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.ObjectivesFrame)
+    AlliedRacesFrame.RaceInfoFrame.AlliedRacesRaceName:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RaceDescriptionText:SetTextColor(1, 1, 1)
-    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RacialTraitsLabel:SetTextColor(1, 0.8, 0)
-
+    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RacialTraitsLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     AlliedRacesFrame:HookScript("OnShow", function(self)
         for button in self.abilityPool:EnumerateActive() do
