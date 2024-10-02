@@ -148,7 +148,7 @@
             </OnShow>
         </Scripts>
     </Button>
-       <Button name="GwStandardButtonNoOutline" text="" virtual="true">
+    <Button name="GwStandardButtonNoOutline" text="" virtual="true">
         <Size x="128" y="24" />
         <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/button"/>
         <DisabledTexture file="Interface/AddOns/GW2_UI/textures/uistuff/button_disable"/>

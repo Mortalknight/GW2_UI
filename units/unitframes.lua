@@ -363,7 +363,6 @@ local function setUnitPortraitFrame(self)
                 break
             end
         end
-      
     end
 
     if foundBossMod and border == "boss" then

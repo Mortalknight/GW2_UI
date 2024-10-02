@@ -440,6 +440,7 @@ do
         frame:GwStripTextures()
         frame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
         frame:SetHeight(frame:GetHeight() + 10)
+        frame:EnableMouse(true)
 
         if borderBox then
             borderBox:GwStripTextures()

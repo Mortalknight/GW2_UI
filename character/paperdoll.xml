@@ -90,14 +90,24 @@
 
     <ItemButton name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true"/>
 
-    <Button name="GwPaperDollOutFitListButton" inherits="GwCharacterMenuBlank" text="Not yet loaded" virtual="true">
+    <EventButton name="GwPaperDollOutfitsButtonTemplate" text="Not yet loaded" virtual="true">
+        <Size x="220" y="49"/>
         <Layers>
-            <Layer>
-                <Texture parentKey="ddbg" hidden="true" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
-                    <Size x="32" y="30"></Size>
+            <Layer level="OVERLAY">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
+                    <Size x="49" y="49"></Size>
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/character/menu-bg">
+                    <Size x="32" y="32"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -115,6 +125,13 @@
                         <Anchor point="CENTER" relativeKey="$parent.SpecRing" relativePoint="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
+            </Layer>
+            <Layer textureSubLevel="2">
+                <FontString parentKey="name" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="CENTER">
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="-20"/>
+                    </Anchors>
+                </FontString>
             </Layer>
         </Layers>
         <Frames>
@@ -173,7 +190,7 @@
                 </Layers>
             </Button>
         </Frames>
-    </Button>
+    </EventButton>
 
     <Frame name="GwPaperDollBagItemList" hidden="true" virtual="true">
         <Size x="231" y="498"></Size>
@@ -199,24 +216,6 @@
             </Button>
         </Frames>
     </Frame>
-
-    <Button name="GwPaperDollOutfitsButton" inherits="GwPaperDollOutFitListButton" virtual="true">
-        <Size x="220" y="49"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
-                    <Size x="49" y="49"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    </Anchors>
-                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Button>
 
     <Frame name="GwPaperDollOutfits" hidden="true" virtual="true">
         <Size x="220" y="478"></Size>
@@ -246,6 +245,18 @@
                     <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="7"></Anchor>
                 </Anchors>
             </Button>
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Size x="220" y="480"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-5"></Anchor>
+                </Anchors>
+            </Frame>
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="0"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                </Anchors>
+            </EventFrame>
         </Frames>
     </Frame>
 
