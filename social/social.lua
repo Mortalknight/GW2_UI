@@ -446,6 +446,29 @@ local function loadBaseFrame()
     -- set binding change handlers
     fmGSW.secure:HookScript("OnEvent", click_OnEvent)
     fmGSW.secure:RegisterEvent("UPDATE_BINDINGS")
+
+    fmGSW.backgroundMask = UIParent:CreateMaskTexture()
+    fmGSW.backgroundMask:SetPoint("TOPLEFT", fmGSW, "TOPLEFT", -64, 64)
+    fmGSW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGSW, "BOTTOMLEFT",-64, 0)
+    fmGSW.backgroundMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    fmGSW.background:AddMaskTexture(fmGSW.backgroundMask)
+
+    fmGSW:HookScript("OnShow", function()
+        GW.AddToAnimation("SOCIALPANEL_ONSHOW",
+            0,
+            1,
+            GetTime(),
+            GW.WINDOW_FADE_DURATION,
+            function(p)
+                fmGSW:SetAlpha(p)
+                fmGSW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGSW.background, "BOTTOMLEFT", GW.lerp(-64, fmGSW.background:GetWidth(), p) , 0)
+            end,
+            1,
+            function()
+                fmGSW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGSW.background, "BOTTOMLEFT", fmGSW.background:GetWidth() + 200, 0)
+            end
+        )
+    end)
 end
 GW.AddForProfiling("social", "loadBaseFrame", loadBaseFrame)
 

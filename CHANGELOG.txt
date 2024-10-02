@@ -1,3 +1,18 @@
+7.6.0
+NEW
+    - Add option to shorten healtglobe shield values
+    - Add option to hide player frame at party grid
+    - Add option to hide class icons at grids, if no class color is used
+
+FIXES
+    - Fix drawn layer of lfg accept button
+    - Fix BigWigs integration
+
+CHANGES
+    - Add Monk hero talent to dodgebar
+    - Update some skins
+    - Added theather event timer bar to objectices tracker
+
 7.5.0
 NEW
     - Add option to shorten values, like health values or damage text

@@ -15,6 +15,16 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.6.0",{
+    {ct.feature, [=[Add option to shorten healtglobe shield values]=]},
+    {ct.feature, [=[Add option to hide player frame at party grid]=]},
+    {ct.feature, [=[Add option to hide class icons at grids, if no class color is used]=]},
+    {ct.bug, [=[Fix drawn layer of lfg accept button]=]},
+    {ct.bug, [=[Fix BigWigs integration]=]},
+    {ct.change, [=[Add Monk hero talent to dodgebar]=]},
+    {ct.change, [=[Added theather event timer bar to objectices tracker]=]},
+    {ct.change, [=[Update some skins]=]},
+})
 
 addChange("7.5.0",{
     {ct.feature, [=[Add option to shorten values, like health values or damage text]=]},
