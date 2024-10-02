@@ -35,25 +35,22 @@ local function ToggleButton(self, shown)
     self.equipOutfit:SetShown(shown)
     self.deleteOutfit.icon:SetDesaturated(true)
     self.saveOutfit.icon:SetDesaturated(true)
-    self.equipOutfit:SetText(EQUIPSET_EQUIP)
+
+    self:SetHeight(shown and 80 or 49)
+    toggleIgnoredSlots(shown)
 end
 
 local function outfitListButton_OnClick(self)
     if not self then return end
     g_selectionBehavior:ToggleSelect(self)
 
-    if not self.saveOutfit:IsShown() then
-        toggleIgnoredSlots(true)
+    if g_selectionBehavior:IsSelected(self) then
         updateIngoredSlots(self.setID)
-        self.equipOutfit:SetText(EQUIPSET_EQUIP)
 
         ToggleButton(self, true)
-        self:SetHeight(80)
         GwPaperDollOutfits.selectedSetID = self.setID
     else
         ToggleButton(self, false)
-
-        self:SetHeight(49)
     end
 end
 
@@ -141,7 +138,6 @@ local function outfitDeleteButton_OnClick(self)
             C_EquipmentSet.DeleteEquipmentSet(self:GetParent().setID)
 
             UpdateScrollBox(GwPaperDollOutfits)
-            --outfitListButton_OnClick(self:GetParent())
         end
     )
 end
@@ -163,7 +159,7 @@ local function EquipmentSet_InitButton(button, elementData)
         button.saveOutfit:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:ClearLines()
-            GameTooltip_AddNormalLine(GameTooltip, SAVE)
+            GameTooltip:AddLine(SAVE, 1, 1, 1)
             GameTooltip:Show()
         end)
         button.saveOutfit:SetScript("OnLeave", GameTooltip_Hide)
@@ -171,7 +167,7 @@ local function EquipmentSet_InitButton(button, elementData)
         button.editOutfit:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:ClearLines()
-            GameTooltip_AddNormalLine(GameTooltip, EDIT)
+            GameTooltip:AddLine(EDIT, 1, 1, 1)
             GameTooltip:Show()
         end)
         button.editOutfit:SetScript("OnLeave", GameTooltip_Hide)
@@ -179,7 +175,7 @@ local function EquipmentSet_InitButton(button, elementData)
         button.deleteOutfit:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:ClearLines()
-            GameTooltip_AddNormalLine(GameTooltip, DELETE)
+            GameTooltip:AddLine(DELETE, 1, 1, 1)
             GameTooltip:Show()
         end)
         button.deleteOutfit:SetScript("OnLeave", GameTooltip_Hide)
@@ -273,6 +269,8 @@ local function LoadPDEquipset(fmMenu)
     g_selectionBehavior = ScrollUtil.AddSelectionBehavior(fmGPDO.ScrollBox, SelectionBehaviorFlags.Deselectable, SelectionBehaviorFlags.Intrusive);
     g_selectionBehavior:RegisterCallback(SelectionBehaviorMixin.Event.OnSelectionChanged, function(o, elementData, selected)
         local button = fmGPDO.ScrollBox:FindFrame(elementData)
+
+        ToggleButton(button, selected)
         if button then
             button:SetSelected(selected)
         end
@@ -293,6 +291,6 @@ local function LoadPDEquipset(fmMenu)
     )
     UpdateScrollBox(fmGPDO)
 
-    hooksecurefunc(GwGearManagerPopupFrame, "OkayButton_OnClick", function() UpdateScrollBox(fmGPDO)  outfitListButton_OnClick(GwGearManagerPopupFrame.listButton ) end)
+    hooksecurefunc(GwGearManagerPopupFrame, "OkayButton_OnClick", function() UpdateScrollBox(fmGPDO) end)
 end
 GW.LoadPDEquipset = LoadPDEquipset
