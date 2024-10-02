@@ -38,6 +38,8 @@ local function Titles_InitButton(button, elementData)
     else
         button.zebra:SetVertexColor(0, 0, 0, 0)
     end
+
+    button.gwSelected:SetShown(GetCurrentTitle() == button.titleId)
 end
 
 local function saveKnowenTitles()

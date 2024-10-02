@@ -227,7 +227,7 @@
                 <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
                     <Size x="256" y="512"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="7"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-8" y="7"/>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -246,15 +246,15 @@
                 </Anchors>
             </Button>
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
-                <Size x="220" y="480"></Size>
+                <Size x="210" y="480"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-3"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-5"></Anchor>
                 </Anchors>
             </Frame>
             <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="-2" y="0"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-2" y="0"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="-8" y="0"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-8" y="0"/>
                 </Anchors>
             </EventFrame>
         </Frames>

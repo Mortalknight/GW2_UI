@@ -708,7 +708,7 @@ local function AddListItemChildHoverTexture(child)
 
         child.gwSelected = child:CreateTexture(nil, "ARTWORK", nil, 0)
         child.gwSelected:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
-        child.gwSelected:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+        child.gwSelected:SetVertexColor(0.8, 0.8, 0.8, 1)
         child.gwSelected:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
         child.gwSelected:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
         child.gwSelected:Hide()
