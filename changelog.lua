@@ -22,7 +22,7 @@ addChange("7.6.0",{
     {ct.bug, [=[Fix drawn layer of lfg accept button]=]},
     {ct.bug, [=[Fix BigWigs integration]=]},
     {ct.change, [=[Add Monk hero talent to dodgebar]=]},
-    {ct.change, [=[Added theather event timer bar to objectices tracker]=]},
+    {ct.change, [=[Added theater event timer bar to objectives tracker]=]},
     {ct.change, [=[Update some skins]=]},
 })
 
