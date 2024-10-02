@@ -248,13 +248,13 @@
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Size x="220" y="480"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-5"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-3"></Anchor>
                 </Anchors>
             </Frame>
             <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="0"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="-2" y="0"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-2" y="0"/>
                 </Anchors>
             </EventFrame>
         </Frames>
