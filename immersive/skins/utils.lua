@@ -694,7 +694,9 @@ GW.HandleScrollFrameHeaderButton = HandleScrollFrameHeaderButton
 
 local function AddMouseMotionPropagationToChildFrames(self)
     for _, child in next, { self:GetChildren() } do
-        child:SetPropagateMouseMotion(true)
+        if not InCombatLockdown() then
+            child:SetPropagateMouseMotion(true)
+        end
         AddMouseMotionPropagationToChildFrames(child)
     end
 end
@@ -754,7 +756,9 @@ local function HandleItemListScrollBoxHover(self)
 
             child.IsSkinned = true
         end
-        child:SetPropagateMouseMotion(true)
+        if not InCombatLockdown() then
+            child:SetPropagateMouseMotion(true)
+        end
 
         --zebra
         local zebra = child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 or false
