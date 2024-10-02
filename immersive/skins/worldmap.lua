@@ -332,7 +332,7 @@ local function worldMapSkin()
     function WorldDungeonEntrancePinMixin:UpdateMousePropagation() end
 
     WorldMapFrame:GwStripTextures()
-    GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {QuestMapFrame})
+    GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {QuestMapFrame}, nil, true)
     WorldMapFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     WorldMapFrame.BorderFrame:GwStripTextures()

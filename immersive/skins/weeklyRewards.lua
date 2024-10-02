@@ -109,7 +109,7 @@ local function ApplyWeeklyRewardsSkin()
     if not GW.settings.WEEKLY_REWARDS_SKIN_ENABLED then return end
 
     WeeklyRewardsFrame:GwStripTextures()
-    GW.CreateFrameHeaderWithBody(WeeklyRewardsFrame, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {WeeklyRewardsFrame})
+    GW.CreateFrameHeaderWithBody(WeeklyRewardsFrame, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {WeeklyRewardsFrame}, nil, true)
 
     WeeklyRewardsFrame.BorderContainer:GwStripTextures()
     WeeklyRewardsFrame.ConcessionFrame:GwStripTextures()

@@ -96,12 +96,14 @@ local function SkinLookingForGroupFrames()
     RaidFinderFrame:GwStripTextures()
     RaidFinderQueueFrame:GwStripTextures(true)
 
+    PVEFrame.LeftSidePanel = CreateFrame("Frame", "GwPVEFrameLeftPanel", PVEFrame, "GwWindowLeftPanel")
+
     GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon", {
         LFDQueueFrame,
         RaidFinderQueueFrame,
         LFGListPVEStub
-    })
-    CreateFrame("Frame", "GwPVEFrameLeftPanel", PVEFrame, "GwWindowLeftPanel")
+    }
+    , nil, true)
     PVEFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     -- copied from blizzard need to icon switching
@@ -136,8 +138,8 @@ local function SkinLookingForGroupFrames()
 		end
 
 		tab:ClearAllPoints()
-		tab:SetPoint("TOPRIGHT", GwPVEFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * (idx - 1)))
-		tab:SetParent(GwPVEFrameLeftPanel)
+		tab:SetPoint("TOPRIGHT", PVEFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * (idx - 1)))
+		tab:SetParent(PVEFrame.LeftSidePanel)
 		tab:SetSize(64, 40)
     end
 
@@ -755,28 +757,6 @@ local function SkinLookingForGroupFrames()
             end)
         end
     end)
-
-    local bgMask = UIParent:CreateMaskTexture()
-	bgMask:SetPoint("TOPLEFT", PVEFrame, "TOPLEFT", -64, 64)
-	bgMask:SetPoint("BOTTOMRIGHT", PVEFrame, "BOTTOMLEFT", -64, 0)
-	bgMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-	PVEFrame.tex:AddMaskTexture(bgMask)
-	PVEFrame.gwHeader.BGLEFT:AddMaskTexture(bgMask)
-	PVEFrame.gwHeader.BGRIGHT:AddMaskTexture(bgMask)
-	GwPVEFrameLeftPanel.background:AddMaskTexture(bgMask)
-	PVEFrame.backgroundMask = bgMask
-
-	PVEFrame:HookScript("OnShow",function()
-		GW.AddToAnimation("APVEFRAMEFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
-			function(p)
-				PVEFrame:SetAlpha(p)
-				bgMask:SetPoint("BOTTOMRIGHT", PVEFrame.tex, "BOTTOMLEFT", GW.lerp(-64, PVEFrame.tex:GetWidth(), p), 0)
-			end,
-			1,
-			function()
-				bgMask:SetPoint("BOTTOMRIGHT", PVEFrame.tex, "BOTTOMLEFT", PVEFrame.tex:GetWidth() + 200 , 0)
-			end)
-	end)
 
     GW.MakeFrameMovable(PVEFrame, nil, "PvEWindow", true)
     PVEFrame:SetClampedToScreen(true)

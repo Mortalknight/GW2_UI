@@ -869,8 +869,8 @@ local function updateAchievementFrameTabLayout()
         local f = _G["AchievementFrameTab"..i]
         if f and f:IsShown() then
             f:ClearAllPoints()
-            f:SetPoint("TOPRIGHT",AchivementFrameLeftPanel,"TOPLEFT", 1, -32 + (-40 * x))
-            f:SetParent(AchivementFrameLeftPanel)
+            f:SetPoint("TOPRIGHT",AchievementFrame.LeftSidePanel,"TOPLEFT", 1, -32 + (-40 * x))
+            f:SetParent(AchievementFrame.LeftSidePanel)
             updateAchievementFrameTab(f,i)
             x = x + 1
         end
@@ -1084,7 +1084,7 @@ local function skinAchevement()
 
     AchievementFrame:SetSize(853, 627)
 
-    CreateFrame("Frame", "AchivementFrameLeftPanel", AchievementFrame, "GwWindowLeftPanel")
+    AchievementFrame.LeftSidePanel = CreateFrame("Frame", "AchivementFrameLeftPanel", AchievementFrame, "GwWindowLeftPanel")
 
     AchievementFrameCategories:SetSize(221, 426)
     AchievementFrameCategories:ClearAllPoints()
@@ -1103,7 +1103,7 @@ local function skinAchevement()
 
     AchievementFrame.Header.Title:Hide()
 
-    GW.CreateFrameHeaderWithBody(AchievementFrame, nil, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 0, 0)
+    GW.CreateFrameHeaderWithBody(AchievementFrame, nil, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 0, true)
 
     AchievementFrameHeader.windowIcon:ClearAllPoints()
     AchievementFrameHeader.windowIcon:SetPoint("CENTER", AchievementFrameHeader, "BOTTOMLEFT", -26, 26)
@@ -1508,31 +1508,6 @@ local function skinAchevement()
         AchievementFrameSummaryAchievement4:SetHeight(height)
         updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement4, select(4, ...))
     end)
-
-    local bgMask = UIParent:CreateMaskTexture()
-    bgMask:SetPoint("TOPLEFT", AchievementFrame, "TOPLEFT", -64, 64)
-    bgMask:SetPoint("BOTTOMRIGHT", AchievementFrame, "BOTTOMLEFT", -64, 0)
-    bgMask:SetTexture(
-        "Interface/AddOns/GW2_UI/textures/masktest",
-        "CLAMPTOBLACKADDITIVE",
-        "CLAMPTOBLACKADDITIVE"
-    )
-    AchievementFrame.tex:AddMaskTexture(bgMask)
-    AchievementFrameHeader.BGLEFT:AddMaskTexture(bgMask)
-    AchievementFrameHeader.BGRIGHT:AddMaskTexture(bgMask)
-    AchivementFrameLeftPanel.background:AddMaskTexture(bgMask)
-    AchievementFrame.backgroundMask = bgMask
-
-    AchievementFrame:HookScript("OnShow",function()
-    AddToAnimation("ACHIVEMENTFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
-        function(p)
-            AchievementFrame:SetAlpha(p)
-            bgMask:SetPoint("BOTTOMRIGHT", AchievementFrame.tex, "BOTTOMLEFT", lerp(-64, AchievementFrame.tex:GetWidth(), p), 0)
-        end, 1, function()
-            bgMask:SetPoint("BOTTOMRIGHT", AchievementFrame.tex, "BOTTOMLEFT", AchievementFrame.tex:GetWidth() + 200 , 0)
-        end)
-    end)
-
     -- make the frame movable
     GW.MakeFrameMovable(AchievementFrame, nil, "AchievementWindow", true)
     GW.MakeFrameMovable(AchievementFrame.Header, AchievementFrame, "AchievementWindow")

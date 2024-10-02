@@ -18,7 +18,7 @@ local function SkinInspectFrameOnLoad()
     InspectFrameCloseButton:SetSize(20, 20)
     InspectPaperDollFrame.ViewButton:GwSkinButton(false, true)
 
-    GW.CreateFrameHeaderWithBody(InspectFrame, InspectFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {InspectPaperDollItemsFrame})
+    GW.CreateFrameHeaderWithBody(InspectFrame, InspectFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {InspectPaperDollItemsFrame}, nil, true)
     InspectFrame.gwHeader.windowIcon:SetSize(65, 65)
     InspectFrame.gwHeader.windowIcon:ClearAllPoints()
     InspectFrame.gwHeader.windowIcon:SetPoint("CENTER", InspectFrame.gwHeader.BGLEFT, "LEFT", 25, -5)

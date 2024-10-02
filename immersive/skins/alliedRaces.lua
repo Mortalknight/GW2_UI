@@ -14,7 +14,7 @@ local function ApplyAlliedRacesUISkin()
 
     select(2, AlliedRacesFrame.ModelScene:GetRegions()):Hide()
 
-    GW.CreateFrameHeaderWithBody(AlliedRacesFrame, AlliedRacesFrameTitleText, "Interface/AddOns/GW2_UI/textures/icons/auction-window-icon", {AlliedRacesFrame.RaceInfoFrame})
+    GW.CreateFrameHeaderWithBody(AlliedRacesFrame, AlliedRacesFrameTitleText, "Interface/AddOns/GW2_UI/textures/icons/auction-window-icon", {AlliedRacesFrame.RaceInfoFrame}, nil, true)
 
     AlliedRacesFrame.Banner:Hide()
     AlliedRacesFrame.RaceInfoFrame.tex:ClearAllPoints()

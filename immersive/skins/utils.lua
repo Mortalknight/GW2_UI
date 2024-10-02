@@ -551,7 +551,7 @@ local function HandleTabs(self, isTop)
 end
 GW.HandleTabs = HandleTabs
 
-local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, detailBackgroundsXOffset)
+local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, detailBackgroundsXOffset, addFrameOpenAnimation)
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
     header:SetClampedToScreen(true)
@@ -581,6 +581,35 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
             detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
             v.tex = detailBg
         end
+    end
+
+    if addFrameOpenAnimation then
+        local bgMask = UIParent:CreateMaskTexture()
+        bgMask:SetPoint("TOPLEFT", frame, "TOPLEFT", -64, 64)
+        bgMask:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", -64, 0)
+        bgMask:SetTexture(
+            "Interface/AddOns/GW2_UI/textures/masktest",
+            "CLAMPTOBLACKADDITIVE",
+            "CLAMPTOBLACKADDITIVE"
+        )
+
+        frame.tex:AddMaskTexture(bgMask)
+        header.BGLEFT:AddMaskTexture(bgMask)
+        header.BGRIGHT:AddMaskTexture(bgMask)
+        if frame.LeftSidePanel then
+            frame.LeftSidePanel.background:AddMaskTexture(bgMask)
+        end
+        frame.backgroundMask = bgMask
+
+        frame:HookScript("OnShow",function()
+        GW.AddToAnimation((frame.GetName and frame:GetName() or tostring(frame)) .. "_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
+            function(p)
+                frame:SetAlpha(p)
+                bgMask:SetPoint("BOTTOMRIGHT", frame.tex, "BOTTOMLEFT", GW.lerp(-64, frame.tex:GetWidth(), p), 0)
+            end, 1, function()
+                bgMask:SetPoint("BOTTOMRIGHT", frame.tex, "BOTTOMLEFT", frame.tex:GetWidth() + 200 , 0)
+            end)
+        end)
     end
 end
 GW.CreateFrameHeaderWithBody = CreateFrameHeaderWithBody

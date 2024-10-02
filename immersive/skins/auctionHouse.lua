@@ -49,8 +49,8 @@ local function HandleTabs(arg1)
 		end
 
 		tab:ClearAllPoints()
-		tab:SetPoint("TOPRIGHT", GwAuctionsHouseFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * GW.ActionHouseTabsAdded))
-		tab:SetParent(GwAuctionsHouseFrameLeftPanel)
+		tab:SetPoint("TOPRIGHT", AuctionHouseFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * GW.ActionHouseTabsAdded))
+		tab:SetParent(AuctionHouseFrame.LeftSidePanel)
 		tab:SetSize(64, 40)
 		GW.ActionHouseTabsAdded = GW.ActionHouseTabsAdded + 1
 	end
@@ -213,6 +213,7 @@ local function ApplyAuctionHouseSkin()
 	AuctionHouseFrameAuctionsFrame.BidsList:GwStripTextures()
 	AuctionHouseFrame.WoWTokenResults:GwStripTextures()
 
+	AuctionHouseFrame.LeftSidePanel = CreateFrame("Frame", "GwAuctionsHouseFrameLeftPanel", AuctionHouseFrame, "GwWindowLeftPanel")
 	GW.CreateFrameHeaderWithBody(AuctionHouseFrame, AuctionHouseFrameTitleText, "Interface/AddOns/GW2_UI/textures/icons/auction-window-icon", {AuctionHouseFrame.CategoriesList,
 								AuctionHouseFrame.BrowseResultsFrame,
 								AuctionHouseFrame.CommoditiesBuyFrame,
@@ -230,7 +231,8 @@ local function ApplyAuctionHouseSkin()
 								AuctionHouseFrameAuctionsFrame.AllAuctionsList,
 								AuctionHouseFrameAuctionsFrame.BidsList,
 								AuctionHouseFrame.WoWTokenResults,
-								})
+								}
+								, nil, true)
 	AuctionHouseFrame:SetWidth(810)
 	AuctionHouseFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/windowbg")
 	AuctionHouseFrame.tex:SetTexCoord(0, 1, 0, 0.74)
@@ -241,7 +243,6 @@ local function ApplyAuctionHouseSkin()
 	AuctionHouseFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
 	AuctionHouseFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
-	CreateFrame("Frame", "GwAuctionsHouseFrameLeftPanel", AuctionHouseFrame, "GwWindowLeftPanel")
 	AuctionHouseFrame:SetClampedToScreen(true)
 	AuctionHouseFrame:SetClampRectInsets(-40, 0, AuctionHouseFrame.gwHeader:GetHeight() - 30, 0)
 
@@ -560,28 +561,6 @@ local function ApplyAuctionHouseSkin()
 
 	multisellFrame.CancelButton:GwSkinButton(true)
 	GW.HandleIcon(progressBar.Icon, true, GW.BackdropTemplates.ColorableBorderOnly)
-
-	local bgMask = UIParent:CreateMaskTexture()
-	bgMask:SetPoint("TOPLEFT", AuctionHouseFrame, "TOPLEFT", -64, 64)
-	bgMask:SetPoint("BOTTOMRIGHT", AuctionHouseFrame, "BOTTOMLEFT", -64, 0)
-	bgMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-	AuctionHouseFrame.tex:AddMaskTexture(bgMask)
-	AuctionHouseFrame.gwHeader.BGLEFT:AddMaskTexture(bgMask)
-	AuctionHouseFrame.gwHeader.BGRIGHT:AddMaskTexture(bgMask)
-	GwAuctionsHouseFrameLeftPanel.background:AddMaskTexture(bgMask)
-	AuctionHouseFrame.backgroundMask = bgMask
-
-	AuctionHouseFrame:HookScript("OnShow",function()
-		GW.AddToAnimation("AUCTIONHOUSEFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
-			function(p)
-				AuctionHouseFrame:SetAlpha(p)
-				bgMask:SetPoint("BOTTOMRIGHT", AuctionHouseFrame.tex, "BOTTOMLEFT", GW.lerp(-64, AuctionHouseFrame.tex:GetWidth(), p), 0)
-			end,
-			1,
-			function()
-				bgMask:SetPoint("BOTTOMRIGHT", AuctionHouseFrame.tex, "BOTTOMLEFT", AuctionHouseFrame.tex:GetWidth() + 200 , 0)
-			end)
-	end)
 
 	-- make the frame movable
     GW.MakeFrameMovable(AuctionHouseFrame, nil, "AuctionHouseWindow", true)
