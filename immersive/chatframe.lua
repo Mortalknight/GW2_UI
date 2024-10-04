@@ -547,7 +547,7 @@ local function OnHyperlinkEnter(self, refString)
 end
 
 local function OnHyperlinkLeave()
-    if GW.settings.CHAT_HYPERLINK_TOOLTIP then return end
+    if not GW.settings.CHAT_HYPERLINK_TOOLTIP then return end
     if hyperLinkEntered then
         hyperLinkEntered = nil
         GameTooltip:Hide()
@@ -555,15 +555,14 @@ local function OnHyperlinkLeave()
 end
 
 local function OnMouseWheel(frame)
-    if GW.settings.CHAT_HYPERLINK_TOOLTIP then return end
+    if not GW.settings.CHAT_HYPERLINK_TOOLTIP then return end
     if hyperLinkEntered == frame then
         hyperLinkEntered = false
         GameTooltip:Hide()
     end
 end
 
-local function ToggleHyperlink(enabled)
-    if enabled == nil then return end
+local function SetupHyperlink(enabled)
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]
         local hooked = hooks and hooks[frame] and hooks[frame].OnHyperlinkEnter
@@ -2232,7 +2231,7 @@ local function LoadChat()
         end
     end)
 
-    ToggleHyperlink(GW.settings.CHAT_HYPERLINK_TOOLTIP)
+    SetupHyperlink()
     UpdateChatKeywords()
     SetupSmileys()
 
