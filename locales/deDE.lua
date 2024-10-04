@@ -664,3 +664,5 @@ L["Reset Minimap Zoom to default value. Set 0 to disable it"] = "Setzt den Minim
 L["Hide class icon"] = "Klassensymbole ausblenden"
 L["Announce Interrupts"] = "Unterbrechungen ankündigen"
 L["Announce when you interrupt a spell to the specified chat channel"] = "Melde über den angegebenen Chatkanal einen unterbrochenen Zauber"
+L["Copy Chat Lines"] = "Chatzeile kopieren"
+L["Adds an arrow infront of the chat lines to copy the entire line"] = "Fügt einen Pfeil vor der Chatzeile hinzu um die gesamte Zeile zu kopieren"

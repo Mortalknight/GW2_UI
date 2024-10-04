@@ -459,35 +459,84 @@ local function SetChatEditBoxMessage(message)
     ChatFrameEditBox:HighlightText()
 end
 
-local SetHyperlink = _G.ItemRefTooltip.SetHyperlink
-function _G.ItemRefTooltip:SetHyperlink(data, ...)
+local function HyperLinkedURL(data)
     if strsub(data, 1, 3) == "url" then
         local currentLink = strsub(data, 5)
         if currentLink and currentLink ~= "" then
             SetChatEditBoxMessage(currentLink)
         end
-    elseif strsub(data, 1, 3) == "squ" then
+    end
+end
+
+local function HyperLinkedSQU(data)
+    if strsub(data, 1, 3) == "squ" then
+        if GW.settings.USE_SOCIAL_WINDOW then
+            if InCombatLockdown() then return end
+            GwSocialWindow:SetAttribute("windowpanelopen", "quicklist")
+        else
+            if not QuickJoinFrame:IsShown() then
+                ToggleQuickJoinPanel()
+            end
+        end
+
         local guid = strsub(data, 5)
         if guid and guid ~= "" then
-            if GW.settings.USE_SOCIAL_WINDOW then
-                if InCombatLockdown() then return end
-                GwSocialWindow:SetAttribute("windowpanelopen", "quicklist")
-            else
-                if not QuickJoinFrame:IsShown() then
-                    ToggleQuickJoinPanel()
-                end
-            end
             QuickJoinFrame:SelectGroup(guid)
             QuickJoinFrame:ScrollToGroup(guid)
         end
-    else
-        SetHyperlink(self, data, ...)
+    end
+end
+
+local function HyperLinkedCPL(data)
+    local chatID = strsub(data, 5)
+    local chat = _G[format("ChatFrame%d", chatID)]
+    if not chat then return end
+
+    local cursorX, cursorY = GetCursorPosition()
+    local scale = chat:GetEffectiveScale() --blizzard does this with `scale = UIParent:GetScale()`
+    local posX, posY = (cursorX / scale), (cursorY / scale)
+
+    local _, index = chat:FindCharacterAndLineIndexAtCoordinate(posX, posY)
+    if not index then return end
+
+    local line = chat.visibleLines and chat.visibleLines[index]
+    local msg = line and line.messageInfo and line.messageInfo.message
+    if msg and not isMessageProtected(msg) then
+        msg = gsub(msg,"|c(%x-)|H(.-)|h(.-)|h|r","\10c%1\10H%2\10h%3\10h\10r") -- strip colors and trim but not hyperlinks
+        msg = gsub(msg,"||","\11") -- for printing item lines from /dump, etc
+        msg = GW.StripString(removeIconFromLine(msg))
+        msg = gsub(msg,"\11","||")
+        msg = gsub(msg,"\10c(%x-)\10H(.-)\10h(.-)\10h\10r","|c%1|H%2|h%3|h|r")
+
+        if msg ~= "" then
+            SetChatEditBoxMessage(msg)
+        end
+    end
+end
+
+do
+    local funcs = {
+        cpl = HyperLinkedCPL,
+        squ = HyperLinkedSQU,
+        url = HyperLinkedURL
+    }
+
+    local SetHyperlink = _G.ItemRefTooltip.SetHyperlink
+    function _G.ItemRefTooltip:SetHyperlink(data, ...)
+        if strsub(data, 1, 6) ~= "gwtime" then
+            local func = funcs[strsub(data, 1, 3)]
+            if func then
+                func(data)
+            else
+                SetHyperlink(self, data, ...)
+            end
+        end
     end
 end
 
 local hyperLinkEntered
 local function OnHyperlinkEnter(self, refString)
-    if InCombatLockdown() then return end
+    if InCombatLockdown() or not GW.settings.CHAT_HYPERLINK_TOOLTIP then return end
     local linkToken = strmatch(refString, "^([^:]+)")
     if hyperlinkTypes[linkToken] then
         GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
@@ -498,6 +547,7 @@ local function OnHyperlinkEnter(self, refString)
 end
 
 local function OnHyperlinkLeave()
+    if GW.settings.CHAT_HYPERLINK_TOOLTIP then return end
     if hyperLinkEntered then
         hyperLinkEntered = nil
         GameTooltip:Hide()
@@ -505,6 +555,7 @@ local function OnHyperlinkLeave()
 end
 
 local function OnMouseWheel(frame)
+    if GW.settings.CHAT_HYPERLINK_TOOLTIP then return end
     if hyperLinkEntered == frame then
         hyperLinkEntered = false
         GameTooltip:Hide()
@@ -512,18 +563,17 @@ local function OnMouseWheel(frame)
 end
 
 local function ToggleHyperlink(enabled)
-    if not enabled then return end
+    if enabled == nil then return end
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]
         local hooked = hooks and hooks[frame] and hooks[frame].OnHyperlinkEnter
         if not hooked then
-            frame:HookScript("OnHyperlinkEnter", enabled and OnHyperlinkEnter or nil)
-            frame:HookScript("OnHyperlinkLeave", enabled and OnHyperlinkLeave or nil)
-            frame:HookScript("OnMouseWheel", enabled and OnMouseWheel or nil)
+            frame:HookScript("OnHyperlinkEnter", OnHyperlinkEnter)
+            frame:HookScript("OnHyperlinkLeave", OnHyperlinkLeave)
+            frame:HookScript("OnMouseWheel", OnMouseWheel)
         end
     end
 end
-GW.ToggleChatHyperlink = ToggleHyperlink
 
 local function UpdateChatKeywords()
     wipe(Keywords)
@@ -776,33 +826,39 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
     return ChatFrame_AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil;
 end
 
-local function AddMessageEdits(self, msg, alwaysAddTimestamp)
-    local timeStampFormat = GetChatTimestampFormat()
+local function AddMessageEdits(frame, msg, alwaysAddTimestamp)
+    if not strmatch(msg, '^%s*$') and not strmatch(msg, '^|Hgwtime|h') and not strmatch(msg, '^|Hcpl:') then
+        local timeStampFormat = GetChatTimestampFormat()
 
-    if timeStampFormat and (GW.settings.CHAT_ADD_TIMESTAMP_TO_ALL or alwaysAddTimestamp) then
-        local timeStamp = BetterDate(timeStampFormat, time())
-        timeStamp = gsub(timeStamp, " ", "")
-        timeStamp = gsub(timeStamp, "AM", " AM")
-        timeStamp = gsub(timeStamp, "PM", " PM")
+        if timeStampFormat and (GW.settings.CHAT_ADD_TIMESTAMP_TO_ALL or alwaysAddTimestamp) then
+            local timeStamp = BetterDate(timeStampFormat, time())
+            timeStamp = gsub(timeStamp, " ", "")
+            timeStamp = gsub(timeStamp, "AM", " AM")
+            timeStamp = gsub(timeStamp, "PM", " PM")
 
-        if GW.settings.CHAT_USE_GW2_STYLE then
-            msg = format("|c%s[%s]|r %s", "FF888888", timeStamp, msg)
-        else
-            msg = format("[%s] %s", timeStamp, msg)
+            if GW.settings.CHAT_USE_GW2_STYLE then
+                msg = format("|Hgwtime|h|c%s[%s]|r|h %s", "FF888888", timeStamp, msg)
+            else
+                msg = format("|Hgwtime|h[%s]|h %s", timeStamp, msg)
+            end
         end
-    end
 
-    -- color channel in light grey
-    if GW.settings.CHAT_USE_GW2_STYLE then
         -- color channel in light grey
-        msg = msg:gsub(" |Hchannel:(.-)|h%[(.-)%]|h", function(channelLink, channelTag)
-            return string.format("|Hchannel:%s|h|c%s[%s]|r|h", channelLink, "FFD0D0D0", channelTag)
-        end)
+        if GW.settings.CHAT_USE_GW2_STYLE then
+            -- color channel in light grey
+            msg = msg:gsub(" |Hchannel:(.-)|h%[(.-)%]|h", function(channelLink, channelTag)
+                return string.format("|Hchannel:%s|h|c%s[%s]|r|h", channelLink, "FFD0D0D0", channelTag)
+            end)
 
-        -- remove square brackets from message name in chat
-        msg = msg:gsub("|h%[(|c(.-)|r)%]|h: ", function(coloredPlayer)
-            return string.format("|h%s|h: ", coloredPlayer)
-        end)
+            -- remove square brackets from message name in chat
+            msg = msg:gsub("|h%[(|c(.-)|r)%]|h: ", function(coloredPlayer)
+                return string.format("|h%s|h: ", coloredPlayer)
+            end)
+        end
+
+        if GW.settings.copyChatLines then
+			msg = format('|Hcpl:%s|h%s|h %s', frame:GetID(), format("|T%s:14|t", "Interface/AddOns/GW2_UI/textures/uistuff/arrow_right"), msg)
+		end
     end
 
     return msg

@@ -634,3 +634,5 @@ L["Reset Minimap Zoom to default value. Set 0 to disable it"] = true
 L["Hide class icon"] = true
 L["Announce Interrupts"] = true
 L["Announce when you interrupt a spell to the specified chat channel"] = true
+L["Copy Chat Lines"] = true
+L["Adds an arrow infront of the chat lines to copy the entire line"] = true

@@ -235,6 +235,7 @@ GW.globalDefault = {
         CHAT_USE_GW2_STYLE= true,
         CHAT_NUM_SCROLL_MESSAGES= 3,
         CHAT_SCROLL_DOWN_INTERVAL= 15,
+        copyChatLines = false,
 
         target_TARGET_ENABLED= true,
         target_TARGET_SHOW_CASTBAR= true,
