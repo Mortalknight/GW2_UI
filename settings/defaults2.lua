@@ -9,6 +9,7 @@ GW.privateDefaults = {
         PLAYER_TRACKED_DODGEBAR_SPELL_ID = 0,
         ISKAARAN_FISHING_NET_DATA = {},
         CHAT_KEYWORDS_ALERT_COLOR= {r = .5, g = .5, b = .5},
+        ChatHistoryLog = {},
     },
 }
 
@@ -543,6 +544,20 @@ GW.globalDefault = {
         CHAT_KEYWORDS_EMOJI= true,
         CHAT_SOCIAL_LINK= true,
         CHAT_ADD_TIMESTAMP_TO_ALL= true,
+        chatHistory = true,
+        showHistory = { -- maybe as setting later
+            WHISPER = true,
+            GUILD = true,
+            PARTY = true,
+            RAID = true,
+            INSTANCE = true,
+            CHANNEL = true,
+            SAY = true,
+            YELL = true,
+            EMOTE = true
+        },
+        historySize = 100,
+        timeStampFormat = "NONE",
 
         ClasspowerBar_pos= {
             point= "BOTTOMLEFT",

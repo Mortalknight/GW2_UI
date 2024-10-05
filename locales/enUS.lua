@@ -618,7 +618,6 @@ L["Headers"] = true
 L["Normal text"] = true
 L["Small text"] = true
 L["Use GW2 Text Style Template"] = true
-
 L["Header Font"] = true
 L["Shorten values"] = true
 L["Shorten health values"] = true
@@ -636,3 +635,7 @@ L["Announce Interrupts"] = true
 L["Announce when you interrupt a spell to the specified chat channel"] = true
 L["Copy Chat Lines"] = true
 L["Adds an arrow infront of the chat lines to copy the entire line"] = true
+L["Log the main chat frames history. So when you reloadui or log in and out you see the history from your last session."] = true
+L["History"] = true
+L["History Size"] = true
+L["Reset History"] = true

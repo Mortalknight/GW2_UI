@@ -776,9 +776,7 @@ local function evPlayerLogin(self)
         GW.LoadQuestview()
     end
 
-    if GW.settings.CHATFRAME_ENABLED then
-        GW.LoadChat()
-    end
+    GW.LoadChat()
 
     --Create player hud
     if GW.settings.HEALTHGLOBE_ENABLED and not GW.settings.PLAYER_AS_TARGET_FRAME then

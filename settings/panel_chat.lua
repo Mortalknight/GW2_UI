@@ -2,6 +2,7 @@ local _, GW = ...
 local L = GW.L
 local addOption = GW.AddOption
 local addOptionColorPicker = GW.AddOptionColorPicker
+local addOptionButton = GW.AddOptionButton
 local addOptionSlider = GW.AddOptionSlider
 local addOptionText = GW.AddOptionText
 local addOptionDropdown = GW.AddOptionDropdown
@@ -31,7 +32,33 @@ local function LoadChatPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Emotion Icons"], L["Display emotion icons in chat"], "CHAT_KEYWORDS_EMOJI", function(value) GW.UpdateChatSettings(); GW_EmoteFrame:Hide(); for _, frameName in ipairs(CHAT_FRAMES) do if _G[frameName].buttonEmote then _G[frameName].buttonEmote:SetShown(value); end end end, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Quick Join Messages"], L["Show clickable Quick Join messages inside of the chat."], "CHAT_SOCIAL_LINK", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Add timestamp to all messages"], nil, "CHAT_ADD_TIMESTAMP_TO_ALL", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, GW.NewSign ..  L["Copy Chat Lines"], L["Adds an arrow infront of the chat lines to copy the entire line"], "copyChatLines", nil, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, GW.NewSign .. L["Copy Chat Lines"], L["Adds an arrow infront of the chat lines to copy the entire line"], "copyChatLines", nil, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, GW.NewSign .. L["History"], L["Log the main chat frames history. So when you reloadui or log in and out you see the history from your last session"], "chatHistory", nil, nil, {["CHATFRAME_ENABLED"] = true})
+
+    addOptionSlider(
+        p.scroll.scrollchild,
+        GW.NewSign .. L["History Size"],
+        nil,
+        "historySize",
+        nil,
+        10,
+        500,
+        nil,
+        0,
+        {["CHATFRAME_ENABLED"] = true, ["chatHistory"] = true},
+        1
+    )
+    addOptionButton(p.scroll.scrollchild, GW.NewSign .. L["Reset History"], nil, "GW2_ResetChatHistoryButton", function() GW.private.ChatHistoryLog = {} end)
+
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        GW.NewSign .. TIMESTAMPS_LABEL,
+        OPTION_TOOLTIP_TIMESTAMPS,
+        "timeStampFormat",
+        nil,
+        {"NONE", "%I:%M ", "%I:%M:%S ", "%I:%M %p ", "%I:%M:%S %p ", "%H:%M ", "%H:%M:%S "},
+        {NONE, "03:27", "03:27:32", "03:27 PM", "03:27:32 PM", "15:27", "15:27:32"}
+    )
 
     addOptionDropdown(
         p.scroll.scrollchild,
