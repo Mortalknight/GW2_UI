@@ -14,8 +14,8 @@ local function AddTsmTab(_, tabId)
     end
 
     tab:ClearAllPoints()
-    tab:SetPoint("TOPRIGHT", GwAuctionsHouseFrameLeftPanel, "TOPLEFT", 1, -32 + (-40 * GW.ActionHouseTabsAdded))
-    tab:SetParent(GwAuctionsHouseFrameLeftPanel)
+    tab:SetPoint("TOPRIGHT", AuctionHouseFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * GW.ActionHouseTabsAdded))
+    tab:SetParent(AuctionHouseFrame.LeftSidePanel)
     tab:SetSize(64, 40)
     GW.ActionHouseTabsAdded = GW.ActionHouseTabsAdded + 1
 end
