@@ -1067,8 +1067,8 @@ local function AddMessageEdits(frame, msg, alwaysAddTimestamp, isHistory, histor
     return msg
 end
 
-local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID, event, eventArgs, msgFormatter, alwaysAddTimestamp, isHistory, historyTime)
-    local body = AddMessageEdits(self, msg, alwaysAddTimestamp, isHistory, historyTime)
+local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID, event, eventArgs, msgFormatter, isHistory, historyTime)
+    local body = AddMessageEdits(self, msg, nil, isHistory, historyTime)
     self.OldAddMessage(self, body, infoR, infoG, infoB, infoID, accessID, typeID, event, eventArgs, msgFormatter)
 end
 
