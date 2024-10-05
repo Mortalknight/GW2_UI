@@ -213,7 +213,6 @@ local function ApplyAuctionHouseSkin()
 	AuctionHouseFrameAuctionsFrame.BidsList:GwStripTextures()
 	AuctionHouseFrame.WoWTokenResults:GwStripTextures()
 
-	AuctionHouseFrame.LeftSidePanel = CreateFrame("Frame", "GwAuctionsHouseFrameLeftPanel", AuctionHouseFrame, "GwWindowLeftPanel")
 	GW.CreateFrameHeaderWithBody(AuctionHouseFrame, AuctionHouseFrameTitleText, "Interface/AddOns/GW2_UI/textures/icons/auction-window-icon", {AuctionHouseFrame.CategoriesList,
 								AuctionHouseFrame.BrowseResultsFrame,
 								AuctionHouseFrame.CommoditiesBuyFrame,
@@ -232,7 +231,7 @@ local function ApplyAuctionHouseSkin()
 								AuctionHouseFrameAuctionsFrame.BidsList,
 								AuctionHouseFrame.WoWTokenResults,
 								}
-								, nil, true)
+								, nil, true, true)
 	AuctionHouseFrame:SetWidth(810)
 	AuctionHouseFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/windowbg")
 	AuctionHouseFrame.tex:SetTexCoord(0, 1, 0, 0.74)

@@ -1084,8 +1084,6 @@ local function skinAchevement()
 
     AchievementFrame:SetSize(853, 627)
 
-    AchievementFrame.LeftSidePanel = CreateFrame("Frame", "AchivementFrameLeftPanel", AchievementFrame, "GwWindowLeftPanel")
-
     AchievementFrameCategories:SetSize(221, 426)
     AchievementFrameCategories:ClearAllPoints()
     AchievementFrameCategories:SetPoint("TOPLEFT", 10, -172)
@@ -1103,8 +1101,8 @@ local function skinAchevement()
 
     AchievementFrame.Header.Title:Hide()
 
-    GW.CreateFrameHeaderWithBody(AchievementFrame, nil, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 0, true)
-
+    GW.CreateFrameHeaderWithBody(AchievementFrame, nil, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 0, true, true)
+    AchivementFrameLeftPanel = AchievementFrame.LeftSidePanel -- needed for krowis skin
     AchievementFrameHeader.windowIcon:ClearAllPoints()
     AchievementFrameHeader.windowIcon:SetPoint("CENTER", AchievementFrameHeader, "BOTTOMLEFT", -26, 26)
     AchievementFrameHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/achievements-window-icon")

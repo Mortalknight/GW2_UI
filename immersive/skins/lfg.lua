@@ -96,14 +96,11 @@ local function SkinLookingForGroupFrames()
     RaidFinderFrame:GwStripTextures()
     RaidFinderQueueFrame:GwStripTextures(true)
 
-    PVEFrame.LeftSidePanel = CreateFrame("Frame", "GwPVEFrameLeftPanel", PVEFrame, "GwWindowLeftPanel")
-
     GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon", {
         LFDQueueFrame,
         RaidFinderQueueFrame,
         LFGListPVEStub
-    }
-    , nil, true)
+    }, nil, true, true)
     PVEFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     -- copied from blizzard need to icon switching

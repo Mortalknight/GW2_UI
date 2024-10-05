@@ -551,7 +551,7 @@ local function HandleTabs(self, isTop)
 end
 GW.HandleTabs = HandleTabs
 
-local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, detailBackgroundsXOffset, addFrameOpenAnimation)
+local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, detailBackgroundsXOffset, addLeftSidePanel, addFrameOpenAnimation)
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
     header:SetClampedToScreen(true)
@@ -581,6 +581,11 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
             detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
             v.tex = detailBg
         end
+    end
+
+
+    if addLeftSidePanel then
+        frame.LeftSidePanel = CreateFrame("Frame", frame:GetName() .. "LeftPanel", frame, "GwWindowLeftPanel")
     end
 
     if addFrameOpenAnimation then
