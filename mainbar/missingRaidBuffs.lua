@@ -164,9 +164,9 @@ local function setButtonStyle(button, haveBuff)
         button.icon:SetDesaturated(GW.settings.MISSING_RAID_BUFF_INVERT and GW.settings.MISSING_RAID_BUFF_grayed_out or false)
         button:SetAlpha(not GW.settings.MISSING_RAID_BUFF_INVERT and 1 or GW.settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1)
         if GW.settings.MISSING_RAID_BUFF_animated then
-            LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
+            LibCustomGlow.ButtonGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
         else
-            LibCustomGlow.PixelGlow_Stop(button)
+            LibCustomGlow.ButtonGlow_Stop(button)
         end
     else
         if GW.settings.MISSING_RAID_BUFF_INVERT then
@@ -176,7 +176,7 @@ local function setButtonStyle(button, haveBuff)
         end
 
         button:SetAlpha(GW.settings.MISSING_RAID_BUFF_INVERT and 1 or GW.settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1)
-        LibCustomGlow.PixelGlow_Stop(button)
+        LibCustomGlow.ButtonGlow_Stop(button)
     end
 end
 

@@ -562,7 +562,7 @@ local function OnMouseWheel(frame)
     end
 end
 
-local function SetupHyperlink(enabled)
+local function SetupHyperlink()
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]
         local hooked = hooks and hooks[frame] and hooks[frame].OnHyperlinkEnter
