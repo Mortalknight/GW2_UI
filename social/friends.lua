@@ -196,7 +196,7 @@ local function LoadFriendList(tabContainer)
                 local diffColor = GetQuestDifficultyColor(level)
                 local diff = level ~= 0 and format("FF%02x%02x%02x", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255) or "FFFFFFFF"
 
-                nameText = format('%s |cFFFFFFFF(|r%s - %s %s|cFFFFFFFF)|r', WrapTextInColorCode(name, color), class, LEVEL, WrapTextInColorCode(level, diff))
+                nameText = format('%s |cFFFFFFFF(|r%s - %s %s|cFFFFFFFF)|r', WrapTextInColorCode(name, color.colorStr), class, LEVEL, WrapTextInColorCode(level, diff))
                 infoText = info.area
 
                 if classTag then
