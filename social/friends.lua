@@ -1,4 +1,5 @@
 local _, GW = ...
+local L = GW.L
 
 local atlasToTex = {
     ["friendslist-invitebutton-horde-normal"] = [[Interface\FriendsFrame\PlusManz-Horde]],
@@ -6,43 +7,43 @@ local atlasToTex = {
     ["friendslist-invitebutton-default-normal"] = [[Interface\FriendsFrame\PlusManz-PlusManz]],
 }
 
-local MediaPath = 'Interface/AddOns/GW2_UI/Textures/social/'
-local ONE_MINUTE = 60;
-local ONE_HOUR = 60 * ONE_MINUTE;
-local ONE_DAY = 24 * ONE_HOUR;
-local ONE_MONTH = 30 * ONE_DAY;
-local ONE_YEAR = 12 * ONE_MONTH;
+local MediaPath = "Interface/AddOns/GW2_UI/Textures/social/"
+local ONE_MINUTE = 60
+local ONE_HOUR = 60 * ONE_MINUTE
+local ONE_DAY = 24 * ONE_HOUR
+local ONE_MONTH = 30 * ONE_DAY
+local ONE_YEAR = 12 * ONE_MONTH
 local icons = {
     Game = {
-        Alliance = { Name = _G.FACTION_ALLIANCE, Order = 1, Launcher = MediaPath..'GameIcons/Launcher/Alliance' },
-        Horde = { Name = _G.FACTION_HORDE, Order = 2,  Launcher = MediaPath..'GameIcons/Launcher/Horde' },
-        Neutral = { Name = _G.FACTION_STANDING_LABEL4, Order = 3, Launcher = MediaPath..'GameIcons/Launcher/WoW' },
-        App = { Name = GW.L['App'], Order = 4, Color = '82C5FF', Launcher = MediaPath..'GameIcons/Launcher/BattleNet' },
-        BSAp = { Name = GW.L['Mobile'], Order = 5, Color = '82C5FF', Launcher = MediaPath..'GameIcons/Launcher/Mobile' },
-        D3 = { Name = GW.L['Diablo 3'], Color = 'C41F3B', Launcher = MediaPath..'GameIcons/Launcher/D3' },
-        Fen = { Name = GW.L['Diablo 4'], Color = 'C41F3B', Launcher = MediaPath..'GameIcons/Launcher/D4' },
-        WTCG = { Name = GW.L['Hearthstone'], Color = 'FFB100', Launcher = MediaPath..'GameIcons/Launcher/Hearthstone' },
-        S1 = { Name = GW.L['Starcraft'], Color = 'C495DD', Launcher = MediaPath..'GameIcons/Launcher/SC' },
-        S2 = { Name = GW.L['Starcraft 2'], Color = 'C495DD', Launcher = MediaPath..'GameIcons/Launcher/SC2' },
-        Hero = { Name = GW.L['Hero of the Storm'], Color = '00CCFF', Launcher = MediaPath..'GameIcons/Launcher/Heroes' },
-        Pro = { Name = GW.L['Overwatch'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/Overwatch' },
-        VIPR = { Name = GW.L['Call of Duty 4'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/COD4' },
-        ODIN = { Name = GW.L['Call of Duty Modern Warfare'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/CODMW' },
-        W3 = { Name = GW.L['Warcraft 3 Reforged'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/WC3R' },
-        LAZR = { Name = GW.L['Call of Duty Modern Warfare 2'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/CODMW2' },
-        ZEUS = { Name = GW.L['Call of Duty Cold War'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/CODCW' },
-        WLBY = { Name = GW.L['Crash Bandicoot 4'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/CB4' },
-        OSI = { Name = GW.L['Diablo II Resurrected'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/D2' },
-        FORE = { Name = GW.L['Call of Duty Vanguard'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/CODVanguard' },
-        RTRO = { Name = GW.L['Arcade Collection'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/Arcade' },
-        ANBS = { Name = GW.L['Diablo Immortal'], Color = 'C41F3B', Launcher = MediaPath..'GameIcons/Launcher/DI' },
-        GRY = { Name = GW.L['Warcraft Arclight Rumble'], Color = 'FFFFFF', Launcher = MediaPath..'GameIcons/Launcher/Arclight' },
+        Alliance = { Name = FACTION_ALLIANCE, Order = 1, Launcher = MediaPath.."GameIcons/Launcher/Alliance" },
+        Horde = { Name = FACTION_HORDE, Order = 2,  Launcher = MediaPath.."GameIcons/Launcher/Horde" },
+        Neutral = { Name = FACTION_STANDING_LABEL4, Order = 3, Launcher = MediaPath.."GameIcons/Launcher/WoW" },
+        App = { Name = L["App"], Order = 4, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/BattleNet" },
+        BSAp = { Name = L["Mobile"], Order = 5, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/Mobile" },
+        D3 = { Name = L["Diablo 3"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/D3" },
+        Fen = { Name = L["Diablo 4"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/D4" },
+        WTCG = { Name = L["Hearthstone"], Color = "FFB100", Launcher = MediaPath.."GameIcons/Launcher/Hearthstone" },
+        S1 = { Name = L["Starcraft"], Color = "C495DD", Launcher = MediaPath.."GameIcons/Launcher/SC" },
+        S2 = { Name = L["Starcraft 2"], Color = "C495DD", Launcher = MediaPath.."GameIcons/Launcher/SC2" },
+        Hero = { Name = L["Hero of the Storm"], Color = "00CCFF", Launcher = MediaPath.."GameIcons/Launcher/Heroes" },
+        Pro = { Name = L["Overwatch"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/Overwatch" },
+        VIPR = { Name = L["Call of Duty 4"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/COD4" },
+        ODIN = { Name = L["Call of Duty Modern Warfare"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/CODMW" },
+        W3 = { Name = L["Warcraft 3 Reforged"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/WC3R" },
+        LAZR = { Name = L["Call of Duty Modern Warfare 2"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/CODMW2" },
+        ZEUS = { Name = L["Call of Duty Cold War"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/CODCW" },
+        WLBY = { Name = L["Crash Bandicoot 4"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/CB4" },
+        OSI = { Name = L["Diablo II Resurrected"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/D2" },
+        FORE = { Name = L["Call of Duty Vanguard"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/CODVanguard" },
+        RTRO = { Name = L["Arcade Collection"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/Arcade" },
+        ANBS = { Name = L["Diablo Immortal"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/DI" },
+        GRY = { Name = L["Warcraft Arclight Rumble"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/Arclight" },
     },
     Status = {
-        Online = { Name = _G.FRIENDS_LIST_ONLINE, Order = 1, Default = _G.FRIENDS_TEXTURE_ONLINE, Square = MediaPath..'StatusIcons/Square/Online', D3 = MediaPath..'StatusIcons/D3/Online', Color = {.243, .57, 1} },
-        Offline = { Name = _G.FRIENDS_LIST_OFFLINE, Order = 2, Default = _G.FRIENDS_TEXTURE_OFFLINE, Square = MediaPath..'StatusIcons/Square/Offline', D3 = MediaPath..'StatusIcons/D3/Offline', Color = {.486, .518, .541} },
-        DND = { Name = _G.DEFAULT_DND_MESSAGE, Order = 3, Default = _G.FRIENDS_TEXTURE_DND, Square = MediaPath..'StatusIcons/Square/DND', D3 = MediaPath..'StatusIcons/D3/DND', Color = {1, 0, 0} },
-        AFK = { Name = _G.DEFAULT_AFK_MESSAGE, Order = 4, Default = _G.FRIENDS_TEXTURE_AFK, Square = MediaPath..'StatusIcons/Square/AFK', D3 = MediaPath..'StatusIcons/D3/AFK', Color = {1, 1, 0} },
+        Online = { Name = FRIENDS_LIST_ONLINE, Order = 1, Default = FRIENDS_TEXTURE_ONLINE, Square = MediaPath.."StatusIcons/Square/Online", D3 = MediaPath.."StatusIcons/D3/Online", Color = {.243, .57, 1} },
+        Offline = { Name = FRIENDS_LIST_OFFLINE, Order = 2, Default = FRIENDS_TEXTURE_OFFLINE, Square = MediaPath.."StatusIcons/Square/Offline", D3 = MediaPath.."StatusIcons/D3/Offline", Color = {.486, .518, .541} },
+        DND = { Name = DEFAULT_DND_MESSAGE, Order = 3, Default = FRIENDS_TEXTURE_DND, Square = MediaPath.."StatusIcons/Square/DND", D3 = MediaPath.."StatusIcons/D3/DND", Color = {1, 0, 0} },
+        AFK = { Name = DEFAULT_AFK_MESSAGE, Order = 4, Default = FRIENDS_TEXTURE_AFK, Square = MediaPath.."StatusIcons/Square/AFK", D3 = MediaPath.."StatusIcons/D3/AFK", Color = {1, 1, 0} },
     }
 }
 
@@ -71,13 +72,13 @@ local function CreateTexture(button, type, layer)
     button.efl[type].Left:SetHeight(32)
     button.efl[type].Left:SetPoint("LEFT", button, "CENTER")
     button.efl[type].Left:SetPoint("TOPLEFT", button, "TOPLEFT")
-    button.efl[type].Left:SetTexture('Interface/Buttons/WHITE8X8')
+    button.efl[type].Left:SetTexture("Interface/Buttons/WHITE8X8")
 
     button.efl[type].Right = button:CreateTexture(nil, layer)
     button.efl[type].Right:SetHeight(32)
     button.efl[type].Right:SetPoint("RIGHT", button, "CENTER")
     button.efl[type].Right:SetPoint("TOPRIGHT", button, "TOPRIGHT")
-    button.efl[type].Right:SetTexture('Interface/Buttons/WHITE8X8')
+    button.efl[type].Right:SetTexture("Interface/Buttons/WHITE8X8")
 end
 
 local function HandleInviteTex(self, atlas)
@@ -94,7 +95,7 @@ local function LoadFriendList(tabContainer)
     GWFriendFrame:SetScript("OnShow", function()
         FriendsList_Update(true)
         if not InCombatLockdown() then UpdateMicroButtons() end
-        FriendsFrame_CheckQuickJoinHelpTip();
+        FriendsFrame_CheckQuickJoinHelpTip()
         FriendsFrame_UpdateQuickJoinTab(#C_SocialQueue.GetAllGroups())
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
         C_GuildInfo.GuildRoster()
@@ -176,7 +177,7 @@ local function LoadFriendList(tabContainer)
             button.IsSkinned = true
         end
 
-        if button.newIcon and button.buttonType == _G.FRIENDS_BUTTON_TYPE_BNET then
+        if button.newIcon and button.buttonType == FRIENDS_BUTTON_TYPE_BNET then
             if FriendsFrame_GetInviteRestriction(button.id) == INVITE_RESTRICTION_NONE then
                 button.newIcon:SetVertexColor(1, 1, 1)
             else
@@ -186,22 +187,22 @@ local function LoadFriendList(tabContainer)
 
         -- game icon skin
         local nameText, infoText
-        local status = 'Offline'
+        local status = "Offline"
         if button.buttonType == FRIENDS_BUTTON_TYPE_WOW then
             local info = C_FriendList.GetFriendInfoByIndex(button.id)
             if info.connected then
                 local name, level, class = info.name, info.level, info.className
                 local classTag, color = GW.UnlocalizedClassName(class), GW.GWGetClassColor(GW.UnlocalizedClassName(class), true, true, true)
-                status = info.dnd and 'DND' or info.afk and 'AFK' or 'Online'
+                status = info.dnd and "DND" or info.afk and "AFK" or "Online"
                 local diffColor = GetQuestDifficultyColor(level)
                 local diff = level ~= 0 and format("FF%02x%02x%02x", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255) or "FFFFFFFF"
 
-                nameText = format('%s |cFFFFFFFF(|r%s - %s %s|cFFFFFFFF)|r', WrapTextInColorCode(name, color.colorStr), class, LEVEL, WrapTextInColorCode(level, diff))
+                nameText = format("%s |cFFFFFFFF(|r%s - %s %s|cFFFFFFFF)|r", WrapTextInColorCode(name, color.colorStr), class, LEVEL, WrapTextInColorCode(level, diff))
                 infoText = info.area
 
                 if classTag then
                     button.gameIcon:Show()
-                    button.gameIcon:SetTexture('Interface/WorldStateFrame/Icons-Classes')
+                    button.gameIcon:SetTexture("Interface/WorldStateFrame/Icons-Classes")
                     button.gameIcon:SetTexCoord(unpack(CLASS_ICON_TCOORDS[classTag]))
                 end
             else
@@ -215,7 +216,7 @@ local function LoadFriendList(tabContainer)
                 infoText = info.gameAccountInfo.richPresence
                 if info.gameAccountInfo.isOnline then
                     local client = info.gameAccountInfo.clientProgram
-                    status = info.isDND and 'DND' or info.isAFK and 'AFK' or 'Online'
+                    status = info.isDND and "DND" or info.isAFK and "AFK" or "Online"
 
                     if client == BNET_CLIENT_WOW then
                         local level = info.gameAccountInfo.characterLevel
@@ -223,12 +224,12 @@ local function LoadFriendList(tabContainer)
                         local classcolor = GW.GWGetClassColor(GW.UnlocalizedClassName(info.gameAccountInfo.className), true, true, true)
                         if characterName then
                             local diffColor = GetQuestDifficultyColor(level)
-                            local diff = level ~= 0 and format('FF%02x%02x%02x', diffColor.r * 255, diffColor.g * 255, diffColor.b * 255) or 'FFFFFFFF'
-                            nameText = format('%s (%s - %s %s)', nameText, WrapTextInColorCode(characterName, classcolor.colorStr), LEVEL, WrapTextInColorCode(level, diff))
+                            local diff = level ~= 0 and format("FF%02x%02x%02x", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255) or "FFFFFFFF"
+                            nameText = format("%s (%s - %s %s)", nameText, WrapTextInColorCode(characterName, classcolor.colorStr), LEVEL, WrapTextInColorCode(level, diff))
                         end
 
-                        if info.gameAccountInfo.wowProjectID == _G.WOW_PROJECT_CLASSIC and info.gameAccountInfo.realmDisplayName ~= GW.myrealm then
-                            infoText = format('%s - %s', info.gameAccountInfo.areaName or _G.UNKNOWN, infoText)
+                        if info.gameAccountInfo.wowProjectID == WOW_PROJECT_CLASSIC and info.gameAccountInfo.realmDisplayName ~= GW.myrealm then
+                            infoText = format("%s - %s", info.gameAccountInfo.areaName or UNKNOWN, infoText)
                         elseif info.gameAccountInfo.realmDisplayName == GW.myrealm then
                             infoText = info.gameAccountInfo.areaName
                         end
@@ -236,17 +237,17 @@ local function LoadFriendList(tabContainer)
                         local faction = info.gameAccountInfo.factionName
                         button.gameIcon:SetTexture(faction and icons.Game[faction].Launcher or icons.Game.Neutral.Launcher)
                     else
-                        if not icons.Game[client] then client = 'BSAp' end
-                        nameText = format('|cFF%s%s|r', icons.Game[client].Color or 'FFFFFF', nameText)
+                        if not icons.Game[client] then client = "BSAp" end
+                        nameText = format("|cFF%s%s|r", icons.Game[client].Color or "FFFFFF", nameText)
                         button.gameIcon:SetTexture(icons.Game[client].Launcher)
                     end
 
                     button.gameIcon:SetTexCoord(0, 1, 0, 1)
-                    button.gameIcon:SetDrawLayer('ARTWORK')
+                    button.gameIcon:SetDrawLayer("ARTWORK")
                     button.gameIcon:SetAlpha(1)
                 else
                     local lastOnline = info.lastOnlineTime
-                    infoText = (not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR) and _G.FRIENDS_LIST_OFFLINE or format(_G.BNET_LAST_ONLINE_TIME, _G.FriendsFrame_GetLastOnline(lastOnline))
+                    infoText = (not lastOnline or lastOnline == 0 or time() - lastOnline >= ONE_YEAR) and FRIENDS_LIST_OFFLINE or format(BNET_LAST_ONLINE_TIME, FriendsFrame_GetLastOnline(lastOnline))
                 end
                 button.status:SetTexture(icons.Status[status].Default)
             end
@@ -257,19 +258,18 @@ local function LoadFriendList(tabContainer)
 
         button.background:Hide()
 
-        CreateTexture(button, 'background', 'BACKGROUND')
+        CreateTexture(button, "background", "BACKGROUND")
         SetGradientColor(button.efl.background, StatusColor[status].Inside, StatusColor[status].Outside)
 
         button.highlight:SetVertexColor(0, 0, 0, 0)
 
-        CreateTexture(button, 'highlight', 'HIGHLIGHT')
+        CreateTexture(button, "highlight", "HIGHLIGHT")
         SetGradientColor(button.efl.highlight, StatusColor[status].Inside, StatusColor[status].Outside)
 
         if button.Favorite and button.Favorite:IsShown() then
             button.Favorite:ClearAllPoints()
-            button.Favorite:SetPoint("TOPLEFT", button.name, "TOPLEFT", button.name:GetStringWidth(), 0);
+            button.Favorite:SetPoint("TOPLEFT", button.name, "TOPLEFT", button.name:GetStringWidth(), 0)
         end
-
     end)
 
     --View Friends BN Frame
@@ -352,11 +352,11 @@ local function LoadFriendList(tabContainer)
         if not msg or msg == "" then
             GwSocialWindow:SetAttribute("windowpanelopen", "friendlist")
         else
-            local player, note = strmatch(msg, "%s*([^%s]+)%s*(.*)");
+            local player, note = strmatch(msg, "%s*([^%s]+)%s*(.*)")
             if player then
-                C_FriendList.AddOrRemoveFriend(player, note);
+                C_FriendList.AddOrRemoveFriend(player, note)
             end
         end
     end
 end
-GW.LoadFriendList = LoadFriendList
+LoadFriendList = LoadFriendList
