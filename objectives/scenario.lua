@@ -142,7 +142,7 @@ local function updateCurrentScenario(self, event, ...)
     scenarioBlock:Show()
 
     local _, _, numStages = C_Scenario.GetInfo()
-    if (numStages == 0 or IsOnGroundFloorInJailersTower()) then
+    if numStages == 0 or IsOnGroundFloorInJailersTower() then
         local name, instanceType, _, difficultyName, _ = GetInstanceInfo()
         if instanceType == "raid" then
             compassData.TITLE = name
@@ -171,9 +171,7 @@ local function updateCurrentScenario(self, event, ...)
 
         timerBlock.timer:Hide()
 
-        if not showTimerAsBonus then
-            return
-        end
+        return
     end
 
     local stageName, stageDescription, numCriteria, _, _, _, _, _, _, questID = C_Scenario.GetStepInfo()
@@ -376,7 +374,7 @@ local function updateCurrentScenario(self, event, ...)
     end
 
     for i = scenarioBlock.numObjectives + 1, 20 do
-        if _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i] ~= nil then
+        if _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i] then
             _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
         end
     end
@@ -411,43 +409,37 @@ GW.AddForProfiling("scenario", "updateCurrentScenario", updateCurrentScenario)
 local function scenarioTimerStop(self)
     self:SetScript("OnUpdate", nil)
     self.timer:Hide()
-    self.timerStringChest2:Hide()
-    self.timerStringChest3:Hide()
     self.chestoverlay:Hide()
     self.deathcounter:Hide()
 end
 GW.AddForProfiling("scenario", "scenarioTimerStop", scenarioTimerStop)
 
-local function scenarioAffixes(self)
-    local _, affixes, _ = C_ChallengeMode.GetActiveKeystoneInfo()
-    local i = 1
-    for _, v in pairs(affixes) do
-        if i == 1 then
-            self.height = self.height + 40
-            self.timer:ClearAllPoints()
-            self.timer:SetPoint("TOPLEFT", self.affixeFrame, "BOTTOMLEFT", -10, -15)
-        end
-        local affixID = v
-        local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID)
+local function scenarioAffixes(self, fakeIds)
+    local _, affixes = C_ChallengeMode.GetActiveKeystoneInfo()
+    affixes = fakeIds and #fakeIds > 0 and fakeIds or affixes
 
-        if filedataid then
-            SetPortraitToTexture(self.affixeFrame.affixes[i].icon, filedataid)
+    for idx, v in pairs(affixes) do
+        if idx == 1 then
+            self.height = self.height + 40
         end
-        self.affixeFrame.affixes[i].affixID = affixID
-        self.affixeFrame.affixes[i]:Show()
-        self.affixeFrame.affixes[i].icon:Show()
+
+        local _, _, filedataid = C_ChallengeMode.GetAffixInfo(v)
+        if filedataid then
+            SetPortraitToTexture(self.affixeFrame.affixes[idx].icon, filedataid)
+        end
+        self.affixeFrame.affixes[idx].affixID = v
+        self.affixeFrame.affixes[idx]:Show()
         self.affixeFrame:Show()
-        i = i + 1
+        self.affixeFrame:SetHeight(40) -- needed for anchor points
     end
 
-    if i == 1 then
-        self.timer:ClearAllPoints()
-        self.timer:SetPoint("TOPRIGHT", self.affixeFrame, "BOTTOMRIGHT", -10, 20)
+    if not affixes or (affixes and #affixes == 0) then
         for _, v in ipairs(self.affixeFrame.affixes) do
             v.affixID = nil
             v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
         end
         self.affixeFrame:Hide()
+        self.affixeFrame:SetHeight(1) -- needed for anchor points
     end
 end
 GW.AddForProfiling("scenario", "scenarioAffixes", scenarioAffixes)
@@ -467,6 +459,24 @@ GW.AddForProfiling("scenario", "scenarioTimerUpdateDeathCounter", scenarioTimerU
 
 local function scenarioTimerUpdate(self, ...)
     self.height = 1
+
+    -- fake timer
+    local fake = false
+
+    if fake then
+        self.timer:Show()
+        self.needToShowTimer = true
+        self.height = self.height + 50
+        scenarioAffixes(self, {146})
+        scenarioTimerUpdateDeathCounter(self)
+        self.chestoverlay:Show()
+        self.chestoverlay.chest2:Show()
+        self.chestoverlay.chest3:Show()
+        self.chestoverlay.timerStringChest3:Show()
+        self.chestoverlay.timerStringChest2:Show()
+
+        return
+    end
 
     for i = 1, select("#", ...) do
         local timerID = select(i, ...)
@@ -495,17 +505,17 @@ local function scenarioTimerUpdate(self, ...)
                             self.timerString:SetTextColor(255, 0, 0)
                         end
                         if elapsedTime < time3 then
-                            self.timerStringChest3:SetText(SecondsToClock(time3 - elapsedTime))
-                            self.timerStringChest2:SetText(SecondsToClock(time2 - elapsedTime))
-                            self.timerStringChest3:Show()
-                            self.timerStringChest2:Show()
+                            self.chestoverlay.timerStringChest3:SetText(SecondsToClock(time3 - elapsedTime))
+                            self.chestoverlay.timerStringChest2:SetText(SecondsToClock(time2 - elapsedTime))
+                            self.chestoverlay.timerStringChest3:Show()
+                            self.chestoverlay.timerStringChest2:Show()
                         elseif elapsedTime < time2 then
-                            self.timerStringChest2:SetText(SecondsToClock(time2 - elapsedTime))
-                            self.timerStringChest2:Show()
-                            self.timerStringChest3:Hide()
+                            self.chestoverlay.timerStringChest2:SetText(SecondsToClock(time2 - elapsedTime))
+                            self.chestoverlay.timerStringChest2:Show()
+                            self.chestoverlay.timerStringChest3:Hide()
                         else
-                            self.timerStringChest2:Hide()
-                            self.timerStringChest3:Hide()
+                            self.chestoverlay.timerStringChest2:Hide()
+                            self.chestoverlay.timerStringChest3:Hide()
                         end
                     end
                 )
@@ -536,8 +546,6 @@ local function scenarioTimerUpdate(self, ...)
         end
     end
     self.timer:Hide()
-    self.timerStringChest2:Hide()
-    self.timerStringChest3:Hide()
     self.chestoverlay:Hide()
     self.deathcounter:Hide()
     self:SetScript("OnUpdate", nil)
@@ -548,12 +556,12 @@ local function scenarioTimerUpdate(self, ...)
         v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
     end
     self.affixeFrame:Hide()
+    self.affixeFrame:SetHeight(1) -- needed for anchor points
 end
 GW.AddForProfiling("scenario", "scenarioTimerUpdate", scenarioTimerUpdate)
 
 local function scenarioTimerOnEvent(self, event, ...)
     if (event == "PLAYER_ENTERING_WORLD" or event == nil) then
-        -- ScenarioTimer_CheckTimers(GetWorldElapsedTimers());
         scenarioTimerUpdate(self, GetWorldElapsedTimers())
         scenarioTimerUpdateDeathCounter(self)
     elseif (event == "WORLD_STATE_TIMER_START") then
@@ -562,8 +570,6 @@ local function scenarioTimerOnEvent(self, event, ...)
     elseif (event == "WORLD_STATE_TIMER_STOP") then
         scenarioTimerStop(self)
     elseif (event == "PROVING_GROUNDS_SCORE_UPDATE") then
-        --elseif (event == "SPELL_UPDATE_COOLDOWN") then
-        --    ScenarioSpellButtons_UpdateCooldowns();
         local score = ...
         self.score.scoreString:SetText(score)
         self.score:Show()
@@ -651,40 +657,30 @@ local function LoadScenarioFrame(container)
     timerBlock.height = timerBlock:GetHeight()
     timerBlock.timerlabel = timerBlock.timer.timerlabel
     timerBlock.timerString = timerBlock.timer.timerString
-    timerBlock.timerStringChest2 = timerBlock.timer.timerStringChest2
-    timerBlock.timerStringChest3 = timerBlock.timer.timerStringChest3
     timerBlock.timerlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     timerBlock.timerlabel:SetTextColor(1, 1, 1)
     timerBlock.timerlabel:SetShadowOffset(1, -1)
     timerBlock.timerString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     timerBlock.timerString:SetTextColor(1, 1, 1)
     timerBlock.timerString:SetShadowOffset(1, -1)
-    timerBlock.timerStringChest2:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
-    timerBlock.timerStringChest2:SetTextColor(1, 1, 1)
-    timerBlock.timerStringChest2:SetShadowOffset(1, -1)
-    timerBlock.timerStringChest3:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
-    timerBlock.timerStringChest3:SetTextColor(1, 1, 1)
-    timerBlock.timerStringChest3:SetShadowOffset(1, -1)
+    timerBlock.chestoverlay.timerStringChest2:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
+    timerBlock.chestoverlay.timerStringChest2:SetTextColor(1, 1, 1)
+    timerBlock.chestoverlay.timerStringChest2:SetShadowOffset(1, -1)
+    timerBlock.chestoverlay.timerStringChest3:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
+    timerBlock.chestoverlay.timerStringChest3:SetTextColor(1, 1, 1)
+    timerBlock.chestoverlay.timerStringChest3:SetShadowOffset(1, -1)
+    timerBlock.chestoverlay.chest2:ClearAllPoints()
+    timerBlock.chestoverlay.chest3:ClearAllPoints()
+    timerBlock.chestoverlay.timerStringChest2:ClearAllPoints()
+    timerBlock.chestoverlay.timerStringChest3:ClearAllPoints()
     timerBlock.chestoverlay.chest2:SetPoint("LEFT", timerBlock.timer, "LEFT", timerBlock.timer:GetWidth() * (1 - TIME_FOR_2) - 1, -6)
     timerBlock.chestoverlay.chest3:SetPoint("LEFT", timerBlock.timer, "LEFT", timerBlock.timer:GetWidth() * (1 - TIME_FOR_3) - 1, -6)
+    timerBlock.chestoverlay.timerStringChest2:SetPoint("RIGHT", timerBlock.chestoverlay.chest2, "LEFT", -2, -6)
+    timerBlock.chestoverlay.timerStringChest3:SetPoint("RIGHT", timerBlock.chestoverlay.chest3, "LEFT", -2, -6)
     timerBlock.deathcounter.counterlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
     timerBlock.deathcounter.counterlabel:SetTextColor(1, 1, 1)
     timerBlock.deathcounter.counterlabel:SetShadowOffset(1, -1)
     timerBlock.score.scoreString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    timerBlock.score.scorelabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    timerBlock.timer:SetScript(
-        "OnShow",
-        function(self)
-            self:GetParent().timerBackground:Show()
-            self.timerlabel:SetText(TIME_REMAINING)
-        end
-    )
-    timerBlock.timer:SetScript(
-        "OnHide",
-        function(self)
-            self:GetParent().timerBackground:Hide()
-        end
-    )
     for _, v in ipairs(timerBlock.affixeFrame.affixes) do
         v:SetScript(
             "OnEnter",

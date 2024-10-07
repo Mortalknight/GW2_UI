@@ -577,80 +577,14 @@
             </StatusBar>
         </Frames>
     </Frame>
+
     <Frame name="GwQuesttrackerScenarioBlock" parent="GwQuestTracker" virtual="true">
         <Size x="300" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
         </Anchors>
-        <Layers>
-            <Layer>
-                <Texture name="$parentStatusBarBg" hidden="true" parentKey="timerBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
-                    <Size x="282" y="12"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativeKey="$parent.timer" relativePoint="CENTER" x="0" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
         <Frames>
-            <StatusBar name="$parentStatusBar" parentKey="timer" hidden="true" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
-                <Size x="280" y="10"></Size>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
-                </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar" />
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <FontString parentKey="timerString" text="0:00" justifyH="RIGHT">
-                            <Size x="100" y="24"></Size>
-                            <Anchors>
-                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="22"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentKey="timerStringChest2" text="0:00" justifyH="RIGHT">
-                            <Size x="100" y="24"></Size>
-                            <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent.chestoverlay.chest2" relativePoint="LEFT" x="-2" y="-6"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentKey="timerStringChest3" text="0:00" justifyH="RIGHT">
-                            <Size x="100" y="24"></Size>
-                            <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent.chestoverlay.chest3" relativePoint="LEFT" x="-2" y="-6"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentKey="timerlabel" text="Time Remaining" justifyH="LEFT">
-                            <Size x="300" y="24"></Size>
-                            <Anchors>
-                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="20" y="22"></Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </StatusBar>
-            <Frame name="$parentScore" hidden="true" parentKey="score">
-                <Size x="280" y="10"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.timer" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer>
-                        <FontString parentKey="scorelabel" text="0" justifyH="RIGHT">
-                            <Size x="50" y="24"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="22"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentKey="scoreString" text="0" justifyH="RIGHT">
-                            <Size x="100" y="24"></Size>
-                            <Anchors>
-                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="22"></Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>
-            <Frame parentKey="affixeFrame" hidden="true">
+            <Frame parentKey="affixeFrame" hidden="false">
                 <Size x="280" y="40"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"></Anchor>
@@ -722,6 +656,53 @@
                     </Frame>
                 </Frames>
             </Frame>
+            <StatusBar name="$parentStatusBar" parentKey="timer" hidden="true" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+                <Size x="280" y="10"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.affixeFrame" relativePoint="BOTTOMLEFT" x="-10" y="-15"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar" />
+                <Layers>
+                     <Layer level="BACKGROUND">
+                        <Texture name="$parentStatusBarBg" parentKey="timerBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                            <Size x="282" y="12"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <FontString parentKey="timerString" text="0:00" justifyH="RIGHT">
+                            <Size x="100" y="24"></Size>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="22"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="timerlabel" text="Time Remaining" justifyH="LEFT">
+                            <Size x="300" y="24"></Size>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="20" y="22"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </StatusBar>
+            <Frame name="$parentScore" hidden="true" parentKey="score">
+                <Size x="280" y="10"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.timer" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <FontString parentKey="scoreString" text="0" justifyH="RIGHT">
+                            <Size x="100" y="24"></Size>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="22"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
             <Frame hidden="true" frameLevel="5" toplevel="true" parentKey="chestoverlay">
                 <Size x="1" y="20"></Size>
                 <Anchors>
@@ -736,9 +717,17 @@
                             <Size x="2" y="23"></Size>
                         </Texture>
                     </Layer>
+                    <Layer level="ARTWORK">
+                        <FontString parentKey="timerStringChest2" text="0:00" justifyH="RIGHT">
+                            <Size x="100" y="24"></Size>
+                        </FontString>
+                        <FontString parentKey="timerStringChest3" text="0:00" justifyH="RIGHT">
+                            <Size x="100" y="24"></Size>
+                        </FontString>
+                    </Layer>
                 </Layers>
             </Frame>
-            <Button name="GwDeathCounterButton" hidden="true" frameLevel="5" virtual="true" parentKey="deathcounter">
+            <Button hidden="true" frameLevel="5" virtual="true" parentKey="deathcounter">
                 <Size x="30" y="15"></Size>
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.timer" relativePoint="RIGHT" x="-35" y="-14" />
