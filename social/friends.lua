@@ -359,4 +359,4 @@ local function LoadFriendList(tabContainer)
         end
     end
 end
-LoadFriendList = LoadFriendList
+GW.LoadFriendList = LoadFriendList
