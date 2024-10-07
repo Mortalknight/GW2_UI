@@ -127,29 +127,67 @@ GW.DatabaseMigration = DatabaseMigration
 
 
 local function Migration()
-    GW.InMoveHudMode = true
-    -- new Powerbar and Classpowerbar default position
-    if GwPlayerPowerBar then
-        if GwPlayerPowerBar.isMoved == false then
-            GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerPowerBar.gwMover)
+    -- migration for frame positions
+    if not GW.settings.updateFramePositionMigrationDone then
+        GW.InMoveHudMode = true
+        -- new Powerbar and Classpowerbar default position
+        if GwPlayerPowerBar then
+            if GwPlayerPowerBar.isMoved == false then
+                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerPowerBar.gwMover)
+            end
         end
-    end
-    if GwPlayerClassPower then
-        if GwPlayerClassPower.isMoved == false then
-            GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerClassPower.gwMover)
+        if GwPlayerClassPower then
+            if GwPlayerClassPower.isMoved == false then
+                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerClassPower.gwMover)
+            end
         end
-    end
-    if GwMultiBarBottomRight then
-        if GwMultiBarBottomRight.isMoved == false then
-            GW.ResetMoverFrameToDefaultValues(nil, nil, GwMultiBarBottomRight.gwMover)
+        if GwMultiBarBottomRight then
+            if GwMultiBarBottomRight.isMoved == false then
+                GW.ResetMoverFrameToDefaultValues(nil, nil, GwMultiBarBottomRight.gwMover)
+            end
         end
+
+        if GW.MoveHudScaleableFrame then
+            GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
+            GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
+        end
+
+        GW.InMoveHudMode = false
+        GW.settings.updateFramePositionMigrationDone = true
     end
 
-    if GW.MoveHudScaleableFrame then
-        GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
-        GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
+    -- migration for font module
+    if not GW.settings.fontModuleMigrationDone then
+        if not GW.settings.FONTS_ENABLED then
+            GW.settings.FONT_STYLE_TEMPLATE = "BLIZZARD"
+            GW.settings.FONTS_BIG_HEADER_SIZE = 16
+            GW.settings.FONTS_HEADER_SIZE = 14
+            GW.settings.FONTS_NORMAL_SIZE = 12
+            GW.settings.FONTS_SMALL_SIZE = 11
+            GW.settings.FONTS_OUTLINE = ""
+            GW.settings.FONT_NORMAL = ""
+            GW.settings.FONT_HEADERS = ""
+        end
+
+        GW.settings.FONTS_ENABLED = nil
+
+        GW.settings.fontModuleMigrationDone = true
     end
 
-    GW.InMoveHudMode = false
+    -- migration minimap scale setting
+    if not GW.settings.MinimapScaleSetting then
+        GW.settings.MINIMAP_SIZE = GW.settings.MINIMAP_SCALE
+        GW.settings.MINIMAP_SCALE = nil
+
+        GW.settings.MinimapScaleSetting = true
+    end
+
+    -- migration for chat timestap
+    if not GW.settings.chatTimeStampMigrationDone then
+        local timestampFormat = GetChatTimestampFormat()
+        GW.settings.timeStampFormat = timestampFormat
+
+        GW.settings.chatTimeStampMigrationDone = true
+    end
 end
 GW.Migration = Migration

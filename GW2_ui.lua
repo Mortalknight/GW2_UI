@@ -577,32 +577,6 @@ local function evPlayerEnteringWorld()
         end)
         GW.Notice("DB was converted Reload is needed /reload")
     end
-
-    -- migration for font module
-    if not GW.settings.fontModuleMigrationDone then
-        if not GW.settings.FONTS_ENABLED then
-            GW.settings.FONT_STYLE_TEMPLATE = "BLIZZARD"
-            GW.settings.FONTS_BIG_HEADER_SIZE = 16
-            GW.settings.FONTS_HEADER_SIZE = 14
-            GW.settings.FONTS_NORMAL_SIZE = 12
-            GW.settings.FONTS_SMALL_SIZE = 11
-            GW.settings.FONTS_OUTLINE = ""
-            GW.settings.FONT_NORMAL = ""
-            GW.settings.FONT_HEADERS = ""
-        end
-
-        GW.settings.FONTS_ENABLED = nil
-
-        GW.settings.fontModuleMigrationDone = true
-    end
-
-    -- migration minimap scale setting
-    if not GW.settings.MinimapScaleSetting then
-        GW.settings.MINIMAP_SIZE = GW.settings.MINIMAP_SCALE
-        GW.settings.MINIMAP_SCALE = nil
-
-        GW.settings.MinimapScaleSetting = true
-    end
 end
 AFP("evPlayerEnteringWorld", evPlayerEnteringWorld)
 
