@@ -351,6 +351,9 @@ local function SkinLookingForGroupFrames()
     LFDQueueFrameRandomScrollFrameChildFrameDescription:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     LFDQueueFrameRandomScrollFrameChildFrameRewardsDescription:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
+    GW.HandleTrimScrollBar(LFDQueueFrameRandomScrollFrame.ScrollBar)
+    GW.HandleScrollControls(LFDQueueFrameRandomScrollFrame)
+
     hooksecurefunc("LFGDungeonListButton_SetDungeon", function(button)
         if button and button.expandOrCollapseButton:IsShown() then
             if button.isCollapsed then
