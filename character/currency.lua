@@ -238,6 +238,10 @@ local function updateCollapse(texture, atlas)
                 texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
                 texture:GetPushedTexture():SetRotation(1.570796325)
             end
+            if texture.GetHighlightTexture then
+                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetPushedTexture():SetRotation(1.570796325)
+            end
         else
             if texture.SetTexture then
                 texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
@@ -247,6 +251,10 @@ local function updateCollapse(texture, atlas)
                 texture:GetNormalTexture():SetRotation(0)
             end
             if texture.GetPushedTexture then
+                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetPushedTexture():SetRotation(0)
+            end
+            if texture.GetHighlightTexture then
                 texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
                 texture:GetPushedTexture():SetRotation(0)
             end
@@ -349,7 +357,7 @@ local function UpdateTokenSkins(frame)
 
         if child.elementData.maxQuantity and child.elementData.maxQuantity > 0 then
             child.Content.Count:SetText(CommaValue(child.elementData.quantity) .. " / " .. CommaValue(child.elementData.maxQuantity))
-        else
+        elseif child.elementData.quantity and child.Content then
             child.Content.Count:SetText(CommaValue(child.elementData.quantity))
         end
 
