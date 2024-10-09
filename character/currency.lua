@@ -349,6 +349,8 @@ local function UpdateTokenSkins(frame)
 
         if child.elementData.maxQuantity and child.elementData.maxQuantity > 0 then
             child.Content.Count:SetText(CommaValue(child.elementData.quantity) .. " / " .. CommaValue(child.elementData.maxQuantity))
+        else
+            child.Content.Count:SetText(CommaValue(child.elementData.quantity))
         end
 
         if child.Content and child.Content.WatchedCurrencyCheck then

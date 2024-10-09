@@ -52,7 +52,7 @@ local function LoadLootFrameSkin()
     GwLootFrameTitle.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     GwLootFrameTitle.headerString:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
-    local w, _ = LootFrame:GetSize()
+    local w = LootFrame:GetWidth()
     GwLootFrameTitle:SetWidth(w)
     GwLootFrameTitle.BGLEFT:SetWidth(w)
     GwLootFrameTitle.BGRIGHT:SetWidth(w)
@@ -83,6 +83,9 @@ local function LoadLootFrameSkin()
     end
 
     LootFrame:GwKillEditMode()
+
+    GW.HandleTrimScrollBar(LootFrame.ScrollBar)
+    GW.HandleScrollControls(LootFrame)
 
     LootFrame.ClosePanelButton:ClearAllPoints()
     LootFrame.ClosePanelButton:SetPoint("RIGHT", GwLootFrameTitle.BGRIGHT, "RIGHT", -5, -2)
