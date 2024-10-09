@@ -219,21 +219,21 @@ local sessionCommandToButtonAtlas = {
     [_G.Enum.QuestSessionCommand.Start] = "QuestSharing-DialogIcon",
     [_G.Enum.QuestSessionCommand.Stop] = "QuestSharing-Stop-DialogIcon"
 }
-local function hook_UpdateExecuteCommandAtlases(s, command)
-    s.ExecuteSessionCommand:SetNormalTexture("")
-    s.ExecuteSessionCommand:SetPushedTexture("")
-    s.ExecuteSessionCommand:SetDisabledTexture("")
+local function UpdateExecuteCommandAtlases(frame, command)
+    frame.ExecuteSessionCommand:SetNormalTexture("")
+    frame.ExecuteSessionCommand:SetPushedTexture("")
+    frame.ExecuteSessionCommand:SetDisabledTexture("")
     local atlas = sessionCommandToButtonAtlas[command]
     if atlas then
-        s.ExecuteSessionCommand.normalIcon:SetAtlas(atlas)
+        frame.ExecuteSessionCommand.normalIcon:SetAtlas(atlas)
     end
 end
-AFP("hook_UpdateExecuteCommandAtlases", hook_UpdateExecuteCommandAtlases)
+AFP("UpdateExecuteCommandAtlases", UpdateExecuteCommandAtlases)
 
 local function hook_NotifyDialogShow(_, dialog)
     if not dialog.isSkinned then
         dialog:GwStripTextures()
-        dialog:GwCreateBackdrop()
+        dialog:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
         dialog.ButtonContainer.Confirm:GwSkinButton(false, true)
         dialog.ButtonContainer.Decline:GwSkinButton(false, true)
         if dialog.MinimizeButton then
@@ -468,16 +468,16 @@ local function worldMapSkin()
     QuestMapFrame.QuestSessionManagement:GwStripTextures()
 
     local ExecuteSessionCommand = QuestMapFrame.QuestSessionManagement.ExecuteSessionCommand
-    ExecuteSessionCommand:GwCreateBackdrop()
-    ExecuteSessionCommand:GwSkinButton(false, true, false, true)
+    ExecuteSessionCommand:GwStripTextures()
+    ExecuteSessionCommand:GwStyleButton()
 
     local icon = ExecuteSessionCommand:CreateTexture(nil, "ARTWORK")
     icon:SetPoint("TOPLEFT", 0, 0)
     icon:SetPoint("BOTTOMRIGHT", 0, 0)
     ExecuteSessionCommand.normalIcon = icon
 
-    hooksecurefunc(QuestMapFrame.QuestSessionManagement, "UpdateExecuteCommandAtlases", hook_UpdateExecuteCommandAtlases)
-    hooksecurefunc(_G.QuestSessionManager, "NotifyDialogShow", hook_NotifyDialogShow)
+    hooksecurefunc(QuestMapFrame.QuestSessionManagement, "UpdateExecuteCommandAtlases", UpdateExecuteCommandAtlases)
+    hooksecurefunc(QuestSessionManager, "NotifyDialogShow", hook_NotifyDialogShow)
     hooksecurefunc("QuestLogQuests_Update", hook_QuestLogQuests_Update)
 
     -- Addons

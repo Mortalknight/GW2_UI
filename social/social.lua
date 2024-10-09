@@ -314,9 +314,12 @@ local function mover_SavePosition(self, x, y)
 end
 GW.AddForProfiling("social", "mover_SavePosition", mover_SavePosition)
 
--- TODO: this doesn't work if bindings are updated in combat, but who does that?!
 local function click_OnEvent(self, event)
     if event ~= "UPDATE_BINDINGS" then
+        return
+    end
+    if InCombatLockdown() then
+        GW.CombatQueue_Queue("social_update_keybind", click_OnEvent, {self, event})
         return
     end
     ClearOverrideBindings(self)

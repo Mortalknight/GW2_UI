@@ -304,6 +304,7 @@ local function encounterJournalSkin()
     EncounterJournalMonthlyActivitiesFrame.HeaderContainer.Title:SetShadowOffset(1, -1)
 
     EncounterJournalMonthlyActivitiesFrame.BarComplete.PendingRewardsText:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    EncounterJournalMonthlyActivitiesFrame.BarComplete.AllRewardsCollectedText:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     local loaded
     hooksecurefunc(EncounterJournalMonthlyActivitiesFrame.FilterList.ScrollBox, "Update", function(frame)
