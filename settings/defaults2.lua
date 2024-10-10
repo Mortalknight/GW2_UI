@@ -1088,6 +1088,9 @@ GW.globalDefault = {
         },
         player_pos_scale= 1,
 
+        --general raid tag update rate
+        tagUpdateRate = 0.2, -- eventTimerThreshold
+
         -- short healthvalue settings
         ShortHealthValuePrefixStyle = "ENGLISH",
         ShortHealthValuesDecimalLength = 0,

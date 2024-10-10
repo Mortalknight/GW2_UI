@@ -11,6 +11,40 @@ local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton
 local addGroupHeader = GW.AddGroupHeader
 
+
+--general Grid Settings
+local function LoadGeneralGridSettings(panel)
+    local general = CreateFrame("Frame", "GwSettingsRaidPanel", panel, "GwSettingsPanelScrollTmpl")
+    general.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    general.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    general.header:SetText(L["Group Frames"] )
+    general.sub:SetFont(UNIT_NAME_FONT, 12)
+    general.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    general.sub:SetText(L["Edit the party and raid options to suit your needs."])
+
+    general.header:SetWidth(general.header:GetStringWidth())
+    general.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    general.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    general.breadcrumb:SetText(GENERAL)
+
+    addOptionSlider(
+        general.scroll.scrollchild,
+        GW.NewSign .. L["Name Update Rate"],
+        L["Maximum tick rate allowed for name updates per second."],
+        "tagUpdateRate",
+        function(value)
+            GW.oUF.Tags:SetEventUpdateTimer(value)
+        end,
+        0.05,
+        0.5,
+        nil,
+        2,
+        nil,
+        0.01
+    )
+    return general
+end
+
 -- Profiles
 local function LoadRaid10Profile(panel)
     local raid10 = CreateFrame("Frame", "GwSettingsRaidPanel", panel, "GwSettingsRaidPanelTmpl")
@@ -1458,7 +1492,7 @@ local function LoadRaidPanel(sWindow)
     p.header:Hide()
     p.sub:Hide()
 
-    local profilePanles = {LoadRaid40Profile(p), LoadRaid25Profile(p), LoadRaid10Profile(p), LoadMaintankProfile(p), LoadRaidPetProfile(p), LoadPartyProfile(p)}
+    local profilePanles = {LoadGeneralGridSettings(p), LoadRaid40Profile(p), LoadRaid25Profile(p), LoadRaid10Profile(p), LoadMaintankProfile(p), LoadRaidPetProfile(p), LoadPartyProfile(p)}
     createCat(L["Group Frames"], L["Edit the group settings."], p, profilePanles)
     settingsMenuAddButton(L["Group Frames"], p, profilePanles)
 
@@ -1468,5 +1502,6 @@ local function LoadRaidPanel(sWindow)
     InitPanel(profilePanles[4], true)
     InitPanel(profilePanles[5], true)
     InitPanel(profilePanles[6], true)
+    InitPanel(profilePanles[7], true)
 end
 GW.LoadRaidPanel = LoadRaidPanel
