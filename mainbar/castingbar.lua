@@ -32,6 +32,105 @@ local function UpdateSettings()
 end
 GW.UpdateCastingBarSettings = UpdateSettings
 
+local function HideTicks(self)
+    for _, tick in next, self.TickLines do
+        tick:Hide()
+    end
+end
+
+local function SetCastTicks(frame, numTicks)
+    HideTicks(frame)
+
+    if numTicks and numTicks <= 0 then return end
+
+    local offset = frame:GetWidth() / numTicks
+
+    for i = 1, numTicks - 1 do
+        local tick = frame.TickLines[i]
+        if not tick then
+            tick = CreateFrame("Frame", nil, frame, "GwCastingBarSegmentSep")
+            tick.rank:Hide()
+            frame.TickLines[i] = tick
+        end
+
+        tick:ClearAllPoints()
+        tick:SetPoint("TOPRIGHT", frame, "TOPLEFT", offset * i, 0)
+        tick:Show()
+    end
+end
+
+local function GetTalentTicks(info)
+    local _, _, _, selected = GetTalentInfo(info.tier, info.column, 1)
+    return selected and info.ticks
+end
+
+local function CheckForTicks(self)
+    local baseTicks = GW.ChannelTicks[self.spellID]
+
+    local talentTicks = baseTicks and GW.TalentChannelTicks[self.spellID]
+    local selectedTicks = talentTicks and GetTalentTicks(talentTicks)
+    if selectedTicks then
+        baseTicks = selectedTicks
+    end
+
+    local auraTicks = baseTicks and GW.AuraChannelTicks[self.spellID]
+    if auraTicks then
+        for auraID, tickCount in next, auraTicks.spells do
+            local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(auraID)
+            if auraInfo then
+                baseTicks = tickCount
+                break
+            end
+        end
+    end
+
+    local chainTicks = baseTicks and GW.ChainChannelTicks[self.spellID]
+    if chainTicks then
+        local now = GetTime()
+        local seconds = GW.ChainChannelTime[self.spellID]
+        local match = seconds and self.chainTime and self.chainTick == self.spellID
+
+        if match and (now - seconds) < self.chainTime then
+            baseTicks = chainTicks
+        end
+
+        self.chainTime = now
+        self.chainTick = self.spellID
+    else
+        self.chainTick = nil
+        self.chainTime = nil
+    end
+
+    local hasteTicks = baseTicks and GW.HastedChannelTicks[self.spellID]
+    if hasteTicks then -- requires tickSize
+        local haste = UnitSpellHaste("player") * 0.01
+        local rate = 1 / baseTicks
+        local first = rate * 0.5
+
+        local bonus = 0
+        if haste >= first then
+            bonus = bonus + 1
+        end
+
+        local x = GW.RoundDec(first + rate, 2)
+        while haste >= x do
+            x = GW.RoundDec(first + (rate * bonus), 2)
+
+            if haste >= x then
+                bonus = bonus + 1
+            end
+        end
+
+        SetCastTicks(self, baseTicks + bonus)
+        self.hadTicks = true
+    elseif baseTicks then
+        SetCastTicks(self, baseTicks)
+        self.hadTicks = true
+    else
+        HideTicks(self)
+    end
+end
+
 local function createNewBarSegment(self)
     local segment = CreateFrame("Frame", self:GetName() .. "Segment" .. #self.segments + 1, self, "GwCastingBarSegmentSep")
 
@@ -98,6 +197,13 @@ local function barReset(self)
         animations[self.animationName].completed = true
         animations[self.animationName].duration = 0
     end
+
+    if self.hadTicks and self.unit == "player" then
+        HideTicks(self)
+        self.hadTicks = false
+        self.chainTick = nil -- reset the chain
+        self.chainTime = nil -- spell cast vars
+    end
 end
 GW.AddForProfiling("castingbar", "barReset", barReset)
 
@@ -117,27 +223,23 @@ local function AddFinishAnimation(self, isStopped, isChanneling)
 
     if isChanneling then
         self.animating = false
-        --if not self.isCasting and not self.isChanneling then
-            if self:GetAlpha() > 0 then
-                --UIFrameFadeOut(self, 0.2, 1, 0)
-
-                AddToAnimation(
-                    self.animationName .. "FadeOut",
-                    1,
-                    0,
-                    GetTime(),
-                    0.2,
-                    function(p)
-                        p = math.min(1, math.max(0, p))
-                        self:SetAlpha(p)
-                    end
-                )
-                self.highlight:Hide()
-                self.isCasting = false
-                self.isChanneling = false
-                self.reverseChanneling = false
-            end
-        --end
+        if self:GetAlpha() > 0 then
+            AddToAnimation(
+                self.animationName .. "FadeOut",
+                1,
+                0,
+                GetTime(),
+                0.2,
+                function(p)
+                    p = math.min(1, math.max(0, p))
+                    self:SetAlpha(p)
+                end
+            )
+            self.highlight:Hide()
+            self.isCasting = false
+            self.isChanneling = false
+            self.reverseChanneling = false
+        end
     else
         self.highlight:Show()
         AddToAnimation(
@@ -154,7 +256,6 @@ local function AddFinishAnimation(self, isStopped, isChanneling)
                 self.animating = false
                 if not self.isCasting and not self.isChanneling then
                     if self:GetAlpha() > 0 then
-                        --UIFrameFadeOut(self, 0.2, 1, 0)
                         AddToAnimation(
                             self.animationName .. "FadeOut",
                             1,
@@ -164,7 +265,7 @@ local function AddFinishAnimation(self, isStopped, isChanneling)
                             function(p)
                                 p = math.min(1, math.max(0, p))
                                 self:SetAlpha(p)
-                            end
+                            end, nil
                         )
                         self.highlight:Hide()
                         self.isCasting = false
@@ -219,7 +320,6 @@ local function castBar_OnEvent(self, event, unitID, ...)
 
             barTexture = CASTINGBAR_TEXTURES.GREEN.NORMAL
             barHighlightTexture = CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
-           -- self.progress:setBar(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
         else
             spell, _, icon, startTime, endTime, isTradeSkill, castID, _, spellID = UnitCastingInfo(self.unit)
 
@@ -232,7 +332,6 @@ local function castBar_OnEvent(self, event, unitID, ...)
 
         barReset(self)
 
-       --- self.bar.barCoords = barTexture
         self.barHighLightCoords = barHighlightTexture
 
         if not spell or (not self.showTradeSkills and isTradeSkill) then
@@ -250,6 +349,13 @@ local function castBar_OnEvent(self, event, unitID, ...)
         self.castID = castID
         self.startTime = startTime / 1000
         self.endTime = endTime / 1000
+        self.max = self.endTime -   self.startTime
+
+        if self.isChanneling then
+            self.duration = endTime - GetTime()
+        else
+            self.duration = GetTime() - startTime
+        end
 
         self.highlight:Hide()
 
@@ -259,6 +365,11 @@ local function castBar_OnEvent(self, event, unitID, ...)
             AddStages(self)
         else
             ClearStages(self)
+        end
+
+        --channelTicks
+        if self.unit == "player" and GW.settings.showPlayerCastBarTicks and self.isChanneling then
+            CheckForTicks(self)
         end
 
         AddToAnimation(
@@ -276,11 +387,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
                 self.latency:ClearAllPoints()
                 self.latency:SetPoint(self.isChanneling and "LEFT" or "RIGHT", self, self.isChanneling and "LEFT" or "RIGHT")
 
-               -- self.bar:SetWidth(math.max(1, p * 176))
-               -- self.bar:SetVertexColor(1, 1, 1, 1)
-               self.progress:SetFillAmount(p);
-
-               -- self.bar:SetTexCoord(self.bar.barCoords.L, lerp(self.bar.barCoords.L,self.bar.barCoords.R, p), self.bar.barCoords.T, self.bar.barCoords.B)
+                self.progress:SetFillAmount(p)
 
                 if self.numStages > 0 then
                     for i = 1, self.numStages - 1, 1 do
@@ -313,7 +420,6 @@ local function castBar_OnEvent(self, event, unitID, ...)
         if (event == "UNIT_SPELLCAST_STOP" and self.castID == select(1, ...)) or
             ((event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_EMPOWER_STOP") and (self.isChanneling or self.reverseChanneling)) then
             if self.animating == nil or self.animating == false then
-                --UIFrameFadeOut(self, 0.2, 1, 0)
                 AddFinishAnimation(self, false, true)
             end
             barReset(self)
@@ -350,6 +456,33 @@ local function petCastBar_OnEvent(self, event, unit, ...)
     castBar_OnEvent(self, event, unit, ...)
 end
 
+local function onUpdate(self, elapsed)
+    if self.animating then return end
+    if self.isCasting or self.isChanneling then
+        if self.isCasting then
+            self.duration = self.duration + elapsed
+            if self.duration >= self.max then
+                if animations[self.animationName .. "FadeOut"] == nil then
+                    self:SetAlpha(0)
+                end
+                return
+            end
+        else
+            self.duration = self.duration - elapsed
+            if self.duration <= 0 then
+                if animations[self.animationName .. "FadeOut"] == nil then
+                    self:SetAlpha(0)
+                end
+                return
+            end
+        end
+    else
+        if animations[self.animationName .. "FadeOut"] == nil then
+            self:SetAlpha(0)
+        end
+    end
+end
+
 local function TogglePlayerEnhancedCastbar(self, setShown)
     self.name:SetShown(setShown)
     self.icon:SetShown(setShown)
@@ -378,7 +511,6 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     GwCastingBar.progress.customMaskSize = 64;
     GwCastingBar.highlight = GwCastingBar.progress.highlight;
     GwCastingBar.latency = GwCastingBar.progress.latency;
-   
 
     GwCastingBar.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     GwCastingBar.name:SetShadowOffset(1, -1)
@@ -396,6 +528,7 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     GwCastingBar.animationName = name
     GwCastingBar.showTradeSkills = showTradeSkills
     GwCastingBar.StagePoints = {}
+    GwCastingBar.TickLines = {}
     GwCastingBar.numStages = 0
     GwCastingBar.showDetails = GW.settings.CASTINGBAR_DATA
 
@@ -413,6 +546,9 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     TogglePlayerEnhancedCastbar(GwCastingBar, GwCastingBar.showDetails)
 
     GwCastingBar:SetScript("OnEvent", unit == "pet" and petCastBar_OnEvent or castBar_OnEvent)
+    if unit == "player" then
+        GwCastingBar:SetScript("OnUpdate", onUpdate)
+    end
 
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", unit)
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unit)

@@ -208,12 +208,12 @@ GW.REALM_FLAGS = {
 }
 
 GW.ShortPrefixStyles = {
-	TCHINESE = {{1e8, "億"}, {1e4, "萬"}},
-	CHINESE = {{1e8, "亿"}, {1e4, "万"}},
-	ENGLISH = {{1e12, "T"}, {1e9, "B"}, {1e6, "M"}, {1e3, "K"}},
-	GERMAN = {{1e12, "Bio"}, {1e9, "Mrd"}, {1e6, "Mio"}, {1e3, "Tsd"}},
-	KOREAN = {{1e8, "억"}, {1e4, "만"}, {1e3, "천"}},
-	METRIC = {{1e12, "T"}, {1e9, "G"}, {1e6, "M"}, {1e3, "k"}}
+    TCHINESE = {{1e8, "億"}, {1e4, "萬"}},
+    CHINESE = {{1e8, "亿"}, {1e4, "万"}},
+    ENGLISH = {{1e12, "T"}, {1e9, "B"}, {1e6, "M"}, {1e3, "K"}},
+    GERMAN = {{1e12, "Bio"}, {1e9, "Mrd"}, {1e6, "Mio"}, {1e3, "Tsd"}},
+    KOREAN = {{1e8, "억"}, {1e4, "만"}, {1e3, "천"}},
+    METRIC = {{1e12, "T"}, {1e9, "G"}, {1e6, "M"}, {1e3, "k"}}
 }
 
 GW.INDICATORS = { "BAR", "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT" }
@@ -360,3 +360,69 @@ GW.MagePortals = {
 }
 
 GW.WINDOW_FADE_DURATION = 0.2
+
+-- List of spells to display ticks
+GW.ChannelTicks = {
+    -- Racials
+    [291944]	= 6, -- Regeneratin (Zandalari)
+    -- Evoker
+    [356995]	= 3, -- Disintegrate
+    -- Warlock
+    [198590]	= 4, -- Drain Soul
+    [755]		= 5, -- Health Funnel
+    [234153]	= 5, -- Drain Life
+    -- Priest
+    [64843]		= 4, -- Divine Hymn
+    [15407]		= 6, -- Mind Flay
+    [48045]		= 6, -- Mind Sear
+    [47757]		= 3, -- Penance (heal)
+    [47758]		= 3, -- Penance (dps)
+    [373129]	= 3, -- Penance (Dark Reprimand, dps)
+    [400171]	= 3, -- Penance (Dark Reprimand, heal)
+    [64902]		= 5, -- Symbol of Hope (Mana Hymn)
+    -- Mage
+    [5143]		= 4, -- Arcane Missiles
+    [12051]		= 6, -- Evocation
+    [205021]	= 5, -- Ray of Frost
+    -- Druid
+    [740]		= 4, -- Tranquility
+    -- DK
+    [206931]	= 3, -- Blooddrinker
+    -- DH
+    [198013]	= 10, -- Eye Beam
+    [212084]	= 10, -- Fel Devastation
+    -- Hunter
+    [120360]	= 15, -- Barrage
+    [257044]	= 7, -- Rapid Fire
+    -- Monk
+    [113656]	= 5, -- Fists of Fury
+}
+
+-- Spells that chain, second step
+GW.ChainChannelTicks = {
+    -- Evoker
+    [356995]	= 4, -- Disintegrate
+}
+
+-- Window to chain time (in seconds); usually the channel duration
+GW.ChainChannelTime = {
+    -- Evoker
+    [356995]	= 3, -- Disintegrate
+}
+
+-- Spells Effected By Talents (unused; talents changed)
+GW.TalentChannelTicks = {
+    -- IsSpellKnownOrOverridesKnown and/or IsPlayerSpell
+}
+
+-- Increase ticks from auras
+GW.AuraChannelTicks = {
+    -- Priest
+    [47757]		= { filter = 'HELPFUL', spells = { [373183] = 6 } }, -- Harsh Discipline: Penance (heal)
+    [47758]		= { filter = 'HELPFUL', spells = { [373183] = 6 } }, -- Harsh Discipline: Penance (dps)
+}
+
+-- Spells Effected By Haste, value is Base Tick Size
+GW.HastedChannelTicks = {
+    -- [spellID] = 1, -- SpellName
+}

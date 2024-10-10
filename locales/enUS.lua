@@ -639,3 +639,5 @@ L["Log the main chat frames history. So when you reloadui or log in and out you 
 L["History"] = true
 L["History Size"] = true
 L["Reset History"] = true
+L["Ticks"] = true
+L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."] = true

@@ -892,6 +892,7 @@ GW.globalDefault = {
         WORLDMAP_COORDS_X_OFFSET= 0,
         WORLDMAP_COORDS_Y_OFFSET= 0,
 
+        showPlayerCastBarTicks = true,
         CASTINGBAR_DATA= false,
         USE_CHARACTER_WINDOW= true,
         USE_TALENT_WINDOW= true,

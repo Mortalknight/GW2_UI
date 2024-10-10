@@ -670,3 +670,5 @@ L["Log the main chat frames history. So when you reloadui or log in and out you 
 L["History"] = "Verlauf"
 L["History Size"] = "Verlaufsgröße"
 L["Reset History"] = "Verlauf zurücksetzen"
+L["Ticks"] = "Ticks"
+L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."] = "Anzeige der Zauberbalkenticks für kanalisierte Zauber. Dies ändert sich automatisch für Zauber wie Seelendieb, wenn zusätzliche Ticks durch einen hohen Tempowert entstehen."
