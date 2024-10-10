@@ -25,7 +25,7 @@ local function HandleGoldIcon(button)
     nameFrame:SetSize(118, 39)
 end
 
-local function SkinItemButton(parentFrame, _, index, _, _, _, _, rewardType, _, quality)
+local function SkinItemButton(parentFrame, _, index, _, _, _, _, _, _, quality)
     local parentName = parentFrame:GetName()
     local item = _G[parentName .. "Item" .. index]
     if item and not item.backdrop then
@@ -53,13 +53,9 @@ local function SkinItemButton(parentFrame, _, index, _, _, _, _, rewardType, _, 
         GW.HandleIconBorder(item.IconBorder, item.backdrop)
         item.IconBorder:GwKill()
     end
-    if quality and rewardType then
+    if quality then
         local color = BAG_ITEM_QUALITY_COLORS[quality]
-        if rewardType == "item" then
-            item.backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
-        elseif rewardType == "currency" then
-            item.backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
-        end
+        item.backdrop:SetBackdropBorderColor(color.r or 1, color.g or 1, color.b or 1)
     end
 end
 
