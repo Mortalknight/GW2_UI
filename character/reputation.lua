@@ -87,7 +87,9 @@ local function returnReputationData(factionIndex)
             savedReputation[factionIndex].isWatched,
             savedReputation[factionIndex].isChild,
             savedReputation[factionIndex].factionID,
-            savedReputation[factionIndex].hasBonusRepGain
+            savedReputation[factionIndex].hasBonusRepGain,
+            savedReputation[factionIndex].canSetInactive,
+            savedReputation[factionIndex].isAccountWide
 end
 GW.AddForProfiling("reputation", "returnReputationData", returnReputationData)
 
@@ -139,6 +141,12 @@ local function detailsControls_OnShow(self)
     else
         self.atwar:Hide()
     end
+
+    if self.inactive.isShowAble then
+        self.inactive:Show()
+    else
+        self.inactive:Hide()
+    end
 end
 GW.AddForProfiling("reputation", "detailsControls_OnShow", detailsControls_OnShow)
 
@@ -179,7 +187,9 @@ local function setDetailEx(
     atWarWith,
     canToggleAtWar,
     isWatched,
-    factionID)
+    factionID,
+    canSetInactive,
+    isAccountWide)
     frame:Show()
 
     frame.factionIndex = factionIndex
@@ -199,11 +209,13 @@ local function setDetailEx(
     local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
     local friendInfo = C_GossipInfo.GetFriendshipReputation(factionID or 0)
 
-    --if factionIndex % 2 == 0 then
     frame.background:SetTexture(nil)
-    --else
-    --frame.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
-    --end
+
+    if isAccountWide then
+        frame.accountWide:Show()
+    else
+        frame.accountWide:Hide()
+    end
 
     if savedHeaderName ~= nil and savedHeaderName ~= "" and savedHeaderName ~= name then
         frame.name:SetText(name .. "  |cFFa0a0a0" .. savedHeaderName .. "|r")
@@ -222,8 +234,9 @@ local function setDetailEx(
 
     frame.controles.atwar.isShowAble = canToggleAtWar
     frame.controles.showAsBar.checkbutton:SetChecked(isWatched)
-    frame.controles.inactive.checkbutton:SetChecked(not C_Reputation.IsFactionActive(factionIndex))
 
+    frame.controles.inactive.isShowAble = canSetInactive
+    frame.controles.inactive.checkbutton:SetChecked(not C_Reputation.IsFactionActive(factionIndex))
     frame.controles.inactive:SetScript(
         "OnClick",
         function()
@@ -293,6 +306,13 @@ local function setDetailEx(
             updateOldData()
         end
     )
+
+    frame.accountWide:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(REPUTATION_TOOLTIP_ACCOUNT_WIDE_LABEL, 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    frame.accountWide:SetScript("OnLeave", GameTooltip_Hide)
 
     if factionID and RT[factionID] then
         frame.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/rep/" .. RT[factionID])
@@ -446,7 +466,9 @@ local function setDetail(frame, dat)
         dat.atWarWith,
         dat.canToggleAtWar,
         dat.isWatched,
-        dat.factionID
+        dat.factionID,
+        dat.canSetInactive,
+        dat.isAccountWide
     )
 end
 GW.AddForProfiling("reputation", "setDetail", setDetail)
@@ -469,7 +491,7 @@ updateDetails = function()
     -- run through factions to get data and total count for the selected category
     local savedHeaderName = ""
     for idx = firstReputationCat + 1, lastReputationCat do
-        local name, desc, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain = returnReputationData(idx)
+        local name, desc, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canSetInactive, isAccountWide = returnReputationData(idx)
         if name ~= nil then
             if not factionID or (isHeader and not isChild) then
                 break
@@ -512,6 +534,8 @@ updateDetails = function()
                 facData[factionID].factionID = factionID
                 facData[factionID].hasBonusRepGain = hasBonusRepGain
                 facData[factionID].savedHeaderName = savedHeaderName
+                facData[factionID].canSetInactive = canSetInactive
+                facData[factionID].isAccountWide = isAccountWide
             end
         end
     end
@@ -851,7 +875,9 @@ local function updateDetailsSearch(s)
             isWatched,
             isChild,
             factionID,
-            hasBonusRepGain = returnReputationData(idx)
+            hasBonusRepGain,
+            canSetInactive,
+            isAccountWide= returnReputationData(idx)
 
         local lower1 = string.lower(name)
         local lower2 = string.lower(s)
@@ -896,6 +922,8 @@ local function updateDetailsSearch(s)
             facData[factionID].factionID = factionID
             facData[factionID].hasBonusRepGain = hasBonusRepGain
             facData[factionID].savedHeaderName = savedHeaderName
+            facData[factionID].canSetInactive = canSetInactive
+            facData[factionID].isAccountWide = isAccountWide
         end
     end
 
