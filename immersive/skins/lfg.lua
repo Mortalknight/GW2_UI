@@ -55,7 +55,11 @@ local function SkinItemButton(parentFrame, _, index, _, _, _, _, _, _, quality)
     end
     if quality then
         local color = BAG_ITEM_QUALITY_COLORS[quality]
-        item.backdrop:SetBackdropBorderColor(color.r or 1, color.g or 1, color.b or 1)
+        local r, g, b = 1, 1, 1
+        if color then
+            r, g, b = color.r, color.g, color.b
+        end
+        item.backdrop:SetBackdropBorderColor(r, g, b)
     end
 end
 
