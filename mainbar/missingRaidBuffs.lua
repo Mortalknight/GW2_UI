@@ -47,6 +47,8 @@ local reminderBuffs = {
         --[12] = 382149,	-- Well Fed
         --[13] = 382149,	-- Well Fed
         [12] = 327708,	-- Well Fed
+
+        [13] = 457284,	-- Well Fed
     },
     Intellect = {
         [1] = 1459, -- Arcane Intellect
@@ -64,6 +66,9 @@ local reminderBuffs = {
     Versatility = {
 		1126, -- Mark of the Wild
 	},
+    Mastery = {
+        462854, -- Skyfury
+    },
     MovementBuff = {
         [1] = 381752, -- Evoker
         [2] = 381732, -- Evoker
@@ -282,6 +287,20 @@ local function OnAuraChange(self)
     end
     setButtonStyle(self.movementButton, foundBuff)
 
+     -- Mastery
+     foundBuff = false
+     for _, masteryBuff in pairs(buffInfos.Mastery) do
+         if masteryBuff.hasBuff then
+             self.masteryButton.icon:SetTexture(masteryBuff.texId)
+             foundBuff = true
+             break
+         end
+     end
+     if not foundBuff then
+         self.masteryButton.icon:SetTexture(buffInfos.Mastery[1].texId)
+     end
+     setButtonStyle(self.masteryButton, foundBuff)
+
     -- runes
     foundBuff = false
     for _, runebuff in pairs(buffInfos.DefiledAugmentRune) do
@@ -405,7 +424,8 @@ local function LoadRaidbuffReminder()
     rbr.attackPowerButton = CreateIconBuff(rbr.staminaButton, false, rbr)
     rbr.versatilityButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
     rbr.movementButton = CreateIconBuff(rbr.versatilityButton, false, rbr)
-    rbr.flaskButton = CreateIconBuff(rbr.movementButton, false, rbr)
+    rbr.masteryButton = CreateIconBuff(rbr.movementButton, false, rbr)
+    rbr.flaskButton = CreateIconBuff(rbr.masteryButton, false, rbr)
     rbr.foodButton = CreateIconBuff(rbr.flaskButton, false, rbr)
     rbr.daRuneButton = CreateIconBuff(rbr.foodButton, false, rbr)
     --rbr.weaponButton = CreateIconBuff(rbr.foodButton, false, rbr)
