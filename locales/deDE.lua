@@ -674,3 +674,7 @@ L["Ticks"] = "Ticks"
 L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."] = "Anzeige der Zauberbalkenticks für kanalisierte Zauber. Dies ändert sich automatisch für Zauber wie Seelendieb, wenn zusätzliche Ticks durch einen hohen Tempowert entstehen."
 L["Name Update Rate"] = "Namen Aktualisierungsrate"
 L["Maximum tick rate allowed for name updates per second."] = "Maximal zulässige Tickrate für Namen Updates pro Sekunde."
+L["%s created a feast."] = "%s hat ein Festmahl aufgestellt."
+L["Feasts"] = "Festmähler"
+L["Bots"] = true
+L["%s created a Bot."] = "%s hat einen Bot erstellt."

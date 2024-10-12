@@ -990,6 +990,10 @@ GW.globalDefault = {
         ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND= "None",
         ALERTFRAME_NOTIFICATION_MAGE_PORTAL= true,
         ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND= "None",
+        alertFrameNotificatioFeast = true,
+        alertFrameNotificatioFeastSound= "None",
+        alertFrameNotificatioBot = true,
+        alertFrameNotificatioBotSound= "None",
 
         USE_BATTLEGROUND_HUD= true,
 

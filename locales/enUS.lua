@@ -643,3 +643,7 @@ L["Ticks"] = true
 L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."] = true
 L["Name Update Rate"] = true
 L["Maximum tick rate allowed for name updates per second."] = true
+L["%s created a feast."] = true
+L["Feasts"] = true
+L["Bots"] = true
+L["%s created a Bot."] = true

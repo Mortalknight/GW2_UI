@@ -1471,6 +1471,11 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         end
 
         if subEvent == "SPELL_CAST_SUCCESS" then
+            if GW.settings.alertFrameNotificatioFeast and GW.FeastList[spellID] then
+                local spellInfo = C_Spell.GetSpellInfo(spellID)
+                GW.AlertSystem:AddAlert(format(GW.L["%s created a feast."], srcName), nil, spellInfo.name, false, spellInfo.iconID, false)
+                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.alertFrameNotificatioFeastSound), "Master")
+            end
             if GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE and spellID == 190336 then -- Refreshment Table
                 local spellInfo = C_Spell.GetSpellInfo(190336)
                 -- /run GW.AlertSystem:AddAlert(format("%s created a table of Conjured Refreshments.", "Hansi"), nil, C_Spell.GetSpellInfo(190336), false, select(3, C_Spell.GetSpellInfo(190336)), false)
@@ -1478,6 +1483,11 @@ local function AlertContainerFrameOnEvent(self, event, ...)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND), "Master")
             end
         elseif subEvent == "SPELL_CREATE" then
+            if GW.settings.alertFrameNotificatioBot and GW.BotList[spellID] then
+                local spellInfo = C_Spell.GetSpellInfo(spellID)
+                GW.AlertSystem:AddAlert(format(GW.L["%s created a Bot."], srcName), nil, spellInfo.name, false, spellInfo.iconID, false)
+                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.alertFrameNotificatioBotSound), "Master")
+            end
             if GW.settings.ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING and spellID == 698 then -- Ritual of Summoning
                 local spellInfo = C_Spell.GetSpellInfo(698)
                 -- /run GW.AlertSystem:AddAlert(format("%s is performing a Ritual of Summoning.", "Hansi"), nil, C_Spell.GetSpellInfo(698), false, select(3, C_Spell.GetSpellInfo(698)), false)

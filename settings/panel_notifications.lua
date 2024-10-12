@@ -28,6 +28,43 @@ local function LoadNotificationsPanel(sWindow)
         tinsert(soundKeys, sound)
     end
 
+
+    addOption(p.scroll.scrollchild, GW.NewSign .. L["Bots"], nil, "alertFrameNotificatioBot", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        nil,
+        nil,
+        "alertFrameNotificatioBotSound",
+        nil,
+        soundKeys,
+        soundKeys,
+        nil,
+        {["ALERTFRAME_ENABLED"] = true, ["alertFrameNotificatioBot"] = true},
+        nil,
+        nil,
+        nil,
+        true,
+        true
+    )
+
+    addOption(p.scroll.scrollchild, GW.NewSign .. L["Feasts"], nil, "alertFrameNotificatioFeast", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        nil,
+        nil,
+        "alertFrameNotificatioFeastSound",
+        nil,
+        soundKeys,
+        soundKeys,
+        nil,
+        {["ALERTFRAME_ENABLED"] = true, ["alertFrameNotificatioFeast"] = true},
+        nil,
+        nil,
+        nil,
+        true,
+        true
+    )
+
     addOption(p.scroll.scrollchild, PLAYER_LEVEL_UP, nil, "ALERTFRAME_NOTIFICATION_LEVEL_UP", nil, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
