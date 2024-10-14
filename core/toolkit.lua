@@ -510,7 +510,7 @@ local function GwSkinScrollBar(frame)
 
     if Thumb then
         Thumb:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
-        Thumb:SetSize(12, Thumb:GetSize())
+        Thumb:SetSize(12, Thumb:GetHeight())
     end
 end
 
