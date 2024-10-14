@@ -16,6 +16,19 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("7.6.0",{
+    {ct.feature, [=[Option to copy a single chat line]=]},
+    {ct.feature, [=[Option to show chat history]=]},
+    {ct.feature, [=[Option to show channel ticks on castbar]=]},
+    {ct.feature, [=[Option to control the grid name update frequence to save some fps]=]},
+    {ct.feature, [=[Add mastery buff to raid buff reminder]=]},
+    {ct.change, [=[Jailers tower error]=]},
+    {ct.change, [=[Social frame lua error]=]},
+    {ct.change, [=[Player castbar sometimes stuck on screen]=]},
+    {ct.change, [=[Update some skins]=]},
+    {ct.change, [=[Add warband reputation indicator]=]},
+})
+
+addChange("7.6.0",{
     {ct.feature, [=[Add option to shorten healtglobe shield values]=]},
     {ct.feature, [=[Add option to hide player frame at party grid]=]},
     {ct.feature, [=[Add option to hide class icons at grids, if no class color is used]=]},
