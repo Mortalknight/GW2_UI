@@ -412,7 +412,7 @@ local function UpdateGridHeader(profile)
     if header.isUpdating then return end
     header.isUpdating = true
 
-    local x, y = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[settings.raidGrow[profile]], DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[settings.raidGrow[profile]]
+    local x, y = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[(settings.raidGrow[profile] or "DOWN+RIGHT")], DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[(settings.raidGrow[profile] or "DOWN+RIGHT")]
     local numGroups = header.numGroups
     local isParty = profile == "PARTY"
     local groupsPerRowCol = isParty and 1 or tonumber(settings.groupsPerColumnRow[profile])
@@ -450,7 +450,7 @@ local function UpdateGridHeader(profile)
             end
 
 
-            local point = DIRECTION_TO_POINT[settings.raidGrow[profile]]
+            local point = DIRECTION_TO_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")]
             group:SetAttribute("point", point)
 
             if point == "LEFT" or point == "RIGHT" then
@@ -472,7 +472,7 @@ local function UpdateGridHeader(profile)
                 group:SetAttribute("startingIndex", 1)
             end
 
-            group:SetAttribute("columnAnchorPoint", DIRECTION_TO_COLUMN_ANCHOR_POINT[settings.raidGrow[profile]])
+            group:SetAttribute("columnAnchorPoint", DIRECTION_TO_COLUMN_ANCHOR_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")])
 
             if not group.isForced then
                 group:SetAttribute("maxColumns", raidWideSorting and numGroups or 1)
@@ -505,13 +505,13 @@ local function UpdateGridHeader(profile)
             end
         end
 
-        local point = DIRECTION_TO_GROUP_ANCHOR_POINT[settings.raidGrow[profile]]
+        local point = DIRECTION_TO_GROUP_ANCHOR_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")]
         if (isParty or raidWideSorting) and settings.startFromCenter[profile] then
-			point = DIRECTION_TO_GROUP_ANCHOR_POINT["OUT+" .. settings.raidGrow[profile]]
+			point = DIRECTION_TO_GROUP_ANCHOR_POINT["OUT+" .. (settings.raidGrow[profile] or "DOWN+RIGHT")]
 		end
 
         if lastGroup == 0 then
-            if DIRECTION_TO_POINT[settings.raidGrow[profile]] == "LEFT" or DIRECTION_TO_POINT[settings.raidGrow[profile]] == "RIGHT" then
+            if DIRECTION_TO_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")] == "LEFT" or DIRECTION_TO_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")] == "RIGHT" then
                 if group then group:SetPoint(point, header, point, 0, height * y) end
                 height = height + HEIGHT + groupSpacing
                 newRows = newRows + 1
@@ -521,7 +521,7 @@ local function UpdateGridHeader(profile)
                 newCols = newCols + 1
             end
         else
-            if DIRECTION_TO_POINT[settings.raidGrow[profile]] == "LEFT" or DIRECTION_TO_POINT[settings.raidGrow[profile]] == "RIGHT" then
+            if DIRECTION_TO_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")] == "LEFT" or DIRECTION_TO_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")] == "RIGHT" then
                 if newRows == 1 then
                     if group then group:SetPoint(point, header, point, width * x, 0) end
                     width = width + WIDTH_FIVE + groupSpacing
