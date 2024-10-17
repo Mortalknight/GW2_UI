@@ -389,7 +389,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
             local diffColor = GetCreatureDifficultyColor(level)
             local race, englishRace = UnitRace(unit)
             local _, localizedFaction = GW.GetUnitBattlefieldFaction(unit)
-            if localizedFaction and englishRace == "Pandaren" then race = localizedFaction .. " " .. race end
+            if localizedFaction and (englishRace == "Pandaren" or englishRace == "Dracthyr") then race = localizedFaction .. " " .. race end
             local hexColor = GW.RGBToHex(diffColor.r, diffColor.g, diffColor.b)
             local unitGender = GW.settings.ADVANCED_TOOLTIP_SHOW_GENDER and genderTable[gender]
             if level < realLevel then
