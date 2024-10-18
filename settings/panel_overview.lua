@@ -129,7 +129,7 @@ local function ConvertChangeLogTableToOneTable()
     local table = {}
     local index = 1
     for i = 1, #GW.GW_CHANGELOGS do
-        table[index] = "H" .. GW.GW_CHANGELOGS[i].version
+        table[index] = "H-" .. GW.GW_CHANGELOGS[i].version
         index = index + 1
         for _, change in pairs(GW.GW_CHANGELOGS[i].changes) do
             table[index] = change[1] .. change[2]
@@ -197,39 +197,29 @@ local function InitButton(button, elementData)
         button.isSkinned = true
     end
 
-    if elementData.type == "changelog" then
-        if string.sub(elementData.info, 1, 1) == "H" then
-            button.content:Hide()
-            button.title.text:SetText(string.sub(elementData.info, 2))
-            button.title:Show()
-            elementData.isHeader = true
-        else
-            button.title:Hide()
+    if string.sub(elementData.info, 1, 2) == "H-" then
+        button.content:Hide()
+        button.title.text:SetText(string.sub(elementData.info, 3))
+        button.title:Show()
+        elementData.isHeader = true
+    else
+        if elementData.type == "changelog" then
             button.content.text:SetText(string.sub(elementData.info, 2))
             button.content.text:SetPoint("TOPLEFT", 46, -10)
             getChangeLogIcon(button.content.icon, string.sub(elementData.info, 1, 1))
             button.content.icon:Show()
-            button:SetHeight(math.max(36, button.content.text:GetStringHeight() + 20))
-            button.content:Show()
-            elementData.isHeader = false
-            elementData.neededHeight = button:GetHeight()
-        end
-    elseif elementData.type == "credits" then
-        if string.sub(elementData.info, 1, 2) == "H-" then
-            button.content:Hide()
-            button.title.text:SetText(string.sub(elementData.info, 3))
-            button.title:Show()
-            elementData.isHeader = true
-        else
-            button.title:Hide()
+        elseif elementData.type == "credits" then
             button.content.text:SetText(elementData.info)
             button.content.text:SetPoint("TOPLEFT", 25, -13)
             button.content.icon:Hide()
-            elementData.neededHeight = 36
-            elementData.isHeader = false
-            button.content:Show()
         end
+
+        button.title:Hide()
+        button.content:Show()
+        elementData.isHeader = false
     end
+    elementData.neededHeight = elementData.isHeader and 36 or math.max(36, button.content.text:GetStringHeight() + 20)
+    button:SetHeight(elementData.neededHeight)
 
     -- set zebra color by idx or watch status
     if (elementData.index % 2) == 1 then
