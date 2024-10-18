@@ -119,16 +119,15 @@ local function updateGuildButton(self, event)
         end
 
         GW.FetchGuildMembers()
-
-        if DoesAncestryIncludeAny(self, GetMouseFoci()) then
+        if (StoreFrame and not StoreFrame_IsShown()) and DoesAncestryIncludeAny(self, GetMouseFoci()) then
             GW.Guild_OnEnter(self)
         end
     elseif event == "MODIFIER_STATE_CHANGED" then
-        if not IsAltKeyDown() and DoesAncestryIncludeAny(self, GetMouseFoci())  then
+        if not IsAltKeyDown() and (StoreFrame and not StoreFrame_IsShown()) and DoesAncestryIncludeAny(self, GetMouseFoci())  then
             GW.Guild_OnEnter(self)
         end
     elseif event == "GUILD_MOTD" then
-        if DoesAncestryIncludeAny(self, GetMouseFoci())  then
+        if (StoreFrame and not StoreFrame_IsShown()) and DoesAncestryIncludeAny(self, GetMouseFoci())  then
             GW.Guild_OnEnter(self)
         end
     end
