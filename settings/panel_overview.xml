@@ -61,17 +61,23 @@
                     </Button>
                 </Frames>
             </Frame>
-            <ScrollFrame parentKey="scroll" inherits="GwHybridScrollFrameTemplate">
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Size x="600" y="390"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.pageblock" relativePoint="TOPLEFT" x="0" y="-5"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.pageblock" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
-            </ScrollFrame>
+            </Frame>
+            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="-8" y="0"/>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-8" y="0"/>
+                </Anchors>
+            </EventFrame>
         </Frames>
     </Frame>
 
-    <Frame name="GWSettingsPanelRow" virtual="true">
+    <EventButton name="GwSettingsChangeLogCreditsTemplate" virtual="true">
         <Size x="602" y="36" />
         <Frames>
             <Frame parentKey="title" setAllPoints="true" hidden="true">
@@ -125,7 +131,7 @@
                 </Layers>
             </Frame>
         </Frames>
-    </Frame>
+    </EventButton>
 
     <Button name="GwSettingsOverviewMenuButton" inherits="GwCharacterMenuButtonTemplate"  text="" virtual="true">
         <Size x="221" y="36"></Size>

@@ -9,6 +9,7 @@ local function title_OnClick(self)
     SetCurrentTitle(self.titleId)
 end
 GW.AddForProfiling("paperdoll_titles", "title_OnClick", title_OnClick)
+
 local function UpdateScrollBox(self)
     local dataProvider = CreateDataProvider();
     for index, playerTitle in ipairs(savedPlayerTitles) do

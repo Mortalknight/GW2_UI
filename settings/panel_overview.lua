@@ -139,58 +139,6 @@ local function ConvertChangeLogTableToOneTable()
     return table
 end
 
-local function ShowChangelog(frame)
-    frame.update = ShowChangelog
-    frame:GetParent().header:SetText(L["Changelog"])
-
-    local USED_CHANGELOG_HEIGHT = 0
-    local extraSpace = 0
-    local zebra
-
-    local offset = HybridScrollFrame_GetOffset(frame)
-    local changelogCombiendTable = ConvertChangeLogTableToOneTable()
-    local numberOfRows = #changelogCombiendTable
-
-    for i = 1, #frame.buttons do
-        local slot = frame.buttons[i]
-        local idx = i + offset
-        if idx > numberOfRows then
-            -- empty row (blank starter row, final row, and any empty entries)
-            slot.content:Hide()
-            slot.title:Hide()
-        else
-            local line = changelogCombiendTable[idx]
-
-            if string.sub(line, 1, 1) == "H" then
-                slot.content:Hide()
-                slot.title.text:SetText(string.sub(line, 2))
-                slot.title:Show()
-                slot:SetHeight(36)
-
-                zebra = idx % 2
-                slot.title.background:SetShown(zebra == 1)
-            else
-                slot.title:Hide()
-                slot.content.text:SetText(string.sub(line, 2))
-                slot.content.text:SetPoint("TOPLEFT", 46, -10)
-                getChangeLogIcon(slot.content.icon, string.sub(line, 1, 1))
-                slot.content.icon:Show()
-                -- set zebra color by idx or watch status
-                zebra = idx % 2
-                slot.content.background:SetShown(zebra == 1)
-                slot:SetHeight(math.max(36, slot.content.text:GetStringHeight() + 20))
-
-                extraSpace = extraSpace + slot:GetHeight()
-                slot.content:Show()
-            end
-            slot:Show()
-        end
-    end
-
-    USED_CHANGELOG_HEIGHT = 36 * numberOfRows + (extraSpace)
-    HybridScrollFrame_Update(frame, USED_CHANGELOG_HEIGHT, 390)
-end
-
 local function ConvertCreditsTableToOneTable()
     local table = {}
     local index = 1
@@ -207,65 +155,87 @@ local function ConvertCreditsTableToOneTable()
     return table
 end
 
-local function ShowCredits(frame)
-    frame.update = ShowCredits
-    frame:GetParent().header:SetText(L["Credits"])
+local function UpdateScrollBox(self, type)
+    local dataProvider = CreateDataProvider()
 
-    local USED_CREDITS_HEIGHT = 0
-    local zebra
+    if type == "changelog" then
+        self:GetParent().header:SetText(L["Changelog"])
 
-    local offset = HybridScrollFrame_GetOffset(frame)
-    local creditsCombiendTable = ConvertCreditsTableToOneTable()
-    local numberOfRows = #creditsCombiendTable
+        for index, line in pairs( ConvertChangeLogTableToOneTable() ) do
+            dataProvider:Insert({index = index, type = type, info = line})
+        end
+    elseif type == "credits" then
+        self:GetParent().header:SetText(L["Credits"])
 
-    for i = 1, #frame.buttons do
-        local slot = frame.buttons[i]
-        local idx = i + offset
-        if idx > numberOfRows then
-            -- empty row (blank starter row, final row, and any empty entries)
-            slot.content:Hide()
-            slot.title:Hide()
-        else
-            local line = creditsCombiendTable[idx]
-
-            if string.sub(line, 1, 2) == "H-" then
-                slot.content:Hide()
-                slot.title.text:SetText(string.sub(line, 3))
-                slot.title:Show()
-                slot:SetHeight(36)
-
-                zebra = idx % 2
-                slot.title.background:SetShown(zebra == 1)
-            else
-                slot.title:Hide()
-                slot.content.text:SetText(line)
-                slot.content.text:SetPoint("TOPLEFT", 25, -13)
-                slot.content.icon:Hide()
-                -- set zebra color by idx or watch status
-                zebra = idx % 2
-                slot.content.background:SetShown(zebra == 1)
-                slot:SetHeight(36)
-
-                slot.content:Show()
-            end
-            slot:Show()
+        for index, line in pairs( ConvertCreditsTableToOneTable() ) do
+            dataProvider:Insert({index = index, type = type, info = line})
         end
     end
 
-    USED_CREDITS_HEIGHT = 36 * numberOfRows
-    HybridScrollFrame_Update(frame, USED_CREDITS_HEIGHT, 390)
+    self:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
 end
 
-local function SetUpScrollFrame(frame)
-    HybridScrollFrame_CreateButtons(frame, "GWSettingsPanelRow", 0, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
-    for i = 1, #frame.buttons do
-        local slot = frame.buttons[i]
-        slot:SetWidth(frame:GetWidth() - 12)
-        slot.title.text:SetFont(DAMAGE_TEXT_FONT, 14)
-        slot.title.text:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+local function ShowChangelog(frame)
+    UpdateScrollBox(frame, "changelog")
+    frame:GetParent().ScrollBar:ScrollToBegin();
+end
 
-        slot.content.text:SetFont(UNIT_NAME_FONT, 12)
-        slot.content.text:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+local function ShowCredits(frame)
+    UpdateScrollBox(frame, "credits")
+    frame:GetParent().ScrollBar:ScrollToBegin();
+end
+
+local function InitButton(button, elementData)
+    if not button.isSkinned then
+        button.title.text:SetFont(DAMAGE_TEXT_FONT, 14)
+        button.title.text:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+
+        button.content.text:SetFont(UNIT_NAME_FONT, 12)
+        button.content.text:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+        GW.AddListItemChildHoverTexture(button)
+
+        button.isSkinned = true
+    end
+
+    if elementData.type == "changelog" then
+        if string.sub(elementData.info, 1, 1) == "H" then
+            button.content:Hide()
+            button.title.text:SetText(string.sub(elementData.info, 2))
+            button.title:Show()
+            elementData.isHeader = true
+        else
+            button.title:Hide()
+            button.content.text:SetText(string.sub(elementData.info, 2))
+            button.content.text:SetPoint("TOPLEFT", 46, -10)
+            getChangeLogIcon(button.content.icon, string.sub(elementData.info, 1, 1))
+            button.content.icon:Show()
+            button:SetHeight(math.max(36, button.content.text:GetStringHeight() + 20))
+            button.content:Show()
+            elementData.isHeader = false
+            elementData.neededHeight = button:GetHeight()
+        end
+    elseif elementData.type == "credits" then
+        if string.sub(elementData.info, 1, 2) == "H-" then
+            button.content:Hide()
+            button.title.text:SetText(string.sub(elementData.info, 3))
+            button.title:Show()
+            elementData.isHeader = true
+        else
+            button.title:Hide()
+            button.content.text:SetText(elementData.info)
+            button.content.text:SetPoint("TOPLEFT", 25, -13)
+            button.content.icon:Hide()
+            elementData.neededHeight = 36
+            elementData.isHeader = false
+            button.content:Show()
+        end
+    end
+
+    -- set zebra color by idx or watch status
+    if (elementData.index % 2) == 1 then
+        button.content.background:SetVertexColor(1, 1, 1, 1)
+    else
+        button.content.background:SetVertexColor(0, 0, 0, 0)
     end
 end
 
@@ -322,12 +292,12 @@ local function LoadOverviewPanel(sWindow)
     p.menu.changelog:SetParent(p)
     p.menu.changelog.settings = sWindow
     p.menu.changelog:SetText(L["Changelog"])
-    p.menu.changelog:SetScript("OnClick", function() ShowChangelog(p.scroll) end)
+    p.menu.changelog:SetScript("OnClick", function() ShowChangelog(p.ScrollBox) end)
 
     p.menu.creditsbtn:SetParent(p)
     p.menu.creditsbtn.settings = sWindow
     p.menu.creditsbtn:SetText(L["Credits"])
-    p.menu.creditsbtn:SetScript("OnClick", function() ShowCredits(p.scroll) end)
+    p.menu.creditsbtn:SetScript("OnClick", function() ShowCredits(p.ScrollBox) end)
 
     p.menu.movehudbtn:SetText(L["Move HUD"])
     p.menu.movehudbtn:SetScript("OnClick", fnGSWMH_OnClick)
@@ -348,11 +318,26 @@ local function LoadOverviewPanel(sWindow)
     createCat(L["Modules"], L["Enable and disable components"], p, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_overview")
 
     InitPanel(p, false)
-    -- setup scrollframe
-    local scroll = p.scroll
-    scroll.scrollBar.doNotHide = true
 
-    SetUpScrollFrame(scroll)
+    -- setup scrollframe
+    local view = CreateScrollBoxListLinearView()
+    view:SetElementInitializer("GwSettingsChangeLogCreditsTemplate", function(button, elementData)
+        InitButton(button, elementData);
+    end)
+    ScrollUtil.InitScrollBoxListWithScrollBar(p.ScrollBox, p.ScrollBar, view)
+    view:SetElementExtentCalculator(function(dataIndex, elementData)
+        if elementData.isHeader ~= nil and elementData.isHeader == true then
+            return 36
+        else
+            return elementData.neededHeight or 36
+        end
+    end)
+    ScrollUtil.AddResizableChildrenBehavior(p.ScrollBox)
+    GW.HandleTrimScrollBar(p.ScrollBar)
+    GW.HandleScrollControls(p)
+    p.ScrollBar:SetHideIfUnscrollable(true)
+
+    UpdateScrollBox(p.ScrollBox, "changelog")
 
     p:SetScript("OnShow", function()
         settingMenuToggle(false)
@@ -361,7 +346,5 @@ local function LoadOverviewPanel(sWindow)
     end)
 
     GW.InitBeledarsSplashScreen(p)
-
-    ShowChangelog(scroll)
 end
 GW.LoadOverviewPanel = LoadOverviewPanel
