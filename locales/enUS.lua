@@ -647,3 +647,4 @@ L["%s created a feast."] = true
 L["Feasts"] = true
 L["Bots"] = true
 L["%s created a Bot."] = true
+L["Stack Size"] = true

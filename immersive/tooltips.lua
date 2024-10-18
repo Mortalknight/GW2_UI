@@ -279,9 +279,10 @@ end
 local function GameTooltip_OnTooltipSetItem(self, data)
     if (self ~= GameTooltip and self ~= ShoppingTooltip1 and self ~= ShoppingTooltip2) or self:IsForbidden() then return end
 
-    local itemID, bagCount, bankCount
+    local itemID, bagCount, bankCount, stackSize
     local modKey = IsModKeyDown()
     local GetItem = TooltipUtil.GetDisplayedItem or self.GetItem
+
     if GetItem then
         local _, link = GetItem(self)
 
@@ -291,7 +292,7 @@ local function GameTooltip_OnTooltipSetItem(self, data)
             itemID = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, (data and data.id) or strmatch(link, ":(%w+)"))
         end
 
-        if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT then
+        if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT ~= "NONE" or modKey then
             local count = C_Item.GetItemCount(link)
             local bank = C_Item.GetItemCount(link, true, nil, GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_REAGENTS, GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_WARBAND)
 
@@ -303,6 +304,11 @@ local function GameTooltip_OnTooltipSetItem(self, data)
                 bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, count)
                 bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (bank - count))
             end
+
+            local _, _, _, _, _, _, _, stack = C_Item.GetItemInfo(link)
+            if stack and stack > 1 then
+                stackSize = format(IDLine, L["Stack Size"], stack)
+            end
         end
 
         ScanKeystone(self, link)
@@ -313,9 +319,10 @@ local function GameTooltip_OnTooltipSetItem(self, data)
         end
     end
 
-    if itemID or bagCount or bankCount then self:AddLine(" ") end
+    if itemID or bagCount or bankCount or stackSize then self:AddLine(" ") end
     if itemID or bagCount then self:AddDoubleLine(itemID or " ", bagCount or " ") end
     if bankCount then self:AddDoubleLine(" ", bankCount) end
+    if stackSize then self:AddDoubleLine(" ", stackSize) end
 end
 
 local function GetLevelLine(self, offset, raw)

@@ -678,3 +678,4 @@ L["%s created a feast."] = "%s hat ein Festmahl aufgestellt."
 L["Feasts"] = "Festmähler"
 L["Bots"] = true
 L["%s created a Bot."] = "%s hat einen Bot erstellt."
+L["Stack Size"] = "Stapelgröße"
