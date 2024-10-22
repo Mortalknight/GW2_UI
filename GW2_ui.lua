@@ -577,6 +577,13 @@ local function evPlayerEnteringWorld()
         end)
         GW.Notice("DB was converted Reload is needed /reload")
     end
+
+    -- remove old databse
+    GW2UI_PRIVATE_SETTINGS = nil
+    GW2UI_PRIVATE_LAYOUTS = nil
+    GW2UI_SETTINGS_PROFILES = nil
+    GW2UI_LAYOUTS = nil
+    GW2UI_SETTINGS_DB_03 = nil
 end
 AFP("evPlayerEnteringWorld", evPlayerEnteringWorld)
 

@@ -117,14 +117,13 @@ local function DatabaseMigration(globalDb, privateDb)
         GW.globalSettings:SetProfile(oldActiveProfileName)
     end
 
-    --GW2UI_PRIVATE_SETTINGS = nil
-    --GW2UI_PRIVATE_LAYOUTS = nil
-    --GW2UI_SETTINGS_PROFILES = nil
-    --GW2UI_LAYOUTS = nil
-    --GW2UI_SETTINGS_DB_03 = nil
+    GW2UI_PRIVATE_SETTINGS = nil
+    GW2UI_PRIVATE_LAYOUTS = nil
+    GW2UI_SETTINGS_PROFILES = nil
+    GW2UI_LAYOUTS = nil
+    GW2UI_SETTINGS_DB_03 = nil
 end
 GW.DatabaseMigration = DatabaseMigration
-
 
 local function Migration()
     -- migration for frame positions
