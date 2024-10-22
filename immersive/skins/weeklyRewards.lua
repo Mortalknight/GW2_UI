@@ -93,6 +93,8 @@ local function SkinActivityFrame(frame, isObject)
 
             frame.Background:GwCreateBackdrop("Transparent")
             frame.Background.backdrop.Center:SetDrawLayer("ARTWORK", 1)
+
+            frame.Name:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
         end
     end
 end
