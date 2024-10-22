@@ -15,7 +15,13 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-addChange("7.6.0",{
+addChange("7.7.1",{
+    {ct.change, [=[Add Dracthyr fraction to tooltip]=]},
+    {ct.change, [=[Add stackcount to tooltip]=]},
+    {ct.change, [=[Changes for 11.0.5]=]},
+})
+
+addChange("7.7.0",{
     {ct.feature, [=[Option to copy a single chat line]=]},
     {ct.feature, [=[Option to show chat history]=]},
     {ct.feature, [=[Option to show channel ticks on castbar]=]},
