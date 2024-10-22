@@ -111,6 +111,13 @@ local function ApplyWeeklyRewardsSkin()
     WeeklyRewardsFrame:GwStripTextures()
     GW.CreateFrameHeaderWithBody(WeeklyRewardsFrame, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {WeeklyRewardsFrame}, nil, false, true)
 
+    WeeklyRewardsFrame.titleText = WeeklyRewardsFrame:CreateFontString(nil, "OVERLAY")
+    WeeklyRewardsFrame.titleText:SetParent(WeeklyRewardsFrame.gwHeader)
+    WeeklyRewardsFrame.titleText:SetPoint("BOTTOMLEFT", WeeklyRewardsFrame.gwHeader, "BOTTOMLEFT", 64, 10)
+    WeeklyRewardsFrame.titleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
+    WeeklyRewardsFrame.titleText:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    WeeklyRewardsFrame.titleText:SetText(RATED_PVP_WEEKLY_VAULT)
+
     WeeklyRewardsFrame.BorderContainer:GwStripTextures()
     WeeklyRewardsFrame.ConcessionFrame:GwStripTextures()
 
