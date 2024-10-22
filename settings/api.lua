@@ -64,12 +64,6 @@ end
 GW.DeletePrivateLayoutByLayoutName = DeletePrivateLayoutByLayoutName
 
 local function SetOverrideIncompatibleAddons(setting, value)
-    local profileName = GW.globalSettings:GetCurrentProfile()
-
-    if profileName then
-        GW.settings.profileLastUpdated = date("%m/%d/%y %H:%M:%S")
-    end
-
     GW.settings.IncompatibleAddons[setting].Override = value
     GW.Notice(GW.L["Incompatible Addons behavior Overridden. Needs a reload to take effect."])
 end
@@ -83,7 +77,6 @@ local function ResetToDefault()
     if activeProfile then
         oldUsername = GW.globalSettings.profiles[activeProfile].profileCreatedCharacter
         GW.globalSettings:ResetProfile()
-        GW.globalSettings.profiles[activeProfile].profileLastUpdated = date("%m/%d/%y %H:%M:%S")
         GW.globalSettings.profiles[activeProfile].profileCreatedDate = date("%m/%d/%y %H:%M:%S")
         GW.globalSettings.profiles[activeProfile].profileCreatedCharacter = oldUsername or UNKNOWN
 

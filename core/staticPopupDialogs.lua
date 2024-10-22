@@ -63,15 +63,13 @@ StaticPopupDialogs["GW_CHANGE_PROFILE_NAME"] = {
     OnButton1 = function(self, data)
         local profileToRename = GW2UI_SETTINGS_PROFILES[data.profileID]
         local text = self.editBox:GetText()
-        local changeDate = date("%m/%d/%y %H:%M:%S")
         local description = L["Created: "] .. profileToRename["profileCreatedDate"] .. "\n" .. L["Created by: "] ..
-            profileToRename["profileCreatedCharacter"] .. "\n" .. L["Last updated: "] .. changeDate
+            profileToRename["profileCreatedCharacter"]
 
         -- Use hidden frame font object to calculate string width
         GW.HiddenFrame.HiddenString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
         GW.HiddenFrame.HiddenString:SetText(text)
         profileToRename["profilename"] = text
-        profileToRename["profileLastUpdated"] = changeDate
         data.name:SetText(text)
         data.desc:SetText(description)
 
