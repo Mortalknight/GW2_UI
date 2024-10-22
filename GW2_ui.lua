@@ -408,13 +408,13 @@ local function UpdateDb()
     GW.settings = GW.globalSettings.profile
 end
 
-local function evAddonLoaded(self, addonName)
-    if addonName ~= "GW2_UI" then
-        local loadHook = addonLoadHooks[addonName]
+local function evAddonLoaded(self, loadedAddonName)
+    if loadedAddonName ~= "GW2_UI" then
+        local loadHook = addonLoadHooks[loadedAddonName]
         if loadHook and type(loadHook) == "function" then
-            Debug("run load hook for addon", addonName)
+            Debug("run load hook for addon", loadedAddonName)
             xpcall(loadHook, errorhandler)
-            addonLoadHooks[addonName] = nil
+            addonLoadHooks[loadedAddonName] = nil
         end
         return
     else
