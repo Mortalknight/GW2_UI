@@ -496,7 +496,6 @@ local function UpdateTransferHistorySkins(self)
 end
 
 local function LoadCurrency(tabContainer)
-    -- setup the currency window as a HybridScrollFrame and init each of the faux frame buttons
     local curwin_outer = CreateFrame("Frame", "GWCharacterCurrenyRaidInfoFrame", tabContainer, "GwCurrencyWindow")
 
     --take over TokenFrame
@@ -504,11 +503,11 @@ local function LoadCurrency(tabContainer)
     TokenFrame:SetParent(curwin_outer.Currency)
     TokenFrame:ClearAllPoints()
     TokenFrame:SetPoint("TOPLEFT", curwin_outer.Currency, "TOPLEFT", 0, -15)
-    TokenFrame:SetSize(580, 596)
+    TokenFrame:SetSize(580, 576)
     TokenFrame.ScrollBox:SetParent(TokenFrame)
     TokenFrame.ScrollBox:ClearAllPoints()
     TokenFrame.ScrollBox:SetPoint("TOPLEFT", TokenFrame, 4, 0)
-    TokenFrame.ScrollBox:SetPoint("BOTTOMRIGHT", TokenFrame, -10, 0)
+    TokenFrame.ScrollBox:SetPoint("BOTTOMRIGHT", TokenFrame, -20, 0)
 
     --skin that frame here
     SkinTokenFrame()
