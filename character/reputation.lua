@@ -945,6 +945,7 @@ local function LoadReputation(tabContainer)
     g_selectionBehavior = ScrollUtil.AddSelectionBehavior(fmDetail.Details, SelectionBehaviorFlags.Deselectable, SelectionBehaviorFlags.Intrusive);
     g_selectionBehavior:RegisterCallback(SelectionBehaviorMixin.Event.OnSelectionChanged, function(o, elementData, selected)
         local button = fmDetail.Details:FindFrame(elementData)
+        if not button then return end
         ToggleDetailsButton(button, selected)
     end, fmDetail)
 

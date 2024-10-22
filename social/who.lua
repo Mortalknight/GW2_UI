@@ -8,6 +8,7 @@ local Headers = {
 }
 
 local whoSortValue = 1
+local C_Glue_IsOnGlueScreen = C_Glue and C_Glue.IsOnGlueScreen or IsOnGlueScreen
 
 local function UpdateScrollBox(self)
     local dataProvider = CreateDataProvider()
@@ -29,7 +30,7 @@ end
 
 local function WhoFrameDropdown_OnLoad(self)
     WowStyle1DropdownMixin.OnLoad(self)
-    if not IsOnGlueScreen() then
+    if not C_Glue_IsOnGlueScreen() then
 		local function IsSelected(sortData)
 			return sortData.value == whoSortValue;
 		end
