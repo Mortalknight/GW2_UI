@@ -429,9 +429,11 @@ local function SkinTokenFrame()
     GW.HandleScrollControls(TokenFrame)
     hooksecurefunc(TokenFrame.ScrollBox, "Update", UpdateTokenSkins)
 
-    TokenFrame.filterDropdown:ClearAllPoints()
-    TokenFrame.filterDropdown:SetPoint("TOPRIGHT", TokenFrame, "TOPRIGHT", 3, 25)
-    TokenFrame.filterDropdown:GwHandleDropDownBox()
+    if TokenFrame.filterDropdown then
+        TokenFrame.filterDropdown:ClearAllPoints()
+        TokenFrame.filterDropdown:SetPoint("TOPRIGHT", TokenFrame, "TOPRIGHT", 3, 25)
+        TokenFrame.filterDropdown:GwHandleDropDownBox()
+    end
 
     CurrencyTransferMenu:SetFrameStrata("DIALOG")
 end
