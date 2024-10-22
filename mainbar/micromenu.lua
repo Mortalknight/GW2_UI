@@ -451,6 +451,7 @@ local function setupMicroButtons(mbf)
     local cref
     if GW.settings.USE_CHARACTER_WINDOW then
         cref = CreateFrame("Button", "GwCharacterMicroButton", mbf, "SecureHandlerClickTemplate")
+        Mixin(cref, MainMenuBarMicroButtonMixin)
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         cref.textureName = "CharacterMicroButton"
@@ -562,7 +563,8 @@ local function setupMicroButtons(mbf)
     --ProfessionMicroButton
     local pref
     if GW.settings.USE_PROFESSION_WINDOW then
-        pref = CreateFrame("Button", "GwProfessionMicroButton", CollectionsMicroButton, "SecureHandlerClickTemplate")
+        pref = CreateFrame("Button", "GwProfessionMicroButton", mbf, "SecureHandlerClickTemplate")
+        Mixin(pref, MainMenuBarMicroButtonMixin)
         pref.tooltipText = MicroButtonTooltipText(PROFESSIONS_BUTTON, "TOGGLEPROFESSIONBOOK")
         pref.newbieText = nil
         pref.textureName = "Professions"

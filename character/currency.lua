@@ -425,10 +425,13 @@ local function SkinTokenFrame()
     CurrencyTransferMenu.ConfirmButton:GwSkinButton(false, true)
     CurrencyTransferMenu.CancelButton:GwSkinButton(false, true)
 
-
     GW.HandleTrimScrollBar(TokenFrame.ScrollBar)
     GW.HandleScrollControls(TokenFrame)
     hooksecurefunc(TokenFrame.ScrollBox, "Update", UpdateTokenSkins)
+
+    TokenFrame.filterDropdown:ClearAllPoints()
+    TokenFrame.filterDropdown:SetPoint("TOPRIGHT", TokenFrame, "TOPRIGHT", 3, 25)
+    TokenFrame.filterDropdown:GwHandleDropDownBox()
 
     CurrencyTransferMenu:SetFrameStrata("DIALOG")
 end
@@ -498,12 +501,12 @@ local function LoadCurrency(tabContainer)
     TokenFrame:Show()
     TokenFrame:SetParent(curwin_outer.Currency)
     TokenFrame:ClearAllPoints()
-    TokenFrame:SetPoint("TOPLEFT", curwin_outer.Currency, "TOPLEFT", 0, 0)
-    TokenFrame:SetSize(580, 576)
+    TokenFrame:SetPoint("TOPLEFT", curwin_outer.Currency, "TOPLEFT", 0, -15)
+    TokenFrame:SetSize(580, 596)
     TokenFrame.ScrollBox:SetParent(TokenFrame)
     TokenFrame.ScrollBox:ClearAllPoints()
     TokenFrame.ScrollBox:SetPoint("TOPLEFT", TokenFrame, 4, 0)
-    TokenFrame.ScrollBox:SetPoint("BOTTOMRIGHT", TokenFrame, -22, 0)
+    TokenFrame.ScrollBox:SetPoint("BOTTOMRIGHT", TokenFrame, -10, 0)
 
     --skin that frame here
     SkinTokenFrame()
