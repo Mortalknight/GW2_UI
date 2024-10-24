@@ -91,10 +91,11 @@ local function SkinFrame(frame)
     end
 end
 
-local function OpenMenu(manager)
+local function OpenMenu(manager, region, menuDescription)
     local menu = manager:GetOpenMenu()
     if menu then
         SkinFrame(menu)
+        menuDescription:AddMenuAcquiredCallback(SkinFrame)
     end
 end
 
