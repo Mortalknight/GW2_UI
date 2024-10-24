@@ -51,6 +51,7 @@ local function GetPrivateLayoutByLayoutName(layoutName)
 end
 GW.GetPrivateLayoutByLayoutName = GetPrivateLayoutByLayoutName
 
+
 local function DeletePrivateLayoutByLayoutName(layoutName)
     if GW.private.Layouts == nil then
         GW.private.Layouts = {}

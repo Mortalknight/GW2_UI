@@ -275,7 +275,7 @@ end
 GW.GridToggle = GridToggle
 
 local function UpdateMatchingLayout(self, new_point)
-    local selectedLayoutName = GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.selectedName
+    local selectedLayoutName = GW.private.Layouts.currentSelected
     local layout = selectedLayoutName and GW.GetLayoutByName(selectedLayoutName) or nil
     local frameFound = false
     if layout then

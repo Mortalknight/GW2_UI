@@ -187,9 +187,6 @@ local function delete_OnClick(self)
         function()
             deleteProfile(p.profileName)
             UpdateScrollBox(ProfileWin)
-            GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll)
-
-            UpdateScrollBox(ProfileWin)
         end,
         nil,
         nil,
@@ -250,7 +247,6 @@ local function rename_OnClick(self)
 
                 GW.global.layouts[profileName] = GW.copyTable(nil, GW.global.layouts[profileOriginalName])
                 GW.global.layouts[profileOriginalName] = nil
-                GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll)
 
                 --rename the assinged layouts
                 local privateLayouts = GW.GetAllPrivateLayouts()
