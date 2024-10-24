@@ -39,6 +39,12 @@ local function SkinAddonButtons()
         PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.LeftText:SetTextColor(1, 1, 1)
         PlayerSpellsFrame.SpellBookFrame.TalentTreeTweaks_TransparencySlider.RightText:SetTextColor(1, 1, 1)
     end
+
+    if ClassTalentLoadoutImportDialog and ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox then
+        ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox:GwSkinCheckButton()
+        ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox:SetSize(13, 13)
+        ClassTalentLoadoutImportDialog.TalentTreeTweaks_ImportIntoCurrentCheckbox.text:SetTextColor(1, 1, 1)
+    end
 end
 
 local function HandleTalentFrameDialog(dialog)
