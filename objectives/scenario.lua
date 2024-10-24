@@ -18,6 +18,9 @@ local allowedWidgetUpdateIds = {
     [6183] = true, -- TWW delve
     [5483] = true, -- TWW theather event
     [5865] = true, -- TWW echos
+    [5986] = true, -- 20th
+    [5990] = true, -- 20th
+    [5991] = true, -- 20th
 }
 
 local function getObjectiveBlock(self, index)
@@ -321,17 +324,14 @@ local function updateCurrentScenario(self, event, ...)
     numCriteria = GW.addWarfrontData(scenarioBlock, numCriteria)
     numCriteria = GW.addHeroicVisionsData(scenarioBlock, numCriteria)
     numCriteria = GW.addJailersTowerData(scenarioBlock, numCriteria)
+
     if not showTimerAsBonus then
         numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget = GW.addEmberCourtData(scenarioBlock, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
     end
-    if not showTimerAsBonus then
-        GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId = GW.addEventTimerBarByWidgetId(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId, 5865) -- TWW echo
-    end
-    if not showTimerAsBonus then
-        GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId = GW.addEventTimerBarByWidgetId(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId, 4324) -- DF cooking event
-    end
-    if not showTimerAsBonus then
-        GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId = GW.addEventTimerBarByWidgetId(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId, 5483) -- TWW Theather event
+    for id, _ in pairs(allowedWidgetUpdateIds) do
+        if not showTimerAsBonus then
+            GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId = GW.addEventTimerBarByWidgetId(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId, id)
+        end
     end
 
     local bonusSteps = C_Scenario.GetBonusSteps() or {}
