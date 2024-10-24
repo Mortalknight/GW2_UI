@@ -50,7 +50,7 @@ end
 local function FetchGuildMembers()
     wipe(guildTable)
 
-    local totalMembers = GetNumGuildMembers()
+    local totalMembers = GetNumGuildMembers() or 0
     for i = 1, totalMembers do
         local name, rank, rankIndex, level, _, zone, note, officerNote, connected, memberstatus, className, _, _, isMobile, _, _, guid = GetGuildRosterInfo(i)
         if not name then return end
@@ -101,6 +101,9 @@ local function Guild_OnEnter(self)
     local total, _, online = GetNumGuildMembers()
     if #guildTable == 0 then FetchGuildMembers() end
 
+    if not total then total = 0 end
+    if not online then online = 0 end
+
     SortGuildTable(shiftDown)
 
     local guildName, guildRank = GetGuildInfo("player")
@@ -117,7 +120,7 @@ local function Guild_OnEnter(self)
 
     local guildFactionData = C_Reputation.GetGuildFactionData()
     -- Show only if not on max rep
-    if guildFactionData.reaction ~= 8 then
+    if guildFactionData and guildFactionData.reaction ~= 8 then
         local barMin, barMax, barValue = guildFactionData.currentReactionThreshold, guildFactionData.nextReactionThreshold, guildFactionData.currentStanding;
         barMax = barMax - barMin;
         barValue = barValue - barMin;
