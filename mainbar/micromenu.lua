@@ -102,7 +102,7 @@ local function updateGuildButton(self, event)
             return
         end
 
-        local _, _, numOnlineMembers = GetNumGuildMembers()
+        local _, numOnlineMembers = GetNumGuildMembers()
 
         if numOnlineMembers ~= nil and numOnlineMembers > 0 then
             gmb.GwNotifyDark:Show()
