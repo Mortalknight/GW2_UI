@@ -279,7 +279,8 @@ end
 local function GameTooltip_OnTooltipSetItem(self, data)
     if (self ~= GameTooltip and self ~= ShoppingTooltip1 and self ~= ShoppingTooltip2) or self:IsForbidden() then return end
 
-    local itemID, bagCount, bankCount, stackSize
+    local itemID
+    local bagCount, bankCount, stackSize
     local modKey = IsModKeyDown()
     local GetItem = TooltipUtil.GetDisplayedItem or self.GetItem
 
@@ -292,22 +293,24 @@ local function GameTooltip_OnTooltipSetItem(self, data)
             itemID = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, (data and data.id) or strmatch(link, ":(%w+)"))
         end
 
-        if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT ~= "NONE" or modKey then
-            local count = C_Item.GetItemCount(link)
+        local count = C_Item.GetItemCount(link)
+
+        if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT.Bag then
+            bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, count)
+        end
+
+        if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT.Bank then
             local bank = C_Item.GetItemCount(link, true, nil, GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_REAGENTS, GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_WARBAND)
-
-            if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BAG" then
-                bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, count)
-            elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BANK" then
-                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (bank - count))
-            elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BOTH" then
-                bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, count)
-                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (bank - count))
+            local amount = bank and (bank - count)
+            if amount and amount > 0 then
+                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, amount)
             end
+        end
 
+        if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT.Stack then
             local _, _, _, _, _, _, _, stack = C_Item.GetItemInfo(link)
             if stack and stack > 1 then
-                stackSize = format(IDLine, L["Stack Size"], stack)
+                stackSize = format(("*%s|r %d"):gsub("*", GW.Gw2Color), L["Stack Size"], stack)
             end
         end
 
@@ -319,10 +322,18 @@ local function GameTooltip_OnTooltipSetItem(self, data)
         end
     end
 
-    if itemID or bagCount or bankCount or stackSize then self:AddLine(" ") end
-    if itemID or bagCount then self:AddDoubleLine(itemID or " ", bagCount or " ") end
-    if bankCount then self:AddDoubleLine(" ", bankCount) end
-    if stackSize then self:AddDoubleLine(" ", stackSize) end
+    if itemID or bagCount or bankCount or stackSize then
+        self:AddLine(" ")
+        self:AddDoubleLine(itemID or " ", bagCount or bankCount or stackSize or " ")
+    end
+
+    if (bagCount and bankCount) then
+        self:AddDoubleLine(" ", bankCount)
+    end
+
+    if (bagCount or bankCount) and stackSize then
+        self:AddDoubleLine(" ", stackSize)
+    end
 end
 
 local function GetLevelLine(self, offset, raw)

@@ -648,7 +648,6 @@ local function InitPanel(panel, hasScroll)
 
                         if v.isFont then
                             of.button.string:SetFont(GW.Libs.LSM:Fetch("font", self.optionDisplayName), 12, "")
-
                         end
 
                         if v.callback then

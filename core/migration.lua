@@ -188,5 +188,29 @@ local function Migration()
 
         GW.settings.chatTimeStampMigrationDone = true
     end
+
+    -- migration of tooltip item count
+    if type(GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT) == "string" then
+        local db = {
+            Bank = true,
+            Bag = true,
+            Stack = false
+        }
+        if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BANK" then
+            db.Bank = true
+            db.Bag = false
+        elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BAG" then
+            db.Bank = false
+            db.Bag = true
+        elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BOTH" then
+            db.Bank = true
+            db.Bag = true
+        elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "NONE" then
+            db.Bank = false
+            db.Bag = false
+        end
+
+        GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT = db
+    end
 end
 GW.Migration = Migration

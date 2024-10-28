@@ -154,18 +154,15 @@ local function LoadTooltipPanel(sWindow)
         L["Display how many of a certain item you have in your possession."],
         "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT",
         nil,
-        {"NONE", "BAG", "BANK", "BOTH"},
-        {
-            NONE,
-            INVTYPE_BAG,
-            BANK,
-            STATUS_TEXT_BOTH
-        },
+        {"Bag", "Bank", "Stack"},
+        {INVTYPE_BAG, BANK, L["Stack Size"]},
         nil,
-        {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true}
+        {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true},
+        true
     )
-    addOption(p.scroll.scrollchild, L["Include Reagents"], nil, "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_REAGENTS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true, ["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = {"BANK", "BOTH"}})
-    addOption(p.scroll.scrollchild, L["Include Warband"], nil, "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_WARBAND", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true, ["ADVANCED_TOOLTIP_OPTION_ITEMCOUNT"] = {"BANK", "BOTH"}})
+
+    addOption(p.scroll.scrollchild, L["Include Reagents"], nil, "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_REAGENTS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, L["Include Warband"], nil, "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_WARBAND", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Cursor Anchor Type"],
