@@ -152,8 +152,9 @@ local function updateCurrentScenario(self, event, ...)
 
     -- here we show only the statusbar
     for id, _ in pairs(allowedWidgetUpdateIdsForStatusBar) do
+        print(id)
         local widgetInfo = C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(id)
-        if widgetInfo then
+        if widgetInfo and shownState.shownState ~= Enum.WidgetShownState.Hidden then
             addObjectiveBlock(
             scenarioBlock,
             ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text),
