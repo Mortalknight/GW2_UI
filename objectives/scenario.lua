@@ -13,7 +13,7 @@ local TIME_FOR_2 = 0.8
 local timerBlock
 local scenarioBlock
 
-local allowedWidgetUpdateIds = {
+local allowedWidgetUpdateIdsForTimer = {
     [3302] = true, -- DF cooking event
     [6183] = true, -- TWW delve
     [5483] = true, -- TWW theather event
@@ -21,6 +21,10 @@ local allowedWidgetUpdateIds = {
     [5986] = true, -- 20th
     [5990] = true, -- 20th
     [5991] = true, -- 20th
+}
+
+local allowedWidgetUpdateIdsForStatusBar = {
+    [6350] = true, -- 20th
 }
 
 local function getObjectiveBlock(self, index)
@@ -109,10 +113,11 @@ GW.AddForProfiling("scenario", "addObjectiveBlock", addObjectiveBlock)
 local function updateCurrentScenario(self, event, ...)
     if event == "UPDATE_UI_WIDGET" then
         local w = ...
-        if not w or (w and allowedWidgetUpdateIds[w.widgetID] == nil) then
+        if not w or (w and allowedWidgetUpdateIdsForTimer[w.widgetID] == nil and allowedWidgetUpdateIdsForStatusBar[w.widgetID] == nil) then
             return
         end
     end
+
     GW.RemoveTrackerNotificationOfType("SCENARIO")
     GW.RemoveTrackerNotificationOfType("TORGHAST")
     GW.RemoveTrackerNotificationOfType("DELVE")
@@ -145,8 +150,41 @@ local function updateCurrentScenario(self, event, ...)
     scenarioBlock.questLogIndex = 0
     scenarioBlock:Show()
 
+    -- here we show only the statusbar
+    for id, _ in pairs(allowedWidgetUpdateIdsForStatusBar) do
+        local widgetInfo = C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(id)
+        if widgetInfo then
+            addObjectiveBlock(
+            scenarioBlock,
+            ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text),
+            false,
+            1,
+            "object",
+            widgetInfo.barValue)
+
+            for i = scenarioBlock.numObjectives + 1, 20 do
+                if _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i] then
+                    _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
+                end
+            end
+
+            compassData.TITLE = widgetInfo.text
+            compassData.DESC = ""
+            GW.AddTrackerNotification(compassData)
+
+            scenarioBlock:SetHeight(scenarioBlock.height)
+            self.oldHeight = GW.RoundInt(self:GetHeight())
+            self:SetHeight(scenarioBlock.height)
+            timerBlock.timer:Hide()
+
+            GW.TerminateScenarioWidgetTimer()
+
+            return
+        end
+    end
+
     local _, _, numStages = C_Scenario.GetInfo()
-    if numStages == 0 or IsOnGroundFloorInJailersTower() then
+    if (numStages == 0 or IsOnGroundFloorInJailersTower())  then
         local name, instanceType, _, difficultyName, _ = GetInstanceInfo()
         if instanceType == "raid" then
             compassData.TITLE = name
@@ -174,6 +212,8 @@ local function updateCurrentScenario(self, event, ...)
         self:SetHeight(scenarioBlock.height)
 
         timerBlock.timer:Hide()
+
+        GW.TerminateScenarioWidgetTimer()
 
         return
     end
@@ -328,7 +368,7 @@ local function updateCurrentScenario(self, event, ...)
     if not showTimerAsBonus then
         numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget = GW.addEmberCourtData(scenarioBlock, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
     end
-    for id, _ in pairs(allowedWidgetUpdateIds) do
+    for id, _ in pairs(allowedWidgetUpdateIdsForTimer) do
         if not showTimerAsBonus then
             GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId = GW.addEventTimerBarByWidgetId(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId, id)
         end
