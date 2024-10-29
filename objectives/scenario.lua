@@ -169,7 +169,7 @@ local function updateCurrentScenario(self, event, ...)
             end
 
             compassData.TITLE = widgetInfo.text
-            compassData.DESC = ""
+            compassData.DESC = widgetInfo.text
             GW.AddTrackerNotification(compassData)
 
             scenarioBlock:SetHeight(scenarioBlock.height)

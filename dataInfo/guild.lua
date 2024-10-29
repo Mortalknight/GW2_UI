@@ -1,12 +1,10 @@
 local _, GW = ...
 local CommaValue = GW.CommaValue
 
-local guildTable = {}
-
 local onlinestatus = {
     [0] = "",
-    [1] = "|cffFFFFFF[|r|cffFF0000" .. AFK .. "|r|cffFFFFFF]|r",
-    [2] = "|cffFFFFFF[|r|cffFF0000" .. DND .. "|r|cffFFFFFF]|r",
+    [1] = format(" |cffFFFFFF[|r|cffFF9900%s|r|cffFFFFFF]|r", AFK),
+    [2] = format(" |cffFFFFFF[|r|cffFF3333%s|r|cffFFFFFF]|r", DND),
 }
 local mobilestatus = {
     [0] = [[|TInterface\ChatFrame\UI-ChatIcon-ArmoryChat:14:14:0:0:16:16:0:16:0:16:73:177:73|t]],
@@ -14,11 +12,29 @@ local mobilestatus = {
     [2] = [[|TInterface\ChatFrame\UI-ChatIcon-ArmoryChat-BusyMobile:14:14:0:0:16:16:0:16:0:16|t]],
 }
 
+local TIMERUNNING_ATLAS = "|A:timerunning-glues-icon-small:%s:%s:0:0|a"
+local TIMERUNNING_SMALL = format(TIMERUNNING_ATLAS, 12, 10)
+
+local FACTION_ATLAS = "|A:communities-icon-faction-%s:%s:%s:0:0|a"
+local FACTION_ALLIANCE = format(FACTION_ATLAS, "alliance", 13, 13)
+local FACTION_HORDE = format(FACTION_ATLAS, "horde", 13, 13)
+
 local tthead = GW.myfaction == "Alliance" and GW.FACTION_COLOR[2] or GW.FACTION_COLOR[1]
 local ttsubh = {r = 1, g = 0.93, b = 0.73}
 local ttoff = {r = 0.3, g = 1, b = 0.3}
 local activezone = {r = 0.3, g = 1.0, b = 0.3}
 local inactivezone = {r = 0.65, g = 0.65, b = 0.65}
+local guildInfoString = "%s"
+local guildInfoString2 = GUILD .. ": %d/%d"
+local guildMotDString = "%s |cffaaaaaa- |cffffffff%s"
+local levelNameString = "|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r"
+local levelNameStatusString = "%s |cff%02x%02x%02x%d|r %s%s%s %s"
+local nameRankString = "%s %s |cff999999-|cffffffff %s"
+local standingString = GW.RGBToHex(ttsubh.r, ttsubh.g, ttsubh.b) .. "%s:|r |cFFFFFFFF%s/%s (%s%%)"
+local moreMembersOnlineString = strjoin("", "+%d ", FRIENDS_LIST_ONLINE, "...")
+local noteString = strjoin("", "|cff999999   ", LABEL_NOTE, ":|r %s")
+local officerNoteString = strjoin("", "|cff999999   ", GUILD_RANK1_DESC, ":|r %s")
+local clubTable, guildTable, guildMotD = {}, {}, ""
 
 local function sortByRank(a, b)
     if a and b then
@@ -49,6 +65,25 @@ end
 
 local function FetchGuildMembers()
     wipe(guildTable)
+    wipe(clubTable)
+
+    local clubs = C_Club.GetSubscribedClubs()
+    if clubs then -- use this to get the timerunning flag (and other info?)
+        local guildClubID
+        for _, data in next, clubs do
+            if data.clubType == Enum.ClubType.Guild then
+                guildClubID = data.clubId
+                break
+            end
+        end
+
+        local members = guildClubID and CommunitiesUtil.GetAndSortMemberInfo(guildClubID)
+        if members then
+            for _, data in next, members do
+                clubTable[data.guid] = data
+            end
+        end
+    end
 
     local totalMembers = GetNumGuildMembers() or 0
     for i = 1, totalMembers do
@@ -59,8 +94,9 @@ local function FetchGuildMembers()
         zone = (isMobile and not connected) and REMOTE_CHAT or zone
 
         if connected or isMobile then
-            guildTable[#guildTable + 1] = {
-                name = gsub(name, gsub(GW.myrealm, "[%s%-]", ""), ""),
+            local clubMember = clubTable[guid]
+            local data = {
+                name = gsub(name, format("%%-%s", gsub(GW.myrealm, "[%s%-]", "")), ""),
                 rank = rank,
                 level = level,
                 zone = zone,
@@ -73,6 +109,13 @@ local function FetchGuildMembers()
                 isMobile = isMobile,
                 guid = guid
             }
+
+            if clubMember then
+                data.timerunningID = clubMember.timerunningSeasonID
+                data.faction = clubMember.faction
+            end
+
+            guildTable[#guildTable + 1] = data
         end
     end
 end
@@ -109,30 +152,34 @@ local function Guild_OnEnter(self)
     local guildName, guildRank = GetGuildInfo("player")
 
     if guildName and guildRank then
-        GameTooltip:AddDoubleLine(guildName, GUILD .. ": " .. online .. "/" .. total, tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
+        GameTooltip:AddDoubleLine(format(guildInfoString, guildName), format(guildInfoString2, online, total), tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
         GameTooltip:AddLine(guildRank, 1, 1, 1, 1)
     end
 
     if GetGuildRosterMOTD() ~= "" then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(GUILD_MOTD .. " |cffaaaaaa- |cffffffff" .. GetGuildRosterMOTD(), tthead.r, tthead.g, tthead.b, 1)
+        GameTooltip:AddLine(format(guildMotDString, GUILD_MOTD, guildMotD), tthead.r, tthead.g, tthead.b, 1)
     end
 
     local guildFactionData = C_Reputation.GetGuildFactionData()
     -- Show only if not on max rep
     if guildFactionData and guildFactionData.reaction ~= 8 then
-        local barMin, barMax, barValue = guildFactionData.currentReactionThreshold, guildFactionData.nextReactionThreshold, guildFactionData.currentStanding;
-        barMax = barMax - barMin;
-        barValue = barValue - barMin;
-        GameTooltip:AddLine(GW.RGBToHex(ttsubh.r, ttsubh.g, ttsubh.b) .. COMBAT_FACTION_CHANGE .. ":|r |cFFFFFFFF" .. CommaValue(barValue) .. "/" .. CommaValue(barMax) .. "(" .. ceil((barValue / barMax) * 100) .. "%)")
+        local nextReactionThreshold = guildFactionData.nextReactionThreshold - guildFactionData.currentReactionThreshold
+        local currentStanding = guildFactionData.currentStanding - guildFactionData.currentReactionThreshold
+        GameTooltip:AddLine(format(standingString, COMBAT_FACTION_CHANGE, CommaValue(currentStanding), CommaValue(nextReactionThreshold), ceil((currentStanding / nextReactionThreshold) * 100)))
     end
 
     local zonec
 
     GameTooltip:AddLine(" ")
+    local limit = 20
     for i, info in ipairs(guildTable) do
-        if i > 20 then
-            GameTooltip:AddLine("+ " .. (online - 20) .. " " .. BINDING_HEADER_OTHER, ttsubh.r, ttsubh.g, ttsubh.b)
+        if i > limit then
+            local count = online - limit
+            if count > 1 then
+                GameTooltip:AddLine(format(moreMembersOnlineString, count), ttsubh.r, ttsubh.g, ttsubh.b)
+            end
+
             break
         end
 
@@ -143,19 +190,21 @@ local function Guild_OnEnter(self)
             zonec = inactivezone
         end
 
+        local faction = info.faction == 1 and FACTION_ALLIANCE or info.faction == 0 and FACTION_HORDE or ""
+
         local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
         if not classc then classc = levelc end
 
         if shiftDown then
-            GameTooltip:AddDoubleLine(strmatch(info.name, "([^%-]+).*") .. " |cff999999-|cffffffff " .. info.rank, info.zone, classc.r, classc.g, classc.b, zonec.r, zonec.g, zonec.b)
+            GameTooltip:AddDoubleLine(format(nameRankString, faction, info.name, info.rank), info.zone, classc.r, classc.g, classc.b, zonec.r, zonec.g, zonec.b)
             if info.note ~= "" then
-                GameTooltip:AddLine("|cff999999   " .. LABEL_NOTE .. ":|r " .. info.note, ttsubh.r, ttsubh.g, ttsubh.b, 1)
+                GameTooltip:AddLine(format(noteString, info.note), ttsubh.r, ttsubh.g, ttsubh.b, 1)
             end
             if info.officerNote ~= "" then
-                GameTooltip:AddLine("|cff999999   " .. GUILD_RANK1_DESC .. ":|r " .. info.officerNote, ttoff.r, ttoff.g, ttoff.b, 1)
+                GameTooltip:AddLine(format(officerNoteString, info.officerNote), ttoff.r, ttoff.g, ttoff.b, 1)
             end
         else
-            GameTooltip:AddDoubleLine(format("|cff%02x%02x%02x%d|r %s%s %s", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, strmatch(info.name, "([^%-]+).*"), inGroup(info.name), info.status), info.zone, classc.r, classc.g, classc.b, zonec.r, zonec.g, zonec.b)
+            GameTooltip:AddDoubleLine(format(levelNameStatusString, faction, levelc.r*255, levelc.g*255, levelc.b*255, info.level, strmatch(info.name,"([^%-]+).*"), inGroup(info.name), info.status, info.timerunningID and TIMERUNNING_SMALL or ""), info.zone, classc.r,classc.g,classc.b, zonec.r,zonec.g,zonec.b)
         end
     end
 
@@ -194,7 +243,7 @@ local function Guild_OnClick(self, button)
                     local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
                     if not classc then classc = levelc end
 
-                    local name = format("|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, strmatch(info.name, "([^%-]+).*"))
+                    local name = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, strmatch(info.name, "([^%-]+).*"))
                     if inGroup(strmatch(info.name, "([^%-]+).*")) ~= "" then
                         name = name .. " |cffaaaaaa*|r"
                     elseif not (info.isMobile and info.zone == REMOTE_CHAT) then
