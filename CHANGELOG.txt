@@ -1,3 +1,12 @@
+7.7.2
+FIXES
+    - Guild data info lua error
+
+CHANGES
+    - Skin updates
+    - Guild data info text
+    - Stackcount setting
+
 7.7.1
 CHANGES
     - Add Dracthyr fraction to tooltip

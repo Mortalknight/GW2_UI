@@ -15,6 +15,13 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.7.2",{
+    {ct.bug, [=[Guild data info lua error]=]},
+    {ct.change, [=[Skin updates]=]},
+    {ct.change, [=[Guild data info text]=]},
+    {ct.change, [=[Stackcount setting]=]},
+})
+
 addChange("7.7.1",{
     {ct.change, [=[Add Dracthyr fraction to tooltip]=]},
     {ct.change, [=[Add stackcount to tooltip]=]},
