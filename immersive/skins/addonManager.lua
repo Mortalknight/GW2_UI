@@ -12,7 +12,7 @@ local function SkinAddonList()
     AddonList.DisableAllButton:GwSkinButton(false, true)
     AddonList.OkayButton:GwSkinButton(false, true)
     AddonList.CancelButton:GwSkinButton(false, true)
-    AddonCharacterDropDown:GwSkinDropDownMenu()
+    AddonList.Dropdown:GwHandleDropDownBox()
     AddonListForceLoad:GwSkinCheckButton()
     AddonListForceLoad:SetSize(10, 10)
     AddonListForceLoad:ClearAllPoints()
@@ -41,7 +41,7 @@ local function SkinAddonList()
             if addonIndex <= numEntrys then
 
             local checkall
-            local character = UIDropDownMenu_GetSelectedValue(AddonCharacterDropDown)
+            local character = UIDropDownMenu_GetSelectedValue(AddonList.Dropdown)
             local entry = _G["AddonListEntry" .. i]
                 entry.Enabled = entry.Enabled or _G["AddonListEntry" .. i .. "Enabled"]
             if character == true then

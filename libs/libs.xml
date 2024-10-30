@@ -13,7 +13,7 @@
     <Script file="AceLocale-3.0\AceLocale-3.0.lua"/>
     <Script file="LibDeflate\LibDeflate.lua"/>
     <Script file="LibBase64-1.0\LibBase64-1.0.lua"/>
-    <Script file="LibFrameFade\LibFrameFade.lua"/>
+
     <Script file="LibDispel\LibDispel.lua"/>
     <Script file="LibGW2\LibGW2.lua"/>
     <Script file='LibClassicSpecs\LibClassicSpecs.lua'/>

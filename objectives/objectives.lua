@@ -599,68 +599,68 @@ GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPosi
 
 local function OnBlockClick(self, button)
     if button == "RightButton" then
-        local menuList = {{text = self.title, isTitle = true, notCheckable = true}}
-        local subMenu = {}
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:CreateTitle(self.title)
 
-        -- if we have objectives, we add them needs Questi
-        if Questie and Questie.started then
-            local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID)
-            for _, objective in pairs(QuestieQuest.Objectives) do
-                local objectiveMenu = {}
+            if Questie and Questie.started then
+                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID) or {}
 
-                if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
-                    tinsert(objectiveMenu, {text = L["Set TomTom Target"], hasArrow = false, notCheckable = true, func = function() AddTomTomWaypoint(self.questID, objective) end})
-                end
+                if QuestieQuest:IsComplete() == 0 then
+                    local submenuObjectives = rootDescription:CreateButton(OBJECTIVES_TRACKER_LABEL)
 
-                tinsert(objectiveMenu, {text = L["Show on Map"], notCheckable = true, func = function()
-                    QuestieLoader:ImportModule("TrackerUtils"):ShowObjectiveOnMap(objective)
-                end})
+                    for _, objective in pairs(QuestieQuest.Objectives) do
+                        local submenuObjectives = submenuObjectives:CreateButton(objective.Description)
 
-                tinsert(subMenu, {text = objective.Description, hasArrow = true, notCheckable = true, menuList = objectiveMenu})
-            end
+                        if TomTom and TomTom.AddWaypoint then
+                            submenuObjectives:CreateButton(GW.L["Set TomTom Target"], function()
+                                AddTomTomWaypoint(self.questID, objective)
+                            end)
+                        end
 
-            if next(QuestieQuest.SpecialObjectives) then
-                for _, objective in pairs(QuestieQuest.SpecialObjectives) do
-                    local objectiveMenu = {}
-
-                    if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
-                        tinsert(objectiveMenu, {text = L["Set TomTom Target"], hasArrow = false, notCheckable = true, func = function() AddTomTomWaypoint(self.questID, objective) end})
+                        submenuObjectives:CreateButton(GW.L["Show on Map"], function()
+                            QuestieLoader:ImportModule("TrackerUtils"):ShowObjectiveOnMap(objective)
+                        end)
                     end
 
-                    tinsert(objectiveMenu, {text = L["Show on Map"], notCheckable = true, func = function()
-                        QuestieLoader:ImportModule("TrackerUtils"):ShowObjectiveOnMap(objective)
-                    end})
+                    if next(QuestieQuest.SpecialObjectives) then
+                        for _, objective in pairs(QuestieQuest.SpecialObjectives) do
+                            local submenuObjectives = submenuObjectives:CreateButton(objective.Description)
 
-                    tinsert(subMenu, {text = objective.Description, hasArrow = true, notCheckable = true, menuList = objectiveMenu})
+                            if TomTom and TomTom.AddWaypoint then
+                                submenuObjectives:CreateButton(GW.L["Set TomTom Target"], function()
+                                    AddTomTomWaypoint(self.questID, objective)
+                                end)
+                            end
+
+                            submenuObjectives:CreateButton(GW.L["Show on Map"], function()
+                                QuestieLoader:ImportModule("TrackerUtils"):ShowObjectiveOnMap(objective)
+                            end)
+                        end
+                    end
                 end
             end
 
-            if QuestieQuest:IsComplete() == 0 then
-                tinsert(menuList, { text = OBJECTIVES_TRACKER_LABEL, hasArrow = true, notCheckable = true, menuList = subMenu})
+            rootDescription:CreateButton(COMMUNITIES_INVITE_MANAGER_LINK_TO_CHAT, function() LinkQuestIntoChat(self.title, self.questID) end)
+            rootDescription:CreateButton("Wowhead URL", function() StaticPopup_Show("QUESTIE_WOWHEAD_URL", self.questID, self.title) end)
+            rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() QuestLogFrame:Show()
+                QuestLog_SetSelection(self.questLogIndex)
+                QuestLog_Update()
+            end)
+
+            if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
+                rootDescription:CreateButton(GW.L["Set TomTom Target"], function() AddTomTomWaypoint(self.questID, nil) end)
             end
-        end
 
-        tinsert(menuList, {text = COMMUNITIES_INVITE_MANAGER_LINK_TO_CHAT, hasArrow = false, notCheckable = true, func = function() LinkQuestIntoChat(self.title, self.questID) end})
-        tinsert(menuList, {text = "Wowhead URL", hasArrow = false, notCheckable = true, func = function() StaticPopup_Show("GW2_WOWHEAD_URL", self.questID, self.title) end})
-        tinsert(menuList, {text = OBJECTIVES_VIEW_IN_QUESTLOG, notCheckable = true, func = function() QuestLogFrame:Show()
-            QuestLog_SetSelection(self.questLogIndex)
-            QuestLog_Update() end})
+            if Questie and Questie.started and self.isComplete then
+                rootDescription:CreateButton(GW.L["Show on Map"], function()
+                    local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID)
+                    QuestieLoader:ImportModule("TrackerUtils"):ShowFinisherOnMap(QuestieQuest)
+                end)
+            end
 
-        if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
-            tinsert(menuList, {text = L["Set TomTom Target"], hasArrow = false, notCheckable = true, func = function() AddTomTomWaypoint(self.questID, nil) end})
-        end
+            rootDescription:CreateButton(UNTRACK_QUEST, function() UntrackQuest(self.questLogIndex)  end)
 
-        if Questie and Questie.started and self.isComplete then
-            tinsert(menuList, {text = L["Show on Map"], notCheckable = true, func = function()
-                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID)
-                QuestieLoader:ImportModule("TrackerUtils"):ShowFinisherOnMap(QuestieQuest)
-            end})
-        end
-
-        tinsert(menuList, {text = UNTRACK_QUEST, hasArrow = false, notCheckable = true, func = function() WatchFrame_StopTrackingQuest(self, self.questLogIndex); GW.UpdateQuestTracker(GwQuesttrackerContainerQuests) end})
-
-        GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-        EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+        end)
         return
     end
 

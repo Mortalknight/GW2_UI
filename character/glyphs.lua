@@ -133,10 +133,10 @@ local function takeOverBlizzardsGlypheFrame()
     GlyphFrame.scrollFrame:GwSkinScrollFrame()
     GlyphFrameScrollFrameScrollBar:GwSkinScrollBar()
 
-    GlyphFrameFilterDropDown:GwSkinDropDownMenu(20, GW.BackdropTemplates.DopwDown, 20)
-    GlyphFrameFilterDropDown:SetWidth(167)
-    GlyphFrameFilterDropDown:ClearAllPoints()
-    GlyphFrameFilterDropDown:SetPoint("TOPLEFT", GlyphFrameSearchBox, "BOTTOMLEFT", -5, -3)
+    GlyphFrame.FilterDropdown:GwHandleDropDownBox()
+    GlyphFrame.FilterDropdown:SetWidth(167)
+    GlyphFrame.FilterDropdown:ClearAllPoints()
+    GlyphFrame.FilterDropdown:SetPoint("TOPLEFT", GlyphFrameSearchBox, "BOTTOMLEFT", -5, -3)
 
     GW.SkinTextBox(GlyphFrameSearchBoxMiddle, GlyphFrameSearchBoxLeft, GlyphFrameSearchBoxRight)
 

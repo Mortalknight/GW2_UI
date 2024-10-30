@@ -16,6 +16,8 @@ local minimapDetails = {
     ["COORDS"] = "GwMapCoords"
 }
 
+local TrackingDropdown
+
 local function setMinimapButtons(side)
     MiniMapBattlefieldFrame:ClearAllPoints()
     GameTimeFrame:ClearAllPoints()
@@ -296,6 +298,18 @@ local function ToogleMinimapFpsLable()
 end
 GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
+local function CreateMinimapTrackingDropdown()
+	local dropdown = CreateFrame('Frame', 'GW2_UIMiniMapTrackingDropDown', UIParent, 'UIDropDownMenuTemplate')
+    dropdown:SetID(1)
+    dropdown:SetClampedToScreen(true)
+    dropdown:Hide()
+
+    UIDropDownMenu_Initialize(dropdown, MiniMapTrackingDropDown_Initialize, 'MENU')
+    dropdown.noResize = true
+
+	return dropdown
+end
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = getMinimapShape
@@ -353,8 +367,8 @@ local function LoadMinimap()
     GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
     GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
 
-    GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
-
+    GwMiniMapTrackingFrame = CreateFrame("DropdownButton", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
+    GwMiniMapTrackingFrame:OnLoad()
     local icontype = MiniMapTrackingIcon:GetTexture()
     if icontype == 132328 then icontype = icontype .. GW.myClassID end
     if icontype and trackingTypes[icontype] then
@@ -494,17 +508,6 @@ local function LoadMinimap()
                 MinimapZoomIn:Click()
             elseif delta < 0 and self:GetZoom() > 0 then
                 MinimapZoomOut:Click()
-            end
-        end
-    )
-
-    Minimap:SetScript(
-        "OnMouseDown",
-        function(_, button)
-            if button == "RightButton" then
-                ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
-
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             end
         end
     )

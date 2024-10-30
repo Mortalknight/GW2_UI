@@ -24,8 +24,6 @@ local menuList = {
 }
 
 local function inviteClick(_, name, guid)
-    GW.EasyMenu:Hide()
-
     if not (name and name ~= "") then return end
     local isBNet = type(name) == "number"
 
@@ -54,8 +52,6 @@ local function inviteClick(_, name, guid)
 end
 
 local function whisperClick(_, name, battleNet)
-    GW.EasyMenu:Hide()
-
     if battleNet then
         ChatFrame_SendBNetTell(name)
     else
@@ -410,7 +406,7 @@ local function Friends_OnEvent(self, event, message)
     end
     dataValid = false
 
-    if not IsAltKeyDown() and event == "MODIFIER_STATE_CHANGED" and GetMouseFocus() == self then
+    if not IsAltKeyDown() and event == "MODIFIER_STATE_CHANGED" and DoesAncestryIncludeAny(self, GetMouseFoci()) then
         Friends_OnEnter(self)
     end
 end
@@ -418,56 +414,77 @@ GW.Friends_OnEvent = Friends_OnEvent
 
 local function Friends_OnClick(self, button)
     if button == "RightButton" then
-        local menuCountWhispers = 0
-        local menuCountInvites = 0
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            local tempTeble = {}
 
-        menuList[2].menuList = {}
-        menuList[3].menuList = {}
+            rootDescription:CreateTitle(OPTIONS_MENU)
+            local submenuInvite = rootDescription:CreateButton(INVITE)
+            local submenuWisper = rootDescription:CreateButton(CHAT_MSG_WHISPER_INFORM)
+            local submenuStatus = rootDescription:CreateButton(PLAYER_STATUS)
 
-        for _, info in ipairs(friendTable) do
-            if info.online then
-                local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
-                if not classc then classc = levelc end
+            rootDescription:CreateButton(BN_BROADCAST_TOOLTIP, function()
+                StaticPopup_Show("SET_BN_BROADCAST")
+            end)
 
-                menuCountWhispers = menuCountWhispers + 1
-                menuList[3].menuList[menuCountWhispers] = {text = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name), arg1 = info.name, notCheckable = true, func = whisperClick}
+            submenuStatus:CreateButton("|cff2BC226" .. AVAILABLE .. "|r", function()
+                if IsChatAFK() then SendChatMessage("", "AFK") elseif IsChatDND() then SendChatMessage("", "DND") end
+            end)
+            submenuStatus:CreateButton("|cffE7E716" .. DND .. "|r", function()
+                if not IsChatDND() then SendChatMessage("", "DND") end
+            end)
+            submenuStatus:CreateButton("|cffFF0000" .. AFK .. "|r", function()
+                if not IsChatAFK() then SendChatMessage("", "AFK") end
+            end)
 
-                if inGroup(info.name) == "" then
-                    menuCountInvites = menuCountInvites + 1
-                    menuList[2].menuList[menuCountInvites] = {text = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name), arg1 = info.name, arg2 = info.guid, notCheckable = true, func = inviteClick}
-                end
-            end
-        end
-        for _, info in ipairs(BNTable) do
-            if info.isOnline then
-                local realID, hasBnet = info.accountName, false
-
-                for _, z in ipairs(menuList[3].menuList) do
-                    if z and z.text and (z.text == realID) then
-                        hasBnet = true
-                        break
-                    end
-                end
-
-                if not hasBnet then
-                    menuCountWhispers = menuCountWhispers + 1
-                    menuList[3].menuList[menuCountWhispers] = {text = realID, arg1 = realID, arg2 = true, notCheckable = true, func = whisperClick}
-                end
-
-                if (info.client and info.client == retailID) and inGroup(info.characterName, info.realmName) == "" then
-                    local classc, levelc = GW.GWGetClassColor(info.className, true, true), GetQuestDifficultyColor(info.level)
+            for _, info in ipairs(friendTable) do
+                if info.online then
+                    local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
                     if not classc then classc = levelc end
 
-                    if info.wowProjectID == WOW_PROJECT_ID then
-                        menuCountInvites = menuCountInvites + 1
-                        menuList[2].menuList[menuCountInvites] = {text = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.characterName), arg1 = info.gameID, arg2 = info.guid, notCheckable = true, func = inviteClick}
+                    local name = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name)
+                    submenuWisper:CreateButton(name, function()
+                        whisperClick(info.name)
+                    end)
+
+                    table.insert(tempTeble, name)
+                    if inGroup(info.name) == "" then
+                        submenuInvite:CreateButton(format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name), function()
+                            inviteClick(info.name, info.guid)
+                        end)
                     end
                 end
             end
-        end
 
-        GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-        EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+            for _, info in ipairs(BNTable) do
+                if info.isOnline then
+                    local realID, hasBnet = info.accountName, false
+
+                    for _, name in ipairs(tempTeble) do
+                        if name and name == realID then
+                            hasBnet = true
+                            break
+                        end
+                    end
+
+                    if not hasBnet then
+                        submenuWisper:CreateButton(realID, function()
+                            whisperClick(realID, true)
+                        end)
+                    end
+
+                    if (info.client and info.client == retailID) and inGroup(info.characterName, info.realmName) == "" then
+                        local classc, levelc = GW.GWGetClassColor(info.className, true, true), GetQuestDifficultyColor(info.level)
+                        if not classc then classc = levelc end
+
+                        if info.wowProjectID == WOW_PROJECT_ID then
+                            submenuInvite:CreateButton(format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.characterName), function()
+                                inviteClick(info.gameID, info.guid)
+                            end)
+                        end
+                    end
+                end
+            end
+        end)
     end
 end
 GW.Friends_OnClick = Friends_OnClick

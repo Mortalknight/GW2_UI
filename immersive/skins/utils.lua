@@ -30,6 +30,13 @@ local constBackdropFrameSmallerBorder = {
 }
 GW.skins.constBackdropFrameSmallerBorder = constBackdropFrameSmallerBorder
 
+local constBackdropFrameStatusBar = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/StatusBar",
+    --edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+GW.skins.constBackdropStatusBar = constBackdropFrameStatusBar
+
 local constBackdropFrameColorBorder = {
     edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
     bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
@@ -254,10 +261,38 @@ local function SkinDropDownList()
     end)
 end
 
+local backdrops = {}
+local function SkinFrame(frame)
+    frame:GwStripTextures()
+
+    if backdrops[frame] then
+        frame.backdrop = backdrops[frame] -- relink it back
+    else
+        frame:GwCreateBackdrop(constBackdropFrame)
+        backdrops[frame] = frame.backdrop
+
+        if frame.ScrollBar then
+            GW.HandleTrimScrollBar(frame.ScrollBar)
+        end
+    end
+end
+
+local function OpenMenu(manager, region, menuDescription)
+    local menu = manager:GetOpenMenu()
+    if menu then
+        SkinFrame(menu)
+        menuDescription:AddMenuAcquiredCallback(SkinFrame)
+    end
+end
+
 local function SkinDropDown()
     if not GW.settings.DROPDOWN_SKIN_ENABLED then return end
     SkinDropDownList()
     SkinUIDropDownMenu()
+
+    local manager = Menu.GetManager()
+    hooksecurefunc(manager, "OpenMenu", OpenMenu)
+    hooksecurefunc(manager, "OpenContextMenu", OpenMenu)
 end
 GW.SkinDropDown = SkinDropDown
 

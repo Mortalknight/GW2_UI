@@ -562,7 +562,7 @@ local function moverframe_OnLeave(self)
 end
 
 local function CreateMoverFrame(parent, displayName, settingsName, size, frameOptions, mhf, postdrag, tags)
-    local mf = CreateFrame("Button", "Gw_" .. settingsName, UIParent)
+    local mf = CreateFrame("Button", "Gw_" .. settingsName, UIParent, "SecureHandlerStateTemplate")
     mf:SetClampedToScreen(true)
     mf:SetMovable(true)
     mf:EnableMouseWheel(true)
@@ -571,7 +571,6 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf:SetFrameStrata("DIALOG")
     mf:GwCreateBackdrop("Transparent White")
     mf:SetScale(parent:GetScale())
-    mf:SetProtected()
 
     if size then
         mf:SetSize(unpack(size))

@@ -90,50 +90,37 @@ end
 GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveButton_OnClick)
 
 local function outfitEditButton_OnClick(self)
-    local menuList = {}
-    local gearSetButton = self:GetParent()
-    tinsert(menuList,
-    {
-        text = EQUIPMENT_SET_EDIT,
-        isTitle = false,
-        notCheckable = true,
-        func = function()
-            GearSetButton_Edit(gearSetButton)
-        end
-    })
-    --[[
-    tinsert(menuList,
-    {
-        text = EQUIPMENT_SET_ASSIGN_TO_SPEC,
-        notCheckable = true,
-        isTitle = true
-    })
-    local equipmentSetID = gearSetButton.setID
-    for i = 1, GW.api.GetNumSpecializations() do
-        tinsert(menuList,
-        {
-            text = select(2, GW.api.GetSpecializationInfo(i)),
-            notCheckable = false,
-            func = function()
-                local currentSpecIndex = C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID)
-                if currentSpecIndex ~= i then
-                    C_EquipmentSet.AssignSpecToEquipmentSet(equipmentSetID, i)
-                else
-                    C_EquipmentSet.UnassignEquipmentSetSpec(equipmentSetID)
+    MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+        rootDescription:CreateButton(EQUIPMENT_SET_EDIT, function()
+            GearSetButton_Edit(self:GetParent())
+        end)
+        --[[
+        rootDescription:CreateTitle(EQUIPMENT_SET_ASSIGN_TO_SPEC)
+
+        do
+            for i = 1, GetNumSpecializations() do
+                local function IsSelected(id)
+                    return C_EquipmentSet.GetEquipmentSetAssignedSpec(self:GetParent().setID) == id
                 end
 
-                --GearSetButton_UpdateSpecInfo(gearSetButton)
-                --PaperDollEquipmentManagerPane_Update(true)
-            end,
-            checked = function()
-                return C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID) == i
-            end
-        })
-    end
-    ]]
+                local function SetSelected(id)
+                    local currentSpecIndex = C_EquipmentSet.GetEquipmentSetAssignedSpec(self:GetParent().setID)
+                    if currentSpecIndex ~= id then
+                        C_EquipmentSet.AssignSpecToEquipmentSet(self:GetParent().setID, id)
+                    else
+                        C_EquipmentSet.UnassignEquipmentSetSpec(self:GetParent().setID)
+                    end
 
-    GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-    EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+                    GearSetButton_UpdateSpecInfo(self:GetParent())
+                    PaperDollEquipmentManagerPane_Update(true)
+                end
+
+                local name = select(2, GetSpecializationInfoByID(GetSpecializationInfo(i)))
+                rootDescription:CreateCheckbox(name, IsSelected, SetSelected, i)
+            end
+        end
+        ]]
+    end)
 end
 GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
 

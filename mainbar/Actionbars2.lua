@@ -106,7 +106,7 @@ local function FlyoutDirection(actionbar)
 
             --Change arrow direction depending on what bar the button is on
             local arrowDistance = 2
-            if ((SpellFlyout:IsShown() and SpellFlyout:GetParent() == button) or GetMouseFocus() == button) then
+            if ((SpellFlyout:IsShown() and SpellFlyout:GetParent() == button) or GetMouseFoci() == button) then
                 arrowDistance = 5
             end
 
@@ -929,7 +929,7 @@ local function UpdateMultibarButtons()
     end
     ALWAYS_SHOW_MULTIBARS = HIDE_ACTIONBARS_CVAR
     MultiActionBar_UpdateGridVisibility()
-    InterfaceOptions_UpdateMultiActionBars()
+    MultiActionBar_Update()
 end
 GW.UpdateMultibarButtons = UpdateMultibarButtons
 

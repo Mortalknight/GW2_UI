@@ -2058,20 +2058,29 @@ local function LoadChat()
     end
 
     --Skin ChatMenus
-    local ChatMenus = {
-        "ChatMenu",
-        "EmoteMenu",
-        "LanguageMenu",
-        "VoiceMacroMenu",
-    }
+    --Skin ChatMenus
+    do
+		local menuBackdrop = function(s)
+			s:GwCreateBackdrop(GW.skins.constBackdropFrame)
+		end
 
-    for i = 1, #ChatMenus do
-        _G[ChatMenus[i]]:HookScript("OnShow",
-            function(self)
-                self:GwStripTextures()
-                self:GwCreateBackdrop(GW.skins.constBackdropFrame)
-            end)
-    end
+		local chatMenuBackdrop = function(s)
+			s:GwCreateBackdrop(GW.skins.constBackdropFrame)
+
+			s:ClearAllPoints()
+			s:SetPoint('BOTTOMLEFT', _G.ChatFrame1, 'TOPLEFT', 0, 30)
+		end
+
+		for index, menu in next, { _G.ChatMenu, _G.EmoteMenu, _G.LanguageMenu, _G.VoiceMacroMenu } do
+			menu:StripTextures()
+
+			if index == 1 then -- ChatMenu
+				menu:HookScript('OnShow', chatMenuBackdrop)
+			else
+				menu:HookScript('OnShow', menuBackdrop)
+			end
+		end
+	end
 
     CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
     CombatLogQuickButtonFrame_CustomTexture:Hide()

@@ -449,11 +449,20 @@ local function bag_OnMouseDown(self, button)
     end
 
     local bag_id = self:GetID() - CharacterBag0Slot:GetID() + 1
-    local menuList = {}
-    tinsert(menuList, { text = BAG_FILTER_ASSIGN_TO, isTitle = true, notCheckable = true })
-    tinsert(menuList, { text = BAG_FILTER_IGNORE, checked = function() return C_Container.GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) end, func = function() C_Container.SetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not C_Container.GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)) end })
-    GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-    _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+    MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+        rootDescription:CreateTitle(BAG_FILTER_ASSIGN_TO)
+        local function IsSelected(flag)
+            return C_Container.GetBagSlotFlag(bag_id, flag)
+        end
+
+        local function SetSelected(flag)
+            local value = not IsSelected(flag)
+            C_Container.SetBagSlotFlag(bag_id, flag, value)
+        end
+
+        local checkbox = rootDescription:CreateCheckbox(BAG_FILTER_IGNORE, IsSelected, SetSelected, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+        checkbox:SetResponse(MenuResponse.Close)
+    end)
 end
 GW.AddForProfiling("inventory", "bag_OnMouseDown", bag_OnMouseDown)
 

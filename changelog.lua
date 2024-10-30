@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.8.3",{
+    {ct.change ,[=[Update for 4.4.1]=]},
+})
+
 addChange("1.8.2",{
     {ct.change ,[=[Change pet autocast button indicator]=]},
 })
