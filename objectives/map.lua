@@ -112,8 +112,8 @@ GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
 local function MapCoordsMiniMap_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
-    GameTooltip:AddLine(L["Map Coordinates"])
-    GameTooltip:AddLine(L["Left Click to toggle higher precision coordinates."], 1, 1, 1, true)
+    GameTooltip:AddLine(L["Map Coordinates"], 1, 1, 1)
+    GameTooltip:AddLine(L["Left Click to toggle higher precision coordinates."], 0.8, 0.8, 0.8, true)
     GameTooltip:SetMinimumWidth(100)
     GameTooltip:Show()
 end

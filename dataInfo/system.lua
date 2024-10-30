@@ -5,6 +5,7 @@ local enteredInfo = false
 local infoDisplay, ipTypes = {}, {"IPv4", "IPv6"}
 local infoTable = {}
 local cpuProfiling = GetCVar("scriptProfile") == "1"
+local ScrollButtonIcon = "|TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:13:11:0:-1:512:512:12:66:127:204|t"
 
 local CombineAddOns = {
     ["DBM-Core"] = "^<DBM>",
@@ -185,6 +186,7 @@ local function FpsOnEnter(self, slow)
 
     GameTooltip:AddLine(format("%s%s%s", "|cffaaaaaa", L["Shift Click: Collect Garbage"], "|r"))
     GameTooltip:AddLine(format("%s%s%s", "|cffaaaaaa", L["Ctrl & Shift Click: Toggle CPU Profiling"], "|r"))
+    GameTooltip:AddLine(format("%s%s %s: %s%s", "|cffaaaaaa", ScrollButtonIcon, L["Middle Button"], RELOADUI, "|r"))
     GameTooltip:Show()
 end
 GW.FpsOnEnter = FpsOnEnter
@@ -223,15 +225,17 @@ local function FpsOnUpdate(self, elapsed)
 end
 GW.FpsOnUpdate = FpsOnUpdate
 
-local function FpsOnClick()
+local function FpsOnClick(_, mouseButton)
     if IsShiftKeyDown() then
         if IsControlKeyDown() then
             C_CVar.SetCVar("scriptProfile", GetCVarBool("scriptProfile") and "0" or "1")
-            ReloadUI()
+            C_UI.Reload()
         else
             collectgarbage("collect")
             ResetCPUUsage()
         end
+    elseif mouseButton == "MiddleButton" then
+        C_UI.Reload()
     end
 end
 GW.FpsOnClick = FpsOnClick
