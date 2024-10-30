@@ -5,9 +5,8 @@ local ClearStorage = GW.ClearStorage
 local UpdateCharData = GW.UpdateCharData
 local FormatMoneyForChat = GW.FormatMoneyForChat
 
-local FACTION_ATLAS = "|A:communities-icon-faction-%s:%s:%s:0:0|a"
-local FACTION_ALLIANCE_ICON = format(FACTION_ATLAS, "alliance", 13, 13)
-local FACTION_HORDE_ICON = format(FACTION_ATLAS, "horde", 13, 13)
+local FACTION_ALLIANCE_ICON = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/Alliance:13:13|t"
+local FACTION_HORDE_ICON = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/Horde:13:13|t"
 
 local function GetGraysValue()
     local value = 0

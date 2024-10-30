@@ -15,9 +15,8 @@ local mobilestatus = {
 local TIMERUNNING_ATLAS = "|A:timerunning-glues-icon-small:%s:%s:0:0|a"
 local TIMERUNNING_SMALL = format(TIMERUNNING_ATLAS, 12, 10)
 
-local FACTION_ATLAS = "|A:communities-icon-faction-%s:%s:%s:0:0|a"
-local FACTION_ALLIANCE = format(FACTION_ATLAS, "alliance", 13, 13)
-local FACTION_HORDE = format(FACTION_ATLAS, "horde", 13, 13)
+local FACTION_ALLIANCE = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/Alliance:13:13|t"
+local FACTION_HORDE = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/Horde:13:13|t"
 
 local tthead = GW.myfaction == "Alliance" and GW.FACTION_COLOR[2] or GW.FACTION_COLOR[1]
 local ttsubh = {r = 1, g = 0.93, b = 0.73}
@@ -34,7 +33,7 @@ local standingString = GW.RGBToHex(ttsubh.r, ttsubh.g, ttsubh.b) .. "%s:|r |cFFF
 local moreMembersOnlineString = strjoin("", "+%d ", FRIENDS_LIST_ONLINE, "...")
 local noteString = strjoin("", "|cff999999   ", LABEL_NOTE, ":|r %s")
 local officerNoteString = strjoin("", "|cff999999   ", GUILD_RANK1_DESC, ":|r %s")
-local clubTable, guildTable, guildMotD = {}, {}, ""
+local clubTable, guildTable = {}, {}
 
 local function sortByRank(a, b)
     if a and b then
@@ -158,7 +157,7 @@ local function Guild_OnEnter(self)
 
     if GetGuildRosterMOTD() ~= "" then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(format(guildMotDString, GUILD_MOTD, guildMotD), tthead.r, tthead.g, tthead.b, 1)
+        GameTooltip:AddLine(format(guildMotDString, GUILD_MOTD, GetGuildRosterMOTD()), tthead.r, tthead.g, tthead.b, 1)
     end
 
     local guildFactionData = C_Reputation.GetGuildFactionData()
