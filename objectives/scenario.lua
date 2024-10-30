@@ -382,7 +382,7 @@ local function updateCurrentScenario(self, event, ...)
         local _, _, numCriteriaForStep = C_Scenario.GetStepInfo(bonusStepIndex)
 
         for criteriaIndex = 1, numCriteriaForStep do
-            local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
+            local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfoByStep(bonusStepIndex, criteriaIndex)
             local objectiveType = "progressbar"
             if not scenarioCriteriaInfo.isWeightedProgress then
                 objectiveType = "monster"
@@ -409,7 +409,6 @@ local function updateCurrentScenario(self, event, ...)
                 GwQuestTrackerTimerSavedHeight = 1
                 timerBlock:SetScript("OnUpdate", nil)
                 timerBlock.timer:Hide()
-
                 addObjectiveBlock(
                     scenarioBlock,
                     ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description),
