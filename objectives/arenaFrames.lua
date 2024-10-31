@@ -122,15 +122,13 @@ local function updateArena_Name(self)
 
     if inArena == "arena" then
         local specID = GetArenaOpponentSpec(self.id)
-        if specID == nil then
-            return
-        else
-            if specID and specID > 0 then
-                local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.unit))
-                if role and nameRoleIcon[role] and specName and name then
-                    nameString = nameRoleIcon[role] .. name .. " - " .. specName
-                end
+        if specID and specID > 0 then
+            local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.unit))
+            if role and nameRoleIcon[role] and specName and name then
+                nameString = nameRoleIcon[role] .. name .. " - " .. specName
             end
+        else
+            nameString = name
         end
     elseif inBG ~= nil then
         local role = UnitGroupRolesAssigned(self.unit)
@@ -138,10 +136,10 @@ local function updateArena_Name(self)
         if role and nameRoleIcon[role] and englishFaction and FractionIcon[englishFaction] and name then
             nameString = FractionIcon[englishFaction] .. nameRoleIcon[role] .. name
         else
-            return
+            nameString = name
         end
     else
-        return
+        nameString = name
     end
 
     self.name:SetText(nameString)

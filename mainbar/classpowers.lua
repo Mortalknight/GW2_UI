@@ -647,7 +647,21 @@ end
 
 -- DEAMONHUNTER
 local function timerMetamorphosis(self)
-    local _, _, duration, expires = findBuff("player", 162264)
+    local results = findBuffs("player", 162264, 187827)
+    if results == nil then
+        self.customResourceBar:Hide()
+        return
+    end
+
+    local duration = -1
+    local expires = -1
+    for i = 1, #results do
+        if results[i][4] > expires then
+            expires = results[i][4]
+            duration = results[i][3]
+        end
+    end
+
     if duration ~= nil then
         self.customResourceBar:Show()
         local remainingPrecantage = (expires - GetTime()) / duration
