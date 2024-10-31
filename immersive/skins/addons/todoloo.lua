@@ -51,6 +51,7 @@ local function getObjectiveBlock(self, index, id)
 
             local task = Todoloo.TaskManager:GetTask(self.id, newBlock.objectiveKey)
             Todoloo.TaskManager:SetTaskCompletion(self.id, newBlock.objectiveKey, not task.completed)
+            TodolooObjectiveTracker:LayoutContents()
         end
     end)
 
@@ -290,5 +291,6 @@ local function LoadTodolooAddonSkin()
     )
 
     hooksecurefunc(TodolooObjectiveTracker, "LayoutContents", layoutContent)
+    layoutContent()
 end
 GW.LoadTodolooAddonSkin = LoadTodolooAddonSkin
