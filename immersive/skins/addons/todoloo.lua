@@ -163,7 +163,7 @@ local function DoTasks(block, groupCompleted, groupReset)
     block:SetHeight(block.height)
 end
 
-local function UpdateSingle(self, group, idx)
+local function UpdateSingle(group, idx)
     -- Groups without names should not be visible.
     if group.name == "" then
         return false
@@ -208,7 +208,7 @@ local function UpdateSingle(self, group, idx)
     return true, block.height
 end
 
-local function layoutContent(self)
+local function layoutContent()
     if not Todoloo.Config.Get(Todoloo.Config.Options.ATTACH_TASK_TRACKER_TO_OBJECTIVE_TRACKER) then
         GwQuesttrackerContainerTodoloo.header:Hide()
 
@@ -230,7 +230,7 @@ local function layoutContent(self)
         local groups = TodolooObjectiveTracker:BuildGroupInfos()
         local containerHeight = 20
         for idx, group in ipairs(groups) do
-            local added, usedheight = UpdateSingle(self, group, idx)
+            local added, usedheight = UpdateSingle(group, idx)
             if added then
                 containerHeight = containerHeight + usedheight
             end
@@ -250,7 +250,7 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    layoutContent(TodolooObjectiveTracker)
+    layoutContent()
 end
 GW.CollapseTodolooAddonHeader = CollapseHeader
 
