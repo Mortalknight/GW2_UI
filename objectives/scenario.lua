@@ -647,7 +647,7 @@ local function UIWidgetTemplateTooltipFrameOnEnter(self)
         if self.tooltipContainsHyperLink then
             local clearTooltip = true
             if self.preString and self.preString:len() > 0 then
-                GameTooltip_AddNormalLine(EmbeddedItemTooltip, self.preString, true)
+                EmbeddedItemTooltip:AddLine(self.preString, 1, 1, 1, true)
                 clearTooltip = false
             end
 

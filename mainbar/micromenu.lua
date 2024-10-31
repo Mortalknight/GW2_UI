@@ -371,13 +371,24 @@ end
 AFP("update_OnEnter", update_OnEnter)
 
 -- mail icon
+local function mailIconTooltip()
+    local senders = { GetLatestThreeSenders() }
+	local headerText = #senders >= 1 and HAVE_MAIL_FROM or HAVE_MAIL
+    GameTooltip:AddLine(headerText, 1, 1, 1)
+    for _, sender in ipairs(senders) do
+        GameTooltip:AddLine(sender, 1, 1, 1)
+	end
+
+	GameTooltip:Show()
+end
+
 local function mailIconOnEvent(self, event)
     if event == "UPDATE_PENDING_MAIL" then
         if HasNewMail() then
             self:Show()
             self.GwNotify:Show()
             if GameTooltip:IsOwned(self) then
-                MinimapMailFrameUpdate()
+                mailIconTooltip()
             end
         else
             self:Hide()
@@ -389,7 +400,7 @@ end
 local function mailIconOnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     if GameTooltip:IsOwned(self) then
-        MinimapMailFrameUpdate()
+        mailIconTooltip()
     end
 end
 
@@ -409,10 +420,9 @@ end
 
 local function workOrderIconOnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    local wrap = false
-    GameTooltip_AddNormalLine(GameTooltip, MAILFRAME_CRAFTING_ORDERS_TOOLTIP_TITLE, wrap)
+    GameTooltip:AddLine(MAILFRAME_CRAFTING_ORDERS_TOOLTIP_TITLE, 1, 1, 1)
     for _, countInfo in ipairs(self.countInfos) do
-        GameTooltip_AddNormalLine(GameTooltip, PERSONAL_CRAFTING_ORDERS_AVAIL_FMT:format(countInfo.numPersonalOrders, countInfo.professionName), wrap)
+        GameTooltip:AddLine(PERSONAL_CRAFTING_ORDERS_AVAIL_FMT:format(countInfo.numPersonalOrders, countInfo.professionName), 1, 1, 1)
     end
     GameTooltip:Show()
 end
