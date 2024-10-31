@@ -55,6 +55,8 @@ local function getObjectiveBlock(self, index, id)
         end
     end)
 
+    GW.AddMouseMotionPropagationToChildFrames(self)
+
     return newBlock
 end
 

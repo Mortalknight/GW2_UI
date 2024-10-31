@@ -705,6 +705,7 @@ local function AddMouseMotionPropagationToChildFrames(self)
         AddMouseMotionPropagationToChildFrames(child)
     end
 end
+GW.AddMouseMotionPropagationToChildFrames = AddMouseMotionPropagationToChildFrames
 
 local function AddListItemChildHoverTexture(child)
     child.Background = child:CreateTexture(nil, "BACKGROUND", nil, 0)
