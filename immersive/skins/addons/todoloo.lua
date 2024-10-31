@@ -224,27 +224,14 @@ local function layoutContent(self)
         end
     end
 
-    local numAddedCategories = 0
-    if not GwQuesttrackerContainerTodoloo.collapsed then
-        local groups = self:BuildGroupInfos()
-
-        for idx, group in ipairs(groups) do
-            if UpdateSingle(self, group, idx) then
-                numAddedCategories = numAddedCategories + 1
-            end
-        end
-    end
-
-
     if GwQuesttrackerContainerTodoloo.collapsed then
         GwQuesttrackerContainerTodoloo:SetHeight(20)
     else
-        local groups = self:BuildGroupInfos()
+        local groups = TodolooObjectiveTracker:BuildGroupInfos()
         local containerHeight = 20
         for idx, group in ipairs(groups) do
             local added, usedheight = UpdateSingle(self, group, idx)
             if added then
-                numAddedCategories = numAddedCategories + 1
                 containerHeight = containerHeight + usedheight
             end
         end
@@ -290,7 +277,20 @@ local function LoadTodolooAddonSkin()
         end
     )
 
-    hooksecurefunc(TodolooObjectiveTracker, "LayoutContents", layoutContent)
-    layoutContent()
+    Todoloo.EventBus:RegisterEvents(todolooObjectives, {
+        Todoloo.Tasks.Events.GROUP_ADDED,
+        Todoloo.Tasks.Events.GROUP_REMOVED,
+        Todoloo.Tasks.Events.GROUP_RESET,
+        Todoloo.Tasks.Events.GROUP_UPDATED,
+        Todoloo.Tasks.Events.GROUP_MOVED,
+        Todoloo.Tasks.Events.TASK_ADDED,
+        Todoloo.Tasks.Events.TASK_COMPLETION_SET,
+        Todoloo.Tasks.Events.TASK_REMOVED,
+        Todoloo.Tasks.Events.TASK_RESET,
+        Todoloo.Tasks.Events.TASK_UPDATED,
+        Todoloo.Tasks.Events.TASK_MOVED,
+        Todoloo.Reset.Events.RESET_PERFORMED,
+        Todoloo.Config.Events.CONFIG_CHANGED
+    }, layoutContent)
 end
 GW.LoadTodolooAddonSkin = LoadTodolooAddonSkin
