@@ -946,6 +946,7 @@ GW.globalDefault = {
         HELPFRAME_SKIN_ENABLED= true,
         SKIN_WQT_ENABLED= true,
         SKIN_PETTRACKER_ENABLED= true,
+        SKIN_TODOLOO_ENABLED = true,
         SOCKET_SKIN_ENABLED= true,
         WORLDMAP_SKIN_ENABLED= true,
         GOSSIP_SKIN_ENABLED= true,

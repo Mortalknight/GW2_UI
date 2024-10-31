@@ -930,7 +930,7 @@ end
 local function QuestTrackerLayoutChanged()
     updateExtraQuestItemPositions()
     -- adjust scrolframe height
-    local height = fCollection:GetHeight() + fMonthlyActivity:GetHeight() + fRecipe:GetHeight() + fBonus:GetHeight() + fQuest:GetHeight() + fCampaign:GetHeight() + fAchv:GetHeight() + 60 + (GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT:GetHeight() or 0) + (GwQuesttrackerContainerPetTracker and GwQuesttrackerContainerPetTracker:GetHeight() or 0)
+    local height = fCollection:GetHeight() + fMonthlyActivity:GetHeight() + fRecipe:GetHeight() + fBonus:GetHeight() + fQuest:GetHeight() + fCampaign:GetHeight() + fAchv:GetHeight() + 60 + (GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT:GetHeight() or 0) + (GwQuesttrackerContainerPetTracker and GwQuesttrackerContainerPetTracker:GetHeight() or 0) + (GwQuesttrackerContainerTodoloo and GwQuesttrackerContainerTodoloo:GetHeight() or 0)
     local scroll = 0
     local trackerHeight = GW.settings.QuestTracker_pos_height - fBoss:GetHeight() - fArenaBG:GetHeight() - fScen:GetHeight() - fNotify:GetHeight()
     if height > tonumber(trackerHeight) then
@@ -1445,6 +1445,7 @@ local function LoadQuestTracker()
     GW.LoadCollectionTracking(fCollection)
     GW.LoadWQTAddonSkin()
     GW.LoadPetTrackerAddonSkin()
+    GW.LoadTodolooAddonSkin()
 
     GW.ToggleCollapseObjectivesInChallangeMode()
 

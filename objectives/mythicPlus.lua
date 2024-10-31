@@ -21,6 +21,9 @@ local function OnEvent(_, event)
         if GwQuesttrackerContainerPetTracker then
             GW.CollapsePetTrackerAddonHeader(GwQuesttrackerContainerPetTracker, true, false)
         end
+        if GwQuesttrackerContainerTodoloo then
+            GW.CollapseTodolooAddonHeader(GwQuesttrackerContainerTodoloo, true, false)
+        end
     elseif event == "CHALLENGE_MODE_COMPLETED" or event == "PLAYER_ENTERING_WORLD" then
         GwQuesttrackerContainerQuests.shouldUpdate = false
         GW.CollapseQuestHeader(GwQuesttrackerContainerCampaign, false, true)
@@ -36,6 +39,9 @@ local function OnEvent(_, event)
         end
         if GwQuesttrackerContainerPetTracker then
             GW.CollapsePetTrackerAddonHeader(GwQuesttrackerContainerPetTracker, false, true)
+        end
+        if GwQuesttrackerContainerTodoloo then
+            GW.CollapseTodolooAddonHeader(GwQuesttrackerContainerTodoloo, false, true)
         end
     end
 
