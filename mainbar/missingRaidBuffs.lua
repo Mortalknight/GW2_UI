@@ -435,16 +435,16 @@ local function LoadRaidbuffReminder()
     UpdateMissingRaidBuffVisibility()
     UpdateMissingRaidBuffCustomSpell()
 
-    rbr:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    --rbr:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     rbr:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
     rbr:RegisterUnitEvent("UNIT_AURA", "player")
-    rbr:RegisterEvent("PLAYER_REGEN_ENABLED")
-    rbr:RegisterEvent("PLAYER_REGEN_DISABLED")
+    --rbr:RegisterEvent("PLAYER_REGEN_ENABLED")
+    --rbr:RegisterEvent("PLAYER_REGEN_DISABLED")
     rbr:RegisterEvent("PLAYER_ENTERING_WORLD")
-    rbr:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-    rbr:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    rbr:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    rbr:RegisterEvent("GROUP_ROSTER_UPDATE")
+    --rbr:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+    --rbr:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    --rbr:RegisterEvent("ZONE_CHANGED_NEW_AREA") -- not needed
+    --rbr:RegisterEvent("GROUP_ROSTER_UPDATE") -- Performance and not needed
     rbr:SetScript("OnEvent", OnAuraChange)
 end
 GW.LoadRaidbuffReminder = LoadRaidbuffReminder
