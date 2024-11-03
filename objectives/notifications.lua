@@ -350,6 +350,10 @@ local function SetObjectiveNotification()
         color = {r = 1, g = 1, b = 1}
     end
 
+    --remove tooltip here
+    GwObjectivesNotification.iconFrame:SetScript("OnLeave", nil)
+    GwObjectivesNotification.iconFrame:SetScript("OnLeave", nil)
+
     if icons[data.TYPE] ~= nil then
         GwObjectivesNotification.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
         GwObjectivesNotification.iconFrame.icon:SetTexCoord(
@@ -367,9 +371,6 @@ local function SetObjectiveNotification()
             GwObjectivesNotification.iconFrame:SetScript("OnLeave", function()
                 GameTooltip:Hide()
             end)
-        else
-            GwObjectivesNotification.iconFrame:SetScript("OnLeave", nil)
-            GwObjectivesNotification.iconFrame:SetScript("OnLeave", nil)
         end
 
         if progress ~= nil and icons[data.TYPE] then

@@ -2,7 +2,8 @@ local _, GW = ...
 
 local function HandleMirrorTimer(self, timer)
 	local bar = self:GetAvailableTimer(timer)
-	if bar then
+	if not bar then return end
+	if bar.atlasHolder then
 		bar.atlasHolder = CreateFrame("Frame", nil, bar)
 		bar.atlasHolder:SetClipsChildren(true)
 		bar.atlasHolder:GwSetInside()
@@ -16,10 +17,10 @@ local function HandleMirrorTimer(self, timer)
 		bar.Text:ClearAllPoints()
 		bar.Text:SetParent(bar.StatusBar)
 		bar.Text:SetPoint("CENTER", bar.StatusBar, 0, 1)
-
-		bar:GwStripTextures()
-		bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 	end
+
+	bar:GwStripTextures()
+	bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 end
 
 local function LoadMirrorTimers()
