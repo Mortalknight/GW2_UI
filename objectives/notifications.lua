@@ -228,14 +228,14 @@ local function AddTrackerNotification(data, forceUpdate)
 end
 GW.AddTrackerNotification = AddTrackerNotification
 
-local function RemoveTrackerNotification(notificationID)
+local function RemoveTrackerNotificationById(notificationID)
     if notificationID == nil then
         return
     end
 
     notifications[notificationID] = nil
 end
-GW.RemoveTrackerNotification = RemoveTrackerNotification
+GW.RemoveTrackerNotificationById = RemoveTrackerNotificationById
 
 local function RemoveTrackerNotificationOfType(doType)
     for k, v in pairs(notifications) do
@@ -252,9 +252,8 @@ end
 GW.AddForProfiling("notifications", "removeNotification", removeNotification)
 
 local function NotificationStateChanged(show)
-    if show then
-        GwObjectivesNotification:Show()
-    end
+    GwObjectivesNotification:SetShown(show)
+
     AddToAnimation(
         "notificationToggle",
         0,
@@ -262,7 +261,7 @@ local function NotificationStateChanged(show)
         GetTime(),
         0.2,
         function(step)
-            if show == false then
+            if not show then
                 step = 70 - step
             end
 
@@ -271,9 +270,7 @@ local function NotificationStateChanged(show)
         end,
         nil,
         function()
-            if not show then
-                GwObjectivesNotification:Hide()
-            end
+            GwObjectivesNotification:SetShown(show)
             GwObjectivesNotification.animating = false
             GW.QuestTrackerLayoutChanged()
         end,
@@ -291,7 +288,7 @@ local function updateRadar(self)
 
     local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
     if x == nil or y == nil or self.data.X == nil then
-        RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
+        RemoveTrackerNotificationById(GwObjectivesNotification.compass.dataIndex)
         return
     end
 
@@ -314,24 +311,23 @@ local function SetObjectiveNotification()
         return
     end
 
-    local data, dataBefore
-    for k, _ in pairs(notifications) do
-        if not notifications[k].COMPASS and notifications[k] ~= nil then
-            if data ~= nil then
-                if prioritys(data.TYPE, notifications[k].TYPE) then
+    local data
+    if UnitIsDeadOrGhost("player") then
+        data = getBodyPOI()
+    end
+    if data == nil then
+        for k, _ in pairs(notifications) do
+            if not notifications[k].COMPASS and notifications[k] ~= nil then
+                if data ~= nil then
+                    if prioritys(data.TYPE, notifications[k].TYPE) then
+                        data = notifications[k]
+                    end
+                else
                     data = notifications[k]
                 end
-            else
-                data = notifications[k]
             end
         end
     end
-    if UnitIsDeadOrGhost("player") then
-        dataBefore = data
-        data = getBodyPOI()
-        if data == nil then data = dataBefore end
-    end
-
     if data == nil then
         data = getNearestQuestPOI()
     end
@@ -340,14 +336,8 @@ local function SetObjectiveNotification()
         return
     end
 
-    local title = data.TITLE
-    local desc = data.DESC
-    local color = data.COLOR
-    local useRadar = data.COMPASS
-    local progress = data.PROGRESS
-
-    if color == nil then
-        color = {r = 1, g = 1, b = 1}
+    if data.COLOR == nil then
+        data.COLOR = {r = 1, g = 1, b = 1}
     end
 
     --remove tooltip here
@@ -373,10 +363,10 @@ local function SetObjectiveNotification()
             end)
         end
 
-        if progress ~= nil and icons[data.TYPE] then
+        if data.PROGRESS ~= nil and icons[data.TYPE] then
             GwObjectivesNotification.bonusbar:Show()
-            GwObjectivesNotification.bonusbar.progress = progress
-            GwObjectivesNotification.bonusbar.bar:SetValue(progress)
+            GwObjectivesNotification.bonusbar.progress = data.PROGRESS
+            GwObjectivesNotification.bonusbar.bar:SetValue(data.PROGRESS)
             GwObjectivesNotification.iconFrame.icon:SetTexture(nil)
         else
             GwObjectivesNotification.bonusbar:Hide()
@@ -385,7 +375,7 @@ local function SetObjectiveNotification()
         GwObjectivesNotification.iconFrame.icon:SetTexture(nil)
     end
 
-    if useRadar then
+    if data.COMPASS then
         GwObjectivesNotification.compass:Show()
         GwObjectivesNotification.compass.data = data
         GwObjectivesNotification.compass.dataIndex = data.ID
@@ -406,12 +396,14 @@ local function SetObjectiveNotification()
             currentCompassData = GwObjectivesNotification.compass.dataIndex
             if GwObjectivesNotification.compass.Timer then
                 GwObjectivesNotification.compass.Timer:Cancel()
+                GwObjectivesNotification.compass.Timer = nil
             end
             GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
         elseif not currentCompassData then
             currentCompassData = GwObjectivesNotification.compass.dataIndex
             if GwObjectivesNotification.compass.Timer then
                 GwObjectivesNotification.compass.Timer:Cancel()
+                GwObjectivesNotification.compass.Timer = nil
             end
             GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
         end
@@ -424,12 +416,12 @@ local function SetObjectiveNotification()
         end
     end
 
-    GwObjectivesNotification.title:SetText(title)
-    GwObjectivesNotification.title:SetTextColor(color.r, color.g, color.b)
-    GwObjectivesNotification.compassBG:SetVertexColor(color.r, color.g, color.b, 0.3)
-    GwObjectivesNotification.desc:SetText(desc)
+    GwObjectivesNotification.title:SetText(data.TITLE)
+    GwObjectivesNotification.title:SetTextColor(data.COLOR.r, data.COLOR.g, data.COLOR.b)
+    GwObjectivesNotification.compassBG:SetVertexColor(data.COLOR.r, data.COLOR.g, data.COLOR.b, 0.3)
+    GwObjectivesNotification.desc:SetText(data.DESC)
 
-    if desc == nil or desc == "" then
+    if data.DESC == nil or data.DESC == "" then
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -30)
     else
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -15)
