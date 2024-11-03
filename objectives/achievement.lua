@@ -292,10 +292,10 @@ local function updateAchievementLayout(self, event, ...)
 
     self.header:Hide()
 
-    local numQuests = #trackedAchievements
-    if self.collapsed and numQuests > 0 then
+    local numAchievements = #trackedAchievements
+    if self.collapsed and numAchievements > 0 then
         self.header:Show()
-        numQuests = 0
+        numAchievements = 0
         savedHeight = 20
     end
 
@@ -315,13 +315,13 @@ local function updateAchievementLayout(self, event, ...)
 		end
     end
 
-    for i = 1, numQuests do
+    for i = 1, numAchievements do
         local achievementID = trackedAchievements[i]
         local achievementName = select(2, GetAchievementInfo(achievementID))
         local wasEarnedByMe = select(13, GetAchievementInfo(achievementID))
 
         if not wasEarnedByMe then
-            if i == 1 then
+            if shownIndex == 1 then
                 savedHeight = 20
             end
 
