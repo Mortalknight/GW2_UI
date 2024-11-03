@@ -266,7 +266,7 @@ local function LoadTodolooAddonSkin()
 
     todolooObjectives.header = CreateFrame("Button", nil, todolooObjectives, "GwQuestTrackerHeader")
     todolooObjectives.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    todolooObjectives.header.title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    todolooObjectives.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     todolooObjectives.header.title:SetShadowOffset(1, -1)
     todolooObjectives.header.title:SetText("Todoloo's")
     todolooObjectives.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)

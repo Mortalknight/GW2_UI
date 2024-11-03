@@ -176,7 +176,7 @@ local function LoadPetTrackerAddonSkin()
 
     petTrackerObjectives.header = CreateFrame("Button", nil, petTrackerObjectives, "GwQuestTrackerHeader")
     petTrackerObjectives.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    petTrackerObjectives.header.title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    petTrackerObjectives.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
     petTrackerObjectives.header.title:SetShadowOffset(1, -1)
     petTrackerObjectives.header.title:SetText("Pet Tracker")
     petTrackerObjectives.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
