@@ -1,7 +1,5 @@
 local _, GW = ...
-local AddToAnimation = GW.AddToAnimation
 local GW_CLASS_COLORS = GW.GW_CLASS_COLORS
-local lerp = GW.lerp
 local L = GW.L
 --[[
 TODO
@@ -742,7 +740,7 @@ local function UpdateAchievementFrameListAchievement(self)
     if not elementData.selected then
         self:SetHeight(120)
     else
-        self:Expand(math.max(120,self:GetHeight()))
+        self:Expand(math.max(120, self:DisplayObjectives(self.id, self.completed)))
     end
 
     if self.completed then
@@ -1424,13 +1422,14 @@ local function skinAchevement()
             UpdateAchievementFrameListAchievement(child)
         end
 
-        if LoadAchievementFrameAchievements == false then
+        if not LoadAchievementFrameAchievements then
             LoadAchievementFrameAchievements = true
 
             AchievementFrameAchievements.ScrollBox.view:SetPadding(0, 10, 0, 0, 5)
             AchievementFrameAchievements.ScrollBox.view:SetElementExtentCalculator(function(_, elementData)
             if SelectionBehaviorMixin.IsElementDataIntrusiveSelected(elementData) then
-                    return math.max(AchievementTemplateMixin.CalculateSelectedHeight(elementData), 120)
+                    -- 36 is offset from ACHIEVEMENTBUTTON_COLLAPSEDHEIGHT (84) to our default 120
+                    return math.max(AchievementTemplateMixin.CalculateSelectedHeight(elementData) + 36, 120)
                 else
                     return 120
                 end
