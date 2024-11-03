@@ -69,6 +69,7 @@ local function LoadSlashCommands()
         elseif msg == "clear achievements" then
             local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
             local numAchievements = #trackedAchievements
+            local counter = 0
 
             for i = 1, numAchievements do
                 local achievementID = trackedAchievements[i]
@@ -77,8 +78,12 @@ local function LoadSlashCommands()
 
                 if wasEarnedByMe then
                     C_ContentTracking.StopTracking(Enum.ContentTrackingType.Achievement, achievementID, Enum.ContentTrackingStopType.Manual) 
-                    GW.Notice(format(L["Untracked Achievement '%s(%s)'"], achievementName, achievementID))
+                    GW.Notice(format(L["Untracked Achievement '%s (%s)'"], achievementName, achievementID))
+
+                    counter = counter + 1
                 end
+
+                GW.Notice(format(L["%s Achievements cleared"], counter))
             end
         else
             GW.Notice("\"" .. msg .. "\" is not a valid GW2 UI slash command.")
