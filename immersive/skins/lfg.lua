@@ -743,7 +743,9 @@ local function SkinLookingForGroupFrames()
 
                 for i = 1, result.numMembers do
                     local role, class = C_LFGList.GetSearchResultMemberInfo(button.resultID, i)
-                    tinsert(cache[role], {class = class, role = role})
+                    if role then
+                        tinsert(cache[role], {class = class, role = role})
+                    end
                 end
 
                 for i = 5, 1, -1 do -- The index of icon starts from right
