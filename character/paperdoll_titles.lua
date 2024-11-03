@@ -1,12 +1,16 @@
 local _, GW = ...
 
 local savedPlayerTitles = {}
+local defaultSearchString = SEARCH .. "..."
 
 local function title_OnClick(self)
     if not self.titleId then
         return
     end
     SetCurrentTitle(self.titleId)
+
+    self:GetParent():GetParent():GetParent().input:SetText(defaultSearchString)
+    self:GetParent():GetParent():GetParent().input.clearButton:Hide()
 end
 GW.AddForProfiling("paperdoll_titles", "title_OnClick", title_OnClick)
 
@@ -43,7 +47,8 @@ local function Titles_InitButton(button, elementData)
     button.gwSelected:SetShown(GetCurrentTitle() == button.titleId)
 end
 
-local function saveKnowenTitles()
+local function saveKnowenTitles(titlewin, searchString)
+    wipe(savedPlayerTitles)
     savedPlayerTitles[1] = {}
     savedPlayerTitles[1].name = "       "
     savedPlayerTitles[1].id = -1
@@ -53,7 +58,7 @@ local function saveKnowenTitles()
     for i = 1, GetNumTitles() do
         if IsTitleKnown(i) then
             local tempName, playerTitle = GetTitleName(i)
-            if (tempName and playerTitle) then
+            if tempName and playerTitle and ((searchString and string.find(string.lower(tempName), string.lower(searchString)) or searchString == nil)) then
                 tableIndex = tableIndex + 1
                 savedPlayerTitles[tableIndex] = savedPlayerTitles[tableIndex] or {}
                 savedPlayerTitles[tableIndex].name = strtrim(tempName)
@@ -69,38 +74,76 @@ local function saveKnowenTitles()
         end
     )
     savedPlayerTitles[1].name = PLAYER_TITLE_NONE
+
+    UpdateScrollBox(titlewin)
 end
 GW.AddForProfiling("paperdoll_titles", "saveKnowenTitles", saveKnowenTitles)
 
 local function LoadPDTitles(fmMenu)
-    local titlewin_outer = CreateFrame("Frame", "GwTitleWindow", GwPaperDoll, "GwTitleWindow")
+    local titlewin = CreateFrame("Frame", "GwTitleWindow", GwPaperDoll, "GwTitleWindow")
 
-    saveKnowenTitles()
+    titlewin.input:SetText(defaultSearchString)
+    titlewin.input:SetScript("OnEnterPressed", nil)
+    titlewin.input:SetScript("OnTextChanged", function(self)
+        local text = self:GetText()
+        if text == defaultSearchString or text == "" then
+            saveKnowenTitles(titlewin)
+            self.clearButton:Hide()
+            return
+        end
+        saveKnowenTitles(titlewin, text)
+        self.clearButton:Show()
+    end)
+
+    titlewin.input:SetScript("OnEscapePressed", function(self)
+        self:ClearFocus()
+        self:SetText(defaultSearchString)
+        saveKnowenTitles(titlewin)
+    end)
+
+    titlewin.input:SetScript("OnEditFocusGained", function(self)
+        if self:GetText() == defaultSearchString then
+            self:SetText("")
+        end
+        self.clearButton:Show()
+        saveKnowenTitles(titlewin)
+    end)
+
+    titlewin.input:SetScript("OnEditFocusLost", function(self)
+        if self:GetText() == "" then
+            self:SetText(defaultSearchString)
+            self.clearButton:Hide()
+        end
+    end)
+    titlewin.input.clearButton:SetScript("OnClick", function(self)
+        self:GetParent():ClearFocus()
+        self:GetParent():SetText(defaultSearchString)
+        saveKnowenTitles(titlewin)
+    end)
 
     local view = CreateScrollBoxListLinearView()
     view:SetElementInitializer("GwTitleButtonTemplate", function(button, elementData)
         Titles_InitButton(button, elementData);
     end)
-    ScrollUtil.InitScrollBoxListWithScrollBar(titlewin_outer.ScrollBox, titlewin_outer.ScrollBar, view)
-    GW.HandleTrimScrollBar(titlewin_outer.ScrollBar)
-    GW.HandleScrollControls(titlewin_outer)
-    titlewin_outer.ScrollBar:SetHideIfUnscrollable(true)
+    ScrollUtil.InitScrollBoxListWithScrollBar(titlewin.ScrollBox, titlewin.ScrollBar, view)
+    GW.HandleTrimScrollBar(titlewin.ScrollBar)
+    GW.HandleScrollControls(titlewin)
+    titlewin.ScrollBar:SetHideIfUnscrollable(true)
 
-    UpdateScrollBox(titlewin_outer)
+    saveKnowenTitles(titlewin)
 
     -- update title window when a title update event occurs
-    titlewin_outer:SetScript(
+    titlewin:SetScript(
         "OnEvent",
-        function(self)
-            if GW.inWorld and self:IsShown() then
-                saveKnowenTitles()
-                UpdateScrollBox(titlewin_outer)
+        function()
+            if GW.inWorld then
+                saveKnowenTitles(titlewin)
             end
         end
     )
-    titlewin_outer:RegisterEvent("KNOWN_TITLES_UPDATE")
-    titlewin_outer:RegisterEvent("UNIT_NAME_UPDATE")
+    titlewin:RegisterEvent("KNOWN_TITLES_UPDATE")
+    titlewin:RegisterEvent("UNIT_NAME_UPDATE")
 
-    fmMenu:SetupBackButton(titlewin_outer.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
+    fmMenu:SetupBackButton(titlewin.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
 end
 GW.LoadPDTitles = LoadPDTitles
