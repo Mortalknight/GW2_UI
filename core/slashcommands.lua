@@ -12,6 +12,7 @@ local function LoadSlashCommands()
             GW.Notice("  /gw2 kb             -> To activate the keybindoptions")
             GW.Notice("  /gw2 mh             -> To activate 'Move HUD'-Mode")
             GW.Notice("  /gw2 reset profile  -> To reset the current profile to default settings")
+            GW.Notice("  /gw2 clear achievements  -> Untrack all earned achievements (Blizzard bug)")
         elseif msg == "settings" then
             if InCombatLockdown() then
                 GW.Notice(L["Settings are not available in combat!"])
@@ -65,6 +66,20 @@ local function LoadSlashCommands()
             errorlogFrame.editBox:SetFocus()
 
             errorlogFrame:Show()
+        elseif msg == "clear achievements" then
+            local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
+            local numAchievements = #trackedAchievements
+
+            for i = 1, numAchievements do
+                local achievementID = trackedAchievements[i]
+                local achievementName = select(2, GetAchievementInfo(achievementID))
+                local wasEarnedByMe = select(13, GetAchievementInfo(achievementID))
+
+                if wasEarnedByMe then
+                    C_ContentTracking.StopTracking(Enum.ContentTrackingType.Achievement, achievementID, Enum.ContentTrackingStopType.Manual) 
+                    GW.Notice(format(L["Untracked Achievement '%s(%s)'"], achievementName, achievementID))
+                end
+            end
         else
             GW.Notice("\"" .. msg .. "\" is not a valid GW2 UI slash command.")
         end
