@@ -225,20 +225,25 @@ local function layoutContent()
         end
     end
 
+    local foundTodo = false
     if GwQuesttrackerContainerTodoloo.collapsed then
         GwQuesttrackerContainerTodoloo:SetHeight(20)
     else
         local groups = TodolooObjectiveTracker:BuildGroupInfos()
         local containerHeight = 20
+
         for idx, group in ipairs(groups) do
             local added, usedheight = UpdateSingle(group, idx)
             if added then
+                foundTodo = true
                 containerHeight = containerHeight + usedheight
             end
         end
 
         GwQuesttrackerContainerTodoloo:SetHeight(containerHeight)
     end
+
+    GwQuesttrackerContainerTodoloo:SetShown(foundTodo or GwQuesttrackerContainerTodoloo.collapsed)
 
     GW.QuestTrackerLayoutChanged()
 end
