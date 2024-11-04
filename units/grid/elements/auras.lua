@@ -88,6 +88,7 @@ local function FilterAura(self, unit, data)
     local isImportant, isDispellable
 
     if data.isHelpful then
+        local isPlayerBuff = data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"
         -- missing buffs: needs a custom plugin
 
         local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(data.spellId, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
@@ -105,7 +106,7 @@ local function FilterAura(self, unit, data)
         -- indicators
         local indicators = GW.AURAS_INDICATORS[GW.myclass]
         local indicator = indicators[data.spellId]
-        if indicator then
+        if indicator and isPlayerBuff then
             for _, pos in ipairs(INDICATORS) do
                 if parent.raidIndicators and parent.raidIndicators[pos] and parent.raidIndicators[pos] == (indicator[4] or data.spellId) then
                     local frame = self["indicator" .. pos]
