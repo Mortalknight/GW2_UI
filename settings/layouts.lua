@@ -305,28 +305,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
             end
 
             local radio = rootDescription:CreateRadio(layouts[k].name, IsSelected, SetSelected, layouts[k].name)
-            radio:AddInitializer(function(button, description, menu)
-                button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
-                button.highlight:SetDrawLayer("BACKGROUND")
-                button.highlight:SetBlendMode("BLEND")
-                button.highlight:SetAlpha(0.5)
-                button.leftTexture1:SetSize(13, 13)
-                --button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox")
-                button.leftTexture1:SetPoint("LEFT", 0, 0)
-                if button.leftTexture2 then
-                    button.leftTexture2:SetSize(13, 13)
-                    --button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked")
-                    button.leftTexture2:SetPoint("CENTER", button.leftTexture1, "CENTER", 0, 0)
-                end
-                if not button.gwHooked then
-                    hooksecurefunc(button.highlight, "SetAlpha", function(self, a)
-                        if a ~= 0.5 then
-                            self:SetAlpha(0.5)
-                        end
-                    end)
-                    button.gwHooked = true
-                end
-            end)
+            radio:AddInitializer(GW.BlizzardDropdownRadioButtonInitializer)
         end
 	end)
 
@@ -379,27 +358,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
             end
 
             local check = rootDescription:CreateCheckbox(data.name, IsSelected, SetSelected, data.idx)
-            check:AddInitializer(function(button, description, menu)
-                button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
-                button.highlight:SetDrawLayer("BACKGROUND")
-                button.highlight:SetBlendMode("BLEND")
-                button.highlight:SetAlpha(0.5)
-                button.leftTexture1:SetSize(13, 13)
-                button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox")
-                if button.leftTexture2 then
-                    button.leftTexture2:SetSize(13, 13)
-                    button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked")
-                    button.leftTexture2:SetPoint("CENTER", button.leftTexture1, "CENTER", 0, 0)
-                end
-                if not button.gwHooked then
-                    hooksecurefunc(button.highlight, "SetAlpha", function(self, a)
-                        if a ~= 0.5 then
-                            self:SetAlpha(0.5)
-                        end
-                    end)
-                    button.gwHooked = true
-                end
-            end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
         end
     end)
 

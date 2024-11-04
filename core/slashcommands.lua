@@ -77,7 +77,7 @@ local function LoadSlashCommands()
                 local wasEarnedByMe = select(13, GetAchievementInfo(achievementID))
 
                 if wasEarnedByMe then
-                    C_ContentTracking.StopTracking(Enum.ContentTrackingType.Achievement, achievementID, Enum.ContentTrackingStopType.Manual) 
+                    C_ContentTracking.StopTracking(Enum.ContentTrackingType.Achievement, achievementID, Enum.ContentTrackingStopType.Manual)
                     GW.Notice(format(L["Untracked Achievement '%s (%s)'"], achievementName, achievementID))
 
                     counter = counter + 1

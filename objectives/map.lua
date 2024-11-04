@@ -348,7 +348,7 @@ local function SetupMiniMapTrackingDropdown(self)
         local isHunterClass = GW.myclass == "HUNTER"
 
         if not showAll then
-            rootDescription:CreateButton(UNCHECK_ALL, function()
+            local allButton = rootDescription:CreateButton(UNCHECK_ALL, function()
                 trackingState:ClearSelections();
 
                 for index = 1, C_Minimap.GetNumTrackingTypes() do
@@ -360,6 +360,7 @@ local function SetupMiniMapTrackingDropdown(self)
 
                 return MenuResponse.Refresh;
             end);
+            allButton:AddInitializer(GW.BlizzardDropdownButtonInitializer)
         end
 
         local hunterInfo = {};
@@ -419,6 +420,8 @@ local function SetupMiniMapTrackingDropdown(self)
                     local uv0, uv1 = .0625, .9;
                     rightTexture:SetTexCoord(uv0, uv1, uv0, uv1);
                 end
+
+                GW.BlizzardDropdownCheckButtonInitializer(button, description, menu)
 
                 -- The size is explicitly provided because this requires a right-justified icon.
                 local width, height = fontString:GetUnboundedStringWidth() + 60, 20;
