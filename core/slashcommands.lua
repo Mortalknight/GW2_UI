@@ -82,9 +82,8 @@ local function LoadSlashCommands()
 
                     counter = counter + 1
                 end
-
-                GW.Notice(format(L["%s Achievements cleared"], counter))
             end
+            GW.Notice(format(L["%s Achievements cleared"], counter))
         else
             GW.Notice("\"" .. msg .. "\" is not a valid GW2 UI slash command.")
         end
