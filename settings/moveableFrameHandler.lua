@@ -209,31 +209,6 @@ local function GridToggle(self, _, forceHide)
 end
 GW.GridToggle = GridToggle
 
-local function UpdateMatchingLayout(self, new_point)
-    local selectedLayoutName = GW.private.Layouts.currentSelected
-    local layout = selectedLayoutName and GW.GetLayoutByName(selectedLayoutName) or nil
-    local frameFound = false
-    if layout then
-        for i = 0, #layout.frames do
-            if layout.frames[i] and layout.frames[i].settingName == self.setting then
-                layout.frames[i].point = nil
-                layout.frames[i].point = GW.copyTable(nil, new_point)
-
-                frameFound = true
-                break
-            end
-        end
-
-        -- could be a new moveable frame which is not at the layout settings, so we need to add it here
-        if not frameFound then
-            local newIdx = #layout.frames + 1
-            layout.frames[newIdx] = {}
-            layout.frames[newIdx].settingName = self.setting
-            layout.frames[newIdx].point = GW.copyTable(nil, new_point)
-        end
-    end
-end
-
 local function smallSettings_resetToDefault(self, _,  moverFrame)
     local mf = moverFrame and moverFrame or self:GetParent():GetParent().child
 
@@ -311,7 +286,7 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
     GW.UpdateHudScale()
 
     --also update the selected layout
-    UpdateMatchingLayout(mf, new_point)
+    GW.UpdateMatchingLayout(mf, new_point)
 
     -- run layout manager
     GwSmallSettingsContainer.layoutManager:SetAttribute("inMoveHudMode", false)
@@ -366,7 +341,7 @@ local function mover_OnDragStop(self)
         self:SetUserPlaced(true)
 
         --also update the selected layout
-        UpdateMatchingLayout(self, new_point)
+        GW.UpdateMatchingLayout(self, new_point)
     end
 
     if self.postdrag then
