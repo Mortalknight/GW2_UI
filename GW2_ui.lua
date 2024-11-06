@@ -615,6 +615,7 @@ local function evPlayerLogin(self)
     local lm = GW.LoadMainbarLayout()
 
     --Create Settings window
+    GW.SetUpDatabaseForProfileSpecSwitch()
     GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
     GW.BuildPrefixValues()

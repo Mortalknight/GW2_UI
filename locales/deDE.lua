@@ -679,3 +679,6 @@ L["Feasts"] = "Festmähler"
 L["Bots"] = true
 L["%s created a Bot."] = "%s hat einen Bot erstellt."
 L["Stack Size"] = "Stapelgröße"
+L["Enable spec profiles"] = "Spezialisierungsprofile aktivieren"
+L["When enabled, your profile will be set to the specified profile when you change specialization."] = "Falls diese Option aktiviert ist, wird dein Profil auf das angegebene Profil gesetzt, wenn du die Spezialisierung wechselst."
+L["%s - Active"] = "%s - Aktiv"

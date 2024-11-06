@@ -486,7 +486,7 @@ local function CharacterMenuButton_OnLoad(self, odd)
 end
 
 local function LoadProfilesPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsProfilePanelTmpl")
+    local p = CreateFrame("Frame", "GWTESTFRAME", sWindow.panels, "GwSettingsProfilePanelTmpl")
 
     CharacterMenuButton_OnLoad(p.menu.newProfile, true)
     CharacterMenuButton_OnLoad(p.menu.importProfile, false)
@@ -513,8 +513,8 @@ local function LoadProfilesPanel(sWindow)
     p.sub:SetTextColor(125 / 255, 125 / 255, 125 / 255)
     p.sub:SetText(L["Profiles are an easy way to share your settings across characters and realms."])
 
-    p.resetToDefaultFrame = CreateFrame("Button", nil, p, "GwProfileItemTmpl")
-    p.resetToDefaultFrame:SetPoint("TOPLEFT", 5, -65)
+    -- Setup profile spec switch
+    GW.InititateProfileSpecSwitchSettings(p)
 
     p.resetToDefaultFrame:SetScript("OnEnter", item_OnEnter)
     p.resetToDefaultFrame:SetScript("OnLeave", item_OnLeave)

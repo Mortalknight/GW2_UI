@@ -22,10 +22,98 @@
                     </Button>
                 </Frames>
             </Frame>
-            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
-                <Size x="595" y="470"></Size>
+
+            <Frame parentKey="profileSpec">
+                <Size x="585" y="80"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-150"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-60"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                            <size x="480" y="80"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                            </Anchors>
+                            <TexCoords left="0" right="1" top="0" bottom="0.5" />
+                        </Texture>
+                        <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                            <Size x="585" y="2"></Size>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" x="0" y="-5"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="activeProfile" file="Interface\AddOns\GW2_UI\textures\uistuff\achievementhover">
+                            <size x="480" y="80"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Button parentKey="enabled">
+                        <Size x="480" y="40"/>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="title" text="Title not yet loaded" justifyH="LEFT">
+                                    <Size x="350" y="15"/>
+                                    <Color r="1" g="1" b="1" a="1"/>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="0"/>
+                                    </Anchors>
+                                </FontString>
+                                <FontString parentKey="desc" text="If you see this message. We forgot to load some text. Dont worry we have very capable sample text just like this one to fill you with the information." justifyV="TOP" justifyH="LEFT">
+                                    <Size x="530" y="50"/>
+                                    <Color r="0.49" g="0.49" b="0.49" a="1"/>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-15"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Frames>
+                            <CheckButton parentKey="checkbutton" checked="true">
+                                <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                <Size x="10" y="10"/>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-2"/>
+                                </Anchors>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
+                            </CheckButton>
+                        </Frames>
+                    </Button>
+                </Frames>
+            </Frame>
+            <Button parentKey="resetToDefaultFrame" inherits="GwProfileItemTmpl">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-149"/>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                            <Size x="585" y="2"></Size>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" x="0" y="-5"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                <Size x="595" y="401"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-222"></Anchor>
                 </Anchors>
             </Frame>
             <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">

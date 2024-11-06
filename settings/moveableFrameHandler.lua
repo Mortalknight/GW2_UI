@@ -741,8 +741,6 @@ local function LoadMovers(layoutManager)
     tagScrollFrame.title:SetText(L["Filter"])
     tagScrollFrame:GwHandleDropDownBox(nil, nil, nil, 125)
 
-    GWTEST = tagScrollFrame
-
     tagScrollFrame:SetupMenu(function(dropdown, rootDescription)
         local buttonSize = 20
 		local maxButtons = 7
