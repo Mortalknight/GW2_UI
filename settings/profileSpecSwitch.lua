@@ -10,7 +10,7 @@ local mixin = {}
 local databaseEnhanced = false
 
 local _, classId = UnitClassBase("player")
-numSpecs = GetNumSpecializationsForClassID(classId)
+numSpecs = C_SpecializationInfo.GetNumSpecializationsForClassID(classId)
 for i = 1, numSpecs do
     local _, name = GetSpecializationInfoForClassID(classId, i)
     specNames[i] = name

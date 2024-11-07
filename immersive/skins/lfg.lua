@@ -742,9 +742,9 @@ local function SkinLookingForGroupFrames()
                 }
 
                 for i = 1, result.numMembers do
-                    local role, class = C_LFGList.GetSearchResultMemberInfo(button.resultID, i)
-                    if role then
-                        tinsert(cache[role], {class = class, role = role})
+                    local info = C_LFGList.GetSearchResultPlayerInfo(button.resultID, i)
+                    if info and info.assignedRole then
+                        tinsert(cache[role], {class = nfo.assignedRole, role = info.classFilename})
                     end
                 end
 

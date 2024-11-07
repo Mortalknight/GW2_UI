@@ -83,19 +83,20 @@ local function Update(resultID)
     ClearCache()
 
     for i = 1, result.numMembers do
-        local role, class, _, spec = C_LFGList.GetSearchResultMemberInfo(resultID, i)
+        local info = C_LFGList.GetSearchResultPlayerInfo(resultID, i)
+        if not info then return end
 
-        if not role then
+        if not info.assignedRole then
             GW.Debug("debug", "cache not updated correctly, the role is nil.")
             return
         end
 
-        if not class then
+        if not info.classFilename then
             GW.Debug("debug", "cache not updated correctly, the class is nil.")
             return
         end
 
-        if not spec then
+        if not info.specName then
             GW.Debug("debug", "cache not updated correctly, the spec is nil.")
             return
         end
