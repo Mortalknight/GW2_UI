@@ -515,6 +515,8 @@ local function LoadCurrency(tabContainer)
     --skin that frame here
     SkinTokenFrame()
 
+    TokenFrame.Hide = TokenFrame.Show
+
     hooksecurefunc(TokenFrame, "SetShown", function(self)
         self:Show()
     end)
@@ -542,6 +544,10 @@ local function LoadCurrency(tabContainer)
             self:SetPoint("BOTTOMRIGHT", TokenFrame, -22, 0)
         end
     end)
+
+    BackpackTokenFrame.GetMaxTokensWatched = function()
+        return 4
+    end
 
     -- setup transfer history
     local curHistroyWin = curwin_outer.CurrencyTransferHistoryScroll
