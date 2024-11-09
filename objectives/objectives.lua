@@ -13,9 +13,9 @@ local tomTomWaypoint = nil
 local function AddTomTomWaypoint(questId, objective)
     if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
         local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questId)
-        local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(QuestieQuest)
+        local spawn, zone, name = QuestieLoader:ImportModule("DistanceUtils").GetNearestSpawnForQuest(QuestieQuest)
         if (not spawn) and objective ~= nil then
-            spawn, zone, name = QuestieMap:GetNearestSpawn(objective)
+            spawn, zone, name = QuestieLoader:ImportModule("DistanceUtils").GetNearestSpawn(objective)
         end
         if spawn then
             if tomTomWaypoint and TomTom.RemoveWaypoint then -- remove old waypoint

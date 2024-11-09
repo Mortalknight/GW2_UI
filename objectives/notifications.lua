@@ -144,7 +144,7 @@ local function getNearestQuestPOI()
                         end
                     end
                     if shouldCheck then
-                        local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questieQuest)
+                        local spawn, zone, name = QuestieLoader:ImportModule("DistanceUtils").GetNearestSpawnForQuest(questieQuest)
                         if spawn and zone and name then
                             if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
                                 local distance = _GetDistanceToClosestObjective(spawn, zone, name)
