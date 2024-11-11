@@ -1,3 +1,7 @@
+1.8.4-Cata
+FIXES
+    - Fix BigWigs integration
+
 1.8.3-Cata
 MISC
     - Update for 4.4.1
