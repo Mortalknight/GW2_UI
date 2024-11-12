@@ -428,7 +428,7 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting)
                 end
                 if of.optionType == "slider" then
                     of.slider:SetValue(value)
-                    of.inputFrame.input:SetText(tonumber(value))
+                    of.inputFrame.input:SetText(RoundDec(value, of.decimalNumbers))
                 end
 
                 found = true
@@ -523,7 +523,6 @@ local function InitPanel(panel, hasScroll)
         optionReference[panelUniqueID].options[#optionReference[panelUniqueID].options + 1] = of
 
         of.optionName = v.optionName
-        of.perSpec = v.perSpec
         of.decimalNumbers = v.decimalNumbers
         of.options = v.options
         of.options_names = v.options_names
@@ -531,6 +530,7 @@ local function InitPanel(panel, hasScroll)
         of.optionType = v.optionType
         of.groupHeaderName = v.groupHeaderName
         of.isPrivateSetting = v.isPrivateSetting
+        of.callback = v.callback
         --need this for searchables
         of.forceNewLine = v.forceNewLine
 
@@ -974,43 +974,11 @@ local function InitPanel(panel, hasScroll)
             of.title:SetShadowColor(0, 0, 0, 0)
         elseif v.optionType == "header" then
             of.title:SetFont(DAMAGE_TEXT_FONT, 16)
-            --of.title:SetTextColor(1, 1, 1)
-            --of.title:SetShadowColor(0, 0, 0, 1)
-        end
-
-        if of.perSpec then
-            local onUpdate = function (self)
-                self:SetScript("OnUpdate", nil)
-                local val = of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]
-
-                if v.optionType == "dropdown" then
-                    for i,value in pairs(v.options) do
-                        if value == val then self.button.string:SetText(v.options_names[i]) break end
-                    end
-                elseif v.optionType == "slider" then
-                    self.slider:SetValue(val)
-                elseif v.optionType == "text" then
-                    self.input:SetText(val)
-                elseif v.optionType == "boolean" then
-                    self.checkbutton:SetChecked(val)
-                end
-
-                if v.callback and v.optionType ~= "slider" then
-                    v.callback()
-                end
-            end
-            of:SetScript("OnEvent", function (self, e)
-                if e == "PLAYER_SPECIALIZATION_CHANGED" then
-                    self:SetScript("OnUpdate", onUpdate)
-                end
-            end)
-            of:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
         end
 
         if not newLine then
             padding.x = padding.x + of:GetWidth() + box_padding
         else
-
             padding.x = maximumXSize + 10
         end
     end

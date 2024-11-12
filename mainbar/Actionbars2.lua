@@ -494,6 +494,9 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
     end
     if btn.AutoCastOverlay then
         btn.AutoCastOverlay:SetSize(btnWidth, btnWidth)
+        btn.AutoCastOverlay.Mask:ClearAllPoints()
+        btn.AutoCastOverlay.Mask:SetPoint("TOPLEFT", 1, -1)
+        btn.AutoCastOverlay.Mask:SetPoint("BOTTOMRIGHT", -1, 1)
     end
     if btn.NewActionTexture then
         btn.NewActionTexture:SetSize(btnWidth, btnWidth)
