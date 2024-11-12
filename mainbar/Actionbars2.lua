@@ -461,6 +461,10 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
 
     btn:GetPushedTexture():SetSize(btnWidth, btnWidth)
 
+    if btn.PushedTexture then
+        btn.PushedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
+    end
+
     if btn.Border then
         btn.Border:SetSize(btnWidth, btnWidth)
         btn.Border:SetBlendMode("BLEND")
@@ -591,6 +595,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
 
     if btn.HighlightTexture then
         btn.HighlightTexture:SetSize(btnWidth, btnWidth)
+        btn.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     end
     if btn.SetCheckedTexture then
         btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
