@@ -755,9 +755,7 @@ local function evPlayerLogin(self)
         GW.LoadDragonBar(hg, true)
     end
 
-    if GW.settings.POWERBAR_ENABLED and (GW.settings.PLAYER_AS_TARGET_FRAME and GW.settings.PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR or not GW.settings.PLAYER_AS_TARGET_FRAME) then
-        GW.LoadPowerBar()
-    end
+    GW.LoadPowerBar()
 
     if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
         if GW.settings.BAGS_ENABLED then
@@ -786,15 +784,12 @@ local function evPlayerLogin(self)
     --Create unitframes
     if GW.settings.FOCUS_ENABLED then
         GW.LoadFocus()
-        if GW.settings.focus_TARGET_ENABLED then
-            GW.LoadTargetOfUnit("Focus")
-        end
+        GW.LoadTargetOfUnit("Focus")
     end
     if GW.settings.TARGET_ENABLED then
         GW.LoadTarget()
-        if GW.settings.target_TARGET_ENABLED then
-            GW.LoadTargetOfUnit("Target")
-        end
+
+        GW.LoadTargetOfUnit("Target")
 
         -- move zone text frame
         if not IsFrameModified("ZoneTextFrame") then

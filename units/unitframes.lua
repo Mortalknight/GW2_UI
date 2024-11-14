@@ -1194,6 +1194,18 @@ local function ToggleTargetTargetFrameSetting(unit)
 end
 GW.ToggleTargetTargetFrameSetting = ToggleTargetTargetFrameSetting
 
+local function ToggleTargetOfUnitFrame(unit)
+    if GW.settings[string.lower(unit) .. "_TARGET_ENABLED"] then
+        _G["Gw" .. unit .. "TargetUnitFrame"]:SetScript("OnUpdate", unittarget_OnUpdate)
+        RegisterUnitWatch(_G["Gw" .. unit .. "TargetUnitFrame"])
+    else
+        _G["Gw" .. unit .. "TargetUnitFrame"]:SetScript("OnUpdate", nil)
+        UnregisterUnitWatch(_G["Gw" .. unit .. "TargetUnitFrame"])
+        RegisterStateDriver(_G["Gw" .. unit .. "TargetUnitFrame"], "visibility", "hide")
+    end
+end
+GW.ToggleTargetOfUnitFrame = ToggleTargetOfUnitFrame
+
 local function LoadTargetOfUnit(unit)
     local f = createNormalUnitFrameSmall("Gw" .. unit .. "TargetUnitFrame")
     local unitID = string.lower(unit) .. "target"
@@ -1211,7 +1223,6 @@ local function LoadTargetOfUnit(unit)
     f:SetAttribute("*type1", "target")
     f:SetAttribute("*type2", "togglemenu")
     f:SetAttribute("unit", unitID)
-    RegisterUnitWatch(f)
     f:EnableMouse(true)
     f:RegisterForClicks("AnyDown")
 
@@ -1230,6 +1241,7 @@ local function LoadTargetOfUnit(unit)
     f.debuffFilter = nil
 
     f.totalElapsed = 0.15
-    f:SetScript("OnUpdate", unittarget_OnUpdate)
+
+    ToggleTargetOfUnitFrame(unit)
 end
 GW.LoadTargetOfUnit = LoadTargetOfUnit

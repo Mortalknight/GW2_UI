@@ -420,6 +420,34 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
 end
 GW.UpdatePowerData = UpdatePowerData
 
+local function OnEvent(self, event, unit)
+    if (event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER") and unit == "player" then
+        UpdatePowerData(self)
+    elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
+        self.lastPowerType = nil
+        UpdatePowerData(self)
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        C_Timer.After(0.5, function() UpdatePowerData(self) end)
+        self:UnregisterEvent(event)
+    end
+end
+
+local function TogglePlayerPowerBar()
+  if GW.settings.POWERBAR_ENABLED and (GW.settings.PLAYER_AS_TARGET_FRAME and GW.settings.PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR or not GW.settings.PLAYER_AS_TARGET_FRAME) then
+    GwPlayerPowerBar:SetParent(UIParent)
+    GwPlayerPowerBarDecay:SetParent(UIParent)
+    GwPlayerPowerBar:SetScript("OnEvent", OnEvent)
+    UpdatePowerData(GwPlayerPowerBar)
+    GW.ToggleMover(GwPlayerPowerBar.gwMover, true)
+  else
+    GwPlayerPowerBar:SetParent(GW.HiddenFrame)
+    GwPlayerPowerBarDecay:SetParent(GW.HiddenFrame)
+    GwPlayerPowerBar:SetScript("OnEvent", nil)
+    GW.ToggleMover(GwPlayerPowerBar.gwMover, false)
+  end
+end
+GW.TogglePlayerPowerBar = TogglePlayerPowerBar
+
 local function LoadPowerBar()
   local playerPowerBar = GW.createNewStatusbar("GwPlayerPowerBar",UIParent,"GwStatusPowerBar",true)
   playerPowerBar.customMaskSize = 64
@@ -456,21 +484,6 @@ local function LoadPowerBar()
   end
   GW.MixinHideDuringPetAndOverride(playerPowerBar)
 
-  playerPowerBar:SetScript(
-      "OnEvent",
-      function(self, event, unit)
-          if (event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER") and unit == "player" then
-              UpdatePowerData(playerPowerBar)
-          elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
-              playerPowerBar.lastPowerType = nil
-              UpdatePowerData(playerPowerBar)
-          elseif event == "PLAYER_ENTERING_WORLD" then
-              C_Timer.After(0.5, function() UpdatePowerData(playerPowerBar) end)
-              self:UnregisterEvent(event)
-          end
-      end
-  )
-
   playerPowerBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
   playerPowerBar.label:SetShadowColor(0, 0, 0, 1)
   playerPowerBar.label:SetShadowOffset(1, -1)
@@ -480,6 +493,6 @@ local function LoadPowerBar()
   playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
   playerPowerBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
-  UpdatePowerData(playerPowerBar)
+  TogglePlayerPowerBar()
 end
 GW.LoadPowerBar = LoadPowerBar

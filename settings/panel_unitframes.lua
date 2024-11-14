@@ -97,7 +97,7 @@ local function LoadTargetPanel(sWindow)
     addOption(p_target.scroll.scrollchild, L["Invert target frame"], nil, "target_FRAME_INVERT", function() GW.ShowRlPopup = true end, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target.scroll.scrollchild, L["Show alternative background texture"], nil, "target_FRAME_ALT_BACKGROUND", GW.ToggleTargetFrameSettings, nil, {["TARGET_ENABLED"] = true})
     --TARGET OF TARGET
-    addOption(pTargetOfTarget.scroll.scrollchild, SHOW_TARGET_OF_TARGET_TEXT, L["Enable the target of target frame."], "target_TARGET_ENABLED", function() GW.ShowRlPopup = true end, nil, {["TARGET_ENABLED"] = true})
+    addOption(pTargetOfTarget.scroll.scrollchild, SHOW_TARGET_OF_TARGET_TEXT, L["Enable the target of target frame."], "target_TARGET_ENABLED", function() GW.ToggleTargetOfUnitFrame("Target") end, nil, {["TARGET_ENABLED"] = true})
     addOption(pTargetOfTarget.scroll.scrollchild, SHOW_ENEMY_CAST, nil, "target_TARGET_SHOW_CASTBAR", function() GW.ToggleTargetTargetFrameSetting("Target") end, nil, {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true})
 
     --FOCUS
@@ -114,7 +114,7 @@ local function LoadTargetPanel(sWindow)
     addOption(p_focus.scroll.scrollchild, L["Invert focus frame"], nil, "focus_FRAME_INVERT", function() GW.ShowRlPopup = true end, nil, {["FOCUS_ENABLED"] = true})
     addOption(p_focus.scroll.scrollchild, L["Show alternative background texture"], nil, "focus_FRAME_ALT_BACKGROUND", GW.ToggleFocusFrameSettings, nil, {["FOCUS_ENABLED"] = true})
     --TARGET OF FOCUS
-    addOption(pTargetOfFocus.scroll.scrollchild, MINIMAP_TRACKING_FOCUS, L["Display the focus target frame."], "focus_TARGET_ENABLED", function() GW.ShowRlPopup = true end, nil, {["FOCUS_ENABLED"] = true})
+    addOption(pTargetOfFocus.scroll.scrollchild, MINIMAP_TRACKING_FOCUS, L["Display the focus target frame."], "focus_TARGET_ENABLED", function() GW.ToggleTargetOfUnitFrame("Focus") end, nil, {["FOCUS_ENABLED"] = true})
     addOption(pTargetOfFocus.scroll.scrollchild, SHOW_ENEMY_CAST, nil, "focus_TARGET_SHOW_CASTBAR", function() GW.ToggleTargetTargetFrameSetting("Focus") end , nil, {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true})
 
     InitPanel(pPlayerPet, true)
