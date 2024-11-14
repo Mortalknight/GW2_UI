@@ -21,7 +21,7 @@ local function LoadModulesPanel(sWindow)
 
     addOption(p.scroll.scrollchild, XPBAR_LABEL, nil, "XPBAR_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Health Globe"], L["Enable the health bar replacement."], "HEALTHGLOBE_ENABLED", function() GW.ShowRlPopup = true end)
-    addOption(p.scroll.scrollchild, DISPLAY_POWER_BARS, L["Replace the default mana/power bar."], "POWERBAR_ENABLED", GW.TogglePlayerPowerBar)
+    addOption(p.scroll.scrollchild, DISPLAY_POWER_BARS, L["Replace the default mana/power bar."], "POWERBAR_ENABLED", function() GW.TogglePlayerPowerBar(); GW.UpdateClassPowerExtraManabar() end)
     addOption(p.scroll.scrollchild, FOCUS, L["Enable the focus target frame replacement."], "FOCUS_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, TARGET, L["Enable the target frame replacement."], "TARGET_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, MINIMAP_LABEL, L["Use the GW2 UI Minimap frame."], "MINIMAP_ENABLED", function() GW.ShowRlPopup = true end, nil, nil, "Minimap")

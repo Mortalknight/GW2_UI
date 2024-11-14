@@ -1702,7 +1702,7 @@ local function barChange_OnEvent(self, event)
         elseif f.barType == "combo" then
             f:Hide()
         end
-    elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
+    elseif event == "PLAYER_SPECIALIZATION_CHANGED" or event == "FORCE_UPDATE" then
         f.gwPlayerForm = GetShapeshiftFormID()
         GW.CheckRole()
         selectType(f)
@@ -1710,6 +1710,34 @@ local function barChange_OnEvent(self, event)
         UpdateVisibility(f, event == "PLAYER_REGEN_DISABLED")
     end
 end
+
+local function UpdateExtraManabar()
+    if not GW.settings.CLASS_POWER then return end
+    if GW.settings.POWERBAR_ENABLED then
+        local anchorFrame = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame or GwPlayerPowerBar
+        local barWidth = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
+
+        GwPlayerAltClassLmb:ClearAllPoints()
+        if GW.settings.PLAYER_AS_TARGET_FRAME then
+            GwPlayerAltClassLmb:SetPoint("BOTTOMLEFT", anchorFrame.powerbar, "TOPLEFT", 0, -10)
+            GwPlayerAltClassLmb:SetPoint("BOTTOMRIGHT", anchorFrame.powerbar, "TOPRIGHT", 0, -10)
+            GwPlayerAltClassLmb:SetSize(barWidth + 2, 3)
+        else
+            GwPlayerAltClassLmb:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 0)
+            GwPlayerAltClassLmb:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 0)
+            GwPlayerAltClassLmb:SetSize(barWidth, 5)
+        end
+
+        GwPlayerAltClassLmb:SetParent(UIParent)
+        GwPlayerPowerBarDecay:SetParent(UIParent)
+
+        barChange_OnEvent(GwPlayerClassPower.decay, "FORCE_UPDATE")
+      else
+        GwPlayerAltClassLmb:SetParent(GW.HiddenFrame)
+        GwPlayerPowerBarDecay:SetParent(GW.HiddenFrame)
+    end
+end
+GW.UpdateClassPowerExtraManabar = UpdateExtraManabar
 
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
@@ -1767,50 +1795,30 @@ local function LoadClassPowers()
     cpf.auraExpirationTime = nil
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
-    if GW.settings.POWERBAR_ENABLED then
-        local anchorFrame = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame or
-            GwPlayerPowerBar
-        local barWidth = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and
-            GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
-        local lmb = GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
-        lmb.customMaskSize = 64
-        lmb.bar = lmb
-        lmb:addToBarMask(lmb.intensity)
-        lmb:addToBarMask(lmb.intensity2)
-        lmb:addToBarMask(lmb.scrollTexture)
-        lmb:addToBarMask(lmb.scrollTexture2)
-        lmb:addToBarMask(lmb.runeoverlay)
-        lmb.runicmask:SetSize(lmb:GetSize())
-        lmb.runeoverlay:AddMaskTexture(lmb.runicmask)
-        cpf.lmb = lmb
-
-        GW.initPowerBar(cpf.lmb)
-
-        lmb.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay", lmb, nil, true)
-        lmb.decay:SetFillAmount(0)
-        lmb.decay:SetFrameLevel(lmb.decay:GetFrameLevel() - 1)
-        lmb.decay:ClearAllPoints()
-        lmb.decay:SetPoint("TOPLEFT", lmb, "TOPLEFT", 0, 0)
-        lmb.decay:SetPoint("BOTTOMRIGHT", lmb, "BOTTOMRIGHT", 0, 0)
-
-        lmb:ClearAllPoints()
-        if GW.settings.PLAYER_AS_TARGET_FRAME then
-            lmb:SetPoint("BOTTOMLEFT", anchorFrame.powerbar, "TOPLEFT", 0, -10)
-            lmb:SetPoint("BOTTOMRIGHT", anchorFrame.powerbar, "TOPRIGHT", 0, -10)
-            lmb:SetSize(barWidth + 2, 3)
-        else
-            lmb:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 0)
-            lmb:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 0)
-            lmb:SetSize(barWidth, 5)
-        end
-        lmb:SetFrameStrata("MEDIUM")
-        lmb.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-        lmb.label:SetShadowColor(0, 0, 0, 1)
-        lmb.label:SetShadowOffset(1, -1)
-
-        GW.MixinHideDuringPetAndOverride(lmb)
-        GW.MixinHideDuringPetAndOverride(lmb.decay)
-    end
+    local lmb = GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
+    lmb.customMaskSize = 64
+    lmb.bar = lmb
+    lmb:addToBarMask(lmb.intensity)
+    lmb:addToBarMask(lmb.intensity2)
+    lmb:addToBarMask(lmb.scrollTexture)
+    lmb:addToBarMask(lmb.scrollTexture2)
+    lmb:addToBarMask(lmb.runeoverlay)
+    lmb.runicmask:SetSize(lmb:GetSize())
+    lmb.runeoverlay:AddMaskTexture(lmb.runicmask)
+    cpf.lmb = lmb
+    GW.initPowerBar(cpf.lmb)
+    lmb.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay", lmb, nil, true)
+    lmb.decay:SetFillAmount(0)
+    lmb.decay:SetFrameLevel(lmb.decay:GetFrameLevel() - 1)
+    lmb.decay:ClearAllPoints()
+    lmb.decay:SetPoint("TOPLEFT", lmb, "TOPLEFT", 0, 0)
+    lmb.decay:SetPoint("BOTTOMRIGHT", lmb, "BOTTOMRIGHT", 0, 0)
+    lmb:SetFrameStrata("MEDIUM")
+    lmb.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    lmb.label:SetShadowColor(0, 0, 0, 1)
+    lmb.label:SetShadowOffset(1, -1)
+    GW.MixinHideDuringPetAndOverride(lmb)
+    GW.MixinHideDuringPetAndOverride(lmb.decay)
 
     -- create an extra mana power bar that is used sometimes
     local exbar = GW.createNewStatusbar("GwPlayerAltClassExBar", cpf, "GwStatusPowerBar", true)
@@ -1868,6 +1876,7 @@ local function LoadClassPowers()
 
     updateVisibilitySetting(cpf, false)
     selectType(cpf)
+    UpdateExtraManabar()
 
     if (GW.myClassID == 4 or GW.myClassID == 11) and GW.settings.TARGET_ENABLED and GW.settings.target_HOOK_COMBOPOINTS then
         cpf.decay:RegisterEvent("PLAYER_TARGET_CHANGED")

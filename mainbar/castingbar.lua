@@ -484,6 +484,7 @@ local function onUpdate(self, elapsed)
 end
 
 local function TogglePlayerEnhancedCastbar(self, setShown)
+    if not self then return end
     self.name:SetShown(setShown)
     self.icon:SetShown(setShown)
     self.latency:SetShown(setShown)
