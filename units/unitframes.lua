@@ -358,7 +358,7 @@ local function setUnitPortraitFrame(self)
         end
     elseif BigWigs then
         local npcId = GW.GetUnitCreatureId(self.unit)
-        for _, module in next, BigWigs:IterateBossModules() do
+        for _, module in BigWigs:IterateBossModules() do
             if module.enableMobs[npcId] then
                 foundBossMod = true
                 break
