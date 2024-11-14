@@ -576,19 +576,19 @@ local function UpdatePartyFrames()
 end
 GW.UpdatePartyFrames = UpdatePartyFrames
 
-local function UpdatePetVisibility()
+local function UpdatePetVisibility(alwaysHide)
     for i = 1, MAX_PARTY_MEMBERS + (GW.settings.PARTY_PLAYER_FRAME and 1 or 0) do
         local frame = _G["GwPartyPetFrame" .. i]
-        if GW.settings.PARTY_SHOW_PETS then
-            RegisterStateDriver(frame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))))
-        else
+        if not GW.settings.PARTY_SHOW_PETS or alwaysHide then
             RegisterStateDriver(frame, "visibility", "hide")
+        else
+            RegisterStateDriver(frame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))))
         end
     end
 end
 GW.UpdatePartyPetVisibility = UpdatePetVisibility
 
-local function UpdatePlayerInPartySetting()
+local function UpdatePlayerInPartySetting(alwaysHide)
     local isFirstFrame = true
     for i = 1, MAX_PARTY_MEMBERS + 1 do
         local frame = _G["GwPartyFrame" .. i]
@@ -610,10 +610,14 @@ local function UpdatePlayerInPartySetting()
         party_OnEvent(frame, "load")
         updatePartyData(frame)
 
-        if frame.unit == "player" then
-            RegisterStateDriver(frame, "visibility", ("[@raid1,exists][@%s,noexists] hide;show"):format("party1"))
+        if alwaysHide then
+            RegisterStateDriver(frame, "visibility", ("hide"):format("party1"))
         else
-            RegisterStateDriver(frame, "visibility", ("[@raid1,exists][@%s,noexists] hide;show"):format(frame.unit))
+            if frame.unit == "player" then
+                RegisterStateDriver(frame, "visibility", ("[@raid1,exists][@%s,noexists] hide;show"):format("party1"))
+            else
+                RegisterStateDriver(frame, "visibility", ("[@raid1,exists][@%s,noexists] hide;show"):format(frame.unit))
+            end
         end
 
         isFirstFrame = false
@@ -623,6 +627,8 @@ local function UpdatePlayerInPartySetting()
         RegisterStateDriver(_G["GwPartyFrame" .. MAX_PARTY_MEMBERS + 1], "visibility", "hide")
         RegisterStateDriver(_G["GwPartyPetFrame" .. MAX_PARTY_MEMBERS + 1], "visibility", "hide")
     end
+
+    UpdatePetVisibility(alwaysHide)
 end
 GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
 
@@ -887,13 +893,9 @@ local function createPartyFrame(i, isPlayer)
 end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
-
 local function LoadPartyFrames()
     GW.CreateRaidControlFrame()
 
-    if GW.settings.RAID_FRAMES and GW.settings.RAID_STYLE_PARTY then
-        return
-    end
     local index = 1
     local isFirstFrame = true
     for _ = 1, MAX_PARTY_MEMBERS + 1 do
@@ -906,8 +908,7 @@ local function LoadPartyFrames()
         index = index + 1
     end
 
-    UpdatePlayerInPartySetting()
-    UpdatePetVisibility()
+    UpdatePlayerInPartySetting(GW.settings.RAID_FRAMES and GW.settings.RAID_STYLE_PARTY)
 
     -- Set up preview mode
     GwSettingsPartyPanel.buttonPartyPreview.previewMode = false

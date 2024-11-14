@@ -27,6 +27,7 @@ local function UpdateScrollBox(self)
 
     self:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
 end
+GW.RefreshProfileScrollBox = UpdateScrollBox
 
 local function createImportExportFrame()
     local frame = CreateFrame("Frame", "GW_ImportExportFrame", UIParent)
@@ -486,7 +487,7 @@ local function CharacterMenuButton_OnLoad(self, odd)
 end
 
 local function LoadProfilesPanel(sWindow)
-    local p = CreateFrame("Frame", "GWTESTFRAME", sWindow.panels, "GwSettingsProfilePanelTmpl")
+    local p = CreateFrame("Frame", "GW2ProfileSettingsView", sWindow.panels, "GwSettingsProfilePanelTmpl")
 
     CharacterMenuButton_OnLoad(p.menu.newProfile, true)
     CharacterMenuButton_OnLoad(p.menu.importProfile, false)

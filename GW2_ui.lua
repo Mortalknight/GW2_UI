@@ -338,9 +338,11 @@ end
 GW.getBestPixelScale = getBestPixelScale
 
 local function PixelPerfection()
-    GW.scale = getBestPixelScale()
-    GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
-    UIParent:SetScale(GW.scale)
+    if GW.settings.PIXEL_PERFECTION and not GetCVarBool("useUiScale") then
+        GW.scale = getBestPixelScale()
+        GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
+        UIParent:SetScale(GW.scale)
+    end
 end
 GW.PixelPerfection = PixelPerfection
 

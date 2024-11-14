@@ -440,6 +440,78 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting)
 end
 GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
 
+local function RefreshSettingsAfterProfileSwitch()
+    for _, panel in pairs(GW.getOptionReference()) do
+        for _, of in pairs(panel.options) do
+            if of.optionType == "slider" then
+                of.slider:SetValue(RoundDec((of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]), of.decimalNumbers))
+                of.inputFrame.input:SetText(RoundDec(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName], of.decimalNumbers))
+                if of.callback then
+                    of.callback()
+                end
+            elseif of.optionType == "boolean" then
+                of.checkbutton:SetChecked(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName])
+                if of.callback then
+                    local toSet = of.checkbutton:GetChecked()
+                    of.callback(toSet, of.optionName)
+                end
+            elseif of.optionType == "text" then
+                of.inputFrame.input:SetText(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName] or "")
+                if of.callback then
+                    of.callback(of.inputFrame.input)
+                end
+            elseif of.optionType == "colorPicker" then
+                local color = of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]
+                of.button.bg:SetColorTexture(color.r, color.g, color.b)
+            elseif of.optionType == "dropdown" then
+                for i = 1, #of.scrollFrame.buttons do
+                    local slot = of.scrollFrame.buttons[i]
+
+                    if of.hasCheckbox then
+                        local toSet = false
+                        if slot.checkbutton:GetChecked() then
+                            toSet = true
+                        end
+                        if of.callback then
+                            of.callback(toSet, slot.option)
+                        end
+                    else
+                        if of.callback then
+                            of.callback(slot.option)
+                        end
+                    end
+
+                end
+
+                loadDropDown(of.scrollFrame)
+
+                -- set current settings value
+                for key, val in pairs(of.options) do
+                    if of.isPrivateSetting then
+                        if GW.private[of.optionName] == val then
+                            of.button.string:SetText(of.options_names[key])
+                            break
+                        end
+                    else
+                        if GW.settings[of.optionName] == val then
+                            of.button.string:SetText(of.options_names[key])
+                            break
+                        end
+                    end
+                end
+                if of.isFont then
+                    of.button.string:SetFont(GW.Libs.LSM:Fetch("font", of.button.string:GetText()), 12, "")
+                else
+                    of.button.string:SetFont(UNIT_NAME_FONT, 12)
+                end
+            end
+        end
+    end
+    checkDependenciesOnLoad()
+    GW.ShowRlPopup = false
+end
+GW.RefreshSettingsAfterProfileSwitch = RefreshSettingsAfterProfileSwitch
+
 local panelUniqueID = 0
 local function InitPanel(panel, hasScroll)
     panelUniqueID = panelUniqueID + 1
@@ -531,6 +603,7 @@ local function InitPanel(panel, hasScroll)
         of.groupHeaderName = v.groupHeaderName
         of.isPrivateSetting = v.isPrivateSetting
         of.callback = v.callback
+        of.hasCheckbox = v.hasCheckbox
         --need this for searchables
         of.forceNewLine = v.forceNewLine
 
@@ -622,6 +695,8 @@ local function InitPanel(panel, hasScroll)
             scrollFrame.of = of
             scrollFrame.update = loadDropDown
             scrollFrame.scrollBar.doNotHide = false
+
+            of.scrollFrame = scrollFrame
             HybridScrollFrame_CreateButtons(scrollFrame, "GwDropDownItemTmpl", 0, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
             for i = 1, #scrollFrame.buttons do
                 local slot = scrollFrame.buttons[i]
@@ -777,7 +852,7 @@ local function InitPanel(panel, hasScroll)
             )
         elseif v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
-            of.slider:SetValue(RoundDec((of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName])))
+            of.slider:SetValue(RoundDec((of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]), of.decimalNumbers))
             if v.step then of.slider:SetValueStep(v.step) end
             of.slider:SetObeyStepOnDrag(true)
             of.slider:SetScript(
@@ -963,7 +1038,7 @@ local function InitPanel(panel, hasScroll)
                         end
                         return
                     end
-                    if v.callback ~= nil then
+                    if v.callback then
                         v.callback()
                     end
                     --Check all dependencies on this option

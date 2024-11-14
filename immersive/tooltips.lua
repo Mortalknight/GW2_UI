@@ -37,6 +37,7 @@ local function IsModKeyDown(setting)
 end
 
 local function EmbeddedItemTooltip_ID(self, id)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self:IsForbidden() then return end
     if self.Tooltip:IsShown() and IsModKeyDown() then
         self.Tooltip:AddLine(format(IDLine, ID, id))
@@ -45,6 +46,7 @@ local function EmbeddedItemTooltip_ID(self, id)
 end
 
 local function EmbeddedItemTooltip_QuestReward(self)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self:IsForbidden() then return end
     if self.Tooltip:IsShown() and IsModKeyDown() then
         self.Tooltip:AddLine(format(IDLine, ID, self.itemID or self.spellID))
@@ -71,6 +73,7 @@ local function RemoveTrashLines(self)
 end
 
 local function SetUnitAura(self, unit, index, filter)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if not self or self:IsForbidden() then return end
 
     local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
@@ -105,6 +108,7 @@ local function SetUnitAura(self, unit, index, filter)
 end
 
 local function GameTooltip_OnTooltipSetSpell(self, data)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
 
     local spellID
@@ -177,6 +181,7 @@ local function ScanKeystone(self, link)
 end
 
 local function SetHyperlink(self, link)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self:IsForbidden() then return end
 
     if select(3, string.find(link, "(%a-):")) == "achievement" then
@@ -210,6 +215,7 @@ local function SetHyperlink(self, link)
 end
 
 local function GameTooltip_OnTooltipSetToy(self, data)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
 
     local spellID
@@ -224,6 +230,7 @@ local function GameTooltip_OnTooltipSetToy(self, data)
 end
 
 local function GameTooltip_OnTooltipSetCurrency(self, data)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
 
     local spellID
@@ -238,6 +245,7 @@ local function GameTooltip_OnTooltipSetCurrency(self, data)
 end
 
 local function AddQuestID(frame)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if GameTooltip:IsForbidden() then return end
 
     local questID = IsModKeyDown() and (frame.questLogIndex and C_QuestLog.GetQuestIDForLogIndex(frame.questLogIndex) or frame.questID)
@@ -253,6 +261,7 @@ local function AddQuestID(frame)
 end
 
 local function AddBattlePetID()
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if not BattlePetTooltip or not BattlePetTooltip.speciesID or not IsModKeyDown() then return end
 
     BattlePetTooltip:AddLine(" ")
@@ -261,6 +270,7 @@ local function AddBattlePetID()
 end
 
 local function GameTooltip_OnTooltipCleared(self)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self:IsForbidden() then return end
 
     self.ItemLevelShown = nil
@@ -277,6 +287,7 @@ local function GameTooltip_OnTooltipCleared(self)
 end
 
 local function GameTooltip_OnTooltipSetItem(self, data)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if (self ~= GameTooltip and self ~= ShoppingTooltip1 and self ~= ShoppingTooltip2) or self:IsForbidden() then return end
 
     local itemID
@@ -654,6 +665,7 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
 end
 
 local function GameTooltip_OnTooltipSetUnit(self, data)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self ~= GameTooltip or self:IsForbidden() then return end
 
     local _, unit = self:GetUnit()
@@ -721,6 +733,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
 end
 
 local function GameTooltipStatusBar_OnValueChanged(self, value)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self:IsForbidden() or not value or not self.text or not GW.settings.ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT then return end
 
     local _, unit = self:GetParent():GetUnit()
@@ -750,6 +763,7 @@ local function GameTooltipStatusBar_OnValueChanged(self, value)
 end
 
 local function SetItemRef(link)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
     if IsModifierKeyDown() or not (link and strfind(link, "^spell:")) then return end
 
     ItemRefTooltip:AddLine(format(IDLine, ID, strmatch(link, ":(%d+)")))
@@ -1143,51 +1157,49 @@ local function LoadTooltips()
         hooksecurefunc("LFGListUtil_SetSearchEntryTooltip", AddPremadeGroupInfo)
     end
 
-    if GW.settings.ADVANCED_TOOLTIP then
-        GameTooltip.StatusBar = GameTooltipStatusBar
-        GameTooltip.StatusBar:SetScript("OnValueChanged", nil)
-        GameTooltip.StatusBar.text = GameTooltip.StatusBar:CreateFontString(nil, "OVERLAY")
-        GameTooltip.StatusBar.text:SetPoint("CENTER", GameTooltip.StatusBar, 0, 0)
-        GameTooltip.StatusBar.text:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
+    GameTooltip.StatusBar = GameTooltipStatusBar
+    GameTooltip.StatusBar:SetScript("OnValueChanged", nil)
+    GameTooltip.StatusBar.text = GameTooltip.StatusBar:CreateFontString(nil, "OVERLAY")
+    GameTooltip.StatusBar.text:SetPoint("CENTER", GameTooltip.StatusBar, 0, 0)
+    GameTooltip.StatusBar.text:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
 
-        hooksecurefunc("SetItemRef", SetItemRef)
-        hooksecurefunc("EmbeddedItemTooltip_SetItemByID", EmbeddedItemTooltip_ID)
-        hooksecurefunc("EmbeddedItemTooltip_SetCurrencyByID", EmbeddedItemTooltip_ID)
-        hooksecurefunc("EmbeddedItemTooltip_SetSpellWithTextureByID", EmbeddedItemTooltip_ID)
-        hooksecurefunc("EmbeddedItemTooltip_SetItemByQuestReward", EmbeddedItemTooltip_QuestReward)
-        hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
-        hooksecurefunc(GameTooltip, "SetUnitAura", SetUnitAura)
-        hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitAura)
-        hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitAura)
+    hooksecurefunc("SetItemRef", SetItemRef)
+    hooksecurefunc("EmbeddedItemTooltip_SetItemByID", EmbeddedItemTooltip_ID)
+    hooksecurefunc("EmbeddedItemTooltip_SetCurrencyByID", EmbeddedItemTooltip_ID)
+    hooksecurefunc("EmbeddedItemTooltip_SetSpellWithTextureByID", EmbeddedItemTooltip_ID)
+    hooksecurefunc("EmbeddedItemTooltip_SetItemByQuestReward", EmbeddedItemTooltip_QuestReward)
+    hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
+    hooksecurefunc(GameTooltip, "SetUnitAura", SetUnitAura)
+    hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitAura)
+    hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitAura)
 
-        hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
-        hooksecurefunc("TaskPOI_OnEnter", AddQuestID)
-        hooksecurefunc("BattlePetToolTip_Show", AddBattlePetID)
-        hooksecurefunc(GameTooltip, "SetHyperlink", SetHyperlink)
-        hooksecurefunc(ItemRefTooltip, "SetHyperlink", SetHyperlink)
+    hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
+    hooksecurefunc("TaskPOI_OnEnter", AddQuestID)
+    hooksecurefunc("BattlePetToolTip_Show", AddBattlePetID)
+    hooksecurefunc(GameTooltip, "SetHyperlink", SetHyperlink)
+    hooksecurefunc(ItemRefTooltip, "SetHyperlink", SetHyperlink)
 
-        local eventFrame = CreateFrame("Frame")
-        eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
-        eventFrame:SetScript("OnEvent", function()
-            if not GameTooltip:IsForbidden() and GameTooltip:IsShown() then
-                local owner = GameTooltip:GetOwner()
-                if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame) or (GwPlayerUnitFrame and owner == GwPlayerUnitFrame)) and UnitExists("mouseover") then
-                    GameTooltip:RefreshData()
-                end
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
+    eventFrame:SetScript("OnEvent", function()
+        if not GameTooltip:IsForbidden() and GameTooltip:IsShown() then
+            local owner = GameTooltip:GetOwner()
+            if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame) or (GwPlayerUnitFrame and owner == GwPlayerUnitFrame)) and UnitExists("mouseover") then
+                GameTooltip:RefreshData()
             end
-        end)
+        end
+    end)
 
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetItem)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, GameTooltip_OnTooltipSetSpell)
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetItem)
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, GameTooltip_OnTooltipSetSpell)
 
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Currency, GameTooltip_OnTooltipSetCurrency)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Toy, GameTooltip_OnTooltipSetToy)
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Currency, GameTooltip_OnTooltipSetCurrency)
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Toy, GameTooltip_OnTooltipSetToy)
 
-        GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
-        GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
-    end
+    GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
+    GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
 
     local eventFrame2 = CreateFrame("Frame")
     eventFrame2:RegisterEvent("PLAYER_REGEN_DISABLED")

@@ -76,7 +76,7 @@ local function LoadTargetPanel(sWindow)
     --PET
     addOption(pPlayerPet.scroll.scrollchild, L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "PET_FLOATING_COMBAT_TEXT", GW.TogglePetFrameCombatFeedback, nil, {["PETBAR_ENABLED"] = true})
     addOption(pPlayerPet.scroll.scrollchild, L["Show auras below"], nil, "PET_AURAS_UNDER", function() GW.TogglePetAuraPosition() end, nil, {["PETBAR_ENABLED"] = true})
-    addOption(pPlayerPet.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "PET_UNIT_HEALTH_SHORT_VALUES", GW.UpdatePlayerPetHealthValues, nil, {["PETBAR_ENABLED"] = true})
+    addOption(pPlayerPet.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "PET_UNIT_HEALTH_SHORT_VALUES", function() if GwPlayerPetFrame then GW.UpdatePlayerPetHealthValues(GwPlayerPetFrame) end end, nil, {["PETBAR_ENABLED"] = true})
 
     --TARGET
     addOption(p_target.scroll.scrollchild, SHOW_ENEMY_CAST, nil, "target_SHOW_CASTBAR", GW.ToggleTargetFrameSettings, nil, {["TARGET_ENABLED"] = true})
@@ -115,7 +115,7 @@ local function LoadTargetPanel(sWindow)
     addOption(p_focus.scroll.scrollchild, L["Show alternative background texture"], nil, "focus_FRAME_ALT_BACKGROUND", GW.ToggleFocusFrameSettings, nil, {["FOCUS_ENABLED"] = true})
     --TARGET OF FOCUS
     addOption(pTargetOfFocus.scroll.scrollchild, MINIMAP_TRACKING_FOCUS, L["Display the focus target frame."], "focus_TARGET_ENABLED", function() GW.ShowRlPopup = true end, nil, {["FOCUS_ENABLED"] = true})
-    addOption(pTargetOfFocus.scroll.scrollchild, SHOW_ENEMY_CAST, nil, "focus_TARGET_SHOW_CASTBAR", GW.ToggleTargetTargetFrameSetting, nil, {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true})
+    addOption(pTargetOfFocus.scroll.scrollchild, SHOW_ENEMY_CAST, nil, "focus_TARGET_SHOW_CASTBAR", function() GW.ToggleTargetTargetFrameSetting("Focus") end , nil, {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true})
 
     InitPanel(pPlayerPet, true)
     InitPanel(p_target, true)
