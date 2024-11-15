@@ -301,7 +301,13 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
         if InCombatLockdown() then
             settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
         else
-            GW.UpdateGridHeader(profile)
+            if profile == "ALL" then
+                for headerProfile, _ in pairs(headers) do
+                    GW.UpdateGridHeader(headerProfile)
+                end
+            else
+                GW.UpdateGridHeader(profile)
+            end
         end
     end
 end

@@ -131,6 +131,9 @@ local function InititateProfileSpecSwitchSettings(panel)
 
         dropDown:SetupMenu(function(drowpdown, rootDescription)
             local profiles = GW.globalSettings:GetProfiles()
+            local buttonSize = 20
+            local maxButtons = 7
+            rootDescription:SetScrollMode(buttonSize * maxButtons)
 
             for _, profile in pairs(profiles) do
                 local function IsSelected(data)

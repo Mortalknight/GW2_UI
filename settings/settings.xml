@@ -261,99 +261,12 @@
             </Layer>
         </Layers>
        <Frames>
-            <Frame hidden="true" frameStrata="HIGH" parentKey="container">
-                <Size x="250" y="20"/>
+            <DropdownButton parentKey="dropDown" inherits="WowStyle1DropdownTemplate">
+                <Size x="260" y="25"/>
                 <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-5" y="0"/>
                 </Anchors>
-                <Frames>
-                    <ScrollFrame parentKey="contentScroll" inherits="GwHybridScrollFrameTemplate">
-                        <Size x="250" y="120"></Size>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-20"></Anchor>
-                        </Anchors>
-                    </ScrollFrame>
-                </Frames>
-            </Frame>
-            <Button parentKey="button">
-                <Size x="250" y="20"/>
-                <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
-                </Anchors>
-                <Layers>
-                    <Layer level="BACKGROUND" textureSubLevel="2">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
-                            <Color r="0" b="0" g="0"/>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                    <Layer level="OVERLAY" textureSubLevel="3">
-                        <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE">
-                            <Size x="240" y="20"/>
-                            <Color r="1" b="1" g="1"/>
-                            <Anchors>
-                                <Anchor point="CENTER"/>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                    <Layer level="OVERLAY" textureSubLevel="4">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down">
-                            <Color r="1" g="1" b="1" a="1"/>
-                            <Size x="18" y="18"/>
-                            <Anchors>
-                                <Anchor point="RIGHT"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Button>
-        </Frames>
-    </Button>
-
-    <Button name="GwDropDownItemTmpl" frameStrata="HIGH" virtual="true">
-        <Size x="250" y="20"/>
-        <Layers>
-            <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
-                    <Color r="0" b="0" g="0"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
-                    </Anchors>
-                </Texture>
-                <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE">
-                    <Size x="240" y="20"/>
-                    <Color r="1" b="1" g="1"/>
-                    <Anchors>
-                        <Anchor point="LEFT" x="25" y="0"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-             <Layer level="OVERLAY" textureSubLevel="100">
-                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button_hover" setAllPoints="true" hidden="true"/>
-            </Layer>
-        </Layers>
-        <Frames>
-            <CheckButton parentKey="checkbutton" checked="false">
-                <HitRectInsets left="0" right="0" top="0" bottom="0"/>
-                <Size x="16" y="16"/>
-                <Anchors>
-                    <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
-                </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
-                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
-            </CheckButton>
-            <Button parentKey="soundButton">
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on"/>
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight"/>
-                <Size x="12" y="12"/>
-                <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-18" y="0"/>
-                </Anchors>
-            </Button>
+            </DropdownButton>
         </Frames>
     </Button>
 

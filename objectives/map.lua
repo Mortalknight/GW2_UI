@@ -86,6 +86,7 @@ local expansionLandingPageTable = {
 }
 
 local function SetMinimapHover()
+    print("TRIGGERED")
     -- show all and hide not needes
     for _, v in pairs(minimapDetails) do
         if v and _G[v] then _G[v]:SetAlpha(1) end
