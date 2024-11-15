@@ -963,7 +963,9 @@ local function ToggleTargetFrameSettings()
     end
 
     target_OnEvent(GwTargetUnitFrame, "FORCE_UPDATE")
-    GW.UpdateClasspowerBar(GwPlayerClassPower.decay, "FORCE_UPDATE")
+    if GwPlayerClassPower then
+        GW.UpdateClasspowerBar(GwPlayerClassPower.decay, "FORCE_UPDATE")
+    end
 end
 GW.ToggleTargetFrameSettings = ToggleTargetFrameSettings
 
