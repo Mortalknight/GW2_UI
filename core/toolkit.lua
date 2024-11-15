@@ -529,15 +529,15 @@ local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdown
         frame:GwCreateBackdrop(backdropTemplate, true)
         frame.backdrop:SetBackdropColor(0, 0, 0)
     else
-        frame:GwCreateBackdrop(GW.BackdropTemplates.StatusBar)
+        frame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder) -- was StatusBar
     end
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
-    frame.backdrop:SetPoint("TOPLEFT", 5, -2)
-    frame.backdrop:SetPoint("BOTTOMRIGHT", -2, -2)
+    frame.backdrop:SetPoint("TOPLEFT", 3, 0)
+    frame.backdrop:SetPoint("BOTTOMRIGHT", -2, 0)
 
-    local tex = frame:CreateTexture(nil, 'ARTWORK')
+    local tex = frame:CreateTexture(nil, "ARTWORK")
     tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
-    tex:SetPoint('RIGHT', frame.backdrop, -3, 0)
+    tex:SetPoint("RIGHT", frame.backdrop, -3, 0)
     tex:SetRotation(3.14)
     tex:SetSize(14, 14)
 
