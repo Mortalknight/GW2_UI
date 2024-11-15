@@ -251,7 +251,7 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
         elseif type == "text" then
             _G[name].inputFrame.input:SetTextColor(0.82, 0, 0)
         elseif type == "dropdown" then
-            _G[name].title:SetTextColor(0.82, 0, 0)
+            _G[name].dropDown.Text:SetTextColor(0.82, 0, 0)
         end
     elseif overrideColor then
         _G[name].title:SetTextColor(1, 0.65, 0)
@@ -260,7 +260,7 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
         elseif type == "text" then
             _G[name].inputFrame.input:SetTextColor(1, 0.65, 0)
         elseif type == "dropdown" then
-            _G[name].title:SetTextColor(1, 0.65, 0)
+            _G[name].dropDown.Text:SetTextColor(1, 0.65, 0)
         end
     elseif SetEnable then
         _G[name].title:SetTextColor(1, 1, 1)
@@ -276,7 +276,7 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
             _G[name].inputFrame.input:SetTextColor(1, 1, 1)
         elseif type == "dropdown" then
             _G[name].dropDown:Enable()
-            _G[name].title:SetTextColor(1, 1, 1)
+            _G[name].dropDown.Text:SetTextColor(1, 1, 1)
         elseif type == "button" then
             _G[name]:Enable()
             _G[name].title:SetTextColor(0, 0, 0)
@@ -295,7 +295,7 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
             _G[name].inputFrame.input:SetTextColor(0.4, 0.4, 0.4)
         elseif type == "dropdown" then
             _G[name].dropDown:Disable()
-            _G[name].title:SetTextColor(0.4, 0.4, 0.4)
+            _G[name].dropDown.Text:SetTextColor(0.4, 0.4, 0.4)
         elseif type == "button" then
             _G[name]:Disable()
         end
@@ -582,6 +582,8 @@ local function InitPanel(panel, hasScroll)
                 end
             end)
         elseif v.optionType == "dropdown" then
+            of.dropDown.OnButtonStateChanged = GW.NoOp
+            
             of.dropDown:GwHandleDropDownBox(nil, nil, nil, 260)
             of.dropDown:HookScript("OnMouseDown", function(_, button)
                 if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
@@ -679,14 +681,14 @@ local function InitPanel(panel, hasScroll)
                                 GW.settings[data.optionName] = data.option
                             end
 
-                            if v.callback then
-                                v.callback(data.option)
-                            end
-
                             if v.isFont then
                                 of.dropDown.Text:SetFont(GW.Libs.LSM:Fetch("font", data.option), 12, "")
                             else
                                 of.dropDown.Text:SetFont(UNIT_NAME_FONT, 12)
+                            end
+
+                            if v.callback then
+                                v.callback(data.option)
                             end
                         end
                         checkDependenciesOnLoad()
@@ -737,6 +739,9 @@ local function InitPanel(panel, hasScroll)
             else
                 of.dropDown.Text:SetFont(UNIT_NAME_FONT, 12)
             end
+
+            of.dropDown:Enable()
+            of.dropDown.Text:SetTextColor(1, 1, 1) -- init text color for options without deps
         elseif v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
             of.slider:SetValue(RoundDec((of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]), of.decimalNumbers))
