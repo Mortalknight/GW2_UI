@@ -441,6 +441,7 @@ end
 GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
 
 local function RefreshSettingsAfterProfileSwitch()
+    GW.disableGridUpdate = true
     for _, panel in pairs(GW.getOptionReference()) do
         for _, of in pairs(panel.options) do
             if of.optionType == "slider" then
@@ -509,6 +510,9 @@ local function RefreshSettingsAfterProfileSwitch()
     end
     checkDependenciesOnLoad()
     GW.ShowRlPopup = false
+    GW.disableGridUpdate = false
+    -- Update grids with new settings
+    GW.UpdateGridSettings("ALL", nil, true)
 end
 GW.RefreshSettingsAfterProfileSwitch = RefreshSettingsAfterProfileSwitch
 

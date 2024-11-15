@@ -173,6 +173,8 @@ local headerGroupBy = {
 }
 
 local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
+    if GW.disableGridUpdate then return end
+
     --frame enabled settings -- needed for config mode
     settings.enabled.RAID_PET = GW.settings.RAID_PET_FRAMES
     settings.enabled.PARTY = GW.settings.RAID_STYLE_PARTY
@@ -271,7 +273,6 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
 
     -- Update this settings on a spec switch
     if not settingsEventFrame.isSetup then
-        settingsEventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
         settingsEventFrame:SetScript("OnEvent", function(_, event)
             UpdateSettings(profile, false, true)
             if event == "PLAYER_REGEN_ENABLED" then settingsEventFrame:UnregisterEvent(event) end
