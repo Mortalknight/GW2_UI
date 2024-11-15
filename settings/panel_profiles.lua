@@ -8,6 +8,7 @@ local settingMenuToggle = GW.settingMenuToggle
 local ICONS = {}
 local ImportExportFrame = nil
 local ProfileWin = nil
+local IconSelectionFrame = nil
 
 local function UpdateScrollBox(self)
     local dataProvider = CreateDataProvider()
@@ -225,6 +226,26 @@ local function export_OnClick(self)
 end
 AddForProfiling("panel_profiles", "export_OnClick", export_OnClick)
 
+local function changeIcon_OnClick(btn)
+    if not IconSelectionFrame then return end
+    IconSelectionFrame.OkayButton_OnClick = function()
+        local iconTexture = IconSelectionFrame.BorderBox.SelectedIconArea.SelectedIconButton:GetIconTexture()
+
+        if iconTexture then
+            GW.globalSettings.profiles[btn:GetParent().profileName].profileIcon = iconTexture
+            UpdateScrollBox(ProfileWin)
+            IconSelectionFrame:Hide()
+        end
+    end
+
+    if IconSelectionFrame:IsShown() then
+        IconSelectionFrame:Hide()
+    else
+        IconSelectionFrame:Show()
+        IconSelectionFrame:Update(GW.globalSettings.profiles[btn:GetParent().profileName].profileIcon)
+    end
+end
+
 local function rename_OnClick(self)
     GW.InputPrompt(
         GARRISON_SHIP_RENAME_LABEL,
@@ -285,9 +306,12 @@ local function item_OnLoad(self)
 
     self.export:GetFontString():SetText(L["Export"])
 
+    self.changeIcon:GetFontString():SetText(L["Change Icon"])
+
     self.delete:SetScript("OnClick", delete_OnClick)
     self.export:SetScript("OnClick", export_OnClick)
     self.rename:SetScript("OnClick", rename_OnClick)
+    self.changeIcon:SetScript("OnClick", changeIcon_OnClick)
     self.copy:SetScript("OnClick", copy_OnClick)
 
 end
@@ -304,6 +328,7 @@ local function item_OnEnter(self)
     self.rename:SetShown(self.canRename)
     self.export:SetEnabled(self.canExport)
     self.export:SetShown(self.canExport)
+    self.changeIcon:SetShown(self.canChangeIcon)
     self.copy:SetEnabled(self.canCopy)
     self.copy:SetShown(self.canCopy)
 end
@@ -327,6 +352,9 @@ local function item_OnLeave(self)
     end
     if self.canCopy then
         self.copy:Hide()
+    end
+    if self.canChangeIcon then
+        self.changeIcon:Hide()
     end
 end
 AddForProfiling("panel_profiles", "item_OnLeave", item_OnLeave)
@@ -400,6 +428,7 @@ local function InitButton(button, elementData)
     button.hasOptions = true
     button.canDelete = true
     button.canExport = true
+    button.canChangeIcon = true
     button.canRename = true
     button.canCopy = true
     button.canActivate = true
@@ -526,6 +555,7 @@ local function LoadProfilesPanel(sWindow)
     p.resetToDefaultFrame.hasOptions = false
     p.resetToDefaultFrame.canDelete = false
     p.resetToDefaultFrame.canExport = false
+    p.resetToDefaultFrame.canChangeIcon = false
     p.resetToDefaultFrame.canRename = false
     p.resetToDefaultFrame.canCopy = false
     p.resetToDefaultFrame.background:SetTexCoord(0, 1, 0, 0.5)
@@ -597,6 +627,44 @@ local function LoadProfilesPanel(sWindow)
 
         sWindow.headerBreadcrumb:SetText(s:lower():gsub("^%l", string.upper))
     end)
+
+    -- Icons selection Frame
+    IconSelectionFrame = CreateFrame("Frame", nil, p, "IconSelectorPopupFrameTemplate")
+    IconSelectionFrame:Hide()
+    IconSelectionFrame:OnLoad()
+    IconSelectionFrame:EnableMouse(true)
+    IconSelectionFrame:SetScript("OnShow", function()
+        IconSelectionFrame:OnShow()
+        IconSelectionFrame.iconDataProvider = CreateAndInitFromMixin(IconDataProviderMixin, IconDataProviderExtraType.Equipment)
+        IconSelectionFrame:SetIconFilter(IconSelectorPopupFrameIconFilterTypes.All)
+        IconSelectionFrame:Update()
+
+        local function OnIconSelected(selectionIndex, icon)
+            IconSelectionFrame.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(icon)
+
+            -- Index is not yet set, but we know if an icon in IconSelector was selected it was in the list, so set directly.
+            IconSelectionFrame.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetText(ICON_SELECTION_CLICK)
+            IconSelectionFrame.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetFontObject(GameFontHighlightSmall)
+        end
+        IconSelectionFrame.IconSelector:SetSelectedCallback(OnIconSelected)
+
+        if not IconSelectionFrame.isSkinned then
+            GW.HandleIconSelectionFrame(IconSelectionFrame)
+        end
+    end)
+    IconSelectionFrame:SetScript("OnHide", IconSelectionFrame.OnHide)
+    IconSelectionFrame:SetScript("OnEvent", IconSelectionFrame.OnEvent)
+    IconSelectionFrame.BorderBox.IconSelectorEditBox:Hide()
+    IconSelectionFrame.Update = function(self, texture)
+        self.IconSelector:SetSelectedIndex(self:GetIndexOfIcon(texture))
+        self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(texture)
+        local getSelection = GenerateClosure(self.GetIconByIndex, self);
+        local getNumSelections = GenerateClosure(self.GetNumIcons, self);
+        self.IconSelector:SetSelectionsDataProvider(getSelection, getNumSelections);
+        self.IconSelector:ScrollToSelectedIndex();
+        self:SetSelectedIconText()
+        IconSelectionFrame.BorderBox.OkayButton:Enable()
+    end
 
     ImportExportFrame = createImportExportFrame()
 end

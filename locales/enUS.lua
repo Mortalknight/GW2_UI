@@ -652,3 +652,4 @@ L["Stack Size"] = true
 L["Enable spec profiles"] = true
 L["When enabled, your profile will be set to the specified profile when you change specialization."] = true
 L["%s - Active"] = true
+L["Change Icon"] = true

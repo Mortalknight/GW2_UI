@@ -244,6 +244,13 @@
                 </Anchors>
             </Button>
 
+            <Button hidden="true" inherits="GwStandardButton" text="Change Icon" parentKey="changeIcon">
+                <Size x="70" y="20" />
+                <Anchors>
+                    <Anchor point="RIGHT" relativeKey="$parent.export" relativePoint="LEFT" x="-5" y="0"/>
+                </Anchors>
+            </Button>
+
             <Button hidden="true" inherits="GwStandardButton" parentKey="delete">
                 <Size x="70" y="20" />
                 <Anchors>
