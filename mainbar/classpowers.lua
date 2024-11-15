@@ -969,14 +969,6 @@ end
 GW.AddForProfiling("classpowers", "setPriest", setPriest)
 
 -- DEATH KNIGHT
-local RUNE_TIMER_ANIMATIONS = {}
-RUNE_TIMER_ANIMATIONS[1] = 0
-RUNE_TIMER_ANIMATIONS[2] = 0
-RUNE_TIMER_ANIMATIONS[3] = 0
-RUNE_TIMER_ANIMATIONS[4] = 0
-RUNE_TIMER_ANIMATIONS[5] = 0
-RUNE_TIMER_ANIMATIONS[6] = 0
-
 -- cache rune data table
 local RUNE_PROGRESS = {
     { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
@@ -986,8 +978,6 @@ local RUNE_PROGRESS = {
     { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
     { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
 }
-
-
 
 local function powerRune(self)
     local f = self
@@ -1001,8 +991,6 @@ local function powerRune(self)
         else
             RUNE_PROGRESS[i].progress = 1
         end
-       
-   
     end
     table.sort(RUNE_PROGRESS, function(a, b) return a.progress > b.progress end)
     for i = 1, 6 do
@@ -1686,6 +1674,7 @@ end
 GW.AddForProfiling("classpowers", "selectType", selectType)
 
 local function barChange_OnEvent(self, event)
+    if not self then return end
     local f = self:GetParent()
     if event == "UPDATE_SHAPESHIFT_FORM" then
         -- this event fires often when form hasn't changed; check old form against current form
@@ -1710,6 +1699,7 @@ local function barChange_OnEvent(self, event)
         UpdateVisibility(f, event == "PLAYER_REGEN_DISABLED")
     end
 end
+GW.UpdateClasspowerBar = barChange_OnEvent
 
 local function UpdateExtraManabar()
     if not GW.settings.CLASS_POWER then return end

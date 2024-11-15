@@ -750,6 +750,7 @@ end
 GW.AddForProfiling("unitframes", "updateHealthValues", updateHealthValues)
 
 local function target_OnEvent(self, event, unit)
+    if not self then return end
     local ttf = GwTargetTargetUnitFrame
 
     if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED", "FORCE_UPDATE") then
@@ -962,6 +963,7 @@ local function ToggleTargetFrameSettings()
     end
 
     target_OnEvent(GwTargetUnitFrame, "FORCE_UPDATE")
+    GW.UpdateClasspowerBar(GwPlayerClassPower.decay, "FORCE_UPDATE")
 end
 GW.ToggleTargetFrameSettings = ToggleTargetFrameSettings
 
