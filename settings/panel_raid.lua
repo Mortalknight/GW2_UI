@@ -1087,7 +1087,7 @@ local function LoadPartyProfile(panel)
     party.preview:SetScript("OnLeave", GameTooltip_Hide)
     party.preview:SetEnabled(GW.settings.RAID_STYLE_PARTY)
 
-    addOption(party.scroll.scrollchild, USE_RAID_STYLE_PARTY_FRAMES, OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES, "RAID_STYLE_PARTY", function(value) party.preview:SetEnabled(value);  GW.UpdateGridSettings("PARTY", false, true) end, nil, {["RAID_FRAMES"] = true})
+    addOption(party.scroll.scrollchild, USE_RAID_STYLE_PARTY_FRAMES, OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES, "RAID_STYLE_PARTY", function(value) party.preview:SetEnabled(value);  GW.UpdateGridSettings("PARTY", false, true); GW.UpdatePlayerInPartySetting(value) end, nil, {["RAID_FRAMES"] = true})
     addOption(party.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
     addOption(party.scroll.scrollchild, GW.NewSign .. L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true, ["RAID_CLASS_COLOR_PARTY"] = false})
     addOption(party.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})

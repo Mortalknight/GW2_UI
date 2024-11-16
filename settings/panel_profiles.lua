@@ -306,7 +306,7 @@ local function item_OnLoad(self)
 
     self.export:GetFontString():SetText(L["Export"])
 
-    self.changeIcon:GetFontString():SetText(L["Change Icon"])
+    self.changeIcon:GetFontString():SetText(L["Edit Icon"])
 
     self.delete:SetScript("OnClick", delete_OnClick)
     self.export:SetScript("OnClick", export_OnClick)

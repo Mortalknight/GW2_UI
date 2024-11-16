@@ -583,7 +583,7 @@ local function InitPanel(panel, hasScroll)
             end)
         elseif v.optionType == "dropdown" then
             of.dropDown.OnButtonStateChanged = GW.NoOp
-            
+
             of.dropDown:GwHandleDropDownBox(nil, nil, nil, 260)
             of.dropDown:HookScript("OnMouseDown", function(_, button)
                 if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
@@ -599,6 +599,27 @@ local function InitPanel(panel, hasScroll)
                 end
             end)
 
+            of.dropDown:SetSelectionText(function(selections)
+                if #selections == 0 then
+                    return L["No option selected"]
+                elseif #selections > 5 then
+                    return L["More than 5 options selected (#%s)"]:format(#selections)
+                end
+
+                local texts = {}
+                local text
+                for _, selection in ipairs(selections) do
+                    if not selection:IsSelectionIgnored() then
+                        table.insert(texts, MenuUtil.GetElementText(selection))
+                    end
+                end
+                if #texts > 0 then
+                    text = table.concat(texts, LIST_DELIMITER)
+                end
+
+                return text
+            end);
+
             of.dropDown:SetupMenu(function(drowpdown, rootDescription)
                 local buttonSize = 20
                 local maxButtons = 10
@@ -608,21 +629,16 @@ local function InitPanel(panel, hasScroll)
                     local function IsSelected(data)
                         if v.hasCheckbox then
                             local settingstable = of.isPrivateSetting and GW.private[data.optionName] or GW.settings[data.optionName]
+                            local isSelected = false
                             if type(settingstable[option]) == "table" then
-                                local isSelected = settingstable[option].enable
-                                if GW.IsInProfileSwitch and v.callback then
-                                    v.callback(isSelected, data.option)
-                                end
-
-                                return isSelected
+                                isSelected = settingstable[option].enable
                             else
-                                local isSelected = settingstable[option] == nil and true or settingstable[option]
-                                if GW.IsInProfileSwitch and v.callback then
-
-                                    v.callback(isSelected, data.option)
-                                end
-                                return isSelected
+                                isSelected = settingstable[option] == nil and true or settingstable[option]
                             end
+                            if GW.IsInProfileSwitch and v.callback then
+                                v.callback(isSelected, data.option)
+                            end
+                            return isSelected
                         else
                             if GW.IsInProfileSwitch and v.callback then
                                 v.callback(data.option)
@@ -646,27 +662,17 @@ local function InitPanel(panel, hasScroll)
                             if of.isPrivateSetting then
                                 if type(GW.private[data.optionName][data.option]) == "table" then
                                     isSelected = not GW.private[data.optionName][data.option].enable
-                                else
-                                    isSelected = not GW.private[data.optionName][data.option]
-                                end
-                            else
-                                if type(GW.settings[data.optionName][data.option]) == "table" then
-                                    isSelected = not GW.settings[data.optionName][data.option].enable
-                                else
-                                    isSelected = not GW.settings[data.optionName][data.option]
-                                end
-                            end
-
-                            if of.isPrivateSetting then
-                                if type(GW.private[data.optionName][data.option]) == "table" then
                                     GW.private[data.optionName][data.option].enable = isSelected
                                 else
+                                    isSelected = not GW.private[data.optionName][data.option]
                                     GW.private[data.optionName][data.option] = isSelected
                                 end
                             else
                                 if type(GW.settings[data.optionName][data.option]) == "table" then
+                                    isSelected = not GW.settings[data.optionName][data.option].enable
                                     GW.settings[data.optionName][data.option].enable = isSelected
                                 else
+                                    isSelected = not GW.settings[data.optionName][data.option]
                                     GW.settings[data.optionName][data.option] = isSelected
                                 end
                             end
