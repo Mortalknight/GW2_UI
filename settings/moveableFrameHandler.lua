@@ -310,6 +310,19 @@ local function mover_OnDragStart(self)
 end
 GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
 
+local function CheckForDefaultPosition(frame, point, relativePoint, xOfs, yOfs, newPoint)
+    if frame.defaultPoint.point == point and frame.defaultPoint.relativePoint == relativePoint and frame.defaultPoint.xOfs == xOfs and frame.defaultPoint.yOfs == yOfs then
+        newPoint.hasMoved = false
+    else
+        newPoint.hasMoved = true
+    end
+
+    frame.parent.isMoved = newPoint.hasMoved
+    frame.parent:SetAttribute("isMoved", newPoint.hasMoved)
+
+    GW.settings[frame.setting] = newPoint
+end
+
 local function mover_OnDragStop(self)
     local settingsName = self.setting
     self:StopMovingOrSizing()
@@ -324,18 +337,11 @@ local function mover_OnDragStop(self)
         new_point.yOfs = yOfs and GW.RoundInt(yOfs) or 0
 
         -- check if frame moved or back at default position
-        if self.defaultPoint.point == point and self.defaultPoint.relativePoint == relativePoint and self.defaultPoint.xOfs == xOfs and self.defaultPoint.yOfs == yOfs then
-            new_point.hasMoved = false
-        else
-            new_point.hasMoved = true
-        end
+        CheckForDefaultPosition(self, point, relativePoint, xOfs, yOfs, new_point)
+
         self:ClearAllPoints()
         self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
-        GW.settings[settingsName] = new_point
         self.savedPoint = GW.copyTable(nil, new_point)
-
-        self.parent.isMoved = new_point.hasMoved
-        self.parent:SetAttribute("isMoved", new_point.hasMoved)
 
         self:SetMovable(true)
         self:SetUserPlaced(true)
@@ -577,24 +583,13 @@ local function RegisterMovableFrame(frame, displayName, settingsName, tags, size
         moveframe:SetPoint(moveframe.savedPoint.point, UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
     end
 
-    if moveframe.savedPoint.hasMoved == nil then -- can be removed after some time
-        if moveframe.defaultPoint.point == moveframe.savedPoint.point and moveframe.defaultPoint.relativePoint == moveframe.savedPoint.relativePoint and moveframe.defaultPoint.xOfs == moveframe.savedPoint.xOfs and moveframe.defaultPoint.yOfs == moveframe.savedPoint.yOfs then
-            frame.isMoved = false
-            frame:SetAttribute("isMoved", false)
-        else
-            frame.isMoved = true
-            frame:SetAttribute("isMoved", true)
-        end
-    elseif moveframe.savedPoint.hasMoved ~= nil then
+    if moveframe.savedPoint.hasMoved ~= nil then
         frame.isMoved = moveframe.savedPoint.hasMoved
         frame:SetAttribute("isMoved", moveframe.savedPoint.hasMoved)
     end
 
-    --temp to migrate to new isMoved system
-    if moveframe.savedPoint.hasMoved == nil then
-        moveframe.savedPoint.hasMoved = frame.isMoved
-        GW.settings[settingsName] = moveframe.savedPoint
-    end
+    -- check if frame moved or back at default position
+    CheckForDefaultPosition(moveframe, moveframe.savedPoint.point, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs, moveframe.savedPoint)
 end
 GW.RegisterMovableFrame = RegisterMovableFrame
 
