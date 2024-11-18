@@ -1431,7 +1431,6 @@ local function LoadQuestTracker()
     fQuest.header.title:SetTextColor(TRACKER_TYPE_COLOR.QUEST.r, TRACKER_TYPE_COLOR.QUEST.g, TRACKER_TYPE_COLOR.QUEST.b)
 
     fQuest.init = false
-    tracker_OnEvent(fQuest, "LOAD")
 
     GW.LoadBossFrame()
     if not C_AddOns.IsAddOnLoaded("sArena") then
@@ -1553,5 +1552,7 @@ local function LoadQuestTracker()
     fTracker:ClearAllPoints()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
     fTracker:SetHeight(GW.settings.QuestTracker_pos_height)
+
+    tracker_OnEvent(fQuest, "LOAD")
 end
 GW.LoadQuestTracker = LoadQuestTracker
