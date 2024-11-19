@@ -988,29 +988,30 @@ local functionFactory = {
                         GameTooltip:AddDoubleLine(L["Bonus Net"], StringByTemplate(L["Not Set"], "danger"))
                     end
                 else
-                    GameTooltip:AddLine(GW.GetIconString(data.args.icon, 16, 16) .. " " .. data.args.eventName, 1, 1, 1)
-                    GameTooltip:AddLine(" ")
-                    GameTooltip:AddDoubleLine(LOCATION_COLON, data.args.location, 1, 1, 1)
+                    GameTooltip:AddLine(GW.GetIconString(data.args.icon, 16, 16) .. " " .. data.args.eventName, GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
+                    GameTooltip:AddDoubleLine(LOCATION_COLON, data.args.location, 1, 1, 1, 1, 1, 1)
 
-                    GameTooltip:AddLine(" ")
-                    GameTooltip:AddDoubleLine(L["Interval"] .. ":", secondToTime(data.args.interval), 1, 1, 1)
-                    GameTooltip:AddDoubleLine(AUCTION_DURATION .. ":", secondToTime(data.args.duration), 1, 1, 1)
+                    if data.args.interval then
+                        GameTooltip:AddDoubleLine(L["Interval"] .. ":", secondToTime(data.args.interval), 1, 1, 1, 1, 1, 1)
+                    end
+                    if data.args.duration then
+                        GameTooltip:AddDoubleLine(AUCTION_DURATION .. ":", secondToTime(data.args.duration), 1, 1, 1, 1, 1, 1)
+                    end
                     if data.nextEventTimestamp then
-                        GameTooltip:AddDoubleLine(L["Next Event"] .. ":", date(L["TimeStamp m/d h:m:s"], data.nextEventTimestamp), 1, 1, 1)
+                        GameTooltip:AddDoubleLine(L["Next Event"] .. ":", date(L["TimeStamp m/d h:m:s"], data.nextEventTimestamp), 1, 1, 1, 1, 1, 1)
                     end
 
-                    GameTooltip:AddLine(" ")
                     if data.frame.isRunning then
-                        GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(data.args.runningText, "success"), 1, 1, 1)
+                        GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(data.args.runningText, "success"), 1, 1, 1, 1, 1, 1)
                     else
-                        GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(QUEUED_STATUS_WAITING, "greyLight"), 1, 1, 1)
+                        GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(QUEUED_STATUS_WAITING, "greyLight"), 1, 1, 1, 1, 1, 1)
                     end
 
                     if data.args.hasWeeklyReward then
                         if data.frame.isCompleted then
-                            GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_COMPLETED, "success"), 1, 1, 1)
+                            GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_COMPLETED, "success"), 1, 1, 1, 1, 1, 1)
                         else
-                            GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_NOT_COMPLETED, "danger"), 1, 1, 1)
+                            GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_NOT_COMPLETED, "danger"), 1, 1, 1, 1, 1, 1)
                         end
                     end
                     GameTooltip:AddLine(" ")

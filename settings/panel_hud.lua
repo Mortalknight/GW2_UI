@@ -98,7 +98,7 @@ local function LoadHudPanel(sWindow)
     addOption(general.scroll.scrollchild, L["Show event timer micro menu icon"], L["Displays an micro menu icon for the world map event timers"], "MICROMENU_EVENT_TIMER_ICON", function() GW.ToggleEventTimerMicroMenuIcon(Gw2MicroBarFrame.cf) end)    
 
     addOption(general.scroll.scrollchild, DISPLAY_BORDERS, L["Toggle the borders around the screen"], "BORDER_ENABLED", GW.ToggleHudBackground)
-    addOption(general.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", nil, nil, {["PARTY_FRAMES"] = true})
+    addOption(general.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", GW.ToggleRaidControllFrame, nil, {["PARTY_FRAMES"] = true})
     addOption(
         general.scroll.scrollchild,
         L["Pixel Perfect Mode"],

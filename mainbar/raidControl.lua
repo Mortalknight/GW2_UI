@@ -57,6 +57,16 @@ local function fnGMIG_OnEvent(self)
     self.groupCounter:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:2:64:64:4:60:4:60|t " .. numTank .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:2:64:64:4:60:4:60|t " .. numHeal .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:15:15:0:0:64:64:4:60:4:60|t " .. numDamage)
 end
 
+local function ToggleVisibility()
+    if not created then return end
+    if GW.settings.FADE_GROUP_MANAGE_FRAME then
+        GwManageGroupButton.fadeOut()
+    else
+        GwManageGroupButton.fadeIn()
+    end
+end
+GW.ToggleRaidControllFrame = ToggleVisibility
+
 local function CreateRaidControlFrame()
     if created then return end
     created = true
@@ -322,5 +332,11 @@ local function CreateRaidControlFrame()
         fi:Play()
     end
     fmGMGB:SetAlpha(0)
+
+    if GW.settings.FADE_GROUP_MANAGE_FRAME then
+        fmGMGB.fadeOut()
+    else
+        fmGMGB.fadeIn()
+    end
 end
 GW.CreateRaidControlFrame = CreateRaidControlFrame
