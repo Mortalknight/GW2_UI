@@ -33,8 +33,8 @@ GW.SetMinimapHover = SetMinimapHover
 
 local function setMinimapButtons(side)
     MiniMapBattlefieldFrame:ClearAllPoints()
-    if MiniMapLFGFrame then
-        MiniMapLFGFrame:ClearAllPoints()
+    if LFGMinimapFrame then
+        LFGMinimapFrame:ClearAllPoints()
     end
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
@@ -43,8 +43,8 @@ local function setMinimapButtons(side)
     if side == "left" then
         GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
         MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 3, -6)
-        if MiniMapLFGFrame then
-            MiniMapLFGFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
+        if LFGMinimapFrame then
+            LFGMinimapFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
         end
         GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -127)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
@@ -54,8 +54,8 @@ local function setMinimapButtons(side)
     else
         GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 0, 0)
         MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 3, -6)
-        if MiniMapLFGFrame then
-            MiniMapLFGFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 5, -7)
+        if LFGMinimapFrame then
+            LFGMinimapFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 5, -7)
         end
         GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -127)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
@@ -113,28 +113,29 @@ end
 GW.AddForProfiling("map", "lfgAnimPvP", lfgAnimPvP)
 
 local function lfgAnimStop()
-    MiniMapLFGFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFGMicroButton-Down")
-    MiniMapLFGFrame.animationCircle:Hide()
-    MiniMapLFGFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
+    LFGMinimapFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFGMicroButton-Down")
+    LFGMinimapFrame.animationCircle:Hide()
+    LFGMinimapFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
 end
 GW.AddForProfiling("map", "lfgAnimPvPStop", lfgAnimPvPStop)
 
 local function lfgAnim(_, elapse)
     if Minimap:IsShown() then
-        MiniMapLFGFrameIcon:SetAlpha(1)
+        LFGMinimapFrameIcon:SetAlpha(1)
     else
-        MiniMapLFGFrameIcon:SetAlpha(0)
+        LFGMinimapFrameIcon:SetAlpha(0)
         return
     end
 
-    MiniMapLFGFrame.animationCircle:Show()
+    LFGMinimapFrame.animationCircle:Show()
 
-    MiniMapLFGFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFGMicroButton-Down")
+    LFGMinimapFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFGMicroButton-Down")
 
-    local rot = MiniMapLFGFrame.animationCircle.background:GetRotation() + (1.5 * elapse)
+    local rot = LFGMinimapFrame.animationCircle.background:GetRotation() + (1.5 * elapse)
 
-    MiniMapLFGFrame.animationCircle.background:SetRotation(rot)
-    MiniMapLFGFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
+    LFGMinimapFrame.animationCircle.background:SetRotation(rot)
+    LFGMinimapFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
+    LFGMinimapFrameIconTexture:SetTexCoord(0, 1, 0, 1)
 end
 GW.AddForProfiling("map", "lfgAnim", lfgAnim)
 
@@ -331,28 +332,58 @@ local function ToogleMinimapFpsLable()
 end
 GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
+local function SetUpAfterLogin()
+    local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", LFGMinimapFrame, "GwLfgQueueIcon")
+    GwLfgQueueIcon:SetAllPoints(LFGMinimapFrame)
+    LFGMinimapFrameBorder:Kill()
+    LFGMinimapFrameIconTexture:Kill()
+    LFGMinimapFrame:SetSize(26, 26)
+    LFGMinimapFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
+    LFGMinimapFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")
+    hooksecurefunc(LFGMinimapFrameIcon, "StartAnimating", function()
+        if not Minimap:IsShown() then return end
+        GwLfgQueueIcon.animation:Play()
+    end)
+    hooksecurefunc(LFGMinimapFrameIcon, "StopAnimating", function()
+        GwLfgQueueIcon.animation:Stop()
+    end)
+
+    local hookedTimerFrame = CreateFrame("Frame")
+    MiniMapBattlefieldFrame:HookScript("OnShow", function()
+        hookedTimerFrame:SetScript("OnUpdate", function(_, elapse)
+            lfgAnimPvP(elapse)
+        end)
+    end)
+    MiniMapBattlefieldFrame:HookScript("OnHide", function()
+        lfgAnimPvPStop()
+        hookedTimerFrame:SetScript("OnUpdate", nil)
+    end)
+    MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
+
+    -- check on which side we need to set the buttons
+    local x = Minimap:GetCenter()
+    local screenWidth = UIParent:GetRight()
+    if x > (screenWidth / 2) then
+        setMinimapButtons("left")
+    else
+        setMinimapButtons("right")
+    end
+end
+
+local function OnEvent(_, event)
+    SetUpAfterLogin()
+end
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = getMinimapShape
 
+    M:RegisterEvent("PLAYER_ENTERING_WORLD")
+    M:SetScript("OnEvent", OnEvent)
+
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
 
     SetMinimapHover()
-
-    MiniMapLFGFrameIcon:HookScript("OnUpdate", lfgAnim)
-    MiniMapLFGFrame:HookScript("OnHide", lfgAnimStop)
-    MiniMapLFGFrameIconTexture:SetSize(20, 20)
-    MiniMapLFGFrameIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-    MiniMapLFGFrameIcon:SetSize(20, 20)
-
-    hooksecurefunc("BattlefieldFrame_OnUpdate", lfgAnimPvP)
-    MiniMapBattlefieldIcon:SetTexture("Interface\\BattlefieldFrame\\Battleground-" .. UnitFactionGroup("player"))
-    MiniMapBattlefieldIcon:SetTexCoord(0, 1, 0, 1)
-    MiniMapBattlefieldIcon:SetSize(30, 30)
-    MiniMapBattlefieldIcon:ClearAllPoints()
-    MiniMapBattlefieldIcon:SetPoint("CENTER", MiniMapBattlefieldFrame, "CENTER", 0, 0)
-    MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
-    MiniMapLFGFrame.animationCircle = CreateFrame("Frame", "GwLFGAnimation", MiniMapLFGFrame, "GwLFDAnimation")
 
     Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
     Minimap:SetParent(UIParent)
@@ -410,7 +441,6 @@ local function LoadMinimap()
     GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
     TimeManager_LoadUI()
     TimeManagerClockButton:Hide()
-    --StopwatchFrame:SetParent("UIParent")
     GwMapTime:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     GwMapTime.timeTimer = C_Timer.NewTicker(0.2, function()
         GwMapTime.Time:SetText(GameTime_GetTime(false))
@@ -438,7 +468,6 @@ local function LoadMinimap()
 
     MinimapCluster:SetAlpha(0.0)
     MinimapBorder:Hide()
-    MiniMapWorldMapButton:Kill()
 
     MinimapZoneText:ClearAllPoints()
 
@@ -530,14 +559,6 @@ local function LoadMinimap()
     GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", ALL .. ",Blizzard,Map", {Minimap:GetSize()}, {"default"}, nil, MinimapPostDrag)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
-    -- check on which side we need to set the buttons
-    local x = Minimap:GetCenter()
-    local screenWidth = UIParent:GetRight()
-    if x > (screenWidth / 2) then
-        setMinimapButtons("left")
-    else
-        setMinimapButtons("right")
-    end
 
     if not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
         MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
