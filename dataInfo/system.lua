@@ -197,26 +197,27 @@ local function FpsOnLeave()
 end
 GW.FpsOnLeave = FpsOnLeave
 
-local wait, count = 10, 0
+local wait, rate, delay = 10, 0, 0
 local function FpsOnUpdate(self, elapsed)
     wait = wait - elapsed
+    rate = rate + 1
 
     if wait < 0 then
         wait = 1
 
-        local framerate = floor(GetFramerate() or 0)
+        self.fps:SetText(rate .. " FPS")
 
-        self.fps:SetText(framerate .. " FPS")
+        rate = 0 -- ok reset it
 
-        if not enteredInfo then return end
-
-        if InCombatLockdown() then
-            if count > 3 then
+        if not enteredInfo then
+			return
+		elseif InCombatLockdown() then
+            if delay > 3 then
                 FpsOnEnter(self)
-                count = 0
+                delay = 0
             else
-                FpsOnEnter(self, count)
-                count = count + 1
+                FpsOnEnter(self, delay)
+                delay = delay + 1
             end
         else
             FpsOnEnter(self)

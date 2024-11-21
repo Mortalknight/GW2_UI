@@ -237,7 +237,7 @@ end
 GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 
 local function LoadBossFrame()
-    for i = 1, MAX_BOSS_FRAMES do
+    for i = 1, 8 do
         bossFrames[i] = registerFrame(i)
     end
     SetUpFramePosition()

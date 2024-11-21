@@ -48,18 +48,25 @@ OnEnter and OnLeave script handlers will be set to display a Tooltip if the `Tot
 local _, ns = ...
 local oUF = ns.oUF
 
+local TOTEM_PRIORITIES = _G.STANDARD_TOTEM_PRIORITIES
+if(UnitClassBase('player') == 'SHAMAN') then
+	TOTEM_PRIORITIES = _G.SHAMAN_TOTEM_PRIORITIES
+end
+
 local function UpdateTooltip(self)
 	GameTooltip:SetTotem(self:GetID())
 end
 
 local function OnEnter(self)
-	if(not self:IsVisible()) then return end
+	if(GameTooltip:IsForbidden() or not self:IsVisible()) then return end
 
 	GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMRIGHT')
 	self:UpdateTooltip()
 end
 
 local function OnLeave()
+	if(GameTooltip:IsForbidden()) then return end
+
 	GameTooltip:Hide()
 end
 
@@ -75,7 +82,7 @@ local function UpdateTotem(self, event, slot)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(slot) end
 
-	local totem = element[slot]
+	local totem = element[TOTEM_PRIORITIES[slot]]
 	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
 	if(haveTotem and duration > 0) then
 		if(totem.Icon) then
@@ -135,8 +142,7 @@ local function Enable(self)
 		element.ForceUpdate = ForceUpdate
 
 		for i = 1, #element do
-			local totem = element[i]
-
+			local totem = element[TOTEM_PRIORITIES[i]]
 			totem:SetID(i)
 
 			if(totem:IsMouseEnabled()) then

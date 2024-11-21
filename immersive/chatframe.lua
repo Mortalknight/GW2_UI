@@ -781,9 +781,9 @@ end
 local function ChatThrottleHandler(author, message, when)
     local msg = PrepareMessage(author, message)
     if msg then
-        for message, object in pairs(throttle) do
+        for savedMessage, object in pairs(throttle) do
             if difftime(when, object.time) >= GW.settings.CHAT_SPAM_INTERVAL_TIMER then
-                throttle[message] = nil
+                throttle[savedMessage] = nil
             end
         end
 
