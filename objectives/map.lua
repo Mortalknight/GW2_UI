@@ -335,8 +335,8 @@ GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 local function SetUpAfterLogin()
     local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", LFGMinimapFrame, "GwLfgQueueIcon")
     GwLfgQueueIcon:SetAllPoints(LFGMinimapFrame)
-    LFGMinimapFrameBorder:Kill()
-    LFGMinimapFrameIconTexture:Kill()
+    if LFGMinimapFrameBorder then LFGMinimapFrameBorder:Kill() end
+    if LFGMinimapFrameIconTexture then LFGMinimapFrameIconTexture:Kill() end
     LFGMinimapFrame:SetSize(26, 26)
     LFGMinimapFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
     LFGMinimapFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")

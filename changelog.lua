@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("3.3.15",{
+    {ct.change,[=[Update for 1.15.5]=]},
+})
+
 addChange("3.3.14",{
     {ct.change,[=[Update for 1.15.5]=]},
 })
