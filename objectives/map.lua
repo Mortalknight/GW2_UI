@@ -112,33 +112,6 @@ local function lfgAnimPvP(elapse)
 end
 GW.AddForProfiling("map", "lfgAnimPvP", lfgAnimPvP)
 
-local function lfgAnimStop()
-    LFGMinimapFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFGMicroButton-Down")
-    LFGMinimapFrame.animationCircle:Hide()
-    LFGMinimapFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
-end
-GW.AddForProfiling("map", "lfgAnimPvPStop", lfgAnimPvPStop)
-
-local function lfgAnim(_, elapse)
-    if Minimap:IsShown() then
-        LFGMinimapFrameIcon:SetAlpha(1)
-    else
-        LFGMinimapFrameIcon:SetAlpha(0)
-        return
-    end
-
-    LFGMinimapFrame.animationCircle:Show()
-
-    LFGMinimapFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFGMicroButton-Down")
-
-    local rot = LFGMinimapFrame.animationCircle.background:GetRotation() + (1.5 * elapse)
-
-    LFGMinimapFrame.animationCircle.background:SetRotation(rot)
-    LFGMinimapFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
-    LFGMinimapFrameIconTexture:SetTexCoord(0, 1, 0, 1)
-end
-GW.AddForProfiling("map", "lfgAnim", lfgAnim)
-
 local function hideMiniMapIcons()
     for _, v in pairs(MAP_FRAMES_HIDE) do
         if v then
@@ -265,26 +238,6 @@ local function minimap_OnHide()
 end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
-local function Minimap_OnMouseDown(self, btn)
-    if M.TrackingDropdown then
-        GW.Libs.LibDD:HideDropDownMenu(1, nil, M.TrackingDropdown)
-    end
-
-    if btn == "RightButton" and M.TrackingDropdown then
-        GW.Libs.LibDD:ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
-    else
-        Minimap.OnClick(self)
-    end
-end
-
-local function Minimap_OnMouseWheel(_, d)
-    if d > 0 then
-        MinimapZoomIn:Click()
-    elseif d < 0 then
-        MinimapZoomOut:Click()
-    end
-end
-
 local function ToogleMinimapCoorsLable()
     if GetSetting("MINIMAP_COORDS_TOGGLE") then
         GwMapCoords:Show()
@@ -332,7 +285,9 @@ local function ToogleMinimapFpsLable()
 end
 GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
-local function SetUpAfterLogin()
+local function SetUpLfgFrame()
+    if not LFGMinimapFrame then return end
+
     local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", LFGMinimapFrame, "GwLfgQueueIcon")
     GwLfgQueueIcon:SetAllPoints(LFGMinimapFrame)
     if LFGMinimapFrameBorder then LFGMinimapFrameBorder:Kill() end
@@ -370,15 +325,33 @@ local function SetUpAfterLogin()
     end
 end
 
-local function OnEvent(_, event)
-    SetUpAfterLogin()
+local function OnEvent(_, event, ...)
+    if event == "PLAYER_ENTERING_WORLD" then
+        local initLogin, isReload = ...
+        if initLogin or isReload then
+            SetUpLfgFrame()
+        end
+    elseif event == "ADDON_LOADED" then
+        local addon = ...
+        if addon == "Blizzard_GroupFinder_VanillaStyle" then
+            SetUpLfgFrame()
+        end
+    end
 end
 
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = getMinimapShape
 
-    M:RegisterEvent("PLAYER_ENTERING_WORLD")
+    if not GW.ClassicAnniv then
+        M:RegisterEvent("PLAYER_ENTERING_WORLD")
+    elseif GW.ClassicAnniv then
+        if C_AddOns.IsAddOnLoaded("Blizzard_GroupFinder_VanillaStyle") then
+            OnEvent(nil, "ADDON_LOADED", "Blizzard_GroupFinder_VanillaStyle")
+        else
+            M:RegisterEvent("ADDON_LOADED")
+        end
+    end
     M:SetScript("OnEvent", OnEvent)
 
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")

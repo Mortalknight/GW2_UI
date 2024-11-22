@@ -21,8 +21,11 @@ GW.wowpatch, GW.wowbuild = GetBuildInfo()
 GW.wowbuild = tonumber(GW.wowbuild)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
 
-GW.ClassicHC = C_GameRules and C_GameRules.IsHardcoreActive()
-GW.ClassicSOD = C_Engraving and C_Engraving.IsEngravingEnabled()
+local season = C_Seasons and C_Seasons.GetActiveSeason()
+GW.ClassicHC = season == 3 -- Hardcore
+GW.ClassicSOD = season == 2 -- Season of Discovery
+GW.ClassicAnniv = season == 11 -- Anniversary
+GW.ClassicAnnivHC = season == 12 -- Anniversary Hardcore
 
 --Tables
 GW.skins = {}
