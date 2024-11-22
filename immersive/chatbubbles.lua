@@ -26,7 +26,7 @@ local function UpdateBubbleBorder(self)
     local senderInfo = messageToSender[text]
     if text then
         if senderInfo then
-            self.Name:SetFormattedText("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, messageToSender[text].message)
+            self.Name:SetFormattedText("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, messageToSender[text].senderName)
 
             if senderInfo.unitType == 1 then
                 messageText:SetTextColor(1, 1, 1, 1)
@@ -154,7 +154,14 @@ local function ChatBubble_OnEvent(_, event, msg, sender)
         if event == "CHAT_MSG_MONSTER_SAY" or event == "CHAT_MSG_MONSTER_YELL" then
             unit = 1
         end
-        messageToSender[msg] = {unitType = unit, message = Ambiguate(sender, "none")}
+        local senderName
+        if TRP3_API then
+            senderName = TRP3_API.register.getUnitRPNameWithID(sender)
+        end
+        if not senderName then
+            senderName = Ambiguate(sender, "none")
+        end
+        messageToSender[msg] = {unitType = unit, senderName = senderName}
     end
 end
 
