@@ -343,17 +343,6 @@ local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = getMinimapShape
 
-    if not GW.ClassicAnniv then
-        M:RegisterEvent("PLAYER_ENTERING_WORLD")
-    elseif GW.ClassicAnniv then
-        if C_AddOns.IsAddOnLoaded("Blizzard_GroupFinder_VanillaStyle") then
-            OnEvent(nil, "ADDON_LOADED", "Blizzard_GroupFinder_VanillaStyle")
-        else
-            M:RegisterEvent("ADDON_LOADED")
-        end
-    end
-    M:SetScript("OnEvent", OnEvent)
-
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
 
     SetMinimapHover()
@@ -539,7 +528,16 @@ local function LoadMinimap()
         MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
     end
 
-    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow")
+    if not GW.ClassicAnniv then
+        M:RegisterEvent("PLAYER_ENTERING_WORLD")
+    elseif GW.ClassicAnniv then
+        if C_AddOns.IsAddOnLoaded("Blizzard_GroupFinder_VanillaStyle") then
+            OnEvent(nil, "ADDON_LOADED", "Blizzard_GroupFinder_VanillaStyle")
+        else
+            M:RegisterEvent("ADDON_LOADED")
+        end
+    end
+    M:SetScript("OnEvent", OnEvent)
 
     C_Timer.After(0.1, hoverMiniMapOut)
 

@@ -85,7 +85,7 @@ end
 local function powerMana(self, event, ...)
     local ptype = select(2, ...)
     if event == "CLASS_POWER_INIT" or ptype == "MANA" then
-        UpdatePowerData(self, 0, "MANA", "GwLittlePowerBar")
+        UpdatePowerData(self, 0, "MANA")
     end
 end
 
@@ -249,6 +249,8 @@ local function LoadClassPowers()
         lmb.label:SetFont(DAMAGE_TEXT_FONT, 12)
         lmb.label:SetShadowColor(0, 0, 0, 1)
         lmb.label:SetShadowOffset(1, -1)
+
+        lmb:SetParent(UIParent)
     end
 
     cpf.Script:SetScript("OnEvent", barChange_OnEvent)
