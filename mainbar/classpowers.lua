@@ -1719,12 +1719,10 @@ local function UpdateExtraManabar()
         end
 
         GwPlayerAltClassLmb:SetParent(UIParent)
-        GwPlayerPowerBarDecay:SetParent(UIParent)
 
         barChange_OnEvent(GwPlayerClassPower.decay, "FORCE_UPDATE")
       else
         GwPlayerAltClassLmb:SetParent(GW.HiddenFrame)
-        GwPlayerPowerBarDecay:SetParent(GW.HiddenFrame)
     end
 end
 GW.UpdateClassPowerExtraManabar = UpdateExtraManabar
@@ -1797,7 +1795,7 @@ local function LoadClassPowers()
     lmb.runeoverlay:AddMaskTexture(lmb.runicmask)
     cpf.lmb = lmb
     GW.initPowerBar(cpf.lmb)
-    lmb.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay", lmb, nil, true)
+    lmb.decay = GW.createNewStatusbar("GwPlayerAltClassLmbBarDecay", lmb, nil, true)
     lmb.decay:SetFillAmount(0)
     lmb.decay:SetFrameLevel(lmb.decay:GetFrameLevel() - 1)
     lmb.decay:ClearAllPoints()
@@ -1822,7 +1820,7 @@ local function LoadClassPowers()
     exbar.runicmask:SetSize(exbar:GetSize())
     exbar.runeoverlay:AddMaskTexture(exbar.runicmask)
 
-    exbar.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay", exbar, nil, true)
+    exbar.decay = GW.createNewStatusbar("GwPlayerAltClassExBarDecay", exbar, nil, true)
     exbar.decay:SetFillAmount(0)
     exbar.decay:SetFrameLevel(exbar.decay:GetFrameLevel() - 1)
     exbar.decay:ClearAllPoints()
