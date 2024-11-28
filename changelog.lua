@@ -20,7 +20,7 @@ addChange("7.8.0",{
     {ct.feature, [=[Add option to hook profiles to a spec. This will switch the profile on spec switch]=]},
     {ct.feature, [=[Add todoloo support for GW2 Objectives tracker]=]},
     {ct.feature, [=[Add searchbox for player titles]=]},
-    {ct.feature, [=[Add slash command to clear tracked but already earned achievemnts (blizzard bug): /gw2 clear achievements]=]},
+    {ct.feature, [=[Add slash command to clear tracked but already earned achievements (blizzard bug): /gw2 clear achievements]=]},
     {ct.feature, [=[Add option to change profile icons]=]},
     {ct.feature, [=[Add TRP3 support for GW2 chatbubbles]=]},
     {ct.change, [=[Added fraction icons to the guild datatext]=]},

@@ -482,6 +482,7 @@ local function AddButtons_BagFilters(description, bagID)
     for i, flag in ContainerFrameUtil_EnumerateBagGearFilters() do
         local checkbox = description:CreateCheckbox(BAG_FILTER_LABELS[flag], IsSelected, SetSelected, flag)
         checkbox:SetResponse(MenuResponse.Close)
+        checkbox:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
     end
 end
 
@@ -510,7 +511,8 @@ local function AddButtons_BagCleanup(description, bagID)
         end
 
         local checkbox = description:CreateCheckbox(BAG_FILTER_CLEANUP, IsSelected, SetSelected);
-        checkbox:SetResponse(MenuResponse.Close);
+        checkbox:SetResponse(MenuResponse.Close)
+        checkbox:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
     end
 
     -- ignore junk selling from this bag or backpack
@@ -533,6 +535,7 @@ local function AddButtons_BagCleanup(description, bagID)
 
         local checkbox = description:CreateCheckbox(SELL_ALL_JUNK_ITEMS_EXCLUDE_FLAG, IsSelected, SetSelected);
         checkbox:SetResponse(MenuResponse.Close);
+        checkbox:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
     end
 end
 

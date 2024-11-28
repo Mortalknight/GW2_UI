@@ -854,70 +854,19 @@ local function LoadBank(helpers)
         end
     )
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BANK)
+    EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
+    f.buttonSettings:SetScript("OnClick", function(self)
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            local check = rootDescription:CreateCheckbox(L["Compact Icons"], function() return GW.settings.BAG_ITEM_SIZE == BANK_ITEM_COMPACT_SIZE end, compactToggle)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-    do
-        EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
-        local dd = f.buttonSettings.dropdown
-        dd:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        f.buttonSettings:SetScript(
-            "OnClick",
-            function(self)
-                if dd:IsShown() then
-                    dd:Hide()
-                else
-                    -- check if the dropdown need to grow up or down
-                    local _, y = self:GetCenter()
-                    local screenHeight = UIParent:GetTop()
-                    local position
-                    if y > (screenHeight / 2) then
-                        position = "TOPRIGHT"
-                    else
-                        position = "BOTTOMRIGHT"
-                    end
-                    dd:ClearAllPoints()
-                    dd:SetPoint(position, dd:GetParent(), "LEFT", 0, -5)
-                    dd:Show()
-                end
-            end
-        )
+            check = rootDescription:CreateCheckbox(L["Reverse Bag Order"], function() return GW.settings.BANK_REVERSE_SORT end, function() GW.settings.BANK_REVERSE_SORT = not GW.settings.BANK_REVERSE_SORT; ContainerFrame_UpdateAll() end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.compactBank.checkbutton:SetScript(
-            "OnClick",
-            function(self)
-                self:SetChecked(compactToggle())
-                dd:Hide()
-            end
-        )
-
-        dd.bagOrder.checkbutton:SetScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BANK_REVERSE_SORT
-                dd.bagOrder.checkbutton:SetChecked(newStatus)
-                GW.settings.BANK_REVERSE_SORT = newStatus
-                ContainerFrame_UpdateAll() --this is tainting
-            end
-        )
-
-        dd.itemBorder.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW
-                dd.itemBorder.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = newStatus
-                ContainerFrame_UpdateAll() --this is tainting
-            end
-        )
-
-        dd.compactBank.checkbutton:SetChecked(GW.settings.BAG_ITEM_SIZE == BANK_ITEM_COMPACT_SIZE)
-        dd.bagOrder.checkbutton:SetChecked(GW.settings.BANK_REVERSE_SORT)
-        dd.itemBorder.checkbutton:SetChecked(GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW)
-
-        -- setup bag setting icons locals
-        dd.compactBank.title:SetText(L["Compact Icons"])
-        dd.bagOrder.title:SetText(L["Reverse Bag Order"])
-        dd.itemBorder.title:SetText(L["Show Quality Color"])
-    end
+            check = rootDescription:CreateCheckbox(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; ContainerFrame_UpdateAll() end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
+        end)
+    end)
 
     -- setup bank/reagent switching tabs
     f.ItemTab:SetScript("OnEnter", tab_OnEnter)

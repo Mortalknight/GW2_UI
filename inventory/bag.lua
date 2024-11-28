@@ -249,29 +249,7 @@ local function createBagBar(f)
     SetItemButtonQuality(bp, 1, nil)
 
     -- create bag slot buttons for equippable bags
-    local cb0_id = CharacterBag0Slot:GetID()
-    local getInvId = function(self)
-        local inv_id, _ = GetInventorySlotInfo(strsub(self:GetName(), 10))
-        return inv_id
-    end
     for bag_idx = 1, NUM_BAG_SLOTS do
-        -- this name MUST have a 9-letter prefix and match the style "CharacterBag0Slot"
-        -- because of hard-coded string parsing in PaperDollItemSlotButton_OnLoad
-        --local name = "GwInvntryBag" .. (bag_idx - 1) .. "Slot"
-        --local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
-        --b.commandName = ""
-
-        -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
-        -- The ID set here is NOT the usual bag_id; rather it is an offset from the
-        -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
-        --b:SetID(cb0_id + bag_idx - 1)
-        --b.BagID = bag_idx
-        -- unlike BankItemButtonBagTemplate, we must provide the GetInventorySlot method
-        --b.GetInventorySlot = getInvId
-
-        -- remove default of capturing right-click also (we handle right-click separately)
-
-        --TEST
         local b = _G["CharacterBag" .. bag_idx - 1 .. "Slot"]
         b:SetParent(f)
         b:RegisterForClicks("LeftButtonUp")
@@ -280,30 +258,11 @@ local function createBagBar(f)
 
         inv.reskinBagBar(b)
 
-        -- Hide default bag bar
-        --_G["CharacterBag" .. bag_idx - 1 .. "Slot"]:GwKill()
-        --_G["CharacterBag" .. bag_idx - 1 .. "Slot"]:SetScale(0.0001)
-       -- _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:SetAlpha(0)
-
         f.bags[bag_idx] = b
     end
 
     --Get Reagant Slot
     if CharacterReagentBag0Slot then
-        --local name = "GwInvntryReagentBag0Slot"
-        --local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
-        --b.commandName = ""
-
-        -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
-        -- The ID set here is NOT the usual bag_id; rather it is an offset from the
-        -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
-        --b:SetID(cb0_id + 5 - 1)
-        --b.BagID = 5
-        -- unlike BankItemButtonBagTemplate, we must provide the GetInventorySlot method
-        --b.GetInventorySlot = getInvId
-
-        -- remove default of capturing right-click also (we handle right-click separately)
-        --TEST
         local b = CharacterReagentBag0Slot
         b:SetParent(f)
         b:RegisterForClicks("LeftButtonUp")
@@ -684,191 +643,49 @@ local function LoadBag(helpers)
         end
     )
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BAGS)
-    do
-        EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
-        local dd = f.buttonSettings.dropdown
-        dd:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        f.buttonSettings:HookScript(
-            "OnClick",
-            function(self)
-                if dd:IsShown() then
-                    dd:Hide()
-                else
-                    -- check if the dropdown need to grow up or down
-                    local _, y = self:GetCenter()
-                    local screenHeight = UIParent:GetTop()
-                    local position
-                    if y > (screenHeight / 2) then
-                        position = "TOPRIGHT"
-                    else
-                        position = "BOTTOMRIGHT"
-                    end
-                    dd:ClearAllPoints()
-                    dd:SetPoint(position, dd:GetParent(), "LEFT", 0, -5)
-                    dd:Show()
-                end
-            end
-        )
+    EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
 
-        dd.compactBags.checkbutton:HookScript(
-            "OnClick",
-            function(self)
-                self:SetChecked(compactToggle())
-                dd:Hide()
-            end
-        )
+    f.buttonSettings:SetScript("OnClick", function(self)
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            local check = rootDescription:CreateCheckbox(L["Compact Icons"], function() return GW.settings.BAG_ITEM_SIZE == BAG_ITEM_COMPACT_SIZE end, compactToggle)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.newOrder.checkbutton:HookScript(
-            "OnClick",
-            function()
-                -- FOR TAINT testing
-                --local newStatus = not GW.settings.BAG_REVERSE_NEW_LOOT
-                --C_Container.SetInsertItemsLeftToRight(newStatus)
-                --dd.newOrder.checkbutton:SetChecked(newStatus)
-                --GW.settings.BAG_REVERSE_NEW_LOOT = newStatus
-                --GW.
-                dd:Hide()
-            end
-        )
-        -- set it back to default, only once
-        if not GW.settings.Reset_Container_Loot_Order then
-            C_Container.SetInsertItemsLeftToRight(false)
-            GW.settings.Reset_Container_Loot_Order = true
-        end
+            check = rootDescription:CreateCheckbox(L["Loot to leftmost Bag"], function() return GW.settings.BAG_REVERSE_NEW_LOOT end, function() local newStatus = not GW.settings.BAG_REVERSE_NEW_LOOT; C_Container.SetInsertItemsLeftToRight(newStatus); GW.settings.BAG_REVERSE_NEW_LOOT = newStatus end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.sortOrder.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_ITEMS_REVERSE_SORT
-                C_Container.SetSortBagsRightToLeft(newStatus)
-                dd.sortOrder.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_ITEMS_REVERSE_SORT = newStatus
-                dd:Hide()
-            end
-        )
+            check = rootDescription:CreateCheckbox(L["Sort to Last Bag"], function() return GW.settings.BAG_ITEMS_REVERSE_SORT end, function() local newStatus = not GW.settings.BAG_ITEMS_REVERSE_SORT; C_Container.SetSortBagsRightToLeft(newStatus); GW.settings.BAG_ITEMS_REVERSE_SORT = newStatus end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.bagOrder.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_REVERSE_SORT
-                dd.bagOrder.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_REVERSE_SORT = newStatus
-                layoutItems(f)
-                snapFrameSize(f)
-            end
-        )
+            check = rootDescription:CreateCheckbox(L["Reverse Bag Order"], function() return GW.settings.BAG_REVERSE_SORT end, function() GW.settings.BAG_REVERSE_SORT = not GW.settings.BAG_REVERSE_SORT; layoutItems(f); snapFrameSize(f) end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.itemBorder.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW
-                dd.itemBorder.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = newStatus
-                ContainerFrame_UpdateAll() -- this is tainting
-            end
-        )
+            check = rootDescription:CreateCheckbox(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; ContainerFrame_UpdateAll() end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.junkIcon.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW
-                dd.junkIcon.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_ITEM_JUNK_ICON_SHOW = newStatus
-                ContainerFrame_UpdateAll()  --this is tainting
-            end
-        )
+            check = rootDescription:CreateCheckbox(L["Show Junk Icon"], function() return GW.settings.BAG_ITEM_JUNK_ICON_SHOW end, function() GW.settings.BAG_ITEM_JUNK_ICON_SHOW = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW; ContainerFrame_UpdateAll() end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.scrapIcon.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_ITEM_SCRAP_ICON_SHOW
-                dd.scrapIcon.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_ITEM_SCRAP_ICON_SHOW = newStatus
-                ContainerFrame_UpdateAll() -- this is tainting
-            end
-        )
+            check = rootDescription:CreateCheckbox(L["Show Scrap Icon"], function() return GW.settings.BAG_ITEM_SCRAP_ICON_SHOW end, function() GW.settings.BAG_ITEM_SCRAP_ICON_SHOW = not GW.settings.BAG_ITEM_SCRAP_ICON_SHOW; ContainerFrame_UpdateAll() end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.upgradeIcon.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW
-                dd.upgradeIcon.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW = newStatus
-                ContainerFrame_UpdateAll()  --this is tainting
-            end
-        )
+            check = rootDescription:CreateCheckbox(L["Show Upgrade Icon"], function() return GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW end, function() GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW = not GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW; ContainerFrame_UpdateAll() end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.professionColor.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_PROFESSION_BAG_COLOR
-                dd.professionColor.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_PROFESSION_BAG_COLOR = newStatus
-                ContainerFrame_UpdateAll() --this is tainting
-            end
-        )
+            check = rootDescription:CreateCheckbox(L["Show Profession Bag Coloring"], function() return GW.settings.BAG_PROFESSION_BAG_COLOR end, function() GW.settings.BAG_PROFESSION_BAG_COLOR = not GW.settings.BAG_PROFESSION_BAG_COLOR; ContainerFrame_UpdateAll() end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.vendorGrays.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_VENDOR_GRAYS
-                dd.vendorGrays.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_VENDOR_GRAYS = newStatus
-                GW.SetupVendorJunk(newStatus)
-            end
-        )
+            check = rootDescription:CreateCheckbox(SHOW_ITEM_LEVEL:gsub("-\n", ""):gsub("\n", " "), function() return GW.settings.BAG_SHOW_ILVL end, function() GW.settings.BAG_SHOW_ILVL = not GW.settings.BAG_SHOW_ILVL; ContainerFrame_UpdateAll() end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.showItemLvl.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_SHOW_ILVL
-                dd.showItemLvl.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_SHOW_ILVL = newStatus
-                ContainerFrame_UpdateAll() --this is tainting
-            end
-        )
+            check = rootDescription:CreateCheckbox(L["Sell junk automatically"], function() return GW.settings.BAG_VENDOR_GRAYS end, function() local newStatus = not GW.settings.BAG_VENDOR_GRAYS; GW.settings.BAG_VENDOR_GRAYS = newStatus; GW.SetupVendorJunk(newStatus) end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 
-        dd.separateBags.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_SEPARATE_BAGS
-                dd.separateBags.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_SEPARATE_BAGS = newStatus
-                layoutItems(f)
-                snapFrameSize(f)
-                dd:Hide()
-            end
-        )
+            check = rootDescription:CreateCheckbox(L["Separate bags"], function() return GW.settings.BAG_SEPARATE_BAGS end, function() local newStatus = not GW.settings.BAG_SEPARATE_BAGS; GW.settings.BAG_SEPARATE_BAGS = newStatus; layoutItems(f); snapFrameSize(f) end)
+            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
+        end)
+    end)
 
-        dd.compactBags.checkbutton:SetChecked(GW.settings.BAG_ITEM_SIZE == BAG_ITEM_COMPACT_SIZE)
-        dd.newOrder.checkbutton:SetChecked(GW.settings.BAG_REVERSE_NEW_LOOT)
-        dd.sortOrder.checkbutton:SetChecked(GW.settings.BAG_ITEMS_REVERSE_SORT)
-        dd.bagOrder.checkbutton:SetChecked(GW.settings.BAG_REVERSE_SORT)
-        dd.itemBorder.checkbutton:SetChecked(GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW)
-        dd.junkIcon.checkbutton:SetChecked(GW.settings.BAG_ITEM_JUNK_ICON_SHOW)
-        dd.scrapIcon.checkbutton:SetChecked(GW.settings.BAG_ITEM_SCRAP_ICON_SHOW)
-        dd.upgradeIcon.checkbutton:SetChecked(GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW)
-        dd.professionColor.checkbutton:SetChecked(GW.settings.BAG_PROFESSION_BAG_COLOR)
-        dd.vendorGrays.checkbutton:SetChecked(GW.settings.BAG_VENDOR_GRAYS)
-        dd.showItemLvl.checkbutton:SetChecked(GW.settings.BAG_SHOW_ILVL)
-        dd.separateBags.checkbutton:SetChecked(GW.settings.BAG_SEPARATE_BAGS)
-
-        GW.SetupVendorJunk(dd.vendorGrays.checkbutton:GetChecked())
-
-        -- setup bag setting title locals
-        dd.compactBags.title:SetText(L["Compact Icons"])
-        dd.newOrder.title:SetText(L["Loot to leftmost Bag"])
-        dd.sortOrder.title:SetText(L["Sort to Last Bag"])
-        dd.itemBorder.title:SetText(L["Show Quality Color"])
-        dd.junkIcon.title:SetText(L["Show Junk Icon"])
-        dd.scrapIcon.title:SetText(L["Show Scrap Icon"])
-        dd.upgradeIcon.title:SetText(L["Show Upgrade Icon"])
-        dd.bagOrder.title:SetText(L["Reverse Bag Order"])
-        dd.professionColor.title:SetText(L["Show Profession Bag Coloring"])
-        dd.vendorGrays.title:SetText(L["Sell junk automatically"])
-        dd.showItemLvl.title:SetText(SHOW_ITEM_LEVEL)
-        dd.separateBags.title:SetText(L["Separate bags"])
-    end
+    GW.SetupVendorJunk(GW.settings.BAG_VENDOR_GRAYS)
 
     -- setup money frame
     f.bronze:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)

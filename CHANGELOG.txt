@@ -3,7 +3,7 @@ NEW
     - Add option to hook profiles to a spec. This will switch the profile on spec switch
     - Add todoloo support for GW2 Objectives tracker
     - Add searchbox for player titles
-    - Add slash command to clear tracked but already earned achievemnts (blizzard bug): /gw2 clear achievements
+    - Add slash command to clear tracked but already earned achievements (blizzard bug): /gw2 clear achievements
     - Add option to change profile icons
     - Add TRP3 support for GW2 chatbubbles
 
