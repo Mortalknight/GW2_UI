@@ -30,7 +30,7 @@ addChange("7.8.0",{
     {ct.bug, [=[Achievement skin scroll height]=]},
     {ct.bug, [=[Grid aura indicators now only shows player auras]=]},
     {ct.bug, [=[Fix dodgebar for some classes]=]},
-    {ct.bug, [=[Fix objectives tracker loading order3]=]},
+    {ct.bug, [=[Fix objectives tracker loading order]=]},
 })
 
 addChange("7.7.2",{
