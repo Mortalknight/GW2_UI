@@ -15,6 +15,24 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("7.8.0",{
+    {ct.feature, [=[Add option to hook profiles to a spec. This will switch the profile on spec switch]=]},
+    {ct.feature, [=[Add todoloo support for GW2 Objectives tracker]=]},
+    {ct.feature, [=[Add searchbox for player titles]=]},
+    {ct.feature, [=[Add slash command to clear tracked but already earned achievemnts (blizzard bug): /gw2 clear achievements]=]},
+    {ct.feature, [=[Add option to change profile icons]=]},
+    {ct.feature, [=[Add TRP3 support for GW2 chatbubbles]=]},
+    {ct.change, [=[Added fraction icons to the guild datatext]=]},
+    {ct.change, [=[Change all dropdown elements to new blizzard ui system]=]},
+    {ct.change, [=[Allow max 4 watched tokens with gw2 bags enabled]=]},
+    {ct.bug, [=[Objectives tracker bonus step names]=]},
+    {ct.bug, [=[Achievement skin scroll height]=]},
+    {ct.bug, [=[Grid aura indicators now only shows player auras]=]},
+    {ct.bug, [=[Fix dodgebar for some classes]=]},
+    {ct.bug, [=[Fix objectives tracker loading order3]=]},
+})
+
 addChange("7.7.2",{
     {ct.bug, [=[Guild data info lua error]=]},
     {ct.change, [=[Skin updates]=]},
