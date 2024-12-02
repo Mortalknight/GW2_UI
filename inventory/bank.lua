@@ -536,9 +536,6 @@ local function bank_OnHide(self)
     self:RegisterEvent("BANKFRAME_OPENED")
     self:RegisterEvent("BANKFRAME_CLOSED")
     C_Bank.CloseBankFrame()
-    if self.buttonSettings.dropdown:IsShown() then
-        self.buttonSettings.dropdown:Hide()
-    end
 end
 GW.AddForProfiling("bank", "bank_OnHide", bank_OnHide)
 

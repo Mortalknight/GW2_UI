@@ -430,9 +430,6 @@ local function bag_OnHide(self)
     if IsBagOpen(BACKPACK_CONTAINER) then
         CloseBackpack()
     end
-    if self.buttonSettings.dropdown:IsShown() then
-        self.buttonSettings.dropdown:Hide()
-    end
 end
 GW.AddForProfiling("bag", "bag_OnHide", bag_OnHide)
 

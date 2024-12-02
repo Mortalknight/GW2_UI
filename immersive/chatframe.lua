@@ -881,8 +881,8 @@ end
 
 local function GetBNFriendColor(name, id, useBTag)
     local info = C_BattleNet.GetAccountInfoByID(id)
-    local BATTLE_TAG = info and info.battleTag and strmatch(info.battleTag,"([^#]+)")
-    local TAG = useBTag and BATTLE_TAG
+    local BNET_TAG = info and info.isBattleTagFriend and info.battleTag and strmatch(info.battleTag, "([^#]+)")
+    local TAG = useBTag and BNET_TAG
 
     local Class
     local gameInfo = info and info.gameAccountID and C_BattleNet.GetGameAccountInfoByID(info.gameAccountID)
@@ -893,12 +893,12 @@ local function GetBNFriendColor(name, id, useBTag)
         if firstToonClass then
             Class = GW.UnlocalizedClassName(firstToonClass)
         else
-            return TAG or name, info and info.isBattleTagFriend and BATTLE_TAG
+            return TAG or name, BNET_TAG
         end
     end
 
     local Color = Class and GW.GWGetClassColor(Class, true, true, true)
-    return (Color and format("|c%s%s|r", Color.colorStr, TAG or name)) or TAG or name, info and info.isBattleTagFriend and BATTLE_TAG
+    return (Color and format("|c%s%s|r", Color.colorStr, TAG or name)) or TAG or name, BNET_TAG
 end
 
 -- chat histroy
@@ -1475,10 +1475,11 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 message = format(globalstring, arg2)
             elseif arg1 == "FRIEND_ONLINE" or arg1 == "FRIEND_OFFLINE" then
                 local accountInfo = C_BattleNet.GetAccountInfoByID(arg13)
-                if accountInfo and accountInfo.gameAccountInfo and accountInfo.gameAccountInfo.clientProgram ~= "" and accountInfo.gameAccountInfo.clientProgram then
-                    C_Texture.GetTitleIconTexture(accountInfo.gameAccountInfo.clientProgram, Enum.TitleIconVersion.Small, function(success, texture)
+                local gameInfo = accountInfo and accountInfo.gameAccountInfo
+                if gameInfo and gameInfo.clientProgram and gameInfo.clientProgram ~= "" then
+                    C_Texture.GetTitleIconTexture(gameInfo.clientProgram, Enum.TitleIconVersion.Small, function(success, texture)
                         if success then
-                            local characterName = BNet_GetValidatedCharacterNameWithClientEmbeddedTexture(accountInfo.gameAccountInfo.characterName, accountInfo.battleTag, texture, 32, 32, 10)
+                            local characterName = BNet_GetValidatedCharacterNameWithClientEmbeddedTexture(gameInfo.characterName, accountInfo.battleTag, texture, 32, 32, 10)
                             local linkDisplayText = format("[%s] (%s)", arg2, characterName)
                             local playerLink = GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
                             frame:AddMessage(format(globalstring, playerLink), info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
