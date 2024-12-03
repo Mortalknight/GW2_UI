@@ -626,11 +626,6 @@ local function evPlayerLogin(self)
     -- Create Warning Prompt
     GW.CreateWarningPrompt()
 
-    -- load alert settings
-    GW.LoadAlertSystem()
-    GW.SetupAlertFramePosition()
-    GW.LoadOurAlertSubSystem()
-
     -- disable Move Anything bag handling
     disableMABags()
 
@@ -682,6 +677,16 @@ local function evPlayerLogin(self)
     GW.MakeAltPowerBarMovable()
     GW.WidgetUISetup()
 
+    -- make sure to load the objetives tracker before we load the altert system prevent some errors with other addons
+    if GW.settings.QUESTTRACKER_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
+        GW.LoadQuestTracker()
+    end
+
+    -- load alert settings
+    GW.LoadAlertSystem()
+    GW.SetupAlertFramePosition()
+    GW.LoadOurAlertSubSystem()
+
     --Create hud art
     hudArtFrame = GW.LoadHudArt()
 
@@ -730,9 +735,7 @@ local function evPlayerLogin(self)
         QueueStatusButton:SetParent(UIParent)
     end
 
-    if GW.settings.QUESTTRACKER_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
-        GW.LoadQuestTracker()
-    end
+   
 
     if GW.settings.TOOLTIPS_ENABLED then
         GW.LoadTooltips()

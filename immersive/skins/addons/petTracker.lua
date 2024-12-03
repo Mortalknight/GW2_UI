@@ -100,7 +100,7 @@ local function setUpProgressbar(block, progress, counter)
     return h
 end
 
-local function petTrackerUpdate(self)
+local function petTrackerUpdate()
     local progress = PetTracker.Maps:GetCurrentProgress()
     local foundPet = false
     local height, counter = 1, 1
@@ -114,16 +114,16 @@ local function petTrackerUpdate(self)
         end
     end
 
-    if PetTracker.sets.trackPets then
+    if PetTracker.sets.zoneTracker then
         -- setup the progessbar
         height = height + setUpProgressbar(petBlock, progress, counter)
         counter = counter + 1
-        for quality = 0, self:MaxQuality() do
+        for quality = 0, PetTracker.Tracker:MaxQuality() do
             for level = 0, PetTracker.MaxLevel do
                 for _, specie in ipairs(progress[quality][level] or {}) do
                     if counter <= maxEntries then
                         local petObjectives = getObjectiveBlock(petBlock, counter)
-                        if AddSpecie(self, petObjectives, specie, quality, level) then
+                        if AddSpecie(PetTracker.Tracker, petObjectives, specie, quality, level) then
                             foundPet = true
                             height = height + 20
                             counter = counter + 1
@@ -162,7 +162,7 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    petTrackerUpdate(PetTracker.Tracker)
+    petTrackerUpdate()
 end
 GW.CollapsePetTrackerAddonHeader = CollapseHeader
 
@@ -187,20 +187,18 @@ local function LoadPetTrackerAddonSkin()
             if button == "RightButton" then
                 if not self.collapsed then
 
-                    MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-                        rootDescription:CreateTitle(AUCTION_CATEGORY_BATTLE_PETS)
-                        rootDescription:CreateCheckbox(petTrackerLocals.TrackPets, function()
-                            return PetTracker.sets.trackPets()
-                        end,
-                        function()
-                            PetTracker.Tracker.Toggle()
-                        end)
-                        rootDescription:CreateCheckbox(petTrackerLocals.CapturedPets, function()
-                            return PetTracker.capturedPets.trackPets()
-                        end,
-                        function()
-                            PetTracker.Tracker.ToggleCaptured()
-                        end)
+                    MenuUtil.CreateContextMenu(self, function(ownerRegion, drop)
+                        drop:CreateTitle('|TInterface/Addons/PetTracker/art/compass:16:16|t PetTracker')
+                        drop:CreateCheckbox(petTrackerLocals.ZoneTracker, PetTracker.GetOption, PetTracker.ToggleOption, 'zoneTracker')
+                        drop:CreateCheckbox(petTrackerLocals.CapturedPets, PetTracker.GetOption, PetTracker.ToggleOption, 'capturedPets')
+
+                        local get = function(v) return PetTracker.sets.targetQuality == v end
+                        local set = function(v) PetTracker.SetOption('targetQuality', v) end
+
+                        local target = drop:CreateButton(petTrackerLocals.DisplayCondition)
+                        target:CreateRadio(ALWAYS, get, set, PetTracker.MaxQuality)
+                        target:CreateRadio(petTrackerLocals.MissingRares, get, set, PetTracker.MaxPlayerQuality)
+                        target:CreateRadio(petTrackerLocals.MissingPets, get, set, 1)
                     end)
                 end
             else
@@ -209,6 +207,6 @@ local function LoadPetTrackerAddonSkin()
         end
     )
 
-    hooksecurefunc(PetTracker.Tracker, "Update", function() petTrackerUpdate(PetTracker.Tracker) end)
+    hooksecurefunc(PetTracker.Tracker, "Update", petTrackerUpdate)
 end
 GW.LoadPetTrackerAddonSkin = LoadPetTrackerAddonSkin
