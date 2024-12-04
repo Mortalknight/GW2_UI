@@ -60,6 +60,8 @@ local function ApplyBlizzardEditModeChanges(self)
     LEMO:ApplyChanges()
 
     LEMO:RegisterForLayoutChangeBackToGW2Layout()
+
+    MirrorTimerContainer:Show()
 end
 
 local function OnEvent(self, event)
