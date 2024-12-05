@@ -51,6 +51,7 @@ local function UpdateGridRaid40Frame(frame)
     frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
     frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
     frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES
+    frame.outOfRangeAlphaValue = GW.settings.RAID_OUT_OF_RANGE_ALPHA
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do

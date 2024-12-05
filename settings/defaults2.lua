@@ -672,6 +672,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON_TANK= true,
         RAID_SHOW_LEADER_ICON_TANK= true,
         RAID_SHORT_HEALTH_VALUES_TANK = false,
+        RAID_OUT_OF_RANGE_ALPHA_TANK = 0.2,
 
         raidMaintank_pos= {
             point= "TOPLEFT",
@@ -709,6 +710,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON_PET= false, -- always
         RAID_SHOW_LEADER_ICON_PET= false, -- always
         RAID_SHORT_HEALTH_VALUES_PET = false,
+        RAID_OUT_OF_RANGE_ALPHA_PET = 0.2,
 
         raid_pet_pos= {
             point= "TOPLEFT",
@@ -745,6 +747,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON= true,
         RAID_SHOW_LEADER_ICON= true,
         RAID_SHORT_HEALTH_VALUES = false,
+        RAID_OUT_OF_RANGE_ALPHA = 0.2,
 
         raid_pos= {
             point= "TOPLEFT",
@@ -782,6 +785,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON_RAID25= true,
         RAID_SHOW_LEADER_ICON_RAID25= true,
         RAID_SHORT_HEALTH_VALUES_RAID25 = false,
+        RAID_OUT_OF_RANGE_ALPHA_RAID25 = 0.2,
 
         raid25_pos= {
             point= "TOPLEFT",
@@ -819,6 +823,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON_RAID10= true,
         RAID_SHOW_LEADER_ICON_RAID10= true,
         RAID_SHORT_HEALTH_VALUES_RAID10 = false,
+        RAID_OUT_OF_RANGE_ALPHA_RAID10 = 0.2,
 
         raid10_pos= {
             point= "TOPLEFT",
@@ -856,6 +861,7 @@ GW.globalDefault = {
         RAID_SHOW_LEADER_ICON_PARTY= true,
         RAID_SHORT_HEALTH_VALUES_PARTY = false,
         RAID_SHOW_PLAYER_PARTY = true, -- only for party grid
+        RAID_OUT_OF_RANGE_ALPHA_PARTY = 0.2,
 
         raid_party_pos= {
             point= "TOPLEFT",

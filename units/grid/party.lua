@@ -50,6 +50,7 @@ local function UpdateGridPartyFrame(frame)
     frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
     frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
     frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_PARTY
+    frame.outOfRangeAlphaValue = GW.settings.RAID_OUT_OF_RANGE_ALPHA_PARTY
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do

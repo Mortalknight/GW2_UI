@@ -12,6 +12,6 @@ end
 GW.Construct_RangeIndicator = Construct_RangeIndicator
 
 local function Update_RangeIndicator(frame)
-    -- nothing atm
+    frame.Range.outsideAlpha =  frame.outOfRangeAlphaValue
 end
 GW.Update_RangeIndicator = Update_RangeIndicator
