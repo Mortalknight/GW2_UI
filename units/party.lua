@@ -8,7 +8,6 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
 local AddToClique = GW.AddToClique
-local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local IsIn = GW.IsIn
 local nameRoleIcon = GW.nameRoleIcon
@@ -374,7 +373,7 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
     if GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES then
         formatFunction = GW.ShortValue
     else
-        formatFunction = CommaValue
+        formatFunction = BreakUpLargeNumbers
     end
 
     if GW.settings.PARTY_UNIT_HEALTH == "NONE" then

@@ -126,7 +126,7 @@ local function FormatMoneyForChat(amount)
     local copper = mod(value, COPPER_PER_SILVER)
 
     if gold > 0 then
-        str = format("%s%s |r|TInterface/AddOns/GW2_UI/textures/icons/Coins:12:12:0:0:64:32:22:42:1:20|t%s", goldcolor, GW.CommaValue(gold), " ")
+        str = format("%s%s |r|TInterface/AddOns/GW2_UI/textures/icons/Coins:12:12:0:0:64:32:22:42:1:20|t%s", goldcolor, BreakUpLargeNumbers(gold), " ")
     end
     if silver > 0 or gold > 0 then
         str = format("%s%s%d |r|TInterface/AddOns/GW2_UI/textures/icons/Coins:12:12:0:0:64:32:43:64:1:20|t%s", str, silvercolor, silver, (copper > 0 or gold > 0) and " " or "")

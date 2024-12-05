@@ -785,6 +785,14 @@ local function LoadBank(helpers)
     f.AccountFrame.MoneyFrame.MoneyDisplay:ClearAllPoints()
     f.AccountFrame.MoneyFrame.MoneyDisplay:SetPoint("BOTTOMRIGHT", f.AccountFrame, "BOTTOMRIGHT", 3, -27)
 
+    -- setup money frame
+    f.AccountFrame.MoneyFrame.MoneyDisplay.CopperButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.AccountFrame.MoneyFrame.MoneyDisplay.CopperButton.Text:SetTextColor(177 / 255, 97 / 255, 34 / 255)
+    f.AccountFrame.MoneyFrame.MoneyDisplay.SilverButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.AccountFrame.MoneyFrame.MoneyDisplay.SilverButton.Text:SetTextColor(170 / 255, 170 / 255, 170 / 255)
+    f.AccountFrame.MoneyFrame.MoneyDisplay.GoldButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.AccountFrame.MoneyFrame.MoneyDisplay.GoldButton.Text:SetTextColor(221 / 255, 187 / 255, 68 / 255)
+
     hooksecurefunc(f.AccountFrame.Header, "SetShown", function(self) self:Hide() end)
     hooksecurefunc(f.AccountFrame, "RefreshBankTabs", createAccountBagBar)
     hooksecurefunc(f.AccountFrame, "RefreshBankPanel", refreshBankPanel)

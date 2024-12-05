@@ -1,5 +1,4 @@
 local _, GW = ...
-local CommaValue = GW.CommaValue
 local PowerBarColorCustom = GW.PowerBarColorCustom
 
 local function resetPowerBarVisuals(self)
@@ -373,7 +372,7 @@ local function powerBar_OnUpdate(self)
   self:SetFillAmount(0)
 
   if self.textUpdate < GetTime() then
-    self.powerBarString:SetText(CommaValue(powerMax * powerPrec))
+    self.powerBarString:SetText(BreakUpLargeNumbers(powerMax * powerPrec))
     self.textUpdate = GetTime() + 0.2
   end
 end
@@ -405,7 +404,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
   setPowerBarVisuals(self,forcePowerType,powerToken)
 
   self:SetFillAmount(powerPrec)
-  self.label:SetText(CommaValue(self.lostKnownPower))
+  self.label:SetText(BreakUpLargeNumbers(self.lostKnownPower))
 
   if self.lastPowerType ~= self.powerType and self == GwPlayerPowerBar then
     self.lastPowerType = self.powerType

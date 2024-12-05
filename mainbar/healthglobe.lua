@@ -1,5 +1,4 @@
 local _, GW = ...
-local CommaValue = GW.CommaValue
 local AddToClique = GW.AddToClique
 local Self_Hide = GW.Self_Hide
 local TimeParts = GW.TimeParts
@@ -95,29 +94,29 @@ local function updateHealthData(self)
     if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
         formatFunction = GW.ShortValue
     else
-        formatFunction = CommaValue
+        formatFunction = BreakUpLargeNumbers
     end
 
     if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
-        hv = CommaValue(health / healthMax * 100) .. "%"
+        hv = BreakUpLargeNumbers(health / healthMax * 100, true) .. "%"
     elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
         hv = formatFunction(health)
     elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
-        hv = formatFunction(health) .. "\n" .. CommaValue(health / healthMax * 100) .. "%"
+        hv = formatFunction(health) .. "\n" .. BreakUpLargeNumbers(health / healthMax * 100, true) .. "%"
     end
 
     if GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES then
         formatFunction = GW.ShortValue
     else
-        formatFunction = CommaValue
+        formatFunction = BreakUpLargeNumbers
     end
 
     if GW.settings.PLAYER_UNIT_ABSORB == "PREC" then
-        av = CommaValue(absorb / healthMax * 100) .. "%"
+        av = BreakUpLargeNumbers(absorb / healthMax * 100, true) .. "%"
     elseif GW.settings.PLAYER_UNIT_ABSORB == "VALUE" then
         av = formatFunction(absorb)
     elseif GW.settings.PLAYER_UNIT_ABSORB == "BOTH" then
-        av = formatFunction(absorb) .. "\n" .. CommaValue(absorb / healthMax * 100) .. "%"
+        av = formatFunction(absorb) .. "\n" .. BreakUpLargeNumbers(absorb / healthMax * 100, true) .. "%"
     end
 
     self.text_h.value:SetText(hv)

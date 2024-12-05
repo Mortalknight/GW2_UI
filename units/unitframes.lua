@@ -1,7 +1,6 @@
 local _, GW = ...
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local TimeCount = GW.TimeCount
-local CommaValue = GW.CommaValue
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local bloodSpark = GW.BLOOD_SPARK
 local GWGetClassColor = GW.GWGetClassColor
@@ -182,19 +181,19 @@ local function updateHealthTextString(self, health, healthPrecentage)
     if self.shortendHealthValues then
         formatFunction = GW.ShortValue
     else
-        formatFunction = CommaValue
+        formatFunction = BreakUpLargeNumbers
     end
 
     if self.showHealthValue and self.showHealthPrecentage then
         if not self.frameInvert then
-            healthString = formatFunction(health) .. " - " .. CommaValue(healthPrecentage * 100) .. "%"
+            healthString = formatFunction(health) .. " - " .. BreakUpLargeNumbers(healthPrecentage * 100, true) .. "%"
         else
-            healthString = CommaValue(healthPrecentage * 100) .. "% - " .. formatFunction(health)
+            healthString = BreakUpLargeNumbers(healthPrecentage * 100, true) .. "% - " .. formatFunction(health)
         end
     elseif self.showHealthValue and not self.showHealthPrecentage then
         healthString = formatFunction(health)
     elseif not self.showHealthValue and self.showHealthPrecentage then
-        healthString = CommaValue(healthPrecentage * 100) .. "%"
+        healthString = BreakUpLargeNumbers(healthPrecentage * 100, true) .. "%"
     end
 
     self.healthString:SetText(healthString)

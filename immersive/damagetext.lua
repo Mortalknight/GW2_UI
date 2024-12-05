@@ -1,7 +1,6 @@
 local _, GW = ...
 local AFP = GW.AddProfiling
 local AddToAnimation = GW.AddToAnimation
-local CommaValue = GW.CommaValue
 local CountTable  = GW.CountTable
 local MoveTowards = GW.MoveTowards
 local getSpriteByIndex = GW.getSpriteByIndex
@@ -919,7 +918,7 @@ local function formatDamageValue(amount)
     if GW.settings.GW_COMBAT_TEXT_SHORT_VALUES then
         formatFunction = GW.ShortValue
     elseif GW.settings.GW_COMBAT_TEXT_COMMA_FORMAT then
-        formatFunction = GW.CommaValue
+        formatFunction = BreakUpLargeNumbers
     end
 
     return formatFunction and formatFunction(amount) or amount

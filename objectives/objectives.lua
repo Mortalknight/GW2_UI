@@ -1,7 +1,6 @@
 local _, GW = ...
 local RoundDec = GW.RoundDec
 local lerp = GW.lerp
-local CommaValue = GW.CommaValue
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local IsIn = GW.IsIn
@@ -184,7 +183,7 @@ local function FormatObjectiveNumbers(text)
     numNeeded = tonumber(numNeeded)
 
     if numItems ~= nil and numNeeded ~= nil then
-        return CommaValue(numItems) .. " / " .. CommaValue(numNeeded) .. " " .. itemName
+        return BreakUpLargeNumbers(numItems) .. " / " .. BreakUpLargeNumbers(numNeeded) .. " " .. itemName
     end
     return text
 end

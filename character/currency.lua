@@ -1,6 +1,5 @@
 local _, GW = ...
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
-local CommaValue = GW.CommaValue
 
 local selectedLongInstanceID = nil
 
@@ -356,9 +355,9 @@ local function UpdateTokenSkins(frame)
         end
 
         if child.elementData.maxQuantity and child.elementData.maxQuantity > 0 then
-            child.Content.Count:SetText(CommaValue(child.elementData.quantity) .. " / " .. CommaValue(child.elementData.maxQuantity))
+            child.Content.Count:SetText(BreakUpLargeNumbers(child.elementData.quantity) .. " / " .. BreakUpLargeNumbers(child.elementData.maxQuantity))
         elseif child.elementData.quantity and child.Content then
-            child.Content.Count:SetText(CommaValue(child.elementData.quantity))
+            child.Content.Count:SetText(BreakUpLargeNumbers(child.elementData.quantity))
         end
 
         if child.Content and child.Content.WatchedCurrencyCheck then

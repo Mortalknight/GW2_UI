@@ -2,7 +2,6 @@ local _, GW = ...
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local LoadAuras = GW.LoadAuras
 local PowerBarColorCustom = GW.PowerBarColorCustom
-local CommaValue = GW.CommaValue
 local UpdateBuffLayout = GW.UpdateBuffLayout
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
@@ -231,7 +230,7 @@ local function updateHealthData(self)
     if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
         formatFunction = GW.ShortValue
     else
-        formatFunction = CommaValue
+        formatFunction = BreakUpLargeNumbers
     end
 
     if health > 0 and healthMax > 0 then

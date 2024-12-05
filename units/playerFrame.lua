@@ -3,7 +3,6 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local AddToClique = GW.AddToClique
 local createNormalUnitFrame = GW.createNormalUnitFrame
 local IsIn = GW.IsIn
-local CommaValue = GW.CommaValue
 
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
@@ -12,15 +11,15 @@ local function updateHealthTextString(self, health, healthPrecentage)
     if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
         formatFunction = GW.ShortValue
     else
-        formatFunction = CommaValue
+        formatFunction = BreakUpLargeNumbers
     end
 
     if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
-        healthString = CommaValue(healthPrecentage * 100) .. "%"
+        healthString = BreakUpLargeNumbers(healthPrecentage * 100, true) .. "%"
     elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
         healthString = formatFunction(health)
     elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
-        healthString = formatFunction(health) .. " - " .. CommaValue(healthPrecentage * 100) .. "%"
+        healthString = formatFunction(health) .. " - " .. BreakUpLargeNumbers(healthPrecentage * 100, true) .. "%"
     end
 
     self.healthString:SetText(healthString)
