@@ -168,7 +168,7 @@ local function ClassColor(class, usePriestColor, forNameString)
     if type(color) ~= "table" then return end
 
     if not color.colorStr then
-        color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
+        color.colorStr = GW.RGBToHex(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3), "ff")
     elseif strlen(color.colorStr) == 6 then
         color.colorStr = "ff" .. color.colorStr
     end

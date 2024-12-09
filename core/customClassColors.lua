@@ -51,7 +51,7 @@ function GW.UpdateCustomClassColor(classTag, r, g, b)
     local color = colors and colors[classTag]
     if color then
         color.r, color.g, color.b = r, g, b
-        color.colorStr = GW.RGBToHex(r, g, b, "ff")
+        color.colorStr = GW.RGBToHex(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3), "ff")
     end
 
     local db = GW.private.CustomClassColor[classTag]
@@ -70,7 +70,7 @@ function GW.UpdateCustomClassColors()
         if color then
             if color.r ~= db.r or color.g ~= db.g or color.b ~= db.b then
                 color.r, color.g, color.b = db.r, db.g, db.b
-                color.colorStr = GW.RGBToHex(db.r, db.g, db.b, "ff")
+                color.colorStr = GW.RGBToHex(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3), "ff")
 
                 changed = true
             end
