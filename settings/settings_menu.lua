@@ -123,9 +123,6 @@ local function resetSearchables()
         of:ClearAllPoints()
         of:SetParent(of.searchAble.og_parent)
         of:SetPoint(of.searchAble.og_point, of.searchAble.og_relativePoint, of.searchAble.og_x, of.searchAble.og_y)
-        if of.searchAble.og_dd_container_parent then
-            of.container:SetParent(of.searchAble.og_dd_container_parent)
-        end
     end
 
     matchingOptionFrames = {}
@@ -215,11 +212,7 @@ local function searchInputChanged(self)
                     og_relativePoint = relativeTo,
                     og_x = xOfs,
                     og_y = yOfs,
-                    og_dd_container_parent = nil
                 }
-                if of.optionType == "dropdown" then
-                    of.searchAble.og_dd_container_parent = of.container:GetParent()
-                end
                 matchingOptionFrames[#matchingOptionFrames + 1] = of
 
                 if first then
