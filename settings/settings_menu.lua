@@ -175,16 +175,16 @@ local function searchInputChanged(self)
     if not self:HasFocus() then return end
 
     local text = self:GetText()
-    if text == nil or text == "" then
+    if text == nil or text == "" or text == SEARCH then
+        self.clearButton:Hide()
         return
     end
-    if text == SEARCH then
-        return
-    end
+
     resetMenu(true)
     hideBreadCrumbFrames()
     self:SetTextColor(1, 1, 1)
     switchCat(nil, GwSettingsSearchResultPanel)
+    self.clearButton:Show()
 
     local box_padding = 8
     local pY = -48
@@ -397,10 +397,16 @@ local function loadSettingsSearchAbleMenu()
     GwSettingsMenuSearchable.search.input:SetTextColor(178 / 255, 178 / 255, 178 / 255)
     GwSettingsMenuSearchable.search.input:SetText(SEARCH)
     GwSettingsMenuSearchable.search.input:SetScript("OnEscapePressed", fnGWP_input_OnEscapePressed)
-    GwSettingsMenuSearchable.search.input:SetScript("OnEditFocusGained", function(self) if self:GetText()==SEARCH then self:SetText("") end end)
-    GwSettingsMenuSearchable.search.input:SetScript("OnEditFocusLost", function(self) if self:GetText()==nil or self:GetText()=="" then self:SetTextColor(178 / 255, 178 / 255, 178 / 255) self:SetText(SEARCH) end end)
+    GwSettingsMenuSearchable.search.input:SetScript("OnEditFocusGained", function(self) if self:GetText()==SEARCH then self:SetText("") end self.clearButton:Show() end)
+    GwSettingsMenuSearchable.search.input:SetScript("OnEditFocusLost", function(self) if self:GetText()==nil or self:GetText()=="" then self:SetTextColor(178 / 255, 178 / 255, 178 / 255) self:SetText(SEARCH) self.clearButton:Hide() end end)
     GwSettingsMenuSearchable.search.input:SetScript("OnEnterPressed", fnGWP_input_OnEnterPressed)
-    GwSettingsMenuSearchable.search.input:SetScript("OnTextChanged",searchInputChanged)
+    GwSettingsMenuSearchable.search.input:SetScript("OnTextChanged", searchInputChanged)
+    GwSettingsMenuSearchable.search.input.clearButton:SetScript("OnClick", function(self)
+        self:GetParent():ClearFocus()
+        self:GetParent():SetText(SEARCH)
+        GW.SettingsFrameSwitchCategorieModule(2)
+    end)
+
 
     -- load the scrollbox on first load
     GwSettingsMenuSearchable.firstTimeLoaded = true

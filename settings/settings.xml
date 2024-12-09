@@ -959,6 +959,40 @@
                 <FontString inherits="GameFontNormalSmall">
                     <Color r="1" b="1" g="1"/>
                 </FontString>
+                <Frames>
+                    <Button parentKey="clearButton" hidden="true">
+                        <Size x="17" y="17"/>
+                        <Anchors>
+                            <Anchor point="RIGHT" x="-3" y="0"/>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture atlas="common-search-clearbutton" useAtlasSize="false" alpha="0.5" parentKey="texture">
+                                    <Size x="10" y="10"/>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="3" y="-3"/>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnEnter>
+                                self.texture:SetAlpha(1.0);
+                            </OnEnter>
+                            <OnLeave>
+                                self.texture:SetAlpha(0.5);
+                            </OnLeave>
+                            <OnMouseDown>
+                                if self:IsEnabled() then
+                                    self.texture:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4);
+                                end
+                            </OnMouseDown>
+                            <OnMouseUp>
+                                self.texture:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3);
+                            </OnMouseUp>
+                        </Scripts>
+                    </Button>
+                </Frames>
             </EditBox>
         </Frames>
     </Frame>

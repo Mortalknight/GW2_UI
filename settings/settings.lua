@@ -50,6 +50,7 @@ local function switchCat(index)
         end
     end
 end
+GW.SettingsFrameSwitchCategorieModule = switchCat
 AddForProfiling("settings", "switchCat", switchCat)
 
 local fnF_OnEnter = function(self)
