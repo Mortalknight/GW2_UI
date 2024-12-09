@@ -241,9 +241,6 @@ local function searchInputChanged(self)
                 of:ClearAllPoints()
                 of:SetParent(GwSettingsSearchResultPanel.scroll.scrollchild)
                 of:SetPoint("TOPLEFT", GwSettingsSearchResultPanel.scroll.scrollchild, "TOPLEFT", padding.x, padding.y)
-                if of.optionType == "dropdown" then
-                of.container:SetParent(GwSettingsSearchResultPanel.scroll)
-                end
 
                 if not of.newLine then
                     padding.x = padding.x + of:GetWidth() + box_padding
