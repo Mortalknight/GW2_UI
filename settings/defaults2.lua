@@ -8,8 +8,25 @@ GW.privateDefaults = {
         PLAYER_TRACKED_DODGEBAR_SPELL = "",
         PLAYER_TRACKED_DODGEBAR_SPELL_ID = 0,
         ISKAARAN_FISHING_NET_DATA = {},
-        CHAT_KEYWORDS_ALERT_COLOR= {r = .5, g = .5, b = .5},
+        CHAT_KEYWORDS_ALERT_COLOR = {r = .5, g = .5, b = .5},
         ChatHistoryLog = {},
+
+        -- GW2 Class colors
+        CustomClassColor = {
+            WARRIOR = { r = 90 / 255, g = 54 / 255, b = 38 / 255, a = 1 },
+            PALADIN = { r = 177 / 255, g = 72 / 255, b = 117 / 255, a = 1 },
+            HUNTER = { r = 99 / 255, g = 125 / 255, b = 53 / 255, a = 1 },
+            ROGUE = { r = 190 / 255, g = 183 / 255, b = 79 / 255, a = 1 },
+            PRIEST = { r = 205 / 255, g = 205 / 255, b = 205 / 255, a = 1 },
+            DEATHKNIGHT = { r = 148 / 255, g = 62 / 255, b = 62 / 255, a = 1 },
+            SHAMAN = { r = 30 / 255, g = 44 / 255, b = 149 / 255, a = 1 },
+            MAGE = { r = 101 / 255, g = 157 / 255, b = 184 / 255, a = 1 },
+            WARLOCK = { r = 125 / 255, g = 88 / 255, b = 154 / 255, a = 1 },
+            MONK = { r = 66 / 255, g = 151 / 255, b = 112 / 255, a = 1 },
+            DRUID = { r = 158 / 255, g = 103 / 255, b = 37 / 255, a = 1 },
+            DEMONHUNTER = { r = 72 / 255, g = 38 / 255, b = 148 / 255, a = 1 },
+            EVOKER = { r = 56 / 255, g = 99 / 255, b = 113 / 255, a = 1 }
+        },
     },
 }
 

@@ -139,32 +139,47 @@ local function FormatMoneyForChat(amount)
 end
 GW.FormatMoneyForChat = FormatMoneyForChat
 
-do
-    local function GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
-        if not class or not useClassColor then
-            return RAID_CLASS_COLORS.PRIEST
-        end
-
-        local useBlizzardClassColor = alwaysUseBlizzardColors or GW.settings.BLIZZARDCLASSCOLOR_ENABLED
-        local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
-        local colorForNameString
-
-        if type(color) ~= "table" then return end
-
-        if not color.colorStr then
-            color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
-        elseif strlen(color.colorStr) == 6 then
-            color.colorStr = "ff" .. color.colorStr
-        end
-
-        if forNameString and not useBlizzardClassColor then
-            colorForNameString = {r = min(1, color.r + 0.3), g = min(1, color.g + 0.3), b = min(1, color.b + 0.3), a = color.a, colorStr = GW.RGBToHex(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3), "ff")}
-        end
-
-        return forNameString and colorForNameString or color
+local function GetDefaultClassColor(class)
+    local color
+    if GW.settings.BLIZZARDCLASSCOLOR_ENABLED then
+        color = RAID_CLASS_COLORS[class]
+    else
+        color = GW.privateDefaults.profile.CustomClassColor[class]
     end
-    GW.GWGetClassColor = GWGetClassColor
+    if type(color) ~= "table" then return end
+    if not color.colorStr then
+        color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
+    elseif strlen(color.colorStr) == 6 then
+        color.colorStr = "ff" .. color.colorStr
+    end
+
+    return color
 end
+GW.GetDefaultClassColor = GetDefaultClassColor
+
+local function ClassColor(class, usePriestColor, forNameString)
+    if not class then return end
+    if usePriestColor then
+        return GW.PriestColors
+    end
+
+    local color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
+
+    if type(color) ~= "table" then return end
+
+    if not color.colorStr then
+        color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
+    elseif strlen(color.colorStr) == 6 then
+        color.colorStr = "ff" .. color.colorStr
+    end
+
+    if not GW.settings.BLIZZARDCLASSCOLOR_ENABLED and forNameString then
+        return {r = min(1, color.r + 0.3), g = min(1, color.g + 0.3), b = min(1, color.b + 0.3), a = color.a, colorStr = GW.RGBToHex(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3), "ff")}
+    end
+
+	return color
+end
+GW.GWGetClassColor = ClassColor
 
 --RGB to Hex
 local function RGBToHex(r, g, b, header, ending)
@@ -203,8 +218,6 @@ local function GetUnitBattlefieldFaction(unit)
     return englishFaction, localizedFaction
 end
 GW.GetUnitBattlefieldFaction = GetUnitBattlefieldFaction
-
-
 
 local function FillTable(T, map, ...)
     wipe(T)
@@ -1132,3 +1145,5 @@ local function BlizzardDropdownButtonInitializer(button, description, menu)
     end
 end
 GW.BlizzardDropdownButtonInitializer = BlizzardDropdownButtonInitializer
+
+

@@ -44,6 +44,7 @@ GW.wowpatch, GW.wowbuild, _ , GW.wowToc = GetBuildInfo()
 GW.wowbuild = tonumber(GW.wowbuild)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
 GW.NewSign = [[|TInterface\OptionsFrame\UI-OptionsFrame-NewFeatureIcon:14:14|t]]
+GW.PriestColors = {r = 0.99, g = 0.99, b = 0.99, colorStr = "fffcfcfc"}
 
 GW.HiddenFrame = CreateFrame("Frame")
 GW.HiddenFrame.HiddenString = GW.HiddenFrame:CreateFontString(nil, "OVERLAY")

@@ -179,7 +179,7 @@ local function LoadChatPanel(sWindow)
         nil,
         {["CHATFRAME_ENABLED"] = true}
     )
-    addOptionColorPicker(p.scroll.scrollchild, L["Keyword highlight color"], nil, "CHAT_KEYWORDS_ALERT_COLOR", nil, nil, {["CHATFRAME_ENABLED"] = true}, nil, nil, nil, true)
+    addOptionColorPicker(p.scroll.scrollchild, L["Keyword highlight color"], nil, "CHAT_KEYWORDS_ALERT_COLOR", GW.private.CHAT_KEYWORDS_ALERT_COLOR, GW.privateDefaults.profile.CHAT_KEYWORDS_ALERT_COLOR, nil, nil, {["CHATFRAME_ENABLED"] = true})
 
     InitPanel(p, true)
 end

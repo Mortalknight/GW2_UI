@@ -46,6 +46,7 @@ core\init.lua
 core\incompatibleAddons.lua
 settings\api.lua
 
+core\customClassColors.lua
 core\staticPopupDialogs.lua
 core\raid_debuffs.lua
 core\toolkit.lua
@@ -73,6 +74,7 @@ settings\panel_profiles.xml
 settings\panel_raid.xml
 settings\panel_party.xml
 settings\settings.lua
+settings\panel_general.lua
 settings\panel_chat.lua
 settings\panel_objectives.lua
 settings\panel_modules.lua

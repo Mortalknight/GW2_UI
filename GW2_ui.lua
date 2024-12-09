@@ -429,6 +429,8 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.charSettings = GW.Libs.AceDB:New('GW2UI_PRIVATE_DB', GW.privateDefaults)
         GW.private = GW.charSettings.profile
 
+        GW.UpdateCustomClassColors()
+
         -- setup default values on load, which are required for same skins
         if GW.settings.PIXEL_PERFECTION and not GetCVarBool("useUiScale") then
             PixelPerfection()

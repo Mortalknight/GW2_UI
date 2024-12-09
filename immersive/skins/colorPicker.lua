@@ -199,6 +199,8 @@ local function SkinAndEnhanceColorPicker()
             frame:SetWidth(345)
         end
 
+        GwColorPPDefault:SetEnabled(GwColorPPDefault.defaultColor)
+
         UpdateColorTexts(nil, nil, nil, frame.Content.HexBox)
     end)
 
@@ -241,7 +243,7 @@ local function SkinAndEnhanceColorPicker()
     classButton:SetPoint("TOPRIGHT", ColorPickerFrame, "TOPRIGHT", 0, 0)
 
     classButton:SetScript("OnClick", function()
-        local color = GW.GWGetClassColor(GW.myclass, true, true)
+        local color = GW.GetDefaultClassColor(GW.myclass)
         ColorPickerFrame.Content.ColorPicker:SetColorRGB(color.r, color.g, color.b)
         ColorPickerFrame.Content.ColorSwatchCurrent:SetColorTexture(color.r, color.g, color.b)
     end)
@@ -264,6 +266,26 @@ local function SkinAndEnhanceColorPicker()
             end
         end
     end)
+
+    -- add defaults button to the ColorPickerFrame
+	local defaultButton = CreateFrame("Button", "GwColorPPDefault", ColorPickerFrame, "GwStandardButton")
+	defaultButton:SetText(DEFAULT)
+	defaultButton:SetSize(80, 22)
+	defaultButton:Disable() -- enable when something has been copied
+	ColorPickerFrame:HookScript("OnHide", function(btn) if btn.defaultColor then wipe(btn.defaultColor) end end)
+
+    -- paste color on button click, updating frame components
+	defaultButton:SetScript("OnClick", function(btn)
+		local colors = btn.defaultColor
+
+		ColorPickerFrame.Content.ColorPicker:SetColorRGB(colors.r, colors.g, colors.b)
+		ColorPickerFrame.Content.ColorSwatchCurrent:SetColorTexture(colors.r, colors.g, colors.b)
+
+		if ColorPickerFrame.hasOpacity and colors.a then
+			ColorPickerFrame.Content.ColorPicker:SetColorAlpha(colors.a)
+			onAlphaValueChanged(nil, colorBuffer.a)
+		end
+	end)
 
     -- set up edit box frames and interior label and text areas
     for i, rgb in next, { "R", "G", "B", "A" } do
@@ -331,9 +353,10 @@ local function SkinAndEnhanceColorPicker()
     pasteButton:SetPoint("TOPLEFT", copyButton, "TOPRIGHT", 2, 0)
 
     classButton:SetPoint("TOP", copyButton, "BOTTOMRIGHT", 0, -7)
+    defaultButton:SetPoint('TOPLEFT', classButton, 'BOTTOMLEFT', 0, -2)
 
     ColorPickerFrame.Content.HexBox:ClearAllPoints()
-    ColorPickerFrame.Content.HexBox:SetPoint("TOPRIGHT", classButton, "BOTTOMRIGHT", 0, -2)
+    ColorPickerFrame.Content.HexBox:SetPoint("TOPRIGHT", defaultButton, "BOTTOMRIGHT", 0, -2)
     ColorPickerFrame.Content.HexBox:SetWidth(78)
 
     GwColorPPBoxA:SetPoint("RIGHT", ColorPickerFrame.Content.HexBox, "LEFT", -45, 0)

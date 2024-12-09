@@ -198,10 +198,12 @@ local function AddGroupHeader(panel, name)
 end
 GW.AddGroupHeader = AddGroupHeader
 
-local function AddOptionColorPicker(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
+local function AddOptionColorPicker(panel, name, desc, optionName, getterSetter, default, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
 
     opt.optionType = "colorPicker"
+    opt.getterSetter = getterSetter
+    opt.default = default
 
     return opt
 end
@@ -280,6 +282,8 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
         elseif type == "button" then
             _G[name]:Enable()
             _G[name].title:SetTextColor(0, 0, 0)
+        elseif type == "colorPicker" then
+            _G[name].button:Enable()
         end
     else
         _G[name].title:SetTextColor(0.4, 0.4, 0.4)
@@ -298,6 +302,8 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
             _G[name].dropDown.Text:SetTextColor(0.4, 0.4, 0.4)
         elseif type == "button" then
             _G[name]:Disable()
+        elseif type == "colorPicker" then
+            _G[name].button:Disable()
         end
     end
 end
@@ -340,14 +346,47 @@ local function checkDependenciesOnLoad()
     end
 end
 
-local function ShowColorPicker(r, g, b, a, changedCallback)
+local function ColorPickerFrameCallback(restore, frame, buttonBackground)
+    if ColorPickerFrame.noColorCallback then return end
+    local newR, newG, newB
+    if restore then
+     -- The user bailed, we extract the old color from the table created by ShowColorPicker.
+     newR, newG, newB = unpack(restore)
+    else
+     -- Something changed
+      newR, newG, newB = ColorPickerFrame.Content.ColorPicker:GetColorRGB()
+    end
+    -- Update our internal storage.
+
+    local color = frame.getterSetter
+    color.r = newR
+    color.g = newG
+    color.b = newB
+    frame.getterSetter = color
+    buttonBackground:SetColorTexture(newR, newG, newB)
+
+    if frame.callback then
+        frame.callback(newR, newG, newB)
+    end
+end
+
+local function ShowColorPicker(frame)
+    local r, g, b = frame.getterSetter.r, frame.getterSetter.g, frame.getterSetter.b
     ColorPickerFrame.Content.ColorPicker:SetColorRGB(r, g, b)
-    ColorPickerFrame.hasOpacity = (a ~= nil)
-    ColorPickerFrame.opacity = a
-    ColorPickerFrame.previousValues = {r, g, b, a}
-    ColorPickerFrame.func = changedCallback
-    ColorPickerFrame.opacityFunc = changedCallback
-    ColorPickerFrame.cancelFunc = changedCallback
+    ColorPickerFrame.hasOpacity = (frame.getterSetter.a ~= nil)
+    ColorPickerFrame.opacity = frame.getterSetter.a
+    ColorPickerFrame.previousValues = {r, g, b, frame.getterSetter.a}
+    ColorPickerFrame.func = function() ColorPickerFrameCallback(nil, frame, frame.button.bg) end
+    ColorPickerFrame.opacityFunc = function() ColorPickerFrameCallback(nil, frame, frame.button.bg) end
+    ColorPickerFrame.cancelFunc = function(restore) ColorPickerFrameCallback(restore, frame, frame.button.bg) end
+
+    if frame.default then
+        if not GwColorPPDefault.defaultColor then
+            GwColorPPDefault.defaultColor = {}
+        end
+
+        GwColorPPDefault.defaultColor = frame.default
+    end
     ColorPickerFrame:Show()
     ColorPickerFrame:SetFrameStrata('FULLSCREEN_DIALOG')
     ColorPickerFrame:SetClampedToScreen(true)
@@ -403,7 +442,7 @@ local function RefreshSettingsAfterProfileSwitch()
                     of.callback(of.inputFrame.input)
                 end
             elseif of.optionType == "colorPicker" then
-                local color = of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]
+                local color = of.getterSetter -- here we have a setter/getter like GW.settings.SETTINGNAME
                 of.button.bg:SetColorTexture(color.r, color.g, color.b)
             elseif of.optionType == "dropdown" then
                 of.dropDown:GenerateMenu()
@@ -511,6 +550,8 @@ local function InitPanel(panel, hasScroll)
         of.isPrivateSetting = v.isPrivateSetting
         of.callback = v.callback
         of.hasCheckbox = v.hasCheckbox
+        of.getterSetter = v.getterSetter
+        of.default = v.default
         --need this for searchables
         of.forceNewLine = v.forceNewLine
 
@@ -549,36 +590,13 @@ local function InitPanel(panel, hasScroll)
         of:SetScript("OnLeave", GameTooltip_Hide)
 
         if v.optionType == "colorPicker" then
-            local color = of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]
-            of.button.bg:SetColorTexture(color.r, color.g, color.b)
+            local setting = of.getterSetter
+            of.button.bg:SetColorTexture(setting.r, setting.g, setting.b)
             of.button:SetScript("OnClick", function()
                 if ColorPickerFrame:IsShown() then
                     HideUIPanel(ColorPickerFrame)
                 else
-                    color = of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]
-                    ShowColorPicker(color.r, color.g, color.b, nil, function(restore)
-                        if ColorPickerFrame.noColorCallback then return end
-                        local newR, newG, newB
-                        if restore then
-                         -- The user bailed, we extract the old color from the table created by ShowColorPicker.
-                         newR, newG, newB = unpack(restore)
-                        else
-                         -- Something changed
-                          newR, newG, newB = ColorPickerFrame.Content.ColorPicker:GetColorRGB()
-                        end
-                        -- Update our internal storage.
-
-                        local color = of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]
-                        color.r = newR
-                        color.g = newG
-                        color.b = newB
-                        if of.isPrivateSetting then
-                            GW.private[of.optionName] = color
-                        else
-                            GW.settings[of.optionName] = color
-                        end
-                        of.button.bg:SetColorTexture(newR, newG, newB)
-                    end)
+                    ShowColorPicker(of)
                 end
             end)
         elseif v.optionType == "dropdown" then
@@ -1049,6 +1067,7 @@ local function LoadSettings()
 
     GW.LoadOverviewPanel(sWindow)
     GW.LoadModulesPanel(sWindow)
+    GW.LoadGeneralPanel(sWindow)
     GW.LoadPlayerPanel(sWindow)
     GW.LoadTargetPanel(sWindow)
     GW.LoadActionbarPanel(sWindow)

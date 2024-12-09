@@ -106,7 +106,7 @@ end
 
 local function CreateTooltipLine(role, class, spec, amount)
     local specIcon = localizedSpecNameToIcon[class] and localizedSpecNameToIcon[class][spec]
-    local color = GW.GWGetClassColor(class, true, true)
+    local color = GW.GWGetClassColor(class, false, true)
 
     return format("|T%s:16:16:0:0:64:64:4:60:4:60|t", GW.nameRoleIconPure[role]) .. GW.GetClassIconStringWithStyle(class, 14, 14) .. " " .. (specIcon and GW.GetIconString(specIcon, 14, 14, true) or "") ..
     format(" |c%s", color.colorStr) .. (LOCALIZED_CLASS_NAMES_MALE[class] or "") .. " (" .. spec .. ")|r" .. (amount <= 1 and "" or " x " .. tostring(amount))

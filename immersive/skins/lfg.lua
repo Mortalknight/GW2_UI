@@ -713,7 +713,7 @@ local function SkinLookingForGroupFrames()
                             icon.line = line
                         end
 
-                        local color = GW.GWGetClassColor(class, true, false)
+                        local color = GW.GWGetClassColor(class)
                         icon.line:SetVertexColor(color.r, color.g, color.b)
                         icon.line:SetAlpha(1)
                     elseif parent and icon.line then

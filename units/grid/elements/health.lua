@@ -29,7 +29,7 @@ local function PostUpdateHealthColor(self, unit)
         if parent.useClassColor then
             --if we are here we need to class color the frame
             local _, englishClass = UnitClassRnd(unit)
-            local color = self.fakeColor or GW.GWGetClassColor(englishClass, true)
+            local color = self.fakeColor or GW.GWGetClassColor(englishClass)
             self:SetStatusBarColor(color.r, color.g, color.b)
             self.fakeColor = color
         end

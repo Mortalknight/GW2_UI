@@ -921,7 +921,7 @@ local function LoadPDBagList(fmMenu)
     fmGDR.characterName:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
     fmGDR.characterData:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     fmGDR.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
-    local color = GWGetClassColor(GW.myclass, true)
+    local color = GWGetClassColor(GW.myclass)
 
     SetClassIcon(fmGDR.classIcon, GW.myClassID)
 

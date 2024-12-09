@@ -192,7 +192,7 @@ local function LoadFriendList(tabContainer)
             local info = C_FriendList.GetFriendInfoByIndex(button.id)
             if info.connected then
                 local name, level, class = info.name, info.level, info.className
-                local classTag, color = GW.UnlocalizedClassName(class), GW.GWGetClassColor(GW.UnlocalizedClassName(class), true, true, true)
+                local classTag, color = GW.UnlocalizedClassName(class), GW.GWGetClassColor(GW.UnlocalizedClassName(class), false, true)
                 status = info.dnd and "DND" or info.afk and "AFK" or "Online"
                 local diffColor = GetQuestDifficultyColor(level)
                 local diff = level ~= 0 and format("FF%02x%02x%02x", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255) or "FFFFFFFF"
@@ -221,7 +221,7 @@ local function LoadFriendList(tabContainer)
                     if client == BNET_CLIENT_WOW then
                         local level = info.gameAccountInfo.characterLevel
                         local characterName = info.gameAccountInfo.characterName
-                        local classcolor = GW.GWGetClassColor(GW.UnlocalizedClassName(info.gameAccountInfo.className), true, true, true)
+                        local classcolor = GW.GWGetClassColor(GW.UnlocalizedClassName(info.gameAccountInfo.className), false, true)
                         if characterName then
                             local diffColor = GetQuestDifficultyColor(level)
                             local diff = level ~= 0 and format("FF%02x%02x%02x", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255) or "FFFFFFFF"

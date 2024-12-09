@@ -409,7 +409,7 @@ GW.UpdateMissingRaidBuffCustomSpell = UpdateMissingRaidBuffCustomSpell
 local function LoadRaidbuffReminder()
     local rbr = CreateFrame("Frame", "GW_RaidBuffReminder", UIParent)
 
-    classColor = GW.GWGetClassColor(GW.myclass, true)
+    classColor = GW.GWGetClassColor(GW.myclass)
 
     rbr:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
