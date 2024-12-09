@@ -5,7 +5,7 @@ local friendTable, BNTable, tableList, clientSorted = {}, {}, {}, {}
 local totalOnlineString = strjoin("", FRIENDS_LIST_ONLINE, ": %s/%s")
 local tthead = GW.myfaction == "Alliance" and GW.FACTION_COLOR[2] or GW.FACTION_COLOR[1]
 local activezone, inactivezone = {r = 0.3, g = 1.0, b = 0.3}, {r = 0.65, g = 0.65, b = 0.65}
-local levelNameString = "|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r"
+local levelNameString = "|cff%02x%02x%02x%d|r |c%s%s|r"
 local levelNameClassString = "|cff%02x%02x%02x%d|r %s%s%s"
 local retailID, classicID, tbcID, wrathID = WOW_PROJECT_MAINLINE, WOW_PROJECT_CLASSIC, WOW_PROJECT_BURNING_CRUSADE_CLASSIC or 5, WOW_PROJECT_WRATH_CLASSIC or 11
 
@@ -332,7 +332,7 @@ local function Friends_OnEnter(self)
     if onlineFriends > 0 then
         for _, info in ipairs(friendTable) do
             if info.online then
-                local zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+                zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
                 if zoneText and (zoneText == info.zone) then zonec = activezone else zonec = inactivezone end
                 classc, levelc = GW.GWGetClassColor(info.class, false, true), GetQuestDifficultyColor(info.level)
                 if not classc then classc = levelc end
@@ -368,7 +368,7 @@ local function Friends_OnEnter(self)
 
                         if not classc then classc = RAID_CLASS_COLORS.PRIEST end
 
-                        TooltipAddXLine(true, header, format(levelNameString .. "%s%s", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.characterName, inGroup(info.characterName, info.realmName), status), info.accountName, 238, 238, 238, 238, 238, 238)
+                        TooltipAddXLine(true, header, format(levelNameString .. "%s%s", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.colorStr, info.characterName, inGroup(info.characterName, info.realmName), status), info.accountName, 238, 238, 238, 238, 238, 238)
                         if shiftDown then
                             if zoneText and (zoneText == info.zoneName) then zonec = activezone else zonec = inactivezone end
                             if GW.myrealm == info.realmName then realmc = activezone else realmc = inactivezone end
@@ -432,14 +432,14 @@ local function Friends_OnClick(self, button)
                     local classc, levelc = GW.GWGetClassColor(info.class, false, true), GetQuestDifficultyColor(info.level)
                     if not classc then classc = levelc end
 
-                    local name = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name)
+                    local name = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.colorStr, info.name)
                     submenuWisper:CreateButton(name, function()
                         whisperClick(info.name)
                     end)
 
                     table.insert(tempTeble, name)
                     if inGroup(info.name) == "" then
-                        submenuInvite:CreateButton(format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name), function()
+                        submenuInvite:CreateButton(format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.colorStr, info.name), function()
                             inviteClick(info.name, info.guid)
                         end)
                     end
@@ -468,7 +468,7 @@ local function Friends_OnClick(self, button)
                         if not classc then classc = levelc end
 
                         if info.wowProjectID == WOW_PROJECT_ID then
-                            submenuInvite:CreateButton(format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.characterName), function()
+                            submenuInvite:CreateButton(format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.colorStr, info.characterName), function()
                                 inviteClick(info.gameID, info.guid)
                             end)
                         end

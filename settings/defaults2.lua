@@ -958,6 +958,7 @@ GW.globalDefault = {
         AUCTIONATOR_SKIN_ENABLED = true,
         FLIGHTMAP_SKIN_ENABLED= true,
         BLIZZARDCLASSCOLOR_ENABLED= false,
+        brightenUpClassColorFontString = true,
         ADDONLIST_SKIN_ENABLED= true,
         BINDINGS_SKIN_ENABLED= true,
         BLIZZARD_OPTIONS_SKIN_ENABLED= true,

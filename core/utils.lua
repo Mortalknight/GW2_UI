@@ -164,17 +164,13 @@ local function ClassColor(class, usePriestColor, forNameString)
     end
 
     local color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
-
+    local brightUpValue = (not GW.settings.BLIZZARDCLASSCOLOR_ENABLED and GW.settings.brightenUpClassColorFontString and 0.3) or 0
     if type(color) ~= "table" then return end
 
-    if not color.colorStr then
-        color.colorStr = GW.RGBToHex(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3), "ff")
-    elseif strlen(color.colorStr) == 6 then
-        color.colorStr = "ff" .. color.colorStr
-    end
+    color.colorStr = GW.RGBToHex(min(1, color.r + brightUpValue), min(1, color.g + brightUpValue), min(1, color.b + brightUpValue), "ff")
 
-    if not GW.settings.BLIZZARDCLASSCOLOR_ENABLED and forNameString then
-        return {r = min(1, color.r + 0.3), g = min(1, color.g + 0.3), b = min(1, color.b + 0.3), a = color.a, colorStr = GW.RGBToHex(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3), "ff")}
+    if forNameString then
+        return {r = min(1, color.r + brightUpValue), g = min(1, color.g + brightUpValue), b = min(1, color.b + brightUpValue), a = color.a, colorStr = GW.RGBToHex(min(1, color.r + brightUpValue), min(1, color.g + brightUpValue), min(1, color.b + brightUpValue), "ff")}
     end
 
 	return color

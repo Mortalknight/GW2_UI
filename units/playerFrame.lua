@@ -80,10 +80,10 @@ local function unitFrameData(self, lvl)
 
     if GW.settings.player_CLASS_COLOR then
         local _, englishClass = UnitClass(self.unit)
-        local color = GW.GWGetClassColor(englishClass)
+        local color = GW.GWGetClassColor(englishClass, false, true)
 
         self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
-        self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
+        self.nameString:SetTextColor(color.r, color.g, color.b, color.a)
     else
         self.health:SetStatusBarColor(0.207, 0.392, 0.16, 1)
         self.nameString:SetTextColor(0.207, 0.392, 0.16, 1)

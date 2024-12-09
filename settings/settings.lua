@@ -893,6 +893,7 @@ local function InitPanel(panel, hasScroll)
                     if self:GetChecked() then
                         toSet = true
                     end
+                    print(of.optionName, of.isPrivateSetting)
                     if of.isPrivateSetting then
                         GW.private[of.optionName] = toSet
                     else

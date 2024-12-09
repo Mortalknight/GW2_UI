@@ -84,6 +84,7 @@ local function LoadGeneralPanel(sWindow)
             GW.UpdateCustomClassColor(tag, color.r, color.g, color.b)
         end
     end, nil, nil, nil, nil, L["Custom Class Colors"])
+    addOption(p.scroll.scrollchild, L["Increase class name font string brightness"], nil, "brightenUpClassColorFontString", GW.UpdateCustomClassColors, nil, {["BLIZZARDCLASSCOLOR_ENABLED"] = false}, nil, nil, L["Custom Class Colors"])
 
     for i = 1, #CLASS_SORT_ORDER do
         local name, tag = GetClassInfo(i)

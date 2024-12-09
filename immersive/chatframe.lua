@@ -661,7 +661,7 @@ local function CheckKeyword(message, author)
                 if wordMatch then
                     local classColorTable = GW.GWGetClassColor(classMatch, false, true)
                     if classColorTable then
-                        word = gsub(word, gsub(tempWord, "%-","%%-"), format("\124cff%.2x%.2x%.2x%s\124r", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
+                        word = gsub(word, gsub(tempWord, "%-","%%-"), format("\124c%s%s\124r", classColorTable.colorStr, tempWord))
                     end
                 end
             end
@@ -922,7 +922,7 @@ local function GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg1
 		local data = GW_GetPlayerInfoByGUID(arg12)
 		local color = data and data.classColor
 		if color then
-			return format("|cff%.2x%.2x%.2x%s|r", color.r * 255, color.g * 255, color.b * 255, name)
+			return format("|c%s%s|r", color.colorStr, name)
 		end
 	end
 
@@ -950,7 +950,7 @@ local function ChatFrame_ReplaceIconAndGroupExpressions(message, noIconReplaceme
 					if name and subgroup == groupIndex then
 						local classColorTable = GW.GWGetClassColor(classFileName)
 						if classColorTable then
-							name = format("|cff%.2x%.2x%.2x%s|r", classColorTable.r * 255, classColorTable.g * 255, classColorTable.b * 255, name)
+							name = format("|c%s%s|r", classColorTable.colorStr, name)
 						end
 						groupList = groupList..(groupList == "[" and "" or PLAYER_LIST_DELIMITER)..name
 					end
