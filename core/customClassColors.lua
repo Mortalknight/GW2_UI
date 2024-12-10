@@ -4,29 +4,27 @@ local callbacks = {}
 
 function GW.CustomClassColorUpdate()
     for func in next, callbacks do
-        if type(func) == "function" then
-            func()
-        end
+        func()
     end
 end
 
-function GW.CustomClassColorRegister(func)
+function GW.CustomClassColorRegister(_, func)
     callbacks[func] = true
 end
 
-function GW.CustomClassColorUnregister(func)
+function GW.CustomClassColorUnregister(_, func)
     callbacks[func] = nil
 end
 
-function GW.CustomClassColorNotify()
-    local changed = GW.UpdateCustomClassColors()
+function GW.CustomClassColorNotify(_, changed)
+    GW.UpdateCustomClassColors()
     if changed then
         GW.CustomClassColorUpdate()
     end
 end
 
-function GW.CustomClassColorClassToken(className)
-    return GW.UnlocalizedClassName(className)
+function GW.CustomClassColorClassToken(_, className)
+    return GW:UnlocalizedClassName(className)
 end
 
 local meta = {
@@ -46,7 +44,7 @@ function GW.SetupCustomClassColors()
     return object
 end
 
-function GW.UpdateCustomClassColor(classTag, r, g, b)
+function GW.UpdateCustomClassColor(classTag, r, g, b, changed)
     local colors = CUSTOM_CLASS_COLORS
     local color = colors and colors[classTag]
     local brightUpValue = not GW.settings.BLIZZARDCLASSCOLOR_ENABLED and GW.settings.brightenUpClassColorFontString and 0.3 or 0
@@ -60,12 +58,12 @@ function GW.UpdateCustomClassColor(classTag, r, g, b)
     if db then
         db.r, db.g, db.b = r, g, b
     end
-    GW.CustomClassColorNotify()
+    GW.CustomClassColorNotify(nil, changed)
 end
 
 function GW.UpdateCustomClassColors()
     local custom = CUSTOM_CLASS_COLORS or GW.SetupCustomClassColors()
-    local colors, changed = GW.private.CustomClassColor
+    local colors = GW.private.CustomClassColor
     local brightUpValue = not GW.settings.BLIZZARDCLASSCOLOR_ENABLED and GW.settings.brightenUpClassColorFontString and 0.3 or 0
 
     for classTag, db in next, colors do
@@ -74,11 +72,7 @@ function GW.UpdateCustomClassColors()
             if color.r ~= db.r or color.g ~= db.g or color.b ~= db.b then
                 color.r, color.g, color.b = db.r, db.g, db.b
                 color.colorStr = GW.RGBToHex(min(1, color.r + brightUpValue), min(1, color.g + brightUpValue), min(1, color.b + brightUpValue), "ff")
-
-                changed = true
             end
         end
     end
-
-    return changed
 end

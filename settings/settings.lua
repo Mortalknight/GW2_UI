@@ -360,6 +360,7 @@ local function ColorPickerFrameCallback(restore, frame, buttonBackground)
     -- Update our internal storage.
 
     local color = frame.getterSetter
+    local changed = color.r ~= newR or color.g ~= newG or color.b ~= newB
     color.r = newR
     color.g = newG
     color.b = newB
@@ -367,7 +368,7 @@ local function ColorPickerFrameCallback(restore, frame, buttonBackground)
     buttonBackground:SetColorTexture(newR, newG, newB)
 
     if frame.callback then
-        frame.callback(newR, newG, newB)
+        frame.callback(newR, newG, newB, changed)
     end
 end
 
@@ -893,7 +894,6 @@ local function InitPanel(panel, hasScroll)
                     if self:GetChecked() then
                         toSet = true
                     end
-                    print(of.optionName, of.isPrivateSetting)
                     if of.isPrivateSetting then
                         GW.private[of.optionName] = toSet
                     else
