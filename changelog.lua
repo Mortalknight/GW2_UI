@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("3.3.18",{
+    {ct.change,[=[BigWigs fix]=]},
+})
+
 addChange("3.3.17",{
     {ct.change,[=[Update for 1.15.5]=]},
 })
