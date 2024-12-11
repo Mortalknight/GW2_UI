@@ -502,7 +502,7 @@ local function AddTargetInfo(self, unit)
             if not targetColor.colorStr then targetColor.colorStr = GW.RGBToHex(targetColor.r, targetColor.g, targetColor.b, "ff") end
         end
 
-        self:AddDoubleLine(format("%s:", TARGET), format("|cff%s%s|r", targetColor.colorStr, UnitName(unitTarget)))
+        self:AddDoubleLine(format("%s:", TARGET), format("|c%s%s|r", targetColor.colorStr, UnitName(unitTarget)))
     end
 
     if IsInGroup() then
