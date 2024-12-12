@@ -90,7 +90,7 @@ local function BuildPrefixValues()
     local shortValueDec = format("%%.%df", GW.settings.ShortHealthValuesDecimalLength or 1)
 
     for _, style in ipairs(GW.ShortPrefixValues) do
-        style[3] = shortValueDec .. style[2]
+        style[3] = shortValueDec
     end
 end
 GW.BuildPrefixValues = BuildPrefixValues
@@ -102,11 +102,11 @@ local function ShortValue(value)
     for i = 1, #values do
         local arg1, arg2, arg3 = unpack(values[i])
         if abs_value >= arg1 then
-            return format(arg3, value / arg1)
+            return GW.GetLocalizedNumber(format(arg3, value / arg1)) .. arg2
         end
     end
 
-    return format("%.0f", value)
+    return GW.GetLocalizedNumber(format("%.0f", value))
 end
 GW.ShortValue = ShortValue
 
@@ -301,10 +301,16 @@ local function SplitNumber(number)
     local integer_part, decimal_part = tostring(number):match("^(%d+)%.?(%d*)$")
 
     integer_part = tonumber(integer_part)
-    decimal_part = tonumber(decimal_part) or 0
+    decimal_part = decimal_part ~= "" and decimal_part or "0"
     return integer_part, decimal_part
 end
 GW.SplitNumber = SplitNumber
+
+local function GetLocalizedNumber(number)
+    local integer_part, decimal_part = GW.SplitNumber(number)
+    return format("%s%s%s", BreakUpLargeNumbers(integer_part, true), DECIMAL_SEPERATOR, decimal_part)
+end
+GW.GetLocalizedNumber = GetLocalizedNumber
 
 local function CommaValue(n)
     n = RoundDec(n)
