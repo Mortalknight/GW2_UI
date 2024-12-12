@@ -111,9 +111,9 @@ end
 GW.ShortValue = ShortValue
 
 local function SetPointsRestricted(frame)
-	if frame and not pcall(frame.GetPoint, frame) then
-		return true
-	end
+    if frame and not pcall(frame.GetPoint, frame) then
+        return true
+    end
 end
 GW.SetPointsRestricted = SetPointsRestricted
 
@@ -173,7 +173,7 @@ local function ClassColor(class, usePriestColor, forNameString)
         return {r = min(1, color.r + brightUpValue), g = min(1, color.g + brightUpValue), b = min(1, color.b + brightUpValue), a = color.a, colorStr = GW.RGBToHex(min(1, color.r + brightUpValue), min(1, color.g + brightUpValue), min(1, color.b + brightUpValue), "ff")}
     end
 
-	return color
+    return color
 end
 GW.GWGetClassColor = ClassColor
 
@@ -188,7 +188,7 @@ GW.RGBToHex = RGBToHex
 
 local function HexToRGB(hex)
     local rhex, ghex, bhex = strsub(hex, 1, 2), strsub(hex, 3, 4), strsub(hex, 5, 6)
-	return tonumber(rhex, 16) / 255, tonumber(ghex, 16) / 255, tonumber(bhex, 16) / 255
+    return tonumber(rhex, 16) / 255, tonumber(ghex, 16) / 255, tonumber(bhex, 16) / 255
 end
 GW.HexToRGB = HexToRGB
 
@@ -293,9 +293,27 @@ end
 GW.TimeCount = TimeCount
 
 local function RoundDec(number, decimals)
-    return (("%%.%df"):format(decimals)):format(number)
+    if type(number) ~= 'number' then
+        return number, decimals
+    end
+
+    if decimals and decimals > 0 then
+        local mult = 10 ^ decimals
+        return floor(number * mult + 0.5) / mult
+    end
+
+    return floor(number + 0.5)
 end
 GW.RoundDec = RoundDec
+
+local function SplitNumber(number)
+    local integer_part, decimal_part = tostring(number):match("^(%d+)%.?(%d*)$")
+
+    integer_part = tonumber(integer_part)
+    decimal_part = tonumber(decimal_part) or 0
+    return integer_part, decimal_part
+end
+GW.SplitNumber = SplitNumber
 
 local function CommaValue(n)
     n = RoundDec(n)
@@ -333,34 +351,34 @@ end
 GW.Diff = Diff
 
 local function lerp(v0, v1, t)
-  t = max(0,min(1,t))
+t = max(0,min(1,t))
     if v0 == nil then
         v0 = 0
     end
-   return (1 - t) * v0 + t * v1;
+return (1 - t) * v0 + t * v1;
 end
 GW.lerp = lerp
 local function lerpEaseOut(v0,v1,t)
-  t = min(1,t)
-  t = math.sin(t * math.pi * 0.5);
+t = min(1,t)
+t = math.sin(t * math.pi * 0.5);
 
-  return lerp(v0,v1,t)
+return lerp(v0,v1,t)
 end
 GW.lerpEaseOut = lerpEaseOut
 
 local function signum(number)
-   if number > 0 then
-      return 1
-   elseif number < 0 then
-      return -1
-   else
-      return 0
-   end
+if number > 0 then
+    return 1
+elseif number < 0 then
+    return -1
+else
+    return 0
+end
 end
 
 local function MoveTowards( current,  target,  maxDelta)
     if math.abs(target - current) <= maxDelta then
-      return target;
+    return target;
     end
     return current + signum(target - current) * maxDelta;
 end
@@ -777,26 +795,23 @@ end
 GW.TextGradient = TextGradient
 
 local function StatusBarColorGradient(bar, value, max, backdrop)
-	if not (bar and value) then return end
+    if not (bar and value) then return end
 
-	local current = (not max and value) or (value and max and max ~= 0 and value / max)
-	if not current then return end
+    local current = (not max and value) or (value and max and max ~= 0 and value / max)
+    if not current then return end
 
-	local r, g, b = ColorGradient(current, 0.8, 0, 0, 0.8, 0.8, 0, 0, 0.8,  0)
-	bar:SetStatusBarColor(r, g, b)
+    local r, g, b = ColorGradient(current, 0.8, 0, 0, 0.8, 0.8, 0, 0, 0.8,  0)
+    bar:SetStatusBarColor(r, g, b)
 
-	if not backdrop then
-		backdrop = bar.backdrop
-	end
+    if not backdrop then
+        backdrop = bar.backdrop
+    end
 
-	if backdrop then
-		backdrop:SetBackdropColor(r * 0.25, g * 0.25, b * 0.25)
-	end
+    if backdrop then
+        backdrop:SetBackdropColor(r * 0.25, g * 0.25, b * 0.25)
+    end
 end
 GW.StatusBarColorGradient = StatusBarColorGradient
-
-
-
 
 
 local Fn = function (...) return not GW.Matches(...) end
@@ -941,17 +956,17 @@ end
 GW.GetClassIconStringWithStyle = GetClassIconStringWithStyle
 
 local function IsGroupMember(name)
-	if name then
-		if UnitInParty(name) then
-			return 1
-		elseif UnitInRaid(name) then
-			return 2
-		elseif name == GW.myname then
-			return 3
-		end
-	end
+    if name then
+        if UnitInParty(name) then
+            return 1
+        elseif UnitInRaid(name) then
+            return 2
+        elseif name == GW.myname then
+            return 3
+        end
+    end
 
-	return false
+    return false
 end
 GW.IsGroupMember = IsGroupMember
 

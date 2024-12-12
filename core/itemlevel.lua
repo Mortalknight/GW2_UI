@@ -195,11 +195,28 @@ local function CalculateAverageItemLevel(iLevelDB, unit)
 end
 GW.CalculateAverageItemLevel = CalculateAverageItemLevel
 
+local function GetPlayerItemLevel()
+    local average, equipped, pvpItemLevel = GetAverageItemLevel()
+    local averageLocal, equippedLocal, pvpItemLevelLocal
+    average, equipped, pvpItemLevel = RoundDec(average, 2), RoundDec(equipped, 2), RoundDec(pvpItemLevel, 2)
+
+    local averageSplit1, averageSplit2 = GW.SplitNumber(average)
+    local equippedSplit1, equippedSplit2 = GW.SplitNumber(equipped)
+    local pvpItemLevelSplit1, pvpItemLevelSplit2 = GW.SplitNumber(pvpItemLevel)
+    averageLocal = string.format("%s%s%02d", FormatLargeNumber(averageSplit1), DECIMAL_SEPERATOR, averageSplit2)
+    equippedLocal = string.format("%s%s%02d", FormatLargeNumber(equippedSplit1), DECIMAL_SEPERATOR, equippedSplit2)
+    pvpItemLevelLocal = string.format("%s%s%02d", FormatLargeNumber(pvpItemLevelSplit1), DECIMAL_SEPERATOR, pvpItemLevelSplit2)
+
+    return average, equipped, pvpItemLevel, averageLocal, equippedLocal, pvpItemLevelLocal
+end
+GW.GetPlayerItemLevel = GetPlayerItemLevel
+
 do
     local iLevelDB, tryAgain, slotInfo = {}, {}, nil
     local function GetUnitItemLevel(unit)
         if UnitIsUnit(unit, "player") then
-            return format("%0.2f", RoundDec((select(2, GetAverageItemLevel())), 2))
+            local _, equipped = GW.GetPlayerItemLevel()
+			return equipped
         end
 
         if next(iLevelDB) then wipe(iLevelDB) end

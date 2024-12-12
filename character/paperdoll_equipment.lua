@@ -500,14 +500,12 @@ end
 GW.AddForProfiling("paperdoll_equipment", "getDurabilityListFrame", getDurabilityListFrame)
 
 local function updateStats()
-    local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
-    avgItemLevelEquipped = math.floor(avgItemLevelEquipped)
-    avgItemLevel = math.floor(avgItemLevel)
-    if avgItemLevelEquipped < avgItemLevel then
-        avgItemLevelEquipped = math.floor(avgItemLevelEquipped) .. "(" .. math.floor(avgItemLevel) .. ")"
+    local average, equipped, _, averageLocal, equippedLocal, _ = GW.GetPlayerItemLevel()
+    if equipped < average then
+        equippedLocal = equippedLocal .. "(" .. averageLocal .. ")"
     end
 
-    GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
+    GwDressingRoom.itemLevel:SetText(equippedLocal)
     GwDressingRoom.itemLevel:SetTextColor(GetItemLevelColor())
 
     local statFrame
@@ -939,6 +937,30 @@ local function LoadPDBagList(fmMenu)
     local fmGPDSI = CreateFrame("Frame", "GwPaperDollSelectedIndicator", fmGDR, "GwPaperDollSelectedIndicator")
     fmGPDSI:SetScript("OnShow", indicatorAnimation)
 
+
+    fmGDR.itemLevelFrame:SetScript("OnEnter", function(self)
+        local average, equipped, _, averageLocal, equippedLocal, pvpItemLevelLocal = GW.GetPlayerItemLevel()
+        local minItemLevel = C_PaperDollInfo.GetMinItemLevel()
+        local displayItemLevel = math.max(minItemLevel or 0, equipped)
+
+        self.tooltip = HIGHLIGHT_FONT_COLOR_CODE .. format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_AVERAGE_ITEM_LEVEL) .. " " .. averageLocal
+        if displayItemLevel ~= average then
+            self.tooltip = self.tooltip .. "  " .. format(STAT_AVERAGE_ITEM_LEVEL_EQUIPPED:gsub("%%d", "%%s"), equippedLocal)
+        end
+        self.tooltip = self.tooltip .. FONT_COLOR_CODE_CLOSE
+        self.tooltip2 = STAT_AVERAGE_ITEM_LEVEL_TOOLTIP
+        self.tooltip2 = self.tooltip2 .. "\n\n" .. STAT_AVERAGE_PVP_ITEM_LEVEL:gsub("%%d", "%%s"):format(pvpItemLevelLocal)
+        if not self.tooltip then
+            return
+        end
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+        GameTooltip:SetText(self.tooltip)
+        if self.tooltip2 then
+            GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+        end
+        GameTooltip:Show()
+    end)
+fmGDR.itemLevelFrame:SetScript("OnLeave", GameTooltip_Hide)
     updateStats()
 end
 GW.LoadPDBagList = LoadPDBagList
