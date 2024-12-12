@@ -293,16 +293,7 @@ end
 GW.TimeCount = TimeCount
 
 local function RoundDec(number, decimals)
-    if type(number) ~= 'number' then
-        return number, decimals
-    end
-
-    if decimals and decimals > 0 then
-        local mult = 10 ^ decimals
-        return floor(number * mult + 0.5) / mult
-    end
-
-    return floor(number + 0.5)
+    return (("%%.%df"):format(decimals)):format(number)
 end
 GW.RoundDec = RoundDec
 
