@@ -500,12 +500,12 @@ end
 GW.AddForProfiling("paperdoll_equipment", "getDurabilityListFrame", getDurabilityListFrame)
 
 local function updateStats()
-    local average, equipped, _, averageLocal, equippedLocal, _ = GW.GetPlayerItemLevel()
+    local average, equipped = GW.GetPlayerItemLevel()
     if equipped < average then
-        equippedLocal = equippedLocal .. "(" .. averageLocal .. ")"
+        GwDressingRoom.itemLevel:SetText(math.floor(equipped) .. "(" .. math.floor(average) .. ")")
+    else
+        GwDressingRoom.itemLevel:SetText(math.floor(equipped))
     end
-
-    GwDressingRoom.itemLevel:SetText(equippedLocal)
     GwDressingRoom.itemLevel:SetTextColor(GetItemLevelColor())
 
     local statFrame
