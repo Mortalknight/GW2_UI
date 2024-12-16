@@ -737,8 +737,6 @@ local function evPlayerLogin(self)
         QueueStatusButton:SetParent(UIParent)
     end
 
-   
-
     if GW.settings.TOOLTIPS_ENABLED then
         GW.LoadTooltips()
     end
@@ -866,8 +864,6 @@ local function evPlayerLogin(self)
         GW.InitializeRaidFrames()
     end
 
-    GW.UpdateHudScale()
-
     if (forcedMABags) then
         GW.Notice(L["MoveAnything bag handling disabled."])
     end
@@ -886,6 +882,9 @@ local function evPlayerLogin(self)
     GW.UpdateCharData()
 
     GW.HandleBlizzardEditMode()
+
+    GW.UpdateHudScale()
+    GW.MakeHudMoveable()
 end
 AFP("evPlayerLogin", evPlayerLogin)
 

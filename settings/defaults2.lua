@@ -354,6 +354,14 @@ GW.globalDefault = {
         MULTIBAR_MARGIIN = 2,
         MAINBAR_MARGIIN = 5,
 
+        HudPosition= {
+            point= "BOTTOM",
+            relativePoint= "BOTTOM",
+            xOfs= 0,
+            yOfs= 14,
+            hasMoved= false,
+        },
+
         MultiBarBottomLeft= {
             point= "BOTTOMLEFT",
             relativePoint= "BOTTOM",
