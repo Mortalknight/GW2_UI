@@ -188,21 +188,6 @@ local function bag_OnUpdate(self, elapsed)
 end
 AFP("bag_OnUpdate", bag_OnUpdate)
 
-local function modifyMicroAlert(alert, microButton)
-    if not alert then return end --TODO: Alerts are changed
-    alert.GwMicroButton = microButton
-    alert.Arrow.Arrow:SetTexCoord(0.78515625, 0.99218750, 0.58789063, 0.54687500)
-    alert.Arrow.Glow:SetTexCoord(0.40625000, 0.66015625, 0.82812500, 0.77343750)
-    alert.Arrow.Glow:ClearAllPoints()
-    alert.Arrow.Glow:SetPoint("BOTTOM")
-
-    alert.Arrow:ClearAllPoints()
-    alert.Arrow:SetPoint("BOTTOMLEFT", alert, "TOPLEFT", 4, -4)
-    alert:ClearAllPoints()
-    alert:SetPoint("TOPLEFT", microButton, "BOTTOMLEFT", -18, -20)
-end
-AFP("modifyMicroAlert", modifyMicroAlert)
-
 local function reskinMicroButton(btn, name, mbf, hook)
     if btn:IsProtected() and InCombatLockdown() then return end
     if not btn.gwSetParentHooked then
@@ -902,14 +887,5 @@ local function LoadMicroMenu()
     -- fix alert positions and hide the micromenu bar
     MicroButtonAndBagsBar:SetAlpha(0)
     MicroButtonAndBagsBar:EnableMouse(false)
-    modifyMicroAlert(CollectionsMicroButtonAlert, CollectionsMicroButton)
-    modifyMicroAlert(LFDMicroButtonAlert, LFDMicroButton)
-    modifyMicroAlert(EJMicroButtonAlert, EJMicroButton)
-    modifyMicroAlert(StoreMicroButtonAlert, StoreMicroButton)
-    if GW.settings.USE_CHARACTER_WINDOW then
-        modifyMicroAlert(CharacterMicroButtonAlert, GwCharacterMicroButton)
-    else
-        modifyMicroAlert(CharacterMicroButtonAlert, CharacterMicroButton)
-    end
 end
 GW.LoadMicroMenu = LoadMicroMenu

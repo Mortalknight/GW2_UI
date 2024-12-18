@@ -884,7 +884,7 @@ local function evPlayerLogin(self)
     GW.HandleBlizzardEditMode()
 
     GW.UpdateHudScale()
-    GW.MakeHudMoveable()
+    --GW.MakeHudMoveable() -- possible actionbar taint
 end
 AFP("evPlayerLogin", evPlayerLogin)
 
