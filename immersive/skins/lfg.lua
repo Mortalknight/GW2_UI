@@ -147,6 +147,9 @@ local function SkinLookingForGroupFrames()
 		tab:SetPoint("TOPRIGHT", PVEFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * (idx - 1)))
 		tab:SetParent(PVEFrame.LeftSidePanel)
 		tab:SetSize(64, 40)
+
+        tab.ClearAllPoints = GW.NoOp
+        tab.SetPoint = GW.NoOp
     end
 
 	PVEFrame.gwHeader.windowIcon:ClearAllPoints()
