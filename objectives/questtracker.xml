@@ -436,7 +436,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button parentKey="groupButton" hidden="true">
+            <Button parentKey="groupButton" mixin="QuestObjectiveFindGroupButtonMixin" hidden="true">
                 <Size x="25" y="25"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="-25"></Anchor>

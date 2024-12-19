@@ -373,6 +373,12 @@ local function CreateTrackerObject(name, parent)
             LFGListUtil_FindQuestGroup(self:GetParent().id, true)
         end
     end)
+    f.groupButton:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self)
+	    GameTooltip:AddLine(TOOLTIP_TRACKER_FIND_GROUP_BUTTON, HIGHLIGHT_FONT_COLOR:GetRGB());
+	    GameTooltip:Show()
+    end)
+    f.groupButton:SetScript("OnLeave", GameTooltip_Hide)
 
     f.turnin:SetScale(fTracker:GetScale() * 0.9)
     f.popupQuestAccept:SetScale(fTracker:GetScale() * 0.9)

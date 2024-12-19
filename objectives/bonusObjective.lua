@@ -257,7 +257,7 @@ local function setUpBlock(container, questIDs, collapsed)
 
                 if savedQuests[questID] == nil then
                     NewQuestAnimation(GwBonusObjectiveBlock)
-                    PlaySound(SOUNDKIT["UI_WORLDQUEST_START"])
+                    PlaySound(SOUNDKIT.UI_WORLDQUEST_START)
                     savedQuests[questID] = true
                 end
 

@@ -16,6 +16,17 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 
+addChange("7.9.0",{
+    {ct.feature, [=[Added grid out of range alpha value setting]=]},
+    {ct.feature, [=[Added custom class color support]=]},
+    {ct.change, [=[Update more dropdowns]=]},
+    {ct.change, [=[Use local number delimiter]=]},
+    {ct.change, [=[11.0.7 changes]=]},
+    {ct.bug, [=[Fix PetTracker integration]=]},
+    {ct.bug, [=[Fix Blizzard mirror timer not shown]=]},
+    {ct.bug, [=[Setting search works again]=]},
+})
+
 addChange("7.8.0",{
     {ct.feature, [=[Add option to hook profiles to a spec. This will switch the profile on spec switch]=]},
     {ct.feature, [=[Add todoloo support for GW2 Objectives tracker]=]},
