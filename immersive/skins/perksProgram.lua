@@ -9,11 +9,20 @@ end
 
 local function HandleRewardButton(button)
     local container = button.ContentsContainer
-    if container and not container.isSkinned then
-        container.isSkinned = true
-        GW.HandleIcon(container.Icon)
-        ReplaceIconString(container.Price)
-        hooksecurefunc(container.Price, "SetText", ReplaceIconString)
+    if not container then return end
+
+    local icon = container.Icon
+    if icon then
+        GW.HandleIcon(icon)
+    end
+
+    local price = container.Price
+    if price then
+        ReplaceIconString(price)
+        if not price.IsSkinned then
+            price.IsSkinned = true
+            hooksecurefunc(price, "SetText", ReplaceIconString)
+        end
     end
 end
 

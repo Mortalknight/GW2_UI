@@ -24,9 +24,12 @@ local function GenericTraitFrameSkin()
     GenericTraitFrame.CloseButton:GwSkinButton(true)
     GenericTraitFrame.CloseButton:SetPoint("TOPRIGHT", -3, -2)
 
-    ReplaceIconString(GenericTraitFrame.Currency.UnspentPointsCount)
-    hooksecurefunc(GenericTraitFrame.Currency.UnspentPointsCount, 'SetText', ReplaceIconString)
     hooksecurefunc(GenericTraitFrame, "ApplyLayout", RemoveTexture)
+    local unspentCount = GenericTraitFrame.Currency.UnspentPointsCount
+    if unspentCount then
+        ReplaceIconString(unspentCount)
+        hooksecurefunc(unspentCount, "SetText", ReplaceIconString)
+    end
 end
 
 local function LoadGenericTraitFrameSkin()
