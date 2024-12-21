@@ -932,9 +932,9 @@ end
 
 local function GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
     if TRP3_API and TRP3_API.utils and TRP3_API.utils.customGetColoredNameWithCustomFallbackFunction then
-        TRP3_API.utils.customGetColoredNameWithCustomFallbackFunction(GetGw2ColoredName, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
+        return TRP3_API.utils.customGetColoredNameWithCustomFallbackFunction(GetGw2ColoredName, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
     else
-        GetGw2ColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
+        return GetGw2ColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
     end
 end
 GW.GetColoredName = GetColoredName
