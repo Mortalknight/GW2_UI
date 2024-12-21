@@ -902,7 +902,8 @@ local function GetBNFriendColor(name, id, useBTag)
 end
 
 --Modified copy from FrameXML ChatFrame.lua to add CUSTOM_CLASS_COLORS (args were changed)
-local function GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg12)
+--Added also TRP3 support
+local function GetGw2ColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
 	if not arg2 then return end -- guild deaths is called here with no arg2
 
 	local chatType = strsub(event, 10)
@@ -910,7 +911,7 @@ local function GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg1
 	if subType == "WHISPER" then
 		chatType = "WHISPER"
 	elseif subType == "CHANNEL" then
-		chatType = "CHANNEL" .. arg8
+		chatType = "CHANNEL" .. channelNumber
 	end
 
 	-- ambiguate guild chat names
@@ -927,6 +928,14 @@ local function GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg1
 	end
 
 	return name
+end
+
+local function GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
+    if TRP3_API and TRP3_API.utils and TRP3_API.utils.customGetColoredNameWithCustomFallbackFunction then
+        TRP3_API.utils.customGetColoredNameWithCustomFallbackFunction(GetGw2ColoredName, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
+    else
+        GetGw2ColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
+    end
 end
 GW.GetColoredName = GetColoredName
 
