@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.9.1",{
+    {ct.change, [=[TRP3 chat support]=]},
+})
+
 
 addChange("7.9.0",{
     {ct.feature, [=[Added grid out of range alpha value setting]=]},

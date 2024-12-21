@@ -1,3 +1,7 @@
+7.9.1
+CHANGES
+    - TRP3 chat support
+
 7.9.0
 NEW
     - Added grid out of range alpha value setting
