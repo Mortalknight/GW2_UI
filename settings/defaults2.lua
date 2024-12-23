@@ -12,7 +12,7 @@ GW.privateDefaults = {
         ChatHistoryLog = {},
 
         -- GW2 Class colors
-        CustomClassColor = {
+        Gw2ClassColor = {
             WARRIOR = { r = 90 / 255, g = 54 / 255, b = 38 / 255, a = 1 },
             PALADIN = { r = 177 / 255, g = 72 / 255, b = 117 / 255, a = 1 },
             HUNTER = { r = 99 / 255, g = 125 / 255, b = 53 / 255, a = 1 },
@@ -20,6 +20,7 @@ GW.privateDefaults = {
             PRIEST = { r = 205 / 255, g = 205 / 255, b = 205 / 255, a = 1 },
             DEATHKNIGHT = { r = 148 / 255, g = 62 / 255, b = 62 / 255, a = 1 },
             SHAMAN = { r = 30 / 255, g = 44 / 255, b = 149 / 255, a = 1 },
+            --MAGE = {r = 62 / 255, g = 121 / 255, b = 149 / 255, a = 1},
             MAGE = { r = 101 / 255, g = 157 / 255, b = 184 / 255, a = 1 },
             WARLOCK = { r = 125 / 255, g = 88 / 255, b = 154 / 255, a = 1 },
             MONK = { r = 66 / 255, g = 151 / 255, b = 112 / 255, a = 1 },
@@ -966,7 +967,6 @@ GW.globalDefault = {
         AUCTIONATOR_SKIN_ENABLED = true,
         FLIGHTMAP_SKIN_ENABLED= true,
         BLIZZARDCLASSCOLOR_ENABLED= false,
-        brightenUpClassColorFontString = true,
         ADDONLIST_SKIN_ENABLED= true,
         BINDINGS_SKIN_ENABLED= true,
         BLIZZARD_OPTIONS_SKIN_ENABLED= true,

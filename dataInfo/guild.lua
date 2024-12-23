@@ -25,7 +25,7 @@ local inactivezone = {r = 0.65, g = 0.65, b = 0.65}
 local guildInfoString = "%s"
 local guildInfoString2 = GUILD .. ": %d/%d"
 local guildMotDString = "%s |cffaaaaaa- |cffffffff%s"
-local levelNameString = "|cff%02x%02x%02x%d|r |c%s%s|r"
+local levelNameString = "|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r"
 local levelNameStatusString = "%s |cff%02x%02x%02x%d|r %s%s%s %s"
 local nameRankString = "%s %s |cff999999-|cffffffff %s"
 local standingString = GW.RGBToHex(ttsubh.r, ttsubh.g, ttsubh.b) .. "%s:|r |cFFFFFFFF%s/%s (%s%%)"
@@ -192,7 +192,7 @@ local function Guild_OnEnter(self)
 
         local faction = info.faction == 1 and FACTION_ALLIANCE or info.faction == 0 and FACTION_HORDE or ""
 
-        local classc, levelc = GW.GWGetClassColor(info.class, false, true), GetQuestDifficultyColor(info.level)
+        local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
         if not classc then classc = levelc end
 
         if shiftDown then
@@ -240,10 +240,10 @@ local function Guild_OnClick(self, button)
 
             for _, info in ipairs(guildTable) do
                 if (info.online or info.isMobile) and strmatch(info.name, "([^%-]+).*") ~= GW.myname then
-                    local classc, levelc = GW.GWGetClassColor(info.class, false, true), GetQuestDifficultyColor(info.level)
+                    local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
                     if not classc then classc = levelc end
 
-                    local name = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.colorStr, strmatch(info.name, "([^%-]+).*"))
+                    local name = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, strmatch(info.name, "([^%-]+).*"))
                     if inGroup(strmatch(info.name, "([^%-]+).*")) ~= "" then
                         name = name .. " |cffaaaaaa*|r"
                     elseif not (info.isMobile and info.zone == REMOTE_CHAT) then

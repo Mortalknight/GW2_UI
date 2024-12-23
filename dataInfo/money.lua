@@ -109,7 +109,7 @@ local function Money_OnEnter(self)
         -- list all players from the realm
         GameTooltip:AddLine(CHARACTER .. ":")
         for _, g in pairs(myGold) do
-            local color = GW.GWGetClassColor(g.class, false, true)
+            local color = GW.GWGetClassColor(g.class, true, true)
             local factionTexture = ""
             if g.faction and g.faction ~= "" and g.faction ~= "Neutral" then
                 factionTexture = g.faction == "Alliance" and FACTION_ALLIANCE_ICON or FACTION_HORDE_ICON

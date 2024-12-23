@@ -125,7 +125,7 @@ local function Chat_OnMouseWheel(self, delta)
 end
 
 local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
-    local coloredName = GW.GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+    local coloredName = GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
     local chatType = strsub(event, 10)
     local info = ChatTypeInfo[chatType]
 
@@ -218,7 +218,7 @@ end
 GW.ToggelAfkMode = ToggelAfkMode
 
 local function loadAFKAnimation()
-    local classColor = GWGetClassColor(GW.myclass, false, true)
+    local classColor = GWGetClassColor(GW.myclass, true, true)
     local playerName = GW.myname
 
     local BackdropFrame = {

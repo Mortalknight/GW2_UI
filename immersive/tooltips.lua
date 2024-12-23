@@ -496,13 +496,12 @@ local function AddTargetInfo(self, unit)
         local targetColor
         if UnitIsPlayer(unitTarget) and not UnitHasVehicleUI(unitTarget) then
             local _, class = UnitClass(unitTarget)
-            targetColor = GWGetClassColor(class, not GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
+            targetColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
         else
             targetColor = GW.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
-            if not targetColor.colorStr then targetColor.colorStr = GW.RGBToHex(targetColor.r, targetColor.g, targetColor.b, "ff") end
         end
 
-        self:AddDoubleLine(format("%s:", TARGET), format("|c%s%s|r", targetColor.colorStr, UnitName(unitTarget)))
+        self:AddDoubleLine(format("%s:", TARGET), format("|cff%02x%02x%02x%s|r", targetColor.r * 255, targetColor.g * 255, targetColor.b * 255, UnitName(unitTarget)))
     end
 
     if IsInGroup() then

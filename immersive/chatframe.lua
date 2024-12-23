@@ -659,9 +659,9 @@ local function CheckKeyword(message, author)
                 local wordMatch = classMatch and lowerCaseWord
 
                 if wordMatch then
-                    local classColorTable = GW.GWGetClassColor(classMatch, false, true)
+                    local classColorTable = GW.GWGetClassColor(classMatch, true, true, true)
                     if classColorTable then
-                        word = gsub(word, gsub(tempWord, "%-","%%-"), format("\124c%s%s\124r", classColorTable.colorStr, tempWord))
+                        word = gsub(word, gsub(tempWord, "%-","%%-"), format("\124cff%.2x%.2x%.2x%s\124r", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
                     end
                 end
             end
@@ -857,7 +857,7 @@ local function GW_GetPlayerInfoByGUID(guid)
         GuidCache[guid] = data
     end
 
-    if data then data.classColor = GW.GWGetClassColor(data.englishClass, false, true) end
+    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true, true) end
 
     return data
 end
@@ -897,82 +897,8 @@ local function GetBNFriendColor(name, id, useBTag)
         end
     end
 
-    local Color = Class and GW.GWGetClassColor(Class, false, true)
+    local Color = Class and GW.GWGetClassColor(Class, true, true, true)
     return (Color and format("|c%s%s|r", Color.colorStr, TAG or name)) or TAG or name, BNET_TAG
-end
-
---Modified copy from FrameXML ChatFrame.lua to add CUSTOM_CLASS_COLORS (args were changed)
---Added also TRP3 support
-local function GetGw2ColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
-	if not arg2 then return end -- guild deaths is called here with no arg2
-
-	local chatType = strsub(event, 10)
-	local subType = strsub(chatType, 1, 7)
-	if subType == "WHISPER" then
-		chatType = "WHISPER"
-	elseif subType == "CHANNEL" then
-		chatType = "CHANNEL" .. channelNumber
-	end
-
-	-- ambiguate guild chat names
-	local name = Ambiguate(arg2, (chatType == "GUILD" and "guild") or "none")
-
-	-- handle the class color
-	local info = name and arg12 and ChatTypeInfo[chatType]
-	if info and Chat_ShouldColorChatByClass(info) then
-		local data = GW_GetPlayerInfoByGUID(arg12)
-		local color = data and data.classColor
-		if color then
-			return format("|c%s%s|r", color.colorStr, name)
-		end
-	end
-
-	return name
-end
-
-local function GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
-    if TRP3_API and TRP3_API.utils and TRP3_API.utils.customGetColoredNameWithCustomFallbackFunction then
-        return TRP3_API.utils.customGetColoredNameWithCustomFallbackFunction(GetGw2ColoredName, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
-    else
-        return GetGw2ColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, channelNumber, arg9, arg10, arg11, arg12, ...)
-    end
-end
-GW.GetColoredName = GetColoredName
-
---Copied from FrameXML ChatFrame.lua and modified to add CUSTOM_CLASS_COLORS
-local seenGroups = {}
-local function ChatFrame_ReplaceIconAndGroupExpressions(message, noIconReplacement, noGroupReplacement)
-	wipe(seenGroups)
-
-	local ICON_LIST, ICON_TAG_LIST, GROUP_TAG_LIST = ICON_LIST, ICON_TAG_LIST, GROUP_TAG_LIST
-	for tag in gmatch(message, "%b{}") do
-		local term = strlower(gsub(tag, "[{}]", ""))
-		if not noIconReplacement and ICON_TAG_LIST[term] and ICON_LIST[ICON_TAG_LIST[term]] then
-			message = gsub(message, tag, ICON_LIST[ICON_TAG_LIST[term]] .. "0|t")
-		elseif not noGroupReplacement and GROUP_TAG_LIST[term] then
-			local groupIndex = GROUP_TAG_LIST[term]
-			if not seenGroups[groupIndex] then
-				seenGroups[groupIndex] = true
-				local groupList = "["
-				for i = 1, GetNumGroupMembers() do
-					local name, _, subgroup, _, _, classFileName = GetRaidRosterInfo(i)
-					if name and subgroup == groupIndex then
-						local classColorTable = GW.GWGetClassColor(classFileName)
-						if classColorTable then
-							name = format("|c%s%s|r", classColorTable.colorStr, name)
-						end
-						groupList = groupList..(groupList == "[" and "" or PLAYER_LIST_DELIMITER)..name
-					end
-				end
-				if groupList ~= "[" then
-					groupList = groupList.."]"
-					message = gsub(message, tag, groupList, 1)
-				end
-			end
-		end
-	end
-
-	return message
 end
 
 -- chat histroy
@@ -1206,7 +1132,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
     arg1 = RemoveExtraSpaces(arg1)
 
     -- Search for icon links and replace them with texture links.
-    arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup)) -- If arg17 is true, don"t convert to raid icons
+    arg1 = C_ChatInfo.ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup)) -- If arg17 is true, don"t convert to raid icons
 
     -- Get class colored name for BattleNet friend
     if chatType == "BN_WHISPER" or chatType == "BN_WHISPER_INFORM" then

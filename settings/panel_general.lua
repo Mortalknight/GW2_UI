@@ -76,20 +76,19 @@ local function LoadGeneralPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Blizzard Class Colors"], nil, "BLIZZARDCLASSCOLOR_ENABLED", function(value)
         for i = 1, #CLASS_SORT_ORDER do
             local _, tag = GetClassInfo(i)
-            local settingsButton = _G["CustomClassColor" .. tag]
-            local color = value == true and RAID_CLASS_COLORS[tag] or GW.privateDefaults.profile.CustomClassColor[tag]
+            local settingsButton = _G["Gw2ClassColor" .. tag]
+            local color = value == true and RAID_CLASS_COLORS[tag] or GW.privateDefaults.profile.Gw2ClassColor[tag]
 
             settingsButton.getterSetter = {r = color.r, g = color.g, b = color.b, colorStr = nil}
             settingsButton.button.bg:SetColorTexture(color.r,  color.g,  color.b)
-            GW.UpdateCustomClassColor(tag, color.r, color.g, color.b, true)
+            GW.UpdateGw2ClassColor(tag, color.r, color.g, color.b, true)
         end
     end, nil, nil, nil, nil, L["Custom Class Colors"])
-    addOption(p.scroll.scrollchild, L["Increase class name font string brightness"], nil, "brightenUpClassColorFontString", function() GW.CustomClassColorNotify(nil, true) end, nil, {["BLIZZARDCLASSCOLOR_ENABLED"] = false}, nil, nil, L["Custom Class Colors"])
 
     for i = 1, #CLASS_SORT_ORDER do
         local name, tag = GetClassInfo(i)
-        addOptionColorPicker(p.scroll.scrollchild, name, nil, "CustomClassColor" .. tag, GW.private.CustomClassColor[tag], GW.privateDefaults.profile.CustomClassColor[tag], function(r, g, b, changed)
-            GW.UpdateCustomClassColor(tag, r, g, b, changed)
+        addOptionColorPicker(p.scroll.scrollchild, name, nil, "Gw2ClassColor" .. tag, GW.private.Gw2ClassColor[tag], GW.privateDefaults.profile.Gw2ClassColor[tag], function(r, g, b, changed)
+            GW.UpdateGw2ClassColor(tag, r, g, b, changed)
         end, nil, {["BLIZZARDCLASSCOLOR_ENABLED"] = false}, nil, nil, L["Custom Class Colors"])
     end
 

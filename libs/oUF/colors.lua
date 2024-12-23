@@ -95,9 +95,9 @@ local colors = {
 -- We do this because people edit the vars directly, and changing the default
 -- globals makes SPICE FLOW!
 local function customClassColors()
-	if(_G.CUSTOM_CLASS_COLORS) then
+	if(ns.GW_CLASS_COLORS) then
 		local function updateColors()
-			for classToken, color in next, _G.CUSTOM_CLASS_COLORS do
+			for classToken, color in next, ns.GW_CLASS_COLORS do
 				colors.class[classToken] = oUF:CreateColor(color.r, color.g, color.b)
 			end
 
@@ -107,17 +107,21 @@ local function customClassColors()
 		end
 
 		updateColors()
-		_G.CUSTOM_CLASS_COLORS:RegisterCallback(updateColors)
+		ns.GW_CLASS_COLORS:RegisterCallback(updateColors)
 
 		return true
 	end
 end
 
-if(not customClassColors()) then
+if(ns.settings or not customClassColors()) then
 	for classToken, color in next, _G.RAID_CLASS_COLORS do
 		colors.class[classToken] = oUF:CreateColor(color.r, color.g, color.b)
 	end
 
+	-- GW2 Change
+	C_Timer.After(0.5, customClassColors)
+
+	--[[
 	local eventHandler = CreateFrame('Frame')
 	eventHandler:RegisterEvent('ADDON_LOADED')
 	eventHandler:SetScript('OnEvent', function(self)
@@ -126,6 +130,7 @@ if(not customClassColors()) then
 			self:SetScript('OnEvent', nil)
 		end
 	end)
+	]]
 end
 
 for debuffType, color in next, _G.DebuffTypeColor do
