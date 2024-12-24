@@ -97,7 +97,7 @@ local function SetUnitAura(self, unit, index, filter)
 
         if auraData.sourceUnit then
             local _, class = UnitClass(auraData.sourceUnit)
-            local color = GWGetClassColor(class, not GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
+            local color = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
             self:AddDoubleLine(format(IDLine, ID, auraData.spellId), format("|c%s%s|r", color.colorStr, UnitName(auraData.sourceUnit) or UNKNOWN))
         else
             self:AddLine(format(IDLine, ID, auraData.spellId))
@@ -381,7 +381,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local relationship = UnitRealmRelationship(unit)
         local isShiftKeyDown = IsShiftKeyDown()
 
-        local nameColor = GWGetClassColor(class, not GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
+        local nameColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
 
         if GW.settings.ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES and pvpName and pvpName ~= "" then
             name = pvpName
@@ -510,7 +510,7 @@ local function AddTargetInfo(self, unit)
             local groupUnit = (isInRaid and "raid" or "party")..i
             if UnitIsUnit(groupUnit.."target", unit) and not UnitIsUnit(groupUnit,"player") then
                 local _, class = UnitClass(groupUnit)
-                local classColor = GWGetClassColor(class, not GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
+                local classColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
                 tinsert(targetList, format("|c%s%s|r", classColor.colorStr, UnitName(groupUnit)))
             end
         end
