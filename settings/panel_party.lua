@@ -2,6 +2,7 @@ local _, GW = ...
 local L = GW.L
 local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
+local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton;
@@ -19,9 +20,10 @@ local function LoadPartyPanel(sWindow)
     settingsMenuAddButton(CHAT_MSG_PARTY, p, {})
 
     addOption(p, L["Show both party frames and party grid"], format(L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."], USE_RAID_STYLE_PARTY_FRAMES), "RAID_STYLE_PARTY_AND_FRAMES", function() GW.UpdateGridSettings("PARTY", true); end, nil, {["PARTY_FRAMES"] = true, ["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
-    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "PARTY_SHOW_DEBUFFS", nil, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "PARTY_ONLY_DISPELL_DEBUFFS", nil, nil, {["PARTY_FRAMES"] = true, ["PARTY_SHOW_DEBUFFS"] = true, ["RAID_STYLE_PARTY"] = false})
-    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, SHOW_BUFFS, nil, "PARTY_SHOW_BUFFS", GW.UpdatePartyFrames, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "PARTY_SHOW_DEBUFFS", GW.UpdatePartyFrames, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "PARTY_ONLY_DISPELL_DEBUFFS", GW.UpdatePartyFrames, nil, {["PARTY_FRAMES"] = true, ["PARTY_SHOW_DEBUFFS"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", GW.UpdatePartyFrames, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
     addOption(p, L["Player frame in group"], L["Show your player frame as part of the group"], "PARTY_PLAYER_FRAME", GW.UpdatePlayerInPartySetting, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
     addOption(p, COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS, nil, "PARTY_SHOW_PETS", GW.UpdatePartyPetVisibility, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
     addOption(p, GW.NewSign .. L["Shorten health values"], nil, "PARTY_UNIT_HEALTH_SHORT_VALUES", GW.UpdatePartyFrames, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
@@ -42,6 +44,20 @@ local function LoadPartyPanel(sWindow)
         nil,
         {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false},
         nil
+    )
+
+    addOptionSlider(
+        p,
+        L["Aura size"],
+        nil,
+        "PARTY_SHOW_AURA_ICON_SIZE",
+        GW.UpdatePartyFrames,
+        10,
+        40,
+        nil,
+        0,
+        {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false},
+        2
     )
 
     InitPanel(p)

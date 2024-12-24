@@ -19,7 +19,7 @@ GW.GetDebuffScaleBasedOnPrio = GetDebuffScaleBasedOnPrio
 
 local function sortAuras(a, b)
     if a.caster and b.caster and a.caster == b.caster then
-        return tonumber(a.timeremaning) < tonumber(b.timeremaning)
+        return tonumber(a.timeRemaining) < tonumber(b.timeRemaining)
     end
 
     return (b.caster ~= "player" and a.caster == "player")
@@ -28,7 +28,7 @@ GW.AddForProfiling("auras", "sortAuras", sortAuras)
 
 local function sortAurasRevert(a, b)
     if a.caster and b.caster and a.caster == b.caster then
-        return tonumber(a.timeremaning) > tonumber(b.timeremaning)
+        return tonumber(a.timeRemaining) > tonumber(b.timeRemaining)
     end
 
     return (a.caster ~= "player" and b.caster == "player")
@@ -47,73 +47,59 @@ local function sortAuraList(auraList, revert)
 end
 GW.AddForProfiling("auras", "sortAuraList", sortAuraList)
 
-local function getBuffs(unit, filter, revert)
+local function getBuffs(self)
     local buffList = {}
-    local auraData
-    local time = GetTime()
-    if filter == nil then
-        filter = ""
-    end
-    for i = 1, 40 do
-        auraData = C_UnitAuras.GetBuffDataByIndex(unit, i, filter)
+    if not self.displayBuffs then return buffList end
+
+    AuraUtil.ForEachAura(self.unit, "HELPFUL", 40, function(auraData)
         if auraData then
-            buffList[i] = {}
-            local bli = buffList[i]
-            bli.id = i
-
-            bli.name = auraData.name
-            bli.icon = auraData.icon
-            bli.count = auraData.applications
-            bli.dispelType = auraData.dispelName
-            bli.duration = auraData.duration
-            bli.expires = auraData.expirationTime
-            bli.caster = auraData.sourceUnit
-            bli.isStealable = auraData.isStealable
-            bli.shouldConsolidate = auraData.nameplateShowPersonal
-            bli.spellID = auraData.spellId
-
-            bli.timeremaning = bli.duration <= 0 and 500001 or bli.expires - time
+            tinsert(buffList, {
+                name = auraData.name,
+                icon = auraData.icon,
+                count = auraData.applications,
+                dispelType = auraData.dispelName,
+                duration = auraData.duration,
+                expires = auraData.expirationTime,
+                caster = auraData.sourceUnit,
+                isStealable = auraData.isStealable,
+                shouldConsolidate = auraData.nameplateShowPersonal,
+                spellID = auraData.spellId,
+                timeRemaining = auraData.duration <= 0 and 500000 or auraData.expirationTime - GetTime(),
+                auraInstanceID = auraData.auraInstanceID
+            })
         end
-    end
+    end, true)
 
-    return sortAuraList(buffList, revert)
+    return sortAuraList(buffList, self.frameInvert)
 end
 GW.AddForProfiling("auras", "getBuffs", getBuffs)
 
-local function getDebuffs(unit, filter, revert)
+local function getDebuffs(self)
     local debuffList = {}
-    local showImportant = filter == "IMPORTANT"
-    local counter = 0
-    local filterToUse = nil
-    local time = GetTime()
-    local auraData
-    if not showImportant then
-        filterToUse = filter
-    end
-    for i = 1, 40 do
-        auraData = C_UnitAuras.GetDebuffDataByIndex(unit, i, filterToUse)
+    local showImportant = self.debuffFilter == "IMPORTANT"
+    local filterToUse = self.debuffFilter == "PLAYER" and "PLAYER" or "HARMFUL"
+    if not self.displayDebuffs then return debuffList end
+
+    AuraUtil.ForEachAura(self.unit, filterToUse, 40, function(auraData)
         if auraData and ((showImportant and (auraData.sourceUnit == "player" or GW.ImportendRaidDebuff[auraData.spellId])) or not showImportant) then
-            counter = counter + 1
-            debuffList[counter] = {}
-            local dbi = debuffList[counter]
-            dbi.id = i
-
-            dbi.name = auraData.name
-            dbi.icon = auraData.icon
-            dbi.count = auraData.applications
-            dbi.dispelType = auraData.dispelName
-            dbi.duration = auraData.duration
-            dbi.expires = auraData.expirationTime
-            dbi.caster = auraData.sourceUnit
-            dbi.isStealable = auraData.isStealable
-            dbi.shouldConsolidate = auraData.nameplateShowPersonal
-            dbi.spellID  = auraData.spellId
-
-            dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - time
+            tinsert(debuffList, {
+                name = auraData.name,
+                icon = auraData.icon,
+                count = auraData.applications,
+                dispelType = auraData.dispelName,
+                duration = auraData.duration,
+                expires = auraData.expirationTime,
+                caster = auraData.sourceUnit,
+                isStealable = auraData.isStealable,
+                shouldConsolidate = auraData.nameplateShowPersonal,
+                spellID = auraData.spellId,
+                timeRemaining = auraData.duration <= 0 and 500000 or auraData.expirationTime - GetTime(),
+                auraInstanceID = auraData.auraInstanceID
+            })
         end
-    end
+    end, true)
 
-    return sortAuraList(debuffList, revert)
+    return sortAuraList(debuffList, self.frameInvert)
 end
 GW.AddForProfiling("auras", "getDebuffs", getDebuffs)
 
@@ -160,7 +146,7 @@ local function setBuffData(self, buffs, i)
         stacks = b.count
     end
 
-    if b.expires < 1 or b.timeremaning > 500000 then
+    if b.expires < 1 or b.timeRemaining > 500000 then
         self.expires = nil
     else
         self.expires = b.expires
@@ -187,7 +173,7 @@ local function setBuffData(self, buffs, i)
         end
     end
 
-    self.auraid = b.id
+    self.auraInstanceID = b.auraInstanceID
     self.stacks:SetText(stacks)
     self.icon:SetTexture(b.icon)
 
@@ -213,8 +199,8 @@ GW.AddForProfiling("auras", "auraAnimateIn", auraAnimateIn)
 
 -- No use for player (not secure)
 local function UpdateBuffLayout(self, event, anchorPos)
-    local minIndex = self.displayBuffs and 1 or 40
-    local maxIndex = self.displayDebuffs and 80 or 40
+    local minIndex = 1
+    local maxIndex = 80
     local marginX = 3
     local marginY = 20
     local maxHeightInRow = 0
@@ -225,8 +211,8 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local bigSize = 28
     local maxSize = self.auras:GetWidth()
     local isBuff = false
-    local auraList = getBuffs(self.unit, nil, self.frameInvert)
-    local dbList = getDebuffs(self.unit, self.debuffFilter, self.frameInvert)
+    local auraList = getBuffs(self)
+    local dbList = getDebuffs(self)
     local lineSize = smallSize
     local saveAuras = {}
     local debuffScale = GetDebuffScaleBasedOnPrio()
@@ -335,13 +321,13 @@ end
 GW.UpdateBuffLayout = UpdateBuffLayout
 
 local function auraFrame_OnEnter(self)
-    if self:IsShown() and self.auraid ~= nil and self.unit ~= nil then
+    if self:IsShown() and self.auraInstanceID ~= nil and self.unit ~= nil then
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
         GameTooltip:ClearLines()
         if self.auraType == "buff" then
-            GameTooltip:SetUnitBuff(self.unit, self.auraid)
+            GameTooltip:SetUnitBuffByAuraInstanceID(self.unit, self.auraInstanceID)
         else
-            GameTooltip:SetUnitDebuff(self.unit, self.auraid, self.debuffFilter)
+            GameTooltip:SetUnitDebuffByAuraInstanceID(self.unit, self.auraInstanceID, self.debuffFilter)
         end
         GameTooltip:Show()
     end
