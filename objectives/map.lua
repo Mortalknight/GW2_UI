@@ -122,7 +122,7 @@ GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
 local function mapCoordsMiniMap_setCoords(self)
     local x, y, xT, yT = GW.Libs.GW2Lib:GetPlayerLocationCoords()
     if x and y then
-        self.Coords:SetText(RoundDec(xT, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(yT, self.MapCoordsMiniMapPrecision))
+        self.Coords:SetText(GW.GetLocalizedNumber(xT, self.MapCoordsMiniMapPrecision) .. "/" .. GW.GetLocalizedNumber(yT, self.MapCoordsMiniMapPrecision))
     else
         self.Coords:SetText(NOT_APPLICABLE)
     end

@@ -23,7 +23,7 @@ local function UpdateCoords()
 
     local x, y, xT, yT = GW.Libs.GW2Lib:GetPlayerLocationCoords()
     if x and y then
-        CoordsFrame.Coords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (xT or 0), (yT or 0))
+        CoordsFrame.Coords:SetFormattedText("%s: %s/%s", PLAYER,  GW.GetLocalizedNumber((xT or 0), 2),  GW.GetLocalizedNumber((yT or 0), 2))
     else
         CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, NOT_APPLICABLE)
     end
@@ -31,7 +31,7 @@ local function UpdateCoords()
     if WorldMapFrame.ScrollContainer:IsMouseOver() then
         local x, y = WorldMapFrame.ScrollContainer:GetNormalizedCursorPosition()
         if x and y and x >= 0 and y >= 0 then
-            CoordsFrame.Coords:SetFormattedText("%s - %s: %.2f, %.2f", CoordsFrame.Coords:GetText(), MOUSE_LABEL, x * 100, y * 100)
+            CoordsFrame.Coords:SetFormattedText("%s - %s: %s/%s", CoordsFrame.Coords:GetText(), MOUSE_LABEL, GW.GetLocalizedNumber(x * 100, 2), GW.GetLocalizedNumber(y * 100, 2))
         end
     end
 end

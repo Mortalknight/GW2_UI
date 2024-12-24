@@ -346,10 +346,10 @@ local function GetLocalizedNumber(number, numberDecimal)
     end
 
     -- Wenn Dezimalteil vorhanden ist, füge ihn hinzu
+    if numberDecimal then
+        decimalPart = string.sub(decimalPart, 1, numberDecimal)
+    end
     if #decimalPart > 0 then
-        if numberDecimal then
-            decimalPart = string.sub(decimalPart, 1, numberDecimal)
-        end
         formattedNumber = table.concat(formattedInteger) .. DECIMAL_DELIMITER .. decimalPart
     else
         formattedNumber = table.concat(formattedInteger)
