@@ -1,3 +1,8 @@
+7.9.3
+CHANGES
+    - Remove CUSTOM_CLASS_COLOR support and cahnge it to GW2 Class colors
+    - Add option to set number format
+
 7.9.2
 CHANGES
     - TRP3 chat support

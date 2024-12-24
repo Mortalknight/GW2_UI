@@ -15,6 +15,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.9.3",{
+    {ct.change, [=[Remove CUSTOM_CLASS_COLOR support and cahnge it to GW2 Class colors]=]},
+    {ct.change, [=[Add option to set number format]=]},
+})
+
 addChange("7.9.2",{
     {ct.change, [=[TRP3 chat support]=]},
 })

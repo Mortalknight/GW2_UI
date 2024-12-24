@@ -320,5 +320,5 @@ local function TriggerGw2Switch()
 end
 function lib:RegisterForLayoutChangeBackToGW2Layout()
   hooksecurefunc(EditModeManagerFrame, "SelectLayout", SetLayoutBackToGw2Layout)
-  TriggerGw2Switch()
+  --TriggerGw2Switch()
 end

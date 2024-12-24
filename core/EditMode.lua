@@ -8,8 +8,8 @@ local hideFrames = {}
 eventFrame.hideFrames = hideFrames
 
 local function getGameMenuEditModeButton() -- MenuButton get saved while adding gw2 setting button
-	local menu = GameMenuFrame
-	return menu and menu.GwMenuButtons and GameMenuFrame.GwMenuButtons[HUD_EDIT_MODE_MENU]
+    local menu = GameMenuFrame
+    return menu and menu.GwMenuButtons and GameMenuFrame.GwMenuButtons[HUD_EDIT_MODE_MENU]
 end
 
 local function SetEnabled(self, enabled)
@@ -74,7 +74,7 @@ local function ApplyBlizzardEditModeChanges(self)
 
     LEMO:RegisterForLayoutChangeBackToGW2Layout()
 
-    MirrorTimerContainer:Show()
+    --MirrorTimerContainer:Show()
 
     changesDone = true
 end
