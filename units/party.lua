@@ -373,7 +373,7 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
     if GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES then
         formatFunction = GW.ShortValue
     else
-        formatFunction = BreakUpLargeNumbers
+        formatFunction = GW.GetLocalizedNumber
     end
 
     if GW.settings.PARTY_UNIT_HEALTH == "NONE" then

@@ -230,7 +230,7 @@ local function updateHealthData(self)
     if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
         formatFunction = GW.ShortValue
     else
-        formatFunction = BreakUpLargeNumbers
+        formatFunction = GW.GetLocalizedNumber
     end
 
     if health > 0 and healthMax > 0 then

@@ -183,7 +183,7 @@ local function FormatObjectiveNumbers(text)
     numNeeded = tonumber(numNeeded)
 
     if numItems ~= nil and numNeeded ~= nil then
-        return BreakUpLargeNumbers(numItems) .. " / " .. BreakUpLargeNumbers(numNeeded) .. " " .. itemName
+        return GW.GetLocalizedNumber(numItems) .. " / " .. GW.GetLocalizedNumber(numNeeded) .. " " .. itemName
     end
     return text
 end

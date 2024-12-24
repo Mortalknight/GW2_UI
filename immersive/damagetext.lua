@@ -918,7 +918,7 @@ local function formatDamageValue(amount)
     if GW.settings.GW_COMBAT_TEXT_SHORT_VALUES then
         formatFunction = GW.ShortValue
     elseif GW.settings.GW_COMBAT_TEXT_COMMA_FORMAT then
-        formatFunction = BreakUpLargeNumbers
+        formatFunction = GW.GetLocalizedNumber
     end
 
     return formatFunction and formatFunction(amount) or amount

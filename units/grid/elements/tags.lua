@@ -85,7 +85,7 @@ local function Create_Tags()
         if shortendHealthValue then
             formatFunction = GW.ShortValue
         else
-            formatFunction = BreakUpLargeNumbers
+            formatFunction = GW.GetLocalizedNumber
         end
 
         if healthMax > 0 then

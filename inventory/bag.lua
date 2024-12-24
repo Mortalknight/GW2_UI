@@ -127,7 +127,7 @@ local function updateMoney(self)
 
     self.bronze:SetText(copper)
     self.silver:SetText(silver)
-    self.gold:SetText(BreakUpLargeNumbers(gold))
+    self.gold:SetText(GW.GetLocalizedNumber(gold))
 
     UpdateMoney()
 end
@@ -139,7 +139,7 @@ local function watchCurrency(self)
     for i = 1, currencyCount do
         local info = C_CurrencyInfo.GetCurrencyListInfo(i)
         if not info.isHeader and info.isShowInBackpack and watchSlot <= 4 then
-            self["currency" .. tostring(watchSlot)]:SetText(BreakUpLargeNumbers(info.quantity))
+            self["currency" .. tostring(watchSlot)]:SetText(GW.GetLocalizedNumber(info.quantity))
             self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(info.iconFileID)
             self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = i
             watchSlot = watchSlot + 1

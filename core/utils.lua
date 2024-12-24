@@ -126,7 +126,7 @@ local function FormatMoneyForChat(amount)
     local copper = mod(value, COPPER_PER_SILVER)
 
     if gold > 0 then
-        str = format("%s%s |r|TInterface/AddOns/GW2_UI/textures/icons/Coins:12:12:0:0:64:32:22:42:1:20|t%s", goldcolor, BreakUpLargeNumbers(gold), " ")
+        str = format("%s%s |r|TInterface/AddOns/GW2_UI/textures/icons/Coins:12:12:0:0:64:32:22:42:1:20|t%s", goldcolor, GW.GetLocalizedNumber(gold), " ")
     end
     if silver > 0 or gold > 0 then
         str = format("%s%s%d |r|TInterface/AddOns/GW2_UI/textures/icons/Coins:12:12:0:0:64:32:43:64:1:20|t%s", str, silvercolor, silver, (copper > 0 or gold > 0) and " " or "")
@@ -305,20 +305,60 @@ local function RoundDec(number, decimals)
 end
 GW.RoundDec = RoundDec
 
-local function SplitNumber(number)
-    local integer_part, decimal_part = tostring(number):match("^(%d+)%.?(%d*)$")
+local function GetLocalizedNumber(number, numberDecimal)
+    local DECIMAL_DELIMITER = GW.settings.NumberFormat == "POINT" and "." or ","
+    local LARGE_NUMBER_DELIMITER = GW.settings.NumberFormat == "POINT" and "," or "."
+    local formattedNumber, integerPart, decimalPart
 
-    integer_part = tonumber(integer_part)
-    decimal_part = decimal_part ~= "" and decimal_part or "0"
-    return integer_part, decimal_part
-end
-GW.SplitNumber = SplitNumber
+    -- Wandelt die Zahl in einen String um
+    local zahlStr = tostring(number)
 
-local function GetLocalizedNumber(number)
-    local integer_part, decimal_part = GW.SplitNumber(number)
-    return format("%s%s%s", BreakUpLargeNumbers(integer_part, true), DECIMAL_SEPERATOR, decimal_part)
+    -- Bestimme die Position des Dezimaltrennzeichens
+    local decimalPos = string.find(zahlStr, "%.")
+
+    if decimalPos then
+        -- Teile die Zahl in Ganzzahl und Dezimalteil
+        integerPart = string.sub(zahlStr, 1, decimalPos - 1)
+        decimalPart = string.sub(zahlStr, decimalPos + 1)
+    else
+        -- Falls kein Dezimaltrennzeichen vorhanden ist, setze den Dezimalteil auf leer
+        integerPart = zahlStr
+        decimalPart = ""
+    end
+
+    -- Tausendertrennzeichen in der Ganzzahl hinzufügen
+    local formattedInteger = {}
+    local len = #integerPart
+
+    -- Von rechts nach links durch die Ganzzahl laufen und in eine Tabelle speichern
+    local count = 0  -- Zähler für Gruppen von 3 Ziffern
+    for i = len, 1, -1 do
+        local currentChar = integerPart:sub(i, i)
+
+        -- Tausendertrennzeichen hinzufügen, wenn nötig
+        if count > 0 and count % 3 == 0 then
+            table.insert(formattedInteger, 1, LARGE_NUMBER_DELIMITER)
+        end
+
+        -- Füge das aktuelle Zeichen zur formatierten Ganzzahl hinzu
+        table.insert(formattedInteger, 1, currentChar)
+        count = count + 1
+    end
+
+    -- Wenn Dezimalteil vorhanden ist, füge ihn hinzu
+    if #decimalPart > 0 then
+        if numberDecimal then
+            decimalPart = string.sub(decimalPart, 1, numberDecimal)
+        end
+        formattedNumber = table.concat(formattedInteger) .. DECIMAL_DELIMITER .. decimalPart
+    else
+        formattedNumber = table.concat(formattedInteger)
+    end
+
+    return formattedNumber
 end
 GW.GetLocalizedNumber = GetLocalizedNumber
+-- /dump GetLocalizedNumber2(5600000.345, 3)
 
 local function CommaValue(n)
     n = RoundDec(n)

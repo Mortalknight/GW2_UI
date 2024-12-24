@@ -555,8 +555,8 @@ local function setReputationDetails(frame, data)
         frame.currentRank:SetText(friendInfo.friendshipFactionID and friendInfo.reaction or currentRank)
         frame.nextRank:SetText(L["Paragon"] .. (currentValue > threshold and (" (" .. RoundDec(currentValue / threshold, 0) .. "x)") or ""))
 
-        frame.currentValue:SetText(BreakUpLargeNumbers(value))
-        frame.nextValue:SetText(BreakUpLargeNumbers(threshold))
+        frame.currentValue:SetText(GW.GetLocalizedNumber(value))
+        frame.nextValue:SetText(GW.GetLocalizedNumber(threshold))
 
         local percent = math.floor(RoundDec(((value - 0) / (threshold - 0)) * 100))
         frame.percentage:SetText(percent .. "%")
@@ -575,8 +575,8 @@ local function setReputationDetails(frame, data)
         frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
 
         if (friendInfo.nextThreshold) then
-            frame.currentValue:SetText(BreakUpLargeNumbers(friendInfo.standing - friendInfo.reactionThreshold))
-            frame.nextValue:SetText(BreakUpLargeNumbers(friendInfo.nextThreshold - friendInfo.reactionThreshold))
+            frame.currentValue:SetText(GW.GetLocalizedNumber(friendInfo.standing - friendInfo.reactionThreshold))
+            frame.nextValue:SetText(BreakUpLargeNuGW.GetLocalizedNumbermbers(friendInfo.nextThreshold - friendInfo.reactionThreshold))
 
             local percent =
                 math.floor(RoundDec(((friendInfo.standing - friendInfo.reactionThreshold) / (friendInfo.nextThreshold - friendInfo.reactionThreshold)) * 100))
@@ -620,8 +620,8 @@ local function setReputationDetails(frame, data)
                 frame.nextRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel + 1)
                 frame.currentRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
 
-                frame.currentValue:SetText(BreakUpLargeNumbers(majorFactionData.renownReputationEarned or 0))
-                frame.nextValue:SetText(BreakUpLargeNumbers(majorFactionData.renownLevelThreshold))
+                frame.currentValue:SetText(GW.GetLocalizedNumber(majorFactionData.renownReputationEarned or 0))
+                frame.nextValue:SetText(GW.GetLocalizedNumber(majorFactionData.renownLevelThreshold))
                 frame.percentage:SetText((math.floor((majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold * 100) .. "%"))
 
                 frame.StatusBar:SetValue((majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold)
@@ -630,7 +630,7 @@ local function setReputationDetails(frame, data)
     else
         frame.currentRank:SetText(currentRank)
         frame.nextRank:SetText(nextRank)
-        frame.currentValue:SetText(BreakUpLargeNumbers(data.earnedValue - data.bottomValue))
+        frame.currentValue:SetText(GW.GetLocalizedNumber(data.earnedValue - data.bottomValue))
         local ldiff = data.topValue - data.bottomValue
         if ldiff == 0 then
             ldiff = 1
@@ -642,7 +642,7 @@ local function setReputationDetails(frame, data)
             frame.percentage:SetText(percent .. "%")
         end
 
-        frame.nextValue:SetText(BreakUpLargeNumbers(ldiff))
+        frame.nextValue:SetText(GW.GetLocalizedNumber(ldiff))
 
         frame.StatusBar:SetMinMaxValues(0, 1)
         frame.StatusBar:SetValue((data.earnedValue - data.bottomValue) / ldiff)

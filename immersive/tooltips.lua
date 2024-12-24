@@ -593,7 +593,7 @@ local function AddMythicInfo(self, unit)
         local color = C_ChallengeMode.GetDungeonScoreRarityColor(data.currentSeasonScore)
         if not color or color == nil then color = {} end
 
-        self:AddDoubleLine(DUNGEON_SCORE_LEADER:format("@"):gsub(": @", ""), BreakUpLargeNumbers(data.currentSeasonScore), nil, nil, nil, color.r or 1, color.g or 1, color.b or 1)
+        self:AddDoubleLine(DUNGEON_SCORE_LEADER:format("@"):gsub(": @", ""), GW.GetLocalizedNumber(data.currentSeasonScore), nil, nil, nil, color.r or 1, color.g or 1, color.b or 1)
     end
 end
 
@@ -757,7 +757,7 @@ local function GameTooltipStatusBar_OnValueChanged(self, value)
             self.text:SetFormattedText("%d%%", floor(value * 100))
             self:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
         else
-            self.text:SetText(BreakUpLargeNumbers(value) .. " / " .. BreakUpLargeNumbers(max))
+            self.text:SetText(GW.GetLocalizedNumber(value) .. " / " .. GW.GetLocalizedNumber(max))
         end
     end
 end

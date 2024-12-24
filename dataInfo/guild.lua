@@ -166,7 +166,7 @@ local function Guild_OnEnter(self)
     if guildFactionData and guildFactionData.reaction ~= 8 then
         local nextReactionThreshold = guildFactionData.nextReactionThreshold - guildFactionData.currentReactionThreshold
         local currentStanding = guildFactionData.currentStanding - guildFactionData.currentReactionThreshold
-        GameTooltip:AddLine(format(standingString, COMBAT_FACTION_CHANGE, BreakUpLargeNumbers(currentStanding), BreakUpLargeNumbers(nextReactionThreshold), ceil((currentStanding / nextReactionThreshold) * 100)))
+        GameTooltip:AddLine(format(standingString, COMBAT_FACTION_CHANGE, GW.GetLocalizedNumber(currentStanding), GW.GetLocalizedNumber(nextReactionThreshold), ceil((currentStanding / nextReactionThreshold) * 100)))
     end
 
     local zonec

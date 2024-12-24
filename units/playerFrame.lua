@@ -11,15 +11,15 @@ local function updateHealthTextString(self, health, healthPrecentage)
     if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
         formatFunction = GW.ShortValue
     else
-        formatFunction = BreakUpLargeNumbers
+        formatFunction = GW.GetLocalizedNumber
     end
 
     if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
-        healthString = BreakUpLargeNumbers(healthPrecentage * 100, true) .. "%"
+        healthString = GW.GetLocalizedNumber(healthPrecentage * 100, 0) .. "%"
     elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
         healthString = formatFunction(health)
     elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
-        healthString = formatFunction(health) .. " - " .. BreakUpLargeNumbers(healthPrecentage * 100, true) .. "%"
+        healthString = formatFunction(health) .. " - " .. GW.GetLocalizedNumber(healthPrecentage * 100, 0) .. "%"
     end
 
     self.healthString:SetText(healthString)

@@ -44,6 +44,15 @@ local function LoadGeneralPanel(sWindow)
         {"TCHINESE", "CHINESE", "ENGLISH", "GERMAN", "KOREAN", "METRIC"},
         {"萬, 億", "万, 亿", "K, M, B, T", "Tsd, Mio, Mrd, Bio", "천, 만, 억", "k, M, G, T"}
     )
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        GW.NewSign .. L["Number format"],
+        L["Will be used for the most numbers"],
+        "NumberFormat",
+        nil,
+        {"POINT", "COMMA"},
+        {"1,000,000.00", "1.000.000,00"}
+    )
     addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
     addOptionDropdown(
         p.scroll.scrollchild,

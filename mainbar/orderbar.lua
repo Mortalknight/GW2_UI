@@ -64,7 +64,7 @@ local function orderBar_OnEvent(self, event)
     local primaryCurrency, _ = C_Garrison.GetCurrencyTypes(Enum.GarrisonType.Type_7_0_Garrison)
 
     local cinfo = C_CurrencyInfo.GetCurrencyInfo(primaryCurrency)
-    local amount = BreakUpLargeNumbers(cinfo.quantity)
+    local amount = GW.GetLocalizedNumber(cinfo.quantity)
     self.currency:SetText(amount)
 
     updateOrderBar(self)

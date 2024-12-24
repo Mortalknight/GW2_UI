@@ -35,9 +35,9 @@ local function xpbar_OnEnter(self)
         GameTooltip:AddLine(
             COMBAT_XP_GAIN ..
             " " ..
-            BreakUpLargeNumbers(valCurrent) ..
+            GW.GetLocalizedNumber(valCurrent) ..
             " / " ..
-            BreakUpLargeNumbers(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r",
+            GW.GetLocalizedNumber(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r",
             1,
             1,
             1
@@ -47,7 +47,7 @@ local function xpbar_OnEnter(self)
     if rested ~= nil and rested ~= 0 then
         GameTooltip:AddLine(
             L["Rested "] ..
-            BreakUpLargeNumbers(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
+            GW.GetLocalizedNumber(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
             1,
             1,
             1
@@ -78,7 +78,7 @@ local function xpbar_OnEnter(self)
         end
         GameTooltip:AddLine(
             AZERITE_POWER_BAR:format(
-                BreakUpLargeNumbers(azeriteXP) .. " / " .. BreakUpLargeNumbers(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r"
+                GW.GetLocalizedNumber(azeriteXP) .. " / " .. GW.GetLocalizedNumber(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r"
             ),
             1,
             1,
@@ -201,8 +201,8 @@ local function xpbar_OnEvent(self, event)
                 " " ..
                 REPUTATION ..
                 " " ..
-                BreakUpLargeNumbers(currentValue - 0) ..
-                " / " .. BreakUpLargeNumbers(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                GW.GetLocalizedNumber(currentValue - 0) ..
+                " / " .. GW.GetLocalizedNumber(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
             isParagon = true
@@ -215,9 +215,9 @@ local function xpbar_OnEvent(self, event)
                     " " ..
                     REPUTATION ..
                     " " ..
-                    BreakUpLargeNumbers(friendReputationInfo.standing - friendReputationInfo.reactionThreshold) ..
+                    GW.GetLocalizedNumber(friendReputationInfo.standing - friendReputationInfo.reactionThreshold) ..
                     " / " ..
-                    BreakUpLargeNumbers(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold) ..
+                    GW.GetLocalizedNumber(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold) ..
                     " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             else
                 valPrecRepu = 1
@@ -225,9 +225,9 @@ local function xpbar_OnEvent(self, event)
                     " " ..
                     REPUTATION ..
                     " " ..
-                    BreakUpLargeNumbers(friendReputationInfo.maxRep) ..
+                    GW.GetLocalizedNumber(friendReputationInfo.maxRep) ..
                     " / " ..
-                    BreakUpLargeNumbers(friendReputationInfo.maxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                    GW.GetLocalizedNumber(friendReputationInfo.maxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
             self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5]
@@ -249,9 +249,9 @@ local function xpbar_OnEvent(self, event)
                 " " ..
                 REPUTATION ..
                 " " ..
-                BreakUpLargeNumbers((majorFactionData.renownReputationEarned or 0)) ..
+                GW.GetLocalizedNumber((majorFactionData.renownReputationEarned or 0)) ..
                 " / " ..
-                BreakUpLargeNumbers(majorFactionData.renownLevelThreshold) ..
+                GW.GetLocalizedNumber(majorFactionData.renownLevelThreshold) ..
                 " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
@@ -278,9 +278,9 @@ local function xpbar_OnEvent(self, event)
                     " " ..
                     REPUTATION ..
                     " " ..
-                    BreakUpLargeNumbers((watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold)) ..
+                    GW.GetLocalizedNumber((watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold)) ..
                     " / " ..
-                    BreakUpLargeNumbers((watchedFactionData.nextReactionThreshold - watchedFactionData.currentReactionThreshold)) ..
+                    GW.GetLocalizedNumber((watchedFactionData.nextReactionThreshold - watchedFactionData.currentReactionThreshold)) ..
                     " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[watchedFactionData.reaction].r,
@@ -375,8 +375,8 @@ local function xpbar_OnEvent(self, event)
         gw_honor_vals =
             HONOR ..
             " " ..
-            BreakUpLargeNumbers(currentHonor) ..
-            " / " .. BreakUpLargeNumbers(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
+            GW.GetLocalizedNumber(currentHonor) ..
+            " / " .. GW.GetLocalizedNumber(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
         self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
     end
 

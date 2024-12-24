@@ -181,19 +181,19 @@ local function updateHealthTextString(self, health, healthPrecentage)
     if self.shortendHealthValues then
         formatFunction = GW.ShortValue
     else
-        formatFunction = BreakUpLargeNumbers
+        formatFunction = GW.GetLocalizedNumber
     end
 
     if self.showHealthValue and self.showHealthPrecentage then
         if not self.frameInvert then
-            healthString = formatFunction(health) .. " - " .. BreakUpLargeNumbers(healthPrecentage * 100, true) .. "%"
+            healthString = formatFunction(health) .. " - " .. GW.GetLocalizedNumber(healthPrecentage * 100, 0) .. "%"
         else
-            healthString = BreakUpLargeNumbers(healthPrecentage * 100, true) .. "% - " .. formatFunction(health)
+            healthString = GW.GetLocalizedNumber(healthPrecentage * 100, 0) .. "% - " .. formatFunction(health)
         end
     elseif self.showHealthValue and not self.showHealthPrecentage then
         healthString = formatFunction(health)
     elseif not self.showHealthValue and self.showHealthPrecentage then
-        healthString = BreakUpLargeNumbers(healthPrecentage * 100, true) .. "%"
+        healthString = GW.GetLocalizedNumber(healthPrecentage * 100, 0) .. "%"
     end
 
     self.healthString:SetText(healthString)

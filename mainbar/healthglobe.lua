@@ -94,29 +94,29 @@ local function updateHealthData(self)
     if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
         formatFunction = GW.ShortValue
     else
-        formatFunction = BreakUpLargeNumbers
+        formatFunction = GW.GetLocalizedNumber
     end
 
     if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
-        hv = BreakUpLargeNumbers(health / healthMax * 100, true) .. "%"
+        hv = GW.GetLocalizedNumber(health / healthMax * 100, 0) .. "%"
     elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
         hv = formatFunction(health)
     elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
-        hv = formatFunction(health) .. "\n" .. BreakUpLargeNumbers(health / healthMax * 100, true) .. "%"
+        hv = formatFunction(health) .. "\n" .. GW.GetLocalizedNumber(health / healthMax * 100, 0) .. "%"
     end
 
     if GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES then
         formatFunction = GW.ShortValue
     else
-        formatFunction = BreakUpLargeNumbers
+        formatFunction = GW.GetLocalizedNumber
     end
 
     if GW.settings.PLAYER_UNIT_ABSORB == "PREC" then
-        av = BreakUpLargeNumbers(absorb / healthMax * 100, true) .. "%"
+        av = GW.GetLocalizedNumber(absorb / healthMax * 100, 0) .. "%"
     elseif GW.settings.PLAYER_UNIT_ABSORB == "VALUE" then
         av = formatFunction(absorb)
     elseif GW.settings.PLAYER_UNIT_ABSORB == "BOTH" then
-        av = formatFunction(absorb) .. "\n" .. BreakUpLargeNumbers(absorb / healthMax * 100, true) .. "%"
+        av = formatFunction(absorb) .. "\n" .. GW.GetLocalizedNumber(absorb / healthMax * 100, 0) .. "%"
     end
 
     self.text_h.value:SetText(hv)

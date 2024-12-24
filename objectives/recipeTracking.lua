@@ -105,7 +105,7 @@ local function addObjective(block, text, finished, qty, totalqty)
 
     objectiveBlock:Show()
     if qty < totalqty then
-        objectiveBlock.ObjectiveText:SetText(BreakUpLargeNumbers(qty) .. "/" .. BreakUpLargeNumbers(totalqty) .. " " .. text)
+        objectiveBlock.ObjectiveText:SetText(GW.GetLocalizedNumber(qty) .. "/" .. GW.GetLocalizedNumber(totalqty) .. " " .. text)
     else
         objectiveBlock.ObjectiveText:SetText(text)
     end
