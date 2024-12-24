@@ -122,7 +122,7 @@ GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
 local function mapCoordsMiniMap_setCoords(self)
     local x, y, xT, yT = GW.Libs.GW2Lib:GetPlayerLocationCoords()
     if x and y then
-        self.Coords:SetText(GW.GetLocalizedNumber(xT, self.MapCoordsMiniMapPrecision) .. "/" .. GW.GetLocalizedNumber(yT, self.MapCoordsMiniMapPrecision))
+        self.Coords:SetText(GW.GetLocalizedNumber(xT, GW.settings.MINIMAP_COORDS_PRECISION) .. "/" .. GW.GetLocalizedNumber(yT, GW.settings.MINIMAP_COORDS_PRECISION))
     else
         self.Coords:SetText(NOT_APPLICABLE)
     end
@@ -133,13 +133,12 @@ local function MapCoordsMiniMap_OnClick(self, button)
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-        if self.MapCoordsMiniMapPrecision == 0 then
-            self.MapCoordsMiniMapPrecision = 2
+        if GW.settings.MINIMAP_COORDS_PRECISION == 0 then
+            GW.settings.MINIMAP_COORDS_PRECISION = 2
         else
-            self.MapCoordsMiniMapPrecision = 0
+            GW.settings.MINIMAP_COORDS_PRECISION = 0
         end
 
-        GW.settings.MINIMAP_COORDS_PRECISION = self.MapCoordsMiniMapPrecision
         mapCoordsMiniMap_setCoords(self)
     end
 end
@@ -835,7 +834,6 @@ local function LoadMinimap()
     GwMapCoords.Coords:SetTextColor(1, 1, 1)
     GwMapCoords.Coords:SetShadowOffset(2, -2)
     GwMapCoords.Coords:SetText(NOT_APPLICABLE)
-    GwMapCoords.MapCoordsMiniMapPrecision = GW.settings.MINIMAP_COORDS_PRECISION
     ToogleMinimapCoorsLable()
 
     --FPS
