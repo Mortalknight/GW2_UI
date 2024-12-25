@@ -124,63 +124,6 @@ local function setAuraType(self, typeAura)
 end
 GW.AddForProfiling("auras", "setAuraType", setAuraType)
 
-local function setBuffData(self, buffs, i)
-    if not self or not buffs then
-        return false
-    end
-    local b = buffs[i]
-    if b == nil or b.name == nil then
-        return false
-    end
-
-    local stacks = ""
-
-    if b.caster == "player" and (b.duration > 0 and b.duration < 120) then
-        setAuraType(self, "bigBuff")
-        self.cooldown:SetCooldown(b.expires - b.duration, b.duration)
-    else
-        setAuraType(self, "smallbuff")
-    end
-
-    if b.count ~= nil and b.count > 1 then
-        stacks = b.count
-    end
-
-    if b.expires < 1 or b.timeRemaining > 500000 then
-        self.expires = nil
-    else
-        self.expires = b.expires
-    end
-
-    if self.auraType == "debuff" then
-        if b.dispelType and BadDispels[b.spellID] and GW.Libs.Dispel:IsDispellableByMe(b.dispelType) then
-            b.dispelType = "BadDispel"
-        end
-        if not b.dispelType and BleedList[b.spellID] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
-            b.dispelType = "Bleed"
-        end
-
-        if b.dispelType then
-            self.background:SetVertexColor(DebuffColors[b.dispelType].r, DebuffColors[b.dispelType].g, DebuffColors[b.dispelType].b)
-        else
-            self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-        end
-    else
-        if b.isStealable then
-            self.background:SetVertexColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
-        else
-            self.background:SetVertexColor(0, 0, 0)
-        end
-    end
-
-    self.auraInstanceID = b.auraInstanceID
-    self.stacks:SetText(stacks)
-    self.icon:SetTexture(b.icon)
-
-    return true
-end
-GW.AddForProfiling("auras", "setBuffData", setBuffData)
-
 local function auraAnimateIn(self)
     local endWidth = self:GetWidth()
 
@@ -197,122 +140,164 @@ local function auraAnimateIn(self)
 end
 GW.AddForProfiling("auras", "auraAnimateIn", auraAnimateIn)
 
+local function setAuraData(self, parent, aura, isBuff, debuffScale, anchorPos, event, saveAuras, maxSize, usedWidth, maxHeightInRow, usedHeight, marginX, marginY, lineSize, smallSize, bigSize)
+    local stacks = ""
+    local usedWidth2 = 2
+    local newAura = true
+    local isBig = self.typeAura == "bigBuff"
+    local size = smallSize
+
+    if aura.caster == "player" and (aura.duration > 0 and aura.duration < 120) then
+        setAuraType(self, "bigBuff")
+        self.cooldown:SetCooldown(aura.expires - aura.duration, aura.duration)
+    else
+        setAuraType(self, "smallbuff")
+    end
+
+    if aura.count ~= nil and aura.count > 1 then
+        stacks = aura.count
+    end
+
+    if aura.expires < 1 or aura.timeRemaining > 500000 then
+        self.expires = nil
+    else
+        self.expires = aura.expires
+    end
+
+    if self.auraType == "debuff" then
+        if aura.dispelType and BadDispels[aura.spellID] and GW.Libs.Dispel:IsDispellableByMe(aura.dispelType) then
+            aura.dispelType = "BadDispel"
+        end
+        if not aura.dispelType and BleedList[aura.spellID] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
+            aura.dispelType = "Bleed"
+        end
+
+        if aura.dispelType then
+            self.background:SetVertexColor(DebuffColors[aura.dispelType].r, DebuffColors[aura.dispelType].g, DebuffColors[aura.dispelType].b)
+        else
+            self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+        end
+    else
+        if aura.isStealable then
+            self.background:SetVertexColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
+        else
+            self.background:SetVertexColor(0, 0, 0)
+        end
+    end
+
+    self.auraInstanceID = aura.auraInstanceID
+    self.stacks:SetText(stacks)
+    self.icon:SetTexture(aura.icon)
+
+    self.nextUpdate = 0
+    self.duration:SetText("")
+
+    if isBig then
+        size = bigSize
+        lineSize = bigSize
+
+        for _, savedAuraName in pairs(parent.saveAuras[self.auraType]) do
+            if savedAuraName == aura.name then
+                newAura = false
+            end
+        end
+        self.animating = false
+        if isBuff then
+            saveAuras.buff[#saveAuras.buff + 1] = aura.name
+        else
+            saveAuras.debuff[#saveAuras.debuff + 1] = aura.name
+        end
+    elseif UnitIsFriend(self.unit, "player") and not isBuff then
+        -- debuffs
+        if GW.ImportendRaidDebuff[aura.spellID] and aura.dispelType and GW.Libs.Dispel:IsDispellableByMe(aura.dispelType) then
+            size = size * debuffScale
+        elseif GW.ImportendRaidDebuff[aura.spellID] then
+            size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
+        elseif aura.dispelType and GW.Libs.Dispel:IsDispellableByMe(aura.dispelType) then
+            size = size * tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
+        end
+    end
+
+    usedWidth = usedWidth + size + marginX
+    if maxSize < usedWidth then
+        usedWidth = 0
+        maxHeightInRow = size
+        usedHeight = usedHeight + lineSize + marginY
+        lineSize = smallSize
+    elseif size > maxHeightInRow then
+        maxHeightInRow = size
+    end
+    if usedWidth > 0 then
+        usedWidth2 = usedWidth - size - marginX
+    else
+        usedWidth2 = usedWidth
+    end
+    local px = usedWidth2  + (size / 2)
+    local py = usedHeight + (maxHeightInRow / 2)
+
+    if anchorPos == "pet" then
+        self:SetPoint("CENTER", parent.auras, "TOPRIGHT", -px, parent.auraPositionUnder and -py or py)
+    else
+        self:SetPoint("CENTER", parent.auras, parent.frameInvert and "TOPRIGHT" or "TOPLEFT", parent.frameInvert and -px or px, parent.auraPositionTop and py or -py)
+    end
+
+    self:SetSize(size, size)
+    if newAura and isBig and event == "UNIT_AURA" then
+        auraAnimateIn(self)
+    end
+
+    if usedWidth == 0 then
+        usedWidth = usedWidth + size + marginX
+    end
+
+    return saveAuras, usedWidth, maxHeightInRow, usedHeight, marginX, marginY, lineSize, smallSize, bigSize
+end
+GW.AddForProfiling("auras", "setAuraData", setAuraData)
+
 -- No use for player (not secure)
 local function UpdateBuffLayout(self, event, anchorPos)
-    local minIndex = 1
-    local maxIndex = 80
-    local marginX = 3
-    local marginY = 20
     local maxHeightInRow = 0
     local usedWidth = 0
     local usedHeight = 0
-    local usedWidth2 = 2
     local smallSize = 20
     local bigSize = 28
-    local maxSize = self.auras:GetWidth()
-    local isBuff = false
-    local auraList = getBuffs(self)
-    local dbList = getDebuffs(self)
+    local marginX = 3
+    local marginY = 20
     local lineSize = smallSize
-    local saveAuras = {}
+    local buffList = getBuffs(self)
+    local debuffList = getDebuffs(self)
     local debuffScale = GetDebuffScaleBasedOnPrio()
-
+    local maxSize = self.auras:GetWidth()
+    local saveAuras = {}
     saveAuras.buff = {}
     saveAuras.debuff = {}
 
-    for frameIndex = minIndex, maxIndex do
-        local index = frameIndex
-        local list = auraList
-        local newAura = true
-
-        if frameIndex > 40 then
-            index = frameIndex - 40
+    for i, auraFrame in pairs(self.buffFrames) do
+        if buffList[i] then
+            saveAuras, usedWidth, maxHeightInRow, usedHeight, marginX, marginY, lineSize, smallSize, bigSize = setAuraData(auraFrame, self, buffList[i], true, debuffScale, anchorPos, event, saveAuras, maxSize, usedWidth, maxHeightInRow, usedHeight, marginX, marginY, lineSize, smallSize, bigSize)
+            auraFrame:SetScript("OnUpdate", auraFrame.OnUpdatefunction)
+            auraFrame:Show()
+        else
+            auraFrame:Hide()
+            auraFrame:SetScript("OnUpdate", nil)
+            auraFrame.endTime = nil
         end
+    end
 
-        local frame = _G["Gw" .. self.unit .. "buffFrame" .. index]
+    -- new line for debuffs
+    usedWidth = 0
+    usedHeight = usedHeight + lineSize + marginY
+    lineSize = smallSize
 
-        if frameIndex > 40 then
-            frame = _G["Gw" .. self.unit .. "debuffFrame" .. index]
-            list = dbList
-        end
-        if frameIndex == 41 and isBuff then
-            usedWidth = 0
-            usedHeight = usedHeight + lineSize + marginY
-            lineSize = smallSize
-            isBuff = false
-        end
-
-        if setBuffData(frame, list, index) then
-            if frameIndex <= 40 then
-                isBuff = true
-            end
-            if not frame:IsShown() then
-                frame:Show()
-            end
-            frame.nextUpdate = 0
-            frame.duration:SetText("")
-            frame:SetScript("OnUpdate", frame.OnUpdatefunction)
-
-            local isBig = frame.typeAura == "bigBuff"
-
-            local size = smallSize
-            if isBig then
-                size = bigSize
-                lineSize = bigSize
-
-                for _, v in pairs(self.saveAuras[frame.auraType]) do
-                    if v == list[index].name then
-                        newAura = false
-                    end
-                end
-                self.animating = false
-                saveAuras[frame.auraType][#saveAuras[frame.auraType] + 1] = list[index].name
-            elseif UnitIsFriend(self.unit, "player") and not isBuff then
-                -- debuffs
-                if GW.ImportendRaidDebuff[list[index].spellID] and list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
-                    size = size * debuffScale
-                elseif GW.ImportendRaidDebuff[list[index].spellID] then
-                    size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
-                elseif list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
-                    size = size * tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
-                end
-            end
-
-            usedWidth = usedWidth + size + marginX
-            if maxSize < usedWidth then
-                usedWidth = 0
-                maxHeightInRow = size
-                usedHeight = usedHeight + lineSize + marginY
-                lineSize = smallSize
-            elseif size > maxHeightInRow then
-                maxHeightInRow = size
-            end
-            if usedWidth > 0 then
-                usedWidth2 = usedWidth - size - marginX
-            else
-                usedWidth2 = usedWidth
-            end
-            local px = usedWidth2  + (size / 2)
-            local py = usedHeight + (maxHeightInRow / 2)
-
-            if anchorPos == "pet" then
-                frame:SetPoint("CENTER", self.auras, "TOPRIGHT", -px, self.auraPositionUnder and -py or py)
-            else
-                frame:SetPoint("CENTER", self.auras, self.frameInvert and "TOPRIGHT" or "TOPLEFT", self.frameInvert and -px or px, self.auraPositionTop and py or -py)
-            end
-
-            frame:SetSize(size, size)
-            if newAura and isBig and event == "UNIT_AURA" then
-                auraAnimateIn(frame)
-            end
-
-            if usedWidth == 0 then
-                usedWidth = usedWidth + size + marginX
-            end
-        elseif frame then
-            frame:Hide()
-            frame:SetScript("OnUpdate", nil)
-            frame.endTime = nil
+    for i, auraFrame in pairs(self.debuffFrames) do
+        if debuffList[i] then
+            saveAuras, usedWidth, maxHeightInRow, usedHeight, marginX, marginY, lineSize, smallSize, bigSize = setAuraData(auraFrame, self, debuffList[i], true, debuffScale, anchorPos, event, saveAuras, maxSize, usedWidth, maxHeightInRow, usedHeight, marginX, marginY, lineSize, smallSize, bigSize)
+            auraFrame:SetScript("OnUpdate", auraFrame.OnUpdatefunction)
+            auraFrame:Show()
+        else
+            auraFrame:Hide()
+            auraFrame:SetScript("OnUpdate", nil)
+            auraFrame.endTime = nil
         end
     end
 
@@ -374,8 +359,6 @@ local function CreateAuraFrame(name, parent)
     f.icon = f.status.icon
 
     f.OnUpdatefunction = auraFrame_OnUpdate
-
-    f:SetScript("OnUpdate", auraFrame_OnUpdate)
     f:SetScript("OnEnter", auraFrame_OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
 
@@ -384,16 +367,24 @@ end
 GW.CreateAuraFrame = CreateAuraFrame
 
 local function LoadAuras(self)
+    self.buffFrames = {}
+    self.debuffFrames = {}
+    self.saveAuras = {}
+    self.saveAuras.buff = {}
+    self.saveAuras.debuff = {}
+
     for i = 1, 40 do
         local frame = CreateAuraFrame("Gw" .. self.unit .. "buffFrame" .. i, self.auras)
         frame.unit = self.unit
         frame.auraType = "buff"
+
+        self.buffFrames[i] = frame
+
         frame = CreateAuraFrame("Gw" .. self.unit .. "debuffFrame" .. i, self.auras)
         frame.unit = self.unit
         frame.auraType = "debuff"
+
+        self.debuffFrames[i] = frame
     end
-    self.saveAuras = {}
-    self.saveAuras.buff = {}
-    self.saveAuras.debuff = {}
 end
 GW.LoadAuras = LoadAuras

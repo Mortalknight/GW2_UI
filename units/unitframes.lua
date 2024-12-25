@@ -1003,6 +1003,8 @@ local function LoadTarget()
     NewUnitFrame.unit = "target"
     NewUnitFrame.type = "NormalTarget"
 
+    LoadAuras(NewUnitFrame)
+
     RegisterMovableFrame(NewUnitFrame, TARGET, "target_pos",  ALL .. ",Unitframe", nil, {"default", "scaleable"})
 
     NewUnitFrame:ClearAllPoints()
@@ -1066,8 +1068,6 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", "target")
 
-    LoadAuras(NewUnitFrame)
-
     -- create floating combat text
     ToggleTargetFrameCombatFeedback()
 end
@@ -1120,6 +1120,8 @@ local function LoadFocus()
     local NewUnitFrame = createNormalUnitFrame("GwFocusUnitFrame", GW.settings.focus_FRAME_INVERT)
     NewUnitFrame.unit = "focus"
     NewUnitFrame.type = "NormalTarget"
+
+    LoadAuras(NewUnitFrame)
 
     RegisterMovableFrame(NewUnitFrame, FOCUS, "focus_pos", ALL .. ",Unitframe", nil, {"default", "scaleable"})
 
@@ -1177,8 +1179,6 @@ local function LoadFocus()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", "focus")
-
-    LoadAuras(NewUnitFrame)
 end
 GW.LoadFocus = LoadFocus
 
@@ -1192,7 +1192,7 @@ local function ToggleTargetTargetFrameSetting(unit)
     if unit == "Target" then
         target_OnEvent(GwTargetUnitFrame, "FORCE_UPDATE")
     else
-        focus_OnEvent(GwFocusTargetUnitFrame, "FORCE_UPDATE")
+        focus_OnEvent(GwFocusUnitFrame, "FORCE_UPDATE")
     end
 end
 GW.ToggleTargetTargetFrameSetting = ToggleTargetTargetFrameSetting
