@@ -832,7 +832,7 @@ local function ForceUpdate(element, onlyPosition)
 	return Update(element.__owner, 'ForceUpdate', element.__owner.unit, nil, onlyPosition)
 end
 
-local function Enable(self)
+local function Enable(self) 
 	if(self.Auras or self.Buffs or self.Debuffs) then
 		self:RegisterEvent('UNIT_AURA', UpdateAuras)
 

@@ -748,7 +748,7 @@ local function updateHealthValues(self, event)
 end
 GW.AddForProfiling("unitframes", "updateHealthValues", updateHealthValues)
 
-local function target_OnEvent(self, event, unit)
+local function target_OnEvent(self, event, unit, ...)
     if not self then return end
     local ttf = GwTargetTargetUnitFrame
 
@@ -781,7 +781,7 @@ local function target_OnEvent(self, event, unit)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
-        UpdateBuffLayout(self, event)
+        GW.UpdateBuffLayout2(self, event, self.unit, ...)
 
         if event == "PLAYER_TARGET_CHANGED" then
             if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then
@@ -821,7 +821,7 @@ local function target_OnEvent(self, event, unit)
         updateThreatValues(self)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
-            UpdateBuffLayout(self, event)
+            GW.UpdateBuffLayout2(self, event, unit, ...)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
@@ -837,7 +837,7 @@ local function target_OnEvent(self, event, unit)
 end
 GW.AddForProfiling("unitframes", "target_OnEvent", target_OnEvent)
 
-local function focus_OnEvent(self, event, unit)
+local function focus_OnEvent(self, event, unit, ...)
     local ttf = GwFocusTargetUnitFrame
 
     if event == "PLAYER_FOCUS_CHANGED" or event == "ZONE_CHANGED" or event == "FORCE_UPDATE" then
@@ -851,7 +851,7 @@ local function focus_OnEvent(self, event, unit)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
-        UpdateBuffLayout(self, event)
+        GW.UpdateBuffLayout2(self, event, self.unit, ...)
 
         if event == "PLAYER_FOCUS_CHANGED" then
             if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then
@@ -880,7 +880,7 @@ local function focus_OnEvent(self, event, unit)
         updateRaidMarkers(self)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
-            UpdateBuffLayout(self, event)
+            GW.UpdateBuffLayout2(self, event, unit, ...)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then

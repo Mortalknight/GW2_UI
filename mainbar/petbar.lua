@@ -245,7 +245,7 @@ local function updateHealthData(self)
 end
 GW.UpdatePlayerPetHealthValues = updateHealthData
 
-local function updatePetData(self, event, unit)
+local function updatePetData(self, event, unit, ...)
     if not UnitExists("pet") then
         return
     end
@@ -255,7 +255,7 @@ local function updatePetData(self, event, unit)
         updateHealthData(self)
         updatePowerData(self)
     elseif event == "UNIT_AURA" then
-        UpdateBuffLayout(self, event, unit)
+        GW.UpdateBuffLayout2(self, event, unit, ...)
         return
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
         SetPortraitTexture(self.portrait, "pet")
