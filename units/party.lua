@@ -1,9 +1,5 @@
 local _, GW = ...
-local TimeCount = GW.TimeCount
 local PowerBarColorCustom = GW.PowerBarColorCustom
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
-local BleedList = GW.Libs.Dispel:GetBleedList()
-local BadDispels = GW.Libs.Dispel:GetBadList()
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
@@ -100,247 +96,53 @@ local function updateUnitPortrait(self)
 end
 GW.AddForProfiling("party", "updateUnitPortrait", updateUnitPortrait)
 
-local function getUnitDebuffs(unit)
-    local debuffList = {}
-
-    if not GW.settings.PARTY_SHOW_DEBUFFS and not GW.settings.PARTY_ONLY_DISPELL_DEBUFFS and not GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF then
-        return debuffList
-    else
-        AuraUtil.ForEachAura(unit, "HARMFUL", 40, function(auraData)
-            if auraData and auraData.name then
-                local shouldDisplay = false
-                local isImportant = (GW.ImportendRaidDebuff[auraData.spellId] and GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) or false
-                local isDispellable = GW.Libs.Dispel:IsDispellableByMe(auraData.dispelName)
-
-                if GW.settings.PARTY_SHOW_DEBUFFS then
-                    if GW.settings.PARTY_ONLY_DISPELL_DEBUFFS then
-                        if auraData.dispelName and GW.Libs.Dispel:IsDispellableByMe(auraData.dispelName) then
-                            shouldDisplay = auraData.name and not (auraData.spellId == 6788 and auraData.sourceUnit and not UnitIsUnit(auraData.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
-                        end
-                    else
-                        shouldDisplay = auraData.name and not (auraData.spellId == 6788 and auraData.sourceUnit and not UnitIsUnit(auraData.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
-                    end
-                end
-
-                if GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF and not shouldDisplay then
-                    shouldDisplay = GW.ImportendRaidDebuff[auraData.spellId] or false
-                end
-
-                if shouldDisplay then
-                    tinsert(debuffList, {
-                        name = auraData.name,
-                        icon = auraData.icon,
-                        count = auraData.applications,
-                        dispelType = auraData.dispelName,
-                        duration = auraData.duration,
-                        expires = auraData.expirationTime,
-                        caster = auraData.sourceUnit,
-                        isStealable = auraData.isStealable,
-                        shouldConsolidate = auraData.nameplateShowPersonal,
-                        spellID = auraData.spellId,
-                        timeRemaining = auraData.duration <= 0 and 500000 or auraData.expirationTime - GetTime(),
-                        auraInstanceID = auraData.auraInstanceID,
-                        isImportant = isImportant,
-                        isDispellable = isDispellable
-                    })
-                end
-            end
-        end, true)
-    end
-
-    table.sort(
-        debuffList,
-        function(a, b)
-            return a.timeRemaining > b.timeRemaining
+local function FilterAura(element, unit, data, isBuff)
+    if isBuff then
+        if data.name then
+            return true
         end
-    )
+    else
+        if data and data.name then
+            local shouldDisplay = false
 
-    return debuffList
-end
-GW.AddForProfiling("party", "getUnitDebuffs", getUnitDebuffs)
-
-local function DebuffOnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
-    GameTooltip:ClearLines()
-    GameTooltip:SetUnitDebuffByAuraInstanceID(self.unit, self.auraInstanceID)
-    GameTooltip:Show()
-end
-
-local function updatePartyDebuffs(self, x, y)
-    local unit = self.unit
-    local debuffList = getUnitDebuffs(unit)
-    local debuffScale = GW.GetDebuffScaleBasedOnPrio()
-    local size = self.isPet and GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6 or GW.settings.PARTY_SHOW_AURA_ICON_SIZE
-    local marginy = size + 2
-
-    for i, debuffFrame in pairs(self.debuffFrames) do
-        if debuffList[i] then
-            debuffFrame.icon:SetTexture(debuffList[i].icon)
-            debuffFrame.icon:SetParent(debuffFrame)
-
-            debuffFrame.expires = debuffList[i].expires
-            debuffFrame.duration = debuffList[i].duration
-            debuffFrame.auraInstanceID = debuffList[i].auraInstanceID
-            debuffFrame.unit = unit
-
-            if debuffList[i].dispelType and BadDispels[debuffList[i].spellID] and GW.Libs.Dispel:IsDispellableByMe(debuffList[i].dispelType) then
-                debuffList[i].dispelType = "BadDispel"
-            end
-            if not debuffList[i].dispelType and BleedList[debuffList[i].spellID] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
-                debuffList[i].dispelType = "Bleed"
-            end
-
-            debuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-            if debuffList[i].dispelType and DebuffColors[debuffList[i].dispelType] then
-                debuffFrame.background:SetVertexColor(DebuffColors[debuffList[i].dispelType].r, DebuffColors[debuffList[i].dispelType].g, DebuffColors[debuffList[i].dispelType].b)
-            end
-
-            debuffFrame.cooldown.duration:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
-            debuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
-            debuffFrame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, (debuffList[i].count or 1) > 9 and 11 or 14, "OUTLINE")
-
-            debuffFrame:SetScript("OnEnter", DebuffOnEnter)
-            debuffFrame:SetScript("OnLeave", GameTooltip_Hide)
-            debuffFrame:SetScript("OnUpdate", function(_, elapsed)
-                if debuffFrame.throt < 0 and debuffFrame.expires ~= nil and debuffFrame:IsShown() then
-                    debuffFrame.throt = 0.2
-                    if GameTooltip:IsOwned(debuffFrame) then
-                        DebuffOnEnter(debuffFrame)
+            if GW.settings.PARTY_SHOW_DEBUFFS then
+                if GW.settings.PARTY_ONLY_DISPELL_DEBUFFS then
+                    if data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
+                        shouldDisplay = data.name and not (data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
                     end
                 else
-                    debuffFrame.throt = debuffFrame.throt - elapsed
-                end
-            end)
-
-            if debuffList[i].isImportant or debuffList[i].isDispellable then
-                if debuffList[i].isImportant and debuffList[i].isDispellable then
-                    size = size * debuffScale
-                elseif debuffList[i].isImportant then
-                    size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
-                elseif debuffList[i].isDispellable then
-                    size = size * tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
+                    shouldDisplay = data.name and not (data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
                 end
             end
-            debuffFrame:SetSize(size, size)
-            debuffFrame:ClearAllPoints()
-            debuffFrame:SetPoint("BOTTOMRIGHT", ((size - 1) * x), marginy * y)
 
-            debuffFrame:Show()
-
-            x = x + 1
-            if x > 10 then
-                y = y + 1
-                x = 0
+            if GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF and not shouldDisplay then
+                shouldDisplay = GW.ImportendRaidDebuff[data.spellId] or false
             end
-        else
-            debuffFrame:Hide()
-            debuffFrame:SetScript("OnEnter", nil)
-            debuffFrame:SetScript("OnLeave", nil)
-            debuffFrame:SetScript("OnUpdate", nil)
+
+            return shouldDisplay
         end
     end
 end
-GW.AddForProfiling("party", "updatePartyDebuffs", updatePartyDebuffs)
 
-local function getUnitBuffs(unit)
-    local buffList = {}
-
-    if not GW.settings.PARTY_SHOW_BUFFS then
-        return buffList
-    end
-
-    AuraUtil.ForEachAura(unit, "HELPFUL", 40, function(auraData)
-        if auraData and auraData.name then
-            tinsert(buffList, {
-                name = auraData.name,
-                icon = auraData.icon,
-                count = auraData.applications,
-                dispelType = auraData.dispelName,
-                duration = auraData.duration,
-                expires = auraData.expirationTime,
-                caster = auraData.sourceUnit,
-                isStealable = auraData.isStealable,
-                shouldConsolidate = auraData.nameplateShowPersonal,
-                spellID = auraData.spellId,
-                timeRemaining = auraData.duration <= 0 and 500000 or auraData.expirationTime - GetTime(),
-                auraInstanceID = auraData.auraInstanceID
-            })
-        end
-    end, true)
-
-    table.sort(
-        buffList,
-        function(a, b)
-            return a.timeRemaining > b.timeRemaining
-        end
-    )
-
-    return buffList
-end
-GW.AddForProfiling("party", "getUnitBuffs", getUnitBuffs)
-
-local function BuffOnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
-    GameTooltip:ClearLines()
-    GameTooltip:SetUnitBuffByAuraInstanceID(self.unit, self.auraInstanceID)
-    GameTooltip:Show()
-end
-
-local function updatePartyAuras(self)
+local function AuraSetPoint(element, from, to)
     local x = 0
     local y = 0
-    local unit = self.unit
-    local width = self.isPet and GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6 or GW.settings.PARTY_SHOW_AURA_ICON_SIZE
-    local buffList = getUnitBuffs(unit)
-    local marginy = width + 2
 
-    for i, buffFrame in pairs(self.buffFrames) do
-        if buffList[i] then
-            buffFrame.buffIcon:SetTexture(buffList[i].icon)
-            buffFrame.buffIcon:SetParent(buffFrame)
-            buffFrame:SetSize(width, width)
+    for i = from, to do
+        local button = element[i]
+        if(not button) then break end
 
-            buffFrame.expires = buffList[i].expires
-            buffFrame.duration = buffList[i].duration
-            buffFrame.auraInstanceID = buffList[i].auraInstanceID
-            buffFrame.unit = unit
-
-            buffFrame.buffDuration:SetText("")
-            buffFrame.buffStacks:SetText((buffList[i].count or 1) > 1 and buffList[i].count or "")
-            buffFrame:ClearAllPoints()
-            buffFrame:SetPoint("BOTTOMRIGHT", ((width - 1) * x), marginy * y)
-
-            buffFrame:SetScript("OnEnter", BuffOnEnter)
-            buffFrame:SetScript("OnLeave", GameTooltip_Hide)
-            buffFrame:SetScript("OnUpdate", function(_, elapsed)
-                if buffFrame.throt < 0 and buffFrame.expires ~= nil and buffFrame:IsShown() then
-                    buffFrame.throt = 0.2
-                    if GameTooltip:IsOwned(buffFrame) then
-                        BuffOnEnter(buffFrame)
-                    end
-                else
-                    buffFrame.throt = buffFrame.throt - elapsed
-                end
-            end)
-
-            buffFrame:Show()
-
-            x = x + 1
-            if x > 10 then
-                y = y + 1
-                x = 0
-            end
-        else
-            buffFrame:Hide()
-            buffFrame:SetScript("OnEnter", nil)
-            buffFrame:SetScript("OnLeave", nil)
-            buffFrame:SetScript("OnUpdate", nil)
+        if x > 10 then
+            y = y + 1
+            x = 0
         end
-    end
 
-    updatePartyDebuffs(self, x, y)
+        button:ClearAllPoints()
+        button:SetPoint("BOTTOMRIGHT", ((button.neededSize - 1) * x), (button.neededSize + 2) * y)
+
+        x = x + 1
+    end
 end
-GW.AddForProfiling("party", "updatePartyAuras", updatePartyAuras)
 
 local function setUnitName(self)
     local role = UnitGroupRolesAssigned(self.unit)
@@ -510,11 +312,10 @@ local function updatePartyData(self)
         SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
     end
 
-    updatePartyAuras(self)
 end
 GW.AddForProfiling("party", "updatePartyData", updatePartyData)
 
-local function party_OnEvent(self, event, unit)
+local function party_OnEvent(self, event, unit, ...)
     if (not UnitExists(self.unit) or IsInRaid()) and not event == "load" then
         return
     end
@@ -522,7 +323,7 @@ local function party_OnEvent(self, event, unit)
     if event == "load" then
         setPredictionAmount(self)
         setHealth(self)
-        updatePartyAuras(self)
+        GW.UpdateBuffLayout(self, event, self.unit)
     end
     if not self.nameNotLoaded then
         setUnitName(self)
@@ -552,7 +353,7 @@ local function party_OnEvent(self, event, unit)
     elseif event == "UNIT_NAME_UPDATE" then
         setUnitName(self)
     elseif event == "UNIT_AURA" then
-        updatePartyAuras(self)
+        GW.UpdateBuffLayout(self, event, unit, ...)
     elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.unit) then
         updateAwayData(self)
     elseif event == "READY_CHECK_FINISHED" then
@@ -569,8 +370,16 @@ GW.AddForProfiling("party", "party_OnEvent", party_OnEvent)
 local function UpdatePartyFrames()
     for i = 1, MAX_PARTY_MEMBERS + (GW.settings.PARTY_PLAYER_FRAME and 1 or 0) do
         local frame = _G["GwPartyFrame" .. i]
+        frame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
+        frame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
+        frame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
+        frame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
         party_OnEvent(frame, "load")
         frame = _G["GwPartyPetFrame" .. i]
+        frame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
+        frame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
+        frame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
+        frame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
         if frame then party_OnEvent(frame, "load") end
     end
 end
@@ -664,6 +473,15 @@ local function CreatePartyPetFrame(frame, i)
     f.unit = unit
     f.isPet = true
 
+    f.auras.FilterAura = FilterAura
+    f.auras.SetPosition = AuraSetPoint
+    f.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
+    f.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
+    f.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
+    f.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
+    f.auras.hideDuration = true
+    GW.LoadAuras(f)
+
     f:ClearAllPoints()
     f:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 15, -17)
 
@@ -698,34 +516,6 @@ local function CreatePartyPetFrame(frame, i)
     f:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
     f:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED",unit)
     f:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED",unit)
-
-    -- create de/buff frames
-    f.buffFrames = {}
-    f.debuffFrames = {}
-    for k = 1, 40 do
-        local debuffFrame = CreateFrame("Frame", nil, f.auras,  "GwDeBuffIcon")
-        debuffFrame:SetParent(f.auras)
-        debuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-        debuffFrame.cooldown:SetDrawEdge(0)
-        debuffFrame.cooldown:SetDrawSwipe(1)
-        debuffFrame.cooldown:SetReverse(1)
-        debuffFrame.cooldown:SetHideCountdownNumbers(true)
-        debuffFrame.throt = -1
-        debuffFrame:SetSize(10, 10)
-
-        f.debuffFrames[k] = debuffFrame
-
-        local buffFrame = CreateFrame("Button", nil, f.auras, "GwBuffIconBig")
-        buffFrame.buffDuration:SetFont(UNIT_NAME_FONT, 11)
-        buffFrame.buffDuration:SetTextColor(1, 1, 1)
-        buffFrame.buffStacks:SetFont(UNIT_NAME_FONT, 6, "OUTLINE")
-        buffFrame.buffStacks:SetTextColor(1, 1, 1)
-        buffFrame:SetParent(f.auras)
-        buffFrame:SetSize(10, 10)
-        buffFrame.throt = -1
-
-        f.buffFrames[k] = buffFrame
-    end
 
     party_OnEvent(f, "load")
 
@@ -765,6 +555,15 @@ local function createPartyFrame(i, isPlayer)
     frame.guid = UnitGUID(frame.unit)
     frame.ready = -1
     frame.nameNotLoaded = false
+
+    frame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
+    frame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
+    frame.auras.hideDuration = true
+    frame.auras.FilterAura = FilterAura
+    frame.auras.SetPosition = AuraSetPoint
+    frame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
+    frame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
+    GW.LoadAuras(frame)
 
     CreatePartyPetFrame(frame, i)
 
@@ -822,34 +621,8 @@ local function createPartyFrame(i, isPlayer)
 
     frame:SetScript("OnEvent", party_OnEvent)
 
-    -- create de/buff frames
-    frame.buffFrames = {}
-    frame.debuffFrames = {}
     frame.privateAuraFrames = {}
     for k = 1, 40 do
-        local debuffFrame = CreateFrame("Frame", nil, frame.auras,  "GwDeBuffIcon")
-        debuffFrame:SetParent(frame.auras)
-        debuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-        debuffFrame.cooldown:SetDrawEdge(0)
-        debuffFrame.cooldown:SetDrawSwipe(1)
-        debuffFrame.cooldown:SetReverse(1)
-        debuffFrame.cooldown:SetHideCountdownNumbers(true)
-        debuffFrame:SetSize(24, 24)
-        debuffFrame.throt = -1
-
-        frame.debuffFrames[k] = debuffFrame
-
-        local buffFrame = CreateFrame("Button", nil, frame.auras, "GwBuffIconBig")
-        buffFrame.buffDuration:SetFont(UNIT_NAME_FONT, 11)
-        buffFrame.buffDuration:SetTextColor(1, 1, 1)
-        buffFrame.buffStacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINE")
-        buffFrame.buffStacks:SetTextColor(1, 1, 1)
-        buffFrame:SetParent(frame.auras)
-        buffFrame:SetSize(20, 20)
-        buffFrame.throt = -1
-
-        frame.buffFrames[k] = buffFrame
-
         if k <=2 then
             local privateAura = CreateFrame("Frame", nil, frame.auras, "GwPrivateAuraTmpl")
             privateAura:SetPoint("BOTTOMRIGHT", frame.auras, (28 * (k - 1)), 28 * 2)

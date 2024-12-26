@@ -22,12 +22,14 @@ end
 GW.AddForProfiling("auras", "auraFrame_OnEnter", auraFrame_OnEnter)
 
 local function auraFrame_OnUpdate(self, elapsed)
-    if self.nextUpdate > 0 then
-        self.nextUpdate = self.nextUpdate - elapsed
-    elseif self:IsShown() and self.expirationTime ~= nil then
-        local text, nextUpdate = GW.GetTimeInfo(self.expirationTime - GetTime())
-        self.nextUpdate = nextUpdate
-        self.duration:SetText(text)
+    if not self.hideDuration then
+        if self.nextUpdate > 0 then
+            self.nextUpdate = self.nextUpdate - elapsed
+        elseif self:IsShown() and self.expirationTime ~= nil then
+            local text, nextUpdate = GW.GetTimeInfo(self.expirationTime - GetTime())
+            self.nextUpdate = nextUpdate
+            self.duration:SetText(text)
+        end
     end
 
     if self.elapsed and self.elapsed > 0.1 then
@@ -67,7 +69,6 @@ local function CreateAuraFrame(name, parent)
 
     return f
 end
-GW.CreateAuraFrame = CreateAuraFrame
 
 local function GetDebuffScaleBasedOnPrio()
     local scale = 1
@@ -163,6 +164,7 @@ local function SetPosition(element, from, to, unit, isInvert, auraPositon)
     local usedHeight = 0
     local lineSize = smallSize
     local firstDebuff = false
+    local handledBuff = false
 
     for i = from, to do
         local button = element[i]
@@ -172,8 +174,10 @@ local function SetPosition(element, from, to, unit, isInvert, auraPositon)
             firstDebuff = true
             -- new line for debuffs
             usedWidth = 0
-            usedHeight = usedHeight + lineSize + marginY
+            usedHeight = handledBuff and (usedHeight + lineSize + marginY) or 0
             lineSize = smallSize
+        else
+            handledBuff = true
         end
 
         usedWidth = usedWidth + button.neededSize + marginX
@@ -208,18 +212,18 @@ local function updateAura(element, unit, data, position, isBuff)
     local button = element[position]
     if not button then
         button = CreateAuraFrame(element:GetDebugName() .. 'Button' .. position, element)
-        button.smallSize = 20
-        button.bigSize = 28
 
         table.insert(element, button)
-        element.createdButtons = element.createdButtons + 1
     end
 
+    button.smallSize = element.smallSize
+    button.bigSize = element.bigSize
     local size = button.smallSize
 
     -- for tooltips
     button.auraInstanceID = data.auraInstanceID
     button.isHarmful = data.isHarmful
+    button.hideDuration = element.hideDuration
 
     if data.sourceUnit == "player" and (data.duration > 0 and data.duration < 120) then
         setAuraType(button, "bigBuff")
@@ -312,7 +316,7 @@ local function processData(data, showImportant, newBuffAnimation)
     return data
 end
 
-local function UpdateBuffLayout2(self, event, unit, updateInfo)
+local function UpdateBuffLayout(self, event, unit, updateInfo)
     if self.unit ~= unit then return end
 
     local isFullUpdate = not updateInfo or updateInfo.isFullUpdate
@@ -320,11 +324,11 @@ local function UpdateBuffLayout2(self, event, unit, updateInfo)
     local auras = self.auras
 
     local buffsChanged = false
-    local numBuffs = 40 -- could be a setting
+    local numBuffs = self.displayBuffs or 32
     local buffFilter = 'HELPFUL'
 
     local debuffsChanged = false
-    local numDebuffs = 40 -- could be a setting
+    local numDebuffs = self.displayDebuffs or 40 -- could be a setting
     local debuffFilter = self.debuffFilter == "PLAYER" and "PLAYER" or "HARMFUL"
     local showImportant = self.debuffFilter == "IMPORTANT"
 
@@ -340,7 +344,7 @@ local function UpdateBuffLayout2(self, event, unit, updateInfo)
             local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]), false, false)
             auras.allBuffs[data.auraInstanceID] = data
 
-            if FilterAura(auras, unit, data, true) then
+            if ((auras.FilterAura or FilterAura)(auras, unit, data, true)) then
                 auras.activeBuffs[data.auraInstanceID] = true
             end
         end
@@ -354,7 +358,7 @@ local function UpdateBuffLayout2(self, event, unit, updateInfo)
             local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]), showImportant, false)
             auras.allDebuffs[data.auraInstanceID] = data
 
-            if FilterAura(auras, unit, data, false) then
+            if ((auras.FilterAura or FilterAura)(auras, unit, data, false)) then
                 auras.activeDebuffs[data.auraInstanceID] = true
             end
         end
@@ -365,7 +369,7 @@ local function UpdateBuffLayout2(self, event, unit, updateInfo)
                     data = processData(data, false, true)
                     auras.allBuffs[data.auraInstanceID] = data
 
-                    if FilterAura(auras, unit, data, true) then
+                    if ((auras.FilterAura or FilterAura)(auras, unit, data, true)) then
                         auras.activeBuffs[data.auraInstanceID] = true
                         buffsChanged = true
                     end
@@ -373,7 +377,7 @@ local function UpdateBuffLayout2(self, event, unit, updateInfo)
                     data = processData(data, showImportant, false)
                     auras.allDebuffs[data.auraInstanceID] = data
 
-                    if FilterAura(auras, unit, data, false) then
+                    if ((auras.FilterAura or FilterAura)(auras, unit, data, false)) then
                         auras.activeDebuffs[data.auraInstanceID] = true
                         debuffsChanged = true
                     end
@@ -469,7 +473,7 @@ local function UpdateBuffLayout2(self, event, unit, updateInfo)
 
         if numVisible ~= auras.visibleButtons then
             auras.visibleButtons = numVisible
-            visibleChanged = auras.reanchorIfVisibleChanged -- more convenient than auras.reanchorIfVisibleChanged and visibleChanged
+            visibleChanged = true
         end
 
         for i = numVisible + 1, #auras do
@@ -477,18 +481,16 @@ local function UpdateBuffLayout2(self, event, unit, updateInfo)
             auras[i]:SetScript("OnUpdate", nil)
         end
 
-        if visibleChanged or auras.createdButtons > auras.anchoredButtons then
+        if visibleChanged or isFullUpdate then
             local auraPositon = (unit == "pet" and self.auraPositionUnder and "DOWN") or (not self.auraPositionTop and "DOWN") or "TOP"
-            SetPosition(auras, 1, numVisible, unit, self.frameInvert, auraPositon)
+            (auras.SetPosition or SetPosition)(auras, 1, numVisible, unit, self.frameInvert, auraPositon)
         end
     end
 end
-GW.UpdateBuffLayout2 = UpdateBuffLayout2
+GW.UpdateBuffLayout = UpdateBuffLayout
 
 -- No use for player (not secure)
 local function LoadAuras(self)
-    self.auras.createdButtons = 0
-    self.auras.anchoredButtons = 0
     self.auras.visibleButtons = 0
 end
 GW.LoadAuras = LoadAuras

@@ -255,7 +255,7 @@ local function updatePetData(self, event, unit, ...)
         updateHealthData(self)
         updatePowerData(self)
     elseif event == "UNIT_AURA" then
-        GW.UpdateBuffLayout2(self, event, unit, ...)
+        GW.UpdateBuffLayout(self, event, unit, ...)
         return
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
         SetPortraitTexture(self.portrait, "pet")
@@ -379,7 +379,7 @@ local function LoadPetFrame(lm)
 
     playerPetFrame.displayBuffs = true
     playerPetFrame.displayDebuffs = true
-    playerPetFrame.debuffFilter = "player"
+    playerPetFrame.debuffFilter = "PLAYER"
 
     LoadAuras(playerPetFrame)
 

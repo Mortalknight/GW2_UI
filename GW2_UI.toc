@@ -130,7 +130,6 @@ social\raf.lua
 social\ignoreList.lua
 social\social.lua
 
-units\aurabar.xml
 units\target.xml
 units\target.lua
 units\party.xml

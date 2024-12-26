@@ -781,7 +781,7 @@ local function target_OnEvent(self, event, unit, ...)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
-        GW.UpdateBuffLayout2(self, event, self.unit, ...)
+        GW.UpdateBuffLayout(self, event, self.unit, ...)
 
         if event == "PLAYER_TARGET_CHANGED" then
             if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then
@@ -821,7 +821,7 @@ local function target_OnEvent(self, event, unit, ...)
         updateThreatValues(self)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
-            GW.UpdateBuffLayout2(self, event, unit, ...)
+            GW.UpdateBuffLayout(self, event, unit, ...)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
@@ -851,7 +851,7 @@ local function focus_OnEvent(self, event, unit, ...)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
-        GW.UpdateBuffLayout2(self, event, self.unit, ...)
+        GW.UpdateBuffLayout(self, event, self.unit, ...)
 
         if event == "PLAYER_FOCUS_CHANGED" then
             if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then
@@ -880,7 +880,7 @@ local function focus_OnEvent(self, event, unit, ...)
         updateRaidMarkers(self)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
-            GW.UpdateBuffLayout2(self, event, unit, ...)
+            GW.UpdateBuffLayout(self, event, unit, ...)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
@@ -924,8 +924,11 @@ local function ToggleTargetFrameSettings()
     GwTargetUnitFrame.showCastbar = GW.settings.target_SHOW_CASTBAR
     GwTargetUnitFrame.showCastingbarData = GW.settings.target_CASTINGBAR_DATA
 
-    GwTargetUnitFrame.displayBuffs = GW.settings.target_BUFFS
-    GwTargetUnitFrame.displayDebuffs = GW.settings.target_DEBUFFS
+    GwTargetUnitFrame.displayBuffs = GW.settings.target_BUFFS and 32 or 0
+    GwTargetUnitFrame.displayDebuffs = GW.settings.target_DEBUFFS and 40 or 0
+
+    GwTargetUnitFrame.auras.smallSize = 20
+    GwTargetUnitFrame.auras.bigSize = 26
 
     GwTargetUnitFrame.shortendHealthValues = GW.settings.TARGET_UNIT_HEALTH_SHORT_VALUES
 
@@ -1080,8 +1083,11 @@ local function ToggleFocusFrameSettings()
     GwFocusUnitFrame.showHealthPrecentage = GW.settings.focus_HEALTH_VALUE_TYPE
     GwFocusUnitFrame.showCastbar = GW.settings.focus_SHOW_CASTBAR
 
-    GwFocusUnitFrame.displayBuffs = GW.settings.focus_BUFFS
-    GwFocusUnitFrame.displayDebuffs = GW.settings.focus_DEBUFFS
+    GwFocusUnitFrame.displayBuffs = GW.settings.focus_BUFFS and 32 or 0
+    GwFocusUnitFrame.displayDebuffs = GW.settings.focus_DEBUFFS and 40 or 0
+
+    GwFocusUnitFrame.auras.smallSize = 20
+    GwFocusUnitFrame.auras.bigSize = 26
 
     GwFocusUnitFrame.shortendHealthValues = GW.settings.FOCUS_UNIT_HEALTH_SHORT_VALUES
 
