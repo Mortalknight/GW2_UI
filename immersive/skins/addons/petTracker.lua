@@ -208,5 +208,6 @@ local function LoadPetTrackerAddonSkin()
     )
 
     hooksecurefunc(PetTracker.Tracker, "Update", petTrackerUpdate)
+    petTrackerUpdate()
 end
 GW.LoadPetTrackerAddonSkin = LoadPetTrackerAddonSkin
