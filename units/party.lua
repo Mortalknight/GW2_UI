@@ -323,7 +323,7 @@ local function party_OnEvent(self, event, unit, ...)
     if event == "load" then
         setPredictionAmount(self)
         setHealth(self)
-        GW.UpdateBuffLayout(self, event, self.unit)
+        self.auras:ForceUpdate()
     end
     if not self.nameNotLoaded then
         setUnitName(self)
@@ -420,7 +420,7 @@ local function UpdatePlayerInPartySetting(alwaysHide)
         updatePartyData(frame)
 
         if alwaysHide then
-            RegisterStateDriver(frame, "visibility", ("hide"):format("party1"))
+            RegisterStateDriver(frame, "visibility", "hide")
         else
             if frame.unit == "player" then
                 RegisterStateDriver(frame, "visibility", ("[@raid1,exists][@%s,noexists] hide;show"):format("party1"))

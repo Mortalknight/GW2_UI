@@ -781,7 +781,7 @@ local function target_OnEvent(self, event, unit, ...)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
-        GW.UpdateBuffLayout(self, event, self.unit, ...)
+        self.auras:ForceUpdate()
 
         if event == "PLAYER_TARGET_CHANGED" then
             if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then
@@ -851,7 +851,7 @@ local function focus_OnEvent(self, event, unit, ...)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
-        GW.UpdateBuffLayout(self, event, self.unit, ...)
+        self.auras:ForceUpdate()
 
         if event == "PLAYER_FOCUS_CHANGED" then
             if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then

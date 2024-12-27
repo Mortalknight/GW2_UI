@@ -294,6 +294,8 @@ local function TogglePetAuraPosition()
         GwPlayerPetFrame.auras:ClearAllPoints()
         GwPlayerPetFrame.auras:SetPoint("TOPLEFT", GwPlayerPetFrame.resource, "BOTTOMLEFT", 0, -5)
     end
+
+    GwPlayerPetFrame.auras:ForceUpdate()
 end
 GW.TogglePetAuraPosition = TogglePetAuraPosition
 
@@ -357,8 +359,6 @@ local function LoadPetFrame(lm)
     playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     playerPetFrame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
 
-    TogglePetAuraPosition()
-
     playerPetFrame:SetScript("OnEnter", function(self)
         if self.unit then
             GameTooltip:ClearLines()
@@ -367,6 +367,19 @@ local function LoadPetFrame(lm)
             GameTooltip:Show()
         end
     end)
+
+    playerPetFrame.unit = "pet"
+
+    playerPetFrame.debuffFilter = "PLAYER"
+    playerPetFrame.displayBuffs = 32
+    playerPetFrame.displayDebuffs = 40
+    playerPetFrame.auras.smallSize = 20
+    playerPetFrame.auras.bigSize = 24
+
+    LoadAuras(playerPetFrame)
+
+    TogglePetAuraPosition()
+
     playerPetFrame:SetScript("OnLeave", GameTooltip_Hide)
     playerPetFrame:SetScript("OnEvent", updatePetData)
     playerPetFrame:HookScript(
@@ -375,13 +388,6 @@ local function LoadPetFrame(lm)
             updatePetData(self, "UNIT_PET", "pet")
         end
     )
-    playerPetFrame.unit = "pet"
-
-    playerPetFrame.displayBuffs = true
-    playerPetFrame.displayDebuffs = true
-    playerPetFrame.debuffFilter = "PLAYER"
-
-    LoadAuras(playerPetFrame)
 
     playerPetFrame:RegisterUnitEvent("UNIT_PET", "player")
     playerPetFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "pet")

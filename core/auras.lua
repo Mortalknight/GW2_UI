@@ -214,6 +214,7 @@ local function updateAura(element, unit, data, position, isBuff)
         button = CreateAuraFrame(element:GetDebugName() .. 'Button' .. position, element)
 
         table.insert(element, button)
+        element.createdButtons = element.createdButtons + 1
     end
 
     button.smallSize = element.smallSize
@@ -481,16 +482,29 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
             auras[i]:SetScript("OnUpdate", nil)
         end
 
-        if visibleChanged or isFullUpdate then
+        if event == "ForceUpdate" or visibleChanged or auras.createdButtons > auras.anchoredButtons then
             local auraPositon = (unit == "pet" and self.auraPositionUnder and "DOWN") or (not self.auraPositionTop and "DOWN") or "TOP"
-            (auras.SetPosition or SetPosition)(auras, 1, numVisible, unit, self.frameInvert, auraPositon)
+            if(visibleChanged or event == "ForceUpdate") then
+                (auras.SetPosition or SetPosition) (auras, 1, numVisible, unit, self.frameInvert, auraPositon)
+            else
+                (auras.SetPosition or SetPosition) (auras, auras.anchoredButtons + 1, auras.createdButtons, unit, self.frameInvert, auraPositon)
+                auras.anchoredButtons = auras.createdButtons
+            end
         end
     end
 end
 GW.UpdateBuffLayout = UpdateBuffLayout
 
+local function ForceUpdate(element)
+    local parent = element:GetParent()
+    UpdateBuffLayout(parent, "ForceUpdate", parent.unit)
+end
+
 -- No use for player (not secure)
 local function LoadAuras(self)
     self.auras.visibleButtons = 0
+    self.auras.createdButtons = 0
+    self.auras.anchoredButtons = 0
+    self.auras.ForceUpdate = ForceUpdate
 end
 GW.LoadAuras = LoadAuras
