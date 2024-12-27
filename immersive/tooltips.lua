@@ -72,13 +72,7 @@ local function RemoveTrashLines(self)
     end
 end
 
-local function SetUnitAura(self, unit, index, filter)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
-    if not self or self:IsForbidden() then return end
-
-    local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
-    if not auraData then return end
-
+local function AddMountInfoToAuraTooltip (self, auraData)
     local mountID, mountText = MountIDs[auraData.spellId], ""
     if mountID then
         local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(mountID)
@@ -105,6 +99,25 @@ local function SetUnitAura(self, unit, index, filter)
     end
 
     self:Show()
+end
+
+local function SetUnitAura(self, unit, index, filter)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
+    if not self or self:IsForbidden() then return end
+
+    local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
+    if not auraData then return end
+    AddMountInfoToAuraTooltip(self, auraData)
+end
+
+local function SetUnitAuraByAuraInstanceId(self, unit, auraInstanceId)
+    if not GW.settings.ADVANCED_TOOLTIP then return end
+    if not self or self:IsForbidden() then return end
+
+    local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceId)
+    if not auraData then return end
+
+    AddMountInfoToAuraTooltip(self, auraData)
 end
 
 local function GameTooltip_OnTooltipSetSpell(self, data)
@@ -1172,6 +1185,8 @@ local function LoadTooltips()
     hooksecurefunc(GameTooltip, "SetUnitAura", SetUnitAura)
     hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitAura)
     hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitAura)
+    hooksecurefunc(GameTooltip, "SetUnitDebuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)
+    hooksecurefunc(GameTooltip, "SetUnitBuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)
 
     hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
     hooksecurefunc("TaskPOI_OnEnter", AddQuestID)
