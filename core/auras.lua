@@ -286,6 +286,7 @@ local function updateAura(element, unit, data, position, isBuff)
     button:SetSize(size, size)
     if data.newBuffAnimation == true then
         auraAnimateIn(button)
+        data.newBuffAnimation = false
     end
     button:EnableMouse(true)
     button:Show()
@@ -484,12 +485,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
 
         if event == "ForceUpdate" or visibleChanged or auras.createdButtons > auras.anchoredButtons then
             local auraPositon = (unit == "pet" and self.auraPositionUnder and "DOWN") or (not self.auraPositionTop and "DOWN") or "TOP"
-            if(visibleChanged or event == "ForceUpdate") then
-                (auras.SetPosition or SetPosition) (auras, 1, numVisible, unit, self.frameInvert, auraPositon)
-            else
-                (auras.SetPosition or SetPosition) (auras, auras.anchoredButtons + 1, auras.createdButtons, unit, self.frameInvert, auraPositon)
-                auras.anchoredButtons = auras.createdButtons
-            end
+            (auras.SetPosition or SetPosition) (auras, 1, numVisible, unit, self.frameInvert, auraPositon)
         end
     end
 end

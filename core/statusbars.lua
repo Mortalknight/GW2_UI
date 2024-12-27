@@ -314,13 +314,14 @@ local function createNewStatusBar(name, parent, template, smooth)
 end
 GW.createNewStatusbar = createNewStatusBar
 
-local function preLoadStatusBarMaskTextures()
+local function PreloadStatusBarMaskTextures()
     local f = CreateFrame("Frame", nil, UIParent)
     f:SetSize(1, 1)
+    f:SetPoint("TOPLEFT", -5000)
     for i = 0, numSpritesInAnimation do
         f.preLoader = f:CreateTexture(nil, "BACKGROUND")
         f.preLoader:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. i)
         f.preLoader:SetSize(1, 1)
     end
 end
-GW.preLoadStatusBarMaskTextures = preLoadStatusBarMaskTextures
+GW.PreloadStatusBarMaskTextures = PreloadStatusBarMaskTextures
