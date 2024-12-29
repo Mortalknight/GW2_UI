@@ -12,7 +12,6 @@ local AddToClique = GW.AddToClique
 local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
-local UpdateBuffLayout = GW.UpdateBuffLayout
 local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
 local fctf
@@ -656,36 +655,6 @@ local function updateCastValues(self)
 end
 GW.AddForProfiling("unitframes", "updateCastValues", updateCastValues)
 
-local function updatePowerValues(self, hideAt0,event)
-    local powerType, powerToken, _ = UnitPowerType(self.unit)
-    local power = UnitPower(self.unit, powerType)
-    local powerMax = UnitPowerMax(self.unit, powerType)
-    local powerPrecentage = 0
-
-    if power > 0 and powerMax > 0 then
-        powerPrecentage = power / powerMax
-    end
-
-    if power <= 0 and hideAt0 then
-        self.powerbar:Hide()
-    else
-        self.powerbar:Show()
-    end
-
-    if PowerBarColorCustom[powerToken] then
-        local pwcolor = PowerBarColorCustom[powerToken]
-        self.powerbar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-    end
-
-    if event and event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
-      self.powerbar:ForceFillAmount(powerPrecentage)
-    else
-      self.powerbar:SetFillAmount(powerPrecentage)
-    end
-end
-GW.updatePowerValues = updatePowerValues
-GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
-
 local function updateThreatValues(self)
     self.threatValue = select(3, UnitDetailedThreatSituation("player", self.unit))
 
@@ -698,55 +667,6 @@ local function updateThreatValues(self)
     end
 end
 GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
-
-local function updateHealthValues(self, event)
-    local health = UnitHealth(self.unit)
-    local healthMax = UnitHealthMax(self.unit)
-    local absorb = UnitGetTotalAbsorbs(self.unit)
-    local prediction = UnitGetIncomingHeals(self.unit) or 0
-    local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
-    local absorbPrecentage = 0
-    local absorbAmount = 0
-    local absorbAmount2 = 0
-    local predictionPrecentage = 0
-    local healAbsorbPrecentage = 0
-    local healthPrecentage = 0
-
-    if health > 0 and healthMax > 0 then
-        healthPrecentage = health / healthMax
-    end
-
-    if absorb > 0 and healthMax > 0 then
-        absorbPrecentage = absorb / healthMax
-        absorbAmount = healthPrecentage + absorbPrecentage
-        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
-    end
-
-    if prediction > 0 and healthMax > 0 then
-        predictionPrecentage = (prediction / healthMax) + healthPrecentage
-    end
-    if healAbsorb > 0 and healthMax > 0 then
-        healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
-    end
-    self.healPrediction:SetFillAmount(predictionPrecentage)
-
-    self.health.barOnUpdate = function()
-      updateHealthTextString(self, health, self.health:GetFillAmount())
-    end
-
-    if event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
-        self.health:ForceFillAmount(healthPrecentage)
-        self.absorbbg:ForceFillAmount(absorbAmount)
-        self.absorbOverlay:ForceFillAmount(absorbAmount2)
-        self.antiHeal:ForceFillAmount(healAbsorbPrecentage)
-    else
-        self.health:SetFillAmount(healthPrecentage)
-        self.absorbbg:SetFillAmount(absorbAmount)
-        self.absorbOverlay:SetFillAmount(absorbAmount2)
-        self.antiHeal:SetFillAmount(healAbsorbPrecentage)
-    end
-end
-GW.AddForProfiling("unitframes", "updateHealthValues", updateHealthValues)
 
 local function target_OnEvent(self, event, unit, ...)
     if not self then return end
@@ -777,10 +697,10 @@ local function target_OnEvent(self, event, unit, ...)
 
         unitFrameData(self)
         if (ttf) then unitFrameData(ttf) end
-        updateHealthValues(self, event)
-        if (ttf) then updateHealthValues(ttf, event) end
-        updatePowerValues(self,nil,event)
-        if (ttf) then updatePowerValues(ttf,nil,event) end
+        GW.UpdateHealthBar(self, true)
+        if (ttf) then GW.UpdateHealthBar(self, true) end
+        GW.UpdatePowerBar(self, event == "PLAYER_TARGET_CHANGED")
+        if (ttf) then GW.UpdatePowerBar(self, event == "PLAYER_TARGET_CHANGED") end
         updateCastValues(self)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
@@ -804,8 +724,8 @@ local function target_OnEvent(self, event, unit, ...)
         if (ttf ~= nil) then
             if UnitExists("targettarget") then
                 unitFrameData(ttf)
-                updateHealthValues(ttf, event)
-                updatePowerValues(ttf,nil,event)
+                GW.UpdateHealthBar(self, true)
+                GW.UpdatePowerBar(self, true)
                 updateCastValues(ttf)
                 updateRaidMarkers(ttf)
             end
@@ -825,9 +745,9 @@ local function target_OnEvent(self, event, unit, ...)
         if event == "UNIT_AURA" then
             GW.UpdateBuffLayout(self, event, unit, ...)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
-            updateHealthValues(self, event)
+            GW.UpdateHealthBar(self)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-            updatePowerValues(self,nil,event)
+            GW.UpdatePowerBar(self)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
             updateCastValues(self)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
@@ -845,10 +765,10 @@ local function focus_OnEvent(self, event, unit, ...)
     if event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_ENTERING_WORLD" or event == "FORCE_UPDATE" then
         unitFrameData(self)
         if (ttf) then unitFrameData(ttf) end
-        updateHealthValues(self, event)
-        if (ttf) then updateHealthValues(ttf, event) end
-        updatePowerValues(self,nil,event)
-        if (ttf) then updatePowerValues(ttf,nil,event) end
+        GW.UpdateHealthBar(self, true)
+        if (ttf) then GW.UpdateHealthBar(self, true) end
+        GW.UpdatePowerBar(self, event == "PLAYER_FOCUS_CHANGED")
+        if (ttf) then GW.UpdatePowerBar(self, event == "PLAYER_FOCUS_CHANGED") end
         updateCastValues(self)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
@@ -872,8 +792,8 @@ local function focus_OnEvent(self, event, unit, ...)
         if (ttf ~= nil) then
             if UnitExists("focustarget") then
                 unitFrameData(ttf)
-                updateHealthValues(ttf, event)
-                updatePowerValues(ttf,nil,event)
+                GW.UpdateHealthBar(self, true)
+                GW.UpdatePowerBar(self, true)
                 updateCastValues(ttf)
                 updateRaidMarkers(ttf)
             end
@@ -884,9 +804,9 @@ local function focus_OnEvent(self, event, unit, ...)
         if event == "UNIT_AURA" then
             GW.UpdateBuffLayout(self, event, unit, ...)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
-            updateHealthValues(self, event)
+            GW.UpdateHealthBar(self)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-            updatePowerValues(self,nil,event)
+            GW.UpdatePowerBar(self)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
             updateCastValues(self)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
@@ -912,8 +832,8 @@ local function unittarget_OnUpdate(self, elapsed)
     end
 
     updateRaidMarkers(self)
-    updateHealthValues(self, "UNIT_TARGET")
-    updatePowerValues(self,nil,"UNIT_TARGET")
+    GW.UpdateHealthBar(self, true)
+    GW.UpdatePowerBar(self, true)
     updateCastValues(self)
 end
 GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)

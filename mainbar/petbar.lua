@@ -203,48 +203,6 @@ local function UpdatePetCooldown(self)
     end
 end
 
-local function updatePowerData(self)
-    local powerType, powerToken = UnitPowerType("pet")
-    local resource = UnitPower("pet", powerType)
-    local resourceMax = UnitPowerMax("pet", powerType)
-    local resourcePrec = 0
-
-    if resource ~= nil and resource > 0 and resourceMax > 0 then
-        resourcePrec = resource / resourceMax
-    end
-
-    if PowerBarColorCustom[powerToken] then
-        local pwcolor = PowerBarColorCustom[powerToken]
-        self.resource:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-    end
-
-    self.resource:SetFillAmount(resourcePrec)
-end
-
-local function updateHealthData(self)
-    local health = UnitHealth("pet")
-    local healthMax = UnitHealthMax("pet")
-    local healthprec = 0
-    local formatFunction
-
-    if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
-        formatFunction = GW.ShortValue
-    else
-        formatFunction = GW.GetLocalizedNumber
-    end
-
-    if health > 0 and healthMax > 0 then
-        healthprec = health / healthMax
-    end
-
-    self.health:SetFillAmount(healthprec)
-
-    self.health.barOnUpdate = function()
-        self.health.text:SetText(formatFunction(health))
-    end
-end
-GW.UpdatePlayerPetHealthValues = updateHealthData
-
 local function updatePetData(self, event, unit, ...)
     if not UnitExists("pet") then
         return
@@ -252,8 +210,8 @@ local function updatePetData(self, event, unit, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         SetPortraitTexture(self.portrait, "pet")
         UpdatePetActionBar(self, event, unit)
-        updateHealthData(self)
-        updatePowerData(self)
+        GW.UpdateHealthBar(self)
+        GW.UpdatePowerBar(self, true)
     elseif event == "UNIT_AURA" then
         GW.UpdateBuffLayout(self, event, unit, ...)
         return
@@ -274,15 +232,15 @@ local function updatePetData(self, event, unit, ...)
         SetPortraitTexture(self.portrait, "pet")
         UpdatePetActionBar(self, event, unit)
         if event == "UNIT_PET" then
-            updateHealthData(self)
-            updatePowerData(self)
+            GW.UpdateHealthBar(self)
+            GW.UpdatePowerBar(self, true)
         end
     elseif event == "PET_BAR_UPDATE_COOLDOWN" then
         UpdatePetCooldown(self)
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
-        updateHealthData(self)
+        GW.UpdateHealthBar(self)
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
-        updatePowerData(self)
+        GW.UpdatePowerBar(self)
     end
 end
 GW.AddForProfiling("petbar", "updatePetData", updatePetData)
@@ -292,7 +250,7 @@ local function TogglePetAuraPosition()
 
     GwPlayerPetFrame.auras:ClearAllPoints()
     if GwPlayerPetFrame.auraPositionUnder then
-        GwPlayerPetFrame.auras:SetPoint("TOPLEFT", GwPlayerPetFrame.resource, "BOTTOMLEFT", 0, -5)
+        GwPlayerPetFrame.auras:SetPoint("TOPLEFT", GwPlayerPetFrame.powerbar, "BOTTOMLEFT", 0, -5)
     else
         GwPlayerPetFrame.auras:SetPoint("TOPRIGHT", GwPlayerPetFrame.Background, "BOTTOMRIGHT", -3, 100)
     end
@@ -335,10 +293,10 @@ local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
 
     GW.hookStatusbarBehaviour(playerPetFrame.health, true)
-    GW.hookStatusbarBehaviour(playerPetFrame.resource, true)
+    GW.hookStatusbarBehaviour(playerPetFrame.powerbar, true)
 
     playerPetFrame.health.customMaskSize = 64
-    playerPetFrame.resource.customMaskSize = 64
+    playerPetFrame.powerbar.customMaskSize = 64
 
     playerPetFrame.buttons = {}
 
@@ -350,6 +308,18 @@ local function LoadPetFrame(lm)
     PetActionBar:GwKillEditMode()
 
     hooksecurefunc(PetActionBar, "Update", UpdateAutoCast)
+
+    playerPetFrame.updateHealthTextString = function(self, health)
+        local formatFunction
+
+        if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
+            formatFunction = GW.ShortValue
+        else
+            formatFunction = GW.GetLocalizedNumber
+        end
+
+        self.health.text:SetText(formatFunction(health))
+    end
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")

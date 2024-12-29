@@ -111,6 +111,8 @@ dataInfo\durability.lua
 datainfo\characterItemInfo.lua
 
 core\auras.lua
+core\powerBar.lua
+core\healthBar.lua
 
 changelog.lua
 GW2_ui.lua

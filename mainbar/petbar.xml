@@ -51,7 +51,7 @@
                     </Layer>
                 </Layers>
             </StatusBar>
-            <StatusBar parentKey="resource" inherits="GwStatusBarTemplate">
+            <StatusBar parentKey="powerbar" inherits="GwStatusBarTemplate">
                 <Size x="230" y="2"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.health" x="0" y="-2"/>

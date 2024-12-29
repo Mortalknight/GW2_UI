@@ -4,69 +4,6 @@ local AddToClique = GW.AddToClique
 local createNormalUnitFrame = GW.createNormalUnitFrame
 local IsIn = GW.IsIn
 
-local function updateHealthTextString(self, health, healthPrecentage)
-    local healthString = ""
-    local formatFunction
-
-    if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
-        formatFunction = GW.ShortValue
-    else
-        formatFunction = GW.GetLocalizedNumber
-    end
-
-    if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
-        healthString = GW.GetLocalizedNumber(healthPrecentage * 100, 0) .. "%"
-    elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
-        healthString = formatFunction(health)
-    elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
-        healthString = formatFunction(health) .. " - " .. GW.GetLocalizedNumber(healthPrecentage * 100, 0) .. "%"
-    end
-
-    self.healthString:SetText(healthString)
-end
-GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextString)
-
-local function updateHealthData(self)
-    local health = UnitHealth(self.unit)
-    local healthMax = UnitHealthMax(self.unit)
-    local absorb = UnitGetTotalAbsorbs(self.unit)
-    local prediction = UnitGetIncomingHeals(self.unit) or 0
-    local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
-    local absorbPrecentage = 0
-    local absorbAmount = 0
-    local absorbAmount2 = 0
-    local predictionPrecentage = 0
-    local healAbsorbPrecentage = 0
-    local healthPrecentage = 0
-
-    if health > 0 and healthMax > 0 then
-        healthPrecentage = health / healthMax
-    end
-
-    if absorb > 0 and healthMax > 0 then
-        absorbPrecentage = absorb / healthMax
-        absorbAmount = healthPrecentage + absorbPrecentage
-        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
-    end
-
-    if prediction > 0 and healthMax > 0 then
-        predictionPrecentage = (prediction / healthMax) + healthPrecentage
-    end
-    if healAbsorb > 0 and healthMax > 0 then
-        healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
-    end
-    self.healPrediction:SetFillAmount(predictionPrecentage)
-
-    self.health.barOnUpdate = function()
-        updateHealthTextString(self, health, self.health:GetFillAmount())
-    end
-
-    self.health:SetFillAmount(healthPrecentage)
-    self.absorbbg:SetFillAmount(absorbAmount)
-    self.absorbOverlay:SetFillAmount(absorbAmount2)
-    self.antiHeal:SetFillAmount(healAbsorbPrecentage)
-end
-
 local function unitFrameData(self, lvl)
     local level = lvl or UnitLevel(self.unit)
     local name = UnitName(self.unit)
@@ -95,17 +32,17 @@ end
 local function player_OnEvent(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         unitFrameData(self)
-        updateHealthData(self)
-        GW.updatePowerValues(self, false)
+        GW.UpdateHealthBar(self)
+        GW.UpdatePowerBar(self)
     elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE") then
         unitFrameData(self)
     elseif event == "PLAYER_LEVEL_UP" then
         local level = ...
         unitFrameData(self, level)
     elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
-        updateHealthData(self)
+        GW.UpdateHealthBar(self)
     elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UPDATE_SHAPESHIFT_FORM", "ACTIVE_TALENT_GROUP_CHANGED") then
-        GW.updatePowerValues(self, false)
+        GW.UpdatePowerBar(self)
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         GW.PlayerSelectPvp(self)
     elseif event == "RESURRECT_REQUEST" then
@@ -117,7 +54,11 @@ local function UpdateSettings()
     if GwPlayerUnitFrame then
         GwPlayerUnitFrame.altBg:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
 
-        updateHealthData(GwPlayerUnitFrame)
+        GwPlayerUnitFrame.shortendHealthValues = GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES
+        GwPlayerUnitFrame.showHealthValue = GW.settings.PLAYER_UNIT_HEALTH == "VALUE" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
+        GwPlayerUnitFrame.showHealthPrecentage = GW.settings.PLAYER_UNIT_HEALTH == "PREC" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
+
+        GW.UpdateHealthBar(GwPlayerUnitFrame)
         unitFrameData(GwPlayerUnitFrame)
     end
 end
