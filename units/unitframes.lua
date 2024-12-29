@@ -752,7 +752,7 @@ local function target_OnEvent(self, event, unit, ...)
     if not self then return end
     local ttf = GwTargetTargetUnitFrame
 
-    if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED", "FORCE_UPDATE") then
+    if IsIn(event, "PLAYER_TARGET_CHANGED", "PLAYER_ENTERING_WORLD", "FORCE_UPDATE") then
         if event == "PLAYER_TARGET_CHANGED" and CanInspect(self.unit) and GW.settings.target_SHOW_ILVL then
             local guid = UnitGUID(self.unit)
             if guid then
@@ -769,6 +769,10 @@ local function target_OnEvent(self, event, unit, ...)
             updateThreatValues(self)
         elseif self.threattabbg:IsShown() then
             self.threattabbg:Hide()
+        end
+
+        if event == "PLAYER_ENTERING_WORLD" then
+            wipe(GW.unitIlvlsCache)
         end
 
         unitFrameData(self)
@@ -806,8 +810,6 @@ local function target_OnEvent(self, event, unit, ...)
                 updateRaidMarkers(ttf)
             end
         end
-    elseif event == "PLAYER_ENTERING_WORLD" then
-        wipe(GW.unitIlvlsCache)
     elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
@@ -840,7 +842,7 @@ GW.AddForProfiling("unitframes", "target_OnEvent", target_OnEvent)
 local function focus_OnEvent(self, event, unit, ...)
     local ttf = GwFocusTargetUnitFrame
 
-    if event == "PLAYER_FOCUS_CHANGED" or event == "ZONE_CHANGED" or event == "FORCE_UPDATE" then
+    if event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_ENTERING_WORLD" or event == "FORCE_UPDATE" then
         unitFrameData(self)
         if (ttf) then unitFrameData(ttf) end
         updateHealthValues(self, event)
@@ -1045,7 +1047,6 @@ local function LoadTarget()
     NewUnitFrame:SetScript("OnEvent", target_OnEvent)
 
     NewUnitFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-    NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
     NewUnitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
@@ -1164,7 +1165,7 @@ local function LoadFocus()
     NewUnitFrame:SetScript("OnEvent", focus_OnEvent)
 
     NewUnitFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
-    NewUnitFrame:RegisterEvent("ZONE_CHANGED")
+    NewUnitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
 
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "focus")
