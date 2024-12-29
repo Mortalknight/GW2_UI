@@ -194,7 +194,7 @@ local function SetPosition(element, from, to, unit, isInvert, auraPositon)
         else
             usedWidth2 = usedWidth
         end
-        local px = usedWidth2  + (button.neededSize / 2)
+        local px = usedWidth2 + (button.neededSize / 2)
         local py = usedHeight + (maxHeightInRow / 2)
 
         button:ClearAllPoints()
@@ -234,6 +234,7 @@ local function updateAura(element, unit, data, position, isBuff)
     else
         setAuraType(button, "smallbuff")
         button.Cooldown:Hide()
+        data.newBuffAnimation = false
     end
 
     if data.expirationTime < 1 or data.timeRemaining > 500000 then
@@ -484,7 +485,16 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
         end
 
         if event == "ForceUpdate" or visibleChanged or auras.createdButtons > auras.anchoredButtons then
-            local auraPositon = (unit == "pet" and self.auraPositionUnder and "DOWN") or (not self.auraPositionTop and "DOWN") or "TOP"
+            local auraPositon = "TOP"
+            if unit == "pet" then
+                if self.auraPositionUnder == true then
+                    auraPositon = "DOWN"
+                end
+            else
+                if not self.auraPositionTop then
+                    auraPositon = "DOWN"
+                end
+            end
             (auras.SetPosition or SetPosition) (auras, 1, numVisible, unit, self.frameInvert, auraPositon)
         end
     end

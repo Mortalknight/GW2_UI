@@ -290,9 +290,11 @@ GW.AddForProfiling("petbar", "updatePetData", updatePetData)
 local function TogglePetAuraPosition()
     GwPlayerPetFrame.auraPositionUnder = GW.settings.PET_AURAS_UNDER
 
+    GwPlayerPetFrame.auras:ClearAllPoints()
     if GwPlayerPetFrame.auraPositionUnder then
-        GwPlayerPetFrame.auras:ClearAllPoints()
         GwPlayerPetFrame.auras:SetPoint("TOPLEFT", GwPlayerPetFrame.resource, "BOTTOMLEFT", 0, -5)
+    else
+        GwPlayerPetFrame.auras:SetPoint("TOPRIGHT", GwPlayerPetFrame.Background, "BOTTOMRIGHT", -3, 100)
     end
 
     GwPlayerPetFrame.auras:ForceUpdate()
