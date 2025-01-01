@@ -93,13 +93,16 @@ local function LoadFriendList(tabContainer)
     GWFriendFrame.Container = tabContainer
 
     GWFriendFrame:SetScript("OnShow", function()
+        local onGlues =  C_Glue.IsOnGlueScreen()
+        local inPlunderstorm = C_GameEnvironmentManager.GetCurrentGameEnvironment() == Enum.GameEnvironment.WoWLabs
+        if not onGlues and not inPlunderstorm then
+            -- if not InCombatLockdown() then UpdateMicroButtons() end -- possible actionbar taint via micromenu
+            FriendsFrame_CheckQuickJoinHelpTip()
+            FriendsFrame_UpdateQuickJoinTab(#C_SocialQueue.GetAllGroups())
+            C_GuildInfo.GuildRoster()
+        end
         FriendsList_Update(true)
-        if not InCombatLockdown() then UpdateMicroButtons() end
-        FriendsFrame_CheckQuickJoinHelpTip()
-        FriendsFrame_UpdateQuickJoinTab(#C_SocialQueue.GetAllGroups())
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-        C_GuildInfo.GuildRoster()
-
         FriendsFrame_Update()
     end)
 
