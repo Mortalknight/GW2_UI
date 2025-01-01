@@ -220,26 +220,6 @@ local function setButtonStyle(ispassive, spellID, skillType, icon, spellbookInde
     return btn
 end
 
-local function findHigherRank(t,spellID)
-    local si = spellID
-    for k,v in pairs(GW.SpellsByLevel) do
-        for _,spell in pairs(v) do
-            if spell.requiredIds~=nil then
-                for _,rid in pairs(spell.requiredIds) do
-                    if rid == si  then
-                        if not IsSpellKnown(spell.id) then
-                            t[#t + 1] = {id=spell.id,level=k,rank=spell.rank}
-                            t = findHigherRank(t,spell.id)
-                            return t
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return t
-end
-
 local function getHeaderHeight(pagingContainer,lastHeader)
     local lastColumn = 1
     if lastHeader~=nil then
@@ -276,6 +256,8 @@ local function setUpPaging(self)
     self.attrDummy:SetFrameRef('container3', self.container3)
     self.attrDummy:SetFrameRef('container4', self.container4)
     self.attrDummy:SetFrameRef('container5', self.container5)
+    self.attrDummy:SetFrameRef('container6', self.container6)
+    self.attrDummy:SetFrameRef('container7', self.container7)
     self.attrDummy:SetFrameRef('left', self.left)
     self.attrDummy:SetFrameRef('right', self.right)
     self.attrDummy:SetAttribute('_onattributechanged', ([=[
@@ -286,13 +268,23 @@ local function setUpPaging(self)
         local p3 = self:GetFrameRef('container3')
         local p4 = self:GetFrameRef('container4')
         local p5 = self:GetFrameRef('container5')
+        local p6 = self:GetFrameRef('container6')
+        local p7 = self:GetFrameRef('container7')
         local left = self:GetFrameRef('left')
         local right = self:GetFrameRef('right')
         local numPages = %s
         local currentPage = 1
 
         if value == "left" then
-            if p5:IsVisible() then
+            if p7:IsVisible() then
+                p7:Hide()
+                p6:Show()
+                currentPage = 6
+            elseif p6:IsVisible() then
+                p6:Hide()
+                p5:Show()
+                currentPage = 5
+            elseif p5:IsVisible() then
                 p5:Hide()
                 p4:Show()
                 currentPage = 4
@@ -327,6 +319,14 @@ local function setUpPaging(self)
                 p4:Hide()
                 p5:Show()
                 currentPage = 5
+            elseif p5:IsVisible() then
+                p5:Hide()
+                p6:Show()
+                currentPage = 6
+            elseif p6:IsVisible() then
+                p6:Hide()
+                p7:Show()
+                currentPage = 7
             end
         end
 
