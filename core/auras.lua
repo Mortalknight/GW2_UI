@@ -152,7 +152,7 @@ GW.AddForProfiling("auras", "auraAnimateIn", auraAnimateIn)
 
 local function SetPosition(element, from, to, unit, isInvert, auraPositon)
     local anchorTo = unit == "pet" and "TOPRIGHT" or isInvert and "TOPRIGHT" or "TOPLEFT"
-    local growthx = (isInvert or unit == "pet" and -1) or 1
+    local growthx = isInvert and -1 or (unit == "pet" and -1) or 1
     local growthy = (auraPositon == 'DOWN' and -1) or 1
     local marginY = 20
     local marginX = 3
