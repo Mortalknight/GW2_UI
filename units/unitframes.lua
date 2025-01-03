@@ -1,7 +1,6 @@
 local _, GW = ...
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local TimeCount = GW.TimeCount
-local PowerBarColorCustom = GW.PowerBarColorCustom
 local bloodSpark = GW.BLOOD_SPARK
 local GWGetClassColor = GW.GWGetClassColor
 local TARGET_FRAME_ART = GW.TARGET_FRAME_ART
@@ -36,13 +35,13 @@ local function createNormalUnitFrame(ftype, revert)
     f.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
 
     --GwTargetUnitFrame.health:GetValue()
-    GW.hookStatusbarBehaviour(f.absorbOverlay,true)
-    GW.hookStatusbarBehaviour(f.antiHeal,true)
-    GW.hookStatusbarBehaviour(f.health, true, nil)
-    GW.hookStatusbarBehaviour(f.absorbbg,true)
-    GW.hookStatusbarBehaviour(f.healPrediction,false)
-    GW.hookStatusbarBehaviour(f.castingbarNormal,false)
-    GW.hookStatusbarBehaviour(f.powerbar,true)
+    GW.hookStatusbarBehaviour(f.absorbOverlay, true)
+    GW.hookStatusbarBehaviour(f.antiHeal, true)
+    GW.hookStatusbarBehaviour(f.health, true)
+    GW.hookStatusbarBehaviour(f.absorbbg, true)
+    GW.hookStatusbarBehaviour(f.healPrediction, false)
+    GW.hookStatusbarBehaviour(f.castingbarNormal, false)
+    GW.hookStatusbarBehaviour(f.powerbar, true)
 
     f.absorbOverlay.customMaskSize = 64
     f.antiHeal.customMaskSize = 64
@@ -64,12 +63,14 @@ local function createNormalUnitFrame(ftype, revert)
         f.healthString:SetPoint("RIGHT", f.absorbOverlay, "RIGHT", -5, 0)
         f.healthString:SetJustifyH("RIGHT")
 
-        --f.absorbOverlay:SetReverseFill(true)
-        --f.antiHeal:SetReverseFill(true)
-        --f.health:SetReverseFill(true)
-        --f.absorbbg:SetReverseFill(true)
-        --f.healPrediction:SetReverseFill(true)
-        --f.powerbar:SetReverseFill(true)
+        f.absorbOverlay:SetReverseFill(true)
+        f.antiHeal:SetReverseFill(true)
+        f.health:SetReverseFill(true)
+        f.absorbbg:SetReverseFill(true)
+        f.healPrediction:SetReverseFill(true)
+        f.powerbar:SetReverseFill(true)
+        f.castingbarNormal:SetReverseFill(true)
+        f.castingbarNormal.internalBar:SetTexCoord(0, 1, 0, 1)
     end
 
     f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
@@ -220,10 +221,6 @@ local function updateHealthbarColor(self)
             nameColor = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
         end
         self.health:SetStatusBarColor(nameColor.r, nameColor.g, nameColor.b, 1)
-    --    self.healthbar:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
-    --    self.healthbarSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
-    --    self.healthbarFlash:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
-    --    self.healthbarFlashSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
         self.nameString:SetTextColor(nameColor.r, nameColor.g, nameColor.b, 1)
     end
 
@@ -446,33 +443,7 @@ end
 GW.AddForProfiling("unitframes", "unitFrameData", unitFrameData)
 
 local function normalCastBarAnimation(self, powerPrec)
-
-  self.castingbarNormal:SetFillAmount(powerPrec)
-  --[[
-
-
-    local powerBarWidth = self.barWidth
-    self.castingbarNormal:SetWidth(math.max(1, powerPrec * powerBarWidth))
-    self.castingbarNormalSpark:SetWidth(math.min(15, math.max(1, powerPrec * powerBarWidth)))
-    self.castingbarNormal:SetTexCoord(self.barCoords.L, GW.lerp(self.barCoords.L,self.barCoords.R, powerPrec), self.barCoords.T, self.barCoords.B)
-
-    self.castingbarNormal:SetVertexColor(1, 1, 1, 1)
-
-    if self.numStages > 0 then
-        for i = 1, self.numStages - 1, 1 do
-            local stage_percentage = self.StagePoints[i]
-            if stage_percentage <= powerPrec then
-                self.highlight:SetTexCoord(self.barHighLightCoords.L, GW.lerp(self.barHighLightCoords.L, self.barHighLightCoords.R, stage_percentage), self.barHighLightCoords.T, self.barHighLightCoords.B)
-                self.highlight:SetWidth(math.max(1, stage_percentage * powerBarWidth))
-                self.highlight:Show()
-            end
-
-            if i == 1 and stage_percentage >= powerPrec then
-                self.highlight:Hide()
-            end
-        end
-    end
-      ]]
+    self.castingbarNormal:SetFillAmount(powerPrec)
 end
 GW.AddForProfiling("unitframes", "normalCastBarAnimation", normalCastBarAnimation)
 
@@ -488,22 +459,6 @@ local function protectedCastAnimation(self, powerPrec)
 
     self.castingbar:SetTexCoord(0, math.min(1, math.max(0, 0.0625 * segment)), 0, 1)
     self.castingbar:SetWidth(math.min(powerBarWidth, math.max(1, spark)))
-
-
-    --if self.numStages > 0 then
-    --    for i = 1, self.numStages - 1, 1 do
-    --        local stage_percentage = self.StagePoints[i]
-    --        if stage_percentage <= powerPrec then
-    --            self.highlight:SetTexCoord(self.barHighLightCoords.L, GW.lerp(self.barHighLightCoords.L, self.barHighLightCoords.R, stage_percentage), self.barHighLightCoords.T, self.barHighLightCoords.B)
-    --            self.highlight:SetWidth(math.max(1, stage_percentage * powerBarWidth))
-    --            self.highlight:Show()
-    --        end
-
-    --        if i == 1 and stage_percentage >= powerPrec then
-    --            self.highlight:Hide()
-    --        end
-    --    end
-    --end
 end
 GW.AddForProfiling("unitframes", "protectedCastAnimation", protectedCastAnimation)
 
@@ -559,8 +514,6 @@ local function updateCastValues(self)
         barHighlightTexture = GW.CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
     end
 
-    --WIP self.castingbarNormal:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
-
     local isChargeSpell = numStages and numStages > 0 or false
 
     if isChargeSpell then
@@ -582,11 +535,14 @@ local function updateCastValues(self)
     startTime = startTime / 1000
     endTime = endTime / 1000
 
-
-
     if texture ~= nil and self.portrait ~= nil and (self.activePortrait == nil or self.activePortrait ~= texture) then
         self.portrait:SetTexture(texture)
         self.activePortrait = texture
+        if self.frameInvert then
+            self.portrait:SetTexCoord(1, 0, 0, 1)
+        else
+            self.portrait:SetTexCoord(0, 1, 0, 1)
+        end
     end
 
     self.castingbarBackground:Show()
