@@ -369,7 +369,7 @@ local function loadBaseFrame()
     fmGSW:SetAttribute("_onattributechanged", socialSecure_OnAttributeChanged)
 
     fmGSW:SetClampedToScreen(true)
-	fmGSW:SetClampRectInsets(-fmGSW.Left:GetWidth(), 0, fmGSW.Header:GetHeight() - 10, 0)
+    fmGSW:SetClampRectInsets(-fmGSW.Left:GetWidth(), 0, fmGSW.Header:GetHeight() - 10, 0)
 
     fmGSW.SoundOpen = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
@@ -561,7 +561,6 @@ local function GWFriendsFrame_OnEvent(_, event, ...)
         end
     elseif ( event == "BN_CUSTOM_MESSAGE_LOADED" ) then
             FriendsFrameBattlenetFrame.BroadcastFrame:UpdateBroadcast();
-
     elseif ( event == "NEW_MATCHMAKING_PARTY_INVITE" ) then
         local collapsed = GetCVarBool("partyInvitesCollapsed_Glue");
         if ( collapsed ) then
@@ -583,10 +582,10 @@ local function GWFriendsFrame_OnEvent(_, event, ...)
         IgnoreList_Update();
     elseif ( event == "WHO_LIST_UPDATE" ) then
         WhoList_Update()
-        FriendsFrame_Update();
+        FriendsFrame_Update()
     elseif ( event == "PLAYER_FLAGS_CHANGED" or event == "BN_INFO_CHANGED") then
-        FriendsFrameStatusDropdown:GenerateMenu();
-		FriendsFrame_CheckBattlenetStatus();
+        FriendsFrameStatusDropdown:GenerateMenu()
+        FriendsFrame_CheckBattlenetStatus()
     elseif ( event == "PLAYER_ENTERING_WORLD" or event == "BN_CONNECTED" or event == "BN_DISCONNECTED") then
         FriendsFrame_CheckBattlenetStatus();
         -- We want to remove any friends from the frame so they don't linger when it's first re-opened.
@@ -610,7 +609,7 @@ local function GWFriendsFrame_OnEvent(_, event, ...)
     elseif ( event == "PLAYER_GUILD_UPDATE") then
         C_GuildInfo.GuildRoster()
     elseif ( event == "FRAMES_LOADED" ) then
-		FriendsFrame_CheckBattlenetStatus();
+        FriendsFrame_CheckBattlenetStatus()
     end
 end
 
