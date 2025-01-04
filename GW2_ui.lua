@@ -864,6 +864,8 @@ local function evPlayerLogin(self)
         GW.InitializeRaidFrames()
     end
 
+    GW.UpdateHudScale()
+
     if (forcedMABags) then
         GW.Notice(L["MoveAnything bag handling disabled."])
     end
@@ -882,9 +884,6 @@ local function evPlayerLogin(self)
     GW.UpdateCharData()
 
     GW.HandleBlizzardEditMode()
-
-    GW.UpdateHudScale()
-    --GW.MakeHudMoveable() -- possible actionbar taint
 end
 AFP("evPlayerLogin", evPlayerLogin)
 

@@ -1308,32 +1308,3 @@ local function LoadXPBar()
     )
 end
 GW.LoadXPBar = LoadXPBar
-
-local function MakeHudMoveable()
-    if not GW.settings.ACTIONBARS_ENABLED or (GW.settings.ACTIONBARS_ENABLED and not GW.settings.BAR_LAYOUT_ENABLED) then return end
-    -- Create movableFrame for mainactionbar, healthglobe and hudart
-
-    local anchorFrame = CreateFrame("Frame", "GwHudMover", UIParent)
-    anchorFrame:SetSize(Gw2_HudBackgroud.actionBarHud:GetWidth(), Gw2_HudBackgroud.actionBarHud:GetHeight() / 2)
-    anchorFrame:SetScale(Gw2_HudBackgroud.actionBarHud:GetScale())
-
-    GW.RegisterMovableFrame(anchorFrame, L["Main HUD"], "HudPosition", "HUD", nil, {"default"})
-
-    -- anchor the hud elements to that mover if they exist
-    -- mainactionbar
-    GW.AnchorMainBarToHudMover()
-
-    -- HG
-    if GW.settings.HEALTHGLOBE_ENABLED and not GW.settings.PLAYER_AS_TARGET_FRAME then
-        GW2_PlayerFrame:ClearAllPoints()
-        GW2_PlayerFrame:SetPoint("BOTTOM", anchorFrame.gwMover, "BOTTOM", 0, (17 - 14))
-    end
-
-    -- hud art
-    Gw2_HudBackgroud.actionBarHud:ClearAllPoints()
-    Gw2_HudBackgroud.actionBarHud:SetPoint("BOTTOM", anchorFrame.gwMover, "BOTTOM", 0, 0)
-
-    Gw2_HudBackgroud.actionBarHudFX:ClearAllPoints()
-    Gw2_HudBackgroud.actionBarHudFX:SetPoint("BOTTOM", anchorFrame.gwMover, "BOTTOM", 0, 0)
-end
-GW.MakeHudMoveable = MakeHudMoveable

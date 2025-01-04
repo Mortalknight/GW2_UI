@@ -313,12 +313,6 @@ eventFrame:SetScript("OnEvent", function(self)
   SetLayoutBackToGw2Layout(nil, eventFrame.layoutIndex)
 end)
 
-local function TriggerGw2Switch()
-  lib:SetActiveLayout(lib:GetPresetLayoutNames()[1])
-  lib:ApplyChanges()
-  SetLayoutBackToGw2Layout(nil, GetLayoutIndex(lib:GetPresetLayoutNames()[1]))
-end
 function lib:RegisterForLayoutChangeBackToGW2Layout()
   hooksecurefunc(EditModeManagerFrame, "SelectLayout", SetLayoutBackToGw2Layout)
-  --TriggerGw2Switch()
 end

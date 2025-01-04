@@ -2,7 +2,6 @@ local _, GW = ...
 local LEMO = GW.Libs.LEMO
 
 local CheckActionBar = function() return (GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED) end
-local changesDone = false
 local eventFrame = CreateFrame("Frame")
 local hideFrames = {}
 eventFrame.hideFrames = hideFrames
@@ -17,19 +16,6 @@ local function SetEnabled(self, enabled)
         self:Disable()
     end
 end
-
-local function AnchorMainBarToHudMover()
-    if not changesDone then
-        GW.Wait(0.1, AnchorMainBarToHudMover)
-    end
-
-    LEMO:LoadLayouts()
-    LEMO:SetActiveLayout("GW2_Layout")
-    LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.HideBarArt, 1)
-    LEMO:ReanchorFrame(MainMenuBar, "TOP", GwHudMover.gwMover, "BOTTOM", 0, ((80 - 14) * (tonumber(GW.settings.HUD_SCALE) or 1)))
-    LEMO:ApplyChanges()
-end
-GW.AnchorMainBarToHudMover = AnchorMainBarToHudMover
 
 local function ApplyBlizzardEditModeChanges(self)
     if InCombatLockdown() then
@@ -75,8 +61,6 @@ local function ApplyBlizzardEditModeChanges(self)
     LEMO:RegisterForLayoutChangeBackToGW2Layout()
 
     MirrorTimerContainer:Show()
-
-    changesDone = true
 end
 
 local function OnEvent(self, event)
