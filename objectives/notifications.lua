@@ -341,7 +341,7 @@ local function SetObjectiveNotification()
     end
 
     --remove tooltip here
-    GwObjectivesNotification.iconFrame:SetScript("OnLeave", nil)
+    GwObjectivesNotification.iconFrame:SetScript("OnEnter", nil)
     GwObjectivesNotification.iconFrame:SetScript("OnLeave", nil)
 
     if icons[data.TYPE] ~= nil then
