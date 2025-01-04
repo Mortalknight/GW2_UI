@@ -1,5 +1,17 @@
 local _, GW = ...
 
+local function ScaleTalkingHeadFrame()
+    TalkingHeadFrame:SetScale(GW.settings.TalkingHeadFrameScale)
+
+    --Reset Model Camera
+    local model = TalkingHeadFrame.MainFrame.Model
+    if model.uiCameraID then
+        model:RefreshCamera()
+        Model_ApplyUICamera(model, model.uiCameraID)
+    end
+end
+GW.ScaleTalkingHeadFrame = ScaleTalkingHeadFrame
+
 local function InitTalkingHeadFrame()
     if not GW.settings.TALKINGHEAD_SKIN_ENABLED then return end
 
@@ -8,17 +20,6 @@ local function InitTalkingHeadFrame()
         if alertFrameSubSystem.anchorFrame and alertFrameSubSystem.anchorFrame == TalkingHeadFrame then
             tremove(AlertFrame.alertFrameSubSystems, i)
         end
-    end
-
-    --GW.RegisterMovableFrame(TalkingHeadFrame, "Talking Head Frame", "TalkingHeadFrame_pos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
-    --TalkingHeadFrame:ClearAllPoints()
-    --TalkingHeadFrame:SetPoint("TOPLEFT", TalkingHeadFrame.gwMover)
-
-    --Reset Model Camera
-    local model = TalkingHeadFrame.MainFrame.Model
-    if model.uiCameraID then
-        model:RefreshCamera()
-        Model_ApplyUICamera(model, model.uiCameraID)
     end
 
     -- Skin
@@ -46,6 +47,8 @@ local function InitTalkingHeadFrame()
     TalkingHeadFrame.MainFrame.CloseButton:SetPoint("TOPRIGHT", -30, -8)
 
     TalkingHeadFrame.BackgroundFrame.TextBackground:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+
+    ScaleTalkingHeadFrame()
 end
 
 local function LoadTalkingHeadSkin()

@@ -120,6 +120,19 @@ local function LoadHudPanel(sWindow)
             L["Party / Raid"],
         }
     )
+    addOptionSlider(
+        general.scroll.scrollchild,
+        GW.NewSign .. L["Talking Head Scale"],
+        nil,
+        "TalkingHeadFrameScale",
+        GW.ScaleTalkingHeadFrame,
+        0.5,
+        2,
+        nil,
+        2,
+        {["TALKINGHEAD_SKIN_ENABLED"] = true},
+        0.01
+    )
 
     --MINIMAP
     addOption(minimap.scroll.scrollchild, L["Addon Compartment"], nil, "MINIMAP_ADDON_COMPARTMENT_TOGGLE", function() GW.HandleAddonCompartmentButton() end, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")

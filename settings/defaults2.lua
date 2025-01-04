@@ -490,14 +490,7 @@ GW.globalDefault = {
         },
         ZoneAbilityFramePos_scale= 1,
 
-        TalkingHeadFrame_pos= {
-            point= "BOTTOM",
-            relativePoint= "BOTTOM",
-            xOfs= 0,
-            yOfs= 372,
-            hasMoved= false,
-        },
-        TalkingHeadFrame_pos_scale= 0.9,
+        TalkingHeadFrameScale= 0.9,
 
         HealthGlobe_pos= {
             point= "BOTTOM",
