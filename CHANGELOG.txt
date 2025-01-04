@@ -1,3 +1,15 @@
+7.10.0
+NEW
+    - Added Talking Head Scaler
+    - Target/Focus frame bars no inverted in inverted mode
+
+CHANGES
+    - Optimize aura handling for all unitframes
+    - Optimize Healtbar and Powerbar handling
+
+FIXES
+    - Fix PetTracker loading
+
 7.9.3
 CHANGES
     - Remove CUSTOM_CLASS_COLOR support and cahnge it to GW2 Class colors

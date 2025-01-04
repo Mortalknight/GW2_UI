@@ -15,6 +15,15 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("7.10.0",{
+    {ct.feature, [=[Added Talking Head Scaler]=]},
+    {ct.feature, [=[Target/Focus frame bars no inverted in inverted mode]=]},
+    {ct.change, [=[Optimize aura handling for all unitframes]=]},
+    {ct.change, [=[Optimize Healtbar and Powerbar handling]=]},
+    {ct.bug, [=[Fix PetTracker loading]=]},
+})
+
 addChange("7.9.3",{
     {ct.change, [=[Remove CUSTOM_CLASS_COLOR support and cahnge it to GW2 Class colors]=]},
     {ct.change, [=[Add option to set number format]=]},

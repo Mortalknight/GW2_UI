@@ -1,48 +1,11 @@
-7.9.3
-CHANGES
-    - Remove CUSTOM_CLASS_COLOR support and cahnge it to GW2 Class colors
-    - Add option to set number format
-
-7.9.2
-CHANGES
-    - TRP3 chat support
-
-7.9.1
-CHANGES
-    - TRP3 chat support
-
-7.9.0
+7.10.0
 NEW
-    - Added grid out of range alpha value setting
-    - Added custom class color support
+    - Added Talking Head Scaler
+    - Target/Focus frame bars no inverted in inverted mode
 
 CHANGES
-    - Update more dropdowns
-    - Use local number delimiter
-    - 11.0.7 changes
+    - Optimize aura handling for all unitframes
+    - Optimize Healtbar and Powerbar handling
 
 FIXES
-    - Fix PetTracker integration
-    - Fix Blizzard mirror timer not shown
-    - Setting search works again
-
-7.8.0
-NEW
-    - Add option to hook profiles to a spec. This will switch the profile on spec switch
-    - Add todoloo support for GW2 Objectives tracker
-    - Add searchbox for player titles
-    - Add slash command to clear tracked but already earned achievements (blizzard bug): /gw2 clear achievements
-    - Add option to change profile icons
-    - Add TRP3 support for GW2 chatbubbles
-
-CHANGES
-    - Added fraction icons to the guild datatext
-    - Change all dropdown elements to new blizzard ui system
-    - Allow max 4 watched tokens with gw2 bags enabled
-
-FIXES
-    - Objectives tracker bonus step names
-    - Achievement skin scroll height
-    - Grid aura indicators now only shows player auras
-    - Fix dodgebar for some classes
-    - Fix objectives tracker loading order
+    - Fix PetTracker loading
