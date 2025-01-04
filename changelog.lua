@@ -20,7 +20,7 @@ addChange("7.10.0",{
     {ct.feature, [=[Added Talking Head Scaler]=]},
     {ct.feature, [=[Target/Focus frame bars no inverted in inverted mode]=]},
     {ct.change, [=[Optimize aura handling for all unitframes]=]},
-    {ct.change, [=[Optimize Healtbar and Powerbar handling]=]},
+    {ct.change, [=[Optimize Healthbar and Powerbar handling]=]},
     {ct.bug, [=[Fix PetTracker loading]=]},
 })
 

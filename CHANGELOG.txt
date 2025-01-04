@@ -5,7 +5,7 @@ NEW
 
 CHANGES
     - Optimize aura handling for all unitframes
-    - Optimize Healtbar and Powerbar handling
+    - Optimize Healthbar and Powerbar handling
 
 FIXES
     - Fix PetTracker loading
