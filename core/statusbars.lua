@@ -270,6 +270,11 @@ local function hookStatusbarBehaviour(statusBar, smooth, animationType)
     statusBar.UpdateBarSize = UpdateBarSize
 
     statusBar.maskContainer:ClearAllPoints()
+    statusBar.maskOverflow:ClearAllPoints()
+    statusBar.maskOverflow:SetPoint("TOPLEFT", statusBar.maskContainer, "TOPRIGHT", 0, 0)
+    statusBar.maskOverflow:SetPoint("BOTTOMLEFT", statusBar.maskContainer, "BOTTOMRIGHT", 0, 0)
+    statusBar.maskOverflow:SetPoint("TOPRIGHT", statusBar, "TOPRIGHT", 3, 0)
+    statusBar.maskOverflow:SetPoint("BOTTOMRIGHT", statusBar, "BOTTOMRIGHT", 3, 0)
 
     statusBar:addToBarMask(statusBar.internalBar)
 
