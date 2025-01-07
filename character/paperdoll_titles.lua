@@ -1,7 +1,9 @@
 local _, GW = ...
+local L = GW.L
 
 local savedPlayerTitles = {}
-local defaultSearchString = SEARCH .. "..."
+local showEarned = true;
+local showUnearned = false;
 
 local function title_OnClick(self)
     if not self.titleId then
@@ -9,7 +11,7 @@ local function title_OnClick(self)
     end
     SetCurrentTitle(self.titleId)
 
-    self:GetParent():GetParent():GetParent().input:SetText(defaultSearchString)
+    self:GetParent():GetParent():GetParent().input:SetText("")
     self:GetParent():GetParent():GetParent().input.clearButton:Hide()
 end
 GW.AddForProfiling("paperdoll_titles", "title_OnClick", title_OnClick)
@@ -27,7 +29,6 @@ local function Titles_InitButton(button, elementData)
 
     if not button.isSkinned then
         button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        button.name:SetTextColor(1, 1, 1)
         button:HookScript("OnClick", title_OnClick)
         GW.AddListItemChildHoverTexture(button)
 
@@ -44,25 +45,38 @@ local function Titles_InitButton(button, elementData)
         button.zebra:SetVertexColor(0, 0, 0, 0)
     end
 
+    if playerTitle.isKnown then
+        button:Enable();
+        button.name:SetTextColor(1, 1, 1)
+    else
+        button:Disable();
+        button.name:SetTextColor(0.60, 0.60, 0.60)
+    end
+
     button.gwSelected:SetShown(GetCurrentTitle() == button.titleId)
 end
 
 local function saveKnowenTitles(titlewin, searchString)
     wipe(savedPlayerTitles)
-    savedPlayerTitles[1] = {}
-    savedPlayerTitles[1].name = "       "
-    savedPlayerTitles[1].id = -1
+    local tableIndex = 0
+    if showEarned then
+        savedPlayerTitles[1] = {}
+        savedPlayerTitles[1].name = "       "
+        savedPlayerTitles[1].id = -1
+        savedPlayerTitles[1].isKnown = true
 
-    local tableIndex = 1
+        tableIndex = 1
+    end
 
     for i = 1, GetNumTitles() do
-        if IsTitleKnown(i) then
+        if (showEarned and IsTitleKnown(i)) or (showUnearned and not IsTitleKnown(i)) then
             local tempName, playerTitle = GetTitleName(i)
             if tempName and playerTitle and ((searchString and string.find(string.lower(tempName), string.lower(searchString)) or searchString == nil)) then
                 tableIndex = tableIndex + 1
                 savedPlayerTitles[tableIndex] = savedPlayerTitles[tableIndex] or {}
                 savedPlayerTitles[tableIndex].name = strtrim(tempName)
                 savedPlayerTitles[tableIndex].id = i
+                savedPlayerTitles[tableIndex].isKnown = IsTitleKnown(i)
             end
         end
     end
@@ -79,14 +93,50 @@ local function saveKnowenTitles(titlewin, searchString)
 end
 GW.AddForProfiling("paperdoll_titles", "saveKnowenTitles", saveKnowenTitles)
 
+local function SetSearchboxInstructions(editbox, text)
+    editbox.Instructions:SetTextColor(0.5, 0.5, 0.5)
+    editbox.Instructions:SetText(text)
+end
+
+local function ResetFilter()
+    showEarned = true
+    showUnearned = false
+
+    GwTitleWindow.input:SetText("")
+    GwTitleWindow.input.clearButton:Hide()
+    saveKnowenTitles(GwTitleWindow)
+end
+
+local function ShowFiterDropDown(self)
+    local menu = MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+        local check = rootDescription:CreateCheckbox(ACHIEVEMENTFRAME_FILTER_COMPLETED,function() return showEarned end, function() showEarned = not showEarned; GwTitleWindow.input:SetText(""); GwTitleWindow.input.clearButton:Hide(); saveKnowenTitles(GwTitleWindow) end)
+        check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
+
+        check = rootDescription:CreateCheckbox(L["Unearned"],function() return showUnearned end, function() showUnearned = not showUnearned; GwTitleWindow.input:SetText(""); GwTitleWindow.input.clearButton:Hide(); saveKnowenTitles(GwTitleWindow) end)
+        check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
+
+        check:SetTooltip(function(tooltip, elementDescription)
+            tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
+            tooltip:AddLine(L["You may see duplicated titles that are unavailable to your faction"], 1, 1, 1)
+        end);
+    end)
+
+    menu:SetClosedCallback(function()
+        if not showEarned and not showUnearned then
+            ResetFilter()
+        end
+    end)
+end
+
 local function LoadPDTitles(fmMenu)
     local titlewin = CreateFrame("Frame", "GwTitleWindow", GwPaperDoll, "GwTitleWindow")
 
-    titlewin.input:SetText(defaultSearchString)
+    SetSearchboxInstructions(titlewin.input, SEARCH .. "...")
+    titlewin.input:SetText("")
     titlewin.input:SetScript("OnEnterPressed", nil)
-    titlewin.input:SetScript("OnTextChanged", function(self)
+    titlewin.input:HookScript("OnTextChanged", function(self)
         local text = self:GetText()
-        if text == defaultSearchString or text == "" then
+        if text == "" then
             saveKnowenTitles(titlewin)
             self.clearButton:Hide()
             return
@@ -97,28 +147,47 @@ local function LoadPDTitles(fmMenu)
 
     titlewin.input:SetScript("OnEscapePressed", function(self)
         self:ClearFocus()
-        self:SetText(defaultSearchString)
+        self:SetText("")
         saveKnowenTitles(titlewin)
     end)
 
     titlewin.input:SetScript("OnEditFocusGained", function(self)
-        if self:GetText() == defaultSearchString then
-            self:SetText("")
-        end
         self.clearButton:Show()
         saveKnowenTitles(titlewin)
     end)
 
     titlewin.input:SetScript("OnEditFocusLost", function(self)
         if self:GetText() == "" then
-            self:SetText(defaultSearchString)
             self.clearButton:Hide()
         end
     end)
     titlewin.input.clearButton:SetScript("OnClick", function(self)
         self:GetParent():ClearFocus()
-        self:GetParent():SetText(defaultSearchString)
+        self:GetParent():SetText("")
         saveKnowenTitles(titlewin)
+    end)
+
+    titlewin.filter:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(FILTER, 1, 1, 1)
+        if showUnearned == true then
+            GameTooltip:AddLine(L["Right Click To Reset Filter"], 1, 0.82, 0, true)
+        end
+        GameTooltip:Show()
+    end)
+    titlewin.filter:SetScript("OnLeave", GameTooltip_Hide)
+    titlewin.filter:SetScript("OnClick", function(self, button)
+        if button == "LeftButton" then
+            GameTooltip:Hide()
+            ShowFiterDropDown(self)
+        elseif button == "RightButton" then
+            -- reset filter
+            ResetFilter()
+            if self:IsMouseMotionFocus() then
+                GameTooltip:Hide()
+                self:OnEnter()
+            end
+        end
     end)
 
     local view = CreateScrollBoxListLinearView()

@@ -852,6 +852,11 @@ local function InitCategorieButton(button, elementData)
     end
 end
 
+local function SetSearchboxInstructions(editbox, text)
+    editbox.Instructions:SetTextColor(0.5, 0.5, 0.5)
+    editbox.Instructions:SetText(text)
+end
+
 local function LoadReputation(tabContainer)
     local fmGPR = CreateFrame("Frame", "GwPaperReputation", tabContainer, "GwPaperReputation")
 
@@ -879,11 +884,12 @@ local function LoadReputation(tabContainer)
         UpdateDetailsData(GwRepDetailFrame.Details)
     end
     fmGPR.Categories:SetScript("OnEvent", fnGPR_OnEvent)
-    fmGPR.input:SetText(SEARCH .. "...")
+    SetSearchboxInstructions(fmGPR.input, SEARCH .. "...")
+    fmGPR.input:SetText("")
     fmGPR.input:SetScript("OnEnterPressed", nil)
     local fnGPR_input_OnTextChanged = function(self)
         local text = self:GetText()
-        if text == SEARCH .. "..." or text == "" then
+        if text == "" then
             isSearchResult = nil
             UpdateDetailsData(GwRepDetailFrame.Details)
             self.clearButton:Hide()
@@ -893,18 +899,15 @@ local function LoadReputation(tabContainer)
         UpdateDetailsData(GwRepDetailFrame.Details)
         self.clearButton:Show()
     end
-    fmGPR.input:SetScript("OnTextChanged", fnGPR_input_OnTextChanged)
+    fmGPR.input:HookScript("OnTextChanged", fnGPR_input_OnTextChanged)
     local fnGPR_input_OnEscapePressed = function(self)
         self:ClearFocus()
-        self:SetText(SEARCH .. "...")
+        self:SetText("")
         isSearchResult = nil
         UpdateDetailsData(GwRepDetailFrame.Details)
     end
     fmGPR.input:SetScript("OnEscapePressed", fnGPR_input_OnEscapePressed)
     local fnGPR_input_OnEditFocusGained = function(self)
-        if self:GetText() == SEARCH .. "..." then
-            self:SetText("")
-        end
         self.clearButton:Show()
         --update saved reputations
         updateSavedReputation()
@@ -912,14 +915,13 @@ local function LoadReputation(tabContainer)
     fmGPR.input:SetScript("OnEditFocusGained", fnGPR_input_OnEditFocusGained)
     local fnGPR_input_OnEditFocusLost = function(self)
         if self:GetText() == "" then
-            self:SetText(SEARCH .. "...")
             self.clearButton:Hide()
         end
     end
     fmGPR.input:SetScript("OnEditFocusLost", fnGPR_input_OnEditFocusLost)
     fmGPR.input.clearButton:SetScript("OnClick", function(self)
         self:GetParent():ClearFocus()
-        self:GetParent():SetText(SEARCH .. "...")
+        self:GetParent():SetText("")
         isSearchResult = nil
         UpdateDetailsData(GwRepDetailFrame.Details)
     end)

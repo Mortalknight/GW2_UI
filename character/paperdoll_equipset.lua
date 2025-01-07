@@ -124,7 +124,8 @@ local function outfitEditButton_OnClick(self)
                 end
 
                 local name = select(2, GetSpecializationInfoByID(GetSpecializationInfo(i)))
-                rootDescription:CreateCheckbox(name, IsSelected, SetSelected, i)
+                local check = rootDescription:CreateCheckbox(name, IsSelected, SetSelected, i)
+                check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
             end
         end
     end)
