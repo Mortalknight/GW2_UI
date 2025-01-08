@@ -576,7 +576,7 @@ local function setReputationDetails(frame, data)
 
         if (friendInfo.nextThreshold) then
             frame.currentValue:SetText(GW.GetLocalizedNumber(friendInfo.standing - friendInfo.reactionThreshold))
-            frame.nextValue:SetText(BreakUpLargeNuGW.GetLocalizedNumbermbers(friendInfo.nextThreshold - friendInfo.reactionThreshold))
+            frame.nextValue:SetText(GW.GetLocalizedNumber(friendInfo.nextThreshold - friendInfo.reactionThreshold))
 
             local percent =
                 math.floor(RoundDec(((friendInfo.standing - friendInfo.reactionThreshold) / (friendInfo.nextThreshold - friendInfo.reactionThreshold)) * 100))

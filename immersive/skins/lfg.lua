@@ -868,6 +868,17 @@ local function ApplyPvPUISkin()
     end)
 
     PVPQueueFrame.HonorInset:GwStripTextures()
+    PVPQueueFrame.HonorInset.Background:GwKill()
+
+    local SEASON_STATE_OFFSEASON = 1
+    hooksecurefunc(PVPQueueFrame.HonorInset.RatedPanel, "Update", function(self)
+        local seasonState = ConquestFrame.seasonState
+        if seasonState == SEASON_STATE_OFFSEASON then
+			self.Tier.Title:SetTextColor(DISABLED_FONT_COLOR:GetRGB())
+		else
+			self.Tier.Title:SetTextColor(1, 1, 1)
+		end
+    end)
 
     local SeasonReward = PVPQueueFrame.HonorInset.RatedPanel.SeasonRewardFrame
     SeasonReward:GwCreateBackdrop()
@@ -875,6 +886,12 @@ local function ApplyPvPUISkin()
     SeasonReward.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     SeasonReward.CircleMask:Hide()
     SeasonReward.Ring:Hide()
+
+    for _, region in next, { SeasonReward:GetRegions() } do
+        if region:IsObjectType("FontString") then
+            region:SetTextColor(1, 1, 1)
+        end
+    end
 
     -- Honor Frame
     local HonorFrame = _G.HonorFrame

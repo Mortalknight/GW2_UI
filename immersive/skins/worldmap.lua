@@ -166,7 +166,7 @@ local function QuestInfo_Display(template, parentFrame)
     select(1, _G.QuestInfoItemHighlight:GetRegions()):SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/questitemhighlight")
     fRwd.ItemChooseText:SetTextColor(1, 1, 1)
     fRwd.ItemReceiveText:SetTextColor(1, 1, 1)
-    QuestInfoAccountCompletedNotice:SetTextColor(0, 0.9, 0.6)
+    QuestMapFrame.DetailsFrame.BackFrame.AccountCompletedNotice.Text:SetTextColor(0, 0.9, 0.6)
 
     if not isMapStyle and GW.settings.QUESTVIEW_ENABLED then
         fRwd.Header:SetTextColor(1, 1, 1)
@@ -370,7 +370,8 @@ local function worldMapSkin()
     WorldMapFrame.NavBar.homeButton.tex = tex
     WorldMapFrame.NavBar.homeButton.tex:SetAlpha(1)
 
-    WorldMapFrame.NavBar.homeButton.borderFrame = CreateFrame("Frame",nil, WorldMapFrame.NavBar.homeButton, "GwLightButtonBorder")
+    WorldMapFrame.NavBar.homeButton.borderFrame = CreateFrame("Frame", nil, WorldMapFrame.NavBar.homeButton, "GwLightButtonBorder")
+
     WorldMapFrame.BorderFrame.CloseButton:GwSkinButton(true)
     WorldMapFrame.BorderFrame.CloseButton:SetSize(20, 20)
     WorldMapFrame.BorderFrame.CloseButton:SetPoint("TOPRIGHT",-10,-2)
@@ -431,9 +432,9 @@ local function worldMapSkin()
     QuestScrollFrame.ScrollBar:GwSkinScrollBar()
     QuestScrollFrame:GwSkinScrollFrame()
 
-    local CampaignOverview = QuestMapFrame.CampaignOverview
-    SkinHeaders(CampaignOverview.Header)
-    CampaignOverview.ScrollFrame:GwStripTextures()
+    --local CampaignOverview = QuestMapFrame.CampaignOverview
+    --SkinHeaders(CampaignOverview.Header)
+    --CampaignOverview.ScrollFrame:GwStripTextures()
     GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar, true)
     GW.HandleScrollControls(QuestScrollFrame)
 
@@ -513,8 +514,12 @@ local function worldMapSkin()
     WorldMapFrame:SetClampedToScreen(true)
     WorldMapFrame:SetClampRectInsets(0, 0, WorldMapFrameHeader:GetHeight() - 30, 0)
 
+    -- 11.1 Side Tabs
+    for _, tab in ipairs (QuestMapFrame.TabButtons) do
+        GW.HandleTabs(tab, "right", {tab.Icon}, true)
+    end
+
     -- 11.0 Map Legend
-    QuestMapFrame.MapLegend.BackButton:GwSkinButton(false, true)
     QuestMapFrame.MapLegend.TitleText:SetFont(STANDARD_TEXT_FONT, 16)
     QuestMapFrame.MapLegend.BorderFrame:SetAlpha(0)
     MapLegendScrollFrame:GwStripTextures()
