@@ -514,17 +514,25 @@ local function worldMapSkin()
     WorldMapFrame:SetClampedToScreen(true)
     WorldMapFrame:SetClampRectInsets(0, 0, WorldMapFrameHeader:GetHeight() - 30, 0)
 
-    -- 11.1 Side Tabs
-    for _, tab in ipairs (QuestMapFrame.TabButtons) do
-        GW.HandleTabs(tab, "right", {tab.Icon}, true)
-    end
-
     -- 11.0 Map Legend
     QuestMapFrame.MapLegend.TitleText:SetFont(STANDARD_TEXT_FONT, 16)
     QuestMapFrame.MapLegend.BorderFrame:SetAlpha(0)
     MapLegendScrollFrame:GwStripTextures()
     MapLegendScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
     GW.HandleTrimScrollBar(MapLegendScrollFrame.ScrollBar)
+
+    -- 11.1 Side Tabs
+    for _, tab in ipairs (QuestMapFrame.TabButtons) do
+        GW.HandleTabs(tab, "right", {tab.Icon}, true)
+    end
+
+    -- 11.1 Event Tab
+    QuestMapFrame.EventsFrame.TitleText:SetFont(STANDARD_TEXT_FONT, 16)
+    QuestMapFrame.EventsFrame.BorderFrame:SetAlpha(0)
+    QuestMapFrame.EventsFrame:GwStripTextures()
+    QuestMapFrame.EventsFrame.ScrollBox.Background:GwStripTextures()
+    QuestMapFrame.EventsFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    GW.HandleTrimScrollBar(QuestMapFrame.EventsFrame.ScrollBar)
 end
 AFP("worldMapSkin", worldMapSkin)
 

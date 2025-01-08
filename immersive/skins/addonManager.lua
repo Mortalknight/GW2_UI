@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function HandleButton(entry, treeNode)
+local function HandleAddonEntry(entry, treeNode)
     if not entry.IsSkinned then
         entry.Enabled:GwSkinCheckButton()
         entry.Enabled:SetSize(15, 15)
@@ -36,7 +36,6 @@ local function HandleButton(entry, treeNode)
         checktex:SetVertexColor(1, 1, 1)
         checktex:SetDesaturated(false)
     end
-
 end
 
 local function LoadAddonListSkin()
@@ -78,6 +77,6 @@ local function LoadAddonListSkin()
     GW.HandleTrimScrollBar(AddonList.ScrollBar)
     GW.HandleScrollControls(AddonList)
 
-    hooksecurefunc("AddonList_InitAddon", HandleButton)
+    hooksecurefunc("AddonList_InitAddon", HandleAddonEntry)
 end
 GW.LoadAddonListSkin = LoadAddonListSkin
