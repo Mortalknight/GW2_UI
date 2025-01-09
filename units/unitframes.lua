@@ -55,7 +55,6 @@ local function createNormalUnitFrame(ftype, revert)
     f.absorbbg:SetStatusBarColor(1,1,1,0.66)
     f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
-
     f.frameInvert = revert
 
     if revert then
@@ -70,7 +69,8 @@ local function createNormalUnitFrame(ftype, revert)
         f.healPrediction:SetReverseFill(true)
         f.powerbar:SetReverseFill(true)
         f.castingbarNormal:SetReverseFill(true)
-        f.castingbarNormal.internalBar:SetTexCoord(0, 1, 0, 1)
+        f.castingbarNormal.internalBar:SetTexCoord(1, 0, 0, 1)
+        f.castingbarSpark:SetTexCoord(1, 0, 0, 1)
     end
 
     f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
@@ -455,10 +455,15 @@ local function protectedCastAnimation(self, powerPrec)
     local sparkPoint = (powerBarWidth * powerPrec) - 20
 
     self.castingbarSpark:SetWidth(math.min(32, 32 * (powerPrec / 0.10)))
-    self.castingbarSpark:SetPoint("LEFT", self.castingbar, "LEFT", math.max(0, sparkPoint), 0)
-
-    self.castingbar:SetTexCoord(0, math.min(1, math.max(0, 0.0625 * segment)), 0, 1)
-    self.castingbar:SetWidth(math.min(powerBarWidth, math.max(1, spark)))
+    if self.frameInvert then
+        self.castingbarSpark:SetPoint("RIGHT", self.castingbar, "RIGHT", -math.max(0, sparkPoint), 0)
+        self.castingbar:SetTexCoord(math.min(1, math.max(0, 0.0625 * segment)), 0, 0, 1)
+        self.castingbar:SetWidth(-math.min(powerBarWidth, math.max(1, spark)))
+    else
+        self.castingbarSpark:SetPoint("LEFT", self.castingbar, "LEFT", math.max(0, sparkPoint), 0)
+        self.castingbar:SetTexCoord(0, math.min(1, math.max(0, 0.0625 * segment)), 0, 1)
+        self.castingbar:SetWidth(math.min(powerBarWidth, math.max(1, spark)))
+    end
 end
 GW.AddForProfiling("unitframes", "protectedCastAnimation", protectedCastAnimation)
 
