@@ -212,5 +212,10 @@ local function Migration()
 
         GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT = db
     end
+
+    -- migrationtarget frame itemlevel
+    if type(GW.settings.target_ILVL) == "boolean" then
+        GW.settings.target_ILVL = GW.settings.target_ILVL == true and "ITEM_LEVEL" or "PVP_LEVEL"
+    end
 end
 GW.Migration = Migration
