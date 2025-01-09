@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.8.6",{
+    {ct.bug, [=[Fix an issue where the bag size was not saved]=]},
+})
+
 addChange("1.8.5",{
     {ct.bug, [=[Fix BigWigs integration]=]},
 })

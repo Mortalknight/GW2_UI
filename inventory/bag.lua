@@ -452,7 +452,7 @@ end
 GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
 
 local function onBagResizeStop(self)
-    GW.settingsBAG_WIDTH = self:GetWidth()
+    GW.settings.BAG_WIDTH = self:GetWidth()
     GwBagFrame.Header:SetWidth(GW.settings.BAG_WIDTH)
     inv.onMoved(self, "BAG_POSITION", snapFrameSize)
 end
