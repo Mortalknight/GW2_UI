@@ -883,6 +883,8 @@ local function evPlayerLogin(self)
     self:SetScript("OnUpdate", gw_OnUpdate)
     GW.UpdateCharData()
 
+    GW.SetupSingingSockets()
+
     GW.HandleBlizzardEditMode()
 end
 AFP("evPlayerLogin", evPlayerLogin)

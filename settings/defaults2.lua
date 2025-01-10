@@ -136,6 +136,8 @@ GW.globalDefault = {
 
         BUTTON_ASSIGNMENTS= true,
 
+        singingSockets = true,
+
         HUD_BACKGROUND= true,
         HUD_SPELL_SWAP= true,
 
