@@ -303,7 +303,6 @@ local function updatePartyData(self)
     updateAwayData(self)
     updateUnitPortrait(self)
 
-
     if self.level then
         self.level:SetText(UnitLevel(self.unit))
     end
@@ -340,6 +339,7 @@ local function party_OnEvent(self, event, unit, ...)
         self.powerbar:SetValue(powerPrecentage)
     elseif IsIn(event, "UNIT_LEVEL", "GROUP_ROSTER_UPDATE", "UNIT_MODEL_CHANGED") then
         updatePartyData(self)
+        self.auras:ForceUpdate()
     elseif event == "UNIT_HEAL_PREDICTION" then
         setPredictionAmount(self)
     elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" then
