@@ -86,7 +86,6 @@ local function CreateSingingSockets()
 end
 
 local function SetupSingingSockets()
-	CreateSingingSockets()
 	hooksecurefunc("ItemSocketingFrame_LoadUI", function()
 		if not ItemSocketingFrame or not GW.settings.singingSockets then
 			for i = 1, 3 do
@@ -95,6 +94,9 @@ local function SetupSingingSockets()
 				end
 			end
 		else
+			if #singingFrames == 0 then
+				CreateSingingSockets()
+			end
 			local isSingingSocket = GetSocketTypes(1) == "SingingThunder"
 
 			for i = 1, 3 do

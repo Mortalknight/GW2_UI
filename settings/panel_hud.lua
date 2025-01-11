@@ -75,7 +75,7 @@ local function LoadHudPanel(sWindow)
 
     addOption(general.scroll.scrollchild, DISPLAY_BORDERS, L["Toggle the borders around the screen"], "BORDER_ENABLED", GW.ToggleHudBackground)
     addOption(general.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", GW.ToggleRaidControllFrame, nil, {["PARTY_FRAMES"] = true})
-    addOption(general.scroll.scrollchild, L["Singing Sockets Info"], L["Adds a Singing sockets selection tool on the Socketing Frame"], "singingSockets")
+    addOption(general.scroll.scrollchild, GW.NewSign .. L["Singing Sockets Info"], L["Adds a Singing sockets selection tool on the Socketing Frame"], "singingSockets")
     addOption(
         general.scroll.scrollchild,
         L["Pixel Perfect Mode"],
