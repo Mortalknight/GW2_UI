@@ -70,7 +70,6 @@ local function CreateSingingSockets()
 		local frame = CreateFrame("Frame", "GW2UISingingSocket" .. i, ItemSocketingFrame)
 		frame:SetSize(iconSize * 2, iconSize * 2)
 		frame:SetPoint("TOP", _G["ItemSocketingSocket" .. i], "BOTTOM", 0, -40)
-		frame:GwCreateBackdrop(nil)
 		singingFrames[i] = frame
 		local index = 0
 		for _, gemID in next, gemsInfo[i] do
@@ -87,6 +86,7 @@ local function CreateSingingSockets()
 end
 
 local function SetupSingingSockets()
+	CreateSingingSockets()
 	hooksecurefunc("ItemSocketingFrame_LoadUI", function()
 		if not ItemSocketingFrame or not GW.settings.singingSockets then
 			for i = 1, 3 do
@@ -95,7 +95,6 @@ local function SetupSingingSockets()
 				end
 			end
 		else
-			if #singingFrames == 0 then CreateSingingSockets() end
 			local isSingingSocket = GetSocketTypes(1) == "SingingThunder"
 
 			for i = 1, 3 do
