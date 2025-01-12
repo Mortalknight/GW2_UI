@@ -1,7 +1,6 @@
 local _, GW = ...
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
 local AddToClique = GW.AddToClique
 local RoundDec = GW.RoundDec
@@ -292,10 +291,8 @@ local function updatePartyData(self)
     if powerMax > 0 then
         powerPrecentage = power / powerMax
     end
-    Bar(self.healthbar, healthPrec)
     self.healPrediction:SetFillAmount(predictionPrecentage)
-
-    self.powerbar:SetValue(powerPrecentage)
+    self.powerbar:SetFillAmount(powerPrecentage)
     setHealth(self)
     setUnitHealAbsorb(self)
     setAbsorbAmount(self)
@@ -320,8 +317,7 @@ local function party_OnEvent(self, event, unit, ...)
     end
 
     if event == "load" then
-        setPredictionAmount(self)
-        setHealth(self)
+        updatePartyData(self)
         self.auras:ForceUpdate()
     end
     if not self.nameNotLoaded then
@@ -336,7 +332,7 @@ local function party_OnEvent(self, event, unit, ...)
         if powerMax > 0 then
             powerPrecentage = power / powerMax
         end
-        self.powerbar:SetValue(powerPrecentage)
+        self.powerbar:SetFillAmount(powerPrecentage)
     elseif IsIn(event, "UNIT_LEVEL", "GROUP_ROSTER_UPDATE", "UNIT_MODEL_CHANGED") then
         updatePartyData(self)
         self.auras:ForceUpdate()
@@ -418,6 +414,7 @@ local function UpdatePlayerInPartySetting(alwaysHide)
         frame:SetAttribute("unit", frame.unit)
         party_OnEvent(frame, "load")
         updatePartyData(frame)
+        frame.auras:ForceUpdate()
 
         if alwaysHide then
             RegisterStateDriver(frame, "visibility", "hide")
@@ -458,6 +455,7 @@ local function CreatePartyPetFrame(frame, i)
     GW.hookStatusbarBehaviour(f.health,true)
     GW.hookStatusbarBehaviour(f.absorbbg,true)
     GW.hookStatusbarBehaviour(f.healPrediction,false)
+    GW.hookStatusbarBehaviour(f.powerbar, true)
 
     f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
     f.absorbbg:SetStatusBarColor(1,1,1,0.66)
@@ -518,8 +516,6 @@ local function CreatePartyPetFrame(frame, i)
     f:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED",unit)
 
     party_OnEvent(f, "load")
-
-    updatePartyData(f)
 end
 
 local function createPartyFrame(i, isPlayer)
@@ -539,6 +535,7 @@ local function createPartyFrame(i, isPlayer)
     GW.hookStatusbarBehaviour(frame.health,true)
     GW.hookStatusbarBehaviour(frame.absorbbg,true)
     GW.hookStatusbarBehaviour(frame.healPrediction,false)
+    GW.hookStatusbarBehaviour(frame.powerbar, true)
 
     frame.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
     frame.absorbbg:SetStatusBarColor(1,1,1,0.66)
@@ -661,8 +658,6 @@ local function createPartyFrame(i, isPlayer)
     end
 
     party_OnEvent(frame, "load")
-
-    updatePartyData(frame)
 end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 

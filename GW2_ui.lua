@@ -192,49 +192,6 @@ function GwStandardButton_OnLeave(self)
     TriggerButtonHoverAnimation(self, self.hover, 0, 0.1)
 end
 
-local function barAnimation(self, barWidth, sparkWidth)
-    local snap = (animations[self.animationName].progress * 100) / 5
-
-    local round_closest = 0.05 * snap
-
-    local spark_min = math.floor(snap)
-    local spark_current = snap
-
-    local spark_prec = spark_current - spark_min
-
-    local spark =
-        math.min(barWidth - sparkWidth, math.floor(barWidth * round_closest) - math.floor(sparkWidth * spark_prec))
-    local bI = 17 - math.max(1, RoundInt(16 * spark_prec))
-
-    self.spark:SetTexCoord(bloodSpark[bI].left, bloodSpark[bI].right, bloodSpark[bI].top, bloodSpark[bI].bottom)
-
-    self:SetValue(round_closest)
-    self.spark:ClearAllPoints()
-    self.spark:SetPoint("LEFT", spark, 0)
-end
-AFP("barAnimation", barAnimation)
-
-local function Bar(self, value)
-    if self == nil then
-        return
-    end
-    local barWidth = self:GetWidth()
-    local sparkWidth = self.spark:GetWidth()
-
-    AddToAnimation(
-        self.animationName,
-        self.animationValue,
-        value,
-        GetTime(),
-        0.2,
-        function()
-            barAnimation(self, barWidth, sparkWidth)
-        end
-    )
-    self.animationValue = value
-end
-GW.Bar = Bar
-
 local function SetClassIcon(self, class)
     if class == nil then
         class = 0
