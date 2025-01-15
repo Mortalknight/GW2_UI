@@ -803,7 +803,7 @@ local function ApplyPvPUISkin()
 
     PVPUIFrame:GwStripTextures()
 
-    for i = 1, 3 do
+    for i = 1, 4 do
         local bu = _G["PVPQueueFrameCategoryButton" .. i]
         bu.Ring:GwKill()
         bu.Background:GwKill()
@@ -868,6 +868,13 @@ local function ApplyPvPUISkin()
     end)
 
     PVPQueueFrame.HonorInset:GwStripTextures()
+
+    if PlunderstormFrame then
+        PlunderstormFrame.Inset:GwStripTextures()
+        PlunderstormFrame.StartQueue:GwSkinButton(false, true)
+        PlunderstormFrame.BasicsTitle:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+        PVPQueueFrame.HonorInset.PlunderstormPanel.PlunderstoreButton:GwSkinButton(false, true)
+    end
 
     local SeasonReward = PVPQueueFrame.HonorInset.RatedPanel.SeasonRewardFrame
     SeasonReward:GwCreateBackdrop()
