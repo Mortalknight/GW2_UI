@@ -14,7 +14,15 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
-
+addChange("7.11.0",{
+    {ct.feature, [=[dded option to hide target item level display]=]},
+    {ct.feature, [=[Added option to show Singing Socket gems]=]},
+    {ct.change, [=[Update auctionator skin]=]},
+    {ct.bug, [=[Repuration error]=]},
+    {ct.bug, [=[Notification tooltip]=]},
+    {ct.bug, [=[Fix inverted statusbar]=]},
+    {ct.bug, [=[Party frame auras can stuck sometimes]=]},
+})
 
 addChange("7.10.0",{
     {ct.feature, [=[Added Talking Head Scaler]=]},

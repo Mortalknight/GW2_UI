@@ -253,8 +253,7 @@ L["Lock HUD"] = true
 L["Display all of the target's debuffs."] = true
 L["Display the target's buffs."] = true
 L["Display the target's debuffs that you have inflicted."] = true
-L["Display Average Item Level"] = true
-L["Display the average item level instead of prestige level for friendly units."] = true
+L["Display the average item level, prestige level for friendly units or disable it."]= true
 L["Show Junk Icon"] = true
 L["Show Quality Color"] = true
 L["Show Scrap Icon"] = true
@@ -648,7 +647,6 @@ L["Feasts"] = true
 L["Bots"] = true
 L["%s created a Bot."] = true
 L["Stack Size"] = true
-
 L["Enable spec profiles"] = true
 L["When enabled, your profile will be set to the specified profile when you change specialization."] = true
 L["%s - Active"] = true
@@ -662,3 +660,7 @@ L["Custom Class Colors"] = true
 L["Unearned"] = true
 L["Right Click To Reset Filter"] = true
 L["You may see duplicated titles that are unavailable to your faction"] = true
+L["Display additional information (item level, pvp level)"] = true
+
+L["Singing Sockets Info"] = true
+L["Adds a Singing sockets selection tool on the Socketing Frame"] = true

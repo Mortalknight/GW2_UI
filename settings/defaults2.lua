@@ -136,6 +136,8 @@ GW.globalDefault = {
 
         BUTTON_ASSIGNMENTS= true,
 
+        singingSockets = true,
+
         HUD_BACKGROUND= true,
         HUD_SPELL_SWAP= true,
 
@@ -271,7 +273,6 @@ GW.globalDefault = {
         target_BUFFS_FILTER= true,
         target_BUFFS_FILTER_ALL= false,
         target_BUFFS_FILTER_IMPORTANT= false,
-        target_ILVL= false,
         target_THREAT_VALUE_ENABLED= false,
         target_HOOK_COMBOPOINTS= false,
         target_HEALTH_VALUE_ENABLED= false,
@@ -282,6 +283,7 @@ GW.globalDefault = {
         target_FLOATING_COMBAT_TEXT= true,
         target_FRAME_INVERT= false,
         target_FRAME_ALT_BACKGROUND= false,
+        target_ILVL = "PVP_LEVEL",
 
         focus_TARGET_ENABLED= true,
         focus_TARGET_SHOW_CASTBAR= true,
@@ -293,6 +295,7 @@ GW.globalDefault = {
         focus_BUFFS_FILTER= true,
         focus_BUFFS_FILTER_ALL= false,
         focus_BUFFS_FILTER_IMPORTANT= false,
+        focus_ILVL = "PVP_LEVEL",
 
         focus_HEALTH_VALUE_ENABLED= false,
         focus_HEALTH_VALUE_TYPE= false,

@@ -275,6 +275,7 @@ character\reputation_table.lua
 character\reputation.lua
 character\currency.lua
 character\professions.lua
+character\singingSockets.lua
 ##character\talents_pvp.lua
 ##character\spellbook.lua
 ##character\talents.lua

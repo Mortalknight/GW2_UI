@@ -583,11 +583,7 @@ local function setReputationDetails(frame, data)
             if percent == -1 then
                 frame.percentage:SetText("0%")
             else
-                frame.percentage:SetText(
-                    (math.floor(
-                        RoundDec(((friendInfo.standing - friendInfo.reactionThreshold) / (friendInfo.nextThreshold - friendInfo.reactionThreshold)) * 100)
-                    )) .. "%"
-                )
+                frame.percentage:SetText(percent .. "%")
             end
 
             frame.StatusBar:SetValue((friendInfo.standing - friendInfo.reactionThreshold) / (friendInfo.nextThreshold - friendInfo.reactionThreshold))

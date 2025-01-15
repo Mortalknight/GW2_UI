@@ -364,12 +364,10 @@
                 <Texture parentKey="castingbarSpark" file="Interface/AddOns/GW2_UI/textures/units/castingbarshieldspark">
                     <Size x="32" y="12"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.castingbar" relativePoint="LEFT" x="0" y="0"></Anchor>
+                        <Anchor point="RIGHT" relativeKey="$parent.castingbar" relativePoint="RIGHT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-
             </Layer>
-
             <Layer level="ARTWORK" textureSubLevel="5">
                 <Texture file="Interface/AddOns/GW2_UI/textures/units/targetPortraitinner">
                     <Size x="65" y="65"></Size>
@@ -381,10 +379,9 @@
                 <Texture parentKey="castingbar" file="Interface/AddOns/GW2_UI/textures/units/castingbarshield">
                     <Size x="213" y="12"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
+                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="RIGHT" x="-4" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
                 <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
@@ -399,9 +396,6 @@
                         <Anchor point="CENTER" relativeKey="$parent.prestigeString" relativePoint="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-
-
-
                 <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-highlight" hidden="true">
                     <Size x="213" y="12"></Size>
                     <Anchors>
@@ -410,42 +404,36 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-
                 <FontString parentKey="nameString" text="unknown" inherits="GameFontNormalMed3" justifyH="RIGHT" justifyV="MIDDLE">
                     <Size x="200" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-
                 <FontString parentKey="levelString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="213" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-
                 <FontString parentKey="threatString" text="" justifyH="CENTER" justifyV="MIDDLE">
                     <Size x="38" y="30"/>
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent.threattabbg" relativePoint="CENTER" x="0" y="1"></Anchor>
                     </Anchors>
                 </FontString>
-
                 <FontString parentKey="castingString" text="unknown" justifyH="RIGHT" justifyV="MIDDLE">
                     <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.castingbarBackground" relativePoint="RIGHT" x="0" y="0"></Anchor>
                     </Anchors>
                 </FontString>
-
                 <FontString parentKey="castingTimeString" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="70" y="15"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="7" y="0"></Anchor>
                     </Anchors>
                 </FontString>
-
                 <FontString parentKey="prestigeString" text="4" justifyH="CENTER" justifyV="MIDDLE">
                     <Size x="32" y="28"/>
                     <Anchors>
@@ -469,9 +457,9 @@
             </StatusBar>
             <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
                 <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm"/>
-                <Size x="213" y="13"/>
+                <Size x="211" y="13"/>
                 <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
+                    <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="2" y="0"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer textureSubLevel="2">

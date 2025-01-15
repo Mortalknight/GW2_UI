@@ -55,7 +55,6 @@ local function createNormalUnitFrame(ftype, revert)
     f.absorbbg:SetStatusBarColor(1,1,1,0.66)
     f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
-
     f.frameInvert = revert
 
     if revert then
@@ -70,7 +69,8 @@ local function createNormalUnitFrame(ftype, revert)
         f.healPrediction:SetReverseFill(true)
         f.powerbar:SetReverseFill(true)
         f.castingbarNormal:SetReverseFill(true)
-        f.castingbarNormal.internalBar:SetTexCoord(0, 1, 0, 1)
+        f.castingbarNormal.internalBar:SetTexCoord(1, 0, 0, 1)
+        f.castingbarSpark:SetTexCoord(1, 0, 0, 1)
     end
 
     f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
@@ -288,8 +288,7 @@ local function setUnitPortraitFrame(self)
 
     local txt
     local border = "normal"
-    local showItemLevel = (GW.settings[self.unit .. "_SHOW_ILVL"] and CanInspect(self.unit))
-    local honorLevel = showItemLevel and 0 or UnitHonorLevel(self.unit)
+    local canInspect = CanInspect(self.unit)
 
     local unitClassIfication = UnitClassification(self.unit)
     if TARGET_FRAME_ART[unitClassIfication] ~= nil then
@@ -299,28 +298,29 @@ local function setUnitPortraitFrame(self)
         end
     end
 
-    if showItemLevel then
-        local guid = UnitGUID(self.unit)
-        if guid and GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel then
-            txt = RoundDec(GW.unitIlvlsCache[guid].itemLevel, 0)
-        end
-    elseif honorLevel > 9 then
-        local plvl
-        txt = honorLevel
+    if canInspect then
+        if GW.settings[self.unit .. "_ILVL"] == "ITEM_LEVEL" then
+            local guid = UnitGUID(self.unit)
+            if guid and GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel then
+                txt = RoundDec(GW.unitIlvlsCache[guid].itemLevel, 0)
+            end
+        elseif GW.settings[self.unit .. "_ILVL"] == "PVP_LEVEL" then
+            local plvl = 0
+            txt = UnitHonorLevel(self.unit)
 
-        if txt > 199 then
-            plvl = 4
-        elseif txt > 99 then
-            plvl = 3
-        elseif txt > 49 then
-            plvl = 2
-        elseif txt > 9 then
-            plvl = 1
-        end
+            if txt > 199 then
+                plvl = 4
+            elseif txt > 99 then
+                plvl = 3
+            elseif txt > 49 then
+                plvl = 2
+            elseif txt > 9 then
+                plvl = 1
+            end
 
-        local key = "prestige" .. plvl
-        if TARGET_FRAME_ART[key] then
-            border = key
+            if plvl > 0 and TARGET_FRAME_ART["prestige" .. plvl] then
+                border = "prestige" .. plvl
+            end
         end
     end
 
@@ -455,10 +455,15 @@ local function protectedCastAnimation(self, powerPrec)
     local sparkPoint = (powerBarWidth * powerPrec) - 20
 
     self.castingbarSpark:SetWidth(math.min(32, 32 * (powerPrec / 0.10)))
-    self.castingbarSpark:SetPoint("LEFT", self.castingbar, "LEFT", math.max(0, sparkPoint), 0)
-
-    self.castingbar:SetTexCoord(0, math.min(1, math.max(0, 0.0625 * segment)), 0, 1)
-    self.castingbar:SetWidth(math.min(powerBarWidth, math.max(1, spark)))
+    if self.frameInvert then
+        self.castingbarSpark:SetPoint("RIGHT", self.castingbar, "RIGHT", -math.max(0, sparkPoint), 0)
+        self.castingbar:SetTexCoord(math.min(1, math.max(0, 0.0625 * segment)), 0, 0, 1)
+        self.castingbar:SetWidth(-math.min(powerBarWidth, math.max(1, spark)))
+    else
+        self.castingbarSpark:SetPoint("LEFT", self.castingbar, "LEFT", math.max(0, sparkPoint), 0)
+        self.castingbar:SetTexCoord(0, math.min(1, math.max(0, 0.0625 * segment)), 0, 1)
+        self.castingbar:SetWidth(math.min(powerBarWidth, math.max(1, spark)))
+    end
 end
 GW.AddForProfiling("unitframes", "protectedCastAnimation", protectedCastAnimation)
 
@@ -629,10 +634,10 @@ local function target_OnEvent(self, event, unit, ...)
     local ttf = GwTargetTargetUnitFrame
 
     if IsIn(event, "PLAYER_TARGET_CHANGED", "PLAYER_ENTERING_WORLD", "FORCE_UPDATE") then
-        if event == "PLAYER_TARGET_CHANGED" and CanInspect(self.unit) and GW.settings.target_SHOW_ILVL then
+        if event == "PLAYER_TARGET_CHANGED" and CanInspect(self.unit) and (GW.settings.target_ILVL == "PVP_LEVEL" or GW.settings.target_ILVL == "ITEM_LEVEL") then
             local guid = UnitGUID(self.unit)
             if guid then
-                if not GW.unitIlvlsCache[guid] then
+                if not GW.unitIlvlsCache[guid] or (GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel == nil) then
                     local _, englishClass = UnitClass(self.unit)
                     local color = GWGetClassColor(englishClass, true, true)
                     GW.unitIlvlsCache[guid] = {unitColor = {color.r, color.g, color.b}}
@@ -690,7 +695,7 @@ local function target_OnEvent(self, event, unit, ...)
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
     elseif event == "INSPECT_READY" then
-        if not GW.settings.target_SHOW_ILVL then
+        if GW.settings.target_ILVL == "NONE" then
             self:UnregisterEvent("INSPECT_READY")
         else
             updateAvgItemLevel(self, unit)
