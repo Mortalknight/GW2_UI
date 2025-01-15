@@ -448,7 +448,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
     local isPlayerUnit = UnitIsPlayer(unit)
 
     if not unit then
-        local GMF = GetMouseGetMouseFociFocus()
+        local GMF = GetMouseFoci()
         local focusUnit = GMF and GMF.GetAttribute and GMF:GetAttribute("unit")
         if focusUnit then unit = focusUnit end
         if not unit or not UnitExists(unit) then

@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("1.8.7",{
+    {ct.bug, [=[Fix tooltip issue]=]},
+})
+
 addChange("1.8.6",{
     {ct.bug, [=[Fix an issue where the bag size was not saved]=]},
 })

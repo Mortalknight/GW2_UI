@@ -1,3 +1,7 @@
+1.8.7-Cata
+FIXES
+    - Fix tooltip issue
+
 1.8.6-Cata
 FIXES
     - Fix an issue where the bag size was not saved
@@ -27,34 +31,3 @@ FIXES
         - Added back enchant info to hero panel
     FIXES
         - Target frame floating combat text setting is now working
-
-1.7.2-Cata
-FIXES
-    - Extended Vendor setting is working again
-
-1.7.1-Cata
-FIXES
-    - Hover binding settings menu is working again
-    - Move HUD saves the positions again
-
-CHANGES
-    - Better integration with addon tooltips
-
-1.7.0-Cata
-CHANGES
-    - Update databse
-
-1.6.1-Cata
-FIXES
-    - Pet talents can not be set again
-
-
-1.6.0-Cata
-NEW
-    - Added Gem info to hero panel
-    - Added back ilvl to targetframes and tooltip (hold shift)
-    - Add vehicle mover
-    - Add minimap widget mover
-
-FIXES
-    - Some lua errors
