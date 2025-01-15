@@ -1,3 +1,18 @@
+7.11.0
+NEW
+    - Added option to hide target item level display
+    - Added option to show Singing Socket gems
+
+CHANGES
+    - Update auctionator skin
+
+FIXES
+    - Repuration error
+    - Notification tooltip
+    - Fix inverted statusbar
+    - Party frame auras can stuck sometimes
+
+
 7.10.0
 NEW
     - Added Talking Head Scaler

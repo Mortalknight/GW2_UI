@@ -1,11 +1,13 @@
-7.10.0
+7.11.0
 NEW
-    - Added Talking Head Scaler
-    - Target/Focus frame bars no inverted in inverted mode
+    - Added option to hide target item level display
+    - Added option to show Singing Socket gems
 
 CHANGES
-    - Optimize aura handling for all unitframes
-    - Optimize Healthbar and Powerbar handling
+    - Update auctionator skin
 
 FIXES
-    - Fix PetTracker loading
+    - Repuration error
+    - Notification tooltip
+    - Fix inverted statusbar
+    - Party frame auras can stuck sometimes
