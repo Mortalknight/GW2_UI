@@ -18,7 +18,6 @@
         </Layers>
     </Frame>
 
-    
     <Button name="GwSpellbookUnknownSpell" enableMouse="true"  virtual="true">
         <Size x="40" y="40"/>
         <Layers>

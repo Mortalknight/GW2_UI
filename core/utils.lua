@@ -417,10 +417,15 @@ local function StrLower(str, i, j)
 end
 GW.StrLower = StrLower
 
-local function IsNAN(n)
+local function IsInf(n)
+    return tostring(n) == tostring(1/0)
+end
+GW.IsInf = IsInf
+
+local function IsNaN(n)
     return tostring(n) == tostring(0/0)
 end
-GW.IsNAN = IsNAN
+GW.IsNaN = IsNaN
 
 local function IsFrameModified(f_name)
     if not MovAny then

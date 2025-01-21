@@ -37,7 +37,7 @@ local function SkinInspectFrameOnLoad()
     end)
 
     for i = 1, 3 do
-        GW.HandleTabs(_G["InspectFrameTab" .. i], true)
+        GW.HandleTabs(_G["InspectFrameTab" .. i])
         _G["InspectFrameTab" .. i]:SetSize(80, 24)
         if i > 1 then
             _G["InspectFrameTab" .. i]:ClearAllPoints()

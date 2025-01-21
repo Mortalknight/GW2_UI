@@ -8,6 +8,11 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+
+addChange("1.8.8",{
+    {ct.bug, [=[Skin adjustments]=]},
+})
+
 addChange("1.8.7",{
     {ct.bug, [=[Fix tooltip issue]=]},
 })

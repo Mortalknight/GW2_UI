@@ -27,6 +27,7 @@ local function SkinAddonList()
         _G["AddonListEntry" .. i .. "Enabled"]:SetHitRectInsets(0, 0, 0, 0)
         _G["AddonListEntry" .. i .. "Enabled"]:SetSize(15, 15)
         _G["AddonListEntry"  ..  i].LoadAddonButton:GwSkinButton(false, true)
+        _G["AddonListEntry"  ..  i].LoadAddonButton.gwBorderFrame:Hide()
     end
 
     AddonListScrollFrame:GwSkinScrollFrame()

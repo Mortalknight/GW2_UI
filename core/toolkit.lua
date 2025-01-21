@@ -344,6 +344,11 @@ local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover,
 
             if button.LeftSeparator then button.LeftSeparator:Hide() end
             if button.RightSeparator then button.RightSeparator:Hide() end
+
+            local borderFrame = CreateFrame("Frame", nil, button, "GwButtonBorder")
+            borderFrame:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+            borderFrame:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+            button.gwBorderFrame = borderFrame
         end
 
         if setTextColor then
@@ -481,11 +486,11 @@ local function GwHandleDropDownBox(frame, backdropTemplate, width)
         frame:GwCreateBackdrop(backdropTemplate, true)
         frame.backdrop:SetBackdropColor(0, 0, 0)
     else
-        frame:GwCreateBackdrop(GW.skins.constBackdropStatusBar)
+        frame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
     end
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
-    frame.backdrop:SetPoint("TOPLEFT", 5, -2)
-    frame.backdrop:SetPoint("BOTTOMRIGHT", -2, -2)
+    frame.backdrop:SetPoint("TOPLEFT", 3, 0)
+    frame.backdrop:SetPoint("BOTTOMRIGHT", -2, 0)
 
     local tex = frame:CreateTexture(nil, 'ARTWORK')
     tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")

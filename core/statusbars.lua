@@ -38,12 +38,8 @@ local function getAnimationDurationDynamic(self,val1,val2,width)
     return t
 end
 
-local function addMask(self, mask, value)
-    --if value == 0 then
-    --    self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/0")
-    --else
-        self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. mask)
-    --end
+local function addMask(self, mask)
+    self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. mask)
 end
 
 local function GetFillAmount(self)
@@ -53,8 +49,8 @@ end
 local function SetFillAmount(self, value, forced)
     local isVertical = (self:GetOrientation() == "VERTICAL") or false
     local isReverseFill = self:GetReverseFill()
-    local totalWidth = self.totalWidth or isVertical and self:GetHeight() or self:GetWidth()
-    local height = self.totalHeight or isVertical and self:GetWidth() or self:GetHeight()
+    local totalWidth = self.totalWidth or (isVertical and self:GetHeight() or self:GetWidth())
+    local height = self.totalHeight or (isVertical and self:GetWidth() or self:GetHeight())
 
     -- fallback if width or height is 0
     if totalWidth == 0 then totalWidth = 1 end
@@ -62,12 +58,11 @@ local function SetFillAmount(self, value, forced)
 
     local barWidth = totalWidth * value
     local stretchMask = self.strechMask or false
-
-    local maskHightValue = self.customMaskSize or 128
+    local maskHeightValue = self.customMaskSize or 128
 
     self.fillAmount = value
 
-    local numberOfSegments = totalWidth / maskHightValue
+    local numberOfSegments = totalWidth / maskHeightValue
     local numberOfSegmentsRound = math.ceil(numberOfSegments)
 
     local segmentSize = totalWidth / numberOfSegmentsRound
@@ -78,7 +73,7 @@ local function SetFillAmount(self, value, forced)
     local barPosition = ((currentSegmentIndex + 1) * segmentSize) / totalWidth
 
     local rampStartPoint = (segmentSize * currentSegmentIndex)
-    local rampEndPoint = (segmentSize * (currentSegmentIndex+1))
+    local rampEndPoint = (segmentSize * (currentSegmentIndex + 1))
     local rampProgress = (barWidth - rampStartPoint) / (rampEndPoint - rampStartPoint)
 
     local interpolateRamp = lerp(numSpritesInAnimation, 0, rampProgress)
@@ -90,30 +85,15 @@ local function SetFillAmount(self, value, forced)
 
     if stretchMask then
         if isVertical then
-            self.maskContainer:SetSize(height, maskHightValue)
+            self.maskContainer:SetSize(height, maskHeightValue)
         else
-            self.maskContainer:SetSize(maskHightValue, height)
+            self.maskContainer:SetSize(maskHeightValue, height)
         end
     else
         self.maskContainer:SetSize(segmentSize, segmentSize)
     end
 
-    if self.spark ~= nil then
-        if value == 0 then
-            self.spark:Hide()
-        else
-            self.spark:Show()
-        end
-        local sparkPosition = (currentSegmentPosition + (segmentSize * rampProgress) - self.spark.width) + 10
-        local sparkWidth = min(barWidth, self.spark.width)
-        self.spark:SetWidth(sparkWidth)
-        self.spark:SetHeight(height)
-        self.spark:ClearAllPoints()
-        if isReverseFill then
-            self.spark:SetPoint("RIGHT", self.internalBar, "RIGHT", -min(totalWidth - self.spark.width, max(0, sparkPosition)), 0)
-        else
-            self.spark:SetPoint("LEFT", self.internalBar, "LEFT", min(totalWidth - self.spark.width, max(0, sparkPosition)), 0)
-        end
+    if self.spark then
         self.spark:Hide()
     end
 
@@ -130,11 +110,11 @@ local function SetFillAmount(self, value, forced)
         if isVertical then
             self.maskContainer:SetPoint("BOTTOM", self.internalBar, "BOTTOM", 0, currentSegmentPosition)
         elseif isReverseFill then
-            self.maskContainer:SetPoint("RIGHT", self.internalBar, "RIGHT", currentSegmentPosition, 0)
+            self.maskContainer:SetPoint("RIGHT", self.internalBar, "RIGHT", -currentSegmentPosition, 0)
         else
             self.maskContainer:SetPoint("LEFT", self.internalBar, "LEFT", currentSegmentPosition, 0)
         end
-        if not GW.IsNAN(barPosition) then
+        if not GW.IsNaN(barPosition) and not GW.IsInf(barPosition) then
             self:SetValue(barPosition)
         end
         self.fill_threshold = barPosition
@@ -210,25 +190,28 @@ end
 
 local function SetReverseFill(self, reverse)
     if reverse then
-        self.maskContainer.mask0:SetRotation(math.rad(180))
+        self.internalBar:SetPoint("RIGHT", self, "RIGHT", 0, 0)
 
-        self.maskContainer.mask0:ClearAllPoints()
-        self.maskContainer.mask0:SetPoint("TOPRIGHT", self.maskContainer, "TOPRIGHT", 0, 0)
-        self.maskContainer.mask0:SetPoint("BOTTOMLEFT", self.maskContainer, "BOTTOMLEFT", 0, 0)
+        local maskContainer = self.maskContainer
+        local maskOverflow = self.maskOverflow
 
-        self.maskContainer:ClearAllPoints()
-        self.maskContainer:SetPoint("RIGHT", self.internalBar, "RIGHT", 0, 0)
+        maskContainer:ClearAllPoints()
+        maskContainer:SetPoint("RIGHT", self, "RIGHT", 0, 0)
+        maskContainer.mask0:SetRotation(3.14159)
+        maskContainer.mask0:ClearAllPoints()
+        maskContainer.mask0:SetPoint("TOPRIGHT", maskContainer, "TOPRIGHT", 0, 0)
+        maskContainer.mask0:SetPoint("BOTTOMLEFT", maskContainer, "BOTTOMLEFT", 0, 0)
 
-        self.maskOverflow.mask:SetRotation(math.rad(180))
-        self.maskOverflow:ClearAllPoints()
-        self.maskOverflow:SetPoint("TOPRIGHT", self.maskContainer, "TOPLEFT", 0, 0)
-        self.maskOverflow:SetPoint("BOTTOMRIGHT", self.maskContainer, "BOTTOMLEFT", 0, 0)
-        self.maskOverflow:SetPoint("TOPLEFT", self, "TOPLEFT", -3, 0)
-        self.maskOverflow:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", -3, 0)
+        maskOverflow:ClearAllPoints()
+        maskOverflow:SetPoint("TOPRIGHT", self.maskContainer, "TOPLEFT", 0, 0)
+        maskOverflow:SetPoint("BOTTOMRIGHT", self.maskContainer, "BOTTOMLEFT", 0, 0)
+        maskOverflow:SetPoint("TOPLEFT", self, "TOPLEFT", -3, 0)
+        maskOverflow:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", -3, 0)
 
-        self.maskOverflow.mask:ClearAllPoints()
-        self.maskOverflow.mask:SetPoint("TOPRIGHT", self.maskOverflow, "TOPRIGHT", 0, 0)
-        self.maskOverflow.mask:SetPoint("BOTTOMLEFT", self.maskOverflow, "BOTTOMLEFT", 0, 0)
+        maskOverflow.mask:SetRotation(3.14159)
+        maskOverflow.mask:ClearAllPoints()
+        maskOverflow.mask:SetPoint("TOPRIGHT", maskOverflow, "TOPRIGHT", 0, 0)
+        maskOverflow.mask:SetPoint("BOTTOMLEFT", maskOverflow, "BOTTOMLEFT", 0, 0)
     end
 end
 
@@ -288,7 +271,6 @@ local function hookStatusbarBehaviour(statusBar, smooth, animationType)
 
     statusBar.maskContainer:ClearAllPoints()
     statusBar.maskOverflow:ClearAllPoints()
-
     statusBar.maskOverflow:SetPoint("TOPLEFT", statusBar.maskContainer, "TOPRIGHT", 0, 0)
     statusBar.maskOverflow:SetPoint("BOTTOMLEFT", statusBar.maskContainer, "BOTTOMRIGHT", 0, 0)
     statusBar.maskOverflow:SetPoint("TOPRIGHT", statusBar, "TOPRIGHT", 3, 0)
@@ -301,8 +283,7 @@ local function hookStatusbarBehaviour(statusBar, smooth, animationType)
         statusBar.spark.width = statusBar.spark:GetWidth()
     end
     hooksecurefunc(statusBar, "SetOrientation", SetOrientation)
-    --hooksecurefunc(statusBar, "SetReverseFill", SetReverseFill)
-
+    hooksecurefunc(statusBar, "SetReverseFill", SetReverseFill)
     return statusBar
 end
 GW.hookStatusbarBehaviour = hookStatusbarBehaviour
@@ -315,13 +296,14 @@ local function createNewStatusBar(name, parent, template, smooth)
 end
 GW.createNewStatusbar = createNewStatusBar
 
-local function preLoadStatusBarMaskTextures()
+local function PreloadStatusBarMaskTextures()
     local f = CreateFrame("Frame", nil, UIParent)
     f:SetSize(1, 1)
+    f:SetPoint("TOPLEFT", -5000)
     for i = 0, numSpritesInAnimation do
         f.preLoader = f:CreateTexture(nil, "BACKGROUND")
         f.preLoader:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. i)
         f.preLoader:SetSize(1, 1)
     end
 end
-GW.preLoadStatusBarMaskTextures = preLoadStatusBarMaskTextures
+GW.PreloadStatusBarMaskTextures = PreloadStatusBarMaskTextures

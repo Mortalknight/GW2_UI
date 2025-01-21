@@ -9,7 +9,8 @@ BAG_FILTER_LABELS = {
 };
 
 -- reskins an ItemButton to use GW2_UI styling
-local function reskinItemButton(iname, b, overrideIconSize)
+local function reskinItemButton(b, overrideIconSize)
+    if not b then return end
     local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
     b:SetSize(iconSize, iconSize)
 
@@ -41,7 +42,7 @@ local function reskinItemButton(iname, b, overrideIconSize)
     b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     b.Count:SetJustifyH("RIGHT")
 
-    local qtex = b.IconQuestTexture or (iname and _G[iname .. "IconQuestTexture"])
+    local qtex = b.IconQuestTexture or b["IconQuestTexture"]
     if qtex then
         qtex:SetSize(iconSize + 2, iconSize + 2)
         qtex:ClearAllPoints()
@@ -83,12 +84,12 @@ local function reskinItemButton(iname, b, overrideIconSize)
         b.itemlevel:SetText("")
     end
 
-    if iname then
-        GW.RegisterCooldown(_G[iname .. "Cooldown"])
-    elseif b.cooldown then
+    if b.cooldown then
         GW.RegisterCooldown(b.cooldown)
     elseif b.Cooldown then
         GW.RegisterCooldown(b.Cooldown)
+    elseif b.GetName and b:GetName() and _G[b:GetName() .. "Cooldown"] then
+        GW.RegisterCooldown(_G[b:GetName() .. "Cooldown"])
     end
 end
 GW.SkinBagItemButton = reskinItemButton
@@ -98,7 +99,7 @@ local function getContainerFrame(bag_id)
     -- ContainerFrame assignment is not guaranteed; only safe approach is to
     -- search every ContainerFrame and check its ID for a match.
     for i = 1, NUM_CONTAINER_FRAMES do
-        local cf = _G["ContainerFrame" .. i] 
+        local cf = _G["ContainerFrame" .. i]
         if cf and cf:GetID() == bag_id then
             return cf
         end
@@ -114,7 +115,7 @@ local function reskinItemButtons()
             local iname = "ContainerFrame" .. i .. "Item" .. j
             local b = _G[iname]
             if b then
-                reskinItemButton(iname, b)
+                reskinItemButton(b)
             end
         end
     end

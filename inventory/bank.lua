@@ -289,7 +289,7 @@ local function reskinBankItemButtons()
         local iname = "BankFrameItem" .. i
         local b = _G[iname]
         if b then
-            inv.reskinItemButton(iname, b)
+            inv.reskinItemButton(b)
         end
     end
 end

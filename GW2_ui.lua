@@ -478,7 +478,7 @@ local function evAddonLoaded(self, addonName)
     GW.LoadFlightMapSkin()
     GW.LoadMacroOptionsSkin()
     GW.LoadSocketUISkin()
-    GW.preLoadStatusBarMaskTextures()
+    GW.PreloadStatusBarMaskTextures()
 end
 AFP("evAddonLoaded", evAddonLoaded)
 
