@@ -157,6 +157,11 @@ local function CheckUpdateIcon(button)
 end
 GW.CheckUpdateIcon = CheckUpdateIcon
 
+--copy from blizzard seams provate in 11.1
+local function GetItemButtonIconTexture(button)
+	return button.Icon or button.icon or _G[button:GetName().."IconTexture"];
+end
+
 local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     if not button.gwBackdrop then
         return
@@ -233,7 +238,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         end
 
         t:Show()
-        button:GetItemButtonIconTexture():Show()
+        GetItemButtonIconTexture(button):Show()
     else
         if button.junkIcon then button.junkIcon:Hide() end
         if button.scrapIcon then button.scrapIcon:Hide() end
@@ -242,7 +247,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button:SetScript("OnUpdate", nil)
         end
         if button.itemlevel then button.itemlevel:SetText("") end
-        button:GetItemButtonIconTexture():Hide()
+        GetItemButtonIconTexture(button):Hide()
     end
 end
 GW.SetBagItemButtonQualitySkin = hookItemQuality
