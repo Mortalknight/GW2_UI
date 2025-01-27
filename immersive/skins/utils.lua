@@ -789,6 +789,10 @@ local function AddListItemChildHoverTexture(child)
         child.gwSelected:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
         child.gwSelected:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
         child.gwSelected:Hide()
+
+        if child.GetHighlightTexture and child:GetHighlightTexture() then
+            child:GetHighlightTexture():GwKill()
+        end
     end
 
     AddMouseMotionPropagationToChildFrames(child)

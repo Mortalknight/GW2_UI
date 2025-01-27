@@ -14,6 +14,7 @@ local function HandleAddonEntry(entry, treeNode)
         entry.Reload:SetTextColor(1.0, 0.3, 0.3)
         entry.LoadAddonButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
 
+        GW.AddListItemChildHoverTexture(entry)
         entry.IsSkinned = true
     end
     local addonIndex = treeNode:GetData().addonIndex
@@ -78,5 +79,6 @@ local function LoadAddonListSkin()
     GW.HandleScrollControls(AddonList)
 
     hooksecurefunc("AddonList_InitAddon", HandleAddonEntry)
+    hooksecurefunc(AddonList.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 end
 GW.LoadAddonListSkin = LoadAddonListSkin
