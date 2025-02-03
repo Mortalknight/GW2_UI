@@ -1,7 +1,5 @@
 local addonName, GW = ...
 local L = GW.L
-local RoundInt = GW.RoundInt
-local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverride

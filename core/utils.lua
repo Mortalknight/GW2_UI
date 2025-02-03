@@ -558,7 +558,7 @@ local function securePetAndOverride(f, stateType)
     return true
 end
 
-local function secureHideDurinPetAndMountedgMounted(f, stateType)
+local function secureHideDurinPetAndMountedgMounted(f)
     if InCombatLockdown() then
         return false
     end
@@ -1026,7 +1026,7 @@ local function IsSpellTalented(spellID) -- this could be made to be a lot more e
 
     for _, treeID in ipairs(configInfo.treeIDs) do -- in the context of talent trees, there is only 1 treeID
         local nodes = C_Traits.GetTreeNodes(treeID)
-        for i, nodeID in ipairs(nodes) do
+        for _, nodeID in ipairs(nodes) do
             local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
             for _, entryID in ipairs(nodeInfo.entryIDsWithCommittedRanks) do -- there should be 1 or 0
                 local entryInfo = C_Traits.GetEntryInfo(configID, entryID)

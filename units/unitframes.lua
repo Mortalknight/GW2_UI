@@ -423,10 +423,6 @@ GW.AddForProfiling("unitframes", "setUnitPortrait", setUnitPortrait)
 
 local function unitFrameData(self)
     local level = UnitLevel(self.unit)
-    if level == -1 then
-        level = "??"
-    end
-
     local name = UnitName(self.unit)
 
     if UnitIsGroupLeader(self.unit) then
@@ -434,7 +430,7 @@ local function unitFrameData(self)
     end
 
     self.nameString:SetText(name)
-    self.levelString:SetText(level)
+    self.levelString:SetText((level == -1 and "??" or level))
 
     updateHealthbarColor(self)
 

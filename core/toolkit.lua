@@ -572,6 +572,7 @@ local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textB
         frame:GwCreateBackdrop()
         GW.SkinTextBox(middle, left, right, nil, nil, -5, textBoxRightOffset or -10)
     end
+
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
     frame.backdrop:SetPoint("TOPLEFT", 5, -2)
     frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, -2)

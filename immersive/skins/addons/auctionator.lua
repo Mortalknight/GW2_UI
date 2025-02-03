@@ -410,10 +410,10 @@ local function SkinAuctionator()
         GW.SkinTextBox(textarea.Middle, textarea.Left, textarea.Right)
     end
 
-    extendedSearch.FilterKeySelector:GwSkinDropDownMenu()
-    extendedSearch.QualityContainer.DropDown.DropDown:GwSkinDropDownMenu()
-    extendedSearch.ExpansionContainer.DropDown.DropDown:GwSkinDropDownMenu()
-    extendedSearch.TierContainer.DropDown.DropDown:GwSkinDropDownMenu()
+    extendedSearch.FilterKeySelector.DropDown:GwHandleDropDownBox(nil, nil, nil, 280)
+    extendedSearch.QualityContainer.DropDown.DropDown:GwHandleDropDownBox()
+    extendedSearch.ExpansionContainer.DropDown.DropDown:GwHandleDropDownBox()
+    extendedSearch.TierContainer.DropDown.DropDown:GwHandleDropDownBox()
 end
 
 local function LoadAuctionatorAddonSkin()
