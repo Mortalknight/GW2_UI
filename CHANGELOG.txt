@@ -1,3 +1,7 @@
+7.11.1
+FIXES
+    - Fix actionbar taint
+
 7.11.0
 NEW
     - Added option to hide target item level display

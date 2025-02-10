@@ -14,6 +14,11 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+
+addChange("7.11.1",{
+    {ct.bug, [=[Fix actionbar taint]=]},
+})
+
 addChange("7.11.0",{
     {ct.feature, [=[dded option to hide target item level display]=]},
     {ct.feature, [=[Added option to show Singing Socket gems]=]},
