@@ -137,6 +137,7 @@ GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 
 local function CheckUpdateIcon(button)
     local itemInfo = C_Container.GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+    if not itemInfo then return false end
     if not itemInfo.stackCount then return false end -- If the stack count is 0, it's clearly not an upgrade
     if not itemInfo.hyperlink then return nil end -- If we didn't get an item link, but there's an item there, try again later
     local itemIsUpgrade = PawnShouldItemLinkHaveUpgradeArrow(itemInfo.hyperlink)

@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("3.3.20",{
+    {ct.change,[=[Fix bag lua error]=]},
+})
+
 addChange("3.3.19",{
     {ct.change,[=[Added more spellbook container]=]},
 })
