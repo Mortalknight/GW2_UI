@@ -116,41 +116,6 @@ end
 -- Locale doesn't exist yet, make it exist
 GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI")
 
--- remove the NPE, conflicts with customs hero and spell book panel
-local NPERemoveFrame = CreateFrame("Frame")
-NPERemoveFrame:Hide()
-
-local function RemoveNPE(_, event)
-    if NewPlayerExperience then
-        if NewPlayerExperience:GetIsActive() then
-            NewPlayerExperience:Shutdown()
-            C_CVar.SetCVar("showNPETutorials", "0")
-        end
-
-        if event then
-            NPERemoveFrame:UnregisterEvent(event)
-        end
-    end
-end
-
-if NewPlayerExperience then
-    RemoveNPE()
-else
-    NPERemoveFrame:RegisterEvent("ADDON_LOADED")
-    NPERemoveFrame:SetScript("OnEvent", RemoveNPE)
-end
-
-local function AcknowledgeTips()
-    for frame in HelpTip.framePool:EnumerateActive() do
-        frame:Acknowledge()
-    end
-end
-
--- disable helper tooltips
-hooksecurefunc(HelpTip, "Show", AcknowledgeTips)
-C_Timer.After(1, function() AcknowledgeTips() end)
-
-
 local function copyTable(newTable, tableToCopy)
     if type(newTable) ~= "table" then newTable = {} end
 
