@@ -75,10 +75,18 @@ local function OnProfileDeleted(event, target, profileName)
     end
 end
 
+local function CheckDualSpecOnLogin()
+    if GW2ProfileSettingsView then
+        GW.globalSettings:CheckDualSpecState()
+    else
+        C_Timer.After(0.1, CheckDualSpecOnLogin)
+    end
+end
+
 local function EnhanceDatabase()
     GW.globalSettings.db = GW.globalSettings:GetNamespace("ProfileSpecSwitch", true) or GW.globalSettings:RegisterNamespace("ProfileSpecSwitch")
     EmbedMixin()
-    GW.globalSettings:CheckDualSpecState()
+    CheckDualSpecOnLogin()
 end
 
 local function SetUpDatabaseForProfileSpecSwitch()

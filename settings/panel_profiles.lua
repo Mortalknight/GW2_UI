@@ -359,13 +359,19 @@ local function item_OnLeave(self)
 end
 AddForProfiling("panel_profiles", "item_OnLeave", item_OnLeave)
 
-local function addProfile(name, profileData, copy)
+local function addProfile(name, profileData, copy, import)
     local profileList = GW.globalSettings:GetProfiles()
+    local importCounter = 1
     for _, v in pairs(profileList) do
         if name == v then
-            GW.Notice("Profile with that name already exists")
-            GW.WarningPrompt("Profile with that name already exists")
-            return
+            if import then
+                name = name .. "-" .. importCounter
+                importCounter = importCounter + 1
+            else
+                GW.Notice("Profile with that name already exists")
+                GW.WarningPrompt("Profile with that name already exists")
+                return
+            end
         end
     end
 

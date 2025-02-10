@@ -170,7 +170,7 @@ local function ImportProfile(dataString)
         return
     end
 
-    GW.addProfile(profileName, profileDataString)
+    GW.addProfile(profileName .. " - " .. profilePlayer, profileDataString, false, true)
 
     return profileName, profilePlayer, version
 end
