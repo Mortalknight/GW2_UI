@@ -278,15 +278,9 @@ local function updateGossipOption(self)
         if elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER or elementData.buttonType == GOSSIP_BUTTON_TYPE_TITLE then
             self:SetHeight(0)
         else
-            if elementData.info then
-                --save button reference so we can use it for keyboard
-                if not elementData.info.orderIndex then
-                    local idx = #gossipOptionPointer
-                    if gossipOptionPointer[idx] then idx = 1 end
-                    elementData.info.orderIndex = idx
-                end
-                gossipOptionPointer[elementData.info.orderIndex] = self
-                self:GetFontString():SetText("[" .. elementData.info.orderIndex + 1 .. "] " .. (elementData.info.name or elementData.info.title))
+            if elementData.index then
+                gossipOptionPointer[elementData.index] = self
+                self:GetFontString():SetText("[" .. elementData.index .. "] " .. (elementData.info.name or elementData.info.title))
             end
         end
     end
@@ -692,7 +686,6 @@ local function LoadGossipSkin()
         --Downside if butto name contains a number it will be used. example JoyStick1
         local numKey = tonumber(key)
         local foundUsableKey = false
-        if numKey then numKey = numKey - 1 end -- we store it index based and start with 0
         if numKey and gossipOptionPointer[numKey] then
             gossipOptionPointer[numKey]:Click()
             foundUsableKey = true
