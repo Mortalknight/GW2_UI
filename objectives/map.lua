@@ -16,8 +16,6 @@ local minimapDetails = {
     ["COORDS"] = "GwMapCoords"
 }
 
-local TrackingDropdown
-
 local function setMinimapButtons(side)
     MiniMapBattlefieldFrame:ClearAllPoints()
     GameTimeFrame:ClearAllPoints()
@@ -298,17 +296,6 @@ local function ToogleMinimapFpsLable()
 end
 GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
-local function CreateMinimapTrackingDropdown()
-	local dropdown = CreateFrame('Frame', 'GW2_UIMiniMapTrackingDropDown', UIParent, 'UIDropDownMenuTemplate')
-    dropdown:SetID(1)
-    dropdown:SetClampedToScreen(true)
-    dropdown:Hide()
-
-    UIDropDownMenu_Initialize(dropdown, MiniMapTrackingDropDown_Initialize, 'MENU')
-    dropdown.noResize = true
-
-	return dropdown
-end
 
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
@@ -369,42 +356,38 @@ local function LoadMinimap()
 
     GwMiniMapTrackingFrame = CreateFrame("DropdownButton", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
     GwMiniMapTrackingFrame:OnLoad()
-    local icontype = MiniMapTrackingIcon:GetTexture()
+    GwMiniMapTrackingFrame:Show()
+    local icontype = MiniMapTrackingIcon:GetTexture() or 136025
     if icontype == 132328 then icontype = icontype .. GW.myClassID end
-    if icontype and trackingTypes[icontype] then
-        GwMiniMapTrackingFrame.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
-        GwMiniMapTrackingFrame:Show()
-    else
-        GwMiniMapTrackingFrame:Hide()
+    if trackingTypes[icontype] == nil then
+        icontype = 136025
     end
+    GwMiniMapTrackingFrame.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
 
     GwMiniMapTrackingFrame:RegisterEvent("MINIMAP_UPDATE_TRACKING")
-    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self)
-        local icontype = MiniMapTrackingIcon:GetTexture()
+    GwMiniMapTrackingFrame:HookScript("OnEvent", function(self)
+        local icontype = MiniMapTrackingIcon:GetTexture() or 136025
         if icontype == 132328 then icontype = icontype .. GW.myClassID end
-        if icontype and trackingTypes[icontype] then
-            self.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
-            self:Show()
-        else
-            self:Hide()
+        if trackingTypes[icontype] == nil then
+            icontype = 136025
         end
+        self.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
     end)
     GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", -30, 0)
 
     --Time
     TimeManager_LoadUI()
     TimeManagerClockButton:Hide()
-   --Time
-   GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
-   GwMapTime:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-   GwMapTime.timeTimer = C_Timer.NewTicker(0.2, function()
-       GwMapTime.Time:SetText(GameTime_GetTime(false))
-   end)
-   GwMapTime:RegisterEvent("UPDATE_INSTANCE_INFO")
-   GwMapTime:SetScript("OnClick", GW.Time_OnClick)
-   GwMapTime:SetScript("OnEnter", GW.Time_OnEnter)
-   GwMapTime:SetScript("OnLeave", GW.Time_OnLeave)
-   GwMapTime:SetScript("OnEvent", GW.Time_OnEvent)
+    GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
+    GwMapTime:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    GwMapTime.timeTimer = C_Timer.NewTicker(0.2, function()
+        GwMapTime.Time:SetText(GameTime_GetTime(false))
+    end)
+    GwMapTime:RegisterEvent("UPDATE_INSTANCE_INFO")
+    GwMapTime:SetScript("OnClick", GW.Time_OnClick)
+    GwMapTime:SetScript("OnEnter", GW.Time_OnEnter)
+    GwMapTime:SetScript("OnLeave", GW.Time_OnLeave)
+    GwMapTime:SetScript("OnEvent", GW.Time_OnEvent)
 
     --coords
     GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")

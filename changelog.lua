@@ -9,6 +9,10 @@ local ct = {
 GW.CHANGELOGS_TYPES = ct
 
 
+addChange("1.9.0",{
+    {ct.change, [=[Update for 4.4.2]=]},
+})
+
 addChange("1.8.8",{
     {ct.bug, [=[Skin adjustments]=]},
 })

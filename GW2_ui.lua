@@ -802,6 +802,7 @@ local function evPlayerLogin(self)
     -- create action bars
     if GW.settings.ACTIONBARS_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         GW.LoadActionBars(lm)
+        GW.ExtraAB_BossAB_Setup()
         MultiActionBar_Update()
     end
 

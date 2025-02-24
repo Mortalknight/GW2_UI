@@ -104,7 +104,7 @@ local function Guild_OnEnter(self)
     GameTooltip:AddLine(" ")
 
     local shiftDown = IsShiftKeyDown()
-    local total, _, online = GetNumGuildMembers()
+    local total, online = GetNumGuildMembers()
     if #guildTable == 0 then FetchGuildMembers() end
 
     SortGuildTable(shiftDown)
