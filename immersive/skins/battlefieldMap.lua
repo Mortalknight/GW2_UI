@@ -51,7 +51,7 @@ local function ApplyBattlefieldMapFrameSkin()
 
 	if BattlefieldMapTab then
 		BattlefieldMapTab:SetHeight(24)
-		GW.HandleTabs(BattlefieldMapTab, true)
+		GW.HandleTabs(BattlefieldMapTab, "top")
 		BattlefieldMapFrame:SetPoint("TOPLEFT", BattlefieldMapTab, "BOTTOMLEFT", 0, 0)
 
 		if BattlefieldMapTab.Text then

@@ -255,7 +255,7 @@ local function skinPlayerSpells()
         SpellBookFrame.HelpPlateButton:GwKill()
 
         for _, tab in next, { SpellBookFrame.CategoryTabSystem:GetChildren() } do
-            GW.HandleTabs(tab, true)
+            GW.HandleTabs(tab, "top")
         end
 
         local PagedSpellsFrame = PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame

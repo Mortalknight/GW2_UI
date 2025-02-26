@@ -497,12 +497,14 @@ end
 GW.StrLower = StrLower
 
 local function IsInf(n)
-    return tostring(n) == tostring(1/0)
+    --return tostring(n) == tostring(1/0)
+    return false
 end
 GW.IsInf = IsInf
 
 local function IsNaN(n)
-    return tostring(n) == tostring(0/0)
+    --return tostring(n) == tostring(0/0)
+    return false
 end
 GW.IsNaN = IsNaN
 

@@ -277,7 +277,6 @@ local function encounterJournalSkin()
     EJ.navBar.homeButton.tex:SetAlpha(1)
 
     EJ.navBar.homeButton.borderFrame = CreateFrame("Frame", nil, EJ.navBar.homeButton, "GwLightButtonBorder")
-
     EJ.CloseButton:SetPoint("TOPRIGHT", -10, -2)
     EncounterJournalPortrait:Show()
 
@@ -442,7 +441,7 @@ local function encounterJournalSkin()
         local info = EncounterJournal.encounter.info
 
         local tab = info[name]
-        tab:GwSkinButton(false, true)
+        GW.HandleTabs(tab, "right", {tab.unselected, tab.selected})
 
         tab:ClearAllPoints()
 

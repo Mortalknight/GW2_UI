@@ -481,11 +481,38 @@ do
     GW.HandleIconSelectionFrame = HandleIconSelectionFrame
 end
 
-local function HandleTabs(self, isTop)
+local function HandleTabs(self, direction, textures, setDesaturated)
     if self and not self.isSkinned then
+        local oldTexture = {}
+        if textures then
+            for _, texture in pairs(textures) do
+                if texture:GetAtlas() then
+                    tinsert(oldTexture, {isAtlas = true, texture = texture, textureFile = texture:GetAtlas()})
+                else
+                    tinsert(oldTexture, {isAtlas = false, texture = texture, textureFile = texture:GetTexture()})
+                end
+            end
+        end
+
         self:GwStripTextures()
-        self:GetFontString():SetTextColor(1, 1, 1, 1)
-        self:GetFontString():SetShadowOffset(0, 0)
+
+        if textures and oldTexture and #oldTexture > 0 then
+            for _, textureData in pairs(oldTexture) do
+                if textureData.isAtlas then
+                    textureData.texture:SetAtlas(textureData.textureFile)
+                else
+                    textureData.texture:SetTexture(textureData.textureFile)
+                end
+                if setDesaturated ~= nil then
+                    textureData.texture:SetDesaturated(setDesaturated)
+                end
+            end
+        end
+
+        if self.GetFontString and self:GetFontString() ~= nil then
+            self:GetFontString():SetTextColor(1, 1, 1, 1)
+            self:GetFontString():SetShadowOffset(0, 0)
+        end
 
         local tex = self:CreateTexture(nil, "BACKGROUND")
         tex:SetPoint("LEFT", self, "LEFT")
@@ -501,16 +528,25 @@ local function HandleTabs(self, isTop)
         self.background = self:CreateTexture(nil, "BACKGROUND", nil, -7)
         self.background:SetAllPoints(self)
         self.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
-        if not isTop then
-            self.background:SetTexCoord(0, 1, 1, 0)
-            self.borderFrame.bottom:Show()
-            self.borderFrame.top:Hide()
-        else
+        if direction == "top" then
             self.borderFrame.bottom:Hide()
-            self.borderFrame.top:Show()
+        elseif direction == "left" then
+            self.background:SetTexCoord(1, 0, 1, 0)
+            self.borderFrame.right:Hide()
+            self.borderFrame.bottom:Show()
+        elseif direction == "right" then
+            self.background:SetTexCoord(1, 0, 0, 1)
+            self.borderFrame.left:Hide()
+            self.borderFrame.bottom:Show()
+        else
+            self.background:SetTexCoord(0, 1, 1, 0)
+            self.borderFrame.top:Hide()
+            self.borderFrame.bottom:Show()
         end
 
-        self.Text:SetPoint("CENTER", self, "CENTER", 0, 0)
+        if self.Text then
+            self.Text:SetPoint("CENTER", self, "CENTER", 0, 0)
+        end
 
         if self.SetTabSelected then
             hooksecurefunc(self, "SetTabSelected", function(tab)
@@ -530,13 +566,17 @@ local function HandleTabs(self, isTop)
             hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
                 if self == tab then
                     tab.background:SetBlendMode("BLEND")
-                    tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
+                    if tab.Text then
+                        tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
+                    end
                 end
             end)
             hooksecurefunc("PanelTemplates_SelectTab", function(tab)
                 if self == tab then
                     tab.background:SetBlendMode("MOD")
-                    tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
+                    if tab.Text then
+                        tab.Text:SetPoint("CENTER", tab, "CENTER", 0, 0)
+                    end
                 end
             end)
             if self.LeftActive and self.LeftActive:IsShown() then -- selected
@@ -749,6 +789,10 @@ local function AddListItemChildHoverTexture(child)
         child.gwSelected:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
         child.gwSelected:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
         child.gwSelected:Hide()
+
+        if child.GetHighlightTexture and child:GetHighlightTexture() then
+            child:GetHighlightTexture():GwKill()
+        end
     end
 
     AddMouseMotionPropagationToChildFrames(child)

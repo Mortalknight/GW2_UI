@@ -465,7 +465,7 @@ local function ApplyAuctionHouseSkin()
 
 	for _, tab in pairs(AuctionsFrameTabs) do
 		if tab then
-			GW.HandleTabs(tab, true)
+			GW.HandleTabs(tab, "top")
 		end
 	end
 

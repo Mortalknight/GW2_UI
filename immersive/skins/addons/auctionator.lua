@@ -323,8 +323,8 @@ local function SkinAuctionator()
     buyingFrame.IconAndName.Icon.backdrop:GwSetOutside(buyingFrame.IconAndName.Icon)
     buyingFrame.IconAndName:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
-    GW.HandleTabs(list.ContainerTabs.ListsTab, true)
-    GW.HandleTabs(list.ContainerTabs.RecentsTab, true)
+    GW.HandleTabs(list.ContainerTabs.ListsTab, "top")
+    GW.HandleTabs(list.ContainerTabs.RecentsTab, "top")
 
     list.ContainerTabs.ListsTab:SetHeight(28)
     list.ContainerTabs.RecentsTab:SetHeight(28)
