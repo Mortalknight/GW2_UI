@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.12.0",{
+    {ct.bug, [=[Update for 11.1.0]=]},
+})
+
 addChange("7.11.1",{
     {ct.bug, [=[Fix actionbar taint]=]},
 })
