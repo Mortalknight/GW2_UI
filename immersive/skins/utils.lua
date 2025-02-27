@@ -514,19 +514,21 @@ local function HandleTabs(self, direction, textures, setDesaturated)
             self:GetFontString():SetShadowOffset(0, 0)
         end
 
-        local tex = self:CreateTexture(nil, "BACKGROUND")
-        tex:SetPoint("LEFT", self, "LEFT")
-        tex:SetPoint("TOP", self, "TOP")
-        tex:SetPoint("BOTTOM", self, "BOTTOM")
-        tex:SetPoint("RIGHT", self, "RIGHT")
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
-        self.tex = tex
+        self.tex = self:CreateTexture(nil, "BACKGROUND")
+        self.tex:SetPoint("LEFT", self, "LEFT")
+        self.tex:SetPoint("TOP", self, "TOP")
+        self.tex:SetPoint("BOTTOM", self, "BOTTOM")
+        self.tex:SetPoint("RIGHT", self, "RIGHT")
+        self.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
         self.tex:SetAlpha(1)
 
         self.borderFrame = CreateFrame("Frame", nil, self, "GwLightButtonBorder")
 
         self.background = self:CreateTexture(nil, "BACKGROUND", nil, -7)
-        self.background:SetAllPoints(self)
+        self.background:SetPoint("LEFT", self, "LEFT")
+        self.background:SetPoint("TOP", self, "TOP")
+        self.background:SetPoint("BOTTOM", self, "BOTTOM")
+        self.background:SetPoint("RIGHT", self, "RIGHT")
         self.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
         if direction == "top" then
             self.borderFrame.bottom:Hide()
@@ -561,6 +563,22 @@ local function HandleTabs(self, direction, textures, setDesaturated)
                 self.background:SetBlendMode("MOD")
             else
                 self.background:SetBlendMode("BLEND")
+            end
+        elseif self.SetChecked then
+            hooksecurefunc(self, "SetChecked", function(tab, checked)
+                if checked then
+                    self.tex:SetAlpha(0)
+                else
+                    self.tex:SetAlpha(1)
+                end
+                if self.Text then
+                    self.Text:SetPoint("CENTER", self, "CENTER", 0, 0)
+                end
+            end)
+            if self.SelectedTexture:IsShown() then
+                self.tex:SetAlpha(0)
+            else
+                self.tex:SetAlpha(1)
             end
         else
             hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
