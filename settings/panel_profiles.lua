@@ -524,6 +524,8 @@ end
 local function LoadProfilesPanel(sWindow)
     local p = CreateFrame("Frame", "GW2ProfileSettingsView", sWindow.panels, "GwSettingsProfilePanelTmpl")
 
+    collectAllIcons()
+
     CharacterMenuButton_OnLoad(p.menu.newProfile, true)
     CharacterMenuButton_OnLoad(p.menu.importProfile, false)
     CharacterMenuButton_OnLoad(p.menu.convertOldProfileString, true)
@@ -539,8 +541,6 @@ local function LoadProfilesPanel(sWindow)
     ProfileWin = p.ScrollBox
 
     UpdateScrollBox(p.ScrollBox)
-
-    collectAllIcons()
 
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(1, 1, 1)
