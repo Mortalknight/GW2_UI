@@ -145,7 +145,7 @@ local function blockOnClick(self, button)
                     local mapID = C_TaskQuest.GetQuestZoneID(self.questID)
                     if mapID then
                         OpenQuestLog(mapID)
-                        WorldMapPing_StartPingQuest(self.questID)
+                        EventRegistry:TriggerEvent("MapCanvas.PingQuestID", self.questID)
                     end
                 end
             end

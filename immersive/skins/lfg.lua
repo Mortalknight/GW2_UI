@@ -526,7 +526,6 @@ local function SkinLookingForGroupFrames()
     GW.SkinTextBox(LFGListFrame.SearchPanel.SearchBox.Middle, LFGListFrame.SearchPanel.SearchBox.Left, LFGListFrame.SearchPanel.SearchBox.Right)
     LFGListFrame.SearchPanel.BackButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.SignUpButton:GwSkinButton(false, true)
-    LFGListFrame.CategorySelection.StartGroupButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.BackButton:ClearAllPoints()
     LFGListFrame.SearchPanel.BackButton:SetPoint("BOTTOMLEFT", -1, 3)
     LFGListFrame.SearchPanel.SignUpButton:ClearAllPoints()
@@ -537,7 +536,7 @@ local function SkinLookingForGroupFrames()
     GW.HandleScrollControls(LFGListFrame.SearchPanel)
 
     hooksecurefunc(LFGListFrame.SearchPanel.ScrollBox, "Update", function(self)
-        for _, child in next, { self.ScrollTarget:GetChildren()} do
+        for _, child in next, {self.ScrollTarget:GetChildren()} do
             if not child.IsSkinned and child.Name then
                 child.Name:SetTextColor(1, 1, 1)
                 hooksecurefunc(child.Name, "SetTextColor", GW.LockWhiteButtonColor)
