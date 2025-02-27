@@ -672,10 +672,14 @@ local function evPlayerLogin(self)
         elseif GW.settings.GW_COMBAT_TEXT_MODE == "BLIZZARD" then
             C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
             C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+            GW.LoadDamageText(false)
         else
             C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
             C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+            GW.LoadDamageText(false)
         end
+    else
+        GW.LoadDamageText(false)
     end
 
     if GW.settings.CASTINGBAR_ENABLED then

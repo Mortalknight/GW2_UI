@@ -106,7 +106,7 @@ local function CollectCategories()
                 elseif C_Reputation.IsMajorFaction(factionID) then
                     local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
                     if majorFactionData then
-                        local standing = RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel
+                        local standing = RENOWN_LEVEL_LABEL:format(majorFactionData.renownLevel)
                         cMax = cMax + #C_MajorFactions.GetRenownLevels(factionID)
                         cCur = cCur + majorFactionData.renownLevel
                         if not factionTbl then factionTbl = {} end
@@ -606,15 +606,15 @@ local function setReputationDetails(frame, data)
                 --max rank
                 frame.StatusBar:SetValue(1)
 
-                frame.currentRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
-                frame.nextRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
+                frame.currentRank:SetText(RENOWN_LEVEL_LABEL:format(majorFactionData.renownLevel))
+                frame.nextRank:SetText(RENOWN_LEVEL_LABEL:format(majorFactionData.renownLevel))
 
                 frame.nextValue:SetText()
                 frame.currentValue:SetText()
                 frame.percentage:SetText("100%")
             else
-                frame.nextRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel + 1)
-                frame.currentRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
+                frame.nextRank:SetText(RENOWN_LEVEL_LABEL:format(majorFactionData.renownLevel + 1))
+                frame.currentRank:SetText(RENOWN_LEVEL_LABEL:format(majorFactionData.renownLevel))
 
                 frame.currentValue:SetText(GW.GetLocalizedNumber(majorFactionData.renownReputationEarned or 0))
                 frame.nextValue:SetText(GW.GetLocalizedNumber(majorFactionData.renownLevelThreshold))
