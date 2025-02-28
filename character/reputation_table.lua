@@ -2,6 +2,11 @@ local _, GW = ...
 
 local T = {}
 
+-- TWW
+T[2673] = "Classic_Other/Bilgewater"
+T[2675] = "Classic_Other/BootyBay"
+T[2677] = "Classic_Other/Steamwheedle Cartel"
+
 --dragonflight
 T[2507] = "DRAGONFLIGHT/dragonscale"
 T[2503] = "DRAGONFLIGHT/maruuk"
