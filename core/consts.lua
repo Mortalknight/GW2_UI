@@ -473,10 +473,10 @@ GW.ChannelTicks = {
     [113656]	= 5, -- Fists of Fury
 }
 
--- Spells that chain, second step
+-- Spells that chain, ticks to add
 GW.ChainChannelTicks = {
     -- Evoker
-    [356995]	= 4, -- Disintegrate
+    [356995]	= 1, -- Disintegrate
 }
 
 -- Window to chain time (in seconds); usually the channel duration

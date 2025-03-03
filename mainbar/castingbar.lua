@@ -93,7 +93,7 @@ local function CheckForTicks(self)
         local match = seconds and self.chainTime and self.chainTick == self.spellID
 
         if match and (now - seconds) < self.chainTime then
-            baseTicks = chainTicks
+            baseTicks = baseTicks + chainTicks
         end
 
         self.chainTime = now
