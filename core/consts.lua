@@ -487,7 +487,7 @@ GW.ChainChannelTime = {
 
 -- Spells Effected By Talents (unused; talents changed)
 GW.TalentChannelTicks = {
-    -- IsSpellKnownOrOverridesKnown and/or IsPlayerSpell
+    [356995]	= {[1219723] = 4}
 }
 
 -- Increase ticks from auras
