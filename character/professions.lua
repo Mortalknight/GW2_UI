@@ -33,6 +33,68 @@ PROFESSION_RANKS[9] = {700, DRAENOR_MASTER};
 PROFESSION_RANKS[10] = {800, LEGION_MASTER};
 PROFESSION_RANKS[11] = {950, BATTLE_FOR_AZEROTH_MASTER};
 
+local function GetPrimaryProfessionID(index)
+    local prof = select(index, GetProfessions())
+    if prof then
+        local subcateogryName = select(11, GetProfessionInfo(prof))
+        if not subcateogryName or subcateogryName == "" then return end
+
+        local info
+        local skillLines = C_TradeSkillUI.GetAllProfessionTradeSkillLines()
+
+        for _, skillLine in ipairs(skillLines) do
+            info = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLine)
+            if info and info.professionName == subcateogryName then
+                return skillLine, info.professionName
+            end
+        end
+    end
+end
+
+local function GetProfessionUnspentPoints(index)
+    local professionID = GetPrimaryProfessionID(index)
+    if professionID then
+        local configID = C_ProfSpecs.GetConfigIDForSkillLine(professionID)
+        local tabTreeIDs = C_ProfSpecs.GetSpecTabIDsForSkillLine(professionID)
+        local excludeStagedChangesForCurrencies = false
+        local tabCurrencyCount = {}
+        local total = 0
+
+        for _, treeID in ipairs(tabTreeIDs) do
+            local tabInfo = C_ProfSpecs.GetTabInfo(treeID)
+            local tabSpendCurrency = tabInfo and C_ProfSpecs.GetSpendCurrencyForPath(tabInfo.rootNodeID)
+            if tabSpendCurrency and not tabCurrencyCount[tabSpendCurrency] then
+                local treeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(configID, treeID, excludeStagedChangesForCurrencies)
+                local treeCurrencyInfoMap = {}
+                for _, treeCurrency in ipairs(treeCurrencyInfo) do
+                    treeCurrencyInfoMap[treeCurrency.traitCurrencyID] = treeCurrency;
+                end
+                local currencyInfo = treeCurrencyInfoMap[tabSpendCurrency]
+                local currencyCount = currencyInfo and currencyInfo.quantity or 0
+                tabCurrencyCount[tabSpendCurrency] = currencyCount;
+                total = total + currencyCount
+            end
+        end
+
+        return total
+    end
+end
+
+local function UpdateUnusedKnowledgePoints(self)
+    for i = 1, 2 do
+        local points = GetProfessionUnspentPoints(i)
+        local fm = self.profs[i]
+        if points and points > 0 then
+            fm.unspendedKnowledgePointsFrame.unspendedKnowledgePoints = points
+            fm.unspendedKnowledgePointsFrame.Text:SetText(points)
+            fm.unspendedKnowledgePointsFrame:Show()
+        else
+            fm.unspendedKnowledgePointsFrame.unspendedKnowledgePoints = 0
+            fm.unspendedKnowledgePointsFrame:Hide()
+        end
+    end
+end
+
 local function profButton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
@@ -267,25 +329,41 @@ local function updateOverview(fmOverview)
 end
 GW.AddForProfiling("professions", "updateOverview", updateOverview)
 
-local function overview_OnUpdate(self)
+local function overview_OnUpdate(self, elapsed)
+    if self.delay then
+        self.delay = self.delay - elapsed
+        if self.delay > 0 then
+            return
+        end
+    end
+
     self:SetScript("OnUpdate", nil)
-    updateOverview(self)
+
+    if self.onlyKnowledgePoints then
+        UpdateUnusedKnowledgePoints(self)
+    else
+        updateOverview(self)
+    end
     self.queuedUpdate = false
 end
 GW.AddForProfiling("professions", "overview_OnUpdate", overview_OnUpdate)
 
-local function queueUpdate(fm)
+local function queueUpdate(fm, delay, onlyKnowledgePoints)
     if fm.queuedUpdate then
         return
     end
 
     fm.queuedUpdate = true
+    fm.delay = delay
+    fm.onlyKnowledgePoints = onlyKnowledgePoints
     fm:SetScript("OnUpdate", overview_OnUpdate)
 end
 GW.AddForProfiling("professions", "queueUpdate", queueUpdate)
 
-local function overview_OnEvent(self)
-    if GW.inWorld and self:IsShown() then
+local function overview_OnEvent(self, event)
+    if event == "TRAIT_TREE_CURRENCY_INFO_UPDATED" or event == "TRAIT_CONFIG_UPDATED" then
+        queueUpdate(self, 0.5, true)
+    elseif GW.inWorld and self:IsShown() then
         queueUpdate(self)
     end
 end
@@ -293,6 +371,7 @@ GW.AddForProfiling("professions", "overview_OnEvent", overview_OnEvent)
 
 local function overview_OnShow(self)
     updateOverview(self)
+    UpdateUnusedKnowledgePoints(self)
 end
 GW.AddForProfiling("professions", "overview_OnShow", overview_OnShow)
 
@@ -316,6 +395,36 @@ local function loadOverview(parent)
         )
         mask:SetSize(60, 60)
         fm.icon:AddMaskTexture(mask)
+
+        if i == 1 or i == 2 then
+            fm.unspendedKnowledgePointsFrame = CreateFrame("Frame", nil, fm)
+            fm.unspendedKnowledgePointsFrame:SetPoint("TOPRIGHT", fm.icon, "TOPRIGHT", -6, 5)
+            fm.unspendedKnowledgePointsFrame:SetSize(24, 24)
+            fm.unspendedKnowledgePointsFrame.icon = fm.unspendedKnowledgePointsFrame:CreateTexture(nil, "OVERLAY")
+            fm.unspendedKnowledgePointsFrame.Text = fm.unspendedKnowledgePointsFrame:CreateFontString(nil, "OVERLAY")
+
+            fm.unspendedKnowledgePointsFrame.icon:SetSize(18, 18)
+            fm.unspendedKnowledgePointsFrame.icon:SetPoint("CENTER", fm.unspendedKnowledgePointsFrame, "CENTER")
+            fm.unspendedKnowledgePointsFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
+            fm.unspendedKnowledgePointsFrame.icon:SetVertexColor(0, 0, 0, 0.7)
+
+            fm.unspendedKnowledgePointsFrame.Text:SetSize(24, 24)
+            fm.unspendedKnowledgePointsFrame.Text:SetPoint("CENTER", fm.unspendedKnowledgePointsFrame, "CENTER")
+            fm.unspendedKnowledgePointsFrame.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+            fm.unspendedKnowledgePointsFrame.Text:SetTextColor(1, 1, 1, 1)
+            fm.unspendedKnowledgePointsFrame.Text:SetShadowColor(0, 0, 0, 0)
+
+            fm.unspendedKnowledgePointsFrame:SetScript("OnEnter", function(self)
+                if not self.unspendedKnowledgePoints and self.unspendedKnowledgePoints > 0 then return end
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                GameTooltip:SetText(PROFESSIONS_SPECIALIZATION_UNSPENT_POINTS, GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+                GameTooltip:AddLine(GW.L["You have %s unspent Profession Specialization Knowledge"]:format(self.unspendedKnowledgePoints), 1, 1, 1, true)
+                GameTooltip:Show();
+            end)
+            fm.unspendedKnowledgePointsFrame:SetScript("OnLeave", GameTooltip_Hide)
+
+            fm.unspendedKnowledgePointsFrame:Hide()
+        end
 
         fm.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
         fm.title:SetTextColor(1, 1, 1, 1)
@@ -370,6 +479,8 @@ local function loadOverview(parent)
     fmOverview:RegisterEvent("SKILL_LINES_CHANGED")
     fmOverview:RegisterEvent("TRIAL_STATUS_UPDATE")
     fmOverview:RegisterEvent("SPELLS_CHANGED")
+    fmOverview:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
+    fmOverview:RegisterEvent("TRAIT_CONFIG_UPDATED")
 
     updateOverview(fmOverview)
 end
