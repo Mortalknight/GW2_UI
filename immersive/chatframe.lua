@@ -1301,10 +1301,8 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         local channelLength = strlen(arg4)
         local infoType = chatType
 
-        if chatType == "VOICE_TEXT" then
-            local leader = UnitIsGroupLeader(arg2)
-            infoType, chatType = VoiceTranscription_DetermineChatTypeVoiceTranscription_DetermineChatType(leader)
-            info = ChatTypeInfo[infoType]
+        if chatType == "VOICE_TEXT" and not GetCVarBool("speechToText") then
+            return
         elseif chatType == "COMMUNITIES_CHANNEL" or ((strsub(chatType, 1, 7) == "CHANNEL") and (chatType ~= "CHANNEL_LIST") and ((arg1 ~= "INVITE") or (chatType ~= "CHANNEL_NOTICE_USER"))) then
             if arg1 == "WRONG_PASSWORD" then
                 local _, popup = StaticPopup_Visible("CHAT_CHANNEL_PASSWORD")
@@ -1542,6 +1540,13 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         end
 
         return true
+    elseif event == "CHAT_MSG_OFFICERVOICE_CHAT_CHANNEL_TRANSCRIBING_CHANGED" then
+        if not frame.isTranscribing and arg2 then
+            local info = _G.ChatTypeInfo.SYSTEM
+            frame:AddMessage(_G.SPEECH_TO_TEXT_STARTED, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
+        end
+
+        frame.isTranscribing = arg2
     end
 end
 GW.ChatFrame_MessageEventHandler = ChatFrame_MessageEventHandler
