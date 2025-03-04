@@ -45,7 +45,6 @@ local function handleReward(frame, isMap)
     if frame.NameFrame then
         if isMap then
             frame.NameFrame:SetAlpha(0)
-            --frame.NameFrame:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/nameframe-map")
         else
             frame.NameFrame:SetAlpha(0.75)
             frame.NameFrame:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/nameframe")
@@ -112,7 +111,6 @@ local function QuestInfo_Display(template, parentFrame)
     end
 
     local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
-    --local numSpellRewards = isQuestLog and GetNumQuestLogRewardSpells() or GetNumRewardSpells()
     if #spellRewards > 0 then
         for spellHeader in fRwd.spellHeaderPool:EnumerateActive() do
             spellHeader:SetVertexColor(1, 1, 1)
@@ -285,7 +283,7 @@ local function hook_QuestLogQuests_Update()
     for button in QuestScrollFrame.titleFramePool:EnumerateActive() do
         if not button.IsSkinned then
             if button.Checkbox then
-                button.Checkbox:DisableDrawLayer('BACKGROUND')
+                button.Checkbox:DisableDrawLayer("BACKGROUND")
                 hooksecurefunc(button.Checkbox.CheckMark, "SetShown", function(self, isTracked)
                     self:Show()
                     if isTracked then
@@ -321,13 +319,78 @@ end
 AFP("mover_OnDragStart", mover_OnDragStart)
 
 local function mover_OnDragStop(self)
-    local self = self:GetParent()
-    self:StopMovingOrSizing()
+    self:GetParent():StopMovingOrSizing()
 end
 AFP("mover_OnDragStop", mover_OnDragStop)
 
+local EventsFrameHookedElements = {}
+local function EventsFrameHighlightTexture(element)
+    element:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+    element:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+end
+
+local function EventsFrameBackgroundNormal(element, texture)
+    if texture ~= "Interface/AddOns/GW2_UI/textures/character/menu-hover" then
+        element:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        element:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+
+        local parent = element:GetParent()
+        if parent and parent.Highlight then
+            EventsFrameHighlightTexture(parent.Highlight)
+        end
+    end
+end
+
+local EventsFrameFunctions = {
+    function(element) -- 1: OngoingHeader
+        if not element.Background.backdrop then
+            element.Background:GwStripTextures()
+            element.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+            element.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+            element.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+        end
+
+        element.Label:SetTextColor(1, 1, 1)
+    end,
+    function(element) -- 2: OngoingEvent
+        if not EventsFrameHookedElements[element] then
+            hooksecurefunc(element.Background, "SetAtlas", EventsFrameBackgroundNormal)
+            EventsFrameHookedElements[element] = element.Background
+        end
+    end,
+    function(element) -- 3: ScheduledHeader
+        if not element.Background.backdrop then
+            element.Background:GwStripTextures()
+            element.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
+            element.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+            element.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+        end
+
+        element.Label:SetTextColor(1, 1, 1)
+    end,
+    function(element) -- 4: ScheduledEvent
+        if element.Highlight then
+            if not element.IsSkinned then
+                GW.AddListItemChildHoverTexture(element)
+
+                element.IsSkinned = true
+            end
+            EventsFrameHighlightTexture(element.Highlight)
+        end
+    end
+}
+
+local function EventsFrameCallback(_, frame, elementData)
+    if not elementData.data then return end
+
+    local func = EventsFrameFunctions[elementData.data.entryType]
+    if func then
+        func(frame)
+    end
+end
+
 local function worldMapSkin()
-    -- prevent: [ADDON_ACTION_BLOCKED] AddOn 'GW2_UI' hat versucht die geschützte Funktion 'Frame:SetPropagateMouseClicks()' 
+    -- prevent: [ADDON_ACTION_BLOCKED] AddOn "GW2_UI" hat versucht die geschützte Funktion "Frame:SetPropagateMouseClicks()" 
     WorldDungeonEntrancePinMixin = CreateFromMixins(DungeonEntrancePinMixin)
     function WorldDungeonEntrancePinMixin:UpdateMousePropagation() end
 
@@ -386,8 +449,8 @@ local function worldMapSkin()
 
     QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame:GwStripTextures()
     QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame:GwCreateBackdrop(GW.BackdropTemplates.DopwDown)
-    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetPoint('TOPLEFT', -3, -14)
-    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetPoint('BOTTOMRIGHT', -1, 1)
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetPoint("TOPLEFT", -3, -14)
+    QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetPoint("BOTTOMRIGHT", -1, 1)
     QuestMapFrame.DetailsFrame.RewardsFrameContainer.RewardsFrame.backdrop:SetBackdropColor(0, 0, 0, 1)
 
     QuestMapFrame.DetailsFrame.BackFrame:GwStripTextures()
@@ -432,9 +495,6 @@ local function worldMapSkin()
     QuestScrollFrame.ScrollBar:GwSkinScrollBar()
     QuestScrollFrame:GwSkinScrollFrame()
 
-    --local CampaignOverview = QuestMapFrame.CampaignOverview
-    --SkinHeaders(CampaignOverview.Header)
-    --CampaignOverview.ScrollFrame:GwStripTextures()
     GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar, true)
     GW.HandleScrollControls(QuestScrollFrame)
 
@@ -451,15 +511,15 @@ local function worldMapSkin()
         dropdown:GwHandleDropDownBox()
 
         Tracking.Icon:SetTexture(136460) -- Interface\Minimap\Tracking/None
-        Tracking:SetHighlightTexture(136460, 'ADD')
+        Tracking:SetHighlightTexture(136460, "ADD")
 
         local TrackingHighlight = Tracking:GetHighlightTexture()
         TrackingHighlight:SetAllPoints(Tracking.Icon)
 
-        Pin.Icon:SetAtlas('Waypoint-MapPin-Untracked')
-        Pin.ActiveTexture:SetAtlas('Waypoint-MapPin-Tracked')
+        Pin.Icon:SetAtlas("Waypoint-MapPin-Untracked")
+        Pin.ActiveTexture:SetAtlas("Waypoint-MapPin-Tracked")
         Pin.ActiveTexture:SetAllPoints(Pin.Icon)
-        Pin:SetHighlightTexture(3500068, 'ADD') -- Interface\Waypoint\WaypoinMapPinUI
+        Pin:SetHighlightTexture(3500068, "ADD") -- Interface\Waypoint\WaypoinMapPinUI
 
         local PinHighlight = Pin:GetHighlightTexture()
         PinHighlight:SetAllPoints(Pin.Icon)
@@ -530,9 +590,23 @@ local function worldMapSkin()
     QuestMapFrame.EventsFrame.TitleText:SetFont(STANDARD_TEXT_FONT, 16)
     QuestMapFrame.EventsFrame.BorderFrame:SetAlpha(0)
     QuestMapFrame.EventsFrame:GwStripTextures()
-    QuestMapFrame.EventsFrame.ScrollBox.Background:GwStripTextures()
+    QuestMapFrame.EventsFrame.ScrollBox.Background:SetDrawLayer("BACKGROUND", -1)
+    QuestMapFrame.EventsFrame.ScrollBox.Background:SetVertexColor(1, 0, 1)
+    QuestMapFrame.EventsFrame.ScrollBox.Background:SetAlpha(0.9)
+    QuestMapFrame.EventsFrame.ScrollBox:GwStripTextures()
     QuestMapFrame.EventsFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+
+    for _, region in next, { QuestMapFrame.EventsFrame:GetRegions() } do
+        if region:IsObjectType("Texture") then
+            region:Hide() -- some weird yellow box ?
+
+            break
+        end
+    end
+
     GW.HandleTrimScrollBar(QuestMapFrame.EventsFrame.ScrollBar)
+
+    ScrollUtil.AddAcquiredFrameCallback(QuestMapFrame.EventsFrame.ScrollBox, EventsFrameCallback, QuestMapFrame.EventsFrame, true)
 end
 AFP("worldMapSkin", worldMapSkin)
 

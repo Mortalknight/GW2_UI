@@ -766,6 +766,9 @@ end
 GW.AddMouseMotionPropagationToChildFrames = AddMouseMotionPropagationToChildFrames
 
 local function AddListItemChildHoverTexture(child)
+    if child.Background then
+        child.Background:GwStripTextures()
+    end
     child.Background = child:CreateTexture(nil, "BACKGROUND", nil, 0)
     child.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
     child.Background:ClearAllPoints()

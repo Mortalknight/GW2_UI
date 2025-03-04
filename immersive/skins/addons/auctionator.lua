@@ -266,7 +266,7 @@ local function SkinAuctionator()
     list.RecentsContainer:SetPoint("BOTTOM", 3, 35)
     list.RecentsContainer:SetPoint("LEFT", 3, 0)
 
-    point, anchor, anchorPoint, x, y = list.RecentsContainer.ScrollBox:GetPoint()
+    point, anchor, anchorPoint, _, y = list.RecentsContainer.ScrollBox:GetPoint()
     list.RecentsContainer.ScrollBox:SetPoint(point, anchor, anchorPoint, 5, y)
     GW.HandleTrimScrollBar(list.RecentsContainer.ScrollBar)
     GW.HandleScrollControls(list.RecentsContainer)
