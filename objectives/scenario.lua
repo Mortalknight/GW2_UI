@@ -339,26 +339,28 @@ local function updateCurrentScenario(self, event, ...)
 
     for criteriaIndex = 1, numCriteria do
         local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
-        local objectiveType = scenarioCriteriaInfo.isWeightedProgress and "progressbar" or "monster"
+        if scenarioCriteriaInfo then
+            local objectiveType = scenarioCriteriaInfo.isWeightedProgress and "progressbar" or "monster"
 
-        if objectiveType == "progressbar" and not isMythicKeystone then
-            scenarioCriteriaInfo.totalQuantity = 100
+            if objectiveType == "progressbar" and not isMythicKeystone then
+                scenarioCriteriaInfo.totalQuantity = 100
+            end
+
+            local mythicKeystoneCurrentValue = 0
+            if isMythicKeystone then
+                mythicKeystoneCurrentValue = tonumber(string.match(scenarioCriteriaInfo.quantityString, "%d+")) or 1
+            end
+
+            addObjectiveBlock(
+                scenarioBlock,
+                ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress),
+                false,
+                criteriaIndex,
+                objectiveType,
+                scenarioCriteriaInfo.quantity,
+                isMythicKeystone
+            )
         end
-
-        local mythicKeystoneCurrentValue = 0
-        if isMythicKeystone then
-            mythicKeystoneCurrentValue = tonumber(string.match(scenarioCriteriaInfo.quantityString, "%d+")) or 1
-        end
-
-        addObjectiveBlock(
-            scenarioBlock,
-            ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress),
-            false,
-            criteriaIndex,
-            objectiveType,
-            scenarioCriteriaInfo.quantity,
-            isMythicKeystone
-        )
     end
     -- add special widgets here
     numCriteria = GW.addWarfrontData(scenarioBlock, numCriteria)
