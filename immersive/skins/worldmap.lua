@@ -585,6 +585,12 @@ local function worldMapSkin()
     for _, tab in ipairs (QuestMapFrame.TabButtons) do
         GW.HandleTabs(tab, "right", {tab.Icon}, true)
     end
+    -- add a delay here so that other addons can add there tabs to that array
+    C_Timer.After(2, function()
+        for _, tab in ipairs (QuestMapFrame.TabButtons) do
+            GW.HandleTabs(tab, "right", {tab.Icon}, true)
+        end
+    end)
 
     -- 11.1 Event Tab
     QuestMapFrame.EventsFrame.TitleText:SetFont(STANDARD_TEXT_FONT, 16)
@@ -598,7 +604,7 @@ local function worldMapSkin()
 
     for _, region in next, { QuestMapFrame.EventsFrame:GetRegions() } do
         if region:IsObjectType("Texture") then
-            region:Hide() -- some weird yellow box ?
+            region:Hide()
 
             break
         end
