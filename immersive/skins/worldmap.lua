@@ -390,10 +390,6 @@ local function EventsFrameCallback(_, frame, elementData)
 end
 
 local function worldMapSkin()
-    -- prevent: [ADDON_ACTION_BLOCKED] AddOn "GW2_UI" hat versucht die geschützte Funktion "Frame:SetPropagateMouseClicks()" 
-    WorldDungeonEntrancePinMixin = CreateFromMixins(DungeonEntrancePinMixin)
-    function WorldDungeonEntrancePinMixin:UpdateMousePropagation() end
-
     WorldMapFrame:GwStripTextures()
     GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {QuestMapFrame}, nil, false, true)
     WorldMapFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
