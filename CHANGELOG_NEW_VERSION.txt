@@ -1,3 +1,12 @@
+7.12.1
+CHANGES
+    - Skin Tweaks
+
+FIXES
+    - Fix profile lua error
+    - Fix FCT lua error
+    - Castbar channel ticks
+
 7.12.0
 CHANGES
     - Update for 11.1.0
