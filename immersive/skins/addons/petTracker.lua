@@ -37,12 +37,12 @@ local function createNewMainBlock(parent)
     return newBlock
 end
 
-local function AddSpecie(self, block, specie, quality, level)
+local function AddSpecie(block, specie, quality, level)
     local source = specie:GetSourceIcon()
     if source then
         local name, icon = specie:GetInfo()
         local text = name .. (level > 0 and format(" (%s)", level) or "")
-        local r,g,b = self:GetColor(quality):GetRGB()
+        local r,g,b = PetTracker.Tracker:GetColor(quality):GetRGB()
         block.ObjectiveText:SetText("|T" .. icon ..":0:0:0:0:64:64:4:60:4:60|t |T" .. source ..":0:0:0:0:64:64:4:60:4:60|t " .. GW.RGBToHex(r, g, b) .. text .. "|r")
         block.StatusBar:Hide()
         block:SetHeight(20)
@@ -123,9 +123,9 @@ local function petTrackerUpdate()
                 for _, specie in ipairs(progress[quality][level] or {}) do
                     if counter <= maxEntries then
                         local petObjectives = getObjectiveBlock(petBlock, counter)
-                        if AddSpecie(PetTracker.Tracker, petObjectives, specie, quality, level) then
+                        if AddSpecie(petObjectives, specie, quality, level) then
                             foundPet = true
-                            height = height + 20
+                            height = height + petObjectives:GetHeight()
                             counter = counter + 1
                         end
                     else
@@ -137,9 +137,10 @@ local function petTrackerUpdate()
     end
 
     if foundPet then
+        height = height + progressbarHeight + 30
         petBlock:Show()
-        petBlock:SetHeight(height + progressbarHeight + 30)
-        height = height + 30
+        petBlock:SetHeight(height)
+        height = height + 20 -- for header
     elseif petBlock then
         petBlock:Hide()
     end
