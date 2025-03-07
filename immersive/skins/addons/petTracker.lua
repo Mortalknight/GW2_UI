@@ -12,7 +12,9 @@ local function getObjectiveBlock(self, index)
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
 
     if index == 1 then
-        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
+        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -5)
+    elseif index == 2 then
+        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (index - 1)], "BOTTOMRIGHT", 0, 10)
     else
         newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (index - 1)], "BOTTOMRIGHT", 0, 0)
     end
@@ -32,8 +34,8 @@ local function createNewMainBlock(parent)
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock:Hide()
-    newBlock.Header:SetText(PET)
-
+    newBlock.Header:SetHeight(0.00001)
+    newBlock.Header:Hide()
     return newBlock
 end
 
@@ -137,7 +139,7 @@ local function petTrackerUpdate()
     end
 
     if foundPet then
-        height = height + progressbarHeight + 30
+        height = height + progressbarHeight
         petBlock:Show()
         petBlock:SetHeight(height)
         height = height + 20 -- for header
