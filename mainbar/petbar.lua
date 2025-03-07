@@ -342,7 +342,7 @@ local function LoadPetFrame(lm)
 
     playerPetFrame.unit = "pet"
 
-    playerPetFrame.debuffFilter = "PLAYER"
+    playerPetFrame.debuffFilter = "PLAYER|HARMFUL"
     playerPetFrame.displayBuffs = 32
     playerPetFrame.displayDebuffs = 40
     playerPetFrame.auras.smallSize = 20

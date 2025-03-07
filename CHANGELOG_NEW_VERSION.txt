@@ -6,6 +6,7 @@ FIXES
     - Fix profile lua error
     - Fix FCT lua error
     - Castbar channel ticks
+    - Target frame debuff settings are working again
 
 7.12.0
 CHANGES

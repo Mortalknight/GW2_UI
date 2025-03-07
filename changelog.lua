@@ -20,6 +20,7 @@ addChange("7.12.1",{
     {ct.bug, [=[Fix profile lua error]=]},
     {ct.bug, [=[Fix FCT lua error]=]},
     {ct.bug, [=[Castbar channel ticks]=]},
+    {ct.bug, [=[Target frame debuff settings are working again]=]},
 })
 
 addChange("7.12.0",{

@@ -143,14 +143,11 @@ social\raf.lua
 social\ignoreList.lua
 social\social.lua
 
-units\target.xml
-units\target.lua
 units\party.xml
 units\unitframes.xml
 units\unitframes.lua
 units\party.lua
 units\playerFrame.lua
-
 
 units\grid\elements\gridFrameAuraIndicator.xml
 units\grid\elements\privateAura.lua

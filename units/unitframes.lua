@@ -34,7 +34,6 @@ local function createNormalUnitFrame(ftype, revert)
     f.healPrediction = hg.healPrediction
     f.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
 
-    --GwTargetUnitFrame.health:GetValue()
     GW.hookStatusbarBehaviour(f.absorbOverlay, true)
     GW.hookStatusbarBehaviour(f.antiHeal, true)
     GW.hookStatusbarBehaviour(f.health, true)
@@ -834,14 +833,8 @@ local function ToggleTargetFrameSettings()
         GwTargetUnitFrame.auras:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbarBackground, "BOTTOMLEFT", 2, -23)
     end
 
-    -- priority: All > Important > Player
-    GwTargetUnitFrame.debuffFilter = "PLAYER"
-    if GW.settings.target_BUFFS_FILTER_IMPORTANT then
-        GwTargetUnitFrame.debuffFilter = "IMPORTANT"
-    end
-    if GW.settings.target_BUFFS_FILTER_ALL then
-        GwTargetUnitFrame.debuffFilter = nil
-    end
+    GwTargetUnitFrame.debuffFilter = GW.settings.target_BUFFS_FILTER_ALL and "HARMFUL" or "PLAYER|HARMFUL"
+    GwTargetUnitFrame.debuffFilterShowImportant = GW.settings.target_BUFFS_FILTER_IMPORTANT
 
     target_OnEvent(GwTargetUnitFrame, "FORCE_UPDATE")
     if GwPlayerClassPower then
@@ -987,14 +980,8 @@ local function ToggleFocusFrameSettings()
         end
     end
 
-    -- priority: All > Important > Player
-    GwFocusUnitFrame.debuffFilter = "PLAYER"
-    if GW.settings.focus_BUFFS_FILTER_IMPORTANT then
-        GwFocusUnitFrame.debuffFilter = "IMPORTANT"
-    end
-    if GW.settings.focus_BUFFS_FILTER_ALL then
-        GwFocusUnitFrame.debuffFilter = nil
-    end
+    GwFocusUnitFrame.debuffFilter = GW.settings.focus_BUFFS_FILTER_ALL and "HARMFUL" or "PLAYER|HARMFUL"
+    GwFocusUnitFrame.debuffFilterShowImportant = GW.settings.focus_BUFFS_FILTER_IMPORTANT
 
     focus_OnEvent(GwFocusUnitFrame, "FORCE_UPDATE")
 end
