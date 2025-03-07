@@ -21,8 +21,8 @@ local function getObjectiveBlock(self, index)
 end
 
 local function createNewMainBlock(parent)
-    if _G["GwPetTrackerBlock"] then
-        return _G["GwPetTrackerBlock"]
+    if GwPetTrackerBlock then
+        return GwPetTrackerBlock
     end
 
     local newBlock = GW.CreateTrackerObject("GwPetTrackerBlock", parent)
@@ -32,6 +32,7 @@ local function createNewMainBlock(parent)
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock:Hide()
+    newBlock.Header:SetText(PET)
 
     return newBlock
 end
@@ -69,7 +70,7 @@ local function setUpProgressbar(block, progress, counter)
 
     progessbarObjective.notChangeSize = true
     progessbarObjective.ObjectiveText:SetText("")
-    progessbarObjective.ObjectiveText:SetHeight(progessbarObjective.ObjectiveText:GetStringHeight() + 10)
+    progessbarObjective.ObjectiveText:SetHeight(10)
     progessbarObjective.StatusBar.precentage = false
     progessbarObjective.StatusBar:Show()
     progessbarObjective.StatusBar.notHide = true
@@ -83,7 +84,7 @@ local function setUpProgressbar(block, progress, counter)
     progessbarObjective.StatusBar.progress:Show()
     progessbarObjective:Show()
 
-    local h = progessbarObjective.ObjectiveText:GetStringHeight() + progessbarObjective.StatusBar:GetHeight() + 10
+    local h = 10 + progessbarObjective.StatusBar:GetHeight() + 10
     progessbarObjective:SetHeight(h)
 
     progessbarObjective:SetScript("OnEnter", function()
@@ -103,9 +104,8 @@ end
 local function petTrackerUpdate()
     local progress = PetTracker.Maps:GetCurrentProgress()
     local foundPet = false
-    local height, counter = 1, 1
+    local height, progressbarHeight, counter = 1, 0, 1
     local petBlock = createNewMainBlock(GwQuesttrackerContainerPetTracker)
-    petBlock.Header:SetText(PET)
 
     -- hide always all objectives
     for i = 1, 25 do
@@ -116,7 +116,7 @@ local function petTrackerUpdate()
 
     if PetTracker.sets.zoneTracker then
         -- setup the progessbar
-        height = height + setUpProgressbar(petBlock, progress, counter)
+        progressbarHeight = setUpProgressbar(petBlock, progress, counter)
         counter = counter + 1
         for quality = 0, PetTracker.Tracker:MaxQuality() do
             for level = 0, PetTracker.MaxLevel do
@@ -138,7 +138,8 @@ local function petTrackerUpdate()
 
     if foundPet then
         petBlock:Show()
-        petBlock:SetHeight(height + 30)
+        petBlock:SetHeight(height + progressbarHeight + 30)
+        height = height + 30
     elseif petBlock then
         petBlock:Hide()
     end
@@ -150,7 +151,7 @@ local function petTrackerUpdate()
     end
 
     GwQuesttrackerContainerPetTracker.header:SetShown(foundPet)
-    GwQuesttrackerContainerPetTracker:SetHeight(height + 30)
+    GwQuesttrackerContainerPetTracker:SetHeight(height)
     GW.QuestTrackerLayoutChanged()
 end
 
