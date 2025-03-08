@@ -71,6 +71,7 @@ end
 local function setUpProgressbar(block, progress, counter)
     local progessbarObjective = getObjectiveBlock(block, counter)
     local petsOwned = 0
+    local h
 
     progessbarObjective.notChangeSize = true
     progessbarObjective.ObjectiveText:SetText("")
@@ -86,9 +87,14 @@ local function setUpProgressbar(block, progress, counter)
     progessbarObjective.progress = petsOwned / progress.total
     progessbarObjective.StatusBar:SetValue(petsOwned)
     progessbarObjective.StatusBar.progress:Show()
-    progessbarObjective:Show()
 
-    local h = 10 + progessbarObjective.StatusBar:GetHeight() + 10
+    if progress.total > 0 then
+        progessbarObjective:Show()
+        h = 10 + progessbarObjective.StatusBar:GetHeight() + 10
+    else
+        progessbarObjective:Hide()
+        h = 0
+    end
     progessbarObjective:SetHeight(h)
 
     progessbarObjective:SetScript("OnEnter", function()
@@ -107,6 +113,7 @@ end
 
 local function petTrackerUpdate()
     local petBlock = createNewMainBlock(GwQuesttrackerContainerPetTracker)
+    local progress = PetTracker.Maps:GetCurrentProgress()
 
     -- hide always all objectives
     for i = 1, 25 do
@@ -115,13 +122,12 @@ local function petTrackerUpdate()
         end
     end
 
-    if PetTracker.sets.zoneTracker then
+    if PetTracker.sets.zoneTracker and progress.total > 0 then
         if GwQuesttrackerContainerPetTracker.collapsed then
             GwQuesttrackerContainerPetTracker:SetHeight(20) -- for header
 
             petBlock:Hide()
         else
-            local progress = PetTracker.Maps:GetCurrentProgress()
             local height, counter = 1, 1
             local maxQuality = PetTracker.Tracker:MaxQuality()
 
@@ -137,7 +143,7 @@ local function petTrackerUpdate()
                                 height = height + petObjectives:GetHeight()
                                 counter = counter + 1
                             else
-                                petObjectives:Hide();
+                                petObjectives:Hide()
                             end
                         else
                             break
