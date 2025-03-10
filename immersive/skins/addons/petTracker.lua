@@ -51,7 +51,7 @@ local function AddSpecie(block, specie, quality, level)
         block.StatusBar:Hide()
         block:SetHeight(20)
         block:Show()
-        block:SetScript("OnMouseDown", specie.Display)
+        block:SetScript("OnMouseDown",function() specie:Display() end)
         block:SetScript("OnEnter", function()
             if not block:GetParent().hover:IsShown() then
                 block:GetParent():GetScript("OnEnter")(block:GetParent())

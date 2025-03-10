@@ -15,6 +15,7 @@ local scenarioBlock
 
 local allowedWidgetUpdateIdsForTimer = {
     [3302] = true, -- DF cooking event
+    [5527] = true, -- DF archeolgy event
     [6183] = true, -- TWW delve
     [5483] = true, -- TWW theather event
     [5865] = true, -- TWW echos
