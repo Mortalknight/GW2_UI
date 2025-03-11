@@ -109,8 +109,8 @@ local function petTrackerUpdate()
                                 height = height + petObjectives:GetHeight()
                                 counter = counter + 1
                                 prevBlock = petObjectives
-                            else
-                                petObjectives:Release()
+                            elseif petObjectives then
+                                self.objectivesPool:Release(petObjectives)
                             end
                         else
                             break

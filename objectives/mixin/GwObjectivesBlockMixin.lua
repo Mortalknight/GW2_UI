@@ -221,45 +221,39 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index)
 end
 
 function GwObjectivesBlockTemplateMixin:AddObjective(text, finished, objectiveIndex, objectiveType)
-    if finished == true then
-        return
+    local objectiveBlock = self:GetObjectiveBlock(objectiveIndex)
+    objectiveBlock:Show()
+    objectiveBlock.ObjectiveText:SetText(text)
+    objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
+    if finished then
+        objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
+    else
+        objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
     end
 
-    if text then
-        local objectiveBlock = self:GetObjectiveBlock(objectiveIndex)
-        objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText(text)
-        objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
-        if finished then
-            objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
-        else
-            objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
+    if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
+        if objectiveType == "progressbar" then
+            objectiveBlock.StatusBar:SetShown(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
+            objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
+            objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(self.questID))
+            objectiveBlock.progress = GetQuestProgressBarPercent(self.questID) / 100
+            objectiveBlock.StatusBar.precentage = true
         end
-
-        if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
-            if objectiveType == "progressbar" then
-                objectiveBlock.StatusBar:SetShown(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
-                objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
-                objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(self.questID))
-                objectiveBlock.progress = GetQuestProgressBarPercent(self.questID) / 100
-                objectiveBlock.StatusBar.precentage = true
-            end
+    else
+        objectiveBlock.StatusBar:Hide()
+    end
+    local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
+    objectiveBlock:SetHeight(h)
+    if objectiveBlock.StatusBar:IsShown() then
+        if self.numObjectives >= 1 then
+            h = h + objectiveBlock.StatusBar:GetHeight() + 10
         else
-            objectiveBlock.StatusBar:Hide()
+            h = h + objectiveBlock.StatusBar:GetHeight() + 5
         end
-        local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
         objectiveBlock:SetHeight(h)
-        if objectiveBlock.StatusBar:IsShown() then
-            if self.numObjectives >= 1 then
-                h = h + objectiveBlock.StatusBar:GetHeight() + 10
-            else
-                h = h + objectiveBlock.StatusBar:GetHeight() + 5
-            end
-            objectiveBlock:SetHeight(h)
-        end
-        self.height = self.height + objectiveBlock:GetHeight()
-        self.numObjectives = self.numObjectives + 1
     end
+    self.height = self.height + objectiveBlock:GetHeight()
+    self.numObjectives = self.numObjectives + 1
 end
 
 function GwObjectivesBlockTemplateMixin:IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)
@@ -278,7 +272,7 @@ function GwObjectivesBlockTemplateMixin:UpdateQuestObjective(numObjectives)
     for objectiveIndex = 1, numObjectives do
         --local text, _, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
         local text, objectiveType, finished = GetQuestObjectiveInfo(self.questID, objectiveIndex, false)
-        if not finished then
+        if not finished or not text then
             self:AddObjective(text, finished, addedObjectives, objectiveType)
             addedObjectives = addedObjectives + 1
         end
@@ -431,7 +425,7 @@ function GwObjectivesBlockTemplateMixin:UpdateQuest(parent, quest)
 
         self:UpdateQuestObjective(numObjectives)
 
-        if requiredMoney ~= nil and requiredMoney > GetMoney() then
+        if requiredMoney ~= nil and requiredMoney > GetMoney() and not isComplete then
             self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney), isComplete, self.numObjectives + 1, nil)
         end
 
@@ -500,7 +494,7 @@ function GwObjectivesBlockTemplateMixin:UpdateQuestByID(parent, quest, questID, 
 
     self:UpdateQuestObjective(numObjectives)
 
-    if requiredMoney ~= nil and requiredMoney > GetMoney() then
+    if requiredMoney ~= nil and requiredMoney > GetMoney() and not isComplete then
         self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney), isComplete, self.numObjectives + 1, nil)
     end
 
