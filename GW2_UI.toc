@@ -241,6 +241,14 @@ immersive\damagetext.lua
 immersive\eventTracker.lua
 immersive\interruptAnnouncement.lua
 
+objectives\mixin\GwAchievementTrackerBlockMixin.lua
+objectives\mixin\GwAchievementTrackerContainerMixin.lua
+objectives\mixin\GwAchievementTrackerObjectiveMixin.lua
+objectives\mixin\GwObjectivesAnimationMixin.lua
+objectives\mixin\GwObjectivesBlockMixin.lua
+objectives\mixin\GwQuestTrackerContainerMixin.lua
+objectives\mixin\GwQuestTrackerObjectiveMixin.lua
+
 objectives\scenarioWidgets\eventTimerBarSetupByWidgetId.lua
 objectives\scenarioWidgets\heroicVisions.lua
 objectives\scenarioWidgets\jailersTower.lua

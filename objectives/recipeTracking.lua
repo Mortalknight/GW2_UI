@@ -1,9 +1,6 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local ParseObjectiveString = GW.ParseObjectiveString
-local CreateObjectiveNormal = GW.CreateObjectiveNormal
-local CreateTrackerObject = GW.CreateTrackerObject
-local setBlockColor = GW.setBlockColor
 
 local IsRecrafting = true
 
@@ -59,7 +56,7 @@ local function getObjectiveBlock(self)
 
     self.objectiveBlocks = self.objectiveBlocks or {}
 
-    local newBlock = CreateObjectiveNormal(self:GetName() .. "Objective" .. self.numObjectives, self)
+    local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. self.numObjectives, self, "GwQuesttrackerObjectiveTemplate")
     newBlock:SetParent(self)
 
     self.objectiveBlocks[#self.objectiveBlocks] = newBlock
@@ -80,7 +77,7 @@ local function getBlock(blockIndex)
     return  _G["GwRecipeBlock" .. blockIndex]
     end
 
-    local newBlock = CreateTrackerObject("GwRecipeBlock" .. blockIndex, GwQuesttrackerContainerRecipe)
+    local newBlock = CreateFrame("Button", "GwRecipeBlock" .. blockIndex, GwQuesttrackerContainerRecipe, "GwObjectivesBlockTemplate")
     newBlock:SetParent(GwQuesttrackerContainerRecipe)
 
     if blockIndex == 1 then
@@ -89,7 +86,7 @@ local function getBlock(blockIndex)
         newBlock:SetPoint("TOPRIGHT", _G["GwRecipeBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
     end
     newBlock.height = 0
-    setBlockColor(newBlock, "RECIPE")
+    newBlock:SetBlockColorByKey("RECIPE")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     return newBlock

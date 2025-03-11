@@ -6,7 +6,7 @@ local function getObjectiveBlock(self, index)
         return _G[self:GetName() .. "GwWQTObjective" .. index]
     end
 
-    local newBlock = GW.CreateObjectiveNormal(self:GetName() .. "GwWQTObjective1", self)
+    local newBlock = CreateFrame("Frame", self:GetName() .. "GwWQTObjective1", self, "GwQuesttrackerObjectiveTemplate")
     newBlock:SetParent(self)
     newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
@@ -20,7 +20,7 @@ local function createNewWQTObjectiveBlock(blockIndex, parent)
         return _G["GwWQTBlock" .. blockIndex]
     end
 
-    local newBlock = GW.CreateTrackerObject("GwWQTBlock" .. blockIndex, parent)
+    local newBlock = CreateFrame("Button", "GwWQTBlock" .. blockIndex, parent, "GwObjectivesBlockTemplate")
     newBlock:SetParent(parent)
 
     if blockIndex == 1 then

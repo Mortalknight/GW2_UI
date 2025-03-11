@@ -7,10 +7,10 @@ local function getObjectiveBlock(self, index, id)
 
         return _G[self:GetName() .. "Objective" .. index]
     end
-    local newBlock = GW.CreateObjectiveNormal(self:GetName() .. "Objective" .. index, self)
+    local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. index, self, "GwQuesttrackerObjectiveTemplate")
     newBlock:SetParent(self)
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-
+    newBlock.notChangeSize = true
     if index == 1 then
         newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
     else
@@ -72,7 +72,7 @@ local function createNewBlock(parent, idx)
         return _G["GwTodolooBlock" .. idx]
     end
 
-    local newBlock = GW.CreateTrackerObject("GwTodolooBlock" .. idx, parent)
+    local newBlock = CreateFrame("Button", "GwTodolooBlock" .. idx, parent, "GwObjectivesBlockTemplate")
     newBlock:SetParent(parent)
 
     if idx == 1 then

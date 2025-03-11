@@ -141,7 +141,7 @@
                     </StatusBar>
                 </Frames>
             </Frame>
-            <Frame name="$parentCompass" parentKey="compass">
+            <Frame name="$parentCompass" parentKey="compass" mixin="GwObjectivesAnimationMixin">
                 <Size x="300" y="70"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-50" y="-5"></Anchor>
@@ -209,7 +209,7 @@
         </Anchors>
     </Frame>
 
-    <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" parent="GwQuestTracker" virtual="true">
+    <Button name="GwObjectivesBlockTemplate" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" parent="GwQuestTracker" virtual="true" mixin="GwObjectivesBlockTemplateMixin,GwObjectivesAnimationMixin">
         <Size x="300" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
@@ -243,6 +243,7 @@
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
                     </Anchors>
+                    <Shadow x="1" y="-1"/>
                 </FontString>
                 <FontString name="$parentDifficulty" parentKey="Difficulty" text="" justifyH="RIGHT">
                     <Size x="150" y="30"></Size>
@@ -255,6 +256,7 @@
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="-25"></Anchor>
                     </Anchors>
+                    <Shadow x="1" y="-1"/>
                 </FontString>
             </Layer>
         </Layers>
@@ -447,9 +449,14 @@
                 <DisabledTexture file="Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down"/>
             </Button>
         </Frames>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+            <OnEnter method="OnEnter"/>
+            <OnLeave method="OnLeave"/>
+        </Scripts>
     </Button>
 
-    <Frame name="GwQuesttrackerObjectiveNormal" enableMouse="false" virtual="true">
+    <Frame name="GwQuesttrackerObjectiveTemplate" enableMouse="false" virtual="true" mixin="GwQuestTrackerObjectiveMixin">
         <Size x="300" y="20"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
@@ -461,11 +468,15 @@
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-5"></Anchor>
                     </Anchors>
+                    <Shadow x="-1" y="1"/>
                 </FontString>
             </Layer>
         </Layers>
         <Frames>
             <StatusBar name="$parentStatusBar" hidden="true" parentKey="StatusBar">
+                <KeyValues>
+                    <KeyValue key="animationOld" value="0" type="number"/>
+                </KeyValues>
                 <Size x="280" y="10"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ObjectiveText"></Anchor>
@@ -526,6 +537,7 @@
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
                             </Anchors>
+                            <Shadow x="-1" y="1"/>
                         </FontString>
                     </Layer>
                 </Layers>
@@ -583,11 +595,17 @@
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
                             </Anchors>
+                            <Shadow x="-1" y="1"/>
                         </FontString>
                     </Layer>
                 </Layers>
             </StatusBar>
         </Frames>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+            <OnShow method="OnShow"/>
+            <OnHide method="OnHide"/>
+        </Scripts>
     </Frame>
 
     <Frame name="GwQuesttrackerScenarioBlock" parent="GwQuestTracker" virtual="true">

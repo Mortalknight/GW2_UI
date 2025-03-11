@@ -3,44 +3,6 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local maxEntries = 30
 
-local function getObjectiveBlock(self, index)
-    if _G[self:GetName() .. "Objective" .. index] then
-        return _G[self:GetName() .. "Objective" .. index]
-    end
-    local newBlock = GW.CreateObjectiveNormal(self:GetName() .. "Objective" .. index, self)
-    newBlock:SetParent(self)
-    newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-
-    if index == 1 then
-        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -5)
-    elseif index == 2 then
-        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (index - 1)], "BOTTOMRIGHT", 0, 10)
-    else
-        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (index - 1)], "BOTTOMRIGHT", 0, 0)
-    end
-
-    newBlock:EnableMouse(true)
-
-    return newBlock
-end
-
-local function createNewMainBlock(parent)
-    if GwPetTrackerBlock then
-        return GwPetTrackerBlock
-    end
-
-    local newBlock = GW.CreateTrackerObject("GwPetTrackerBlock", parent)
-    newBlock:SetParent(parent)
-    newBlock:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -20)
-    newBlock.color = TRACKER_TYPE_COLOR.EVENT
-    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock:Hide()
-    newBlock.Header:SetHeight(0.00001)
-    newBlock.Header:Hide()
-    return newBlock
-end
-
 local function AddSpecie(block, specie, quality, level)
     local source = specie:GetSourceIcon()
     if source then
@@ -50,6 +12,7 @@ local function AddSpecie(block, specie, quality, level)
         block.ObjectiveText:SetText("|T" .. icon ..":0:0:0:0:64:64:4:60:4:60|t |T" .. source ..":0:0:0:0:64:64:4:60:4:60|t " .. GW.RGBToHex(r, g, b) .. text .. "|r")
         block.StatusBar:Hide()
         block:SetHeight(20)
+        block.notChangeSize = true
         block:Show()
         block:SetScript("OnMouseDown",function() specie:Display() end)
         block:SetScript("OnEnter", function()
@@ -68,10 +31,12 @@ local function AddSpecie(block, specie, quality, level)
     return false
 end
 
-local function setUpProgressbar(block, progress, counter)
-    local progessbarObjective = getObjectiveBlock(block, counter)
+local function setUpProgressbar(block, progress)
+    local progessbarObjective = block:GetParent().objectivesPool:Acquire()
     local petsOwned = 0
     local h
+
+    progessbarObjective:SetPoint("TOPRIGHT", block, "TOPRIGHT", 0, -5)
 
     progessbarObjective.notChangeSize = true
     progessbarObjective.ObjectiveText:SetText("")
@@ -80,6 +45,7 @@ local function setUpProgressbar(block, progress, counter)
     progessbarObjective.StatusBar:Show()
     progessbarObjective.StatusBar.notHide = true
     progessbarObjective.StatusBar:SetMinMaxValues(0, progress.total)
+    progessbarObjective.StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
     for i = PetTracker.MaxQuality, 1, -1 do
         petsOwned = petsOwned + progress[i].total
     end
@@ -108,42 +74,43 @@ local function setUpProgressbar(block, progress, counter)
         end
     end)
 
-    return h
+    return h, progessbarObjective
 end
 
 local function petTrackerUpdate()
-    local petBlock = createNewMainBlock(GwQuesttrackerContainerPetTracker)
+    local self = GwQuesttrackerContainerPetTracker
     local progress = PetTracker.Maps:GetCurrentProgress()
+    local prevBlock = nil
 
     -- hide always all objectives
-    for i = 1, 25 do
-        if _G["GwPetTrackerBlockObjective" .. i] then
-            _G["GwPetTrackerBlockObjective" .. i]:Hide()
-        end
-    end
+    self.objectivesPool:ReleaseAll()
 
     if PetTracker.sets.zoneTracker and progress.total > 0 then
-        if GwQuesttrackerContainerPetTracker.collapsed then
-            GwQuesttrackerContainerPetTracker:SetHeight(20) -- for header
+        if self.collapsed then
+            self:SetHeight(20) -- for header
 
-            petBlock:Hide()
+            self.mainBlock:Hide()
         else
             local height, counter = 1, 1
+            local statusBarHeight = 0
             local maxQuality = PetTracker.Tracker:MaxQuality()
 
-            height = height + setUpProgressbar(petBlock, progress, counter) -- setup the progessbar
+            statusBarHeight, prevBlock = setUpProgressbar(self.mainBlock, progress) -- setup the progessbar
+            height = height + statusBarHeight
 
             counter = counter + 1
             for quality = 0, maxQuality do
                 for level = 0, PetTracker.MaxLevel do
                     for _, specie in ipairs(progress[quality][level] or {}) do
                         if counter <= maxEntries then
-                            local petObjectives = getObjectiveBlock(petBlock, counter)
+                            local petObjectives = self.objectivesPool:Acquire()
                             if AddSpecie(petObjectives, specie, quality, level) then
+                                petObjectives:SetPoint("TOPRIGHT", prevBlock, "BOTTOMRIGHT", 0, (counter == 2 and 10 or 0))
                                 height = height + petObjectives:GetHeight()
                                 counter = counter + 1
+                                prevBlock = petObjectives
                             else
-                                petObjectives:Hide()
+                                petObjectives:Release()
                             end
                         else
                             break
@@ -152,21 +119,21 @@ local function petTrackerUpdate()
                 end
             end
 
-            petBlock:SetHeight(height)
+            self.mainBlock:SetHeight(height)
             height = height + 20 -- for header
 
-            GwQuesttrackerContainerPetTracker:SetHeight(height)
+            self:SetHeight(height)
 
-            petBlock:Show()
+            self.mainBlock:Show()
         end
 
-        GwQuesttrackerContainerPetTracker.header:Show()
-        GwQuesttrackerContainerPetTracker:SetShown(true)
+        self.header:Show()
+        self:SetShown(true)
     else
-        GwQuesttrackerContainerPetTracker:SetHeight(0.0001)
-        GwQuesttrackerContainerPetTracker:Hide()
+        self:SetHeight(0.0001)
+        self:Hide()
 
-        petBlock:Hide()
+        self.mainBlock:Hide()
     end
 
     GW.QuestTrackerLayoutChanged()
@@ -199,6 +166,21 @@ local function LoadPetTrackerAddonSkin()
     petTrackerObjectives.header.title:SetShadowOffset(1, -1)
     petTrackerObjectives.header.title:SetText("Pet Tracker")
     petTrackerObjectives.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
+
+    petTrackerObjectives.blockPool = CreateFramePool("Frame", petTrackerObjectives, "GwObjectivesBlockTemplate")
+
+    petTrackerObjectives.mainBlock = petTrackerObjectives.blockPool:Acquire()
+    petTrackerObjectives.mainBlock:SetParent(petTrackerObjectives)
+    petTrackerObjectives.mainBlock:SetPoint("TOPRIGHT", petTrackerObjectives, "TOPRIGHT", 0, -20)
+    petTrackerObjectives.mainBlock.color = TRACKER_TYPE_COLOR.EVENT
+    petTrackerObjectives.mainBlock.Header:SetTextColor(petTrackerObjectives.mainBlock.color.r, petTrackerObjectives.mainBlock.color.g, petTrackerObjectives.mainBlock.color.b)
+    petTrackerObjectives.mainBlock.hover:SetVertexColor(petTrackerObjectives.mainBlock.color.r, petTrackerObjectives.mainBlock.color.g, petTrackerObjectives.mainBlock.color.b)
+    petTrackerObjectives.mainBlock:Hide()
+    petTrackerObjectives.mainBlock.Header:SetHeight(0.00001)
+    petTrackerObjectives.mainBlock.Header:Hide()
+    petTrackerObjectives.mainBlock.animationName = "PetTrackerOnEnterOnLeave"
+
+    petTrackerObjectives.objectivesPool = CreateFramePool("Frame", petTrackerObjectives.mainBlock, "GwQuesttrackerObjectiveTemplate")
 
     petTrackerObjectives.collapsed = false
     petTrackerObjectives.header:SetScript("OnMouseDown",

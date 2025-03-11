@@ -2,10 +2,6 @@ local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local ParseCriteria = GW.ParseCriteria
 local ParseObjectiveString = GW.ParseObjectiveString
-local CreateObjectiveNormal = GW.CreateObjectiveNormal
-local CreateTrackerObject = GW.CreateTrackerObject
-local UpdateQuestItem = GW.UpdateQuestItem
-local setBlockColor = GW.setBlockColor
 
 local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
@@ -44,7 +40,7 @@ local function getObjectiveBlock(self, index)
     self.objectiveBlocks = self.objectiveBlocks or {}
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
 
-    local newBlock = CreateObjectiveNormal(self:GetName() .. "GwQuestObjective" .. self.objectiveBlocksNum, self)
+    local newBlock = CreateFrame("Frame", self:GetName() .. "GwQuestObjective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
     tinsert(self.objectiveBlocks, newBlock)
     newBlock:SetParent(self)
     if self.objectiveBlocksNum == 1 then
@@ -197,9 +193,9 @@ local function updateCurrentScenario(self, event, ...)
             GW.RemoveTrackerNotificationOfType("TORGHAST")
             scenarioBlock:Hide()
         end
-        GW.CombatQueue_Queue(nil, UpdateQuestItem, {scenarioBlock})
+        GW.CombatQueue_Queue(nil, scenarioBlock.UpdateQuestItem, {scenarioBlock})
         if scenarioBlock.hasItem then
-            GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GW.updateQuestItemPositions, {scenarioBlock.actionButton, scenarioBlock.height, "SCENARIO", scenarioBlock})
+            GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateQuestItemPositions, {scenarioBlock.actionButton, scenarioBlock.height, "SCENARIO"})
         end
         for i = scenarioBlock.numObjectives + 1, 20 do
             if _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i] then
@@ -327,7 +323,7 @@ local function updateCurrentScenario(self, event, ...)
         scenarioBlock.delvesFrame:Hide()
     end
 
-    setBlockColor(scenarioBlock, compassData.TYPE)
+    scenarioBlock:SetBlockColorByKey(compassData.TYPE)
     scenarioBlock.Header:SetTextColor(scenarioBlock.color.r, scenarioBlock.color.g, scenarioBlock.color.b)
     scenarioBlock.hover:SetVertexColor(scenarioBlock.color.r, scenarioBlock.color.g, scenarioBlock.color.b)
     GW.AddTrackerNotification(compassData, true)
@@ -336,7 +332,7 @@ local function updateCurrentScenario(self, event, ...)
         scenarioBlock.questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
     end
 
-    GW.CombatQueue_Queue(nil, UpdateQuestItem, {scenarioBlock})
+    GW.CombatQueue_Queue(nil, scenarioBlock.UpdateQuestItem, {scenarioBlock})
 
     for criteriaIndex = 1, numCriteria do
         local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
@@ -433,7 +429,7 @@ local function updateCurrentScenario(self, event, ...)
 
     scenarioBlock.height = scenarioBlock.height + 5
     if scenarioBlock.hasItem then
-        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GW.updateQuestItemPositions, {scenarioBlock.actionButton, scenarioBlock.height, "SCENARIO", scenarioBlock})
+        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateQuestItemPositions, {scenarioBlock.actionButton, scenarioBlock.height, "SCENARIO"})
     end
 
     local intGWQuestTrackerHeight = 0
@@ -778,7 +774,7 @@ local function LoadScenarioFrame(container)
 
     timerBlock:SetScript("OnEvent", scenarioTimerOnEvent)
 
-    scenarioBlock = CreateTrackerObject("GwScenarioBlock", container)
+    scenarioBlock = CreateFrame("Button", "GwScenarioBlock", container, "GwObjectivesBlockTemplate")
     scenarioBlock:SetParent(container)
     scenarioBlock:SetPoint("TOPRIGHT", timerBlock, "BOTTOMRIGHT", 0, 0)
     scenarioBlock.Header:SetText("")
@@ -793,7 +789,7 @@ local function LoadScenarioFrame(container)
     scenarioBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
     scenarioBlock.actionButton:SetScript("OnEvent", scenarioBlock.actionButton.OnEvent)
 
-    setBlockColor(scenarioBlock, "SCENARIO")
+    scenarioBlock:SetBlockColorByKey("SCENARIO")
     scenarioBlock.Header:SetTextColor(scenarioBlock.color.r, scenarioBlock.color.g, scenarioBlock.color.b)
     scenarioBlock.hover:SetVertexColor(scenarioBlock.color.r, scenarioBlock.color.g, scenarioBlock.color.b)
 
