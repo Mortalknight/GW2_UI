@@ -1,6 +1,7 @@
 local _, GW = ...
 
-GwAchievementTrackerContainerMixin = {}
+GwAchievementTrackerContainerMixin = CreateFromMixins(GwObjectivesContainerMixin)
+
 function GwAchievementTrackerContainerMixin:UpdateAchievementLayout(event, ...)
     local savedHeight = 1
     local shownIndex = 1
@@ -42,10 +43,11 @@ function GwAchievementTrackerContainerMixin:UpdateAchievementLayout(event, ...)
             end
 
             self.header:Show()
-            local block = self:GetBlock(shownIndex)
+            local block = self:GetBlock(shownIndex, "ACHIEVEMENT", false)
             if block == nil then
                 return
             end
+            Mixin(block, GwAchievementTrackerBlockMixin)
             block.id = achievementID
             block:UpdateAchievementObjectives(self)
 
@@ -65,32 +67,10 @@ function GwAchievementTrackerContainerMixin:UpdateAchievementLayout(event, ...)
     self:SetHeight(savedHeight)
 
     for i = shownIndex, 25 do
-        if _G["GwAchivementBlock" .. i] ~= nil then
-            _G["GwAchivementBlock" .. i]:Hide()
+        if _G["GwQuesttrackerContainerAchievementBlock" .. i] then
+            _G["GwQuesttrackerContainerAchievementBlock" .. i]:Hide()
         end
     end
 
     GW.QuestTrackerLayoutChanged()
-end
-
-function GwAchievementTrackerContainerMixin:GetBlock(blockIndex)
-    if _G["GwAchivementBlock" .. blockIndex] ~= nil then
-       return  _G["GwAchivementBlock" .. blockIndex]
-    end
-
-    local newBlock = CreateFrame("Button", "GwAchivementBlock" .. blockIndex, self, "GwObjectivesBlockTemplate")
-    newBlock:SetParent(self)
-
-    if blockIndex == 1 then
-        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -20)
-    else
-        newBlock:SetPoint("TOPRIGHT", _G["GwAchivementBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
-    end
-    newBlock.height = 0
-    newBlock:SetBlockColorByKey("ACHIEVEMENT")
-    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-
-    Mixin(newBlock, GwAchievementTrackerBlockMixin)
-    return newBlock
 end

@@ -25,7 +25,7 @@ local allowedWidgetUpdateIdsForStatusBar = {
 }
 
 local function getObjectiveBlock(self, index)
-    local block = _G[self:GetName() .. "GwQuestObjective" .. index]
+    local block = _G[self:GetName() .. "Objective" .. index]
     if block then
         block:SetScript("OnEnter", nil)
         block:SetScript("OnLeave", nil)
@@ -40,7 +40,7 @@ local function getObjectiveBlock(self, index)
     self.objectiveBlocks = self.objectiveBlocks or {}
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
 
-    local newBlock = CreateFrame("Frame", self:GetName() .. "GwQuestObjective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
+    local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
     tinsert(self.objectiveBlocks, newBlock)
     newBlock:SetParent(self)
     if self.objectiveBlocksNum == 1 then
@@ -48,7 +48,7 @@ local function getObjectiveBlock(self, index)
     else
         newBlock:SetPoint(
             "TOPRIGHT",
-            _G[self:GetName() .. "GwQuestObjective" .. (self.objectiveBlocksNum - 1)],
+            _G[self:GetName() .. "Objective" .. (self.objectiveBlocksNum - 1)],
             "BOTTOMRIGHT",
             0,
             0
@@ -160,8 +160,8 @@ local function updateCurrentScenario(self, event, ...)
             widgetInfo.barValue)
 
             for i = scenarioBlock.numObjectives + 1, 20 do
-                if _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i] then
-                    _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
+                if _G[scenarioBlock:GetName() .. "Objective" .. i] then
+                    _G[scenarioBlock:GetName() .. "Objective" .. i]:Hide()
                 end
             end
 
@@ -198,8 +198,8 @@ local function updateCurrentScenario(self, event, ...)
             GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateQuestItemPositions, {scenarioBlock.actionButton, scenarioBlock.height, "SCENARIO"})
         end
         for i = scenarioBlock.numObjectives + 1, 20 do
-            if _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i] then
-                _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
+            if _G[scenarioBlock:GetName() .. "Objective" .. i] then
+                _G[scenarioBlock:GetName() .. "Objective" .. i]:Hide()
             end
         end
 
@@ -422,8 +422,8 @@ local function updateCurrentScenario(self, event, ...)
     end
 
     for i = scenarioBlock.numObjectives + 1, 20 do
-        if _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i] then
-            _G[scenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
+        if _G[scenarioBlock:GetName() .. "Objective" .. i] then
+            _G[scenarioBlock:GetName() .. "Objective" .. i]:Hide()
         end
     end
 

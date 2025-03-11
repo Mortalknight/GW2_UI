@@ -135,7 +135,7 @@ local function QuestTrackerLayoutChanged()
 end
 GW.QuestTrackerLayoutChanged = QuestTrackerLayoutChanged
 
-local function tracker_OnEvent(self, event, ...)
+local function QuestTrackerOnEvent(self, event, ...)
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
     if event == "QUEST_LOG_UPDATE" then
@@ -186,7 +186,6 @@ local function tracker_OnEvent(self, event, ...)
     self:CheckForAutoQuests()
     QuestTrackerLayoutChanged()
 end
-AFP("tracker_OnEvent", tracker_OnEvent)
 
 local function tracker_OnUpdate()
     local prevState = fNotify.shouldDisplay
@@ -211,18 +210,18 @@ AFP("bonus_OnEnter", bonus_OnEnter)
 
 local function AdjustItemButtonPositions()
     for i = 1, 25 do
-        if _G["GwCampaignBlock" .. i] then
+        if _G["GwQuesttrackerContainerCampaignBlock" .. i] then
             if i <= fCampaign.numQuests then
-                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. _G["GwCampaignBlock" .. i].index,  _G["GwCampaignBlock" .. i].UpdateQuestItemPositions, {_G["GwCampaignBlock" .. i].actionButton, _G["GwCampaignBlock" .. i].savedHeight})
+                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. _G["GwQuesttrackerContainerCampaignBlock" .. i].index,  _G["GwQuesttrackerContainerCampaignBlock" .. i].UpdateQuestItemPositions, {_G["GwQuesttrackerContainerCampaignBlock" .. i].actionButton, _G["GwQuesttrackerContainerCampaignBlock" .. i].savedHeight})
             else
-                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, _G["GwCampaignBlock" .. i].UpdateQuestItem, {_G["GwCampaignBlock" .. i]})
+                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, _G["GwQuesttrackerContainerCampaignBlock" .. i].UpdateQuestItem, {_G["GwQuesttrackerContainerCampaignBlock" .. i]})
             end
         end
-        if _G["GwQuestBlock" .. i] then
+        if _G["GwQuesttrackerContainerQuestsBlock" .. i] then
             if i <= fQuest.numQuests then
-                GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. _G["GwQuestBlock" .. i].index, _G["GwQuestBlock" .. i].UpdateQuestItemPositions, {_G["GwQuestBlock" .. i].actionButton, _G["GwQuestBlock" .. i].savedHeight, "QUEST"})
+                GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. _G["GwQuesttrackerContainerQuestsBlock" .. i].index, _G["GwQuesttrackerContainerQuestsBlock" .. i].UpdateQuestItemPositions, {_G["GwQuesttrackerContainerQuestsBlock" .. i].actionButton, _G["GwQuesttrackerContainerQuestsBlock" .. i].savedHeight, "QUEST"})
             else
-                GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, _G["GwQuestBlock" .. i].UpdateQuestItem, {_G["GwQuestBlock" .. i]})
+                GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, _G["GwQuesttrackerContainerQuestsBlock" .. i].UpdateQuestItem, {_G["GwQuesttrackerContainerQuestsBlock" .. i]})
             end
         end
 
@@ -251,6 +250,7 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
     fQuest:UpdateQuestLogLayout()
+    fCampaign:UpdateQuestLogLayout()
     QuestTrackerLayoutChanged()
 end
 GW.CollapseQuestHeader = CollapseHeader
@@ -351,10 +351,11 @@ local function LoadQuestTracker()
     fTraScr:SetScrollChild(fScroll)
 
     --Mixin
-    Mixin(fQuest, GwQuestTrackerContainerMixin)
+    Mixin(fQuest, GwObjectivesContainerMixin)
+    Mixin(fCampaign, GwObjectivesContainerMixin)
     Mixin(fAchv, GwAchievementTrackerContainerMixin)
 
-    fQuest:SetScript("OnEvent", tracker_OnEvent)
+    fQuest:SetScript("OnEvent", QuestTrackerOnEvent)
     fQuest:RegisterEvent("QUEST_LOG_UPDATE")
     fQuest:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
     fQuest:RegisterEvent("QUEST_AUTOCOMPLETE")
@@ -362,6 +363,17 @@ local function LoadQuestTracker()
     fQuest:RegisterEvent("PLAYER_MONEY")
     fQuest:RegisterEvent("PLAYER_ENTERING_WORLD")
     fQuest.watchMoneyReasons = 0
+    fQuest.isCampaignContainer = false
+
+    fCampaign:SetScript("OnEvent", QuestTrackerOnEvent)
+    fCampaign:RegisterEvent("QUEST_LOG_UPDATE")
+    fCampaign:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
+    fCampaign:RegisterEvent("QUEST_AUTOCOMPLETE")
+    fCampaign:RegisterEvent("QUEST_ACCEPTED")
+    fCampaign:RegisterEvent("PLAYER_MONEY")
+    fCampaign:RegisterEvent("PLAYER_ENTERING_WORLD")
+    fCampaign.watchMoneyReasons = 0
+    fCampaign.isCampaignContainer = true
 
     fCampaign.header = CreateFrame("Button", nil, fCampaign, "GwQuestTrackerHeader")
     fCampaign.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
@@ -514,6 +526,7 @@ local function LoadQuestTracker()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
     fTracker:SetHeight(GW.settings.QuestTracker_pos_height)
 
-    tracker_OnEvent(fQuest, "LOAD")
+    QuestTrackerOnEvent(fQuest, "LOAD")
+    QuestTrackerOnEvent(fCampaign, "LOAD")
 end
 GW.LoadQuestTracker = LoadQuestTracker

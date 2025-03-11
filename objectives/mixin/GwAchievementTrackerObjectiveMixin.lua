@@ -28,7 +28,7 @@ local function TimerBarOnUpdate(self)
 			timeRemaining = 0;
         else
             self.TimerBar:Hide()
-            GwQuesttrackerContainerAchievement:UpdateAchievementLayout()
+            self:GetParent():GetParent():UpdateAchievementLayout()
 		end
 	end
 	self.TimerBar.Label:SetText(SecondsToClock(timeRemaining))

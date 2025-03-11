@@ -195,8 +195,9 @@ function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(string)
 end
 
 function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index)
-    if _G[self:GetName() .. "GwQuestObjective" .. index] then
-        return _G[self:GetName() .. "GwQuestObjective" .. index]
+    if _G[self:GetName() .. "Objective" .. index] then
+        _G[self:GetName() .. "Objective" .. index]:SetScript("OnUpdate", nil)
+        return _G[self:GetName() .. "Objective" .. index]
     end
 
     if self.objectiveBlocksNum == nil then
@@ -205,13 +206,13 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index)
     self.objectiveBlocks = self.objectiveBlocks or {}
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
 
-    local newBlock = CreateFrame("Frame", self:GetName() .. "GwQuestObjective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
+    local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
     newBlock:SetParent(self)
     tinsert(self.objectiveBlocks, newBlock)
     if self.objectiveBlocksNum == 1 then
         newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
     else
-        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "GwQuestObjective" .. (self.objectiveBlocksNum - 1)], "BOTTOMRIGHT", 0, 0)
+        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (self.objectiveBlocksNum - 1)], "BOTTOMRIGHT", 0, 0)
     end
 
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
@@ -223,9 +224,9 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, finished, objectiveIn
     if finished == true then
         return
     end
-    local objectiveBlock = self:GetObjectiveBlock(objectiveIndex)
 
     if text then
+        local objectiveBlock = self:GetObjectiveBlock(objectiveIndex)
         objectiveBlock:Show()
         objectiveBlock.ObjectiveText:SetText(text)
         objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
@@ -333,7 +334,7 @@ function GwObjectivesBlockTemplateMixin:UpdateQuestItemPositions(button, height,
     button:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
 end
 
-function GwObjectivesBlockTemplateMixin:OnBlockClick(button)
+function GwObjectivesBlockTemplateMixin:OnClick(button)
     if ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
         return
     end
@@ -449,15 +450,15 @@ function GwObjectivesBlockTemplateMixin:UpdateQuest(parent, quest)
         elseif questFailed then
             self:AddObjective(FAILED, false, self.numObjectives + 1, nil)
         end
-        self:SetScript("OnClick", self.OnBlockClick)
+        self:SetScript("OnClick", self.OnClick)
     end
     if self.objectiveBlocks == nil then
         self.objectiveBlocks = {}
     end
 
     for i = self.numObjectives + 1, 20 do
-        if _G[self:GetName() .. "GwQuestObjective" .. i] ~= nil then
-            _G[self:GetName() .. "GwQuestObjective" .. i]:Hide()
+        if _G[self:GetName() .. "Objective" .. i] ~= nil then
+            _G[self:GetName() .. "Objective" .. i]:Hide()
         end
     end
     self.height = self.height + 5
@@ -518,15 +519,15 @@ function GwObjectivesBlockTemplateMixin:UpdateQuestByID(parent, quest, questID, 
     elseif questFailed then
         self:AddObjective(FAILED, false, self.numObjectives + 1, nil)
     end
-    self:SetScript("OnClick", self.OnBlockClick)
+    self:SetScript("OnClick", self.OnClick)
 
     if self.objectiveBlocks == nil then
         self.objectiveBlocks = {}
     end
 
     for i = self.numObjectives + 1, 20 do
-        if _G[self:GetName() .. "GwQuestObjective" .. i] ~= nil then
-            _G[self:GetName() .. "GwQuestObjective" .. i]:Hide()
+        if _G[self:GetName() .. "Objective" .. i] ~= nil then
+            _G[self:GetName() .. "Objective" .. i]:Hide()
         end
     end
     self.height = self.height + 5

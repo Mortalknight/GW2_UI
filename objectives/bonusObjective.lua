@@ -24,8 +24,8 @@ end
 GW.getBonusBlockById = getBonusBlockById
 
 local function getObjectiveBlock(self, index)
-    if _G[self:GetName() .. "GwQuestObjective" .. index] ~= nil then
-        return _G[self:GetName() .. "GwQuestObjective" .. index]
+    if _G[self:GetName() .. "Objective" .. index] ~= nil then
+        return _G[self:GetName() .. "Objective" .. index]
     end
 
     if self.objectiveBlocksNum == nil then
@@ -34,7 +34,7 @@ local function getObjectiveBlock(self, index)
     self.objectiveBlocks = self.objectiveBlocks or {}
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
 
-    local newBlock = CreateFrame("Frame", self:GetName() .. "GwQuestObjective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
+    local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
     newBlock:SetParent(self)
     tinsert(self.objectiveBlocks, newBlock)
     if self.objectiveBlocksNum == 1 then
@@ -42,7 +42,7 @@ local function getObjectiveBlock(self, index)
     else
         newBlock:SetPoint(
             "TOPRIGHT",
-            _G[self:GetName() .. "GwQuestObjective" .. (self.objectiveBlocksNum - 1)],
+            _G[self:GetName() .. "Objective" .. (self.objectiveBlocksNum - 1)],
             "BOTTOMRIGHT",
             0,
             0
@@ -337,8 +337,8 @@ local function setUpBlock(container, questIDs, collapsed)
                     GwBonusObjectiveBlock:Show()
                 end
                 for i = GwBonusObjectiveBlock.numObjectives + 1, 20 do
-                    if _G[GwBonusObjectiveBlock:GetName() .. "GwQuestObjective" .. i] ~= nil then
-                        _G[GwBonusObjectiveBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
+                    if _G[GwBonusObjectiveBlock:GetName() .. "Objective" .. i] ~= nil then
+                        _G[GwBonusObjectiveBlock:GetName() .. "Objective" .. i]:Hide()
                     end
                 end
 
