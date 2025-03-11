@@ -40,7 +40,7 @@ function GwAchievementTrackerBlockMixin:UpdateAchievementObjectives(parent)
                 self:AddObjective(criteriaString, numIncomplete, quantity, totalQuantity, eligible, needTimer, duration, GetTime() - (elapsed or 0))
 
                 if numIncomplete == MAX_OBJECTIVES then
-                    self:AddObjective("...", numIncomplete, nil, nil, true)
+                    self:AddObjective("...", numIncomplete + 1, nil, nil, true)
                     break
                 end
             end

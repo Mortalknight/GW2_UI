@@ -216,6 +216,7 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index)
     end
 
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
+    newBlock.notChangeSize = true
 
     return newBlock
 end
