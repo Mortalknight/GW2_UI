@@ -305,6 +305,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
 
     local isQuestComplete = (self and self.questID) and QuestCache:Get(self.questID):IsComplete() or false
     local shouldShowItem = item and (not isQuestComplete or showItemWhenComplete)
+
     if shouldShowItem and self.questLogIndex then
         self.hasItem = true
         self.actionButton:SetUp(self.questLogIndex)
@@ -321,8 +322,8 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
     end
 end
 
-function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(button, height, type)
-    if not button or not self.hasItem then
+function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(height, type)
+    if not self.actionButton or not self.hasItem then
         return
     end
 
@@ -342,5 +343,5 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(butt
         height = height + GwQuesttrackerContainerCampaign:GetHeight()
     end
 
-    button:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
+    self.actionButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
 end

@@ -210,34 +210,37 @@ AFP("bonus_OnEnter", bonus_OnEnter)
 
 local function AdjustItemButtonPositions()
     for i = 1, 25 do
-        if _G["GwQuesttrackerContainerCampaignBlock" .. i] then
+        local campaignBlock = _G["GwQuesttrackerContainerCampaignBlock" .. i]
+        local questBlock = _G["GwQuesttrackerContainerQuestsBlock" .. i]
+        local bonusObjectiveBlock = _G["GwQuesttrackerContainerBonusObjectivesBlock" .. i]
+        if campaignBlock then
             if i <= fCampaign.numQuests then
-                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. _G["GwQuesttrackerContainerCampaignBlock" .. i].index,  _G["GwQuesttrackerContainerCampaignBlock" .. i].UpdateObjectiveActionButtonPosition, {_G["GwQuesttrackerContainerCampaignBlock" .. i].actionButton, _G["GwQuesttrackerContainerCampaignBlock" .. i].savedHeight})
+                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. campaignBlock.index, campaignBlock.UpdateObjectiveActionButtonPosition, {campaignBlock, campaignBlock.savedHeight})
             else
-                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, _G["GwQuesttrackerContainerCampaignBlock" .. i].UpdateObjectiveActionButton, {_G["GwQuesttrackerContainerCampaignBlock" .. i]})
+                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, campaignBlock.UpdateObjectiveActionButton, {campaignBlock})
             end
         end
-        if _G["GwQuesttrackerContainerQuestsBlock" .. i] then
+        if questBlock then
             if i <= fQuest.numQuests then
-                GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. _G["GwQuesttrackerContainerQuestsBlock" .. i].index, _G["GwQuesttrackerContainerQuestsBlock" .. i].UpdateObjectiveActionButtonPosition, {_G["GwQuesttrackerContainerQuestsBlock" .. i].actionButton, _G["GwQuesttrackerContainerQuestsBlock" .. i].savedHeight, "QUEST"})
+                GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. questBlock.index, questBlock.UpdateObjectiveActionButtonPosition, {questBlock, questBlock.savedHeight, "QUEST"})
             else
-                GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, _G["GwQuesttrackerContainerQuestsBlock" .. i].UpdateObjectiveActionButton, {_G["GwQuesttrackerContainerQuestsBlock" .. i]})
+                GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, questBlock.UpdateObjectiveActionButton, {questBlock})
             end
         end
 
         if i <= 20 then
-            if _G["GwBonusObjectiveBlock" .. i] then
+            if bonusObjectiveBlock then
                 if fBonus.numEvents <= i then
-                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. i, _G["GwBonusObjectiveBlock" .. i].UpdateObjectiveActionButtonPosition, {_G["GwBonusObjectiveBlock" .. i].actionButton, _G["GwBonusObjectiveBlock" .. i].savedHeight, "EVENT"})
+                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. i, bonusObjectiveBlock.UpdateObjectiveActionButtonPosition, {bonusObjectiveBlock, bonusObjectiveBlock.savedHeight, "EVENT"})
                 else
-                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, _G["GwBonusObjectiveBlock" .. i].UpdateObjectiveActionButton, {_G["GwBonusObjectiveBlock" .. i]})
+                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, bonusObjectiveBlock.UpdateObjectiveActionButton, {bonusObjectiveBlock})
                 end
             end
         end
     end
 
     if GwScenarioBlock.hasItem then
-        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GwScenarioBlock.UpdateObjectiveActionButtonPosition, {GwScenarioBlock.actionButton, GwScenarioBlock.height, "SCENARIO"})
+        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GwScenarioBlock.UpdateObjectiveActionButtonPosition, {GwScenarioBlock, GwScenarioBlock.height, "SCENARIO"})
     end
 end
 
@@ -458,7 +461,7 @@ function GwQuestLogMixin:UpdateLayout()
                     savedContainerHeight = savedContainerHeight + block.height
                     -- save some values for later use
                     block.savedHeight = savedContainerHeight
-                    GW.CombatQueue_Queue("update_tracker_" .. self:GetName() .. block.index, block.UpdateObjectiveActionButtonPosition, {block.actionButton, savedContainerHeight}, containerType)
+                    GW.CombatQueue_Queue("update_tracker_" .. self:GetName() .. block.index, block.UpdateObjectiveActionButtonPosition, {block, savedContainerHeight}, containerType)
                 else
                     if (isCampaign and self.isCampaignContainer) or (not isCampaign and not self.isCampaignContainer) then
                         counterQuest = counterQuest + 1
