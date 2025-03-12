@@ -3,139 +3,100 @@ local AddTrackerNotification = GW.AddTrackerNotification
 local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local ParseSimpleObjective = GW.ParseSimpleObjective
-local ParseObjectiveString = GW.ParseObjectiveString
-local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
 
 local savedQuests = {}
 local trackedEventIDs = {}
 
-local function getBonusBlockById(questID)
-    for i = 1, 20 do -- loop bonus blocks
-        local block = _G["GwBonusObjectiveBlock" .. i]
-        if block then
-            if block.questID == questID then
-                return block
-            end
-        end
-    end
+GwBonusObjectivesTrackerBlockMixin = {}
 
-    return nil
-end
-GW.getBonusBlockById = getBonusBlockById
-
-local function getObjectiveBlock(self, index)
-    if _G[self:GetName() .. "Objective" .. index] ~= nil then
-        return _G[self:GetName() .. "Objective" .. index]
-    end
-
-    if self.objectiveBlocksNum == nil then
-        self.objectiveBlocksNum = 0
-    end
-    self.objectiveBlocks = self.objectiveBlocks or {}
-    self.objectiveBlocksNum = self.objectiveBlocksNum + 1
-
-    local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
-    newBlock:SetParent(self)
-    tinsert(self.objectiveBlocks, newBlock)
-    if self.objectiveBlocksNum == 1 then
-        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
-    else
-        newBlock:SetPoint(
-            "TOPRIGHT",
-            _G[self:GetName() .. "Objective" .. (self.objectiveBlocksNum - 1)],
-            "BOTTOMRIGHT",
-            0,
-            0
-        )
-    end
-
-    newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-
-    return newBlock
-end
-GW.AddForProfiling("bonusObjective", "getObjectiveBlock", getObjectiveBlock)
-
-local function TryAddingExpirationWarningLine(block, objectiveIndex)
-    if QuestUtils_ShouldDisplayExpirationWarning(block.questID) then
-        local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
-        local timeLeftMinutes = C_TaskQuest.GetQuestTimeLeftMinutes(block.questID)
-        if timeLeftMinutes and block.tickerSeconds and timeLeftMinutes > 0 then
+function GwBonusObjectivesTrackerBlockMixin:TryAddingExpirationWarningLine(objectiveIndex)
+    if QuestUtils_ShouldDisplayExpirationWarning(self.questID) then
+        local objectiveBlock = self:GetObjectiveBlock(objectiveIndex)
+        local timeLeftMinutes = C_TaskQuest.GetQuestTimeLeftMinutes(self.questID)
+        if timeLeftMinutes and self.tickerSeconds and timeLeftMinutes > 0 then
             if timeLeftMinutes < WORLD_QUESTS_TIME_CRITICAL_MINUTES then
                 local timeString = SecondsToTime(timeLeftMinutes * 60)
                 local text = BONUS_OBJECTIVE_TIME_LEFT:format(timeString)
                 objectiveBlock:Show()
                 objectiveBlock.ObjectiveText:SetText(text)
-                objectiveBlock.ObjectiveText:SetTextColor(DIM_RED_FONT_COLOR.r, DIM_RED_FONT_COLOR.g, DIM_RED_FONT_COLOR.b )
+                objectiveBlock.ObjectiveText:SetTextColor(DIM_RED_FONT_COLOR.r, DIM_RED_FONT_COLOR.g, DIM_RED_FONT_COLOR.b)
                 objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
                 objectiveBlock.StatusBar:Hide()
                 local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
                 objectiveBlock:SetHeight(h)
-                block.height = block.height + objectiveBlock:GetHeight()
-                block.numObjectives = block.numObjectives + 1
+                self.height = self.height + objectiveBlock:GetHeight()
+                self.numObjectives = self.numObjectives + 1
 
-                block.tickerSeconds = 10
+                self.tickerSeconds = 10
             else
                 local timeToAlert = max((timeLeftMinutes - WORLD_QUESTS_TIME_CRITICAL_MINUTES) * 60 - 10, 10)
-                if block.tickerSeconds == 0 or timeToAlert < block.tickerSeconds then
-                    block.tickerSeconds = timeToAlert
+                if self.tickerSeconds == 0 or timeToAlert < self.tickerSeconds then
+                    self.tickerSeconds = timeToAlert
                 end
             end
         end
     end
 end
 
-local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiveType, quantity)
-    local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
+function GwBonusObjectivesTrackerBlockMixin:TryShowRewardsTooltip()
+	local questID
+	if self.id < 0 then
+		-- this is a scenario bonus objective
+		questID = C_Scenario.GetBonusStepRewardQuestID(-self.id)
+		if questID == 0 then
+			-- huh, no reward
+			return
+		end
+	else
+		questID = self.id;
+		if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+			-- no tooltip for completed objectives
+			return;
+		end
+	end
 
-    local precentageComplete = 0
-    if text then
-        objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText(text)
-        objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
-        if finished then
-            objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
-        else
-            objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
-        end
+	if HaveQuestRewardData(questID) and GetQuestLogRewardXP(questID) == 0 and (not C_QuestInfoSystem.HasQuestRewardCurrencies(questID))
+								and GetNumQuestLogRewards(questID) == 0 and GetQuestLogRewardMoney(questID) == 0 and GetQuestLogRewardArtifactXP(questID) == 0 then
+		GameTooltip:Hide()
+		return
+	end
 
-        if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text, objectiveType, quantity) then
-            if objectiveType == "progressbar" then
-                objectiveBlock.StatusBar:SetShown(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
-                objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
-                objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
-                objectiveBlock.progress = GetQuestProgressBarPercent(block.questID) / 100
-                objectiveBlock.StatusBar.precentage = true
-            end
-            precentageComplete = objectiveBlock.progress
-        else
-            objectiveBlock.StatusBar:Hide()
-        end
+	GameTooltip:ClearAllPoints()
+	GameTooltip:SetPoint("TOPRIGHT", self, "TOPLEFT", 0, 0)
+	GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
 
-        local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
-        objectiveBlock:SetHeight(h)
-        if objectiveBlock.StatusBar:IsShown() then
-            if block.numObjectives >= 1 then
-                h = h + objectiveBlock.StatusBar:GetHeight() + 10
-            else
-                h = h + objectiveBlock.StatusBar:GetHeight() + 5
-            end
-            objectiveBlock:SetHeight(h)
-        end
-        block.height = block.height + objectiveBlock:GetHeight()
-        block.numObjectives = block.numObjectives + 1
-    end
-    return precentageComplete
+	if not HaveQuestRewardData(questID) then
+		GameTooltip:AddLine(RETRIEVING_DATA, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
+		GameTooltip_SetTooltipWaitingForData(GameTooltip, true)
+	else
+		local isWorldQuest = self.parentModule.showWorldQuests
+		if isWorldQuest then
+			QuestUtils_AddQuestTypeToTooltip(GameTooltip, questID, NORMAL_FONT_COLOR)
+			GameTooltip:AddLine(REWARDS, NORMAL_FONT_COLOR:GetRGB())
+		else
+			GameTooltip:SetText(REWARDS, NORMAL_FONT_COLOR:GetRGB())
+		end
+		GameTooltip:AddLine(isWorldQuest and WORLD_QUEST_TOOLTIP_DESCRIPTION or BONUS_OBJECTIVE_TOOLTIP_DESCRIPTION, 1, 1, 1, 1)
+		GameTooltip:AddLine(" ")
+		GameTooltip_AddQuestRewardsToTooltip(GameTooltip, questID, TOOLTIP_QUEST_REWARDS_STYLE_NONE)
+		GameTooltip_SetTooltipWaitingForData(GameTooltip, false)
+	end
+
+	GameTooltip:Show()
+	EventRegistry:TriggerEvent("BonusObjectiveBlock.QuestRewardTooltipShown", self, self.id, true)
+	self.hasRewardsTooltip = true
 end
-GW.AddForProfiling("bonusObjective", "addObjectiveBlock", addObjectiveBlock)
 
-local function blockOnClick(self, button)
+GwBonusObjectivesTrackerContainerMixin = {}
+
+function GwBonusObjectivesTrackerContainerMixin:BlockOnClick(button)
     local isThreatQuest = C_QuestLog.IsThreatQuest(self.questID)
     if self.parentModule.showWorldQuests or isThreatQuest then
         if button == "LeftButton" then
             if not ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
                 if IsShiftKeyDown() then
                     if QuestUtils_IsQuestWatched(self.questID) and not isThreatQuest then
-                        QuestUtil.UntrackWorldQuest(self.questID);
+                        QuestUtil.UntrackWorldQuest(self.questID)
                     end
                 else
                     local mapID = C_TaskQuest.GetQuestZoneID(self.questID)
@@ -162,54 +123,7 @@ local function blockOnClick(self, button)
     end
 end
 
-local function createNewBonusObjectiveBlock(container, blockIndex)
-    if _G["GwBonusObjectiveBlock" .. blockIndex] ~= nil then
-        return _G["GwBonusObjectiveBlock" .. blockIndex]
-    end
-
-    local newBlock = CreateFrame("Button", "GwBonusObjectiveBlock" .. blockIndex, container, "GwObjectivesBlockTemplate")
-    newBlock:SetParent(container)
-
-    Mixin(newBlock, BonusObjectiveBlockMixin)
-
-    -- needed for tooltip
-    newBlock.parentModule = {}
-    newBlock.parentModule.showWorldQuests = true
-    newBlock.event = true
-
-    if blockIndex == 1 then
-        newBlock:SetPoint("TOPRIGHT", container, "TOPRIGHT", 0, -20)
-    else
-        newBlock:SetPoint("TOPRIGHT", _G["GwBonusObjectiveBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
-    end
-
-    newBlock.Header:SetText("")
-    newBlock:SetScript("OnClick", blockOnClick)
-
-    newBlock.color = TRACKER_TYPE_COLOR["EVENT"]
-    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-
-    -- quest item button here
-    newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
-
-    newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    newBlock.actionButton.NormalTexture:SetTexture(nil)
-    newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
-    newBlock.actionButton:SetScript("OnShow", newBlock.actionButton.OnShow)
-    newBlock.actionButton:SetScript("OnHide", newBlock.actionButton.OnHide)
-    newBlock.actionButton:SetScript("OnEnter", newBlock.actionButton.OnEnter)
-    newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
-    newBlock.actionButton:SetScript("OnEvent", newBlock.actionButton.OnEvent)
-
-    newBlock.height = 20
-    newBlock.numObjectives = 0
-    newBlock:Hide()
-
-    return newBlock
-end
-
-local function setUpBlock(container, questIDs, collapsed)
+function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
     local savedContainerHeight = 1
     local shownBlocks = 0
     local blockIndex = 1
@@ -231,42 +145,48 @@ local function setUpBlock(container, questIDs, collapsed)
             numObjectives = 0
         end
         if isInArea or (v.tracked and text) then
-            if not collapsed then
+            if not self.collapsed then
                 compassData.TITLE = text
 
                 if text == nil then
                     text = ""
                 end
-                local GwBonusObjectiveBlock = createNewBonusObjectiveBlock(container, blockIndex)
-                if GwBonusObjectiveBlock == nil then
+                local block = self:GetBlock(blockIndex, "EVENT", true)
+                if block == nil then
                     return
                 end
-                if GwBonusObjectiveBlock.ticker then
-                    GwBonusObjectiveBlock.ticker:Cancel()
-                    GwBonusObjectiveBlock.ticker = nil
-                end
-                GwBonusObjectiveBlock.tickerSeconds = 0
-                GwBonusObjectiveBlock.height = 20
-                GwBonusObjectiveBlock.numObjectives = 0
+                -- needed for tooltip
+                block.parentModule = {}
+                block.parentModule.showWorldQuests = true
+                block.event = true
 
-                GwBonusObjectiveBlock.Header:SetText(text)
+                if block.ticker then
+                    block.ticker:Cancel()
+                    block.ticker = nil
+                end
+                block.tickerSeconds = 0
+                block.height = 20
+                block.numObjectives = 0
+
+
+                block.Header:SetText(text)
 
                 if savedQuests[questID] == nil then
-                    GwBonusObjectiveBlock:NewQuestAnimation()
+                    block:NewQuestAnimation()
                     PlaySound(SOUNDKIT.UI_WORLDQUEST_START)
                     savedQuests[questID] = true
                 end
 
-                GwBonusObjectiveBlock.questID = questID
-                GwBonusObjectiveBlock.id = questID
-                GwBonusObjectiveBlock.TrackedQuest = {}
-                GwBonusObjectiveBlock.TrackedQuest.questID = questID
-                GwBonusObjectiveBlock.questLogIndex = questLogIndex
-                GwBonusObjectiveBlock.hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
+                block.questID = questID
+                block.id = questID
+                block.TrackedQuest = {}
+                block.TrackedQuest.questID = questID
+                block.questLogIndex = questLogIndex
+                block.hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
 
-                GwBonusObjectiveBlock.groupButton:SetShown(GwBonusObjectiveBlock.hasGroupFinderButton)
+                block.groupButton:SetShown(block.hasGroupFinderButton)
 
-                GW.CombatQueue_Queue(nil, GwBonusObjectiveBlock.UpdateObjectiveActionButton, {GwBonusObjectiveBlock})
+                GW.CombatQueue_Queue(nil, block.UpdateObjectiveActionButton, {block})
 
                 if not foundEvent then
                     savedContainerHeight = 20
@@ -295,8 +215,8 @@ local function setUpBlock(container, questIDs, collapsed)
                         simpleDesc = simpleDesc .. ", " .. ParseSimpleObjective(txt)
                     end
 
-                    if not container.collapsed == true then
-                        local progressValue = addObjectiveBlock(GwBonusObjectiveBlock, txt, finished, objectiveIndex, objectiveType)
+                    if not self.collapsed then
+                        local progressValue = block:AddObjective(txt, objectiveIndex, {isBonusObjective = true, finished = finished, objectiveType = objectiveType})
                         if finished then
                             objectiveProgress = objectiveProgress + (1 / numObjectives)
                         else
@@ -306,14 +226,14 @@ local function setUpBlock(container, questIDs, collapsed)
                 end
 
                 -- try to add a timer here
-                TryAddingExpirationWarningLine(GwBonusObjectiveBlock, numObjectives + 1)
-                if GwBonusObjectiveBlock.tickerSeconds > 0 then
-                    if GwBonusObjectiveBlock.ticker then
-                        GwBonusObjectiveBlock.ticker:Cancel()
-                        GwBonusObjectiveBlock.ticker = nil
+                block:TryAddingExpirationWarningLine(numObjectives + 1)
+                if block.tickerSeconds > 0 then
+                    if block.ticker then
+                        block.ticker:Cancel()
+                        block.ticker = nil
                     end
-                    GwBonusObjectiveBlock.ticker = C_Timer.NewTicker(GwBonusObjectiveBlock.tickerSeconds, function()
-                        GW.updateBonusObjective(container)
+                    block.ticker = C_Timer.NewTicker(block.tickerSeconds, function()
+                        self:UpdateLayout()
                     end)
                 end
 
@@ -327,22 +247,22 @@ local function setUpBlock(container, questIDs, collapsed)
                     AddTrackerNotification(compassData)
                 end
 
-                savedContainerHeight = savedContainerHeight + GwBonusObjectiveBlock.height + 10
-                GwBonusObjectiveBlock.savedHeight = savedContainerHeight
-                if GwBonusObjectiveBlock.hasItem then
-                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. blockIndex, GwBonusObjectiveBlock.UpdateObjectiveActionButtonPosition, {GwBonusObjectiveBlock.actionButton, savedContainerHeight, "EVENT"})
+                savedContainerHeight = savedContainerHeight + block.height + 10
+                block.savedHeight = savedContainerHeight
+                if block.hasItem then
+                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. blockIndex, block.UpdateObjectiveActionButtonPosition, {block.actionButton, savedContainerHeight, "EVENT"})
                 end
 
-                if not container.collapsed then
-                    GwBonusObjectiveBlock:Show()
+                if not self.collapsed then
+                    block:Show()
                 end
-                for i = GwBonusObjectiveBlock.numObjectives + 1, 20 do
-                    if _G[GwBonusObjectiveBlock:GetName() .. "Objective" .. i] ~= nil then
-                        _G[GwBonusObjectiveBlock:GetName() .. "Objective" .. i]:Hide()
+                for i = block.numObjectives + 1, 20 do
+                    if _G[block:GetName() .. "Objective" .. i] then
+                        _G[block:GetName() .. "Objective" .. i]:Hide()
                     end
                 end
 
-                GwBonusObjectiveBlock:SetHeight(GwBonusObjectiveBlock.height + 10)
+                block:SetHeight(block.height + 10)
                 shownBlocks = shownBlocks + 1
                 blockIndex = blockIndex + 1
             else
@@ -351,20 +271,21 @@ local function setUpBlock(container, questIDs, collapsed)
             end
         end
     end
-    container:SetHeight(savedContainerHeight)
+    self:SetHeight(savedContainerHeight)
 
     return foundEvent, shownBlocks
 end
 
-local function updateBonusObjective(self)
+function GwBonusObjectivesTrackerContainerMixin:UpdateLayout()
     RemoveTrackerNotificationOfType("EVENT")
 
     for i = 1, 20 do
-        if _G["GwBonusObjectiveBlock" .. i] then
-            _G["GwBonusObjectiveBlock" .. i].questID = false
-            _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
-            if _G["GwBonusObjectiveBlock" .. i].groupButton then _G["GwBonusObjectiveBlock" .. i].groupButton:Hide() end
-            GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, _G["GwBonusObjectiveBlock" .. i].UpdateObjectiveActionButton, {_G["GwBonusObjectiveBlock" .. i]})
+        local block = _G[self:GetName() .. i]
+        if block then
+            block.questID = false
+            block.questLogIndex = 0
+            if block.groupButton then block.groupButton:Hide() end
+            GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
         end
     end
 
@@ -388,18 +309,19 @@ local function updateBonusObjective(self)
         end
     end
 
-    local foundEvent, shownBlocks = setUpBlock(self, trackedEventIDs, self.collapsed)
+    local foundEvent, shownBlocks = self:UpdateBlocks(trackedEventIDs)
     self.numEvents = shownBlocks
 
     for i = (shownBlocks > 0 and not self.collapsed and shownBlocks + 1) or 1, 20 do
-        if _G["GwBonusObjectiveBlock" .. i] then
-            _G["GwBonusObjectiveBlock" .. i].questID = false
-            _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
-            _G["GwBonusObjectiveBlock" .. i]:Hide()
-            GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, _G["GwBonusObjectiveBlock" .. i].UpdateObjectiveActionButton, {_G["GwBonusObjectiveBlock" .. i]})
-            if _G["GwBonusObjectiveBlock" .. i].ticker then
-                _G["GwBonusObjectiveBlock" .. i].ticker:Cancel()
-                _G["GwBonusObjectiveBlock" .. i].ticker = nil
+        local block = _G[self:GetName() .. "Block" .. i]
+        if block then
+            block.questID = false
+            block.questLogIndex = 0
+            block:Hide()
+            GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
+            if block.ticker then
+                block.ticker:Cancel()
+                block.ticker = nil
             end
         end
     end
@@ -412,10 +334,8 @@ local function updateBonusObjective(self)
         wipe(savedQuests)
     end
 
-    QuestTrackerLayoutChanged()
+    GW.QuestTrackerLayoutChanged()
 end
-GW.updateBonusObjective = updateBonusObjective
-GW.AddForProfiling("bonusObjective", "updateBonusObjective", updateBonusObjective)
 
 local function CollapseHeader(self, forceCollapse, forceOpen)
     if (not self.collapsed or forceCollapse) and not forceOpen then
@@ -425,12 +345,16 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    updateBonusObjective(self)
+    self:UpdateLayout()
 end
 GW.CollapseBonusObjectivesHeader = CollapseHeader
 
 local function LoadBonusFrame(container)
-    container:SetScript("OnEvent", updateBonusObjective)
+    --Mixin Override
+    Mixin(container, GwBonusObjectivesTrackerContainerMixin)
+    container.blockMixInTemplate = GwBonusObjectivesTrackerBlockMixin
+
+    container:SetScript("OnEvent", container.UpdateLayout)
     container:RegisterEvent("QUEST_LOG_UPDATE")
     container:RegisterEvent("TASK_PROGRESS_UPDATE")
     container:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
@@ -460,6 +384,6 @@ local function LoadBonusFrame(container)
         end
     end)
 
-    updateBonusObjective(container)
+    container:UpdateLayout()
 end
 GW.LoadBonusFrame = LoadBonusFrame

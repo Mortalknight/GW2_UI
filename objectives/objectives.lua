@@ -170,7 +170,7 @@ local function QuestTrackerOnEvent(self, event, ...)
         self:UpdateLayout()
     elseif event == "LOAD" then
         self:UpdateLayout()
-        C_Timer.After(0.5, function() GW.updateBonusObjective(fBonus) end)
+        C_Timer.After(0.5, function() fBonus:UpdateLayout() end)
         self.init = true
     elseif event == "PLAYER_ENTERING_WORLD" then
         self:RegisterEvent("QUEST_DATA_LOAD_RESULT")

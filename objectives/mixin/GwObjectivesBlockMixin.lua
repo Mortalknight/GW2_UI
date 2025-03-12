@@ -59,13 +59,10 @@ local function ParseObjectiveString(block, text, objectiveType, quantity, numIte
     end
     block.StatusBar.precentage = false
 
-    local numItems, numNeeded = numItems, numNeeded
-    if not numItems and not numNeeded then
-        _, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
-        if numItems == nil then
-            numItems, numNeeded, _ = string.match(text, "(%d+)/(%d+) (%S+)")
-        end
+    if not numItems or not numNeeded then
+        numItems, numNeeded = string.match(text, "(%d+)/(%d+)")
     end
+
     numItems = tonumber(numItems)
     numNeeded = tonumber(numNeeded)
 
@@ -181,8 +178,8 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     end)
     self.groupButton:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self)
-	    GameTooltip:AddLine(TOOLTIP_TRACKER_FIND_GROUP_BUTTON, HIGHLIGHT_FONT_COLOR:GetRGB())
-	    GameTooltip:Show()
+        GameTooltip:AddLine(TOOLTIP_TRACKER_FIND_GROUP_BUTTON, HIGHLIGHT_FONT_COLOR:GetRGB())
+        GameTooltip:Show()
     end)
     self.groupButton:SetScript("OnLeave", GameTooltip_Hide)
 
@@ -232,8 +229,9 @@ end
 function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, options)
     self.numObjectives = self.numObjectives + 1
     local objectiveBlock = self:GetObjectiveBlock(objectiveIndex)
-    objectiveBlock:Show()
+    local precentageComplete = 0
 
+    objectiveBlock:Show()
     local formattedText = options.isAchievement and GW.FormatObjectiveNumbers(text) or text
     objectiveBlock.ObjectiveText:SetText(formattedText)
     objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
@@ -244,7 +242,7 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
         else
             objectiveBlock.ObjectiveText:SetTextColor(DIM_RED_FONT_COLOR.r, DIM_RED_FONT_COLOR.g, DIM_RED_FONT_COLOR.b)
         end
-    elseif options.isQuest then
+    else
         if options.finished then
             objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
         else
@@ -252,7 +250,7 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
         end
     end
 
-    if options.objectiveType == "progressbar" or GW.ParseObjectiveString(objectiveBlock, text, nil, nil, options.qty, options.totalqty) then
+    if options.objectiveType == "progressbar" or GW.ParseObjectiveString(objectiveBlock, text, options.objectiveType, options.qty, options.totalqty) then
         if options.objectiveType == "progressbar" then
             objectiveBlock.StatusBar:SetShown(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
             objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
@@ -260,6 +258,7 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
             objectiveBlock.progress = GetQuestProgressBarPercent(self.questID) / 100
             objectiveBlock.StatusBar.precentage = true
         end
+        precentageComplete = objectiveBlock.progress
     else
         objectiveBlock.StatusBar:Hide()
     end
@@ -282,6 +281,8 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
     end
 
     self.height = self.height + objectiveBlock:GetHeight()
+
+    return precentageComplete
 end
 
 function GwObjectivesBlockTemplateMixin:IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)

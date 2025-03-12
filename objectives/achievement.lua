@@ -118,7 +118,6 @@ function GwAchievementTrackerContainerMixin:BlockOnClick(mouseButton)
         end)
     end
 end
-
 function GwAchievementTrackerContainerMixin:UpdateLayout(event, ...)
     local savedHeight = 1
     local shownIndex = 1
