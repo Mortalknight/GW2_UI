@@ -278,7 +278,15 @@ local function updateCurrentScenario(self, event, ...)
             if spellInfo.shownState ~= Enum.WidgetShownState.Hidden then
                 local spellData = C_Spell.GetSpellInfo(spellInfo.spellID)
 
-                SetPortraitToTexture(scenarioBlock.delvesFrame.spell[id].icon, spellData.iconID)
+                scenarioBlock.delvesFrame.spell[id].icon:SetTexture(spellData.iconID)
+
+                if not scenarioBlock.delvesFrame.spell[id].mask then
+                    scenarioBlock.delvesFrame.spell[id].mask = scenarioBlock.delvesFrame.spell[id]:CreateMaskTexture()
+                    scenarioBlock.delvesFrame.spell[id].mask:SetAllPoints(scenarioBlock.delvesFrame.spell[id].icon)
+                    scenarioBlock.delvesFrame.spell[id].mask:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+                    scenarioBlock.delvesFrame.spell[id].icon:AddMaskTexture(scenarioBlock.delvesFrame.spell[id].mask)
+                end
+
                 scenarioBlock.delvesFrame.spell[id].icon:SetDesaturated(spellInfo.enabledState == Enum.WidgetEnabledState.Disabled)
 
                 scenarioBlock.delvesFrame.spell[id].spellID = spellData.spellID
@@ -473,7 +481,13 @@ local function scenarioAffixes(self, fakeIds)
 
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(v)
         if filedataid then
-            SetPortraitToTexture(self.affixeFrame.affixes[idx].icon, filedataid)
+            self.affixeFrame.affixes[idx].icon:SetTexture(filedataid)
+            if not self.affixeFrame.affixes[idx].mask then
+                self.affixeFrame.affixes[idx].mask = self.affixeFrame.affixes[idx]:CreateMaskTexture()
+                self.affixeFrame.affixes[idx].mask:SetAllPoints(self.affixeFrame.affixes[idx].icon)
+                self.affixeFrame.affixes[idx].mask:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+                self.affixeFrame.affixes[idx].icon:AddMaskTexture(self.affixeFrame.affixes[idx].mask)
+            end
         end
         self.affixeFrame.affixes[idx].affixID = v
         self.affixeFrame.affixes[idx]:Show()
