@@ -221,19 +221,31 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index)
     return newBlock
 end
 
-function GwObjectivesBlockTemplateMixin:AddObjective(text, finished, objectiveIndex, objectiveType)
+function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, options)
+    self.numObjectives = self.numObjectives + 1
     local objectiveBlock = self:GetObjectiveBlock(objectiveIndex)
     objectiveBlock:Show()
-    objectiveBlock.ObjectiveText:SetText(text)
+
+    local formattedText = options.isAchievement and GW.FormatObjectiveNumbers(text) or text
+    objectiveBlock.ObjectiveText:SetText(formattedText)
     objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
-    if finished then
-        objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
-    else
-        objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
+
+    if options.isAchievement then
+        if options.eligible then
+            objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
+        else
+            objectiveBlock.ObjectiveText:SetTextColor(DIM_RED_FONT_COLOR.r, DIM_RED_FONT_COLOR.g, DIM_RED_FONT_COLOR.b)
+        end
+    elseif options.isQuest then
+        if options.finished then
+            objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
+        else
+            objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
+        end
     end
 
-    if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
-        if objectiveType == "progressbar" then
+    if options.objectiveType == "progressbar" or GW.ParseObjectiveString(objectiveBlock, text, nil, nil, options.qty, options.totalqty) then
+        if options.objectiveType == "progressbar" then
             objectiveBlock.StatusBar:SetShown(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
             objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
             objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(self.questID))
@@ -243,6 +255,7 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, finished, objectiveIn
     else
         objectiveBlock.StatusBar:Hide()
     end
+
     local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
     objectiveBlock:SetHeight(h)
     if objectiveBlock.StatusBar:IsShown() then
@@ -253,8 +266,14 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, finished, objectiveIn
         end
         objectiveBlock:SetHeight(h)
     end
+
+    if options.isAchievement and options.timerShown then
+        objectiveBlock:AddTimer(options.duration, options.startTime)
+    elseif options.isAchievement then
+        objectiveBlock.TimerBar:Hide()
+    end
+
     self.height = self.height + objectiveBlock:GetHeight()
-    self.numObjectives = self.numObjectives + 1
 end
 
 function GwObjectivesBlockTemplateMixin:IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)
@@ -271,16 +290,15 @@ end
 function GwObjectivesBlockTemplateMixin:UpdateQuestObjective(numObjectives)
     local addedObjectives = 1
     for objectiveIndex = 1, numObjectives do
-        --local text, _, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
         local text, objectiveType, finished = GetQuestObjectiveInfo(self.questID, objectiveIndex, false)
         if not finished or not text then
-            self:AddObjective(text, finished, addedObjectives, objectiveType)
+            self:AddObjective(text, addedObjectives, {isQuest = true, finished = finished, objectiveType = objectiveType,})
             addedObjectives = addedObjectives + 1
         end
     end
 end
 
-function GwObjectivesBlockTemplateMixin:UpdateQuestItem()
+function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
     local link, item, _, showItemWhenComplete = nil, nil, nil, false
 
     if self.questLogIndex then
@@ -305,7 +323,7 @@ function GwObjectivesBlockTemplateMixin:UpdateQuestItem()
     end
 end
 
-function GwObjectivesBlockTemplateMixin:UpdateQuestItemPositions(button, height, type)
+function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(button, height, type)
     if not button or not self.hasItem then
         return
     end
@@ -327,65 +345,6 @@ function GwObjectivesBlockTemplateMixin:UpdateQuestItemPositions(button, height,
     end
 
     button:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
-end
-
-function GwObjectivesBlockTemplateMixin:OnClick(button)
-    if ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
-        return
-    end
-
-    if button ~= "RightButton" then
-		local questID = self.id;
-		if IsModifiedClick("QUESTWATCHTOGGLE") then
-			C_QuestLog.RemoveQuestWatch(questID);
-		else
-			local quest = QuestCache:Get(questID);
-			if quest.isAutoComplete and quest:IsComplete() then
-				RemoveAutoQuestPopUp(questID)
-				ShowQuestComplete(questID);
-			else
-				QuestMapFrame_OpenToQuestDetails(questID);
-			end
-		end
-	else
-		MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
-			local questID = self.id;
-			rootDescription:CreateTitle(C_QuestLog.GetTitleForQuestID(questID));
-
-			if C_SuperTrack.GetSuperTrackedQuestID() ~= questID then
-				rootDescription:CreateButton(SUPER_TRACK_QUEST, function()
-					C_SuperTrack.SetSuperTrackedQuestID(questID);
-				end);
-			else
-				rootDescription:CreateButton(STOP_SUPER_TRACK_QUEST, function()
-					C_SuperTrack.SetSuperTrackedQuestID(0);
-				end);
-			end
-
-			local toggleDetailsText = QuestUtil.IsShowingQuestDetails(questID) and OBJECTIVES_HIDE_VIEW_IN_QUESTLOG or OBJECTIVES_VIEW_IN_QUESTLOG;
-
-			rootDescription:CreateButton(toggleDetailsText, function()
-				QuestUtil.OpenQuestDetails(questID);
-			end);
-
-			rootDescription:CreateButton(OBJECTIVES_SHOW_QUEST_MAP, function()
-				QuestMapFrame_OpenToQuestDetails(questID);
-			end);
-
-			rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()
-				C_QuestLog.RemoveQuestWatch(questID);
-			end);
-
-			if C_QuestLog.IsPushableQuest(questID) and IsInGroup() then
-				rootDescription:CreateButton(SHARE_QUEST, function()
-					QuestUtil.ShareQuest(questID);
-				end);
-			end
-			rootDescription:CreateButton(ABANDON_QUEST_ABBREV, function()
-				QuestMapQuestOptions_AbandonQuest(questID);
-			end)
-		end)
-	end
 end
 
 function GwObjectivesBlockTemplateMixin:UpdateQuest(parent, quest)
@@ -418,7 +377,7 @@ function GwObjectivesBlockTemplateMixin:UpdateQuest(parent, quest)
         self.Header:SetText(quest.title)
 
         --Quest item
-        GW.CombatQueue_Queue(nil, self.UpdateQuestItem, {self})
+        GW.CombatQueue_Queue(nil, self.UpdateObjectiveActionButton, {self})
 
         if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
             isComplete = true
@@ -427,23 +386,23 @@ function GwObjectivesBlockTemplateMixin:UpdateQuest(parent, quest)
         self:UpdateQuestObjective(numObjectives)
 
         if requiredMoney ~= nil and requiredMoney > GetMoney() and not isComplete then
-            self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney), isComplete, self.numObjectives + 1, nil)
+            self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney), self.numObjectives + 1, {isQuest = true, finished = isComplete, objectiveType = nil})
         end
 
         if isComplete then
             if quest.isAutoComplete then
-                self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, false, self.numObjectives + 1, nil)
+                self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
             else
                 local completionText = GetQuestLogCompletionText(questLogIndex)
 
                 if (completionText) then
-                    self:AddObjective(completionText, false, self.numObjectives + 1, nil)
+                    self:AddObjective(completionText, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
                 else
-                    self:AddObjective(QUEST_WATCH_QUEST_READY, false, self.numObjectives + 1, nil)
+                    self:AddObjective(QUEST_WATCH_QUEST_READY, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
                 end
             end
         elseif questFailed then
-            self:AddObjective(FAILED, false, self.numObjectives + 1, nil)
+            self:AddObjective(FAILED, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
         end
         self:SetScript("OnClick", self.OnClick)
     end
@@ -487,7 +446,7 @@ function GwObjectivesBlockTemplateMixin:UpdateQuestByID(parent, quest, questID, 
     self.Header:SetText(quest.title)
 
     --Quest item
-    GW.CombatQueue_Queue(nil, self.UpdateQuestItem, {self})
+    GW.CombatQueue_Queue(nil, self.UpdateObjectiveActionButton, {self})
 
     if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
         isComplete = true
@@ -496,23 +455,23 @@ function GwObjectivesBlockTemplateMixin:UpdateQuestByID(parent, quest, questID, 
     self:UpdateQuestObjective(numObjectives)
 
     if requiredMoney ~= nil and requiredMoney > GetMoney() and not isComplete then
-        self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney), isComplete, self.numObjectives + 1, nil)
+        self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney), self.numObjectives + 1, {isQuest = true, finished = isComplete, objectiveType = nil})
     end
 
     if isComplete then
         if quest.isAutoComplete then
-            self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, false, self.numObjectives + 1, nil)
+            self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
         else
             local completionText = GetQuestLogCompletionText(questLogIndex)
 
             if (completionText) then
-                self:AddObjective(completionText, false, self.numObjectives + 1, nil)
+                self:AddObjective(completionText, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
             else
-                self:AddObjective(QUEST_WATCH_QUEST_READY, false, self.numObjectives + 1, nil)
+                self:AddObjective(QUEST_WATCH_QUEST_READY, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
             end
         end
     elseif questFailed then
-        self:AddObjective(FAILED, false, self.numObjectives + 1, nil)
+        self:AddObjective(FAILED, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
     end
     self:SetScript("OnClick", self.OnClick)
 

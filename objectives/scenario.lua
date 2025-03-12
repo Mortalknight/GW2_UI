@@ -193,9 +193,9 @@ local function updateCurrentScenario(self, event, ...)
             GW.RemoveTrackerNotificationOfType("TORGHAST")
             scenarioBlock:Hide()
         end
-        GW.CombatQueue_Queue(nil, scenarioBlock.UpdateQuestItem, {scenarioBlock})
+        GW.CombatQueue_Queue(nil, scenarioBlock.UpdateObjectiveActionButton, {scenarioBlock})
         if scenarioBlock.hasItem then
-            GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateQuestItemPositions, {scenarioBlock.actionButton, scenarioBlock.height, "SCENARIO"})
+            GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateObjectiveActionButtonPosition, {scenarioBlock.actionButton, scenarioBlock.height, "SCENARIO"})
         end
         for i = scenarioBlock.numObjectives + 1, 20 do
             if _G[scenarioBlock:GetName() .. "Objective" .. i] then
@@ -332,7 +332,7 @@ local function updateCurrentScenario(self, event, ...)
         scenarioBlock.questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
     end
 
-    GW.CombatQueue_Queue(nil, scenarioBlock.UpdateQuestItem, {scenarioBlock})
+    GW.CombatQueue_Queue(nil, scenarioBlock.UpdateObjectiveActionButton, {scenarioBlock})
 
     for criteriaIndex = 1, numCriteria do
         local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
@@ -429,7 +429,7 @@ local function updateCurrentScenario(self, event, ...)
 
     scenarioBlock.height = scenarioBlock.height + 5
     if scenarioBlock.hasItem then
-        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateQuestItemPositions, {scenarioBlock.actionButton, scenarioBlock.height, "SCENARIO"})
+        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateObjectiveActionButtonPosition, {scenarioBlock.actionButton, scenarioBlock.height, "SCENARIO"})
     end
 
     local intGWQuestTrackerHeight = 0

@@ -266,7 +266,7 @@ local function setUpBlock(container, questIDs, collapsed)
 
                 GwBonusObjectiveBlock.groupButton:SetShown(GwBonusObjectiveBlock.hasGroupFinderButton)
 
-                GW.CombatQueue_Queue(nil, GwBonusObjectiveBlock.UpdateQuestItem, {GwBonusObjectiveBlock})
+                GW.CombatQueue_Queue(nil, GwBonusObjectiveBlock.UpdateObjectiveActionButton, {GwBonusObjectiveBlock})
 
                 if not foundEvent then
                     savedContainerHeight = 20
@@ -330,7 +330,7 @@ local function setUpBlock(container, questIDs, collapsed)
                 savedContainerHeight = savedContainerHeight + GwBonusObjectiveBlock.height + 10
                 GwBonusObjectiveBlock.savedHeight = savedContainerHeight
                 if GwBonusObjectiveBlock.hasItem then
-                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. blockIndex, GwBonusObjectiveBlock.UpdateQuestItemPositions, {GwBonusObjectiveBlock.actionButton, savedContainerHeight, "EVENT"})
+                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. blockIndex, GwBonusObjectiveBlock.UpdateObjectiveActionButtonPosition, {GwBonusObjectiveBlock.actionButton, savedContainerHeight, "EVENT"})
                 end
 
                 if not container.collapsed then
@@ -364,7 +364,7 @@ local function updateBonusObjective(self)
             _G["GwBonusObjectiveBlock" .. i].questID = false
             _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
             if _G["GwBonusObjectiveBlock" .. i].groupButton then _G["GwBonusObjectiveBlock" .. i].groupButton:Hide() end
-            GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, _G["GwBonusObjectiveBlock" .. i].UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
+            GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, _G["GwBonusObjectiveBlock" .. i].UpdateObjectiveActionButton, {_G["GwBonusObjectiveBlock" .. i]})
         end
     end
 
@@ -396,7 +396,7 @@ local function updateBonusObjective(self)
             _G["GwBonusObjectiveBlock" .. i].questID = false
             _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
             _G["GwBonusObjectiveBlock" .. i]:Hide()
-            GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, _G["GwBonusObjectiveBlock" .. i].UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
+            GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, _G["GwBonusObjectiveBlock" .. i].UpdateObjectiveActionButton, {_G["GwBonusObjectiveBlock" .. i]})
             if _G["GwBonusObjectiveBlock" .. i].ticker then
                 _G["GwBonusObjectiveBlock" .. i].ticker:Cancel()
                 _G["GwBonusObjectiveBlock" .. i].ticker = nil

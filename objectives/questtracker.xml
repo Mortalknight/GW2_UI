@@ -195,7 +195,7 @@
         </Anchors>
     </Frame>
 
-    <Frame name="GwQuesttrackerContainer" parent="GwQuestTracker" virtual="true" frameStrata="LOW">
+    <Frame name="GwQuesttrackerContainer" parent="GwQuestTracker" virtual="true" frameStrata="LOW" mixin="GwObjectivesContainerMixin">
         <Size x="300" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
