@@ -6,7 +6,7 @@ function GwObjectivesContainerMixin:UpdateLayout()
     -- override per module
 end
 
-function GwObjectivesContainerMixin:BlockOnClick(button)
+function GwObjectivesContainerMixin:BlockOnClick()
     -- override per module
 end
 

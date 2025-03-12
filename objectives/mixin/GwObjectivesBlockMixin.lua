@@ -2,6 +2,14 @@ local _, GW = ...
 
 GwObjectivesBlockTemplateMixin = {}
 
+function GwObjectivesBlockTemplateMixin:UpdateBlockObjectives()
+    -- override per module
+end
+
+function GwObjectivesBlockTemplateMixin:UpdateBlock()
+    -- override per module
+end
+
 local function wiggleAnim(self)
     if self.animation == nil then
         self.animation = 0
@@ -287,17 +295,6 @@ function GwObjectivesBlockTemplateMixin:IsQuestAutoTurnInOrAutoAccept(blockQuest
     return false
 end
 
-function GwObjectivesBlockTemplateMixin:UpdateQuestObjective(numObjectives)
-    local addedObjectives = 1
-    for objectiveIndex = 1, numObjectives do
-        local text, objectiveType, finished = GetQuestObjectiveInfo(self.questID, objectiveIndex, false)
-        if not finished or not text then
-            self:AddObjective(text, addedObjectives, {isQuest = true, finished = finished, objectiveType = objectiveType,})
-            addedObjectives = addedObjectives + 1
-        end
-    end
-end
-
 function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
     local link, item, _, showItemWhenComplete = nil, nil, nil, false
 
@@ -345,145 +342,4 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(butt
     end
 
     button:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
-end
-
-function GwObjectivesBlockTemplateMixin:UpdateQuest(parent, quest)
-    local questID = quest:GetID()
-    local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
-    local isComplete = quest:IsComplete()
-    local questLogIndex = quest:GetQuestLogIndex()
-    local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
-    local questFailed = C_QuestLog.IsFailed(questID)
-    local hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
-
-    self.height = 25
-    self.numObjectives = 0
-    self.turnin:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "COMPLETE"))
-    self.popupQuestAccept:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
-    self.groupButton:SetShown(hasGroupFinderButton)
-
-    if questID and questLogIndex and questLogIndex > 0 then
-        if requiredMoney then
-            parent.watchMoneyReasons = parent.watchMoneyReasons + 1
-        else
-            parent.watchMoneyReasons = parent.watchMoneyReasons - 1
-        end
-
-        self.questID = questID
-        self.id = questID
-        self.questLogIndex = questLogIndex
-        self.hasGroupFinderButton = hasGroupFinderButton
-
-        self.Header:SetText(quest.title)
-
-        --Quest item
-        GW.CombatQueue_Queue(nil, self.UpdateObjectiveActionButton, {self})
-
-        if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
-            isComplete = true
-        end
-
-        self:UpdateQuestObjective(numObjectives)
-
-        if requiredMoney ~= nil and requiredMoney > GetMoney() and not isComplete then
-            self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney), self.numObjectives + 1, {isQuest = true, finished = isComplete, objectiveType = nil})
-        end
-
-        if isComplete then
-            if quest.isAutoComplete then
-                self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
-            else
-                local completionText = GetQuestLogCompletionText(questLogIndex)
-
-                if (completionText) then
-                    self:AddObjective(completionText, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
-                else
-                    self:AddObjective(QUEST_WATCH_QUEST_READY, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
-                end
-            end
-        elseif questFailed then
-            self:AddObjective(FAILED, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
-        end
-        self:SetScript("OnClick", self.OnClick)
-    end
-    if self.objectiveBlocks == nil then
-        self.objectiveBlocks = {}
-    end
-
-    for i = self.numObjectives + 1, 20 do
-        if _G[self:GetName() .. "Objective" .. i] ~= nil then
-            _G[self:GetName() .. "Objective" .. i]:Hide()
-        end
-    end
-    self.height = self.height + 5
-    self:SetHeight(self.height)
-end
-
-function GwObjectivesBlockTemplateMixin:UpdateQuestByID(parent, quest, questID, questLogIndex)
-    local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
-    local isComplete = quest:IsComplete()
-    local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
-    local questFailed = C_QuestLog.IsFailed(questID)
-    local hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
-
-    self.height = 25
-    self.numObjectives = 0
-    self.turnin:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "COMPLETE"))
-    self.popupQuestAccept:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
-    self.groupButton:SetShown(hasGroupFinderButton)
-
-    if requiredMoney then
-        parent.watchMoneyReasons = parent.watchMoneyReasons + 1
-    else
-        parent.watchMoneyReasons = parent.watchMoneyReasons - 1
-    end
-
-    self.questID = questID
-    self.id = questID
-    self.questLogIndex = questLogIndex
-    self.hasGroupFinderButton = hasGroupFinderButton
-
-    self.Header:SetText(quest.title)
-
-    --Quest item
-    GW.CombatQueue_Queue(nil, self.UpdateObjectiveActionButton, {self})
-
-    if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
-        isComplete = true
-    end
-
-    self:UpdateQuestObjective(numObjectives)
-
-    if requiredMoney ~= nil and requiredMoney > GetMoney() and not isComplete then
-        self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney), self.numObjectives + 1, {isQuest = true, finished = isComplete, objectiveType = nil})
-    end
-
-    if isComplete then
-        if quest.isAutoComplete then
-            self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
-        else
-            local completionText = GetQuestLogCompletionText(questLogIndex)
-
-            if (completionText) then
-                self:AddObjective(completionText, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
-            else
-                self:AddObjective(QUEST_WATCH_QUEST_READY, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
-            end
-        end
-    elseif questFailed then
-        self:AddObjective(FAILED, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
-    end
-    self:SetScript("OnClick", self.OnClick)
-
-    if self.objectiveBlocks == nil then
-        self.objectiveBlocks = {}
-    end
-
-    for i = self.numObjectives + 1, 20 do
-        if _G[self:GetName() .. "Objective" .. i] ~= nil then
-            _G[self:GetName() .. "Objective" .. i]:Hide()
-        end
-    end
-    self.height = self.height + 5
-    self:SetHeight(self.height)
 end

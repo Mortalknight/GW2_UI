@@ -3,7 +3,7 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local MAX_OBJECTIVES = 10
 GwAchievementTrackerBlockMixin = {}
-function GwAchievementTrackerBlockMixin:UpdateAchievementObjectives(parent)
+function GwAchievementTrackerBlockMixin:UpdateBlock(parent)
     local numIncomplete = 0
     local numCriteria = GetAchievementNumCriteria(self.id)
     local description = select(8, GetAchievementInfo(self.id))
@@ -71,8 +71,8 @@ function GwAchievementTrackerBlockMixin:UpdateAchievementObjectives(parent)
     end
 
     for i = self.numObjectives + 1, 20 do
-        if _G[self:GetName() .. "GwAchievementObjective" .. i] ~= nil then
-            _G[self:GetName() .. "GwAchievementObjective" .. i]:Hide()
+        if _G[self:GetName() .. "Objective" .. i] then
+            _G[self:GetName() .. "Objective" .. i]:Hide()
         end
     end
 
@@ -165,7 +165,7 @@ function GwAchievementTrackerContainerMixin:UpdateLayout(event, ...)
                 return
             end
             block.id = achievementID
-            block:UpdateAchievementObjectives(self)
+            block:UpdateBlock(self)
 
             block.Header:SetText(achievementName)
 
