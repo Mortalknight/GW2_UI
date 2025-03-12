@@ -250,7 +250,7 @@ function GwQuestLogBlockMixin:UpdateBlockObjectives(numObjectives)
     for objectiveIndex = 1, numObjectives do
         local text, objectiveType, finished = GetQuestObjectiveInfo(self.questID, objectiveIndex, false)
         if not finished or not text then
-            self:AddObjective(text, addedObjectives, {isQuest = true, finished = finished, objectiveType = objectiveType,})
+            self:AddObjective(text, addedObjectives, {isQuest = true, finished = finished, objectiveType = objectiveType})
             addedObjectives = addedObjectives + 1
         end
     end

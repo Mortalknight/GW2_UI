@@ -87,9 +87,15 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
             objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
         end
 
-        if not ParseObjectiveString(objectiveBlock, text, objectiveType, quantity, nil, nil, isMythicKeystone) then
+        if objectiveType == "progressbar" then
+            objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
+            objectiveBlock.StatusBar:SetValue(quantity or 0)
+            objectiveBlock.StatusBar:SetShown(isMythicKeystone or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
+            objectiveBlock.StatusBar.precentage = true
+        elseif not ParseObjectiveString(objectiveBlock, text, nil, nil, isMythicKeystone) then
             objectiveBlock.StatusBar:Hide()
         end
+
         local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
         objectiveBlock:SetHeight(h)
         if objectiveBlock.StatusBar:IsShown() then

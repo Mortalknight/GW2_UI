@@ -26,7 +26,6 @@ function GwAchievementTrackerBlockMixin:UpdateBlock(parent)
 
                         criteriaString = description
                     else
-
                         criteriaString = description
                     end
                 else
@@ -37,8 +36,8 @@ function GwAchievementTrackerBlockMixin:UpdateBlock(parent)
                 end
 
                 local needTimer = duration and elapsed and elapsed < duration
-                self:AddObjective(criteriaString, numIncomplete, {isAchievement = true, qty = quantity, totalqty = totalQuantity, eligible = eligible, timerShown = needTimer, duration = duration, startTime = GetTime() - (elapsed or 0)})
 
+                self:AddObjective(criteriaString, numIncomplete, {isAchievement = true, qty = quantity, totalqty = totalQuantity, eligible = eligible, timerShown = needTimer, duration = duration, startTime = GetTime() - (elapsed or 0)})
                 if numIncomplete == MAX_OBJECTIVES then
                     self:AddObjective("...", numIncomplete + 1, {isAchievement = true, qty = nil, totalqty = nil, eligible = true, timerShown = false, duration = nil, startTime = nil})
                     break

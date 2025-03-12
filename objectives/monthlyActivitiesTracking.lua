@@ -93,9 +93,7 @@ local function addObjective(block, text, finished, qty, totalqty)
     objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
     objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
 
-    if ParseObjectiveString(objectiveBlock, text, nil, nil, qty, totalqty) then
-        --added progressbar in ParseObjectiveString
-    else
+    if not ParseObjectiveString(objectiveBlock, text, qty, totalqty) then
         objectiveBlock.StatusBar:Hide()
     end
     local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10

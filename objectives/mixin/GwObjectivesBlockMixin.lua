@@ -49,14 +49,7 @@ local function wiggleAnim(self)
     )
 end
 
-local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded, overrideShowStatusbarSetting)
-    if objectiveType == "progressbar" then
-        block.StatusBar:SetMinMaxValues(0, 100)
-        block.StatusBar:SetValue(quantity or 0)
-        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
-        block.StatusBar.precentage = true
-        return true
-    end
+local function ParseObjectiveString(block, text, numItems, numNeeded, overrideShowStatusbarSetting)
     block.StatusBar.precentage = false
 
     if not numItems or not numNeeded then
@@ -250,14 +243,15 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
         end
     end
 
-    if options.objectiveType == "progressbar" or GW.ParseObjectiveString(objectiveBlock, text, options.objectiveType, options.qty, options.totalqty) then
-        if options.objectiveType == "progressbar" then
-            objectiveBlock.StatusBar:SetShown(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
-            objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
-            objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(self.questID))
-            objectiveBlock.progress = GetQuestProgressBarPercent(self.questID) / 100
-            objectiveBlock.StatusBar.precentage = true
-        end
+    if options.objectiveType == "progressbar" then
+        objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
+        objectiveBlock.StatusBar:SetValue(options.qty or GetQuestProgressBarPercent(self.questID) or 0)
+        objectiveBlock.StatusBar:SetShown(options.overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
+        objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(self.questID))
+        objectiveBlock.progress = (options.qty or GetQuestProgressBarPercent(self.questID)) / 100
+        objectiveBlock.StatusBar.precentage = true
+        precentageComplete = objectiveBlock.progress
+    elseif GW.ParseObjectiveString(objectiveBlock, text, options.qty, options.totalqty, options.overrideShowStatusbarSetting) then
         precentageComplete = objectiveBlock.progress
     else
         objectiveBlock.StatusBar:Hide()
