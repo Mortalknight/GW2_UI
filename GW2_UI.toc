@@ -211,6 +211,8 @@ mainbar\powerbar.lua
 mainbar\classpowers.lua
 mainbar\dodgebar.lua
 mainbar\autoRepair.lua
+mainbar\extraAB_bossAB.lua
+mainbar\altPowerBar.lua
 
 inventory\bag.xml
 inventory\bank.xml
@@ -240,6 +242,11 @@ immersive\damagetext.xml
 immersive\damagetext.lua
 immersive\eventTracker.lua
 immersive\interruptAnnouncement.lua
+immersive\minimapButtons.lua
+immersive\minimapInstanceDifficult.lua
+immersive\minimap.lua
+immersive\worldmap.lua
+immersive\widgetUI.lua
 
 objectives\mixin\GwObjectivesAnimationMixin.lua
 objectives\mixin\GwObjectivesBlockMixin.lua
@@ -252,10 +259,6 @@ objectives\scenarioWidgets\jailersTower.lua
 objectives\scenarioWidgets\warfronts.lua
 objectives\scenarioWidgets\emberCourt.lua
 objectives\questtracker.xml
-objectives\minimapButtons.lua
-objectives\minimapInstanceDifficult.lua
-objectives\map.lua
-objectives\worldmap.lua
 objectives\mythicPlus.lua
 objectives\objectives.lua
 objectives\scenario.lua
@@ -267,9 +270,7 @@ objectives\monthlyActivitiesTracking.lua
 objectives\bossFrames.lua
 objectives\arenaFrames.lua
 objectives\achievement.lua
-objectives\extraAB_bossAB.lua
-objectives\altPowerBar.lua
-objectives\widgetUI.lua
+objectives\ObjectivesTracker.lua
 
 character\character.xml
 character\paperdoll.xml

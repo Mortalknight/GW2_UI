@@ -482,7 +482,7 @@ local function commonEntering()
     end
     C_Timer.After(0.5, function()
         if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
-            GW.RemoveTrackerNotificationOfType("ARENA")
+            GwObjectivesNotification:RemoveNotificationOfType("ARENA")
         end
     end)
 end
@@ -636,7 +636,7 @@ local function evPlayerLogin(self)
 
     -- make sure to load the objetives tracker before we load the altert system prevent some errors with other addons
     if GW.settings.QUESTTRACKER_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
-        GW.LoadQuestTracker()
+        GW.LoadObjectivesTracker()
     end
 
     -- load alert settings

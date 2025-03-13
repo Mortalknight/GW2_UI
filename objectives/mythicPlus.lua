@@ -7,14 +7,14 @@ local function OnEvent(_, event)
 
     if event == "CHALLENGE_MODE_START" or difficultyID == 8 then
         GwQuesttrackerContainerQuests.shouldUpdate = false
-        GW.CollapseQuestHeader(GwQuesttrackerContainerCampaign, true, false)
+        GwQuesttrackerContainerCampaign:CollapseHeader(true, false)
         GwQuesttrackerContainerQuests.shouldUpdate = false
-        GW.CollapseQuestHeader(GwQuesttrackerContainerQuests, true, false)
-        GW.CollapseRecipeHeader(GwQuesttrackerContainerRecipe, true, false)
-        GW.CollapseonthlyActivitiesHeader(GwQuesttrackerContainerMonthlyActivity, true, false)
-        GW.CollapseCollectionHeader(GwQuesttrackerContainerCollection, true, false)
-        GW.CollapseBonusObjectivesHeader(GwQuesttrackerContainerBonusObjectives, true, false)
-        GW.CollapseAchievementHeader(GwQuesttrackerContainerAchievement, true, false)
+        GwQuesttrackerContainerQuests:CollapseHeader(true, false)
+        GwQuesttrackerContainerRecipe:CollapseHeader(true, false)
+        GwQuesttrackerContainerMonthlyActivity:CollapseHeader(true, false)
+        GwQuesttrackerContainerCollection:CollapseHeader(true, false)
+        GwQuesttrackerContainerBonus:CollapseHeader(true, false)
+        GwQuesttrackerContainerAchievement:CollapseHeader(true, false)
         if GwQuesttrackerContainerWQT then
             GW.CollapseWQTAddonHeader(GwQuesttrackerContainerWQT, true, false)
         end
@@ -26,14 +26,14 @@ local function OnEvent(_, event)
         end
     elseif event == "CHALLENGE_MODE_COMPLETED" or event == "PLAYER_ENTERING_WORLD" then
         GwQuesttrackerContainerQuests.shouldUpdate = false
-        GW.CollapseQuestHeader(GwQuesttrackerContainerCampaign, false, true)
+        GwQuesttrackerContainerCampaign:CollapseHeader(false, true)
         GwQuesttrackerContainerQuests.shouldUpdate = false
-        GW.CollapseQuestHeader(GwQuesttrackerContainerQuests, false, true)
-        GW.CollapseRecipeHeader(GwQuesttrackerContainerRecipe, false, true)
-        GW.CollapseonthlyActivitiesHeader(GwQuesttrackerContainerMonthlyActivity, false, true)
-        GW.CollapseCollectionHeader(GwQuesttrackerContainerCollection, true, false)
-        GW.CollapseBonusObjectivesHeader(GwQuesttrackerContainerBonusObjectives, false, true)
-        GW.CollapseAchievementHeader(GwQuesttrackerContainerAchievement, false, true)
+        GwQuesttrackerContainerQuests:CollapseHeader(false, true)
+        GwQuesttrackerContainerRecipe:CollapseHeader(false, true)
+        GwQuesttrackerContainerMonthlyActivity:CollapseHeader(false, true)
+        GwQuesttrackerContainerCollection:CollapseHeader(false, true)
+        GwQuesttrackerContainerBonus:CollapseHeader(false, true)
+        GwQuesttrackerContainerAchievement:CollapseHeader(false, true)
         if GwQuesttrackerContainerWQT then
             GW.CollapseWQTAddonHeader(GwQuesttrackerContainerWQT, false, true)
         end

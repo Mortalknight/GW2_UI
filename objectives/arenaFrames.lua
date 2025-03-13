@@ -1,6 +1,4 @@
 local _, GW = ...
-local AddTrackerNotification = GW.AddTrackerNotification
-local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local AddToClique = GW.AddToClique
 local PowerBarColorCustom = GW.PowerBarColorCustom
@@ -19,6 +17,8 @@ local FractionIcon = {}
     FractionIcon.Alliance = "|TInterface/AddOns/GW2_UI/textures/battleground/Alliance:16:16:0:0|t "
     FractionIcon.Horde = "|TInterface/AddOns/GW2_UI/textures/battleground/Horde:16:16:0:0|t "
     FractionIcon.NONE = ""
+
+GwObjectivesArenaContainerMixin = {}
 
 local function setCompass()
     local compassData = {}
@@ -52,7 +52,7 @@ local function setCompass()
     compassData.Y = nil
     compassData.COLOR = TRACKER_TYPE_COLOR.ARENA
 
-    AddTrackerNotification(compassData, true)
+    GwObjectivesNotification:AddNotification(compassData, true)
 end
 
 local function updateArenaFrameHeight(self)
@@ -241,7 +241,7 @@ local function registerFrame(i, container)
             updateArenaFrameHeight(container)
             local _, instanceType = IsInInstance()
             if countArenaFrames < 1 and instanceType ~= "arena" and instanceType ~= "pvp" then
-                RemoveTrackerNotificationOfType("ARENA")
+                GwObjectivesNotification:RemoveNotificationOfType("ARENA")
                 countArenaFrames = 0
             end
         end
@@ -342,7 +342,11 @@ local function SetUpFramePosition()
 end
 GW.SetUpArenaFramePosition = SetUpFramePosition
 
-local function LoadArenaFrame(self)
+function GwObjectivesArenaContainerMixin:InitModule()
+    if C_AddOns.IsAddOnLoaded("sArena") then
+        return
+    end
+
     for i = 1, MAX_ARENA_ENEMIES do
         arenaFrames[i] = registerFrame(i, self)
         arenaPrepFrames[i] = registerPrepFrame(self)
@@ -367,4 +371,3 @@ local function LoadArenaFrame(self)
 
     C_Timer.After(0.01, function() updateArenaFrameHeight(self) end)
 end
-GW.LoadArenaFrame = LoadArenaFrame

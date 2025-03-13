@@ -49,27 +49,6 @@ local function wiggleAnim(self)
     )
 end
 
-local function ParseObjectiveString(block, text, numItems, numNeeded, overrideShowStatusbarSetting)
-    block.StatusBar.precentage = false
-
-    if not numItems or not numNeeded then
-        numItems, numNeeded = string.match(text, "(%d+)/(%d+)")
-    end
-
-    numItems = tonumber(numItems)
-    numNeeded = tonumber(numNeeded)
-
-    if numItems and numNeeded and numNeeded > 1 and numItems < numNeeded then
-        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
-        block.StatusBar:SetMinMaxValues(0, numNeeded)
-        block.StatusBar:SetValue(numItems)
-        block.progress = numItems / numNeeded
-        return true
-    end
-    return false
-end
-GW.ParseObjectiveString = ParseObjectiveString
-
 function GwObjectivesBlockTemplateMixin:OnEnter()
     if not self.hover then
         self.oldColor = {}
@@ -225,7 +204,14 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
     local precentageComplete = 0
 
     objectiveBlock:Show()
-    local formattedText = options.isAchievement and GW.FormatObjectiveNumbers(text) or text
+    local formattedText = text
+    if options.isReceip then
+        if options.qty < options.totalqty then
+            objectiveBlock.ObjectiveText:SetText(GW.GetLocalizedNumber(options.qty) .. "/" .. GW.GetLocalizedNumber(options.totalqty) .. " " .. text)
+        end
+    elseif options.isAchievement then
+        GW.FormatObjectiveNumbers(text)
+    end
     objectiveBlock.ObjectiveText:SetText(formattedText)
     objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
 
@@ -321,20 +307,20 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(heig
         return
     end
 
-    local height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight()
-    if GwObjectivesNotification:IsShown() then
-        height = height + GwObjectivesNotification.desc:GetHeight()
+    height = height + GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainerBossFrames:GetHeight() + GW.ObjectiveTrackerContainerArenaFrames:GetHeight()
+    if GW.ObjectiveTrackerContainer.Notification:IsShown() then
+        height = height + GW.ObjectiveTrackerContainer.Notification.desc:GetHeight()
     else
         height = height - 40
     end
     if type == "SCENARIO" then
-        height = height - (GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight())
+        height = height - (GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainerArenaFrames:GetHeight())
     end
     if type == "EVENT" then
-        height = height + GwQuesttrackerContainerQuests:GetHeight()
+        height = height + GW.ObjectiveTrackerContainer.Quests:GetHeight()
     end
     if type == "QUEST" or type == "EVENT" then
-        height = height + GwQuesttrackerContainerCampaign:GetHeight()
+        height = height + GW.ObjectiveTrackerContainer.Campaign:GetHeight()
     end
 
     self.actionButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)

@@ -188,7 +188,7 @@
         </Anchors>
     </ScrollFrame>
 
-    <Frame name="GwQuestTracker" parent="UIParent" virtual="true" frameStrata="LOW">
+    <Frame name="GwQuestTracker" parent="UIParent" virtual="true" frameStrata="LOW" mixin="GwObjectivesTrackerMixin">
         <Size x="400" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>

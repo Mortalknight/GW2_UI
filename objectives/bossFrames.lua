@@ -1,10 +1,10 @@
 local _, GW = ...
-local AddTrackerNotification = GW.AddTrackerNotification
-local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local AddToClique = GW.AddToClique
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local bossFrames = {}
+
+GwObjectivesBossContainerMixin = {}
 
 local function updateBossFrameHeight()
     local i = 0
@@ -125,7 +125,7 @@ local function bossFrameOnShow(self)
     compassData.COLOR = TRACKER_TYPE_COLOR.BOSS
     compassData.TITLE = UnitName(self.unit)
 
-    AddTrackerNotification(compassData)
+    GwObjectivesNotification:AddNotification(compassData)
     updateBoss_Name(self)
     updateBoss_Health(self)
     updateBoss_Power(self)
@@ -138,7 +138,7 @@ local function bossFrameOnHide(self)
     updateBossFrameHeight()
 
     if self.id == 1 then
-        RemoveTrackerNotificationOfType("BOSS")
+        GwObjectivesNotification:RemoveNotificationOfType("BOSS")
     end
 end
 
@@ -236,11 +236,10 @@ local function registerFrame(i)
 end
 GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 
-local function LoadBossFrame()
+function GwObjectivesBossContainerMixin:InitModule()
     for i = 1, 8 do
         bossFrames[i] = registerFrame(i)
     end
     SetUpFramePosition()
     C_Timer.After(0.01, function() updateBossFrameHeight() end)
 end
-GW.LoadBossFrame = LoadBossFrame

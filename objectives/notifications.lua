@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local AddToAnimation = GW.AddToAnimation
-local ParseSimpleObjective = GW.ParseSimpleObjective
 
 local notifications = {}
 local questCompass = {}
@@ -149,7 +148,7 @@ local function getNearestQuestPOI()
         end
 
         if poiX then
-            local objectiveText = isWQ and ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
+            local objectiveText = isWQ and GW.ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
             local isCampaign = QuestCache:Get(closestQuestID):IsCampaign()
             local isFrequent = QuestCache:Get(closestQuestID).frequency and QuestCache:Get(closestQuestID).frequency > 0
             if QuestCache:Get(closestQuestID).frequency == nil then
@@ -217,68 +216,6 @@ local function getBodyPOI()
 end
 GW.AddForProfiling("notifications", "getBodyPOI", getBodyPOI)
 
-local function AddTrackerNotification(data, forceUpdate)
-    if data == nil or data.ID == nil then
-        return
-    end
-    notifications[data.ID] = data
-    if forceUpdate then
-        GW.forceCompassHeaderUpdate()
-    end
-end
-GW.AddTrackerNotification = AddTrackerNotification
-
-local function RemoveTrackerNotificationById(notificationID)
-    if notificationID == nil then
-        return
-    end
-
-    notifications[notificationID] = nil
-end
-GW.RemoveTrackerNotificationById = RemoveTrackerNotificationById
-
-local function RemoveTrackerNotificationOfType(doType)
-    for k, v in pairs(notifications) do
-        if v.TYPE == doType then
-            notifications[k] = nil
-        end
-    end
-end
-GW.RemoveTrackerNotificationOfType = RemoveTrackerNotificationOfType
-
-local function removeNotification()
-    GwObjectivesNotification.shouldDisplay = false
-end
-GW.AddForProfiling("notifications", "removeNotification", removeNotification)
-
-local function NotificationStateChanged(show)
-    GwObjectivesNotification:SetShown(show)
-
-    AddToAnimation(
-        "notificationToggle",
-        0,
-        70,
-        GetTime(),
-        0.2,
-        function(step)
-            if not show then
-                step = 70 - step
-            end
-
-            GwObjectivesNotification:SetAlpha(step / 70)
-            GwObjectivesNotification:SetHeight(math.max(step, 1))
-        end,
-        nil,
-        function()
-            GwObjectivesNotification:SetShown(show)
-            GwObjectivesNotification.animating = false
-            GW.QuestTrackerLayoutChanged()
-        end,
-        true
-    )
-end
-GW.NotificationStateChanged = NotificationStateChanged
-
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
 local function updateRadar(self)
@@ -288,7 +225,7 @@ local function updateRadar(self)
 
     local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
     if x == nil or y == nil or self.data.X == nil then
-        RemoveTrackerNotificationById(GwObjectivesNotification.compass.dataIndex)
+        self:GetParent():RemoveNotificationById(self.dataIndex)
         return
     end
 
@@ -304,10 +241,64 @@ local function updateRadar(self)
 end
 GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
+GwObjectivesTrackerNotificationMixin = {}
+function GwObjectivesTrackerNotificationMixin:AddNotification(data, forceUpdate)
+    if data == nil or data.ID == nil then
+        return
+    end
+    notifications[data.ID] = data
+    if forceUpdate then
+        self:OnUpdate()
+    end
+end
+
+function GwObjectivesTrackerNotificationMixin:RemoveNotificationById(notificationID)
+    if notificationID == nil then
+        return
+    end
+
+    notifications[notificationID] = nil
+end
+
+function GwObjectivesTrackerNotificationMixin:RemoveNotificationOfType(doType)
+    for k, v in pairs(notifications) do
+        if v.TYPE == doType then
+            notifications[k] = nil
+        end
+    end
+end
+
+function GwObjectivesTrackerNotificationMixin:NotificationStateChanged(show)
+    self:SetShown(show)
+
+    AddToAnimation(
+        "notificationToggle",
+        0,
+        70,
+        GetTime(),
+        0.2,
+        function(step)
+            if not show then
+                step = 70 - step
+            end
+
+            self:SetAlpha(step / 70)
+            self:SetHeight(math.max(step, 1))
+        end,
+        nil,
+        function()
+            self:SetShown(show)
+            self.animating = false
+            GwQuestTracker:LayoutChanged()
+        end,
+        true
+    )
+end
+
 local currentCompassData
-local function SetObjectiveNotification()
+function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
     if not GW.settings.SHOW_QUESTTRACKER_COMPASS then
-        GwObjectivesNotification.shouldDisplay = false
+        self.shouldDisplay = false
         return
     end
 
@@ -332,7 +323,7 @@ local function SetObjectiveNotification()
         data = getNearestQuestPOI()
     end
     if data == nil then
-        removeNotification()
+        self.shouldDisplay = false
         return
     end
 
@@ -341,12 +332,12 @@ local function SetObjectiveNotification()
     end
 
     --remove tooltip here
-    GwObjectivesNotification.iconFrame:SetScript("OnEnter", nil)
-    GwObjectivesNotification.iconFrame:SetScript("OnLeave", nil)
+    self.iconFrame:SetScript("OnEnter", nil)
+    self.iconFrame:SetScript("OnLeave", nil)
 
     if icons[data.TYPE] ~= nil then
-        GwObjectivesNotification.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
-        GwObjectivesNotification.iconFrame.icon:SetTexCoord(
+        self.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
+        self.iconFrame.icon:SetTexCoord(
             icons[data.TYPE].l,
             icons[data.TYPE].r,
             icons[data.TYPE].t,
@@ -354,78 +345,152 @@ local function SetObjectiveNotification()
         )
 
         if data.TYPE == "DELVE" then
-            GwObjectivesNotification.iconFrame:SetScript("OnEnter", function()
-                GameTooltip:SetOwner(GwObjectivesNotification.iconFrame, "ANCHOR_LEFT")
-                GameTooltip:SetSpellByID(GwObjectivesNotification.iconFrame.tooltipSpellID)
+            self.iconFrame:SetScript("OnEnter", function()
+                GameTooltip:SetOwner(self.iconFrame, "ANCHOR_LEFT")
+                GameTooltip:SetSpellByID(self.iconFrame.tooltipSpellID)
             end)
-            GwObjectivesNotification.iconFrame:SetScript("OnLeave", function()
+            self.iconFrame:SetScript("OnLeave", function()
                 GameTooltip:Hide()
             end)
         end
 
         if data.PROGRESS ~= nil and icons[data.TYPE] then
-            GwObjectivesNotification.bonusbar:Show()
-            GwObjectivesNotification.bonusbar.progress = data.PROGRESS
-            GwObjectivesNotification.bonusbar.bar:SetValue(data.PROGRESS)
-            GwObjectivesNotification.iconFrame.icon:SetTexture(nil)
+            self.bonusbar:Show()
+            self.bonusbar.progress = data.PROGRESS
+            self.bonusbar.bar:SetValue(data.PROGRESS)
+            self.iconFrame.icon:SetTexture(nil)
         else
-            GwObjectivesNotification.bonusbar:Hide()
+            self.bonusbar:Hide()
         end
     else
-        GwObjectivesNotification.iconFrame.icon:SetTexture(nil)
+        self.iconFrame.icon:SetTexture(nil)
     end
 
     if data.COMPASS then
-        GwObjectivesNotification.compass:Show()
-        GwObjectivesNotification.compass.data = data
-        GwObjectivesNotification.compass.dataIndex = data.ID
+        self.compass:Show()
+        self.compass.data = data
+        self.compass.dataIndex = data.ID
 
         if icons[data.TYPE] ~= nil then
-            GwObjectivesNotification.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
-            GwObjectivesNotification.compass.icon:SetTexCoord(
+            self.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
+            self.compass.icon:SetTexCoord(
                 icons[data.TYPE].l,
                 icons[data.TYPE].r,
                 icons[data.TYPE].t,
                 icons[data.TYPE].b
             )
         else
-            GwObjectivesNotification.compass.icon:SetTexture(nil)
+            self.compass.icon:SetTexture(nil)
         end
 
-        if currentCompassData and currentCompassData ~= GwObjectivesNotification.compass.dataIndex then
-            currentCompassData = GwObjectivesNotification.compass.dataIndex
-            if GwObjectivesNotification.compass.Timer then
-                GwObjectivesNotification.compass.Timer:Cancel()
-                GwObjectivesNotification.compass.Timer = nil
+        if currentCompassData and currentCompassData ~= self.compass.dataIndex then
+            currentCompassData = self.compass.dataIndex
+            if self.compass.Timer then
+                self.compass.Timer:Cancel()
+                self.compass.Timer = nil
             end
-            GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
+            self.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(self.compass) end)
         elseif not currentCompassData then
-            currentCompassData = GwObjectivesNotification.compass.dataIndex
-            if GwObjectivesNotification.compass.Timer then
-                GwObjectivesNotification.compass.Timer:Cancel()
-                GwObjectivesNotification.compass.Timer = nil
+            currentCompassData = self.compass.dataIndex
+            if self.compass.Timer then
+                self.compass.Timer:Cancel()
+                self.compass.Timer = nil
             end
-            GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
+            self.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(self.compass) end)
         end
-        GwObjectivesNotification.iconFrame.icon:SetTexture(nil)
+        self.iconFrame.icon:SetTexture(nil)
     else
-        GwObjectivesNotification.compass:Hide()
-        if GwObjectivesNotification.compass.Timer then
-            GwObjectivesNotification.compass.Timer:Cancel()
-            GwObjectivesNotification.compass.Timer = nil
+        self.compass:Hide()
+        if self.compass.Timer then
+            self.compass.Timer:Cancel()
+            self.compass.Timer = nil
         end
     end
 
-    GwObjectivesNotification.title:SetText(data.TITLE)
-    GwObjectivesNotification.title:SetTextColor(data.COLOR.r, data.COLOR.g, data.COLOR.b)
-    GwObjectivesNotification.compassBG:SetVertexColor(data.COLOR.r, data.COLOR.g, data.COLOR.b, 0.3)
-    GwObjectivesNotification.desc:SetText(data.DESC)
+    self.title:SetText(data.TITLE)
+    self.title:SetTextColor(data.COLOR.r, data.COLOR.g, data.COLOR.b)
+    self.compassBG:SetVertexColor(data.COLOR.r, data.COLOR.g, data.COLOR.b, 0.3)
+    self.desc:SetText(data.DESC)
 
     if data.DESC == nil or data.DESC == "" then
-        GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -30)
+        self.title:SetPoint("TOP", self, "TOP", 0, -30)
     else
-        GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -15)
+        self.title:SetPoint("TOP", self, "TOP", 0, -15)
     end
-    GwObjectivesNotification.shouldDisplay = true
+    self.shouldDisplay = true
 end
-GW.SetObjectiveNotification = SetObjectiveNotification
+
+function GwObjectivesTrackerNotificationMixin:BonusbarOnEnter()
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 0)
+    GameTooltip:ClearLines()
+    GameTooltip:SetText(GW.RoundDec(self.progress * 100, 0) .. "%")
+    GameTooltip:Show()
+end
+
+function GwObjectivesTrackerNotificationMixin:OnUpdate()
+    local prevState = self.shouldDisplay
+
+    if GW.Libs.GW2Lib:GetPlayerLocationMapID() or GW.Libs.GW2Lib:GetPlayerInstanceMapID() then
+        self:SetObjectiveNotification()
+    end
+
+    if prevState ~= self.shouldDisplay then
+        self:NotificationStateChanged(self.shouldDisplay)
+    end
+end
+
+function GwObjectivesTrackerNotificationMixin:OnEvent(event, ...)
+    if GW.IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
+        if self.Ticker then
+            self.Ticker:Cancel()
+            self.Ticker = nil
+        end
+        self.Ticker = C_Timer.NewTicker(1, function() self:OnUpdate() end)
+    elseif GW.IsIn(event, "PLAYER_STOPPED_MOVING", "PLAYER_CONTROL_GAINED") then -- Events for stop updating
+        if self.Ticker then
+            self.Ticker:Cancel()
+            self.Ticker = nil
+        end
+    elseif event == "QUEST_DATA_LOAD_RESULT" then
+        local questID, success = ...
+        if success and self.compass.dataIndex and questID == self.compass.dataIndex then
+            self:OnUpdate()
+        end
+    else
+        C_Timer.After(0.25, function() self:OnUpdate() end)
+    end
+end
+
+function GwObjectivesTrackerNotificationMixin:InitModule()
+    self.animatingState = false
+    self.animating = false
+    self.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.title:SetShadowOffset(1, -1)
+    self.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    self.desc:SetShadowOffset(1, -1)
+    self.bonusbar.bar:SetOrientation("VERTICAL")
+    self.bonusbar.bar:SetMinMaxValues(0, 1)
+    self.bonusbar.bar:SetValue(0.5)
+    self.bonusbar:SetScript("OnEnter", self.BonusbarOnEnter)
+    self.bonusbar:SetScript("OnLeave", GameTooltip_Hide)
+    self.compass:SetScript("OnShow", self.compass.NewQuestAnimation)
+    self.compass:SetScript("OnMouseDown", function() C_SuperTrack.SetSuperTrackedQuestID(0) end)
+
+    self.shouldDisplay = false
+
+    -- only update the tracker on Events or if player moves
+    self:RegisterEvent("PLAYER_STARTED_MOVING")
+    self:RegisterEvent("PLAYER_STOPPED_MOVING")
+    self:RegisterEvent("PLAYER_CONTROL_LOST")
+    self:RegisterEvent("PLAYER_CONTROL_GAINED")
+    self:RegisterEvent("QUEST_LOG_UPDATE")
+    self:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
+    self:RegisterEvent("PLAYER_MONEY")
+    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+    self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    self:RegisterEvent("QUEST_DATA_LOAD_RESULT")
+    self:RegisterEvent("SUPER_TRACKING_CHANGED")
+    self:RegisterEvent("SCENARIO_UPDATE")
+    self:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
+    self:SetScript("OnEvent", self.OnEvent)
+end

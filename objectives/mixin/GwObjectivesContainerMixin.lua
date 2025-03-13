@@ -10,6 +10,17 @@ function GwObjectivesContainerMixin:BlockOnClick()
     -- override per module
 end
 
+function GwObjectivesContainerMixin:CollapseHeader(forceCollapse, forceOpen)
+    if (not self.collapsed or forceCollapse) and not forceOpen then
+        self.collapsed = true
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+    else
+        self.collapsed = false
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end
+    self:UpdateLayout()
+end
+
 function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     if _G[self:GetName() .. "Block" .. idx] then
         local block = _G[self:GetName() .. "Block" .. idx]

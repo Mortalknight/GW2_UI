@@ -91,7 +91,7 @@ local function addWQTTrackerQuest(self)
 
     self.header:SetShown(counter > 0 or foundEvent)
     self:SetHeight(height)
-    GW.QuestTrackerLayoutChanged()
+    GwQuestTracker:LayoutChanged()
 end
 
 local function CollapseHeader(self, forceCollapse, forceOpen)
@@ -110,6 +110,9 @@ local function LoadWQTAddonSkin()
     if not GW.settings.SKIN_WQT_ENABLED or not WorldQuestTrackerAddon then return end
 
     local fWQT = CreateFrame("Frame", "GwQuesttrackerContainerWQT", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
+
+    tinsert(GW.QuestTrackerScrollableContainer, fWQT)
+
     fWQT:SetParent(GwQuestTrackerScrollChild)
     fWQT:SetPoint("TOPRIGHT", GwQuesttrackerContainerCollection, "BOTTOMRIGHT")
 

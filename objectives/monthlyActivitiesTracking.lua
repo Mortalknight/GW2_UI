@@ -1,8 +1,108 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
-local ParseObjectiveString = GW.ParseObjectiveString
 
-local function monthlyActivities_OnClick(self, button)
+
+GwObjectivesMonthlyActivitiesBlockMixin = {}
+
+function GwObjectivesMonthlyActivitiesBlockMixin:UpdateBlock(requirements)
+    self.height = 25
+    self.numObjectives = 0
+
+    for idx, requirement in ipairs(requirements) do
+        if not requirement.completed then
+            local criteriaString = requirement.requirementText
+            criteriaString = string.gsub(criteriaString, " / ", "/")
+            criteriaString = string.gsub(criteriaString, "- ", "")
+            self:AddObjective(criteriaString, idx, {isMonthlyActivity = true, finished = false})
+        end
+    end
+
+    for i = self.numObjectives + 1, 20 do
+        if _G[self:GetName() .. "Objective" .. i] then
+            _G[self:GetName() .. "Objective" .. i]:Hide()
+        end
+    end
+
+    self:SetHeight(self.height)
+end
+
+GwObjectivesMonthlyActivitiesContainerMixin = {}
+
+function GwObjectivesMonthlyActivitiesContainerMixin:UpdateLayout()
+    local trackedActivities = C_PerksActivities.GetTrackedPerksActivities().trackedIDs
+    local savedHeight = 1
+    local shownIndex = 1
+    local showHeader = false
+
+    self.header:Hide()
+
+    if self.collapsed and #trackedActivities > 0 then
+        self.header:Show()
+        wipe(trackedActivities)
+        savedHeight = 20
+    end
+
+    for i = 1, #trackedActivities do
+        local activityID = trackedActivities[i]
+        local activityInfo = C_PerksActivities.GetPerksActivityInfo(activityID)
+
+        if activityInfo and not activityInfo.completed then
+            local activityName = activityInfo.activityName
+			local requirements = activityInfo.requirementsList
+            local block = self:GetBlock(shownIndex, "MONTHLYACTIVITY", false)
+            if block == nil then
+                return
+            end
+
+            block.id = activityID
+            block.title = activityName
+            block.Header:SetText(activityName)
+            -- criteria
+            block:UpdateBlock(requirements)
+            block:Show()
+
+            savedHeight = savedHeight + block.height
+
+            shownIndex = shownIndex + 1
+
+            self.header:Show()
+            showHeader = true
+        end
+    end
+
+    if showHeader and not self.collapsed then
+        savedHeight = savedHeight + 20
+    end
+    self:SetHeight(savedHeight)
+
+    for i = shownIndex, 25 do
+        if _G["GwQuesttrackerContainerMonthlyActivityBlock" .. i] then
+            _G["GwQuesttrackerContainerMonthlyActivityBlock" .. i]:Hide()
+            _G["GwQuesttrackerContainerMonthlyActivityBlock" .. i].id = nil
+        end
+    end
+
+    GwQuestTracker:LayoutChanged()
+end
+
+function GwObjectivesMonthlyActivitiesContainerMixin:OnEvent(event, ...)
+    if event == "PERKS_ACTIVITIES_TRACKED_UPDATED" or event == "PERKS_ACTIVITIES_TRACKED_LIST_CHANGED" then
+        self:UpdateLayout()
+    elseif event == "PERKS_ACTIVITY_COMPLETED" then
+        local trackedActivities = C_PerksActivities.GetTrackedPerksActivities().trackedIDs
+        local perksActivityID = ...
+        for i = 1, #trackedActivities do
+            local activityID = trackedActivities[i]
+            if activityID == perksActivityID then
+                PlaySound(SOUNDKIT.TRADING_POST_UI_COMPLETING_ACTIVITIES)
+                self:UpdateLayout()
+                break
+            end
+        end
+    end
+end
+
+function GwObjectivesMonthlyActivitiesContainerMixin:BlockOnClick(button)
     if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
 		local perksActivityLink = C_PerksActivities.GetPerksActivityChatLink(self.id)
 		ChatEdit_InsertLink(perksActivityLink)
@@ -33,215 +133,27 @@ local function monthlyActivities_OnClick(self, button)
 	end
 end
 
-local function getObjectiveBlock(self)
-    if _G[self:GetName() .. "Objective" .. self.numObjectives] then
-        return _G[self:GetName() .. "Objective" .. self.numObjectives]
-    end
+function GwObjectivesMonthlyActivitiesContainerMixin:InitModule()
+    self:RegisterEvent("PERKS_ACTIVITIES_TRACKED_UPDATED")
+    self:RegisterEvent("PERKS_ACTIVITY_COMPLETED")
+    self:RegisterEvent("PERKS_ACTIVITIES_TRACKED_LIST_CHANGED")
+    self:SetScript("OnEvent", self.OnEvent)
 
-    self.objectiveBlocks = self.objectiveBlocks or {}
+    self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
+    self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:SetShadowOffset(1, -1)
+    self.header.title:SetText(TRACKER_HEADER_MONTHLY_ACTIVITIES)
 
-    local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. self.numObjectives, self, "GwQuesttrackerObjectiveTemplate")
-    newBlock:SetParent(self)
-
-    self.objectiveBlocks[#self.objectiveBlocks] = newBlock
-
-    if self.numObjectives == 1 then
-        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
-    else
-        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. self.numObjectives - 1], "BOTTOMRIGHT", 0, 0)
-    end
-
-    newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-
-    return newBlock
-end
-
-local function getBlock(blockIndex)
-    if _G["GwMonthlyActivityBlock" .. blockIndex] then
-        return  _G["GwMonthlyActivityBlock" .. blockIndex]
-    end
-
-    local newBlock = CreateFrame("Button", "GwMonthlyActivityBlock" .. blockIndex, GwQuesttrackerContainerMonthlyActivity, "GwObjectivesBlockTemplate")
-    newBlock:SetParent(GwQuesttrackerContainerMonthlyActivity)
-
-    if blockIndex == 1 then
-        newBlock:SetPoint("TOPRIGHT", GwQuesttrackerContainerMonthlyActivity, "TOPRIGHT", 0, -20)
-    else
-        newBlock:SetPoint("TOPRIGHT", _G["GwMonthlyActivityBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
-    end
-    newBlock.height = 0
-    newBlock:SetBlockColorByKey("MONTHLYACTIVITY")
-    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    return newBlock
-end
-
-local function addObjective(block, text, finished, qty, totalqty)
-    if finished or not text then
-        return
-    end
-
-    block.numObjectives = block.numObjectives + 1
-    local objectiveBlock = getObjectiveBlock(block)
-
-    objectiveBlock:Show()
-    if qty < totalqty then
-        objectiveBlock.ObjectiveText:SetText(GW.GetLocalizedNumber(qty) .. "/" .. GW.GetLocalizedNumber(totalqty) .. " " .. text)
-    else
-        objectiveBlock.ObjectiveText:SetText(text)
-    end
-    objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
-    objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
-
-    if not ParseObjectiveString(objectiveBlock, text, qty, totalqty) then
-        objectiveBlock.StatusBar:Hide()
-    end
-    local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
-    objectiveBlock:SetHeight(h)
-    if objectiveBlock.StatusBar:IsShown() then
-        if block.numObjectives >= 1 then
-            h = h + objectiveBlock.StatusBar:GetHeight() + 5
-        else
-            h = h + objectiveBlock.StatusBar:GetHeight() + 5
-        end
-        objectiveBlock:SetHeight(h)
-    end
-    block.height = block.height + objectiveBlock:GetHeight()
-end
-
-local function updateActivityObjectives(block, requirements)
-    block.height = 25
-    block.numObjectives = 0
-
-    for _, requirement in ipairs(requirements) do
-        if not requirement.completed then
-            local criteriaString = requirement.requirementText
-            criteriaString = string.gsub(criteriaString, " / ", "/")
-            criteriaString = string.gsub(criteriaString, "- ", "")
-            addObjective(block, criteriaString, false, 0, 0)
-        end
-    end
-
-    for i = block.numObjectives + 1, 20 do
-        if _G[block:GetName() .. "Objective" .. i] then
-            _G[block:GetName() .. "Objective" .. i]:Hide()
-        end
-    end
-
-    block:SetHeight(block.height)
-end
-
-local function Update(self)
-    local trackedActivities = C_PerksActivities.GetTrackedPerksActivities().trackedIDs
-    local savedHeight = 1
-    local shownIndex = 1
-    local showHeader = false
-
-    self.header:Hide()
-
-    if self.collapsed and #trackedActivities > 0 then
-        self.header:Show()
-        wipe(trackedActivities)
-        savedHeight = 20
-    end
-
-    for i = 1, #trackedActivities do
-        local activityID = trackedActivities[i]
-        local activityInfo = C_PerksActivities.GetPerksActivityInfo(activityID)
-
-        if activityInfo and not activityInfo.completed then
-            local activityName = activityInfo.activityName
-			local requirements = activityInfo.requirementsList
-            local block = getBlock(shownIndex)
-            if block == nil then
-                return
-            end
-
-            block.id = activityID
-            block.title = activityName
-            block.Header:SetText(activityName)
-            -- criteria
-            updateActivityObjectives(block, requirements)
-            block:Show()
-
-            block:SetScript("OnClick", monthlyActivities_OnClick)
-
-            savedHeight = savedHeight + block.height
-
-            shownIndex = shownIndex + 1
-
-            self.header:Show()
-            showHeader = true
-        end
-    end
-
-    if showHeader and not self.collapsed then
-        savedHeight = savedHeight + 20
-    end
-    self:SetHeight(savedHeight)
-
-    for i = shownIndex, 25 do
-        if _G["GwMonthlyActivityBlock" .. i] then
-            _G["GwMonthlyActivityBlock" .. i]:Hide()
-            _G["GwMonthlyActivityBlock" .. i].id = nil
-        end
-    end
-
-    GW.QuestTrackerLayoutChanged()
-end
-GW.UpdateMonthlyActivitesTracking = Update
-
-local function OnEvent(self, event, ...)
-    if event == "PERKS_ACTIVITIES_TRACKED_UPDATED" then
-        Update(self)
-    elseif event == "PERKS_ACTIVITY_COMPLETED" then
-        local trackedActivities = C_PerksActivities.GetTrackedPerksActivities().trackedIDs
-        local perksActivityID = ...
-        for i = 1, #trackedActivities do
-            local activityID = trackedActivities[i]
-            if activityID == perksActivityID then
-                PlaySound(SOUNDKIT.TRADING_POST_UI_COMPLETING_ACTIVITIES)
-                break
-            end
-        end
-    end
-end
-
-local function CollapseHeader(self, forceCollapse, forceOpen)
-    if (not self.collapsed or forceCollapse) and not forceOpen then
-        self.collapsed = true
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-    else
-        self.collapsed = false
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    end
-    Update(self)
-end
-GW.CollapseonthlyActivitiesHeader = CollapseHeader
-
-local function LoadMonthlyActivitiesTracking(container)
-    container:RegisterEvent("PERKS_ACTIVITIES_TRACKED_UPDATED")
-    container:RegisterEvent("PERKS_ACTIVITY_COMPLETED")
-    container:SetScript("OnEvent", OnEvent)
-
-    container.header = CreateFrame("Button", nil, container, "GwQuestTrackerHeader")
-    container.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    container.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    container.header.title:SetShadowOffset(1, -1)
-    container.header.title:SetText(TRACKER_HEADER_MONTHLY_ACTIVITIES)
-
-    container.collapsed = false
-    container.header:SetScript("OnMouseDown",
-        function(self)
-            CollapseHeader(self:GetParent(), false, false)
-        end
-    )
-    container.header.title:SetTextColor(
+    self.collapsed = false
+    self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
+    self.header.title:SetTextColor(
         TRACKER_TYPE_COLOR.MONTHLYACTIVITY.r,
         TRACKER_TYPE_COLOR.MONTHLYACTIVITY.g,
         TRACKER_TYPE_COLOR.MONTHLYACTIVITY.b
     )
 
-    Update(container)
+    self.blockMixInTemplate = GwObjectivesMonthlyActivitiesBlockMixin
+
+    self:UpdateLayout()
 end
-GW.LoadMonthlyActivitiesTracking = LoadMonthlyActivitiesTracking

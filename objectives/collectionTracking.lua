@@ -2,155 +2,112 @@ local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local NavigableContentTrackingTargets = {
-	[Enum.ContentTrackingTargetType.Vendor] = true,
-	[Enum.ContentTrackingTargetType.JournalEncounter] = true,
+    [Enum.ContentTrackingTargetType.Vendor] = true,
+    [Enum.ContentTrackingTargetType.JournalEncounter] = true,
 };
 local blockIndex
 local savedHeight
 
-local function collection_OnClick(self, button)
-    if not ContentTrackingUtil.ProcessChatLink(self.trackableType, self.trackableID) then
-		if button ~= "RightButton" then
-			CloseDropDownMenus()
+GwObjectivesCollectionBlockMixin = CreateFromMixins(POIButtonOwnerMixin)
 
-			if ContentTrackingUtil.IsTrackingModifierDown() then
-				C_ContentTracking.StopTracking(self.trackableType, self.trackableID, Enum.ContentTrackingStopType.Manual)
-			elseif (self.trackableType == Enum.ContentTrackingType.Appearance) and IsModifiedClick("DRESSUP") then
-				DressUpVisual(self.trackableID);
-			elseif self.targetType == Enum.ContentTrackingTargetType.Achievement then
-				OpenAchievementFrameToAchievement(self.targetID)
-			elseif self.targetType == Enum.ContentTrackingTargetType.Profession then
-				AdventureObjectiveTracker_ClickProfessionTarget(self.targetID)
-			else
-				ContentTrackingUtil.OpenMapToTrackable(self.trackableType, self.trackableID)
-			end
+function GwObjectivesCollectionBlockMixin:UpdateBlock()
+    local ignoreWaypoint = true
+    local trackingResult, uiMapID = C_ContentTracking.GetBestMapForTrackable(self.trackableType, self.trackableID, ignoreWaypoint)
+    self.endLocationUIMap = (trackingResult == Enum.ContentTrackingResult.Success) and uiMapID or nil
 
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-		else
-            MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-                rootDescription:CreateTitle(self.title)
-                rootDescription:CreateButton(CONTENT_TRACKING_OPEN_JOURNAL_OPTION, function() TransmogUtil.OpenCollectionToItem(self.trackableID) end)
-                rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function() C_ContentTracking.StopTracking(self.trackableType, self.trackableID, Enum.ContentTrackingStopType.Manual) end)
-            end)
+    local objectiveText = C_ContentTracking.GetObjectiveText(self.targetType, self.targetID)
+    if objectiveText then
+        self:AddObjective(objectiveText, 1, {})
+    else
+        self:AddObjective(CONTENT_TRACKING_RETRIEVING_INFO, 1, {})
+    end
+
+    if NavigableContentTrackingTargets[self.targetType] then
+        -- If data is still pending, show nothing extra and wait for it to load.
+        if objectiveText and (trackingResult ~= Enum.ContentTrackingResult.DataPending) then
+            if not self.endLocationUIMap then
+                self:AddObjective(CONTENT_TRACKING_LOCATION_UNAVAILABLE, 2, {})
+            else
+                local navigableTrackingResult, isNavigable = C_ContentTracking.IsNavigable(self.trackableType, self.trackableID)
+                if (navigableTrackingResult == Enum.ContentTrackingResult.Failure) or (navigableTrackingResult == Enum.ContentTrackingResult.Success and not isNavigable) then
+                    self:AddObjective(CONTENT_TRACKING_ROUTE_UNAVAILABLE, 2, {})
+                else
+                    local superTrackedType, superTrackedID = C_SuperTrack.GetSuperTrackedContent()
+                    if (self.trackableType == superTrackedType) and (self.trackableID == superTrackedID) then
+                        local waypointText = C_ContentTracking.GetWaypointText(self.trackableType, self.trackableID)
+                        if waypointText then
+                            local formattedText = OPTIONAL_QUEST_OBJECTIVE_DESCRIPTION:format(waypointText)
+                            self:AddObjective(formattedText, 2, {})
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if ObjectiveTrackerManager:CanShowPOIs(self) then
+        local poiButton = self:GetButtonForTrackable(self.trackableType, self.trackableID)
+        if poiButton then
+            poiButton:SetPoint("TOPRIGHT", self.Header, "TOPLEFT", -3, -5)
+            poiButton.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/132060")
+            poiButton.PushedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/132060")
+            poiButton.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/132060")
+            poiButton.Display.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/132060")
+            poiButton:SetSize(20, 20)
+            poiButton.NormalTexture:SetSize(20, 20)
+            poiButton.PushedTexture:SetSize(20, 20)
+            poiButton.HighlightTexture:SetSize(20, 20)
+            poiButton.Display.Icon:SetSize(20, 20)
+
+            poiButton.NormalTexture:SetDesaturated(true)
+            poiButton.PushedTexture:SetDesaturated(true)
+            poiButton.HighlightTexture:SetDesaturated(true)
+            poiButton.Display.Icon:SetDesaturated(true)
+
+            poiButton.Glow:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/132060")
+            if not poiButton.hooked then
+                hooksecurefunc(poiButton.Display, "SetAtlas", function(btn)
+                    btn.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/132060")
+                    btn.Icon:SetSize(20, 20)
+                end)
+                poiButton.hooked = true
+            end
+
+            self.poiButton = poiButton
+        end
+    end
+
+    for i = self.numObjectives + 1, 25 do
+        if _G[self:GetName() .. "Objective" .. i] then
+            _G[self:GetName() .. "Objective" .. i]:Hide()
         end
     end
 end
 
-local function getObjectiveBlock(self)
-    if _G[self:GetName() .. "Objective" .. self.numObjectives] then
-        return _G[self:GetName() .. "Objective" .. self.numObjectives]
-    end
-
-    self.objectiveBlocks = self.objectiveBlocks or {}
-
-    local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. self.numObjectives, self, "GwQuesttrackerObjectiveTemplate")
-    newBlock:SetParent(self)
-
-    self.objectiveBlocks[#self.objectiveBlocks] = newBlock
-
-    if self.numObjectives == 1 then
-        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
-    else
-        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. self.numObjectives - 1], "BOTTOMRIGHT", 0, 0)
-    end
-
-    newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-
-    return newBlock
-end
-
-local function getBlock(blockIndex)
-    if _G["GwCollectionBlock" .. blockIndex] then
-        return  _G["GwCollectionBlock" .. blockIndex]
-    end
-
-    local newBlock = CreateFrame("Button", "GwCollectionBlock" .. blockIndex, GwQuesttrackerContainerCollection, "GwObjectivesBlockTemplate")
-    newBlock:SetParent(GwQuesttrackerContainerCollection)
-
-    if blockIndex == 1 then
-        newBlock:SetPoint("TOPRIGHT", GwQuesttrackerContainerCollection, "TOPRIGHT", 0, -20)
-    else
-        newBlock:SetPoint("TOPRIGHT", _G["GwCollectionBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
-    end
-    newBlock.height = 0
-    newBlock:SetBlockColorByKey("RECIPE")
-    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    return newBlock
-end
-
-local function addObjective(block, text)
-    if not text then
-        return
-    end
-
-    block.numObjectives = block.numObjectives + 1
-    local objectiveBlock = getObjectiveBlock(block)
-
-    objectiveBlock:Show()
-    objectiveBlock.ObjectiveText:SetText(text)
-    objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
-    objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
-    objectiveBlock.StatusBar:Hide()
-
-    local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
-    objectiveBlock:SetHeight(h)
-    block.height = block.height + objectiveBlock:GetHeight()
-end
-
+GwObjectivesCollectionContainerMixin = {}
 local function updateCollectionLayout(self, trackableType, trackableID)
     local targetType, targetID = C_ContentTracking.GetCurrentTrackingTarget(trackableType, trackableID)
 
     if targetType then
         blockIndex = blockIndex + 1
 
-        local block = getBlock(blockIndex)
+        local block = self:GetBlock(blockIndex, "RECIPE", false)
+        block:Init() -- POIButtonOwnerTemplate
+        block.poiButton = nil
         block.trackableID = trackableID
-		block.trackableType = trackableType
+        block.trackableType = trackableType
+        block.targetType = targetType
+        block.targetID = targetID
         block.height = 35
         block.numObjectives = 0
 
-		local title = C_ContentTracking.GetTitle(trackableType, trackableID)
-		block.title = title
-		block.Header:SetText(title)
-
-		block.targetType = targetType
-		block.targetID = targetID
-
-        local ignoreWaypoint = true
-		local trackingResult, uiMapID = C_ContentTracking.GetBestMapForTrackable(trackableType, trackableID, ignoreWaypoint)
-		block.endLocationUIMap = (trackingResult == Enum.ContentTrackingResult.Success) and uiMapID or nil
-
-		local objectiveText = C_ContentTracking.GetObjectiveText(targetType, targetID)
-		if objectiveText then
-            addObjective(block, objectiveText)
-		else
-            addObjective(block, CONTENT_TRACKING_RETRIEVING_INFO)
-		end
-
-        if NavigableContentTrackingTargets[targetType] then
-			-- If data is still pending, show nothing extra and wait for it to load.
-			if objectiveText and (trackingResult ~= Enum.ContentTrackingResult.DataPending) then
-				if not block.endLocationUIMap then
-                    addObjective(block, CONTENT_TRACKING_LOCATION_UNAVAILABLE)
-				else
-					local navigableTrackingResult, isNavigable = C_ContentTracking.IsNavigable(trackableType, trackableID);
-					if (navigableTrackingResult == Enum.ContentTrackingResult.Failure) or
-						(navigableTrackingResult == Enum.ContentTrackingResult.Success and not isNavigable) then
-                        addObjective(block, CONTENT_TRACKING_ROUTE_UNAVAILABLE)
-					end
-				end
-			end
-		end
-
-        for i = block.numObjectives + 1, 20 do
-            if _G[block:GetName() .. "Objective" .. i] then
-                _G[block:GetName() .. "Objective" .. i]:Hide()
-            end
-        end
+        local title = C_ContentTracking.GetTitle(trackableType, trackableID)
+        block.title = title
+        block.Header:SetText(title)
+        block:UpdateBlock()
 
         if blockIndex == 1 then
-            savedHeight = 20
+            savedHeight = 20 -- for header
         end
         savedHeight = savedHeight + block.height
 
@@ -163,18 +120,18 @@ local function updateCollectionLayout(self, trackableType, trackableID)
         else
             block:Hide()
         end
-
-        block:SetScript("OnClick", collection_OnClick)
     end
 
     for i = blockIndex + 1, 25 do
-        if _G["GwCollectionBlock" .. i] then
-            _G["GwCollectionBlock" .. i]:Hide()
-            _G["GwCollectionBlock" .. i].id = nil
-            _G["GwCollectionBlock" .. i].isRecraft = nil
+        local block = _G["GwQuesttrackerContainerCollectionBlock" .. i]
+        if block then
+            block:Hide()
+            block.id = nil
+            block.isRecraft = nil
+            block.poiButton = nil
         end
     end
-    GW.QuestTrackerLayoutChanged()
+    GwQuestTracker:LayoutChanged()
 
     if blockIndex > 25 then
         return false
@@ -188,101 +145,111 @@ local function EnumerateTrackables(self, callback)
     blockIndex = 0
     savedHeight = 1
 
-    for i, trackableType in ipairs(C_ContentTracking.GetCollectableSourceTypes()) do
-		local trackedIDs = C_ContentTracking.GetTrackedIDs(trackableType)
-		for j, trackableID in ipairs(trackedIDs) do
+    for _, trackableType in ipairs(C_ContentTracking.GetCollectableSourceTypes()) do
+        local trackedIDs = C_ContentTracking.GetTrackedIDs(trackableType)
+        for _, trackableID in ipairs(trackedIDs) do
             hasSomethingToTrack = true
-			if not callback(trackableType, trackableID) then
-				break
-			end
-		end
-	end
-
-    if not hasSomethingToTrack then
-        self.header:Hide()
-        for i = 1, 25 do
-            if _G["GwCollectionBlock" .. i] then
-                _G["GwCollectionBlock" .. i]:Hide()
+            if not callback(trackableType, trackableID) then
+                break
             end
         end
-        GW.QuestTrackerLayoutChanged()
     end
-
-    if hasSomethingToTrack and self.collapsed then
+    if not hasSomethingToTrack or (hasSomethingToTrack and self.collapsed) then
+        if not hasSomethingToTrack then
+            self.header:Hide()
+        else
+            savedHeight = 20 -- for header
+        end
         for i = 1, 25 do
-            if _G["GwCollectionBlock" .. i] then
-                _G["GwCollectionBlock" .. i]:Hide()
+            local collectionBlock = _G["GwQuesttrackerContainerCollectionBlock" .. i]
+            if collectionBlock then
+                collectionBlock:Hide()
             end
         end
-        GW.QuestTrackerLayoutChanged()
+        self:SetHeight(savedHeight)
+        GwQuestTracker:LayoutChanged()
     end
 end
 
 local function StopTrackingCollectedItems(self)
-	if not self.collectedIds then
-		return
-	end
+    if not self.collectedIds then
+        return
+    end
 
-	local removingCollectedObjective = false;
-	for trackableId, trackableType in pairs(self.collectedIds) do
-		C_ContentTracking.StopTracking(trackableType, trackableId, Enum.ContentTrackingStopType.Manual)
-		removingCollectedObjective = true
-	end
-	if removingCollectedObjective then
-		PlaySound(SOUNDKIT.CONTENT_TRACKING_OBJECTIVE_TRACKING_END)
-	end
-	self.collectedIds = nil
+    local removingCollectedObjective = false;
+    for trackableId, trackableType in pairs(self.collectedIds) do
+        C_ContentTracking.StopTracking(trackableType, trackableId, Enum.ContentTrackingStopType.Manual)
+        removingCollectedObjective = true
+    end
+    if removingCollectedObjective then
+        PlaySound(SOUNDKIT.CONTENT_TRACKING_OBJECTIVE_TRACKING_END)
+    end
+    self.collectedIds = nil
 end
 
-local function UpdateCollectionTrackingLayout(self)
+function GwObjectivesCollectionContainerMixin:UpdateLayout()
+    -- POIButtonOwnerTemplate
+    for i = 1, 25 do
+        local block = _G["GwQuesttrackerContainerCollectionBlock" .. i]
+        if block then
+            block:ResetUsage()
+        end
+    end
     StopTrackingCollectedItems(self)
     EnumerateTrackables(self, GenerateClosure(updateCollectionLayout, self))
 end
-GW.UpdateCollectionTrackingLayout = UpdateCollectionTrackingLayout
 
-local function OnEvent(self)
+function GwObjectivesCollectionContainerMixin:OnEvent()
     if not ContentTrackingUtil.IsContentTrackingEnabled() then return end
 
-    UpdateCollectionTrackingLayout(self)
+    self:UpdateLayout()
 end
 
-local function CollapseHeader(self, forceCollapse, forceOpen)
-    if (not self.collapsed or forceCollapse) and not forceOpen then
-        self.collapsed = true
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-    else
-        self.collapsed = false
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    end
-    UpdateCollectionTrackingLayout(self)
-end
-GW.CollapseCollectionHeader = CollapseHeader
+function GwObjectivesCollectionContainerMixin:BlockOnClick(button)
+    if not ContentTrackingUtil.ProcessChatLink(self.trackableType, self.trackableID) then
+        if button ~= "RightButton" then
+            if ContentTrackingUtil.IsTrackingModifierDown() then
+                C_ContentTracking.StopTracking(self.trackableType, self.trackableID, Enum.ContentTrackingStopType.Manual)
+            elseif (self.trackableType == Enum.ContentTrackingType.Appearance) and IsModifiedClick("DRESSUP") then
+                DressUpVisual(self.trackableID);
+            elseif self.targetType == Enum.ContentTrackingTargetType.Achievement then
+                OpenAchievementFrameToAchievement(self.targetID)
+            elseif self.targetType == Enum.ContentTrackingTargetType.Profession then
+                AdventureObjectiveTrackerMixin:ClickProfessionTarget(self.targetID)
+            else
+                ContentTrackingUtil.OpenMapToTrackable(self.trackableType, self.trackableID)
+            end
 
-local function LoadCollectionTracking(container)
-    container:RegisterEvent("TRANSMOG_COLLECTION_SOURCE_ADDED")
-    container:RegisterEvent("CONTENT_TRACKING_UPDATE")
-    container:RegisterEvent("TRACKING_TARGET_INFO_UPDATE")
-    container:SetScript("OnEvent", OnEvent)
-
-    container.header = CreateFrame("Button", nil, container, "GwQuestTrackerHeader")
-    container.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    container.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    container.header.title:SetShadowOffset(1, -1)
-    container.header.title:SetText(ADVENTURE_TRACKING_MODULE_HEADER_TEXT)
-
-    container.collapsed = false
-    container.header:SetScript("OnMouseDown",
-        function(self)
-            CollapseHeader(self:GetParent(), false, false)
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+        else
+            MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+                rootDescription:CreateTitle(self.title)
+                rootDescription:CreateButton(CONTENT_TRACKING_OPEN_JOURNAL_OPTION, function() TransmogUtil.OpenCollectionToItem(self.trackableID) end)
+                rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function() C_ContentTracking.StopTracking(self.trackableType, self.trackableID, Enum.ContentTrackingStopType.Manual) end)
+            end)
         end
-    )
-    container.header.title:SetTextColor(
-        TRACKER_TYPE_COLOR.RECIPE.r,
-        TRACKER_TYPE_COLOR.RECIPE.g,
-        TRACKER_TYPE_COLOR.RECIPE.b
-    )
-
-    StopTrackingCollectedItems(container)
-    EnumerateTrackables(container, GenerateClosure(updateCollectionLayout, container))
+    end
 end
-GW.LoadCollectionTracking = LoadCollectionTracking
+
+function GwObjectivesCollectionContainerMixin:InitModule()
+    self:RegisterEvent("SUPER_TRACKING_CHANGED")
+    self:RegisterEvent("TRACKING_TARGET_INFO_UPDATE")
+    self:RegisterEvent("TRACKABLE_INFO_UPDATE")
+    self:RegisterEvent("TRANSMOG_COLLECTION_SOURCE_ADDED")
+    self:RegisterEvent("CONTENT_TRACKING_UPDATE")
+    self:SetScript("OnEvent", self.OnEvent)
+
+    self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
+    self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:SetShadowOffset(1, -1)
+    self.header.title:SetText(ADVENTURE_TRACKING_MODULE_HEADER_TEXT)
+
+    self.collapsed = false
+    self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
+    self.header.title:SetTextColor(TRACKER_TYPE_COLOR.RECIPE.r, TRACKER_TYPE_COLOR.RECIPE.g, TRACKER_TYPE_COLOR.RECIPE.b)
+
+    self.blockMixInTemplate = GwObjectivesCollectionBlockMixin
+
+    self:UpdateLayout()
+end

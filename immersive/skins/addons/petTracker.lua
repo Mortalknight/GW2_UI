@@ -136,7 +136,7 @@ local function petTrackerUpdate()
         self.mainBlock:Hide()
     end
 
-    GW.QuestTrackerLayoutChanged()
+    GwQuestTracker:LayoutChanged()
 end
 
 local function CollapseHeader(self, forceCollapse, forceOpen)
@@ -156,6 +156,8 @@ local function LoadPetTrackerAddonSkin()
 
     local petTrackerLocals = LibStub("AceLocale-3.0"):GetLocale("PetTracker")
     local petTrackerObjectives = CreateFrame("Frame", "GwQuesttrackerContainerPetTracker", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
+
+    tinsert(GW.QuestTrackerScrollableContainer, petTrackerObjectives)
 
     petTrackerObjectives:SetParent(GwQuestTrackerScrollChild)
     petTrackerObjectives:SetPoint("TOPRIGHT", GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT or GwQuesttrackerContainerCollection, "BOTTOMRIGHT")

@@ -245,7 +245,7 @@ local function layoutContent()
 
     GwQuesttrackerContainerTodoloo:SetShown(foundTodo or GwQuesttrackerContainerTodoloo.collapsed)
 
-    GW.QuestTrackerLayoutChanged()
+    GwQuestTracker:LayoutChanged()
 end
 
 local function CollapseHeader(self, forceCollapse, forceOpen)
@@ -265,6 +265,9 @@ local function LoadTodolooAddonSkin()
     if not Todoloo.Config.Get(Todoloo.Config.Options.ATTACH_TASK_TRACKER_TO_OBJECTIVE_TRACKER) then return end
 
     local todolooObjectives = CreateFrame("Frame", "GwQuesttrackerContainerTodoloo", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
+
+    tinsert(GW.QuestTrackerScrollableContainer, GwQuesttrackerContainerTodoloo)
+
     todolooObjectives:SetParent(GwQuestTrackerScrollChild)
     todolooObjectives:SetPoint("TOPRIGHT", GwQuesttrackerContainerPetTracker and GwQuesttrackerContainerPetTracker or GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT or GwQuesttrackerContainerCollection, "BOTTOMRIGHT")
 

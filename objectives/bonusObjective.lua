@@ -1,8 +1,5 @@
 local _, GW = ...
-local AddTrackerNotification = GW.AddTrackerNotification
-local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
-local ParseSimpleObjective = GW.ParseSimpleObjective
 
 local savedQuests = {}
 local trackedEventIDs = {}
@@ -210,9 +207,9 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                     compassData.MAPID = GW.Libs.GW2Lib:GetPlayerLocationMapID()
 
                     if simpleDesc == "" then
-                        simpleDesc = ParseSimpleObjective(txt)
+                        simpleDesc = GW.ParseSimpleObjective(txt)
                     else
-                        simpleDesc = simpleDesc .. ", " .. ParseSimpleObjective(txt)
+                        simpleDesc = simpleDesc .. ", " .. GW.ParseSimpleObjective(txt)
                     end
 
                     if not self.collapsed then
@@ -244,7 +241,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 compassData.PROGRESS = objectiveProgress
 
                 if isInArea then
-                    AddTrackerNotification(compassData)
+                    GwObjectivesNotification:AddNotification(compassData)
                 end
 
                 savedContainerHeight = savedContainerHeight + block.height + 10
@@ -277,7 +274,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
 end
 
 function GwBonusObjectivesTrackerContainerMixin:UpdateLayout()
-    RemoveTrackerNotificationOfType("EVENT")
+    GwObjectivesNotification:RemoveNotificationOfType("EVENT")
 
     for i = 1, 20 do
         local block = _G[self:GetName() .. i]
@@ -334,44 +331,26 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateLayout()
         wipe(savedQuests)
     end
 
-    GW.QuestTrackerLayoutChanged()
+    GwQuestTracker:LayoutChanged()
 end
 
-local function CollapseHeader(self, forceCollapse, forceOpen)
-    if (not self.collapsed or forceCollapse) and not forceOpen then
-        self.collapsed = true
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-    else
-        self.collapsed = false
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    end
-    self:UpdateLayout()
-end
-GW.CollapseBonusObjectivesHeader = CollapseHeader
+function GwBonusObjectivesTrackerContainerMixin:InitModule()
+    self.blockMixInTemplate = GwBonusObjectivesTrackerBlockMixin
 
-local function LoadBonusFrame(container)
-    --Mixin Override
-    Mixin(container, GwBonusObjectivesTrackerContainerMixin)
-    container.blockMixInTemplate = GwBonusObjectivesTrackerBlockMixin
+    self:SetScript("OnEvent", self.UpdateLayout)
+    self:RegisterEvent("QUEST_LOG_UPDATE")
+    self:RegisterEvent("TASK_PROGRESS_UPDATE")
+    self:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
 
-    container:SetScript("OnEvent", container.UpdateLayout)
-    container:RegisterEvent("QUEST_LOG_UPDATE")
-    container:RegisterEvent("TASK_PROGRESS_UPDATE")
-    container:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
+    self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
+    self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:SetShadowOffset(1, -1)
+    self.header.title:SetText(EVENTS_LABEL)
 
-    container.header = CreateFrame("Button", nil, container, "GwQuestTrackerHeader")
-    container.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    container.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    container.header.title:SetShadowOffset(1, -1)
-    container.header.title:SetText(EVENTS_LABEL)
-
-    container.collapsed = false
-    container.header:SetScript("OnMouseDown",
-        function(self)
-            CollapseHeader(self:GetParent(), false, false)
-        end
-    )
-    container.header.title:SetTextColor(
+    self.collapsed = false
+    self.header:SetScript("OnMouseDown", self.CollapseHeader)
+    self.header.title:SetTextColor(
         TRACKER_TYPE_COLOR.EVENT.r,
         TRACKER_TYPE_COLOR.EVENT.g,
         TRACKER_TYPE_COLOR.EVENT.b
@@ -379,11 +358,10 @@ local function LoadBonusFrame(container)
 
     hooksecurefunc(QuestUtil, "UntrackWorldQuest", function(questID)
         savedQuests[questID] = nil
-        if trackedEventIDs[questID] ~= nil then
+        if trackedEventIDs[questID] then
             trackedEventIDs[questID].tracked = false
         end
     end)
 
-    container:UpdateLayout()
+    self:UpdateLayout()
 end
-GW.LoadBonusFrame = LoadBonusFrame

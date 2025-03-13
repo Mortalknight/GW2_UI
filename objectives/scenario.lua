@@ -24,6 +24,8 @@ local allowedWidgetUpdateIdsForStatusBar = {
     [6350] = true, -- 20th
 }
 
+GwObjectivesScenarioContainerMixin = {}
+
 local function getObjectiveBlock(self, index)
     local block = _G[self:GetName() .. "Objective" .. index]
     if block then
@@ -121,9 +123,9 @@ local function updateCurrentScenario(self, event, ...)
         end
     end
 
-    GW.RemoveTrackerNotificationOfType("SCENARIO")
-    GW.RemoveTrackerNotificationOfType("TORGHAST")
-    GW.RemoveTrackerNotificationOfType("DELVE")
+    GwObjectivesNotification:RemoveNotificationOfType("SCENARIO")
+    GwObjectivesNotification:RemoveNotificationOfType("TORGHAST")
+    GwObjectivesNotification:RemoveNotificationOfType("DELVE")
 
     local compassData = {}
     local showTimerAsBonus = false
@@ -173,7 +175,7 @@ local function updateCurrentScenario(self, event, ...)
 
             compassData.TITLE = widgetInfo.text
             compassData.DESC = widgetInfo.text
-            GW.AddTrackerNotification(compassData)
+            GwObjectivesNotification:AddNotification(compassData)
 
             scenarioBlock:SetHeight(scenarioBlock.height)
             self.oldHeight = GW.RoundInt(self:GetHeight())
@@ -192,11 +194,11 @@ local function updateCurrentScenario(self, event, ...)
         if instanceType == "raid" then
             compassData.TITLE = name
             compassData.DESC = difficultyName
-            GW.AddTrackerNotification(compassData)
+            GwObjectivesNotification:AddNotification(compassData)
             scenarioBlock.height = scenarioBlock.height + 5
         else
-            GW.RemoveTrackerNotificationOfType("SCENARIO")
-            GW.RemoveTrackerNotificationOfType("TORGHAST")
+            GwObjectivesNotification:RemoveNotificationOfType("SCENARIO")
+            GwObjectivesNotification:RemoveNotificationOfType("TORGHAST")
             scenarioBlock:Hide()
         end
         GW.CombatQueue_Queue(nil, scenarioBlock.UpdateObjectiveActionButton, {scenarioBlock})
@@ -340,7 +342,7 @@ local function updateCurrentScenario(self, event, ...)
     scenarioBlock:SetBlockColorByKey(compassData.TYPE)
     scenarioBlock.Header:SetTextColor(scenarioBlock.color.r, scenarioBlock.color.g, scenarioBlock.color.b)
     scenarioBlock.hover:SetVertexColor(scenarioBlock.color.r, scenarioBlock.color.g, scenarioBlock.color.b)
-    GW.AddTrackerNotification(compassData, true)
+    GwObjectivesNotification:AddNotification(compassData, true)
 
     if questID ~= nil then
         scenarioBlock.questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
@@ -694,33 +696,33 @@ local function UIWidgetTemplateTooltipFrameOnEnter(self)
     end
 end
 
-local function LoadScenarioFrame(container)
-    container:SetScript("OnEvent", updateCurrentScenario)
+function GwObjectivesScenarioContainerMixin:InitModule()
+    self:SetScript("OnEvent", updateCurrentScenario)
 
-    container:RegisterEvent("PLAYER_ENTERING_WORLD")
-    container:RegisterEvent("SCENARIO_UPDATE")
-    container:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
-    container:RegisterEvent("LOOT_CLOSED")
-    container:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-    container:RegisterEvent("UPDATE_UI_WIDGET")
-    container:RegisterEvent("ZONE_CHANGED_INDOORS")
-    container:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    container:RegisterEvent("ZONE_CHANGED")
-    container:RegisterEvent("SCENARIO_COMPLETED")
-    container:RegisterEvent("SCENARIO_SPELL_UPDATE")
-    container:RegisterEvent("JAILERS_TOWER_LEVEL_UPDATE")
+    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+    self:RegisterEvent("SCENARIO_UPDATE")
+    self:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
+    self:RegisterEvent("LOOT_CLOSED")
+    self:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+    self:RegisterEvent("UPDATE_UI_WIDGET")
+    self:RegisterEvent("ZONE_CHANGED_INDOORS")
+    self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    self:RegisterEvent("ZONE_CHANGED")
+    self:RegisterEvent("SCENARIO_COMPLETED")
+    self:RegisterEvent("SCENARIO_SPELL_UPDATE")
+    self:RegisterEvent("JAILERS_TOWER_LEVEL_UPDATE")
 
-    container.jailersTowerType = nil
+    self.jailersTowerType = nil
 
     -- JailersTower hook
     -- do it only here so we are sure we do not hook more than one time
     hooksecurefunc(ScenarioObjectiveTracker, "SlideInContents", function(self)
         if self:ShouldShowCriteria() and IsInJailersTower() then
-            updateCurrentScenario(container)
+            updateCurrentScenario(self)
         end
     end)
 
-    timerBlock = CreateFrame("Button", "GwQuestTrackerTimer", container, "GwQuesttrackerScenarioBlock")
+    timerBlock = CreateFrame("Button", "GwQuestTrackerTimer", self, "GwQuesttrackerScenarioBlock")
     timerBlock.needToShowTimer = false
     timerBlock.height = timerBlock:GetHeight()
     timerBlock.timerlabel = timerBlock.timer.timerlabel
@@ -778,9 +780,9 @@ local function LoadScenarioFrame(container)
     )
     timerBlock.deathcounter:SetScript("OnLeave", GameTooltip_Hide)
 
-    timerBlock:SetParent(container)
+    timerBlock:SetParent(self)
     timerBlock:ClearAllPoints()
-    timerBlock:SetPoint("TOPRIGHT", container, "TOPRIGHT", 0, 0)
+    timerBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
 
     timerBlock:RegisterEvent("PLAYER_ENTERING_WORLD")
     timerBlock:RegisterEvent("WORLD_STATE_TIMER_START")
@@ -794,8 +796,8 @@ local function LoadScenarioFrame(container)
 
     timerBlock:SetScript("OnEvent", scenarioTimerOnEvent)
 
-    scenarioBlock = CreateFrame("Button", "GwScenarioBlock", container, "GwObjectivesBlockTemplate")
-    scenarioBlock:SetParent(container)
+    scenarioBlock = CreateFrame("Button", "GwScenarioBlock", self, "GwObjectivesBlockTemplate")
+    scenarioBlock:SetParent(self)
     scenarioBlock:SetPoint("TOPRIGHT", timerBlock, "BOTTOMRIGHT", 0, 0)
     scenarioBlock.Header:SetText("")
 
@@ -841,8 +843,7 @@ local function LoadScenarioFrame(container)
     end)
     scenarioBlock.delvesFrame.deathCounter.counter:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
-    C_Timer.After(0.8, function() updateCurrentScenario(container) end)
+    C_Timer.After(0.8, function() updateCurrentScenario(self) end)
 
     scenarioTimerOnEvent(timerBlock)
 end
-GW.LoadScenarioFrame = LoadScenarioFrame
