@@ -307,14 +307,14 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(heig
         return
     end
 
-    height = height + GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainerBossFrames:GetHeight() + GW.ObjectiveTrackerContainerArenaFrames:GetHeight()
+    height = height + GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()
     if GW.ObjectiveTrackerContainer.Notification:IsShown() then
         height = height + GW.ObjectiveTrackerContainer.Notification.desc:GetHeight()
     else
         height = height - 40
     end
     if type == "SCENARIO" then
-        height = height - (GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainerArenaFrames:GetHeight())
+        height = height - (GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight())
     end
     if type == "EVENT" then
         height = height + GW.ObjectiveTrackerContainer.Quests:GetHeight()
