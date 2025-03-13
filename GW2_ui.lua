@@ -481,7 +481,7 @@ local function commonEntering()
         PixelPerfection()
     end
     C_Timer.After(0.5, function()
-        if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
+        if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() and GwObjectivesNotification then
             GwObjectivesNotification:RemoveNotificationOfType("ARENA")
         end
     end)
