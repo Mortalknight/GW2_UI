@@ -1,7 +1,5 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
-local ParseCriteria = GW.ParseCriteria
-local ParseObjectiveString = GW.ParseObjectiveString
 
 local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
@@ -45,6 +43,7 @@ local function getObjectiveBlock(self, index)
     local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
     tinsert(self.objectiveBlocks, newBlock)
     newBlock:SetParent(self)
+    newBlock.notChangeSize = true
     if self.objectiveBlocksNum == 1 then
         newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -5)
     else
@@ -94,7 +93,7 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
             objectiveBlock.StatusBar:SetValue(quantity or 0)
             objectiveBlock.StatusBar:SetShown(isMythicKeystone or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
             objectiveBlock.StatusBar.precentage = true
-        elseif not ParseObjectiveString(objectiveBlock, text, nil, nil, isMythicKeystone) then
+        elseif not GW.ParseObjectiveString(objectiveBlock, text, nil, nil, isMythicKeystone) then
             objectiveBlock.StatusBar:Hide()
         end
 
@@ -161,7 +160,7 @@ local function updateCurrentScenario(self, event, ...)
         if widgetInfo and widgetInfo.shownState ~= Enum.WidgetShownState.Hidden then
             addObjectiveBlock(
             scenarioBlock,
-            ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text),
+            GW.ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text),
             false,
             1,
             "object",
@@ -366,7 +365,7 @@ local function updateCurrentScenario(self, event, ...)
 
             addObjectiveBlock(
                 scenarioBlock,
-                ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress),
+                GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress),
                 false,
                 criteriaIndex,
                 objectiveType,
@@ -426,7 +425,7 @@ local function updateCurrentScenario(self, event, ...)
                 timerBlock.timer:Hide()
                 addObjectiveBlock(
                     scenarioBlock,
-                    ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description),
+                    GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description),
                     false,
                     numCriteriaPrev + criteriaIndex,
                     objectiveType,
