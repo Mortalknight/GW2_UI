@@ -1,6 +1,8 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
+local containerMixin = CreateFromMixins(GwObjectivesContainerMixin)
+
 local function getObjectiveBlock(self, index, id)
     if _G[self:GetName() .. "Objective" .. index] then
         _G[self:GetName() .. "Objective" .. index].objectiveKey = id
@@ -209,7 +211,7 @@ local function UpdateSingle(group, idx)
     return true, block.height
 end
 
-local function layoutContent()
+function containerMixin:UpdateLayout()
     if not Todoloo.Config.Get(Todoloo.Config.Options.ATTACH_TASK_TRACKER_TO_OBJECTIVE_TRACKER) then
         GwQuesttrackerContainerTodoloo.header:Hide()
 
@@ -248,23 +250,12 @@ local function layoutContent()
     GwQuestTracker:LayoutChanged()
 end
 
-local function CollapseHeader(self, forceCollapse, forceOpen)
-    if (not self.collapsed or forceCollapse) and not forceOpen then
-        self.collapsed = true
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-    else
-        self.collapsed = false
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    end
-    layoutContent()
-end
-GW.CollapseTodolooAddonHeader = CollapseHeader
-
 local function LoadTodolooAddonSkin()
     if not GW.settings.SKIN_TODOLOO_ENABLED or not Todoloo then return end
     if not Todoloo.Config.Get(Todoloo.Config.Options.ATTACH_TASK_TRACKER_TO_OBJECTIVE_TRACKER) then return end
 
     local todolooObjectives = CreateFrame("Frame", "GwQuesttrackerContainerTodoloo", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
+    Mixin(todolooObjectives, containerMixin)
 
     tinsert(GW.QuestTrackerScrollableContainer, GwQuesttrackerContainerTodoloo)
 
@@ -280,11 +271,7 @@ local function LoadTodolooAddonSkin()
     todolooObjectives.header:Show()
 
     todolooObjectives.collapsed = false
-    todolooObjectives.header:SetScript("OnMouseDown",
-        function(self, button)
-            CollapseHeader(self:GetParent(), false, false)
-        end
-    )
+    todolooObjectives.header:SetScript("OnMouseDown", function() todolooObjectives:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
 
     Todoloo.EventBus:RegisterEvents(todolooObjectives, {
         Todoloo.Tasks.Events.GROUP_ADDED,
@@ -300,6 +287,6 @@ local function LoadTodolooAddonSkin()
         Todoloo.Tasks.Events.TASK_MOVED,
         Todoloo.Reset.Events.RESET_PERFORMED,
         Todoloo.Config.Events.CONFIG_CHANGED
-    }, layoutContent)
+    }, function() todolooObjectives:UpdateLayout() end)
 end
 GW.LoadTodolooAddonSkin = LoadTodolooAddonSkin

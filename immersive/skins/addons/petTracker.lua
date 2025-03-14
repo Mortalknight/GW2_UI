@@ -3,6 +3,7 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local maxEntries = 30
 
+local containerMixin = CreateFromMixins(GwObjectivesContainerMixin)
 local function AddSpecie(block, specie, quality, level)
     local source = specie:GetSourceIcon()
     if source then
@@ -77,8 +78,7 @@ local function setUpProgressbar(block, progress)
     return h, progessbarObjective
 end
 
-local function petTrackerUpdate()
-    local self = GwQuesttrackerContainerPetTracker
+function containerMixin:UpdateLayout()
     local progress = PetTracker.Maps:GetCurrentProgress()
     local prevBlock = nil
 
@@ -139,23 +139,12 @@ local function petTrackerUpdate()
     GwQuestTracker:LayoutChanged()
 end
 
-local function CollapseHeader(self, forceCollapse, forceOpen)
-    if (not self.collapsed or forceCollapse) and not forceOpen then
-        self.collapsed = true
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-    else
-        self.collapsed = false
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    end
-    petTrackerUpdate()
-end
-GW.CollapsePetTrackerAddonHeader = CollapseHeader
-
 local function LoadPetTrackerAddonSkin()
     if not GW.settings.SKIN_PETTRACKER_ENABLED or not PetTracker then return end
 
     local petTrackerLocals = LibStub("AceLocale-3.0"):GetLocale("PetTracker")
     local petTrackerObjectives = CreateFrame("Frame", "GwQuesttrackerContainerPetTracker", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
+    Mixin(petTrackerObjectives, containerMixin)
 
     tinsert(GW.QuestTrackerScrollableContainer, petTrackerObjectives)
 
@@ -188,7 +177,7 @@ local function LoadPetTrackerAddonSkin()
     petTrackerObjectives.header:SetScript("OnMouseDown",
         function(self, button)
             if button == "RightButton" then
-                if not self.collapsed then
+                if not petTrackerObjectives.collapsed then
 
                     MenuUtil.CreateContextMenu(self, function(ownerRegion, drop)
                         drop:CreateTitle('|TInterface/Addons/PetTracker/art/compass:16:16|t PetTracker')
@@ -205,16 +194,16 @@ local function LoadPetTrackerAddonSkin()
                     end)
                 end
             else
-                CollapseHeader(self:GetParent(), false, false)
+                petTrackerObjectives:CollapseHeader(false, false)
             end
         end
     )
 
-    petTrackerObjectives:SetScript("OnEvent", petTrackerUpdate)
+    petTrackerObjectives:SetScript("OnEvent", petTrackerObjectives.UpdateLayout)
     petTrackerObjectives:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-	EventRegistry:RegisterCallback("PetTracker.COLLECTION_CHANGED", petTrackerUpdate)
-	EventRegistry:RegisterCallback("PetTracker.OPTIONS_CHANGED", petTrackerUpdate)
+	EventRegistry:RegisterCallback("PetTracker.COLLECTION_CHANGED", function() petTrackerObjectives:UpdateLayout() end)
+	EventRegistry:RegisterCallback("PetTracker.OPTIONS_CHANGED", function() petTrackerObjectives:UpdateLayout() end)
 
-    petTrackerUpdate()
+    petTrackerObjectives:UpdateLayout()
 end
 GW.LoadPetTrackerAddonSkin = LoadPetTrackerAddonSkin

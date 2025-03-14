@@ -224,6 +224,12 @@ inventory\lootframe.xml
 inventory\lootframe.lua
 inventory\extendVendor.lua
 
+objectives\mixin\GwObjectivesAnimationMixin.lua
+objectives\mixin\GwObjectivesBlockMixin.lua
+objectives\mixin\GwObjectivesContainerMixin.lua
+objectives\mixin\GwQuestTrackerObjectiveMixin.lua
+objectives\mixin\GwObjectivesUnitFrameMixin.lua
+
 immersive\skins\skins.xml
 immersive\skins\achievements.xml
 immersive\toast.xml
@@ -247,11 +253,6 @@ immersive\minimapInstanceDifficult.lua
 immersive\minimap.lua
 immersive\worldmap.lua
 immersive\widgetUI.lua
-
-objectives\mixin\GwObjectivesAnimationMixin.lua
-objectives\mixin\GwObjectivesBlockMixin.lua
-objectives\mixin\GwObjectivesContainerMixin.lua
-objectives\mixin\GwQuestTrackerObjectiveMixin.lua
 
 objectives\scenarioWidgets\eventTimerBarSetupByWidgetId.lua
 objectives\scenarioWidgets\heroicVisions.lua

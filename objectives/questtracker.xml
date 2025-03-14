@@ -818,7 +818,7 @@
         </Frames>
     </Frame>
 
-    <Button name="GwQuestTrackerBossFrameTemp" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" hidden="true">
+    <Button name="GwQuestTrackerBossFrameTemp" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" hidden="true" mixin="GwBossFrameMixin">
         <Size x="300" y="48"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
@@ -969,7 +969,7 @@
 
     <Button name="GwQuestTrackerAreanaFrameTemp" inherits="GwQuestTrackerBossFrameTemp,SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" hidden="true"/>
 
-    <Button name="GwQuestTrackerArenaPrepFrameTemp" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" hidden="true">
+    <Button name="GwQuestTrackerArenaPrepFrameTemp" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" hidden="true" mixin="GwArenaPrepFrameMixin">
         <Size x="300" y="48"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>

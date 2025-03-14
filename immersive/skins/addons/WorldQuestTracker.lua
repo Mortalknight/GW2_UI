@@ -1,6 +1,7 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
+local containerMixin = CreateFromMixins(GwObjectivesContainerMixin)
 local function getObjectiveBlock(self, index)
     if _G[self:GetName() .. "GwWQTObjective" .. index] then
         return _G[self:GetName() .. "GwWQTObjective" .. index]
@@ -10,6 +11,7 @@ local function getObjectiveBlock(self, index)
     newBlock:SetParent(self)
     newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
+    newBlock.notChangeSize = true
 
     return newBlock
 end
@@ -38,7 +40,7 @@ local function createNewWQTObjectiveBlock(blockIndex, parent)
     return newBlock
 end
 
-local function addWQTTrackerQuest(self)
+function containerMixin:UpdateLayout()
     local objectiveBlock, objectiveDetailBlock
     local counter = 0
     local height = 1
@@ -94,22 +96,11 @@ local function addWQTTrackerQuest(self)
     GwQuestTracker:LayoutChanged()
 end
 
-local function CollapseHeader(self, forceCollapse, forceOpen)
-    if (not self.collapsed or forceCollapse) and not forceOpen then
-        self.collapsed = true
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-    else
-        self.collapsed = false
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    end
-    addWQTTrackerQuest(GwQuesttrackerContainerWQT)
-end
-GW.CollapseWQTAddonHeader = CollapseHeader
-
 local function LoadWQTAddonSkin()
     if not GW.settings.SKIN_WQT_ENABLED or not WorldQuestTrackerAddon then return end
 
     local fWQT = CreateFrame("Frame", "GwQuesttrackerContainerWQT", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
+    Mixin(fWQT, containerMixin)
 
     tinsert(GW.QuestTrackerScrollableContainer, fWQT)
 
@@ -124,13 +115,9 @@ local function LoadWQTAddonSkin()
     fWQT.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
 
     fWQT.collapsed = false
-    fWQT.header:SetScript("OnMouseDown",
-        function(self)
-            CollapseHeader(self:GetParent(), false, false)
-        end
-    )
+    fWQT.header:SetScript("OnMouseDown", function() fWQT:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
 
-    addWQTTrackerQuest(fWQT)
-    hooksecurefunc(WorldQuestTrackerAddon, "RefreshTrackerAnchor", function() addWQTTrackerQuest(fWQT) end)
+    fWQT:UpdateLayout()
+    hooksecurefunc(WorldQuestTrackerAddon, "RefreshTrackerAnchor", function() fWQT:UpdateLayout() end)
 end
 GW.LoadWQTAddonSkin = LoadWQTAddonSkin

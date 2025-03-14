@@ -207,6 +207,65 @@ function GwQuestLogBlockMixin:UpdateBlockById(questID, parent, quest, questLogIn
 end
 
 GwQuestLogMixin = {}
+
+function GwQuestLogMixin:GetBlockByQuestId(questID)
+    for i = 1, 25 do -- loop quest and campaign
+        local block = _G[self:GetName() .. "Block" .. i]
+        if block then
+            if block.questID == questID then
+                return block
+            end
+        end
+    end
+
+    return nil
+end
+
+function GwQuestLogMixin:GetOrCreateBlockByQuestId(questID, colorKey)
+    local blockName = self:GetName() .. "Block"
+
+    for i = 1, 25 do
+        if _G[blockName .. i] then
+            if _G[blockName .. i].questID == questID then
+                return _G[blockName .. i]
+            elseif _G[blockName .. i].questID == nil then
+                return self:GetBlock(i, colorKey, true)
+            end
+        else
+            return self:GetBlock(i, colorKey, true)
+        end
+    end
+
+    return nil
+end
+
+function GwQuestLogMixin:GetQuestWatchId(questID)
+    for i = 1, C_QuestLog.GetNumQuestWatches() do
+        if questID == C_QuestLog.GetQuestIDForQuestWatchIndex(i) then
+            return i
+        end
+    end
+
+    return nil
+end
+
+function GwQuestLogMixin:CheckForAutoQuests()
+    for i = 1, GetNumAutoQuestPopUps() do
+        local questID, popUpType = GetAutoQuestPopUp(i)
+        if questID and (popUpType == "OFFER" or popUpType == "COMPLETE") then
+            --find our block with that questId
+            local questBlock = self:GetBlockByQuestId(questID)
+            if questBlock then
+                if popUpType == "OFFER" then
+                    questBlock.popupQuestAccept:Show()
+                elseif popUpType == "COMPLETE" then
+                    questBlock.turnin:Show()
+                end
+            end
+        end
+    end
+end
+
 function GwQuestLogMixin:UpdateLayout()
     if self.isUpdating or not self.init then
         return
@@ -270,15 +329,16 @@ function GwQuestLogMixin:UpdateLayout()
                     savedContainerHeight = savedContainerHeight + block.height
                     -- save some values for later use
                     block.savedHeight = savedContainerHeight
-                    GW.CombatQueue_Queue("update_tracker_" .. self:GetName() .. block.index, block.UpdateObjectiveActionButtonPosition, {block, savedContainerHeight}, containerType)
+                    GW.CombatQueue_Queue("update_tracker_" .. self:GetName() .. block.index, block.UpdateObjectiveActionButtonPosition, {block, savedContainerHeight, self.isCampaignContainer and nil or "QUEST"})
                 else
                     if (isCampaign and self.isCampaignContainer) or (not isCampaign and not self.isCampaignContainer) then
                         counterQuest = counterQuest + 1
                     end
-                    if _G[self:GetName() .. "Block" .. counterQuest] then
-                        _G[self:GetName() .. "Block" .. counterQuest]:Hide()
-                        _G[self:GetName() .. "Block" .. counterQuest].questLogIndex = 0
-                        GW.CombatQueue_Queue("update_tracker_" .. self:GetName() .. counterQuest, _G[self:GetName() .. "Block" .. counterQuest].UpdateObjectiveActionButton, {_G[self:GetName() .. "Block" .. counterQuest]})
+                    local block = _G[self:GetName() .. "Block" .. counterQuest]
+                    if block then
+                        block:Hide()
+                        block.questLogIndex = 0
+                        GW.CombatQueue_Queue("update_tracker_" .. self:GetName() .. counterQuest, block.UpdateObjectiveActionButton, {block})
                     end
                 end
             end
@@ -292,12 +352,13 @@ function GwQuestLogMixin:UpdateLayout()
 
     -- hide other quests
     for i = counterQuest + 1, 25 do
-        if _G[self:GetName() .. "Block" .. i] then
-            _G[self:GetName() .. "Block" .. i].questID = nil
-            _G[self:GetName() .. "Block" .. i].questLogIndex = 0
-            _G[self:GetName() .. "Block" .. i]:Hide()
+        local block = _G[self:GetName() .. "Block" .. i]
+        if block then
+            block.questID = nil
+            block.questLogIndex = 0
+            block:Hide()
 
-            GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, _G[self:GetName() .. "Block" .. i].UpdateObjectiveActionButton, {_G[self:GetName() .. "Block" .. i]})
+            GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
         end
     end
     if counterQuest == 0 and self.isCampaignContainer then self.header:Hide() end

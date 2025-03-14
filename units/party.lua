@@ -426,6 +426,14 @@ local function UpdatePlayerInPartySetting(alwaysHide)
             end
         end
 
+        if not GW.settings.PARTY_PLAYER_FRAME and i == 5 then
+            frame:SetScript("OnEvent", nil)
+            _G["GwPartyPetFrame5"]:SetScript("OnEvent", nil)
+        elseif GW.settings.PARTY_PLAYER_FRAME and i == 5 then
+            frame:SetScript("OnEvent", party_OnEvent)
+            _G["GwPartyPetFrame5"]:SetScript("OnEvent", party_OnEvent)
+        end
+
         isFirstFrame = false
     end
 
@@ -441,7 +449,6 @@ GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
 local function CreatePartyPetFrame(frame, i)
     local unit = frame.unit == "player" and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
     local f = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, "GwPartyPetFrame")
-
     local hg = f.healthContainer
     f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
     f.antiHeal = hg.healPrediction.absorbbg.health.antiHeal

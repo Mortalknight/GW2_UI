@@ -49,6 +49,7 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     newBlock:SetBlockColorByKey(colorKey)
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
+    self["Block" .. idx] = newBlock
 
     newBlock:SetScript("OnMouseDown", self.BlockOnClick)
 
@@ -70,62 +71,4 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     end
 
     return newBlock
-end
-
-function GwObjectivesContainerMixin:GetBlockByQuestId(questID)
-    for i = 1, 25 do -- loop quest and campaign
-        local block = _G[self:GetName() .. "Block" .. i]
-        if block then
-            if block.questID == questID then
-                return block
-            end
-        end
-    end
-
-    return nil
-end
-
-function GwObjectivesContainerMixin:GetOrCreateBlockByQuestId(questID, colorKey)
-    local blockName = self:GetName() .. "Block"
-
-    for i = 1, 25 do
-        if _G[blockName .. i] then
-            if _G[blockName .. i].questID == questID then
-                return _G[blockName .. i]
-            elseif _G[blockName .. i].questID == nil then
-                return self:GetBlock(i, colorKey, true)
-            end
-        else
-            return self:GetBlock(i, colorKey, true)
-        end
-    end
-
-    return nil
-end
-
-function GwObjectivesContainerMixin:GetQuestWatchId(questID)
-    for i = 1, C_QuestLog.GetNumQuestWatches() do
-        if questID == C_QuestLog.GetQuestIDForQuestWatchIndex(i) then
-            return i
-        end
-    end
-
-    return nil
-end
-
-function GwObjectivesContainerMixin:CheckForAutoQuests()
-    for i = 1, GetNumAutoQuestPopUps() do
-        local questID, popUpType = GetAutoQuestPopUp(i)
-        if questID and (popUpType == "OFFER" or popUpType == "COMPLETE") then
-            --find our block with that questId
-            local questBlock = self:GetBlockByQuestId(questID)
-            if questBlock then
-                if popUpType == "OFFER" then
-                    questBlock.popupQuestAccept:Show()
-                elseif popUpType == "COMPLETE" then
-                    questBlock.turnin:Show()
-                end
-            end
-        end
-    end
 end

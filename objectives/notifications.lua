@@ -4,7 +4,6 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local AddToAnimation = GW.AddToAnimation
 
 local notifications = {}
-local questCompass = {}
 
 local icons = {
     QUEST = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
@@ -40,34 +39,24 @@ end
 GW.AddForProfiling("notifications", "prioritys", prioritys)
 
 local function getQuestPOIText(questLogIndex)
-    local finalText = ""
-    local text, finished
-    local numFinished = 0
-    local numItemDropTooltips = GetNumQuestItemDrops(questLogIndex)
-    if numItemDropTooltips and numItemDropTooltips > 0 then
-        for i = 1, numItemDropTooltips do
-            text, _, finished = GetQuestLogItemDrop(i, questLogIndex)
-            if text and not finished then
-                finalText = finalText .. text .. "\n"
-            end
-            if finished then numFinished = numFinished + 1 end
-        end
-        if finalText == "" and numItemDropTooltips == numFinished then finalText = QUEST_WATCH_QUEST_READY end
-    else
-        local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
-        for i = 1, numObjectives do
-            text, _, finished = GetQuestLogLeaderBoard(i, questLogIndex)
+    local finalText, numFinished = "", 0
+    local numItemDrops = GetNumQuestItemDrops(questLogIndex)
+    local numObjectives = numItemDrops > 0 and numItemDrops or GetNumQuestLeaderBoards(questLogIndex)
+    local getter = numItemDrops > 0 and GetQuestLogItemDrop or GetQuestLogLeaderBoard
 
-            if text and not finished then
+    for i = 1, numObjectives do
+        local text, _, finished = getter(i, questLogIndex)
+        if text then
+            if finished then
+                numFinished = numFinished + 1
+                if numObjectives == 1 then return QUEST_WATCH_QUEST_READY end
+            else
                 finalText = finalText .. text .. "\n"
-            elseif text and numObjectives == 1  and finished then
-                finalText = QUEST_WATCH_QUEST_READY
             end
-            if finished then numFinished = numFinished + 1 end
         end
-        if finalText == "" and numObjectives == numFinished then finalText = QUEST_WATCH_QUEST_READY end
     end
-    return finalText
+
+    return numFinished == numObjectives and QUEST_WATCH_QUEST_READY or finalText
 end
 GW.AddForProfiling("notifications", "getQuestPOIText", getQuestPOIText)
 
@@ -81,35 +70,28 @@ local function getNearestQuestPOI()
     local numQuests = C_QuestLog.GetNumQuestLogEntries()
     local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
 
-    if (x == nil or y == nil) and (numTrackedQuests == 0 or numTrackedWQ == 0 or numQuests == 0) then
+    if (not x or not y) and (numTrackedQuests == 0 and numTrackedWQ == 0 and numQuests == 0) then
         return nil
     end
 
-    local closestQuestID
-    local minDistSqr = math.huge
-    local isWQ = false
-    wipe(questCompass)
+
+    local closestQuestID, minDistSqr, isWQ = nil, math.huge, false
 
     -- first check for nearest tracker WQ
     for i = 1, numTrackedWQ do
-        local watchedWorldQuestID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
-        if watchedWorldQuestID then
-            local distanceSq = C_QuestLog.GetDistanceSqToQuest(watchedWorldQuestID)
-            if distanceSq and distanceSq <= minDistSqr then
-                minDistSqr = distanceSq;
-                closestQuestID = watchedWorldQuestID
-                isWQ = true
-            end
+        local questID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
+        local dist = questID and C_QuestLog.GetDistanceSqToQuest(questID)
+        if dist and dist <= minDistSqr then
+            minDistSqr, closestQuestID, isWQ = dist, questID, true
         end
     end
 
     if not closestQuestID then
         local questID = C_SuperTrack.GetSuperTrackedQuestID()
-        if questID and QuestHasPOIInfo(questID) then
-            local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
-            if onContinent and distSqr <= minDistSqr then
-                minDistSqr = distSqr
-                closestQuestID = questID
+        if questID then
+            local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
+            if onContinent and dist and dist <= minDistSqr then
+                minDistSqr, closestQuestID = dist, questID
             end
         end
     end
@@ -127,117 +109,122 @@ local function getNearestQuestPOI()
                 end
             end
         end
-    end
 
-    if closestQuestID then
-        local poiX, poiY
-        if isWQ then
-            poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.Libs.GW2Lib:GetPlayerLocationMapID())
-        else
-            local questsOnMap = C_QuestLog.GetQuestsOnMap(GW.Libs.GW2Lib:GetPlayerLocationMapID())
-
-            if questsOnMap then
-                for _, info in ipairs(questsOnMap) do
-                    if info.questID == closestQuestID then
-                        poiX = info.x
-                        poiY = info.y
-                        break
+        if not closestQuestID then
+            for questLogIndex = 1, numQuests do
+                local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
+                local questData = QuestCache:Get(questID)
+                local isOnMap, hasLocalPOI = questData:IsOnMap()
+                if isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
+                    local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
+                    if onContinent and dist and dist <= minDistSqr then
+                        minDistSqr, closestQuestID = dist, questID
                     end
                 end
             end
         end
+    end
 
-        if poiX then
-            local objectiveText = isWQ and GW.ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
-            local isCampaign = QuestCache:Get(closestQuestID):IsCampaign()
-            local isFrequent = QuestCache:Get(closestQuestID).frequency and QuestCache:Get(closestQuestID).frequency > 0
-            if QuestCache:Get(closestQuestID).frequency == nil then
-                -- Could happens that blizzard returns the wrong value, check at the tracker is the quest us frequent to avoid a memory leak here
-                local found = false
-                for i = 1, 25 do
-                    if _G["GwQuesttrackerContainerCampaignBlock" .. i] ~= nil and _G["GwQuesttrackerContainerCampaignBlock" .. i].questID == closestQuestID then
-                        isFrequent = _G["GwQuesttrackerContainerCampaignBlock" .. i].isFrequency
-                        found = true
-                        break
-                    end
-                end
-                if not found then
-                    for i = 1, 25 do
-                        if _G["GwQuesttrackerContainerQuestsBlock" .. i] ~= nil and _G["GwQuesttrackerContainerQuestsBlock" .. i].questID == closestQuestID then
-                            isFrequent = _G["GwQuesttrackerContainerQuestsBlock" .. i].isFrequency
-                            break
-                        end
-                    end
-                end
+    if not closestQuestID then return nil end
+
+    local poiX, poiY = nil, nil
+    if isWQ then
+        poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.Libs.GW2Lib:GetPlayerLocationMapID())
+    else
+        local questsOnMap = C_QuestLog.GetQuestsOnMap(GW.Libs.GW2Lib:GetPlayerLocationMapID())
+        for _, info in ipairs(questsOnMap or {}) do
+            if info.questID == closestQuestID then
+                poiX, poiY = info.x, info.y
+                break
             end
-            questCompass.DESC = objectiveText
-            questCompass.TITLE = QuestUtils_GetQuestName(closestQuestID)
-            questCompass.ID = closestQuestID
-            questCompass.X = poiX
-            questCompass.Y = poiY
-            questCompass.QUESTID = closestQuestID
-            questCompass.TYPE = isCampaign and "CAMPAIGN" or isFrequent and "DAILY" or isWQ and "EVENT" or "QUEST"
-            questCompass.COLOR = isCampaign and TRACKER_TYPE_COLOR.CAMPAIGN or isFrequent and TRACKER_TYPE_COLOR.DAILY or isWQ and TRACKER_TYPE_COLOR.EVENT or TRACKER_TYPE_COLOR.QUEST
-            questCompass.COMPASS = true
-
-            return questCompass
         end
     end
 
-    return nil
+    if not poiX then return nil end
+
+    local questData = QuestCache:Get(closestQuestID)
+    local isCampaign = questData:IsCampaign()
+    local isFrequent = questData.frequency and questData.frequency > 0
+    local objectiveText = isWQ and GW.ParseSimpleObjective(GetQuestObjectiveInfo(closestQuestID, 1, false)) or getQuestPOIText(C_QuestLog.GetLogIndexForQuestID(closestQuestID))
+
+    if questData.frequency == nil then
+        for i = 1, 25 do
+            local block = GW.ObjectiveTrackerContainer.Campaign["Block" .. i]
+            if block and block.questID == closestQuestID then
+                isFrequent = block.isFrequency
+                break
+            end
+            block = GW.ObjectiveTrackerContainer.Quests["Block" .. i]
+            if block and block.questID == closestQuestID then
+                isFrequent = block.isFrequency
+                break
+            end
+        end
+    end
+
+    return {
+        X = poiX,
+        Y = poiY,
+        DESC = objectiveText,
+        TITLE = questData.title,
+        TYPE = isCampaign and "CAMPAIGN" or isFrequent and "DAILY" or isWQ and "EVENT" or "QUEST",
+        ID = closestQuestID,
+        COLOR = isCampaign and TRACKER_TYPE_COLOR.CAMPAIGN
+            or isFrequent and TRACKER_TYPE_COLOR.DAILY
+            or isWQ and TRACKER_TYPE_COLOR.EVENT
+            or TRACKER_TYPE_COLOR.QUEST,
+        COMPASS = true,
+        QUESTID = closestQuestID
+    }
 end
 GW.AddForProfiling("notifications", "getNearestQuestPOI", getNearestQuestPOI)
 
 local function getBodyPOI()
-    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
+    local mapID = GW.Libs.GW2Lib:GetPlayerLocationMapID()
+    if not mapID then
         return nil
     end
 
-    local corpTable = C_DeathInfo.GetCorpseMapPosition(GW.Libs.GW2Lib:GetPlayerLocationMapID())
-    if corpTable == nil then
+    local corpTable = C_DeathInfo.GetCorpseMapPosition(mapID)
+    if not corpTable then
         return nil
     end
 
     local x, y = corpTable:GetXY()
-    if x == nil or x == 0 then
+    if not x or x == 0 then
         return nil
     end
 
-    local bodyCompass = {}
-    bodyCompass.X = x
-    bodyCompass.Y = y
-    bodyCompass.TITLE = L["Retrieve your corpse"]
-    bodyCompass.TYPE = "DEAD"
-    bodyCompass.ID = "playerDead"
-    bodyCompass.COLOR = TRACKER_TYPE_COLOR.DEAD
-    bodyCompass.COMPASS = true
-
-    return bodyCompass
+    return {
+        X = x,
+        Y = y,
+        TITLE = L["Retrieve your corpse"],
+        TYPE = "DEAD",
+        ID = "playerDead",
+        COLOR = TRACKER_TYPE_COLOR.DEAD,
+        COMPASS = true
+    }
 end
 GW.AddForProfiling("notifications", "getBodyPOI", getBodyPOI)
 
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
 local function updateRadar(self)
-    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
-        return
-    end
-
     local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
-    if x == nil or y == nil or self.data.X == nil then
+    if not x or not y or not self.data.X then
         self:GetParent():RemoveNotificationById(self.dataIndex)
         return
     end
 
-    local pFacing = GetPlayerFacing()
-    if pFacing == nil then pFacing = 0 end
+    local pFacing = GetPlayerFacing() or 0
     local dir_x = self.data.X - x
     local dir_y = self.data.Y - y
-    local a = math.atan2(dir_y, dir_x)
-    a = rad_135 - a - pFacing
+    local angle = math.atan2(dir_y, dir_x)
+    angle = rad_135 - angle - pFacing
 
-    local sin, cos = math.sin(a) * square_half, math.cos(a) * square_half
-    self.arrow:SetTexCoord(0.5 - sin, 0.5 + cos, 0.5 + cos, 0.5 + sin, 0.5 - cos, 0.5 - sin, 0.5 + sin, 0.5 - cos)
+    local sin_a = math.sin(angle) * square_half
+    local cos_a = math.cos(angle) * square_half
+    self.arrow:SetTexCoord(0.5 - sin_a, 0.5 + cos_a, 0.5 + cos_a, 0.5 + sin_a, 0.5 - cos_a, 0.5 - sin_a, 0.5 + sin_a, 0.5 - cos_a)
 end
 GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
@@ -302,47 +289,42 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
         return
     end
 
-    local data
+    local data = nil
+
     if UnitIsDeadOrGhost("player") then
         data = getBodyPOI()
     end
-    if data == nil then
-        for k, _ in pairs(notifications) do
-            if not notifications[k].COMPASS and notifications[k] ~= nil then
-                if data ~= nil then
-                    if prioritys(data.TYPE, notifications[k].TYPE) then
-                        data = notifications[k]
-                    end
-                else
-                    data = notifications[k]
+
+    if not data then
+        for _, notification in pairs(notifications) do
+            if notification and not notification.COMPASS then
+                if not data or prioritys(data.TYPE, notification.TYPE) then
+                    data = notification
                 end
             end
         end
     end
-    if data == nil then
+
+    if not data then
         data = getNearestQuestPOI()
     end
-    if data == nil then
+
+    if not data then
         self.shouldDisplay = false
         return
     end
 
-    if data.COLOR == nil then
-        data.COLOR = {r = 1, g = 1, b = 1}
-    end
+    data.COLOR = data.COLOR or { r = 1, g = 1, b = 1 }
 
     --remove tooltip here
     self.iconFrame:SetScript("OnEnter", nil)
     self.iconFrame:SetScript("OnLeave", nil)
 
-    if icons[data.TYPE] ~= nil then
-        self.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
-        self.iconFrame.icon:SetTexCoord(
-            icons[data.TYPE].l,
-            icons[data.TYPE].r,
-            icons[data.TYPE].t,
-            icons[data.TYPE].b
-        )
+    local iconInfo = icons[data.TYPE]
+
+    if iconInfo then
+        self.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex)
+        self.iconFrame.icon:SetTexCoord(iconInfo.l, iconInfo.r, iconInfo.t, iconInfo.b)
 
         if data.TYPE == "DELVE" then
             self.iconFrame:SetScript("OnEnter", function()
@@ -354,7 +336,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
             end)
         end
 
-        if data.PROGRESS ~= nil and icons[data.TYPE] then
+        if data.PROGRESS and iconInfo then
             self.bonusbar:Show()
             self.bonusbar.progress = data.PROGRESS
             self.bonusbar.bar:SetValue(data.PROGRESS)
@@ -371,26 +353,14 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
         self.compass.data = data
         self.compass.dataIndex = data.ID
 
-        if icons[data.TYPE] ~= nil then
-            self.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
-            self.compass.icon:SetTexCoord(
-                icons[data.TYPE].l,
-                icons[data.TYPE].r,
-                icons[data.TYPE].t,
-                icons[data.TYPE].b
-            )
+        if iconInfo then
+            self.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex)
+            self.compass.icon:SetTexCoord(iconInfo.l, iconInfo.r, iconInfo.t, iconInfo.b)
         else
             self.compass.icon:SetTexture(nil)
         end
 
-        if currentCompassData and currentCompassData ~= self.compass.dataIndex then
-            currentCompassData = self.compass.dataIndex
-            if self.compass.Timer then
-                self.compass.Timer:Cancel()
-                self.compass.Timer = nil
-            end
-            self.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(self.compass) end)
-        elseif not currentCompassData then
+        if not currentCompassData or currentCompassData ~= self.compass.dataIndex then
             currentCompassData = self.compass.dataIndex
             if self.compass.Timer then
                 self.compass.Timer:Cancel()
@@ -398,6 +368,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
             end
             self.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(self.compass) end)
         end
+
         self.iconFrame.icon:SetTexture(nil)
     else
         self.compass:Hide()
@@ -410,13 +381,14 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
     self.title:SetText(data.TITLE)
     self.title:SetTextColor(data.COLOR.r, data.COLOR.g, data.COLOR.b)
     self.compassBG:SetVertexColor(data.COLOR.r, data.COLOR.g, data.COLOR.b, 0.3)
-    self.desc:SetText(data.DESC)
+    self.desc:SetText(data.DESC or "")
 
-    if data.DESC == nil or data.DESC == "" then
+    if not data.DESC or data.DESC == "" then
         self.title:SetPoint("TOP", self, "TOP", 0, -30)
     else
         self.title:SetPoint("TOP", self, "TOP", 0, -15)
     end
+
     self.shouldDisplay = true
 end
 
