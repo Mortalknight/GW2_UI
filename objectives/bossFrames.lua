@@ -68,7 +68,7 @@ function GwBossFrameMixin:OnEvent(event, unit)
         if unit ~= self.unit then return end
     end
     if not self:IsShown() then return end
-    print(123)
+
     if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         self:UpdateHealth()
     elseif event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT" then
