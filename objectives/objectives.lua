@@ -97,13 +97,11 @@ function GwQuestLogBlockMixin:UpdateBlockObjectives(numObjectives)
     end
 end
 
-function GwQuestLogBlockMixin:UpdateBlock(parent, quest)
-    local questID = quest:GetID()
-    local questLogIndex = quest:GetQuestLogIndex()
-    UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
-end
-
-function GwQuestLogBlockMixin:UpdateBlockById(questID, parent, quest, questLogIndex)
+function GwQuestLogBlockMixin:UpdateBlock(parent, quest, questID, questLogIndex)
+    if quest and not questID then
+        questID = quest:GetID()
+        questLogIndex = quest:GetQuestLogIndex()
+    end
     UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
 end
 
@@ -312,7 +310,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
 
     if block and questLogIndex and questLogIndex > 0 then
         block.isFrequency = isFrequency
-        block:UpdateBlockById(questID, self, q, questLogIndex)
+        block:UpdateBlock(self, q, questID, questLogIndex)
         block:Show()
         if added then
             C_Timer.After(0.1, function() block:NewQuestAnimation() end)
