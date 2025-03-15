@@ -199,6 +199,7 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index)
 end
 
 function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, options)
+    if not text then return end
     self.numObjectives = self.numObjectives + 1
     local objectiveBlock = self:GetObjectiveBlock(objectiveIndex)
     local precentageComplete = 0
