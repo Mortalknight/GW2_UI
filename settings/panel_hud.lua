@@ -472,7 +472,6 @@ local function LoadHudPanel(sWindow)
         COMBAT_SUBTEXT,
         "GW_COMBAT_TEXT_MODE",
         function(value)
-            print("FCT ON SWITCH", value)
             if value == "GW2" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
                 if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
