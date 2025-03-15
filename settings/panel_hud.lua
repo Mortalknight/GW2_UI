@@ -472,6 +472,7 @@ local function LoadHudPanel(sWindow)
         COMBAT_SUBTEXT,
         "GW_COMBAT_TEXT_MODE",
         function(value)
+            print("FCT ON SWITCH", value)
             if value == "GW2" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
                 if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
@@ -508,7 +509,11 @@ local function LoadHudPanel(sWindow)
         L["GW2 floating combat text style"],
         nil,
         "GW_COMBAT_TEXT_STYLE",
-        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat(true) end,
+        function()
+            local enabled = GW.settings.GW_COMBAT_TEXT_MODE == "GW2" or GW.settings.GW_COMBAT_TEXT_MODE == "BLIZZARD" or false
+            GW.UpdateDameTextSettings()
+            GW.FloatingCombatTextToggleFormat(enabled)
+        end,
         {"Default", "Stacking", "Classic"},
         {DEFAULT, L["Stacking"], EXPANSION_NAME0},
         nil,
@@ -522,7 +527,11 @@ local function LoadHudPanel(sWindow)
         L["Classic combat text anchoring"],
         nil,
         "GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR",
-        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat(true) end,
+        function()
+            local enabled = GW.settings.GW_COMBAT_TEXT_MODE == "GW2" or GW.settings.GW_COMBAT_TEXT_MODE == "BLIZZARD" or false
+            GW.UpdateDameTextSettings()
+            GW.FloatingCombatTextToggleFormat(enabled)
+        end,
         {"Nameplates", "Center"},
         {NAMEPLATES_LABEL, L["Center of screen"]},
         nil,
