@@ -1105,22 +1105,17 @@ local function RescanAllNameplates()
     end
 end
 
-local function onCombatLogEvent(self)
-    handleCombatLogEvent(self, CombatLogGetCurrentEventInfo())
-end
-AFP("onNamePlateRemoved", onNamePlateRemoved)
-
 local function ToggleFormat(activate)
     if activate then
-        eventHandler:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_DAMAGE", handleCombatLogEvent)
+        GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_MISSED", handleCombatLogEvent)
+        GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_HEAL", handleCombatLogEvent)
 
         eventHandler:SetScript("OnEvent", function(_, event, ...)
             if event == "NAME_PLATE_UNIT_ADDED" then
                 onNamePlateAdded(eventHandler, event, ...)
             elseif event == "NAME_PLATE_UNIT_REMOVED" then
                 onNamePlateRemoved(eventHandler, event, ...)
-            elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-                onCombatLogEvent(eventHandler)
             end
         end)
 
@@ -1188,6 +1183,7 @@ local function ToggleFormat(activate)
     else
         eventHandler:UnregisterAllEvents()
         eventHandler:SetScript("OnEvent", nil)
+        GW.Libs.GW2Lib:UnregisterAllCombatEvents(eventHandler)
 
         wipe(unitToGuid)
         wipe(guidToUnit)

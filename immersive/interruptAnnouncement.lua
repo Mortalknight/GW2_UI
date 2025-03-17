@@ -8,12 +8,12 @@ local function IsRandomGroup()
     return IsPartyLFG() or C_PartyInfo.IsPartyWalkIn() -- This is the API for Delves
 end
 
-local function OnEvent()
+local function OnEvent(self, _, subEvent, _, sourceGUID, srcName, sourceFlags, _, destGUID, destName, _, _, ...)
     local inGroup = IsInGroup()
     if not inGroup then return end
 
-    local _, event, _, sourceGUID, _, _, _, destGUID, destName, _, _, _, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
-    local announce = spellName and (destGUID ~= GW.myguid) and (sourceGUID == GW.myguid or sourceGUID == UnitGUID("pet")) and strmatch(event, "_INTERRUPT")
+    local _, _, _, spellID, spellName = ...
+    local announce = spellName and (destGUID ~= GW.myguid) and (sourceGUID == GW.myguid or sourceGUID == UnitGUID("pet"))
     if not announce then return end
 
     local inRaid, inPartyLFG = IsInRaid(), IsRandomGroup()
@@ -56,11 +56,9 @@ end
 local function ToggleInterruptAnncouncement()
     local announce = GW.settings.interruptAnnounce
     if announce and announce ~= "NONE" then
-        frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-        frame:SetScript("OnEvent", OnEvent)
+        GW.Libs.GW2Lib:RegisterCombatEvent(frame, "_INTERRUPT", OnEvent)
     else
-        frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-        frame:SetScript("OnEvent", nil)
+        GW.Libs.GW2Lib:UnregisterCombatEvent(frame, "_INTERRUPT")
     end
 end
 GW.ToggleInterruptAnncouncement = ToggleInterruptAnncouncement
