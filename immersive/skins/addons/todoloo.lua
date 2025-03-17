@@ -1,9 +1,10 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
-local containerMixin = CreateFromMixins(GwObjectivesContainerMixin)
+GwTodolooContainerMixin =  {}
+GwTodolooBlockMixin = {}
 
-local function getObjectiveBlock(self, index, id)
+function GwTodolooBlockMixin:GetObjectiveBlock(index, id)
     if _G[self:GetName() .. "Objective" .. index] then
         _G[self:GetName() .. "Objective" .. index].objectiveKey = id
 
@@ -61,36 +62,6 @@ local function getObjectiveBlock(self, index, id)
     return newBlock
 end
 
-local function createNewBlock(parent, idx)
-    if _G["GwTodolooBlock" .. idx] then
-
-        -- hide always all objectives
-        for i = 1, 99 do
-            if _G["GwTodolooBlock" .. idx .. "Objective" .. i] then
-                _G["GwTodolooBlock" .. idx .. "Objective" .. i]:Hide()
-            end
-        end
-
-        return _G["GwTodolooBlock" .. idx]
-    end
-
-    local newBlock = CreateFrame("Button", "GwTodolooBlock" .. idx, parent, "GwObjectivesBlockTemplate")
-    newBlock:SetParent(parent)
-
-    if idx == 1 then
-        newBlock:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -20)
-    else
-        newBlock:SetPoint("TOPRIGHT", _G["GwTodolooBlock" .. (idx - 1)], "BOTTOMRIGHT", 0, 0)
-    end
-
-    newBlock.color = TRACKER_TYPE_COLOR.EVENT
-    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock:Hide()
-
-    return newBlock
-end
-
 local function SetUpObjectivesBlock(block, name, isCompleted, resetType)
     block:Show()
 
@@ -118,8 +89,8 @@ local function SetUpObjectivesBlock(block, name, isCompleted, resetType)
     block.height = h
 end
 
-local function DoTasks(block, groupCompleted, groupReset)
-    local tasks = Todoloo.TaskManager:GetGroupTasks(block.id)
+function GwTodolooBlockMixin:DoTasks(groupCompleted, groupReset)
+    local tasks = Todoloo.TaskManager:GetGroupTasks(self.id)
     local counter = 1
     local height = 20
     local iterTasks = {};
@@ -137,7 +108,7 @@ local function DoTasks(block, groupCompleted, groupReset)
     for _, task in pairs(iterTasks) do
         if groupCompleted then
             if Todoloo.Config.Get(Todoloo.Config.Options.SHOW_COMPLETED_TASKS) then
-                local objectivesBlock = getObjectiveBlock(block, counter, task.id)
+                local objectivesBlock = self:GetObjectiveBlock(counter, task.id)
                 SetUpObjectivesBlock(objectivesBlock, task.name, true, (task.reset and task.reset or groupReset or 0))
 
                 height = height + objectivesBlock.height
@@ -146,14 +117,14 @@ local function DoTasks(block, groupCompleted, groupReset)
         else
             if task.completed then
                 if Todoloo.Config.Get(Todoloo.Config.Options.SHOW_COMPLETED_TASKS) then
-                    local objectivesBlock = getObjectiveBlock(block, counter, task.id)
+                    local objectivesBlock = self:GetObjectiveBlock(counter, task.id)
                     SetUpObjectivesBlock(objectivesBlock, task.name, true,  (task.reset and task.reset or groupReset or 0))
 
                     height = height + objectivesBlock.height
                     counter = counter + 1
                 end
             else
-                local objectivesBlock = getObjectiveBlock(block, counter, task.id)
+                local objectivesBlock = self:GetObjectiveBlock(counter, task.id)
                 SetUpObjectivesBlock(objectivesBlock, task.name, false,  (task.reset and task.reset or groupReset or 0))
 
                 height = height + objectivesBlock.height
@@ -162,17 +133,17 @@ local function DoTasks(block, groupCompleted, groupReset)
         end
     end
 
-    block.height = height + 5
-    block:SetHeight(block.height)
+    self.height = height + 5
+    self:SetHeight(self.height)
 end
 
-local function UpdateSingle(group, idx)
+function GwTodolooContainerMixin:UpdateSingle(group, idx)
     -- Groups without names should not be visible.
     if group.name == "" then
         return false
     end
 
-    local block = createNewBlock(GwQuesttrackerContainerTodoloo, idx)
+    local block = self:GetBlock(idx, "EVENT")
     local isComplete = Todoloo.TaskManager:IsGroupComplete(group.id)
     local groupData = Todoloo.TaskManager:GetGroup(group.id)
     local groupHeaderText = group.name
@@ -185,7 +156,7 @@ local function UpdateSingle(group, idx)
     block.Header:SetText(groupHeaderText)
     block.id = group.id
 
-    if groupData and groupData.reset and (groupData.reset ==  TODOLOO_RESET_INTERVALS.Daily or groupData.reset ==  TODOLOO_RESET_INTERVALS.Weekly) then
+    if groupData and groupData.reset and (groupData.reset == TODOLOO_RESET_INTERVALS.Daily or groupData.reset == TODOLOO_RESET_INTERVALS.Weekly) then
         block.color = TRACKER_TYPE_COLOR.DAILY
         groupReset = groupData.reset
     else
@@ -196,14 +167,14 @@ local function UpdateSingle(group, idx)
         block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
 
     if isComplete and not Todoloo.Config.Get(Todoloo.Config.Options.SHOW_COMPLETED_TASKS) then
-        DoTasks(block, isComplete, groupReset)
+        block:DoTasks(isComplete, groupReset)
         if Todoloo.Config.Get(Todoloo.Config.Options.SHOW_COMPLETED_GROUPS) then
-            local objectivesBlock = getObjectiveBlock(block, 0, "GROUP_COMPLETE")
+            local objectivesBlock = block:GetObjectiveBlock(0, "GROUP_COMPLETE")
             SetUpObjectivesBlock(objectivesBlock, "Group tasks done", true, 0)
             block.height = block.height + objectivesBlock.height
         end
     else
-        DoTasks(block, isComplete, groupReset)
+        block:DoTasks(isComplete, groupReset)
     end
 
     block:Show()
@@ -211,69 +182,65 @@ local function UpdateSingle(group, idx)
     return true, block.height
 end
 
-function containerMixin:UpdateLayout()
+function GwTodolooContainerMixin:UpdateLayout()
     if not Todoloo.Config.Get(Todoloo.Config.Options.ATTACH_TASK_TRACKER_TO_OBJECTIVE_TRACKER) then
-        GwQuesttrackerContainerTodoloo.header:Hide()
+        self.header:Hide()
+        self:SetHeight(0.001)
 
         return
     else
-        GwQuesttrackerContainerTodoloo.header:Show()
+        self.header:Show()
     end
 
     -- hide always all blocks
     for i = 1, 99 do
-        if _G["GwTodolooBlock" .. i] then
-            _G["GwTodolooBlock" .. i]:Hide()
+        local block = _G[self:GetName() .. "Block" .. i]
+        if block then
+            block:Hide()
         end
     end
 
     local foundTodo = false
-    if GwQuesttrackerContainerTodoloo.collapsed then
-        GwQuesttrackerContainerTodoloo:SetHeight(20)
+    if self.collapsed then
+        self:SetHeight(20)
     else
         local groups = TodolooObjectiveTracker:BuildGroupInfos()
         local containerHeight = 20
 
         for idx, group in ipairs(groups) do
-            local added, usedheight = UpdateSingle(group, idx)
+            local added, usedheight = self:UpdateSingle(group, idx)
             if added then
                 foundTodo = true
                 containerHeight = containerHeight + usedheight
             end
         end
 
-        GwQuesttrackerContainerTodoloo:SetHeight(containerHeight)
+        self:SetHeight(containerHeight)
     end
 
-    GwQuesttrackerContainerTodoloo:SetShown(foundTodo or GwQuesttrackerContainerTodoloo.collapsed)
+    self:SetShown(foundTodo or self.collapsed)
 
     GwQuestTracker:LayoutChanged()
 end
 
-local function LoadTodolooAddonSkin()
+function GwTodolooContainerMixin:InitModule()
     if not GW.settings.SKIN_TODOLOO_ENABLED or not Todoloo then return end
     if not Todoloo.Config.Get(Todoloo.Config.Options.ATTACH_TASK_TRACKER_TO_OBJECTIVE_TRACKER) then return end
 
-    local todolooObjectives = CreateFrame("Frame", "GwQuesttrackerContainerTodoloo", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
-    Mixin(todolooObjectives, containerMixin)
+    self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
+    self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:SetShadowOffset(1, -1)
+    self.header.title:SetText("Todoloo's")
+    self.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
+    self.header:Show()
 
-    tinsert(GW.QuestTrackerScrollableContainer, GwQuesttrackerContainerTodoloo)
+    self.collapsed = false
+    self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
 
-    todolooObjectives:SetParent(GwQuestTrackerScrollChild)
-    todolooObjectives:SetPoint("TOPRIGHT", GwQuesttrackerContainerPetTracker and GwQuesttrackerContainerPetTracker or GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT or GwQuesttrackerContainerCollection, "BOTTOMRIGHT")
+    self.blockMixInTemplate = GwTodolooBlockMixin
 
-    todolooObjectives.header = CreateFrame("Button", nil, todolooObjectives, "GwQuestTrackerHeader")
-    todolooObjectives.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    todolooObjectives.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    todolooObjectives.header.title:SetShadowOffset(1, -1)
-    todolooObjectives.header.title:SetText("Todoloo's")
-    todolooObjectives.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
-    todolooObjectives.header:Show()
-
-    todolooObjectives.collapsed = false
-    todolooObjectives.header:SetScript("OnMouseDown", function() todolooObjectives:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
-
-    Todoloo.EventBus:RegisterEvents(todolooObjectives, {
+    Todoloo.EventBus:RegisterEvents(self, {
         Todoloo.Tasks.Events.GROUP_ADDED,
         Todoloo.Tasks.Events.GROUP_REMOVED,
         Todoloo.Tasks.Events.GROUP_RESET,
@@ -287,6 +254,6 @@ local function LoadTodolooAddonSkin()
         Todoloo.Tasks.Events.TASK_MOVED,
         Todoloo.Reset.Events.RESET_PERFORMED,
         Todoloo.Config.Events.CONFIG_CHANGED
-    }, function() todolooObjectives:UpdateLayout() end)
+    }, function() self:UpdateLayout() end)
+
 end
-GW.LoadTodolooAddonSkin = LoadTodolooAddonSkin

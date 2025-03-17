@@ -69,12 +69,6 @@ function GwAchievementTrackerBlockMixin:UpdateBlock(parent)
         self:AddObjective(description, 1, {isAchievement = true, qty = nil, totalqty = nil, eligible = eligible, timerShown = timerShown, duration = timerCriteriaDuration, startTime = timerCriteriaStartTime})
     end
 
-    for i = self.numObjectives + 1, 20 do
-        if _G[self:GetName() .. "Objective" .. i] then
-            _G[self:GetName() .. "Objective" .. i]:Hide()
-        end
-    end
-
     self:SetHeight(self.height)
 end
 

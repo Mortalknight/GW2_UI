@@ -76,12 +76,6 @@ function GwObjectivesCollectionBlockMixin:UpdateBlock()
             self.poiButton = poiButton
         end
     end
-
-    for i = self.numObjectives + 1, 25 do
-        if _G[self:GetName() .. "Objective" .. i] then
-            _G[self:GetName() .. "Objective" .. i]:Hide()
-        end
-    end
 end
 
 GwObjectivesCollectionContainerMixin = {}

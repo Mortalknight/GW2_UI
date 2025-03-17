@@ -244,14 +244,6 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 end
 
                 block:Show()
-                local blockName = block:GetName()
-                for i = block.numObjectives + 1, 20 do
-                    local objectiveFrame = _G[blockName .. "Objective" .. i]
-                    if objectiveFrame then
-                        objectiveFrame:Hide()
-                    end
-                end
-
                 block:SetHeight(block.height + 10)
                 shownBlocks = shownBlocks + 1
                 blockIndex = blockIndex + 1
@@ -356,7 +348,7 @@ function GwBonusObjectivesTrackerContainerMixin:InitModule()
     self.header.title:SetText(EVENTS_LABEL)
 
     self.collapsed = false
-    self.header:SetScript("OnMouseDown", self.CollapseHeader)
+    self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
     self.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
 
     self:UpdateLayout()

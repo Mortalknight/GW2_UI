@@ -73,13 +73,6 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
         self.objectiveBlocks = {}
     end
 
-    for i = self.numObjectives + 1, 20 do
-        local obj = _G[self:GetName() .. "Objective" .. i]
-        if obj then
-            obj:Hide()
-        end
-    end
-
     self.height = self.height + 5
     self:SetHeight(self.height)
 end

@@ -29,8 +29,10 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
         block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
         block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
         for i = 1, 50 do
-            if _G[block:GetName() .. "Objective" .. i] then
-                _G[block:GetName() .. "Objective" .. i].StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
+            local obj = _G[block:GetName() .. "Objective" .. i]
+            if obj then
+                obj.StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
+                obj:Hide()
             end
         end
         return block

@@ -12,7 +12,11 @@ local objectivesTrackerConfiguration = {
     { name = "GwQuesttrackerContainerBonus", scrollable = true, mixin = GwBonusObjectivesTrackerContainerMixin, enumName = "Bonus" },
     { name = "GwQuesttrackerContainerRecipe", scrollable = true, mixin = GwObjectivesRecipeContainerMixin, enumName = "Recipe" },
     { name = "GwQuesttrackerContainerMonthlyActivity", scrollable = true, mixin = GwObjectivesMonthlyActivitiesContainerMixin, enumName = "MonthlyActivity" },
-    { name = "GwQuesttrackerContainerCollection", scrollable = true, mixin = GwObjectivesCollectionContainerMixin, enumName = "Collection" }
+    { name = "GwQuesttrackerContainerCollection", scrollable = true, mixin = GwObjectivesCollectionContainerMixin, enumName = "Collection" },
+    -- ADDONS
+    { name = "GwQuesttrackerContainerWQT", scrollable = true, mixin = GwWorldQuestTrackerContainerMixin, enumName = "WQT" },
+    { name = "GwQuesttrackerContainerPetTracker", scrollable = true, mixin = GwPetTrackerContainerMixin, enumName = "PetTracker" },
+    { name = "GwQuesttrackerContainerTodoloo", scrollable = true, mixin = GwTodolooContainerMixin, enumName = "Todoloo" }
 }
 
 -- container enum
@@ -248,10 +252,6 @@ local function LoadObjectivesTracker()
     for _, frame in ipairs(GW.QuestTrackerScrollableContainer) do
         if frame.InitModule then frame:InitModule() end
     end
-
-    GW.LoadWQTAddonSkin()
-    GW.LoadPetTrackerAddonSkin()
-    GW.LoadTodolooAddonSkin()
 
     GW.ToggleCollapseObjectivesInChallangeMode()
 
