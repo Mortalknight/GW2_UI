@@ -159,9 +159,6 @@ function GwAchievementTrackerContainerMixin:UpdateLayout(event, ...)
 
             self.header:Show()
             local block = self:GetBlock(shownIndex, "ACHIEVEMENT", false)
-            if block == nil then
-                return
-            end
             block.id = achievementID
             block:UpdateBlock(self)
 
