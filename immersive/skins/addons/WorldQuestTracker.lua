@@ -2,46 +2,8 @@ local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local containerMixin = CreateFromMixins(GwObjectivesContainerMixin)
-local function getObjectiveBlock(self, index)
-    if _G[self:GetName() .. "GwWQTObjective" .. index] then
-        return _G[self:GetName() .. "GwWQTObjective" .. index]
-    end
-
-    local newBlock = CreateFrame("Frame", self:GetName() .. "GwWQTObjective1", self, "GwQuesttrackerObjectiveTemplate")
-    newBlock:SetParent(self)
-    newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
-    newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-    newBlock.notChangeSize = true
-
-    return newBlock
-end
-GW.AddForProfiling("bonusObjective", "getObjectiveBlock", getObjectiveBlock)
-
-local function createNewWQTObjectiveBlock(blockIndex, parent)
-    if _G["GwWQTBlock" .. blockIndex] then
-        return _G["GwWQTBlock" .. blockIndex]
-    end
-
-    local newBlock = CreateFrame("Button", "GwWQTBlock" .. blockIndex, parent, "GwObjectivesBlockTemplate")
-    newBlock:SetParent(parent)
-
-    if blockIndex == 1 then
-        newBlock:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -20)
-    else
-        newBlock:SetPoint("TOPRIGHT", _G["GwWQTBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
-    end
-
-    newBlock.color = TRACKER_TYPE_COLOR.EVENT
-    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-
-    newBlock:Hide()
-
-    return newBlock
-end
-
 function containerMixin:UpdateLayout()
-    local objectiveBlock, objectiveDetailBlock
+    local objectiveDetailBlock
     local counter = 0
     local height = 1
     local foundEvent = false
@@ -54,17 +16,20 @@ function containerMixin:UpdateLayout()
             counter = counter + 1
             foundEvent = true
 
-            objectiveBlock = createNewWQTObjectiveBlock(counter, self)
-            objectiveBlock.Header:SetText(wqtFrame.Title:GetText())
+            if counter == 1 then
+                height = 20
+            end
+
+            local block = self:GetBlock(counter, "EVENT", false)
+            block.Header:SetText(wqtFrame.Title:GetText())
             wqtFrame.Title:Hide()
-            objectiveDetailBlock = getObjectiveBlock(objectiveBlock, 1)
+            objectiveDetailBlock = block:GetObjectiveBlock(1)
             objectiveDetailBlock:SetHeight(wqtFrame:GetHeight())
+
             wqtFrame:SetParent(objectiveDetailBlock)
             wqtFrame:ClearAllPoints()
             wqtFrame:SetAllPoints()
             wqtFrame.Zone:SetPoint ("TOPLEFT", wqtFrame, "TOPLEFT", 10, -7)
-            --wqtFrame.Icon:RemoveMaskTexture( wqtFrame.Icon:GetMaskTexture(0))
-            --wqtFrame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             wqtFrame.Circle:Hide()
             wqtFrame.Shadow:Hide()
             wqtFrame.SuperTracked:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
@@ -73,22 +38,26 @@ function containerMixin:UpdateLayout()
             objectiveDetailBlock:Show()
             objectiveDetailBlock.ObjectiveText:SetText("")
             objectiveDetailBlock.StatusBar:Hide()
-
-            objectiveBlock:SetHeight(objectiveDetailBlock:GetHeight() + 30)
-            height = height + objectiveBlock:GetHeight()
-            objectiveBlock:Show()
+            block:SetHeight(objectiveDetailBlock:GetHeight() + 35)
+            height = height + block:GetHeight()
+            block:Show()
         end
     end
 
     for i = (self.collapsed and foundEvent and 1 or counter + 1), 25 do
-        if _G["GwWQTBlock" .. i] and _G["GwWQTBlock" .. i]:IsShown() then
-            _G["GwWQTBlock" .. i]:Hide()
+        local block = _G[self:GetName() .. "Block" .. i]
+        if block and block:IsShown() then
+            block:Hide()
         end
     end
 
     if WorldQuestTrackerQuestsHeader then
         WorldQuestTrackerQuestsHeader:Hide()
         WorldQuestTrackerQuestsHeaderMinimizeButton:Hide()
+    end
+
+    if self.collapsed and foundEvent then
+        height = 20
     end
 
     self.header:SetShown(counter > 0 or foundEvent)
