@@ -182,7 +182,7 @@ local function CoordsWatcherStart()
         CoordsTicker:Cancel()
         CoordsTicker = nil
     end
-    CoordsTicker = C_Timer.NewTicker(0.1, function() CoordsUpdate() end)
+    CoordsTicker = C_Timer.NewTicker(0.1, CoordsUpdate)
     if CoordsStopTimer then
         CoordsStopTimer:Cancel()
         CoordsStopTimer = nil
@@ -191,8 +191,7 @@ end
 
 local function CoordsWatcherStop(event)
     if event == "CRITERIA_UPDATE" then
-        if lib.locationData.coordsFalling then return end
-        if (GetUnitSpeed("player") or 0) > 0 then return end
+        if lib.locationData.coordsFalling or (GetUnitSpeed("player") or 0) > 0 then return end
         lib.locationData.coordsFalling = nil
     elseif (event == "PLAYER_STOPPED_MOVING" or event == "PLAYER_CONTROL_GAINED") and IsFalling() then
         lib.locationData.coordsFalling = true
@@ -200,14 +199,14 @@ local function CoordsWatcherStop(event)
     end
 
     if not CoordsStopTimer then
-        CoordsStopTimer = C_Timer.NewTimer(0.5, function() CoordsStopWatching() end)
+        CoordsStopTimer = C_Timer.NewTimer(0.5, CoordsStopWatching)
     end
 end
 
 local function MapInfoUpdateMapId()
     lib.locationData.mapID = C_Map.GetBestMapForUnit("player")
     if not lib.locationData.mapID then
-        C_Timer.After(0.1, function() MapInfoUpdateMapId() end)
+        C_Timer.After(0.1, MapInfoUpdateMapId)
     end
 end
 
@@ -242,15 +241,23 @@ local function HandleEvents(_, event, ...)
     end
 end
 
-frame:RegisterEvent("LOADING_SCREEN_DISABLED")
-frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-frame:RegisterEvent("ZONE_CHANGED")
-frame:RegisterEvent("ZONE_CHANGED_INDOORS")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-frame:RegisterEvent("CRITERIA_UPDATE")
-frame:RegisterEvent("PLAYER_STARTED_MOVING")
-frame:RegisterEvent("PLAYER_STOPPED_MOVING")
-frame:RegisterEvent("PLAYER_CONTROL_LOST")
-frame:RegisterEvent("PLAYER_CONTROL_GAINED")
-frame:RegisterEvent("PLAYER_CAN_GLIDE_CHANGED")
+local events = {
+    "LOADING_SCREEN_DISABLED",
+    "ZONE_CHANGED_NEW_AREA",
+    "ZONE_CHANGED",
+    "ZONE_CHANGED_INDOORS",
+    "PLAYER_ENTERING_WORLD",
+    "CRITERIA_UPDATE",
+    "PLAYER_STARTED_MOVING",
+    "PLAYER_STOPPED_MOVING",
+    "PLAYER_CONTROL_LOST",
+    "PLAYER_CONTROL_GAINED",
+    "PLAYER_CAN_GLIDE_CHANGED",
+    "COMBAT_LOG_EVENT_UNFILTERED"
+}
+
+for _, evt in ipairs(events) do
+    frame:RegisterEvent(evt)
+end
+
 frame:SetScript("OnEvent", HandleEvents)

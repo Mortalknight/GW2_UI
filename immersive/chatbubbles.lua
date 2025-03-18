@@ -3,10 +3,16 @@ local _, GW = ...
 --Message caches
 local messageToSender = {}
 
+local bgTexture         = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background"
+local bgInvTexture      = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background-inverted"
+local borderHoriTexture = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori"
+local borderHoriInvTex  = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori-inverted"
+local borderTexture     = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border"
+local borderInvTexture  = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted"
+
 local function UpdateBubbleBorder(self)
     local backdrop = self.backdrop
     local messageText = backdrop and backdrop.String
-
     if not messageText then
         return
     end
@@ -19,110 +25,102 @@ local function UpdateBubbleBorder(self)
     self.background:SetPoint("BOTTOMRIGHT", messageText, "BOTTOMRIGHT",8,-8)
     messageText:SetWidth(math.min(200,messageText:GetWidth()))
 
-    local name = self.Name and self.Name:GetText()
-    if name then self.Name:SetText() end
+    if self.Name and self.Name:GetText() then
+        self.Name:SetText("")
+    end
 
     local text = messageText:GetText()
-    local senderInfo = messageToSender[text]
-    if text then
-        if senderInfo then
-            self.Name:SetFormattedText("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, messageToSender[text].senderName)
+    if not text then return end
 
-            if senderInfo.unitType == 1 then
-                messageText:SetTextColor(1, 1, 1, 1)
-                self.background:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background-inverted")
-                self.bordertop:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori-inverted")
-                self.borderbottom:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori-inverted")
-                self.borderright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-                self.borderleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-                self.bordertopright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-                self.bordertopleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-                self.borderbottomleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-                self.borderbottomright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-                return
-            end
+    local senderInfo = messageToSender[text]
+    if senderInfo then
+        self.Name:SetFormattedText("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, senderInfo.senderName)
+        if senderInfo.unitType == 1 then
+            messageText:SetTextColor(1, 1, 1, 1)
+            self.background:SetTexture(bgInvTexture)
+            self.bordertop:SetTexture(borderHoriInvTex)
+            self.borderbottom:SetTexture(borderHoriInvTex)
+            self.borderright:SetTexture(borderInvTexture)
+            self.borderleft:SetTexture(borderInvTexture)
+            self.bordertopright:SetTexture(borderInvTexture)
+            self.bordertopleft:SetTexture(borderInvTexture)
+            self.borderbottomleft:SetTexture(borderInvTexture)
+            self.borderbottomright:SetTexture(borderInvTexture)
+            return
         end
-        messageText:SetTextColor(0, 0, 0, 1)
-        self.background:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background")
-        self.bordertop:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori")
-        self.borderbottom:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori")
-        self.borderright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
-        self.borderleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
-        self.bordertopright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
-        self.bordertopleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
-        self.borderbottomleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
-        self.borderbottomright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
     end
+
+    messageText:SetTextColor(0, 0, 0, 1)
+    self.background:SetTexture(bgTexture)
+    self.bordertop:SetTexture(borderHoriTexture)
+    self.borderbottom:SetTexture(borderHoriTexture)
+    self.borderright:SetTexture(borderTexture)
+    self.borderleft:SetTexture(borderTexture)
+    self.bordertopright:SetTexture(borderTexture)
+    self.bordertopleft:SetTexture(borderTexture)
+    self.borderbottomleft:SetTexture(borderTexture)
+    self.borderbottomright:SetTexture(borderTexture)
 end
 
 local function SkinBubble(frame, backdrop)
     frame.background = frame:CreateTexture(nil, "ARTWORK", nil, -8)
-    frame.background:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background")
+    frame.background:SetTexture(bgTexture)
     frame.background:SetPoint("TOPLEFT", frame, "TOPLEFT")
     frame.background:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
-    frame.background:SetTexCoord(0,0.8515625,0,0.58203125 )
+    frame.background:SetTexCoord(0, 0.8515625, 0, 0.58203125)
 
     frame.bordertop = frame:CreateTexture(nil, "ARTWORK", nil, -8)
-    frame.bordertop:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori")
+    frame.bordertop:SetTexture(borderHoriTexture)
     frame.bordertop:ClearAllPoints()
     frame.bordertop:SetPoint("BOTTOMLEFT", frame.background, "TOPLEFT", 0, 0)
     frame.bordertop:SetPoint("BOTTOMRIGHT", frame.background, "TOPRIGHT", 0, 0)
-    frame.bordertop:SetHeight(11/2)
-    frame.bordertop:SetTexCoord(0,0.8515625,0,0.34375 )
+    frame.bordertop:SetHeight(11 / 2)
+    frame.bordertop:SetTexCoord(0, 0.8515625, 0, 0.34375)
 
     frame.borderbottom = frame:CreateTexture(nil, "ARTWORK", nil, -8)
-    frame.borderbottom:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori")
-    frame.borderbottom:SetPoint("TOPLEFT", frame.background, "BOTTOMLEFT", 0,0)
+    frame.borderbottom:SetTexture(borderHoriTexture)
+    frame.borderbottom:SetPoint("TOPLEFT", frame.background, "BOTTOMLEFT", 0, 0)
     frame.borderbottom:SetPoint("TOPRIGHT", frame.background, "BOTTOMRIGHT", 0, 0)
-    frame.borderbottom:SetHeight(10/2)
-    frame.borderbottom:SetTexCoord(0,0.8515625,0.6875,1)
+    frame.borderbottom:SetHeight(10 / 2)
+    frame.borderbottom:SetTexCoord(0, 0.8515625, 0.6875, 1)
 
     frame.borderright = frame:CreateTexture(nil, "ARTWORK", nil, -8)
-    frame.borderright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+    frame.borderright:SetTexture(borderTexture)
     frame.borderright:SetPoint("TOPLEFT", frame.background, "TOPRIGHT")
     frame.borderright:SetPoint("BOTTOMLEFT", frame.background, "BOTTOMRIGHT")
-    frame.borderright:SetWidth(26/2)
-    frame.borderright:SetTexCoord(0.1484375 ,0.3515625 ,0,0.58203125)
+    frame.borderright:SetWidth(26 / 2)
+    frame.borderright:SetTexCoord(0.1484375, 0.3515625, 0, 0.58203125)
 
     frame.borderleft = frame:CreateTexture(nil, "ARTWORK", nil, -8)
-    frame.borderleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+    frame.borderleft:SetTexture(borderTexture)
     frame.borderleft:SetPoint("TOPRIGHT", frame.background, "TOPLEFT")
     frame.borderleft:SetPoint("BOTTOMRIGHT", frame.background, "BOTTOMLEFT")
-    frame.borderleft:SetWidth(15/2)
-    frame.borderleft:SetTexCoord(0,0.1171875,0,0.58203125)
+    frame.borderleft:SetWidth(15 / 2)
+    frame.borderleft:SetTexCoord(0, 0.1171875, 0, 0.58203125)
 
     frame.bordertopright = frame:CreateTexture(nil, "ARTWORK", nil, -8)
-    frame.bordertopright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+    frame.bordertopright:SetTexture(borderTexture)
     frame.bordertopright:SetPoint("BOTTOMLEFT", frame.background, "TOPRIGHT", 0, 0)
-    frame.bordertopright:SetSize(16/2,11/2)
-    frame.bordertopright:SetTexCoord(0.484375 ,0.609375  ,0,0.021484375 )
+    frame.bordertopright:SetSize(16 / 2, 11 / 2)
+    frame.bordertopright:SetTexCoord(0.484375, 0.609375, 0, 0.021484375)
 
     frame.bordertopleft = frame:CreateTexture(nil, "ARTWORK", nil, -8)
-    frame.bordertopleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+    frame.bordertopleft:SetTexture(borderTexture)
     frame.bordertopleft:SetPoint("BOTTOMRIGHT", frame.background, "TOPLEFT", 0, 0)
-    frame.bordertopleft:SetSize(15/2,11/2)
-    frame.bordertopleft:SetTexCoord(0.328125 ,0.4453125 ,0,0.021484375 )
+    frame.bordertopleft:SetSize(15 / 2, 11 / 2)
+    frame.bordertopleft:SetTexCoord(0.328125, 0.4453125, 0, 0.021484375)
 
     frame.borderbottomleft = frame:CreateTexture(nil, "ARTWORK", nil, -8)
-    frame.borderbottomleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+    frame.borderbottomleft:SetTexture(borderTexture)
     frame.borderbottomleft:SetPoint("TOPRIGHT", frame.background, "BOTTOMLEFT", 0, 0)
-    frame.borderbottomleft:SetSize(15/2,10/2)
-    frame.borderbottomleft:SetTexCoord(0.671875,0.7890625,0,0.01953125 )
+    frame.borderbottomleft:SetSize(15 / 2, 10 / 2)
+    frame.borderbottomleft:SetTexCoord(0.671875, 0.7890625, 0, 0.01953125)
 
     frame.borderbottomright = frame:CreateTexture(nil, "ARTWORK", nil, -8)
-    frame.borderbottomright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+    frame.borderbottomright:SetTexture(borderTexture)
     frame.borderbottomright:SetPoint("TOPLEFT", frame.background, "BOTTOMRIGHT", 0, 0)
-    frame.borderbottomright:SetSize(22/2,10/2)
-    frame.borderbottomright:SetTexCoord(0.828125,1,0,0.01953125)
-
-    --[[
-        frame.borderbottom = frame:CreateTexture(nil, "ARTWORK", nil, -8)
-        frame.borderbottom:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderbottom")
-        frame.borderbottom:SetPoint("TOPLEFT", frame.background, "BOTTOMLEFT", 0,0)
-        frame.borderbottom:SetPoint("TOPRIGHT", frame.background, "BOTTOMRIGHT", 0, 0)
-        frame.borderbottom:SetHeight(5)
-        frame.borderbottom:SetTexCoord(0,0.9375,0,0.625)
-    ]]
+    frame.borderbottomright:SetSize(22 / 2, 10 / 2)
+    frame.borderbottomright:SetTexCoord(0.828125, 1, 0, 0.01953125)
 
     if not frame.Name then
         frame.Name = frame:CreateFontString(nil, "OVERLAY")
@@ -147,21 +145,12 @@ local function SkinBubble(frame, backdrop)
 end
 
 local function ChatBubble_OnEvent(_, event, msg, sender)
-    if event == "PLAYER_ENTERING_WORLD" then --Clear caches
+    if event == "PLAYER_ENTERING_WORLD" then
         wipe(messageToSender)
     else
-        local unit = 0
-        if event == "CHAT_MSG_MONSTER_SAY" or event == "CHAT_MSG_MONSTER_YELL" then
-            unit = 1
-        end
-        local senderName
-        if TRP3_API then
-            senderName = TRP3_API.register.getUnitRPNameWithID(sender)
-        end
-        if not senderName then
-            senderName = Ambiguate(sender, "none")
-        end
-        messageToSender[msg] = {unitType = unit, senderName = senderName}
+        local unit = (event == "CHAT_MSG_MONSTER_SAY" or event == "CHAT_MSG_MONSTER_YELL") and 1 or 0
+        local senderName = TRP3_API and TRP3_API.register.getUnitRPNameWithID(sender) or Ambiguate(sender, "none")
+        messageToSender[msg] = { unitType = unit, senderName = senderName }
     end
 end
 
@@ -172,7 +161,8 @@ local function ChatBubble_OnUpdate(self, elapsed)
     end
     self.lastUpdate = 0
 
-    for _, chatBubble in pairs(C_ChatBubbles.GetAllChatBubbles()) do
+    local chatBubbles = C_ChatBubbles.GetAllChatBubbles()
+    for _, chatBubble in pairs(chatBubbles) do
         local backdrop = chatBubble:GetChildren()
         if backdrop and not backdrop:IsForbidden() and not chatBubble.isSkinned then
             SkinBubble(chatBubble, backdrop)

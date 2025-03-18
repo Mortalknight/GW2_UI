@@ -1,27 +1,25 @@
 local _, GW = ...
 
-local buttons = {}
-
-local ignoreButton = {
-    "GameTimeFrame",
-    "HelpOpenWebTicketButton",
-    "MiniMapVoiceChatFrame",
-    "TimeManagerClockButton",
-    "BattlefieldMinimap",
-    "ButtonCollectFrame",
-    "GameTimeFrame",
-    "QueueStatusMinimapButton",
-    "GarrisonLandingPageMinimapButton",
-    "MiniMapMailFrame",
-    "MiniMapTracking",
-    "MinimapZoomIn",
-    "MinimapZoomOut",
-    "RecipeRadarMinimapButtonFrame",
-    "InstanceDifficultyFrame",
-    "GwMapFPS",
-    "GwMapCoords",
-    "GwMapTime"
+local ignoreButtonLookup = {
+    GameTimeFrame = true,
+    HelpOpenWebTicketButton = true,
+    MiniMapVoiceChatFrame = true,
+    TimeManagerClockButton = true,
+    BattlefieldMinimap = true,
+    ButtonCollectFrame = true,
+    QueueStatusMinimapButton = true,
+    GarrisonLandingPageMinimapButton = true,
+    MiniMapMailFrame = true,
+    MiniMapTracking = true,
+    MinimapZoomIn = true,
+    MinimapZoomOut = true,
+    RecipeRadarMinimapButtonFrame = true,
+    InstanceDifficultyFrame = true,
+    GwMapFPS = true,
+    GwMapCoords = true,
+    GwMapTime = true,
 }
+
 local genericIgnore = {
     "Archy",
     "GatherMatePin",
@@ -41,6 +39,7 @@ local genericIgnore = {
     "QuestieFrame",
     "ElvConfigToggle"
 }
+
 local partialIgnore = {
     "Node",
     "Note",
@@ -48,6 +47,7 @@ local partialIgnore = {
     "POI",
     "TTMinimapButton"
 }
+
 local RemoveTextureID = {
     [136430] = true,
     [136467] = true,
@@ -55,11 +55,13 @@ local RemoveTextureID = {
     [130924] = true,
     [136477] = true,
 }
+
 local RemoveTextureFile = {
     ["interface/minimap/minimap-trackingborder"] = true,
     ["interface/minimap/ui-minimap-border"] = true,
     ["interface/minimap/ui-minimap-background"] = true,
 }
+
 local buttonFunctions = {
     "SetParent",
     "ClearAllPoints",
@@ -70,30 +72,45 @@ local buttonFunctions = {
     "SetFrameLevel"
 }
 
+local buttons = {}
+
 local function SkinMinimapButton(button)
     if button.isSkinned then return end
 
     local name = button.GetName and button:GetName()
-
-    if tContains(ignoreButton, name) then return end
-
-    for i = 1, #genericIgnore do
-        if strsub(name, 1, strlen(genericIgnore[i])) == genericIgnore[i] then return end
+    if not name then
+        return
     end
 
-    for i = 1, #partialIgnore do
-        if strfind(name, "LibDBIcon") == nil and strfind(name, partialIgnore[i]) ~= nil then return end
+    if ignoreButtonLookup[name] then
+        return
+    end
+
+    for i = 1, #genericIgnore do
+        local prefix = genericIgnore[i]
+        if name:sub(1, #prefix) == prefix then
+            return
+        end
+    end
+
+    if not name:find("LibDBIcon") then
+        for i = 1, #partialIgnore do
+            if name:find(partialIgnore[i]) then
+                return
+            end
+        end
     end
 
     for i = 1, button:GetNumRegions() do
         local region = select(i, button:GetRegions())
-        if region.IsObjectType and region:IsObjectType("Texture") then
+        if region and region.IsObjectType and region:IsObjectType("Texture") then
             local texture = region.GetTextureFileID and region:GetTextureFileID()
 
-            if RemoveTextureID[texture] then
-                region:SetTexture()
+            if texture and RemoveTextureID[texture] then
+                region:SetTexture(nil)
             else
-                texture = strlower(tostring(region:GetTexture()))
+                texture = region:GetTexture() or ""
+                texture = tostring(texture):lower()
                 if RemoveTextureFile[texture] or (strfind(texture, [[interface\characterframe]]) or (strfind(texture, [[interface\minimap]]) and not strfind(texture, [[interface\minimap\tracking\]])) or strfind(texture, "border") or strfind(texture, "background") or strfind(texture, "alphamask") or strfind(texture, "highlight")) then
                     region:SetTexture()
                     region:SetAlpha(0)
@@ -127,19 +144,20 @@ local function SkinMinimapButton(button)
 end
 
 local function LockButton(self)
-    for _, func in pairs(buttonFunctions) do
-        self[func] = GW.NoOp
+    for _, funcName in ipairs(buttonFunctions) do
+        self[funcName] = GW.NoOp
     end
 end
 
 local function UnlockButton(self)
-    for _, func in pairs(buttonFunctions) do
-        self[func] = nil
+    for _, funcName in ipairs(buttonFunctions) do
+        self[funcName] = nil
     end
 end
 
 local function UpdateButtons(self)
-    local frameIndex, prevFrame = 0, self.container
+    local frameIndex = 0
+    local prevFrame = self.container
 
     for _, button in pairs(buttons) do
         if button:IsShown() then
@@ -167,18 +185,16 @@ local function UpdateButtons(self)
         self:Hide()
     end
 
-    self.gw_Showing = not (frameIndex == 0)
+    self.gw_Showing = (frameIndex > 0)
 end
 
 local function GrabIcons(self)
     if InCombatLockdown() or C_PetBattles.IsInBattle() then return end
 
-    local children = {Minimap:GetChildren()}
-    for _, frame in ipairs(children) do
+    for _, frame in ipairs({Minimap:GetChildren()}) do
         if frame then
-            local name = frame:GetName()
-            local width = frame:GetWidth()
-            if name and width > 15 and width < 40 and (frame:IsObjectType("Button") or frame:IsObjectType("Frame")) then
+            local width = frame:GetWidth() or 0
+            if width > 15 and width < 40 and (frame:IsObjectType("Button") or frame:IsObjectType("Frame")) then
                 SkinMinimapButton(frame)
             end
         end

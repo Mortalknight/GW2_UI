@@ -9,8 +9,7 @@ local function IsRandomGroup()
 end
 
 local function OnEvent(self, _, subEvent, _, sourceGUID, srcName, sourceFlags, _, destGUID, destName, _, _, ...)
-    local inGroup = IsInGroup()
-    if not inGroup then return end
+    if not IsInGroup() then return end
 
     local _, _, _, spellID, spellName = ...
     local announce = spellName and (destGUID ~= GW.myguid) and (sourceGUID == GW.myguid or sourceGUID == UnitGUID("pet"))

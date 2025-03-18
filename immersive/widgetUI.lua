@@ -3,16 +3,17 @@ local _, GW = ...
 local function EmberCourtCaptureBar() end
 
 local function PVPCaptureBar(self)
-    self.LeftLine:SetAlpha(0)
-    self.RightLine:SetAlpha(0)
-    self.BarBackground:SetAlpha(0)
-    self.Glow1:SetAlpha(0)
-    self.Glow2:SetAlpha(0)
-    self.Glow3:SetAlpha(0)
+    local hideElements = { "LeftLine", "RightLine", "BarBackground", "Glow1", "Glow2", "Glow3" }
+    for _, elem in ipairs(hideElements) do
+        if self[elem] then
+            self[elem]:SetAlpha(0)
+        end
+    end
 
-    self.LeftBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    self.RightBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    self.NeutralBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    local texturePath = "Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg"
+    self.LeftBar:SetTexture(texturePath)
+    self.RightBar:SetTexture(texturePath)
+    self.NeutralBar:SetTexture(texturePath)
 
     self.LeftBar:SetVertexColor(0.2, 0.6, 1.0)
     self.RightBar:SetVertexColor(0.9, 0.2, 0.2)
@@ -60,14 +61,12 @@ local function UIWidgetTemplateStatusBar(self)
 
     if not bar.backdrop then
         bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-
-        bar.BGLeft:SetAlpha(0)
-        bar.BGRight:SetAlpha(0)
-        bar.BGCenter:SetAlpha(0)
-        bar.BorderLeft:SetAlpha(0)
-        bar.BorderRight:SetAlpha(0)
-        bar.BorderCenter:SetAlpha(0)
-        bar.Spark:SetAlpha(0)
+        local hideParts = { "BGLeft", "BGRight", "BGCenter", "BorderLeft", "BorderRight", "BorderCenter", "Spark" }
+        for _, part in ipairs(hideParts) do
+            if bar[part] then
+                bar[part]:SetAlpha(0)
+            end
+        end
     end
 end
 
@@ -107,14 +106,17 @@ local function WidgetUISetup()
         GW.RegisterMovableFrame(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", ALL .. ",Blizzard,Widgets", {150, 30}, {"default", "scaleable"})
 
         C_Timer.After(0.5, function()
-            UIWidgetTopCenterContainerFrame:ClearAllPoints()
-            UIWidgetTopCenterContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
-
-            UIWidgetPowerBarContainerFrame:ClearAllPoints()
-            UIWidgetPowerBarContainerFrame:SetPoint("CENTER", UIWidgetPowerBarContainerFrame.gwMover, "CENTER")
-
-            UIWidgetBelowMinimapContainerFrame:ClearAllPoints()
-            UIWidgetBelowMinimapContainerFrame:SetPoint("CENTER", UIWidgetBelowMinimapContainerFrame.gwMover, "CENTER")
+            local containers = {
+                UIWidgetTopCenterContainerFrame,
+                UIWidgetPowerBarContainerFrame,
+                UIWidgetBelowMinimapContainerFrame,
+            }
+            for _, frame in ipairs(containers) do
+                frame:ClearAllPoints()
+                if frame.gwMover then
+                    frame:SetPoint("CENTER", frame.gwMover, "CENTER")
+                end
+            end
         end)
 
         hooksecurefunc(UIWidgetTopCenterContainerFrame, "SetPoint", TopCenterPosition)
