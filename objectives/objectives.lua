@@ -335,7 +335,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
                 end
             end
         end
-        GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, block.UdateQuestItemPositions, {block.actionButton, heightForQuestItem, self.isCampaignContainer and nil or "QUEST"})
+        GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block.actionButton, heightForQuestItem, self.isCampaignContainer and nil or "QUEST"})
     end
 
     GwQuestTracker:LayoutChanged()
