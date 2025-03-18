@@ -202,7 +202,8 @@ local function updateCurrentScenario(self, event, ...)
         end
         GW.CombatQueue_Queue(nil, scenarioBlock.UpdateObjectiveActionButton, {scenarioBlock})
         if scenarioBlock.hasItem then
-            GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateObjectiveActionButtonPosition, {scenarioBlock, scenarioBlock.height, "SCENARIO"})
+            scenarioBlock.fromContainerTopHeight = scenarioBlock.height
+            GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateObjectiveActionButtonPosition, {scenarioBlock, "SCENARIO"})
         end
         for i = scenarioBlock.numObjectives + 1, 20 do
             if _G[scenarioBlock:GetName() .. "Objective" .. i] then
@@ -444,7 +445,8 @@ local function updateCurrentScenario(self, event, ...)
 
     scenarioBlock.height = scenarioBlock.height + 5
     if scenarioBlock.hasItem then
-        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateObjectiveActionButtonPosition, {scenarioBlock, scenarioBlock.height, "SCENARIO"})
+        scenarioBlock.fromContainerTopHeight = scenarioBlock.height
+        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", scenarioBlock.UpdateObjectiveActionButtonPosition, {scenarioBlock, "SCENARIO"})
     end
 
     local intGWQuestTrackerHeight = 0

@@ -128,14 +128,14 @@ function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
         local bonusObjectiveBlock = _G["GwQuesttrackerContainerBlock" .. i]
         if campaignBlock then
             if i <= GW.ObjectiveTrackerContainer.Campaign.numQuests then
-                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. campaignBlock.index, campaignBlock.UpdateObjectiveActionButtonPosition, {campaignBlock, campaignBlock.savedHeight})
+                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. campaignBlock.index, campaignBlock.UpdateObjectiveActionButtonPosition, {campaignBlock})
             else
                 GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, campaignBlock.UpdateObjectiveActionButton, {campaignBlock})
             end
         end
         if questBlock then
             if i <= GW.ObjectiveTrackerContainer.Quests.numQuests then
-                GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. questBlock.index, questBlock.UpdateObjectiveActionButtonPosition, {questBlock, questBlock.savedHeight, "QUEST"})
+                GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. questBlock.index, questBlock.UpdateObjectiveActionButtonPosition, {questBlock, "QUEST"})
             else
                 GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, questBlock.UpdateObjectiveActionButton, {questBlock})
             end
@@ -144,7 +144,7 @@ function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
         if i <= 20 then
             if bonusObjectiveBlock then
                 if GW.ObjectiveTrackerContainer.Bonus.numEvents <= i then
-                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. i, bonusObjectiveBlock.UpdateObjectiveActionButtonPosition, {bonusObjectiveBlock, bonusObjectiveBlock.savedHeight, "EVENT"})
+                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. i, bonusObjectiveBlock.UpdateObjectiveActionButtonPosition, {bonusObjectiveBlock, "EVENT"})
                 else
                     GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, bonusObjectiveBlock.UpdateObjectiveActionButton, {bonusObjectiveBlock})
                 end
@@ -153,7 +153,7 @@ function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
     end
 
     if GwScenarioBlock.hasItem then
-        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GwScenarioBlock.UpdateObjectiveActionButtonPosition, {GwScenarioBlock, GwScenarioBlock.height, "SCENARIO"})
+        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GwScenarioBlock.UpdateObjectiveActionButtonPosition, {GwScenarioBlock, "SCENARIO"})
     end
 end
 

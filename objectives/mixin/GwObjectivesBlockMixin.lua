@@ -303,12 +303,12 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
     end
 end
 
-function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(height, type)
+function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type)
     if not self.actionButton or not self.hasItem then
         return
     end
 
-    height = height + GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()
+    local height = self.fromContainerTopHeight + GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()
     if GW.ObjectiveTrackerContainer.Notification:IsShown() then
         height = height + GW.ObjectiveTrackerContainer.Notification.desc:GetHeight()
     else
