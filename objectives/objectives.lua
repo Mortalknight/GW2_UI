@@ -243,6 +243,7 @@ function GwQuestLogMixin:UpdateLayout()
                     block:UpdateBlock(self, q)
                     block:Show()
                     savedContainerHeight = savedContainerHeight + block.height
+                    block.savedHeight = savedContainerHeight
                     GW.CombatQueue_Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block, savedContainerHeight, self.isCampaignContainer and nil or "QUEST"})
                 else
                     counterQuest = counterQuest + 1
@@ -335,6 +336,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
                 end
             end
         end
+        block.savedHeight = heightForQuestItem
         GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block.actionButton, heightForQuestItem, self.isCampaignContainer and nil or "QUEST"})
     end
 
