@@ -1,10 +1,20 @@
 local _, GW = ...
+
+local math, table, string, bit = math, table, string, bit
+local UnitGUID = UnitGUID
+local GetTime = GetTime
+local CreateFrame = CreateFrame
+local C_NamePlate = C_NamePlate
+local C_NamePlate_GetNamePlates = C_NamePlate.GetNamePlates
+local RegisterMovableFrame = GW.RegisterMovableFrame
+local ToggleMover = GW.ToggleMover
+
 local AFP = GW.AddProfiling
 local AddToAnimation = GW.AddToAnimation
 local CountTable  = GW.CountTable
 local MoveTowards = GW.MoveTowards
 local getSpriteByIndex = GW.getSpriteByIndex
-local playerGUID
+
 local unitToGuid = {}
 local guidToUnit = {}
 
@@ -22,27 +32,56 @@ local elementIcons = {
     rows = 2
 }
 
-local colorTable ={
+local colorTable = {
     gw = {
         spell = {r = 1, g = 1, b = 1, a = 1},
         melee = {r = 1, g = 1, b = 1, a = 1},
-        pet = {r = 1, g = 0.2, b= 0.2, a = 1},
-        heal = {r = 25 / 255, g = 255 / 255, b = 25 / 255, a = 1},
+        pet   = {r = 1, g = 0.2, b = 0.2, a = 1},
+        heal  = {r = 25/255, g = 255/255, b = 25/255, a = 1},
     },
     blizzard = {
         spell = {r = 1, g = 1, b = 0, a = 1},
         melee = {r = 1, g = 1, b = 1, a = 1},
-        pet = {r = 1, g = 1, b = 1, a = 1},
-        heal = {r = 25 / 255, g = 255 / 255, b = 25 / 255, a = 1},
-    }
+        pet   = {r = 1, g = 1, b = 1, a = 1},
+        heal  = {r = 25/255, g = 255/255, b = 25/255, a = 1},
+    },
 }
 
+local function GenerateExplosiveGrid(maxDistance)
+    local result = {}
+    local queue = {}
+    local visited = {}
+    local neighborOrder = {
+        {1, 0}, {0, -1}, {0, 1}, {-1, 0},
+        {-1, -1}, {1, -1}, {1, 1}, {-1, 1},
+    }
+    local function key(x, y)
+        return x .. "," .. y
+    end
+
+    visited[key(0, 0)] = true
+    table.insert(queue, {0, 0})
+    while #queue > 0 do
+        local current = table.remove(queue, 1)
+        local cx, cy = current[1], current[2]
+        for _, offset in ipairs(neighborOrder) do
+            local nx, ny = cx + offset[1], cy + offset[2]
+            if math.abs(nx) <= maxDistance and math.abs(ny) <= maxDistance and not visited[key(nx, ny)] then
+                visited[key(nx, ny)] = true
+                table.insert(result, {x = nx, y = ny})
+                table.insert(queue, {nx, ny})
+            end
+        end
+    end
+    return result
+end
+
+local classicGridData = GenerateExplosiveGrid(10)
 local NUM_OBJECTS_HARDLIMIT = 20
 
 --Animation settings
 local NORMAL_ANIMATION_DURATION = 0.7
 local CRITICAL_ANIMATION_DURATION = 1.2
-
 local STACKING_NORMAL_ANIMATION_DURATION = 1
 local STACKING_CRITICAL_ANIMATION_DURATION = 1
 local STACKING_NORMAL_ANIMATION_OFFSET_Y = 10
@@ -51,7 +90,6 @@ local STACKING_MOVESPEED = 1
 
 local CLASSIC_NUM_HITS = 0
 local CLASSIC_AVARAGE_HIT = 0
-
 local NORMAL_ANIMATION_OFFSET_Y = 20
 
 local stackingContainer
@@ -63,449 +101,6 @@ local NORMAL_ANIMATION
 local CRITICAL_ANIMATION
 local NUM_ACTIVE_FRAMES = 0
 
-local classicGridData = {
-    {x =1, y=0},
-    {x =0, y=-1},
-    {x =0, y=1},
-    {x =-1, y=0},
-    {x =-1, y=-1},
-    {x =1, y=-1},
-    {x =1, y=1},
-    {x =-1, y=1},
-    {x =0, y=2},
-    {x =2, y=0},
-    {x =-2, y=0},
-    {x =0, y=-2},
-    {x =-2, y=-1},
-    {x =1, y=-2},
-    {x =2, y=1},
-    {x =2, y=-1},
-    {x =-1, y=-2},
-    {x =-1, y=2},
-    {x =-2, y=1},
-    {x =1, y=2},
-    {x =2, y=2},
-    {x =2, y=-2},
-    {x =-2, y=-2},
-    {x =-2, y=2},
-    {x =0, y=-3},
-    {x =-3, y=0},
-    {x =0, y=3},
-    {x =3, y=0},
-    {x =-1, y=3},
-    {x =3, y=1},
-    {x =3, y=-1},
-    {x =-1, y=-3},
-    {x =1, y=3},
-    {x =-3, y=-1},
-    {x =-3, y=1},
-    {x =1, y=-3},
-    {x =2, y=-3},
-    {x =-2, y=-3},
-    {x =-3, y=2},
-    {x =3, y=2},
-    {x =-2, y=3},
-    {x =-3, y=-2},
-    {x =3, y=-2},
-    {x =2, y=3},
-    {x =0, y=-4},
-    {x =4, y=0},
-    {x =-4, y=0},
-    {x =0, y=4},
-    {x =-1, y=-4},
-    {x =4, y=-1},
-    {x =-4, y=1},
-    {x =-4, y=-1},
-    {x =4, y=1},
-    {x =-1, y=4},
-    {x =1, y=-4},
-    {x =1, y=4},
-    {x =-3, y=-3},
-    {x =3, y=3},
-    {x =3, y=-3},
-    {x =-3, y=3},
-    {x =4, y=-2},
-    {x =-4, y=-2},
-    {x =2, y=-4},
-    {x =2, y=4},
-    {x =4, y=2},
-    {x =-4, y=2},
-    {x =-2, y=-4},
-    {x =-2, y=4},
-    {x =5, y=0},
-    {x =-5, y=0},
-    {x =3, y=-4},
-    {x =-4, y=3},
-    {x =-3, y=4},
-    {x =0, y=-5},
-    {x =-4, y=-3},
-    {x =0, y=5},
-    {x =4, y=-3},
-    {x =3, y=4},
-    {x =4, y=3},
-    {x =-3, y=-4},
-    {x =-1, y=5},
-    {x =5, y=1},
-    {x =1, y=5},
-    {x =-1, y=-5},
-    {x =-5, y=1},
-    {x =-5, y=-1},
-    {x =1, y=-5},
-    {x =5, y=-1},
-    {x =2, y=5},
-    {x =-5, y=-2},
-    {x =-2, y=-5},
-    {x =5, y=2},
-    {x =5, y=-2},
-    {x =-2, y=5},
-    {x =-5, y=2},
-    {x =2, y=-5},
-    {x =4, y=4},
-    {x =-4, y=4},
-    {x =-4, y=-4},
-    {x =4, y=-4},
-    {x =-3, y=5},
-    {x =-5, y=3},
-    {x =-5, y=-3},
-    {x =5, y=3},
-    {x =3, y=5},
-    {x =-3, y=-5},
-    {x =5, y=-3},
-    {x =3, y=-5},
-    {x =6, y=0},
-    {x =0, y=6},
-    {x =0, y=-6},
-    {x =-6, y=0},
-    {x =1, y=-6},
-    {x =-1, y=6},
-    {x =-1, y=-6},
-    {x =1, y=6},
-    {x =6, y=-1},
-    {x =-6, y=1},
-    {x =-6, y=-1},
-    {x =6, y=1},
-    {x =6, y=2},
-    {x =-6, y=2},
-    {x =-2, y=6},
-    {x =-6, y=-2},
-    {x =-2, y=-6},
-    {x =2, y=-6},
-    {x =2, y=6},
-    {x =6, y=-2},
-    {x =-5, y=-4},
-    {x =-4, y=5},
-    {x =5, y=4},
-    {x =4, y=-5},
-    {x =-4, y=-5},
-    {x =5, y=-4},
-    {x =-5, y=4},
-    {x =4, y=5},
-    {x =6, y=-3},
-    {x =6, y=3},
-    {x =3, y=6},
-    {x =3, y=-6},
-    {x =-6, y=3},
-    {x =-3, y=-6},
-    {x =-3, y=6},
-    {x =-6, y=-3},
-    {x =0, y=-7},
-    {x =7, y=0},
-    {x =-7, y=0},
-    {x =0, y=7},
-    {x =5, y=5},
-    {x =5, y=-5},
-    {x =-5, y=-5},
-    {x =7, y=1},
-    {x =-1, y=-7},
-    {x =1, y=7},
-    {x =1, y=-7},
-    {x =-1, y=7},
-    {x =-7, y=-1},
-    {x =-7, y=1},
-    {x =7, y=-1},
-    {x =-5, y=5},
-    {x =4, y=6},
-    {x =6, y=4},
-    {x =4, y=-6},
-    {x =6, y=-4},
-    {x =-6, y=-4},
-    {x =-6, y=4},
-    {x =-4, y=6},
-    {x =-4, y=-6},
-    {x =2, y=7},
-    {x =-7, y=-2},
-    {x =2, y=-7},
-    {x =-2, y=7},
-    {x =-7, y=2},
-    {x =7, y=-2},
-    {x =7, y=2},
-    {x =-2, y=-7},
-    {x =3, y=7},
-    {x =-7, y=-3},
-    {x =-7, y=3},
-    {x =3, y=-7},
-    {x =-3, y=-7},
-    {x =7, y=-3},
-    {x =-3, y=7},
-    {x =7, y=3},
-    {x =6, y=-5},
-    {x =6, y=5},
-    {x =5, y=6},
-    {x =-5, y=-6},
-    {x =-6, y=5},
-    {x =-5, y=6},
-    {x =5, y=-6},
-    {x =-6, y=-5},
-    {x =0, y=-8},
-    {x =8, y=0},
-    {x =0, y=8},
-    {x =-8, y=0},
-    {x =-4, y=7},
-    {x =1, y=8},
-    {x =7, y=-4},
-    {x =-1, y=8},
-    {x =7, y=4},
-    {x =-4, y=-7},
-    {x =1, y=-8},
-    {x =4, y=-7},
-    {x =8, y=1},
-    {x =4, y=7},
-    {x =-8, y=-1},
-    {x =-8, y=1},
-    {x =-7, y=-4},
-    {x =-1, y=-8},
-    {x =-7, y=4},
-    {x =8, y=-1},
-    {x =8, y=2},
-    {x =2, y=-8},
-    {x =-8, y=2},
-    {x =-2, y=8},
-    {x =-2, y=-8},
-    {x =8, y=-2},
-    {x =-8, y=-2},
-    {x =2, y=8},
-    {x =6, y=-6},
-    {x =6, y=6},
-    {x =-6, y=6},
-    {x =-6, y=-6},
-    {x =3, y=8},
-    {x =8, y=3},
-    {x =-8, y=3},
-    {x =3, y=-8},
-    {x =8, y=-3},
-    {x =-3, y=8},
-    {x =-8, y=-3},
-    {x =-3, y=-8},
-    {x =-5, y=-7},
-    {x =7, y=-5},
-    {x =-7, y=-5},
-    {x =7, y=5},
-    {x =5, y=7},
-    {x =-5, y=7},
-    {x =-7, y=5},
-    {x =5, y=-7},
-    {x =4, y=8},
-    {x =4, y=-8},
-    {x =8, y=-4},
-    {x =-4, y=8},
-    {x =-4, y=-8},
-    {x =8, y=4},
-    {x =-8, y=-4},
-    {x =-8, y=4},
-    {x =0, y=-9},
-    {x =-9, y=0},
-    {x =9, y=0},
-    {x =0, y=9},
-    {x =9, y=1},
-    {x =-9, y=1},
-    {x =-1, y=9},
-    {x =1, y=-9},
-    {x =1, y=9},
-    {x =-1, y=-9},
-    {x =9, y=-1},
-    {x =-9, y=-1},
-    {x =-7, y=6},
-    {x =-2, y=-9},
-    {x =6, y=-7},
-    {x =9, y=-2},
-    {x =-6, y=-7},
-    {x =-2, y=9},
-    {x =-9, y=2},
-    {x =-7, y=-6},
-    {x =2, y=9},
-    {x =7, y=6},
-    {x =2, y=-9},
-    {x =6, y=7},
-    {x =-9, y=-2},
-    {x =-6, y=7},
-    {x =9, y=2},
-    {x =7, y=-6},
-    {x =8, y=-5},
-    {x =-5, y=-8},
-    {x =8, y=5},
-    {x =5, y=8},
-    {x =-5, y=8},
-    {x =-8, y=-5},
-    {x =5, y=-8},
-    {x =-8, y=5},
-    {x =-3, y=-9},
-    {x =9, y=3},
-    {x =3, y=9},
-    {x =-9, y=-3},
-    {x =3, y=-9},
-    {x =-3, y=9},
-    {x =-9, y=3},
-    {x =9, y=-3},
-    {x =9, y=-4},
-    {x =-9, y=4},
-    {x =4, y=9},
-    {x =-9, y=-4},
-    {x =-4, y=9},
-    {x =9, y=4},
-    {x =4, y=-9},
-    {x =-4, y=-9},
-    {x =7, y=-7},
-    {x =-7, y=7},
-    {x =7, y=7},
-    {x =-7, y=-7},
-    {x =6, y=-8},
-    {x =0, y=10},
-    {x =-8, y=-6},
-    {x =6, y=8},
-    {x =8, y=6},
-    {x =-8, y=6},
-    {x =0, y=-10},
-    {x =-6, y=-8},
-    {x =-10, y=0},
-    {x =8, y=-6},
-    {x =-6, y=8},
-    {x =10, y=0},
-    {x =1, y=10},
-    {x =-10, y=1},
-    {x =1, y=-10},
-    {x =-10, y=-1},
-    {x =10, y=1},
-    {x =-1, y=10},
-    {x =10, y=-1},
-    {x =-1, y=-10},
-    {x =10, y=-2},
-    {x =2, y=10},
-    {x =-10, y=-2},
-    {x =-2, y=-10},
-    {x =2, y=-10},
-    {x =-2, y=10},
-    {x =10, y=2},
-    {x =-10, y=2},
-    {x =-9, y=5},
-    {x =9, y=5},
-    {x =9, y=-5},
-    {x =-9, y=-5},
-    {x =5, y=-9},
-    {x =5, y=9},
-    {x =-5, y=-9},
-    {x =-5, y=9},
-    {x =10, y=3},
-    {x =10, y=-3},
-    {x =-10, y=3},
-    {x =-10, y=-3},
-    {x =-3, y=10},
-    {x =3, y=-10},
-    {x =-3, y=-10},
-    {x =3, y=10},
-    {x =8, y=-7},
-    {x =8, y=7},
-    {x =7, y=8},
-    {x =7, y=-8},
-    {x =-7, y=-8},
-    {x =-7, y=8},
-    {x =-8, y=7},
-    {x =-8, y=-7},
-    {x =-10, y=-4},
-    {x =-4, y=-10},
-    {x =-4, y=10},
-    {x =4, y=-10},
-    {x =10, y=4},
-    {x =4, y=10},
-    {x =-10, y=4},
-    {x =10, y=-4},
-    {x =9, y=6},
-    {x =6, y=9},
-    {x =9, y=-6},
-    {x =6, y=-9},
-    {x =-9, y=-6},
-    {x =-6, y=-9},
-    {x =-9, y=6},
-    {x =-6, y=9},
-    {x =-5, y=10},
-    {x =-5, y=-10},
-    {x =10, y=5},
-    {x =10, y=-5},
-    {x =-10, y=5},
-    {x =5, y=10},
-    {x =5, y=-10},
-    {x =-10, y=-5},
-    {x =8, y=8},
-    {x =-8, y=8},
-    {x =8, y=-8},
-    {x =-8, y=-8},
-    {x =7, y=9},
-    {x =-7, y=9},
-    {x =-9, y=-7},
-    {x =-9, y=7},
-    {x =9, y=-7},
-    {x =7, y=-9},
-    {x =-7, y=-9},
-    {x =9, y=7},
-    {x =10, y=-6},
-    {x =-10, y=6},
-    {x =6, y=-10},
-    {x =10, y=6},
-    {x =6, y=10},
-    {x =-10, y=-6},
-    {x =-6, y=-10},
-    {x =-6, y=10},
-    {x =9, y=-8},
-    {x =-9, y=-8},
-    {x =8, y=-9},
-    {x =-8, y=-9},
-    {x =8, y=9},
-    {x =9, y=8},
-    {x =-9, y=8},
-    {x =-8, y=9},
-    {x =7, y=-10},
-    {x =-7, y=-10},
-    {x =10, y=-7},
-    {x =-7, y=10},
-    {x =-10, y=7},
-    {x =-10, y=-7},
-    {x =7, y=10},
-    {x =10, y=7},
-    {x =-9, y=9},
-    {x =9, y=-9},
-    {x =9, y=9},
-    {x =-9, y=-9},
-    {x =-10, y=8},
-    {x =-8, y=-10},
-    {x =-8, y=10},
-    {x =-10, y=-8},
-    {x =8, y=-10},
-    {x =10, y=8},
-    {x =10, y=-8},
-    {x =8, y=10},
-    {x =10, y=-9},
-    {x =-10, y=-9},
-    {x =9, y=10},
-    {x =9, y=-10},
-    {x =-9, y=10},
-    {x =-9, y=-10},
-    {x =10, y=9},
-    {x =-10, y=9},
-    {x =-10, y=-10},
-    {x =-10, y=10},
-    {x =10, y=-10},
-    {x =10, y=10},
-}
-
 local usedColorTable
 local function UpdateSettings()
     usedColorTable = GW.settings.GW_COMBAT_TEXT_BLIZZARD_COLOR and colorTable.blizzard or colorTable.gw
@@ -513,97 +108,70 @@ end
 GW.UpdateDameTextSettings = UpdateSettings
 
 local function getSchoolIndex(school)
-    if school == 1 then         -- 	Physical
-        return 0
-    elseif school == 2 then     -- 	Holy
-        return 1
-    elseif school == 4 then     -- 	Fire
-        return 6
-    elseif school == 8 then     -- 	Nature
-        return 2
-    elseif school == 16 then    -- 	Frost
-        return 5
-    elseif school == 32 then    -- 	Shadow
-        return 3
-    elseif school == 64 then    -- 	Arcane
-        return 4
-    else
-        return false
-    end
+    if school == 1 then return 0
+    elseif school == 2 then return 1
+    elseif school == 4 then return 6
+    elseif school == 8 then return 2
+    elseif school == 16 then return 5
+    elseif school == 32 then return 3
+    elseif school == 64 then return 4
+    else return false end
 end
 local function getSchoolIconMap(self, school)
-
     local iconID = getSchoolIndex(school)
-
     if iconID then
         self:SetTexCoord(getSpriteByIndex(elementIcons, iconID))
         return true
-    else
-        return false
     end
+    return false
 end
 
 local function getDurationModifier()
-    return math.max(1,NUM_ACTIVE_FRAMES / 10)
+    return math.max(1, NUM_ACTIVE_FRAMES / 10)
 end
+
 local function calcAvarageHit(amount)
-    if CLASSIC_NUM_HITS>100 then
-        return
-    end
+    if CLASSIC_NUM_HITS > 100 then return end
     CLASSIC_NUM_HITS = CLASSIC_NUM_HITS + 1
     CLASSIC_AVARAGE_HIT = CLASSIC_AVARAGE_HIT + amount
 end
+
 local function getAvrageHitModifier(amount, critical, forAdd)
-    if amount == nil then
+    if not amount then
         return forAdd and 0 or 1
     end
-
-	local a = CLASSIC_AVARAGE_HIT / CLASSIC_NUM_HITS;
-
-	local n = math.min(1.5, math.max(0.7, (amount / a)))
-	if critical then
-		return n / 2
-	end
-	return n
+    local a = CLASSIC_AVARAGE_HIT / CLASSIC_NUM_HITS
+    local n = math.min(1.5, math.max(0.7, (amount / a)))
+    return critical and (n / 2) or n
 end
+
 local function classicPositionGrid(namePlate)
-    if namePlateClassicGrid[namePlate] == nil then
+    if not namePlateClassicGrid[namePlate] then
         namePlateClassicGrid[namePlate] = {}
     end
-
     for i = 1, 100 do
-        if namePlateClassicGrid[namePlate][i] == nil then
+        if not namePlateClassicGrid[namePlate][i] then
             namePlateClassicGrid[namePlate][i] = true
             return i, classicGridData[i].x, classicGridData[i].y
         end
     end
-
     return nil, 1, 0
 end
 
 --STACKING
 local function stackingContainerOnUpdate()
-    -- for each damage text instance
-    local NUM_ACTIVE_DAMAGETEXT_FRAMES = CountTable(stackingContainer.activeFrames)
-    if NUM_ACTIVE_DAMAGETEXT_FRAMES <= 0 then return end
-
+    local activeCount = CountTable(stackingContainer.activeFrames)
+    if activeCount <= 0 then return end
     local index = 0
-    local newOffsetValue = -((NUM_ACTIVE_DAMAGETEXT_FRAMES * (20 / 2)))
+    local newOffsetValue = -((activeCount * (20 / 2)))
     local currentOffsetValue = stackingContainer.offsetValue or 0
-
     stackingContainer.offsetValue = MoveTowards(currentOffsetValue, newOffsetValue, STACKING_MOVESPEED)
     for _, f in pairs(stackingContainer.activeFrames) do
-        local offsetY = 20 * index
-        offsetY = offsetY + stackingContainer.offsetValue
-        local frameOffset = (f.offsetY or 0)
-        local frameOffsetX = (f.offsetX or 0)
-        offsetY = offsetY + frameOffset
+        local offsetY = 20 * index + stackingContainer.offsetValue + (f.offsetY or 0)
+        if not f.oldOffsetY then f.oldOffsetY = offsetY end
+        f.oldOffsetY = MoveTowards(f.oldOffsetY, offsetY, activeCount)
         f:ClearAllPoints()
-        if f.oldOffsetY == nil then
-            f.oldOffsetY = offsetY
-        end
-        f.oldOffsetY =  MoveTowards(f.oldOffsetY, offsetY, NUM_ACTIVE_DAMAGETEXT_FRAMES)
-        f:SetPoint("CENTER", stackingContainer, "CENTER", frameOffsetX, f.oldOffsetY)
+        f:SetPoint("CENTER", stackingContainer, "CENTER", (f.offsetX or 0), f.oldOffsetY)
         index = index + 1
     end
 end
@@ -611,17 +179,11 @@ end
 local function animateTextCriticalForStackingFormat(frame)
     local aName = frame:GetName()
     frame.oldOffsetY = nil
-
-    AddToAnimation(
-        aName,
-        0,
-        1,
-        GetTime(),
-        STACKING_CRITICAL_ANIMATION_DURATION,
+    AddToAnimation(aName, 0, 1, GetTime(), STACKING_CRITICAL_ANIMATION_DURATION,
         function(p)
             local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
             frame.offsetY = offsetY
-            frame.offsetX =  0
+            frame.offsetX = 0
             if p < 0.25 then
                 local scaleFade = p - 0.25
                 frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X, 0, scaleFade / 0.25)
@@ -629,16 +191,11 @@ local function animateTextCriticalForStackingFormat(frame)
             else
                 frame:SetScale(frame.textScaleModifier)
             end
-
-            if p > 0.7 then
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
-            else
-                frame:SetAlpha(1)
-            end
+            frame:SetAlpha(p > 0.7 and math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))) or 1)
         end,
         nil,
         function()
-            table.remove(stackingContainer.activeFrames,1)
+            table.remove(stackingContainer.activeFrames, 1)
             frame:SetScale(1)
             frame:Hide()
         end
@@ -649,26 +206,15 @@ AFP("animateTextCriticalForStackingFormat", animateTextCriticalForStackingFormat
 local function animateTextNormalForStackingFormat(frame)
     local aName = frame:GetName()
     frame.oldOffsetY = nil
-
-    AddToAnimation(
-        aName,
-        0,
-        1,
-        GetTime(),
-        STACKING_NORMAL_ANIMATION_DURATION,
+    AddToAnimation(aName, 0, 1, GetTime(), STACKING_NORMAL_ANIMATION_DURATION,
         function(p)
-            frame.offsetX =  0
+            frame.offsetX = 0
             frame:SetScale(1 * frame.textScaleModifier)
             frame.offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
-
             if p < 0.25 then
                 frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X, 0, (p - 0.25) / 0.25)
             end
-            if p > 0.7 then
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
-            else
-                frame:SetAlpha(1)
-            end
+            frame:SetAlpha(p > 0.7 and math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))) or 1)
         end,
         nil,
         function()
@@ -683,33 +229,21 @@ AFP("animateTextNormalForStackingFormat", animateTextNormalForStackingFormat)
 -- DEFAULT
 local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
     local aName = frame:GetName()
-
-    AddToAnimation(
-        aName,
-        0,
-        1,
-        GetTime(),
-        CRITICAL_ANIMATION_DURATION,
+    AddToAnimation(aName, 0, 1, GetTime(), CRITICAL_ANIMATION_DURATION,
         function(p)
             if p < 0.25 then
                 frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)), frame.textScaleModifier, p / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
-
             if offsetIndex == 0 then
                 frame:SetPoint("TOP", frame.anchorFrame, "BOTTOM", 0, 0)
             elseif offsetIndex == 1 then
                 frame:SetPoint("TOP", frame.anchorFrame, "BOTTOMLEFT", 0, 0)
-            elseif offsetIndex== 2 then
+            elseif offsetIndex == 2 then
                 frame:SetPoint("TOP", frame.anchorFrame, "BOTTOMRIGHT", 0, 0)
             end
-
-            if p > 0.7 then
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
-            else
-                frame:SetAlpha(1)
-            end
+            frame:SetAlpha(p > 0.7 and math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))) or 1)
         end,
         nil,
         function()
@@ -722,30 +256,18 @@ AFP("animateTextCriticalForDefaultFormat", animateTextCriticalForDefaultFormat)
 
 local function animateTextNormalForDefaultFormat(frame, offsetIndex)
     local aName = frame:GetName()
-
-    AddToAnimation(
-        aName,
-        0,
-        1,
-        GetTime(),
-        NORMAL_ANIMATION_DURATION,
+    AddToAnimation(aName, 0, 1, GetTime(), NORMAL_ANIMATION_DURATION,
         function(p)
             local offsetY = NORMAL_ANIMATION_OFFSET_Y * p
-
-            frame:SetScale(1 * frame.textScaleModifier )
+            frame:SetScale(1 * frame.textScaleModifier)
             if offsetIndex == 0 then
                 frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
-            elseif offsetIndex== 1 then
+            elseif offsetIndex == 1 then
                 frame:SetPoint("BOTTOM", frame.anchorFrame, "TOPLEFT", 0, offsetY)
-            elseif offsetIndex== 2 then
+            elseif offsetIndex == 2 then
                 frame:SetPoint("BOTTOM", frame.anchorFrame, "TOPRIGHT", 0, offsetY)
             end
-
-            if p > 0.7 then
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
-            else
-                frame:SetAlpha(1)
-            end
+            frame:SetAlpha(p > 0.7 and math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))) or 1)
         end,
         nil,
         function()
@@ -759,41 +281,30 @@ AFP("animateTextNormalForDefaultFormat", animateTextNormalForDefaultFormat)
 --CLASSIC
 local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
     local aName = frame:GetName()
-    NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES +1;
-    AddToAnimation(
-        aName,
-        0,
-        1,
-        GetTime(),
-        math.min(CRITICAL_ANIMATION_DURATION*2,(CRITICAL_ANIMATION_DURATION  * (frame.dynamicScaleAdd + math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER))))) / getDurationModifier(),
+    NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES + 1
+    AddToAnimation(aName, 0, 1, GetTime(),
+        math.min(CRITICAL_ANIMATION_DURATION * 2, (CRITICAL_ANIMATION_DURATION * (frame.dynamicScaleAdd + math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)))) / getDurationModifier()),
         function(p)
-            if frame.anchorFrame == nil or not frame.anchorFrame:IsShown() then
+            if not frame.anchorFrame or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
                 classicPositionGrid(frame.anchorFrame)
             end
-
             if p < 0.05 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)), frame.dynamicScaleAdd, p  / 0.05)))
+                frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)), frame.dynamicScaleAdd, p / 0.05)))
             else
                 frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER))))
             end
-
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
-
-            if p > 0.9 then
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.9) / 0.1))))
-            else
-                frame:SetAlpha(1)
-            end
+            frame:SetAlpha(p > 0.9 and math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.9) / 0.1))) or 1)
         end,
         nil,
         function()
-            if namePlateClassicGrid[frame.anchorFrame] and gridIndex ~= nil then
+            if namePlateClassicGrid[frame.anchorFrame] and gridIndex then
                 namePlateClassicGrid[frame.anchorFrame][gridIndex] = nil
             end
             frame:SetScale(1)
             frame:Hide()
-            NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES - 1;
+            NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES - 1
         end
     )
 end
@@ -801,38 +312,29 @@ AFP("animateTextCriticalForClassicFormat", animateTextCriticalForClassicFormat)
 
 local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
     local aName = frame:GetName()
-    NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES + 1;
-    AddToAnimation(
-        aName,
-        0,
-        1,
-        GetTime(),
-        NORMAL_ANIMATION_DURATION / getDurationModifier(),
+    NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES + 1
+    AddToAnimation(aName, 0, 1, GetTime(), NORMAL_ANIMATION_DURATION / getDurationModifier(),
         function(p)
-            if frame.anchorFrame==nil or not frame.anchorFrame:IsShown() then
+            if not frame.anchorFrame or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
                 classicPositionGrid(frame.anchorFrame)
             end
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
             if p < 0.10 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier, frame.dynamicScaleAdd, p  / 0.10)))
+                frame:SetScale(math.max(0.1, GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier, frame.dynamicScaleAdd, p / 0.10)))
             else
                 frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier))
             end
-            if p > 0.9 then
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.9) / 0.1))))
-            else
-                frame:SetAlpha(1)
-            end
+            frame:SetAlpha(p > 0.9 and math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.9) / 0.1))) or 1)
         end,
         nil,
         function()
-            if namePlateClassicGrid[frame.anchorFrame] and gridIndex ~= nil then
+            if namePlateClassicGrid[frame.anchorFrame] and gridIndex then
                 namePlateClassicGrid[frame.anchorFrame][gridIndex] = nil
             end
             frame:SetScale(1)
             frame:Hide()
-            NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES - 1;
+            NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES - 1
         end
     )
 end
@@ -841,13 +343,11 @@ AFP("animateTextNormalForClassicFormat", animateTextNormalForClassicFormat)
 local createdFramesIndex = 0
 local function createNewFontElement(self)
     if createdFramesIndex >= NUM_OBJECTS_HARDLIMIT then
---      return nil
+        --optional: return nil
     end
-
     local f = CreateFrame("FRAME", "GwDamageTextElement" .. createdFramesIndex, self, "GwDamageText")
     f.string:SetJustifyV("MIDDLE")
     f.string:SetJustifyH("Left")
-
     f.id = createdFramesIndex
     table.insert(fontStringList, f)
     createdFramesIndex = createdFramesIndex + 1
@@ -861,11 +361,8 @@ local function getFontElement(self)
             return f
         end
     end
-
     local newFrame = createNewFontElement(self)
-    if newFrame ~= nil then
-        return newFrame
-    end
+    if newFrame then return newFrame end
     for _, f in pairs(fontStringList) do
         return f
     end
@@ -899,35 +396,27 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
         self.peroidicBackground:Hide()
     end
 
-    self.pet = source == "pet"
+    self.pet = (source == "pet")
     self.textScaleModifier = self.pet and math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER)) or 1
     self.periodic = periodic
 
-    local colorSource = (source == "pet" or source == "melee") and source or source == "heal" and "heal" or "spell"
-
-    self.string:SetTextColor(usedColorTable[colorSource].r, usedColorTable[colorSource].g, usedColorTable[colorSource].b, usedColorTable[colorSource].a)
-
+    local colorSource = (source == "pet" or source == "melee") and source or (source == "heal" and "heal") or "spell"
+    local col = usedColorTable[colorSource]
+    self.string:SetTextColor(col.r, col.g, col.b, col.a)
     self:Show()
-
     self:ClearAllPoints()
 end
 AFP("setElementData", setElementData)
 
 local function formatDamageValue(amount)
-    local formatFunction = nil
-    if GW.settings.GW_COMBAT_TEXT_SHORT_VALUES then
-        formatFunction = GW.ShortValue
-    elseif GW.settings.GW_COMBAT_TEXT_COMMA_FORMAT then
-        formatFunction = GW.GetLocalizedNumber
-    end
-
+    local formatFunction = GW.settings.GW_COMBAT_TEXT_SHORT_VALUES and GW.ShortValue or (GW.settings.GW_COMBAT_TEXT_COMMA_FORMAT and GW.GetLocalizedNumber or nil)
     return formatFunction and formatFunction(amount) or amount
 end
 AFP("formatDamageValue", formatDamageValue)
 
 local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic,school)
     local f = getFontElement(self)
-    f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
+    f.string:SetText(missType and _G[missType] or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
 
     if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Default or GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic then
         local nameplate
@@ -935,49 +424,27 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
             nameplate = ClassicDummyFrame
         else
             local unit = guidToUnit[guid]
-
             if unit then
                 nameplate = C_NamePlate.GetNamePlateForUnit(unit)
                 f.unit = unit
             end
-
             if not nameplate then
-                if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Default then
-                    return
-                else
-                    nameplate = ClassicDummyFrame -- use as fallback if namplates out off range
-                end
+                nameplate = ClassicDummyFrame
             end
         end
         if amount and amount > 0 then
             calcAvarageHit(amount)
         end
-
         f.anchorFrame = nameplate
         f.dynamicScale = getAvrageHitModifier(amount, critical)
-        f.dynamicScaleAdd = getAvrageHitModifier(amount,critical, true)
-
+        f.dynamicScaleAdd = getAvrageHitModifier(amount, critical, true)
         setElementData(f, critical, source, missType, blocked, absorbed, periodic, school)
-
-        if namePlatesOffsets[nameplate] == nil then
-            namePlatesOffsets[nameplate] = 0
-        else
-            namePlatesOffsets[nameplate] = namePlatesOffsets[nameplate] + 1
-            if namePlatesOffsets[nameplate] > 2 then
-                namePlatesOffsets[nameplate] = 0
-            end
-        end
+        namePlatesOffsets[nameplate] = (namePlatesOffsets[nameplate] or -1) + 1
+        if namePlatesOffsets[nameplate] > 2 then namePlatesOffsets[nameplate] = 0 end
 
         if critical then
-            if namePlatesCriticalOffsets[nameplate] == nil then
-                namePlatesCriticalOffsets[nameplate] = 0
-            else
-                namePlatesCriticalOffsets[nameplate] = namePlatesCriticalOffsets[nameplate] + 1
-                if namePlatesCriticalOffsets[nameplate] > 2 then
-                    namePlatesCriticalOffsets[nameplate] = 0
-                end
-            end
-
+            namePlatesCriticalOffsets[nameplate] = (namePlatesCriticalOffsets[nameplate] or -1) + 1
+            if namePlatesCriticalOffsets[nameplate] > 2 then namePlatesCriticalOffsets[nameplate] = 0 end
             if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Default then
                 CRITICAL_ANIMATION(f, namePlatesCriticalOffsets[nameplate])
             else
@@ -992,12 +459,8 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         end
     elseif GW.settings.GW_COMBAT_TEXT_STYLE == formats.Stacking then
         f.anchorFrame = stackingContainer
-        -- Add damage text to array of active Elements
         table.insert(stackingContainer.activeFrames, f)
-
         setElementData(f, critical, source, missType, blocked, absorbed, periodic, school)
-
-        -- add to animation here
         if critical then
             CRITICAL_ANIMATION(f)
         else
@@ -1008,31 +471,26 @@ end
 AFP("displayDamageText", displayDamageText)
 
 local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, ...)
-    local targetUnit = guidToUnit[destGUID]
-    -- if targetNameplate doesnt exists, ignore
-    if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Default and not targetUnit then return end
-    local _
-    if playerGUID == sourceGUID and playerGUID~=destGUID then
+    if GW.myguid == sourceGUID and GW.myguid ~= destGUID then
         local periodic = false
-        local element = nil
-        if (string.find(event, "_DAMAGE")) then
-            local spellName, amount, blocked, absorbed, critical
-            if (string.find(event, "SWING")) then
+        if string.find(event, "_DAMAGE") then
+            local spellName, amount, blocked, absorbed, critical, localElement
+            if string.find(event, "SWING") then
                 spellName, amount, _, _, _, blocked, absorbed, critical = "melee", ...
-            elseif (string.find(event, "ENVIRONMENTAL")) then
+            elseif string.find(event, "ENVIRONMENTAL") then
                 spellName, amount, _, _, _, blocked, absorbed, critical = ...
-            elseif (string.find(event, "PERIODIC")) then
-                _, spellName, element, amount, _, _, _, blocked, absorbed, critical = ...
+            elseif string.find(event, "PERIODIC") then
+                _, spellName, localElement, amount, _, _, _, blocked, absorbed, critical = ...
                 periodic = true
             else
                 _, spellName, _, amount, _, _, _, blocked, absorbed, critical = ...
             end
-            displayDamageText(self, destGUID, amount, critical, spellName, nil, blocked, absorbed, periodic, element)
-        elseif (string.find(event, "_MISSED")) then
+            displayDamageText(self, destGUID, amount, critical, spellName, nil, blocked, absorbed, periodic, localElement)
+        elseif string.find(event, "_MISSED") then
             local missType
-            if (string.find(event, "RANGE") or string.find(event, "SPELL")) then
-                missType = select(4,...)
-            elseif (string.find(event, "SWING")) then
+            if string.find(event, "RANGE") or string.find(event, "SPELL") then
+                missType = select(4, ...)
+            elseif string.find(event, "SWING") then
                 missType = ...
             else
                 _, _, _, missType = ...
@@ -1044,22 +502,22 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
                 displayDamageText(self, destGUID, (amount - overhealing), critical, "heal", nil, nil, (absorbed > 0 and absorbed or nil))
             end
         end
-    elseif (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) > 0 or bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) > 0) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) > 0 then -- caster is player pet
-        if (string.find(event, "_DAMAGE")) then
-            local amount, _, _, _, _, blocked, absorbed, critical
-            if (string.find(event, "SWING")) then
+    elseif (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) > 0 or bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) > 0) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) > 0 then
+        if string.find(event, "_DAMAGE") then
+            local amount, blocked, absorbed, critical
+            if string.find(event, "SWING") then
                 _, amount, _, _, _, blocked, absorbed, critical = "pet", ...
-            elseif (string.find(event, "ENVIRONMENTAL")) then
+            elseif string.find(event, "ENVIRONMENTAL") then
                 _, amount, _, _, _, blocked, absorbed, critical = ...
             else
                 _, _, _, amount, _, _, _, blocked, absorbed, critical = ...
             end
             displayDamageText(self, destGUID, amount, critical, "pet", nil, blocked, absorbed)
-        elseif (string.find(event, "_MISSED")) then
+        elseif string.find(event, "_MISSED") then
             local missType
-            if (string.find(event, "RANGE") or string.find(event, "SPELL")) then
-                missType = select(4,...)
-            elseif (string.find(event, "SWING")) then
+            if string.find(event, "RANGE") or string.find(event, "SPELL") then
+                missType = select(4, ...)
+            elseif string.find(event, "SWING") then
                 missType = ...
             end
             displayDamageText(self, destGUID, nil, nil, "pet", missType)
@@ -1079,14 +537,11 @@ AFP("onNamePlateAdded", onNamePlateAdded)
 
 local function onNamePlateRemoved(_, _, unitID)
     local guid = unitToGuid[unitID]
-
     unitToGuid[unitID] = nil
     guidToUnit[guid] = nil
-
     if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic then
-      return
+        return
     end
-
     for _, f in pairs(fontStringList) do
         if f.unit and f.unit == unitID then
             f:Hide()
@@ -1096,7 +551,7 @@ end
 AFP("onNamePlateRemoved", onNamePlateRemoved)
 
 local function RescanAllNameplates()
-    for _, frame in pairs(C_NamePlate.GetNamePlates(false)) do
+    for _, frame in pairs(C_NamePlate_GetNamePlates(false)) do
         local guid = UnitGUID(frame.namePlateUnitToken)
         if guid then
             unitToGuid[frame.namePlateUnitToken] = guid
@@ -1110,7 +565,6 @@ local function ToggleFormat(activate)
         GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_DAMAGE", handleCombatLogEvent)
         GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_MISSED", handleCombatLogEvent)
         GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_HEAL", handleCombatLogEvent)
-
         eventHandler:SetScript("OnEvent", function(_, event, ...)
             if event == "NAME_PLATE_UNIT_ADDED" then
                 onNamePlateAdded(eventHandler, event, ...)
@@ -1120,78 +574,58 @@ local function ToggleFormat(activate)
         end)
 
         if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Default or GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic then
-            -- hide the other format things
-            GW.ToggleMover(stackingContainer.gwMover, false)
-
+            ToggleMover(stackingContainer.gwMover, false)
             stackingContainer:SetScript("OnUpdate", nil)
             stackingContainer:Hide()
             wipe(stackingContainer.activeFrames)
-
             NUM_OBJECTS_HARDLIMIT = 20
-
             if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic then
                 CRITICAL_ANIMATION = animateTextCriticalForClassicFormat
                 NORMAL_ANIMATION = animateTextNormalForClassicFormat
-
                 if GW.settings.GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR == "Nameplates" then
                     eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
                     eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
-
                     RescanAllNameplates()
                 else
                     eventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
                     eventHandler:UnregisterEvent("NAME_PLATE_UNIT_REMOVED")
-
                     wipe(unitToGuid)
                     wipe(guidToUnit)
                 end
-
                 ClassicDummyFrame:Show()
             else
                 ClassicDummyFrame:Hide()
-
                 CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
                 NORMAL_ANIMATION = animateTextNormalForDefaultFormat
-
                 eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
                 eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
-
                 RescanAllNameplates()
-
                 wipe(namePlateClassicGrid)
             end
         elseif GW.settings.GW_COMBAT_TEXT_STYLE == formats.Stacking then
             ClassicDummyFrame:Hide()
-
             CRITICAL_ANIMATION = animateTextCriticalForStackingFormat
             NORMAL_ANIMATION = animateTextNormalForStackingFormat
-
             NUM_OBJECTS_HARDLIMIT = 50
-
             eventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
             eventHandler:UnregisterEvent("NAME_PLATE_UNIT_REMOVED")
-
             wipe(unitToGuid)
             wipe(guidToUnit)
             wipe(namePlateClassicGrid)
             wipe(stackingContainer.activeFrames)
-
             stackingContainer:SetScript("OnUpdate", stackingContainerOnUpdate)
             stackingContainer:Show()
-            GW.ToggleMover(stackingContainer.gwMover, true)
+            ToggleMover(stackingContainer.gwMover, true)
         end
     else
         eventHandler:UnregisterAllEvents()
         eventHandler:SetScript("OnEvent", nil)
         GW.Libs.GW2Lib:UnregisterAllCombatEvents(eventHandler)
-
         wipe(unitToGuid)
         wipe(guidToUnit)
-
-        GW.ToggleMover(stackingContainer.gwMover, false)
+        ToggleMover(stackingContainer.gwMover, false)
         stackingContainer:SetScript("OnUpdate", nil)
         stackingContainer:Hide()
-
         ClassicDummyFrame:Hide()
     end
 end
@@ -1204,8 +638,7 @@ local function LoadDamageText(activate)
     stackingContainer = CreateFrame("Frame", nil, UIParent)
     stackingContainer:SetSize(200, 400)
     stackingContainer:EnableMouse(false)
-    stackingContainer:ClearAllPoints()
-    GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
+    RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
     stackingContainer:ClearAllPoints()
     stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
     stackingContainer.activeFrames = {}
@@ -1217,6 +650,5 @@ local function LoadDamageText(activate)
     ClassicDummyFrame:EnableMouse(false)
 
     ToggleFormat(activate)
-    playerGUID = UnitGUID("player")
 end
 GW.LoadDamageText = LoadDamageText

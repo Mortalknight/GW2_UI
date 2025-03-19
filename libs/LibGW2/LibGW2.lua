@@ -99,7 +99,7 @@ function lib:UnregisterAllCombatEvents(frm)
     end
 end
 
-local tasksPerFrame = 5
+local tasksPerFrame = 10
 local function ProcessAsyncQueue(self)
     local count = 0
 
