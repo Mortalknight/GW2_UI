@@ -5,14 +5,7 @@ local function addHeroicVisionsData(block, numCriteria)
         local info = C_CurrencyInfo.GetCurrencyInfo(1744) --Corrupted Memento
         if info then
             numCriteria = numCriteria + 1
-            GW.AddScenarioObjectivesBlock(
-                block,
-                GW.ParseCriteria(info.quantity, 0, info.name),
-                false,
-                numCriteria,
-                "monster",
-                info.quantity
-            )
+            block:AddObjective(GW.ParseCriteria(info.quantity, 0, info.name), numCriteria, { finished = false, objectiveType = "monster", qty = info.quantity, firstObjectivesYValue = -5 })
         end
     end
 

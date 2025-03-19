@@ -5,16 +5,9 @@ local function addJailersTowerData(block, numCriteria)
         --Phantasma
         local phinfo = C_CurrencyInfo.GetCurrencyInfo(1728)
         numCriteria = numCriteria + 1
-        GW.AddScenarioObjectivesBlock(
-            block,
-            "|T3743737:0:0:0:0:64:64:4:60:4:60|t " .. phinfo.quantity .. " " .. phinfo.name,
-            false,
-            numCriteria,
-            "monster",
-            phinfo.quantity
-        )
+        block:AddObjective("|T3743737:0:0:0:0:64:64:4:60:4:60|t " .. phinfo.quantity .. " " .. phinfo.name, numCriteria, { finished = false, objectiveType = "monster", qty = phinfo.quantity, firstObjectivesYValue = -5 })
 
-        local objectiveBlock = GW.GetScenarioObjectivesBlock(block, numCriteria)
+        local objectiveBlock = block:GetObjectiveBlock(numCriteria)
         objectiveBlock:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
             GameTooltip:ClearLines()
@@ -26,7 +19,7 @@ local function addJailersTowerData(block, numCriteria)
 
         -- grab the MawBuffs Button from here
         numCriteria = numCriteria + 1
-        objectiveBlock = GW.GetScenarioObjectivesBlock(block, numCriteria)
+        objectiveBlock = block:GetObjectiveBlock(numCriteria)
         objectiveBlock:SetHeight(ScenarioObjectiveTracker.MawBuffsBlock:GetHeight()) --.Container
         ScenarioObjectiveTracker.MawBuffsBlock.Container:SetParent(objectiveBlock)
         ScenarioObjectiveTracker.MawBuffsBlock.Container:ClearAllPoints()

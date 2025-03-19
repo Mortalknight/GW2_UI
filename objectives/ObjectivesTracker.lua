@@ -152,8 +152,8 @@ function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
         end
     end
 
-    if GwScenarioBlock.hasItem then
-        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GwScenarioBlock.UpdateObjectiveActionButtonPosition, {GwScenarioBlock, "SCENARIO"})
+    if GW.ObjectiveTrackerContainer.Scenario.block.hasItem then
+        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GW.ObjectiveTrackerContainer.Scenario.block.UpdateObjectiveActionButtonPosition, {GW.ObjectiveTrackerContainer.Scenario.block, "SCENARIO"})
     end
 end
 

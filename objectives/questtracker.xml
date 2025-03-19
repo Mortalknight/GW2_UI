@@ -608,7 +608,7 @@
         </Scripts>
     </Frame>
 
-    <Frame name="GwQuesttrackerScenarioBlock" parent="GwQuestTracker" virtual="true">
+    <Frame name="GwQuesttrackerScenarioBlock" parent="GwQuestTracker" virtual="true" mixin="GwQuesttrackerScenarioBlockMixin">
         <Size x="300" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>

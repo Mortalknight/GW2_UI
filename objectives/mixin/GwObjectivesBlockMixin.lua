@@ -171,10 +171,15 @@ function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(string)
     self.color = GW.TRACKER_TYPE_COLOR[string]
 end
 
-function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index)
-    if _G[self:GetName() .. "Objective" .. index] then
-        _G[self:GetName() .. "Objective" .. index]:SetScript("OnUpdate", nil)
-        return _G[self:GetName() .. "Objective" .. index]
+function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectivesYValue)
+    local block = _G[self:GetName() .. "Objective" .. index]
+    if block then
+        block:SetScript("OnUpdate", nil)
+        block:SetScript("OnEnter", nil)
+        block:SetScript("OnLeave", nil)
+        block.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
+        block.isMythicKeystone = false
+        return block
     end
 
     if self.objectiveBlocksNum == nil then
@@ -187,7 +192,7 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index)
     newBlock:SetParent(self)
     tinsert(self.objectiveBlocks, newBlock)
     if self.objectiveBlocksNum == 1 then
-        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
+        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, (firstObjectivesYValue or -25))
     else
         newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (self.objectiveBlocksNum - 1)], "BOTTOMRIGHT", 0, 0)
     end
@@ -195,13 +200,18 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index)
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
     newBlock.notChangeSize = true
 
+    newBlock.hasObjectToHide = false
+    newBlock.objectToHide = nil
+    newBlock.resetParent = false
+    newBlock.isMythicKeystone = false
+
     return newBlock
 end
 
 function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, options)
     if not text then return end
     self.numObjectives = self.numObjectives + 1
-    local objectiveBlock = self:GetObjectiveBlock(objectiveIndex)
+    local objectiveBlock = self:GetObjectiveBlock(objectiveIndex, options.firstObjectivesYValue)
     local precentageComplete = 0
 
     objectiveBlock:Show()
@@ -215,6 +225,14 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
     end
     objectiveBlock.ObjectiveText:SetText(formattedText)
     objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
+
+    if objectiveBlock.hasObjectToHide then
+        if objectiveBlock.resetParent then objectiveBlock.objectToHide.SetParent = nil end
+        objectiveBlock.objectToHide:SetParent(GW.HiddenFrame)
+        if objectiveBlock.resetParent then objectiveBlock.objectToHide.SetParent = GW.NoOp end
+    end
+
+    objectiveBlock.isMythicKeystone = options.isMythicKeystone
 
     if options.isAchievement then
         if options.eligible then
@@ -232,13 +250,12 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
 
     if options.objectiveType == "progressbar" then
         objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
-        objectiveBlock.StatusBar:SetValue(options.qty or GetQuestProgressBarPercent(self.questID) or 0)
-        objectiveBlock.StatusBar:SetShown(options.overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
-        objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(self.questID))
-        objectiveBlock.progress = (options.qty or GetQuestProgressBarPercent(self.questID)) / 100
+        objectiveBlock.StatusBar:SetValue(options.qty or (self.questID and GetQuestProgressBarPercent(self.questID)) or 0)
+        objectiveBlock.StatusBar:SetShown(options.isMythicKeystone or options.overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
+        objectiveBlock.progress = (options.qty or (self.questID and GetQuestProgressBarPercent(self.questID))) / 100
         objectiveBlock.StatusBar.precentage = true
         precentageComplete = objectiveBlock.progress
-    elseif GW.ParseObjectiveString(objectiveBlock, text, options.qty, options.totalqty, options.overrideShowStatusbarSetting) then
+    elseif GW.ParseObjectiveString(objectiveBlock, text, options.qty, options.totalqty, (options.overrideShowStatusbarSetting or options.isMythicKeystone)) then
         precentageComplete = objectiveBlock.progress
     else
         objectiveBlock.StatusBar:Hide()
