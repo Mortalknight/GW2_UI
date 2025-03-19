@@ -79,6 +79,7 @@ local function setUpProgressbar(block, progress)
 end
 
 function GwPetTrackerContainerMixin:UpdateLayout()
+    if not PetTracker then return end
     local progress = PetTracker.Maps:GetCurrentProgress()
     local prevBlock = nil
 
@@ -140,7 +141,7 @@ function GwPetTrackerContainerMixin:UpdateLayout()
 end
 
 function GwPetTrackerContainerMixin:InitModule()
-    if not GW.settings.SKIN_PETTRACKER_ENABLED or not PetTracker then return end
+    if not GW.settings.SKIN_PETTRACKER_ENABLED then return end
 
     local petTrackerLocals = LibStub("AceLocale-3.0"):GetLocale("PetTracker")
 
@@ -191,10 +192,12 @@ function GwPetTrackerContainerMixin:InitModule()
         end
     )
 
-    self:SetScript("OnEvent", self.UpdateLayout)
-    self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-	EventRegistry:RegisterCallback("PetTracker.COLLECTION_CHANGED", function() self:UpdateLayout() end)
-	EventRegistry:RegisterCallback("PetTracker.OPTIONS_CHANGED", function() self:UpdateLayout() end)
+    if PetTracker then
+        self:SetScript("OnEvent", self.UpdateLayout)
+        self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+        EventRegistry:RegisterCallback("PetTracker.COLLECTION_CHANGED", function() self:UpdateLayout() end)
+        EventRegistry:RegisterCallback("PetTracker.OPTIONS_CHANGED", function() self:UpdateLayout() end)
 
-    self:UpdateLayout()
+        self:UpdateLayout()
+    end
 end

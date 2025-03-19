@@ -3,6 +3,7 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 GwWorldQuestTrackerContainerMixin =  {}
 function GwWorldQuestTrackerContainerMixin:UpdateLayout()
+    if not WorldQuestTrackerAddon then return end
     local objectiveDetailBlock
     local counter = 0
     local height = 0.001
@@ -66,7 +67,7 @@ function GwWorldQuestTrackerContainerMixin:UpdateLayout()
 end
 
 function GwWorldQuestTrackerContainerMixin:InitModule()
-    if not GW.settings.SKIN_WQT_ENABLED or not WorldQuestTrackerAddon then return end
+    if not GW.settings.SKIN_WQT_ENABLED then return end
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
@@ -78,6 +79,8 @@ function GwWorldQuestTrackerContainerMixin:InitModule()
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
 
-    self:UpdateLayout()
-    hooksecurefunc(WorldQuestTrackerAddon, "RefreshTrackerAnchor", function() self:UpdateLayout() end)
+    if WorldQuestTrackerAddon then
+        self:UpdateLayout()
+        hooksecurefunc(WorldQuestTrackerAddon, "RefreshTrackerAnchor", function() self:UpdateLayout() end)
+    end
 end
