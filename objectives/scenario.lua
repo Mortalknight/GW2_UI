@@ -17,6 +17,7 @@ local allowedWidgetUpdateIdsForTimer = {
 
 local allowedWidgetUpdateIdsForStatusBar = {
     [6350] = true, -- 20th
+    [6758] = true, -- 11.1
 }
 
 GwObjectivesScenarioContainerMixin = {}

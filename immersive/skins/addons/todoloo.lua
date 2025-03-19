@@ -183,7 +183,7 @@ function GwTodolooContainerMixin:UpdateSingle(group, idx)
 end
 
 function GwTodolooContainerMixin:UpdateLayout()
-    if not Todoloo or not Todoloo.Config.Get(Todoloo.Config.Options.ATTACH_TASK_TRACKER_TO_OBJECTIVE_TRACKER) then
+    if not Todoloo.Config.Get(Todoloo.Config.Options.ATTACH_TASK_TRACKER_TO_OBJECTIVE_TRACKER) then
         self.header:Hide()
         self:SetHeight(0.001)
 
@@ -224,7 +224,7 @@ function GwTodolooContainerMixin:UpdateLayout()
 end
 
 function GwTodolooContainerMixin:InitModule()
-    if not GW.settings.SKIN_TODOLOO_ENABLED then return end
+    if not GW.settings.SKIN_TODOLOO_ENABLED or not Todoloo then return end
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
@@ -239,21 +239,19 @@ function GwTodolooContainerMixin:InitModule()
 
     self.blockMixInTemplate = GwTodolooBlockMixin
 
-    if Todoloo then
-        Todoloo.EventBus:RegisterEvents(self, {
-            Todoloo.Tasks.Events.GROUP_ADDED,
-            Todoloo.Tasks.Events.GROUP_REMOVED,
-            Todoloo.Tasks.Events.GROUP_RESET,
-            Todoloo.Tasks.Events.GROUP_UPDATED,
-            Todoloo.Tasks.Events.GROUP_MOVED,
-            Todoloo.Tasks.Events.TASK_ADDED,
-            Todoloo.Tasks.Events.TASK_COMPLETION_SET,
-            Todoloo.Tasks.Events.TASK_REMOVED,
-            Todoloo.Tasks.Events.TASK_RESET,
-            Todoloo.Tasks.Events.TASK_UPDATED,
-            Todoloo.Tasks.Events.TASK_MOVED,
-            Todoloo.Reset.Events.RESET_PERFORMED,
-            Todoloo.Config.Events.CONFIG_CHANGED
-        }, function() self:UpdateLayout() end)
-    end
+    Todoloo.EventBus:RegisterEvents(self, {
+        Todoloo.Tasks.Events.GROUP_ADDED,
+        Todoloo.Tasks.Events.GROUP_REMOVED,
+        Todoloo.Tasks.Events.GROUP_RESET,
+        Todoloo.Tasks.Events.GROUP_UPDATED,
+        Todoloo.Tasks.Events.GROUP_MOVED,
+        Todoloo.Tasks.Events.TASK_ADDED,
+        Todoloo.Tasks.Events.TASK_COMPLETION_SET,
+        Todoloo.Tasks.Events.TASK_REMOVED,
+        Todoloo.Tasks.Events.TASK_RESET,
+        Todoloo.Tasks.Events.TASK_UPDATED,
+        Todoloo.Tasks.Events.TASK_MOVED,
+        Todoloo.Reset.Events.RESET_PERFORMED,
+        Todoloo.Config.Events.CONFIG_CHANGED
+    }, function() self:UpdateLayout() end)
 end

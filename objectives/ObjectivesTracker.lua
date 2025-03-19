@@ -14,9 +14,9 @@ local objectivesTrackerConfiguration = {
     { name = "GwQuesttrackerContainerMonthlyActivity", scrollable = true, mixin = GwObjectivesMonthlyActivitiesContainerMixin, enumName = "MonthlyActivity" },
     { name = "GwQuesttrackerContainerCollection", scrollable = true, mixin = GwObjectivesCollectionContainerMixin, enumName = "Collection" },
     -- ADDONS
-    { name = "GwQuesttrackerContainerWQT", scrollable = true, mixin = GwWorldQuestTrackerContainerMixin, enumName = "WQT" },
-    { name = "GwQuesttrackerContainerPetTracker", scrollable = true, mixin = GwPetTrackerContainerMixin, enumName = "PetTracker" },
-    { name = "GwQuesttrackerContainerTodoloo", scrollable = true, mixin = GwTodolooContainerMixin, enumName = "Todoloo" }
+    { name = "GwQuesttrackerContainerWQT", scrollable = true, mixin = GwWorldQuestTrackerContainerMixin, enumName = "WQT", addonName = "WorldQuestTracker" },
+    { name = "GwQuesttrackerContainerPetTracker", scrollable = true, mixin = GwPetTrackerContainerMixin, enumName = "PetTracker", addonName = "PetTracker" },
+    { name = "GwQuesttrackerContainerTodoloo", scrollable = true, mixin = GwTodolooContainerMixin, enumName = "Todoloo", addonName = "Todoloo" }
 }
 
 -- container enum
@@ -211,14 +211,20 @@ local function LoadObjectivesTracker()
 
     -- create container
     for _, config in ipairs(objectivesTrackerConfiguration) do
-        local parent = config.scrollable and objectivesTracker.ScrollFrame.Child or objectivesTracker
-        local frame = objectivesTracker:CreateTrackerContainer(config.name, parent, config.mixin, config.template)
+        local shouldLoad = true
+        if config.addonName then
+            shouldLoad = C_AddOns.IsAddOnLoaded(config.addonName)
+        end
+        if shouldLoad then
+            local parent = config.scrollable and objectivesTracker.ScrollFrame.Child or objectivesTracker
+            local frame = objectivesTracker:CreateTrackerContainer(config.name, parent, config.mixin, config.template)
 
-        GW.ObjectiveTrackerContainer[config.enumName] = frame
-        if config.scrollable then
-            table.insert(GW.QuestTrackerScrollableContainer, frame)
-        else
-            table.insert(GW.QuestTrackerFixedContainer, frame)
+            GW.ObjectiveTrackerContainer[config.enumName] = frame
+            if config.scrollable then
+                table.insert(GW.QuestTrackerScrollableContainer, frame)
+            else
+                table.insert(GW.QuestTrackerFixedContainer, frame)
+            end
         end
     end
 
