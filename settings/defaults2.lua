@@ -37,6 +37,9 @@ GW.globalDefault = {
         Reset_Container_Loot_Order = false,
         OBJECTIVES_COLLAPSE_IN_M_PLUS = false,
 
+        FixGuildNewsSpam = true,
+        forceDisableCPUProfiler = true,
+
         RAIDDEBUFFS = {},
         TARGET_ENABLED = true,
         FOCUS_ENABLED = true,

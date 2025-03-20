@@ -75,6 +75,7 @@ core\notaint.lua
 core\LFGPlayerInfo.lua
 core\statusbars.xml
 core\statusbars.lua
+core\blizzardFixes.lua
 
 settings\profileSpecSwitch.lua
 settings\splashScreen.lua

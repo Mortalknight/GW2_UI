@@ -694,3 +694,6 @@ L["Display the average item level, prestige level for friendly units or disable 
 L["Display additional information (ilvl, pvp level)"] = "Zeige zusätzliche Informationen (Gegenstandsstufe, PVP-Stufe)"
 L["Singing Sockets Info"] = "Singende Sockel Info"
 L["Adds a Singing sockets selection tool on the Socketing Frame."] = "Fügt ein Auswahlwerkzeug für singende Sockel im Sockelfenster hinzu"
+L["Blizzard Fixes"] = true
+L["CPU Profiling"] = true
+L["If enable it will disable the CPU Profiling CVar. Which can cause some performance issues and should not be enabled by default"] = "Wenn aktiviert, wird die CPU-Profiling-CVar deaktiviert. Dies kann zu einigen Leistungsproblemen führen und sollte standardmäßig nicht aktiviert sein"

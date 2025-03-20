@@ -664,3 +664,6 @@ L["Display additional information (item level, pvp level)"] = true
 
 L["Singing Sockets Info"] = true
 L["Adds a Singing sockets selection tool on the Socketing Frame"] = true
+L["Blizzard Fixes"] = true
+L["CPU Profiling"] = true
+L["If enable it will disable the CPU Profiling CVar. Which can cause some performance issues and should not be enabled by default"] = true
