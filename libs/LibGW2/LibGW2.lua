@@ -1,3 +1,4 @@
+local _, GW = ...
 local MAJOR, MINOR = "LibGW2-1.0", 2
 assert(LibStub, MAJOR .. " requires LibStub")
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
@@ -10,6 +11,8 @@ local frame = CreateFrame("Frame")
 local mapRects, tempVec2D = {}, CreateVector2D(0, 0)
 local cleuEventListener = {}
 local asyncQueue = {}
+local cleuTicker = nil
+local tasksPerFrame = 5
 
 lib.callbacks = CallbackHandler:New(lib)
 
@@ -49,10 +52,36 @@ end
 
 local function EnableCLEU()
     frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    if cleuTicker then
+        cleuTicker:Cancel()
+        cleuTicker = nil
+    end
+    GW.Debug("CLEU ENABLED")
+
+    cleuTicker = C_Timer.NewTicker(0.1, function()
+        local queuedFunc = table.remove(asyncQueue, 1)
+        local count = 0
+        while queuedFunc do
+            if queuedFunc then
+                queuedFunc()
+            end
+            if count >= tasksPerFrame then
+                break
+            end
+            queuedFunc = table.remove(asyncQueue, 1)
+            count = count + 1
+        end
+    end)
 end
 
 local function DisableCLEU()
     frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    if cleuTicker then
+        cleuTicker:Cancel()
+        cleuTicker = nil
+    end
+
+    GW.Debug("CLEU DISABLED")
 end
 
 local function IsCLEUEnable()
@@ -99,22 +128,6 @@ function lib:UnregisterAllCombatEvents(frm)
     end
 end
 
-local tasksPerFrame = 10
-local function ProcessAsyncQueue(self)
-    local count = 0
-
-    while count < tasksPerFrame and #asyncQueue > 0 do
-        local queuedFunc = table.remove(asyncQueue, 1)
-        if queuedFunc then
-            queuedFunc()
-        end
-        count = count + 1
-    end
-
-    if #asyncQueue == 0 then
-        self:SetScript("OnUpdate", nil)
-    end
-end
 
 local function HandlingCLEU(_, subEvent, _, sourceGUID, srcName, sourceFlags, _, destGUID, destName, _, _, ...)
     for eventKey, frameListeners in pairs(cleuEventListener) do
@@ -126,9 +139,6 @@ local function HandlingCLEU(_, subEvent, _, sourceGUID, srcName, sourceFlags, _,
                 end
             end
         end
-    end
-    if not frame:GetScript("OnUpdate") then
-        frame:SetScript("OnUpdate", ProcessAsyncQueue)
     end
 end
 
@@ -252,8 +262,7 @@ local events = {
     "PLAYER_STOPPED_MOVING",
     "PLAYER_CONTROL_LOST",
     "PLAYER_CONTROL_GAINED",
-    "PLAYER_CAN_GLIDE_CHANGED",
-    "COMBAT_LOG_EVENT_UNFILTERED"
+    "PLAYER_CAN_GLIDE_CHANGED"
 }
 
 for _, evt in ipairs(events) do

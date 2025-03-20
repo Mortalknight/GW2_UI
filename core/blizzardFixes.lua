@@ -25,8 +25,6 @@ function GW:FixBlizzardIssues()
         end)
     end
 
-    print(self.settings.FixGuildNewsSpam)
-
     RegisterCVar("addonProfilerEnabled", "1")
     SetCVar("addonProfilerEnabled", self.settings.forceDisableCPUProfiler and 0 or 1)
     local cpuProfiler = C_AddOnProfiler.IsEnabled()
