@@ -335,9 +335,9 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type
         height = height - (GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight())
     end
     if type == "EVENT" then
-        height = height + GW.ObjectiveTrackerContainer.Quests:GetHeight()
+        height = height + GW.ObjectiveTrackerContainer.Quests:GetHeight() + GW.ObjectiveTrackerContainer.Campaign:GetHeight()
     end
-    if type == "QUEST" or type == "EVENT" then
+    if type == "QUEST" then
         height = height + GW.ObjectiveTrackerContainer.Campaign:GetHeight()
     end
 

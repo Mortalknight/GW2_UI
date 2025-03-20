@@ -39,7 +39,7 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     self.id = questID
     self.questLogIndex = questLogIndex
     self.hasGroupFinderButton = hasGroupFinderButton
-
+    self.title = quest.title
     self.Header:SetText(quest.title)
 
     GW.CombatQueue_Queue(nil, self.UpdateObjectiveActionButton, {self})
@@ -103,10 +103,7 @@ GwQuestLogMixin = {}
 function GwQuestLogMixin:OnEvent(event, ...)
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
-    if event == "LOAD" then
-        self:UpdateLayout()
-        self.init = true
-    elseif event == "QUEST_LOG_UPDATE" then
+    if event == "QUEST_LOG_UPDATE" then
         self:UpdateLayout()
     elseif event == "QUEST_ACCEPTED" then
         local questID = ...
@@ -206,7 +203,7 @@ function GwQuestLogMixin:CheckForAutoQuests()
 end
 
 function GwQuestLogMixin:UpdateLayout()
-    if self.isUpdating or not self.init then
+    if self.isUpdating then
         return
     end
     self.isUpdating = true
@@ -244,7 +241,7 @@ function GwQuestLogMixin:UpdateLayout()
                     block:Show()
                     savedContainerHeight = savedContainerHeight + block.height
                     block.fromContainerTopHeight = savedContainerHeight
-                    GW.CombatQueue_Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block, self.isCampaignContainer and nil or "QUEST"})
+                    GW.CombatQueue_Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block, (not self.isCampaignContainer) and "QUEST" or nil})
                 else
                     counterQuest = counterQuest + 1
                     local block = _G[frameName .. "Block" .. counterQuest]
@@ -284,7 +281,7 @@ function GwQuestLogMixin:UpdateLayout()
 end
 
 function GwQuestLogMixin:PartialUpdate(questID, added)
-    if self.isUpdating or not self.init or not questID then
+    if self.isUpdating or not questID then
         return
     end
     self.isUpdating = true
@@ -337,7 +334,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
             end
         end
         block.fromContainerTopHeight = heightForQuestItem
-        GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block.actionButton, self.isCampaignContainer and nil or "QUEST"})
+        GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block, (not self.isCampaignContainer) and "QUEST" or nil})
     end
 
     GwQuestTracker:LayoutChanged()
@@ -433,8 +430,6 @@ function GwObjectivesQuestContainerMixin:InitModule()
         self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
         self.header.title:SetText(TRACKER_HEADER_QUESTS)
     end
-
-    self.init = false
 
     self:OnEvent("LOAD")
 end
