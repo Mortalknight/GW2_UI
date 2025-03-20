@@ -132,8 +132,7 @@ local function LoadGeneralPanel(sWindow)
     end
 
     -- blizzard fixes
-    addOption(blizzardFix.scroll.scrollchild, GW.NewSign .. GUILD_NEWS, L["This will fix the current Guild News jam."], "FixGuildNewsSpam", GW.FixBlizzardIssues)
-    addOption(blizzardFix.scroll.scrollchild, GW.NewSign .. L["CPU Profiling"], L["If enable it will disable the CPU Profiling CVar. Which can cause some performance issues and should not be enabled by default"], "forceDisableCPUProfiler", GW.FixBlizzardIssues)
+    addOption(blizzardFix.scroll.scrollchild, GW.NewSign .. GUILD_NEWS, L["This will fix the current Guild News jam."], "FixGuildNewsSpam", function() GW:FixBlizzardIssues() end)
 
     InitPanel(general, true)
     InitPanel(classcolors, true)

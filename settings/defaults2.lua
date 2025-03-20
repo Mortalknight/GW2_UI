@@ -38,7 +38,6 @@ GW.globalDefault = {
         OBJECTIVES_COLLAPSE_IN_M_PLUS = false,
 
         FixGuildNewsSpam = true,
-        forceDisableCPUProfiler = true,
 
         RAIDDEBUFFS = {},
         TARGET_ENABLED = true,

@@ -24,9 +24,4 @@ function GW:FixBlizzardIssues()
             end
         end)
     end
-
-    RegisterCVar("addonProfilerEnabled", "1")
-    SetCVar("addonProfilerEnabled", self.settings.forceDisableCPUProfiler and 0 or 1)
-    local cpuProfiler = C_AddOnProfiler.IsEnabled()
-    self.Debug("Blizzard AddOn profiling is: " .. (cpuProfiler == true and "ON" or "OFF"))
 end
