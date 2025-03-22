@@ -230,6 +230,7 @@ objectives\mixin\GwObjectivesBlockMixin.lua
 objectives\mixin\GwObjectivesContainerMixin.lua
 objectives\mixin\GwQuestTrackerObjectiveMixin.lua
 objectives\mixin\GwObjectivesUnitFrameMixin.lua
+objectives\mixin\GwObjectivesGroupfinderButtonMixin.lua
 
 immersive\skins\skins.xml
 immersive\skins\achievements.xml

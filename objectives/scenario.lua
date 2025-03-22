@@ -63,6 +63,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
 
     block.numObjectives = 0
     block.questLogIndex = 0
+    block.groupButton:Hide()
     block:Show()
 
     -- here we show only the statusbar
@@ -89,7 +90,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         end
     end
 
-    local _, _, numStages = C_Scenario.GetInfo()
+    local _, _, numStages, _, _, _, _, _, _, _, _, _, scenarioID = C_Scenario.GetInfo()
     if numStages == 0 or IsOnGroundFloorInJailersTower() then
         local name, instanceType, _, difficultyName, _ = GetInstanceInfo()
         if instanceType == "raid" then
@@ -229,6 +230,9 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         block.questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
     end
 
+    --check for groupfinder button
+    block:UpdateFindGroupButton(scenarioID)
+
     GW.CombatQueue_Queue(nil, block.UpdateObjectiveActionButton, {block})
 
     for criteriaIndex = 1, numCriteria do
@@ -324,6 +328,16 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     block:SetHeight(block.height - intGWQuestTrackerHeight)
     self.oldHeight = GW.RoundInt(self:GetHeight())
     self:SetHeight(block.height)
+end
+
+function GwQuesttrackerScenarioBlockMixin:UpdateFindGroupButton(scenarioID)
+    local hasButton = C_LFGList.CanCreateScenarioGroup(scenarioID)
+    if hasButton then
+		self.groupButton:SetUp(scenarioID)
+		self.groupButton:Show()
+	else
+		self.groupButton:Hide()
+	end
 end
 
 function GwQuesttrackerScenarioBlockMixin:UpdateAffixes(fakeIds)

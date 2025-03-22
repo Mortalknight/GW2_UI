@@ -158,7 +158,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
             compassData.TYPE = "EVENT"
             compassData.COMPASS = true
         end
-        if numObjectives and treatAsInArea then
+        if numObjectives > 0 and treatAsInArea then
             if not self.collapsed then
                 local block = self:GetBlock(blockIndex, "EVENT", true)
                 compassData.TITLE = text
@@ -179,6 +179,9 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 block.questID = questID
                 block.hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
                 block.groupButton:SetShown(block.hasGroupFinderButton)
+                if block.hasGroupFinderButton then
+                    block.groupButton:SetUp(questID, false)
+                end
 
                 GW.CombatQueue_Queue(nil, block.UpdateObjectiveActionButton, {block})
 

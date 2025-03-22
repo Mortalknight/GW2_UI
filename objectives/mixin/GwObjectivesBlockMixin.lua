@@ -81,12 +81,12 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
     if self.event then
         self:TryShowRewardsTooltip()
     else
-        if IsInGroup() and self.id then
+        if IsInGroup() and self.questID then
             GameTooltip:ClearAllPoints()
             GameTooltip:SetPoint("TOPRIGHT", self, "TOPLEFT", 0, 0)
             GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
-            GameTooltip:SetQuestPartyProgress(self.id)
-            EventRegistry:TriggerEvent("OnQuestBlockHeader.OnEnter", self, self.id, true)
+            GameTooltip:SetQuestPartyProgress(self.questID)
+            EventRegistry:TriggerEvent("OnQuestBlockHeader.OnEnter", self, self.questID, true)
         end
     end
 end
@@ -119,41 +119,29 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     self.Header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     self.SubHeader:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
-    self.turnin:SetScript("OnShow", function(self) self:SetScript("OnUpdate", wiggleAnim) end)
-    self.turnin:SetScript("OnHide", function(self) self:SetScript("OnUpdate", nil) end)
-    self.turnin:SetScript("OnClick",function(self)
-        ShowQuestComplete(self:GetParent().id)
-        RemoveAutoQuestPopUp(self:GetParent().id)
-        self:Hide()
+    self.turnin:SetScript("OnShow", function() self:SetScript("OnUpdate", wiggleAnim) end)
+    self.turnin:SetScript("OnHide", function() self:SetScript("OnUpdate", nil) end)
+    self.turnin:SetScript("OnClick",function(btn)
+        ShowQuestComplete(self.questID)
+        RemoveAutoQuestPopUp(self.questID)
+        btn:Hide()
     end)
-    self.popupQuestAccept:SetScript(
-        "OnShow",
-        function(self)
-            self:SetScript("OnUpdate", wiggleAnim)
-        end
-    )
-    self.popupQuestAccept:SetScript(
-        "OnHide",
-        function(self)
-            self:SetScript("OnUpdate", nil)
-        end
-    )
-    self.popupQuestAccept:SetScript("OnClick", function(self)
-        ShowQuestOffer(self:GetParent().id)
-        RemoveAutoQuestPopUp(self:GetParent().id)
-        self:Hide()
-    end)
-    self.groupButton:SetScript("OnClick", function(self)
-        if self:GetParent().hasGroupFinderButton then
-            LFGListUtil_FindQuestGroup(self:GetParent().id, true)
-        end
-    end)
-    self.groupButton:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self)
-        GameTooltip:AddLine(TOOLTIP_TRACKER_FIND_GROUP_BUTTON, HIGHLIGHT_FONT_COLOR:GetRGB())
-        GameTooltip:Show()
-    end)
-    self.groupButton:SetScript("OnLeave", GameTooltip_Hide)
+    self.popupQuestAccept:SetScript("OnShow",
+        function(btn)
+            btn:SetScript("OnUpdate", wiggleAnim)
+        end)
+    self.popupQuestAccept:SetScript("OnHide",
+        function(btn)
+            btn:SetScript("OnUpdate", nil)
+        end)
+    self.popupQuestAccept:SetScript("OnClick", function(btn)
+            ShowQuestOffer(self.questID)
+            RemoveAutoQuestPopUp(self.questID)
+            btn:Hide()
+        end)
+    self.groupButton:SetScript("OnClick", self.groupButton.OnClick)
+    self.groupButton:SetScript("OnEnter", self.groupButton.OnEnter)
+    self.groupButton:SetScript("OnLeave", self.groupButton.OnLeave)
 
     self.turnin:SetScale(GwQuestTracker:GetScale() * 0.9)
     self.popupQuestAccept:SetScale(GwQuestTracker:GetScale() * 0.9)

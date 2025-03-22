@@ -28,6 +28,9 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     self.turnin:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "COMPLETE"))
     self.popupQuestAccept:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
     self.groupButton:SetShown(hasGroupFinderButton)
+    if hasGroupFinderButton then
+        self.groupButton:SetUp(questID, false)
+    end
 
     if requiredMoney then
         parent.watchMoneyReasons = parent.watchMoneyReasons + 1
@@ -36,7 +39,6 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     end
 
     self.questID = questID
-    self.id = questID
     self.questLogIndex = questLogIndex
     self.hasGroupFinderButton = hasGroupFinderButton
     self.title = quest.title
@@ -347,7 +349,7 @@ function GwQuestLogMixin:BlockOnClick(button)
     end
 
     if button ~= "RightButton" then
-        local questID = self.id
+        local questID = self.questID
         if IsModifiedClick("QUESTWATCHTOGGLE") then
             C_QuestLog.RemoveQuestWatch(questID)
         else
@@ -361,7 +363,7 @@ function GwQuestLogMixin:BlockOnClick(button)
         end
     else
         MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
-            local questID = self.id
+            local questID = self.questID
             rootDescription:CreateTitle(C_QuestLog.GetTitleForQuestID(questID))
 
             if C_SuperTrack.GetSuperTrackedQuestID() ~= questID then
