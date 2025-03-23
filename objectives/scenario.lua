@@ -231,7 +231,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     end
 
     --check for groupfinder button
-    block:UpdateFindGroupButton(scenarioID)
+    block:UpdateFindGroupButton(scenarioID, true)
 
     GW.CombatQueue_Queue(nil, block.UpdateObjectiveActionButton, {block})
 
@@ -328,16 +328,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     block:SetHeight(block.height - intGWQuestTrackerHeight)
     self.oldHeight = GW.RoundInt(self:GetHeight())
     self:SetHeight(block.height)
-end
-
-function GwQuesttrackerScenarioBlockMixin:UpdateFindGroupButton(scenarioID)
-    local hasButton = C_LFGList.CanCreateScenarioGroup(scenarioID)
-    if hasButton then
-		self.groupButton:SetUp(scenarioID)
-		self.groupButton:Show()
-	else
-		self.groupButton:Hide()
-	end
 end
 
 function GwQuesttrackerScenarioBlockMixin:UpdateAffixes(fakeIds)

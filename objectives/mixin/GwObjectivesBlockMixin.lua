@@ -10,43 +10,19 @@ function GwObjectivesBlockTemplateMixin:UpdateBlock()
     -- override per module
 end
 
-local function wiggleAnim(self)
-    if self.animation == nil then
-        self.animation = 0
+function GwObjectivesBlockTemplateMixin:UpdateFindGroupButton(id, isScenario)
+    local hasButton
+    if not isScenario then
+        hasButton = C_LFGList.CanCreateQuestGroup(id)
+    else
+        hasButton = C_LFGList.CanCreateScenarioGroup(id)
     end
-    if self.doingAnimation == true then
-        return
-    end
-    self.doingAnimation = true
-    GW.AddToAnimation(
-        self:GetName(),
-        0,
-        1,
-        GetTime(),
-        2,
-        function(prog)
-            self.flare:SetRotation(GW.lerp(0, 1, prog))
-
-            if prog < 0.25 then
-                self.texture:SetRotation(GW.lerp(0, -0.5, math.sin((prog / 0.25) * math.pi * 0.5)))
-                self.flare:SetAlpha(GW.lerp(0, 1, math.sin((prog / 0.25) * math.pi * 0.5)))
-            end
-            if prog > 0.25 and prog < 0.75 then
-                self.texture:SetRotation(GW.lerp(-0.5, 0.5, math.sin(((prog - 0.25) / 0.5) * math.pi * 0.5)))
-            end
-            if prog > 0.75 then
-                self.texture:SetRotation(GW.lerp(0.5, 0, math.sin(((prog - 0.75) / 0.25) * math.pi * 0.5)))
-            end
-
-            if prog > 0.25 then
-                self.flare:SetAlpha(GW.lerp(1, 0, ((prog - 0.25) / 0.75)))
-            end
-        end,
-        nil,
-        function()
-            self.doingAnimation = false
-        end
-    )
+    if hasButton then
+		self.groupButton:SetUp(id, isScenario)
+		self.groupButton:Show()
+    else
+        self.groupButton:Hide()
+	end
 end
 
 function GwObjectivesBlockTemplateMixin:OnEnter()
@@ -119,21 +95,15 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     self.Header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     self.SubHeader:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
-    self.turnin:SetScript("OnShow", function() self:SetScript("OnUpdate", wiggleAnim) end)
+    self.turnin:SetScript("OnShow", function(btn) btn:SetScript("OnUpdate", btn.WiggleAnimation) end)
     self.turnin:SetScript("OnHide", function() self:SetScript("OnUpdate", nil) end)
     self.turnin:SetScript("OnClick",function(btn)
         ShowQuestComplete(self.questID)
         RemoveAutoQuestPopUp(self.questID)
         btn:Hide()
     end)
-    self.popupQuestAccept:SetScript("OnShow",
-        function(btn)
-            btn:SetScript("OnUpdate", wiggleAnim)
-        end)
-    self.popupQuestAccept:SetScript("OnHide",
-        function(btn)
-            btn:SetScript("OnUpdate", nil)
-        end)
+    self.popupQuestAccept:SetScript("OnShow", function(btn) btn:SetScript("OnUpdate", btn.WiggleAnimation) end)
+    self.popupQuestAccept:SetScript("OnHide", function(btn) btn:SetScript("OnUpdate", nil) end)
     self.popupQuestAccept:SetScript("OnClick", function(btn)
             ShowQuestOffer(self.questID)
             RemoveAutoQuestPopUp(self.questID)

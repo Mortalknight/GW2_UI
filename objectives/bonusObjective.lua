@@ -177,11 +177,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 end
 
                 block.questID = questID
-                block.hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
-                block.groupButton:SetShown(block.hasGroupFinderButton)
-                if block.hasGroupFinderButton then
-                    block.groupButton:SetUp(questID, false)
-                end
+                block:UpdateFindGroupButton(questID, false)
 
                 GW.CombatQueue_Queue(nil, block.UpdateObjectiveActionButton, {block})
 

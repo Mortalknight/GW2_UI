@@ -21,16 +21,12 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     local isComplete = quest:IsComplete()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     local questFailed = C_QuestLog.IsFailed(questID)
-    local hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
 
     self.height = 25
     self.numObjectives = 0
     self.turnin:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "COMPLETE"))
     self.popupQuestAccept:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
-    self.groupButton:SetShown(hasGroupFinderButton)
-    if hasGroupFinderButton then
-        self.groupButton:SetUp(questID, false)
-    end
+    self:UpdateFindGroupButton(questID, false)
 
     if requiredMoney then
         parent.watchMoneyReasons = parent.watchMoneyReasons + 1
@@ -40,7 +36,6 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
 
     self.questID = questID
     self.questLogIndex = questLogIndex
-    self.hasGroupFinderButton = hasGroupFinderButton
     self.title = quest.title
     self.Header:SetText(quest.title)
 
