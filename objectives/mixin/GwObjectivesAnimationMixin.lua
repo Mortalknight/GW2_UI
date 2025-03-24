@@ -31,10 +31,6 @@ function GwObjectivesAnimationMixin:WiggleAnimation()
     if self.animation == nil then
         self.animation = 0
     end
-    if self.doingAnimation == true then
-        return
-    end
-    self.doingAnimation = true
     GW.AddToAnimation(
         self:GetName(),
         0,
@@ -61,7 +57,7 @@ function GwObjectivesAnimationMixin:WiggleAnimation()
         end,
         nil,
         function()
-            self.doingAnimation = false
+            self:WiggleAnimation()
         end
     )
 end

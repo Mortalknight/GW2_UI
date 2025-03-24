@@ -20,7 +20,7 @@
         </Layers>
     </Frame>
 
-    <Button name="GwNormalUnitFrame" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true">
+    <Button name="GwNormalUnitFrame" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
         <Size x="300" y="64"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="0"></Anchor>
@@ -194,7 +194,7 @@
         </Frames>
     </Button>
 
-    <Button name="GwNormalUnitFrameSmall" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true">
+    <Button name="GwNormalUnitFrameSmall" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwTargetUnitFrameMixin,GwUnitPowerbarMixin,GwUnitHealthbarMixin">
         <Size x="148" y="64"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="0"></Anchor>
@@ -313,7 +313,7 @@
         </Frames>
     </Button>
 
-    <Button name="GwNormalUnitFrameInvert" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true">
+    <Button name="GwNormalUnitFrameInvert" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
         <Size x="300" y="64"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="0"></Anchor>

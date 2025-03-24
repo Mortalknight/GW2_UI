@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Button name="GwPlayerPetFrameTmpl" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="MEDIUM" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate,PingableUnitFrameTemplate" virtual="true">
+    <Button name="GwPlayerPetFrameTmpl" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="MEDIUM" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitHealthbarMixin,GwUnitPowerbarMixin,GwPlayerPetFrameMixin">
         <Size x="316" y="100"></Size>
         <HitRectInsets>
             <AbsInset left="0" right="0" top="0" bottom="30"/>

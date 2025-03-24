@@ -750,13 +750,12 @@ local function evPlayerLogin(self)
 
     --Create unitframes
     if GW.settings.FOCUS_ENABLED then
-        GW.LoadFocus()
-        GW.LoadTargetOfUnit("Focus")
+        local unitFrame = GW.LoadUnitFrame("Focus", GW.settings.focus_FRAME_INVERT)
+        GW.LoadTargetOfUnit("Focus", unitFrame)
     end
     if GW.settings.TARGET_ENABLED then
-        GW.LoadTarget()
-
-        GW.LoadTargetOfUnit("Target")
+        local unitFrame = GW.LoadUnitFrame("Target", GW.settings.target_FRAME_INVERT)
+        GW.LoadTargetOfUnit("Target", unitFrame)
 
         -- move zone text frame
         if not IsFrameModified("ZoneTextFrame") then

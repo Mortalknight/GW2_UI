@@ -5,181 +5,79 @@ local TimeParts = GW.TimeParts
 local IsIn = GW.IsIn
 local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 
-local function flashAnimation(self, delta, t)
-    if t == nil then t = 0 end
-    local speed  =  max(1, 4 * (1 - (self.healthPrecentage / 0.65)))
-    t = t + (delta) * speed
-    local c =  0.4 * math.abs(math.sin(t))
+GwHealthglobeMixin = {}
+
+function GwHealthglobeMixin:FlashAnimation(delta, t)
+    t = (t or 0) + delta * max(1, 4 * (1 - (self.healthPercentage / 0.65)))
+    local c = 0.4 * math.abs(math.sin(t))
     self.border.normal:SetVertexColor(c, c, c, 1)
 
-    if self.healthPrecentage > 0.65 and c < 0.2 then
+    if self.healthPercentage > 0.65 and c < 0.2 then
         self:SetScript("OnUpdate", nil)
         self.border.normal:SetVertexColor(0, 0, 0, 1)
     end
 end
 
-local function repair_OnEvent(self, event)
-    if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
-        return
-    end
-    local needRepair = false
-    local gearBroken = false
-    for i = 1, 23 do
-        local current, maximum = GetInventoryItemDurability(i)
-        if current ~= nil then
-            local dur = current / maximum
-            if dur < 0.5 then
-                needRepair = true
-            end
-            if dur == 0 then
-                gearBroken = true
-            end
-        end
-    end
-    self.gearBroken = gearBroken
+function GwHealthglobeMixin:UpdateHealthData()
+    local health, healthMax = UnitHealth("player"), UnitHealthMax("player")
+    local absorb, prediction = UnitGetTotalAbsorbs("player"), UnitGetIncomingHeals("player") or 0
+    local healAbsorb = UnitGetTotalHealAbsorbs("player")
+    local healthPercentage = health / healthMax
 
-    if gearBroken then
-        self.icon:SetTexCoord(0, 1, 0.5, 1)
-    else
-        self.icon:SetTexCoord(0, 1, 0, 0.5)
+    self.healthPercentage = healthPercentage
+    self.health:SetFillAmount(healthPercentage - 0.035)
+    self.candy:SetFillAmount(healthPercentage)
+
+    local absorbPercentage = absorb > 0 and absorb / healthMax or 0
+    local absorbOverlayPercentage = absorb > 0 and (absorbPercentage - (1 - healthPercentage)) or 0
+    local predictionPercentage = prediction > 0 and (prediction / healthMax) or 0
+    local healAbsorbPercentage = healAbsorb > 0 and (min(healthMax, healAbsorb / healthMax)) or 0
+
+    self.healPrediction:SetFillAmount(healthPercentage + predictionPercentage)
+    self.absorbbg:SetFillAmount(healthPercentage + absorbPercentage)
+    self.absorbOverlay:SetFillAmount(absorbOverlayPercentage)
+    self.antiHeal:SetFillAmount(healAbsorbPercentage)
+
+    local function formatValue(value)
+        return GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES and GW.ShortValue(value) or GW.GetLocalizedNumber(value)
     end
 
-    if needRepair then
-        self:Show()
-    else
-        self:Hide()
-    end
-end
-GW.AddForProfiling("healthglobe", "repair_OnEvent", repair_OnEvent)
+    local hv = GW.settings.PLAYER_UNIT_HEALTH == "PREC" and (GW.GetLocalizedNumber(healthPercentage * 100, 0) .. "%")
+        or GW.settings.PLAYER_UNIT_HEALTH == "VALUE" and formatValue(health)
+        or formatValue(health) .. "\n" .. GW.GetLocalizedNumber(healthPercentage * 100, 0) .. "%"
 
-local function updateHealthData(self)
-    local health = UnitHealth("Player")
-    local healthMax = UnitHealthMax("Player")
-    local absorb = UnitGetTotalAbsorbs("Player")
-    local prediction = UnitGetIncomingHeals("Player") or 0
-    local healAbsorb =  UnitGetTotalHealAbsorbs("Player")
-    local absorbPrecentage = 0
-    local absorbAmount = 0
-    local absorbAmount2 = 0
-    local predictionPrecentage = 0
-    local healAbsorbPrecentage = 0
-    local healthPrecentage = health/healthMax
-    local formatFunction
-
-    self.healthPrecentage = healthPrecentage -- used for animation
-    self.health:SetFillAmount(healthPrecentage - 0.035)
-    self.candy:SetFillAmount(healthPrecentage)
-
-    if absorb > 0 and healthMax > 0 then
-        absorbPrecentage = absorb / healthMax
-        absorbAmount = healthPrecentage + absorbPrecentage
-        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
-    end
-
-    if prediction > 0 and healthMax > 0 then
-        predictionPrecentage = prediction / healthMax
-    end
-    if healAbsorb > 0 and healthMax > 0 then
-        healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
-    end
-
-    self.healPrediction:SetFillAmount(healthPrecentage + predictionPrecentage)
-    self.absorbbg:SetFillAmount(absorbAmount)
-    self.absorbOverlay:SetFillAmount(absorbAmount2)
-    self.antiHeal:SetFillAmount(healAbsorbPrecentage)
-    -- hard-set the text values for health/absorb based on the user settings (%, value or both)
-    local hv = ""
-    local av = ""
-
-    if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
-        formatFunction = GW.ShortValue
-    else
-        formatFunction = GW.GetLocalizedNumber
-    end
-
-    if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
-        hv = GW.GetLocalizedNumber(health / healthMax * 100, 0) .. "%"
-    elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
-        hv = formatFunction(health)
-    elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
-        hv = formatFunction(health) .. "\n" .. GW.GetLocalizedNumber(health / healthMax * 100, 0) .. "%"
-    end
-
-    if GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES then
-        formatFunction = GW.ShortValue
-    else
-        formatFunction = GW.GetLocalizedNumber
-    end
-
-    if GW.settings.PLAYER_UNIT_ABSORB == "PREC" then
-        av = GW.GetLocalizedNumber(absorb / healthMax * 100, 0) .. "%"
-    elseif GW.settings.PLAYER_UNIT_ABSORB == "VALUE" then
-        av = formatFunction(absorb)
-    elseif GW.settings.PLAYER_UNIT_ABSORB == "BOTH" then
-        av = formatFunction(absorb) .. "\n" .. GW.GetLocalizedNumber(absorb / healthMax * 100, 0) .. "%"
-    end
+    local av = GW.settings.PLAYER_UNIT_ABSORB == "PREC" and (GW.GetLocalizedNumber(absorbPercentage * 100, 0) .. "%")
+        or GW.settings.PLAYER_UNIT_ABSORB == "VALUE" and formatValue(absorb)
+        or formatValue(absorb) .. "\n" .. GW.GetLocalizedNumber(absorbPercentage * 100, 0) .. "%"
 
     self.text_h.value:SetText(hv)
     self.text_a.value:SetText(av)
 
-    for _, v in ipairs(self.text_h.shadow) do
-        v:SetText(hv)
-    end
+    for _, v in ipairs(self.text_h.shadow) do v:SetText(hv) end
+    for _, v in ipairs(self.text_a.shadow) do v:SetText(av) end
 
-    for _, v in ipairs(self.text_a.shadow) do
-        v:SetText(av)
-    end
+    self.text_a:SetShown(absorb > 0)
 
-    if absorb < 1 then
-        self.text_a:Hide()
-    else
-        self.text_a:Show()
-    end
-
-    if healthPrecentage < 0.65 and self:GetScript("OnUpdate") == nil then
-        self:SetScript("OnUpdate", flashAnimation)
+    if healthPercentage < 0.65 and not self:GetScript("OnUpdate") then
+        self:SetScript("OnUpdate", self.FlashAnimation)
     end
 end
-GW.AddForProfiling("healthglobe", "updateHealthData", updateHealthData)
 
-local function selectPvp(self)
-    local prevFlag = self.pvp.pvpFlag
-    if GW.settings.PLAYER_SHOW_PVP_INDICATOR and (C_PvP.IsWarModeDesired() or GetPVPDesired() or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
-        self.pvp.pvpFlag = true
-        if prevFlag ~= true then
-            if GW.myfaction == "Horde" then
-                self.pvp.ally:Hide()
-                self.pvp.horde:Show()
-            else
-                self.pvp.ally:Show()
-                self.pvp.horde:Hide()
-            end
-        end
-    else
-        self.pvp.pvpFlag = false
-        self.pvp.ally:Hide()
-        self.pvp.horde:Hide()
-    end
-end
-GW.PlayerSelectPvp = selectPvp
-GW.AddForProfiling("healthglobe", "selectPvp", selectPvp)
-
-local function globe_OnEvent(self, event)
+function GwHealthglobeMixin:OnEvent(event)
     if event == "PLAYER_ENTERING_WORLD" then
         MixinHideDuringPetAndOverride(self)
-        updateHealthData(self)
-        selectPvp(self)
+        self:UpdateHealthData()
+        self:SelectPvp()
     elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
-        updateHealthData(self)
+        self:UpdateHealthData()
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
-        selectPvp(self)
+        self:SelectPvp()
     elseif event == "RESURRECT_REQUEST" then
         PlaySound(SOUNDKIT.UI_70_BOOST_THANKSFORPLAYING_SMALLER, "Master")
     end
 end
-GW.AddForProfiling("healthglobe", "globe_OnEvent", globe_OnEvent)
 
-local function globe_OnEnter(self)
+function GwHealthglobeMixin:OnEnter()
     local warmode = C_PvP.IsWarModeDesired()
     local pvpdesired = GetPVPDesired()
     local pvpactive = UnitIsPVP("player") or UnitIsPVPFreeForAll("player")
@@ -229,17 +127,36 @@ local function globe_OnEnter(self)
         self.pvp:fadeIn()
     end
 end
-GW.PlayerFrame_OnEnter = globe_OnEnter
-GW.AddForProfiling("healthglobe", "globe_OnEnter", globe_OnEnter)
 
-local function fill_OnFinish(self)
-    local f = self:GetParent():GetParent()
-    f:ClearAllPoints()
-    f:SetPoint("CENTER", f:GetParent(), "CENTER", self.gwXoff, self.gwYoff)
+GwHealthglobeRepairMixin = {}
+
+function GwHealthglobeRepairMixin:OnEvent(event)
+    if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
+        return
+    end
+    local needRepair = false
+    local gearBroken = false
+    for i = 1, 23 do
+        local current, maximum = GetInventoryItemDurability(i)
+        if current and maximum then
+            local dur = current / maximum
+            if dur == 0 then
+                gearBroken = true
+                needRepair = true
+                break -- Keine weitere Überprüfung nötig, wenn ein Item komplett kaputt ist
+            elseif dur < 0.5 then
+                needRepair = true
+            end
+        end
+    end
+    self.gearBroken = gearBroken
+
+    self.gearBroken = gearBroken
+    self.icon:SetTexCoord(0, 1, gearBroken and 0.5 or 0, gearBroken and 1 or 0.5)
+    self:SetShown(needRepair)
 end
-GW.AddForProfiling("healthglobe", "fill_OnFinish", fill_OnFinish)
 
-local function repair_OnEnter(self)
+function GwHealthglobeRepairMixin:RepairOnEnter()
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
     if self.gearBroken then
@@ -249,18 +166,12 @@ local function repair_OnEnter(self)
     end
     GameTooltip:Show()
 end
-GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
 
-local function UpdateSettings()
-    if GW2_PlayerFrame then
-        updateHealthData(GW2_PlayerFrame)
-    end
+function GwHealthglobeMixin:ToggleSettings()
+    self:UpdateHealthData()
 end
-GW.UpdateHealthglobeSettings = UpdateSettings
 
 local function LoadHealthGlobe()
-    UpdateSettings()
-
     local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, "GwHealthGlobeTmpl")
 
     hg.absorbOverlay = hg.healPrediction.absorbbg.candy.health.antiHeal.absorbOverlay
@@ -273,25 +184,13 @@ local function LoadHealthGlobe()
     hg.text_a = hg.absorbOverlay.text_a
     hg.repair = hg.absorbOverlay.repair
 
-    GW.hookStatusbarBehaviour(hg.absorbOverlay,true)
-    GW.hookStatusbarBehaviour(hg.antiHeal,true)
-    GW.hookStatusbarBehaviour(hg.health,true)
-    GW.hookStatusbarBehaviour(hg.candy,true)
-    GW.hookStatusbarBehaviour(hg.absorbbg,true)
-    GW.hookStatusbarBehaviour(hg.healPrediction,true)
+    for _, bar in pairs({hg.absorbOverlay, hg.antiHeal, hg.health, hg.candy, hg.absorbbg, hg.healPrediction}) do
+        GW.hookStatusbarBehaviour(bar, true)
+        bar:SetOrientation("VERTICAL")
+    end
 
     hg.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     hg.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
-
-    hg.candy:SetOrientation("VERTICAL")
-    hg.absorbOverlay:SetOrientation("VERTICAL")
-    hg.antiHeal:SetOrientation("VERTICAL")
-    hg.candy:SetOrientation("VERTICAL")
-    hg.healPrediction:SetOrientation("VERTICAL")
-    hg.health:SetOrientation("VERTICAL")
-    hg.absorbbg:SetOrientation("VERTICAL")
-
-    GW.RegisterScaleFrame(hg, 1.1)
 
     -- position based on XP bar space and make it movable if your actionbars are off
     if GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED and not GW.IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
@@ -309,6 +208,7 @@ local function LoadHealthGlobe()
             hg.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, 0)
         end
     end
+    GW.RegisterScaleFrame(hg, 1.1)
 
     -- unit frame stuff
     hg:SetAttribute("*type1", "target")
@@ -316,6 +216,7 @@ local function LoadHealthGlobe()
     hg:SetAttribute("unit", "player")
     hg:EnableMouse(true)
     hg:RegisterForClicks("AnyDown")
+    hg.unit = "player"
 
     AddToClique(hg)
 
@@ -351,8 +252,8 @@ local function LoadHealthGlobe()
         v:SetTextColor(0, 0, 0, 1 / i)
     end
 
-    hg:SetScript("OnEvent", globe_OnEvent)
-    hg:SetScript("OnEnter", globe_OnEnter)
+    hg:SetScript("OnEvent", hg.OnEvent)
+    hg:SetScript("OnEnter", hg.OnEnter)
     hg:SetScript("OnLeave", function(self)
         GameTooltip_Hide()
         if GW.settings.PLAYER_SHOW_PVP_INDICATOR and self.pvp.pvpFlag then
@@ -375,8 +276,8 @@ local function LoadHealthGlobe()
     DurabilityFrame:Hide()
 
     local rep = hg.repair
-    rep:SetScript("OnEvent", repair_OnEvent)
-    rep:SetScript("OnEnter", repair_OnEnter)
+    rep:SetScript("OnEvent", rep.OnEvent)
+    rep:SetScript("OnEnter", rep.OnEnter)
     rep:SetScript("OnLeave", GameTooltip_Hide)
     rep:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
     rep:RegisterEvent("PLAYER_ENTERING_WORLD")

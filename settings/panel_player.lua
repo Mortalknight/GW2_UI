@@ -56,8 +56,8 @@ local function LoadPlayerPanel(sWindow)
     settingsMenuAddButton(PLAYER, p, {p_player, p_player_aura, p_player_debuff})
 
     addOption(p_player.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", function() GW.ShowRlPopup = true end, nil, {["HEALTHGLOBE_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, L["Show alternative background texture"], nil, "PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND", GW.UpdatePlayerFrameSettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
-    addOption(p_player.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", GW.UpdatePlayerFrameSettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
+    addOption(p_player.scroll.scrollchild, L["Show alternative background texture"], nil, "PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND", function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
+    addOption(p_player.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
     addOption(p_player.scroll.scrollchild, L["Show an additional resource bar"], nil, "PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR", function() GW.TogglePlayerPowerBar(); GW.UpdateClassPowerExtraManabar() end, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true, ["POWERBAR_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["PvP Indicator"], nil, "PLAYER_SHOW_PVP_INDICATOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Player de/buff animation"], L["Shows an animation for new de/buffs"], "PLAYER_AURA_ANIMATION", nil, nil, {["PLAYER_BUFFS_ENABLED"] = true})
@@ -65,8 +65,8 @@ local function LoadPlayerPanel(sWindow)
     addOption(p_player.scroll.scrollchild, L["Show character item info"], L["Display gems and enchants on the GW2 character panel"], "SHOW_CHARACTER_ITEM_INFO", function() GW.ToggleCharacterItemInfo() end, nil, {["USE_CHARACTER_WINDOW"] = true})
     addOption(p_player.scroll.scrollchild, L["Hide Blizzard dragon riding vigor"], nil, "HIDE_BLIZZARD_VIGOR_BAR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Show classpower bar only in combat"], nil, "CLASSPOWER_ONLY_SHOW_IN_COMBAT", function() GW.UpdateClassPowerVisibilitySetting(GwPlayerClassPower, true) end, nil, {["CLASS_POWER"] = true})
-    addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "PLAYER_UNIT_HEALTH_SHORT_VALUES", function() GW.UpdateHealthglobeSettings(); GW.UpdatePlayerFrameSettings() end, nil, {["HEALTHGLOBE_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Shorten shield values"], nil, "PLAYER_UNIT_SHIELD_SHORT_VALUES", function() GW.UpdateHealthglobeSettings(); GW.UpdatePlayerFrameSettings() end, nil, {["HEALTHGLOBE_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "PLAYER_UNIT_HEALTH_SHORT_VALUES", function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, nil, {["HEALTHGLOBE_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Shorten shield values"], nil, "PLAYER_UNIT_SHIELD_SHORT_VALUES", function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", function(value) GW.TogglePlayerEnhancedCastbar(GwCastingBarPlayer, value); GW.TogglePlayerEnhancedCastbar(GwCastingBarPet, value); end, nil, {["CASTINGBAR_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Ticks"], L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."], "showPlayerCastBarTicks", nil, nil, {["CASTINGBAR_ENABLED"] = true})
 
@@ -75,7 +75,7 @@ local function LoadPlayerPanel(sWindow)
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "PLAYER_UNIT_HEALTH",
-        function() GW.UpdateHealthglobeSettings(); GW.UpdatePlayerFrameSettings() end,
+        function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end,
         {"NONE", "PREC", "VALUE", "BOTH"},
         {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
         nil,
@@ -86,7 +86,7 @@ local function LoadPlayerPanel(sWindow)
         L["Show Shield Value"],
         nil,
         "PLAYER_UNIT_ABSORB",
-        function() GW.UpdateHealthglobeSettings(); GW.UpdatePlayerFrameSettings() end,
+        function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end,
         {"NONE", "PREC", "VALUE", "BOTH"},
         {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
         nil,

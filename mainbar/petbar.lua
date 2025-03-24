@@ -1,11 +1,11 @@
 local _, GW = ...
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local LoadAuras = GW.LoadAuras
-local PowerBarColorCustom = GW.PowerBarColorCustom
-local UpdateBuffLayout = GW.UpdateBuffLayout
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
 local fctf
+
+GwPlayerPetFrameMixin = {}
 
 local function UpdatePetActionBarIcons()
     PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
@@ -210,8 +210,8 @@ local function updatePetData(self, event, unit, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         SetPortraitTexture(self.portrait, "pet")
         UpdatePetActionBar(self, event, unit)
-        GW.UpdateHealthBar(self)
-        GW.UpdatePowerBar(self, true)
+        self:UpdateHealthBar()
+        self:UpdatePowerBar(true)
     elseif event == "UNIT_AURA" then
         GW.UpdateBuffLayout(self, event, unit, ...)
         return
@@ -232,15 +232,15 @@ local function updatePetData(self, event, unit, ...)
         SetPortraitTexture(self.portrait, "pet")
         UpdatePetActionBar(self, event, unit)
         if event == "UNIT_PET" then
-            GW.UpdateHealthBar(self)
-            GW.UpdatePowerBar(self, true)
+            self:UpdateHealthBar()
+            self:UpdatePowerBar(true)
         end
     elseif event == "PET_BAR_UPDATE_COOLDOWN" then
         UpdatePetCooldown(self)
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
-        GW.UpdateHealthBar(self)
+        self:UpdateHealthBar()
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
-        GW.UpdatePowerBar(self)
+        self:UpdatePowerBar()
     end
 end
 GW.AddForProfiling("petbar", "updatePetData", updatePetData)
@@ -289,6 +289,19 @@ local function TogglePetFrameCombatFeedback()
 end
 GW.TogglePetFrameCombatFeedback = TogglePetFrameCombatFeedback
 
+function GwPlayerPetFrameMixin:UpdateHealthTextString(health)
+    local formatFunction
+    GW.Debug("OVERRIDEN FUNCTION: UpdateHealthTextString")
+
+    if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
+        formatFunction = GW.ShortValue
+    else
+        formatFunction = GW.GetLocalizedNumber
+    end
+
+    self.health.text:SetText(formatFunction(health))
+end
+
 local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
 
@@ -308,18 +321,6 @@ local function LoadPetFrame(lm)
     PetActionBar:GwKillEditMode()
 
     hooksecurefunc(PetActionBar, "Update", UpdateAutoCast)
-
-    playerPetFrame.updateHealthTextString = function(self, health)
-        local formatFunction
-
-        if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
-            formatFunction = GW.ShortValue
-        else
-            formatFunction = GW.GetLocalizedNumber
-        end
-
-        self.health.text:SetText(formatFunction(health))
-    end
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")

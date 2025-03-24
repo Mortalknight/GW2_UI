@@ -286,6 +286,7 @@ GW.globalDefault = {
         target_FRAME_INVERT= false,
         target_FRAME_ALT_BACKGROUND= false,
         target_ILVL = "PVP_LEVEL",
+        target_SHORT_VALUES = false,
 
         focus_TARGET_ENABLED= true,
         focus_TARGET_SHOW_CASTBAR= true,
@@ -298,12 +299,13 @@ GW.globalDefault = {
         focus_BUFFS_FILTER_ALL= false,
         focus_BUFFS_FILTER_IMPORTANT= false,
         focus_ILVL = "PVP_LEVEL",
-
         focus_HEALTH_VALUE_ENABLED= false,
         focus_HEALTH_VALUE_TYPE= false,
         focus_CLASS_COLOR= true,
+        focus_CASTINGBAR_DATA= false,
         focus_FRAME_INVERT= false,
         focus_FRAME_ALT_BACKGROUND= false,
+        focus_SHORT_VALUES = false,
 
         target_pos= {
             point= "TOP",
@@ -1126,13 +1128,10 @@ GW.globalDefault = {
         --general raid tag update rate
         tagUpdateRate = 0.2, -- eventTimerThreshold
 
-        -- short healthvalue settings
         ShortHealthValuePrefixStyle = "ENGLISH",
         ShortHealthValuesDecimalLength = 0,
         PLAYER_UNIT_HEALTH_SHORT_VALUES = false,
         PLAYER_UNIT_SHIELD_SHORT_VALUES = false,
-        TARGET_UNIT_HEALTH_SHORT_VALUES = false,
-        FOCUS_UNIT_HEALTH_SHORT_VALUES = false,
         PET_UNIT_HEALTH_SHORT_VALUES = false,
         PARTY_UNIT_HEALTH_SHORT_VALUES = false,
 

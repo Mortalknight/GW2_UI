@@ -1,73 +1,49 @@
 local _, GW = ...
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local AddToClique = GW.AddToClique
-local createNormalUnitFrame = GW.createNormalUnitFrame
 local IsIn = GW.IsIn
 
-local function unitFrameData(self, lvl)
-    local level = lvl or UnitLevel(self.unit)
-    local name = UnitName(self.unit)
+GwPlayerUnitFrameMixin = {}
 
-    if UnitIsGroupLeader(self.unit) then
-        name = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:18:18|t" .. name
-    end
-
-    self.nameString:SetText(name)
-    self.levelString:SetText(level)
-
-    if GW.settings.player_CLASS_COLOR then
-        local _, englishClass = UnitClass(self.unit)
-        local color = GW.GWGetClassColor(englishClass, true)
-
-        self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
-        self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
-    else
-        self.health:SetStatusBarColor(0.207, 0.392, 0.16, 1)
-        self.nameString:SetTextColor(0.207, 0.392, 0.16, 1)
-    end
-
-    SetPortraitTexture(self.portrait, self.unit)
-end
-
-local function player_OnEvent(self, event, ...)
+function GwPlayerUnitFrameMixin:OnEvent(event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
-        unitFrameData(self)
-        GW.UpdateHealthBar(self)
-        GW.UpdatePowerBar(self)
+        self:UnitFrameData()
+        self:UpdateHealthBar()
+        self:UpdatePowerBar()
     elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE") then
-        unitFrameData(self)
+        self:UnitFrameData()
     elseif event == "PLAYER_LEVEL_UP" then
         local level = ...
-        unitFrameData(self, level)
+        self:UnitFrameData(level)
     elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
-        GW.UpdateHealthBar(self)
+        self:UpdateHealthBar()
     elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UPDATE_SHAPESHIFT_FORM", "ACTIVE_TALENT_GROUP_CHANGED") then
-        GW.UpdatePowerBar(self)
+        self:UpdatePowerBar()
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
-        GW.PlayerSelectPvp(self)
+        self:SelectPvp()
     elseif event == "RESURRECT_REQUEST" then
         PlaySound(SOUNDKIT.UI_70_BOOST_THANKSFORPLAYING_SMALLER, "Master")
     end
 end
 
-local function UpdateSettings()
-    if GwPlayerUnitFrame then
-        GwPlayerUnitFrame.altBg:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
+function GwPlayerUnitFrameMixin:ToggleSettings()
+    self.altBg:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
 
-        GwPlayerUnitFrame.shortendHealthValues = GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES
-        GwPlayerUnitFrame.showHealthValue = GW.settings.PLAYER_UNIT_HEALTH == "VALUE" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
-        GwPlayerUnitFrame.showHealthPrecentage = GW.settings.PLAYER_UNIT_HEALTH == "PREC" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
+    self.shortendHealthValues = GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES
+    self.showHealthValue = GW.settings.PLAYER_UNIT_HEALTH == "VALUE" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
+    self.showHealthPrecentage = GW.settings.PLAYER_UNIT_HEALTH == "PREC" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
+    self.classColor = GW.settings.player_CLASS_COLOR
 
-        GW.UpdateHealthBar(GwPlayerUnitFrame)
-        unitFrameData(GwPlayerUnitFrame)
-    end
+    self:UpdateHealthBar()
+    self:UnitFrameData()
 end
-GW.UpdatePlayerFrameSettings = UpdateSettings
 
 local function LoadPlayerFrame()
-    local NewUnitFrame = createNormalUnitFrame("GwPlayerUnitFrame")
+    local NewUnitFrame = GW.CreateUnitFrame("GwPlayerUnitFrame")
     NewUnitFrame.unit = "player"
     NewUnitFrame.type = "NormalTarget"
+
+    Mixin(NewUnitFrame, GwPlayerUnitFrameMixin)
 
     RegisterMovableFrame(NewUnitFrame, PLAYER, "player_pos",  ALL .. ",Unitframe", nil, {"default", "scaleable"})
 
@@ -115,7 +91,7 @@ local function LoadPlayerFrame()
     NewUnitFrame.pvp.horde:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 5)
     NewUnitFrame.pvp.horde:Hide()
 
-    NewUnitFrame:SetScript("OnEvent", player_OnEvent)
+    NewUnitFrame:SetScript("OnEvent", NewUnitFrame.OnEvent)
 
     NewUnitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     NewUnitFrame:RegisterEvent("WAR_MODE_STATUS_UPDATE")
@@ -133,7 +109,7 @@ local function LoadPlayerFrame()
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
-    NewUnitFrame:SetScript("OnEnter", GW.PlayerFrame_OnEnter)
+    NewUnitFrame:SetScript("OnEnter", GwHealthglobeMixin.OnEnter)
     NewUnitFrame:SetScript("OnLeave", function(self)
         GameTooltip_Hide()
         if self.pvp.pvpFlag then
@@ -187,7 +163,7 @@ local function LoadPlayerFrame()
     NewUnitFrame.prestigebg:Hide()
     NewUnitFrame.prestigeString:Hide()
 
-    UpdateSettings()
+    NewUnitFrame:ToggleSettings()
 
     return NewUnitFrame
 end

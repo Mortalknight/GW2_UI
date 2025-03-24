@@ -217,5 +217,15 @@ local function Migration()
     if type(GW.settings.target_ILVL) == "boolean" then
         GW.settings.target_ILVL = GW.settings.target_ILVL == true and "ITEM_LEVEL" or "PVP_LEVEL"
     end
+
+    if GW.settings.TARGET_UNIT_HEALTH_SHORT_VALUES ~= nil then
+        GW.settings.target_SHORT_VALUES = GW.settings.TARGET_UNIT_HEALTH_SHORT_VALUES
+        GW.settings.TARGET_UNIT_HEALTH_SHORT_VALUES = nil
+    end
+
+    if GW.settings.FOCUS_UNIT_HEALTH_SHORT_VALUES ~= nil then
+        GW.settings.focus_SHORT_VALUES = GW.settings.FOCUS_UNIT_HEALTH_SHORT_VALUES
+        GW.settings.FOCUS_UNIT_HEALTH_SHORT_VALUES = nil
+    end
 end
 GW.Migration = Migration

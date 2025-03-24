@@ -38,7 +38,7 @@ local function UpdatePredictionBarsOverride(self, event, unit)
     end
 
     if healAbsorb > 0 and healthMax > 0 then
-        healAbsorbPrecentage = min(healthMax, healAbsorb / healthMax)
+        healAbsorbPrecentage = min(1, healAbsorb / healthMax)
     end
 
     if not self.Forced then
