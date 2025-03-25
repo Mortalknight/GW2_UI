@@ -814,16 +814,16 @@ function GwTargetUnitFrameMixin:OnUpdate(elapsed)
 end
 
 function GwTargetUnitFrameMixin:ToggleSettings()
-    self.classColor = GW.settings[self.unit .. "_CLASS_COLOR"]
-    self.classColor = GW.settings[self.unit .. "_TARGET_SHOW_CASTBAR"]
+    self.classColor = GW.settings[self.parentUnitId .. "_CLASS_COLOR"]
+    self.classColor = GW.settings[self.parentUnitId .. "_TARGET_SHOW_CASTBAR"]
 
-    self.altBg:SetShown(GW.settings[self.unit .. "_FRAME_ALT_BACKGROUND"])
+    self.altBg:SetShown(GW.settings[self.parentUnitId .. "_FRAME_ALT_BACKGROUND"])
 
     self.parentUnitFrame:OnEvent("FORCE_UPDATE")
 end
 
 function GwTargetUnitFrameMixin:ToggleUnitFrame()
-    if GW.settings[self.unit .. "_TARGET_ENABLED"] then
+    if GW.settings[self.parentUnitId .. "_TARGET_ENABLED"] then
         self:SetScript("OnUpdate", self.OnUpdate)
         RegisterUnitWatch(self)
     else
@@ -840,6 +840,7 @@ local function LoadTargetOfUnit(unit, parentUnitFrame)
     f.unit = unitID
 
     f.parentUnitFrame = parentUnitFrame
+    f.parentUnitId = unit:lower()
 
     f.segments = {}
     f.StagePoints = {}
