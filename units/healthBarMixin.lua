@@ -2,7 +2,7 @@ local _, GW = ...
 
 GwUnitHealthbarMixin = {}
 
-function GwUnitHealthbarMixin:UpdateHealthTextString(health, healthPrecentage)
+function GwUnitHealthbarMixin:UpdateHealthTextString(health, healthPrecentage, healthMax)
     local formatFunc = self.shortendHealthValues and GW.ShortValue or GW.GetLocalizedNumber
     local pctText = GW.GetLocalizedNumber(healthPrecentage * 100, 0) .. "%"
 
@@ -30,15 +30,15 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
     local absorbPrecentage = (absorb > 0 and healthMax > 0) and (absorb / healthMax) or 0
     local absorbAmount = absorb > 0 and (healthPrecentage + absorbPrecentage) or 0
     local absorbAmount2 = absorb > 0 and (absorbPrecentage - (1 - healthPrecentage)) or 0
-    local predictionPrecentage = (prediction > 0 and healthMax > 0) and (healthPrecentage + prediction / healthMax) or 0
+    local predictionPrecentage = (prediction > 0 and healthMax > 0) and math.min(1, healthPrecentage + (prediction / healthMax)) or 0
     local healAbsorbPrecentage = (healAbsorb > 0 and healthMax > 0) and math.min(1, healAbsorb / healthMax) or 0
 
     if self.healPrediction then
         self.healPrediction:SetFillAmount(predictionPrecentage)
     end
 
-    self.health.barOnUpdate = function() 
-        self:UpdateHealthTextString(health, self.health:GetFillAmount())
+    self.health.barOnUpdate = function()
+        self:UpdateHealthTextString(health, self.health:GetFillAmount(), healthMax)
     end
 
     if forceUpdate then

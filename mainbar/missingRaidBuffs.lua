@@ -3,11 +3,11 @@ local L = GW.L
 
 local LibCustomGlow = GW.Libs.CustomGlows
 local ALPHA = 0.3
-local classColor
 
 -- tables
 local checkIds = {}
 local buffInfos = {}
+
 local reminderBuffs = {
     Flask = {
         -- Dragonflight
@@ -44,10 +44,7 @@ local reminderBuffs = {
         -- DF
         [10] = 382149,	-- Well Fed
         [11] = 396092,	-- Well Fed
-        --[12] = 382149,	-- Well Fed
-        --[13] = 382149,	-- Well Fed
         [12] = 327708,	-- Well Fed
-
         [13] = 457284,	-- Well Fed
     },
     Intellect = {
@@ -64,10 +61,10 @@ local reminderBuffs = {
         [2] = 264761, -- War-Scroll of Battle
     },
     Versatility = {
-		1126, -- Mark of the Wild
+		[1] = 1126,    -- Mark of the Wild
 	},
     Mastery = {
-        462854, -- Skyfury
+        [1] = 462854,  -- Skyfury
     },
     MovementBuff = {
         [1] = 381752, -- Evoker
@@ -92,359 +89,261 @@ local reminderBuffs = {
     },
 }
 
-local function GetBuffInfos()
-    local spellInfo
-    for k, v in pairs(reminderBuffs) do
-        buffInfos[k] = {}
-        if type(v) == "table" then
-            for sk, id in pairs(v) do
-                spellInfo = C_Spell.GetSpellInfo(id)
+local ButtonMixin = {}
+
+function ButtonMixin:Init(parent, anchor, isFirst)
+    self:SetSize(28, 28)
+    if isFirst then
+        self:SetPoint("BOTTOMLEFT", anchor, "BOTTOMLEFT", 2, 2)
+    else
+        self:SetPoint("LEFT", anchor, "RIGHT", 3, 0)
+    end
+    self:SetFrameLevel(parent:GetFrameLevel() + 10)
+
+    self.icon = self:CreateTexture(nil, "OVERLAY")
+    self.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    self.icon:SetPoint("TOPLEFT", 2, -2)
+    self.icon:SetPoint("BOTTOMRIGHT", -2, 2)
+
+    -- Setze Standard-Pushed/Highlight Texturen
+    self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
+    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+end
+
+function ButtonMixin:UpdateStyle(haveBuff, settings, glowLib, classColor)
+    if not haveBuff then
+        self.icon:SetDesaturated(settings.MISSING_RAID_BUFF_INVERT and settings.MISSING_RAID_BUFF_grayed_out or false)
+        self:SetAlpha((not settings.MISSING_RAID_BUFF_INVERT and 1) or (settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1))
+        if settings.MISSING_RAID_BUFF_animated then
+            glowLib.ButtonGlow_Start(self, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
+        else
+            glowLib.ButtonGlow_Stop(self)
+        end
+    else
+        self.icon:SetDesaturated(settings.MISSING_RAID_BUFF_INVERT and false or settings.MISSING_RAID_BUFF_grayed_out)
+        self:SetAlpha((settings.MISSING_RAID_BUFF_INVERT and 1) or (settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1))
+        glowLib.ButtonGlow_Stop(self)
+    end
+end
+
+function ButtonMixin:UpdateForType(buffType)
+    local found = false
+    local buffTbl = buffInfos[buffType]
+    if buffTbl then
+        for _, buff in ipairs(buffTbl) do
+            if buff.hasBuff then
+                self.icon:SetTexture(buff.texId)
+                found = true
+                break
+            end
+        end
+        if not found then
+            self.icon:SetTexture(buffTbl[1] and buffTbl[1].texId or nil)
+        end
+        self:UpdateStyle(found, GW.settings, LibCustomGlow, self:GetParent().classColor)
+    end
+end
+
+local RaidBuffReminderMixin = {}
+
+function RaidBuffReminderMixin:OnLoad()
+    -- Setze Klassenfarbe
+    self.classColor = GW.GWGetClassColor(GW.myclass, true)
+    -- Initialisiere BuffInfos
+    self:UpdateBuffInfos()
+
+    -- Erstelle Buttons und mische ButtonMixin ein
+    self.intButton = CreateFrame("Button", nil, self)
+    Mixin(self.intButton, ButtonMixin)
+    self.intButton:Init(self, self, true)
+
+    self.staminaButton = CreateFrame("Button", nil, self)
+    Mixin(self.staminaButton, ButtonMixin)
+    self.staminaButton:Init(self, self.intButton, false)
+
+    self.attackPowerButton = CreateFrame("Button", nil, self)
+    Mixin(self.attackPowerButton, ButtonMixin)
+    self.attackPowerButton:Init(self, self.staminaButton, false)
+
+    self.versatilityButton = CreateFrame("Button", nil, self)
+    Mixin(self.versatilityButton, ButtonMixin)
+    self.versatilityButton:Init(self, self.attackPowerButton, false)
+
+    self.movementButton = CreateFrame("Button", nil, self)
+    Mixin(self.movementButton, ButtonMixin)
+    self.movementButton:Init(self, self.versatilityButton, false)
+
+    self.masteryButton = CreateFrame("Button", nil, self)
+    Mixin(self.masteryButton, ButtonMixin)
+    self.masteryButton:Init(self, self.movementButton, false)
+
+    self.flaskButton = CreateFrame("Button", nil, self)
+    Mixin(self.flaskButton, ButtonMixin)
+    self.flaskButton:Init(self, self.masteryButton, false)
+
+    self.foodButton = CreateFrame("Button", nil, self)
+    Mixin(self.foodButton, ButtonMixin)
+    self.foodButton:Init(self, self.flaskButton, false)
+
+    self.daRuneButton = CreateFrame("Button", nil, self)
+    Mixin(self.daRuneButton, ButtonMixin)
+    self.daRuneButton:Init(self, self.foodButton, false)
+
+    self.customButton = CreateFrame("Button", nil, self)
+    Mixin(self.customButton, ButtonMixin)
+    self.customButton:Init(self, self.daRuneButton, false)
+end
+
+function RaidBuffReminderMixin:UpdateBuffInfos()
+    -- Füllt die buffInfos-Tabelle basierend auf reminderBuffs
+    for key, tbl in pairs(reminderBuffs) do
+        buffInfos[key] = {}
+        if type(tbl) == "table" then
+            for idx, spellID in pairs(tbl) do
+                local spellInfo = C_Spell.GetSpellInfo(spellID)
                 if spellInfo then
-                    buffInfos[k][sk] = {name = spellInfo.name, texId = spellInfo.iconID, spellId = id, hasBuff = false}
-                    if k == "Weapon" then
-                        buffInfos[k][sk].texId = GetInventoryItemTexture("player", 16)
-                    end
+                    buffInfos[key][idx] = {
+                        name    = spellInfo.name,
+                        texId   = (key == "Weapon") and GetInventoryItemTexture("player", 16) or spellInfo.iconID,
+                        spellId = spellID,
+                        hasBuff = false
+                    }
                 end
             end
         end
     end
 end
 
-local function CheckForBuffs()
+function RaidBuffReminderMixin:CheckForBuffs()
     local auraData, foundBuff
-    local hasMainHandEnchant, mainHandEnchantID, hasOffHandEnchant, offHandEnchantId
+    local hasMainHandEnchant, mainHandEnchantID, hasOffHandEnchant, offHandEnchantID
     wipe(checkIds)
-
-    -- reset all spells
-    for k, v in pairs(buffInfos) do
-        if type(v) == "table" then
-            for sk, _ in pairs(v) do
-                buffInfos[k][sk].hasBuff = false
+    -- Reset Buff-Status
+    for key, tbl in pairs(buffInfos) do
+        if type(tbl) == "table" then
+            for idx, _ in pairs(tbl) do
+                buffInfos[key][idx].hasBuff = false
             end
         end
     end
 
     for i = 1, 40 do
-        foundBuff = false
         auraData = C_UnitAuras.GetBuffDataByIndex("player", i)
-        if not auraData then
-            break
-        else
-            for k, v in pairs(buffInfos) do
-                if type(v) == "table" then
-                    for sk, _ in pairs(v) do
-                        if k == "Weapon" then
-                            hasMainHandEnchant, _, _, mainHandEnchantID, hasOffHandEnchant, _, _, offHandEnchantId = GetWeaponEnchantInfo()
-                            if (hasMainHandEnchant and buffInfos[k][sk].spellId == mainHandEnchantID) or (hasOffHandEnchant and buffInfos[k][sk].spellId == offHandEnchantId) then
-                                buffInfos[k][sk].hasBuff = true
-                                checkIds[mainHandEnchantID or offHandEnchantId] = true
-                                foundBuff = true
-                                break
-                            end
-                        else
-                            if buffInfos[k][sk].spellId == auraData.spellId then
-                                buffInfos[k][sk].hasBuff = true
-                                checkIds[auraData.spellId] = true
-                                foundBuff = true
-                                break
+        if not auraData then break end
 
-                            end
+        for key, tbl in pairs(buffInfos) do
+            if type(tbl) == "table" then
+                foundBuff = false
+                for idx, buff in pairs(tbl) do
+                    if key == "Weapon" then
+                        hasMainHandEnchant, _, _, mainHandEnchantID, hasOffHandEnchant, _, _, offHandEnchantID = GetWeaponEnchantInfo()
+                        if (hasMainHandEnchant and buff.spellId == mainHandEnchantID) or (hasOffHandEnchant and buff.spellId == offHandEnchantID) then
+                            buff.hasBuff = true
+                            checkIds[mainHandEnchantID or offHandEnchantID] = true
+                            foundBuff = true
+                            break
+                        end
+                    else
+                        if buff.spellId == auraData.spellId then
+                            buff.hasBuff = true
+                            checkIds[auraData.spellId] = true
+                            foundBuff = true
+                            break
                         end
                     end
-                    if foundBuff then
-                        break
-                    end
                 end
+                if foundBuff then break end
             end
+        end
 
-            if not checkIds[auraData.spellId or mainHandEnchantID or offHandEnchantId] then
-                checkIds[auraData.spellId or mainHandEnchantID or offHandEnchantId] = true
-            end
+        if not checkIds[auraData.spellId or mainHandEnchantID or offHandEnchantID] then
+            checkIds[auraData.spellId or mainHandEnchantID or offHandEnchantID] = true
         end
     end
 end
 
-local function setButtonStyle(button, haveBuff)
-    if not haveBuff then
-        button.icon:SetDesaturated(GW.settings.MISSING_RAID_BUFF_INVERT and GW.settings.MISSING_RAID_BUFF_grayed_out or false)
-        button:SetAlpha(not GW.settings.MISSING_RAID_BUFF_INVERT and 1 or GW.settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1)
-        if GW.settings.MISSING_RAID_BUFF_animated then
-            LibCustomGlow.ButtonGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
-        else
-            LibCustomGlow.ButtonGlow_Stop(button)
-        end
-    else
-        if GW.settings.MISSING_RAID_BUFF_INVERT then
-            button.icon:SetDesaturated(false)
-        else
-            button.icon:SetDesaturated(GW.settings.MISSING_RAID_BUFF_grayed_out)
-        end
+function RaidBuffReminderMixin:UpdateButtons()
+    if not self:IsShown() then return end
+    self:CheckForBuffs()
 
-        button:SetAlpha(GW.settings.MISSING_RAID_BUFF_INVERT and 1 or GW.settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1)
-        LibCustomGlow.ButtonGlow_Stop(button)
-    end
-end
+    self.flaskButton:UpdateForType("Flask")
+    self.foodButton:UpdateForType("Food")
+    self.intButton:UpdateForType("Intellect")
+    self.staminaButton:UpdateForType("Stamina")
+    self.attackPowerButton:UpdateForType("AttackPower")
+    self.versatilityButton:UpdateForType("Versatility")
+    self.movementButton:UpdateForType("MovementBuff")
+    self.masteryButton:UpdateForType("Mastery")
+    self.daRuneButton:UpdateForType("DefiledAugmentRune")
 
-local function OnAuraChange(self)
-    local foundBuff = false
-    -- check if we have a matching buff
-    CheckForBuffs()
-
-    -- Flask
-    for _, flask in pairs(buffInfos.Flask) do
-        if flask.hasBuff then
-            self.flaskButton.icon:SetTexture(flask.texId)
-            foundBuff = true
-            break
-        end
-    end
-    if not foundBuff then
-        self.flaskButton.icon:SetTexture(buffInfos.Flask[1].texId)
-    end
-    setButtonStyle(self.flaskButton, foundBuff)
-
-    -- Food
-    foundBuff = false
-    for _, foodbuff in pairs(buffInfos.Food) do
-        if foodbuff.hasBuff then
-            self.foodButton.icon:SetTexture(foodbuff.texId)
-            foundBuff = true
-            break
-        end
-    end
-    if not foundBuff then
-        self.foodButton.icon:SetTexture(buffInfos.Food[1].texId)
-    end
-    setButtonStyle(self.foodButton, foundBuff)
-
-    -- Int
-    foundBuff = false
-    for _, intellectbuff in pairs(buffInfos.Intellect) do
-        if intellectbuff.hasBuff then
-            self.intButton.icon:SetTexture(intellectbuff.texId)
-            foundBuff = true
-            break
-        end
-    end
-    if not foundBuff then
-        self.intButton.icon:SetTexture(buffInfos.Intellect[1].texId)
-    end
-    setButtonStyle(self.intButton, foundBuff)
-
-    -- Stamina
-    foundBuff = false
-    for _, staminabuff in pairs(buffInfos.Stamina) do
-        if staminabuff.hasBuff then
-            self.staminaButton.icon:SetTexture(staminabuff.texId)
-            foundBuff = true
-            break
-        end
-    end
-    if not foundBuff then
-        self.staminaButton.icon:SetTexture(buffInfos.Stamina[1].texId)
-    end
-    setButtonStyle(self.staminaButton, foundBuff)
-
-    -- AttackPower
-    foundBuff = false
-    for _, attackpowerbuff in pairs(buffInfos.AttackPower) do
-        if attackpowerbuff.hasBuff then
-            self.attackPowerButton.icon:SetTexture(attackpowerbuff.texId)
-            foundBuff = true
-            break
-        end
-    end
-    if not foundBuff then
-        self.attackPowerButton.icon:SetTexture(buffInfos.AttackPower[1].texId)
-    end
-    setButtonStyle(self.attackPowerButton, foundBuff)
-
-    -- Versatility
-    foundBuff = false
-    for _, versatilityBuff in pairs(buffInfos.Versatility) do
-        if versatilityBuff.hasBuff then
-            self.versatilityButton.icon:SetTexture(versatilityBuff.texId)
-            foundBuff = true
-            break
-        end
-    end
-    if not foundBuff then
-        self.versatilityButton.icon:SetTexture(C_Spell.GetSpellTexture(1126))
-    end
-    setButtonStyle(self.versatilityButton, foundBuff)
-
-    -- MovementBuff
-    foundBuff = false
-    for _, movementBuff in pairs(buffInfos.MovementBuff) do
-        if movementBuff.hasBuff then
-            self.movementButton.icon:SetTexture(movementBuff.texId)
-            foundBuff = true
-            break
-        end
-    end
-    if not foundBuff then
-        self.movementButton.icon:SetTexture(buffInfos.MovementBuff[1].texId)
-    end
-    setButtonStyle(self.movementButton, foundBuff)
-
-     -- Mastery
-     foundBuff = false
-     for _, masteryBuff in pairs(buffInfos.Mastery) do
-         if masteryBuff.hasBuff then
-             self.masteryButton.icon:SetTexture(masteryBuff.texId)
-             foundBuff = true
-             break
-         end
-     end
-     if not foundBuff then
-         self.masteryButton.icon:SetTexture(buffInfos.Mastery[1].texId)
-     end
-     setButtonStyle(self.masteryButton, foundBuff)
-
-    -- runes
-    foundBuff = false
-    for _, runebuff in pairs(buffInfos.DefiledAugmentRune) do
-        if runebuff.hasBuff then
-            self.daRuneButton.icon:SetTexture(runebuff.texId)
-            foundBuff = true
-            break
-        end
-    end
-    if not foundBuff and buffInfos.DefiledAugmentRune and buffInfos.DefiledAugmentRune[1] then
-        self.daRuneButton.icon:SetTexture(buffInfos.DefiledAugmentRune[1].texId)
-    end
-    setButtonStyle(self.daRuneButton, foundBuff)
-
-    -- Weapon
-    --[[
-    foundBuff = false
-    for _, weaponbuff in pairs(buffInfos.Weapon) do
-        if weaponbuff.hasBuff then
-            self.weaponButton.icon:SetTexture(weaponbuff.texId)
-            foundBuff = true
-            break
-        end
-    end
-    if not foundBuff and buffInfos.Weapon and buffInfos.Weapon[1] then
-        self.weaponButton.icon:SetTexture(buffInfos.Weapon[1].texId)
-    end
-    setButtonStyle(self.weaponButton, foundBuff)
-    ]]
-
-    -- Custom
     if #buffInfos.Custom > 0 then
         self:SetSize(309, 32)
         self.customButton.icon:SetTexture(buffInfos.Custom[1].texId)
-
         if not self.customButton:IsShown() then self.customButton:Show() end
-        setButtonStyle(self.customButton, buffInfos.Custom[1].hasBuff)
+        self.customButton:UpdateStyle(buffInfos.Custom[1].hasBuff, GW.settings, LibCustomGlow, self.classColor)
     else
         self:SetSize(280, 32)
         self.customButton:Hide()
         LibCustomGlow.PixelGlow_Stop(self.customButton)
     end
 end
-GW.UpdateMissingRaidBuffs = OnAuraChange
 
-local function SetButtonStyle(button)
-    if button.icon then
-        button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    end
-
-    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
-    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+function RaidBuffReminderMixin:OnEvent()
+    self:UpdateButtons()
 end
 
-local function CreateIconBuff(relativeTo, firstbutton, frame)
-    local button = CreateFrame("Button", nil, frame)
-    button:SetSize(28, 28)
-
-    if firstbutton then
-        button:SetPoint("BOTTOMLEFT", relativeTo, "BOTTOMLEFT", 2, 2)
-    else
-        button:SetPoint("LEFT", relativeTo, "RIGHT", 3, 0)
+function RaidBuffReminderMixin:UpdateCustomSpell()
+    wipe(buffInfos.Custom)
+    local keywords = gsub(GW.settings.MISSING_RAID_BUFF_custom_id, ",%s", ",")
+    for str in string.gmatch(keywords, "[^,]+") do
+        if str ~= "" then
+            local spellID = tonumber(str)
+            local spellInfo = C_Spell.GetSpellInfo(spellID)
+            if spellInfo then
+                buffInfos.Custom[1] = {
+                    name    = spellInfo.name,
+                    texId   = spellInfo.iconID,
+                    spellId = spellID,
+                    hasBuff = false
+                }
+            end
+            break
+        end
     end
-    button:SetFrameLevel(frame:GetFrameLevel() + 10)
-
-    button.icon = button:CreateTexture(nil, "OVERLAY")
-    button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    button.icon:SetPoint("TOPLEFT", 2, -2)
-    button.icon:SetPoint("BOTTOMRIGHT", -2, 2)
-
-    SetButtonStyle(button)
-
-    return button
+    self:UpdateButtons()
 end
 
-local function UpdateMissingRaidBuffVisibility()
+function RaidBuffReminderMixin:UpdateVisibility()
     local VisibilityStates = {
-        ["NEVER"] = "hide",
-        ["ALWAYS"] = "[petbattle] hide; show",
-        ["IN_GROUP"] = "[petbattle] hide; [group:raid] hide; [group:party] show; hide",
-        ["IN_RAID"] = "[petbattle] hide; [group:raid] show; [group:party] hide; hide",
+        ["NEVER"]         = "hide",
+        ["ALWAYS"]        = "[petbattle] hide; show",
+        ["IN_GROUP"]      = "[petbattle] hide; [group:raid] hide; [group:party] show; hide",
+        ["IN_RAID"]       = "[petbattle] hide; [group:raid] show; [group:party] hide; hide",
         ["IN_RAID_IN_PARTY"] = "[petbattle] hide; [group] show; hide",
     }
-
-    RegisterStateDriver(GW_RaidBuffReminder, "visibility", VisibilityStates[GW.settings.MISSING_RAID_BUFF])
+    RegisterStateDriver(self, "visibility", VisibilityStates[GW.settings.MISSING_RAID_BUFF])
 end
-GW.UpdateMissingRaidBuffVisibility = UpdateMissingRaidBuffVisibility
-
-local function UpdateMissingRaidBuffCustomSpell()
-	wipe(buffInfos.Custom)
-
-	local keywords = gsub(GW.settings.MISSING_RAID_BUFF_custom_id, ",%s", ",")
-
-	for stringValue in gmatch(keywords, "[^,]+") do
-		if stringValue ~= "" then
-            local spellInfo = C_Spell.GetSpellInfo(tonumber(stringValue))
-            buffInfos.Custom[1] = {name = spellInfo.name, texId = spellInfo.iconID, spellId = tonumber(stringValue), hasBuff = false}
-            break
-		end
-	end
-
-    OnAuraChange(GW_RaidBuffReminder)
-end
-GW.UpdateMissingRaidBuffCustomSpell = UpdateMissingRaidBuffCustomSpell
 
 local function LoadRaidbuffReminder()
-    local rbr = CreateFrame("Frame", "GW_RaidBuffReminder", UIParent)
-
-    classColor = GW.GWGetClassColor(GW.myclass, true)
+    local rbr = CreateFrame("Frame", "GwRaidBuffReminder", UIParent)
+    Mixin(rbr, RaidBuffReminderMixin)
+    rbr:OnLoad()
 
     rbr:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-
     rbr:SetSize(210, 32)
-
     GW.RegisterMovableFrame(rbr, L["Missing Raid Buffs Bar"], "MISSING_RAID_BUFF_pos", ALL .. ",Raid,Aura", nil, {"default", "scaleable"})
     rbr:ClearAllPoints()
     rbr:SetPoint("TOPLEFT", rbr.gwMover)
 
-    rbr.intButton = CreateIconBuff(rbr, true, rbr)
-    rbr.staminaButton = CreateIconBuff(rbr.intButton, false, rbr)
-    rbr.attackPowerButton = CreateIconBuff(rbr.staminaButton, false, rbr)
-    rbr.versatilityButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
-    rbr.movementButton = CreateIconBuff(rbr.versatilityButton, false, rbr)
-    rbr.masteryButton = CreateIconBuff(rbr.movementButton, false, rbr)
-    rbr.flaskButton = CreateIconBuff(rbr.masteryButton, false, rbr)
-    rbr.foodButton = CreateIconBuff(rbr.flaskButton, false, rbr)
-    rbr.daRuneButton = CreateIconBuff(rbr.foodButton, false, rbr)
-    --rbr.weaponButton = CreateIconBuff(rbr.foodButton, false, rbr)
-    rbr.customButton = CreateIconBuff(rbr.daRuneButton, false, rbr)
-
-    GetBuffInfos()
-    UpdateMissingRaidBuffVisibility()
-    UpdateMissingRaidBuffCustomSpell()
-
-    --rbr:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     rbr:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
     rbr:RegisterUnitEvent("UNIT_AURA", "player")
-    --rbr:RegisterEvent("PLAYER_REGEN_ENABLED")
-    --rbr:RegisterEvent("PLAYER_REGEN_DISABLED")
     rbr:RegisterEvent("PLAYER_ENTERING_WORLD")
-    --rbr:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-    --rbr:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    --rbr:RegisterEvent("ZONE_CHANGED_NEW_AREA") -- not needed
-    --rbr:RegisterEvent("GROUP_ROSTER_UPDATE") -- Performance and not needed
-    rbr:SetScript("OnEvent", OnAuraChange)
+    rbr:SetScript("OnEvent", rbr.OnEvent)
+
+    rbr:UpdateBuffInfos()
+    rbr:UpdateVisibility()
+    rbr:UpdateCustomSpell()
+
+    return rbr
 end
 GW.LoadRaidbuffReminder = LoadRaidbuffReminder
