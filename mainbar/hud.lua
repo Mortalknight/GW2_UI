@@ -882,9 +882,9 @@ local function selectBg(self)
         end
     end
 
-    if modelFX ~= nil then
+    if modelFX then
         createModelFx(modelFX)
-    elseif modelFX == nil and self.actionBarHudFX:IsShown() and GwHudFXDebug == nil then
+    elseif not modelFX and self.actionBarHudFX:IsShown() and not GwHudFXDebug then
         self.actionBarHudFX:Hide()
     end
 
@@ -1141,22 +1141,14 @@ end)
 ]]
 
 
-
-
-
 local function hud_OnEvent(self, event, ...)
+    print(event, ...)
     if event == "UNIT_AURA" then
-        local unit = ...
-        if unit == "player" then
-            selectBg(self)
-        end
+        selectBg(self)
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         selectBg(self)
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
-        local unit = ...
-        if unit == "player" then
-            combatHealthState(self)
-        end
+        combatHealthState(self)
     end
 end
 GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
@@ -1201,12 +1193,12 @@ local function LoadHudArt()
         selectBg(hudArtFrame)
     end)
 
-    hudArtFrame:RegisterEvent("UNIT_AURA")
     hudArtFrame:RegisterEvent("PLAYER_ALIVE")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     hudArtFrame:RegisterUnitEvent("UNIT_HEALTH", "player")
     hudArtFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
+    hudArtFrame:RegisterUnitEvent("UNIT_AURA", "player")
     selectBg(hudArtFrame)
     combatHealthState(hudArtFrame)
 
