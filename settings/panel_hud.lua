@@ -479,7 +479,7 @@ local function LoadHudPanel(sWindow)
                 else
                     C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
                 end
-                GW.LoadDamageText(true)
+                GW.FloatingCombatTextToggleFormat(true)
             elseif value == "BLIZZARD" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
                 C_CVar.SetCVar("floatingCombatTextCombafloatingCombatTextCombatHealingtDamage", "1")

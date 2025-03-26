@@ -561,15 +561,26 @@ local function RescanAllNameplates()
 end
 
 local function ToggleFormat(activate)
+    print(activate)
     if activate then
         GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_DAMAGE", handleCombatLogEvent)
         GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_MISSED", handleCombatLogEvent)
         GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_HEAL", handleCombatLogEvent)
+
+
+        eventHandler:RegisterEvent("CVAR_UPDATE")
         eventHandler:SetScript("OnEvent", function(_, event, ...)
             if event == "NAME_PLATE_UNIT_ADDED" then
                 onNamePlateAdded(eventHandler, event, ...)
             elseif event == "NAME_PLATE_UNIT_REMOVED" then
                 onNamePlateRemoved(eventHandler, event, ...)
+            elseif event == "CVAR_UPDATE" then
+                local eventName, value = ...
+                if eventName == "floatingCombatTextCombatDamage" and value == "1" then
+                    C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                elseif eventName == "floatingCombatTextCombatHealing" then
+                    C_CVar.SetCVar("floatingCombatTextCombatHealing", (GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS and "0" or "1"))
+                end
             end
         end)
 
