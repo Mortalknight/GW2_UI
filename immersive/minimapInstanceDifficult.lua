@@ -117,6 +117,10 @@ local function SkinMinimapInstanceDifficult()
     guild:HookScript("OnShow", HideBlizzardIcon)
     challenge:HookScript("OnShow", HideBlizzardIcon)
 
+    instance:Hide()
+    guild:Hide()
+    challenge:Hide()
+
     hooksecurefunc(MinimapCluster.InstanceDifficulty, "Update", function() InstanceDifficultOnEvent(d) end)
 end
 GW.SkinMinimapInstanceDifficult = SkinMinimapInstanceDifficult
