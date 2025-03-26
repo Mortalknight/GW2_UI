@@ -117,12 +117,7 @@ GW.AddForProfiling("hud", "xpbar_OnClick", xpbar_OnClick)
 local function flareAnim(self)
     self.barOverlay.flare:Show()
 
-    AddToAnimation(
-        "GwXpFlare",
-        0,
-        1,
-        GetTime(),
-        1,
+    AddToAnimation("GwXpFlare", 0, 1, GetTime(), 1,
         function(prog)
             self.barOverlay.flare.texture:SetAlpha(1)
             self.barOverlay.flare.texture:SetRotation(lerp(0, 3, prog))
@@ -138,209 +133,248 @@ local function flareAnim(self)
 end
 GW.AddForProfiling("hud", "flareAnim", flareAnim)
 
+local function UpdateXPValues(self)
+    local valCurrent = UnitXP("player")
+    local valMax = UnitXPMax("player")
+    local valPrec = (valMax > 0) and (valCurrent / valMax) or 0
+
+    local rested = GetXPExhaustion() or 0
+    if rested > 0 then
+        rested = math.min(rested / (valMax - valCurrent), 1)
+    end
+
+    self.ExpBar:SetStatusBarColor(0.83, 0.57, 0)
+    return valPrec, rested
+end
+
+local function UpdateReputation(self, lockLevelTextUnderMaxLevel)
+    local watchedFactionData = C_Reputation.GetWatchedFactionData()
+
+    local showRepu = false
+    local valPrecRepu = 0
+    local repuLevel, repuNextLevel = nil, nil
+    local level, nextLevel
+
+    if watchedFactionData and watchedFactionData.factionID and watchedFactionData.factionID > 0 then
+        local friendReputationInfo = C_GossipInfo.GetFriendshipReputation(watchedFactionData.factionID)
+        local isParagon, isFriend, isMajor, isNormal = false, false, false, false
+        local MajorCurrentLevel, MajorNextLevel = 0, 0
+        showRepu = true
+
+
+        if C_Reputation.IsFactionParagon(watchedFactionData.factionID) then
+            local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(watchedFactionData.factionID)
+            currentValue = currentValue % maxValueParagon
+            valPrecRepu = (maxValueParagon > 0) and (currentValue / maxValueParagon) or 0
+            gw_reputation_vals = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
+                watchedFactionData.name, REPUTATION,
+                GW.GetLocalizedNumber(currentValue), GW.GetLocalizedNumber(maxValueParagon), math.floor(valPrecRepu * 100))
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
+            isParagon = true
+            isFriend = (friendReputationInfo and friendReputationInfo.friendshipFactionID > 0)
+        elseif friendReputationInfo and friendReputationInfo.friendshipFactionID > 0 then
+            if friendReputationInfo.nextThreshold then
+                valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) /
+                                (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
+                gw_reputation_vals = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
+                    friendReputationInfo.name, REPUTATION,
+                    GW.GetLocalizedNumber(friendReputationInfo.standing - friendReputationInfo.reactionThreshold),
+                    GW.GetLocalizedNumber(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold),
+                    math.floor(valPrecRepu * 100))
+            else
+                valPrecRepu = 1
+                gw_reputation_vals = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
+                    friendReputationInfo.name, REPUTATION,
+                    GW.GetLocalizedNumber(friendReputationInfo.maxRep), GW.GetLocalizedNumber(friendReputationInfo.maxRep), 100)
+            end
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+            isFriend = true
+        elseif C_Reputation.IsMajorFaction(watchedFactionData.factionID) then
+            local majorFactionData = C_MajorFactions.GetMajorFactionData(watchedFactionData.factionID)
+            if majorFactionData then
+                MajorCurrentLevel = majorFactionData.renownLevel
+                MajorNextLevel = C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) and MajorCurrentLevel or (MajorCurrentLevel + 1)
+                repuLevel = MajorCurrentLevel
+                repuNextLevel = MajorNextLevel
+                if C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) then
+                    valPrecRepu = 1
+                else
+                    valPrecRepu = (majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold
+                end
+                gw_reputation_vals = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
+                    watchedFactionData.name, REPUTATION,
+                    GW.GetLocalizedNumber(majorFactionData.renownReputationEarned or 0),
+                    GW.GetLocalizedNumber(majorFactionData.renownLevelThreshold),
+                    math.floor(valPrecRepu * 100))
+                self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+                isMajor = true
+                repuLevel = MajorCurrentLevel
+                repuNextLevel = MajorNextLevel
+            end
+        else
+            -- Normaler Ruf
+            local currentStanding = watchedFactionData.currentStanding or 0
+            local currentThreshold = watchedFactionData.currentReactionThreshold or 0
+            local nextThreshold = watchedFactionData.nextReactionThreshold or 0
+            if (currentStanding - currentThreshold) == 0 then
+                valPrecRepu = 1
+                gw_reputation_vals = string.format("%s %s 21,000 / 21,000 |cffa6a6a6 (%d%%)|r", watchedFactionData.name, REPUTATION, 100)
+            else
+                valPrecRepu = (currentStanding - currentThreshold) / (nextThreshold - currentThreshold)
+                gw_reputation_vals = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
+                    watchedFactionData.name, REPUTATION,
+                    GW.GetLocalizedNumber(currentStanding - currentThreshold),
+                    GW.GetLocalizedNumber(nextThreshold - currentThreshold),
+                    math.floor(valPrecRepu * 100))
+            end
+            local reaction = watchedFactionData.reaction or 1
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
+            isNormal = true
+
+            -- Setze das Level-Label basierend auf Rufdaten:
+            local nextId = (watchedFactionData.reaction and watchedFactionData.reaction + 1) or 1
+
+            if not lockLevelTextUnderMaxLevel then
+                -- Hier wird level überschrieben, je nach Fraktionstyp:
+                level = isMajor and repuLevel or isFriend and friendReputationInfo.reaction or
+                        isParagon and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1)) or
+                        isNormal and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1))
+                        nextLevel = isParagon and L["Paragon"] or isFriend and "" or isMajor and repuNextLevel or
+                        isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
+            end
+        end
+    end
+    return showRepu, valPrecRepu, level, nextLevel
+end
+
+local function UpdateAzerite(self)
+    local showAzerite = false
+    local AzeritVal, AzeritLevel = 0, 0
+    local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+    local shouldShowAzerite = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
+    if shouldShowAzerite then
+        showAzerite = true
+        local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+        AzeritLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
+        AzeritVal = (xpForNextPoint > 0) and (azeriteXP / xpForNextPoint) or 0
+        self.AzeritBar:SetStatusBarColor(FACTION_BAR_COLORS[10].r, FACTION_BAR_COLORS[10].g, FACTION_BAR_COLORS[10].b)
+        self.AzeritBar.animation:Show()
+    end
+    return showAzerite, AzeritVal, AzeritLevel
+end
+
+local function SetBarLayout(bar, candy, spark, height, offset)
+    bar:Show()
+    candy:Show()
+    spark:Show()
+    bar:SetHeight(height)
+    candy:SetHeight(height)
+    spark:SetHeight(height)
+    candy:ClearAllPoints()
+    candy:SetPoint("TOPLEFT", 90, offset)
+    candy:SetPoint("TOPRIGHT", -90, offset)
+    bar:ClearAllPoints()
+    bar:SetPoint("TOPLEFT", 90, offset)
+    bar:SetPoint("TOPRIGHT", -90, offset)
+end
+
+local function LayoutBars(self, showExp, showAzerite, showRepu)
+    local visibleBars = {}
+
+    if showExp then
+        table.insert(visibleBars, {bar = self.ExpBar, candy = self.ExpBarCandy, spark = self.ExpBar.Spark})
+    else
+        self.ExpBar:Hide()
+        self.ExpBarCandy:Hide()
+        self.ExpBar.Spark:Hide()
+        self.ExpBar:SetValue(0)
+        self.ExpBarCandy:SetValue(0)
+    end
+
+    if showAzerite then
+        table.insert(visibleBars, {bar = self.AzeritBar, candy = self.AzeritBarCandy, spark = self.AzeritBar.Spark})
+    else
+        self.AzeritBar:Hide()
+        self.AzeritBarCandy:Hide()
+        self.AzeritBar.animation:Hide()
+        self.AzeritBar:SetValue(0)
+        self.AzeritBarCandy:SetValue(0)
+        self.AzeritBar.Spark:Hide()
+    end
+
+    if showRepu then
+        table.insert(visibleBars, {bar = self.RepuBar, candy = self.RepuBarCandy, spark = self.RepuBar.Spark})
+    else
+        self.RepuBar:Hide()
+        self.RepuBarCandy:Hide()
+        self.RepuBar:SetValue(0)
+        self.RepuBarCandy:SetValue(0)
+        self.RepuBar.Spark:Hide()
+    end
+
+    local count = #visibleBars
+    local height = 0
+    if count == 3 then
+        height = 2.66
+    elseif count == 2 then
+        height = 4
+    elseif count == 1 then
+        height = 8
+    end
+
+    for i, barData in ipairs(visibleBars) do
+        local offset = -4 * i -- z. B. i==1 -> -4, i==2 -> -8, i==3 -> -12
+        SetBarLayout(barData.bar, barData.candy, barData.spark, height, offset)
+    end
+end
+
 local function xpbar_OnEvent(self, event)
     if event == "UPDATE_FACTION" and not GW.inWorld then
         return
     end
 
-    local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and
-        C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
-    local AzeritVal = 0
-    local AzeritLevel = 0
-
-    local valCurrent = UnitXP("Player")
-    local valMax = UnitXPMax("Player")
-    local valPrec = valCurrent / valMax
-    local valPrecRepu = 0
-
-    local level = GW.mylevel
-    local maxPlayerLevel = GetMaxLevelForPlayerExpansion()
-    local Nextlevel = math.min(maxPlayerLevel, level + 1)
-    local lockLevelTextUnderMaxLevel = level < Nextlevel
-
-    local rested = GetXPExhaustion()
-    local showBar1 = level < Nextlevel
-    local showBar2 = false
-    local showBar3 = false
-    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or
-        ""
-
-    if rested == nil or (rested / valMax) == 0 then
-        rested = 0
-    else
-        rested = math.min((rested / (valMax - valCurrent)), 1)
-    end
-
-    local animationSpeed = 15
-
-    self.ExpBar:SetStatusBarColor(0.83, 0.57, 0)
-
     gw_reputation_vals = nil
 
-    local watchedFactionData = C_Reputation.GetWatchedFactionData()
-    if watchedFactionData and watchedFactionData.factionID and watchedFactionData.factionID > 0 then
-        --local _, _, standingId, bottomValue, topValue, earnedValue = GetFactionInfoByID(watchedFactionData.factionID)
-        local friendReputationInfo = C_GossipInfo.GetFriendshipReputation(watchedFactionData.factionID)
-        local friendshipID = friendReputationInfo.friendshipFactionID
+    local animationSpeed = 15
+    local maxPlayerLevel = GetMaxLevelForPlayerExpansion()
+    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or ""
+    local showExp = (GW.mylevel < maxPlayerLevel)
+    local level = GW.mylevel
+    local Nextlevel = GW.mylevel < maxPlayerLevel and (GW.mylevel + 1) or GW.mylevel
+    local lockLevelTextUnderMaxLevel = level < Nextlevel
 
-        local isParagon = false
-        local isFriend = false
-        local isMajor = false
-        local isNormal = false
+    local valPrec, rested = UpdateXPValues(self)
+    local showRepu, valPrecRepu, repuLevel, repuNextLevel = UpdateReputation(self, lockLevelTextUnderMaxLevel)
+    local showAzerite, AzeritVal, AzeritLevel = UpdateAzerite(self)
 
-        local MajorCurrentLevel = 0
-        local MajorNextLevel = 0
-        if C_Reputation.IsFactionParagon(watchedFactionData.factionID) then
-            local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(watchedFactionData.factionID)
-
-            currentValue = currentValue % maxValueParagon;
-            valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
-
-            gw_reputation_vals = watchedFactionData.name ..
-                " " ..
-                REPUTATION ..
-                " " ..
-                GW.GetLocalizedNumber(currentValue - 0) ..
-                " / " .. GW.GetLocalizedNumber(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
-
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
-            isParagon = true
-            isFriend = friendshipID > 0
-        elseif friendshipID > 0 then
-            if friendReputationInfo.nextThreshold then
-                valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) /
-                    (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
-                gw_reputation_vals = friendReputationInfo.name ..
-                    " " ..
-                    REPUTATION ..
-                    " " ..
-                    GW.GetLocalizedNumber(friendReputationInfo.standing - friendReputationInfo.reactionThreshold) ..
-                    " / " ..
-                    GW.GetLocalizedNumber(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold) ..
-                    " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
-            else
-                valPrecRepu = 1
-                gw_reputation_vals = friendReputationInfo.name ..
-                    " " ..
-                    REPUTATION ..
-                    " " ..
-                    GW.GetLocalizedNumber(friendReputationInfo.maxRep) ..
-                    " / " ..
-                    GW.GetLocalizedNumber(friendReputationInfo.maxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
-            end
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
-            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5]
-                .b)
-            isFriend = true
-        elseif C_Reputation.IsMajorFaction(watchedFactionData.factionID) then
-            local majorFactionData = C_MajorFactions.GetMajorFactionData(watchedFactionData.factionID)
-
-            MajorCurrentLevel = majorFactionData.renownLevel
-            MajorNextLevel = C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) and MajorCurrentLevel or
-                MajorCurrentLevel + 1
-
-            if C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) then
-                valPrecRepu = 1
-            else
-                valPrecRepu = ((majorFactionData.renownReputationEarned or 0)) / majorFactionData.renownLevelThreshold
-            end
-            gw_reputation_vals = watchedFactionData.name ..
-                " " ..
-                REPUTATION ..
-                " " ..
-                GW.GetLocalizedNumber((majorFactionData.renownReputationEarned or 0)) ..
-                " / " ..
-                GW.GetLocalizedNumber(majorFactionData.renownLevelThreshold) ..
-                " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
-
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
-            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g,
-                FACTION_BAR_COLORS[11].b)
-            isMajor = true
-        else
-            local currentRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (watchedFactionData.reaction or 1))),
-                GW.mysex)
-            local nextRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (watchedFactionData.reaction or 1) + 1)),
-                GW.mysex)
-
-            watchedFactionData.currentStanding = watchedFactionData.currentStanding or 0                   --fallback
-            watchedFactionData.nextReactionThreshold = watchedFactionData.nextReactionThreshold or 0       --fallback
-            watchedFactionData.currentReactionThreshold = watchedFactionData.currentReactionThreshold or 0 --fallback
-            if currentRank == nextRank and watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold == 0 then
-                valPrecRepu = 1
-                gw_reputation_vals = watchedFactionData.name ..
-                    " " .. REPUTATION .. " 21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
-            else
-                valPrecRepu = (watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold) /
-                    (watchedFactionData.nextReactionThreshold - watchedFactionData.currentReactionThreshold)
-                gw_reputation_vals = watchedFactionData.name ..
-                    " " ..
-                    REPUTATION ..
-                    " " ..
-                    GW.GetLocalizedNumber((watchedFactionData.currentStanding - watchedFactionData.currentReactionThreshold)) ..
-                    " / " ..
-                    GW.GetLocalizedNumber((watchedFactionData.nextReactionThreshold - watchedFactionData.currentReactionThreshold)) ..
-                    " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
-            end
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[watchedFactionData.reaction].r,
-                FACTION_BAR_COLORS[watchedFactionData.reaction].g, FACTION_BAR_COLORS[watchedFactionData.reaction].b)
-            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[watchedFactionData.reaction].r,
-                FACTION_BAR_COLORS[watchedFactionData.reaction].g, FACTION_BAR_COLORS[watchedFactionData.reaction].b)
-            isNormal = true
-        end
-
-        local nextId = watchedFactionData.reaction and watchedFactionData.reaction + 1 or 1 --standingId
-        if not lockLevelTextUnderMaxLevel then
-            level = isMajor and MajorCurrentLevel or isFriend and friendReputationInfo.reaction or
-                isParagon and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1)) or
-                isNormal and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1))
-            Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isMajor and MajorNextLevel or
-                isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
-        end
-
-        showBar3 = true
+    if repuLevel and repuNextLevel then
+        level = repuLevel
+        Nextlevel = repuNextLevel
     end
 
-    if shouldShowAzeritBar then
-        showBar2 = true
-        local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-        AzeritLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
+    gw_honor_vals = nil
 
-        if xpForNextPoint > 0 then
-            AzeritVal = azeriteXP / xpForNextPoint
-        else
-            AzeritVal = 0
-        end
-        self.AzeritBar:SetStatusBarColor(
-            FACTION_BAR_COLORS[10].r,
-            FACTION_BAR_COLORS[10].g,
-            FACTION_BAR_COLORS[10].b
-        )
-        self.AzeritBar.animation:Show()
+    if (GW.mylevel == maxPlayerLevel and (UnitInBattleground("player") or event == "PLAYER_ENTERING_BATTLEGROUND")) or IsWatchingHonorAsXP() then
+        showExp = true
+        level = UnitHonorLevel("player")
+        Nextlevel = level + 1
+
+        local currentHonor = UnitHonor("player")
+        local maxHonor = UnitHonorMax("player")
+        valPrec = (maxHonor > 0) and (currentHonor / maxHonor) or 0
+
+        gw_honor_vals = HONOR .. " " .. GW.GetLocalizedNumber(currentHonor) .. " / " .. GW.GetLocalizedNumber(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
+        self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
     end
 
-    if showBar2 then
+    if showAzerite then
         self.AzeritBarCandy:SetValue(AzeritVal)
-
-        AddToAnimation(
-            "AzeritBarAnimation",
-            self.AzeritBar.AzeritBarAnimation,
-            AzeritVal,
-            GetTime(),
-            animationSpeed,
+        AddToAnimation("AzeritBarAnimation", self.AzeritBar.AzeritBarAnimation, AzeritVal, GetTime(), animationSpeed,
             function(p)
-                self.AzeritBar.Spark:SetWidth(
-                    math.max(
-                        8,
-                        math.min(9, self.AzeritBar:GetWidth() * p)
-                    )
-                )
-
+                self.AzeritBar.Spark:SetWidth(math.max(8, math.min(9, self.AzeritBar:GetWidth() * p)))
                 self.AzeritBar:SetValue(p)
                 self.AzeritBar.Spark:SetPoint("LEFT", self.AzeritBar:GetWidth() * p - 8, 0)
-            end
-        )
+            end)
         self.AzeritBar.AzeritBarAnimation = AzeritVal
 
         if maxPlayerLevel == GW.mylevel then
@@ -352,35 +386,14 @@ local function xpbar_OnEvent(self, event)
             self.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
         end
     else
-        local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or
-            "Interface/AddOns/GW2_UI/textures/hud/level-label"
+        local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or "Interface/AddOns/GW2_UI/textures/hud/level-label"
         self.NextLevel:SetTextColor(1, 1, 1)
         self.CurrentLevel:SetTextColor(1, 1, 1)
         self.labelRight:SetTexture(texture)
         self.labelLeft:SetTexture(texture)
     end
 
-    --If we are inside a pvp arena we show the honorbar
-    gw_honor_vals = nil
-
-    if (GW.mylevel == maxPlayerLevel and (UnitInBattleground("player") ~= nil or event == "PLAYER_ENTERING_BATTLEGROUND")) or IsWatchingHonorAsXP() then
-        showBar1 = true
-        level = UnitHonorLevel("player")
-        Nextlevel = level + 1
-
-        local currentHonor = UnitHonor("player")
-        local maxHonor = UnitHonorMax("player")
-        valPrec = currentHonor / maxHonor
-
-        gw_honor_vals =
-            HONOR ..
-            " " ..
-            GW.GetLocalizedNumber(currentHonor) ..
-            " / " .. GW.GetLocalizedNumber(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
-        self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
-    end
-
-    if showBar1 then
+    if showExp then
         local GainBigExp = false
         local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (GW.mylevel / maxPlayerLevel)))
         if (valPrec - experiencebarAnimation) > FlareBreakPoint then
@@ -395,353 +408,96 @@ local function xpbar_OnEvent(self, event)
         self.barOverlay.flare.soundCooldown = 0
         local expSoundCooldown = 0
         local startTime = GetTime()
-
         animationSpeed = Diff(experiencebarAnimation, valPrec)
         animationSpeed = math.min(15, math.max(5, 10 * animationSpeed))
 
-        AddToAnimation(
-            "experiencebarAnimation",
-            experiencebarAnimation,
-            valPrec,
-            GetTime(),
-            animationSpeed,
-            function(step)
-                self.ExpBar.Spark:SetWidth(
-                    math.max(
-                        8,
-                        math.min(9, self.ExpBar:GetWidth() * step)
-                    )
-                )
-
-                if not GainBigExp then
-                    self.ExpBar:SetValue(step)
-                    self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * step - 8, 0)
-
-                    local flarePoint = ((UIParent:GetWidth() - 180) * step) + 90
-                    self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
-                end
-                self.ExpBar.Rested:SetValue(rested)
-                self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT", self.ExpBar:GetWidth() * step, 0)
-
-                if GainBigExp and self.barOverlay.flare.soundCooldown < GetTime() then
-                    expSoundCooldown =
-                        math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
-
-                    self.ExpBar:SetValue(step)
-                    self.ExpBar.Spark:SetPoint(
-                        "LEFT",
-                        self.ExpBar:GetWidth() * step - 8,
-                        0
-                    )
-
-                    local flarePoint = ((UIParent:GetWidth() - 180) * step) + 90
-                    self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
-
-                    self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
-                    PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
-
-                    animations["experiencebarAnimation"].from = step
-                end
+        AddToAnimation("experiencebarAnimation", experiencebarAnimation, valPrec, GetTime(), animationSpeed, function(step)
+            self.ExpBar.Spark:SetWidth(math.max(8, math.min(9, self.ExpBar:GetWidth() * step)))
+            if not GainBigExp then
+                self.ExpBar:SetValue(step)
+                self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * step - 8, 0)
+                local flarePoint = ((UIParent:GetWidth() - 180) * step) + 90
+                self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
             end
-        )
-        AddToAnimation(
-            "GwExperienceBarCandy",
-            experiencebarAnimation,
-            valPrec,
-            GetTime(),
-            0.3,
-            function(p)
-                self.ExpBarCandy:SetValue(p)
+            self.ExpBar.Rested:SetValue(rested)
+            self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT", self.ExpBar:GetWidth() * step, 0)
+
+            if GainBigExp and self.barOverlay.flare.soundCooldown < GetTime() then
+                expSoundCooldown = math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
+                self.ExpBar:SetValue(step)
+                self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * step - 8, 0)
+                local flarePoint = ((UIParent:GetWidth() - 180) * step) + 90
+                self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
+                self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
+                PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+                animations.experiencebarAnimation.from = step
             end
-        )
+        end)
+        AddToAnimation("GwExperienceBarCandy", experiencebarAnimation, valPrec, GetTime(), 0.3, function(p)
+            self.ExpBarCandy:SetValue(p)
+        end)
     end
 
-    if showBar3 then
+    if showRepu then
+        animationSpeed = 15
         self.RepuBarCandy:SetValue(valPrecRepu)
-
-        AddToAnimation(
-            "repuBarAnimation",
-            self.RepuBar.repuBarAnimation,
-            valPrecRepu,
-            GetTime(),
-            animationSpeed,
-            function(p)
-                self.RepuBar.Spark:SetWidth(
-                    math.max(
-                        8,
-                        math.min(9, self.RepuBar:GetWidth() * p)
-                    )
-                )
-
-                self.RepuBar:SetValue(p)
-                self.RepuBar.Spark:SetPoint("LEFT", self.RepuBar:GetWidth() * p - 8, 0)
-            end
-        )
+        AddToAnimation("repuBarAnimation", self.RepuBar.repuBarAnimation, valPrecRepu, GetTime(), animationSpeed, function(p)
+            self.RepuBar.Spark:SetWidth(math.max(8, math.min(9, self.RepuBar:GetWidth() * p)))
+            self.RepuBar:SetValue(p)
+            self.RepuBar.Spark:SetPoint("LEFT", self.RepuBar:GetWidth() * p - 8, 0)
+        end)
         self.RepuBar.repuBarAnimation = valPrecRepu
     end
+
+    LayoutBars(self, showExp, showAzerite, showRepu)
 
     experiencebarAnimation = valPrec
 
     if GW.IsUpcomingSpellAvalible() then
-        Nextlevel = Nextlevel and Nextlevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:20:20:0:0|t" or
-            ""
+        Nextlevel = Nextlevel .. " |TInterface\\AddOns\\GW2_UI\\textures/icons/levelreward-icon:20:20:0:0|t"
     end
-
     if GW.mylevel ~= UnitEffectiveLevel("player") then
         level = level .. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"
     end
 
     self.NextLevel:SetText(Nextlevel)
     self.CurrentLevel:SetText(restingIconString .. level)
-    self.expBarShouldShow = showBar1
-    self.azeritBarShouldShow = showBar2
-    self.repuBarShouldShow = showBar3
-    if showBar1 and showBar2 and showBar3 then
-        self.ExpBar:Show()
-        self.ExpBarCandy:Show()
-        self.ExpBar:SetHeight(2.66)
-        self.ExpBarCandy:SetHeight(2.66)
-        self.ExpBar.Spark:SetHeight(2.66)
-        self.ExpBar.Spark:Show()
-        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
-        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
-        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
-
-        self.AzeritBar:Show()
-        self.AzeritBarCandy:Show()
-        self.AzeritBar.animation:Show()
-        self.AzeritBar:SetHeight(2.66)
-        self.AzeritBar.animation:SetHeight(2.66)
-        self.AzeritBarCandy:SetHeight(2.66)
-        self.AzeritBar.Spark:SetHeight(2.66)
-        self.AzeritBar.Spark:Show()
-        self.AzeritBarCandy:SetPoint("TOPLEFT", 90, -8)
-        self.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -8)
-        self.AzeritBar:SetPoint("TOPLEFT", 90, -8)
-        self.AzeritBar:SetPoint("TOPRIGHT", -90, -8)
-
-        self.RepuBar:Show()
-        self.RepuBarCandy:Show()
-        self.RepuBar:SetHeight(2.66)
-        self.RepuBarCandy:SetHeight(2.66)
-        self.RepuBar.Spark:SetHeight(2.66)
-        self.RepuBar.Spark:Show()
-        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -12)
-        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -12)
-        self.RepuBar:SetPoint("TOPLEFT", 90, -12)
-        self.RepuBar:SetPoint("TOPRIGHT", -90, -12)
-    elseif showBar1 and not showBar2 and showBar3 then
-        self.ExpBar:Show()
-        self.ExpBarCandy:Show()
-        self.ExpBar:SetHeight(4)
-        self.ExpBarCandy:SetHeight(4)
-        self.ExpBar.Spark:SetHeight(4)
-        self.ExpBar.Spark:Show()
-        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
-        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
-        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
-
-        self.AzeritBar:Hide()
-        self.AzeritBarCandy:Hide()
-        self.AzeritBar.animation:Hide()
-        self.AzeritBar:SetValue(0)
-        self.AzeritBarCandy:SetValue(0)
-        self.AzeritBar.Spark:Hide()
-
-        self.RepuBar:Show()
-        self.RepuBarCandy:Show()
-        self.RepuBar:SetHeight(4)
-        self.RepuBarCandy:SetHeight(4)
-        self.RepuBar.Spark:SetHeight(4)
-        self.RepuBar.Spark:Show()
-        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -8)
-        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -8)
-        self.RepuBar:SetPoint("TOPLEFT", 90, -8)
-        self.RepuBar:SetPoint("TOPRIGHT", -90, -8)
-    elseif not showBar1 and showBar2 and showBar3 then
-        self.ExpBar:Hide()
-        self.ExpBarCandy:Hide()
-        self.ExpBar:SetValue(0)
-        self.ExpBarCandy:SetValue(0)
-        self.ExpBar.Spark:Hide()
-
-        self.AzeritBar:Show()
-        self.AzeritBarCandy:Show()
-        self.AzeritBar.animation:Show()
-        self.AzeritBar:SetHeight(4)
-        self.AzeritBar.animation:SetHeight(4)
-        self.AzeritBarCandy:SetHeight(4)
-        self.AzeritBar.Spark:SetHeight(4)
-        self.AzeritBar.Spark:Show()
-        self.AzeritBarCandy:SetPoint("TOPLEFT", 90, -4)
-        self.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        self.AzeritBar:SetPoint("TOPLEFT", 90, -4)
-        self.AzeritBar:SetPoint("TOPRIGHT", -90, -4)
-
-        self.RepuBar:Show()
-        self.RepuBarCandy:Show()
-        self.RepuBar:SetHeight(4)
-        self.RepuBarCandy:SetHeight(4)
-        self.RepuBar.Spark:SetHeight(4)
-        self.RepuBar.Spark:Show()
-        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -8)
-        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -8)
-        self.RepuBar:SetPoint("TOPLEFT", 90, -8)
-        self.RepuBar:SetPoint("TOPRIGHT", -90, -8)
-    elseif not showBar1 and not showBar2 and showBar3 then
-        self.ExpBar:Hide()
-        self.ExpBarCandy:Hide()
-        self.ExpBar:SetValue(0)
-        self.ExpBarCandy:SetValue(0)
-        self.ExpBar.Spark:Hide()
-
-        self.AzeritBar:Hide()
-        self.AzeritBarCandy:Hide()
-        self.AzeritBar.animation:Hide()
-        self.AzeritBar:SetValue(0)
-        self.AzeritBarCandy:SetValue(0)
-        self.AzeritBar.Spark:Hide()
-
-        self.RepuBar:Show()
-        self.RepuBarCandy:Show()
-        self.RepuBar:SetHeight(8)
-        self.RepuBarCandy:SetHeight(8)
-        self.RepuBar.Spark:SetHeight(8)
-        self.RepuBar.Spark:Show()
-        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -4)
-        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        self.RepuBar:SetPoint("TOPLEFT", 90, -4)
-        self.RepuBar:SetPoint("TOPRIGHT", -90, -4)
-    elseif not showBar1 and not showBar2 and not showBar3 then
-        self.ExpBar:Hide()
-        self.ExpBarCandy:Hide()
-        self.ExpBar:SetValue(0)
-        self.ExpBarCandy:SetValue(0)
-        self.ExpBar.Spark:Hide()
-
-        self.AzeritBar:Hide()
-        self.AzeritBarCandy:Hide()
-        self.AzeritBar.animation:Hide()
-        self.AzeritBar:SetValue(0)
-        self.AzeritBarCandy:SetValue(0)
-        self.AzeritBar.Spark:Hide()
-
-        self.RepuBar:Hide()
-        self.RepuBarCandy:Hide()
-        self.RepuBar:SetValue(0)
-        self.RepuBarCandy:SetValue(0)
-        self.RepuBar.Spark:Hide()
-    elseif showBar1 and not showBar2 and not showBar3 then
-        self.ExpBar:Show()
-        self.ExpBarCandy:Show()
-        self.ExpBar:SetHeight(8)
-        self.ExpBarCandy:SetHeight(8)
-        self.ExpBar.Spark:SetHeight(8)
-        self.ExpBar.Spark:Show()
-        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
-        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
-        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
-
-        self.AzeritBar:Hide()
-        self.AzeritBarCandy:Hide()
-        self.AzeritBar.animation:Hide()
-        self.AzeritBar:SetValue(0)
-        self.AzeritBarCandy:SetValue(0)
-        self.AzeritBar.Spark:Hide()
-
-        self.RepuBar:Hide()
-        self.RepuBarCandy:Hide()
-        self.RepuBar:SetValue(0)
-        self.RepuBarCandy:SetValue(0)
-        self.RepuBar.Spark:Hide()
-    elseif showBar1 and showBar2 and not showBar3 then
-        self.ExpBar:Show()
-        self.ExpBarCandy:Show()
-        self.ExpBar:SetHeight(4)
-        self.ExpBarCandy:SetHeight(4)
-        self.ExpBar.Spark:SetHeight(4)
-        self.ExpBar.Spark:Show()
-        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
-        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
-        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
-
-        self.AzeritBar:Show()
-        self.AzeritBarCandy:Show()
-        self.AzeritBar.animation:Show()
-        self.AzeritBar:SetHeight(4)
-        self.AzeritBar.animation:SetHeight(4)
-        self.AzeritBarCandy:SetHeight(4)
-        self.AzeritBar.Spark:SetHeight(4)
-        self.AzeritBar.Spark:Show()
-        self.AzeritBarCandy:SetPoint("TOPLEFT", 90, -8)
-        self.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -8)
-        self.AzeritBar:SetPoint("TOPLEFT", 90, -8)
-        self.AzeritBar:SetPoint("TOPRIGHT", -90, -8)
-
-        self.RepuBar:Hide()
-        self.RepuBarCandy:Hide()
-        self.RepuBar:SetValue(0)
-        self.RepuBarCandy:SetValue(0)
-        self.RepuBar.Spark:Hide()
-    elseif not showBar1 and showBar2 and not showBar3 then
-        self.ExpBar:Hide()
-        self.ExpBarCandy:Hide()
-        self.ExpBar:SetValue(0)
-        self.ExpBarCandy:SetValue(0)
-        self.ExpBar.Spark:Hide()
-
-        self.AzeritBar:Show()
-        self.AzeritBarCandy:Show()
-        self.AzeritBar.animation:Show()
-        self.AzeritBar:SetHeight(8)
-        self.AzeritBar.animation:SetHeight(8)
-        self.AzeritBarCandy:SetHeight(8)
-        self.AzeritBar.Spark:SetHeight(8)
-        self.AzeritBar.Spark:Show()
-        self.AzeritBarCandy:SetPoint("TOPLEFT", 90, -4)
-        self.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        self.AzeritBar:SetPoint("TOPLEFT", 90, -4)
-        self.AzeritBar:SetPoint("TOPRIGHT", -90, -4)
-
-        self.RepuBar:Hide()
-        self.RepuBarCandy:Hide()
-        self.RepuBar:SetValue(0)
-        self.RepuBarCandy:SetValue(0)
-        self.RepuBar.Spark:Hide()
-    end
-
-    if experiencebarAnimation > valPrec then
-        experiencebarAnimation = 0
-    end
+    self.expBarShouldShow = showExp
+    self.azeritBarShouldShow = showAzerite
+    self.repuBarShouldShow = showRepu
 end
-GW.AddForProfiling("hud", "xpbar_OnEvent", xpbar_OnEvent)
 
 local function animateAzeriteBar(self, elapsed)
-    self:SetPoint("RIGHT", self:GetParent():GetParent().AzeritBar.Spark, "RIGHT", 0, 0)
+    local parent = self:GetParent():GetParent()
+    local AzeritBar = parent.AzeritBar
+    local spark = AzeritBar.Spark
+    local value = AzeritBar:GetValue()
+
+    self:SetPoint("RIGHT", spark, "RIGHT", 0, 0)
+
     local speed = 0.01
-    self.prog = self.prog + (speed * elapsed)
+    self.prog = self.prog + speed * elapsed
     if self.prog > 1 then
         self.prog = 0
     end
+    local prog = self.prog
 
-    self.texture1:SetTexCoord(0, self:GetParent():GetParent().AzeritBar:GetValue(), 0, 1)
-    self.texture2:SetTexCoord(self:GetParent():GetParent().AzeritBar:GetValue(), 0, 1, 0)
+    self.texture1:SetTexCoord(0, value, 0, 1)
+    self.texture2:SetTexCoord(value, 0, 1, 0)
 
-    if self.prog < 0.2 then
-        self.texture2:SetVertexColor(1, 1, 1, lerp(0, 1, self.prog / 0.2))
-    elseif self.prog > 0.8 then
-        self.texture2:SetVertexColor(1, 1, 1, lerp(1, 0, (self.prog - 0.8) / 0.2))
+    if prog < 0.2 then
+        self.texture2:SetVertexColor(1, 1, 1, lerp(0, 1, prog / 0.2))
+    elseif prog > 0.8 then
+        self.texture2:SetVertexColor(1, 1, 1, lerp(1, 0, (prog - 0.8) / 0.2))
     end
-    if self.prog > 0.5 then
-        self.texture1:SetVertexColor(1, 1, 1, lerp(0.3, 0, (self.prog - 0.5) / 0.5))
-    elseif self.prog < 0.5 then
-        self.texture1:SetVertexColor(1, 1, 1, lerp(0, 0.3, self.prog / 0.5))
+
+    if prog < 0.5 then
+        self.texture1:SetVertexColor(1, 1, 1, lerp(0, 0.3, prog / 0.5))
+    else
+        self.texture1:SetVertexColor(1, 1, 1, lerp(0.3, 0, (prog - 0.5) / 0.5))
     end
-    self.texture2:SetTexCoord(1 - self.prog, self.prog, 1, 0)
+
+    self.texture2:SetTexCoord(1 - prog, prog, 1, 0)
 end
 GW.AddForProfiling("hud", "animateAzeriteBar", animateAzeriteBar)
 
@@ -783,8 +539,6 @@ local function registerActionHudAura(auraID, left, right, unit, modelFX)
     end
 end
 GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
-
-
 
 -- For creates a model effect somewhere on the hud with a trigger buff
 local function createModelFx(modelFX)
@@ -837,11 +591,11 @@ local function selectBg(self)
     end
 
     if GW.myClassID == 11 then --Druid
-        local ShapeshiftFormID = GetShapeshiftFormID()
-        if ShapeshiftFormID == BEAR_FORM then
+        local form = GetShapeshiftFormID()
+        if form == BEAR_FORM then
             right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_bear"
             left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_bear"
-        elseif ShapeshiftFormID == CAT_FORM then
+        elseif form == CAT_FORM then
             right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_cat"
             left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_cat"
         end
@@ -856,26 +610,26 @@ local function selectBg(self)
         right = "Interface/AddOns/GW2_UI/textures/hud/rightshadowcombat"
         left = "Interface/AddOns/GW2_UI/textures/hud/leftshadowcombat"
 
-        local bolFound = false
-        --player buffs
-        for k, v in pairs(actionHudPlayerAuras) do
-            local auraData = C_UnitAuras.GetPlayerAuraBySpellID(k)
-            if auraData then
-                right = v.right
-                left = v.left
-                modelFX = v.modelFX
-                bolFound = true
+        local auraFound = false
+        for spellID, auraData in pairs(actionHudPlayerAuras) do
+            if C_UnitAuras.GetPlayerAuraBySpellID(spellID) then
+                right = auraData.right
+                left = auraData.left
+                modelFX = auraData.modelFX
+                auraFound = true
                 break
             end
         end
+
         -- pet buffs
-        if not bolFound then
+        if not auraFound then
             for i = 1, 40 do
                 local auraData = C_UnitAuras.GetBuffDataByIndex("pet", i)
-                if auraData and actionHudPlayerPetAuras[auraData.spellId] and actionHudPlayerPetAuras[auraData.spellId].unit == "pet" then
-                    right = actionHudPlayerPetAuras[auraData.spellId].right
-                    left = actionHudPlayerPetAuras[auraData.spellId].left
-                    modelFX = actionHudPlayerPetAuras[auraData.spellId].modelFX
+                local petAura = auraData and actionHudPlayerPetAuras[auraData.spellId]
+                if petAura and petAura.unit == "pet" then
+                    right = petAura.right
+                    left = petAura.left
+                    modelFX = petAura.modelFX
                     break
                 end
             end
@@ -884,7 +638,7 @@ local function selectBg(self)
 
     if modelFX then
         createModelFx(modelFX)
-    elseif not modelFX and self.actionBarHudFX:IsShown() and not GwHudFXDebug then
+    elseif self.actionBarHudFX:IsShown() and not GwHudFXDebug then
         self.actionBarHudFX:Hide()
     end
 
@@ -893,16 +647,10 @@ local function selectBg(self)
         self.actionBarHud.Right:SetTexture(right)
         self.actionBarHud.Left:SetTexture(left)
 
-        AddToAnimation(
-            "DynamicHud",
-            0,
-            1,
-            GetTime(),
-            0.2,
-            function(prog)
-                self.actionBarHud.Right:SetAlpha(prog)
-                self.actionBarHud.Left:SetAlpha(prog)
-            end)
+        AddToAnimation("DynamicHud", 0, 1, GetTime(), 0.2, function(prog)
+            self.actionBarHud.Right:SetAlpha(prog)
+            self.actionBarHud.Left:SetAlpha(prog)
+        end)
     end
 end
 GW.AddForProfiling("hud", "selectBg", selectBg)
@@ -1142,7 +890,6 @@ end)
 
 
 local function hud_OnEvent(self, event, ...)
-    print(event, ...)
     if event == "UNIT_AURA" then
         selectBg(self)
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
@@ -1173,8 +920,6 @@ local function ToggleHudBackground()
                 f:Hide()
             end
         end
-
-        --Gw2MicroBarFrame.cf.bg:SetShown(showBorder)
     end
 end
 GW.ToggleHudBackground = ToggleHudBackground
