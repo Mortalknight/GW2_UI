@@ -12,7 +12,6 @@ local mapRects, tempVec2D = {}, CreateVector2D(0, 0)
 local cleuEventListener = {}
 local asyncQueue = {}
 local cleuTicker = nil
-local tasksPerFrame = 5
 
 lib.callbacks = CallbackHandler:New(lib)
 
@@ -59,17 +58,13 @@ local function EnableCLEU()
     GW.Debug("CLEU ENABLED")
 
     cleuTicker = C_Timer.NewTicker(0.1, function()
+        GW.Debug(#asyncQueue)
         local queuedFunc = table.remove(asyncQueue, 1)
-        local count = 0
         while queuedFunc do
             if queuedFunc then
                 queuedFunc()
             end
-            if count >= tasksPerFrame then
-                break
-            end
             queuedFunc = table.remove(asyncQueue, 1)
-            count = count + 1
         end
     end)
 end
