@@ -1,5 +1,4 @@
 local _, GW = ...
-local PowerBarColorCustom = GW.PowerBarColorCustom
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local SetClassIcon = GW.SetClassIcon
 local AddToClique = GW.AddToClique
@@ -163,7 +162,7 @@ function GwPartyFrameMixin:SetUnitName()
     self.name:SetText(nameString)
 end
 
-function GwPartyFrameMixin:SetHealthValue(healthCur, healthMax, healthPrec)
+function GwPartyFrameMixin:UpdateHealthTextString(healthCur, healthPrec, healthMax)
     if GW.settings.PARTY_UNIT_HEALTH == "NONE" then
         self.healthString:Hide()
         return
@@ -186,45 +185,9 @@ function GwPartyFrameMixin:SetHealthValue(healthCur, healthMax, healthPrec)
     self.healthString:Show()
 end
 
-function GwPartyFrameMixin:SetAbsorbAmount()
-    local health, healthMax = UnitHealth(self.unit), UnitHealthMax(self.unit)
-    local absorb = UnitGetTotalAbsorbs(self.unit)
-    local healthPrec = (healthMax > 0) and (health / healthMax) or 0
-    local absorbPerc = (absorb > 0 and healthMax > 0) and (absorb / healthMax) or 0
-    local fillAmount = healthPrec + absorbPerc
-    local overlayAmount = absorbPerc - (1 - healthPrec)
-    self.absorbbg:SetFillAmount(fillAmount)
-    self.absorbOverlay:SetFillAmount(overlayAmount)
-end
-
-function GwPartyFrameMixin:SetUnitHealAbsorb()
-    local healthMax = UnitHealthMax(self.unit)
-    local healAbsorb = UnitGetTotalHealAbsorbs(self.unit)
-    local fill = (healAbsorb > 0 and healthMax > 0) and min(1, healAbsorb / healthMax) or 0
-    self.antiHeal:SetFillAmount(fill)
-end
-
-function GwPartyFrameMixin:SetHealPrediction(predPerc)
-    self.healPrediction:SetFillAmount(predPerc)
-end
-
-function GwPartyFrameMixin:SetHealth()
-    local health, healthMax = UnitHealth(self.unit), UnitHealthMax(self.unit)
-    local healthPrec = (healthMax > 0) and (health / healthMax) or 0
-    local prediction = UnitGetIncomingHeals(self.unit) or 0
-    local predPerc = (healthMax > 0) and math.min(healthPrec + (prediction / healthMax), 1) or 0
-    self:SetHealPrediction(predPerc)
-    self:SetHealthValue(health, healthMax, healthPrec)
-    self.health:SetFillAmount(healthPrec)
-end
-
 function GwPartyFrameMixin:UpdateFrame()
-    if not UnitExists(self.unit) then return end
-
     self:UpdatePowerBar()
-    self:SetHealth()
-    self:SetUnitHealAbsorb()
-    self:SetAbsorbAmount()
+    self:UpdateHealthBar()
     self:SetUnitName()
     self:UpdateAwayData()
     self:UpdatePortrait()
@@ -234,7 +197,7 @@ function GwPartyFrameMixin:UpdateFrame()
 end
 
 function GwPartyFrameMixin:OnEvent(event, unit, ...)
-    if (not UnitExists(self.unit) or IsInRaid()) and event ~= "load" then return end
+    if (not UnitExists(self.unit) or IsInRaid()) or not self:IsVisible() and event ~= "load" then return end
 
     if event == "load" then
         self:UpdateFrame()
@@ -245,19 +208,13 @@ function GwPartyFrameMixin:OnEvent(event, unit, ...)
         self:SetUnitName()
     end
 
-    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
-        self:SetHealth()
+    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" or event == "UNIT_HEAL_PREDICTION" or event == "UNIT_ABSORB_AMOUNT_CHANGED" or event == "UNIT_HEAL_ABSORB_AMOUNT_CHANGED" then
+        self:UpdateHealthBar()
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         self:UpdatePowerBar()
     elseif IsIn(event, "UNIT_LEVEL", "GROUP_ROSTER_UPDATE", "UNIT_MODEL_CHANGED") then
         self:UpdateFrame()
         self.auras:ForceUpdate()
-    elseif event == "UNIT_HEAL_PREDICTION" then
-        self:SetHealth()
-    elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" then
-        self:SetAbsorbAmount()
-    elseif event == "UNIT_HEAL_ABSORB_AMOUNT_CHANGED" then
-        self:SetUnitHealAbsorb()
     elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
         self:UpdateAwayData()
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
