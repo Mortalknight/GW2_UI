@@ -561,7 +561,6 @@ local function RescanAllNameplates()
 end
 
 local function ToggleFormat(activate)
-    print(activate)
     if activate then
         GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_DAMAGE", handleCombatLogEvent)
         GW.Libs.GW2Lib:RegisterCombatEvent(eventHandler, "_MISSED", handleCombatLogEvent)

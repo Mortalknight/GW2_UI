@@ -280,7 +280,7 @@
         </Layers>
     </Frame>
 
-    <Frame name="GwCastingBar" virtual="true" frameStrata="DIALOG">
+    <Frame name="GwCastingBar" virtual="true" frameStrata="DIALOG" mixin="GwCastingBarMixin">
         <Size x="176" y="15"></Size>
         <Anchors>
             <Anchor point="CENTER"></Anchor>

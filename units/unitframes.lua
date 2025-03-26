@@ -398,7 +398,7 @@ function GwUnitFrameMixin:HideCastBar()
     if self.castingbarSpark then self.castingbarSpark:Hide() end
     if self.castingbarNormal then self.castingbarNormal:Hide() end
 
-    GW.ClearStages(self)
+    self:ClearStages()
 
     if self.portrait then
         self:SetUnitPortrait()
@@ -415,7 +415,6 @@ end
 function GwUnitFrameMixin:UpdateCastValues()
     local numStages = 0
     local barTexture = GW.CASTINGBAR_TEXTURES.YELLOW.NORMAL
-    local barHighlightTexture = GW.CASTINGBAR_TEXTURES.YELLOW.HIGHLIGHT
 
     local isCasting, isChanneling, reverseChanneling = true, false, false
 
@@ -425,8 +424,9 @@ function GwUnitFrameMixin:UpdateCastValues()
         name, _, texture, startTime, endTime, _, notInterruptible, _, _, numStages = UnitChannelInfo(self.unit)
         isCasting, isChanneling, reverseChanneling = false, true, false
         barTexture = GW.CASTINGBAR_TEXTURES.GREEN.NORMAL
-        barHighlightTexture = GW.CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
     end
+
+    self.castingbarNormal.internalBar:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barTexture)
 
     local isChargeSpell = numStages and numStages > 0 or false
 
@@ -443,8 +443,6 @@ function GwUnitFrameMixin:UpdateCastValues()
     self.isCasting = isCasting
     self.isChanneling = isChanneling
     self.reverseChanneling = reverseChanneling
-    self.barCoords = barTexture
-    self.barHighLightCoords = barHighlightTexture
     self.numStages = numStages and (numStages + 1) or 0
     self.maxValue = (endTime - startTime) / 1000
     startTime, endTime = startTime / 1000, endTime / 1000
@@ -484,9 +482,9 @@ function GwUnitFrameMixin:UpdateCastValues()
     end
 
     if reverseChanneling then
-        GW.AddStages(self, cbBackground, self.barWidth)
+        self:AddStages(cbBackground, self.barWidth)
     else
-        GW.ClearStages(self)
+        self:ClearStages()
     end
 
     AddToAnimation(
