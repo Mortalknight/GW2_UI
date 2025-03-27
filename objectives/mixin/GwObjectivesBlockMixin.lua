@@ -175,11 +175,11 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
     objectiveBlock:Show()
     local formattedText = text
     if options.isReceip then
-        if options.qty < options.totalqty then
-            objectiveBlock.ObjectiveText:SetText(GW.GetLocalizedNumber(options.qty) .. "/" .. GW.GetLocalizedNumber(options.totalqty) .. " " .. text)
+        if options.qty and options.qty < options.totalqty then
+            formattedText = GW.GetLocalizedNumber(options.qty) .. "/" .. GW.GetLocalizedNumber(options.totalqty) .. " " .. text
         end
     elseif options.isAchievement then
-        GW.FormatObjectiveNumbers(text)
+        formattedText = GW.FormatObjectiveNumbers(text)
     end
     objectiveBlock.ObjectiveText:SetText(formattedText)
     objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
