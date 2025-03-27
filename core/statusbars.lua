@@ -6,6 +6,11 @@ local numSpritesInAnimation = 254
 local uniqueID = 0
 local round = GW.RoundInt
 
+local floor = math.floor
+local ceil = math.ceil
+local abs = math.abs
+local max = math.max
+
 --[[
 
 Bar:SetFillAmount(amount)
@@ -30,14 +35,12 @@ local BarAnimateTypes = {All = 1, Decay = 2, Regenerate = 3}
 local BarInterpolation = {Ease = 1, Linear = 2}
 GW.BarAnimateTypes = BarAnimateTypes
 
-local function getAnimationDurationDynamic(self,val1,val2,width)
-    if width == nil then width = 0 end
+local function getAnimationDurationDynamic(self, val1, val2, width)
+    width = width or 0
     local speed = self.speed or 500
-    speed = math.max(0.0000001, speed * math.abs(val1 - val2))
-    local t = (width * math.abs(val1 - val2)) / speed
-    return t
+    speed = max(0.0000001, speed * abs(val1 - val2))
+    return (width * abs(val1 - val2)) / speed
 end
-
 local function addMask(self, mask)
     self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. mask)
 end
@@ -47,7 +50,8 @@ local function GetFillAmount(self)
 end
 
 local function SetFillAmount(self, value, forced)
-    local isVertical = (self:GetOrientation() == "VERTICAL") or false
+    local orientation = self:GetOrientation()
+    local isVertical = (orientation == "VERTICAL")
     local isReverseFill = self:GetReverseFill()
     local totalWidth = self.totalWidth or (isVertical and self:GetHeight() or self:GetWidth())
     local height = self.totalHeight or (isVertical and self:GetWidth() or self:GetHeight())
@@ -63,19 +67,14 @@ local function SetFillAmount(self, value, forced)
     self.fillAmount = value
 
     local numberOfSegments = totalWidth / maskHeightValue
-    local numberOfSegmentsRound = math.ceil(numberOfSegments)
-
+    local numberOfSegmentsRound = ceil(numberOfSegments)
     local segmentSize = totalWidth / numberOfSegmentsRound
-
-    local currentSegmentIndex = math.floor(numberOfSegmentsRound * value)
+    local currentSegmentIndex = floor(numberOfSegmentsRound * value)
     local currentSegmentPosition = currentSegmentIndex * segmentSize
-
     local barPosition = ((currentSegmentIndex + 1) * segmentSize) / totalWidth
-
     local rampStartPoint = (segmentSize * currentSegmentIndex)
     local rampEndPoint = (segmentSize * (currentSegmentIndex + 1))
     local rampProgress = (barWidth - rampStartPoint) / (rampEndPoint - rampStartPoint)
-
     local interpolateRamp = lerp(numSpritesInAnimation, 0, rampProgress)
     local interpolateRampRound = round(interpolateRamp)
 
@@ -126,10 +125,11 @@ end
 
 local function barUpdate(self, delta)
     self.animatedTime = self.animatedTime + delta
-    local animationProgress = self.animatedTime / math.max(0.00000001, self.animatedDuration)
+    local duration = max(0.00000001, self.animatedDuration)
+    local animationProgress = self.animatedTime / duration
     local newValue = 0
     if self.BarInterpolation and self.BarInterpolation == BarInterpolation.Linear then
-        newValue = Lerp(self.animatedStartValue, self.animatedValue, animationProgress)
+        newValue = lerp(self.animatedStartValue, self.animatedValue, animationProgress) -- LERP?
     else
         newValue = lerpEaseOut(self.animatedStartValue, self.animatedValue, animationProgress)
     end
@@ -162,7 +162,7 @@ local function onupdate_AnimateBar(self, value)
     self.animatedTime = 0
     self.animatedDuration = getAnimationDurationDynamic(self, self.animatedStartValue, self.animatedValue, self:GetWidth())
 
-    if self.onAnimationStart ~= nil then
+    if self.onAnimationStart then
         self.onAnimationStart(self, value)
     end
 
@@ -181,11 +181,10 @@ local function ForceFillAmount(self, value)
 end
 
 local function addToBarMask(self, texture)
-    if texture == nil then
-        return
+    if texture then
+        texture:AddMaskTexture(self.maskContainer.mask0)
+        texture:AddMaskTexture(self.maskOverflow.mask)
     end
-    texture:AddMaskTexture(self.maskContainer.mask0)
-    texture:AddMaskTexture(self.maskOverflow.mask)
 end
 
 local function SetReverseFill(self, reverse)

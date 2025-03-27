@@ -6,6 +6,12 @@ local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverri
 local Debug = GW.Debug
 local AFP = GW.AddProfiling
 
+local sin = math.sin
+local pi = math.pi
+local GetTime = GetTime
+local min = math.min
+local max = math.max
+
 local animations = GW.animations
 
 local l = CreateFrame("Frame") -- Main event frame
@@ -38,14 +44,14 @@ end
 
 function GW2_ADDON_OnAddonCompartmentEnter(_, menuButtonFrame)
     GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_NONE");
-    GameTooltip:SetPoint("TOPRIGHT", menuButtonFrame, "BOTTOMRIGHT", 0, 0);
+    GameTooltip:SetPoint("TOPRIGHT", menuButtonFrame, "BOTTOMRIGHT", 0, 0)
     GameTooltip:ClearLines()
     GameTooltip:AddDoubleLine(addonName, C_AddOns.GetAddOnMetadata(addonName, "Version"))
     GameTooltip:Show()
 end
 
 function GW2_ADDON_OnAddonCompartmentLeave(addonName, button)
-    GameTooltip:Hide();
+    GameTooltip:Hide()
 end
 
 local function disableMABags()
@@ -107,9 +113,9 @@ GW.AddToAnimation = AddToAnimation
     rows = 3
 }
 ]]--
-local function getSprite(map,x,y)
-    local pw = (map.width / map.colums) / map.width
-    local ph = (map.height / map.rows) / map.height
+local function getSprite(map, x, y)
+    local pw = 1 / map.colums
+    local ph = 1 / map.rows
 
     local left = pw * (x - 1)
     local right = pw * x
@@ -117,35 +123,37 @@ local function getSprite(map,x,y)
     local top = ph * (y - 1)
     local bottom = ph * y
 
-    return left, right, top, bottom;
+    return left, right, top, bottom
 end
 GW.getSprite = getSprite
 
 local function getSpriteByIndex(map, index)
-    if map == nil then
+    if not map then
         return 0, 0, 0, 0
     end
 
-    local tileWidth =  map.width / map.colums
-    local tileHeight =  map.height / map.rows
+    local w, h = map.width, map.height
+    local cols, rows = map.colums, map.rows
 
-    local tilesPerColums = map.width / tileWidth
-    --local tilesPerRow = map.height / tileHeight
+    local tileWidth = w / cols
+    local tileHeight = h / rows
 
-    local left = tileWidth * (index % tilesPerColums)
-    local top =  tileHeight * math.floor(index / tilesPerColums)
+    local col = index % cols
+    local row = math.floor(index / cols)
 
-    local bottom = top + tileHeight
+    local left = tileWidth * col
+    local top = tileHeight * row
     local right = left + tileWidth
+    local bottom = top + tileHeight
 
-    return left / map.width, right / map.width, top / map.height,bottom / map.height
+    return left / w, right / w, top / h, bottom / h
 end
 GW.getSpriteByIndex = getSpriteByIndex
 
 local function TriggerButtonHoverAnimation(self, hover, to, duration)
-    local name = self.animationName or self.GetName and self:GetName() or tostring(self)
+    local name = self.animationName or (self.GetName and self:GetName()) or tostring(self)
     hover:SetAlpha(1)
-    duration = duration or math.min(1, self:GetWidth() * 0.002)
+    duration = duration or min(1, self:GetWidth() * 0.002)
     AddToAnimation(
         name,
         self.animationValue or 0,
@@ -154,15 +162,14 @@ local function TriggerButtonHoverAnimation(self, hover, to, duration)
         duration,
         function(p)
             local w = self:GetWidth()
-
             local lerp = GW.lerp(0, w + (w * 0.5), p)
-            local lerp2 = math.min(1, math.max(0.4, math.min(1, GW.lerp(0.4, 1, p))))
-            local stripAmount = 1 - math.max(0, (lerp / w) - 1)
+            local lerp2 = min(1, max(0.4, GW.lerp(0.4, 1, p)))
+            local stripAmount = 1 - max(0, (lerp / w) - 1)
             if self.limitHoverStripAmount then
-                stripAmount = math.max(self.limitHoverStripAmount, stripAmount)
+                stripAmount = max(self.limitHoverStripAmount, stripAmount)
             end
 
-            hover:SetPoint("RIGHT", self, "LEFT", math.min(w, lerp) , 0)
+            hover:SetPoint("RIGHT", self, "LEFT", min(w, lerp) , 0)
             hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
             hover:SetTexCoord(0, stripAmount, 0, 1)
         end
@@ -194,13 +201,15 @@ local function SetClassIcon(self, class)
     if class == nil then
         class = 0
     end
+    local tex = CLASS_ICONS[class]
 
-    self:SetTexCoord(CLASS_ICONS[class].l, CLASS_ICONS[class].r, CLASS_ICONS[class].t, CLASS_ICONS[class].b)
+    self:SetTexCoord(tex.l, tex.r, tex.t, tex.b)
 end
 GW.SetClassIcon = SetClassIcon
 
 local function SetDeadIcon(self)
-    self:SetTexCoord(CLASS_ICONS["dead"].l, CLASS_ICONS["dead"].r, CLASS_ICONS["dead"].t, CLASS_ICONS["dead"].b)
+    local tex = CLASS_ICONS.dead
+    self:SetTexCoordt(tex.l, tex.r, tex.t, tex.b)
 end
 GW.SetDeadIcon = SetDeadIcon
 
@@ -237,31 +246,31 @@ local function gw_OnUpdate(_, elapsed)
     local time = GetTime()
     for _, v in pairs(animations) do
         count = count + 1
-        if v.completed == false and time >= (v.start + v.duration) then
-            if v.easeing == nil then
-                v.progress = GW.lerp(v.from, v.to, math.sin(1 * math.pi * 0.5))
-            else
-                v.progress = GW.lerp(v.from, v.to, 1)
-            end
-            if v.method then
-                v.method(v.progress)
-            end
 
-            if v.onCompleteCallback then
-                v.onCompleteCallback()
-            end
+        if not v.completed then
+            if time >= (v.start + v.duration) then
+                local t = v.easeing and 1 or sin(pi * 0.5)
+                v.progress = GW.lerp(v.from, v.to, t)
 
-            v.completed = true
-            foundAnimation = true
-        end
-        if v.completed == false then
-            if v.easeing == nil then
-                v.progress = GW.lerp(v.from, v.to, math.sin((time - v.start) / v.duration * math.pi * 0.5))
+                if v.method then
+                    v.method(v.progress)
+                end
+
+                if v.onCompleteCallback then
+                    v.onCompleteCallback()
+                end
+
+                v.completed = true
+                foundAnimation = true
             else
-                v.progress = GW.lerp(v.from, v.to, (time - v.start) / v.duration)
+                local t = v.easeing and ((time - v.start) / v.duration) or sin((time - v.start) / v.duration * pi * 0.5)
+                v.progress = GW.lerp(v.from, v.to, t)
+
+                if v.method then
+                    v.method(v.progress)
+                end
+                foundAnimation = true
             end
-            v.method(v.progress)
-            foundAnimation = true
         end
     end
 
@@ -270,15 +279,16 @@ local function gw_OnUpdate(_, elapsed)
     end
 
     --Swim hud
-    if lastSwimState ~= IsSwimming() then
-        if IsSwimming() then
+    local swimming = IsSwimming()
+    if lastSwimState ~= swimming then
+        if swimming then
             AddToAnimation("swimAnimation", swimAnimation, 1, time, 0.1, swimAnim)
             swimAnimation = 1
         else
             AddToAnimation("swimAnimation", swimAnimation, 0, time, 3.0, swimAnim)
             swimAnimation = 0
         end
-        lastSwimState = IsSwimming()
+        lastSwimState = swimming
     end
 
     for _, cb in ipairs(updateCB) do
