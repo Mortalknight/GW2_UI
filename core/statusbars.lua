@@ -31,6 +31,8 @@ bar.speed
 
 ]]
 
+GwAnimatedStatusBarMixin = {}
+
 local BarAnimateTypes = {All = 1, Decay = 2, Regenerate = 3}
 local BarInterpolation = {Ease = 1, Linear = 2}
 GW.BarAnimateTypes = BarAnimateTypes
@@ -41,15 +43,20 @@ local function getAnimationDurationDynamic(self, val1, val2, width)
     speed = max(0.0000001, speed * abs(val1 - val2))
     return (width * abs(val1 - val2)) / speed
 end
-local function addMask(self, mask)
+function GwAnimatedStatusBarMixin:AddMask(mask)
     self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. mask)
 end
 
-local function GetFillAmount(self)
+function GwAnimatedStatusBarMixin:GetFillAmount()
     return self.fillAmount or 0
 end
 
-local function SetFillAmount(self, value, forced)
+function GwAnimatedStatusBarMixin:SetFillAmount(value, forced)
+    if self.smoothAnimation and not forced then
+        self:FillBarSmooth(value)
+        return
+    end
+
     local orientation = self:GetOrientation()
     local isVertical = (orientation == "VERTICAL")
     local isReverseFill = self:GetReverseFill()
@@ -97,7 +104,7 @@ local function SetFillAmount(self, value, forced)
     end
 
     if not self.interpolateRampRound or interpolateRampRound ~= self.interpolateRampRound then
-        self:addMask(interpolateRampRound, value)
+        self:AddMask(interpolateRampRound)
 
         if isVertical then
             self.maskContainer.mask0:SetSize(self.maskContainer:GetHeight(), self.maskContainer:GetWidth())
@@ -123,7 +130,7 @@ local function SetFillAmount(self, value, forced)
     end
 end
 
-local function barUpdate(self, delta)
+function GwAnimatedStatusBarMixin:BarUpdate(delta)
     self.animatedTime = self.animatedTime + delta
     local duration = max(0.00000001, self.animatedDuration)
     local animationProgress = self.animatedTime / duration
@@ -133,7 +140,7 @@ local function barUpdate(self, delta)
     else
         newValue = lerpEaseOut(self.animatedStartValue, self.animatedValue, animationProgress)
     end
-    SetFillAmount(self, newValue)
+    self:SetFillAmount(newValue, true)
     if self.onUpdateAnimation then
         self.onUpdateAnimation(self, animationProgress, delta)
     end
@@ -142,7 +149,7 @@ local function barUpdate(self, delta)
     end
 end
 
-local function setCustomAnimation(self, from, to, time)
+function GwAnimatedStatusBarMixin:SetCustomAnimation(from, to, time)
     self.animatedValue = to
     self.animatedStartValue = from
     self.animatedTime = 0
@@ -153,12 +160,12 @@ local function setCustomAnimation(self, from, to, time)
         self.onAnimationStart(self, to)
     end
 
-    self:SetScript("OnUpdate", barUpdate)
+    self:SetScript("OnUpdate", self.BarUpdate)
 end
 
-local function onupdate_AnimateBar(self, value)
+function GwAnimatedStatusBarMixin:FillBarSmooth(value)
     self.animatedValue = value
-    self.animatedStartValue = GetFillAmount(self)
+    self.animatedStartValue = self:GetFillAmount()
     self.animatedTime = 0
     self.animatedDuration = getAnimationDurationDynamic(self, self.animatedStartValue, self.animatedValue, self:GetWidth())
 
@@ -172,15 +179,15 @@ local function onupdate_AnimateBar(self, value)
         return
     end
 
-    self:SetScript("OnUpdate", barUpdate)
+    self:SetScript("OnUpdate", self.BarUpdate)
 end
 
-local function ForceFillAmount(self, value)
-    SetFillAmount(self, value, true)
+function GwAnimatedStatusBarMixin:ForceFillAmount(value)
+    self:SetFillAmount(value, true)
     self:SetScript("OnUpdate", nil)
 end
 
-local function addToBarMask(self, texture)
+function GwAnimatedStatusBarMixin:AddToBarMask(texture)
     if texture then
         texture:AddMaskTexture(self.maskContainer.mask0)
         texture:AddMaskTexture(self.maskOverflow.mask)
@@ -236,37 +243,34 @@ local function SetOrientation(self)
     self.maskOverflow.mask:SetSize(self.maskOverflow:GetHeight(), self.maskOverflow:GetWidth())
 end
 
-local function UpdateBarSize(self)
+function GwAnimatedStatusBarMixin:UpdateBarSize()
     local isVertical = (self:GetOrientation() == "VERTICAL") or false
     local totalWidth = self.totalWidth or isVertical and self:GetHeight() or self:GetWidth()
     local height = self.totalHeight or isVertical and self:GetWidth() or self:GetHeight()
     self.maskContainer:SetSize(totalWidth / numSpritesInAnimation, height)
 end
 
-local function hookStatusbarBehaviour(statusBar, smooth, animationType)
+local function AddStatusbarAnimation(statusBar, smooth, animationType)
     if not AddToAnimation then
         AddToAnimation = GW.AddToAnimation
         round = GW.RoundInt
     end
     animationType = animationType or BarAnimateTypes.All
 
+    Mixin(statusBar,  GwAnimatedStatusBarMixin)
+
     statusBar:SetClampedToScreen(false)
     statusBar.maskContainer:SetClampedToScreen(false)
     statusBar.maskOverflow:SetClampedToScreen(false)
 
+    statusBar.smoothAnimation = smooth
+
     uniqueID = uniqueID + 1
     statusBar.maskContainer:SetSize(statusBar.internalBar:GetWidth() / numSpritesInAnimation, statusBar.internalBar:GetHeight())
     statusBar.fill_threshold = 0
-    statusBar.GetFillAmount = GetFillAmount
-    statusBar.SetFillAmount = smooth and onupdate_AnimateBar or SetFillAmount
-    statusBar.ForceFillAmount = ForceFillAmount
-    statusBar.setCustomAnimation = setCustomAnimation
-    statusBar.addToBarMask = addToBarMask
     statusBar.animationType = animationType
     statusBar.BarInterpolation = BarInterpolation.Ease
     statusBar.uniqueID = uniqueID
-    statusBar.addMask = addMask
-    statusBar.UpdateBarSize = UpdateBarSize
 
     statusBar.maskContainer:ClearAllPoints()
     statusBar.maskOverflow:ClearAllPoints()
@@ -275,25 +279,25 @@ local function hookStatusbarBehaviour(statusBar, smooth, animationType)
     statusBar.maskOverflow:SetPoint("TOPRIGHT", statusBar, "TOPRIGHT", 3, 0)
     statusBar.maskOverflow:SetPoint("BOTTOMRIGHT", statusBar, "BOTTOMRIGHT", 3, 0)
 
-    statusBar:addToBarMask(statusBar.internalBar)
+    statusBar:AddToBarMask(statusBar.internalBar)
 
     if statusBar.spark ~= nil then
-        statusBar:addToBarMask(statusBar.spark)
+        statusBar:AddToBarMask(statusBar.spark)
         statusBar.spark.width = statusBar.spark:GetWidth()
     end
     hooksecurefunc(statusBar, "SetOrientation", SetOrientation)
     hooksecurefunc(statusBar, "SetReverseFill", SetReverseFill)
     return statusBar
 end
-GW.hookStatusbarBehaviour = hookStatusbarBehaviour
+GW.AddStatusbarAnimation = AddStatusbarAnimation
 
-local function createNewStatusBar(name, parent, template, smooth)
+local function CreateAnimatedStatusBar(name, parent, template, smooth)
     template = template or "GwStatusBarTemplate"
     local statusBar = CreateFrame("StatusBar", name, parent, template)
-    hookStatusbarBehaviour(statusBar, smooth)
+    AddStatusbarAnimation(statusBar, smooth)
     return statusBar
 end
-GW.createNewStatusbar = createNewStatusBar
+GW.CreateAnimatedStatusBar = CreateAnimatedStatusBar
 
 local function PreloadStatusBarMaskTextures()
     local f = CreateFrame("Frame", nil, UIParent)

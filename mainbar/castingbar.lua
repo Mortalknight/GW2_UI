@@ -515,7 +515,7 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     UpdateSettings()
 
     local GwCastingBar = CreateFrame("Frame", name, UIParent, "GwCastingBar")
-    GW.hookStatusbarBehaviour(GwCastingBar.progress, false)
+    GW.AddStatusbarAnimation(GwCastingBar.progress, false)
     GwCastingBar.progress.customMaskSize = 64
     GwCastingBar.highlight = GwCastingBar.progress.highlight
     GwCastingBar.latency = GwCastingBar.progress.latency

@@ -185,7 +185,7 @@ local function LoadHealthGlobe()
     hg.repair = hg.absorbOverlay.repair
 
     for _, bar in pairs({hg.absorbOverlay, hg.antiHeal, hg.health, hg.candy, hg.absorbbg, hg.healPrediction}) do
-        GW.hookStatusbarBehaviour(bar, true)
+        GW.AddStatusbarAnimation(bar, true)
         bar:SetOrientation("VERTICAL")
     end
 

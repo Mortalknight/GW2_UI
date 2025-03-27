@@ -305,8 +305,8 @@ end
 local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
 
-    GW.hookStatusbarBehaviour(playerPetFrame.health, true)
-    GW.hookStatusbarBehaviour(playerPetFrame.powerbar, true)
+    GW.AddStatusbarAnimation(playerPetFrame.health, true)
+    GW.AddStatusbarAnimation(playerPetFrame.powerbar, true)
 
     playerPetFrame.health.customMaskSize = 64
     playerPetFrame.powerbar.customMaskSize = 64

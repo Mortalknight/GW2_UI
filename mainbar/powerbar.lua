@@ -448,18 +448,18 @@ end
 GW.TogglePlayerPowerBar = TogglePlayerPowerBar
 
 local function LoadPowerBar()
-  local playerPowerBar = GW.createNewStatusbar("GwPlayerPowerBar",UIParent,"GwStatusPowerBar",true)
+  local playerPowerBar = GW.CreateAnimatedStatusBar("GwPlayerPowerBar",UIParent,"GwStatusPowerBar",true)
   playerPowerBar.customMaskSize = 64
   playerPowerBar.bar = playerPowerBar
-  playerPowerBar:addToBarMask(playerPowerBar.intensity)
-  playerPowerBar:addToBarMask(playerPowerBar.intensity2)
-  playerPowerBar:addToBarMask(playerPowerBar.scrollTexture)
-  playerPowerBar:addToBarMask(playerPowerBar.scrollTexture2)
-  playerPowerBar:addToBarMask(playerPowerBar.runeoverlay)
+  playerPowerBar:AddToBarMask(playerPowerBar.intensity)
+  playerPowerBar:AddToBarMask(playerPowerBar.intensity2)
+  playerPowerBar:AddToBarMask(playerPowerBar.scrollTexture)
+  playerPowerBar:AddToBarMask(playerPowerBar.scrollTexture2)
+  playerPowerBar:AddToBarMask(playerPowerBar.runeoverlay)
   playerPowerBar.runicmask:SetSize(playerPowerBar:GetSize())
   playerPowerBar.runeoverlay:AddMaskTexture(playerPowerBar.runicmask)
 
-  playerPowerBar.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay",UIParent,nil,true)
+  playerPowerBar.decay = GW.CreateAnimatedStatusBar("GwPlayerPowerBarDecay",UIParent,nil,true)
 
   playerPowerBar.decay:SetFillAmount(0)
   playerPowerBar.decay:SetFrameLevel(playerPowerBar.decay:GetFrameLevel() - 1)

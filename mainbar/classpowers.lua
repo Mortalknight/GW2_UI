@@ -616,7 +616,7 @@ local function powerEbonMight(self, event, ...)
                 self.auraExpirationTime = auraExpirationTime
 
                 local remainingPrecantage = math.min(1, (auraExpirationTime - GetTime()) / 20) -- hard coded max duration of 20 sec like blizzard
-                self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, auraInfo.duration)
+                self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, auraInfo.duration)
             end
         end
     else
@@ -666,7 +666,7 @@ local function timerMetamorphosis(self)
         self.customResourceBar:Show()
         local remainingPrecantage = (expires - GetTime()) / duration
         local remainingTime = duration * remainingPrecantage
-        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, remainingTime)
+        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     else
         self.customResourceBar:Hide()
     end
@@ -680,7 +680,7 @@ local function powerRend(self)
         self.customResourceBar:Show()
         local remainingPrecantage = (expires - GetTime()) / duration
         local remainingTime = duration * remainingPrecantage
-        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, remainingTime)
+        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     else
         self.customResourceBar:Hide()
     end
@@ -691,7 +691,7 @@ local function powerEnrage(self)
         self.customResourceBar:Show()
         local remainingPrecantage = (expires - GetTime()) / duration
         local remainingTime = duration * remainingPrecantage
-        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, remainingTime)
+        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     else
         self.customResourceBar:Hide()
     end
@@ -722,7 +722,7 @@ local function powerSBlock(self)
     if expires > 0 then
         local remainingPrecantage = (expires - GetTime()) / duration
         local remainingTime = duration * remainingPrecantage
-        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, remainingTime)
+        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     end
 end
 GW.AddForProfiling("classpowers", "powerSBlock", powerSBlock)
@@ -787,7 +787,7 @@ local function powerHoly(self, event, ...)
         if duration ~= nil then
             local remainingPrecantage = (expires - GetTime()) / duration
             local remainingTime = duration * remainingPrecantage
-            self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, remainingTime)
+            self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
         end
     else
         local old_power = self.gwPower
@@ -892,7 +892,7 @@ local function powerFrenzy(self, event)
     if event == "CLASS_POWER_INIT" or expires > old_expires then
         local remainingPrecantage = (expires - GetTime()) / duration
         local remainingTime = duration * remainingPrecantage
-        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, remainingTime)
+        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
         if event ~= "CLASS_POWER_INIT" then
             AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
         end
@@ -917,7 +917,7 @@ local function powerMongoose(self, event)
     if event == "CLASS_POWER_INIT" or expires > old_expires then
         local remainingPrecantage = (expires - GetTime()) / duration
         local remainingTime = duration * remainingPrecantage
-        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, remainingTime)
+        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
         if event ~= "CLASS_POWER_INIT" then
             AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
         end
@@ -1473,7 +1473,7 @@ local function powerStagger(self, event, ...)
             local staggarPrec = pwr / pwrMax
 
             staggarPrec = math.max(0, math.min(staggarPrec, 1))
-            self.customResourceBar:setCustomAnimation(staggarPrec, 0, remainingTime)
+            self.customResourceBar:SetCustomAnimation(staggarPrec, 0, remainingTime)
             -- end
         end
     end
@@ -1729,22 +1729,22 @@ GW.UpdateClassPowerExtraManabar = UpdateExtraManabar
 
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
-    GW.hookStatusbarBehaviour(cpf.staggerBar.ironskin, false)
+    GW.AddStatusbarAnimation(cpf.staggerBar.ironskin, false)
     cpf.staggerBar.ironskin.customMaskSize = 64
     cpf.staggerBar.ironskin.customMaskSize = 64
 
-    cpf.customResourceBar = GW.createNewStatusbar("GwCustomResourceBar", cpf, "GwStatusPowerBar", true)
+    cpf.customResourceBar = GW.CreateAnimatedStatusBar("GwCustomResourceBar", cpf, "GwStatusPowerBar", true)
     cpf.customResourceBar.customMaskSize = 64
     cpf.customResourceBar.bar = cpf.customResourceBar
-    cpf.customResourceBar:addToBarMask(cpf.customResourceBar.intensity)
-    cpf.customResourceBar:addToBarMask(cpf.customResourceBar.intensity2)
-    cpf.customResourceBar:addToBarMask(cpf.customResourceBar.scrollTexture)
-    cpf.customResourceBar:addToBarMask(cpf.customResourceBar.scrollTexture2)
-    cpf.customResourceBar:addToBarMask(cpf.customResourceBar.runeoverlay)
+    cpf.customResourceBar:AddToBarMask(cpf.customResourceBar.intensity)
+    cpf.customResourceBar:AddToBarMask(cpf.customResourceBar.intensity2)
+    cpf.customResourceBar:AddToBarMask(cpf.customResourceBar.scrollTexture)
+    cpf.customResourceBar:AddToBarMask(cpf.customResourceBar.scrollTexture2)
+    cpf.customResourceBar:AddToBarMask(cpf.customResourceBar.runeoverlay)
     cpf.customResourceBar.runicmask:SetSize(cpf.customResourceBar:GetSize())
     cpf.customResourceBar.runeoverlay:AddMaskTexture(cpf.customResourceBar.runicmask)
 
-    cpf.customResourceBar.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay", UIParent, nil, true)
+    cpf.customResourceBar.decay = GW.CreateAnimatedStatusBar("GwPlayerPowerBarDecay", UIParent, nil, true)
 
     cpf.customResourceBar.decay:SetFillAmount(0)
     cpf.customResourceBar.decay:SetFrameLevel(cpf.customResourceBar.decay:GetFrameLevel() - 1)
@@ -1783,19 +1783,19 @@ local function LoadClassPowers()
     cpf.auraExpirationTime = nil
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
-    local lmb = GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
+    local lmb = GW.CreateAnimatedStatusBar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
     lmb.customMaskSize = 64
     lmb.bar = lmb
-    lmb:addToBarMask(lmb.intensity)
-    lmb:addToBarMask(lmb.intensity2)
-    lmb:addToBarMask(lmb.scrollTexture)
-    lmb:addToBarMask(lmb.scrollTexture2)
-    lmb:addToBarMask(lmb.runeoverlay)
+    lmb:AddToBarMask(lmb.intensity)
+    lmb:AddToBarMask(lmb.intensity2)
+    lmb:AddToBarMask(lmb.scrollTexture)
+    lmb:AddToBarMask(lmb.scrollTexture2)
+    lmb:AddToBarMask(lmb.runeoverlay)
     lmb.runicmask:SetSize(lmb:GetSize())
     lmb.runeoverlay:AddMaskTexture(lmb.runicmask)
     cpf.lmb = lmb
     GW.initPowerBar(cpf.lmb)
-    lmb.decay = GW.createNewStatusbar("GwPlayerAltClassLmbBarDecay", lmb, nil, true)
+    lmb.decay = GW.CreateAnimatedStatusBar("GwPlayerAltClassLmbBarDecay", lmb, nil, true)
     lmb.decay:SetFillAmount(0)
     lmb.decay:SetFrameLevel(lmb.decay:GetFrameLevel() - 1)
     lmb.decay:ClearAllPoints()
@@ -1809,18 +1809,18 @@ local function LoadClassPowers()
     GW.MixinHideDuringPetAndOverride(lmb.decay)
 
     -- create an extra mana power bar that is used sometimes
-    local exbar = GW.createNewStatusbar("GwPlayerAltClassExBar", cpf, "GwStatusPowerBar", true)
+    local exbar = GW.CreateAnimatedStatusBar("GwPlayerAltClassExBar", cpf, "GwStatusPowerBar", true)
     exbar.customMaskSize = 64
     exbar.bar = exbar
-    exbar:addToBarMask(exbar.intensity)
-    exbar:addToBarMask(exbar.intensity2)
-    exbar:addToBarMask(exbar.scrollTexture)
-    exbar:addToBarMask(exbar.scrollTexture2)
-    exbar:addToBarMask(exbar.runeoverlay)
+    exbar:AddToBarMask(exbar.intensity)
+    exbar:AddToBarMask(exbar.intensity2)
+    exbar:AddToBarMask(exbar.scrollTexture)
+    exbar:AddToBarMask(exbar.scrollTexture2)
+    exbar:AddToBarMask(exbar.runeoverlay)
     exbar.runicmask:SetSize(exbar:GetSize())
     exbar.runeoverlay:AddMaskTexture(exbar.runicmask)
 
-    exbar.decay = GW.createNewStatusbar("GwPlayerAltClassExBarDecay", exbar, nil, true)
+    exbar.decay = GW.CreateAnimatedStatusBar("GwPlayerAltClassExBarDecay", exbar, nil, true)
     exbar.decay:SetFillAmount(0)
     exbar.decay:SetFrameLevel(exbar.decay:GetFrameLevel() - 1)
     exbar.decay:ClearAllPoints()

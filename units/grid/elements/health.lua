@@ -65,7 +65,7 @@ local function UpdateHealthOverride(self, event, unit)
 end
 
 local function Construct_HealthBar(frame)
-    local healthPredictionbar = GW.createNewStatusbar('$parent_HealthPredictionBar', frame, "GwStatusBarBarNoAnchorNoSize", false)
+    local healthPredictionbar = GW.CreateAnimatedStatusBar('$parent_HealthPredictionBar', frame, "GwStatusBarBarNoAnchorNoSize", false)
     healthPredictionbar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
     healthPredictionbar:SetPoint('TOPLEFT', frame, "TOPLEFT")
     healthPredictionbar:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
@@ -75,7 +75,7 @@ local function Construct_HealthBar(frame)
     healthPredictionbar.strechMask = true
     healthPredictionbar:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
-    local absorbBar = GW.createNewStatusbar('$parent_AbsorbBar', healthPredictionbar, "GwStatusBarBarNoAnchorNoSize", true)
+    local absorbBar = GW.CreateAnimatedStatusBar('$parent_AbsorbBar', healthPredictionbar, "GwStatusBarBarNoAnchorNoSize", true)
     absorbBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb")
     absorbBar:SetPoint('TOPLEFT', healthPredictionbar, "TOPLEFT")
     absorbBar:SetPoint('BOTTOMRIGHT', healthPredictionbar, 'BOTTOMRIGHT')
@@ -84,14 +84,14 @@ local function Construct_HealthBar(frame)
     absorbBar.strechMask = true
     absorbBar:SetStatusBarColor(1,1,1,0.66)
 
-    local health = GW.createNewStatusbar('$parent_HealthBar', absorbBar, "GwStatusBarBarNoAnchorNoSize", true)
+    local health = GW.CreateAnimatedStatusBar('$parent_HealthBar', absorbBar, "GwStatusBarBarNoAnchorNoSize", true)
     health:SetPoint('TOPLEFT', absorbBar, "TOPLEFT")
     health:SetPoint('BOTTOMRIGHT', absorbBar, 'BOTTOMRIGHT')
     health:SetMinMaxValues(0, 1)
     health.customMaskSize = 32
     health.strechMask = true
 
-    local healAbsorbBar = GW.createNewStatusbar('$parent_AntiHealBar', health, "GwStatusBarBarNoAnchorNoSize", true)
+    local healAbsorbBar = GW.CreateAnimatedStatusBar('$parent_AntiHealBar', health, "GwStatusBarBarNoAnchorNoSize", true)
     healAbsorbBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal")
     healAbsorbBar:SetPoint('TOPLEFT', health, "TOPLEFT")
     healAbsorbBar:SetPoint('BOTTOMRIGHT', health, 'BOTTOMRIGHT')
@@ -99,7 +99,7 @@ local function Construct_HealthBar(frame)
     healAbsorbBar.customMaskSize = 32
     healAbsorbBar.strechMask = true
 
-    local overAbsorb = GW.createNewStatusbar('$parent_AbsorbOverlayHealBar', healAbsorbBar, "GwStatusBarBarNoAnchorNoSize", true)
+    local overAbsorb = GW.CreateAnimatedStatusBar('$parent_AbsorbOverlayHealBar', healAbsorbBar, "GwStatusBarBarNoAnchorNoSize", true)
     overAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb")
     overAbsorb:SetPoint('TOPLEFT', healAbsorbBar, "TOPLEFT")
     overAbsorb:SetPoint('BOTTOMRIGHT', healAbsorbBar, 'BOTTOMRIGHT')

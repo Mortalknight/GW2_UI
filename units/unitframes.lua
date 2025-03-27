@@ -26,13 +26,13 @@ local function CreateUnitFrame(name, revert)
     f.healPrediction= hg.healPrediction
     f.healthString  = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
 
-    GW.hookStatusbarBehaviour(f.absorbOverlay, true)
-    GW.hookStatusbarBehaviour(f.antiHeal, true)
-    GW.hookStatusbarBehaviour(f.health, true)
-    GW.hookStatusbarBehaviour(f.absorbbg, true)
-    GW.hookStatusbarBehaviour(f.healPrediction, false)
-    GW.hookStatusbarBehaviour(f.castingbarNormal, false)
-    GW.hookStatusbarBehaviour(f.powerbar, true)
+    GW.AddStatusbarAnimation(f.absorbOverlay, true)
+    GW.AddStatusbarAnimation(f.antiHeal, true)
+    GW.AddStatusbarAnimation(f.health, true)
+    GW.AddStatusbarAnimation(f.absorbbg, true)
+    GW.AddStatusbarAnimation(f.healPrediction, false)
+    GW.AddStatusbarAnimation(f.castingbarNormal, false)
+    GW.AddStatusbarAnimation(f.powerbar, true)
 
     local elements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.castingbarNormal, f.powerbar }
     for _, element in ipairs(elements) do
@@ -97,13 +97,13 @@ local function CreateSmallUnitFrame(name)
     f.healPrediction= hg.healPrediction
     f.healthString  = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
 
-    GW.hookStatusbarBehaviour(f.absorbOverlay, true)
-    GW.hookStatusbarBehaviour(f.antiHeal, true)
-    GW.hookStatusbarBehaviour(f.health, true)
-    GW.hookStatusbarBehaviour(f.absorbbg, true)
-    GW.hookStatusbarBehaviour(f.healPrediction, false)
-    GW.hookStatusbarBehaviour(f.castingbarNormal, false)
-    GW.hookStatusbarBehaviour(f.powerbar, true)
+    GW.AddStatusbarAnimation(f.absorbOverlay, true)
+    GW.AddStatusbarAnimation(f.antiHeal, true)
+    GW.AddStatusbarAnimation(f.health, true)
+    GW.AddStatusbarAnimation(f.absorbbg, true)
+    GW.AddStatusbarAnimation(f.healPrediction, false)
+    GW.AddStatusbarAnimation(f.castingbarNormal, false)
+    GW.AddStatusbarAnimation(f.powerbar, true)
 
     local elements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.castingbarNormal, f.powerbar }
     for _, element in ipairs(elements) do

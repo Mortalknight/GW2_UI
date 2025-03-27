@@ -331,9 +331,9 @@ local function CreatePartyFrame(i, isPlayer)
     frame.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
 
     for _, bar in ipairs({ frame.absorbOverlay, frame.antiHeal, frame.health, frame.absorbbg, frame.healPrediction, frame.powerbar }) do
-        GW.hookStatusbarBehaviour(bar, true)
+        GW.AddStatusbarAnimation(bar, true)
     end
-    GW.hookStatusbarBehaviour(frame.healPrediction, false)
+    GW.AddStatusbarAnimation(frame.healPrediction, false)
 
     frame.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     frame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
@@ -360,9 +360,9 @@ local function CreatePartyFrame(i, isPlayer)
     petFrame.healthString = phg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
 
     for _, bar in ipairs({ petFrame.absorbOverlay, petFrame.antiHeal, petFrame.health, petFrame.absorbbg, petFrame.healPrediction, petFrame.powerbar }) do
-        GW.hookStatusbarBehaviour(bar, true)
+        GW.AddStatusbarAnimation(bar, true)
     end
-    GW.hookStatusbarBehaviour(petFrame.healPrediction, false)
+    GW.AddStatusbarAnimation(petFrame.healPrediction, false)
 
     petFrame.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     petFrame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
