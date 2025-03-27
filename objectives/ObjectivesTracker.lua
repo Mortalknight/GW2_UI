@@ -15,12 +15,14 @@ local objectivesTrackerConfiguration = {
     { name = "GwQuesttrackerContainerCollection", scrollable = true, mixin = GwObjectivesCollectionContainerMixin, enumName = "Collection" },
     -- ADDONS
     { name = "GwQuesttrackerContainerWQT", scrollable = true, mixin = GwWorldQuestTrackerContainerMixin, enumName = "WQT", addonName = "WorldQuestTracker" },
-    { name = "GwQuesttrackerContainerPetTracker", scrollable = true, mixin = GwPetTrackerContainerMixin, enumName = "PetTracker", addonName = "PetTracker" },
+    { name = "GwQuesttrackerContainerPetTracker", scrollable = true, mixin = GwPetTrackerContainerMixin, enumName = "PetTracker", addonName = "PetTracker_Config" },
     { name = "GwQuesttrackerContainerTodoloo", scrollable = true, mixin = GwTodolooContainerMixin, enumName = "Todoloo", addonName = "Todoloo" }
 }
 
 -- container enum
 GW.ObjectiveTrackerContainer = {}
+
+local addonContainerWaitingQueue = {}
 
 -- Helper functions
 local function ParseObjectiveString(block, text, numItems, numNeeded, overrideShowStatusbarSetting)
@@ -198,6 +200,39 @@ function GwObjectivesTrackerMixin:CreateTrackerContainer(name, parent, mixin, te
     return frame
 end
 
+function GwObjectivesTrackerMixin:OnEvent(_, ...)
+    local addonName = ...
+    for id, config in ipairs(addonContainerWaitingQueue) do
+        if config.addonName == addonName then
+            local frame = self:CreateTrackerContainer(config.name, self.ScrollFrame.Child, config.mixin, config.template)
+
+            GW.ObjectiveTrackerContainer[config.enumName] = frame
+            frame:SetPoint("TOPRIGHT", GW.QuestTrackerScrollableContainer[#GW.QuestTrackerScrollableContainer], "BOTTOMRIGHT")
+
+            table.insert(GW.QuestTrackerScrollableContainer, frame)
+
+            if frame.InitModule then frame:InitModule() end
+
+            GW.ToggleCollapseObjectivesInChallangeMode()
+            table.remove(addonContainerWaitingQueue, id)
+            break
+        end
+    end
+
+    if #addonContainerWaitingQueue == 0 then
+        self:UnregisterAllEvents()
+    end
+end
+
+function GwObjectivesTrackerMixin:AddAddonContainerLoadingToQueue(config)
+    table.insert(addonContainerWaitingQueue, config)
+
+    if not self:IsEventRegistered("ADDON_LOADED") then
+        self:RegisterEvent("ADDON_LOADED")
+        self:SetScript("OnEvent", self.OnEvent)
+    end
+end
+
 local function LoadObjectivesTracker()
     DisableBlizzardsObjevtiveTracker()
 
@@ -214,6 +249,9 @@ local function LoadObjectivesTracker()
         local shouldLoad = true
         if config.addonName then
             shouldLoad = C_AddOns.IsAddOnLoaded(config.addonName)
+            if not shouldLoad then
+                objectivesTracker:AddAddonContainerLoadingToQueue(config)
+            end
         end
         if shouldLoad then
             local parent = config.scrollable and objectivesTracker.ScrollFrame.Child or objectivesTracker

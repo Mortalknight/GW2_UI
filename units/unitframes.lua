@@ -495,12 +495,11 @@ function GwUnitFrameMixin:UpdateCastValues()
         endTime - startTime,
         function(p)
             if self.showCastingbarData and self.castingTimeString then
-              if notInterruptible then
-                  self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
-              else
-                  self.castingbarNormal.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
-              end
-
+                if notInterruptible then
+                    self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+                else
+                    self.castingbarNormal.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+                end
             end
             p = self.isChanneling and (1 - p) or p
 
@@ -514,7 +513,7 @@ function GwUnitFrameMixin:UpdateCastValues()
     )
 end
 
-local function updateThreatValues(self)
+function GwUnitFrameMixin:UpdateThreatValues()
     self.threatValue = select(3, UnitDetailedThreatSituation("player", self.unit))
 
     if self.threatValue == nil then
@@ -525,7 +524,6 @@ local function updateThreatValues(self)
         self.threattabbg:SetAlpha(1.0)
     end
 end
-GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
 
 function GwUnitFrameMixin:OnEvent(event, unit, ...)
     local secondaryFrame
@@ -549,7 +547,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         end
 
         if self.showThreat then
-            updateThreatValues(self)
+            self:UpdateThreatValues()
         elseif self.threattabbg and self.threattabbg:IsShown() then
             self.threattabbg:Hide()
         end
@@ -614,7 +612,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             end
         end
     elseif event == "UNIT_THREAT_LIST_UPDATE" and self.showThreat then
-        updateThreatValues(self)
+        self:UpdateThreatValues()
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             GW.UpdateBuffLayout(self, event, unit, ...)
