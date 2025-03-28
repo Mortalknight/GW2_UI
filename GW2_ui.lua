@@ -209,7 +209,7 @@ GW.SetClassIcon = SetClassIcon
 
 local function SetDeadIcon(self)
     local tex = CLASS_ICONS.dead
-    self:SetTexCoordt(tex.l, tex.r, tex.t, tex.b)
+    self:SetTexCoord(tex.l, tex.r, tex.t, tex.b)
 end
 GW.SetDeadIcon = SetDeadIcon
 
