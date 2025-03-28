@@ -1,7 +1,6 @@
 local _, GW = ...
 local lerp = GW.lerp
 local RoundInt = GW.RoundInt
-local UpdatePowerData = GW.UpdatePowerData
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 
@@ -58,7 +57,7 @@ local function setPowerTypeEbonMight(self)
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/agu-intensity", "REPEAT")
     self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/agu-intensity2", "REPEAT")
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
-    self.animator:SetScript("OnUpdate", function(_, delta) self.scrollTextureParalaxOnUpdate(self, delta) end)
+    self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
     self.scrollTexture:SetBlendMode("ADD")
@@ -71,7 +70,7 @@ local function setPowerTypeMeta(self)
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity", "REPEAT")
     self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity2", "REPEAT")
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
-    self.animator:SetScript("OnUpdate", function(_, delta) self.scrollTextureParalaxOnUpdate(self, delta) end)
+    self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
     self.spark:SetAlpha(0.5)
@@ -85,7 +84,7 @@ local function setPowerTypeStagger(self)
     self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-intensity")
     self.intensity2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-intensity2")
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
-    self.animator:SetScript("OnUpdate", function(_, delta) self.scrollTextureParalaxOnUpdate(self, delta) end)
+    self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(0)
     self.scrollTexture2:SetAlpha(0)
     self.spark:SetAlpha(0.5)
@@ -98,7 +97,7 @@ local function setPowerTypeEnrage(self)
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/enrage-intensity", "REPEAT", "REPEAT")
     self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/enrage-intensity2", "REPEAT", "REPEAT")
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
-    self.animator:SetScript("OnUpdate", function(_, delta) self.scrollTextureVerticalParalaxOnUpdate(self, delta) end)
+    self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureVerticalParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(0.5)
     self.scrollTexture2:SetAlpha(0.5)
     self.scrollTexture:SetBlendMode("ADD")
@@ -121,7 +120,7 @@ local function setPowerTYpeFrenzy(self)
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzyspark")
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll", "REPEAT")
     self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2", "REPEAT")
-    self.animator:SetScript("OnUpdate", function(_, delta) self.scrollTextureParalaxOnUpdate(self, delta) end)
+    self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollSpeedMultiplier = -3
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
@@ -134,7 +133,7 @@ local function setPowerTypeRend(self)
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzyspark")
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll", "REPEAT")
     self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2", "REPEAT")
-    self.animator:SetScript("OnUpdate", function(_, delta) self.scrollTextureParalaxOnUpdate(self, delta) end)
+    self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollSpeedMultiplier = -3
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
@@ -142,8 +141,6 @@ local function setPowerTypeRend(self)
 
     self.customMaskSize = 128
 end
-
-
 
 local function updateTextureBasedOnCondition(self)
     if GW.myClassID == 9 then        -- Warlock
@@ -316,7 +313,7 @@ GW.AddForProfiling("classpowers", "findBuffs", findBuffs)
 local function powerMana(self, event, ...)
     local ptype = select(2, ...)
     if event == "CLASS_POWER_INIT" or ptype == "MANA" then
-        UpdatePowerData(self.exbar, 0, "MANA")
+        self.exbar:UpdatePowerData(0, "MANA")
 
         C_Timer.After(0.12, function()
             if GwPlayerPowerBar and GwPlayerPowerBar.powerType == 0 then
@@ -336,7 +333,7 @@ GW.AddForProfiling("classpowers", "powerMana", powerMana)
 local function powerLittleMana(self, event, ...)
     local ptype = select(2, ...)
     if event == "CLASS_POWER_INIT" or ptype == "MANA" then
-        UpdatePowerData(self:GetParent().lmb, 0, "MANA")
+        self:GetParent().lmb:UpdatePowerData(0, "MANA")
     end
 end
 GW.AddForProfiling("classpowers", "powerLittleMana", powerLittleMana)
@@ -1613,7 +1610,7 @@ local function selectType(f)
 
     -- hide all class power sub-pieces and reset anything needed
     f.customResourceBar:ForceFillAmount(0)
-    f.customResourceBar:resetPowerBarVisuals()
+    f.customResourceBar:ResetPowerBarVisuals()
     f.customResourceBar:Hide()
     f.customResourceBar:SetWidth(313)
     f.runeBar:Hide()
@@ -1758,8 +1755,6 @@ local function LoadClassPowers()
     cpf.customResourceBar:ClearAllPoints()
     cpf.customResourceBar:SetPoint("LEFT", cpf, "LEFT", 0, -11) -- GLow help, is this the proper way of aligning this?
 
-    GW.initPowerBar(cpf.customResourceBar)
-
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", { 312, 32 },
         { "default", "scaleable" }, true)
 
@@ -1794,7 +1789,7 @@ local function LoadClassPowers()
     lmb.runicmask:SetSize(lmb:GetSize())
     lmb.runeoverlay:AddMaskTexture(lmb.runicmask)
     cpf.lmb = lmb
-    GW.initPowerBar(cpf.lmb)
+
     lmb.decay = GW.CreateAnimatedStatusBar("GwPlayerAltClassLmbBarDecay", lmb, nil, true)
     lmb.decay:SetFillAmount(0)
     lmb.decay:SetFrameLevel(lmb.decay:GetFrameLevel() - 1)
@@ -1830,7 +1825,7 @@ local function LoadClassPowers()
     GW.MixinHideDuringPetAndOverride(exbar)
     GW.MixinHideDuringPetAndOverride(exbar.decay)
     cpf.exbar = exbar
-    GW.initPowerBar(cpf.exbar)
+
     exbar:SetPoint("TOPLEFT", cpf)
 
     exbar:SetFrameStrata("MEDIUM")
