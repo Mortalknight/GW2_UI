@@ -1,8 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-  <Button name="GwDodgeBarTmpl" virtual="true" inherits="SecureActionButtonTemplate,SecureHandlerStateTemplate,UnsecureDodgeBar" frameStrata="MEDIUM" frameLevel="1">
-  </Button>
-    <Button name="UnsecureDodgeBar" virtual="true"  frameStrata="MEDIUM" frameLevel="1">
+
+    <Button name="GwDodgeBarTmpl" virtual="true" inherits="SecureActionButtonTemplate,SecureHandlerStateTemplate,UnsecureDodgeBar" frameStrata="MEDIUM" frameLevel="1"/>
+
+    <Button name="UnsecureDodgeBar" virtual="true"  frameStrata="MEDIUM" frameLevel="1" mixin="GwDodgeBarMixin">
         <Size x="128" y="48"></Size>
         <Frames>
             <Frame parentKey="arcfill">

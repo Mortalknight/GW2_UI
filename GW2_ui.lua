@@ -725,11 +725,9 @@ local function evPlayerLogin(self)
     if GW.settings.HEALTHGLOBE_ENABLED and not GW.settings.PLAYER_AS_TARGET_FRAME then
         local hg = GW.LoadHealthGlobe()
         GW.LoadDodgeBar(hg, false)
-        GW.LoadDragonBar(hg, false)
     elseif GW.settings.HEALTHGLOBE_ENABLED and GW.settings.PLAYER_AS_TARGET_FRAME then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
-        GW.LoadDragonBar(hg, true)
     end
 
     GW.LoadPowerBar()

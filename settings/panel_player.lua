@@ -106,8 +106,10 @@ local function LoadPlayerPanel(sWindow)
             self:SetText(name)
             GW.private.PLAYER_TRACKED_DODGEBAR_SPELL = name
             GW.private.PLAYER_TRACKED_DODGEBAR_SPELL_ID = spellId
-            GW.initDodgebarSpell(GwDodgeBar)
-            GW.setDodgebarSpell(GwDodgeBar)
+            if GwDodgeBar then
+                GwDodgeBar:InitBar()
+                GwDodgeBar:SetupBar()
+            end
         end,
         nil,
         nil,
