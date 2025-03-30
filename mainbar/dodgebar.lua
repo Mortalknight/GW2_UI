@@ -258,32 +258,32 @@ function GwDodgeBarMixin:OnEvent(event, ...)
     end
 end
 
-function GwDodgeBarMixin:OnEnter()
-    -- change the masks/art to the hover version
-    local af = self.arcfill
+function GwDodgeBarMixin:OnEnter(_, override)
+    local bar = override and self or self.skyringingBarShown and self.skyrindingBar or self
+    local af = bar.arcfill
     for _, v in ipairs(af.masked) do
         v:AddMaskTexture(af.mask_hover)
         v:RemoveMaskTexture(af.mask_normal)
     end
     af.fill:AddMaskTexture(af.maskr_hover)
     af.fill:RemoveMaskTexture(af.maskr_normal)
-    self.border.normal:Hide()
-    self.border.hover:Show()
+    bar.border.normal:Hide()
+    bar.border.hover:Show()
 
-    if self.spellId then
-        GameTooltip_SetDefaultAnchor(GameTooltip, self)
-        GameTooltip:SetSpellByID(self.spellId)
+    if bar.spellId then
+        GameTooltip_SetDefaultAnchor(GameTooltip, bar)
+        GameTooltip:SetSpellByID(bar.spellId)
         GameTooltip:Show()
     else
-        GameTooltip_SetDefaultAnchor(GameTooltip, self)
-        GameTooltip:AddLine(self.tooltip, 1, 1, 1, true)
+        GameTooltip_SetDefaultAnchor(GameTooltip, bar)
+        GameTooltip:AddLine(bar.tooltip, 1, 1, 1, true)
         GameTooltip:Show()
     end
 end
 
-function GwDodgeBarMixin:OnLeave()
-    -- change the masks/art to the non-hover (normal) version
-    local af = self.arcfill
+function GwDodgeBarMixin:OnLeave(_, override)
+    local bar = override and self or self.skyringingBarShown and self.skyrindingBar or self
+    local af = bar.arcfill
     for _, v in ipairs(af.masked) do
         v:AddMaskTexture(af.mask_normal)
         v:RemoveMaskTexture(af.mask_hover)
@@ -293,8 +293,8 @@ function GwDodgeBarMixin:OnLeave()
     af.fillFractions:AddMaskTexture(af.maskr_fraction)
     af.spark:AddMaskTexture(af.maskr_normal)
     af.spark:RemoveMaskTexture(af.maskr_hover)
-    self.border.hover:Hide()
-    self.border.normal:Show()
+    bar.border.hover:Hide()
+    bar.border.normal:Show()
 
     -- hide the spell tooltip
     GameTooltip_Hide()
@@ -322,18 +322,14 @@ function GwDodgeBarMixin:UpdateSkyridingBarState(state, isLogin)
 
     if not state and self:IsShown() then
         self:Hide()
-        self.dodgeBar:EnableMouse(true)
-        self.dodgeBar:SetScript("OnEnter", self.dodgeBar.OnEnter)
-        self.dodgeBar:SetScript("OnLeave", self.dodgeBar.OnLeave)
+        self.dodgeBar.skyringingBarShown = false
         if GW.settings.HIDE_BLIZZARD_VIGOR_BAR and not EncounterBar:IsVisible() then
             C_Timer.After(0.5, function() EncounterBar:Show() end)
         end
     elseif (state and not self:IsShown()) or (state and isLogin and self:IsShown()) then
         self:Show()
-        self.dodgeBar:SetScript("OnEnter", nil)
-        self.dodgeBar:SetScript("OnLeave", nil)
         self.dodgeBar:OnLeave()
-        self.dodgeBar:EnableMouse(false)
+        self.dodgeBar.skyringingBarShown = true
 
         if GW.settings.HIDE_BLIZZARD_VIGOR_BAR and EncounterBar:IsVisible() then
             EncounterBar:Hide()
@@ -368,8 +364,8 @@ function GwDodgeBarMixin:SkyridingBarOnEvent(event, ...)
     end
 end
 
-function GwDodgeBarMixin:LoadDragonBar(parent)
-    Debug("LoadDragonBar start")
+function GwDodgeBarMixin:LoadSkiridingBar(parent)
+    Debug("LoadSkiridingBar start")
 
     -- this bar gets a global name for use in key bindings
     local fmdb = CreateFrame("Button", "GwSkyridingBar", UIParent, "UnsecureDodgeBar")
@@ -432,9 +428,7 @@ function GwDodgeBarMixin:LoadDragonBar(parent)
     ag:SetScript("OnFinished", fmdb.OnFinished)
 
     -- setup dodgebar event handling
-    fmdb:OnLeave()
-    fmdb:SetScript("OnEnter", fmdb.OnEnter)
-    fmdb:SetScript("OnLeave", fmdb.OnLeave)
+    fmdb:OnLeave(nil, true)
     fmdb:SetScript("OnEvent", fmdb.SkyridingBarOnEvent)
 
     GW.Libs.GW2Lib.RegisterCallback(fmdb, "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE", function(event, ...)
@@ -444,7 +438,7 @@ function GwDodgeBarMixin:LoadDragonBar(parent)
     fmdb:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
     fmdb:RegisterEvent("UPDATE_UI_WIDGET")
 
-    Debug("LoadDragonBar done")
+    Debug("LoadSkiridingBar done")
     return fmdb
 end
 
@@ -490,7 +484,8 @@ local function LoadDodgeBar(parent, asTargetFrame)
     af.gwAnimFill = a2
 
     -- setup dodgebar event handling
-    fmdb:OnLeave()
+    fmdb.skyringingBarShown = false
+    fmdb:OnLeave(nil, true)
     fmdb:SetScript("OnEnter", fmdb.OnEnter)
     fmdb:SetScript("OnLeave", fmdb.OnLeave)
     fmdb:SetScript("OnEvent", fmdb.OnEvent)
@@ -504,7 +499,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
     MixinHideDuringPetAndOverride(fmdb)
 
     Debug("LoadDodgeBar done")
-    fmdb:LoadDragonBar(parent)
+    fmdb.skyridingbar = fmdb:LoadSkiridingBar(parent)
     return fmdb
 end
 GW.LoadDodgeBar = LoadDodgeBar
