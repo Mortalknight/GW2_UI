@@ -26,11 +26,11 @@ lib.locationData = {
     xText = nil,
     yText = nil
 }
-lib.isDragonRiding = nil
+lib.isSkyridingRiding = nil
 
---/dump GW2_ADDON.Libs.GW2Lib:IsPlayerDragonRiding()
-function lib:IsPlayerDragonRiding()
-    return lib.isDragonRiding
+--/dump GW2_ADDON.Libs.GW2Lib:IsPlayerSkyRiding()
+function lib:IsPlayerSkyRiding()
+    return lib.isSkyridingRiding
 end
 
 function lib:GetPlayerInstanceMapID()
@@ -219,9 +219,9 @@ local function IsSkyriding(canSkyriding, isLogin)
     if canSkyriding == nil then
         canSkyriding = select(2, C_PlayerInfo.GetGlidingInfo())
     end
-    if canSkyriding ~= lib.isDragonRiding then
-        lib.isDragonRiding = canSkyriding
-        lib.callbacks:Fire("GW2_PLAYER_DRAGONRIDING_STATE_CHANGE", lib.isDragonRiding, isLogin)
+    if canSkyriding ~= lib.isSkyridingRiding then
+        lib.isSkyridingRiding = canSkyriding
+        lib.callbacks:Fire("GW2_PLAYER_SKYRIDING_STATE_CHANGE", lib.isSkyridingRiding, isLogin)
     end
 end
 local function HandleEvents(_, event, ...)

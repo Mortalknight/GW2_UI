@@ -601,7 +601,7 @@ local function selectBg(self)
         end
     end
 
-    if GW.Libs.GW2Lib:IsPlayerDragonRiding() then
+    if GW.Libs.GW2Lib:IsPlayerSkyRiding() then
         right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow-dragon"
         left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow-dragon"
     end
@@ -934,7 +934,7 @@ local function LoadHudArt()
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)
     hud_OnEvent(hudArtFrame, "INIT")
 
-    GW.Libs.GW2Lib.RegisterCallback(hudArtFrame, "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE", function()
+    GW.Libs.GW2Lib.RegisterCallback(hudArtFrame, "GW2_PLAYER_SKYRIDING_STATE_CHANGE", function()
         selectBg(hudArtFrame)
     end)
 

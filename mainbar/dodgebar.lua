@@ -105,7 +105,7 @@ function GwDodgeBarMixin:AnimateSkyridingBar(current, fraction, max)
 
     self.currentValue = current
     self.currentValueFraction =  fraction
-    AddToAnimation("DRAGONBAR", 0, 1, GetTime(), 0.8, function(p)
+    AddToAnimation("SKYRIDINGBAR", 0, 1, GetTime(), 0.8, function(p)
         local l = lerp(from, to, p) / max
         local l2 = lerp(fromFraction, toFraction, p) / max
 
@@ -358,7 +358,7 @@ function GwDodgeBarMixin:SkyridingBarOnEvent(event, ...)
             self.tooltip = widgetInfo.tooltip
             self.gwMaxCharges = widgetInfo.numTotalFrames
         end
-    elseif event == "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE" then
+    elseif event == "GW2_PLAYER_SKYRIDING_STATE_CHANGE" then
         local state, isLogin = ...
         self:UpdateSkyridingBarState(state, isLogin)
     end
@@ -380,7 +380,7 @@ function GwDodgeBarMixin:LoadSkiridingBar(parent)
     GW.AddMouseMotionPropagationToChildFrames(self.border)
 
     if fmdb.asTargetFrame then
-        parent.dragonBar = fmdb
+        parent.skyrindingBar = fmdb
         fmdb.arcfill:SetSize(80, 72)
         fmdb.arcfill.mask_normal:SetSize(80, 72)
         fmdb.arcfill.mask_hover:SetSize(80, 72)
@@ -431,7 +431,7 @@ function GwDodgeBarMixin:LoadSkiridingBar(parent)
     fmdb:OnLeave(nil, true)
     fmdb:SetScript("OnEvent", fmdb.SkyridingBarOnEvent)
 
-    GW.Libs.GW2Lib.RegisterCallback(fmdb, "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE", function(event, ...)
+    GW.Libs.GW2Lib.RegisterCallback(fmdb, "GW2_PLAYER_SKYRIDING_STATE_CHANGE", function(event, ...)
         fmdb:SkyridingBarOnEvent(event, ...)
     end)
 
@@ -499,7 +499,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
     MixinHideDuringPetAndOverride(fmdb)
 
     Debug("LoadDodgeBar done")
-    fmdb.skyridingbar = fmdb:LoadSkiridingBar(parent)
+    fmdb:LoadSkiridingBar(parent)
     return fmdb
 end
 GW.LoadDodgeBar = LoadDodgeBar
