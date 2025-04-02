@@ -142,8 +142,8 @@ social\raf.lua
 social\ignoreList.lua
 social\social.lua
 
-units\powerBarMixin.lua
-units\healthBarMixin.lua
+units\mixin\powerBarMixin.lua
+units\mixin\healthBarMixin.lua
 units\party.xml
 units\unitframes.xml
 units\unitframes.lua

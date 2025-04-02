@@ -1,50 +1,10 @@
 local _, GW = ...
 local L = GW.L
-local RoundDec = GW.RoundDec
 
 local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailIcon
-MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
-MAP_FRAMES_HIDE[3] = MiniMapTrackingButton
-MAP_FRAMES_HIDE[4] = MiniMapTracking
-
-local ALWAYS_ON_FILTERS = {
-    [Enum.MinimapTrackingFilter.QuestPoIs] = true,
-    [Enum.MinimapTrackingFilter.TaxiNode] = true,
-    [Enum.MinimapTrackingFilter.Innkeeper] = true,
-    [Enum.MinimapTrackingFilter.ItemUpgrade] = true,
-    [Enum.MinimapTrackingFilter.Battlemaster] = true,
-    [Enum.MinimapTrackingFilter.Stablemaster] = true,
-};
-
-local CONDITIONAL_FILTERS = {
-    [Enum.MinimapTrackingFilter.Target] = true,
-    [Enum.MinimapTrackingFilter.Digsites] = true,
-    [Enum.MinimapTrackingFilter.Repair] = true,
-};
-
-local OPTIONAL_FILTERS = {
-    [Enum.MinimapTrackingFilter.Banker] = true,
-    [Enum.MinimapTrackingFilter.Auctioneer] = true,
-    [Enum.MinimapTrackingFilter.Barber] = true,
-    [Enum.MinimapTrackingFilter.TrainerProfession] = true,
-    [Enum.MinimapTrackingFilter.AccountCompletedQuests] = true,
-    [Enum.MinimapTrackingFilter.TrivialQuests] = true,
-    [Enum.MinimapTrackingFilter.Transmogrifier] = true,
-    [Enum.MinimapTrackingFilter.Mailbox] = true,
-};
-
-local LOW_PRIORITY_TRACKING_SPELLS = {
-    [261764] = true; -- Track Warboards
-};
-
-local TRACKING_SPELL_OVERRIDE_TEXTURES = {
-    [43308] = "professions_tracking_fish";-- Find Fish
-    [2580] = "professions_tracking_ore"; -- Find Minerals 1
-    [8388] = "professions_tracking_ore"; -- Find Minerals 2
-    [2383] = "professions_tracking_herb"; -- Find Herbs 1
-    [8387] = "professions_tracking_herb"; -- Find Herbs 2
-};
+MAP_FRAMES_HIDE[2] = MiniMapTrackingButton
+MAP_FRAMES_HIDE[3] = MiniMapTracking
 
 local M = CreateFrame("Frame")
 
@@ -287,189 +247,17 @@ local function ToogleMinimapFpsLable()
 end
 GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
-local function CreatePredictedTrackingState()
-    local tbl = {};
-    local state = {};
-
-    tbl.SetSelected = function(self, index, selected)
-        state[index] = selected;
-
-        MinimapUtil.SetTrackingFilterByFilterIndex(index, selected); -- 11.0.2
-    end
-
-    -- Some filters (like trivial quest tracking) can be changed from other places in the UI (like the Options panel or the World Map)
-    -- If a filter is changed from an external system, then all we need to do is update the predicted state
-    tbl.OverrideSelectedState = function(self, index, selected)
-        state[index] = selected;
-    end
-
-    tbl.IsSelected = function(self, index)
-        return state[index] == true;
-    end
-
-    tbl.ClearSelections = function(self)
-        state = {};
-
-        C_Minimap.ClearAllTracking();
-    end
-
-    tbl.Enumerate = function(self)
-        return ipairs(state);
-    end
-
-    return tbl;
-end
-
-local trackingState = CreatePredictedTrackingState()
-
-local function CanDisplayTrackingInfo(index)
-    local filter = C_Minimap.GetTrackingFilter(index);
-    if not filter then
-        return false;
-    end
-
-    return OPTIONAL_FILTERS[filter.filterID] or filter.spellID;
-end
-
-local function ToggleTrackingSelected(info)
-    local selected = trackingState:IsSelected(info.index);
-    local newSelected = not selected;
-    trackingState:SetSelected(info.index, newSelected);
-end
-
-local function IsTrackingActive(info)
-    return trackingState:IsSelected(info.index);
-end
-
-local function SetupMiniMapTrackingDropdown(self)
-    MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-        local showAll = GetCVarBool("minimapTrackingShowAll")
-        local isHunterClass = GW.myclass == "HUNTER"
-
-        if not showAll then
-            local allButton = rootDescription:CreateButton(UNCHECK_ALL, function()
-                trackingState:ClearSelections();
-
-                for index = 1, C_Minimap.GetNumTrackingTypes() do
-                    local filter = C_Minimap.GetTrackingFilter(index);
-                    if ALWAYS_ON_FILTERS[filter.filterID] or CONDITIONAL_FILTERS[filter.filterID] then
-                        trackingState:SetSelected(index, true);
-                    end
-                end
-
-                return MenuResponse.Refresh;
-            end);
-            allButton:AddInitializer(GW.BlizzardDropdownButtonInitializer)
-        end
-
-        local hunterInfo = {};
-        local townfolkInfo = {};
-        local regularInfo = {};
-
-        for index = 1, C_Minimap.GetNumTrackingTypes() do
-            if showAll or CanDisplayTrackingInfo(index) then
-                local trackingInfo = C_Minimap.GetTrackingInfo(index);
-                trackingInfo.index = index;
-
-                if isHunterClass and (trackingInfo.subType == HUNTER_TRACKING) then
-                    table.insert(hunterInfo, trackingInfo);
-                elseif trackingInfo.subType == TOWNSFOLK_TRACKING then
-                    table.insert(townfolkInfo, trackingInfo);
-                else
-                    table.insert(regularInfo, trackingInfo);
-                end
-            end
-        end
-
-        TableUtil.Execute({hunterInfo, townfolkInfo, regularInfo}, function(trackingInfo)
-            table.sort(trackingInfo, function(a, b)
-                -- Sort low priority tracking spells to the end
-                local filterA = C_Minimap.GetTrackingFilter(a.index);
-                local filterB = C_Minimap.GetTrackingFilter(b.index);
-                local lowPriorityA = LOW_PRIORITY_TRACKING_SPELLS[filterA.spellID] or false;
-                local lowPriorityB = LOW_PRIORITY_TRACKING_SPELLS[filterB.spellID] or false;
-                if lowPriorityA ~= lowPriorityB then
-                    return not lowPriorityA;
-                end
-                return a.index < b.index;
-            end);
-        end);
-
-        local function CreateCheckboxWithIcon(parentDescription, trackingInfo)
-            local name = trackingInfo.name;
-            trackingInfo.text = name;
-
-            local texture = TRACKING_SPELL_OVERRIDE_TEXTURES[trackingInfo.spellID] or trackingInfo.texture;
-            local desc = parentDescription:CreateCheckbox(
-                name,
-                IsTrackingActive,
-                ToggleTrackingSelected,
-                trackingInfo);
-
-            desc:AddInitializer(function(button, description, menu)
-                local rightTexture = button:AttachTexture();
-                rightTexture:SetSize(20, 20);
-                rightTexture:SetPoint("RIGHT");
-                rightTexture:SetTexture(texture);
-
-                local fontString = button.fontString;
-                fontString:SetPoint("RIGHT", rightTexture, "LEFT");
-
-                if trackingInfo.type == "spell" then
-                    local uv0, uv1 = .0625, .9;
-                    rightTexture:SetTexCoord(uv0, uv1, uv0, uv1);
-                end
-
-                GW.BlizzardDropdownCheckButtonInitializer(button, description, menu)
-
-                -- The size is explicitly provided because this requires a right-justified icon.
-                local width, height = fontString:GetUnboundedStringWidth() + 60, 20;
-                return width, height;
-            end);
-
-            return desc;
-        end
-
-        local hunterCount = #hunterInfo;
-        if hunterCount > 0 then
-            if hunterCount > 1 then
-                local hunterMenuDesc = rootDescription:CreateButton(HUNTER_TRACKING_TEXT);
-                for index, info in ipairs(hunterInfo) do
-                    CreateCheckboxWithIcon(hunterMenuDesc, info);
-                end
-            else
-                CreateCheckboxWithIcon(rootDescription);
-            end
-        end
-        if #townfolkInfo > 0 then
-            local townfolkMenuDesc = rootDescription;
-            if showAll then
-                townfolkMenuDesc = rootDescription:CreateButton(TOWNSFOLK_TRACKING_TEXT);
-            end
-
-            for index, info in ipairs(townfolkInfo) do
-                CreateCheckboxWithIcon(townfolkMenuDesc, info);
-            end
-        end
-
-        for index, info in ipairs(regularInfo) do
-            CreateCheckboxWithIcon(rootDescription, info);
-        end
-    end)
-end
-
 local function Minimap_OnMouseDown(self, btn)
     if btn == "RightButton" then
-        SetupMiniMapTrackingDropdown(self)
+        self.gwTrackingButton:OpenMenu()
     else
         Minimap.OnClick(self)
     end
 end
 
-local function MapCanvas_OnMouseDown(self, btn)--TODO
-
+local function MapCanvas_OnMouseDown(self, btn)
     if btn == "RightButton" then
-        SetupMiniMapTrackingDropdown(self)
+        self.gwTrackingButton:OpenMenu()
     end
 end
 
@@ -621,12 +409,11 @@ end
 
 local function SetupHybridMinimap()
     local MapCanvas = HybridMinimap.MapCanvas
-    --MapCanvas:SetMaskTexture(E.Media.Textures.White8x8)
     MapCanvas:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
     MapCanvas:SetScript("OnMouseDown", MapCanvas_OnMouseDown)
     MapCanvas:SetScript("OnMouseUp", GW.NoOp)
 
-    _G.HybridMinimap.CircleMask:GwStripTextures()
+    HybridMinimap.CircleMask:GwStripTextures()
 end
 
 local function UpdateClusterPoint(_, _, anchor)
@@ -748,7 +535,6 @@ local function LoadMinimap()
 
     MinimapCluster.ZoneTextButton:GwKill()
     TimeManagerClockButton:GwKill()
-    MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
 
     GwMapGradient.location = GwMapGradient:CreateFontString(nil, "OVERLAY")
     GwMapGradient.location:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
@@ -912,5 +698,14 @@ local function LoadMinimap()
         QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
         QueueStatusButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
     end)
+
+    -- Minimap Tracking Button
+    Minimap.gwTrackingButton = CreateFrame("DropdownButton", "TEST_G")
+    Minimap.gwTrackingButton:SetFrameStrata("BACKGROUND")
+    MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
+    Mixin(Minimap.gwTrackingButton, MiniMapTrackingButtonMixin)
+    Minimap.gwTrackingButton:OnLoad()
+    Minimap.gwTrackingButton:SetScript("OnEvent", Minimap.gwTrackingButton.OnEvent)
+    Minimap.gwTrackingButton:SetAllPoints(Minimap)
 end
 GW.LoadMinimap = LoadMinimap
