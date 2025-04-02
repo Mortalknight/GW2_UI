@@ -700,7 +700,7 @@ local function LoadMinimap()
     end)
 
     -- Minimap Tracking Button
-    Minimap.gwTrackingButton = CreateFrame("DropdownButton", "TEST_G")
+    Minimap.gwTrackingButton = CreateFrame("DropdownButton")
     Minimap.gwTrackingButton:SetFrameStrata("BACKGROUND")
     MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
     Mixin(Minimap.gwTrackingButton, MiniMapTrackingButtonMixin)
