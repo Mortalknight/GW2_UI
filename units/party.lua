@@ -197,7 +197,8 @@ function GwPartyFrameMixin:UpdateFrame()
 end
 
 function GwPartyFrameMixin:OnEvent(event, unit, ...)
-    if (not UnitExists(self.unit) or IsInRaid()) or not self:IsVisible() and event ~= "load" then return end
+    local isVisible = event == "UNIT_PET" or self:IsVisible()
+    if (not UnitExists(self.unit) or IsInRaid()) or not isVisible and event ~= "load" then return end
 
     if event == "load" then
         self:UpdateFrame()
@@ -212,7 +213,7 @@ function GwPartyFrameMixin:OnEvent(event, unit, ...)
         self:UpdateHealthBar()
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         self:UpdatePowerBar()
-    elseif IsIn(event, "UNIT_LEVEL", "GROUP_ROSTER_UPDATE", "UNIT_MODEL_CHANGED") then
+    elseif IsIn(event, "UNIT_LEVEL", "GROUP_ROSTER_UPDATE", "UNIT_MODEL_CHANGED", "UNIT_PET") then
         self:UpdateFrame()
         self.auras:ForceUpdate()
     elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
