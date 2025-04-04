@@ -19,6 +19,7 @@ local icons = {
         Horde = { Name = FACTION_HORDE, Order = 2,  Launcher = MediaPath.."GameIcons/Launcher/Horde" },
         Neutral = { Name = FACTION_STANDING_LABEL4, Order = 3, Launcher = MediaPath.."GameIcons/Launcher/WoW" },
         App = { Name = L["App"], Order = 4, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/BattleNet" },
+        CLNT = { Name = L["App"], Order = 4, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/BattleNet" },
         BSAp = { Name = L["Mobile"], Order = 5, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/Mobile" },
         D3 = { Name = L["Diablo 3"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/D3" },
         Fen = { Name = L["Diablo 4"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/D4" },

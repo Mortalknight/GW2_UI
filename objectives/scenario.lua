@@ -16,8 +16,7 @@ local allowedWidgetUpdateIdsForTimer = {
 }
 
 local allowedWidgetUpdateIdsForStatusBar = {
-    [6350] = true, -- 20th
-    --[6758] = true, -- 11.1
+    [6758] = {additon = true}, -- 11.1
 }
 
 GwObjectivesScenarioContainerMixin = {}
@@ -65,30 +64,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     block.questLogIndex = 0
     block.groupButton:Hide()
     block:Show()
-
-    -- here we show only the statusbar
-    for id in pairs(allowedWidgetUpdateIdsForStatusBar) do
-        local widgetInfo = C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(id)
-        if widgetInfo and widgetInfo.shownState ~= Enum.WidgetShownState.Hidden then
-            block:AddObjective(GW.ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text), 1, { finished = false, objectiveType = "object", qty = widgetInfo.barValue, firstObjectivesYValue = -5 })
-
-            for i = block.numObjectives + 1, 20 do
-                if _G[containerName .. "Objective" .. i] then
-                    _G[containerName .. "Objective" .. i]:Hide()
-                end
-            end
-
-            compassData.TITLE = widgetInfo.text
-            compassData.DESC = widgetInfo.text
-            GwObjectivesNotification:AddNotification(compassData)
-            block:SetHeight(block.height)
-            self.oldHeight = GW.RoundInt(self:GetHeight())
-            self:SetHeight(block.height)
-            timerBlock.timer:Hide()
-            GW.TerminateScenarioWidgetTimer()
-            return
-        end
-    end
 
     local _, _, numStages, _, _, _, _, _, _, _, _, _, scenarioID = C_Scenario.GetInfo()
     if numStages == 0 or IsOnGroundFloorInJailersTower() then
@@ -248,6 +223,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             if isMythicKeystone then
                 mythicKeystoneCurrentValue = tonumber(string.match(scenarioCriteriaInfo.quantityString, "%d+")) or 1
             end
+            print(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, objectiveType)
             block:AddObjective(GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress), criteriaIndex, { finished = false, objectiveType = objectiveType, qty = scenarioCriteriaInfo.quantity, isMythicKeystone = isMythicKeystone, firstObjectivesYValue = -5 })
         end
     end
@@ -298,10 +274,20 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
                 GwQuestTrackerTimerSavedHeight = 1
                 timerBlock:SetScript("OnUpdate", nil)
                 timerBlock.timer:Hide()
-                block:AddObjective(GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description), numCriteriaPrev + criteriaIndex, { finished = false, objectiveType = objectiveType, qty = scenarioCriteriaInfo.quantity, firstObjectivesYValue = -5 })
+                block:AddObjective(GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description), numCriteriaPrev + 1, { finished = false, objectiveType = objectiveType, qty = scenarioCriteriaInfo.quantity, firstObjectivesYValue = -5 })
+                numCriteriaPrev = numCriteriaPrev + 1
             end
         end
-        numCriteriaPrev = numCriteriaPrev + numCriteriaForStep
+    end
+
+    --check for additonal statusbar
+    for id in pairs(allowedWidgetUpdateIdsForStatusBar) do
+        local widgetInfo = C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(id)
+        if widgetInfo and widgetInfo.shownState ~= Enum.WidgetShownState.Hidden then
+            block:AddObjective(GW.ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text), numCriteriaPrev + 1, { finished = false, objectiveType = "object", qty = widgetInfo.barValue, firstObjectivesYValue = -5 })
+            numCriteriaPrev = numCriteriaPrev + 1
+            GW.TerminateScenarioWidgetTimer()
+        end
     end
 
     for i = block.numObjectives + 1, 20 do

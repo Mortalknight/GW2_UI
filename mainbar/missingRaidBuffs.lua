@@ -30,35 +30,25 @@ local reminderBuffs = {
     },
     Food = {
         [1] = 104280,	-- Well Fed
+        [2] = 461957,	-- Well Fed
+        [3] = 461958,	-- Well Fed
+        [4] = 461959,	-- Well Fed
+        [5] = 461960,	-- Well Fed
 
-        -- Shadowlands
-        [2] = 259455,	-- Well Fed
-        [3] = 308434,	-- Well Fed
-        [4] = 308488,	-- Well Fed
-        [5] = 308506,	-- Well Fed
-        [6] = 308514,	-- Well Fed
-        [7] = 308637,	-- Well Fed
-        [8] = 327715,	-- Well Fed
-        [9] = 327851,	-- Well Fed
-
-        -- DF
-        [10] = 382149,	-- Well Fed
-        [11] = 396092,	-- Well Fed
-        [12] = 327708,	-- Well Fed
-        [13] = 457284,	-- Well Fed
+        [6] = 462180,	-- Well Fed
+        [7] = 462181,	-- Well Fed
+        [8] = 462182,	-- Well Fed
+        [9] = 462183,	-- Well Fed
+        [10] = 462210,	-- Well Fed
     },
     Intellect = {
         [1] = 1459, -- Arcane Intellect
-        [2] = 264760, -- War-Scroll of Intellect
     },
     Stamina = {
         [1] = 21562, -- Power Word: Fortitude
-        [2] = 6307, -- Blood Pact
-        [3] = 264764, -- War-Scroll of Fortitude
     },
     AttackPower = {
         [1] = 6673, -- Battle Shout
-        [2] = 264761, -- War-Scroll of Battle
     },
     Versatility = {
 		[1] = 1126,    -- Mark of the Wild
