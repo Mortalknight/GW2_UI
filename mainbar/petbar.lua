@@ -234,6 +234,7 @@ local function updatePetData(self, event, unit, ...)
         if event == "UNIT_PET" then
             self:UpdateHealthBar()
             self:UpdatePowerBar(true)
+            self.auras:ForceUpdate()
         end
     elseif event == "PET_BAR_UPDATE_COOLDOWN" then
         UpdatePetCooldown(self)
