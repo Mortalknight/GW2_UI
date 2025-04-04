@@ -223,7 +223,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             if isMythicKeystone then
                 mythicKeystoneCurrentValue = tonumber(string.match(scenarioCriteriaInfo.quantityString, "%d+")) or 1
             end
-            print(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, objectiveType)
             block:AddObjective(GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress), criteriaIndex, { finished = false, objectiveType = objectiveType, qty = scenarioCriteriaInfo.quantity, isMythicKeystone = isMythicKeystone, firstObjectivesYValue = -5 })
         end
     end
