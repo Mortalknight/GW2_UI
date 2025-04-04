@@ -66,21 +66,30 @@ end
 GW.ParseSimpleObjective = ParseSimpleObjective
 
 local function ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone, mythicKeystoneCurrentValue, isWeightedProgress)
-    if quantity ~= nil and totalQuantity ~= nil and criteriaString ~= nil then
-        if isMythicKeystone then
-            if isWeightedProgress then
-                return string.format("%.2f", (mythicKeystoneCurrentValue / totalQuantity * 100)) .."% " ..  string.format("(%s/%s) %s", mythicKeystoneCurrentValue, totalQuantity, criteriaString)
-            else
-                return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
-            end
-        elseif totalQuantity == 0 then
-            return string.format("%d %s", quantity, criteriaString)
-        else
-            return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
-        end
+    if not (quantity and totalQuantity and criteriaString) then
+        return criteriaString
     end
 
-    return criteriaString
+    if isMythicKeystone then
+        if isWeightedProgress then
+            local percent = mythicKeystoneCurrentValue / totalQuantity * 100
+            return string.format("%.2f%% (%d/%d) %s", percent, mythicKeystoneCurrentValue, totalQuantity, criteriaString)
+        end
+        return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
+    end
+
+    if totalQuantity == 0 then
+        return string.format("%d %s", quantity, criteriaString)
+    end
+
+    local startPattern = "^%d+/%d+%s+"
+    local endPattern = ":%s*%d+/%d+$"
+
+    if criteriaString:match(startPattern) or criteriaString:match(endPattern) then
+        return criteriaString
+    end
+
+    return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
 end
 GW.ParseCriteria = ParseCriteria
 
