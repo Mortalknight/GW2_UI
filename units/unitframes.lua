@@ -12,8 +12,6 @@ local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
-local fctf
-
 
 local function CreateUnitFrame(name, revert)
     local f = CreateFrame("Button", name, UIParent, revert and "GwNormalUnitFrameInvert" or "GwNormalUnitFrame")
@@ -533,7 +531,13 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         secondaryFrame = GwFocusTargetUnitFrame
     end
 
-    if IsIn(event, "PLAYER_TARGET_CHANGED", "PLAYER_FOCUS_CHANGED", "PLAYER_ENTERING_WORLD", "FORCE_UPDATE") then
+    local arg1, arg2, arg3, arg4, arg5 = ...
+
+    if event == "UNIT_COMBAT" then
+        if arg1 == self.unit then
+            CombatFeedback_OnCombatEvent(self, arg2, arg3, arg4, arg5)
+        end
+    elseif IsIn(event, "PLAYER_TARGET_CHANGED", "PLAYER_FOCUS_CHANGED", "PLAYER_ENTERING_WORLD", "FORCE_UPDATE") then
         if event == "PLAYER_TARGET_CHANGED" and self.unit == "target" and CanInspect(self.unit) and
             (self.showItemLevel == "PVP_LEVEL" or self.showItemLevel == "ITEM_LEVEL") then
             local guid = UnitGUID(self.unit)
@@ -686,30 +690,11 @@ end
 
 function GwUnitFrameMixin:ToggleTargetFrameCombatFeedback()
     if GW.settings.target_FLOATING_COMBAT_TEXT then
-        if not fctf then
-            fctf = CreateFrame("Frame", nil, self)
-            fctf:SetFrameLevel(self:GetFrameLevel() + 3)
-            fctf:SetScript("OnEvent", function(frame, _, unit, ...)
-                if frame.unit == unit then
-                    CombatFeedback_OnCombatEvent(frame, ...)
-                end
-            end)
-            local font = fctf:CreateFontString(nil, "OVERLAY")
-            font:SetFont(DAMAGE_TEXT_FONT, 30, "")
-            fctf.fontString = font
-            font:SetPoint("CENTER", self.portrait, "CENTER")
-            font:Hide()
-
-            fctf.unit = self.unit
-            CombatFeedback_Initialize(fctf, fctf.fontString, 30)
-        end
-        fctf:RegisterEvent("UNIT_COMBAT")
-        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
+        self:RegisterEvent("UNIT_COMBAT")
+        self:SetScript("OnUpdate", CombatFeedback_OnUpdate)
     else
-        if fctf then
-            fctf:UnregisterAllEvents()
-            fctf:SetScript("OnUpdate", nil)
-        end
+        self:UnregisterEvent("UNIT_COMBAT")
+        self:SetScript("OnUpdate", nil)
     end
 end
 
