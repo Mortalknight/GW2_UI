@@ -769,6 +769,11 @@ local function LoadUnitFrame(unit, frameInvert)
     end
 
     if unit == "target" then
+        unitframe.feedbackText = unitframe:CreateFontString(nil, "OVERLAY")
+        unitframe.feedbackText:SetFont(DAMAGE_TEXT_FONT, 30, "")
+        unitframe.feedbackText:SetPoint("CENTER", unitframe.portrait, "CENTER")
+        unitframe.feedbackText:Hide()
+        unitframe.feedbackFontHeight = 30
         unitframe:ToggleTargetFrameCombatFeedback()
     end
 
