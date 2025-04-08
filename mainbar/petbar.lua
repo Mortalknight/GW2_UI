@@ -170,11 +170,11 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
     if not UnitExists("pet") then
         return
     end
-    local arg1, arg2, arg3, arg4, arg5 = ...
+    local arg1, arg2, arg3, arg4 = ...
 
     if event == "UNIT_COMBAT" then
-        if arg1 == self.unit then
-            CombatFeedback_OnCombatEvent(self, arg2, arg3, arg4, arg5)
+        if unit == self.unit then
+            CombatFeedback_OnCombatEvent(self, arg1, arg2, arg3, arg4)
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
         SetPortraitTexture(self.portrait, "pet")

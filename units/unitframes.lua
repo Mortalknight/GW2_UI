@@ -531,11 +531,11 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         secondaryFrame = GwFocusTargetUnitFrame
     end
 
-    local arg1, arg2, arg3, arg4, arg5 = ...
+    local arg1, arg2, arg3, arg4 = ...
 
     if event == "UNIT_COMBAT" then
-        if arg1 == self.unit then
-            CombatFeedback_OnCombatEvent(self, arg2, arg3, arg4, arg5)
+        if unit == self.unit then
+            CombatFeedback_OnCombatEvent(self, arg1, arg2, arg3, arg4)
         end
     elseif IsIn(event, "PLAYER_TARGET_CHANGED", "PLAYER_FOCUS_CHANGED", "PLAYER_ENTERING_WORLD", "FORCE_UPDATE") then
         if event == "PLAYER_TARGET_CHANGED" and self.unit == "target" and CanInspect(self.unit) and
