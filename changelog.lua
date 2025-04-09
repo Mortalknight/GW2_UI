@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("3.3.21",{
+    {ct.change,[=[Update for 1.15.7]=]},
+})
+
 addChange("3.3.20",{
     {ct.change,[=[Fix bag lua error]=]},
 })

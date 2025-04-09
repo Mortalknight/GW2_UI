@@ -1,4 +1,4 @@
-## Interface: 11505
+## Interface: 11507
 ## Title: |cffffedbaGW2 UI|r |cFF888888Era|r
 ## Notes: Hud Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
