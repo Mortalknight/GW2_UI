@@ -345,10 +345,12 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
         local slots = {C_UnitAuras.GetAuraSlots(unit, buffFilter)}
         for i = 2, #slots do -- #1 return is continuationToken, we don't care about it
             local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]), false, false)
-            auras.allBuffs[data.auraInstanceID] = data
+            if data then
+                auras.allBuffs[data.auraInstanceID] = data
 
-            if ((auras.FilterAura or FilterAura)(auras, unit, data, true)) then
-                auras.activeBuffs[data.auraInstanceID] = true
+                if ((auras.FilterAura or FilterAura)(auras, unit, data, true)) then
+                    auras.activeBuffs[data.auraInstanceID] = true
+                end
             end
         end
 
@@ -359,10 +361,12 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
         slots = {C_UnitAuras.GetAuraSlots(unit, debuffFilter)}
         for i = 2, #slots do
             local data = processData(C_UnitAuras.GetAuraDataBySlot(unit, slots[i]), showImportant, false)
-            auras.allDebuffs[data.auraInstanceID] = data
+            if data then
+                auras.allDebuffs[data.auraInstanceID] = data
 
-            if ((auras.FilterAura or FilterAura)(auras, unit, data, false)) then
-                auras.activeDebuffs[data.auraInstanceID] = true
+                if ((auras.FilterAura or FilterAura)(auras, unit, data, false)) then
+                    auras.activeDebuffs[data.auraInstanceID] = true
+                end
             end
         end
     else
@@ -370,19 +374,23 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
             for _, data in next, updateInfo.addedAuras do
                 if(data.isHelpful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, buffFilter)) then
                     data = processData(data, false, true)
-                    auras.allBuffs[data.auraInstanceID] = data
+                    if data then
+                        auras.allBuffs[data.auraInstanceID] = data
 
-                    if ((auras.FilterAura or FilterAura)(auras, unit, data, true)) then
-                        auras.activeBuffs[data.auraInstanceID] = true
-                        buffsChanged = true
+                        if ((auras.FilterAura or FilterAura)(auras, unit, data, true)) then
+                            auras.activeBuffs[data.auraInstanceID] = true
+                            buffsChanged = true
+                        end
                     end
                 elseif(data.isHarmful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, debuffFilter)) then
                     data = processData(data, showImportant, false)
-                    auras.allDebuffs[data.auraInstanceID] = data
+                    if data then
+                        auras.allDebuffs[data.auraInstanceID] = data
 
-                    if ((auras.FilterAura or FilterAura)(auras, unit, data, false)) then
-                        auras.activeDebuffs[data.auraInstanceID] = true
-                        debuffsChanged = true
+                        if ((auras.FilterAura or FilterAura)(auras, unit, data, false)) then
+                            auras.activeDebuffs[data.auraInstanceID] = true
+                            debuffsChanged = true
+                        end
                     end
                 end
             end
