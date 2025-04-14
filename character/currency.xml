@@ -85,18 +85,26 @@
                 </Anchors>
             </ScrollFrame>
 
-            <Frame parentKey="RaidScroll" inherits="WowScrollBoxList" hidden="true">
+            <Frame parentKey="RaidLocks" hidden="true">
                 <Size x="580" y="576"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-10"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-10"></Anchor>
                 </Anchors>
+                <Frames>
+                    <Frame parentKey="RaidScroll" inherits="WowScrollBoxList">
+                        <Size x="580" y="576"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-10"></Anchor>
+                        </Anchors>
+                    </Frame>
+                    <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.RaidScroll" relativePoint="TOPRIGHT" x="-18" y="0"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.RaidScroll" relativePoint="BOTTOMRIGHT" x="-18" y="0"/>
+                        </Anchors>
+                    </EventFrame>
+                </Frames>
             </Frame>
-            <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.RaidScroll" relativePoint="TOPRIGHT" x="-18" y="0"/>
-                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.RaidScroll" relativePoint="BOTTOMRIGHT" x="-18" y="0"/>
-                </Anchors>
-            </EventFrame>
         </Frames>
     </Frame>
 

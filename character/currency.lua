@@ -566,15 +566,15 @@ local function LoadCurrency(tabContainer)
     view:SetElementInitializer("GwRaidInfoButtonTemplate", function(button, elementData)
         RaidInfo_InitButton(button, elementData)
     end)
-    ScrollUtil.InitScrollBoxListWithScrollBar(curwin_outer.RaidScroll, curwin_outer.ScrollBar, view)
-    GW.HandleTrimScrollBar(curwin_outer.ScrollBar)
-    GW.HandleScrollControls(curwin_outer)
-    curwin_outer.ScrollBar:SetHideIfUnscrollable(true)
+    ScrollUtil.InitScrollBoxListWithScrollBar(curwin_outer.RaidLocks.RaidScroll, curwin_outer.RaidLocks.ScrollBar, view)
+    GW.HandleTrimScrollBar(curwin_outer.RaidLocks.ScrollBar)
+    GW.HandleScrollControls(curwin_outer.RaidLocks)
+    curwin_outer.RaidLocks.ScrollBar:SetHideIfUnscrollable(true)
 
-    UpdateRaidInfoScrollBox(curwin_outer)
+    UpdateRaidInfoScrollBox(curwin_outer.RaidLocks)
 
     -- update currency window when a currency update event occurs
-    curwin_outer:SetScript(
+    curwin_outer.RaidLocks:SetScript(
         "OnEvent",
         function(self)
             if GW.inWorld and self:IsShown() then
@@ -582,7 +582,7 @@ local function LoadCurrency(tabContainer)
             end
         end
     )
-    curwin_outer:RegisterEvent("UPDATE_INSTANCE_INFO")
+    curwin_outer.RaidLocks:RegisterEvent("UPDATE_INSTANCE_INFO")
 
     -- setup a menu frame
     local fmMenu = CreateFrame("Frame", "GWCurrencyMenu", tabContainer, "GwCharacterMenu")
@@ -607,7 +607,7 @@ local function LoadCurrency(tabContainer)
     fmMenu.items.currencyTransferHistory = item
 
     item = CreateFrame("Button", "GwRaidInfoFrame", fmMenu, "GwCharacterMenuButtonTemplate")
-    item.ToggleMe = curwin_outer.RaidScroll
+    item.ToggleMe = curwin_outer.RaidLocks
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(RAID_INFORMATION)
     item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
