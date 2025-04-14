@@ -57,15 +57,7 @@ local function LoadSlashCommands()
                 end
             )
         elseif msg == "error" then
-            local txt = ("Version: %s Date: %s Locale: %s Build %s %s"):format(GW.VERSION_STRING or "?", date("%m/%d/%y %H:%M:%S") or "?", GW.mylocal or "?", GW.wowpatch, GW.wowbuild)
-            txt = txt .. "\n" .. GW.Join("\n", GW.ErrorHandler.log)
-
-            local errorlogFrame = GW.CreateErrorLogWindow()
-            errorlogFrame.editBox:SetText(txt)
-            errorlogFrame.editBox:HighlightText()
-            errorlogFrame.editBox:SetFocus()
-
-            errorlogFrame:Show()
+            Gw2ErrorLog:Toggle()
         elseif msg == "clear achievements" then
             local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
             local numAchievements = #trackedAchievements

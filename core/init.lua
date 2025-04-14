@@ -74,7 +74,7 @@ GW.earnedMoney = 0
 GW.spentMoney = 0
 
 -- Init error handler
-GW.RegisterErrorHandler()
+GW.CreateErrorHandler()
 
 GW.AlertContainerFrame = nil
 

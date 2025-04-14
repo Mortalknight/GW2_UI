@@ -496,6 +496,11 @@ local function StrLower(str, i, j)
 end
 GW.StrLower = StrLower
 
+local function StartsWith(str, str2)
+    return type(str) == "string" and str:sub(1, str2:len()) == str2
+end
+GW.StartsWith = StartsWith
+
 local function IsInf(n)
     --return tostring(n) == tostring(1/0)
     return false
