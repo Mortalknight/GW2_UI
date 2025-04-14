@@ -853,7 +853,7 @@ local function InitCategorieButton(button, elementData)
     button.standings = elementData.data.fctTbl
 
     button.name:SetText(elementData.data.name)
-    if elementData.data.standingCur and elementData.data.standingCur > 0 and elementData.data.standingMax and elementData.data.standingMax > 0 then
+    if elementData.data.name ~= COVENANT_SANCTUM_TIER_INACTIVE and elementData.data.standingCur and elementData.data.standingCur > 0 and elementData.data.standingMax and elementData.data.standingMax > 0 then
         button.StatusBar:SetValue(elementData.data.standingCur / elementData.data.standingMax)
         button.StatusBar.percentage:SetText(math.floor(RoundDec(button.StatusBar:GetValue() * 100)) .. "%")
         if elementData.data.standingCur / elementData.data.standingMax >= 1 and elementData.data.standingMax ~= 0 then
@@ -862,12 +862,17 @@ local function InitCategorieButton(button, elementData)
         else
             button.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
         end
+        button.StatusBar:Show()
+        button.statusbarbg:Show()
+    else
+        button.StatusBar:Hide()
+        button.statusbarbg:Hide()
     end
     -- paragonIndicator
+    button.paragonIndicator:Hide()
+    button.flareIcon.animationGroup1:Stop()
+    button.flareIcon.animationGroup2:Stop()
     if GwPaperReputation:IsShown() then
-        button.paragonIndicator:Hide()
-        button.flareIcon.animationGroup1:Stop()
-        button.flareIcon.animationGroup2:Stop()
         for _, v in pairs(button.standings) do
             if v.hasRewardPending then
                 button.paragonIndicator:Show()
@@ -876,10 +881,6 @@ local function InitCategorieButton(button, elementData)
                 break
             end
         end
-    else
-        button.paragonIndicator:Hide()
-        button.flareIcon.animationGroup1:Stop()
-        button.flareIcon.animationGroup2:Stop()
     end
 
     -- set zebra color by idx or watch status
@@ -1009,13 +1010,14 @@ local function LoadReputation(tabContainer)
     ReputationFrame:UnregisterAllEvents()
 
     GwPaperReputation:HookScript("OnShow", function()
-        UpdateCategories(categoriesScrollBox)
         updateSavedReputation()
+        UpdateCategories(categoriesScrollBox)
         isSearchResult = nil
         UpdateDetailsData(GwRepDetailFrame.Details)
     end)
     GwPaperReputation:HookScript("OnHide", function()
         -- stop button animations
+        updateSavedReputation()
         UpdateCategories(categoriesScrollBox)
     end)
 end
