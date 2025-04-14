@@ -237,7 +237,6 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
 
                 savedContainerHeight = savedContainerHeight + block.height + 10
                 block.fromContainerTopHeight = savedContainerHeight
-                print(block.hasItem)
                 if block.hasItem then
                     GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. blockIndex, block.UpdateObjectiveActionButtonPosition, {block, "EVENT"})
                 end
