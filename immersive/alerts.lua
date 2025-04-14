@@ -1440,7 +1440,9 @@ local function AlertContainerFrameOnEvent(self, event, ...)
     elseif event == "QUEST_ACCEPTED" and GW.settings.ALERTFRAME_NOTIFICATION_PARAGON then
         local questId = ...
         if PARAGON_QUEST_ID[questId] then
-            local text = GW.RGBToHex(0.22, 0.37, 0.98) .. (GetFactionInfoByID(PARAGON_QUEST_ID[questId][1]) or UNKNOWN) .. "|r"
+            local factionData = C_Reputation.GetFactionDataByID (PARAGON_QUEST_ID[questId][1])
+            local name = factionData and factionData.name or UNKNOWN
+            local text = GW.RGBToHex(0.22, 0.37, 0.98) .. name .. "|r"
             local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questId))
             -- /run GW.AlertSystem:AddAlert(format("|cff00c0fa%s|r", GetFactionInfoByID(2407)), nil, format("|cff00c0fa%s|r", "TESTE"), false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
             GW.AlertSystem:AddAlert(name, nil, text, false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
