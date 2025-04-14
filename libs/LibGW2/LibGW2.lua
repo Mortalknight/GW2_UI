@@ -58,7 +58,6 @@ local function EnableCLEU()
     GW.Debug("CLEU ENABLED")
 
     cleuTicker = C_Timer.NewTicker(0.1, function()
-        GW.Debug(#asyncQueue)
         local queuedFunc = table.remove(asyncQueue, 1)
         while queuedFunc do
             if queuedFunc then

@@ -122,13 +122,12 @@ function Gw2ErrorHandlerMixin:HandleError(msg, stack, locals)
         self.errorRate = max(0, self.errorRate - self.LOG_MAX_ERROR_RATE * (GetTime() - self.errorPrev)) + 1
         self.errorPrev = GetTime()
 
-        for match in stack:gmatch(Name .. "[\\/]+([^:\n]+)") do
-            if match and (not GW.StartsWith(match, "Libs") or GW.StartsWith(match, "libs")) then
+        for match in stack:gmatch("%[?" .. Name .. "[\\/]+([^:%]]+)") do
+            if match and not GW.StartsWith(match, "Libs") and not GW.StartsWith(match, "libs") then
                 self.errors = self.errors + 1
-
                 Debug("ERROR", msg .. "\n" .. stack)
                 tinsert(self.log, ("[%s] |cffff0000[ERROR]|r: %s"):format(date("%H:%M:%S"), (msg .. "\n" .. stack) or "-"))
-                while #self.log > self.LOG_MAX_ENTRIES do
+                while #self.log > self.maxEntries do
                     tremove(self.log, 1)
                 end
 
