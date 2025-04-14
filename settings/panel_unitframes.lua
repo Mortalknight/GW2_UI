@@ -76,7 +76,7 @@ local function LoadTargetPanel(sWindow)
 
     --PET
     addOption(pPlayerPet.scroll.scrollchild, L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "PET_FLOATING_COMBAT_TEXT", function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleCombatFeedback() end end, nil, {["PETBAR_ENABLED"] = true})
-    addOption(pPlayerPet.scroll.scrollchild, L["Show auras below"], nil, "PET_AURAS_UNDER", function() if GwPlayerPetFrame then GwPlayerPetFrame:TogglePetAuraPosition() end end, nil, {["PETBAR_ENABLED"] = true})
+    addOption(pPlayerPet.scroll.scrollchild, L["Show auras below"], nil, "PET_AURAS_UNDER", function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleAuraPosition() end end, nil, {["PETBAR_ENABLED"] = true})
     addOption(pPlayerPet.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "PET_UNIT_HEALTH_SHORT_VALUES", function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateHealthBar() end end, nil, {["PETBAR_ENABLED"] = true})
 
     --TARGET
