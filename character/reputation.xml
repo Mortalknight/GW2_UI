@@ -107,6 +107,22 @@
             </Layer>
         </Layers>
         <Frames>
+            <Frame parentKey="paragonIndicator" hidden="true">
+                <Size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" x="-5" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Icon" file="Interface/AddOns/GW2_UI/textures/icons/rewards-icon">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
             <StatusBar minValue="0" maxValue="1" hidden="false" parentKey="StatusBar">
                 <Size x="201" y="4"></Size>
                 <Anchors>

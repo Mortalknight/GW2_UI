@@ -76,6 +76,7 @@ local function CollectCategories()
         local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID = returnReputationData(factionIndex)
         if name then
             local friendInfo = C_GossipInfo.GetFriendshipReputation(factionID or 0)
+            local _, _, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID or 0)
             if isHeader and not isChild then
                 if not skipFirst then
                     tinsert(catagories, {idx = idx, idxLast = factionIndex - 1,  name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl)})
@@ -96,12 +97,15 @@ local function CollectCategories()
                     for _, v in pairs(factionTbl) do
                         if v.isFriend == true and v.standingText == friendInfo.reaction then
                             v.counter = v.counter + 1
+                            if hasRewardPending then
+                                v.hasRewardPending = true
+                            end
                             found = true
                             break
                         end
                     end
                     if not found then
-                        tinsert(factionTbl, {standingId = friendRankInfo.currentLevel, isFriend = true, standingText = friendInfo.reaction, counter = 1})
+                        tinsert(factionTbl, {standingId = friendRankInfo.currentLevel, isFriend = true, standingText = friendInfo.reaction, hasRewardPending = hasRewardPending, counter = 1})
                     end
                 elseif C_Reputation.IsMajorFaction(factionID) then
                     local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
@@ -113,12 +117,15 @@ local function CollectCategories()
                         for _, v in pairs(factionTbl) do
                             if v.isFriend == false and v.standingText == standing then
                                 v.counter = v.counter + 1
+                                if hasRewardPending then
+                                    v.hasRewardPending = true
+                                end
                                 found = true
                                 break
                             end
                         end
                         if not found then
-                            tinsert(factionTbl, {standingId = majorFactionData.renownLevel, isFriend = false, standingText = standing, counter = 1})
+                            tinsert(factionTbl, {standingId = majorFactionData.renownLevel, isFriend = false, standingText = standing, hasRewardPending = hasRewardPending, counter = 1})
                         end
                     end
                 elseif not isHeader then
@@ -129,12 +136,15 @@ local function CollectCategories()
                     for _, v in pairs(factionTbl) do
                         if v.isFriend == false and v.standingText == standing then
                             v.counter = v.counter + 1
+                            if hasRewardPending then
+                                v.hasRewardPending = true
+                            end
                             found = true
                             break
                         end
                     end
                     if not found then
-                        tinsert(factionTbl, {standingId = standingId, isFriend = false, standingText = standing, counter = 1})
+                        tinsert(factionTbl, {standingId = standingId, isFriend = false, standingText = standing, hasRewardPending = hasRewardPending, counter = 1})
                     end
                 end
             end
@@ -820,6 +830,21 @@ local function InitCategorieButton(button, elementData)
             self.StatusBar.percentage:Hide()
             GameTooltip:Hide()
         end)
+        button.paragonIndicator:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(L["Paragon"], 1, 1, 1)
+            GameTooltip:Show()
+        end)
+        button.paragonIndicator:SetScript("OnLeave", GameTooltip_Hide)
+        GW.AddFlareAnimationToObject(button, button.paragonIndicator)
+        button.paragonIndicator.flare:SetSize(32, 32)
+        button.paragonIndicator.flare2:SetSize(32, 32)
+        button.paragonIndicator.animationGroup1:SetScript("OnFinished", function(self)
+            self:Play()
+        end)
+        button.paragonIndicator.animationGroup2:SetScript("OnFinished", function(self)
+            self:Play()
+        end)
 
         button.isSkinned = true
     end
@@ -837,6 +862,24 @@ local function InitCategorieButton(button, elementData)
         else
             button.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
         end
+    end
+    -- paragonIndicator
+    if GwPaperReputation:IsShown() then
+        button.paragonIndicator:Hide()
+        button.flareIcon.animationGroup1:Stop()
+        button.flareIcon.animationGroup2:Stop()
+        for _, v in pairs(button.standings) do
+            if v.hasRewardPending then
+                button.paragonIndicator:Show()
+                button.flareIcon.animationGroup1:Play()
+                button.flareIcon.animationGroup2:Play()
+                break
+            end
+        end
+    else
+        button.paragonIndicator:Hide()
+        button.flareIcon.animationGroup1:Stop()
+        button.flareIcon.animationGroup2:Stop()
     end
 
     -- set zebra color by idx or watch status
@@ -964,5 +1007,16 @@ local function LoadReputation(tabContainer)
     end
 
     ReputationFrame:UnregisterAllEvents()
+
+    GwPaperReputation:HookScript("OnShow", function()
+        UpdateCategories(categoriesScrollBox)
+        updateSavedReputation()
+        isSearchResult = nil
+        UpdateDetailsData(GwRepDetailFrame.Details)
+    end)
+    GwPaperReputation:HookScript("OnHide", function()
+        -- stop button animations
+        UpdateCategories(categoriesScrollBox)
+    end)
 end
 GW.LoadReputation = LoadReputation
