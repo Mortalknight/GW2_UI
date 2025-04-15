@@ -66,11 +66,13 @@ local function CollectCategories()
 
     local catagories = {}
     local factionTbl
+    local pendingParagonRewardFactions = {}
     local cMax = 0
     local cCur = 0
     local idx, headerName = 0, ""
     local skipFirst = true
     local found = false
+    local hasPendingParagonReward = false
 
     for factionIndex = 1, C_Reputation.GetNumFactions() do
         local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID = returnReputationData(factionIndex)
@@ -79,14 +81,16 @@ local function CollectCategories()
             local _, _, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID or 0)
             if isHeader and not isChild then
                 if not skipFirst then
-                    tinsert(catagories, {idx = idx, idxLast = factionIndex - 1,  name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl)})
+                    tinsert(catagories, {idx = idx, idxLast = factionIndex - 1, name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl), hasPendingParagonReward = hasPendingParagonReward, pendingParagonRewardFactions = pendingParagonRewardFactions})
                 end
                 skipFirst = false
                 cMax = 0
                 cCur = 0
                 factionTbl = {}
+                pendingParagonRewardFactions = {}
                 idx = factionIndex
                 headerName = name
+                hasPendingParagonReward = false
             else
                 found = false
                 if friendInfo.friendshipFactionID and friendInfo.friendshipFactionID > 0 then
@@ -98,14 +102,19 @@ local function CollectCategories()
                         if v.isFriend == true and v.standingText == friendInfo.reaction then
                             v.counter = v.counter + 1
                             if hasRewardPending then
-                                v.hasRewardPending = true
+                                hasPendingParagonReward = true
+                                tinsert(pendingParagonRewardFactions, {name = name})
                             end
                             found = true
                             break
                         end
                     end
                     if not found then
-                        tinsert(factionTbl, {standingId = friendRankInfo.currentLevel, isFriend = true, standingText = friendInfo.reaction, hasRewardPending = hasRewardPending, counter = 1})
+                        if hasRewardPending then
+                            tinsert(pendingParagonRewardFactions, {name = name})
+                            hasPendingParagonReward = true
+                        end
+                        tinsert(factionTbl, {standingId = friendRankInfo.currentLevel, isFriend = true, standingText = friendInfo.reaction, counter = 1})
                     end
                 elseif C_Reputation.IsMajorFaction(factionID) then
                     local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
@@ -118,14 +127,19 @@ local function CollectCategories()
                             if v.isFriend == false and v.standingText == standing then
                                 v.counter = v.counter + 1
                                 if hasRewardPending then
-                                    v.hasRewardPending = true
+                                    hasPendingParagonReward = true
+                                    tinsert(pendingParagonRewardFactions, {name = name})
                                 end
                                 found = true
                                 break
                             end
                         end
                         if not found then
-                            tinsert(factionTbl, {standingId = majorFactionData.renownLevel, isFriend = false, standingText = standing, hasRewardPending = hasRewardPending, counter = 1})
+                            if hasRewardPending then
+                                tinsert(pendingParagonRewardFactions, {name = name})
+                                hasPendingParagonReward = true
+                            end
+                            tinsert(factionTbl, {standingId = majorFactionData.renownLevel, isFriend = false, standingText = standing, counter = 1})
                         end
                     end
                 elseif not isHeader then
@@ -137,14 +151,19 @@ local function CollectCategories()
                         if v.isFriend == false and v.standingText == standing then
                             v.counter = v.counter + 1
                             if hasRewardPending then
-                                v.hasRewardPending = true
+                                hasPendingParagonReward = true
+                                tinsert(pendingParagonRewardFactions, {name = name})
                             end
                             found = true
                             break
                         end
                     end
                     if not found then
-                        tinsert(factionTbl, {standingId = standingId, isFriend = false, standingText = standing, hasRewardPending = hasRewardPending, counter = 1})
+                        if hasRewardPending then
+                            hasPendingParagonReward = true
+                            tinsert(pendingParagonRewardFactions, {name = name})
+                        end
+                        tinsert(factionTbl, {standingId = standingId, isFriend = false, standingText = standing, counter = 1})
                     end
                 end
             end
@@ -152,7 +171,7 @@ local function CollectCategories()
     end
     -- insert the last header
     if factionTbl then
-        tinsert(catagories, {idx = idx, idxLast = C_Reputation.GetNumFactions(), name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl)})
+        tinsert(catagories, {idx = idx, idxLast = C_Reputation.GetNumFactions(), name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl), hasPendingParagonReward = hasPendingParagonReward, pendingParagonRewardFactions = pendingParagonRewardFactions})
     end
 
     return catagories
@@ -833,6 +852,9 @@ local function InitCategorieButton(button, elementData)
         button.paragonIndicator:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:SetText(L["Paragon"], 1, 1, 1)
+            for _, v in pairs(button.pendingParagonRewardFactions) do
+                GameTooltip:AddLine(v.name)
+            end
             GameTooltip:Show()
         end)
         button.paragonIndicator:SetScript("OnLeave", GameTooltip_Hide)
@@ -851,6 +873,7 @@ local function InitCategorieButton(button, elementData)
     button.factionIndexFirst = elementData.data.idx
     button.factionIndexLast = elementData.data.idxLast
     button.standings = elementData.data.fctTbl
+    button.pendingParagonRewardFactions = elementData.data.pendingParagonRewardFactions
 
     button.name:SetText(elementData.data.name)
     if elementData.data.name ~= COVENANT_SANCTUM_TIER_INACTIVE and elementData.data.standingCur and elementData.data.standingCur > 0 and elementData.data.standingMax and elementData.data.standingMax > 0 then
@@ -873,13 +896,10 @@ local function InitCategorieButton(button, elementData)
     button.flareIcon.animationGroup1:Stop()
     button.flareIcon.animationGroup2:Stop()
     if GwPaperReputation:IsShown() then
-        for _, v in pairs(button.standings) do
-            if v.hasRewardPending then
-                button.paragonIndicator:Show()
-                button.flareIcon.animationGroup1:Play()
-                button.flareIcon.animationGroup2:Play()
-                break
-            end
+        if elementData.data.hasPendingParagonReward then
+            button.paragonIndicator:Show()
+            button.flareIcon.animationGroup1:Play()
+            button.flareIcon.animationGroup2:Play()
         end
     end
 
