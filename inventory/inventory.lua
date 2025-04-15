@@ -6,6 +6,102 @@ local MAX_CONTAINER_ITEMS = 36
 local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder"
 local BACKDROP_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop"
 
+--Pawn integration
+do
+    local PawnLoaded = false
+    local frame = CreateFrame("Frame")
+    local upgradeCache = {}
+    local pending = {}
+    local limit = 2 / 60 / 4
+    local resetInterval = 1 / 4
+    local timerResetsAt = 0
+    local left = 0
+
+    local function PostRefresh(self, event, ...)
+        if event == "ADDON_LOADED" and not PawnLoaded then
+            local name = ...
+            if name == "Pawn" then
+                hooksecurefunc("PawnInvalidateBestItems", PostRefresh)
+                hooksecurefunc("PawnResetTooltips", PostRefresh)
+                self:UnregisterEvent("ADDON_LOADED")
+                PawnLoaded = true
+            end
+            return
+        end
+        ContainerFrame_UpdateAll()
+    end
+
+    frame:RegisterEvent("PLAYER_LEVEL_UP")
+    frame:RegisterEvent("ADDON_LOADED")
+    frame:SetScript("OnEvent", PostRefresh)
+
+    local function ShouldPawnShow(itemLink)
+        local classID = select(6, C_Item.GetItemInfoInstant(itemLink))
+        return PawnLoaded and (classID == Enum.ItemClass.Armor or classID == Enum.ItemClass.Weapon)
+    end
+
+    local function GetPawnUpgradeStatus(itemLink)
+        if upgradeCache[itemLink] ~= nil then
+            return upgradeCache[itemLink]
+        end
+
+        local start = GetTimePreciseSec()
+
+        if start >= timerResetsAt then
+            timerResetsAt = start + resetInterval
+            left = limit
+        elseif left <= 0 then
+            return nil
+        end
+
+        local result = PawnShouldItemLinkHaveUpgradeArrowUnbudgeted(itemLink)
+        local elapsed = GetTimePreciseSec() - start
+
+        left = left - elapsed
+        if result ~= nil then
+            upgradeCache[itemLink] = result
+           return result
+        end
+
+        if C_Item.IsItemDataCachedByID(itemLink) then
+            upgradeCache[itemLink] = false
+           return false
+        end
+        return nil
+    end
+
+    local function OnUpdate(self)
+        for itemLink in pairs(pending) do
+            local result = GetPawnUpgradeStatus(itemLink)
+            if result then
+                pending[itemLink] = nil
+            end
+        end
+        if next(pending) == nil then
+            self:SetScript("OnUpdate", nil)
+            PostRefresh()
+        end
+    end
+
+    local function RegisterPawnUpgradeIcon(itemLink)
+        local result = upgradeCache[itemLink]
+        if result then
+            return result
+        end
+
+        result = ShouldPawnShow(itemLink) and GetPawnUpgradeStatus(itemLink)
+        if result == nil then
+            pending[itemLink] = true
+            frame:SetScript("OnUpdate", OnUpdate)
+        else
+            upgradeCache[itemLink] = result
+        end
+
+        return result
+    end
+    GW.RegisterPawnUpgradeIcon = RegisterPawnUpgradeIcon
+end
+
 -- reskins an ItemButton to use GW2_UI styling
 local function reskinItemButton(b, overrideIconSize)
     if not b then return end
@@ -107,7 +203,6 @@ end
 GW.SkinBagItemButton = reskinItemButton
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
-
 -- is needed for first setup of the bag (skinniing)
 local function UpdateContainerItems(self)
     for _, itemButton in self:EnumerateValidItems() do
@@ -139,31 +234,16 @@ local function reskinItemButtons()
     end
 end
 
-local function CheckUpdateIcon_OnUpdate(self, elapsed)
-    self.timeSinceUpgradeCheck = (self.timeSinceUpgradeCheck or 0) + elapsed
-    if self.timeSinceUpgradeCheck >= 0.5 then
-        GW.CheckUpdateIcon(self)
-        self.timeSinceUpgradeCheck = 0
-    end
-end
+local function CheckUpdateIcon(button, itemLink)
+    local itemIsUpgrade = GW.RegisterPawnUpgradeIcon(itemLink)
 
-local function CheckUpdateIcon(button)
-    local itemIsUpgrade = nil
-    if PawnIsContainerItemAnUpgrade then
-        itemIsUpgrade = PawnIsContainerItemAnUpgrade(button:GetParent():GetID(), button:GetID())
-    end
-
-    if itemIsUpgrade == nil then -- nil means not all the data was available to determine if this is an upgrade.
-        button.UpgradeIcon:SetShown(false)
-        button:SetScript("OnUpdate", CheckUpdateIcon_OnUpdate)
-    else
+    if itemIsUpgrade then -- nil means not all the data was available to determine if this is an upgrade.
         button.UpgradeIcon:SetShown(itemIsUpgrade)
-        button:SetScript("OnUpdate", nil)
     end
 end
 GW.CheckUpdateIcon = CheckUpdateIcon
 
---copy from blizzard seams provate in 11.1
+--copy from blizzard seams private in 11.1
 local function GetItemButtonIconTexture(button)
 	return button.Icon or button.icon or _G[button:GetName().."IconTexture"];
 end
@@ -228,8 +308,10 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             end
         end
         -- Show upgrade icon if active
-        if GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon then
-            CheckUpdateIcon(button)
+        if itemInfo and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon then
+            CheckUpdateIcon(button, itemInfo.hyperlink)
+        elseif button.UpgradeIcon then
+            button.UpgradeIcon:Hide()
         end
 
         -- Show ilvl if active
@@ -248,10 +330,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     else
         if button.junkIcon then button.junkIcon:Hide() end
         if button.scrapIcon then button.scrapIcon:Hide() end
-        if button.UpgradeIcon then
-            button.UpgradeIcon:Hide()
-            button:SetScript("OnUpdate", nil)
-        end
+        if button.UpgradeIcon then button.UpgradeIcon:Hide() end
         if button.itemlevel then button.itemlevel:SetText("") end
         GetItemButtonIconTexture(button):Hide()
     end
