@@ -79,6 +79,7 @@ local PARAGON_QUEST_ID = { --[questID] = {factionID}
     [83739] = {2605}, --The General
     [83740] = {2607}, --The Vizier
     [83738] = {2601}, --The Weaver
+    [85805] = {2653}, --Cartels of Undermine
 }
 
 local VignetteExclusionMapIDs = {
