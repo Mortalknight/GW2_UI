@@ -97,103 +97,110 @@ local charSecure_OnClick =
     ]=]
 
 -- use the windowpanelopen attr to show/hide the char frame with correct tab open
-local charSecure_OnAttributeChanged =
-    [=[
-    if name ~= "windowpanelopen" then
-        return
-    end
+local charSecure_OnAttributeChanged = [=[
+    if name ~= "windowpanelopen" then return end
 
-    local fmDoll = self:GetFrameRef("GwPaperDoll")
-    local showDoll = false
-    local fmRep = self:GetFrameRef("GwReputationFrame")
-    local showRep = flase
-    local fmCur = self:GetFrameRef("GwCurrencyFrame")
-    local showCur = flase
-    local fmProf = self:GetFrameRef("GwProfessionsFrame")
-    local showProf = false
+    -- frames
+    local doll = self:GetFrameRef("GwPaperDoll")
+    local rep = self:GetFrameRef("GwReputationFrame")
+    local cur = self:GetFrameRef("GwCurrencyFrame")
+    local prof = self:GetFrameRef("GwProfessionsFrame")
 
-    local close = false
     local keytoggle = self:GetAttribute("keytoggle")
+    local selected = value
 
-    if fmProf ~= nil and value == "professions" then
-        if keytoggle and fmProf:IsVisible() then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showProf = true
+    if selected == "paperdoll" then
+        if doll then
+            if keytoggle and doll:IsVisible() then
+                self:SetAttribute("keytoggle", nil)
+                self:SetAttribute("windowpanelopen", nil)
+                return
+            else
+                doll:Show()
+            end
         end
-    elseif fmDoll ~= nil and value == "paperdoll" then
-        if keytoggle and fmDoll:IsVisible() then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showDoll = true
+        if rep then
+            rep:Hide()
         end
-    elseif fmRep ~= nil and value == "reputation" then
-        if keytoggle and fmRep:IsVisible() then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showRep = true
+        if cur then
+            cur:Hide()
         end
-    elseif fmCur ~= nil and value == "currency" then
-        if keytoggle and fmCur:IsVisible() then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showCur = true
+        if prof then
+            prof:Hide()
+        end
+    elseif selected == "reputation" then
+        if rep then
+            if keytoggle and rep:IsVisible() then
+                self:SetAttribute("keytoggle", nil)
+                self:SetAttribute("windowpanelopen", nil)
+                return
+            else
+                rep:Show()
+            end
+        end
+        if doll then
+            doll:Hide()
+        end
+        if cur then
+            cur:Hide()
+        end
+        if prof then
+            prof:Hide()
+        end
+    elseif selected == "currency" then
+        if cur then
+            if keytoggle and cur:IsVisible() then
+                self:SetAttribute("keytoggle", nil)
+                self:SetAttribute("windowpanelopen", nil)
+                return
+            else
+                cur:Show()
+            end
+        end
+        if doll then
+            doll:Hide()
+        end
+        if rep then
+            rep:Hide()
+        end
+        if prof then
+            prof:Hide()
+        end
+    elseif selected == "professions" then
+        if prof then
+            if keytoggle and prof:IsVisible() then
+                self:SetAttribute("keytoggle", nil)
+                self:SetAttribute("windowpanelopen", nil)
+                return
+            else
+                prof:Show()
+            end
+        end
+        if doll then
+            doll:Hide()
+        end
+        if rep then
+            rep:Hide()
+        end
+        if cur then
+            cur:Hide()
         end
     else
-        close = true
+        self:Hide()
+        self:CallMethod("SoundExit")
     end
 
     if keytoggle then
         self:SetAttribute("keytoggle", nil)
     end
 
-    if fmDoll then
-        if showDoll and not close then
-            fmDoll:Show()
-        else
-            fmDoll:Hide()
-        end
-    end
-    if fmProf then
-        if showProf and not close then
-            fmProf:Show()
-        else
-            fmProf:Hide()
-        end
-    end
-    if fmRep then
-        if showRep and not close then
-            fmRep:Show()
-        else
-            fmRep:Hide()
-        end
-    end
-    if fmCur then
-        if showCur and not close then
-            fmCur:Show()
-        else
-            fmCur:Hide()
-        end
-    end
-
-    if close then
-        self:Hide()
-        self:CallMethod("SoundExit")
-    elseif not self:IsVisible() then
+    if not self:IsVisible() and value then
         self:Show()
         self:CallMethod("SoundOpen")
-    else
+    elseif value then
         self:CallMethod("SoundSwap")
     end
-    ]=]
+]=]
 
 local charSecure_OnShow =
     [=[
@@ -292,7 +299,7 @@ local function GetScaleDistance()
     return sqrt(x * x + y * y)
 end
 
-local function loadBaseFrame()
+local function LoadBaseFrame()
     if hasBeenLoaded then
         return
     end
@@ -336,17 +343,17 @@ local function loadBaseFrame()
     GwCharacterWindowHeaderRight:AddMaskTexture(fmGCW.backgroundMask)
     GwCharacterWindowLeft:AddMaskTexture(fmGCW.backgroundMask)
 
-    fmGCW:HookScript("OnShow",function()
+    fmGCW:HookScript("OnShow",function(self)
         AddToAnimation("HERO_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
         function(p)
-            fmGCW:SetAlpha(p)
-            if GwDressingRoom and GwDressingRoom.model then
-                GwDressingRoom.model:SetAlpha(math.max(0, (p - 0.5) / 0.5))
+            self:SetAlpha(p)
+            if self.dressingRoom and self.dressingRoom.model then
+                self.dressingRoom.model:SetAlpha(math.max(0, (p - 0.5) / 0.5))
             end
-            fmGCW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT", lerp(-64, fmGCW.background:GetWidth(), p) , 0)
+            self.backgroundMask:SetPoint("BOTTOMRIGHT", self.background, "BOTTOMLEFT", lerp(-64, self.background:GetWidth(), p) , 0)
         end, 1, function()
-            fmGCW.backgroundMask:SetPoint("TOPLEFT", fmGCW.background, "TOPLEFT", -64, 64)
-            fmGCW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT",-64, 0)
+            self.backgroundMask:SetPoint("TOPLEFT", self.background, "TOPLEFT", -64, 64)
+            self.backgroundMask:SetPoint("BOTTOMRIGHT", self.background, "BOTTOMLEFT",-64, 0)
         end)
     end)
 
@@ -381,25 +388,25 @@ local function loadBaseFrame()
         if btn ~= "RightButton" then
             return
         end
-        heroFrameLeft, heroFrameTop = GwCharacterWindow:GetLeft(), GwCharacterWindow:GetTop()
-        heroFrameNormalScale = GwCharacterWindow:GetScale()
+        heroFrameLeft, heroFrameTop = fmGCW:GetLeft(), fmGCW:GetTop()
+        heroFrameNormalScale = fmGCW:GetScale()
         heroFrameX,heroFrameY = heroFrameLeft, heroFrameTop - (UIParent:GetHeight() / heroFrameNormalScale)
-        heroFrameEffectiveScale = GwCharacterWindow:GetEffectiveScale()
+        heroFrameEffectiveScale = fmGCW:GetEffectiveScale()
         moveDistance = GetScaleDistance()
         self:SetScript("OnUpdate", function()
             local scale = GetScaleDistance() / moveDistance * heroFrameNormalScale
             if scale < 0.2 then scale = 0.2 elseif scale > 3.0 then scale = 3.0 end
-            GwCharacterWindow:SetScale(scale)
-            local s = heroFrameNormalScale / GwCharacterWindow:GetScale()
+            fmGCW:SetScale(scale)
+            local s = heroFrameNormalScale / fmGCW:GetScale()
             local x = heroFrameX * s
             local y = heroFrameY * s
-            GwCharacterWindow:ClearAllPoints()
-            GwCharacterWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
+            fmGCW:ClearAllPoints()
+            fmGCW:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
         end)
     end)
     fmGCW.sizer:SetScript("OnMouseUp", function(self)
         self:SetScript("OnUpdate", nil)
-        GW.settings.HERO_POSITION_SCALE = GwCharacterWindow:GetScale()
+        GW.settings.HERO_POSITION_SCALE = fmGCW:GetScale()
         -- Save hero frame position
         local pos = GW.settings.HERO_POSITION
         if pos then
@@ -407,10 +414,10 @@ local function loadBaseFrame()
         else
             pos = {}
         end
-        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = GwCharacterWindow:GetPoint()
+        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = fmGCW:GetPoint()
         GW.settings.HERO_POSITION = pos
         --Reset Model Camera
-        GwDressingRoom.model:RefreshCamera()
+        fmGCW.dressingRoom.model:RefreshCamera()
     end)
 
     -- set binding change handlers
@@ -421,10 +428,12 @@ local function loadBaseFrame()
 
     -- hook into inventory currency button
     --if GwCurrencyIcon then
-    --    GwCurrencyIcon:SetFrameRef("GwCharacterWindow", fmGCW)
+    --    GwCurrencyIcon:SetFrameRef("fmGCW", fmGCW)
     --end
+
+    return fmGCW
 end
-GW.AddForProfiling("character", "loadBaseFrame", loadBaseFrame)
+GW.AddForProfiling("character", "LoadBaseFrame", LoadBaseFrame)
 
 local function setTabIconState(self, b)
     if b then
@@ -475,17 +484,17 @@ local function LoadCharacter()
         return
     end
 
-    loadBaseFrame()
+    local baseFrame = LoadBaseFrame()
 
     local tabIndex = 1
     for _, v in pairs(windowsList) do
         if GW.settings[v.SettingName] then
-            local container = CreateFrame("Frame", v.FrameName, GwCharacterWindow, "GwCharacterTabContainer")
+            local container = CreateFrame("Frame", v.FrameName, baseFrame, "GwCharacterTabContainer")
             local tab = createTabIcon(v.TabIcon, tabIndex)
 
-            GwCharacterWindow:SetFrameRef(v.RefName, container)
+            baseFrame:SetFrameRef(v.RefName, container)
             container.TabFrame = tab
-            container.CharWindow = GwCharacterWindow
+            container.CharWindow = baseFrame
             container.HeaderIcon = v.HeaderIcon
             container.HeaderText = v.HeaderText
             tab.gwTipLabel = v.TooltipText
@@ -494,7 +503,7 @@ local function LoadCharacter()
             tab:SetScript("OnLeave", GameTooltip_Hide)
 
             v.TabFrame = tab
-            tab:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+            tab:SetFrameRef("GwCharacterWindow", baseFrame)
             tab:SetAttribute("_onclick", v.OnClick)
             container:SetScript("OnShow", container_OnShow)
             container:SetScript("OnHide", container_OnHide)
@@ -506,7 +515,7 @@ local function LoadCharacter()
     end
 
     -- set bindings on secure instead of char win to not interfere with secure ESC binding on char win
-    click_OnEvent(GwCharacterWindow.secure, "UPDATE_BINDINGS")
+    click_OnEvent(baseFrame.secure, "UPDATE_BINDINGS")
 end
 GW.LoadCharacter = LoadCharacter
 

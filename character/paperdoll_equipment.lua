@@ -782,10 +782,12 @@ local function EquipCursorItem()
     end
 end
 
-local function LoadPDBagList(fmMenu)
-    local fmGDR = CreateFrame("Button", "GwDressingRoom", GwPaperDoll, "GwDressingRoom")
-    local fmPD3M = GwDressingRoom.model
-    local fmGPDS = GwDressingRoom.stats
+local function LoadPDBagList(fmMenu, parent)
+    local fmGDR = CreateFrame("Button", "GwDressingRoom", parent, "GwDressingRoom")
+    local fmPD3M = fmGDR.model
+    local fmGPDS = fmGDR.stats
+
+    parent.CharWindow.dressingRoom = fmGDR
 
     -- to prevent ALT click lua error
     fmGDR.flyoutSettings = {
@@ -926,7 +928,7 @@ local function LoadPDBagList(fmMenu)
     fmGDR.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
     fmGDR:SetScript("OnClick", resetBagInventory)
 
-    local fmGPDBIL = CreateFrame("Frame", "GwPaperDollBagItemList", GwPaperDoll, "GwPaperDollBagItemList")
+    local fmGPDBIL = CreateFrame("Frame", "GwPaperDollBagItemList", parent, "GwPaperDollBagItemList")
     fmGPDBIL:SetScript("OnEvent", updateBagItemListAll)
     fmGPDBIL:SetScript("OnHide", resetBagInventory)
     fmGPDBIL:SetScript("OnShow", GwPaperDollBagItemList_OnShow)
@@ -960,7 +962,9 @@ local function LoadPDBagList(fmMenu)
         end
         GameTooltip:Show()
     end)
-fmGDR.itemLevelFrame:SetScript("OnLeave", GameTooltip_Hide)
+    fmGDR.itemLevelFrame:SetScript("OnLeave", GameTooltip_Hide)
     updateStats()
+
+    return fmGDR, fmGPDBIL
 end
 GW.LoadPDBagList = LoadPDBagList

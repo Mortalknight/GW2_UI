@@ -220,8 +220,8 @@ local function EquipmentSet_InitButton(button, elementData)
     ToggleButton(button, false)
 end
 
-local function LoadPDEquipset(fmMenu)
-    local fmGPDO = CreateFrame("Frame", "GwPaperDollOutfits", GwPaperDoll, "GwPaperDollOutfits")
+local function LoadPDEquipset(fmMenu, parent)
+    local fmGPDO = CreateFrame("Frame", "GwPaperDollOutfits", parent, "GwPaperDollOutfits")
     GwGearManagerPopupFrame = CreateFrame("Frame", "GwGearManagerPopupFrame", GwDressingRoom, "IconSelectorPopupFrameTemplate")
     Mixin(GwGearManagerPopupFrame, GearManagerPopupFrameMixin)
     GwGearManagerPopupFrame:Hide()
@@ -293,5 +293,7 @@ local function LoadPDEquipset(fmMenu)
     UpdateScrollBox(fmGPDO)
 
     hooksecurefunc(GwGearManagerPopupFrame, "OkayButton_OnClick", function() UpdateScrollBox(fmGPDO) end)
+
+    return fmGPDO
 end
 GW.LoadPDEquipset = LoadPDEquipset

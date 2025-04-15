@@ -173,7 +173,7 @@ local function bag_OnClick(self, button)
     if button == "LeftButton" then
         if self.gwHasBag then
             if not IsBagOpen(self:GetBagID()) then
-                OpenBag(self:GetBagID()) --taint atm
+                OpenBag(self:GetBagID())
             end
         elseif self.tooltipText == BANK_BAG_PURCHASE then
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
@@ -811,7 +811,7 @@ local function LoadBank(helpers)
 
     -- don't let anyone close bank bags while the bank is open
     hooksecurefunc("ToggleAllBags", function()
-        if GwBankFrame:IsShown() then
+        if f:IsShown() then
             for i = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
                 if not IsBagOpen(i) then
                     OpenBag(i)
@@ -820,7 +820,7 @@ local function LoadBank(helpers)
         end
     end)
     hooksecurefunc("ToggleBackpack", function()
-        if GwBankFrame:IsShown() then
+        if f:IsShown() then
             for i = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
                 if not IsBagOpen(i) then
                     OpenBag(i)

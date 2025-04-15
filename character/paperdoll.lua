@@ -9,23 +9,28 @@ local hideCharframe = true
 local prevAddonButtonAnchor = nil
 local firstAddonMenuButtonAnchor
 
+local dressingRoom
+local paperDollBagItemList
+local paperDollOutfits
+local paperDollTitles
+
 local function characterPanelToggle(frame)
     if InCombatLockdown() then
         GW.Notice(ERR_NOT_IN_COMBAT)
         return
     end
     fmMenu:Hide()
-    GwPaperDollBagItemList:Hide()
-    GwPaperDollOutfits:Hide()
-    GwTitleWindow:Hide()
+    paperDollBagItemList:Hide()
+    paperDollOutfits:Hide()
+    paperDollTitles:Hide()
 
     if frame == nil then
-        GwDressingRoom:Hide()
+        dressingRoom:Hide()
         return
     end
 
     frame:Show()
-    GwDressingRoom:Show()
+    dressingRoom:Show()
 end
 GW.AddForProfiling("paperdoll", "characterPanelToggle", characterPanelToggle)
 
@@ -97,18 +102,15 @@ local function addAddonButton(name, setting, showFunction)
 end
 
 local function LoadPaperDoll(tabContainer)
-    --local fmPD = CreateFrame("Frame", "GwPaperDoll", tabContainer, "GwPaperDoll")
-    GwPaperDoll = tabContainer
-
     fmMenu = CreateFrame("Frame", nil, tabContainer, "GwCharacterMenu")
     fmMenu.SetupBackButton = menu_SetupBackButton
 
-    GW.LoadPDBagList(fmMenu)
-    GW.LoadPDEquipset(fmMenu)
-    GW.LoadPDTitles(fmMenu)
+    dressingRoom, paperDollBagItemList = GW.LoadPDBagList(fmMenu, tabContainer)
+    paperDollOutfits = GW.LoadPDEquipset(fmMenu, tabContainer)
+    paperDollTitles = GW.LoadPDTitles(fmMenu, tabContainer)
 
     fmMenu.equipmentMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
-    fmMenu.equipmentMenu.ToggleMe = GwPaperDollBagItemList
+    fmMenu.equipmentMenu.ToggleMe = paperDollBagItemList
     fmMenu.equipmentMenu:SetScript("OnClick", menuItem_OnClick)
     fmMenu.equipmentMenu:SetText(BAG_FILTER_EQUIPMENT)
     fmMenu.equipmentMenu:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
@@ -116,7 +118,7 @@ local function LoadPaperDoll(tabContainer)
     fmMenu.equipmentMenu:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
 
     fmMenu.outfitsMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
-    fmMenu.outfitsMenu.ToggleMe = GwPaperDollOutfits
+    fmMenu.outfitsMenu.ToggleMe = paperDollOutfits
     fmMenu.outfitsMenu:SetScript("OnClick", menuItem_OnClick)
     fmMenu.outfitsMenu:SetText(EQUIPMENT_MANAGER)
     fmMenu.outfitsMenu:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
@@ -124,7 +126,7 @@ local function LoadPaperDoll(tabContainer)
     fmMenu.outfitsMenu:SetPoint("TOPLEFT", fmMenu.equipmentMenu, "BOTTOMLEFT")
 
     fmMenu.titlesMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
-    fmMenu.titlesMenu.ToggleMe = GwTitleWindow
+    fmMenu.titlesMenu.ToggleMe = paperDollTitles
     fmMenu.titlesMenu:SetScript("OnClick", menuItem_OnClick)
     fmMenu.titlesMenu:SetText(PAPERDOLL_SIDEBAR_TITLES)
     fmMenu.titlesMenu:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
@@ -138,7 +140,7 @@ local function LoadPaperDoll(tabContainer)
     -- pull corruption thingy from default paperdoll
     if (CharacterStatsPane and CharacterStatsPane.ItemLevelFrame) then
         local cpt = CharacterStatsPane.ItemLevelFrame.Corruption
-        local attr = GwDressingRoom.stats
+        local attr = dressingRoom.stats
         if (cpt and attr) then
             cpt:SetParent(attr)
             cpt:ClearAllPoints()
@@ -175,6 +177,6 @@ local function LoadPaperDoll(tabContainer)
             end
         end
     end)
-    GwDressingRoom.background:AddMaskTexture(GwCharacterWindow.backgroundMask)
+    dressingRoom.background:AddMaskTexture(tabContainer.CharWindow.backgroundMask)
 end
 GW.LoadPaperDoll = LoadPaperDoll

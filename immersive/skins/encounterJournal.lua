@@ -382,13 +382,12 @@ local function encounterJournalSkin()
     EncounterInfo.instanceButton:SetNormalTexture("")
     EncounterInfo.instanceButton:SetHighlightTexture("")
 
-    EncounterInfo.leftShadow:SetAlpha(0) -- maybe a taint fix? (before GwKill())
+    EncounterInfo.leftShadow:SetAlpha(0)
     EncounterInfo.rightShadow:SetAlpha(0)
-    EncounterInfo.model.dungeonBG:SetAlpha(0) -- maybe a taint fix? (before GwKill())
+    EncounterInfo.model.dungeonBG:SetAlpha(0)
     EncounterJournalEncounterFrameInfoBG:SetHeight(385)
     EncounterJournalEncounterFrameInfoModelFrameShadow:GwKill()
 
-    --taint
     EncounterInfo.instanceButton:ClearAllPoints()
     EncounterInfo.instanceButton:SetPoint("TOPLEFT",EncounterInfo, "TOPLEFT", 0, 0)
 

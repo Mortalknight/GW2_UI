@@ -128,8 +128,8 @@ local function ShowFiterDropDown(self)
     end)
 end
 
-local function LoadPDTitles(fmMenu)
-    local titlewin = CreateFrame("Frame", "GwTitleWindow", GwPaperDoll, "GwTitleWindow")
+local function LoadPDTitles(fmMenu, parent)
+    local titlewin = CreateFrame("Frame", "GwTitleWindow", parent, "GwTitleWindow")
 
     SetSearchboxInstructions(titlewin.input, SEARCH .. "...")
     titlewin.input:SetText("")
@@ -214,5 +214,7 @@ local function LoadPDTitles(fmMenu)
     titlewin:RegisterEvent("UNIT_NAME_UPDATE")
 
     fmMenu:SetupBackButton(titlewin.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
+
+    return titlewin
 end
 GW.LoadPDTitles = LoadPDTitles

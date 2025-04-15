@@ -70,6 +70,15 @@ local PARAGON_QUEST_ID = { --[questID] = {factionID}
     [64266] = {2472}, --The Archivist's Codex
     [64267] = {2432}, --Ve'nari
     [64867] = {2478}, --The Enlightened
+
+    --TWW
+    [79219] = {2590}, --Council of Dornogal
+    [29218] = {2570}, --Hallowfall Arathi
+    [79220] = {2594}, --The Assembly of the Deep
+    [79196] = {2600}, --The Severed Threads
+    [83739] = {2605}, --The General
+    [83740] = {2607}, --The Vizier
+    [83738] = {2601}, --The Weaver
 }
 
 local VignetteExclusionMapIDs = {
@@ -1360,6 +1369,7 @@ local function CLEUHandling(self, _, subEvent, _, sourceGUID, srcName, sourceFla
 end
 
 local function AlertContainerFrameOnEvent(self, event, ...)
+    local currentTime = GetTime()
     if event == "PLAYER_LEVEL_UP" and GW.settings.ALERTFRAME_NOTIFICATION_LEVEL_UP then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
         GW.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
@@ -1440,16 +1450,20 @@ local function AlertContainerFrameOnEvent(self, event, ...)
     elseif event == "QUEST_ACCEPTED" and GW.settings.ALERTFRAME_NOTIFICATION_PARAGON then
         local questId = ...
         if PARAGON_QUEST_ID[questId] then
-            local factionData = C_Reputation.GetFactionDataByID (PARAGON_QUEST_ID[questId][1])
-            local name = factionData and factionData.name or UNKNOWN
-            local text = GW.RGBToHex(0.22, 0.37, 0.98) .. name .. "|r"
+            local factionData = C_Reputation.GetFactionDataByID(PARAGON_QUEST_ID[questId][1])
+            local text = GW.RGBToHex(0.22, 0.37, 0.98) .. (factionData and factionData.name or UNKNOWN) .. "|r"
             local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questId))
             -- /run GW.AlertSystem:AddAlert(format("|cff00c0fa%s|r", GetFactionInfoByID(2407)), nil, format("|cff00c0fa%s|r", "TESTE"), false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
             GW.AlertSystem:AddAlert(name, nil, text, false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound",GW.settings.ALERTFRAME_NOTIFICATION_PARAGON_SOUND), "Master")
+            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_PARAGON_SOUND), "Master")
         end
     elseif event == "VIGNETTE_MINIMAP_UPDATED" and GW.settings.ALERTFRAME_NOTIFICATION_RARE then
-        if VignetteExclusionMapIDs[GW.Libs.GW2Lib:GetPlayerLocationMapID()] or IsInGroup() or IsInRaid() or IsPartyLFG() then return end
+        if VignetteExclusionMapIDs[GW.Libs.GW2Lib:GetPlayerLocationMapID()] then return end
+
+        local inGroup, inRaid, inPartyLFG = IsInGroup(), IsInRaid(), IsPartyLFG() or C_PartyInfo.IsPartyWalkIn()
+        if inGroup or inRaid or inPartyLFG then
+            return
+        end
 
         local vignetteGUID, onMinimap = ...
 
@@ -1467,14 +1481,13 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
             if vignetteGUID ~= self.lastMinimapRare.id then
                 GW.Debug("Minimap vignette with id", vignetteInfo.vignetteID, "and name", vignetteInfo.name, "appeared on the minimap.")
-                vignetteInfo.nameColored = format("|cff00c0fa%s|r", vignetteInfo.name)
+                vignetteInfo.nameColored = format("|cff00c0fa%s|r", vignetteInfo.name:utf8sub(1, 28))
                 GW.AlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil, vignetteInfo.nameColored, false, vignetteInfo.atlasName, false, nil, vignetteInfo.name)
                 self.lastMinimapRare.id = vignetteGUID
 
-                local time = GetTime()
-                if time > (self.lastMinimapRare.time + 20) then
+                if currentTime > (self.lastMinimapRare.time + 20) then
                     PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_RARE_SOUND), "Master")
-                    self.lastMinimapRare.time = time
+                    self.lastMinimapRare.time = currentTime
                 end
             end
         end
@@ -1504,11 +1517,11 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         local damager = IsDamage and forDamage and "|cffd62c35" .. DAMAGER .. "|r" or ""
 
         if ((IsTank and forTank) or (IsHealer and forHealer) or (IsDamage and forDamage)) and not ingroup then
-            if GetTime() - LFG_Timer > 20 then
+            if currentTime - LFG_Timer > 20 then
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND), "Master")
                 -- /run GW.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
                 GW.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
-                LFG_Timer = GetTime()
+                LFG_Timer = currentTime
             end
         end
     end

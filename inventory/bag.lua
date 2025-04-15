@@ -12,16 +12,16 @@ local function setBagHeaders()
     for i = 1, 5 do
         local slotID = GetInventorySlotInfo(i == 5 and ("ReagentBag0Slot") or ("Bag" .. i - 1 .. "Slot"))
         local itemID = GetInventoryItemID("player", slotID)
-
+        local header = _G["GwBagFrameGwBagHeader" .. i]
         if itemID then
             local r, g, b = 1, 1, 1
             local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
             if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
 
-            _G["GwBagFrameGwBagHeader" .. i].nameString:SetText(strlen(GW.settings["BAG_HEADER_NAME" .. i]) > 0 and GW.settings["BAG_HEADER_NAME" .. i] or itemName and itemName or UNKNOWN)
-            _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(r, g, b, 1)
+            header.nameString:SetText(strlen(GW.settings["BAG_HEADER_NAME" .. i]) > 0 and GW.settings["BAG_HEADER_NAME" .. i] or itemName and itemName or UNKNOWN)
+            header.nameString:SetTextColor(r, g, b, 1)
         else
-            _G["GwBagFrameGwBagHeader" .. i]:Hide()
+            header:Hide()
         end
     end
     _G["GwBagFrameGwBagHeader0"].nameString:SetText(strlen(GW.settings.BAG_HEADER_NAME0) > 0 and GW.settings.BAG_HEADER_NAME0 or BACKPACK_TOOLTIP)
@@ -29,7 +29,8 @@ end
 
 -- adjusts the ItemButton layout flow when the bag window size changes (or on open)
 local function layoutBagItems(f)
-    local max_col = f:GetParent().gw_bag_cols
+    local parent = f:GetParent()
+    local max_col = parent.gw_bag_cols
     local col = 0
     local rev = GW.settings.BAG_REVERSE_SORT
     local sep = GW.settings.BAG_SEPARATE_BAGS
@@ -46,35 +47,37 @@ local function layoutBagItems(f)
         iS = NUM_TOTAL_EQUIPPED_BAG_SLOTS
         iD = -1
     end
-    f:GetParent().unfinishedRow = 0
-    f:GetParent().finishedRow = 0
+    parent.unfinishedRow = 0
+    parent.finishedRow = 0
 
     local lcf = inv.layoutContainerFrame
     for i = iS, iE, iD do
         local bag_id = i
         local slotID, itemID
         local cf = f.Containers[bag_id]
+        local header = _G["GwBagFrameGwBagHeader" .. bag_id]
         if sep then
-            _G["GwBagFrameGwBagHeader" .. bag_id]:Show()
-            _G["GwBagFrameGwBagHeader" .. bag_id]:ClearAllPoints()
-            _G["GwBagFrameGwBagHeader" .. bag_id]:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off)
-            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(GW.settings.BAG_WIDTH - BAG_ITEM_PADDING)
-            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(GW.settings.BAG_WIDTH - BAG_ITEM_PADDING)
+            header:Show()
+            header:ClearAllPoints()
+            header:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off)
+            header:SetWidth(GW.settings.BAG_WIDTH - BAG_ITEM_PADDING)
+            header.background:SetWidth(GW.settings.BAG_WIDTH - BAG_ITEM_PADDING)
         else
-            _G["GwBagFrameGwBagHeader" .. bag_id] :Hide()
+            header:Hide()
         end
-        if sep and cf.shouldShow then
-            col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off)
-            cf:Show()
-        elseif sep and not cf.shouldShow then
-            cf:Hide()
-        elseif not sep then
-            col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off)
+
+        if sep then
+            cf:SetShown(cf.shouldShow)
+        else
             cf:Show()
         end
 
-        if unfinishedRow then f:GetParent().unfinishedRow = f:GetParent().unfinishedRow  + 1 end
-        f:GetParent().finishedRow = f:GetParent().finishedRow + finishedRows
+        if cf:IsShown() then
+            col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off)
+        end
+
+        parent.unfinishedRow = parent.unfinishedRow + (unfinishedRow and 1 or 0)
+        parent.finishedRow = parent.finishedRow + finishedRows
 
         if not rev and bag_id <= 3 then
             slotID = GetInventorySlotInfo("Bag" .. bag_id .. "Slot")
@@ -92,7 +95,11 @@ local function layoutBagItems(f)
                 row = row + 1
             end
         end
+
+        finishedRows = 0
+        unfinishedRow = false
     end
+
     setBagHeaders()
 end
 GW.AddForProfiling("bag", "layoutBagItems", layoutBagItems)
@@ -139,24 +146,23 @@ local function watchCurrency(self)
     for i = 1, currencyCount do
         local info = C_CurrencyInfo.GetCurrencyListInfo(i)
         if not info.isHeader and info.isShowInBackpack and watchSlot <= 4 then
-            self["currency" .. tostring(watchSlot)]:SetText(GW.GetLocalizedNumber(info.quantity))
-            self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(info.iconFileID)
-            self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = i
+            self["currency" .. watchSlot]:SetText(GW.GetLocalizedNumber(info.quantity))
+            self["currency" .. watchSlot .. "Texture"]:SetTexture(info.iconFileID)
+            self["currency" .. watchSlot .. "Frame"].CurrencyIdx = i
             watchSlot = watchSlot + 1
         end
     end
 
     for i = watchSlot, 4 do
-        self["currency" .. tostring(i)]:SetText("")
-        self["currency" .. tostring(i) .. "Texture"]:SetTexture(nil)
-        self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = nil
+        self["currency" .. i]:SetText("")
+        self["currency" .. i .. "Texture"]:SetTexture(nil)
+        self["currency" .. watchSlot .. "Frame"].CurrencyIdx = nil
     end
 end
 GW.AddForProfiling("bag", "watchCurrency", watchCurrency)
 
 local function updateFreeSpaceString(free, full)
-    local space_string = free .. " / " .. full
-    GwBagFrame.spaceString:SetText(space_string)
+    GwBagFrame.spaceString:SetText(free .. " / " .. full)
 end
 GW.AddForProfiling("bag", "updateFreeSpaceString", updateFreeSpaceString)
 
@@ -188,17 +194,12 @@ GW.AddForProfiling("bag", "rescanBagContainers", rescanBagContainers)
 -- draws the backpack bag slots in the correct order
 local function setBagBarOrder(f)
     local x = -40
-    local y
     local bag_size = 28
     local bag_padding = 4
     local rev = GW.settings.BAG_REVERSE_SORT
+    local y = rev and (NUM_TOTAL_EQUIPPED_BAG_SLOTS - ((bag_size + bag_padding) * NUM_TOTAL_EQUIPPED_BAG_SLOTS)) or NUM_TOTAL_EQUIPPED_BAG_SLOTS
 
     f.setBagBarOrderInProgress = true
-    if rev then
-        y = NUM_TOTAL_EQUIPPED_BAG_SLOTS - ((bag_size + bag_padding) * NUM_TOTAL_EQUIPPED_BAG_SLOTS)
-    else
-        y = NUM_TOTAL_EQUIPPED_BAG_SLOTS
-    end
 
     for bag_idx = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         local b = f.bags[bag_idx]
@@ -221,7 +222,7 @@ local function bag_OnClick(self, button)
         local id = self:GetID();
         local hadItem = PutItemInBag(id)
         if not hadItem and self.gwHasBag and not IsBagOpen(self:GetBagID()) then
-            OpenBag(self:GetBagID()) --taint atm
+            OpenBag(self:GetBagID())
         end
     end
 end
@@ -404,11 +405,11 @@ local function bag_OnShow(self)
     self:RegisterEvent("BAG_UPDATE_DELAYED")
     self:RegisterEvent("CVAR_UPDATE")
     if not IsBagOpen(BACKPACK_CONTAINER) then
-        OpenBackpack() --TODO: taint atm
+        OpenBackpack()
     end
     for i = 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         if not IsBagOpen(i) then
-            OpenBag(i) --TODO: taint atm
+            OpenBag(i)
         end
     end
 
@@ -443,11 +444,7 @@ local function bag_OnEvent(self, event, ...)
             local bag_id = bag - cb0_id + 1
             local b = self.ItemFrame.bags[bag_id]
             if b and b.icon and b.icon.SetDesaturated then
-                if event == "ITEM_LOCKED" then
-                    b.icon:SetDesaturated(true)
-                else
-                    b.icon:SetDesaturated(false)
-                end
+                b.icon:SetDesaturated(event == "ITEM_LOCKED")
             end
             self.gw_need_bag_rescan = true
         end
@@ -460,7 +457,7 @@ local function bag_OnEvent(self, event, ...)
         if self.gw_need_bag_rescan then
             for bag_id = 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
                 if not IsBagOpen(bag_id) then
-                    OpenBag(bag_id) --TODO: taint atm
+                    OpenBag(bag_id)
                 end
             end
             updateBagBar(self.ItemFrame)
@@ -483,18 +480,12 @@ end
 GW.AddForProfiling("bag", "bag_OnEvent", bag_OnEvent)
 
 local function bagHeader_OnClick(self, btn)
-    local bag_id = string.sub(self:GetName(), -1)
+    local bag_id = tonumber(string.sub(self:GetName(), -1))
     if btn == "LeftButton" then
-        if self.icon:IsShown() then
-            -- collaps
-            self:GetParent().ItemFrame.Containers[tonumber(bag_id)].shouldShow = false
-        else
-            -- expand
-            self:GetParent().ItemFrame.Containers[tonumber(bag_id)].shouldShow = true
-        end
+        local cf = self:GetParent().ItemFrame.Containers[bag_id]
+        cf.shouldShow = not cf.shouldShow
         self.icon:SetShown(not self.icon:IsShown())
         self.icon2:SetShown(not self.icon:IsShown())
-
         layoutItems(self:GetParent())
         snapFrameSize(self:GetParent())
     elseif btn == "RightButton" then
@@ -555,14 +546,14 @@ local function LoadBag(helpers)
 
     -- setup bagheader stuff
     for i = 0, 5 do
-        _G["GwBagFrameGwBagHeader" .. i].nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(1, 1, 1)
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetShadowColor(0, 0, 0, 0)
-        _G["GwBagFrameGwBagHeader" .. i].icon2:Hide()
-        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnClick", bagHeader_OnClick)
-        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnClick", bagHeader_OnClick)
-        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnEnter", bagHeader_OnEnter)
-        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnLeave", GameTooltip_Hide)
+        local header = _G["GwBagFrameGwBagHeader" .. i]
+        header.nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        header.nameString:SetTextColor(1, 1, 1)
+        header.nameString:SetShadowColor(0, 0, 0, 0)
+        header.icon2:Hide()
+        header:SetScript("OnClick", bagHeader_OnClick)
+        header:SetScript("OnEnter", bagHeader_OnEnter)
+        header:SetScript("OnLeave", GameTooltip_Hide)
     end
 
     -- take the original search box
@@ -594,7 +585,6 @@ local function LoadBag(helpers)
     -- anytime a ContainerFrame is populated with a backpack bagId, we take its buttons
     hooksecurefunc("ContainerFrame_GenerateFrame", function(frame, _, id)
         if id >= BACKPACK_CONTAINER and id <= NUM_BAG_SLOTS then
-            --rescanBagContainers(f) -- Testing if this is causing the delay
             if frame.ExtraBagSlotsHelpBox then
                 local h = frame.ExtraBagSlotsHelpBox
                 h:ClearAllPoints()
@@ -621,6 +611,7 @@ local function LoadBag(helpers)
     hooksecurefunc("OpenBackpack", hookOpenBackpack)
     hooksecurefunc("CloseBackpack", hookCloseBackpack)
     hooksecurefunc("ToggleBackpack", hookToggleBackpack)
+
     local bindings = {"TOGGLEBACKPACK", "TOGGLEREAGENTBAG1", "TOGGLEBAG1", "TOGGLEBAG2", "TOGGLEBAG3", "TOGGLEBAG4"}
     for _, b in pairs(bindings) do
         local key = GetBindingKey(b)
@@ -640,66 +631,57 @@ local function LoadBag(helpers)
     )
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BAGS)
     EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
-
     f.buttonSettings:SetScript("OnClick", function(self)
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-            local check = rootDescription:CreateCheckbox(L["Compact Icons"], function() return GW.settings.BAG_ITEM_SIZE == BAG_ITEM_COMPACT_SIZE end, compactToggle)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
+            local function addCheck(label, getter, setter)
+                local check = rootDescription:CreateCheckbox(label, getter, setter)
+                check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
+            end
 
-            check = rootDescription:CreateCheckbox(L["Loot to leftmost Bag"], function() return GW.settings.BAG_REVERSE_NEW_LOOT end, function() local newStatus = not GW.settings.BAG_REVERSE_NEW_LOOT; C_Container.SetInsertItemsLeftToRight(newStatus); GW.settings.BAG_REVERSE_NEW_LOOT = newStatus end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-            check = rootDescription:CreateCheckbox(L["Sort to Last Bag"], function() return GW.settings.BAG_ITEMS_REVERSE_SORT end, function() local newStatus = not GW.settings.BAG_ITEMS_REVERSE_SORT; C_Container.SetSortBagsRightToLeft(newStatus); GW.settings.BAG_ITEMS_REVERSE_SORT = newStatus end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-            check = rootDescription:CreateCheckbox(L["Reverse Bag Order"], function() return GW.settings.BAG_REVERSE_SORT end, function() GW.settings.BAG_REVERSE_SORT = not GW.settings.BAG_REVERSE_SORT; layoutItems(f); snapFrameSize(f) end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-            check = rootDescription:CreateCheckbox(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; ContainerFrame_UpdateAll() end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-            check = rootDescription:CreateCheckbox(L["Show Junk Icon"], function() return GW.settings.BAG_ITEM_JUNK_ICON_SHOW end, function() GW.settings.BAG_ITEM_JUNK_ICON_SHOW = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW; ContainerFrame_UpdateAll() end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-            check = rootDescription:CreateCheckbox(L["Show Scrap Icon"], function() return GW.settings.BAG_ITEM_SCRAP_ICON_SHOW end, function() GW.settings.BAG_ITEM_SCRAP_ICON_SHOW = not GW.settings.BAG_ITEM_SCRAP_ICON_SHOW; ContainerFrame_UpdateAll() end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-            check = rootDescription:CreateCheckbox(L["Show Upgrade Icon"], function() return GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW end, function() GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW = not GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW; ContainerFrame_UpdateAll() end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-            check = rootDescription:CreateCheckbox(L["Show Profession Bag Coloring"], function() return GW.settings.BAG_PROFESSION_BAG_COLOR end, function() GW.settings.BAG_PROFESSION_BAG_COLOR = not GW.settings.BAG_PROFESSION_BAG_COLOR; ContainerFrame_UpdateAll() end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-            check = rootDescription:CreateCheckbox(SHOW_ITEM_LEVEL:gsub("-\n", ""):gsub("\n", " "), function() return GW.settings.BAG_SHOW_ILVL end, function() GW.settings.BAG_SHOW_ILVL = not GW.settings.BAG_SHOW_ILVL; ContainerFrame_UpdateAll() end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-            check = rootDescription:CreateCheckbox(L["Sell junk automatically"], function() return GW.settings.BAG_VENDOR_GRAYS end, function() local newStatus = not GW.settings.BAG_VENDOR_GRAYS; GW.settings.BAG_VENDOR_GRAYS = newStatus; GW.SetupVendorJunk(newStatus) end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
-
-            check = rootDescription:CreateCheckbox(L["Separate bags"], function() return GW.settings.BAG_SEPARATE_BAGS end, function() local newStatus = not GW.settings.BAG_SEPARATE_BAGS; GW.settings.BAG_SEPARATE_BAGS = newStatus; layoutItems(f); snapFrameSize(f) end)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
+            addCheck(L["Compact Icons"], function() return GW.settings.BAG_ITEM_SIZE == BAG_ITEM_COMPACT_SIZE end, compactToggle)
+            addCheck(L["Loot to leftmost Bag"], function() return GW.settings.BAG_REVERSE_NEW_LOOT end,
+                     function() local ns = not GW.settings.BAG_REVERSE_NEW_LOOT; C_Container.SetInsertItemsLeftToRight(ns); GW.settings.BAG_REVERSE_NEW_LOOT = ns end)
+            addCheck(L["Sort to Last Bag"], function() return GW.settings.BAG_ITEMS_REVERSE_SORT end,
+                     function() local ns = not GW.settings.BAG_ITEMS_REVERSE_SORT; C_Container.SetSortBagsRightToLeft(ns); GW.settings.BAG_ITEMS_REVERSE_SORT = ns end)
+            addCheck(L["Reverse Bag Order"], function() return GW.settings.BAG_REVERSE_SORT end,
+                     function() GW.settings.BAG_REVERSE_SORT = not GW.settings.BAG_REVERSE_SORT; layoutItems(f); snapFrameSize(f) end)
+            addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end,
+                     function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; ContainerFrame_UpdateAll() end)
+            addCheck(L["Show Junk Icon"], function() return GW.settings.BAG_ITEM_JUNK_ICON_SHOW end,
+                     function() GW.settings.BAG_ITEM_JUNK_ICON_SHOW = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW; ContainerFrame_UpdateAll() end)
+            addCheck(L["Show Scrap Icon"], function() return GW.settings.BAG_ITEM_SCRAP_ICON_SHOW end,
+                     function() GW.settings.BAG_ITEM_SCRAP_ICON_SHOW = not GW.settings.BAG_ITEM_SCRAP_ICON_SHOW; ContainerFrame_UpdateAll() end)
+            addCheck(L["Show Upgrade Icon"], function() return GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW end,
+                     function() GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW = not GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW; ContainerFrame_UpdateAll() end)
+            addCheck(L["Show Profession Bag Coloring"], function() return GW.settings.BAG_PROFESSION_BAG_COLOR end,
+                     function() GW.settings.BAG_PROFESSION_BAG_COLOR = not GW.settings.BAG_PROFESSION_BAG_COLOR; ContainerFrame_UpdateAll() end)
+            addCheck(SHOW_ITEM_LEVEL:gsub("-\n", ""):gsub("\n", " "), function() return GW.settings.BAG_SHOW_ILVL end,
+                     function() GW.settings.BAG_SHOW_ILVL = not GW.settings.BAG_SHOW_ILVL; ContainerFrame_UpdateAll() end)
+            addCheck(L["Sell junk automatically"], function() return GW.settings.BAG_VENDOR_GRAYS end,
+                     function() local ns = not GW.settings.BAG_VENDOR_GRAYS; GW.settings.BAG_VENDOR_GRAYS = ns; GW.SetupVendorJunk(ns) end)
+            addCheck(L["Separate bags"], function() return GW.settings.BAG_SEPARATE_BAGS end,
+                     function() local ns = not GW.settings.BAG_SEPARATE_BAGS; GW.settings.BAG_SEPARATE_BAGS = ns; layoutItems(f); snapFrameSize(f) end)
         end)
     end)
 
     GW.SetupVendorJunk(GW.settings.BAG_VENDOR_GRAYS)
 
     -- setup money frame
-    f.bronze:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.bronze:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.silver:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.silver:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.gold:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
+    for _, frameName in ipairs({"bronze", "silver", "gold"}) do
+        f[frameName]:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    end
+    f.bronze:SetTextColor(177/255, 97/255, 34/255)
+    f.silver:SetTextColor(170/255, 170/255, 170/255)
+    f.gold:SetTextColor(221/255, 187/255, 68/255)
 
     -- money frame tooltip
     f.moneyFrame:SetScript("OnEnter", GW.Money_OnEnter)
     f.moneyFrame:SetScript("OnClick", GW.Money_OnClick)
 
-    -- update money when applicable
+    f.moneyFrame:SetScript("OnEnter", GW.Money_OnEnter)
+    f.moneyFrame:SetScript("OnClick", GW.Money_OnClick)
     f.moneyFrame:SetScript("OnEvent", function(self)
-        if GW.inWorld then
-            updateMoney(self:GetParent())
-        end
+        if GW.inWorld then updateMoney(self:GetParent()) end
     end)
     f.moneyFrame:RegisterEvent("PLAYER_MONEY")
     updateMoney(f)
@@ -712,65 +694,25 @@ local function LoadBag(helpers)
     end)
 
     -- setup watch currencies
-    f.currency1:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.currency1:SetTextColor(1, 1, 1)
-    f.currency2:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.currency2:SetTextColor(1, 1, 1)
-    f.currency3:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.currency3:SetTextColor(1, 1, 1)
-    f.currency4:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.currency4:SetTextColor(1, 1, 1)
-
-    -- set warch currencies tooltips
-    f.currency1Frame:SetScript("OnEnter", function(self)
-        if not self.CurrencyIdx then
-            return
-        end
-        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-        GameTooltip:ClearLines()
-        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-        GameTooltip:Show()
-    end)
-    f.currency2Frame:SetScript("OnEnter", function(self)
-        if not self.CurrencyIdx then
-            return
-        end
-        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-        GameTooltip:ClearLines()
-        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-        GameTooltip:Show()
-    end)
-    f.currency3Frame:SetScript("OnEnter", function(self)
-        if not self.CurrencyIdx then
-            return
-        end
-        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-        GameTooltip:ClearLines()
-        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-        GameTooltip:Show()
-    end)
-    f.currency4Frame:SetScript("OnEnter", function(self)
-        if not self.CurrencyIdx then
-            return
-        end
-        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-        GameTooltip:ClearLines()
-        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-        GameTooltip:Show()
-    end)
+    for i = 1, 4 do
+        local currencyFrame = f["currency" .. i]
+        currencyFrame:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        currencyFrame:SetTextColor(1, 1, 1)
+        f["currency" .. i .. "Frame"]:SetScript("OnEnter", function(self)
+            if self.CurrencyIdx then
+                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                GameTooltip:ClearLines()
+                GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+                GameTooltip:Show()
+            end
+        end)
+    end
 
     f.currency:SetScript("OnEvent", function(self)
-        if GW.inWorld then
-            watchCurrency(self:GetParent())
-        end
+        if GW.inWorld then watchCurrency(self:GetParent()) end
     end)
     f.currency:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-    hooksecurefunc(
-        C_CurrencyInfo, "SetCurrencyBackpack",
-        function()
-            watchCurrency(f)
-        end
-    )
+    hooksecurefunc(C_CurrencyInfo, "SetCurrencyBackpack", function() watchCurrency(f) end)
     watchCurrency(f)
 
     -- return a callback that should be called when item size changes

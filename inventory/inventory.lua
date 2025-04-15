@@ -3,6 +3,8 @@ local setItemLevel = GW.setItemLevel
 
 -- global for this deprecated in 8.3; from ContainerFrame.lua
 local MAX_CONTAINER_ITEMS = 36
+local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder"
+local BACKDROP_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop"
 
 -- reskins an ItemButton to use GW2_UI styling
 local function reskinItemButton(b, overrideIconSize)
@@ -15,7 +17,7 @@ local function reskinItemButton(b, overrideIconSize)
     b.icon:SetAlpha(0.9)
 
     b.IconBorder:SetAllPoints(b)
-    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    b.IconBorder:SetTexture(BORDER_TEXTURE)
 
     local norm = b:GetNormalTexture()
     norm:GwKill()
@@ -34,6 +36,10 @@ local function reskinItemButton(b, overrideIconSize)
         b.Background:Hide()
     end
 
+    if b.PushedTexture then
+        b.PushedTexture:SetTexture()
+    end
+
     b.ItemSlotBackground:Hide()
     if not b.ItemSlotBackgroundHooked then
         hooksecurefunc(b.ItemSlotBackground, "SetShown", function()
@@ -44,13 +50,13 @@ local function reskinItemButton(b, overrideIconSize)
 
     local high = b:GetHighlightTexture()
     high:SetAllPoints(b)
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    high:SetTexture(BORDER_TEXTURE)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
     if not b.gwBackdrop then
         local bd = b:CreateTexture(nil, "BACKGROUND")
-        bd:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
+        bd:SetTexture(BACKDROP_TEXTURE)
         bd:SetAllPoints(b)
         b.gwBackdrop = bd
     end
@@ -171,7 +177,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     local isReagentBag = bag_id == 5
 
     local t = button.IconBorder
-    t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    t:SetTexture(BORDER_TEXTURE)
     t:SetAlpha(0.9)
     t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
 
@@ -388,15 +394,16 @@ local function reskinBagBar(b, ha)
     norm:SetTexture(nil)
 
     b.IconBorder:SetAllPoints(b)
-    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    b.IconBorder:SetTexture(BORDER_TEXTURE)
     hooksecurefunc(b.IconBorder, "SetTexture", function()
-        if b.IconBorder:GetTexture() and b.IconBorder:GetTexture() > 0 and b.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
-            b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        local t = b.IconBorder:GetTexture()
+        if t and t > 0 and t ~= BORDER_TEXTURE then
+            b.IconBorder:SetTexture(BORDER_TEXTURE)
         end
     end)
 
     local high = b:GetHighlightTexture()
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    high:SetTexture(BORDER_TEXTURE)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
     high:SetSize(bag_size, bag_size)
@@ -638,7 +645,7 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     end
 
     local cols = f == GwBagFrame and f.gw_bag_cols or f.gw_bank_cols
-    local sep = f == GwBagFrame and GW.settings.BAG_SEPARATE_BAGS or false
+    local sep = (f == GwBagFrame and GW.settings.BAG_SEPARATE_BAGS) or false
 
     if not cfs then
         f:SetHeight(min_height)
@@ -662,21 +669,13 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     if sep then
         local bags_equipped = 0
         for i = 1, 5 do
-            local slotID, itemID
-
-            if i <= 4 then
-                slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
-            else
-                slotID = 35 -- ReagentBag0Slot
-            end
-            itemID = GetInventoryItemID("player", slotID)
-
-            if itemID then
+            local slotID = (i <= 4) and GetInventorySlotInfo("Bag" .. (i - 1) .. "Slot") or 35 -- ReagentBag0Slot
+            if GetInventoryItemID("player", slotID) then
                 bags_equipped = bags_equipped + 1
             end
         end
-        f.finishedRow = f.finishedRow and f.finishedRow or 0
-        f.unfinishedRow = f.unfinishedRow and f.unfinishedRow or 0
+        f.finishedRow = f.finishedRow or 0
+        f.unfinishedRow = f.unfinishedRow or 0
         rows = f.finishedRow + bags_equipped + 1 + f.unfinishedRow
     else
         rows = math.ceil(slots / cols)
@@ -684,9 +683,12 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     f:SetHeight(max((isize * rows) + 75, min_height))
     f:SetWidth((isize * cols) + padding + 2)
     for i = 0, 6 do
-        if _G["GwBagFrameGwBagHeader" .. i] and sep then
-            _G["GwBagFrameGwBagHeader" .. i]:SetWidth((isize * cols) + padding + 2 - 5)
-            _G["GwBagFrameGwBagHeader" .. i].background:SetWidth((isize * cols) + padding + 2 - 5)
+        local header = _G["GwBagFrameGwBagHeader" .. i]
+        if header and sep then
+            header:SetWidth((isize * cols) + padding + 2 - 5)
+            if header.background then
+                header.background:SetWidth((isize * cols) + padding + 2 - 5)
+            end
         end
     end
 end
@@ -790,12 +792,6 @@ local function LoadInventory()
     for i = 1, NUM_CONTAINER_FRAMES do
         local cf = _G["ContainerFrame" .. i]
         if cf then
-            --cf:EnableMouse(false)
-            --cf:SetAlpha(0)
-            --cf:SetParent(GW.HiddenFrame)
-            --cf:ClearAllPoints()
-            --cf:SetPoint("BOTTOM")
-
             -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
             cf:UnregisterEvent("BAG_OPEN")
         end
