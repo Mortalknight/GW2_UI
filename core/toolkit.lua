@@ -717,29 +717,32 @@ end
 
 local function GwStyleButton(button, noHover, noPushed, noChecked)
     if button.SetHighlightTexture and button.CreateTexture and not button.hover and not noHover then
-        local hover = button:CreateTexture()
+        button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/white")
+
+        local hover = button:GetHighlightTexture()
         hover:GwSetInside()
         hover:SetBlendMode('ADD')
         hover:SetColorTexture(1, 1, 1, 0.3)
-        button:SetHighlightTexture(hover)
         button.hover = hover
     end
 
     if button.SetPushedTexture and button.CreateTexture and not button.pushed and not noPushed then
-        local pushed = button:CreateTexture()
+        button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/white")
+
+        local pushed = button:GetPushedTexture()
         pushed:GwSetInside()
         pushed:SetBlendMode('ADD')
         pushed:SetColorTexture(0.9, 0.8, 0.1, 0.3)
-        button:SetPushedTexture(pushed)
         button.pushed = pushed
     end
 
     if button.SetCheckedTexture and button.CreateTexture and not button.checked and not noChecked then
-        local checked = button:CreateTexture()
+        button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/white")
+
+        local checked = button:GetCheckedTexture()
         checked:GwSetInside()
         checked:SetBlendMode('ADD')
         checked:SetColorTexture(1, 1, 1, 0.3)
-        button:SetCheckedTexture(checked)
         button.checked = checked
     end
 
