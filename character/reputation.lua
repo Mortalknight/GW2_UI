@@ -6,7 +6,6 @@ local RT = GW.REP_TEXTURES
 
 local categoriesScrollBox
 local isSearchResult = nil
-local savedReputation = {}
 local firstReputationCat = 1
 local lastReputationCat = 1
 local OFF_Y = 10
@@ -16,165 +15,120 @@ local REPBG_T = 0
 local REPBG_B = 0.464
 
 local g_selectionBehavior = nil
-
-local facData = {}
-local facOrder = {}
-
-local function reputationSearch(a, b)
-    return string.find(a, b)
-end
-
-local function returnReputationData(factionIndex)
-    if savedReputation[factionIndex] == nil then
-        return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
-    end
-    return savedReputation[factionIndex].name,
-            savedReputation[factionIndex].description,
-            savedReputation[factionIndex].standingId,
-            savedReputation[factionIndex].bottomValue,
-            savedReputation[factionIndex].topValue,
-            savedReputation[factionIndex].earnedValue,
-            savedReputation[factionIndex].atWarWith,
-            savedReputation[factionIndex].canToggleAtWar,
-            savedReputation[factionIndex].isHeader,
-            savedReputation[factionIndex].isCollapsed,
-            savedReputation[factionIndex].hasRep,
-            savedReputation[factionIndex].isWatched,
-            savedReputation[factionIndex].isChild,
-            savedReputation[factionIndex].factionID,
-            savedReputation[factionIndex].hasBonusRepGain,
-            savedReputation[factionIndex].canSetInactive,
-            savedReputation[factionIndex].isAccountWide
-end
-GW.AddForProfiling("reputation", "returnReputationData", returnReputationData)
+local updateQueued = false
 
 local function sortFactionsStatus(tbl)
     table.sort(tbl, function(a, b)
             if a.isFriend ~= b.isFriend then
                 return b.isFriend
-            elseif a.standingId ~= b.standingId then
-                return a.standingId > b.standingId
+            elseif a.reaction ~= b.reaction then
+                return a.reaction > b.reaction
             else
-                return a.standingId < b.standingId
+                return a.reaction < b.reaction
             end
         end)
     return tbl
 end
 
+local function addToFactionTable(factionTbl, reaction, standingText, isFriend, name, hasRewardPending, pendingParagonRewardFactions)
+    for _, v in ipairs(factionTbl) do
+        if v.isFriend == isFriend and v.standingText == standingText then
+            v.counter = v.counter + 1
+            if hasRewardPending then
+                tinsert(pendingParagonRewardFactions, {name = name})
+            end
+            return true
+        end
+    end
+
+    if hasRewardPending then
+        tinsert(pendingParagonRewardFactions, {name = name})
+    end
+
+    tinsert(factionTbl, {reaction = reaction, standingText = standingText, isFriend = isFriend, counter = 1})
+    return false
+end
+
 local function CollectCategories()
     C_Reputation.ExpandAllFactionHeaders()
 
-    local catagories = {}
-    local factionTbl
+    local categories = {}
+    local factionTbl = {}
     local pendingParagonRewardFactions = {}
-    local cMax = 0
-    local cCur = 0
+    local cMax, cCur = 0, 0
     local idx, headerName = 0, ""
     local skipFirst = true
-    local found = false
     local hasPendingParagonReward = false
 
     for factionIndex = 1, C_Reputation.GetNumFactions() do
-        local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID = returnReputationData(factionIndex)
-        if name then
-            local friendInfo = C_GossipInfo.GetFriendshipReputation(factionID or 0)
-            local _, _, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID or 0)
-            if isHeader and not isChild then
+        local data = C_Reputation.GetFactionDataByIndex(factionIndex)
+        if data and data.name then
+            local friendInfo = C_GossipInfo.GetFriendshipReputation(data.factionID or 0)
+            local _, _, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(data.factionID or 0)
+
+            if data.isHeader and not data.isChild then
                 if not skipFirst then
-                    tinsert(catagories, {idx = idx, idxLast = factionIndex - 1, name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl), hasPendingParagonReward = hasPendingParagonReward, pendingParagonRewardFactions = pendingParagonRewardFactions})
+                    tinsert(categories, {
+                        idx = idx,
+                        idxLast = factionIndex - 1,
+                        name = headerName,
+                        standingCur = cCur,
+                        standingMax = cMax,
+                        fctTbl = sortFactionsStatus(factionTbl),
+                        hasPendingParagonReward = hasPendingParagonReward,
+                        pendingParagonRewardFactions = pendingParagonRewardFactions
+                    })
                 end
+
                 skipFirst = false
-                cMax = 0
-                cCur = 0
+                cMax, cCur = 0, 0
                 factionTbl = {}
                 pendingParagonRewardFactions = {}
-                idx = factionIndex
-                headerName = name
                 hasPendingParagonReward = false
+                idx = factionIndex
+                headerName = data.name
             else
-                found = false
-                if friendInfo.friendshipFactionID and friendInfo.friendshipFactionID > 0 then
-                    local friendRankInfo = C_GossipInfo.GetFriendshipReputationRanks(friendInfo.friendshipFactionID)
-                    cMax = cMax + friendRankInfo.maxLevel
-                    cCur = cCur + friendRankInfo.currentLevel
-                    if not factionTbl then factionTbl = {} end
-                    for _, v in pairs(factionTbl) do
-                        if v.isFriend == true and v.standingText == friendInfo.reaction then
-                            v.counter = v.counter + 1
-                            if hasRewardPending then
-                                hasPendingParagonReward = true
-                                tinsert(pendingParagonRewardFactions, {name = name})
-                            end
-                            found = true
-                            break
-                        end
+                if friendInfo and friendInfo.friendshipFactionID and friendInfo.friendshipFactionID > 0 then
+                    local friendRanks = C_GossipInfo.GetFriendshipReputationRanks(friendInfo.friendshipFactionID)
+                    local standingText = friendInfo.reaction
+                    cMax = cMax + friendRanks.maxLevel
+                    cCur = cCur + friendRanks.currentLevel
+                    addToFactionTable(factionTbl, friendRanks.currentLevel, standingText, true, data.name, hasRewardPending, pendingParagonRewardFactions)
+                    if hasRewardPending then hasPendingParagonReward = true end
+                elseif C_Reputation.IsMajorFaction(data.factionID) then
+                    local major = C_MajorFactions.GetMajorFactionData(data.factionID)
+                    if major then
+                        local standingText = RENOWN_LEVEL_LABEL:format(major.renownLevel)
+                        cMax = cMax + #C_MajorFactions.GetRenownLevels(data.factionID)
+                        cCur = cCur + major.renownLevel
+                        addToFactionTable(factionTbl, major.renownLevel, standingText, false, data.name, hasRewardPending, pendingParagonRewardFactions)
+                        if hasRewardPending then hasPendingParagonReward = true end
                     end
-                    if not found then
-                        if hasRewardPending then
-                            tinsert(pendingParagonRewardFactions, {name = name})
-                            hasPendingParagonReward = true
-                        end
-                        tinsert(factionTbl, {standingId = friendRankInfo.currentLevel, isFriend = true, standingText = friendInfo.reaction, counter = 1})
-                    end
-                elseif C_Reputation.IsMajorFaction(factionID) then
-                    local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
-                    if majorFactionData then
-                        local standing = RENOWN_LEVEL_LABEL:format(majorFactionData.renownLevel)
-                        cMax = cMax + #C_MajorFactions.GetRenownLevels(factionID)
-                        cCur = cCur + majorFactionData.renownLevel
-                        if not factionTbl then factionTbl = {} end
-                        for _, v in pairs(factionTbl) do
-                            if v.isFriend == false and v.standingText == standing then
-                                v.counter = v.counter + 1
-                                if hasRewardPending then
-                                    hasPendingParagonReward = true
-                                    tinsert(pendingParagonRewardFactions, {name = name})
-                                end
-                                found = true
-                                break
-                            end
-                        end
-                        if not found then
-                            if hasRewardPending then
-                                tinsert(pendingParagonRewardFactions, {name = name})
-                                hasPendingParagonReward = true
-                            end
-                            tinsert(factionTbl, {standingId = majorFactionData.renownLevel, isFriend = false, standingText = standing, counter = 1})
-                        end
-                    end
-                elseif not isHeader then
-                    local standing = getglobal("FACTION_STANDING_LABEL" .. standingId)
+                elseif not data.isHeader then
+                    local standingText = getglobal("FACTION_STANDING_LABEL" .. data.reaction)
                     cMax = cMax + 8
-                    cCur = cCur + standingId
-                    if not factionTbl then factionTbl = {} end
-                    for _, v in pairs(factionTbl) do
-                        if v.isFriend == false and v.standingText == standing then
-                            v.counter = v.counter + 1
-                            if hasRewardPending then
-                                hasPendingParagonReward = true
-                                tinsert(pendingParagonRewardFactions, {name = name})
-                            end
-                            found = true
-                            break
-                        end
-                    end
-                    if not found then
-                        if hasRewardPending then
-                            hasPendingParagonReward = true
-                            tinsert(pendingParagonRewardFactions, {name = name})
-                        end
-                        tinsert(factionTbl, {standingId = standingId, isFriend = false, standingText = standing, counter = 1})
-                    end
+                    cCur = cCur + data.reaction
+                    addToFactionTable(factionTbl, data.reaction, standingText, false, data.name, hasRewardPending, pendingParagonRewardFactions)
+                    if hasRewardPending then hasPendingParagonReward = true end
                 end
             end
         end
     end
     -- insert the last header
-    if factionTbl then
-        tinsert(catagories, {idx = idx, idxLast = C_Reputation.GetNumFactions(), name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl), hasPendingParagonReward = hasPendingParagonReward, pendingParagonRewardFactions = pendingParagonRewardFactions})
+    if #factionTbl > 0 then
+        tinsert(categories, {
+            idx = idx,
+            idxLast = C_Reputation.GetNumFactions(),
+            name = headerName,
+            standingCur = cCur,
+            standingMax = cMax,
+            fctTbl = sortFactionsStatus(factionTbl),
+            hasPendingParagonReward = hasPendingParagonReward,
+            pendingParagonRewardFactions = pendingParagonRewardFactions
+        })
     end
 
-    return catagories
+    return categories
 end
 
 local function UpdateCategories(self)
@@ -188,166 +142,56 @@ local function UpdateCategories(self)
 end
 
 local function UpdateDetailsData(self)
-    local dataProvider = CreateDataProvider()
-
-    -- clean up facData table (re-use instead of reallocate to prevent mem bloat)
-    for _, v in pairs(facData) do
-        v.loaded = false
-    end
-    table.wipe(facOrder)
-
-    -- run through factions to get data and total count for the selected category
-    local savedHeaderName = ""
-
-    if isSearchResult then
-        for idx = 1, C_Reputation.GetNumFactions() do
-            local name,
-                desc,
-                standingId,
-                bottomValue,
-                topValue,
-                earnedValue,
-                atWarWith,
-                canToggleAtWar,
-                isHeader,
-                isCollapsed,
-                hasRep,
-                isWatched,
-                isChild,
-                factionID,
-                hasBonusRepGain,
-                canSetInactive,
-                isAccountWide = returnReputationData(idx)
-
-            local lower1 = string.lower(name)
-            local lower2 = string.lower(isSearchResult)
-
-            if isHeader and not isChild then
-                -- skip
-            elseif name == nil or reputationSearch(lower1, lower2) == nil then
-                -- skip
-            else
-                if isHeader and isChild then
-                    savedHeaderName = name
-                end
-
-                if not isChild then
-                    savedHeaderName = ""
-                end
-
-                if not facData[factionID] and factionID then
-                    facData[factionID] = {}
-                end
-                facOrder[#facOrder + 1] = factionID
-                facData[factionID].loaded = true
-                facData[factionID].factionIndex = idx
-                facData[factionID].name = name
-                facData[factionID].desc = desc
-                facData[factionID].standingId = standingId
-                facData[factionID].bottomValue = bottomValue
-                facData[factionID].topValue = topValue
-                facData[factionID].earnedValue = earnedValue
-                facData[factionID].atWarWith = atWarWith
-                facData[factionID].canToggleAtWar = canToggleAtWar
-                facData[factionID].isHeader = isHeader
-                facData[factionID].isCollapsed = isCollapsed
-                facData[factionID].hasRep = hasRep
-                facData[factionID].isWatched = isWatched
-                facData[factionID].isChild = isChild
-                facData[factionID].factionID = factionID
-                facData[factionID].hasBonusRepGain = hasBonusRepGain
-                facData[factionID].savedHeaderName = savedHeaderName
-                facData[factionID].canSetInactive = canSetInactive
-                facData[factionID].isAccountWide = isAccountWide
-            end
-        end
-    else
-        for idx = firstReputationCat + 1, lastReputationCat do
-            local name, desc, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canSetInactive, isAccountWide = returnReputationData(idx)
-            if name then
-                if not factionID or (isHeader and not isChild) then
-                    break
-                end
-
-                if isHeader and isChild and name then
-                    savedHeaderName = name
-                end
-
-                if not isChild then
-                    savedHeaderName = ""
-                end
-
-                if not facData[factionID] and (not isHeader or hasRep) then
-                    facData[factionID] = {}
-                end
-                if not isHeader or hasRep then
-                    facOrder[#facOrder + 1] = factionID
-                    facData[factionID].loaded = true
-                    facData[factionID].factionIndex = idx
-                    facData[factionID].name = name
-                    facData[factionID].desc = desc
-                    facData[factionID].standingId = standingId
-                    facData[factionID].bottomValue = bottomValue
-                    facData[factionID].topValue = topValue
-                    facData[factionID].earnedValue = earnedValue
-                    facData[factionID].atWarWith = atWarWith
-                    facData[factionID].canToggleAtWar = canToggleAtWar
-                    facData[factionID].isHeader = isHeader
-                    facData[factionID].isCollapsed = isCollapsed
-                    facData[factionID].hasRep = hasRep
-                    facData[factionID].isWatched = isWatched
-                    facData[factionID].isChild = isChild
-                    facData[factionID].factionID = factionID
-                    facData[factionID].hasBonusRepGain = hasBonusRepGain
-                    facData[factionID].savedHeaderName = savedHeaderName
-                    facData[factionID].canSetInactive = canSetInactive
-                    facData[factionID].isAccountWide = isAccountWide
-                end
-            end
-        end
-    end
-
-    for index, id in ipairs(facOrder) do
-        if index and facData[id] and facData[id].loaded then
-            dataProvider:Insert({index = index, data = facData[id]})
-        end
-    end
-
-    self:SetDataProvider(dataProvider, ScrollBoxConstants.RetainScrollPosition)
-end
-
-local function updateSavedReputation()
+    local factionList = {}
     for factionIndex = 1, C_Reputation.GetNumFactions() do
         local factionData = C_Reputation.GetFactionDataByIndex(factionIndex)
         if factionData then
-            savedReputation[factionIndex] = {}
-
             if factionData.name == GUILD then
                 factionData = C_Reputation.GetGuildFactionData()
             end
             if factionData then
-                savedReputation[factionIndex].name = factionData.name
-                savedReputation[factionIndex].description = factionData.description
-                savedReputation[factionIndex].standingId = factionData.reaction
-                savedReputation[factionIndex].bottomValue = factionData.currentReactionThreshold
-                savedReputation[factionIndex].topValue = factionData.nextReactionThreshold
-                savedReputation[factionIndex].earnedValue = factionData.currentStanding
-                savedReputation[factionIndex].atWarWith = factionData.atWarWith
-                savedReputation[factionIndex].canToggleAtWar = factionData.canToggleAtWar
-                savedReputation[factionIndex].isHeader = factionData.isHeader
-                savedReputation[factionIndex].isCollapsed = factionData.isCollapsed
-                savedReputation[factionIndex].hasRep = factionData.isHeaderWithRep
-                savedReputation[factionIndex].isWatched = factionData.isWatched
-                savedReputation[factionIndex].isChild = factionData.isChild
-                savedReputation[factionIndex].factionID = factionData.factionID
-                savedReputation[factionIndex].hasBonusRepGain = factionData.hasBonusRepGain
-                savedReputation[factionIndex].canSetInactive = factionData.canSetInactive
-                savedReputation[factionIndex].isAccountWide = factionData.isAccountWide
+                factionData.factionIndex = factionIndex
+                tinsert(factionList, factionData)
             end
         end
     end
+
+    -- run through factions to get data and total count for the selected category
+    local savedHeaderName = ""
+    local filteredFactionList = {}
+
+    local searchLower = isSearchResult and string.lower(isSearchResult) or nil
+
+    for _, data in ipairs(factionList) do
+        local name = data.name
+        if name then
+            local include = false
+            if isSearchResult then
+                if not (data.isHeader and not data.isChild) and string.find(string.lower(name), searchLower) then
+                    include = true
+                end
+            else
+                local index = data.factionIndex
+                if index >= firstReputationCat and index <= lastReputationCat and data.factionID and (not data.isHeader or data.isChild) then
+                    include = not data.isHeader or data.isHeaderWithRep
+                end
+            end
+
+            if include then
+                if data.isHeader and data.isChild then
+                    savedHeaderName = name
+                elseif not data.isChild then
+                    savedHeaderName = ""
+                end
+
+                data.savedHeaderName = savedHeaderName
+                tinsert(filteredFactionList, data)
+            end
+        end
+    end
+
+    self:SetDataProvider(CreateDataProvider(filteredFactionList), ScrollBoxConstants.RetainScrollPosition)
 end
-GW.AddForProfiling("reputation", "updateSavedReputation", updateSavedReputation)
 
 local function showHeader(firstIndex, lastIndex)
     firstReputationCat = firstIndex
@@ -447,8 +291,8 @@ local function setReputationDetails(frame, data)
         frame.controles:Hide()
     end
 
-    local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, data.standingId)), GW.mysex)
-    local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, data.standingId + 1)), GW.mysex)
+    local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, data.reaction)), GW.mysex)
+    local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, data.reaction + 1)), GW.mysex)
     local friendInfo = C_GossipInfo.GetFriendshipReputation(data.factionID or 0)
 
     frame.background:SetTexture(nil)
@@ -485,7 +329,6 @@ local function setReputationDetails(frame, data)
             local shouldBeActive = not C_Reputation.IsFactionActive(data.factionIndex)
             C_Reputation.SetFactionActive(data.factionIndex, shouldBeActive)
 
-            updateSavedReputation()
             UpdateCategories(categoriesScrollBox)
             isSearchResult = nil
             UpdateDetailsData(GwRepDetailFrame.Details)
@@ -504,7 +347,6 @@ local function setReputationDetails(frame, data)
             local shouldBeActive = not C_Reputation.IsFactionActive(data.factionIndex)
             C_Reputation.SetFactionActive(data.factionIndex, shouldBeActive)
 
-            updateSavedReputation()
             UpdateCategories(categoriesScrollBox)
             isSearchResult = nil
             UpdateDetailsData(GwRepDetailFrame.Details)
@@ -522,7 +364,6 @@ local function setReputationDetails(frame, data)
         function()
             C_Reputation.ToggleFactionAtWar(data.factionIndex)
             if data.canToggleAtWar then
-                updateSavedReputation()
                 isSearchResult = nil
                 UpdateDetailsData(GwRepDetailFrame.Details)
             end
@@ -537,7 +378,6 @@ local function setReputationDetails(frame, data)
             else
                 C_Reputation.SetWatchedFactionByIndex(data.factionIndex)
             end
-            updateSavedReputation()
         end
     )
     frame.controles.showAsBar.checkbutton:SetScript(
@@ -548,7 +388,6 @@ local function setReputationDetails(frame, data)
             else
                 C_Reputation.SetWatchedFactionByIndex(data.factionIndex)
             end
-            updateSavedReputation()
         end
     )
 
@@ -655,12 +494,12 @@ local function setReputationDetails(frame, data)
     else
         frame.currentRank:SetText(currentRank)
         frame.nextRank:SetText(nextRank)
-        frame.currentValue:SetText(GW.GetLocalizedNumber(data.earnedValue - data.bottomValue))
-        local ldiff = data.topValue - data.bottomValue
+        frame.currentValue:SetText(GW.GetLocalizedNumber(data.currentStanding - data.currentReactionThreshold))
+        local ldiff = data.nextReactionThreshold - data.currentReactionThreshold
         if ldiff == 0 then
             ldiff = 1
         end
-        local percent = math.floor(RoundDec(((data.earnedValue - data.bottomValue) / ldiff) * 100))
+        local percent = math.floor(RoundDec(((data.currentStanding - data.currentReactionThreshold) / ldiff) * 100))
         if percent == -1 then
             frame.percentage:SetText("0%")
         else
@@ -670,9 +509,9 @@ local function setReputationDetails(frame, data)
         frame.nextValue:SetText(GW.GetLocalizedNumber(ldiff))
 
         frame.StatusBar:SetMinMaxValues(0, 1)
-        frame.StatusBar:SetValue((data.earnedValue - data.bottomValue) / ldiff)
+        frame.StatusBar:SetValue((data.currentStanding - data.currentReactionThreshold) / ldiff)
 
-        if currentRank == nextRank and data.earnedValue - data.bottomValue == 0 then
+        if currentRank == nextRank and data.currentStanding - data.currentReactionThreshold == 0 then
             frame.percentage:SetText("100%")
             frame.StatusBar:SetValue(1)
             frame.nextValue:SetText()
@@ -680,14 +519,14 @@ local function setReputationDetails(frame, data)
         end
 
         frame.background2:SetVertexColor(
-            FACTION_BAR_COLORS[data.standingId].r,
-            FACTION_BAR_COLORS[data.standingId].g,
-            FACTION_BAR_COLORS[data.standingId].b
+            FACTION_BAR_COLORS[data.reaction].r,
+            FACTION_BAR_COLORS[data.reaction].g,
+            FACTION_BAR_COLORS[data.reaction].b
         )
         frame.StatusBar:SetStatusBarColor(
-            FACTION_BAR_COLORS[data.standingId].r,
-            FACTION_BAR_COLORS[data.standingId].g,
-            FACTION_BAR_COLORS[data.standingId].b
+            FACTION_BAR_COLORS[data.reaction].r,
+            FACTION_BAR_COLORS[data.reaction].g,
+            FACTION_BAR_COLORS[data.reaction].b
         )
     end
 end
@@ -792,7 +631,7 @@ local function InitDetailsButton(button, elementData)
 
         button.isSkinned = true
     end
-    setReputationDetails(button, elementData.data)
+    setReputationDetails(button, elementData)
 end
 
 local function InitCategorieButton(button, elementData)
@@ -818,7 +657,6 @@ local function InitCategorieButton(button, elementData)
                 end
             end)
         button:SetScript("OnClick", function(self)
-            updateSavedReputation()
             showHeader(self.factionIndexFirst, self.factionIndexLast)
             UpdateCategories(categoriesScrollBox)
             isSearchResult = nil
@@ -934,14 +772,20 @@ local function LoadReputation(tabContainer)
     fmGPR.Categories:RegisterEvent("UPDATE_FACTION")
     fmGPR.Categories:RegisterEvent("QUEST_LOG_UPDATE")
     fmGPR.Categories:RegisterEvent("MAJOR_FACTION_RENOWN_LEVEL_CHANGED")
-	fmGPR.Categories:RegisterEvent("MAJOR_FACTION_UNLOCKED")
-    local fnGPR_OnEvent = function(self, event)
+    fmGPR.Categories:RegisterEvent("MAJOR_FACTION_UNLOCKED")
+    local fnGPR_OnEvent = function(_, event)
         if not GW.inWorld then
             return
         end
-        updateSavedReputation()
-        isSearchResult = nil
-        UpdateDetailsData(GwRepDetailFrame.Details)
+        if not updateQueued then
+            updateQueued = true
+            C_Timer.After(1, function()
+                isSearchResult = nil
+                UpdateDetailsData(GwRepDetailFrame.Details)
+                GW.Debug("Reputation", event)
+                updateQueued = false
+            end)
+        end
     end
     fmGPR.Categories:SetScript("OnEvent", fnGPR_OnEvent)
     SetSearchboxInstructions(fmGPR.input, SEARCH .. "...")
@@ -969,8 +813,6 @@ local function LoadReputation(tabContainer)
     fmGPR.input:SetScript("OnEscapePressed", fnGPR_input_OnEscapePressed)
     local fnGPR_input_OnEditFocusGained = function(self)
         self.clearButton:Show()
-        --update saved reputations
-        updateSavedReputation()
     end
     fmGPR.input:SetScript("OnEditFocusGained", fnGPR_input_OnEditFocusGained)
     local fnGPR_input_OnEditFocusLost = function(self)
@@ -994,12 +836,12 @@ local function LoadReputation(tabContainer)
     end)
     detailsView:SetPadding(5, 5, 12, 12, 10)
     detailsView:SetElementExtentCalculator(function(dataIndex, elementData)
-		if SelectionBehaviorMixin.IsElementDataIntrusiveSelected(elementData) then
-			return DETAIL_LG_H
-		else
-			return DETAIL_H
-		end
-	end)
+        if SelectionBehaviorMixin.IsElementDataIntrusiveSelected(elementData) then
+            return DETAIL_LG_H
+        else
+            return DETAIL_H
+        end
+    end)
 
     ScrollUtil.InitScrollBoxListWithScrollBar(fmDetail.Details, fmDetail.ScrollBar, detailsView)
 
@@ -1016,7 +858,6 @@ local function LoadReputation(tabContainer)
     GW.HandleScrollControls(fmDetail)
     fmDetail.ScrollBar:SetHideIfUnscrollable(true)
 
-    updateSavedReputation()
     UpdateCategories(categoriesScrollBox)
     UpdateDetailsData(fmDetail.Details)
 
@@ -1030,14 +871,11 @@ local function LoadReputation(tabContainer)
     ReputationFrame:UnregisterAllEvents()
 
     GwPaperReputation:HookScript("OnShow", function()
-        updateSavedReputation()
         UpdateCategories(categoriesScrollBox)
         isSearchResult = nil
         UpdateDetailsData(GwRepDetailFrame.Details)
     end)
     GwPaperReputation:HookScript("OnHide", function()
-        -- stop button animations
-        updateSavedReputation()
         UpdateCategories(categoriesScrollBox)
     end)
 end
