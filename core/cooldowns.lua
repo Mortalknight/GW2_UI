@@ -113,6 +113,7 @@ local function ToggleBlizzardCooldownText(self, timer, request)
         end
     end
 end
+GW.ToggleBlizzardCooldownText = ToggleBlizzardCooldownText
 
 local function Cooldown_OnSizeChanged(self, width, force)
     local scale = width and (floor(width + 0.5) / ICON_SIZE)

@@ -637,6 +637,7 @@ local function evPlayerLogin(self)
     GW.LoadLootFrameSkin()
     GW.LoadExpansionLadningPageSkin()
     GW.LoadGenericTraitFrameSkin()
+    GW.LoadCooldownManagerSkin()
 
     GW.LoadDetailsSkin()
     GW.LoadImmersionAddonSkin()

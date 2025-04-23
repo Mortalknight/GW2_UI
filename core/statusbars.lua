@@ -255,7 +255,6 @@ local function AddStatusbarAnimation(statusBar, smooth, animationType)
         AddToAnimation = GW.AddToAnimation
         round = GW.RoundInt
     end
-    animationType = animationType or BarAnimateTypes.All
 
     Mixin(statusBar,  GwAnimatedStatusBarMixin)
 
@@ -268,7 +267,7 @@ local function AddStatusbarAnimation(statusBar, smooth, animationType)
     uniqueID = uniqueID + 1
     statusBar.maskContainer:SetSize(statusBar.internalBar:GetWidth() / numSpritesInAnimation, statusBar.internalBar:GetHeight())
     statusBar.fill_threshold = 0
-    statusBar.animationType = animationType
+    statusBar.animationType = animationType or BarAnimateTypes.All
     statusBar.BarInterpolation = BarInterpolation.Ease
     statusBar.uniqueID = uniqueID
 

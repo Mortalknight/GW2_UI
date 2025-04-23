@@ -998,6 +998,7 @@ GW.globalDefault = {
         AuctionHouseSkinEnabled = true,
         BattlefieldMapSkinEnabled = true,
         MajorFactionSkinEnabled = true,
+        CooldownManagerSkinEnabled = true,
 
         ALERTFRAME_NOTIFICATION_LEVEL_UP= true,
         ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND= "None",

@@ -18,6 +18,7 @@ local function LoadSkinsPanel(sWindow)
 
     settingsMenuAddButton(L["Skins"],p,{})
 
+    addOption(p.scroll.scrollchild, COOLDOWN_VIEWER_LABEL, nil, "CooldownManagerSkinEnabled", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Alert Frames"], nil, "ALERTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, MAINMENU_BUTTON, nil, "MAINMENU_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Popup notifications"], nil, "STATICPOPUP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
