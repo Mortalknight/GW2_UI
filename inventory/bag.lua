@@ -14,12 +14,14 @@ local function setBagHeaders()
         local itemID = GetInventoryItemID("player", slotID)
         local header = _G["GwBagFrameGwBagHeader" .. i]
         if itemID then
-            local r, g, b = 1, 1, 1
+            local color = {r = 1, g = 1, b = 1}
             local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
-            if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
+            if itemRarity then
+                color = GW.GetQualityColor(itemRarity)
+            end
 
             header.nameString:SetText(strlen(GW.settings["BAG_HEADER_NAME" .. i]) > 0 and GW.settings["BAG_HEADER_NAME" .. i] or itemName and itemName or UNKNOWN)
-            header.nameString:SetTextColor(r, g, b, 1)
+            header.nameString:SetTextColor(color.r, color.g, color.b, 1)
         else
             header:Hide()
         end

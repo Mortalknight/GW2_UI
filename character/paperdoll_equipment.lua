@@ -115,10 +115,10 @@ end
 
 local function setItemButtonQuality(button, quality)
     if quality then
-        if quality >= Enum.ItemQuality.Common and C_Item.GetItemQualityColor(quality) then
-            local r, g, b = C_Item.GetItemQualityColor(quality)
+        local color = GW.GetQualityColor(quality)
+        if quality >= Enum.ItemQuality.Common and color then
             button.IconBorder:Show()
-            button.IconBorder:SetVertexColor(r, g, b)
+            button.IconBorder:SetVertexColor(color.r, color.g, color.b)
         else
             button.IconBorder:Hide()
         end
@@ -624,7 +624,7 @@ local function stats_OnEvent(self, event, ...)
     elseif (event == "PLAYER_TALENT_UPDATE") then
         updateUnitData()
         self:SetScript("OnUpdate", stats_QueuedUpdate)
-    elseif (event == "ACTIVE_TALENT_GROUP_CHANGED") then
+    elseif event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "COLOR_OVERRIDES_RESET" or event == "COLOR_OVERRIDE_UPDATED" then
         updateStats()
     elseif (event == "SPELL_POWER_CHANGED") then
         self:SetScript("OnUpdate", stats_QueuedUpdate)
@@ -910,6 +910,8 @@ local function LoadPDBagList(fmMenu, parent)
     fmGPDS:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE")
     fmGPDS:RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
     fmGPDS:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    fmGPDS:RegisterEvent("COLOR_OVERRIDES_RESET")
+    fmGPDS:RegisterEvent("COLOR_OVERRIDE_UPDATED")
     fmGPDS:RegisterUnitEvent("UNIT_DAMAGE", "player")
     fmGPDS:RegisterUnitEvent("UNIT_ATTACK_SPEED", "player")
     fmGPDS:RegisterUnitEvent("UNIT_MAXHEALTH", "player")

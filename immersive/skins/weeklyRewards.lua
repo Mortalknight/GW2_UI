@@ -5,14 +5,14 @@ local function ReskinConfirmIcon(frame)
     GW.HandleIconBorder(frame.IconBorder, frame.Icon.backdrop)
 end
 
-local r, g, b = C_Item.GetItemQualityColor(Enum.ItemQuality.Epic or 4)
+local color = GW.GetQualityColor(Enum.ItemQuality.Epic or 4)
 local function SkinRewardIcon(itemFrame)
     if not itemFrame.IsSkinned then
         itemFrame:GwCreateBackdrop("Transparent")
         itemFrame:DisableDrawLayer("BORDER")
         itemFrame.Icon:SetPoint("LEFT", 6, 0)
         GW.HandleIcon(itemFrame.Icon, true)
-        itemFrame.backdrop:SetBackdropBorderColor(r, g, b)
+        itemFrame.backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
         itemFrame.IsSkinned = true
     end
 end

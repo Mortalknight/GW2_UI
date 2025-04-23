@@ -265,9 +265,9 @@ gwMocks.GroupLootFrame_OnShow = function(self)
     end
 
     self.IconFrame.Icon:SetTexture(texture)
-    self.IconFrame.Border:SetAtlas(LOOT_BORDER_BY_QUALITY[quality] or LOOT_BORDER_BY_QUALITY[Enum.ItemQuality.Uncommon])
+    self.IconFrame.Border:SetAtlas(ColorManager.GetAtlasDataForLootBorderItemQuality[quality] or ColorManager.GetAtlasDataForLootBorderItemQuality[Enum.ItemQuality.Uncommon])
     self.Name:SetText(name)
-    local color = ITEM_QUALITY_COLORS[quality]
+    local color =  GW.GetQualityColor(quality)
     self.Name:SetVertexColor(color.r, color.g, color.b)
     self.Border:SetVertexColor(color.r, color.g, color.b)
     if (count > 1) then

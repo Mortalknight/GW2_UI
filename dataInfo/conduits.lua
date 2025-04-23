@@ -45,7 +45,7 @@ local function LandingButton_OnEnter(self)
                 local spellInfo = C_Spell.GetSpellInfo(C_Soulbinds.GetConduitSpellID(conduits[i].id, conduits[i].rank))
                 local conduitItemLevel = C_Soulbinds.GetConduitCollectionData(conduits[i].id).conduitItemLevel
                 local conduitQuality = C_Soulbinds.GetConduitQuality(conduits[i].id, conduits[i].rank)
-                local color = ITEM_QUALITY_COLORS[conduitQuality]
+                local color = GW.GetQualityColor(conduitQuality)
 
                 GameTooltip:AddLine(CreateAtlasMarkup(Soulbinds.GetConduitEmblemAtlas(conduits[i].type)) .. " [" .. conduitItemLevel .. "]  " .. AddTexture(spellInfo.iconID) .. " " .. GW.RGBToHex(color.r, color.g, color.b) .. spellInfo.name .. "|r ")
             end

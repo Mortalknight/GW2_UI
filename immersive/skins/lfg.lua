@@ -54,7 +54,7 @@ local function SkinItemButton(parentFrame, _, index, _, _, _, _, _, _, quality)
         item.IconBorder:GwKill()
     end
     if quality then
-        local color = BAG_ITEM_QUALITY_COLORS[quality]
+        local color = GW.GetBagItemQualityColor(quality)
         local r, g, b = 1, 1, 1
         if color then
             r, g, b = color.r, color.g, color.b
@@ -1005,12 +1005,12 @@ local function ApplyPvPUISkin()
             end
         end
         if rewardTexture then
-            local r, g, b = C_Item.GetItemQualityColor(rewardQuaility)
+            local color = GW.GetQualityColor(rewardQuaility)
             rewardFrame.Icon:SetTexture(rewardTexture)
             if not rewardFrame.Icon.backdrop then
                 rewardFrame.Icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
             end
-            rewardFrame.Icon.backdrop:SetBackdropBorderColor(r, g, b)
+            rewardFrame.Icon.backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
         end
     end)
 

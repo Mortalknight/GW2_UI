@@ -257,15 +257,16 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     local isReagentBag = bag_id == 5
 
     local t = button.IconBorder
+    local colorCommon = GW.GetBagItemQualityColor(Enum.ItemQuality.Common)
     t:SetTexture(BORDER_TEXTURE)
     t:SetAlpha(0.9)
-    t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
+    t:SetVertexColor(colorCommon.r, colorCommon.g, colorCommon.b)
 
     if not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW then
-        t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
+        t:SetVertexColor(colorCommon.r, colorCommon.g, colorCommon.b)
     end
 
-    local professionColors = isReagentBag and BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Artifact] or GW.professionBagColor[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
+    local professionColors = isReagentBag and GW.GetBagItemQualityColor(Enum.ItemQuality.Artifact) or GW.professionBagColor[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     if (GW.settings.BAG_PROFESSION_BAG_COLOR or isReagentBag) and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
@@ -322,7 +323,8 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         end
 
         if GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW and quality and quality > 0 then
-            t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
+            local color = GW.GetBagItemQualityColor(quality)
+            t:SetVertexColor(color.r, color.g, color.b)
         end
 
         t:Show()

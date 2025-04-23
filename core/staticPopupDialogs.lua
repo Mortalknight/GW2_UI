@@ -36,12 +36,14 @@ StaticPopupDialogs["GW_CHANGE_BAG_HEADER"] = {
             local itemID = GetInventoryItemID("player", slotID)
 
             if itemID then
-                local r, g, b = 1, 1, 1
+                local color = {r = 1, g = 1, b = 1}
                 local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
-                if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
+                if itemRarity then
+                    color = GW.GetQualityColor(itemRarity)
+                end
 
                 _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(itemName or UNKNOWN)
-                _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(r, g, b, 1)
+                _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(color.r, color.g, color.b, 1)
             end
         else
             _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(BACKPACK_TOOLTIP)

@@ -1122,8 +1122,8 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         showLink = false
         -- fix blizzard formatting errors from localization strings
         --arg1 = gsub(arg1, "%%%d", "%%s")
-        arg1 = gsub(arg1, "(%d%%)([^%%%a])", "%1%%%2")
-        arg1 = gsub(arg1, "(%d%%)$", "%1%%")
+        arg1 = gsub(arg1, "(%d%s?%%)([^%%%a])", "%1%%%2")
+        arg1 = gsub(arg1, "(%d%s?%%)$", "%1%%")
     else
         arg1 = gsub(arg1, "%%", "%%%%")
     end

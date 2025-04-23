@@ -170,14 +170,14 @@ local function hook_EJSuggestFrame_UpdateRewards(sugg)
         sugg.reward.icon:SetTexture(rewardData.itemIcon or rewardData.currencyIcon or [[Interface\Icons\achievement_guildperk_mobilebanking]])
         sugg.reward.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
-        local r, g, b = 1, 1, 1
+        local color = {r = 1, g = 1, b = 1}
         if rewardData.itemID then
             local quality = select(3, C_Item.GetItemInfo(rewardData.itemID))
             if quality and quality > 1 then
-                r, g, b = C_Item.GetItemQualityColor(quality)
+                color = GW.GetQualityColor(quality)
             end
         end
-        sugg.reward.icon.backdrop:SetBackdropBorderColor(r, g, b)
+        sugg.reward.icon.backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
     end
 end
 
@@ -185,7 +185,7 @@ local function ItemSetsItemBorder(border, atlas)
     local parent = border:GetParent()
     local backdrop = parent and parent.Icon and parent.Icon.backdrop
     if backdrop and atlas then
-        local color = BAG_ITEM_QUALITY_COLORS[lootQuality[atlas]]
+        local color = GW.GetBagItemQualityColor(lootQuality[atlas])
         if color then
             backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
         else

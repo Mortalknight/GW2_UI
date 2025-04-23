@@ -745,22 +745,37 @@ GW.FrameFlash = FrameFlash
 local function setItemLevel(button, quality, itemlink, slot)
     button.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
     if quality then
-        local r, g, b = C_Item.GetItemQualityColor(quality or 1)
-        if quality >= Enum.ItemQuality.Common and C_Item.GetItemQualityColor(quality) then
-            r, g, b = C_Item.GetItemQualityColor(quality)
-            button.itemlevel:SetTextColor(r, g, b, 1)
+        local color = GW.GetQualityColor(quality)
+        if quality >= Enum.ItemQuality.Common and color then
+            button.itemlevel:SetTextColor(color.r, color.g, color.b, 1)
         end
         local slotInfo = GW.GetGearSlotInfo("player", slot, itemlink, false)
         button.itemlevel:SetText(slotInfo.iLvl)
-        button.itemlevel:SetTextColor(r, g, b, 1)
+        button.itemlevel:SetTextColor(color.r, color.g, color.b, 1)
         slotInfo = nil
     else
-        local r, g, b = C_Item.GetItemQualityColor(1)
+        local color = GW.GetQualityColor(1)
         button.itemlevel:SetText("")
-        button.itemlevel:SetTextColor(r, g, b, 1)
+        button.itemlevel:SetTextColor(color.r, color.g, color.b, 1)
     end
 end
 GW.setItemLevel = setItemLevel
+
+local function GetQualityColor(quality)
+    if quality == -1 then
+        return {r = 0, g = 0, b = 0}
+    end
+    return ColorManager.GetColorDataForItemQuality(quality)
+end
+GW.GetQualityColor = GetQualityColor
+
+local function GetBagItemQualityColor(quality)
+    if quality == -1 then
+        return {r = 0, g = 0, b = 0}
+    end
+    return ColorManager.GetColorDataForBagItemQuality(quality)
+end
+GW.GetBagItemQualityColor = GetBagItemQualityColor
 
 local function GetScreenQuadrant(frame)
     local x, y = frame:GetCenter()

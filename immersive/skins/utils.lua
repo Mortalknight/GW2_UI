@@ -202,13 +202,13 @@ GW.HandleIcon = HandleIcon
 do
     local iconColors = {
         ['auctionhouse-itemicon-border-gray']		= {r = .61, g = .61, b = .61},
-        ['auctionhouse-itemicon-border-white']		= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common],
-        ['auctionhouse-itemicon-border-green']		= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Uncommon],
-        ['auctionhouse-itemicon-border-blue']		= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Rare],
-        ['auctionhouse-itemicon-border-purple']		= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Epic],
-        ['auctionhouse-itemicon-border-orange']		= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Legendary],
-        ['auctionhouse-itemicon-border-artifact']	= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Artifact],
-        ['auctionhouse-itemicon-border-account']	= BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Heirloom]
+        ['auctionhouse-itemicon-border-white']		= GW.GetBagItemQualityColor(Enum.ItemQuality.Common),
+        ['auctionhouse-itemicon-border-green']		= GW.GetBagItemQualityColor(Enum.ItemQuality.Uncommon),
+        ['auctionhouse-itemicon-border-blue']		= GW.GetBagItemQualityColor(Enum.ItemQuality.Rare),
+        ['auctionhouse-itemicon-border-purple']		= GW.GetBagItemQualityColor(Enum.ItemQuality.Epic),
+        ['auctionhouse-itemicon-border-orange']		= GW.GetBagItemQualityColor(Enum.ItemQuality.Legendary),
+        ['auctionhouse-itemicon-border-artifact']	= GW.GetBagItemQualityColor(Enum.ItemQuality.Artifact),
+        ['auctionhouse-itemicon-border-account']	= GW.GetBagItemQualityColor(Enum.ItemQuality.Heirloom)
     }
 
     local function iconBorderColorAtlas(border, atlas)
@@ -263,7 +263,8 @@ do
         end
 
         local r, g, b, a = border:GetVertexColor()
-        local atlas = iconColors[border.GetAtlas and border:GetAtlas()]
+        local atlasQuality = iconColors[border.GetAtlas and border:GetAtlas()]
+        local atlas = atlasQuality and GW.GetQualityColor(atlasQuality)
         if customFunc then
             border.customFunc = customFunc
             local br, bg, bb = 1, 1, 1

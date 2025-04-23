@@ -45,7 +45,7 @@ end
 
 local function CreateItemButton(frame, size, texture)
 	local button = CreateFrame("Button", nil, frame, "BackdropTemplate")
-	local epicColor = BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Epic]
+	local epicColor = GW.GetBagItemQualityColor(Enum.ItemQuality.Epic)
 	button:SetSize(size, size)
 	button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
 	button.backdrop:SetAllPoints()

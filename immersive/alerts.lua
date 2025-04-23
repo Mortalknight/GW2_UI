@@ -476,7 +476,7 @@ local function skinLegendaryItemAlert(frame, itemLink)
     end
 
     local _, _, itemRarity = C_Item.GetItemInfo(itemLink)
-    local color = ITEM_QUALITY_COLORS[itemRarity]
+    local color = GW.GetQualityColor(itemRarity)
     if color then
         frame.Icon.b:SetBackdropBorderColor(color.r, color.g, color.b)
     else
@@ -912,7 +912,7 @@ local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
         frame.isSkinned = true
     end
 
-    local color = ITEM_QUALITY_COLORS[quality]
+    local color = GW.GetQualityColor(quality)
     if color then
         frame.PortraitFrame.squareBG:SetBackdropBorderColor(color.r, color.g, color.b)
     else
@@ -1103,7 +1103,7 @@ local function skinGarrisonRandomMissionAlert(frame, _, _, _, _, _, quality)
     end
 
     if frame.PortraitFrame and frame.PortraitFrame.squareBG then
-        local color = quality and ITEM_QUALITY_COLORS[quality]
+        local color = quality and GW.GetQualityColor(quality)
         if color then
             frame.PortraitFrame.squareBG:SetBackdropBorderColor(color.r, color.g, color.b)
         else

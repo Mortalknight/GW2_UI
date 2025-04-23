@@ -99,7 +99,7 @@ local function LoadFriendList(tabContainer)
 
     GWFriendFrame:SetScript("OnShow", function()
         local onGlues =  C_Glue.IsOnGlueScreen()
-        local inPlunderstorm = C_GameEnvironmentManager.GetCurrentGameEnvironment() == Enum.GameEnvironment.WoWLabs
+        local inPlunderstorm = C_GameRules.GetActiveGameMode() == Enum.GameMode.Plunderstorm
         if not onGlues and not inPlunderstorm then
             FriendsFrame_CheckQuickJoinHelpTip()
             FriendsFrame_UpdateQuickJoinTab(#C_SocialQueue.GetAllGroups())

@@ -30,16 +30,17 @@ local function Bags_OnEnter(self)
             local sumNum = 19 + i
 
             local r2, g2, b2 = GW.ColorGradient(usedSlots / numSlots, 0.1, 1, 0.1, 1, 1, 0.1, 1, 0.1, 0.1)
-            local r, g, b, icon
+            local icon
+            local color = {r = 1, g = 1, b = 1}
 
             if i > 0 then
-                r, g, b = C_Item.GetItemQualityColor(GetInventoryItemQuality("player", sumNum) or 1)
+                color = GW.GetQualityColor(GetInventoryItemQuality("player", sumNum) or 1)
                 icon = GetInventoryItemTexture("player", sumNum)
             end
 
             bagName = GW.settings.BAG_SEPARATE_BAGS and strlen(GW.settings["BAG_HEADER_NAME" .. i]) > 0 and GW.settings["BAG_HEADER_NAME" .. i] or bagName
 
-            GameTooltip:AddDoubleLine(format(iconString, icon or "Interface/Buttons/Button-Backpack-Up") .. bagName, format("%d/%d", usedSlots, numSlots), r or 1, g or 1, b or 1, r2, g2, b2)
+            GameTooltip:AddDoubleLine(format(iconString, icon or "Interface/Buttons/Button-Backpack-Up") .. bagName, format("%d/%d", usedSlots, numSlots), color.r or 1, color.g or 1, color.b or 1, r2, g2, b2)
         end
     end
 
