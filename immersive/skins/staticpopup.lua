@@ -34,8 +34,8 @@ local function LoadStaticPopupSkin()
         StaticPopup.Border:Hide()
 
         local tex = StaticPopup:CreateTexture(nil, "BACKGROUND")
-        tex:SetPoint("TOP", StaticPopup, "TOP", 0, 0)
-        tex:SetSize(StaticPopup:GetSize())
+        tex:SetPoint("TOPLEFT", StaticPopup, "TOPLEFT", 0, 0)
+        tex:SetPoint("BOTTOMRIGHT", StaticPopup, "BOTTOMRIGHT", 0, 0)
         tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
         StaticPopup.tex = tex
 
@@ -80,8 +80,8 @@ local function LoadStaticPopupSkin()
             self.closeDialog.Border:Hide()
 
             local tex = self.closeDialog:CreateTexture(nil, "BACKGROUND")
-            tex:SetPoint("TOP", self.closeDialog, "TOP", 0, 0)
-            tex:SetSize(self.closeDialog:GetSize())
+            tex:SetPoint("TOPLEFT", self.closeDialog, "TOPLEFT", 0, 0)
+            tex:SetPoint("BOTTOMRIGHT", self.closeDialog, "BOTTOMRIGHT", 0, 0)
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
             self.closeDialog.tex = tex
 
@@ -102,8 +102,8 @@ local function LoadStaticPopupSkin()
             self.CloseDialog.Border:Hide()
 
             local tex = self.CloseDialog:CreateTexture(nil, "BACKGROUND")
-            tex:SetPoint("TOP", self.CloseDialog, "TOP", 0, 0)
-            tex:SetSize(self.CloseDialog:GetSize())
+            tex:SetPoint("TOPLEFT", self.closeDialog, "TOPLEFT", 0, 0)
+            tex:SetPoint("BOTTOMRIGHT", self.closeDialog, "BOTTOMRIGHT", 0, 0)
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
             self.CloseDialog.tex = tex
 
