@@ -38,16 +38,23 @@ end
 
 function CooldownManagerFunctions:SkinIcon(container, icon)
     CooldownManagerFunctions:UpdateTextContainer(container)
-    GW.HandleIcon(icon)
+    icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
     if not icon.gwBackdrop then
         local backDrop = CreateFrame("Frame", nil, container, "GwActionButtonBackdropTmpl")
         local backDropSize = 1
 
-        backDrop:SetPoint("TOPLEFT", icon, "TOPLEFT", -backDropSize, backDropSize)
-        backDrop:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", backDropSize, -backDropSize)
-        icon.gwBackdrop = true
+        backDrop:SetPoint("TOPLEFT", container, "TOPLEFT", -backDropSize, backDropSize)
+        backDrop:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", backDropSize, -backDropSize)
+
+        container.gwBackdrop = backDrop
     end
+
+    container.gwBackdrop.bg:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+    container.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+    container.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+    container.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+    container.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
 
     for _, region in next, { container:GetRegions() } do
         if region:IsObjectType("Texture") then
