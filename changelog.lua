@@ -15,6 +15,17 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.13.0",{
+    {ct.feature, [=[Cooldown Manager skin]=]},
+    {ct.feature, [=[Add paragon indicator to reputation category list]=]},
+    {ct.bug, [=[PetTracker integration now work as expected]=]},
+    {ct.bug, [=[WQT integration now work as expected]=]},
+    {ct.bug, [=[Error when entering delves]=]},
+    {ct.change, [=[Rewritten objectives tracker, should perform much better now]=]},
+    {ct.change, [=[Better CLEU handling with sharing over the addon]=]},
+    {ct.change, [=[Much more optimization over all modules of the addon]=]},
+})
+
 addChange("7.12.1",{
     {ct.change, [=[Skin tweaks]=]},
     {ct.bug, [=[Fix profile lua error]=]},

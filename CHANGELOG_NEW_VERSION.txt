@@ -1,14 +1,14 @@
-7.12.1
-CHANGES
-    - Skin Tweaks
+7.13.0
+NEW
+    - Cooldown Manager skin
+    - Add paragon indicator to reputation category list
 
 FIXES
-    - Fix profile lua error
-    - Fix FCT lua error
-    - Castbar channel ticks
-    - Target frame debuff settings are working again
+    - PetTracker integration now work as expected
+    - WQT integration now work as expected
+    - Error when entering delves
 
-7.12.0
 CHANGES
-    - Update for 11.1.0
-
+    - Rewritten objectives tracker, should perform much better now
+    - Better CLEU handling with sharing over the addon
+    - Much more optimization over all modules of the addon

@@ -1,3 +1,19 @@
+7.13.0
+NEW
+    - Cooldown Manager skin
+    - Add paragon indicator to reputation category list
+
+FIXES
+    - PetTracker integration now work as expected
+    - WQT integration now work as expected
+    - Error when entering delves
+
+CHANGES
+    - Rewritten objectives tracker, should perform much better now
+    - Better CLEU handling with sharing over the addon
+    - Much more optimization over all modules of the addon
+
+
 7.12.1
 CHANGES
     - Skin Tweaks
