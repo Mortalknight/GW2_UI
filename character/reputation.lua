@@ -16,6 +16,8 @@ local REPBG_B = 0.464
 local g_selectionBehavior = nil
 local updateQueued = false
 
+local factionDataCache = {}
+
 local ReputationFrameEvents = {
 	"MAJOR_FACTION_RENOWN_LEVEL_CHANGED",
 	"MAJOR_FACTION_UNLOCKED",
@@ -69,9 +71,7 @@ local function UpdateDetailsData(self, details)
     self:SetDataProvider(CreateDataProvider(details), ScrollBoxConstants.RetainScrollPosition)
 end
 
-local function CollectFactionData()
-    C_Reputation.ExpandAllFactionHeaders()
-
+local function CollectFactionData(fetchData)
     local categories = {}
     local details = {}
     local factionTbl = {}
@@ -82,19 +82,28 @@ local function CollectFactionData()
     local skipFirst = true
     local hasPendingParagonReward = false
     local savedHeaderName = ""
-    local numFactions = C_Reputation.GetNumFactions()
 
     local searchLower = isSearchResult and string.lower(isSearchResult) or nil
 
-    for factionIndex = 1, numFactions do
-        local data = C_Reputation.GetFactionDataByIndex(factionIndex)
-        if data then
-            if data.name == GUILD then
-                data = C_Reputation.GetGuildFactionData() or data -- fallback
+    if fetchData then
+        C_Reputation.ExpandAllFactionHeaders()
+        wipe(factionDataCache)
+        for factionIndex = 1, C_Reputation.GetNumFactions() do
+            local factionData = C_Reputation.GetFactionDataByIndex(factionIndex)
+            if factionData then
+                if factionData.name == GUILD then
+                    factionData = C_Reputation.GetGuildFactionData()
+                end
+                if factionData then
+                    factionData.factionIndex = factionIndex
+                    tinsert(factionDataCache, factionData)
+                end
             end
+        end
+    end
 
-            data.factionIndex = factionIndex
-
+    for _, data in ipairs(factionDataCache) do
+        if data then
             local includeInDetails = false
             if data.name then
                 if isSearchResult then
@@ -102,7 +111,7 @@ local function CollectFactionData()
                         includeInDetails = true
                     end
                 else
-                    if factionIndex >= firstReputationCat and factionIndex <= lastReputationCat and data.factionID and (not data.isHeader or data.isChild) then
+                    if data.factionIndex >= firstReputationCat and data.factionIndex <= lastReputationCat and data.factionID and (not data.isHeader or data.isChild) then
                         includeInDetails = not data.isHeader or data.isHeaderWithRep
                     end
                 end
@@ -127,7 +136,7 @@ local function CollectFactionData()
                     if not skipFirst then
                         tinsert(categories, {
                             idx = idx,
-                            idxLast = factionIndex - 1,
+                            idxLast = data.factionIndex - 1,
                             name = headerName,
                             standingCur = cCur,
                             standingMax = cMax,
@@ -141,7 +150,7 @@ local function CollectFactionData()
                     factionTbl = {}
                     pendingParagonRewardFactions = {}
                     hasPendingParagonReward = false
-                    idx = factionIndex
+                    idx = data.factionIndex
                     headerName = data.name
                 else
                     if friendInfo and friendInfo.friendshipFactionID and friendInfo.friendshipFactionID > 0 then
@@ -175,7 +184,7 @@ local function CollectFactionData()
     if #factionTbl > 0 then
         tinsert(categories, {
             idx = idx,
-            idxLast = numFactions,
+            idxLast = #factionDataCache,
             name = headerName,
             standingCur = cCur,
             standingMax = cMax,
@@ -701,7 +710,7 @@ local function LoadReputation(tabContainer)
             updateQueued = true
             C_Timer.After(0.2, function()
                 isSearchResult = nil
-                local _, details = CollectFactionData()
+                local _, details = CollectFactionData(true)
                 UpdateDetailsData(fmDetail.Details, details)
                 GW.Debug("Reputation", event)
                 updateQueued = false
@@ -718,6 +727,7 @@ local function LoadReputation(tabContainer)
         local details
         if text == "" then
             isSearchResult = nil
+            _, details = CollectFactionData()
             self.clearButton:Hide()
         else
             isSearchResult = text
@@ -781,7 +791,7 @@ local function LoadReputation(tabContainer)
     fmDetail.ScrollBar:SetHideIfUnscrollable(true)
 
     isSearchResult = nil
-    local categories, details = CollectFactionData()
+    local categories, details = CollectFactionData(true)
     UpdateCategories(fmGPR.Categories, categories)
     local firstCategory = fmGPR.Categories:Find(1)
     if firstCategory then
@@ -795,7 +805,7 @@ local function LoadReputation(tabContainer)
     fmGPR:HookScript("OnShow", function(self)
         FrameUtil.RegisterFrameForEvents(self.Categories, ReputationFrameEvents)
         isSearchResult = nil
-        local cat, detailsOnShow = CollectFactionData()
+        local cat, detailsOnShow = CollectFactionData(true)
         UpdateCategories(fmGPR.Categories, cat)
         UpdateDetailsData(fmDetail.Details, detailsOnShow)
     end)
