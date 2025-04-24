@@ -74,7 +74,7 @@ local function SetTooltip(self)
     GameTooltip:ClearLines()
 
     if self:GetAttribute("index") then
-        GameTooltip:SetUnitAura(SecureButton_GetUnit(self.header), self:GetID(), self:GetFilter())
+        GameTooltip:SetUnitAura(self.header:GetAttribute("unit"), self:GetID(), self:GetFilter())
     elseif self:GetAttribute("target-slot") then
         GameTooltip:SetInventoryItem("player", self:GetID())
     end
@@ -258,6 +258,18 @@ local function UpdateTempEnchant(self, index, expires)
         self:SetCD(((expires / 1000) or 0) + GetTime(), -1, nil, 2, nil)
     else
         ClearAuraTime(self)
+    end
+end
+
+local function HeaderOnEvent(self, event)
+    if event == "WEAPON_ENCHANT_CHANGED" then
+        local header = self.frame
+        for enchantIndex, button in next, header.enchantButtons do
+            if header.enchants[enchantIndex] ~= button then
+                header.enchants[enchantIndex] = button
+                header.elapsedEnchants = 0 -- reset the timer
+            end
+        end
     end
 end
 
@@ -457,7 +469,9 @@ local function newHeader(filter, settingname)
 
     h.visibility = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
     h.visibility:SetScript("OnUpdate", HeaderOnUpdate)
+    h.visibility:SetScript("OnEvent", HeaderOnEvent)
     h.visibility.frame = h
+    h.visibility:RegisterEvent("WEAPON_ENCHANT_CHANGED")
     h.name = name
 
     RegisterAttributeDriver(h, "unit", "[vehicleui] vehicle; player")

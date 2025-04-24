@@ -249,12 +249,12 @@ local function LoadPlayerPanel(sWindow)
         function()
             GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
         end,
-        16,
+        10,
         60,
         nil,
         0,
         {["PLAYER_BUFFS_ENABLED"] = true},
-        2
+        1
     )
 
     -- DEBUFF
@@ -390,12 +390,12 @@ local function LoadPlayerPanel(sWindow)
         function()
             GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame")
         end,
-        16,
+        10,
         60,
         nil,
         0,
         {["PLAYER_BUFFS_ENABLED"] = true},
-        2
+        1
     )
 
     InitPanel(p_player, true)
