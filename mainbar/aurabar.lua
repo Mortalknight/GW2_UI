@@ -339,6 +339,7 @@ function GwAuraTmpl_OnLoad(self)
     self.enchantIndex = tonumber(strmatch(self.name, "TempEnchant(%d)$"))
     if self.enchantIndex then
         self.header["enchant" .. self.enchantIndex] = self
+        self.header.enchantButtons[self.enchantIndex] = self
     else
         self.instant = true
     end
@@ -463,6 +464,7 @@ local function newHeader(filter, settingname)
     -- setup parameters for the header template
     h:SetAttribute("unit", "player")
     h:SetAttribute("filter", filter)
+    h.enchantButtons = {}
     h.enchants = {}
     h.spells = {}
     h.filter = filter
