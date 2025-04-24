@@ -13,7 +13,7 @@ end
 
 local function DelayedMajorFactionList(frame)
     C_Timer.After(0.1, function()
-        if frame and frame.MajorFactionList then
+        if frame.MajorFactionList then
             GW.HandleTrimScrollBar(frame.MajorFactionList.ScrollBar)
             GW.HandleScrollControls(frame.MajorFactionList)
         end
@@ -46,6 +46,9 @@ local function ExpansionLadningPageSkin()
         if landingOverlay then
             landingOverlay.CloseButton:GwSkinButton(true)
             landingOverlay.CloseButton:SetPoint("TOPRIGHT", 35, 30)
+            if landingOverlay.MajorFactionList then
+                DelayedMajorFactionList(landingOverlay)
+            end
         end
     end
 end
