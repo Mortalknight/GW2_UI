@@ -109,7 +109,7 @@ local charSecure_OnAttributeChanged = [=[
     local keytoggle = self:GetAttribute("keytoggle")
     local selected = value
 
-    if selected == "paperdoll" then
+    if selected == "paperdoll" or selected == "character" then
         if doll then
             if keytoggle and doll:IsVisible() then
                 self:SetAttribute("keytoggle", nil)
