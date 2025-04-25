@@ -201,19 +201,27 @@ GW.HandleIcon = HandleIcon
 
 do
     local iconColors = {
-        ['auctionhouse-itemicon-border-gray']		= {r = .61, g = .61, b = .61},
-        ['auctionhouse-itemicon-border-white']		= GW.GetBagItemQualityColor(Enum.ItemQuality.Common),
-        ['auctionhouse-itemicon-border-green']		= GW.GetBagItemQualityColor(Enum.ItemQuality.Uncommon),
-        ['auctionhouse-itemicon-border-blue']		= GW.GetBagItemQualityColor(Enum.ItemQuality.Rare),
-        ['auctionhouse-itemicon-border-purple']		= GW.GetBagItemQualityColor(Enum.ItemQuality.Epic),
-        ['auctionhouse-itemicon-border-orange']		= GW.GetBagItemQualityColor(Enum.ItemQuality.Legendary),
-        ['auctionhouse-itemicon-border-artifact']	= GW.GetBagItemQualityColor(Enum.ItemQuality.Artifact),
-        ['auctionhouse-itemicon-border-account']	= GW.GetBagItemQualityColor(Enum.ItemQuality.Heirloom)
+        ["auctionhouse-itemicon-border-gray"]		= Enum.ItemQuality.Poor,
+        ["auctionhouse-itemicon-border-white"]		= Enum.ItemQuality.Common,
+        ["auctionhouse-itemicon-border-green"]		= Enum.ItemQuality.Uncommon,
+        ["auctionhouse-itemicon-border-blue"]		= Enum.ItemQuality.Rare,
+        ["auctionhouse-itemicon-border-purple"]		= Enum.ItemQuality.Epic,
+        ["auctionhouse-itemicon-border-orange"]		= Enum.ItemQuality.Legendary,
+        ["auctionhouse-itemicon-border-artifact"]	= Enum.ItemQuality.Artifact,
+        ["auctionhouse-itemicon-border-account"]	= Enum.ItemQuality.Heirloom,
+
+        ["Professions-Slot-Frame"]					= Enum.ItemQuality.Common,
+        ["Professions-Slot-Frame-Green"]			= Enum.ItemQuality.Uncommon,
+        ["Professions-Slot-Frame-Blue"]				= Enum.ItemQuality.Rare,
+        ["Professions-Slot-Frame-Epic"]				= Enum.ItemQuality.Epic,
+        ["Professions-Slot-Frame-Legendary"]		= Enum.ItemQuality.Legendary
     }
 
     local function iconBorderColorAtlas(border, atlas)
-        local color = iconColors[atlas]
-        if not color then return end
+        local quality = iconColors[atlas]
+        if not quality then return end
+
+        local color = GW.GetBagItemQualityColor(iconColors[atlas])
 
         if border.customFunc then
             local br, bg, bb = 1, 1, 1
@@ -224,6 +232,9 @@ do
     end
 
     local function iconBorderColorVertex(border, r, g, b, a)
+        local quality = iconColors[border:GetAtlas()]
+        if quality then return end
+
         if border.customFunc then
             local br, bg, bb = 1, 1, 1
             border.customFunc(border, r, g, b, a, br, bg, bb)
@@ -263,8 +274,8 @@ do
         end
 
         local r, g, b, a = border:GetVertexColor()
-        local atlasQuality = iconColors[border.GetAtlas and border:GetAtlas()]
-        local atlas = atlasQuality and GW.GetQualityColor(atlasQuality)
+        local quality = iconColors[border:GetAtlas()]
+        local atlas = quality and GW.GetBagItemQualityColor(quality)
         if customFunc then
             border.customFunc = customFunc
             local br, bg, bb = 1, 1, 1
@@ -282,11 +293,11 @@ do
             border.IconBorderHooked = true
             border:Hide()
 
-            hooksecurefunc(border, 'SetAtlas', iconBorderColorAtlas)
+            hooksecurefunc(border, "SetAtlas", iconBorderColorAtlas)
             hooksecurefunc(border, "SetVertexColor", iconBorderColorVertex)
             hooksecurefunc(border, "Hide", iconBorderHide)
-            hooksecurefunc(border, 'SetShown', iconBorderShown)
-            hooksecurefunc(border, 'Show', iconBorderShown)
+            hooksecurefunc(border, "SetShown", iconBorderShown)
+            hooksecurefunc(border, "Show", iconBorderShown)
 
         end
     end
