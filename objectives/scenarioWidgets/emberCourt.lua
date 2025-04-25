@@ -27,13 +27,13 @@ local function addEmberCourtData(container, numCriteria, GwQuestTrackerTimerSave
             objectiveBlock.resetParent = true
         end
 
-        local w2 = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) and C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) or C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2906)
+        local w2 = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) or C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2906)
         if w2 and w2.timerMax > 0 and w2.timerValue <= w2.timerMax then
             if not isOnUpdateHooked then
                 container.timerBlock:SetScript(
                     "OnUpdate",
                     function()
-                        local widget = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) and C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) or C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2906)
+                        local widget = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) or C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2906)
                         if widget and widget.timerValue ~= widget.timerMax then
                             container.timerBlock.timer:SetValue(widget.timerValue / widget.timerMax)
                             container.timerBlock.timerString:SetText(SecondsToClock(widget.timerValue, false))

@@ -29,10 +29,13 @@ GwObjectivesScenarioContainerMixin = {}
 GwQuesttrackerScenarioBlockMixin = {}
 
 function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
+    local widgetId = nil
     if event == "UPDATE_UI_WIDGET" then
         local w = ...
         if not (w and (allowedWidgetUpdateIdsForTimer[w.widgetID] or allowedWidgetUpdateIdsForStatusBar[w.widgetID])) then
             return
+        else
+            widgetId = allowedWidgetUpdateIdsForTimer[w.widgetID] and w.widgetID or nil
         end
     end
 
@@ -101,7 +104,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         timerBlock.timer:Hide()
         timerBlock.height = 1
         timerBlock:SetHeight(timerBlock.height)
-        GW.TerminateScenarioWidgetTimer()
 
         return
     end
@@ -146,7 +148,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     end
 
     -- check for active delves
-    local delvesWidgetInfo = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(6183)
+    local delvesWidgetInfo = (difficultyID and difficultyID == 208) and C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(6183)
     if delvesWidgetInfo and delvesWidgetInfo.frameTextureKit == "delves-scenario" then
         local tierLevel = delvesWidgetInfo.tierText or ""
         GwObjectivesNotification.iconFrame.tooltipSpellID = delvesWidgetInfo.tierTooltipSpellID
@@ -238,14 +240,10 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     numCriteria = GW.addWarfrontData(block, numCriteria)
     numCriteria = GW.addHeroicVisionsData(block, numCriteria)
     numCriteria = GW.addJailersTowerData(block, numCriteria)
+    numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget = GW.addEmberCourtData(self, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
 
-    if not showTimerAsBonus then
-        numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget = GW.addEmberCourtData(self, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
-    end
-    for id, _ in pairs(allowedWidgetUpdateIdsForTimer) do
-        if not showTimerAsBonus then
-            GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId = GW.addEventTimerBarByWidgetId(timerBlock, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEventTimerBarByWidgetId, id)
-        end
+    if not showTimerAsBonus and widgetId then
+        GwQuestTrackerTimerSavedHeight, showTimerAsBonus = GW.addEventTimerBarByWidgetId(timerBlock, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, widgetId)
     end
 
     local bonusSteps = C_Scenario.GetBonusSteps() or {}
@@ -303,9 +301,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             end
             block:AddObjective(text, numCriteriaPrev + 1, { finished = false, objectiveType = objectiveType, qty = quantity, firstObjectivesYValue = -5 })
             numCriteriaPrev = numCriteriaPrev + 1
-            if not showTimerAsBonus then
-                GW.TerminateScenarioWidgetTimer()
-            end
         end
     end
 
