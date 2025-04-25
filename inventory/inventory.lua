@@ -237,7 +237,7 @@ end
 local function CheckUpdateIcon(button, itemLink)
     local itemIsUpgrade = GW.RegisterPawnUpgradeIcon(itemLink)
 
-    if itemIsUpgrade then -- nil means not all the data was available to determine if this is an upgrade.
+    if itemIsUpgrade ~= nil then -- nil means not all the data was available to determine if this is an upgrade.
         button.UpgradeIcon:SetShown(itemIsUpgrade)
     end
 end
