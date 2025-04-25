@@ -38,7 +38,6 @@ local function addEventTimerBarByWidgetId(timerBlock, gwQuestTrackerTimerSavedHe
             timerBlock.timer:Hide()
             showTimerAsBonus = false
             TerminateTimer()
-
         end
         isEventTimerBarByWidgetId = true
     else

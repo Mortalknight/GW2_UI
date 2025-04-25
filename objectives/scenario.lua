@@ -10,13 +10,19 @@ local allowedWidgetUpdateIdsForTimer = {
     [6183] = true, -- TWW delve
     [5483] = true, -- TWW theather event
     [5865] = true, -- TWW echos
-    [5986] = true, -- 20th
-    [5990] = true, -- 20th
-    [5991] = true, -- 20th
+    --[5986] = true, -- 20th still needed?
+    --[5990] = true, -- 20th still needed?
+    --[5991] = true, -- 20th still needed?
+    [6268] = true, -- Night (1361)
+    [6286] = true, -- Night (1367)
+    [6289] = true, -- Night (1370)
+    [6287] = true, -- Night (1368)
+    [6288] = true, -- Night (1369)
 }
 
 local allowedWidgetUpdateIdsForStatusBar = {
-    [6758] = {additon = true}, -- 11.1
+    [6758] = {additon = true}, -- 11.1.0
+    [6280] = {additon = true}, -- 11.1.5
 }
 
 GwObjectivesScenarioContainerMixin = {}
@@ -93,6 +99,8 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         self.oldHeight = GW.RoundInt(self:GetHeight())
         self:SetHeight(block.height)
         timerBlock.timer:Hide()
+        timerBlock.height = 1
+        timerBlock:SetHeight(timerBlock.height)
         GW.TerminateScenarioWidgetTimer()
 
         return
@@ -283,9 +291,21 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     for id in pairs(allowedWidgetUpdateIdsForStatusBar) do
         local widgetInfo = C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(id)
         if widgetInfo and widgetInfo.shownState ~= Enum.WidgetShownState.Hidden then
-            block:AddObjective(GW.ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text), numCriteriaPrev + 1, { finished = false, objectiveType = "object", qty = widgetInfo.barValue, firstObjectivesYValue = -5 })
+            local objectiveType =  "object"
+            local quantity = widgetInfo.barValue
+            local text = GW.ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text)
+
+            C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(6280)
+            if widgetInfo.barValueTextType == Enum.StatusBarValueTextType.Percentage then
+                objectiveType = "progressbar"
+                quantity = widgetInfo.barValue / widgetInfo.barMax * 100
+                text = (widgetInfo.text or "") .. " " .. FormatPercentage(widgetInfo.barValue / widgetInfo.barMax, true)
+            end
+            block:AddObjective(text, numCriteriaPrev + 1, { finished = false, objectiveType = objectiveType, qty = quantity, firstObjectivesYValue = -5 })
             numCriteriaPrev = numCriteriaPrev + 1
-            GW.TerminateScenarioWidgetTimer()
+            if not showTimerAsBonus then
+                GW.TerminateScenarioWidgetTimer()
+            end
         end
     end
 
