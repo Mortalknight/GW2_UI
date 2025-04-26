@@ -525,7 +525,7 @@ local function ApplyAuctionHouseSkin()
 	ItemButton.Icon.backdrop:SetBackdropBorderColor(0, .8, 1)
 	ItemButton:GetHighlightTexture():Hide()
 	ItemButton.CircleMask:Hide()
-	ItemButton.IconBorder:GwKill()
+	ItemButton.IconBorder:SetAlpha(0)
 
 	--WoW Token Tutorial Frame
 	local WowTokenGameTimeTutorial = AuctionHouseFrame.WoWTokenResults.GameTimeTutorial

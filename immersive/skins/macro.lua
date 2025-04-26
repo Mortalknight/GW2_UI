@@ -1,5 +1,17 @@
 local _, GW = ...
 
+local function MacroSelectorScrollUpdateChild(button)
+    if button.Icon and not button.ssSkinned then
+        GW.HandleItemButton(button, true)
+    end
+end
+
+local function MacroSelectorScrollUpdate(frame)
+    if frame.view then
+        frame:ForEachFrame(MacroSelectorScrollUpdateChild)
+    end
+end
+
 local function ApplyMacroOptionsSkin()
     if not GW.settings.MACRO_SKIN_ENABLED then return end
 
@@ -90,13 +102,7 @@ local function ApplyMacroOptionsSkin()
 
     MacroFrameSelectedMacroName:SetTextColor(1, 1, 1)
 
-    hooksecurefunc(MacroFrame.MacroSelector.ScrollBox, "Update", function()
-        for _, button in next, {MacroFrame.MacroSelector.ScrollBox.ScrollTarget:GetChildren()} do
-            if button.Icon and not button.isSkinned then
-                GW.HandleItemButton(button, true)
-            end
-        end
-    end)
+    hooksecurefunc(MacroFrame.MacroSelector.ScrollBox, "Update", MacroSelectorScrollUpdate)
 
     MacroPopupFrame:HookScript("OnShow", function(self)
         self:ClearAllPoints()
