@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local isOnUpdateHooked = false
-local function addEmberCourtData(container, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
+local function addEmberCourtData(container, numCriteria)
     if GW.Libs.GW2Lib:GetPlayerLocationMapID()== 1644 then
         if BottomScenarioWidgetContainerBlock.WidgetContainer:GetHeight() > 1.1 then
             numCriteria = numCriteria + 1
@@ -26,38 +26,8 @@ local function addEmberCourtData(container, numCriteria, GwQuestTrackerTimerSave
             objectiveBlock.objectToHide = BottomScenarioWidgetContainerBlock
             objectiveBlock.resetParent = true
         end
-
-        local w2 = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) or C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2906)
-        if w2 and w2.timerMax > 0 and w2.timerValue <= w2.timerMax then
-            if not isOnUpdateHooked then
-                container.timerBlock:SetScript(
-                    "OnUpdate",
-                    function()
-                        local widget = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) or C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2906)
-                        if widget and widget.timerValue ~= widget.timerMax then
-                            container.timerBlock.timer:SetValue(widget.timerValue / widget.timerMax)
-                            container.timerBlock.timerString:SetText(SecondsToClock(widget.timerValue, false))
-                        else
-                            container.timerBlock:SetScript("OnUpdate", nil)
-                            GwQuesttrackerContainerScenario:UpdateLayout()
-                        end
-                    end
-                )
-            end
-            container.timerBlock.timer:Show()
-            GwQuestTrackerTimerSavedHeight = GwQuestTrackerTimerSavedHeight + 40
-            showTimerAsBonus = true
-            isOnUpdateHooked = true
-        else
-            GwQuestTrackerTimerSavedHeight = 1
-            container.timerBlock:SetScript("OnUpdate", nil)
-            container.timerBlock.timer:Hide()
-            isOnUpdateHooked = false
-        end
-
-        isEmberCourtWidget = true
     end
 
-    return numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget
+    return numCriteria
 end
 GW.addEmberCourtData = addEmberCourtData

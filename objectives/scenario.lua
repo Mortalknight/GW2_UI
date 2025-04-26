@@ -5,6 +5,8 @@ local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
 
 local allowedWidgetUpdateIdsForTimer = {
+    [2904] = true, -- Ember Court
+    [2906] = true, -- Ember Court
     [3302] = true, -- DF cooking event
     [5527] = true, -- DF archeolgy event
     [6183] = true, -- TWW delve
@@ -60,7 +62,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     local containerName = self.block:GetName()
     local showTimerAsBonus = false
     local GwQuestTrackerTimerSavedHeight = 1
-    local isEmberCourtWidget = false
     local isEventTimerBarByWidgetId = false
 
     block.height = 1
@@ -240,7 +241,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     numCriteria = GW.addWarfrontData(block, numCriteria)
     numCriteria = GW.addHeroicVisionsData(block, numCriteria)
     numCriteria = GW.addJailersTowerData(block, numCriteria)
-    numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget = GW.addEmberCourtData(self, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
+    numCriteria = GW.addEmberCourtData(self, numCriteria)
 
     if not showTimerAsBonus and widgetId then
         GwQuestTrackerTimerSavedHeight, showTimerAsBonus = GW.addEventTimerBarByWidgetId(timerBlock, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, widgetId)
@@ -297,7 +298,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             if widgetInfo.barValueTextType == Enum.StatusBarValueTextType.Percentage then
                 objectiveType = "progressbar"
                 quantity = widgetInfo.barValue / widgetInfo.barMax * 100
-                text = (widgetInfo.text or "") .. " " .. FormatPercentage(widgetInfo.barValue / widgetInfo.barMax, true)
+                text = (widgetInfo.text or "") .. " " .. FormatPercentage(widgetInfo.barValue / widgetInfo.barMax)
             end
             block:AddObjective(text, numCriteriaPrev + 1, { finished = false, objectiveType = objectiveType, qty = quantity, firstObjectivesYValue = -5 })
             numCriteriaPrev = numCriteriaPrev + 1
@@ -320,7 +321,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     if timerBlock.affixeFrame:IsShown() then intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40 end
     if timerBlock.timer:IsShown() then intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40 end
 
-    if showTimerAsBonus or isEmberCourtWidget or isEventTimerBarByWidgetId then
+    if showTimerAsBonus or isEventTimerBarByWidgetId then
         timerBlock.height = GwQuestTrackerTimerSavedHeight
     end
 
