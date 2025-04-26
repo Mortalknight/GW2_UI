@@ -628,6 +628,33 @@ GW.globalDefault = {
         },
         BelowMinimapContainer_pos_scale= 1,
 
+        EventToastWidget_pos = {
+            point= "TOP",
+            relativePoint= "TOP",
+            xOfs= 0,
+            yOfs= -150,
+            hasMoved= false,
+        },
+        EventToastWidget_pos_scale= 1,
+
+        TicketStatusFrame_pos = {
+            point= "TOPLEFT",
+            relativePoint= "TOPLEFT",
+            xOfs= 250,
+            yOfs= -5,
+            hasMoved= false,
+        },
+        TicketStatusFrame_pos_scale= 1,
+
+        BossBannerWidget_pos = {
+            point= "TOP",
+            relativePoint= "TOP",
+            xOfs= 0,
+            yOfs= -125,
+            hasMoved= false,
+        },
+        BossBannerWidget_pos_scale= 1,
+
         AlertPos= {
             point= "BOTTOMRIGHT",
             relativePoint= "BOTTOMRIGHT",

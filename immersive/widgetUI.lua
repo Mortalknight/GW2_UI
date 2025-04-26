@@ -1,9 +1,13 @@
 local _, GW = ...
 
-local function EmberCourtCaptureBar() end
+local function BelowMinimap_EmberCourt() end
 
-local function PVPCaptureBar(self)
-    local hideElements = { "LeftLine", "RightLine", "BarBackground", "Glow1", "Glow2", "Glow3" }
+local function BelowMinimap_CaptureBar(self)
+    if not self.LeftLine or not self.LeftBar then return end
+
+    self.GlowPulseAnim:Stop()
+
+    local hideElements = { "LeftLine", "RightLine", "BarBackground", "SparkNeutral", "Glow1", "Glow2", "Glow3" }
     for _, elem in ipairs(hideElements) do
         if self[elem] then
             self[elem]:SetAlpha(0)
@@ -23,15 +27,17 @@ local function PVPCaptureBar(self)
         self:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
         self.backdrop:SetPoint("TOPLEFT", self.LeftBar, -1, 1)
         self.backdrop:SetPoint("BOTTOMRIGHT", self.RightBar, 1, -1)
+    else
+        self.backdrop:SetFrameLevel(self:GetFrameLevel() - 1)
     end
 end
 
 local captureBarSkins = {
-    [2] = PVPCaptureBar,
-    [252] = EmberCourtCaptureBar
+    [2] = BelowMinimap_CaptureBar,
+    [252] = BelowMinimap_EmberCourt
 }
 
-local function TopCenterPosition(self, _, anchor)
+local function UpdatePosition(self, _, anchor)
     local holder = self.gwMover
     if holder and anchor ~= holder then
         self:ClearAllPoints()
@@ -55,25 +61,59 @@ local function UIWidgetTemplateStatusBar(self)
         return
     end
 
-    if self.Text then
-        self.Text:SetTextColor(1, 1, 1)
+    local hideParts = { "BGLeft", "BGRight", "BGCenter", "BorderLeft", "BorderRight", "BorderCenter", "Spark" }
+    for _, part in ipairs(hideParts) do
+        if bar[part] then
+            bar[part]:SetAlpha(0)
+        end
     end
 
     if not bar.backdrop then
         bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-        local hideParts = { "BGLeft", "BGRight", "BGCenter", "BorderLeft", "BorderRight", "BorderCenter", "Spark" }
-        for _, part in ipairs(hideParts) do
-            if bar[part] then
-                bar[part]:SetAlpha(0)
-            end
+
+        if self.Label then -- title
+            self.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "SHADOW")
+        end
+
+        if bar.Label then -- percent text
+            bar.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "SHADOW")
+        end
+
+        if self.Text then
+            self.Text:SetTextColor(1, 1, 1)
         end
     end
 end
 
-local function UIWidgetTemplateCaptureBar(self, _, widgetContainer)
-    if not widgetContainer then return end
+local function BelowMinimap_UpdateBar(self, _, widgetContainer)
+    if self:IsForbidden() or not widgetContainer then return end
+
     local skinFunc = captureBarSkins[widgetContainer.widgetSetID]
     if skinFunc then skinFunc(self) end
+end
+
+local function UIWidgetTemplateCaptureBar(self, widgetInfo, widgetContainer)
+    if widgetContainer == UIWidgetBelowMinimapContainerFrame and widgetContainer.ProcessWidget then
+        return
+    end
+
+    BelowMinimap_UpdateBar(self, widgetInfo, widgetContainer)
+end
+
+local function BelowMinimap_ProcessWidget(self, widgetID)
+    if not self or not self.widgetFrames then return end
+
+    if widgetID then
+        local bar = self.widgetFrames[widgetID]
+        if bar then
+            BelowMinimap_UpdateBar(bar, nil, self)
+        end
+    else
+        for _, bar in next, self.widgetFrames do
+            BelowMinimap_UpdateBar(bar, nil, self)
+        end
+    end
+
 end
 
 local function CheckElvUI()
@@ -97,39 +137,36 @@ local function CheckElvUI()
     return b.Initialized
 end
 
+local function BuildWidgetMover(container, moverName, setting, size)
+    GW.RegisterMovableFrame(container, moverName, setting, ALL .. ",Blizzard,Widgets", size, {"default", "scaleable"})
+
+    UpdatePosition(container, container.gwMover)
+    hooksecurefunc(container, "SetPoint", UpdatePosition)
+end
 
 local function WidgetUISetup()
     -- avoide conflict with elvui
     if not CheckElvUI() then
-        GW.RegisterMovableFrame(UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", ALL .. ",Blizzard,Widgets", {58, 58}, {"default", "scaleable"})
-        GW.RegisterMovableFrame(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", ALL .. ",Blizzard,Widgets", {100, 20}, {"default", "scaleable"})
-        GW.RegisterMovableFrame(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", ALL .. ",Blizzard,Widgets", {150, 30}, {"default", "scaleable"})
-
-        C_Timer.After(0.5, function()
-            local containers = {
-                UIWidgetTopCenterContainerFrame,
-                UIWidgetPowerBarContainerFrame,
-                UIWidgetBelowMinimapContainerFrame,
-            }
-            for _, frame in ipairs(containers) do
-                frame:ClearAllPoints()
-                if frame.gwMover then
-                    frame:SetPoint("CENTER", frame.gwMover, "CENTER")
-                end
-            end
-        end)
-
-        hooksecurefunc(UIWidgetTopCenterContainerFrame, "SetPoint", TopCenterPosition)
-        hooksecurefunc(UIWidgetPowerBarContainerFrame, "SetPoint", TopCenterPosition)
-        hooksecurefunc(UIWidgetBelowMinimapContainerFrame, "SetPoint", TopCenterPosition)
-
-        hooksecurefunc(UIWidgetTemplateStatusBarMixin, "Setup", UIWidgetTemplateStatusBar)
-        hooksecurefunc(UIWidgetTemplateCaptureBarMixin, "Setup", UIWidgetTemplateCaptureBar)
+        BuildWidgetMover(UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", {58, 58})
+        BuildWidgetMover(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", {100, 20})
+        BuildWidgetMover(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", {150, 30})
+        BuildWidgetMover(EventToastManagerFrame, "EventToastWidget", "EventToastWidget_pos", {200, 20})
+        BuildWidgetMover(BossBanner, "BossBannerWidget", "BossBannerWidget_pos", {200, 20})
+        BuildWidgetMover(TicketStatusFrame, "GM Ticket Frame", "TicketStatusFrame_pos")
 
         -- handle power bar widgets after reload as Setup will have fired before this
         for _, widget in pairs(UIWidgetPowerBarContainerFrame.widgetFrames) do
             UIWidgetTemplateStatusBar(widget)
         end
+
+        hooksecurefunc(UIWidgetTemplateStatusBarMixin, "Setup", UIWidgetTemplateStatusBar)
+        hooksecurefunc(UIWidgetTemplateCaptureBarMixin, "Setup", UIWidgetTemplateCaptureBar)
+
+        if UIWidgetBelowMinimapContainerFrame.ProcessWidget then
+            hooksecurefunc(UIWidgetBelowMinimapContainerFrame, 'ProcessWidget', BelowMinimap_ProcessWidget)
+        end
+
+        BelowMinimap_ProcessWidget(UIWidgetBelowMinimapContainerFrame)
     end
 end
 GW.WidgetUISetup = WidgetUISetup
