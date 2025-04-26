@@ -370,6 +370,11 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
             end
         end
     else
+        auras.allBuffs = auras.allBuffs or {}
+        auras.activeBuffs = auras.activeBuffs or {}
+        auras.allDebuffs = auras.allDebuffs or {}
+        auras.activeDebuffs = auras.activeDebuffs or {}
+
         if updateInfo.addedAuras then
             for _, data in next, updateInfo.addedAuras do
                 if(data.isHelpful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, buffFilter)) then
