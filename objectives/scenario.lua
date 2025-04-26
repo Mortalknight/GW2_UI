@@ -297,8 +297,9 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(6280)
             if widgetInfo.barValueTextType == Enum.StatusBarValueTextType.Percentage then
                 objectiveType = "progressbar"
-                quantity = widgetInfo.barValue / widgetInfo.barMax * 100
-                text = (widgetInfo.text or "") .. " " .. FormatPercentage(widgetInfo.barValue / widgetInfo.barMax)
+                quantity = math.min(1, widgetInfo.barValue / widgetInfo.barMax)
+                text = (widgetInfo.text or "") .. " " .. FormatPercentage(quantity)
+                quantity = quantity * 100
             end
             block:AddObjective(text, numCriteriaPrev + 1, { finished = false, objectiveType = objectiveType, qty = quantity, firstObjectivesYValue = -5 })
             numCriteriaPrev = numCriteriaPrev + 1
