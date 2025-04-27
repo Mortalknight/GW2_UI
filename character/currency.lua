@@ -107,7 +107,7 @@ local function raidInfo_OnClick(self)
         self.extendButton.selectedRaidID = self.longInstanceID
         self.extendButton.selectedWorldBossID = self.worldBossID
         selectedLongInstanceID = self.longInstanceID
-        UpdateRaidInfoScrollBox(GWCharacterCurrenyRaidInfoFrame)
+        UpdateRaidInfoScrollBox(GWCharacterCurrenyRaidInfoFrame.RaidLocks)
     end
 end
 GW.AddForProfiling("currency", "raidInfo_OnClick", raidInfo_OnClick)
