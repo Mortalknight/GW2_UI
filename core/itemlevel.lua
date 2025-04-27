@@ -4,6 +4,7 @@ local RoundDec = GW.RoundDec
 local MATCH_ITEM_LEVEL = ITEM_LEVEL:gsub("%%d", "(%%d+)")
 local MATCH_ITEM_LEVEL_ALT = ITEM_LEVEL_ALT:gsub("%%d(%s?)%(%%d%)", "%%d+%1%%((%%d+)%%)")
 local MATCH_ENCHANT = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "(.+)")
+local MATCH_SET_ITEM = ITEM_SET_BONUS:gsub("%%s", "(.+)")
 local X2_INVTYPES, X2_EXCEPTIONS, ARMOR_SLOTS = {
     INVTYPE_2HWEAPON = true,
     INVTYPE_RANGEDRIGHT = true,
@@ -34,11 +35,13 @@ local function InspectGearSlot(data, line, lineText, slotInfo)
     local enchant = strmatch(lineText, MATCH_ENCHANT)
     if enchant then
         local color1, color2 = strmatch(enchant, "(|cn.-:).-(|r)")
+        local enchantQuality = enchant:match("(%s?|A.-|a)")
         local text = gsub(gsub(enchant, "%s?|A.-|a", ""), "|cn.-:(.-)|r", "%1")
-        slotInfo.enchantText = format("%s%s%s", color1 or "", text, color2 or "")
-        slotInfo.enchantTextShort = format("%s%s%s", color1 or "", string.utf8sub(text, 1, 18), color2 or "")
-        slotInfo.enchantTextShort2 = format("%s%s%s", color1 or "", string.utf8sub(text, 1, 11), color2 or "")
+        slotInfo.enchantText = format("%s%s%s%s", color1 or "", text, color2 or "", enchantQuality or "")
+        slotInfo.enchantTextShort = format("%s%s%s%s", color1 or "", string.utf8sub(text, 1, 18), color2 or "", enchantQuality or "")
+        slotInfo.enchantTextShort2 = format("%s%s%s%s", color1 or "", string.utf8sub(text, 1, 11), color2 or "", enchantQuality or "")
         slotInfo.enchantTextReal = enchant
+        slotInfo.enchantQuality = enchantQuality
 
         if line.leftColor then
             slotInfo.enchantColors[1] = line.leftColor.r
@@ -56,6 +59,11 @@ local function InspectGearSlot(data, line, lineText, slotInfo)
             slotInfo.itemLevelColors[2] = data.lines[1].leftColor.g
             slotInfo.itemLevelColors[3] = data.lines[1].leftColor.b
         end
+    end
+
+    local isSetItem = lineText and strmatch(lineText, MATCH_SET_ITEM)
+    if isSetItem then
+        slotInfo.isSetItem = true
     end
 end
 

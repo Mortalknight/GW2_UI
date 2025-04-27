@@ -119,6 +119,9 @@ local function setItemButtonQuality(button, quality)
         if quality >= Enum.ItemQuality.Common and color then
             button.IconBorder:Show()
             button.IconBorder:SetVertexColor(color.r, color.g, color.b)
+            if  button.setBorder then
+                button.setBorder.Glow:SetVertexColor(color.r, color.g, color.b)
+            end
         else
             button.IconBorder:Hide()
         end
@@ -326,7 +329,14 @@ local function updateItemSlot(self)
 
     local quality = GetInventoryItemQuality("player", slot)
     setItemButtonQuality(self, quality)
+
+    if self.isSetItem then
+        self.setBorder:Show()
+    else
+        self.setBorder:Hide()
+    end
 end
+GW.UpdateCharacterPanelItemSlot = updateItemSlot
 GW.AddForProfiling("paperdoll_equipment", "updateItemSlot", updateItemSlot)
 
 local function itemSlot_OnEvent(self, event, ...)
@@ -701,6 +711,16 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.repairIcon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
     slot.repairIcon:SetTexCoord(0, 1, 0.5, 1)
     slot.repairIcon:SetSize(20, 20)
+
+    slot.setBorder = CreateFrame("Frame", nil, slot)
+    slot.setBorder:SetSize(size * 1.5, size * 1.5)
+    slot.setBorder:SetPoint("TOPLEFT", slot, "TOPLEFT", -size * 0.2, size  * 0.2)
+    slot.setBorder:SetPoint("BOTTOMRIGHT", slot, "BOTTOMRIGHT", size * 0.2, -size * 0.2)
+    slot.setBorder:SetFrameLevel(slot:GetFrameLevel() - 1)
+    slot.setBorder.Glow = slot.setBorder:CreateTexture(nil, "OVERLAY")
+    slot.setBorder.Glow:SetTexture("Interface/SpellActivationOverlay/IconAlert")
+    slot.setBorder.Glow:SetAllPoints()
+    slot.setBorder.Glow:SetTexCoord(0.00781250, 0.50781250, 0.53515625, 0.78515625)
 
     slot.itemlevel = slot:CreateFontString(nil, "OVERLAY")
     slot.itemlevel:SetSize(size, 10)
