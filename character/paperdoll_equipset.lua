@@ -1,12 +1,10 @@
 local _, GW = ...
-local SavedItemSlots = GW.char_equipset_SavedItems
 local WarningPrompt = GW.WarningPrompt
-
 local g_selectionBehavior = nil
 local GwGearManagerPopupFrame
 
 local function toggleIgnoredSlots(show)
-    for _, v in pairs(SavedItemSlots) do
+    for _, v in pairs(GW.char_equipset_SavedItems) do
         if show then
             v.ignoreSlotCheck:Show()
         else
@@ -20,10 +18,10 @@ local function updateIngoredSlots(id)
     for slot, ignored in pairs(ignoredSlots) do
         if (ignored) then
             C_EquipmentSet.IgnoreSlotForSave(slot)
-            SavedItemSlots[slot].ignoreSlotCheck:SetChecked(false)
+            GW.char_equipset_SavedItems[slot].ignoreSlotCheck:SetChecked(false)
         else
             C_EquipmentSet.UnignoreSlotForSave(slot)
-            SavedItemSlots[slot].ignoreSlotCheck:SetChecked(true)
+            GW.char_equipset_SavedItems[slot].ignoreSlotCheck:SetChecked(true)
         end
     end
 end
