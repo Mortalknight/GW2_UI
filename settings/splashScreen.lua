@@ -6,64 +6,25 @@ local interval = 180 * 60
 local startTimeStamp = 1725037205
 local fadeDuration = 1.5
 
-local function EaseInOutQuad(t)
-    if t < 0.5 then
-        return 2 * t * t
-    else
-        return -1 + (4 - 2 * t) * t
-    end
-end
+local function CrossfadeTextures(self, isActive)
+    local fadeOutTex = isActive and self.splashart or self.splashart2
+    local fadeInTex = isActive and self.splashart2 or self.splashart
 
-local function CrossfadeTextures(self, dur, isActive)
-    GW.Debug(isActive, "CrossfadeTextures", dur)
-    if self.fadeTickerActive then return end
-    self.fadeTickerActive = true
-
-    local startTime = GetTime()
-
-    self:SetScript("OnUpdate", function()
-        local progress = (GetTime() - startTime) / dur
-
-        if progress >= 1 then
-            progress = 1
-            self:SetScript("OnUpdate", nil)
-            self.fadeTickerActive = nil
-        end
-
-        local eased = EaseInOutQuad(progress)
-
-        if isActive then
-            self.splashart2:SetAlpha(eased)
-            self.splashart:SetAlpha(1 - eased)
-        else
-            self.splashart2:SetAlpha(1 - eased)
-            self.splashart:SetAlpha(eased)
-        end
-    end)
+    UIFrameFadeOut(fadeOutTex, fadeDuration, 1, 0)
+    UIFrameFadeIn(fadeInTex, fadeDuration, 0, 1)
 end
 GW.GWCrossfadeTextures = CrossfadeTextures
---/run GW2_ADDON.GWCrossfadeTextures(GwSettingsWindow, 1.5, true)
+--/run GW2_ADDON.GWCrossfadeTextures(GwSettingsWindow, true)
 local function CheckFunction(self)
-    local timeSinceStart = GetServerTime() - startTimeStamp
-    local timeOver = timeSinceStart % interval
-    local nextEventIndex = math.floor(timeSinceStart / interval) + 1
-    local nextEventTimestamp = startTimeStamp + interval * nextEventIndex
-    local wasRunning = timer.isRunning
-    timer.timeOver = timeOver
-    timer.nextEventIndex = nextEventIndex
-    timer.nextEventTimestamp = nextEventTimestamp
+    local elapsedTotal = GetServerTime() - startTimeStamp
+    local over         = elapsedTotal % interval
+    local running      = over < duration
 
-    if timeOver < duration then
-        timer.timeLeft = duration - timeOver
-        timer.isRunning = true
-    else
-        timer.timeLeft = interval - timeOver
-        timer.isRunning = false
+    if timer.isRunning ~= running then
+        CrossfadeTextures(self, running)
     end
 
-    if wasRunning ~= timer.isRunning then
-        CrossfadeTextures(self, fadeDuration, timer.isRunning)
-    end
+    timer.isRunning = running
 end
 
 local function StopBeledarsTicker()
@@ -75,11 +36,6 @@ end
 
 local function StartBeledarsTicker(self)
     StopBeledarsTicker()
-
-    if timer.ticker then
-        timer.ticker:Cancel()
-        timer.ticker = nil
-    end
     timer.ticker = C_Timer.NewTicker(1, function() CheckFunction(self) end)
 end
 

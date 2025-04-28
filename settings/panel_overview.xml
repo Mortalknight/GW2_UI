@@ -11,7 +11,7 @@
                     </Anchors>
                     <TexCoords left="0" right="0.763671875" top="0" bottom="1" />
                 </Texture>
-                 <Texture parentkey="splashart2" alpha="0" file="Interface\AddOns\GW2_UI\textures\uistuff\settingartwork-dark">
+                 <Texture parentkey="splashart2" file="Interface\AddOns\GW2_UI\textures\uistuff\settingartwork-dark">
                     <Size x="612" y="400"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-20" y="0"></Anchor>
