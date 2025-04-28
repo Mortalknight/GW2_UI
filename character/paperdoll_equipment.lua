@@ -232,13 +232,6 @@ local function updateBagItemList(itemButton)
             local row = math.floor((itemIndex - 1) / 4)
             local delay = row * 0.05 + ((itemIndex - 1) % 4) * 0.015
             itemFrame.fadeIn:SetStartDelay(delay)
-            itemFrame.fadeInAnim:HookScript("OnFinished", function(...)
-                itemFrame:SetAlpha(1)
-                itemFrame.BACKGROUND:SetAlpha(1)
-                itemFrame.itemlevel:SetAlpha(1)
-                itemFrame.repairIcon:SetAlpha(1)
-                setItemLevel(itemFrame, itemFrame.quality, itemFrame.ItemLink)
-            end)
             itemFrame.fadeInAnim:Play()
 
             gridIndex = gridIndex + 1
@@ -430,6 +423,14 @@ getBagSlotFrame = function()
         f.itemlevel:SetAlpha(0)
         f.repairIcon:SetAlpha(0)
 
+        f.fadeInAnim:HookScript("OnFinished", function()
+            f:SetAlpha(1)
+            f.BACKGROUND:SetAlpha(1)
+            f.itemlevel:SetAlpha(1)
+            f.repairIcon:SetAlpha(1)
+            setItemLevel(f, f.quality, f.ItemLink)
+        end)
+
         f.initialized = true
     end
 
@@ -448,7 +449,7 @@ local function updateBagItemListAll()
     local x, y = 10, 15
 
     for _, id in ipairs(EquipSlotList) do
-        wipe(bagItemList)
+        bagItemList = wipe(bagItemList or {})
         GetInventoryItemsForSlot(id, bagItemList)
         for location in pairs(bagItemList) do
             if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
@@ -466,13 +467,6 @@ local function updateBagItemListAll()
                 local row = math.floor((itemIndex - 1) / 4)
                 local delay = row * 0.05 + ((itemIndex - 1) % 4) * 0.015
                 itemFrame.fadeIn:SetStartDelay(delay)
-                itemFrame.fadeInAnim:HookScript("OnFinished", function(...)
-                    itemFrame:SetAlpha(1)
-                    itemFrame.BACKGROUND:SetAlpha(1)
-                    itemFrame.itemlevel:SetAlpha(1)
-                    itemFrame.repairIcon:SetAlpha(1)
-                    setItemLevel(itemFrame, itemFrame.quality, itemFrame.ItemLink)
-                end)
                 itemFrame.fadeInAnim:Play()
 
                 gridIndex = gridIndex + 1
@@ -577,8 +571,9 @@ local function updateStats(self)
                     x = 0
                     y = y + 35
                 end
+            else
+                self.statsFramePool:Release(frame)
             end
-
         end
     end
 
