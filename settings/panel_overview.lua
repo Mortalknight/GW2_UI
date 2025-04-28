@@ -234,6 +234,8 @@ local function LoadOverviewPanel(sWindow)
 
     sWindow.splashart = p.splashart
     p.splashart:AddMaskTexture(sWindow.backgroundMask)
+    sWindow.splashart2 = p.splashart2
+    p.splashart2:AddMaskTexture(sWindow.backgroundMask)
 
     CharacterMenuButton_OnLoad(p.menu.welcomebtn, true)
     CharacterMenuButton_OnLoad(p.menu.keybindingsbtn, false)
