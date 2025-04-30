@@ -32,7 +32,7 @@ end
 -------------------- Mythic+ Specific --------------------
 ----------------------------------------------------------
 -- General Affix
-    SetDefaultOnTheFly(440313) -- Sanguine
+    SetDefaultOnTheFly(440313) -- Void Rift
 ----------------------------------------------------------
     ---------------- The War Within Dungeons -----------------
     ----------------------------------------------------------
@@ -323,21 +323,32 @@ end
     SetDefaultOnTheFly(459669) -- Spew Oil
 -- Cauldron of Carnage
     SetDefaultOnTheFly(1213690) -- Molten Phlegm
+    SetDefaultOnTheFly(1214009) -- Voltaic Image
 -- Rik Reverb
     SetDefaultOnTheFly(1217122) -- Lingering Voltage
+    SetDefaultOnTheFly(468119) -- Resonant Echoes
+    SetDefaultOnTheFly(467044) -- Faulty Zap
 -- Stix Bunkjunker
     SetDefaultOnTheFly(461536) -- Rolling Rubbish
     SetDefaultOnTheFly(1217954) -- Meltdown
     SetDefaultOnTheFly(465346) -- Sorted
+    SetDefaultOnTheFly(466748) -- Infected Bite
 -- Sprocketmonger Lockenstock
     SetDefaultOnTheFly(1218342) -- Unstable Shrapnel
     SetDefaultOnTheFly(465917) -- Gravi-Gunk
+    SetDefaultOnTheFly(471308) -- Blisterizer Mk. II
 -- The One-Armed Bandit
     SetDefaultOnTheFly(471927) -- Withering Flames
     SetDefaultOnTheFly(460420) -- Crushed!
 -- Mug'Zee, Heads of Security
     SetDefaultOnTheFly(4664769) -- Frostshatter Boots
+    SetDefaultOnTheFly(466509) -- Stormfury Finger Gun
+    SetDefaultOnTheFly(1215488) -- Disintegration Beam (Actually getting beamed)
+    SetDefaultOnTheFly(469391) -- Perforating Wound
 -- Chrome King Gallywix
+    SetDefaultOnTheFly(466154) -- Blast Burns
+    SetDefaultOnTheFly(466834) -- Shock Barrage
+    SetDefaultOnTheFly(469362) -- Charged Giga Bomb (Carrying)
 ---------------------------------------------------------
 ------------------- Nerub'ar Palace ---------------------
 ---------------------------------------------------------
