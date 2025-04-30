@@ -303,7 +303,9 @@ GW.AURAS_INDICATORS = {
         [410089] = { 0.13, 0.87, 0.50 }, -- Prescience
         [395296] = { 0.98, 0.44, 0.00 }, -- Ebon Might < self
         [395152] = { 0.98, 0.44, 0.00 }, -- Ebon Might < others
+        [361022] = { 0.98, 0.44, 0.00 }, -- Sense Power
         [406732] = { 0.82, 0.29, 0.24 }, -- Spatial Paradox
+        [406789] = { 0.82, 0.29, 0.24 }, -- Spatial Paradox
     },
     PET = {
         [193396] = { 0.6, 0.2, 0.8 },   -- Demonic Empowerment
@@ -470,7 +472,7 @@ GW.ChannelTicks = {
     [120360]	= 15, -- Barrage
     [257044]	= 7, -- Rapid Fire
     -- Monk
-    [113656]	= 5, -- Fists of Fury
+    [113656]	= 4, -- Fists of Fury
 }
 
 -- Spells that chain, ticks to add
