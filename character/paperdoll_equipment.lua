@@ -146,6 +146,7 @@ local function setItemButtonQuality(button, quality)
             button.IconBorder:SetVertexColor(color.r, color.g, color.b)
             if  button.itemSetBorderIndicator then
                 button.itemSetBorderIndicator.Glow:SetVertexColor(color.r, color.g, color.b)
+                button.itemSetBorderShimmer.Shimmer:SetVertexColor(color.r, color.g, color.b)
                 button.itemSetBorderShimmer.Lightning:SetVertexColor(color.r, color.g, color.b)
             end
         else
@@ -354,9 +355,9 @@ local function updateItemSlot(self)
     setItemButtonQuality(self, quality)
 
     if self.isSetItem then
-        self.StartSetIndicatorAnimation()
+        self:StartSetIndicatorAnimation()
     else
-        self.StopSetIndicatorAnimation()
+        self:StopSetIndicatorAnimation()
     end
 end
 GW.UpdateCharacterPanelItemSlot = updateItemSlot
@@ -702,7 +703,7 @@ local function setupTexture(tex, parent, point, file, coord, size)
     end
 end
 
-local function CreateItemSetGlow(slot, size)
+local function CreateItemSetGlow(slot, size, parent)
     if not slot then return end
 
     slot.itemSetBorderIndicator = CreateFrame("Frame", nil, slot)
@@ -720,8 +721,16 @@ local function CreateItemSetGlow(slot, size)
     slot.itemSetBorderShimmer:SetAllPoints(slot)
     slot.itemSetBorderShimmer:SetFrameLevel(slot:GetFrameLevel() + 2)
 
+    slot.itemSetBorderShimmer.Shimmer = slot.itemSetBorderShimmer:CreateTexture(nil, "OVERLAY")
+    slot.itemSetBorderShimmer.Shimmer:SetTexture("Interface/AddOns/GW2_UI/textures/genericarc_03")
+    slot.itemSetBorderShimmer.Shimmer:SetAllPoints(slot.itemSetBorderShimmer)
+    slot.itemSetBorderShimmer.Shimmer:SetBlendMode("ADD")
+    slot.itemSetBorderShimmer.Shimmer:SetAlpha(0.2)
+    slot.itemSetBorderShimmer.Shimmer:SetScale(1.4)
+    slot.itemSetBorderShimmer.Shimmer:Hide()
+
     slot.itemSetBorderShimmer.Lightning = slot.itemSetBorderShimmer:CreateTexture(nil, "OVERLAY")
-    slot.itemSetBorderShimmer.Lightning:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/itemButtonLightning")
+    slot.itemSetBorderShimmer.Lightning:SetTexture("Interface/AddOns/GW2_UI/textures/lightning")
     slot.itemSetBorderShimmer.Lightning:SetAllPoints(slot.itemSetBorderShimmer)
     slot.itemSetBorderShimmer.Lightning:SetBlendMode("ADD")
     slot.itemSetBorderShimmer.Lightning:SetAlpha(0)
@@ -742,45 +751,77 @@ local function CreateItemSetGlow(slot, size)
     pulseIn:SetDuration(1.0)
     pulseIn:SetOrder(2)
 
+    --local rotate = ag:CreateAnimation("Rotation")
+    --rotate:SetTarget(slot.itemSetBorderShimmer.Shimmer)
+    --rotate:SetDegrees(15)
+    --rotate:SetDuration(4.0)
+    --rotate:SetSmoothing("IN_OUT")
+    --rotate:SetOrder(1)
+
     -- 5. Animation einstellen
     ag:SetLooping("REPEAT")
 
-    local function StartLightning()
-        slot.itemSetBorderShimmer.Lightning:SetAlpha(0)
-        local ag2 = slot:CreateAnimationGroup()
-        local inA  = ag2:CreateAnimation("Alpha")
-        inA:SetTarget(slot.itemSetBorderShimmer.Lightning)
-        inA:SetFromAlpha(0)
-        inA:SetToAlpha(1)
-        inA:SetDuration(0.1)
-        inA:SetOrder(1)
-        local outA = ag2:CreateAnimation("Alpha")
-        outA:SetTarget(slot.itemSetBorderShimmer.Lightning)
-        outA:SetFromAlpha(1)
-        outA:SetToAlpha(0)
-        outA:SetDuration(0.2)
-        outA:SetOrder(2)
-        ag2:Play()
-        slot.itemSetBorderShimmer.timer = C_Timer.NewTicker(math.random(8, 12), StartLightning, 1)
-    end
-    local function StartSetIndicatorAnimation()
-        slot.itemSetBorderShimmer:Show()
-        slot.itemSetBorderIndicator:Show()
+    local ag2 = slot:CreateAnimationGroup()
+    local inA  = ag2:CreateAnimation("Alpha")
+    inA:SetTarget(slot.itemSetBorderShimmer.Lightning)
+    inA:SetFromAlpha(0)
+    inA:SetToAlpha(1)
+    inA:SetDuration(0.1)
+    inA:SetOrder(1)
+    local outA = ag2:CreateAnimation("Alpha")
+    outA:SetTarget(slot.itemSetBorderShimmer.Lightning)
+    outA:SetFromAlpha(1)
+    outA:SetToAlpha(0)
+    outA:SetDuration(0.2)
+    outA:SetOrder(2)
+
+    slot.itemSetAnimationRunning = false
+    slot.itemSetTimer = nil
+
+    function slot:StartSetIndicatorAnimation()
+        if self.itemSetAnimationRunning then return end
+        self.itemSetAnimationRunning = true
+
+        self.itemSetBorderShimmer:Show()
+        self.itemSetBorderIndicator:Show()
+
         ag:Play()
-        StartLightning()
+        ag2:Play()
+
+        -- Starte mit zufälliger Verzögerung
+        local function StartBlitzLoop()
+            if not self.itemSetAnimationRunning then return end
+            local nextDelay = math.random(8, 15)
+            self.itemSetTimer = C_Timer.NewTimer(nextDelay, function()
+                if not self.itemSetAnimationRunning then return end
+                ag2:Play()
+                StartBlitzLoop()
+            end)
+        end
+
+        -- Initial leicht zufällig verzögert starten
+        C_Timer.After(math.random(0, 2), StartBlitzLoop)
     end
 
-    local function StopSetIndicatorAnimation()
-        slot.itemSetBorderShimmer:Hide()
-        slot.itemSetBorderIndicator:Hide()
+    function slot:StopSetIndicatorAnimation()
+        self.itemSetBorderShimmer:Hide()
+        self.itemSetBorderIndicator:Hide()
+
+        if not self.itemSetAnimationRunning then return end
+        self.itemSetAnimationRunning = false
+
         ag:Stop()
-        if slot.itemSetBorderShimmer.timer  then
-            slot.itemSetBorderShimmer.timer:Cancel()
-            slot.itemSetBorderShimmer.timer = nil
+        ag2:Stop()
+
+        if self.itemSetTimer then
+            self.itemSetTimer:Cancel()
+            self.itemSetTimer = nil
         end
     end
-    slot.StartSetIndicatorAnimation = StartSetIndicatorAnimation
-    slot.StopSetIndicatorAnimation = StopSetIndicatorAnimation
+
+    parent:HookScript("OnHide", function()
+        slot:StopSetIndicatorAnimation()
+    end)
 end
 
 
@@ -813,7 +854,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.repairIcon = slot:CreateTexture(nil, "OVERLAY")
     setupTexture(slot.repairIcon, slot, {"BOTTOMRIGHT", slot, "BOTTOMRIGHT"}, "Interface/AddOns/GW2_UI/textures/globe/repair", {0, 1, 0.5, 1}, {20, 20})
 
-    CreateItemSetGlow(slot, size)
+    CreateItemSetGlow(slot, size, parent)
 
     slot.itemlevel = slot:CreateFontString(nil, "OVERLAY")
     slot.itemlevel:SetSize(size, 10)
