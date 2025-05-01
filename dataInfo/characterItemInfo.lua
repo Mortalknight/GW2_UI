@@ -64,6 +64,25 @@ local function CreateSlotStrings()
         slot.enchantText:SetJustifyH(tbl.id >= 12 and "CENTER" or "LEFT")
         slot.enchantText:SetPoint(justify, slot, x + (justify == "BOTTOMLEFT" and 5 or 0), y)
 
+        if tbl.id >= 12 then
+            local enchantHoverFrame = CreateFrame("Button", nil, slot)
+            enchantHoverFrame:SetAllPoints(slot.enchantText)
+            enchantHoverFrame:SetFrameLevel(slot:GetFrameLevel() + 1)
+            enchantHoverFrame:SetScript("OnEnter", function(self)
+                if not slot.tooltipText then return end
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:ClearLines()
+
+                if slot.enchantColors then
+                    GameTooltip:AddLine(slot.tooltipText, unpack(slot.enchantColors))
+                else
+                    GameTooltip:AddLine(slot.tooltipText)
+                end
+                GameTooltip:Show()
+            end)
+            enchantHoverFrame:SetScript("OnLeave", GameTooltip_Hide)
+        end
+
         slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
 
         for u = 1, 10 do
@@ -76,9 +95,11 @@ local function CreateSlotStrings()
 end
 
 local function UpdatePageStrings(inspectItem, slotInfo)
-    inspectItem.enchantText:SetText(GW.RoundInt(inspectItem.enchantText:GetWidth()) == 40 and slotInfo.enchantTextShort2 or slotInfo.enchantText or "")
-
+    local width = GW.RoundInt(inspectItem.enchantText:GetWidth())
+    inspectItem.enchantText:SetText(width == 40 and slotInfo.enchantTextShort2 or slotInfo.enchantText or "")
+    inspectItem.tooltipText = width == 40 and slotInfo.enchantText or nil
     if slotInfo.enchantColors and next(slotInfo.enchantColors) then
+        inspectItem.enchantColors = width == 40 and slotInfo.enchantColors or nil
         inspectItem.enchantText:SetTextColor(unpack(slotInfo.enchantColors))
     end
 
