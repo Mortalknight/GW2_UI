@@ -170,20 +170,23 @@ local function AddFlare(frame, flarFrame)
         flarFrame.flare2:Show()
     end
 
-    if not flarFrame.animationGroup1 then
-        flarFrame.animationGroup1 = flarFrame.flare:CreateAnimationGroup()
-        local a1 = flarFrame.animationGroup1:CreateAnimation("Rotation")
-        a1:SetDegrees(2000)
-        a1:SetDuration(60)
-        a1:SetSmoothing("OUT")
-    end
+    if not flarFrame.animationGroup then
+        flarFrame.animationGroup = flarFrame:CreateAnimationGroup()
+        local rotation = flarFrame.animationGroup:CreateAnimation("Rotation")
+        rotation:SetTarget(flarFrame.flare)
+        rotation:SetDegrees(2000)
+        rotation:SetDuration(60)
+        rotation:SetSmoothing("OUT")
+        rotation:SetOrder(1)
 
-    if not flarFrame.animationGroup2 then
-        flarFrame.animationGroup2 = flarFrame.flare2:CreateAnimationGroup()
-        local a2 = flarFrame.animationGroup2:CreateAnimation("Rotation")
-        a2:SetDegrees(-2000)
-        a2:SetDuration(60)
-        a2:SetSmoothing("OUT")
+        local rotation2 = flarFrame.animationGroup:CreateAnimation("Rotation")
+        rotation2:SetTarget(flarFrame.flare2)
+        rotation2:SetDegrees(-2000)
+        rotation2:SetDuration(60)
+        rotation2:SetSmoothing("OUT")
+        rotation2:SetOrder(1)
+
+        flarFrame.animationGroup:SetLooping("REPEAT")
     end
 end
 GW.AddFlareAnimationToObject = AddFlare
@@ -1589,8 +1592,7 @@ local function LoadAlertSystem()
     hooksecurefunc("AlertFrame_PlayIntroAnimation", function(self)
         -- show flare
         if self.flareIcon then
-            self.flareIcon.animationGroup1:Play()
-            self.flareIcon.animationGroup2:Play()
+            self.flareIcon.animationGroup:Play()
         end
     end)
     hooksecurefunc("AlertFrame_PlayOutAnimation", function(self)
@@ -1600,11 +1602,8 @@ local function LoadAlertSystem()
                 self.timer = nil
             end
             self.timer = C_Timer.NewTicker(self.duration or 4, function()
-                if not self:IsShown() then
-                    self.flareIcon.animationGroup1:Stop()
-                    self.flareIcon.animationGroup2:Stop()
-                    self.timer:Cancel()
-                end
+                self.flareIcon.animationGroup:Stop()
+                self.timer:Cancel()
             end)
         end
     end)

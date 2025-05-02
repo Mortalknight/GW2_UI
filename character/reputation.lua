@@ -636,8 +636,20 @@ local function InitCategorieButton(button, elementData)
         GW.AddFlareAnimationToObject(button, button.paragonIndicator)
         button.paragonIndicator.flare:SetSize(32, 32)
         button.paragonIndicator.flare2:SetSize(32, 32)
-        button.paragonIndicator.animationGroup1:SetScript("OnFinished", function(self) self:Play() end)
-        button.paragonIndicator.animationGroup2:SetScript("OnFinished", function(self) self:Play() end)
+
+        function button:StopParagonIdicatorAnimation()
+            self.paragonIndicator:Hide()
+            self.flareIcon.animationGroup:Stop()
+        end
+
+        function button:StartParagonIdicatorAnimation()
+            self.paragonIndicator:Show()
+            self.flareIcon.animationGroup:Play()
+        end
+
+        GwPaperReputation:HookScript("OnHide", function()
+           button:StopParagonIdicatorAnimation()
+        end)
 
         button.isSkinned = true
     end
@@ -664,14 +676,10 @@ local function InitCategorieButton(button, elementData)
         button.statusbarbg:Hide()
     end
     -- paragonIndicator
-    button.paragonIndicator:Hide()
-    button.flareIcon.animationGroup1:Stop()
-    button.flareIcon.animationGroup2:Stop()
+    button:StopParagonIdicatorAnimation()
     if GwPaperReputation:IsShown() then
         if elementData.hasPendingParagonReward then
-            button.paragonIndicator:Show()
-            button.flareIcon.animationGroup1:Play()
-            button.flareIcon.animationGroup2:Play()
+            button:StartParagonIdicatorAnimation()
         end
     end
 
@@ -812,8 +820,6 @@ local function LoadReputation(tabContainer)
 
     fmGPR:HookScript("OnHide", function(self)
         FrameUtil.UnregisterFrameForEvents(self.Categories, ReputationFrameEvents)
-        local cat, _ = CollectFactionData()
-        UpdateCategories(fmGPR.Categories, cat)
     end)
 end
 GW.LoadReputation = LoadReputation
