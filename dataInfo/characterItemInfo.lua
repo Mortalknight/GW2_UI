@@ -45,26 +45,39 @@ local function GetInspectPoints(id)
     if not id then return end
 
     if id <= 10 then
-        return 47, 18, "BOTTOMLEFT"
+        return 3, 0, "LEFT", "RIGHT"
     elseif id <= 13 then
-        return 0, 25, "TOP"
+        return 0, 26, "TOP", "TOP"
     else
-        return 0, -25, "BOTTOM"
+        return 0, -26, "BOTTOM", "BOTTOM"
     end
 end
 
 local function CreateSlotStrings()
     for name, tbl in pairs(InspectItems) do
         local slot = _G[name]
-        local x, y, justify = GetInspectPoints(tbl.id)
+        local x, y, justify, point = GetInspectPoints(tbl.id)
 
         slot.enchantText = slot:CreateFontString(nil, "OVERLAY")
-        slot.enchantText:SetSize(tbl.id >= 12 and 40 or 100, 30)
-        slot.enchantText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, tbl.id >= 12 and -4 or -2)
-        slot.enchantText:SetJustifyH(tbl.id >= 12 and "CENTER" or "LEFT")
-        slot.enchantText:SetPoint(justify, slot, x + (justify == "BOTTOMLEFT" and 5 or 0), y)
+        slot.enchantText:SetSize(tbl.id >= 11 and 40 or 100, 30)
+        slot.enchantText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, tbl.id >= 11 and -4 or -2)
+        slot.enchantText:SetJustifyH(tbl.id >= 11 and "CENTER" or "LEFT")
+        slot.enchantText:SetPoint(justify, slot, point, x + (justify == "CENTER" and 5 or 0), y)
 
-        if tbl.id >= 12 then
+        local bg = slot:CreateTexture(nil, "BACKGROUND")
+        bg:SetAlpha(0.6)
+        bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover")
+        bg:SetPoint("TOPLEFT", slot.enchantText, "TOPLEFT", -2, 2)
+        bg:SetPoint("BOTTOMRIGHT", slot.enchantText, "BOTTOMRIGHT", 2, -2)
+        bg:Hide()
+        if tbl.id >= 11 and tbl.id <= 13 then
+            bg:SetRotation(1.5708)
+        elseif tbl.id >= 14 then
+            bg:SetRotation(4.7124)
+        end
+        slot.enchantTextBg = bg
+
+        if tbl.id >= 11 then
             local enchantHoverFrame = CreateFrame("Button", nil, slot)
             enchantHoverFrame:SetAllPoints(slot.enchantText)
             enchantHoverFrame:SetFrameLevel(slot:GetFrameLevel() + 1)
@@ -86,10 +99,11 @@ local function CreateSlotStrings()
         slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
 
         for u = 1, 10 do
-            local offsetX = u == 1 and 2 or -((u - 1) * 13)
+            local offset = -((u - 1) * 13)
             local offsetY = -2
-            if u >= 4 then offsetY = offsetY + (math.floor((u - 1) / 3) * 13) end
-            slot["textureSlot" .. u], slot["textureSlotBackdrop" .. u] = CreateInspectTexture(slot, offsetX, offsetY)
+            local newX = u == 1 and 2 or -offset
+            local newY = u == 4 and offsetY + 13 or u == 4 and offsetY + 26 or u == 7 and offsetY + 39 or offsetY
+            slot["textureSlot" .. u], slot["textureSlotBackdrop" .. u] = CreateInspectTexture(slot, newX, newY)
         end
     end
 end
@@ -98,6 +112,7 @@ local function UpdatePageStrings(inspectItem, slotInfo)
     local width = GW.RoundInt(inspectItem.enchantText:GetWidth())
     inspectItem.enchantText:SetText(width == 40 and slotInfo.enchantTextShort2 or slotInfo.enchantText or "")
     inspectItem.tooltipText = width == 40 and slotInfo.enchantText or nil
+    inspectItem.enchantTextBg:SetShown(slotInfo.enchantTextShort2 or slotInfo.enchantText)
     if slotInfo.enchantColors and next(slotInfo.enchantColors) then
         inspectItem.enchantColors = width == 40 and slotInfo.enchantColors or nil
         inspectItem.enchantText:SetTextColor(unpack(slotInfo.enchantColors))
