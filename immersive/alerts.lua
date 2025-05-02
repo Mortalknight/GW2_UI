@@ -1604,7 +1604,8 @@ local function LoadAlertSystem()
             self.timer = C_Timer.NewTicker(self.duration or 4, function()
                 self.flareIcon.animationGroup:Stop()
                 self.timer:Cancel()
-            end)
+                self.timer = nil
+            end, 1)
         end
     end)
 
