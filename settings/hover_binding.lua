@@ -313,7 +313,5 @@ local function LoadHoverBinds()
     fmGWKB.cancelButton:SetText(CANCEL)
     fmGWKB.acceptButton:SetScript("OnClick", fmGWKB_accept_OnClick)
     fmGWKB.cancelButton:SetScript("OnClick", fmGWKB_cancel_OnClick)
-
-    tinsert(UISpecialFrames, "GwKeyBindPrompt")
 end
 GW.LoadHoverBinds = LoadHoverBinds
