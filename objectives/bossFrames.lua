@@ -54,12 +54,20 @@ function GwBossFrameMixin:OnShow()
     self:UpdateRaidMarkers()
     self:UpdateHealthbarColor()
     self.container:UpdateBossFrameHeight()
+
+    if self.eventless then
+        self:SetScript("OnUpdate", self.OnUpdate)
+    end
 end
 
 function GwBossFrameMixin:OnHide()
     self.container:UpdateBossFrameHeight()
     if self.id == 1 then
         GwObjectivesNotification:RemoveNotificationOfType("BOSS")
+    end
+
+    if self.eventless then
+        self:SetScript("OnUpdate", nil)
     end
 end
 
@@ -87,6 +95,24 @@ function GwBossFrameMixin:OnEvent(event, unit)
         self:UpdateHealthbarColor()
         self.container:UpdateBossFrameHeight()
     end
+end
+
+function GwBossFrameMixin:OnUpdate(elapsed)
+    if self.totalElapsed > 0 then
+        self.totalElapsed = self.totalElapsed - elapsed
+        return
+    end
+    self.totalElapsed = 0.25
+    if not UnitExists(self.unit) then
+        return
+    end
+
+    self:UpdateName()
+    self:UpdateHealth()
+    self:UpdatePower()
+    self:UpdateRaidMarkers()
+    self:UpdateHealthbarColor()
+    self.container:UpdateBossFrameHeight()
 end
 
 GwObjectivesBossContainerMixin = {}
@@ -123,7 +149,7 @@ function GwObjectivesBossContainerMixin:SetUpFramePosition()
     end
 end
 
-function GwObjectivesBossContainerMixin:RegisterFrame(i)
+function GwObjectivesBossContainerMixin:RegisterFrame(i, eventless)
     local bossFrame = CreateFrame("Button", "GwBossFrame" .. i, GwQuestTracker, "GwQuestTrackerBossFrameTemp")
     local unit = "boss" .. i
 
@@ -131,6 +157,7 @@ function GwObjectivesBossContainerMixin:RegisterFrame(i)
     bossFrame.unit = unit
     bossFrame.guid = UnitGUID(unit)
     bossFrame.container = self
+    bossFrame.eventless = eventless
 
     bossFrame:SetAttribute("unit", unit)
     bossFrame:SetAttribute("*type1", "target")
@@ -147,20 +174,25 @@ function GwObjectivesBossContainerMixin:RegisterFrame(i)
 
     bossFrame.icon:SetVertexColor(TRACKER_TYPE_COLOR.BOSS.r, TRACKER_TYPE_COLOR.BOSS.g, TRACKER_TYPE_COLOR.BOSS.b)
 
-    bossFrame:RegisterEvent("RAID_TARGET_UPDATE")
-    bossFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-    bossFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    bossFrame:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
-    bossFrame:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
-    bossFrame:RegisterUnitEvent("UNIT_HEALTH", unit)
-    bossFrame:RegisterUnitEvent("UNIT_MAXPOWER", unit)
-    bossFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
-    bossFrame:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
-    bossFrame:RegisterUnitEvent("UNIT_FACTION", unit)
+    if not eventless then
+        bossFrame:RegisterEvent("RAID_TARGET_UPDATE")
+        bossFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+        bossFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        bossFrame:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
+        bossFrame:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
+        bossFrame:RegisterUnitEvent("UNIT_HEALTH", unit)
+        bossFrame:RegisterUnitEvent("UNIT_MAXPOWER", unit)
+        bossFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
+        bossFrame:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
+        bossFrame:RegisterUnitEvent("UNIT_FACTION", unit)
+
+        bossFrame:SetScript("OnEvent", bossFrame.OnEvent)
+    else
+        bossFrame.totalElapsed = 0.15
+    end
 
     bossFrame:SetScript("OnShow", bossFrame.OnShow)
     bossFrame:SetScript("OnHide", bossFrame.OnHide)
-    bossFrame:SetScript("OnEvent", bossFrame.OnEvent)
     bossFrame:SetScript("OnEnter", bossFrame.OnEnter)
     bossFrame:SetScript("OnLeave", bossFrame.OnLeave)
 
@@ -168,8 +200,10 @@ function GwObjectivesBossContainerMixin:RegisterFrame(i)
 end
 
 function GwObjectivesBossContainerMixin:InitModule()
-    for i = 1, 8 do
-        bossFrames[i] = self:RegisterFrame(i)
+    local eventless = false
+    for i = 1, 10 do
+        if i >= 6 then eventless = true end
+        bossFrames[i] = self:RegisterFrame(i, eventless)
     end
     self:SetUpFramePosition()
     C_Timer.After(0.01, function() self:UpdateBossFrameHeight() end)

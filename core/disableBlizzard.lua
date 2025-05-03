@@ -4,7 +4,7 @@ local isArenaHooked = false
 local lockedFrames = {}
 
 local MAX_PARTY = MEMBERS_PER_RAID_GROUP or MAX_PARTY_MEMBERS or 5
-local MAX_BOSS_FRAMES = 8
+local MAX_BOSS_FRAMES = 10
 
 -- lock Boss, Party, and Arena
 local function LockParent(frame, parent)
