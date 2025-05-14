@@ -304,6 +304,7 @@ function GwUnitFrameMixin:UpdateRaidMarkers()
 end
 
 function GwUnitFrameMixin:SetUnitPortrait()
+    if not self.portrait then return end
     SetPortraitTexture(self.portrait, self.unit)
     if self.frameInvert then
         self.portrait:SetTexCoord(1, 0, 0, 1)
@@ -328,12 +329,11 @@ function GwUnitFrameMixin:UnitFrameData(lvl)
 
         self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
         self.nameString:SetTextColor(math.min(color.r + 0.3, 1), math.min(color.g + 0.3, 1), math.min(color.b + 0.3, 1), color.a)
-
-        SetPortraitTexture(self.portrait, self.unit)
     else
         self:UpdateHealthbarColor()
     end
 
+    self:SetUnitPortrait()
     self:SetUnitPortraitFrame()
 end
 
@@ -397,10 +397,7 @@ function GwUnitFrameMixin:HideCastBar()
     if self.castingbarNormal then self.castingbarNormal:Hide() end
 
     self:ClearStages()
-
-    if self.portrait then
-        self:SetUnitPortrait()
-    end
+    self:SetUnitPortrait()
 
     local animKey = "GwUnitFrame" .. self.unit .. "Cast"
     local anim = animations[animKey]
