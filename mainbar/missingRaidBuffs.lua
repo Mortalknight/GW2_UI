@@ -10,69 +10,55 @@ local buffInfos = {}
 
 local reminderBuffs = {
     Flask = {
-        -- Dragonflight
-        [1] = 370652, -- Phial of Static Empowerment
-        [2] = 370661, -- Phial of Icy Preservation
-		[3] = 371172, -- Phial of Tepid Versatility
-		[4] = 371186, -- Charged Phial of Alacrity
-		[5] = 371204, -- Phial of Still Air
-		[6] = 371339, -- Phial of Elemental Chaos
-		[7] = 371354, -- Phial of the Eye in the Storm
-		[8] = 371386, -- Phial of Charged Isolation
-		[9] = 373257, -- Phial of Glacial Fury
-		[10] = 374000, -- Iced Phial of Corrupting Rage
+        -- TWW
+        431971, -- Flask of Tempered Aggression
+        431972, -- Flask of Tempered Swiftness
+        431973, -- Flask of Tempered Versatility
+        431974, -- Flask of Tempered Mastery
+        432021, -- Flask of Alchemical Chaos
+        432021, -- Flask of Alchemical Chaos
+        432473, -- Flask of Saving Graces
     },
     DefiledAugmentRune = {
-        [1] = 224001,			-- Defiled Augumentation (15 primary stat)
-        [2] = 270058,			-- Battle Scarred Augmentation (60 primary stat)
-        [3] = 347901,			-- Veiled Augmentation (18 primary stat)
-        [4] = 367405,           -- Eternal Augment Rune
+        393438, -- Dreambound Augment Rune
+        453250, -- Crystallized Augment Rune
     },
     Food = {
-        [1] = 104280,	-- Well Fed
-        [2] = 461957,	-- Well Fed
-        [3] = 461958,	-- Well Fed
-        [4] = 461959,	-- Well Fed
-        [5] = 461960,	-- Well Fed
-
-        [6] = 462180,	-- Well Fed
-        [7] = 462181,	-- Well Fed
-        [8] = 462182,	-- Well Fed
-        [9] = 462183,	-- Well Fed
-        [10] = 462210,	-- Well Fed
+    -- Well Fed
+        104280,
+        461957, -- (Mastery)
+        461958, -- (Vers)
+        461959, -- (Crit)
+        461960, -- (Haste)
+        -- Hearty Well Fed
+        462180, -- (Haste)
+        462181, -- (Crit)
+        462182, -- (Vers)
+        462183, -- (Mastery)
+        462210, -- (Primary Stat)
+        -- Delve
+        442522,	-- Delve
     },
     Intellect = {
-        [1] = 1459, -- Arcane Intellect
+        1459, -- Arcane Intellect
     },
     Stamina = {
-        [1] = 21562, -- Power Word: Fortitude
+        21562, -- Power Word: Fortitude
     },
     AttackPower = {
-        [1] = 6673, -- Battle Shout
+        6673, -- Battle Shout
     },
     Versatility = {
-		[1] = 1126,    -- Mark of the Wild
-	},
+        1126, -- Mark of the Wild
+    },
     Mastery = {
-        [1] = 462854,  -- Skyfury
+        462854, -- Skyfury
     },
-    MovementBuff = {
-        [1] = 381752, -- Evoker
-        [2] = 381732, -- Evoker
-        [3] = 381741, -- Evoker
-        [4] = 381746, -- Evoker
-        [5] = 381748, -- Evoker
-        [6] = 381749, -- Evoker
-        [7] = 381750, -- Evoker
-        [8] = 381751, -- Evoker
-        [9] = 381753, -- Evoker
-        [10] = 381754, -- Evoker
-        [11] = 381756, -- Evoker
-        [12] = 381757, -- Evoker
-        [13] = 381758, -- Evoker
+    CooldownReduce = {
+        381748, -- Blessing of the Bronze -- search for name
     },
-    Weapon = { -- EnchantsID
-        [1] = nil,
+    Weapon = {
+        1, -- just a fallback
     },
     Custom = {
         -- spellID,	-- Spell Info
@@ -137,12 +123,9 @@ end
 local RaidBuffReminderMixin = {}
 
 function RaidBuffReminderMixin:OnLoad()
-    -- Setze Klassenfarbe
     self.classColor = GW.GWGetClassColor(GW.myclass, true)
-    -- Initialisiere BuffInfos
     self:UpdateBuffInfos()
 
-    -- Erstelle Buttons und mische ButtonMixin ein
     self.intButton = CreateFrame("Button", nil, self)
     Mixin(self.intButton, ButtonMixin)
     self.intButton:Init(self, self, true)
@@ -159,13 +142,13 @@ function RaidBuffReminderMixin:OnLoad()
     Mixin(self.versatilityButton, ButtonMixin)
     self.versatilityButton:Init(self, self.attackPowerButton, false)
 
-    self.movementButton = CreateFrame("Button", nil, self)
-    Mixin(self.movementButton, ButtonMixin)
-    self.movementButton:Init(self, self.versatilityButton, false)
+    self.CooldownReduce = CreateFrame("Button", nil, self)
+    Mixin(self.CooldownReduce, ButtonMixin)
+    self.CooldownReduce:Init(self, self.versatilityButton, false)
 
     self.masteryButton = CreateFrame("Button", nil, self)
     Mixin(self.masteryButton, ButtonMixin)
-    self.masteryButton:Init(self, self.movementButton, false)
+    self.masteryButton:Init(self, self.CooldownReduce, false)
 
     self.flaskButton = CreateFrame("Button", nil, self)
     Mixin(self.flaskButton, ButtonMixin)
@@ -175,17 +158,16 @@ function RaidBuffReminderMixin:OnLoad()
     Mixin(self.foodButton, ButtonMixin)
     self.foodButton:Init(self, self.flaskButton, false)
 
-    self.daRuneButton = CreateFrame("Button", nil, self)
-    Mixin(self.daRuneButton, ButtonMixin)
-    self.daRuneButton:Init(self, self.foodButton, false)
+    self.DefiledAugmentRune = CreateFrame("Button", nil, self)
+    Mixin(self.DefiledAugmentRune, ButtonMixin)
+    self.DefiledAugmentRune:Init(self, self.foodButton, false)
 
     self.customButton = CreateFrame("Button", nil, self)
     Mixin(self.customButton, ButtonMixin)
-    self.customButton:Init(self, self.daRuneButton, false)
+    self.customButton:Init(self, self.CooldownReduce, false)
 end
 
 function RaidBuffReminderMixin:UpdateBuffInfos()
-    -- Füllt die buffInfos-Tabelle basierend auf reminderBuffs
     for key, tbl in pairs(reminderBuffs) do
         buffInfos[key] = {}
         if type(tbl) == "table" then
@@ -233,6 +215,13 @@ function RaidBuffReminderMixin:CheckForBuffs()
                             foundBuff = true
                             break
                         end
+                    elseif key == "CooldownReduce" then -- here we search for name to reduce all call spell ids
+                        if AuraUtil.FindAuraByName(buff.name, "player") then
+                            buff.hasBuff = true
+                            checkIds[auraData.spellId] = true
+                            foundBuff = true
+                            break
+                        end
                     else
                         if buff.spellId == auraData.spellId then
                             buff.hasBuff = true
@@ -262,9 +251,9 @@ function RaidBuffReminderMixin:UpdateButtons()
     self.staminaButton:UpdateForType("Stamina")
     self.attackPowerButton:UpdateForType("AttackPower")
     self.versatilityButton:UpdateForType("Versatility")
-    self.movementButton:UpdateForType("MovementBuff")
+    self.CooldownReduce:UpdateForType("CooldownReduce")
     self.masteryButton:UpdateForType("Mastery")
-    self.daRuneButton:UpdateForType("DefiledAugmentRune")
+    self.DefiledAugmentRune:UpdateForType("DefiledAugmentRune")
 
     if #buffInfos.Custom > 0 then
         self:SetSize(309, 32)
@@ -312,6 +301,8 @@ function RaidBuffReminderMixin:UpdateVisibility()
         ["IN_RAID_IN_PARTY"] = "[petbattle] hide; [group] show; hide",
     }
     RegisterStateDriver(self, "visibility", VisibilityStates[GW.settings.MISSING_RAID_BUFF])
+
+    self:UpdateButtons()
 end
 
 local function LoadRaidbuffReminder()
