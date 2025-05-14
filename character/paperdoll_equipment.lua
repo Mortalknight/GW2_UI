@@ -144,7 +144,7 @@ local function setItemButtonQuality(button, quality)
         if quality >= Enum.ItemQuality.Common and color then
             button.IconBorder:Show()
             button.IconBorder:SetVertexColor(color.r, color.g, color.b)
-            if  button.itemSetBorderIndicator then
+            if button.itemSetBorderIndicator then
                 button.itemSetBorderIndicator.Glow:SetVertexColor(color.r, color.g, color.b)
                 button.itemSetBorderShimmer.Lightning:SetVertexColor(color.r, color.g, color.b)
             end

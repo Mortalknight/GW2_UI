@@ -222,7 +222,7 @@ local function ToggleCharacterItemInfo(setup)
             local inspectItem = _G[name]
             inspectItem.enchantText:SetText("")
             inspectItem.itemlevel:SetText("")
-            inspectItem.setBorder:Hide()
+            inspectItem.itemSetBorderIndicator:Hide()
 
             for y = 1, 10 do
                 inspectItem["textureSlot" .. y]:SetTexture()
