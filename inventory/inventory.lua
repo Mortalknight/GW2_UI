@@ -28,6 +28,7 @@ do
             end
             return
         end
+        upgradeCache = {}
         ContainerFrame_UpdateAll()
     end
 
