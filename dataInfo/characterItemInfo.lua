@@ -221,6 +221,7 @@ local function ToggleCharacterItemInfo(setup)
         for name, _ in pairs(InspectItems) do
             local inspectItem = _G[name]
             inspectItem.enchantText:SetText("")
+            inspectItem.enchantTextBg:Hide()
             inspectItem.itemlevel:SetText("")
             inspectItem.itemSetBorderIndicator:Hide()
 

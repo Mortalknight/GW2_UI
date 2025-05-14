@@ -15,6 +15,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("7.13.2",{
+    {ct.bug, [=[Fix issue with 7.13.1]=]},
+})
+
 addChange("7.13.1",{
     {ct.bug, [=[Hero panel opens for enchants]=]},
     {ct.bug, [=[Weapon enchants should now show correclty]=]},
