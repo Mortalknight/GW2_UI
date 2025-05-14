@@ -15,6 +15,19 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("7.13.1",{
+    {ct.bug, [=[Hero panel opens for enchants]=]},
+    {ct.bug, [=[Weapon enchants should now show correclty]=]},
+    {ct.bug, [=[Fix Pawn integration]=]},
+    {ct.bug, [=[Raid lock lua error]=]},
+    {ct.change, [=[Redo reputation frame, should load and react faster]=]},
+    {ct.change, [=[Add radio button texture]=]},
+    {ct.change, [=[Added Nightfall to objectives tracker]=]},
+    {ct.change, [=[Update some skins]=]},
+    {ct.change, [=[Added 3 new widget mover to move hud mode]=]},
+    {ct.change, [=[Added some animations]=]},
+})
+
 addChange("7.13.0",{
     {ct.feature, [=[Cooldown Manager skin]=]},
     {ct.feature, [=[Add paragon indicator to reputation category list]=]},
