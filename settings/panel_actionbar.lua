@@ -91,39 +91,12 @@ local function LoadActionbarPanel(sWindow)
 
     -- GENERAL
     addOption(general.scroll.scrollchild, L["Automatic Bar Layout"], L["Enable or disable the automatic layout management of the primary action bars and associated frames (pet, buffs); required for auto bar fading and some other features"], "BAR_LAYOUT_ENABLED", function() GW.ShowRlPopup = true end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
-    addOptionSlider(
-        general.scroll.scrollchild,
-        L["Empty slots alpha"],
-        L["Set the empty action bar slots alpha value."],
-        "ACTIONBAR_BACKGROUND_ALPHA",
-        function()
-            GW.UpdateMainBarHot()
-            GW.UpdateMultibarButtons()
-        end,
-        0,
-        1,
-        nil,
-        1,
-        {["ACTIONBARS_ENABLED"] = true}
-    )
+    addOptionSlider(general.scroll.scrollchild, L["Empty slots alpha"], L["Set the empty action bar slots alpha value."], {settingName = "ACTIONBAR_BACKGROUND_ALPHA", getterSetter = "GW.settings.ACTIONBAR_BACKGROUND_ALPHA", callback = function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, min = 0, max = 1, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true}})
     addOption(general.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
     addOption(general.scroll.scrollchild, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons(); if GwPlayerPetFrame then GwPlayerPetFrame:UpdatePetBarButtons() end end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
 
     -- MAINBAR
-    addOptionSlider(
-        mainBar.scroll.scrollchild,
-        L["Button Spacing"],
-        nil,
-        "MAINBAR_MARGIIN",
-        function()
-            GW.UpdateMainBarHot()
-        end,
-        0,
-        10,
-        nil,
-        1,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}
-    )
+    addOptionSlider(mainBar.scroll.scrollchild, L["Button Spacing"], nil, {settingName = "MAINBAR_MARGIIN", getterSetter = "GW.settings.MAINBAR_MARGIIN", callback = function() GW.UpdateMainBarHot() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}})
     addOptionDropdown(
         mainBar.scroll.scrollchild,
         L["Main Bar Range Indicator"],
@@ -155,20 +128,8 @@ local function LoadActionbarPanel(sWindow)
 
 
     --EXTRABARS
-    addOptionSlider(
-        extraBars.scroll.scrollchild,
-        L["Button Spacing"],
-        nil,
-        "MULTIBAR_MARGIIN",
-        function()
-            GW.UpdateMultibarButtons()
-        end,
-        0,
-        10,
-        nil,
-        1,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}
-    )
+    addOptionSlider(extraBars.scroll.scrollchild, L["Button Spacing"], nil, {settingName = "MULTIBAR_MARGIIN", getterSetter = "GW.settings.MULTIBAR_MARGIIN", callback = function() GW.UpdateMultibarButtons() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}})
+
     addOptionDropdown(
         extraBars.scroll.scrollchild,
         OPTION_SHOW_ACTION_BAR:format(2) .. " " .. SHOW,

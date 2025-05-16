@@ -225,6 +225,25 @@ function GwPlayerPetFrameMixin:ToggleAuraPosition()
     self.auras:ForceUpdate()
 end
 
+function GwPlayerPetFrameMixin:ToggleFaderOptions()
+    local frameFaderSettings = GW.settings.petFrameFader
+    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight then
+        GW.FrameFadeEnable(self, true)
+        self.Fader:SetOption("Hover", frameFaderSettings.hover)
+        self.Fader:SetOption("Combat", frameFaderSettings.combat)
+        self.Fader:SetOption("Casting", frameFaderSettings.casting)
+        self.Fader:SetOption("DynamicFlight", frameFaderSettings.dynamicflight)
+        self.Fader:SetOption("Smooth", (frameFaderSettings.smooth > 0 and frameFaderSettings.smooth) or nil)
+        self.Fader:SetOption("MinAlpha", frameFaderSettings.minAlpha)
+        self.Fader:SetOption("MaxAlpha", frameFaderSettings.maxAlpha)
+
+        self.Fader:ClearTimers()
+        self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)
+    elseif self.Fader then
+        GW.FrameFadeDisable(self)
+    end
+end
+
 function GwPlayerPetFrameMixin:ToggleCombatFeedback()
     if GW.settings.PET_FLOATING_COMBAT_TEXT then
         self:RegisterEvent("UNIT_COMBAT")
@@ -361,5 +380,8 @@ local function LoadPetFrame(lm)
     playerPetFrame.feedbackText:Hide()
     playerPetFrame.feedbackFontHeight = 30
     playerPetFrame:ToggleCombatFeedback()
+
+    --frame fader init
+    playerPetFrame:ToggleFaderOptions()
 end
 GW.LoadPetFrame = LoadPetFrame

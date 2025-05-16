@@ -32,27 +32,15 @@ local function LoadChatPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Emotion Icons"], L["Display emotion icons in chat"], "CHAT_KEYWORDS_EMOJI", function(value) GW.UpdateChatSettings(); GW_EmoteFrame:Hide(); for _, frameName in ipairs(CHAT_FRAMES) do if _G[frameName].buttonEmote then _G[frameName].buttonEmote:SetShown(value); end end end, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Quick Join Messages"], L["Show clickable Quick Join messages inside of the chat."], "CHAT_SOCIAL_LINK", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Add timestamp to all messages"], nil, "CHAT_ADD_TIMESTAMP_TO_ALL", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, GW.NewSign .. L["Copy Chat Lines"], L["Adds an arrow infront of the chat lines to copy the entire line"], "copyChatLines", nil, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, GW.NewSign .. L["History"], L["Log the main chat frames history. So when you reloadui or log in and out you see the history from your last session"], "chatHistory", nil, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Copy Chat Lines"], L["Adds an arrow infront of the chat lines to copy the entire line"], "copyChatLines", nil, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["History"], L["Log the main chat frames history. So when you reloadui or log in and out you see the history from your last session"], "chatHistory", nil, nil, {["CHATFRAME_ENABLED"] = true})
 
-    addOptionSlider(
-        p.scroll.scrollchild,
-        GW.NewSign .. L["History Size"],
-        nil,
-        "historySize",
-        nil,
-        10,
-        500,
-        nil,
-        0,
-        {["CHATFRAME_ENABLED"] = true, ["chatHistory"] = true},
-        1
-    )
-    addOptionButton(p.scroll.scrollchild, GW.NewSign .. L["Reset History"], nil, "GW2_ResetChatHistoryButton", function() GW.private.ChatHistoryLog = {} end)
+    addOptionSlider(p.scroll.scrollchild, L["History Size"], nil, {settingName = "historySize", getterSetter = "GW.settings.historySize", min = 10, max = 500, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true, ["chatHistory"] = true}})
+    addOptionButton(p.scroll.scrollchild, L["Reset History"], nil, "GW2_ResetChatHistoryButton", function() GW.private.ChatHistoryLog = {} end)
 
     addOptionDropdown(
         p.scroll.scrollchild,
-        GW.NewSign .. TIMESTAMPS_LABEL,
+        TIMESTAMPS_LABEL,
         OPTION_TOOLTIP_TIMESTAMPS,
         "timeStampFormat",
         nil,
@@ -91,81 +79,12 @@ local function LoadChatPanel(sWindow)
         nil,
         true
     )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Spam Interval"] ,
-        L["Prevent the same messages from displaying in chat more than once within this set amount of seconds, set to zero to disable."],
-        "CHAT_SPAM_INTERVAL_TIMER",
-        function()
-            GW.UpdateChatSettings()
-            GW.DisableChatThrottle()
-        end,
-        0,
-        100,
-        nil,
-        0,
-        {["CHATFRAME_ENABLED"] = true},
-        1
-    )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Combat Repeat"],
-        L["Number of repeat characters while in combat before the chat editbox is automatically closed, set to zero to disable."],
-        "CHAT_INCOMBAT_TEXT_REPEAT",
-        function()
-            GW.UpdateChatSettings()
-        end,
-        0,
-        15,
-        nil,
-        0,
-        {["CHATFRAME_ENABLED"] = true},
-        1
-    )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Scroll Messages"],
-        L["Number of messages you scroll for each step."],
-        "CHAT_NUM_SCROLL_MESSAGES",
-        function()
-            GW.UpdateChatSettings()
-        end,
-        1,
-        12,
-        nil,
-        0,
-        {["CHATFRAME_ENABLED"] = true},
-        1
-    )
+    addOptionSlider(p.scroll.scrollchild, L["Spam Interval"], L["Prevent the same messages from displaying in chat more than once within this set amount of seconds, set to zero to disable."], {settingName = "CHAT_SPAM_INTERVAL_TIMER", getterSetter = "GW.settings.CHAT_SPAM_INTERVAL_TIMER", callback = function() GW.UpdateChatSettings(); GW.DisableChatThrottle() end, min = 0, max = 100, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Combat Repeat"], L["Number of repeat characters while in combat before the chat editbox is automatically closed, set to zero to disable."], {settingName = "CHAT_INCOMBAT_TEXT_REPEAT", getterSetter = "GW.settings.CHAT_INCOMBAT_TEXT_REPEAT", callback = function() GW.UpdateChatSettings() end, min = 0, max = 15, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Scroll Messages"], L["Number of messages you scroll for each step."], {settingName = "CHAT_NUM_SCROLL_MESSAGES", getterSetter = "GW.settings.CHAT_NUM_SCROLL_MESSAGES", callback = function() GW.UpdateChatSettings() end, min = 1, max = 12, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Scroll Interval"], L["Number of time in seconds to scroll down to the bottom of the chat window if you are not scrolled down completely."], {settingName = "CHAT_SCROLL_DOWN_INTERVAL", getterSetter = "GW.settings.CHAT_SCROLL_DOWN_INTERVAL", callback = function() GW.UpdateChatSettings() end, min = 0, max = 120, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild,  L["Maximum lines of 'Copy Chat Frame'"],  L["Set the maximum number of lines displayed in the Copy Chat Frame"], {settingName = "CHAT_MAX_COPY_CHAT_LINES", getterSetter = "GW.settings.CHAT_MAX_COPY_CHAT_LINES", min = 50, max = 500, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
 
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Scroll Interval"],
-        L["Number of time in seconds to scroll down to the bottom of the chat window if you are not scrolled down completely."],
-        "CHAT_SCROLL_DOWN_INTERVAL",
-        function()
-            GW.UpdateChatSettings()
-        end,
-        0,
-        120,
-        nil,
-        0,
-        {["CHATFRAME_ENABLED"] = true},
-        1
-    )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Maximum lines of 'Copy Chat Frame'"],
-        L["Set the maximum number of lines displayed in the Copy Chat Frame"],
-        "CHAT_MAX_COPY_CHAT_LINES",
-        nil,
-        50,
-        500,
-        nil,
-        0,
-        {["CHATFRAME_ENABLED"] = true},
-        1
-    )
     addOptionText(
         p.scroll.scrollchild,
         L["Keywords"],
@@ -179,7 +98,7 @@ local function LoadChatPanel(sWindow)
         nil,
         {["CHATFRAME_ENABLED"] = true}
     )
-    addOptionColorPicker(p.scroll.scrollchild, L["Keyword highlight color"], nil, "CHAT_KEYWORDS_ALERT_COLOR", GW.private.CHAT_KEYWORDS_ALERT_COLOR, GW.privateDefaults.profile.CHAT_KEYWORDS_ALERT_COLOR, nil, nil, {["CHATFRAME_ENABLED"] = true})
+    addOptionColorPicker(p.scroll.scrollchild, L["Keyword highlight color"], nil, {settingName = "CHAT_KEYWORDS_ALERT_COLOR", getterSetter = "GW.private.CHAT_KEYWORDS_ALERT_COLOR", dependence = {["CHATFRAME_ENABLED"] = true}})
 
     InitPanel(p, true)
 end

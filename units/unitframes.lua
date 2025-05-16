@@ -206,7 +206,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
         elseif self.showItemLevel == "PVP_LEVEL" then
             local honorLevel = UnitHonorLevel(unit) or 0
             local prestigeLevel = (honorLevel > 199 and 4) or (honorLevel > 99 and 3) or
-                                  (honorLevel > 49 and 2) or (honorLevel > 9 and 1) or 0
+                                (honorLevel > 49 and 2) or (honorLevel > 9 and 1) or 0
 
 
             if prestigeLevel > 0 and TARGET_FRAME_ART["prestige" .. prestigeLevel] then
@@ -680,6 +680,24 @@ function GwUnitFrameMixin:ToggleSettings()
 
     self:OnEvent("FORCE_UPDATE")
 
+    --frame fader
+    local frameFaderSettings = GW.settings[unit .. "FrameFader"]
+    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight then
+        GW.FrameFadeEnable(self, true)
+        self.Fader:SetOption("Hover", frameFaderSettings.hover)
+        self.Fader:SetOption("Combat", frameFaderSettings.combat)
+        self.Fader:SetOption("Casting", frameFaderSettings.casting)
+        self.Fader:SetOption("DynamicFlight", frameFaderSettings.dynamicflight)
+        self.Fader:SetOption("Smooth", (frameFaderSettings.smooth > 0 and frameFaderSettings.smooth) or nil)
+        self.Fader:SetOption("MinAlpha", frameFaderSettings.minAlpha)
+        self.Fader:SetOption("MaxAlpha", frameFaderSettings.maxAlpha)
+
+        self.Fader:ClearTimers()
+        self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)
+    elseif self.Fader then
+        GW.FrameFadeDisable(self)
+    end
+
     if GwPlayerClassPower then
         GW.UpdateClasspowerBar(GwPlayerClassPower.decay, "FORCE_UPDATE")
     end
@@ -801,6 +819,23 @@ function GwTargetUnitFrameMixin:ToggleSettings()
     self.classColor = GW.settings[self.parentUnitId .. "_TARGET_SHOW_CASTBAR"]
 
     self.altBg:SetShown(GW.settings[self.parentUnitId .. "_FRAME_ALT_BACKGROUND"])
+
+    local frameFaderSettings = GW.settings[self.unit .. "FrameFader"]
+    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight then
+        GW.FrameFadeEnable(self, true)
+        self.Fader:SetOption("Hover", frameFaderSettings.hover)
+        self.Fader:SetOption("Combat", frameFaderSettings.combat)
+        self.Fader:SetOption("Casting", frameFaderSettings.casting)
+        self.Fader:SetOption("DynamicFlight", frameFaderSettings.dynamicflight)
+        self.Fader:SetOption("Smooth", (frameFaderSettings.smooth > 0 and frameFaderSettings.smooth) or nil)
+        self.Fader:SetOption("MinAlpha", frameFaderSettings.minAlpha)
+        self.Fader:SetOption("MaxAlpha", frameFaderSettings.maxAlpha)
+
+        self.Fader:ClearTimers()
+        self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)
+    elseif self.Fader then
+        GW.FrameFadeDisable(self)
+    end
 
     self.parentUnitFrame:OnEvent("FORCE_UPDATE")
 end

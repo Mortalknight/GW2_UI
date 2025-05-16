@@ -29,7 +29,7 @@ local function LoadNotificationsPanel(sWindow)
     end
 
 
-    addOption(p.scroll.scrollchild, GW.NewSign .. L["Bots"], nil, "alertFrameNotificatioBot", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Bots"], nil, "alertFrameNotificatioBot", nil, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
@@ -47,7 +47,7 @@ local function LoadNotificationsPanel(sWindow)
         true
     )
 
-    addOption(p.scroll.scrollchild, GW.NewSign .. L["Feasts"], nil, "alertFrameNotificatioFeast", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Feasts"], nil, "alertFrameNotificatioFeast", nil, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,

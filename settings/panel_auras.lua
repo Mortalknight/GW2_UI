@@ -89,32 +89,8 @@ local function LoadAurasPanel(sWindow)
         nil,
         "spell"
     )
-    addOptionSlider(
-        p_auras.scroll.scrollchild,
-        L["Set important Dungeon & Raid debuff scale"],
-        nil,
-        "RAIDDEBUFFS_Scale",
-        function()
-            GW.UpdateGridSettings("ALL", false)
-        end,
-        0.5,
-        2,
-        nil,
-        2
-    )
-    addOptionSlider(
-        p_auras.scroll.scrollchild,
-        L["Set dispellable debuff scale"],
-        nil,
-        "DISPELL_DEBUFFS_Scale",
-        function()
-            GW.UpdateGridSettings("ALL", false)
-        end,
-        0.5,
-        2,
-        nil,
-        2
-    )
+    addOptionSlider(p_auras.scroll.scrollchild, L["Set important Dungeon & Raid debuff scale"], nil, {settingName = "RAIDDEBUFFS_Scale", getterSetter = "GW.settings.RAIDDEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
+    addOptionSlider(p_auras.scroll.scrollchild, L["Set dispellable debuff scale"], nil, {settingName = "DISPELL_DEBUFFS_Scale", getterSetter = "GW.settings.DISPELL_DEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
     addOptionDropdown(
         p_auras.scroll.scrollchild,
         L["Important & dispellable debuff scale priority"],

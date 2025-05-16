@@ -11,6 +11,43 @@ local all_options = {}
 local optionReference = {}
 
 --helper functions for settings
+function CreateSettingProxy(fullPath)
+    local keys = {}
+    for key in string.gmatch(fullPath, "[^%.]+") do
+        table.insert(keys, key)
+    end
+
+    return {
+        get = function()
+            local ref = GW
+            for i = 2, #keys - 1 do
+                ref = ref[keys[i]]
+                if not ref then return nil end
+            end
+            return ref[keys[#keys]]
+        end,
+
+        set = function(value)
+            local ref = GW
+            for i = 2, #keys - 1 do
+                if not ref[keys[i]] then ref[keys[i]] = {} end
+                ref = ref[keys[i]]
+            end
+            ref[keys[#keys]] = value
+        end,
+
+        getDefault = function()
+            local isPrivateDefault = keys[2] == "private"
+            local ref = (isPrivateDefault and GW.privateDefaults.profile) or GW.globalDefault.profile
+            for i = 3, #keys - 1 do
+                ref = ref[keys[i]]
+                if not ref then return nil end
+            end
+            return ref[keys[#keys]]
+        end
+    }
+end
+
 local function getSettingsCat()
   return settings_cat
 end
@@ -199,25 +236,33 @@ local function AddGroupHeader(panel, name)
 end
 GW.AddGroupHeader = AddGroupHeader
 
-local function AddOptionColorPicker(panel, name, desc, optionName, getterSetter, default, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+local function AddOptionColorPicker(panel, name, desc, values)
+    local opt = AddOption(panel, name, desc, values.settingName, values.callback, values.params, values.dependence, values.incompatibleAddons, values.forceNewLine, values.groupHeaderName)
 
     opt.optionType = "colorPicker"
-    opt.getterSetter = getterSetter
-    opt.default = default
+
+    local proxy = CreateSettingProxy(values.getterSetter)
+    opt.get = proxy.get
+    opt.set = proxy.set
+    opt.getDefault = proxy.getDefault
 
     return opt
 end
 GW.AddOptionColorPicker = AddOptionColorPicker
 
-local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
+local function AddOptionSlider(panel, name, desc, values)
+    local opt = AddOption(panel, name, desc, values.settingName, values.callback, values.params, values.dependence, values.incompatibleAddons, values.forceNewLine, values.groupHeaderName, values.isPrivateSetting)
 
-    opt.min = min
-    opt.max = max
-    opt.decimalNumbers = decimalNumbers or 0
-    opt.step = step
+    opt.min = values.min
+    opt.max = values.max
+    opt.decimalNumbers = values.decimalNumbers or 0
+    opt.step = values.step
     opt.optionType = "slider"
+
+    local proxy = CreateSettingProxy(values.getterSetter)
+    opt.get = proxy.get
+    opt.set = proxy.set
+    opt.getDefault = proxy.getDefault
 
     return opt
 end
@@ -359,12 +404,12 @@ local function ColorPickerFrameCallback(restore, frame, buttonBackground)
     end
     -- Update our internal storage.
 
-    local color = frame.getterSetter
+    local color = frame.get()
     local changed = color.r ~= newR or color.g ~= newG or color.b ~= newB
     color.r = newR
     color.g = newG
     color.b = newB
-    frame.getterSetter = color
+    frame.set(color)
     buttonBackground:SetColorTexture(newR, newG, newB)
 
     if frame.callback then
@@ -373,21 +418,21 @@ local function ColorPickerFrameCallback(restore, frame, buttonBackground)
 end
 
 local function ShowColorPicker(frame)
-    local r, g, b = frame.getterSetter.r, frame.getterSetter.g, frame.getterSetter.b
-    ColorPickerFrame.Content.ColorPicker:SetColorRGB(r, g, b)
-    ColorPickerFrame.hasOpacity = (frame.getterSetter.a ~= nil)
-    ColorPickerFrame.opacity = frame.getterSetter.a
-    ColorPickerFrame.previousValues = {r, g, b, frame.getterSetter.a}
+    local color = frame.get()
+    ColorPickerFrame.Content.ColorPicker:SetColorRGB(color.r, color.g, color.b)
+    ColorPickerFrame.hasOpacity = (color.a ~= nil)
+    ColorPickerFrame.opacity = color.a
+    ColorPickerFrame.previousValues = {color.r, color.g, color.b, color.a}
     ColorPickerFrame.func = function() ColorPickerFrameCallback(nil, frame, frame.button.bg) end
     ColorPickerFrame.opacityFunc = function() ColorPickerFrameCallback(nil, frame, frame.button.bg) end
     ColorPickerFrame.cancelFunc = function(restore) ColorPickerFrameCallback(restore, frame, frame.button.bg) end
 
-    if frame.default then
+    if frame.getDefault then
         if not GwColorPPDefault.defaultColor then
             GwColorPPDefault.defaultColor = {}
         end
 
-        GwColorPPDefault.defaultColor = frame.default
+        GwColorPPDefault.defaultColor = frame.getDefault()
     end
     ColorPickerFrame:Show()
     ColorPickerFrame:SetFrameStrata('FULLSCREEN_DIALOG')
@@ -427,8 +472,8 @@ local function RefreshSettingsAfterProfileSwitch()
     for _, panel in pairs(GW.getOptionReference()) do
         for _, of in pairs(panel.options) do
             if of.optionType == "slider" then
-                of.slider:SetValue(RoundDec((of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]), of.decimalNumbers))
-                of.inputFrame.input:SetText(RoundDec(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName], of.decimalNumbers))
+                of.slider:SetValue(RoundDec(of.get(), of.decimalNumbers)) -- here we have a setter/getter like GW.settings.SETTINGNAME
+                of.inputFrame.input:SetText(RoundDec(of.get(), of.decimalNumbers))
                 if of.callback then
                     of.callback()
                 end
@@ -444,7 +489,7 @@ local function RefreshSettingsAfterProfileSwitch()
                     of.callback(of.inputFrame.input)
                 end
             elseif of.optionType == "colorPicker" then
-                local color = of.getterSetter -- here we have a setter/getter like GW.settings.SETTINGNAME
+                local color = of.get() -- here we have a setter/getter like GW.settings.SETTINGNAME
                 of.button.bg:SetColorTexture(color.r, color.g, color.b)
             elseif of.optionType == "dropdown" then
                 of.dropDown:GenerateMenu()
@@ -552,8 +597,9 @@ local function InitPanel(panel, hasScroll)
         of.isPrivateSetting = v.isPrivateSetting
         of.callback = v.callback
         of.hasCheckbox = v.hasCheckbox
-        of.getterSetter = v.getterSetter
-        of.default = v.default
+        of.get = v.get
+        of.set = v.set
+        of.getDefault = v.getDefault
         --need this for searchables
         of.forceNewLine = v.forceNewLine
 
@@ -592,7 +638,7 @@ local function InitPanel(panel, hasScroll)
         of:SetScript("OnLeave", GameTooltip_Hide)
 
         if v.optionType == "colorPicker" then
-            local setting = of.getterSetter
+            local setting = of.get()
             of.button.bg:SetColorTexture(setting.r, setting.g, setting.b)
             of.button:SetScript("OnClick", function()
                 if ColorPickerFrame:IsShown() then
@@ -770,7 +816,7 @@ local function InitPanel(panel, hasScroll)
             of.dropDown.Text:SetTextColor(1, 1, 1) -- init text color for options without deps
         elseif v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
-            of.slider:SetValue(RoundDec((of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName]), of.decimalNumbers))
+            of.slider:SetValue(RoundDec(of.get(), of.decimalNumbers))
             if v.step then of.slider:SetValueStep(v.step) end
             of.slider:SetObeyStepOnDrag(true)
             of.slider:SetScript(
@@ -786,24 +832,19 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetValue(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName])
+                        self:SetValue(of.get())
                         return
                     end
                     local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
-                    if of.isPrivateSetting then
-                        GW.private[of.optionName] = tonumber(roundValue)
-                    else
-                        GW.settings[of.optionName] = tonumber(roundValue)
-                    end
-
+                    of.set(tonumber(roundValue))
                     self:GetParent().inputFrame.input:SetText(roundValue)
                     if v.callback then
                         v.callback()
                     end
                 end
             )
-            of.inputFrame.input:SetText(RoundDec(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName], of.decimalNumbers))
+            of.inputFrame.input:SetText(RoundDec(of.get(), of.decimalNumbers))
             of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
@@ -817,7 +858,7 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetText(RoundDec(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName], of.decimalNumbers))
+                        self:SetText(RoundDec(of.get(), of.decimalNumbers))
                         return
                     end
                     local roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
@@ -832,11 +873,8 @@ local function InitPanel(panel, hasScroll)
                     end
                     self:GetParent():GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
-                    if of.isPrivateSetting then
-                        GW.private[of.optionName] = tonumber(roundValue)
-                    else
-                        GW.settings[of.optionName] = tonumber(roundValue)
-                    end
+
+                    of.set(tonumber(roundValue))
                     if v.callback then
                         v.callback()
                     end

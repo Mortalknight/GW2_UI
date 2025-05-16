@@ -27,21 +27,8 @@ local function LoadGeneralGridSettings(panel)
     general.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     general.breadcrumb:SetText(GENERAL)
 
-    addOptionSlider(
-        general.scroll.scrollchild,
-        GW.NewSign .. L["Name Update Rate"],
-        L["Maximum tick rate allowed for name updates per second."],
-        "tagUpdateRate",
-        function(value)
-            GW.oUF.Tags:SetEventUpdateTimer(value)
-        end,
-        0.05,
-        0.5,
-        nil,
-        2,
-        nil,
-        0.01
-    )
+    addOptionSlider(general.scroll.scrollchild, L["Name Update Rate"], L["Maximum tick rate allowed for name updates per second."], {settingName = "tagUpdateRate", getterSetter = "GW.settings.tagUpdateRate", callback = function(value) GW.oUF.Tags:SetEventUpdateTimer(value) end, min = 0.05, max = 0.5, decimalNumbers = 2, step = 0.01})
+
     return general
 end
 
@@ -75,7 +62,7 @@ local function LoadRaid10Profile(panel)
 
     addOption(raid10.scroll.scrollchild, L["Enable Raid 10 grid"], L["Display a separate raid grid for groups from 1 to 10 players"], "RAID10_ENABLED", function(value) raid10.preview:SetEnabled(value); GW.UpdateGridSettings("RAID10", nil, true); GW.UpdateGridSettings("RAID25", nil, true); GW.UpdateGridSettings("RAID40", nil, true) end, nil, {["RAID_FRAMES"] = true})
     addOption(raid10.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
-    addOption(raid10.scroll.scrollchild, GW.NewSign .. L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true, ["RAID_CLASS_COLOR_RAID10"] = false})
+    addOption(raid10.scroll.scrollchild, L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true, ["RAID_CLASS_COLOR_RAID10"] = false})
     addOption(raid10.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
     addOption(raid10.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
     addOption(raid10.scroll.scrollchild, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true, ["RAID_SHOW_DEBUFFS"] = true})
@@ -85,21 +72,9 @@ local function LoadRaid10Profile(panel)
     addOption(raid10.scroll.scrollchild, L["Tank Icon"], nil, "RAID_SHOW_TANK_ICON_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
     addOption(raid10.scroll.scrollchild, L["Leader/Assist Icon"], nil, "RAID_SHOW_LEADER_ICON_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
     addOption(raid10.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_RAID10", function() GW.UpdateGridSettings("RAID10", true) end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
-    addOption(raid10.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
-    addOptionSlider(
-        raid10.scroll.scrollchild,
-        GW.NewSign .. L["Out of Range Alpha Value"],
-        nil,
-        "RAID_OUT_OF_RANGE_ALPHA_RAID10",
-        function()
-            GW.UpdateGridSettings("RAID10")
-        end,
-        0,
-        1,
-        nil,
-        2,
-        {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}
-    )
+    addOption(raid10.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
+    addOptionSlider(raid10.scroll.scrollchild, L["Out of Range Alpha Value"], nil, {settingName = "RAID_OUT_OF_RANGE_ALPHA_RAID10", getterSetter = "GW.settings.RAID_OUT_OF_RANGE_ALPHA_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}})
+
     addOptionDropdown(
         raid10.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -177,95 +152,12 @@ local function LoadRaid10Profile(panel)
         {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}
     )
 
-    addOptionSlider(
-        raid10.scroll.scrollchild,
-        L["Groups Per Row/Column"],
-        nil,
-        "RAID_GROUPS_PER_COLUMN_RAID10",
-        function()
-            GW.UpdateGridSettings("RAID10", true)
-        end,
-        1,
-        2,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        raid10.scroll.scrollchild,
-        L["Set Raid Unit Width"],
-        L["Set the width of the raid units."],
-        "RAID_WIDTH_RAID10",
-        function()
-            GW.UpdateGridSettings("RAID10", false, true)
-        end,
-        45,
-        300,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        raid10.scroll.scrollchild,
-        L["Set Raid Unit Height"],
-        L["Set the height of the raid units."],
-        "RAID_HEIGHT_RAID10",
-        function()
-            GW.UpdateGridSettings("RAID10", false, true)
-        end,
-        15,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        raid10.scroll.scrollchild,
-        L["Horizontal Spacing"],
-        nil,
-        "RAID_UNITS_HORIZONTAL_SPACING_RAID10",
-        function()
-            GW.UpdateGridSettings("RAID10", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        raid10.scroll.scrollchild,
-        L["Vertical Spacing"],
-        nil,
-        "RAID_UNITS_VERTICAL_SPACING_RAID10",
-        function()
-            GW.UpdateGridSettings("RAID10", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        raid10.scroll.scrollchild,
-        L["Group Spacing"],
-        L["Additional spacing between each individual group."],
-        "RAID_UNITS_GROUP_SPACING_RAID10",
-        function()
-            GW.UpdateGridSettings("RAID10", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}
-    )
+    addOptionSlider(raid10.scroll.scrollchild, L["Groups Per Row/Column"], nil, {settingName = "RAID_GROUPS_PER_COLUMN_RAID10", getterSetter = "GW.settings.RAID_GROUPS_PER_COLUMN_RAID10", callback = function() GW.UpdateGridSettings("RAID10", true) end, min = 1, max = 2, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}})
+    addOptionSlider(raid10.scroll.scrollchild, L["Set Raid Unit Width"], L["Set the width of the raid units."], {settingName = "RAID_WIDTH_RAID10", getterSetter = "GW.settings.RAID_WIDTH_RAID10", callback = function() GW.UpdateGridSettings("RAID10", false, true) end, min = 45, max = 300, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}})
+    addOptionSlider(raid10.scroll.scrollchild, L["Set Raid Unit Height"], L["Set the height of the raid units."], {settingName = "RAID_HEIGHT_RAID10", getterSetter = "GW.settings.RAID_HEIGHT_RAID10", callback = function() GW.UpdateGridSettings("RAID10", false, true) end, min = 15, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}})
+    addOptionSlider(raid10.scroll.scrollchild, L["Horizontal Spacing"], nil, {settingName = "RAID_UNITS_HORIZONTAL_SPACING_RAID10", getterSetter = "GW.settings.RAID_UNITS_HORIZONTAL_SPACING_RAID10", callback = function() GW.UpdateGridSettings("RAID10", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}})
+    addOptionSlider(raid10.scroll.scrollchild, L["Vertical Spacing"], nil, {settingName = "RAID_UNITS_VERTICAL_SPACING_RAID10", getterSetter = "GW.settings.RAID_UNITS_VERTICAL_SPACING_RAID10", callback = function() GW.UpdateGridSettings("RAID10", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}})
+    addOptionSlider(raid10.scroll.scrollchild, L["Group Spacing"], L["Additional spacing between each individual group."], {settingName = "RAID_UNITS_GROUP_SPACING_RAID10", getterSetter = "GW.settings.RAID_UNITS_GROUP_SPACING_RAID10", callback = function() GW.UpdateGridSettings("RAID10", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}})
 
     -- Sorting
     addGroupHeader(raid10.scroll.scrollchild, L["Grouping & Sorting"])
@@ -351,7 +243,7 @@ local function LoadRaid25Profile(panel)
 
     addOption(raid25.scroll.scrollchild, L["Enable Raid 25 grid"], L["Display a separate raid grid for groups from 11 to 25 players"], "RAID25_ENABLED", function(value) raid25.preview:SetEnabled(value); GW.UpdateGridSettings("RAID10", nil, true); GW.UpdateGridSettings("RAID25", nil, true); GW.UpdateGridSettings("RAID40", nil, true) end, nil, {["RAID_FRAMES"] = true})
     addOption(raid25.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
-    addOption(raid25.scroll.scrollchild, GW.NewSign .. L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true, ["RAID_CLASS_COLOR_RAID25"] = false})
+    addOption(raid25.scroll.scrollchild, L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true, ["RAID_CLASS_COLOR_RAID25"] = false})
     addOption(raid25.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
     addOption(raid25.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
     addOption(raid25.scroll.scrollchild, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true, ["RAID_SHOW_DEBUFFS"] = true})
@@ -361,21 +253,9 @@ local function LoadRaid25Profile(panel)
     addOption(raid25.scroll.scrollchild, L["Tank Icon"], nil, "RAID_SHOW_TANK_ICON_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
     addOption(raid25.scroll.scrollchild, L["Leader/Assist Icon"], nil, "RAID_SHOW_LEADER_ICON_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
     addOption(raid25.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_RAID25", function() GW.UpdateGridSettings("RAID25", true) end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
-    addOption(raid25.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
-    addOptionSlider(
-        raid25.scroll.scrollchild,
-        GW.NewSign .. L["Out of Range Alpha Value"],
-        nil,
-        "RAID_OUT_OF_RANGE_ALPHA_RAID25",
-        function()
-            GW.UpdateGridSettings("RAID25")
-        end,
-        0,
-        1,
-        nil,
-        2,
-        {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}
-    )
+    addOption(raid25.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
+    addOptionSlider(raid25.scroll.scrollchild, L["Out of Range Alpha Value"], nil, {settingName = "RAID_OUT_OF_RANGE_ALPHA_RAID25", getterSetter = "GW.settings.RAID_OUT_OF_RANGE_ALPHA_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}})
+
     addOptionDropdown(
         raid25.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -453,95 +333,12 @@ local function LoadRaid25Profile(panel)
         {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}
     )
 
-    addOptionSlider(
-        raid25.scroll.scrollchild,
-        L["Groups Per Row/Column"],
-        nil,
-        "RAID_GROUPS_PER_COLUMN_RAID25",
-        function()
-            GW.UpdateGridSettings("RAID25", true)
-        end,
-        1,
-        5,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        raid25.scroll.scrollchild,
-        L["Set Raid Unit Width"],
-        L["Set the width of the raid units."],
-        "RAID_WIDTH_RAID25",
-        function()
-            GW.UpdateGridSettings("RAID25", false, true)
-        end,
-        45,
-        300,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        raid25.scroll.scrollchild,
-        L["Set Raid Unit Height"],
-        L["Set the height of the raid units."],
-        "RAID_HEIGHT_RAID25",
-        function()
-            GW.UpdateGridSettings("RAID25", false, true)
-        end,
-        15,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        raid25.scroll.scrollchild,
-        L["Horizontal Spacing"],
-        nil,
-        "RAID_UNITS_HORIZONTAL_SPACING_RAID25",
-        function()
-            GW.UpdateGridSettings("RAID25", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        raid25.scroll.scrollchild,
-        L["Vertical Spacing"],
-        nil,
-        "RAID_UNITS_VERTICAL_SPACING_RAID25",
-        function()
-            GW.UpdateGridSettings("RAID25", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        raid25.scroll.scrollchild,
-        L["Group Spacing"],
-        L["Additional spacing between each individual group."],
-        "RAID_UNITS_GROUP_SPACING_RAID25",
-        function()
-            GW.UpdateGridSettings("RAID25", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}
-    )
+    addOptionSlider(raid25.scroll.scrollchild, L["Groups Per Row/Column"], nil, {settingName = "RAID_GROUPS_PER_COLUMN_RAID25", getterSetter = "GW.settings.RAID_GROUPS_PER_COLUMN_RAID25", callback = function() GW.UpdateGridSettings("RAID25", true) end, min = 1, max = 5, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}})
+    addOptionSlider(raid25.scroll.scrollchild, L["Set Raid Unit Width"], L["Set the width of the raid units."], {settingName = "RAID_WIDTH_RAID25", getterSetter = "GW.settings.RAID_WIDTH_RAID25", callback = function() GW.UpdateGridSettings("RAID25", false, true) end, min = 45, max = 300, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}})
+    addOptionSlider(raid25.scroll.scrollchild, L["Set Raid Unit Height"], L["Set the height of the raid units."], {settingName = "RAID_HEIGHT_RAID25", getterSetter = "GW.settings.RAID_HEIGHT_RAID25", callback = function() GW.UpdateGridSettings("RAID25", false, true) end, min = 15, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}})
+    addOptionSlider(raid25.scroll.scrollchild, L["Horizontal Spacing"], nil, {settingName = "RAID_UNITS_HORIZONTAL_SPACING_RAID25", getterSetter = "GW.settings.RAID_UNITS_HORIZONTAL_SPACING_RAID25", callback = function() GW.UpdateGridSettings("RAID25", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}})
+    addOptionSlider(raid25.scroll.scrollchild, L["Vertical Spacing"], nil, {settingName = "RAID_UNITS_VERTICAL_SPACING_RAID25", getterSetter = "GW.settings.RAID_UNITS_VERTICAL_SPACING_RAID25", callback = function() GW.UpdateGridSettings("RAID25", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}})
+    addOptionSlider(raid25.scroll.scrollchild, L["Group Spacing"], L["Additional spacing between each individual group."], {settingName = "RAID_UNITS_GROUP_SPACING_RAID25", getterSetter = "GW.settings.RAID_UNITS_GROUP_SPACING_RAID25", callback = function() GW.UpdateGridSettings("RAID25", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}})
 
     -- Sorting
     addGroupHeader(raid25.scroll.scrollchild, L["Grouping & Sorting"])
@@ -626,7 +423,7 @@ local function LoadRaid40Profile(panel)
     raid40.preview:SetEnabled(GW.settings.RAID_FRAMES)
 
     addOption(raid40.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", function(value) raid40.preview:SetEnabled(value); GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
-    addOption(raid40.scroll.scrollchild, GW.NewSign .. L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true, ["RAID_CLASS_COLOR"] = false})
+    addOption(raid40.scroll.scrollchild, L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true, ["RAID_CLASS_COLOR"] = false})
     addOption(raid40.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
     addOption(raid40.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
     addOption(raid40.scroll.scrollchild, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
@@ -636,21 +433,9 @@ local function LoadRaid40Profile(panel)
     addOption(raid40.scroll.scrollchild, L["Tank Icon"], nil, "RAID_SHOW_TANK_ICON", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
     addOption(raid40.scroll.scrollchild, L["Leader/Assist Icon"], nil, "RAID_SHOW_LEADER_ICON", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
     addOption(raid40.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER", function() GW.UpdateGridSettings("RAID40", true) end, nil, {["RAID_FRAMES"] = true})
-    addOption(raid40.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
-    addOptionSlider(
-        raid40.scroll.scrollchild,
-        GW.NewSign .. L["Out of Range Alpha Value"],
-        nil,
-        "RAID_OUT_OF_RANGE_ALPHA",
-        function()
-            GW.UpdateGridSettings("RAID40")
-        end,
-        0,
-        1,
-        nil,
-        2,
-        {["RAID_FRAMES"] = true}
-    )
+    addOption(raid40.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
+    addOptionSlider(raid40.scroll.scrollchild, L["Out of Range Alpha Value"], nil, {settingName = "RAID_OUT_OF_RANGE_ALPHA", getterSetter = "GW.settings.RAID_OUT_OF_RANGE_ALPHA", callback = function() GW.UpdateGridSettings("RAID40") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, dependence = {["RAID_FRAMES"] = true}})
+
     addOptionDropdown(
         raid40.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -728,95 +513,12 @@ local function LoadRaid40Profile(panel)
         {["RAID_FRAMES"] = true}
     )
 
-    addOptionSlider(
-        raid40.scroll.scrollchild,
-        L["Groups Per Row/Column"],
-        nil,
-        "RAID_GROUPS_PER_COLUMN",
-        function()
-            GW.UpdateGridSettings("RAID40", true)
-        end,
-        1,
-        8,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true}
-    )
-
-    addOptionSlider(
-        raid40.scroll.scrollchild,
-        L["Set Raid Unit Width"],
-        L["Set the width of the raid units."],
-        "RAID_WIDTH",
-        function()
-            GW.UpdateGridSettings("RAID40", false, true)
-        end,
-        45,
-        300,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true}
-    )
-
-    addOptionSlider(
-        raid40.scroll.scrollchild,
-        L["Set Raid Unit Height"],
-        L["Set the height of the raid units."],
-        "RAID_HEIGHT",
-        function()
-            GW.UpdateGridSettings("RAID40", false, true)
-        end,
-        15,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true}
-    )
-
-    addOptionSlider(
-        raid40.scroll.scrollchild,
-        L["Horizontal Spacing"],
-        nil,
-        "RAID_UNITS_HORIZONTAL_SPACING",
-        function()
-            GW.UpdateGridSettings("RAID40", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true}
-    )
-
-    addOptionSlider(
-        raid40.scroll.scrollchild,
-        L["Vertical Spacing"],
-        nil,
-        "RAID_UNITS_VERTICAL_SPACING",
-        function()
-            GW.UpdateGridSettings("RAID40", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true}
-    )
-
-    addOptionSlider(
-        raid40.scroll.scrollchild,
-        L["Group Spacing"],
-        L["Additional spacing between each individual group."],
-        "RAID_UNITS_GROUP_SPACING",
-        function()
-            GW.UpdateGridSettings("RAID40", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true}
-    )
+    addOptionSlider(raid40.scroll.scrollchild, L["Groups Per Row/Column"], nil, {settingName = "RAID_GROUPS_PER_COLUMN", getterSetter = "GW.settings.RAID_GROUPS_PER_COLUMN", callback = function() GW.UpdateGridSettings("RAID40", true) end, min = 1, max = 8, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
+    addOptionSlider(raid40.scroll.scrollchild, L["Set Raid Unit Width"], L["Set the width of the raid units."], {settingName = "RAID_WIDTH", getterSetter = "GW.settings.RAID_WIDTH", callback = function() GW.UpdateGridSettings("RAID40", false, true) end, min = 45, max = 300, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
+    addOptionSlider(raid40.scroll.scrollchild, L["Set Raid Unit Height"], L["Set the height of the raid units."], {settingName = "RAID_HEIGHT", getterSetter = "GW.settings.RAID_HEIGHT", callback = function() GW.UpdateGridSettings("RAID40", false, true) end, min = 15, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
+    addOptionSlider(raid40.scroll.scrollchild, L["Horizontal Spacing"], nil, {settingName = "RAID_UNITS_HORIZONTAL_SPACING", getterSetter = "GW.settings.RAID_UNITS_HORIZONTAL_SPACING", callback = function() GW.UpdateGridSettings("RAID40", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
+    addOptionSlider(raid40.scroll.scrollchild, L["Vertical Spacing"], nil, {settingName = "RAID_UNITS_VERTICAL_SPACING", getterSetter = "GW.settings.RAID_UNITS_VERTICAL_SPACING", callback = function() GW.UpdateGridSettings("RAID40", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
+    addOptionSlider(raid40.scroll.scrollchild, L["Group Spacing"], L["Additional spacing between each individual group."], {settingName = "RAID_UNITS_GROUP_SPACING", getterSetter = "GW.settings.RAID_UNITS_GROUP_SPACING", callback = function() GW.UpdateGridSettings("RAID40", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence ={["RAID_FRAMES"] = true}})
 
     -- Sorting
     addGroupHeader(raid40.scroll.scrollchild, L["Grouping & Sorting"])
@@ -906,21 +608,9 @@ local function LoadRaidPetProfile(panel)
     addOption(p.scroll.scrollchild, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOption(p.scroll.scrollchild, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOption(p.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_PET", function() GW.UpdateGridSettings("RAID_PET", true) end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
-    addOption(p.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
-    addOptionSlider(
-        p.scroll.scrollchild,
-        GW.NewSign .. L["Out of Range Alpha Value"],
-        nil,
-        "RAID_OUT_OF_RANGE_ALPHA_PET",
-        function()
-            GW.UpdateGridSettings("PET")
-        end,
-        0,
-        1,
-        nil,
-        2,
-        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
-    )
+    addOption(p.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
+    addOptionSlider(p.scroll.scrollchild, L["Out of Range Alpha Value"], nil, {settingName = "RAID_OUT_OF_RANGE_ALPHA_PET", getterSetter = "GW.settings.RAID_OUT_OF_RANGE_ALPHA_PET", callback = function() GW.UpdateGridSettings("RAID40") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}})
+
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -984,95 +674,12 @@ local function LoadRaidPetProfile(panel)
         {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
     )
 
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Groups Per Row/Column"],
-        nil,
-        "RAID_GROUPS_PER_COLUMN_PET",
-        function()
-            GW.UpdateGridSettings("RAID_PET", true)
-        end,
-        1,
-        8,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
-    )
-
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Set Raid Unit Width"],
-        L["Set the width of the raid units."],
-        "RAID_WIDTH_PET",
-        function()
-            GW.UpdateGridSettings("RAID_PET", false, true)
-        end,
-        45,
-        300,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
-    )
-
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Set Raid Unit Height"],
-        L["Set the height of the raid units."],
-        "RAID_HEIGHT_PET",
-        function()
-            GW.UpdateGridSettings("RAID_PET", false, true)
-        end,
-        15,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
-    )
-
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Horizontal Spacing"],
-        nil,
-        "RAID_UNITS_HORIZONTAL_SPACING_PET",
-        function()
-            GW.UpdateGridSettings("RAID_PET", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
-    )
-
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Vertical Spacing"],
-        nil,
-        "RAID_UNITS_VERTICAL_SPACING_PET",
-        function()
-            GW.UpdateGridSettings("RAID_PET", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
-    )
-
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Group Spacing"],
-        L["Additional spacing between each individual group."],
-        "RAID_UNITS_GROUP_SPACING_PET",
-        function()
-            GW.UpdateGridSettings("RAID_PET", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
-    )
+    addOptionSlider(p.scroll.scrollchild, L["Groups Per Row/Column"], nil, {settingName = "RAID_GROUPS_PER_COLUMN_PET", getterSetter = "GW.settings.RAID_GROUPS_PER_COLUMN_PET", callback = function() GW.UpdateGridSettings("RAID_PET", true) end, min = 1, max = 8, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Set Raid Unit Width"], L["Set the width of the raid units."], {settingName = "RAID_WIDTH_PET", getterSetter = "GW.settings.RAID_WIDTH_PET", callback = function() GW.UpdateGridSettings("RAID_PET", false, true) end, min = 45, max = 300, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Set Raid Unit Height"], L["Set the height of the raid units."], {settingName = "RAID_HEIGHT_PET", getterSetter = "GW.settings.RAID_HEIGHT_PET", callback = function() GW.UpdateGridSettings("RAID_PET", false, true) end, min = 15, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Horizontal Spacing"], nil, {settingName = "RAID_UNITS_HORIZONTAL_SPACING_PET", getterSetter = "GW.settings.RAID_UNITS_HORIZONTAL_SPACING_PET", callback = function() GW.UpdateGridSettings("RAID_PET", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Vertical Spacing"], nil, {settingName = "RAID_UNITS_VERTICAL_SPACING_PET", getterSetter = "GW.settings.RAID_UNITS_VERTICAL_SPACING_PET", callback = function() GW.UpdateGridSettings("RAID_PET", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Group Spacing"], L["Additional spacing between each individual group."], {settingName = "RAID_UNITS_GROUP_SPACING_PET", getterSetter = "GW.settings.RAID_UNITS_GROUP_SPACING_PET", callback = function() GW.UpdateGridSettings("RAID_PET", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}})
 
     -- Sorting
     addGroupHeader(p.scroll.scrollchild, L["Grouping & Sorting"])
@@ -1145,7 +752,7 @@ local function LoadPartyProfile(panel)
 
     addOption(party.scroll.scrollchild, USE_RAID_STYLE_PARTY_FRAMES, OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES, "RAID_STYLE_PARTY", function(value) party.preview:SetEnabled(value);  GW.UpdateGridSettings("PARTY", false, true); GW.UpdatePlayerInPartySetting(value) end, nil, {["RAID_FRAMES"] = true})
     addOption(party.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
-    addOption(party.scroll.scrollchild, GW.NewSign .. L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true, ["RAID_CLASS_COLOR_PARTY"] = false})
+    addOption(party.scroll.scrollchild, L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true, ["RAID_CLASS_COLOR_PARTY"] = false})
     addOption(party.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
     addOption(party.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
     addOption(party.scroll.scrollchild, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true})
@@ -1155,22 +762,9 @@ local function LoadPartyProfile(panel)
     addOption(party.scroll.scrollchild, L["Tank Icon"], nil, "RAID_SHOW_TANK_ICON_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
     addOption(party.scroll.scrollchild, L["Leader/Assist Icon"], nil, "RAID_SHOW_LEADER_ICON_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
     addOption(party.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_PARTY", function() GW.UpdateGridSettings("PARTY", true) end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
-    addOption(party.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
-    addOption(party.scroll.scrollchild, GW.NewSign .. L["Player frame in group"], L["Show your player frame as part of the group"], "RAID_SHOW_PLAYER_PARTY", function() GW.UpdateGridSettings("PARTY", true) end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
-    addOptionSlider(
-        party.scroll.scrollchild,
-        GW.NewSign .. L["Out of Range Alpha Value"],
-        nil,
-        "RAID_OUT_OF_RANGE_ALPHA_PARTY",
-        function()
-            GW.UpdateGridSettings("PARTY")
-        end,
-        0,
-        1,
-        nil,
-        2,
-        {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}
-    )
+    addOption(party.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
+    addOption(party.scroll.scrollchild, L["Player frame in group"], L["Show your player frame as part of the group"], "RAID_SHOW_PLAYER_PARTY", function() GW.UpdateGridSettings("PARTY", true) end, nil, {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true})
+    addOptionSlider(party.scroll.scrollchild, L["Out of Range Alpha Value"], nil, {settingName = "RAID_OUT_OF_RANGE_ALPHA_PARTY", getterSetter = "GW.settings.RAID_OUT_OF_RANGE_ALPHA_PARTY", callback = function() GW.UpdateGridSettings("PARTY") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
     addOptionDropdown(
         party.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -1248,79 +842,11 @@ local function LoadPartyProfile(panel)
         {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}
     )
 
-    addOptionSlider(
-        party.scroll.scrollchild,
-        L["Set Raid Unit Width"],
-        L["Set the width of the raid units."],
-        "RAID_WIDTH_PARTY",
-        function()
-            GW.UpdateGridSettings("PARTY", false, true)
-        end,
-        45,
-        300,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}
-    )
-
-    addOptionSlider(
-        party.scroll.scrollchild,
-        L["Set Raid Unit Height"],
-        L["Set the height of the raid units."],
-        "RAID_HEIGHT_PARTY",
-        function()
-            GW.UpdateGridSettings("PARTY", false, true)
-        end,
-        15,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}
-    )
-    addOptionSlider(
-        party.scroll.scrollchild,
-        L["Horizontal Spacing"],
-        nil,
-        "RAID_UNITS_HORIZONTAL_SPACING_PARTY",
-        function()
-            GW.UpdateGridSettings("PARTY", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}
-    )
-
-    addOptionSlider(
-        party.scroll.scrollchild,
-        L["Vertical Spacing"],
-        nil,
-        "RAID_UNITS_VERTICAL_SPACING_PARTY",
-        function()
-            GW.UpdateGridSettings("PARTY", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}
-    )
-
-    addOptionSlider(
-        party.scroll.scrollchild,
-        L["Group Spacing"],
-        L["Additional spacing between each individual group."],
-        "RAID_UNITS_GROUP_SPACING_PARTY",
-        function()
-            GW.UpdateGridSettings("PARTY", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}
-    )
+    addOptionSlider(party.scroll.scrollchild, L["Set Raid Unit Width"], L["Set the width of the raid units."], {settingName = "RAID_WIDTH_PARTY", getterSetter = "GW.settings.RAID_WIDTH_PARTY", callback = function() GW.UpdateGridSettings("PARTY", false, true) end, min = 45, max = 300, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
+    addOptionSlider(party.scroll.scrollchild, L["Set Raid Unit Height"], L["Set the height of the raid units."], {settingName = "RAID_HEIGHT_PARTY", getterSetter = "GW.settings.RAID_HEIGHT_PARTY", callback = function() GW.UpdateGridSettings("PARTY", false, true) end, min = 15, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
+    addOptionSlider(party.scroll.scrollchild, L["Horizontal Spacing"], nil, {settingName = "RAID_UNITS_HORIZONTAL_SPACING_PARTY", getterSetter = "GW.settings.RAID_UNITS_HORIZONTAL_SPACING_PARTY", callback = function() GW.UpdateGridSettings("PARTY", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
+    addOptionSlider(party.scroll.scrollchild, L["Vertical Spacing"], nil, {settingName = "RAID_UNITS_VERTICAL_SPACING_PARTY", getterSetter = "GW.settings.RAID_UNITS_VERTICAL_SPACING_PARTY", callback = function() GW.UpdateGridSettings("PARTY", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
+    addOptionSlider(party.scroll.scrollchild, L["Group Spacing"], L["Additional spacing between each individual group."], {settingName = "RAID_UNITS_GROUP_SPACING_PARTY", getterSetter = "GW.settings.RAID_UNITS_GROUP_SPACING_PARTY", callback = function() GW.UpdateGridSettings("PARTY", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
 
     -- Sorting
     addGroupHeader(party.scroll.scrollchild, L["Grouping & Sorting"])
@@ -1407,7 +933,7 @@ local function LoadMaintankProfile(panel)
 
     addOption(tank.scroll.scrollchild, L["Enable Maintank grid"], nil, "RAID_MAINTANK_FRAMES_ENABLED", function(value) tank.preview:SetEnabled(value); GW.UpdateGridSettings("TANK", nil, true) end, nil, {["RAID_FRAMES"] = true})
     addOption(tank.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
-    addOption(tank.scroll.scrollchild, GW.NewSign .. L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true, ["RAID_CLASS_COLOR_TANK"] = false})
+    addOption(tank.scroll.scrollchild, L["Hide class icon"], nil, "RAID_HIDE_CLASS_ICON_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true, ["RAID_CLASS_COLOR_TANK"] = false})
     addOption(tank.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
     addOption(tank.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
     addOption(tank.scroll.scrollchild, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true, ["RAID_SHOW_DEBUFFS"] = true})
@@ -1416,21 +942,9 @@ local function LoadMaintankProfile(panel)
     addOption(tank.scroll.scrollchild, L["Role Icon"], nil, "RAID_SHOW_ROLE_ICON_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
     addOption(tank.scroll.scrollchild, L["Tank Icon"], nil, "RAID_SHOW_TANK_ICON_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
     addOption(tank.scroll.scrollchild, L["Leader/Assist Icon"], nil, "RAID_SHOW_LEADER_ICON_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
-    addOption(tank.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_TANK", function() GW.UpdateGridSettings("TANK") end, nil,  {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
-    addOptionSlider(
-        tank.scroll.scrollchild,
-        GW.NewSign .. L["Out of Range Alpha Value"],
-        nil,
-        "RAID_OUT_OF_RANGE_ALPHA_TANK",
-        function()
-            GW.UpdateGridSettings("TANK")
-        end,
-        0,
-        1,
-        nil,
-        2,
-        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
-    )
+    addOption(tank.scroll.scrollchild, L["Shorten health values"], nil, "RAID_SHORT_HEALTH_VALUES_TANK", function() GW.UpdateGridSettings("TANK") end, nil,  {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
+    addOptionSlider(tank.scroll.scrollchild, L["Out of Range Alpha Value"], nil, {settingName = "RAID_OUT_OF_RANGE_ALPHA_TANK", getterSetter = "GW.settings.RAID_OUT_OF_RANGE_ALPHA_TANK", callback = function() GW.UpdateGridSettings("TANK") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}})
+
     addOptionDropdown(
         tank.scroll.scrollchild,
         L["Show Aura Tooltips"],
@@ -1508,65 +1022,10 @@ local function LoadMaintankProfile(panel)
         {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
     )
 
-    addOptionSlider(
-        tank.scroll.scrollchild,
-        L["Set Raid Unit Width"],
-        L["Set the width of the raid units."],
-        "RAID_WIDTH_TANK",
-        function()
-            GW.UpdateGridSettings("TANK", false, true)
-        end,
-        45,
-        300,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        tank.scroll.scrollchild,
-        L["Set Raid Unit Height"],
-        L["Set the height of the raid units."],
-        "RAID_HEIGHT_TANK",
-        function()
-            GW.UpdateGridSettings("TANK", false, true)
-        end,
-        15,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        tank.scroll.scrollchild,
-        L["Horizontal Spacing"],
-        nil,
-        "RAID_UNITS_HORIZONTAL_SPACING_TANK",
-        function()
-            GW.UpdateGridSettings("TANK", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        tank.scroll.scrollchild,
-        L["Vertical Spacing"],
-        nil,
-        "RAID_UNITS_VERTICAL_SPACING_TANK",
-        function()
-            GW.UpdateGridSettings("TANK", true)
-        end,
-        -1,
-        100,
-        nil,
-        0,
-        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
-    )
+    addOptionSlider(tank.scroll.scrollchild, L["Set Raid Unit Width"], L["Set the width of the raid units."], {settingName = "RAID_WIDRAID_WIDTH_TANKTH_PET", getterSetter = "GW.settings.RAID_WIDTH_TANK", callback = function() GW.UpdateGridSettings("TANK", false, true) end, min = 45, max = 300, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}})
+    addOptionSlider(tank.scroll.scrollchild, L["Set Raid Unit Height"], L["Set the height of the raid units."], {settingName = "RAID_HEIGHT_TANK", getterSetter = "GW.settings.RAID_HEIGHT_TANK", callback = function() GW.UpdateGridSettings("TANK", false, true) end, min = 15, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}})
+    addOptionSlider(tank.scroll.scrollchild, L["Horizontal Spacing"], nil, {settingName = "RAID_UNITS_HORIZONTAL_SPACING_TANK", getterSetter = "GW.settings.RAID_UNITS_HORIZONTAL_SPACING_TANK", callback = function() GW.UpdateGridSettings("TANK", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}})
+    addOptionSlider(tank.scroll.scrollchild, L["Vertical Spacing"], nil, {settingName = "RAID_UNITS_VERTICAL_SPACING_TANK", getterSetter = "GW.settings.RAID_UNITS_VERTICAL_SPACING_TANK", callback = function() GW.UpdateGridSettings("TANK", true) end, min = -1, max = 100, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}})
 
     return tank
 end

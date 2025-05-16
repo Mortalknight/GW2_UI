@@ -75,7 +75,7 @@ local function LoadHudPanel(sWindow)
 
     addOption(general.scroll.scrollchild, DISPLAY_BORDERS, L["Toggle the borders around the screen"], "BORDER_ENABLED", GW.ToggleHudBackground)
     addOption(general.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", GW.ToggleRaidControllFrame, nil, {["PARTY_FRAMES"] = true})
-    addOption(general.scroll.scrollchild, GW.NewSign .. L["Singing Sockets Info"], L["Adds a Singing sockets selection tool on the Socketing Frame"], "singingSockets")
+    addOption(general.scroll.scrollchild, L["Singing Sockets Info"], L["Adds a Singing sockets selection tool on the Socketing Frame"], "singingSockets")
     addOption(
         general.scroll.scrollchild,
         L["Pixel Perfect Mode"],
@@ -86,17 +86,7 @@ local function LoadHudPanel(sWindow)
             GW.PixelPerfection()
         end
     )
-    addOptionSlider(
-        general.scroll.scrollchild,
-        L["HUD Scale"],
-        L["Change the HUD size."],
-        "HUD_SCALE",
-        function() GW.UpdateHudScale(); GW.ShowRlPopup = true end, --TODO blizzard actionbars
-        0.5,
-        1.5,
-        nil,
-        2
-    )
+    addOptionSlider(general.scroll.scrollchild, L["HUD Scale"], L["Change the HUD size."], {settingName = "HUD_SCALE", getterSetter = "GW.settings.HUD_SCALE", callback = function() GW.UpdateHudScale(); GW.ShowRlPopup = true end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01})
     addOptionButton(general.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], "GW2_Apply_all_Button",
         function()
             local scale = GW.settings.HUD_SCALE
@@ -121,19 +111,7 @@ local function LoadHudPanel(sWindow)
             L["Party / Raid"],
         }
     )
-    addOptionSlider(
-        general.scroll.scrollchild,
-        GW.NewSign .. L["Talking Head Scale"],
-        nil,
-        "TalkingHeadFrameScale",
-        GW.ScaleTalkingHeadFrame,
-        0.5,
-        2,
-        nil,
-        2,
-        {["TALKINGHEAD_SKIN_ENABLED"] = true},
-        0.01
-    )
+    addOptionSlider(general.scroll.scrollchild, L["Talking Head Scale"], nil, {settingName = "TalkingHeadFrameScale", getterSetter = "GW.settings.TalkingHeadFrameScale", callback = GW.ScaleTalkingHeadFrame, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["TALKINGHEAD_SKIN_ENABLED"] = true}})
 
     --MINIMAP
     addOption(minimap.scroll.scrollchild, L["Addon Compartment"], nil, "MINIMAP_ADDON_COMPARTMENT_TOGGLE", function() GW.HandleAddonCompartmentButton() end, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
@@ -153,52 +131,9 @@ local function LoadHudPanel(sWindow)
         true,
         "Minimap"
     )
-    addOptionSlider(
-        minimap.scroll.scrollchild,
-        GW.NewSign .. L["Minimap Size"],
-        L["Change the Minimap size."],
-        "MINIMAP_SIZE",
-        function()
-            local size = GW.settings.MINIMAP_SIZE
-            Minimap:SetSize(size, size)
-            Minimap.gwMover:SetSize(size, size)
-        end,
-        160,
-        420,
-        nil,
-        0,
-        {["MINIMAP_ENABLED"] = true},
-        1
-    )
-    addOptionSlider(
-        minimap.scroll.scrollchild,
-        GW.NewSign .. L["Minimap Scale"],
-        L["Adjust the scale of the minimap and also the pins. Eg: Quests, Resource nodes, Group members"],
-        "MinimapScale",
-        function()
-            Minimap:SetScale(GW.settings.MinimapScale)
-            Minimap.gwMover:SetScale(GW.settings.MinimapScale)
-        end,
-        0.1,
-        2,
-        nil,
-        2,
-        {["MINIMAP_ENABLED"] = true},
-        0.01
-    )
-    addOptionSlider(
-        minimap.scroll.scrollchild,
-        GW.NewSign .. L["Reset Zoom"],
-        L["Reset Minimap Zoom to default value. Set 0 to disable it"],
-        "MinimapResetZoom",
-        nil,
-        0,
-        15,
-        nil,
-        0,
-        {["MINIMAP_ENABLED"] = true},
-        1
-    )
+    addOptionSlider(minimap.scroll.scrollchild, L["Minimap Size"], L["Change the Minimap size."], {settingName = "MINIMAP_SIZE", getterSetter = "GW.settings.MINIMAP_SIZE", callback = function() local size = GW.settings.MINIMAP_SIZE; Minimap:SetSize(size, size); Minimap.gwMover:SetSize(size, size) end, min = 160, max = 420, decimalNumbers = 0, step = 1, dependence = {["MINIMAP_ENABLED"] = true}})
+    addOptionSlider(minimap.scroll.scrollchild, L["Minimap Scale"], L["Adjust the scale of the minimap and also the pins. Eg: Quests, Resource nodes, Group members"], {settingName = "MinimapScale", getterSetter = "GW.settings.MinimapScale", callback = function() Minimap:SetScale(GW.settings.MinimapScale); Minimap.gwMover:SetScale(GW.settings.MinimapScale) end, min = 0.1, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["MINIMAP_ENABLED"] = true}})
+    addOptionSlider(minimap.scroll.scrollchild, L["Reset Zoom"], L["Reset Minimap Zoom to default value. Set 0 to disable it"], {settingName = "MinimapResetZoom", getterSetter = "GW.settings.MinimapResetZoom", min = 0, max = 15, decimalNumbers = 0, step = 1, dependence = {["MINIMAP_ENABLED"] = true}})
 
     --WORLDMAP
     -- world map coordinates
@@ -217,38 +152,8 @@ local function LoadHudPanel(sWindow)
         nil, nil, nil, nil, nil, nil, nil, nil, nil,
         L["World Map Coordinates"]
     )
-    addOptionSlider(
-        worldmap.scroll.scrollchild,
-        L["X-Offset"],
-        nil,
-        "WORLDMAP_COORDS_X_OFFSET",
-        GW.UpdateWorldMapCoordinateSettings,
-        -200,
-        200,
-        nil,
-        0,
-        {["WORLDMAP_COORDS_TOGGLE"] = true},
-        1,
-        nil,
-        nil,
-        L["World Map Coordinates"]
-    )
-    addOptionSlider(
-        worldmap.scroll.scrollchild,
-        L["Y-Offset"],
-        nil,
-        "WORLDMAP_COORDS_Y_OFFSET",
-        GW.UpdateWorldMapCoordinateSettings,
-        -200,
-        200,
-        nil,
-        0,
-        {["WORLDMAP_COORDS_TOGGLE"] = true},
-        1,
-        nil,
-        nil,
-        L["World Map Coordinates"]
-    )
+    addOptionSlider(worldmap.scroll.scrollchild, L["X-Offset"], nil, {settingName = "WORLDMAP_COORDS_X_OFFSET", getterSetter = "GW.settings.WORLDMAP_COORDS_X_OFFSET", callback = GW.UpdateWorldMapCoordinateSettings, min = -200, max = 200, decimalNumbers = 0, step = 1, groupHeaderName = L["World Map Coordinates"], dependence = {["WORLDMAP_COORDS_TOGGLE"] = true}})
+    addOptionSlider(worldmap.scroll.scrollchild, L["Y-Offset"], nil, {settingName = "WORLDMAP_COORDS_Y_OFFSET", getterSetter = "GW.settings.WORLDMAP_COORDS_Y_OFFSET", callback = GW.UpdateWorldMapCoordinateSettings, min = -200, max = 200, decimalNumbers = 0, step = 1, groupHeaderName = L["World Map Coordinates"], dependence = {["WORLDMAP_COORDS_TOGGLE"] = true}})
 
     -- Theater Troupe
     --addGroupHeader(worldmap.scroll.scrollchild,L["Professions Weekly"])
@@ -282,22 +187,7 @@ local function LoadHudPanel(sWindow)
     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_THEATER_TROUPE_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true}, nil, nil, L["Theater Troupe"])
     addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_THEATER_TROUPE_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true, ["WORLD_EVENTS_THEATER_TROUPE_ALERT"] = true}, nil, nil, L["Theater Troupe"])
     addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_THEATER_TROUPE_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true, ["WORLD_EVENTS_THEATER_TROUPE_ALERT"] = true}, nil, nil, L["Theater Troupe"])
-    addOptionSlider(
-        worldmap.scroll.scrollchild,
-        L["Alert Second"],
-        L["Alert will be triggered when the remaining time is less than the set value."],
-        "WORLD_EVENTS_THEATER_TROUPE_ALERT_SECONDS",
-        GW.UpdateWorldEventTrackers,
-        0,
-        3600,
-        nil,
-        0,
-        {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true, ["WORLD_EVENTS_THEATER_TROUPE_ALERT"] = true},
-        1,
-        nil,
-        nil,
-        L["Theater Troupe"]
-    )
+    addOptionSlider(worldmap.scroll.scrollchild, L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {settingName = "WORLD_EVENTS_THEATER_TROUPE_ALERT_SECONDS", getterSetter = "GW.settings.WORLD_EVENTS_THEATER_TROUPE_ALERT_SECONDS", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Theater Troupe"], dependence = {["WORLD_EVENTS_THEATER_TROUPE_ENABLED"] = true, ["WORLD_EVENTS_THEATER_TROUPE_ALERT"] = true}})
 
     -- Community Feast
     addGroupHeader(worldmap.scroll.scrollchild, L["Community Feast"])
@@ -306,22 +196,7 @@ local function LoadHudPanel(sWindow)
     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_COMMUNITY_FEAST_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true}, nil, nil, L["Community Feast"])
     addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true}, nil, nil, L["Community Feast"])
     addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true}, nil, nil, L["Community Feast"])
-    addOptionSlider(
-        worldmap.scroll.scrollchild,
-        L["Alert Second"],
-        L["Alert will be triggered when the remaining time is less than the set value."],
-        "WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS",
-        GW.UpdateWorldEventTrackers,
-        0,
-        3600,
-        nil,
-        0,
-        {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true},
-        1,
-        nil,
-        nil,
-        L["Community Feast"]
-    )
+    addOptionSlider(worldmap.scroll.scrollchild, L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {settingName = "WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS", getterSetter = "GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Community Feast"], dependence = {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true}})
 
     -- Dragonbane Keep
     addGroupHeader(worldmap.scroll.scrollchild, L["Siege On Dragonbane Keep"])
@@ -330,22 +205,7 @@ local function LoadHudPanel(sWindow)
     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_DRAGONBANE_KEEP_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
     addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_DRAGONBANE_KEEP_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
     addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
-    addOptionSlider(
-        worldmap.scroll.scrollchild,
-        L["Alert Second"],
-        L["Alert will be triggered when the remaining time is less than the set value."],
-        "WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS",
-        GW.UpdateWorldEventTrackers,
-        0,
-        3600,
-        nil,
-        0,
-        {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true},
-        1,
-        nil,
-        nil,
-        L["Siege On Dragonbane Keep"]
-    )
+    addOptionSlider(worldmap.scroll.scrollchild, L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {settingName = "WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS", getterSetter = "GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Siege On Dragonbane Keep"], dependence = {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true}})
 
     -- Researchers Under Fire
     addGroupHeader(worldmap.scroll.scrollchild, L["Researchers"])
@@ -354,22 +214,7 @@ local function LoadHudPanel(sWindow)
     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true}, nil, nil, L["Researchers"])
     addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true}, nil, nil, L["Researchers"])
     addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true}, nil, nil, L["Researchers"])
-    addOptionSlider(
-        worldmap.scroll.scrollchild,
-        L["Alert Second"],
-        L["Alert will be triggered when the remaining time is less than the set value."],
-        "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS",
-        GW.UpdateWorldEventTrackers,
-        0,
-        3600,
-        nil,
-        0,
-        {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true},
-        1,
-        nil,
-        nil,
-        L["Researchers"]
-    )
+    addOptionSlider(worldmap.scroll.scrollchild, L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {settingName = "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS", getterSetter = "GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Researchers"], dependence = {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true}})
 
     -- Time Rift Thaldraszus
     addGroupHeader(worldmap.scroll.scrollchild, L["Time Rift"])
@@ -378,22 +223,7 @@ local function LoadHudPanel(sWindow)
     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true}, nil, nil, L["Time Rift"])
     addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true}, nil, nil, L["Time Rift"])
     addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true}, nil, nil, L["Time Rift"])
-    addOptionSlider(
-        worldmap.scroll.scrollchild,
-        L["Alert Second"],
-        L["Alert will be triggered when the remaining time is less than the set value."],
-        "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS",
-        GW.UpdateWorldEventTrackers,
-        0,
-        3600,
-        nil,
-        0,
-        {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true},
-        1,
-        nil,
-        nil,
-        L["Time Rift"]
-    )
+    addOptionSlider(worldmap.scroll.scrollchild, L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {settingName = "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS", getterSetter = "GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Time Rift"], dependence = {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true}})
 
     -- Superbloom
     addGroupHeader(worldmap.scroll.scrollchild, L["Superbloom"])
@@ -402,68 +232,23 @@ local function LoadHudPanel(sWindow)
     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_SUPER_BLOOM_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_SUPER_BLOOM_ENABLED"] = true}, nil, nil, L["Superbloom"])
     addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_SUPER_BLOOM_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_SUPER_BLOOM_ENABLED"] = true, ["WORLD_EVENTS_SUPER_BLOOM_ALERT"] = true}, nil, nil, L["Superbloom"])
     addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_SUPER_BLOOM_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_SUPER_BLOOM_ENABLED"] = true, ["WORLD_EVENTS_SUPER_BLOOM_ALERT"] = true}, nil, nil, L["Superbloom"])
-    addOptionSlider(
-        worldmap.scroll.scrollchild,
-        L["Alert Second"],
-        L["Alert will be triggered when the remaining time is less than the set value."],
-        "WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS",
-        GW.UpdateWorldEventTrackers,
-        0,
-        3600,
-        nil,
-        0,
-        {["WORLD_EVENTS_SUPER_BLOOM_ENABLED"] = true, ["WORLD_EVENTS_SUPER_BLOOM_ALERT"] = true},
-        1,
-        nil,
-        nil,
-        L["Superbloom"]
-    )
+    addOptionSlider(worldmap.scroll.scrollchild, L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {settingName = "WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS", getterSetter = "GW.settings.WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Superbloom"], dependence = {["WORLD_EVENTS_SUPER_BLOOM_ENABLED"] = true, ["WORLD_EVENTS_SUPER_BLOOM_ALERT"] = true}})
 
-     -- Big Dig
-     addGroupHeader(worldmap.scroll.scrollchild, L["Big Dig"])
-     addOption(worldmap.scroll.scrollchild, L["Big Dig"], nil, "WORLD_EVENTS_BIG_DIG_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Big Dig"])
-     addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_BIG_DIG_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true}, nil, nil, L["Big Dig"])
-     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_BIG_DIG_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true}, nil, nil, L["Big Dig"])
-     addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_BIG_DIG_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true, ["WORLD_EVENTS_BIG_DIG_ALERT"] = true}, nil, nil, L["Big Dig"])
-     addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_BIG_DIG_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true, ["WORLD_EVENTS_BIG_DIG_ALERT"] = true}, nil, nil, L["Big Dig"])
-     addOptionSlider(
-         worldmap.scroll.scrollchild,
-         L["Alert Second"],
-         L["Alert will be triggered when the remaining time is less than the set value."],
-         "WORLD_EVENTS_BIG_DIG_ALERT_SECONDS",
-         GW.UpdateWorldEventTrackers,
-         0,
-         3600,
-         nil,
-         0,
-         {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true, ["WORLD_EVENTS_BIG_DIG_ALERT"] = true},
-         1,
-         nil,
-         nil,
-         L["Big Dig"]
-     )
+    -- Big Dig
+    addGroupHeader(worldmap.scroll.scrollchild, L["Big Dig"])
+    addOption(worldmap.scroll.scrollchild, L["Big Dig"], nil, "WORLD_EVENTS_BIG_DIG_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Big Dig"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_BIG_DIG_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true}, nil, nil, L["Big Dig"])
+    addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_BIG_DIG_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true}, nil, nil, L["Big Dig"])
+    addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_BIG_DIG_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true, ["WORLD_EVENTS_BIG_DIG_ALERT"] = true}, nil, nil, L["Big Dig"])
+    addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_BIG_DIG_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true, ["WORLD_EVENTS_BIG_DIG_ALERT"] = true}, nil, nil, L["Big Dig"])
+    addOptionSlider(worldmap.scroll.scrollchild, L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {settingName = "WORLD_EVENTS_BIG_DIG_ALERT_SECONDS", getterSetter = "GW.settings.WORLD_EVENTS_BIG_DIG_ALERT_SECONDS", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Big Dig"], dependence = {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true, ["WORLD_EVENTS_BIG_DIG_ALERT"] = true}})
 
     -- Fishing nets
     addGroupHeader(worldmap.scroll.scrollchild, L["Iskaaran Fishing Net"])
     addOption(worldmap.scroll.scrollchild, L["Iskaaran Fishing Net"], nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Iskaaran Fishing Net"])
     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true}, nil, nil, L["Iskaaran Fishing Net"])
     addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true, ["WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"] = true}, nil, nil, L["Iskaaran Fishing Net"])
-    addOptionSlider(
-        worldmap.scroll.scrollchild,
-        L["Alert Timeout"],
-        L["Alert will be disabled after the set value (hours)."],
-        "WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS",
-        GW.UpdateWorldEventTrackers,
-        0,
-        144,
-        nil,
-        0,
-        {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true, ["WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"] = true},
-        1,
-        nil,
-        nil,
-        L["Iskaaran Fishing Net"]
-    )
+    addOptionSlider(worldmap.scroll.scrollchild, L["Alert Timeout"],  L["Alert will be disabled after the set value (hours)."], {settingName = "WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS", getterSetter = "GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS", callback = GW.UpdateWorldEventTrackers, min = 0, max = 144, decimalNumbers = 0, step = 1, groupHeaderName = L["Iskaaran Fishing Net"], dependence = {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true, ["WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"] = true}})
 
     --FCT
     addOptionDropdown(
@@ -501,7 +286,7 @@ local function LoadHudPanel(sWindow)
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. ": " .. L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
-    addOption(fct.scroll.scrollchild, GW.NewSign .. L["Shorten values"], nil, "GW_COMBAT_TEXT_SHORT_VALUES", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, L["Shorten values"], nil, "GW_COMBAT_TEXT_SHORT_VALUES", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
 
     addOptionDropdown(
         fct.scroll.scrollchild,
@@ -540,102 +325,12 @@ local function LoadHudPanel(sWindow)
         nil,
         COMBAT_TEXT_LABEL
     )
-    addOptionSlider(
-        fct.scroll.scrollchild,
-        FONT_SIZE,
-        nil,
-        "GW_COMBAT_TEXT_FONT_SIZE",
-        GW.UpdateDameTextSettings,
-        2,
-        50,
-        nil,
-        0,
-        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
-        2,
-        "FloatingCombatText",
-        nil,
-        COMBAT_TEXT_LABEL
-    )
-    addOptionSlider(
-        fct.scroll.scrollchild,
-        FONT_SIZE .. ": " .. MISS,
-        nil,
-        "GW_COMBAT_TEXT_FONT_SIZE_MISS",
-        GW.UpdateDameTextSettings,
-        2,
-        50,
-        nil,
-        0,
-        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
-        2,
-        "FloatingCombatText",
-        nil,
-        COMBAT_TEXT_LABEL
-    )
-    addOptionSlider(
-        fct.scroll.scrollchild,
-        FONT_SIZE .. ": " .. CRIT_ABBR,
-        nil,
-        "GW_COMBAT_TEXT_FONT_SIZE_CRIT",
-        GW.UpdateDameTextSettings,
-        2,
-        50,
-        nil,
-        0,
-        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
-        2,
-        "FloatingCombatText",
-        nil,
-        COMBAT_TEXT_LABEL
-    )
-    addOptionSlider(
-        fct.scroll.scrollchild,
-        FONT_SIZE .. ": " .. BLOCK .. "/" .. ABSORB,
-        nil,
-        "GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE",
-        GW.UpdateDameTextSettings,
-        2,
-        50,
-        nil,
-        0,
-        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
-        2,
-        "FloatingCombatText",
-        nil,
-        COMBAT_TEXT_LABEL
-    )
-    addOptionSlider(
-        fct.scroll.scrollchild,
-        FONT_SIZE .. ": " .. L["Crit modifier"],
-        L["Used for animations"],
-        "GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER",
-        GW.UpdateDameTextSettings,
-        0.1,
-        50,
-        nil,
-        2,
-        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
-        nil,
-        "FloatingCombatText",
-        nil,
-        COMBAT_TEXT_LABEL
-    )
-    addOptionSlider(
-        fct.scroll.scrollchild,
-        FONT_SIZE .. ": " .. L["Pet number modifier"],
-        nil,
-        "GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER",
-        GW.UpdateDameTextSettings,
-        0.1,
-        50,
-        nil,
-        2,
-        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
-        nil,
-        "FloatingCombatText",
-        nil,
-        COMBAT_TEXT_LABEL
-    )
+    addOptionSlider(fct.scroll.scrollchild, FONT_SIZE, nil, {settingName = "GW_COMBAT_TEXT_FONT_SIZE", getterSetter = "GW.settings.GW_COMBAT_TEXT_FONT_SIZE", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
+    addOptionSlider(fct.scroll.scrollchild, FONT_SIZE .. ": " .. MISS, nil, {settingName = "GW_COMBAT_TEXT_FONT_SIZE_MISS", getterSetter = "GW.settings.GW_COMBAT_TEXT_FONT_SIZE_MISS", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
+    addOptionSlider(fct.scroll.scrollchild, FONT_SIZE .. ": " .. CRIT_ABBR, nil, {settingName = "GW_COMBAT_TEXT_FONT_SIZE_CRIT", getterSetter = "GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
+    addOptionSlider(fct.scroll.scrollchild, FONT_SIZE .. ": " .. BLOCK .. "/" .. ABSORB, nil, {settingName = "GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE", getterSetter = "GW.settings.GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
+    addOptionSlider(fct.scroll.scrollchild, FONT_SIZE .. ": " .. L["Crit modifier"], nil, {settingName = "GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER", getterSetter = "GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
+    addOptionSlider(fct.scroll.scrollchild, FONT_SIZE .. ": " .. L["Pet number modifier"], nil, {settingName = "GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER", getterSetter = "GW.settings.GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
 
     InitPanel(general, true)
     InitPanel(minimap, true)

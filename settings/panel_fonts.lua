@@ -30,7 +30,7 @@ local function LoadFontsPanel(sWindow)
 
     addOptionDropdown(
         p.scroll.scrollchild,
-        GW.NewSign .. L["Text Style Templates"],
+        L["Text Style Templates"],
         L["Choose from predefined options to customize fonts and text styles, adjusting the appearance of your text."],
         "FONT_STYLE_TEMPLATE",
         function() -- Im adding this inline for now
@@ -90,7 +90,7 @@ local function LoadFontsPanel(sWindow)
     addGroupHeader(p.scroll.scrollchild, L["Custom Font Settings"])
     addOptionDropdown(
         p.scroll.scrollchild,
-        GW.NewSign .. L["Header Font"],
+        L["Header Font"],
         nil,
         "CUSTOM_FONT_HEADER",
         function()
@@ -112,7 +112,7 @@ local function LoadFontsPanel(sWindow)
     )
     addOptionDropdown(
         p.scroll.scrollchild,
-        GW.NewSign .. L["Fonts"],
+        L["Fonts"],
         nil,
         "CUSTOM_FONT_NORMAL",
         function()
@@ -132,59 +132,10 @@ local function LoadFontsPanel(sWindow)
         nil,
         true
     )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        GW.NewSign .. L["Big Headers"],
-        nil,
-        "FONTS_BIG_HEADER_SIZE",
-        GW.UpdateFontSettings,
-        5,
-        42,
-        nil,
-        0,
-        nil,
-        1
-    )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        GW.NewSign .. L["Headers"],
-        nil,
-        "FONTS_HEADER_SIZE",
-        GW.UpdateFontSettings,
-        5,
-        42,
-        nil,
-        0,
-        nil,
-        1
-    )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        GW.NewSign .. L["Normal text"],
-        nil,
-        "FONTS_NORMAL_SIZE",
-        GW.UpdateFontSettings,
-        5,
-        42,
-        nil,
-        0,
-        nil,
-        1
-    )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        GW.NewSign .. L["Small text"],
-        nil,
-        "FONTS_SMALL_SIZE",
-        GW.UpdateFontSettings,
-        5,
-        42,
-        nil,
-        0,
-        nil,
-        1
-    )
-
+    addOptionSlider(p.scroll.scrollchild, L["Big Headers"], nil, {settingName = "FONTS_BIG_HEADER_SIZE", getterSetter = "GW.settings.FONTS_BIG_HEADER_SIZE", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
+    addOptionSlider(p.scroll.scrollchild, L["Headers"], nil, {settingName = "FONTS_HEADER_SIZE", getterSetter = "GW.settings.FONTS_HEADER_SIZE", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
+    addOptionSlider(p.scroll.scrollchild, L["Normal text"], nil, {settingName = "FONTS_NORMAL_SIZE", getterSetter = "GW.settings.FONTS_NORMAL_SIZE", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
+    addOptionSlider(p.scroll.scrollchild, L["Small text"], nil, {settingName = "FONTS_SMALL_SIZE", getterSetter = "GW.settings.FONTS_SMALL_SIZE", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
 
     InitPanel(p, true)
 end

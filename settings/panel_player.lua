@@ -4,6 +4,7 @@ local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionSlider = GW.AddOptionSlider
 local addOptionText = GW.AddOptionText
+local addGroupHeader = GW.AddGroupHeader
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local StrUpper = GW.StrUpper
@@ -51,9 +52,21 @@ local function LoadPlayerPanel(sWindow)
     p_player_debuff.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p_player_debuff.breadcrumb:SetText(L["Debuffs"])
 
-    createCat(PLAYER, L["Modify the player frame settings."], p, {p_player, p_player_aura, p_player_debuff})
+    local fader = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    fader.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    fader.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    fader.header:SetText(PLAYER)
+    fader.sub:SetFont(UNIT_NAME_FONT, 12)
+    fader.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    fader.sub:SetText("")
+    fader.header:SetWidth(fader.header:GetStringWidth())
+    fader.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    fader.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    fader.breadcrumb:SetText(L["Fader"])
 
-    settingsMenuAddButton(PLAYER, p, {p_player, p_player_aura, p_player_debuff})
+    createCat(PLAYER, L["Modify the player frame settings."], p, {p_player, p_player_aura, p_player_debuff, fader})
+
+    settingsMenuAddButton(PLAYER, p, {p_player, p_player_aura, p_player_debuff, fader})
 
     addOption(p_player.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", function() GW.ShowRlPopup = true end, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Show alternative background texture"], nil, "PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND", function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
@@ -65,10 +78,10 @@ local function LoadPlayerPanel(sWindow)
     addOption(p_player.scroll.scrollchild, L["Show character item info"], L["Display gems and enchants on the GW2 character panel"], "SHOW_CHARACTER_ITEM_INFO", function() GW.ToggleCharacterItemInfo() end, nil, {["USE_CHARACTER_WINDOW"] = true})
     addOption(p_player.scroll.scrollchild, L["Hide Blizzard dragon riding vigor"], nil, "HIDE_BLIZZARD_VIGOR_BAR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Show classpower bar only in combat"], nil, "CLASSPOWER_ONLY_SHOW_IN_COMBAT", function() GW.UpdateClassPowerVisibilitySetting(GwPlayerClassPower, true) end, nil, {["CLASS_POWER"] = true})
-    addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "PLAYER_UNIT_HEALTH_SHORT_VALUES", function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, nil, {["HEALTHGLOBE_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Shorten shield values"], nil, "PLAYER_UNIT_SHIELD_SHORT_VALUES", function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, nil, {["HEALTHGLOBE_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Shorten health values"], nil, "PLAYER_UNIT_HEALTH_SHORT_VALUES", function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, nil, {["HEALTHGLOBE_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Shorten shield values"], nil, "PLAYER_UNIT_SHIELD_SHORT_VALUES", function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", function(value) GW.TogglePlayerEnhancedCastbar(GwCastingBarPlayer, value); GW.TogglePlayerEnhancedCastbar(GwCastingBarPet, value); end, nil, {["CASTINGBAR_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Ticks"], L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."], "showPlayerCastBarTicks", nil, nil, {["CASTINGBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Ticks"], L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."], "showPlayerCastBarTicks", nil, nil, {["CASTINGBAR_ENABLED"] = true})
 
     addOptionDropdown(
         p_player.scroll.scrollchild,
@@ -185,77 +198,11 @@ local function LoadPlayerPanel(sWindow)
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
-    addOptionSlider(
-        p_player_aura.scroll.scrollchild,
-        L["Auras per row"],
-        nil,
-        "PLAYER_AURA_WRAP_NUM",
-        function()
-            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
-        end,
-        1,
-        20,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true}
-    )
-    addOptionSlider(
-        p_player_aura.scroll.scrollchild,
-        L["Horizontal Spacing"],
-        nil,
-        "PlayerBuffFrame_HorizontalSpacing",
-        function()
-            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
-        end,
-        -20,
-        50,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true}
-    )
-    addOptionSlider(
-        p_player_aura.scroll.scrollchild,
-        L["Vertical Spacing"],
-        nil,
-        "PlayerBuffFrame_VerticalSpacing",
-        function()
-            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
-        end,
-        0,
-        50,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true}
-    )
-    addOptionSlider(
-        p_player_aura.scroll.scrollchild,
-        L["Max Wraps"],
-        L["Limit the number of rows"],
-        "PlayerBuffFrame_MaxWraps",
-        function()
-            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
-        end,
-        1,
-        32,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true}
-    )
-    addOptionSlider(
-        p_player_aura.scroll.scrollchild,
-        L["Buff size"],
-        nil,
-        "PlayerBuffFrame_ICON_SIZE",
-        function()
-            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
-        end,
-        10,
-        60,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true},
-        1
-    )
+    addOptionSlider(p_player_aura.scroll.scrollchild, L["Auras per row"], nil, {settingName = "PLAYER_AURA_WRAP_NUM", getterSetter = "GW.settings.PLAYER_AURA_WRAP_NUM", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame") end, min = 1, max = 20, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
+    addOptionSlider(p_player_aura.scroll.scrollchild, L["Horizontal Spacing"], nil, {settingName = "PlayerBuffFrame_HorizontalSpacing", getterSetter = "GW.settings.PlayerBuffFrame_HorizontalSpacing", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame") end, min = -20, max = 50, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
+    addOptionSlider(p_player_aura.scroll.scrollchild, L["Vertical Spacing"], nil, {settingName = "PlayerBuffFrame_VerticalSpacing", getterSetter = "GW.settings.PlayerBuffFrame_VerticalSpacing", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame") end, min = 0, max = 50, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
+    addOptionSlider(p_player_aura.scroll.scrollchild, L["Max Wraps"], nil, {settingName = "PlayerBuffFrame_MaxWraps", getterSetter = "GW.settings.PlayerBuffFrame_MaxWraps", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame") end, min = 1, max = 32, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
+    addOptionSlider(p_player_aura.scroll.scrollchild, L["Buff size"], nil, {settingName = "PlayerBuffFrame_ICON_SIZE", getterSetter = "GW.settings.PlayerBuffFrame_ICON_SIZE", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame") end, min = 10, max = 60, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
 
     -- DEBUFF
     addOptionDropdown(
@@ -326,80 +273,23 @@ local function LoadPlayerPanel(sWindow)
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
-    addOptionSlider(
-        p_player_debuff.scroll.scrollchild,
-        L["Auras per row"],
-        nil,
-        "PLAYER_AURA_WRAP_NUM_DEBUFF",
-        function()
-            GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame")
-        end,
-        1,
-        20,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true}
-    )
-    addOptionSlider(
-        p_player_debuff.scroll.scrollchild,
-        L["Horizontal Spacing"],
-        nil,
-        "PlayerDebuffFrame_HorizontalSpacing",
-        function()
-            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
-        end,
-        0,
-        50,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true}
-    )
-    addOptionSlider(
-        p_player_debuff.scroll.scrollchild,
-        L["Vertical Spacing"],
-        nil,
-        "PlayerDebuffFrame_VerticalSpacing",
-        function()
-            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
-        end,
-        0,
-        50,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true}
-    )
-    addOptionSlider(
-        p_player_debuff.scroll.scrollchild,
-        L["Max Wraps"],
-        L["Limit the number of rows"],
-        "PlayerDebuffFrame_MaxWraps",
-        function()
-            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
-        end,
-        1,
-        32,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true}
-    )
-    addOptionSlider(
-        p_player_debuff.scroll.scrollchild,
-        L["Debuff size"],
-        nil,
-        "PlayerDebuffFrame_ICON_SIZE",
-        function()
-            GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame")
-        end,
-        10,
-        60,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true},
-        1
-    )
+    addOptionSlider(p_player_debuff.scroll.scrollchild, L["Auras per row"], nil, {settingName = "PLAYER_AURA_WRAP_NUM_DEBUFF", getterSetter = "GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame") end, min = 1, max = 20, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
+    addOptionSlider(p_player_debuff.scroll.scrollchild, L["Horizontal Spacing"], nil, {settingName = "PlayerDebuffFrame_HorizontalSpacing", getterSetter = "GW.settings.PlayerDebuffFrame_HorizontalSpacing", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame") end, min = 0, max = 50, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
+    addOptionSlider(p_player_debuff.scroll.scrollchild, L["Vertical Spacing"], nil, {settingName = "PlayerDebuffFrame_VerticalSpacing", getterSetter = "GW.settings.PlayerDebuffFrame_VerticalSpacing", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame") end, min = 0, max = 50, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
+    addOptionSlider(p_player_debuff.scroll.scrollchild, L["Max Wraps"], nil, {settingName = "PlayerDebuffFrame_MaxWraps", getterSetter = "GW.settings.PlayerDebuffFrame_MaxWraps", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame") end, min = 1, max = 32, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
+    addOptionSlider(p_player_debuff.scroll.scrollchild, L["Debuff size"], nil, {settingName = "PlayerDebuffFrame_ICON_SIZE", getterSetter = "GW.settings.PlayerDebuffFrame_ICON_SIZE", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame") end, min = 10, max = 60, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
+
+
+    -- FADER
+    addGroupHeader(fader.scroll.scrollchild, L["Fader"])
+    addOptionDropdown(fader.scroll.scrollchild, GW.NewSign .. L["Fader"], nil, "playerFrameFader", function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end end, {"casting", "combat", "hover", "dynamicflight"}, {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT}, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}, true, nil, nil, nil, nil, nil, L["Fader"])
+    addOptionSlider(fader.scroll.scrollchild, GW.NewSign .. L["Smooth"], nil, {settingName = "playerFrameFaderSmooth", getterSetter = "GW.settings.playerFrameFader.smooth", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
+    addOptionSlider(fader.scroll.scrollchild, GW.NewSign .. L["Min Alpha"], nil, {settingName = "playerFrameFaderMinAlpha", getterSetter = "GW.settings.playerFrameFader.minAlpha", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
+    addOptionSlider(fader.scroll.scrollchild, GW.NewSign .. L["Max Alpha"], nil, {settingName = "playerFrameFaderMaxAlpha", getterSetter = "GW.settings.playerFrameFader.maxAlpha", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
 
     InitPanel(p_player, true)
     InitPanel(p_player_aura, true)
     InitPanel(p_player_debuff, true)
+    InitPanel(fader, true)
 end
 GW.LoadPlayerPanel = LoadPlayerPanel

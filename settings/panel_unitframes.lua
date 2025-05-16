@@ -2,9 +2,11 @@ local _, GW = ...
 local L = GW.L
 local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
+local addGroupHeader = GW.AddGroupHeader
+local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
-local settingsMenuAddButton = GW.settingsMenuAddButton;
+local settingsMenuAddButton = GW.settingsMenuAddButton
 
 local function LoadTargetPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
@@ -65,11 +67,11 @@ local function LoadTargetPanel(sWindow)
     pTargetOfFocus.header:SetText(UNITFRAME_LABEL)
     pTargetOfFocus.sub:SetFont(UNIT_NAME_FONT, 12)
     pTargetOfFocus.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    pTargetOfFocus.sub:SetText(L["Modify the target of target frame settings."])
+    pTargetOfFocus.sub:SetText(L["Modify the target of focus frame settings."])
     pTargetOfFocus.header:SetWidth(pTargetOfFocus.header:GetStringWidth())
     pTargetOfFocus.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     pTargetOfFocus.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
-    pTargetOfFocus.breadcrumb:SetText(SHOW_TARGET_OF_TARGET_TEXT)
+    pTargetOfFocus.breadcrumb:SetText(L["Focus target"])
 
     createCat(UNITFRAME_LABEL, L["Edit the target frame settings."], p, {pPlayerPet, p_target, pTargetOfTarget, p_focus, pTargetOfFocus})
     settingsMenuAddButton(UNITFRAME_LABEL, p, {pPlayerPet, p_target, pTargetOfTarget, p_focus, pTargetOfFocus})
@@ -78,6 +80,12 @@ local function LoadTargetPanel(sWindow)
     addOption(pPlayerPet.scroll.scrollchild, L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "PET_FLOATING_COMBAT_TEXT", function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleCombatFeedback() end end, nil, {["PETBAR_ENABLED"] = true})
     addOption(pPlayerPet.scroll.scrollchild, L["Show auras below"], nil, "PET_AURAS_UNDER", function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleAuraPosition() end end, nil, {["PETBAR_ENABLED"] = true})
     addOption(pPlayerPet.scroll.scrollchild, GW.NewSign .. L["Shorten health values"], nil, "PET_UNIT_HEALTH_SHORT_VALUES", function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateHealthBar() end end, nil, {["PETBAR_ENABLED"] = true})
+
+    addGroupHeader(pPlayerPet.scroll.scrollchild, L["Fader"])
+    addOptionDropdown(pPlayerPet.scroll.scrollchild, GW.NewSign .. L["Fader"], nil, "petFrameFader", function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, {"casting", "combat", "hover", "dynamicflight"}, {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT}, nil, {["PETBAR_ENABLED"] = true}, true, nil, nil, nil, nil, nil, L["Fader"])
+    addOptionSlider(pPlayerPet.scroll.scrollchild, GW.NewSign .. L["Smooth"], nil, {settingName = "petFrameFaderSmooth", getterSetter = "GW.settings.petFrameFader.smooth", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["PETBAR_ENABLED"] = true}})
+    addOptionSlider(pPlayerPet.scroll.scrollchild, GW.NewSign .. L["Min Alpha"], nil, {settingName = "petFrameFaderMinAlpha", getterSetter = "GW.settings.petFrameFader.minAlpha", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["PETBAR_ENABLED"] = true}})
+    addOptionSlider(pPlayerPet.scroll.scrollchild, GW.NewSign .. L["Max Alpha"], nil, {settingName = "petFrameFaderMaxAlpha", getterSetter = "GW.settings.petFrameFader.maxAlpha", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["PETBAR_ENABLED"] = true}})
 
     --TARGET
     addOption(p_target.scroll.scrollchild, SHOW_ENEMY_CAST, nil, "target_SHOW_CASTBAR", function() GwTargetUnitFrame:ToggleSettings() end, nil, {["TARGET_ENABLED"] = true})
@@ -108,9 +116,22 @@ local function LoadTargetPanel(sWindow)
         {["TARGET_ENABLED"] = true}
     )
 
+    addGroupHeader(p_target.scroll.scrollchild, L["Fader"])
+    addOptionDropdown(p_target.scroll.scrollchild, GW.NewSign .. L["Fader"], nil, "targetFrameFader", function() GwTargetUnitFrame:ToggleSettings() end, {"casting", "combat", "hover", "dynamicflight"}, {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT}, nil, {["TARGET_ENABLED"] = true}, true, nil, nil, nil, nil, nil, L["Fader"])
+    addOptionSlider(p_target.scroll.scrollchild, GW.NewSign .. L["Smooth"], nil, {settingName = "targetFrameFaderSmooth", getterSetter = "GW.settings.targetFrameFader.smooth", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["TARGET_ENABLED"] = true}})
+    addOptionSlider(p_target.scroll.scrollchild, GW.NewSign .. L["Min Alpha"], nil, {settingName = "targetFrameFaderMinAlpha", getterSetter = "GW.settings.targetFrameFader.minAlpha", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["TARGET_ENABLED"] = true}})
+    addOptionSlider(p_target.scroll.scrollchild, GW.NewSign .. L["Max Alpha"], nil, {settingName = "targetFrameFaderMaxAlpha", getterSetter = "GW.settings.targetFrameFader.maxAlpha", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["TARGET_ENABLED"] = true}})
+
     --TARGET OF TARGET
     addOption(pTargetOfTarget.scroll.scrollchild, SHOW_TARGET_OF_TARGET_TEXT, L["Enable the target of target frame."], "target_TARGET_ENABLED", function() GwTargetTargetUnitFrame:ToggleUnitFrame() end, nil, {["TARGET_ENABLED"] = true})
     addOption(pTargetOfTarget.scroll.scrollchild, SHOW_ENEMY_CAST, nil, "target_TARGET_SHOW_CASTBAR", function() GwTargetTargetUnitFrame:ToggleSettings() end, nil, {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true})
+
+    addGroupHeader(pTargetOfTarget.scroll.scrollchild, L["Fader"])
+    addOptionDropdown(pTargetOfTarget.scroll.scrollchild, GW.NewSign .. L["Fader"], nil, "targettargetFrameFader", function() GwTargetTargetUnitFrame:ToggleSettings() end, {"casting", "combat", "hover", "dynamicflight"}, {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT}, nil, {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}, true, nil, nil, nil, nil, nil, L["Fader"])
+    addOptionSlider(pTargetOfTarget.scroll.scrollchild, GW.NewSign .. L["Smooth"], nil, {settingName = "targettargetFrameFaderSmooth", getterSetter = "GW.settings.targettargetFrameFader.smooth", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
+    addOptionSlider(pTargetOfTarget.scroll.scrollchild, GW.NewSign .. L["Min Alpha"], nil, {settingName = "targettargetFrameFaderMinApha", getterSetter = "GW.settings.targettargetFrameFader.minAlpha", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
+    addOptionSlider(pTargetOfTarget.scroll.scrollchild, GW.NewSign .. L["Max Alpha"], nil, {settingName = "targettargetFrameFaderMaxAlpha", getterSetter = "GW.settings.targettargetFrameFader.maxAlpha", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
+
 
     --FOCUS
     addOption(p_focus.scroll.scrollchild, SHOW_ENEMY_CAST, nil, "focus_SHOW_CASTBAR", function() GwFocusUnitFrame:ToggleSettings() end, nil, {["FOCUS_ENABLED"] = true})
@@ -137,10 +158,22 @@ local function LoadTargetPanel(sWindow)
         nil,
         {["FOCUS_ENABLED"] = true}
     )
+    addGroupHeader(p_focus.scroll.scrollchild, L["Fader"])
+    addOptionDropdown(p_focus.scroll.scrollchild, GW.NewSign .. L["Fader"], nil, "focusFrameFader", function() GwFocusUnitFrame:ToggleSettings() end, {"casting", "combat", "hover", "dynamicflight"}, {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT}, nil, {["FOCUS_ENABLED"] = true}, true, nil, nil, nil, nil, nil, L["Fader"])
+    addOptionSlider(p_focus.scroll.scrollchild, GW.NewSign .. L["Smooth"], nil, {settingName = "focusFrameFaderSmooth", getterSetter = "GW.settings.focusFrameFader.smooth", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["FOCUS_ENABLED"] = true}})
+    addOptionSlider(p_focus.scroll.scrollchild, GW.NewSign .. L["Min Alpha"], nil, {settingName = "focusFrameFaderMinAlpha", getterSetter = "GW.settings.focusFrameFader.minAlpha", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["FOCUS_ENABLED"] = true}})
+    addOptionSlider(p_focus.scroll.scrollchild, GW.NewSign .. L["Max Alpha"], nil, {settingName = "focusFrameFaderMaxAlpha", getterSetter = "GW.settings.focusFrameFader.maxAlpha", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["FOCUS_ENABLED"] = true}})
 
     --TARGET OF FOCUS
     addOption(pTargetOfFocus.scroll.scrollchild, MINIMAP_TRACKING_FOCUS, L["Display the focus target frame."], "focus_TARGET_ENABLED", function() GwFocusTargetUnitFrame:ToggleUnitFrame() end, nil, {["FOCUS_ENABLED"] = true})
     addOption(pTargetOfFocus.scroll.scrollchild, SHOW_ENEMY_CAST, nil, "focus_TARGET_SHOW_CASTBAR", function() GwFocusTargetUnitFrame:ToggleSettings() end , nil, {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true})
+
+    addGroupHeader(pTargetOfFocus.scroll.scrollchild, L["Fader"])
+    addOptionDropdown(pTargetOfFocus.scroll.scrollchild, GW.NewSign .. L["Fader"], nil, "focustargetFrameFader", function() GwFocusTargetUnitFrame:ToggleSettings() end, {"casting", "combat", "hover", "dynamicflight"}, {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT}, nil, {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, true, nil, nil, nil, nil, nil, L["Fader"])
+    addOptionSlider(pTargetOfFocus.scroll.scrollchild, GW.NewSign .. L["Smooth"], nil, {settingName = "focustargetFrameFaderSmooth", getterSetter = "GW.settings.focusFrameFader.smooth", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
+    addOptionSlider(pTargetOfFocus.scroll.scrollchild, GW.NewSign .. L["Min Alpha"], nil, {settingName = "focustargetFrameFaderMinAlpha", getterSetter = "GW.settings.focusFrameFader.minAlpha", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
+    addOptionSlider(pTargetOfFocus.scroll.scrollchild, GW.NewSign .. L["Max Alpha"], nil, {settingName = "focustargetFrameFaderMaxAlpha", getterSetter = "GW.settings.focusFrameFader.maxAlpha", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
+
 
     InitPanel(pPlayerPet, true)
     InitPanel(p_target, true)

@@ -34,6 +34,23 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
     self.showHealthPrecentage = GW.settings.PLAYER_UNIT_HEALTH == "PREC" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
     self.classColor = GW.settings.player_CLASS_COLOR
 
+    local frameFaderSettings = GW.settings.playerFrameFader
+    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight then
+        GW.FrameFadeEnable(self, true)
+        self.Fader:SetOption("Hover", frameFaderSettings.hover)
+        self.Fader:SetOption("Combat", frameFaderSettings.combat)
+        self.Fader:SetOption("Casting", frameFaderSettings.casting)
+        self.Fader:SetOption("DynamicFlight", frameFaderSettings.dynamicflight)
+        self.Fader:SetOption("Smooth", (frameFaderSettings.smooth > 0 and frameFaderSettings.smooth) or nil)
+        self.Fader:SetOption("MinAlpha", frameFaderSettings.minAlpha)
+        self.Fader:SetOption("MaxAlpha", frameFaderSettings.maxAlpha)
+
+        self.Fader:ClearTimers()
+        self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)
+    elseif self.Fader then
+        GW.FrameFadeDisable(self)
+    end
+
     self:UpdateHealthBar()
     self:UnitFrameData()
 end

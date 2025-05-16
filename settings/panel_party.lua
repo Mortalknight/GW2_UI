@@ -26,7 +26,7 @@ local function LoadPartyPanel(sWindow)
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", GW.UpdatePartyFrames, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
     addOption(p, L["Player frame in group"], L["Show your player frame as part of the group"], "PARTY_PLAYER_FRAME", function() GW.UpdatePlayerInPartySetting() end, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
     addOption(p, COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS, nil, "PARTY_SHOW_PETS", GW.UpdatePartyPetVisibility, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
-    addOption(p, GW.NewSign .. L["Shorten health values"], nil, "PARTY_UNIT_HEALTH_SHORT_VALUES", GW.UpdatePartyFrames, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, L["Shorten health values"], nil, "PARTY_UNIT_HEALTH_SHORT_VALUES", GW.UpdatePartyFrames, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
 
     addOptionDropdown(
         p,
@@ -46,19 +46,7 @@ local function LoadPartyPanel(sWindow)
         nil
     )
 
-    addOptionSlider(
-        p,
-        L["Aura size"],
-        nil,
-        "PARTY_SHOW_AURA_ICON_SIZE",
-        GW.UpdatePartyFrames,
-        10,
-        40,
-        nil,
-        0,
-        {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false},
-        2
-    )
+    addOptionSlider(p, L["Aura size"], nil, {settingName = "PARTY_SHOW_AURA_ICON_SIZE", getterSetter = "GW.settings.PARTY_SHOW_AURA_ICON_SIZE", callback = GW.UpdatePartyFrames, min = 10, max = 40, decimalNumbers = 0, step = 2, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
 
     InitPanel(p)
 end

@@ -6,7 +6,6 @@ local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton
 local addOptionSlider = GW.AddOptionSlider
 local addOptionDropdown = GW.AddOptionDropdown
-local addGroupHeader = GW.AddGroupHeader
 local addOptionColorPicker = GW.AddOptionColorPicker
 
 local function LoadGeneralPanel(sWindow)
@@ -53,22 +52,11 @@ local function LoadGeneralPanel(sWindow)
     createCat(GENERAL, nil, p, {general, classcolors, blizzardFix})
     settingsMenuAddButton(GENERAL, p, {general, classcolors, blizzardFix})
 
-    addOptionSlider(
-        general.scroll.scrollchild,
-        GW.NewSign .. L["Shorten values decimal length"],
-        L["Controls the amount of decimals used for shorted values"],
-        "ShortHealthValuesDecimalLength",
-        GW.BuildPrefixValues,
-        0,
-        4,
-        nil,
-        0,
-        nil,
-        1
-    )
+    addOptionSlider(general.scroll.scrollchild, L["Shorten values decimal length"], L["Controls the amount of decimals used for shorted values"], {settingName = "ShortHealthValuesDecimalLength", getterSetter = "GW.settings.ShortHealthValuesDecimalLength", callback = GW.BuildPrefixValues, min = 0, max = 4, decimalNumbers = 0, step = 1})
+
     addOptionDropdown(
         general.scroll.scrollchild,
-        GW.NewSign .. L["Shorten value prefix style"],
+        L["Shorten value prefix style"],
         nil,
         "ShortHealthValuePrefixStyle",
         GW.BuildPrefixValues,
@@ -77,7 +65,7 @@ local function LoadGeneralPanel(sWindow)
     )
     addOptionDropdown(
         general.scroll.scrollchild,
-        GW.NewSign .. L["Number format"],
+        L["Number format"],
         L["Will be used for the most numbers"],
         "NumberFormat",
         nil,
@@ -98,19 +86,7 @@ local function LoadGeneralPanel(sWindow)
             GUILD,
         }
     )
-    addOptionSlider(
-        general.scroll.scrollchild,
-        L["Extended Vendor"],
-        L["The number of pages shown in the merchant frame. Set 1 to disable."],
-        "EXTENDED_VENDOR_NUM_PAGES",
-        function() GW.ShowRlPopup = true end,
-        1,
-        6,
-        nil,
-        0,
-        nil,
-        1
-    )
+    addOptionSlider(general.scroll.scrollchild, L["Extended Vendor"], L["The number of pages shown in the merchant frame. Set 1 to disable."], {settingName = "EXTENDED_VENDOR_NUM_PAGES", getterSetter = "GW.settings.EXTENDED_VENDOR_NUM_PAGES", callback = function() GW.ShowRlPopup = true end, min = 1, max = 6, decimalNumbers = 0, step = 1})
 
     addOption(classcolors.scroll.scrollchild, L["Blizzard Class Colors"], nil, "BLIZZARDCLASSCOLOR_ENABLED", function(value)
         for i = 1, #CLASS_SORT_ORDER do
@@ -126,13 +102,11 @@ local function LoadGeneralPanel(sWindow)
 
     for i = 1, #CLASS_SORT_ORDER do
         local name, tag = GetClassInfo(i)
-        addOptionColorPicker(classcolors.scroll.scrollchild, name, nil, "Gw2ClassColor" .. tag, GW.private.Gw2ClassColor[tag], GW.privateDefaults.profile.Gw2ClassColor[tag], function(r, g, b, changed)
-            GW.UpdateGw2ClassColor(tag, r, g, b, changed)
-        end, nil, {["BLIZZARDCLASSCOLOR_ENABLED"] = false}, nil, nil, L["Custom Class Colors"])
+        addOptionColorPicker(classcolors.scroll.scrollchild, name, nil, {settingName = "Gw2ClassColor" .. tag, getterSetter = "GW.private.Gw2ClassColor." .. tag, callback = function(r, g, b, changed) GW.UpdateGw2ClassColor(tag, r, g, b, changed) end, groupHeaderName = L["Custom Class Colors"], dependence = {["BLIZZARDCLASSCOLOR_ENABLED"] = false}})
     end
 
     -- blizzard fixes
-    addOption(blizzardFix.scroll.scrollchild, GW.NewSign .. GUILD_NEWS, L["This will fix the current Guild News jam."], "FixGuildNewsSpam", function() GW:FixBlizzardIssues() end)
+    addOption(blizzardFix.scroll.scrollchild, GUILD_NEWS, L["This will fix the current Guild News jam."], "FixGuildNewsSpam", function() GW:FixBlizzardIssues() end)
 
     InitPanel(general, true)
     InitPanel(classcolors, true)

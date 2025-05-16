@@ -5,7 +5,7 @@ local addOptionSlider = GW.AddOptionSlider
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
-local settingsMenuAddButton = GW.settingsMenuAddButton;
+local settingsMenuAddButton = GW.settingsMenuAddButton
 
 local function LoadTooltipPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
@@ -86,51 +86,9 @@ local function LoadTooltipPanel(sWindow)
         nil,
         {["TOOLTIPS_ENABLED"] = true, ["HIDE_TOOLTIP_IN_COMBAT"] = true}
     )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        GW.NewSign .. FONT_SIZE .. ": " .. L["Tooltip Header"],
-        nil,
-        "TOOLTIP_HEADER_FONT_SIZE",
-        function()
-            GW.SetTooltipFonts()
-        end,
-        5,
-        42,
-        nil,
-        0,
-        {["TOOLTIPS_ENABLED"] = true},
-        1
-    )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        GW.NewSign .. FONT_SIZE .. ": " .. L["Tooltip Body"],
-        nil,
-        "TOOLTIP_FONT_SIZE",
-        function()
-            GW.SetTooltipFonts()
-        end,
-        5,
-        42,
-        nil,
-        0,
-        {["TOOLTIPS_ENABLED"] = true},
-        1
-    )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        GW.NewSign .. FONT_SIZE .. ": " .. L["Comparison"],
-        L["This setting controls the size of text in item comparison tooltips"],
-        "TOOLTIP_SMALL_FONT_SIZE",
-        function()
-            GW.SetTooltipFonts()
-        end,
-        5,
-        42,
-        nil,
-        0,
-        {["TOOLTIPS_ENABLED"] = true},
-        1
-    )
+    addOptionSlider(p.scroll.scrollchild, FONT_SIZE .. ": " .. L["Tooltip Header"], nil, {settingName = "TOOLTIP_HEADER_FONT_SIZE", getterSetter = "GW.settings.TOOLTIP_HEADER_FONT_SIZE", callback = GW.SetTooltipFonts, min = 5, max = 42, decimalNumbers = 0, step = 1, dependence = {["TOOLTIPS_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild, FONT_SIZE .. ": " .. L["Tooltip Body"], nil, {settingName = "TOOLTIP_FONT_SIZE", getterSetter = "GW.settings.TOOLTIP_FONT_SIZE", callback = GW.SetTooltipFonts, min = 5, max = 42, decimalNumbers = 0, step = 1, dependence = {["TOOLTIPS_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild, FONT_SIZE .. ": " .. L["Comparison"], nil, {settingName = "TOOLTIP_SMALL_FONT_SIZE", getterSetter = "GW.settings.TOOLTIP_SMALL_FONT_SIZE", callback = GW.SetTooltipFonts, min = 5, max = 42, decimalNumbers = 0, step = 1, dependence = {["TOOLTIPS_ENABLED"] = true}})
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Modifier for IDs"],
@@ -178,30 +136,8 @@ local function LoadTooltipPanel(sWindow)
         nil,
         {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true}
     )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Cursor Anchor Offset X"],
-        L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor anchor is NOT 'Cursor Anchor'"],
-        "ANCHOR_CURSOR_OFFSET_X",
-        nil,
-        -128,
-        128,
-        nil,
-        0,
-        {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
-    )
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Cursor Anchor Offset Y"],
-        L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor anchor is NOT 'Cursor Anchor'"],
-        "ANCHOR_CURSOR_OFFSET_Y",
-        nil,
-        -128,
-        128,
-        nil,
-        0,
-        {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
-    )
+    addOptionSlider(p.scroll.scrollchild, L["Cursor Anchor Offset X"], L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor anchor is NOT 'Cursor Anchor'"], {settingName = "ANCHOR_CURSOR_OFFSET_X", getterSetter = "GW.settings.ANCHOR_CURSOR_OFFSET_X", min = -128, max = 128, decimalNumbers = 0, step = 1, dependence = {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}})
+    addOptionSlider(p.scroll.scrollchild, L["Cursor Anchor Offset Y"], L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor anchor is NOT 'Cursor Anchor'"], {settingName = "ANCHOR_CURSOR_OFFSET_Y", getterSetter = "GW.settings.ANCHOR_CURSOR_OFFSET_Y", min = -128, max = 128, decimalNumbers = 0, step = 1, dependence = {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}})
 
     InitPanel(p, true)
 end

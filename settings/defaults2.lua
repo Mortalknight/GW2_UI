@@ -1,5 +1,15 @@
 local _, GW = ...
 
+local UnitFrameFader = {
+    casting = false,
+    combat = false,
+    hover = false,
+    dynamicflight = false,
+    maxAlpha = 1,
+    minAlpha = 0.35,
+    smooth = 0.33,
+}
+
 --private
 GW.privateDefaults = {
     profile = {
@@ -728,6 +738,14 @@ GW.globalDefault = {
             yOfs= -60,
             hasMoved= false,
         },
+
+        --frame fade
+        targetFrameFader = CopyTable(UnitFrameFader),
+        targettargetFrameFader = CopyTable(UnitFrameFader),
+        focusFrameFader = CopyTable(UnitFrameFader),
+        focustargetFrameFader = CopyTable(UnitFrameFader),
+        playerFrameFader = CopyTable(UnitFrameFader),
+        petFrameFader = CopyTable(UnitFrameFader),
 
         -- Raid Pet
         RAID_PET_FRAMES= false,
