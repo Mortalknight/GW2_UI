@@ -177,7 +177,7 @@ local function LoadRaidList(tabContainer)
     if GW.settings.USE_CHARACTER_WINDOW then
         RaidFrameRaidInfoButton:SetScript("OnClick", function()
             if InCombatLockdown() then return end
-            if GWCharacterCurrenyRaidInfoFrame.RaidScroll:IsVisible() then
+            if GWCharacterCurrenyRaidInfoFrame.RaidLocks:IsVisible() then
                 GwCharacterWindow:SetAttribute("windowpanelopen", "nil")
                 return
             end
