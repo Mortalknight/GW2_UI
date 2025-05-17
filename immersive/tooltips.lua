@@ -845,7 +845,7 @@ local function SetTooltipFonts()
     local headerSize = max(5, GW.settings.TOOLTIP_HEADER_FONT_SIZE)
     local smallTextSize = max(5, GW.settings.TOOLTIP_SMALL_FONT_SIZE)
     local textSize = GW.settings.TOOLTIP_FONT_SIZE
-    print(headerSize, smallTextSize, textSize)
+
     GameTooltipHeaderText:SetFont(DAMAGE_TEXT_FONT, headerSize, fontOutline)
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
     GameTooltipText:SetFont(font, textSize, fontOutline)
