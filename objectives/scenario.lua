@@ -11,7 +11,6 @@ local allowedWidgetUpdateIdsForTimer = {
     [5527] = true, -- DF archeolgy event
     [6183] = true, -- TWW delve
     [5483] = true, -- TWW theather event
-    [5865] = true, -- TWW echos
     --[5986] = true, -- 20th still needed?
     --[5990] = true, -- 20th still needed?
     --[5991] = true, -- 20th still needed?
@@ -20,6 +19,10 @@ local allowedWidgetUpdateIdsForTimer = {
     [6289] = true, -- Night (1370)
     [6287] = true, -- Night (1368)
     [6288] = true, -- Night (1369)
+}
+
+local allowedWidgetUpdateIdsForTimerWithNeededTimer = {
+    [5865] = {hasTimer = true}, -- TWW echos
 }
 
 local allowedWidgetUpdateIdsForStatusBar = {
@@ -34,10 +37,10 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     local widgetId = nil
     if event == "UPDATE_UI_WIDGET" then
         local w = ...
-        if not (w and (allowedWidgetUpdateIdsForTimer[w.widgetID] or allowedWidgetUpdateIdsForStatusBar[w.widgetID])) then
+        if not (w and (allowedWidgetUpdateIdsForTimer[w.widgetID] or allowedWidgetUpdateIdsForStatusBar[w.widgetID] or allowedWidgetUpdateIdsForTimerWithNeededTimer[w.widgetID])) then
             return
         else
-            widgetId = allowedWidgetUpdateIdsForTimer[w.widgetID] and w.widgetID or nil
+            widgetId = (allowedWidgetUpdateIdsForTimer[w.widgetID] and w.widgetID) or allowedWidgetUpdateIdsForTimerWithNeededTimer[w.widgetID] and w.widgetID or nil
         end
     end
 
@@ -105,6 +108,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         timerBlock.timer:Hide()
         timerBlock.height = 1
         timerBlock:SetHeight(timerBlock.height)
+        GW.TerminateScenarioWidgetTimer()
 
         return
     end
@@ -245,6 +249,11 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
 
     if not showTimerAsBonus and widgetId then
         GwQuestTrackerTimerSavedHeight, showTimerAsBonus = GW.addEventTimerBarByWidgetId(timerBlock, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, widgetId)
+    elseif not showTimerAsBonus then
+        for id in pairs(allowedWidgetUpdateIdsForTimerWithNeededTimer) do
+            GwQuestTrackerTimerSavedHeight, showTimerAsBonus = GW.addEventTimerBarByWidgetId(timerBlock, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, id)
+            if showTimerAsBonus then break end
+        end
     end
 
     local bonusSteps = C_Scenario.GetBonusSteps() or {}
@@ -290,7 +299,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     for id in pairs(allowedWidgetUpdateIdsForStatusBar) do
         local widgetInfo = C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(id)
         if widgetInfo and widgetInfo.shownState ~= Enum.WidgetShownState.Hidden then
-            local objectiveType =  "object"
+            local objectiveType = "object"
             local quantity = widgetInfo.barValue
             local text = GW.ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text)
 
@@ -303,12 +312,16 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             end
             block:AddObjective(text, numCriteriaPrev + 1, { finished = false, objectiveType = objectiveType, qty = quantity, firstObjectivesYValue = -5 })
             numCriteriaPrev = numCriteriaPrev + 1
+            if not showTimerAsBonus then
+                GW.TerminateScenarioWidgetTimer()
+            end
         end
     end
 
     for i = block.numObjectives + 1, 20 do
-        if _G[containerName.. "Objective" .. i] then
-            _G[containerName .. "Objective" .. i]:Hide()
+        local objective = _G[containerName.. "Objective" .. i]
+        if objective then
+            objective:Hide()
         end
     end
 
