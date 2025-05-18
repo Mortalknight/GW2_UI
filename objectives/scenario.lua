@@ -5,24 +5,21 @@ local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
 
 local allowedWidgetUpdateIdsForTimer = {
-    [2904] = true, -- Ember Court
-    [2906] = true, -- Ember Court
-    [3302] = true, -- DF cooking event
-    [5527] = true, -- DF archeolgy event
-    [6183] = true, -- TWW delve
-    [5483] = true, -- TWW theather event
+    [2904] = {hasTimer = false}, -- Ember Court
+    [2906] = {hasTimer = false}, -- Ember Court
+    [3302] = {hasTimer = false}, -- DF cooking event
+    [5527] = {hasTimer = false}, -- DF archeolgy event
+    [6183] = {hasTimer = false}, -- TWW delve
+    [5483] = {hasTimer = false}, -- TWW theather event
     --[5986] = true, -- 20th still needed?
     --[5990] = true, -- 20th still needed?
     --[5991] = true, -- 20th still needed?
-    [6268] = true, -- Night (1361)
-    [6286] = true, -- Night (1367)
-    [6289] = true, -- Night (1370)
-    [6287] = true, -- Night (1368)
-    [6288] = true, -- Night (1369)
-}
-
-local allowedWidgetUpdateIdsForTimerWithNeededTimer = {
     [5865] = {hasTimer = true}, -- TWW echos
+    [6268] = {hasTimer = false}, -- Night (1361)
+    [6286] = {hasTimer = false}, -- Night (1367)
+    [6289] = {hasTimer = false}, -- Night (1370)
+    [6287] = {hasTimer = false}, -- Night (1368)
+    [6288] = {hasTimer = false}, -- Night (1369)
 }
 
 local allowedWidgetUpdateIdsForStatusBar = {
@@ -37,10 +34,10 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     local widgetId = nil
     if event == "UPDATE_UI_WIDGET" then
         local w = ...
-        if not (w and (allowedWidgetUpdateIdsForTimer[w.widgetID] or allowedWidgetUpdateIdsForStatusBar[w.widgetID] or allowedWidgetUpdateIdsForTimerWithNeededTimer[w.widgetID])) then
+        if not (w and (allowedWidgetUpdateIdsForTimer[w.widgetID] or allowedWidgetUpdateIdsForStatusBar[w.widgetID])) then
             return
         else
-            widgetId = (allowedWidgetUpdateIdsForTimer[w.widgetID] and w.widgetID) or allowedWidgetUpdateIdsForTimerWithNeededTimer[w.widgetID] and w.widgetID or nil
+            widgetId = (allowedWidgetUpdateIdsForTimer[w.widgetID] and w.widgetID) or nil
         end
     end
 
@@ -248,12 +245,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     numCriteria = GW.addEmberCourtData(self, numCriteria)
 
     if not showTimerAsBonus and widgetId then
-        GwQuestTrackerTimerSavedHeight, showTimerAsBonus = GW.addEventTimerBarByWidgetId(timerBlock, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, widgetId)
-    elseif not showTimerAsBonus then
-        for id in pairs(allowedWidgetUpdateIdsForTimerWithNeededTimer) do
-            GwQuestTrackerTimerSavedHeight, showTimerAsBonus = GW.addEventTimerBarByWidgetId(timerBlock, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, id)
-            if showTimerAsBonus then break end
-        end
+        GwQuestTrackerTimerSavedHeight, showTimerAsBonus = GW.addEventTimerBarByWidgetId(timerBlock, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, widgetId, allowedWidgetUpdateIdsForTimer[widgetId].hasTimer)
     end
 
     local bonusSteps = C_Scenario.GetBonusSteps() or {}

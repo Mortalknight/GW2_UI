@@ -24,11 +24,11 @@ local function TimerFunction(timerBlock, widgetId)
     end
 end
 
-local function addEventTimerBarByWidgetId(timerBlock, gwQuestTrackerTimerSavedHeight, showTimerAsBonus, widgetId)
+local function addEventTimerBarByWidgetId(timerBlock, gwQuestTrackerTimerSavedHeight, showTimerAsBonus, widgetId, useRealTimer)
     local widget = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(widgetId)
     if widget then
         if widget.shownState ~= Enum.WidgetShownState.Hidden and widget.timerMax > 0 and widget.timerValue < widget.timerMax and widget.timerValue > 1 then
-            if widget.hasTimer == true then -- here we need to add a real timer
+            if useRealTimer then -- here we need to add a real timer
                 if not timer then
                     timer = C_Timer.NewTicker(0.25, function() TimerFunction(timerBlock, widgetId) end)
                 end
