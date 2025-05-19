@@ -76,6 +76,7 @@ core\LFGPlayerInfo.lua
 core\statusbars.xml
 core\statusbars.lua
 core\blizzardFixes.lua
+core\unitFrameFader.lua
 
 settings\profileSpecSwitch.lua
 settings\splashScreen.lua
@@ -166,6 +167,7 @@ units\grid\elements\nameText.lua
 units\grid\elements\tags.lua
 units\grid\elements\missingAuraIndicator.lua
 units\grid\elements\range.lua
+units\grid\elements\fader.lua
 units\grid\raid40.lua
 units\grid\raid25.lua
 units\grid\raid10.lua

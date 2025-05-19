@@ -35,70 +35,25 @@ local function LoadChatPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Copy Chat Lines"], L["Adds an arrow infront of the chat lines to copy the entire line"], "copyChatLines", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["History"], L["Log the main chat frames history. So when you reloadui or log in and out you see the history from your last session"], "chatHistory", nil, nil, {["CHATFRAME_ENABLED"] = true})
 
-    addOptionSlider(p.scroll.scrollchild, L["History Size"], nil, {settingName = "historySize", getterSetter = "GW.settings.historySize", min = 10, max = 500, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true, ["chatHistory"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["History Size"], nil, {settingName = "historySize", getterSetter = "historySize", min = 10, max = 500, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true, ["chatHistory"] = true}})
     addOptionButton(p.scroll.scrollchild, L["Reset History"], nil, "GW2_ResetChatHistoryButton", function() GW.private.ChatHistoryLog = {} end)
 
-    addOptionDropdown(
-        p.scroll.scrollchild,
-        TIMESTAMPS_LABEL,
-        OPTION_TOOLTIP_TIMESTAMPS,
-        "timeStampFormat",
-        nil,
-        {"NONE", "%I:%M ", "%I:%M:%S ", "%I:%M %p ", "%I:%M:%S %p ", "%H:%M ", "%H:%M:%S "},
-        {NONE, "03:27", "03:27:32", "03:27 PM", "03:27:32 PM", "15:27", "15:27:32"}
-    )
-
-    addOptionDropdown(
-        p.scroll.scrollchild,
-        L["Announce Interrupts"],
-        L["Announce when you interrupt a spell to the specified chat channel"],
-        "interruptAnnounce",
-        GW.ToggleInterruptAnncouncement,
-        {"NONE", "SAY", "YELL", "PARTY", "RAID", "RAID_ONLY", "EMOTE"},
-        {NONE, SAY, YELL, L["Party Only"], L["Party / Raid"], L["Raid Only"], EMOTE}
-    )
+    addOptionDropdown(p.scroll.scrollchild, TIMESTAMPS_LABEL, OPTION_TOOLTIP_TIMESTAMPS, {settingName = "timeStampFormat", getterSetter = "timeStampFormat", optionsList = {"NONE", "%I:%M ", "%I:%M:%S ", "%I:%M %p ", "%I:%M:%S %p ", "%H:%M ", "%H:%M:%S "}, optionNames = {NONE, "03:27", "03:27:32", "03:27 PM", "03:27:32 PM", "15:27", "15:27:32"}})
+    addOptionDropdown(p.scroll.scrollchild, L["Announce Interrupts"], L["Announce when you interrupt a spell to the specified chat channel"], {settingName = "interruptAnnounce", getterSetter = "interruptAnnounce", callback = GW.ToggleInterruptAnncouncement, optionsList = {"NONE", "SAY", "YELL", "PARTY", "RAID", "RAID_ONLY", "EMOTE"}, optionNames = {NONE, SAY, YELL, L["Party Only"], L["Party / Raid"], L["Raid Only"], EMOTE}})
 
     local soundKeys = {}
     for _, sound in next, GW.Libs.LSM:List("sound") do
         tinsert(soundKeys, sound)
     end
-    addOptionDropdown(
-        p.scroll.scrollchild,
-        L["Keyword Alert"],
-        nil,
-        "CHAT_KEYWORDS_ALERT_NEW",
-        function()
-            GW.UpdateChatSettings()
-        end,
-        soundKeys,
-        soundKeys,
-        nil,
-        {["CHATFRAME_ENABLED"] = true},
-        nil,
-        nil,
-        nil,
-        true
-    )
-    addOptionSlider(p.scroll.scrollchild, L["Spam Interval"], L["Prevent the same messages from displaying in chat more than once within this set amount of seconds, set to zero to disable."], {settingName = "CHAT_SPAM_INTERVAL_TIMER", getterSetter = "GW.settings.CHAT_SPAM_INTERVAL_TIMER", callback = function() GW.UpdateChatSettings(); GW.DisableChatThrottle() end, min = 0, max = 100, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
-    addOptionSlider(p.scroll.scrollchild, L["Combat Repeat"], L["Number of repeat characters while in combat before the chat editbox is automatically closed, set to zero to disable."], {settingName = "CHAT_INCOMBAT_TEXT_REPEAT", getterSetter = "GW.settings.CHAT_INCOMBAT_TEXT_REPEAT", callback = function() GW.UpdateChatSettings() end, min = 0, max = 15, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
-    addOptionSlider(p.scroll.scrollchild, L["Scroll Messages"], L["Number of messages you scroll for each step."], {settingName = "CHAT_NUM_SCROLL_MESSAGES", getterSetter = "GW.settings.CHAT_NUM_SCROLL_MESSAGES", callback = function() GW.UpdateChatSettings() end, min = 1, max = 12, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
-    addOptionSlider(p.scroll.scrollchild, L["Scroll Interval"], L["Number of time in seconds to scroll down to the bottom of the chat window if you are not scrolled down completely."], {settingName = "CHAT_SCROLL_DOWN_INTERVAL", getterSetter = "GW.settings.CHAT_SCROLL_DOWN_INTERVAL", callback = function() GW.UpdateChatSettings() end, min = 0, max = 120, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
-    addOptionSlider(p.scroll.scrollchild,  L["Maximum lines of 'Copy Chat Frame'"],  L["Set the maximum number of lines displayed in the Copy Chat Frame"], {settingName = "CHAT_MAX_COPY_CHAT_LINES", getterSetter = "GW.settings.CHAT_MAX_COPY_CHAT_LINES", min = 50, max = 500, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionDropdown(p.scroll.scrollchild, L["Keyword Alert"], nil, {settingName = "CHAT_KEYWORDS_ALERT_NEW", getterSetter = "CHAT_KEYWORDS_ALERT_NEW", callback = GW.UpdateChatSettings, optionsList = soundKeys, optionNames = soundKeys, dependence = {["CHATFRAME_ENABLED"] = true}, hasSound = true})
 
-    addOptionText(
-        p.scroll.scrollchild,
-        L["Keywords"],
-        L["List of words to color in chat if found in a message. If you wish to add multiple words you must seperate the word with a comma. To search for your current name you can use %MYNAME%.\n\nExample:\n%MYNAME%, Heal, Tank"],
-        "CHAT_KEYWORDS",
-        function()
-            GW.UpdateChatSettings()
-            GW.UpdateChatKeywords()
-        end,
-        false,
-        nil,
-        {["CHATFRAME_ENABLED"] = true}
-    )
-    addOptionColorPicker(p.scroll.scrollchild, L["Keyword highlight color"], nil, {settingName = "CHAT_KEYWORDS_ALERT_COLOR", getterSetter = "GW.private.CHAT_KEYWORDS_ALERT_COLOR", dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Spam Interval"], L["Prevent the same messages from displaying in chat more than once within this set amount of seconds, set to zero to disable."], {settingName = "CHAT_SPAM_INTERVAL_TIMER", getterSetter = "CHAT_SPAM_INTERVAL_TIMER", callback = function() GW.UpdateChatSettings(); GW.DisableChatThrottle() end, min = 0, max = 100, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Combat Repeat"], L["Number of repeat characters while in combat before the chat editbox is automatically closed, set to zero to disable."], {settingName = "CHAT_INCOMBAT_TEXT_REPEAT", getterSetter = "CHAT_INCOMBAT_TEXT_REPEAT", callback = function() GW.UpdateChatSettings() end, min = 0, max = 15, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Scroll Messages"], L["Number of messages you scroll for each step."], {settingName = "CHAT_NUM_SCROLL_MESSAGES", getterSetter = "CHAT_NUM_SCROLL_MESSAGES", callback = function() GW.UpdateChatSettings() end, min = 1, max = 12, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild, L["Scroll Interval"], L["Number of time in seconds to scroll down to the bottom of the chat window if you are not scrolled down completely."], {settingName = "CHAT_SCROLL_DOWN_INTERVAL", getterSetter = "CHAT_SCROLL_DOWN_INTERVAL", callback = function() GW.UpdateChatSettings() end, min = 0, max = 120, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionSlider(p.scroll.scrollchild,  L["Maximum lines of 'Copy Chat Frame'"],  L["Set the maximum number of lines displayed in the Copy Chat Frame"], {settingName = "CHAT_MAX_COPY_CHAT_LINES", getterSetter = "CHAT_MAX_COPY_CHAT_LINES", min = 50, max = 500, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionText(p.scroll.scrollchild, L["Keywords"], L["List of words to color in chat if found in a message. If you wish to add multiple words you must seperate the word with a comma. To search for your current name you can use %MYNAME%.\n\nExample:\n%MYNAME%, Heal, Tank"], {settingName = "CHAT_KEYWORDS", getterSetter = "CHAT_KEYWORDS", callback = function() GW.UpdateChatSettings() GW.UpdateChatKeywords() end, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOptionColorPicker(p.scroll.scrollchild, L["Keyword highlight color"], nil, {settingName = "CHAT_KEYWORDS_ALERT_COLOR", getterSetter = "CHAT_KEYWORDS_ALERT_COLOR", dependence = {["CHATFRAME_ENABLED"] = true}, isPrivateSetting = true})
 
     InitPanel(p, true)
 end

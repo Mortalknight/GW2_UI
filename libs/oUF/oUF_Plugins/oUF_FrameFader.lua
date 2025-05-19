@@ -14,14 +14,27 @@ local function ClearTimers(element)
     end
 end
 
+local function UpdateRange(self, unit)
+    local element = self.Fader
+    local inRange, checkedRange
+    local connected = UnitIsConnected(unit)
+    if connected then
+        inRange, checkedRange = UnitInRange(unit)
+        if(checkedRange and not inRange) or UnitPhaseReason(unit) then
+            element.RangeAlpha = element.MinAlpha
+        else
+            element.RangeAlpha = element.MaxAlpha
+        end
+    else
+        element.RangeAlpha = element.MaxAlpha
+    end
+end
+
 local function ToggleAlpha(self, element, endAlpha)
     element:ClearTimers()
 
     if element.Smooth then
-        ns.AddToAnimation(self:GetName(), self:GetAlpha(), endAlpha, GetTime(), element.Smooth,
-        function(p)
-            self:SetAlpha(p)
-        end, 1)
+        ns.AddToAnimation(self:GetName(), self:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) self:SetAlpha(p) end, 1)
     else
         self:SetAlpha(endAlpha)
     end
@@ -29,6 +42,8 @@ end
 
 local isGliding = false
 local function Update(self, event, unit)
+    --print(self:GetName(), self.unit, unit)
+    if not self:IsVisible() then return end
     local element = self.Fader
     if self.isForced or (not element or not element.count or element.count <= 0) then
         self:SetAlpha(1)
@@ -47,15 +62,26 @@ local function Update(self, event, unit)
         unit = self.unit
     end
 
+    -- range fader
+    if element.Range then
+        UpdateRange(self, unit)
+        if element.RangeAlpha then
+            ToggleAlpha(element.rangeFaderObject or self, element, element.RangeAlpha)
+        end
+
+        return
+    end
+
     -- normal fader
-    if	(element.Casting and (UnitCastingInfo(unit) or UnitChannelInfo(unit))) or
+    if (element.Casting and (UnitCastingInfo(unit) or UnitChannelInfo(unit))) or
         (element.Combat and UnitAffectingCombat(unit)) or
         (element.DynamicFlight and not isGliding) or
+        (element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
         (element.Hover and GetMouseFocus(self))
     then
-        ToggleAlpha(self, element, element.MaxAlpha)
+        ToggleAlpha(element.rangeFaderObject or self, element, element.MaxAlpha)
     else
-        ToggleAlpha(self, element, element.MinAlpha)
+        ToggleAlpha(element.rangeFaderObject or self, element, element.MinAlpha)
     end
 end
 
@@ -71,19 +97,24 @@ local function HoverScript(self)
 end
 
 local options = {
+    Range = {
+        enable = function(self)
+            self:RegisterEvent("UNIT_IN_RANGE_UPDATE", Update)
+        end,
+        events = {"UNIT_IN_RANGE_UPDATE"},
+    },
     Hover = {
         enable = function(self)
-            if not self.HoverHooked then
-                local Frame = self.__owner
-                Frame:HookScript("OnEnter", HoverScript)
-                Frame:HookScript("OnLeave", HoverScript)
+        if not self.Fader.HoverHooked then
+                self:HookScript("OnEnter", HoverScript)
+                self:HookScript("OnLeave", HoverScript)
             end
 
-            self.HoverHooked = 1 -- on state
+            self.Fader.HoverHooked = 1 -- on state
         end,
         disable = function(self)
-            if self.HoverHooked == 1 then
-                self.HoverHooked = 0 -- off state
+            if self.Fader.HoverHooked == 1 then
+                self.Fader.HoverHooked = 0 -- off state
             end
         end
     },
@@ -91,58 +122,46 @@ local options = {
         enable = function(self)
             self:RegisterEvent("PLAYER_REGEN_ENABLED", Update, true)
             self:RegisterEvent("PLAYER_REGEN_DISABLED", Update, true)
-            self:RegisterEvent("PLAYER_TARGET_CHANGED", Update, true)
             self:RegisterEvent("UNIT_FLAGS", Update)
-            if self.notOufElement then
-                self:SetScript("OnEvent", function(_, event, ...) Update(self.__owner, event, ...) end)
-            end
         end,
-        events = {"PLAYER_REGEN_ENABLED","PLAYER_REGEN_DISABLED","UNIT_FLAGS","PLAYER_TARGET_CHANGED"}
+        events = {"PLAYER_REGEN_ENABLED","PLAYER_REGEN_DISABLED","UNIT_FLAGS"}
     },
     Casting = {
         enable = function(self)
-            if self.notOufElement then
-                self:SetScript("OnEvent", function(_, event, ...) Update(self.__owner, event, ...) end)
-                self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.__owner.unit)
-                self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.__owner.unit)
-                self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.__owner.unit)
-                self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.__owner.unit)
-                self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.__owner.unit)
-                self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.__owner.unit)
-                self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.__owner.unit)
-                self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.__owner.unit)
-            else
-                self:RegisterEvent("UNIT_SPELLCAST_START", Update)
-                self:RegisterEvent("UNIT_SPELLCAST_FAILED", Update)
-                self:RegisterEvent("UNIT_SPELLCAST_STOP", Update)
-                self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", Update)
-                self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", Update)
-                self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", Update)
-                self:RegisterEvent("UNIT_SPELLCAST_EMPOWER_START", Update)
-                self:RegisterEvent("UNIT_SPELLCAST_EMPOWER_STOP", Update)
-            end
+            self:RegisterEvent("UNIT_SPELLCAST_START", Update)
+            self:RegisterEvent("UNIT_SPELLCAST_FAILED", Update)
+            self:RegisterEvent("UNIT_SPELLCAST_STOP", Update)
+            self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", Update)
+            self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", Update)
+            self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", Update)
+            self:RegisterEvent("UNIT_SPELLCAST_EMPOWER_START", Update)
+            self:RegisterEvent("UNIT_SPELLCAST_EMPOWER_STOP", Update)
         end,
         events = {"UNIT_SPELLCAST_START","UNIT_SPELLCAST_FAILED","UNIT_SPELLCAST_STOP","UNIT_SPELLCAST_INTERRUPTED","UNIT_SPELLCAST_CHANNEL_START","UNIT_SPELLCAST_CHANNEL_STOP","UNIT_SPELLCAST_EMPOWER_START","UNIT_SPELLCAST_EMPOWER_STOP"}
     },
     DynamicFlight = {
         enable = function(self)
             self:RegisterEvent("PLAYER_IS_GLIDING_CHANGED", Update, true)
-            if self.notOufElement then
-                self:SetScript("OnEvent", function(_, event, ...) Update(self.__owner, event, ...) end)
-            end
         end,
         events = {"PLAYER_IS_GLIDING_CHANGED"}
+    },
+    Health = {
+        enable = function(self)
+            self:RegisterEvent("UNIT_HEALTH", Update)
+            self:RegisterEvent("UNIT_MAXHEALTH", Update)
+        end,
+        events = {"UNIT_HEALTH","UNIT_MAXHEALTH"}
     },
     MinAlpha = {
         countIgnored = true,
         enable = function(self, state)
-            self.MinAlpha = state or MIN_ALPHA
+            self.Fader.MinAlpha = state or MIN_ALPHA
         end
     },
     MaxAlpha = {
         countIgnored = true,
         enable = function(self, state)
-            self.MaxAlpha = state or MAX_ALPHA
+            self.Fader.MaxAlpha = state or MAX_ALPHA
         end
     },
     Smooth = {countIgnored = true},
@@ -165,17 +184,17 @@ local function SetOption(element, opt, state)
 
         if state then
             if options[option].enable then
-                options[option].enable(element, state)
+                options[option].enable(element.__owner, state)
             end
         else
             if options[option].events and next(options[option].events) then
                 for _, event in ipairs(options[option].events) do
-                    element:UnregisterEvent(event, Update)
+                    element.__owner:UnregisterEvent(event, Update)
                 end
             end
 
             if options[option].disable then
-                options[option].disable(element)
+                options[option].disable(element.__owner)
             end
         end
 
@@ -185,11 +204,9 @@ local function SetOption(element, opt, state)
     end
 end
 
-local function Enable(self, notOufElement)
-    if not self.Fader then
-        self.Fader = CreateFrame("Frame")
+local function Enable(self)
+    if self.Fader then
         self.Fader.__owner = self
-        self.Fader.notOufElement = notOufElement
         self.Fader.ForceUpdate = ForceUpdate
         self.Fader.SetOption = SetOption
         self.Fader.ClearTimers = ClearTimers
@@ -209,12 +226,8 @@ local function Disable(self)
 
         self.Fader.count = nil
         self.Fader:ClearTimers()
-        ns.AddToAnimation(self:GetName(), self:GetAlpha(), 1, GetTime(), 0.33,
-        function(p)
-            self:SetAlpha(p)
-        end, 1)
+        local faderObject = self.Fader.rangeFaderObject or self
+        ns.AddToAnimation(faderObject:GetName(), faderObject:GetAlpha(), 1, GetTime(), 0.33, function(p) faderObject:SetAlpha(p) end, 1)
     end
 end
-ns.FrameFadeEnable = Enable
-ns.FrameFadeDisable = Disable
 oUF:AddElement("Fader", nil, Enable, Disable)

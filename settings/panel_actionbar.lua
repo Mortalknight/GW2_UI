@@ -91,253 +91,40 @@ local function LoadActionbarPanel(sWindow)
 
     -- GENERAL
     addOption(general.scroll.scrollchild, L["Automatic Bar Layout"], L["Enable or disable the automatic layout management of the primary action bars and associated frames (pet, buffs); required for auto bar fading and some other features"], "BAR_LAYOUT_ENABLED", function() GW.ShowRlPopup = true end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
-    addOptionSlider(general.scroll.scrollchild, L["Empty slots alpha"], L["Set the empty action bar slots alpha value."], {settingName = "ACTIONBAR_BACKGROUND_ALPHA", getterSetter = "GW.settings.ACTIONBAR_BACKGROUND_ALPHA", callback = function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, min = 0, max = 1, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true}})
+    addOptionSlider(general.scroll.scrollchild, L["Empty slots alpha"], L["Set the empty action bar slots alpha value."], {settingName = "ACTIONBAR_BACKGROUND_ALPHA", getterSetter = "ACTIONBAR_BACKGROUND_ALPHA", callback = function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, min = 0, max = 1, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true}})
     addOption(general.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
     addOption(general.scroll.scrollchild, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons(); if GwPlayerPetFrame then GwPlayerPetFrame:UpdatePetBarButtons() end end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
 
     -- MAINBAR
-    addOptionSlider(mainBar.scroll.scrollchild, L["Button Spacing"], nil, {settingName = "MAINBAR_MARGIIN", getterSetter = "GW.settings.MAINBAR_MARGIIN", callback = function() GW.UpdateMainBarHot() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}})
-    addOptionDropdown(
-        mainBar.scroll.scrollchild,
-        L["Main Bar Range Indicator"],
-        nil,
-        "MAINBAR_RANGEINDICATOR",
-        function()
-            GW.UpdateMainBarHot()
-        end,
-        {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"},
-        {L["%s Indicator"]:format(RED_GEM), L["Red Overlay"], STATUS_TEXT_BOTH, NONE},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        mainBar.scroll.scrollchild,
-        BINDING_HEADER_ACTIONBAR .. SHOW,
-        nil,
-        "FADE_MULTIACTIONBAR_8",
-        nil ,
-        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
+    addOptionSlider(mainBar.scroll.scrollchild, L["Button Spacing"], nil, {settingName = "MAINBAR_MARGIIN", getterSetter = "MAINBAR_MARGIIN", callback = function() GW.UpdateMainBarHot() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}})
 
+    addOptionDropdown(mainBar.scroll.scrollchild, L["Main Bar Range Indicator"], nil, {settingName = "MAINBAR_RANGEINDICATOR", getterSetter = "MAINBAR_RANGEINDICATOR", callback = GW.UpdateMainBarHot, optionsList = {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"}, optionNames = {L["%s Indicator"]:format(RED_GEM), L["Red Overlay"], STATUS_TEXT_BOTH, NONE}, dependence = {["ACTIONBARS_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, BINDING_HEADER_ACTIONBAR .. SHOW, nil, {settingName = "FADE_MULTIACTIONBAR_8", getterSetter = "FADE_MULTIACTIONBAR_8", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
 
     --EXTRABARS
-    addOptionSlider(extraBars.scroll.scrollchild, L["Button Spacing"], nil, {settingName = "MULTIBAR_MARGIIN", getterSetter = "GW.settings.MULTIBAR_MARGIIN", callback = function() GW.UpdateMultibarButtons() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}})
+    addOptionSlider(extraBars.scroll.scrollchild, L["Button Spacing"], nil, {settingName = "MULTIBAR_MARGIIN", getterSetter = "MULTIBAR_MARGIIN", callback = function() GW.UpdateMultibarButtons() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}})
 
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(2) .. " " .. SHOW,
-        nil,
-        "FADE_MULTIACTIONBAR_1",
-        nil,
-        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(3) .. " " .. SHOW,
-        nil,
-        "FADE_MULTIACTIONBAR_2",
-        nil,
-        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(4) .. " " .. SHOW,
-        nil,
-        "FADE_MULTIACTIONBAR_3",
-        nil,
-        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(4) .. " " .. L["Width"],
-        L["Number of columns in the two extra right-hand action bars."],
-        "MULTIBAR_RIGHT_COLS",
-        function()
-            setMultibarCols("MultiBarRight", "MULTIBAR_RIGHT_COLS")
-        end,
-        {1, 2, 3, 4, 6, 12},
-        {"1", "2", "3", "4", "6", "12"},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(5) .. " " .. SHOW,
-        nil,
-        "FADE_MULTIACTIONBAR_4",
-        nil,
-        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(5) .. " " .. L["Width"],
-        L["Number of columns in the two extra right-hand action bars."],
-        "MULTIBAR_RIGHT_COLS_2",
-        function()
-            setMultibarCols("MultiBarLeft", "MULTIBAR_RIGHT_COLS_2")
-        end,
-        {1, 2, 3, 4, 6, 12},
-        {"1", "2", "3", "4", "6", "12"},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(6) .. " " .. SHOW,
-        nil,
-        "FADE_MULTIACTIONBAR_5",
-        nil,
-        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(6) .. " " .. L["Width"],
-        L["Number of columns in the two extra right-hand action bars."],
-        "MULTIBAR_RIGHT_COLS_3",
-        function()
-            setMultibarCols("MultiBar5", "MULTIBAR_RIGHT_COLS_3")
-        end,
-        {1, 2, 3, 4, 6, 12},
-        {"1", "2", "3", "4", "6", "12"},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(7) .. " " .. SHOW,
-        nil,
-        "FADE_MULTIACTIONBAR_6",
-        nil,
-        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(7) .. " " .. L["Width"],
-        L["Number of columns in the two extra right-hand action bars."],
-        "MULTIBAR_RIGHT_COLS_4",
-        function()
-            setMultibarCols("MultiBar6", "MULTIBAR_RIGHT_COLS_4")
-        end,
-        {1, 2, 3, 4, 6, 12},
-        {"1", "2", "3", "4", "6", "12"},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(8) .. " " .. SHOW,
-        nil,
-        "FADE_MULTIACTIONBAR_7",
-        nil,
-        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
-        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
-    addOptionDropdown(
-        extraBars.scroll.scrollchild,
-        OPTION_SHOW_ACTION_BAR:format(8) .. " " .. L["Width"],
-        L["Number of columns in the two extra right-hand action bars."],
-        "MULTIBAR_RIGHT_COLS_5",
-        function()
-            setMultibarCols("MultiBar7", "MULTIBAR_RIGHT_COLS_5")
-        end,
-        {1, 2, 3, 4, 6, 12},
-        {"1", "2", "3", "4", "6", "12"},
-        nil,
-        {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(2) .. " " .. SHOW, nil, {settingName = "FADE_MULTIACTIONBAR_1", getterSetter = "FADE_MULTIACTIONBAR_1", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(3) .. " " .. SHOW, nil, {settingName = "FADE_MULTIACTIONBAR_2", getterSetter = "FADE_MULTIACTIONBAR_2", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(4) .. " " .. SHOW, nil, {settingName = "FADE_MULTIACTIONBAR_3", getterSetter = "FADE_MULTIACTIONBAR_3", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(4) .. " " .. L["Width"], L["Number of columns in the two extra right-hand action bars."], {settingName = "MULTIBAR_RIGHT_COLS", getterSetter = "MULTIBAR_RIGHT_COLS", callback = function() setMultibarCols("MultiBarRight", "MULTIBAR_RIGHT_COLS") end, optionsList = {1, 2, 3, 4, 6, 12}, optionNames = {"1", "2", "3", "4", "6", "12"}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(5) .. " " .. SHOW, nil, {settingName = "FADE_MULTIACTIONBAR_4", getterSetter = "FADE_MULTIACTIONBAR_4", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(5) .. " " .. L["Width"], L["Number of columns in the two extra right-hand action bars."], {settingName = "MULTIBAR_RIGHT_COLS_2", getterSetter = "MULTIBAR_RIGHT_COLS_2", callback = function() setMultibarCols("MultiBarLeft", "MULTIBAR_RIGHT_COLS_2") end, optionsList = {1, 2, 3, 4, 6, 12}, optionNames = {"1", "2", "3", "4", "6", "12"}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(6) .. " " .. SHOW, nil, {settingName = "FADE_MULTIACTIONBAR_5", getterSetter = "FADE_MULTIACTIONBAR_5", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(6) .. " " .. L["Width"], L["Number of columns in the two extra right-hand action bars."], {settingName = "MULTIBAR_RIGHT_COLS_3", getterSetter = "MULTIBAR_RIGHT_COLS_3", callback = function() setMultibarCols("MultiBar5", "MULTIBAR_RIGHT_COLS_3") end, optionsList = {1, 2, 3, 4, 6, 12}, optionNames = {"1", "2", "3", "4", "6", "12"}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(7) .. " " .. SHOW, nil, {settingName = "FADE_MULTIACTIONBAR_6", getterSetter = "FADE_MULTIACTIONBAR_6", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(7) .. " " .. L["Width"], L["Number of columns in the two extra right-hand action bars."], {settingName = "MULTIBAR_RIGHT_COLS_4", getterSetter = "MULTIBAR_RIGHT_COLS_4", callback = function() setMultibarCols("MultiBar6", "MULTIBAR_RIGHT_COLS_4") end, optionsList = {1, 2, 3, 4, 6, 12}, optionNames = {"1", "2", "3", "4", "6", "12"}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(8) .. " " .. SHOW, nil, {settingName = "FADE_MULTIACTIONBAR_7", getterSetter = "FADE_MULTIACTIONBAR_7", optionsList = {"ALWAYS", "INCOMBAT", "MOUSE_OVER"}, optionNames = {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+    addOptionDropdown(mainBar.scroll.scrollchild, OPTION_SHOW_ACTION_BAR:format(8) .. " " .. L["Width"], L["Number of columns in the two extra right-hand action bars."], {settingName = "MULTIBAR_RIGHT_COLS_5", getterSetter = "MULTIBAR_RIGHT_COLS_5", callback = function() setMultibarCols("MultiBar7", "MULTIBAR_RIGHT_COLS_5") end, optionsList = {1, 2, 3, 4, 6, 12}, optionNames = {"1", "2", "3", "4", "6", "12"}, dependence = {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+
 
     --TOTEMBAR
-    addOptionDropdown(
-        totemBar.scroll.scrollchild,
-        L["Class Totems Sorting"],
-        nil,
-        "TotemBar_SortDirection",
-        function() GW.UpdateTotembar(GW_TotemBar) end,
-        {"ASC", "DSC"},
-        {L["Ascending"], L["Descending"]},
-        nil,
-        {["HEALTHGLOBE_ENABLED"] = true}
-    )
-    addOptionDropdown(
-        totemBar.scroll.scrollchild,
-        L["Class Totems Growth Direction"],
-        function() GW.UpdateTotembar(GW_TotemBar) end,
-        "TotemBar_GrowDirection",
-        function() GW.UpdateTotembar(GW_TotemBar) end,
-        {"HORIZONTAL", "VERTICAL"},
-        {L["Horizontal"], L["Vertical"]},
-        nil,
-        {["HEALTHGLOBE_ENABLED"] = true}
-    )
+    addOptionDropdown(totemBar.scroll.scrollchild, L["Class Totems Sorting"], nil, {settingName = "TotemBar_SortDirection", getterSetter = "TotemBar_SortDirection", callback = function() GW.UpdateTotembar(GW_TotemBar) end, optionsList = {"ASC", "DSC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
+    addOptionDropdown(totemBar.scroll.scrollchild, L["Class Totems Growth Direction"], nil, {settingName = "TotemBar_GrowDirection", getterSetter = "TotemBar_GrowDirection", callback = function() GW.UpdateTotembar(GW_TotemBar) end, optionsList = {"HORIZONTAL", "VERTICAL"}, optionNames = {L["Horizontal"], L["Vertical"]}, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
 
     -- STANCEBAR
-    addOption(stanceBar.scroll.scrollchild, ENABLE, nil, "StanceBarEnabled", function() GW.UpdateStanceBarVisibility(GwStanceBar) end, nil, {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, "Actionbars")    
-    addOptionDropdown(
-        stanceBar.scroll.scrollchild,
-        L["Stance Bar Growth Direction"],
-        L["Set the growth direction of the stance bar"],
-        "StanceBar_GrowDirection",
-        function()
-            GW.SetStanceButtons(GwStanceBar)
-        end,
-        {"UP", "DOWN", "LEFT", "RIGHT"},
-        {StrUpper(L["Up"], 1, 1), StrUpper(L["Down"], 1, 1), L["Left"], L["Right"]},
-        nil,
-        {["StanceBarEnabled"] = true, ["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true},
-        nil,
-        "Actionbars"
-    )
+    addOption(stanceBar.scroll.scrollchild, ENABLE, nil, "StanceBarEnabled", function() GW.UpdateStanceBarVisibility(GwStanceBar) end, nil, {["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, "Actionbars")
+    addOptionDropdown(totemBar.scroll.scrollchild, L["Class Totems Growth Direction"], L["Set the growth direction of the stance bar"], {settingName = "StanceBar_GrowDirection", getterSetter = "StanceBar_GrowDirection", callback = function() GW.SetStanceButtons(GwStanceBar) end, optionsList = {"UP", "DOWN", "LEFT", "RIGHT"}, optionNames = {StrUpper(L["Up"], 1, 1), StrUpper(L["Down"], 1, 1), L["Left"], L["Right"]}, dependence = {["StanceBarEnabled"] = true, ["ACTIONBARS_ENABLED"] = true, ["BAR_LAYOUT_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
 
     InitPanel(general, true)
     InitPanel(mainBar, true)

@@ -5,6 +5,7 @@ local UnitFrameFader = {
     combat = false,
     hover = false,
     dynamicflight = false,
+    health = false,
     maxAlpha = 1,
     minAlpha = 0.35,
     smooth = 0.33,
@@ -746,6 +747,19 @@ GW.globalDefault = {
         focustargetFrameFader = CopyTable(UnitFrameFader),
         playerFrameFader = CopyTable(UnitFrameFader),
         petFrameFader = CopyTable(UnitFrameFader),
+
+        grid10FrameFaderRange = true,
+        grid10FrameFader = CopyTable(UnitFrameFader),
+        grid25FrameFaderRange = true,
+        grid25FrameFader = CopyTable(UnitFrameFader),
+        grid40FrameFaderRange = true,
+        grid40FrameFader = CopyTable(UnitFrameFader),
+        gridPartyFrameFaderRange = true,
+        gridPartyFrameFader = CopyTable(UnitFrameFader),
+        gridPetFrameFaderRange = true,
+        gridPetFrameFader = CopyTable(UnitFrameFader),
+        gridTankFrameFaderRange = true,
+        gridTankFrameFader = CopyTable(UnitFrameFader),
 
         -- Raid Pet
         RAID_PET_FRAMES= false,

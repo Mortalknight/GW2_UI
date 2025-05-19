@@ -28,7 +28,8 @@ local function GW2_GridRaid10StyleRegister(self)
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
     self.PrivateAuras = GW.Construct_PrivateAura(self)
-    self.Range = GW.Construct_RangeIndicator(self)
+    --self.Range = GW.Construct_RangeIndicator(self)
+    self.Fader = GW.Construct_Faderframe(self)
 
     return self
 end
@@ -89,7 +90,8 @@ local function UpdateGridRaid10Frame(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
     GW.UpdatePrivateAurasSettings(frame)
-    GW.Update_RangeIndicator(frame)
+    --GW.Update_RangeIndicator(frame)
+    GW.Update_Faderframe(frame, "grid10")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")
 end

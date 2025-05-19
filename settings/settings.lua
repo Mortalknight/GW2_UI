@@ -11,39 +11,57 @@ local all_options = {}
 local optionReference = {}
 
 --helper functions for settings
-function CreateSettingProxy(fullPath)
+function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect)
     local keys = {}
     for key in string.gmatch(fullPath, "[^%.]+") do
         table.insert(keys, key)
     end
 
     return {
-        get = function()
-            local ref = GW
-            for i = 2, #keys - 1 do
+        get = function(optionKey)
+            local ref = (isPrivateSetting and GW.private) or GW.settings
+            for i = 1, #keys - 1 do
                 ref = ref[keys[i]]
                 if not ref then return nil end
             end
-            return ref[keys[#keys]]
+            local setting = ref[keys[#keys]]
+            if isMultiselect then
+                if type(setting) == "table" and optionKey then
+                    return setting[optionKey]
+                end
+                return setting
+            end
+            return setting
         end,
 
-        set = function(value)
-            local ref = GW
-            for i = 2, #keys - 1 do
+        set = function(value, optionKey)
+            local ref = (isPrivateSetting and GW.private) or GW.settings
+            for i = 1, #keys - 1 do
                 if not ref[keys[i]] then ref[keys[i]] = {} end
                 ref = ref[keys[i]]
             end
-            ref[keys[#keys]] = value
+            if isMultiselect then
+                if not ref[keys[#keys]] then ref[keys[#keys]] = {} end
+                ref[keys[#keys]][optionKey] = value
+            else
+                ref[keys[#keys]] = value
+            end
         end,
 
-        getDefault = function()
-            local isPrivateDefault = keys[2] == "private"
-            local ref = (isPrivateDefault and GW.privateDefaults.profile) or GW.globalDefault.profile
-            for i = 3, #keys - 1 do
+        getDefault = function(optionKey)
+            local ref = (isPrivateSetting and GW.privateDefaults.profile) or GW.globalDefault.profile
+            for i = 1, #keys - 1 do
                 ref = ref[keys[i]]
                 if not ref then return nil end
             end
-            return ref[keys[#keys]]
+            local setting = ref[keys[#keys]]
+            if isMultiselect then
+                if type(setting) == "table" and optionKey then
+                    return setting[optionKey]
+                end
+                return setting
+            end
+            return setting
         end
     }
 end
@@ -241,7 +259,7 @@ local function AddOptionColorPicker(panel, name, desc, values)
 
     opt.optionType = "colorPicker"
 
-    local proxy = CreateSettingProxy(values.getterSetter)
+    local proxy = CreateSettingProxy(values.getterSetter, values.isPrivateSetting)
     opt.get = proxy.get
     opt.set = proxy.set
     opt.getDefault = proxy.getDefault
@@ -259,7 +277,7 @@ local function AddOptionSlider(panel, name, desc, values)
     opt.step = values.step
     opt.optionType = "slider"
 
-    local proxy = CreateSettingProxy(values.getterSetter)
+    local proxy = CreateSettingProxy(values.getterSetter, values.isPrivateSetting)
     opt.get = proxy.get
     opt.set = proxy.set
     opt.getDefault = proxy.getDefault
@@ -268,88 +286,104 @@ local function AddOptionSlider(panel, name, desc, values)
 end
 GW.AddOptionSlider = AddOptionSlider
 
-local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
+local function AddOptionText(panel, name, desc, values)
+    local opt = AddOption(panel, name, desc, values.settingName, values.callback, values.params, values.dependence, values.incompatibleAddons, values.forceNewLine, values.groupHeaderName, values.isPrivateSetting)
 
-    opt.multiline = multiline
+    opt.multiline = values.multiline
     opt.optionType = "text"
+
+    local proxy = CreateSettingProxy(values.getterSetter, values.isPrivateSetting)
+    opt.get = proxy.get
+    opt.set = proxy.set
+    opt.getDefault = proxy.getDefault
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, isSound, noNewLine, forceNewLine, groupHeaderName, isPrivateSetting, isFont)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
+local function AddOptionDropdown(panel, name, desc, values)
+    local opt = AddOption(panel, name, desc, values.settingName, values.callback, values.params, values.dependence, values.incompatibleAddons, values.forceNewLine, values.groupHeaderName, values.isPrivateSetting)
 
     opt.options = {}
-    opt.options = options_list
-    opt.options_names = option_names
-    opt.hasCheckbox = checkbox
+    opt.options = values.optionsList
+    opt.options_names = values.optionNames
+    opt.hasCheckbox = values.checkbox
     opt.optionType = "dropdown"
-    opt.tooltipType = tooltipType
-    opt.hasSound = isSound
-    opt.noNewLine = noNewLine
-    opt.isFont = isFont
+    opt.tooltipType = values.tooltipType
+    opt.hasSound = values.isSound
+    opt.noNewLine = values.noNewLine
+
+    local proxy = CreateSettingProxy(values.getterSetter, values.isPrivateSetting, values.checkbox)
+    opt.get = proxy.get
+    opt.set = proxy.set
+    opt.getDefault = proxy.getDefault
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
-local function setDependenciesOption(type, name, SetEnable, deactivateColor, overrideColor)
-    if deactivateColor then
-        _G[name].title:SetTextColor(0.82, 0, 0)
-        if type == "slider" then
-            _G[name].inputFrame.input:SetTextColor(0.82, 0, 0)
-        elseif type == "text" then
-            _G[name].inputFrame.input:SetTextColor(0.82, 0, 0)
-        elseif type == "dropdown" then
-            _G[name].dropDown.Text:SetTextColor(0.82, 0, 0)
-        end
-    elseif overrideColor then
-        _G[name].title:SetTextColor(1, 0.65, 0)
-        if type == "slider" then
-            _G[name].inputFrame.input:SetTextColor(1, 0.65, 0)
-        elseif type == "text" then
-            _G[name].inputFrame.input:SetTextColor(1, 0.65, 0)
-        elseif type == "dropdown" then
-            _G[name].dropDown.Text:SetTextColor(1, 0.65, 0)
-        end
-    elseif SetEnable then
-        _G[name].title:SetTextColor(1, 1, 1)
-        if type == "boolean" then
-            _G[name]:Enable()
-            _G[name].checkbutton:Enable()
-        elseif type == "slider" then
-            _G[name].slider:Enable()
-            _G[name].inputFrame.input:Enable()
-            _G[name].inputFrame.input:SetTextColor(0.82, 0.82, 0.82)
-        elseif type == "text" then
-            _G[name].inputFrame.input:Enable()
-            _G[name].inputFrame.input:SetTextColor(1, 1, 1)
-        elseif type == "dropdown" then
-            _G[name].dropDown:Enable()
-            _G[name].dropDown.Text:SetTextColor(1, 1, 1)
-        elseif type == "button" then
-            _G[name]:Enable()
-            _G[name].title:SetTextColor(0, 0, 0)
-        elseif type == "colorPicker" then
-            _G[name].button:Enable()
-        end
-    else
-        _G[name].title:SetTextColor(0.4, 0.4, 0.4)
-        if type == "boolean" then
-            _G[name]:Disable()
-            _G[name].checkbutton:Disable()
-        elseif type == "slider" then
-            _G[name].slider:Disable()
-            _G[name].inputFrame.input:Disable()
-            _G[name].inputFrame.input:SetTextColor(0.4, 0.4, 0.4)
-        elseif type == "text" then
-            _G[name].inputFrame.input:Disable()
-            _G[name].inputFrame.input:SetTextColor(0.4, 0.4, 0.4)
-        elseif type == "dropdown" then
-            _G[name].dropDown:Disable()
-            _G[name].dropDown.Text:SetTextColor(0.4, 0.4, 0.4)
-        elseif type == "button" then
-            _G[name]:Disable()
-        elseif type == "colorPicker" then
-            _G[name].button:Disable()
+local function setDependenciesOption(type, settingName, SetEnable, deactivateColor, overrideColor)
+    for _, panel in pairs(GW.getOptionReference()) do
+        for _, of in pairs(panel.options) do
+            if of.optionName == settingName then
+                if deactivateColor then
+                    of.title:SetTextColor(0.82, 0, 0)
+                    if type == "slider" then
+                        of.inputFrame.input:SetTextColor(0.82, 0, 0)
+                    elseif type == "text" then
+                        of.inputFrame.input:SetTextColor(0.82, 0, 0)
+                    elseif type == "dropdown" then
+                        of.dropDown.Text:SetTextColor(0.82, 0, 0)
+                    end
+                elseif overrideColor then
+                    of.title:SetTextColor(1, 0.65, 0)
+                    if type == "slider" then
+                        of.inputFrame.input:SetTextColor(1, 0.65, 0)
+                    elseif type == "text" then
+                        of.inputFrame.input:SetTextColor(1, 0.65, 0)
+                    elseif type == "dropdown" then
+                        of.dropDown.Text:SetTextColor(1, 0.65, 0)
+                    end
+                elseif SetEnable then
+                    of.title:SetTextColor(1, 1, 1)
+                    if type == "boolean" then
+                        of:Enable()
+                        of.checkbutton:Enable()
+                    elseif type == "slider" then
+                        of.slider:Enable()
+                        of.inputFrame.input:Enable()
+                        of.inputFrame.input:SetTextColor(0.82, 0.82, 0.82)
+                    elseif type == "text" then
+                        of.inputFrame.input:Enable()
+                        of.inputFrame.input:SetTextColor(1, 1, 1)
+                    elseif type == "dropdown" then
+                        of.dropDown:Enable()
+                        of.dropDown.Text:SetTextColor(1, 1, 1)
+                    elseif type == "button" then
+                        of:Enable()
+                        of.title:SetTextColor(0, 0, 0)
+                    elseif type == "colorPicker" then
+                        of.button:Enable()
+                    end
+                else
+                    of.title:SetTextColor(0.4, 0.4, 0.4)
+                    if type == "boolean" then
+                        of:Disable()
+                        of.checkbutton:Disable()
+                    elseif type == "slider" then
+                        of.slider:Disable()
+                        of.inputFrame.input:Disable()
+                        of.inputFrame.input:SetTextColor(0.4, 0.4, 0.4)
+                    elseif type == "text" then
+                        of.inputFrame.input:Disable()
+                        of.inputFrame.input:SetTextColor(0.4, 0.4, 0.4)
+                    elseif type == "dropdown" then
+                        of.dropDown:Disable()
+                        of.dropDown.Text:SetTextColor(0.4, 0.4, 0.4)
+                    elseif type == "button" then
+                        of:Disable()
+                    elseif type == "colorPicker" then
+                        of.button:Disable()
+                    end
+                end
+                break
+            end
         end
     end
 end
@@ -483,8 +517,8 @@ local function RefreshSettingsAfterProfileSwitch()
                     local toSet = of.checkbutton:GetChecked()
                     of.callback(toSet, of.optionName)
                 end
-            elseif of.optionType == "text" then
-                of.inputFrame.input:SetText(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName] or "")
+            elseif of.optionType == "text" then -- here we have a setter/getter like GW.settings.SETTINGNAME
+                of.inputFrame.input(of.get() or "")
                 if of.callback then
                     of.callback(of.inputFrame.input)
                 end
@@ -694,13 +728,7 @@ local function InitPanel(panel, hasScroll)
                 for idx, option in pairs(v.options) do
                     local function IsSelected(data)
                         if v.hasCheckbox then
-                            local settingstable = of.isPrivateSetting and GW.private[data.optionName] or GW.settings[data.optionName]
-                            local isSelected = false
-                            if type(settingstable[option]) == "table" then
-                                isSelected = settingstable[option].enable
-                            else
-                                isSelected = settingstable[option] == nil and true or settingstable[option]
-                            end
+                            local isSelected = of.get(data.option)
                             if GW.IsInProfileSwitch and v.callback then
                                 v.callback(isSelected, data.option)
                             end
@@ -708,57 +736,20 @@ local function InitPanel(panel, hasScroll)
                         else
                             if GW.IsInProfileSwitch and v.callback then
                                 v.callback(data.option)
-                                if v.isFont then
-                                    of.dropDown.Text:SetFont(GW.Libs.LSM:Fetch("font", data.option), 12, "")
-                                else
-                                    of.dropDown.Text:SetFont(UNIT_NAME_FONT, 12)
-                                end
                             end
-                            if of.isPrivateSetting then
-                                return GW.private[data.optionName] == data.option
-                            else
-                                return GW.settings[data.optionName] == data.option
-                            end
+                            return of.get(data.optionName) == data.option
                         end
                     end
                     local function SetSelected(data)
                         if v.hasCheckbox then
-                            local isSelected = true
-
-                            if of.isPrivateSetting then
-                                if type(GW.private[data.optionName][data.option]) == "table" then
-                                    isSelected = not GW.private[data.optionName][data.option].enable
-                                    GW.private[data.optionName][data.option].enable = isSelected
-                                else
-                                    isSelected = not GW.private[data.optionName][data.option]
-                                    GW.private[data.optionName][data.option] = isSelected
-                                end
-                            else
-                                if type(GW.settings[data.optionName][data.option]) == "table" then
-                                    isSelected = not GW.settings[data.optionName][data.option].enable
-                                    GW.settings[data.optionName][data.option].enable = isSelected
-                                else
-                                    isSelected = not GW.settings[data.optionName][data.option]
-                                    GW.settings[data.optionName][data.option] = isSelected
-                                end
-                            end
+                            local isSelected = not of.get(data.option)
+                            of.set(isSelected, data.option)
 
                             if v.callback then
                                 v.callback(isSelected, data.option)
                             end
                         else
-                            if of.isPrivateSetting then
-                                GW.private[data.optionName] = data.option
-                            else
-                                GW.settings[data.optionName] = data.option
-                            end
-
-                            if v.isFont then
-                                of.dropDown.Text:SetFont(GW.Libs.LSM:Fetch("font", data.option), 12, "")
-                            else
-                                of.dropDown.Text:SetFont(UNIT_NAME_FONT, 12)
-                            end
-
+                            of.set(data.option)
                             if v.callback then
                                 v.callback(data.option)
                             end
@@ -806,11 +797,7 @@ local function InitPanel(panel, hasScroll)
                 end
             end)
 
-            if v.isFont then
-                of.dropDown.Text:SetFont(GW.Libs.LSM:Fetch("font", of.dropDown.Text:GetText()), 12, "")
-            else
-                of.dropDown.Text:SetFont(UNIT_NAME_FONT, 12)
-            end
+            of.dropDown.Text:SetFont(UNIT_NAME_FONT, 12)
 
             of.dropDown:Enable()
             of.dropDown.Text:SetTextColor(1, 1, 1) -- init text color for options without deps

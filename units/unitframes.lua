@@ -682,8 +682,8 @@ function GwUnitFrameMixin:ToggleSettings()
 
     --frame fader
     local frameFaderSettings = GW.settings[unit .. "FrameFader"]
-    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight then
-        GW.FrameFadeEnable(self, true)
+    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health then
+        GW.FrameFadeEnable(self)
         self.Fader:SetOption("Hover", frameFaderSettings.hover)
         self.Fader:SetOption("Combat", frameFaderSettings.combat)
         self.Fader:SetOption("Casting", frameFaderSettings.casting)
@@ -691,6 +691,7 @@ function GwUnitFrameMixin:ToggleSettings()
         self.Fader:SetOption("Smooth", (frameFaderSettings.smooth > 0 and frameFaderSettings.smooth) or nil)
         self.Fader:SetOption("MinAlpha", frameFaderSettings.minAlpha)
         self.Fader:SetOption("MaxAlpha", frameFaderSettings.maxAlpha)
+        self.Fader:SetOption("Health", frameFaderSettings.health)
 
         self.Fader:ClearTimers()
         self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)
@@ -821,8 +822,8 @@ function GwTargetUnitFrameMixin:ToggleSettings()
     self.altBg:SetShown(GW.settings[self.parentUnitId .. "_FRAME_ALT_BACKGROUND"])
 
     local frameFaderSettings = GW.settings[self.unit .. "FrameFader"]
-    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight then
-        GW.FrameFadeEnable(self, true)
+    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health then
+        GW.FrameFadeEnable(self)
         self.Fader:SetOption("Hover", frameFaderSettings.hover)
         self.Fader:SetOption("Combat", frameFaderSettings.combat)
         self.Fader:SetOption("Casting", frameFaderSettings.casting)
@@ -830,6 +831,7 @@ function GwTargetUnitFrameMixin:ToggleSettings()
         self.Fader:SetOption("Smooth", (frameFaderSettings.smooth > 0 and frameFaderSettings.smooth) or nil)
         self.Fader:SetOption("MinAlpha", frameFaderSettings.minAlpha)
         self.Fader:SetOption("MaxAlpha", frameFaderSettings.maxAlpha)
+        self.Fader:SetOption("Health", frameFaderSettings.health)
 
         self.Fader:ClearTimers()
         self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)

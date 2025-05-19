@@ -227,8 +227,8 @@ end
 
 function GwPlayerPetFrameMixin:ToggleFaderOptions()
     local frameFaderSettings = GW.settings.petFrameFader
-    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight then
-        GW.FrameFadeEnable(self, true)
+    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health then
+        GW.FrameFadeEnable(self)
         self.Fader:SetOption("Hover", frameFaderSettings.hover)
         self.Fader:SetOption("Combat", frameFaderSettings.combat)
         self.Fader:SetOption("Casting", frameFaderSettings.casting)
@@ -236,6 +236,7 @@ function GwPlayerPetFrameMixin:ToggleFaderOptions()
         self.Fader:SetOption("Smooth", (frameFaderSettings.smooth > 0 and frameFaderSettings.smooth) or nil)
         self.Fader:SetOption("MinAlpha", frameFaderSettings.minAlpha)
         self.Fader:SetOption("MaxAlpha", frameFaderSettings.maxAlpha)
+        self.Fader:SetOption("Health", frameFaderSettings.health)
 
         self.Fader:ClearTimers()
         self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)

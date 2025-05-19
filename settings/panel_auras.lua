@@ -58,48 +58,26 @@ local function LoadAurasPanel(sWindow)
     createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, {p_auras, p_indicator, p_missingBuffs})
     settingsMenuAddButton(L["Raid Auras"], p, {p_auras, p_indicator, p_missingBuffs})
 
-    addOptionText(p_auras.scroll.scrollchild, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", function() GW.UpdateGridSettings("ALL", false) end, nil, nil, {["RAID_FRAMES"] = true})
-    addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", function() GW.UpdateGridSettings("ALL", false) end, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras.scroll.scrollchild, L["Ignored Auras"], L["A list of auras that should never be shown."], {settingName = "AURAS_IGNORED", getterSetter = "AURAS_IGNORED", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
+    addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], {settingName = "AURAS_MISSING", getterSetter = "AURAS_MISSING", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
 
-    local raidDebuffKeys, raidDebuffVales = {}, {}
+    local raidDebuffKeys, raidDebuffValues = {}, {}
     local settingstable = GW.settings.RAIDDEBUFFS
     for spellID, _ in pairs(GW.ImportendRaidDebuff) do
         local spellinfo = C_Spell.GetSpellInfo(spellID)
         if spellID and spellinfo then
             local name = format("%s |cFF888888(%d)|r", spellinfo.name, spellID)
             tinsert(raidDebuffKeys, spellID)
-            tinsert(raidDebuffVales, name)
+            tinsert(raidDebuffValues, name)
 
             GW.ImportendRaidDebuff[spellID] = settingstable[spellID] == nil and true or settingstable[spellID]
         end
     end
-    addOptionDropdown(
-        p_auras.scroll.scrollchild,
-        L["Dungeon & Raid Debuffs"],
-        L["Show important Dungeon & Raid debuffs"],
-        "RAIDDEBUFFS",
-        function(toSet, id)
-            GW.ImportendRaidDebuff[id] = toSet
-        end,
-        raidDebuffKeys,
-        raidDebuffVales,
-        nil,
-        nil,
-        true,
-        nil,
-        "spell"
-    )
-    addOptionSlider(p_auras.scroll.scrollchild, L["Set important Dungeon & Raid debuff scale"], nil, {settingName = "RAIDDEBUFFS_Scale", getterSetter = "GW.settings.RAIDDEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
-    addOptionSlider(p_auras.scroll.scrollchild, L["Set dispellable debuff scale"], nil, {settingName = "DISPELL_DEBUFFS_Scale", getterSetter = "GW.settings.DISPELL_DEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
-    addOptionDropdown(
-        p_auras.scroll.scrollchild,
-        L["Important & dispellable debuff scale priority"],
-        L["If both scales could apply to a debuff, which one should be used"],
-        "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO",
-        nil,
-        {"DISPELL", "IMPORTANT", "OFF"},
-        {L["Dispell > Important"], L["Important > Dispell"], OFF}
-    )
+    addOptionDropdown(p_auras.scroll.scrollchild, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {settingName = "RAIDDEBUFFS", getterSetter = "RAIDDEBUFFS", callback = function(toSet, id) GW.ImportendRaidDebuff[id] = toSet end, optionsList = raidDebuffKeys, optionNames = raidDebuffValues, tooltipType = "spell", checkbox = true})
+
+    addOptionSlider(p_auras.scroll.scrollchild, L["Set important Dungeon & Raid debuff scale"], nil, {settingName = "RAIDDEBUFFS_Scale", getterSetter = "RAIDDEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
+    addOptionSlider(p_auras.scroll.scrollchild, L["Set dispellable debuff scale"], nil, {settingName = "DISPELL_DEBUFFS_Scale", getterSetter = "DISPELL_DEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
+    addOptionDropdown(p_auras.scroll.scrollchild, L["Important & dispellable debuff scale priority"], L["If both scales could apply to a debuff, which one should be used"], {settingName = "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO", getterSetter = "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO", optionsList = {"DISPELL", "IMPORTANT", "OFF"}, optionNames = {L["Dispell > Important"], L["Important > Dispell"], OFF}})
 
     addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", function() GW.UpdateGridSettings("ALL", false) end, nil, {["RAID_FRAMES"] = true})
     addOption(p_indicator.scroll.scrollchild, L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], "INDICATORS_TIME", function() GW.UpdateGridSettings("ALL", false) end, nil, {["RAID_FRAMES"] = true})
@@ -119,57 +97,16 @@ local function LoadAurasPanel(sWindow)
     for v, pos in ipairs(GW.INDICATORS) do
         local key = "INDICATOR_" .. pos
         local t = L[GW.indicatorsText[v]]
-        addOptionDropdown(
-            p_indicator.scroll.scrollchild,
-            L["%s Indicator"]:format(t),
-            L["Edit %s raid aura indicator."]:format(t),
-            key,
-            function()
-                GW.settings[key] = tonumber(GW.settings[key])
-                GW.UpdateGridSettings("ALL", false)
-            end,
-            auraKeys,
-            auraVals,
-            {perSpec = true},
-            {["RAID_FRAMES"] = true},
-            nil,
-            nil,
-            "spell"
-        )
+        addOptionDropdown(p_indicator.scroll.scrollchild, L["%s Indicator"]:format(t), L["Edit %s raid aura indicator."]:format(t), {settingName = key, getterSetter = key, callback = function() GW.settings[key] = tonumber(GW.settings[key]); GW.UpdateGridSettings("ALL", false) end, optionsList = auraKeys, optionNames = auraVals, dependence = {["RAID_FRAMES"] = true}, tooltipType = "spell"})
     end
 
-    addOptionDropdown(
-        p_missingBuffs.scroll.scrollchild,
-        L["Show Missing Raid Buffs Bar"],
-        L["Whether to display a floating bar showing your missing buffs. This can be moved via the 'Move HUD' interface."],
-        "MISSING_RAID_BUFF",
-        function()
-            if GwRaidBuffReminder then GwRaidBuffReminder:UpdateVisibility() end
-        end,
-        {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"},
-        {
-            ALWAYS,
-            NEVER,
-            AGGRO_WARNING_IN_PARTY,
-            L["In raid"],
-            L["In group or in raid"],
-        }
-    )
-
+    addOptionDropdown(p_missingBuffs.scroll.scrollchild, L["Show Missing Raid Buffs Bar"], L["Whether to display a floating bar showing your missing buffs. This can be moved via the 'Move HUD' interface."], {settingName = "MISSING_RAID_BUFF", getterSetter = "MISSING_RAID_BUFF", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateVisibility() end end, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["In raid"], L["In group or in raid"]}})
     addOption(p_missingBuffs.scroll.scrollchild, L["Dimmed"], nil, "MISSING_RAID_BUFF_dimmed", function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end)
     addOption(p_missingBuffs.scroll.scrollchild, L["Greyed out"], nil, "MISSING_RAID_BUFF_grayed_out", function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end)
     addOption(p_missingBuffs.scroll.scrollchild, L["Animated"], L["If enabled, an animated border will surround the missing raid buffs"], "MISSING_RAID_BUFF_animated", function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end)
     addOption(p_missingBuffs.scroll.scrollchild, L["Invert raid buff bar"], L["If enabled, the above settings will apply to buffs you have, instead of buffs you are missing"], "MISSING_RAID_BUFF_INVERT", function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end, nil, nil, nil, true)
 
-    addOptionText(
-        p_missingBuffs.scroll.scrollchild,
-        L["Custom buff"],
-        L["Enter the spell ID of the buff you wish to track. Only one spell ID is supported. To find the spell ID of the buff you want to track, enable IDs in the tooltip settings and mouse over the icon in your aura bar."],
-        "MISSING_RAID_BUFF_custom_id",
-        function()
-            if GwRaidBuffReminder then GwRaidBuffReminder:UpdateCustomSpell() end
-        end
-    )
+    addOptionText(p_missingBuffs.scroll.scrollchild, L["Custom buff"], L["Enter the spell ID of the buff you wish to track. Only one spell ID is supported. To find the spell ID of the buff you want to track, enable IDs in the tooltip settings and mouse over the icon in your aura bar."], {settingName = "MISSING_RAID_BUFF_custom_id", getterSetter = "MISSING_RAID_BUFF_custom_id", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateCustomSpell() end end})
 
     InitPanel(p_auras, true)
     InitPanel(p_indicator, true)
