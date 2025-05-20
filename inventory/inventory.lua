@@ -23,10 +23,10 @@ do
             if name == "Pawn" then
                 hooksecurefunc("PawnInvalidateBestItems", PostRefresh)
                 hooksecurefunc("PawnResetTooltips", PostRefresh)
+                hooksecurefunc("PawnOnInventoryChanged", PostRefresh)
                 self:UnregisterEvent("ADDON_LOADED")
                 PawnLoaded = true
             end
-            return
         end
         upgradeCache = {}
         ContainerFrame_UpdateAll()
