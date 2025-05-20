@@ -191,22 +191,17 @@ function RaidBuffReminderMixin:CheckForBuffs()
         end
     end
 
-    for i = 1, 40 do
-        local auraData = C_UnitAuras.GetBuffDataByIndex("player", i)
-        if not auraData then break end
-
-        for key, tbl in pairs(buffInfos) do
-            for _, buff in pairs(tbl) do
-                if key == "Weapon" then
-                    local hasMainHandEnchant, _, _, mainHandEnchantID, hasOffHandEnchant, _, _, offHandEnchantID = GetWeaponEnchantInfo()
-                    if (hasMainHandEnchant and buff.spellId == mainHandEnchantID) or (hasOffHandEnchant and buff.spellId == offHandEnchantID) then
-                        buff.hasBuff = true
-                        break
-                    end
-                elseif AuraUtil.FindAuraByName(buff.name, "player", "HELPFUL") then
+    for key, tbl in pairs(buffInfos) do
+        for _, buff in pairs(tbl) do
+            if key == "Weapon" then
+                local hasMainHandEnchant, _, _, mainHandEnchantID, hasOffHandEnchant, _, _, offHandEnchantID = GetWeaponEnchantInfo()
+                if (hasMainHandEnchant and buff.spellId == mainHandEnchantID) or (hasOffHandEnchant and buff.spellId == offHandEnchantID) then
                     buff.hasBuff = true
                     break
                 end
+            elseif C_UnitAuras.GetAuraDataBySpellName("player", buff.name) then
+                buff.hasBuff = true
+                break
             end
         end
     end
