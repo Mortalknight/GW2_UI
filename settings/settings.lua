@@ -158,7 +158,7 @@ local function CreateOption(optionType, panel, name, desc, values)
     local opt = {
         name = name,
         desc = desc or "",
-        optionName = values.settingName,
+        optionName = values.getterSetter,
         optionType = optionType,
         callback = values.callback,
         dependence = values.dependence,
@@ -170,14 +170,14 @@ local function CreateOption(optionType, panel, name, desc, values)
         isPrivateSetting = values.isPrivateSetting
     }
 
-    if values and values.getterSetter then
+    if values.getterSetter then
         local proxy = CreateSettingProxy(values.getterSetter, values.isPrivateSetting, values.checkbox)
         opt.get = proxy.get
         opt.set = proxy.set
         opt.getDefault = proxy.getDefault
     end
 
-    if values and values.params then
+    if values.params then
         for k, v in pairs(values.params) do opt[k] = v end
     end
 
@@ -198,8 +198,8 @@ local function CreateOption(optionType, panel, name, desc, values)
     return opt
 end
 
-local function AddOption(panel, name, desc, settingName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName, isPrivateSetting)
-    return CreateOption("boolean", panel, name, desc, {settingName = settingName, callback = callback, params = params, dependence = dependence, incompatibleAddons = incompatibleAddons, forceNewLine = forceNewLine, groupHeaderName = groupHeaderName, isPrivateSetting = isPrivateSetting})
+local function AddOption(panel, name, desc, values)
+    return CreateOption("boolean", panel, name, desc, values)
 end
 GW.AddOption = AddOption
 
@@ -331,7 +331,7 @@ local function checkDependenciesOnLoad()
 
                 for settingName, expectedValue in pairs(v.dependence) do
                     local of = getOptionFrame(settingName)
-                    local currentVal = (of and of.get and of.get()) or (v.isPrivateSetting and GW.private[settingName] or GW.settings[settingName])
+                    local currentVal = (of and of.get and of.get())
 
                     if type(expectedValue) == "table" then
                         local matched = false
@@ -407,27 +407,15 @@ local function ShowColorPicker(frame)
 end
 
 local function updateSettingsFrameSettingsValue(setting, value, setSetting)
-    local found = false
-    for _, panel in pairs(GW.getOptionReference()) do
-        for _, of in pairs(panel.options) do
-            if of.optionName == setting then
-                if setSetting then
-                    if of.isPrivateSetting then
-                        GW.private[setting] = value
-                    else
-                        GW.settings[setting] = value
-                    end
-                end
-                if of.optionType == "slider" then
-                    of.slider:SetValue(value)
-                    of.inputFrame.input:SetText(RoundDec(value, of.decimalNumbers))
-                end
+    local of = getOptionFrame(setting)
+    if not of then return end
 
-                found = true
-                break
-            end
-        end
-        if found then break end
+    if setSetting then
+        of.set(value)
+    end
+    if of.optionType == "slider" then
+        of.slider:SetValue(value)
+        of.inputFrame.input:SetText(RoundDec(value, of.decimalNumbers))
     end
 end
 GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
@@ -438,24 +426,24 @@ local function RefreshSettingsAfterProfileSwitch()
     for _, panel in pairs(GW.getOptionReference()) do
         for _, of in pairs(panel.options) do
             if of.optionType == "slider" then
-                of.slider:SetValue(RoundDec(of.get(), of.decimalNumbers)) -- here we have a setter/getter like GW.settings.SETTINGNAME
+                of.slider:SetValue(RoundDec(of.get(), of.decimalNumbers))
                 of.inputFrame.input:SetText(RoundDec(of.get(), of.decimalNumbers))
                 if of.callback then
                     of.callback()
                 end
             elseif of.optionType == "boolean" then
-                of.checkbutton:SetChecked(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName])
+                of.checkbutton:SetChecked(of.get())
                 if of.callback then
                     local toSet = of.checkbutton:GetChecked()
                     of.callback(toSet, of.optionName)
                 end
-            elseif of.optionType == "text" then -- here we have a setter/getter like GW.settings.SETTINGNAME
+            elseif of.optionType == "text" then
                 of.inputFrame.input(of.get() or "")
                 if of.callback then
                     of.callback(of.inputFrame.input)
                 end
             elseif of.optionType == "colorPicker" then
-                local color = of.get() -- here we have a setter/getter like GW.settings.SETTINGNAME
+                local color = of.get()
                 of.button.bg:SetColorTexture(color.r, color.g, color.b)
             elseif of.optionType == "dropdown" then
                 of.dropDown:GenerateMenu()
@@ -731,7 +719,7 @@ local function InitPanel(panel, hasScroll)
                     end
                 end)
             elseif v.optionType == "boolean" then
-                of.checkbutton:SetChecked(of.isPrivateSetting and GW.private[of.optionName] or GW.settings[of.optionName])
+                of.checkbutton:SetChecked(of.get())
                 of.checkbutton:SetScript("OnClick", function(self, button)
                     if HandleIncompatibility(v, button) then
                         self:SetChecked(not self:GetChecked())
@@ -740,11 +728,7 @@ local function InitPanel(panel, hasScroll)
                         if self:GetChecked() then
                             toSet = true
                         end
-                        if of.isPrivateSetting then
-                            GW.private[of.optionName] = toSet
-                        else
-                            GW.settings[of.optionName] = toSet
-                        end
+                        of.set(toSet)
 
                         if v.callback then
                             v.callback(toSet, of.optionName)
@@ -760,11 +744,7 @@ local function InitPanel(panel, hasScroll)
                             toSet = false
                         end
                         self.checkbutton:SetChecked(toSet)
-                        if of.isPrivateSetting then
-                            GW.private[of.optionName] = toSet
-                        else
-                            GW.settings[of.optionName] = toSet
-                        end
+                        of.set(toSet)
 
                         if v.callback ~= nil then
                             v.callback(toSet, of.optionName)

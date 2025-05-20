@@ -52,15 +52,15 @@ local function LoadGeneralPanel(sWindow)
     createCat(GENERAL, nil, p, {general, classcolors, blizzardFix})
     settingsMenuAddButton(GENERAL, p, {general, classcolors, blizzardFix})
 
-    addOptionSlider(general.scroll.scrollchild, L["Shorten values decimal length"], L["Controls the amount of decimals used for shorted values"], {settingName = "ShortHealthValuesDecimalLength", getterSetter = "ShortHealthValuesDecimalLength", callback = GW.BuildPrefixValues, min = 0, max = 4, decimalNumbers = 0, step = 1})
+    addOptionSlider(general.scroll.scrollchild, L["Shorten values decimal length"], L["Controls the amount of decimals used for shorted values"], { getterSetter = "ShortHealthValuesDecimalLength", callback = GW.BuildPrefixValues, min = 0, max = 4, decimalNumbers = 0, step = 1})
 
-    addOptionDropdown(general.scroll.scrollchild, L["Shorten value prefix style"], nil, {settingName = "ShortHealthValuePrefixStyle", getterSetter = "ShortHealthValuePrefixStyle", callback = GW.BuildPrefixValues, optionsList = {"TCHINESE", "CHINESE", "ENGLISH", "GERMAN", "KOREAN", "METRIC"}, optionNames = {"萬, 億", "万, 亿", "K, M, B, T", "Tsd, Mio, Mrd, Bio", "천, 만, 억", "k, M, G, T"}})
-    addOptionDropdown(general.scroll.scrollchild, L["Number format"], L["Will be used for the most numbers"], {settingName = "NumberFormat", getterSetter = "NumberFormat", optionsList = {"POINT", "COMMA"}, optionNames = {"1,000,000.00", "1.000.000,00"}})
-    addOption(general.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
-    addOptionDropdown(general.scroll.scrollchild, L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], {settingName = "AUTO_REPAIR", getterSetter = "AUTO_REPAIR", optionsList = {"NONE", "PLAYER", "GUILD"}, optionNames = {NONE_KEY, PLAYER, GUILD}})
-    addOptionSlider(general.scroll.scrollchild, L["Extended Vendor"], L["The number of pages shown in the merchant frame. Set 1 to disable."], {settingName = "EXTENDED_VENDOR_NUM_PAGES", getterSetter = "EXTENDED_VENDOR_NUM_PAGES", callback = function() GW.ShowRlPopup = true end, min = 1, max = 6, decimalNumbers = 0, step = 1})
+    addOptionDropdown(general.scroll.scrollchild, L["Shorten value prefix style"], nil, { getterSetter = "ShortHealthValuePrefixStyle", callback = GW.BuildPrefixValues, optionsList = {"TCHINESE", "CHINESE", "ENGLISH", "GERMAN", "KOREAN", "METRIC"}, optionNames = {"萬, 億", "万, 亿", "K, M, B, T", "Tsd, Mio, Mrd, Bio", "천, 만, 억", "k, M, G, T"}})
+    addOptionDropdown(general.scroll.scrollchild, L["Number format"], L["Will be used for the most numbers"], { getterSetter = "NumberFormat", optionsList = {"POINT", "COMMA"}, optionNames = {"1,000,000.00", "1.000.000,00"}})
+    addOption(general.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], {getterSetter = "AFK_MODE", callback = GW.ToggelAfkMode})
+    addOptionDropdown(general.scroll.scrollchild, L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], { getterSetter = "AUTO_REPAIR", optionsList = {"NONE", "PLAYER", "GUILD"}, optionNames = {NONE_KEY, PLAYER, GUILD}})
+    addOptionSlider(general.scroll.scrollchild, L["Extended Vendor"], L["The number of pages shown in the merchant frame. Set 1 to disable."], { getterSetter = "EXTENDED_VENDOR_NUM_PAGES", callback = function() GW.ShowRlPopup = true end, min = 1, max = 6, decimalNumbers = 0, step = 1})
 
-    addOption(classcolors.scroll.scrollchild, L["Blizzard Class Colors"], nil, "BLIZZARDCLASSCOLOR_ENABLED", function(value)
+    addOption(classcolors.scroll.scrollchild, L["Blizzard Class Colors"], nil, {getterSetter = "BLIZZARDCLASSCOLOR_ENABLED", callback = function(value)
         for i = 1, #CLASS_SORT_ORDER do
             local _, tag = GetClassInfo(i)
             local settingsButton = _G["Gw2ClassColor" .. tag]
@@ -70,15 +70,15 @@ local function LoadGeneralPanel(sWindow)
             settingsButton.button.bg:SetColorTexture(color.r,  color.g,  color.b)
             GW.UpdateGw2ClassColor(tag, color.r, color.g, color.b, true)
         end
-    end, nil, nil, nil, nil, L["Custom Class Colors"])
+    end, groupHeaderName = L["Custom Class Colors"]})
 
     for i = 1, #CLASS_SORT_ORDER do
         local name, tag = GetClassInfo(i)
-        addOptionColorPicker(classcolors.scroll.scrollchild, name, nil, {settingName = "Gw2ClassColor" .. tag, getterSetter = "Gw2ClassColor." .. tag, callback = function(r, g, b, changed) GW.UpdateGw2ClassColor(tag, r, g, b, changed) end, groupHeaderName = L["Custom Class Colors"], dependence = {["BLIZZARDCLASSCOLOR_ENABLED"] = false}, isPrivateSetting = true})
+        addOptionColorPicker(classcolors.scroll.scrollchild, name, nil, {getterSetter = "Gw2ClassColor." .. tag, callback = function(r, g, b, changed) GW.UpdateGw2ClassColor(tag, r, g, b, changed) end, groupHeaderName = L["Custom Class Colors"], dependence = {["BLIZZARDCLASSCOLOR_ENABLED"] = false}, isPrivateSetting = true})
     end
 
     -- blizzard fixes
-    addOption(blizzardFix.scroll.scrollchild, GUILD_NEWS, L["This will fix the current Guild News jam."], "FixGuildNewsSpam", function() GW:FixBlizzardIssues() end)
+    addOption(blizzardFix.scroll.scrollchild, GUILD_NEWS, L["This will fix the current Guild News jam."], {getterSetter = "FixGuildNewsSpam", callback = function() GW:FixBlizzardIssues() end})
 
     InitPanel(general, true)
     InitPanel(classcolors, true)
