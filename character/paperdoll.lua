@@ -155,6 +155,7 @@ local function LoadPaperDoll(tabContainer)
     addAddonButton("Outfitter", GW.settings.USE_CHARACTER_WINDOW, function() hideCharframe = false Outfitter:OpenUI() end)
     addAddonButton("MyRolePlay", GW.settings.USE_CHARACTER_WINDOW, function() hideCharframe = false ToggleCharacter("MyRolePlayCharacterFrame") end)
     addAddonButton("TalentSetManager", GW.settings.USE_TALENT_WINDOW, function() TalentFrame_LoadUI() if PlayerTalentFrame_Toggle then PlayerTalentFrame_Toggle(TALENTS_TAB) end end)
+    addAddonButton("ItemUpgradeTip", nil, function() if ItemUpgradeTip then ItemUpgradeTip:ToggleView() end end)
 
     GW.ToggleCharacterItemInfo(true)
     CharacterFrame:SetScript(
