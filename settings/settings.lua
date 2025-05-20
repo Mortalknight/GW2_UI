@@ -244,7 +244,7 @@ local function AddOptionDropdown(panel, name, desc, values)
     opt.optionsNames = values.optionNames
     opt.hasCheckbox = values.checkbox
     opt.tooltipType = values.tooltipType
-    opt.hasSound = values.isSound
+    opt.hasSound = values.hasSound
     opt.noNewLine = values.noNewLine
 
     return opt
