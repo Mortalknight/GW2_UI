@@ -5,7 +5,6 @@ local LibCustomGlow = GW.Libs.CustomGlows
 local ALPHA = 0.3
 
 -- tables
-local checkIds = {}
 local buffInfos = {}
 
 local reminderBuffs = {
@@ -55,7 +54,7 @@ local reminderBuffs = {
         462854, -- Skyfury
     },
     CooldownReduce = {
-        381748, -- Blessing of the Bronze -- search for name
+        381748, -- Blessing of the Bronze
     },
     Weapon = {
         1, -- just a fallback
@@ -170,73 +169,45 @@ end
 function RaidBuffReminderMixin:UpdateBuffInfos()
     for key, tbl in pairs(reminderBuffs) do
         buffInfos[key] = {}
-        if type(tbl) == "table" then
-            for idx, spellID in pairs(tbl) do
-                local spellInfo = C_Spell.GetSpellInfo(spellID)
-                if spellInfo then
-                    buffInfos[key][idx] = {
-                        name    = spellInfo.name,
-                        texId   = (key == "Weapon") and GetInventoryItemTexture("player", 16) or spellInfo.iconID,
-                        spellId = spellID,
-                        hasBuff = false
-                    }
-                end
+        for idx, spellID in pairs(tbl) do
+            local spellInfo = C_Spell.GetSpellInfo(spellID)
+            if spellInfo then
+                buffInfos[key][idx] = {
+                    name    = spellInfo.name,
+                    texId   = (key == "Weapon") and GetInventoryItemTexture("player", 16) or spellInfo.iconID,
+                    spellId = spellID,
+                    hasBuff = false
+                }
             end
         end
     end
 end
 
 function RaidBuffReminderMixin:CheckForBuffs()
-    local auraData, foundBuff
-    local hasMainHandEnchant, mainHandEnchantID, hasOffHandEnchant, offHandEnchantID
-    wipe(checkIds)
     -- Reset Buff-Status
-    for key, tbl in pairs(buffInfos) do
-        if type(tbl) == "table" then
-            for idx, _ in pairs(tbl) do
-                buffInfos[key][idx].hasBuff = false
-            end
+    for _, tbl in pairs(buffInfos) do
+        for _, buff in pairs(tbl) do
+            buff.hasBuff = false
         end
     end
 
     for i = 1, 40 do
-        auraData = C_UnitAuras.GetBuffDataByIndex("player", i)
+        local auraData = C_UnitAuras.GetBuffDataByIndex("player", i)
         if not auraData then break end
 
         for key, tbl in pairs(buffInfos) do
-            if type(tbl) == "table" then
-                foundBuff = false
-                for idx, buff in pairs(tbl) do
-                    if key == "Weapon" then
-                        hasMainHandEnchant, _, _, mainHandEnchantID, hasOffHandEnchant, _, _, offHandEnchantID = GetWeaponEnchantInfo()
-                        if (hasMainHandEnchant and buff.spellId == mainHandEnchantID) or (hasOffHandEnchant and buff.spellId == offHandEnchantID) then
-                            buff.hasBuff = true
-                            checkIds[mainHandEnchantID or offHandEnchantID] = true
-                            foundBuff = true
-                            break
-                        end
-                    elseif key == "CooldownReduce" then -- here we search for name to reduce all call spell ids
-                        if AuraUtil.FindAuraByName(buff.name, "player") then
-                            buff.hasBuff = true
-                            checkIds[auraData.spellId] = true
-                            foundBuff = true
-                            break
-                        end
-                    else
-                        if buff.spellId == auraData.spellId then
-                            buff.hasBuff = true
-                            checkIds[auraData.spellId] = true
-                            foundBuff = true
-                            break
-                        end
+            for _, buff in pairs(tbl) do
+                if key == "Weapon" then
+                    local hasMainHandEnchant, _, _, mainHandEnchantID, hasOffHandEnchant, _, _, offHandEnchantID = GetWeaponEnchantInfo()
+                    if (hasMainHandEnchant and buff.spellId == mainHandEnchantID) or (hasOffHandEnchant and buff.spellId == offHandEnchantID) then
+                        buff.hasBuff = true
+                        break
                     end
+                elseif AuraUtil.FindAuraByName(buff.name, "player", "HELPFUL") then
+                    buff.hasBuff = true
+                    break
                 end
-                if foundBuff then break end
             end
-        end
-
-        if not checkIds[auraData.spellId or mainHandEnchantID or offHandEnchantID] then
-            checkIds[auraData.spellId or mainHandEnchantID or offHandEnchantID] = true
         end
     end
 end
