@@ -87,7 +87,7 @@ local function LoadHudPanel(sWindow)
         end
     )
     addOptionSlider(general.scroll.scrollchild, L["HUD Scale"], L["Change the HUD size."], {settingName = "HUD_SCALE", getterSetter = "HUD_SCALE", callback = function() GW.UpdateHudScale(); GW.ShowRlPopup = true end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01})
-    addOptionButton(general.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], "GW2_Apply_all_Button",
+    addOptionButton(general.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], {settingName = "GW2_Apply_all_Button", callback =
         function()
             local scale = GW.settings.HUD_SCALE
             for _, mf in pairs(GW.scaleableFrames) do
@@ -95,7 +95,7 @@ local function LoadHudPanel(sWindow)
                 mf:SetScale(scale)
                 GW.settings[mf.setting .."_scale"] = scale
             end
-        end)
+        end})
     addOptionDropdown(general.scroll.scrollchild, L["Show Role Bar"], L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."], {settingName = "ROLE_BAR", getterSetter = "ROLE_BAR", callback = GW.UpdateRaidCounterVisibility, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["Raid Only"], L["Party / Raid"]}})
     addOptionSlider(general.scroll.scrollchild, L["Talking Head Scale"], nil, {settingName = "TalkingHeadFrameScale", getterSetter = "TalkingHeadFrameScale", callback = GW.ScaleTalkingHeadFrame, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["TALKINGHEAD_SKIN_ENABLED"] = true}})
 

@@ -36,7 +36,7 @@ local function LoadChatPanel(sWindow)
     addOption(p.scroll.scrollchild, L["History"], L["Log the main chat frames history. So when you reloadui or log in and out you see the history from your last session"], "chatHistory", nil, nil, {["CHATFRAME_ENABLED"] = true})
 
     addOptionSlider(p.scroll.scrollchild, L["History Size"], nil, {settingName = "historySize", getterSetter = "historySize", min = 10, max = 500, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true, ["chatHistory"] = true}})
-    addOptionButton(p.scroll.scrollchild, L["Reset History"], nil, "GW2_ResetChatHistoryButton", function() GW.private.ChatHistoryLog = {} end)
+    addOptionButton(p.scroll.scrollchild, L["Reset History"], nil, {settingName = "GW2_ResetChatHistoryButton", callback = function() GW.private.ChatHistoryLog = {} end})
 
     addOptionDropdown(p.scroll.scrollchild, TIMESTAMPS_LABEL, OPTION_TOOLTIP_TIMESTAMPS, {settingName = "timeStampFormat", getterSetter = "timeStampFormat", optionsList = {"NONE", "%I:%M ", "%I:%M:%S ", "%I:%M %p ", "%I:%M:%S %p ", "%H:%M ", "%H:%M:%S "}, optionNames = {NONE, "03:27", "03:27:32", "03:27 PM", "03:27:32 PM", "15:27", "15:27:32"}})
     addOptionDropdown(p.scroll.scrollchild, L["Announce Interrupts"], L["Announce when you interrupt a spell to the specified chat channel"], {settingName = "interruptAnnounce", getterSetter = "interruptAnnounce", callback = GW.ToggleInterruptAnncouncement, optionsList = {"NONE", "SAY", "YELL", "PARTY", "RAID", "RAID_ONLY", "EMOTE"}, optionNames = {NONE, SAY, YELL, L["Party Only"], L["Party / Raid"], L["Raid Only"], EMOTE}})
