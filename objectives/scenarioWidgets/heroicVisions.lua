@@ -1,7 +1,15 @@
 local _, GW = ...
 
+local mapIds = {
+    [1469] = true,
+    [1470] = true,
+    [2403] = true,
+    [2404] = true
+}
+
 local function addHeroicVisionsData(block, numCriteria)
-    if GW.Libs.GW2Lib:GetPlayerLocationMapID() == 1469 or GW.Libs.GW2Lib:GetPlayerLocationMapID() == 1470 then -- Heroic Vision for OG and SW
+    local mapId = GW.Libs.GW2Lib:GetPlayerLocationMapID()
+    if mapIds[mapId] then -- Heroic Vision for OG and SW
         local info = C_CurrencyInfo.GetCurrencyInfo(1744) --Corrupted Memento
         if info then
             numCriteria = numCriteria + 1
