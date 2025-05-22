@@ -63,10 +63,9 @@ local function LoadGeneralPanel(sWindow)
     addOption(classcolors.scroll.scrollchild, L["Blizzard Class Colors"], nil, {getterSetter = "BLIZZARDCLASSCOLOR_ENABLED", callback = function(value)
         for i = 1, #CLASS_SORT_ORDER do
             local _, tag = GetClassInfo(i)
-            local settingsButton = _G["Gw2ClassColor" .. tag]
-            local color = value == true and RAID_CLASS_COLORS[tag] or GW.privateDefaults.profile.Gw2ClassColor[tag]
+            local settingsButton = GW.GetOptionFrameWidget("Gw2ClassColor." .. tag)
+            local color = value == true and RAID_CLASS_COLORS[tag] or settingsButton.getDefault()
 
-            settingsButton.getterSetter = {r = color.r, g = color.g, b = color.b, colorStr = nil}
             settingsButton.button.bg:SetColorTexture(color.r,  color.g,  color.b)
             GW.UpdateGw2ClassColor(tag, color.r, color.g, color.b, true)
         end

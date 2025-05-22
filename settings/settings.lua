@@ -260,6 +260,7 @@ local function getOptionFrame(settingName)
         end
     end
 end
+GW.GetOptionFrameWidget = getOptionFrame
 
 local function setDependenciesOption(type, settingName, SetEnable, deactivateColor, overrideColor)
     local of = getOptionFrame(settingName)
