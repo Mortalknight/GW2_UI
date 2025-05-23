@@ -45,6 +45,8 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
         self.Fader:SetOption("MinAlpha", frameFaderSettings.minAlpha)
         self.Fader:SetOption("MaxAlpha", frameFaderSettings.maxAlpha)
         self.Fader:SetOption("Health", frameFaderSettings.health)
+        self.Fader:SetOption("Vehicle", frameFaderSettings.vehicle)
+        self.Fader:SetOption("PlayerTarget", frameFaderSettings.playertarget)
 
         self.Fader:ClearTimers()
         self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)

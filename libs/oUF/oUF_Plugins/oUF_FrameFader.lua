@@ -74,8 +74,11 @@ local function Update(self, event, unit)
     -- normal fader
     if (element.Casting and (UnitCastingInfo(unit) or UnitChannelInfo(unit))) or
         (element.Combat and UnitAffectingCombat(unit)) or
+        (element.PlayerTarget and UnitExists("target")) or
+        (element.UnitTarget and UnitExists(unit .. "target")) or
         (element.DynamicFlight and not isGliding) or
         (element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
+        (element.Vehicle and UnitHasVehicleUI(unit)) or
         (element.Hover and GetMouseFocus(self))
     then
         ToggleAlpha(element.rangeFaderObject or self, element, element.MaxAlpha)
@@ -89,9 +92,20 @@ local function ForceUpdate(element, event)
 end
 
 local function HoverScript(self)
-    local Fader = self.Fader
-    if Fader and Fader.HoverHooked == 1 then
-        Fader:ForceUpdate("HoverScript")
+    local fader = self.Fader
+    if fader and fader.HoverHooked == 1 then
+        fader:ForceUpdate("HoverScript")
+    end
+end
+
+local function TargetScript(self)
+    local fader = self.Fader
+    if fader and fader.TargetHooked == 1 then
+        if self:IsShown() then
+            fader:ForceUpdate("TargetScript")
+        else
+            self:SetAlpha(0)
+        end
     end
 end
 
@@ -114,6 +128,30 @@ local options = {
         disable = function(self)
             if self.Fader.HoverHooked == 1 then
                 self.Fader.HoverHooked = 0 -- off state
+            end
+        end
+    },
+    Target = { --[[UnitTarget, PlayerTarget]]
+        enable = function(self)
+            if not self.Fader.TargetHooked then
+                self:HookScript("OnShow", TargetScript)
+                self:HookScript("OnHide", TargetScript)
+            end
+
+            self.Fader.TargetHooked = 1 -- on state
+
+            if not self:IsShown() then
+                self:SetAlpha(0)
+            end
+
+            self:RegisterEvent("UNIT_TARGET", Update)
+            self:RegisterEvent("PLAYER_TARGET_CHANGED", Update, true)
+            self:RegisterEvent("PLAYER_FOCUS_CHANGED", Update, true)
+        end,
+        events = {"UNIT_TARGET","PLAYER_TARGET_CHANGED","PLAYER_FOCUS_CHANGED"},
+        disable = function(self)
+            if self.Fader.TargetHooked == 1 then
+                self.Fader.TargetHooked = 0 -- off state
             end
         end
     },
@@ -143,6 +181,13 @@ local options = {
             self:RegisterEvent("PLAYER_IS_GLIDING_CHANGED", Update, true)
         end,
         events = {"PLAYER_IS_GLIDING_CHANGED"}
+    },
+    Vehicle = {
+        enable = function(self)
+            self:RegisterEvent("UNIT_ENTERED_VEHICLE", Update, true)
+            self:RegisterEvent("UNIT_EXITED_VEHICLE", Update, true)
+        end,
+        events = {"UNIT_ENTERED_VEHICLE","UNIT_EXITED_VEHICLE"}
     },
     Health = {
         enable = function(self)
@@ -175,7 +220,7 @@ local function CountOption(element, state, oldState)
 end
 
 local function SetOption(element, opt, state)
-    local option = opt
+    local option = ((opt == "UnitTarget" or opt == "PlayerTarget") and "Target") or opt
     local oldState = element[opt]
 
     if option and options[option] and (oldState ~= state) then
@@ -220,7 +265,12 @@ end
 local function Disable(self)
     if self.Fader then
         for opt in pairs(options) do
-            self.Fader:SetOption(opt)
+            if opt == "Target" then
+				self.Fader:SetOption("UnitTarget")
+				self.Fader:SetOption("PlayerTarget")
+			else
+				self.Fader:SetOption(opt)
+			end
         end
 
         self.Fader.count = nil

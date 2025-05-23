@@ -672,3 +672,6 @@ L["Min Alpha"] = true
 L["Max Alpha"] = true
 L["Fader"] = true
 L["Focus target"] = true
+L["Vehicle"] = true
+L["Unit Target"] = true
+L["Player Target"] = true
