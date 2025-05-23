@@ -12,7 +12,7 @@ local settingsMenuAddButton = GW.settingsMenuAddButton;
 local function setMultibarCols(barName, setting)
     local mb = GW.settings[barName]
     local cols = GW.settings[setting]
-    GW.Debug("setting multibar colsfor bar ", barName, "to", cols)
+    GW.Debug("setting multibar cols for bar ", barName, "to", cols)
 
     mb["ButtonsPerRow"] = cols
     GW.settings[barName] = mb

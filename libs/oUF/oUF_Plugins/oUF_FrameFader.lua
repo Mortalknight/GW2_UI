@@ -42,7 +42,6 @@ end
 
 local isGliding = false
 local function Update(self, event, unit)
-    --print(self:GetName(), self.unit, unit)
     if not self:IsVisible() then return end
     local element = self.Fader
     if self.isForced or (not element or not element.count or element.count <= 0) then

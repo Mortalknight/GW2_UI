@@ -439,7 +439,7 @@ local function RefreshSettingsAfterProfileSwitch()
                     of.callback(toSet, of.optionName)
                 end
             elseif of.optionType == "text" then
-                of.inputFrame.input(of.get() or "")
+                of.inputFrame.input:SetText(of.get() or "")
                 if of.callback then
                     of.callback(of.inputFrame.input)
                 end
@@ -514,7 +514,6 @@ local function InitPanel(panel, hasScroll)
             lastOptionName = of.displayName
             for k, val in pairs(v) do
                 of[k] = val
-                print(k)
             end
             of.newLine = newLine
 
@@ -593,15 +592,16 @@ local function InitPanel(panel, hasScroll)
                         local function IsSelected(data)
                             if v.hasCheckbox then
                                 local isSelected = of.get(data.option)
-                                if GW.IsInProfileSwitch and v.callback then
+                                if GW.IsInProfileSwitch and v.callback and isSelected then
                                     v.callback(isSelected, data.option)
                                 end
                                 return isSelected
                             else
-                                if GW.IsInProfileSwitch and v.callback then
+                                local isSelected = of.get(data.optionName) == data.option
+                                if GW.IsInProfileSwitch and v.callback and isSelected then
                                     v.callback(data.option)
                                 end
-                                return of.get(data.optionName) == data.option
+                                return isSelected
                             end
                         end
                         local function SetSelected(data)
