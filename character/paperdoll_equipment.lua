@@ -111,7 +111,6 @@ local PAPERDOLL_STATCATEGORIES = {
 local EquipSlotList = {}
 local bagItemList = {}
 local selectedInventorySlot = nil
-local durabilityFrame = nil
 local bagSlotFramePool
 
 local function UpdateAzeriteItem(self)
@@ -382,10 +381,6 @@ local function stat_OnEnter(self)
     elseif self.stat == "MOVESPEED" then
         MovementSpeed_OnEnter(self)
         return
-    elseif self.stat == "DURABILITY" then
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GW.DurabilityTooltip()
-        return
     end
     if (not self.tooltip) then
         return
@@ -516,7 +511,6 @@ local function getStatListFrame(self)
         frame.Label:SetFont(UNIT_NAME_FONT, 1)
         frame.Label:SetTextColor(0, 0, 0, 0)
 
-        frame:SetScript("OnEnter", stat_OnEnter)
         frame:SetScript("OnLeave", GameTooltip_Hide)
 
         frame.onEnterFunc = nil
@@ -579,7 +573,7 @@ local function updateStats(self)
     end
 
     -- Add Durability Icon
-    durabilityFrame = getStatListFrame(self)
+    local durabilityFrame = getStatListFrame(self)
     durabilityFrame:ClearAllPoints()
     durabilityFrame:SetPoint("TOPLEFT", self.stats, "TOPLEFT", 5 + x, -35 - y)
     durabilityFrame:Show()
@@ -588,6 +582,11 @@ local function updateStats(self)
     durabilityFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
     durabilityFrame.icon:SetTexCoord(0, 1, 0, 0.5)
     durabilityFrame.icon:SetDesaturated(true)
+    durabilityFrame:SetScript("OnEnter", GW.DurabilityTooltip)
+    durabilityFrame:SetScript("OnEvent", GW.DurabilityOnEvent)
+    durabilityFrame:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
+    durabilityFrame:RegisterEvent("MERCHANT_SHOW")
+    GW.DurabilityOnEvent(durabilityFrame, "ForceUpdate")
 end
 GW.AddForProfiling("paperdoll_equipment", "updateStats", updateStats)
 
@@ -615,10 +614,6 @@ local function stats_OnEvent(self, event, ...)
     if (IsIn(event, "UNIT_MODEL_CHANGED", "UNIT_NAME_UPDATE") and unit == "player") or event == "PLAYER_ENTERING_WORLD" then
         parent.model:SetUnit("player", false)
         updateUnitData(parent)
-        GW.collectDurability(durabilityFrame)
-        return
-    elseif IsIn(event, "UPDATE_INVENTORY_DURABILITY", "MERCHANT_SHOW") then
-        GW.collectDurability(durabilityFrame)
         return
     end
 
@@ -1006,8 +1001,6 @@ local function RegisterStatsEvents(frame)
         "LIFESTEAL_UPDATE",
         "AVOIDANCE_UPDATE",
         "KNOWN_TITLES_UPDATE",
-        "UPDATE_INVENTORY_DURABILITY",
-        "MERCHANT_SHOW",
         "UNIT_NAME_UPDATE",
         "PLAYER_TALENT_UPDATE",
         "BAG_UPDATE",
@@ -1065,6 +1058,14 @@ local function ResetBagSlotFrame(_, f)
     f:Hide()
 end
 
+local function ResetStatsFrame(_, f)
+    f:SetScript("OnEvent", nil)
+    f:SetScript("OnEnter", stat_OnEnter)
+    f:UnregisterAllEvents()
+    f:ClearAllPoints()
+    f:Hide()
+end
+
 local function LoadPDBagList(fmMenu, parent)
     local fmGDR = CreateFrame("Button", "GwDressingRoom", parent, "GwDressingRoom")
     local fmPD3M = fmGDR.model
@@ -1072,7 +1073,7 @@ local function LoadPDBagList(fmMenu, parent)
     local fmGPDBIL = CreateFrame("Frame", "GwPaperDollBagItemList", parent, "GwPaperDollBagItemList")
 
     --frame pools
-    fmGDR.statsFramePool = CreateFramePool("Frame", fmGPDS, "GwPaperDollStat")
+    fmGDR.statsFramePool = CreateFramePool("Frame", fmGPDS, "GwPaperDollStat", ResetStatsFrame)
     bagSlotFramePool = CreateFramePool("ItemButton", fmGPDBIL, "GwPaperDollBagItem", ResetBagSlotFrame)
 
     parent.CharWindow.dressingRoom = fmGDR

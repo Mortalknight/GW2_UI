@@ -18,7 +18,7 @@ local slots = {
     [17] = INVTYPE_WEAPONOFFHAND,
     [18] = INVTYPE_RANGED,
 }
-local function collectDurability(self)
+local function DurabilityOnEvent(self, event)
     totalDurability = 100
     totalRepairCost = 0
 
@@ -39,10 +39,13 @@ local function collectDurability(self)
     end
     tooltipData = nil
     self.Value:SetFormattedText("%d%%", totalDurability)
-end
-GW.collectDurability = collectDurability
 
-local function DurabilityTooltip()
+    GW.Debug("Durability update with event", event, "and durability of", totalDurability)
+end
+GW.DurabilityOnEvent = DurabilityOnEvent
+
+local function DurabilityTooltip(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip:ClearLines()
     GameTooltip:AddLine(DURABILITY, 1, 0.85, 0)
 
