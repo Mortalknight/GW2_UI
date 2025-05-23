@@ -47,7 +47,7 @@ GW.DurabilityOnEvent = DurabilityOnEvent
 local function DurabilityTooltip(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip:ClearLines()
-    GameTooltip:AddLine(DURABILITY, 1, 0.85, 0)
+    GameTooltip:AddLine(DURABILITY, 1, 1, 1)
 
     for slot, durability in pairs(invDurability) do
         GameTooltip:AddDoubleLine(format("|T%s:14:14:0:0:64:64:4:60:4:60|t %s", GetInventoryItemTexture("player", slot), GetInventoryItemLink("player", slot)), format("%d%%", durability), 1, 1, 1, GW.ColorGradient(durability * 0.01, 1, 0.1, 0.1, 1, 1, 0.1, 0.1, 1, 0.1))
