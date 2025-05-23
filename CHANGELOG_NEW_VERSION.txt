@@ -1,3 +1,7 @@
+7.14.1
+FIXES
+    - Fix settings lua error
+
 7.14.0
 NEW
     - Added unitframe fader options to all unitframes

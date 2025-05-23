@@ -14,6 +14,11 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+
+addChange("7.14.1",{
+    {ct.bug, [=[Fix settings lua error]=]},
+})
+
 addChange("7.14.0",{
     {ct.feature, [=[Added unitframe fader options to all unitframes]=]},
     {ct.change, [=[Fix issue with 7.13.1]=]},

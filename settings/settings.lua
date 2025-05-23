@@ -177,19 +177,15 @@ local function CreateOption(optionType, panel, name, desc, values)
         opt.getDefault = proxy.getDefault
     end
 
-    if values.params then
-        for k, v in pairs(values.params) do opt[k] = v end
-    end
-
     table.insert(panel.gwOptions, opt)
 
     if values and values.incompatibleAddons then
         local isIncompatibleAddonLoaded, whichAddonsLoaded, isOverride = GW.IsIncompatibleAddonLoadedOrOverride(values.incompatibleAddons)
         if isIncompatibleAddonLoaded and not isOverride then
-            opt.desc = desc .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            opt.desc = opt.desc .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
             opt.isIncompatibleAddonLoaded = true
         elseif isIncompatibleAddonLoaded and isOverride then
-            opt.desc = desc .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffffa500" ..  L["You have overridden this behavior."] .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            opt.desc = opt.desc .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffffa500" ..  L["You have overridden this behavior."] .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
             opt.isIncompatibleAddonLoaded = false
             opt.isIncompatibleAddonLoadedButOverride = true
         end
