@@ -14,7 +14,13 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
-
+addChange("7.14.0",{
+    {ct.feature, [=[Added unitframe fader options to all unitframes]=]},
+    {ct.change, [=[Fix issue with 7.13.1]=]},
+    {ct.bug, [=[Raidlock error]=]},
+    {ct.bug, [=[Fix buff reminder]=]},
+    {ct.bug, [=[Fix pawn integration]=]},
+})
 
 addChange("7.13.2",{
     {ct.bug, [=[Fix issue with 7.13.1]=]},

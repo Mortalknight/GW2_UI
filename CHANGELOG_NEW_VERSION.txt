@@ -1,33 +1,8 @@
-7.13.2
-FIXES
-    - Fix issue with 7.13.1
-
-7.13.1
-FIXES
-    - Hero panel opens for enchants
-    - Weapon enchants should now show correclty
-    - Fix Pawn integration
-    - Raid lock lua error
-
-CHANGES
-    - Redo reputation frame, should load and react faster
-    - Add radio button texture
-    - Added Nightfall to objectives tracker
-    - Update some skins
-    - Added 3 new widget mover to move hud mode
-    - Added some animations
-
-7.13.0
+7.14.0
 NEW
-    - Cooldown Manager skin
-    - Add paragon indicator to reputation category list
+    - Added unitframe fader options to all unitframes
 
 FIXES
-    - PetTracker integration now work as expected
-    - WQT integration now work as expected
-    - Error when entering delves
-
-CHANGES
-    - Rewritten objectives tracker, should perform much better now
-    - Better CLEU handling with sharing over the addon
-    - Much more optimization over all modules of the addon
+    - Raidlock error
+    - Fix buff reminder
+    - Fix pawn integration
