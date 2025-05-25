@@ -13,7 +13,7 @@ local LoadAuras = GW.LoadAuras
 local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
 
-local function CreateUnitFrame(name, revert)
+local function CreateUnitFrame(name, revert, animatedPowerbar)
     local f = CreateFrame("Button", name, UIParent, revert and "GwNormalUnitFrameInvert" or "GwNormalUnitFrame")
 
     local hg = f.healthContainer
@@ -30,31 +30,38 @@ local function CreateUnitFrame(name, revert)
     GW.AddStatusbarAnimation(f.absorbbg, true)
     GW.AddStatusbarAnimation(f.healPrediction, false)
     GW.AddStatusbarAnimation(f.castingbarNormal, false)
-    GW.AddStatusbarAnimation(f.powerbar, true)
 
-    f.powerbar.customMaskSize = 64
-    f.powerbar.bar = f.powerbar
-    f.powerbar:AddToBarMask(f.powerbar.intensity)
-    f.powerbar:AddToBarMask(f.powerbar.intensity2)
-    f.powerbar:AddToBarMask(f.powerbar.scrollTexture)
-    f.powerbar:AddToBarMask(f.powerbar.scrollTexture2)
-    f.powerbar:AddToBarMask(f.powerbar.runeoverlay)
-    f.powerbar.runicmask:SetSize(f.powerbar:GetSize())
-    f.powerbar.runeoverlay:AddMaskTexture(f.powerbar.runicmask)
+    if animatedPowerbar then
+        f.powerbarContainer.powerbar = GW.CreateAnimatedStatusBar(name .. "Powerbar", f, "GwStatusPowerBar", true)
+        f.powerbar = f.powerbarContainer.powerbar
+        f.powerbar.bar = f.powerbar
+        f.powerbar:AddToBarMask(f.powerbar.intensity)
+        f.powerbar:AddToBarMask(f.powerbar.intensity2)
+        f.powerbar:AddToBarMask(f.powerbar.scrollTexture)
+        f.powerbar:AddToBarMask(f.powerbar.scrollTexture2)
+        f.powerbar:AddToBarMask(f.powerbar.runeoverlay)
+        f.powerbar.runicmask:SetSize(f.powerbar:GetSize())
+        f.powerbar.runeoverlay:AddMaskTexture(f.powerbar.runicmask)
 
-    f.powerbar.decay = GW.CreateAnimatedStatusBar(name .. "decay", f.powerbar, nil, true)
+        f.powerbar.decay = GW.CreateAnimatedStatusBar(name .. "decay", f.powerbar, nil, true)
 
-    f.powerbar.decay:SetFillAmount(0)
-    f.powerbar.decay:SetFrameLevel(f.powerbar.decay:GetFrameLevel() - 1)
-    f.powerbar.decay:ClearAllPoints()
-    f.powerbar.decay:SetPoint("TOPLEFT", f.powerbar, "TOPLEFT", 0, 0)
-    f.powerbar.decay:SetPoint("BOTTOMRIGHT", f.powerbar, "BOTTOMRIGHT", 0, 0)
+        f.powerbar.decay:SetFillAmount(0)
+        f.powerbar.decay:SetFrameLevel(f.powerbar.decay:GetFrameLevel() - 1)
+        f.powerbar.decay:ClearAllPoints()
+        f.powerbar.decay:SetPoint("TOPLEFT", f.powerbar, "TOPLEFT", 0, 0)
+        f.powerbar.decay:SetPoint("BOTTOMRIGHT", f.powerbar, "BOTTOMRIGHT", 0, 0)
 
-    f.powerbar.label:SetPoint("LEFT", f.powerbar, "LEFT", 5, 0)
-    f.powerbar.label:SetJustifyH("LEFT")
+        f.powerbar.label:SetPoint("LEFT", f.powerbar, "LEFT", 5, 0)
+        f.powerbar.label:SetJustifyH("LEFT")
+    else
+        f.powerbarContainer.powerbar = GW.CreateAnimatedStatusBar(name .. "Powerbar", f, nil, true)
+        f.powerbar = f.powerbarContainer.powerbar
+    end
+    f.powerbarContainer.powerbar:SetSize(213, 3)
+    f.powerbar:SetAllPoints(f.powerbarContainer)
     f.powerbar.label:Hide()
 
-    local elements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.castingbarNormal}
+    local elements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.castingbarNormal, f.powerbar}
     for _, element in ipairs(elements) do
         element.customMaskSize = 64
     end
@@ -73,7 +80,9 @@ local function CreateUnitFrame(name, revert)
         f.powerbar.label:SetJustifyH("RIGHT")
         local reverseElements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.powerbar, f.castingbarNormal, f.powerbar.decay }
         for _, bar in ipairs(reverseElements) do
-            bar:SetReverseFill(true)
+            if bar then
+                bar:SetReverseFill(true)
+            end
         end
         f.castingbarNormal.internalBar:SetTexCoord(1, 0, 0, 1)
         f.castingbarSpark:SetTexCoord(1, 0, 0, 1)
@@ -120,6 +129,9 @@ local function CreateSmallUnitFrame(name)
     f.absorbbg      = hg.healPrediction.absorbbg
     f.healPrediction= hg.healPrediction
     f.healthString  = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+    f.powerbarContainer.powerbar = GW.CreateAnimatedStatusBar(name .. "Powerbar", f, nil, true)
+    f.powerbar = f.powerbarContainer.powerbar
+    f.powerbar:SetAllPoints(f.powerbarContainer)
 
     GW.AddStatusbarAnimation(f.absorbOverlay, true)
     GW.AddStatusbarAnimation(f.antiHeal, true)
@@ -127,32 +139,8 @@ local function CreateSmallUnitFrame(name)
     GW.AddStatusbarAnimation(f.absorbbg, true)
     GW.AddStatusbarAnimation(f.healPrediction, false)
     GW.AddStatusbarAnimation(f.castingbarNormal, false)
-    GW.AddStatusbarAnimation(f.powerbar, true)
 
-    f.powerbar.customMaskSize = 64
-    f.powerbar.bar = f.powerbar
-    f.powerbar:AddToBarMask(f.powerbar.intensity)
-    f.powerbar:AddToBarMask(f.powerbar.intensity2)
-    f.powerbar:AddToBarMask(f.powerbar.scrollTexture)
-    f.powerbar:AddToBarMask(f.powerbar.scrollTexture2)
-    f.powerbar:AddToBarMask(f.powerbar.runeoverlay)
-    f.powerbar.runicmask:SetSize(f.powerbar:GetSize())
-    f.powerbar.runeoverlay:AddMaskTexture(f.powerbar.runicmask)
-
-    f.powerbar.decay = GW.CreateAnimatedStatusBar(name .. "Decay", f.powerbar, nil, true)
-
-    f.powerbar.decay:SetFillAmount(0)
-    f.powerbar.decay:SetFrameLevel(f.powerbar.decay:GetFrameLevel() - 1)
-    f.powerbar.decay:ClearAllPoints()
-    f.powerbar.decay:SetPoint("TOPLEFT", f.powerbar, "TOPLEFT", 0, 0)
-    f.powerbar.decay:SetPoint("BOTTOMRIGHT", f.powerbar, "BOTTOMRIGHT", 0, 0)
-
-    f.powerbar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-    f.powerbar.label:SetShadowColor(0, 0, 0, 1)
-    f.powerbar.label:SetShadowOffset(1, -1)
-    f.powerbar.label:Hide()
-
-    local elements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.castingbarNormal }
+    local elements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.castingbarNormal, f.powerbar }
     for _, element in ipairs(elements) do
         element.customMaskSize = 64
     end
@@ -612,11 +600,11 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         if secondaryFrame then secondaryFrame:UpdateHealthBar(true) end
 
         if IsIn(event, "PLAYER_TARGET_CHANGED", "PLAYER_FOCUS_CHANGED") then
-            self.powerbar:UpdatePowerData()
-            if secondaryFrame then  secondaryFrame.powerbar:UpdatePowerData() end
+            self:UpdatePowerBar(true)
+            if secondaryFrame then  secondaryFrame:UpdatePowerBar(true) end
         else
-            self.powerbar:UpdatePowerData()
-            if secondaryFrame then secondaryFrame.powerbar:UpdatePowerData() end
+            self:UpdatePowerBar()
+            if secondaryFrame then secondaryFrame:UpdatePowerBar() end
         end
 
         self:UpdateCastValues()
@@ -645,7 +633,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             if UnitExists(targetUnit) then
                 secondaryFrame:UnitFrameData()
                 secondaryFrame:UpdateHealthBar(true)
-                secondaryFrame.powerbar:UpdatePowerData()
+                secondaryFrame:UpdatePowerBar(true)
                 secondaryFrame:UpdateCastValues()
                 secondaryFrame:UpdateRaidMarkers()
             end
@@ -668,8 +656,8 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             GW.UpdateBuffLayout(self, event, unit, ...)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             self:UpdateHealthBar()
-        elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-            self.powerbar:UpdatePowerData()
+        elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UNIT_DISPLAYPOWER") then
+            self:UpdatePowerBar()
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
             self:UpdateCastValues()
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
@@ -828,6 +816,7 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", unit)
     unitframe:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
+    unitframe:RegisterEvent("UNIT_DISPLAYPOWER")
         unitframe:RegisterUnitEvent("UNIT_FACTION", unit)
     if unit == "target" then
         unitframe:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -863,7 +852,7 @@ function GwTargetUnitFrameMixin:OnUpdate(elapsed)
 
     self:UpdateRaidMarkers()
     self:UpdateHealthBar(true)
-    self.powerbar:UpdatePowerData()
+    self:UpdatePowerBar(true)
     self:UpdateCastValues()
 end
 

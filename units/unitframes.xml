@@ -61,7 +61,7 @@
                 <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="215" y="15"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbar" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbarContainer" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
                     <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                     <Color r="1" g="1" b="1" a="0.6"></Color>
@@ -156,12 +156,12 @@
                     <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
                 </Anchors>
             </Frame>
-            <StatusBar parentKey="powerbar" inherits="GwStatusPowerBar">
+            <Frame parentKey="powerbarContainer">
                 <Size x="213" y="3"/>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="1" y="-1"></Anchor>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.healthContainer" relativePoint="BOTTOMLEFT" x="0" y="-1"></Anchor>
                 </Anchors>
-            </StatusBar>
+            </Frame>
             <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
                 <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm"/>
                 <Size x="213" y="13"/>
@@ -217,7 +217,7 @@
                 <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="148" y="15"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbar" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbarContainer" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
                     <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                     <Color r="1" g="1" b="1" a="0.6"></Color>
@@ -269,18 +269,18 @@
             </Layer>
         </Layers>
         <Frames>
-          <Frame parentKey="healthContainer" inherits="GwHealthBarTemplate">
-            <Size x="148" y="13"/>
-            <Anchors>
-                <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
-            </Anchors>
-          </Frame>
-          <StatusBar parentKey="powerbar" inherits="GwStatusPowerBar">
-            <Size x="148" y="3"/>
-            <Anchors>
-                <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="1" y="-1"></Anchor>
-            </Anchors>
-          </StatusBar>
+            <Frame parentKey="healthContainer" inherits="GwHealthBarTemplate">
+                <Size x="148" y="13"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
+                </Anchors>
+            </Frame>
+            <Frame parentKey="powerbarContainer">
+                <Size x="148" y="3"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.healthContainer" relativePoint="BOTTOMLEFT" x="0" y="-1"></Anchor>
+                </Anchors>
+            </Frame>
           <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
             <BarTexture parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm"/>
             <Size x="148" y="13"/>
@@ -354,7 +354,7 @@
                 <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="215" y="15"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbar" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbarContainer" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
                     <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                     <Color r="1" g="1" b="1" a="0.6"></Color>
@@ -449,12 +449,12 @@
                     <Anchor point="RIGHT" relativeKey="$parent.healthbarBackground" relativePoint="RIGHT" x="-1" y="0"></Anchor>
                 </Anchors>
             </Frame>
-            <StatusBar parentKey="powerbar" inherits="GwStatusPowerBar">
+            <Frame parentKey="powerbarContainer">
                 <Size x="213" y="3"/>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMRIGHT" x="-1" y="-1"></Anchor>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.healthContainer" relativePoint="BOTTOMRIGHT" x="0" y="-1"></Anchor>
                 </Anchors>
-            </StatusBar>
+            </Frame>
             <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
                 <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm"/>
                 <Size x="211" y="13"/>

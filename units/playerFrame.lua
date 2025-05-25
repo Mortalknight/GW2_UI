@@ -59,10 +59,10 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
 
     -- ressourcebar size
     if GW.settings.PlayerTargetFrameExtendRessourcebar then
-        self.powerbar:SetHeight(10)
+        self.powerbarContainer:SetHeight(10)
         self.powerbar.label:Show()
     else
-        self.powerbar:SetHeight(3)
+        self.powerbarContainer:SetHeight(3)
         self.powerbar.label:Hide()
     end
 
@@ -71,7 +71,7 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
 end
 
 local function LoadPlayerFrame()
-    local frame = GW.CreateUnitFrame("GwPlayerUnitFrame")
+    local frame = GW.CreateUnitFrame("GwPlayerUnitFrame", false, true)
     frame.unit = "player"
     frame.type = "NormalTarget"
 
