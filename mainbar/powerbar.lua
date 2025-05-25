@@ -374,7 +374,7 @@ local function OnEvent(self, event, unit)
 end
 
 function GwPlayerPowerBarMixin:ToggleBar()
-    if GW.settings.POWERBAR_ENABLED and (GW.settings.PLAYER_AS_TARGET_FRAME and GW.settings.PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR or not GW.settings.PLAYER_AS_TARGET_FRAME) then
+    if GW.settings.POWERBAR_ENABLED and ((GW.settings.PLAYER_AS_TARGET_FRAME and GW.settings.PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR) or not GW.settings.PLAYER_AS_TARGET_FRAME) then
         self:SetParent(UIParent)
         self.decay:SetParent(UIParent)
         self:SetScript("OnEvent", OnEvent)
