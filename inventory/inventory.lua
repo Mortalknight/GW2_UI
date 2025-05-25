@@ -16,6 +16,7 @@ do
     local resetInterval = 1 / 4
     local timerResetsAt = 0
     local left = 0
+    local lastRefresh = 0
 
     local function PostRefresh(self, event, ...)
         if event == "ADDON_LOADED" and not PawnLoaded then
@@ -28,6 +29,12 @@ do
                 PawnLoaded = true
             end
         end
+        local now = GetTime()
+        if now - lastRefresh < 0.1 then
+            return
+        end
+        lastRefresh = now
+
         upgradeCache = {}
         ContainerFrame_UpdateAll()
     end
