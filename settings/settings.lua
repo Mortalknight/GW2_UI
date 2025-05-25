@@ -411,8 +411,16 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting)
         of.set(value)
     end
     if of.optionType == "slider" then
-        of.slider:SetValue(value)
+        of.slider:SetValue(RoundDec(value, of.decimalNumbers))
         of.inputFrame.input:SetText(RoundDec(value, of.decimalNumbers))
+    elseif of.optionType == "boolean" then
+        of.checkbutton:SetChecked(value)
+    elseif of.optionType == "text" then
+        of.inputFrame.input:SetText(value or "")
+    elseif of.optionType == "colorPicker" then
+        of.button.bg:SetColorTexture(value.r, value.g, value.b)
+    elseif of.optionType == "dropdown" then
+        of.dropDown:GenerateMenu()
     end
 end
 GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
@@ -807,7 +815,8 @@ local function LoadSettings()
         mf:Show()
         -- Check UI Scale
         if GetCVarBool("useUiScale") then
-            _G["PIXEL_PERFECTION"].checkbutton:SetChecked(false)
+            local of = getOptionFrame("PIXEL_PERFECTION")
+            of.checkbutton:SetChecked(false)
         end
 
         checkDependenciesOnLoad()
