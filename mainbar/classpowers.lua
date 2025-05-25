@@ -1706,8 +1706,8 @@ local function UpdateExtraManabar()
 
         GwPlayerAltClassLmb:ClearAllPoints()
         if GW.settings.PLAYER_AS_TARGET_FRAME then
-            GwPlayerAltClassLmb:SetPoint("BOTTOMLEFT", anchorFrame.powerbar, "TOPLEFT", 0, -10)
-            GwPlayerAltClassLmb:SetPoint("BOTTOMRIGHT", anchorFrame.powerbar, "TOPRIGHT", 0, -10)
+            GwPlayerAltClassLmb:SetPoint("TOPLEFT", anchorFrame.powerbar, "BOTTOMLEFT", 0, -3)
+            GwPlayerAltClassLmb:SetPoint("TOPRIGHT", anchorFrame.powerbar, "BOTTOMRIGHT", 0, -3)
             GwPlayerAltClassLmb:SetSize(barWidth + 2, 3)
         else
             GwPlayerAltClassLmb:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 0)

@@ -9,7 +9,7 @@ function GwPlayerUnitFrameMixin:OnEvent(event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         self:UnitFrameData()
         self:UpdateHealthBar()
-        self:UpdatePowerBar()
+        self.powerbar:UpdatePowerData()
     elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE") then
         self:UnitFrameData()
     elseif event == "PLAYER_LEVEL_UP" then
@@ -17,8 +17,11 @@ function GwPlayerUnitFrameMixin:OnEvent(event, ...)
         self:UnitFrameData(level)
     elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         self:UpdateHealthBar()
-    elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UPDATE_SHAPESHIFT_FORM", "ACTIVE_TALENT_GROUP_CHANGED") then
-        self:UpdatePowerBar()
+    elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
+       self.powerbar:UpdatePowerData()
+     elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
+        self.powerbar.lastPowerType = nil
+        self.powerbar:UpdatePowerData()
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         self:SelectPvp()
     elseif event == "RESURRECT_REQUEST" then
@@ -35,7 +38,7 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
     self.classColor = GW.settings.player_CLASS_COLOR
 
     local frameFaderSettings = GW.settings.playerFrameFader
-    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health then
+    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health or frameFaderSettings.vehicle or frameFaderSettings.playertarget then
         GW.FrameFadeEnable(self)
         self.Fader:SetOption("Hover", frameFaderSettings.hover)
         self.Fader:SetOption("Combat", frameFaderSettings.combat)
@@ -52,6 +55,15 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
         self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)
     elseif self.Fader then
         GW.FrameFadeDisable(self)
+    end
+
+    -- ressourcebar size
+    if GW.settings.PlayerTargetFrameExtendRessourcebar then
+        self.powerbar:SetHeight(10)
+        self.powerbar.label:Show()
+    else
+        self.powerbar:SetHeight(3)
+        self.powerbar.label:Hide()
     end
 
     self:UpdateHealthBar()

@@ -227,7 +227,7 @@ end
 
 function GwPlayerPetFrameMixin:ToggleFaderOptions()
     local frameFaderSettings = GW.settings.petFrameFader
-    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health then
+    if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health or frameFaderSettings.vehicle or frameFaderSettings.playertarget or frameFaderSettings.unittarget then
         GW.FrameFadeEnable(self)
         self.Fader:SetOption("Hover", frameFaderSettings.hover)
         self.Fader:SetOption("Combat", frameFaderSettings.combat)

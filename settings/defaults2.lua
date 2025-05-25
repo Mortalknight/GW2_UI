@@ -1178,6 +1178,7 @@ GW.globalDefault = {
         PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW= true,
         PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND= false,
         CLASSPOWER_ONLY_SHOW_IN_COMBAT= false,
+        PlayerTargetFrameExtendRessourcebar = false,
 
         player_pos= {
             point= "CENTER",
