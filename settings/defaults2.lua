@@ -1339,6 +1339,12 @@ GW.globalDefault = {
                     "PremadeGroupsFilter",
                 },
             },
+            Chat = {
+                Override = false,
+                Addons = {
+                    "Chattynator",
+                },
+            },
         }
     }
 }
