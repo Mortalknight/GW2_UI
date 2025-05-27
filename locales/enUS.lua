@@ -675,3 +675,6 @@ L["Focus target"] = true
 L["Vehicle"] = true
 L["Unit Target"] = true
 L["Player Target"] = true
+L["true"] = "On"
+L["false"] = "Off"
+L["Required Settings:"] = true

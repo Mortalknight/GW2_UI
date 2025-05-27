@@ -149,6 +149,57 @@ local function CreateCat(name, desc, panel, scrollFrames, visibleTabButton, icon
 end
 GW.CreateCat = CreateCat
 
+local function AddDependenciesToOptionWidgetTooltip()
+    for _, panel in pairs(GW.getOptionReference()) do
+        for _, of in pairs(panel.options) do
+            if of.dependence then
+                of.dependenciesInfo = {}
+
+                for settingName, expectedValue in pairs(of.dependence) do
+                    local settingsWidget = GW.GetOptionFrameWidget(settingName)
+                    local displayName = settingsWidget and settingsWidget.displayName or settingName
+                    local currentVal = settingsWidget and settingsWidget.get()
+                    local match = false
+
+                    local expectedText = ""
+                    if type(expectedValue) == "table" then
+                        local valuesList = {}
+                        for _, v in ipairs(expectedValue) do
+                            if currentVal == v then
+                                match = true
+                            end
+
+                            local display = tostring(v)
+
+                            if settingsWidget and settingsWidget.optionsList and settingsWidget.optionsNames then
+                                for i, real in ipairs(settingsWidget.optionsList) do
+                                    if real == v then
+                                        display = settingsWidget.optionsNames[i]
+                                        break
+                                    end
+                                end
+                            end
+
+                            table.insert(valuesList, display)
+                        end
+                        expectedText = table.concat(valuesList, ", ")
+                    else
+                        if currentVal == expectedValue then
+                            match = true
+                        end
+                        expectedText = L[tostring(expectedValue)]
+                    end
+
+                    local color = match and "|cff66cc66" or "|cffcc6666"  -- grün oder rot
+                    expectedText = color .. expectedText .. "|r"
+
+                    table.insert(of.dependenciesInfo, { name = string.format("|cffaaaaaa%s|r", settingsWidget.settingsPath .. displayName), expected = expectedText })
+                end
+            end
+        end
+    end
+end
+
 local function CreateOption(optionType, panel, name, desc, values)
     if not panel then return end
     values = values or {}
@@ -179,7 +230,7 @@ local function CreateOption(optionType, panel, name, desc, values)
 
     table.insert(panel.gwOptions, opt)
 
-    if values and values.incompatibleAddons then
+    if values.incompatibleAddons then
         local isIncompatibleAddonLoaded, whichAddonsLoaded, isOverride = GW.IsIncompatibleAddonLoadedOrOverride(values.incompatibleAddons)
         if isIncompatibleAddonLoaded and not isOverride then
             opt.desc = opt.desc .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
@@ -353,6 +404,7 @@ local function checkDependenciesOnLoad()
             end
         end
     end
+    AddDependenciesToOptionWidgetTooltip()
 end
 
 local function ColorPickerFrameCallback(restore, frame, buttonBackground)
@@ -514,6 +566,11 @@ local function InitPanel(panel, hasScroll)
             table.insert(optionReference[panelUniqueID].options, of)
 
             -- Shared setup
+            local t = {}
+            for _, path in ipairs{panel.header and panel.header:GetText(), panel.breadcrumb and panel.breadcrumb:GetText()} do
+                if path and path ~= "" then t[#t+1] = path end
+            end
+            of.settingsPath = table.concat(t, "->") .. "->"
             of.displayName = v.name or lastOptionName
             lastOptionName = of.displayName
             for k, val in pairs(v) do
@@ -546,8 +603,17 @@ local function InitPanel(panel, hasScroll)
             of:SetScript("OnEnter", function()
                 GameTooltip:SetOwner(of, "ANCHOR_CURSOR", 0, 0)
                 GameTooltip:ClearLines()
-                GameTooltip:AddLine(v.name, 1, 1, 1)
-                GameTooltip:AddLine(v.desc, 1, 1, 1, true)
+                GameTooltip:AddLine(of.displayName, 1, 1, 1)
+                GameTooltip:AddLine(of.desc, 1, 1, 1, true)
+
+                if of.dependenciesInfo and #of.dependenciesInfo > 0 then
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine("|cffffedba" .. L["Required Settings:"] .. "|r")
+                    for _, info in ipairs(of.dependenciesInfo) do
+                        GameTooltip:AddDoubleLine(info.name, info.expected)
+                    end
+                end
+
                 GameTooltip:Show()
             end)
             of:SetScript("OnLeave", GameTooltip_Hide)
