@@ -2332,7 +2332,7 @@ GW.UpdateChatSettings = UpdateSettings
 local function LoadChat()
     DelayGuildMOTD()
 
-    if not GW.settings.CHATFRAME_ENABLED then return end
+    if not GW.settings.CHATFRAME_ENABLED or GW.IsIncompatibleAddonLoadedOrOverride("Chat", true) then return end
     local eventFrame = CreateFrame("Frame")
 
     if QuickJoinToastButton then
