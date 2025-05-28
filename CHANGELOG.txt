@@ -1,3 +1,14 @@
+7.15.0
+NEW
+    - Added more option to unitframe fader
+    - Added option to extend player powerbar hight (player unitframe)
+
+FIXES
+    - Fix Pawn integration
+
+CHANGES
+    - Add required settings to settings tooltip
+
 7.14.1
 FIXES
     - Fix settings lua error

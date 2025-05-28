@@ -1,12 +1,10 @@
-7.14.1
-FIXES
-    - Fix settings lua error
-
-7.14.0
+7.15.0
 NEW
-    - Added unitframe fader options to all unitframes
+    - Added more option to unitframe fader
+    - Added option to extend player powerbar hight (player unitframe)
 
 FIXES
-    - Raidlock error
-    - Fix buff reminder
-    - Fix pawn integration
+    - Fix Pawn integration
+
+CHANGES
+    - Add required settings to settings tooltip

@@ -15,13 +15,20 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("7.15.0",{
+    {ct.feature, [=[Added more option to unitframe fader]=]},
+    {ct.feature, [=[Added option to extend player powerbar hight (player unitframe)]=]},
+    {ct.change, [=[Add required settings to settings tooltip]=]},
+    {ct.bug, [=[RFix Pawn integration]=]},
+})
+
 addChange("7.14.1",{
     {ct.bug, [=[Fix settings lua error]=]},
 })
 
 addChange("7.14.0",{
     {ct.feature, [=[Added unitframe fader options to all unitframes]=]},
-    {ct.change, [=[Fix issue with 7.13.1]=]},
     {ct.bug, [=[Raidlock error]=]},
     {ct.bug, [=[Fix buff reminder]=]},
     {ct.bug, [=[Fix pawn integration]=]},
