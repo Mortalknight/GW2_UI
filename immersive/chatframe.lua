@@ -176,6 +176,8 @@ local gw2StaffList = {
     ["Ilyxiana-Ravencrest"] = gw2StaffIcon,
 }
 
+local chatModuleInit = false
+
 local function colorizeLine(text, r, g, b)
     local hexCode = GW.RGBToHex(r, g, b)
     return format("%s%s|r", hexCode, text)
@@ -1822,17 +1824,10 @@ local function styleChatWindow(frame)
 
     editbox:HookScript("OnEditFocusGained", function(editBox)
         frame.editboxHasFocus = true
-        --frame:SetScript(
-        --    "OnUpdate",
-        --    function()
-        --        handleChatFrameFadeIn(frame)
-        --    end
-        --)
         FCF_FadeInChatFrame(frame)
         editBox:Show()
     end)
     editbox:HookScript("OnEditFocusLost", function(editBox)
-        --frame:SetScript("OnUpdate", nil)
         frame.editboxHasFocus = false
         FCF_FadeOutChatFrame(frame)
         if GW.settings.CHATFRAME_EDITBOX_HIDE then
@@ -2315,6 +2310,7 @@ local function SocialQueueEvent(...)
 end
 
 local function UpdateSettings()
+    if not chatModuleInit then return end
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]
         if frame and frame:IsShown() then
@@ -2334,6 +2330,8 @@ local function LoadChat()
 
     if not GW.settings.CHATFRAME_ENABLED or GW.IsIncompatibleAddonLoadedOrOverride("Chat", true) then return end
     local eventFrame = CreateFrame("Frame")
+
+    chatModuleInit = true
 
     if QuickJoinToastButton then
         QuickJoinToastButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
