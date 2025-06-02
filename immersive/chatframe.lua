@@ -2028,7 +2028,7 @@ local function BuildEmoticonTableFrame()
             end
         end
         if not alreadyIn then
-            icon = CreateFrame("Frame", format("IconButton%d", i), frame)
+            icon = CreateFrame("Frame", nil, frame)
             icon:SetSize(24, 24)
             icon.text = text
             icon.texture = icon:CreateTexture(nil, "ARTWORK")
