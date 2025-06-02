@@ -661,7 +661,6 @@ L["Unearned"] = true
 L["Right Click To Reset Filter"] = true
 L["You may see duplicated titles that are unavailable to your faction"] = true
 L["Display additional information (item level, pvp level)"] = true
-
 L["Singing Sockets Info"] = true
 L["Adds a Singing sockets selection tool on the Socketing Frame"] = true
 L["Blizzard Fixes"] = true
