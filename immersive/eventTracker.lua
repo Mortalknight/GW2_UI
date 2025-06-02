@@ -408,7 +408,7 @@ local eventData = {
                     region = 4
                 end
 
-                return timestampTable[region]
+                return timestampTable[region] or timestampTable[1]
             end)(),
             onClick = worldMapIDSetter(2248),
             onClickHelpText = L["Click to show location"],
@@ -498,7 +498,7 @@ local eventData = {
                     region = 4
                 end
 
-                return timestampTable[region]
+                return timestampTable[region] or timestampTable[1]
             end)(),
             onClick = worldMapIDSetter(2024),
             onClickHelpText = L["Click to show location"]
@@ -539,7 +539,7 @@ local eventData = {
                     region = 4
                 end
 
-                return timestampTable[region]
+                return timestampTable[region] or timestampTable[1]
             end)(),
             onClick = worldMapIDSetter(2022),
             onClickHelpText = L["Click to show location"]
@@ -579,7 +579,7 @@ local eventData = {
                     region = 4
                 end
 
-            return timestampTable[region]
+            return timestampTable[region] or timestampTable[1]
             end)(),
             onClick = worldMapIDSetter(2133),
             onClickHelpText = L["Click to show location"]
@@ -619,7 +619,7 @@ local eventData = {
                     region = 4
                 end
 
-            return timestampTable[region]
+            return timestampTable[region] or timestampTable[1]
             end)(),
             onClick = worldMapIDSetter(2025),
             onClickHelpText = L["Click to show location"]
@@ -659,7 +659,7 @@ local eventData = {
                     region = 4
                 end
 
-                return timestampTable[region]
+                return timestampTable[region] or timestampTable[1]
             end)()
         }
     },
@@ -698,7 +698,7 @@ local eventData = {
                     region = 4
                 end
 
-                return timestampTable[region]
+                return timestampTable[region] or timestampTable[1]
             end)(),
             onClick = worldMapIDSetter(2024),
             onClickHelpText = L["Click to show location"]

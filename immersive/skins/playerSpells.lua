@@ -248,9 +248,11 @@ local function skinPlayerSpells()
         PlayerSpellsFrame.MaxMinButtonFrame:GwHandleMaxMinFrame()
         GW.SkinTextBox(SpellBookFrame.SearchBox.Middle, SpellBookFrame.SearchBox.Left, SpellBookFrame.SearchBox.Right)
         SpellBookFrame.SearchBox:SetHeight(20)
-        SpellBookFrame.HidePassivesCheckButton.Button:GwSkinCheckButton()
-        SpellBookFrame.HidePassivesCheckButton.Button:SetSize(20, 20)
-        SpellBookFrame.HidePassivesCheckButton.Label:SetTextColor(1, 1, 1)
+        if SpellBookFrame.HidePassivesCheckButton then
+            SpellBookFrame.HidePassivesCheckButton.Button:GwSkinCheckButton()
+            SpellBookFrame.HidePassivesCheckButton.Button:SetSize(20, 20)
+            SpellBookFrame.HidePassivesCheckButton.Label:SetTextColor(1, 1, 1)
+        end
 
         SpellBookFrame.HelpPlateButton:GwKill()
 
