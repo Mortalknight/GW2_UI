@@ -215,19 +215,20 @@ GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 local function UpdateContainerItems(self)
     for _, itemButton in self:EnumerateValidItems() do
         if itemButton then
-            local bagID = itemButton:GetBagID();
+            local bagID, slotID = itemButton:GetBagID(), itemButton:GetID()
+            local info = C_Container.GetContainerItemInfo(bagID, slotID)
 
-            local info = C_Container.GetContainerItemInfo(bagID, itemButton:GetID())
-            local texture = info and info.iconFileID
-            local quality = info and info.quality
-            local itemLink = info and info.hyperlink
-            local isBound = info and info.isBound
-
-            itemButton:SetHasItem(texture);
-            itemButton:SetItemButtonTexture(texture)
-            SetItemButtonQuality(itemButton, quality, itemLink, false, isBound);
+            if info then
+                itemButton:SetHasItem(info.iconFileID)
+                itemButton:SetItemButtonTexture(info.iconFileID)
+                SetItemButtonQuality(itemButton, info.quality, info.hyperlink, false, info.isBound)
+            else
+                itemButton:SetHasItem(nil)
+                itemButton:SetItemButtonTexture(nil)
+                SetItemButtonQuality(itemButton, nil, nil, false, nil)
+            end
         end
-	end
+    end
 end
 
 local function reskinItemButtons()
@@ -250,11 +251,6 @@ local function CheckUpdateIcon(button, itemLink)
     end
 end
 GW.CheckUpdateIcon = CheckUpdateIcon
-
---copy from blizzard seams private in 11.1
-local function GetItemButtonIconTexture(button)
-	return button.Icon or button.icon or _G[button:GetName().."IconTexture"];
-end
 
 local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     if not button.gwBackdrop then

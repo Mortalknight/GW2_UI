@@ -8,7 +8,7 @@ local cpuProfiling = GetCVar("scriptProfile") == "1"
 local ScrollButtonIcon = "|TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:13:11:0:-1:512:512:12:66:127:204|t"
 
 local CombineAddOns = {
-    ["DBM-Core"] = "^<DBM>",
+    ["DBM-Core"] = "^<DBM Core>",
     ["DataStore"] = "^DataStore",
     ["Altoholic"] = "^Altoholic",
     ["AtlasLoot"] = "^AtlasLoot",
@@ -33,27 +33,27 @@ end
 GW.BuildAddonList = BuildAddonList
 
 local function formatMem(memory)
-    local mult = 10 ^ 1
     if memory >= 1024 then
-        return format("%.2f mb", ((memory / 1024) * mult) / mult)
+        return format("%.2f mb", memory / 1024)
     else
-        return format("%d kb", (memory * mult) / mult)
+       return format("%d kb", memory)
     end
 end
 
-local function displayData(data, totalMEM, totalCPU)
+local function displayData(data, totalMem, totalCPU)
     if not data then return end
-    if totalMEM == 0 then totalMEM = 0.00000000000000000001 end
+    if totalMem == 0 then totalMem = 0.00000000000000000001 end
 
     local name, mem, cpu = data.title, data.mem, data.cpu
+    local memRatio = mem / totalMem
+    local memColor = GW.RGBToHex(memRatio, (1 - memRatio) + 0.5, 0)
+
     if cpu then
-        local memRed, cpuRed = mem / totalMEM, cpu / totalCPU
-        local memGreen, cpuGreen = (1 - memRed) + 0.5, (1 - cpuRed) + .5
-        GameTooltip:AddDoubleLine(name, format("%s%s|r |cffffffff/|r %s%s|r", GW.RGBToHex(memRed, memGreen, 0), formatMem(mem), GW.RGBToHex(cpuRed, cpuGreen, 0), format("%d ms", cpu)), 1, 1, 1)
+        local cpuRatio = cpu / totalCPU
+        local cpuColor = GW.RGBToHex(cpuRatio, (1 - cpuRatio) + 0.5, 0)
+        GameTooltip:AddDoubleLine(name, format("%s%s|r |cffffffff/|r %s%s|r", memColor, formatMem(mem), cpuColor, format("%d ms", cpu)), 1, 1, 1)
     else
-        local red = mem / totalMEM
-        local green = (1 - red) + 0.5
-        GameTooltip:AddDoubleLine(name, formatMem(mem), 1, 1, 1, red or 1, green or 1, 0)
+        GameTooltip:AddDoubleLine(name, formatMem(mem), 1, 1, 1, memRatio, (1 - memRatio) + 0.5, 0)
     end
 end
 
@@ -77,47 +77,32 @@ local function FpsOnEnter(self, slow)
         GameTooltip:AddDoubleLine(L["World Protocol:"], ipTypes[ipTypeWorld or 0] or UNKNOWN, 1, 0.93, 0.73, 0.84, 0.75, 0.65)
     end
 
-    local Downloading = GetFileStreamingStatus() ~= 0 or GetBackgroundLoadingStatus() ~= 0
-    if Downloading then
+    if GetFileStreamingStatus() ~= 0 or GetBackgroundLoadingStatus() ~= 0 then
         GameTooltip:AddDoubleLine(L["Bandwidth"], format("%.2f Mbps", GetAvailableBandwidth()), 1, 0.93, 0.73, 0.84, 0.75, 0.65)
         GameTooltip:AddDoubleLine(L["Download"], format("%.2f%%", GetDownloadedPercentage() * 100), 1, 0.93, 0.73, 0.84, 0.75, 0.65)
         GameTooltip:AddLine(" ")
     end
 
-    if slow == 1 or not slow then
-        UpdateAddOnMemoryUsage()
-    end
-
-    if cpuProfiling and not slow then
-        UpdateAddOnCPUUsage()
-    end
+    if slow == 1 or not slow then UpdateAddOnMemoryUsage() end
+    if cpuProfiling and not slow then UpdateAddOnCPUUsage() end
 
     wipe(infoDisplay)
 
-    local count, totalMEM, totalCPU = 0, 0, 0
+    local totalMEM, totalCPU = 0, 0
     local showByCPU = cpuProfiling and not IsShiftKeyDown()
+
     for _, data in ipairs(infoTable) do
-        local i = data.index
-        if C_AddOns.IsAddOnLoaded(i) then
-            local mem = GetAddOnMemoryUsage(i)
+        if C_AddOns.IsAddOnLoaded(data.index) then
+            local mem = GetAddOnMemoryUsage(data.index)
+            local cpu = cpuProfiling and GetAddOnCPUUsage(data.index) or nil
+
             totalMEM = totalMEM + mem
+            if showByCPU and cpu then totalCPU = totalCPU + cpu end
 
-            local cpu
-            if cpuProfiling then
-                cpu = GetAddOnCPUUsage(i)
-                totalCPU = totalCPU + cpu
-            end
 
+            data.mem, data.cpu = mem, cpu
             data.sort = (showByCPU and cpu) or mem
-            data.cpu = showByCPU and cpu
-            data.mem = mem
-
-            count = count + 1
-            infoDisplay[count] = data
-
-            if data.name == "GW2_UI" then
-                infoTable[data.name] = data
-            end
+            tinsert(infoDisplay, data)
         end
     end
 
@@ -127,63 +112,54 @@ local function FpsOnEnter(self, slow)
     end
 
     GameTooltip:AddLine(" ")
-    for addon, searchString in pairs(CombineAddOns) do
-        local addonIndex, memoryUsage, cpuUsage = 0, 0, 0
-        for i, data in pairs(infoDisplay) do
-            if data and data.name == addon then
-                cpuUsage = data.cpu or 0
-                memoryUsage = data.mem
-                addonIndex = i
-                break
-            end
-        end
+
+    for addon, pattern in pairs(CombineAddOns) do
+        local totalMem, cpuUsage, mainIndex = 0, 0 , nil
         for k, data in pairs(infoDisplay) do
             if type(data) == "table" then
                 local name, mem, cpu = data.title, data.mem, data.cpu
-                local stripName = GW.StripString(data.title)
-                if name and (strmatch(stripName, searchString) or data.name == addon) then
+                local stripName = GW.StripString(name)
+                if name and (strmatch(stripName, pattern) or data.name == addon) then
                     if data.name ~= addon and stripName ~= addon then
-                        memoryUsage = memoryUsage + mem
+                        totalMem = totalMem + mem
                         if showByCPU and cpuProfiling then
                             cpuUsage = cpuUsage + cpu
                         end
                         infoDisplay[k] = false
+                    else
+                        if not mainIndex then
+                            mainIndex = k
+                        end
+                        totalMem = totalMem + mem
+                        if showByCPU and cpuProfiling then
+                            cpuUsage = cpuUsage + cpu
+                        end
                     end
                 end
             end
         end
 
-        local data = addonIndex > 0 and infoDisplay[addonIndex]
-        if data then
-            local mem = memoryUsage > 0 and memoryUsage
-            local cpu = cpuUsage > 0 and cpuUsage
-
-            if mem then data.men = mem end
-            if cpu then data.cpu = cpu end
-            if mem or cpu then
-                data.sort = (showByCPU and cpu) or mem
-            end
+        if mainIndex then
+            local main = infoDisplay[mainIndex]
+            main.mem = totalMem
+            main.cpu = showByCPU and cpuUsage or nil
+            main.sort = (showByCPU and cpuUsage) or totalMem
         end
     end
 
-    for i = count, 1, -1 do
-        local data = infoDisplay[i]
-        if type(data) == "boolean" then
-            tremove(infoDisplay, i)
-        end
+    for i = #infoDisplay, 1, -1 do
+        if not infoDisplay[i] then tremove(infoDisplay, i) end
     end
 
     sort(infoDisplay, displaySort)
-
-    for i = 1, count do
-        displayData(infoDisplay[i], totalMEM, totalCPU)
+    for _, data in ipairs(infoDisplay) do
+        displayData(data, totalMEM, totalCPU)
     end
 
     GameTooltip:AddLine(" ")
     if showByCPU then
         GameTooltip:AddLine(format("%s%s%s", "|cffaaaaaa", L["Hold Shift: Memory Usage"], "|r"))
     end
-
     GameTooltip:AddLine(format("%s%s%s", "|cffaaaaaa", L["Shift Click: Collect Garbage"], "|r"))
     GameTooltip:AddLine(format("%s%s%s", "|cffaaaaaa", L["Ctrl & Shift Click: Toggle CPU Profiling"], "|r"))
     GameTooltip:AddLine(format("%s%s %s: %s%s", "|cffaaaaaa", ScrollButtonIcon, L["Middle Button"], RELOADUI, "|r"))
@@ -199,8 +175,7 @@ GW.FpsOnLeave = FpsOnLeave
 
 local wait, rate, delay = 10, 0, 0
 local function FpsOnUpdate(self, elapsed)
-    wait = wait - elapsed
-    rate = rate + 1
+    wait, rate = wait - elapsed, rate + 1
 
     if wait < 0 then
         wait = 1
