@@ -397,7 +397,7 @@ local function Friends_OnEvent(self, event, message)
     end
     dataValid = false
 
-    if not IsAltKeyDown() and event == "MODIFIER_STATE_CHANGED" and DoesAncestryIncludeAny(self, GetMouseFoci()) then
+    if not IsAltKeyDown() and event == "MODIFIER_STATE_CHANGED" and GW.DoesAncestryIncludeAny(self, GetMouseFoci()) then
         Friends_OnEnter(self)
     end
 end

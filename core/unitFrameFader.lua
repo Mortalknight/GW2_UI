@@ -3,7 +3,7 @@ local _, GW = ...
 local MIN_ALPHA, MAX_ALPHA = 0.35, 1
 
 local function GetMouseFocus(self)
-    return DoesAncestryIncludeAny(self, GetMouseFoci())
+    return GW.DoesAncestryIncludeAny(self, GetMouseFoci())
 end
 
 local function ClearTimers(element)

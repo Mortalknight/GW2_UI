@@ -501,18 +501,6 @@ local function StartsWith(str, str2)
 end
 GW.StartsWith = StartsWith
 
-local function IsInf(n)
-    --return tostring(n) == tostring(1/0)
-    return false
-end
-GW.IsInf = IsInf
-
-local function IsNaN(n)
-    --return tostring(n) == tostring(0/0)
-    return false
-end
-GW.IsNaN = IsNaN
-
 local function IsFrameModified(f_name)
     if not MovAny then
         return false
@@ -1224,4 +1212,26 @@ local function BlizzardDropdownButtonInitializer(button, description, menu)
 end
 GW.BlizzardDropdownButtonInitializer = BlizzardDropdownButtonInitializer
 
+local function DoesAncestryInclude(ancestry, frame)
+	if ancestry then
+		local currentFrame = frame;
+		while currentFrame do
+			if currentFrame == ancestry then
+				return true;
+			end
+			currentFrame = currentFrame.GetParent and currentFrame:GetParent() or nil
+		end
+	end
+	return false;
+end
+GW.DoesAncestryInclude = DoesAncestryInclude
 
+local function DoesAncestryIncludeAny(ancestry, frames)
+	for _, frame in ipairs(frames) do
+		if DoesAncestryInclude(ancestry, frame) then
+			return true;
+		end
+	end
+	return false;
+end
+GW.DoesAncestryIncludeAny = DoesAncestryIncludeAny
