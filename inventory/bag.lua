@@ -679,14 +679,14 @@ local function LoadBag(helpers)
     -- money frame tooltip
     f.moneyFrame:SetScript("OnEnter", GW.Money_OnEnter)
     f.moneyFrame:SetScript("OnClick", GW.Money_OnClick)
-
-    f.moneyFrame:SetScript("OnEnter", GW.Money_OnEnter)
-    f.moneyFrame:SetScript("OnClick", GW.Money_OnClick)
     f.moneyFrame:SetScript("OnEvent", function(self)
-        if GW.inWorld then updateMoney(self:GetParent()) end
+        updateMoney(self:GetParent())
+        GW.MoneyOnEvent()
     end)
     f.moneyFrame:RegisterEvent("PLAYER_MONEY")
+    f.moneyFrame:RegisterEvent("ACCOUNT_MONEY")
     updateMoney(f)
+    GW.MoneyOnEvent()
 
     f.currency:SetScript("OnClick", function()
         -- TODO: cannot do this properly until we make the whole bag frame secure

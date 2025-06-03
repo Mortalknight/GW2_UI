@@ -1,4 +1,4 @@
-local _, GW = ...
+local GW2Name, GW = ...
 local L = GW.L
 
 local enteredInfo = false
@@ -97,11 +97,10 @@ local function FpsOnEnter(self, slow)
             local cpu = cpuProfiling and GetAddOnCPUUsage(data.index) or nil
 
             totalMEM = totalMEM + mem
-            if showByCPU and cpu then totalCPU = totalCPU + cpu end
-
+            if cpu then totalCPU = totalCPU + cpu end
 
             data.mem, data.cpu = mem, cpu
-            data.sort = (showByCPU and cpu) or mem
+            data.sort = cpu or mem
             tinsert(infoDisplay, data)
         end
     end
@@ -113,52 +112,94 @@ local function FpsOnEnter(self, slow)
 
     GameTooltip:AddLine(" ")
 
+    local usedKeys = {}
     for addon, pattern in pairs(CombineAddOns) do
-        local totalMem, cpuUsage, mainIndex = 0, 0 , nil
-        for k, data in pairs(infoDisplay) do
+        local totalMem, totalCPU = 0, 0
+        local mainData = nil
+
+        for i = #infoDisplay, 1, -1 do
+            local data = infoDisplay[i]
             if type(data) == "table" then
-                local name, mem, cpu = data.title, data.mem, data.cpu
+                local name = data.title
                 local stripName = GW.StripString(name)
+
                 if name and (strmatch(stripName, pattern) or data.name == addon) then
-                    if data.name ~= addon and stripName ~= addon then
-                        totalMem = totalMem + mem
-                        if showByCPU and cpuProfiling then
-                            cpuUsage = cpuUsage + cpu
-                        end
-                        infoDisplay[k] = false
+                    totalMem = totalMem + data.mem
+                    if showByCPU and cpuProfiling then
+                        totalCPU = totalCPU + (data.cpu or 0)
+                    end
+
+                    if not mainData and (data.name == addon or stripName == addon) then
+                        mainData = data
                     else
-                        if not mainIndex then
-                            mainIndex = k
-                        end
-                        totalMem = totalMem + mem
-                        if showByCPU and cpuProfiling then
-                            cpuUsage = cpuUsage + cpu
-                        end
+                        tremove(infoDisplay, i)
                     end
                 end
             end
         end
 
-        if mainIndex then
-            local main = infoDisplay[mainIndex]
-            main.mem = totalMem
-            main.cpu = showByCPU and cpuUsage or nil
-            main.sort = (showByCPU and cpuUsage) or totalMem
+        if mainData then
+            mainData.mem = totalMem
+            mainData.cpu = showByCPU and totalCPU or nil
+            mainData.sort = showByCPU and totalCPU or totalMem
         end
     end
 
-    for i = #infoDisplay, 1, -1 do
-        if not infoDisplay[i] then tremove(infoDisplay, i) end
+    local found = false
+    for _, data in ipairs(infoDisplay) do
+        if GW.StripString(data.title) == GW2Name or data.name == GW2Name then
+            found = true
+            break
+        end
     end
 
-    sort(infoDisplay, displaySort)
-    for _, data in ipairs(infoDisplay) do
-        displayData(data, totalMEM, totalCPU)
+    if not found then
+        for _, data in ipairs(infoTable) do
+            if (data.name == GW2Name or GW.StripString(data.title) == GW2Name) then
+                local mem = GetAddOnMemoryUsage(data.index)
+                local cpu = cpuProfiling and GetAddOnCPUUsage(data.index) or nil
+
+                data.mem = mem
+                data.cpu = cpu
+                data.sort = showByCPU and cpu or mem
+
+                tinsert(infoDisplay, data)
+                break
+            end
+        end
+    end
+
+    local finalDisplay = {}
+    for i, data in ipairs(infoDisplay) do
+        if not usedKeys[i] then
+            tinsert(finalDisplay, data)
+        elseif usedKeys[i] == true and data.name then
+            tinsert(finalDisplay, data) -- reinserting main entries
+        end
+    end
+
+    sort(finalDisplay, displaySort)
+    local displayLimit = IsAltKeyDown() and math.huge or 30
+    for i = 1, math.min(displayLimit, #finalDisplay) do
+        displayData(finalDisplay[i], totalMEM, totalCPU)
+    end
+
+    if #finalDisplay > displayLimit then
+        local hiddenCount, hiddenMem = #finalDisplay - displayLimit, 0
+
+        for i = displayLimit + 1, #finalDisplay do
+            hiddenMem = hiddenMem + (finalDisplay[i].mem or 0)
+        end
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddDoubleLine(format(L["Hidden AddOns: %d"], hiddenCount), formatMem(hiddenMem), 1, 0.93, 0.73, 0.84, 0.75, 0.65)
     end
 
     GameTooltip:AddLine(" ")
     if showByCPU then
         GameTooltip:AddLine(format("%s%s%s", "|cffaaaaaa", L["Hold Shift: Memory Usage"], "|r"))
+    end
+    if not IsAltKeyDown() and #finalDisplay > displayLimit then
+        GameTooltip:AddLine(format("|cffaaaaaa%s|r", L["Hold Alt: Show All AddOns"]))
     end
     GameTooltip:AddLine(format("%s%s%s", "|cffaaaaaa", L["Shift Click: Collect Garbage"], "|r"))
     GameTooltip:AddLine(format("%s%s%s", "|cffaaaaaa", L["Ctrl & Shift Click: Toggle CPU Profiling"], "|r"))
@@ -175,10 +216,11 @@ GW.FpsOnLeave = FpsOnLeave
 
 local wait, rate, delay = 10, 0, 0
 local function FpsOnUpdate(self, elapsed)
-    wait, rate = wait - elapsed, rate + 1
-
-    if wait < 0 then
-        wait = 1
+    if wait < 1 then
+        wait = wait + elapsed
+        rate = rate + 1
+    else
+        wait = 0
 
         self.fps:SetText(rate .. " FPS")
 
@@ -200,6 +242,11 @@ local function FpsOnUpdate(self, elapsed)
     end
 end
 GW.FpsOnUpdate = FpsOnUpdate
+
+local function FpsOnEvent(self)
+    FpsOnEnter(self)
+end
+GW.FpsOnEvent = FpsOnEvent
 
 local function FpsOnClick(_, mouseButton)
     if IsShiftKeyDown() then

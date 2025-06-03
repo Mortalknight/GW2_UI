@@ -7,7 +7,18 @@ local FormatMoneyForChat = GW.FormatMoneyForChat
 
 local ALLIANCE_ICON = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/Alliance:13:13|t"
 local HORDE_ICON = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/Horde:13:13|t"
-local NEUTRAL_ICON = "|TInterface/Timer/Panda-Logo:14|t "
+local NEUTRAL_ICON = "|TInterface/Timer/Panda-Logo:14|t"
+
+local Ticker = nil
+local warbandGold = 0
+
+local function UpdateMarketPrice()
+	return C_WowTokenPublic.UpdateMarketPrice()
+end
+
+local function UpdateWarbandGold()
+	warbandGold = C_Bank.FetchDepositedMoney(Enum.BankType.Account)
+end
 
 local function GetGraysValue()
     local total = 0
@@ -50,6 +61,18 @@ local function Money_OnClick(self, button)
 
 end
 GW.Money_OnClick = Money_OnClick
+
+local function OnEvent(self, event)
+    if not IsLoggedIn() then return end
+
+    UpdateWarbandGold()
+
+    if not Ticker then
+        C_WowTokenPublic.UpdateMarketPrice()
+        Ticker = C_Timer.NewTicker(60, UpdateMarketPrice)
+    end
+end
+GW.MoneyOnEvent = OnEvent
 
 local function Money_OnEnter(self)
     local list = GetStorage(nil, "REALM")
@@ -118,7 +141,7 @@ local function Money_OnEnter(self)
 
     GameTooltip:AddDoubleLine(TOTAL .. ":", FormatMoneyForChat(totalAlliance + totalHorde + totalNeutral), 1, 1, 1, 1, 1, 1)
     GameTooltip:AddLine(" ")
-    GameTooltip:AddDoubleLine(L["Warband:"], FormatMoneyForChat(C_Bank.FetchDepositedMoney(Enum.BankType.Account) or 0), 1, 1, 1, 1, 1, 1)
+    GameTooltip:AddDoubleLine(L["Warband:"], FormatMoneyForChat(warbandGold), 1, 1, 1, 1, 1, 1)
 
     GameTooltip:AddLine(" ")
     C_WowTokenPublic.UpdateMarketPrice()

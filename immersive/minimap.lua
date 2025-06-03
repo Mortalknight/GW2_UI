@@ -236,12 +236,16 @@ local function ToogleMinimapFpsLable()
         GwMapFPS:SetScript("OnUpdate", GW.FpsOnUpdate)
         GwMapFPS:SetScript("OnLeave", GW.FpsOnLeave)
         GwMapFPS:SetScript("OnClick", GW.FpsOnClick)
+        GwMapFPS:SetScript("OnEvent", GW.FpsOnEvent)
+        GwMapFPS:RegisterEvent("MODIFIER_STATE_CHANGED")
         GwMapFPS:Show()
     else
         GwMapFPS:SetScript("OnEnter", nil)
         GwMapFPS:SetScript("OnUpdate", nil)
         GwMapFPS:SetScript("OnLeave", nil)
         GwMapFPS:SetScript("OnClick", nil)
+        GwMapFPS:SetScript("OnEvent", nil)
+        GwMapFPS:UnregisterEvent("MODIFIER_STATE_CHANGED")
         GwMapFPS:Hide()
     end
 end
