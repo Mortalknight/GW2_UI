@@ -244,7 +244,9 @@ end
 GW.FpsOnUpdate = FpsOnUpdate
 
 local function FpsOnEvent(self)
-    FpsOnEnter(self)
+    if enteredInfo then
+        FpsOnEnter(self)
+    end
 end
 GW.FpsOnEvent = FpsOnEvent
 
