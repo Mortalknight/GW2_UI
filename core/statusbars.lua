@@ -52,6 +52,9 @@ function GwAnimatedStatusBarMixin:GetFillAmount()
 end
 
 function GwAnimatedStatusBarMixin:SetFillAmount(value, forced)
+    if type(value) ~= "number" or value ~= value or value == math.huge or value == -math.huge then
+        value = 0 -- Fallback if NaN or Inf
+    end
     if self.smoothAnimation and not forced then
         self:FillBarSmooth(value)
         return
@@ -120,9 +123,7 @@ function GwAnimatedStatusBarMixin:SetFillAmount(value, forced)
         else
             self.maskContainer:SetPoint("LEFT", self.internalBar, "LEFT", currentSegmentPosition, 0)
         end
-        if not GW.IsNaN(barPosition) and not GW.IsInf(barPosition) then
-            self:SetValue(barPosition)
-        end
+        self:SetValue(barPosition)
         self.fill_threshold = barPosition
     end
     if self.barOnUpdate then
