@@ -3,8 +3,6 @@ name: Release Retail Update # description of this workflow, can be anything you 
 # triggers when pushing a tag
 on:
   push:
-    branches:
-      - master
     tags:
       - '**'
 
@@ -13,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
-
         - uses: BigWigsMods/packager@master
           env:
             GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
