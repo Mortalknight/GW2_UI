@@ -44,11 +44,13 @@ function GwHealthglobeMixin:UpdateHealthData()
 
     local hv = GW.settings.PLAYER_UNIT_HEALTH == "PREC" and (GW.GetLocalizedNumber(healthPercentage * 100, 0) .. "%")
         or GW.settings.PLAYER_UNIT_HEALTH == "VALUE" and formatValue(health)
-        or formatValue(health) .. "\n" .. GW.GetLocalizedNumber(healthPercentage * 100, 0) .. "%"
+        or GW.settings.PLAYER_UNIT_HEALTH == "BOTH" and formatValue(health) .. "\n" .. GW.GetLocalizedNumber(healthPercentage * 100, 0) .. "%"
+        or ""
 
     local av = GW.settings.PLAYER_UNIT_ABSORB == "PREC" and (GW.GetLocalizedNumber(absorbPercentage * 100, 0) .. "%")
         or GW.settings.PLAYER_UNIT_ABSORB == "VALUE" and formatValue(absorb)
-        or formatValue(absorb) .. "\n" .. GW.GetLocalizedNumber(absorbPercentage * 100, 0) .. "%"
+        or GW.settings.PLAYER_UNIT_ABSORB == "BOTH" and  formatValue(absorb) .. "\n" .. GW.GetLocalizedNumber(absorbPercentage * 100, 0) .. "%"
+        or ""
 
     self.text_h.value:SetText(hv)
     self.text_a.value:SetText(av)

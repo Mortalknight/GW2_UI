@@ -16,16 +16,6 @@ local animations = GW.animations
 
 local l = CreateFrame("Frame") -- Main event frame
 
-GW.VERSION_STRING = "GW2_UI @project-version@"
-
--- Make a global GW variable , so others cann access out functions
-GW2_ADDON = GW
-
-if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
-    GW.Notice("You have installed GW2_UI retail version. Please install the classic version to use GW2_UI.")
-    return
-end
-
 if GW.CheckForPasteAddon() and GW.settings.ACTIONBARS_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
     GW.Notice("|cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
 end

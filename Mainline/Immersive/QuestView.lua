@@ -428,7 +428,7 @@ function QuestViewMixin:showQuestFrame()
         self.container.playerModel:SetAnimation(emotes.Read)
         self.container.playerModel:ApplySpellVisualKit(29521, false)
     end
-    PlaySoundFile("Interface/AddOns/GW2_UI/sounds/dialog_open.ogg", "SFX")
+    PlaySoundFile("Interface/AddOns/GW2_UI/Sounds/dialog_open.ogg", "SFX")
 end
 
 function QuestViewMixin:clearDialog()
@@ -596,7 +596,7 @@ function QuestViewMixin:evQuestFinished()
     self.container.dialog.reqItems:Hide()
     self:Hide()
     if (self.questState ~= "PROGRESS") then
-        PlaySoundFile("Interface/AddOns/GW2_UI/sounds/dialog_close.ogg", "SFX")
+        PlaySoundFile("Interface/AddOns/GW2_UI/Sounds/dialog_close.ogg", "SFX")
     end
 end
 

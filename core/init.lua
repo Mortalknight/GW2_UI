@@ -1,6 +1,33 @@
 
 local addonName, GW = ...
 
+GW.VERSION_STRING = "GW2_UI @project-version@"
+
+-- Make a global GW variable , so others cann access our functions
+GW2_ADDON = GW
+
+assert(GW.oUF, 'GW2_UI was unable to locate oUF.')
+
+do -- Expansions
+    GW.Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+    GW.TBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+    GW.Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+    GW.Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+    GW.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+
+    local season = C_Seasons and C_Seasons.GetActiveSeason()
+    GW.ClassicHC = season == 3 -- Hardcore
+    GW.ClassicSOD = season == 2 -- Season of Discovery
+    GW.ClassicAnniv = season == 11 -- Anniversary
+    GW.ClassicAnnivHC = season == 12 -- Anniversary Hardcore
+
+    local IsHardcoreActive = C_GameRules and C_GameRules.IsHardcoreActive
+    GW.IsHardcoreActive = IsHardcoreActive and IsHardcoreActive()
+
+    local IsEngravingEnabled = C_Engraving and C_Engraving.IsEngravingEnabled
+    GW.IsEngravingEnabled = IsEngravingEnabled and IsEngravingEnabled()
+end
+
 -- init: store API, to reduce the API usage
 local function GetPlayerRole()
     local assignedRole = UnitGroupRolesAssigned("player")
@@ -19,8 +46,6 @@ local function CheckRole()
     -- myrole = group role; TANK, HEALER, DAMAGER
 end
 GW.CheckRole = CheckRole
-
-assert(GW.oUF, 'GW2_UI was unable to locate oUF.')
 
 --Constants
 local gameLocale = GetLocale()
@@ -157,6 +182,6 @@ GW.Libs.LSM:Register("statusbar", "GW2_UI_Details", "Interface/Addons/GW2_UI/tex
 GW.Libs.LSM:Register("border", "GW2_UI", "Interface/Addons/GW2_UI/textures/uistuff/UI-Tooltip-Border")
 
 --Sound
-GW.Libs.LSM:Register("sound", "GW2_UI: Close", "Interface/AddOns/GW2_UI/sounds/dialog_close.ogg")
-GW.Libs.LSM:Register("sound", "GW2_UI: Open", "Interface/AddOns/GW2_UI/sounds/dialog_open.ogg")
-GW.Libs.LSM:Register("sound", "GW2_UI: Ping", "Interface/AddOns/GW2_UI/sounds/exp_gain_ping.ogg")
+GW.Libs.LSM:Register("sound", "GW2_UI: Close", "Interface/AddOns/GW2_UI/Sounds/dialog_close.ogg")
+GW.Libs.LSM:Register("sound", "GW2_UI: Open", "Interface/AddOns/GW2_UI/Sounds/dialog_open.ogg")
+GW.Libs.LSM:Register("sound", "GW2_UI: Ping", "Interface/AddOns/GW2_UI/Sounds/exp_gain_ping.ogg")

@@ -34,6 +34,7 @@
     <Script file="weeklyRewards.lua"/>
     <Script file="lfg.lua"/>
     <Script file="orderHallTalentFrame.lua"/>
+    <Include file="achievements.xml"/>
     <Script file="achievements.lua"/>
     <Script file="perksProgram.lua"/>
     <Script file="expansionLandingPage.lua"/>

@@ -1,0 +1,64 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file ="..\Libs\libs.xml"/>
+    <Include file ="..\Locales\Load_Locales.xml"/>
+    <Include file ="TaintLess.xml"/>
+
+    <Script file ="errorHandler.lua"/>
+    <Include file ="shared.xml"/>
+    <Script file ="consts.lua"/>
+
+    <Script file ="toolkit.lua"/>
+    <Script file ="utils.lua"/>
+    <Script file ="..\changelog.lua"/>
+
+    <Script file="init.lua"/>
+
+    <Script file ="migration.lua"/>
+
+    <Script file ="debug.lua"/>
+
+    <Script file ="locationData.lua"/>
+    <Script file ="..\Settings\defaults2.lua"/>
+    <Include file ="..\Settings\Load.xml"/>
+
+    <Include file ="..\Core\Mixin\Load.xml"/>
+
+    <Script file ="customClassColors.lua"/>
+    <Script file ="staticPopupDialogs.lua"/>
+    <Script file ="raid_debuffs.lua"/>
+
+    <Include file ="warningPrompt.xml"/>
+    <Script file ="warningPrompt.lua"/>
+
+    <Script file ="backdropTemplates.lua"/>
+    <Script file ="itemlevel.lua"/>
+    <Script file ="fonts.lua"/>
+    <Script file ="storage.lua"/>
+    <Script file ="statusReport.lua"/>
+    <Script file ="slashcommands.lua"/>
+    <Script file ="cooldowns.lua"/>
+    <Script file ="misc.lua"/>
+    <Script file ="disableBlizzard.lua"/>
+    <Script file ="notaint.lua"/>
+    <Include file ="statusbars.xml"/>
+    <Script file ="statusbars.lua"/>
+    <Script file ="blizzardFixes.lua"/>
+    <Script file ="unitFrameFader.lua"/>
+
+    <Script file ="DataInfo\money.lua"/>
+    <Script file ="DataInfo\guild.lua"/>
+    <Script file ="DataInfo\bags.lua"/>
+    <Script file ="DataInfo\time.lua"/>
+    <Script file ="DataInfo\conduits.lua"/>
+    <Script file ="DataInfo\friends.lua"/>
+    <Script file ="DataInfo\system.lua"/>
+    <Script file ="DataInfo\durability.lua"/>
+    <Script file ="DataInfo\characterItemInfo.lua"/>
+
+    <Script file ="auras.lua"/>
+
+    <Include file ="Inventory\Load.xml"/>
+
+    <Include file ="Tests\Load.xml"/>
+
+</Ui>

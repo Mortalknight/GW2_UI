@@ -429,7 +429,7 @@ local function xpbar_OnEvent(self, event)
                 local flarePoint = ((UIParent:GetWidth() - 180) * step) + 90
                 self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
                 self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
-                PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+                PlaySoundFile("Interface/AddOns/GW2_UI/Sounds/exp_gain_ping.ogg", "SFX")
                 animations.experiencebarAnimation.from = step
             end
         end)

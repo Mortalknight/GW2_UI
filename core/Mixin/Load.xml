@@ -1,0 +1,12 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="powerBarMixin.lua"/>
+    <Script file ="healthBarMixin.lua"/>
+
+    <Script file ="GwObjectivesAnimationMixin.lua"/>
+    <Script file ="GwObjectivesBlockMixin.lua"/>
+    <Script file ="GwObjectivesContainerMixin.lua"/>
+    <Script file ="GwQuestTrackerObjectiveMixin.lua"/>
+    <Script file ="GwObjectivesUnitFrameMixin.lua"/>
+    <Script file ="GwObjectivesGroupfinderButtonMixin.lua"/>
+
+</Ui>

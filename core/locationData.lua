@@ -3,21 +3,6 @@ local mapInfoWatcher = CreateFrame("Frame")
 local coordsWatcher = CreateFrame("Frame")
 local mapRects, tempVec2D = {}, CreateVector2D(0, 0)
 
--- we need to load this function here because it is need in defaults.lua
-local function MapTable(T, fn, withKey, fnKeyValue)
-    local t = {}
-    for k,v in pairs(T) do
-        if withKey then
-            t[k] = fn(v, k)
-        else
-            t[k] = fn(v)
-        end
-        t[k] = fnKeyValue ~= nil and t[k][fnKeyValue] or t[k]
-    end
-    return t
-end
-GW.MapTable = MapTable
-
 local function GetPlayerMapPos(mapID)
     tempVec2D.x, tempVec2D.y = UnitPosition("player")
     if not tempVec2D.x then return end

@@ -6,6 +6,20 @@ local maxUpdatesPerCircle = 5
 local EMPTY = {}
 local NIL = {}
 
+local function MapTable(T, fn, withKey, fnKeyValue)
+    local t = {}
+    for k,v in pairs(T) do
+        if withKey then
+            t[k] = fn(v, k)
+        else
+            t[k] = fn(v)
+        end
+        t[k] = fnKeyValue ~= nil and t[k][fnKeyValue] or t[k]
+    end
+    return t
+end
+GW.MapTable = MapTable
+
 local function CombatQueue_Initialize()
     C_Timer.NewTicker(0.1, function()
         if InCombatLockdown() then

@@ -1,0 +1,21 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="Misc\LFGPlayerInfo.lua"/>
+    <Script file ="Misc\EditMode.lua"/>
+
+    <Script file ="GW2_ui.lua"/>
+
+    <Include file ="Social\Load.xml"/>
+
+    <Include file ="Units\Load.xml"/>
+
+    <Include file ="Mainbar\Load.xml"/>
+
+    <Include file ="Immersive\Load.xml"/>
+
+    <Include file ="Objectives\Load.xml"/>
+
+    <Include file ="Character\Load.xml"/>
+
+    <Include file ="Battlegrounds\Load.xml"/>
+
+</Ui>
