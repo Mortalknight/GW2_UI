@@ -6,6 +6,68 @@ local maxUpdatesPerCircle = 5
 local EMPTY = {}
 local NIL = {}
 
+local function SetDeadIcon(self)
+    local tex = GW.CLASS_ICONS.dead
+    self:SetTexCoord(tex.l, tex.r, tex.t, tex.b)
+end
+GW.SetDeadIcon = SetDeadIcon
+
+local function SetClassIcon(self, class)
+    if class == nil then
+        class = 0
+    end
+    local tex = GW.CLASS_ICONS[class]
+
+    self:SetTexCoord(tex.l, tex.r, tex.t, tex.b)
+end
+GW.SetClassIcon = SetClassIcon
+
+--[[
+    Basic helper function for spritemaps
+    mapExample = {
+    width = 100,
+    height = 10,
+    colums = 5,
+    rows = 3
+}
+]]--
+local function getSprite(map, x, y)
+    local pw = 1 / map.colums
+    local ph = 1 / map.rows
+
+    local left = pw * (x - 1)
+    local right = pw * x
+
+    local top = ph * (y - 1)
+    local bottom = ph * y
+
+    return left, right, top, bottom
+end
+GW.getSprite = getSprite
+
+local function getSpriteByIndex(map, index)
+    if not map then
+        return 0, 0, 0, 0
+    end
+
+    local w, h = map.width, map.height
+    local cols, rows = map.colums, map.rows
+
+    local tileWidth = w / cols
+    local tileHeight = h / rows
+
+    local col = index % cols
+    local row = math.floor(index / cols)
+
+    local left = tileWidth * col
+    local top = tileHeight * row
+    local right = left + tileWidth
+    local bottom = top + tileHeight
+
+    return left / w, right / w, top / h, bottom / h
+end
+GW.getSpriteByIndex = getSpriteByIndex
+
 local function MapTable(T, fn, withKey, fnKeyValue)
     local t = {}
     for k,v in pairs(T) do

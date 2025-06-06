@@ -14,6 +14,8 @@
 
     <Script file ="migration.lua"/>
 
+    <Include file ="Immersive\Load.xml"/>
+
     <Script file ="debug.lua"/>
 
     <Script file ="locationData.lua"/>

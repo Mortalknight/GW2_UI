@@ -28,11 +28,11 @@ local lastSwimState = true
 local hudArtFrame
 
 
-function GW2_ADDON_AddonCompartmentOnClickFunc()
-    GW.ToggleGw2Settings()
-end
-
 if GW.Retail then
+
+    function GW2_ADDON_AddonCompartmentOnClickFunc()
+        GW.ToggleGw2Settings()
+    end
     function GW2_ADDON_OnAddonCompartmentEnter(_, menuButtonFrame)
         GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_NONE");
         GameTooltip:SetPoint("TOPRIGHT", menuButtonFrame, "BOTTOMRIGHT", 0, 0)
@@ -54,6 +54,15 @@ local function disableMABags()
     MADB.noBags = true
     MAOptNoBags:SetEnabled(false)
     forcedMABags = true
+end
+
+local function disableTitanPanelBarAdjusting()
+    local ourBars = GetSetting("ACTIONBARS_ENABLED")
+    if ourBars and C_AddOns.IsAddOnLoaded("TitanClassic") then
+        TitanMovable_AddonAdjust("MultiBarRight", true)
+        TitanMovable_AddonAdjust("ExtraActionBarFrame", true)
+        TitanMovable_AddonAdjust("MinimapCluster", true)
+    end
 end
 
 -- https://us.battle.net/forums/en/wow/topic/6036615884
@@ -95,51 +104,15 @@ local function AddToAnimation(name, from, to, start, duration, method, easeing, 
 end
 GW.AddToAnimation = AddToAnimation
 
---[[
-    Basic helper function for spritemaps
-    mapExample = {
-    width = 100,
-    height = 10,
-    colums = 5,
-    rows = 3
-}
-]]--
-local function getSprite(map, x, y)
-    local pw = 1 / map.colums
-    local ph = 1 / map.rows
-
-    local left = pw * (x - 1)
-    local right = pw * x
-
-    local top = ph * (y - 1)
-    local bottom = ph * y
-
-    return left, right, top, bottom
-end
-GW.getSprite = getSprite
-
-local function getSpriteByIndex(map, index)
-    if not map then
-        return 0, 0, 0, 0
+local function StopAnimation(name)
+    if animations[name] then
+        animations[name].completed = true
+        return true
     end
 
-    local w, h = map.width, map.height
-    local cols, rows = map.colums, map.rows
-
-    local tileWidth = w / cols
-    local tileHeight = h / rows
-
-    local col = index % cols
-    local row = math.floor(index / cols)
-
-    local left = tileWidth * col
-    local top = tileHeight * row
-    local right = left + tileWidth
-    local bottom = top + tileHeight
-
-    return left / w, right / w, top / h, bottom / h
+    return false
 end
-GW.getSpriteByIndex = getSpriteByIndex
+GW.StopAnimation = StopAnimation
 
 local function TriggerButtonHoverAnimation(self, hover, to, duration)
     local name = self.animationName or (self.GetName and self:GetName()) or tostring(self)
@@ -188,31 +161,6 @@ function GwStandardButton_OnLeave(self)
     TriggerButtonHoverAnimation(self, self.hover, 0, 0.1)
 end
 
-local function SetClassIcon(self, class)
-    if class == nil then
-        class = 0
-    end
-    local tex = CLASS_ICONS[class]
-
-    self:SetTexCoord(tex.l, tex.r, tex.t, tex.b)
-end
-GW.SetClassIcon = SetClassIcon
-
-local function SetDeadIcon(self)
-    local tex = CLASS_ICONS.dead
-    self:SetTexCoord(tex.l, tex.r, tex.t, tex.b)
-end
-GW.SetDeadIcon = SetDeadIcon
-
-local function StopAnimation(name)
-    if animations[name] then
-        animations[name].completed = true
-        return true
-    end
-
-    return false
-end
-GW.StopAnimation = StopAnimation
 
 local function swimAnim()
     local r, g, b = hudArtFrame.actionBarHud.RightSwim:GetVertexColor()
@@ -283,6 +231,10 @@ local function gw_OnUpdate(_, elapsed)
 
     for _, cb in ipairs(updateCB) do
         cb.func(cb.payload, elapsed)
+    end
+
+    if GW.Classic and PetActionBarFrame:IsShown() and GetSetting("PETBAR_ENABLED") and loaded then
+        PetActionBarFrame:Hide()
     end
 end
 AFP("gw_OnUpdate", gw_OnUpdate)
@@ -413,30 +365,34 @@ local function evAddonLoaded(self, loadedAddonName)
 
     -- TODO: moving skinning from player login to here
     -- Skins: BLizzard & Addons
-    GW.LoadWorldMapSkin()
-    GW.LoadEncounterJournalSkin()
-    GW.LoadAchivementSkin()
-    GW.LoadAlliedRacesUISkin()
-    GW.LoadBarShopUISkin()
-    GW.LoadChromieTimerSkin()
-    GW.LoadCovenantSanctumSkin()
-    GW.LoadDeathRecapSkin()
-    GW.LoadFlightMapSkin()
-    GW.LoadInspectFrameSkin()
-    GW.LoadItemUpgradeSkin()
-    GW.LoadLFGSkin()
-    GW.LoadMacroOptionsSkin()
-    GW.LoadOrderHallTalentFrameSkin()
-    GW.LoadSocketUISkin()
-    GW.LoadSoulbindsSkin()
-    GW.LoadWeeklyRewardsSkin()
-    GW.LoadPerksProgramSkin()
-    GW.LoadAdventureMapSkin()
-    GW.LoadPlayerSpellsSkin()
-    GW.LoadAuctionHouseSkin()
-    GW.LoadBattlefieldMapSkin()
-    GW.LoadMajorFactionsFrameSkin()
     GW.PreloadStatusBarMaskTextures()
+    GW.LoadWorldMapSkin()
+    GW.LoadFlightMapSkin()
+    GW.LoadMacroOptionsSkin()
+
+    if GW.Retail then
+        GW.LoadEncounterJournalSkin()
+        GW.LoadAchivementSkin()
+        GW.LoadAlliedRacesUISkin()
+        GW.LoadBarShopUISkin()
+        GW.LoadChromieTimerSkin()
+        GW.LoadCovenantSanctumSkin()
+        GW.LoadDeathRecapSkin()
+        GW.LoadInspectFrameSkin()
+        GW.LoadItemUpgradeSkin()
+        GW.LoadLFGSkin()
+        GW.LoadOrderHallTalentFrameSkin()
+        GW.LoadSocketUISkin()
+        GW.LoadSoulbindsSkin()
+        GW.LoadWeeklyRewardsSkin()
+        GW.LoadPerksProgramSkin()
+        GW.LoadAdventureMapSkin()
+        GW.LoadPlayerSpellsSkin()
+        GW.LoadAuctionHouseSkin()
+        GW.LoadBattlefieldMapSkin()
+        GW.LoadMajorFactionsFrameSkin()
+    end
+
 end
 AFP("evAddonLoaded", evAddonLoaded)
 
@@ -526,7 +482,6 @@ local function evPlayerEnteringWorld()
         GW2UI_SETTINGS_DB_03 = nil
     end
 
-
     GW:FixBlizzardIssues()
 
     C_Timer.After(1, function() collectgarbage("collect") end)
@@ -581,10 +536,12 @@ local function evPlayerLogin(self)
     local lm = GW.LoadMainbarLayout()
 
     --Create Settings window
-    GW.SetUpDatabaseForProfileSpecSwitch()
+    if GW.Retail then
+        GW.SetUpDatabaseForProfileSpecSwitch()
+        GW.BuildPrefixValues()
+    end
     GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
-    GW.BuildPrefixValues()
     GW.LoadFonts()
 
     -- Create Warning Prompt
@@ -592,9 +549,17 @@ local function evPlayerLogin(self)
 
     -- disable Move Anything bag handling
     disableMABags()
+    if GW.Classic then
+        disableTitanPanelBarAdjusting()
+    end
 
     -- Load Slash commands
     GW.LoadSlashCommands()
+
+    local i = GW.Classic == true and 1 or 2
+    if i == 1 then
+        return
+    end
 
     -- Misc
     GW.InitializeMiscFunctions()

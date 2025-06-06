@@ -50,8 +50,6 @@
     <Script file="addons\postal.lua"/>
     <Script file="addons\WorldQuestTracker.lua"/>
     <Script file="addons\petTracker.lua"/>
-    <Script file="addons\detailsProfile.lua"/>
-    <Script file="addons\masqueSkin.lua"/>
     <Script file="addons\auctionator.lua"/>
     <Script file="addons\tsm.lua"/>
     <Script file="addons\todoloo.lua"/>
