@@ -32,16 +32,18 @@ function GW2_ADDON_AddonCompartmentOnClickFunc()
     GW.ToggleGw2Settings()
 end
 
-function GW2_ADDON_OnAddonCompartmentEnter(_, menuButtonFrame)
-    GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_NONE");
-    GameTooltip:SetPoint("TOPRIGHT", menuButtonFrame, "BOTTOMRIGHT", 0, 0)
-    GameTooltip:ClearLines()
-    GameTooltip:AddDoubleLine(addonName, C_AddOns.GetAddOnMetadata(addonName, "Version"))
-    GameTooltip:Show()
-end
+if GW.Retail then
+    function GW2_ADDON_OnAddonCompartmentEnter(_, menuButtonFrame)
+        GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_NONE");
+        GameTooltip:SetPoint("TOPRIGHT", menuButtonFrame, "BOTTOMRIGHT", 0, 0)
+        GameTooltip:ClearLines()
+        GameTooltip:AddDoubleLine(addonName, C_AddOns.GetAddOnMetadata(addonName, "Version"))
+        GameTooltip:Show()
+    end
 
-function GW2_ADDON_OnAddonCompartmentLeave(addonName, button)
-    GameTooltip:Hide()
+    function GW2_ADDON_OnAddonCompartmentLeave(addonName, button)
+        GameTooltip:Hide()
+    end
 end
 
 local function disableMABags()
@@ -53,7 +55,6 @@ local function disableMABags()
     MAOptNoBags:SetEnabled(false)
     forcedMABags = true
 end
-AFP("disableMABags", disableMABags)
 
 -- https://us.battle.net/forums/en/wow/topic/6036615884
 if AchievementMicroButton_Update == nil then
@@ -218,7 +219,6 @@ local function swimAnim()
     hudArtFrame.actionBarHud.RightSwim:SetVertexColor(r, g, b, animations.swimAnimation.progress)
     hudArtFrame.actionBarHud.LeftSwim:SetVertexColor(r, g, b, animations.swimAnimation.progress)
 end
-AFP("swimAnim", swimAnim)
 
 local updateCB = {}
 local function AddUpdateCB(func, payload)
@@ -545,21 +545,23 @@ local function evPlayerLogin(self)
         return
     end
 
-    -- fetch data
-    -- Loop through the expansions to collect the textures
-    local numTiers = (EJ_GetNumTiers() or 0)
-    if numTiers > 0 then
-        local currentTier = EJ_GetCurrentTier()
+    if GW.Retail then
+        -- fetch data
+        -- Loop through the expansions to collect the textures
+        local numTiers = (EJ_GetNumTiers() or 0)
+        if numTiers > 0 then
+            local currentTier = EJ_GetCurrentTier()
 
-        for i = 1, numTiers do
-            EJ_SelectTier(i)
-            GW.GetInstanceImages(false)
-            GW.GetInstanceImages(true)
-        end
+            for i = 1, numTiers do
+                EJ_SelectTier(i)
+                GW.GetInstanceImages(false)
+                GW.GetInstanceImages(true)
+            end
 
-        -- Set it back to the previous tier
-        if currentTier then
-            EJ_SelectTier(currentTier)
+            -- Set it back to the previous tier
+            if currentTier then
+                EJ_SelectTier(currentTier)
+            end
         end
     end
 

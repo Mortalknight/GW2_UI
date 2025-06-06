@@ -1,5 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file ="..\Libs\libs.xml"/>
     <Include file ="..\Locales\Load_Locales.xml"/>
     <Include file ="TaintLess.xml"/>
 
@@ -61,4 +60,5 @@
 
     <Include file ="Tests\Load.xml"/>
 
+    <Script file ="GW2_ui.lua"/>
 </Ui>

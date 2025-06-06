@@ -76,6 +76,10 @@ local function Enable(self)
         self:RegisterEvent("UPDATE_INSTANCE_INFO", Update, true)
         self:RegisterEvent("UNIT_HEALTH", Update)
 
+        if oUF.isClassic then
+			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Update)
+		end
+
         return true
     end
 end
@@ -89,6 +93,10 @@ local function Disable(self)
         self:UnregisterEvent("RAID_TARGET_UPDATE", Update, true)
         self:UnregisterEvent("UPDATE_INSTANCE_INFO", Update, true)
         self:UnregisterEvent("UNIT_HEALTH", Update)
+
+        if oUF.isClassic then
+			self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Update)
+		end
 
         self.MiddleIcon:Hide()
     end

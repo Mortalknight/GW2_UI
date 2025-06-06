@@ -1,3 +1,0 @@
-local _, ns = ...
-ns.oUF = {}
-ns.oUF.Private = {}

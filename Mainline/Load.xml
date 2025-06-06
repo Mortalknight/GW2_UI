@@ -2,8 +2,6 @@
     <Script file ="Misc\LFGPlayerInfo.lua"/>
     <Script file ="Misc\EditMode.lua"/>
 
-    <Script file ="GW2_ui.lua"/>
-
     <Include file ="Social\Load.xml"/>
 
     <Include file ="Units\Load.xml"/>

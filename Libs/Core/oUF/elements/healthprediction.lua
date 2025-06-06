@@ -120,14 +120,14 @@ local function Update(self, event, unit)
 
 	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
 	local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
-	local absorb = UnitGetTotalAbsorbs(unit) or 0
-	local healAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
+	local absorb = oUF.isRetail and UnitGetTotalAbsorbs(unit) or 0
+	local healAbsorb = oUF.isRetail and UnitGetTotalHealAbsorbs(unit) or 0
 	local health, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
 	local otherIncomingHeal = 0
 	local hasOverHealAbsorb = false
 
 	if(healAbsorb > allIncomingHeal) then
-		healAbsorb = healAbsorb - allIncomingHeal 
+		healAbsorb = healAbsorb - allIncomingHeal
 		allIncomingHeal = 0
 		myIncomingHeal = 0
 
@@ -270,9 +270,16 @@ local function Enable(self)
 		self:RegisterEvent('UNIT_HEALTH', Path)
 		self:RegisterEvent('UNIT_MAXHEALTH', Path)
 		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
-		self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
-		self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
-		self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
+
+		if oUF.isClassic then
+			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
+		end
+
+		if oUF.isRetail then
+			self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
+			self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
+			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
+		end
 
 		if(not element.maxOverflow) then
 			element.maxOverflow = 1.05
@@ -350,9 +357,16 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_HEALTH', Path)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('UNIT_HEAL_PREDICTION', Path)
-		self:UnregisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
-		self:UnregisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
-		self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
+
+		if oUF.isClassic then
+			self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
+		end
+
+		if oUF.isRetail then
+			self:UnregisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
+			self:UnregisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
+			self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
+		end
 	end
 end
 

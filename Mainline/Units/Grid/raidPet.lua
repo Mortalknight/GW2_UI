@@ -27,7 +27,8 @@ local function GW2_GridRaidPetStyleRegister(self)
     GW.Construct_PredictionBar(self) -- creates only the function regestration
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
-    self.Range = GW.Construct_RangeIndicator(self)
+     --self.Range = GW.Construct_RangeIndicator(self)
+    self.Fader = GW.Construct_Faderframe(self)
 
     self:DisableElement("MiddleIcon")
 
@@ -90,7 +91,8 @@ local function UpdateGridRaidPetFrame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    GW.Update_RangeIndicator(frame)
+    --GW.Update_RangeIndicator(frame)
+    GW.Update_Faderframe(frame, "gridPet")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")
 end

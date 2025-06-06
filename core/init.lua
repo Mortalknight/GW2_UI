@@ -6,7 +6,7 @@ GW.VERSION_STRING = "GW2_UI @project-version@"
 -- Make a global GW variable , so others cann access our functions
 GW2_ADDON = GW
 
-assert(GW.oUF, 'GW2_UI was unable to locate oUF.')
+assert(GW.oUF, "GW2_UI was unable to locate oUF.")
 
 do -- Expansions
     GW.Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
@@ -30,17 +30,20 @@ end
 
 -- init: store API, to reduce the API usage
 local function GetPlayerRole()
-    local assignedRole = UnitGroupRolesAssigned("player")
-    if assignedRole == "NONE" then
-        return GW.myspec and GetSpecializationRole(GW.myspec)
-    end
-
-    return assignedRole
+    local assignedRole = GW.allowRoles and UnitGroupRolesAssigned("player") or "NONE"
+    return (assignedRole ~= "NONE" and assignedRole) or GW.myspecRole or "NONE"
 end
 GW.GetPlayerRole = GetPlayerRole
 
 local function CheckRole()
     GW.myspec = GetSpecialization()
+    if GW.myspec then
+        if GW.Retail then
+            GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecRole = GetSpecializationInfo(GW.myspec)
+        else
+            GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecBackground, GW.myspecRole = GW.Libs.LCS.GetSpecializationInfo(GW.myspec)
+        end
+    end
     GW.myrole = GetPlayerRole()
 
     -- myrole = group role; TANK, HEALER, DAMAGER
@@ -60,11 +63,11 @@ GW.myname = UnitName("player")
 GW.myrealm = GetRealmName()
 GW.mysex = UnitSex("player")
 GW.mylevel = UnitLevel("player")
-GW.myspec = GetSpecialization()
 GW.CheckRole()
 GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
 GW.resolution = format("%dx%d", GW.screenwidth, GW.screenHeight)
 GW.wowpatch, GW.wowbuild, _ , GW.wowToc = GetBuildInfo()
+GW.allowRoles = GW.Retail or GW.Cata or GW.ClassicAnniv or GW.ClassicAnnivHC or GW.ClassicSOD
 
 GW.wowbuild = tonumber(GW.wowbuild)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
@@ -93,6 +96,10 @@ GW.AchievementFrameSkinFunction = {}
 GW.CreditsList = {}
 GW.texts = {}
 GW.instanceIconByName = {}
+
+if not GW.Retail then
+    GW.trackedQuests = {}
+end
 
 -- money
 GW.earnedMoney = 0
@@ -123,19 +130,25 @@ do
     AddLib("LEMO", "LibEditModeOverride-1.0-GW2", true)
     AddLib("Dispel", "LibDispel-1.0-GW", true)
     AddLib("GW2Lib", "LibGW2-1.0", true)
+
+    if GW.Classic then
+        AddLib("LibDetours", "LibDetours-1.0", true)
+        AddLib("CI", "LibClassicInspector", true)
+        AddLib("LCS", "LibClassicSpecs", true)
+    end
 end
 
 -- triger GetCurrentRegion() for LRI to unpack all data on startup
 GW.Libs.LRI:GetCurrentRegion()
 
 do
-	GW.UnlocalizedClasses = {}
-	for k, v in pairs(LOCALIZED_CLASS_NAMES_MALE) do GW.UnlocalizedClasses[v] = k end
-	for k, v in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do GW.UnlocalizedClasses[v] = k end
+    GW.UnlocalizedClasses = {}
+    for k, v in pairs(LOCALIZED_CLASS_NAMES_MALE) do GW.UnlocalizedClasses[v] = k end
+    for k, v in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do GW.UnlocalizedClasses[v] = k end
 
-	function GW.UnlocalizedClassName(className)
-		return (className and className ~= "") and GW.UnlocalizedClasses[className]
-	end
+    function GW.UnlocalizedClassName(className)
+        return (className and className ~= "") and GW.UnlocalizedClasses[className]
+    end
 end
 
 -- Locale doesn't exist yet, make it exist

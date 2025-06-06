@@ -34,7 +34,8 @@ local function GW2_GridMaintankStyleRegister(self)
     GW.Construct_PredictionBar(self) -- creates only the function regestration
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
-    self.Range = GW.Construct_RangeIndicator(self)
+     --self.Range = GW.Construct_RangeIndicator(self)
+    self.Fader = GW.Construct_Faderframe(self)
 
     return self
 end
@@ -94,7 +95,8 @@ local function UpdateGridMaintankFrame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    GW.Update_RangeIndicator(frame)
+    --GW.Update_RangeIndicator(frame)
+    GW.Update_Faderframe(frame, "gridTank")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")
 end

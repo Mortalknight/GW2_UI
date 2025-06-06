@@ -119,6 +119,7 @@ local function UpdateColor(self, event, unit)
 	if(self.unit ~= unit) then return end
 	local element = self.Power
 
+	local isPlayer = UnitIsPlayer(unit) or (oUF.isRetail and UnitInPartyIsAI(unit))
 	local pType, pToken, altR, altG, altB = UnitPowerType(unit)
 
 	local r, g, b, color, atlas
@@ -151,9 +152,9 @@ local function UpdateColor(self, event, unit)
 		if(element.useAtlas and color and color.atlas) then
 			atlas = color.atlas
 		end
-	elseif(element.colorClass and (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
-		or (element.colorClassNPC and not (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)))
-		or (element.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
+	elseif(element.colorClass and isPlayer)
+		or (element.colorClassNPC and not isPlayer)
+		or (element.colorClassPet and UnitPlayerControlled(unit) and not isPlayer) then
 		local _, class = UnitClass(unit)
 		color = self.colors.class[class]
 	elseif(element.colorSelection and unitSelectionType(unit, element.considerSelectionInCombatHostile)) then
@@ -225,7 +226,7 @@ local function Update(self, event, unit)
 	end
 
 	local displayType, min
-	if(element.displayAltPower) then
+	if(oUF.isRetail and element.displayAltPower) then
 		displayType, min = element:GetDisplayPower()
 	end
 
@@ -418,7 +419,7 @@ local function Enable(self)
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
-		if(not element.GetDisplayPower) then
+		if(oUF.isRetail and not element.GetDisplayPower) then
 			element.GetDisplayPower = GetDisplayPower
 		end
 

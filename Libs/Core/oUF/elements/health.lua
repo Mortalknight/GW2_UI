@@ -328,6 +328,12 @@ local function Enable(self)
 		element.SetColorTapping = SetColorTapping
 		element.SetColorThreat = SetColorThreat
 
+		if oUF.isRetail then
+			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
+		elseif oUF.isClassic then
+			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
+		end
+
 		if(element.colorDisconnected) then
 			self:RegisterEvent('UNIT_CONNECTION', ColorPath)
 		end
@@ -346,7 +352,6 @@ local function Enable(self)
 
 		self:RegisterEvent('UNIT_HEALTH', Path)
 		self:RegisterEvent('UNIT_MAXHEALTH', Path)
-		self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
@@ -376,13 +381,18 @@ local function Disable(self)
 	if(element) then
 		element:Hide()
 
+		if oUF.isRetail then
+			self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
+		elseif oUF.isClassic then
+			self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
+		end
+
 		self:UnregisterEvent('UNIT_HEALTH', Path)
 		self:UnregisterEvent('UNIT_MAXHEALTH', Path)
 		self:UnregisterEvent('UNIT_CONNECTION', ColorPath)
 		self:UnregisterEvent('UNIT_FACTION', ColorPath)
 		self:UnregisterEvent('UNIT_FLAGS', ColorPath)
 		self:UnregisterEvent('UNIT_THREAT_LIST_UPDATE', ColorPath)
-		self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
 
 		if(element.TempLoss) then
 			element.TempLoss:Hide()

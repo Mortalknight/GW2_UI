@@ -1,6 +1,7 @@
 local _, GW = ...
 
 local MIN_ALPHA, MAX_ALPHA = 0.35, 1
+local onRangeObjects, onRangeFrame = {}
 
 local function GetMouseFocus(self)
     return GW.DoesAncestryIncludeAny(self, GetMouseFoci())
@@ -50,10 +51,12 @@ local function Update(self, event, unit)
     end
 
     -- stuff for Skyriding
-    if event == "ForceUpdate" then
-        isGliding = C_PlayerInfo.GetGlidingInfo()
-    elseif event == "PLAYER_IS_GLIDING_CHANGED" then
-        isGliding = unit -- unit is true/false with the event being PLAYER_IS_GLIDING_CHANGED
+    if GW.Retail then
+        if event == "ForceUpdate" then
+            isGliding = C_PlayerInfo.GetGlidingInfo()
+        elseif event == "PLAYER_IS_GLIDING_CHANGED" then
+            isGliding = unit -- unit is true/false with the event being PLAYER_IS_GLIDING_CHANGED
+        end
     end
 
     -- try to get the unit from the parent
@@ -76,9 +79,9 @@ local function Update(self, event, unit)
         (element.Combat and UnitAffectingCombat(unit)) or
         (element.PlayerTarget and UnitExists("target")) or
         (element.UnitTarget and UnitExists(unit .. "target")) or
-        (element.DynamicFlight and not isGliding) or
+        (element.DynamicFlight and GW.Retail and not isGliding) or
         (element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
-        (element.Vehicle and UnitHasVehicleUI(unit)) or
+    (element.Vehicle and (GW.Retail or GW.Cata) and UnitHasVehicleUI(unit)) or
         (element.Hover and GetMouseFocus(self))
     then
         ToggleAlpha(element.rangeFaderObject or self, element, element.MaxAlpha)
@@ -89,6 +92,20 @@ end
 
 local function ForceUpdate(element, event)
     return Update(element.__owner, event or "ForceUpdate", element.__owner.unit)
+end
+
+local function onRangeUpdate(frame, elapsed)
+	frame.timer = (frame.timer or 0) + elapsed
+
+	if (frame.timer >= .20) then
+		for _, object in next, onRangeObjects do
+			if object:IsVisible() then
+				object.Fader:ForceUpdate('OnRangeUpdate')
+			end
+		end
+
+		frame.timer = 0
+	end
 end
 
 local function HoverScript(self)
@@ -112,9 +129,37 @@ end
 local options = {
     Range = {
         enable = function(self)
-            self:RegisterUnitEvent("UNIT_IN_RANGE_UPDATE", self.__owner.unit)
+            if oUF.isRetail then
+                self:RegisterEvent("UNIT_IN_RANGE_UPDATE", Update)
+            else
+                if not onRangeFrame then
+                    onRangeFrame = CreateFrame('Frame')
+                    onRangeFrame:SetScript('OnUpdate', onRangeUpdate)
+                end
+
+                onRangeFrame:Show()
+                tinsert(onRangeObjects, self)
+            end
         end,
-        events = {"UNIT_IN_RANGE_UPDATE"},
+        disable = function(self)
+            if oUF.isRetail then
+                self:UnregisterEvent('UNIT_IN_RANGE_UPDATE', Update)
+            else
+                if onRangeFrame then
+                    for idx, obj in next, onRangeObjects do
+                        if obj == self then
+                            self.Fader.RangeAlpha = nil
+                            tremove(onRangeObjects, idx)
+                            break
+                        end
+                    end
+
+                    if #onRangeObjects == 0 then
+                        onRangeFrame:Hide()
+                    end
+                end
+            end
+		end,
     },
     Hover = {
         enable = function(self)
@@ -173,30 +218,24 @@ local options = {
             self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.__owner.unit)
             self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.__owner.unit)
             self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.__owner.unit)
-            self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.__owner.unit)
-            self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.__owner.unit)
+
+            if GW.Retail then
+                self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.__owner.unit)
+                self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.__owner.unit)
+            end
         end,
-        events = {"UNIT_SPELLCAST_START","UNIT_SPELLCAST_FAILED","UNIT_SPELLCAST_STOP","UNIT_SPELLCAST_INTERRUPTED","UNIT_SPELLCAST_CHANNEL_START","UNIT_SPELLCAST_CHANNEL_STOP","UNIT_SPELLCAST_EMPOWER_START","UNIT_SPELLCAST_EMPOWER_STOP"}
-    },
-    DynamicFlight = {
-        enable = function(self)
-            self:RegisterEvent("PLAYER_IS_GLIDING_CHANGED")
-        end,
-        events = {"PLAYER_IS_GLIDING_CHANGED"}
+        events = {"UNIT_SPELLCAST_START","UNIT_SPELLCAST_FAILED","UNIT_SPELLCAST_STOP","UNIT_SPELLCAST_INTERRUPTED","UNIT_SPELLCAST_CHANNEL_START","UNIT_SPELLCAST_CHANNEL_STOP"}
     },
     Health = {
         enable = function(self)
+            if GW.Classic then
+                self:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self.__owner.unit)
+            end
+
             self:RegisterUnitEvent("UNIT_HEALTH", self.__owner.unit)
             self:RegisterUnitEvent("UNIT_MAXHEALTH", self.__owner.unit)
         end,
-        events = {"UNIT_HEALTH","UNIT_MAXHEALTH"}
-    },
-    Vehicle = {
-        enable = function(self)
-            self:RegisterEvent("UNIT_ENTERED_VEHICLE")
-            self:RegisterEvent("UNIT_EXITED_VEHICLE")
-        end,
-        events = {"UNIT_ENTERED_VEHICLE","UNIT_MAXHEALTH"}
+        events = GW.Classic and {'UNIT_HEALTH_FREQUENT','UNIT_HEALTH','UNIT_MAXHEALTH'} or {'UNIT_HEALTH','UNIT_MAXHEALTH'}
     },
     MinAlpha = {
         countIgnored = true,
@@ -212,6 +251,27 @@ local options = {
     },
     Smooth = {countIgnored = true},
 }
+
+if GW.Retail then
+    tinsert(options.Casting.events, "UNIT_SPELLCAST_EMPOWER_START")
+    tinsert(options.Casting.events, "UNIT_SPELLCAST_EMPOWER_STOP")
+    options.DynamicFlight = {
+        enable = function(self)
+            self:RegisterEvent("PLAYER_IS_GLIDING_CHANGED", Update, true)
+        end,
+        events = {"PLAYER_IS_GLIDING_CHANGED"}
+    }
+end
+
+if GW.Retail or GW.Cata then
+    options.Vehicle = {
+        enable = function(self)
+            self:RegisterEvent("UNIT_ENTERED_VEHICLE", Update, true)
+            self:RegisterEvent("UNIT_EXITED_VEHICLE", Update, true)
+        end,
+        events = {"UNIT_ENTERED_VEHICLE","UNIT_EXITED_VEHICLE"}
+    }
+end
 
 local function CountOption(element, state, oldState)
     if state and not oldState then
@@ -268,12 +328,12 @@ end
 local function Disable(self)
     if self.Fader then
         for opt in pairs(options) do
-           if opt == "Target" then
-				self.Fader:SetOption("UnitTarget")
-				self.Fader:SetOption("PlayerTarget")
-			else
-				self.Fader:SetOption(opt)
-			end
+        if opt == "Target" then
+                self.Fader:SetOption("UnitTarget")
+                self.Fader:SetOption("PlayerTarget")
+            else
+                self.Fader:SetOption(opt)
+            end
         end
 
         self.Fader.count = nil

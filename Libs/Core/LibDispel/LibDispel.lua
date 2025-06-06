@@ -1,4 +1,4 @@
-local MAJOR, MINOR = "LibDispel-1.0-GW", 1
+local MAJOR, MINOR = "LibDispel-1.0-GW", 2
 assert(LibStub, MAJOR.." requires LibStub")
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
@@ -607,7 +607,7 @@ if Retail then
     BleedList[266231] = "Severing Axe"
     BleedList[266505] = "Rending Claw"
     BleedList[267064] = "Bleeding"
-    BleedList[267080] = "Blight of G#huun"
+    BleedList[267080] = "Blight of G'huun"
     BleedList[267103] = "Blight of G'huun"
     BleedList[267441] = "Serrated Axe"
     BleedList[267523] = "Cutting Surge"
@@ -1063,12 +1063,14 @@ do
             return
         end
 
+        local undoRanks = (Classic and GetCVar("ShowAllSpellRanks") ~= "1") and SetCVar("ShowAllSpellRanks", "1")
+
         if event == "UNIT_PET" then
             DispelList.Magic = CheckPetSpells()
         elseif myClass == "DRUID" then
-            local cure = Retail and CheckSpell(88423) -- Nature's Cure
+            local cure = Retail and CheckSpell(88423) -- Nature"s Cure
             local corruption = CheckSpell(2782) -- Remove Corruption
-            DispelList.Magic = cure or (Cata and corruption and CheckTalentClassic(3, 15)) -- Nature's Cure Talent
+            DispelList.Magic = cure or (Cata and corruption and CheckTalentClassic(3, 15)) -- Nature"s Cure Talent
             DispelList.Poison = cure or (not Classic and corruption) or CheckSpell(2893) or CheckSpell(8946) -- Abolish Poison / Cure Poison
             DispelList.Curse = cure or corruption
         elseif myClass == "MAGE" then
@@ -1113,6 +1115,10 @@ do
             DispelList.Curse = cauterizing
             DispelList.Bleed = cauterizing
         end
+
+        if undoRanks then
+            SetCVar("ShowAllSpellRanks", "0")
+        end
     end
 
 -- setup events
@@ -1125,16 +1131,14 @@ do
     local frame = lib.frame
     frame:SetScript("OnEvent", UpdateDispels)
     frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
     frame:RegisterEvent("PLAYER_LOGIN")
+
+    if Retail or Cata then
+        frame:RegisterEvent("PLAYER_TALENT_UPDATE")
+    end
 
     if myClass == "WARLOCK" then
         frame:RegisterUnitEvent("UNIT_PET", "player")
-    end
-
-    if Cata then
-        frame:RegisterEvent("PLAYER_TALENT_UPDATE")
-    elseif Retail then
-        frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
-        frame:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
     end
 end
