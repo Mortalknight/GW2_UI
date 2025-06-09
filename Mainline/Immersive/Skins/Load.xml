@@ -12,7 +12,6 @@
     <Script file="inspectFrame.lua"/>
     <Script file="socket.lua"/>
     <Script file="worldmap.lua"/>
-    <Script file="gossip.lua"/>
     <Script file="itemUpgrade.lua"/>
     <Script file="timeManager.lua"/>
     <Script file="merchant.lua"/>

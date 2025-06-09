@@ -238,7 +238,6 @@ local function skinGossipOption(self)
         hl:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/optionhover")
         hl:SetVertexColor(1, 1, 1, 1)
         hl:Hide()
-        --self:GwSetInside(background)
         self:HookScript("OnEnter", function()
             hl:Show()
             hl:SetAlpha(0.2)
@@ -254,8 +253,8 @@ local function skinGossipOption(self)
         end)
     end
 
-    local buttonText = self.GetFontString and self:GetFontString()
-    if buttonText then
+    local buttonText = self.GetFontString and self:GetFontString() or select(3, self:GetRegions())
+    if buttonText and buttonText:IsObjectType("FontString") then
         buttonText:ClearAllPoints()
         buttonText:SetPoint("LEFT", self, "LEFT", 40, 0)
         buttonText:SetTextColor(1, 1, 1)
@@ -499,16 +498,22 @@ local function LoadGossipSkin()
 
     local GossipFrame = GossipFrame
 
-    GW.HandleTrimScrollBar(ItemTextScrollFrame.ScrollBar, true)
-    GW.HandleScrollControls(ItemTextScrollFrame)
-    GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar, true)
+    if GW.Retail then
+        GW.HandleTrimScrollBar(ItemTextScrollFrame.ScrollBar)
+        GW.HandleScrollControls(ItemTextScrollFrame)
+    else
+        ItemTextScrollFrameScrollBar:GwSkinScrollBar()
+        ItemTextScrollFrame:GwSkinScrollFrame()
+    end
+    GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar)
     GW.HandleScrollControls(GossipFrame.GreetingPanel)
     GossipFrame.GreetingPanel.GoodbyeButton:Hide()
     GossipFrame.GreetingPanel.GoodbyeButton:GwStripTextures()
     GossipFrame.GreetingPanel.GoodbyeButton:GwSkinButton(false, true)
 
+    local statusbar = NPCFriendshipStatusBar or GossipFrame.FriendshipStatusBar
     for i = 1, 4 do
-        local notch = GossipFrame.FriendshipStatusBar["Notch" .. i]
+        local notch = statusbar["Notch" .. i]
         if notch then
             notch:SetColorTexture(0, 0, 0)
             notch:SetSize(1, 16)
@@ -525,7 +530,9 @@ local function LoadGossipSkin()
     ItemTextFrame:GwStripTextures(true)
     ItemTextFrame:GwCreateBackdrop()
     QuestFont:SetTextColor(1, 1, 1)
-    GossipFrameInset:Hide()
+    if GossipFrameInset then
+        GossipFrameInset:Hide()
+    end
     GossipFramePortrait:Hide()
 
     if GossipFrame.Background then
@@ -542,6 +549,9 @@ local function LoadGossipSkin()
     ItemTextScrollFrame:GwStripTextures()
 
     GossipFrame:GwStripTextures()
+    if GossipFrame.GreetingPanel then
+        GossipFrame.GreetingPanel:GwStripTextures()
+    end
     GossipFrame:GwCreateBackdrop()
     tex = GossipFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
 
@@ -622,13 +632,13 @@ local function LoadGossipSkin()
     hooksecurefunc(GossipFrame, "Update", function()
         updateModelFrame(portraitFrame)
     end)
-
-    GossipFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
-    GossipFrameTitleText:SetTextColor(1, 1, 1)
-    GossipFrameTitleText:ClearAllPoints()
-    GossipFrameTitleText:SetPoint("TOPLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 0)
-    GossipFrameTitleText:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "BOTTOMRIGHT", -10, 0)
-    GossipFrameTitleText:SetJustifyH("LEFT")
+    local titleText = GossipFrameTitleText or GossipFrame.TitleContainer.TitleText
+    titleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+    titleText:SetTextColor(1, 1, 1)
+    titleText:ClearAllPoints()
+    titleText:SetPoint("TOPLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 0)
+    titleText:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "BOTTOMRIGHT", -10, 0)
+    titleText:SetJustifyH("LEFT")
     GossipFrame.CloseButton:GwSkinButton(true)
     GossipFrame.CloseButton:SetSize(20, 20)
     GossipFrame.CloseButton:ClearAllPoints()
@@ -636,8 +646,15 @@ local function LoadGossipSkin()
     GossipFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
     GossipFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
     GossipFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
-    ItemTextFrameCloseButton:GwSkinButton(true)
-    ItemTextFrameCloseButton:SetSize(20, 20)
+    if ItemTextFrameCloseButton then
+        ItemTextFrameCloseButton:GwSkinButton(true)
+        ItemTextFrameCloseButton:SetSize(20, 20)
+    end
+
+    if ItemTextCloseButton then
+        ItemTextCloseButton:GwSkinButton(true)
+        ItemTextCloseButton:SetSize(20, 20)
+    end
 
     GossipFrame.GreetingPanel.ScrollBox:ClearAllPoints()
     GossipFrame.GreetingPanel.ScrollBox:SetPoint("TOPLEFT", GossipFrame.ListBackground, "TOPLEFT")
@@ -754,7 +771,7 @@ local function LoadGossipSkin()
         end
     end)
 
-    local NPCFriendshipStatusBar = GossipFrame.FriendshipStatusBar
+    local NPCFriendshipStatusBar = NPCFriendshipStatusBar or GossipFrame.FriendshipStatusBar
     NPCFriendshipStatusBar:SetFrameLevel(portraitFrame:GetFrameLevel() + 2)
     NPCFriendshipStatusBar:ClearAllPoints()
     NPCFriendshipStatusBar:SetPoint("BOTTOMLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 3)
@@ -772,143 +789,165 @@ local function LoadGossipSkin()
     NPCFriendshipStatusBar.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     --QuestFrame
-    local QuestFrame = QuestFrame
-    QuestFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
-    QuestFrame:GwStripTextures()
-    QuestFrame:GwCreateBackdrop()
-    QuestFrame.tex = QuestFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
-    w, h = QuestFrame:GetSize()
-    QuestFrame.tex:SetPoint("TOP", QuestFrame, "TOP", 0, 20)
-    QuestFrame.tex:SetSize(w + 50, h + 70)
-    QuestFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    if GW.Retail then
+        local QuestFrame = QuestFrame
+        QuestFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
+        QuestFrame:GwStripTextures()
+        QuestFrame:GwCreateBackdrop()
+        QuestFrame.tex = QuestFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
+        w, h = QuestFrame:GetSize()
+        QuestFrame.tex:SetPoint("TOP", QuestFrame, "TOP", 0, 20)
+        QuestFrame.tex:SetSize(w + 50, h + 70)
+        QuestFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
 
-    QuestFrame.CloseButton:GwSkinButton(true)
-    QuestFrame.CloseButton:SetSize(20, 20)
+        QuestFrame.CloseButton:GwSkinButton(true)
+        QuestFrame.CloseButton:SetSize(20, 20)
 
-    QuestFrameDetailPanel:GwStripTextures(nil, true)
-    QuestDetailScrollFrame:GwStripTextures()
-    QuestProgressScrollFrame:GwStripTextures()
-    QuestGreetingScrollFrame:GwStripTextures()
+        QuestFrameDetailPanel:GwStripTextures(nil, true)
+        QuestDetailScrollFrame:GwStripTextures()
+        QuestProgressScrollFrame:GwStripTextures()
+        QuestGreetingScrollFrame:GwStripTextures()
 
-    QuestFrameGreetingPanel:HookScript("OnShow", function(frame)
-        for button in frame.titleButtonPool:EnumerateActive() do
-            button.Icon:SetDrawLayer("ARTWORK")
+        QuestFrameGreetingPanel:HookScript("OnShow", function(frame)
+            for button in frame.titleButtonPool:EnumerateActive() do
+                button.Icon:SetDrawLayer("ARTWORK")
 
-            local text = button:GetFontString():GetText()
-            if text and strfind(text, "|cff000000") then
-                button:GetFontString():SetText(gsub(text, "|cff000000", "|cffffe519"))
+                local text = button:GetFontString():GetText()
+                if text and strfind(text, "|cff000000") then
+                    button:GetFontString():SetText(gsub(text, "|cff000000", "|cffffe519"))
+                end
             end
+        end)
+
+        local sealFrameTextColor = {
+            ["480404"] = "c20606",
+            ["042c54"] = "1c86ee",
+        }
+
+        if not GW.QuestInfo_Display_hooked then
+            hooksecurefunc("QuestInfo_Display", GW.QuestInfo_Display)
+            GW.QuestInfo_Display_hooked = true
         end
-    end)
+        hooksecurefunc("QuestFrame_SetTitleTextColor", function(self)
+            self:SetTextColor(1, 0.8, 0.1)
+        end)
+        hooksecurefunc("QuestFrame_SetTextColor", function(self)
+            self:SetTextColor(1, 1, 1)
+        end)
+        hooksecurefunc("QuestFrameProgressItems_Update", function()
+            QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
+            QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
+        end)
+        hooksecurefunc("QuestInfo_ShowRequiredMoney", function()
+            local requiredMoney = GetQuestLogRequiredMoney()
+            if requiredMoney > 0 then
+                if requiredMoney > GetMoney() then
+                    QuestInfoRequiredMoneyText:SetTextColor(0.63, 0.09, 0.09)
+                else
+                    QuestInfoRequiredMoneyText:SetTextColor(1, 0.8, 0.1)
+                end
+            end
+        end)
+        hooksecurefunc(QuestInfoSealFrame.Text, "SetText", function(self, text)
+            if text and text ~= "" then
+                local colorStr, rawText = strmatch(text, "|c[fF][fF](%x%x%x%x%x%x)(.-)|r")
+                if colorStr and rawText then
+                    colorStr = sealFrameTextColor[colorStr] or "99ccff"
+                    self:SetFormattedText("|cff%s%s|r", colorStr, rawText)
+                end
+            end
+        end)
+        hooksecurefunc("QuestFrameProgressItems_Update", function()
+            QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
+            QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
+        end)
 
-    local sealFrameTextColor = {
-        ["480404"] = "c20606",
-        ["042c54"] = "1c86ee",
-    }
+        for i = 1, 6 do
+            local button = _G["QuestProgressItem" .. i]
+            local icon = _G["QuestProgressItem" .. i .. "IconTexture"]
+            icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            button:GwStripTextures()
+            button:SetFrameLevel(button:GetFrameLevel() + 1)
+        end
 
-    if not GW.QuestInfo_Display_hooked then
-        hooksecurefunc("QuestInfo_Display", GW.QuestInfo_Display)
-        GW.QuestInfo_Display_hooked = true
+        QuestFrameDetailPanel.SealMaterialBG:SetAlpha(0)
+        QuestFrameRewardPanel.SealMaterialBG:SetAlpha(0)
+        QuestFrameProgressPanel.SealMaterialBG:SetAlpha(0)
+        QuestFrameGreetingPanel.SealMaterialBG:SetAlpha(0)
+
+        QuestFrameGreetingPanel:GwStripTextures(true)
+        QuestFrameGreetingGoodbyeButton:GwSkinButton(false, true)
+        QuestGreetingFrameHorizontalBreak:GwKill()
+
+        QuestDetailScrollChildFrame:GwStripTextures(true)
+        QuestRewardScrollChildFrame:GwStripTextures(true)
+        QuestFrameProgressPanel:GwStripTextures(true)
+        QuestFrameRewardPanel:GwStripTextures(true)
+
+        GW.HandleTrimScrollBar(QuestProgressScrollFrame.ScrollBar, true)
+        GW.HandleTrimScrollBar(QuestRewardScrollFrame.ScrollBar, true)
+        GW.HandleTrimScrollBar(QuestDetailScrollFrame.ScrollBar, true)
+        GW.HandleTrimScrollBar(QuestGreetingScrollFrame.ScrollBar, true)
+
+        GW.HandleScrollControls(QuestProgressScrollFrame)
+        GW.HandleScrollControls(QuestRewardScrollFrame)
+        GW.HandleScrollControls(QuestDetailScrollFrame)
+        GW.HandleScrollControls(QuestGreetingScrollFrame)
+
+        QuestFrameAcceptButton:GwSkinButton(false, true)
+        QuestFrameDeclineButton:GwSkinButton(false, true)
+        QuestFrameCompleteButton:GwSkinButton(false, true)
+        QuestFrameGoodbyeButton:GwSkinButton(false, true)
+        QuestFrameCompleteQuestButton:GwSkinButton(false, true)
+
+        QuestModelScene.ModelTextFrame:GwStripTextures()
+        QuestNPCModelText:SetTextColor(1, 1, 1)
+
+        QuestModelScene:SetHeight(253)
+        QuestModelScene:GwStripTextures()
+        QuestModelScene:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+        QuestModelScene.ModelTextFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, nil, 10)
+
+        QuestNPCModelNameText:ClearAllPoints()
+        QuestNPCModelNameText:SetPoint("TOP", QuestModelScene, 0, -10)
+        QuestNPCModelNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+        QuestNPCModelNameText:SetTextColor(1, 1, 1)
+
+        QuestNPCModelText:SetJustifyH("CENTER")
+        QuestNPCModelTextScrollFrame:ClearAllPoints()
+        QuestNPCModelTextScrollFrame:SetPoint("TOPLEFT", QuestModelScene.ModelTextFrame, 2, -2)
+        QuestNPCModelTextScrollFrame:SetPoint("BOTTOMRIGHT", QuestModelScene.ModelTextFrame, -10, 6)
+        QuestNPCModelTextScrollChildFrame:GwSetInside(QuestNPCModelTextScrollFrame)
+
+        GW.HandleTrimScrollBar(QuestNPCModelTextScrollFrame.ScrollBar)
+        GW.HandleScrollControls(QuestNPCModelTextScrollFrame)
+        hooksecurefunc("QuestFrame_ShowQuestPortrait", function(frame, _, _, _, _, _, x, y)
+            local mapFrame = QuestMapFrame:GetParent()
+
+            QuestModelScene:ClearAllPoints()
+            QuestModelScene:SetPoint("TOPLEFT", frame, "TOPRIGHT", (x or 0) + (frame == mapFrame and 0 or 6), y or 0)
+        end)
+
+        QuestLogPopupDetailFrame:GwStripTextures(nil, true)
+        QuestLogPopupDetailFrame:GwCreateBackdrop()
+        tex = QuestLogPopupDetailFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
+        w, h = QuestLogPopupDetailFrame:GetSize()
+        tex:SetPoint("TOP", QuestLogPopupDetailFrame, "TOP", 0, 20)
+        tex:SetSize(w + 50, h + 70)
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+        QuestLogPopupDetailFrame.tex = tex
+
+        QuestLogPopupDetailFrameAbandonButton:GwSkinButton(false, true)
+        QuestLogPopupDetailFrameShareButton:GwSkinButton(false, true)
+        QuestLogPopupDetailFrameTrackButton:GwSkinButton(false, true)
+        QuestLogPopupDetailFrameCloseButton:GwSkinButton(true)
+        QuestLogPopupDetailFrameCloseButton:SetSize(20, 20)
+
+        QuestLogPopupDetailFrameScrollFrame:GwStripTextures()
+        GW.HandleTrimScrollBar(QuestLogPopupDetailFrameScrollFrame.ScrollBar, true)
+        GW.HandleScrollControls(QuestLogPopupDetailFrameScrollFrame)
+        QuestLogPopupDetailFrameScrollFrame:GwSkinScrollFrame()
     end
-    hooksecurefunc("QuestFrame_SetTitleTextColor", function(self)
-        self:SetTextColor(1, 0.8, 0.1)
-    end)
-    hooksecurefunc("QuestFrame_SetTextColor", function(self)
-        self:SetTextColor(1, 1, 1)
-    end)
-    hooksecurefunc("QuestFrameProgressItems_Update", function()
-        QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
-        QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
-    end)
-    hooksecurefunc("QuestInfo_ShowRequiredMoney", function()
-        local requiredMoney = GetQuestLogRequiredMoney()
-        if requiredMoney > 0 then
-            if requiredMoney > GetMoney() then
-                QuestInfoRequiredMoneyText:SetTextColor(0.63, 0.09, 0.09)
-            else
-                QuestInfoRequiredMoneyText:SetTextColor(1, 0.8, 0.1)
-            end
-        end
-    end)
-    hooksecurefunc(QuestInfoSealFrame.Text, "SetText", function(self, text)
-        if text and text ~= "" then
-            local colorStr, rawText = strmatch(text, "|c[fF][fF](%x%x%x%x%x%x)(.-)|r")
-            if colorStr and rawText then
-                colorStr = sealFrameTextColor[colorStr] or "99ccff"
-                self:SetFormattedText("|cff%s%s|r", colorStr, rawText)
-            end
-        end
-    end)
-    hooksecurefunc("QuestFrameProgressItems_Update", function()
-        QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
-        QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
-    end)
-
-    for i = 1, 6 do
-        local button = _G["QuestProgressItem" .. i]
-        local icon = _G["QuestProgressItem" .. i .. "IconTexture"]
-        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        button:GwStripTextures()
-        button:SetFrameLevel(button:GetFrameLevel() + 1)
-    end
-
-    QuestFrameDetailPanel.SealMaterialBG:SetAlpha(0)
-    QuestFrameRewardPanel.SealMaterialBG:SetAlpha(0)
-    QuestFrameProgressPanel.SealMaterialBG:SetAlpha(0)
-    QuestFrameGreetingPanel.SealMaterialBG:SetAlpha(0)
-
-    QuestFrameGreetingPanel:GwStripTextures(true)
-    QuestFrameGreetingGoodbyeButton:GwSkinButton(false, true)
-    QuestGreetingFrameHorizontalBreak:GwKill()
-
-    QuestDetailScrollChildFrame:GwStripTextures(true)
-    QuestRewardScrollChildFrame:GwStripTextures(true)
-    QuestFrameProgressPanel:GwStripTextures(true)
-    QuestFrameRewardPanel:GwStripTextures(true)
-
-    GW.HandleTrimScrollBar(QuestProgressScrollFrame.ScrollBar, true)
-    GW.HandleTrimScrollBar(QuestRewardScrollFrame.ScrollBar, true)
-    GW.HandleTrimScrollBar(QuestDetailScrollFrame.ScrollBar, true)
-    GW.HandleTrimScrollBar(QuestGreetingScrollFrame.ScrollBar, true)
-
-    GW.HandleScrollControls(QuestProgressScrollFrame)
-    GW.HandleScrollControls(QuestRewardScrollFrame)
-    GW.HandleScrollControls(QuestDetailScrollFrame)
-    GW.HandleScrollControls(QuestGreetingScrollFrame)
-
-    QuestFrameAcceptButton:GwSkinButton(false, true)
-    QuestFrameDeclineButton:GwSkinButton(false, true)
-    QuestFrameCompleteButton:GwSkinButton(false, true)
-    QuestFrameGoodbyeButton:GwSkinButton(false, true)
-    QuestFrameCompleteQuestButton:GwSkinButton(false, true)
-
-    QuestModelScene.ModelTextFrame:GwStripTextures()
-    QuestNPCModelText:SetTextColor(1, 1, 1)
-
-    QuestModelScene:SetHeight(253)
-    QuestModelScene:GwStripTextures()
-    QuestModelScene:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-    QuestModelScene.ModelTextFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, nil, 10)
-
-    QuestNPCModelNameText:ClearAllPoints()
-    QuestNPCModelNameText:SetPoint("TOP", QuestModelScene, 0, -10)
-    QuestNPCModelNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
-    QuestNPCModelNameText:SetTextColor(1, 1, 1)
-
-    QuestNPCModelText:SetJustifyH("CENTER")
-    QuestNPCModelTextScrollFrame:ClearAllPoints()
-    QuestNPCModelTextScrollFrame:SetPoint("TOPLEFT", QuestModelScene.ModelTextFrame, 2, -2)
-    QuestNPCModelTextScrollFrame:SetPoint("BOTTOMRIGHT", QuestModelScene.ModelTextFrame, -10, 6)
-    QuestNPCModelTextScrollChildFrame:GwSetInside(QuestNPCModelTextScrollFrame)
-
-    GW.HandleTrimScrollBar(QuestNPCModelTextScrollFrame.ScrollBar)
-    GW.HandleScrollControls(QuestNPCModelTextScrollFrame)
-    hooksecurefunc("QuestFrame_ShowQuestPortrait", function(frame, _, _, _, _, _, x, y)
-        local mapFrame = QuestMapFrame:GetParent()
-
-        QuestModelScene:ClearAllPoints()
-        QuestModelScene:SetPoint("TOPLEFT", frame, "TOPRIGHT", (x or 0) + (frame == mapFrame and 0 or 6), y or 0)
-    end)
 
     -- mover
     GossipFrame.mover = CreateFrame("Frame", nil, GossipFrame)
@@ -925,25 +964,5 @@ local function LoadGossipSkin()
     GossipFrame.mover:SetScript("OnDragStop", function(self)
         self:GetParent():StopMovingOrSizing()
     end)
-
-    QuestLogPopupDetailFrame:GwStripTextures(nil, true)
-    QuestLogPopupDetailFrame:GwCreateBackdrop()
-    tex = QuestLogPopupDetailFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
-    w, h = QuestLogPopupDetailFrame:GetSize()
-    tex:SetPoint("TOP", QuestLogPopupDetailFrame, "TOP", 0, 20)
-    tex:SetSize(w + 50, h + 70)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    QuestLogPopupDetailFrame.tex = tex
-
-    QuestLogPopupDetailFrameAbandonButton:GwSkinButton(false, true)
-    QuestLogPopupDetailFrameShareButton:GwSkinButton(false, true)
-    QuestLogPopupDetailFrameTrackButton:GwSkinButton(false, true)
-    QuestLogPopupDetailFrameCloseButton:GwSkinButton(true)
-    QuestLogPopupDetailFrameCloseButton:SetSize(20, 20)
-
-    QuestLogPopupDetailFrameScrollFrame:GwStripTextures()
-    GW.HandleTrimScrollBar(QuestLogPopupDetailFrameScrollFrame.ScrollBar, true)
-    GW.HandleScrollControls(QuestLogPopupDetailFrameScrollFrame)
-    QuestLogPopupDetailFrameScrollFrame:GwSkinScrollFrame()
 end
 GW.LoadGossipSkin = LoadGossipSkin

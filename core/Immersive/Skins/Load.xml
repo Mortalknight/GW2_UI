@@ -12,4 +12,5 @@
     <Script file="helpFrame.lua"/>
     <Script file="auctionator.lua"/>
     <Script file="tsm.lua"/>
+    <Script file="gossip.lua"/>
 </Ui>
