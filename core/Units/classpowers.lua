@@ -1765,6 +1765,15 @@ local function LoadClassPowers()
         CPWR_FRAME = cpf
     end
 
+    -- need to pull it out of core because of not existing atlas files on non retail clients
+    if GW.Retail then
+        for i = 1, 6 do
+            cpf.evoker["essence" .. i] = CreateFrame("Frame", nil, cpf.evoker, "GwEssencePointTemplate")
+            cpf.evoker["essence" .. i]:SetSize(32, 32)
+            cpf.evoker["essence" .. i]:SetPoint("LEFT", cpf.evoker, "LEFT", (i - 1) * 32, 0)
+        end
+    end
+
     cpf.auraExpirationTime = nil
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on

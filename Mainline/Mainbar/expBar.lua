@@ -572,7 +572,7 @@ local function LoadXPBar()
     experiencebar.CurrentLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
     experiencebar.PetBar:Hide()
-    experiencebar.PetBarBarCandy:Hide()
+    experiencebar.PetBarCandy:Hide()
 
     updateBarSize(experiencebar)
     xpbar_OnEvent(experiencebar)

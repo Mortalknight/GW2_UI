@@ -510,7 +510,7 @@ local function setupMicroButtons(mbf)
     -- or if we need to create our own char button for the custom hero panel
     local cref
     if GW.settings.USE_CHARACTER_WINDOW then
-        cref = CreateFrame("Button", "GwCharacterMicroButton", mbf, GW.Retail and "" or "MainMenuBarMicroButton," .. "SecureHandlerClickTemplate")
+        cref = CreateFrame("Button", "GwCharacterMicroButton", mbf, (GW.Retail and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
         if GW.Retail then
             Mixin(cref, MainMenuBarMicroButtonMixin)
         end
@@ -703,7 +703,7 @@ local function setupMicroButtons(mbf)
 
         --ProfessionMicroButton
         if GW.settings.USE_PROFESSION_WINDOW then
-            pref = CreateFrame("Button", "GwProfessionMicroButton", mbf, GW.Retail and "" or "MainMenuBarMicroButton," .. "SecureHandlerClickTemplate")
+            pref = CreateFrame("Button", "GwProfessionMicroButton", mbf, (GW.Retail and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
             if GW.Retail then
                 Mixin(pref, MainMenuBarMicroButtonMixin)
             end

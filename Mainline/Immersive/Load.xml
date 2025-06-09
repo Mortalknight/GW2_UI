@@ -3,8 +3,6 @@
     <Include file ="toast.xml"/>
     <Script file ="alertPosition.lua"/>
     <Script file ="alerts.lua"/>
-    <Include file ="damagetext.xml"/>
-    <Script file ="damagetext.lua"/>
     <Script file ="eventTracker.lua"/>
     <Script file ="minimapInstanceDifficult.lua"/>
     <Script file ="minimap.lua"/>

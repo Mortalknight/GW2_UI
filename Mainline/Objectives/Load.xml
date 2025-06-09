@@ -5,7 +5,6 @@
     <Script file ="scenarioWidgets\warfronts.lua"/>
     <Script file ="scenarioWidgets\emberCourt.lua"/>
 
-    <Include file ="questtracker.xml"/>
     <Script file ="mythicPlus.lua"/>
     <Script file ="objectives.lua"/>
     <Script file ="scenario.lua"/>

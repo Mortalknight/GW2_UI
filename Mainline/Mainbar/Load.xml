@@ -5,8 +5,7 @@
     <Include file ="orderbar.xml"/>
     <Script file ="orderbar.lua"/>
     <Script file ="mirrortimer.lua"/>
-    <Include file ="expBar.lua.xml"/>
-    <Script file ="hud.lua"/>
+    <Script file ="expBar.lua"/>
     <Script file ="totemBar.lua"/>
     <Script file ="altPowerBar.lua"/>
 </Ui>

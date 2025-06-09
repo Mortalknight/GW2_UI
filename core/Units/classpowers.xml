@@ -1,9 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwEssencePointTemplate" virtual="true"/>
-
-
     <Frame name="GwPlayerClassPower" frameStrata="MEDIUM" parent="UIParent" virtual="true">
         <Size x="312" y="18"></Size>
         <Anchors>
@@ -589,51 +586,12 @@
                         </Texture>
                     </Layer>
                 </Layers>
-              
             </Frame>
             <Frame parentKey="evoker" hidden="true">
                 <Size x="316" y="18"></Size>
                 <Anchors>
                     <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                 </Anchors>
-                <Frames>
-                    <Frame parentKey="essence1" inherits="GwEssencePointTemplate">
-                        <Size x="32" y="32"></Size>
-                        <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
-                        </Anchors>
-                    </Frame>
-                    <Frame parentKey="essence2" inherits="GwEssencePointTemplate">
-                        <Size x="32" y="32"></Size>
-                        <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
-                        </Anchors>
-                    </Frame>
-                    <Frame parentKey="essence3" inherits="GwEssencePointTemplate">
-                        <Size x="32" y="32"></Size>
-                        <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
-                        </Anchors>
-                    </Frame>
-                    <Frame parentKey="essence4" inherits="GwEssencePointTemplate">
-                        <Size x="32" y="32"></Size>
-                        <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
-                        </Anchors>
-                    </Frame>
-                    <Frame parentKey="essence5" inherits="GwEssencePointTemplate">
-                        <Size x="32" y="32"></Size>
-                        <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" x="128" y="0"></Anchor>
-                        </Anchors>
-                    </Frame>
-                    <Frame parentKey="essence6" inherits="GwEssencePointTemplate">
-                        <Size x="32" y="32"></Size>
-                        <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" x="160" y="0"></Anchor>
-                        </Anchors>
-                    </Frame>
-                </Frames>
             </Frame>
             <Frame parentKey="brewmaster" hidden="true">
                 <Size x="316" y="18"></Size>
