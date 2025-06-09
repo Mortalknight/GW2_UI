@@ -1,3 +1,19 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="Skins\Load.xml"/>
+    <Script file ="tooltips.lua"/>
+    <Script file ="chatframe.lua"/>
+    <Script file ="chatbubbles.lua"/>
+    <Script file ="customClassColors.lua"/>
+    <Include file ="hudart.xml"/>
+    <Script file ="hudart.lua"/>
+    <Include file ="experiencebar.xml"/>
+    <Include file ="hudelements.xml"/>
+    <Script file ="staticPopupDialogs.lua"/>
+    <Include file ="warningPrompt.xml"/>
+    <Script file ="warningPrompt.lua"/>
+    <Script file ="QuestReqItems.lua"/>
+    <Include file ="QuestReqItems.xml"/>
+    <Script file ="QuestViewData.lua"/>
+    <Script file ="QuestView.lua"/>
+    <Include file ="QuestView.xml"/>
 </Ui>

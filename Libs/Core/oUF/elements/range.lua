@@ -46,7 +46,13 @@ local function Update(self, event)
 	local connected = UnitIsConnected(unit)
 	if(connected) then
 		inRange, checkedRange = UnitInRange(unit)
-		if(checkedRange and not inRange) or UnitPhaseReason(unit) then
+		local phaseReason
+        if ns.Retail then
+            phaseReason = UnitPhaseReason(unit)
+        else
+            phaseReason = not UnitInPhase(unit)
+        end
+		if(checkedRange and not inRange) or phaseReason then
 			self.Health.healthPredictionbar:SetAlpha(element.outsideAlpha)
 		else
 			self.Health.healthPredictionbar:SetAlpha(element.insideAlpha)

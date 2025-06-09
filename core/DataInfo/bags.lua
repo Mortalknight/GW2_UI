@@ -21,7 +21,7 @@ local function Bags_OnEnter(self)
     end
     GameTooltip:AddLine(" ")
 
-    for i = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
+    for i = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS do
         local bagName = GetBagName(i)
         if bagName then
             local numSlots = ContainerFrame_GetContainerNumSlots(i)
@@ -44,15 +44,17 @@ local function Bags_OnEnter(self)
         end
     end
 
-    for i = 1, BackpackTokenFrame:GetMaxTokensWatched() do
-        local info = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
-        if info then
-            if i == 1 then
-                GameTooltip:AddLine(" ")
-                GameTooltip:AddLine(CURRENCY, GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
-            end
-            if info.quantity then
-                GameTooltip:AddDoubleLine(format(iconString, info.iconFileID) .. info.name, info.quantity, 1, 1, 1, 1, 1, 1)
+    if GW.Retail then
+        for i = 1, BackpackTokenFrame:GetMaxTokensWatched() do
+            local info = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
+            if info then
+                if i == 1 then
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine(CURRENCY, GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
+                end
+                if info.quantity then
+                    GameTooltip:AddDoubleLine(format(iconString, info.iconFileID) .. info.name, info.quantity, 1, 1, 1, 1, 1, 1)
+                end
             end
         end
     end

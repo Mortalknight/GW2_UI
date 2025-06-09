@@ -1,0 +1,15 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="raidMarkerCircle.lua"/>
+    <Script file ="worldmapCoords.lua"/>,
+    <Script file ="extendVendor.lua"/>
+    <Script file ="worldmarkersKeybind.lua"/>
+    <Script file ="raidCounter.lua"/>
+    <Script file ="autoRepair.lua"/>
+    <Script file ="interruptAnnouncement.lua"/>
+    <Script file ="afk.lua"/>
+    <Script file ="itemlevel.lua"/>
+    <Script file ="misc.lua"/>
+    <Script file ="blizzardFixes.lua"/>
+    <Script file ="statusReport.lua"/>
+    <Script file ="slashcommands.lua"/>
+</Ui>

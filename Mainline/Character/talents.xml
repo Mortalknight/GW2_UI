@@ -24,13 +24,13 @@
             <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
         <Frames>
-            <Button parentKey="tree1"   registerForClicks="LeftButtonUp RightButtonUp" inherits="SecureHandlerClickTemplate,SecureHandlerAttributeTemplate,GwCharacterMenuButtonTemplate">
+            <Button parentKey="tree1"   registerForClicks="LeftButtonUp RightButtonUp" inherits="SecureHandlerClickTemplate,SecureHandlerAttributeTemplate,GwHeroPanelMenuButtonTemplate">
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-10"></Anchor>
                 </Anchors>
             </Button>
-            <Button parentKey="tree2" text="Tree 2" registerForClicks="LeftButtonUp RightButtonUp" inherits="SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate">
+            <Button parentKey="tree2" text="Tree 2" registerForClicks="LeftButtonUp RightButtonUp" inherits="SecureHandlerClickTemplate,GwHeroPanelMenuButtonTemplate">
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.tree1" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>

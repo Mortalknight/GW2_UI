@@ -443,7 +443,7 @@ function LCS.GetSpecializationInfo(specIndex, isInspect, isPet)
 		return
 	end
 
-	return specId, spec.name, spec.description, spec.icon, spec.background, spec.role, spec.primaryStat
+	return specId, spec.name, spec.description, spec.icon, spec.role, spec.primaryStat, spec.background
 end
 
 function LCS.GetSpecializationInfoForClassID(classId, specIndex)

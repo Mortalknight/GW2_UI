@@ -616,7 +616,9 @@ end
 GW.ToggleMover = ToggleMover
 
 local function LoadMovers(layoutManager)
-    createGrid()
+    if GW.Retail then
+        createGrid()
+    end
     -- Create mover settings frame
     local fnMf_OnDragStart = function(self)
         self:StartMoving()

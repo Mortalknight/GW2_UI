@@ -83,24 +83,26 @@ local function Time_OnEnter(self)
         end
     end
 
-    local addedLine = false
-    local worldbossLockoutList = {}
-    for i = 1, GetNumSavedWorldBosses() do
-        local name, _, reset = GetSavedWorldBossInfo(i)
-        tinsert(worldbossLockoutList, {name, reset})
-    end
-    sort(worldbossLockoutList, sortFunc)
-    for i = 1,#worldbossLockoutList do
-        local name, reset = unpack(worldbossLockoutList[i])
-        if reset then
-            if not addedLine then
-                if GameTooltip:NumLines() > 0 then
-                    GameTooltip:AddLine(" ")
+    if not GW.Classic then
+        local addedLine = false
+        local worldbossLockoutList = {}
+        for i = 1, GetNumSavedWorldBosses() do
+            local name, _, reset = GetSavedWorldBossInfo(i)
+            tinsert(worldbossLockoutList, {name, reset})
+        end
+        sort(worldbossLockoutList, sortFunc)
+        for i = 1,#worldbossLockoutList do
+            local name, reset = unpack(worldbossLockoutList[i])
+            if reset then
+                if not addedLine then
+                    if GameTooltip:NumLines() > 0 then
+                        GameTooltip:AddLine(" ")
+                    end
+                    GameTooltip:AddLine(WORLD_BOSSES_TEXT)
+                    addedLine = true
                 end
-                GameTooltip:AddLine(WORLD_BOSSES_TEXT)
-                addedLine = true
+                GameTooltip:AddDoubleLine(name, SecondsToTime(reset, true, nil, 3), 1, 1, 1, 0.8, 0.8, 0.8)
             end
-            GameTooltip:AddDoubleLine(name, SecondsToTime(reset, true, nil, 3), 1, 1, 1, 0.8, 0.8, 0.8)
         end
     end
 
@@ -140,9 +142,17 @@ GW.Time_OnEvent = Time_OnEvent
 local function Time_OnClick(_, button)
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        ToggleTimeManager()
+        if not GW.Classic then
+            ToggleTimeManager()
+        else
+            TimeManager_Toggle()
+        end
     else
-        GameTimeFrame:Click()
+        if not GW.Classic then
+            GameTimeFrame:Click()
+        else
+            Stopwatch_Toggle()
+        end
     end
 end
 GW.Time_OnClick = Time_OnClick

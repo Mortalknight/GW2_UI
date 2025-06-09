@@ -1,6 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local AddToAnimation = GW.AddToAnimation
+
 local lerp = GW.lerp
 local windowsList = {}
 local hasBeenLoaded = false
@@ -344,7 +344,7 @@ local function LoadBaseFrame()
     GwCharacterWindowLeft:AddMaskTexture(fmGCW.backgroundMask)
 
     fmGCW:HookScript("OnShow",function(self)
-        AddToAnimation("HERO_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
+        GW.AddToAnimation("HERO_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
         function(p)
             self:SetAlpha(p)
             if self.dressingRoom and self.dressingRoom.model then

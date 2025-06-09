@@ -25,7 +25,6 @@
     <Script file ="panel_notifications.lua"/>
     <Script file ="panel_skins.lua"/>
     <Script file ="panel_profiles.lua"/>
-    <Script file ="hover_binding.lua"/>
     <Include file ="welcome.xml"/>
     <Script file ="welcome.lua"/>
     <Script file ="layouts.lua"/>

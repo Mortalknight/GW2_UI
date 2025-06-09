@@ -160,7 +160,6 @@ local function SkinAndEnhanceColorPicker()
 
     ColorPickerFrame:SetHeight(ColorPickerFrame:GetHeight() + 40)
 
-
     ColorPickerFrame.Border:Hide()
     ColorPickerFrame.Header:GwStripTextures()
     GW.CreateFrameHeaderWithBody(ColorPickerFrame, ColorPickerFrame.Header.Text, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon")

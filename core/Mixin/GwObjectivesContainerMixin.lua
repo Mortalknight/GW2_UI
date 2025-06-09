@@ -62,6 +62,7 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     -- quest item button here
     if addItemButton then
         newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
+        Mixin(newBlock.actionButton, QuestObjectiveItemButtonMixin)
         newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         newBlock.actionButton.NormalTexture:SetTexture(nil)
         newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
@@ -70,6 +71,9 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
         newBlock.actionButton:SetScript("OnEnter", newBlock.actionButton.OnEnter)
         newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
         newBlock.actionButton:SetScript("OnEvent", newBlock.actionButton.OnEvent)
+        newBlock.actionButton.Glow = newBlock.actionButton:CreateTexture(nil, "BACKGROUND", nil, 0)
+        newBlock.actionButton.Glow:SetAtlas("UI-QuestTrackerButton-QuestItem-Frame-Glow", true)
+        newBlock.actionButton.Glow:SetPoint("CENTER", newBlock.actionButton, "CENTER", 0, 0)
     end
 
     return newBlock

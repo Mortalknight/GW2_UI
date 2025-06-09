@@ -487,11 +487,11 @@ end
 GW.AddForProfiling("professions", "loadOverview", loadOverview)
 
 local function LoadProfessions(tabContainer)
-    local fmMenu = CreateFrame("Frame", nil, tabContainer, "GwCharacterMenu")
+    local fmMenu = CreateFrame("Frame", nil, tabContainer, "GwHeroPanelMenuTemplate")
 
     loadOverview(tabContainer)
 
-    fmMenu.overviewMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+    fmMenu.overviewMenu = CreateFrame("Button", nil, fmMenu, "GwHeroPanelMenuButtonTemplate")
     fmMenu.overviewMenu:SetText(TRADESKILLS)
     fmMenu.overviewMenu:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
     fmMenu.overviewMenu:ClearAllPoints()

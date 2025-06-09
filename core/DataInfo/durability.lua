@@ -3,7 +3,6 @@ local _, GW = ...
 local totalDurability = 0
 local invDurability = {}
 local totalRepairCost
-local tooltipData
 
 local slots = {
     [1] = INVTYPE_HEAD,
@@ -27,17 +26,22 @@ local function DurabilityOnEvent(self, event)
     for idx in pairs(slots) do
         local current, maximum = GetInventoryItemDurability(idx)
         if current and maximum > 0 then
-            local perc = (current / maximum) * 100
+            local perc, repairCost = (current / maximum) * 100
             invDurability[idx] = perc
 
             if perc < totalDurability then
                 totalDurability = perc
             end
-            tooltipData = C_TooltipInfo.GetInventoryItem("player", idx)
-			totalRepairCost = totalRepairCost + (tooltipData and tooltipData.repairCost or 0)
+            if GW.Retail then
+                local tooltipData = C_TooltipInfo.GetInventoryItem("player", idx)
+                repairCost = tooltipData and tooltipData.repairCost
+            else
+                _, _, repairCost = GW.ScanTooltip:SetInventoryItem("player", idx)
+            end
+
+            totalRepairCost = totalRepairCost + (repairCost or 0)
         end
     end
-    tooltipData = nil
     self.Value:SetFormattedText("%d%%", totalDurability)
 
     GW.Debug("Durability update with event", event, "and durability of", totalDurability)

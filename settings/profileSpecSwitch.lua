@@ -2,18 +2,26 @@ local _, GW = ...
 local L = GW.L
 
 local eventFrame = CreateFrame("Frame")
-local numSpecs = 0
-local specNames = {}
+local numSpecs = 2
+local specNames = {TALENT_SPEC_PRIMARY, TALENT_SPEC_SECONDARY}
 local currentSpec = 0
 local settingsPanel
 local mixin = {}
 local databaseEnhanced = false
 
-local _, classId = UnitClassBase("player")
-numSpecs = C_SpecializationInfo.GetNumSpecializationsForClassID(classId)
-for i = 1, numSpecs do
-    local _, name = GetSpecializationInfoForClassID(classId, i)
-    specNames[i] = name
+
+local GetSpecialization = GW.Retail and GetSpecialization or GetActiveTalentGroup
+local CanPlayerUseTalentSpecUI = GW.Retail and C_SpecializationInfo.CanPlayerUseTalentSpecUI or function()
+	return true, HELPFRAME_CHARACTER_BULLET5
+end
+
+if GW.Retail then
+    local _, classId = UnitClassBase("player")
+    numSpecs = C_SpecializationInfo.GetNumSpecializationsForClassID(classId)
+    for i = 1, numSpecs do
+        local _, name = GetSpecializationInfoForClassID(classId, i)
+        specNames[i] = name
+    end
 end
 
 function mixin:IsDualSpecEnabled()
@@ -161,7 +169,7 @@ local function InititateProfileSpecSwitchSettings(panel)
     end
     -- set button state
     if currentSpec == 0 then
-        local _, reason = C_SpecializationInfo.CanPlayerUseTalentSpecUI()
+        local _, reason = CanPlayerUseTalentSpecUI()
         if not reason or reason == "" then
             reason = TALENT_MICRO_BUTTON_NO_SPEC
         end
@@ -179,7 +187,7 @@ GW.InititateProfileSpecSwitchSettings = InititateProfileSpecSwitchSettings
 local function eventHandler(self, event)
     local spec = GetSpecialization() or 0
     -- Newly created characters start at 5 instead of 1 in 9.0.1.
-    if spec == 5 or not C_SpecializationInfo.CanPlayerUseTalentSpecUI() then
+    if spec == 5 or not CanPlayerUseTalentSpecUI() then
         spec = 0
     end
     currentSpec = spec
@@ -187,8 +195,12 @@ local function eventHandler(self, event)
     if event == "PLAYER_LOGIN" then
         self:UnregisterEvent(event)
         self:RegisterEvent("PLAYER_ENTERING_WORLD")
-        self:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
-        self:RegisterEvent("PLAYER_LEVEL_CHANGED")
+        if GW.Retail then
+            self:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+            self:RegisterEvent("PLAYER_LEVEL_CHANGED")
+        else
+            self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+        end
     end
 
     if settingsPanel then

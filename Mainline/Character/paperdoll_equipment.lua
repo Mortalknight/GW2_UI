@@ -2,9 +2,8 @@ local _, GW = ...
 GW.char_equipset_SavedItems = {}
 local GWGetClassColor = GW.GWGetClassColor
 local SetClassIcon = GW.SetClassIcon
-local AddToAnimation = GW.AddToAnimation
+
 local IsIn = GW.IsIn
-local setItemLevel = GW.setItemLevel
 
 local modelPositions = {
     Human = {0.4, 0, -0.05},
@@ -424,7 +423,7 @@ getBagSlotFrame = function()
             f.BACKGROUND:SetAlpha(1)
             f.itemlevel:SetAlpha(1)
             f.repairIcon:SetAlpha(1)
-            setItemLevel(f, f.quality, f.ItemLink)
+            GW.SetItemLevel(f, f.quality, f.ItemLink)
         end)
 
         f.initialized = true
@@ -657,7 +656,7 @@ local function indicatorAnimation(self)
     local name = self:GetName()
     local _, _, _, startX, _ = self:GetPoint()
 
-    AddToAnimation(
+    GW.AddToAnimation(
         name,
         0,
         1,
@@ -875,6 +874,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
     slot.itemlevel:SetTextColor(1, 1, 1)
     slot.itemlevel:SetJustifyH("LEFT")
+    slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
 
     slot.ignoreSlotCheck = CreateFrame("CheckButton", nil, slot, "GWIgnoreSlotCheck")
 

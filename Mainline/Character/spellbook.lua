@@ -582,7 +582,7 @@ GW.AddForProfiling("talents", "passivePool_Resetter", passivePool_Resetter)
 
 local function updateButton(self)
     if self.spellbookIndex and self.booktype then
-        local spellCooldownInfo = C_Spell.GetSpellCooldown(self.spellbookIndex, self.booktype)
+        local spellCooldownInfo = GW.GetSpellCooldown(self.spellbookIndex, self.booktype)
 
         if spellCooldownInfo.startTime ~= nil and spellCooldownInfo.duration ~= nil then
             self.cooldown:SetCooldown(spellCooldownInfo.startTime, spellCooldownInfo.duration)

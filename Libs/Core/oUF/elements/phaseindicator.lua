@@ -80,7 +80,13 @@ local function Update(self, event, unit)
 
 	-- BUG: UnitPhaseReason returns wrong data for friendly NPCs in phased scenarios like WM or Chromie Time
 	-- https://github.com/Stanzilla/WoWUIBugs/issues/49
-	local phaseReason = UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitPhaseReason(unit) or nil
+	local phaseReasonCheck
+	if ns.Retail then
+		phaseReasonCheck = UnitPhaseReason(unit)
+	else
+		phaseReasonCheck = not UnitInPhase(unit)
+	end
+	local phaseReason = UnitIsPlayer(unit) and UnitIsConnected(unit) and phaseReasonCheck or nil
 	if(phaseReason) then
 		element:Show()
 	else

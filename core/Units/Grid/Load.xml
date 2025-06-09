@@ -1,0 +1,27 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file ="elements\GridFrameAuraIndicator.xml"/>
+    <Script file ="elements\privateAura.lua"/>
+    <Script file ="elements\auras.lua"/>
+    <Script file ="elements\predictionBars.lua"/>
+    <Script file ="elements\middleIcon.lua"/>
+    <Script file ="elements\threathIndicator.lua"/>
+    <Script file ="elements\readyCheck.lua"/>
+    <Script file ="elements\summonIcon.lua"/>
+    <Script file ="elements\resurrectionIcon.lua"/>
+    <Script file ="elements\healtValueText.lua"/>
+    <Script file ="elements\health.lua"/>
+    <Script file ="elements\power.lua"/>
+    <Script file ="elements\nameText.lua"/>
+    <Script file ="elements\tags.lua"/>
+    <Script file ="elements\missingAuraIndicator.lua"/>
+    <Script file ="elements\range.lua"/>
+    <Script file ="elements\fader.lua"/>
+    <Script file ="raid40.lua"/>
+    <Script file ="raid25.lua"/>
+    <Script file ="raid10.lua"/>
+    <Script file ="party.lua"/>
+    <Script file ="raidPet.lua"/>
+    <Script file ="maintank.lua"/>
+    <Script file ="constructor.lua"/>
+    <Script file ="configEnvironment.lua"/>
+</Ui>

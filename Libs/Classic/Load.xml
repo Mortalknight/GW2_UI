@@ -1,3 +1,23 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file ="..\Libs\Classic\Load.xml"/>
+    <Include file="..\Core\oUF\oUF_Classic.xml"/>
+    <Include file="..\Core\oUF\oUF_Plugins\oUF_Plugins.xml"/>
+    <Include file="..\Core\UTF8\UTF8.xml"/>
+    <Script file="..\Core\LibStub\LibStub.lua"/>
+    <Script file="..\Core\CallbackHandler-1.0\CallbackHandler-1.0.lua"/>
+
+    <Script file="..\Core\AceDB-3.0\AceDB-3.0.lua"/>
+    <Script file="..\Core\LibSharedMedia-3.0\LibSharedMedia-3.0.lua"/>
+    <Script file="..\Core\LibRealmInfo\LibRealmInfo.lua"/>
+    <Script file="..\Core\LibCompress\LibCompress.lua"/>
+    <Script file="..\Core\AceSerializer-3.0\AceSerializer-3.0.lua"/>
+    <Script file="..\Core\AceLocale-3.0\AceLocale-3.0.lua"/>
+    <Script file="..\Core\LibDeflate\LibDeflate.lua"/>
+    <Script file="..\Core\LibBase64-1.0\LibBase64-1.0.lua"/>
+    <Script file="..\Core\LibCustomGlow\LibCustomGlow-1.0.lua"/>
+    <Script file="..\Core\LibEditMode\LibEditModeOverride.lua"/>
+    <Script file="..\Core\LibDispel\LibDispel.lua"/>
+    <Script file="..\Core\LibGW2\LibGW2.lua"/>
+    <Script file="LibDetours-1.0\LibDetours-1.0.lua"/>
+    <Script file="LibClassicInspector\LibClassicInspector.lua"/>
+    <Script file="LibClassicSpecs\LibClassicSpecs.lua"/>
 </Ui>

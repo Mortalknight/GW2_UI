@@ -21,7 +21,13 @@ local function UpdateRange(self, unit)
     local connected = UnitIsConnected(unit)
     if connected then
         inRange, checkedRange = UnitInRange(unit)
-        if(checkedRange and not inRange) or UnitPhaseReason(unit) then
+        local phaseReason
+        if ns.Retail then
+            phaseReason = UnitPhaseReason(unit)
+        else
+            phaseReason = not UnitInPhase(unit)
+        end
+        if(checkedRange and not inRange) or phaseReason then
             element.RangeAlpha = element.MinAlpha
         else
             element.RangeAlpha = element.MaxAlpha

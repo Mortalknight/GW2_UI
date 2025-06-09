@@ -123,7 +123,7 @@ end
 AddForProfiling("settings", "fnF_OnClick", fnF_OnClick)
 
 local visible_cat_button_id  = 0
-local function CreateCat(name, desc, panel, scrollFrames, visibleTabButton, icon)
+local function CreateCat(name, desc, panel, scrollFrames, createSettingsEntry, visibleTabButton, icon)
     local i = #settings_cat + 1
     -- create and position a new button/label for this category
     local f = CreateFrame("Button", nil, GwSettingsWindow, "GwSettingsLabelTmpl")
@@ -146,6 +146,10 @@ local function CreateCat(name, desc, panel, scrollFrames, visibleTabButton, icon
     end
 
     f:SetScript("OnClick", fnF_OnClick)
+
+    if createSettingsEntry then
+        GW.settingsMenuAddButton(name, panel, (scrollFrames and #scrollFrames > 1 and scrollFrames or {}))
+    end
 end
 GW.CreateCat = CreateCat
 
@@ -157,43 +161,45 @@ local function AddDependenciesToOptionWidgetTooltip()
 
                 for settingName, expectedValue in pairs(of.dependence) do
                     local settingsWidget = GW.GetOptionFrameWidget(settingName)
-                    local displayName = settingsWidget and settingsWidget.displayName or settingName
-                    local currentVal = settingsWidget and settingsWidget.get()
-                    local match = false
+                    if settingsWidget then
+                        local displayName = settingsWidget and settingsWidget.displayName or settingName
+                        local currentVal = settingsWidget and settingsWidget.get()
+                        local match = false
 
-                    local expectedText = ""
-                    if type(expectedValue) == "table" then
-                        local valuesList = {}
-                        for _, v in ipairs(expectedValue) do
-                            if currentVal == v then
-                                match = true
-                            end
+                        local expectedText = ""
+                        if type(expectedValue) == "table" then
+                            local valuesList = {}
+                            for _, v in ipairs(expectedValue) do
+                                if currentVal == v then
+                                    match = true
+                                end
 
-                            local display = tostring(v)
+                                local display = tostring(v)
 
-                            if settingsWidget and settingsWidget.optionsList and settingsWidget.optionsNames then
-                                for i, real in ipairs(settingsWidget.optionsList) do
-                                    if real == v then
-                                        display = settingsWidget.optionsNames[i]
-                                        break
+                                if settingsWidget and settingsWidget.optionsList and settingsWidget.optionsNames then
+                                    for i, real in ipairs(settingsWidget.optionsList) do
+                                        if real == v then
+                                            display = settingsWidget.optionsNames[i]
+                                            break
+                                        end
                                     end
                                 end
+
+                                table.insert(valuesList, display)
                             end
+                            expectedText = table.concat(valuesList, ", ")
+                        else
+                            if currentVal == expectedValue then
+                                match = true
+                            end
+                            expectedText = L[tostring(expectedValue)]
+                        end
 
-                            table.insert(valuesList, display)
-                        end
-                        expectedText = table.concat(valuesList, ", ")
-                    else
-                        if currentVal == expectedValue then
-                            match = true
-                        end
-                        expectedText = L[tostring(expectedValue)]
+                        local color = match and "|cff66cc66" or "|cffcc6666"  -- green or red
+                        expectedText = color .. expectedText .. "|r"
+
+                        table.insert(of.dependenciesInfo, { name = string.format("|cffaaaaaa%s|r", settingsWidget.settingsPath .. displayName), expected = expectedText })
                     end
-
-                    local color = match and "|cff66cc66" or "|cffcc6666"  -- grün oder rot
-                    expectedText = color .. expectedText .. "|r"
-
-                    table.insert(of.dependenciesInfo, { name = string.format("|cffaaaaaa%s|r", settingsWidget.settingsPath .. displayName), expected = expectedText })
                 end
             end
         end
@@ -203,6 +209,10 @@ end
 local function CreateOption(optionType, panel, name, desc, values)
     if not panel then return end
     values = values or {}
+
+    if values.hidden == true then
+        return nil
+    end
 
     panel.gwOptions = panel.gwOptions or {}
 
@@ -218,7 +228,8 @@ local function CreateOption(optionType, panel, name, desc, values)
         isIncompatibleAddonLoaded = false,
         isIncompatibleAddonLoadedButOverride = false,
         groupHeaderName = values.groupHeaderName,
-        isPrivateSetting = values.isPrivateSetting
+        isPrivateSetting = values.isPrivateSetting,
+        optionUpdateFunc = values.optionUpdateFunc,
     }
 
     if values.getterSetter then
@@ -255,8 +266,8 @@ local function AddOptionButton(panel, name, desc, values)
 end
 GW.AddOptionButton = AddOptionButton
 
-local function AddGroupHeader(panel, name)
-    return CreateOption("header", panel, name)
+local function AddGroupHeader(panel, name, values)
+    return CreateOption("header", panel, name, nil, values)
 end
 GW.AddGroupHeader = AddGroupHeader
 
@@ -267,6 +278,8 @@ GW.AddOptionColorPicker = AddOptionColorPicker
 
 local function AddOptionSlider(panel, name, desc, values)
     local opt = CreateOption("slider", panel, name, desc, values)
+    if not opt then return end
+
     opt.min = values.min
     opt.max = values.max
     opt.decimalNumbers = values.decimalNumbers or 0
@@ -278,6 +291,8 @@ GW.AddOptionSlider = AddOptionSlider
 
 local function AddOptionText(panel, name, desc, values)
     local opt = CreateOption("text", panel, name, desc, values)
+    if not opt then return end
+
     opt.multiline = values.multiline
 
     return opt
@@ -286,6 +301,7 @@ GW.AddOptionText = AddOptionText
 
 local function AddOptionDropdown(panel, name, desc, values)
     local opt = CreateOption("dropdown", panel, name, desc, values)
+    if not opt then return end
 
     opt.optionsList = values.optionsList
     opt.optionsNames = values.optionNames
@@ -411,11 +427,15 @@ local function ColorPickerFrameCallback(restore, frame, buttonBackground)
     if ColorPickerFrame.noColorCallback then return end
     local newR, newG, newB
     if restore then
-    -- The user bailed, we extract the old color from the table created by ShowColorPicker.
-    newR, newG, newB = unpack(restore)
+        -- The user bailed, we extract the old color from the table created by ShowColorPicker.
+        newR, newG, newB = unpack(restore)
     else
-    -- Something changed
-    newR, newG, newB = ColorPickerFrame.Content.ColorPicker:GetColorRGB()
+        -- Something changed
+        if GW.Retail then
+            newR, newG, newB = ColorPickerFrame.Content.ColorPicker:GetColorRGB()
+        else
+            newR, newG, newB = ColorPickerFrame:GetColorRGB()
+        end
     end
     -- Update our internal storage.
 
@@ -434,7 +454,11 @@ end
 
 local function ShowColorPicker(frame)
     local color = frame.get()
-    ColorPickerFrame.Content.ColorPicker:SetColorRGB(color.r, color.g, color.b)
+    if GW.Retail then
+        ColorPickerFrame.Content.ColorPicker:SetColorRGB(color.r, color.g, color.b)
+    else
+        ColorPickerFrame:SetColorRGB(color.r, color.g, color.b)
+    end
     ColorPickerFrame.hasOpacity = (color.a ~= nil)
     ColorPickerFrame.opacity = color.a
     ColorPickerFrame.previousValues = {color.r, color.g, color.b, color.a}
@@ -442,7 +466,7 @@ local function ShowColorPicker(frame)
     ColorPickerFrame.opacityFunc = function() ColorPickerFrameCallback(nil, frame, frame.button.bg) end
     ColorPickerFrame.cancelFunc = function(restore) ColorPickerFrameCallback(restore, frame, frame.button.bg) end
 
-    if frame.getDefault then
+    if GwColorPPDefault and frame.getDefault then
         if not GwColorPPDefault.defaultColor then
             GwColorPPDefault.defaultColor = {}
         end
@@ -700,9 +724,9 @@ local function InitPanel(panel, hasScroll)
 
                         entryButton:AddInitializer(function(button, description, menu)
                             if v.hasCheckbox then
-                                GW.BlizzardDropdownCheckButtonInitializer(button, description, menu)
+                                GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, IsSelected,  {optionName = v.optionName, option = option})
                             else
-                                GW.BlizzardDropdownRadioButtonInitializer(button, description, menu)
+                                GW.BlizzardDropdownRadioButtonInitializer(button, description, menu, IsSelected,  {optionName = v.optionName, option = option})
                             end
 
                             if v.hasSound then
@@ -922,7 +946,7 @@ local function LoadSettings()
             lerp = GW.lerp
         end
 
-        AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW",
+        GW.AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW",
             0,
             1,
             GetTime(),

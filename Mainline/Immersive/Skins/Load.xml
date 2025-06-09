@@ -1,15 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file="menu.lua"/>
-    <Script file="utils.lua"/>
-    <Script file="battlenet.lua"/>
     <Script file="deathrecapframe.lua"/>
-    <Script file="ghostframe.lua"/>
     <Script file="lfg_popup_frames.lua"/>
     <Script file="mainMenuFrame.lua"/>
-    <Script file="readycheck.lua"/>
-    <Script file="staticpopup.lua"/>
     <Script file="talkinghead.lua"/>
-    <Script file="timetracker.lua"/>
     <Script file="flightmap.lua"/>
     <Script file="addonManager.lua"/>
     <Script file="macro.lua"/>
@@ -17,14 +10,11 @@
     <Script file="barber.lua"/>
     <Script file="dressUpFrame.lua"/>
     <Script file="inspectFrame.lua"/>
-    <Script file="helpFrame.lua"/>
     <Script file="socket.lua"/>
     <Script file="worldmap.lua"/>
     <Script file="gossip.lua"/>
-    <Script file="misc.lua"/>
     <Script file="itemUpgrade.lua"/>
     <Script file="timeManager.lua"/>
-    <Script file="colorPicker.lua"/>
     <Script file="merchant.lua"/>
     <Script file="encounterJournal.lua"/>
     <Script file="covenantSanctum.lua"/>
@@ -33,6 +23,7 @@
     <Script file="alliedRaces.lua"/>
     <Script file="weeklyRewards.lua"/>
     <Script file="lfg.lua"/>
+    <Script file="colorPicker.lua"/>
     <Script file="orderHallTalentFrame.lua"/>
     <Include file="achievements.xml"/>
     <Script file="achievements.lua"/>
@@ -45,12 +36,9 @@
     <Script file="battlefieldMap.lua"/>
     <Script file="majorFaction.lua"/>
     <Script file="cooldownManager.lua"/>
-
     <Script file="addons\immersion.lua"/>
     <Script file="addons\postal.lua"/>
     <Script file="addons\WorldQuestTracker.lua"/>
     <Script file="addons\petTracker.lua"/>
-    <Script file="addons\auctionator.lua"/>
-    <Script file="addons\tsm.lua"/>
     <Script file="addons\todoloo.lua"/>
 </Ui>

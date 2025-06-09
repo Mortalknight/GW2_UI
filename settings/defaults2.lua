@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo or GetSpellInfo
 
 local UnitFrameFader = {
     casting = false,
@@ -71,12 +72,12 @@ GW.globalDefault = {
         BAGS_ENABLED = true,
         NPC_CAM_ENABLED = false,
         CASTINGBAR_ENABLED = true,
+        SHOWACTIONBAR_MACRO_NAME_ENABLED = false,
         ACTIONBAR_BACKGROUND_ALPHA = 0.3,
         SHOWACTIONBAR_MACRO_NAME_ENABLED = false,
         SHOW_QUESTTRACKER_COMPASS = true,
         QUESTTRACKER_STATUSBARS_ENABLED = true,
-        MINIMAP_HOVER = "NONE",
-        MINIMAP_ALWAYS_SHOW_HOVER_DETAILS = {CLOCK = false,ZONE = false,COORDS = false,},
+        MINIMAP_ALWAYS_SHOW_HOVER_DETAILS = {CLOCK = false, ZONE = false, COORDS = false,},
         CLASS_POWER = true,
         RAID_FRAMES = true,
         PARTY_FRAMES = true,
@@ -237,6 +238,15 @@ GW.globalDefault = {
         },
         LOOTFRAME_POS_scale= 1,
 
+        WORLDMAP_POSITION= {
+            point= "CENTER",
+            relativePoint= "CENTER",
+            xOfs= 0,
+            yOfs= 0,
+            hasMoved= false,
+        },
+        WORLDMAP_POSITION_scale= 1,
+
         MAILBOX_POSITION= {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",
@@ -263,6 +273,10 @@ GW.globalDefault = {
         FADE_MULTIACTIONBAR_6= "ALWAYS",
         FADE_MULTIACTIONBAR_7= "ALWAYS",
         FADE_MULTIACTIONBAR_8= "ALWAYS",
+        GW_SHOW_MULTI_ACTIONBAR_1 = false,
+        GW_SHOW_MULTI_ACTIONBAR_2 = false,
+        GW_SHOW_MULTI_ACTIONBAR_3 = false,
+        GW_SHOW_MULTI_ACTIONBAR_4 = false,
         HIDE_CHATSHADOW= false,
         HIDE_QUESTVIEW= false,
         USE_CHAT_BUBBLES= false,
@@ -990,12 +1004,15 @@ GW.globalDefault = {
         CASTINGBAR_DATA= false,
         USE_CHARACTER_WINDOW= true,
         USE_TALENT_WINDOW= true,
+        USE_SPELLBOOK_WINDOW = true,
         USE_PROFESSION_WINDOW= true,
 
         USE_SOCIAL_WINDOW= true,
 
-        AURAS_IGNORED= strjoin(", ", unpack(GW.MapTable(GW.AURAS_IGNORED, C_Spell.GetSpellInfo, nil, "name"))),
-        AURAS_MISSING= strjoin(", ", unpack(GW.MapTable(GW.AURAS_MISSING, C_Spell.GetSpellInfo, nil, "name"))),
+        QUESTTRACKER_SORTING = "DEFAULT",
+
+        AURAS_IGNORED= strjoin(", ", unpack(GW.MapTable(GW.AURAS_IGNORED, GetSpellInfo, nil, "name"))),
+        AURAS_MISSING= strjoin(", ", unpack(GW.MapTable(GW.AURAS_MISSING, GetSpellInfo, nil, "name"))),
         INDICATORS_ICON= false,
         INDICATORS_TIME= true,
         INDICATOR_BAR= {
@@ -1040,6 +1057,7 @@ GW.globalDefault = {
         SOCKET_SKIN_ENABLED= true,
         WORLDMAP_SKIN_ENABLED= true,
         GOSSIP_SKIN_ENABLED= true,
+        QUESTLOG_SKIN_ENABLED = true,
         ITEMUPGRADE_SKIN_ENABLED= true,
         TIMEMANAGER_SKIN_ENABLED= true,
         MERCHANT_SKIN_ENABLED= true,
@@ -1061,6 +1079,16 @@ GW.globalDefault = {
         BattlefieldMapSkinEnabled = true,
         MajorFactionSkinEnabled = true,
         CooldownManagerSkinEnabled = true,
+
+        QUESTTIMERS_SKIN_ENABLED = true,
+        QUEST_TIMERS_FRAME_POSITION = {
+            point= "TOPRIGHT",
+            relativePoint= "TOPRIGHT",
+            xOfs= -305,
+            yOfs= -0,
+            hasMoved= false,
+        },
+        QUEST_TIMERS_FRAME_POSITION_scale = 1,
 
         ALERTFRAME_NOTIFICATION_LEVEL_UP= true,
         ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND= "None",
@@ -1175,6 +1203,8 @@ GW.globalDefault = {
         PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR= false,
         player_CLASS_COLOR= false,
         PLAYER_SHOW_PVP_INDICATOR= true,
+        PLAYER_ENERGY_MANA_TICK_HIDE_OFC = false,
+        PLAYER_ENERGY_MANA_TICK = true,
         PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW= true,
         PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND= false,
         CLASSPOWER_ONLY_SHOW_IN_COMBAT= false,

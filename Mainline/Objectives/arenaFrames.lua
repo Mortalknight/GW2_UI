@@ -190,7 +190,7 @@ function GwObjectivesArenaContainerMixin:SetUpFramePosition()
 end
 
 function GwObjectivesArenaContainerMixin:RegisterFrame(i)
-    local arenaFrame = CreateFrame("Button", "GwArenaFrame" .. i, GwQuestTracker, "GwQuestTrackerAreanaFrameTemp")
+    local arenaFrame = CreateFrame("Button", "GwArenaFrame" .. i, GwQuestTracker, "GwQuestTrackerAreanaFramePingableTemplate")
     local unit = "arena" .. i
 
     arenaFrame.unit = unit
@@ -233,7 +233,7 @@ function GwObjectivesArenaContainerMixin:RegisterFrame(i)
 end
 
 function GwObjectivesArenaContainerMixin:RegisterPrepFrame()
-    local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFrameTemp")
+    local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFramePingableTemplate")
 
     arenaPrepFrame:EnableMouse(true)
     arenaPrepFrame:RegisterForClicks("AnyDown")

@@ -370,7 +370,7 @@
         </Layers>
     </Frame>
 
-    <Frame name="GwSettingsPanelScrollTmpl" virtual="true">
+    <Frame name="GwSettingsPanelScrollTmpl" virtual="true" hidden="true">
         <Size x="617" y="600"/>
         <Anchors>
             <Anchor point="TOPLEFT" x="0" y="0"/>
@@ -997,7 +997,7 @@
         </Frames>
     </Frame>
 
-    <Frame name="GwSettingsMenuSearchable" inherits="GwCharacterMenu" virtual="true">
+    <Frame name="GwSettingsMenuSearchable" inherits="GwHeroPanelMenuTemplate" virtual="true">
         <Anchors>
             <Anchor point="TOPLEFT" x="10" y="-102"></Anchor>
         </Anchors>
@@ -1116,12 +1116,13 @@
             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
         <Frames>
-            <Button parentKey="button" inherits="GwCharacterMenuButtonTemplate" text="">
+            <Button parentKey="button" inherits="GwHeroPanelMenuButtonTemplate" text="">
                 <Anchors>
                     <Anchor point="TOPLEFT"/>
                 </Anchors>
                 <Layers>
                     <Layer textureSubLevel="OVERLAY">
+                        <FontString parentKey="text" inherits="gw_button_font_menu_light" justifyH="LEFT"/>
                         <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -1147,12 +1148,13 @@
         </Frames>
     </Frame>
 
-    <Button name="GwSettingsMenuSearchableSubButton" inherits="GwCharacterMenuButtonTemplate" text="" virtual="true">
+    <Button name="GwSettingsMenuSearchableSubButton" inherits="GwHeroPanelMenuButtonTemplate" text="" virtual="true">
         <Anchors>
             <Anchor point="TOPLEFT"/>
         </Anchors>
         <Layers>
             <Layer>
+                <FontString parentKey="text" inherits="gw_button_font_menu_light" justifyH="LEFT"/>
                 <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>

@@ -1,6 +1,9 @@
 local _, GW = ...
 local L = GW.L
 
+local GetSpecialization = GW.Retail and GetSpecialization or GetActiveTalentGroup
+local GetSpecializationInfo = GW.Classic and GW.Libs.LCS.GetSpecializationInfo or GetSpecializationInfo
+
 local function UpdateMatchingLayout(self, new_point)
     local selectedLayoutName = GW.private.Layouts.currentSelected
     local layout = selectedLayoutName and GW.GetLayoutByName(selectedLayoutName) or nil
@@ -183,7 +186,7 @@ end
 local function specSwitchHandlerOnEvent(self, event)
     local currentSpecIdx = GetSpecialization()
 
-    if event == "PLAYER_SPECIALIZATION_CHANGED" and self.currentSpecIdx == currentSpecIdx then
+    if (event == "PLAYER_SPECIALIZATION_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED") and self.currentSpecIdx == currentSpecIdx then
         return
     end
 
@@ -344,7 +347,14 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     specScrollFrame:SetupMenu(function(drowpdown, rootDescription)
         local privateLayoutSettings = GW.GetAllPrivateLayouts()
         local specs = {}
-        for index = 1, GetNumSpecializations() do
+        local endIdx = 2
+        if GW.Retail then
+            endIdx = GetNumSpecializations()
+        else
+            local hasDualSpec = GetNumTalentGroups(false, false) > 1
+            endIdx = hasDualSpec and 2 or 1
+        end
+        for index = 1, endIdx do
             local id, name, _, icon, role = GetSpecializationInfo(index)
             if id then
                 specs[index] = {}
@@ -398,7 +408,12 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     specSwitchHandler.currentSpecIdx = GetSpecialization() -- sometimes PLAYER_SPECIALIZATION_CHANGED fired twice, so we prevent a double call
 
     specSwitchHandler:RegisterEvent("PLAYER_ENTERING_WORLD") -- for start up
-    specSwitchHandler:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    if GW.Retail then
+        specSwitchHandler:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    elseif GW.Classic then
+        specSwitchHandler:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    end
+    
     specSwitchHandler:SetScript("OnEvent", specSwitchHandlerOnEvent)
     specSwitchHandler.layoutManager = layoutManager
     specSwitchHandler.smallSettingsFrame = smallSettingsFrame

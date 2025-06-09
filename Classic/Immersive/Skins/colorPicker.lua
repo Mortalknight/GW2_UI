@@ -136,6 +136,8 @@ end
 local function SkinAndEnhanceColorPicker()
     if C_AddOns.IsAddOnLoaded("ColorPickerPlus") then return end
 
+    ColorPickerFrame.swatchFunc = GW.NoOp
+
     ColorPickerFrame:SetClampedToScreen(true)
 
     ColorPickerFrame:SetHeight(ColorPickerFrame:GetHeight() + 40)
@@ -149,8 +151,7 @@ local function SkinAndEnhanceColorPicker()
         end
     end
 
-    GW.CreateFrameHeaderWithBody(ColorPickerFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon")
-
+    GW.CreateFrameHeaderWithBody(ColorPickerFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon", nil, nil, nil, true)
 
     ColorPickerFrame.TopEdge:Hide()
     ColorPickerFrame.RightEdge:Hide()
@@ -161,8 +162,7 @@ local function SkinAndEnhanceColorPicker()
     ColorPickerFrame.TopLeftCorner:Hide()
     ColorPickerFrame.TopRightCorner:Hide()
 
-    ColorPickerFrameHeader:StripTextures()
-    --ColorPickerFrameHeader.Text:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    ColorPickerFrameHeader:GwStripTextures()
 
     ColorPickerCancelButton:ClearAllPoints()
     ColorPickerOkayButton:ClearAllPoints()
@@ -170,9 +170,9 @@ local function SkinAndEnhanceColorPicker()
     ColorPickerCancelButton:SetPoint("BOTTOMLEFT", ColorPickerFrame, "BOTTOM", 0, 6)
     ColorPickerOkayButton:SetPoint("BOTTOMLEFT", ColorPickerFrame,"BOTTOMLEFT", 6,6)
     ColorPickerOkayButton:SetPoint("RIGHT", ColorPickerCancelButton,"LEFT", -4,0)
-    OpacitySliderFrame:SkinSliderFrame()
-    ColorPickerOkayButton:SkinButton(false, true)
-    ColorPickerCancelButton:SkinButton(false, true)
+    OpacitySliderFrame:GwSkinSliderFrame()
+    ColorPickerOkayButton:GwSkinButton(false, true)
+    ColorPickerCancelButton:GwSkinButton(false, true)
 
     ColorPickerFrame:HookScript("OnShow", function(frame)
         if frame.hasOpacity then
@@ -271,9 +271,9 @@ local function SkinAndEnhanceColorPicker()
 
     ColorPPBoxA:SetPoint("RIGHT", ColorPickerCancelButton, "RIGHT", 0, 20)
     ColorPPBoxH:SetPoint("RIGHT", ColorPPBoxA, "LEFT", -15, 0)
-    ColorPPBoxB:SetPoint("RIGHT", ColorPPBoxH, "LEFT", -40, 0)
-    ColorPPBoxG:SetPoint("RIGHT", ColorPPBoxB, "LEFT", -25, 0)
-    ColorPPBoxR:SetPoint("RIGHT", ColorPPBoxG, "LEFT", -25, 0)
+    ColorPPBoxB:SetPoint("RIGHT", ColorPPBoxH, "LEFT", -15, 0)
+    ColorPPBoxG:SetPoint("RIGHT", ColorPPBoxB, "LEFT", -15, 0)
+    ColorPPBoxR:SetPoint("RIGHT", ColorPPBoxG, "LEFT", -15, 0)
 
     -- make the color picker movable.
     local mover = CreateFrame("Frame", nil, ColorPickerFrame)

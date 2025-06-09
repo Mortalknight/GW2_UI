@@ -8,7 +8,6 @@ local addOptionText = GW.AddOptionText
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
-local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadChatPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
@@ -19,8 +18,8 @@ local function LoadChatPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit chat settings."])
 
-    createCat(CHAT, nil, p, {p})
-    settingsMenuAddButton(CHAT, p, {})
+    createCat(CHAT, nil, p, {p}, true)
+
     addOption(p.scroll.scrollchild, L["GW2 chat message style"], L["Changes the chat font, timestamp color and name display"], { getterSetter = "CHAT_USE_GW2_STYLE", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
     addOption(p.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], { getterSetter = "CHATFRAME_FADE", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
     addOption(p.scroll.scrollchild, L["Hide Editbox"], L["Hide the chat editbox when not in focus."], { getterSetter = "CHATFRAME_EDITBOX_HIDE", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
@@ -30,7 +29,7 @@ local function LoadChatPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Role Icon"], L["Display LFG Icons in group chat."], { getterSetter = "CHAT_SHOW_LFG_ICONS", callback = function() GW.UpdateChatSettings() GW.CollectLfgRolesForChatIcons() end, dependence = {["CHATFRAME_ENABLED"] = true}})
     addOption(p.scroll.scrollchild, L["Class Color Mentions"], L["Use class color for the names of players when they are mentioned."], { getterSetter = "CHAT_CLASS_COLOR_MENTIONS", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
     addOption(p.scroll.scrollchild, L["Emotion Icons"], L["Display emotion icons in chat"], {getterSetter = "CHAT_KEYWORDS_EMOJI", callback = function(value) GW.UpdateChatSettings() if GW_EmoteFrame then GW_EmoteFrame:Hide() end for _, frameName in ipairs(CHAT_FRAMES) do if _G[frameName].buttonEmote then _G[frameName].buttonEmote:SetShown(value) end end end, dependence = {["CHATFRAME_ENABLED"] = true}})
-    addOption(p.scroll.scrollchild, L["Quick Join Messages"], L["Show clickable Quick Join messages inside of the chat."], { getterSetter = "CHAT_SOCIAL_LINK", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
+    addOption(p.scroll.scrollchild, L["Quick Join Messages"], L["Show clickable Quick Join messages inside of the chat."], { getterSetter = "CHAT_SOCIAL_LINK", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}, hidden = not GW.Retail})
     addOption(p.scroll.scrollchild, L["Add timestamp to all messages"], nil, { getterSetter = "CHAT_ADD_TIMESTAMP_TO_ALL", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
     addOption(p.scroll.scrollchild, L["Copy Chat Lines"], L["Adds an arrow infront of the chat lines to copy the entire line"], { getterSetter = "copyChatLines", dependence = {["CHATFRAME_ENABLED"] = true}})
     addOption(p.scroll.scrollchild, L["History"], L["Log the main chat frames history. So when you reloadui or log in and out you see the history from your last session"], { getterSetter = "chatHistory", dependence = {["CHATFRAME_ENABLED"] = true}})

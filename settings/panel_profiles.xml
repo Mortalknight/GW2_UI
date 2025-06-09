@@ -4,7 +4,7 @@
 
     <Frame name="GwSettingsProfilePanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
         <Frames>
-            <Frame parentKey="menu" inherits="GwCharacterMenu">
+            <Frame parentKey="menu" inherits="GwHeroPanelMenuTemplate">
                 <Anchors>
                     <Anchor point="TOPLEFT" x="-231" y="-102"></Anchor>
                 </Anchors>

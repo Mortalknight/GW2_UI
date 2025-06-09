@@ -3,7 +3,6 @@ local L = GW.L
 local addOption = GW.AddOption
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
-local settingsMenuAddButton = GW.settingsMenuAddButton;
 local settingMenuToggle = GW.settingMenuToggle
 
 local function LoadModulesPanel(sWindow)
@@ -16,13 +15,12 @@ local function LoadModulesPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Enable or disable the modules you need and don't need."])
 
-    createCat(L["Modules"], L["Enable and disable components"], p, {p}, true)
-    settingsMenuAddButton(L["Modules"], p, {})
+    createCat(L["Modules"], L["Enable and disable components"], p, {p}, true, true)
 
     addOption(p.scroll.scrollchild, XPBAR_LABEL, nil, {getterSetter = "XPBAR_ENABLED", callback = function() GW.ShowRlPopup = true end})
     addOption(p.scroll.scrollchild, L["Health Globe"], L["Enable the health bar replacement."], {getterSetter = "HEALTHGLOBE_ENABLED", callback = function() GW.ShowRlPopup = true end})
     addOption(p.scroll.scrollchild, DISPLAY_POWER_BARS, L["Replace the default mana/power bar."], {getterSetter = "POWERBAR_ENABLED", callback = function() GwPlayerPowerBar:ToggleBar(); GW.UpdateClassPowerExtraManabar() end})
-    addOption(p.scroll.scrollchild, FOCUS, L["Enable the focus target frame replacement."], {getterSetter = "FOCUS_ENABLED", callback = function() GW.ShowRlPopup = true end})
+    addOption(p.scroll.scrollchild, FOCUS, L["Enable the focus target frame replacement."], {getterSetter = "FOCUS_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = GW.Classic})
     addOption(p.scroll.scrollchild, TARGET, L["Enable the target frame replacement."], {getterSetter = "TARGET_ENABLED", callback = function() GW.ShowRlPopup = true end})
     addOption(p.scroll.scrollchild, MINIMAP_LABEL, L["Use the GW2 UI Minimap frame."], {getterSetter = "MINIMAP_ENABLED", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Minimap"})
     addOption(p.scroll.scrollchild, OBJECTIVES_TRACKER_LABEL, L["Enable the revamped and improved quest tracker."], {getterSetter = "QUESTTRACKER_ENABLED", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Objectives"})
@@ -38,8 +36,10 @@ local function LoadModulesPanel(sWindow)
     addOption(p.scroll.scrollchild, RAID_FRAMES_LABEL, RAID_FRAMES_SUBTEXT, {getterSetter = "RAID_FRAMES", callback = function() GW.ShowRlPopup = true end})
     addOption(p.scroll.scrollchild, L["Group Frames"], L["Replace the default UI group frames."], {getterSetter = "PARTY_FRAMES", callback = function() GW.ShowRlPopup = true end})
     addOption(p.scroll.scrollchild, BINDING_NAME_TOGGLECHARACTER0, L["Replace the default character window."], {getterSetter = "USE_CHARACTER_WINDOW", callback = function() GW.ShowRlPopup = true end})
-    addOption(p.scroll.scrollchild, TRADE_SKILLS, L["Enable the profession replacement."], {getterSetter = "USE_PROFESSION_WINDOW", callback = function() GW.ShowRlPopup = true end})
-    addOption(p.scroll.scrollchild, BATTLEGROUND, nil, {getterSetter = "USE_BATTLEGROUND_HUD", callback = function() GW.ShowRlPopup = true end})
+    addOption(p.scroll.scrollchild, TALENTS, L["Enable the talents, specialization, and spellbook replacement."], {getterSetter = "USE_TALENT_WINDOW", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Classic})
+    addOption(p.scroll.scrollchild, SPELLBOOK_ABILITIES_BUTTON, SPELLBOOK_ABILITIES_BUTTON, {getterSetter = "USE_SPELLBOOK_WINDOW", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Classic})
+    addOption(p.scroll.scrollchild, TRADE_SKILLS, L["Enable the profession replacement."], {getterSetter = "USE_PROFESSION_WINDOW", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
+    addOption(p.scroll.scrollchild, BATTLEGROUND, nil, {getterSetter = "USE_BATTLEGROUND_HUD", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
     addOption(p.scroll.scrollchild, CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC, nil, {getterSetter = "DYNAMIC_CAM",
         callback = function(value)
             C_CVar.SetCVar("test_cameraDynamicPitch", value and "1" or "0")
@@ -47,8 +47,8 @@ local function LoadModulesPanel(sWindow)
             C_CVar.SetCVar("cameraReduceUnexpectedMovement", value and "0" or "1")
         end, incompatibleAddons = "DynamicCam"})
     addOption(p.scroll.scrollchild, CHAT_BUBBLES_TEXT, L["Replace the default UI chat bubbles. (Only in not protected areas)"], {getterSetter = "CHATBUBBLES_ENABLED", callback = function() GW.ShowRlPopup = true end})
-    addOption(p.scroll.scrollchild, L["Alert Frames"], nil, {getterSetter = "ALERTFRAME_ENABLED", callback = function() GW.ShowRlPopup = true end})
-    addOption(p.scroll.scrollchild, FRIENDS, nil, {getterSetter = "USE_SOCIAL_WINDOW", callback = function() GW.ShowRlPopup = true end})
+    addOption(p.scroll.scrollchild, L["Alert Frames"], nil, {getterSetter = "ALERTFRAME_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = GW.Classic})
+    addOption(p.scroll.scrollchild, FRIENDS, nil, {getterSetter = "USE_SOCIAL_WINDOW", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
 
     InitPanel(p, true)
     p:SetScript("OnShow", function()

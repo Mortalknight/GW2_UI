@@ -137,8 +137,10 @@ function oUF:DisableBlizzard(unit)
 
 			handleFrame(PartyFrame)
 
-			for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
-				handleFrame(frame, true)
+			if PartyFrame then
+				for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do 
+					handleFrame(frame, true)
+				end
 			end
 
 			for i = 1, MEMBERS_PER_RAID_GROUP do

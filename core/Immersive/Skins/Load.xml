@@ -1,4 +1,15 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file ="detailsProfile.lua"/>
     <Script file ="masqueSkin.lua"/>
+    <Script file ="utils.lua"/>
+    <Script file ="menu.lua"/>
+    <Script file="staticpopup.lua"/>
+    <Script file="readycheck.lua"/>
+    <Script file="battlenet.lua"/>
+    <Script file="misc.lua"/>
+    <Script file="timetracker.lua"/>
+    <Script file="ghostframe.lua"/>
+    <Script file="helpFrame.lua"/>
+    <Script file="auctionator.lua"/>
+    <Script file="tsm.lua"/>
 </Ui>

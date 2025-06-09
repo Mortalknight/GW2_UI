@@ -3,24 +3,6 @@ local _, GW = ...
 local CoordsFrame
 local moveDistance, mapX, mapY, mapLeft, mapTop, mapNormalScale, mapEffectiveScale = 0, 0, 0, 0, 0, 1, 0
 
-local function UpdateCoords()
-    if not WorldMapFrame:IsShown() then
-        return
-    end
-
-    if GW.locationData.x and GW.locationData.y then
-        CoordsFrame.Coords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (GW.locationData.xText or 0), (GW.locationData.yText or 0))
-    else
-        CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, NOT_APPLICABLE)
-    end
-
-    if WorldMapFrame.ScrollContainer:IsMouseOver() then
-        local x, y = WorldMapFrame.ScrollContainer:GetNormalizedCursorPosition()
-        if x and y and x >= 0 and y >= 0 then
-            CoordsFrame.Coords:SetFormattedText("%s - %s: %.2f, %.2f", CoordsFrame.Coords:GetText(), MOUSE_LABEL, x * 100, y * 100)
-        end
-    end
-end
 
 local function GetScaleDistance()
     local left, top = mapLeft, mapTop
@@ -32,9 +14,9 @@ local function GetScaleDistance()
 end
 
 local function LoadWorldMapSkin()
-    if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
-    WorldMapFrame:StripTextures()
-    WorldMapFrame.BlackoutFrame:Kill()
+    if not GW.settings.WORLDMAP_SKIN_ENABLED then return end
+    WorldMapFrame:GwStripTextures()
+    WorldMapFrame.BlackoutFrame:GwKill()
 
     local headerText
     local r = {WorldMapFrame.BorderFrame:GetRegions()}
@@ -46,14 +28,14 @@ local function LoadWorldMapSkin()
         end
     end
 
-    GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 30)
+    GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 30, nil, true)
     WorldMapFrameHeader.BGLEFT:SetWidth(100)
     WorldMapFrameHeader.BGRIGHT:SetWidth(WorldMapFrame.BorderFrame:GetWidth())
-    WorldMapFrame.BorderFrame:StripTextures()
-    WorldMapFrame.MiniBorderFrame:StripTextures()
+    WorldMapFrame.BorderFrame:GwStripTextures()
+    WorldMapFrame.MiniBorderFrame:GwStripTextures()
 
-    WorldMapFrame.BorderFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
-    WorldMapFrame.MiniBorderFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    WorldMapFrame.BorderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    WorldMapFrame.MiniBorderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
     WorldMapContinentDropdown:GwHandleDropDownBox()
     WorldMapZoneDropdown:GwHandleDropDownBox()
@@ -69,9 +51,9 @@ local function LoadWorldMapSkin()
     WorldMapZoomOutButton:SetPoint("LEFT", WorldMapZoneDropdown, "RIGHT", 3, 2)
     WorldMapZoomOutButton:SetHeight(21)
 
-    WorldMapZoomOutButton:SkinButton(false, true)
+    WorldMapZoomOutButton:GwSkinButton(false, true)
 
-    WorldMapFrameCloseButton:SkinButton(true)
+    WorldMapFrameCloseButton:GwSkinButton(true)
     WorldMapFrameCloseButton:SetSize(20, 20)
     WorldMapFrameCloseButton:ClearAllPoints()
     WorldMapFrameCloseButton:SetPoint("TOPRIGHT", WorldMapFrame, "TOPRIGHT", 0, 0)
@@ -120,19 +102,19 @@ local function LoadWorldMapSkin()
         WorldMapFrame:StopMovingOrSizing()
         WorldMapFrame:SetUserPlaced(false)
         -- Save map frame position
-        local pos = GW.GetSetting("WORLDMAP_POSITION")
+        local pos = GW.settings.WORLDMAP_POSITION
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-        GW.SetSetting("WORLDMAP_POSITION", pos)
+        GW.settings.WORLDMAP_POSITION = pos
     end)
 
     -- Set position on startup
     WorldMapFrame:HookScript("OnShow", function()
-        local pos = GW.GetSetting("WORLDMAP_POSITION")
+        local pos = GW.settings.WORLDMAP_POSITION
         WorldMapFrame:ClearAllPoints()
         WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     end)
@@ -154,7 +136,7 @@ local function LoadWorldMapSkin()
 
     scaleHandle.t = scaleHandle:CreateTexture(nil, "OVERLAY")
     scaleHandle.t:SetAllPoints()
-    scaleHandle.t:SetTexture("Interface/AddOns/GW2_UI/textures/resize")
+    scaleHandle.t:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize")
     scaleHandle.t:SetDesaturated(true)
 
     -- Create scale frame
@@ -189,23 +171,23 @@ local function LoadWorldMapSkin()
     scaleMouse:SetScript("OnMouseUp", function(frame)
         frame:SetScript("OnUpdate", nil)
         frame:SetAllPoints(scaleHandle)
-        GW.SetSetting("WORLDMAP_SCALE", WorldMapFrame:GetScale())
+        GW.settings.WORLDMAP_SCALE = WorldMapFrame:GetScale()
         WorldMapFrame:SetScale(WorldMapFrame:GetScale())
         -- Save map frame position
-        local pos = GW.GetSetting("WORLDMAP_POSITION")
+        local pos = GW.settings.WORLDMAP_POSITION
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-        GW.SetSetting("WORLDMAP_POSITION", pos)
+        GW.settings.WORLDMAP_POSITION = pos
     end)
 
     -- Function to set position after Leatrix_Maps has loaded
     local function LeatrixMapsFix()
         hooksecurefunc(WorldMapFrame, "Show", function()
-            local pos = GW.GetSetting("WORLDMAP_POSITION")
+            local pos = GW.settings.WORLDMAP_POSITION
             WorldMapFrame:ClearAllPoints()
             WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
@@ -217,14 +199,14 @@ local function LoadWorldMapSkin()
                 WorldMapFrame:StopMovingOrSizing()
                 WorldMapFrame:SetUserPlaced(false)
                 -- Save map frame position
-                local pos = GW.GetSetting("WORLDMAP_POSITION")
+                local pos = GW.settings.WORLDMAP_POSITION
                 if pos then
                     wipe(pos)
                 else
                     pos = {}
                 end
                 pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
-                GW.SetSetting("WORLDMAP_POSITION", pos)
+                GW.settings.WORLDMAP_POSITION = pos
             end)
         end)
     end
@@ -243,47 +225,6 @@ local function LoadWorldMapSkin()
         end)
     end
 
-    if Questie_Toggle then Questie_Toggle:SkinButton(false, true) end
+    if Questie_Toggle then Questie_Toggle:GwSkinButton(false, true) end
 end
 GW.LoadWorldMapSkin = LoadWorldMapSkin
-
-local function ToggleWorldMapCoords()
-    if GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then
-        CoordsFrame:Show()
-    else
-        CoordsFrame:Hide()
-    end
-end
-GW.ToggleWorldMapCoords = ToggleWorldMapCoords
-
-local function AddCoordsToWorldMap()
-    local CoordsTimer = nil
-    CoordsFrame = CreateFrame("Frame", nil, WorldMapFrame)
-    CoordsFrame:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
-    CoordsFrame:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
-    CoordsFrame.Coords = CoordsFrame:CreateFontString(nil, "OVERLAY")
-    CoordsFrame.Coords:SetTextColor(1, 1 ,1)
-    CoordsFrame.Coords:SetFontObject(NumberFontNormal)
-
-    WorldMapFrame:HookScript("OnShow", function()
-        if not CoordsTimer then
-            UpdateCoords()
-
-            if CoordsTimer then
-                CoordsTimer:Cancel()
-                CoordsTimer =nil
-            end
-            CoordsTimer = C_Timer.NewTicker(0.1, function() UpdateCoords() end)
-        end
-    end)
-    WorldMapFrame:HookScript("OnHide", function()
-        CoordsTimer:Cancel()
-        CoordsTimer = nil
-    end)
-
-    CoordsFrame.Coords:ClearAllPoints()
-    CoordsFrame.Coords:SetPoint("TOP", WorldMapFrame.ScrollContainer, "TOP", 0, 0)
-
-    ToggleWorldMapCoords()
-end
-GW.AddCoordsToWorldMap = AddCoordsToWorldMap

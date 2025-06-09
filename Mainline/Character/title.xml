@@ -40,7 +40,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Titles">
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwHeroPanelMenuButtonBackTemplate" text="Character: Titles">
                 <Size x="231" y="50"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"/>

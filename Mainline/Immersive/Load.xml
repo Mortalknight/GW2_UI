@@ -3,22 +3,10 @@
     <Include file ="toast.xml"/>
     <Script file ="alertPosition.lua"/>
     <Script file ="alerts.lua"/>
-    <Script file ="afk.lua"/>
-    <Script file ="QuestReqItems.lua"/>
-    <Include file ="QuestReqItems.xml"/>
-    <Script file ="QuestViewData.lua"/>
-    <Script file ="QuestView.lua"/>
-    <Include file ="QuestView.xml"/>
-    <Script file ="chatframe.lua"/>
-    <Script file ="chatbubbles.lua"/>
-    <Script file ="tooltips.lua"/>
     <Include file ="damagetext.xml"/>
     <Script file ="damagetext.lua"/>
     <Script file ="eventTracker.lua"/>
-    <Script file ="interruptAnnouncement.lua"/>
-    <Script file ="minimapButtons.lua"/>
     <Script file ="minimapInstanceDifficult.lua"/>
     <Script file ="minimap.lua"/>
-    <Script file ="worldmap.lua"/>
     <Script file ="widgetUI.lua"/>
 </Ui>

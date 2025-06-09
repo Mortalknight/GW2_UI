@@ -150,7 +150,7 @@ function GwObjectivesBossContainerMixin:SetUpFramePosition()
 end
 
 function GwObjectivesBossContainerMixin:RegisterFrame(i, eventless)
-    local bossFrame = CreateFrame("Button", "GwBossFrame" .. i, GwQuestTracker, "GwQuestTrackerBossFrameTemp")
+    local bossFrame = CreateFrame("Button", "GwBossFrame" .. i, GwQuestTracker, "GwQuestTrackerBossFramePingableTemplate")
     local unit = "boss" .. i
 
     bossFrame.id = i

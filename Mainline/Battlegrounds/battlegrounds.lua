@@ -1,6 +1,6 @@
 local _, GW = ...
 local FACTION_COLOR = GW.FACTION_COLOR
-local AddToAnimation = GW.AddToAnimation
+
 local GetAreaPOIForMap = C_AreaPoiInfo.GetAreaPOIForMap
 local GetAreaPOIInfo = C_AreaPoiInfo.GetAreaPOIInfo
 
@@ -46,7 +46,7 @@ local function capStateChanged(self)
     local fnScale = function(prog)
         self:SetScale(prog)
     end
-    AddToAnimation(self:GetName(), 2, 1, GetTime(), 0.5, fnScale)
+    GW.AddToAnimation(self:GetName(), 2, 1, GetTime(), 0.5, fnScale)
 end
 GW.AddForProfiling("battlegrounds", "capStateChanged", capStateChanged)
 

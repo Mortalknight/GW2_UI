@@ -1,26 +1,25 @@
 local _, GW = ...
-local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 
 local function LoadAddonListSkin()
-    if not GW.GetSetting("ADDONLIST_SKIN_ENABLED") then return end
+    if not GW.settings.ADDONLIST_SKIN_ENABLED then return end
     local AddonList = _G.AddonList
     GW.HandlePortraitFrame(AddonList)
 
-    GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {AddonListScrollFrame})
+    GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {AddonListScrollFrame}, nil, nil, true)
 
     _G.AddonListBg:Hide()
     AddonList.TitleBg:Hide()
     AddonList.TopTileStreaks:Hide()
 
-    AddonListInset:CreateBackdrop(constBackdropFrameBorder)
+    AddonListInset:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder)
 
-    AddonList.CloseButton:SkinButton(true)
-    AddonList.EnableAllButton:SkinButton(false, true)
-    AddonList.DisableAllButton:SkinButton(false, true)
-    AddonList.OkayButton:SkinButton(false, true)
-    AddonList.CancelButton:SkinButton(false, true)
+    AddonList.CloseButton:GwSkinButton(true)
+    AddonList.EnableAllButton:GwSkinButton(false, true)
+    AddonList.DisableAllButton:GwSkinButton(false, true)
+    AddonList.OkayButton:GwSkinButton(false, true)
+    AddonList.CancelButton:GwSkinButton(false, true)
     AddonList.Dropdown:GwHandleDropDownBox()
-    _G.AddonListForceLoad:SkinCheckButton()
+    _G.AddonListForceLoad:GwSkinCheckButton()
     _G.AddonListForceLoad:SetSize(18, 18)
 
     AddonList.CloseButton:SetSize(25, 25)
@@ -28,14 +27,14 @@ local function LoadAddonListSkin()
     AddonList.CloseButton:SetPoint("TOPRIGHT", 0, 0)
 
     for i = 1, _G.MAX_ADDONS_DISPLAYED do
-        _G["AddonListEntry" .. i .. "Enabled"]:SkinCheckButton()
+        _G["AddonListEntry" .. i .. "Enabled"]:GwSkinCheckButton()
         _G["AddonListEntry" .. i .. "Enabled"]:SetHitRectInsets(0, 0, 0, 0)
         _G["AddonListEntry" .. i .. "Enabled"]:SetSize(15, 15)
-        _G["AddonListEntry"  ..  i].LoadAddonButton:SkinButton(false, true)
+        _G["AddonListEntry"  ..  i].LoadAddonButton:GwSkinButton(false, true)
     end
 
-    _G.AddonListScrollFrame:SkinScrollFrame()
-    _G.AddonListScrollFrameScrollBar:SkinScrollBar()
+    _G.AddonListScrollFrame:GwSkinScrollFrame()
+    _G.AddonListScrollFrameScrollBar:GwSkinScrollBar()
 
     hooksecurefunc("AddonList_Update", function()
         local numEntrys = C_AddOns.GetNumAddOns()

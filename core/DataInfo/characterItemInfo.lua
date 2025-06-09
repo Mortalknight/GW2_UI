@@ -21,6 +21,9 @@ local InspectItems = {
     CharacterTrinket1Slot = {id = 15, slotId = 14},
     CharacterBackSlot = {id = 16, slotId = 15},
 }
+if GW.Cata then
+    tinsert(InspectItems, {id = 17, slotId = 18})
+end
 
 local function CreateInspectTexture(slot, x, y)
     local texture = slot:CreateTexture()
@@ -223,7 +226,9 @@ local function ToggleCharacterItemInfo(setup)
             inspectItem.enchantText:SetText("")
             inspectItem.enchantTextBg:Hide()
             inspectItem.itemlevel:SetText("")
-            inspectItem.itemSetBorderIndicator:Hide()
+            if inspectItem.itemSetBorderIndicator then
+                inspectItem.itemSetBorderIndicator:Hide()
+            end
 
             for y = 1, 10 do
                 inspectItem["textureSlot" .. y]:SetTexture()

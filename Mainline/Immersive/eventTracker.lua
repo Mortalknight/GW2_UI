@@ -1710,7 +1710,7 @@ local function UpdateTrackers()
 end
 GW.UpdateWorldEventTrackers = UpdateTrackers
 
-local function LoadDragonFlightWorldEvents()
+local function LoadWorldEventTimer()
 
     AddWorldMapFrame()
     UpdateTrackers()
@@ -1726,7 +1726,7 @@ local function LoadDragonFlightWorldEvents()
     QuestMapFrame:HookScript("OnHide", UpdateTrackers)
 
 end
-GW.LoadDragonFlightWorldEvents = LoadDragonFlightWorldEvents
+GW.LoadWorldEventTimer = LoadWorldEventTimer
 
 
 _G["SLASH_GWDEBUGSLASH1"] = "/gw2debug"

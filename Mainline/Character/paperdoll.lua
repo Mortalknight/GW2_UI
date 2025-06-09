@@ -81,7 +81,7 @@ GW.AddForProfiling("paperdoll", "menu_SetupBackButton", menu_SetupBackButton)
 local isFirstAddonButton = true
 local function addAddonButton(name, setting, showFunction)
     if C_AddOns.IsAddOnLoaded(name) and (setting == nil or setting == true) then
-        fmMenu[name] = CreateFrame("Button", nil, fmMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
+        fmMenu[name] = CreateFrame("Button", nil, fmMenu, "SecureHandlerClickTemplate,GwHeroPanelMenuButtonTemplate")
         fmMenu[name]:SetText(select(2, C_AddOns.GetAddOnInfo(name)))
         fmMenu[name]:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
         fmMenu[name]:ClearAllPoints()
@@ -102,14 +102,14 @@ local function addAddonButton(name, setting, showFunction)
 end
 
 local function LoadPaperDoll(tabContainer)
-    fmMenu = CreateFrame("Frame", nil, tabContainer, "GwCharacterMenu")
+    fmMenu = CreateFrame("Frame", nil, tabContainer, "GwHeroPanelMenuTemplate")
     fmMenu.SetupBackButton = menu_SetupBackButton
 
     dressingRoom, paperDollBagItemList = GW.LoadPDBagList(fmMenu, tabContainer)
     paperDollOutfits = GW.LoadPDEquipset(fmMenu, tabContainer)
     paperDollTitles = GW.LoadPDTitles(fmMenu, tabContainer)
 
-    fmMenu.equipmentMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+    fmMenu.equipmentMenu = CreateFrame("Button", nil, fmMenu, "GwHeroPanelMenuButtonTemplate")
     fmMenu.equipmentMenu.ToggleMe = paperDollBagItemList
     fmMenu.equipmentMenu:SetScript("OnClick", menuItem_OnClick)
     fmMenu.equipmentMenu:SetText(BAG_FILTER_EQUIPMENT)
@@ -117,7 +117,7 @@ local function LoadPaperDoll(tabContainer)
     fmMenu.equipmentMenu:ClearAllPoints()
     fmMenu.equipmentMenu:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
 
-    fmMenu.outfitsMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+    fmMenu.outfitsMenu = CreateFrame("Button", nil, fmMenu, "GwHeroPanelMenuButtonTemplate")
     fmMenu.outfitsMenu.ToggleMe = paperDollOutfits
     fmMenu.outfitsMenu:SetScript("OnClick", menuItem_OnClick)
     fmMenu.outfitsMenu:SetText(EQUIPMENT_MANAGER)
@@ -125,7 +125,7 @@ local function LoadPaperDoll(tabContainer)
     fmMenu.outfitsMenu:ClearAllPoints()
     fmMenu.outfitsMenu:SetPoint("TOPLEFT", fmMenu.equipmentMenu, "BOTTOMLEFT")
 
-    fmMenu.titlesMenu = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+    fmMenu.titlesMenu = CreateFrame("Button", nil, fmMenu, "GwHeroPanelMenuButtonTemplate")
     fmMenu.titlesMenu.ToggleMe = paperDollTitles
     fmMenu.titlesMenu:SetScript("OnClick", menuItem_OnClick)
     fmMenu.titlesMenu:SetText(PAPERDOLL_SIDEBAR_TITLES)

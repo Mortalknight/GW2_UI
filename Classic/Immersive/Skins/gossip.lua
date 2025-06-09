@@ -1,7 +1,6 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local animations = GW.animations
-local AddToAnimation = GW.AddToAnimation
+
 local lerp = GW.lerp
 
 local CUSTOM_ICONS = {
@@ -185,7 +184,7 @@ local function skinGossipOption(self)
         self:HookScript("OnEnter", function()
             hl:Show()
             hl:SetAlpha(0.2)
-            AddToAnimation("GOSSIP_OPTIONHOVER", 0, 1, GetTime(), 0.2,
+            GW.AddToAnimation("GOSSIP_OPTIONHOVER", 0, 1, GetTime(), 0.2,
                 function()
                     local p = animations["GOSSIP_OPTIONHOVER"].progress
                     p = math.max(0.2,p)
@@ -332,7 +331,7 @@ local function updateModelFrame(self, unit,isDebugUpdate) -- needs to be tested 
         self.modelFrame:SetCameraTarget(fx, fy, newZ + (newZ * (sizeDif / 2)))
 
         if not isDebugUpdate then
-            AddToAnimation("GOSSIP_MODEL", 0, 1, GetTime(), 0.8,
+            GW.AddToAnimation("GOSSIP_MODEL", 0, 1, GetTime(), 0.8,
                 function()
                 local p = animations["GOSSIP_MODEL"].progress
                 p = math.min(1,math.max(0,(p - 0.5) / 0.5))
@@ -430,15 +429,15 @@ local function loadPortraitDebugMode()
 end
 
 local function LoadGossipSkin()
-    if not GetSetting("GOSSIP_SKIN_ENABLED") then return end
+    if not GW.settings.GOSSIP_SKIN_ENABLED then return end
 
-    ItemTextScrollFrameScrollBar:SkinScrollBar()
-    ItemTextScrollFrame:SkinScrollFrame()
+    ItemTextScrollFrameScrollBar:GwSkinScrollBar()
+    ItemTextScrollFrame:GwSkinScrollFrame()
     GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar)
-    GW.HandleAchivementsScrollControls(GossipFrame.GreetingPanel)
+    GW.HandleScrollControls(GossipFrame.GreetingPanel)
     GossipFrame.GreetingPanel.GoodbyeButton:Hide()
-    GossipFrame.GreetingPanel.GoodbyeButton:StripTextures()
-    GossipFrame.GreetingPanel.GoodbyeButton:SkinButton(false, true)
+    GossipFrame.GreetingPanel.GoodbyeButton:GwStripTextures()
+    GossipFrame.GreetingPanel.GoodbyeButton:GwSkinButton(false, true)
 
     for i = 1, 4 do
         local notch =  NPCFriendshipStatusBar["Notch" .. i]
@@ -455,8 +454,8 @@ local function LoadGossipSkin()
         end
     end)
 
-    ItemTextFrame:StripTextures(true)
-    ItemTextFrame:CreateBackdrop()
+    ItemTextFrame:GwStripTextures(true)
+    ItemTextFrame:GwCreateBackdrop()
     QuestFont:SetTextColor(1, 1, 1)
     --GossipFrameInset:Hide()
     GossipFramePortrait:Hide()
@@ -472,11 +471,11 @@ local function LoadGossipSkin()
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     ItemTextFrame.tex = tex
 
-    ItemTextScrollFrame:StripTextures()
+    ItemTextScrollFrame:GwStripTextures()
 
-    GossipFrame:StripTextures()
-    GossipFrame.GreetingPanel:StripTextures()
-    GossipFrame:CreateBackdrop()
+    GossipFrame:GwStripTextures()
+    GossipFrame.GreetingPanel:GwStripTextures()
+    GossipFrame:GwCreateBackdrop()
     tex = GossipFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
 
     tex:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 0, 0)
@@ -563,7 +562,7 @@ local function LoadGossipSkin()
     GossipFrame.TitleContainer.TitleText:SetPoint("TOPLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 0)
     GossipFrame.TitleContainer.TitleText:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel,"BOTTOMRIGHT", -10, 0)
     GossipFrame.TitleContainer.TitleText:SetJustifyH("LEFT")
-    GossipFrame.CloseButton:SkinButton(true)
+    GossipFrame.CloseButton:GwSkinButton(true)
     GossipFrame.CloseButton:SetSize(20, 20)
     GossipFrame.CloseButton:ClearAllPoints()
     GossipFrame.CloseButton:SetPoint("BOTTOMLEFT", portraitFrame.npcNameLabel, "BOTTOMRIGHT", -10, 0)
@@ -579,8 +578,8 @@ local function LoadGossipSkin()
     GW.HandleNextPrevButton(ItemTextNextPageButton)
 
     local GossipPaginControler = CreateFrame("Button", "GossipPaginControler", GossipFrame)
-    local GossipPagingBack = CreateFrame("Button", "GossipPagingBack", GossipPaginControler, "GwCharacterMenuButtonBack")
-    local GossipPagingForward = CreateFrame("Button", "GossipPagingForward", GossipPaginControler, "GwCharacterMenuButtonBack")
+    local GossipPagingBack = CreateFrame("Button", "GossipPagingBack", GossipPaginControler, "GwHeroPanelMenuButtonBackTemplate")
+    local GossipPagingForward = CreateFrame("Button", "GossipPagingForward", GossipPaginControler, "GwHeroPanelMenuButtonBackTemplate")
 
     GossipPaginControler:RegisterForClicks("LeftButtonDown", "RightButtonDown")
 
@@ -615,7 +614,7 @@ local function LoadGossipSkin()
     GossipFrame:HookScript("OnShow",function()
         GossipFrame.CloseButton:Hide()
 
-        AddToAnimation("GOSSIP_FRAME_FADE", 0, 1, GetTime(), 0.4,
+        GW.AddToAnimation("GOSSIP_FRAME_FADE", 0, 1, GetTime(), 0.4,
             function()
                 local p = animations["GOSSIP_FRAME_FADE"].progress
                 GossipFrame:SetAlpha(math.max(0.5, p))
@@ -673,7 +672,7 @@ local function LoadGossipSkin()
     NPCFriendshipStatusBar:SetPoint("BOTTOMLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 3)
     NPCFriendshipStatusBar:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "TOPRIGHT", -5, 3)
     NPCFriendshipStatusBar:SetHeight(16)
-    NPCFriendshipStatusBar:StripTextures()
+    NPCFriendshipStatusBar:GwStripTextures()
     NPCFriendshipStatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
     NPCFriendshipStatusBar.bg = NPCFriendshipStatusBar:CreateTexture(nil, "BACKGROUND")
     NPCFriendshipStatusBar.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
@@ -684,7 +683,7 @@ local function LoadGossipSkin()
     NPCFriendshipStatusBar.icon:SetPoint("RIGHT", NPCFriendshipStatusBar, "LEFT", 0, -3)
     NPCFriendshipStatusBar.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
-    ItemTextCloseButton:SkinButton(true)
+    ItemTextCloseButton:GwSkinButton(true)
     ItemTextCloseButton:SetSize(20, 20)
 end
 GW.LoadGossipSkin = LoadGossipSkin

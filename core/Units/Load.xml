@@ -1,0 +1,21 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file ="healthglobe.xml"/>
+    <Script file ="unitFrameFader.lua"/>
+    <Script file ="healthglobe.lua"/>
+    <Script file ="playerFrame.lua"/>
+    <Include file ="unitframes.xml"/>
+    <Script file ="unitframes.lua"/>
+    <Include file ="dodgebar.xml"/>
+    <Script file ="dodgebar.lua"/>
+    <Include file ="powerbar.xml"/>
+    <Script file ="powerbar.lua"/>
+    <Script file ="comboBarTarget.lua"/>
+    <Include file ="petbar.xml"/>
+    <Script file ="petbar.lua"/>
+    <Include file ="classpowers.xml"/>
+    <Script file ="classpowers.lua"/>
+    <Include file ="party.xml"/>
+    <Script file ="party.lua"/>
+    <Include file ="Grid\Load.xml"/>
+
+</Ui>

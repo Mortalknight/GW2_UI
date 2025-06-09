@@ -1,5 +1,5 @@
 local _, GW = ...
-local AddToAnimation = GW.AddToAnimation
+
 local lerp = GW.lerp
 local gossipOptionPointer = {}
 
@@ -242,7 +242,7 @@ local function skinGossipOption(self)
         self:HookScript("OnEnter", function()
             hl:Show()
             hl:SetAlpha(0.2)
-            AddToAnimation("GOSSIP_OPTIONHOVER", 0, 1, GetTime(), 0.2,
+            GW.AddToAnimation("GOSSIP_OPTIONHOVER", 0, 1, GetTime(), 0.2,
                 function(p)
                     p = math.max(0.2, p)
                     hl:SetAlpha(p)
@@ -398,7 +398,7 @@ local function updateModelFrame(self, unit, isDebugUpdate) -- needs to be tested
         self.modelFrame:SetCameraTarget(fx, fy, newZ + (newZ * (sizeDif / 2)))
 
         if not isDebugUpdate then
-            AddToAnimation("GOSSIP_MODEL", 0, 1, GetTime(), 0.8,
+            GW.AddToAnimation("GOSSIP_MODEL", 0, 1, GetTime(), 0.8,
                 function(p)
                     p = math.min(1, math.max(0, (p - 0.5) / 0.5))
                     self.modelFrame:SetAlpha(p)
@@ -646,9 +646,8 @@ local function LoadGossipSkin()
     GW.HandleNextPrevButton(ItemTextNextPageButton)
 
     local GossipPaginControler = CreateFrame("Button", "GossipPaginControler", GossipFrame)
-    local GossipPagingBack = CreateFrame("Button", "GossipPagingBack", GossipPaginControler, "GwCharacterMenuButtonBack")
-    local GossipPagingForward = CreateFrame("Button", "GossipPagingForward", GossipPaginControler,
-        "GwCharacterMenuButtonBack")
+    local GossipPagingBack = CreateFrame("Button", "GossipPagingBack", GossipPaginControler, "GwHeroPanelMenuButtonBackTemplate")
+    local GossipPagingForward = CreateFrame("Button", "GossipPagingForward", GossipPaginControler, "GwHeroPanelMenuButtonBackTemplate")
 
     GossipPaginControler:RegisterForClicks("LeftButtonDown", "RightButtonDown")
 
@@ -698,7 +697,7 @@ local function LoadGossipSkin()
     GossipFrame:HookScript("OnShow", function()
         GossipFrame.CloseButton:Hide()
 
-        AddToAnimation("GOSSIP_FRAME_FADE", 0, 1, GetTime(), 0.4,
+        GW.AddToAnimation("GOSSIP_FRAME_FADE", 0, 1, GetTime(), 0.4,
             function(p)
                 GossipFrame:SetAlpha(math.max(0.5, p))
                 portraitFrame.npcNameLabel:SetWidth(200 * p)

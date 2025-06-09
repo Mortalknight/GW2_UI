@@ -208,7 +208,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Equipment">
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwHeroPanelMenuButtonBackTemplate" text="Character: Equipment">
                 <Size x="231" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="60"></Anchor>
@@ -233,7 +233,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Outfits">
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwHeroPanelMenuButtonBackTemplate" text="Character: Outfits">
                 <Size x="231" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
@@ -276,7 +276,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack" text="Character: Titles">
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwHeroPanelMenuButtonBackTemplate" text="Character: Titles">
                 <Size x="231" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>

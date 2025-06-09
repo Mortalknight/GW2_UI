@@ -22,9 +22,9 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
     local unit = self.unit
     local health = UnitHealth(unit)
     local healthMax = UnitHealthMax(unit)
-    local absorb = UnitGetTotalAbsorbs(unit)
+    local absorb = UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(unit) or 0
     local prediction = UnitGetIncomingHeals(unit) or 0
-    local healAbsorb = UnitGetTotalHealAbsorbs(unit)
+    local healAbsorb = UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs(unit) or 0
 
     local healthPrecentage = (healthMax > 0) and (health / healthMax) or 0
     local absorbPrecentage = (absorb > 0 and healthMax > 0) and (absorb / healthMax) or 0

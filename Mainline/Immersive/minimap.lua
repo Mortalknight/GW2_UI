@@ -197,7 +197,7 @@ local function MinimapPostDrag(self)
     end
 end
 
-local function ToogleMinimapCoorsLable()
+local function ToogleMinimapCoordsLable()
     if GW.settings.MINIMAP_COORDS_TOGGLE then
         GwMapCoords:Show()
         GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
@@ -227,7 +227,7 @@ local function ToogleMinimapCoorsLable()
         end
     end
 end
-GW.ToogleMinimapCoorsLable = ToogleMinimapCoorsLable
+GW.ToogleMinimapCoordsLable = ToogleMinimapCoordsLable
 
 local function ToogleMinimapFpsLable()
     if GW.settings.MINIMAP_FPS then
@@ -624,7 +624,7 @@ local function LoadMinimap()
     GwMapCoords.Coords:SetTextColor(1, 1, 1)
     GwMapCoords.Coords:SetShadowOffset(2, -2)
     GwMapCoords.Coords:SetText(NOT_APPLICABLE)
-    ToogleMinimapCoorsLable()
+    ToogleMinimapCoordsLable()
 
     --FPS
     GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")

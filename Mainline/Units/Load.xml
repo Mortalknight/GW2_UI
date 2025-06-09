@@ -1,33 +1,3 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file ="party.xml"/>
-    <Include file ="unitframes.xml"/>
-    <Script file ="unitframes.lua"/>
-    <Script file ="party.lua"/>
-    <Script file ="playerFrame.lua"/>
-
-    <Include file ="Grid\elements\GridFrameAuraIndicator.xml"/>
-    <Script file ="Grid\elements\privateAura.lua"/>
-    <Script file ="Grid\elements\auras.lua"/>
-    <Script file ="Grid\elements\predictionBars.lua"/>
-    <Script file ="Grid\elements\middleIcon.lua"/>
-    <Script file ="Grid\elements\threathIndicator.lua"/>
-    <Script file ="Grid\elements\readyCheck.lua"/>
-    <Script file ="Grid\elements\summonIcon.lua"/>
-    <Script file ="Grid\elements\resurrectionIcon.lua"/>
-    <Script file ="Grid\elements\healtValueText.lua"/>
-    <Script file ="Grid\elements\health.lua"/>
-    <Script file ="Grid\elements\power.lua"/>
-    <Script file ="Grid\elements\nameText.lua"/>
-    <Script file ="Grid\elements\tags.lua"/>
-    <Script file ="Grid\elements\missingAuraIndicator.lua"/>
-    <Script file ="Grid\elements\range.lua"/>
-    <Script file ="Grid\elements\fader.lua"/>
-    <Script file ="Grid\raid40.lua"/>
-    <Script file ="Grid\raid25.lua"/>
-    <Script file ="Grid\raid10.lua"/>
-    <Script file ="Grid\party.lua"/>
-    <Script file ="Grid\raidPet.lua"/>
-    <Script file ="Grid\maintank.lua"/>
-    <Script file ="Grid\constructor.lua"/>
-    <Script file ="Grid\configEnvironment.lua"/>
+    <Include file ="classpowers.xml"/>
 </Ui>

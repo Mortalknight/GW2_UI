@@ -247,6 +247,7 @@ local function LoadObjectivesTracker()
 
     -- Create our own tracker
     local objectivesTracker = CreateFrame("Frame", "GwQuestTracker", UIParent, "GwQuestTracker")
+    Mixin(objectivesTracker, GwObjectivesTrackerMixin)
     objectivesTracker.ScrollFrame = objectivesTracker:CreateTrackerScrollFrame("GwQuestTrackerScroll", GW.settings.QuestTracker_pos_height)
     objectivesTracker.ScrollFrame.Child = CreateFrame("Frame", "GwQuestTrackerScrollChild", objectivesTracker.ScrollFrame, objectivesTracker)
 

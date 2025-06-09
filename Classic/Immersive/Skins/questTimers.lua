@@ -5,8 +5,8 @@ local function ApplyQuestTimersSkin()
     QuestTimerFrame:ClearAllPoints()
     QuestTimerFrame:SetPoint("TOPLEFT", QuestTimerFrame.gwMover)
 
-    QuestTimerFrame:StripTextures()
-    QuestTimerFrame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+    QuestTimerFrame:GwStripTextures()
+    QuestTimerFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
     QuestTimerHeader:SetPoint('TOP', 1, 8)
 
     hooksecurefunc(QuestTimerFrame, "SetPoint", function(_, _, parent)
@@ -18,7 +18,7 @@ local function ApplyQuestTimersSkin()
 end
 
 local function LoadQuestTimersSkin()
-    if not GW.GetSetting("QUESTTIMERS_SKIN_ENABLED") then return end
+    if not GW.settings.QUESTTIMERS_SKIN_ENABLED then return end
     GW.RegisterLoadHook(ApplyQuestTimersSkin, "Blizzard_QuestTimer", QuestTimerFrame)
 
     C_AddOns.LoadAddOn("Blizzard_QuestTimer")

@@ -4,10 +4,11 @@ local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local L = GW.L
-local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 
 local function LoadNotificationsPanel(sWindow)
+    if GW.Classic then return end
+
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
@@ -20,8 +21,7 @@ local function LoadNotificationsPanel(sWindow)
     p.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p.breadcrumb:SetText(L["Vignettes"])
 
-    createCat(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, L["Edit your GW2 notifications."], p, {p})
-    settingsMenuAddButton(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, p, {})
+    createCat(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, L["Edit your GW2 notifications."], p, {p}, true)
 
     local soundKeys = {}
     for _, sound in next, GW.Libs.LSM:List("sound") do

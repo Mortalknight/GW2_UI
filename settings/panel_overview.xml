@@ -30,7 +30,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame parentKey="menu" inherits="GwCharacterMenu">
+            <Frame parentKey="menu" inherits="GwHeroPanelMenuTemplate">
                 <Anchors>
                     <Anchor point="TOPLEFT" x="-231" y="-102"></Anchor>
                 </Anchors>
@@ -140,7 +140,7 @@
         </Frames>
     </EventButton>
 
-    <Button name="GwSettingsOverviewMenuButton" inherits="GwCharacterMenuButtonTemplate"  text="" virtual="true">
+    <Button name="GwSettingsOverviewMenuButton" inherits="GwHeroPanelMenuButtonTemplate" text="" virtual="true">
         <Size x="221" y="36"></Size>
     </Button>
 

@@ -5,7 +5,6 @@ local addGroupHeader = GW.AddGroupHeader
 local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
-local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadFontsPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
@@ -16,8 +15,7 @@ local function LoadFontsPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit font settings."])
 
-    createCat(L["Fonts"], nil, p, { p })
-    settingsMenuAddButton(L["Fonts"], p, {})
+    createCat(L["Fonts"], nil, p, {p}, true)
 
     local fontsKeys = {}
     local fontsValues = {}

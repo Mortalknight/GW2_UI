@@ -18,16 +18,15 @@ local function CharacterMenuButton_OnLoad(self, odd, hasArrow, margin, isSubCat)
         self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
     end
 
-    self:GetFontString():SetJustifyH("LEFT")
     self.arrow:ClearAllPoints()
     self.arrow:SetPoint("LEFT", 10, 0)
     self.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
     self.arrow:SetSize(16, 16)
     if not hasArrow then
         self.arrow:Hide()
-        self:GetFontString():SetPoint("LEFT", self, "LEFT", margin + (isSubCat and 0 or 20), 0)
+        self.text:SetPoint("LEFT", self, "LEFT", margin + (isSubCat and 0 or 20), 0)
     else
-        self:GetFontString():SetPoint("LEFT", self, "LEFT", margin, 0)
+        self.text:SetPoint("LEFT", self, "LEFT", margin, 0)
     end
 end
 
@@ -88,7 +87,7 @@ local function toggleMenuItem(self,active)
         self.button.arrow:SetRotation(0)
         self.content:SetHeight(self.content.height)
         updateScrollFrame(GwSettingsMenuSearchable)
-        AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2,
+        GW.AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2,
             function(p) self.button.arrow:SetRotation(-1.5707 * p) end,
             "noease")
 
@@ -98,7 +97,7 @@ local function toggleMenuItem(self,active)
     self.content:SetHeight(0)
     updateScrollFrame(GwSettingsMenuSearchable)
     --can be done with animation groups
-    AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2,
+    GW.AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2,
         function(p) self.button.arrow:SetRotation(-1.5707 * p) end,
         "noease")
 
@@ -286,7 +285,7 @@ local function settingsMenuAddButton(name, basePanel, frames)
         menuItem.contentSizer:SetHeight(math.max(36, height))
     end)
 
-    menuItem.button:SetText(name)
+    menuItem.button.text:SetText(name)
 
     --load button styling
     local zebra  = false
@@ -304,7 +303,7 @@ local function settingsMenuAddButton(name, basePanel, frames)
         local subButton = CreateFrame("Button", name .. "GwSearchableSubButton" .. menuItem.content.buttonCount, menuItem.content, "GwSettingsMenuSearchableSubButton")
 
         --Grab the breadcrumb title from the panel
-        subButton:SetText(panelFrame.breadcrumb:GetText())
+        subButton.text:SetText(panelFrame.breadcrumb:GetText())
 
         -- set parent button needed
         subButton.parentButton = menuItem

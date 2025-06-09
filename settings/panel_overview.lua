@@ -77,12 +77,12 @@ end
 
 --copied from character.lua needs to be removed later
 local function CharacterMenuButton_OnLoad(self, odd)
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
     self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if odd then
         self:ClearNormalTexture()
     else
-        self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
+        self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
     end
 
     self:GetFontString():SetJustifyH("LEFT")
@@ -237,6 +237,18 @@ local function LoadOverviewPanel(sWindow)
     sWindow.splashart2 = p.splashart2
     p.splashart2:AddMaskTexture(sWindow.backgroundMask)
 
+    if GW.Retail then
+        p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail")
+        p.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail-dark")
+        print(123123131231312313131)
+    elseif GW.Classic then
+        p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic")
+        p.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic")
+    elseif GW.Cata then
+        p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata")
+        p.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata")
+    end
+
     CharacterMenuButton_OnLoad(p.menu.welcomebtn, true)
     CharacterMenuButton_OnLoad(p.menu.keybindingsbtn, false)
     CharacterMenuButton_OnLoad(p.menu.movehudbtn, true)
@@ -307,7 +319,7 @@ local function LoadOverviewPanel(sWindow)
     sWindow.headerBreadcrumb:SetFont(DAMAGE_TEXT_FONT, 14)
     sWindow.headerBreadcrumb:SetText(CHAT_CONFIGURATION)
 
-    createCat(L["Modules"], L["Enable and disable components"], p, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_overview")
+    createCat(L["Modules"], L["Enable and disable components"], p, false, nil, true, "Interface/AddOns/GW2_UI/textures/uistuff/tabicon_overview")
 
     InitPanel(p, false)
 
@@ -337,6 +349,8 @@ local function LoadOverviewPanel(sWindow)
         sWindow.headerBreadcrumb:SetText(OVERVIEW)
     end)
 
-    GW.InitBeledarsSplashScreen(p)
+    if GW.Retail then
+        GW.InitBeledarsSplashScreen(p)
+    end
 end
 GW.LoadOverviewPanel = LoadOverviewPanel

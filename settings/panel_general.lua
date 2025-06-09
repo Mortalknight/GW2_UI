@@ -3,7 +3,6 @@ local L = GW.L
 local addOption = GW.AddOption
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
-local settingsMenuAddButton = GW.settingsMenuAddButton
 local addOptionSlider = GW.AddOptionSlider
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionColorPicker = GW.AddOptionColorPicker
@@ -49,12 +48,11 @@ local function LoadGeneralPanel(sWindow)
     blizzardFix.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     blizzardFix.breadcrumb:SetText(L["Blizzard Fixes"])
 
-    createCat(GENERAL, nil, p, {general, classcolors, blizzardFix})
-    settingsMenuAddButton(GENERAL, p, {general, classcolors, blizzardFix})
+    createCat(GENERAL, nil, p, {general, classcolors, blizzardFix}, true)
 
-    addOptionSlider(general.scroll.scrollchild, L["Shorten values decimal length"], L["Controls the amount of decimals used for shorted values"], { getterSetter = "ShortHealthValuesDecimalLength", callback = GW.BuildPrefixValues, min = 0, max = 4, decimalNumbers = 0, step = 1})
+    addOptionSlider(general.scroll.scrollchild, L["Shorten values decimal length"], L["Controls the amount of decimals used for shorted values"], { getterSetter = "ShortHealthValuesDecimalLength", callback = GW.BuildPrefixValues, min = 0, max = 4, decimalNumbers = 0, step = 1, hidden = not GW.Retail})
 
-    addOptionDropdown(general.scroll.scrollchild, L["Shorten value prefix style"], nil, { getterSetter = "ShortHealthValuePrefixStyle", callback = GW.BuildPrefixValues, optionsList = {"TCHINESE", "CHINESE", "ENGLISH", "GERMAN", "KOREAN", "METRIC"}, optionNames = {"萬, 億", "万, 亿", "K, M, B, T", "Tsd, Mio, Mrd, Bio", "천, 만, 억", "k, M, G, T"}})
+    addOptionDropdown(general.scroll.scrollchild, L["Shorten value prefix style"], nil, { getterSetter = "ShortHealthValuePrefixStyle", callback = GW.BuildPrefixValues, optionsList = {"TCHINESE", "CHINESE", "ENGLISH", "GERMAN", "KOREAN", "METRIC"}, optionNames = {"萬, 億", "万, 亿", "K, M, B, T", "Tsd, Mio, Mrd, Bio", "천, 만, 억", "k, M, G, T"}, hidden = not GW.Retail})
     addOptionDropdown(general.scroll.scrollchild, L["Number format"], L["Will be used for the most numbers"], { getterSetter = "NumberFormat", optionsList = {"POINT", "COMMA"}, optionNames = {"1,000,000.00", "1.000.000,00"}})
     addOption(general.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], {getterSetter = "AFK_MODE", callback = GW.ToggelAfkMode})
     addOptionDropdown(general.scroll.scrollchild, L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], { getterSetter = "AUTO_REPAIR", optionsList = {"NONE", "PLAYER", "GUILD"}, optionNames = {NONE_KEY, PLAYER, GUILD}})

@@ -1,6 +1,5 @@
 local addonName, GW = ...
 local L = GW.L
-local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverride
 local Debug = GW.Debug
@@ -29,7 +28,6 @@ local hudArtFrame
 
 
 if GW.Retail then
-
     function GW2_ADDON_AddonCompartmentOnClickFunc()
         GW.ToggleGw2Settings()
     end
@@ -57,7 +55,7 @@ local function disableMABags()
 end
 
 local function disableTitanPanelBarAdjusting()
-    local ourBars = GetSetting("ACTIONBARS_ENABLED")
+    local ourBars = GW.settings.ACTIONBARS_ENABLED
     if ourBars and C_AddOns.IsAddOnLoaded("TitanClassic") then
         TitanMovable_AddonAdjust("MultiBarRight", true)
         TitanMovable_AddonAdjust("ExtraActionBarFrame", true)
@@ -233,7 +231,7 @@ local function gw_OnUpdate(_, elapsed)
         cb.func(cb.payload, elapsed)
     end
 
-    if GW.Classic and PetActionBarFrame:IsShown() and GetSetting("PETBAR_ENABLED") and loaded then
+    if GW.Classic and PetActionBarFrame:IsShown() and GW.settings.PETBAR_ENABLED and loaded then
         PetActionBarFrame:Hide()
     end
 end
@@ -536,12 +534,15 @@ local function evPlayerLogin(self)
     local lm = GW.LoadMainbarLayout()
 
     --Create Settings window
+    GW.SetUpDatabaseForProfileSpecSwitch()
     if GW.Retail then
-        GW.SetUpDatabaseForProfileSpecSwitch()
         GW.BuildPrefixValues()
     end
     GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
+    if not GW.Retail then
+        GW.LoadHoverBinds()
+    end
     GW.LoadFonts()
 
     -- Create Warning Prompt
@@ -556,17 +557,14 @@ local function evPlayerLogin(self)
     -- Load Slash commands
     GW.LoadSlashCommands()
 
-    local i = GW.Classic == true and 1 or 2
-    if i == 1 then
-        return
-    end
-
     -- Misc
     GW.InitializeMiscFunctions()
     GW.LoadRaidMarkerCircle()
 
     --Create general skins
-    GW.StoreGameMenuButton()
+    if GW.Retail then
+        GW.StoreGameMenuButton()
+    end
     if GW.settings.MAINMENU_SKIN_ENABLED then
         GW.SkinMainMenu()
     else
@@ -580,32 +578,36 @@ local function evPlayerLogin(self)
     GW.LoadStaticPopupSkin()
     GW.LoadBNToastSkin()
     GW.LoadDropDownSkin()
-    GW.LoadLFGSkins()
     GW.LoadReadyCheckSkin()
-    GW.LoadTalkingHeadSkin()
     GW.LoadMiscBlizzardFrameSkins()
     GW.LoadAddonListSkin()
-    GW.LoadMailSkin()
-    GW.LoadDressUpFrameSkin()
     GW.LoadHelperFrameSkin()
     GW.LoadGossipSkin()
     GW.LoadTimeManagerSkin()
     GW.LoadMerchantFrameSkin()
     GW.LoadLootFrameSkin()
-    GW.LoadExpansionLadningPageSkin()
-    GW.LoadGenericTraitFrameSkin()
-    GW.LoadCooldownManagerSkin()
-
     GW.LoadDetailsSkin()
-    GW.LoadImmersionAddonSkin()
     GW.AddMasqueSkin()
     GW.LoadAuctionatorAddonSkin()
     GW.LoadTSMAddonSkin()
-
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
-    GW.MakeAltPowerBarMovable()
-    GW.WidgetUISetup()
+
+    if GW.Retail then
+        GW.LoadLFGSkins()
+        GW.LoadTalkingHeadSkin()
+        GW.LoadMailSkin()
+        GW.LoadDressUpFrameSkin()
+        GW.LoadExpansionLadningPageSkin()
+        GW.LoadGenericTraitFrameSkin()
+        GW.LoadCooldownManagerSkin()
+        GW.LoadImmersionAddonSkin()
+        GW.MakeAltPowerBarMovable()
+        GW.WidgetUISetup()
+    elseif GW.Classic then
+        GW.LoadQuestLogFrameSkin()
+        GW.LoadQuestTimersSkin()
+    end
 
     -- make sure to load the objetives tracker before we load the altert system prevent some errors with other addons
     if GW.settings.QUESTTRACKER_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
@@ -613,9 +615,11 @@ local function evPlayerLogin(self)
     end
 
     -- load alert settings
-    GW.LoadAlertSystem()
-    GW.SetupAlertFramePosition()
-    GW.LoadOurAlertSubSystem()
+    if GW.Retail then
+        GW.LoadAlertSystem()
+        GW.SetupAlertFramePosition()
+        GW.LoadOurAlertSubSystem()
+    end
 
     --Create hud art
     hudArtFrame = GW.LoadHudArt()
@@ -662,7 +666,7 @@ local function evPlayerLogin(self)
 
     if GW.settings.MINIMAP_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Minimap", true) then
         GW.LoadMinimap()
-    else
+    elseif QueueStatusButton then
         QueueStatusButton:ClearAllPoints()
         QueueStatusButton:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
         QueueStatusButton:SetSize(26, 26)
@@ -686,6 +690,11 @@ local function evPlayerLogin(self)
     elseif GW.settings.HEALTHGLOBE_ENABLED and GW.settings.PLAYER_AS_TARGET_FRAME then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
+        if not GW.Retail then
+            if GW.settings.PLAYER_ENERGY_MANA_TICK then
+                GW.Load5SR(hg)
+            end
+        end
     end
 
     GW.LoadPowerBar()
@@ -698,27 +707,29 @@ local function evPlayerLogin(self)
 
     GW.SetUpExtendedVendor()
 
-    if GW.settings.USE_BATTLEGROUND_HUD then
+    if GW.Retail and GW.settings.USE_BATTLEGROUND_HUD then
         GW.LoadBattlegrounds()
     end
 
     GW.LoadCharacter()
 
-    GW.LoadSocialFrame()
+    if GW.Retail then
+        GW.LoadSocialFrame()
+        GW.LoadRaidbuffReminder()
+        GW.LoadWorldEventTimer()
+    end
 
     GW.Create_Raid_Counter()
-    GW.LoadRaidbuffReminder()
-
     GW.LoadMirrorTimers()
     GW.LoadAutoRepair()
-    GW.LoadDragonFlightWorldEvents()
     GW.ToggleInterruptAnncouncement()
 
     --Create unitframes
-    if GW.settings.FOCUS_ENABLED then
+    if not GW.Classic and GW.settings.FOCUS_ENABLED then
         local unitFrame = GW.LoadUnitFrame("Focus", GW.settings.focus_FRAME_INVERT)
         GW.LoadTargetOfUnit("Focus", unitFrame)
     end
+
     if GW.settings.TARGET_ENABLED then
         local unitFrame = GW.LoadUnitFrame("Target", GW.settings.target_FRAME_INVERT)
         GW.LoadTargetOfUnit("Target", unitFrame)
@@ -745,11 +756,17 @@ local function evPlayerLogin(self)
 
     -- create action bars
     if GW.settings.ACTIONBARS_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
-        if GW.settings.BAR_LAYOUT_ENABLED then
-            GW.LoadActionBars(lm, false)
-            GW.ExtraAB_BossAB_Setup()
+        if GW.Retail then
+            if GW.settings.BAR_LAYOUT_ENABLED then
+                GW.LoadActionBars(lm, false)
+                GW.ExtraAB_BossAB_Setup()
+            else
+                GW.LoadActionBars(lm, true)
+            end
         else
-            GW.LoadActionBars(lm, true)
+            GW.LoadActionBars(lm)
+            -- to update our bars
+            MultiActionBar_Update()
         end
     end
 
@@ -762,6 +779,8 @@ local function evPlayerLogin(self)
     if GW.settings.PLAYER_BUFFS_ENABLED then
         GW.LoadPlayerAuras(lm)
     end
+
+    GW.LoadAFKAnimation()
 
     if not IsIncompatibleAddonLoadedOrOverride("DynamicCam", true) then -- Only touch this setting if no other addon for this is loaded
         if GW.settings.DYNAMIC_CAM then
@@ -776,14 +795,16 @@ local function evPlayerLogin(self)
         end)
     end
 
-    GW.loadAFKAnimation()
-
     if GW.settings.CHATBUBBLES_ENABLED then
         GW.LoadChatBubbles()
     end
+
     -- create new microbuttons
     GW.LoadMicroMenu()
-    GW.LoadOrderBar()
+
+    if GW.Retail then
+        GW.LoadOrderBar()
+    end
 
     if GW.settings.PARTY_FRAMES then
         GW.LoadPartyFrames()
@@ -812,9 +833,10 @@ local function evPlayerLogin(self)
     self:SetScript("OnUpdate", gw_OnUpdate)
     GW.UpdateCharData()
 
-    GW.SetupSingingSockets()
-
-    GW.HandleBlizzardEditMode()
+    if GW.Retail then
+        GW.SetupSingingSockets()
+        GW.HandleBlizzardEditMode()
+    end
 end
 AFP("evPlayerLogin", evPlayerLogin)
 
@@ -848,9 +870,11 @@ l:RegisterEvent("PLAYER_ENTERING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
 l:RegisterEvent("UI_SCALE_CHANGED")
 l:RegisterEvent("PLAYER_LEVEL_UP")
-l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 l:RegisterEvent("ADDON_LOADED")
+if not GW.Classic then
+    l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
+end
 
 local function AddToClique(frame)
     if type(frame) == "string" then

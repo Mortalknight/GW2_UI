@@ -68,7 +68,7 @@ local function applyButtonStyle()
             b.Right:Hide()
             b.Left:Hide()
             b.Middle:Hide()
-            b:SetNormalTexture("Interface/AddOns/GW2_UI/textures/mainmenubutton")
+            b:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton")
             b:ClearHighlightTexture()
             b.Text:ClearAllPoints()
             b.Text:SetPoint("LEFT", b, "LEFT", 32,0)
@@ -82,7 +82,7 @@ local function applyButtonStyle()
             local tex = b:CreateTexture(nil, "OVERLAY")
             tex:SetPoint("LEFT", b, "LEFT", 0, 0)
             tex:SetSize(32, 32)
-            tex:SetTexture("Interface/AddOns/GW2_UI/textures/mainmenuicons")
+            tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons")
             tex:SetTexCoord(GW.getSprite(ICON_SPRITES, f.sprite[1], f.sprite[2]))
         end
     end
@@ -109,13 +109,13 @@ local function SkinMainMenu()
             c:Hide()
         end
     end
-    GameMenuFrame:StripTextures()
-    GameMenuFrame:CreateBackdrop(nil)
+    GameMenuFrame:GwStripTextures()
+    GameMenuFrame:GwCreateBackdrop(nil)
 
     local tex = GameMenuFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -10)
     tex:SetSize(256, 464)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/mainmenubg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubg")
 
     GameMenuFrameHeader:Hide()
 

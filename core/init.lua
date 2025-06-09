@@ -36,12 +36,12 @@ end
 GW.GetPlayerRole = GetPlayerRole
 
 local function CheckRole()
-    GW.myspec = GetSpecialization()
+    GW.myspec = ((GW.Classic or GW.Cata) and GW.Libs.LCS.GetSpecialization or GetSpecialization)()
     if GW.myspec then
         if GW.Retail then
             GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecRole = GetSpecializationInfo(GW.myspec)
         else
-            GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecBackground, GW.myspecRole = GW.Libs.LCS.GetSpecializationInfo(GW.myspec)
+            GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecRole = GW.Libs.LCS.GetSpecializationInfo(GW.myspec)
         end
     end
     GW.myrole = GetPlayerRole()
@@ -63,7 +63,6 @@ GW.myname = UnitName("player")
 GW.myrealm = GetRealmName()
 GW.mysex = UnitSex("player")
 GW.mylevel = UnitLevel("player")
-GW.CheckRole()
 GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
 GW.resolution = format("%dx%d", GW.screenwidth, GW.screenHeight)
 GW.wowpatch, GW.wowbuild, _ , GW.wowToc = GetBuildInfo()
@@ -76,6 +75,7 @@ GW.NewSign = [[|TInterface\OptionsFrame\UI-OptionsFrame-NewFeatureIcon:14:14|t]]
 GW.HiddenFrame = CreateFrame("Frame")
 GW.HiddenFrame.HiddenString = GW.HiddenFrame:CreateFontString(nil, "OVERLAY")
 GW.HiddenFrame:Hide()
+GW.ScanTooltip = CreateFrame("GameTooltip", "GW2_UIScanTooltip", UIParent, "GameTooltipTemplate")
 GW.BorderSize = 1
 GW.SpacingSize = 1
 
@@ -84,7 +84,6 @@ GW.InMoveHudMode = false
 
 --Tables
 GW.unitIlvlsCache = {}
-GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}
 GW.gwMocks = {}
 GW.MOVABLE_FRAMES = {}
@@ -110,6 +109,10 @@ GW.CreateErrorHandler()
 
 GW.AlertContainerFrame = nil
 
+if GW.Classic then
+    Enum.ItemQuality.Common = Enum.ItemQuality.Standard
+end
+
 -- Init Libs
 do
     GW.Libs = {}
@@ -134,7 +137,7 @@ do
     if GW.Classic then
         AddLib("LibDetours", "LibDetours-1.0", true)
         AddLib("CI", "LibClassicInspector", true)
-        AddLib("LCS", "LibClassicSpecs", true)
+        AddLib("LCS", "LibClassicSpecs-GW2", true)
     end
 end
 

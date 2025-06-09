@@ -231,7 +231,7 @@ local function HandleEvents(_, event, ...)
     elseif event == "PLAYER_CAN_GLIDE_CHANGED" then
         local canSkyriding = ...
         IsSkyriding(canSkyriding)
-    elseif event == "PLAYER_ENTERING_WORLD" then
+    elseif event == "PLAYER_ENTERING_WORLD" and GW.Retail then
         local isLogin, isReload = ...
         IsSkyriding(nil, isLogin or isReload)
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
@@ -255,9 +255,11 @@ local events = {
     "PLAYER_STARTED_MOVING",
     "PLAYER_STOPPED_MOVING",
     "PLAYER_CONTROL_LOST",
-    "PLAYER_CONTROL_GAINED",
-    "PLAYER_CAN_GLIDE_CHANGED"
+    "PLAYER_CONTROL_GAINED"
 }
+if GW.Retail then
+    tinsert(events,"PLAYER_CAN_GLIDE_CHANGED")
+end
 
 for _, evt in ipairs(events) do
     frame:RegisterEvent(evt)

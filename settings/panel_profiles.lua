@@ -466,16 +466,41 @@ end
 local function collectAllIcons()
     -- We need to avoid adding duplicate spellIDs from the spellbook tabs for your other specs.
     local activeIcons = {}
+    local endIdx = GW.Retail and C_SpellBook.GetNumSpellBookSkillLines() or GetNumSpellTabs()
+    local itemInfo
 
-    for i = 1, C_SpellBook.GetNumSpellBookSkillLines() do
-        local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(i)
-        skillLineInfo.itemIndexOffset = skillLineInfo.itemIndexOffset + 1
-        local tabEnd = skillLineInfo.itemIndexOffset + skillLineInfo.numSpellBookItems
-        for j = skillLineInfo.itemIndexOffset, tabEnd - 1 do
+
+    for i = 1, endIdx do
+        local tabStart
+        local tabEnd
+        if GW.Retail then
+            local skillLineInfo = C_SpellBook.GetSpellBookSkillLineInfo(i)
+            skillLineInfo.itemIndexOffset = skillLineInfo.itemIndexOffset + 1
+            tabStart = skillLineInfo.itemIndexOffset
+            tabEnd = skillLineInfo.itemIndexOffset + skillLineInfo.numSpellBookItems
+        else
+            local _, _, offset, numSpells, _ = GetSpellTabInfo(i)
+            offset = offset + 1
+            tabStart = offset
+            tabEnd = offset + numSpells
+        end
+        for j = tabStart, tabEnd - 1 do
             --to get spell info by slot, you have to pass in a pet argument
-            local spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(j, Enum.SpellBookSpellBank.Player)
+            local spellBookItemInfo
+            if GW.Retail then
+                spellBookItemInfo = C_SpellBook.GetSpellBookItemInfo(j, Enum.SpellBookSpellBank.Player)
+            else
+                local itemType, actionID = GetSpellBookItemInfo(j, "player")
+                spellBookItemInfo = {itemType = itemType, actionID = actionID}
+            end
+
             if spellBookItemInfo.itemType ~= "FUTURESPELL" then
-                local fileID = C_SpellBook.GetSpellBookItemTexture(j, Enum.SpellBookSpellBank.Player)
+                local fileID
+                if GW.Retail then
+                    fileID = C_SpellBook.GetSpellBookItemTexture(j, Enum.SpellBookSpellBank.Player)
+                else
+                    fileID = GetSpellBookItemTexture(j, "player")
+                end
                 if fileID then
                     activeIcons[fileID] = true
                 end
@@ -486,7 +511,7 @@ local function collectAllIcons()
                     for k = 1, numSlots do
                         local spellID, _, isKnownSlot = GetFlyoutSlotInfo(spellBookItemInfo.actionID, k)
                         if isKnownSlot and spellID then
-                            local fileID = C_Spell.GetSpellTexture(spellID)
+                            local fileID = C_Spell and C_Spell.GetSpellTexture(spellID) or GetSpellTexture(spellID)
                             if fileID then
                                 activeIcons[fileID] = true
                             end
@@ -624,7 +649,7 @@ local function LoadProfilesPanel(sWindow)
         ImportExportFrame.decode:SetText(CONVERT)
     end)
 
-    createCat(L["PROFILES"], L["Add and remove profiles."], p, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_profiles")
+    createCat(L["PROFILES"], L["Add and remove profiles."], p, false, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_profiles")
 
     p:SetScript("OnShow", function()
         settingMenuToggle(false)

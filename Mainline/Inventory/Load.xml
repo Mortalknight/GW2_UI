@@ -1,0 +1,10 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file ="bag.xml"/>
+    <Include file ="bank.xml"/>
+    <Include file ="lootframe.xml"/>
+    <Script file ="autoSell.lua"/>
+    <Script file ="inventory.lua"/>
+    <Script file ="bag.lua"/>
+    <Script file ="bank.lua"/>
+    <Script file ="lootframe.lua"/>
+</Ui>

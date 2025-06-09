@@ -585,10 +585,10 @@ local function LoadCurrency(tabContainer)
     curwin_outer.RaidLocks:RegisterEvent("UPDATE_INSTANCE_INFO")
 
     -- setup a menu frame
-    local fmMenu = CreateFrame("Frame", "GWCurrencyMenu", tabContainer, "GwCharacterMenu")
+    local fmMenu = CreateFrame("Frame", "GWCurrencyMenu", tabContainer, "GwHeroPanelMenuTemplate")
     fmMenu.items = {}
 
-    local item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+    local item = CreateFrame("Button", nil, fmMenu, "GwHeroPanelMenuButtonTemplate")
     item.ToggleMe = curwin_outer.Currency
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(CURRENCY)
@@ -597,7 +597,7 @@ local function LoadCurrency(tabContainer)
     item:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
     fmMenu.items.currency = item
 
-    item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
+    item = CreateFrame("Button", nil, fmMenu, "GwHeroPanelMenuButtonTemplate")
     item.ToggleMe = curHistroyWin
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(CURRENCY_TRANSFER_LOG_TITLE)
@@ -606,7 +606,7 @@ local function LoadCurrency(tabContainer)
     item:SetPoint("TOPLEFT", fmMenu.items.currency, "BOTTOMLEFT")
     fmMenu.items.currencyTransferHistory = item
 
-    item = CreateFrame("Button", "GwRaidInfoFrame", fmMenu, "GwCharacterMenuButtonTemplate")
+    item = CreateFrame("Button", "GwRaidInfoFrame", fmMenu, "GwHeroPanelMenuButtonTemplate")
     item.ToggleMe = curwin_outer.RaidLocks
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(RAID_INFORMATION)

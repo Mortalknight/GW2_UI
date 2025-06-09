@@ -1,0 +1,116 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwObjectivesNotification" hidden="true" virtual="true" parent="UIParent" frameStrata="LOW">
+        <Size x="300" y="1"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer Level="BACKGROUND">
+                <Texture parentKey="compassBG" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
+                    <Color r="1" g="1" b="1" a="0.3"></Color>
+                    <Size x="300" y="70"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentString" text="Quest name" parentKey="title" justifyH="LEFT" justifyV="TOP">
+                    <Size x="300" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="-15"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentSubString" parentKey="desc" text="Quest name" justifyH="LEFT" justifyV="TOP">
+                    <Size x="300" y="35"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" y="-39"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="iconFrame">
+                <Size x="30" y="30"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="-5" y="-10"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parenticon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
+                            <Size x="30" y="30"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame parentKey="bonusbar" hidden="true">
+                <Size x="40" y="40"></Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer textureSubLevel="2" Level="BACKGROUND">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\questview\bonusobjective-background">
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <StatusBar parentKey="bar">
+                        <Size x="26" y="26"></Size>
+                        <Anchors>
+                            <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\questview\bonusobjective-fill" />
+                    </StatusBar>
+                </Frames>
+            </Frame>
+            <Frame name="$parentCompass" parentKey="compass" mixin="GwObjectivesAnimationMixin">
+                <Size x="300" y="70"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-50" y="-5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer textureSubLevel="2" Level="BACKGROUND">
+                        <Texture parentKey="roundTexture" file="Interface/AddOns/GW2_UI/textures/questview/compass-rad-bg">
+                            <Size x="60" y="60"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="3" Level="BACKGROUND">
+                        <Texture parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/questview/compass-arrow">
+                            <Size x="60" y="60"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="4" Level="BACKGROUND">
+                        <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-objective">
+                            <Size x="30" y="30"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture name="$parentFlare" parentKey="flare" hidden="false" file="Interface/AddOns/GW2_UI/textures/hud/expflare">
+                            <Size x="150" y="150"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="LEFT" y="0" x="20"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>
