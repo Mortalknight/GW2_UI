@@ -231,7 +231,7 @@ local function gw_OnUpdate(_, elapsed)
         cb.func(cb.payload, elapsed)
     end
 
-    if GW.Classic and PetActionBarFrame:IsShown() and GW.settings.PETBAR_ENABLED and loaded then
+    if GW.Classic and PetActionBarFrame:IsShown() and GW.settings.PETBAR_ENABLED and loaded and not GW.IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         PetActionBarFrame:Hide()
     end
 end
@@ -771,7 +771,7 @@ local function evPlayerLogin(self)
     end
 
     -- create pet frame
-    if GW.settings.PETBAR_ENABLED then
+    if GW.settings.PETBAR_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         GW.LoadPetFrame(lm)
     end
 
