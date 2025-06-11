@@ -717,7 +717,7 @@ local function SkinLookingForGroupFrames()
     end)
 
     C_Timer.After(2, function()
-        if not GW.IsIncompatibleAddonLoadedOrOverride("LfgInfo", true) then
+        if not GW.ShouldBlockIncompatibleAddon("LfgInfo") then
             local ReskinIcon = function(parent, icon, class, role)
                 if role then
                     icon:SetAlpha(1)

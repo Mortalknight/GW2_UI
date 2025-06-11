@@ -1,7 +1,6 @@
 local addonName, GW = ...
 local L = GW.L
 local IsFrameModified = GW.IsFrameModified
-local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverride
 local Debug = GW.Debug
 local AFP = GW.AddProfiling
 
@@ -15,7 +14,7 @@ local animations = GW.animations
 
 local l = CreateFrame("Frame") -- Main event frame
 
-if GW.CheckForPasteAddon() and GW.settings.ACTIONBARS_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
+if GW.CheckForPasteAddon() and GW.settings.ACTIONBARS_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
     GW.Notice("|cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
 end
 
@@ -45,7 +44,7 @@ if GW.Retail then
 end
 
 local function disableMABags()
-    local bags = GW.settings.BAGS_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Inventory", true)
+    local bags = GW.settings.BAGS_ENABLED and not GW.ShouldBlockIncompatibleAddon("Inventory")
     if not bags or not MovAny or not MADB then
         return
     end
@@ -231,7 +230,7 @@ local function gw_OnUpdate(_, elapsed)
         cb.func(cb.payload, elapsed)
     end
 
-    if GW.Classic and PetActionBarFrame:IsShown() and GW.settings.PETBAR_ENABLED and loaded and not GW.IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
+    if GW.Classic and PetActionBarFrame:IsShown() and GW.settings.PETBAR_ENABLED and loaded and not GW.GW.ShouldBlockIncompatibleAddon("Actionbars") then
         PetActionBarFrame:Hide()
     end
 end
@@ -334,6 +333,7 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.charSettings = GW.Libs.AceDB:New('GW2UI_PRIVATE_DB', GW.privateDefaults)
         GW.private = GW.charSettings.profile
 
+        GW.ApplyMissingIncompatibleAddonsDefaults()
         GW.UpdateGw2ClassColors()
 
         -- setup default values on load, which are required for same skins
@@ -610,7 +610,7 @@ local function evPlayerLogin(self)
     end
 
     -- make sure to load the objetives tracker before we load the altert system prevent some errors with other addons
-    if GW.settings.QUESTTRACKER_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
+    if GW.settings.QUESTTRACKER_ENABLED and not GW.ShouldBlockIncompatibleAddon("Objectives") then
         GW.LoadObjectivesTracker()
     end
 
@@ -637,7 +637,7 @@ local function evPlayerLogin(self)
         hudArtFrame.edgeTintBottomCornerRight:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
     end
 
-    if not IsIncompatibleAddonLoadedOrOverride("FloatingCombatText", true) then -- Only touch this setting if no other addon for this is loaded
+    if not GW.ShouldBlockIncompatibleAddon("FloatingCombatText") then -- Only touch this setting if no other addon for this is loaded
         if GW.settings.GW_COMBAT_TEXT_MODE == "GW2" then
             C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
             if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
@@ -664,7 +664,7 @@ local function evPlayerLogin(self)
         GW.LoadCastingBar("GwCastingBarPet", "pet", false)
     end
 
-    if GW.settings.MINIMAP_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Minimap", true) then
+    if GW.settings.MINIMAP_ENABLED and not GW.ShouldBlockIncompatibleAddon("Minimap") then
         GW.LoadMinimap()
     elseif QueueStatusButton then
         QueueStatusButton:ClearAllPoints()
@@ -677,7 +677,7 @@ local function evPlayerLogin(self)
         GW.LoadTooltips()
     end
 
-    if GW.settings.QUESTVIEW_ENABLED and not IsIncompatibleAddonLoadedOrOverride("ImmersiveQuesting", true) then
+    if GW.settings.QUESTVIEW_ENABLED and not GW.ShouldBlockIncompatibleAddon("ImmersiveQuesting") then
         GW.LoadQuestview()
     end
 
@@ -699,7 +699,7 @@ local function evPlayerLogin(self)
 
     GW.LoadPowerBar()
 
-    if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
+    if not GW.ShouldBlockIncompatibleAddon("Inventory") then -- Only touch this setting if no other addon for this is loaded
         if GW.settings.BAGS_ENABLED then
             GW.LoadInventory()
         end
@@ -755,7 +755,7 @@ local function evPlayerLogin(self)
     end
 
     -- create action bars
-    if GW.settings.ACTIONBARS_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
+    if GW.settings.ACTIONBARS_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
         if GW.Retail then
             if GW.settings.BAR_LAYOUT_ENABLED then
                 GW.LoadActionBars(lm, false)
@@ -771,7 +771,7 @@ local function evPlayerLogin(self)
     end
 
     -- create pet frame
-    if GW.settings.PETBAR_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
+    if GW.settings.PETBAR_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
         GW.LoadPetFrame(lm)
     end
 
@@ -782,7 +782,7 @@ local function evPlayerLogin(self)
 
     GW.LoadAFKAnimation()
 
-    if not IsIncompatibleAddonLoadedOrOverride("DynamicCam", true) then -- Only touch this setting if no other addon for this is loaded
+    if not GW.ShouldBlockIncompatibleAddon("DynamicCam") then -- Only touch this setting if no other addon for this is loaded
         if GW.settings.DYNAMIC_CAM then
             C_CVar.SetCVar("test_cameraDynamicPitch", "1")
             C_CVar.SetCVar("cameraKeepCharacterCentered", "0")

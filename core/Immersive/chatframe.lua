@@ -2420,7 +2420,7 @@ GW.UpdateChatSettings = UpdateSettings
 local function LoadChat()
     DelayGuildMOTD()
 
-    if not GW.settings.CHATFRAME_ENABLED or GW.IsIncompatibleAddonLoadedOrOverride("Chat", true) then return end
+    if not GW.settings.CHATFRAME_ENABLED or GW.ShouldBlockIncompatibleAddon("Chat") then return end
     local eventFrame = CreateFrame("Frame")
 
     chatModuleInit = true

@@ -193,7 +193,7 @@ local function LoadHealthGlobe()
     hg.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
     -- position based on XP bar space and make it movable if your actionbars are off
-    if GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED and not GW.IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
+    if GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
         if GW.settings.XPBAR_ENABLED then
             hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
         else

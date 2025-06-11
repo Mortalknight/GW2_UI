@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local SetOverrideIncompatibleAddons = GW.SetOverrideIncompatibleAddons
 local RoundDec = GW.RoundDec
 local AddForProfiling = GW.AddForProfiling
 local AddToAnimation
@@ -242,14 +241,17 @@ local function CreateOption(optionType, panel, name, desc, values)
     table.insert(panel.gwOptions, opt)
 
     if values.incompatibleAddons then
-        local isIncompatibleAddonLoaded, whichAddonsLoaded, isOverride = GW.IsIncompatibleAddonLoadedOrOverride(values.incompatibleAddons)
-        if isIncompatibleAddonLoaded and not isOverride then
-            opt.desc = opt.desc .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
-            opt.isIncompatibleAddonLoaded = true
-        elseif isIncompatibleAddonLoaded and isOverride then
-            opt.desc = opt.desc .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffffa500" ..  L["You have overridden this behavior."] .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
-            opt.isIncompatibleAddonLoaded = false
-            opt.isIncompatibleAddonLoadedButOverride = true
+        local isLoaded, loadedAddons, isOverride = GW.GetIncompatibleAddonInfo(values.incompatibleAddons)
+
+        if isLoaded then
+            local baseMsg = "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r"
+            local addonList = "|cffff0000\n" .. loadedAddons .. "|r"
+            local overrideHint = "\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            local overrideNote = isOverride and ("\n\n|cffffa500" .. L["You have overridden this behavior."] .. "|r") or ""
+
+            opt.desc = opt.desc .. baseMsg .. addonList .. overrideNote .. overrideHint
+            opt.isIncompatibleAddonLoaded = isLoaded
+            opt.isIncompatibleAddonLoadedButOverride = isOverride
         end
     end
 
@@ -387,9 +389,8 @@ end
 local function checkDependenciesOnLoad()
     for _, panel in pairs(GW.getOptionReference()) do
         for _, v in pairs(panel.options) do
-            if v.isIncompatibleAddonLoaded then
-                local override = v.isIncompatibleAddonLoadedButOverride == true
-                setDependenciesOption(v.optionType, v.optionName, false, not override, override)
+            if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+                setDependenciesOption(v.optionType, v.optionName, false, v.isIncompatibleAddonLoaded, v.isIncompatibleAddonLoadedButOverride)
             elseif v.dependence then
                 local allDepsMet = true
 
@@ -544,9 +545,9 @@ local function HandleIncompatibility(v, button)
     if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
         if IsControlKeyDown() and (button and button == "LeftButton" or button == nil) then
             if v.isIncompatibleAddonLoaded and not v.isIncompatibleAddonLoadedButOverride then
-                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, true)
+                GW.SetOverrideIncompatibleAddons(v.incompatibleAddonsType, true)
             elseif not v.isIncompatibleAddonLoaded and v.isIncompatibleAddonLoadedButOverride then
-                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
+                GW.SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
             end
         end
         return true
@@ -814,7 +815,11 @@ local function InitPanel(panel, hasScroll)
                     end
                 end)
             elseif v.optionType == "boolean" then
-                of.checkbutton:SetChecked(of.get())
+                local state = of.get()
+                if v.isIncompatibleAddonLoaded and not v.isIncompatibleAddonLoadedButOverride then
+                    state = false
+                end
+                of.checkbutton:SetChecked(state)
                 of.checkbutton:SetScript("OnClick", function(self, button)
                     if HandleIncompatibility(v, button) then
                         self:SetChecked(not self:GetChecked())

@@ -1192,7 +1192,7 @@ local function LoadTooltips()
     if GW.Retail then
         GameTooltipDefaultContainer:GwKillEditMode()
 
-        if not GW.IsIncompatibleAddonLoadedOrOverride("LfgInfo", true) then
+        if not GW.ShouldBlockIncompatibleAddon("LfgInfo") then
             hooksecurefunc("LFGListUtil_SetSearchEntryTooltip", AddPremadeGroupInfo)
         end
     end

@@ -563,7 +563,7 @@ local function LoadMinimap()
     Minimap:ClearAllPoints()
     Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
 
-    if not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
+    if not GW.ShouldBlockIncompatibleAddon("Objectives") then
         MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
         MinimapCluster:ClearAllPoints()
         MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
