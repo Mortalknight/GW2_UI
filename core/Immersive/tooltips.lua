@@ -3,8 +3,6 @@ local L = GW.L
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local RGBToHex = GW.RGBToHex
 local GWGetClassColor = GW.GWGetClassColor
-local Wait = GW.Wait
-local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local nameRoleIcon = GW.nameRoleIcon
 
@@ -632,7 +630,7 @@ local function TT_OnEvent(_, event, unitGUID)
     if UnitExists("mouseover") and UnitGUID("mouseover") == unitGUID then
         local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel("mouseover")
         if itemLevel == "tooSoon" then
-            Wait(0.05, function()
+            GW.Wait(0.05, function()
                 local canUpdate = true
                 for _, x in ipairs(retryTable) do
                     local slotInfo = GW.GetGearSlotInfo(retryUnit, x)
@@ -646,11 +644,11 @@ local function TT_OnEvent(_, event, unitGUID)
 
                 if canUpdate then
                     local calculateItemLevel = GW.CalculateAverageItemLevel(iLevelDB, retryUnit)
-                    PopulateUnitIlvlsCache(unitGUID, calculateItemLevel, true)
+                    GW.PopulateUnitIlvlsCache(unitGUID, calculateItemLevel, true)
                 end
             end)
         else
-            PopulateUnitIlvlsCache(unitGUID, itemLevel, true)
+            GW.PopulateUnitIlvlsCache(unitGUID, itemLevel, true)
         end
     end
 
@@ -674,7 +672,7 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
         if not itemLevel or (GetTime() - GW.unitIlvlsCache[unitGUID].time > 120) then
             GW.unitIlvlsCache[unitGUID].time = nil
             GW.unitIlvlsCache[unitGUID].itemLevel = nil
-            return Wait(0.33, AddInspectInfo(self, unit, numTries + 1, r, g, b))
+            return GW.Wait(0.33, AddInspectInfo(self, unit, numTries + 1, r, g, b))
         end
 
         self.ItemLevelShown = true
