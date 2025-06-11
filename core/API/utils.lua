@@ -1312,7 +1312,7 @@ local function DoesAncestryInclude(ancestry, frame)
 			if currentFrame == ancestry then
 				return true;
 			end
-			currentFrame = currentFrame.GetParent and currentFrame:GetParent() or nil
+			currentFrame = type(currentFrame) == "table" and currentFrame.GetParent and currentFrame:GetParent() or nil
 		end
 	end
 	return false;
