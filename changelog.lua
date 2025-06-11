@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.0.0",{
+    {ct.feature, [=[Merged Retail and Era version]=]},
+})
+
 
 addChange("7.15.0",{
     {ct.feature, [=[Added more option to unitframe fader]=]},

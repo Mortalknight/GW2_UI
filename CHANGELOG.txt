@@ -1,3 +1,6 @@
+NEW
+    - Merged Retail and Era version
+
 7.15.0
 NEW
     - Added more option to unitframe fader
