@@ -253,28 +253,36 @@ function GwObjectivesBlockTemplateMixin:IsQuestAutoTurnInOrAutoAccept(blockQuest
 end
 
 function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
-    local link, item, _, showItemWhenComplete = nil, nil, nil, false
+    local btn = self.actionButton
+    self.hasItem = false
 
-    if self.questLogIndex then
-        link, item, _, showItemWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
-    end
-
-    local isQuestComplete = (self and self.questID) and QuestCache:Get(self.questID):IsComplete() or false
-    local shouldShowItem = item and (not isQuestComplete or showItemWhenComplete)
-
-    if shouldShowItem and self.questLogIndex then
-        self.hasItem = true
-        self.actionButton:SetUp(self.questLogIndex)
-
-        self.actionButton:SetAttribute("type", "item")
-        self.actionButton:SetAttribute("item", link)
-
-        self.actionButton:SetScript("OnUpdate", self.actionButton.OnUpdate)
-        self.actionButton:Show()
+    if GW.Retail then
+        if self.questLogIndex then
+            local link, item, _, showWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
+            local isComplete = self.questID and QuestCache:Get(self.questID):IsComplete() or false
+            if item and (not isComplete or showWhenComplete) then
+                self.hasItem = true
+                btn:SetUp(self.questLogIndex)
+                btn:SetAttribute("type", "item")
+                btn:SetAttribute("item", link)
+                btn:SetScript("OnUpdate", btn.OnUpdate)
+                btn:Show()
+                return
+            end
+        end
+        btn:Hide()
+        btn:SetScript("OnUpdate", nil)
     else
-        self.hasItem = false
-        self.actionButton:Hide()
-        self.actionButton:SetScript("OnUpdate", nil)
+        if self.sourceItemId and not self.isComplete and btn:SetItem(self) then
+            btn:SetScript("OnUpdate", btn.OnUpdate)
+            btn:Show()
+            self.hasItem = true
+        else
+            btn:FakeHide()
+            btn.itemID, btn.questID, btn.itemName = nil, nil, nil
+            btn:Hide()
+            btn:SetScript("OnUpdate", nil)
+        end
     end
 end
 
@@ -283,7 +291,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type
         return
     end
 
-    local height = self.fromContainerTopHeight + GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()
+    local height = self.fromContainerTopHeight + (GW.Retail and (GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()) or 0)
     if GW.ObjectiveTrackerContainer.Notification:IsShown() then
         height = height + GW.ObjectiveTrackerContainer.Notification.desc:GetHeight()
     else

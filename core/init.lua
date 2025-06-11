@@ -96,10 +96,6 @@ GW.CreditsList = {}
 GW.texts = {}
 GW.instanceIconByName = {}
 
-if not GW.Retail then
-    GW.trackedQuests = {}
-end
-
 -- money
 GW.earnedMoney = 0
 GW.spentMoney = 0

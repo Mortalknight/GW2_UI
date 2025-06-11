@@ -3,4 +3,5 @@
     <Include file ="notifications.xml"/>
     <Script file ="minimapButtons.lua"/>
     <Script file ="notifications.lua"/>
+    <Script file ="ObjectivesTracker.lua"/>
 </Ui>

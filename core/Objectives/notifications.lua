@@ -246,7 +246,7 @@ local function getNearestQuestPOIClassic()
     local spawnInfo
     local questieQuest
 
-    for _, quest in pairs(GW.trackedQuests) do
+    for _, quest in pairs(GW.ObjectiveTrackerContainer.Quests.trackedQuests) do
         if quest.questId then
             questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(quest.questId)
             if questieQuest then

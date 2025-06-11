@@ -1,24 +1,5 @@
 local _, GW = ...
 
--- container configuration
-local objectivesTrackerConfiguration = {
-    { name = "GwObjectivesNotification", scrollable = false, mixin = GwObjectivesTrackerNotificationMixin, enumName = "Notification", template = "GwObjectivesNotification" },
-    { name = "GwQuesttrackerContainerBossFrames", scrollable = false, mixin = GwObjectivesBossContainerMixin, enumName = "BossFrames" },
-    { name = "GwQuesttrackerContainerArenaBGFrames", scrollable = false, mixin = GwObjectivesArenaContainerMixin, enumName = "ArenaFrames" },
-    { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enumName = "Scenario" },
-    { name = "GwQuesttrackerContainerAchievement", scrollable = true, mixin = GwAchievementTrackerContainerMixin, enumName = "Achievement" },
-    { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Campaign" },
-    { name = "GwQuesttrackerContainerQuests", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Quests" },
-    { name = "GwQuesttrackerContainerBonus", scrollable = true, mixin = GwBonusObjectivesTrackerContainerMixin, enumName = "Bonus" },
-    { name = "GwQuesttrackerContainerRecipe", scrollable = true, mixin = GwObjectivesRecipeContainerMixin, enumName = "Recipe" },
-    { name = "GwQuesttrackerContainerMonthlyActivity", scrollable = true, mixin = GwObjectivesMonthlyActivitiesContainerMixin, enumName = "MonthlyActivity" },
-    { name = "GwQuesttrackerContainerCollection", scrollable = true, mixin = GwObjectivesCollectionContainerMixin, enumName = "Collection" },
-    -- ADDONS
-    { name = "GwQuesttrackerContainerWQT", scrollable = true, mixin = GwWorldQuestTrackerContainerMixin, enumName = "WQT", addonName = "WorldQuestTracker" },
-    { name = "GwQuesttrackerContainerPetTracker", scrollable = true, mixin = GwPetTrackerContainerMixin, enumName = "PetTracker", addonName = "PetTracker_Config" },
-    { name = "GwQuesttrackerContainerTodoloo", scrollable = true, mixin = GwTodolooContainerMixin, enumName = "Todoloo", addonName = "Todoloo" }
-}
-
 -- container enum
 GW.ObjectiveTrackerContainer = {}
 
@@ -163,26 +144,40 @@ function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
         end
     end
 
-    if GW.ObjectiveTrackerContainer.Scenario.block.hasItem then
+    if GW.ObjectiveTrackerContainer.Scenario and GW.ObjectiveTrackerContainer.Scenario.block.hasItem then
         GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GW.ObjectiveTrackerContainer.Scenario.block.UpdateObjectiveActionButtonPosition, {GW.ObjectiveTrackerContainer.Scenario.block, "SCENARIO"})
     end
 end
 
 local function DisableBlizzardsObjevtiveTracker()
-    ObjectiveTrackerFrame:SetMovable(1)
-    ObjectiveTrackerFrame:SetUserPlaced(true)
-    ObjectiveTrackerFrame:Hide()
-    ObjectiveTrackerFrame:SetScript(
-        "OnShow",
-        function()
-            ObjectiveTrackerFrame:Hide()
-        end
-    )
+    if ObjectiveTrackerFrame then
+        ObjectiveTrackerFrame:SetMovable(1)
+        ObjectiveTrackerFrame:SetUserPlaced(true)
+        ObjectiveTrackerFrame:Hide()
+        ObjectiveTrackerFrame:SetScript(
+            "OnShow",
+            function()
+                ObjectiveTrackerFrame:Hide()
+            end
+        )
 
-    --ObjectiveTrackerFrame:UnregisterAllEvents()
-    ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
-    ObjectiveTrackerFrame:SetScript("OnSizeChanged", nil)
-    --ObjectiveTrackerFrame:SetScript("OnEvent", nil)
+        --ObjectiveTrackerFrame:UnregisterAllEvents()
+        ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
+        ObjectiveTrackerFrame:SetScript("OnSizeChanged", nil)
+        --ObjectiveTrackerFrame:SetScript("OnEvent", nil)
+    else
+        QuestWatchFrame:SetMovable(1)
+        QuestWatchFrame:SetUserPlaced(true)
+        QuestWatchFrame:Hide()
+        QuestWatchFrame:SetScript(
+            "OnShow",
+            function()
+                QuestWatchFrame:Hide()
+            end
+        )
+
+        SetCVar("autoQuestWatch", "1")
+    end
 end
 
 function GwObjectivesTrackerMixin:CreateTrackerScrollFrame(name, height)
@@ -243,6 +238,25 @@ function GwObjectivesTrackerMixin:AddAddonContainerLoadingToQueue(config)
 end
 
 local function LoadObjectivesTracker()
+    -- container configuration
+    local objectivesTrackerConfiguration = {
+        { name = "GwObjectivesNotification", scrollable = false, mixin = GwObjectivesTrackerNotificationMixin, enumName = "Notification", template = "GwObjectivesNotification", load = true },
+        { name = "GwQuesttrackerContainerBossFrames", scrollable = false, mixin = GwObjectivesBossContainerMixin, enumName = "BossFrames", load = not GW.Classic },
+        { name = "GwQuesttrackerContainerArenaBGFrames", scrollable = false, mixin = GwObjectivesArenaContainerMixin, enumName = "ArenaFrames", load = not GW.Classic },
+        { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enumName = "Scenario", load = not GW.Classic },
+        { name = "GwQuesttrackerContainerAchievement", scrollable = true, mixin = GwAchievementTrackerContainerMixin, enumName = "Achievement", load = not GW.Classic },
+        { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Campaign", load = not GW.Classic },
+        { name = "GwQuesttrackerContainerQuests", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Quests", load = true },
+        { name = "GwQuesttrackerContainerBonus", scrollable = true, mixin = GwBonusObjectivesTrackerContainerMixin, enumName = "Bonus", load = GW.Retail },
+        { name = "GwQuesttrackerContainerRecipe", scrollable = true, mixin = GwObjectivesRecipeContainerMixin, enumName = "Recipe", load = GW.Retail },
+        { name = "GwQuesttrackerContainerMonthlyActivity", scrollable = true, mixin = GwObjectivesMonthlyActivitiesContainerMixin, enumName = "MonthlyActivity", load = GW.Retail },
+        { name = "GwQuesttrackerContainerCollection", scrollable = true, mixin = GwObjectivesCollectionContainerMixin, enumName = "Collection", load = GW.Retail },
+        -- ADDONS
+        { name = "GwQuesttrackerContainerWQT", scrollable = true, mixin = GwWorldQuestTrackerContainerMixin, enumName = "WQT", addonName = "WorldQuestTracker", load = GW.Retail },
+        { name = "GwQuesttrackerContainerPetTracker", scrollable = true, mixin = GwPetTrackerContainerMixin, enumName = "PetTracker", addonName = "PetTracker_Config", load = GW.Retail },
+        { name = "GwQuesttrackerContainerTodoloo", scrollable = true, mixin = GwTodolooContainerMixin, enumName = "Todoloo", addonName = "Todoloo", load = GW.Retail }
+    }
+
     DisableBlizzardsObjevtiveTracker()
 
     -- Create our own tracker
@@ -256,13 +270,14 @@ local function LoadObjectivesTracker()
 
     -- create container
     for _, config in ipairs(objectivesTrackerConfiguration) do
-        local shouldLoad = true
-        if config.addonName then
+        local shouldLoad = config.load
+        if shouldLoad and config.addonName then
             shouldLoad = C_AddOns.IsAddOnLoaded(config.addonName)
             if not shouldLoad then
                 objectivesTracker:AddAddonContainerLoadingToQueue(config)
             end
         end
+
         if shouldLoad then
             local parent = config.scrollable and objectivesTracker.ScrollFrame.Child or objectivesTracker
             local frame = objectivesTracker:CreateTrackerContainer(config.name, parent, config.mixin, config.template)
@@ -307,10 +322,12 @@ local function LoadObjectivesTracker()
         if frame.InitModule then frame:InitModule() end
     end
 
-    GW.ToggleCollapseObjectivesInChallangeMode()
+    if GW.Retail then
+        GW.ToggleCollapseObjectivesInChallangeMode()
+    end
 
      -- some hooks to set the itembuttons correct
-     local UpdateItemButtonPositionAndAdjustScrollFrame = function()
+    local UpdateItemButtonPositionAndAdjustScrollFrame = function()
         GW.Debug("Update Quest Buttons")
         objectivesTracker:LayoutChanged()
         objectivesTracker:AdjustItemButtonPositions()

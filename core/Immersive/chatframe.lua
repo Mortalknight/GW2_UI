@@ -1029,6 +1029,10 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
         end
     end
 
+    local channelName = C_ChatInfo.GetChannelShortcutForChannelID(channelID)
+    if not channelName then
+        return false
+    end
     return ChatFrame_AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil;
 end
 
