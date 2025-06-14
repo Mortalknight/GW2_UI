@@ -278,6 +278,11 @@ local function actionButtonGlobalStyle(self)
     self.AzeriteTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     self.AzeriteTexture:SetDrawLayer("BORDER", 1)
 
+    self.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
+    self.itemlevel:SetTextColor(1, 1, 1)
+    self.itemlevel:SetJustifyH("LEFT")
+    self.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+
     UpdateAzeriteItem(self)
 end
 GW.AddForProfiling("paperdoll_equipment", "actionButtonGlobalStyle", actionButtonGlobalStyle)

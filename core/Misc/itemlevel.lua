@@ -155,16 +155,15 @@ end
 do
     local function GetGearSlotInfo(unit, slot, itemlink, deepScan)
         local tt = GW.ScanTooltip
-        local hasItem
-        tt:SetOwner(UIParent, "ANCHOR_NONE")
+        tt:SetOwner(UIParent, "ANCHOR_CURSOR")
         if itemlink and string.find(itemlink, "item") then
-            hasItem = tt:SetHyperlink(itemlink)
+            tt:SetHyperlink(itemlink)
         elseif slot then
-            hasItem = tt:SetInventoryItem(unit, slot)
+            tt:SetInventoryItem(unit, slot)
         end
         tt:Show()
 
-        local info = hasItem and tt:GetTooltipData()
+        local info = tt:GetTooltipData()
 
         if not tt.slotInfo then tt.slotInfo = {} else wipe(tt.slotInfo) end
         local slotInfo = tt.slotInfo

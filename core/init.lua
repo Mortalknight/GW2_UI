@@ -105,7 +105,7 @@ GW.CreateErrorHandler()
 
 GW.AlertContainerFrame = nil
 
-if GW.Classic then
+if not GW.Retail then
     Enum.ItemQuality.Common = Enum.ItemQuality.Standard
 end
 

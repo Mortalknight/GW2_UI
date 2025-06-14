@@ -453,7 +453,7 @@ local function PaperDollSlotButton_Update(self)
     if GW.settings.SHOW_CHARACTER_ITEM_INFO and self.itemlevel then
         local itemLink = GetInventoryItemLink("player", slot)
         if itemLink then
-            local iLvl = C_Item.GetDetailedItemLevelInfo(GetInventoryItemLink("player", slot))
+            local iLvl = C_Item.GetDetailedItemLevelInfo(itemLink)
             if iLvl then
                 local quality = GetInventoryItemQuality("player", slot)
                 if quality >= Enum.ItemQuality.Common then
@@ -645,7 +645,7 @@ function LoadHonorTab()
             GWHonorFrameCurrentHKValue:SetPoint("RIGHT")
             GWHonorFrameCurrentHKText:SetFont(GWHonorFrameCurrentHKText:GetFont(), 14, "")
             GWHonorFrameCurrentHKValue:SetFont(GWHonorFrameCurrentHKValue:GetFont(), 14, "")
-        
+
             local DKC = CreateFrame("Frame", "GWHonorFrameCurrentDK", GwPaperHonor, "HonorFrameDKButtonTemplate")
             DKC:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -45)
             DKC:SetWidth(slot:GetWidth() - 30)
@@ -660,7 +660,7 @@ function LoadHonorTab()
             GWHonorFrameYesterdayHKValue:SetPoint("RIGHT")
             GWHonorFrameYesterdayHKText:SetFont(GWHonorFrameYesterdayHKText:GetFont(), 14, "")
             GWHonorFrameYesterdayHKValue:SetFont(GWHonorFrameYesterdayHKValue:GetFont(), 14, "")
-            
+
             local DKY = CreateFrame("Frame", "GWHonorFrameYesterdayContribution", GwPaperHonor, "HonorFrameContributionButtonTemplate")
             DKY:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -45)
             DKY:SetWidth(slot:GetWidth() - 30)
@@ -675,7 +675,7 @@ function LoadHonorTab()
             GWHonorFrameThisWeekHKValue:SetPoint("RIGHT")
             GWHonorFrameThisWeekHKText:SetFont(GWHonorFrameThisWeekHKText:GetFont(), 14, "")
             GWHonorFrameThisWeekHKValue:SetFont(GWHonorFrameThisWeekHKValue:GetFont(), 14, "")
-            
+
             local DKTW = CreateFrame("Frame", "GWHonorFrameThisWeekContribution", GwPaperHonor, "HonorFrameContributionButtonTemplate")
             DKTW:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -45)
             DKTW:SetWidth(slot:GetWidth() - 30)
@@ -772,7 +772,7 @@ function UpdateHonorTab(updateAll)
         GWHonorFrameLastWeekContributionValue:SetText(contribution)
         GWHonorFrameLastWeekStandingValue:SetText(rank)
     end
-    
+
     -- This session's values (today)
     hk, dk = GetPVPSessionStats()
     if HonorSpy then
@@ -781,7 +781,7 @@ function UpdateHonorTab(updateAll)
         GWHonorFrameCurrentHKValue:SetText(hk)
     end
     GWHonorFrameCurrentDKValue:SetText(dk)
-    
+
     -- Lifetime stats
     hk, dk, highestRank = GetPVPLifetimeStats()
     GWHonorFrameLifeTimeHKValue:SetText(hk)
@@ -791,7 +791,7 @@ function UpdateHonorTab(updateAll)
         rankName = NONE
     end
     GWHonorFrameLifeTimeRankValue:SetText(rankName)
-    
+
     -- Set rank name and number
     rankName, rankNumber = GetPVPRankInfo(UnitPVPRank("player"))
     if not rankName then

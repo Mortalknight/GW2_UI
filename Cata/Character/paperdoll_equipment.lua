@@ -23,6 +23,11 @@ local function actionButtonGlobalStyle(self)
     self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     self:GetHighlightTexture():SetBlendMode("ADD")
     self:GetHighlightTexture():SetAlpha(0.33)
+
+    self.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
+    self.itemlevel:SetTextColor(1, 1, 1)
+    self.itemlevel:SetJustifyH("LEFT")
+    self.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
 end
 
 local function updateBagItemButton(button)
@@ -53,8 +58,11 @@ local function updateBagItemButton(button)
             setTooltip()
         end
 
-        --GW.setItemLevel(button, quality, button.ItemLink)
-        --GW.setItemButtonQuality(button, quality)
+        local  _, _, quality  = C_Item.GetItemInfo(id)
+        if quality then
+            GW.SetItemLevel(button, quality, button.ItemLink)
+            GW.setItemButtonQuality(button, quality)
+        end
     end
 end
 
