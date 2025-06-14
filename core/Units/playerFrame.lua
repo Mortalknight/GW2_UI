@@ -156,7 +156,7 @@ local function LoadPlayerFrame()
     end)
 
     -- grab the TotemFramebuttons to our own Totem Frame
-    if GW.Retail then
+    if not GW.Classic then
         GW.CreateTotemBar()
     end
 

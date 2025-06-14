@@ -1061,8 +1061,8 @@ local function StyleTooltips()
         ItemRefShoppingTooltip1,
         ItemRefShoppingTooltip2,
         FriendsTooltip,
-        (QuestScrollFrame and QuestScrollFrame.CampaignTooltip or nil),
-        (QuestScrollFrame and QuestScrollFrame.StoryTooltip or nil),
+        (GW.Retail and QuestScrollFrame.CampaignTooltip or nil),
+        (GW.Retail and QuestScrollFrame.StoryTooltip or nil),
         WarCampaignTooltip,
         EmbeddedItemTooltip,
         ReputationParagonTooltip,
@@ -1138,7 +1138,7 @@ local function LoadTooltips()
     SkinItemRefTooltipCloseButton()
     SkinQueueStatusFrame()
 
-    if QuestScrollFrame then
+    if GW.Retail then
         QuestScrollFrame.StoryTooltip:SetFrameLevel(4)
     end
 

@@ -3,5 +3,8 @@
     <Include file ="notifications.xml"/>
     <Script file ="minimapButtons.lua"/>
     <Script file ="notifications.lua"/>
+    <Script file ="achievement.lua"/>
     <Script file ="ObjectivesTracker.lua"/>
+    <Script file ="bossFrames.lua"/>
+    <Script file ="arenaFrames.lua"/>
 </Ui>

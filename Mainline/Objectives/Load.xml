@@ -12,7 +12,4 @@
     <Script file ="recipeTracking.lua"/>
     <Script file ="collectionTracking.lua"/>
     <Script file ="monthlyActivitiesTracking.lua"/>
-    <Script file ="bossFrames.lua"/>
-    <Script file ="arenaFrames.lua"/>
-    <Script file ="achievement.lua"/>
 </Ui>

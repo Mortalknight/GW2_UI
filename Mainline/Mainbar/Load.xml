@@ -6,6 +6,4 @@
     <Script file ="orderbar.lua"/>
     <Script file ="mirrortimer.lua"/>
     <Script file ="expBar.lua"/>
-    <Script file ="totemBar.lua"/>
-    <Script file ="altPowerBar.lua"/>
 </Ui>

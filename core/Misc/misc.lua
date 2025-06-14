@@ -1,13 +1,14 @@
 local _, GW = ...
 
-local QuestRewardGoldIconOverlay = {}
+local mostValue = {}
+local upgradeIconsByPawn = {}
 
 local function QuestXPPercent()
     if not GW.settings.QUEST_XP_PERCENT then return end
 
     local _, unitXPMax = UnitXP("player"), UnitXPMax("player")
     if QuestInfoFrame.questLog then
-        local selectedQuest = C_QuestLog.GetSelectedQuest()
+        local selectedQuest = GW.Retail and C_QuestLog.GetSelectedQuest() or GetQuestID()
         if C_QuestLog.ShouldShowQuestRewards(selectedQuest) then
             local xp = GetQuestLogRewardXP()
             if xp and xp > 0 then
@@ -27,8 +28,10 @@ end
 local function ResetQuestRewardMostValueIcon()
     -- hide all old overlays
     for i = 1, MAX_NUM_ITEMS do
-        if QuestRewardGoldIconOverlay[i] then QuestRewardGoldIconOverlay[i]:Hide() end
+        if upgradeIconsByPawn[i] then upgradeIconsByPawn[i]:Hide() end
     end
+
+    if mostValue then mostValue:Hide() end
 end
 GW.ResetQuestRewardMostValueIcon = ResetQuestRewardMostValueIcon
 
@@ -48,6 +51,22 @@ local function QuestRewardMostValueIcon()
         local questLink = GetQuestItemLink("choice", i)
         local _, _, amount = GetQuestItemInfo("choice", i)
         local itemSellPrice = questLink and select(11, C_Item.GetItemInfo(questLink))
+        local itemIsUpgrade = PawnShouldItemLinkHaveUpgradeArrow and PawnShouldItemLinkHaveUpgradeArrow(questLink)
+        local upgradeIconByPawn = upgradeIconsByPawn[i]
+
+        if itemIsUpgrade then
+            if not upgradeIconByPawn then
+                upgradeIconByPawn = _G["QuestInfoRewardsFrameQuestInfoItem" .. i]:CreateTexture(nil, "OVERLAY")
+                upgradeIconByPawn:SetPoint("BOTTOMRIGHT", _G["QuestInfoRewardsFrameQuestInfoItem" .. i], "BOTTOMRIGHT", -2, 2)
+                upgradeIconByPawn:SetSize(15, 15)
+                upgradeIconByPawn:SetAtlas("bags-greenarrow", true)
+                upgradeIconByPawn:SetDrawLayer("OVERLAY", 7)
+                upgradeIconByPawn:Hide()
+
+                upgradeIconsByPawn[i] = upgradeIconByPawn
+            end
+            upgradeIconByPawn:Show()
+        end
 
         local totalValue = (itemSellPrice and itemSellPrice * amount) or 0
         if totalValue > bestValue then
@@ -59,20 +78,9 @@ local function QuestRewardMostValueIcon()
     if bestItem > 0 then
         local btn = _G["QuestInfoRewardsFrameQuestInfoItem" .. bestItem]
         if btn and btn.type == "choice" then
-            local questRewardGoldOverlay = QuestRewardGoldIconOverlay[bestItem]
-
-            if not questRewardGoldOverlay then
-                questRewardGoldOverlay = btn:CreateTexture(nil, "OVERLAY")
-                questRewardGoldOverlay:SetPoint("TOPLEFT", -5, 5)
-                questRewardGoldOverlay:SetSize(15, 15)
-                questRewardGoldOverlay:SetTexture("Interface/AddOns/GW2_UI/textures/icons/Coins")
-                questRewardGoldOverlay:SetTexCoord(0.33, 0.66, 0.022, 0.66)
-                questRewardGoldOverlay:SetDrawLayer("OVERLAY", 7)
-
-                QuestRewardGoldIconOverlay[bestItem] = questRewardGoldOverlay
-            end
-
-            questRewardGoldOverlay:Show()
+            mostValue:ClearAllPoints()
+            mostValue:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -2, -2)
+            mostValue:Show()
         end
     end
 end
@@ -85,6 +93,22 @@ end
 
 local function InitializeMiscFunctions()
     local MiscFrame = CreateFrame("Frame")
+
+     mostValue = CreateFrame("Frame", "GW2UI_QuestRewardGoldIconFrame", QuestInfoRewardsFrame)
+    mostValue:SetFrameStrata("HIGH")
+    mostValue:SetSize(15, 15)
+    mostValue:Hide()
+
+    mostValue.Icon = mostValue:CreateTexture(nil, "OVERLAY")
+    mostValue.Icon:SetAllPoints(mostValue)
+    mostValue.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/Coins")
+    mostValue.Icon:SetTexCoord(0.33, 0.66, 0.022, 0.66)
+
+    hooksecurefunc(QuestFrameRewardPanel, "Hide", function()
+        if mostValue then
+            mostValue:Hide()
+        end
+    end)
 
     MiscFrame:RegisterEvent("QUEST_COMPLETE") -- used for quest gold reward icon
 

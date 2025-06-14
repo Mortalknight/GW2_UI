@@ -2,4 +2,6 @@
     <Script file="mainBarLayout.lua"/>
     <Include file ="raidControl.xml"/>
     <Script file ="raidControl.lua"/>
+    <Script file ="altPowerBar.lua"/>
+    <Script file ="totemBar.lua"/>
 </Ui>

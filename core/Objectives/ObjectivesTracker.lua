@@ -150,7 +150,7 @@ function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
 end
 
 local function DisableBlizzardsObjevtiveTracker()
-    if ObjectiveTrackerFrame then
+    if GW.Retail then
         ObjectiveTrackerFrame:SetMovable(1)
         ObjectiveTrackerFrame:SetUserPlaced(true)
         ObjectiveTrackerFrame:Hide()
@@ -165,17 +165,16 @@ local function DisableBlizzardsObjevtiveTracker()
         ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
         ObjectiveTrackerFrame:SetScript("OnSizeChanged", nil)
         --ObjectiveTrackerFrame:SetScript("OnEvent", nil)
-    else
+    elseif GW.Cata then
+        WatchFrame:SetMovable(1)
+        WatchFrame:SetUserPlaced(true)
+        WatchFrame:GwKill()
+        WatchFrame:SetScript("OnShow",function() WatchFrame:Hide() end)
+    elseif GW.Classic then
         QuestWatchFrame:SetMovable(1)
         QuestWatchFrame:SetUserPlaced(true)
         QuestWatchFrame:Hide()
-        QuestWatchFrame:SetScript(
-            "OnShow",
-            function()
-                QuestWatchFrame:Hide()
-            end
-        )
-
+        QuestWatchFrame:SetScript("OnShow",function() QuestWatchFrame:Hide() end)
         SetCVar("autoQuestWatch", "1")
     end
 end
@@ -243,9 +242,9 @@ local function LoadObjectivesTracker()
         { name = "GwObjectivesNotification", scrollable = false, mixin = GwObjectivesTrackerNotificationMixin, enumName = "Notification", template = "GwObjectivesNotification", load = true },
         { name = "GwQuesttrackerContainerBossFrames", scrollable = false, mixin = GwObjectivesBossContainerMixin, enumName = "BossFrames", load = not GW.Classic },
         { name = "GwQuesttrackerContainerArenaBGFrames", scrollable = false, mixin = GwObjectivesArenaContainerMixin, enumName = "ArenaFrames", load = not GW.Classic },
-        { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enumName = "Scenario", load = not GW.Classic },
+        { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enumName = "Scenario", load = GW.Retail },
         { name = "GwQuesttrackerContainerAchievement", scrollable = true, mixin = GwAchievementTrackerContainerMixin, enumName = "Achievement", load = not GW.Classic },
-        { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Campaign", load = not GW.Classic },
+        { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Campaign", load = GW.Retail },
         { name = "GwQuesttrackerContainerQuests", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Quests", load = true },
         { name = "GwQuesttrackerContainerBonus", scrollable = true, mixin = GwBonusObjectivesTrackerContainerMixin, enumName = "Bonus", load = GW.Retail },
         { name = "GwQuesttrackerContainerRecipe", scrollable = true, mixin = GwObjectivesRecipeContainerMixin, enumName = "Recipe", load = GW.Retail },

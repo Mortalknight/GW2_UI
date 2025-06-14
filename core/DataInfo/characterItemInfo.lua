@@ -12,18 +12,16 @@ local InspectItems = {
     CharacterHandsSlot = {id = 8, slotId = 10},
     CharacterMainHandSlot = {id = 9, slotId = 16},
     CharacterSecondaryHandSlot = {id = 10, slotId = 17},
+    CharacterRangedSlot = {id = 11, slotId = 18},
 
-    CharacterNeckSlot = {id = 11, slotId = 2},
-    CharacterFinger0Slot = {id = 12, slotId = 11},
-    CharacterTrinket0Slot = {id = 13, slotId = 13},
+    CharacterNeckSlot = {id = 12, slotId = 2},
+    CharacterFinger0Slot = {id = 13, slotId = 11},
+    CharacterTrinket0Slot = {id = 14, slotId = 13},
 
-    CharacterFinger1Slot = {id = 14, slotId = 12},
-    CharacterTrinket1Slot = {id = 15, slotId = 14},
-    CharacterBackSlot = {id = 16, slotId = 15},
+    CharacterFinger1Slot = {id = 15, slotId = 12},
+    CharacterTrinket1Slot = {id = 16, slotId = 14},
+    CharacterBackSlot = {id = 17, slotId = 15},
 }
-if GW.Cata then
-    tinsert(InspectItems, {id = 17, slotId = 18})
-end
 
 local function CreateInspectTexture(slot, x, y)
     local texture = slot:CreateTexture()
@@ -47,9 +45,9 @@ end
 local function GetInspectPoints(id)
     if not id then return end
 
-    if id <= 10 then
+    if id <= 11 then
         return 3, 0, "LEFT", "RIGHT"
-    elseif id <= 13 then
+    elseif id <= 14 then
         return 0, 26, "TOP", "TOP"
     else
         return 0, -26, "BOTTOM", "BOTTOM"
@@ -59,54 +57,56 @@ end
 local function CreateSlotStrings()
     for name, tbl in pairs(InspectItems) do
         local slot = _G[name]
-        local x, y, justify, point = GetInspectPoints(tbl.id)
+        if slot then
+            local x, y, justify, point = GetInspectPoints(tbl.id)
 
-        slot.enchantText = slot:CreateFontString(nil, "OVERLAY")
-        slot.enchantText:SetSize(tbl.id >= 11 and 40 or 100, 30)
-        slot.enchantText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, tbl.id >= 11 and -4 or -2)
-        slot.enchantText:SetJustifyH(tbl.id >= 11 and "CENTER" or "LEFT")
-        slot.enchantText:SetPoint(justify, slot, point, x + (justify == "CENTER" and 5 or 0), y)
+            slot.enchantText = slot:CreateFontString(nil, "OVERLAY")
+            slot.enchantText:SetSize(tbl.id >= 12 and 40 or 100, 30)
+            slot.enchantText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, tbl.id >= 12 and -4 or -2)
+            slot.enchantText:SetJustifyH(tbl.id >= 12 and "CENTER" or "LEFT")
+            slot.enchantText:SetPoint(justify, slot, point, x + (justify == "CENTER" and 5 or 0), y)
 
-        local bg = slot:CreateTexture(nil, "BACKGROUND")
-        bg:SetAlpha(0.6)
-        bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover")
-        bg:SetPoint("TOPLEFT", slot.enchantText, "TOPLEFT", -2, 2)
-        bg:SetPoint("BOTTOMRIGHT", slot.enchantText, "BOTTOMRIGHT", 2, -2)
-        bg:Hide()
-        if tbl.id >= 11 and tbl.id <= 13 then
-            bg:SetRotation(1.5708)
-        elseif tbl.id >= 14 then
-            bg:SetRotation(4.7124)
-        end
-        slot.enchantTextBg = bg
+            local bg = slot:CreateTexture(nil, "BACKGROUND")
+            bg:SetAlpha(0.6)
+            bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover")
+            bg:SetPoint("TOPLEFT", slot.enchantText, "TOPLEFT", -2, 2)
+            bg:SetPoint("BOTTOMRIGHT", slot.enchantText, "BOTTOMRIGHT", 2, -2)
+            bg:Hide()
+            if tbl.id >= 12 and tbl.id <= 14 then
+                bg:SetRotation(1.5708)
+            elseif tbl.id >= 15 then
+                bg:SetRotation(4.7124)
+            end
+            slot.enchantTextBg = bg
 
-        if tbl.id >= 11 then
-            local enchantHoverFrame = CreateFrame("Button", nil, slot)
-            enchantHoverFrame:SetAllPoints(slot.enchantText)
-            enchantHoverFrame:SetFrameLevel(slot:GetFrameLevel() + 1)
-            enchantHoverFrame:SetScript("OnEnter", function(self)
-                if not slot.tooltipText then return end
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:ClearLines()
+            if tbl.id >= 12 then
+                local enchantHoverFrame = CreateFrame("Button", nil, slot)
+                enchantHoverFrame:SetAllPoints(slot.enchantText)
+                enchantHoverFrame:SetFrameLevel(slot:GetFrameLevel() + 1)
+                enchantHoverFrame:SetScript("OnEnter", function(self)
+                    if not slot.tooltipText then return end
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:ClearLines()
 
-                if slot.enchantColors then
-                    GameTooltip:AddLine(slot.tooltipText, unpack(slot.enchantColors))
-                else
-                    GameTooltip:AddLine(slot.tooltipText)
-                end
-                GameTooltip:Show()
-            end)
-            enchantHoverFrame:SetScript("OnLeave", GameTooltip_Hide)
-        end
+                    if slot.enchantColors then
+                        GameTooltip:AddLine(slot.tooltipText, unpack(slot.enchantColors))
+                    else
+                        GameTooltip:AddLine(slot.tooltipText)
+                    end
+                    GameTooltip:Show()
+                end)
+                enchantHoverFrame:SetScript("OnLeave", GameTooltip_Hide)
+            end
 
-        slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+            slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
 
-        for u = 1, 10 do
-            local offset = -((u - 1) * 13)
-            local offsetY = -2
-            local newX = u == 1 and 2 or -offset
-            local newY = u == 4 and offsetY + 13 or u == 4 and offsetY + 26 or u == 7 and offsetY + 39 or offsetY
-            slot["textureSlot" .. u], slot["textureSlotBackdrop" .. u] = CreateInspectTexture(slot, newX, newY)
+            for u = 1, 10 do
+                local offset = -((u - 1) * 13)
+                local offsetY = -2
+                local newX = u == 1 and 2 or -offset
+                local newY = u == 4 and offsetY + 13 or u == 4 and offsetY + 26 or u == 7 and offsetY + 39 or offsetY
+                slot["textureSlot" .. u], slot["textureSlotBackdrop" .. u] = CreateInspectTexture(slot, newX, newY)
+            end
         end
     end
 end
@@ -138,7 +138,7 @@ local function UpdatePageStrings(inspectItem, slotInfo)
     end
 
     inspectItem.itemlevel:SetText(slotInfo.iLvl or "")
-    if slotInfo.itemLevelColors then
+    if slotInfo.itemLevelColors and slotInfo.itemLevelColors[1] and slotInfo.itemLevelColors[2] and slotInfo.itemLevelColors[3]  then
         inspectItem.itemlevel:SetTextColor(unpack(slotInfo.itemLevelColors))
     end
 

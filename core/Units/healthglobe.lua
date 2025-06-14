@@ -288,7 +288,7 @@ local function LoadHealthGlobe()
     rep:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     -- grab the TotemFramebuttons to our own Totem Frame
-    if GW.Retail then
+    if not GW.Classic then
         GW.CreateTotemBar()
     end
 

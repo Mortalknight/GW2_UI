@@ -13,4 +13,10 @@
     <Script file="auctionator.lua"/>
     <Script file="tsm.lua"/>
     <Script file="gossip.lua"/>
+    <Script file="lfg_popup_frames.lua"/>
+    <Script file="mail.lua"/>
+    <Script file="merchant.lua"/>
+    <Script file="socket.lua"/>
+
+    <Script file="addons\postal.lua"/>
 </Ui>

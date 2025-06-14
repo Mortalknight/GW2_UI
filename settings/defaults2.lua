@@ -174,6 +174,7 @@ GW.globalDefault = {
         BAG_VENDOR_GRAYS= false,
         BAG_SHOW_ILVL= false,
         BAG_SEPARATE_BAGS= false,
+        BAG_SHOW_EQUIPMENT_SET_NAME = false,
         BAG_HEADER_NAME0= "",
         BAG_HEADER_NAME1= "",
         BAG_HEADER_NAME2= "",
@@ -236,6 +237,15 @@ GW.globalDefault = {
             hasMoved= false,
         },
         LOOTFRAME_POS_scale= 1,
+
+        VEHICLE_SEAT_POS= {
+            point= "LEFT",
+            relativePoint= "LEFT",
+            xOfs= 20,
+            yOfs= -45,
+            hasMoved= false,
+        },
+        VEHICLE_SEAT_POS_scale= 1,
 
         WORLDMAP_POSITION= {
             point= "CENTER",

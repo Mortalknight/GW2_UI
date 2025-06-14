@@ -8,7 +8,6 @@
     <Script file ="stats.lua"/>
     <Script file ="advanced_stats.lua"/>
     <Script file ="character.lua"/>
-    <Script file ="reputation_table.lua"/>
     <Script file ="reputation.lua"/>
     <Script file ="skills.lua"/>
     <Script file ="sodEngravingFrame.lua"/>

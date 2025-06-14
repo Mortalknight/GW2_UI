@@ -1,0 +1,4 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="objectives.lua"/>
+    <Script file ="extraAB_bossAB.lua"/>
+</Ui>

@@ -2,7 +2,7 @@ local _, GW = ...
 local L = GW.L
 
 local GetSpecialization = GW.Retail and GetSpecialization or GetActiveTalentGroup
-local GetSpecializationInfo = GW.Classic and GW.Libs.LCS.GetSpecializationInfo or GetSpecializationInfo
+local GetSpecializationInfo = not GW.Retail and GW.Libs.LCS.GetSpecializationInfo or GetSpecializationInfo
 
 local function UpdateMatchingLayout(self, new_point)
     local selectedLayoutName = GW.private.Layouts.currentSelected

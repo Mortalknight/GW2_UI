@@ -133,6 +133,9 @@ do
     if GW.Classic then
         AddLib("LibDetours", "LibDetours-1.0", true)
         AddLib("CI", "LibClassicInspector", true)
+    end
+
+    if GW.Classic or GW.Cata then
         AddLib("LCS", "LibClassicSpecs-GW2", true)
     end
 end

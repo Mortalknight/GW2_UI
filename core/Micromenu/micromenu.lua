@@ -21,7 +21,9 @@ local MICRO_BUTTONS = {
     "HelpMicroButton",
     "StoreMicroButton",
     "ProfessionMicroButton",
-    "WorldMapMicroButton" --none Retail
+    "WorldMapMicroButton", --none Retail
+    "PVPMicroButton", --none Retail
+    "LFGMicroButton" --none Retail
     }
 
 do
@@ -618,7 +620,14 @@ local function setupMicroButtons(mbf)
                 ]=]
             )
 
-            disableMicroButton(TalentMicroButton, true)
+            if GW.Classic then
+                disableMicroButton(TalentMicroButton, true)
+            elseif GW.Cata then
+                TalentMicroButton:ClearAllPoints()
+                TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 8, 0) -- 8 because blizzard is setting is Achievement Button position back to 0, so we add the space here
+                TalentMicroButton:SetAlpha(0)
+                TalentMicroButton:EnableMouse(false)
+            end
         else
             -- TalentMicroButton
             tref = TalentMicroButton
@@ -657,7 +666,7 @@ local function setupMicroButtons(mbf)
     gref:HookScript("OnEvent", updateGuildButton)
     gref:HookScript("OnEnter", GW.Guild_OnEnter)
     gref:SetScript("OnClick", GW.Guild_OnClick)
-    if GW.Retail then
+    if not GW.Classic then
         hooksecurefunc(gref, "UpdateTabard", function()
             gref:GetDisabledTexture():SetAlpha(1)
             gref:GetNormalTexture():SetAlpha(1)
@@ -671,10 +680,6 @@ local function setupMicroButtons(mbf)
         end)
     end
     updateGuildButton(gref, "GUILD_ROSTER_UPDATE")
-
-    if GW.Classic then
-        disableMicroButton(FriendsMicroButton, true)
-    end
 
     local pref
     if GW.Retail then
@@ -732,6 +737,26 @@ local function setupMicroButtons(mbf)
             pref:ClearAllPoints()
             pref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
         end
+    elseif GW.Cata then
+        -- CollectionsMicroButton
+        CollectionsMicroButton:ClearAllPoints()
+        CollectionsMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
+
+        -- PVPMicroButton
+        PVPMicroButton:ClearAllPoints()
+        PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+        PVPMicroButtonTexture:SetAlpha(0)
+
+
+        -- LFGMicroButton
+        LFGMicroButton:ClearAllPoints()
+        LFGMicroButton:SetPoint("BOTTOMLEFT", PVPMicroButton, "BOTTOMRIGHT", 4, 0)
+
+        -- EJMicroButton
+        EJMicroButton:ClearAllPoints()
+        EJMicroButton:SetPoint("BOTTOMLEFT", LFGMicroButton, "BOTTOMRIGHT", 4, 0)
+
+        pref = EJMicroButton
     else
          -- WorldMapMicroButton
         WorldMapMicroButton:ClearAllPoints()
@@ -746,8 +771,9 @@ local function setupMicroButtons(mbf)
         MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
         MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
     else
-        MainMenuBarPerformanceBar:Hide()
-        MainMenuBarDownload:Hide()
+        MainMenuBarPerformanceBar:SetAlpha(0)
+        MainMenuBarPerformanceBar:SetScale(0.00001)
+        if MainMenuBarDownload then MainMenuBarDownload:Hide() end
     end
     MainMenuMicroButton.updateInterval = 0
     MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)

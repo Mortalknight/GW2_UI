@@ -156,14 +156,18 @@ function GwPlayerPetFrameMixin:Update(event, unit)
             end
         else
             if PetActionButton_StopFlash then
-                    PetActionButton_StopFlash(button)
-                else
-                    button:StopFlash()
-                end
+                PetActionButton_StopFlash(button)
+            else
+                button:StopFlash()
+            end
         end
 
         if not PetHasActionBar() and texture and name ~= "PET_ACTION_FOLLOW" then
-            button:StopFlash()
+            if PetActionButton_StopFlash then
+                PetActionButton_StopFlash(button)
+            else
+                button:StopFlash()
+            end
             button.icon:SetDesaturation(1)
             button:SetChecked(false)
         end

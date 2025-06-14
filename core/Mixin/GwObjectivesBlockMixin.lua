@@ -241,12 +241,17 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
     return precentageComplete
 end
 
-function GwObjectivesBlockTemplateMixin:IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)
+function GwObjectivesBlockTemplateMixin:IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType, isComplete, isAutoComplete)
     for i = 1, GetNumAutoQuestPopUps() do
         local questID, popUpType = GetAutoQuestPopUp(i)
         if blockQuestID and questID and popUpType and popUpType == checkType and blockQuestID == questID then
             return true
         end
+    end
+
+    --fallback for cata
+    if GW.Cata and checkType == "COMPLETE" and isComplete and isAutoComplete then
+        return true
     end
 
     return false
@@ -256,13 +261,23 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
     local btn = self.actionButton
     self.hasItem = false
 
-    if GW.Retail then
+    if not GW.Classic then
         if self.questLogIndex then
-            local link, item, _, showWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
-            local isComplete = self.questID and QuestCache:Get(self.questID):IsComplete() or false
+            local link, item, charges, showWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
+
+            local isComplete = GW.Retail and (self.questID and QuestCache:Get(self.questID):IsComplete()) or GW.Cata and (self.isComplete) or false
             if item and (not isComplete or showWhenComplete) then
                 self.hasItem = true
-                btn:SetUp(self.questLogIndex)
+                if GW.Retail then
+                    btn:SetUp(self.questLogIndex)
+                else
+                    btn:SetID(self.questLogIndex)
+                    btn.charges = charges
+                    btn.rangeTimer = -1
+                    SetItemButtonTexture(btn, item)
+                    SetItemButtonCount(btn, charges)
+                    WatchFrameItem_UpdateCooldown(btn)
+                end
                 btn:SetAttribute("type", "item")
                 btn:SetAttribute("item", link)
                 btn:SetScript("OnUpdate", btn.OnUpdate)
@@ -272,7 +287,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
         end
         btn:Hide()
         btn:SetScript("OnUpdate", nil)
-    else
+    elseif GW.Classic then
         if self.sourceItemId and not self.isComplete and btn:SetItem(self) then
             btn:SetScript("OnUpdate", btn.OnUpdate)
             btn:Show()

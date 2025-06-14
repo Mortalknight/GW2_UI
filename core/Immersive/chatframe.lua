@@ -282,7 +282,7 @@ local function setButtonPosition(frame)
     if frame.buttonSide == "right" then
         frame.Container:ClearAllPoints()
         frame.Container:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 5)
-        local anchorFrame = GW.Classic and _G[name .. "EditBoxRight"] or _G[name .. "EditBoxFocusRight"]
+        local anchorFrame = not GW.Retail and _G[name .. "EditBoxRight"] or _G[name .. "EditBoxFocusRight"]
         if not frame.isDocked then
             frame.Container:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMRIGHT", 5, editbox:GetHeight() - 0)
         else
@@ -305,7 +305,7 @@ local function setButtonPosition(frame)
     else
         frame.Container:ClearAllPoints()
         frame.Container:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
-        local anchorFrame = GW.Classic and _G[name .. "EditBoxRight"] or _G[name .. "EditBoxFocusRight"]
+        local anchorFrame = not GW.Retail and _G[name .. "EditBoxRight"] or _G[name .. "EditBoxFocusRight"]
         if not frame.isDocked then
             frame.Container:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
         else
@@ -1754,7 +1754,7 @@ local function styleChatWindow(frame)
         fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
         fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
 
-        local anchorFrame = GW.Classic and _G[name .. "EditBoxRight"] or _G[name .. "EditBoxFocusRight"]
+        local anchorFrame = not GW.Retail and _G[name .. "EditBoxRight"] or _G[name .. "EditBoxFocusRight"]
         if not frame.isDocked then
             fmGCC:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
         else
@@ -1827,7 +1827,7 @@ local function styleChatWindow(frame)
         GW.HandleScrollControls(frame)
     end
 
-    if GW.Classic then
+    if not GW.Retail then
         _G[name .. "ButtonFrameBottomButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_down")
         _G[name .. "ButtonFrameBottomButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_up")
         _G[name .. "ButtonFrameBottomButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_down")
@@ -2448,6 +2448,23 @@ local function LoadChat()
 
         QuickJoinToastButton.ClearAllPoints = GW.NoOp
         QuickJoinToastButton.SetPoint = GW.NoOp
+    end
+
+    if not GW.Retail then
+        FriendsMicroButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
+        FriendsMicroButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton")
+        FriendsMicroButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
+        FriendsMicroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
+        FriendsMicroButton:SetSize(25, 25)
+        FriendsMicroButton:ClearAllPoints()
+        FriendsMicroButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
+        FriendsMicroButton.ClearAllPoints = GW.NoOp
+        FriendsMicroButton.SetPoint = GW.NoOp
+        local _, _, fontFlags = FriendsMicroButtonCount:GetFont()
+        FriendsMicroButtonCount:SetFont(_, 14, fontFlags)
+        FriendsMicroButtonCount:SetTextColor(1, 1, 1)
+        FriendsMicroButtonCount:SetShadowOffset(1, 1)
+        FriendsMicroButtonCount:SetPoint("TOP", FriendsMicroButton, "BOTTOM", 1, 1)
     end
 
     for _, frameName in ipairs(CHAT_FRAMES) do

@@ -16,4 +16,7 @@
     <Script file ="QuestViewData.lua"/>
     <Script file ="QuestView.lua"/>
     <Include file ="QuestView.xml"/>
+    <Include file ="toast.xml"/>
+    <Script file ="alertPosition.lua"/>
+    <Script file ="alerts.lua"/>
 </Ui>

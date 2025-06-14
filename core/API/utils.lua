@@ -665,7 +665,7 @@ local function normPetAndOverride(f, stateType)
         OverrideActionBar:HookScript("OnShow", f_OnShow)
         OverrideActionBar:HookScript("OnHide", f_OnHide)
     end
-    if stateType ~= "override" then
+    if stateType ~= "override" and PetBattleFrame then
         PetBattleFrame:HookScript("OnShow", f_OnShow)
         PetBattleFrame:HookScript("OnHide", f_OnHide)
     end

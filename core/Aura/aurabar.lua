@@ -596,10 +596,14 @@ end
 local function LoadPlayerAuras(lm)
     -- hide default buffs
     BuffFrame:GwKill()
-    if GW.Retail then
+    if DebuffFrame then
         DebuffFrame:GwKill()
-    elseif GW.Classic then
+    end
+    if TemporaryEnchantFrame then
         TemporaryEnchantFrame:GwKill()
+    end
+    if ConsolidatedBuffs then
+        ConsolidatedBuffs:GwKill()
     end
 
     loadAuras(lm)

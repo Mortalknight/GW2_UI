@@ -1,5 +1,6 @@
+8.0.0
 NEW
-    - Merged Retail and Era version
+    - Merged Retail, Era and Cata version
 
 7.15.0
 NEW

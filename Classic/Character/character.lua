@@ -201,7 +201,7 @@ local function PaperDollGetStatListFrame(self, i, isPet, stat)
     if frame then
         return frame
     end
-    frame = CreateFrame("Frame", "GwPaperDollStat" .. i, self, "GwPaperDollStat")
+    frame = CreateFrame("Frame", isPet and ("GwPaperDollPetStat" or "GwPaperDollStat") .. i, self, "GwPaperDollStat")
 
     if stat == "DURABILITY" then
         frame:SetScript("OnEnter", GW.DurabilityTooltip)
@@ -398,7 +398,7 @@ GW.PaperDollUpdatePetStats = PaperDollUpdatePetStats
 local function PaperDollSetStatIcon(self, stat)
     local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon-classic"
 
-    if STATS_ICONS[stat] ~= nil then
+    if STATS_ICONS[stat] then
         self.icon:SetTexCoord(GW.getSprite(statsIconsSprite,STATS_ICONS[stat].x,STATS_ICONS[stat].y))
     end
 

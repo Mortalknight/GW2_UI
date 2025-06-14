@@ -1,10 +1,27 @@
 local _, GW = ...
 local RoundDec = GW.RoundDec
 
+local GetSpellDescription = C_Spell.GetSpellDescription or GetSpellDescription
+local ESSENCE_DESCRIPTION = GetSpellDescription(277253)
+
+local essenceTextureID = 2975691
 local MATCH_ITEM_LEVEL = ITEM_LEVEL:gsub("%%d", "(%%d+)")
 local MATCH_ITEM_LEVEL_ALT = ITEM_LEVEL_ALT:gsub("%%d(%s?)%(%%d%)", "%%d+%1%%((%%d+)%%)")
 local MATCH_ENCHANT = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "(.+)")
 local MATCH_SET_ITEM = ITEM_SET_BONUS:gsub("%%s", "(.+)")
+local AZERITE_RESPEC_BUTTON = { -- use this to find Reforge (taken from retail)
+    enUS = "Reforge",
+    frFR = "Retouche",
+    deDE = "Umschmieden",
+    koKR = "재연마",
+    ruRU = "Перековать",
+    zhCN = "重铸",
+    zhTW = "重鑄",
+    esES = "Reforjar",
+    esMX = "Reforjar",
+    ptBR = "Reforjar",
+    itIT = "Riforgia"
+}
 local X2_INVTYPES, X2_EXCEPTIONS, ARMOR_SLOTS = {
     INVTYPE_2HWEAPON = true,
     INVTYPE_RANGEDRIGHT = true,
@@ -31,8 +48,29 @@ local function PopulateUnitIlvlsCache(unitGUID, itemLevel, tooltip)
 end
 GW.PopulateUnitIlvlsCache = PopulateUnitIlvlsCache
 
-local function InspectGearSlot(data, line, lineText, slotInfo)
-    local enchant = strmatch(lineText, MATCH_ENCHANT)
+local function InspectGearSlot(line, lineText, slotInfo)
+    if not lineText then return end
+
+    local itemLevel = lineText and (strmatch(lineText, MATCH_ITEM_LEVEL_ALT) or strmatch(lineText, MATCH_ITEM_LEVEL))
+    if itemLevel then
+        slotInfo.iLvl = tonumber(itemLevel)
+
+        local r1, g1, b1 = GW2_UIScanTooltipTextLeft1:GetTextColor()
+        slotInfo.itemLevelColors[1] = r1
+        slotInfo.itemLevelColors[2] = g1
+        slotInfo.itemLevelColors[3] = b1
+    end
+
+    local isSetItem = lineText and strmatch(lineText, MATCH_SET_ITEM)
+    if isSetItem then
+        slotInfo.isSetItem = true
+    end
+
+    local r, g, b = line:GetTextColor()
+    local allow = not GW.Cata or ((r == 0 and g == 1 and b == 0) and not strfind(lineText, ITEM_SPELL_TRIGGER_ONEQUIP, nil, true) and not strfind(lineText, AZERITE_RESPEC_BUTTON[GW.mylocal or "enUS"], nil, true) and not strfind(lineText, "%(%d+ min%)"))
+    if not allow then return end
+
+    local enchant = (not GW.Cata and strmatch(lineText, MATCH_ENCHANT)) or (GW.Cata and strfind(lineText, "^%+") and not strfind(lineText, BONUS_ARMOR, nil, true) and not strfind(lineText, STAT_MASTERY, nil, true) and lineText)
     if enchant then
         local color1, color2 = strmatch(enchant, "(|cn.-:).-(|r)")
         local enchantQuality = enchant:match("(%s?|A.-|a)")
@@ -43,157 +81,180 @@ local function InspectGearSlot(data, line, lineText, slotInfo)
         slotInfo.enchantTextReal = enchant
         slotInfo.enchantQuality = enchantQuality
 
-        if line.leftColor then
-            slotInfo.enchantColors[1] = line.leftColor.r
-            slotInfo.enchantColors[2] = line.leftColor.g
-            slotInfo.enchantColors[3] = line.leftColor.b
-        end
-    end
-
-    local itemLevel = lineText and (strmatch(lineText, MATCH_ITEM_LEVEL_ALT) or strmatch(lineText, MATCH_ITEM_LEVEL))
-    if not GW.Classic and itemLevel then
-        slotInfo.iLvl = tonumber(itemLevel)
-
-        if data.lines[1].leftColor then
-            slotInfo.itemLevelColors[1] = data.lines[1].leftColor.r
-            slotInfo.itemLevelColors[2] = data.lines[1].leftColor.g
-            slotInfo.itemLevelColors[3] = data.lines[1].leftColor.b
-        end
-    end
-
-    local isSetItem = lineText and strmatch(lineText, MATCH_SET_ITEM)
-    if isSetItem then
-        slotInfo.isSetItem = true
+        slotInfo.enchantColors[1] = r
+        slotInfo.enchantColors[2] = g
+        slotInfo.enchantColors[3] = b
     end
 end
 
-local function ScanTooltipTextures(data, slotInfo)
-    if not slotInfo.gems then
-        slotInfo.gems = {}
+local function ScanTooltipTextures()
+    local tt = GW.ScanTooltip
+
+    if not tt.gems then
+        tt.gems = {}
     else
-        wipe(slotInfo.gems)
+        wipe(tt.gems)
     end
 
-    local idx = 1
-    for i = 1, #data.lines do
-        local texture = nil
-        if data.lines[i].gemIcon then
-            texture = data.lines[i].gemIcon
+    if not tt.essences then
+        tt.essences = {}
+    else
+        for _, essences in pairs(tt.essences) do
+            wipe(essences)
         end
+    end
 
+    local step = 1
+    for i = 1, 10 do
+        local tex = _G["GW2_UIScanTooltipTexture"..i]
+        local texture = tex and tex:IsShown() and tex:GetTexture()
         if texture then
-            slotInfo.gems[idx] = texture
-            idx = idx + 1
+            if texture == essenceTextureID then
+                local selected = (tt.gems[i-1] ~= essenceTextureID and tt.gems[i-1]) or nil
+                if not tt.essences[step] then tt.essences[step] = {} end
+
+                tt.essences[step][1] = selected			--essence texture if selected or nil
+                tt.essences[step][2] = tex:GetAtlas()	--atlas place "tooltip-heartofazerothessence-major" or "tooltip-heartofazerothessence-minor"
+                tt.essences[step][3] = texture			--border texture placed by the atlas
+
+                step = step + 1
+
+                if selected then
+                    tt.gems[i-1] = nil
+                end
+            else
+                tt.gems[i] = texture
+            end
+        end
+    end
+
+    return tt.gems, tt.essences
+end
+
+local function CollectEssenceInfo(index, lineText, slotInfo)
+    local step = 1
+    local essence = slotInfo.essences[step]
+    if essence and next(essence) and (ESSENCE_DESCRIPTION and strfind(lineText, ESSENCE_DESCRIPTION, nil, true) and strfind(lineText, ITEM_SPELL_TRIGGER_ONEQUIP, nil, true)) then
+        for i = 5, 2, -1 do
+            local line = _G["GW2_UIScanTooltipTextLeft"..index - i]
+            local text = line and line:GetText()
+
+            if text and (not strmatch(text, "^[ +]")) and essence and next(essence) then
+                local r, g, b = line:GetTextColor()
+
+                essence[4] = GW.RGBToHex(r, g, b)
+                essence[5] = text
+
+                step = step + 1
+                essence = slotInfo.essences[step]
+            end
         end
     end
 end
 
 do
-    local slotInfo = {}
-    local data = nil
     local function GetGearSlotInfo(unit, slot, itemlink, deepScan)
-        data = nil
-        if GW.Retail then
-            if itemlink and string.find(itemlink, "item") then
-                data = C_TooltipInfo.GetHyperlink(itemlink)
-            elseif slot then
-                data = C_TooltipInfo.GetInventoryItem(unit, slot)
-            end
-        else
-            local hasItem
-            GW.ScanTooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-            if itemlink and string.find(itemlink, "item") then
-                hasItem = GW.ScanTooltip:SetHyperlink(itemlink)
-            elseif slot then
-                hasItem = GW.ScanTooltip:SetInventoryItem(unit, slot)
-            end
-
-            data = hasItem and GW.ScanTooltip:GetTooltipData()
+        local tt = GW.ScanTooltip
+        local hasItem
+        tt:SetOwner(UIParent, "ANCHOR_NONE")
+        if itemlink and string.find(itemlink, "item") then
+            hasItem = tt:SetHyperlink(itemlink)
+        elseif slot then
+            hasItem = tt:SetInventoryItem(unit, slot)
         end
-        if not data then return {} end
-        wipe(slotInfo)
+        tt:Show()
+
+        local info = hasItem and tt:GetTooltipData()
+
+        if not tt.slotInfo then tt.slotInfo = {} else wipe(tt.slotInfo) end
+        local slotInfo = tt.slotInfo
 
         if deepScan then
-            ScanTooltipTextures(data, slotInfo)
+            slotInfo.gems, slotInfo.essences = ScanTooltipTextures()
 
-            if not slotInfo.enchantColors then slotInfo.enchantColors = {} else wipe(slotInfo.enchantColors) end
-            if not slotInfo.itemLevelColors then slotInfo.itemLevelColors = {} else wipe(slotInfo.itemLevelColors) end
+            if not tt.enchantColors then tt.enchantColors = {} else wipe(tt.enchantColors) end
+            if not tt.itemLevelColors then tt.itemLevelColors = {} else wipe(tt.itemLevelColors) end
+            slotInfo.enchantColors = tt.enchantColors
+            slotInfo.itemLevelColors = tt.itemLevelColors
 
-            for x = 1, #data.lines do
-                local line = data.lines[x]
-                if line then
-                    local lineText = line.leftText
-                    if lineText and x == 1 and lineText == RETRIEVING_ITEM_INFO then
+
+            if info then
+                for i, line in next, info.lines do
+                    local text = line and line.leftText
+                    if i == 1 and text == RETRIEVING_ITEM_INFO then
                         return "tooSoon"
                     else
-                        InspectGearSlot(data, line, lineText, slotInfo)
+                        InspectGearSlot(_G["GW2_UIScanTooltipTextLeft"..i], text, slotInfo)
+                        CollectEssenceInfo(i, text, slotInfo)
                     end
                 end
             end
-        else
-            if data.lines[1] and data.lines[1].leftText
-            and data.lines[1].leftText == RETRIEVING_ITEM_INFO then
+        elseif info then
+            local firstLine = info.lines[1]
+            local firstText = firstLine and firstLine.leftText
+            if firstText == RETRIEVING_ITEM_INFO then
                 return "tooSoon"
             end
 
-            local colorblind = GetCVarBool("colorblindmode") and 4 or 3
-            for x = 2, colorblind do
-                if data.lines[x] then
-                    local line = data.lines[x].leftText
-                    if line then
-                        local itemLevel = line and (strmatch(line, MATCH_ITEM_LEVEL_ALT) or strmatch(line, MATCH_ITEM_LEVEL))
-                        if itemLevel then
-                            slotInfo.iLvl = tonumber(itemLevel)
-                        end
+            local colorblind = GetCVarBool("colorblindmode")
+            local numLines = GW.Cata and (colorblind and 21 or 20) or (colorblind and 4 or 3)
+            for x = 2, numLines do
+                local line = info.lines[x]
+                if line then
+                    local text = line.leftText
+                    local itemLevel = (text and text ~= "") and (strmatch(text, MATCH_ITEM_LEVEL_ALT) or strmatch(text, MATCH_ITEM_LEVEL))
+                    if itemLevel then
+                        slotInfo.iLvl = tonumber(itemLevel)
                     end
                 end
             end
+
         end
-        if next(data) then wipe(data) end
+        tt:Hide()
         return slotInfo
     end
     GW.GetGearSlotInfo = GetGearSlotInfo
 end
 
 local function CalculateAverageItemLevel(iLevelDB, unit)
-    local spec = GetInspectSpecialization(unit)
-    local isOK, total, link = true, 0, nil
+    local spec = GW.Retail and GetInspectSpecialization(unit)
+    local total = 0
 
-    if not spec or spec == 0 then
-        isOK = false
-    end
+    if GW.Retail and (not spec or spec == 0) then
+		return
+	end
 
     -- Armor
     for _, id in next, ARMOR_SLOTS do
-        link = GetInventoryItemLink(unit, id)
+        local link = GetInventoryItemLink(unit, id)
         if link then
             local cur = iLevelDB[id]
             if cur and cur > 0 then
                 total = total + cur
             end
         elseif GetInventoryItemTexture(unit, id) then
-            isOK = false
+            return
         end
     end
 
     -- Main hand
     local mainItemLevel, mainQuality, mainEquipLoc, mainItemClass, mainItemSubClass = 0, nil, nil, nil, nil
-    link = GetInventoryItemLink(unit, 16)
-    if link then
+    local mainLink = GetInventoryItemLink(unit, 16)
+    if mainLink then
         mainItemLevel = iLevelDB[16]
-        _, _, mainQuality, _, _, _, _, _, mainEquipLoc, _, _, mainItemClass, mainItemSubClass = C_Item.GetItemInfo(link)
+        _, _, mainQuality, _, _, _, _, _, mainEquipLoc, _, _, mainItemClass, mainItemSubClass = C_Item.GetItemInfo(mainLink)
     elseif GetInventoryItemTexture(unit, 16) then
-        isOK = false
+        return
     end
 
     -- Off hand
     local offItemLevel, offEquipLoc = 0, nil
-    link = GetInventoryItemLink(unit, 17)
-    if link then
+    local offLink = GetInventoryItemLink(unit, 17)
+    if offLink then
         offItemLevel = iLevelDB[17]
-        _, _, _, _, _, _, _, _, offEquipLoc = C_Item.GetItemInfo(link)
+        _, _, _, _, _, _, _, _, offEquipLoc = C_Item.GetItemInfo(offLink)
     elseif GetInventoryItemTexture(unit, 17) then
-        isOK = false
+        return
     end
 
     if mainItemLevel and offItemLevel then
@@ -208,10 +269,11 @@ local function CalculateAverageItemLevel(iLevelDB, unit)
     -- at the beginning of an arena match no info might be available,
     -- so despite having equipped gear a person may appear naked
     if total == 0 then
-        isOK = false
+        return
     end
 
-    return isOK and format("%0.2f", RoundDec(total / 16, 2))
+    local numItems = GW.Cata and 17 or 16
+	return format("%0.2f", RoundDec(total / numItems, 2))
 end
 GW.CalculateAverageItemLevel = CalculateAverageItemLevel
 
@@ -233,7 +295,7 @@ do
     local function GetUnitItemLevel(unit)
         if UnitIsUnit(unit, "player") then
             local _, equipped = GW.GetPlayerItemLevel()
-			return equipped
+            return equipped
         end
 
         if next(iLevelDB) then wipe(iLevelDB) end

@@ -173,57 +173,17 @@ GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
 
 --classic
 registerActionHudAura(
-    31842,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy",
-    "player"
-)
-registerActionHudAura(
-    31884,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy",
-    "player"
-)
-registerActionHudAura(
     5487,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_bear",
     "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_bear",
     "player"
 )
+
+--cata
 registerActionHudAura(
     768,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_cat",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_cat",
-    "player"
-)
-registerActionHudAura(
-    51271,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_frost",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost",
-    "player"
-)
-registerActionHudAura(
-    187827,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_metamorph",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_metamorph",
-    "player"
-)
-registerActionHudAura(
-    215785,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_fire",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire",
-    "player"
-)
-registerActionHudAura(
-    77762,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_fire",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire",
-    "player"
-)
-registerActionHudAura(
-    201846,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_storm",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_storm",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_cat",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_cat",
     "player"
 )
 

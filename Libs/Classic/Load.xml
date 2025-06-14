@@ -19,5 +19,5 @@
     <Script file="..\Core\LibGW2\LibGW2.lua"/>
     <Script file="LibDetours-1.0\LibDetours-1.0.lua"/>
     <Script file="LibClassicInspector\LibClassicInspector.lua"/>
-    <Script file="LibClassicSpecs\LibClassicSpecs.lua"/>
+    <Script file="..\Core\LibClassicSpecs\LibClassicSpecs.lua"/>
 </Ui>

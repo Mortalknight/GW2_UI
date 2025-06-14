@@ -1,0 +1,23 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file ="character.xml"/>
+    <Include file ="currency.xml"/>
+    <Include file ="glyphs.xml"/>
+    <Include file ="professions.xml"/>
+    <Include file ="reputation.xml"/>
+    <Include file ="spellbook.xml"/>
+    <Include file ="talents.xml"/>
+    <Include file ="title.xml"/>
+    <Script file ="advanced_stats.lua"/>
+    <Script file ="character.lua"/>
+    <Script file ="currency.lua"/>
+    <Script file ="glyphs.lua"/>
+    <Script file ="paperdoll_equipment.lua"/>
+    <Script file ="paperdoll_equipset.lua"/>
+    <Script file ="professions.lua"/>
+    <Script file ="reputation.lua"/>
+    <Script file ="spellbook.lua"/>
+    <Script file ="stats.lua"/>
+    <Script file ="talents.lua"/>
+    <Script file ="titles.lua"/>
+    <Script file ="windowManager.lua"/>
+</Ui>

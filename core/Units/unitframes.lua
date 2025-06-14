@@ -231,7 +231,7 @@ function GwUnitFrameMixin:UpdateHealthbarColor()
 end
 
 function GwUnitFrameMixin:SetUnitPortraitFrame()
-    if not self.portrait or not self.background or not GW.Retail then return end
+    if not self.portrait or not self.background or GW.Classic then return end
 
     local unit = self.unit
     local border = "normal"

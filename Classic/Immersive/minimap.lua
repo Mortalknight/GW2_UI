@@ -1,6 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local RoundDec = GW.RoundDec
+local trackingTypes = GW.trackingTypes
 
 local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailFrame
@@ -17,23 +17,6 @@ local minimapDetails = {
     ["CLOCK"] = "GwMapTime",
     ["COORDS"] = "GwMapCoords"
 }
-
-local trackingTypes = {}
-trackingTypes[136025] = {l = 0.125, r = 0.250, t = 0, b = 0.5} --mining
-trackingTypes[133939] = {l = 0, r = 0.125, t = 0, b = 0.5} --herbalism
-trackingTypes[135974] = {l = 0.750, r = 0.875, t = 0, b = 0.5} --undead
-trackingTypes[136142] = {l = 0.750, r = 0.875, t = 0, b = 0.5} --undead
-trackingTypes["1323283"] = {l = 0.875, r = 1, t = 0, b = 0.5} --beast for hunter
-trackingTypes["13232811"] = {l = 0, r = 0.125, t = 0.5, b = 1} --human for druid
-trackingTypes[135942] = {l = 0, r = 0.125, t = 0.5, b = 1} --human
-trackingTypes[136172] = {l = 0.250, r = 0.375, t = 0.5, b = 1} --demon
-trackingTypes[136217] = {l = 0.250, r = 0.375, t = 0.5, b = 1} --demon
-trackingTypes[135725] = {l = 0.375, r = 0.5, t = 0.5, b = 1} --treasure
-trackingTypes[133888] = {l = 0.125, r = 0.250, t = 0.5, b = 1} --fish
-trackingTypes[134153] = {l = 0.5, r = 0.625, t = 0, b = 0.5} --Dragonkin
-trackingTypes[135861] = {l = 0.250, r = 0.375, t = 0, b = 0.5} --Elementals
-trackingTypes[132275] = {l = 0.375, r = 0.5, t = 0, b = 0.5} --Giants
-trackingTypes[132320] = {l = 0.625, r = 0.750, t = 0, b = 0.5} --Hidden
 
 local function SetMinimapHover()
     -- show all and hide not needes

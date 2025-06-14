@@ -19,12 +19,10 @@ GW.GetSpellCooldown = GetSpellCooldownWrapper
 local function CompatibleTooltip(tt)
 	if tt.GetTooltipData then return end
 
-	local info = { name = tt:GetName(), lines = {} }
-	info.leftTextName = info.name .. "TextLeft"
-	info.rightTextName = info.name .. "TextRight"
-
 	tt.GetTooltipData = function()
-		wipe(info.lines)
+		local info = { name = tt:GetName(), lines = {} }
+		info.leftTextName = info.name .. "TextLeft"
+		info.rightTextName = info.name .. "TextRight"
 
 		for i = 1, tt:NumLines() do
 			local left = _G[info.leftTextName..i]

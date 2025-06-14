@@ -3,9 +3,7 @@ local lerp = GW.lerp
 local RoundInt = GW.RoundInt
 local animations = GW.animations
 
-
 local CPWR_FRAME
-local CPF_HOOKED_TO_TARGETFRAME = false
 
 local function UpdateVisibility(self, inCombat)
     if self.onlyShowInCombat then
@@ -383,6 +381,17 @@ local function powerCombo(self, event, ...)
     local pwrMax = UnitPowerMax("player", Enum.PowerType.ComboPoints)
     local pwr = UnitPower("player", Enum.PowerType.ComboPoints)
     local chargedPowerPoints = GetUnitChargedPowerPoints and GetUnitChargedPowerPoints("player") or {}
+    local comboPoints = GetComboPoints(self.unit, "target")
+
+    if self.unit == "vehicle" then
+        if comboPoints == 0 then
+            self.combopoints:Hide()
+            return
+        else
+            self.combopoints:Show()
+        end
+    end
+
     local old_power = self.gwPower
     local showPoint = false
     self.gwPower = pwr
@@ -464,6 +473,90 @@ local function setComboBar(f)
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
 GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
+
+local function powerEclipsOnUpdate(self)
+    local pwrMax = UnitPowerMax(self.unit, Enum.PowerType.Balance)
+    local pwr = UnitPower(self.unit, Enum.PowerType.Balance)
+    if (self.oldEclipsPower ~= nil and self.oldEclipsPower == pwr) then
+        return
+    end
+
+    GW.AddToAnimation(
+        "ECLIPS_BAR",
+        self.oldEclipsPower,
+        pwr,
+        GetTime(),
+        0.2,
+        function(p)
+            local pwrP = p / pwrMax
+            local pwrAbs = math.abs(p) / pwrMax
+            local segmentSize = self.eclips:GetWidth() / 2
+            local arrowPosition = segmentSize * pwrP
+
+            local clampedArrowPosition = math.max(math.min(arrowPosition, segmentSize - 9), -segmentSize + 9)
+            self.eclips.arrow:SetPoint("CENTER", self.background, "CENTER", clampedArrowPosition, 0)
+            self.eclips.fill:ClearAllPoints()
+            if p > 0 then
+                self.eclips.fill:SetPoint("LEFT", self.background, "CENTER", 0, 0)
+                self.eclips.fill:SetPoint("RIGHT", self.background, "CENTER", arrowPosition, 0)
+                self.eclips.fill:SetTexCoord(0, pwrAbs, 0, 1)
+            else
+                self.eclips.fill:SetPoint("LEFT", self.background, "CENTER", arrowPosition, 0)
+                self.eclips.fill:SetPoint("RIGHT", self.background, "CENTER", 0, 0)
+                self.eclips.fill:SetTexCoord(0, pwrAbs, 0, 1)
+            end
+            self.oldEclipsPower = p
+        end
+    )
+end
+
+local function eclipsUnitAura(self)
+    local hasLunarEclipse = C_UnitAuras.GetPlayerAuraBySpellID(ECLIPSE_BAR_LUNAR_BUFF_ID) ~= nil
+    local hasSolarEclipse = C_UnitAuras.GetPlayerAuraBySpellID(ECLIPSE_BAR_SOLAR_BUFF_ID) ~= nil
+    if hasLunarEclipse then
+        self.eclips.lunar:Show()
+        self.eclips.solar:Hide()
+    elseif hasSolarEclipse then
+        self.eclips.lunar:Hide()
+        self.eclips.solar:Show()
+    else
+        self.eclips.lunar:Hide()
+        self.eclips.solar:Hide()
+    end
+end
+
+local function powerEclips(self, event, ...)
+    if event == "ECLIPSE_DIRECTION_CHANGE" then
+        local direction = ...
+        if direction == "sun" then
+            self.eclips.arrow:SetTexCoord(0, 1, 0, 1)
+        elseif direction == "moon" then
+            self.eclips.arrow:SetTexCoord(1, 0, 0, 1)
+        else
+            self.eclips.lunar:Hide()
+            self.eclips.solar:Hide()
+        end
+    elseif event == "UNIT_AURA" then
+        eclipsUnitAura(self)
+    elseif event == "CLASS_POWER_INIT" then
+        eclipsUnitAura(self)
+        powerEclipsOnUpdate(self)
+    end
+end
+
+local function setEclips(f)
+    f.barType = "eclips"
+    f.eclips:Show()
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+
+    f:SetScript("OnUpdate", powerEclipsOnUpdate)
+    f:SetScript("OnEvent", powerEclips)
+    powerEclips(f, "CLASS_POWER_INIT")
+
+    f:RegisterUnitEvent("UNIT_AURA", "player")
+    f:RegisterEvent("ECLIPSE_DIRECTION_CHANGE")
+end
 
 -- EVOKER
 local FillingAnimationTime = 5.0
@@ -750,34 +843,28 @@ GW.AddForProfiling("classpowers", "powerSotR", powerSotR)
 
 local function powerHoly(self, event, ...)
     local pType = select(2, ...)
-    if event ~= "CLASS_POWER_INIT" and pType ~= "HOLY_POWER" and event ~= "UNIT_AURA" then
+    if event ~= "CLASS_POWER_INIT" and pType ~= "HOLY_POWER"  then
         return
     end
-    if event == "UNIT_AURA" then
-        local _, count, duration, expires = findBuff("player", 132403)
-        if duration ~= nil then
-            local remainingPrecantage = (expires - GetTime()) / duration
-            local remainingTime = duration * remainingPrecantage
-            self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
-        end
+
+    local old_power = self.gwPower
+    --empty v:SetTexCoord(0,0.5,0,0.5)
+    --full  v:SetTexCoord(0.5,1,0,0.5)
+    --current  v:SetTexCoord(0,0.5,0.5,1)
+    local pwr = UnitPower("player", 9)
+    local pwrThreshold = (GW.Retail and 3 or 1)
+    if pwr < pwrThreshold then
+        self.background:SetAlpha(0.2)
     else
-        local old_power = self.gwPower
-        --empty v:SetTexCoord(0,0.5,0,0.5)
-        --full  v:SetTexCoord(0.5,1,0,0.5)
-        --current  v:SetTexCoord(0,0.5,0.5,1)
-        local pwrMax = UnitPowerMax("player", 9)
-        local pwr = UnitPower("player", 9)
-        if pwr < 3 then
-            self.background:SetAlpha(0.2)
-        else
-            self.background:SetAlpha(1)
-        end
-        for k, v in pairs(self.paladin.power) do
+        self.background:SetAlpha(1)
+    end
+    for _, v in pairs(self.paladin.power) do
+        if v:IsShown() then
             local id = tonumber(v:GetParentKey())
             if old_power < id and pwr >= id then
                 animFlarePoint(self, v, 1, 0, 0.5)
             end
-            if pwr >= 3 and id < 4 then
+            if pwr >= pwrThreshold and id < (pwrThreshold - 1) then
                 v:SetTexCoord(0, 0.5, 0.5, 1)
             elseif pwr >= id then
                 v:SetTexCoord(0.5, 1, 0, 0.5)
@@ -785,28 +872,12 @@ local function powerHoly(self, event, ...)
                 v:SetTexCoord(0, 0.5, 0, 0.5)
             end
         end
-        self.gwPower = pwr;
     end
+    self.gwPower = pwr
 end
 GW.AddForProfiling("classpowers", "powerHoly", powerHoly)
 
 local function setPaladin(f)
-    --if GW.myspec == 2 then -- prot
-    --f.background:SetTexture(nil)
-    --f.fill:SetTexture(nil)
-    --local fd = f.decay
-    --fd.bar:SetStatusBarColor(0.85, 0.65, 0)
-    --fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
-    --fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
-    --fd.bar:SetValue(0)
-    --fd:Show()
-
-    --f:SetScript("OnEvent", powerSotR)
-    --powerSotR(f, "CLASS_POWER_INIT")
-    --f:RegisterUnitEvent("UNIT_AURA", "player")
-
-    --return true
-    --elseif GW.myspec == 3 or GW.myspec == 5 then -- retribution / standard
     f.paladin:Show()
 
     f.background:ClearAllPoints()
@@ -814,13 +885,23 @@ local function setPaladin(f)
     f.background:SetWidth(181)
     f.background:SetTexCoord(0, 0.70703125, 0, 0.640625)
     f.paladin:ClearAllPoints()
-    f.paladin:SetPoint("TOPLEFT", GwPlayerClassPower.gwMover, 0, 0)
-    f.paladin:SetPoint("BOTTOMLEFT", GwPlayerClassPower.gwMover, 0, 0)
-    f.background:SetPoint("LEFT", GwPlayerClassPower.gwMover, "LEFT", 0, 2)
+    f.paladin:SetPoint("TOPLEFT", f.gwMover, 0, 0)
+    f.paladin:SetPoint("BOTTOMLEFT", f.gwMover, 0, 0)
+    f.background:SetPoint("LEFT", f.gwMover, "LEFT", 0, 2)
 
     f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower/background")
 
     f.fill:Hide()
+
+    local maxPoints = UnitPowerMax("player", 9)
+    for _, v in pairs(f.paladin.power) do
+        local id = tonumber(v:GetParentKey())
+        if id > maxPoints then
+            v:Hide()
+        else
+            v:Show()
+        end
+    end
 
     f:SetScript("OnEvent", powerHoly)
     powerHoly(f, "CLASS_POWER_INIT")
@@ -830,7 +911,7 @@ local function setPaladin(f)
     if GW.myspec == 2 then
         f.customResourceBar:SetWidth(164)
         f.customResourceBar:ClearAllPoints()
-        f.customResourceBar:SetPoint("RIGHT", GwPlayerClassPower.gwMover, 2, 0)
+        f.customResourceBar:SetPoint("RIGHT", f.gwMover, 2, 0)
         f.customResourceBar:Show()
 
         setPowerTypePaladinShield(f.customResourceBar)
@@ -839,9 +920,6 @@ local function setPaladin(f)
     end
 
     return true
-    --end
-
-    --return false
 end
 GW.AddForProfiling("classpowers", "setPaladin", setPaladin)
 
@@ -931,10 +1009,67 @@ end
 GW.AddForProfiling("classpowers", "setRogue", setRogue)
 
 -- PRIEST
+local function shadowOrbs(self, event, ...)
+    if event ~= "CLASS_POWER_INIT" and event ~= "UNIT_AURA" then
+        return
+    end
+
+    local _, count, _, _ = findBuff("player", 77487)
+    if count == nil then
+        count = 0
+    end
+
+    local old_power = self.gwPower
+    local pwr = count
+    if pwr < 2 then
+        self.background:SetAlpha(0.2)
+    else
+        self.background:SetAlpha(1)
+    end
+    for _, v in pairs(self.priest.power) do
+        local id = tonumber(v:GetParentKey())
+        if old_power < id and pwr >= id then
+            animFlarePoint(self, v, 1, 0, 0.5)
+        end
+        if pwr >= 3 and id < 4 then
+            v:SetTexCoord(0, 0.5, 0.5, 1)
+        elseif pwr >= id then
+            v:SetTexCoord(0.5, 1, 0, 0.5)
+        elseif pwr < id then
+            v:SetTexCoord(0, 0.5, 0, 0.5)
+        end
+    end
+    self.gwPower = pwr;
+end
+GW.AddForProfiling("classpowers", "shadowOrbs", shadowOrbs)
+
 local function setPriest(f)
     if GW.myspec == 3 then -- shadow
-        setManaBar(f)
-        return true
+        if GW.Retail then
+            setManaBar(f)
+            return true
+        elseif GW.Cata then
+            f.priest:Show()
+
+            f.background:ClearAllPoints()
+            f.background:SetHeight(41)
+            f.background:SetWidth(181)
+            f.background:SetTexCoord(0, 0.70703125, 0, 0.640625)
+            f.priest:ClearAllPoints()
+            f.priest:SetPoint("TOPLEFT", f.gwMover, 0, 0)
+            f.priest:SetPoint("BOTTOMLEFT", f.gwMover, 0, 0)
+            f.background:SetPoint("LEFT", f.gwMover, "LEFT", 0, 2)
+
+            f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/shadoworbs/background")
+
+            f.fill:Hide()
+
+            f:SetScript("OnEvent", shadowOrbs)
+            shadowOrbs(f, "CLASS_POWER_INIT")
+            f:RegisterUnitEvent("UNIT_AURA", "player")
+
+            return true
+        end
     end
 
     return false
@@ -952,26 +1087,97 @@ local RUNE_PROGRESS = {
     { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
 }
 
+local RUNETYPE_BLOOD = 1
+local RUNETYPE_FROST = 2
+local RUNETYPE_UNHOLY = 3
+local RUNETYPE_DEATH = 4
+
+local iconTextures = {}
+iconTextures[RUNETYPE_BLOOD] = "Interface/AddOns/GW2_UI/textures/altpower/runes-blood"
+iconTextures[RUNETYPE_FROST] = "Interface/AddOns/GW2_UI/textures/altpower/runes"
+iconTextures[RUNETYPE_UNHOLY] = "Interface/AddOns/GW2_UI/textures/altpower/runes-unholy"
+iconTextures[RUNETYPE_DEATH] = "Interface/AddOns/GW2_UI/textures/altpower/runes-death"
+local RUNE_TIMER_ANIMATIONS = {
+    [1] = 0,
+    [2] = 0,
+    [3] = 0,
+    [4] = 0,
+    [5] = 0,
+    [6] = 0,
+}
+
+local getBlizzardRuneId = {
+    [1] = 1,
+    [2] = 2,
+    [3] = 5,
+    [4] = 6,
+    [5] = 3,
+    [6] = 4,
+}
+
+local function getRuneData(index)
+    if GW.Retail then
+        local start, duration, ready = GetRuneCooldown(index)
+        local progress = 1
+        if start ~= nil and duration > 0 then
+            progress = (GetTime() - start) / duration
+        end
+        return {
+            start = start,
+            duration = duration,
+            ready = ready,
+            progress = progress,
+            runeType = nil, -- no need in retail
+        }
+    else
+        local correctRuneId = getBlizzardRuneId[index]
+        local start, duration, ready = GetRuneCooldown(correctRuneId)
+        local runeType = GetRuneType(correctRuneId)
+        local progress = 1
+        if start == nil then
+            start = GetTime()
+            duration = 0
+        end
+        return {
+            start = start,
+            duration = duration,
+            ready = ready,
+            progress = progress,
+            runeType = runeType,
+        }
+    end
+end
+
 local function powerRune(self)
     local f = self
     local fr = self.runeBar
+    local runeData = {}
 
-    --cache the rune data so we can sort it
     for i = 1, 6 do
-        RUNE_PROGRESS[i].rune_start, RUNE_PROGRESS[i].rune_duration, RUNE_PROGRESS[i].rune_ready = GetRuneCooldown(i)
-        if RUNE_PROGRESS[i].rune_start ~= nil then
-            RUNE_PROGRESS[i].progress = (GetTime() - RUNE_PROGRESS[i].rune_start) / RUNE_PROGRESS[i].rune_duration
-        else
-            RUNE_PROGRESS[i].progress = 1
-        end
+        runeData[i] = getRuneData(i)
     end
-    table.sort(RUNE_PROGRESS, function(a, b) return a.progress > b.progress end)
+
+    if GW.Retail then
+        table.sort(runeData, function(a, b) return a.progress > b.progress end)
+    end
+
     for i = 1, 6 do
+        local data = runeData[i]
         local fFill = fr["runeTexFill" .. i]
         local fTex = fr["runeTex" .. i]
         local fFlare = fr["flare" .. i]
         local animId = "RUNE_TIMER_ANIMATIONS" .. i
-        if RUNE_PROGRESS[i].rune_ready and fFill then
+
+        if not data.start or data.start == 0 then
+            return
+        end
+
+        if not GW.Retail and data.runeType then
+            fFill:SetTexture(iconTextures[data.runeType])
+            fTex:SetTexture(iconTextures[data.runeType])
+        end
+
+        if data.ready and fFill then
             fFill:SetTexCoord(0.5, 1, 0, 1)
             fFill:SetHeight(32)
             fFill:SetVertexColor(1, 1, 1, 1)
@@ -981,24 +1187,23 @@ local function powerRune(self)
                 animations[animId].duration = 0
             end
         else
-            if RUNE_PROGRESS[i].rune_start == 0 then
-                return
-            end
-
             GW.AddToAnimation(
                 animId,
-                RUNE_PROGRESS[i].progress,
+                GW.Retail and data.progress or RUNE_TIMER_ANIMATIONS[i],
                 1,
-                RUNE_PROGRESS[i].rune_start,
-                RUNE_PROGRESS[i].rune_duration,
-                function()
-                    local value = math.min(1, math.max(0, 0.6 * animations[animId].progress))
-                    fFill:SetTexCoord(0.5, 1, 1 - animations[animId].progress, 1)
-                    fFill:SetHeight(32 * animations[animId].progress)
-                    fFill:SetVertexColor(1, 1, 1, 0.5)
-                    fFill:SetDesaturated(true)
-                    fFill:SetBlendMode("BLEND")
-                    fFlare:SetVertexColor(1,1,1,0)
+                data.start,
+                data.duration,
+                function(p)
+                    fFill:SetTexCoord(0.5, 1, 1 - p, 1)
+                    fFill:SetHeight(32 * p)
+                    if GW.Retail then
+                        fFill:SetVertexColor(1, 1, 1, 0.5)
+                        fFill:SetDesaturated(true)
+                        fFill:SetBlendMode("BLEND")
+                        fFlare:SetVertexColor(1, 1, 1, 0)
+                    else
+                        fFill:SetVertexColor(0.6 * p, 0.6 * p, 0.6 * p)
+                    end
                 end,
                 "noease",
                 function()
@@ -1011,17 +1216,21 @@ local function powerRune(self)
                         GetTime(),
                         0.5,
                         function(p)
-                            fFlare:SetVertexColor(1,1,1,p)
-                            fFlare:SetSize(512 *  math.sin(p * math.pi * 0.5),256)
-                            fFlare:SetBlendMode("ADD")
-                           -- fFill:SetVertexColor(1, 1, 1, 1)
-                            --fFill:SetBlendMode("ADD")
-                            --f.flare:SetAlpha(math.min(1, math.max(0, p)))
+                            if GW.Retail then
+                                fFlare:SetVertexColor(1, 1, 1, p)
+                                fFlare:SetSize(512 * math.sin(p * math.pi * 0.5), 256)
+                                fFlare:SetBlendMode("ADD")
+                            else
+                                f.flare:SetAlpha(math.min(1, math.max(0, p)))
+                            end
                         end
                     )
                 end
             )
-            
+
+            if not GW.Retail then
+                RUNE_TIMER_ANIMATIONS[i] = 0
+            end
         end
         fTex:SetTexCoord(0, 0.5, 0, 1)
     end
@@ -1040,23 +1249,46 @@ local function setDeathKnight(f)
     f.flare:SetHeight(128)
     fr:Show()
 
-    local texture = "runes-blood"
-    if GW.myspec == 2 then     -- frost
-        texture = "runes"
-    elseif GW.myspec == 3 then -- unholy
-        texture = "runes-unholy"
-    end
+    if GW.Retail then
+        local texture = "runes-blood"
+        if GW.myspec == 2 then     -- frost
+            texture = "runes"
+        elseif GW.myspec == 3 then -- unholy
+            texture = "runes-unholy"
+        end
 
-    for i = 1, 6 do
-        local fFill = fr["runeTexFill" .. i]
-        local fTex = fr["runeTex" .. i]
-        local fFlare = fr["flare" .. i]
+        for i = 1, 6 do
+            local fFill = fr["runeTexFill" .. i]
+            local fTex = fr["runeTex" .. i]
+            local fFlare = fr["flare" .. i]
 
-        fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
-        fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
-        fFlare:SetRotation(1.5708)
-        fFlare:SetVertexColor(1,1,1,0)
-        fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
+            fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
+            fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
+            fFlare:SetRotation(1.5708)
+            fFlare:SetVertexColor(1,1,1,0)
+            fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
+        end
+    elseif GW.Cata then
+        for i = 1, 6 do
+            local texture
+            local fFill = fr["runeTexFill" .. i]
+            local fTex = fr["runeTex" .. i]
+            local fFlare = fr["flare" .. i]
+
+            if i <= 2 then
+                texture = "runes-blood"
+            elseif i <= 4 then
+                texture = "runes-unholy"
+            else
+                texture = "runes"
+            end
+
+            fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
+            fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
+            fFlare:SetRotation(1.5708)
+            fFlare:SetVertexColor(1,1,1,0)
+            fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
+        end
     end
 
     f:SetScript("OnEvent", powerRune)
@@ -1098,21 +1330,44 @@ end
 GW.AddForProfiling("classpowers", "powerMaelstrom", powerMaelstrom)
 
 local function setShaman(f)
-    if GW.myspec == 1 then
-        -- ele use extra mana bar on left
-        setManaBar(f)
-        return true
-    elseif GW.myspec == 2 then -- enh
-        f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -10)
-        f.background:SetTexture(nil)
-        f.fill:SetTexture(nil)
-        local fms = f.maelstrom
-        fms:Show()
+    if GW.Retail then
+        if GW.myspec == 1 then
+            -- ele use extra mana bar on left
+            setManaBar(f)
+            return true
+        elseif GW.myspec == 2 then -- enh
+            f:ClearAllPoints()
+            f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -10)
+            f.background:SetTexture(nil)
+            f.fill:SetTexture(nil)
+            local fms = f.maelstrom
+            fms:Show()
 
-        f:SetScript("OnEvent", powerMaelstrom)
-        powerMaelstrom(f)
-        f:RegisterUnitEvent("UNIT_AURA", "player")
+            f:SetScript("OnEvent", powerMaelstrom)
+            powerMaelstrom(f)
+            f:RegisterUnitEvent("UNIT_AURA", "player")
+            return true
+        end
+    else
+        if not InCombatLockdown() then
+            UIPARENT_MANAGED_FRAME_POSITIONS.MultiCastActionBarFrame = nil
+
+            MultiCastActionBarFrame:SetParent(f)
+            MultiCastActionBarFrame:ClearAllPoints()
+            MultiCastActionBarFrame:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, 5)
+            hooksecurefunc(MultiCastActionBarFrame, "SetPoint", function(self, p1, anchor, p2, x, y)
+                if p1 ~= "TOPLEFT" or anchor ~= f or p2 ~= "BOTTOMLEFT" or x ~= 0 or y ~= 5 then
+                    self:ClearAllPoints()
+                    self:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, 5)
+                end
+            end)
+        elseif InCombatLockdown() then
+            f.decay:RegisterEvent("PLAYER_REGEN_ENABLED")
+        end
+
+        f.background:Hide()
+        f.fill:Hide()
+
         return true
     end
 
@@ -1235,32 +1490,36 @@ local function powerSoulshard(self, event, ...)
     for i = 1, pwrMax do
         if pwr >= i then
             self.warlock["shard" .. i]:Show()
-            self.warlock.shardFlare:ClearAllPoints()
-            self.warlock.shardFlare:SetPoint("CENTER", self.warlock["shard" .. i], "CENTER", 0, 0)
-            if pwr > old_power then
-                self.warlock.shardFlare:Show()
-                GW.AddToAnimation(
-                    "WARLOCK_SHARD_FLARE",
-                    0,
-                    5,
-                    GetTime(),
-                    0.7,
-                    function(p)
-                        p = GW.RoundInt(p)
-                        self.warlock.shardFlare:SetTexCoord(GW.getSpriteByIndex(self.warlock.flareMap, p))
-                    end,
-                    nil,
-                    function()
-                        self.warlock.shardFlare:Hide()
-                    end
-                )
+            if GW.Retail then
+                self.warlock.shardFlare:ClearAllPoints()
+                self.warlock.shardFlare:SetPoint("CENTER", self.warlock["shard" .. i], "CENTER", 0, 0)
+                if pwr > old_power then
+                    self.warlock.shardFlare:Show()
+                    GW.AddToAnimation(
+                        "WARLOCK_SHARD_FLARE",
+                        0,
+                        5,
+                        GetTime(),
+                        0.7,
+                        function(p)
+                            p = GW.RoundInt(p)
+                            self.warlock.shardFlare:SetTexCoord(GW.getSpriteByIndex(self.warlock.flareMap, p))
+                        end,
+                        nil,
+                        function()
+                            self.warlock.shardFlare:Hide()
+                        end
+                    )
+                end
+            else
+                self.warlock.shardFlare:Hide()
             end
         else
             self.warlock["shard" .. i]:Hide()
         end
     end
 
-    if GW.myspec == 3 then -- Destruction
+    if GW.Retail and GW.myspec == 3 then -- Destruction
         local shardPower = UnitPower("player", Enum.PowerType.SoulShards, true)
         local shardModifier = UnitPowerDisplayMod(Enum.PowerType.SoulShards)
         shardPower = (shardModifier ~= 0) and (shardPower / shardModifier) or 0
@@ -1298,7 +1557,7 @@ local function setWarlock(f)
     f.fill:SetTexture(nil)
     f:SetHeight(32)
     f.warlock:Show()
-    if GW.myspec == 3 then -- Destruction
+    if GW.Retail and GW.myspec == 3 then -- Destruction
         f.warlock.shardFragment.amount = -1
         f.warlock.shardFragment:Show()
         local flarAnimationMap = {
@@ -1543,11 +1802,13 @@ local function setDruid(f)
                 barType = "mana"
             end
         end
-    elseif GW.Classic then
+    else
         if form == CAT_FORM then -- cat
             barType = "combo|little_mana"
         elseif form == BEAR_FORM or form == 8 then --bear
             barType = "little_mana"
+        elseif form == MOONKIN_FORM then           --Moonkin
+            barType = "eclips"
         end
     end
 
@@ -1566,6 +1827,8 @@ local function setDruid(f)
             setLittleManaBar(f, "combo")
         end
         return true
+    elseif barType == "eclips" then
+        setEclips(f)
     else
         return false
     end
@@ -1604,6 +1867,8 @@ local function selectType(f)
     f.runeBar:Hide()
     f.decayCounter:Hide()
     f.maelstrom:Hide()
+    f.priest:Hide()
+    f.paladin:Hide()
     f.brewmaster:Hide()
     f.staggerBar:Hide()
     f.disc:Hide()
@@ -1613,6 +1878,7 @@ local function selectType(f)
     f.warlock:Hide()
     f.combopoints:Hide()
     f.evoker:Hide()
+
     if GW.settings.POWERBAR_ENABLED then
         f.lmb:Hide()
         f.lmb.decay:Hide()
@@ -1620,23 +1886,25 @@ local function selectType(f)
     f.gwPower = -1
     local showBar = false
 
-    if GW.myClassID == 1 and GW.Retail then
+    if f.unit == "vehicle" then
+        showBar = false
+    elseif GW.myClassID == 1 and GW.Retail then
         showBar = setWarrior(f)
-    elseif GW.myClassID == 2 and GW.Retail then
+    elseif GW.myClassID == 2 and not GW.Classic then
         showBar = setPaladin(f)
     elseif GW.myClassID == 3 and GW.Retail then
         showBar = setHunter(f)
     elseif GW.myClassID == 4 then
         showBar = setRogue(f)
-    elseif GW.myClassID == 5 and GW.Retail then
+    elseif GW.myClassID == 5 and not GW.Classic then
         showBar = setPriest(f)
-    elseif GW.myClassID == 6 and GW.Retail then
+    elseif GW.myClassID == 6 and not GW.Classic then
         showBar = setDeathKnight(f)
-    elseif GW.myClassID == 7 and GW.Retail then
+    elseif GW.myClassID == 7 and not GW.Classic then
         showBar = setShaman(f)
     elseif GW.myClassID == 8 and GW.Retail then
         showBar = setMage(f)
-    elseif GW.myClassID == 9 and GW.Retail then
+    elseif GW.myClassID == 9 and not GW.Classic then
         showBar = setWarlock(f)
     elseif GW.myClassID == 10 and GW.Retail then
         showBar = setMonk(f)
@@ -1684,6 +1952,12 @@ local function barChange_OnEvent(self, event)
         selectType(f)
     elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
         UpdateVisibility(f, event == "PLAYER_REGEN_DISABLED")
+    elseif event == "UNIT_ENTERED_VEHICLE" then
+        f.unit = "vehicle"
+        selectType(f)
+    elseif event == "UNIT_EXITED_VEHICLE" then
+        f.unit = "player"
+        selectType(f)
     end
 end
 GW.UpdateClasspowerBar = barChange_OnEvent
@@ -1858,6 +2132,8 @@ local function LoadClassPowers()
     cpf.decay:RegisterEvent("PLAYER_ENTERING_WORLD")
     cpf.decay:RegisterEvent("CHARACTER_POINTS_CHANGED")
     cpf.decay:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    cpf.decay:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
+    cpf.decay:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
 
     cpf.gwPlayerForm = GetShapeshiftFormID()
 

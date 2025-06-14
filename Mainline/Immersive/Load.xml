@@ -1,8 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="Skins\Load.xml"/>
-    <Include file ="toast.xml"/>
-    <Script file ="alertPosition.lua"/>
-    <Script file ="alerts.lua"/>
     <Script file ="eventTracker.lua"/>
     <Script file ="minimapInstanceDifficult.lua"/>
     <Script file ="minimap.lua"/>

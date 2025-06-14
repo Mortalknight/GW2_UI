@@ -83,6 +83,24 @@ GW.professionBagColor = {
     [65536] = { r = .87, g = .05, b = .25 } --cooking
 }
 
+GW.trackingTypes = {
+    [136025] = {l = 0.125, r = 0.250, t = 0, b = 0.5}, --mining
+    [133939] = {l = 0, r = 0.125, t = 0, b = 0.5}, --herbalism
+    [135974] = {l = 0.750, r = 0.875, t = 0, b = 0.5}, --undead
+    [136142] = {l = 0.750, r = 0.875, t = 0, b = 0.5}, --undead
+    ["1323283"] = {l = 0.875, r = 1, t = 0, b = 0.5}, --beast for hunter
+    ["13232811"] = {l = 0, r = 0.125, t = 0.5, b = 1}, --human for druid
+    [135942] = {l = 0, r = 0.125, t = 0.5, b = 1}, --human
+    [136172] = {l = 0.250, r = 0.375, t = 0.5, b = 1}, --demon
+    [136217] = {l = 0.250, r = 0.375, t = 0.5, b = 1}, --demon
+    [135725] = {l = 0.375, r = 0.5, t = 0.5, b = 1}, --treasure
+    [133888] = {l = 0.125, r = 0.250, t = 0.5, b = 1}, --fish
+    [134153] = {l = 0.5, r = 0.625, t = 0, b = 0.5}, --Dragonkin
+    [135861] = {l = 0.250, r = 0.375, t = 0, b = 0.5}, --Elementals
+    [132275] = {l = 0.375, r = 0.5, t = 0, b = 0.5}, --Giants
+    [132320] = {l = 0.625, r = 0.750, t = 0, b = 0.5}, --Hidden
+}
+
 GW.TRACKER_TYPE_COLOR = {
     QUEST = { r = 221 / 255, g = 198 / 255, b = 68 / 255 },
     CAMPAIGN = { r = 121 / 255, g = 222 / 255, b = 47 / 255 },
@@ -239,6 +257,19 @@ GW.ShortPrefixStyles = {
     GERMAN = {{1e12, "Bio"}, {1e9, "Mrd"}, {1e6, "Mio"}, {1e3, "Tsd"}},
     KOREAN = {{1e8, "억"}, {1e4, "만"}, {1e3, "천"}},
     METRIC = {{1e12, "T"}, {1e9, "G"}, {1e6, "M"}, {1e3, "k"}}
+}
+
+GW.GemTypeInfo = {
+	Yellow			= { r = 0.97, g = 0.82, b = 0.29 },
+	Red				= { r = 1.00, g = 0.47, b = 0.47 },
+	Blue			= { r = 0.47, g = 0.67, b = 1.00 },
+	Hydraulic		= { r = 1.00, g = 1.00, b = 1.00 },
+	Cogwheel		= { r = 1.00, g = 1.00, b = 1.00 },
+	Meta			= { r = 1.00, g = 1.00, b = 1.00 },
+	Prismatic		= { r = 1.00, g = 1.00, b = 1.00 },
+	PunchcardRed	= { r = 1.00, g = 0.47, b = 0.47 },
+	PunchcardYellow	= { r = 0.97, g = 0.82, b = 0.29 },
+	PunchcardBlue	= { r = 0.47, g = 0.67, b = 1.00 },
 }
 
 GW.INDICATORS = { "BAR", "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT" }
@@ -535,6 +566,60 @@ elseif GW.Classic then
         GW.AURAS_INDICATORS.PRIEST[401877] = {0.00, 0.00, 0.90} -- Prayer of Mending
         GW.AURAS_INDICATORS.PRIEST[402004] =  {0.00, 0.00, 0.83} -- Pain Suppression
     end
+elseif GW.Cata then
+    GW.AURAS_INDICATORS = {
+        PRIEST = {
+            [17]	= {0.00, 0.00, 1.00}, -- Power Word: Shield
+            [139]	= {0.33, 0.73, 0.75}, -- Renew
+            [6788]	= {0.89, 0.1, 0.1}, -- Weakened Soul
+            [41635]	= {0.2, 0.7, 0.2}, -- Prayer of Mending
+            [10060] = {0.17, 1.00, 0.45}, -- Power Infusion
+            [47788] = {0.17, 1.00, 0.45}, -- Guardian Spirit
+            [33206] = {0.17, 1.00, 0.45}, -- Pain Suppression
+        },
+        DRUID = {
+            [467]	= {0.4, 0.2, 0.8}, -- Thorns
+            [774]	= {0.83, 1.00, 0.25}, -- Rejuvenation
+            [8936]	= {0.33, 0.73, 0.75}, -- Regrowth
+            [29166]	= {0.49, 0.60, 0.55}, -- Innervate
+            [33763]	= {0.33, 0.37, 0.47}, -- Lifebloom
+            [48438]	= {0.8, 0.4, 0}, -- Wild Growth
+        },
+        PALADIN = {
+            [1044]	= {0.89, 0.45, 0}, -- Hand of Freedom
+            [1038]	= {0.11, 1.00, 0.45}, -- Hand of Salvation
+            [6940]	= {0.89, 0.1, 0.1}, -- Hand of Sacrifice
+            [1022]	= {0.17, 1.00, 0.75}, -- Hand of Protection
+            [53563]	= {0.7, 0.3, 0.7}, -- Beacon of Light
+        },
+        SHAMAN = {
+            [16177]	= {0.2, 0.2, {116236,16237}}, -- Ancestral Fortitude
+            [974]	= {0.08, 0.21, 0.43}, -- Earth Shield
+            [61295] = {0.7, 0.3, 0.7}, -- Riptide
+            [51945] = {0.7, 0.3, 0.7}, -- Earthliving
+        },
+        ROGUE = {
+            [57933] = {0.17, 1.00, 0.45}, -- Tricks of the Trade
+        },
+        WARRIOR = {
+            [3411]	= {0.2, 0.2, 1}, -- Intervene
+            [50720]	= {0.4, 0.2, 0.8}, -- Vigilance
+        },
+        HUNTER = {
+            [34477] = {0.17, 1.00, 0.45},-- Misdirection
+        },
+        WARLOCK = {
+            [5697]	= {0.89, 0.09, 0.05}, -- Unending Breath
+            [20707]	= {0.00, 0.00, 0.85}, -- Soulstone
+        },
+        MAGE = {
+            [130]	= {0.00, 0.00, 0.50}, -- Slow Fall
+            [54646] = {0.17, 1.00, 0.45}, -- Focus Magic
+        },
+        DEATHKNIGHT = {
+            [49016] = {0.17, 1.00, 0.45}, -- Unholy Frenzy
+        },
+    }
 end
 
 -- Never show theses auras
@@ -544,6 +629,33 @@ if GW.Retail then
         57724, -- Exhaustion
         80354, -- Temporal Displacement
         264689 -- Fatigued
+    }
+elseif GW.Cata then
+    GW.AURAS_IGNORED = {
+        186403,	-- Sign of Battle
+        377749,	-- Joyous Journeys
+        24755, 	-- Tricked or Treated
+        6788,	-- Weakended Soul
+        8326,	-- Ghost
+        8733,	-- Blessing of Blackfathom
+        15007,	-- Resurrection Sickness
+        23445,	-- Evil Twin
+        24755,	-- Trick or Treat
+        25163,	-- Oozeling Disgusting Aura
+        25771,	-- Forbearance
+        26013,	-- Deserter
+        36032,	-- Arcane Blast
+        41425,	-- Hypothermia
+        46221,	-- Animal Blood
+        55711,	-- Weakened Heart
+        57723,	-- Exhaustion
+        57724,	-- Sated
+        58539,	-- Watchers Corpse
+        69438,	-- Sample Satisfaction
+        71041,	-- Dungeon Deserter
+        80354,	-- Timewarp
+        95809,	-- Insanity
+        95223	-- Group Res
     }
 else
     GW.AURAS_IGNORED = {}
@@ -800,6 +912,49 @@ elseif GW.Classic then
         GW.ChannelTicks[402277] = 3 -- Penance (Healing)
         GW.ChannelTicks[413259] = 5 -- Mind Sear (Rune)
     end
+elseif GW.Cata then
+    GW.ChannelTicks = {
+        -- Warlock
+        [1120]	= 5, -- Drain Soul
+        [689]	= 5, -- Drain Life
+        [5740]	= 4, -- Rain of Fire
+        [755]	= 10, -- Health Funnel
+        [79268]	= 3, -- Soul Harvest
+        [1949]	= 15, -- Hellfire
+        -- Druid
+        [44203]	= 4, -- Tranquility
+        [16914]	= 10, -- Hurricane
+        -- Priest
+        [15407]	= 3, -- Mind Flay
+        [48045]	= 5, -- Mind Sear
+        [47540]	= 3, -- Penance
+        [64901]	= 4, -- Hymn of Hope
+        [64843]	= 4, -- Divine Hymn
+        -- Mage
+        [5143]	= 5, -- Arcane Missiles
+        [10]	= 8, -- Blizzard
+        [12051]	= 4, -- Evocation
+        -- Death Knight
+        [42650]	= 8, -- Army of the Dead
+        -- First Aid
+        [45544]	= 8, -- Heavy Frostweave Bandage
+        [45543]	= 8, -- Frostweave Bandage
+        [27031]	= 8, -- Heavy Netherweave Bandage
+        [27030]	= 8, -- Netherweave Bandage
+        [23567]	= 8, -- Warsong Gulch Runecloth Bandage
+        [23696]	= 8, -- Alterac Heavy Runecloth Bandage
+        [24414]	= 8, -- Arathi Basin Runecloth Bandage
+        [18610]	= 8, -- Heavy Runecloth Bandage
+        [18608]	= 8, -- Runecloth Bandage
+        [10839]	= 8, -- Heavy Mageweave Bandage
+        [10838]	= 8, -- Mageweave Bandage
+        [7927]	= 8, -- Heavy Silk Bandage
+        [7926]	= 8, -- Silk Bandage
+        [3268]	= 7, -- Heavy Wool Bandage
+        [3267]	= 7, -- Wool Bandage
+        [1159]	= 6, -- Heavy Linen Bandage
+        [746]	= 6 -- Linen Bandage
+    }
 end
 
 -- Spells that chain, ticks to add

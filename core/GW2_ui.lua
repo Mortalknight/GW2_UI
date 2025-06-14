@@ -380,7 +380,6 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.LoadItemUpgradeSkin()
         GW.LoadLFGSkin()
         GW.LoadOrderHallTalentFrameSkin()
-        GW.LoadSocketUISkin()
         GW.LoadSoulbindsSkin()
         GW.LoadWeeklyRewardsSkin()
         GW.LoadPerksProgramSkin()
@@ -389,6 +388,10 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.LoadAuctionHouseSkin()
         GW.LoadBattlefieldMapSkin()
         GW.LoadMajorFactionsFrameSkin()
+    end
+
+    if not GW.Classic then
+        GW.LoadSocketUISkin()
     end
 
 end
@@ -594,19 +597,26 @@ local function evPlayerLogin(self)
     GW.AddCoordsToWorldMap()
 
     if GW.Retail then
-        GW.LoadLFGSkins()
         GW.LoadTalkingHeadSkin()
-        GW.LoadMailSkin()
         GW.LoadDressUpFrameSkin()
         GW.LoadExpansionLadningPageSkin()
         GW.LoadGenericTraitFrameSkin()
         GW.LoadCooldownManagerSkin()
         GW.LoadImmersionAddonSkin()
-        GW.MakeAltPowerBarMovable()
         GW.WidgetUISetup()
-    elseif GW.Classic then
+    else
         GW.LoadQuestLogFrameSkin()
         GW.LoadQuestTimersSkin()
+    end
+
+    if not GW.Classic then
+        GW.MakeAltPowerBarMovable()
+        GW.LoadLFGSkins()
+        GW.LoadMailSkin()
+    end
+
+    if GW.Cata then
+        GW.SetUpVehicleFrameMover()
     end
 
     -- make sure to load the objetives tracker before we load the altert system prevent some errors with other addons
@@ -615,7 +625,7 @@ local function evPlayerLogin(self)
     end
 
     -- load alert settings
-    if GW.Retail then
+    if not GW.Classic then
         GW.LoadAlertSystem()
         GW.SetupAlertFramePosition()
         GW.LoadOurAlertSubSystem()
@@ -823,12 +833,11 @@ local function evPlayerLogin(self)
     --Check if we should show Welcomepage or Changelog
     if GW.private.GW2_UI_VERSION == "WELCOME" then
         GW.ShowWelcomePanel()
-        GW.private.GW2_UI_VERSION = GW.VERSION_STRING
     elseif GW.private.GW2_UI_VERSION ~= GW.VERSION_STRING then
         ShowUIPanel(GwSettingsWindow)
         HideUIPanel(GameMenuFrame)
-        GW.private.GW2_UI_VERSION = GW.VERSION_STRING
     end
+    GW.private.GW2_UI_VERSION = GW.VERSION_STRING
 
     self:SetScript("OnUpdate", gw_OnUpdate)
     GW.UpdateCharData()
@@ -872,7 +881,7 @@ l:RegisterEvent("UI_SCALE_CHANGED")
 l:RegisterEvent("PLAYER_LEVEL_UP")
 l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 l:RegisterEvent("ADDON_LOADED")
-if not GW.Classic then
+if GW.Retail then
     l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 end
 

@@ -28,11 +28,11 @@ local function LoadNotificationsPanel(sWindow)
         tinsert(soundKeys, sound)
     end
 
-    addOption(p.scroll.scrollchild, L["Bots"], nil, {getterSetter = "alertFrameNotificatioBot", dependence = {["ALERTFRAME_ENABLED"] = true}})
-    addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "alertFrameNotificatioBotSound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["alertFrameNotificatioBot"] = true}, hasSound = true, noNewLine = true})
+    addOption(p.scroll.scrollchild, L["Bots"], nil, {getterSetter = "alertFrameNotificatioBot", dependence = {["ALERTFRAME_ENABLED"] = true}, hidden = not GW.Retail})
+    addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "alertFrameNotificatioBotSound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["alertFrameNotificatioBot"] = true}, hasSound = true, noNewLine = true, hidden = not GW.Retail})
 
-    addOption(p.scroll.scrollchild, L["Feasts"], nil, {getterSetter = "alertFrameNotificatioFeast", dependence = {["ALERTFRAME_ENABLED"] = true}})
-    addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "alertFrameNotificatioFeastSound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["alertFrameNotificatioFeast"] = true}, hasSound = true, noNewLine = true})
+    addOption(p.scroll.scrollchild, L["Feasts"], nil, {getterSetter = "alertFrameNotificatioFeast", dependence = {["ALERTFRAME_ENABLED"] = true}, hidden = not GW.Retail})
+    addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "alertFrameNotificatioFeastSound", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["alertFrameNotificatioFeast"] = true}, hasSound = true, noNewLine = true, hidden = not GW.Retail})
 
     addOption(p.scroll.scrollchild, PLAYER_LEVEL_UP, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_LEVEL_UP", dependence = {["ALERTFRAME_ENABLED"] = true}})
     addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_LEVEL_UP"] = true}, hasSound = true, noNewLine = true})
@@ -46,11 +46,11 @@ local function LoadNotificationsPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Repair needed"], nil, {getterSetter = "ALERTFRAME_NOTIFICATION_REPAIR", dependence = {["ALERTFRAME_ENABLED"] = true}})
     addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_REPAIR_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_REPAIR"] = true}, hasSound = true, noNewLine = true})
 
-    addOption(p.scroll.scrollchild, L["Paragon chest"], nil, {getterSetter = "ALERTFRAME_NOTIFICATION_PARAGON", dependence = {["ALERTFRAME_ENABLED"] = true}})
-    addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_PARAGON_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_PARAGON"] = true}, hasSound = true, noNewLine = true})
+    addOption(p.scroll.scrollchild, L["Paragon chest"], nil, {getterSetter = "ALERTFRAME_NOTIFICATION_PARAGON", dependence = {["ALERTFRAME_ENABLED"] = true}, hidden = not GW.Retail})
+    addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_PARAGON_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_PARAGON"] = true}, hasSound = true, noNewLine = true, hidden = not GW.Retail})
 
-    addOption(p.scroll.scrollchild, L["Rare on minimap"], nil, {getterSetter = "ALERTFRAME_NOTIFICATION_RARE", dependence = {["ALERTFRAME_ENABLED"] = true}})
-    addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_RARE_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_RARE"] = true}, hasSound = true, noNewLine = true})
+    addOption(p.scroll.scrollchild, L["Rare on minimap"], nil, {getterSetter = "ALERTFRAME_NOTIFICATION_RARE", dependence = {["ALERTFRAME_ENABLED"] = true}, hidden = not GW.Retail})
+    addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_RARE_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_RARE"] = true}, hasSound = true, noNewLine = true, hidden = not GW.Retail})
 
     addOption(p.scroll.scrollchild, L["Calendar invite"], nil, {getterSetter = "ALERTFRAME_NOTIFICATION_CALENDAR_INVITE", dependence = {["ALERTFRAME_ENABLED"] = true}})
     addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_CALENDAR_INVITE"] = true}, hasSound = true, noNewLine = true})

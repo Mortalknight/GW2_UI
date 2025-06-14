@@ -698,3 +698,5 @@ L["bound to"] = true
 L["Sold Junk for: %s"] = true
 L["Show Quest XP on Quest Tracker"] = true
 L["Quest Tracker sorting"] = true
+L["Show on Map"] = true
+L["Set TomTom Target"] = true

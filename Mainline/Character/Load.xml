@@ -11,7 +11,6 @@
     <Script file ="paperdoll_equipment.lua"/>
     <Script file ="paperdoll_equipset.lua"/>
     <Script file ="paperdoll_titles.lua"/>
-    <Script file ="reputation_table.lua"/>
     <Script file ="reputation.lua"/>
     <Script file ="currency.lua"/>
     <Script file ="professions.lua"/>
