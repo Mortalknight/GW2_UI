@@ -53,6 +53,7 @@ GW.globalDefault = {
         OBJECTIVES_COLLAPSE_IN_M_PLUS = false,
 
         FixGuildNewsSpam = true,
+        gridSpacing = 64,
 
         RAIDDEBUFFS = {},
         TARGET_ENABLED = true,

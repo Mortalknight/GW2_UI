@@ -37,7 +37,7 @@ local function lockHudObjects(_, _, inCombatLockdown)
         mf:Hide()
     end
 
-    GW.GridToggle(GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.showGrid, _, true)
+    GW.GridToggle(_, _, true)
 
     -- enable main bar layout manager and trigger the changes
     GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
@@ -100,111 +100,126 @@ local function HandleMoveHudEvents(self, event)
     end
 end
 
-local editModeGridLinePixelWidth = 1.2
-
-local function SetupLineThickness(line, linePixelWidth)
-    local lineThickness = PixelUtil.GetNearestPixelSize(linePixelWidth, line:GetEffectiveScale(), linePixelWidth)
-    line:SetThickness(lineThickness)
-end
-
-local function SetupLine(self, centerLine, verticalLine, xOffset, yOffset)
-    local color = centerLine and EDIT_MODE_GRID_CENTER_LINE_COLOR or EDIT_MODE_GRID_LINE_COLOR
-    self:SetColorTexture(color:GetRGBA())
-
-    self:SetStartPoint(verticalLine and "TOP" or "LEFT", EditModeManagerFrame.Grid, xOffset, yOffset)
-    self:SetEndPoint(verticalLine and "BOTTOM" or "RIGHT", EditModeManagerFrame.Grid, xOffset, yOffset)
-
-    SetupLineThickness(self, editModeGridLinePixelWidth)
-end
-
-local function UpdateGrid(self)
-    if not self:IsVisible() then
-        return
-    end
-    self.linePool:ReleaseAll()
-
-    local centerLine = true
-    local centerLineNo = false
-    local verticalLine = true
-    local verticalLineNo = false
-
-    local centerVerticalLine = self.linePool:Acquire()
-    SetupLine(centerVerticalLine, centerLine, verticalLine, 0, 0)
-    centerVerticalLine:Show()
-
-    local centerHorizontalLine = self.linePool:Acquire()
-    SetupLine(centerHorizontalLine, centerLine, verticalLineNo, 0, 0)
-    centerHorizontalLine:Show()
-
-    local halfNumVerticalLines = floor((self:GetWidth() / self.gridSpacing) / 2)
-    local halfNumHorizontalLines = floor((self:GetHeight() / self.gridSpacing) / 2)
-
-    for i = 1, halfNumVerticalLines do
-        local xOffset = i * self.gridSpacing
-
-        local line = self.linePool:Acquire()
-        SetupLine(line, centerLineNo, verticalLine, xOffset, 0)
-        line:Show()
-
-        line = self.linePool:Acquire()
-        SetupLine(line, centerLineNo, verticalLine, -xOffset, 0)
-        line:Show()
-    end
-
-    for i = 1, halfNumHorizontalLines do
-        local yOffset = i * self.gridSpacing
-
-        local line = self.linePool:Acquire()
-        SetupLine(line, centerLineNo, verticalLineNo, 0, yOffset)
-        line:Show()
-
-        line = self.linePool:Acquire()
-        SetupLine(line, centerLineNo, verticalLineNo, 0, -yOffset)
-        line:Show()
+local function Grid_GetRegion()
+    if grid then
+        if grid.regionCount and grid.regionCount > 0 then
+            local line = select(grid.regionCount, grid:GetRegions())
+            grid.regionCount = grid.regionCount - 1
+            line:SetAlpha(1)
+            return line
+        else
+            return grid:CreateTexture()
+        end
     end
 end
 
-local function GridOnHide(self)
-    self.linePool:ReleaseAll()
-end
-
-local function GridOnLoad(self)
-    self.linePool = EditModeUtil.CreateLinePool(self, "EditModeGridLineTemplate")
-
-    self.uiParentCenterX, self.uiParentCenterY = UIParent:GetCenter()
-
-    self:RegisterEvent("DISPLAY_SIZE_CHANGED")
-    self:RegisterEvent("UI_SCALE_CHANGED")
-    hooksecurefunc("UpdateUIParentPosition", function() if self:IsShown() then UpdateGrid(self) end end)
-end
-
-local function createGrid()
-    grid = CreateFrame("Frame", "GW2_Grid", UIParent)
-    grid:SetFrameStrata("BACKGROUND")
-    grid:SetPoint("TOPLEFT", UIParent)
-    grid:SetPoint("BOTTOMRIGHT", UIParent)
-    GridOnLoad(grid)
-    grid:SetScript("OnHide", GridOnHide)
-    grid.SetGridSpacing = function(self, spacing)
-        self.gridSpacing = spacing
-        UpdateGrid(self)
+local function CreateGrid()
+    if not grid then
+        grid = CreateFrame("Frame", "GW2_UIIGrid", UIParent)
+        grid:SetFrameStrata("BACKGROUND")
+    else
+        grid.regionCount = 0
+        for _, region in next, { grid:GetRegions() } do
+            if region.IsObjectType and region:IsObjectType("Texture") then
+                grid.regionCount = grid.regionCount + 1
+                region:SetAlpha(0)
+            end
+        end
     end
 
-    grid:SetGridSpacing(64)
-    grid:Hide()
+    local width, height = UIParent:GetSize()
+    local size, half = GW.mult * 0.5, height * 0.5
+
+    local gSize = GW.settings.gridSpacing
+    local gHalf = gSize * 0.5
+
+    local ratio = width / height
+    local hHeight = height * ratio
+    local wStep = width / gSize
+    local hStep = hHeight / gSize
+
+    grid.boxSize = gSize
+    grid:SetPoint("CENTER", UIParent)
+    grid:SetSize(width, height)
+    grid:Show()
+
+    for i = 0, gSize do
+        local tx = Grid_GetRegion()
+        if i == gHalf then
+            tx:SetColorTexture(1, 0, 0)
+            tx:SetDrawLayer("BACKGROUND", 1)
+        else
+            tx:SetColorTexture(0, 0, 0)
+            tx:SetDrawLayer("BACKGROUND", 0)
+        end
+
+        local iwStep = i*wStep
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", iwStep - size, 0)
+        tx:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", iwStep + size, 0)
+    end
+
+    do
+        local tx = Grid_GetRegion()
+        tx:SetColorTexture(1, 0, 0)
+        tx:SetDrawLayer("BACKGROUND", 1)
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -half + size)
+        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(half + size))
+    end
+
+    local hSteps = floor((height*0.5)/hStep)
+    for i = 1, hSteps do
+        local ihStep = i*hStep
+
+        local tx = Grid_GetRegion()
+        tx:SetColorTexture(0, 0, 0)
+        tx:SetDrawLayer("BACKGROUND", 0)
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(half+ihStep) + size)
+        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(half+ihStep + size))
+
+        tx = Grid_GetRegion()
+        tx:SetColorTexture(0, 0, 0)
+        tx:SetDrawLayer("BACKGROUND", 0)
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(half-ihStep) + size)
+        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(half-ihStep + size))
+    end
 end
 
-local function GridToggle(self, _, forceHide)
-    self = self:GetParent()
-    if grid:IsShown() or forceHide then
+local function ShowGrid()
+    if not grid then
+        CreateGrid()
+    elseif grid.boxSize ~= GW.settings.gridSpacing then
         grid:Hide()
-        self.gridAlign:Hide()
-        self.showGrid:SetText(L["Show grid"])
+        CreateGrid()
     else
         grid:Show()
-        UpdateGrid(grid)
-        self.gridAlign:Show()
-        self.showGrid:SetText(L["Hide grid"])
+    end
+end
+
+local function HideGrid()
+    if grid then
+        grid:Hide()
+    end
+end
+
+local function GridToggle(_, _, forceClose)
+    if InCombatLockdown() then return end
+    local show = true
+    if grid then
+        show = not grid:IsShown()
+    end
+
+    if show and not forceClose then
+        ShowGrid()
+        GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign:Show()
+        GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid:SetText(L["Hide grid"])
+    else
+        HideGrid()
+        GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign:Hide()
+        GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid:SetText(L["Show grid"])
     end
 end
 GW.GridToggle = GridToggle
@@ -232,7 +247,7 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
     mf.parent.isMoved = false
     mf.parent:SetAttribute("isMoved", new_point.hasMoved)
 
-    --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction, h,v spacing, auras per row and max wraps to default
+    --if "PlayerBuffFrame" or "PlayerDebuffFrame", set also the grow direction, h,v spacing, auras per row and max wraps to default
     if mf.setting == "PlayerBuffFrame" or mf.setting == "PlayerDebuffFrame" then
         -- reset also the settings frame values
         GW.updateSettingsFrameSettingsValue(mf.setting .. "_GrowDirection", "UP", true)
@@ -497,7 +512,7 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     end
     mf:Hide()
 
-    local fs = mf:CreateFontString(nil, 'OVERLAY')
+    local fs = mf:CreateFontString(nil, "OVERLAY")
     fs:SetFont(UNIT_NAME_FONT, 12, "")
     fs:SetPoint("CENTER")
     fs:SetText(displayName)
@@ -616,9 +631,6 @@ end
 GW.ToggleMover = ToggleMover
 
 local function LoadMovers(layoutManager)
-    if GW.Retail then
-        createGrid()
-    end
     -- Create mover settings frame
     local fnMf_OnDragStart = function(self)
         self:StartMoving()
@@ -704,29 +716,30 @@ local function LoadMovers(layoutManager)
 
 
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEscapePressed", function(eb)
-        eb:SetText(grid.gridSpacing)
+        eb:SetText(GW.settings.gridSpacing)
         EditBox_ClearFocus(eb)
     end)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEnterPressed", function(eb)
         local text = eb:GetText()
         if tonumber(text) then
             if tonumber(text) <= 300 and tonumber(text) >= 20 then
-                grid:SetGridSpacing(tonumber(text))
+                GW.settings.gridSpacing = tonumber(text)
+                ShowGrid()()
             else
-                eb:SetText(grid.gridSpacing)
+                eb:SetText(GW.settings.gridSpacing)
             end
         else
-            eb:SetText(grid.gridSpacing)
+            eb:SetText(GW.settings.gridSpacing)
         end
         EditBox_ClearFocus(eb)
     end)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEditFocusLost", function(eb)
-        eb:SetText(grid.gridSpacing)
+        eb:SetText(GW.settings.gridSpacing)
     end)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEditFocusGained", smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.HighlightText)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnShow", function(eb)
         EditBox_ClearFocus(eb)
-        eb:SetText(grid.gridSpacing)
+        eb:SetText(GW.settings.gridSpacing)
     end)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.text:SetText(L["Grid Size:"])
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign:Hide()
@@ -740,8 +753,8 @@ local function LoadMovers(layoutManager)
 
     tagScrollFrame:SetupMenu(function(dropdown, rootDescription)
         local buttonSize = 20
-		local maxButtons = 7
-		rootDescription:SetScrollMode(buttonSize * maxButtons)
+        local maxButtons = 7
+        rootDescription:SetScrollMode(buttonSize * maxButtons)
 
         for _, v in pairs(allTags) do
             local function IsSelected(tagEnum)
@@ -756,7 +769,7 @@ local function LoadMovers(layoutManager)
             local radio = rootDescription:CreateRadio(v, IsSelected, SetSelected, v)
             radio:AddInitializer(GW.BlizzardDropdownRadioButtonInitializer)
         end
-	end)
+    end)
 
     --Layout
     GW.LoadLayoutsFrame(smallSettingsContainer, layoutManager)

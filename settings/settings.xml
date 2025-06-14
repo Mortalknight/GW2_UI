@@ -812,7 +812,7 @@
                         </Anchors>
                     </Button>
                     <Frame parentKey="gridAlign" inherits="GwStandardInputField">
-                        <Size x="30" y="20" />
+                        <Size x="50" y="20" />
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.showGrid" relativePoint="BOTTOMRIGHT" x="-30" y="-5" />
                         </Anchors>
