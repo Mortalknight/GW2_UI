@@ -19,7 +19,7 @@ function GwObjectivesItemButtonMixin:OnUpdate(elapsed)
 		if ( rangeTimer <= 0 ) then
 			local link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
 			if ( not charges or charges ~= self.charges ) then
-				self:GetParent():GetParent():GetParent():UpdateLayout()
+				self:GetParent():UpdateLayout()
 				return
 			end
 			local count = self.HotKey
