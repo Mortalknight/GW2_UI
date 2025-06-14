@@ -724,7 +724,7 @@ local function LoadMovers(layoutManager)
         if tonumber(text) then
             if tonumber(text) <= 300 and tonumber(text) >= 20 then
                 GW.settings.gridSpacing = tonumber(text)
-                ShowGrid()()
+                ShowGrid()
             else
                 eb:SetText(GW.settings.gridSpacing)
             end
