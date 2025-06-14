@@ -271,12 +271,12 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
                 if GW.Retail then
                     btn:SetUp(self.questLogIndex)
                 else
-                    btn:SetID(self.questLogIndex)
+                    btn.questLogIndex = self.questLogIndex
                     btn.charges = charges
                     btn.rangeTimer = -1
                     SetItemButtonTexture(btn, item)
                     SetItemButtonCount(btn, charges)
-                    WatchFrameItem_UpdateCooldown(btn)
+                    btn:UpdateCooldown()
                 end
                 btn:SetAttribute("type", "item")
                 btn:SetAttribute("item", link)
@@ -306,7 +306,14 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type
         return
     end
 
-    local height = self.fromContainerTopHeight + (GW.Retail and (GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()) or 0)
+    local height = self.fromContainerTopHeight
+    if GW.Retail then
+        height = height + GW.ObjectiveTrackerContainer.Scenario:GetHeight()
+    end
+    if not GW.Classic then
+        height = height +GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()
+    end
+
     if GW.ObjectiveTrackerContainer.Notification:IsShown() then
         height = height + GW.ObjectiveTrackerContainer.Notification.desc:GetHeight()
     else
@@ -318,7 +325,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type
     if type == "EVENT" then
         height = height + GW.ObjectiveTrackerContainer.Quests:GetHeight() + GW.ObjectiveTrackerContainer.Campaign:GetHeight()
     end
-    if type == "QUEST" then
+    if GW.Retail and type == "QUEST" then
         height = height + GW.ObjectiveTrackerContainer.Campaign:GetHeight()
     end
 

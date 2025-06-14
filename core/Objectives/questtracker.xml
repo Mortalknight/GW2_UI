@@ -3,7 +3,6 @@
     <Button name="GwQuestItemTemplate" registerForClicks="AnyDown" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
         <Size x="26" y="26"/>
         <Layers>
-
             <Layer level="ARTWORK">
                 <FontString parentKey="HotKey" inherits="NumberFontNormalSmallGray" justifyH="LEFT" text="RANGE_INDICATOR">
                     <Size x="29" y="10"/>

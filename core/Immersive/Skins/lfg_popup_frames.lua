@@ -1,5 +1,4 @@
 local _, GW = ...
-local constBackdropFrame = GW.BackdropTemplates.Default
 
 -------------------------------------------------------LFGDungeonReadyStatus-------------------------------------------------------
 local function SkinLFGDungeonReadyStatus()
@@ -10,7 +9,7 @@ local function SkinLFGDungeonReadyStatus()
         LFGDungeonReadyStatusCloseButton:ClearAllPoints()
         LFGDungeonReadyStatusCloseButton:SetPoint("TOPRIGHT", -3, -3)
 
-        LFGDungeonReadyStatus:GwCreateBackdrop(constBackdropFrame)
+        LFGDungeonReadyStatus:GwCreateBackdrop(GW.BackdropTemplates.Default)
     end
 
     hooksecurefunc("LFGDungeonReadyPopup_Update", SkinLFGDungeonReadyStatus_OnUpdate)
@@ -31,7 +30,7 @@ local function SkinLFGDungeonReadyDialog()
 
         LFGDungeonReadyDialog.instanceInfo.underline:Hide()
 
-        LFGDungeonReadyDialog:GwCreateBackdrop(constBackdropFrame)
+        LFGDungeonReadyDialog:GwCreateBackdrop(GW.BackdropTemplates.Default)
     end
 
     hooksecurefunc("LFGDungeonReadyPopup_Update", SkinLFGDungeonReadyDialog_OnUpdate)
@@ -40,7 +39,7 @@ end
 -------------------------------------------------------LFDRoleCheckPopup-------------------------------------------------------
 local function SkinLFDRoleCheckPopup()
     local SkinLFDRoleCheckPopup_OnUpdate = function()
-        LFDRoleCheckPopup:GwCreateBackdrop(constBackdropFrame)
+        LFDRoleCheckPopup:GwCreateBackdrop(GW.BackdropTemplates.Default)
         LFDRoleCheckPopup.Border:Hide()
         LFDRoleCheckPopupAcceptButton:GwSkinButton(false, true)
         LFDRoleCheckPopupDeclineButton:GwSkinButton(false, true)
@@ -57,7 +56,7 @@ local function SkinLFGInvitePopup()
     LFGInvitePopupAcceptButton:GwSkinButton(false, true)
     LFGInvitePopupDeclineButton:GwSkinButton(false, true)
 
-    LFGInvitePopup:GwCreateBackdrop(constBackdropFrame)
+    LFGInvitePopup:GwCreateBackdrop(GW.BackdropTemplates.Default)
 end
 
 local function LoadLFGSkins()

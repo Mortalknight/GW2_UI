@@ -1,39 +1,50 @@
 GwObjectivesItemButtonMixin = {}
 
+function GwObjectivesItemButtonMixin:UpdateCooldown()
+   local itemCooldown = self.Cooldown
+	local start, duration, enable = GetQuestLogSpecialItemCooldown(self.questLogIndex)
+	CooldownFrame_Set(itemCooldown, start, duration, enable)
+	if ( duration > 0 and enable == 0 ) then
+		SetItemButtonTextureVertexColor(self, 0.4, 0.4, 0.4)
+	else
+		SetItemButtonTextureVertexColor(self, 1, 1, 1)
+	end
+end
+
 function GwObjectivesItemButtonMixin:OnUpdate(elapsed)
     -- Handle range indicator
-	local rangeTimer = self.rangeTimer;
+	local rangeTimer = self.rangeTimer
 	if ( rangeTimer ) then
-		rangeTimer = rangeTimer - elapsed;
+		rangeTimer = rangeTimer - elapsed
 		if ( rangeTimer <= 0 ) then
-			local link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(self:GetID());
+			local link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
 			if ( not charges or charges ~= self.charges ) then
 				self:GetParent():GetParent():UpdateLayout()
-				return;
+				return
 			end
-			local count = _G[self:GetName().."HotKey"];
-			local valid = IsQuestLogSpecialItemInRange(self:GetID());
+			local count = self.HotKey
+			local valid = IsQuestLogSpecialItemInRange(self.questLogIndex)
 			if ( valid == 0 ) then
-				count:Show();
-				count:SetVertexColor(1.0, 0.1, 0.1);
+				count:Show()
+				count:SetVertexColor(1.0, 0.1, 0.1)
 			elseif ( valid == 1 ) then
-				count:Show();
-				count:SetVertexColor(0.6, 0.6, 0.6);
+				count:Show()
+				count:SetVertexColor(0.6, 0.6, 0.6)
 			else
-				count:Hide();
+				count:Hide()
 			end
-			rangeTimer = TOOLTIP_UPDATE_TIME;
+			rangeTimer = TOOLTIP_UPDATE_TIME
 		end
 
-		self.rangeTimer = rangeTimer;
+		self.rangeTimer = rangeTimer
 	end
 end
 
 function GwObjectivesItemButtonMixin:OnEvent(event)
     if ( event == "PLAYER_TARGET_CHANGED" ) then
-		self.rangeTimer = -1;
+		self.rangeTimer = -1
 	elseif ( event == "BAG_UPDATE_COOLDOWN" ) then
-		WatchFrameItem_UpdateCooldown(self);
+		self:UpdateCooldown()
 	end
 end
 
@@ -48,7 +59,7 @@ function GwObjectivesItemButtonMixin:OnHide()
 end
 
 function GwObjectivesItemButtonMixin:OnEnter()
-    if not self.itemID then return end
+    if not self.questLogIndex then return end
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:SetQuestLogSpecialItem(self.itemID)
+	GameTooltip:SetQuestLogSpecialItem(self.questLogIndex)
 end

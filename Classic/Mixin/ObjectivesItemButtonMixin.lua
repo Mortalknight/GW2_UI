@@ -1,5 +1,3 @@
-local _, GW = ...
-
 GwObjectivesItemButtonMixin = {}
 
 function GwObjectivesItemButtonMixin:SetItem(block)
