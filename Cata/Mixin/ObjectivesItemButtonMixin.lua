@@ -4,7 +4,7 @@ function GwObjectivesItemButtonMixin:UpdateCooldown()
    local itemCooldown = self.Cooldown
 	local start, duration, enable = GetQuestLogSpecialItemCooldown(self.questLogIndex)
 	CooldownFrame_Set(itemCooldown, start, duration, enable)
-	if ( duration > 0 and enable == 0 ) then
+	if ( duration and duration > 0 and enable and enable == 0 ) then
 		SetItemButtonTextureVertexColor(self, 0.4, 0.4, 0.4)
 	else
 		SetItemButtonTextureVertexColor(self, 1, 1, 1)
@@ -19,7 +19,7 @@ function GwObjectivesItemButtonMixin:OnUpdate(elapsed)
 		if ( rangeTimer <= 0 ) then
 			local link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
 			if ( not charges or charges ~= self.charges ) then
-				self:GetParent():GetParent():UpdateLayout()
+				self:GetParent():GetParent():GetParent():UpdateLayout()
 				return
 			end
 			local count = self.HotKey
