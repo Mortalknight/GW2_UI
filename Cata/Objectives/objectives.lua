@@ -221,7 +221,7 @@ function GwQuestLogMixin:OnEvent(event, ...)
     local arg1 = ...
     local numWatchedQuests = GetNumQuestWatches()
 
-    if (event == "QUEST_LOG_UPDATE" or event == "UPDATE_FACTION" or (event == "UNIT_QUEST_LOG_CHANGED" and arg1 == "player")) then
+    if (event == "QUEST_WATCH_LIST_CHANGED" or event == "QUEST_LOG_UPDATE" or event == "UPDATE_FACTION" or (event == "UNIT_QUEST_LOG_CHANGED" and arg1 == "player")) then
         self:UpdateLayout()
     elseif event == "PLAYER_MONEY" and self.watchMoneyReasons > numWatchedQuests then
         self:UpdateLayout()
@@ -477,6 +477,7 @@ function GwObjectivesQuestContainerMixin:InitModule()
 	self:RegisterEvent("QUEST_WATCH_UPDATE")
 	self:RegisterEvent("UPDATE_FACTION")
 	self:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
+    self:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
 	self:RegisterEvent("PLAYER_LEVEL_UP")
     self:RegisterEvent("PLAYER_MONEY")
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
