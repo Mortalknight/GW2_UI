@@ -197,11 +197,12 @@ local function StatOnEnter(self)
 end
 
 local function PaperDollGetStatListFrame(self, i, isPet, stat)
-    local frame = isPet and _G[(isPet and "GwPaperDollPetStat" or "GwPaperDollStat") .. i]
+    local frameName = isPet and ("GwPaperDollPetStat" .. i) or ("GwPaperDollStat" .. i)
+    local frame = _G[frameName]
     if frame then
         return frame
     end
-    frame = CreateFrame("Frame", (isPet and "GwPaperDollPetStat" or "GwPaperDollStat") .. i, self, "GwPaperDollStat")
+    frame = CreateFrame("Frame", frameName, self, "GwPaperDollStat")
 
     if stat == "DURABILITY" then
         frame:SetScript("OnEnter", GW.DurabilityTooltip)
