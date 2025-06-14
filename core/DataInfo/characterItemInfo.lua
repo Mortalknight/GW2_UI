@@ -159,13 +159,15 @@ do
     local function UpdatePageInfo()
         for name, tbl in pairs(InspectItems) do
             local inspectItem = _G[name]
-            inspectItem.enchantText:SetText("")
+            if inspectItem then
+                inspectItem.enchantText:SetText("")
 
-            local slotInfo = GW.GetGearSlotInfo("player", tbl.slotId, nil, true)
-            if slotInfo == "tooSoon" then
-                TryGearAgain(tbl.slotId, true, inspectItem)
-            else
-                UpdatePageStrings(inspectItem, slotInfo)
+                local slotInfo = GW.GetGearSlotInfo("player", tbl.slotId, nil, true)
+                if slotInfo == "tooSoon" then
+                    TryGearAgain(tbl.slotId, true, inspectItem)
+                else
+                    UpdatePageStrings(inspectItem, slotInfo)
+                end
             end
         end
     end
@@ -187,7 +189,10 @@ local function UpdateCharacterInfo(self, event)
         GW.UpdatePageInfo()
         --update itemborder
         for name, _ in pairs(InspectItems) do
-            GW.UpdateCharacterPanelItemSlot(_G[name])
+            local frame = _G[name]
+            if frame then
+                GW.UpdateCharacterPanelItemSlot(frame)
+            end
         end
         self.needsUpdate = false
     end
@@ -223,16 +228,18 @@ local function ToggleCharacterItemInfo(setup)
         f.lastUpdateTime = 0
         for name, _ in pairs(InspectItems) do
             local inspectItem = _G[name]
-            inspectItem.enchantText:SetText("")
-            inspectItem.enchantTextBg:Hide()
-            inspectItem.itemlevel:SetText("")
-            if inspectItem.itemSetBorderIndicator then
-                inspectItem.itemSetBorderIndicator:Hide()
-            end
+            if inspectItem then
+                inspectItem.enchantText:SetText("")
+                inspectItem.enchantTextBg:Hide()
+                inspectItem.itemlevel:SetText("")
+                if inspectItem.itemSetBorderIndicator then
+                    inspectItem.itemSetBorderIndicator:Hide()
+                end
 
-            for y = 1, 10 do
-                inspectItem["textureSlot" .. y]:SetTexture()
-                inspectItem["textureSlotBackdrop" .. y]:Hide()
+                for y = 1, 10 do
+                    inspectItem["textureSlot" .. y]:SetTexture()
+                    inspectItem["textureSlotBackdrop" .. y]:Hide()
+                end
             end
         end
     end
