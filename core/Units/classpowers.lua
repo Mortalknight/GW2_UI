@@ -1168,10 +1168,6 @@ local function powerRune(self)
         local fFlare = fr["flare" .. i]
         local animId = "RUNE_TIMER_ANIMATIONS" .. i
 
-        if not data.start or data.start == 0 then
-            return
-        end
-
         if not GW.Retail and data.runeType then
             fFill:SetTexture(iconTextures[data.runeType])
             fTex:SetTexture(iconTextures[data.runeType])
@@ -1187,6 +1183,9 @@ local function powerRune(self)
                 animations[animId].duration = 0
             end
         else
+            if not data.start or data.start == 0 then
+                return
+            end
             GW.AddToAnimation(
                 animId,
                 GW.Retail and data.progress or RUNE_TIMER_ANIMATIONS[i],
