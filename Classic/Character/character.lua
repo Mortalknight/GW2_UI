@@ -197,7 +197,7 @@ local function StatOnEnter(self)
 end
 
 local function PaperDollGetStatListFrame(self, i, isPet, stat)
-    local frame = isPet and _G["GwPaperDollPetStat" .. i] or _G["GwPaperDollStat" .. i]
+    local frame = isPet and _G[(isPet and "GwPaperDollPetStat" or "GwPaperDollStat") .. i]
     if frame then
         return frame
     end
