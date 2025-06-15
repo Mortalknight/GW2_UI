@@ -31,6 +31,7 @@
     <Include file ="Stancebar\Load.xml"/>
     <Include file ="Micromenu\Load.xml"/>
     <Include file ="Character\Load.xml"/>
+    <Include file ="Inventory\Load.xml"/>
     <Include file ="Tests\Load.xml"/>
 
     <Script file ="GW2_ui.lua"/>
