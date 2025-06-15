@@ -4,13 +4,14 @@ local NeedStanceButtonStyling = false
 local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10
 local WispSplode = [[Interface\Icons\Spell_Nature_WispSplode]]
 
-local function UpdateVisibility(self)
+GwStanceBarMixin = {}
+
+function GwStanceBarMixin:UpdateVisibility()
     if not self then return end
     RegisterStateDriver(self, "visibility", (not GW.settings.StanceBarEnabled or GetNumShapeshiftForms() == 0) and "hide" or "[vehicleui][petbattle] hide; show")
 end
-GW.UpdateStanceBarVisibility = UpdateVisibility
 
-local function UpdateCooldown(self)
+function GwStanceBarMixin:UpdateCooldown()
     local numForms = GetNumShapeshiftForms()
     for i = 1, NUM_STANCE_SLOTS do
         if i <= numForms then
@@ -27,7 +28,7 @@ local function UpdateCooldown(self)
     end
 end
 
-local function PositionsAndSize(self)
+function GwStanceBarMixin:PositionsAndSize()
     if not self then return end
     local numForms = GetNumShapeshiftForms()
 
@@ -84,9 +85,8 @@ local function PositionsAndSize(self)
         end
     end
 end
-GW.SetStanceButtons = PositionsAndSize
 
-local function StyleStanceBarButtons()
+function GwStanceBarMixin:StyleStanceBarButtons()
     local numForms = GetNumShapeshiftForms()
     local stance = GetShapeshiftForm()
 
@@ -121,18 +121,18 @@ local function StyleStanceBarButtons()
     end
 end
 
-local function UpdateKeybinds()
+function GwStanceBarMixin:UpdateKeybinds()
     for i = 1, NUM_STANCE_SLOTS do
-        local button = _G['GwStanceBarButton'..i]
+        local button = _G["GwStanceBarButton" .. i]
         if not button then break end
 
-        button.HotKey:SetText(GetBindingKey('SHAPESHIFTBUTTON'..i))
+        button.HotKey:SetText(GetBindingKey("SHAPESHIFTBUTTON" .. i))
         GW.updateHotkey(button)
         GW.FixHotKeyPosition(button, true)
     end
 end
 
-local function AdjustMaxStanceButtons(self)
+function GwStanceBarMixin:AdjustMaxStanceButtons()
     for _, button in ipairs(self.buttons) do
         button:Hide()
     end
@@ -159,13 +159,13 @@ local function AdjustMaxStanceButtons(self)
         end
     end
 
-    PositionsAndSize(self)
-    StyleStanceBarButtons()
-    UpdateKeybinds()
-    UpdateVisibility(self)
+    self:PositionsAndSize()
+    self:StyleStanceBarButtons()
+    self:UpdateKeybinds()
+    self:UpdateVisibility()
 end
 
-local function StanceButton_OnEvent(self, event)
+function GwStanceBarMixin:OnEvent( event)
     local inCombat = InCombatLockdown()
 
     if (event == "PLAYER_ENTERING_WORLD" or event == "UPDATE_SHAPESHIFT_FORMS") or NeedAdjustMaxStanceButtons then
@@ -173,20 +173,20 @@ local function StanceButton_OnEvent(self, event)
             NeedAdjustMaxStanceButtons = true
         else
             self.container:SetShown(GW.settings.StanceBarContainerState == "open" and true or false)
-            AdjustMaxStanceButtons(self)
+            self:AdjustMaxStanceButtons()
             NeedAdjustMaxStanceButtons = false
         end
     elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "UPDATE_SHAPESHIFT_USABLE" or event == "ACTIONBAR_PAGE_CHANGED" or NeedStanceButtonStyling then
         if inCombat then
             NeedStanceButtonStyling = true
         else
-            StyleStanceBarButtons()
+            self:StyleStanceBarButtons()
             NeedStanceButtonStyling = false
         end
     elseif event == "UPDATE_SHAPESHIFT_COOLDOWN" then
-        UpdateCooldown(self)
+        self:UpdateCooldown()
     elseif event == "UPDATE_BINDINGS" then
-        UpdateKeybinds()
+        self:UpdateKeybinds()
     end
 
     if inCombat then
@@ -199,6 +199,7 @@ end
 
 local function CreateStanceBarButtonHolder()
     local StanceButtonHolder = CreateFrame("Button", "GwStanceBar", UIParent, "GwStanceBarButton")
+    Mixin(StanceButtonHolder, GwStanceBarMixin)
 
     StanceButtonHolder.buttons = {}
 
@@ -209,9 +210,9 @@ local function CreateStanceBarButtonHolder()
     StanceButtonHolder:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
     StanceButtonHolder:RegisterEvent("UPDATE_SHAPESHIFT_COOLDOWN")
     StanceButtonHolder:RegisterEvent("UPDATE_BINDINGS")
-    StanceButtonHolder:SetScript("OnEvent", StanceButton_OnEvent)
+    StanceButtonHolder:SetScript("OnEvent", StanceButtonHolder.OnEvent)
 
-    UpdateVisibility(StanceButtonHolder)
+    StanceButtonHolder:UpdateVisibility()
 
     return StanceButtonHolder
 end
