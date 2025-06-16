@@ -120,6 +120,7 @@ local function getNearestQuestPOIRetail()
     local numTrackedWQ = C_QuestLog.GetNumWorldQuestWatches()
     local numQuests = C_QuestLog.GetNumQuestLogEntries()
     local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+    local poiX, poiY = nil, nil
 
     if (not x or not y) and (numTrackedQuests == 0 and numTrackedWQ == 0 and numQuests == 0) then
         return nil
@@ -143,6 +144,11 @@ local function getNearestQuestPOIRetail()
             local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
             if onContinent and dist and dist <= minDistSqr then
                 minDistSqr, closestQuestID = dist, questID
+            else
+                poiX, poiY = C_QuestLog.GetNextWaypointForMap(questID, GW.Libs.GW2Lib:GetPlayerLocationMapID())
+                if poiX and poiY then
+                    closestQuestID = questID
+                end
             end
         end
     end
@@ -151,26 +157,12 @@ local function getNearestQuestPOIRetail()
     if not closestQuestID then
         for questLogIndex = 1, numQuests do
             local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
-            local isOnMap, hasLocalPOI = QuestCache:Get(questID):IsOnMap()
-            if questID and isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
-                local distSqr, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
-                if onContinent and distSqr <= minDistSqr then
-                    minDistSqr = distSqr
-                    closestQuestID = questID
-                end
-            end
-        end
-
-        if not closestQuestID then
-            for questLogIndex = 1, numQuests do
-                local questID = C_QuestLog.GetQuestIDForLogIndex(questLogIndex)
-                local questData = QuestCache:Get(questID)
-                local isOnMap, hasLocalPOI = questData:IsOnMap()
-                if isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
-                    local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
-                    if onContinent and dist and dist <= minDistSqr then
-                        minDistSqr, closestQuestID = dist, questID
-                    end
+            local questData = QuestCache:Get(questID)
+            local isOnMap, hasLocalPOI = questData:IsOnMap()
+            if isOnMap and hasLocalPOI and QuestHasPOIInfo(questID) then
+                local dist, onContinent = C_QuestLog.GetDistanceSqToQuest(questID)
+                if onContinent and dist and dist <= minDistSqr then
+                    minDistSqr, closestQuestID = dist, questID
                 end
             end
         end
@@ -178,15 +170,19 @@ local function getNearestQuestPOIRetail()
 
     if not closestQuestID then return nil end
 
-    local poiX, poiY = nil, nil
     if isWQ then
         poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.Libs.GW2Lib:GetPlayerLocationMapID())
     else
-        local questsOnMap = C_QuestLog.GetQuestsOnMap(GW.Libs.GW2Lib:GetPlayerLocationMapID())
-        for _, info in ipairs(questsOnMap or {}) do
-            if info.questID == closestQuestID then
-                poiX, poiY = info.x, info.y
-                break
+        if not poiX then
+            local questsOnMap = C_QuestLog.GetQuestsOnMap(GW.Libs.GW2Lib:GetPlayerLocationMapID())
+            for _, info in ipairs(questsOnMap or {}) do
+                if info.questID == closestQuestID then
+                    poiX, poiY = info.x, info.y
+                    break
+                end
+            end
+            if not poiX then
+                poiX, poiY = C_QuestLog.GetNextWaypointForMap(closestQuestID, GW.Libs.GW2Lib:GetPlayerLocationMapID())
             end
         end
     end

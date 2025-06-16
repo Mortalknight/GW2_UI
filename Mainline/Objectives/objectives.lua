@@ -38,10 +38,11 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     self.questID = questID
     self.questLogIndex = questLogIndex
     self.title = quest.title
-    self.Header:SetText(quest.title)
 
     if isSuperTracked then
-        self.Header:SetText("<<" .. quest.title .. ">>")
+        self.Header:SetFormattedText("|A:Waypoint-MapPin-Tracked:15:15:0:0|a%s", quest.title)
+    else
+        self.Header:SetText(quest.title)
     end
 
     GW.CombatQueue_Queue(nil, self.UpdateObjectiveActionButton, {self})
