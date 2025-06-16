@@ -93,6 +93,7 @@ local function getQuestPOIText(questLogIndex)
     local finalText, numFinished = "", 0
     local numItemDrops = GetNumQuestItemDrops(questLogIndex)
     local numObjectives = numItemDrops > 0 and numItemDrops or GetNumQuestLeaderBoards(questLogIndex)
+    local completionText = GetQuestLogCompletionText(questLogIndex) or QUEST_WATCH_QUEST_READY
     local getter = numItemDrops > 0 and GetQuestLogItemDrop or GetQuestLogLeaderBoard
 
     for i = 1, numObjectives do
@@ -100,14 +101,16 @@ local function getQuestPOIText(questLogIndex)
         if text then
             if finished then
                 numFinished = numFinished + 1
-                if numObjectives == 1 then return QUEST_WATCH_QUEST_READY end
+                if numObjectives == 1 then
+                    return completionText
+                end
             else
                 finalText = finalText .. text .. "\n"
             end
         end
     end
 
-    return numFinished == numObjectives and QUEST_WATCH_QUEST_READY or finalText
+    return numFinished == numObjectives and completionText or finalText
 end
 GW.AddForProfiling("notifications", "getQuestPOIText", getQuestPOIText)
 
@@ -188,7 +191,7 @@ local function getNearestQuestPOIRetail()
     end
 
     if not poiX then return nil end
-
+    print(closestQuestID)
     local questData = QuestCache:Get(closestQuestID)
     local isCampaign = questData:IsCampaign()
     local isFrequent = questData.frequency and questData.frequency > 0
