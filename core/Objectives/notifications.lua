@@ -302,6 +302,57 @@ local function getNearestQuestPOIClassic()
 end
 GW.AddForProfiling("notifications", "getNearestQuestPOIClassic", getNearestQuestPOIClassic)
 
+local function getNearestQuestPOICata()
+    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
+        return nil
+    end
+
+    local numQuests = GetNumQuestLogEntries()
+    local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+
+    if x == nil or y == nil or numQuests == 0 then
+        return nil
+    end
+
+    local closestQuestID
+    local minDistSqr = math.huge
+    local isFrequent = false
+    local title
+    wipe(questCompass)
+
+    for questLogIndex = 1, numQuests do
+        local questLogTitleText, _, _, _, _, _, frequency, questID, _, _, isOnMap, hasLocalPOI = GetQuestLogTitle(questLogIndex)
+        if questID and isOnMap and hasLocalPOI then
+            local _, poiX, poiY = QuestPOIGetIconInfo(questID)
+
+            local distance = CalculateDistance(x, y, poiX, poiY)
+            if distance and distance < minDistSqr then
+                minDistSqr = distance
+                closestQuestID = questID
+                isFrequent = frequency and frequency > 1
+                title = questLogTitleText
+            end
+        end
+    end
+    if closestQuestID then
+        local _, poiX, poiY = QuestPOIGetIconInfo(closestQuestID)
+
+        questCompass.DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID))
+        questCompass.TITLE = title
+        questCompass.ID = closestQuestID
+        questCompass.X = poiX
+        questCompass.Y = poiY
+        questCompass.QUESTID = closestQuestID
+        questCompass.TYPE = isFrequent and "DAILY" or "QUEST"
+        questCompass.COLOR = isFrequent and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST
+        questCompass.COMPASS = true
+
+        return questCompass
+    end
+
+    return nil
+end
+
 local function getBodyPOI()
     local mapID = GW.Libs.GW2Lib:GetPlayerLocationMapID()
     if not mapID then
@@ -433,6 +484,8 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
             data = getNearestQuestPOIRetail()
         elseif GW.Classic then
             data = getNearestQuestPOIClassic()
+        elseif GW.Cata then
+            data = getNearestQuestPOICata()
         end
     end
 
@@ -573,8 +626,7 @@ function GwObjectivesTrackerNotificationMixin:InitModule()
     self.bonusbar:SetScript("OnEnter", self.BonusbarOnEnter)
     self.bonusbar:SetScript("OnLeave", GameTooltip_Hide)
     self.compass:SetScript("OnShow", self.compass.NewQuestAnimation)
-    self.compass:SetScript("OnMouseDown", function() C_SuperTrack.SetSuperTrackedQuestID(0) end)
-
+    self.compass:SetScript("OnMouseDown", function() if GW.Retail then C_SuperTrack.ClearAllSuperTracked() end end)
     self.shouldDisplay = false
 
     -- only update the tracker on Events or if player moves

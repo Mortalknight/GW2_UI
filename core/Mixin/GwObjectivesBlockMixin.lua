@@ -13,7 +13,7 @@ end
 function GwObjectivesBlockTemplateMixin:UpdateFindGroupButton(id, isScenario)
     local hasButton
     if not isScenario then
-        hasButton = C_LFGList.CanCreateQuestGroup(id)
+        hasButton = QuestUtil.CanCreateQuestGroup(id)
     else
         hasButton = C_LFGList.CanCreateScenarioGroup(id)
     end
@@ -230,10 +230,11 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
         objectiveBlock:SetHeight(h)
     end
 
-    if options.isAchievement and options.timerShown then
+    if options.timerShown then
         objectiveBlock:AddTimer(options.duration, options.startTime)
-    elseif options.isAchievement then
+    else
         objectiveBlock.TimerBar:Hide()
+        objectiveBlock.TimerBar:SetScript("OnUpdate", nil)
     end
 
     self.height = self.height + objectiveBlock:GetHeight()

@@ -316,7 +316,6 @@ do
     GW.SetupZoomReset = SetupZoomReset
 end
 
-
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = getMinimapShape

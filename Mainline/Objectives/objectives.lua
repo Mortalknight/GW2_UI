@@ -19,8 +19,9 @@ end
 local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
-    local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     local questFailed = C_QuestLog.IsFailed(questID)
+    local isSuperTracked = (questID == C_SuperTrack.GetSuperTrackedQuestID())
+    local shouldShowWaypoint = isSuperTracked or (questID == QuestMapFrame_GetFocusedQuestID())
 
     self.height = 25
     self.numObjectives = 0
@@ -28,7 +29,7 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     self.popupQuestAccept:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
     self:UpdateFindGroupButton(questID, false)
 
-    if requiredMoney then
+    if quest.requiredMoney > 0 then
         parent.watchMoneyReasons = parent.watchMoneyReasons + 1
     else
         parent.watchMoneyReasons = parent.watchMoneyReasons - 1
@@ -39,17 +40,17 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     self.title = quest.title
     self.Header:SetText(quest.title)
 
+    if isSuperTracked then
+        self.Header:SetText("<<" .. quest.title .. ">>")
+    end
+
     GW.CombatQueue_Queue(nil, self.UpdateObjectiveActionButton, {self})
 
-    if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
+    if numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
         isComplete = true
     end
 
     self:UpdateBlockObjectives(numObjectives)
-
-    if requiredMoney and requiredMoney > GetMoney() and not isComplete then
-        self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney), self.numObjectives + 1, {isQuest = true, finished = isComplete, objectiveType = nil})
-    end
 
     if isComplete then
         if quest.isAutoComplete then
@@ -57,13 +58,41 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
         else
             local completionText = GetQuestLogCompletionText(questLogIndex)
             if completionText then
+                if shouldShowWaypoint then
+                    local waypointText = C_QuestLog.GetNextWaypointText(questID)
+                    if waypointText then
+                        self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+                    end
+                end
                 self:AddObjective(completionText, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
             else
-                self:AddObjective(QUEST_WATCH_QUEST_READY, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+                local waypointText = C_QuestLog.GetNextWaypointText(questID)
+                if waypointText then
+                    self:AddObjective(waypointText, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+                else
+                    self:AddObjective(QUEST_WATCH_QUEST_READY, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+                end
             end
         end
     elseif questFailed then
         self:AddObjective(FAILED, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+    else
+        if shouldShowWaypoint then
+			local waypointText = C_QuestLog.GetNextWaypointText(questID);
+			if waypointText  then
+                self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), self.numObjectives + 1, {isQuest = true, finished = isComplete, objectiveType = nil})
+			end
+		end
+
+        if quest.requiredMoney > GetMoney() then
+            self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), self.numObjectives + 1, {isQuest = true, finished = isComplete, objectiveType = nil})
+        end
+
+        -- timer bar
+		local timeTotal, timeElapsed = C_QuestLog.GetTimeAllowed(questID)
+		if timeTotal and timeElapsed and timeElapsed < timeTotal then
+            self:AddObjective("", 1, {isQuest = true, qty = nil, totalqty = nil, timerShown = true, duration = timeTotal, startTime = GetTime() - timeElapsed})
+		end
     end
 
     if not self.objectiveBlocks then
@@ -138,6 +167,8 @@ function GwQuestLogMixin:OnEvent(event, ...)
         if success and questID and idx and idx > 0 then
             C_Timer.After(1, function() self:PartialUpdate(questID) end)
         end
+    else
+        self:UpdateLayout()
     end
 
     if self.watchMoneyReasons > numWatchedQuests then
@@ -409,6 +440,8 @@ function GwObjectivesQuestContainerMixin:InitModule()
     self:RegisterEvent("QUEST_ACCEPTED")
     self:RegisterEvent("PLAYER_MONEY")
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
+    self:RegisterEvent("SUPER_TRACKING_CHANGED")
+    self:RegisterEvent("QUEST_POI_UPDATE")
     self.watchMoneyReasons = 0
     self.isCampaignContainer = self:GetName() == "GwQuesttrackerContainerCampaign"
 

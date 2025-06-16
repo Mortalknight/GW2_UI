@@ -181,6 +181,7 @@ do
                 for i, line in next, info.lines do
                     local text = line and line.leftText
                     if i == 1 and text == RETRIEVING_ITEM_INFO then
+                        tt:Hide()
                         return "tooSoon"
                     else
                         InspectGearSlot(_G["GW2_UIScanTooltipTextLeft"..i], text, slotInfo)
@@ -192,6 +193,7 @@ do
             local firstLine = info.lines[1]
             local firstText = firstLine and firstLine.leftText
             if firstText == RETRIEVING_ITEM_INFO then
+                tt:Hide()
                 return "tooSoon"
             end
 
