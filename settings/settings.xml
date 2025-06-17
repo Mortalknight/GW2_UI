@@ -811,22 +811,39 @@
                             <Anchor point="TOPLEFT" relativeKey="$parent.tagDropdown" relativePoint="BOTTOMLEFT" x="-50" y="-3" />
                         </Anchors>
                     </Button>
-                    <Frame parentKey="gridAlign" inherits="GwStandardInputField">
-                        <Size x="50" y="20" />
+                    <Frame parentKey="gridSlider" hidden="true">
+                        <Size x="170" y="20" />
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.showGrid" relativePoint="BOTTOMRIGHT" x="-30" y="-5" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.showGrid" relativePoint="BOTTOMLEFT" x="0" y="-5" />
                         </Anchors>
-                        <Layers>
-                            <Layer>
-                                <FontString parentKey="text" text="GRID ALIGN" inherits="gw_button_font_black" justifyH="LEFT">
-                                    <Size x="130" y="20"/>
-                                    <Color r="1" g="1" b="1"/>
-                                    <Anchors>
-                                        <Anchor point="RIGHT" relativePoint="LEFT" x="-5" y="0"/>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
+                        <Frames>
+                            <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">
+                                <Size x="140" y="20"/>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativeKey="$parent.showGrid" relativePoint="TOPLEFT" x="0" y="0" />
+                                </Anchors>
+                                <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
+                                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle">
+                                    <Size x="16" y="16"/>
+                                </ThumbTexture>
+                                <Layers>
+                                    <Layer>
+                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg">
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                                            </Anchors>
+                                        </Texture>
+                                    </Layer>
+                                </Layers>
+                            </Slider>
+                            <Frame parentKey="inputFrame" inherits="GwStandardInputField">
+                                <Size x="35" y="20"/>
+                                <Anchors>
+                                    <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="10" y="0"/>
+                                </Anchors>
+                            </Frame>
+                        </Frames>
                     </Frame>
                 </Frames>
             </Frame>

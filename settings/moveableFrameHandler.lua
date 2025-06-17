@@ -100,17 +100,19 @@ local function HandleMoveHudEvents(self, event)
     end
 end
 
-local function Grid_GetRegion()
-    if grid then
-        if grid.regionCount and grid.regionCount > 0 then
-            local line = select(grid.regionCount, grid:GetRegions())
-            grid.regionCount = grid.regionCount - 1
-            line:SetAlpha(1)
-            return line
-        else
-            return grid:CreateTexture()
+local function GridGetRegion()
+    if not grid then return end
+
+    if grid.regionCount and grid.regionCount > 0 then
+        local region = select(grid.regionCount, grid:GetRegions())
+        grid.regionCount = grid.regionCount - 1
+        if region and region.SetAlpha then
+            region:SetAlpha(1)
+            return region
         end
     end
+
+    return grid:CreateTexture(nil, "BACKGROUND", nil, 0)
 end
 
 local function CreateGrid()
@@ -119,7 +121,7 @@ local function CreateGrid()
         grid:SetFrameStrata("BACKGROUND")
     else
         grid.regionCount = 0
-        for _, region in next, { grid:GetRegions() } do
+        for _, region in ipairs({grid:GetRegions()}) do
             if region.IsObjectType and region:IsObjectType("Texture") then
                 grid.regionCount = grid.regionCount + 1
                 region:SetAlpha(0)
@@ -128,63 +130,43 @@ local function CreateGrid()
     end
 
     local width, height = UIParent:GetSize()
-    local size, half = GW.mult * 0.5, height * 0.5
-
+    local size = math.max(GW.mult * 0.5, 0.5)  -- Min 0.5 pixel
     local gSize = GW.settings.gridSpacing
-    local gHalf = gSize * 0.5
+    local step = math.min(width, height) / gSize
+    local halfW, halfH = width * 0.5, height * 0.5
 
-    local ratio = width / height
-    local hHeight = height * ratio
-    local wStep = width / gSize
-    local hStep = hHeight / gSize
 
     grid.boxSize = gSize
     grid:SetPoint("CENTER", UIParent)
     grid:SetSize(width, height)
     grid:Show()
 
-    for i = 0, gSize do
-        local tx = Grid_GetRegion()
-        if i == gHalf then
-            tx:SetColorTexture(1, 0, 0)
-            tx:SetDrawLayer("BACKGROUND", 1)
-        else
-            tx:SetColorTexture(0, 0, 0)
-            tx:SetDrawLayer("BACKGROUND", 0)
-        end
-
-        local iwStep = i*wStep
+    -- Vertical lines
+    local cols = math.floor(width / step / 2)
+    for i = -cols, cols do
+        local x = i * step
+        local tx = GridGetRegion()
+        local isCenter = (i == 0)
+        tx:SetColorTexture(isCenter and 1 or 0, 0, 0, 1)
+        tx:SetDrawLayer("BACKGROUND", isCenter and 1 or 0)
         tx:ClearAllPoints()
-        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", iwStep - size, 0)
-        tx:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", iwStep + size, 0)
+        tx:SetPoint("TOP", grid, "CENTER", x, halfH)
+        tx:SetPoint("BOTTOM", grid, "CENTER", x, -halfH)
+        tx:SetWidth(size)
     end
 
-    do
-        local tx = Grid_GetRegion()
-        tx:SetColorTexture(1, 0, 0)
-        tx:SetDrawLayer("BACKGROUND", 1)
+    -- horizontal lines
+    local rows = math.floor(height / step / 2)
+    for i = -rows, rows do
+        local y = i * step
+        local tx = GridGetRegion()
+        local isCenter = (i == 0)
+        tx:SetColorTexture(isCenter and 1 or 0, 0, 0, 1)
+        tx:SetDrawLayer("BACKGROUND", isCenter and 1 or 0)
         tx:ClearAllPoints()
-        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -half + size)
-        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(half + size))
-    end
-
-    local hSteps = floor((height*0.5)/hStep)
-    for i = 1, hSteps do
-        local ihStep = i*hStep
-
-        local tx = Grid_GetRegion()
-        tx:SetColorTexture(0, 0, 0)
-        tx:SetDrawLayer("BACKGROUND", 0)
-        tx:ClearAllPoints()
-        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(half+ihStep) + size)
-        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(half+ihStep + size))
-
-        tx = Grid_GetRegion()
-        tx:SetColorTexture(0, 0, 0)
-        tx:SetDrawLayer("BACKGROUND", 0)
-        tx:ClearAllPoints()
-        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(half-ihStep) + size)
-        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(half-ihStep + size))
+        tx:SetPoint("LEFT", grid, "CENTER", -halfW, y)
+        tx:SetPoint("RIGHT", grid, "CENTER", halfW, y)
+        tx:SetHeight(size)
     end
 end
 
@@ -207,18 +189,15 @@ end
 
 local function GridToggle(_, _, forceClose)
     if InCombatLockdown() then return end
-    local show = true
-    if grid then
-        show = not grid:IsShown()
-    end
+    local show = not (grid and grid:IsShown())
 
     if show and not forceClose then
         ShowGrid()
-        GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign:Show()
+        GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider:Show()
         GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid:SetText(L["Hide grid"])
     else
         HideGrid()
-        GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign:Hide()
+        GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider:Hide()
         GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid:SetText(L["Show grid"])
     end
 end
@@ -714,35 +693,33 @@ local function LoadMovers(layoutManager)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid:SetScript("OnClick", GridToggle)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid:SetText(L["Show grid"])
 
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetMinMaxValues(20, 300)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetValue(GW.RoundDec(GW.settings.gridSpacing, 0))
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetObeyStepOnDrag(true)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetValueStep(2)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.inputFrame.input:SetText(GW.RoundDec(GW.settings.gridSpacing, 0))
 
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEscapePressed", function(eb)
-        eb:SetText(GW.settings.gridSpacing)
-        EditBox_ClearFocus(eb)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.slider:SetScript("OnValueChanged", function(self)
+        local roundValue = GW.RoundDec(self:GetValue(), 0)
+        GW.settings.gridSpacing = tonumber(roundValue)
+        self:GetParent().inputFrame.input:SetText(roundValue)
+        ShowGrid()
     end)
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEnterPressed", function(eb)
-        local text = eb:GetText()
-        if tonumber(text) then
-            if tonumber(text) <= 300 and tonumber(text) >= 20 then
-                GW.settings.gridSpacing = tonumber(text)
-                ShowGrid()
-            else
-                eb:SetText(GW.settings.gridSpacing)
-            end
-        else
-            eb:SetText(GW.settings.gridSpacing)
-        end
-        EditBox_ClearFocus(eb)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridSlider.inputFrame.input:SetScript("OnEnterPressed", function(self)
+        local roundValue = GW.RoundDec(self:GetNumber(), 0) or 20
+
+        self:ClearFocus()
+        if tonumber(roundValue) > 300 then self:SetText(300) end
+        if tonumber(roundValue) < 20 then self:SetText(20) end
+        roundValue = GW.RoundDec(self:GetNumber(), 0) or 20
+
+        roundValue = floor((roundValue - 20) / 2 + 0.5) * 2 + 20
+        self:GetParent():GetParent().slider:SetValue(roundValue)
+        self:SetText(roundValue)
+
+        GW.settings.gridSpacing = tonumber(roundValue)
+        ShowGrid()
     end)
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEditFocusLost", function(eb)
-        eb:SetText(GW.settings.gridSpacing)
-    end)
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEditFocusGained", smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.HighlightText)
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnShow", function(eb)
-        EditBox_ClearFocus(eb)
-        eb:SetText(GW.settings.gridSpacing)
-    end)
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.text:SetText(L["Grid Size:"])
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign:Hide()
 
     --load tag dropdown
     local tagScrollFrame = smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown
