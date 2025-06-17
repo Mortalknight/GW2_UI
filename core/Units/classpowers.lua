@@ -2135,6 +2135,7 @@ local function LoadClassPowers()
     cpf.decay:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
 
     cpf.gwPlayerForm = GetShapeshiftFormID()
+    cpf.unit = "player"
 
     updateVisibilitySetting(cpf, false)
     selectType(cpf)

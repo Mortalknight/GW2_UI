@@ -15,10 +15,13 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.0.2",{
+    {ct.feature, [=[Combopoint error for era and cata]=]},
+})
+
 addChange("8.0.1",{
     {ct.feature, [=[Merged Retail, Era and Cata version]=]},
 })
-
 
 addChange("7.15.0",{
     {ct.feature, [=[Added more option to unitframe fader]=]},
