@@ -317,7 +317,6 @@ local function getNearestQuestPOICata()
     local minDistSqr = math.huge
     local isFrequent = false
     local title
-    wipe(questCompass)
 
     for questLogIndex = 1, numQuests do
         local questLogTitleText, _, _, _, _, _, frequency, questID, _, _, isOnMap, hasLocalPOI = GetQuestLogTitle(questLogIndex)
@@ -336,17 +335,17 @@ local function getNearestQuestPOICata()
     if closestQuestID then
         local _, poiX, poiY = QuestPOIGetIconInfo(closestQuestID)
 
-        questCompass.DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID))
-        questCompass.TITLE = title
-        questCompass.ID = closestQuestID
-        questCompass.X = poiX
-        questCompass.Y = poiY
-        questCompass.QUESTID = closestQuestID
-        questCompass.TYPE = isFrequent and "DAILY" or "QUEST"
-        questCompass.COLOR = isFrequent and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST
-        questCompass.COMPASS = true
-
-        return questCompass
+        return {
+            X = poiX,
+            Y = poiY,
+            DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
+            TITLE = title,
+            TYPE = isFrequent and "DAILY" or "QUEST",
+            ID = closestQuestID,
+            COLOR = isFrequent and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST,
+            COMPASS = true,
+            QUESTID = closestQuestID
+        }
     end
 
     return nil
