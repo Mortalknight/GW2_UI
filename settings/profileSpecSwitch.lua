@@ -236,8 +236,6 @@ local function eventHandler(self, event)
 
     if databaseEnhanced then
         GW.globalSettings:CheckDualSpecState()
-
-        --Update settings Inferface here
     end
 end
 
