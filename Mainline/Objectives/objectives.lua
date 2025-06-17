@@ -16,6 +16,14 @@ local function IsQuestFrequency(q)
     return isFreq
 end
 
+local function BrightenColor(r, g, b, factor)
+    factor = factor or 0.3
+    return
+        math.min(1, r + (1 - r) * factor),
+        math.min(1, g + (1 - g) * factor),
+        math.min(1, b + (1 - b) * factor)
+end
+
 local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
@@ -38,11 +46,15 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     self.questID = questID
     self.questLogIndex = questLogIndex
     self.title = quest.title
+    self.isSuperTracked = isSuperTracked
+    self.Header:SetText(quest.title)
 
     if isSuperTracked then
-        self.Header:SetFormattedText("|A:Waypoint-MapPin-Tracked:15:15:0:0|a%s", quest.title)
+        local r, g, b = BrightenColor(self.color.r, self.color.g, self.color.b, 0.3)
+        self.Header:SetTextColor(r, g, b)
+        self:GetScript("OnEnter")(self)
     else
-        self.Header:SetText(quest.title)
+        self:GetScript("OnLeave")(self)
     end
 
     GW.CombatQueue_Queue(nil, self.UpdateObjectiveActionButton, {self})

@@ -43,17 +43,19 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
             v.StatusBar.progress:Show()
         end
     end
-    GW.AddToAnimation(
-        (self.animationName or self:GetName()) .. "hover",
-        0,
-        1,
-        GetTime(),
-        0.2,
-        function(step)
-            self.hover:SetAlpha(math.max((step - 0.3), 0))
-            self.hover:SetTexCoord(0, step, 0, 1)
-        end
-    )
+    if not self.isSuperTracked then
+        GW.AddToAnimation(
+            (self.animationName or self:GetName()) .. "hover",
+            0,
+            1,
+            GetTime(),
+            0.2,
+            function(step)
+                self.hover:SetAlpha(math.max((step - 0.3), 0))
+                self.hover:SetTexCoord(0, step, 0, 1)
+            end
+        )
+    end
     if self.event then
         self:TryShowRewardsTooltip()
     else
@@ -75,8 +77,9 @@ function GwObjectivesBlockTemplateMixin:OnLeave()
 
         self = self:GetParent()
     end
-
-    self.hover:Hide()
+    if not self.isSuperTracked then
+        self.hover:Hide()
+    end
     if self.objectiveBlocks == nil then
         self.objectiveBlocks = {}
     end
