@@ -15,7 +15,7 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-addChange("8.0.0",{
+addChange("8.0.1",{
     {ct.feature, [=[Merged Retail, Era and Cata version]=]},
 })
 
