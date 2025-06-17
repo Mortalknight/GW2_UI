@@ -1801,13 +1801,19 @@ local function setDruid(f)
                 barType = "mana"
             end
         end
-    else
+    elseif GW.Cata then
         if form == CAT_FORM then -- cat
             barType = "combo|little_mana"
         elseif form == BEAR_FORM or form == 8 then --bear
             barType = "little_mana"
         elseif form == MOONKIN_FORM then           --Moonkin
             barType = "eclips"
+        end
+    elseif GW.Classic then
+        if form == CAT_FORM then -- cat
+            barType = "combo|little_mana"
+        elseif form == BEAR_FORM or form == 8 then --bear
+            barType = "little_mana"
         end
     end
 

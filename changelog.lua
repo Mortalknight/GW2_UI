@@ -15,8 +15,12 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.0.3",{
+    {ct.bug, [=[Fix eclips bar on era]=]},
+})
+
 addChange("8.0.2",{
-    {ct.feature, [=[Combopoint error for era and cata]=]},
+    {ct.bug, [=[Combopoint error for era and cata]=]},
 })
 
 addChange("8.0.1",{
