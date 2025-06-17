@@ -17,6 +17,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("8.0.3",{
     {ct.bug, [=[Fix eclips bar on era]=]},
+    {ct.bug, [=[Fix micromenu moving on era and cata]=]},
 })
 
 addChange("8.0.2",{

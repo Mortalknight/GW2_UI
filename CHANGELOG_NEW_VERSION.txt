@@ -1,6 +1,7 @@
 8.0.3
 FIXES
     - Fix eclips bar on era
+    - Fix micromenu moving on era and cata
 
 8.0.2
 FIXES

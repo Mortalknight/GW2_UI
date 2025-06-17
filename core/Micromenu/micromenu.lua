@@ -531,7 +531,7 @@ local function setupMicroButtons(mbf)
                 f:SetAttribute("windowpanelopen", "paperdoll")
             ]=]
         )
-        disableMicroButton(CharacterMicroButton, true)
+        disableMicroButton(CharacterMicroButton, GW.Retail)
         if GW.Retail then
             cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
             cref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(cref); GameTooltip:Hide() end)
@@ -545,6 +545,13 @@ local function setupMicroButtons(mbf)
         cref:RegisterEvent("FRIENDLIST_UPDATE")
         cref:RegisterEvent("CHAT_MSG_SYSTEM")
         cref:RegisterEvent("MODIFIER_STATE_CHANGED")
+
+        if not GW.Retail then
+            CharacterMicroButton.GwSetAnchorPoint = function(self)
+                self:ClearAllPoints()
+                self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
+            end
+        end
     else
         cref = CharacterMicroButton
         if MicroButtonPortrait then
@@ -991,11 +998,18 @@ local function hook_UpdateMicroButtons()
         else
             tref = TalentMicroButton
         end
-        QuestLogMicroButton:ClearAllPoints()
-        QuestLogMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
+        if not InCombatLockdown() then
+            QuestLogMicroButton:ClearAllPoints()
+            QuestLogMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
 
-        SocialsMicroButton:ClearAllPoints()
-        SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
+            SocialsMicroButton:ClearAllPoints()
+            SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
+        end
+    elseif GW.Cata then
+        if not InCombatLockdown() then
+            AchievementMicroButton:ClearAllPoints()
+            AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)
+        end
     end
 end
 AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)
@@ -1040,6 +1054,23 @@ local function LoadMicroMenu()
     if GW.Retail then
         -- event timer icon
         ToggleEventTimerIcon(mbf.cf)
+    end
+
+    if not GW.Retail then
+        for i = 1, #MICRO_BUTTONS do
+            MICRO_BUTTONS[i] = nil
+        end
+
+        UpdateMicroButtonsParent(mbf.cf)
+
+        hooksecurefunc(
+            "MoveMicroButtons",
+            function()
+                if CharacterMicroButton.GwSetAnchorPoint then
+                    CharacterMicroButton:GwSetAnchorPoint()
+                end
+            end
+        )
     end
 
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
