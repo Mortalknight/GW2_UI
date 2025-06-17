@@ -230,7 +230,7 @@ local function gw_OnUpdate(_, elapsed)
         cb.func(cb.payload, elapsed)
     end
 
-    if GW.Classic and PetActionBarFrame:IsShown() and GW.settings.PETBAR_ENABLED and loaded and not GW.GW.ShouldBlockIncompatibleAddon("Actionbars") then
+    if GW.Classic and PetActionBarFrame:IsShown() and GW.settings.PETBAR_ENABLED and loaded and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
         PetActionBarFrame:Hide()
     end
 end
