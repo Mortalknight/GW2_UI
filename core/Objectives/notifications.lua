@@ -191,7 +191,6 @@ local function getNearestQuestPOIRetail()
     end
 
     if not poiX then return nil end
-    print(closestQuestID)
     local questData = QuestCache:Get(closestQuestID)
     local isCampaign = questData:IsCampaign()
     local isFrequent = questData.frequency and questData.frequency > 0
