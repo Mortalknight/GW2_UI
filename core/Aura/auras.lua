@@ -7,7 +7,12 @@ local BadDispels = GW.Libs.Dispel:GetBadList()
 local function UpdateTooltip(self)
     if GameTooltip:IsForbidden() then return end
 
-    GameTooltip:SetUnitAura(self:GetParent():GetParent().unit, self.id, self.filter)
+    --GameTooltip:SetUnitAura(self:GetParent():GetParent().unit, self.id, self.filter)
+    if self.isHarmful then
+		GameTooltip:SetUnitDebuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
+	else
+		GameTooltip:SetUnitBuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
+	end
 end
 
 local function auraFrame_OnEnter(self)
@@ -202,7 +207,7 @@ local function SetPosition(element, from, to, unit, isInvert, auraPositon)
     end
 end
 
-local function updateAura(element, unit, data, position, isBuff, index)
+local function updateAura(element, unit, data, position, isBuff)
     if not data.name then return end
 
     local button = element[position]
@@ -220,8 +225,7 @@ local function updateAura(element, unit, data, position, isBuff, index)
     -- for tooltips
     button.auraInstanceID = data.auraInstanceID
     button.hideDuration = element.hideDuration
-    button.filter = data.isHarmful and "HARMFUL" or "HELPFUL"
-    button.id = index
+    button.isHarmful = data.isHarmful
 
     if data.sourceUnit == "player" and (data.duration > 0 and data.duration < 120) then
         setAuraType(button, "bigBuff")
@@ -444,7 +448,6 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
 
     if buffsChanged or debuffsChanged then
         local numVisible
-        local index = 1
 
         if buffsChanged then
             -- instead of removing auras one by one, just wipe the tables entirely
@@ -460,8 +463,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
             numVisible = math.min(numBuffs, numTotal, #auras.sortedBuffs)
 
             for i = 1, numVisible do
-                updateAura(auras, unit, auras.sortedBuffs[i], i, true, index)
-                index = index + 1
+                updateAura(auras, unit, auras.sortedBuffs[i], i, true)
             end
         else
             numVisible = math.min(numBuffs, numTotal, #auras.sortedBuffs)
@@ -481,10 +483,8 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
         numDebuffs = math.min(numDebuffs, numTotal - numVisible, #auras.sortedDebuffs)
 
         -- any changes to buffs will affect debuffs, so just redraw them even if nothing changed
-        index = 1
         for i = 1, numDebuffs do
-            updateAura(auras, unit, auras.sortedDebuffs[i], numVisible + i, false, index)
-            index = index + 1
+            updateAura(auras, unit, auras.sortedDebuffs[i], numVisible + i, false)
         end
 
         numVisible = numVisible + numDebuffs
@@ -528,5 +528,6 @@ local function LoadAuras(self)
     self.auras.createdButtons = 0
     self.auras.anchoredButtons = 0
     self.auras.ForceUpdate = ForceUpdate
+    self.auras.__owner = self
 end
 GW.LoadAuras = LoadAuras
