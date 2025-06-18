@@ -1,5 +1,4 @@
 local _, GW = ...
-local constBackdropFrameSmallerBorder = GW.BackdropTemplates.DefaultWithSmallBorder
 
 local function UpdateRepairButtons()
     MerchantRepairAllButton:ClearAllPoints()
@@ -39,7 +38,7 @@ local function SkinMerchantFrameItemButton(i)
     local item = _G["MerchantItem" .. i]
 
     item:GwStripTextures(true)
-    item:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
+    item:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 6, 6)
     item.backdrop:SetFrameLevel(item:GetFrameLevel())
 
     button:GwStripTextures()
@@ -99,7 +98,7 @@ local function LoadMerchantFrameSkin()
 
     MerchantBuyBackItem:SetPoint("TOPLEFT", MerchantItem10, "BOTTOMLEFT", 0, -50)
     MerchantBuyBackItem:GwStripTextures(true)
-    MerchantBuyBackItem:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
+    MerchantBuyBackItem:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 6, 6)
     MerchantBuyBackItem.backdrop:SetFrameLevel(MerchantBuyBackItem:GetFrameLevel())
     MerchantBuyBackItem.backdrop:SetPoint("TOPLEFT", -6, 6)
     MerchantBuyBackItem.backdrop:SetPoint("BOTTOMRIGHT", 6, -6)

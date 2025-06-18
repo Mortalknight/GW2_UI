@@ -9,6 +9,7 @@
     <Script file ="..\changelog.lua"/>
     <Script file ="debug.lua"/>
     <Script file ="migration.lua"/>
+    <Script file ="backdropTemplates.lua"/>
     <Script file ="..\Settings\defaults2.lua"/>
     <Include file ="..\Settings\Load.xml"/>
     <Include file ="..\Core\Mixin\Load.xml"/>
@@ -16,7 +17,6 @@
     <Include file ="Objectives\Load.xml"/>
     <Include file ="Statusbar\Load.xml"/>
     <Script file ="raid_debuffs.lua"/>
-    <Script file ="backdropTemplates.lua"/>
     <Script file ="fonts.lua"/>
     <Script file ="cooldowns.lua"/>
     <Script file ="disableBlizzard.lua"/>
