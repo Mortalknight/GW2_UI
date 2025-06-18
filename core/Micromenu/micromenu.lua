@@ -5,7 +5,7 @@ local updateIcon
 
 local PERFORMANCE_BAR_UPDATE_INTERVAL = 1
 
-local MICRO_BUTTONS = {
+local MICRO_BUTTONS_LOCAL = {
     "CharacterMicroButton",
     "PlayerSpellsMicroButton",
     "SpellbookMicroButton", -- none Retail
@@ -314,8 +314,8 @@ end
 AFP("reskinMicroButton", reskinMicroButton)
 
 local function reskinMicroButtons(mbf, hook)
-    for i = 1, #MICRO_BUTTONS do
-        local name = MICRO_BUTTONS[i]
+    for i = 1, #MICRO_BUTTONS_LOCAL do
+        local name = MICRO_BUTTONS_LOCAL[i]
         local btn = _G[name]
         if btn then
             reskinMicroButton(btn, name, mbf, hook)
@@ -327,8 +327,12 @@ AFP("reskinMicroButtons", reskinMicroButtons)
 local function disableMicroButton(btn, hideOnly)
     if hideOnly then
         -- hide it off-screen but still want events to run for alerts/notifications
-        btn:ClearAllPoints()
-        btn:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
+        if GW.Cata then
+            btn:SetParent(GW.HiddenFrame)
+        else
+            btn:ClearAllPoints()
+            btn:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
+        end
     else
         btn:Disable()
         btn:UnregisterAllEvents()
@@ -545,21 +549,18 @@ local function setupMicroButtons(mbf)
         cref:RegisterEvent("FRIENDLIST_UPDATE")
         cref:RegisterEvent("CHAT_MSG_SYSTEM")
         cref:RegisterEvent("MODIFIER_STATE_CHANGED")
-
-        if not GW.Retail then
-            CharacterMicroButton.GwSetAnchorPoint = function(self)
-                self:ClearAllPoints()
-                self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
-            end
-        end
     else
         cref = CharacterMicroButton
         if MicroButtonPortrait then
             MicroButtonPortrait:Hide()
         end
     end
-    cref:ClearAllPoints()
-    cref:SetPoint("TOPLEFT", mbf, "TOPLEFT", 5, -3)
+    cref.GwSetAnchorPoint = function(self)
+        -- this must also happen in the auto-layout update hook which is why we do it like this
+        self:ClearAllPoints()
+        self:SetPoint("TOPLEFT", mbf, "TOPLEFT", 5, -3)
+    end
+    cref:GwSetAnchorPoint()
 
     -- custom bag microbutton
     local bref = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
@@ -754,7 +755,6 @@ local function setupMicroButtons(mbf)
         PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
         PVPMicroButtonTexture:SetAlpha(0)
 
-
         -- LFGMicroButton
         LFGMicroButton:ClearAllPoints()
         LFGMicroButton:SetPoint("BOTTOMLEFT", PVPMicroButton, "BOTTOMRIGHT", 4, 0)
@@ -943,8 +943,8 @@ local function checkElvUI()
     ab.UpdateMicroButtonsParent = GW.NoOp
     ab.UpdateMicroButtons = GW.NoOp
     ab.UpdateMicroButtonTexture = GW.NoOp
-    for i = 1, #MICRO_BUTTONS do
-        local name = MICRO_BUTTONS[i]
+    for i = 1, #MICRO_BUTTONS_LOCAL do
+        local name = MICRO_BUTTONS_LOCAL[i]
         local btn = _G[name]
         if btn then
             -- remove the backdrop ElvUI adds
