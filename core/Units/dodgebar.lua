@@ -4,7 +4,6 @@ local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 local FrameFlash = GW.FrameFlash
 local lerp = GW.lerp
 
-
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
 local DODGEBAR_SPELLS = {} -- spell ID used to generate the bar information/tooltip

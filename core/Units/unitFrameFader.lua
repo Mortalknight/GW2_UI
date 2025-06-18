@@ -135,7 +135,7 @@ end
 local options = {
     Range = {
         enable = function(self)
-            if oUF.isRetail then
+            if GW.Retail then
                 self:RegisterEvent("UNIT_IN_RANGE_UPDATE", Update)
             else
                 if not onRangeFrame then
@@ -148,7 +148,7 @@ local options = {
             end
         end,
         disable = function(self)
-            if oUF.isRetail then
+            if GW.Retail then
                 self:UnregisterEvent('UNIT_IN_RANGE_UPDATE', Update)
             else
                 if onRangeFrame then

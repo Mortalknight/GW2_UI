@@ -1,5 +1,5 @@
 local _, GW = ...
-local MAJOR, MINOR = "LibGW2-1.0", 2
+local MAJOR, MINOR = "LibGW2-1.0", 3
 assert(LibStub, MAJOR .. " requires LibStub")
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
@@ -12,6 +12,12 @@ local mapRects, tempVec2D = {}, CreateVector2D(0, 0)
 local cleuEventListener = {}
 local asyncQueue = {}
 local cleuTicker = nil
+
+local isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+local isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+local isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+local isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 
 lib.callbacks = CallbackHandler:New(lib)
 
@@ -257,8 +263,8 @@ local events = {
     "PLAYER_CONTROL_LOST",
     "PLAYER_CONTROL_GAINED"
 }
-if GW.Retail then
-    tinsert(events,"PLAYER_CAN_GLIDE_CHANGED")
+if isRetail then
+    tinsert(events, "PLAYER_CAN_GLIDE_CHANGED")
 end
 
 for _, evt in ipairs(events) do
