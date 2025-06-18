@@ -13,8 +13,6 @@ jobs:
 
       - name: Update TOC Interface version
         uses: p3lim/toc-interface-updater@v3
-        with:
-          flavor: retail
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6
