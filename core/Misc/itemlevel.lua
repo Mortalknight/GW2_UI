@@ -106,11 +106,11 @@ local function ScanTooltipTextures()
 
     local step = 1
     for i = 1, 10 do
-        local tex = _G["GW2_UIScanTooltipTexture"..i]
+        local tex = _G["GW2_UIScanTooltipTexture" .. i]
         local texture = tex and tex:IsShown() and tex:GetTexture()
         if texture then
             if texture == essenceTextureID then
-                local selected = (tt.gems[i-1] ~= essenceTextureID and tt.gems[i-1]) or nil
+                local selected = (tt.gems[i - 1] ~= essenceTextureID and tt.gems[i - 1]) or nil
                 if not tt.essences[step] then tt.essences[step] = {} end
 
                 tt.essences[step][1] = selected			--essence texture if selected or nil
@@ -127,7 +127,6 @@ local function ScanTooltipTextures()
             end
         end
     end
-
     return tt.gems, tt.essences
 end
 
@@ -175,7 +174,6 @@ do
             if not tt.itemLevelColors then tt.itemLevelColors = {} else wipe(tt.itemLevelColors) end
             slotInfo.enchantColors = tt.enchantColors
             slotInfo.itemLevelColors = tt.itemLevelColors
-
 
             if info then
                 for i, line in next, info.lines do
