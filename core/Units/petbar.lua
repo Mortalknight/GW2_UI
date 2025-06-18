@@ -17,9 +17,15 @@ local function UpdatePetActionBarIcons()
     PetActionButton2Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
     PetActionButton3Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
 
-    PetActionButton8Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
-    PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
-    PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
+    if PetActionButton8Icon:GetTexture() == 524348 then
+        PetActionButton8Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
+    end
+    if PetActionButton9Icon:GetTexture() == 132110 then
+        PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
+    end
+    if PetActionButton10Icon:GetTexture() == 132311 then
+        PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
+    end
 end
 GW.AddForProfiling("petbar", "UpdatePetActionBarIcons", UpdatePetActionBarIcons)
 
@@ -233,7 +239,9 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
         self:Update(event, unit)
         self:UpdateHealthBar()
         self:UpdatePowerBar(true)
-         C_Timer.After(0.1, function() self:UpdateHappiness() end)
+        if GW.Classic then
+            C_Timer.After(0.1, function() self:UpdateHappiness() end)
+        end
     elseif event == "UNIT_AURA" then
         GW.UpdateBuffLayout(self, event, unit, ...)
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
@@ -264,6 +272,12 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
         self:UpdatePowerBar()
     elseif event == "UNIT_HAPPINESS" then
         self:UpdateHappiness()
+    elseif event == "PET_BAR_HIDEGRID" then
+        if GW.Retail then
+            PetActionBar:Update()
+        else
+            PetActionBar_Update()
+        end
     end
 end
 
@@ -423,6 +437,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("PET_BAR_UPDATE_USABLE")
     playerPetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     playerPetFrame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
+    playerPetFrame:RegisterEvent("PET_BAR_HIDEGRID")
     if GW.Classic then
         playerPetFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "pet")
         playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
