@@ -15,6 +15,12 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.0.4",{
+    {ct.bug, [=[Fix microbar moving (cata)]=]},
+    {ct.bug, [=[Readd spellbook and talent setting (cata)]=]},
+    {ct.bug, [=[Fix skyridingbar (retail)]=]},
+})
+
 addChange("8.0.3",{
     {ct.bug, [=[Fix eclips bar on era]=]},
     {ct.bug, [=[Fix micromenu moving on era and cata]=]},
