@@ -258,7 +258,6 @@ local function rename_OnClick(self)
                 GW.WarningPrompt("Profile with that name already exists")
                 return
             end
-            GW.globalSettings.profiles[profileOriginalName].profilename = profileName
             GW.globalSettings.profiles[profileName] = GW.copyTable(nil, GW.globalSettings.profiles[profileOriginalName])
             GW.globalSettings.profiles[profileOriginalName] = nil
 
@@ -291,7 +290,7 @@ end
 
 local function copy_OnClick(self)
     local newProfil = GW.copyTable(nil, GW.globalSettings.profiles[self:GetParent().profileName])
-    GW.addProfile(L["Copy of"] .. " " .. GW.globalSettings.profiles[self:GetParent().profileName].profilename, newProfil, true)
+    GW.addProfile(L["Copy of"] .. " " .. self:GetParent().profileName, newProfil, true)
 end
 
 
@@ -377,7 +376,6 @@ local function addProfile(name, profileData, copy, import)
 
     if copy then
         GW.globalSettings.profiles[name] = profileData
-        GW.globalSettings.profiles[name].profilename = name
     elseif profileData then
         GW.globalSettings.profiles[name] = profileData
     else

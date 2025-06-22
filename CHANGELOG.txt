@@ -4,6 +4,7 @@ FIXES
     - Fix unit level at tooltip (era)
     - Fix aura tooltip (era & cata)
     - Fix mirror timer (era & cata)
+    - Fix copying profiles
 
 8.0.4
 FIXES
