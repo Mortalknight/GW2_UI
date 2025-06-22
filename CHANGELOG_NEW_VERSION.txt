@@ -1,10 +1,14 @@
+8.0.5
+FIXES
+    - Fix target level color (era & cata)
+
 8.0.4
 FIXES
     - Fix microbar moving (cata)
     - Readd spellbook and talent setting (cata)
     - Fix skyridingbar (retail)
 
-#8.0.3
+8.0.3
 FIXES
     - Fix eclips bar on era
     - Fix micromenu moving on era and cata

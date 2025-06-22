@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.0.5",{
+    {ct.bug, [=[Fix target level color (era & cata)]=]},
+})
+
 addChange("8.0.4",{
     {ct.bug, [=[Fix microbar moving (cata)]=]},
     {ct.bug, [=[Readd spellbook and talent setting (cata)]=]},

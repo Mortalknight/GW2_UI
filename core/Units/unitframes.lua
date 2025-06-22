@@ -231,7 +231,7 @@ function GwUnitFrameMixin:UpdateHealthbarColor()
 end
 
 function GwUnitFrameMixin:SetUnitPortraitFrame()
-    if not self.portrait or not self.background or GW.Classic then return end
+    if not self.portrait or not self.background then return end
 
     local unit = self.unit
     local border = "normal"
@@ -245,7 +245,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
         if unitLevel == -1 then border = "boss" end
     end
 
-    if canInspect then
+    if not GW.Classic and canInspect then
         if self.showItemLevel == "ITEM_LEVEL" then
             local guid = UnitGUID(self.unit)
             if guid then
@@ -382,6 +382,16 @@ function GwUnitFrameMixin:UnitFrameData(lvl)
         self.nameString:SetTextColor(math.min(color.r + 0.3, 1), math.min(color.g + 0.3, 1), math.min(color.b + 0.3, 1), color.a)
     else
         self:UpdateHealthbarColor()
+    end
+
+    if not GW.Retail then
+        if UnitCanAttack("player", self.unit) then
+            if level == "??" then level = 99 end
+            local color = GetCreatureDifficultyColor(level)
+            self.levelString:SetVertexColor(color.r, color.g, color.b)
+        else
+            self.levelString:SetVertexColor(1, 1, 1)
+        end
     end
 
     self:SetUnitPortrait()
