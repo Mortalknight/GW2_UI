@@ -421,7 +421,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local awayText = UnitIsAFK(unit) and AFK_LABEL or UnitIsDND(unit) and DND_LABEL or ""
         GameTooltipTextLeft1:SetFormattedText("|c%s%s%s|r", nameColor.colorStr, name or UNKNOWN, awayText)
 
-        local levelLine, specLine = GetLevelLine(self, (guildName and 2 or 1))
+        local levelLine, specLine = GetLevelLine(self, (guildName and not GW.Classic and 2) or 1)
         if guildName then
             if guildRealm and isShiftKeyDown then
                 guildName = guildName.."-"..guildRealm

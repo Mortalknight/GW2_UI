@@ -1,6 +1,7 @@
 8.0.5
 FIXES
     - Fix target level color (era & cata)
+    - Fix unit level at tooltip (era)
 
 8.0.4
 FIXES
