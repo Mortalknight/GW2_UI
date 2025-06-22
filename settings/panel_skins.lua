@@ -64,7 +64,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r World Quest Tracker", nil, {getterSetter = "SKIN_WQT_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["QUESTTRACKER_ENABLED"] = true}, incompatibleAddons = "Objectives", hidden = not GW.Retail})
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Immersion", nil, {getterSetter = "IMMERSIONADDON_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r PetTracker", nil, {getterSetter = "SKIN_PETTRACKER_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["QUESTTRACKER_ENABLED"] = true}, incompatibleAddons = "Objectives", hidden = not GW.Retail})
-    addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Auctionator", nil, {getterSetter = "AUCTIONATOR_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["AuctionHouseSkinEnabled"] = true}})
+    addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Auctionator", nil, {getterSetter = "AUCTIONATOR_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["AuctionHouseSkinEnabled"] = true, hidden = not GW.Retail}})
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Todoloo", nil, {getterSetter = "SKIN_TODOLOO_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
     InitPanel(p, true)
 end
