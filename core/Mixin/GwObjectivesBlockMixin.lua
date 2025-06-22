@@ -59,7 +59,7 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
     if self.event then
         self:TryShowRewardsTooltip()
     else
-        if IsInGroup() and self.questID then
+        if GW.Retail and IsInGroup() and self.questID then
             GameTooltip:ClearAllPoints()
             GameTooltip:SetPoint("TOPRIGHT", self, "TOPLEFT", 0, 0)
             GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
