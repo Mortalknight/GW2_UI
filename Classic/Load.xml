@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="Misc\Load.xml"/>
     <Include file ="Mixin\Load.xml"/>
+    <Include file ="Auras\Load.xml"/>
     <Include file ="Immersive\Load.xml"/>
     <Include file ="Actionbar\Load.xml"/>
     <Include file ="Inventory\Load.xml"/>

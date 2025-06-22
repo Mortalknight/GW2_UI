@@ -383,8 +383,6 @@ function GwAuraTmpl_OnLoad(self)
     self:SetScript("OnHide", AuraOnHide)
     self:SetScript("OnLeave", GameTooltip_Hide)
 
-    self:RegisterForClicks("AnyUp", "AnyDown")
-
     self.gwInit = true
 end
 
@@ -392,7 +390,7 @@ local function UpdateAuraHeader(header, settingName)
     if not header then return end
 
     local size = tonumber(GW.RoundDec(GW.settings[settingName .. "_ICON_SIZE"]))
-    local aura_tmpl = format("GwAuraSecureTmpl%d", size)
+    local aura_tmpl = format("GwAuraTmpl%d", size)
     local grow_dir = GW.settings[settingName .. "_GrowDirection"]
     local maxWraps = GW.settings[settingName .. "_MaxWraps"]
     local horizontalSpacing = tonumber(GW.settings[settingName .. "_HorizontalSpacing"])
