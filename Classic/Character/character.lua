@@ -467,7 +467,7 @@ local function PaperDollSlotButton_Update(self)
         else
             self.itemlevel:SetText("")
         end
-    else
+    elseif self.itemlevel then
         self.itemlevel:SetText("")
     end
 
