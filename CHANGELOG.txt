@@ -3,6 +3,7 @@ FIXES
     - Fix target level color (era & cata)
     - Fix unit level at tooltip (era)
     - Fix aura tooltip (era & cata)
+    - Fix mirror timer (era & cata)
 
 8.0.4
 FIXES
