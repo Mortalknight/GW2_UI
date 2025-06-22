@@ -78,11 +78,15 @@ local function UpdateTooltip(self)
 
 	if self.tooltipBySpellId then
 		GameTooltip:SetSpellByID(self.tooltipBySpellId)
-	elseif(self.isHarmful) then
-		GameTooltip:SetUnitDebuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
-	else
-		GameTooltip:SetUnitBuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
-	end
+	elseif oUF.isRetail then
+		if self.isHarmful then
+            GameTooltip:SetUnitDebuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
+        else
+            GameTooltip:SetUnitBuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
+        end
+    else
+        GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self.index, self.isHarmful and "HARMFUL" or "HELPFUL")
+    end
 end
 
 local function onEnter(self)
@@ -195,6 +199,21 @@ local function updateAura(element, unit, data, position)
 	-- for tooltips
 	button.auraInstanceID = data.auraInstanceID
 	button.isHarmful = data.isHarmful
+
+	if not oUF.isRetail then
+         --loop to get the index
+        for i = 1, 40 do
+            local auraData = C_UnitAuras.GetAuraDataByIndex(unit, i, data.isHelpful and "HELPFUL" or "HARMFUL")
+            if auraData then
+                if auraData.auraInstanceID == data.auraInstanceID then
+                    button.index = i
+                    break
+                end
+            else
+                break
+            end
+        end
+    end
 
 	if(button.Cooldown and not element.disableCooldown) then
 		if(data.duration > 0) then

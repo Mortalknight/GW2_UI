@@ -18,6 +18,7 @@ AddChange(string addonVersion, table changeList)
 addChange("8.0.5",{
     {ct.bug, [=[Fix target level color (era & cata)]=]},
     {ct.bug, [=[Fix unit level at tooltip (era)]=]},
+    {ct.bug, [=[Fix aura tooltip (era & cata)]=]},
 })
 
 addChange("8.0.4",{

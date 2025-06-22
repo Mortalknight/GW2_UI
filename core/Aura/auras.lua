@@ -7,12 +7,15 @@ local BadDispels = GW.Libs.Dispel:GetBadList()
 local function UpdateTooltip(self)
     if GameTooltip:IsForbidden() then return end
 
-    --GameTooltip:SetUnitAura(self:GetParent():GetParent().unit, self.id, self.filter)
-    if self.isHarmful then
-		GameTooltip:SetUnitDebuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
-	else
-		GameTooltip:SetUnitBuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
-	end
+    if GW.Retail then
+        if self.isHarmful then
+            GameTooltip:SetUnitDebuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
+        else
+            GameTooltip:SetUnitBuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
+        end
+    else
+        GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self.index, self.isHarmful and "HARMFUL" or "HELPFUL")
+    end
 end
 
 local function auraFrame_OnEnter(self)
@@ -226,6 +229,21 @@ local function updateAura(element, unit, data, position, isBuff)
     button.auraInstanceID = data.auraInstanceID
     button.hideDuration = element.hideDuration
     button.isHarmful = data.isHarmful
+
+    if not GW.Retail then
+         --loop to get the index
+        for i = 1, 40 do
+            local auraData = C_UnitAuras.GetAuraDataByIndex(unit, i, data.isHelpful and "HELPFUL" or "HARMFUL")
+            if auraData then
+                if auraData.auraInstanceID == data.auraInstanceID then
+                    button.index = i
+                    break
+                end
+            else
+                break
+            end
+        end
+    end
 
     if data.sourceUnit == "player" and (data.duration > 0 and data.duration < 120) then
         setAuraType(button, "bigBuff")
