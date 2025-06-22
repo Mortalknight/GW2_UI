@@ -102,7 +102,7 @@ end
 
 local function updateGuildButton(self, event)
     if event == "GUILD_ROSTER_UPDATE" then
-        local gmb = GuildMicroButton or SocialsMicroButton
+        local gmb = SocialsMicroButton or GuildMicroButton
         if gmb == nil then
             return
         end
@@ -664,7 +664,7 @@ local function setupMicroButtons(mbf)
     updateQuestLogButton()
 
     -- GuildMicroButton
-    local gref = GuildMicroButton or SocialsMicroButton
+    local gref = SocialsMicroButton or GuildMicroButton
     gref:ClearAllPoints()
     gref:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
     gref.Ticker = C_Timer.NewTicker(15, function() C_GuildInfo.GuildRoster() end)
@@ -981,7 +981,7 @@ AFP("checkElvUI", checkElvUI)
 
 local function hook_UpdateMicroButtons()
     HelpMicroButton:Show()
-    local m = GuildMicroButton or SocialsMicroButton
+    local m = SocialsMicroButton or GuildMicroButton
     m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
     m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
     m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
