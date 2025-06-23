@@ -59,10 +59,11 @@ function mixin:CheckDualSpecState()
     local profileName = self:GetDualSpecProfile()
     local currentProfileName = self:GetCurrentProfile()
     if profileName ~= currentProfileName then
+        GW.Debug("Profile Switch detected - Switch from profile " .. currentProfileName .. " to " .. profileName)
         self:SetProfile(profileName)
         GW.RefreshSettingsAfterProfileSwitch()
         GW.RefreshProfileScrollBox(GW2ProfileSettingsView.ScrollBox)
-        GW.Debug("Profile Switch detected - Switch from profile " .. currentProfileName .. " to " .. profileName)
+        GW.Debug("Profile Switch detected - Done")
     end
 end
 
