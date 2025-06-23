@@ -35,14 +35,13 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
     end
 
     self.hover:Show()
-    if self.objectiveBlocks == nil then
-        self.objectiveBlocks = {}
-    end
-    for _, v in pairs(self.objectiveBlocks) do
+
+    for _, v in pairs(self.objectiveBlocks or {}) do
         if not v.StatusBar.notHide then
             v.StatusBar.progress:Show()
         end
     end
+
     if not self.isSuperTracked then
         GW.AddToAnimation(
             (self.animationName or self:GetName()) .. "hover",
@@ -58,14 +57,12 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
     end
     if self.event then
         self:TryShowRewardsTooltip()
-    else
-        if GW.Retail and IsInGroup() and self.questID then
-            GameTooltip:ClearAllPoints()
-            GameTooltip:SetPoint("TOPRIGHT", self, "TOPLEFT", 0, 0)
-            GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
-            GameTooltip:SetQuestPartyProgress(self.questID)
-            EventRegistry:TriggerEvent("OnQuestBlockHeader.OnEnter", self, self.questID, true)
-        end
+    elseif GW.Retail and IsInGroup() and self.questID then
+        GameTooltip:ClearAllPoints()
+        GameTooltip:SetPoint("TOPRIGHT", self, "TOPLEFT", 0, 0)
+        GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
+        GameTooltip:SetQuestPartyProgress(self.questID)
+        EventRegistry:TriggerEvent("OnQuestBlockHeader.OnEnter", self, self.questID, true)
     end
 end
 
@@ -80,14 +77,13 @@ function GwObjectivesBlockTemplateMixin:OnLeave()
     if not self.isSuperTracked then
         self.hover:Hide()
     end
-    if self.objectiveBlocks == nil then
-        self.objectiveBlocks = {}
-    end
-    for _, v in pairs(self.objectiveBlocks) do
+
+    for _, v in pairs(self.objectiveBlocks or {}) do
         if not v.StatusBar.notHide then
             v.StatusBar.progress:Hide()
         end
     end
+
     if GW.animations[(self.animationName or self:GetName()) .. "hover"] then
         GW.animations[(self.animationName or self:GetName()) .. "hover"].complete = true
     end
@@ -133,40 +129,38 @@ function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(string)
 end
 
 function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectivesYValue)
-    local block = _G[self:GetName() .. "Objective" .. index]
-    if block then
-        block:SetScript("OnUpdate", nil)
-        block:SetScript("OnEnter", nil)
-        block:SetScript("OnLeave", nil)
-        block.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-        block.isMythicKeystone = false
-        return block
+    local objective = _G[self:GetName() .. "Objective" .. index]
+    if objective then
+        objective:SetScript("OnUpdate", nil)
+        objective:SetScript("OnEnter", nil)
+        objective:SetScript("OnLeave", nil)
+        objective.isMythicKeystone = false
+        return objective
     end
 
-    if self.objectiveBlocksNum == nil then
-        self.objectiveBlocksNum = 0
-    end
+    self.objectiveBlocksNum = (self.objectiveBlocksNum or 0) + 1
     self.objectiveBlocks = self.objectiveBlocks or {}
-    self.objectiveBlocksNum = self.objectiveBlocksNum + 1
 
-    local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
-    newBlock:SetParent(self)
-    tinsert(self.objectiveBlocks, newBlock)
+    local newObjective = CreateFrame("Frame", self:GetName() .. "Objective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
+    newObjective:SetParent(self)
+    tinsert(self.objectiveBlocks, newObjective)
+
     if self.objectiveBlocksNum == 1 then
-        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, (firstObjectivesYValue or -25))
+        newObjective:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, (firstObjectivesYValue or -25))
     else
-        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (self.objectiveBlocksNum - 1)], "BOTTOMRIGHT", 0, 0)
+        newObjective:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (self.objectiveBlocksNum - 1)], "BOTTOMRIGHT", 0, 0)
     end
 
-    newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-    newBlock.notChangeSize = true
+    newObjective.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
+    newObjective.TimerBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
 
-    newBlock.hasObjectToHide = false
-    newBlock.objectToHide = nil
-    newBlock.resetParent = false
-    newBlock.isMythicKeystone = false
+    newObjective.notChangeSize = true
+    newObjective.hasObjectToHide = false
+    newObjective.objectToHide = nil
+    newObjective.resetParent = false
+    newObjective.isMythicKeystone = false
 
-    return newBlock
+    return newObjective
 end
 
 function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, options)

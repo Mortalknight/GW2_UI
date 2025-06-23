@@ -160,10 +160,6 @@ local function UpdateBlockInternal(self, parent, quest)
         self:AddObjective(FAILED, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
     end
 
-    if not self.objectiveBlocks then
-        self.objectiveBlocks = {}
-    end
-
     self.height = self.height + 5
     self:SetHeight(self.height)
 end

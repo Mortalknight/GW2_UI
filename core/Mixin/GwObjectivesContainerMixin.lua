@@ -32,6 +32,7 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
             local obj = _G[block:GetName() .. "Objective" .. i]
             if obj then
                 obj.StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
+                obj.TimerBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
                 obj:Hide()
             end
         end
