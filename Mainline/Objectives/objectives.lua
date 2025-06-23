@@ -104,7 +104,7 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
         -- timer bar
 		local timeTotal, timeElapsed = C_QuestLog.GetTimeAllowed(questID)
 		if timeTotal and timeElapsed and timeElapsed < timeTotal then
-            self:AddObjective("", 1, {isQuest = true, qty = nil, totalqty = nil, timerShown = true, duration = timeTotal, startTime = GetTime() - timeElapsed})
+            self:AddObjective("", self.numObjectives + 1, {isQuest = true, qty = nil, totalqty = nil, timerShown = true, duration = timeTotal, startTime = GetTime() - timeElapsed})
 		end
     end
 
