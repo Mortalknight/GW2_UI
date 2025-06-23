@@ -659,7 +659,7 @@ end
 
 local lastGUID
 local function AddInspectInfo(self, unit, numTries, r, g, b)
-    if self.ItemLevelShown or (not unit) or (numTries > 3) or not CanInspect(unit) then return end
+    if self.ItemLevelShown or (not unit) or (numTries > 3) or not UnitIsPlayer(unit) or not CanInspect(unit) or (GW.Cata and not CheckInteractDistance(unit, 4)) then return end
 
     local unitGUID = UnitGUID(unit)
     if not unitGUID then return end
