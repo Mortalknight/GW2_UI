@@ -188,27 +188,30 @@ function GwQuestLogMixin:OnEvent(event, ...)
 end
 
 function GwQuestLogMixin:GetBlockByQuestId(questID)
-    local frameName = self:GetName()
-    for i = 1, Constants.QuestWatchConsts.MAX_QUEST_WATCHES do
-        local block = _G[frameName .. "Block" .. i]
-        if block and block.questID == questID then
-            return block
+    if self.blocks then
+        for i = 1, #self.blocks do
+            local block = self.blocks[i]
+            if block and block.questID == questID then
+                return block
+            end
         end
     end
     return nil
 end
 
 function GwQuestLogMixin:GetOrCreateBlockByQuestId(questID, colorKey)
-    local blockName = self:GetName() .. "Block"
-    for i = 1, Constants.QuestWatchConsts.MAX_QUEST_WATCHES do
-        if _G[blockName .. i] then
-            if _G[blockName .. i].questID == questID then
-                return _G[blockName .. i]
-            elseif _G[blockName .. i].questID == nil then
+    if self.blocks then
+        for i = 1, #self.blocks do
+            local block = self.blocks[i]
+            if block then
+                if block.questID == questID then
+                    return block
+                elseif block.questID == nil then
+                    return self:GetBlock(i, colorKey, true)
+                end
+            else
                 return self:GetBlock(i, colorKey, true)
             end
-        else
-            return self:GetBlock(i, colorKey, true)
         end
     end
     return nil
@@ -281,7 +284,7 @@ function GwQuestLogMixin:UpdateLayout()
                     GW.CombatQueue_Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block, (not self.isCampaignContainer) and "QUEST" or nil})
                 else
                     counterQuest = counterQuest + 1
-                    local block = _G[frameName .. "Block" .. counterQuest]
+                    local block = self.blocks and self.blocks[counterQuest]
                     if block then
                         block:Hide()
                         block.questLogIndex = 0
@@ -297,15 +300,18 @@ function GwQuestLogMixin:UpdateLayout()
     self.numQuests = counterQuest
 
     -- hide other quests
-    for i = counterQuest + 1, Constants.QuestWatchConsts.MAX_QUEST_WATCHES do
-        local block = _G[frameName .. "Block" .. i]
-        if block then
-            block.questID = nil
-            block.questLogIndex = 0
-            block:Hide()
-            GW.CombatQueue_Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
+    if self.blocks then
+        for i = counterQuest + 1, #self.blocks do
+            local block = self.blocks[i]
+            if block then
+                block.questID = nil
+                block.questLogIndex = 0
+                block:Hide()
+                GW.CombatQueue_Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
+            end
         end
     end
+
     if counterQuest == 0 and self.isCampaignContainer then
         self.header:Hide()
     end
@@ -347,29 +353,35 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
 
     local newHeight = 20
     local counterQuest = 0
-    local frameName = self:GetName()
-    for i = 1, Constants.QuestWatchConsts.MAX_QUEST_WATCHES do
-        local b = _G[frameName .. "Block" .. i]
-        if b and b:IsShown() then
-            newHeight = newHeight + b.height
-            counterQuest = counterQuest + 1
+
+    if self.blocks then
+        for i = 1, #self.blocks do
+            local b = self.blocks[i]
+            if b and b:IsShown() then
+                newHeight = newHeight + b.height
+                counterQuest = counterQuest + 1
+            end
         end
     end
+
     self:SetHeight(newHeight)
     local headerCounterText = " (" .. counterQuest .. ")"
     self.header.title:SetText(self.isCampaignContainer and TRACKER_HEADER_CAMPAIGN_QUESTS .. headerCounterText or TRACKER_HEADER_QUESTS .. headerCounterText)
 
     if block and block.hasItem then
         local heightForQuestItem = 20
-        for i = 1, Constants.QuestWatchConsts.MAX_QUEST_WATCHES do
-            local b = _G[frameName .. "Block" .. i]
-            if b and b:IsShown() then
-                heightForQuestItem = heightForQuestItem + b.height
-                if b.questID == questID then
-                    break
+        if self.blocks then
+            for i = 1, #self.blocks do
+                local b = self.blocks[i]
+                if b and b:IsShown() then
+                    heightForQuestItem = heightForQuestItem + b.height
+                    if b.questID == questID then
+                        break
+                    end
                 end
             end
         end
+
         block.fromContainerTopHeight = heightForQuestItem
         GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block, (not self.isCampaignContainer) and "QUEST" or nil})
     end

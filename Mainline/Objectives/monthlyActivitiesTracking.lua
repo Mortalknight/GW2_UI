@@ -17,9 +17,12 @@ function GwObjectivesMonthlyActivitiesBlockMixin:UpdateBlock(requirements)
         end
     end
 
-    for i = self.numObjectives + 1, 20 do
-        if _G[self:GetName() .. "Objective" .. i] then
-            _G[self:GetName() .. "Objective" .. i]:Hide()
+    if self.objectiveBlocks then
+       for i = (self.numObjectives or 0) + 1, #self.objectiveBlocks do
+            local obj = self.objectiveBlocks[i]
+            if obj then
+                obj:Hide()
+            end
         end
     end
 

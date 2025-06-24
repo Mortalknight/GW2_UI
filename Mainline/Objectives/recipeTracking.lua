@@ -99,11 +99,14 @@ function GwObjectivesRecipeContainerMixin:ProcessUpdate()
 
     self:SetHeight(savedHeight)
 
-    for i = shownIndex, 25 do
-        if _G[self:GetName() .. "Block" .. i] then
-            _G[self:GetName() .. "Block" .. i]:Hide()
-            _G[self:GetName() .. "Block" .. i].id = nil
-            _G[self:GetName() .. "Block" .. i].isRecraft = nil
+    if self.blocks then
+        for i = shownIndex, #self.blocks do
+            local block = self.blocks[i]
+            if block then
+                block.id = nil
+                block.isRecraft = nil
+                block:Hide()
+            end
         end
     end
 

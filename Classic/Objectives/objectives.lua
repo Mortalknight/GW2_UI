@@ -313,7 +313,7 @@ function GwQuestLogMixin:UpdateLayout()
                 tinsert(self.trackedQuests, quest)
             else
                 counterQuest = counterQuest + 1
-                local block = _G[frameName .. "Block" .. counterQuest]
+                local block = self.blocks and self.blocks[counterQuest]
                 if block then
                     block.questID = nil
                     block.questLogIndex = 0
@@ -330,14 +330,16 @@ function GwQuestLogMixin:UpdateLayout()
     self.numQuests = counterQuest
 
     -- hide other quests
-    for i = counterQuest + 1, 25 do
-        local block = _G[frameName .. "Block" .. i]
-        if block then
-            block.questID = nil
-            block.questLogIndex = 0
-            block.sourceItemId = nil
-            block:Hide()
-            GW.CombatQueue_Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
+    if self.blocks then
+        for i = counterQuest + 1, #self.blocks do
+            local block = self.blocks[i]
+            if block then
+                block.questID = nil
+                block.questLogIndex = 0
+                block.sourceItemId = nil
+                block:Hide()
+                GW.CombatQueue_Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
+            end
         end
     end
 

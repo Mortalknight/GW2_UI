@@ -180,9 +180,12 @@ function GwAchievementTrackerContainerMixin:UpdateLayout(event, ...)
     self.oldHeight = GW.RoundInt(self:GetHeight())
     self:SetHeight(savedHeight)
 
-    for i = shownIndex, 25 do
-        if _G["GwQuesttrackerContainerAchievementBlock" .. i] then
-            _G["GwQuesttrackerContainerAchievementBlock" .. i]:Hide()
+    if self.blocks then
+        for i = shownIndex, #self.blocks do
+            local block = self.blocks[i]
+            if block then
+                block:Hide()
+            end
         end
     end
 

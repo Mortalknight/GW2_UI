@@ -116,13 +116,15 @@ local function updateCollectionLayout(self, trackableType, trackableID)
         end
     end
 
-    for i = blockIndex + 1, 25 do
-        local block = _G["GwQuesttrackerContainerCollectionBlock" .. i]
-        if block then
-            block:Hide()
-            block.id = nil
-            block.isRecraft = nil
-            block.poiButton = nil
+    if self.blocks then
+        for i = blockIndex + 1, #self.blocks do
+            local block = self.blocks[i]
+            if block then
+                block:Hide()
+                block.id = nil
+                block.isRecraft = nil
+                block.poiButton = nil
+            end
         end
     end
     GwQuestTracker:LayoutChanged()

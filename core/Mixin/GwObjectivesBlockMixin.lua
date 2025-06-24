@@ -44,7 +44,7 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
 
     if not self.isSuperTracked then
         GW.AddToAnimation(
-            (self.animationName or self:GetName()) .. "hover",
+            (self.animationName or self:GetDebugName()) .. "hover",
             0,
             1,
             GetTime(),
@@ -84,8 +84,8 @@ function GwObjectivesBlockTemplateMixin:OnLeave()
         end
     end
 
-    if GW.animations[(self.animationName or self:GetName()) .. "hover"] then
-        GW.animations[(self.animationName or self:GetName()) .. "hover"].complete = true
+    if GW.animations[(self.animationName or self:GetDebugName()) .. "hover"] then
+        GW.animations[(self.animationName or self:GetDebugName()) .. "hover"].complete = true
     end
     GameTooltip_Hide()
 end
@@ -129,7 +129,7 @@ function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(string)
 end
 
 function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectivesYValue)
-    local objective = _G[self:GetName() .. "Objective" .. index]
+    local objective = self.objectiveBlocks and self.objectiveBlocks[index]
     if objective then
         objective:SetScript("OnUpdate", nil)
         objective:SetScript("OnEnter", nil)
@@ -141,14 +141,14 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectives
     self.objectiveBlocksNum = (self.objectiveBlocksNum or 0) + 1
     self.objectiveBlocks = self.objectiveBlocks or {}
 
-    local newObjective = CreateFrame("Frame", self:GetName() .. "Objective" .. self.objectiveBlocksNum, self, "GwQuesttrackerObjectiveTemplate")
+    local newObjective = CreateFrame("Frame", nil, self, "GwQuesttrackerObjectiveTemplate")
     newObjective:SetParent(self)
     tinsert(self.objectiveBlocks, newObjective)
 
     if self.objectiveBlocksNum == 1 then
         newObjective:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, (firstObjectivesYValue or -25))
     else
-        newObjective:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (self.objectiveBlocksNum - 1)], "BOTTOMRIGHT", 0, 0)
+        newObjective:SetPoint("TOPRIGHT", self.objectiveBlocks[self.objectiveBlocksNum - 1], "BOTTOMRIGHT", 0, 0)
     end
 
     newObjective.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)

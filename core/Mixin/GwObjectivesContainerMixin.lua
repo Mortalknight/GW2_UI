@@ -22,15 +22,14 @@ function GwObjectivesContainerMixin:CollapseHeader(forceCollapse, forceOpen)
 end
 
 function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
-    if _G[self:GetName() .. "Block" .. idx] then
-        local block = _G[self:GetName() .. "Block" .. idx]
+    local block = self.blocks and self.blocks[idx]
+    if block then
         -- set the correct block color for an existing block here
         block:SetBlockColorByKey(colorKey)
         block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
         block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
-        for i = 1, 50 do
-            local obj = _G[block:GetName() .. "Objective" .. i]
-            if obj then
+        if block.objectiveBlocks then
+            for _, obj in ipairs(block.objectiveBlocks) do
                 obj.StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
                 obj.TimerBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
                 obj:Hide()
@@ -39,20 +38,23 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
         return block
     end
 
-    local newBlock = CreateFrame("Button", self:GetName() .. "Block" .. idx, self, "GwObjectivesBlockTemplate")
+    self.blocksNum = (self.blocksNum or 0) + 1
+    self.blocks = self.blocks or {}
+
+    local newBlock = CreateFrame("Button", nil, self, "GwObjectivesBlockTemplate")
     newBlock:SetParent(self)
+    tinsert(self.blocks, newBlock)
 
     if idx == 1 then
         newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -20)
     else
-        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Block" ..  (idx - 1)], "BOTTOMRIGHT", 0, 0)
+        newBlock:SetPoint("TOPRIGHT", self.blocks[self.blocksNum - 1], "BOTTOMRIGHT", 0, 0)
     end
 
     newBlock.index = idx
     newBlock:SetBlockColorByKey(colorKey)
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    self["Block" .. idx] = newBlock
 
     newBlock:SetScript("OnMouseDown", self.BlockOnClick)
 

@@ -93,9 +93,13 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             block.fromContainerTopHeight = block.height
             GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", block.UpdateObjectiveActionButtonPosition, {block, "SCENARIO"})
         end
-        for i = block.numObjectives + 1, 20 do
-            if _G[containerName .. "Objective" .. i] then
-                _G[containerName .. "Objective" .. i]:Hide()
+
+        if block.objectiveBlocks then
+            for i = (block.numObjectives or 0) + 1, #block.objectiveBlocks do
+                local obj = block.objectiveBlocks[i]
+                if obj then
+                    obj:Hide()
+                end
             end
         end
 
@@ -310,10 +314,12 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         end
     end
 
-    for i = block.numObjectives + 1, 20 do
-        local objective = _G[containerName.. "Objective" .. i]
-        if objective then
-            objective:Hide()
+    if block.objectiveBlocks then
+       for i = (block.numObjectives or 0) + 1, #block.objectiveBlocks do
+            local obj = block.objectiveBlocks[i]
+            if obj then
+                obj:Hide()
+            end
         end
     end
 

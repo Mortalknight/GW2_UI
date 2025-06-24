@@ -5,26 +5,29 @@ GwTodolooContainerMixin =  {}
 GwTodolooBlockMixin = {}
 
 function GwTodolooBlockMixin:GetObjectiveBlock(index, id)
-    if _G[self:GetName() .. "Objective" .. index] then
-        _G[self:GetName() .. "Objective" .. index].objectiveKey = id
+    local objective = self.objectiveBlocks and self.objectiveBlocks[index]
+    if objective then
+        objective.objectiveKey = id
 
-        return _G[self:GetName() .. "Objective" .. index]
+        return objective
     end
-    local newBlock = CreateFrame("Frame", self:GetName() .. "Objective" .. index, self, "GwQuesttrackerObjectiveTemplate")
-    newBlock:SetParent(self)
-    newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-    newBlock.notChangeSize = true
+    local newObjective = CreateFrame("Frame", nil, self, "GwQuesttrackerObjectiveTemplate")
+    newObjective:SetParent(self)
+    tinsert(self.objectiveBlocks, newObjective)
+
+    newObjective.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
+    newObjective.notChangeSize = true
     if index == 1 then
-        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
+        newObjective:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
     else
-        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (index - 1)], "BOTTOMRIGHT", 0, 0)
+        newObjective:SetPoint("TOPRIGHT", self.objectiveBlocks[self.objectiveBlocksNum - 1], "BOTTOMRIGHT", 0, 0)
     end
-    newBlock.objectiveKey = id
+    newObjective.objectiveKey = id
 
-    newBlock:HookScript("OnEnter", function()
-        local task = Todoloo.TaskManager:GetTask(self.id, newBlock.objectiveKey)
+    newObjective:HookScript("OnEnter", function()
+        local task = Todoloo.TaskManager:GetTask(self.id, newObjective.objectiveKey)
         if task then
-            GameTooltip:SetOwner(newBlock, "ANCHOR_BOTTOMLEFT", 0, 0)
+            GameTooltip:SetOwner(newObjective, "ANCHOR_BOTTOMLEFT", 0, 0)
             GameTooltip:ClearLines()
             GameTooltip:AddLine(task.name, 1, 1, 1)
             if task.description then
@@ -44,22 +47,22 @@ function GwTodolooBlockMixin:GetObjectiveBlock(index, id)
             GameTooltip:Show()
         end
     end)
-    newBlock:HookScript("OnLeave", GameTooltip_Hide)
+    newObjective:HookScript("OnLeave", GameTooltip_Hide)
 
-    newBlock:SetScript("OnMouseDown", function()
+    newObjective:SetScript("OnMouseDown", function()
         if IsShiftKeyDown() then
-            if newBlock.objectiveKey == "GROUP_COMPLETE" then
+            if newObjective.objectiveKey == "GROUP_COMPLETE" then
                 return
             end
 
-            local task = Todoloo.TaskManager:GetTask(self.id, newBlock.objectiveKey)
-            Todoloo.TaskManager:SetTaskCompletion(self.id, newBlock.objectiveKey, not task.completed)
+            local task = Todoloo.TaskManager:GetTask(self.id, newObjective.objectiveKey)
+            Todoloo.TaskManager:SetTaskCompletion(self.id, newObjective.objectiveKey, not task.completed)
         end
     end)
 
     GW.AddMouseMotionPropagationToChildFrames(self)
 
-    return newBlock
+    return newObjective
 end
 
 local function SetUpObjectivesBlock(block, name, isCompleted, resetType)
@@ -193,10 +196,12 @@ function GwTodolooContainerMixin:UpdateLayout()
     end
 
     -- hide always all blocks
-    for i = 1, 99 do
-        local block = _G[self:GetName() .. "Block" .. i]
-        if block then
-            block:Hide()
+    if self.blocks then
+        for i = 1, #self.blocks do
+            local block = self.blocks[i]
+            if block then
+                block:Hide()
+            end
         end
     end
 

@@ -199,12 +199,12 @@ local function getNearestQuestPOIRetail()
 
     if questData.frequency == nil then
         for i = 1, 25 do
-            local block = GW.ObjectiveTrackerContainer.Campaign["Block" .. i]
+            local block = GW.ObjectiveTrackerContainer.Campaign.blocks[i]
             if block and block.questID == closestQuestID then
                 isFrequent = block.isFrequency
                 break
             end
-            block = GW.ObjectiveTrackerContainer.Quests["Block" .. i]
+            block = GW.ObjectiveTrackerContainer.Quests.blocks[i]
             if block and block.questID == closestQuestID then
                 isFrequent = block.isFrequency
                 break
