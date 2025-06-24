@@ -45,7 +45,7 @@
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
-                <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-objective">
+                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-objective">
                     <Size x="26" y="26"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="LEFT" x="-20" y="0"></Anchor>
@@ -53,7 +53,7 @@
                 </Texture>
             </Layer>
             <Layer Level="OVERLAY">
-                <FontString name="$parentString" text="Quests" parentKey="title" justifyH="LEFT" justifyV="MIDDLE">
+                <FontString text="Quests" parentKey="title" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="300" y="20"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" x="0" y="0"></Anchor>
@@ -97,21 +97,21 @@
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
-                <Texture name="$parentSep" alphaMode="add" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
+                <Texture alphaMode="add" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
                     <Color r="1" b="1" g="1" a="0.6"></Color>
                     <Size x="300" y="1"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentHoverBg" parentKey="hover" hidden="true" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
+                <Texture parentKey="hover" hidden="true" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
                     <Size x="300" y="70"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentFlare" parentKey="flare" hidden="true" file="Interface/AddOns/GW2_UI/textures/hud/expflare">
+                <Texture parentKey="flare" hidden="true" file="Interface/AddOns/GW2_UI/textures/hud/expflare">
                     <Size x="150" y="150"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="0"></Anchor>
@@ -119,20 +119,20 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString name="$parentQuestName" parentKey="Header" text="Quest name" justifyH="LEFT">
+                <FontString parentKey="Header" text="Quest name" justifyH="LEFT">
                     <Size x="300" y="30"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
                     </Anchors>
                     <Shadow x="1" y="-1"/>
                 </FontString>
-                <FontString name="$parentDifficulty" parentKey="Difficulty" text="" justifyH="RIGHT">
+                <FontString parentKey="Difficulty" text="" justifyH="RIGHT">
                     <Size x="150" y="30"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentQuestSubHeader" parentKey="SubHeader" text="" justifyH="LEFT">
+                <FontString parentKey="SubHeader" text="" justifyH="LEFT">
                     <Size x="300" y="30"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="-25"></Anchor>
@@ -271,7 +271,7 @@
                     </Frame>
                 </Frames>
             </Frame>
-            <Button name="$parentClickToTurnIn" hidden="true" parentKey="turnin" mixin="GwObjectivesAnimationMixin">
+            <Button hidden="true" parentKey="turnin" mixin="GwObjectivesAnimationMixin">
                 <size x="90" y="90"></size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="10"></Anchor>
@@ -295,7 +295,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="$parentClickToAccept" hidden="true" parentKey="popupQuestAccept" mixin="GwObjectivesAnimationMixin">
+            <Button hidden="true" parentKey="popupQuestAccept" mixin="GwObjectivesAnimationMixin">
                 <size x="90" y="90"></size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="20" y="10"></Anchor>
@@ -344,7 +344,7 @@
         </Anchors>
         <Layers>
             <Layer level="OVERLAY">
-                <FontString name="$parentString" parentKey="ObjectiveText" text="Objective text 1/2" justifyH="LEFT" justifyV="TOP">
+                <FontString parentKey="ObjectiveText" text="Objective text 1/2" justifyH="LEFT" justifyV="TOP">
                     <Size x="280" y="100"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-5"></Anchor>
@@ -354,10 +354,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentStatusBar" hidden="true" parentKey="StatusBar">
-                <KeyValues>
-                    <KeyValue key="animationOld" value="0" type="number"/>
-                </KeyValues>
+            <StatusBar hidden="true" parentKey="StatusBar">
                 <Size x="280" y="10"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ObjectiveText"></Anchor>
@@ -365,7 +362,7 @@
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentStatusBarBg" parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                        <Texture parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -405,7 +402,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK">
-                        <Texture name="$parentSpark" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white" parentKey="Spark">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white" parentKey="Spark">
                             <Size x="10" y="10"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -413,7 +410,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentString" hidden="true" parentKey="progress" text="100" justifyH="CENTER" justifyV="MIDDLE">
+                        <FontString hidden="true" parentKey="progress" text="100" justifyH="CENTER" justifyV="MIDDLE">
                             <Size x="280" y="10"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
@@ -423,7 +420,7 @@
                     </Layer>
                 </Layers>
             </StatusBar>
-            <StatusBar name="$parentTimerBar" hidden="true" parentKey="TimerBar">
+            <StatusBar hidden="true" parentKey="TimerBar">
                 <Size x="280" y="10"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.ObjectiveText"></Anchor>
@@ -431,7 +428,7 @@
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentStatusBarBg" parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                        <Texture parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -471,7 +468,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentString" hidden="false" parentKey="Label" text="100" justifyH="CENTER" justifyV="MIDDLE">
+                        <FontString hidden="false" parentKey="Label" text="100" justifyH="CENTER" justifyV="MIDDLE">
                             <Size x="280" y="10"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
@@ -567,7 +564,7 @@
                     </Frame>
                 </Frames>
             </Frame>
-            <StatusBar name="$parentStatusBar" parentKey="timer" hidden="true" defaultValue="1" minValue="0" maxValue="1">
+            <StatusBar parentKey="timer" hidden="true" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="280" y="10"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.affixeFrame" relativePoint="BOTTOMLEFT" x="-10" y="-15"></Anchor>
@@ -575,7 +572,7 @@
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentStatusBarBg" parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                        <Texture parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -630,7 +627,7 @@
                     </Layer>
                 </Layers>
             </StatusBar>
-            <Frame name="$parentScore" hidden="true" parentKey="score">
+            <Frame hidden="true" parentKey="score">
                 <Size x="280" y="10"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.timer" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
@@ -679,7 +676,7 @@
                     <Layer Level="ARTWORK">
                     </Layer>
                     <Layer Level="BACKGROUND">
-                        <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icons\icon-dead">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\icons\icon-dead">
                             <Size x="15" y="15"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -687,7 +684,7 @@
                         </Texture>
                     </Layer>
                     <Layer Level="OVERLAY">
-                        <FontString name="$parentString" text="TEST" parentKey="counterlabel" justifyH="RIGHT" justifyV="MIDDLE">
+                        <FontString text="TEST" parentKey="counterlabel" justifyH="RIGHT" justifyV="MIDDLE">
                             <Size x="30" y="15"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"></Anchor>
@@ -708,13 +705,13 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
+                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
                     <Size x="24" y="24"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-17" y="-5"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentMarker" parentKey="marker" hidden="true" file="Interface\AddOns\GW2_UI\textures\icons\icon-dead">
+                <Texture parentKey="marker" hidden="true" file="Interface\AddOns\GW2_UI\textures\icons\icon-dead">
                     <Size x="24" y="24"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-17" y="-5"></Anchor>
@@ -722,7 +719,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString name="$parentString" parentKey="name" text="Objective text 1/2" justifyH="LEFT">
+                <FontString parentKey="name" text="Objective text 1/2" justifyH="LEFT">
                     <Size x="300" y="20"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="10"></Anchor>
@@ -731,7 +728,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentHealthBar" parentKey="health">
+            <StatusBar parentKey="health">
                 <Size x="280" y="10"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
@@ -739,7 +736,7 @@
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentStatusBarBg" parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                        <Texture parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -779,7 +776,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentString" parentKey="value" text="50%" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="value" text="50%" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Color r="1" g="1" b="1"></Color>
                             <Size x="180" y="10"/>
                             <Anchors>
@@ -789,7 +786,7 @@
                     </Layer>
                 </Layers>
             </StatusBar>
-            <StatusBar name="$parentPowerBar" parentKey="power">
+            <StatusBar parentKey="power">
                 <Size x="280" y="8"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-33"></Anchor>
@@ -797,7 +794,7 @@
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentStatusBarBg" parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                        <Texture parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -837,7 +834,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentString" parentKey="value" hidden="false" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="value" hidden="false" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Color r="1" g="1" b="1"></Color>
                             <Size x="180" y="8"/>
                             <Anchors>
@@ -863,7 +860,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
                     <Size x="24" y="24"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-17" y="-5"></Anchor>
@@ -871,7 +868,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString name="$parentString" parentKey="name" text="Objective text 1/2" justifyH="LEFT">
+                <FontString parentKey="name" text="Objective text 1/2" justifyH="LEFT">
                     <Size x="300" y="20"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="10"></Anchor>
@@ -880,7 +877,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentStatusBar" parentKey="health" defaultValue="1" minValue="0" maxValue="1">
+            <StatusBar parentKey="health" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="280" y="10"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
@@ -888,7 +885,7 @@
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentStatusBarBg" parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                        <Texture parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -929,7 +926,7 @@
                     </Layer>
                 </Layers>
             </StatusBar>
-            <StatusBar name="$parentStatusBar" parentKey="power" defaultValue="1" minValue="0" maxValue="1">
+            <StatusBar parentKey="power" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="280" y="8"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-33"></Anchor>
@@ -937,7 +934,7 @@
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentStatusBarBg" parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                        <Texture parentKey="statusbarBg" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>

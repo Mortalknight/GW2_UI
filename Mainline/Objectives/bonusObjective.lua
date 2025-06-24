@@ -260,7 +260,6 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateLayout(newQuestId)
     if self.isUpdating then return end
 
     self.isUpdating = true
-    local selfName = self:GetName()
     local trackedEventIDs = {}
     GwObjectivesNotification:RemoveNotificationOfType("EVENT")
 
