@@ -5,7 +5,6 @@ GwObjectivesAnimationMixin = {}
 function GwObjectivesAnimationMixin:NewQuestAnimation()
     self.flare:Show()
     self.flare:SetAlpha(1)
-    print(self:GetDebugName())
     GW.AddToAnimation(
         self:GetDebugName() .. "flare",
         0,
