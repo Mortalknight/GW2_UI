@@ -1,6 +1,5 @@
 local _, GW = ...
 local GwSettingsMenuSearchable
-local AddToAnimation
 
 local btnIndex = 0
 local newButtonAnchorPoint = nil
@@ -79,15 +78,12 @@ local function updateScrollFrame(self)
 end
 
 local function toggleMenuItem(self,active)
-    if AddToAnimation == nil then
-        AddToAnimation = GW.AddToAnimation
-    end
     if active then
         self.content:Show()
         self.button.arrow:SetRotation(0)
         self.content:SetHeight(self.content.height)
         updateScrollFrame(GwSettingsMenuSearchable)
-        GW.AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2,
+        GW.AddToAnimation(self:GetDebugName(), 0,1, GetTime(), 0.2,
             function(p) self.button.arrow:SetRotation(-1.5707 * p) end,
             "noease")
 
@@ -97,7 +93,7 @@ local function toggleMenuItem(self,active)
     self.content:SetHeight(0)
     updateScrollFrame(GwSettingsMenuSearchable)
     --can be done with animation groups
-    GW.AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2,
+    GW.AddToAnimation(self:GetDebugName(), 1,0, GetTime(), 0.2,
         function(p) self.button.arrow:SetRotation(-1.5707 * p) end,
         "noease")
 

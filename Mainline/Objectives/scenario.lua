@@ -59,7 +59,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
 
     local block = self.block
     local timerBlock = self.timerBlock
-    local containerName = self.block:GetName()
     local showTimerAsBonus = false
     local GwQuestTrackerTimerSavedHeight = 1
     local isEventTimerBarByWidgetId = false

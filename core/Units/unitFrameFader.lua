@@ -39,7 +39,7 @@ local function ToggleAlpha(self, element, endAlpha)
     element:ClearTimers()
 
     if element.Smooth then
-        GW.AddToAnimation(self:GetName(), self:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) self:SetAlpha(p) end, 1)
+        GW.AddToAnimation(self:GetDebugName(), self:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) self:SetAlpha(p) end, 1)
     else
         self:SetAlpha(endAlpha)
     end
@@ -345,7 +345,7 @@ local function Disable(self)
         self.Fader.count = nil
         self.Fader:ClearTimers()
         local faderObject = self.Fader.rangeFaderObject or self
-        GW.AddToAnimation(faderObject:GetName(), faderObject:GetAlpha(), 1, GetTime(), 0.33, function(p) faderObject:SetAlpha(p) end, 1)
+        GW.AddToAnimation(faderObject:GetDebugName(), faderObject:GetAlpha(), 1, GetTime(), 0.33, function(p) faderObject:SetAlpha(p) end, 1)
 
         self.Fader:SetScript("OnEvent", nil)
     end

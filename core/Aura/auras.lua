@@ -142,7 +142,7 @@ local function auraAnimateIn(self)
     local endWidth = self:GetWidth()
 
     GW.AddToAnimation(
-        self:GetName(),
+        self:GetDebugName(),
         endWidth * 2,
         endWidth,
         GetTime(),

@@ -689,7 +689,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
         frame.backgroundMask = bgMask
 
         frame:HookScript("OnShow",function()
-        GW.AddToAnimation((frame.GetName and frame:GetName() or tostring(frame)) .. "_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
+        GW.AddToAnimation((frame.GetDebugName and frame:GetDebugName() or tostring(frame)) .. "_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
             function(p)
                 frame:SetAlpha(p)
                 bgMask:SetPoint("BOTTOMRIGHT", frame.tex, "BOTTOMLEFT", GW.lerp(-64, frame.tex:GetWidth(), p), 0)

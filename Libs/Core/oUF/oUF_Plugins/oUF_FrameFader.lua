@@ -41,7 +41,7 @@ local function ToggleAlpha(self, element, endAlpha)
     element:ClearTimers()
 
     if element.Smooth then
-        ns.AddToAnimation(self:GetName(), self:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) self:SetAlpha(p) end, 1)
+        ns.AddToAnimation(self:GetDebugName(), self:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) self:SetAlpha(p) end, 1)
     else
         self:SetAlpha(endAlpha)
     end
@@ -342,7 +342,7 @@ local function Disable(self)
         self.Fader.count = nil
         self.Fader:ClearTimers()
         local faderObject = self.Fader.rangeFaderObject or self
-        ns.AddToAnimation(faderObject:GetName(), faderObject:GetAlpha(), 1, GetTime(), 0.33, function(p) faderObject:SetAlpha(p) end, 1)
+        ns.AddToAnimation(faderObject:GetDebugName(), faderObject:GetAlpha(), 1, GetTime(), 0.33, function(p) faderObject:SetAlpha(p) end, 1)
     end
 end
 oUF:AddElement("Fader", nil, Enable, Disable)

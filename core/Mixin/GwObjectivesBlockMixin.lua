@@ -84,9 +84,7 @@ function GwObjectivesBlockTemplateMixin:OnLeave()
         end
     end
 
-    if GW.animations[(self.animationName or self:GetDebugName()) .. "hover"] then
-        GW.animations[(self.animationName or self:GetDebugName()) .. "hover"].complete = true
-    end
+    GW.StopAnimation((self.animationName or self:GetDebugName()) .. "hover")
     GameTooltip_Hide()
 end
 
@@ -95,14 +93,14 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     self.SubHeader:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
     self.turnin:SetScript("OnShow", self.turnin.WiggleAnimation)
-    self.turnin:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetName()) end)
+    self.turnin:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetDebugName()) end)
     self.turnin:SetScript("OnClick",function(btn)
         ShowQuestComplete(self.questID)
         RemoveAutoQuestPopUp(self.questID)
         btn:Hide()
     end)
     self.popupQuestAccept:SetScript("OnShow", self.popupQuestAccept.WiggleAnimation)
-    self.popupQuestAccept:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetName()) end)
+    self.popupQuestAccept:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetDebugName()) end)
     self.popupQuestAccept:SetScript("OnClick", function(btn)
             ShowQuestOffer(self.questID)
             RemoveAutoQuestPopUp(self.questID)

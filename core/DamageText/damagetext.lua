@@ -176,9 +176,8 @@ local function stackingContainerOnUpdate()
 end
 
 local function animateTextCriticalForStackingFormat(frame)
-    local aName = frame:GetName()
     frame.oldOffsetY = nil
-    GW.AddToAnimation(aName, 0, 1, GetTime(), STACKING_CRITICAL_ANIMATION_DURATION,
+    GW.AddToAnimation(frame:GetDebugName(), 0, 1, GetTime(), STACKING_CRITICAL_ANIMATION_DURATION,
         function(p)
             local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
             frame.offsetY = offsetY
@@ -203,9 +202,8 @@ end
 AFP("animateTextCriticalForStackingFormat", animateTextCriticalForStackingFormat)
 
 local function animateTextNormalForStackingFormat(frame)
-    local aName = frame:GetName()
     frame.oldOffsetY = nil
-    GW.AddToAnimation(aName, 0, 1, GetTime(), STACKING_NORMAL_ANIMATION_DURATION,
+    GW.AddToAnimation(frame:GetDebugName(), 0, 1, GetTime(), STACKING_NORMAL_ANIMATION_DURATION,
         function(p)
             frame.offsetX = 0
             frame:SetScale(1 * frame.textScaleModifier)
@@ -227,8 +225,7 @@ AFP("animateTextNormalForStackingFormat", animateTextNormalForStackingFormat)
 
 -- DEFAULT
 local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
-    local aName = frame:GetName()
-    GW.AddToAnimation(aName, 0, 1, GetTime(), CRITICAL_ANIMATION_DURATION,
+    GW.AddToAnimation(frame:GetDebugName(), 0, 1, GetTime(), CRITICAL_ANIMATION_DURATION,
         function(p)
             if p < 0.25 then
                 frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)), frame.textScaleModifier, p / 0.25))
@@ -254,8 +251,7 @@ end
 AFP("animateTextCriticalForDefaultFormat", animateTextCriticalForDefaultFormat)
 
 local function animateTextNormalForDefaultFormat(frame, offsetIndex)
-    local aName = frame:GetName()
-    GW.AddToAnimation(aName, 0, 1, GetTime(), NORMAL_ANIMATION_DURATION,
+    GW.AddToAnimation(frame:GetDebugName(), 0, 1, GetTime(), NORMAL_ANIMATION_DURATION,
         function(p)
             local offsetY = NORMAL_ANIMATION_OFFSET_Y * p
             frame:SetScale(1 * frame.textScaleModifier)
@@ -279,9 +275,8 @@ AFP("animateTextNormalForDefaultFormat", animateTextNormalForDefaultFormat)
 
 --CLASSIC
 local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
-    local aName = frame:GetName()
     NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES + 1
-    GW.AddToAnimation(aName, 0, 1, GetTime(),
+    GW.AddToAnimation(frame:GetDebugName(), 0, 1, GetTime(),
         math.min(CRITICAL_ANIMATION_DURATION * 2, (CRITICAL_ANIMATION_DURATION * (frame.dynamicScaleAdd + math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)))) / getDurationModifier()),
         function(p)
             if not frame.anchorFrame or not frame.anchorFrame:IsShown() then
@@ -310,9 +305,8 @@ end
 AFP("animateTextCriticalForClassicFormat", animateTextCriticalForClassicFormat)
 
 local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
-    local aName = frame:GetName()
     NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES + 1
-    GW.AddToAnimation(aName, 0, 1, GetTime(), NORMAL_ANIMATION_DURATION / getDurationModifier(),
+    GW.AddToAnimation(frame:GetDebugName(), 0, 1, GetTime(), NORMAL_ANIMATION_DURATION / getDurationModifier(),
         function(p)
             if not frame.anchorFrame or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame

@@ -141,7 +141,7 @@ function GwCastingBarMixin:Init(unit, showTradeSkills)
     self.isChanneling = false
     self.reverseChanneling = false
     self.isCasting = false
-    self.animationName = self:GetName()
+    self.animationName = self:GetDebugName()
     self.showTradeSkills = showTradeSkills
     self.StagePoints = {}
     self.TickLines = {}

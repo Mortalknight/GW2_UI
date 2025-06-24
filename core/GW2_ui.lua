@@ -112,7 +112,7 @@ end
 GW.StopAnimation = StopAnimation
 
 local function TriggerButtonHoverAnimation(self, hover, to, duration)
-    local name = self.animationName or (self.GetName and self:GetName()) or tostring(self)
+    local name = self.animationName or (self.GetDebugName and self:GetDebugName()) or tostring(self)
     hover:SetAlpha(1)
     duration = duration or min(1, self:GetWidth() * 0.002)
     AddToAnimation(

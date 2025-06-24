@@ -337,7 +337,7 @@ local function talentBunnton_OnEnter(self)
     self.UpdateTooltip = talentBunnton_OnEnter
 end
 
-local function setBackgroundFxHeight(self, height,shouldBeHidden)
+local function setBackgroundFxHeight(self, height, shouldBeHidden)
     if shouldBeHidden or height<1 then
         self.backgroundFx:Hide()
         return 
@@ -358,7 +358,7 @@ local function setBackgroundFxHeight(self, height,shouldBeHidden)
         return
     end
     local oldHeight = self.fxOldHeight
-    AddToAnimation(self:GetName(), 0, 1, GetTime(), 0.2,
+    AddToAnimation(self:GetDebugName(), 0, 1, GetTime(), 0.2,
         function()
             local p = animations[self:GetName()].progress
             local height = lerp(oldHeight, height, p)

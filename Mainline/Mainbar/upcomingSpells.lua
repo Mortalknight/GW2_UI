@@ -145,10 +145,9 @@ end
 local function UpcomingSpellsFrameOnShow(self)
     PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN)
     self.animationValue = -400
-    local name = self:GetName()
     local start = GetTime()
     GW.AddToAnimation(
-        name,
+        self:GetDebugName(),
         self.animationValue,
         0,
         start,

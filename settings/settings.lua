@@ -2,8 +2,6 @@ local _, GW = ...
 local L = GW.L
 local RoundDec = GW.RoundDec
 local AddForProfiling = GW.AddForProfiling
-local AddToAnimation
-local lerp
 
 local settings_cat = {}
 local optionReference = {}
@@ -946,11 +944,6 @@ local function LoadSettings()
     sWindow.background:AddMaskTexture(sWindow.backgroundMask)
 
     sWindow:HookScript("OnShow", function()
-        if AddToAnimation == nil then
-            AddToAnimation = GW.AddToAnimation
-            lerp = GW.lerp
-        end
-
         GW.AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW",
             0,
             1,
@@ -958,7 +951,7 @@ local function LoadSettings()
             GW.WINDOW_FADE_DURATION,
             function(p)
                 sWindow:SetAlpha(p)
-                sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT", lerp(-64, sWindow.background:GetWidth(), p) , 0)
+                sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT", GW.lerp(-64, sWindow.background:GetWidth(), p) , 0)
             end,
             1,
             function()

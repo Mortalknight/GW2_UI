@@ -1,10 +1,7 @@
 local _, GW = ...
 
-local lerpEaseOut = GW.lerpEaseOut
-local lerp = GW.lerp
 local numSpritesInAnimation = 254
 local uniqueID = 0
-local round = GW.RoundInt
 
 local floor = math.floor
 local ceil = math.ceil
@@ -85,8 +82,8 @@ function GwAnimatedStatusBarMixin:SetFillAmount(value, forced)
     local rampStartPoint = (segmentSize * currentSegmentIndex)
     local rampEndPoint = (segmentSize * (currentSegmentIndex + 1))
     local rampProgress = (barWidth - rampStartPoint) / (rampEndPoint - rampStartPoint)
-    local interpolateRamp = lerp(numSpritesInAnimation, 0, rampProgress)
-    local interpolateRampRound = round(interpolateRamp)
+    local interpolateRamp = GW.lerp(numSpritesInAnimation, 0, rampProgress)
+    local interpolateRampRound = GW.RoundInt(interpolateRamp)
 
     if value == 0 then
         barPosition = 0
@@ -137,9 +134,9 @@ function GwAnimatedStatusBarMixin:BarUpdate(delta)
     local animationProgress = self.animatedTime / duration
     local newValue = 0
     if self.BarInterpolation and self.BarInterpolation == BarInterpolation.Linear then
-        newValue = lerp(self.animatedStartValue, self.animatedValue, animationProgress) -- LERP?
+        newValue = GW.lerp(self.animatedStartValue, self.animatedValue, animationProgress) -- LERP?
     else
-        newValue = lerpEaseOut(self.animatedStartValue, self.animatedValue, animationProgress)
+        newValue = GW.lerpEaseOut(self.animatedStartValue, self.animatedValue, animationProgress)
     end
     self:SetFillAmount(newValue, true)
     if self.onUpdateAnimation then
@@ -252,11 +249,6 @@ function GwAnimatedStatusBarMixin:UpdateBarSize()
 end
 
 local function AddStatusbarAnimation(statusBar, smooth, animationType)
-    if not AddToAnimation then
-        AddToAnimation = GW.AddToAnimation
-        round = GW.RoundInt
-    end
-
     Mixin(statusBar,  GwAnimatedStatusBarMixin)
 
     statusBar:SetClampedToScreen(false)

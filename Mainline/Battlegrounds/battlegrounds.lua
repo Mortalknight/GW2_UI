@@ -46,7 +46,7 @@ local function capStateChanged(self)
     local fnScale = function(prog)
         self:SetScale(prog)
     end
-    GW.AddToAnimation(self:GetName(), 2, 1, GetTime(), 0.5, fnScale)
+    GW.AddToAnimation(self:GetDebugName(), 2, 1, GetTime(), 0.5, fnScale)
 end
 GW.AddForProfiling("battlegrounds", "capStateChanged", capStateChanged)
 

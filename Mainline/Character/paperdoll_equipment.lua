@@ -658,11 +658,10 @@ end
 GW.AddForProfiling("paperdoll_equipment", "resetBagInventory", resetBagInventory)
 
 local function indicatorAnimation(self)
-    local name = self:GetName()
     local _, _, _, startX, _ = self:GetPoint()
 
     GW.AddToAnimation(
-        name,
+        self:GetDebugName(),
         0,
         1,
         GetTime(),
