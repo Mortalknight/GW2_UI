@@ -347,7 +347,10 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
         block:UpdateBlock(self, q, questID, questLogIndex)
         block:Show()
         if added then
-            C_Timer.After(0.1, function() block:NewQuestAnimation() end)
+            C_Timer.After(0.1, function()
+                local b = self:GetBlockByQuestId(questID)
+                if b then b:NewQuestAnimation() end
+            end)
         end
     end
 

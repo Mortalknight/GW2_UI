@@ -5,8 +5,9 @@ GwObjectivesAnimationMixin = {}
 function GwObjectivesAnimationMixin:NewQuestAnimation()
     self.flare:Show()
     self.flare:SetAlpha(1)
+    print(self:GetDebugName())
     GW.AddToAnimation(
-        self:GetName() .. "flare",
+        self:GetDebugName() .. "flare",
         0,
         1,
         GetTime(),
@@ -32,7 +33,7 @@ function GwObjectivesAnimationMixin:WiggleAnimation()
         self.animation = 0
     end
     GW.AddToAnimation(
-        self:GetName(),
+        self:GetDebugName(),
         0,
         1,
         GetTime(),
