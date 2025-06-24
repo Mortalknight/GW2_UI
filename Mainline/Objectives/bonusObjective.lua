@@ -299,7 +299,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateLayout(newQuestId)
     self.numEvents = shownBlocks
 
     if self.blocks then
-        for i = (shownBlocks > 0 and not self.collapsed and shownBlocks + 1), #self.blocks do
+        for i = (shownBlocks > 0 and not self.collapsed and shownBlocks + 1) or 1, #self.blocks do
             local block = self.blocks[i]
             if block then
                 block.questID = false
