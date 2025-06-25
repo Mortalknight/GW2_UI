@@ -28,27 +28,26 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
         block:SetBlockColorByKey(colorKey)
         block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
         block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
-        if block.objectiveBlocks then
-            for _, obj in ipairs(block.objectiveBlocks) do
-                obj.StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
-                obj.TimerBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
-                obj:Hide()
-            end
+        for _, obj in ipairs(block.objectiveBlocks) do
+            obj.StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
+            obj.TimerBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
+            obj:Hide()
         end
         return block
     end
 
-    self.blocksNum = (self.blocksNum or 0) + 1
-    self.blocks = self.blocks or {}
+    local count = #self.blocks + 1
 
     local newBlock = CreateFrame("Button", nil, self, "GwObjectivesBlockTemplate")
     newBlock:SetParent(self)
     tinsert(self.blocks, newBlock)
 
-    if idx == 1 then
+    newBlock.objectiveBlocks = {}
+
+    if count == 1 then
         newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -20)
     else
-        newBlock:SetPoint("TOPRIGHT", self.blocks[self.blocksNum - 1], "BOTTOMRIGHT", 0, 0)
+        newBlock:SetPoint("TOPRIGHT", self.blocks[count - 1], "BOTTOMRIGHT", 0, 0)
     end
 
     newBlock.index = idx

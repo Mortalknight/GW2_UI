@@ -99,15 +99,11 @@ function GwObjectivesRecipeContainerMixin:ProcessUpdate()
 
     self:SetHeight(savedHeight)
 
-    if self.blocks then
-        for i = shownIndex, #self.blocks do
-            local block = self.blocks[i]
-            if block then
-                block.id = nil
-                block.isRecraft = nil
-                block:Hide()
-            end
-        end
+    for i = shownIndex, #self.blocks do
+        local block = self.blocks[i]
+        block.id = nil
+        block.isRecraft = nil
+        block:Hide()
     end
 
     GwQuestTracker:LayoutChanged()

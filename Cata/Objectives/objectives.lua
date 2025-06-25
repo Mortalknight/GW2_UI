@@ -187,11 +187,9 @@ end
 GwQuestLogMixin = {}
 
 function GwQuestLogMixin:GetBlockByQuestId(questID)
-    if self.blocks then
-        for _, block in ipairs(self.blocks) do
-            if block and block.questID == questID then
-                return block
-            end
+    for _, block in ipairs(self.blocks) do
+        if block and block.questID == questID then
+            return block
         end
     end
     return nil
@@ -346,17 +344,13 @@ function GwQuestLogMixin:UpdateLayout()
     self.numQuests = counterQuest
 
     -- hide other quests
-    if self.blocks then
-        for i = counterQuest + 1, #self.blocks do
-            local block = self.blocks[i]
-            if block then
-                block.questID = nil
-                block.questLogIndex = 0
-                block.sourceItemId = nil
-                block:Hide()
-                GW.CombatQueue_Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
-            end
-        end
+    for i = counterQuest + 1, #self.blocks do
+        local block = self.blocks[i]
+        block.questID = nil
+        block.questLogIndex = 0
+        block.sourceItemId = nil
+        block:Hide()
+        GW.CombatQueue_Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
     end
 
     local headerCounterText = " (" .. counterQuest .. ")"

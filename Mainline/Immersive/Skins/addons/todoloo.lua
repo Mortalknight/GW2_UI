@@ -11,16 +11,19 @@ function GwTodolooBlockMixin:GetObjectiveBlock(index, id)
 
         return objective
     end
+
+    local count = #self.objectiveBlocks + 1
+
     local newObjective = CreateFrame("Frame", nil, self, "GwQuesttrackerObjectiveTemplate")
     newObjective:SetParent(self)
     tinsert(self.objectiveBlocks, newObjective)
 
     newObjective.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
     newObjective.notChangeSize = true
-    if index == 1 then
+    if count == 1 then
         newObjective:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
     else
-        newObjective:SetPoint("TOPRIGHT", self.objectiveBlocks[self.objectiveBlocksNum - 1], "BOTTOMRIGHT", 0, 0)
+        newObjective:SetPoint("TOPRIGHT", self.objectiveBlocks[count- 1], "BOTTOMRIGHT", 0, 0)
     end
     newObjective.objectiveKey = id
 
@@ -96,16 +99,16 @@ function GwTodolooBlockMixin:DoTasks(groupCompleted, groupReset)
     local tasks = Todoloo.TaskManager:GetGroupTasks(self.id)
     local counter = 1
     local height = 20
-    local iterTasks = {};
+    local iterTasks = {}
     for index, task in ipairs(tasks) do
-        task["id"] = index;
-        tinsert(iterTasks, task);
+        task.id = index
+        tinsert(iterTasks, task)
     end
 
     if Todoloo.Config.Get(Todoloo.Config.Options.ORDER_BY_COMPLETION) then
         table.sort(iterTasks, function(lhs, rhs)
-            return not lhs.completed and rhs.completed;
-        end);
+            return not lhs.completed and rhs.completed
+        end)
     end
 
     for _, task in pairs(iterTasks) do
@@ -121,14 +124,14 @@ function GwTodolooBlockMixin:DoTasks(groupCompleted, groupReset)
             if task.completed then
                 if Todoloo.Config.Get(Todoloo.Config.Options.SHOW_COMPLETED_TASKS) then
                     local objectivesBlock = self:GetObjectiveBlock(counter, task.id)
-                    SetUpObjectivesBlock(objectivesBlock, task.name, true,  (task.reset and task.reset or groupReset or 0))
+                    SetUpObjectivesBlock(objectivesBlock, task.name, true, (task.reset and task.reset or groupReset or 0))
 
                     height = height + objectivesBlock.height
                     counter = counter + 1
                 end
             else
                 local objectivesBlock = self:GetObjectiveBlock(counter, task.id)
-                SetUpObjectivesBlock(objectivesBlock, task.name, false,  (task.reset and task.reset or groupReset or 0))
+                SetUpObjectivesBlock(objectivesBlock, task.name, false, (task.reset and task.reset or groupReset or 0))
 
                 height = height + objectivesBlock.height
                 counter = counter + 1
@@ -196,13 +199,8 @@ function GwTodolooContainerMixin:UpdateLayout()
     end
 
     -- hide always all blocks
-    if self.blocks then
-        for i = 1, #self.blocks do
-            local block = self.blocks[i]
-            if block then
-                block:Hide()
-            end
-        end
+    for i = 1, #self.blocks do
+        self.blocks[i]:Hide()
     end
 
     local foundTodo = false

@@ -200,6 +200,8 @@ function GwObjectivesTrackerMixin:CreateTrackerContainer(name, parent, mixin, te
     if mixin then
         Mixin(frame, mixin)
     end
+    frame.blocks = {}
+
     return frame
 end
 

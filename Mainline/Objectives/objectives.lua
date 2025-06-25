@@ -188,33 +188,25 @@ function GwQuestLogMixin:OnEvent(event, ...)
 end
 
 function GwQuestLogMixin:GetBlockByQuestId(questID)
-    if self.blocks then
-        for i = 1, #self.blocks do
-            local block = self.blocks[i]
-            if block and block.questID == questID then
-                return block
-            end
+    for i = 1, #self.blocks do
+        local block = self.blocks[i]
+        if block.questID == questID then
+            return block
         end
     end
     return nil
 end
 
 function GwQuestLogMixin:GetOrCreateBlockByQuestId(questID, colorKey)
-    if self.blocks then
-        for i = 1, #self.blocks do
-            local block = self.blocks[i]
-            if block then
-                if block.questID == questID then
-                    return block
-                elseif block.questID == nil then
-                    return self:GetBlock(i, colorKey, true)
-                end
-            else
-                return self:GetBlock(i, colorKey, true)
-            end
+    for i = 1, #self.blocks do
+        local block = self.blocks[i]
+        if block.questID == questID then
+            return block
+        elseif block.questID == nil then
+            return self:GetBlock(i, colorKey, true)
         end
     end
-    return nil
+    return self:GetBlock(#self.blocks + 1, colorKey, true)
 end
 
 function GwQuestLogMixin:GetQuestWatchId(questID)
@@ -300,16 +292,12 @@ function GwQuestLogMixin:UpdateLayout()
     self.numQuests = counterQuest
 
     -- hide other quests
-    if self.blocks then
-        for i = counterQuest + 1, #self.blocks do
-            local block = self.blocks[i]
-            if block then
-                block.questID = nil
-                block.questLogIndex = 0
-                block:Hide()
-                GW.CombatQueue_Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
-            end
-        end
+    for i = counterQuest + 1, #self.blocks do
+        local block = self.blocks[i]
+        block.questID = nil
+        block.questLogIndex = 0
+        block:Hide()
+        GW.CombatQueue_Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
     end
 
     if counterQuest == 0 and self.isCampaignContainer then
@@ -357,13 +345,11 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
     local newHeight = 20
     local counterQuest = 0
 
-    if self.blocks then
-        for i = 1, #self.blocks do
-            local b = self.blocks[i]
-            if b and b:IsShown() then
-                newHeight = newHeight + b.height
-                counterQuest = counterQuest + 1
-            end
+    for i = 1, #self.blocks do
+        local b = self.blocks[i]
+        if b:IsShown() then
+            newHeight = newHeight + b.height
+            counterQuest = counterQuest + 1
         end
     end
 
@@ -373,14 +359,12 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
 
     if block and block.hasItem then
         local heightForQuestItem = 20
-        if self.blocks then
-            for i = 1, #self.blocks do
-                local b = self.blocks[i]
-                if b and b:IsShown() then
-                    heightForQuestItem = heightForQuestItem + b.height
-                    if b.questID == questID then
-                        break
-                    end
+        for i = 1, #self.blocks do
+            local b = self.blocks[i]
+            if b:IsShown() then
+                heightForQuestItem = heightForQuestItem + b.height
+                if b.questID == questID then
+                    break
                 end
             end
         end

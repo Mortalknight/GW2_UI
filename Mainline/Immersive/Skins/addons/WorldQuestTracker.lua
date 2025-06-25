@@ -44,12 +44,10 @@ function GwWorldQuestTrackerContainerMixin:UpdateLayout()
         end
     end
 
-    if self.blocks then
-        for i = (self.collapsed and foundEvent and 1 or counter + 1), #self.blocks do
-            local block = self.blocks[i]
-            if block and block:IsShown() then
-                block:Hide()
-            end
+    for i = (self.collapsed and foundEvent and 1 or counter + 1), #self.blocks do
+        local block = self.blocks[i]
+        if block:IsShown() then
+            block:Hide()
         end
     end
 

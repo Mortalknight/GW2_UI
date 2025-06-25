@@ -263,19 +263,15 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateLayout(newQuestId)
     local trackedEventIDs = {}
     GwObjectivesNotification:RemoveNotificationOfType("EVENT")
 
-    if self.blocks then
-        for i = 1, #self.blocks do
-            local block = self.blocks[i]
-            if block then
-                block.questID = false
-                if block.ticker then
-                    block.ticker:Cancel()
-                    block.ticker = nil
-                end
-                GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
-                block:Hide()
-            end
+    for i = 1, #self.blocks do
+        local block = self.blocks[i]
+        block.questID = false
+        if block.ticker then
+            block.ticker:Cancel()
+            block.ticker = nil
         end
+        GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
+        block:Hide()
     end
 
     local tasks = GetTasksTable()
@@ -297,18 +293,14 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateLayout(newQuestId)
     local foundEvent, shownBlocks = self:UpdateBlocks(trackedEventIDs)
     self.numEvents = shownBlocks
 
-    if self.blocks then
-        for i = (shownBlocks > 0 and not self.collapsed and shownBlocks + 1) or 1, #self.blocks do
-            local block = self.blocks[i]
-            if block then
-                block.questID = false
-                block:Hide()
-                GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
-                if block.ticker then
-                    block.ticker:Cancel()
-                    block.ticker = nil
-                end
-            end
+    for i = (shownBlocks > 0 and not self.collapsed and shownBlocks + 1) or 1, #self.blocks do
+        local block = self.blocks[i]
+        block.questID = false
+        block:Hide()
+        GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
+        if block.ticker then
+            block.ticker:Cancel()
+            block.ticker = nil
         end
     end
 

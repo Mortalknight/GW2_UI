@@ -36,10 +36,8 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
 
     self.hover:Show()
 
-    for _, v in pairs(self.objectiveBlocks or {}) do
-        if not v.StatusBar.notHide then
-            v.StatusBar.progress:Show()
-        end
+    for _, v in pairs(self.objectiveBlocks) do
+        v.StatusBar.progress:SetShown(not v.StatusBar.notHide)
     end
 
     if not self.isSuperTracked then
@@ -78,10 +76,8 @@ function GwObjectivesBlockTemplateMixin:OnLeave()
         self.hover:Hide()
     end
 
-    for _, v in pairs(self.objectiveBlocks or {}) do
-        if not v.StatusBar.notHide then
-            v.StatusBar.progress:Hide()
-        end
+    for _, v in pairs(self.objectiveBlocks) do
+        v.StatusBar.progress:SetShown(v.StatusBar.notHide)
     end
 
     GW.StopAnimation((self.animationName or self:GetDebugName()) .. "hover")
@@ -136,17 +132,16 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectives
         return objective
     end
 
-    self.objectiveBlocksNum = (self.objectiveBlocksNum or 0) + 1
-    self.objectiveBlocks = self.objectiveBlocks or {}
+    local count = #self.objectiveBlocks + 1
 
     local newObjective = CreateFrame("Frame", nil, self, "GwQuesttrackerObjectiveTemplate")
     newObjective:SetParent(self)
     tinsert(self.objectiveBlocks, newObjective)
 
-    if self.objectiveBlocksNum == 1 then
+    if count == 1 then
         newObjective:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, (firstObjectivesYValue or -25))
     else
-        newObjective:SetPoint("TOPRIGHT", self.objectiveBlocks[self.objectiveBlocksNum - 1], "BOTTOMRIGHT", 0, 0)
+        newObjective:SetPoint("TOPRIGHT", self.objectiveBlocks[count - 1], "BOTTOMRIGHT", 0, 0)
     end
 
     newObjective.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)

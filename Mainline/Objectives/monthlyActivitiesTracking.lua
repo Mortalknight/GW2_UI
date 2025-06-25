@@ -17,13 +17,8 @@ function GwObjectivesMonthlyActivitiesBlockMixin:UpdateBlock(requirements)
         end
     end
 
-    if self.objectiveBlocks then
-       for i = (self.numObjectives or 0) + 1, #self.objectiveBlocks do
-            local obj = self.objectiveBlocks[i]
-            if obj then
-                obj:Hide()
-            end
-        end
+    for i = (self.numObjectives or 0) + 1, #self.objectiveBlocks do
+        self.objectiveBlocks[i]:Hide()
     end
 
     self:SetHeight(self.height)
