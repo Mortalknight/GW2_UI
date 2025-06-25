@@ -36,8 +36,10 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
 
     self.hover:Show()
 
-    for _, v in pairs(self.objectiveBlocks) do
-        v.StatusBar.progress:SetShown(not v.StatusBar.notHide)
+    for _, v in pairs(self.objectiveBlocks or {}) do
+        if not v.StatusBar.notHide then
+            v.StatusBar.progress:Show()
+        end
     end
 
     if not self.isSuperTracked then
@@ -76,8 +78,10 @@ function GwObjectivesBlockTemplateMixin:OnLeave()
         self.hover:Hide()
     end
 
-    for _, v in pairs(self.objectiveBlocks) do
-        v.StatusBar.progress:SetShown(v.StatusBar.notHide)
+    for _, v in pairs(self.objectiveBlocks or {}) do
+        if not v.StatusBar.notHide then
+            v.StatusBar.progress:Hide()
+        end
     end
 
     GW.StopAnimation((self.animationName or self:GetDebugName()) .. "hover")
