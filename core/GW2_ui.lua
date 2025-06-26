@@ -720,6 +720,21 @@ local function evPlayerLogin(self)
         if GW.settings.BAGS_ENABLED then
             GW.LoadInventory()
         end
+    elseif not GW.Retail then
+        -- if not our bags, we need to cut the bagbar frame out of the micromenu
+        if not C_AddOns.IsAddOnLoaded("Bartender4") then
+            MainMenuBarBackpackButton:ClearAllPoints()
+            CharacterBag0Slot:ClearAllPoints()
+            CharacterBag1Slot:ClearAllPoints()
+            CharacterBag2Slot:ClearAllPoints()
+            CharacterBag3Slot:ClearAllPoints()
+
+            MainMenuBarBackpackButton:SetPoint("RIGHT", ActionButton12, "RIGHT", ActionButton12:GetWidth() + 64, 0)
+            CharacterBag0Slot:SetPoint("LEFT", MainMenuBarBackpackButton, "RIGHT", 0, 0)
+            CharacterBag1Slot:SetPoint("LEFT", CharacterBag0Slot, "RIGHT", 0, 0)
+            CharacterBag2Slot:SetPoint("LEFT", CharacterBag1Slot, "RIGHT", 0, 0)
+            CharacterBag3Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
+        end
     end
 
     GW.SetUpExtendedVendor()
