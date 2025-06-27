@@ -200,13 +200,15 @@ local function hookItemQuality(button, quality, itemIDOrLink)
     local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
     local showEquipmentSetName = GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME
 
+    button.IconOverlay:Hide()
     local t = button.IconBorder
+    local colorCommon = GW.GetBagItemQualityColor(Enum.ItemQuality.Common)
     t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     t:SetAlpha(0.9)
-    button.IconOverlay:Hide()
+    t:SetVertexColor(colorCommon.r, colorCommon.g, colorCommon.b)
 
     if not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW then
-        t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
+        t:SetVertexColor(colorCommon.r, colorCommon.g, colorCommon.b)
     end
 
     if GW.settings.BAG_PROFESSION_BAG_COLOR and professionColors then
@@ -218,16 +220,8 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         local isQuestItem = select(12, C_Item.GetItemInfo(itemIDOrLink))
         if quality == nil then quality = 0 end
 
-        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
-            t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
-            t:Show()
-        else
-            t:Hide()
-        end
-
         if isQuestItem == LE_ITEM_CLASS_QUESTITEM then
             t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
-            t:Show()
             button.questIcon:Show()
         else
             button.questIcon:Hide()
@@ -275,8 +269,14 @@ local function hookItemQuality(button, quality, itemIDOrLink)
                 button.itemlevel:SetText(equipmentSetName)
             end
         end
+
+        if GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW and quality and quality > 0 then
+            local color = GW.GetBagItemQualityColor(quality)
+            t:SetVertexColor(color.r, color.g, color.b)
+        end
+
+        t:Show()
     else
-        t:Hide()
         if button.junkIcon then button.junkIcon:Hide() end
         if button.questIcon then button.questIcon:Hide() end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end

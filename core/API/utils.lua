@@ -829,16 +829,21 @@ local function GetQualityColor(quality)
         return ColorManager.GetColorDataForItemQuality(quality)
     else
         local r, g, b = C_Item.GetItemQualityColor(quality)
-        return{r = r, g = g, b = b}
+        return {r = r, g = g, b = b}
     end
 end
 GW.GetQualityColor = GetQualityColor
 
 local function GetBagItemQualityColor(quality)
-    if quality == -1 then
-        return {r = 0, g = 0, b = 0}
+    if ColorManager then
+        if quality == -1 then
+            return {r = 0, g = 0, b = 0}
+        end
+        return ColorManager.GetColorDataForBagItemQuality(quality)
+    else
+        local r, g, b = C_Item.GetItemQualityColor(quality)
+        return {r = r, g = g, b = b}
     end
-    return ColorManager.GetColorDataForBagItemQuality(quality)
 end
 GW.GetBagItemQualityColor = GetBagItemQualityColor
 
