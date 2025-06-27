@@ -69,7 +69,7 @@ local function reskinItemButton(b, overrideIconSize)
 
     if not b.questIcon then
         b.questIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
-        b.questIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icon-quest")
+        b.questIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
         b.questIcon:SetSize(25, 25)
         b.questIcon:SetPoint("TOPLEFT", -7, 1)
         b.questIcon:SetVertexColor(221 / 255, 198 / 255, 68 / 255)
