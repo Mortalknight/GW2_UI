@@ -796,6 +796,10 @@ local function evPlayerLogin(self)
             GW.LoadActionBars(lm)
             -- to update our bars
             MultiActionBar_Update()
+
+            if GW.Cata then
+                GW.ExtraAB_BossAB_Setup()
+            end
         end
     end
 

@@ -1,3 +1,7 @@
+8.0.6
+FIXES
+    - Some more fixes for all versions
+
 8.0.5
 FIXES
     - Fix target level color (era & cata)
