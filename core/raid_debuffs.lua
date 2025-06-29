@@ -425,7 +425,7 @@ if GW.Retail then
         SetDefaultOnTheFly(439829) -- Silken Tomb
         SetDefaultOnTheFly(439825) -- Silken Tomb 2
         SetDefaultOnTheFly(437586) -- Reactive Toxin
-elseif GW.Cata then
+elseif GW.Mists then
     -------------------------------------------------
     -------------------- Dungeons -------------------
     -------------------------------------------------

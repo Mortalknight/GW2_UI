@@ -32,6 +32,8 @@ local function worldMapSkin()
     WorldMapFrame.BorderFrame:GwStripTextures()
     WorldMapFrame.MiniBorderFrame:GwStripTextures()
 
+    MiniWorldMapTitle:Hide()
+
     WorldMapFrame.BorderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     WorldMapFrame.MiniBorderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
@@ -40,14 +42,21 @@ local function worldMapSkin()
     WorldMapZoneMinimapDropdown:GwHandleDropDownBox()
 
     WorldMapTrackQuest:GwSkinCheckButton()
+    WorldMapShowDigsites:GwSkinCheckButton()
     WorldMapQuestShowObjectives:GwSkinCheckButton()
     WorldMapTrackQuest:SetSize(15, 15)
+    WorldMapShowDigsites:SetSize(15, 15)
     WorldMapQuestShowObjectives:SetSize(15, 15)
+    WorldMapTrackQuestText:SetTextColor(1, 1, 1)
+    WorldMapShowDigsitesText:SetTextColor(1, 1, 1)
+    WorldMapQuestShowObjectivesText:SetTextColor(1, 1, 1)
 
     QuestScrollFrame:GwSkinScrollFrame()
     QuestMapFrame.DetailsFrame.ScrollFrame:GwSkinScrollFrame()
     QuestScrollFrame.ScrollBar:GwSkinScrollBar()
     QuestMapFrame.DetailsFrame.ScrollFrame.ScrollBar:GwSkinScrollBar()
+
+    WorldMapFrame.WorldMapLevelDropDown:GwHandleDropDownBox()
 
     WorldMapContinentDropdown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 330, -35)
     WorldMapContinentDropdown:SetWidth(205)

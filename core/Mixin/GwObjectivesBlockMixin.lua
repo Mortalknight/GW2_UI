@@ -245,7 +245,7 @@ function GwObjectivesBlockTemplateMixin:IsQuestAutoTurnInOrAutoAccept(blockQuest
     end
 
     --fallback for cata
-    if GW.Cata and checkType == "COMPLETE" and isComplete and isAutoComplete then
+    if GW.Mists and checkType == "COMPLETE" and isComplete and isAutoComplete then
         return true
     end
 
@@ -260,7 +260,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
         if self.questLogIndex then
             local link, item, charges, showWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
 
-            local isComplete = GW.Retail and (self.questID and QuestCache:Get(self.questID):IsComplete()) or GW.Cata and (self.isComplete) or false
+            local isComplete = GW.Retail and (self.questID and QuestCache:Get(self.questID):IsComplete()) or GW.Mists and (self.isComplete) or false
             if item and (not isComplete or showWhenComplete) then
                 self.hasItem = true
                 if GW.Retail then

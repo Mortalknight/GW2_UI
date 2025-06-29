@@ -87,7 +87,7 @@ local function Update(self, event, unit)
         (element.UnitTarget and UnitExists(unit .. "target")) or
         (element.DynamicFlight and oUF.isRetail and not isGliding) or
         (element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
-        (element.Vehicle and (oUF.isRetail or oUF.isCata) and UnitHasVehicleUI(unit)) or
+        (element.Vehicle and (oUF.isRetail or oUF.isMists) and UnitHasVehicleUI(unit)) or
         (element.Hover and GetMouseFocus(self))
     then
         ToggleAlpha(element.rangeFaderObject or self, element, element.MaxAlpha)
@@ -267,7 +267,7 @@ if oUF.isRetail then
     }
 end
 
-if oUF.isRetail or oUF.isCata then
+if oUF.isRetail or oUF.isMists then
     options.Vehicle = {
         enable = function(self)
             self:RegisterEvent("UNIT_ENTERED_VEHICLE", Update, true)

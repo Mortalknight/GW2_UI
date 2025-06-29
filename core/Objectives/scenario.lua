@@ -333,6 +333,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
 end
 
 function GwQuesttrackerScenarioBlockMixin:UpdateAffixes(fakeIds)
+    if not GW.Retail then return end
     local _, affixes = C_ChallengeMode.GetActiveKeystoneInfo()
     affixes = fakeIds and #fakeIds > 0 and fakeIds or affixes
 
@@ -366,6 +367,7 @@ function GwQuesttrackerScenarioBlockMixin:UpdateAffixes(fakeIds)
 end
 
 function GwQuesttrackerScenarioBlockMixin:UpdateDeathCounter()
+    if not GW.Retail then return end
     local count, timeLost = C_ChallengeMode.GetDeathCount()
     self.deathcounter.count = count
     self.deathcounter.timeLost = timeLost
@@ -559,11 +561,13 @@ function GwObjectivesScenarioContainerMixin:InitModule()
 
     -- JailersTower hook
     -- do it only here so we are sure we do not hook more than one time
-    hooksecurefunc(ScenarioObjectiveTracker, "SlideInContents", function(container)
-        if container:ShouldShowCriteria() and IsInJailersTower() then
-            self:UpdateLayout()
-        end
-    end)
+    if GW.Retail then
+        hooksecurefunc(ScenarioObjectiveTracker, "SlideInContents", function(container)
+            if container:ShouldShowCriteria() and IsInJailersTower() then
+                self:UpdateLayout()
+            end
+        end)
+    end
 
     self.timerBlock = CreateFrame("Button", "GwQuestTrackerTimer", self, "GwQuesttrackerScenarioBlock")
     self.timerBlock.container = self
@@ -630,12 +634,15 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     self.timerBlock:RegisterEvent("PLAYER_ENTERING_WORLD")
     self.timerBlock:RegisterEvent("WORLD_STATE_TIMER_START")
     self.timerBlock:RegisterEvent("WORLD_STATE_TIMER_STOP")
-    self.timerBlock:RegisterEvent("PROVING_GROUNDS_SCORE_UPDATE")
     self.timerBlock:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
     self.timerBlock:RegisterEvent("CHALLENGE_MODE_START")
     self.timerBlock:RegisterEvent("CHALLENGE_MODE_COMPLETED")
     self.timerBlock:RegisterEvent("ZONE_CHANGED")
     self.timerBlock:RegisterEvent("CHALLENGE_MODE_DEATH_COUNT_UPDATED")
+
+    if GW.Retail then
+        self.timerBlock:RegisterEvent("PROVING_GROUNDS_SCORE_UPDATE")
+    end
     self.timerBlock:SetScript("OnEvent", self.timerBlock.TimerBlockOnEvent)
 
     self.block = self:GetBlock(1, "SCENARIO", true)

@@ -13,6 +13,7 @@ do -- Expansions
     GW.TBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
     GW.Wrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
     GW.Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+    GW.Mists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC
     GW.Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 
     local season = C_Seasons and C_Seasons.GetActiveSeason()
@@ -36,13 +37,12 @@ end
 GW.GetPlayerRole = GetPlayerRole
 
 local function CheckRole()
-    GW.myspec = ((GW.Classic or GW.Cata) and GW.Libs.LCS.GetSpecialization or GetSpecialization)()
+    local GetSpecialization = (GW.Libs.LCS and GW.Libs.LCS.GetSpecialization) or C_SpecializationInfo.GetSpecialization or GetSpecialization
+    local GetSpecializationInfo = (GW.Libs.LCS and GW.Libs.LCS.GetSpecializationInfo) or C_SpecializationInfo.GetSpecializationInfo or GetSpecializationInfo
+
+    GW.myspec = GetSpecialization()
     if GW.myspec then
-        if GW.Retail then
-            GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecRole = GetSpecializationInfo(GW.myspec)
-        else
-            GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecRole = GW.Libs.LCS.GetSpecializationInfo(GW.myspec)
-        end
+        GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecRole = GetSpecializationInfo(GW.myspec)
     end
     GW.myrole = GetPlayerRole()
 
@@ -66,7 +66,7 @@ GW.mylevel = UnitLevel("player")
 GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
 GW.resolution = format("%dx%d", GW.screenwidth, GW.screenHeight)
 GW.wowpatch, GW.wowbuild, _ , GW.wowToc = GetBuildInfo()
-GW.allowRoles = GW.Retail or GW.Cata or GW.ClassicAnniv or GW.ClassicAnnivHC or GW.ClassicSOD
+GW.allowRoles = GW.Retail or GW.Mists or GW.ClassicAnniv or GW.ClassicAnnivHC or GW.ClassicSOD
 
 GW.wowbuild = tonumber(GW.wowbuild)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
@@ -135,7 +135,7 @@ do
         AddLib("CI", "LibClassicInspector", true)
     end
 
-    if GW.Classic or GW.Cata then
+    if not (GW.Retail or GW.Mists) then
         AddLib("LCS", "LibClassicSpecs-GW2", true)
     end
 end

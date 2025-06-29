@@ -1048,7 +1048,7 @@ local function setPriest(f)
         if GW.Retail then
             setManaBar(f)
             return true
-        elseif GW.Cata then
+        elseif GW.Mists then
             f.priest:Show()
 
             f.background:ClearAllPoints()
@@ -1267,7 +1267,7 @@ local function setDeathKnight(f)
             fFlare:SetVertexColor(1,1,1,0)
             fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
         end
-    elseif GW.Cata then
+    elseif GW.Mists then
         for i = 1, 6 do
             local texture
             local fFill = fr["runeTexFill" .. i]
@@ -1725,9 +1725,6 @@ local function setMonk(f)
         --f:ClearAllPoints()
         --f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -15)
 
-
-
-
         f:SetScript("OnEvent", powerStagger)
         powerStagger(f, "CLASS_POWER_INIT")
 
@@ -1736,7 +1733,7 @@ local function setMonk(f)
         f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
         return true
-    elseif GW.myspec == 3 then -- ww
+    elseif GW.myspec == 3 or (GW.myspec == 2 and GW.Mists) then -- ww
         f:ClearAllPoints()
         f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
         f:SetHeight(32)
@@ -1801,7 +1798,7 @@ local function setDruid(f)
                 barType = "mana"
             end
         end
-    elseif GW.Cata then
+    elseif GW.Mists then
         if form == CAT_FORM then -- cat
             barType = "combo|little_mana"
         elseif form == BEAR_FORM or form == 8 then --bear
@@ -1911,7 +1908,7 @@ local function selectType(f)
         showBar = setMage(f)
     elseif GW.myClassID == 9 and not GW.Classic then
         showBar = setWarlock(f)
-    elseif GW.myClassID == 10 and GW.Retail then
+    elseif GW.myClassID == 10 and (GW.Retail or GW.Mists) then
         showBar = setMonk(f)
     elseif GW.myClassID == 11 then
         showBar = setDruid(f)

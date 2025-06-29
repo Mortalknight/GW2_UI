@@ -347,7 +347,7 @@ local function LoadMinimap()
         lfgAnimPvPStop()
         hookedTimerFrame:SetScript("OnUpdate", nil)
     end)
-
+--[[
     hooksecurefunc("MiniMapBattlefieldFrame_isArena", function()
         local _, _, _, _, _, _, isRankedArena  = GetBattlefieldStatus(1)
         if isRankedArena then
@@ -362,6 +362,7 @@ local function LoadMinimap()
             MiniMapBattlefieldIcon:SetPoint("CENTER", MiniMapBattlefieldFrame, "CENTER", 0, 0);
         end
     end)
+    ]]
     MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
 
     Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
@@ -450,9 +451,6 @@ local function LoadMinimap()
             MinimapZoneText:SetTextColor(1, 1, 1)
         end
     )
-
-    MiniMapBattlefieldBorder:SetTexture(nil)
-    BattlegroundShine:SetTexture(nil)
 
     --CalenderIcon
     GameTimeFrame:SetParent(Minimap)

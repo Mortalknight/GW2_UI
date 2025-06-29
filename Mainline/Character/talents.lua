@@ -144,7 +144,7 @@ local function LoadTalents(tabContainer)
 
             self:GetFrameRef('GwTalentsTree1Container'):Hide()
             self:GetFrameRef('GwTalentsTree2Container'):Hide()
-        
+
             if value == 1 then
                 self:GetFrameRef('GwTalentsTree1Container'):Show()
                 return

@@ -275,7 +275,7 @@ local function Enable(self)
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 
-		if oUF.isRetail then
+		if oUF.isRetail or oUF.isMists then
 			self:RegisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 			self:RegisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
@@ -362,7 +362,7 @@ local function Disable(self)
 			self:UnregisterEvent('UNIT_HEALTH_FREQUENT', Path)
 		end
 
-		if oUF.isRetail then
+		if oUF.isRetail or oUF.isMists then
 			self:UnregisterEvent('UNIT_ABSORB_AMOUNT_CHANGED', Path)
 			self:UnregisterEvent('UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 			self:UnregisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)

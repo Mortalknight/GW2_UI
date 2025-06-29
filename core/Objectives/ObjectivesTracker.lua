@@ -165,7 +165,7 @@ local function DisableBlizzardsObjevtiveTracker()
         ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
         ObjectiveTrackerFrame:SetScript("OnSizeChanged", nil)
         --ObjectiveTrackerFrame:SetScript("OnEvent", nil)
-    elseif GW.Cata then
+    elseif GW.Mists then
         WatchFrame:SetMovable(1)
         WatchFrame:SetUserPlaced(true)
         WatchFrame:GwKill()
@@ -244,7 +244,7 @@ local function LoadObjectivesTracker()
         { name = "GwObjectivesNotification", scrollable = false, mixin = GwObjectivesTrackerNotificationMixin, enumName = "Notification", template = "GwObjectivesNotification", load = true },
         { name = "GwQuesttrackerContainerBossFrames", scrollable = false, mixin = GwObjectivesBossContainerMixin, enumName = "BossFrames", load = not GW.Classic },
         { name = "GwQuesttrackerContainerArenaBGFrames", scrollable = false, mixin = GwObjectivesArenaContainerMixin, enumName = "ArenaFrames", load = not GW.Classic },
-        { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enumName = "Scenario", load = GW.Retail },
+        { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enumName = "Scenario", load = not GW.Classic },
         { name = "GwQuesttrackerContainerAchievement", scrollable = true, mixin = GwAchievementTrackerContainerMixin, enumName = "Achievement", load = not GW.Classic },
         { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Campaign", load = GW.Retail },
         { name = "GwQuesttrackerContainerQuests", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Quests", load = true },

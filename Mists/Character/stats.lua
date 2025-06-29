@@ -298,23 +298,25 @@ local function getMastery()
 	end
 	tooltip = title
 
-	local masteryKnown = IsSpellKnown(CLASS_MASTERY_SPELLS[class]);
-	local primaryTalentTree = GetPrimaryTalentTree();
-	if (masteryKnown and primaryTalentTree) then
-		local masterySpell, masterySpell2 = GetTalentTreeMasterySpells(primaryTalentTree);
-		if (masterySpell) then
-			GameTooltip:AddSpellByID(masterySpell);
-		end
-		if (masterySpell2) then
-			GameTooltip:AddLine(" ");
-			GameTooltip:AddSpellByID(masterySpell2);
+    -- Class mastery spells are not used in MoP.
+	local isClassMasteryKnownOrUnused = ClassicExpansionAtLeast(LE_EXPANSION_MISTS_OF_PANDARIA) or IsSpellKnown(CLASS_MASTERY_SPELLS[class]);
+	local primaryTalentTree = C_SpecializationInfo.GetSpecialization();
+	if (isClassMasteryKnownOrUnused and primaryTalentTree) then
+		local masterySpells = C_SpecializationInfo.GetSpecializationMasterySpells(primaryTalentTree)
+        local hasAddedAnyMasterySpell = false
+        for i, masterySpell in ipairs(masterySpells) do
+			if hasAddedAnyMasterySpell then
+				GameTooltip:AddLine(" ")
+			end
+			GameTooltip:AddSpellByID(masterySpell)
+			hasAddedAnyMasterySpell = true
 		end
 		GameTooltip:AddLine(" ");
 		GameTooltip:AddLine(format(STAT_MASTERY_TOOLTIP, GetCombatRating(CR_MASTERY), masteryBonus), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
 	else
 		GameTooltip:AddLine(format(STAT_MASTERY_TOOLTIP, GetCombatRating(CR_MASTERY), masteryBonus), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
 		GameTooltip:AddLine(" ");
-		if (masteryKnown) then
+		if (isClassMasteryKnownOrUnused) then
 			GameTooltip:AddLine(STAT_MASTERY_TOOLTIP_NO_TALENT_SPEC, GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, true);
 		else
 			GameTooltip:AddLine(STAT_MASTERY_TOOLTIP_NOT_KNOWN, GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, true);

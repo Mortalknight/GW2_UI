@@ -570,6 +570,7 @@ local tagEvents = {
 	['status']              = 'UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION',
 	['threat']              = 'UNIT_THREAT_SITUATION_UPDATE',
 	['threatcolor']         = 'UNIT_THREAT_SITUATION_UPDATE',
+	['chi']                 = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
 }
 
 local unitlessEvents = {
@@ -589,7 +590,9 @@ if oUF.isRetail then
 	tagEvents['chi']                 = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
 	tagEvents['holypower']           = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
 	unitlessEvents.PLAYER_TALENT_UPDATE = true
-elseif oUF.isCata then
+elseif oUF.isMists then
+	tagEvents['chi']                 = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
+	tagEvents['holypower']           = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
 	unitlessEvents.PLAYER_TALENT_UPDATE = true
 end
 

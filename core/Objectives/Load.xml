@@ -1,6 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="questtracker.xml"/>
     <Include file ="notifications.xml"/>
+
+    <Script file ="scenarioWidgets\eventTimerBarSetupByWidgetId.lua"/>
+
+    <Script file ="scenario.lua"/>
     <Script file ="minimapButtons.lua"/>
     <Script file ="notifications.lua"/>
     <Script file ="achievement.lua"/>

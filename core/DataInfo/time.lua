@@ -142,13 +142,9 @@ GW.Time_OnEvent = Time_OnEvent
 local function Time_OnClick(_, button)
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        if not GW.Classic then
-            ToggleTimeManager()
-        else
-            TimeManager_Toggle()
-        end
+        ToggleFrame(TimeManagerFrame)
     else
-        if not GW.Classic then
+        if GW.Retail or GW.Mists then
             GameTimeFrame:Click()
         else
             Stopwatch_Toggle()

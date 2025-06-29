@@ -1,6 +1,33 @@
 local _, GW = ...
 local GWGetClassColor = GW.GWGetClassColor
 
+local modelPositions = {
+    Human = {0.4, 0, -0.05},
+    Worgen = {0.1, 0, -0.1},
+    Tauren = {0.6, 0, 0},
+    HighmountainTauren = {0.6, 0, 0},
+    BloodElf = {0.5, 0, 0},
+    VoidElf = {0.5, 0, 0},
+    Draenei = {0.3, 0, -0.15},
+    LightforgedDraenei = {0.3, 0, -0.15},
+    NightElf = {0.3, 0, -0.15},
+    Nightborne = {0.3, 0, -0.15},
+    Pandaren = {0.3, 0, -0.15},
+    KulTiran = {0.3, 0, -0.15},
+    Goblin = {0.2, 0, -0.05},
+    Vulpera = {0.2, 0, -0.05},
+    Troll = {0.2, 0, -0.05},
+    ZandalariTroll = {0.2, 0, -0.05},
+    Scourge = {0.2, 0, -0.05},
+    Dwarf = {0.3, 0, 0},
+    DarkIronDwarf = {0.3, 0, 0},
+    Gnome = {0.2, 0, -0.05},
+    Mechagnome = {0.2, 0, -0.05},
+    Orc = {0.1, 0, -0.15},
+    MagharOrc = {0.1, 0, -0.15},
+    Dracthyr = {0.1, 0, -0.15},
+}
+
 local PlayerSlots = {
     ["CharacterHeadSlot"] = {0, 0.25, 0, 0.125},
     ["CharacterNeckSlot"] = {0.25, 0.5, 0, 0.125},
@@ -22,6 +49,8 @@ local PlayerSlots = {
     ["CharacterSecondaryHandSlot"] = {0, 0.25, 0.125, 0.25},
     ["CharacterRangedSlot"] = {0.25, 0.5, 0.5, 0.625},
 }
+
+PaperDollItemSlotButton_GetSlotName(CharacterSecondaryHandSlot)
 
 local  statsIconsSprite = {
     width = 256,
@@ -72,7 +101,7 @@ end
 
 local function PaperDollUpdateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
-    local _, specName = GW.Libs.LCS.GetSpecializationInfo(GW.myspec)
+    local _, specName = C_SpecializationInfo.GetSpecializationInfo(GW.myspec)
     local color = GWGetClassColor(GW.myclass, true)
     local classColorString = format("ff%.2x%.2x%.2x", color.r * 255, color.g * 255, color.b * 255);
     GW.SetClassIcon(GwDressingRoom.classIcon, GW.myclass)
@@ -263,11 +292,12 @@ local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x
 end
 
 local function UpdateItemLevelAndGearScore()
-    local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
-    avgItemLevel = floor(avgItemLevel);
-	avgItemLevelEquipped = floor(avgItemLevelEquipped);
-
-    GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped .. " / " .. avgItemLevel)
+    local average, equipped = GW.GetPlayerItemLevel()
+    local itemLevelText = math.floor(equipped)
+    if equipped < average then
+        itemLevelText = itemLevelText .. "(" .. math.floor(average) .. ")"
+    end
+    GwDressingRoom.itemLevel:SetText(itemLevelText)
     GwDressingRoom.itemLevel:SetTextColor(1, 1, 1)
 end
 
@@ -594,6 +624,13 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.IsGW2Hooked = true
 end
 
+local function SetupCharacterSlots(slots, parent)
+    for _, v in ipairs(slots) do
+        local slot, anchorParent, point, relativePoint, xOffset, yOffset, size = unpack(v)
+        grabDefaultSlots(slot, {point, anchorParent, relativePoint, xOffset, yOffset}, parent, size)
+    end
+end
+
 local function LoadPaperDoll()
     CreateFrame("Frame", "GwCharacterWindowContainer", GwCharacterWindow, "GwCharacterWindowContainer")
     CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
@@ -621,32 +658,33 @@ local function LoadPaperDoll()
 		verticalAnchorY = 0,
 	};
 
-    grabDefaultSlots(CharacterHeadSlot, {"TOPLEFT", GwDressingRoom.gear, "TOPLEFT", 0, 0}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterShoulderSlot, {"TOPLEFT", CharacterHeadSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterChestSlot, {"TOPLEFT", CharacterShoulderSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterWristSlot, {"TOPLEFT", CharacterChestSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterHandsSlot, {"TOPLEFT", CharacterWristSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterWaistSlot, {"TOPLEFT", CharacterHandsSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterLegsSlot, {"TOPLEFT", CharacterWaistSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterFeetSlot, {"TOPLEFT", CharacterLegsSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterMainHandSlot, {"TOPLEFT", CharacterFeetSlot, "BOTTOMLEFT", 0, -20}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterSecondaryHandSlot, {"TOPLEFT", CharacterMainHandSlot, "TOPRIGHT", 5, 0}, GwDressingRoom, 50)
-    grabDefaultSlots(CharacterRangedSlot, {"TOPLEFT", CharacterMainHandSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
+    local characterSlots = {
+        -- Format: {SlotFrame, AnchorParent, AnchorPoint, RelativePoint, XOffset, YOffset, Size}
+        {CharacterHeadSlot,      GwDressingRoom.gear,                "TOPLEFT", "TOPLEFT",    0,  0, 50},
+        {CharacterShoulderSlot,  CharacterHeadSlot,         "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
+        {CharacterChestSlot,     CharacterShoulderSlot,     "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
+        {CharacterWristSlot,     CharacterChestSlot,        "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
+        {CharacterHandsSlot,     CharacterWristSlot,        "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
+        {CharacterWaistSlot,     CharacterHandsSlot,        "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
+        {CharacterLegsSlot,      CharacterWaistSlot,        "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
+        {CharacterFeetSlot,      CharacterLegsSlot,         "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
+        {CharacterMainHandSlot,  CharacterFeetSlot,         "TOPLEFT", "BOTTOMLEFT", 0, -20, 50},
+        {CharacterSecondaryHandSlot, CharacterMainHandSlot, "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
+        {CharacterRangedSlot, CharacterSecondaryHandSlot,   "TOPLEFT", "BOTTOMLEFT", 0, -5, 50},
 
-    grabDefaultSlots(CharacterTabardSlot, {"TOPRIGHT", GwDressingRoom.stats, "BOTTOMRIGHT", -5, -20}, GwDressingRoom, 40)
-    grabDefaultSlots(CharacterShirtSlot, {"TOPRIGHT", CharacterTabardSlot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
-    grabDefaultSlots(CharacterTrinket0Slot, {"TOPRIGHT", CharacterTabardSlot, "TOPLEFT", -5, 0}, GwDressingRoom, 40)
-    grabDefaultSlots(CharacterTrinket1Slot, {"TOPRIGHT", CharacterTrinket0Slot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
-    grabDefaultSlots(CharacterFinger0Slot, {"TOPRIGHT", CharacterTrinket0Slot, "TOPLEFT", -5, 0}, GwDressingRoom, 40)
-    grabDefaultSlots(CharacterFinger1Slot, {"TOPRIGHT", CharacterFinger0Slot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
-    grabDefaultSlots(CharacterNeckSlot, {"TOPRIGHT", CharacterFinger0Slot, "TOPLEFT", -5, 0}, GwDressingRoom, 40)
-    grabDefaultSlots(CharacterBackSlot, {"TOPRIGHT", CharacterNeckSlot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
+        {CharacterTabardSlot,    GwDressingRoom.stats,           "TOPRIGHT", "BOTTOMRIGHT", -5, -20, 40},
+        {CharacterShirtSlot,     CharacterTabardSlot,   "TOPRIGHT", "BOTTOMRIGHT",  0, -5, 40},
+        {CharacterTrinket0Slot,  CharacterTabardSlot,   "TOPRIGHT", "TOPLEFT",     -5, 0, 40},
+        {CharacterTrinket1Slot,  CharacterTrinket0Slot, "TOPRIGHT", "BOTTOMRIGHT",  0, -5, 40},
+        {CharacterFinger0Slot,   CharacterTrinket0Slot, "TOPRIGHT", "TOPLEFT",     -5, 0, 40},
+        {CharacterFinger1Slot,   CharacterFinger0Slot,  "TOPRIGHT", "BOTTOMRIGHT",  0, -5, 40},
+        {CharacterNeckSlot,      CharacterFinger0Slot,  "TOPRIGHT", "TOPLEFT",     -5, 0, 40},
+        {CharacterBackSlot,      CharacterNeckSlot,     "TOPRIGHT", "BOTTOMRIGHT",  0, -5, 40},
+    }
 
-    if UnitHasRelicSlot("player") then
-        CharacterRangedSlot.icon:SetTexCoord(0.25, 0.5, 0.5, 0.625)
-    else
-        CharacterRangedSlot.icon:SetTexCoord(0, 0.25, 0.5, 0.625)
-    end
+    SetupCharacterSlots(characterSlots, GwDressingRoom)
+
+    CharacterRangedSlot.icon:SetTexCoord(0, 0.25, 0.5, 0.625)
 
     hooksecurefunc("PaperDollItemSlotButton_Update", function(button)
         if not button.IsGW2Hooked then return end
@@ -654,13 +692,6 @@ local function LoadPaperDoll()
         if not textureName then
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg-cata")
             button.icon:SetTexCoord(unpack(PlayerSlots[button:GetName()]))
-            if button == CharacterRangedSlot then
-                if UnitHasRelicSlot("player") then
-                    CharacterRangedSlot.icon:SetTexCoord(0.25, 0.5, 0.5, 0.625)
-                else
-                    CharacterRangedSlot.icon:SetTexCoord(0, 0.25, 0.5, 0.625)
-                end
-            end
             PaperDollSlotButton_Update(button)
         else
             button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -675,31 +706,13 @@ local function LoadPaperDoll()
     GwDressingRoom.model:SetUnit("player")
     GwDressingRoom.model:SetPosition(0.8, 0, 0)
 
-    if GW.myrace == "Human" then
-        GwDressingRoom.model:SetPosition(0.4, 0, -0.05)
-    elseif GW.myrace == "Worgen" then
-        GwDressingRoom.model:SetPosition(0.1, 0, -0.1)
-    elseif GW.myrace == "Tauren" then
-        GwDressingRoom.model:SetPosition(0.6, 0, 0)
-    elseif GW.myrace == "BloodElf" then
-        GwDressingRoom.model:SetPosition(0.5, 0, 0)
-    elseif GW.myrace == "Draenei" then
-        GwDressingRoom.model:SetPosition(0.3, 0, -0.15)
-    elseif GW.myrace == "NightElf" then
-        GwDressingRoom.model:SetPosition(0.3, 0, -0.15)
-    elseif GW.myrace == "Troll" then
-        GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
-    elseif GW.myrace == "Scourge" then
-        GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
-    elseif GW.myrace == "Dwarf" then
-        GwDressingRoom.model:SetPosition(0.3, 0, 0)
-    elseif GW.myrace == "Goblin" or GW.myrace == "Vulpera" then
-        GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
-    elseif GW.myrace == "Gnome" then
-        GwDressingRoom.model:SetPosition(0.2, 0, -0.05)
-    elseif GW.myrace == "Orc" then
-        GwDressingRoom.model:SetPosition(0.1, 0, -0.15)
+    local pos = modelPositions[GW.myrace]
+    if pos then
+        GwDressingRoom.model:SetPosition(unpack(pos))
+    else
+        GwDressingRoom.model:SetPosition(0.8, 0, 0) -- fallback
     end
+
     GwDressingRoom.model:SetRotation(-0.15)
     Model_OnLoad(GwDressingRoom.model, 4, 0, -0.1, CharacterModelFrame_OnMouseUp)
 

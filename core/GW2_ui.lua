@@ -622,7 +622,7 @@ local function evPlayerLogin(self)
         GW.LoadMailSkin()
     end
 
-    if GW.Cata then
+    if GW.Mists then
         GW.SetUpVehicleFrameMover()
     end
 
@@ -797,7 +797,7 @@ local function evPlayerLogin(self)
             -- to update our bars
             MultiActionBar_Update()
 
-            if GW.Cata then
+            if GW.Mists then
                 GW.ExtraAB_BossAB_Setup()
             end
         end

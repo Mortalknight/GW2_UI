@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local GetSpecializationInfo = GW.Classic and GW.Libs.LCS.GetSpecializationInfo or GetSpecializationInfo
+local GetSpecializationInfo = (GW.Libs.LCS and GW.Libs.LCS.GetSpecializationInfo) or C_SpecializationInfo.GetSpecializationInfo or GetSpecializationInfo
 
 local function AreOtherAddOnsEnabled()
     for i = 1, C_AddOns.GetNumAddOns() do

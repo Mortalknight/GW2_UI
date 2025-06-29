@@ -67,10 +67,10 @@ local function InspectGearSlot(line, lineText, slotInfo)
     end
 
     local r, g, b = line:GetTextColor()
-    local allow = not GW.Cata or ((r == 0 and g == 1 and b == 0) and not strfind(lineText, ITEM_SPELL_TRIGGER_ONEQUIP, nil, true) and not strfind(lineText, AZERITE_RESPEC_BUTTON[GW.mylocal or "enUS"], nil, true) and not strfind(lineText, "%(%d+ min%)"))
+    local allow = not GW.Mists or ((r == 0 and g == 1 and b == 0) and not strfind(lineText, ITEM_SPELL_TRIGGER_ONEQUIP, nil, true) and not strfind(lineText, AZERITE_RESPEC_BUTTON[GW.mylocal or "enUS"], nil, true) and not strfind(lineText, "%(%d+ min%)"))
     if not allow then return end
 
-    local enchant = (not GW.Cata and strmatch(lineText, MATCH_ENCHANT)) or (GW.Cata and strfind(lineText, "^%+") and not strfind(lineText, BONUS_ARMOR, nil, true) and not strfind(lineText, STAT_MASTERY, nil, true) and lineText)
+    local enchant = (not GW.Mists and strmatch(lineText, MATCH_ENCHANT)) or (GW.Mists and strfind(lineText, "^%+") and not strfind(lineText, BONUS_ARMOR, nil, true) and not strfind(lineText, STAT_MASTERY, nil, true) and lineText)
     if enchant then
         local color1, color2 = strmatch(enchant, "(|cn.-:).-(|r)")
         local enchantQuality = enchant:match("(%s?|A.-|a)")
@@ -196,7 +196,7 @@ do
             end
 
             local colorblind = GetCVarBool("colorblindmode")
-            local numLines = GW.Cata and (colorblind and 21 or 20) or (colorblind and 4 or 3)
+            local numLines = GW.Mists and (colorblind and 21 or 20) or (colorblind and 4 or 3)
             for x = 2, numLines do
                 local line = info.lines[x]
                 if line then
@@ -271,7 +271,7 @@ local function CalculateAverageItemLevel(iLevelDB, unit)
         return
     end
 
-    local numItems = GW.Cata and 17 or 16
+    local numItems = GW.Mists and 17 or 16
 	return format("%0.2f", RoundDec(total / numItems, 2))
 end
 GW.CalculateAverageItemLevel = CalculateAverageItemLevel

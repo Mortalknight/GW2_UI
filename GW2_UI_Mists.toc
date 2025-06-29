@@ -1,5 +1,5 @@
-## Interface: 40402
-## Title: |cffffedbaGW2 UI|r |cFF888888Cata|r
+## Interface: 50500
+## Title: |cffffedbaGW2 UI|r |cFF888888Mists|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
 ## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU, Masque, HonorSpy, TitanClassic, LibClassicDurations, Clique, TotemTimers
@@ -14,8 +14,8 @@
 ## SavedVariablesPerCharacter: GW2UI_PRIVATE_SETTINGS, GW2UI_PRIVATE_LAYOUTS
 ## SavedVariables: GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2, GW2UI_LAYOUTS, GW2UI_DATABASE, GW2UI_PRIVATE_DB
 
-Libs\Cata\Load.xml
+Libs\Mists\Load.xml
 
 Core\Load.xml
 
-Cata\Load.xml
+Mists\Load.xml

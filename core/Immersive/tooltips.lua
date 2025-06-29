@@ -659,7 +659,7 @@ end
 
 local lastGUID
 local function AddInspectInfo(self, unit, numTries, r, g, b)
-    if self.ItemLevelShown or (not unit) or (numTries > 3) or not UnitIsPlayer(unit) or not CanInspect(unit) or (GW.Cata and not CheckInteractDistance(unit, 4)) then return end
+    if self.ItemLevelShown or (not unit) or (numTries > 3) or not UnitIsPlayer(unit) or not CanInspect(unit) or (GW.Mists and not CheckInteractDistance(unit, 4)) then return end
 
     local unitGUID = UnitGUID(unit)
     if not unitGUID then return end
@@ -731,7 +731,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         AddMythicInfo(self, unit)
     end
 
-    if (GW.Retail or GW.Cata) and isShiftKeyDown and isPlayerUnit and not InCombatLockdown() and not self.ItemLevelShown then
+    if (GW.Retail or GW.Mists) and isShiftKeyDown and isPlayerUnit and not InCombatLockdown() and not self.ItemLevelShown then
         if color then
             AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
         else
@@ -1213,7 +1213,7 @@ local function LoadTooltips()
     hooksecurefunc(GameTooltip, "SetHyperlink", SetHyperlink)
     hooksecurefunc(ItemRefTooltip, "SetHyperlink", SetHyperlink)
 
-    if TooltipDataProcessor and not GW.Cata then
+    if TooltipDataProcessor and not GW.Mists then
         hooksecurefunc("EmbeddedItemTooltip_SetSpellWithTextureByID", EmbeddedItemTooltip_ID)
         hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
         hooksecurefunc(GameTooltip, "SetUnitDebuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)

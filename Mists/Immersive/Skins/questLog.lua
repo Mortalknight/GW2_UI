@@ -287,7 +287,7 @@ local function LoadQuestLogFrameSkin()
 
 	hooksecurefunc('QuestLogUpdateQuestCount', function()
 		QuestLogCount:ClearAllPoints()
-		QuestLogCount:SetPoint('BOTTOMLEFT', QuestLogListScrollFrame.backdrop, 'TOPLEFT', 0, 5)
+		QuestLogCount:SetPoint('BOTTOMLEFT', QuestLogListScrollFrame.tex, 'TOPLEFT', 0, 5)
 	end)
 
     local textR, textG, textB = 1, 1, 1
@@ -414,9 +414,7 @@ local function LoadQuestLogFrameSkin()
 	QuestFramePushQuestButton:SetPoint('LEFT', QuestLogFrameAbandonButton, 'RIGHT', 1, 0)
 	QuestFramePushQuestButton:SetPoint('RIGHT', QuestLogFrameTrackButton, 'LEFT', -1, 0)
 
-	GW.CreateFrameHeaderWithBody(QuestLogFrame, QuestLogTitleText:GetText(), "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {QuestLogListScrollFrame, QuestLogDetailScrollFrame}, 10, nil, true)
-	QuestLogListScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder, true, 2, 2)
-    QuestLogDetailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder, true, 2, 4)
+	GW.CreateFrameHeaderWithBody(QuestLogFrame, QuestLogTitleText:GetText(), "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {QuestLogListScrollFrame, QuestLogDetailScrollFrame}, 2, nil, true)
 	QuestLogFrameCancelButton:SetPoint('BOTTOMRIGHT', QuestLogFrame, 'BOTTOMRIGHT', -25, 12)
 
 	QuestLogTitleText:Hide()
@@ -441,6 +439,10 @@ local function LoadQuestLogFrameSkin()
 
     QuestLogCount:GwStripTextures()
     QuestLogCount:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+	QuestLogQuestCount:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.SMALL)
+	QuestLogQuestCount:SetTextColor(1, 1, 1)
+	QuestLogCount.backdrop:SetFrameLevel(QuestLogFrame:GetFrameLevel() + 1)
+	QuestLogFrameShowMapButtonText:SetTextColor(1, 1, 1)
 
     --- mover
     QuestLogFrame:EnableMouse(true)
@@ -469,11 +471,6 @@ local function LoadQuestLogFrameSkin()
     QuestDetailScrollFrame:GwStripTextures()
     QuestProgressScrollFrame:GwStripTextures()
     QuestGreetingScrollFrame:GwStripTextures()
-
-    QuestFrameDetailPanel.SealMaterialBG:SetAlpha(0)
-    QuestFrameRewardPanel.SealMaterialBG:SetAlpha(0)
-    QuestFrameProgressPanel.SealMaterialBG:SetAlpha(0)
-    QuestFrameGreetingPanel.SealMaterialBG:SetAlpha(0)
 
     QuestFrameGreetingPanel:GwStripTextures(true)
     QuestFrameGreetingGoodbyeButton:GwSkinButton(false, true)

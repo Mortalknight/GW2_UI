@@ -9,12 +9,14 @@ local drawItemSetList
 local function updateIngoredSlots(id)
     local ignoredSlots = C_EquipmentSet.GetIgnoredSlots(id)
     for slot, ignored in pairs(ignoredSlots) do
-        if (ignored) then
-            C_EquipmentSet.IgnoreSlotForSave(slot)
-            GW.char_equipset_SavedItems[slot].ignoreSlotCheck:SetChecked(false)
-        else
-            C_EquipmentSet.UnignoreSlotForSave(slot)
-            GW.char_equipset_SavedItems[slot].ignoreSlotCheck:SetChecked(true)
+        if GW.char_equipset_SavedItems[slot] then
+            if (ignored) then
+                C_EquipmentSet.IgnoreSlotForSave(slot)
+                GW.char_equipset_SavedItems[slot].ignoreSlotCheck:SetChecked(false)
+            else
+                C_EquipmentSet.UnignoreSlotForSave(slot)
+                GW.char_equipset_SavedItems[slot].ignoreSlotCheck:SetChecked(true)
+            end
         end
     end
 end
@@ -94,7 +96,6 @@ local function outfitEditButton_OnClick(self)
         rootDescription:CreateButton(EQUIPMENT_SET_EDIT, function()
             GearSetButton_Edit(self:GetParent())
         end)
-        --[[
         rootDescription:CreateTitle(EQUIPMENT_SET_ASSIGN_TO_SPEC)
 
         do
@@ -115,11 +116,11 @@ local function outfitEditButton_OnClick(self)
                     PaperDollEquipmentManagerPane_Update(true)
                 end
 
-                local name = select(2, GetSpecializationInfoByID(GetSpecializationInfo(i)))
-                rootDescription:CreateCheckbox(name, IsSelected, SetSelected, i)
+                local specID = C_SpecializationInfo.GetSpecializationInfo(i)
+			    local text = select(2, GetSpecializationInfoByID(specID))
+                rootDescription:CreateCheckbox(text, IsSelected, SetSelected, i)
             end
         end
-        ]]
     end)
 end
 GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)

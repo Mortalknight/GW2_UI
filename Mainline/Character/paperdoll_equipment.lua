@@ -529,7 +529,7 @@ local function updateStats(self)
     local average, equipped = GW.GetPlayerItemLevel()
     local itemLevelText = math.floor(equipped)
     if equipped < average then
-    itemLevelText = itemLevelText .. "(" .. math.floor(average) .. ")"
+        itemLevelText = itemLevelText .. "(" .. math.floor(average) .. ")"
     end
     self.itemLevel:SetText(itemLevelText)
     self.itemLevel:SetTextColor(GetItemLevelColor())

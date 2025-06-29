@@ -436,7 +436,7 @@ local function LoadPowerBar()
 
     playerPowerBar:ToggleBar()
 
-    if not GW.Retail and GW.settings.PLAYER_ENERGY_MANA_TICK then
+    if GW.Classic and GW.settings.PLAYER_ENERGY_MANA_TICK then
         GW.Load5SR()
     end
 end

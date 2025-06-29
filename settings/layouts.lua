@@ -1,8 +1,8 @@
 local _, GW = ...
 local L = GW.L
 
-local GetSpecialization = GW.Retail and GetSpecialization or GetActiveTalentGroup
-local GetSpecializationInfo = not GW.Retail and GW.Libs.LCS.GetSpecializationInfo or GetSpecializationInfo
+local GetSpecialization = C_SpecializationInfo.GetSpecialization or GetSpecialization or GetActiveTalentGroup
+local GetSpecializationInfo = (GW.Libs.LCS and GW.Libs.LCS.GetSpecializationInfo) or C_SpecializationInfo.GetSpecializationInfo or GetSpecializationInfo
 
 local function UpdateMatchingLayout(self, new_point)
     local selectedLayoutName = GW.private.Layouts.currentSelected
@@ -348,7 +348,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
         local privateLayoutSettings = GW.GetAllPrivateLayouts()
         local specs = {}
         local endIdx = 2
-        if GW.Retail then
+        if GW.Retail or GW.Mists then
             endIdx = GetNumSpecializations()
         else
             local hasDualSpec = GetNumTalentGroups(false, false) > 1

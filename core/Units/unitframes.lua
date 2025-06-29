@@ -238,7 +238,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
     local txt
     local unitLevel = UnitLevel(unit)
     local unitClassification = UnitClassification(unit)
-    local canInspect = UnitIsPlayer(unit) and (not GW.Cata or CheckInteractDistance(unit, 4)) and CanInspect(unit)
+    local canInspect = UnitIsPlayer(unit) and (not GW.Mists or CheckInteractDistance(unit, 4)) and CanInspect(unit)
 
     if TARGET_FRAME_ART[unitClassification] then
         border = unitClassification
@@ -313,7 +313,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
 end
 
 function GwUnitFrameMixin:UpdateAvgItemLevel(guid)
-    if guid ~= UnitGUID(self.unit) or not UnitIsPlayer(self.unit) or (GW.Cata and not CheckInteractDistance(self.unit, 4)) or not CanInspect(self.unit) then return end
+    if guid ~= UnitGUID(self.unit) or not UnitIsPlayer(self.unit) or (GW.Mists and not CheckInteractDistance(self.unit, 4)) or not CanInspect(self.unit) then return end
 
     local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel(self.unit)
 
@@ -597,7 +597,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         end
     elseif IsIn(event, "PLAYER_TARGET_CHANGED", "PLAYER_FOCUS_CHANGED", "PLAYER_ENTERING_WORLD", "FORCE_UPDATE") then
         if event == "PLAYER_TARGET_CHANGED" and self.unit == "target" and UnitIsPlayer(self.unit) and (self.showItemLevel == "PVP_LEVEL" or self.showItemLevel == "ITEM_LEVEL")
-            and (not GW.Cata or CheckInteractDistance(self.unit, 4)) and CanInspect(self.unit) then
+            and (not GW.Mists or CheckInteractDistance(self.unit, 4)) and CanInspect(self.unit) then
             local guid = UnitGUID(self.unit)
             if guid and (not GW.unitIlvlsCache[guid] or (GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel == nil)) then
                 local _, englishClass = UnitClass(self.unit)

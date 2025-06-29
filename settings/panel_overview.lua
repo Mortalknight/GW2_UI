@@ -243,7 +243,7 @@ local function LoadOverviewPanel(sWindow)
     elseif GW.Classic then
         p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic")
         p.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic")
-    elseif GW.Cata then
+    elseif GW.Mists then
         p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata")
         p.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata")
     end

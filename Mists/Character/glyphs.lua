@@ -78,8 +78,6 @@ local function takeOverBlizzardsGlypheFrame()
     GlyphFrame_LoadUI()
 
     --Error message
-
- 
     local glyphesFrame = CreateFrame("Frame", "GwGlyphesFrame", GwCharacterWindow, "GwGlyphTempContainer")
     hooksecurefunc("GlyphFrame_OnEvent", function(self, event, ...)
         if ( event == "ADDON_LOADED" ) then
@@ -106,6 +104,18 @@ local function takeOverBlizzardsGlypheFrame()
     GlyphFrame.sideInset:ClearAllPoints()
     GlyphFrame.sideInset:SetPoint("TOPLEFT", glyphesFrame, "TOPRIGHT", -200, -60)
     GlyphFrame.sideInset:SetPoint("BOTTOMRIGHT", glyphesFrame, "BOTTOMRIGHT", -10, 100)
+
+    hooksecurefunc(GlyphFrame.sideInset, "SetPoint", function(_, _, anchor)
+        if anchor ~= glyphesFrame then
+            GlyphFrame.sideInset:ClearAllPoints()
+            GlyphFrame.sideInset:SetPoint("TOPLEFT", glyphesFrame, "TOPRIGHT", -200, -60)
+            GlyphFrame.sideInset:SetPoint("BOTTOMRIGHT", glyphesFrame, "BOTTOMRIGHT", -10, 100)
+        end
+    end)
+
+    GlyphFrame:HookScript("OnHide", function()
+        GlyphFrame:Show()
+    end)
 
     GlyphFrame.background:SetSize(650, 600)
     GlyphFrame.background:SetTexture()

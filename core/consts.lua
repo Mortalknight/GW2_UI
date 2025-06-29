@@ -566,7 +566,7 @@ elseif GW.Classic then
         GW.AURAS_INDICATORS.PRIEST[401877] = {0.00, 0.00, 0.90} -- Prayer of Mending
         GW.AURAS_INDICATORS.PRIEST[402004] =  {0.00, 0.00, 0.83} -- Pain Suppression
     end
-elseif GW.Cata then
+elseif GW.Mists then --TODO
     GW.AURAS_INDICATORS = {
         PRIEST = {
             [17]	= {0.00, 0.00, 1.00}, -- Power Word: Shield
@@ -619,6 +619,15 @@ elseif GW.Cata then
         DEATHKNIGHT = {
             [49016] = {0.17, 1.00, 0.45}, -- Unholy Frenzy
         },
+        MONK = {
+            [115175] = { 0.6, 0.9, 0.9 },   -- Soothing Mist
+            [119611] = { 0.3, 0.8, 0.6 },   -- Renewing Mist
+            [116849] = { 0.2, 0.8, 0.2 },   -- Life Cocoon
+            [124682] = { 0.8, 0.8, 0.25 },  -- Enveloping Mist
+            [191840] = { 0.27, 0.62, 0.7 }, -- Essence Font
+            [116841] = { 0.12, 1.00, 0.53 }, -- Tiger's Lust (Freedom)
+            [325209] = { 0.3, 0.8, 0.6 },   -- Enveloping Breath
+        },
     }
 end
 
@@ -630,7 +639,7 @@ if GW.Retail then
         80354, -- Temporal Displacement
         264689 -- Fatigued
     }
-elseif GW.Cata then
+elseif GW.Mists then
     GW.AURAS_IGNORED = {
         186403,	-- Sign of Battle
         377749,	-- Joyous Journeys
@@ -912,7 +921,7 @@ elseif GW.Classic then
         GW.ChannelTicks[402277] = 3 -- Penance (Healing)
         GW.ChannelTicks[413259] = 5 -- Mind Sear (Rune)
     end
-elseif GW.Cata then
+elseif GW.Mists then
     GW.ChannelTicks = {
         -- Warlock
         [1120]	= 5, -- Drain Soul

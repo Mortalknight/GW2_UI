@@ -301,7 +301,7 @@ local function getNearestQuestPOIClassic()
 end
 GW.AddForProfiling("notifications", "getNearestQuestPOIClassic", getNearestQuestPOIClassic)
 
-local function getNearestQuestPOICata()
+local function getNearestQuestPOIMists() --TODO
     if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
         return nil
     end
@@ -482,8 +482,8 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
             data = getNearestQuestPOIRetail()
         elseif GW.Classic then
             data = getNearestQuestPOIClassic()
-        elseif GW.Cata then
-            data = getNearestQuestPOICata()
+        elseif GW.Mists then
+            data = getNearestQuestPOIMists()
         end
     end
 

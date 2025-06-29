@@ -327,7 +327,7 @@ AFP("reskinMicroButtons", reskinMicroButtons)
 local function disableMicroButton(btn, hideOnly)
     if hideOnly then
         -- hide it off-screen but still want events to run for alerts/notifications
-        if GW.Cata then
+        if GW.Mists then
             btn:SetParent(GW.HiddenFrame)
         else
             btn:ClearAllPoints()
@@ -595,7 +595,7 @@ local function setupMicroButtons(mbf)
                 ]=]
             )
 
-            disableMicroButton(SpellbookMicroButton, true)
+            disableMicroButton(SpellbookMicroButton)
         else
             sref = SpellbookMicroButton
             sref:ClearAllPoints()
@@ -630,7 +630,7 @@ local function setupMicroButtons(mbf)
 
             if GW.Classic then
                 disableMicroButton(TalentMicroButton, true)
-            elseif GW.Cata then
+            elseif GW.Mists then
                 TalentMicroButton:ClearAllPoints()
                 TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 8, 0) -- 8 because blizzard is setting is Achievement Button position back to 0, so we add the space here
                 TalentMicroButton:SetAlpha(0)
@@ -745,7 +745,7 @@ local function setupMicroButtons(mbf)
             pref:ClearAllPoints()
             pref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
         end
-    elseif GW.Cata then
+    elseif GW.Mists then
         -- CollectionsMicroButton
         CollectionsMicroButton:ClearAllPoints()
         CollectionsMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
@@ -1005,7 +1005,7 @@ local function hook_UpdateMicroButtons()
             SocialsMicroButton:ClearAllPoints()
             SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
         end
-    elseif GW.Cata then
+    elseif GW.Mists then
         if not InCombatLockdown() then
             AchievementMicroButton:ClearAllPoints()
             AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)
@@ -1035,7 +1035,7 @@ local function LoadMicroMenu()
 
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")
-    mbf:SetSize(GW.Retail and 500 or GW.Cata and 370 or 280, 41)
+    mbf:SetSize(GW.Retail and 500 or GW.Mists and 370 or 280, 41)
     local postDragFunction = function(mbf)
         mbf.cf.bg:SetShown(not mbf.isMoved)
     end

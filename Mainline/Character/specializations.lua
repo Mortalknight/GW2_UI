@@ -138,7 +138,7 @@ local function SpecSwitchAnimation(self, playFlash)
     end
 end
 
-local function LoadSpecializations(parentContainer)
+local function LoadSpecializations(parentContainer) 
     parentContainer.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     parentContainer.title:SetTextColor(1, 1, 1, 1)
     parentContainer.title:SetShadowColor(0, 0, 0, 1)

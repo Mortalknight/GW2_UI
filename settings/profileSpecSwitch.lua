@@ -9,16 +9,39 @@ local settingsPanel
 local mixin = {}
 local databaseEnhanced = false
 
-local GetSpecialization = GW.Retail and GetSpecialization or GetActiveTalentGroup
-local CanPlayerUseTalentSpecUI = GW.Retail and C_SpecializationInfo.CanPlayerUseTalentSpecUI or function()
+local GetSpecialization = C_SpecializationInfo.GetSpecialization or GetSpecialization or GetActiveTalentGroup
+local CanPlayerUseTalentSpecUI = C_SpecializationInfo.CanPlayerUseTalentSpecUI or function()
 	return true, HELPFRAME_CHARACTER_BULLET5
 end
 
-if GW.Retail then
+ local specsByClassID = {
+    [0] = { 74, 81, 79 },
+    [1] = { 71, 72, 73, 1446 },
+    [2] = { 65, 66, 70, 1451 },
+    [3] = { 253, 254, 255, 1448 },
+    [4] = { 259, 260, 261, 1453 },
+    [5] = { 256, 257, 258, 1452 },
+    [6] = { 250, 251, 252, 1455 },
+    [7] = { 262, 263, 264, 1444 },
+    [8] = { 62, 63, 64, 1449 },
+    [9] = { 265, 266, 267, 1454 },
+    [10] = { 268, 270, 269, 1450 },
+    [11] = { 102, 103, 104, 105, 1447 },
+  }
+
+  local GetSpecializationInfoForClassID = function (classID, specIndex)
+    local specID = specsByClassID[classID][specIndex]
+    if not specID then
+      return nil
+    end
+    return GetSpecializationInfoByID(specID)
+  end
+
+if GW.Retail or GW.Mists then
     local _, classId = UnitClassBase("player")
     numSpecs = C_SpecializationInfo.GetNumSpecializationsForClassID(classId)
     for i = 1, numSpecs do
-        local _, name = GetSpecializationInfoForClassID(classId, i)
+        local _, name = GetSpecializationInfoForClassID(classId, i, GW.mysex)
         specNames[i] = name
     end
 end
@@ -142,7 +165,7 @@ local function InititateProfileSpecSwitchSettings(panel)
         dropDown.title:SetPoint("BOTTOMLEFT", dropDown, "TOPLEFT", 8, -2)
         dropDown.title:SetFont(UNIT_NAME_FONT, 10)
         dropDown.title:SetText(i == currentSpec and format(L["%s - Active"], specNames[i]) or specNames[i])
-        if not GW.Retail then
+        if GW.Classic then
            dropDown:SetScript("OnEnter", function(self)
             local specIndex = i
             local highPointsSpentIndex = nil

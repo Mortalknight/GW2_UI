@@ -5,13 +5,10 @@ local function ApplyMacroOptionsSkin()
     local macroHeaderText
 
     local r = {MacroFrame:GetRegions()}
-    local i = 1
     for _,c in pairs(r) do
-        if c:GetObjectType() == "Texture" then
-            c:Hide()
-        elseif c:GetObjectType() == "FontString" then
-            if i == 2 then macroHeaderText = c end
-            i = i + 1
+        if c:GetObjectType() == "FontString" then
+            macroHeaderText = c
+            break
         end
     end
 
@@ -23,20 +20,19 @@ local function ApplyMacroOptionsSkin()
     MacroFrame.TitleBg:Hide()
     MacroFrame.TopTileStreaks:Hide()
 
-    _G.MacroFrameInsetInsetTopBorder:Hide()
-    _G.MacroFrameInsetInsetBottomBorder:Hide()
-    _G.MacroFrameInsetInsetLeftBorder:Hide()
-    _G.MacroFrameInsetInsetRightBorder:Hide()
-    _G.MacroFrameInsetInsetTopLeftCorner:Hide()
-    _G.MacroFrameInsetInsetTopRightCorner:Hide()
-    _G.MacroFrameInsetInsetBotRightCorner:Hide()
-    _G.MacroFrameInsetInsetBotLeftCorner:Hide()
-
     MacroFrame:GwCreateBackdrop()
 
     MacroHorizontalBarLeft:Hide()
-    MacroFrameTextBackground:GwStripTextures()
-    MacroFrameTextBackground:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    MacroFrameInset.NineSlice:Hide()
+    MacroHorizontalBarLeft:Hide()
+
+    if not MacroFrameTextBackground.NineSlice.SetBackdrop then
+        Mixin(MacroFrameTextBackground.NineSlice, BackdropTemplateMixin)
+        MacroFrameTextBackground.NineSlice:HookScript("OnSizeChanged", MacroFrameTextBackground.NineSlice.OnBackdropSizeChanged)
+    end
+
+    MacroFrameTextBackground.NineSlice:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+    MacroFrameTextBackground.NineSlice:SetBackdropBorderColor(0, 0, 0)
 
     for _,c in pairs(r) do
         if c:GetObjectType() == "Texture" then
@@ -47,7 +43,7 @@ local function ApplyMacroOptionsSkin()
     MacroFrame.MacroSelector.ScrollBox:GwStripTextures()
     MacroFrame.MacroSelector.ScrollBox:GwCreateBackdrop(GW.BackdropTemplates.Default)
     GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar)
-    _G.MacroFrameScrollFrameScrollBar:GwSkinScrollBar()
+    GW.HandleScrollControls(MacroFrame.MacroSelector)
 
     local buttons = {
         _G.MacroSaveButton,
@@ -66,8 +62,16 @@ local function ApplyMacroOptionsSkin()
     _G.MacroFrameCloseButton:SetSize(25, 25)
     _G.MacroFrameCloseButton:ClearAllPoints()
     _G.MacroFrameCloseButton:SetPoint("TOPRIGHT", 0, 0)
-    _G.MacroFrameTab1:GwSkinTab()
-    _G.MacroFrameTab2:GwSkinTab()
+
+    GW.HandleTabs(MacroFrameTab1, "top")
+    GW.HandleTabs(MacroFrameTab2, "top")
+    MacroFrameTab1:SetHeight(25)
+    MacroFrameTab2:SetHeight(25)
+
+    MacroFrameTab1:SetPoint("TOPLEFT", MacroFrame, "TOPLEFT", 4, -35)
+    MacroFrameTab2:SetPoint("LEFT", MacroFrameTab1, "RIGHT", 0, 0)
+    MacroFrameTab1.Text:SetAllPoints(MacroFrameTab1)
+    MacroFrameTab2.Text:SetAllPoints(MacroFrameTab2)
 
     local r = {_G.MacroFrameSelectedMacroButton:GetRegions()}
     local ii = 1
@@ -159,22 +163,8 @@ local function ApplyMacroOptionsSkin()
         self:ClearAllPoints()
         self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
 
-        for _, button in next, { MacroPopupFrame.IconSelector.ScrollBox.ScrollTarget:GetChildren() } do
-            local icon, texture = button.Icon, nil
-            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
-            if icon then
-                icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-                icon:GwSetInside(button)
-                texture = icon:GetTexture()
-            end
-
-            button:GwStripTextures()
-            button:GwCreateBackdrop()
-            button:GwStyleButton(nil, true)
-
-            if texture then
-                icon:SetTexture(texture)
-            end
+        if not self.isSkinned then
+            GW.HandleIconSelectionFrame(self)
         end
     end)
 end
