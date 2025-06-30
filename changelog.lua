@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.0.7",{
+    {ct.bug, [=[Fix collection tracking collapse (retail)]=]},
+})
+
 addChange("8.0.6",{
     {ct.bug, [=[Some more fixes for all versions]=]},
 })
