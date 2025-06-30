@@ -152,12 +152,10 @@ local function EnumerateTrackables(self, callback)
         else
             savedHeight = 20 -- for header
         end
-        for i = 1, 25 do
-            local collectionBlock = _G["GwQuesttrackerContainerCollectionBlock" .. i]
-            if collectionBlock then
-                collectionBlock:Hide()
-            end
+        for i = 1, #self.blocks do
+            self.blocks[i]:Hide()
         end
+
         self:SetHeight(savedHeight)
         GwQuestTracker:LayoutChanged()
     end
