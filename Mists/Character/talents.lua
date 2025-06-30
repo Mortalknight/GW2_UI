@@ -1,15 +1,13 @@
 local _, GW = ...
-local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
 local isPetTalents = false
-local talentFrame
+local talentContainer
 
 local maxTalentRows = 6
 local talentsPerRow = 3
 
 local TAXIROUTE_LINEFACTOR = 32 / 30 -- Multiplying factor for texture coordinates
 local TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2 -- Half o that
-
 
 
 StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
@@ -80,24 +78,6 @@ local function drawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
     T:SetPoint("TOPRIGHT", C, relPoint, cx + Bwid, cy + Bhgt)
 end
 
-local function hookTalentButton(self, container, row, index)
-    --  self:SetAttribute('macrotext1', '/click PlayerTalentFrameTalentsTalentRow'..row..'Talent'..index)
-    self:RegisterForClicks("AnyUp")
-    --   self:SetAttribute("type", "macro");
-    self:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (38)), -10 + ((-42 * index) + 40))
-
-    local mask = UIParent:CreateMaskTexture()
-    mask:SetPoint("CENTER", self, "CENTER", 0, 0)
-
-    mask:SetTexture(
-        "Interface/AddOns/GW2_UI/textures/talents/passive_border",
-        "CLAMPTOBLACKADDITIVE",
-        "CLAMPTOBLACKADDITIVE"
-    )
-    mask:SetSize(34, 34)
-    self.mask = mask
-end
-
 local function setLineRotation(self, from, to)
     local y1 = 0
     local y2 = 0
@@ -120,55 +100,157 @@ local function setLineRotation(self, from, to)
     drawRouteLine(self.line, self, 10, y1, 56, y2, 4, "TOPLEFT")
 end
 
+local function GetSpellPreviewButton(self, index)
+    local spellButton = self.spellPreviewButton[index]
 
+    if spellButton then
+        return spellButton
+    end
 
-local function loadTalentsFrames()
-    local mask = UIParent:CreateMaskTexture()
+    spellButton = CreateFrame("Button", nil, self)
+    spellButton:SetSize(30, 30)
+    spellButton.icon = spellButton:CreateTexture(nil, "ARTWORK")
+    spellButton.icon:SetAllPoints()
+    spellButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
-    mask:SetPoint("TOPLEFT", GwCharacterWindow, 'TOPLEFT', 0, 0)
-    mask:SetParent(GwCharacterWindow)
-    mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE",
-        "CLAMPTOBLACKADDITIVE")
-    mask:SetSize(853, 853)
+    spellButton:SetScript("OnEnter", function(self)
+        if not self.spellID or not GetSpellInfo(self.spellID) then
+            return
+        end
+
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetSpellByID(self.spellID, false, false, true)
+        if self.extraTooltip then
+            GameTooltip:AddLine(self.extraTooltip)
+        end
+        self.UpdateTooltip = self.OnEnter
+        GameTooltip:Show()
+    end)
+
+    spellButton:SetScript("OnLeave", function(self)
+        self.UpdateTooltip = nil
+        GameTooltip:Hide()
+    end)
+
+    tinsert(self.spellPreviewButton, spellButton)
+
+    return spellButton
 end
-local function setNavigation(self)
-    talentFrame.navigation.spec1Button.selected = false
-    talentFrame.navigation.spec2Button.selected = false
-    talentFrame.navigation.petTalentsButton.selected = false
-    talentFrame.navigation.spec1Button.background:SetTexture(
-        "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
-    talentFrame.navigation.spec2Button.background:SetTexture(
-        "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
-    talentFrame.navigation.petTalentsButton.background:SetTexture(
-        "Interface\\AddOns\\GW2_UI\\textures\\talents\\button-normal")
-    self.selected = true
-    self.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\button-selected")
+
+local function UpdateClearInfo()
+    local name, count, texture = GetTalentClearInfo()
+    if name then
+        talentContainer.topBar.clearInfo:SetText(format("|T%s:12:12|t%s %s", texture, count, name))
+    end
+end
+
+local function UpdateTrees()
+    for i = 1, GetNumSpecializations(false, isPetTalents) do
+        local container = _G["GwSpecFrame" .. i]
+
+        local id, name, description, icon, role = C_SpecializationInfo.GetSpecializationInfo(i, false, isPetTalents, nil, GW.mysex)
+
+        container.roleIcon:ClearAllPoints()
+        if role == "TANK" then
+            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
+            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 14, -6)
+        elseif role == "HEALER" then
+            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
+            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 12, -5)
+        elseif role == "DAMAGER" then
+            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
+            container.roleIcon:SetSize(30, 30)
+            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 17, -10)
+        end
+
+        container.icon:SetTexture(icon)
+        container.info.specTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+        container.info.specTitle:SetTextColor(1, 1, 1, 1)
+        container.info.specTitle:SetShadowColor(0, 0, 0, 1)
+        container.info.specTitle:SetShadowOffset(1, -1)
+        container.info.specDesc:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        container.info.specDesc:SetTextColor(0.8, 0.8, 0.8, 1)
+        container.info.specDesc:SetShadowColor(0, 0, 0, 1)
+        container.info.specDesc:SetShadowOffset(1, -1)
+        container.info.specTitle:SetText(name)
+        container.info.specDesc:SetText(description)
+
+        -- spell icons
+        for idx = 1, #container.spellPreviewButton do
+            container.spellPreviewButton[idx]:Hide()
+        end
+        local bonuses
+        if isPetTalents then
+            bonuses = {GetSpecializationSpells(i, nil, isPetTalents)}
+        else
+            bonuses = SPEC_SPELLS_DISPLAY[id]
+        end
+
+        if bonuses then
+            local buttonsPerColumn = 4
+            local buttonSpacing = 33
+            local columnSpacing = 33
+            local spellInColumn = 0
+            local columnIndex = 0
+            local yStartOffset = -5
+
+            for idx = 1, #bonuses, 2 do
+                local bonus = bonuses[idx]
+                local spellButton = GetSpellPreviewButton(container, idx)
+                local _, icon2 = GetSpellTexture(bonus)
+                spellButton.icon:SetTexture(icon2)
+                spellButton.spellID = bonus
+                spellButton:ClearAllPoints()
+
+                local xOffset = -10 - (columnIndex * columnSpacing)
+                local yOffset = yStartOffset - (spellInColumn * buttonSpacing)
+
+                spellButton:SetPoint("TOPRIGHT", container, "TOPRIGHT", xOffset, yOffset)
+                spellButton:Show()
+
+                spellInColumn = spellInColumn + 1
+
+                if spellInColumn >= buttonsPerColumn then
+                    spellInColumn = 0
+                    columnIndex = columnIndex + 1
+                end
+            end
+        end
+    end
 end
 
 local function updateActiveSpec()
    if InCombatLockdown() then
         return
     end
+    local spec = C_SpecializationInfo.GetSpecialization(false, isPetTalents, openSpec)
+    local isCurrentSpec = openSpec == C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents)
 
-    talentFrame.navigation.activateSpecGroup:SetShown(not isPetTalents)
-    talentFrame.navigation.activateSpecGroup:SetShown(openSpec ~= C_SpecializationInfo.GetActiveSpecGroup(false))
+    UpdateTrees()
+    UpdateClearInfo()
+    talentContainer.topBar.activateSpecGroup:SetShown(not isCurrentSpec and not isPetTalents)
+    talentContainer.topBar.activeSpecIndicator:SetShown(isCurrentSpec and not isPetTalents)
 
-
-    for i = 1, GetNumSpecializations() do
+    for i = 1, GetNumSpecializations(false, isPetTalents) do
         local container = _G["GwSpecFrame" .. i]
 
         container.specIndex = i
-        if i == GW.myspec then
+        if i == spec then
             container.active = true
             container.info:Hide()
             container.background:SetDesaturated(false)
+            container.icon:SetDesaturated(false)
         else
             container.active = false
             container.info:Show()
-
+            container.icon:SetDesaturated(true)
             container.background:SetDesaturated(true)
         end
-        local last = 0
+        if isPetTalents then
+            container.active = false
+            container.info:Show()
+        end
+
         local lastIndex = 2
         for row = 1, maxTalentRows do
             local anySelected = false
@@ -179,10 +261,10 @@ local function updateActiveSpec()
                 local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
                 local talentInfoQuery = {};
                 talentInfoQuery.tier = row
-                talentInfoQuery.column = index;
-                talentInfoQuery.groupIndex = C_SpecializationInfo.GetActiveSpecGroup(isPetTalents);
-                talentInfoQuery.isInspect = false;
-                talentInfoQuery.target = isPetTalents and "pet" or "player";
+                talentInfoQuery.column = index
+                talentInfoQuery.groupIndex = openSpec
+                talentInfoQuery.isInspect = false
+                talentInfoQuery.target = isPetTalents and "pet" or "player"
                 local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
 
                 if not talentInfo.available then
@@ -197,14 +279,15 @@ local function updateActiveSpec()
 
                 button.talentID = talentInfo.talentID
                 button.available = talentInfo.available
-                button.known = talentInfo.known
+                button.hasGoldBorder = talentInfo.hasGoldBorder
                 button.tier = row
                 button.selected = talentInfo.selected
                 button:SetID(talentInfo.talentID)
+                _G["PlayerTalentFrameTalentsTalentRow" .. row .. "Talent" .. index]:SetID(talentInfo.talentID)
 
                 local ispassive = IsPassiveSpell(talentInfo.spellID)
                 button:EnableMouse(true)
-                if i ~= GW.myspec then
+                if i ~= spec or not isCurrentSpec then
                     button:EnableMouse(false)
                 end
 
@@ -220,15 +303,16 @@ local function updateActiveSpec()
                     button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border")
                 end
 
-                if i == GW.myspec and (talentInfo.selected or talentInfo.available) and not talentInfo.known then
+                if i == spec and (talentInfo.selected or talentInfo.available) and not talentInfo.hasGoldBorder and not isPetTalents then
                     button.highlight:Show()
                     button.legendaryHighlight:Hide()
 
+                    local line = _G["GwTalentLine" .. i .. "-" .. row]
                     if lastIndex ~= -1 then
-                        _G["GwTalentLine" .. i .. "-" .. last .. "-" .. row]:Show()
-                        setLineRotation(_G["GwTalentLine" .. i .. "-" .. last .. "-" .. row], lastIndex, index)
+                        line:Show()
+                        setLineRotation(line, lastIndex, index)
                     else
-                        _G["GwTalentLine" .. i .. "-" .. last .. "-" .. row]:Hide()
+                        line:Hide()
                     end
 
                     if talentInfo.selected then
@@ -239,17 +323,17 @@ local function updateActiveSpec()
                     end
                 else
                     button.legendaryHighlight:Hide()
-                    if talentInfo.known then
+                    if talentInfo.hasGoldBorder then
                         button.legendaryHighlight:Show()
                     end
                     button.highlight:Hide()
                 end
 
-                if i == GW.myspec and (talentInfo.selected or talentInfo.available or talentInfo.known) then
+                if i == spec and isCurrentSpec and (talentInfo.selected or talentInfo.available or talentInfo.hasGoldBorder) and not isPetTalents then
                     button.icon:SetDesaturated(false)
                     button.icon:SetVertexColor(1, 1, 1, 1)
                     button:SetAlpha(1)
-                elseif i ~= GW.myspec then
+                elseif i ~= spec or isPetTalents then
                     button.icon:SetDesaturated(true)
                     button.icon:SetVertexColor(1, 1, 1, 0.1)
                     button:SetAlpha(0.5)
@@ -259,7 +343,7 @@ local function updateActiveSpec()
                 end
             end
 
-            if i == GW.myspec and allAvalible == true and anySelected == false then
+            if i == spec and allAvalible == true and anySelected == false then
                 for index = 1, talentsPerRow do
                     local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
                     button.icon:SetDesaturated(false)
@@ -270,27 +354,31 @@ local function updateActiveSpec()
             end
 
             if not sel then
-                _G["GwTalentLine" .. i .. "-" .. last .. "-" .. row]:Hide()
+                _G["GwTalentLine" .. i .. "-" .. row]:Hide()
             end
-
-            last = row
         end
     end
 end
 
 local function LoadTalents()
     TalentFrame_LoadUI()
-    talentFrame = CreateFrame('Frame', 'GwTalentFrame', GwCharacterWindow, 'GwLegacyTalentFrame')
-    talentFrame.navigation.activateSpecGroup:SetWidth(talentFrame.navigation.activateSpecGroup:GetTextWidth() + 40)
+    local talentWindow = CreateFrame("Frame", "GwTalentFrame", GwCharacterWindow, "GwCharacterTabContainer")
 
-    loadTalentsFrames()
+    talentContainer = CreateFrame('Frame', 'GwTalentSpecFrame', talentWindow, 'SecureHandlerStateTemplate,GwTalentFrame')
 
-    talentFrame.navigation.petTalentsButton.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\tabicon_pet")
-    talentFrame.navigation.petTalentsButton.icon:SetTexCoord(0.6796875, 0.96875, 0.046875, 0.625)
-
-    talentFrame.navigation.petTalentsButton:SetShown(GW.myclass == "HUNTER")
-
-    talentFrame.specs = {}
+    talentContainer.title:SetFont(DAMAGE_TEXT_FONT, 14)
+    talentContainer.title:SetTextColor(1, 1, 1, 1)
+    talentContainer.title:SetShadowColor(0, 0, 0, 1)
+    talentContainer.title:SetShadowOffset(1, -1)
+    talentContainer.title:SetText(SPECIALIZATION)
+    talentContainer.topBar.activeSpecIndicator:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
+    talentContainer.topBar.activeSpecIndicator:SetTextColor(63 / 255, 205 / 255, 75 / 255)
+    talentContainer.topBar.unspentPoints:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
+    talentContainer.topBar.unspentPoints:SetTextColor(0.87, 0.74, 0.29, 1)
+    talentContainer.topBar.clearInfo:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
+    talentContainer.topBar.clearInfo:SetTextColor(1, 1, 1)
+    talentContainer.specs = {}
+    talentContainer:Show()
 
     -- setup specs
     local txR, txT, txH, txMH
@@ -323,22 +411,20 @@ local function LoadTalents()
         self:SetScript("OnUpdate", nil)
     end
     local fnContainer_OnClick = function(self)
-        if not C_SpecializationInfo.GetSpecialization() then
-            SetSpecialization(self.specIndex, isPetTalents)
+        local currentSpec = C_SpecializationInfo.GetSpecialization(nil, isPetTalents, openSpec)
+
+        if (isPetTalents and self.specIndex ~= currentSpec and IsPetActive()) or (not currentSpec or currentSpec > GetNumSpecializations(false, isPetTalents)) then
+            GW.WarningPrompt(CONFIRM_LEARN_SPEC, function() SetSpecialization(self.specIndex, isPetTalents) end, nil, YES, NO)
         end
     end
 
     for i = 1, specs do
-        local container = CreateFrame("Button", "GwSpecFrame" .. i, talentFrame, "GwSpecFrame")
+        local container = CreateFrame("Button", "GwSpecFrame" .. i, talentContainer, "GwSpecFrame")
 
         container:RegisterForClicks("AnyUp")
         local mask = UIParent:CreateMaskTexture()
         mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
-        mask:SetTexture(
-            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
-            "CLAMPTOBLACKADDITIVE",
-            "CLAMPTOBLACKADDITIVE"
-        )
+        mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         mask:SetSize(80, 80)
         container.icon:AddMaskTexture(mask)
         container:SetScript("OnEnter", nil)
@@ -347,32 +433,14 @@ local function LoadTalents()
         container:SetScript("OnShow", fnContainer_OnShow)
         container:SetScript("OnHide", fnContainer_OnHide)
         container:SetScript("OnClick", fnContainer_OnClick)
-        if i == 1 then
-            container:SetPoint("TOPLEFT", talentFrame, "TOPLEFT", 10, -120 * i)
-        else
-            container:SetPoint("TOPLEFT", _G["GwSpecFrame" .. i - 1], "BOTTOMLEFT", 0, -10)
-        end
+        container:SetPoint("TOPLEFT", talentContainer, "TOPLEFT", 10, (-140 * i) + 60)
+
         container.spec = i
-
-        local _, name, description, icon, role, primaryStat = C_SpecializationInfo.GetSpecializationInfo(i, false, false, nil, GW.mysex)
-
-        container.icon:SetTexture(icon)
-        container.info.specTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-        container.info.specTitle:SetTextColor(1, 1, 1, 1)
-        container.info.specTitle:SetShadowColor(0, 0, 0, 1)
-        container.info.specTitle:SetShadowOffset(1, -1)
-        container.info.specDesc:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-        container.info.specDesc:SetTextColor(0.8, 0.8, 0.8, 1)
-        container.info.specDesc:SetShadowColor(0, 0, 0, 1)
-        container.info.specDesc:SetShadowOffset(1, -1)
-        container.info.specTitle:SetText(name)
-        container.info.specDesc:SetText(description)
+        container.spellPreviewButton = {}
 
         txT = (i - 1) * txH
         container.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/" .. GW.myClassID)
         container.background:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
-
-        local last = 0
 
         local fnTalentButton_OnEnter = function(self)
             if self:GetParent().active ~= true then
@@ -397,124 +465,83 @@ local function LoadTalents()
             end
             if ( button == "LeftButton" and not self.selected ) then
                 LearnTalents(self.talentID)
-			elseif ( button == "RightButton" and self.selected ) then
-				if ( UnitIsDeadOrGhost("player") ) then
-					UIErrorsFrame:AddMessage(ERR_PLAYER_DEAD, 1.0, 0.1, 0.1, 1.0);
-				else
-					StaticPopup_Show("CONFIRM_REMOVE_TALENT", nil, nil, {id = self:GetID()});
-				end
 			end
         end
         for row = 1, maxTalentRows do
             local fistOnRow
-            local line = CreateFrame("Frame", "GwTalentLine" .. i .. "-" .. last .. "-" .. row, container, "GwTalentLine")
-
+            local line = CreateFrame("Frame", "GwTalentLine" .. i .. "-" .. row, container, "GwTalentLine")
             line:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (88)), -10)
 
-            last = row
-
             for index = 1, talentsPerRow do
-                local talentButton =
-                    CreateFrame(
-                    "Button",
-                    "GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index,
-                    container,
-                    "GwTalentButton"
-                )
+                local talentButton = CreateFrame("Button", "GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index, container, "GwTalentButton")
                 talentButton:SetScript("OnEnter", fnTalentButton_OnEnter)
                 talentButton:SetScript("OnLeave", GameTooltip_Hide)
                 talentButton:SetScript("OnDragStart", fnTalentButton_OnDragStart)
-                talentButton:SetScript("OnClick", fnTalentButton_OnClick)
+                talentButton:HookScript("OnClick", fnTalentButton_OnClick)
 
+                talentButton:RegisterForClicks("AnyUp")
                 talentButton:RegisterForDrag("LeftButton")
-
-                hookTalentButton(talentButton, container, row, index)
+                talentButton:SetAttribute("type2", "macro")
+                talentButton:SetAttribute('macrotext2', '/click PlayerTalentFrameTalentsTalentRow'..row..'Talent'..index .. " RightButton")
+                talentButton:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (38)), -10 + ((-42 * index) + 40))
+                talentButton.mask = talentButton:CreateMaskTexture()
+                talentButton.mask:SetPoint("CENTER", talentButton, "CENTER", 0, 0)
+                talentButton.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+                talentButton.mask:SetSize(34, 34)
 
                 if fistOnRow == nil then
                     fistOnRow = talentButton
                 end
             end
             if i == 1 then
-                local numberDisplay = CreateFrame("Frame", "GwTalentsLevelLabel" .. row, talentFrame, "GwTalentsLevelLabel")
+                local numberDisplay = CreateFrame("Frame", "GwTalentsLevelLabel" .. row, talentContainer, "GwTalentsLevelLabel")
                 numberDisplay.title:SetFont(DAMAGE_TEXT_FONT, 14)
                 numberDisplay.title:SetTextColor(0.7, 0.7, 0.7, 1)
                 numberDisplay.title:SetShadowColor(0, 0, 0, 0)
                 numberDisplay.title:SetShadowOffset(1, -1)
                 numberDisplay:SetPoint("BOTTOM", fistOnRow, "TOP", 0, 13)
-                numberDisplay.title:SetText(select(3, GetTalentTierInfo(row, C_SpecializationInfo.GetActiveSpecGroup())))
+                numberDisplay.title:SetText(select(3, GetTalentTierInfo(row, C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents))))
             end
         end
 
-        tinsert(talentFrame.specs, container)
+        tinsert(talentContainer.specs, container)
     end
 
     updateActiveSpec()
 
-    talentFrame.navigation.spec1Button:SetScript("OnClick", function(self)
-        setNavigation(self)
-        openSpec                      = 1
-        isPetTalents                  = false
-        PlayerTalentFrame.talentGroup = 1
-        updateActiveSpec()
-    end)
-    talentFrame.navigation.spec1Button:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
-        GameTooltip:SetText(TALENT_SPEC_PRIMARY, 1, 1, 1)
-        GameTooltip:Show()
-    end)
-    talentFrame.navigation.spec1Button:SetScript("OnLeave", GameTooltip_Hide)
-    talentFrame.navigation.spec2Button:SetScript("OnClick", function(self)
-        setNavigation(self)
-        openSpec                      = 2
-        isPetTalents                  = false
-        PlayerTalentFrame.talentGroup = 2
-        updateActiveSpec()
-    end)
-    talentFrame.navigation.spec2Button:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
-        GameTooltip:SetText(TALENT_SPEC_SECONDARY, 1, 1, 1)
-        GameTooltip:Show()
-    end)
-    talentFrame.navigation.spec2Button:SetScript("OnLeave", GameTooltip_Hide)
-    talentFrame.navigation.petTalentsButton:SetScript("OnClick", function(self)
-        setNavigation(self)
-        openSpec                      = 1
-        isPetTalents                  = true
-        PlayerTalentFrame.talentGroup = 1
-        updateActiveSpec()
-    end)
-    talentFrame.navigation.activateSpecGroup:SetScript("OnClick", function()
+    talentContainer.topBar.activateSpecGroup:SetScript("OnClick", function()
         if openSpec then
             C_SpecializationInfo.SetActiveSpecGroup(openSpec)
-            updateActiveSpec()
         end
     end)
 
-    local activeTalentGroup = C_SpecializationInfo.GetActiveSpecGroup(false)
-    if activeTalentGroup == 1 then
-        talentFrame.navigation.spec1Button:GetScript("OnClick")(talentFrame.navigation.spec1Button)
-    elseif activeTalentGroup == 2 then
-        talentFrame.navigation.spec2Button:GetScript("OnClick")(talentFrame.navigation.spec2Button)
-    end
+    talentContainer:RegisterEvent("PLAYER_TALENT_UPDATE")
+    talentContainer:RegisterEvent("PET_TALENT_UPDATE")
+    talentContainer:RegisterEvent("PET_SPECIALIZATION_CHANGED")
+    talentContainer:RegisterEvent("UNIT_LEVEL")
+    talentContainer:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    talentContainer:RegisterEvent("TALENT_GROUP_ROLE_CHANGED")
+    talentContainer:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
+    talentContainer:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED")
+    talentContainer:RegisterEvent("PREVIEW_TALENT_PRIMARY_TREE_CHANGED")
+    talentContainer:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    talentContainer:RegisterEvent("PLAYER_ENTERING_WORLD")
+    talentContainer:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    talentContainer:RegisterEvent("BAG_UPDATE_DELAYED")
+    talentContainer:SetScript('OnEvent', function(_, event)
+        C_Timer.After(0.1, function() talentContainer.topBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player") .. " |TInterface/AddOns/GW2_UI/textures/icons/talent-icon: 24, 24, 0, 0, 0.1875, 0.828125 , 0.1875, 0.828125 |t ") end)
 
-    talentFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
-    talentFrame:RegisterEvent("PET_TALENT_UPDATE")
-    talentFrame:RegisterEvent("PET_SPECIALIZATION_CHANGED")
-    talentFrame:RegisterEvent("UNIT_LEVEL")
-    talentFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    talentFrame:RegisterEvent("TALENT_GROUP_ROLE_CHANGED")
-    talentFrame:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
-    talentFrame:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED")
-    talentFrame:RegisterEvent("PREVIEW_TALENT_PRIMARY_TREE_CHANGED")
-    talentFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    talentFrame:SetScript('OnEvent', function(self, event)
-        talentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS,
-            UnitCharacterPoints("player") ..
-            " |TInterface/AddOns/GW2_UI/textures/icons/talent-icon: 24, 24, 0, 0, 0.1875, 0.828125 , 0.1875, 0.828125 |t ")
-        if not talentFrame:IsShown() then return end
-        updateActiveSpec()
+        if event == "PLAYER_SPECIALIZATION_CHANGED" then
+            local activeTalentGroup = C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents)
+            talentContainer.fmMenu.items.spec1:SetText(activeTalentGroup == 1 and SPECIALIZATION_PRIMARY_ACTIVE or SPECIALIZATION_PRIMARY)
+            talentContainer.fmMenu.items.spec2:SetText(activeTalentGroup == 2 and SPECIALIZATION_SECONDARY_ACTIVE or SPECIALIZATION_SECONDARY)
+        elseif event == "BAG_UPDATE_DELAYED" then
+            UpdateClearInfo()
+        else
+            updateActiveSpec()
+        end
     end)
-    talentFrame:SetScript('OnShow', function()
+    talentContainer:SetScript('OnShow', function()
         if InCombatLockdown() then return end
         updateActiveSpec()
     end)
@@ -523,7 +550,57 @@ local function LoadTalents()
         GwCharacterWindow:SetAttribute("keytoggle", true)
         GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
     end)
-    talentFrame:Hide()
-    return talentFrame
+
+    -- setup a menu frame
+    local activeTalentGroup = C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents)
+    local fmMenu = CreateFrame("Frame", "GWTalemtsMenu", talentWindow, "GwCharacterMenuTemplate")
+    fmMenu.items = {}
+    talentContainer.fmMenu = fmMenu
+
+    local item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate,SecureActionButtonTemplate")
+    item:SetAttribute("macrotext", "/click PlayerSpecTab1")
+    item:SetAttribute("type", "macro")
+    PlayerSpecTab1:HookScript("OnClick", function()
+        openSpec                      = 1
+        isPetTalents                  = false
+        updateActiveSpec()
+    end)
+    item:SetText(activeTalentGroup == 1 and SPECIALIZATION_PRIMARY_ACTIVE or SPECIALIZATION_PRIMARY)
+    item:ClearAllPoints()
+    item:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
+    fmMenu.items.spec1 = item
+
+    item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate,SecureActionButtonTemplate")
+    item:SetAttribute("macrotext", "/click PlayerSpecTab2")
+    item:SetAttribute("type", "macro")
+    PlayerSpecTab2:HookScript("OnClick", function()
+        openSpec                      = 2
+        isPetTalents                  = false
+        updateActiveSpec()
+    end)
+    item:SetText(activeTalentGroup == 2 and SPECIALIZATION_SECONDARY_ACTIVE or SPECIALIZATION_SECONDARY)
+    item:ClearAllPoints()
+    item:SetPoint("TOPLEFT", fmMenu.items.spec1, "BOTTOMLEFT")
+    fmMenu.items.spec2 = item
+
+    item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate,SecureActionButtonTemplate")
+    item:SetAttribute("macrotext", "/click PlayerTalentFrameTab4")
+    item:SetAttribute("type", "macro")
+    PlayerTalentFrameTab4:HookScript("OnClick", function()
+        openSpec                      = C_SpecializationInfo.GetActiveSpecGroup(false, true)
+        isPetTalents                  = true
+        updateActiveSpec()
+    end)
+    item:SetText(PET)
+    item:ClearAllPoints()
+    item:SetPoint("TOPLEFT", fmMenu.items.spec2, "BOTTOMLEFT")
+    fmMenu.items.specPet = item
+    fmMenu.items.specPet:SetShown(GW.myclass == "HUNTER")
+
+    GW.CharacterMenuButton_OnLoad(fmMenu.items.spec1, false)
+    GW.CharacterMenuButton_OnLoad(fmMenu.items.spec2, true)
+    GW.CharacterMenuButton_OnLoad(fmMenu.items.specPet, false)
+
+    return talentWindow
 end
 GW.LoadTalents = LoadTalents
