@@ -10,22 +10,6 @@ local TAXIROUTE_LINEFACTOR = 32 / 30 -- Multiplying factor for texture coordinat
 local TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2 -- Half o that
 
 
-StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
-    text = CONFIRM_LEARN_PREVIEW_TALENTS,
-    button1 = YES,
-    button2 = NO,
-    OnAccept = function()
-        LearnPreviewTalents(isPetTalents)
-    end,
-    OnCancel = function()
-    end,
-    hideOnEscape = 1,
-    timeout = 0,
-    exclusive = 1,
-    preferredIndex = 4
-}
-
-
 local function drawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
     if (not relPoint) then
         relPoint = "BOTTOMLEFT"
