@@ -91,12 +91,25 @@ local function GetSpellPreviewButton(self, index)
         return spellButton
     end
 
-    spellButton = CreateFrame("Button", nil, self)
+    spellButton = CreateFrame("Button", nil, self, "SecureActionButtonTemplate")
     spellButton:SetSize(30, 30)
     spellButton.icon = spellButton:CreateTexture(nil, "ARTWORK")
     spellButton.icon:SetAllPoints()
     spellButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
+    spellButton:EnableMouse(true)
+    spellButton:RegisterForClicks("AnyUp")
+    spellButton:RegisterForDrag("LeftButton")
+    spellButton:SetScript("OnDragStart", function(self)
+        if InCombatLockdown() then
+            return
+        end
+        if self.isPetSpell then
+            PickupPetSpell(self.spellID)
+        else
+            PickupSpell(self.spellID)
+        end
+    end)
     spellButton:SetScript("OnEnter", function(self)
         if not self.spellID or not GetSpellInfo(self.spellID) then
             return
@@ -184,6 +197,7 @@ local function UpdateTrees()
                 local _, icon2 = GetSpellTexture(bonus)
                 spellButton.icon:SetTexture(icon2)
                 spellButton.spellID = bonus
+                spellButton.isPetSpell = isPetTalents
                 spellButton:ClearAllPoints()
 
                 local xOffset = -10 - (columnIndex * columnSpacing)
@@ -241,7 +255,6 @@ local function updateActiveSpec()
             local anySelected = false
             local allAvalible = false
             local line = container.lines[row]
-            line.set = false
             line:Hide()
 
             if row == 1 then
@@ -304,7 +317,6 @@ local function updateActiveSpec()
                     if lastIndex ~= -1 and lastRowHadSelection and talentInfo.selected then
                         line:Show()
                         setLineRotation(line, lastIndex, index)
-                        line.set = true
                     end
 
                     if talentInfo.selected then
@@ -464,7 +476,7 @@ local function LoadTalents()
         end
         for row = 1, maxTalentRows do
             local fistOnRow
-            local line = CreateFrame("Frame", "GwTalentLine" .. i .. "-" .. row, container, "GwTalentLine")
+            local line = CreateFrame("Frame", nil, container, "GwTalentLine")
             line:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (88)), -10)
             tinsert(container.lines, line)
 
@@ -495,7 +507,7 @@ local function LoadTalents()
                 numberDisplay.title:SetTextColor(0.7, 0.7, 0.7, 1)
                 numberDisplay.title:SetShadowColor(0, 0, 0, 0)
                 numberDisplay.title:SetShadowOffset(1, -1)
-                numberDisplay:SetPoint("BOTTOM", fistOnRow, "TOP", 0, 13)
+                numberDisplay:SetPoint("BOTTOM", fistOnRow, "TOP", 0, 10)
                 numberDisplay.title:SetText(select(3, GetTalentTierInfo(row, C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents))))
             end
         end
