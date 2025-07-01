@@ -30,7 +30,7 @@ local X2_INVTYPES, X2_EXCEPTIONS, ARMOR_SLOTS = {
     {
         [2] = 19, -- wands, use INVTYPE_RANGEDRIGHT, but are 1H
     },
-    {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
+    {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, GW.Mists and 18 or nil}
 
 local function PopulateUnitIlvlsCache(unitGUID, itemLevel, tooltip)
     if itemLevel then

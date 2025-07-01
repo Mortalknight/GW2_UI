@@ -239,8 +239,11 @@ local function updateActiveSpec()
         for row = 1, maxTalentRows do
             local anySelected = false
             local allAvalible = false
+            local line = container.lines[row]
+            line.set = false
 
             local sel = nil
+            local setLine = false
             for index = 1, talentsPerRow do
                 local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
                 local talentInfoQuery = {};
@@ -291,15 +294,15 @@ local function updateActiveSpec()
                     button.highlight:Show()
                     button.legendaryHighlight:Hide()
 
-                    local line = _G["GwTalentLine" .. i .. "-" .. row]
-                    if lastIndex ~= -1 then
+                    if lastIndex ~= -1 and talentInfo.selected and not line.set then
                         line:Show()
                         setLineRotation(line, lastIndex, index)
-                    else
+                        line.set = true
+                    elseif not line.set then
                         line:Hide()
                     end
 
-                    if talentInfo.selected then --test here
+                    if talentInfo.selected then
                         sel = true
                         lastIndex = index
                     elseif index == talentsPerRow and not sel then
@@ -338,7 +341,7 @@ local function updateActiveSpec()
             end
 
             if not sel then
-                _G["GwTalentLine" .. i .. "-" .. row]:Hide()
+                container.lines[row]:Hide()
             end
         end
     end
@@ -421,6 +424,7 @@ local function LoadTalents()
 
         container.spec = i
         container.spellPreviewButton = {}
+        container.lines = {}
 
         txT = (i - 1) * txH
         container.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/" .. GW.myClassID)
@@ -455,6 +459,7 @@ local function LoadTalents()
             local fistOnRow
             local line = CreateFrame("Frame", "GwTalentLine" .. i .. "-" .. row, container, "GwTalentLine")
             line:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (88)), -10)
+            tinsert(container.lines, line)
 
             for index = 1, talentsPerRow do
                 local talentButton = CreateFrame("Button", "GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index, container, "GwTalentButton")
