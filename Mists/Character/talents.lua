@@ -299,7 +299,7 @@ local function updateActiveSpec()
                         line:Hide()
                     end
 
-                    if talentInfo.selected then
+                    if talentInfo.selected then --test here
                         sel = true
                         lastIndex = index
                     elseif index == talentsPerRow and not sel then
@@ -397,7 +397,7 @@ local function LoadTalents()
     local fnContainer_OnClick = function(self)
         local currentSpec = C_SpecializationInfo.GetSpecialization(nil, isPetTalents, openSpec)
 
-        if (isPetTalents and self.specIndex ~= currentSpec and IsPetActive()) or (not currentSpec or currentSpec > GetNumSpecializations(false, isPetTalents)) then
+        if (isPetTalents and self.specIndex ~= currentSpec and IsPetActive()) or ((not currentSpec or currentSpec > GetNumSpecializations(false, isPetTalents) and self.specIndex == currentSpec)) then
             GW.WarningPrompt(CONFIRM_LEARN_SPEC, function() SetSpecialization(self.specIndex, isPetTalents) end, nil, YES, NO)
         end
     end
