@@ -235,15 +235,22 @@ local function updateActiveSpec()
             container.info:Show()
         end
 
-        local lastIndex = 2
+        local lastIndex = -1
+        local lastRowHadSelection = false
         for row = 1, maxTalentRows do
             local anySelected = false
             local allAvalible = false
             local line = container.lines[row]
             line.set = false
+            line:Hide()
 
-            local sel = nil
-            local setLine = false
+            if row == 1 then
+                lastIndex = 2
+                lastRowHadSelection = true
+            end
+
+            local sel = false
+            local selectedIndex = -1
             for index = 1, talentsPerRow do
                 local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
                 local talentInfoQuery = {};
@@ -294,19 +301,15 @@ local function updateActiveSpec()
                     button.highlight:Show()
                     button.legendaryHighlight:Hide()
 
-                    if lastIndex ~= -1 and talentInfo.selected and not line.set then
+                    if lastIndex ~= -1 and lastRowHadSelection and talentInfo.selected then
                         line:Show()
                         setLineRotation(line, lastIndex, index)
                         line.set = true
-                    elseif not line.set then
-                        line:Hide()
                     end
 
                     if talentInfo.selected then
                         sel = true
-                        lastIndex = index
-                    elseif index == talentsPerRow and not sel then
-                        lastIndex = -1
+                        selectedIndex = index
                     end
                 else
                     button.legendaryHighlight:Hide()
@@ -340,8 +343,12 @@ local function updateActiveSpec()
                 end
             end
 
-            if not sel then
-                container.lines[row]:Hide()
+            if sel then
+                lastIndex = selectedIndex
+                lastRowHadSelection = true
+            else
+                lastIndex = -1
+                lastRowHadSelection = false
             end
         end
     end
