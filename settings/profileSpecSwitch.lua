@@ -9,6 +9,7 @@ local settingsPanel
 local mixin = {}
 local databaseEnhanced = false
 
+local GetSpecializationInfoForClassID = GetSpecializationInfoForClassID
 local GetSpecialization = C_SpecializationInfo.GetSpecialization or GetSpecialization or GetActiveTalentGroup
 local CanPlayerUseTalentSpecUI = C_SpecializationInfo.CanPlayerUseTalentSpecUI or function()
 	return true, HELPFRAME_CHARACTER_BULLET5
@@ -29,13 +30,15 @@ end
     [11] = { 102, 103, 104, 105, 1447 },
   }
 
-  local GetSpecializationInfoForClassID = function (classID, specIndex)
-    local specID = specsByClassID[classID][specIndex]
-    if not specID then
-      return nil
+  if GW.Mists then
+    GetSpecializationInfoForClassID = function (classID, specIndex)
+        local specID = specsByClassID[classID][specIndex]
+        if not specID then
+            return nil
+        end
+        return GetSpecializationInfoByID(specID)
     end
-    return GetSpecializationInfoByID(specID)
-  end
+end
 
 if GW.Retail or GW.Mists then
     local _, classId = UnitClassBase("player")
