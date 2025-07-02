@@ -217,20 +217,21 @@ local function UpdateTrees()
     end
 end
 
-local function updateActiveSpec()
-   if InCombatLockdown() then
+local function updateActiveSpec(self)
+    if InCombatLockdown() then
         return
     end
     local spec = C_SpecializationInfo.GetSpecialization(false, isPetTalents, openSpec)
     local isCurrentSpec = openSpec == C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents)
 
-    UpdateTrees()
-    UpdateClearInfo()
     talentContainer.topBar.activateSpecGroup:SetShown(not isCurrentSpec and not isPetTalents)
     talentContainer.topBar.activeSpecIndicator:SetShown(isCurrentSpec and not isPetTalents)
 
+    UpdateTrees()
+    UpdateClearInfo()
+
     for i = 1, GetNumSpecializations(false, isPetTalents) do
-        local container = _G["GwSpecFrame" .. i]
+        local container = self.specs[i]
 
         container.specIndex = i
         if i == spec then
@@ -265,7 +266,7 @@ local function updateActiveSpec()
             local sel = false
             local selectedIndex = -1
             for index = 1, talentsPerRow do
-                local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
+                local button = container.talentButtons[row].buttons[index]
                 local talentInfoQuery = {};
                 talentInfoQuery.tier = row
                 talentInfoQuery.column = index
@@ -347,7 +348,7 @@ local function updateActiveSpec()
 
             if i == spec and allAvalible == true and anySelected == false then
                 for index = 1, talentsPerRow do
-                    local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
+                    local button = container.talentButtons[row].buttons[index]
                     button.icon:SetDesaturated(false)
                     button.icon:SetVertexColor(1, 1, 1, 1)
                     button:SetAlpha(1)
@@ -425,7 +426,7 @@ local function LoadTalents()
     end
 
     for i = 1, specs do
-        local container = CreateFrame("Button", "GwSpecFrame" .. i, talentContainer, "GwSpecFrame")
+        local container = CreateFrame("Button", nil, talentContainer, "GwSpecFrame")
 
         container:RegisterForClicks("AnyUp")
         local mask = UIParent:CreateMaskTexture()
@@ -443,6 +444,7 @@ local function LoadTalents()
 
         container.spec = i
         container.spellPreviewButton = {}
+        container.talentButtons = {}
         container.lines = {}
 
         txT = (i - 1) * txH
@@ -479,9 +481,10 @@ local function LoadTalents()
             local line = CreateFrame("Frame", nil, container, "GwTalentLine")
             line:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (88)), -10)
             tinsert(container.lines, line)
+            container.talentButtons[row].buttons = {}
 
             for index = 1, talentsPerRow do
-                local talentButton = CreateFrame("Button", "GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index, container, "GwTalentButton")
+                local talentButton = CreateFrame("Button", nil, container, "GwTalentButton")
                 talentButton:SetScript("OnEnter", fnTalentButton_OnEnter)
                 talentButton:SetScript("OnLeave", GameTooltip_Hide)
                 talentButton:SetScript("OnDragStart", fnTalentButton_OnDragStart)
@@ -500,6 +503,8 @@ local function LoadTalents()
                 if fistOnRow == nil then
                     fistOnRow = talentButton
                 end
+
+                tinsert(container.talentButtons[row].buttons, talentButton)
             end
             if i == 1 then
                 local numberDisplay = CreateFrame("Frame", "GwTalentsLevelLabel" .. row, talentContainer, "GwTalentsLevelLabel")
@@ -515,7 +520,7 @@ local function LoadTalents()
         tinsert(talentContainer.specs, container)
     end
 
-    updateActiveSpec()
+    updateActiveSpec(talentContainer)
 
     talentContainer.topBar.activateSpecGroup:SetScript("OnClick", function()
         if openSpec then
@@ -537,21 +542,22 @@ local function LoadTalents()
     talentContainer:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     talentContainer:RegisterEvent("BAG_UPDATE_DELAYED")
     talentContainer:SetScript('OnEvent', function(_, event)
-        C_Timer.After(0.1, function() talentContainer.topBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player") .. " |TInterface/AddOns/GW2_UI/textures/icons/talent-icon: 24, 24, 0, 0, 0.1875, 0.828125 , 0.1875, 0.828125 |t ") end)
+        C_Timer.After(0.1, function() talentContainer.topBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player") .. " |TInterface/AddOns/GW2_UI/textures/icons/talent-icon:24:24:0:0:0.1875:0.828125:0.1875:0.828125|t") end)
 
         if event == "PLAYER_SPECIALIZATION_CHANGED" then
             local activeTalentGroup = C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents)
             talentContainer.fmMenu.items.spec1:SetText(activeTalentGroup == 1 and SPECIALIZATION_PRIMARY_ACTIVE or SPECIALIZATION_PRIMARY)
             talentContainer.fmMenu.items.spec2:SetText(activeTalentGroup == 2 and SPECIALIZATION_SECONDARY_ACTIVE or SPECIALIZATION_SECONDARY)
+            updateActiveSpec(talentContainer)
         elseif event == "BAG_UPDATE_DELAYED" then
             UpdateClearInfo()
         else
-            updateActiveSpec()
+            updateActiveSpec(talentContainer)
         end
     end)
     talentContainer:SetScript('OnShow', function()
         if InCombatLockdown() then return end
-        updateActiveSpec()
+        updateActiveSpec(talentContainer)
     end)
     hooksecurefunc('ToggleTalentFrame', function()
         if InCombatLockdown() then return end
@@ -571,7 +577,7 @@ local function LoadTalents()
     PlayerSpecTab1:HookScript("OnClick", function()
         openSpec                      = 1
         isPetTalents                  = false
-        updateActiveSpec()
+        updateActiveSpec(talentContainer)
     end)
     item:SetText(activeTalentGroup == 1 and SPECIALIZATION_PRIMARY_ACTIVE or SPECIALIZATION_PRIMARY)
     item:ClearAllPoints()
@@ -584,7 +590,7 @@ local function LoadTalents()
     PlayerSpecTab2:HookScript("OnClick", function()
         openSpec                      = 2
         isPetTalents                  = false
-        updateActiveSpec()
+        updateActiveSpec(talentContainer)
     end)
     item:SetText(activeTalentGroup == 2 and SPECIALIZATION_SECONDARY_ACTIVE or SPECIALIZATION_SECONDARY)
     item:ClearAllPoints()
@@ -597,7 +603,7 @@ local function LoadTalents()
     PlayerTalentFrameTab4:HookScript("OnClick", function()
         openSpec                      = C_SpecializationInfo.GetActiveSpecGroup(false, true)
         isPetTalents                  = true
-        updateActiveSpec()
+        updateActiveSpec(talentContainer)
     end)
     item:SetText(PET)
     item:ClearAllPoints()
