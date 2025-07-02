@@ -629,16 +629,28 @@ local function LoadGossipSkin()
     portraitFrame.npcNameLabel:SetSize(200, 32)
     portraitFrame.npcNameLabel:SetPoint("TOPLEFT", portraitFrame, "TOPLEFT", -3, -170)
 
+    portraitFrame.npcNameText = portraitFrame:CreateFontString(nil, "ARTWORK")
+    portraitFrame.npcNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+    portraitFrame.npcNameText:SetTextColor(1, 1, 1)
+    portraitFrame.npcNameText:ClearAllPoints()
+    portraitFrame.npcNameText:SetPoint("TOPLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 0)
+    portraitFrame.npcNameText:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "BOTTOMRIGHT", -10, 0)
+    portraitFrame.npcNameText:SetJustifyH("LEFT")
+
     hooksecurefunc(GossipFrame, "Update", function()
         updateModelFrame(portraitFrame)
     end)
-    local titleText = GossipFrameTitleText or GossipFrame.TitleContainer.TitleText
-    titleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
-    titleText:SetTextColor(1, 1, 1)
-    titleText:ClearAllPoints()
-    titleText:SetPoint("TOPLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 0)
-    titleText:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "BOTTOMRIGHT", -10, 0)
-    titleText:SetJustifyH("LEFT")
+    local titleText = GW.Classic and GossipFrameTitleText or GW.Mists and GossipFrame.TitleText or GossipFrame.TitleContainer.TitleText
+    hooksecurefunc(titleText, "SetText", function(_, txt)
+        portraitFrame.npcNameText:SetText(txt)
+    end)
+    if titleText.SetTitleFormatted then
+        hooksecurefunc(titleText, "SetTitleFormatted", function(_, fmt, ...)
+            portraitFrame.npcNameText:SetFormattedText(fmt, ...)
+        end)
+    end
+    titleText:Hide()
+
     GossipFrame.CloseButton:GwSkinButton(true)
     GossipFrame.CloseButton:SetSize(20, 20)
     GossipFrame.CloseButton:ClearAllPoints()
