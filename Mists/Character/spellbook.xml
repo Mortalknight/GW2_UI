@@ -188,6 +188,28 @@
                     </OnShow>
                 </Scripts>
             </Frame>
+            <Frame name="$parentcontainer7" parentKey="container7" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
+                <Size x="608" y="541"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:GetParent().pages:SetText(7)
+                    </OnShow>
+                </Scripts>
+            </Frame>
+            <Frame name="$parentcontainer8" parentKey="container8" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
+                <Size x="608" y="541"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:GetParent().pages:SetText(8)
+                    </OnShow>
+                </Scripts>
+            </Frame>
             <Button parentKey="left" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerShowHideTemplate,SecureHandlerStateTemplate">
                 <size x="32" y="32"/>
                 <Anchors>
