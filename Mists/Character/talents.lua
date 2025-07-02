@@ -8,6 +8,10 @@ local talentsPerRow = 3
 local TAXIROUTE_LINEFACTOR = 32 / 30 -- Multiplying factor for texture coordinates
 local TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2 -- Half o that
 
+local passiveHighlight = "Interface/AddOns/GW2_UI/textures/talents/passive_highlight"
+local activeHighlight = "Interface/AddOns/GW2_UI/textures/talents/active_highlight"
+local passiveOutline = "Interface/AddOns/GW2_UI/textures/talents/passive_outline"
+local activeOutline = "Interface/AddOns/GW2_UI/textures/talents/background_border"
 
 local function drawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
     if (not relPoint) then
@@ -95,36 +99,40 @@ local function GetSpellPreviewButton(self, index)
     spellButton.icon = spellButton:CreateTexture(nil, "ARTWORK")
     spellButton.icon:SetAllPoints()
     spellButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    spellButton.border = spellButton:CreateTexture(nil, "BACKGROUND")
+    spellButton.border:SetSize(31, 31)
+    spellButton.border:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty")
+    spellButton.border:SetPoint("CENTER", spellButton, "CENTER", 0, 0)
 
     spellButton:EnableMouse(true)
     spellButton:RegisterForClicks("AnyUp")
     spellButton:RegisterForDrag("LeftButton")
-    spellButton:SetScript("OnDragStart", function(self)
+    spellButton:SetScript("OnDragStart", function(btn)
         if InCombatLockdown() then
             return
         end
-        if self.isPetSpell then
-            PickupPetSpell(self.spellID)
+        if btn.isPetSpell then
+            PickupPetSpell(btn.spellID)
         else
-            PickupSpell(self.spellID)
+            PickupSpell(btn.spellID)
         end
     end)
-    spellButton:SetScript("OnEnter", function(self)
-        if not self.spellID or not GetSpellInfo(self.spellID) then
+    spellButton:SetScript("OnEnter", function(btn)
+        if not btn.spellID or not GetSpellInfo(btn.spellID) then
             return
         end
 
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetSpellByID(self.spellID, false, false, true)
-        if self.extraTooltip then
-            GameTooltip:AddLine(self.extraTooltip)
+        GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
+        GameTooltip:SetSpellByID(btn.spellID, false, false, true)
+        if btn.extraTooltip then
+            GameTooltip:AddLine(btn.extraTooltip)
         end
-        self.UpdateTooltip = self.OnEnter
+        btn.UpdateTooltip = btn.OnEnter
         GameTooltip:Show()
     end)
 
-    spellButton:SetScript("OnLeave", function(self)
-        self.UpdateTooltip = nil
+    spellButton:SetScript("OnLeave", function(btn)
+        btn.UpdateTooltip = nil
         GameTooltip:Hide()
     end)
 
@@ -140,9 +148,10 @@ local function UpdateClearInfo(self)
     end
 end
 
-local function UpdateTrees(self)
+local function UpdateTrees(self, currentSpec)
     for i = 1, GetNumSpecializations(false, isPetTalents) do
         local container = self.specs[i]
+        local isActiveSpec = (i == currentSpec)
 
         local id, name, description, icon, role = C_SpecializationInfo.GetSpecializationInfo(i, false, isPetTalents, nil, GW.mysex)
 
@@ -199,6 +208,10 @@ local function UpdateTrees(self)
                 spellButton.isPetSpell = isPetTalents
                 spellButton:ClearAllPoints()
 
+                spellButton.icon:SetDesaturated(not isActiveSpec)
+                spellButton:EnableMouse(isActiveSpec)
+                spellButton.icon:SetAlpha(isActiveSpec and 1 or 0.5)
+
                 local xOffset = -10 - (columnIndex * columnSpacing)
                 local yOffset = yStartOffset - (spellInColumn * buttonSpacing)
 
@@ -222,15 +235,21 @@ local function updateActiveSpec(self)
     end
     local spec = C_SpecializationInfo.GetSpecialization(false, isPetTalents, openSpec)
     local isCurrentSpec = openSpec == C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents)
+    local talentInfoQuery = {
+        groupIndex = openSpec,
+        isInspect = false,
+        target = isPetTalents and "pet" or "player"
+    }
 
     self.topBar.activateSpecGroup:SetShown(not isCurrentSpec and not isPetTalents)
     self.topBar.activeSpecIndicator:SetShown(isCurrentSpec and not isPetTalents)
 
-    UpdateTrees(self)
+    UpdateTrees(self, spec)
     UpdateClearInfo(self)
 
     for i = 1, GetNumSpecializations(false, isPetTalents) do
         local container = self.specs[i]
+        local isActiveSpec = (i == spec)
 
         container.specIndex = i
         if i == spec then
@@ -251,9 +270,8 @@ local function updateActiveSpec(self)
 
         local lastIndex = -1
         local lastRowHadSelection = false
+
         for row = 1, maxTalentRows do
-            local anySelected = false
-            local allAvalible = false
             local line = container.lines[row]
             line:Hide()
 
@@ -264,26 +282,22 @@ local function updateActiveSpec(self)
 
             local sel = false
             local selectedIndex = -1
+            local anySelected = false
+            local allAvailable = true
+
             for index = 1, talentsPerRow do
                 local button = container.talentButtons[row].buttons[index]
-                local talentInfoQuery = {};
+
+                -- Query
                 talentInfoQuery.tier = row
                 talentInfoQuery.column = index
-                talentInfoQuery.groupIndex = openSpec
-                talentInfoQuery.isInspect = false
-                talentInfoQuery.target = isPetTalents and "pet" or "player"
                 local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
 
-                if not talentInfo.available then
-                    allAvalible = false
-                end
-                if not talentInfo.selected then
-                    anySelected = true
-                end
+                anySelected = anySelected or talentInfo.selected
+                allAvailable = allAvailable and talentInfo.available
 
                 button.spellId = talentInfo.spellID
                 button.icon:SetTexture(talentInfo.icon)
-
                 button.talentID = talentInfo.talentID
                 button.available = talentInfo.available
                 button.hasGoldBorder = talentInfo.hasGoldBorder
@@ -292,69 +306,76 @@ local function updateActiveSpec(self)
                 button:SetID(talentInfo.talentID)
                 _G["PlayerTalentFrameTalentsTalentRow" .. row .. "Talent" .. index]:SetID(talentInfo.talentID)
 
-                local ispassive = IsPassiveSpell(talentInfo.spellID)
-                button:EnableMouse(true)
-                if i ~= spec or not isCurrentSpec then
-                    button:EnableMouse(false)
-                end
+                button:EnableMouse(isActiveSpec and isCurrentSpec)
 
-                if ispassive then
-                    button.legendaryHighlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight")
-                    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight")
+                local isPassive = IsPassiveSpell(talentInfo.spellID)
+                if isPassive then
+                    button.legendaryHighlight:SetTexture(passiveHighlight)
+                    button.highlight:SetTexture(passiveHighlight)
                     button.icon:AddMaskTexture(button.mask)
-                    button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_outline")
+                    button.outline:SetTexture(passiveOutline)
                 else
-                    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight")
-                    button.legendaryHighlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight")
+                    button.legendaryHighlight:SetTexture(activeHighlight)
+                    button.highlight:SetTexture(activeHighlight)
                     button.icon:RemoveMaskTexture(button.mask)
-                    button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border")
+                    button.outline:SetTexture(activeOutline)
                 end
 
-                if i == spec and (talentInfo.selected or talentInfo.available) and not talentInfo.hasGoldBorder and not isPetTalents then
-                    button.highlight:Show()
-                    button.legendaryHighlight:Hide()
+                -- Vorab merken, ob selektiert
+                if talentInfo.selected then
+                    sel = true
+                    selectedIndex = index
+                end
+            end
 
-                    if lastIndex ~= -1 and lastRowHadSelection and talentInfo.selected then
-                        line:Show()
-                        setLineRotation(line, lastIndex, index)
-                    end
+            for index = 1, talentsPerRow do
+                local button = container.talentButtons[row].buttons[index]
+                talentInfoQuery.tier = row
+                talentInfoQuery.column = index
+                local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
 
-                    if talentInfo.selected then
-                        sel = true
-                        selectedIndex = index
+                if isActiveSpec and not isPetTalents then
+                    -- Aktiver Spec
+                    if sel then
+                        -- Es wurde ein Talent ausgewählt
+                        if talentInfo.selected then
+                            button.highlight:Show()
+                            button.legendaryHighlight:Hide()
+                            button.icon:SetDesaturated(false)
+                            button.icon:SetVertexColor(1, 1, 1, 1)
+                            button:SetAlpha(1)
+                        else
+                            button.highlight:Hide()
+                            button.legendaryHighlight:SetShown(talentInfo.hasGoldBorder)
+                            button.icon:SetDesaturated(true)
+                            button.icon:SetVertexColor(1, 1, 1, 0.4)
+                            button:SetAlpha(0.5)
+                        end
+                    else
+                        -- Kein Talent ausgewählt
+                        button.highlight:Show()
+                        button.legendaryHighlight:Hide()
+                        button.icon:SetDesaturated(false)
+                        button.icon:SetVertexColor(1, 1, 1, 1)
+                        button:SetAlpha(1)
                     end
                 else
-                    button.legendaryHighlight:Hide()
-                    if talentInfo.hasGoldBorder then
-                        button.legendaryHighlight:Show()
-                    end
+                    -- Nicht aktiver Spec oder PetTalents
                     button.highlight:Hide()
-                end
-
-                if i == spec and isCurrentSpec and (talentInfo.selected or talentInfo.available or talentInfo.hasGoldBorder) and not isPetTalents then
-                    button.icon:SetDesaturated(false)
-                    button.icon:SetVertexColor(1, 1, 1, 1)
-                    button:SetAlpha(1)
-                elseif i ~= spec or isPetTalents then
+                    button.legendaryHighlight:SetShown(talentInfo.hasGoldBorder)
                     button.icon:SetDesaturated(true)
                     button.icon:SetVertexColor(1, 1, 1, 0.1)
                     button:SetAlpha(0.5)
-                else
-                    button.icon:SetDesaturated(true)
-                    button.icon:SetVertexColor(1, 1, 1, 0.4)
                 end
             end
 
-            if i == spec and allAvalible == true and anySelected == false then
-                for index = 1, talentsPerRow do
-                    local button = container.talentButtons[row].buttons[index]
-                    button.icon:SetDesaturated(false)
-                    button.icon:SetVertexColor(1, 1, 1, 1)
-                    button:SetAlpha(1)
-                    button.highlight:Hide()
-                end
+            -- Linien zeichnen, wenn aktiv und ausgewählt
+            if isActiveSpec and sel and lastIndex ~= -1 and lastRowHadSelection then
+                line:Show()
+                setLineRotation(line, lastIndex, selectedIndex)
             end
 
+            -- Zustand für nächste Reihe merken
             if sel then
                 lastIndex = selectedIndex
                 lastRowHadSelection = true

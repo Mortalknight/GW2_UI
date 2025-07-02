@@ -188,14 +188,14 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight" hidden="true">
                     <Size x="34" y="34"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                     </Anchors>
                     <Color r="1" b="0.6" g="1" a="0.9"></Color>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="legendaryHighlight">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="legendaryHighlight" hidden="true">
                     <Size x="34" y="34"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
