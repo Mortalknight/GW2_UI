@@ -1,3 +1,7 @@
+8.1.0
+NEW
+    - Mists support
+
 8.0.7
 FIXES
     - Fix collection tracking collapse (retail)

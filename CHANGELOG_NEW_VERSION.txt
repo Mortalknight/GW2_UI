@@ -1,35 +1,3 @@
-8.0.7
-FIXES
-    - Fix collection tracking collapse (retail)
-
-8.0.6
-FIXES
-    - Some more fixes for all versions
-
-8.0.5
-FIXES
-    - Fix target level color (era & cata)
-    - Fix unit level at tooltip (era)
-    - Fix aura tooltip (era & cata)
-    - Fix mirror timer (era & cata)
-    - Fix objectives tooltip (era & cata)
-    - Fix copying profiles
-
-8.0.4
-FIXES
-    - Fix microbar moving (cata)
-    - Readd spellbook and talent setting (cata)
-    - Fix skyridingbar (retail)
-
-8.0.3
-FIXES
-    - Fix eclips bar on era
-    - Fix micromenu moving on era and cata
-
-8.0.2
-FIXES
-    - Combopoint error for era and cata
-
-8.0.1
+8.1.0
 NEW
-    - Merged Retail, Era and Cata version
+    - Mists support

@@ -598,6 +598,7 @@ local function LoadTalents()
         openSpec                      = 1
         isPetTalents                  = false
         updateActiveSpec(talentContainer)
+        GlyphFrame:Show()
     end)
     item:SetText(activeTalentGroup == 1 and SPECIALIZATION_PRIMARY_ACTIVE or SPECIALIZATION_PRIMARY)
     item:ClearAllPoints()
@@ -611,6 +612,7 @@ local function LoadTalents()
         openSpec                      = 2
         isPetTalents                  = false
         updateActiveSpec(talentContainer)
+     GlyphFrame:Show()
     end)
     item:SetText(activeTalentGroup == 2 and SPECIALIZATION_SECONDARY_ACTIVE or SPECIALIZATION_SECONDARY)
     item:ClearAllPoints()
@@ -624,6 +626,7 @@ local function LoadTalents()
         openSpec                      = C_SpecializationInfo.GetActiveSpecGroup(false, true)
         isPetTalents                  = true
         updateActiveSpec(talentContainer)
+        GlyphFrame:Show()
     end)
     item:SetText(PET)
     item:ClearAllPoints()

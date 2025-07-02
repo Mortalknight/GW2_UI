@@ -30,7 +30,6 @@ local function skinButton(button)
     button.selectedTex:SetTexCoord(0, 1, 0, 1)
 end
 
-
 local function updateGlyphListFrame()
     if InCombatLockdown() then return end
     local scrollFrame = GlyphFrame.scrollFrame
@@ -65,14 +64,6 @@ local function updateGlyphListFrame()
     end
 end
 
-
-
-local function glyphFrame_Update()
-    --TODO: Adjust to out talents
-    --Set the PlayerTalentFrame.pet and PlayerTalentFrame.talentGroup to the correct value if our talent frame is used
-end
-
-
 local function takeOverBlizzardsGlypheFrame()
     TalentFrame_LoadUI()
     GlyphFrame_LoadUI()
@@ -94,9 +85,7 @@ local function takeOverBlizzardsGlypheFrame()
     end)
 
     glyphesFrame.notice:SetFont(UNIT_NAME_FONT,12)
-
     glyphesFrame.notice:SetText("Notice: You might encounter an error message when attempting to apply a glyph. This is because Blizzard has not re-implemented some of their glyph API functions. You can simply ignore this message and try again.")
-
 
     GlyphFrame_OnEvent(GlyphFrame, "ADDON_LOADED", "Blizzard_GlyphUI")
     GlyphFrame:Show()
@@ -117,10 +106,6 @@ local function takeOverBlizzardsGlypheFrame()
         GlyphFrame:Show()
     end)
 
-    GlyphFrame:HookScript("SetShown", function()
-        GlyphFrame:Show()
-    end)
-
     GlyphFrame.background:SetSize(650, 600)
     GlyphFrame.background:SetTexture()
 
@@ -128,7 +113,6 @@ local function takeOverBlizzardsGlypheFrame()
     updateGlyphListFrame()
     hooksecurefunc(GlyphFrame.scrollFrame, "update", updateGlyphListFrame)
     hooksecurefunc("GlyphFrame_UpdateGlyphList", updateGlyphListFrame)
-    hooksecurefunc("GlyphFrame_Update", glyphFrame_Update)
     GlyphFrameSideInsetBackground:Hide()
 
     GlyphFrame.glow:ClearAllPoints()
