@@ -429,161 +429,226 @@ elseif GW.Mists then
     -------------------------------------------------
     -------------------- Dungeons -------------------
     -------------------------------------------------
-    -- Blackrock Caverns
-    -- Throne of the Tides
-    -- The Stonecore
-    -- The Vortex Pinnacle
-    -- Grim Batol
-    -- Halls of Origination
-    -- Deadmines
-    -- Shadowfang Keep
-    -- Lost City of the Tol'vir
+    -- Scholomance
+    -- Scarlet Halls
+    -- Mogu'shan Palace
+    -- Stormstout Brewery
+    -- Siege of Niuzao Temple
+    -- Scarlet Monastery
+    -- Temple of the Jade Serpent
+    -- Gate of the Setting Sun
+    -- Shado-Pan Monastery
     -------------------------------------------------
-    -------------------- Phase 1 --------------------
+    --------------------- Raids ---------------------
     -------------------------------------------------
-    -- Baradin Hold
-    SetDefaultOnTheFly(95173)	-- Consuming Darkness
-    SetDefaultOnTheFly(96913)	-- Searing Shadows
-    SetDefaultOnTheFly(104936)	-- Skewer
-    SetDefaultOnTheFly(105067)	-- Seething Hate
-    -- Blackwing Descent
-    SetDefaultOnTheFly(91911)	-- Constricting Chains
-    SetDefaultOnTheFly(94679)	-- Parasitic Infection
-    SetDefaultOnTheFly(94617)	-- Mangle
-    SetDefaultOnTheFly(78199)	-- Sweltering Armor
-    SetDefaultOnTheFly(91433)	-- Lightning Conductor
-    SetDefaultOnTheFly(91521)	-- Incineration Security Measure
-    SetDefaultOnTheFly(80094)	-- Fixate
-    SetDefaultOnTheFly(91535)	-- Flamethrower
-    SetDefaultOnTheFly(80161)	-- Chemical Cloud
-    SetDefaultOnTheFly(92035)	-- Acquiring Target
-    SetDefaultOnTheFly(79835)	-- Poison Soaked Shell
-    SetDefaultOnTheFly(91555)	-- Power Generator
-    SetDefaultOnTheFly(92048)	-- Shadow Infusion
-    SetDefaultOnTheFly(92053)	-- Shadow Conductor
-    SetDefaultOnTheFly(77699)	-- Flash Freeze
-    SetDefaultOnTheFly(77760)	-- Biting Chill
-    SetDefaultOnTheFly(92754)	-- Engulfing Darkness
-    SetDefaultOnTheFly(92971)	-- Consuming Flames
-    SetDefaultOnTheFly(92989)	-- Rend
-    SetDefaultOnTheFly(92423)	-- Searing Flame
-    SetDefaultOnTheFly(92485)	-- Roaring Flame
-    SetDefaultOnTheFly(92407)	-- Sonic Breath
-    SetDefaultOnTheFly(78092)	-- Tracking
-    SetDefaultOnTheFly(82881)	-- Break
-    SetDefaultOnTheFly(89084)	-- Low Health
-    SetDefaultOnTheFly(81114)	-- Magma
-    SetDefaultOnTheFly(94128)	-- Tail Lash
-    SetDefaultOnTheFly(79339)	-- Explosive Cinders
-    SetDefaultOnTheFly(79318)	-- Dominion
-    -- The Bastion of Twilight
-    SetDefaultOnTheFly(39171)	-- Malevolent Strikes
-    SetDefaultOnTheFly(83710)	-- Furious Roar
-    SetDefaultOnTheFly(92878)	-- Blackout
-    SetDefaultOnTheFly(86840)	-- Devouring Flames
-    SetDefaultOnTheFly(95639)	-- Engulfing Magic
-    SetDefaultOnTheFly(92886)	-- Twilight Zone
-    SetDefaultOnTheFly(88518)	-- Twilight Meteorite
-    SetDefaultOnTheFly(86505)	-- Fabulous Flames
-    SetDefaultOnTheFly(93051)	-- Twilight Shift
-    SetDefaultOnTheFly(92511)	-- Hydro Lance
-    SetDefaultOnTheFly(82762)	-- Waterlogged
-    SetDefaultOnTheFly(92505)	-- Frozen
-    SetDefaultOnTheFly(92518)	-- Flame Torrent
-    SetDefaultOnTheFly(83099)	-- Lightning Rod
-    SetDefaultOnTheFly(92075)	-- Gravity Core
-    SetDefaultOnTheFly(92488)	-- Gravity Crush
-    SetDefaultOnTheFly(82660)	-- Burning Blood
-    SetDefaultOnTheFly(82665)	-- Heart of Ice
-    SetDefaultOnTheFly(83500)	-- Swirling Winds
-    SetDefaultOnTheFly(83581)	-- Grounded
-    SetDefaultOnTheFly(92067)	-- Static Overload
-    SetDefaultOnTheFly(86028)	-- Cho's Blast
-    SetDefaultOnTheFly(86029)	-- Gall's Blast
-    SetDefaultOnTheFly(93187)	-- Corrupted Blood
-    SetDefaultOnTheFly(82125)	-- Corruption: Malformation
-    SetDefaultOnTheFly(82170)	-- Corruption: Absolute
-    SetDefaultOnTheFly(93200)	-- Corruption: Sickness
-    SetDefaultOnTheFly(82411)	-- Debilitating Beam
-    SetDefaultOnTheFly(91317)	-- Worshipping
-    SetDefaultOnTheFly(92956)	-- Wrack
-    -- Throne of the Four Winds
-    SetDefaultOnTheFly(93131)	-- Ice Patch
-    SetDefaultOnTheFly(86206)	-- Soothing Breeze
-    SetDefaultOnTheFly(93122)	-- Toxic Spores
-    SetDefaultOnTheFly(93058)	-- Slicing Gale
-    SetDefaultOnTheFly(93260)	-- Ice Storm
-    SetDefaultOnTheFly(93295)	-- Lightning Rod
-    SetDefaultOnTheFly(87873)	-- Static Shock
-    SetDefaultOnTheFly(87856)	-- Squall Line
-    SetDefaultOnTheFly(88427)	-- Electrocute
-    -------------------------------------------------
-    -------------------- Phase 3 --------------------
-    -------------------------------------------------
-    -- Zul'Aman (Dungeon)
-    -- Zul'Gurub (Dungeon)
-    -- Firelands
-    SetDefaultOnTheFly(99506)	-- Widows Kiss
-    SetDefaultOnTheFly(97202)	-- Fiery Web Spin
-    SetDefaultOnTheFly(49026)	-- Fixate
-    SetDefaultOnTheFly(97079)	-- Seeping Venom
-    SetDefaultOnTheFly(99389)	-- Imprinted
-    SetDefaultOnTheFly(101296)	-- Fiero Blast
-    SetDefaultOnTheFly(100723)	-- Gushing Wound
-    SetDefaultOnTheFly(101729)	-- Blazing Claw
-    SetDefaultOnTheFly(100640)	-- Harsh Winds
-    SetDefaultOnTheFly(100555)	-- Smouldering Roots
-    SetDefaultOnTheFly(99837)	-- Crystal Prison
-    SetDefaultOnTheFly(99937)	-- Jagged Tear
-    SetDefaultOnTheFly(99403)	-- Tormented
-    SetDefaultOnTheFly(99256)	-- Torment
-    SetDefaultOnTheFly(99252)	-- Blaze of Glory
-    SetDefaultOnTheFly(99516)	-- Countdown
-    SetDefaultOnTheFly(98450)	-- Searing Seeds
-    SetDefaultOnTheFly(98565)	-- Burning Orb
-    SetDefaultOnTheFly(98313)	-- Magma Blast
-    SetDefaultOnTheFly(99145)	-- Blazing Heat
-    SetDefaultOnTheFly(99399)	-- Burning Wound
-    SetDefaultOnTheFly(99613)	-- Molten Blast
-    SetDefaultOnTheFly(100293)	-- Lava Wave
-    SetDefaultOnTheFly(100675)	-- Dreadflame
-    SetDefaultOnTheFly(100249)	-- Combustion
-    SetDefaultOnTheFly(99532)	-- Melt Armor
-    -------------------------------------------------
-    -------------------- Phase 4 --------------------
-    -------------------------------------------------
-    -- Dragon Soul
-    SetDefaultOnTheFly(103541)	-- Safe
-    SetDefaultOnTheFly(103536)	-- Warning
-    SetDefaultOnTheFly(103534)	-- Danger
-    SetDefaultOnTheFly(103687)	-- Crush Armor
-    SetDefaultOnTheFly(108570)	-- Black Blood of the Earth
-    SetDefaultOnTheFly(103434)	-- Disrupting Shadows
-    SetDefaultOnTheFly(105171)	-- Deep Corruption
-    SetDefaultOnTheFly(105465)	-- Lighting Storm
-    SetDefaultOnTheFly(104451)	-- Ice Tomb
-    SetDefaultOnTheFly(109325)	-- Frostflake
-    SetDefaultOnTheFly(105289)	-- Shattered Ice
-    SetDefaultOnTheFly(105285)	-- Target
-    SetDefaultOnTheFly(105259)	-- Watery Entrenchment
-    SetDefaultOnTheFly(107061)	-- Ice Lance
-    SetDefaultOnTheFly(109075)	-- Fading Light
-    SetDefaultOnTheFly(108043)	-- Sunder Armor
-    SetDefaultOnTheFly(107558)	-- Degeneration
-    SetDefaultOnTheFly(107567)	-- Brutal Strike
-    SetDefaultOnTheFly(108046)	-- Shockwave
-    SetDefaultOnTheFly(110214)	-- Shockwave
-    SetDefaultOnTheFly(105479)	-- Searing Plasma
-    SetDefaultOnTheFly(105490)	-- Fiery Grip
-    SetDefaultOnTheFly(105563)	-- Grasping Tendrils
-    SetDefaultOnTheFly(106199)	-- Blood Corruption: Death
-    SetDefaultOnTheFly(105841)	-- Degenerative Bite
-    SetDefaultOnTheFly(106385)	-- Crush
-    SetDefaultOnTheFly(106730)	-- Tetanus
-    SetDefaultOnTheFly(106444)	-- Impale
-    SetDefaultOnTheFly(106794)	-- Shrapnel (Target)
-    SetDefaultOnTheFly(105445)	-- Blistering Heat
-    SetDefaultOnTheFly(108649)	-- Corrupting Parasite
+    -- Mogu'shan Vaults
+        -- The Stone Guard
+        SetDefaultOnTheFly(125206)	-- Rend Flesh
+        SetDefaultOnTheFly(130395)	-- Jasper Chains
+        SetDefaultOnTheFly(116281)	-- Cobalt Mine Blast
+        -- Feng the Accursed
+        SetDefaultOnTheFly(131788)	-- Lightning Lash
+        SetDefaultOnTheFly(116942)	-- Flaming Spear
+        SetDefaultOnTheFly(131790)	-- Arcane Shock
+        SetDefaultOnTheFly(131792)	-- Shadowburn
+        SetDefaultOnTheFly(116374)	-- Lightning Charge
+        SetDefaultOnTheFly(116784)	-- Wildfire Spark
+        SetDefaultOnTheFly(116417)	-- Arcane Resonance
+        -- Gara'jal the Spiritbinder
+        SetDefaultOnTheFly(122151)	-- Voodoo Doll
+        SetDefaultOnTheFly(117723)	-- Frail Soul
+        -- The Spirit Kings
+        SetDefaultOnTheFly(117708)	-- Maddening Shout
+        SetDefaultOnTheFly(118303)	-- Fixate
+        SetDefaultOnTheFly(118048)	-- Pillaged
+        SetDefaultOnTheFly(118135)	-- Pinned Down
+        SetDefaultOnTheFly(118163)	-- Robbed Blind
+        -- Elegon
+        SetDefaultOnTheFly(117878)	-- Overcharged
+        SetDefaultOnTheFly(117949)	-- Closed Circuit
+        SetDefaultOnTheFly(132222)	-- Destabilizing Energies
+        -- Will of the Emperor
+        SetDefaultOnTheFly(116835)	-- Devastating Arc
+        SetDefaultOnTheFly(116778)	-- Focused Defense
+        SetDefaultOnTheFly(116525)	-- Focused Assault
+    -- Heart of Fear
+        -- Imperial Vizier Zor'lok
+        SetDefaultOnTheFly(122761)	-- Exhale
+        SetDefaultOnTheFly(122760)	-- Exhale
+        SetDefaultOnTheFly(122740)	-- Convert
+        SetDefaultOnTheFly(123812)	-- Pheromones of Zeal
+        -- Blade Lord Ta'yak
+        SetDefaultOnTheFly(123180)	-- Wind Step
+        SetDefaultOnTheFly(123474)	-- Overwhelming Assault
+        -- Garalon
+        SetDefaultOnTheFly(122835)	-- Pheromones
+        SetDefaultOnTheFly(123081)	-- Pungency
+        -- Wind Lord Mel'jarak
+        SetDefaultOnTheFly(129078)	-- Amber Prison
+        SetDefaultOnTheFly(122055)	-- Residue
+        SetDefaultOnTheFly(122064)	-- Corrosive Resin
+        SetDefaultOnTheFly(123963)	-- Kor'thik Strike
+        -- Amber-Shaper Un'sok
+        SetDefaultOnTheFly(121949)	-- Parasitic Growth
+        SetDefaultOnTheFly(122370)	-- Reshape Life
+    -- Terrace of Endless Spring
+        -- Protectors of the Endless
+        SetDefaultOnTheFly(117436)	-- Lightning Prison
+        SetDefaultOnTheFly(118091)	-- Defiled Ground
+        SetDefaultOnTheFly(117519)	-- Touch of Sha
+        -- Tsulong
+        SetDefaultOnTheFly(122752)	-- Shadow Breath
+        SetDefaultOnTheFly(123011)	-- Terrorize
+        SetDefaultOnTheFly(116161)	-- Crossed Over
+        SetDefaultOnTheFly(122777)	-- Nightmares
+        SetDefaultOnTheFly(123036)	-- Fright
+        -- Lei Shi
+        SetDefaultOnTheFly(123121)	-- Spray
+        SetDefaultOnTheFly(123705)	-- Scary Fog
+        -- Sha of Fear
+        SetDefaultOnTheFly(119985)	-- Dread Spray
+        SetDefaultOnTheFly(119086)	-- Penetrating Bolt
+        SetDefaultOnTheFly(119775)	-- Reaching Attack
+        SetDefaultOnTheFly(120669)	-- Naked and Afraid
+        SetDefaultOnTheFly(120629)	-- Huddle in Terror
+    -- Throne of Thunder
+        -- Trash
+        SetDefaultOnTheFly(138349)	-- Static Wound
+        SetDefaultOnTheFly(137371)	-- Thundering Throw
+        -- Jin'rokh the Breaker
+        SetDefaultOnTheFly(137162)	-- Static Burst
+        SetDefaultOnTheFly(138732)	-- Ionization
+        SetDefaultOnTheFly(137422)	-- Focused Lightning
+        -- Horridon
+        SetDefaultOnTheFly(136767)	-- Triple Puncture
+        SetDefaultOnTheFly(136708)	-- Stone Gaze
+        SetDefaultOnTheFly(136654)	-- Rending Charge
+        SetDefaultOnTheFly(136719)	-- Blazing Sunlight
+        SetDefaultOnTheFly(136587)	-- Venom Bolt Volley
+        SetDefaultOnTheFly(136710)	-- Deadly Plague
+        SetDefaultOnTheFly(136512)	-- Hex of Confusion
+        -- Council of Elders
+        SetDefaultOnTheFly(137641)	-- Soul Fragment
+        SetDefaultOnTheFly(137359)	-- Shadowed Loa Spirit Fixate
+        SetDefaultOnTheFly(137972)	-- Twisted Fate
+        SetDefaultOnTheFly(136903)	-- Frigid Assault
+        SetDefaultOnTheFly(136922)	-- Frostbite
+        SetDefaultOnTheFly(136992)	-- Biting Cold
+        SetDefaultOnTheFly(136857)	-- Entrapped
+        -- Tortos
+        SetDefaultOnTheFly(136753)	-- Slashing Talons
+        SetDefaultOnTheFly(137633)	-- Crystal Shell
+        SetDefaultOnTheFly(140701)	-- Crystal Shell: Full Capacity! (Heroic)
+        -- Megaera
+        SetDefaultOnTheFly(137731)	-- Ignite Flesh
+        SetDefaultOnTheFly(139843)	-- Arctic Freeze
+        SetDefaultOnTheFly(139840)	-- Rot Armor
+        SetDefaultOnTheFly(134391)	-- Cinder
+        SetDefaultOnTheFly(139857)	-- Torrent of Ice
+        SetDefaultOnTheFly(140179)	-- Suppression (Heroic)
+        -- Ji-Kun
+        SetDefaultOnTheFly(134366)	-- Talon Rake
+        SetDefaultOnTheFly(140092)	-- Infected Talons
+        SetDefaultOnTheFly(134256)	-- Slimed
+        -- Durumu the Forgotten
+        SetDefaultOnTheFly(133767)	-- Serious Wound
+        SetDefaultOnTheFly(133768)	-- Arterial Cut
+        SetDefaultOnTheFly(133798)	-- Life Drain
+        SetDefaultOnTheFly(133597)	-- Dark Parasite (Heroic)
+        -- Primordius
+        SetDefaultOnTheFly(136050)	-- Malformed Blood
+        SetDefaultOnTheFly(136228)	-- Volatile Pathogen
+        -- Dark Animus
+        SetDefaultOnTheFly(138569)	-- Explosive Slam
+        SetDefaultOnTheFly(138609)	-- Matter Swap
+        SetDefaultOnTheFly(138659)	-- Touch of the Animus
+        -- Iron Qon
+        SetDefaultOnTheFly(134691)	-- Impale
+        SetDefaultOnTheFly(136192)	-- Lightning Storm
+        SetDefaultOnTheFly(136193)	-- Arcing Lightning
+        -- Twin Consorts
+        SetDefaultOnTheFly(137440)	-- Icy Shadows
+        SetDefaultOnTheFly(137408)	-- Fan of Flames
+        SetDefaultOnTheFly(137360)	-- Corrupted Healing
+        SetDefaultOnTheFly(136722)	-- Slumber Spores
+        SetDefaultOnTheFly(137341)	-- Beast of Nightmares
+        -- Lei Shen
+        SetDefaultOnTheFly(135000)	-- Decapitate
+        SetDefaultOnTheFly(136478)	-- Fusion Slash
+        SetDefaultOnTheFly(136914)	-- Electrical Shock
+        SetDefaultOnTheFly(135695)	-- Static Shock
+        SetDefaultOnTheFly(136295)	-- Overcharged
+        SetDefaultOnTheFly(139011)	-- Helm of Command (Heroic)
+        -- Ra-den
+        SetDefaultOnTheFly(138297)	-- Unstable Vita
+        SetDefaultOnTheFly(138329)	-- Unleashed Anima
+        SetDefaultOnTheFly(138372)	-- Vita Sensitivity
+    -- Siege of Orgrimmar
+        -- Immerseus
+        SetDefaultOnTheFly(143436)	-- Corrosive Blast
+        SetDefaultOnTheFly(143579)	-- Sha Corruption(Heroic)
+        -- Fallen Protectors
+        SetDefaultOnTheFly(143434)	-- Shadow Word: Bane
+        SetDefaultOnTheFly(143198)	-- Garrote
+        SetDefaultOnTheFly(143840)	-- Mark of Anguish
+        SetDefaultOnTheFly(147383)	-- Debilitation
+        -- Norushen
+        SetDefaultOnTheFly(146124)	-- Self Doubt
+        SetDefaultOnTheFly(144851)	-- Test of Confidence
+        SetDefaultOnTheFly(144514)	-- Lingering Corruption
+        -- Sha of Pride
+        SetDefaultOnTheFly(144358)	-- Wounded Pride
+        SetDefaultOnTheFly(144774)	-- Reaching Attacks
+        SetDefaultOnTheFly(147207)	-- Weakened Resolve(Heroic)
+        SetDefaultOnTheFly(144351)	-- Mark of Arrogance
+        SetDefaultOnTheFly(146594)	-- Gift of the Titans
+        -- Galakras
+        SetDefaultOnTheFly(147029)	-- Flames of Galakrond
+        SetDefaultOnTheFly(146902)	-- Poison-Tipped Blades
+        -- Iron Juggernaut
+        SetDefaultOnTheFly(144467)	-- Ignite Armor
+        SetDefaultOnTheFly(144459)	-- Laser Burn
+        -- Kor'kron Dark Shaman
+        SetDefaultOnTheFly(144215)	-- Froststorm Strike
+        SetDefaultOnTheFly(143990)	-- Foul Geyser
+        SetDefaultOnTheFly(144330)	-- Iron Prison(Heroic)
+        SetDefaultOnTheFly(144089)	-- Toxic Mist
+        -- General Nazgrim
+        SetDefaultOnTheFly(143494)	-- Sundering Blow
+        SetDefaultOnTheFly(143638)	-- Bonecracker
+        SetDefaultOnTheFly(143431)	-- Magistrike
+        SetDefaultOnTheFly(143480)	-- Assassin's Mark
+        -- Malkorok
+        SetDefaultOnTheFly(142990)	-- Fatal Strike
+        SetDefaultOnTheFly(143919)	-- Languish(Heroic)
+        SetDefaultOnTheFly(142864)	-- Ancient Barrier
+        SetDefaultOnTheFly(142865)	-- Strong Ancient Barrier
+        SetDefaultOnTheFly(142913)	-- Displaced Energy
+        -- Spoils of Pandaria
+        SetDefaultOnTheFly(145218)	-- Harden Flesh
+        SetDefaultOnTheFly(146235)	-- Breath of Fire
+        -- Thok the Bloodthirsty
+        SetDefaultOnTheFly(143766)	-- Panic
+        SetDefaultOnTheFly(143773)	-- Freezing Breath
+        SetDefaultOnTheFly(146589)	-- Skeleton Key
+        SetDefaultOnTheFly(143777)	-- Frozen Solid
+        SetDefaultOnTheFly(143780)	-- Acid Breath
+        SetDefaultOnTheFly(143800)	-- Icy Blood
+        SetDefaultOnTheFly(143767)	-- Scorching Breath
+        SetDefaultOnTheFly(143791)	-- Corrosive Blood
+        -- Siegecrafter Blackfuse
+        SetDefaultOnTheFly(143385)	-- Electrostatic Charge
+        SetDefaultOnTheFly(144236)	-- Pattern Recognition
+        -- Paragons of the Klaxxi
+        SetDefaultOnTheFly(143974)	-- Shield Bash
+        SetDefaultOnTheFly(142315)	-- Caustic Blood
+        SetDefaultOnTheFly(143701)	-- Whirling
+        SetDefaultOnTheFly(142948)	-- Aim
+        -- Garrosh Hellscream
+        SetDefaultOnTheFly(145183)	-- Gripping Despair
+        SetDefaultOnTheFly(145195)	-- Empowered Gripping Despair
+        SetDefaultOnTheFly(145065)	-- Touch of Y'Shaarj
+        SetDefaultOnTheFly(145171)	-- Empowered Touch of Y'Shaarj
 elseif GW.Classic then
     -- Onyxia's Lair
         SetDefaultOnTheFly(18431) --Bellowing Roar

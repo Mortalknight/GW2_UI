@@ -117,6 +117,10 @@ local function takeOverBlizzardsGlypheFrame()
         GlyphFrame:Show()
     end)
 
+    GlyphFrame:HookScript("SetShown", function()
+        GlyphFrame:Show()
+    end)
+
     GlyphFrame.background:SetSize(650, 600)
     GlyphFrame.background:SetTexture()
 

@@ -54,7 +54,6 @@ GW.BAG_TYP_COLORS = {
     [0x0004] = {r = 0.251, g = 0.878, b = 0.816},--Soul          3
     [0x0020] = {r = 0.451, g = 1, b = 0},        --Herbs         6
     [0x0040] = {r = 1, g = 0, b = 1}             --Enchanting    7
-
 }
 
 GW.nameRoleIcon = {
@@ -620,13 +619,10 @@ elseif GW.Mists then --TODO
             [49016] = {0.17, 1.00, 0.45}, -- Unholy Frenzy
         },
         MONK = {
-            [115175] = { 0.6, 0.9, 0.9 },   -- Soothing Mist
-            [119611] = { 0.3, 0.8, 0.6 },   -- Renewing Mist
+            [119611] = { 0.8, 0.4, 0.8 },   -- Renewing Mist
             [116849] = { 0.2, 0.8, 0.2 },   -- Life Cocoon
-            [124682] = { 0.8, 0.8, 0.25 },  -- Enveloping Mist
-            [191840] = { 0.27, 0.62, 0.7 }, -- Essence Font
-            [116841] = { 0.12, 1.00, 0.53 }, -- Tiger's Lust (Freedom)
-            [325209] = { 0.3, 0.8, 0.6 },   -- Enveloping Breath
+            [124081] = { 0.7, 0.4, 0 },  -- Zen Sphere
+            [132120] = { 0.4, 0.8, 0.2 }, -- Enveloping Mist
         },
     }
 end
@@ -992,5 +988,11 @@ GW.AuraChannelTicks = {
 
 -- Spells Effected By Haste, value is Base Tick Size
 GW.HastedChannelTicks = {
-    -- [spellID] = 1, -- SpellName
+    -- Warlock
+    [1120]	= true, -- Drain Soul
+    [689]	= true, -- Drain Life
+    [5740]	= true, -- Rain of Fire
+    [755]	= true, -- Health Funnel
+    [79268]	= true, -- Soul Harvest
+    [1949]	= true, -- Hellfire
 }

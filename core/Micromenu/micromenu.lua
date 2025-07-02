@@ -763,7 +763,10 @@ local function setupMicroButtons(mbf)
         EJMicroButton:ClearAllPoints()
         EJMicroButton:SetPoint("BOTTOMLEFT", LFGMicroButton, "BOTTOMRIGHT", 4, 0)
 
-        pref = EJMicroButton
+        StoreMicroButton:ClearAllPoints()
+        StoreMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
+
+        pref = StoreMicroButton
     else
          -- WorldMapMicroButton
         WorldMapMicroButton:ClearAllPoints()
@@ -790,10 +793,8 @@ local function setupMicroButtons(mbf)
     HelpMicroButton:SetPoint("BOTTOMLEFT", MainMenuMicroButton, "BOTTOMRIGHT", 4, 0)
 
     if GW.Retail then
-        -- StoreMicroButton
         StoreMicroButton:ClearAllPoints()
         StoreMicroButton:SetPoint("BOTTOMLEFT", HelpMicroButton, "BOTTOMRIGHT", 4, 0)
-
         -- great vault icom
         local greatVaultIcon = CreateFrame("Button", "Gw2GreateVaultMicroMenuButton", mbf, "MainMenuBarMicroButton")
         greatVaultIcon.newbieText = nil
@@ -1009,6 +1010,9 @@ local function hook_UpdateMicroButtons()
         if not InCombatLockdown() then
             AchievementMicroButton:ClearAllPoints()
             AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)
+
+            MainMenuMicroButton:ClearAllPoints()
+            MainMenuMicroButton:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
         end
     end
 end
