@@ -1,7 +1,6 @@
 local _, GW = ...
 local openSpec = 1 -- Can be 1 or 2
 local isPetTalents = false
-local talentContainer
 
 local maxTalentRows = 6
 local talentsPerRow = 3
@@ -134,16 +133,16 @@ local function GetSpellPreviewButton(self, index)
     return spellButton
 end
 
-local function UpdateClearInfo()
+local function UpdateClearInfo(self)
     local name, count, texture = GetTalentClearInfo()
     if name then
-        talentContainer.topBar.clearInfo:SetText(format("|T%s:12:12|t%s %s", texture, count, name))
+        self.topBar.clearInfo:SetText(format("|T%s:12:12|t%s %s", texture, count, name))
     end
 end
 
-local function UpdateTrees()
+local function UpdateTrees(self)
     for i = 1, GetNumSpecializations(false, isPetTalents) do
-        local container = _G["GwSpecFrame" .. i]
+        local container = self.specs[i]
 
         local id, name, description, icon, role = C_SpecializationInfo.GetSpecializationInfo(i, false, isPetTalents, nil, GW.mysex)
 
@@ -224,11 +223,11 @@ local function updateActiveSpec(self)
     local spec = C_SpecializationInfo.GetSpecialization(false, isPetTalents, openSpec)
     local isCurrentSpec = openSpec == C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents)
 
-    talentContainer.topBar.activateSpecGroup:SetShown(not isCurrentSpec and not isPetTalents)
-    talentContainer.topBar.activeSpecIndicator:SetShown(isCurrentSpec and not isPetTalents)
+    self.topBar.activateSpecGroup:SetShown(not isCurrentSpec and not isPetTalents)
+    self.topBar.activeSpecIndicator:SetShown(isCurrentSpec and not isPetTalents)
 
-    UpdateTrees()
-    UpdateClearInfo()
+    UpdateTrees(self)
+    UpdateClearInfo(self)
 
     for i = 1, GetNumSpecializations(false, isPetTalents) do
         local container = self.specs[i]
@@ -370,8 +369,7 @@ end
 local function LoadTalents()
     TalentFrame_LoadUI()
     local talentWindow = CreateFrame("Frame", "GwTalentFrame", GwCharacterWindow, "GwCharacterTabContainer")
-
-    talentContainer = CreateFrame('Frame', 'GwTalentSpecFrame', talentWindow, 'SecureHandlerStateTemplate,GwTalentFrame')
+    local talentContainer = CreateFrame('Frame', 'GwTalentSpecFrame', talentWindow, 'SecureHandlerStateTemplate,GwTalentFrame')
 
     talentContainer.title:SetFont(DAMAGE_TEXT_FONT, 14)
     talentContainer.title:SetTextColor(1, 1, 1, 1)
@@ -481,6 +479,7 @@ local function LoadTalents()
             local line = CreateFrame("Frame", nil, container, "GwTalentLine")
             line:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (88)), -10)
             tinsert(container.lines, line)
+            container.talentButtons[row] = {}
             container.talentButtons[row].buttons = {}
 
             for index = 1, talentsPerRow do
@@ -550,7 +549,7 @@ local function LoadTalents()
             talentContainer.fmMenu.items.spec2:SetText(activeTalentGroup == 2 and SPECIALIZATION_SECONDARY_ACTIVE or SPECIALIZATION_SECONDARY)
             updateActiveSpec(talentContainer)
         elseif event == "BAG_UPDATE_DELAYED" then
-            UpdateClearInfo()
+            UpdateClearInfo(talentContainer)
         else
             updateActiveSpec(talentContainer)
         end
