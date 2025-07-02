@@ -374,7 +374,7 @@ local function LoadMinimap()
     GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
     GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
 
-    GwMiniMapTrackingFrame = CreateFrame("DropdownButton", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
+    GwMiniMapTrackingFrame = CreateFrame("DropdownButton", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrameDropDownTemplate")
     GwMiniMapTrackingFrame:OnLoad()
     GwMiniMapTrackingFrame:Show()
     local icontype = MiniMapTrackingIcon:GetTexture() or 136025
@@ -439,8 +439,6 @@ local function LoadMinimap()
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
     MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
-    --MiniMapLFGFrame:ClearAllPoints()
-    --MiniMapLFGFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
 
     MinimapZoneText:SetTextColor(1, 1, 1)
 
@@ -469,12 +467,7 @@ local function LoadMinimap()
 
     GW.CreateMinimapButtonsSack()
 
-    hooksecurefunc(
-        Minimap,
-        "SetScale",
-        function()
-        end
-    )
+    hooksecurefunc(Minimap, "SetScale", function() end)
 
     Minimap:SetScale(1.2)
     MinimapZoneText:ClearAllPoints()

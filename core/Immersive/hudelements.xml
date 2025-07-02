@@ -151,6 +151,35 @@
         </Scripts>
     </Frame>
 
+    <DropdownButton name="GwMiniMapTrackingFrameDropDownTemplate" mixin="MiniMapTrackingButtonMixin" enableMouse="true" hidden="true" virtual="true">
+        <Size>
+            <AbsDimension x="30" y="30"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT">
+                <Offset>
+                    <AbsDimension x="-15" y="0"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\Textures\icons\track-icons-map">
+                    <Size>
+                        <AbsDimension x="30" y="30"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter method="OnEnter"/>
+			<OnLeave method="OnLeave"/>
+        </Scripts>
+    </DropdownButton>
+
     <Button name="GwMapTime" frameStrata="MEDIUM" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" frameLevel="2" virtual="true">
         <Size x="50" y="20"></Size>
         <Anchors>
