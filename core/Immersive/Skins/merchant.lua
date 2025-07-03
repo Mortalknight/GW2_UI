@@ -86,7 +86,51 @@ local function LoadMerchantFrameSkin()
     MerchantFramePortrait:Hide()
 
     hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
-        SetPortraitTexture(MerchantFrame.gwHeader.windowIcon, "NPC");
+        SetPortraitTexture(MerchantFrame.gwHeader.windowIcon, "NPC")
+        if GW.Mists then
+            local numMerchantItems = GetMerchantNumItems()
+            local index = (MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE
+            for i = 1, MERCHANT_ITEMS_PER_PAGE do
+                index = index + 1
+
+                if index <= numMerchantItems then
+                    local button = _G["MerchantItem" .. i .. "ItemButton"]
+                    local name = _G["MerchantItem" .. i .. "Name"]
+
+                    if button.link then
+                        local quality = C_Item.GetItemQualityByID(button.link)
+                        if quality and quality > 1 then
+                            local r, g, b = C_Item.GetItemQualityColor(quality)
+                            button.icon.backdrop:SetBackdropBorderColor(r, g, b)
+                            name:SetTextColor(r, g, b)
+                        else
+                            button.icon.backdrop:SetBackdropBorderColor(1, 1, 1)
+                            name:SetTextColor(1, 1, 1)
+                        end
+                    else
+                        button.icon.backdrop:SetBackdropBorderColor(1, 1, 1)
+                        name:SetTextColor(1, 1, 1)
+                    end
+                end
+
+                local itemName = GetBuybackItemInfo(GetNumBuybackItems())
+                if itemName then
+                    local quality = C_Item.GetItemQualityByID(itemName)
+                    if quality and quality > 1 then
+                        local r, g, b = C_Item.GetItemQualityColor(quality)
+                        MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(r, g, b)
+                        MerchantBuyBackItemName:SetTextColor(r, g, b)
+                    else
+                        MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(1, 1, 1)
+                        MerchantBuyBackItemName:SetTextColor(1, 1, 1)
+                    end
+                else
+                    MerchantBuyBackItemItemButtonIconTexture.backdrop:SetBackdropBorderColor(1, 1, 1)
+                end
+            end
+
+            MerchantRepairText:SetPoint('BOTTOMLEFT', 14, 69)
+        end
     end)
 
     hooksecurefunc(MerchantFrame, "SetWidth", function()
@@ -162,6 +206,11 @@ local function LoadMerchantFrameSkin()
     MerchantBuyBackItemItemButtonIconTexture:ClearAllPoints()
     MerchantBuyBackItemItemButtonIconTexture:SetPoint("TOPLEFT", 1, -1)
     MerchantBuyBackItemItemButtonIconTexture:SetPoint("BOTTOMRIGHT", -1, 1)
+
+    if GW.Mists then
+        GW.HandleIcon(MerchantBuyBackItemItemButtonIconTexture, true, GW.BackdropTemplates.ColorableBorderOnly)
+        GW.HandleIconBorder(MerchantBuyBackItemItemButton.IconBorder, MerchantBuyBackItemItemButtonIconTexture.backdrop)
+    end
 
     MerchantRepairItemButton:GwSkinButton(false, false, true)
     MerchantGuildBankRepairButton:GetRegions():GwSetInside()
