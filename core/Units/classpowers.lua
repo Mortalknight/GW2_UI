@@ -1648,16 +1648,14 @@ local function powerChi(self, event, ...)
 end
 GW.AddForProfiling("classpowers", "powerChi", powerChi)
 
-local function ironSkin_OnUpdate()
-    local f = CPWR_FRAME
-    local fb = f.brewmaster
-    local precentage = math.min(1, math.max(0, (fb.ironskin.expires - GetTime()) / 23))
-    fb.ironskin.ironartwork:SetAlpha(precentage)
-    fb.ironskin.fill:SetTexCoord(0, precentage, 0, 1)
-    fb.ironskin.fill:SetWidth(precentage * 256)
+local function ironSkin_OnUpdate(self)
+    local precentage = math.min(1, math.max(0, (self.expires - GetTime()) / 23))
+    self.ironartwork:SetAlpha(precentage)
+    self.fill:SetTexCoord(0, precentage, 0, 1)
+    self.fill:SetWidth(precentage * 256)
 
-    fb.ironskin.indicator:SetPoint("LEFT", math.min(252, (precentage * 256)) - 13, 19)
-    fb.ironskin.indicatorText:SetText(RoundInt(fb.ironskin.expires - GetTime()) .. "s")
+    self.indicator:SetPoint("LEFT", math.min(252, (precentage * 256)) - 13, 19)
+    self.indicatorText:SetText(RoundInt(self.expires - GetTime()) .. "s")
 end
 GW.AddForProfiling("classpowers", "ironSkin_OnUpdate", ironSkin_OnUpdate)
 
@@ -1666,19 +1664,27 @@ local function powerStagger(self, event, ...)
     local fb = self.brewmaster
     if event == nil then
         fb.ironskin:Hide()
-        fb.stagger.ironartwork:Hide()
+        fb.ironskin.ironartwork:Hide()
+        if fb.ironskin.ticker then
+            fb.ironskin.ticker:Cancel()
+        end
     end
 
     if unit == "player" and event == "UNIT_AURA" then
         local _, _, duration, expires = findBuff("player", GW.Mists and 115307 or 215479)
 
-        if expires ~= nil then
+        if expires then
             fb.ironskin.expires = expires
-            fb.ironskin:SetScript("OnUpdate", ironSkin_OnUpdate)
+            if fb.ironskin.ticker then
+                fb.ironskin.ticker:Cancel()
+            end
+            fb.ironskin.ticker = C_Timer.NewTicker(0.01, function() ironSkin_OnUpdate(fb.ironskin) end )
             fb.ironskin:Show()
             fb.ironskin.ironartwork:Show()
         else
-            fb.ironskin:SetScript("OnUpdate", nil)
+            if fb.ironskin.ticker then
+                fb.ironskin.ticker:Cancel()
+            end
             fb.ironskin:Hide()
             fb.ironskin.ironartwork:Hide()
         end
@@ -1732,8 +1738,11 @@ local function setMonk(f)
             f.background:SetTexture(nil)
             f.fill:SetTexture(nil)
             setPowerTypeStagger(f.customResourceBar)
-            f.customResourceBar:Show()
             f.brewmaster:Show()
+            f.customResourceBar:Show()
+            f.customResourceBar:SetWidth(312)
+            f.customResourceBar:ClearAllPoints()
+            f.customResourceBar:SetPoint("LEFT", f.gwMover, 0, -5)
 
             f:SetScript("OnEvent", powerStagger)
             powerStagger(f, "CLASS_POWER_INIT")
