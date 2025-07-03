@@ -378,35 +378,35 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="runeTex1" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                        <Texture parentKey="shardBg1" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
                             <TexCoords left="0.5" right="1" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex2" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                        <Texture parentKey="shardBg2" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
                             <TexCoords left="0.5" right="1" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex3" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                        <Texture parentKey="shardBg3" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
                             <TexCoords left="0.5" right="1" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex4" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                        <Texture parentKey="shardBg4" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
                             <TexCoords left="0.5" right="1" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex5" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                        <Texture parentKey="shardBg5" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
                           <TexCoords left="0.5" right="1" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
@@ -422,28 +422,28 @@
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shard2" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                        <Texture parentKey="shard2" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
                             <TexCoords left="0" right="0.5" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shard3" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                        <Texture parentKey="shard3" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
                             <TexCoords left="0" right="0.5" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shard4" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                        <Texture parentKey="shard4" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
                             <TexCoords left="0" right="0.5" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shard5" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard">
+                        <Texture parentKey="shard5" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
                             <TexCoords left="0" right="0.5" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>

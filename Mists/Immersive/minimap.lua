@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local RoundDec = GW.RoundDec
 local trackingTypes = GW.trackingTypes
 
 local MAP_FRAMES_HIDE = {}

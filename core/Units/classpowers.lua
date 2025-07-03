@@ -151,11 +151,13 @@ local function updateTextureBasedOnCondition(self)
                 self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard-green")
             end
         else
-            self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare")
-            self.warlock.shardFragment.barFill:SetTexture(
-                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill")
+            local tex1 = GW.Retail and "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare" or "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare"
+            local tex2 = GW.Retail and "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill" or "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill"
+            local tex3 = GW.Retail and "Interface/AddOns/GW2_UI/textures/altpower/soulshard" or "Interface/AddOns/GW2_UI/textures/altpower/soulshard"
+            self.warlock.shardFlare:SetTexture(tex1)
+            self.warlock.shardFragment.barFill:SetTexture(tex2)
             for i = 1, 5 do
-                self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard")
+                self.warlock["shard" .. i]:SetTexture(tex3)
             end
         end
     end
@@ -1477,50 +1479,47 @@ local function powerSoulshard(self, event, ...)
     end
 
     local pType = select(2, ...)
-    if event ~= "CLASS_POWER_INIT" and pType ~= "SOUL_SHARDS" then
+    if event ~= "CLASS_POWER_INIT" and (pType ~= "SOUL_SHARDS" and pType ~= "BURNING_EMBERS") then
         return
     end
-
-    local pwrMax = UnitPowerMax("player", 7)
-    local pwr = UnitPower("player", 7)
+    local powerType = self.warlock.powerType
+    local pwrMax = UnitPowerMax("player", powerType)
+    local pwr = UnitPower("player", powerType)
     local old_power = self.gwPower
     self.gwPower = pwr
 
     for i = 1, pwrMax do
+        self.warlock["shardBg" .. i]:Show()
         if pwr >= i then
             self.warlock["shard" .. i]:Show()
-            if GW.Retail then
-                self.warlock.shardFlare:ClearAllPoints()
-                self.warlock.shardFlare:SetPoint("CENTER", self.warlock["shard" .. i], "CENTER", 0, 0)
-                if pwr > old_power then
-                    self.warlock.shardFlare:Show()
-                    GW.AddToAnimation(
-                        "WARLOCK_SHARD_FLARE",
-                        0,
-                        5,
-                        GetTime(),
-                        0.7,
-                        function(p)
-                            p = GW.RoundInt(p)
-                            self.warlock.shardFlare:SetTexCoord(GW.getSpriteByIndex(self.warlock.flareMap, p))
-                        end,
-                        nil,
-                        function()
-                            self.warlock.shardFlare:Hide()
-                        end
-                    )
-                end
-            else
-                self.warlock.shardFlare:Hide()
+            self.warlock.shardFlare:ClearAllPoints()
+            self.warlock.shardFlare:SetPoint("CENTER", self.warlock["shard" .. i], "CENTER", 0, 0)
+            if pwr > old_power then
+                self.warlock.shardFlare:Show()
+                GW.AddToAnimation(
+                    "WARLOCK_SHARD_FLARE",
+                    0,
+                    5,
+                    GetTime(),
+                    0.7,
+                    function(p)
+                        p = GW.RoundInt(p)
+                        self.warlock.shardFlare:SetTexCoord(GW.getSpriteByIndex(self.warlock.flareMap, p))
+                    end,
+                    nil,
+                    function()
+                        self.warlock.shardFlare:Hide()
+                    end
+                )
             end
         else
             self.warlock["shard" .. i]:Hide()
         end
     end
 
-    if GW.Retail and GW.myspec == 3 then -- Destruction
-        local shardPower = UnitPower("player", Enum.PowerType.SoulShards, true)
-        local shardModifier = UnitPowerDisplayMod(Enum.PowerType.SoulShards)
+    if GW.myspec == 3 then -- Destruction
+        local shardPower = UnitPower("player", powerType, true)
+        local shardModifier = UnitPowerDisplayMod(powerType)
         shardPower = (shardModifier ~= 0) and (shardPower / shardModifier) or 0
         shardPower = Saturate(shardPower - pwr)
         if shardPower == 0 then shardPower = 0.00000000000001 end
@@ -1551,12 +1550,28 @@ local function powerSoulshard(self, event, ...)
 end
 GW.AddForProfiling("classpowers", "powerSoulshard", powerSoulshard)
 
+local function powerDemonicFury(self, event, ...)
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "DEMONIC_FURY" then
+        return
+    end
+
+    local power = UnitPower("player", Enum.PowerType.DemonicFury)
+	local maxPower = UnitPowerMax("player", Enum.PowerType.DemonicFury)
+    local percent = power / maxPower
+    if event == "CLASS_POWER_INIT" then
+        self.customResourceBar:ForceFillAmount(percent)
+    else
+        self.customResourceBar:SetFillAmount(percent)
+    end
+end
+
 local function setWarlock(f)
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
     f:SetHeight(32)
     f.warlock:Show()
-    if GW.Retail and GW.myspec == 3 then -- Destruction
+    if GW.myspec == 3 then -- Destruction
         f.warlock.shardFragment.amount = -1
         f.warlock.shardFragment:Show()
         local flarAnimationMap = {
@@ -1569,13 +1584,40 @@ local function setWarlock(f)
     else
         f.warlock.shardFragment:Hide()
     end
-    f:SetScript("OnEvent", powerSoulshard)
-    powerSoulshard(f, "CLASS_POWER_INIT")
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+    if GW.Mists then
+        f:RegisterEvent("UNIT_DISPLAYPOWER")
+    end
     -- Register "LEARNED_SPELL_IN_TAB" so we can check for the green fire spell and check an login
     f:RegisterEvent("LEARNED_SPELL_IN_TAB")
     updateTextureBasedOnCondition(f)
+
+    if GW.Retail then
+        f.warlock.powerType = Enum.PowerType.SoulShards
+        f:SetScript("OnEvent", powerSoulshard)
+        powerSoulshard(f, "CLASS_POWER_INIT")
+    elseif GW.Mists then
+        if GW.myspec == 1 then
+            f.warlock.powerType = Enum.PowerType.SoulShards
+            f:SetScript("OnEvent", powerSoulshard)
+            powerSoulshard(f, "CLASS_POWER_INIT")
+        elseif GW.myspec == 2 then
+            f.warlock:Hide()
+            setPowerTypeMeta(f.customResourceBar)
+            f.customResourceBar:Show()
+            f.customResourceBar:SetWidth(312)
+            f.customResourceBar:ClearAllPoints()
+            f.customResourceBar:SetPoint("LEFT", f.gwMover, 0, -5)
+
+            f:SetScript("OnEvent", powerDemonicFury)
+            powerDemonicFury(f, "CLASS_POWER_INIT")
+        elseif GW.myspec == 3 then
+            f.warlock.powerType = Enum.PowerType.BurningEmbers
+            f:SetScript("OnEvent", powerSoulshard)
+            powerSoulshard(f, "CLASS_POWER_INIT")
+        end
+    end
 
     return true
 end
