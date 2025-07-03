@@ -469,8 +469,9 @@ local function LoadTalents()
         container:SetScript("OnShow", fnContainer_OnShow)
         container:SetScript("OnHide", fnContainer_OnHide)
         container:SetScript("OnClick", fnContainer_OnClick)
+        container.icon:SetScript("OnClick", function() fnContainer_OnClick(container) end)
         container.icon:SetScript("OnEnter", SpecIconOnEnter)
-        container:SetScript("OnLeave", GameTooltip_Hide)
+        container.icon:SetScript("OnLeave", GameTooltip_Hide)
         container:SetPoint("TOPLEFT", talentContainer, "TOPLEFT", 10, (-140 * i) + 60)
 
         container.spec = i
