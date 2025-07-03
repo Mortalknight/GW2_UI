@@ -1,3 +1,7 @@
+8.1.2
+FIXES
+    - More Mists adjustments
+
 8.1.1
 FIXES
     - More Mists adjustments
