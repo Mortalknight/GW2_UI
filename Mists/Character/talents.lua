@@ -168,7 +168,7 @@ local function UpdateTrees(self, currentSpec)
             container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 17, -10)
         end
 
-        container.icon:SetTexture(icon)
+        container.icon.texture:SetTexture(icon)
         container.info.specTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
         container.info.specTitle:SetTextColor(1, 1, 1, 1)
         container.info.specTitle:SetShadowColor(0, 0, 0, 1)
@@ -179,6 +179,7 @@ local function UpdateTrees(self, currentSpec)
         container.info.specDesc:SetShadowOffset(1, -1)
         container.info.specTitle:SetText(name)
         container.info.specDesc:SetText(description)
+        container.tooltip = description
 
         -- spell icons
         for idx = 1, #container.spellPreviewButton do
@@ -256,11 +257,11 @@ local function updateActiveSpec(self)
             container.active = true
             container.info:Hide()
             container.background:SetDesaturated(false)
-            container.icon:SetDesaturated(false)
+            container.icon.texture:SetDesaturated(false)
         else
             container.active = false
             container.info:Show()
-            container.icon:SetDesaturated(true)
+            container.icon.texture:SetDesaturated(true)
             container.background:SetDesaturated(true)
         end
         if isPetTalents then
@@ -387,6 +388,16 @@ local function updateActiveSpec(self)
     end
 end
 
+local function SpecIconOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOP")
+    GameTooltip:AddLine(self:GetParent().tooltip, 1, 1, 1)
+    if not self:GetParent().active and not isPetTalents  then
+        GameTooltip:AddLine(TALENT_SPEC_CHANGE_AT_CLASS_TRAINER, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
+    end
+    GameTooltip:SetMinimumWidth(300)
+    GameTooltip:Show()
+end
+
 local function LoadTalents()
     TalentFrame_LoadUI()
     local talentWindow = CreateFrame("Frame", "GwTalentFrame", GwCharacterWindow, "GwCharacterTabContainer")
@@ -451,13 +462,15 @@ local function LoadTalents()
         mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
         mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         mask:SetSize(80, 80)
-        container.icon:AddMaskTexture(mask)
+        container.icon.texture:AddMaskTexture(mask)
         container:SetScript("OnEnter", nil)
         container:SetScript("OnLeave", nil)
         container:SetScript("OnUpdate", nil)
         container:SetScript("OnShow", fnContainer_OnShow)
         container:SetScript("OnHide", fnContainer_OnHide)
         container:SetScript("OnClick", fnContainer_OnClick)
+        container.icon:SetScript("OnEnter", SpecIconOnEnter)
+        container:SetScript("OnLeave", GameTooltip_Hide)
         container:SetPoint("TOPLEFT", talentContainer, "TOPLEFT", 10, (-140 * i) + 60)
 
         container.spec = i

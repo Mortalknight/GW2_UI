@@ -96,15 +96,6 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
-                    <Size x="80" y="80"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="20" y="0"></Anchor>
-                    </Anchors>
-                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-                </Texture>
-            </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
                 <Texture parentKey="roleIcon">
                     <Size x="25" y="25"></Size>
@@ -158,6 +149,23 @@
                                 <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                             </Anchors>
                         </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame parentKey="icon">
+                <Size x="80" y="80"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="20" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                            <Size x="80" y="80"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                        </Texture>
                     </Layer>
                 </Layers>
             </Frame>
