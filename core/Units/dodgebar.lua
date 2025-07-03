@@ -26,6 +26,16 @@ if GW.Retail then
     DODGEBAR_SPELLS["DEMONHUNTER"] = "[spec:1] 195072; [spec:2] 189110; 344865" -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
     DODGEBAR_SPELLS_ATTR["DEMONHUNTER"] = "[spec:1] 343017,320416,344865; [spec:2] 189110; 344865" -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
     DODGEBAR_SPELLS["EVOKER"] = "358267"
+elseif GW.Mists then
+    DODGEBAR_SPELLS["ROGUE"] = "2983" -- Sprint
+    DODGEBAR_SPELLS["WARRIOR"] = "100" -- Charge
+    DODGEBAR_SPELLS["HUNTER"] = "781" -- Disengage
+    DODGEBAR_SPELLS["MAGE"] = "1953" -- Shimmer if talented, else Blink
+    DODGEBAR_SPELLS["MONK"] = "[known:115008]115008; 109132" -- Chi Torpedo if talented, else Roll
+    DODGEBAR_SPELLS["WARLOCK"] = "48020" -- Demonic Circle: Teleport; TODO disable when Demonic Circle buff not active
+    DODGEBAR_SPELLS["DRUID"] = "9821"
+    DODGEBAR_SPELLS["DEATHKNIGHT"] = "444347,48265" -- Death's Advance
+    DODGEBAR_SPELLS["SHAMAN"] = "[spec:2] 58875,2645" -- Spirit Walk if Enhance
 elseif GW.Classic then
     DODGEBAR_SPELLS["WARRIOR"] = "100" -- Charge
     DODGEBAR_SPELLS["HUNTER"] = "781" -- Disengage
