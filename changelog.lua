@@ -16,7 +16,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("8.1.3",{
-    {ct.bug, [=[ix issue with 8.1.2]=]},
+    {ct.bug, [=[Fix issue with 8.1.2]=]},
 })
 
 addChange("8.1.2",{
