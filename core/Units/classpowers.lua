@@ -1810,6 +1810,9 @@ local function setDruid(f)
             end
         end
     elseif GW.Mists then
+        if GW.myspec == 1 and form == nil then
+            barType = "eclips"
+        end
         if form == CAT_FORM then -- cat
             barType = "combo|little_mana"
         elseif form == BEAR_FORM or form == 8 then --bear
@@ -1842,6 +1845,7 @@ local function setDruid(f)
         return true
     elseif barType == "eclips" then
         setEclips(f)
+        return true
     else
         return false
     end
@@ -1890,6 +1894,7 @@ local function selectType(f)
     f.warlock:Hide()
     f.combopoints:Hide()
     f.evoker:Hide()
+    f.eclips:Hide()
 
     if GW.settings.POWERBAR_ENABLED then
         f.lmb:Hide()
