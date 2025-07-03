@@ -1606,48 +1606,11 @@ local function powerChi(self, event, ...)
 end
 GW.AddForProfiling("classpowers", "powerChi", powerChi)
 
-local function loopStagger()
-    local f = CPWR_FRAME
-    local fb = f.brewmaster
-    local staggerAmountClamped = math.min(1, fb.debugpre)
-    local alpha = math.min(1, math.max(0, lerp(0, 1, staggerAmountClamped / 0.5)))
-
-    if fb.debugpre == 0 then
-        fb.stagger.blue:Hide()
-        fb.stagger.yellow:Hide()
-        fb.stagger.red:Hide()
-        fb.stagger.indicator:Hide()
-        fb.stagger.indicatorText:Hide()
-    elseif not fb.stagger.blue:IsShown() then
-        fb.stagger.blue:Show()
-        fb.stagger.yellow:Show()
-        fb.stagger.red:Show()
-        fb.stagger.indicator:Show()
-        fb.stagger.indicatorText:Show()
-    end
-
-    fb.stagger.blue:SetVertexColor(1, 1, 1, 1)
-    fb.stagger.yellow:SetVertexColor(1, 1, 1, alpha)
-    fb.stagger.red:SetVertexColor(1, 1, 1, alpha)
-
-    fb.stagger.blue:SetTexCoord(0, staggerAmountClamped, 0, 1)
-    fb.stagger.yellow:SetTexCoord(0, staggerAmountClamped, 0, 1)
-    fb.stagger.red:SetTexCoord(0, staggerAmountClamped, 0, 1)
-
-    fb.stagger.blue:SetWidth(staggerAmountClamped * 256)
-    fb.stagger.yellow:SetWidth(staggerAmountClamped * 256)
-    fb.stagger.red:SetWidth(staggerAmountClamped * 256)
-
-    fb.stagger.indicator:SetPoint("LEFT", (staggerAmountClamped * 256) - 13, -6)
-    fb.stagger.indicatorText:SetText(math.floor(fb.debugpre * 100) .. "%")
-end
-GW.AddForProfiling("classpowers", "loopStagger", loopStagger)
-
 local function ironSkin_OnUpdate()
     local f = CPWR_FRAME
     local fb = f.brewmaster
     local precentage = math.min(1, math.max(0, (fb.ironskin.expires - GetTime()) / 23))
-    fb.stagger.ironartwork:SetAlpha(precentage)
+    fb.ironskin.ironartwork:SetAlpha(precentage)
     fb.ironskin.fill:SetTexCoord(0, precentage, 0, 1)
     fb.ironskin.fill:SetWidth(precentage * 256)
 
@@ -1660,28 +1623,26 @@ local function powerStagger(self, event, ...)
     local unit = select(1, ...)
     local fb = self.brewmaster
     if event == nil then
-        fb.debugpre = 0
-        --   loopStagger()
         fb.ironskin:Hide()
         fb.stagger.ironartwork:Hide()
     end
 
     if unit == "player" and event == "UNIT_AURA" then
-        local _, _, _, expires = findBuff("player", 215479)
+        local _, _, duration, expires = findBuff("player", GW.Mists and 115307 or 215479)
 
         if expires ~= nil then
             fb.ironskin.expires = expires
             fb.ironskin:SetScript("OnUpdate", ironSkin_OnUpdate)
             fb.ironskin:Show()
-            fb.stagger.ironartwork:Show()
+            fb.ironskin.ironartwork:Show()
         else
             fb.ironskin:SetScript("OnUpdate", nil)
             fb.ironskin:Hide()
-            fb.stagger.ironartwork:Hide()
+            fb.ironskin.ironartwork:Hide()
         end
 
         --This can be optimized by checking aura payload for changes rather then scaning auras
-        local _, _, duration, expires = findBuff("player", 124275)   -- light stagger
+        _, _, duration, expires = findBuff("player", 124275)   -- light stagger
         if duration == nil then
             _, _, duration, expires = findBuff("player", 124274)     -- medium stagger
             if duration == nil then
@@ -1689,48 +1650,56 @@ local function powerStagger(self, event, ...)
             end
         end
 
-
-
-
-        if duration ~= nil then
+        if duration then
             local remainingPrecantage = (expires - GetTime()) / duration
             local remainingTime = duration * remainingPrecantage
-
 
             local pwrMax = UnitHealthMax("player")
             local pwr = UnitStagger("player")
 
-            --   CLASS_POWER =  168000
             local staggarPrec = pwr / pwrMax
 
             staggarPrec = math.max(0, math.min(staggarPrec, 1))
             self.customResourceBar:SetCustomAnimation(staggarPrec, 0, remainingTime)
-            -- end
         end
     end
-
-
-
-    fb.debugpre = staggarPrec
-    -- loopStagger()
 end
 GW.AddForProfiling("classpowers", "powerStagger", powerStagger)
 
 local function setMonk(f)
     if GW.myspec == 1 then -- brewmaster
-        f.background:SetTexture(nil)
-        f.fill:SetTexture(nil)
-        setPowerTypeStagger(f.customResourceBar)
-        f.customResourceBar:Show()
-        --f:ClearAllPoints()
-        --f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -15)
+        if GW.Mists then
+            f:ClearAllPoints()
+            f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
+            f:SetHeight(32)
+            f:SetWidth(256)
+            f.background:SetHeight(32)
+            f.background:SetWidth(320)
+            f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi")
+            f.background:SetTexCoord(0, 1, 0.5, 1)
+            f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi-flare")
+            f.fill:SetHeight(32)
+            f.fill:SetWidth(256)
+            f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi")
 
-        f:SetScript("OnEvent", powerStagger)
-        powerStagger(f, "CLASS_POWER_INIT")
+            f:SetScript("OnEvent", powerChi)
+            powerChi(f, "CLASS_POWER_INIT")
+            f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+            f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+        else
+            f.background:SetTexture(nil)
+            f.fill:SetTexture(nil)
+            setPowerTypeStagger(f.customResourceBar)
+            f.customResourceBar:Show()
+            f.brewmaster:Show()
 
-        f:RegisterUnitEvent("UNIT_AURA", "player")
-        f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-        f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+            f:SetScript("OnEvent", powerStagger)
+            powerStagger(f, "CLASS_POWER_INIT")
+
+            f:RegisterUnitEvent("UNIT_AURA", "player")
+            f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+            f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+        end
 
         return true
     elseif GW.myspec == 3 or (GW.myspec == 2 and GW.Mists) then -- ww
@@ -1872,7 +1841,6 @@ local function selectType(f)
     f.priest:Hide()
     f.paladin:Hide()
     f.brewmaster:Hide()
-    f.staggerBar:Hide()
     f.disc:Hide()
     f.decay:Hide()
     f.exbar:Hide()
@@ -1992,9 +1960,6 @@ GW.UpdateClassPowerExtraManabar = UpdateExtraManabar
 
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
-    GW.AddStatusbarAnimation(cpf.staggerBar.ironskin, false)
-    cpf.staggerBar.ironskin.customMaskSize = 64
-    cpf.staggerBar.ironskin.customMaskSize = 64
 
     cpf.customResourceBar = GW.CreateAnimatedStatusBar("GwCustomResourceBar", cpf, "GwStatusPowerBar", true)
     cpf.customResourceBar.customMaskSize = 64
@@ -2115,16 +2080,8 @@ local function LoadClassPowers()
 
     -- set a bunch of other init styling stuff
     cpf.decayCounter.count:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 6)
-    cpf.brewmaster.debugpre = 0
-    cpf.brewmaster.stagger.indicatorText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     cpf.brewmaster.ironskin.indicatorText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     cpf.brewmaster.ironskin.expires = 0
-    cpf.staggerBar.value = 0
-    cpf.staggerBar.spark = cpf.staggerBar.bar.spark
-    cpf.staggerBar.texture1 = cpf.staggerBar.bar.texture1
-    cpf.staggerBar.texture2 = cpf.staggerBar.bar.texture2
-    cpf.staggerBar.fill = cpf.staggerBar.bar.fill
-    cpf.staggerBar.fill:SetVertexColor(59 / 255, 173 / 255, 231 / 255)
     cpf.disc.bar.overlay:SetModel(1372783)
     cpf.disc.bar.overlay:SetPosition(0, 0, 2)
     cpf.disc.bar.overlay:SetPosition(0, 0, 0)
