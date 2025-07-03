@@ -64,17 +64,17 @@ local function MinimapPostDrag(self)
 end
 
 local function lfgAnimPvPStop()
-    MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\LFDMicroButton-Down")
+    MiniMapBattlefieldFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\LFDMicroButton-Down")
     MiniMapBattlefieldFrame.animationCircle:Hide()
-    MiniMapBattlefieldIcon:SetTexCoord(unpack(GW.TexCoords))
+    MiniMapBattlefieldFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
 end
 GW.AddForProfiling("map", "lfgAnimPvPStop", lfgAnimPvPStop)
 
 local function lfgAnimPvP(elapse)
     if Minimap:IsShown() then
-        MiniMapBattlefieldIcon:SetAlpha(1)
+        MiniMapBattlefieldFrameIcon:SetAlpha(1)
     else
-        MiniMapBattlefieldIcon:SetAlpha(0)
+        MiniMapBattlefieldFrameIcon:SetAlpha(0)
         return
     end
     if GetBattlefieldStatus(1) == "active" then
@@ -85,15 +85,16 @@ local function lfgAnimPvP(elapse)
 
     local _, _, _, _, _, _, isRankedArena  = GetBattlefieldStatus(1)
     if isRankedArena then
-        MiniMapBattlefieldIcon:SetTexture("Interface\\PVPFrame\\PVP-ArenaPoints-Icon");
+        MiniMapBattlefieldFrameIconTexture:SetTexture("Interface\\PVPFrame\\PVP-ArenaPoints-Icon");
     elseif UnitFactionGroup("player") then
-        MiniMapBattlefieldIcon:SetTexture("Interface\\BattlefieldFrame\\Battleground-"..UnitFactionGroup("player"));
+        MiniMapBattlefieldFrameIconTexture:SetTexture("Interface\\BattlefieldFrame\\Battleground-" .. UnitFactionGroup("player"));
     end
 
     local rot = MiniMapBattlefieldFrame.animationCircle.background:GetRotation() + (1.5 * elapse)
 
     MiniMapBattlefieldFrame.animationCircle.background:SetRotation(rot)
-    MiniMapBattlefieldIcon:SetTexCoord(unpack(GW.TexCoords))
+    MiniMapBattlefieldFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
+    MiniMapBattlefieldFrameIcon:SetScript("OnUpdate", nil)
 end
 GW.AddForProfiling("map", "lfgAnimPvP", lfgAnimPvP)
 
@@ -347,22 +348,7 @@ local function LoadMinimap()
         lfgAnimPvPStop()
         hookedTimerFrame:SetScript("OnUpdate", nil)
     end)
---[[
-    hooksecurefunc("MiniMapBattlefieldFrame_isArena", function()
-        local _, _, _, _, _, _, isRankedArena  = GetBattlefieldStatus(1)
-        if isRankedArena then
-            MiniMapBattlefieldIcon:SetTexture("Interface\\PVPFrame\\PVP-ArenaPoints-Icon")
-            MiniMapBattlefieldIcon:ClearAllPoints()
-            MiniMapBattlefieldIcon:SetPoint("CENTER", MiniMapBattlefieldFrame, "CENTER", -1, 2)
-        elseif ( UnitFactionGroup("player") ) then
-            MiniMapBattlefieldIcon:SetTexture("Interface\\BattlefieldFrame\\Battleground-" .. UnitFactionGroup("player"))
-            MiniMapBattlefieldIcon:SetTexCoord(0, 1, 0, 1)
-            MiniMapBattlefieldIcon:SetSize(30, 30)
-            MiniMapBattlefieldIcon:ClearAllPoints()
-            MiniMapBattlefieldIcon:SetPoint("CENTER", MiniMapBattlefieldFrame, "CENTER", 0, 0);
-        end
-    end)
-    ]]
+
     MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
 
     Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
