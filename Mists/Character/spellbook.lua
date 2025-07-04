@@ -374,6 +374,7 @@ local function updateSpellbookTab(self)
     self.updating = true
     if InCombatLockdown() then
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
+        self.updating = false
         return
     end
 

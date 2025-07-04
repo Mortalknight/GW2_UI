@@ -1639,8 +1639,8 @@ local function powerChi(self, event, ...)
 
     self.gwPower = pwr
 
-    self.background:SetTexCoord(0, 1, 0.125 * (pwrMax + 1), 0.125 * (pwrMax + 2))
-    self.fill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
+    self.background:SetTexCoord(0, 1, 0.111 * (pwrMax + 2), 0.111 * (pwrMax + 3))
+    self.fill:SetTexCoord(0, 1, 0.111 * p, 0.111 * (p + 1))
 
     if old_power < pwr and event ~= "CLASS_POWER_INIT" then
         animFlare(self)
