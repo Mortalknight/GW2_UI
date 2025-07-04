@@ -1,27 +1,26 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwSpellbookActionBackground" virtual="true">
+    <Frame name="GwSpellbookActionButtonHeaderTemplate" virtual="true">
         <Size x="304" y="64"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
         </Anchors>
         <Layers>
-            <Layer level="BACKGROUND"/>
             <Layer level="BORDER">
                 <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
-                    <Size x="256" y="20"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-10"/>
                     </Anchors>
                 </FontString>
+                <FontString parentKey="subTitle" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.title" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+                    </Anchors>
+                    <Color r="0.5" g="0.5" b="0.5" a="1"/>
+                </FontString>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                self.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
-            </OnLoad>
-        </Scripts>
     </Frame>
 
     <Frame name="GwSpellbookMenu" inherits="SecureHandlerAttributeTemplate" virtual="true">
