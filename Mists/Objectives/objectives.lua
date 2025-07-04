@@ -20,34 +20,15 @@ local function AddTomTomWaypoint(questId, objective)
     end
 end
 
-local function LinkQuestIntoChat(title, questId)
+local function LinkQuestIntoChat(questId)
     if not ChatFrame1EditBox:IsVisible() then
-        if Questie and Questie.started then
-            ChatFrame_OpenChat("[" .. title .. " (" .. questId .. ")]")
-        else
-            ChatFrame_OpenChat(gsub(title, " *(.*)", "%1"))
-        end
+        ChatFrame_OpenChat(GetQuestLink(questId))
     else
-        if Questie and Questie.started then
-            ChatEdit_InsertLink("[" .. title .. " (" .. questId .. ")]")
-        else
-            ChatEdit_InsertLink(gsub(title, " *(.*)", "%1"))
-        end
+        ChatEdit_InsertLink(GetQuestLink(questId))
     end
 end
 
 local function UntrackQuest(questLogIndex)
-    local questID = GetQuestIDFromLogIndex(questLogIndex)
-    for index, value in ipairs(QUEST_WATCH_LIST) do
-        if value.id == questID then
-            tremove(QUEST_WATCH_LIST, index)
-        end
-    end
-    if GetCVar("autoQuestWatch") == "0" then
-        GW2UI_QUEST_WATCH_DB.TrackedQuests[questID] = nil
-    else
-        GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questID] = true
-    end
     RemoveQuestWatch(questLogIndex)
     QuestWatch_Update()
     QuestLog_Update()
@@ -332,7 +313,6 @@ function GwQuestLogMixin:UpdateLayout()
             if block then
                 block.questID = nil
                 block.questLogIndex = 0
-                block.sourceItemId = nil
                 block:Hide()
                 GW.CombatQueue_Queue("update_tracker_" .. counterQuest, block.UpdateObjectiveActionButton, {block})
             end
@@ -348,7 +328,6 @@ function GwQuestLogMixin:UpdateLayout()
         local block = self.blocks[i]
         block.questID = nil
         block.questLogIndex = 0
-        block.sourceItemId = nil
         block:Hide()
         GW.CombatQueue_Queue("update_tracker_itembutton_remove" .. i, block.UpdateObjectiveActionButton, {block})
     end
@@ -401,10 +380,16 @@ function GwQuestLogMixin:BlockOnClick(button)
                         end
                     end
                 end
+
+                rootDescription:CreateButton("Wowhead URL", function() StaticPopup_Show("QUESTIE_WOWHEAD_URL", self.questID, self.title) end)
+            else
+                if WatchFrame.showObjectives then
+                    rootDescription:CreateButton(OBJECTIVES_SHOW_QUEST_MAP, function()
+                        QuestMapFrame_OpenToQuestDetails(self.questID)
+                    end)
+                end
             end
 
-            rootDescription:CreateButton(COMMUNITIES_INVITE_MANAGER_LINK_TO_CHAT, function() LinkQuestIntoChat(self.title, self.questID) end)
-            rootDescription:CreateButton("Wowhead URL", function() StaticPopup_Show("QUESTIE_WOWHEAD_URL", self.questID, self.title) end)
             rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function() QuestLogFrame:Show()
                 QuestLog_SetSelection(self.questLogIndex)
                 QuestLog_Update()
@@ -421,7 +406,13 @@ function GwQuestLogMixin:BlockOnClick(button)
                 end)
             end
 
-            rootDescription:CreateButton(UNTRACK_QUEST, function() UntrackQuest(self.questLogIndex)  end)
+            rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function() UntrackQuest(self.questLogIndex) end)
+
+            if GetQuestLogPushable(self.questLogIndex) and IsInGroup()then
+				rootDescription:CreateButton(SHARE_QUEST, function()
+					WatchFrame_ShareQuest(button, self.questLogIndex)
+				end)
+			end
 
         end)
         return
@@ -429,7 +420,7 @@ function GwQuestLogMixin:BlockOnClick(button)
 
     if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
         if button == "LeftButton" then
-            LinkQuestIntoChat(self.title, self.questID)
+            LinkQuestIntoChat(self.questID)
         end
         return
     elseif IsControlKeyDown() then
@@ -460,10 +451,6 @@ GwObjectivesQuestContainerMixin = CreateFromMixins(GwQuestLogMixin)
 function GwObjectivesQuestContainerMixin:InitModule()
     self.blockMixInTemplate = GwQuestLogBlockMixin
 
-    GW2UI_QUEST_WATCH_DB = GW2UI_QUEST_WATCH_DB or {}
-    GW2UI_QUEST_WATCH_DB.TrackedQuests = GW2UI_QUEST_WATCH_DB.TrackedQuests or {}
-    GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests = GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests or {}
-
     self:SetScript("OnEvent", self.OnEvent)
     self:RegisterEvent("QUEST_LOG_UPDATE")
 	self:RegisterEvent("QUEST_WATCH_UPDATE")
@@ -486,24 +473,6 @@ function GwObjectivesQuestContainerMixin:InitModule()
     self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
     self.header.title:SetText(TRACKER_HEADER_QUESTS)
 
-    local baseQLTB_OnClick = QuestLogTitleButton_OnClick
-    QuestLogTitleButton_OnClick = function(self, button) -- I wanted to use hooksecurefunc but this needs to be a pre-hook to work properly unfortunately
-        if (not self) or self.isHeader or not IsShiftKeyDown() then baseQLTB_OnClick(self, button) return end
-        local questLogLineIndex = self:GetID()
-
-        if ( IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() ) then
-            local questId = GetQuestIDFromLogIndex(questLogLineIndex)
-            ChatEdit_InsertLink("["..gsub(self:GetText(), " *(.*)", "%1").." ("..questId..")]")
-        else
-            if GetNumQuestLeaderBoards(questLogLineIndex) == 0 and not IsQuestWatched(questLogLineIndex) then -- only call if we actually want to fix this quest (normal quests already call AQW_insert)
-                WatchFrame_Update()
-                QuestLog_SetSelection(questLogLineIndex)
-                QuestLog_Update()
-            else
-                baseQLTB_OnClick(self, button)
-            end
-        end
-    end
 
     ExpandQuestHeader(0)
 

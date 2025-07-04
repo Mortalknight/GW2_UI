@@ -79,7 +79,7 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
                 newBlock.actionButton:FakeHide()
             end
         end
-        newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
+        newBlock.actionButton:RegisterForClicks("AnyDown")
         newBlock.actionButton:SetScript("OnLeave", GameTooltip_Hide)
         newBlock.actionButton:SetScript("OnEnter", newBlock.actionButton.OnEnter)
         newBlock.actionButton:SetScript("OnShow", newBlock.actionButton.OnShow)

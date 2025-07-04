@@ -426,6 +426,12 @@ local function LoadQuestLogFrameSkin()
     QuestLogDetailFrameCloseButton:GwSkinButton(true)
     QuestLogDetailFrameCloseButton:SetSize(20, 20)
 
+	QuestLogDetailFrame:GwStripTextures()
+	QuestLogDetailFrame.tex = QuestLogDetailFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
+   	QuestLogDetailFrame.tex:SetPoint("TOPLEFT", QuestLogDetailFrame.NineSlice, "TOPLEFT", -10, 20)
+    QuestLogDetailFrame.tex:SetPoint("BOTTOMRIGHT", QuestLogDetailFrame.NineSlice, "BOTTOMRIGHT", 20, -20)
+    QuestLogDetailFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+
 	QuestGreetingFrameHorizontalBreak:GwKill()
 
 	QuestLogListScrollFrame:SetWidth(303)

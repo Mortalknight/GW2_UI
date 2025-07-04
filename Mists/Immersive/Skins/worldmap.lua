@@ -27,39 +27,48 @@ local function worldMapSkin()
     end
 
     GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 30, nil, true)
-    WorldMapFrameHeader.BGLEFT:SetWidth(100)
-    WorldMapFrameHeader.BGRIGHT:SetWidth(WorldMapFrame.BorderFrame:GetWidth())
-    WorldMapFrame.BorderFrame:GwStripTextures()
-    WorldMapFrame.MiniBorderFrame:GwStripTextures()
+    WorldMapFrame.BorderFrame:GwKill()
+    WorldMapFrame.MiniBorderFrame:GwKill()
 
     MiniWorldMapTitle:Hide()
-
-    WorldMapFrame.BorderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
-    WorldMapFrame.MiniBorderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    WorldMapTitleButton:GwKill()
 
     WorldMapContinentDropdown:GwHandleDropDownBox()
     WorldMapZoneDropdown:GwHandleDropDownBox()
     WorldMapZoneMinimapDropdown:GwHandleDropDownBox()
     WorldMapFrame.WorldMapOptionsDropDown:GwHandleDropDownBox()
+    WorldMapTrackQuest:GwSkinCheckButton()
+    WorldMapTrackQuest:SetSize(15, 15)
+    WorldMapTrackQuestText:SetTextColor(1, 1, 1)
 
-    QuestScrollFrame:GwSkinScrollFrame()
     QuestMapFrame.DetailsFrame.ScrollFrame:GwSkinScrollFrame()
-    QuestScrollFrame.ScrollBar:GwSkinScrollBar()
     QuestMapFrame.DetailsFrame.ScrollFrame.ScrollBar:GwSkinScrollBar()
+
+    GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar)
+    GW.HandleScrollControls(QuestScrollFrame)
 
     WorldMapFrame.WorldMapLevelDropDown:GwHandleDropDownBox()
 
-    WorldMapContinentDropdown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 330, -35)
-    WorldMapContinentDropdown:SetWidth(205)
-    WorldMapContinentDropdown:SetHeight(33)
-    WorldMapZoneDropdown:SetPoint("LEFT", WorldMapContinentDropdown, "RIGHT", -20, 0)
-    WorldMapZoneDropdown:SetWidth(205)
-    WorldMapZoneDropdown:SetHeight(33)
-
+    WorldMapZoneMinimapDropdown:ClearAllPoints()
+    WorldMapContinentDropdown:ClearAllPoints()
+    WorldMapZoneDropdown:ClearAllPoints()
+    WorldMapZoneMinimapDropdown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 6, -45)
+    WorldMapContinentDropdown:SetPoint("LEFT", WorldMapZoneMinimapDropdown, "RIGHT", -5, 0)
+    WorldMapZoneDropdown:SetPoint("LEFT", WorldMapContinentDropdown, "RIGHT", -5, 0)
     WorldMapZoomOutButton:SetPoint("LEFT", WorldMapZoneDropdown, "RIGHT", 3, 2)
-    WorldMapZoomOutButton:SetHeight(21)
-
     WorldMapZoomOutButton:GwSkinButton(false, true)
+
+    for _, v in pairs({WorldMapZoneMinimapDropdown, WorldMapContinentDropdown, WorldMapZoneDropdown}) do
+        local regions = {v:GetRegions()}
+        for regionKey, c in pairs(regions) do
+            if c:GetObjectType() == "FontString" and regionKey == 4 then
+                c:SetTextColor(1, 1, 1)
+                c:ClearAllPoints()
+                c:SetPoint("TOPLEFT", v, "TOPLEFT", 5, 10)
+
+            end
+        end
+    end
 
     WorldMapFrameCloseButton:GwSkinButton(true)
     WorldMapFrameCloseButton:SetSize(20, 20)
@@ -87,8 +96,6 @@ local function worldMapSkin()
     WorldMapFrame.HandleUserActionToggleSelf = function()
         if WorldMapFrame:IsShown() then WorldMapFrame:Hide() else WorldMapFrame:Show() end
     end
-
-    --HideUIPanel(WorldMapFrame)
 
     table.insert(UISpecialFrames, "WorldMapFrame")
     WorldMapFrame:SetScale(0.8)
