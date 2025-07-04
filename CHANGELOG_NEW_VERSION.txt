@@ -1,3 +1,7 @@
+8.1.5
+CHANGES
+    - Added temp chi bg texture
+
 8.1.4
 FIXES
     - Next round of Mists fixes
