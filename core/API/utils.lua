@@ -378,7 +378,7 @@ GW.TimeCount = TimeCount
 
 local function RoundDec(number, decimals)
     if type(number) ~= "number" then
-        return number, decimals
+        number = tonumber(number)
     end
 
     if decimals and decimals > 0 then
