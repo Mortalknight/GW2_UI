@@ -13,7 +13,7 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-10"/>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="subTitle" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
+                <FontString parentKey="subTitle" text="" justifyH="LEFT" justifyV="MIDDLE">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.title" relativePoint="BOTTOMLEFT" x="0" y="0"/>
                     </Anchors>
