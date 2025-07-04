@@ -43,7 +43,7 @@
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"/>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="clearInfo" text="10" justifyH="LEFT" justifyV="MIDDLE">
+                        <FontString parentKey="clearInfo" text="" justifyH="LEFT" justifyV="MIDDLE">
                             <Size x="250" y="15"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="-18"/>

@@ -294,38 +294,40 @@ local function updateActiveSpec(self)
                 talentInfoQuery.column = index
                 local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
 
-                anySelected = anySelected or talentInfo.selected
-                allAvailable = allAvailable and talentInfo.available
+                if talentInfo then
+                    anySelected = anySelected or talentInfo.selected
+                    allAvailable = allAvailable and talentInfo.available
 
-                button.spellId = talentInfo.spellID
-                button.icon:SetTexture(talentInfo.icon)
-                button.talentID = talentInfo.talentID
-                button.available = talentInfo.available
-                button.hasGoldBorder = talentInfo.hasGoldBorder
-                button.tier = row
-                button.selected = talentInfo.selected
-                button:SetID(talentInfo.talentID)
-                _G["PlayerTalentFrameTalentsTalentRow" .. row .. "Talent" .. index]:SetID(talentInfo.talentID)
+                    button.spellId = talentInfo.spellID
+                    button.icon:SetTexture(talentInfo.icon)
+                    button.talentID = talentInfo.talentID
+                    button.available = talentInfo.available
+                    button.hasGoldBorder = talentInfo.hasGoldBorder
+                    button.tier = row
+                    button.selected = talentInfo.selected
+                    button:SetID(talentInfo.talentID)
+                    _G["PlayerTalentFrameTalentsTalentRow" .. row .. "Talent" .. index]:SetID(talentInfo.talentID)
 
-                button:EnableMouse(isActiveSpec and isCurrentSpec)
+                    button:EnableMouse(isActiveSpec and isCurrentSpec)
 
-                local isPassive = IsPassiveSpell(talentInfo.spellID)
-                if isPassive then
-                    button.legendaryHighlight:SetTexture(passiveHighlight)
-                    button.highlight:SetTexture(passiveHighlight)
-                    button.icon:AddMaskTexture(button.mask)
-                    button.outline:SetTexture(passiveOutline)
-                else
-                    button.legendaryHighlight:SetTexture(activeHighlight)
-                    button.highlight:SetTexture(activeHighlight)
-                    button.icon:RemoveMaskTexture(button.mask)
-                    button.outline:SetTexture(activeOutline)
-                end
+                    local isPassive = IsPassiveSpell(talentInfo.spellID)
+                    if isPassive then
+                        button.legendaryHighlight:SetTexture(passiveHighlight)
+                        button.highlight:SetTexture(passiveHighlight)
+                        button.icon:AddMaskTexture(button.mask)
+                        button.outline:SetTexture(passiveOutline)
+                    else
+                        button.legendaryHighlight:SetTexture(activeHighlight)
+                        button.highlight:SetTexture(activeHighlight)
+                        button.icon:RemoveMaskTexture(button.mask)
+                        button.outline:SetTexture(activeOutline)
+                    end
 
-                -- Vorab merken, ob selektiert
-                if talentInfo.selected then
-                    sel = true
-                    selectedIndex = index
+                    -- Vorab merken, ob selektiert
+                    if talentInfo.selected then
+                        sel = true
+                        selectedIndex = index
+                    end
                 end
             end
 
@@ -335,38 +337,40 @@ local function updateActiveSpec(self)
                 talentInfoQuery.column = index
                 local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
 
-                if isActiveSpec and not isPetTalents then
-                    -- Aktiver Spec
-                    if sel then
-                        -- Es wurde ein Talent ausgewählt
-                        if talentInfo.selected then
+                if talentInfo then
+                    if isActiveSpec and not isPetTalents then
+                        -- Aktiver Spec
+                        if sel then
+                            -- Es wurde ein Talent ausgewählt
+                            if talentInfo.selected then
+                                button.highlight:Show()
+                                button.legendaryHighlight:Hide()
+                                button.icon:SetDesaturated(false)
+                                button.icon:SetVertexColor(1, 1, 1, 1)
+                                button:SetAlpha(1)
+                            else
+                                button.highlight:Hide()
+                                button.legendaryHighlight:SetShown(talentInfo.hasGoldBorder)
+                                button.icon:SetDesaturated(true)
+                                button.icon:SetVertexColor(1, 1, 1, 0.4)
+                                button:SetAlpha(0.5)
+                            end
+                        else
+                            -- Kein Talent ausgewählt
                             button.highlight:Show()
                             button.legendaryHighlight:Hide()
                             button.icon:SetDesaturated(false)
                             button.icon:SetVertexColor(1, 1, 1, 1)
                             button:SetAlpha(1)
-                        else
-                            button.highlight:Hide()
-                            button.legendaryHighlight:SetShown(talentInfo.hasGoldBorder)
-                            button.icon:SetDesaturated(true)
-                            button.icon:SetVertexColor(1, 1, 1, 0.4)
-                            button:SetAlpha(0.5)
                         end
                     else
-                        -- Kein Talent ausgewählt
-                        button.highlight:Show()
-                        button.legendaryHighlight:Hide()
-                        button.icon:SetDesaturated(false)
-                        button.icon:SetVertexColor(1, 1, 1, 1)
-                        button:SetAlpha(1)
+                        -- Nicht aktiver Spec oder PetTalents
+                        button.highlight:Hide()
+                        button.legendaryHighlight:SetShown(talentInfo.hasGoldBorder)
+                        button.icon:SetDesaturated(true)
+                        button.icon:SetVertexColor(1, 1, 1, 0.1)
+                        button:SetAlpha(0.5)
                     end
-                else
-                    -- Nicht aktiver Spec oder PetTalents
-                    button.highlight:Hide()
-                    button.legendaryHighlight:SetShown(talentInfo.hasGoldBorder)
-                    button.icon:SetDesaturated(true)
-                    button.icon:SetVertexColor(1, 1, 1, 0.1)
-                    button:SetAlpha(0.5)
                 end
             end
 
