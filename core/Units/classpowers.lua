@@ -1715,8 +1715,25 @@ end
 GW.AddForProfiling("classpowers", "powerStagger", powerStagger)
 
 local function setMonk(f)
-    if GW.myspec == 1 then -- brewmaster
-        if GW.Mists then
+    if GW.Retail then
+        if GW.myspec == 1 then -- brewmaster
+            f.background:SetTexture(nil)
+            f.fill:SetTexture(nil)
+            setPowerTypeStagger(f.customResourceBar)
+            f.brewmaster:Show()
+            f.customResourceBar:Show()
+            f.customResourceBar:SetWidth(312)
+            f.customResourceBar:ClearAllPoints()
+            f.customResourceBar:SetPoint("LEFT", f.gwMover, 0, -5)
+
+            f:SetScript("OnEvent", powerStagger)
+            powerStagger(f, "CLASS_POWER_INIT")
+
+            f:RegisterUnitEvent("UNIT_AURA", "player")
+            f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+            f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+            return true
+        elseif GW.myspec == 3 then -- ww
             f:ClearAllPoints()
             f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
             f:SetHeight(32)
@@ -1734,26 +1751,10 @@ local function setMonk(f)
             powerChi(f, "CLASS_POWER_INIT")
             f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
             f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
-        else
-            f.background:SetTexture(nil)
-            f.fill:SetTexture(nil)
-            setPowerTypeStagger(f.customResourceBar)
-            f.brewmaster:Show()
-            f.customResourceBar:Show()
-            f.customResourceBar:SetWidth(312)
-            f.customResourceBar:ClearAllPoints()
-            f.customResourceBar:SetPoint("LEFT", f.gwMover, 0, -5)
 
-            f:SetScript("OnEvent", powerStagger)
-            powerStagger(f, "CLASS_POWER_INIT")
-
-            f:RegisterUnitEvent("UNIT_AURA", "player")
-            f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-            f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+            return true
         end
-
-        return true
-    elseif GW.myspec == 3 or (GW.myspec == 2 and GW.Mists) then -- ww
+    elseif GW.Mists then
         f:ClearAllPoints()
         f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
         f:SetHeight(32)
