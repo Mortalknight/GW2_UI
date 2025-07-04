@@ -35,7 +35,7 @@ local function UntrackQuest(questLogIndex)
 end
 
 local function AddQuestInfos(questLogIndex, id)
-    local title, level, group, _, _, isComplete, frequency, questId, startEvent = GetQuestLogTitle(questLogIndex)
+    local title, level, questTag, _, _, isComplete, frequency, questId, startEvent = GetQuestLogTitle(questLogIndex)
     if title and questId then
         local isFailed = false
         local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
@@ -68,7 +68,7 @@ local function AddQuestInfos(questLogIndex, id)
             questWatchedId = id or 0,
             questLogIndex = questLogIndex,
             questLevel = level,
-            questGroup = group,
+            questTag = questTag,
             title = title,
             isComplete = isComplete,
             startEvent = startEvent,
@@ -95,11 +95,11 @@ local function UpdateBlockInternal(self, parent, quest)
 
     self.title = quest.title
     local text = ""
-    if quest.questGroup == "Elite" then
+    if quest.questTag == "Elite" then
         text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon:12:12:0:0|t] "
-    elseif quest.questGroup == "Dungeon" then
+    elseif quest.questTag == "Dungeon" then
         text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon:12:12:0:0|t] "
-    elseif quest.questGroup then
+    elseif quest.questTag == "Group" then
         text = "[" .. quest.questLevel .. "+] "
     else
         text = "[" .. quest.questLevel .. "] "
