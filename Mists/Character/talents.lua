@@ -155,17 +155,17 @@ local function UpdateTrees(self, currentSpec)
 
         local id, name, description, icon, role = C_SpecializationInfo.GetSpecializationInfo(i, false, isPetTalents, nil, GW.mysex)
 
-        container.roleIcon:ClearAllPoints()
+        container.icon.roleIcon:ClearAllPoints()
         if role == "TANK" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 14, -6)
+            container.icon.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
+            container.icon.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 14, -6)
         elseif role == "HEALER" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 12, -5)
+            container.icon.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
+            container.icon.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 12, -5)
         elseif role == "DAMAGER" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
-            container.roleIcon:SetSize(30, 30)
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 17, -10)
+            container.icon.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
+            container.icon.roleIcon:SetSize(30, 30)
+            container.icon.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 17, -10)
         end
 
         container.icon.texture:SetTexture(icon)

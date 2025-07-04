@@ -96,28 +96,7 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK" textureSubLevel="6">
-                <Texture parentKey="roleIcon">
-                    <Size x="25" y="25"></Size>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="5">
-                <Texture parentKey="roleIconBg" file="Interface/AddOns/GW2_UI/textures/hud/notification-backdrop">
-                    <Size x="27" y="27"></Size>
-                    <Color r="0" g="0" b="0" a="0.7"/>
-                    <Anchors>
-                        <Anchor point="CENTER" relativeKey="$parent.roleIcon" relativePoint="CENTER" x="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="BORDER">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
-                    <Size x="90" y="90"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER" x="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
+
         </Layers>
         <Frames>
             <Frame parentKey="info" enableMouse="false">
@@ -165,6 +144,28 @@
                                 <Anchor point="CENTER"></Anchor>
                             </Anchors>
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK" textureSubLevel="6">
+                        <Texture parentKey="roleIcon">
+                            <Size x="25" y="25"></Size>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK" textureSubLevel="5">
+                        <Texture parentKey="roleIconBg" file="Interface/AddOns/GW2_UI/textures/hud/notification-backdrop">
+                            <Size x="27" y="27"></Size>
+                            <Color r="0" g="0" b="0" a="0.7"/>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.roleIcon" relativePoint="CENTER" x="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                            <Size x="110" y="110"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER"></Anchor>
+                            </Anchors>
                         </Texture>
                     </Layer>
                 </Layers>
