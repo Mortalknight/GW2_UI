@@ -31,7 +31,8 @@ elseif GW.Mists then
     DODGEBAR_SPELLS["WARRIOR"] = "100" -- Charge
     DODGEBAR_SPELLS["HUNTER"] = "781" -- Disengage
     DODGEBAR_SPELLS["MAGE"] = "1953" -- Shimmer if talented, else Blink
-    DODGEBAR_SPELLS["MONK"] = "[known:115008]115008; 109132" -- Chi Torpedo if talented, else Roll
+    DODGEBAR_SPELLS["MONK"] = "[known:115173] 121827; 109132"-- Chi Torpedo if talented, else Roll
+    DODGEBAR_SPELLS_ATTR["MONK"] = "109132"
     DODGEBAR_SPELLS["WARLOCK"] = "48020" -- Demonic Circle: Teleport; TODO disable when Demonic Circle buff not active
     DODGEBAR_SPELLS["DRUID"] = "9821"
     DODGEBAR_SPELLS["DEATHKNIGHT"] = "444347,48265" -- Death's Advance
