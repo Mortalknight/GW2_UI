@@ -739,7 +739,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         end
     end
 
-    if not isPlayerUnit and IsModKeyDown() and not (GW.Retail and C_PetBattles.IsInBattle()) then
+    if not isPlayerUnit and IsModKeyDown() and not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()) then
         local guid = (data and data.guid) or UnitGUID(unit) or ""
         local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
         if id then -- NPC ID"s

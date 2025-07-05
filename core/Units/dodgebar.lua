@@ -186,7 +186,7 @@ function GwDodgeBarMixin:InitBar(pew)
             self:SetAttribute("spell", self.spellId)
             Debug("Dodgebar spell for Click: ", self:GetAttribute("spell"))
         end
-        if not (GW.Retail and C_PetBattles.IsInBattle()) and not HasOverrideActionBar() and not HasVehicleActionBar() then
+        if not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()) and not HasOverrideActionBar() and not HasVehicleActionBar() then
             self:Show()
         end
     end
