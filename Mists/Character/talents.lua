@@ -283,8 +283,6 @@ local function updateActiveSpec(self)
 
             local sel = false
             local selectedIndex = -1
-            local anySelected = false
-            local allAvailable = true
 
             for index = 1, talentsPerRow do
                 local button = container.talentButtons[row].buttons[index]
@@ -295,9 +293,6 @@ local function updateActiveSpec(self)
                 local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
 
                 if talentInfo then
-                    anySelected = anySelected or talentInfo.selected
-                    allAvailable = allAvailable and talentInfo.available
-
                     button.spellId = talentInfo.spellID
                     button.icon:SetTexture(talentInfo.icon)
                     button.talentID = talentInfo.talentID
@@ -355,11 +350,18 @@ local function updateActiveSpec(self)
                                 button.icon:SetVertexColor(1, 1, 1, 0.4)
                                 button:SetAlpha(0.5)
                             end
-                        else
-                            -- Kein Talent ausgewählt
+                        elseif button.available then
+                            -- Kein Talent ausgewählt aber verfügbar
                             button.highlight:Show()
                             button.legendaryHighlight:Hide()
                             button.icon:SetDesaturated(false)
+                            button.icon:SetVertexColor(1, 1, 1, 1)
+                            button:SetAlpha(1)
+                        else
+                            -- Kein Talent ausgewählt aber verfügbar
+                            button.highlight:Hide()
+                            button.legendaryHighlight:Hide()
+                            button.icon:SetDesaturated(true)
                             button.icon:SetVertexColor(1, 1, 1, 1)
                             button:SetAlpha(1)
                         end
