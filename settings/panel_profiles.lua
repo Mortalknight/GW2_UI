@@ -579,7 +579,8 @@ local function LoadProfilesPanel(sWindow)
     p.resetToDefaultFrame:SetScript("OnLeave", item_OnLeave)
     item_OnLoad(p.resetToDefaultFrame)
 
-    p.resetToDefaultFrame.activateButton.icon:SetTexture("Interface/icons/inv_corgi2")
+    p.resetToDefaultFrame.activateButton.icon:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo")
+    p.resetToDefaultFrame.activateButton.icon:SetTexCoord(0, 1, 0, 1)
 
     p.resetToDefaultFrame.hasOptions = false
     p.resetToDefaultFrame.canDelete = false
