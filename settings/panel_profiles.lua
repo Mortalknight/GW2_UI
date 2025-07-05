@@ -448,25 +448,21 @@ local function InitButton(button, elementData)
     GW.globalSettings.profiles[elementData.data].profileCreatedCharacter = GW.globalSettings.profiles[elementData.data].profileCreatedCharacter or UNKNOWN
     GW.globalSettings.profiles[elementData.data].profileIcon = GW.globalSettings.profiles[elementData.data].profileIcon or ICONS[math.random(1, #ICONS)]
 
-    if(type(GW.globalSettings.profiles[elementData.data].profileIcon) == "number") then
+    if (type(GW.globalSettings.profiles[elementData.data].profileIcon) == "number") then
         button.activateButton.icon:SetTexture(GW.globalSettings.profiles[elementData.data].profileIcon)
     else
-        button.activateButton.icon:SetTexture("INTERFACE\\ICONS\\" .. GW.globalSettings.profiles[elementData.data].profileIcon)
+        button.activateButton.icon:SetTexture("INTERFACE/ICONS/" .. GW.globalSettings.profiles[elementData.data].profileIcon)
     end
 
-    button.desc:SetText(L["Created: "] ..
-        GW.globalSettings.profiles[elementData.data].profileCreatedDate .. "\n" ..
-        L["Created by: "] ..
-        GW.globalSettings.profiles[elementData.data].profileCreatedCharacter .. "\n"
-    )
+    button.desc:SetText(L["Created: "] .. GW.globalSettings.profiles[elementData.data].profileCreatedDate .. "\n" ..
+        L["Created by: "] .. GW.globalSettings.profiles[elementData.data].profileCreatedCharacter .. "\n" ..
+        (GW.globalSettings.profiles[elementData.data].profileChangedDate and L["Last updated: "] ..GW.globalSettings.profiles[elementData.data].profileChangedDate or ""))
 end
 
 local function collectAllIcons()
     -- We need to avoid adding duplicate spellIDs from the spellbook tabs for your other specs.
     local activeIcons = {}
     local endIdx = GW.Retail and C_SpellBook.GetNumSpellBookSkillLines() or GetNumSpellTabs()
-    local itemInfo
-
 
     for i = 1, endIdx do
         local tabStart
