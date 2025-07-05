@@ -42,11 +42,9 @@ local function reskinItemButton(b, overrideIconSize)
     b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     b.Count:SetJustifyH("RIGHT")
 
-    local qtex = b.IconQuestTexture or b["IconQuestTexture"]
+    local qtex = _G[b:GetName() .. "IconQuestTexture"]
     if qtex then
-        qtex:SetSize(iconSize + 2, iconSize + 2)
-        qtex:ClearAllPoints()
-        qtex:SetPoint("CENTER", b, "CENTER", 0, 0)
+        qtex:SetAlpha(0)
     end
 
     if b.flash then
