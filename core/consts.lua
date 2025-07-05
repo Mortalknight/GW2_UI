@@ -941,6 +941,8 @@ elseif GW.Mists then
         [12051]	= 4, -- Evocation
         -- Death Knight
         [42650]	= 8, -- Army of the Dead
+        -- Monk
+        [113656]	= 4, -- Fists of Fury
         -- First Aid
         [45544]	= 8, -- Heavy Frostweave Bandage
         [45543]	= 8, -- Frostweave Bandage
