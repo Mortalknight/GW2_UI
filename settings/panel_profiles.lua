@@ -115,11 +115,11 @@ local function createImportExportFrame()
     frame.import:SetSize(128, 28)
     frame.import:SetText(L["Import"])
     frame.import:SetScript("OnClick", function()
-        local profileName, profilePlayer, version = GW.ImportProfile(frame.editBox:GetText())
+        local profileName, profilePlayer = GW.ImportProfile(frame.editBox:GetText())
 
         frame.result:SetText("")
-        if profileName and profilePlayer and version == "Retail" then
-            frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
+        if profileName and profilePlayer then
+            frame.subheader:SetText(profileName .. " - " .. profilePlayer)
             frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully imported!"])
             frame.editBox:SetText("")
         else
