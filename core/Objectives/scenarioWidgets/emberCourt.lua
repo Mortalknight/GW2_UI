@@ -2,7 +2,7 @@ local _, GW = ...
 
 local isOnUpdateHooked = false
 local function addEmberCourtData(container, numCriteria)
-    if GW.Libs.GW2Lib:GetPlayerLocationMapID()== 1644 then
+    if GW.Libs.GW2Lib:GetPlayerLocationMapID() == 1644 then
         if BottomScenarioWidgetContainerBlock.WidgetContainer:GetHeight() > 1.1 then
             numCriteria = numCriteria + 1
 
