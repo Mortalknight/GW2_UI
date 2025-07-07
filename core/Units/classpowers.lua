@@ -501,11 +501,11 @@ local function powerEclipsOnUpdate(self)
             if p > 0 then
                 self.eclips.fill:SetPoint("LEFT", self.background, "CENTER", 0, 0)
                 self.eclips.fill:SetPoint("RIGHT", self.background, "CENTER", arrowPosition, 0)
-                self.eclips.fill:SetTexCoord(0, pwrAbs, 0, 1)
+                self.eclips.fill:SetTexCoord(0, math.max(0, math.min(pwrAbs, 1)), 0, 1)
             else
                 self.eclips.fill:SetPoint("LEFT", self.background, "CENTER", arrowPosition, 0)
                 self.eclips.fill:SetPoint("RIGHT", self.background, "CENTER", 0, 0)
-                self.eclips.fill:SetTexCoord(0, pwrAbs, 0, 1)
+                self.eclips.fill:SetTexCoord(0, math.max(0, math.min(pwrAbs, 1)), 0, 1)
             end
             self.oldEclipsPower = p
         end
