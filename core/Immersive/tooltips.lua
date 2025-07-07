@@ -8,6 +8,7 @@ local nameRoleIcon = GW.nameRoleIcon
 
 
 local MountIDs = {}
+local MountText = {}
 local targetList = {}
 local classification = {
     worldboss = format("|cffAF5050 %s|r", BOSS),
@@ -70,9 +71,10 @@ local function RemoveTrashLines(self)
 end
 
 local function AddMountInfoToAuraTooltip (self, auraData)
-    local mountID, mountText = MountIDs[auraData.spellId], ""
+    local mountID, mountText = MountIDs[auraData.spellId]
+
     if mountID then
-        local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(mountID)
+        local sourceText = MountText[mountID]
         mountText = sourceText and gsub(sourceText, "|n%s+|n", "|n")
 
         if mountText then
@@ -558,9 +560,9 @@ local function AddMountInfo(self, unit)
     while auraData do
         local mountID = MountIDs[auraData.spellId]
         if mountID then
-            local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(mountID)
             self:AddDoubleLine(format("%s:", MOUNT), auraData.name, nil, nil, nil, 1, 1, 1)
 
+            local sourceText = MountText[mountID]
             local mountText = sourceText and IsControlKeyDown() and gsub(sourceText, "|n%s+|n", "|n")
             if mountText then
                 local sourceModified = gsub(mountText, "|n", "\10")
@@ -719,7 +721,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         AddTargetInfo(self, unit)
     end
 
-    if GW.Retail and GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown then
+    if (GW.Retail or GW.Mists) and GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown then
         AddMountInfo(self, unit)
     end
 
@@ -1176,10 +1178,15 @@ local function LoadTooltips()
 
     -- Functions
     MountIDs = {}
-    local mountIDs = C_MountJournal.GetMountIDs()
-    for _, mountID in ipairs(mountIDs) do
-        local _, spellID = C_MountJournal.GetMountInfoByID(mountID)
-        MountIDs[spellID] = mountID
+    MountText = {}
+    if GW.Retail or GW.Mists then
+        local mountIDs = C_MountJournal.GetMountIDs()
+        for _, mountID in ipairs(mountIDs) do
+            local _, spellID = C_MountJournal.GetMountInfoByID(mountID)
+            local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(mountID)
+            MountIDs[spellID] = mountID
+            MountText[mountID] = sourceText
+        end
     end
 
     --Tooltip Fonts
