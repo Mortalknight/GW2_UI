@@ -227,5 +227,40 @@ local function Migration()
         GW.settings.focus_SHORT_VALUES = GW.settings.FOCUS_UNIT_HEALTH_SHORT_VALUES
         GW.settings.FOCUS_UNIT_HEALTH_SHORT_VALUES = nil
     end
+
+    -- fix Default Profile tag
+    if not GW.settings.profileMetaDataFixed then
+        local profiles = GW.globalSettings:GetProfiles()
+        for _, profile in pairs( profiles ) do
+            if profile == "Default" and GW.globalSettings.profiles[profile].profileCreatedCharacter == UNKNOWN then
+                GW.globalSettings.profiles[profile].profileCreatedCharacter = "GW2_UI"
+                GW.globalSettings.profiles[profile].profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"])
+            end
+            local dateString = GW.globalSettings.profiles[profile].profileCreatedDate
+            if dateString and dateString:match("^(%d+)/(%d+)/(%d+) (%d+):(%d+):(%d+)$") then
+                local month, day, year, hour, min, sec = dateString:match("(%d+)/(%d+)/(%d+) (%d+):(%d+):(%d+)")
+                year = tonumber(year)
+                if year < 70 then
+                    year = 2000 + year
+                else
+                    year = 1900 + year
+                end
+                local t = {
+                    year = year,
+                    month = tonumber(month),
+                    day = tonumber(day),
+                    hour = tonumber(hour),
+                    min = tonumber(min),
+                    sec = tonumber(sec),
+                }
+                local timestamp = time(t)
+                GW.globalSettings.profiles[profile].profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"], timestamp)
+            elseif dateString == UNKNOWN then
+                GW.globalSettings.profiles[profile].profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"])
+            end
+        end
+        GW.settings.profileMetaDataFixed = true
+        GW.RefreshProfileScrollBox(GW2ProfileSettingsView.ScrollBox)
+    end
 end
 GW.Migration = Migration

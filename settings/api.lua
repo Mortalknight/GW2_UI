@@ -78,7 +78,7 @@ local function ResetToDefault()
     if activeProfile then
         oldUsername = GW.globalSettings.profiles[activeProfile].profileCreatedCharacter
         GW.globalSettings:ResetProfile()
-        GW.globalSettings.profiles[activeProfile].profileCreatedDate = date("%m/%d/%y %H:%M:%S")
+        GW.globalSettings.profiles[activeProfile].profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"])
         GW.globalSettings.profiles[activeProfile].profileCreatedCharacter = oldUsername or UNKNOWN
 
         -- also rest the matching profile layout
@@ -96,7 +96,7 @@ local function GetExportString(profileName)
     local profileTable = GW.globalSettings.profiles[profileName]
 
     local serialData = Serializer:Serialize(profileTable)
-    local exportString = format("%s::%s::%s::%s", serialData, profileName, GW.myname, "Retail")
+    local exportString = format("%s::%s::%s::%s", serialData, profileName, GW.myname, "Retail") -- we need Retail here for older profiles
     local compressedData = Deflate:CompressDeflate(exportString, Deflate.compressLevel)
     local printableString = Deflate:EncodeForPrint(compressedData)
 
@@ -111,7 +111,7 @@ GW.GetImportStringType = GetImportStringType
 
 local function DecodeProfile(dataString)
     local stringType = GetImportStringType(dataString)
-    local profileName, profilePlayer, version, profileData, success
+    local profileName, profilePlayer, profileData, success
 
     if stringType == "Deflate" then
         local data = gsub(dataString, "^" .. EXPORT_PREFIX, "")
@@ -129,7 +129,7 @@ local function DecodeProfile(dataString)
         end
 
         serializedData = format("%s%s", serializedData, "^^")
-        profileName, profilePlayer, version = GW.splitString(profileInfo, "::")
+        profileName, profilePlayer = GW.splitString(profileInfo, "::")
         success, profileData = Serializer:Deserialize(serializedData)
 
         if not success then
@@ -137,7 +137,7 @@ local function DecodeProfile(dataString)
         end
     end
 
-    return profileName, profilePlayer, version, profileData
+    return profileName, profilePlayer, profileData
 end
 GW.DecodeProfile = DecodeProfile
 
@@ -164,14 +164,14 @@ end
 GW.ConvertOldProfileString = ConvertOldProfileString
 
 local function ImportProfile(dataString)
-    local profileName, profilePlayer, version, profileDataString = DecodeProfile(dataString)
+    local profileName, profilePlayer, profileDataString = DecodeProfile(dataString)
 
-    if not profileDataString or version ~= "Retail" then
+    if not profileDataString then
         return
     end
 
     GW.addProfile(profileName .. " - " .. profilePlayer, profileDataString, false, true)
 
-    return profileName, profilePlayer, version
+    return profileName, profilePlayer
 end
 GW.ImportProfile = ImportProfile

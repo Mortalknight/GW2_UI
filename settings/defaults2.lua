@@ -52,6 +52,9 @@ GW.globalDefault = {
         Reset_Container_Loot_Order = false,
         OBJECTIVES_COLLAPSE_IN_M_PLUS = false,
 
+        profileCreatedCharacter = "GW2_UI",
+        profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"]),
+
         FixGuildNewsSpam = true,
         gridSpacing = 64,
 

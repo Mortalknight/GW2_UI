@@ -4,6 +4,7 @@ if not L then return end
 
 -- Timestamp
 L["TimeStamp m/d h:m:s"] = "%d.%m. %H:%M:%S"
+L["TimeStamp m/d/y h:m:s"] = "%d.%m.%y %H:%M:%S"
 --Strings
 L[" (Resting)"] = " (Erholen)"
 L["Created by: "] = "Erstellt von: "

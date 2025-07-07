@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local function addJailersTowerData(block, numCriteria)
-    if IsInJailersTower() then
+    if GW.Retail and IsInJailersTower() then
         --Phantasma
         local phinfo = C_CurrencyInfo.GetCurrencyInfo(1728)
         numCriteria = numCriteria + 1

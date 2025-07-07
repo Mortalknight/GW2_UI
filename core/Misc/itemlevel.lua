@@ -9,19 +9,7 @@ local MATCH_ITEM_LEVEL = ITEM_LEVEL:gsub("%%d", "(%%d+)")
 local MATCH_ITEM_LEVEL_ALT = ITEM_LEVEL_ALT:gsub("%%d(%s?)%(%%d%)", "%%d+%1%%((%%d+)%%)")
 local MATCH_ENCHANT = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "(.+)")
 local MATCH_SET_ITEM = ITEM_SET_BONUS:gsub("%%s", "(.+)")
-local AZERITE_RESPEC_BUTTON = { -- use this to find Reforge (taken from retail)
-    enUS = "Reforge",
-    frFR = "Retouche",
-    deDE = "Umschmieden",
-    koKR = "재연마",
-    ruRU = "Перековать",
-    zhCN = "重铸",
-    zhTW = "重鑄",
-    esES = "Reforjar",
-    esMX = "Reforjar",
-    ptBR = "Reforjar",
-    itIT = "Riforgia"
-}
+
 local X2_INVTYPES, X2_EXCEPTIONS, ARMOR_SLOTS = {
     INVTYPE_2HWEAPON = true,
     INVTYPE_RANGEDRIGHT = true,
@@ -30,7 +18,7 @@ local X2_INVTYPES, X2_EXCEPTIONS, ARMOR_SLOTS = {
     {
         [2] = 19, -- wands, use INVTYPE_RANGEDRIGHT, but are 1H
     },
-    {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, GW.Mists and 18 or nil}
+    {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
 
 local function PopulateUnitIlvlsCache(unitGUID, itemLevel, tooltip)
     if itemLevel then
@@ -66,15 +54,12 @@ local function InspectGearSlot(line, lineText, slotInfo)
         slotInfo.isSetItem = true
     end
 
-    local r, g, b = line:GetTextColor()
-    local allow = not GW.Mists or ((r == 0 and g == 1 and b == 0) and not strfind(lineText, ITEM_SPELL_TRIGGER_ONEQUIP, nil, true) and not strfind(lineText, AZERITE_RESPEC_BUTTON[GW.mylocal or "enUS"], nil, true) and not strfind(lineText, "%(%d+ min%)"))
-    if not allow then return end
-
-    local enchant = (not GW.Mists and strmatch(lineText, MATCH_ENCHANT)) or (GW.Mists and strfind(lineText, "^%+") and not strfind(lineText, BONUS_ARMOR, nil, true) and not strfind(lineText, STAT_MASTERY, nil, true) and lineText)
+    local enchant = strmatch(lineText, MATCH_ENCHANT)
     if enchant then
         local color1, color2 = strmatch(enchant, "(|cn.-:).-(|r)")
         local enchantQuality = enchant:match("(%s?|A.-|a)")
         local text = gsub(gsub(enchant, "%s?|A.-|a", ""), "|cn.-:(.-)|r", "%1")
+        local r, g, b = line:GetTextColor()
         slotInfo.enchantText = format("%s%s%s%s", color1 or "", text, color2 or "", enchantQuality or "")
         slotInfo.enchantTextShort = format("%s%s%s%s", color1 or "", string.utf8sub(text, 1, 18), color2 or "", enchantQuality or "")
         slotInfo.enchantTextShort2 = format("%s%s%s%s", color1 or "", string.utf8sub(text, 1, 11), color2 or "", enchantQuality or "")
@@ -271,8 +256,7 @@ local function CalculateAverageItemLevel(iLevelDB, unit)
         return
     end
 
-    local numItems = GW.Mists and 17 or 16
-	return format("%0.2f", RoundDec(total / numItems, 2))
+	return format("%0.2f", RoundDec(total / 16, 2))
 end
 GW.CalculateAverageItemLevel = CalculateAverageItemLevel
 

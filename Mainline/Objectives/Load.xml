@@ -1,9 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file ="scenarioWidgets\heroicVisions.lua"/>
-    <Script file ="scenarioWidgets\jailersTower.lua"/>
-    <Script file ="scenarioWidgets\warfronts.lua"/>
-    <Script file ="scenarioWidgets\emberCourt.lua"/>
-
     <Script file ="mythicPlus.lua"/>
     <Script file ="objectives.lua"/>
     <Script file ="bonusObjective.lua"/>

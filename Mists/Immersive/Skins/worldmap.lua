@@ -26,9 +26,14 @@ local function worldMapSkin()
         end
     end
 
-    GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 30, nil, true)
-    WorldMapFrame.BorderFrame:GwKill()
+    GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {QuestScrollFrame}, 30, nil, true)
+    WorldMapFrame.BorderFrame:GwStripTextures()
+    WorldMapFrame.BorderFrame:SetFrameStrata(WorldMapFrame:GetFrameStrata())
     WorldMapFrame.MiniBorderFrame:GwKill()
+
+    WorldMapFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    WorldMapFrame.backdrop:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 0, -30)
+    WorldMapFrame.backdrop:SetPoint("BOTTOMRIGHT", WorldMapFrame, "BOTTOMRIGHT", 0, 0)
 
     MiniWorldMapTitle:Hide()
     WorldMapTitleButton:GwKill()

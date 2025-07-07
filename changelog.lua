@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.1.6",{
+    {ct.bug, [=[Next round of Mists fixes]=]},
+})
+
 addChange("8.1.5",{
     {ct.change, [=[Added temp chi bg texture]=]},
 })

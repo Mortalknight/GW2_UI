@@ -188,13 +188,13 @@
                 </Anchors>
                 <Layers>
                     <Layer textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface/icons/inv_helmet_151">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/gwlogo">
                             <size x="56" y="56"/>
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="3">
-                        <FontString hidden="true" parentKey="hint" text="SOULBIND_NODE_ACTIVATE" justifyV="MIDDLE" justifyH="CENTER">
+                        <FontString hidden="true" parentKey="hint" text="ACTIVATE" justifyV="MIDDLE" justifyH="CENTER">
                             <Size x="54" y="54"/>
                             <Color r="1" g="1" b="1" a="1"/>
                             <Anchors>

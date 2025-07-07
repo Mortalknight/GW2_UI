@@ -95,14 +95,22 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     self.turnin:SetScript("OnShow", self.turnin.WiggleAnimation)
     self.turnin:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetDebugName()) end)
     self.turnin:SetScript("OnClick",function(btn)
-        ShowQuestComplete(self.questID)
+        if GW.Retail then
+            ShowQuestComplete(self.questID)
+        else
+            ShowQuestComplete(self.questLogIndex)
+        end
         RemoveAutoQuestPopUp(self.questID)
         btn:Hide()
     end)
     self.popupQuestAccept:SetScript("OnShow", self.popupQuestAccept.WiggleAnimation)
     self.popupQuestAccept:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetDebugName()) end)
     self.popupQuestAccept:SetScript("OnClick", function(btn)
+         if GW.Retail then
             ShowQuestOffer(self.questID)
+        else
+            ShowQuestOffer(self.questLogIndex)
+        end
             RemoveAutoQuestPopUp(self.questID)
             btn:Hide()
         end)

@@ -3,6 +3,10 @@
     <Include file ="notifications.xml"/>
 
     <Script file ="scenarioWidgets\eventTimerBarSetupByWidgetId.lua"/>
+    <Script file ="scenarioWidgets\heroicVisions.lua"/>
+    <Script file ="scenarioWidgets\jailersTower.lua"/>
+    <Script file ="scenarioWidgets\warfronts.lua"/>
+    <Script file ="scenarioWidgets\emberCourt.lua"/>
 
     <Script file ="scenario.lua"/>
     <Script file ="minimapButtons.lua"/>

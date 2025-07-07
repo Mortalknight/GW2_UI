@@ -3,6 +3,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("GW2_UI", "enUS", true, true)
 
 -- Timestamp
 L["TimeStamp m/d h:m:s"] = "%m/%d %H:%M:%S"
+L["TimeStamp m/d/y h:m:s"] = "%m/%d/%y %H:%M:%S"
 --Strings
 L["Use the GW2 UI improved action bars."] = true
 L["Fade Action Bars"] = true

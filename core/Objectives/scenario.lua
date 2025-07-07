@@ -75,7 +75,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     block:Show()
 
     local _, _, numStages, _, _, _, _, _, _, _, _, _, scenarioID = C_Scenario.GetInfo()
-    if numStages == 0 or IsOnGroundFloorInJailersTower() then
+    if numStages == 0 or (GW.Retail and IsOnGroundFloorInJailersTower()) then
         local name, instanceType, _, difficultyName, _ = GetInstanceInfo()
         if instanceType == "raid" then
             compassData.TITLE = name
@@ -114,7 +114,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     stageDescription = stageDescription or ""
     stageName = stageName or ""
     if difficultyName then
-        local level = C_ChallengeMode.GetActiveKeystoneInfo()
+        local level = GW.Retail and C_ChallengeMode.GetActiveKeystoneInfo() or 0
         if level > 0 then
             compassData.TITLE = stageName .. " |cFFFFFFFF +" .. level .. " " .. difficultyName .. "|r"
         else
@@ -123,7 +123,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         compassData.DESC = stageDescription .. " "
     end
 
-    if IsInJailersTower() then
+    if GW.Retail and IsInJailersTower() then
         local floor = ""
         if event == "JAILERS_TOWER_LEVEL_UPDATE" then
             local level, type, textureKit = ...
@@ -148,7 +148,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     end
 
     -- check for active delves
-    local delvesWidgetInfo = (difficultyID and difficultyID == 208) and C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(6183)
+    local delvesWidgetInfo = GW.Retail and (difficultyID and difficultyID == 208) and C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(6183)
     if delvesWidgetInfo and delvesWidgetInfo.frameTextureKit == "delves-scenario" then
         local tierLevel = delvesWidgetInfo.tierText or ""
         GwObjectivesNotification.iconFrame.tooltipSpellID = delvesWidgetInfo.tierTooltipSpellID
@@ -212,11 +212,13 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     GwObjectivesNotification:AddNotification(compassData, true)
 
     if questID then
-        block.questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
+        block.questLogIndex = GW.Retail and C_QuestLog.GetLogIndexForQuestID(questID) or GetQuestLogIndexByID(questID)
     end
 
     --check for groupfinder button
-    block:UpdateFindGroupButton(scenarioID, true)
+    if GW.Retail then
+        block:UpdateFindGroupButton(scenarioID, true)
+    end
 
     GW.CombatQueue_Queue(nil, block.UpdateObjectiveActionButton, {block})
 

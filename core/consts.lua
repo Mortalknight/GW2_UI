@@ -931,6 +931,7 @@ elseif GW.Mists then
         [16914]	= 10, -- Hurricane
         -- Priest
         [15407]	= 3, -- Mind Flay
+        [129197] = 3, -- Mind Flay (Insanity)
         [48045]	= 5, -- Mind Sear
         [47540]	= 3, -- Penance
         [64901]	= 4, -- Hymn of Hope
@@ -941,6 +942,8 @@ elseif GW.Mists then
         [12051]	= 4, -- Evocation
         -- Death Knight
         [42650]	= 8, -- Army of the Dead
+        -- Monk
+        [113656]	= 4, -- Fists of Fury
         -- First Aid
         [45544]	= 8, -- Heavy Frostweave Bandage
         [45543]	= 8, -- Frostweave Bandage

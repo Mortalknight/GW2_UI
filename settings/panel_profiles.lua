@@ -115,11 +115,11 @@ local function createImportExportFrame()
     frame.import:SetSize(128, 28)
     frame.import:SetText(L["Import"])
     frame.import:SetScript("OnClick", function()
-        local profileName, profilePlayer, version = GW.ImportProfile(frame.editBox:GetText())
+        local profileName, profilePlayer = GW.ImportProfile(frame.editBox:GetText())
 
         frame.result:SetText("")
-        if profileName and profilePlayer and version == "Retail" then
-            frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
+        if profileName and profilePlayer then
+            frame.subheader:SetText(profileName .. " - " .. profilePlayer)
             frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully imported!"])
             frame.editBox:SetText("")
         else
@@ -448,25 +448,21 @@ local function InitButton(button, elementData)
     GW.globalSettings.profiles[elementData.data].profileCreatedCharacter = GW.globalSettings.profiles[elementData.data].profileCreatedCharacter or UNKNOWN
     GW.globalSettings.profiles[elementData.data].profileIcon = GW.globalSettings.profiles[elementData.data].profileIcon or ICONS[math.random(1, #ICONS)]
 
-    if(type(GW.globalSettings.profiles[elementData.data].profileIcon) == "number") then
+    if (type(GW.globalSettings.profiles[elementData.data].profileIcon) == "number") then
         button.activateButton.icon:SetTexture(GW.globalSettings.profiles[elementData.data].profileIcon)
     else
-        button.activateButton.icon:SetTexture("INTERFACE\\ICONS\\" .. GW.globalSettings.profiles[elementData.data].profileIcon)
+        button.activateButton.icon:SetTexture("INTERFACE/ICONS/" .. GW.globalSettings.profiles[elementData.data].profileIcon)
     end
 
-    button.desc:SetText(L["Created: "] ..
-        GW.globalSettings.profiles[elementData.data].profileCreatedDate .. "\n" ..
-        L["Created by: "] ..
-        GW.globalSettings.profiles[elementData.data].profileCreatedCharacter .. "\n"
-    )
+    button.desc:SetText(L["Created: "] .. GW.globalSettings.profiles[elementData.data].profileCreatedDate .. "\n" ..
+        L["Created by: "] .. GW.globalSettings.profiles[elementData.data].profileCreatedCharacter .. "\n" ..
+        (GW.globalSettings.profiles[elementData.data].profileChangedDate and L["Last updated: "] ..GW.globalSettings.profiles[elementData.data].profileChangedDate or ""))
 end
 
 local function collectAllIcons()
     -- We need to avoid adding duplicate spellIDs from the spellbook tabs for your other specs.
     local activeIcons = {}
     local endIdx = GW.Retail and C_SpellBook.GetNumSpellBookSkillLines() or GetNumSpellTabs()
-    local itemInfo
-
 
     for i = 1, endIdx do
         local tabStart
@@ -579,7 +575,8 @@ local function LoadProfilesPanel(sWindow)
     p.resetToDefaultFrame:SetScript("OnLeave", item_OnLeave)
     item_OnLoad(p.resetToDefaultFrame)
 
-    p.resetToDefaultFrame.activateButton.icon:SetTexture("Interface/icons/inv_corgi2")
+    p.resetToDefaultFrame.activateButton.icon:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo")
+    p.resetToDefaultFrame.activateButton.icon:SetTexCoord(0, 1, 0, 1)
 
     p.resetToDefaultFrame.hasOptions = false
     p.resetToDefaultFrame.canDelete = false

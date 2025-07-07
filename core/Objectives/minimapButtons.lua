@@ -190,7 +190,7 @@ local function UpdateButtons(self)
 end
 
 local function GrabIcons(self)
-    if InCombatLockdown() or C_PetBattles and C_PetBattles.IsInBattle() then return end
+    if InCombatLockdown() or (C_PetBattles and C_PetBattles.IsInBattle()) then return end
 
     for _, frame in ipairs({Minimap:GetChildren()}) do
         if frame then
