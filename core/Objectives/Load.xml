@@ -8,7 +8,6 @@
     <Script file ="scenarioWidgets\warfronts.lua"/>
     <Script file ="scenarioWidgets\emberCourt.lua"/>
 
-
     <Script file ="scenario.lua"/>
     <Script file ="minimapButtons.lua"/>
     <Script file ="notifications.lua"/>

@@ -114,7 +114,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     stageDescription = stageDescription or ""
     stageName = stageName or ""
     if difficultyName then
-        local level = C_ChallengeMode.GetActiveKeystoneInfo()
+        local level = GW.Retail and C_ChallengeMode.GetActiveKeystoneInfo() or 0
         if level > 0 then
             compassData.TITLE = stageName .. " |cFFFFFFFF +" .. level .. " " .. difficultyName .. "|r"
         else
@@ -212,7 +212,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     GwObjectivesNotification:AddNotification(compassData, true)
 
     if questID then
-        block.questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
+        block.questLogIndex = GW.Retail and C_QuestLog.GetLogIndexForQuestID(questID) or GetQuestLogIndexByID(questID)
     end
 
     --check for groupfinder button

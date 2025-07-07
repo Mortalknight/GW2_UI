@@ -301,7 +301,7 @@ local function getNearestQuestPOIClassic()
 end
 GW.AddForProfiling("notifications", "getNearestQuestPOIClassic", getNearestQuestPOIClassic)
 
-local function getNearestQuestPOIMists() --TODO
+local function getNearestQuestPOIMists()
     if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
         return nil
     end
