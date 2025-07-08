@@ -8,7 +8,6 @@ local nameRoleIcon = GW.nameRoleIcon
 
 
 local MountIDs = {}
-local MountText = {}
 local targetList = {}
 local classification = {
     worldboss = format("|cffAF5050 %s|r", BOSS),
@@ -71,10 +70,10 @@ local function RemoveTrashLines(self)
 end
 
 local function AddMountInfoToAuraTooltip (self, auraData)
-    local mountID, mountText = MountIDs[auraData.spellId]
+    local mountID, mountText = MountIDs[auraData.spellId], ""
 
     if mountID then
-        local sourceText = MountText[mountID]
+        local sourceText = mountID.sourceText
         mountText = sourceText and gsub(sourceText, "|n%s+|n", "|n")
 
         if mountText then
@@ -562,7 +561,7 @@ local function AddMountInfo(self, unit)
         if mountID then
             self:AddDoubleLine(format("%s:", MOUNT), auraData.name, nil, nil, nil, 1, 1, 1)
 
-            local sourceText = MountText[mountID]
+            local sourceText = mountID.sourceText
             local mountText = sourceText and IsControlKeyDown() and gsub(sourceText, "|n%s+|n", "|n")
             if mountText then
                 local sourceModified = gsub(mountText, "|n", "\10")
@@ -1178,14 +1177,12 @@ local function LoadTooltips()
 
     -- Functions
     MountIDs = {}
-    MountText = {}
     if GW.Retail or GW.Mists then
         local mountIDs = C_MountJournal.GetMountIDs()
         for _, mountID in ipairs(mountIDs) do
             local _, spellID = C_MountJournal.GetMountInfoByID(mountID)
             local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(mountID)
-            MountIDs[spellID] = mountID
-            MountText[mountID] = sourceText
+            MountIDs[spellID] = {mountId = mountID, sourceText = sourceText}
         end
     end
 
