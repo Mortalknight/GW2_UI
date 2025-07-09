@@ -1615,7 +1615,7 @@ GW.AddForProfiling("classpowers", "setWarlock", setWarlock)
 -- MONK
 local function powerChi(self, event, ...)
     local pType = select(2, ...)
-    if event ~= "CLASS_POWER_INIT" and pType ~= "CHI" then
+    if event ~= "CLASS_POWER_INIT" and pType ~= "CHI" and pType ~= "DARK_FORCE" then
         return
     end
 
