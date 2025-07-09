@@ -1,3 +1,9 @@
+8.1.7
+FIXES
+    - Shadow prist orbs (mists)
+    - DK runes (mists)
+    - Unitframe absorb amounts (mists)
+
 8.1.6
 FIXES
     - New round of Mists fixes

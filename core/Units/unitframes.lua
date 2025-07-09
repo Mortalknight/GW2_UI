@@ -842,8 +842,11 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
     unitframe:RegisterEvent("UNIT_DISPLAYPOWER")
 
-    if GW.Retail then
+    if GW.Retail or GW.Mists then
         unitframe:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", unit)
+    end
+
+    if GW.Retail then
         unitframe:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", unit)
         unitframe:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", unit)
         unitframe:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", unit)

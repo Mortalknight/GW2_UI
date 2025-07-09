@@ -425,7 +425,7 @@ local function CreatePartyFrame(i, isPlayer)
     end
     petFrame:OnEvent("load")
 
-    if GW.Retail then
+    if GW.Retail or GW.Mists then
         petFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", petUnit)
         petFrame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", petUnit)
     elseif GW.Classic then
@@ -471,8 +471,11 @@ local function CreatePartyFrame(i, isPlayer)
     end
     frame:SetScript("OnEvent", frame.OnEvent)
 
-     if GW.Retail then
+    if GW.Retail then
         frame:RegisterEvent("INCOMING_SUMMON_CHANGED")
+    end
+
+    if GW.Retail or GW.Mists then
         frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
         frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", registerUnit)
     elseif GW.Classic then

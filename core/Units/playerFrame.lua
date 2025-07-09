@@ -142,6 +142,9 @@ local function LoadPlayerFrame()
 
     if GW.Retail then
         frame:RegisterEvent("WAR_MODE_STATUS_UPDATE")
+    end
+
+    if GW.Retail or GW.Mists then
         frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
     elseif GW.Classic then
         frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")

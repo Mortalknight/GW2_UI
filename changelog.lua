@@ -15,6 +15,12 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.1.7",{
+    {ct.bug, [=[ Shadow prist orbs (mists)]=]},
+    {ct.bug, [=[DK runes (mists)]=]},
+    {ct.bug, [=[Unitframe absorb amounts (mists)]=]},
+})
+
 addChange("8.1.6",{
     {ct.bug, [=[Next round of Mists fixes]=]},
 })
