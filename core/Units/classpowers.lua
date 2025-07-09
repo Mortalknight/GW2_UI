@@ -1080,11 +1080,12 @@ local RUNETYPE_FROST = 2
 local RUNETYPE_UNHOLY = 3
 local RUNETYPE_DEATH = 4
 
-local iconTextures = {}
-iconTextures[RUNETYPE_BLOOD] = "Interface/AddOns/GW2_UI/textures/altpower/runes-blood"
-iconTextures[RUNETYPE_FROST] = "Interface/AddOns/GW2_UI/textures/altpower/runes"
-iconTextures[RUNETYPE_UNHOLY] = "Interface/AddOns/GW2_UI/textures/altpower/runes-unholy"
-iconTextures[RUNETYPE_DEATH] = "Interface/AddOns/GW2_UI/textures/altpower/runes-death"
+local iconTextures = {
+    [RUNETYPE_BLOOD] = "Interface/AddOns/GW2_UI/textures/altpower/runes-blood",
+    [RUNETYPE_FROST] = "Interface/AddOns/GW2_UI/textures/altpower/runes",
+    [RUNETYPE_UNHOLY] = "Interface/AddOns/GW2_UI/textures/altpower/runes-unholy",
+    [RUNETYPE_DEATH] = "Interface/AddOns/GW2_UI/textures/altpower/runes-death"
+}
 local RUNE_TIMER_ANIMATIONS = {
     [1] = 0,
     [2] = 0,
@@ -1121,6 +1122,7 @@ local function getRuneData(index)
         local correctRuneId = getBlizzardRuneId[index]
         local start, duration, ready = GetRuneCooldown(correctRuneId)
         local runeType = GetRuneType(correctRuneId)
+
         local progress = 1
         if start == nil then
             start = GetTime()
