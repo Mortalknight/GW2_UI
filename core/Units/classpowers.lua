@@ -1012,36 +1012,32 @@ GW.AddForProfiling("classpowers", "setRogue", setRogue)
 
 -- PRIEST
 local function shadowOrbs(self, event, ...)
-    if event ~= "CLASS_POWER_INIT" and event ~= "UNIT_AURA" then
+   local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "SHADOW_ORBS" then
         return
     end
 
-    local _, count, _, _ = findBuff("player", 77487)
-    if count == nil then
-        count = 0
-    end
-
+    local currentOrbs = UnitPower("player", Enum.PowerType.ShadowOrbs)
     local old_power = self.gwPower
-    local pwr = count
-    if pwr < 2 then
+    if currentOrbs < 2 then
         self.background:SetAlpha(0.2)
     else
         self.background:SetAlpha(1)
     end
     for _, v in pairs(self.priest.power) do
         local id = tonumber(v:GetParentKey())
-        if old_power < id and pwr >= id then
+        if old_power < id and currentOrbs >= id then
             animFlarePoint(self, v, 1, 0, 0.5)
         end
-        if pwr >= 3 and id < 4 then
+        if currentOrbs >= 3 and id < 4 then
             v:SetTexCoord(0, 0.5, 0.5, 1)
-        elseif pwr >= id then
+        elseif currentOrbs >= id then
             v:SetTexCoord(0.5, 1, 0, 0.5)
-        elseif pwr < id then
+        elseif currentOrbs < id then
             v:SetTexCoord(0, 0.5, 0, 0.5)
         end
     end
-    self.gwPower = pwr;
+    self.gwPower = currentOrbs
 end
 GW.AddForProfiling("classpowers", "shadowOrbs", shadowOrbs)
 
@@ -1068,7 +1064,7 @@ local function setPriest(f)
 
             f:SetScript("OnEvent", shadowOrbs)
             shadowOrbs(f, "CLASS_POWER_INIT")
-            f:RegisterUnitEvent("UNIT_AURA", "player")
+            f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
             return true
         end
@@ -1079,16 +1075,6 @@ end
 GW.AddForProfiling("classpowers", "setPriest", setPriest)
 
 -- DEATH KNIGHT
--- cache rune data table
-local RUNE_PROGRESS = {
-    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
-    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
-    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
-    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
-    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
-    { rune_start = 0, rune_duration = 0, rune_ready = false, progress = 0 },
-}
-
 local RUNETYPE_BLOOD = 1
 local RUNETYPE_FROST = 2
 local RUNETYPE_UNHOLY = 3
@@ -1179,13 +1165,15 @@ local function powerRune(self)
             fFill:SetTexCoord(0.5, 1, 0, 1)
             fFill:SetHeight(32)
             fFill:SetVertexColor(1, 1, 1, 1)
-            fFill:SetDesaturated(false)
+            if GW.Retail then
+                fFill:SetDesaturated(false)
+            end
             if animations[animId] then
                 animations[animId].completed = true
                 animations[animId].duration = 0
             end
         else
-            if not data.start or data.start == 0 then
+            if data.start == 0 then
                 return
             end
             GW.AddToAnimation(
@@ -1235,7 +1223,6 @@ local function powerRune(self)
         end
         fTex:SetTexCoord(0, 0.5, 0, 1)
     end
-
 end
 GW.AddForProfiling("classpowers", "powerRune", powerRune)
 
@@ -1266,7 +1253,7 @@ local function setDeathKnight(f)
             fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
             fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
             fFlare:SetRotation(1.5708)
-            fFlare:SetVertexColor(1,1,1,0)
+            fFlare:SetVertexColor(1, 1, 1, 0)
             fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
         end
     elseif GW.Mists then
@@ -1287,7 +1274,7 @@ local function setDeathKnight(f)
             fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
             fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
             fFlare:SetRotation(1.5708)
-            fFlare:SetVertexColor(1,1,1,0)
+            fFlare:SetVertexColor(1, 1, 1, 0)
             fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
         end
     end
