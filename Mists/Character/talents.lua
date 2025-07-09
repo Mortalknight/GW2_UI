@@ -100,15 +100,19 @@ local function GetSpellPreviewButton(self, index)
     spellButton.icon:SetAllPoints()
     spellButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     spellButton.border = spellButton:CreateTexture(nil, "BACKGROUND")
-    spellButton.border:SetSize(31, 31)
+    spellButton.border:SetSize(32, 32)
     spellButton.border:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty")
     spellButton.border:SetPoint("CENTER", spellButton, "CENTER", 0, 0)
+    spellButton.mask = spellButton:CreateMaskTexture()
+    spellButton.mask:SetPoint("CENTER", spellButton, "CENTER", 0, 0)
+    spellButton.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    spellButton.mask:SetSize(34, 34)
 
     spellButton:EnableMouse(true)
     spellButton:RegisterForClicks("AnyUp")
     spellButton:RegisterForDrag("LeftButton")
     spellButton:SetScript("OnDragStart", function(btn)
-        if InCombatLockdown() then
+        if InCombatLockdown() or btn.isPassive then
             return
         end
         if btn.isPetSpell then
@@ -204,10 +208,20 @@ local function UpdateTrees(self, currentSpec)
                 local bonus = bonuses[idx]
                 local spellButton = GetSpellPreviewButton(container, idx)
                 local _, icon2 = GetSpellTexture(bonus)
+                local isPassive = IsPassiveSpell(bonus)
                 spellButton.icon:SetTexture(icon2)
                 spellButton.spellID = bonus
                 spellButton.isPetSpell = isPetTalents
+                spellButton.isPassive = isPassive
                 spellButton:ClearAllPoints()
+
+                if isPassive then
+                    spellButton.icon:AddMaskTexture(spellButton.mask)
+                    spellButton.border:SetTexture(passiveOutline)
+                else
+                    spellButton.icon:RemoveMaskTexture(spellButton.mask)
+                    spellButton.border:SetTexture(activeOutline)
+                end
 
                 spellButton.icon:SetDesaturated(not isActiveSpec)
                 spellButton:EnableMouse(isActiveSpec)
