@@ -283,7 +283,7 @@ local function GetUnitBattlefieldFaction(unit)
     -- this might be a rated BG or wargame and if so the player's faction might be altered
     -- should also apply if `player` is a mercenary.
     if unit == "player" and GW.Retail then
-        if C_PvP.IsRatedBattleground or IsWargame() then
+        if C_PvP.IsRatedBattleground() or IsWargame() then
             englishFaction = PLAYER_FACTION_GROUP[GetBattlefieldArenaFaction()]
             localizedFaction = (englishFaction == "Alliance" and FACTION_ALLIANCE) or FACTION_HORDE
         elseif UnitIsMercenary(unit) then
