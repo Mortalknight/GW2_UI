@@ -443,7 +443,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
             local race, englishRace = UnitRace(unit)
 
             local _, localizedFaction = GW.GetUnitBattlefieldFaction(unit)
-            if localizedFaction and (englishRace == "Pandaren" or englishRace == "Dracthyr") then
+            if localizedFaction and (englishRace == "Pandaren" or englishRace == "Dracthyr" or englishRace == "Earthen") then
                 race = localizedFaction .. " " .. race
             end
             local hexColor = GW.RGBToHex(diffColor.r, diffColor.g, diffColor.b)
