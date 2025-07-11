@@ -761,7 +761,6 @@ local function GwKillEditMode(object)
 end
 
 local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddition, skip)
-    if GW.texts[object] then return end
     if not object or not font or not object.SetFont or not textSizeType then return end
 
     if not skip then -- can be used for ignoring setting updates and used for update function
