@@ -37,7 +37,8 @@ local function updateBagItemButton(button)
     end
     local id, name, textureName, count, durability, maxDurability, _, _, _, _, _, setTooltip = EquipmentManager_GetItemInfoByLocation(location)
     local broken = (maxDurability and durability == 0)
-
+    local _, _, _, _, bag = EquipmentManager_UnpackLocation(location)
+    button.bagID = bag
     button.ItemId = id
     button.ItemLink = GW.getContainerItemLinkByNameOrId(name, id)
     if button.ItemLink == nil then
@@ -58,7 +59,7 @@ local function updateBagItemButton(button)
             setTooltip()
         end
 
-        local  _, _, quality  = C_Item.GetItemInfo(id)
+        local  _, _, quality = C_Item.GetItemInfo(id)
         if quality then
             GW.SetItemLevel(button, quality, button.ItemLink)
             GW.SetItemButtonBorderQuality(button, quality)

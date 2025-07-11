@@ -868,7 +868,7 @@ local function SetItemLevel(button, quality, itemInput, slot)
         local item = Item:CreateFromItemLink(itemLink)
 
         item:ContinueOnItemLoad(function()
-            local itemLoc = ItemLocation:CreateFromBagAndSlot(button.bagID, button:GetID())
+            local itemLoc = ItemLocation:CreateFromBagAndSlot(button.bagID or 0, button:GetID())
             if itemLoc and itemLoc:IsValid() then
                 local ilvl = C_Item.GetCurrentItemLevel(itemLoc)
                 if ilvl and ilvl > 0 then

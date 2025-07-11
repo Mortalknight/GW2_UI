@@ -198,6 +198,8 @@ local function hookItemQuality(button, quality, itemIDOrLink)
     local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
     local showEquipmentSetName = GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME
 
+    button.bagID = bag_id
+
     button.IconOverlay:Hide()
     local t = button.IconBorder
     local colorCommon = GW.GetBagItemQualityColor(Enum.ItemQuality.Common)
