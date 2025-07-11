@@ -1,5 +1,4 @@
 local Name, GW = ...
-local Debug = GW.Debug
 
 -- Thanks at Shrugal for the ErrorHandler
 
@@ -125,7 +124,7 @@ function Gw2ErrorHandlerMixin:HandleError(msg, stack, locals)
         for match in stack:gmatch("%[?" .. Name .. "[\\/]+([^:%]]+)") do
             if match and not GW.StartsWith(match, "Libs") and not GW.StartsWith(match, "libs") then
                 self.errors = self.errors + 1
-                Debug("ERROR", msg .. "\n" .. stack)
+                GW.Debug("ERROR", msg .. "\n" .. stack)
                 tinsert(self.log, ("[%s] |cffff0000[ERROR]|r: %s"):format(date("%H:%M:%S"), (msg .. "\n" .. stack) or "-"))
                 while #self.log > self.maxEntries do
                     tremove(self.log, 1)
