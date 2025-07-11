@@ -561,13 +561,14 @@ local function LoadBag(helpers)
 
     -- setup bagheader stuff
     for i = 0, 4 do
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetFont(UNIT_NAME_FONT, 12)
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(1, 1, 1)
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetShadowColor(0, 0, 0, 0)
-        _G["GwBagFrameGwBagHeader" .. i].icon2:Hide()
-        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnClick", bagHeader_OnClick)
-        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnEnter", bagHeader_OnEnter)
-        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnLeave", GameTooltip_Hide)
+        local header = _G["GwBagFrameGwBagHeader" .. i]
+        header.nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        header.nameString:SetTextColor(1, 1, 1)
+        header.nameString:SetShadowColor(0, 0, 0, 0)
+        header.icon2:Hide()
+        header:SetScript("OnClick", bagHeader_OnClick)
+        header:SetScript("OnEnter", bagHeader_OnEnter)
+        header:SetScript("OnLeave", GameTooltip_Hide)
     end
 
     -- take the original search box
@@ -613,9 +614,9 @@ local function LoadBag(helpers)
     createBagBar(f.ItemFrame)
 
     -- skin some things not done in XML
-    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20)
+    f.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
     f.headerString:SetText(INVENTORY_TOOLTIP)
-    f.spaceString:SetFont(UNIT_NAME_FONT, 12)
+    f.spaceString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 
@@ -818,12 +819,12 @@ local function LoadBag(helpers)
     end
 
     -- setup money frame
-    f.bronze:SetFont(UNIT_NAME_FONT, 12)
-    f.bronze:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.silver:SetFont(UNIT_NAME_FONT, 12)
-    f.silver:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.gold:SetFont(UNIT_NAME_FONT, 12)
-    f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
+    for _, frameName in ipairs({"bronze", "silver", "gold"}) do
+        f[frameName]:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    end
+    f.bronze:SetTextColor(177/255, 97/255, 34/255)
+    f.silver:SetTextColor(170/255, 170/255, 170/255)
+    f.gold:SetTextColor(221/255, 187/255, 68/255)
 
     -- money frame tooltip
     f.moneyFrame:SetScript("OnEnter", GW.Money_OnEnter)
@@ -846,41 +847,19 @@ local function LoadBag(helpers)
     end)
 
     -- setup watch currencies
-    f.currency1:SetFont(UNIT_NAME_FONT, 12)
-    f.currency1:SetTextColor(1, 1, 1)
-    f.currency2:SetFont(UNIT_NAME_FONT, 12)
-    f.currency2:SetTextColor(1, 1, 1)
-    f.currency3:SetFont(UNIT_NAME_FONT, 12)
-    f.currency3:SetTextColor(1, 1, 1)
-
-    -- set warch currencies tooltips
-    f.currency1Frame:SetScript("OnEnter", function(self)
-        if not self.CurrencyIdx then
-            return
-        end
-        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-        GameTooltip:ClearLines()
-        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-        GameTooltip:Show()
-    end)
-    f.currency2Frame:SetScript("OnEnter", function(self)
-        if not self.CurrencyIdx then
-            return
-        end
-        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-        GameTooltip:ClearLines()
-        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-        GameTooltip:Show()
-    end)
-    f.currency3Frame:SetScript("OnEnter", function(self)
-        if not self.CurrencyIdx then
-            return
-        end
-        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-        GameTooltip:ClearLines()
-        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-        GameTooltip:Show()
-    end)
+    for i = 1, 3 do
+        local currencyFrame = f["currency" .. i]
+        currencyFrame:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        currencyFrame:SetTextColor(1, 1, 1)
+        f["currency" .. i .. "Frame"]:SetScript("OnEnter", function(self)
+            if self.CurrencyIdx then
+                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+                GameTooltip:ClearLines()
+                GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+                GameTooltip:Show()
+            end
+        end)
+    end
 
     f.currency:SetScript("OnEvent", function(self)
         if GW.inWorld then

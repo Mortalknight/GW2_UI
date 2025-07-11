@@ -620,18 +620,19 @@ local function LoadBag(helpers)
 
     -- setup bagheader stuff
     for i = 0, 5 do
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetFont(UNIT_NAME_FONT, 12, "")
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(1, 1, 1)
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetShadowColor(0, 0, 0, 0)
+        local header = _G["GwBagFrameGwBagHeader" .. i]
+        header.nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        header.nameString:SetTextColor(1, 1, 1)
+        header.nameString:SetShadowColor(0, 0, 0, 0)
         if i == 5 then
-            _G["GwBagFrameGwBagHeader" .. i].icon:Hide()
-            _G["GwBagFrameGwBagHeader" .. i].icon2:Show()
+            header.icon:Hide()
+            header.icon2:Show()
         else
-            _G["GwBagFrameGwBagHeader" .. i].icon2:Hide()
+            header.icon2:Hide()
         end
-        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnClick", bagHeader_OnClick)
-        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnEnter", bagHeader_OnEnter)
-        _G["GwBagFrameGwBagHeader" .. i]:SetScript("OnLeave", GameTooltip_Hide)
+        header:SetScript("OnClick", bagHeader_OnClick)
+        header:SetScript("OnEnter", bagHeader_OnEnter)
+        header:SetScript("OnLeave", GameTooltip_Hide)
     end
 
     -- take the original search box
@@ -685,9 +686,9 @@ local function LoadBag(helpers)
     createBagBar(f.ItemFrame)
 
     -- skin some things not done in XML
-    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20, "")
+    f.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
     f.headerString:SetText(INVENTORY_TOOLTIP)
-    f.spaceString:SetFont(UNIT_NAME_FONT, 12, "")
+    f.spaceString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 
@@ -877,12 +878,12 @@ local function LoadBag(helpers)
     end
 
     -- setup money frame
-    f.bronze:SetFont(UNIT_NAME_FONT, 12, "")
-    f.bronze:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.silver:SetFont(UNIT_NAME_FONT, 12, "")
-    f.silver:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.gold:SetFont(UNIT_NAME_FONT, 12, "")
-    f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
+    for _, frameName in ipairs({"bronze", "silver", "gold"}) do
+        f[frameName]:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    end
+    f.bronze:SetTextColor(177/255, 97/255, 34/255)
+    f.silver:SetTextColor(170/255, 170/255, 170/255)
+    f.gold:SetTextColor(221/255, 187/255, 68/255)
 
     -- money frame tooltip
     f.moneyFrame:SetScript("OnEnter", GW.Money_OnEnter)
@@ -921,7 +922,7 @@ local function LoadBag(helpers)
     smsj.shadow:SetAllPoints()
     smsj.shadow:SetColorTexture(0.1, 0.1, 0.1, 1.0)
 
-    smsj.text = smsj:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge") 
+    smsj.text = smsj:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     smsj.text:SetAllPoints();
     smsj.text:SetText(L["Selling Junk"])
 

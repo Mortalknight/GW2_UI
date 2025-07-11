@@ -34,7 +34,7 @@ local function updateLootFrameButtons(self)
             button.NameFrame:SetPoint("LEFT", button, "RIGHT", 0, 0)
         end
 
-        if button.Text then
+        if button.Text then 
             button.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
         end
     end

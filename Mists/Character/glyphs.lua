@@ -15,9 +15,9 @@ end
 local function skinButton(button)
     button:GwSkinButton(false, true)
 
-    button.name:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
+    button.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     button.name:SetTextColor(0.7, 0.7, 0.5, 1)
-    button.typeName:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
+    button.typeName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL, "OUTLINE")
     button.typeName:SetTextColor(0.5, 0.5, 0.5, 1)
 
     button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -50,7 +50,7 @@ local function updateGlyphListFrame()
                     header.skinned = true
                     header:GwStripTextures()
                     header:GwCreateBackdrop('Transparent')
-                    header.name:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
+                    header.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
                     header.name:SetTextColor(1, 1, 1, 1)
 
                     header:HookScript("OnClick", updateGlyphListFrame)
@@ -84,7 +84,7 @@ local function takeOverBlizzardsGlypheFrame()
         end
     end)
 
-    glyphesFrame.notice:SetFont(UNIT_NAME_FONT,12)
+    glyphesFrame.notice:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     glyphesFrame.notice:SetText("Notice: You might encounter an error message when attempting to apply a glyph. This is because Blizzard has not re-implemented some of their glyph API functions. You can simply ignore this message and try again.")
 
     GlyphFrame_OnEvent(GlyphFrame, "ADDON_LOADED", "Blizzard_GlyphUI")
@@ -125,7 +125,7 @@ local function takeOverBlizzardsGlypheFrame()
     GlyphFrame.clearInfo:ClearAllPoints()
     GlyphFrame.clearInfo:SetPoint("TOPLEFT", glyphesFrame, "TOPLEFT", 10, -10)
     GlyphFrame.clearInfo.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    GlyphFrame.clearInfo.name:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
+    GlyphFrame.clearInfo.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     GlyphFrame.clearInfo.name:SetTextColor(1, 1, 1, 1)
 
     GlyphFrame.scrollFrame:GwSkinScrollFrame()

@@ -79,8 +79,8 @@ local function getSpellBookHeader(self, tab)
     end
 
     header = CreateFrame("Frame", nil, self.container[tab], "GwSpellbookActionButtonHeaderTemplate")
-    header.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
-    header.subTitle:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
+    header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+    header.subTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL, "OUTLINE")
     tinsert(self.container[tab].headerFrame, header)
     return header
 end
@@ -570,13 +570,13 @@ local function LoadSpellBook()
         local menuItem = CreateFrame("Button", "GwspellbookTab" .. tab, menu, "GwspellbookTab")
         menuItem:SetPoint("TOPLEFT", menu, "TOPLEFT", 0, -menuItem:GetHeight() * (tab - 1))
         local container = CreateFrame("Frame", "GwSpellbookContainerTab" .. tab, spellBook, "GwSpellbookContainerTab")
-        container.title:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
+        container.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE")
         container.title:SetTextColor(0.9, 0.9, 0.7, 1)
-        container.pages:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+        container.pages:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
         container.pages:SetTextColor(0.7, 0.7, 0.5, 1)
 
         local zebra = tab % 2
-        menuItem.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
+        menuItem.title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
         menuItem.title:SetTextColor(0.7, 0.7, 0.5, 1)
         menuItem.bg:SetVertexColor(1, 1, 1, zebra)
         menuItem.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
