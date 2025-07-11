@@ -540,7 +540,7 @@ local function LoadMinimap()
     MinimapCluster.ZoneTextButton:GwKill()
     TimeManagerClockButton:GwKill()
 
-    GwMapGradient.location = GwMapGradient:CreateFontString(nil, "OVERLAY")
+    GwMapGradient.location = GwMapGradient:CreateFontString(nil, "OVERLAY") 
     GwMapGradient.location:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
     GwMapGradient.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
     GwMapGradient.location:SetJustifyH("CENTER")

@@ -391,7 +391,7 @@ local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
     elseif isMainBar then
         button.HotKey:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
         button.HotKey:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
-        button.HotKey:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
+        button.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
         button.HotKey:SetTextColor(1, 1, 1)
     else
         button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 0)
@@ -413,7 +413,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.Count:ClearAllPoints()
         btn.Count:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
         btn.Count:SetJustifyH("RIGHT")
-        btn.Count:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
+         btn.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER, "OUTLINE")
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 
@@ -541,7 +541,7 @@ local function updateMainBar()
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
-            hotkey:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
+            hotkey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
             hotkey:SetTextColor(1, 1, 1)
             btn.changedColor = false
             btn.rangeIndicatorSetting = rangeIndicatorSetting

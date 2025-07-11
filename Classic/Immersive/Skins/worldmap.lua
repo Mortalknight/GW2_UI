@@ -1,8 +1,6 @@
 local _, GW = ...
 
-local CoordsFrame
 local moveDistance, mapX, mapY, mapLeft, mapTop, mapNormalScale, mapEffectiveScale = 0, 0, 0, 0, 0, 1, 0
-
 
 local function GetScaleDistance()
     local left, top = mapLeft, mapTop

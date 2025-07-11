@@ -588,7 +588,7 @@ local function styleCharacterMenuBackButton(self)
     fontString:SetTextColor(1,1,1,1)
     fontString:SetShadowColor(0,0,0,0)
     fontString:SetShadowOffset(1,-1)
-    fontString:SetFont(DAMAGE_TEXT_FONT,14, "")
+    fontString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
 end
 
@@ -623,7 +623,7 @@ local function CharacterMenuButton_OnLoad(self, odd, addGwHeroPanelFrameRef)
     self:GetFontString():SetTextColor(1, 1, 1, 1)
     self:GetFontString():SetShadowColor(0, 0, 0, 0)
     self:GetFontString():SetShadowOffset(1, -1)
-    self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14, "")
+    self:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     self:GetFontString():SetJustifyH("LEFT")
     self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
 

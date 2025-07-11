@@ -99,7 +99,7 @@ local function LoadMirrorTimers()
             mirrorTimer:ClearAllPoints()
             mirrorTimer:SetPoint("TOP", _G["GwMirrorTimer" .. i - 1], "BOTTOM")
         end
-        mirrorTimer.bar.name:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
+        mirrorTimer.bar.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
         mirrorTimer.timer = nil
         mirrorTimer:RegisterEvent("MIRROR_TIMER_START")
         mirrorTimer:RegisterEvent("MIRROR_TIMER_PAUSE")
