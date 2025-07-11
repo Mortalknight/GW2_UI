@@ -110,9 +110,8 @@ do
 end
 
 -- reskins an ItemButton to use GW2_UI styling
-local function reskinItemButton(b, overrideIconSize)
+local function reskinItemButton(b, overrideIconSize, firstLoading)
     if not b then return end
-    local i = 1
 
     local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
     b:SetSize(iconSize, iconSize)
@@ -124,10 +123,7 @@ local function reskinItemButton(b, overrideIconSize)
     b.IconBorder:SetAllPoints(b)
     b.IconBorder:SetTexture(BORDER_TEXTURE)
 
-    local norm = b:GetNormalTexture()
-    --norm:GwKill()
     b:ClearNormalTexture()
-
 
     if b.NormalTexture then
         b.NormalTexture:SetTexture()
@@ -138,8 +134,6 @@ local function reskinItemButton(b, overrideIconSize)
 		b.ItemSlotBackground:SetAllPoints(b)
     end
 
-   
-
     if b.Background then
         b.Background:Hide()
     end
@@ -149,8 +143,6 @@ local function reskinItemButton(b, overrideIconSize)
     end
 
     b.ItemSlotBackground:SetAlpha(0)
-
-    
 
     local high = b:GetHighlightTexture()
     high:SetAllPoints(b)
@@ -165,22 +157,16 @@ local function reskinItemButton(b, overrideIconSize)
         b.gwBackdrop = bd
     end
 
-    
-
     b.Count:ClearAllPoints()
     b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
     b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
     b.Count:SetJustifyH("RIGHT")
-
-     
 
     if b.IconQuestTexture then
         b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
         b.IconQuestTexture:ClearAllPoints()
         b.IconQuestTexture:SetPoint("CENTER", b, "CENTER", 0, 0)
     end
-
-   
 
     if b.flash then
         b.flash:SetAllPoints(b)
@@ -208,20 +194,21 @@ local function reskinItemButton(b, overrideIconSize)
         b.itemlevel:SetText("")
     end
 
-
     if b.cooldown then
         GW.RegisterCooldown(b.cooldown)
     elseif b.Cooldown then
         GW.RegisterCooldown(b.Cooldown)
     end
 
-    local bagID, slotID = b:GetBagID(), b:GetID()
-    local info = C_Container.GetContainerItemInfo(bagID, slotID)
-    if b.SetHasItem then
-        b:SetHasItem(info and info.iconFileID)
-        b:SetItemButtonTexture(info and info.iconFileID)
+    if firstLoading then
+        local bagID, slotID = b:GetBagID(), b:GetID()
+        local info = C_Container.GetContainerItemInfo(bagID, slotID)
+        if b.SetHasItem then
+            b:SetHasItem(info and info.iconFileID)
+            b:SetItemButtonTexture(info and info.iconFileID)
+        end
+        GW.SetBagItemButtonQualitySkin(b, info and info.quality, info and info.hyperlink, false)
     end
-    GW.SetBagItemButtonQualitySkin(b, info and info.quality, info and info.hyperlink, false)
 end
 GW.SkinBagItemButton = reskinItemButton
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
@@ -283,7 +270,7 @@ local function reskinItemButtons()
         for _, slot in next, container.Items do
             if slot then
                 if not slot.__gwSkinned then
-                    reskinItemButton(slot) -- will only be trigger on first init
+                    reskinItemButton(slot, nil, true) -- will only be trigger on first init
                     slot.__gwSkinned = true
                 end
                 updateItemVisuals(slot)
