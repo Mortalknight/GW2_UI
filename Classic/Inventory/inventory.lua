@@ -61,7 +61,6 @@ local function reskinItemButton(b, overrideIconSize)
 
     if not b.UpgradeIcon then
         b.UpgradeIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
-        b.UpgradeIcon:SetSize(15, 15)
         b.UpgradeIcon:SetPoint("TOPRIGHT", 7, -1)
         b.UpgradeIcon:Hide()
     end
@@ -92,6 +91,57 @@ end
 GW.SkinBagItemButton = reskinItemButton
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
+local function updateItemVisuals(b, overrideIconSize)
+   if not b or not b:IsShown() then return end
+
+    local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
+
+    if b:GetWidth() ~= iconSize or b:GetHeight() ~= iconSize then
+        b:SetSize(iconSize, iconSize)
+    end
+
+    local L, R, T, B = b.icon:GetTexCoord()
+    if L ~= 0.07 or R ~= 0.93 or T ~= 0.07 or B ~= 0.93 then
+        b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    end
+    if b.icon:GetAlpha() ~= 0.9 then
+        b.icon:SetAlpha(0.9)
+    end
+
+    if b:GetHighlightTexture() then
+        local high = b:GetHighlightTexture()
+        if high:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
+            high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        end
+        if high:GetBlendMode() ~= "ADD" then
+            high:SetBlendMode("ADD")
+        end
+        if high:GetAlpha() ~= 0.33 then
+            high:SetAlpha(0.33)
+        end
+    end
+
+    local point, _, relativePoint, x, y = b.Count:GetPoint()
+    if point ~= "TOPRIGHT" or relativePoint ~= "TOPRIGHT" or x ~= 0 or y ~= -3 then
+        b.Count:ClearAllPoints()
+        b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
+    end
+    if b.Count:GetJustifyH() ~= "RIGHT" then
+        b.Count:SetJustifyH("RIGHT")
+    end
+
+    if b.IconQuestTexture then
+        local w, h = b.IconQuestTexture:GetSize()
+        if w ~= iconSize + 2 or h ~= iconSize + 2 then
+            b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
+        end
+    end
+
+    if b.flash then
+        b.flash:SetAllPoints(b)
+    end
+end
+
 local function getContainerFrame(bag_id)
     -- ContainerFrame assignment is not guaranteed; only safe approach is to
     -- search every ContainerFrame and check its ID for a match.
@@ -106,14 +156,15 @@ local function getContainerFrame(bag_id)
 end
 GW.AddForProfiling("inventory", "getContainerFrame", getContainerFrame)
 
-
 local function reskinItemButtons()
     for i = 1, NUM_CONTAINER_FRAMES do
         for j = 1, MAX_CONTAINER_ITEMS do
-            local b = _G["ContainerFrame" .. i .. "Item" .. j]
-            if b then
-                reskinItemButton(b)
+            local slot = _G["ContainerFrame" .. i .. "Item" .. j]
+            if not slot.__gwSkinned then
+                reskinItemButton(slot) -- will only be trigger on first init
+                slot.__gwSkinned = true
             end
+            updateItemVisuals(slot)
         end
     end
 end
@@ -169,7 +220,7 @@ local function IsItemEligibleForItemLevelDisplay(equipLoc, rarity)
     return false
 end
 
-local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
+local function SetItemButtonData(button, quality, itemIDOrLink)
     if not button.gwBackdrop then
         return
     end
@@ -261,7 +312,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
     end
 end
-GW.SetBagItemButtonQualitySkin = hookSetItemButtonQuality
+GW.SetBagItemButtonQualitySkin = SetItemButtonData
 
 local bag_resize
 local bank_resize
@@ -678,7 +729,7 @@ local function LoadInventory()
     reskinItemButtons()
 
     -- whenever an ItemButton sets its quality ensure our custom border is being used
-    hooksecurefunc("SetItemButtonQuality", hookSetItemButtonQuality)
+    hooksecurefunc("SetItemButtonQuality", SetItemButtonData)
 
     -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
     for i = 1, NUM_CONTAINER_FRAMES do

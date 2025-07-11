@@ -110,7 +110,7 @@ do
 end
 
 -- reskins an ItemButton to use GW2_UI styling
-local function reskinItemButton(b, overrideIconSize, firstLoading)
+local function ReskinItemButton(b, overrideIconSize)
     if not b then return end
 
     local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
@@ -199,21 +199,24 @@ local function reskinItemButton(b, overrideIconSize, firstLoading)
     elseif b.Cooldown then
         GW.RegisterCooldown(b.Cooldown)
     end
-
-    if firstLoading then
-        local bagID, slotID = b:GetBagID(), b:GetID()
-        local info = C_Container.GetContainerItemInfo(bagID, slotID)
-        if b.SetHasItem then
-            b:SetHasItem(info and info.iconFileID)
-            b:SetItemButtonTexture(info and info.iconFileID)
-        end
-        GW.SetBagItemButtonQualitySkin(b, info and info.quality, info and info.hyperlink, false)
-    end
 end
-GW.SkinBagItemButton = reskinItemButton
-GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
+GW.SkinBagItemButton = ReskinItemButton
 
-local function updateItemVisuals(b, overrideIconSize)
+local function AssignItemData(slot)
+    if not slot then return end
+    local bagID, slotID = slot:GetBagID(), slot:GetID()
+    if not bagID or not slotID then
+        return
+    end
+    local info = C_Container.GetContainerItemInfo(bagID, slotID)
+    if slot.SetHasItem then
+        slot:SetHasItem(info and info.iconFileID)
+        slot:SetItemButtonTexture(info and info.iconFileID)
+    end
+    GW.SetBagItemButtonQualitySkin(slot, info and info.quality, info and info.hyperlink, false)
+end
+
+local function UpdateItemVisuals(b, overrideIconSize)
    if not b or not b:IsShown() then return end
 
     local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
@@ -270,10 +273,11 @@ local function reskinItemButtons()
         for _, slot in next, container.Items do
             if slot then
                 if not slot.__gwSkinned then
-                    reskinItemButton(slot, nil, true) -- will only be trigger on first init
+                    ReskinItemButton(slot) -- will only be trigger on first init
+                    AssignItemData(slot)
                     slot.__gwSkinned = true
                 end
-                updateItemVisuals(slot)
+                UpdateItemVisuals(slot)
             end
         end
     end
@@ -288,7 +292,7 @@ local function CheckUpdateIcon(button, itemLink)
 end
 GW.CheckUpdateIcon = CheckUpdateIcon
 
-local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
+local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays)
     if not button.gwBackdrop then
         return
     end
@@ -381,8 +385,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         GetItemButtonIconTexture(button):Hide()
     end
 end
-GW.SetBagItemButtonQualitySkin = hookItemQuality
-GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
+GW.SetBagItemButtonQualitySkin = SetItemButtonData
 
 local bag_resize
 local bank_resize
@@ -923,10 +926,10 @@ local function LoadInventory()
     end
 
     -- whenever an ItemButton sets its quality ensure our custom border is being used
-    hooksecurefunc("SetItemButtonQuality", hookItemQuality)
+    hooksecurefunc("SetItemButtonQuality", SetItemButtonData)
 
     local helpers = {}
-    helpers.reskinItemButton = reskinItemButton
+    helpers.reskinItemButton = ReskinItemButton
     helpers.reskinItemButtons = reskinItemButtons
     helpers.resizeInventory = resizeInventory
     helpers.getContainerFrame = getContainerFrame
