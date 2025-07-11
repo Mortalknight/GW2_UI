@@ -815,15 +815,43 @@ local function FrameFlash(frame, duration, fadeOutAlpha, fadeInAlpha, loop)
 end
 GW.FrameFlash = FrameFlash
 
-local function SetItemLevel(button, quality, itemlink, slot)
-    if not itemlink or itemlink == "" then return end
-    if not button.itemlevel then return end
+local function LoadItemAsync(itemInput, callback)
+    if type(itemInput) == "string" and itemInput:find("^|c.+|Hitem:") then
+        callback(itemInput)
+        return
+    end
 
-    if button.__gwLastItemLink == itemlink then return end
+    local _, link = C_Item.GetItemInfo(itemInput)
+    if link then
+        callback(link)
+        return
+    end
 
-    local function applyItemLevel(ilvl, color)
+    local itemID = tonumber(itemInput)
+    if not itemID then return end
+
+    local item = Item:CreateFromItemID(itemID)
+    item:ContinueOnItemLoad(function()
+        local _, resolvedLink = C_Item.GetItemInfo(itemID)
+        if resolvedLink then
+            callback(resolvedLink)
+        end
+    end)
+end
+
+local function SetItemLevel(button, quality, itemInput, slot)
+    if not itemInput or itemInput == "" then
+        button.itemlevel:SetText("")
+        button.__gwLastItemLink = nil
+        return
+    end
+
+    if button.__gwLastItemLink == itemInput then return end
+
+    local function applyItemLevel(ilvl, color, usedLink)
         if not ilvl or ilvl <= 0 then
             button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
             return
         end
 
@@ -832,37 +860,32 @@ local function SetItemLevel(button, quality, itemlink, slot)
             button.itemlevel:SetTextColor(color.r, color.g, color.b, 1)
         end
 
-        button.__gwLastItemLink = itemlink
+        button.__gwLastItemLink = usedLink
     end
 
-    local color = GW.GetQualityColor(quality or 0)
-    local itemLoc = ItemLocation:CreateFromBagAndSlot(button.bagID or 0, button:GetID() or 0)
-    if itemLoc and itemLoc:IsValid() then
-        local ilvl = C_Item.GetCurrentItemLevel(itemLoc)
-        if ilvl and ilvl > 0 then
-            applyItemLevel(ilvl, color)
-            return
-        end
-    end
+    LoadItemAsync(itemInput, function(itemLink)
+        local color = GW.GetQualityColor(quality or 0)
+        local item = Item:CreateFromItemLink(itemLink)
 
-    local item = Item:CreateFromItemLink(itemlink)
-    item:ContinueOnItemLoad(function()
-        local itemLocAsync = ItemLocation:CreateFromBagAndSlot(button.bagID or 0, button:GetID() or 0)
-        if itemLocAsync and itemLocAsync:IsValid() then
-            local asyncLvl = C_Item.GetCurrentItemLevel(itemLocAsync)
-            if asyncLvl and asyncLvl > 0 then
-                applyItemLevel(asyncLvl, color)
-                return
+        item:ContinueOnItemLoad(function()
+            local itemLoc = ItemLocation:CreateFromBagAndSlot(button.bagID, button:GetID())
+            if itemLoc and itemLoc:IsValid() then
+                local ilvl = C_Item.GetCurrentItemLevel(itemLoc)
+                if ilvl and ilvl > 0 then
+                    applyItemLevel(ilvl, color, itemLink)
+                    return
+                end
             end
-        end
 
-        -- Fallback-Fallback: Tooltipscan, nur wenn gar nichts anderes geht
-        local slotInfo = GW.GetGearSlotInfo("player", slot, itemlink, false)
-        if slotInfo and slotInfo.iLvl then
-            applyItemLevel(slotInfo.iLvl, color)
-        else
-            button.itemlevel:SetText("")
-        end
+            -- Fallback: Tooltipscan
+            local slotInfo = GW.GetGearSlotInfo("player", slot, itemLink, false)
+            if slotInfo and slotInfo.iLvl then
+                applyItemLevel(slotInfo.iLvl, color, itemLink)
+            else
+                button.itemlevel:SetText("")
+                button.__gwLastItemLink = nil
+            end
+        end)
     end)
 end
 GW.SetItemLevel = SetItemLevel
@@ -1357,25 +1380,25 @@ end
 GW.BlizzardDropdownButtonInitializer = BlizzardDropdownButtonInitializer
 
 local function DoesAncestryInclude(ancestry, frame)
-	if ancestry then
-		local currentFrame = frame;
-		while currentFrame do
-			if currentFrame == ancestry then
-				return true;
-			end
-			currentFrame = type(currentFrame) == "table" and currentFrame.GetParent and currentFrame:GetParent() or nil
-		end
-	end
-	return false;
+    if ancestry then
+        local currentFrame = frame;
+        while currentFrame do
+            if currentFrame == ancestry then
+                return true;
+            end
+            currentFrame = type(currentFrame) == "table" and currentFrame.GetParent and currentFrame:GetParent() or nil
+        end
+    end
+    return false;
 end
 GW.DoesAncestryInclude = DoesAncestryInclude
 
 local function DoesAncestryIncludeAny(ancestry, frames)
-	for _, frame in ipairs(frames) do
-		if DoesAncestryInclude(ancestry, frame) then
-			return true;
-		end
-	end
-	return false;
+    for _, frame in ipairs(frames) do
+        if DoesAncestryInclude(ancestry, frame) then
+            return true;
+        end
+    end
+    return false;
 end
 GW.DoesAncestryIncludeAny = DoesAncestryIncludeAny

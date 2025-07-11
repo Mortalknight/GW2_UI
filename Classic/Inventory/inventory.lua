@@ -110,8 +110,7 @@ GW.AddForProfiling("inventory", "getContainerFrame", getContainerFrame)
 local function reskinItemButtons()
     for i = 1, NUM_CONTAINER_FRAMES do
         for j = 1, MAX_CONTAINER_ITEMS do
-            local iname = "ContainerFrame" .. i .. "Item" .. j
-            local b = _G[iname]
+            local b = _G["ContainerFrame" .. i .. "Item" .. j]
             if b then
                 reskinItemButton(b)
             end
@@ -191,6 +190,8 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
     local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or GW.BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
 
+    button.bagID = bag_id
+
     if itemIDOrLink then
         local isQuestItem = select(12, C_Item.GetItemInfo(itemIDOrLink))
         if quality == nil then quality = 0 end
@@ -223,6 +224,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         if button.itemlevel and showItemLevel then
             local canShowItemLevel = IsItemEligibleForItemLevelDisplay(select(9, C_Item.GetItemInfo(itemIDOrLink)), quality)
             if canShowItemLevel then
+                print(itemIDOrLink)
                 GW.SetItemLevel(button, quality, itemIDOrLink)
             else
                 button.itemlevel:SetText("")
@@ -314,7 +316,7 @@ local function takeItemButtons(p, bag_id)
     -- amazingly; this is probably brittle in the long-term though and we should
     -- someday re-implemenent all the ItemButton functionality ourselves
 
-    freeItemButtons(cf, p, bag_id)
+    freeItemButtons(cf, p)
 
     local iname
     if bag_id == BANK_CONTAINER then
