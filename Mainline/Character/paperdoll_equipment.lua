@@ -163,7 +163,7 @@ local function updateBagItemButton(button)
     local id, _, textureName, count, durability, maxDurability, _, _, _, _, _, setTooltip, quality = EquipmentManager_GetItemInfoByLocation(location)
     local broken = (maxDurability and durability == 0)
 
-    button.ItemId = id
+    button.itemId = id
     button.quality = quality
     button:ResetAzeriteItem()
 
@@ -195,7 +195,7 @@ local function updateBagItemButton(button)
 
         setItemButtonQuality(button, quality)
 
-        button.IconOverlay:SetShown(button.ItemId and C_Item.IsCorruptedItem(button.ItemId))
+        button.IconOverlay:SetShown(button.itemId and C_Item.IsCorruptedItem(button.itemId))
     end
 end
 GW.AddForProfiling("paperdoll_equipment", "updateBagItemButton", updateBagItemButton)
@@ -1030,7 +1030,7 @@ end
 local function ResetBagSlotFrame(_, f)
     f.location = nil
     f.itemSlot = nil
-    f.ItemId = nil
+    f.itemId = nil
     f.quality = nil
     f.__gwLastItemLink = nil
     if f.ResetAzeriteItem then
