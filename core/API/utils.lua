@@ -880,13 +880,21 @@ local function SetItemLevel(button, quality, itemInput, slot)
         local item = Item:CreateFromItemLink(itemLink)
 
         item:ContinueOnItemLoad(function()
-            local itemLoc = ItemLocation:CreateFromBagAndSlot(button.bagID or 0, button:GetID())
-            if itemLoc and itemLoc:IsValid() then
-                local ilvl = C_Item.GetCurrentItemLevel(itemLoc)
-                if ilvl and ilvl > 0 then
-                    applyItemLevel(ilvl, color, itemLink)
-                    return
+            if button.bagID and button:GetID() then
+                local itemLoc = ItemLocation:CreateFromBagAndSlot(button.bagID, button:GetID())
+                if itemLoc and itemLoc:IsValid() then
+                    local ilvl = C_Item.GetCurrentItemLevel(itemLoc)
+                    if ilvl and ilvl > 0 then
+                        applyItemLevel(ilvl, color, itemLink)
+                        return
+                    end
                 end
+            end
+            -- Fallback for items without location
+            local ilvl = C_Item.GetDetailedItemLevelInfo(itemLink)
+            if ilvl and ilvl > 0 then
+                applyItemLevel(ilvl, color, itemLink)
+                return
             end
 
             -- Fallback: Tooltipscan
