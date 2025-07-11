@@ -159,15 +159,6 @@ local function SetItemButtonQualityForBags(button, quality)
 end
 GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 
-local function IsItemEligibleForItemLevelDisplay(equipLoc, rarity)
-    if ((equipLoc ~= nil and equipLoc ~= "" and equipLoc ~= "INVTYPE_BAG"
-        and equipLoc ~= "INVTYPE_QUIVER" and equipLoc ~= "INVTYPE_TABARD"))
-    and (rarity and rarity >= 1) then
-        return true
-    end
-
-    return false
-end
 
 local function GetItemEquipmentSetName(itemIDOrLink)
     local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
@@ -246,7 +237,7 @@ local function hookItemQuality(button, quality, itemIDOrLink)
 
         -- Show ilvl if active
         if showItemLevel then
-            local canShowItemLevel = IsItemEligibleForItemLevelDisplay(select(9, C_Item.GetItemInfo(itemIDOrLink)), quality)
+            local canShowItemLevel = GW.IsItemEligibleForItemLevelDisplay(itemIDOrLink)
             if canShowItemLevel then
                 GW.SetItemLevel(button, quality, itemIDOrLink)
             else
