@@ -224,7 +224,6 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         if button.itemlevel and showItemLevel then
             local canShowItemLevel = IsItemEligibleForItemLevelDisplay(select(9, C_Item.GetItemInfo(itemIDOrLink)), quality)
             if canShowItemLevel then
-                print(itemIDOrLink)
                 GW.SetItemLevel(button, quality, itemIDOrLink)
             else
                 button.itemlevel:SetText("")
