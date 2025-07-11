@@ -220,20 +220,17 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         end
 
         -- Show ilvl if active
-        if showItemLevel then
+        if button.itemlevel and showItemLevel then
             local canShowItemLevel = IsItemEligibleForItemLevelDisplay(select(9, C_Item.GetItemInfo(itemIDOrLink)), quality)
-            local iLvl = C_Item.GetDetailedItemLevelInfo(itemIDOrLink)
-            if canShowItemLevel and iLvl then
-                if quality >= LE_ITEM_QUALITY_COMMON and C_Item.GetItemQualityColor(quality) then
-                    local r, g, b = C_Item.GetItemQualityColor(quality)
-                    button.itemlevel:SetTextColor(r, g, b, 1)
-                end
-                button.itemlevel:SetText(iLvl)
+            if canShowItemLevel then
+                GW.SetItemLevel(button, quality, itemIDOrLink)
             else
                 button.itemlevel:SetText("")
+                button.__gwLastItemLink = nil
             end
         elseif button.itemlevel then
             button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
         end
 
         if GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW and quality and quality > 0 then
@@ -246,7 +243,10 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         if button.junkIcon then button.junkIcon:Hide() end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end
         if button.questIcon then button.questIcon:Hide() end
-        if button.itemlevel then button.itemlevel:SetText("") end
+        if button.itemlevel then
+            button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
+        end
     end
 
     if GW.settings.BAG_PROFESSION_BAG_COLOR and professionColors then

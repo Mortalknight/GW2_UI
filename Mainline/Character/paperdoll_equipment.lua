@@ -1034,6 +1034,7 @@ local function ResetBagSlotFrame(_, f)
     f.ItemId = nil
     f.ItemLink = nil
     f.quality = nil
+    f.__gwLastItemLink = nil
     if f.ResetAzeriteItem then
         f:ResetAzeriteItem()
     end

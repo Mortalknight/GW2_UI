@@ -816,17 +816,54 @@ end
 GW.FrameFlash = FrameFlash
 
 local function SetItemLevel(button, quality, itemlink, slot)
-    if quality then
-        local color = GW.GetQualityColor(quality)
-        if quality >= Enum.ItemQuality.Common and color then
+    if not itemlink or itemlink == "" then return end
+    if not button.itemlevel then return end
+
+    if button.__gwLastItemLink == itemlink then return end
+
+    local function applyItemLevel(ilvl, color)
+        if not ilvl or ilvl <= 0 then
+            button.itemlevel:SetText("")
+            return
+        end
+
+        button.itemlevel:SetText(ilvl)
+        if color then
             button.itemlevel:SetTextColor(color.r, color.g, color.b, 1)
         end
-        local slotInfo = GW.GetGearSlotInfo("player", slot, itemlink, false)
-        button.itemlevel:SetText(slotInfo.iLvl)
-        button.itemlevel:SetTextColor(color.r, color.g, color.b, 1)
-    else
-        button.itemlevel:SetText("")
+
+        button.__gwLastItemLink = itemlink
     end
+
+    local color = GW.GetQualityColor(quality or 0)
+    local itemLoc = ItemLocation:CreateFromBagAndSlot(button.bagID or 0, button:GetID() or 0)
+    if itemLoc and itemLoc:IsValid() then
+        local ilvl = C_Item.GetCurrentItemLevel(itemLoc)
+        if ilvl and ilvl > 0 then
+            applyItemLevel(ilvl, color)
+            return
+        end
+    end
+
+    local item = Item:CreateFromItemLink(itemlink)
+    item:ContinueOnItemLoad(function()
+        local itemLocAsync = ItemLocation:CreateFromBagAndSlot(button.bagID or 0, button:GetID() or 0)
+        if itemLocAsync and itemLocAsync:IsValid() then
+            local asyncLvl = C_Item.GetCurrentItemLevel(itemLocAsync)
+            if asyncLvl and asyncLvl > 0 then
+                applyItemLevel(asyncLvl, color)
+                return
+            end
+        end
+
+        -- Fallback-Fallback: Tooltipscan, nur wenn gar nichts anderes geht
+        local slotInfo = GW.GetGearSlotInfo("player", slot, itemlink, false)
+        if slotInfo and slotInfo.iLvl then
+            applyItemLevel(slotInfo.iLvl, color)
+        else
+            button.itemlevel:SetText("")
+        end
+    end)
 end
 GW.SetItemLevel = SetItemLevel
 

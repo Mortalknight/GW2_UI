@@ -245,18 +245,15 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         -- Show ilvl if active
         if showItemLevel then
             local canShowItemLevel = IsItemEligibleForItemLevelDisplay(select(9, C_Item.GetItemInfo(itemIDOrLink)), quality)
-            local iLvl = C_Item.GetDetailedItemLevelInfo(itemIDOrLink)
-            if canShowItemLevel and iLvl then
-                if quality >= LE_ITEM_QUALITY_COMMON and C_Item.GetItemQualityColor(quality) then
-                    local r, g, b = C_Item.GetItemQualityColor(quality)
-                    button.itemlevel:SetTextColor(r, g, b, 1)
-                end
-                button.itemlevel:SetText(iLvl)
+            if canShowItemLevel then
+                GW.SetItemLevel(button, quality, itemIDOrLink)
             else
                 button.itemlevel:SetText("")
+                button.__gwLastItemLink = nil
             end
         elseif button.itemlevel then
             button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
         end
 
         -- Show equipment set name
@@ -278,7 +275,10 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         if button.junkIcon then button.junkIcon:Hide() end
         if button.questIcon then button.questIcon:Hide() end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end
-        if button.itemlevel then button.itemlevel:SetText("") end
+        if button.itemlevel then
+            button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
+        end
     end
 end
 GW.SetBagItemButtonQualitySkin = hookItemQuality

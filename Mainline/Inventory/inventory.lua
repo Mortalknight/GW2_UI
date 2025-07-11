@@ -112,6 +112,8 @@ end
 -- reskins an ItemButton to use GW2_UI styling
 local function reskinItemButton(b, overrideIconSize)
     if not b then return end
+    local i = 1
+
     local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
     b:SetSize(iconSize, iconSize)
 
@@ -123,8 +125,9 @@ local function reskinItemButton(b, overrideIconSize)
     b.IconBorder:SetTexture(BORDER_TEXTURE)
 
     local norm = b:GetNormalTexture()
-    norm:GwKill()
+    --norm:GwKill()
     b:ClearNormalTexture()
+
 
     if b.NormalTexture then
         b.NormalTexture:SetTexture()
@@ -135,6 +138,8 @@ local function reskinItemButton(b, overrideIconSize)
 		b.ItemSlotBackground:SetAllPoints(b)
     end
 
+   
+
     if b.Background then
         b.Background:Hide()
     end
@@ -143,13 +148,9 @@ local function reskinItemButton(b, overrideIconSize)
         b.PushedTexture:SetTexture()
     end
 
-    b.ItemSlotBackground:Hide()
-    if not b.ItemSlotBackgroundHooked then
-        hooksecurefunc(b.ItemSlotBackground, "SetShown", function()
-            b.ItemSlotBackground:Hide()
-        end)
-        b.ItemSlotBackgroundHooked = true
-    end
+    b.ItemSlotBackground:SetAlpha(0)
+
+    
 
     local high = b:GetHighlightTexture()
     high:SetAllPoints(b)
@@ -164,16 +165,22 @@ local function reskinItemButton(b, overrideIconSize)
         b.gwBackdrop = bd
     end
 
+    
+
     b.Count:ClearAllPoints()
     b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
     b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
     b.Count:SetJustifyH("RIGHT")
+
+     
 
     if b.IconQuestTexture then
         b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
         b.IconQuestTexture:ClearAllPoints()
         b.IconQuestTexture:SetPoint("CENTER", b, "CENTER", 0, 0)
     end
+
+   
 
     if b.flash then
         b.flash:SetAllPoints(b)
@@ -201,32 +208,72 @@ local function reskinItemButton(b, overrideIconSize)
         b.itemlevel:SetText("")
     end
 
+
     if b.cooldown then
         GW.RegisterCooldown(b.cooldown)
     elseif b.Cooldown then
         GW.RegisterCooldown(b.Cooldown)
     end
+
+    local bagID, slotID = b:GetBagID(), b:GetID()
+    local info = C_Container.GetContainerItemInfo(bagID, slotID)
+    if b.SetHasItem then
+        b:SetHasItem(info and info.iconFileID)
+        b:SetItemButtonTexture(info and info.iconFileID)
+    end
+    GW.SetBagItemButtonQualitySkin(b, info and info.quality, info and info.hyperlink, false)
 end
 GW.SkinBagItemButton = reskinItemButton
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
--- is needed for first setup of the bag (skinniing)
-local function UpdateContainerItems(self)
-    for _, itemButton in self:EnumerateValidItems() do
-        if itemButton then
-            local bagID, slotID = itemButton:GetBagID(), itemButton:GetID()
-            local info = C_Container.GetContainerItemInfo(bagID, slotID)
+local function updateItemVisuals(b, overrideIconSize)
+   if not b or not b:IsShown() then return end
 
-            if info then
-                itemButton:SetHasItem(info.iconFileID)
-                itemButton:SetItemButtonTexture(info.iconFileID)
-                SetItemButtonQuality(itemButton, info.quality, info.hyperlink, false, info.isBound)
-            else
-                itemButton:SetHasItem(nil)
-                itemButton:SetItemButtonTexture(nil)
-                SetItemButtonQuality(itemButton, nil, nil, false, nil)
-            end
+    local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
+
+    if b:GetWidth() ~= iconSize or b:GetHeight() ~= iconSize then
+        b:SetSize(iconSize, iconSize)
+    end
+
+    local L, R, T, B = b.icon:GetTexCoord()
+    if L ~= 0.07 or R ~= 0.93 or T ~= 0.07 or B ~= 0.93 then
+        b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    end
+    if b.icon:GetAlpha() ~= 0.9 then
+        b.icon:SetAlpha(0.9)
+    end
+
+    if b:GetHighlightTexture() then
+        local high = b:GetHighlightTexture()
+        if high:GetTexture() ~= BORDER_TEXTURE then
+            high:SetTexture(BORDER_TEXTURE)
         end
+        if high:GetBlendMode() ~= "ADD" then
+            high:SetBlendMode("ADD")
+        end
+        if high:GetAlpha() ~= 0.33 then
+            high:SetAlpha(0.33)
+        end
+    end
+
+    local point, _, relativePoint, x, y = b.Count:GetPoint()
+    if point ~= "TOPRIGHT" or relativePoint ~= "TOPRIGHT" or x ~= 0 or y ~= -3 then
+        b.Count:ClearAllPoints()
+        b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
+    end
+    if b.Count:GetJustifyH() ~= "RIGHT" then
+        b.Count:SetJustifyH("RIGHT")
+    end
+
+    if b.IconQuestTexture then
+        local w, h = b.IconQuestTexture:GetSize()
+        if w ~= iconSize + 2 or h ~= iconSize + 2 then
+            b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
+        end
+    end
+
+    if b.flash then
+        b.flash:SetAllPoints(b)
     end
 end
 
@@ -235,10 +282,13 @@ local function reskinItemButtons()
         local container = _G["ContainerFrame" .. i]
         for _, slot in next, container.Items do
             if slot then
-                reskinItemButton(slot)
+                if not slot.__gwSkinned then
+                    reskinItemButton(slot) -- will only be trigger on first init
+                    slot.__gwSkinned = true
+                end
+                updateItemVisuals(slot)
             end
         end
-        UpdateContainerItems(container)
     end
 end
 
@@ -323,6 +373,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             GW.SetItemLevel(button, quality, itemIDOrLink)
         elseif button.itemlevel then
             button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
         end
 
         if GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW and quality and quality > 0 then
@@ -336,7 +387,10 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         if button.junkIcon then button.junkIcon:Hide() end
         if button.scrapIcon then button.scrapIcon:Hide() end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end
-        if button.itemlevel then button.itemlevel:SetText("") end
+        if button.itemlevel then
+            button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
+        end
         GetItemButtonIconTexture(button):Hide()
     end
 end

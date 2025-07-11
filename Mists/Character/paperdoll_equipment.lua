@@ -61,7 +61,7 @@ local function updateBagItemButton(button)
         local  _, _, quality  = C_Item.GetItemInfo(id)
         if quality then
             GW.SetItemLevel(button, quality, button.ItemLink)
-            GW.setItemButtonQuality(button, quality)
+            GW.SetItemButtonBorderQuality(button, quality)
         end
     end
 end
@@ -206,7 +206,7 @@ local function updateItemSlot(self)
     end
 
     local quality = GetInventoryItemQuality("player", slot)
-    GW.setItemButtonQuality(self, quality)
+    GW.SetItemButtonBorderQuality(self, quality)
 end
 GW.UpdateCharacterPanelItemSlot = updateItemSlot
 GW.updateItemSlot = updateItemSlot
@@ -295,8 +295,10 @@ local function bagSlot_OnClick(self)
 end
 
 getBagSlotFrame = function(i)
-    if _G["gwPaperDollBagSlotButton" .. i] then
-        return _G["gwPaperDollBagSlotButton" .. i]
+    local button = _G["gwPaperDollBagSlotButton" .. i]
+    if button then
+        button.__gwLastItemLink = nil
+        return button
     end
 
     local f = CreateFrame("ItemButton", "gwPaperDollBagSlotButton" .. i, GwPaperDollBagItemList, "GwPaperDollBagItem")
