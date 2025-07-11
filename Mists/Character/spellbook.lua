@@ -126,6 +126,22 @@ local function GetSpellbookActionButton(tab, container, index)
     local button = tab.buttons[index]
 
     if button then
+        button.isPassive = nil
+        button.isFuture = nil
+        button.isFlyout = nil
+        button.spellbookIndex = nil
+        button.booktype = nil
+        button.spellId = nil
+
+        button:SetAttribute("type1", nil)
+        button:SetAttribute("type2", nil)
+        button:SetAttribute("spell", nil)
+        button:SetAttribute("flyout", nil)
+        button:SetAttribute("flyoutDirection", nil)
+        button:SetAttribute("shift-type1", nil)
+        button:SetAttribute("shift-type2", nil)
+        button:SetAttribute("*macrotext2", nil)
+        button:SetAttribute("ispickable", nil)
         return button
     end
 
@@ -136,6 +152,7 @@ local function GetSpellbookActionButton(tab, container, index)
     button.mask:SetSize(40, 40)
     button.mask:SetParent(button)
 
+    button.modifiedClick = SpellButton_OnModifiedClick
     button:RegisterForClicks("AnyUp")
     button:RegisterForDrag("LeftButton")
     button:RegisterEvent("SPELL_UPDATE_COOLDOWN")
@@ -245,7 +262,7 @@ end
 
 local function getHeaderHeight(pagingContainer, lastHeader)
     local lastColumn = 1
-    if lastHeader ~= nil then
+    if lastHeader then
         lastColumn = lastHeader.column
     end
     local c1 = 0
@@ -429,7 +446,6 @@ local function updateSpellbookTab(self)
 
                 local button = GetSpellbookActionButton(tab, pagingContainer, i)
                 setButtonStyle(button, isPassive, spellID or slotID, slotType, icon, spellIndex, BOOKTYPE, nameSpell, requiredLevel, isOffSpec)
-                button.modifiedClick = SpellButton_OnModifiedClick
                 if not isPassive then GW.RegisterCooldown(button.cooldown) end
                 boxIndex = boxIndex + 1
 
@@ -640,6 +656,8 @@ local function LoadSpellBook()
     end)
 
     SpellBookFrame:UnregisterAllEvents()
+
+    updateSpellbookTab(spellBook)
 
     return spellBook
 end
