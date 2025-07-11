@@ -361,7 +361,13 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
 
         -- Show ilvl if active
         if button.itemlevel and GW.settings.BAG_SHOW_ILVL then
-            GW.SetItemLevel(button, quality, itemIDOrLink)
+            local canShowItemLevel = GW.IsItemEligibleForItemLevelDisplay(itemIDOrLink)
+            if canShowItemLevel then
+                GW.SetItemLevel(button, quality, itemIDOrLink)
+            else
+                button.itemlevel:SetText("")
+                button.__gwLastItemLink = nil
+            end
         elseif button.itemlevel then
             button.itemlevel:SetText("")
             button.__gwLastItemLink = nil

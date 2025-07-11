@@ -839,6 +839,18 @@ local function LoadItemAsync(itemInput, callback)
     end)
 end
 
+local function IsItemEligibleForItemLevelDisplay(itemInput)
+    local classID = select(6, C_Item.GetItemInfoInstant(itemInput))
+    return
+        -- Regular equipment
+        classID == Enum.ItemClass.Armor or classID == Enum.ItemClass.Weapon
+        -- Profession equipment (retail only)
+        or classID == Enum.ItemClass.Profession
+        -- Legion Artifact relics (retail only)
+        or (classID == Enum.ItemClass.Gem and IsArtifactRelicItem and IsArtifactRelicItem(itemInput))
+end
+GW.IsItemEligibleForItemLevelDisplay = IsItemEligibleForItemLevelDisplay
+
 local function SetItemLevel(button, quality, itemInput, slot)
     if not itemInput or itemInput == "" then
         button.itemlevel:SetText("")
