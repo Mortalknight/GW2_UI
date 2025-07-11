@@ -279,7 +279,7 @@
                         <Anchor point="CENTER" relativePoint="CENTER" x="0"/>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spell-lock" parentKey="lock">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spell-lock" parentKey="lock" hidden="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>

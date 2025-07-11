@@ -132,6 +132,7 @@ local function GetSpellbookActionButton(tab, container, index)
         button.spellbookIndex = nil
         button.booktype = nil
         button.spellId = nil
+        button.requiredLevel = nil
 
         button:SetAttribute("type1", nil)
         button:SetAttribute("type2", nil)
@@ -227,7 +228,6 @@ local function setButtonStyle(btn, isPassive, spellID, slotType, icon, spellbook
     end
 
     if btn.requiredLevel and btn.requiredLevel > GW.mylevel then
-        btn.lock:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spell-lock")
         btn.lock:Show()
     else
         btn.lock:Hide()
