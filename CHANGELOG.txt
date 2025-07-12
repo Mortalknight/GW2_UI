@@ -1,3 +1,10 @@
+8.1.8
+FIXES
+    - Bag opening lag
+    - Wrong tooltip faction (Retail)
+    - Friendstooltip show correct game now
+    - Spellbook tweaks (Mists)
+
 8.1.7
 FIXES
     - Shadow prist orbs (mists)

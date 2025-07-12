@@ -15,8 +15,15 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.1.8",{
+    {ct.bug, [=[Bag opening lag]=]},
+    {ct.bug, [=[Wrong tooltip faction (Retail)]=]},
+    {ct.bug, [=[Friendstooltip show correct game now]=]},
+    {ct.bug, [=[Spellbook tweaks (Mists)]=]},
+})
+
 addChange("8.1.7",{
-    {ct.bug, [=[ Shadow prist orbs (mists)]=]},
+    {ct.bug, [=[Shadow prist orbs (mists)]=]},
     {ct.bug, [=[DK runes (mists)]=]},
     {ct.bug, [=[Unitframe absorb amounts (mists)]=]},
 })
