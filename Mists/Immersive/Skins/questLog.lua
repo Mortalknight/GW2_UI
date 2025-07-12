@@ -76,7 +76,7 @@ local function handleItemButton(item)
     end
 
     if item.Name then
-        item.Name:SetFont(UNIT_NAME_FONT, 12, "")
+        item.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     end
 
     if item.CircleBackground then

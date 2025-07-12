@@ -303,7 +303,7 @@ local function LoadBaseFrame()
     if hasBeenLoaded then
         return
     end
-    hasBeenLoaded = true
+    hasBeenLoaded = true 
 
     -- create the character window and secure bind its tab open/close functions
     local fmGCW = CreateFrame("Frame", "GwCharacterWindow", UIParent, "GwCharacterWindowTemplate")

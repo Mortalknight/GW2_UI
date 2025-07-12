@@ -157,7 +157,7 @@ local function createStatusbar(playerFrame)
     fsr.statusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
 
     fsr.statusBar.label = fsr.statusBar:CreateFontString(nil, "OVERLAY")
-    fsr.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
+    fsr.statusBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL, "", -4)
     fsr.statusBar.label:SetText("")
     fsr.statusBar.label:SetPoint("CENTER", 0, 0)
     fsr.statusBar.label:SetTextColor(1, 1, 1)

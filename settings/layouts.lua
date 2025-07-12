@@ -334,7 +334,9 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
             end
 
             local radio = rootDescription:CreateRadio(layouts[k].name, IsSelected, SetSelected, layouts[k].name)
-            radio:AddInitializer(GW.BlizzardDropdownRadioButtonInitializer)
+            radio:AddInitializer(function(button, description, menu)
+                GW.BlizzardDropdownRadioButtonInitializer(button, description, menu, IsSelected, layouts[k].name)
+            end)
         end
 	end)
 
@@ -394,7 +396,9 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
             end
 
             local check = rootDescription:CreateCheckbox(data.name, IsSelected, SetSelected, data.idx)
-            check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
+            check:AddInitializer(function(button, description, menu)
+                GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, IsSelected, data.idx)
+            end)
         end
     end)
 

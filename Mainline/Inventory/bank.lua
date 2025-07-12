@@ -785,7 +785,7 @@ local function LoadBank(helpers)
     f.AccountFrame.MoneyFrame.MoneyDisplay:ClearAllPoints()
     f.AccountFrame.MoneyFrame.MoneyDisplay:SetPoint("BOTTOMRIGHT", f.AccountFrame, "BOTTOMRIGHT", 3, -27)
 
-    -- setup money frame
+    -- setup money frame 
     f.AccountFrame.MoneyFrame.MoneyDisplay.CopperButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     f.AccountFrame.MoneyFrame.MoneyDisplay.CopperButton.Text:SetTextColor(177 / 255, 97 / 255, 34 / 255)
     f.AccountFrame.MoneyFrame.MoneyDisplay.SilverButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)

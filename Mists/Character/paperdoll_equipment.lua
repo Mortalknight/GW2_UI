@@ -35,14 +35,11 @@ local function updateBagItemButton(button)
     if not location then
         return
     end
-    local id, name, textureName, count, durability, maxDurability, _, _, _, _, _, setTooltip = EquipmentManager_GetItemInfoByLocation(location)
+
+    local id, _, textureName, count, durability, maxDurability, _, _, _, _, _, setTooltip = EquipmentManager_GetItemInfoByLocation(location)
     local broken = (maxDurability and durability == 0)
 
     button.ItemId = id
-    button.ItemLink = GW.getContainerItemLinkByNameOrId(name, id)
-    if button.ItemLink == nil then
-        button.ItemLink = GW.getInventoryItemLinkByNameAndId(name, id)
-    end
 
     if textureName then
         SetItemButtonTexture(button, textureName)
@@ -58,10 +55,10 @@ local function updateBagItemButton(button)
             setTooltip()
         end
 
-        local  _, _, quality  = C_Item.GetItemInfo(id)
+        local  _, _, quality = C_Item.GetItemInfo(id)
         if quality then
-            GW.SetItemLevel(button, quality, button.ItemLink)
-            GW.setItemButtonQuality(button, quality)
+            GW.SetItemLevel(button, quality, button.ItemId)
+            GW.SetItemButtonBorderQuality(button, quality)
         end
     end
 end
@@ -76,7 +73,7 @@ local function updateBagItemListAll()
     local x = 10
     local y = 15
 
-    for _, v in pairs(GW.equipSlotList ) do
+    for _, v in pairs(GW.equipSlotList) do
         local id = v
 
         wipe(bagItemList)
@@ -206,7 +203,7 @@ local function updateItemSlot(self)
     end
 
     local quality = GetInventoryItemQuality("player", slot)
-    GW.setItemButtonQuality(self, quality)
+    GW.SetItemButtonBorderQuality(self, quality)
 end
 GW.UpdateCharacterPanelItemSlot = updateItemSlot
 GW.updateItemSlot = updateItemSlot
@@ -295,8 +292,10 @@ local function bagSlot_OnClick(self)
 end
 
 getBagSlotFrame = function(i)
-    if _G["gwPaperDollBagSlotButton" .. i] then
-        return _G["gwPaperDollBagSlotButton" .. i]
+    local button = _G["gwPaperDollBagSlotButton" .. i]
+    if button then
+        button.__gwLastItemLink = nil
+        return button
     end
 
     local f = CreateFrame("ItemButton", "gwPaperDollBagSlotButton" .. i, GwPaperDollBagItemList, "GwPaperDollBagItem")

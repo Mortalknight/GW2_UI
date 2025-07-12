@@ -213,7 +213,9 @@ local function InititateProfileSpecSwitchSettings(panel)
                 end
 
                 local radio = rootDescription:CreateRadio(profile, IsSelected, SetSelected, {specId = i, profileName = profile})
-                radio:AddInitializer(GW.BlizzardDropdownRadioButtonInitializer)
+                radio:AddInitializer(function(button, description, menu)
+                    GW.BlizzardDropdownRadioButtonInitializer(button, description, menu, IsSelected, {specId = i, profileName = profile})
+                end)
             end
         end)
 

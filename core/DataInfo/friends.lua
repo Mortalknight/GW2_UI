@@ -9,6 +9,7 @@ local levelNameString = "|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r"
 local levelNameClassString = "|cff%02x%02x%02x%d|r %s%s%s"
 local TIMERUNNING_ATLAS = "|A:timerunning-glues-icon-small:%s:%s:0:0|a"
 local TIMERUNNING_SMALL = format(TIMERUNNING_ATLAS, 12, 10)
+local friendOnline, friendOffline = gsub(ERR_FRIEND_ONLINE_SS,"|Hplayer:%%s|h%[%%s%]|h",""), gsub(ERR_FRIEND_OFFLINE_S,"%%s","")
 
 local function inviteClick(name, guid)
     if not (name and name ~= "") then return end
@@ -85,6 +86,12 @@ local function inGroup(name, realmName)
     return (UnitInParty(name) or UnitInRaid(name)) and "|cffaaaaaa*|r" or ""
 end
 
+local function SortAlphabeticName(a, b)
+    if a.name and b.name then
+        return a.name < b.name
+    end
+end
+
 local function BuildFriendTable(total)
     wipe(friendTable)
     for i = 1, total do
@@ -105,12 +112,7 @@ local function BuildFriendTable(total)
         end
     end
     if next(friendTable) then
-        sort(friendTable, function(a, b)
-            if a.name and b.name then
-                return a.name < b.name
-            end
-            return a < b
-        end)
+        sort(friendTable, SortAlphabeticName)
     end
 end
 
@@ -170,13 +172,12 @@ local function AddToBNTable(bnIndex, bnetIDAccount, accountName, battleTag, char
         timerunningID = timerunningID	--20
     }
 
-    if wowProjectID and wowProjectID == WOW_PROJECT_MAINLINE then
+    if wowProjectID and wowProjectID ~= WOW_PROJECT_MAINLINE then
         obj.classicText, obj.realmName = strmatch(gameText, "(.-)%s%-%s(.+)")
 
         if obj.classicText and obj.classicText ~= "" and obj.classicText ~= EXPANSION_NAME0 then
             obj.classicText = gsub(obj.classicText, "%s?" .. EXPANSION_NAME0 .. "%s?", "")
         end
-
     end
 
     BNTable[bnIndex] = obj
@@ -239,9 +240,7 @@ end
 
 local isBNOnline
 local function BuildBNTable(total)
-    for _, v in pairs(tableList) do
-        wipe(v)
-    end
+    for _, v in pairs(tableList) do wipe(v) end
     wipe(BNTable)
     wipe(clientSorted)
 
@@ -381,7 +380,7 @@ local function Friends_OnEnter(self)
                             TooltipAddXLine(true, header, info.zoneName, info.realmName, zonec.r, zonec.g, zonec.b, realmc.r, realmc.g, realmc.b)
                         end
                     else
-                        TooltipAddXLine(true, header, info.characterName .. status, info.accountName, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9)
+                        TooltipAddXLine(true, header, info.characterName .. status, info.accountName, .9, .9, .9, .9, .9, .9)
                         if shiftDown and (info.gameText and info.gameText ~= "") and (info.client and info.client ~= "App" and info.client ~= "BSAp") then
                             TooltipAddXLine(false, header, info.gameText, inactivezone.r, inactivezone.g, inactivezone.b)
                         end
@@ -399,7 +398,7 @@ local function Friends_OnEvent(self, event, message)
     isBNOnline = BNConnected()
 
     if event == "CHAT_MSG_SYSTEM" then
-        if not (strfind(message, gsub(ERR_FRIEND_ONLINE_SS, "|Hplayer:%%s|h%[%%s%]|h","")) or strfind(message, gsub(ERR_FRIEND_OFFLINE_S, "%%s", ""))) then return end
+        if not (strfind(message, friendOnline) or strfind(message, friendOffline)) then return end
     end
     dataValid = false
 

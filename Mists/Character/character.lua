@@ -474,11 +474,11 @@ local function PaperDollSlotButton_Update(self)
 
     if self.IconBorder then
         local quality = GetInventoryItemQuality("player", slot)
-        GW.setItemButtonQuality(self, quality)
+        GW.SetItemButtonBorderQuality(self, quality)
     end
 end
 
-local function setItemButtonQuality(button, quality)
+local function SetItemButtonBorderQuality(button, quality)
     if quality then
         if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
             button.IconBorder:Show();
@@ -490,7 +490,7 @@ local function setItemButtonQuality(button, quality)
         button.IconBorder:Hide();
     end
 end
-GW.setItemButtonQuality = setItemButtonQuality
+GW.SetItemButtonBorderQuality = SetItemButtonBorderQuality
 
 local CHARACTER_PANEL_OPEN = nil
 function GwToggleCharacter(tab, onlyShow)

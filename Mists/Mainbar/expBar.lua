@@ -481,8 +481,8 @@ local function LoadXPBar()
 
     experiencebar.RepuBar.repuBarAnimation = 0
     experiencebar.PetBar.petBarAnimation = 0
-    experiencebar.NextLevel:SetFont(UNIT_NAME_FONT, 12, "")
-    experiencebar.CurrentLevel:SetFont(UNIT_NAME_FONT, 12, "")
+    experiencebar.NextLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    experiencebar.CurrentLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
 
     experiencebar.AzeritBar:Hide()
     experiencebar.AzeritBarCandy:Hide()

@@ -1427,7 +1427,8 @@ local function skinAchevement()
 
             AchievementFrameAchievements.ScrollBox.view:SetPadding(0, 10, 0, 0, 5)
             AchievementFrameAchievements.ScrollBox.view:SetElementExtentCalculator(function(_, elementData)
-            if SelectionBehaviorMixin.IsElementDataIntrusiveSelected(elementData) then
+                -- sometimes elementData.category, elementData.index is missing and that causes an error
+                if SelectionBehaviorMixin.IsElementDataIntrusiveSelected(elementData) and elementData.category and elementData.index then
                     -- 36 is offset from ACHIEVEMENTBUTTON_COLLAPSEDHEIGHT (84) to our default 120
                     return math.max(AchievementTemplateMixin.CalculateSelectedHeight(elementData) + 36, 120)
                 else

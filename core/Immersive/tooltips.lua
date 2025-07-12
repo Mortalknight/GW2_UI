@@ -24,6 +24,8 @@ local genderTable = {
 local LEVEL1 = strlower(TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?",""))
 local LEVEL2 = strlower((TOOLTIP_UNIT_LEVEL_RACE or TOOLTIP_UNIT_LEVEL_CLASS):gsub("^%%2$s%s?(.-)%s?%%1$s","%1"):gsub("^%-?г?о?%s?",""):gsub("%s?%%s%s?%-?",""))
 local IDLine = "|cffffedba%s|r %d"
+local AFK_LABEL = " |cffFFFFFF[|r|cffFF9900" .. L["AFK"] .. "|r|cffFFFFFF]|r"
+local DND_LABEL = " |cffFFFFFF[|r|cffFF3333" .. L["DND"] .. "|r|cffFFFFFF]|r"
 
 local TT = CreateFrame("Frame")
 
@@ -439,8 +441,11 @@ local function SetUnitText(self, unit, isPlayerUnit)
         if levelLine then
             local diffColor = GetCreatureDifficultyColor(level)
             local race, englishRace = UnitRace(unit)
+
             local _, localizedFaction = GW.GetUnitBattlefieldFaction(unit)
-            if localizedFaction and (englishRace == "Pandaren" or englishRace == "Dracthyr") then race = localizedFaction .. " " .. race end
+            if localizedFaction and (englishRace == "Pandaren" or englishRace == "Dracthyr" or englishRace == "Earthen") then
+                race = localizedFaction .. " " .. race
+            end
             local hexColor = GW.RGBToHex(diffColor.r, diffColor.g, diffColor.b)
             local unitGender = GW.settings.ADVANCED_TOOLTIP_SHOW_GENDER and genderTable[gender]
 

@@ -744,7 +744,9 @@ local function LoadMovers(layoutManager)
             end
 
             local radio = rootDescription:CreateRadio(v, IsSelected, SetSelected, v)
-            radio:AddInitializer(GW.BlizzardDropdownRadioButtonInitializer)
+            radio:AddInitializer(function(button, description, menu)
+                GW.BlizzardDropdownRadioButtonInitializer(button, description, menu, IsSelected, v)
+            end)
         end
     end)
 

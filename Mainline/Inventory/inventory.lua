@@ -110,8 +110,9 @@ do
 end
 
 -- reskins an ItemButton to use GW2_UI styling
-local function reskinItemButton(b, overrideIconSize)
+local function ReskinItemButton(b, overrideIconSize)
     if not b then return end
+
     local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
     b:SetSize(iconSize, iconSize)
 
@@ -122,8 +123,6 @@ local function reskinItemButton(b, overrideIconSize)
     b.IconBorder:SetAllPoints(b)
     b.IconBorder:SetTexture(BORDER_TEXTURE)
 
-    local norm = b:GetNormalTexture()
-    norm:GwKill()
     b:ClearNormalTexture()
 
     if b.NormalTexture then
@@ -143,13 +142,7 @@ local function reskinItemButton(b, overrideIconSize)
         b.PushedTexture:SetTexture()
     end
 
-    b.ItemSlotBackground:Hide()
-    if not b.ItemSlotBackgroundHooked then
-        hooksecurefunc(b.ItemSlotBackground, "SetShown", function()
-            b.ItemSlotBackground:Hide()
-        end)
-        b.ItemSlotBackgroundHooked = true
-    end
+    b.ItemSlotBackground:SetAlpha(0)
 
     local high = b:GetHighlightTexture()
     high:SetAllPoints(b)
@@ -170,9 +163,22 @@ local function reskinItemButton(b, overrideIconSize)
     b.Count:SetJustifyH("RIGHT")
 
     if b.IconQuestTexture then
-        b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
         b.IconQuestTexture:ClearAllPoints()
-        b.IconQuestTexture:SetPoint("CENTER", b, "CENTER", 0, 0)
+        b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+        b.IconQuestTexture:SetSize(25, 25)
+        b.IconQuestTexture:SetPoint("TOPLEFT", -7, 1)
+        b.IconQuestTexture:SetVertexColor(221 / 255, 198 / 255, 68 / 255)
+        if b.UpdateQuestItem then
+            hooksecurefunc(b, "UpdateQuestItem", function()
+                b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+            end)
+        else --bank_slots
+            hooksecurefunc(b.IconQuestTexture, "SetTexture", function(_, tex)
+                if tex ~= "Interface/AddOns/GW2_UI/textures/icons/icon-quest" then
+                    b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+                end
+            end)
+        end
     end
 
     if b.flash then
@@ -207,26 +213,78 @@ local function reskinItemButton(b, overrideIconSize)
         GW.RegisterCooldown(b.Cooldown)
     end
 end
-GW.SkinBagItemButton = reskinItemButton
-GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
+GW.SkinBagItemButton = ReskinItemButton
 
--- is needed for first setup of the bag (skinniing)
-local function UpdateContainerItems(self)
-    for _, itemButton in self:EnumerateValidItems() do
-        if itemButton then
-            local bagID, slotID = itemButton:GetBagID(), itemButton:GetID()
-            local info = C_Container.GetContainerItemInfo(bagID, slotID)
+local function AssignItemData(slot)
+    if not slot then return end
+    local bagID, slotID = slot:GetBagID(), slot:GetID()
+    if not bagID or not slotID then
+        return
+    end
+    local info = C_Container.GetContainerItemInfo(bagID, slotID)
+    if slot.SetHasItem then
+        slot:SetHasItem(info and info.iconFileID)
+        slot:SetItemButtonTexture(info and info.iconFileID)
+    end
+    GW.SetBagItemButtonQualitySkin(slot, info and info.quality, info and info.hyperlink, false)
+end
 
-            if info then
-                itemButton:SetHasItem(info.iconFileID)
-                itemButton:SetItemButtonTexture(info.iconFileID)
-                SetItemButtonQuality(itemButton, info.quality, info.hyperlink, false, info.isBound)
-            else
-                itemButton:SetHasItem(nil)
-                itemButton:SetItemButtonTexture(nil)
-                SetItemButtonQuality(itemButton, nil, nil, false, nil)
-            end
+local function UpdateItemVisuals(b, overrideIconSize)
+   if not b or not b:IsShown() then return end
+
+    local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
+
+    if b:GetWidth() ~= iconSize or b:GetHeight() ~= iconSize then
+        b:SetSize(iconSize, iconSize)
+    end
+
+    local L, R, T, B = b.icon:GetTexCoord()
+    if L ~= 0.07 or R ~= 0.93 or T ~= 0.07 or B ~= 0.93 then
+        b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    end
+    if b.icon:GetAlpha() ~= 0.9 then
+        b.icon:SetAlpha(0.9)
+    end
+
+    if b:GetHighlightTexture() then
+        local high = b:GetHighlightTexture()
+        if high ~= BORDER_TEXTURE then
+            high:SetTexture(BORDER_TEXTURE)
         end
+        if high:GetBlendMode() ~= "ADD" then
+            high:SetBlendMode("ADD")
+        end
+        if high:GetAlpha() ~= 0.33 then
+            high:SetAlpha(0.33)
+        end
+    end
+
+    local point, _, relativePoint, x, y = b.Count:GetPoint()
+    if point ~= "TOPRIGHT" or relativePoint ~= "TOPRIGHT" or x ~= 0 or y ~= -3 then
+        b.Count:ClearAllPoints()
+        b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
+    end
+    if b.Count:GetJustifyH() ~= "RIGHT" then
+        b.Count:SetJustifyH("RIGHT")
+    end
+
+    if b.IconQuestTexture then
+        local w, h = b.IconQuestTexture:GetSize()
+        if w ~= 25 or h ~= 25 then
+            b.IconQuestTexture:SetSize(25, 25)
+        end
+        point, _, _, x, y = b.IconQuestTexture:GetPoint()
+        if point ~= "TOPLEFT" or x ~= -7 or y ~= 1 then
+            b.IconQuestTexture:ClearAllPoints()
+             b.IconQuestTexture:SetPoint("TOPLEFT", -7, 1)
+        end
+        if b.IconQuestTexture:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/icons/icon-quest" then
+            b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+        end
+    end
+
+    if b.flash then
+        b.flash:SetAllPoints(b)
     end
 end
 
@@ -235,10 +293,14 @@ local function reskinItemButtons()
         local container = _G["ContainerFrame" .. i]
         for _, slot in next, container.Items do
             if slot then
-                reskinItemButton(slot)
+                if not slot.__gwSkinned then
+                    ReskinItemButton(slot) -- will only be trigger on first init
+                    AssignItemData(slot)
+                    slot.__gwSkinned = true
+                end
+                UpdateItemVisuals(slot)
             end
         end
-        UpdateContainerItems(container)
     end
 end
 
@@ -251,7 +313,7 @@ local function CheckUpdateIcon(button, itemLink)
 end
 GW.CheckUpdateIcon = CheckUpdateIcon
 
-local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
+local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays)
     if not button.gwBackdrop then
         return
     end
@@ -320,9 +382,16 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
 
         -- Show ilvl if active
         if button.itemlevel and GW.settings.BAG_SHOW_ILVL then
-            GW.SetItemLevel(button, quality, itemIDOrLink)
+            local canShowItemLevel = GW.IsItemEligibleForItemLevelDisplay(itemIDOrLink)
+            if canShowItemLevel then
+                GW.SetItemLevel(button, quality, itemIDOrLink)
+            else
+                button.itemlevel:SetText("")
+                button.__gwLastItemLink = nil
+            end
         elseif button.itemlevel then
             button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
         end
 
         if GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW and quality and quality > 0 then
@@ -336,12 +405,14 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         if button.junkIcon then button.junkIcon:Hide() end
         if button.scrapIcon then button.scrapIcon:Hide() end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end
-        if button.itemlevel then button.itemlevel:SetText("") end
+        if button.itemlevel then
+            button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
+        end
         GetItemButtonIconTexture(button):Hide()
     end
 end
-GW.SetBagItemButtonQualitySkin = hookItemQuality
-GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
+GW.SetBagItemButtonQualitySkin = SetItemButtonData
 
 local bag_resize
 local bank_resize
@@ -882,10 +953,10 @@ local function LoadInventory()
     end
 
     -- whenever an ItemButton sets its quality ensure our custom border is being used
-    hooksecurefunc("SetItemButtonQuality", hookItemQuality)
+    hooksecurefunc("SetItemButtonQuality", SetItemButtonData)
 
     local helpers = {}
-    helpers.reskinItemButton = reskinItemButton
+    helpers.reskinItemButton = ReskinItemButton
     helpers.reskinItemButtons = reskinItemButtons
     helpers.resizeInventory = resizeInventory
     helpers.getContainerFrame = getContainerFrame

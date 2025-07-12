@@ -39,7 +39,7 @@ local function reskinItemButton(b, overrideIconSize)
 
     b.Count:ClearAllPoints()
     b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
-    b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+    b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
     b.Count:SetJustifyH("RIGHT")
 
     local qtex = _G[b:GetName() .. "IconQuestTexture"]
@@ -77,7 +77,7 @@ local function reskinItemButton(b, overrideIconSize)
 
     if not b.itemlevel then
         b.itemlevel = b:CreateFontString(nil, "OVERLAY")
-        b.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+        b.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
         b.itemlevel:SetPoint("BOTTOMRIGHT", 0, 0)
         b.itemlevel:SetText("")
     end
@@ -159,15 +159,6 @@ local function SetItemButtonQualityForBags(button, quality)
 end
 GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 
-local function IsItemEligibleForItemLevelDisplay(equipLoc, rarity)
-    if ((equipLoc ~= nil and equipLoc ~= "" and equipLoc ~= "INVTYPE_BAG"
-        and equipLoc ~= "INVTYPE_QUIVER" and equipLoc ~= "INVTYPE_TABARD"))
-    and (rarity and rarity >= 1) then
-        return true
-    end
-
-    return false
-end
 
 local function GetItemEquipmentSetName(itemIDOrLink)
     local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
@@ -197,6 +188,8 @@ local function hookItemQuality(button, quality, itemIDOrLink)
     local professionColors = BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
     local showEquipmentSetName = GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME
+
+    button.bagID = bag_id
 
     button.IconOverlay:Hide()
     local t = button.IconBorder
@@ -244,19 +237,16 @@ local function hookItemQuality(button, quality, itemIDOrLink)
 
         -- Show ilvl if active
         if showItemLevel then
-            local canShowItemLevel = IsItemEligibleForItemLevelDisplay(select(9, C_Item.GetItemInfo(itemIDOrLink)), quality)
-            local iLvl = C_Item.GetDetailedItemLevelInfo(itemIDOrLink)
-            if canShowItemLevel and iLvl then
-                if quality >= LE_ITEM_QUALITY_COMMON and C_Item.GetItemQualityColor(quality) then
-                    local r, g, b = C_Item.GetItemQualityColor(quality)
-                    button.itemlevel:SetTextColor(r, g, b, 1)
-                end
-                button.itemlevel:SetText(iLvl)
+            local canShowItemLevel = GW.IsItemEligibleForItemLevelDisplay(itemIDOrLink)
+            if canShowItemLevel then
+                GW.SetItemLevel(button, quality, itemIDOrLink)
             else
                 button.itemlevel:SetText("")
+                button.__gwLastItemLink = nil
             end
         elseif button.itemlevel then
             button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
         end
 
         -- Show equipment set name
@@ -278,7 +268,10 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         if button.junkIcon then button.junkIcon:Hide() end
         if button.questIcon then button.questIcon:Hide() end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end
-        if button.itemlevel then button.itemlevel:SetText("") end
+        if button.itemlevel then
+            button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
+        end
     end
 end
 GW.SetBagItemButtonQualitySkin = hookItemQuality
@@ -372,7 +365,7 @@ local function reskinBagBar(b)
     if b.Count then
         b.Count:ClearAllPoints()
         b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
-        b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+        b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
         b.Count:SetJustifyH("RIGHT")
     end
 
@@ -406,8 +399,8 @@ local function reskinSearchBox(sb)
         return
     end
 
-    sb:SetFont(UNIT_NAME_FONT, 14, "")
-    sb.Instructions:SetFont(UNIT_NAME_FONT, 14, "")
+    sb:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    sb.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
     sb.Left:SetPoint("LEFT", 0, 0)

@@ -283,7 +283,7 @@ local function GetUnitBattlefieldFaction(unit)
     -- this might be a rated BG or wargame and if so the player's faction might be altered
     -- should also apply if `player` is a mercenary.
     if unit == "player" and GW.Retail then
-        if C_PvP.IsRatedBattleground or IsWargame() then
+        if C_PvP.IsRatedBattleground() or IsWargame() then
             englishFaction = PLAYER_FACTION_GROUP[GetBattlefieldArenaFaction()]
             localizedFaction = (englishFaction == "Alliance" and FACTION_ALLIANCE) or FACTION_HORDE
         elseif UnitIsMercenary(unit) then
@@ -481,34 +481,35 @@ end
 GW.Diff = Diff
 
 local function lerp(v0, v1, t)
-t = max(0,min(1,t))
+    t = max(0,min(1,t))
     if v0 == nil then
         v0 = 0
     end
-return (1 - t) * v0 + t * v1;
+    return (1 - t) * v0 + t * v1;
 end
 GW.lerp = lerp
-local function lerpEaseOut(v0,v1,t)
-t = min(1,t)
-t = math.sin(t * math.pi * 0.5);
 
-return lerp(v0,v1,t)
+local function lerpEaseOut(v0,v1,t)
+    t = min(1,t)
+    t = math.sin(t * math.pi * 0.5);
+
+    return lerp(v0,v1,t)
 end
 GW.lerpEaseOut = lerpEaseOut
 
 local function signum(number)
-if number > 0 then
-    return 1
-elseif number < 0 then
-    return -1
-else
-    return 0
-end
+    if number > 0 then
+        return 1
+    elseif number < 0 then
+        return -1
+    else
+        return 0
+    end
 end
 
 local function MoveTowards( current,  target,  maxDelta)
     if math.abs(target - current) <= maxDelta then
-    return target;
+        return target;
     end
     return current + signum(target - current) * maxDelta;
 end
@@ -717,33 +718,6 @@ local function MixinHideDuringPetAndMountedOverride(f)
     end
 end
 GW.MixinHideDuringPetAndMountedOverride = MixinHideDuringPetAndMountedOverride
-local function getContainerItemLinkByNameOrId(itemName, id)
-    local itemLink = nil
-    for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local item = C_Container.GetContainerItemLink(bag, slot)
-            if item and (item:find(itemName) or item:find(id)) then
-                itemLink = item
-                break
-            end
-        end
-    end
-
-    return itemLink
-end
-GW.getContainerItemLinkByNameOrId = getContainerItemLinkByNameOrId
-
-local function getInventoryItemLinkByNameAndId(name, id)
-    for slot = 1, 17 do
-        local itemLink = GetInventoryItemLink("player", slot)
-        if itemLink and itemLink:find(name) and itemLink:find(id) then
-            return itemLink
-        end
-    end
-
-    return nil
-end
-GW.getInventoryItemLinkByNameAndId = getInventoryItemLinkByNameAndId
 
 local function frame_OnEnter(self)
     GameTooltip:SetOwner(self, self.tooltipDir, 0, self.tooltipYoff)
@@ -815,18 +789,98 @@ local function FrameFlash(frame, duration, fadeOutAlpha, fadeInAlpha, loop)
 end
 GW.FrameFlash = FrameFlash
 
-local function SetItemLevel(button, quality, itemlink, slot)
-    if quality then
-        local color = GW.GetQualityColor(quality)
-        if quality >= Enum.ItemQuality.Common and color then
+local function LoadItemAsync(itemInput, callback)
+    if type(itemInput) == "string" and itemInput:find("^|c.+|Hitem:") then
+        callback(itemInput)
+        return
+    end
+
+    local _, link = C_Item.GetItemInfo(itemInput)
+    if link then
+        callback(link)
+        return
+    end
+
+    local itemID = tonumber(itemInput)
+    if not itemID then return end
+
+    local item = Item:CreateFromItemID(itemID)
+    item:ContinueOnItemLoad(function()
+        local _, resolvedLink = C_Item.GetItemInfo(itemID)
+        if resolvedLink then
+            callback(resolvedLink)
+        end
+    end)
+end
+
+local function IsItemEligibleForItemLevelDisplay(itemInput)
+    local classID = select(6, C_Item.GetItemInfoInstant(itemInput))
+    return
+        -- Regular equipment
+        classID == Enum.ItemClass.Armor or classID == Enum.ItemClass.Weapon
+        -- Profession equipment (retail only)
+        or classID == Enum.ItemClass.Profession
+        -- Legion Artifact relics (retail only)
+        or (classID == Enum.ItemClass.Gem and IsArtifactRelicItem and IsArtifactRelicItem(itemInput))
+end
+GW.IsItemEligibleForItemLevelDisplay = IsItemEligibleForItemLevelDisplay
+
+local function SetItemLevel(button, quality, itemInput, slot)
+    if not itemInput or itemInput == "" then
+        button.itemlevel:SetText("")
+        button.__gwLastItemLink = nil
+        return
+    end
+
+    if button.__gwLastItemLink == itemInput then return end
+
+    local function applyItemLevel(ilvl, color, usedLink)
+        if not ilvl or ilvl <= 0 then
+            button.itemlevel:SetText("")
+            button.__gwLastItemLink = nil
+            return
+        end
+
+        button.itemlevel:SetText(ilvl)
+        if color then
             button.itemlevel:SetTextColor(color.r, color.g, color.b, 1)
         end
-        local slotInfo = GW.GetGearSlotInfo("player", slot, itemlink, false)
-        button.itemlevel:SetText(slotInfo.iLvl)
-        button.itemlevel:SetTextColor(color.r, color.g, color.b, 1)
-    else
-        button.itemlevel:SetText("")
+
+        button.__gwLastItemLink = usedLink
     end
+
+    LoadItemAsync(itemInput, function(itemLink)
+        local color = GW.GetQualityColor(quality or 0)
+        local item = Item:CreateFromItemLink(itemLink)
+
+        item:ContinueOnItemLoad(function()
+            if button.bagID and button:GetID() then
+                local itemLoc = ItemLocation:CreateFromBagAndSlot(button.bagID, button:GetID())
+                if itemLoc and itemLoc:IsValid() then
+                    local ilvl = C_Item.GetCurrentItemLevel(itemLoc)
+                    if ilvl and ilvl > 0 then
+                        applyItemLevel(ilvl, color, itemLink)
+                        return
+                    end
+                end
+            end
+            -- Fallback for items without location
+            local ilvl = C_Item.GetDetailedItemLevelInfo(itemLink)
+            if ilvl and ilvl > 0 then
+                applyItemLevel(ilvl, color, itemLink)
+                return
+            end
+
+            -- Fallback: Tooltipscan
+            local slotInfo = GW.GetGearSlotInfo("player", slot, itemLink, false)
+            if slotInfo and slotInfo.iLvl then
+                applyItemLevel(slotInfo.iLvl, color, itemLink)
+            else
+                button.itemlevel:SetText("")
+                button.__gwLastItemLink = nil
+            end
+        end)
+    end)
 end
 GW.SetItemLevel = SetItemLevel
 
@@ -1228,9 +1282,9 @@ if GW.mylocal == "deDE" then
     InstanceNameByID[1186] = "Spitzen des Aufstiegs"    -- "Die Spitzen des Aufstiegs"
     InstanceNameByID[1198] = "Angriff der Nokhud"		-- "Der Angriff der Nokhud"
     InstanceNameByID[1203] = "Azurblaues Gewölbe"		-- "Das Azurblaube Gewölbe"
+    InstanceNameByID[758] = "Eiskronenzitadelle"	-- "Die Eiskronenzitadelle"
 end
-local function GetInstanceImages(raid)
-    local index = 1
+local function GetInstanceImages(index, raid)
     local instanceID, name, _, _, buttonImage = EJ_GetInstanceByIndex(index, raid)
     while instanceID do
         GW.instanceIconByName[InstanceNameByID[instanceID] or name] = buttonImage
@@ -1320,25 +1374,25 @@ end
 GW.BlizzardDropdownButtonInitializer = BlizzardDropdownButtonInitializer
 
 local function DoesAncestryInclude(ancestry, frame)
-	if ancestry then
-		local currentFrame = frame;
-		while currentFrame do
-			if currentFrame == ancestry then
-				return true;
-			end
-			currentFrame = type(currentFrame) == "table" and currentFrame.GetParent and currentFrame:GetParent() or nil
-		end
-	end
-	return false;
+    if ancestry then
+        local currentFrame = frame;
+        while currentFrame do
+            if currentFrame == ancestry then
+                return true;
+            end
+            currentFrame = type(currentFrame) == "table" and currentFrame.GetParent and currentFrame:GetParent() or nil
+        end
+    end
+    return false;
 end
 GW.DoesAncestryInclude = DoesAncestryInclude
 
 local function DoesAncestryIncludeAny(ancestry, frames)
-	for _, frame in ipairs(frames) do
-		if DoesAncestryInclude(ancestry, frame) then
-			return true;
-		end
-	end
-	return false;
+    for _, frame in ipairs(frames) do
+        if DoesAncestryInclude(ancestry, frame) then
+            return true;
+        end
+    end
+    return false;
 end
 GW.DoesAncestryIncludeAny = DoesAncestryIncludeAny
