@@ -481,34 +481,35 @@ end
 GW.Diff = Diff
 
 local function lerp(v0, v1, t)
-t = max(0,min(1,t))
+    t = max(0,min(1,t))
     if v0 == nil then
         v0 = 0
     end
-return (1 - t) * v0 + t * v1;
+    return (1 - t) * v0 + t * v1;
 end
 GW.lerp = lerp
-local function lerpEaseOut(v0,v1,t)
-t = min(1,t)
-t = math.sin(t * math.pi * 0.5);
 
-return lerp(v0,v1,t)
+local function lerpEaseOut(v0,v1,t)
+    t = min(1,t)
+    t = math.sin(t * math.pi * 0.5);
+
+    return lerp(v0,v1,t)
 end
 GW.lerpEaseOut = lerpEaseOut
 
 local function signum(number)
-if number > 0 then
-    return 1
-elseif number < 0 then
-    return -1
-else
-    return 0
-end
+    if number > 0 then
+        return 1
+    elseif number < 0 then
+        return -1
+    else
+        return 0
+    end
 end
 
 local function MoveTowards( current,  target,  maxDelta)
     if math.abs(target - current) <= maxDelta then
-    return target;
+        return target;
     end
     return current + signum(target - current) * maxDelta;
 end
@@ -1281,9 +1282,9 @@ if GW.mylocal == "deDE" then
     InstanceNameByID[1186] = "Spitzen des Aufstiegs"    -- "Die Spitzen des Aufstiegs"
     InstanceNameByID[1198] = "Angriff der Nokhud"		-- "Der Angriff der Nokhud"
     InstanceNameByID[1203] = "Azurblaues Gewölbe"		-- "Das Azurblaube Gewölbe"
+    InstanceNameByID[758] = "Eiskronenzitadelle"	-- "Die Eiskronenzitadelle"
 end
-local function GetInstanceImages(raid)
-    local index = 1
+local function GetInstanceImages(index, raid)
     local instanceID, name, _, _, buttonImage = EJ_GetInstanceByIndex(index, raid)
     while instanceID do
         GW.instanceIconByName[InstanceNameByID[instanceID] or name] = buttonImage

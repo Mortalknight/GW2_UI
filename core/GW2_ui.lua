@@ -503,8 +503,8 @@ local function evPlayerLogin(self)
 
             for i = 1, numTiers do
                 EJ_SelectTier(i)
-                GW.GetInstanceImages(false)
-                GW.GetInstanceImages(true)
+                GW.GetInstanceImages(1, false)
+                GW.GetInstanceImages(1, true)
             end
 
             -- Set it back to the previous tier
