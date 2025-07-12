@@ -163,9 +163,22 @@ local function ReskinItemButton(b, overrideIconSize)
     b.Count:SetJustifyH("RIGHT")
 
     if b.IconQuestTexture then
-        b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
         b.IconQuestTexture:ClearAllPoints()
-        b.IconQuestTexture:SetPoint("CENTER", b, "CENTER", 0, 0)
+        b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+        b.IconQuestTexture:SetSize(25, 25)
+        b.IconQuestTexture:SetPoint("TOPLEFT", -7, 1)
+        b.IconQuestTexture:SetVertexColor(221 / 255, 198 / 255, 68 / 255)
+        if b.UpdateQuestItem then
+            hooksecurefunc(b, "UpdateQuestItem", function()
+                b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+            end)
+        else --bank_slots
+            hooksecurefunc(b.IconQuestTexture, "SetTexture", function(_, tex)
+                if tex ~= "Interface/AddOns/GW2_UI/textures/icons/icon-quest" then
+                    b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+                end
+            end)
+        end
     end
 
     if b.flash then
@@ -235,7 +248,7 @@ local function UpdateItemVisuals(b, overrideIconSize)
 
     if b:GetHighlightTexture() then
         local high = b:GetHighlightTexture()
-        if high:GetTexture() ~= BORDER_TEXTURE then
+        if high ~= BORDER_TEXTURE then
             high:SetTexture(BORDER_TEXTURE)
         end
         if high:GetBlendMode() ~= "ADD" then
@@ -257,8 +270,16 @@ local function UpdateItemVisuals(b, overrideIconSize)
 
     if b.IconQuestTexture then
         local w, h = b.IconQuestTexture:GetSize()
-        if w ~= iconSize + 2 or h ~= iconSize + 2 then
-            b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
+        if w ~= 25 or h ~= 25 then
+            b.IconQuestTexture:SetSize(25, 25)
+        end
+        point, _, _, x, y = b.IconQuestTexture:GetPoint()
+        if point ~= "TOPLEFT" or x ~= -7 or y ~= 1 then
+            b.IconQuestTexture:ClearAllPoints()
+             b.IconQuestTexture:SetPoint("TOPLEFT", -7, 1)
+        end
+        if b.IconQuestTexture:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/icons/icon-quest" then
+            b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
         end
     end
 
