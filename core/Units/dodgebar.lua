@@ -323,8 +323,8 @@ function GwDodgeBarMixin:SetupSkyridingBar()
 
     for i = 1, 5 do
         local seperator = _G[frameName .. "Sep" .. i]
-        if i <= self.gwMaxCharges then
-            local p = lerp(RAD_AT_START, RAD_AT_END, i / self.gwMaxCharges)
+        if i <= self.gwMaxCharges - 1 then
+            local p = lerp(RAD_AT_START, RAD_AT_END, i / self.gwMaxCharges )
             seperator:SetRotation(p)
             seperator:Show()
         else
