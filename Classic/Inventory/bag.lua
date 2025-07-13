@@ -486,9 +486,6 @@ local function bag_OnHide(self)
     if IsBagOpen(KEYRING_CONTAINER) then
         CloseBag(KEYRING_CONTAINER)
     end
-    if self.buttonSettings.dropdown:IsShown() then
-        self.buttonSettings.dropdown:Hide()
-    end
 end
 GW.AddForProfiling("bag", "bag_OnHide", bag_OnHide)
 
