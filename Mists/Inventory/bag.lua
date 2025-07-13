@@ -647,7 +647,9 @@ local function LoadBag(helpers)
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
             local function addCheck(label, getter, setter)
                 local check = rootDescription:CreateCheckbox(label, getter, setter)
-                check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
+                check:AddInitializer(function(button, description, menu)
+                    GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
+                end)
             end
 
             addCheck(L["Compact Icons"], function() return GW.settings.BAG_ITEM_SIZE == BAG_ITEM_COMPACT_SIZE end, compactToggle)
