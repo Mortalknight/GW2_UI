@@ -681,9 +681,9 @@ local function LoadBag(helpers)
         dd.sortOrder:HookScript(
             "OnClick",
             function()
-                local newStatus = not GW.settings.SORT_BAGS_RIGHT_TO_LEFT
+                local newStatus = not GW.settings.BAG_ITEMS_REVERSE_SORT
                 dd.sortOrder.checkbutton:SetChecked(newStatus)
-                GW.settingsSORT_BAGS_RIGHT_TO_LEFT = newStatus
+                GW.settings.BAG_ITEMS_REVERSE_SORT = newStatus
                 dd:Hide()
             end
         )
@@ -790,7 +790,7 @@ local function LoadBag(helpers)
         )
 
         dd.compactBags.checkbutton:SetChecked(GW.settings.BAG_ITEM_SIZE == BAG_ITEM_COMPACT_SIZE)
-        dd.sortOrder.checkbutton:SetChecked(GW.settings.SORT_BAGS_RIGHT_TO_LEFT)
+        dd.sortOrder.checkbutton:SetChecked(GW.settings.BAG_ITEMS_REVERSE_SORT)
         dd.bagOrder.checkbutton:SetChecked(GW.settings.BAG_REVERSE_SORT)
         dd.itemBorder.checkbutton:SetChecked(GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW)
         dd.junkIcon.checkbutton:SetChecked(GW.settings.BAG_ITEM_JUNK_ICON_SHOW)

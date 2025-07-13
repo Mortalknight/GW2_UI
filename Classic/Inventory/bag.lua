@@ -717,165 +717,42 @@ local function LoadBag(helpers)
         end
     )
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BAGS)
-    do
-        local dd = f.buttonSettings.dropdown
-        dd:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        f.buttonSettings:HookScript(
-            "OnClick",
-            function(self)
-                if dd:IsShown() then
-                    dd:Hide()
-                else
-                    -- check if the dropdown need to grow up or down
-                    local _, y = self:GetCenter()
-                    local screenHeight = UIParent:GetTop()
-                    local position
-                    if y > (screenHeight / 2) then
-                        position = "TOPRIGHT"
-                    else
-                        position = "BOTTOMRIGHT"
-                    end
-                    dd:ClearAllPoints()
-                    dd:SetPoint(position, dd:GetParent(), "LEFT", 0, -5)
-                    dd:Show()
-                end
+    EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
+
+    f.buttonSettings:SetScript("OnClick", function(self)
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            local function addCheck(label, getter, setter)
+                local check = rootDescription:CreateCheckbox(label, getter, setter)
+                check:AddInitializer(function(button, description, menu)
+                    GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
+                end)
             end
-        )
 
-        dd.compactBags.checkbutton:HookScript(
-            "OnClick",
-            function(self)
-                self:SetChecked(compactToggle())
-                dd:Hide()
-            end
-        )
+            addCheck(L["Compact Icons"], function() return GW.settings.BAG_ITEM_SIZE == BAG_ITEM_COMPACT_SIZE end, compactToggle)
+            addCheck(L["Loot to leftmost Bag"], function() return GW.settings.BAG_REVERSE_NEW_LOOT end,
+                     function() local ns = not GW.settings.BAG_REVERSE_NEW_LOOT; C_Container.SetInsertItemsLeftToRight(ns); GW.settings.BAG_REVERSE_NEW_LOOT = ns end)
+            addCheck(L["Sort to Last Bag"], function() return GW.settings.BAG_ITEMS_REVERSE_SORT end,
+                     function() local ns = not GW.settings.BAG_ITEMS_REVERSE_SORT; GW.settings.BAG_ITEMS_REVERSE_SORT = ns end)
+            addCheck(L["Reverse Bag Order"], function() return GW.settings.BAG_REVERSE_SORT end,
+                     function() GW.settings.BAG_REVERSE_SORT = not GW.settings.BAG_REVERSE_SORT; layoutItems(f); snapFrameSize(f) end)
+            addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end,
+                     function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; ContainerFrame_UpdateAll() end)
+            addCheck(L["Show Junk Icon"], function() return GW.settings.BAG_ITEM_JUNK_ICON_SHOW end,
+                     function() GW.settings.BAG_ITEM_JUNK_ICON_SHOW = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW; ContainerFrame_UpdateAll() end)
+            addCheck(L["Show Upgrade Icon"], function() return GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW end,
+                     function() GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW = not GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW; ContainerFrame_UpdateAll() end)
+            addCheck(L["Show Profession Bag Coloring"], function() return GW.settings.BAG_PROFESSION_BAG_COLOR end,
+                     function() GW.settings.BAG_PROFESSION_BAG_COLOR = not GW.settings.BAG_PROFESSION_BAG_COLOR; ContainerFrame_UpdateAll() end)
+            addCheck(SHOW_ITEM_LEVEL:gsub("-\n", ""):gsub("\n", " "), function() return GW.settings.BAG_SHOW_ILVL end,
+                     function() GW.settings.BAG_SHOW_ILVL = not GW.settings.BAG_SHOW_ILVL; ContainerFrame_UpdateAll() end)
+            addCheck(L["Sell junk automatically"], function() return GW.settings.BAG_VENDOR_GRAYS end,
+                     function() local ns = not GW.settings.BAG_VENDOR_GRAYS; GW.settings.BAG_VENDOR_GRAYS = ns; GW.SetupVendorJunk(ns) end)
+            addCheck(L["Separate bags"], function() return GW.settings.BAG_SEPARATE_BAGS end,
+                     function() local ns = not GW.settings.BAG_SEPARATE_BAGS; GW.settings.BAG_SEPARATE_BAGS = ns; layoutItems(f); snapFrameSize(f) end)
+        end)
+    end)
 
-        dd.sortOrder:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.SORT_BAGS_RIGHT_TO_LEFT
-                GW.SetSortBagsRightToLeft(newStatus)
-                dd.sortOrder.checkbutton:SetChecked(newStatus)
-                GW.settings.SORT_BAGS_RIGHT_TO_LEFT = newStatus
-                dd:Hide()
-            end
-        )
-
-        dd.bagOrder.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_REVERSE_SORT
-                dd.bagOrder.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_REVERSE_SORT = newStatus
-
-                layoutItems(f)
-                snapFrameSize(f)
-            end
-        )
-
-        dd.itemBorder.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW
-                dd.itemBorder.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = newStatus
-
-                ContainerFrame_UpdateAll()
-            end
-        )
-
-        dd.junkIcon.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_ITEM_JUNK_ICON_SHOW
-                dd.junkIcon.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_ITEM_JUNK_ICON_SHOW = newStatus
-
-                ContainerFrame_UpdateAll()
-            end
-        )
-
-        dd.upgradeIcon.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW
-                dd.upgradeIcon.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW = newStatus
-
-                ContainerFrame_UpdateAll()
-            end
-        )
-
-        dd.professionColor.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_PROFESSION_BAG_COLOR
-                dd.professionColor.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_PROFESSION_BAG_COLOR = newStatus
-                ContainerFrame_UpdateAll()
-            end
-        )
-
-        dd.vendorGrays.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_VENDOR_GRAYS
-                dd.vendorGrays.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_VENDOR_GRAYS = newStatus
-                GW.SetupVendorJunk(GW.settings.BAG_VENDOR_GRAYS)
-            end
-        )
-
-        dd.showItemLvl.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_SHOW_ILVL
-                dd.showItemLvl.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_SHOW_ILVL = newStatus
-
-                ContainerFrame_UpdateAll()
-            end
-        )
-
-
-        dd.separateBags.checkbutton:HookScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BAG_SEPARATE_BAGS
-                dd.separateBags.checkbutton:SetChecked(newStatus)
-                GW.settings.BAG_SEPARATE_BAGS = newStatus
-
-                layoutItems(f)
-                snapFrameSize(f)
-                dd:Hide()
-            end
-        )
-
-        dd.compactBags.checkbutton:SetChecked(GW.settings.BAG_ITEM_SIZE == BAG_ITEM_COMPACT_SIZE)
-        dd.sortOrder.checkbutton:SetChecked(GW.settings.SORT_BAGS_RIGHT_TO_LEFT)
-        dd.bagOrder.checkbutton:SetChecked(GW.settings.BAG_REVERSE_SORT)
-        dd.itemBorder.checkbutton:SetChecked(GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW)
-        dd.junkIcon.checkbutton:SetChecked(GW.settings.BAG_ITEM_JUNK_ICON_SHOW)
-        dd.upgradeIcon.checkbutton:SetChecked(GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW)
-        dd.professionColor.checkbutton:SetChecked(GW.settings.BAG_PROFESSION_BAG_COLOR)
-        dd.vendorGrays.checkbutton:SetChecked(GW.settings.BAG_VENDOR_GRAYS)
-        dd.showItemLvl.checkbutton:SetChecked(GW.settings.BAG_SHOW_ILVL)
-        dd.separateBags.checkbutton:SetChecked(GW.settings.BAG_SEPARATE_BAGS)
-
-        GW.SetupVendorJunk(GW.settings.BAG_VENDOR_GRAYS)
-
-        -- setup bag setting title locals
-        dd.compactBags.title:SetText(L["Compact Icons"])
-        dd.sortOrder.title:SetText(L["Sort to Last Bag"])
-        dd.itemBorder.title:SetText(L["Show Quality Color"])
-        dd.junkIcon.title:SetText(L["Show Junk Icon"])
-        dd.upgradeIcon.title:SetText(L["Show Upgrade Icon |cFF888888(required Pawn - can cause a bag open delay)|r"])
-        dd.professionColor.title:SetText(L["Show Profession Bag Coloring"])
-        dd.bagOrder.title:SetText(L["Reverse Bag Order"])
-        dd.vendorGrays.title:SetText(L["Sell junk automatically"])
-        dd.showItemLvl.title:SetText(SHOW_ITEM_LEVEL)
-        dd.separateBags.title:SetText(L["Separate bags"])
-    end
+    GW.SetupVendorJunk(GW.settings.BAG_VENDOR_GRAYS)
 
     -- setup money frame
     for _, frameName in ipairs({"bronze", "silver", "gold"}) do
