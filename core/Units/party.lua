@@ -254,6 +254,7 @@ local function UpdatePartyFrames()
     for _, frame in ipairs(partyFrames) do
         frame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
         frame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
+        frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR
         frame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
         frame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
         frame:OnEvent("load")
@@ -261,6 +262,7 @@ local function UpdatePartyFrames()
         frame.PetFrame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
         frame.PetFrame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
         frame.PetFrame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
+        frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR
         frame.PetFrame:OnEvent("load")
     end
 end

@@ -36,6 +36,7 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
     self.showHealthValue = GW.settings.PLAYER_UNIT_HEALTH == "VALUE" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
     self.showHealthPrecentage = GW.settings.PLAYER_UNIT_HEALTH == "PREC" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
     self.classColor = GW.settings.player_CLASS_COLOR
+    self.showAbsorbBar = GW.settings.PLAYER_SHOW_ABSORB_BAR
 
     local frameFaderSettings = GW.settings.playerFrameFader
     if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health or frameFaderSettings.vehicle or frameFaderSettings.playertarget then

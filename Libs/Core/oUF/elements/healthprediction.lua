@@ -120,8 +120,8 @@ local function Update(self, event, unit)
 
 	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
 	local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
-	local absorb = oUF.isRetail and UnitGetTotalAbsorbs(unit) or 0
-	local healAbsorb = oUF.isRetail and UnitGetTotalHealAbsorbs(unit) or 0
+	local absorb = self.showAbsorbBar and UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(unit) or 0 --GW2 change
+	local healAbsorb = UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs(unit) or 0
 	local health, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
 	local otherIncomingHeal = 0
 	local hasOverHealAbsorb = false

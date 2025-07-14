@@ -153,6 +153,7 @@ GW.globalDefault = {
 
         PET_FLOATING_COMBAT_TEXT= false,
         PET_AURAS_UNDER= false,
+        PET_SHOW_ABSORB_BAR = true,
 
         BUTTON_ASSIGNMENTS= true,
 
@@ -309,7 +310,9 @@ GW.globalDefault = {
 
         target_TARGET_ENABLED= true,
         target_TARGET_SHOW_CASTBAR= true,
+        target_TARGET_SHOW_ABSORB_BAR = true,
         target_SHOW_CASTBAR= true,
+        target_SHOW_ABSORB_BAR = true,
         target_DEBUFFS= true,
         target_DEBUFFS_FILTER= true,
         target_BUFFS= true,
@@ -331,6 +334,8 @@ GW.globalDefault = {
 
         focus_TARGET_ENABLED= true,
         focus_TARGET_SHOW_CASTBAR= true,
+        focus_TARGET_SHOW_ABSORB_BAR = true,
+        focus_SHOW_ABSORB_BAR = true,
         focus_SHOW_CASTBAR= true,
         focus_DEBUFFS= true,
         focus_DEBUFFS_FILTER= true,
@@ -760,8 +765,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON_TANK= true,
         RAID_SHOW_LEADER_ICON_TANK= true,
         RAID_SHORT_HEALTH_VALUES_TANK = false,
-        RAID_OUT_OF_RANGE_ALPHA_TANK = 0.2,
-
+        RAID_SHOW_ABSORB_BAR_TANK = true,
         raidMaintank_pos= {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",
@@ -819,7 +823,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON_PET= false, -- always
         RAID_SHOW_LEADER_ICON_PET= false, -- always
         RAID_SHORT_HEALTH_VALUES_PET = false,
-        RAID_OUT_OF_RANGE_ALPHA_PET = 0.2,
+        RAID_SHOW_ABSORB_BAR_PET = true,
 
         raid_pet_pos= {
             point= "TOPLEFT",
@@ -856,7 +860,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON= true,
         RAID_SHOW_LEADER_ICON= true,
         RAID_SHORT_HEALTH_VALUES = false,
-        RAID_OUT_OF_RANGE_ALPHA = 0.2,
+        RAID_SHOW_ABSORB_BAR = true,
 
         raid_pos= {
             point= "TOPLEFT",
@@ -894,7 +898,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON_RAID25= true,
         RAID_SHOW_LEADER_ICON_RAID25= true,
         RAID_SHORT_HEALTH_VALUES_RAID25 = false,
-        RAID_OUT_OF_RANGE_ALPHA_RAID25 = 0.2,
+        RAID_SHOW_ABSORB_BAR_RAID25 = true,
 
         raid25_pos= {
             point= "TOPLEFT",
@@ -932,7 +936,7 @@ GW.globalDefault = {
         RAID_SHOW_TANK_ICON_RAID10= true,
         RAID_SHOW_LEADER_ICON_RAID10= true,
         RAID_SHORT_HEALTH_VALUES_RAID10 = false,
-        RAID_OUT_OF_RANGE_ALPHA_RAID10 = 0.2,
+        RAID_SHOW_ABSORB_BAR_RAID10 = true,
 
         raid10_pos= {
             point= "TOPLEFT",
@@ -970,8 +974,7 @@ GW.globalDefault = {
         RAID_SHOW_LEADER_ICON_PARTY= true,
         RAID_SHORT_HEALTH_VALUES_PARTY = false,
         RAID_SHOW_PLAYER_PARTY = true, -- only for party grid
-        RAID_OUT_OF_RANGE_ALPHA_PARTY = 0.2,
-
+        RAID_SHOW_ABSORB_BAR_PARTY = true,
         raid_party_pos= {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",
@@ -990,6 +993,7 @@ GW.globalDefault = {
         PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF= false,
         PARTY_PLAYER_FRAME= false,
         PARTY_SHOW_PETS= false,
+        PARTY_SHOW_ABSORB_BAR = true,
         FADE_GROUP_MANAGE_FRAME= false,
 
         RAIDDEBUFFS_Scale= 1,
@@ -1215,6 +1219,7 @@ GW.globalDefault = {
         PLAYER_AS_TARGET_FRAME= false,
         PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR= false,
         player_CLASS_COLOR= false,
+        PLAYER_SHOW_ABSORB_BAR = true,
         PLAYER_SHOW_PVP_INDICATOR= true,
         PLAYER_ENERGY_MANA_TICK_HIDE_OFC = false,
         PLAYER_ENERGY_MANA_TICK = true,

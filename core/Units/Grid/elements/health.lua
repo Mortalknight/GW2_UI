@@ -19,7 +19,6 @@ local function PostUpdateHealth(self)
     else
         self.fakeValue = nil
     end
-
 end
 
 local function PostUpdateHealthColor(self, unit)
@@ -174,6 +173,7 @@ local function Update_Healtbar(frame)
     health.statusBarColor = health.statusBarColor or {}
     health.colorClass = frame.useClassColor
     health.colorDisconnected = true
+    health.showAbsorbBar = frame.showAbsorbBar
 
     if not frame.useClassColor then
         health.colorHealth = true
