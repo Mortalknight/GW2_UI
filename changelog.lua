@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.2.0",{
+    {ct.feature, [=[Add option to hide absorb bar on all unitframes]=]},
+})
+
 addChange("8.1.9",{
     {ct.bug, [=[Scenario error (retail)]=]},
     {ct.bug, [=[Bag sorting (Mists & Era)]=]},

@@ -340,6 +340,11 @@ function GwPlayerPetFrameMixin:UpdateHealthTextString(health)
     self.health.text:SetText(formatFunction(health))
 end
 
+function GwPlayerPetFrameMixin:UpdateSettings()
+    self.showAbsorbBar = GW.settings.PET_SHOW_ABSORB_BAR
+    self:OnEvent("UNIT_PET", "player")
+end
+
 local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, GW.Retail and "GwPlayerPetFramePingableTemplate" or "GwPlayerPetFrameTemplate")
 
@@ -484,5 +489,6 @@ local function LoadPetFrame(lm)
 
     --frame fader init
     playerPetFrame:ToggleFaderOptions()
+    playerPetFrame:UpdateSettings()
 end
 GW.LoadPetFrame = LoadPetFrame

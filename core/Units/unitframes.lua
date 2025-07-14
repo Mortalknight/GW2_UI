@@ -699,6 +699,7 @@ function GwUnitFrameMixin:ToggleSettings()
     self.showHealthValue = GW.settings[unit .. "_HEALTH_VALUE_ENABLED"]
     self.showHealthPrecentage = GW.settings[unit .. "_HEALTH_VALUE_TYPE"]
     self.showCastbar = GW.settings[unit .. "_SHOW_CASTBAR"]
+    self.showAbsorbBar = GW.settings[unit .. "_SHOW_ABSORB_BAR"]
 
     self.showCastingbarData = GW.settings[unit .. "_CASTINGBAR_DATA"]
 
@@ -898,6 +899,7 @@ end
 function GwTargetUnitFrameMixin:ToggleSettings()
     self.classColor = GW.settings[self.parentUnitId .. "_CLASS_COLOR"]
     self.showCastbar = GW.settings[self.parentUnitId .. "_TARGET_SHOW_CASTBAR"]
+    self.showAbsorbBar = GW.settings[self.parentUnitId .. "_TARGET_SHOW_ABSORB_BAR"]
 
     self.altBg:SetShown(GW.settings[self.parentUnitId .. "_FRAME_ALT_BACKGROUND"])
 

@@ -1,3 +1,7 @@
+8.2.0
+NEW
+    - Add option to hide absorb bar on all unitframes
+
 8.1.9
 FIXES
     - Scenario error (retail)

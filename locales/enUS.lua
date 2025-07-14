@@ -701,3 +701,5 @@ L["Show Quest XP on Quest Tracker"] = true
 L["Quest Tracker sorting"] = true
 L["Show on Map"] = true
 L["Set TomTom Target"] = true
+L["Show absorb bar"] = true
+L["Range"] = true

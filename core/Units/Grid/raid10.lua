@@ -28,7 +28,6 @@ local function GW2_GridRaid10StyleRegister(self)
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
     self.PrivateAuras = GW.Construct_PrivateAura(self)
-    --self.Range = GW.Construct_RangeIndicator(self)
     self.Fader = GW.Construct_Faderframe(self)
 
     return self
@@ -52,7 +51,7 @@ local function UpdateGridRaid10Frame(frame)
     frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
     frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
     frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_RAID10
-    frame.outOfRangeAlphaValue = GW.settings.RAID_OUT_OF_RANGE_ALPHA_RAID10
+    frame.showAbsorbBar = GW.settings.RAID_SHOW_ABSORB_BAR_RAID10
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do

@@ -27,7 +27,6 @@ local function GW2_GridPartyStyleRegister(self)
     GW.Construct_PredictionBar(self) -- creates only the function regestration
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
-     --self.Range = GW.Construct_RangeIndicator(self)
     self.Fader = GW.Construct_Faderframe(self)
 
     return self
@@ -51,7 +50,7 @@ local function UpdateGridPartyFrame(frame)
     frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
     frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
     frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_PARTY
-    frame.outOfRangeAlphaValue = GW.settings.RAID_OUT_OF_RANGE_ALPHA_PARTY
+    frame.showAbsorbBar = GW.settings.RAID_SHOW_ABSORB_BAR_PARTY
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do
@@ -88,7 +87,6 @@ local function UpdateGridPartyFrame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    --GW.Update_RangeIndicator(frame)
     GW.Update_Faderframe(frame, "gridParty")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")

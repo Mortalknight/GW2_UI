@@ -34,7 +34,6 @@ local function GW2_GridMaintankStyleRegister(self)
     GW.Construct_PredictionBar(self) -- creates only the function regestration
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
-     --self.Range = GW.Construct_RangeIndicator(self)
     self.Fader = GW.Construct_Faderframe(self)
 
     return self
@@ -58,7 +57,7 @@ local function UpdateGridMaintankFrame(frame)
     frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
     --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
     frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_TANK
-    frame.outOfRangeAlphaValue = GW.settings.RAID_OUT_OF_RANGE_ALPHA_TANK
+    frame.showAbsorbBar = GW.settings.RAID_SHOW_ABSORB_BAR_TANK
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do

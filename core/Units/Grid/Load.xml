@@ -14,7 +14,6 @@
     <Script file ="elements\nameText.lua"/>
     <Script file ="elements\tags.lua"/>
     <Script file ="elements\missingAuraIndicator.lua"/>
-    <Script file ="elements\range.lua"/>
     <Script file ="elements\fader.lua"/>
     <Script file ="raid40.lua"/>
     <Script file ="raid25.lua"/>
