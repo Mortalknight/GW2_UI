@@ -155,7 +155,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
         local compassData = {}
 
         if isOnMap then
-            compassData.TYPE = "EVENT"
+            compassData.TYPE = GW.TRACKER_TYPE.EVENT
             compassData.COMPASS = true
         end
         if numObjectives > 0 and treatAsInArea then
@@ -190,7 +190,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 local objectiveProgress = 0
                 local playerMapID = GW.Libs.GW2Lib:GetPlayerLocationMapID()
 
-                compassData.TYPE = "EVENT"
+                compassData.TYPE = GW.TRACKER_TYPE.EVENT
                 compassData.ID = questID
                 compassData.COLOR = TRACKER_TYPE_COLOR.EVENT
                 compassData.COMPASS = false
@@ -261,7 +261,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateLayout(newQuestId)
 
     self.isUpdating = true
     local trackedEventIDs = {}
-    GwObjectivesNotification:RemoveNotificationOfType("EVENT")
+    GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.EVENT)
 
     for i = 1, #self.blocks do
         local block = self.blocks[i]

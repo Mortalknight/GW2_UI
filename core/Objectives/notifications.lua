@@ -217,7 +217,7 @@ local function getNearestQuestPOIRetail()
         Y = poiY,
         DESC = objectiveText,
         TITLE = questData.title,
-        TYPE = isCampaign and "CAMPAIGN" or isFrequent and "DAILY" or isWQ and "EVENT" or "QUEST",
+        TYPE = isCampaign and GW.TRACKER_TYPE.CAMPAIGN or isFrequent and GW.TRACKER_TYPE.DAILY or isWQ and GW.TRACKER_TYPE.EVENT or GW.TRACKER_TYPE.QUEST,
         ID = closestQuestID,
         COLOR = isCampaign and TRACKER_TYPE_COLOR.CAMPAIGN
             or isFrequent and TRACKER_TYPE_COLOR.DAILY
@@ -292,7 +292,7 @@ local function getNearestQuestPOIClassic()
         Y = poiY,
         DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
         TITLE = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID)),
-        TYPE = isDaily and "DAILY" or "QUEST",
+        TYPE = isDaily and GW.TRACKER_TYPE.DAILY or GW.TRACKER_TYPE.QUEST,
         ID = closestQuestID,
         COLOR = isDaily and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST,
         COMPASS = true,
@@ -340,7 +340,7 @@ local function getNearestQuestPOIMists()
             Y = poiY,
             DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
             TITLE = title,
-            TYPE = isFrequent and "DAILY" or "QUEST",
+            TYPE = isFrequent and GW.TRACKER_TYPE.DAILY or GW.TRACKER_TYPE.QUEST,
             ID = closestQuestID,
             COLOR = isFrequent and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST,
             COMPASS = true,
@@ -371,7 +371,7 @@ local function getBodyPOI()
         X = x,
         Y = y,
         TITLE = L["Retrieve your corpse"],
-        TYPE = "DEAD",
+        TYPE = GW.TRACKER_TYPE.DEAD,
         ID = "playerDead",
         COLOR = TRACKER_TYPE_COLOR.DEAD,
         COMPASS = true
@@ -504,7 +504,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
         self.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex)
         self.iconFrame.icon:SetTexCoord(iconInfo.l, iconInfo.r, iconInfo.t, iconInfo.b)
 
-        if data.TYPE == "DELVE" then
+        if data.TYPE == GW.TRACKER_TYPE.DELVE then
             self.iconFrame:SetScript("OnEnter", function()
                 GameTooltip:SetOwner(self.iconFrame, "ANCHOR_LEFT")
                 GameTooltip:SetSpellByID(self.iconFrame.tooltipSpellID)

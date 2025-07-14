@@ -43,7 +43,7 @@ local function setCompass()
 
     compassData.TITLE = compassTitle
     compassData.DESC = compassDesc
-    compassData.TYPE = "ARENA"
+    compassData.TYPE = GW.TRACKER_TYPE.ARENA
     compassData.ID = "arena_unknown"
     compassData.QUESTID = "unknown"
     compassData.COMPASS = false

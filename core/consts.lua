@@ -115,6 +115,22 @@ GW.TRACKER_TYPE_COLOR = {
     DELVE = { r = 171 / 255, g = 37 / 255, b = 240 / 255 }
 }
 
+GW.TRACKER_TYPE = {
+    QUEST = 1,
+    CAMPAIGN = 2,
+    EVENT = 3,
+    SCENARIO = 4,
+    BOSS = 5,
+    ARENA = 6,
+    ACHIEVEMENT = 7,
+    DAILY = 8,
+    TORGHAST = 9,
+    RECIPE = 10,
+    MONTHLYACTIVITY = 11,
+    DELVE = 12,
+    DEAD = 13
+}
+
 GW.FACTION_BAR_COLORS = {
     [1] = { r = 0.8, g = 0.3, b = 0.22 },
     [2] = { r = 0.8, g = 0.3, b = 0.22 },

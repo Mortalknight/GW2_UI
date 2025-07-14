@@ -145,27 +145,22 @@ local function updateTextureBasedOnCondition(self)
         -- Hook green fire
         if IsSpellKnown(101508) then -- check for spell id 101508
             self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-green")
-            self.warlock.shardFragment.barFill:SetTexture(
-                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-green")
+            self.warlock.shardFragment.barFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-green")
             for i = 1, 5 do
                 self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard-green")
             end
         else
-            local tex1 = GW.Retail and "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare" or "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare"
-            local tex2 = GW.Retail and "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill" or "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill"
-            local tex3 = GW.Retail and "Interface/AddOns/GW2_UI/textures/altpower/soulshard" or "Interface/AddOns/GW2_UI/textures/altpower/soulshard"
-            self.warlock.shardFlare:SetTexture(tex1)
-            self.warlock.shardFragment.barFill:SetTexture(tex2)
+            self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare")
+            self.warlock.shardFragment.barFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill")
             for i = 1, 5 do
-                self.warlock["shard" .. i]:SetTexture(tex3)
+                self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard")
             end
         end
     end
 end
 
-local function animFlarePoint(f, point, to, from, duration)
+local function animFlarePoint(f, point, duration)
     local ff = f.flare
-    local pwr = f.gwPower
     ff:ClearAllPoints()
     ff:SetPoint("CENTER", point, "CENTER", 0, 0)
     GW.AddToAnimation(
@@ -864,7 +859,7 @@ local function powerHoly(self, event, ...)
         if v:IsShown() then
             local id = tonumber(v:GetParentKey())
             if old_power < id and pwr >= id then
-                animFlarePoint(self, v, 1, 0, 0.5)
+                animFlarePoint(self, v, 0.5)
             end
             if pwr >= pwrThreshold and id < (pwrThreshold - 1) then
                 v:SetTexCoord(0, 0.5, 0.5, 1)
@@ -1027,7 +1022,7 @@ local function shadowOrbs(self, event, ...)
     for _, v in pairs(self.priest.power) do
         local id = tonumber(v:GetParentKey())
         if old_power < id and currentOrbs >= id then
-            animFlarePoint(self, v, 1, 0, 0.5)
+            animFlarePoint(self, v, 0.5)
         end
         if currentOrbs >= 3 and id < 4 then
             v:SetTexCoord(0, 0.5, 0.5, 1)
@@ -1602,6 +1597,11 @@ local function setWarlock(f)
             f:SetScript("OnEvent", powerDemonicFury)
             powerDemonicFury(f, "CLASS_POWER_INIT")
         elseif GW.myspec == 3 then
+            f.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-red")
+            f.warlock.shardFragment.barFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-red")
+            for i = 1, 5 do
+                f.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard-red")
+            end
             f.warlock.powerType = Enum.PowerType.BurningEmbers
             f:SetScript("OnEvent", powerSoulshard)
             powerSoulshard(f, "CLASS_POWER_INIT")
@@ -2006,6 +2006,7 @@ GW.UpdateClassPowerExtraManabar = UpdateExtraManabar
 
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
+    CPWR_FRAME = cpf
 
     cpf.customResourceBar = GW.CreateAnimatedStatusBar("GwCustomResourceBar", cpf, "GwStatusPowerBar", true)
     cpf.customResourceBar.customMaskSize = 64
@@ -2049,7 +2050,6 @@ local function LoadClassPowers()
         GW.MixinHideDuringPetAndOverride(cpf)
         GW.MixinHideDuringPetAndOverride(cpf.customResourceBar)
         GW.MixinHideDuringPetAndOverride(cpf.customResourceBar.decay)
-        CPWR_FRAME = cpf
     end
 
     -- need to pull it out of core because of not existing atlas files on non retail clients

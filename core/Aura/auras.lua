@@ -297,7 +297,6 @@ local function updateAura(element, unit, data, position, isBuff)
         end
     end
 
-
     button.icon:SetTexture(data.icon)
     button.stacks:SetText(data.applications > 1 and data.applications or "")
     button.nextUpdate = 0

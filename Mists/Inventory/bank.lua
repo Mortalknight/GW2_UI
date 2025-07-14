@@ -505,58 +505,22 @@ local function LoadBank(helpers)
         end
     )
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BANK)
-    do
-        EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
-        local dd = f.buttonSettings.dropdown
-        dd:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        f.buttonSettings:HookScript(
-            "OnClick",
-            function(self)
-                if dd:IsShown() then
-                    dd:Hide()
-                else
-                    -- check if the dropdown need to grow up or down
-                    local _, y = self:GetCenter()
-                    local screenHeight = UIParent:GetTop()
-                    local position
-                    if y > (screenHeight / 2) then
-                        position = "TOPRIGHT"
-                    else
-                        position = "BOTTOMRIGHT"
-                    end
-                    dd:ClearAllPoints()
-                    dd:SetPoint(position, dd:GetParent(), "LEFT", 0, -5)
-                    dd:Show()
-                end
+    EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
+    f.buttonSettings:SetScript("OnClick", function(self)
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+
+            local function addCheck(label, getter, setter)
+                local check = rootDescription:CreateCheckbox(label, getter, setter)
+                check:AddInitializer(function(button, description, menu)
+                    GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
+                end)
             end
-        )
 
-        dd.compactBank.checkbutton:SetScript(
-            "OnClick",
-            function(self)
-                self:SetChecked(compactToggle())
-                dd:Hide()
-            end
-        )
-
-        dd.bagOrder.checkbutton:SetScript(
-            "OnClick",
-            function()
-                local newStatus = not GW.settings.BANK_REVERSE_SORT
-                dd.bagOrder.checkbutton:SetChecked(newStatus)
-                GW.settings.BANK_REVERSE_SORT = newStatus
-
-                ContainerFrame_UpdateAll()
-            end
-        )
-
-        dd.compactBank.checkbutton:SetChecked(GW.settings.BAG_ITEM_SIZE == BANK_ITEM_COMPACT_SIZE)
-        dd.bagOrder.checkbutton:SetChecked(GW.settings.BANK_REVERSE_SORT)
-
-        -- setup bag setting title locals
-        dd.compactBank.title:SetText(L["Compact Icons"])
-        dd.bagOrder.title:SetText(L["Reverse Bag Order"])
-    end
+            addCheck(L["Compact Icons"], function() return GW.settings.BAG_ITEM_SIZE == BANK_ITEM_COMPACT_SIZE end, compactToggle)
+            addCheck(L["Reverse Bag Order"], function() return GW.settings.BANK_REVERSE_SORT end, function() GW.settings.BANK_REVERSE_SORT = not GW.settings.BANK_REVERSE_SORT; ContainerFrame_UpdateAll() end)
+            addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; ContainerFrame_UpdateAll() end)
+        end)
+    end)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()

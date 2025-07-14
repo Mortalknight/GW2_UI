@@ -439,7 +439,7 @@ local function commonEntering()
     end
     C_Timer.After(0.5, function()
         if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() and GwObjectivesNotification then
-            GwObjectivesNotification:RemoveNotificationOfType("ARENA")
+            GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.ARENA)
         end
     end)
 end

@@ -41,12 +41,12 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         end
     end
 
-    GwObjectivesNotification:RemoveNotificationOfType("SCENARIO")
-    GwObjectivesNotification:RemoveNotificationOfType("TORGHAST")
-    GwObjectivesNotification:RemoveNotificationOfType("DELVE")
+    GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.SCENARIO)
+    GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.TORGHAST)
+    GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.DELVE)
 
     local compassData = {
-        TYPE = "SCENARIO",
+        TYPE = GW.TRACKER_TYPE.SCENARIO,
         TITLE = "Unknown Scenario",
         ID = "unknown",
         QUESTID = "unknown",
@@ -83,8 +83,8 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             GwObjectivesNotification:AddNotification(compassData)
             block.height = block.height + 5
         else
-            GwObjectivesNotification:RemoveNotificationOfType("SCENARIO")
-            GwObjectivesNotification:RemoveNotificationOfType("TORGHAST")
+            GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.SCENARIO)
+            GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.TORGHAST)
             block:Hide()
         end
         GW.CombatQueue_Queue(nil, block.UpdateObjectiveActionButton, {block})
@@ -144,7 +144,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         end
 
         compassData.COLOR = TRACKER_TYPE_COLOR.TORGHAST
-        compassData.TYPE = "TORGHAST"
+        compassData.TYPE = GW.TRACKER_TYPE.TORGHAST
     end
 
     -- check for active delves
@@ -201,7 +201,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         end
 
         compassData.COLOR = TRACKER_TYPE_COLOR.DELVE
-        compassData.TYPE = "DELVE"
+        compassData.TYPE = GW.TRACKER_TYPE.DELVE
     else
         block.delvesFrame:Hide()
     end
@@ -212,7 +212,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     GwObjectivesNotification:AddNotification(compassData, true)
 
     if questID then
-        block.questLogIndex = GW.Retail and C_QuestLog.GetLogIndexForQuestID(questID) or GetQuestLogIndexByID(questID)
+        block.questLogIndex = (GW.Retail and C_QuestLog.GetLogIndexForQuestID or GetQuestLogIndexByID)(questID)
     end
 
     --check for groupfinder button

@@ -62,7 +62,7 @@ end
 function GwBossFrameMixin:OnHide()
     self.container:UpdateBossFrameHeight()
     if self.id == 1 then
-        GwObjectivesNotification:RemoveNotificationOfType("BOSS")
+        GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.BOSS)
     end
 
     if self.eventless then

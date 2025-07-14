@@ -850,11 +850,13 @@ local function LoadUnitFrame(unit, frameInvert)
         unitframe:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", unit)
         unitframe:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", unit)
         unitframe:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", unit)
-    elseif GW.Classic then
+    end
+
+    if GW.Classic then
         unitframe:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", unit)
     end
 
-        unitframe:RegisterUnitEvent("UNIT_FACTION", unit)
+    unitframe:RegisterUnitEvent("UNIT_FACTION", unit)
     if unit == "target" then
         unitframe:RegisterEvent("PLAYER_TARGET_CHANGED")
         unitframe:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", unit)
