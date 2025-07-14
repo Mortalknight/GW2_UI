@@ -15,6 +15,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.1.9",{
+    {ct.bug, [=[Scenario error (retail)]=]},
+    {ct.bug, [=[Bag sorting (Mists & Era)]=]},
+})
+
 addChange("8.1.8",{
     {ct.bug, [=[Bag opening lag]=]},
     {ct.bug, [=[Wrong tooltip faction (Retail)]=]},
