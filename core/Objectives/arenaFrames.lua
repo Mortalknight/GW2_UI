@@ -105,7 +105,7 @@ function GwArenaFrameMixin:OnHide()
     self.container:UpdateArenaFrameHeight()
     local _, instanceType = IsInInstance()
     if countArenaFrames < 1 and instanceType ~= "arena" and instanceType ~= "pvp" then
-        GwObjectivesNotification:RemoveNotificationOfType("ARENA")
+        GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.ARENA)
         countArenaFrames = 0
     end
 end
@@ -142,7 +142,7 @@ function GwObjectivesArenaContainerMixin:SetCompass()
 
     compassData.TITLE = compassTitle
     compassData.DESC = compassDesc
-    compassData.TYPE = "ARENA"
+    compassData.TYPE = GW.TRACKER_TYPE.ARENA
     compassData.ID = "arena_unknown"
     compassData.QUESTID = "unknown"
     compassData.COMPASS = false
