@@ -212,7 +212,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     GwObjectivesNotification:AddNotification(compassData, true)
 
     if questID then
-        block.questLogIndex = GW.Retail and C_QuestLog.GetLogIndexForQuestID(questID) or GetQuestLogIndexByID(questID)
+        block.questLogIndex = (GW.Retail and C_QuestLog.GetLogIndexForQuestID or GetQuestLogIndexByID)(questID)
     end
 
     --check for groupfinder button
