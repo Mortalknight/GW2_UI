@@ -138,18 +138,16 @@ local function updateActionbarBorders(btn)
 end
 
 local function changeFlyoutStyle(self)
-    if not self.FlyoutArrowContainer or not self.FlyoutBorderShadow then
+    if not self:HasPopup() then
 		return
 	end
-
-    self.FlyoutBorderShadow:Hide()
     SpellFlyout.Background.End:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
     SpellFlyout.Background.HorizontalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
     SpellFlyout.Background.VerticalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
     SpellFlyout.Background.Start:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
 
     local i = 1
-    local btn = _G["SpellFlyoutButton1"]
+    local btn = _G["SpellFlyoutPopupButton" .. i]
     while btn do
         if btn.NormalTexture then
             btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
@@ -158,7 +156,7 @@ local function changeFlyoutStyle(self)
         btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
         btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
         i = i + 1
-        btn = _G["SpellFlyoutButton" .. i]
+        btn = _G["SpellFlyoutPopupButton" .. i]
     end
 end
 AFP("changeFlyoutStyle", changeFlyoutStyle)
