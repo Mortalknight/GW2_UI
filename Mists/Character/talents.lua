@@ -469,7 +469,7 @@ local function LoadTalents()
     end
     local fnContainer_OnClick = function(self)
         local currentSpec = C_SpecializationInfo.GetSpecialization(nil, isPetTalents, openSpec)
-        if (isPetTalents and self.specIndex ~= currentSpec and IsPetActive()) or (not currentSpec or currentSpec > GetNumSpecializations(false, isPetTalents) and C_SpecializationInfo.CanPlayerUseTalentSpecUI()) then
+        if (isPetTalents and self.specIndex ~= currentSpec and IsPetActive()) or ((not currentSpec or currentSpec > GetNumSpecializations(false, isPetTalents)) and C_SpecializationInfo.CanPlayerUseTalentSpecUI()) then
             GW.WarningPrompt(CONFIRM_LEARN_SPEC, function() SetSpecialization(self.specIndex, isPetTalents) end, nil, YES, NO)
         end
     end
