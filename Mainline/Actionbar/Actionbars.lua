@@ -138,13 +138,10 @@ local function updateActionbarBorders(btn)
 end
 
 local function changeFlyoutStyle(self)
-    if not self:HasPopup() then
-		return
-	end
-    SpellFlyout.Background.End:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    SpellFlyout.Background.HorizontalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    SpellFlyout.Background.VerticalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    SpellFlyout.Background.Start:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    self.Background.End:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    self.Background.HorizontalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    self.Background.VerticalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    self.Background.Start:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
 
     local i = 1
     local btn = _G["SpellFlyoutPopupButton" .. i]
@@ -827,7 +824,6 @@ local function updateMainBar()
             saveVertexColor(btn.icon, btn.icon:GetVertexColor())
             hooksecurefunc(btn.icon, "SetVertexColor", saveVertexColor)
             hooksecurefunc(btn, "UpdateUsable", changeVertexColorActionbars)
-            hooksecurefunc(btn, "UpdateFlyout", changeFlyoutStyle)
             hooksecurefunc(btn, "Update", updateActionbarBorders)
             updateActionbarBorders(btn)
 
@@ -1006,7 +1002,6 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             saveVertexColor(btn.icon, btn.icon:GetVertexColor())
             hooksecurefunc(btn.icon, "SetVertexColor", saveVertexColor)
             hooksecurefunc(btn, "UpdateUsable", changeVertexColorActionbars)
-            hooksecurefunc(btn, "UpdateFlyout", changeFlyoutStyle)
             hooksecurefunc(btn, "Update", updateActionbarBorders)
 
             btn:ClearAllPoints()
@@ -1388,6 +1383,7 @@ local function LoadActionBars(lm, skinOnly)
 
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", function() C_Timer.After(1, trackBarChanges) end)
+    hooksecurefunc(SpellFlyout, "Toggle", changeFlyoutStyle)
     trackBarChanges()
 
     -- do stuff to other pieces of the blizz UI
