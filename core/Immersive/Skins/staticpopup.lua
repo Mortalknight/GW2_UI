@@ -4,11 +4,22 @@ local function gwSetStaticPopupSize()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
         StaticPopup.tex:SetSize(StaticPopup:GetSize())
-        _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon")
-        _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:SetTexture(nil)
-        _G["StaticPopup" .. i .. "ItemFrame"].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-        _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        _G["StaticPopup" .. i .. "ItemFrameNormalTexture"]:SetTexture(nil)
+        if _G["StaticPopup" .. i .. "AlertIcon"] then
+            _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon")
+        else
+            StaticPopup.AlertIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon")
+        end
+        if _G["StaticPopup" .. i .. "ItemFrameNameFrame"] then
+            _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:SetTexture(nil)
+            _G["StaticPopup" .. i .. "ItemFrame"].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            _G["StaticPopup" .. i .. "ItemFrameNormalTexture"]:SetTexture(nil)
+        else
+            StaticPopup.ItemFrame.NameFrame:SetTexture(nil)
+            StaticPopup.ItemFrame.Item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            StaticPopup.ItemFrame.Item.icon:SetTexCoord(0.9, 0.1, 0.9, 0.1)
+            StaticPopup.ItemFrame.Item.icon:GwSetInside()
+        end
         _G["StaticPopup" .. i .. "CloseButton"]:GwSkinButton(true)
         _G["StaticPopup" .. i .. "CloseButton"]:SetSize(20, 20)
         _G["StaticPopup" .. i .. "CloseButton"]:ClearAllPoints()
@@ -38,6 +49,10 @@ local function LoadStaticPopupSkin()
             StaticPopup.Border:Hide()
         end
 
+        if StaticPopup.BG then
+            StaticPopup.BG:Hide()
+        end
+
         local tex = StaticPopup:CreateTexture(nil, "BACKGROUND")
         tex:SetPoint("TOPLEFT", StaticPopup, "TOPLEFT", 0, 0)
         tex:SetPoint("BOTTOMRIGHT", StaticPopup, "BOTTOMRIGHT", 0, 0)
@@ -61,16 +76,30 @@ local function LoadStaticPopupSkin()
         _G["StaticPopup" .. i .. "EditBox"]:SetPoint("TOPLEFT", -2, -4)
         _G["StaticPopup" .. i .. "EditBox"]:SetPoint("BOTTOMRIGHT", 2, 4)
 
-        _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:GwKill()
-        _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.9, 0.1, 0.9, 0.1)
-        _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:GwSetInside()
+        if _G["StaticPopup" .. i .. "ItemFrameNameFrame"] then
+            _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:GwKill()
+            _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.9, 0.1, 0.9, 0.1)
+            _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:GwSetInside()
+        else
+            StaticPopup.ItemFrame.NameFrame:GwKill()
+            StaticPopup.ItemFrame.Item.icon:SetTexCoord(0.9, 0.1, 0.9, 0.1)
+            StaticPopup.ItemFrame.Item.icon:GwSetInside()
+        end
 
-        local itemFrame = _G["StaticPopup" .. i .. "ItemFrame"]
-        itemFrame:GwStyleButton()
-        GW.HandleIcon(itemFrame.icon, true, GW.BackdropTemplates.ColorableBorderOnly)
-        GW.HandleIconBorder(itemFrame.IconBorder, itemFrame.icon.backdrop)
+        local itemFrame
+        if StaticPopup.ItemFrame then
+            itemFrame = StaticPopup.ItemFrame
+            itemFrame:GwStyleButton()
+            GW.HandleIcon(itemFrame.Item.icon, true, GW.BackdropTemplates.ColorableBorderOnly)
+            GW.HandleIconBorder(itemFrame.Item.IconBorder, itemFrame.Item.icon.backdrop)
+        else
+            itemFrame = _G["StaticPopup" .. i .. "ItemFrame"]
+            itemFrame:GwStyleButton()
+            GW.HandleIcon(itemFrame.icon, true, GW.BackdropTemplates.ColorableBorderOnly)
+            GW.HandleIconBorder(itemFrame.IconBorder, itemFrame.icon.backdrop)
+        end
 
-        local normTex = itemFrame:GetNormalTexture()
+        local normTex = itemFrame.GetNormalTexture and itemFrame:GetNormalTexture()
         if normTex then
             normTex:SetTexture()
             hooksecurefunc(normTex, "SetTexture", ClearSetTexture)

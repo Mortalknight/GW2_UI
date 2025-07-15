@@ -548,7 +548,7 @@ local function SkinLookingForGroupFrames()
     end)
 
     LFGListFrame.SearchPanel.FilterButton:GwSkinButton(false, true)
-    LFGListFrame.SearchPanel.FilterButton:SetPoint("LEFT", LFGListFrame.SearchPanel.SearchBox, "RIGHT", 5, 0)
+    LFGListFrame.SearchPanel.FilterButton:SetPoint("TOPRIGHT", LFGListFrame.SearchPanel, "TOPRIGHT", 0, -58)
     LFGListFrame.SearchPanel.RefreshButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.BackToGroupButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.RefreshButton:SetSize(24, 24)
