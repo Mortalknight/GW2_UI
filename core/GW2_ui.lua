@@ -493,6 +493,7 @@ local function evPlayerLogin(self)
         GW.UpdateCharData()
         return
     end
+    GW.LoadFonts()
 
     if GW.Retail then
         -- fetch data
@@ -539,7 +540,6 @@ local function evPlayerLogin(self)
     if not GW.Retail then
         GW.LoadHoverBinds()
     end
-    GW.LoadFonts()
 
     -- Create Warning Prompt
     GW.CreateWarningPrompt()

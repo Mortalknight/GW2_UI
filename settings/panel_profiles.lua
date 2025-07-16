@@ -300,11 +300,8 @@ local function item_OnLoad(self)
     self.activateButton.hint:SetFont(DAMAGE_TEXT_FONT, 10)
     self.activateButton.hint:SetShadowColor(0, 0, 0, 1)
     self.activateButton.hint:SetShadowOffset(1, -1)
-
     self.desc:SetTextColor(0.49, 0.49, 0.49)
-
     self.export:GetFontString():SetText(L["Export"])
-
     self.changeIcon:GetFontString():SetText(L["Edit Icon"])
 
     self.delete:SetScript("OnClick", delete_OnClick)
@@ -312,7 +309,6 @@ local function item_OnLoad(self)
     self.rename:SetScript("OnClick", rename_OnClick)
     self.changeIcon:SetScript("OnClick", changeIcon_OnClick)
     self.copy:SetScript("OnClick", copy_OnClick)
-
 end
 AddForProfiling("panel_profiles", "item_OnLoad", item_OnLoad)
 
@@ -528,12 +524,12 @@ end
 
 --copied from character.lua needs to be removed later
 local function CharacterMenuButton_OnLoad(self, odd)
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
     self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if odd then
         self:ClearNormalTexture()
     else
-        self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
+        self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
     end
 
     self:GetFontString():SetJustifyH("LEFT")
@@ -644,7 +640,7 @@ local function LoadProfilesPanel(sWindow)
         ImportExportFrame.decode:SetText(CONVERT)
     end)
 
-    createCat(L["PROFILES"], L["Add and remove profiles."], p, false, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_profiles")
+    createCat(L["PROFILES"], L["Add and remove profiles."], p, false, nil, true, "Interface/AddOns/GW2_UI/textures/uistuff/tabicon_profiles")
 
     p:SetScript("OnShow", function()
         settingMenuToggle(false)

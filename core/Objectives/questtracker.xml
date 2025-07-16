@@ -847,9 +847,9 @@
         </Frames>
     </Button>
 
-    <Button name="GwQuestTrackerAreanaFramePingableTemplate" inherits="GwQuestTrackerBossFramePingableTemplate" virtual="true" hidden="true"/>
+    <Button name="GwQuestTrackerArenaFramePingableTemplate" inherits="GwQuestTrackerBossFrameTemplate,PingableUnitFrameTemplate" virtual="true" hidden="true"/>
 
-    <Button name="GwQuestTrackerAreanaFrameTemplate" inherits="GwQuestTrackerBossFrameTemplate" virtual="true" hidden="true"/>
+    <Button name="GwQuestTrackerArenaFrameTemplate" inherits="GwQuestTrackerBossFrameTemplate" virtual="true" mixin="GwArenaFrameMixin" hidden="true"/>
 
     <Button name="GwQuestTrackerArenaPrepFramePingableTemplate" inherits="GwQuestTrackerArenaPrepFrameTemplate,PingableUnitFrameTemplate" virtual="true"/>
 

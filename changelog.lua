@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.2.1",{
+    {ct.feature, [=[Arena frame lua error (Mists)]=]},
+})
+
 addChange("8.2.0",{
     {ct.feature, [=[Add option to hide absorb bar on all unitframes]=]},
 })
