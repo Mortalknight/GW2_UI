@@ -312,6 +312,7 @@ GW.RegisterLoadHook = RegisterLoadHook
 
 local function UpdateDb()
     GW.settings = GW.globalSettings.profile
+    GW.Migration()
 end
 
 local function evAddonLoaded(self, loadedAddonName)
