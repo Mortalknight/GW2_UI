@@ -9,10 +9,6 @@ local BANK_ITEM_PADDING = 5
 
 local PURCHASE_TAB_ID = -1
 
-local function fetchPurchasedBankTabData(f)
-    f.purchasedBankTabData = C_Bank.FetchPurchasedBankTabData(f.bankType)
-end
-
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutAccountBankItems(f)
     local max_col = f:GetParent().gw_bank_cols
@@ -43,7 +39,7 @@ local function updateFreeBankSlots(self)
 end
 GW.AddForProfiling("bank", "updateFreeBankSlots", updateFreeBankSlots)
 
-local function takeOverBankItemButtons(self)
+local function GrabBankItemButtons(self)
     local idx = 1
     for itemButton in self:EnumerateValidItems() do
         itemButton:SetParent(self.Container)
@@ -138,7 +134,7 @@ local function accountTabOnClick(self, button)
     end
 end
 
-local function refreshBankPanel(self)
+local function RefreshBankPanel(self)
     self:HideAllPrompts()
     if self:ShouldShowLockPrompt() then
         self:ShowLockPrompt()
@@ -147,17 +143,18 @@ local function refreshBankPanel(self)
     end
 
     if self:ShouldShowPurchasePrompt() then
-        self:ShowPurchasePrompt();
+        self:ShowPurchasePrompt()
         self.Container:Hide()
-        return;
+        return
     end
-    local noTabSelected = self.selectedTabID == nil;
+    local noTabSelected = self.selectedTabID == nil
     if noTabSelected then
-        return;
+        return
     end
 
-    takeOverBankItemButtons(self)
-
+	self:SetItemDisplayEnabled(true)
+	self:SetMoneyFrameEnabled(true)
+	self:GenerateItemSlotsForSelectedTab()
     self.Container:Show()
 end
 
@@ -174,10 +171,8 @@ local function SelectFirstAvailableTab(self)
     end
 end
 
-local function createAccountBagBar(f)
+local function RefreshBankTabs(f)
     local lastButton
-    fetchPurchasedBankTabData(f)
-    takeOverBankItemButtons(f)
     f.bankTabPool:ReleaseAll()
 
     if f.purchasedBankTabData then
@@ -252,11 +247,8 @@ local function compactToggle()
 end
 GW.AddForProfiling("bank", "compactToggle", compactToggle)
 
-local function bank_OnShow(self)
+local function OnShow(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-    self:RegisterEvent("BANK_TABS_CHANGED")
-    self:RegisterEvent("BAG_UPDATE")
-    self:RegisterEvent("BANK_TAB_SETTINGS_UPDATED")
 
     -- hide the bank frame off screen
     BankFrame:ClearAllPoints()
@@ -264,41 +256,38 @@ local function bank_OnShow(self)
     BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
     BankPanel.AutoSortButton:Hide()
 
-    createAccountBagBar(self.BankPanel)
+    OpenAllBags(self.BankPanel)
+    self.BankPanel:FetchPurchasedBankTabData()
+    GrabBankItemButtons(self.BankPanel)
+    RefreshBankTabs(self.BankPanel)
     snapFrameSize(self)
     inv.reskinItemButtons()
 end
-GW.AddForProfiling("bank", "bank_OnShow", bank_OnShow)
+GW.AddForProfiling("bank", "OnShow", OnShow)
 
-local function bank_OnHide(self)
+local function OnHide(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
     self:UnregisterAllEvents()
     self:RegisterEvent("BANKFRAME_OPENED")
     self:RegisterEvent("BANKFRAME_CLOSED")
+    CloseAllBags(self.BankPanel)
     C_Bank.CloseBankFrame()
 end
-GW.AddForProfiling("bank", "bank_OnHide", bank_OnHide)
+GW.AddForProfiling("bank", "OnHide", OnHide)
 
-local function bank_OnEvent(self, event, ...)
+local function OnEvent(self, event, ...)
     if event == "BANKFRAME_OPENED" then
-        self:Show()
+        self:GetParent():Show()
     elseif event == "BANKFRAME_CLOSED" then
-        self:Hide()
+        self:GetParent():Hide()
     elseif event == "BAG_UPDATE" then
-        local containerID = select(1, ...)
-        if self.BankPanel.selectedTabID == containerID then
-            inv.updateFreeSlots(self.spaceString, containerID, containerID)
-        end
-    elseif event == "BANK_TABS_CHANGED" then
-        createAccountBagBar(self.BankPanel)
-    elseif event == "BANK_TAB_SETTINGS_UPDATED" then
-        local bankType = ...
-        if bankType == self.BankPanel.bankType then
-            self.BankPanel.TabSettingsMenu:Hide()
+        local containerID = ...
+        if self.selectedTabID == containerID then
+            inv.updateFreeSlots(self:GetParent().spaceString, containerID, containerID)
         end
     end
 end
-GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
+GW.AddForProfiling("bank", "OnEvent", OnEvent)
 
 local function tab_OnEnter(self)
     self.Icon:SetBlendMode("ADD")
@@ -355,8 +344,8 @@ local function LoadBank(helpers)
     f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, 0)
 
     -- setup show/hide
-    f:SetScript("OnShow", bank_OnShow)
-    f:SetScript("OnHide", bank_OnHide)
+    f:SetScript("OnShow", OnShow)
+    f:SetScript("OnHide", OnHide)
     f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
 
     -- re-hide the BankFrame any time it gets repositioned by UIParent stuff
@@ -391,17 +380,9 @@ local function LoadBank(helpers)
     cf.gw_items = {}
     cf.gw_num_slots = 0
     f.BankPanel.Container = cf
-    f.BankPanel.bankType = Enum.BankType.Character -- always start with this one
     f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
-    f.BankPanel:SetBankType(Enum.BankType.Character)
+    f.BankPanel:SetBankType(Enum.BankType.Character) -- always start with this one
     BankFrame.BankPanel:SetBankType(Enum.BankType.Character)
-
-    BankPanelTabMixin.IsSelected = GW.NoOp
-
-    f.BankPanel.ShouldShowPurchasePrompt = function(self)
-        fetchPurchasedBankTabData(self)
-        return C_Bank.CanPurchaseBankTab(f.BankPanel.bankType) and (not self.purchasedBankTabData or (self.purchasedBankTabData and #self.purchasedBankTabData == 0))
-    end
 
     f.BankPanel.TabSettingsMenu = CreateFrame("Frame", nil, f, "BankPanelTabSettingsMenuTemplate")
     f.BankPanel.TabSettingsMenu.SetSelectedTab = function(self, selectedTabID)
@@ -410,7 +391,7 @@ local function LoadBank(helpers)
             return
         end
 
-        fetchPurchasedBankTabData(f.BankPanel)
+        f.BankPanel:FetchPurchasedBankTabData()
 
         if not f.BankPanel.purchasedBankTabData then
             self.selectedTabData = nil
@@ -468,10 +449,10 @@ local function LoadBank(helpers)
 
     --sort popup
     BankCleanUpConfirmationPopup:GwStripTextures()
-    local tex = BankCleanUpConfirmationPopup:CreateTexture(nil, "BACKGROUND")
-    tex:SetPoint("TOPLEFT", BankCleanUpConfirmationPopup, "TOPLEFT", 0, 0)
-    tex:SetPoint("BOTTOMRIGHT", BankCleanUpConfirmationPopup, "BOTTOMRIGHT", 0, 0)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    BankCleanUpConfirmationPopup.tex = BankCleanUpConfirmationPopup:CreateTexture(nil, "BACKGROUND")
+    BankCleanUpConfirmationPopup.tex:SetPoint("TOPLEFT", BankCleanUpConfirmationPopup, "TOPLEFT", 0, 0)
+    BankCleanUpConfirmationPopup.tex:SetPoint("BOTTOMRIGHT", BankCleanUpConfirmationPopup, "BOTTOMRIGHT", 0, 0)
+    BankCleanUpConfirmationPopup.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     BankCleanUpConfirmationPopup.Text:SetTextColor(1, 1, 1)
     BankCleanUpConfirmationPopup.AcceptButton:GwSkinButton(false, true)
     BankCleanUpConfirmationPopup.CancelButton:GwSkinButton(false, true)
@@ -480,11 +461,11 @@ local function LoadBank(helpers)
     BankCleanUpConfirmationPopup.HidePopupCheckbox.Label:SetTextColor(1, 1, 1)
 
     hooksecurefunc(f.BankPanel.Header, "SetShown", function(self) self:Hide() end)
-    hooksecurefunc(f.BankPanel, "RefreshBankTabs", createAccountBagBar)
-    hooksecurefunc(f.BankPanel, "RefreshBankPanel", refreshBankPanel)
-    hooksecurefunc(f.BankPanel, "GenerateItemSlotsForSelectedTab", takeOverBankItemButtons)
-    hooksecurefunc(C_Bank, "PurchaseBankTab", function() createAccountBagBar(f.BankPanel) end)
+    hooksecurefunc(f.BankPanel, "GenerateItemSlotsForSelectedTab", GrabBankItemButtons)
     hooksecurefunc(f.BankPanel, "SelectTab", function(_, id) BankFrame.BankPanel.selectedTabID = id end)
+
+    f.BankPanel.RefreshBankPanel = RefreshBankPanel
+    f.BankPanel.RefreshBankTabs = RefreshBankTabs
 
     -- skin some things not done in XML
     f.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
@@ -494,9 +475,9 @@ local function LoadBank(helpers)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 
     -- setup initial events (more are added when open in bank_OnEvent)
-    f:SetScript("OnEvent", bank_OnEvent)
-    f:RegisterEvent("BANKFRAME_OPENED")
-    f:RegisterEvent("BANKFRAME_CLOSED")
+    f.BankPanel:HookScript("OnEvent", OnEvent)
+    f.BankPanel:RegisterEvent("BANKFRAME_OPENED")
+    f.BankPanel:RegisterEvent("BANKFRAME_CLOSED")
 
     -- setup settings button and its dropdown items
     f.buttonSort:SetScript("OnClick",
@@ -535,13 +516,13 @@ local function LoadBank(helpers)
     f.ItemTab:SetScript("OnLeave", tab_OnLeave)
     f.ItemTab:SetScript(
         "OnClick",
-        function(self)
+        function()
+            f.buttonSort.tooltipText = BAG_CLEANUP_BANK
             BankFrame.BankPanel:SetBankType(Enum.BankType.Character)
             f.BankPanel:SetBankType(Enum.BankType.Character)
             f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
-            self:GetParent().buttonSort.tooltipText = BAG_CLEANUP_BANK
             f.BankPanel.MoneyFrame:RefreshContents()
-            createAccountBagBar(f.BankPanel)
+            RefreshBankTabs(f.BankPanel)
             SelectFirstAvailableTab(f.BankPanel)
         end
     )
@@ -551,13 +532,13 @@ local function LoadBank(helpers)
     f.AccountTab:SetScript("OnLeave", tab_OnLeave)
     f.AccountTab:SetScript(
         "OnClick",
-        function(self)
+        function()
+            f.buttonSort.tooltipText = BAG_CLEANUP_ACCOUNT_BANK
             BankFrame.BankPanel:SetBankType(Enum.BankType.Account)
             f.BankPanel:SetBankType(Enum.BankType.Account)
             f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Account)
-            self:GetParent().buttonSort.tooltipText = BAG_CLEANUP_ACCOUNT_BANK
             f.BankPanel.MoneyFrame:RefreshContents()
-            createAccountBagBar(f.BankPanel)
+            RefreshBankTabs(f.BankPanel)
             SelectFirstAvailableTab(f.BankPanel)
         end
     )
@@ -565,7 +546,7 @@ local function LoadBank(helpers)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()
-        takeOverBankItemButtons(f.BankPanel)
+        GrabBankItemButtons(f.BankPanel)
     end
     return changeItemSize
 end
