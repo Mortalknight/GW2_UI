@@ -95,7 +95,7 @@
             <Button parentKey="AccountTab">
                 <Size x="40" y="40"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-40" y="-100"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-40" y="-60"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
@@ -171,57 +171,7 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
 
-            <Frame parentKey="ItemFrame" inherits="CallbackRegistrantTemplate" mixin="BankPanelMixin">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
-                </Anchors>
-                <Frames>
-                    <Frame parentKey="Header" inherits="BankPanelHeaderFrameTemplate" hidden="true">
-						<Anchors>
-							<Anchor point="TOP" y="50"/>
-						</Anchors>
-					</Frame>
-
-                    <Frame parentKey="MoneyFrame" inherits="BankPanelMoneyFrameTemplate" hidden="true">
-						<Anchors>
-							<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
-						</Anchors>
-					</Frame>
-
-                    <Frame parentKey="ItemDepositFrame" inherits="BankPanelAutoDepositFrameTemplate">
-						<Anchors>
-							<Anchor point="BOTTOM" relativeKey="$parent.NineSlice" relativePoint="BOTTOM" y="10"/>
-						</Anchors>
-					</Frame>
-
-                    <ItemButton parentKey="PurchaseTab" inherits="BankPanelPurchaseTabTemplate" hidden ="true"/>
-
-                    <Frame parentKey="PurchasePrompt" inherits="BankPanelPurchasePromptTemplate" hidden="true" parentArray="Prompts">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
-							<Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
-						</Anchors>
-					</Frame>
-
-					<Frame parentKey="LockPrompt" inherits="BankPanelLockPromptTemplate" hidden="true" parentArray="Prompts">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
-							<Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
-						</Anchors>
-					</Frame>
-                    
-                </Frames>
-                <Scripts>
-					<OnLoad method="OnLoad"/>
-					<OnShow method="OnShow"/>
-					<OnHide method="OnHide"/>
-					<OnEvent method="OnEvent"/>
-					<OnUpdate method="OnUpdate"/>
-				</Scripts>
-            </Frame>
-
-            <Frame parentKey="AccountFrame" inherits="CallbackRegistrantTemplate" mixin="BankPanelMixin" hidden="true">
+            <Frame parentKey="BankPanel" inherits="CallbackRegistrantTemplate" mixin="BankPanelMixin" hidden="false">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
@@ -240,7 +190,7 @@
 						</Anchors>
 					</Frame>
 
-                    <Frame parentKey="ItemDepositFrame" inherits="BankPanelAutoDepositFrameTemplate">
+                    <Frame parentKey="AutoDepositFrame" inherits="BankPanelAutoDepositFrameTemplate">
 						<Anchors>
 							<Anchor point="BOTTOM" relativeKey="$parent.NineSlice" relativePoint="BOTTOM" y="10"/>
 						</Anchors>

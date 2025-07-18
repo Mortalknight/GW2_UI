@@ -809,7 +809,7 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
 
     local slots = 0
 
-    if f == GwBankFrame and f.AccountFrame:IsShown() then
+    if f == GwBankFrame then
         slots = slots + cfs.gw_num_slots
     else
         for _, cf in pairs(cfs) do

@@ -10,38 +10,8 @@ local BANK_ITEM_PADDING = 5
 local PURCHASE_TAB_ID = -1
 
 local function fetchPurchasedBankTabData(f)
-    f.accountBankPurchasedBankTabData = C_Bank.FetchPurchasedBankTabData(f.bankType)
+    f.purchasedBankTabData = C_Bank.FetchPurchasedBankTabData(f.bankType)
 end
-
--- adjusts the ItemButton layout flow when the bank window size changes (or on open)
-local function layoutBankItems(f)
-    local max_col = f:GetParent().gw_bank_cols
-    local row = 0
-    local col = 0
-    local rev = GW.settings.BANK_REVERSE_SORT
-
-    local item_off = GW.settings.BAG_ITEM_SIZE  + BANK_ITEM_PADDING
-
-    local iS = NUM_TOTAL_EQUIPPED_BAG_SLOTS
-    local iE = NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS
-    local iD = 1
-    if rev then
-        iS = iE
-        iE = NUM_TOTAL_EQUIPPED_BAG_SLOTS
-        iD = -1
-    end
-
-    local lcf = inv.layoutContainerFrame
-    for i = iS, iE, iD do
-        local bag_id = i
-        if bag_id == NUM_TOTAL_EQUIPPED_BAG_SLOTS then
-            bag_id = BANK_CONTAINER
-        end
-        local cf = f.Containers[bag_id]
-        col, row = lcf(cf, max_col, row, col, (bag_id == BANK_CONTAINER), item_off)
-    end
-end
-GW.AddForProfiling("bank", "layoutBankItems", layoutBankItems)
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutAccountBankItems(f)
@@ -56,22 +26,9 @@ local function layoutAccountBankItems(f)
 end
 GW.AddForProfiling("bank", "layoutAccountBankItems", layoutAccountBankItems)
 
--- adjusts the ItemButton layout flow when the bank window size changes (or on open)
-local function layoutItems(f)
-    if f.ItemFrame:IsShown() then
-        layoutBankItems(f.ItemFrame)
-    end
-end
-
 -- adjusts the bank frame size to snap to the exact row/col sizing of contents
 local function snapFrameSize(f)
-    local cfs
-    if f.ItemFrame:IsShown() then
-        cfs = f.ItemFrame.Containers
-    elseif f.AccountFrame:IsShown() then
-        cfs = f.AccountFrame.Container
-    end
-    inv.snapFrameSize(f, cfs, GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, 370)
+    inv.snapFrameSize(f, f.BankPanel.Container, GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, 370)
 end
 GW.AddForProfiling("bank", "snapFrameSize", snapFrameSize)
 
@@ -86,173 +43,7 @@ local function updateFreeBankSlots(self)
 end
 GW.AddForProfiling("bank", "updateFreeBankSlots", updateFreeBankSlots)
 
--- update all bank items and bank bags
-local function updateBankContainers(f)
-    if not f.gw_took_bank then
-        inv.takeItemButtons(f.ItemFrame, BANK_CONTAINER)
-        f.gw_took_bank = true
-    end
-    if f:IsShown() then
-        if f.ItemFrame:IsShown() then
-            updateFreeBankSlots(f.ItemFrame)
-        end
-        layoutItems(f)
-        snapFrameSize(f)
-    end
-end
-GW.AddForProfiling("bank", "updateBankContainers", updateBankContainers)
-
--- rescan ALL bank ItemButtons
-local function rescanBankContainers(f)
-    for bag_id = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
-        inv.takeItemButtons(f.ItemFrame, bag_id)
-    end
-    updateBankContainers(f)
-end
-GW.AddForProfiling("bank", "rescanBankContainers", rescanBankContainers)
-
--- draws the bank bag slots in the correct order
-local function setBagBarOrder(f)
-    local x = -40
-    local y
-    local bag_size = 28
-    local bag_padding = 4
-    local rev = GW.settings.BANK_REVERSE_SORT
-    if rev then
-        y = -80 - ((bag_size + bag_padding) * NUM_BANKBAGSLOTS)
-    else
-        y = -80
-    end
-
-    for bag_idx = 0, NUM_BANKBAGSLOTS do
-        local b = f.bags[bag_idx]
-        b:ClearAllPoints()
-        b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
-        if rev then
-            y = y + bag_size + bag_padding
-        else
-            y = y - bag_size - bag_padding
-        end
-    end
-end
-GW.AddForProfiling("bank", "setBagBarOrder", setBagBarOrder)
-
-local function bag_OnClick(self, button)
-    -- on left click, test if this is a purchase slot and do purchase confirm,
-    -- otherwise ensure that the bag stays open despite default toggle behavior
-    if button == "LeftButton" then
-        if self.gwHasBag then
-            if not IsBagOpen(self:GetBagID()) then
-                OpenBag(self:GetBagID())
-            end
-        elseif self.tooltipText == BANK_BAG_PURCHASE then
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
-            StaticPopup_Show("CONFIRM_BUY_BANK_SLOT")
-        end
-    end
-end
-GW.AddForProfiling("bank", "bag_OnClick", bag_OnClick)
-
--- creates the bank bag slot icons for the ItemFrame
-local function createBagBar(f)
-    f.bags = {}
-
-    local getBagId = function(self)
-        return self:GetID() + NUM_BAG_FRAMES + NUM_REAGENTBAG_FRAMES
-    end
-
-    for bag_idx = 1, NUM_BANKBAGSLOTS do
-        local b = CreateFrame("ItemButton", nil, f, "GwBankBagTemplate")
-
-        -- We depend on a number of behaviors from the default BankItemButtonBagTemplate.
-        -- The ID set here is NOT the usual bag_id; rather it is a 1-based index of bank
-        -- bags used by helper methods provided by BankItemButtonBagTemplate.
-        b:SetID(bag_idx)
-        -- unlike BagSlotButtonTemplate, we must provide the GetBagID method ourself
-        b.GetBagID = getBagId
-
-        -- remove default of capturing right-click also (we handle right-click separately)
-        b:RegisterForClicks("LeftButtonUp")
-        b:HookScript("OnClick", bag_OnClick)
-        b:HookScript("OnMouseDown", inv.bag_OnMouseDown)
-
-        inv.reskinBagBar(b)
-
-        f.bags[bag_idx] = b
-    end
-
-    -- create a fake bag frame for the base bank slots
-    local b = CreateFrame("ItemButton", nil, f, "GwBankBaseBagTemplate")
-    b:SetID(0)
-    b.GetBagID = function()
-        return BANK_CONTAINER
-    end
-    inv.reskinBagBar(b)
-    local norm = b:GetNormalTexture()
-    norm:SetVertexColor(1, 1, 1, 0.75)
-    SetItemButtonQuality(b, 1, nil)
-    EnableTooltip(b, BANK, "ANCHOR_RIGHT", 0)
-    b.icon:SetTexture(413587)
-    b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    b:RegisterForClicks("LeftButtonUp")
-    b:SetScript("OnClick", C_Bank.CloseBankFrame)
-    f.bags[0] = b
-
-    setBagBarOrder(f)
-end
-GW.AddForProfiling("bank", "createBagBar", createBagBar)
-
--- updates the contents of the bank bag slots
-local function updateBagBar(f)
-    local bank_slots, full = GetNumBankSlots()
-    for bag_idx = 1, NUM_BANKBAGSLOTS do
-        local b = f.bags[bag_idx]
-        local bag_id = b:GetBagID()
-        local inv_id = C_Container.ContainerIDToInventoryID(bag_id)
-        local bag_tex = GetInventoryItemTexture("player", inv_id)
-        local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_id)
-
-        b.icon:Show()
-        b.gwHasBag = false -- flag used by OnClick hook to pop up context menu when valid
-        local norm = b:GetNormalTexture()
-        norm:SetVertexColor(1, 1, 1, 0.75)
-        if bag_tex ~= nil then
-            b.gwHasBag = true
-            if not IsBagOpen(bag_id) then
-                OpenBag(bag_id) -- default open valid bank bags immediately  --TAINT atm
-            end
-            b.icon:SetTexture(bag_tex)
-            local quality = GetInventoryItemQuality("player", inv_id)
-            if quality then
-                SetItemButtonQuality(b, quality, nil)
-            end
-            if IsInventoryItemLocked(inv_id) then
-                b.icon:SetDesaturated(true)
-            else
-                b.icon:SetDesaturated(false)
-            end
-        elseif bag_idx > bank_slots then
-            if not full and bag_idx == bank_slots + 1 then
-                b.tooltipText = BANK_BAG_PURCHASE
-                b.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon")
-                b.icon:SetTexCoord(0.2, 0.8, 0.2, 0.8)
-            else
-                b.tooltipText = GUILDBANK_TAB_LOCKED
-                b.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/lock")
-                b.icon:SetTexCoord(0.15, 0.85, 0.07, 0.85)
-            end
-        elseif slot_tex ~= nil then
-            b.tooltipText = BANK_BAG
-            b.icon:SetTexture(slot_tex)
-            b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        else
-            b.icon:Hide()
-        end
-    end
-end
-GW.AddForProfiling("bank", "updateBagBar", updateBagBar)
-
-local function takeOverAccountBankItemButtons(self)
+local function takeOverBankItemButtons(self)
     local idx = 1
     for itemButton in self:EnumerateValidItems() do
         itemButton:SetParent(self.Container)
@@ -309,6 +100,17 @@ local function reskinAccountBagBar(b)
         end
     end)
 
+    b.SelectedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
+    b.SelectedTexture:GwSetOutside()
+    if not b.gwHooked then
+        hooksecurefunc(b:GetParent(), "OnBankTabClicked", function(self)
+            for btn in self.bankTabPool:EnumerateActive() do
+                btn.SelectedTexture:SetShown(btn:IsEnabled() and btn:IsSelected())
+            end
+        end)
+    end
+    b.IsSelected = function(self) return self.tabData.ID == self:GetParent().selectedTabID end
+
     local high = b:GetHighlightTexture()
     high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     high:SetBlendMode("ADD")
@@ -321,9 +123,10 @@ end
 local function accountTabOnClick(self, button)
     if button == "RightButton" and not self:IsPurchaseTab() then
         self:GetParent().TabSettingsMenu:OnOpenTabSettingsRequested(self.tabData.ID)
+        self:GetParent().TabSettingsMenu:OnNewBankTabSelected(self.tabData.ID)
     end
 
-	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
     if self:IsPurchaseTab() and C_Bank.CanPurchaseBankTab(self:GetParent().bankType) then
         self:GetParent().Container:Hide()
         self:GetParent():ShowPurchasePrompt()
@@ -336,78 +139,89 @@ local function accountTabOnClick(self, button)
 end
 
 local function refreshBankPanel(self)
+    self:HideAllPrompts()
     if self:ShouldShowLockPrompt() then
-		self:ShowLockPrompt()
+        self:ShowLockPrompt()
         self.Container:Hide()
-		return
-	end
+        return
+    end
 
     if self:ShouldShowPurchasePrompt() then
-		self:ShowPurchasePrompt();
+        self:ShowPurchasePrompt();
         self.Container:Hide()
-		return;
-	end
-
+        return;
+    end
     local noTabSelected = self.selectedTabID == nil;
-	if noTabSelected then
-		return;
-	end
+    if noTabSelected then
+        return;
+    end
 
-    takeOverAccountBankItemButtons(self)
+    takeOverBankItemButtons(self)
 
     self.Container:Show()
 end
 
-local function createAccountBagBar(f)
-    local x = -40
-    local y = -80
-    local bag_size = 28
-    local bag_padding = 4
+local function SelectFirstAvailableTab(self)
+    local hasPurchasedTabs = self.purchasedBankTabData and #self.purchasedBankTabData > 0
+    if hasPurchasedTabs then
+        self:SelectTab(self.purchasedBankTabData[1].ID)
+    elseif C_Bank.CanPurchaseBankTab(self.bankType) then
+        self:SelectTab(PURCHASE_TAB_ID)
+    end
 
+    for btn in self.bankTabPool:EnumerateActive() do
+        btn.SelectedTexture:SetShown(btn:IsEnabled() and btn:IsSelected())
+    end
+end
+
+local function createAccountBagBar(f)
+    local lastButton
     fetchPurchasedBankTabData(f)
-    takeOverAccountBankItemButtons(f)
+    takeOverBankItemButtons(f)
     f.bankTabPool:ReleaseAll()
 
-    if f.accountBankPurchasedBankTabData then
-		for _, bankTabData in ipairs(f.accountBankPurchasedBankTabData) do
+    if f.purchasedBankTabData then
+        for _, bankTabData in ipairs(f.purchasedBankTabData) do
             local b = f.bankTabPool:Acquire()
             b:Init(bankTabData)
 
             b:RegisterForClicks("AnyUp")
             b.OnClick = accountTabOnClick
             b:SetScript("OnClick", b.OnClick)
-
             reskinAccountBagBar(b)
 
             b:SetParent(f)
-            b:ClearAllPoints()
-            b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
+            if not lastButton then
+                b:SetPoint("TOPLEFT", f, "TOPLEFT", -40, -40)
+            else
+                b:SetPoint("TOPLEFT", lastButton, "BOTTOMLEFT", 0, -4)
+            end
             b:Show()
-            y = y - bag_size - bag_padding
+            lastButton = b
         end
     end
 
     -- ...followed by the button to purchase a new tab (if applicable)
-	local showPurchaseTab = C_PlayerInfo.HasAccountInventoryLock() and not C_Bank.HasMaxBankTabs(f.bankType)
-	if showPurchaseTab then
-
-        local purchaseTabData = {
-            ID = PURCHASE_TAB_ID,
-        }
-        f.PurchaseTab:Init(purchaseTabData)
+    local showPurchaseTab = not f:IsBankTypeLocked() and not C_Bank.HasMaxBankTabs(f.bankType)
+    if showPurchaseTab then
+        f.PurchaseTab:Init({ ID = PURCHASE_TAB_ID, bankType = f.bankType })
         reskinAccountBagBar(f.PurchaseTab)
         f.PurchaseTab:SetParent(f)
         f.PurchaseTab:RegisterForClicks("AnyUp")
         f.PurchaseTab:SetScript("OnClick", accountTabOnClick)
-		f.PurchaseTab:SetEnabledState(C_Bank.CanPurchaseBankTab(f.bankType))
+        f.PurchaseTab:SetEnabledState(C_Bank.CanPurchaseBankTab(f.bankType))
 
         f.PurchaseTab:ClearAllPoints()
-        f.PurchaseTab:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
+        if not lastButton then
+            f.PurchaseTab:SetPoint("TOPLEFT", f, "TOPLEFT", -40, -40)
+        else
+            f.PurchaseTab:SetPoint("TOPLEFT", lastButton, "BOTTOMLEFT", 0, -4)
+        end
 
         f.PurchaseTab:Show()
     else
         f.PurchaseTab:Hide()
-	end
+    end
 end
 
 local function onBankResizeStop(self)
@@ -416,17 +230,13 @@ local function onBankResizeStop(self)
 end
 GW.AddForProfiling("bank", "onBankResizeStop", onBankResizeStop)
 
-local function onBankFrameChangeSize(self, _, _, skip)
+local function onBankFrameChangeSize(self)
     local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, self:GetWidth())
 
     if not self.gw_bank_cols or self.gw_bank_cols ~= cols then
         self.gw_bank_cols = cols
-        if not skip then
-            layoutItems(self)
-        end
     end
 end
-GW.AddForProfiling("bank", "onBankFrameChangeSize", onBankFrameChangeSize)
 
 -- toggles the setting for compact/large icons
 local function compactToggle()
@@ -442,37 +252,20 @@ local function compactToggle()
 end
 GW.AddForProfiling("bank", "compactToggle", compactToggle)
 
--- reskin all the base BankFrame ItemButtons
-local function reskinBankItemButtons()
-    local items = C_Container.GetContainerNumSlots(BANK_CONTAINER)
-    for i = 1, items do
-        local iname = "BankFrameItem" .. i
-        local b = _G[iname]
-        if b then
-            inv.reskinItemButton(b)
-        end
-    end
-end
-GW.AddForProfiling("bank", "reskinBankItemButtons", reskinBankItemButtons)
-
-
 local function bank_OnShow(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-    self:RegisterEvent("ITEM_LOCKED")
-    self:RegisterEvent("ITEM_UNLOCKED")
+    self:RegisterEvent("BANK_TABS_CHANGED")
     self:RegisterEvent("BAG_UPDATE")
+    self:RegisterEvent("BANK_TAB_SETTINGS_UPDATED")
 
     -- hide the bank frame off screen
     BankFrame:ClearAllPoints()
     BankFrame:SetClampedToScreen(false)
     BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    BankSlotsFrame:GwKill()
-    BankItemAutoSortButton:Hide()
+    BankPanel.AutoSortButton:Hide()
 
-    OpenAllBags(self) --taints
-    createAccountBagBar(self.AccountFrame)
-    updateBagBar(self.ItemFrame)
-    updateBankContainers(self)
+    createAccountBagBar(self.BankPanel)
+    snapFrameSize(self)
     inv.reskinItemButtons()
 end
 GW.AddForProfiling("bank", "bank_OnShow", bank_OnShow)
@@ -491,51 +284,17 @@ local function bank_OnEvent(self, event, ...)
         self:Show()
     elseif event == "BANKFRAME_CLOSED" then
         self:Hide()
-    elseif event == "PLAYERBANKSLOTS_CHANGED" then
-        local slot = select(1, ...)
-        if slot > NUM_BANKGENERIC_SLOTS then
-            -- a bank bag was un/equipped
-            for bag_id = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
-                if not IsBagOpen(bag_id) then
-                    OpenBag(bag_id)
-                end
-            end
-            updateBagBar(self.ItemFrame)
-            rescanBankContainers(self)
-        else
-            -- an item was added to or removed from the base bank
-            if self.ItemFrame:IsShown() then
-                updateFreeBankSlots(self.ItemFrame)
-            end
-        end
-    elseif event == "PLAYERBANKBAGSLOTS_CHANGED" then
-        -- the # of bank bag slots has changed
-        updateBagBar(self.ItemFrame)
-    elseif event == "ITEM_LOCKED" or event == "ITEM_UNLOCKED" then
-        -- check if the item un/locked is a bank bag and gray it out if so
-        local bag = select(1, ...)
-        local slot = select(2, ...)
-        if bag == BANK_CONTAINER and slot > NUM_BANKGENERIC_SLOTS then
-            local bag_id = slot - NUM_BANKGENERIC_SLOTS
-            local b = self.ItemFrame.bags[bag_id]
-            if b and b.icon and b.icon.SetDesaturated then
-                if event == "ITEM_LOCKED" then
-                    b.icon:SetDesaturated(true)
-                else
-                    b.icon:SetDesaturated(false)
-                end
-            end
-        end
     elseif event == "BAG_UPDATE" then
-        local bag_id = select(1, ...)
-        if bag_id == BANK_CONTAINER or bag_id > NUM_TOTAL_EQUIPPED_BAG_SLOTS and not self.AccountFrame:IsShown() then
-            if self.ItemFrame:IsShown() then
-                updateFreeBankSlots(self.ItemFrame)
-            end
-        elseif self.AccountFrame:IsShown() then
-            if self.AccountFrame.selectedTabID == bag_id then
-                inv.updateFreeSlots(self.spaceString, bag_id, bag_id)
-            end
+        local containerID = select(1, ...)
+        if self.BankPanel.selectedTabID == containerID then
+            inv.updateFreeSlots(self.spaceString, containerID, containerID)
+        end
+    elseif event == "BANK_TABS_CHANGED" then
+        createAccountBagBar(self.BankPanel)
+    elseif event == "BANK_TAB_SETTINGS_UPDATED" then
+        local bankType = ...
+        if bankType == self.BankPanel.bankType then
+            self.BankPanel.TabSettingsMenu:Hide()
         end
     end
 end
@@ -591,7 +350,7 @@ local function LoadBank(helpers)
     tinsert(UISpecialFrames, "GwBankFrame")
     f:ClearAllPoints()
     f:SetWidth(GW.settings.BANK_WIDTH)
-    onBankFrameChangeSize(f, nil, nil, true)
+    onBankFrameChangeSize(f)
     f:SetClampedToScreen(true)
     f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, 0)
 
@@ -604,8 +363,7 @@ local function LoadBank(helpers)
     hooksecurefunc(BankFrame, "Raise", function()
         BankFrame:ClearAllPoints()
         BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-        BankSlotsFrame:GwKill()
-        BankItemAutoSortButton:Hide()
+        BankPanel.AutoSortButton:Hide()
     end)
 
     -- setup movable stuff
@@ -627,160 +385,106 @@ local function LoadBank(helpers)
     inv.reskinSearchBox(BankItemSearchBox)
     inv.relocateSearchBox(BankItemSearchBox, f)
 
-    --Bank Tab Settings
-    local cf = CreateFrame("Frame", nil, f.ItemFrame)
-    cf:SetAllPoints(f.ItemFrame)
+    --Bank Panel Tab setup
+    local cf = CreateFrame("Frame", nil, f.BankPanel)
+    cf:SetAllPoints(f.BankPanel)
     cf.gw_items = {}
     cf.gw_num_slots = 0
-    f.ItemFrame.Container = cf
-    f.ItemFrame.bankType = Enum.BankType.Character
+    f.BankPanel.Container = cf
+    f.BankPanel.bankType = Enum.BankType.Character -- always start with this one
+    f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
+    f.BankPanel:SetBankType(Enum.BankType.Character)
+    BankFrame.BankPanel:SetBankType(Enum.BankType.Character)
 
-    f.ItemFrame.ShouldShowPurchasePrompt = function(self)
+    BankPanelTabMixin.IsSelected = GW.NoOp
+
+    f.BankPanel.ShouldShowPurchasePrompt = function(self)
         fetchPurchasedBankTabData(self)
-        return C_Bank.CanPurchaseBankTab(f.ItemFrame.bankType) and (not self.accountBankPurchasedBankTabData or (self.accountBankPurchasedBankTabData and #self.accountBankPurchasedBankTabData == 0))
+        return C_Bank.CanPurchaseBankTab(f.BankPanel.bankType) and (not self.purchasedBankTabData or (self.purchasedBankTabData and #self.purchasedBankTabData == 0))
     end
 
-    f.ItemFrame.TabSettingsMenu = CreateFrame("Frame", nil, f, "BankPanelTabSettingsMenuTemplate")
-    f.ItemFrame.TabSettingsMenu.SetSelectedTab = function(self, selectedTabID)
-        local alreadySelected = self:GetSelectedTabID() == selectedTabID;
+    f.BankPanel.TabSettingsMenu = CreateFrame("Frame", nil, f, "BankPanelTabSettingsMenuTemplate")
+    f.BankPanel.TabSettingsMenu.SetSelectedTab = function(self, selectedTabID)
+        local alreadySelected = self:GetSelectedTabID() == selectedTabID
         if alreadySelected then
-            return;
+            return
         end
 
-        fetchPurchasedBankTabData(f.ItemFrame)
+        fetchPurchasedBankTabData(f.BankPanel)
 
-        if not f.ItemFrame.accountBankPurchasedBankTabData then
+        if not f.BankPanel.purchasedBankTabData then
             self.selectedTabData = nil
         else
-            for _, tabData in ipairs(f.ItemFrame.accountBankPurchasedBankTabData) do
+            for _, tabData in ipairs(f.BankPanel.purchasedBankTabData) do
                 if tabData.ID == selectedTabID then
                     self.selectedTabData = tabData
                     break
                 end
             end
         end
-
         if self:IsShown() then
             self:Update()
         end
     end
-    f.ItemFrame.TabSettingsMenu:Hide()
-    f.ItemFrame.TabSettingsMenu:OnLoad()
-    f.ItemFrame.TabSettingsMenu:SetScript("OnShow", function()
-        f.ItemFrame.TabSettingsMenu:OnShow()
-        SkinAccountBankTabMenu(f.ItemFrame.TabSettingsMenu)
+    f.BankPanel.TabSettingsMenu:Hide()
+    f.BankPanel.TabSettingsMenu:OnLoad()
+    f.BankPanel.TabSettingsMenu:SetScript("OnShow", function()
+        f.BankPanel.TabSettingsMenu:OnShow()
+        SkinAccountBankTabMenu(f.BankPanel.TabSettingsMenu)
     end)
-    f.ItemFrame.TabSettingsMenu:SetScript("OnHide", f.ItemFrame.TabSettingsMenu.OnHide)
+    f.BankPanel.TabSettingsMenu:SetScript("OnHide", f.BankPanel.TabSettingsMenu.OnHide)
 
-    f.ItemFrame.ItemDepositFrame.DepositButton:GwSkinButton(false, true)
-    f.ItemFrame.ItemDepositFrame.DepositButton:ClearAllPoints()
-    f.ItemFrame.ItemDepositFrame.DepositButton:SetPoint("TOPLEFT", f.ItemFrame, "BOTTOMLEFT", 5, -6)
-    f.ItemFrame.ItemDepositFrame.IncludeReagentsCheckbox:ClearAllPoints()
-    f.ItemFrame.ItemDepositFrame.IncludeReagentsCheckbox:SetPoint("TOPLEFT", f.ItemFrame, "BOTTOMLEFT", 5, 20)
-    f.ItemFrame.ItemDepositFrame.IncludeReagentsCheckbox:GwSkinCheckButton()
-    f.ItemFrame.ItemDepositFrame.IncludeReagentsCheckbox:SetSize(15, 15)
-    f.ItemFrame.ItemDepositFrame.IncludeReagentsCheckbox.Text:SetTextColor(1, 1, 1)
-    hooksecurefunc(f.ItemFrame.ItemDepositFrame, "SetEnabled", function(_, enabled)
+    f.BankPanel.AutoDepositFrame.DepositButton:GwSkinButton(false, true)
+    f.BankPanel.AutoDepositFrame.DepositButton:ClearAllPoints()
+    f.BankPanel.AutoDepositFrame.DepositButton:SetPoint("TOPLEFT", f.BankPanel, "BOTTOMLEFT", 5, -6)
+    f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox:ClearAllPoints()
+    f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox:SetPoint("TOPLEFT", f.BankPanel, "BOTTOMLEFT", 5, 20)
+    f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox:GwSkinCheckButton()
+    f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox:SetSize(15, 15)
+    f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox.Text:SetTextColor(1, 1, 1)
+    hooksecurefunc(f.BankPanel.AutoDepositFrame, "SetEnabled", function(_, enabled)
         local fontColor = enabled and WHITE_FONT_COLOR or GRAY_FONT_COLOR
-        f.ItemFrame.ItemDepositFrame.IncludeReagentsCheckbox.Text:SetTextColor(fontColor:GetRGB())
+        f.BankPanel.AutoDepositFrame.IncludeReagentsCheckbox.Text:SetTextColor(fontColor:GetRGB())
     end)
-    f.ItemFrame.MoneyFrame:GwStripTextures()
-    f.ItemFrame.MoneyFrame.WithdrawButton:GwSkinButton(false, true)
-    f.ItemFrame.MoneyFrame.DepositButton:GwSkinButton(false, true)
-    f.ItemFrame.MoneyFrame.MoneyDisplay:ClearAllPoints()
-    f.ItemFrame.MoneyFrame.MoneyDisplay:SetPoint("BOTTOMRIGHT", f.ItemFrame, "BOTTOMRIGHT", 3, -27)
+    f.BankPanel.MoneyFrame:GwStripTextures()
+    f.BankPanel.MoneyFrame.WithdrawButton:GwSkinButton(false, true)
+    f.BankPanel.MoneyFrame.DepositButton:GwSkinButton(false, true)
+    f.BankPanel.MoneyFrame.MoneyDisplay:ClearAllPoints()
+    f.BankPanel.MoneyFrame.MoneyDisplay:SetPoint("BOTTOMRIGHT", f.BankPanel, "BOTTOMRIGHT", 3, -27)
+
+    f.BankPanel.PurchasePrompt:GwStripTextures()
+    f.BankPanel.PurchasePrompt:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:GwSkinButton(false, true)
+    f.BankPanel.LockPrompt:GwStripTextures()
+    f.BankPanel.LockPrompt:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     -- setup money frame
-    f.ItemFrame.MoneyFrame.MoneyDisplay.CopperButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.ItemFrame.MoneyFrame.MoneyDisplay.CopperButton.Text:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.ItemFrame.MoneyFrame.MoneyDisplay.SilverButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.ItemFrame.MoneyFrame.MoneyDisplay.SilverButton.Text:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.ItemFrame.MoneyFrame.MoneyDisplay.GoldButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.ItemFrame.MoneyFrame.MoneyDisplay.GoldButton.Text:SetTextColor(221 / 255, 187 / 255, 68 / 255)
+    f.BankPanel.MoneyFrame.MoneyDisplay.CopperButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.BankPanel.MoneyFrame.MoneyDisplay.CopperButton.Text:SetTextColor(177 / 255, 97 / 255, 34 / 255)
+    f.BankPanel.MoneyFrame.MoneyDisplay.SilverButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.BankPanel.MoneyFrame.MoneyDisplay.SilverButton.Text:SetTextColor(170 / 255, 170 / 255, 170 / 255)
+    f.BankPanel.MoneyFrame.MoneyDisplay.GoldButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.BankPanel.MoneyFrame.MoneyDisplay.GoldButton.Text:SetTextColor(221 / 255, 187 / 255, 68 / 255)
 
-    hooksecurefunc(f.ItemFrame.Header, "SetShown", function(self) self:Hide() end)
-    hooksecurefunc(f.ItemFrame, "RefreshBankTabs", createAccountBagBar)
-    hooksecurefunc(f.ItemFrame, "RefreshBankPanel", refreshBankPanel)
-    hooksecurefunc(f.ItemFrame, "GenerateItemSlotsForSelectedTab", takeOverAccountBankItemButtons)
+    --sort popup
+    BankCleanUpConfirmationPopup:GwStripTextures()
+    local tex = BankCleanUpConfirmationPopup:CreateTexture(nil, "BACKGROUND")
+    tex:SetPoint("TOPLEFT", BankCleanUpConfirmationPopup, "TOPLEFT", 0, 0)
+    tex:SetPoint("BOTTOMRIGHT", BankCleanUpConfirmationPopup, "BOTTOMRIGHT", 0, 0)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    BankCleanUpConfirmationPopup.Text:SetTextColor(1, 1, 1)
+    BankCleanUpConfirmationPopup.AcceptButton:GwSkinButton(false, true)
+    BankCleanUpConfirmationPopup.CancelButton:GwSkinButton(false, true)
+    BankCleanUpConfirmationPopup.HidePopupCheckbox.Checkbox:GwSkinCheckButton(false, true)
+    BankCleanUpConfirmationPopup.HidePopupCheckbox.Checkbox:SetSize(15, 15)
+    BankCleanUpConfirmationPopup.HidePopupCheckbox.Label:SetTextColor(1, 1, 1)
 
-
-    --AccountBank Tab Settings
-    cf = CreateFrame("Frame", nil, f.AccountFrame)
-    cf:SetAllPoints(f.AccountFrame)
-    cf.gw_items = {}
-    cf.gw_num_slots = 0
-    f.AccountFrame.Container = cf
-    f.AccountFrame.bankType = Enum.BankType.Account
-
-    f.AccountFrame.ShouldShowPurchasePrompt = function(self)
-        fetchPurchasedBankTabData(self)
-        return C_Bank.CanPurchaseBankTab(f.AccountFrame.bankType) and (not self.accountBankPurchasedBankTabData or (self.accountBankPurchasedBankTabData and #self.accountBankPurchasedBankTabData == 0))
-    end
-
-    f.AccountFrame.TabSettingsMenu = CreateFrame("Frame", nil, f, "BankPanelTabSettingsMenuTemplate")
-    f.AccountFrame.TabSettingsMenu.SetSelectedTab = function(self, selectedTabID)
-        local alreadySelected = self:GetSelectedTabID() == selectedTabID;
-        if alreadySelected then
-            return;
-        end
-
-        fetchPurchasedBankTabData(f.AccountFrame)
-
-        if not f.AccountFrame.accountBankPurchasedBankTabData then
-            self.selectedTabData = nil
-        else
-            for _, tabData in ipairs(f.AccountFrame.accountBankPurchasedBankTabData) do
-                if tabData.ID == selectedTabID then
-                    self.selectedTabData = tabData
-                    break
-                end
-            end
-        end
-
-        if self:IsShown() then
-            self:Update()
-        end
-    end
-    f.AccountFrame.TabSettingsMenu:Hide()
-    f.AccountFrame.TabSettingsMenu:OnLoad()
-    f.AccountFrame.TabSettingsMenu:SetScript("OnShow", function()
-        f.AccountFrame.TabSettingsMenu:OnShow()
-        SkinAccountBankTabMenu(f.AccountFrame.TabSettingsMenu)
-    end)
-    f.AccountFrame.TabSettingsMenu:SetScript("OnHide", f.AccountFrame.TabSettingsMenu.OnHide)
-
-    f.AccountFrame.ItemDepositFrame.DepositButton:GwSkinButton(false, true)
-    f.AccountFrame.ItemDepositFrame.DepositButton:ClearAllPoints()
-    f.AccountFrame.ItemDepositFrame.DepositButton:SetPoint("TOPLEFT", f.AccountFrame, "BOTTOMLEFT", 5, -6)
-    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:ClearAllPoints()
-    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:SetPoint("TOPLEFT", f.AccountFrame, "BOTTOMLEFT", 5, 20)
-    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:GwSkinCheckButton()
-    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox:SetSize(15, 15)
-    f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox.Text:SetTextColor(1, 1, 1)
-    hooksecurefunc(f.AccountFrame.ItemDepositFrame, "SetEnabled", function(_, enabled)
-        local fontColor = enabled and WHITE_FONT_COLOR or GRAY_FONT_COLOR
-        f.AccountFrame.ItemDepositFrame.IncludeReagentsCheckbox.Text:SetTextColor(fontColor:GetRGB())
-    end)
-    f.AccountFrame.MoneyFrame:GwStripTextures()
-    f.AccountFrame.MoneyFrame.WithdrawButton:GwSkinButton(false, true)
-    f.AccountFrame.MoneyFrame.DepositButton:GwSkinButton(false, true)
-    f.AccountFrame.MoneyFrame.MoneyDisplay:ClearAllPoints()
-    f.AccountFrame.MoneyFrame.MoneyDisplay:SetPoint("BOTTOMRIGHT", f.AccountFrame, "BOTTOMRIGHT", 3, -27)
-
-    -- setup money frame
-    f.AccountFrame.MoneyFrame.MoneyDisplay.CopperButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.AccountFrame.MoneyFrame.MoneyDisplay.CopperButton.Text:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.AccountFrame.MoneyFrame.MoneyDisplay.SilverButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.AccountFrame.MoneyFrame.MoneyDisplay.SilverButton.Text:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.AccountFrame.MoneyFrame.MoneyDisplay.GoldButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    f.AccountFrame.MoneyFrame.MoneyDisplay.GoldButton.Text:SetTextColor(221 / 255, 187 / 255, 68 / 255)
-
-    hooksecurefunc(f.AccountFrame.Header, "SetShown", function(self) self:Hide() end)
-    hooksecurefunc(f.AccountFrame, "RefreshBankTabs", createAccountBagBar)
-    hooksecurefunc(f.AccountFrame, "RefreshBankPanel", refreshBankPanel)
-    hooksecurefunc(f.AccountFrame, "GenerateItemSlotsForSelectedTab", takeOverAccountBankItemButtons)
-    hooksecurefunc(C_Bank, "PurchaseBankTab", function() createAccountBagBar(f.AccountFrame) end)
-
+    hooksecurefunc(f.BankPanel.Header, "SetShown", function(self) self:Hide() end)
+    hooksecurefunc(f.BankPanel, "RefreshBankTabs", createAccountBagBar)
+    hooksecurefunc(f.BankPanel, "RefreshBankPanel", refreshBankPanel)
+    hooksecurefunc(f.BankPanel, "GenerateItemSlotsForSelectedTab", takeOverBankItemButtons)
+    hooksecurefunc(C_Bank, "PurchaseBankTab", function() createAccountBagBar(f.BankPanel) end)
+    hooksecurefunc(f.BankPanel, "SelectTab", function(_, id) BankFrame.BankPanel.selectedTabID = id end)
 
     -- skin some things not done in XML
     f.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
@@ -795,14 +499,19 @@ local function LoadBank(helpers)
     f:RegisterEvent("BANKFRAME_CLOSED")
 
     -- setup settings button and its dropdown items
-    f.buttonSort:HookScript(
-        "OnClick",
+    f.buttonSort:SetScript("OnClick",
         function(self)
-            PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
-            if self:GetParent().ItemFrame:IsShown() then
-                C_Container.SortBankBags()
-            elseif self:GetParent().AccountFrame:IsShown() then
-                C_Container.SortAccountBankBags()
+            local bankType = self:GetParent().BankPanel.bankType
+            local hasTabsToSort = bankType and C_Bank.FetchNumPurchasedBankTabs(bankType) > 0
+            if not hasTabsToSort then
+                return
+            end
+
+            if GetCVarBool("bankConfirmTabCleanUp") then
+                StaticPopupSpecial_Show(BankCleanUpConfirmationPopup)
+            else
+                C_Container.SortBank(bankType)
+                PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
             end
         end
     )
@@ -827,15 +536,13 @@ local function LoadBank(helpers)
     f.ItemTab:SetScript(
         "OnClick",
         function(self)
-            BankFrame.selectedTab = 1 -- for right-clicking things into bank
-            local bf = self:GetParent()
-            if bf.ItemFrame:IsShown() then
-                return
-            end
-            bf.ItemFrame:Show()
-            bf.AccountFrame:Hide()
-            bf.buttonSort.tooltipText = BAG_CLEANUP_BANK
-            takeOverAccountBankItemButtons(bf.ItemFrame)
+            BankFrame.BankPanel:SetBankType(Enum.BankType.Character)
+            f.BankPanel:SetBankType(Enum.BankType.Character)
+            f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
+            self:GetParent().buttonSort.tooltipText = BAG_CLEANUP_BANK
+            f.BankPanel.MoneyFrame:RefreshContents()
+            createAccountBagBar(f.BankPanel)
+            SelectFirstAvailableTab(f.BankPanel)
         end
     )
     EnableTooltip(f.ItemTab, BANK)
@@ -845,23 +552,20 @@ local function LoadBank(helpers)
     f.AccountTab:SetScript(
         "OnClick",
         function(self)
-            BankFrame.selectedTab = 3 -- for right-clicking things into bank
-            local bf = self:GetParent()
-            if bf.AccountFrame:IsShown() then
-                return
-            end
-            bf.ItemFrame:Hide()
-            bf.AccountFrame:Show()
-            bf.buttonSort.tooltipText = BAG_CLEANUP_ACCOUNT_BANK
-            takeOverAccountBankItemButtons(bf.AccountFrame)
+            BankFrame.BankPanel:SetBankType(Enum.BankType.Account)
+            f.BankPanel:SetBankType(Enum.BankType.Account)
+            f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Account)
+            self:GetParent().buttonSort.tooltipText = BAG_CLEANUP_ACCOUNT_BANK
+            f.BankPanel.MoneyFrame:RefreshContents()
+            createAccountBagBar(f.BankPanel)
+            SelectFirstAvailableTab(f.BankPanel)
         end
     )
     EnableTooltip(f.AccountTab, ACCOUNT_BANK_PANEL_TITLE)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()
-        takeOverAccountBankItemButtons(f.ItemFrame)
-        takeOverAccountBankItemButtons(f.AccountFrame)
+        takeOverBankItemButtons(f.BankPanel)
     end
     return changeItemSize
 end
