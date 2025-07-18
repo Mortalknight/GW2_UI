@@ -26,6 +26,19 @@ local DIRECTION_TO_POINT = {
     UP = "BOTTOMRIGHT",
 }
 
+local AttributeCustomsVisibility = [[
+    local header = self:GetFrameRef("AuraHeader")
+    local hide, shown = newstate == 0, header:IsShown()
+    if hide and shown then header:Hide() elseif not hide and not shown then header:Show() end
+]]
+
+local AttributeInitialConfig = [[
+    local header = self:GetParent()
+
+    self:SetWidth(header:GetAttribute("config-height"))
+    self:SetHeight(header:GetAttribute("config-width"))
+]]
+
 local function setLongCD(self, stackCount)
     self.cooldown:Hide()
     self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
@@ -122,7 +135,7 @@ local function UpdateAura_OnUpdate(self, xpr, elapsed)
         if self.duration < 121 then
             setShortCD(self, xpr, self.duration, self.stackCount)
             if self.duration - remains < 0.1 then
-                if GW.settings.PLAYER_AURA_ANIMATION and (self.oldAuraName ~= self.auraName) then
+                if GW.settings[self.header.setting].NewAuraAnimation and (self.oldAuraName ~= self.auraName) then
                     self.agZoomIn:Play()
                 end
             end
@@ -386,44 +399,44 @@ function GwAuraTmpl_OnLoad(self)
     self.gwInit = true
 end
 
-local function UpdateAuraHeader(header, settingName)
+local function UpdateAuraHeader(header)
     if not header then return end
 
-    local size = tonumber(GW.RoundDec(GW.settings[settingName .. "_ICON_SIZE"]))
-    local aura_tmpl = format("GwAuraTmpl%d", size)
-    local grow_dir = GW.settings[settingName .. "_GrowDirection"]
-    local maxWraps = GW.settings[settingName .. "_MaxWraps"]
-    local horizontalSpacing = tonumber(GW.settings[settingName .. "_HorizontalSpacing"])
-    local verticalSpacing = tonumber(GW.settings[settingName .. "_VerticalSpacing"])
-    local wrapAfter = header.name == "GW2UIPlayerBuffs" and tonumber(GW.settings.PLAYER_AURA_WRAP_NUM) or tonumber(GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF)
+    local width = GW.settings[header.setting].IconSize
+    local height = GW.settings[header.setting].KeepSizeRatio and width or GW.settings[header.setting].IconHeight
+    local grow_dir = GW.settings[header.setting].GrowDirection
+    local maxWraps = GW.settings[header.setting].MaxWraps
+    local horizontalSpacing = GW.settings[header.setting].HorizontalSpacing
+    local verticalSpacing = GW.settings[header.setting].VerticalSpacing
+    local wrapAfter = GW.settings[header.setting].WrapAfter
     if not wrapAfter or wrapAfter < 1 or wrapAfter > 20 then
         wrapAfter = 7
     end
 
-    Debug("settings", settingName, grow_dir, wrapAfter, size)
+    Debug("settings", header.setting, grow_dir, wrapAfter, width, height)
 
-    header:SetAttribute("sortMethod", GW.settings[settingName .. "_SortMethod"])
-    header:SetAttribute("sortDirection", GW.settings[settingName .. "_SortDir"])
-    header:SetAttribute("template", aura_tmpl)
-    header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GW.settings[settingName .. "_Seperate"])))
+    header:SetAttribute("config-width", width)
+    header:SetAttribute("config-height", height)
+    header:SetAttribute("template", "GwAuraTmpl")
+    header:SetAttribute("weaponTemplate", header.filter == "HELPFUL" and "GwAuraTmpl" or nil)
+    header:SetAttribute("sortMethod", GW.settings[header.setting].SortMethod)
+    header:SetAttribute("sortDirection", GW.settings[header.setting].SortDir)
+    header:SetAttribute("separateOwn", GW.settings[header.setting].Seperate)
     header:SetAttribute("wrapAfter", wrapAfter)
     header:SetAttribute("maxWraps", maxWraps)
-    header:SetAttribute("minWidth", ((wrapAfter == 1 and 0 or horizontalSpacing) + size) * wrapAfter)
-    header:SetAttribute("minHeight", (size + 1))
+    header:SetAttribute("minWidth", ((wrapAfter == 1 and 0 or horizontalSpacing) + width) * wrapAfter)
+    header:SetAttribute("minHeight", (height + 1))
     header:SetAttribute("point", DIRECTION_TO_POINT[grow_dir])
-    header:SetAttribute("xOffset", DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] * (horizontalSpacing + size))
+    header:SetAttribute("xOffset", DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] * (horizontalSpacing + width))
     header:SetAttribute("yOffset", 0)
     header:SetAttribute("wrapXOffset", 0)
-    header:SetAttribute("wrapYOffset", DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + size))
+    header:SetAttribute("wrapYOffset", DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height))
     header:SetAttribute("growDir", grow_dir)
-
-    if header.filter == "HELPFUL" then
-        header:SetAttribute("includeWeapons", 1)
-        header:SetAttribute("weaponTemplate", aura_tmpl)
-    end
+    header:SetAttribute("initialConfigFunction", AttributeInitialConfig)
 
     for index, child in next, {header:GetChildren()} do
-        child:SetSize(size, size)
+        child:SetWidth(width)
+        child:SetHeight(height)
 
         --icons arent being hidden when you reduce the amount of maximum buttons
         if index > (maxWraps * wrapAfter) and child:IsShown() then
@@ -440,7 +453,7 @@ local function UpdateAuraHeader(header, settingName)
         header:ClearAllPoints()
         if not header.isMoved then
             anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
-            header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + size))
+            header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height))
         else
             header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
         end
@@ -448,7 +461,7 @@ local function UpdateAuraHeader(header, settingName)
 end
 GW.UpdateAuraHeader = UpdateAuraHeader
 
-local function newHeader(filter, settingname)
+local function newHeader(filter)
     local name = filter == "HELPFUL" and "GW2UIPlayerBuffs" or "GW2UIPlayerDebuffs"
 
     local h = CreateFrame("Frame", name, UIParent, "SecureAuraHeaderTemplate")
@@ -466,6 +479,7 @@ local function newHeader(filter, settingname)
     h.enchants = {}
     h.spells = {}
     h.filter = filter
+    h.setting = filter == "HELPFUL" and "PlayerBuffs" or "PlayerDebuffs"
 
     h.visibility = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
     h.visibility:SetScript("OnUpdate", HeaderOnUpdate)
@@ -477,26 +491,22 @@ local function newHeader(filter, settingname)
         h.visibility:RegisterEvent("WEAPON_ENCHANT_CHANGED")
     end
 
-
     RegisterAttributeDriver(h, "unit", "[vehicleui] vehicle; player")
     SecureHandlerSetFrameRef(h.visibility, "AuraHeader", h)
     RegisterStateDriver(h.visibility, "customVisibility", "[petbattle] 0; 1")
-    h.visibility:SetAttribute("_onstate-customVisibility", [[
-        local header = self:GetFrameRef("AuraHeader")
-        local hide, shown = newstate == 0, header:IsShown()
-        if hide and shown then header:Hide() elseif not hide and not shown then header:Show() end
-    ]])
+    h.visibility:SetAttribute("_onstate-customVisibility", AttributeCustomsVisibility)
 
     if filter == "HELPFUL" then
         h:SetAttribute("consolidateDuration", -1)
         h:SetAttribute("consolidateTo", 0)
+        h:SetAttribute("includeWeapons", 1)
 
         RegisterMovableFrame(h, SHOW_BUFFS, "PlayerBuffFrame", ALL .. ",Blizzard,Aura", {316, 100}, {"default", "scaleable"}, true)
     else
         RegisterMovableFrame(h, SHOW_DEBUFFS, "PlayerDebuffFrame", ALL .. ",Blizzard,Aura", {316, 60}, {"default", "scaleable"}, true)
     end
 
-    UpdateAuraHeader(h, settingname)
+    UpdateAuraHeader(h)
 
     return h
 end
@@ -504,12 +514,12 @@ GW.AddForProfiling("aurabar_secure", "newHeader", newHeader)
 
 local function loadAuras(lm)
     -- create a new header for buffs
-    local hb = newHeader("HELPFUL", "PlayerBuffFrame")
+    local hb = newHeader("HELPFUL")
     hb:Show()
 
     lm:RegisterBuffFrame(hb)
     hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function ()
-        local grow_dir = GW.settings.PlayerBuffFrame_GrowDirection
+        local grow_dir = GW.settings[hb.setting].GrowDirection
         local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
         if not InCombatLockdown() then
@@ -519,11 +529,11 @@ local function loadAuras(lm)
     end)
 
     -- create a new header for debuffs
-    local hd = newHeader("HARMFUL", "PlayerDebuffFrame")
+    local hd = newHeader("HARMFUL")
     hd:Show()
     lm:RegisterDebuffFrame(hd)
     hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function ()
-        local grow_dir = GW.settings.PlayerDebuffFrame_GrowDirection
+        local grow_dir = GW.settings[hd.setting].GrowDirection
         local anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
         if not InCombatLockdown() then

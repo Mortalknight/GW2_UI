@@ -262,5 +262,54 @@ local function Migration()
         GW.settings.profileMetaDataFixed = true
         GW.RefreshProfileScrollBox(GW2ProfileSettingsView.ScrollBox)
     end
+
+    --player buff size
+    if GW.settings.PlayerBuffFrame_Seperate then
+        GW.settings.PlayerBuffs.Seperate = GW.settings.PlayerBuffFrame_Seperate
+        GW.settings.PlayerBuffs.SortDir = GW.settings.PlayerBuffFrame_SortDir
+        GW.settings.PlayerBuffs.SortMethod = GW.settings.PlayerBuffFrame_SortMethod
+        GW.settings.PlayerBuffs.IconSize = GW.RoundDec(GW.settings.PlayerBuffFrame_ICON_SIZE)
+        GW.settings.PlayerBuffs.IconHeight = GW.RoundDec(GW.settings.PlayerBuffFrame_ICON_SIZE)
+        GW.settings.PlayerBuffs.GrowDirection = GW.settings.PlayerBuffFrame_GrowDirection
+        GW.settings.PlayerBuffs.HorizontalSpacing = GW.settings.PlayerBuffFrame_HorizontalSpacing
+        GW.settings.PlayerBuffs.VerticalSpacing = GW.settings.PlayerBuffFrame_VerticalSpacing
+        GW.settings.PlayerBuffs.MaxWraps = GW.settings.PlayerBuffFrame_MaxWraps
+        GW.settings.PlayerBuffs.WrapAfter = GW.settings.PLAYER_AURA_WRAP_NUM
+        GW.settings.PlayerBuffs.NewAuraAnimation = GW.settings.PLAYER_AURA_ANIMATION
+
+        GW.settings.PlayerBuffFrame_Seperate = nil
+        GW.settings.PlayerBuffFrame_SortDir = nil
+        GW.settings.PlayerBuffFrame_SortMethod = nil
+        GW.settings.PlayerBuffFrame_ICON_SIZE = nil
+        GW.settings.PlayerBuffFrame_GrowDirection = nil
+        GW.settings.PlayerBuffFrame_HorizontalSpacing = nil
+        GW.settings.PlayerBuffFrame_VerticalSpacing = nil
+        GW.settings.PLAYER_AURA_WRAP_NUM = nil
+        GW.settings.PlayerBuffFrame_MaxWraps = nil
+        GW.settings.PLAYER_AURA_ANIMATION = nil
+    end
+    if GW.settings.PlayerDebuffFrame_Seperate then
+        GW.settings.PlayerDebuffs.Seperate = GW.settings.PlayerDebuffFrame_Seperate
+        GW.settings.PlayerDebuffs.SortDir = GW.settings.PlayerDebuffFrame_SortDir
+        GW.settings.PlayerDebuffs.SortMethod = GW.settings.PlayerDebuffFrame_SortMethod
+        GW.settings.PlayerDebuffs.IconSize = GW.RoundDec(GW.settings.PlayerDebuffFrame_ICON_SIZE)
+        GW.settings.PlayerDebuffs.IconHeight = GW.RoundDec(GW.settings.PlayerDebuffFrame_ICON_SIZE)
+        GW.settings.PlayerDebuffs.GrowDirection = GW.settings.PlayerDebuffFrame_GrowDirection
+        GW.settings.PlayerDebuffs.HorizontalSpacing = GW.settings.PlayerDebuffFrame_HorizontalSpacing
+        GW.settings.PlayerDebuffs.VerticalSpacing = GW.settings.PlayerDebuffFrame_VerticalSpacing
+        GW.settings.PlayerDebuffs.MaxWraps = GW.settings.PlayerDebuffFrame_MaxWraps
+        GW.settings.PlayerDebuffs.WrapAfter = GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF
+        GW.settings.PlayerDebuffs.NewAuraAnimation = GW.settings.PLAYER_AURA_ANIMATION
+
+        GW.settings.PlayerDebuffFrame_Seperate = nil
+        GW.settings.PlayerDebuffFrame_SortDir = nil
+        GW.settings.PlayerDebuffFrame_SortMethod = nil
+        GW.settings.PlayerDebuffFrame_ICON_SIZE = nil
+        GW.settings.PlayerDebuffFrame_GrowDirection = nil
+        GW.settings.PlayerDebuffFrame_HorizontalSpacing = nil
+        GW.settings.PlayerDebuffFrame_VerticalSpacing = nil
+        GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF = nil
+        GW.settings.PlayerDebuffFrame_MaxWraps = nil
+    end
 end
 GW.Migration = Migration
