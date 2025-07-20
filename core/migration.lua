@@ -125,36 +125,7 @@ local function DatabaseMigration(globalDb, privateDb)
 end
 GW.DatabaseMigration = DatabaseMigration
 
-local function Migration()
-    -- migration for frame positions
-    if not GW.settings.updateFramePositionMigrationDone then
-        GW.InMoveHudMode = true
-        -- new Powerbar and Classpowerbar default position
-        if GwPlayerPowerBar then
-            if GwPlayerPowerBar.isMoved == false then
-                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerPowerBar.gwMover)
-            end
-        end
-        if GwPlayerClassPower then
-            if GwPlayerClassPower.isMoved == false then
-                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerClassPower.gwMover)
-            end
-        end
-        if GwMultiBarBottomRight then
-            if GwMultiBarBottomRight.isMoved == false then
-                GW.ResetMoverFrameToDefaultValues(nil, nil, GwMultiBarBottomRight.gwMover)
-            end
-        end
-
-        if GW.MoveHudScaleableFrame then
-            GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
-            GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
-        end
-
-        GW.InMoveHudMode = false
-        GW.settings.updateFramePositionMigrationDone = true
-    end
-
+local function DatabaseValueMigration()
     -- migration for font module
     if not GW.settings.fontModuleMigrationDone then
         if not GW.settings.FONTS_ENABLED then
@@ -310,6 +281,38 @@ local function Migration()
         GW.settings.PlayerDebuffFrame_VerticalSpacing = nil
         GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF = nil
         GW.settings.PlayerDebuffFrame_MaxWraps = nil
+    end
+end
+GW.DatabaseValueMigration = DatabaseValueMigration
+
+local function Migration()
+    -- migration for frame positions
+    if not GW.settings.updateFramePositionMigrationDone then
+        GW.InMoveHudMode = true
+        -- new Powerbar and Classpowerbar default position
+        if GwPlayerPowerBar then
+            if GwPlayerPowerBar.isMoved == false then
+                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerPowerBar.gwMover)
+            end
+        end
+        if GwPlayerClassPower then
+            if GwPlayerClassPower.isMoved == false then
+                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerClassPower.gwMover)
+            end
+        end
+        if GwMultiBarBottomRight then
+            if GwMultiBarBottomRight.isMoved == false then
+                GW.ResetMoverFrameToDefaultValues(nil, nil, GwMultiBarBottomRight.gwMover)
+            end
+        end
+
+        if GW.MoveHudScaleableFrame then
+            GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
+            GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
+        end
+
+        GW.InMoveHudMode = false
+        GW.settings.updateFramePositionMigrationDone = true
     end
 end
 GW.Migration = Migration
