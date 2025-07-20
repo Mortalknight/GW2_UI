@@ -125,36 +125,7 @@ local function DatabaseMigration(globalDb, privateDb)
 end
 GW.DatabaseMigration = DatabaseMigration
 
-local function Migration()
-    -- migration for frame positions
-    if not GW.settings.updateFramePositionMigrationDone then
-        GW.InMoveHudMode = true
-        -- new Powerbar and Classpowerbar default position
-        if GwPlayerPowerBar then
-            if GwPlayerPowerBar.isMoved == false then
-                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerPowerBar.gwMover)
-            end
-        end
-        if GwPlayerClassPower then
-            if GwPlayerClassPower.isMoved == false then
-                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerClassPower.gwMover)
-            end
-        end
-        if GwMultiBarBottomRight then
-            if GwMultiBarBottomRight.isMoved == false then
-                GW.ResetMoverFrameToDefaultValues(nil, nil, GwMultiBarBottomRight.gwMover)
-            end
-        end
-
-        if GW.MoveHudScaleableFrame then
-            GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
-            GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
-        end
-
-        GW.InMoveHudMode = false
-        GW.settings.updateFramePositionMigrationDone = true
-    end
-
+local function DatabaseValueMigration()
     -- migration for font module
     if not GW.settings.fontModuleMigrationDone then
         if not GW.settings.FONTS_ENABLED then
@@ -261,6 +232,87 @@ local function Migration()
         end
         GW.settings.profileMetaDataFixed = true
         GW.RefreshProfileScrollBox(GW2ProfileSettingsView.ScrollBox)
+    end
+
+    --player buff size
+    if GW.settings.PlayerBuffFrame_Seperate then
+        GW.settings.PlayerBuffs.Seperate = GW.settings.PlayerBuffFrame_Seperate
+        GW.settings.PlayerBuffs.SortDir = GW.settings.PlayerBuffFrame_SortDir
+        GW.settings.PlayerBuffs.SortMethod = GW.settings.PlayerBuffFrame_SortMethod
+        GW.settings.PlayerBuffs.IconSize = GW.RoundDec(GW.settings.PlayerBuffFrame_ICON_SIZE)
+        GW.settings.PlayerBuffs.IconHeight = GW.RoundDec(GW.settings.PlayerBuffFrame_ICON_SIZE)
+        GW.settings.PlayerBuffs.GrowDirection = GW.settings.PlayerBuffFrame_GrowDirection
+        GW.settings.PlayerBuffs.HorizontalSpacing = GW.settings.PlayerBuffFrame_HorizontalSpacing
+        GW.settings.PlayerBuffs.VerticalSpacing = GW.settings.PlayerBuffFrame_VerticalSpacing
+        GW.settings.PlayerBuffs.MaxWraps = GW.settings.PlayerBuffFrame_MaxWraps
+        GW.settings.PlayerBuffs.WrapAfter = GW.settings.PLAYER_AURA_WRAP_NUM
+        GW.settings.PlayerBuffs.NewAuraAnimation = GW.settings.PLAYER_AURA_ANIMATION
+
+        GW.settings.PlayerBuffFrame_Seperate = nil
+        GW.settings.PlayerBuffFrame_SortDir = nil
+        GW.settings.PlayerBuffFrame_SortMethod = nil
+        GW.settings.PlayerBuffFrame_ICON_SIZE = nil
+        GW.settings.PlayerBuffFrame_GrowDirection = nil
+        GW.settings.PlayerBuffFrame_HorizontalSpacing = nil
+        GW.settings.PlayerBuffFrame_VerticalSpacing = nil
+        GW.settings.PLAYER_AURA_WRAP_NUM = nil
+        GW.settings.PlayerBuffFrame_MaxWraps = nil
+        GW.settings.PLAYER_AURA_ANIMATION = nil
+    end
+    if GW.settings.PlayerDebuffFrame_Seperate then
+        GW.settings.PlayerDebuffs.Seperate = GW.settings.PlayerDebuffFrame_Seperate
+        GW.settings.PlayerDebuffs.SortDir = GW.settings.PlayerDebuffFrame_SortDir
+        GW.settings.PlayerDebuffs.SortMethod = GW.settings.PlayerDebuffFrame_SortMethod
+        GW.settings.PlayerDebuffs.IconSize = GW.RoundDec(GW.settings.PlayerDebuffFrame_ICON_SIZE)
+        GW.settings.PlayerDebuffs.IconHeight = GW.RoundDec(GW.settings.PlayerDebuffFrame_ICON_SIZE)
+        GW.settings.PlayerDebuffs.GrowDirection = GW.settings.PlayerDebuffFrame_GrowDirection
+        GW.settings.PlayerDebuffs.HorizontalSpacing = GW.settings.PlayerDebuffFrame_HorizontalSpacing
+        GW.settings.PlayerDebuffs.VerticalSpacing = GW.settings.PlayerDebuffFrame_VerticalSpacing
+        GW.settings.PlayerDebuffs.MaxWraps = GW.settings.PlayerDebuffFrame_MaxWraps
+        GW.settings.PlayerDebuffs.WrapAfter = GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF
+        GW.settings.PlayerDebuffs.NewAuraAnimation = GW.settings.PLAYER_AURA_ANIMATION
+
+        GW.settings.PlayerDebuffFrame_Seperate = nil
+        GW.settings.PlayerDebuffFrame_SortDir = nil
+        GW.settings.PlayerDebuffFrame_SortMethod = nil
+        GW.settings.PlayerDebuffFrame_ICON_SIZE = nil
+        GW.settings.PlayerDebuffFrame_GrowDirection = nil
+        GW.settings.PlayerDebuffFrame_HorizontalSpacing = nil
+        GW.settings.PlayerDebuffFrame_VerticalSpacing = nil
+        GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF = nil
+        GW.settings.PlayerDebuffFrame_MaxWraps = nil
+    end
+end
+GW.DatabaseValueMigration = DatabaseValueMigration
+
+local function Migration()
+    -- migration for frame positions
+    if not GW.settings.updateFramePositionMigrationDone then
+        GW.InMoveHudMode = true
+        -- new Powerbar and Classpowerbar default position
+        if GwPlayerPowerBar then
+            if GwPlayerPowerBar.isMoved == false then
+                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerPowerBar.gwMover)
+            end
+        end
+        if GwPlayerClassPower then
+            if GwPlayerClassPower.isMoved == false then
+                GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerClassPower.gwMover)
+            end
+        end
+        if GwMultiBarBottomRight then
+            if GwMultiBarBottomRight.isMoved == false then
+                GW.ResetMoverFrameToDefaultValues(nil, nil, GwMultiBarBottomRight.gwMover)
+            end
+        end
+
+        if GW.MoveHudScaleableFrame then
+            GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
+            GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
+        end
+
+        GW.InMoveHudMode = false
+        GW.settings.updateFramePositionMigrationDone = true
     end
 end
 GW.Migration = Migration

@@ -42,7 +42,7 @@ local function reskinItemButton(b, overrideIconSize)
     b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
     b.Count:SetJustifyH("RIGHT")
 
-    local qtex = _G[b:GetName() .. "IconQuestTexture"]
+    local qtex = b.GetName and b:GetName() ~= nil and _G[b:GetName() .. "IconQuestTexture"] or nil
     if qtex then
         qtex:SetAlpha(0)
     end

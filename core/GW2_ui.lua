@@ -312,6 +312,8 @@ GW.RegisterLoadHook = RegisterLoadHook
 
 local function UpdateDb()
     GW.settings = GW.globalSettings.profile
+    GW.Migration()
+    GW.DatabaseValueMigration()
 end
 
 local function evAddonLoaded(self, loadedAddonName)
@@ -353,12 +355,8 @@ local function evAddonLoaded(self, loadedAddonName)
     -- TODO: A lot of what happens in player login should probably happen here instead
 
     -- check for DeModal
-    local _, _, _, enabled, _ = C_AddOns.GetAddOnInfo("DeModal")
-    if enabled then
-        GW.HasDeModal = true
-    else
-        GW.HasDeModal = false
-    end
+    local _, _, _, enabled = C_AddOns.GetAddOnInfo("DeModal")
+    GW.HasDeModal = enabled
     Debug("DeModal status:", GW.HasDeModal)
 
     -- TODO: moving skinning from player login to here
@@ -493,6 +491,7 @@ local function evPlayerLogin(self)
         GW.UpdateCharData()
         return
     end
+    GW.DatabaseValueMigration()
     GW.LoadFonts()
 
     if GW.Retail then

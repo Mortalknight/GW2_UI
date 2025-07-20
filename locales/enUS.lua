@@ -703,3 +703,7 @@ L["Show on Map"] = true
 L["Set TomTom Target"] = true
 L["Show absorb bar"] = true
 L["Range"] = true
+L["Width"] = true
+L["Size"] = true
+L["Height"] = true
+L["Keep Size Ratio"] = true

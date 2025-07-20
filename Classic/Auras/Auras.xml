@@ -1,58 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Button name="GwAuraTmpl" inherits="GwAuraSecureTmpl" registerForClicks="RightButtonUp" virtual="true"/>
-
-    <Button name="GwAuraTmpl10" inherits="GwAuraTmpl" virtual="true"><Size x="10" y="10"/></Button>
-    <Button name="GwAuraTmpl11" inherits="GwAuraTmpl" virtual="true"><Size x="11" y="11"/></Button>
-    <Button name="GwAuraTmpl12" inherits="GwAuraTmpl" virtual="true"><Size x="12" y="12"/></Button>
-    <Button name="GwAuraTmpl13" inherits="GwAuraTmpl" virtual="true"><Size x="13" y="13"/></Button>
-    <Button name="GwAuraTmpl14" inherits="GwAuraTmpl" virtual="true"><Size x="14" y="14"/></Button>
-    <Button name="GwAuraTmpl15" inherits="GwAuraTmpl" virtual="true"><Size x="15" y="15"/></Button>
-    <Button name="GwAuraTmpl16" inherits="GwAuraTmpl" virtual="true"><Size x="16" y="16"/></Button>
-    <Button name="GwAuraTmpl17" inherits="GwAuraTmpl" virtual="true"><Size x="17" y="17"/></Button>
-    <Button name="GwAuraTmpl18" inherits="GwAuraTmpl" virtual="true"><Size x="18" y="18"/></Button>
-    <Button name="GwAuraTmpl19" inherits="GwAuraTmpl" virtual="true"><Size x="19" y="19"/></Button>
-    <Button name="GwAuraTmpl20" inherits="GwAuraTmpl" virtual="true"><Size x="20" y="20"/></Button>
-    <Button name="GwAuraTmpl21" inherits="GwAuraTmpl" virtual="true"><Size x="21" y="21"/></Button>
-    <Button name="GwAuraTmpl22" inherits="GwAuraTmpl" virtual="true"><Size x="22" y="22"/></Button>
-    <Button name="GwAuraTmpl23" inherits="GwAuraTmpl" virtual="true"><Size x="23" y="23"/></Button>
-    <Button name="GwAuraTmpl24" inherits="GwAuraTmpl" virtual="true"><Size x="24" y="24"/></Button>
-    <Button name="GwAuraTmpl25" inherits="GwAuraTmpl" virtual="true"><Size x="25" y="25"/></Button>
-    <Button name="GwAuraTmpl26" inherits="GwAuraTmpl" virtual="true"><Size x="26" y="26"/></Button>
-    <Button name="GwAuraTmpl27" inherits="GwAuraTmpl" virtual="true"><Size x="27" y="27"/></Button>
-    <Button name="GwAuraTmpl28" inherits="GwAuraTmpl" virtual="true"><Size x="28" y="28"/></Button>
-    <Button name="GwAuraTmpl29" inherits="GwAuraTmpl" virtual="true"><Size x="29" y="29"/></Button>
-    <Button name="GwAuraTmpl30" inherits="GwAuraTmpl" virtual="true"><Size x="30" y="30"/></Button>
-    <Button name="GwAuraTmpl31" inherits="GwAuraTmpl" virtual="true"><Size x="31" y="31"/></Button>
-    <Button name="GwAuraTmpl32" inherits="GwAuraTmpl" virtual="true"><Size x="32" y="32"/></Button>
-    <Button name="GwAuraTmpl33" inherits="GwAuraTmpl" virtual="true"><Size x="33" y="33"/></Button>
-    <Button name="GwAuraTmpl34" inherits="GwAuraTmpl" virtual="true"><Size x="34" y="34"/></Button>
-    <Button name="GwAuraTmpl35" inherits="GwAuraTmpl" virtual="true"><Size x="35" y="35"/></Button>
-    <Button name="GwAuraTmpl36" inherits="GwAuraTmpl" virtual="true"><Size x="36" y="36"/></Button>
-    <Button name="GwAuraTmpl37" inherits="GwAuraTmpl" virtual="true"><Size x="37" y="37"/></Button>
-    <Button name="GwAuraTmpl38" inherits="GwAuraTmpl" virtual="true"><Size x="38" y="38"/></Button>
-    <Button name="GwAuraTmpl39" inherits="GwAuraTmpl" virtual="true"><Size x="39" y="39"/></Button>
-    <Button name="GwAuraTmpl40" inherits="GwAuraTmpl" virtual="true"><Size x="40" y="40"/></Button>
-    <Button name="GwAuraTmpl41" inherits="GwAuraTmpl" virtual="true"><Size x="41" y="41"/></Button>
-    <Button name="GwAuraTmpl42" inherits="GwAuraTmpl" virtual="true"><Size x="42" y="42"/></Button>
-    <Button name="GwAuraTmpl43" inherits="GwAuraTmpl" virtual="true"><Size x="43" y="43"/></Button>
-    <Button name="GwAuraTmpl44" inherits="GwAuraTmpl" virtual="true"><Size x="44" y="44"/></Button>
-    <Button name="GwAuraTmpl45" inherits="GwAuraTmpl" virtual="true"><Size x="45" y="45"/></Button>
-    <Button name="GwAuraTmpl46" inherits="GwAuraTmpl" virtual="true"><Size x="46" y="46"/></Button>
-    <Button name="GwAuraTmpl47" inherits="GwAuraTmpl" virtual="true"><Size x="47" y="47"/></Button>
-    <Button name="GwAuraTmpl48" inherits="GwAuraTmpl" virtual="true"><Size x="48" y="48"/></Button>
-    <Button name="GwAuraTmpl49" inherits="GwAuraTmpl" virtual="true"><Size x="49" y="49"/></Button>
-    <Button name="GwAuraTmpl50" inherits="GwAuraTmpl" virtual="true"><Size x="50" y="50"/></Button>
-    <Button name="GwAuraTmpl51" inherits="GwAuraTmpl" virtual="true"><Size x="51" y="51"/></Button>
-    <Button name="GwAuraTmpl52" inherits="GwAuraTmpl" virtual="true"><Size x="52" y="52"/></Button>
-    <Button name="GwAuraTmpl53" inherits="GwAuraTmpl" virtual="true"><Size x="53" y="53"/></Button>
-    <Button name="GwAuraTmpl54" inherits="GwAuraTmpl" virtual="true"><Size x="54" y="54"/></Button>
-    <Button name="GwAuraTmpl55" inherits="GwAuraTmpl" virtual="true"><Size x="55" y="55"/></Button>
-    <Button name="GwAuraTmpl56" inherits="GwAuraTmpl" virtual="true"><Size x="56" y="56"/></Button>
-    <Button name="GwAuraTmpl57" inherits="GwAuraTmpl" virtual="true"><Size x="57" y="57"/></Button>
-    <Button name="GwAuraTmpl58" inherits="GwAuraTmpl" virtual="true"><Size x="58" y="58"/></Button>
-    <Button name="GwAuraTmpl59" inherits="GwAuraTmpl" virtual="true"><Size x="59" y="59"/></Button>
-    <Button name="GwAuraTmpl60" inherits="GwAuraTmpl" virtual="true"><Size x="60" y="60"/></Button>
+    <Button name="GwAuraTmpl" inherits="GwAuraSecureTmpl" registerForClicks="RightButtonUp" virtual="true" framelevel="4"/>
 
 </Ui>

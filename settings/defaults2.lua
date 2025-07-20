@@ -15,6 +15,21 @@ local UnitFrameFader = {
     smooth = 0.33,
 }
 
+local PlayerAuraSettings = {
+        Seperate = 0,
+        SortDir = "+",
+        SortMethod = "INDEX",
+        IconSize = 32,
+        IconHeight = 32,
+        KeepSizeRatio = true,
+        GrowDirection = "UP",
+        HorizontalSpacing = 1,
+        VerticalSpacing = 34,
+        MaxWraps = 3,
+        WrapAfter = 7,
+        NewAuraAnimation = true,
+    }
+
 --private
 GW.privateDefaults = {
     profile = {
@@ -1153,10 +1168,6 @@ GW.globalDefault = {
             yOfs= 120,
             hasMoved= false,
         },
-        PlayerBuffFrame_GrowDirection= "UP",
-        PlayerBuffFrame_HorizontalSpacing= 1,
-        PlayerBuffFrame_VerticalSpacing= 34,
-        PlayerBuffFrame_MaxWraps= 3,
         PlayerBuffFrame_scale= 1,
 
         PlayerDebuffFrame= {
@@ -1166,10 +1177,6 @@ GW.globalDefault = {
             yOfs= 220,
             hasMoved= false,
         },
-        PlayerDebuffFrame_GrowDirection= "UP",
-        PlayerDebuffFrame_HorizontalSpacing= 1,
-        PlayerDebuffFrame_VerticalSpacing= 34,
-        PlayerDebuffFrame_MaxWraps= 3,
         PlayerDebuffFrame_scale= 1,
 
         PlayerPrivateAuras= {
@@ -1202,20 +1209,9 @@ GW.globalDefault = {
             yOfs= -150,
         },
 
-        PlayerBuffFrame_Seperate= 0,
-        PlayerDebuffFrame_Seperate= 0,
+        PlayerBuffs = CopyTable(PlayerAuraSettings),
+        PlayerDebuffs = CopyTable(PlayerAuraSettings),
 
-        PlayerBuffFrame_SortDir= "+",
-        PlayerDebuffFrame_SortDir= "+",
-
-        PlayerBuffFrame_SortMethod= "INDEX",
-        PlayerDebuffFrame_SortMethod= "INDEX",
-
-        PLAYER_AURA_WRAP_NUM_DEBUFF= 7,
-        PLAYER_AURA_WRAP_NUM= 7,
-        PLAYER_AURA_ANIMATION= true,
-        PlayerBuffFrame_ICON_SIZE= 32,
-        PlayerDebuffFrame_ICON_SIZE= 32,
         PLAYER_AS_TARGET_FRAME= false,
         PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR= false,
         player_CLASS_COLOR= false,

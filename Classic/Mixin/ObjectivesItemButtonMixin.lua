@@ -42,8 +42,8 @@ function GwObjectivesItemButtonMixin:SetItem(block)
         self:GetPushedTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
         -- Cooldown Updates
-        self.cooldown:SetPoint("CENTER", self, "CENTER", 0, 0)
-        self.cooldown:Hide()
+        self.Cooldown:SetPoint("CENTER", self, "CENTER", 0, 0)
+        self.Cooldown:Hide()
 
         -- Range Updates
         self.HotKey:SetText("●")
@@ -72,10 +72,10 @@ function GwObjectivesItemButtonMixin:UpdateButton()
     local start, duration, enabled = C_Container.GetItemCooldown(self.itemID)
 
     if enabled and duration > 3 and enabled == 1 then
-        self.cooldown:Show()
-        self.cooldown:SetCooldown(start, duration)
+        self.Cooldown:Show()
+        self.Cooldown:SetCooldown(start, duration)
     else
-        self.cooldown:Hide()
+        self.Cooldown:Hide()
     end
 end
 

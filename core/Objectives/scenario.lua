@@ -72,6 +72,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     block.numObjectives = 0
     block.questLogIndex = 0
     block.groupButton:Hide()
+    block.delvesFrame:Hide()
     block:Show()
 
     local _, _, numStages, _, _, _, _, _, _, _, _, _, scenarioID = C_Scenario.GetInfo()
@@ -202,8 +203,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
 
         compassData.COLOR = TRACKER_TYPE_COLOR.DELVE
         compassData.TYPE = GW.TRACKER_TYPE.DELVE
-    else
-        block.delvesFrame:Hide()
     end
 
     block:SetBlockColorByKey(compassData.TYPE)
