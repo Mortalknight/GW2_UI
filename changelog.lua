@@ -15,6 +15,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.2.2",{
+    {ct.feature, [=[Bagnator skin error (Mists)]=]},
+    {ct.feature, [=[Objectives tracker actionbutton error (Era)]=]},
+})
+
 addChange("8.2.1",{
     {ct.feature, [=[Arena frame lua error (Mists)]=]},
 })

@@ -1,3 +1,8 @@
+8.2.2
+FIXES
+    - Bagnator skin error (Mists)
+    - Objectives tracker actionbutton error (Era)
+
 8.2.1
 FIXES
     - Arena frame lua error (Mists)
