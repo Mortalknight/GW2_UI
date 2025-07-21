@@ -742,6 +742,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local showName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
+    GW.MixinHideDuringPetAndOverride(fmMultibar)
 
     if actionPage ~= nil then
         fmMultibar:SetAttribute("actionpage", actionPage)
