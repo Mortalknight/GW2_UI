@@ -73,7 +73,6 @@
                 </FontString>
             </Layer>
         </Layers>
-
         <Frames>
             <Button parentKey="ItemTab">
                 <Size x="40" y="40"></Size>
@@ -109,7 +108,6 @@
                     </Layer>
                 </Layers>
             </Button>
-
             <Frame parentKey="mover" enableMouse="true">
                 <Size y="40" />
                 <Anchors>
@@ -117,7 +115,6 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-30" y="0"></Anchor>
                 </Anchors>
             </Frame>
-
             <Frame parentKey="sizer" enableMouse="true">
                 <Size x="20" y="20"></Size>
                 <Anchors>
@@ -170,48 +167,40 @@
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
             </Button>
-
             <Frame parentKey="BankPanel" inherits="CallbackRegistrantTemplate" mixin="BankPanelMixin" hidden="false">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
                 </Anchors>
                 <Frames>
-
                     <Frame parentKey="Header" inherits="BankPanelHeaderFrameTemplate" hidden="true">
 						<Anchors>
 							<Anchor point="TOP" y="50"/>
 						</Anchors>
 					</Frame>
-
                     <Frame parentKey="MoneyFrame" inherits="BankPanelMoneyFrameTemplate" hidden="true">
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
 						</Anchors>
 					</Frame>
-
                     <Frame parentKey="AutoDepositFrame" inherits="BankPanelAutoDepositFrameTemplate">
 						<Anchors>
 							<Anchor point="BOTTOM" relativeKey="$parent.NineSlice" relativePoint="BOTTOM" y="10"/>
 						</Anchors>
 					</Frame>
-
                     <ItemButton parentKey="PurchaseTab" inherits="BankPanelPurchaseTabTemplate" hidden ="true"/>
-
                     <Frame parentKey="PurchasePrompt" inherits="BankPanelPurchasePromptTemplate" hidden="true" parentArray="Prompts">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
 							<Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
 						</Anchors>
 					</Frame>
-
 					<Frame parentKey="LockPrompt" inherits="BankPanelLockPromptTemplate" hidden="true" parentArray="Prompts">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
 							<Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
 						</Anchors>
 					</Frame>
-
                 </Frames>
                 <Scripts>
 					<OnLoad method="OnLoad"/>
@@ -223,17 +212,5 @@
             </Frame>
         </Frames>
     </Frame>
-
-    <ItemButton name="GwBankBagTemplate" inherits="BankItemButtonBagTemplate" virtual="true">
-        <Size x="28" y="28"></Size>
-    </ItemButton>
-
-    <ItemButton name="GwBankPanelTabTemplate" inherits="BankPanelTabTemplate" virtual="true">
-        <Size x="28" y="28"></Size>
-    </ItemButton>
-
-    <ItemButton name="GwBankBaseBagTemplate" virtual="true">
-        <Size x="28" y="28"></Size>
-    </ItemButton>
 
 </Ui>
