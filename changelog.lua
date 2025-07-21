@@ -15,13 +15,18 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.2.3",{
+    {ct.bug, [=[Loading error]=]},
+    {ct.change, [=[Add more options to player de/buff settings]=]},
+})
+
 addChange("8.2.2",{
-    {ct.feature, [=[Bagnator skin error (Mists)]=]},
-    {ct.feature, [=[Objectives tracker actionbutton error (Era)]=]},
+    {ct.bug, [=[Bagnator skin error (Mists)]=]},
+    {ct.bug, [=[Objectives tracker actionbutton error (Era)]=]},
 })
 
 addChange("8.2.1",{
-    {ct.feature, [=[Arena frame lua error (Mists)]=]},
+    {ct.bug, [=[Arena frame lua error (Mists)]=]},
 })
 
 addChange("8.2.0",{

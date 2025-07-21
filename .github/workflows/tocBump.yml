@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Update TOC Interface version
-        uses: p3lim/toc-interface-updater@v3
+        uses: p3lim/toc-interface-updater@master
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6
