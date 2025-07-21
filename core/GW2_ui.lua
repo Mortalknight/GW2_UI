@@ -335,6 +335,24 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.charSettings = GW.Libs.AceDB:New('GW2UI_PRIVATE_DB', GW.privateDefaults)
         GW.private = GW.charSettings.profile
 
+        local dbMigrated = false
+        if not GW.private.dbConverted and GW.private.GW2_UI_VERSION ~= "WELCOME" then
+            GW.DatabaseMigration(false, true)
+            GW.private.dbConverted = true
+            dbMigrated = true
+        end
+        if not GW.global.dbConverted and GW.private.GW2_UI_VERSION ~= "WELCOME" then
+            GW.DatabaseMigration(true, false)
+            GW.global.dbConverted = true
+            dbMigrated = true
+        end
+
+        if dbMigrated then
+            C_Timer.After(3, function() GW.WarningPrompt(L["DB was converted Reload is needed /reload"], function() C_UI.Reload() end) end)
+            GW.Notice("DB was converted Reload is needed /reload")
+        end
+
+        GW.DatabaseValueMigration()
         GW.ApplyMissingIncompatibleAddonsDefaults()
         GW.UpdateGw2ClassColors()
 
@@ -453,27 +471,6 @@ local function evPlayerEnteringWorld()
         migrationDone = true
     end
 
-    local dbMigrated = false
-    if not GW.private.dbConverted then
-        GW.DatabaseMigration(false, true)
-        GW.private.dbConverted = true
-        dbMigrated = true
-    end
-    if not GW.global.dbConverted then
-        GW.DatabaseMigration(true, false)
-        GW.global.dbConverted = true
-        dbMigrated = true
-    end
-
-    if dbMigrated then
-        C_Timer.After(3, function() GW.WarningPrompt(
-            L["DB was converted Reload is needed /reload"],
-                function() C_UI.Reload() end
-            )
-        end)
-        GW.Notice("DB was converted Reload is needed /reload")
-    end
-
     GW:FixBlizzardIssues()
 
     C_Timer.After(1, function() collectgarbage("collect") end)
@@ -491,7 +488,6 @@ local function evPlayerLogin(self)
         GW.UpdateCharData()
         return
     end
-    GW.DatabaseValueMigration()
     GW.LoadFonts()
 
     if GW.Retail then

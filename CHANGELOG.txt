@@ -1,3 +1,10 @@
+8.2.3
+FIXES
+    - Loading error
+
+CHANGES
+    - dd more options to player de/buff settings
+
 8.2.2
 FIXES
     - Bagnator skin error (Mists)
