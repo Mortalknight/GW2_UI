@@ -3,7 +3,7 @@ FIXES
     - Loading error
 
 CHANGES
-    - dd more options to player de/buff settings
+    - Add more options to player de/buff settings
 
 8.2.2
 FIXES
