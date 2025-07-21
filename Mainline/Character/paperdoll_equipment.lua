@@ -533,7 +533,7 @@ local function updateStats(self)
     self.itemLevel:SetText(itemLevelText)
     self.itemLevel:SetTextColor(GetItemLevelColor())
 
-    local primaryStat = select(6, GetSpecializationInfo(GW.myspec, nil, nil, nil, GW.mysex))
+    local primaryStat = select(6, C_SpecializationInfo.GetSpecializationInfo(GW.myspec, nil, nil, nil, GW.mysex))
 
     self.statsFramePool:ReleaseAll()
 
@@ -601,7 +601,7 @@ GW.AddForProfiling("paperdoll_equipment", "stats_QueuedUpdate", stats_QueuedUpda
 
 local function updateUnitData(self)
     self.characterName:SetText(UnitPVPName("player"))
-    local name = select(2, GetSpecializationInfo(GW.myspec, nil, nil, nil, GW.mysex))
+    local name = select(2, C_SpecializationInfo.GetSpecializationInfo(GW.myspec, nil, nil, nil, GW.mysex))
 
     if name ~= nil then
         local data = LEVEL .. " " .. GW.mylevel .. " " .. name .. " " .. GW.myLocalizedClass

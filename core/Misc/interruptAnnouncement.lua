@@ -37,17 +37,17 @@ local function OnEvent(self, _, subEvent, _, sourceGUID, srcName, sourceFlags, _
 
     local channel = GW.settings.interruptAnnounce
     if channel == "PARTY" then
-        SendChatMessage(msg, inPartyLFG and "INSTANCE_CHAT" or "PARTY")
+        C_ChatInfo.SendChatMessage(msg, inPartyLFG and "INSTANCE_CHAT" or "PARTY")
     elseif channel == "RAID" then
-        SendChatMessage(msg, inPartyLFG and "INSTANCE_CHAT" or (inRaid and "RAID" or "PARTY"))
+        C_ChatInfo.SendChatMessage(msg, inPartyLFG and "INSTANCE_CHAT" or (inRaid and "RAID" or "PARTY"))
     elseif channel == "RAID_ONLY" and inRaid then
-        SendChatMessage(msg, inPartyLFG and "INSTANCE_CHAT" or "RAID")
+        C_ChatInfo.SendChatMessage(msg, inPartyLFG and "INSTANCE_CHAT" or "RAID")
     elseif channel == "SAY" and instanceType ~= "none" then
-        SendChatMessage(msg, "SAY")
+        C_ChatInfo.SendChatMessage(msg, "SAY")
     elseif channel == "YELL" and instanceType ~= "none" then
-        SendChatMessage(msg, "YELL")
+        C_ChatInfo.SendChatMessage(msg, "YELL")
     elseif channel == "EMOTE" then
-        SendChatMessage(msg, "EMOTE")
+        C_ChatInfo.SendChatMessage(msg, "EMOTE")
     end
 end
 

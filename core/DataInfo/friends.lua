@@ -423,13 +423,13 @@ local function Friends_OnClick(self, button)
             end)
 
             submenuStatus:CreateButton("|cff2BC226" .. AVAILABLE .. "|r", function()
-                if IsChatAFK() then SendChatMessage("", "AFK") elseif IsChatDND() then SendChatMessage("", "DND") end
+                if IsChatAFK() then C_ChatInfo.SendChatMessage("", "AFK") elseif IsChatDND() then C_ChatInfo.SendChatMessage("", "DND") end
             end)
             submenuStatus:CreateButton("|cffE7E716" .. DND .. "|r", function()
-                if not IsChatDND() then SendChatMessage("", "DND") end
+                if not IsChatDND() then C_ChatInfo.SendChatMessage("", "DND") end
             end)
             submenuStatus:CreateButton("|cffFF0000" .. AFK .. "|r", function()
-                if not IsChatAFK() then SendChatMessage("", "AFK") end
+                if not IsChatAFK() then C_ChatInfo.SendChatMessage("", "AFK") end
             end)
 
             for _, info in ipairs(friendTable) do

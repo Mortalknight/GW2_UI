@@ -121,7 +121,7 @@ local function outfitEditButton_OnClick(self)
                     PaperDollEquipmentManagerPane_Update(true)
                 end
 
-                local name = select(2, GetSpecializationInfoByID(GetSpecializationInfo(i)))
+                local name = select(2, GetSpecializationInfoByID(C_SpecializationInfo.GetSpecializationInfo(i)))
                 local check = rootDescription:CreateCheckbox(name, IsSelected, SetSelected, i)
                 check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
             end

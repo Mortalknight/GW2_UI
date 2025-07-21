@@ -89,7 +89,7 @@ local function GetSpellPreviewButton(self, index)
 end
 
 local function updateActiveSpec(self)
-    local newSpec = GetSpecialization()
+    local newSpec = C_SpecializationInfo.GetSpecialization()
     GW.SetSpecTabIconAndTooltip(GwSpellbookMenu.tab3)
 
     for i = 1, GetNumSpecializations() do
@@ -117,7 +117,7 @@ local function updateActiveSpec(self)
 end
 
 local function SpecSwitchAnimation(self, playFlash)
-    local newSpec = GetSpecialization()
+    local newSpec = C_SpecializationInfo.GetSpecialization()
 
     for i = 1, GetNumSpecializations() do
         local container = self.specs[i]

@@ -9,9 +9,9 @@ local talentsPerRow = 10
 
 local function setSpecTabIconAndTooltip(tab)
     -- update spec-specific skill tab tooltip and icon
-    local _, specName, _ = GetSpecializationInfo(GW.myspec)
+    local _, specName, _ = C_SpecializationInfo.GetSpecializationInfo(GW.myspec)
     tab.gwTipLabel = specName
-    local spec = GetSpecialization()
+    local spec = C_SpecializationInfo.GetSpecialization()
     if spec then
         local role = GetSpecializationRole(spec)
         tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
@@ -328,11 +328,11 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     local isPetTab = false
     local spellBank = Enum.SpellBookSpellBank.Player
 
-    if spellBookTabs == 3 and (skillLineInfo.numSpellBookItems < 1 or GetSpecialization() == 5) then
+    if spellBookTabs == 3 and (skillLineInfo.numSpellBookItems < 1 or C_SpecializationInfo.GetSpecialization() == 5) then
         fmTab.groups["active"]:Hide()
         fmTab.groups["passive"]:Hide()
         fmTab.groups["lock"]:Show()
-    elseif spellBookTabs == 3 and (skillLineInfo.numSpellBookItems >= 1 or GetSpecialization() < 5) then
+    elseif spellBookTabs == 3 and (skillLineInfo.numSpellBookItems >= 1 or C_SpecializationInfo.GetSpecialization() < 5) then
         fmTab.groups["active"]:Show()
         fmTab.groups["passive"]:Show()
         fmTab.groups["lock"]:Hide()
@@ -423,9 +423,9 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
             activeIndex = CreateActiveSpellButton(activeGroup, activeIndex, fmSpellbook, spellInfo.spellID, spellBookItemInfo.itemType, icon, spellIndex, spellBank, spellBookTabs, name)
         end
     end
-    if spellBookTabs == 5 and GetSpecialization(false, true) then
+    if spellBookTabs == 5 and C_SpecializationInfo.GetSpecialization(false, true) then
         -- add spec spells
-        local bonuses = {GetSpecializationSpells(GetSpecialization(false, true), nil, true)}
+        local bonuses = {GetSpecializationSpells(C_SpecializationInfo.GetSpecialization(false, true), nil, true)}
         for i = 1, #bonuses, 2 do
             if not IsSpellKnownOrOverridesKnown(bonuses[i], true) then
                 local isPassive = IsPassiveSpell(bonuses[i])
@@ -862,7 +862,7 @@ local function LoadSpellbook(tabContainer)
     )
     fmSpellbook:SetAttribute("tabOpen", 2)
 
-    local _, specName = GetSpecializationInfo(GW.myspec)
+    local _, specName = C_SpecializationInfo.GetSpecializationInfo(GW.myspec)
     fmSpellbook.tab1.gwTipLabel = GENERAL_SPELLS
     fmSpellbook.tab2.gwTipLabel = GW.myLocalizedClass
     fmSpellbook.tab3.gwTipLabel = specName

@@ -39,7 +39,7 @@ local function slotButton_OnEnter(self)
         GameTooltip:SetText(PVP_TALENT_SLOT)
         GameTooltip:AddLine(PVP_TALENT_SLOT_EMPTY, GREEN_FONT_COLOR:GetRGB())
     else
-        GameTooltip:SetPvpTalent(self.talentId, false, GetActiveSpecGroup(true), self.slotIndex)
+        GameTooltip:SetPvpTalent(self.talentId, false, C_SpecializationInfo.GetActiveSpecGroup(true), self.slotIndex)
         if not self:GetParent():GetParent().pickingSlot then
             GameTooltip:AddLine(PVP_TALENT_SLOT_EMPTY, GREEN_FONT_COLOR:GetRGB())
         end

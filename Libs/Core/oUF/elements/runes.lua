@@ -83,7 +83,7 @@ end
 local function UpdateColor(self, event)
 	local element = self.Runes
 
-	local spec = GetSpecialization() or 0
+	local spec = C_SpecializationInfo.GetSpecialization() or 0
 
 	local color
 	if(spec > 0 and spec < 4 and element.colorSpec) then
