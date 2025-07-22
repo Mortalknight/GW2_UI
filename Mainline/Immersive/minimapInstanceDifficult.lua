@@ -98,7 +98,7 @@ end
 local function SkinMinimapInstanceDifficult()
     local d = CreateFrame("Frame", "GW_MinimapInstanceDifficultFrame", Minimap)
 
-    d:SetFrameLevel(GwMapGradient:GetFrameLevel() + 1)
+    d:SetFrameStrata("MEDIUM")
     d:SetSize(50, 20)
     d:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -10, 0)
     d.text = d:CreateFontString(nil, "OVERLAY")
