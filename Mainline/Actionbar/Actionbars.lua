@@ -963,8 +963,9 @@ AFP("skinMultiBar", skinMultiBar)
 
 local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local multibar = _G[barName]
+    local settings = GW.settings[barName]
     local used_width = 0
-    local used_height = GW.settings[barName].size
+    local used_height = settings.size
     local btn_padding = 0
     local btn_padding_y = 0
     local btn_this_row = 0
@@ -992,7 +993,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
             btn.SlotBackground:SetAlpha(0)
 
-            btn:SetSize(GW.settings[barName].size, GW.settings[barName].size)
+            btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
 
             btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
@@ -1016,12 +1017,12 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
                 end
             end)
 
-            btn_padding = btn_padding + GW.settings[barName].size + GW.settings.MULTIBAR_MARGIIN
+            btn_padding = btn_padding + settings.size + GW.settings.MULTIBAR_MARGIIN
             btn_this_row = btn_this_row + 1
             used_width = btn_padding
 
-            if btn_this_row == GW.settings[barName].ButtonsPerRow then
-                btn_padding_y = btn_padding_y + GW.settings[barName].size + GW.settings.MULTIBAR_MARGIIN
+            if btn_this_row == settings.ButtonsPerRow then
+                btn_padding_y = btn_padding_y + settings.size + GW.settings.MULTIBAR_MARGIIN
                 btn_this_row = 0
                 btn_padding = 0
                 used_height = btn_padding_y
@@ -1082,9 +1083,9 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         local xOff = GW.settings.PLAYER_AS_TARGET_FRAME and 56 or 0
         fmMultibar.gwMover:ClearAllPoints()
         if barName == "MultiBarBottomLeft" then
-            fmMultibar.gwMover:SetPoint(GW.settings[barName].point, UIParent, GW.settings[barName].relativePoint, GW.settings[barName].xOfs + xOff, GW.settings[barName].yOfs - yOff)
+            fmMultibar.gwMover:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs + xOff, settings.yOfs - yOff)
         elseif barName == "MultiBarBottomRight" then
-            fmMultibar.gwMover:SetPoint(GW.settings[barName].point, UIParent, GW.settings[barName].relativePoint, GW.settings[barName].xOfs - xOff, GW.settings[barName].yOfs - yOff)
+            fmMultibar.gwMover:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs - xOff, settings.yOfs - yOff)
         end
     end
 
@@ -1130,21 +1131,22 @@ local function UpdateMultibarButtons()
             local used_width = 0
             for i = 1, 12 do
                 local btn = fmMultiBar.gw_Buttons[i]
+                local settings = GW.settings[fmMultiBar.originalBarName]
 
                 btn.gwX = btn_padding
                 btn.gwY = btn_padding_y
                 btn:ClearAllPoints()
                 btn:SetPoint("TOPLEFT", fmMultiBar, "TOPLEFT", btn_padding, -btn_padding_y)
 
-                btn_padding = btn_padding + GW.settings[fmMultiBar.originalBarName].size + GW.settings.MULTIBAR_MARGIIN
+                btn_padding = btn_padding + settings.size + GW.settings.MULTIBAR_MARGIIN
                 btn_this_row = btn_this_row + 1
                 used_width = btn_padding
 
-                if btn_this_row == GW.settings[fmMultiBar.originalBarName].ButtonsPerRow then
-                    btn_padding_y = btn_padding_y + GW.settings[fmMultiBar.originalBarName].size + GW.settings.MULTIBAR_MARGIIN
+                if btn_this_row == settings.ButtonsPerRow then
+                    btn_padding_y = btn_padding_y + settings.size + GW.settings.MULTIBAR_MARGIIN
                     btn_this_row = 0
                     btn_padding = 0
-                    used_height = used_height + GW.settings[fmMultiBar.originalBarName].size + GW.settings.MULTIBAR_MARGIIN
+                    used_height = used_height + settings.size + GW.settings.MULTIBAR_MARGIIN
                 end
 
                 btn.gwBackdrop.bg:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))

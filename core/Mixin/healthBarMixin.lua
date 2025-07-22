@@ -2,9 +2,9 @@ local _, GW = ...
 
 GwUnitHealthbarMixin = {}
 
-function GwUnitHealthbarMixin:UpdateHealthTextString(health, healthPrecentage, healthMax)
+function GwUnitHealthbarMixin:UpdateHealthTextString(health, healthPrecentage)
     local formatFunc = self.shortendHealthValues and GW.ShortValue or GW.GetLocalizedNumber
-    local pctText = GW.GetLocalizedNumber(healthPrecentage * 100, 0) .. "%"
+    local pctText = GW.RoundDec(healthPrecentage * 100, 0) .. "%"
 
     local text
     if self.showHealthValue and self.showHealthPrecentage then
@@ -38,7 +38,7 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
     end
 
     self.health.barOnUpdate = function()
-        self:UpdateHealthTextString(health, self.health:GetFillAmount(), healthMax)
+        self:UpdateHealthTextString(health, self.health:GetFillAmount())
     end
 
     if forceUpdate then

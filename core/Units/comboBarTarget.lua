@@ -1,5 +1,4 @@
 local _, GW = ...
-local animations = GW.animations
 
 local comboBar
 
@@ -11,10 +10,10 @@ local function ComboFrame_Update(self)
 
     local comboPoints = GetComboPoints(self.unit, "target")
 
-    if comboPoints > 0 then
+    if comboPoints > 0 and UnitExists("target") then
         if not self:IsShown() then
 			self:Show()
-			UIFrameFadeIn(self, COMBOFRAME_FADE_IN)
+			UIFrameFadeIn(self, COMBOFRAME_FADE_IN, 0, 1)
 		end
 
         local chargedPowerPoints = GetUnitChargedPowerPoints and GetUnitChargedPowerPoints("player") or {}
@@ -157,6 +156,10 @@ local function UpdateSettings(targetFrame)
     else
         -- only check vehicle stuff
         comboBar:Hide()
+        comboBar:UnregisterEvent("PLAYER_TARGET_CHANGED")
+        comboBar:UnregisterEvent("UNIT_POWER_FREQUENT")
+        comboBar:UnregisterEvent("UNIT_MAXPOWER")
+        comboBar:UnregisterEvent("PLAYER_ENTERING_WORLD")
     end
 end
 GW.UpdateComboBarOnTargetFrame = UpdateSettings
