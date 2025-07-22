@@ -214,9 +214,12 @@ GW.AddForProfiling("bank", "OnHide", OnHide)
 
 local function OnEvent(self, event, ...)
     if event == "BANKFRAME_OPENED" then
+        BankFrame.BankPanel:SetBankType(Enum.BankType.Character)
         self:GetParent():Show()
+        BankFrame.BankPanel:Show()
     elseif event == "BANKFRAME_CLOSED" then
         self:GetParent():Hide()
+        BankFrame.BankPanel:Hide()
     elseif event == "BAG_UPDATE" then
         local containerID = ...
         if self.selectedTabID == containerID then
@@ -265,9 +268,6 @@ local function SkinAccountBankTabMenu(self)
 end
 
 local function LoadBank(helpers)
-    BankFrame:SetScript("OnShow", nil)
-    BankFrame:SetScript("OnHide", nil)
-    BankFrame:SetScript("OnEvent", nil)
     inv = helpers
 
     if GW.settings.BAG_ITEM_SIZE > 40 then
@@ -440,7 +440,7 @@ local function LoadBank(helpers)
         "OnClick",
         function()
             f.buttonSort.tooltipText = BAG_CLEANUP_BANK
-            --BankFrame.BankPanel:SetBankType(Enum.BankType.Character)
+            BankFrame.BankPanel:SetBankType(Enum.BankType.Character)
             f.BankPanel:SetBankType(Enum.BankType.Character)
             f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
             f.BankPanel.MoneyFrame:RefreshContents()
@@ -456,7 +456,7 @@ local function LoadBank(helpers)
         "OnClick",
         function()
             f.buttonSort.tooltipText = BAG_CLEANUP_ACCOUNT_BANK
-            --BankFrame.BankPanel:SetBankType(Enum.BankType.Account)
+            BankFrame.BankPanel:SetBankType(Enum.BankType.Account)
             f.BankPanel:SetBankType(Enum.BankType.Account)
             f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Account)
             f.BankPanel.MoneyFrame:RefreshContents()
