@@ -1,5 +1,4 @@
 local _, GW = ...
-local animations = GW.animations
 
 local comboBar
 
