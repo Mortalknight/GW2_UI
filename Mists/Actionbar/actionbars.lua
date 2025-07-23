@@ -585,53 +585,6 @@ end
 GW.setActionButtonStyle = setActionButtonStyle
 GW.AddForProfiling("Actionbars2", "setActionButtonStyle", setActionButtonStyle)
 
-local red_R, red_G, red_B = RED_FONT_COLOR:GetRGB()
-local function helper_RangeUpdate(slot, inRange, checkRange)
-    local btn = nil
-    local indicator = "RED_OVERLAY"
-    local barPrefix = "Gw"
-    if slot <= 24 then
-        btn = MainMenuBar.gw_Buttons[slot]
-        indicator = GW.settings.MAINBAR_RANGEINDICATOR
-        -- 13 to 24 is page 2
-    elseif slot <= 36 then
-        btn = _G[barPrefix .. "MultiBarRight"].gw_Buttons[slot - 24]
-    elseif slot <= 48 then
-        btn = _G[barPrefix .. "MultiBarLeft"].gw_Buttons[slot - 36]
-    elseif slot <= 60 then
-        btn = _G[barPrefix .. "MultiBarBottomRight"].gw_Buttons[slot - 48]
-    elseif slot <= 72 then
-        btn = _G[barPrefix .. "MultiBarBottomLeft"].gw_Buttons[slot - 60]
-    elseif slot <= 144 then
-        -- not sure where the 73-144 range gets used?
-    elseif slot <= 156 then
-        btn = _G[barPrefix .. "MultiBar5"].gw_Buttons[slot - 144]
-    elseif slot <= 168 then
-        btn = _G[barPrefix .. "MultiBar6"].gw_Buttons[slot - 156]
-    elseif slot <= 180 then
-        btn = _G[barPrefix .. "MultiBar7"].gw_Buttons[slot - 168]
-    end
-
-    if not btn then
-        return
-    end
-
-    if checkRange and not inRange then
-        if indicator == "RED_INDICATOR" or indicator == "BOTH" then
-            btn.gw_RangeIndicator:Show()
-        end
-        if indicator == "RED_OVERLAY" or indicator == "BOTH" then
-            btn.icon:SetVertexColor(red_R, red_G, red_B, 1, true)
-        end
-    else
-        if btn.gw_RangeIndicator then
-            btn.gw_RangeIndicator:Hide()
-        end
-        local vc = btn.icon.savedVertexColor
-        btn.icon:SetVertexColor(vc.r, vc.g, vc.b, vc.a, true)
-    end
-end
-
 local function saveVertexColor(self, r, g, b, a, bypass)
     if bypass then
         return
@@ -642,14 +595,14 @@ local function saveVertexColor(self, r, g, b, a, bypass)
     self.savedVertexColor = {["r"] = r, ["g"] = g, ["b"] = b, ["a"] = a}
 end
 
-local function main_OnEvent(self, event, ...)
+local function main_OnEvent(_, event, ...)
     if event == "ACTION_RANGE_CHECK_UPDATE" then
         helper_RangeUpdate(...)
     elseif event == "PLAYER_EQUIPMENT_CHANGED" then
         actionBarEquipUpdate()
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         local forceCombat = (event == "PLAYER_REGEN_DISABLED")
-        fadeCheck(self, forceCombat)
+        fadeCheck(MainMenuBarArtFrame, forceCombat)
     end
 
     -- keep actionbutton style
@@ -716,15 +669,14 @@ local function updateMainBar()
                 end
             end
 
-            local rangeIndicator =
-                CreateFrame("FRAME", "GwActionRangeIndicator" .. i, hotkey:GetParent(), "GwActionRangeIndicatorTmpl")
+            local rangeIndicator = CreateFrame("FRAME", nil, hotkey:GetParent(), "GwActionRangeIndicatorTmpl")
             rangeIndicator:SetFrameStrata("BACKGROUND")
             rangeIndicator:SetPoint("TOPLEFT", btn, "BOTTOMLEFT", -1, -2)
             rangeIndicator:SetPoint("TOPRIGHT", btn, "BOTTOMRIGHT", 1, -2)
-            _G["GwActionRangeIndicator" .. i .. "Texture"]:SetVertexColor(147 / 255, 19 / 255, 2 / 255)
+            rangeIndicator.texture:SetVertexColor(147 / 255, 19 / 255, 2 / 255)
             rangeIndicator:Hide()
 
-            btn["gw_RangeIndicator"] = rangeIndicator
+            btn.gw_RangeIndicator = rangeIndicator
             btn["gw_HotKey"] = hotkey
 
             if GW.settings.BUTTON_ASSIGNMENTS then
@@ -848,6 +800,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
             btn.showMacroName = showName
+            btn.rangeIndicatorSetting = "RED_OVERLAY"
 
             setActionButtonStyle(buttonName .. i, nil, nil, nil, hideActionBarBG)
 
@@ -858,6 +811,15 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)
             btn.noGrid = nil
             btn.changedColor = false
+
+            local rangeIndicator = CreateFrame("FRAME", nil, btn.HotKey:GetParent(), "GwActionRangeIndicatorTmpl")
+            rangeIndicator:SetFrameStrata("BACKGROUND")
+            rangeIndicator:SetPoint("TOPLEFT", btn, "BOTTOMLEFT", -1, -2)
+            rangeIndicator:SetPoint("TOPRIGHT", btn, "BOTTOMRIGHT", 1, -2)
+            rangeIndicator.texture:SetVertexColor(147 / 255, 19 / 255, 2 / 255)
+            rangeIndicator:Hide()
+
+            btn.gw_RangeIndicator = rangeIndicator
 
             btn_padding = btn_padding + settings.size + margin
             btn_this_row = btn_this_row + 1
@@ -1087,23 +1049,65 @@ local function actionButtonFlashing(btn, elapsed)
 end
 GW.AddForProfiling("Actionbars2", "actionButtonFlashing", actionButtonFlashing)
 
-local function actionButtons_OnUpdate(self, elapsed)
+
+local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
+
+local function actionButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
         if (ActionButton_IsFlashing(btn)) then
             actionButtonFlashing(btn, elapsed)
         end
+
+        if testRange then
+            local valid = IsActionInRange(btn.action)
+            local checksRange = (valid ~= nil)
+            local inRange = checksRange and valid
+            if checksRange and not inRange then
+                if btn.rangeIndicatorSetting == "RED_INDICATOR"  or btn.rangeIndicatorSetting == "BOTH" then
+                    btn.gw_RangeIndicator:Show()
+                end
+                if btn.rangeIndicatorSetting == "RED_OVERLAY"  or btn.rangeIndicatorSetting == "BOTH" then
+                    btn.icon:SetVertexColor(out_R, out_G, out_B, 1, true)
+                end
+            else
+                if btn.gw_RangeIndicator then
+                    btn.gw_RangeIndicator:Hide()
+                end
+                local vc = btn.icon.savedVertexColor
+                btn.icon:SetVertexColor(vc.r, vc.g, vc.b, vc.a, true)
+            end
+        end
     end
 end
 GW.AddForProfiling("Actionbars2", "actionButtons_OnUpdate", actionButtons_OnUpdate)
 
-local function multiButtons_OnUpdate(self, elapsed)
+local function multiButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
         if (ActionButton_IsFlashing(btn)) then
             actionButtonFlashing(btn, elapsed)
+        end
+        if testRange then
+            local valid = IsActionInRange(btn.action)
+            local checksRange = (valid ~= nil)
+            local inRange = checksRange and valid
+            if checksRange and not inRange then
+                if btn.rangeIndicatorSetting == "RED_INDICATOR"  or btn.rangeIndicatorSetting == "BOTH" then
+                    btn.gw_RangeIndicator:Show()
+                end
+                if btn.rangeIndicatorSetting == "RED_OVERLAY"  or btn.rangeIndicatorSetting == "BOTH" then
+                    btn.icon:SetVertexColor(out_R, out_G, out_B, 1, true)
+                end
+            else
+                if btn.gw_RangeIndicator then
+                    btn.gw_RangeIndicator:Hide()
+                end
+                local vc = btn.icon.savedVertexColor
+                btn.icon:SetVertexColor(vc.r, vc.g, vc.b, vc.a, true)
+            end
         end
     end
 end
@@ -1111,6 +1115,7 @@ GW.AddForProfiling("Actionbars2", "multiButtons_OnUpdate", multiButtons_OnUpdate
 
 local updateCap = 1 / 60 -- cap updates to 60 FPS
 actionBar_OnUpdate = function(self, elapsed)
+    local testRange = false
     local testFade = false
     self.rangeTimer = self.rangeTimer - elapsed
     self.fadeTimer = self.fadeTimer - elapsed
@@ -1122,6 +1127,7 @@ actionBar_OnUpdate = function(self, elapsed)
     self.elapsedTimer = updateCap
 
     if self.rangeTimer <= 0 then
+        testRange = true
         self.rangeTimer = TOOLTIP_UPDATE_TIME
     end
 
@@ -1137,21 +1143,21 @@ actionBar_OnUpdate = function(self, elapsed)
 
     -- update action bar buttons
     if self.gw_FadeShowing then
-        actionButtons_OnUpdate(self, elapsed)
+        actionButtons_OnUpdate(self, elapsed, testRange)
     end
 
     -- update multibar buttons
     if self.gw_Bar1.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar1, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar1, elapsed, testRange)
     end
     if self.gw_Bar2.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar2, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar2, elapsed, testRange)
     end
     if self.gw_Bar3.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar3, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar3, elapsed, testRange)
     end
     if self.gw_Bar4.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar4, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar4, elapsed, testRange)
     end
 end
 GW.AddForProfiling("Actionbars2", "actionBar_OnUpdate", actionBar_OnUpdate)
