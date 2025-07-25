@@ -1,17 +1,17 @@
 local _, GW = ...
 
 local function GetSpellCooldownWrapper(spellID)
-    if not spellID then return end
+	if not spellID then return end
 
-    if GetSpellCooldown then
-        local startTime, duration, isEnabled, modRate = GetSpellCooldown(spellID)
-        return {startTime = startTime, duration = duration, isEnabled = isEnabled, modRate = modRate}
-    else
-        local info = C_Spell.GetSpellCooldown(spellID)
-        if info then
-            return info
-        end
-    end
+	if GetSpellCooldown then
+		local startTime, duration, isEnabled, modRate = GetSpellCooldown(spellID)
+		return {startTime = startTime, duration = duration, isEnabled = isEnabled, modRate = modRate}
+	else
+		local info = C_Spell.GetSpellCooldown(spellID)
+		if info then
+			return info
+		end
+	end
 end
 GW.GetSpellCooldown = GetSpellCooldownWrapper
 
@@ -39,3 +39,22 @@ local function CompatibleTooltip(tt)
 end
 CompatibleTooltip(GameTooltip)
 CompatibleTooltip(GW.ScanTooltip)
+
+local function CropRatio(width, height, mult)
+	local left, right, top, bottom = 0.05, 0.95, 0.05, 0.95
+	if not mult then mult = 0.5 end
+
+	local ratio = width / height
+	if ratio > 1 then
+		local trimAmount = (1 - (1 / ratio)) * mult
+		top = top + trimAmount
+		bottom = bottom - trimAmount
+	else
+		local trimAmount = (1 - ratio) * mult
+		left = left + trimAmount
+		right = right - trimAmount
+	end
+
+	return left, right, top, bottom
+end
+GW.CropRatio = CropRatio

@@ -35,8 +35,8 @@ local AttributeCustomsVisibility = [[
 local AttributeInitialConfig = [[
     local header = self:GetParent()
 
-    self:SetWidth(header:GetAttribute("config-height"))
-    self:SetHeight(header:GetAttribute("config-width"))
+    self:SetWidth(header:GetAttribute("config-width"))
+    self:SetHeight(header:GetAttribute("config-height"))
 ]]
 
 local function setLongCD(self, stackCount)
@@ -341,6 +341,21 @@ local function AuraOnAttributeChanged(self, attribute, value)
     end
 end
 
+local function UpdateIcon(self, updateSize)
+    local db = GW.settings[self.header.setting]
+    local width, height = db.IconSize, (db.KeepSizeRatio and db.IconSize) or db.IconHeight
+    if updateSize then
+        self:SetWidth(width)
+        self:SetHeight(height)
+    end
+    if db.keepSizeRatio then
+        self.status.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
+    else
+        local left, right, top, bottom = GW.CropRatio(width, height)
+        self.status.icon:SetTexCoord(left, right, top, bottom)
+    end
+end
+
 function GwAuraTmpl_OnLoad(self)
     if self.gwInit then
         return
@@ -396,19 +411,22 @@ function GwAuraTmpl_OnLoad(self)
     self:SetScript("OnHide", AuraOnHide)
     self:SetScript("OnLeave", GameTooltip_Hide)
 
+    UpdateIcon(self)
+
     self.gwInit = true
 end
 
 local function UpdateAuraHeader(header)
     if not header then return end
 
-    local width = GW.settings[header.setting].IconSize
-    local height = GW.settings[header.setting].KeepSizeRatio and width or GW.settings[header.setting].IconHeight
-    local grow_dir = GW.settings[header.setting].GrowDirection
-    local maxWraps = GW.settings[header.setting].MaxWraps
-    local horizontalSpacing = GW.settings[header.setting].HorizontalSpacing
-    local verticalSpacing = GW.settings[header.setting].VerticalSpacing
-    local wrapAfter = GW.settings[header.setting].WrapAfter
+    local db = GW.settings[header.setting]
+    local width = db.IconSize
+    local height = db.KeepSizeRatio and width or db.IconHeight
+    local grow_dir = db.GrowDirection
+    local maxWraps = db.MaxWraps
+    local horizontalSpacing = db.HorizontalSpacing
+    local verticalSpacing = db.VerticalSpacing
+    local wrapAfter = db.WrapAfter
     if not wrapAfter or wrapAfter < 1 or wrapAfter > 20 then
         wrapAfter = 7
     end
@@ -419,9 +437,9 @@ local function UpdateAuraHeader(header)
     header:SetAttribute("config-height", height)
     header:SetAttribute("template", "GwAuraTmpl")
     header:SetAttribute("weaponTemplate", header.filter == "HELPFUL" and "GwAuraTmpl" or nil)
-    header:SetAttribute("sortMethod", GW.settings[header.setting].SortMethod)
-    header:SetAttribute("sortDirection", GW.settings[header.setting].SortDir)
-    header:SetAttribute("separateOwn", GW.settings[header.setting].Seperate)
+    header:SetAttribute("sortMethod", db.SortMethod)
+    header:SetAttribute("sortDirection", db.SortDir)
+    header:SetAttribute("separateOwn", db.Seperate)
     header:SetAttribute("wrapAfter", wrapAfter)
     header:SetAttribute("maxWraps", maxWraps)
     header:SetAttribute("minWidth", ((wrapAfter == 1 and 0 or horizontalSpacing) + width) * wrapAfter)
@@ -434,9 +452,9 @@ local function UpdateAuraHeader(header)
     header:SetAttribute("growDir", grow_dir)
     header:SetAttribute("initialConfigFunction", AttributeInitialConfig)
 
+-- print(db.KeepSizeRatio)
     for index, child in next, {header:GetChildren()} do
-        child:SetWidth(width)
-        child:SetHeight(height)
+        UpdateIcon(child, true)
 
         --icons arent being hidden when you reduce the amount of maximum buttons
         if index > (maxWraps * wrapAfter) and child:IsShown() then
