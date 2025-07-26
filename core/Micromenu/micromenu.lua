@@ -369,19 +369,19 @@ local function LatencyInfoToolTip()
     GameTooltip:ClearLines()
     GameTooltip_AddNewbieTip(MainMenuMicroButton, MainMenuMicroButton.tooltipText, 1.0, 1.0, 1.0, MainMenuMicroButton.newbieText)
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(L["FPS "] .. frameRate .." fps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["Latency (Home) "] .. lagHome .." ms", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["Latency (World) "] .. lagWorld .." ms", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["FPS"] .. " " .. frameRate .." fps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["Latency (Home)"] .. " " .. lagHome .." ms", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["Latency (World)"] .. " " .. lagWorld .." ms", 0.8, 0.8, 0.8)
     GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["Bandwidth (Download) "] .. GW.RoundDec(down,2) .. " Kbps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["Bandwidth (Upload) "] .. GW.RoundDec(up,2) .. " Kbps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["Bandwidth (Download)"] .. " " .. GW.RoundDec(down,2) .. " Kbps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["Bandwidth (Upload)"] .. " " .. GW.RoundDec(up,2) .. " Kbps", 0.8, 0.8, 0.8)
     GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
 
     for i = 1, numAddons do
         addonMemory = addonMemory + GetAddOnMemoryUsage(i)
     end
 
-    GameTooltip:AddLine(L["Memory for Addons: "] .. GW.RoundDec(addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["Memory for Addons:"] .. " " .. GW.RoundDec(addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
 
     for i = 1, numAddons do
         if type(AddonMemoryArray[i]) ~= "table" then
