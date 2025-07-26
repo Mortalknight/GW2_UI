@@ -213,7 +213,7 @@ local function LoadMerchantFrameSkin()
     end
 
     MerchantRepairItemButton:GwSkinButton(false, false, true)
-    MerchantGuildBankRepairButton:GetRegions():GwSetInside()
+    MerchantRepairItemButton:GetRegions():GwSetInside()
     if MerchantRepairItemButton.Icon then
         MerchantRepairItemButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     else

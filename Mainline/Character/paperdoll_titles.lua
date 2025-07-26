@@ -58,6 +58,10 @@ end
 
 local function saveKnowenTitles(titlewin, searchString)
     wipe(savedPlayerTitles)
+    if not showEarned and not showUnearned then
+        UpdateScrollBox(titlewin)
+        return
+    end
     local tableIndex = 0
     if showEarned then
         savedPlayerTitles[1] = {}

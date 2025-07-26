@@ -1349,7 +1349,7 @@ local function UpdateMainBarHot()
     fmActionbar:SetSize(btn_padding, used_height)
     fmActionbar.gw_Width = btn_padding
 
-    actionButtons_OnUpdate(MainMenuBar, 0, true)
+    actionButtons_OnUpdate(MainMenuBar, 0)
 end
 GW.UpdateMainBarHot = UpdateMainBarHot
 
