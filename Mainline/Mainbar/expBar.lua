@@ -158,9 +158,7 @@ local function UpdateReputation(self, lockLevelTextUnderMaxLevel)
     if watchedFactionData and watchedFactionData.factionID and watchedFactionData.factionID > 0 then
         local friendReputationInfo = C_GossipInfo.GetFriendshipReputation(watchedFactionData.factionID)
         local isParagon, isFriend, isMajor, isNormal = false, false, false, false
-        local MajorCurrentLevel, MajorNextLevel = 0, 0
         showRepu = true
-
 
         if C_Reputation.IsFactionParagon(watchedFactionData.factionID) then
             local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(watchedFactionData.factionID)
@@ -192,10 +190,8 @@ local function UpdateReputation(self, lockLevelTextUnderMaxLevel)
         elseif C_Reputation.IsMajorFaction(watchedFactionData.factionID) then
             local majorFactionData = C_MajorFactions.GetMajorFactionData(watchedFactionData.factionID)
             if majorFactionData then
-                MajorCurrentLevel = majorFactionData.renownLevel
-                MajorNextLevel = C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) and MajorCurrentLevel or (MajorCurrentLevel + 1)
-                repuLevel = MajorCurrentLevel
-                repuNextLevel = MajorNextLevel
+                repuLevel = majorFactionData.renownLevel
+                repuNextLevel = C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) and majorFactionData.renownLevel or (majorFactionData.renownLevel + 1)
                 if C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) then
                     valPrecRepu = 1
                 else
@@ -208,8 +204,6 @@ local function UpdateReputation(self, lockLevelTextUnderMaxLevel)
                     math.floor(valPrecRepu * 100))
                 self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
                 isMajor = true
-                repuLevel = MajorCurrentLevel
-                repuNextLevel = MajorNextLevel
             end
         else
             -- Normaler Ruf
@@ -230,18 +224,19 @@ local function UpdateReputation(self, lockLevelTextUnderMaxLevel)
             local reaction = watchedFactionData.reaction or 1
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
             isNormal = true
-
-            -- Setze das Level-Label basierend auf Rufdaten:
+        end
+         -- Setze das Level-Label basierend auf Rufdaten:
+        if not lockLevelTextUnderMaxLevel then
             local nextId = (watchedFactionData.reaction and watchedFactionData.reaction + 1) or 1
-
-            if not lockLevelTextUnderMaxLevel then
-                -- Hier wird level überschrieben, je nach Fraktionstyp:
-                level = isMajor and repuLevel or isFriend and friendReputationInfo.reaction or
-                        isParagon and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1)) or
-                        isNormal and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1))
-                        nextLevel = isParagon and L["Paragon"] or isFriend and "" or isMajor and repuNextLevel or
-                        isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
-            end
+            -- Hier wird level überschrieben, je nach Fraktionstyp:
+            level = isMajor and repuLevel or
+                isFriend and friendReputationInfo.reaction or
+                isParagon and L["Paragon"] or
+                isNormal and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1))
+            nextLevel = isParagon and L["Paragon"] or
+                isFriend and "" or
+                isMajor and repuNextLevel or
+                isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
         end
     end
     return showRepu, valPrecRepu, level, nextLevel
