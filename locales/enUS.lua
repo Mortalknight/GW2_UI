@@ -685,7 +685,6 @@ L["Bandwidth (Download)"] = true
 L["Bandwidth (Upload)"] = true
 L["Memory for Addons:"] = true
 L["Future Spells"] = true
-L["Ranged"] = true
 L["5 secound rule: display remaning time"] = true
 L["Energy/Mana Ticker"] = true
 L["Show Energy/Mana Ticker only in combat"] = true
