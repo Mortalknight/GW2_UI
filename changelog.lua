@@ -15,6 +15,16 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.2.4",{
+    {ct.bug, [=[Fix warbank itemlevel (retail)]=]},
+    {ct.change, [=[Hide multibars during pet battle (mists)]=]},
+    {ct.change, [=[Fix target health % values]=]},
+    {ct.change, [=[Fix combopoints on target]=]},
+    {ct.change, [=[Fix minimap instance difficult indicator (retail)]=]},
+    {ct.change, [=[Fix actionbar coloring (mists)]=]},
+    {ct.change, [=[Fix title filter error (retail)]=]},
+})
+
 addChange("8.2.3",{
     {ct.bug, [=[Loading error]=]},
     {ct.change, [=[Add more options to player de/buff settings]=]},
