@@ -333,10 +333,13 @@ local function setReputationDetails(frame, data)
     if data.factionID and C_Reputation.IsFactionParagon(data.factionID) then
         local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(data.factionID)
         local value = currentValue % threshold
+        local isMajorFaction = C_Reputation.IsMajorFaction(data.factionID)
+        local majorFactionData = isMajorFaction and C_MajorFactions.GetMajorFactionData(data.factionID)
+        local currentRankText = isMajorFaction and RENOWN_LEVEL_LABEL:format(majorFactionData.renownLevel) or friendInfo.friendshipFactionID and friendInfo.reaction or currentRank
 
-        frame.name:SetText(hasRewardPending and data.name .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon:32:32:0:0|t" or data.name)
+        frame.name:SetText(hasRewardPending and frame.name:GetText() .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon:32:32:0:0|t" or frame.name:GetText())
 
-        frame.currentRank:SetText(friendInfo.friendshipFactionID and friendInfo.reaction or currentRank)
+        frame.currentRank:SetText(currentRankText)
         frame.nextRank:SetText(L["Paragon"] .. (currentValue > threshold and (" (" .. RoundDec(currentValue / threshold, 0) .. "x)") or ""))
 
         frame.currentValue:SetText(GW.GetLocalizedNumber(value))
