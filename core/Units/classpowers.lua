@@ -7,9 +7,9 @@ local CPWR_FRAME
 
 local function UpdateVisibility(self, inCombat)
     if self.onlyShowInCombat then
-        self:SetAlpha(inCombat and self.shouldShowBar and 1 or 0)
+        self:SetShown(inCombat and self.shouldShowBar)
     else
-        self:SetAlpha(self.shouldShowBar and 1 or 0)
+        self:SetShown(self.shouldShowBar)
     end
 end
 
