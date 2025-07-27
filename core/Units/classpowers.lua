@@ -255,14 +255,14 @@ local function findBuff(unit, searchID)
     if unit == "player" then
         local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(searchID)
         if auraInfo then
-            return auraInfo.name, auraInfo.applications, auraInfo.duration, auraInfo.expirationTime
+            return auraInfo
         end
     else
         local auraData
         for i = 1, 40 do
             auraData = C_UnitAuras.GetAuraDataByIndex(unit, i)
             if auraData and auraData.spellId == searchID then
-                return auraData.name, auraData.applications, auraData.duration, auraData.expirationTime
+                return auraData
             elseif not auraData then
                 break
             end
@@ -279,12 +279,11 @@ local function findDebuff(unit, searchID, unitSource)
         auraData = C_UnitAuras.GetDebuffDataByIndex(unit, i)
 
         if auraData and ((unitSource == auraData.sourceUnit and auraData.spellId == searchID) or (unitSource == nil and auraData.spellId == searchID)) then
-            return auraData.name, auraData.applications, auraData.duration, auraData.expirationTime
+            return auraData
         elseif not auraData then
             break
         end
     end
-
 
     return nil, nil, nil, nil
 end
@@ -292,25 +291,24 @@ GW.AddForProfiling("classpowers", "findDebuff", findDebuff)
 
 local searchIDs = {}
 local function findBuffs(unit, ...)
-    local auraData
     table.wipe(searchIDs)
     for i = 1, select("#", ...) do
-        searchIDs["ID" .. select(i, ...)] = true
+        searchIDs[select(i, ...)] = true
     end
-    local results = nil
+
+    local results = {}
+
     for i = 1, 40 do
-        auraData = C_UnitAuras.GetAuraDataByIndex(unit, i)
+        local auraData = C_UnitAuras.GetBuffDataByIndex(unit, i)
         if not auraData then
             break
-        elseif searchIDs["ID" .. auraData.spellId] then
-            if results == nil then
-                results = {}
-            end
+        end
+        if searchIDs[auraData.spellId] then
             results[#results + 1] = { auraData.name, auraData.applications, auraData.duration, auraData.expirationTime }
         end
     end
 
-    return results
+   return #results > 0 and results or nil
 end
 GW.AddForProfiling("classpowers", "findBuffs", findBuffs)
 
@@ -744,22 +742,22 @@ GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
 
 -- WARRIOR
 local function powerRend(self)
-    local _, _, duration, expires = findDebuff("target", 388539, "player")
-    if duration ~= nil then
+    local auraData = findDebuff("target", 388539, "player")
+    if auraData and auraData.duration ~= nil then
         self.customResourceBar:Show()
-        local remainingPrecantage = (expires - GetTime()) / duration
-        local remainingTime = duration * remainingPrecantage
+        local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
+        local remainingTime = auraData.duration * remainingPrecantage
         self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     else
         self.customResourceBar:Hide()
     end
 end
 local function powerEnrage(self)
-    local _, _, duration, expires = findBuff("player", 184362)
-    if duration ~= nil then
+    local auraData = findBuff("player", 184362)
+    if auraData and auraData.duration ~= nil then
         self.customResourceBar:Show()
-        local remainingPrecantage = (expires - GetTime()) / duration
-        local remainingTime = duration * remainingPrecantage
+        local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
+        local remainingTime = auraData.duration * remainingPrecantage
         self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     else
         self.customResourceBar:Hide()
@@ -776,7 +774,6 @@ local function powerSBlock(self)
     end
     if results == nil then
         self.customResourceBar:Hide()
-
         return
     end
     self.customResourceBar:Show()
@@ -931,21 +928,21 @@ GW.AddForProfiling("classpowers", "setPaladin", setPaladin)
 -- HUNTER
 local function powerFrenzy(self, event)
     local fdc = self.decayCounter
-    local _, count, duration, expires = findBuff("pet", 272790)
+    local auraData = findBuff("pet", 272790)
 
-    if duration == nil then
+    if auraData and auraData.duration == nil or not auraData then
         fdc.count:SetText(0)
         self.gwPower = -1
         return
     end
 
-    fdc.count:SetText(count)
+    fdc.count:SetText(auraData.applications)
     local old_expires = self.gwPower
     old_expires = old_expires or -1
-    self.gwPower = expires
-    if event == "CLASS_POWER_INIT" or expires > old_expires then
-        local remainingPrecantage = (expires - GetTime()) / duration
-        local remainingTime = duration * remainingPrecantage
+    self.gwPower = auraData.expirationTime
+    if event == "CLASS_POWER_INIT" or auraData.expirationTime > old_expires then
+        local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
+        local remainingTime = auraData.duration * remainingPrecantage
         self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
         if event ~= "CLASS_POWER_INIT" then
             GW.AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
@@ -956,21 +953,21 @@ GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
 
 local function powerMongoose(self, event)
     local fdc = self.decayCounter
-    local _, count, duration, expires = findBuff("player", 259388)
+    local auraData = findBuff("player", 259388)
 
-    if duration == nil then
+    if auraData and auraData.duration == nil or not auraData then
         fdc.count:SetText(0)
         self.gwPower = -1
         return
     end
 
-    fdc.count:SetText(count)
+    fdc.count:SetText(auraData.applications)
     local old_expires = self.gwPower
     old_expires = old_expires or -1
-    self.gwPower = expires
-    if event == "CLASS_POWER_INIT" or expires > old_expires then
-        local remainingPrecantage = (expires - GetTime()) / duration
-        local remainingTime = duration * remainingPrecantage
+    self.gwPower = auraData.expirationTime
+    if event == "CLASS_POWER_INIT" or expauraData.expirationTimeires > old_expires then
+        local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
+        local remainingTime = auraData.duration * remainingPrecantage
         self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
         if event ~= "CLASS_POWER_INIT" then
             GW.AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
@@ -1294,26 +1291,26 @@ GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
 
 -- SHAMAN
 local function powerMaelstrom(self)
-    local _, count, duration = findBuff("player", 344179)
+    local auraData = findBuff("player", 344179)
 
-    if duration == nil then
+    if auraData and auraData.duration == nil then
         self.gwPower = -1
-        count = 0
+        auraData.applications = 0
     end
 
-    if count >= 5 then
+    if auraData and auraData.applications >= 5 then
         self.maelstrom.flare1:Show()
     else
         self.maelstrom.flare1:Hide()
     end
-    if count >= 10 then
+    if auraData and auraData.applications >= 10 then
         self.maelstrom.flare2:Show()
     else
         self.maelstrom.flare2:Hide()
     end
 
     for i = 1, 10 do
-        if count >= i then
+        if auraData and auraData.applications >= i then
             self.maelstrom["rune" .. i]:Show()
         else
             self.maelstrom["rune" .. i]:Hide()
@@ -1393,18 +1390,15 @@ end
 GW.AddForProfiling("classpowers", "powerArcane", powerArcane)
 
 local function powerFrost(self, event)
-    local _, count, _, _ = findBuff("player", 205473)
-
-    if not count then count = 0 end
+    local auraData = findBuff("player", 205473)
+    local count = auraData and auraData.applications or 0
 
     local old_power = self.gwPower
     old_power = old_power or -1
 
-    local p = count
-
     self.gwPower = count
     self.background:SetTexCoord(0, 1, 0.125 * 5, 0.125 * (5 + 1))
-    self.fill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
+    self.fill:SetTexCoord(0, 1, 0.125 * count, 0.125 * (count + 1))
 
     if old_power < count and count > 0 and event ~= "CLASS_POWER_INIT" then
         animFlare(self, 32, -16, 2, true)
@@ -1668,10 +1662,10 @@ local function powerStagger(self, event, ...)
     end
 
     if unit == "player" and event == "UNIT_AURA" then
-        local _, _, duration, expires = findBuff("player", GW.Mists and 115307 or 215479)
+        local auraData = findBuff("player", GW.Mists and 115307 or 215479)
 
-        if expires then
-            fb.ironskin.expires = expires
+        if auraData and auraData.expirationTime then
+            fb.ironskin.expires = auraData.expirationTime
             if fb.ironskin.ticker then
                 fb.ironskin.ticker:Cancel()
             end
@@ -1687,17 +1681,17 @@ local function powerStagger(self, event, ...)
         end
 
         --This can be optimized by checking aura payload for changes rather then scaning auras
-        _, _, duration, expires = findBuff("player", 124275)   -- light stagger
-        if duration == nil then
-            _, _, duration, expires = findBuff("player", 124274)     -- medium stagger
-            if duration == nil then
-                _, _, duration, expires = findBuff("player", 124273) -- heavy stagger
+       auraData = findBuff("player", 124275)   -- light stagger
+        if auraData and auraData.duration == nil then
+            auraData = findBuff("player", 124274)     -- medium stagger
+            if auraData and auraData.duration == nil then
+                auraData = findBuff("player", 124273) -- heavy stagger
             end
         end
 
-        if duration then
-            local remainingPrecantage = (expires - GetTime()) / duration
-            local remainingTime = duration * remainingPrecantage
+        if auraData and auraData.duration then
+            local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
+            local remainingTime = auraData.duration * remainingPrecantage
 
             local pwrMax = UnitHealthMax("player")
             local pwr = UnitStagger("player")
