@@ -15,7 +15,7 @@ if GW.Retail then
     DODGEBAR_SPELLS["ROGUE"] = "2983" -- Sprint
     DODGEBAR_SPELLS["PRIEST"] = "[spec:1/2,known:121536] 121536; 73325" -- Angelic Feather if talented, else Leap of Faith
     DODGEBAR_SPELLS["DEATHKNIGHT"] = "444347,48265" -- Death's Advance
-    DODGEBAR_SPELLS["SHAMAN"] = "[spec:2] 58875,2645" -- Spirit Walk if Enhance
+    DODGEBAR_SPELLS["SHAMAN"] = "2645" -- Spirit Walk if Enhance
     DODGEBAR_SPELLS["MAGE"] = "[known:212653] 212653; 1953" -- Shimmer if talented, else Blink
     DODGEBAR_SPELLS_ATTR["MAGE"] = "1953" -- use Blink instead of Shimmer for the button attr
     DODGEBAR_SPELLS["WARLOCK"] = "48020" -- Demonic Circle: Teleport; TODO disable when Demonic Circle buff not active
@@ -483,7 +483,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
         fmdb:SetPoint("CENTER", parent, "CENTER", 0, 41)
         GW.RegisterScaleFrame(fmdb, 1.1)
     end
-    fmdb:SetAttribute("*type1", "spell")
+    fmdb:SetAttribute("type", "spell")
 
     -- setting these values in the XML creates animation glitches so we do it here instead
     local af = fmdb.arcfill
