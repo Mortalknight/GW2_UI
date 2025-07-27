@@ -38,7 +38,7 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
     end
 
     self.health.barOnUpdate = function()
-        self:UpdateHealthTextString(health, self.health:GetFillAmount())
+        self:UpdateHealthTextString(health, self.health:GetFillAmount(), healthMax) -- HealthMax is used in the overriden PartyFrame UpdateHealthTextString function
     end
 
     if forceUpdate then
