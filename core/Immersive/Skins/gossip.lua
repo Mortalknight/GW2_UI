@@ -507,7 +507,6 @@ local function LoadGossipSkin()
     end
     GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar)
     GW.HandleScrollControls(GossipFrame.GreetingPanel)
-    GossipFrame.GreetingPanel.ScrollBar:SetHideIfUnscrollable(true)
     GossipFrame.GreetingPanel.GoodbyeButton:Hide()
     GossipFrame.GreetingPanel.GoodbyeButton:GwStripTextures()
     GossipFrame.GreetingPanel.GoodbyeButton:GwSkinButton(false, true)
@@ -767,6 +766,7 @@ local function LoadGossipSkin()
         if GreetingPanelFirstLoad then
             GreetingPanelFirstLoad = false
             -- replace the element default size calculator
+            GossipFrame.GreetingPanel.ScrollBar:SetHideIfUnscrollable(true)
             GossipFrame.GreetingPanel.ScrollBox.view:SetPadding(10, 10, 10, 10, 0)
             GossipFrame.GreetingPanel.ScrollBox.view:SetElementExtentCalculator(function(_, elementData)
                 if elementData.greetingTextFrame then
