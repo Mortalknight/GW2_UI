@@ -896,7 +896,7 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
 
     self.icon:SetTexture(iconTexture)
 
-    self.icon:SetTexCoord(0.5, 1, 0, 0.625)
+    self.icon:SetTexCoord(0.51, 1, 0, 0.625)
 
     if tooltipText then
         self:HookScript("OnEnter", function()
@@ -913,7 +913,7 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
             if tab.isSelected then
                 tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
             else
-                tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
+                tab.icon:SetTexCoord(0.51, 1, 0, 0.625)
             end
         end)
         if self.isSelected then
@@ -922,7 +922,7 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
     else
         hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
             if self == tab then
-                tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
+                tab.icon:SetTexCoord(0.51, 1, 0, 0.625)
             end
         end)
         hooksecurefunc("PanelTemplates_SelectTab", function(tab)

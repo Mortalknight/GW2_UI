@@ -851,7 +851,7 @@ local function skinAchievementFrameTab(self,index)
     else
         self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_stats")
     end
-    self.icon:SetTexCoord(0.5,1,0,0.625)
+    self.icon:SetTexCoord(0.51, 1, 0, 0.625)
 end
 
 local function updateAchievementFrameTab(self,index)
@@ -884,7 +884,7 @@ local function AchievementFrameTabSetTabState()
             if not tab.skinned then
                 skinAchievementFrameTab(tab,i)
             end
-            tab.icon:SetTexCoord(0.5,1,0,0.625)
+            tab.icon:SetTexCoord(0.51, 1, 0, 0.625)
         end
     end
 
@@ -897,7 +897,7 @@ local function AchievementFrameTabSetTabState()
         if AchievementFrame.selectedTab~=1 then
             AchievementFrameHeader.breadCrumb:SetText(tab.Text:GetText())
         end
-        tab.icon:SetTexCoord(0,0.5,0,0.625)
+        tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
     end
 end
 
