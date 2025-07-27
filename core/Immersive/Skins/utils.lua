@@ -545,11 +545,13 @@ local function HandleTabs(self, direction, textures, setDesaturated)
         if direction == "top" then
             self.borderFrame.bottom:Hide()
         elseif direction == "left" then
-            self.background:SetTexCoord(1, 0, 1, 0)
+            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tab-tex-right-left")
+            self.background:SetTexCoord(1, 0, 0, 1)
             self.borderFrame.right:Hide()
             self.borderFrame.bottom:Show()
         elseif direction == "right" then
-            self.background:SetTexCoord(1, 0, 0, 1)
+            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tab-tex-right-left")
+            self.background:SetTexCoord(0, 1, 0, 1)
             self.borderFrame.left:Hide()
             self.borderFrame.bottom:Show()
         else
