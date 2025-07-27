@@ -1380,14 +1380,10 @@ local function DoesAncestryInclude(ancestry, frame)
             if currentFrame == ancestry then
                 return true;
             end
-            if type(currentFrame) == "table" and currentFrame.GetParent and type(currentFrame.GetParent) == "function" then
-                currentFrame = currentFrame:GetParent()
-            else
-                currentFrame = nil
-            end
+            currentFrame = GW.SafeGetParent(currentFrame)
         end
     end
-    return false;
+    return false
 end
 GW.DoesAncestryInclude = DoesAncestryInclude
 

@@ -6,10 +6,20 @@ local animations = GW.animations
 local CPWR_FRAME
 
 local function UpdateVisibility(self, inCombat)
-    if self.onlyShowInCombat then
-        self:SetShown(inCombat and self.shouldShowBar)
-    else
-        self:SetShown(self.shouldShowBar)
+    local shouldBeVisible = self.shouldShowBar and (not self.onlyShowInCombat or inCombat)
+    local targetAlpha = shouldBeVisible and 1 or 0
+    for _, frame in ipairs({
+        self,
+        self.customResourceBar,
+        self.customResourceBar.decay,
+        self.lmb,
+        self.lmb.decay,
+        self.exbar,
+        self.exbar.decay,
+    }) do
+        if frame then
+            GW.SetAlphaRecursive(frame, targetAlpha)
+        end
     end
 end
 
@@ -347,8 +357,6 @@ local function setManaBar(f)
         f:SetPoint("TOPLEFT", f.gwMover, 0, -3)
     end
 
-    f:Hide()
-
     f:SetScript("OnEvent", powerMana)
     C_Timer.After(0.5, function() powerMana(f, "CLASS_POWER_INIT") end)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
@@ -366,7 +374,7 @@ local function setLittleManaBar(f, barType)
     f.littleManaBarEventFrame:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f.littleManaBarEventFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
-GW.AddForProfiling("classpowers", "setManaBar", setManaBar)
+GW.AddForProfiling("classpowers", "setLittleManaBar", setLittleManaBar)
 
 -- COMBO POINTS (multi class use)
 local function powerCombo(self, event, ...)
@@ -1932,9 +1940,9 @@ local function selectType(f)
         showBar = setEvoker(f)
     end
 
-    if showBar and not f:IsShown() then
+    if showBar and f:GetAlpha() == 0 then
         showBar = true
-    elseif not showBar and f:IsShown() then
+    elseif not showBar and f:GetAlpha() == 1 then
         showBar = false
     end
 
@@ -1956,12 +1964,6 @@ local function barChange_OnEvent(self, event)
         end
         f.gwPlayerForm = s
         selectType(f)
-    elseif event == "PLAYER_TARGET_CHANGED" then
-        if UnitExists("target") and UnitCanAttack("player", "target") and f.barType == "combo" and not UnitIsDead("target") then
-            f:Show()
-        elseif f.barType == "combo" then
-            f:Hide()
-        end
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" or event == "FORCE_UPDATE" then
         f.gwPlayerForm = GetShapeshiftFormID()
         GW.CheckRole()
@@ -2046,12 +2048,6 @@ local function LoadClassPowers()
     cpf:ClearAllPoints()
     cpf:SetPoint("TOPLEFT", cpf.gwMover)
 
-    if not GW.Classic then
-        GW.MixinHideDuringPetAndOverride(cpf)
-        GW.MixinHideDuringPetAndOverride(cpf.customResourceBar)
-        GW.MixinHideDuringPetAndOverride(cpf.customResourceBar.decay)
-    end
-
     -- need to pull it out of core because of not existing atlas files on non retail clients
     if GW.Retail then
         for i = 1, 6 do
@@ -2083,14 +2079,9 @@ local function LoadClassPowers()
     lmb.decay:SetPoint("TOPLEFT", lmb, "TOPLEFT", 0, 0)
     lmb.decay:SetPoint("BOTTOMRIGHT", lmb, "BOTTOMRIGHT", 0, 0)
     lmb:SetFrameStrata("MEDIUM")
-    lmb.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    lmb.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
     lmb.label:SetShadowColor(0, 0, 0, 1)
     lmb.label:SetShadowOffset(1, -1)
-
-    if not GW.Classic then
-        GW.MixinHideDuringPetAndOverride(lmb)
-        GW.MixinHideDuringPetAndOverride(lmb.decay)
-    end
 
     -- create an extra mana power bar that is used sometimes
     local exbar = GW.CreateAnimatedStatusBar("GwPlayerAltClassExBar", cpf, "GwStatusPowerBar", true)
@@ -2112,6 +2103,11 @@ local function LoadClassPowers()
     exbar.decay:SetPoint("BOTTOMRIGHT", exbar, "BOTTOMRIGHT", 0, 0)
 
     if not GW.Classic then
+        GW.MixinHideDuringPetAndOverride(cpf)
+        GW.MixinHideDuringPetAndOverride(cpf.customResourceBar)
+        GW.MixinHideDuringPetAndOverride(cpf.customResourceBar.decay)
+        GW.MixinHideDuringPetAndOverride(lmb)
+        GW.MixinHideDuringPetAndOverride(lmb.decay)
         GW.MixinHideDuringPetAndOverride(exbar)
         GW.MixinHideDuringPetAndOverride(exbar.decay)
     end
@@ -2142,6 +2138,7 @@ local function LoadClassPowers()
 
     cpf.gwPlayerForm = GetShapeshiftFormID()
     cpf.unit = "player"
+    cpf:Show()
 
     updateVisibilitySetting(cpf, false)
     selectType(cpf)
