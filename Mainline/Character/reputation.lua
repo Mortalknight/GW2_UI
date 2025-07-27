@@ -254,7 +254,7 @@ local function detailsControls_OnHide(self)
 end
 
 local function ToggleDetailsButton(self, showDetails)
-    self:SetHeight(showDetails and  DETAIL_LG_H or DETAIL_H)
+    self:SetHeight(showDetails and DETAIL_LG_H or DETAIL_H)
     self.controles:SetShown(showDetails)
     if showDetails then
         self.repbg:SetTexCoord(unpack(GW.TexCoords))
