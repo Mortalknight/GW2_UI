@@ -347,6 +347,11 @@ local function evAddonLoaded(self, loadedAddonName)
             dbMigrated = true
         end
 
+        if GW.private.GW2_UI_VERSION == "WELCOME" then
+            GW.global.dbConverted = true
+            GW.private.dbConverted = true
+        end
+
         if dbMigrated then
             C_Timer.After(3, function() GW.WarningPrompt(L["DB was converted Reload is needed /reload"], function() C_UI.Reload() end) end)
             GW.Notice("DB was converted Reload is needed /reload")
