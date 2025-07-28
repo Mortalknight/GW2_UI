@@ -58,3 +58,30 @@ local function CropRatio(width, height, mult)
 	return left, right, top, bottom
 end
 GW.CropRatio = CropRatio
+
+local function SetAlphaRecursive(frame, alpha)
+    if not frame or not frame.SetAlpha then return end
+    frame:SetAlpha(alpha)
+
+    for _, child in ipairs({frame:GetChildren()}) do
+        SetAlphaRecursive(child, alpha)
+    end
+end
+GW.SetAlphaRecursive = SetAlphaRecursive
+
+local function SafeGetParent(obj)
+	if type(obj) ~= "table" then
+		return nil
+	end
+
+	local hasMethod = obj.GetParent and type(obj.GetParent) == "function"
+	if hasMethod then
+		local ok, parent = pcall(obj.GetParent, obj)
+		if ok then
+			return parent
+		end
+	end
+
+	return nil
+end
+GW.SafeGetParent = SafeGetParent

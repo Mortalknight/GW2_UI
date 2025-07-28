@@ -50,10 +50,10 @@ function GwObjectivesItemButtonMixin:SetItem(block)
         self.HotKey:Hide()
 
         -- Charges Updates
-        self.count:Hide()
+        self.Count:Hide()
         if self.charges > 1 then
-            self.count:SetText(self.charges)
-            self.count:Show()
+            self.Count:SetText(self.charges)
+            self.Count:Show()
         end
 
         self.UpdateButton(self)
@@ -96,11 +96,11 @@ function GwObjectivesItemButtonMixin:OnUpdate(elapsed)
 
     local charges = C_Item.GetItemCount(self.itemID, nil, true)
     if (not charges or charges ~= self.charges) then
-        self.count:Hide()
+        self.Count:Hide()
         self.charges = C_Item.GetItemCount(self.itemID, nil, true)
         if self.charges > 1 then
-            self.count:SetText(self.charges)
-            self.count:Show()
+            self.Count:SetText(self.charges)
+            self.Count:Show()
         end
     end
 

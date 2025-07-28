@@ -1375,15 +1375,15 @@ GW.BlizzardDropdownButtonInitializer = BlizzardDropdownButtonInitializer
 
 local function DoesAncestryInclude(ancestry, frame)
     if ancestry then
-        local currentFrame = frame;
+        local currentFrame = frame
         while currentFrame do
             if currentFrame == ancestry then
                 return true;
             end
-            currentFrame = type(currentFrame) == "table" and currentFrame.GetParent and currentFrame:GetParent() or nil
+            currentFrame = GW.SafeGetParent(currentFrame)
         end
     end
-    return false;
+    return false
 end
 GW.DoesAncestryInclude = DoesAncestryInclude
 

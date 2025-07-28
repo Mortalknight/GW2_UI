@@ -267,13 +267,12 @@ local function skinGossipOption(self)
     end
 end
 
-local function updateGossipOption(self)
+local function updateGossipOption(self, elementData)
     if not self.skinned then
         skinGossipOption(self)
     end
 
-    if self.GetElementData then
-        local elementData = self:GetElementData()
+    if elementData then
         if elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER or elementData.buttonType == GOSSIP_BUTTON_TYPE_TITLE then
             self:SetHeight(0)
         else
@@ -744,18 +743,15 @@ local function LoadGossipSkin()
     hooksecurefunc(GossipFrame.GreetingPanel.ScrollBox, "Update", function(frame)
         --Reset pointers for buttons
         gossipOptionPointer = {}
-        for _, button in next, { frame.ScrollTarget:GetChildren() } do
-            updateGossipOption(button)
-        end
         -- we need to check each button for button type so we dont count titles and spacers
-        local numButtons = 0
-        GossipFrame.GreetingPanel.ScrollBox:ForEachFrame(function(self)
-            local elementData = self:GetElementData()
+        local hasButton = false
+        GossipFrame.GreetingPanel.ScrollBox:ForEachFrame(function(self, elementData)
             if elementData.buttonType ~= GOSSIP_BUTTON_TYPE_DIVIDER and elementData.buttonType ~= GOSSIP_BUTTON_TYPE_TITLE then
-                numButtons = numButtons + 1
+                hasButton = true
             end
+            updateGossipOption(self, elementData)
         end)
-        if numButtons > 0 then
+        if hasButton then
             GossipFrame.ListBackground:Show()
             GossipFrame.GreetingPanel:Show()
         else
@@ -766,6 +762,7 @@ local function LoadGossipSkin()
         if GreetingPanelFirstLoad then
             GreetingPanelFirstLoad = false
             -- replace the element default size calculator
+            GossipFrame.GreetingPanel.ScrollBar:SetHideIfUnscrollable(true)
             GossipFrame.GreetingPanel.ScrollBox.view:SetPadding(10, 10, 10, 10, 0)
             GossipFrame.GreetingPanel.ScrollBox.view:SetElementExtentCalculator(function(_, elementData)
                 if elementData.greetingTextFrame then

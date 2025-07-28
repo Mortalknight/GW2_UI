@@ -382,15 +382,25 @@ local function worldMapSkin()
     MapLegendScrollFrame:GwStripTextures()
     MapLegendScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
     GW.HandleTrimScrollBar(MapLegendScrollFrame.ScrollBar)
-
     -- 11.1 Side Tabs
-    for _, tab in ipairs (QuestMapFrame.TabButtons) do
+    local lastTab = nil
+    for idx, tab in ipairs (QuestMapFrame.TabButtons) do
         GW.HandleTabs(tab, "right", {tab.Icon}, true)
+        if idx > 1 then
+            tab:ClearAllPoints()
+            tab:SetPoint("TOP", lastTab, "BOTTOM", 0, 1)
+        end
+        lastTab = tab
     end
     -- add a delay here so that other addons can add there tabs to that array
     C_Timer.After(2, function()
-        for _, tab in ipairs (QuestMapFrame.TabButtons) do
+        for idx, tab in ipairs (QuestMapFrame.TabButtons) do
             GW.HandleTabs(tab, "right", {tab.Icon}, true)
+            if idx > 1 then
+                tab:ClearAllPoints()
+                tab:SetPoint("TOP", lastTab, "BOTTOM", 0, 1)
+            end
+            lastTab = tab
         end
     end)
 

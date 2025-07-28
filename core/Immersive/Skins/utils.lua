@@ -545,11 +545,13 @@ local function HandleTabs(self, direction, textures, setDesaturated)
         if direction == "top" then
             self.borderFrame.bottom:Hide()
         elseif direction == "left" then
-            self.background:SetTexCoord(1, 0, 1, 0)
+            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tab-tex-right-left")
+            self.background:SetTexCoord(1, 0, 0, 1)
             self.borderFrame.right:Hide()
             self.borderFrame.bottom:Show()
         elseif direction == "right" then
-            self.background:SetTexCoord(1, 0, 0, 1)
+            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tab-tex-right-left")
+            self.background:SetTexCoord(0, 1, 0, 1)
             self.borderFrame.left:Hide()
             self.borderFrame.bottom:Show()
         else
@@ -894,7 +896,7 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
 
     self.icon:SetTexture(iconTexture)
 
-    self.icon:SetTexCoord(0.5, 1, 0, 0.625)
+    self.icon:SetTexCoord(0.51, 1, 0, 0.625)
 
     if tooltipText then
         self:HookScript("OnEnter", function()
@@ -911,7 +913,7 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
             if tab.isSelected then
                 tab.icon:SetTexCoord(0, 0.5, 0, 0.625)
             else
-                tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
+                tab.icon:SetTexCoord(0.51, 1, 0, 0.625)
             end
         end)
         if self.isSelected then
@@ -920,7 +922,7 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
     else
         hooksecurefunc("PanelTemplates_DeselectTab", function(tab)
             if self == tab then
-                tab.icon:SetTexCoord(0.5, 1, 0, 0.625)
+                tab.icon:SetTexCoord(0.51, 1, 0, 0.625)
             end
         end)
         hooksecurefunc("PanelTemplates_SelectTab", function(tab)
