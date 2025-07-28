@@ -231,7 +231,6 @@ local function DatabaseValueMigration()
             end
         end
         GW.settings.profileMetaDataFixed = true
-        GW.RefreshProfileScrollBox(GW2ProfileSettingsView.ScrollBox)
     end
 
     --player buff size
