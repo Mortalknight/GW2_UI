@@ -1,4 +1,19 @@
+8.2.5
+FIXES
+    - Fix quest sorting (era & mists)
+    - Fix reputation text (retail)
+    - Fix classpower
+    - Fix objectives tracker quest item (era)
 
+8.2.4
+FIXES
+    - Fix warbank itemlevel (retail)
+    - Hide multibars during pet battle (mists)
+    - Fix target health % values
+    - Fix combopoints on target
+    - Fix minimap instance difficult indicator (retail)
+    - Fix actionbar coloring (mists)
+    - Fix title filter error (retail)
 
 8.2.3
 FIXES

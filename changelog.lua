@@ -15,14 +15,21 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+ addChange("8.2.5",{
+    {ct.bug, [=[Fix quest sorting (era & mists)]=]},
+    {ct.bug, [=[Fix reputation text (retail)]=]},
+    {ct.bug, [=[Fix classpower]=]},
+    {ct.bug, [=[Fix objectives tracker quest item (era)]=]},
+})
+
 addChange("8.2.4",{
     {ct.bug, [=[Fix warbank itemlevel (retail)]=]},
-    {ct.change, [=[Hide multibars during pet battle (mists)]=]},
-    {ct.change, [=[Fix target health % values]=]},
-    {ct.change, [=[Fix combopoints on target]=]},
-    {ct.change, [=[Fix minimap instance difficult indicator (retail)]=]},
-    {ct.change, [=[Fix actionbar coloring (mists)]=]},
-    {ct.change, [=[Fix title filter error (retail)]=]},
+    {ct.bug, [=[Hide multibars during pet battle (mists)]=]},
+    {ct.bug, [=[Fix target health % values]=]},
+    {ct.bug, [=[Fix combopoints on target]=]},
+    {ct.bug, [=[Fix minimap instance difficult indicator (retail)]=]},
+    {ct.bug, [=[Fix actionbar coloring (mists)]=]},
+    {ct.bug, [=[Fix title filter error (retail)]=]},
 })
 
 addChange("8.2.3",{

@@ -1,3 +1,10 @@
+8.2.5
+FIXES
+    - Fix quest sorting (era & mists)
+    - Fix reputation text (retail)
+    - Fix classpower
+    - Fix objectives tracker quest item (era)
+
 8.2.4
 FIXES
     - Fix warbank itemlevel (retail)
