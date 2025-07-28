@@ -127,7 +127,7 @@ GW.DatabaseMigration = DatabaseMigration
 
 local function DatabaseValueMigration()
     -- migration for font module
-    if not GW.settings.fontModuleMigrationDone then
+    if GW.settings.FONTS_ENABLED then
         if not GW.settings.FONTS_ENABLED then
             GW.settings.FONT_STYLE_TEMPLATE = "BLIZZARD"
             GW.settings.FONTS_BIG_HEADER_SIZE = 16
@@ -140,16 +140,12 @@ local function DatabaseValueMigration()
         end
 
         GW.settings.FONTS_ENABLED = nil
-
-        GW.settings.fontModuleMigrationDone = true
     end
 
     -- migration minimap scale setting
-    if not GW.settings.MinimapScaleSetting then
+    if GW.settings.MINIMAP_SCALE then
         GW.settings.MINIMAP_SIZE = GW.settings.MINIMAP_SCALE
         GW.settings.MINIMAP_SCALE = nil
-
-        GW.settings.MinimapScaleSetting = true
     end
 
     -- migration for chat timestap
@@ -200,7 +196,7 @@ local function DatabaseValueMigration()
     end
 
     -- fix Default Profile tag
-    if not GW.settings.profileMetaDataFixed then
+    if not GW.settings.profileMetaDataFixed and GW.private.GW2_UI_VERSION ~= "WELCOME" then
         local profiles = GW.globalSettings:GetProfiles()
         for _, profile in pairs( profiles ) do
             if profile == "Default" and GW.globalSettings.profiles[profile].profileCreatedCharacter == UNKNOWN then
