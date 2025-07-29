@@ -1781,7 +1781,7 @@ local function styleChatWindow(frame)
         local middle = _G[t .. m] or (main and main[m])
         local right = _G[t .. r] or (main and main[r])
 
-        if (GW.Retail and texName == "Active") or (not GW.Retail and texName == "Selceted") then
+        if (GW.Retail and texName == "Active") or (not GW.Retail and texName == "Selected") then
             if left then
                 left:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
                 if GW.Retail then

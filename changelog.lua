@@ -15,6 +15,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.2.7",{
+    {ct.bug, [=[Fix hunter classpower]=]},
+    {ct.bug, [=[Fix micro stuttering while leaving combat (retail)]=]},
+})
+
 addChange("8.2.6",{
     {ct.bug, [=[Migration lua error for new users]=]},
     {ct.bug, [=[GW2 Layout creation if max Account Layouts are reached (retail)]=]},
