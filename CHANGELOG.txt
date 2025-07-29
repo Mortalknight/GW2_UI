@@ -1,3 +1,8 @@
+8.2.7
+FIXES
+    - Fix hunter classpower
+    - Fix micro stuttering while leaving combat (retail)
+
 8.2.6
 FIXES
     - Migration lua error for new users
