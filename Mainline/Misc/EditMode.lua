@@ -5,6 +5,8 @@ local eventFrame = CreateFrame("Frame")
 local hideFrames = {}
 eventFrame.hideFrames = hideFrames
 
+local hasAppliedChanges = false
+
 local function getGameMenuEditModeButton() -- MenuButton get saved while adding gw2 setting button
     local menu = GameMenuFrame
     return menu and menu.GwMenuButtons and GameMenuFrame.GwMenuButtons[HUD_EDIT_MODE_MENU]
@@ -16,14 +18,15 @@ local function SetEnabled(self, enabled)
     end
 end
 
-local function ApplyBlizzardEditModeChanges(self)
+local function ApplyBlizzardEditModeChanges()
     if InCombatLockdown() then
-        self:RegisterEvent("PLAYER_REGEN_ENABLED")
         return
     end
     GW.AddGw2Layout(true)
 
     MirrorTimerContainer:Show()
+
+    hasAppliedChanges = true
 end
 
 local function OnEvent(self, event)
@@ -46,9 +49,9 @@ local function OnEvent(self, event)
             end
         end
     end
-    if event == "PLAYER_ENTERING_WORLD" or event == "EDIT_MODE_LAYOUTS_UPDATED" or event == "PLAYER_REGEN_ENABLED" then
+    if event == "PLAYER_ENTERING_WORLD" or event == "EDIT_MODE_LAYOUTS_UPDATED" or (event == "PLAYER_REGEN_ENABLED" and not hasAppliedChanges) then
         if CheckActionBar() then
-            C_Timer.After(0, function() ApplyBlizzardEditModeChanges(self) end)
+            C_Timer.After(0, ApplyBlizzardEditModeChanges)
             -- only tigger that code once
             self:UnregisterEvent("EDIT_MODE_LAYOUTS_UPDATED")
             self:UnregisterEvent("PLAYER_ENTERING_WORLD")
