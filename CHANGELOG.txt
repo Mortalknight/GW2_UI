@@ -1,3 +1,10 @@
+8.2.6
+FIXES
+    - Migration lua error for new users
+    - GW2 Layout creation if max Account Layouts are reached (retail)
+    - Fix micromenu moving (mists)
+    - Copy chat / emote button not clickable (mists & era)
+
 8.2.5
 FIXES
     - Fix quest sorting (era & mists)

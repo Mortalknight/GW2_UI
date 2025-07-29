@@ -15,7 +15,14 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
- addChange("8.2.5",{
+addChange("8.2.6",{
+    {ct.bug, [=[Migration lua error for new users]=]},
+    {ct.bug, [=[GW2 Layout creation if max Account Layouts are reached (retail)]=]},
+    {ct.bug, [=[Fix micromenu moving (mists)]=]},
+    {ct.bug, [=[Copy chat / emote button not clickable (mists & era)]=]},
+})
+
+addChange("8.2.5",{
     {ct.bug, [=[Fix quest sorting (era & mists)]=]},
     {ct.bug, [=[Fix reputation text (retail)]=]},
     {ct.bug, [=[Fix classpower]=]},

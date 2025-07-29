@@ -1781,27 +1781,33 @@ local function styleChatWindow(frame)
         local middle = _G[t .. m] or (main and main[m])
         local right = _G[t .. r] or (main and main[r])
 
-        if texName == "Active" then
+        if (GW.Retail and texName == "Active") or (not GW.Retail and texName == "Selceted") then
             if left then
                 left:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
-                left:ClearAllPoints()
-                left:SetPoint("TOPRIGHT", tab.Left, "TOPRIGHT", 0, 2)
+                if GW.Retail then
+                    left:ClearAllPoints()
+                    left:SetPoint("TOPRIGHT", tab.Left, "TOPRIGHT", 0, 2)
+                end
                 left:SetBlendMode("BLEND")
                 left:SetVertexColor(1, 1, 1, 1)
             end
 
             if middle then
                 middle:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
-                middle:ClearAllPoints()
-                middle:SetPoint("LEFT", tab.Middle, "LEFT", 0, 2)
-                middle:SetPoint("RIGHT", tab.Middle, "RIGHT", 0, 2 )
+                if GW.Retail then
+                    middle:ClearAllPoints()
+                    middle:SetPoint("LEFT", tab.Middle, "LEFT", 0, 2)
+                    middle:SetPoint("RIGHT", tab.Middle, "RIGHT", 0, 2 )
+                end
                 middle:SetBlendMode("BLEND")
                 middle:SetVertexColor(1, 1, 1, 1)
             end
             if right then
                 right:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
-                right:ClearAllPoints()
-                right:SetPoint("TOPRIGHT", tab.Right, "TOPRIGHT", 0, 2)
+                if GW.Retail then
+                    right:ClearAllPoints()
+                    right:SetPoint("TOPRIGHT", tab.Right, "TOPRIGHT", 0, 2)
+                end
                 right:SetBlendMode("BLEND")
                 right:SetVertexColor(1, 1, 1, 1)
             end
@@ -1950,7 +1956,7 @@ local function styleChatWindow(frame)
     frame.copyButton:EnableMouse(true)
     frame.copyButton:SetAlpha(0.35)
     frame.copyButton:SetSize(20, 22)
-    frame.copyButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", GW.Retail and 20 or 0, 26)
+    frame.copyButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", GW.Retail and 20 or 0, GW.Retail and 26 or 4)
     frame.copyButton:SetFrameLevel(frame:GetFrameLevel() + 5)
 
     frame.copyButton.tex = frame.copyButton:CreateTexture(nil, "OVERLAY")
@@ -1970,11 +1976,11 @@ local function styleChatWindow(frame)
 
     --emote bar button
     if GW.settings.CHAT_KEYWORDS_EMOJI and (id ~= 2 and id ~= 3) then
-        frame.buttonEmote = CreateFrame("Frame", nil, frame)
+        frame.buttonEmote = CreateFrame("Frame", "BUTTON_EMOTE", frame)
         frame.buttonEmote:EnableMouse(true)
         frame.buttonEmote:SetAlpha(0.35)
         frame.buttonEmote:SetSize(12, 12)
-        frame.buttonEmote:SetPoint("TOPRIGHT", frame, "TOPRIGHT", GW.Retail and 0 or -20, 22)
+        frame.buttonEmote:SetPoint("TOPRIGHT", frame, "TOPRIGHT", GW.Retail and 0 or -20, GW.Retail and 22 or 0)
         frame.buttonEmote:SetFrameLevel(frame:GetFrameLevel() + 5)
 
         frame.buttonEmote.tex = frame.buttonEmote:CreateTexture(nil, "OVERLAY")

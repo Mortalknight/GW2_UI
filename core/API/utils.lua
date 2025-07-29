@@ -1396,3 +1396,48 @@ local function DoesAncestryIncludeAny(ancestry, frames)
     return false;
 end
 GW.DoesAncestryIncludeAny = DoesAncestryIncludeAny
+
+
+local function AddGw2Layout(init)
+    if not GW.Libs.LEMO:IsReady() then
+        C_Timer.After(0, function() AddGw2Layout(init) end)
+        return
+    end
+
+    GW.Libs.LEMO:LoadLayouts()
+
+    if init or (not init and GW.Libs.LEMO:GetActiveLayout() ~= "GW2_Layout") then
+        if not GW.Libs.LEMO:DoesLayoutExist("GW2_Layout") then
+            if GW.Libs.LEMO:GetNumAccountLayouts() < 5 then
+                GW.Libs.LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
+            else
+                GW.Libs.LEMO:AddLayout(Enum.EditModeLayoutType.Character, "GW2_Layout")
+            end
+        end
+        GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
+
+        GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.IconSize, 5)
+        GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.HideBarArt, 1)
+        GW.Libs.LEMO:SetFrameSetting(MultiBarBottomLeft, Enum.EditModeActionBarSetting.IconSize, 5)
+        GW.Libs.LEMO:SetFrameSetting(MultiBarBottomRight, Enum.EditModeActionBarSetting.IconSize, 5)
+        GW.Libs.LEMO:SetFrameSetting(MultiBarRight, Enum.EditModeActionBarSetting.IconSize, 5)
+        GW.Libs.LEMO:SetFrameSetting(MultiBarLeft, Enum.EditModeActionBarSetting.IconSize, 5)
+        GW.Libs.LEMO:SetFrameSetting(MultiBar5, Enum.EditModeActionBarSetting.IconSize, 5)
+        GW.Libs.LEMO:SetFrameSetting(MultiBar6, Enum.EditModeActionBarSetting.IconSize, 5)
+        GW.Libs.LEMO:SetFrameSetting(MultiBar7, Enum.EditModeActionBarSetting.IconSize, 5)
+        -- Main Actionbar
+        GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal)
+        GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumRows, 1)
+        GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumIcons, 12)
+        GW.Libs.LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.HUD_SCALE) or 1)))
+
+        -- PossessActionBar
+        GW.Libs.LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)
+        GW.Libs.LEMO:ApplyChanges()
+    end
+
+    if init then
+        GW.Libs.LEMO:RegisterForLayoutChangeBackToGW2Layout()
+    end
+end
+GW.AddGw2Layout = AddGw2Layout
