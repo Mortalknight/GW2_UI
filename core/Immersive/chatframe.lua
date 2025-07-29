@@ -1781,27 +1781,33 @@ local function styleChatWindow(frame)
         local middle = _G[t .. m] or (main and main[m])
         local right = _G[t .. r] or (main and main[r])
 
-        if texName == "Active" then
+        if texName == "Selected" then
             if left then
                 left:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
-                left:ClearAllPoints()
-                left:SetPoint("TOPRIGHT", tab.Left, "TOPRIGHT", 0, 2)
+                if GW.Retail then
+                    left:ClearAllPoints()
+                    left:SetPoint("TOPRIGHT", tab.Left, "TOPRIGHT", 0, 2)
+                end
                 left:SetBlendMode("BLEND")
                 left:SetVertexColor(1, 1, 1, 1)
             end
 
             if middle then
                 middle:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
-                middle:ClearAllPoints()
-                middle:SetPoint("LEFT", tab.Middle, "LEFT", 0, 2)
-                middle:SetPoint("RIGHT", tab.Middle, "RIGHT", 0, 2 )
+                if GW.Retail then
+                    middle:ClearAllPoints()
+                    middle:SetPoint("LEFT", tab.Middle, "LEFT", 0, 2)
+                    middle:SetPoint("RIGHT", tab.Middle, "RIGHT", 0, 2 )
+                end
                 middle:SetBlendMode("BLEND")
                 middle:SetVertexColor(1, 1, 1, 1)
             end
             if right then
                 right:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
-                right:ClearAllPoints()
-                right:SetPoint("TOPRIGHT", tab.Right, "TOPRIGHT", 0, 2)
+                if GW.Retail then
+                    right:ClearAllPoints()
+                    right:SetPoint("TOPRIGHT", tab.Right, "TOPRIGHT", 0, 2)
+                end
                 right:SetBlendMode("BLEND")
                 right:SetVertexColor(1, 1, 1, 1)
             end
