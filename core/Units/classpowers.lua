@@ -965,7 +965,7 @@ local function powerMongoose(self, event)
     local old_expires = self.gwPower
     old_expires = old_expires or -1
     self.gwPower = auraData.expirationTime
-    if event == "CLASS_POWER_INIT" or expauraData.expirationTimeires > old_expires then
+    if event == "CLASS_POWER_INIT" or auraData.expirationTime > old_expires then
         local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
         local remainingTime = auraData.duration * remainingPrecantage
         self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
