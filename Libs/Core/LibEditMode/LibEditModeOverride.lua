@@ -272,6 +272,18 @@ function lib:GetPresetLayoutNames()
   return names
 end
 
+function lib:GetNumAccountLayouts()
+  assert(layoutInfo, LOAD_ERROR)
+  local counter = 0
+  for _, layout in ipairs(layoutInfo.layouts) do
+    if layout.layoutType == Enum.EditModeLayoutType.Account then
+      counter = counter + 1
+    end
+  end
+
+  return counter
+end
+
 function lib:CanEditActiveLayout()
   assert(layoutInfo, LOAD_ERROR)
   return layoutInfo.layouts[layoutInfo.activeLayout].layoutType ~= Enum.EditModeLayoutType.Preset

@@ -1,5 +1,4 @@
 local _, GW = ...
-local LEMO = GW.Libs.LEMO
 
 local CheckActionBar = function() return (GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED) end
 local eventFrame = CreateFrame("Frame")
@@ -22,43 +21,7 @@ local function ApplyBlizzardEditModeChanges(self)
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
         return
     end
-    -- do that in the users profile, if this is not editable we create a gw2 profile with needed actionbar settings
-    if not LEMO:IsReady() then
-        C_Timer.After(0, function() ApplyBlizzardEditModeChanges(self) end)
-        return
-    end
-
-    LEMO:LoadLayouts()
-    local doesGw2LayoutExists = LEMO:DoesLayoutExist("GW2_Layout")
-    if not LEMO:CanEditActiveLayout() or not doesGw2LayoutExists then
-        if not doesGw2LayoutExists then
-            LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
-        end
-        LEMO:SetActiveLayout("GW2_Layout")
-    end
-
-    LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.IconSize, 5)
-    LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.HideBarArt, 1)
-    LEMO:SetFrameSetting(MultiBarBottomLeft, Enum.EditModeActionBarSetting.IconSize, 5)
-    LEMO:SetFrameSetting(MultiBarBottomRight, Enum.EditModeActionBarSetting.IconSize, 5)
-    LEMO:SetFrameSetting(MultiBarRight, Enum.EditModeActionBarSetting.IconSize, 5)
-    LEMO:SetFrameSetting(MultiBarLeft, Enum.EditModeActionBarSetting.IconSize, 5)
-    LEMO:SetFrameSetting(MultiBar5, Enum.EditModeActionBarSetting.IconSize, 5)
-    LEMO:SetFrameSetting(MultiBar6, Enum.EditModeActionBarSetting.IconSize, 5)
-    LEMO:SetFrameSetting(MultiBar7, Enum.EditModeActionBarSetting.IconSize, 5)
-
-    -- Main Actionbar
-    LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal)
-    LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumRows, 1)
-    LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumIcons, 12)
-    LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.HUD_SCALE) or 1)))
-
-    -- PossessActionBar
-    LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)
-
-    LEMO:ApplyChanges()
-
-    LEMO:RegisterForLayoutChangeBackToGW2Layout()
+    GW.AddGw2Layout(true)
 
     MirrorTimerContainer:Show()
 end
@@ -82,8 +45,9 @@ local function OnEvent(self, event)
                 end
             end
         end
-    elseif event == "PLAYER_ENTERING_WORLD" or event == "EDIT_MODE_LAYOUTS_UPDATED" or event == "PLAYER_REGEN_ENABLED" then
-        if CheckActionBar() and LEMO:IsReady() then
+    end
+    if event == "PLAYER_ENTERING_WORLD" or event == "EDIT_MODE_LAYOUTS_UPDATED" or event == "PLAYER_REGEN_ENABLED" then
+        if CheckActionBar() then
             C_Timer.After(0, function() ApplyBlizzardEditModeChanges(self) end)
             -- only tigger that code once
             self:UnregisterEvent("EDIT_MODE_LAYOUTS_UPDATED")
