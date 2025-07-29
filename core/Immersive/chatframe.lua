@@ -1950,7 +1950,7 @@ local function styleChatWindow(frame)
     frame.copyButton:EnableMouse(true)
     frame.copyButton:SetAlpha(0.35)
     frame.copyButton:SetSize(20, 22)
-    frame.copyButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", GW.Retail and 20 or 0, 26)
+    frame.copyButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", GW.Retail and 20 or 0, GW.Retail and 26 or 4)
     frame.copyButton:SetFrameLevel(frame:GetFrameLevel() + 5)
 
     frame.copyButton.tex = frame.copyButton:CreateTexture(nil, "OVERLAY")
@@ -1970,11 +1970,11 @@ local function styleChatWindow(frame)
 
     --emote bar button
     if GW.settings.CHAT_KEYWORDS_EMOJI and (id ~= 2 and id ~= 3) then
-        frame.buttonEmote = CreateFrame("Frame", nil, frame)
+        frame.buttonEmote = CreateFrame("Frame", "BUTTON_EMOTE", frame)
         frame.buttonEmote:EnableMouse(true)
         frame.buttonEmote:SetAlpha(0.35)
         frame.buttonEmote:SetSize(12, 12)
-        frame.buttonEmote:SetPoint("TOPRIGHT", frame, "TOPRIGHT", GW.Retail and 0 or -20, 22)
+        frame.buttonEmote:SetPoint("TOPRIGHT", frame, "TOPRIGHT", GW.Retail and 0 or -20, GW.Retail and 22 or 0)
         frame.buttonEmote:SetFrameLevel(frame:GetFrameLevel() + 5)
 
         frame.buttonEmote.tex = frame.buttonEmote:CreateTexture(nil, "OVERLAY")
