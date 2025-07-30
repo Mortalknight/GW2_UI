@@ -114,7 +114,7 @@ local function CreateStatsFrame(parent, anchorTo, width, globalName, specialOnEn
     statFrame.Label = textL
 
     local textR = statFrame:CreateFontString("GwHeroPanelStats_" .. globalName .. "StatText", "ARTWORK", "SystemFont_Outline")
-    textR:SetPoint("TOPRIGHT", statFrame, "TOPRIGHT", -10, 0)
+    textR:SetPoint("TOPRIGHT", statFrame, "TOPRIGHT", 10, 0)
     textR:SetJustifyH("RIGHT")
     textR:SetJustifyV("MIDDLE")
     statFrame.Value = textR
