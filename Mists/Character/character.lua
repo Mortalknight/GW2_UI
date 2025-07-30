@@ -258,13 +258,12 @@ local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y
 
     statFrame:ClearAllPoints()
     if stat == "DURABILITY" then
-        statFrame:SetPoint("TOPRIGHT", GwDressingRoom.stats, "TOPRIGHT", 22, -1)
         statFrame.icon:SetSize(25, 25)
         GW.DurabilityOnEvent(statFrame, "ForceUpdate")
     else
         statFrame.Value:SetText(statText)
-        statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
     end
+    statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
     grid, x, y = statGridPos(grid, x, y)
 
     if stat == "MOVESPEED" then
@@ -345,12 +344,6 @@ local function PaperDollUpdateStats()
     statText, tooltip1, tooltip2 = GW.stats.getMovementSpeed()
     grid, x, y, numShownStats = setStatFrame("MOVESPEED", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 
-    --resitance
-    for resistanceIndex = 2, 6 do
-        _, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex)
-        grid, x, y, numShownStats = setStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-    end
-
     --durability
     grid, x, y, numShownStats = setStatFrame("DURABILITY", numShownStats, "DURABILITY", nil, nil, grid, x, y)
 
@@ -407,11 +400,6 @@ local function PaperDollUpdatePetStats()
 
     statText, tooltip1, tooltip2 = GW.stats.getArmor("pet")
     grid, x, y, numShownStats = setPetStatFrame("ARMOR", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-
-    for resistanceIndex = 2, 6 do
-        _, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex, "pet")
-        grid, x, y, numShownStats = setPetStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-    end
 end
 GW.PaperDollUpdatePetStats = PaperDollUpdatePetStats
 
