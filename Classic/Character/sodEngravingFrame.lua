@@ -286,8 +286,6 @@ local function LoadEngravingFrame()
 	engravingFrame.scrollFrame.scrollBar.doNotHide = true
 	engravingFrame.scrollFrame.dynamic = EngravingFrame_CalculateScroll
 
-	engravingFrame.backButton:SetText(CHARACTER .. ": " .. RUNES)
-
 	HybridScrollFrame_CreateButtons(engravingFrame.scrollFrame, "GwRuneSpellButtonTemplate", 0, -1, "TOPLEFT", "TOPLEFT", 0, -1, "TOP", "BOTTOM")
 
     engravingFrame.dropdown:GwSkinDropDownMenu(80, nil, 80)

@@ -581,7 +581,8 @@ local function styleCharacterMenuButton(self, shadow)
     nextHeroPanelMenuButtonShadowOdd = not nextHeroPanelMenuButtonShadowOdd
 end
 
-local function styleCharacterMenuBackButton(self)
+local function styleCharacterMenuBackButton(self, key)
+    self:SetText(key)
     self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
     self:ClearNormalTexture()
     local fontString = self:GetFontString()
@@ -734,10 +735,10 @@ local function LoadCharacter()
                     styleCharacterMenuButton(GwCharacterMenu.runeMenu, nextHeroPanelMenuButtonShadowOdd)
                     styleCharacterMenuButton(GwCharacterMenu.petMenu, nextHeroPanelMenuButtonShadowOdd)
                 end
-                styleCharacterMenuBackButton(GwPaperSkills.backButton)
-                styleCharacterMenuBackButton(GwPaperHonor.backButton)
-                styleCharacterMenuBackButton(GwEngravingFrame.backButton)
-                styleCharacterMenuBackButton(GwDressingRoomPet.backButton)
+                styleCharacterMenuBackButton(GwPaperSkills.backButton, CHARACTER .. ": " .. SKILLS)
+                styleCharacterMenuBackButton(GwPaperHonor.backButton, CHARACTER .. ": " .. HONOR)
+                styleCharacterMenuBackButton(GwEngravingFrame.backButton, CHARACTER .. ": " .. RUNES)
+                styleCharacterMenuBackButton(GwDressingRoomPet.backButton, CHARACTER .. ": " .. PET)
 
                 -- add addon buttons here
                 firstAddonMenuButtonAnchor = GW.myClassID == ClassIndex.WARLOCK and GwCharacterMenu.petMenu or GW.myClassID  == ClassIndex.HUNTER and GwCharacterMenu.petMenu or GW.ClassicSOD and GwCharacterMenu.runeMenu or GwCharacterMenu.honorMenu

@@ -706,6 +706,14 @@ local function LoadPaperDoll()
 
     hooksecurefunc("ToggleCharacter", GwToggleCharacter)
 
+    GwDressingRoom.characterName:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
+    GwDressingRoom.characterData:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    GwDressingRoom.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+
+    GwDressingRoomPet.characterName:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
+    GwDressingRoomPet.characterData:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    GwDressingRoomPet.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+
     PaperDollUpdateStats()
     PaperDollUpdatePetStats()
     C_Timer.After(1, function()
