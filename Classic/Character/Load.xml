@@ -4,7 +4,6 @@
     <Include file ="sodEngravingFrame.xml"/>
     <Include file ="spellbook.xml"/>
     <Include file ="talents.xml"/>
-    <Include file ="title.xml"/>
     <Script file ="stats.lua"/>
     <Script file ="advanced_stats.lua"/>
     <Script file ="character.lua"/>
@@ -13,6 +12,5 @@
     <Script file ="sodEngravingFrame.lua"/>
     <Script file ="spellbook.lua"/>
     <Script file ="talents.lua"/>
-    <Script file ="titles.lua"/>
     <Script file ="windowManager.lua"/>
 </Ui>
