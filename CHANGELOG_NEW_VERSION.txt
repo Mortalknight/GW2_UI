@@ -1,3 +1,10 @@
+8.2.8
+FIXES
+    - Fix absorb bar toggle
+
+CHANGES
+    - Enable absorb bar toggle on Mists and Retail clients
+
 8.2.7
 FIXES
     - Fix hunter classpower

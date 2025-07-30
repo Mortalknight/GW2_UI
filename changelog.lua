@@ -15,6 +15,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.2.8",{
+    {ct.bug, [=[Fix absorb bar toggle]=]},
+    {ct.change, [=[Enable absorb bar toggle on Mists and Retail clients]=]},
+})
+
 addChange("8.2.7",{
     {ct.bug, [=[Fix hunter classpower]=]},
     {ct.bug, [=[Fix micro stuttering while leaving combat (retail)]=]},
