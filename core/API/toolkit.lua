@@ -768,13 +768,13 @@ local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddi
     end
 
     if textSizeType == GW.TextSizeType.BIG_HEADER then
-        object:SetFont(font, GW.settings.FONTS_BIG_HEADER_SIZE + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, (GW.settings.FONTS_BIG_HEADER_SIZE or 18) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
     elseif textSizeType == GW.TextSizeType.HEADER then
-        object:SetFont(font, GW.settings.FONTS_HEADER_SIZE + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, (GW.settings.FONTS_HEADER_SIZE or 16) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
     elseif textSizeType == GW.TextSizeType.NORMAL then
-        object:SetFont(font, GW.settings.FONTS_NORMAL_SIZE + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, (GW.settings.FONTS_NORMAL_SIZE or 14) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
     elseif textSizeType == GW.TextSizeType.SMALL then
-        object:SetFont(font, GW.settings.FONTS_SMALL_SIZE + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, (GW.settings.FONTS_SMALL_SIZE or 12) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
     end
 
     -- register font for size changes

@@ -5,110 +5,6 @@ local MAX_CONTAINER_ITEMS = 36
 local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder"
 local BACKDROP_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop"
 
---Pawn integration
-do
-    local PawnLoaded = false
-    local frame = CreateFrame("Frame")
-    local upgradeCache = {}
-    local pending = {}
-    local limit = 2 / 60 / 4
-    local resetInterval = 1 / 4
-    local timerResetsAt = 0
-    local left = 0
-    local lastRefresh = 0
-
-    local function PostRefresh(self, event, ...)
-        if event == "ADDON_LOADED" and not PawnLoaded then
-            local name = ...
-            if name == "Pawn" then
-                hooksecurefunc("PawnInvalidateBestItems", PostRefresh)
-                hooksecurefunc("PawnResetTooltips", PostRefresh)
-                hooksecurefunc("PawnOnInventoryChanged", PostRefresh)
-                self:UnregisterEvent("ADDON_LOADED")
-                PawnLoaded = true
-            end
-        end
-        local now = GetTime()
-        if now - lastRefresh < 0.1 then
-            return
-        end
-        lastRefresh = now
-
-        upgradeCache = {}
-        ContainerFrame_UpdateAll()
-    end
-
-    frame:RegisterEvent("PLAYER_LEVEL_UP")
-    frame:RegisterEvent("ADDON_LOADED")
-    frame:SetScript("OnEvent", PostRefresh)
-
-    local function ShouldPawnShow(itemLink)
-        local classID = select(6, C_Item.GetItemInfoInstant(itemLink))
-        return PawnLoaded and (classID == Enum.ItemClass.Armor or classID == Enum.ItemClass.Weapon)
-    end
-
-    local function GetPawnUpgradeStatus(itemLink)
-        if upgradeCache[itemLink] ~= nil then
-            return upgradeCache[itemLink]
-        end
-
-        local start = GetTimePreciseSec()
-
-        if start >= timerResetsAt then
-            timerResetsAt = start + resetInterval
-            left = limit
-        elseif left <= 0 then
-            return nil
-        end
-
-        local result = PawnShouldItemLinkHaveUpgradeArrowUnbudgeted(itemLink)
-        local elapsed = GetTimePreciseSec() - start
-
-        left = left - elapsed
-        if result ~= nil then
-            upgradeCache[itemLink] = result
-           return result
-        end
-
-        if C_Item.IsItemDataCachedByID(itemLink) then
-            upgradeCache[itemLink] = false
-           return false
-        end
-        return nil
-    end
-
-    local function OnUpdate(self)
-        for itemLink in pairs(pending) do
-            local result = GetPawnUpgradeStatus(itemLink)
-            if result then
-                pending[itemLink] = nil
-            end
-        end
-        if next(pending) == nil then
-            self:SetScript("OnUpdate", nil)
-            PostRefresh()
-        end
-    end
-
-    local function RegisterPawnUpgradeIcon(itemLink)
-        local result = upgradeCache[itemLink]
-        if result then
-            return result
-        end
-
-        result = ShouldPawnShow(itemLink) and GetPawnUpgradeStatus(itemLink)
-        if result == nil then
-            pending[itemLink] = true
-            frame:SetScript("OnUpdate", OnUpdate)
-        else
-            upgradeCache[itemLink] = result
-        end
-
-        return result
-    end
-    GW.RegisterPawnUpgradeIcon = RegisterPawnUpgradeIcon
-end
-
 -- reskins an ItemButton to use GW2_UI styling
 local function ReskinItemButton(b, overrideIconSize)
     if not b then return end
@@ -304,15 +200,6 @@ local function reskinItemButtons()
     end
 end
 
-local function CheckUpdateIcon(button, itemLink)
-    local itemIsUpgrade = GW.RegisterPawnUpgradeIcon(itemLink)
-
-    if itemIsUpgrade ~= nil then -- nil means not all the data was available to determine if this is an upgrade.
-        button.UpgradeIcon:SetShown(itemIsUpgrade)
-    end
-end
-GW.CheckUpdateIcon = CheckUpdateIcon
-
 local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays)
     if not button.gwBackdrop then
         return
@@ -375,7 +262,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
         end
         -- Show upgrade icon if active
         if itemInfo and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon then
-            CheckUpdateIcon(button, itemInfo.hyperlink)
+            GW.RegisterPawnUpgradeIcon(button, itemInfo.hyperlink)
         elseif button.UpgradeIcon then
             button.UpgradeIcon:Hide()
         end

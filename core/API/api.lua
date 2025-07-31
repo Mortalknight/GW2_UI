@@ -85,3 +85,113 @@ local function SafeGetParent(obj)
 	return nil
 end
 GW.SafeGetParent = SafeGetParent
+
+
+--Pawn integration
+do
+    local PawnLoaded = false
+    local frame = CreateFrame("Frame")
+    local upgradeCache = {}
+    local pending = {}
+    local limit = 2 / 60 / 4
+    local resetInterval = 1 / 8
+    local timerResetsAt = 0
+    local left = 0
+    local lastRefresh = 0
+
+	local function PostRefresh(forceUpdate)
+        local now = GetTime()
+        if (now - lastRefresh < 0.1) and not forceUpdate then
+            return
+        end
+        lastRefresh = now
+		ContainerFrame_UpdateAll()
+    end
+
+    local function OnEvent(self, event, ...)
+        if event == "ADDON_LOADED" and not PawnLoaded then
+            local name = ...
+            if name == "Pawn" or C_AddOns.IsAddOnLoaded("Pawn") then
+                hooksecurefunc("PawnInvalidateBestItems", PostRefresh)
+                hooksecurefunc("PawnResetTooltips", PostRefresh)
+                self:UnregisterEvent("ADDON_LOADED")
+                PawnLoaded = true
+            end
+		elseif event == "PLAYER_EQUIPMENT_CHANGED" then
+			PostRefresh(true)
+			upgradeCache = {}
+        end
+    end
+
+    frame:RegisterEvent("PLAYER_LEVEL_UP")
+	frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    frame:RegisterEvent("ADDON_LOADED")
+    frame:SetScript("OnEvent", OnEvent)
+
+    local function ShouldPawnShow(itemLink)
+        local classID = select(6, C_Item.GetItemInfoInstant(itemLink))
+        return PawnLoaded and (classID == Enum.ItemClass.Armor or classID == Enum.ItemClass.Weapon)
+    end
+
+    local function GetPawnUpgradeStatus(itemLink)
+        if upgradeCache[itemLink] ~= nil then
+            return upgradeCache[itemLink]
+        end
+
+        local start = GetTimePreciseSec()
+
+        if start >= timerResetsAt then
+            timerResetsAt = start + resetInterval
+            left = limit
+        elseif left <= 0 then
+            return nil
+        end
+
+        local result = PawnShouldItemLinkHaveUpgradeArrowUnbudgeted(itemLink)
+        local elapsed = GetTimePreciseSec() - start
+
+        left = left - elapsed
+        if result ~= nil then
+            upgradeCache[itemLink] = result
+           	return result
+        end
+
+        if C_Item.IsItemDataCachedByID(itemLink) then
+        	upgradeCache[itemLink] = false
+           	return false
+        end
+        return nil
+    end
+
+    local function OnUpdate(self)
+        for _, data in pairs(pending) do
+            local result = GetPawnUpgradeStatus(data.itemLink)
+            if result ~= nil then
+				data.button.UpgradeIcon:SetShown(result)
+                pending[data.itemLink] = nil
+            end
+        end
+
+        if next(pending) == nil then
+            self:SetScript("OnUpdate", nil)
+            PostRefresh()
+        end
+    end
+
+    local function RegisterPawnUpgradeIcon(button, itemLink)
+        local result = upgradeCache[itemLink]
+        if result ~= nil then
+            button.UpgradeIcon:SetShown(result)
+        end
+
+        result = ShouldPawnShow(itemLink) and GetPawnUpgradeStatus(itemLink)
+        if result == nil then
+            pending[itemLink] = {button = button, itemLink = itemLink}
+            frame:SetScript("OnUpdate", OnUpdate)
+        else
+            upgradeCache[itemLink] = result
+			button.UpgradeIcon:SetShown(result)
+        end
+    end
+    GW.RegisterPawnUpgradeIcon = RegisterPawnUpgradeIcon
+end

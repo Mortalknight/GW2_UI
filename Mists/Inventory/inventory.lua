@@ -60,7 +60,6 @@ local function reskinItemButton(b, overrideIconSize)
 
     if not b.UpgradeIcon then
         b.UpgradeIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
-        b.UpgradeIcon:SetSize(15, 15)
         b.UpgradeIcon:SetPoint("TOPRIGHT", 7, -1)
         b.UpgradeIcon:Hide()
     end
@@ -131,15 +130,6 @@ local function hookUpdateAnchors()
     end
 end
 GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
-
-local function CheckUpdateIcon(button)
-    local itemInfo = C_Container.GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
-    if not itemInfo.stackCount then return false end -- If the stack count is 0, it's clearly not an upgrade
-    if not itemInfo.hyperlink then return nil end -- If we didn't get an item link, but there's an item there, try again later
-    local itemIsUpgrade = PawnShouldItemLinkHaveUpgradeArrow(itemInfo.hyperlink)
-
-    button.UpgradeIcon:SetShown(itemIsUpgrade)
-end
 
 local function SetItemButtonQualityForBags(button, quality)
     button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
@@ -231,8 +221,10 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         end
 
         -- Show upgrade icon if active
-        if GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon and PawnShouldItemLinkHaveUpgradeArrow then
-            CheckUpdateIcon(button)
+        if itemInfo.hyperlink and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and PawnShouldItemLinkHaveUpgradeArrow and button.UpgradeIcon then
+            GW.RegisterPawnUpgradeIcon(button, itemInfo.hyperlink)
+        elseif button.UpgradeIcon then
+            button.UpgradeIcon:Hide()
         end
 
         -- Show ilvl if active
