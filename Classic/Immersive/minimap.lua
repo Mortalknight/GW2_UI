@@ -82,7 +82,7 @@ local function lfgAnimPvPStop()
 end
 GW.AddForProfiling("map", "lfgAnimPvPStop", lfgAnimPvPStop)
 
-local function lfgAnimPvP(elapse)
+local function lfgAnimPvP(_, elapse)
     if Minimap:IsShown() then
         MiniMapBattlefieldIcon:SetAlpha(1)
     else
@@ -305,9 +305,7 @@ local function SetUpLfgFrame()
 
     local hookedTimerFrame = CreateFrame("Frame")
     MiniMapBattlefieldFrame:HookScript("OnShow", function()
-        hookedTimerFrame:SetScript("OnUpdate", function(_, elapse)
-            lfgAnimPvP(elapse)
-        end)
+        hookedTimerFrame:SetScript("OnUpdate", lfgAnimPvP)
     end)
     MiniMapBattlefieldFrame:HookScript("OnHide", function()
         lfgAnimPvPStop()

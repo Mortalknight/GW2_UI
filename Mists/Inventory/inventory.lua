@@ -221,7 +221,7 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         end
 
         -- Show upgrade icon if active
-        if itemInfo.hyperlink and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and PawnShouldItemLinkHaveUpgradeArrow and button.UpgradeIcon then
+        if itemInfo.hyperlink and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon then
             GW.RegisterPawnUpgradeIcon(button, itemInfo.hyperlink)
         elseif button.UpgradeIcon then
             button.UpgradeIcon:Hide()
