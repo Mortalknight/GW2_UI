@@ -298,7 +298,7 @@ local function SkinInspectFrameOnLoad()
             frame:GwCreateBackdrop(GW.BackdropTemplates.Default)
             frame.backdrop:SetPoint("TOPLEFT", 9, -4)
             frame.backdrop:SetPoint("BOTTOMRIGHT", -24, 3)
-            frame:EnableMouse(true)
+            frame.backdrop:SetFrameLevel(frame:GetFrameLevel())
         end
     end
 end
