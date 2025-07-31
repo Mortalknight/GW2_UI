@@ -266,16 +266,16 @@ local function SkinInspectFrameOnLoad()
             end
         end
 
-        InspectGlyphs.Glyph1:SetPoint("TOPLEFT", 90, -7)
+        InspectGlyphs.Glyph1:SetPoint("TOPLEFT", 90, -10)
         InspectGlyphs.Glyph2:SetPoint("TOPLEFT", 15, 0)
-        InspectGlyphs.Glyph3:SetPoint("TOPLEFT", 90, -97)
+        InspectGlyphs.Glyph3:SetPoint("TOPLEFT", 90, -100)
         InspectGlyphs.Glyph4:SetPoint("TOPLEFT", 15, -90)
-        InspectGlyphs.Glyph5:SetPoint("TOPLEFT", 90, -187)
+        InspectGlyphs.Glyph5:SetPoint("TOPLEFT", 90, -190)
         InspectGlyphs.Glyph6:SetPoint("TOPLEFT", 15, -180)
     end)
 
     -- Give inspect frame model backdrop it's color back
-    for _, corner in pairs({"TopLeft","TopRight","BotLeft","BotRight"}) do
+    for _, corner in pairs({"TopLeft", "TopRight", "BotLeft", "BotRight"}) do
         local bg = _G["InspectModelFrameBackground" .. corner]
         if bg then
             bg:SetDesaturated(false)
