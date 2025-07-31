@@ -397,7 +397,6 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.LoadChromieTimerSkin()
         GW.LoadCovenantSanctumSkin()
         GW.LoadDeathRecapSkin()
-        GW.LoadInspectFrameSkin()
         GW.LoadItemUpgradeSkin()
         GW.LoadLFGSkin()
         GW.LoadOrderHallTalentFrameSkin()
@@ -413,6 +412,7 @@ local function evAddonLoaded(self, loadedAddonName)
 
     if not GW.Classic then
         GW.LoadSocketUISkin()
+        GW.LoadInspectFrameSkin()
     end
 
 end
