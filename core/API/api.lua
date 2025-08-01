@@ -116,8 +116,14 @@ do
                 hooksecurefunc("PawnResetTooltips", PostRefresh)
                 self:UnregisterEvent("ADDON_LOADED")
                 PawnLoaded = true
+                PostRefresh(true)
             end
 		elseif event == "PLAYER_EQUIPMENT_CHANGED" then
+            local slot = ...do
+                if slot >= C_Container.ContainerIDToInventoryID(1) then
+                    return
+                end
+            end
 			PostRefresh(true)
 			upgradeCache = {}
         end
