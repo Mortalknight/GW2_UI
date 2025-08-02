@@ -9,15 +9,6 @@ local PRIMARY_STATS={
     [5] ="SPIRIT"
 }
 GW.stats.PRIMARY_STATS = PRIMARY_STATS
-local RESITANCE_STATS = {
-    [1] = "Holy",
-    [2] = "Fire",
-    [3] = "Nature",
-    [4] = "Frost",
-    [5] = "Shadow",
-    [6] = "Arcane",
-}
-GW.stats.RESITANCE_STATS = RESITANCE_STATS
 
 local function formateStat(name, base, posBuff, negBuff)
     local effective = max(0, base + posBuff + negBuff)

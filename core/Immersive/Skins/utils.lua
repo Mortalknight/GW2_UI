@@ -623,6 +623,29 @@ local function HandleTabs(self, direction, textures, setDesaturated)
 end
 GW.HandleTabs = HandleTabs
 
+local function HandleRotateButton(btn)
+    if btn.isSkinned then return end
+
+    btn:GwSkinButton(false, true)
+    btn:SetSize(btn:GetWidth() - 14, btn:GetHeight() - 14)
+
+    local normTex = btn:GetNormalTexture()
+    local pushTex = btn:GetPushedTexture()
+    local highlightTex = btn:GetHighlightTexture()
+
+    normTex:GwSetInside()
+    normTex:SetTexCoord(0.3, 0.29, 0.3, 0.65, 0.69, 0.29, 0.69, 0.65)
+
+    pushTex:SetAllPoints(normTex)
+    pushTex:SetTexCoord(0.3, 0.29, 0.3, 0.65, 0.69, 0.29, 0.69, 0.65)
+
+    highlightTex:SetAllPoints(normTex)
+    highlightTex:SetColorTexture(1, 1, 1, 0.3)
+
+    btn.isSkinned = true
+end
+GW.HandleRotateButton = HandleRotateButton
+
 local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, detailBackgroundsXOffset, addLeftSidePanel, addFrameOpenAnimation)
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)

@@ -118,7 +118,7 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK" textureSubLevel="2"> 
+            <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture parentKey="classIcon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\character\pet-happiness">
                     <Size x="64" y="64"></Size>
                     <Anchors>
@@ -290,16 +290,6 @@
                 </Scripts>
             </Frame>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self.characterName:SetFont(UNIT_NAME_FONT, 14, "")
-                self.characterData:SetFont(UNIT_NAME_FONT, 12, "")
-                self.itemLevel:SetFont(UNIT_NAME_FONT, 24, "")
-                self.itemLevelLabel:SetFont(UNIT_NAME_FONT, 12, "")
-                self.itemLevelLabel:SetText(TRAINING_POINTS_LABEL)
-                self.backButton:SetText(CHARACTER .. ": " .. PET)
-            </OnLoad>
-        </Scripts>
     </Frame>
 
     <Button name="GwPaperSkillsItem" enableMouse="true" inherits="GwCharacterMenuBlank" virtual="true">
@@ -516,7 +506,6 @@
         </Frames>
         <Scripts>
             <OnLoad>
-                self.backButton:SetText(CHARACTER .. ": " .. SKILLS)
                 self:RegisterEvent("CHAT_MSG_SKILL")
                 self:RegisterEvent("TRADE_SKILL_UPDATE")
                 self:RegisterEvent("SKILL_LINES_CHANGED")
@@ -559,7 +548,6 @@
         </Frames>
         <Scripts>
             <OnLoad>
-                self.backButton:SetText(CHARACTER .. ": " .. HONOR)
                 self:RegisterEvent("PLAYER_PVP_KILLS_CHANGED")
                 self:RegisterEvent("PLAYER_ENTERING_WORLD")
                 self:RegisterEvent("PLAYER_PVP_RANK_CHANGED")
@@ -758,13 +746,6 @@
                 </Anchors>
             </PlayerModel>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self.characterName:SetFont(UNIT_NAME_FONT, 14, "")
-                self.characterData:SetFont(UNIT_NAME_FONT, 12, "")
-                self.itemLevel:SetFont(UNIT_NAME_FONT, 24, "")
-            </OnLoad>
-        </Scripts>
     </Button>
 
     <Frame name="GwCharacterWindowContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true" frameStrata="HIGH">

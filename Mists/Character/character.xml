@@ -414,15 +414,6 @@
                 </Scripts>
             </Frame>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self.characterName:SetFont(UNIT_NAME_FONT, 14, "")
-                self.characterData:SetFont(UNIT_NAME_FONT, 12, "")
-                self.itemLevel:SetFont(UNIT_NAME_FONT, 24, "")
-                self.itemLevelLabel:SetFont(UNIT_NAME_FONT, 12, "")
-                self.itemLevelLabel:SetText(TRAINING_POINTS_LABEL)
-            </OnLoad>
-        </Scripts>
     </Frame>
 
     <Frame name="GwPaperHonor" inherits="SecureHandlerBaseTemplate" hidden="true" virtual="true">
@@ -646,13 +637,6 @@
                 </Anchors>
             </PlayerModel>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self.characterName:SetFont(UNIT_NAME_FONT, 14, "")
-                self.characterData:SetFont(UNIT_NAME_FONT, 12, "")
-                self.itemLevel:SetFont(UNIT_NAME_FONT, 24, "")
-            </OnLoad>
-        </Scripts>
     </Button>
 
     <Frame name="GwCharacterWindowContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true" frameStrata="HIGH">

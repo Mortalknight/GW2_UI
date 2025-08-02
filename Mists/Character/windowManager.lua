@@ -803,7 +803,7 @@ local function LoadCharacter()
                 styleCharacterMenuBackButton(GwPaperTitles.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
                 styleCharacterMenuBackButton(GwPaperDollOutfits.backButton, CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
                 styleCharacterMenuBackButton(GwDressingRoomPet.backButton, CHARACTER .. ": " .. PET)
-                styleCharacterMenuBackButton(GwPaperDollBagItemList.backButton, CHARACTER .. ": " .. PET)
+                styleCharacterMenuBackButton(GwPaperDollBagItemList.backButton, CHARACTER .. ": " .. BAG_FILTER_EQUIPMENT)
 
                 -- add addon buttons here
                 fmGCW:SetAttribute("myClassId", GW.myClassID)

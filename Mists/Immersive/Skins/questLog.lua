@@ -490,19 +490,34 @@ local function LoadQuestLogFrameSkin()
     QuestProgressScrollFrameScrollBar:GwSkinScrollBar()
     QuestProgressScrollFrame:GwSkinScrollFrame()
 
-    QuestFrameAcceptButton:GwSkinButton(false, true)
-    QuestFrameDeclineButton:GwSkinButton(false, true)
-    QuestFrameCompleteButton:GwSkinButton(false, true)
-    QuestFrameGoodbyeButton:GwSkinButton(false, true)
-    QuestFrameCompleteQuestButton:GwSkinButton(false, true)
+	QuestFrameAcceptButton:GwSkinButton(false, true)
+	QuestFrameDeclineButton:GwSkinButton(false, true)
+	QuestFrameCompleteButton:GwSkinButton(false, true)
+	QuestFrameGoodbyeButton:GwSkinButton(false, true)
+	QuestFrameCompleteQuestButton:GwSkinButton(false, true)
 
-    QuestNPCModelTextFrame:GwStripTextures()
-    local w, h = QuestNPCModelTextFrame:GetSize()
-    QuestNPCModelTextFrame:GwStripTextures()
-    QuestNPCModelTextFrame.tex = QuestNPCModelTextFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
-    QuestNPCModelTextFrame.tex:SetPoint("TOP", QuestNPCModelTextFrame, "TOP", 0, 20)
-    QuestNPCModelTextFrame.tex:SetSize(w + 30, h + 60)
-    QuestNPCModelTextFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+	QuestNPCModelTextFrame:GwStripTextures()
+	QuestNPCModelTextFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+	QuestNPCModelTextFrame:SetPoint('BOTTOM', QuestModelScene, 0, -66)
 
+	QuestNPCModelText:SetTextColor(1, 1, 1)
+
+	QuestModelScene:SetHeight(253)
+	QuestModelScene:GwStripTextures()
+	QuestModelScene:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+
+	QuestNPCModelNameText:ClearAllPoints()
+	QuestNPCModelNameText:SetPoint("TOP", QuestModelScene, 0, -10)
+	QuestNPCModelNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+	QuestNPCModelNameText:SetTextColor(1, 1, 1)
+
+	QuestNPCModelText:SetJustifyH("CENTER")
+	QuestNPCModelTextScrollFrame:ClearAllPoints()
+	QuestNPCModelTextScrollFrame:SetPoint("TOPLEFT", QuestNPCModelTextFrame, 2, -2)
+	QuestNPCModelTextScrollFrame:SetPoint("BOTTOMRIGHT", QuestNPCModelTextFrame, -10, 6)
+	QuestNPCModelTextScrollChildFrame:GwSetInside(QuestNPCModelTextScrollFrame)
+
+	QuestNPCModelTextScrollFrame.ScrollBar:GwSkinScrollBar()
+	QuestNPCModelTextScrollFrame:GwSkinScrollFrame()
 end
 GW.LoadQuestLogFrameSkin = LoadQuestLogFrameSkin

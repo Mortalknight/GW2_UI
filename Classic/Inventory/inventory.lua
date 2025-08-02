@@ -182,16 +182,6 @@ local function hookUpdateAnchors()
 end
 GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 
-local function CheckUpdateIcon(button)
-    local itemInfo = C_Container.GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
-    if not itemInfo then return false end
-    if not itemInfo.stackCount then return false end -- If the stack count is 0, it's clearly not an upgrade
-    if not itemInfo.hyperlink then return nil end -- If we didn't get an item link, but there's an item there, try again later
-    local itemIsUpgrade = PawnShouldItemLinkHaveUpgradeArrow(itemInfo.hyperlink)
-
-    button.UpgradeIcon:SetShown(itemIsUpgrade)
-end
-
 local function SetItemButtonQualityForBags(button, quality)
     button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     button.IconOverlay:Hide()
@@ -257,8 +247,10 @@ local function SetItemButtonData(button, quality, itemIDOrLink)
         end
 
         -- Show upgrade icon if active
-        if GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon and PawnShouldItemLinkHaveUpgradeArrow then
-            CheckUpdateIcon(button)
+        if itemInfo and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon then
+            GW.RegisterPawnUpgradeIcon(button, itemInfo.hyperlink)
+        elseif button.UpgradeIcon then
+            button.UpgradeIcon:Hide()
         end
 
         -- Show ilvl if active
