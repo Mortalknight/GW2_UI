@@ -419,7 +419,17 @@ local function Friends_OnClick(self, button)
             local submenuStatus = rootDescription:CreateButton(PLAYER_STATUS)
 
             rootDescription:CreateButton(BN_BROADCAST_TOOLTIP, function()
-                StaticPopup_Show("SET_BN_BROADCAST")
+                GW.ShowPopup({text = BN_BROADCAST_TOOLTIP,
+                    button1 = ACCEPT,
+                    button2 = CANCEL,
+                    hasEditBox = true,
+                    maxLetters = 127,
+                    inputText = select(4, BNGetInfo()),
+                    EditBoxOnEnterPressed = function(popup) BNSetCustomMessage(popup.input:GetText()) end,
+                    EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+                    OnAccept = function(popup) BNSetCustomMessage(popup.input:GetText()) end,
+                    hideOnEscape = true}
+                )
             end)
 
             submenuStatus:CreateButton("|cff2BC226" .. AVAILABLE .. "|r", function()

@@ -565,7 +565,53 @@ local function bagHeader_OnClick(self, btn)
         layoutItems(self:GetParent())
         snapFrameSize(self:GetParent())
     elseif btn == "RightButton" then
-        StaticPopup_Show("GW_CHANGE_BAG_HEADER", nil, nil, bag_id)
+        GW.ShowPopup({text = L["New Bag Name"],
+            OnAccept = function(promptFrame)
+                GW.settings["BAG_HEADER_NAME" .. bag_id] = promptFrame.input:GetText()
+                _G["GwBagFrameGwBagHeader" .. bag_id].nameString:SetText(GW.settings["BAG_HEADER_NAME" .. bag_id])
+            end,
+            hasEditBox = true,
+            button1 = SAVE,
+            button2 = RESET,
+            EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+            OnCancel = function()
+                GW.settings["BAG_HEADER_NAME" .. bag_id] = ""
+                if tonumber(bag_id) > 0 then
+                    local slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
+                    local itemID = GetInventoryItemID("player", slotID)
+
+                    if itemID then
+                        local color = {r = 1, g = 1, b = 1}
+                        local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
+                        if itemRarity then
+                            color = GW.GetQualityColor(itemRarity)
+                        end
+
+                        _G["GwBagFrameGwBagHeader" .. bag_id].nameString:SetText(itemName or UNKNOWN)
+                        _G["GwBagFrameGwBagHeader" .. bag_id].nameString:SetTextColor(color.r, color.g, color.b, 1)
+                    end
+                else
+                    _G["GwBagFrameGwBagHeader" .. bag_id].nameString:SetText(BACKPACK_TOOLTIP)
+                end
+            end,
+        inputText = (function()
+            local customName = GW.settings["BAG_HEADER_NAME" .. bag_id]
+                if string.len(customName) == 0 then
+                    customName = nil
+                end
+                if tonumber(bag_id) > 0 then
+                    local slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
+                    local itemID = GetInventoryItemID("player", slotID)
+
+                    if itemID then
+                        local itemName = C_Item.GetItemInfo(itemID)
+                        return customName or itemName or UNKNOWN
+                    end
+                else
+                    return customName or BACKPACK_TOOLTIP
+                end
+        end)()}
+        )
     end
 end
 

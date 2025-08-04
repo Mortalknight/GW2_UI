@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local function unitExists(unit)
-	return unit and (UnitExists(unit) or ShowBossFrameWhenUninteractable(unit))
+	return unit and (UnitExists(unit) or UnitIsVisible(unit))
 end
 
 local function Update(self, event, unit)

@@ -4,7 +4,6 @@ local _, GW = ...
 local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, leftOffset, rightOffset, noTop)
     if middleTex then
         middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
-        middleTex:SetAlpha(0.5)
         middleTex:ClearAllPoints()
         middleTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
         middleTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
@@ -13,7 +12,6 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
     if leftTex then
         leftTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
         leftTex:SetWidth(2)
-        leftTex:SetAlpha(1)
         leftTex:ClearAllPoints()
         leftTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
         leftTex:SetPoint("BOTTOMLEFT", -(leftOffset or 0), 0)
@@ -23,7 +21,6 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
     if rightTex then
         rightTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
         rightTex:SetWidth(1)
-        rightTex:SetAlpha(1)
         rightTex:ClearAllPoints()
         rightTex:SetPoint("TOPRIGHT", (rightOffset or 0), 0)
         rightTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)

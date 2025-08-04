@@ -117,15 +117,14 @@ end
 GW.CreateProfileLayout = CreateProfileLayout
 
 local function CreateNewLayout(self)
-    GW.InputPrompt(
-        L["New layout name:"],
-        function()
-            if GwWarningPrompt.input:GetText() == nil then return end
-            local newName = GwWarningPrompt.input:GetText()
+    GW.ShowPopup({text = L["New layout name:"],
+        OnAccept = function(popup)
+            if popup.input:GetText() == nil then return end
+            local newName = popup.input:GetText()
             local savedLayouts = GW.GetAllLayouts()
             if savedLayouts[newName] then
                 GW.Notice("Layout with that name already exists")
-                GW.WarningPrompt("Layout with that name already exists")
+                GW.ShowPopup({text = "Layout with that name already exists"})
                 return
             end
             local newMoverFrameIndex = 0
@@ -141,34 +140,32 @@ local function CreateNewLayout(self)
                 newMoverFrameIndex = newMoverFrameIndex + 1
             end
             self:GetParent().savedLayoutDropDown:GenerateMenu()
-            GwWarningPrompt:Hide()
-        end
-    )
+            popup:Hide()
+        end,
+        hasEditBox = true,
+        notHideOnAccept = true
+    })
 end
 
 local function DeleteSelectedLayout(self)
-    GW.WarningPrompt(
-        L["Are you sure you want to delete the selected layout?"],
-        function()
+    GW.ShowPopup({text = L["Are you sure you want to delete the selected layout?"],
+        OnAccept = function()
             GW.global.layouts[GW.private.Layouts.currentSelected] = nil
             --also delete the assing settings
             GW.DeletePrivateLayoutByLayoutName(GW.private.Layouts.currentSelected)
             self:GetParent().savedLayoutDropDown:GenerateMenu()
-
-            GwWarningPrompt:Hide()
-        end
+        end}
     )
 end
 
 local function RenameSelectedLayout(self)
-    GW.InputPrompt(
-        L["Rename layout:"],
-        function()
-            if GwWarningPrompt.input:GetText() == nil then return end
-            local layoutName = GwWarningPrompt.input:GetText() or UNKNOWN
+    GW.ShowPopup({text = L["Rename layout:"],
+        OnAccept = function(popup)
+            if popup.input:GetText() == nil then return end
+            local layoutName = popup.input:GetText() or UNKNOWN
             if GW.global.layouts[layoutName] then
                 GW.Notice("Layout with that name already exists")
-                GW.WarningPrompt("Layout with that name already exists")
+                GW.ShowPopup({text = "Layout with that name already exists"})
                 return
             end
             GW.global.layouts[GW.private.Layouts.currentSelected].name = layoutName
@@ -177,10 +174,12 @@ local function RenameSelectedLayout(self)
             GW.private.Layouts.currentSelected = layoutName
             self:GetParent().savedLayoutDropDown:GenerateMenu()
 
-            GwWarningPrompt:Hide()
+            popup:Hide()
         end,
-        self:GetParent().savedLayoutDropDown:GetText()
-    )
+        hasEditBox = true,
+        notHideOnAccept = true,
+        inputText = self:GetParent().savedLayoutDropDown:GetText()
+    })
 end
 
 local function specSwitchHandlerOnEvent(self, event)

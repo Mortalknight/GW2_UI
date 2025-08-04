@@ -49,12 +49,8 @@ local function LoadSlashCommands()
                 GW.Notice(L["Settings are not available in combat!"])
                 return
             end
-            GW.WarningPrompt(
-                GW.L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],
-                function()
-                    GW.ResetToDefault()
-                    C_UI.Reload()
-                end
+            GW.ShowPopup({text =  GW.L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],
+                OnAccept = function() GW.ResetToDefault(); C_UI.Reload() end}
             )
         elseif msg == "error" then
             Gw2ErrorLog:Toggle()

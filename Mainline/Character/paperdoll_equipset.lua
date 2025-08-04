@@ -1,5 +1,4 @@
 local _, GW = ...
-local WarningPrompt = GW.WarningPrompt
 local g_selectionBehavior = nil
 local GwGearManagerPopupFrame
 
@@ -84,14 +83,13 @@ local function UpdateScrollBox(self)
 end
 
 local function outfitSaveButton_OnClick(self)
-    WarningPrompt(
-        TRANSMOG_OUTFIT_CONFIRM_SAVE:format(self:GetParent().setName),
-        function()
+    GW.ShowPopup({text = TRANSMOG_OUTFIT_CONFIRM_SAVE:format(self:GetParent().setName),
+        OnAccept = function()
             C_EquipmentSet.SaveEquipmentSet(self:GetParent().setID)
             UpdateScrollBox(GwPaperDollOutfits)
             toggleIgnoredSlots(false)
             outfitListButton_OnClick(self:GetParent())
-        end
+        end}
     )
 end
 GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveButton_OnClick)
@@ -131,13 +129,12 @@ end
 GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
 
 local function outfitDeleteButton_OnClick(self)
-    WarningPrompt(
-        TRANSMOG_OUTFIT_CONFIRM_DELETE:format(self:GetParent().setName),
-        function()
+    GW.ShowPopup({text = TRANSMOG_OUTFIT_CONFIRM_DELETE:format(self:GetParent().setName),
+        OnAccept = function()
             C_EquipmentSet.DeleteEquipmentSet(self:GetParent().setID)
 
             UpdateScrollBox(GwPaperDollOutfits)
-        end
+        end}
     )
 end
 GW.AddForProfiling("character_equipset", "outfitDeleteButton_OnClick", outfitDeleteButton_OnClick)

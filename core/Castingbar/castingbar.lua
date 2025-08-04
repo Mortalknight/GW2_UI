@@ -5,6 +5,9 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local animations = GW.animations
 local IsIn = GW.IsIn
 
+local IsSpellKnown = C_SpellBook.IsSpellKnown or IsPlayerSpell
+local IsSpellInSpellBook = C_SpellBook.IsSpellInSpellBook or IsSpellKnownOrOverridesKnown
+
 local CASTBAR_STAGE_DURATION_INVALID = -1
 
 local CASTINGBAR_TEXTURES = {
@@ -66,8 +69,8 @@ function GwCastingBarMixin:CheckForTicks()
     local talentTicks = baseTicks and GW.TalentChannelTicks[self.spellID]
     if talentTicks then
         for auraId, tickCount in next, talentTicks do
-            if IsPlayerSpell(auraId) then
-                if IsSpellKnownOrOverridesKnown(auraId) or IsPlayerSpell(auraId) then
+            if IsSpellKnown(auraId) then
+                if IsSpellInSpellBook(auraId, nil, true) or IsSpellKnown(auraId) then
 					baseTicks = tickCount
 					break
 				end

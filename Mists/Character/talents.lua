@@ -470,7 +470,7 @@ local function LoadTalents()
     local fnContainer_OnClick = function(self)
         local currentSpec = C_SpecializationInfo.GetSpecialization(nil, isPetTalents, openSpec)
         if (isPetTalents and self.specIndex ~= currentSpec and IsPetActive()) or ((not currentSpec or currentSpec > GetNumSpecializations(false, isPetTalents)) and C_SpecializationInfo.CanPlayerUseTalentSpecUI()) then
-            GW.WarningPrompt(CONFIRM_LEARN_SPEC, function() SetSpecialization(self.specIndex, isPetTalents) end, nil, YES, NO)
+            GW.ShowPopup({text = CONFIRM_LEARN_SPEC, OnAccept = function() SetSpecialization(self.specIndex, isPetTalents) end, button1 = YES, button2 = NO})
         end
     end
 

@@ -551,12 +551,7 @@ local function abandonProffesionOnClick(self)
     local skillIndex = self:GetParent().skillIndex
     local skillName = self:GetParent().skillName
 
-    GW.WarningPrompt(
-        UNLEARN_SKILL:format(skillName),
-        function()
-            AbandonSkill(skillIndex)
-        end
-    )
+    GW.ShowPopup({text = UNLEARN_SKILL:format(skillName), OnAccept = function() AbandonSkill(skillIndex) end})
 end
 
 local function abandonProffesionOnEnter(self)

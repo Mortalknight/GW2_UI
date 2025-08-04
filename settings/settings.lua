@@ -919,8 +919,12 @@ local function LoadSettings()
     sWindow:SetScript("OnHide", function()
         mf:Hide()
         if not GW.InMoveHudMode and GW.ShowRlPopup then
-            StaticPopup_Show("CONFIG_RELOAD")
             GW.ShowRlPopup = false
+            GW.ShowPopup({text = L["One or more of the changes you have made require a UI reload."],
+                OnAccept = function() C_UI.Reload() end,
+                button1 = ACCEPT,
+                button2 = CANCEL}
+            )
         end
     end)
     sWindow:SetScript( "OnEvent", function(self, event)

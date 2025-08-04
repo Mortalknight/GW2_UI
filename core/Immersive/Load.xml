@@ -8,9 +8,8 @@
     <Script file ="hudart.lua"/>
     <Include file ="experiencebar.xml"/>
     <Include file ="hudelements.xml"/>
-    <Script file ="staticPopupDialogs.lua"/>
-    <Include file ="warningPrompt.xml"/>
-    <Script file ="warningPrompt.lua"/>
+    <Include file ="popupFrame.xml"/>
+    <Script file ="popupFrame.lua"/>
     <Script file ="QuestReqItems.lua"/>
     <Include file ="QuestReqItems.xml"/>
     <Script file ="QuestViewData.lua"/>

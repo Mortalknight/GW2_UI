@@ -98,6 +98,7 @@ local function DisableBlizzardFrames()
         -- Raid Utility
         if not CompactRaidFrameManager_SetSetting then
             StaticPopup_Show("WARNING_BLIZZARD_ADDONS")
+            GW.ShowPopup({text = GW.L["It appears one of your AddOns have disabled the AddOn Blizzard_CompactRaidFrames. This can cause errors and other issues. The AddOn will now be re-enabled."], OnAccept = function() C_AddOns.EnableAddOn("Blizzard_CompactRaidFrames"); ReloadUI() end, button1 = OKAY})
         else
             CompactRaidFrameManager_SetSetting("IsShown", "0")
         end

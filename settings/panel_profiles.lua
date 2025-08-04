@@ -184,16 +184,11 @@ AddForProfiling("panel_profiles", "setProfile", setProfile)
 
 local function delete_OnClick(self)
     local p = self:GetParent()
-    GW.WarningPrompt(
-        L["Are you sure you want to delete this profile?"] .. "\n\n'" .. (p.profileName or UNKNOWN) .. "'",
-        function()
+    GW.ShowPopup({text = L["Are you sure you want to delete this profile?"] .. "\n\n'" .. (p.profileName or UNKNOWN) .. "'",
+        OnAccept = function()
             deleteProfile(p.profileName)
             UpdateScrollBox(ProfileWin)
-        end,
-        nil,
-        nil,
-        nil,
-        true
+        end}
     )
 end
 AddForProfiling("panel_profiles", "delete_OnClick", delete_OnClick)
@@ -201,11 +196,10 @@ AddForProfiling("panel_profiles", "delete_OnClick", delete_OnClick)
 local function activate_OnClick(self)
     local p = self:GetParent()
     if not p.canActivate then return end
-    GW.WarningPrompt(
-        L["Do you want to activate profile"] .. "\n\n'" .. (p.profileName or UNKNOWN) .."'?",
-        function()
+    GW.ShowPopup({text = L["Do you want to activate profile"] .. "\n\n'" .. (p.profileName or UNKNOWN) .."'?",
+        OnAccept = function()
             setProfile(p.profileName) -- triggers a reload
-        end
+        end}
     )
 end
 AddForProfiling("panel_profiles", "activate_OnClick", activate_OnClick)
@@ -247,15 +241,14 @@ local function changeIcon_OnClick(btn)
 end
 
 local function rename_OnClick(self)
-    GW.InputPrompt(
-        GARRISON_SHIP_RENAME_LABEL,
-        function()
-            if GwWarningPrompt.input:GetText() == nil then return end
-            local profileName = GwWarningPrompt.input:GetText() or UNKNOWN
+    GW.ShowPopup({text = GARRISON_SHIP_RENAME_LABEL,
+        OnAccept = function(popup)
+            if popup.input:GetText() == nil then return end
+            local profileName = popup.input:GetText() or UNKNOWN
             local profileOriginalName = self:GetParent().profileName
             if GW.globalSettings.profiles[profileName] then
                 GW.Notice("Profile with that name already exists")
-                GW.WarningPrompt("Profile with that name already exists")
+                GW.ShowPopup({text = "Profile with that name already exists"})
                 return
             end
             GW.globalSettings.profiles[profileName] = GW.copyTable(nil, GW.globalSettings.profiles[profileOriginalName])
@@ -280,11 +273,11 @@ local function rename_OnClick(self)
 
             UpdateScrollBox(ProfileWin)
 
-            GwWarningPrompt:Hide()
+            popup:Hide()
         end,
-        self:GetParent().profileName,
-        nil,
-        true
+        notHideOnAccept = true,
+        hasEditBox = true,
+        inputText = self:GetParent().profileName}
     )
 end
 
@@ -364,7 +357,7 @@ local function addProfile(name, profileData, copy, import)
                 importCounter = importCounter + 1
             else
                 GW.Notice("Profile with that name already exists")
-                GW.WarningPrompt("Profile with that name already exists")
+                GW.ShowPopup({text = "Profile with that name already exists"})
                 return
             end
         end
@@ -587,12 +580,11 @@ local function LoadProfilesPanel(sWindow)
     p.resetToDefaultFrame.desc:SetText(L["Load the default addon settings to the current profile."])
     p.resetToDefaultFrame.defaultSettings:SetScript("OnClick",
         function()
-            GW.WarningPrompt(
-                L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],
-                function()
+            GW.ShowPopup({text = L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],
+                OnAccept = function()
                     ResetToDefault()
                     C_UI.Reload()
-                end
+                end}
             )
         end
     )
@@ -602,12 +594,11 @@ local function LoadProfilesPanel(sWindow)
 
     p.menu.newProfile:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
     local fnGCNP_OnClick = function()
-        GW.InputPrompt(
-            NEW_COMPACT_UNIT_FRAME_PROFILE,
-            function()
-                addProfile(string.len(GwWarningPrompt.input:GetText()) == 0 and UNKNOWN or GwWarningPrompt.input:GetText())
-                GwWarningPrompt:Hide()
-            end
+        GW.ShowPopup({text = NEW_COMPACT_UNIT_FRAME_PROFILE,
+            OnAccept = function(popup)
+                addProfile(string.len(popup.input:GetText()) == 0 and UNKNOWN or popup.input:GetText())
+            end,
+            hasEditBox = true}
         )
     end
     p.menu.newProfile:SetScript("OnClick", fnGCNP_OnClick)

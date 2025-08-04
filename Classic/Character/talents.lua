@@ -7,21 +7,6 @@ local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
 local isPetTalents = false
 
-StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
-	text = CONFIRM_LEARN_PREVIEW_TALENTS,
-	button1 = YES,
-	button2 = NO,
-	OnAccept = function ()
-		LearnPreviewTalents(isPetTalents)
-	end,
-	OnCancel = function (self)
-	end,
-	hideOnEscape = 1,
-	timeout = 0,
-	exclusive = 1,
-    preferredIndex = 4
-}
-
 local function UpdateActiveSpec(activeTalentGroup)
     -- set the active spec
     activeSpec = 1
@@ -451,7 +436,12 @@ local function LoadTalents()
         updateTalentTrees()
     end)
     GwTalentFrame.bottomBar.prevLearn:SetScript("OnClick", function()
-        StaticPopup_Show("GW_CONFIRM_LEARN_PREVIEW_TALENTS")
+        GW.ShowPopup({text = CONFIRM_LEARN_PREVIEW_TALENTS,
+            button1 = YES,
+            button2 = NO,
+            OnAccept = function() LearnPreviewTalents(isPetTalents) end,
+            hideOnEscape = true}
+        )
         updateTalentTrees()
     end)
 

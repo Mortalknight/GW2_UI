@@ -274,7 +274,12 @@ local function LoadOverviewPanel(sWindow)
         GW.moveHudObjects(GW.MoveHudScaleableFrame)
     end
     local fnGSWD_OnClick = function()
-        StaticPopup_Show("JOIN_DISCORD")
+        GW.ShowPopup({text = L["Join Discord"],
+            hasEditBox = true,
+            inputText = "https://discord.gg/MZZtRWt",
+            EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+            hideOnEscape = true}
+        )
     end
     local fmGSWKB_OnClick = function()
         sWindow:Hide()

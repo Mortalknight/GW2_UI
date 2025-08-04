@@ -353,7 +353,7 @@ local function evAddonLoaded(self, loadedAddonName)
         end
 
         if dbMigrated then
-            C_Timer.After(3, function() GW.WarningPrompt(L["DB was converted Reload is needed /reload"], function() C_UI.Reload() end) end)
+            C_Timer.After(3, function() GW.ShowPopup({text = L["DB was converted Reload is needed /reload"], OnAccept = function() C_UI.Reload() end}) end)
             GW.Notice("DB was converted Reload is needed /reload")
         end
 
@@ -541,8 +541,8 @@ local function evPlayerLogin(self)
         GW.LoadHoverBinds()
     end
 
-    -- Create Warning Prompt
-    GW.CreateWarningPrompt()
+    -- Create Popup frame
+    GW.CreatePopupFrame()
 
     -- disable Move Anything bag handling
     disableMABags()
