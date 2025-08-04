@@ -23,29 +23,29 @@ end
 GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
 
 -- For creates a model effect somewhere on the hud with a trigger buff
-local function createModelFx(modelFX)
+local function createModelFx(self, modelFX)
     local anchor = modelFX.anchor
     local modelID = modelFX.modelID
     local modelPosition = modelFX.modelPosition
 
-    if modelID == Gw2_HudBackgroud.actionBarHudFX.currentModelID and Gw2_HudBackgroud.actionBarHudFX:IsShown() then
+    if modelID == self.actionBarHudFX.currentModelID and self.actionBarHudFX:IsShown() then
         return
     end
 
     if _G[anchor.target] == nil then
         return
     end
-    Gw2_HudBackgroud.actionBarHudFX.currentModelID = modelID
-    Gw2_HudBackgroud.actionBarHudFX:MakeCurrentCameraCustom()
-    Gw2_HudBackgroud.actionBarHudFX:SetParent(UIParent)
-    Gw2_HudBackgroud.actionBarHudFX:SetFrameStrata(Gw2_HudBackgroud:GetFrameStrata())
-    Gw2_HudBackgroud.actionBarHudFX:SetFrameLevel(Gw2_HudBackgroud:GetFrameLevel() - 1)
-    Gw2_HudBackgroud.actionBarHudFX:SetModel(modelID)
-    Gw2_HudBackgroud.actionBarHudFX:SetPosition(modelPosition.x, modelPosition.y, modelPosition.z)
-    Gw2_HudBackgroud.actionBarHudFX:SetFacing(modelPosition.rotation)
-    Gw2_HudBackgroud.actionBarHudFX:ClearAllPoints()
-    Gw2_HudBackgroud.actionBarHudFX:SetPoint(anchor.point, anchor.target, anchor.relPoint, anchor.x, anchor.y)
-    Gw2_HudBackgroud.actionBarHudFX:Show()
+    self.actionBarHudFX.currentModelID = modelID
+    self.actionBarHudFX:MakeCurrentCameraCustom()
+    self.actionBarHudFX:SetParent(UIParent)
+    self.actionBarHudFX:SetFrameStrata(self:GetFrameStrata())
+    self.actionBarHudFX:SetFrameLevel(self:GetFrameLevel() - 1)
+    self.actionBarHudFX:SetModel(modelID)
+    self.actionBarHudFX:SetPosition(modelPosition.x, modelPosition.y, modelPosition.z)
+    self.actionBarHudFX:SetFacing(modelPosition.rotation)
+    self.actionBarHudFX:ClearAllPoints()
+    self.actionBarHudFX:SetPoint(anchor.point, anchor.target, anchor.relPoint, anchor.x, anchor.y)
+    self.actionBarHudFX:Show()
 
     if GwHudFXDebug then
         GwHudFXDebug.x:SetText(modelPosition.x)
@@ -119,7 +119,7 @@ local function selectBg(self)
     end
 
     if modelFX then
-        createModelFx(modelFX)
+        createModelFx(self, modelFX)
     elseif self.actionBarHudFX:IsShown() and not GwHudFXDebug then
         self.actionBarHudFX:Hide()
     end

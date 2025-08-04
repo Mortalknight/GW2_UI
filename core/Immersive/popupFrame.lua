@@ -90,6 +90,8 @@ local function ShowPopup(info, data)
         return
     end
 
+    popup:SetFrameStrata("DIALOG")
+
     popup.isInUse = true
     popup.string:SetText(info.text)
     popup.OnAccept = info.OnAccept
