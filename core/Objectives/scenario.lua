@@ -411,9 +411,7 @@ function GwQuesttrackerScenarioBlockMixin:TimerUpdate(...)
         if wtype == LE_WORLD_ELAPSED_TIMER_TYPE_CHALLENGE_MODE then
             local mapID = C_ChallengeMode.GetActiveChallengeMapID()
             if mapID then
-                local timeLimit
-                local time3
-                local time2
+                local timeLimit, time2, time3
                 if GW.Retail then
                     _, _, timeLimit = C_ChallengeMode.GetMapUIInfo(mapID)
                     time2 = timeLimit * TIME_FOR_2
