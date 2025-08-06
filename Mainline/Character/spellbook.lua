@@ -384,7 +384,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
                                 local entryInfo = C_Traits.GetEntryInfo(configID, entryID)
                                 if entryInfo and entryInfo.definitionID then
                                     local definitionInfo = C_Traits.GetDefinitionInfo(entryInfo.definitionID)
-                                    if definitionInfo.spellID and IsPlayerSpell(definitionInfo.spellID) and IsPassiveSpell(definitionInfo.spellID) then
+                                    if definitionInfo.spellID and GW.IsPlayerSpell(definitionInfo.spellID) and IsPassiveSpell(definitionInfo.spellID) then
                                         local spellInfo = C_Spell.GetSpellInfo(definitionInfo.spellID)
                                         local skillType = "TALENT"
                                         btn = passiveGroup.pool:Acquire()
@@ -427,7 +427,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
         -- add spec spells
         local bonuses = {GetSpecializationSpells(C_SpecializationInfo.GetSpecialization(false, true), nil, true)}
         for i = 1, #bonuses, 2 do
-            if not IsSpellKnownOrOverridesKnown(bonuses[i], true) then
+            if not GW.IsSpellKnownOrOverridesKnown(bonuses[i], true) then
                 local isPassive = IsPassiveSpell(bonuses[i])
                 local name, _, icon = C_Spell.GetSpellInfo(bonuses[i])
 

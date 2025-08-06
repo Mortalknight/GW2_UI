@@ -40,6 +40,38 @@ end
 CompatibleTooltip(GameTooltip)
 CompatibleTooltip(GW.ScanTooltip)
 
+local function IsSpellKnownOrOverridesKnown(spellID, isPet)
+    if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
+        local spellBank = isPet and Enum.SpellBookSpellBank.Pet or Enum.SpellBookSpellBank.Player
+        local includeOverrides = true
+        return C_SpellBook.IsSpellInSpellBook(spellID, spellBank, includeOverrides)
+    else
+        return IsSpellKnownOrOverridesKnown(spellID, isPet)
+    end
+end
+GW.IsSpellKnownOrOverridesKnown = IsSpellKnownOrOverridesKnown
+
+local function IsSpellKnown(spellID, isPet)
+    if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
+        local spellBank = isPet and Enum.SpellBookSpellBank.Pet or Enum.SpellBookSpellBank.Player
+        local includeOverrides = false
+        return C_SpellBook.IsSpellInSpellBook(spellID, spellBank, includeOverrides)
+    else
+        return IsSpellKnown(spellID, isPet)
+    end
+end
+GW.IsSpellKnown = IsSpellKnown
+
+local function IsPlayerSpell(spellID)
+    if C_SpellBook and C_SpellBook.IsSpellKnown then
+        local spellBank = Enum.SpellBookSpellBank.Player
+        return C_SpellBook.IsSpellKnown(spellID, spellBank)
+    else
+        return IsSpellKnown(spellID)
+    end
+end
+GW.IsPlayerSpell = IsPlayerSpell
+
 local function CropRatio(width, height, mult)
 	local left, right, top, bottom = 0.05, 0.95, 0.05, 0.95
 	if not mult then mult = 0.5 end

@@ -88,7 +88,7 @@ local function LoadPlayerPanel(sWindow)
     addOptionText(p_player.scroll.scrollchild, L["Dodge Bar Ability"], L["Enter the spell ID which should be tracked by the dodge bar.\nIf no ID is entered, the default abilities based on your specialization and talents are tracked."], { getterSetter = "PLAYER_TRACKED_DODGEBAR_SPELL", callback = function(self)
             local spellId = self:GetNumber()
             local name = ""
-            if spellId > 0 and IsSpellKnown(spellId) then
+            if spellId > 0 and GW.IsSpellKnown(spellId) then
                 local spellInfo = C_Spell.GetSpellInfo(spellId)
                 name = spellInfo.name
             end

@@ -154,13 +154,13 @@ function GwDodgeBarMixin:InitBar(pew)
         if not v then return end
         if string.find(v, ",") then
             for _, spell in pairs(GW.splitString(v, ",", true)) do
-                if IsSpellKnown(tonumber(spell)) then
+                if GW.IsSpellKnown(tonumber(spell)) then
                     self.spellId = tonumber(spell)
                     break
                 end
             end
         else
-            self.spellId = IsSpellKnown(tonumber(v)) and tonumber(v) or (DODGEBAR_SPELLS_ATTR[GW.myclass] and tonumber(v)) or nil
+            self.spellId = GW.IsSpellKnown(tonumber(v)) and tonumber(v) or (DODGEBAR_SPELLS_ATTR[GW.myclass] and tonumber(v)) or nil
         end
     end
     Debug("Dodgebar spell for Tooltip: ", self.spellId)
@@ -171,7 +171,7 @@ function GwDodgeBarMixin:InitBar(pew)
             if string.find(v, ",") then
                 local found = false
                 for _, spell in pairs(GW.splitString(v, ",", true)) do
-                    if IsSpellKnown(tonumber(spell)) then
+                    if GW.IsSpellKnown(tonumber(spell)) then
                         self:SetAttribute("spell", tonumber(spell))
                         found = true
                         break

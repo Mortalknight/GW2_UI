@@ -35,7 +35,7 @@ local function spell_buttonOnEnter(self)
 
     if self.booktype == "pet" then isPet = true end
 
-    if IsSpellKnown(self.spellId, isPet) and self.futureSpellOverrider==nil then
+    if GW.IsSpellKnown(self.spellId, isPet) and self.futureSpellOverrider==nil then
         if not self.isFlyout then
             GameTooltip:SetSpellBookItem(self.spellbookIndex,self.booktype)
         else
@@ -421,13 +421,13 @@ end
 
 local function isHigherRankKnownAndThisNot(spellId, isPet)
     if not spellId then return false end
-    if IsPlayerSpell(spellId) or IsSpellKnown(spellId, isPet) then return false end
+    if GW.IsPlayerSpell(spellId) or GW.IsSpellKnown(spellId, isPet) then return false end
     for i = 1, 60 do
         if GW.Skills[GW.myclass][i] then
             for _ ,reqData in pairs(GW.Skills[GW.myclass][i]) do
                 if spellId == reqData.req then
                     isPet = reqData.pet ~= nil and reqData.pet == true
-                    if (IsPlayerSpell(reqData[1]) or IsSpellKnown(reqData[1], isPet) or IsSpellKnownOrOverridesKnown(reqData[1], isPet)) and (not IsPlayerSpell(spellId) or not IsSpellKnown(spellId, isPet) or not IsSpellKnownOrOverridesKnown(spellId, isPet)) then
+                    if (GW.IsPlayerSpell(reqData[1]) or GW.IsSpellKnown(reqData[1], isPet) or GW.IsSpellKnownOrOverridesKnown (reqData[1], isPet)) and (not GW.IsPlayerSpell(spellId) or not GW.IsSpellKnown(spellId, isPet) or not GW.IsSpellKnownOrOverridesKnown (spellId, isPet)) then
                         return true
                     else
                         return isHigherRankKnownAndThisNot(reqData[1], isPet)
@@ -440,8 +440,8 @@ local function isHigherRankKnownAndThisNot(spellId, isPet)
 end
 
 local function isAnyDependencieKnown(spellData, isPet)
-    if IsPlayerSpell(spellData[1]) or IsSpellKnown(spellData[1], isPet) or IsSpellKnownOrOverridesKnown(spellData[1], isPet) then return true end
-    if IsPlayerSpell(spellData.req) or IsSpellKnown(spellData.req, isPet) or IsSpellKnownOrOverridesKnown(spellData.req, isPet) then return true end
+    if GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnown(spellData[1], isPet) or GW.IsSpellKnownOrOverridesKnown (spellData[1], isPet) then return true end
+    if GW.IsPlayerSpell(spellData.req) or GW.IsSpellKnown(spellData.req, isPet) or GW.IsSpellKnownOrOverridesKnown (spellData.req, isPet) then return true end
 
     return false
 end
@@ -479,17 +479,17 @@ local function filterUnknownSpell(spellData)
 
             if isTalent then
                 if learned then
-                    show = not (IsPlayerSpell(spellData[1]) or IsSpellKnown(spellData[1], isPet) or IsSpellKnownOrOverridesKnown(spellData[1], isPet)) and isAnyDependencieKnown(spellData, isPet)
+                    show = not (GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnown(spellData[1], isPet) or GW.IsSpellKnownOrOverridesKnown (spellData[1], isPet)) and isAnyDependencieKnown(spellData, isPet)
                 else
                     show = false
                 end
             else
-                show = not (IsPlayerSpell(spellData[1]) or IsSpellKnown(spellData[1], isPet) or IsSpellKnownOrOverridesKnown(spellData[1], isPet)) and isAnyDependencieKnown(spellData, isPet)
+                show = not (GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnown(spellData[1], isPet) or GW.IsSpellKnownOrOverridesKnown (spellData[1], isPet)) and isAnyDependencieKnown(spellData, isPet)
             end
         end
     elseif isHigherKnownAndThisNot then
         show = false
-    elseif IsSpellKnown(spellData[1]) or IsPlayerSpell(spellData[1]) or IsSpellKnownOrOverridesKnown(spellData[1]) then
+    elseif GW.IsSpellKnown(spellData[1]) or GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnownOrOverridesKnown (spellData[1]) then
         show = false
     end
 

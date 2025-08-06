@@ -290,7 +290,7 @@ local function getMastery()
 	tooltip = title
 
     -- Class mastery spells are not used in MoP.
-	local isClassMasteryKnownOrUnused = ClassicExpansionAtLeast(LE_EXPANSION_MISTS_OF_PANDARIA) or IsSpellKnown(CLASS_MASTERY_SPELLS[class]);
+	local isClassMasteryKnownOrUnused = ClassicExpansionAtLeast(LE_EXPANSION_MISTS_OF_PANDARIA) or GW.IsSpellKnown(CLASS_MASTERY_SPELLS[class]);
 	local primaryTalentTree = C_SpecializationInfo.GetSpecialization();
 	if (isClassMasteryKnownOrUnused and primaryTalentTree) then
 		local masterySpells = C_SpecializationInfo.GetSpecializationMasterySpells(primaryTalentTree)

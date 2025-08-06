@@ -153,7 +153,7 @@ end
 local function updateTextureBasedOnCondition(self)
     if GW.myClassID == 9 then        -- Warlock
         -- Hook green fire
-        if IsSpellKnown(101508) then -- check for spell id 101508
+        if GW.IsSpellKnown(101508) then -- check for spell id 101508
             self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-green")
             self.warlock.shardFragment.barFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-green")
             for i = 1, 5 do
