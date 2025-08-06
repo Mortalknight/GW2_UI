@@ -87,7 +87,7 @@ local function LoadStaticPopupSkin()
         end
 
         local itemFrame
-        if StaticPopup.ItemFrame then
+        if StaticPopup.ItemFrame and StaticPopup.ItemFrame.Item then
             itemFrame = StaticPopup.ItemFrame
             itemFrame:GwStyleButton()
             GW.HandleIcon(itemFrame.Item.icon, true, GW.BackdropTemplates.ColorableBorderOnly)
