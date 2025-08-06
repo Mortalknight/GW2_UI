@@ -110,7 +110,7 @@ local function LoadStaticPopupSkin()
 
     --Movie skip Frame
     hooksecurefunc("CinematicFrame_UpdateLettboxForAspectRatio", function(self)
-        if self and self.closeDialog and not self.closeDialog.template then
+        if self and self.closeDialog and not self.closeDialog.tex then
             self.closeDialog.Border:Hide()
 
             local tex = self.closeDialog:CreateTexture(nil, "BACKGROUND")
@@ -132,7 +132,7 @@ local function LoadStaticPopupSkin()
     end)
 
     hooksecurefunc("MovieFrame_PlayMovie", function(self)
-        if self and self.CloseDialog and not self.CloseDialog.template then
+        if self and self.CloseDialog and not self.CloseDialog.tex then
             self.CloseDialog.Border:Hide()
 
             local tex = self.CloseDialog:CreateTexture(nil, "BACKGROUND")
