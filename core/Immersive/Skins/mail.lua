@@ -126,7 +126,7 @@ local function SkinOpenMailFrame()
     OpenMailDeleteButton:SetPoint("RIGHT", OpenMailCancelButton, "LEFT", -5, 0)
 
     OpenMailCancelButton:GwSkinButton(false, true)
-    OpenMailCancelButton:SetPoint("BOTTOMRIGHT", OpenMailFrame, "BOTTOMRIGHT", -7, -31)
+    OpenMailCancelButton:SetPoint("BOTTOMRIGHT", OpenMailFrame, "BOTTOMRIGHT", -7, -20)
 
     OpenAllMail:GwSkinButton(false, true)
     OpenAllMail:ClearAllPoints()
@@ -136,7 +136,7 @@ local function SkinOpenMailFrame()
         GW.HandleScrollControls(OpenMailScrollFrame)
     else
         OpenMailScrollFrame:GwSkinScrollFrame()
-            OpenMailScrollFrameScrollBar:GwSkinScrollBar()
+        OpenMailScrollFrameScrollBar:GwSkinScrollBar()
     end
 
     OpenMailScrollFrame:SetPoint("TOPLEFT",OpenMailFrame,"TOPLEFT",8,-84)
@@ -160,6 +160,11 @@ local function SkinOpenMailFrame()
                     ii = ii + 1
                 end
             end
+            hooksecurefunc(b.IconBorder, "SetVertexColor", function(self)
+                self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            end)
+
+            b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         end
 
         if t then t:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
@@ -310,6 +315,7 @@ local function ClearMailTextures()
     end
     OpenMailFrame:GwStripTextures()
     OpenMailScrollFrame:GwStripTextures()
+    OpenMailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
     if GW.Retail then
         SendMailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
