@@ -411,9 +411,17 @@ function GwQuesttrackerScenarioBlockMixin:TimerUpdate(...)
         if wtype == LE_WORLD_ELAPSED_TIMER_TYPE_CHALLENGE_MODE then
             local mapID = C_ChallengeMode.GetActiveChallengeMapID()
             if mapID then
-                local _, _, timeLimit = C_ChallengeMode.GetMapUIInfo(mapID)
-                local time3 = timeLimit * TIME_FOR_3
-                local time2 = timeLimit * TIME_FOR_2
+                local timeLimit, time2, time3
+                if GW.Retail then
+                    _, _, timeLimit = C_ChallengeMode.GetMapUIInfo(mapID)
+                    time2 = timeLimit * TIME_FOR_2
+                    time3 = timeLimit * TIME_FOR_3
+                else
+                    local times = C_ChallengeMode.GetChallengeModeMapTimes(mapID)
+                    timeLimit = times[1]
+                    time2 = times[2]
+                    time3 = times[3]
+                end
                 self.chestoverlay:Show()
                 self:SetScript("OnUpdate", function()
                     local _, elapsedTime = GetWorldElapsedTime(timerID)
