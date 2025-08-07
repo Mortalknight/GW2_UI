@@ -3,12 +3,7 @@ local _, GW = ...
 local function gwSetStaticPopupSize()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
-        StaticPopup.tex:SetSize(StaticPopup:GetSize())
-        if _G["StaticPopup" .. i .. "AlertIcon"] then
-            _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon")
-        else
-            StaticPopup.AlertIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon")
-        end
+        StaticPopup.AlertIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon")
         if _G["StaticPopup" .. i .. "ItemFrameNameFrame"] then
             _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:SetTexture(nil)
             _G["StaticPopup" .. i .. "ItemFrame"].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
@@ -20,10 +15,10 @@ local function gwSetStaticPopupSize()
             StaticPopup.ItemFrame.Item.icon:SetTexCoord(0.9, 0.1, 0.9, 0.1)
             StaticPopup.ItemFrame.Item.icon:GwSetInside()
         end
-        _G["StaticPopup" .. i .. "CloseButton"]:GwSkinButton(true)
-        _G["StaticPopup" .. i .. "CloseButton"]:SetSize(20, 20)
-        _G["StaticPopup" .. i .. "CloseButton"]:ClearAllPoints()
-        _G["StaticPopup" .. i .. "CloseButton"]:SetPoint("TOPRIGHT", -20, -5)
+        StaticPopup.CloseButton:GwSkinButton(true)
+        StaticPopup.CloseButton:SetSize(20, 20)
+        StaticPopup.CloseButton:ClearAllPoints()
+        StaticPopup.CloseButton:SetPoint("TOPRIGHT", -20, -5)
     end
 end
 
@@ -60,21 +55,22 @@ local function LoadStaticPopupSkin()
         StaticPopup.tex = tex
 
         --Style Buttons (upto 5)
-        for ii = 1, 5 do
-            if ii < 5 then
-                _G["StaticPopup" .. i .. "Button" .. ii]:GwSkinButton(false, true)
-            else
-                _G["StaticPopup" .. i .. "ExtraButton"]:GwSkinButton(false, true)
-            end
-        end
+        StaticPopup.button1:GwSkinButton(false, true)
+        StaticPopup.button2:GwSkinButton(false, true)
+        StaticPopup.button3:GwSkinButton(false, true)
+        StaticPopup.button4:GwSkinButton(false, true)
+        StaticPopup.extraButton:GwSkinButton(false, true)
+        StaticPopup.Dropdown:GwHandleDropDownBox()
 
         GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameGoldMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameGoldLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameGoldRight"], nil, nil, 5)
         GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameSilverMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameSilverLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameSilverRight"], nil, nil, 5, -10)
         GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameCopperMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameCopperLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameCopperRight"], nil, nil, 5, -10)
+
+        local editbox = StaticPopup.editBox or StaticPopup.EditBox
+        editbox:SetFrameLevel(editbox:GetFrameLevel() + 1)
+        editbox:SetPoint("TOPLEFT", -2, -4)
+        editbox:SetPoint("BOTTOMRIGHT", 2, 4)
         GW.SkinTextBox(_G["StaticPopup" .. i .. "EditBoxMid"], _G["StaticPopup" .. i .. "EditBoxLeft"], _G["StaticPopup" .. i .. "EditBoxRight"], nil, nil, 5)
-        _G["StaticPopup" .. i .. "EditBox"]:SetFrameLevel(_G["StaticPopup" .. i .. "EditBox"]:GetFrameLevel() + 1)
-        _G["StaticPopup" .. i .. "EditBox"]:SetPoint("TOPLEFT", -2, -4)
-        _G["StaticPopup" .. i .. "EditBox"]:SetPoint("BOTTOMRIGHT", 2, 4)
 
         if _G["StaticPopup" .. i .. "ItemFrameNameFrame"] then
             _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:GwKill()
@@ -86,15 +82,12 @@ local function LoadStaticPopupSkin()
             StaticPopup.ItemFrame.Item.icon:GwSetInside()
         end
 
-        local itemFrame
-        if StaticPopup.ItemFrame and StaticPopup.ItemFrame.Item then
-            itemFrame = StaticPopup.ItemFrame
-            itemFrame:GwStyleButton()
+        local itemFrame = StaticPopup.ItemFrame
+        itemFrame:GwStyleButton()
+        if itemFrame.Item then
             GW.HandleIcon(itemFrame.Item.icon, true, GW.BackdropTemplates.ColorableBorderOnly)
             GW.HandleIconBorder(itemFrame.Item.IconBorder, itemFrame.Item.icon.backdrop)
         else
-            itemFrame = _G["StaticPopup" .. i .. "ItemFrame"]
-            itemFrame:GwStyleButton()
             GW.HandleIcon(itemFrame.icon, true, GW.BackdropTemplates.ColorableBorderOnly)
             GW.HandleIconBorder(itemFrame.IconBorder, itemFrame.icon.backdrop)
         end
