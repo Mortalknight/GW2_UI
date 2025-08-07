@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.3.0",{
+    {ct.change, [=[11.2.0 support]=]},
+})
+
 addChange("8.2.8",{
     {ct.bug, [=[Fix absorb bar toggle]=]},
     {ct.change, [=[Enable absorb bar toggle on Mists and Retail clients]=]},

@@ -1,3 +1,7 @@
+8.3.0
+CHANGES
+    - 11.2.0 support
+
 8.2.8
 FIXES
     - Fix absorb bar toggle
