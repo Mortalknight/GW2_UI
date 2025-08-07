@@ -448,43 +448,42 @@ local function LoadMailSkin()
     MailFrame.mover:SetPoint("BOTTOMLEFT", MailFrame, "TOPLEFT", 0, 0)
     MailFrame.mover:SetPoint("BOTTOMRIGHT", MailFrame, "TOPRIGHT", 0, 0)
     MailFrame.mover:RegisterForDrag("LeftButton")
-    MailFrame.mover.onMoveSetting = "MAILBOX_POSITION"
     MailFrame:SetClampedToScreen(true)
-    MailFrame.mover:SetScript("OnDragStart", function(self)
-        self:GetParent():StartMoving()
+    MailFrame.mover:SetScript("OnDragStart", function()
+        MailFrame:StartMoving()
     end)
-    MailFrame.mover:SetScript("OnDragStop", function(self)
-        local self = self:GetParent()
+    MailFrame.mover:SetScript("OnDragStop", function()
+        MailFrame:StopMovingOrSizing()
 
-        self:StopMovingOrSizing()
-
-        local x = self:GetLeft()
-        local y = self:GetTop()
+        local x = MailFrame:GetLeft()
+        local y = MailFrame:GetTop()
 
         -- re-anchor to UIParent after the move
-        self.SetPoint = nil -- Make SetPoint accessable
-        self:ClearAllPoints()
-        self:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x, y)
-        self.SetPoint = GW.NoOp -- Prevent Blizzard to reanchor that frame
+        MailFrame.SetPoint = nil
+        MailFrame:ClearAllPoints()
+        MailFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x, y)
+        MailFrame.SetPoint = GW.NoOp -- prevent blizz from overriding our position
 
         -- store the updated position
-        if self.mover.onMoveSetting then
-            local pos = GW.settings[self.mover.onMoveSetting]
-            if pos then
-                wipe(pos)
-            else
-                pos = {}
-            end
-            pos.point = "TOPLEFT"
-            pos.relativePoint = "BOTTOMLEFT"
-            pos.xOfs = x
-            pos.yOfs = y
-            GW.settings[self.mover.onMoveSetting] = pos
-        end
+        local pos = GW.settings.MAILBOX_POSITION
+        wipe(pos)
+        pos.point = "TOPLEFT"
+        pos.relativePoint = "BOTTOMLEFT"
+        pos.xOfs = x
+        pos.yOfs = y
+        GW.settings.MAILBOX_POSITION = pos
     end)
     MailFrame:ClearAllPoints()
     MailFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-    MailFrame.SetPoint = GW.NoOp -- Prevent Blizzard to reanchor that frame
+    MailFrame.SetPoint = GW.NoOp -- prevent blizz from overriding our position
+
+    MailFrame:HookScript("OnShow", function()
+        local pos = GW.settings.MAILBOX_POSITION
+        MailFrame.SetPoint = nil
+        MailFrame:ClearAllPoints()
+        MailFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+        MailFrame.SetPoint = GW.NoOp -- prevent blizz from overriding our position
+    end)
 
     -- Reskin OpenMailFrame Buttons
     SkinPager()

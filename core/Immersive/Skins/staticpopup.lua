@@ -54,12 +54,20 @@ local function LoadStaticPopupSkin()
         tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
         StaticPopup.tex = tex
 
-        --Style Buttons (upto 5)
-        StaticPopup.button1:GwSkinButton(false, true)
-        StaticPopup.button2:GwSkinButton(false, true)
-        StaticPopup.button3:GwSkinButton(false, true)
-        StaticPopup.button4:GwSkinButton(false, true)
-        StaticPopup.extraButton:GwSkinButton(false, true)
+        --Style Buttons
+        if StaticPopup.ButtonContainer then
+            StaticPopup.ButtonContainer.Button1:GwSkinButton(false, true)
+            StaticPopup.ButtonContainer.Button2:GwSkinButton(false, true)
+            StaticPopup.ButtonContainer.Button3:GwSkinButton(false, true)
+            StaticPopup.ButtonContainer.Button4:GwSkinButton(false, true)
+            StaticPopup.ExtraButton:GwSkinButton(false, true)
+        else
+            StaticPopup.button1:GwSkinButton(false, true)
+            StaticPopup.button2:GwSkinButton(false, true)
+            StaticPopup.button3:GwSkinButton(false, true)
+            StaticPopup.button4:GwSkinButton(false, true)
+            StaticPopup.extraButton:GwSkinButton(false, true)
+        end
         StaticPopup.Dropdown:GwHandleDropDownBox()
 
         GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameGoldMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameGoldLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameGoldRight"], nil, nil, 5)
