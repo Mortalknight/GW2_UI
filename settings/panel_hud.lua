@@ -239,9 +239,9 @@ local function LoadHudPanel(sWindow)
     addOptionSlider(fct.scroll.scrollchild, FONT_SIZE .. ": " .. L["Crit modifier"], nil, { getterSetter = "GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
     addOptionSlider(fct.scroll.scrollchild, FONT_SIZE .. ": " .. L["Pet number modifier"], nil, { getterSetter = "GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
 
-    InitPanel(general, true)
-    InitPanel(minimap, true)
-    InitPanel(worldmap, true)
-    InitPanel(fct, true)
+    InitPanel(general)
+    InitPanel(minimap)
+    InitPanel(worldmap)
+    InitPanel(fct)
 end
 GW.LoadHudPanel = LoadHudPanel

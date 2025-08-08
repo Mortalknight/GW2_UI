@@ -137,9 +137,9 @@ local function LoadPlayerPanel(sWindow)
     addOptionSlider(fader.scroll.scrollchild, GW.NewSign .. L["Min Alpha"], nil, { getterSetter = "playerFrameFader.minAlpha", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
     addOptionSlider(fader.scroll.scrollchild, GW.NewSign .. L["Max Alpha"], nil, { getterSetter = "playerFrameFader.maxAlpha", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
 
-    InitPanel(p_player, true)
-    InitPanel(p_player_aura, true)
-    InitPanel(p_player_debuff, true)
-    InitPanel(fader, true)
+    InitPanel(p_player)
+    InitPanel(p_player_aura)
+    InitPanel(p_player_debuff)
+    InitPanel(fader)
 end
 GW.LoadPlayerPanel = LoadPlayerPanel

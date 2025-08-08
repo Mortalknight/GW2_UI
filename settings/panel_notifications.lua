@@ -70,6 +70,6 @@ local function LoadNotificationsPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Mage portal"], nil, {getterSetter = "ALERTFRAME_NOTIFICATION_MAGE_PORTAL", dependence = {["ALERTFRAME_ENABLED"] = true}})
     addOptionDropdown(p.scroll.scrollchild, nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_MAGE_PORTAL"] = true}, hasSound = true, noNewLine = true})
 
-    InitPanel(p, true)
+    InitPanel(p)
 end
 GW.LoadNotificationsPanel = LoadNotificationsPanel

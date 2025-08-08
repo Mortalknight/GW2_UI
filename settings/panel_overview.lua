@@ -231,6 +231,7 @@ end
 
 local function LoadOverviewPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsSplashPanelTmpl")
+    p.scroll:Hide()
 
     sWindow.splashart = p.splashart
     p.splashart:AddMaskTexture(sWindow.backgroundMask)
@@ -325,7 +326,7 @@ local function LoadOverviewPanel(sWindow)
 
     createCat(L["Modules"], L["Enable and disable components"], p, false, nil, true, "Interface/AddOns/GW2_UI/textures/uistuff/tabicon_overview")
 
-    InitPanel(p, false)
+    InitPanel(p)
 
     -- setup scrollframe
     local view = CreateScrollBoxListLinearView()

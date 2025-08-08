@@ -4,19 +4,34 @@ local L = GW.L
 local moveable_window_placeholders_visible = true
 local settings_window_open_before_change = false
 
-local allTags = {}
+local allTags, allTagsSet = {}, {}
 local selectedTag = ALL
 local grid
 
-local function filterHudMovers(filter)
-    if filter then
-        for _, mf in pairs(GW.MOVABLE_FRAMES) do
-            if string.find(mf.tags, filter, 1, true) and mf.enable then
-                mf:Show()
-            else
-                mf:Hide()
+local function AddTagsCSV(tags)
+    tags = tags or ""
+    for _, v in pairs({strsplit(",", tags)}) do
+        v = strtrim(v)
+        if v ~= "" and not allTagsSet[v] then
+            allTagsSet[v] = true
+            tinsert(allTags, v)
+            -- markiere Dropdown zum Neuaufbau
+            if GwSmallSettingsContainer and GwSmallSettingsContainer.moverSettingsFrame then
+                local dd = GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown
+                if dd then dd.needsRebuild = true end
             end
         end
+    end
+end
+
+local function filterHudMovers(filter)
+    selectedTag = filter
+    for _, mf in ipairs(GW.MOVABLE_FRAMES) do
+        local show = mf.enable
+        if show and filter and mf.tagsSet then
+            show = mf.tagsSet[filter] == true
+        end
+        mf:SetShown(show)
     end
 end
 
@@ -49,18 +64,17 @@ GW.lockHudObjects = lockHudObjects
 GW.AddForProfiling("settings", "lockHudObjects", lockHudObjects)
 
 local function toggleHudPlaceholders()
-    for _, mf in pairs(GW.MOVABLE_FRAMES) do
+    local show = not moveable_window_placeholders_visible
+
+    for _, mf in ipairs(GW.MOVABLE_FRAMES) do
         if mf.backdrop then
-            if moveable_window_placeholders_visible then
-                mf.backdrop:Hide()
-                GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.hidePlaceholder:SetText(L["Show placeholders"])
-            else
-                mf.backdrop:Show()
-                GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.hidePlaceholder:SetText(L["Hide placeholders"])
-            end
+            if show then mf.backdrop:Show() else mf.backdrop:Hide() end
         end
     end
-    moveable_window_placeholders_visible = not moveable_window_placeholders_visible
+    local btn = GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.hidePlaceholder
+    btn:SetText(show and L["Hide placeholders"] or L["Show placeholders"])
+
+    moveable_window_placeholders_visible = show
 end
 GW.toggleHudPlaceholders = toggleHudPlaceholders
 
@@ -71,7 +85,7 @@ local function moveHudObjects(self)
         settings_window_open_before_change = true
     end
     GwSettingsWindow:Hide()
-    for _, mf in pairs(GW.MOVABLE_FRAMES) do
+    for _, mf in ipairs(GW.MOVABLE_FRAMES) do
         mf:EnableMouse(true)
         mf:SetMovable(true)
         mf:SetShown(mf.enable)
@@ -100,52 +114,45 @@ local function HandleMoveHudEvents(self, event)
     end
 end
 
-local function GridGetRegion()
-    if not grid then return end
-
-    if grid.regionCount and grid.regionCount > 0 then
-        local region = select(grid.regionCount, grid:GetRegions())
-        grid.regionCount = grid.regionCount - 1
-        if region and region.SetAlpha then
-            region:SetAlpha(1)
-            return region
-        end
+local function Acquire(frame, pool)
+    local tx = pool[#pool]
+    if tx then
+        pool[#pool] = nil
+        tx:Show()
+        return tx
     end
-
-    return grid:CreateTexture(nil, "BACKGROUND", nil, 0)
+    tx = frame:CreateTexture(nil, "BACKGROUND")
+    return tx
 end
 
 local function CreateGrid()
     if not grid then
         grid = CreateFrame("Frame", "GW2_UIIGrid", UIParent)
         grid:SetFrameStrata("BACKGROUND")
-    else
-        grid.regionCount = 0
-        for _, region in ipairs({grid:GetRegions()}) do
-            if region.IsObjectType and region:IsObjectType("Texture") then
-                grid.regionCount = grid.regionCount + 1
-                region:SetAlpha(0)
-            end
-        end
+        grid.vPool, grid.hPool, grid.activeV, grid.activeH = {}, {}, {}, {}
     end
 
     local width, height = UIParent:GetSize()
     local size = math.max(GW.mult * 0.5, 0.5)  -- Min 0.5 pixel
     local gSize = GW.settings.gridSpacing
-    local step = math.min(width, height) / gSize
+    local step = math.max(2, math.min(width, height) / gSize)
     local halfW, halfH = width * 0.5, height * 0.5
-
 
     grid.boxSize = gSize
     grid:SetPoint("CENTER", UIParent)
     grid:SetSize(width, height)
     grid:Show()
 
+    for _, t in ipairs(grid.activeV) do t:Hide(); grid.vPool[#grid.vPool + 1] = t end
+    for _, t in ipairs(grid.activeH) do t:Hide(); grid.hPool[#grid.hPool + 1] = t end
+    wipe(grid.activeV)
+    wipe(grid.activeH)
+
     -- Vertical lines
     local cols = math.floor(width / step / 2)
     for i = -cols, cols do
         local x = i * step
-        local tx = GridGetRegion()
+        local tx = Acquire(grid, grid.vPool)
         local isCenter = (i == 0)
         tx:SetColorTexture(isCenter and 1 or 0, 0, 0, 1)
         tx:SetDrawLayer("BACKGROUND", isCenter and 1 or 0)
@@ -153,13 +160,14 @@ local function CreateGrid()
         tx:SetPoint("TOP", grid, "CENTER", x, halfH)
         tx:SetPoint("BOTTOM", grid, "CENTER", x, -halfH)
         tx:SetWidth(size)
+        grid.activeV[#grid.activeV+1] = tx
     end
 
     -- horizontal lines
     local rows = math.floor(height / step / 2)
     for i = -rows, rows do
         local y = i * step
-        local tx = GridGetRegion()
+        local tx = Acquire(grid, grid.hPool)
         local isCenter = (i == 0)
         tx:SetColorTexture(isCenter and 1 or 0, 0, 0, 1)
         tx:SetDrawLayer("BACKGROUND", isCenter and 1 or 0)
@@ -167,6 +175,7 @@ local function CreateGrid()
         tx:SetPoint("LEFT", grid, "CENTER", -halfW, y)
         tx:SetPoint("RIGHT", grid, "CENTER", halfW, y)
         tx:SetHeight(size)
+        grid.activeH[#grid.activeH+1] = tx
     end
 end
 
@@ -229,17 +238,18 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
     --if "PlayerBuffFrame" or "PlayerDebuffFrame", set also the grow direction, h,v spacing, auras per row and max wraps to default
     if mf.setting == "PlayerBuffFrame" or mf.setting == "PlayerDebuffFrame" then
         -- reset also the settings frame values
-        GW.updateSettingsFrameSettingsValue(mf.setting .. "_GrowDirection", "UP", true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. "_HorizontalSpacing", 1, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. "_VerticalSpacing", 34, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. "_MaxWraps", 3, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. "_MaxWraps", 3, true)
-        GW.updateSettingsFrameSettingsValue(mf.setting .. "_ICON_SIZE", 32, true)
-        if mf.setting == "PlayerBuffFrame" then
-            GW.updateSettingsFrameSettingsValue("PLAYER_AURA_WRAP_NUM", 7, true)
-        elseif mf.setting == "PlayerDebuffFrame" then
-            GW.updateSettingsFrameSettingsValue("PLAYER_AURA_WRAP_NUM_DEBUFF", 7, true)
-        end
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".Seperate", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".SortDir", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".SortMethod", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".IconSize", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".IconHeight", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".KeepSizeRatio", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".GrowDirection", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".HorizontalSpacing", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".VerticalSpacing", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".MaxWraps", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".WrapAfter", nil, nil, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. ".NewAuraAnimation", nil, nil, true)
         GW.UpdateAuraHeader(mf.parent, mf.setting)
     elseif mf.setting == "MicromenuPos" then
         -- Hide/Show BG here
@@ -454,7 +464,7 @@ local function moverframe_OnEnter(self)
         return
     end
 
-    for _, moverframe in pairs(GW.MOVABLE_FRAMES) do
+    for _, moverframe in ipairs(GW.MOVABLE_FRAMES) do
         if moverframe:IsShown() and moverframe ~= self then
             UIFrameFadeOut(moverframe, 0.5, moverframe:GetAlpha(), 0.5)
         end
@@ -466,7 +476,7 @@ local function moverframe_OnLeave(self)
         return
     end
 
-    for _, moverframe in pairs(GW.MOVABLE_FRAMES) do
+    for _, moverframe in ipairs(GW.MOVABLE_FRAMES) do
         if moverframe:IsShown() and moverframe ~= self then
             UIFrameFadeIn(moverframe, 0.5, moverframe:GetAlpha(), 1)
         end
@@ -508,14 +518,15 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf.frameOptions = frameOptions
     mf.savedPoint = GW.settings[settingsName]
     mf.defaultPoint = GW.globalDefault.profile[settingsName]
-    mf.tags = tags
-
-    for _, v in pairs({strsplit(",", tags)}) do
-        if not tContains(allTags, v) then
-            tinsert(allTags, v)
-            GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown:GenerateMenu()
+    mf.tags = tags or ""
+    mf.tagsSet = {}
+    for _, v in pairs({strsplit(",", mf.tags)}) do
+        v = strtrim(v)
+        if v ~= "" then
+            mf.tagsSet[v] = true
         end
     end
+    AddTagsCSV(mf.tags)
 
     -- set all options default as false
     mf.optionScaleable = false
@@ -600,7 +611,7 @@ local function MoveFrameByPixel(nudgeX, nudgeY)
 end
 
 local function ToggleMover(frame, toggle)
-    for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
+    for _, moveableFrame in ipairs(GW.MOVABLE_FRAMES) do
         if moveableFrame == frame then
             moveableFrame.enable = toggle
             break
@@ -729,24 +740,33 @@ local function LoadMovers(layoutManager)
     tagScrollFrame:GwHandleDropDownBox(nil, nil, nil, 125)
 
     tagScrollFrame:SetupMenu(function(dropdown, rootDescription)
+        table.sort(allTags, function(a, b)
+            if a == ALL then return true end
+            if b == ALL then return false end
+            return tostring(a) < tostring(b)
+        end)
+
         local buttonSize = 20
         local maxButtons = 7
         rootDescription:SetScrollMode(buttonSize * maxButtons)
 
         for _, v in pairs(allTags) do
-            local function IsSelected(tagEnum)
-                return selectedTag == tagEnum
-            end
+            local function IsSelected(tag) return selectedTag == tag end
 
-            local function SetSelected(tagEnum)
-                filterHudMovers(tagEnum)
-                selectedTag = tagEnum
-            end
+            local function SetSelected(tagEnum) filterHudMovers(tagEnum) end
 
             local radio = rootDescription:CreateRadio(v, IsSelected, SetSelected, v)
             radio:AddInitializer(function(button, description, menu)
                 GW.BlizzardDropdownRadioButtonInitializer(button, description, menu, IsSelected, v)
             end)
+        end
+    end)
+
+    tagScrollFrame.needsRebuild = true
+    smallSettingsContainer:HookScript("OnShow", function()
+        if tagScrollFrame.needsRebuild then
+            tagScrollFrame:GenerateMenu()
+            tagScrollFrame.needsRebuild = false
         end
     end)
 

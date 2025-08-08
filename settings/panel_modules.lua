@@ -50,7 +50,7 @@ local function LoadModulesPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Alert Frames"], nil, {getterSetter = "ALERTFRAME_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = GW.Classic})
     addOption(p.scroll.scrollchild, FRIENDS, nil, {getterSetter = "USE_SOCIAL_WINDOW", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
 
-    InitPanel(p, true)
+    InitPanel(p)
     p:SetScript("OnShow", function()
         sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
         sWindow.headerBreadcrumb:SetText(GENERAL)

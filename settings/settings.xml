@@ -449,9 +449,6 @@
                             </Layer>
                         </Layers>
                         <Scripts>
-                            <OnValueChanged>
-                                self:GetParent():SetVerticalScroll(value)
-                            </OnValueChanged>
                             <OnLoad>
                                 self:SetValue(1)
                             </OnLoad>
@@ -491,15 +488,6 @@
                         </Layers>
                     </Button>
                 </Frames>
-                <Scripts>
-                    <OnMouseWheel>
-                        delta = -delta * 15
-                        local s = math.max(0, self:GetVerticalScroll() + delta)
-                        s = math.min(self.maxScroll, s)
-                        self:SetVerticalScroll(s)
-                        self.slider:SetValue(s)
-                    </OnMouseWheel>
-                </Scripts>
             </ScrollFrame>
         </Frames>
     </Frame>
@@ -1193,17 +1181,16 @@
       <Layers>
         <Layer level="BORDER">
           <FontString parentKey="header" text="Header" inherits="GameFontNormalSmall" justifyH="LEFT">
-              <Size x="512" y="25"/>
               <Color r="1" b="1" g="1"/>
               <Anchors>
-                  <Anchor point="TOPLEFT" x="5" y="-10"/>
+                  <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="5" y="-10"/>
               </Anchors>
           </FontString>
           <FontString parentKey="breadcrumb" text="" inherits="GameFontNormalSmall" justifyH="LEFT">
-              <Size x="512" y="25"/>
               <Color r="1" b="1" g="1"/>
               <Anchors>
                   <Anchor point="LEFT" relativeKey="$parent.header" relativePoint="RIGHT" x="10" y="0"/>
+                  <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" y="0"/>
               </Anchors>
           </FontString>
         </Layer>

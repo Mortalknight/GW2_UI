@@ -152,8 +152,8 @@ local function LoadAurasPanel(sWindow)
     addOption(p_missingBuffs.scroll.scrollchild, L["Invert raid buff bar"], L["If enabled, the above settings will apply to buffs you have, instead of buffs you are missing"], { getterSetter = "MISSING_RAID_BUFF_INVERT", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end, forceNewLine = true, hidden = not GW.Retail})
     addOptionText(p_missingBuffs.scroll.scrollchild, L["Custom buff"], L["Enter the spell ID of the buff you wish to track. Only one spell ID is supported. To find the spell ID of the buff you want to track, enable IDs in the tooltip settings and mouse over the icon in your aura bar."], { getterSetter = "MISSING_RAID_BUFF_custom_id", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateCustomSpell() end end, hidden = not GW.Retail})
 
-    InitPanel(p_auras, true)
-    InitPanel(p_indicator, true)
-    InitPanel(p_missingBuffs, true)
+    InitPanel(p_auras)
+    InitPanel(p_indicator)
+    InitPanel(p_missingBuffs)
 end
 GW.LoadAurasPanel = LoadAurasPanel

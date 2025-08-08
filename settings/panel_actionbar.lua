@@ -143,10 +143,10 @@ local function LoadActionbarPanel(sWindow)
     addOption(stanceBar.scroll.scrollchild, ENABLE, nil, { getterSetter = "StanceBarEnabled", callback = function() if GwStanceBar then GwStanceBar:UpdateVisibility() end end, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars"})
     addOptionDropdown(stanceBar.scroll.scrollchild, L["Class Totems Growth Direction"], L["Set the growth direction of the stance bar"], { getterSetter = "StanceBar_GrowDirection", callback = function() if GwStanceBar then GwStanceBar:AdjustMaxStanceButtons() end end, optionsList = {"UP", "DOWN", "LEFT", "RIGHT"}, optionNames = {StrUpper(L["Up"], 1, 1), StrUpper(L["Down"], 1, 1), L["Left"], L["Right"]}, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true, ["StanceBarEnabled"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars"})
 
-    InitPanel(general, true)
-    InitPanel(mainBar, true)
-    InitPanel(extraBars, true)
-    InitPanel(totemBar, true)
-    InitPanel(stanceBar, true)
+    InitPanel(general)
+    InitPanel(mainBar)
+    InitPanel(extraBars)
+    InitPanel(totemBar)
+    InitPanel(stanceBar)
 end
 GW.LoadActionbarPanel = LoadActionbarPanel

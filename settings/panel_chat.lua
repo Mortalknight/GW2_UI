@@ -53,6 +53,6 @@ local function LoadChatPanel(sWindow)
     addOptionText(p.scroll.scrollchild, L["Keywords"], L["List of words to color in chat if found in a message. If you wish to add multiple words you must seperate the word with a comma. To search for your current name you can use %MYNAME%.\n\nExample:\n%MYNAME%, Heal, Tank"], { getterSetter = "CHAT_KEYWORDS", callback = function() GW.UpdateChatSettings() GW.UpdateChatKeywords() end, dependence = {["CHATFRAME_ENABLED"] = true}})
     addOptionColorPicker(p.scroll.scrollchild, L["Keyword highlight color"], nil, { getterSetter = "CHAT_KEYWORDS_ALERT_COLOR", dependence = {["CHATFRAME_ENABLED"] = true}, isPrivateSetting = true})
 
-    InitPanel(p, true)
+    InitPanel(p)
 end
 GW.LoadChatPanel = LoadChatPanel

@@ -162,10 +162,10 @@ local function LoadTargetPanel(sWindow)
     addOptionSlider(pTargetOfFocus.scroll.scrollchild, GW.NewSign .. L["Max Alpha"], nil, { getterSetter = "focusFrameFader.maxAlpha", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic})
 
 
-    InitPanel(pPlayerPet, true)
-    InitPanel(p_target, true)
-    InitPanel(pTargetOfTarget, true)
-    InitPanel(p_focus, true)
-    InitPanel(pTargetOfFocus, true)
+    InitPanel(pPlayerPet)
+    InitPanel(p_target)
+    InitPanel(pTargetOfTarget)
+    InitPanel(p_focus)
+    InitPanel(pTargetOfFocus)
 end
 GW.LoadTargetPanel = LoadTargetPanel

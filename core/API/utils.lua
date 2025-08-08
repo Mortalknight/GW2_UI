@@ -158,6 +158,13 @@ local function CountTable(T)
 end
 GW.CountTable = CountTable
 
+local function Clamp(v, min, max)
+    if v < min then return min end
+    if v > max then return max end
+    return v
+end
+GW.Clamp = Clamp
+
 GW.ShortPrefixValues = {}
 local function BuildPrefixValues()
     if next(GW.ShortPrefixValues) then wipe(GW.ShortPrefixValues) end

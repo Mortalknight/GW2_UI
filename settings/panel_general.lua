@@ -8,11 +8,11 @@ local addOptionDropdown = GW.AddOptionDropdown
 local addOptionColorPicker = GW.AddOptionColorPicker
 
 local function LoadGeneralPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
     p.header:Hide()
     p.sub:Hide()
 
-    local general = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    local general = CreateFrame("Frame", "nil", p, "GwSettingsPanelScrollTmpl")
     general.header:SetFont(DAMAGE_TEXT_FONT, 20)
     general.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     general.header:SetText(GENERAL)
@@ -43,7 +43,7 @@ local function LoadGeneralPanel(sWindow)
     blizzardFix.sub:SetFont(UNIT_NAME_FONT, 12)
     blizzardFix.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     blizzardFix.sub:SetText(nil)
-    blizzardFix.header:SetWidth(classcolors.header:GetStringWidth())
+    blizzardFix.header:SetWidth(blizzardFix.header:GetStringWidth())
     blizzardFix.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     blizzardFix.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     blizzardFix.breadcrumb:SetText(L["Blizzard Fixes"])
@@ -77,8 +77,8 @@ local function LoadGeneralPanel(sWindow)
     -- blizzard fixes
     addOption(blizzardFix.scroll.scrollchild, GUILD_NEWS, L["This will fix the current Guild News jam."], {getterSetter = "FixGuildNewsSpam", callback = function() GW:FixBlizzardIssues() end})
 
-    InitPanel(general, true)
-    InitPanel(classcolors, true)
-    InitPanel(blizzardFix, true)
+    InitPanel(general)
+    InitPanel(classcolors)
+    InitPanel(blizzardFix)
 end
 GW.LoadGeneralPanel = LoadGeneralPanel

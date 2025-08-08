@@ -554,12 +554,12 @@ local function LoadRaidPanel(sWindow)
     local profilePanles = {LoadGeneralGridSettings(p), LoadRaid40Profile(p), LoadRaid25Profile(p), LoadRaid10Profile(p), LoadMaintankProfile(p), LoadRaidPetProfile(p), LoadPartyProfile(p)}
     createCat(L["Group Frames"], L["Edit the group settings."], p, profilePanles, true)
 
-    InitPanel(profilePanles[1], true)
-    InitPanel(profilePanles[2], true)
-    InitPanel(profilePanles[3], true)
-    InitPanel(profilePanles[4], true)
-    InitPanel(profilePanles[5], true)
-    InitPanel(profilePanles[6], true)
-    InitPanel(profilePanles[7], true)
+    InitPanel(profilePanles[1])
+    InitPanel(profilePanles[2])
+    InitPanel(profilePanles[3])
+    InitPanel(profilePanles[4])
+    InitPanel(profilePanles[5])
+    InitPanel(profilePanles[6])
+    InitPanel(profilePanles[7])
 end
 GW.LoadRaidPanel = LoadRaidPanel

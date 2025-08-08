@@ -79,6 +79,6 @@ local function LoadFontsPanel(sWindow)
     addOptionSlider(p.scroll.scrollchild, L["Normal text"], nil, { getterSetter = "FONTS_NORMAL_SIZE", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
     addOptionSlider(p.scroll.scrollchild, L["Small text"], nil, { getterSetter = "FONTS_SMALL_SIZE", callback = GW.UpdateFontSettings, min = 5, max = 42, decimalNumbers = 0, step = 1})
 
-    InitPanel(p, true)
+    InitPanel(p)
 end
 GW.LoadFontsPanel = LoadFontsPanel

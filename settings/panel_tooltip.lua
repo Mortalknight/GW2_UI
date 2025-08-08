@@ -46,6 +46,6 @@ local function LoadTooltipPanel(sWindow)
     addOptionSlider(p.scroll.scrollchild, L["Cursor Anchor Offset X"], L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor anchor is NOT 'Cursor Anchor'"], { getterSetter = "ANCHOR_CURSOR_OFFSET_X", min = -128, max = 128, decimalNumbers = 0, step = 1, dependence = {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}})
     addOptionSlider(p.scroll.scrollchild, L["Cursor Anchor Offset Y"], L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor anchor is NOT 'Cursor Anchor'"], { getterSetter = "ANCHOR_CURSOR_OFFSET_Y", min = -128, max = 128, decimalNumbers = 0, step = 1, dependence = {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}})
 
-    InitPanel(p, true)
+    InitPanel(p)
 end
 GW.LoadTooltipPanel = LoadTooltipPanel

@@ -16,6 +16,58 @@ local optionTypes = {
     header      = {template = "GwOptionBoxHeader", frame = "Frame", newLine = true},
 }
 
+local function UpdateScrollVisibility(panel)
+    local scroll = panel.scroll
+    local parent = scroll.scrollchild
+
+    local top = parent:GetTop() or 0
+    local lowestBottom = top
+    for _, child in ipairs({parent:GetChildren()}) do
+        if child:IsShown() then
+            local b = child:GetBottom()
+            if b and b < lowestBottom then
+                lowestBottom = b
+            end
+        end
+    end
+
+    local contentHeight = math.max(1, top - lowestBottom + 20)
+    local viewportH = scroll:GetHeight() or 1
+    local maxScroll = math.max(0, contentHeight - viewportH)
+    local needScroll = contentHeight > (viewportH + 10)
+
+    parent:SetHeight(contentHeight)
+    scroll:SetScrollChild(parent)
+    scroll.maxScroll = maxScroll
+
+    -- Slider Setup
+    local slider = scroll.slider
+    if not slider then return end
+    slider:SetMinMaxValues(0, maxScroll)
+    slider:SetValue(GW.Clamp(slider:GetValue() or 0, 0, maxScroll))
+
+    if not needScroll then
+        slider:Hide()
+        scroll.scrollUp:Hide()
+        scroll.scrollDown:Hide()
+        scroll:EnableMouseWheel(false)
+        return
+    end
+
+    local trackH = slider:GetHeight()
+    local MIN_THUMB, MAX_THUMB = 18, 60
+    local thumbH = trackH * (viewportH / contentHeight)
+    thumbH = GW.Clamp(thumbH, MIN_THUMB, MAX_THUMB)
+    slider.thumb:SetHeight(thumbH)
+
+    -- Scrollbar anzeigen
+    slider:Show()
+    scroll.scrollUp:Show()
+    scroll.scrollDown:Show()
+    scroll:EnableMouseWheel(true)
+end
+GW.UpdateSettingsFrameScrollVisibility = UpdateScrollVisibility
+
 --helper functions for settings
 function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect)
     local keys = {}
@@ -75,12 +127,12 @@ function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect)
 end
 
 local function getSettingsCat()
-return settings_cat
+    return settings_cat
 end
 GW.getSettingsCat = getSettingsCat
 
 local function getOptionReference()
-return optionReference
+    return optionReference
 end
 GW.getOptionReference = getOptionReference
 
@@ -101,11 +153,9 @@ local function switchCat(index)
         else
             l.cat_panel:Show()
 
-            if l.cat_crollFrames then
-                for _, v in pairs(l.cat_crollFrames) do
-                    v.scroll.slider:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
-                    v.scroll.scrollUp:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
-                    v.scroll.scrollDown:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
+            if l.cat_scrollFrames then
+                for _, v in pairs(l.cat_scrollFrames) do
+                    UpdateScrollVisibility(v)
                 end
             end
 
@@ -130,7 +180,7 @@ local function CreateCat(name, desc, panel, scrollFrames, createSettingsEntry, v
     f.cat_name = name
     f.cat_desc = desc
     f.cat_id = i
-    f.cat_crollFrames = scrollFrames
+    f.cat_scrollFrames = scrollFrames
     settings_cat[i] = f
     f:SetPoint("TOPRIGHT", GwSettingsWindow, "TOPLEFT", 1, -32 + (-40 * visible_cat_button_id))
 
@@ -480,9 +530,13 @@ local function ShowColorPicker(frame)
     ColorPickerFrame:Raise()
 end
 
-local function updateSettingsFrameSettingsValue(setting, value, setSetting)
+local function updateSettingsFrameSettingsValue(setting, value, setSetting, toDefault)
     local of = getOptionFrame(setting)
     if not of then return end
+
+    if toDefault then
+        value = of.getDefault()
+    end
 
     if setSetting then
         of.set(value)
@@ -555,15 +609,15 @@ local function HandleIncompatibility(v, button)
     return false
 end
 
-local function InitPanel(panel, hasScroll)
+local function InitPanel(panel)
     if not panel then return end
 
-    local parent = hasScroll and panel.scroll.scrollchild or panel
+    local parent = panel.scroll.scrollchild
     local options = parent.gwOptions
     if not options then return end
     panelUniqueID = panelUniqueID + 1
 
-    local padding = {x = 8, y = hasScroll and 0 or panel.sub:GetText() and -55 or -35}
+    local padding = {x = 8, y = 0}
     local pY = -48
     local maxWidth = 440
     local first = true
@@ -874,19 +928,35 @@ local function InitPanel(panel, hasScroll)
     end
 
     -- Scrollbar setup
-    if hasScroll then
-        local scrollHeight = panel:GetHeight()
-        local maxScroll = math.max(0, numRows * 40 - scrollHeight + 50)
-        local scroll = panel.scroll
-        scroll:SetScrollChild(scroll.scrollchild)
-        scroll.scrollchild:SetHeight(scrollHeight)
-        scroll.scrollchild:SetWidth(scroll:GetWidth() - 20)
-        scroll.slider:SetMinMaxValues(0, maxScroll)
-        scroll.slider.thumb:SetHeight(scroll.slider:GetHeight() * (scroll:GetHeight() / (maxScroll + scroll:GetHeight())))
-        scroll.slider:SetValue(1)
-        scroll.maxScroll = maxScroll
-        scroll.doNotHide = false
-    end
+    local scroll = panel.scroll
+    UpdateScrollVisibility(panel)
+
+    scroll:HookScript("OnSizeChanged", function() UpdateScrollVisibility(panel) end)
+    scroll.scrollchild:HookScript("OnSizeChanged", function() UpdateScrollVisibility(panel) end)
+
+    scroll:SetScript("OnMouseWheel", function(self, delta)
+        local slider = self.slider
+        if not slider then return end
+
+        local minV, maxV = slider:GetMinMaxValues()
+        if maxV <= minV then return end
+
+        local base = math.max(20, math.floor((self:GetHeight() or 0) * 0.15))
+
+        local step = base
+        if IsShiftKeyDown() then
+            step = base * 3
+        elseif IsControlKeyDown() then
+            step = math.max(10, math.floor(base * 0.4))
+        end
+
+        local newVal = (slider:GetValue() or 0) - (delta * step)
+        slider:SetValue(GW.Clamp(newVal, minV, maxV))
+    end)
+
+    scroll.slider:SetScript("OnValueChanged", function(_, value)
+        scroll:SetVerticalScroll(value)
+    end)
 end
 GW.InitPanel = InitPanel
 
