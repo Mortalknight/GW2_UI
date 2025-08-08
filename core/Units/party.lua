@@ -41,7 +41,7 @@ local function FilterAura(element, unit, data, isBuff)
             end
 
             if GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF and not shouldDisplay then
-                shouldDisplay = GW.ImportendRaidDebuff[data.spellId] or false
+                shouldDisplay = GW.ImportantRaidDebuff[data.spellId] or false
             end
 
             return shouldDisplay

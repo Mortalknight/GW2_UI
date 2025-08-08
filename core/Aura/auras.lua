@@ -13,7 +13,7 @@ local function UpdateTooltip(self)
         else
             GameTooltip:SetUnitBuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
         end
-    else
+    elseif self.index then
         GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self.index, self.isHarmful and "HARMFUL" or "HELPFUL")
     end
 end
@@ -229,6 +229,7 @@ local function updateAura(element, unit, data, position, isBuff)
     button.auraInstanceID = data.auraInstanceID
     button.hideDuration = element.hideDuration
     button.isHarmful = data.isHarmful
+    button.index = nil -- reset
 
     if not GW.Retail then
          --loop to get the index
@@ -288,9 +289,9 @@ local function updateAura(element, unit, data, position, isBuff)
 
     elseif UnitIsFriend(unit, "player") and not isBuff and button.typeAura == "smallbuff" then
         -- debuffs
-        if GW.ImportendRaidDebuff[data.spellId] and data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
+        if GW.ImportantRaidDebuff[data.spellId] and data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
             size = size * GetDebuffScaleBasedOnPrio()
-        elseif GW.ImportendRaidDebuff[data.spellId] then
+        elseif GW.ImportantRaidDebuff[data.spellId] then
             size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
         elseif data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
             size = size * tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
@@ -320,7 +321,7 @@ local function FilterAura(element, unit, data, isBuff)
             return true
         end
     else
-        if data.name and (data.showImportant and (data.sourceUnit == "player" or GW.ImportendRaidDebuff[data.spellId]) or not data.showImportant) then
+        if data.name and (data.showImportant and (data.sourceUnit == "player" or GW.ImportantRaidDebuff[data.spellId]) or not data.showImportant) then
             return true
         end
     end

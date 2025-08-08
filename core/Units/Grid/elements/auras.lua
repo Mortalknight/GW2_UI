@@ -42,7 +42,7 @@ local function PostUpdateButton(self, button, unit, data, position)
     if button.isHarmful then
         local size = 16
         local isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
-        local isImportant = (parent.raidShowImportendInstanceDebuffs and GW.ImportendRaidDebuff[data.spellId]) or false
+        local isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
         if isImportant or isDispellable then
             if isImportant and isDispellable then
                 size = size * GW.GetDebuffScaleBasedOnPrio()
@@ -160,7 +160,7 @@ local function FilterAura(self, unit, data)
         return shouldDisplay
     else
         isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
-        isImportant = (parent.raidShowImportendInstanceDebuffs and GW.ImportendRaidDebuff[data.spellId]) or false
+        isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
 
         if data.dispelName and BadDispels[data.spellId] and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
             data.dispelName = "BadDispel"
@@ -179,7 +179,7 @@ local function FilterAura(self, unit, data)
             end
         end
 
-        if parent.raidShowImportendInstanceDebuffs and not shouldDisplay then
+        if parent.raidShowImportantInstanceDebuffs and not shouldDisplay then
             shouldDisplay = isImportant
         end
 

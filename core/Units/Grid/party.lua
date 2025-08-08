@@ -43,7 +43,7 @@ local function UpdateGridPartyFrame(frame)
     frame.showTargetmarker = GW.settings.RAID_UNIT_MARKERS_PARTY
     frame.unitWidth = tonumber(GW.settings.RAID_WIDTH_PARTY)
     frame.unitHeight = tonumber(GW.settings.RAID_HEIGHT_PARTY)
-    frame.raidShowImportendInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY
+    frame.raidShowImportantInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY
     frame.showAllDebuffs = GW.settings.RAID_SHOW_DEBUFFS_PARTY
     frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_PARTY
     frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PARTY

@@ -61,17 +61,17 @@ local function LoadAurasPanel(sWindow)
 
     local raidDebuffKeys, raidDebuffValues = {}, {}
     local settingstable = GW.settings.RAIDDEBUFFS
-    for spellID, _ in pairs(GW.ImportendRaidDebuff) do
+    for spellID, _ in pairs(GW.ImportantRaidDebuff) do
         local spellinfo = C_Spell.GetSpellInfo(spellID)
         if spellID and spellinfo then
             local name = format("%s |cFF888888(%d)|r", spellinfo.name, spellID)
             tinsert(raidDebuffKeys, spellID)
             tinsert(raidDebuffValues, name)
 
-            GW.ImportendRaidDebuff[spellID] = settingstable[spellID] == nil and true or settingstable[spellID]
+            GW.ImportantRaidDebuff[spellID] = settingstable[spellID] == nil and true or settingstable[spellID]
         end
     end
-    addOptionDropdown(p_auras.scroll.scrollchild, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], { getterSetter = "RAIDDEBUFFS", callback = function(toSet, id) GW.ImportendRaidDebuff[id] = toSet end, optionsList = raidDebuffKeys, optionNames = raidDebuffValues, tooltipType = "spell", checkbox = true})
+    addOptionDropdown(p_auras.scroll.scrollchild, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], { getterSetter = "RAIDDEBUFFS", callback = function(toSet, id) GW.ImportantRaidDebuff[id] = toSet end, optionsList = raidDebuffKeys, optionNames = raidDebuffValues, tooltipType = "spell", checkbox = true})
 
     addOptionSlider(p_auras.scroll.scrollchild, L["Set important Dungeon & Raid debuff scale"], nil, { getterSetter = "RAIDDEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
     addOptionSlider(p_auras.scroll.scrollchild, L["Set dispellable debuff scale"], nil, { getterSetter = "DISPELL_DEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})

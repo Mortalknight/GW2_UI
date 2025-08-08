@@ -12,12 +12,20 @@ local TimeFormats = {
     [4] = "%d"
 }
 
+local function Cooldown_BelowScale(self)
+    return self.fontScale and (self.fontScale < MIN_SCALE)
+end
+
+local function Cooldown_StopTimer(self)
+    self.text:SetText("")
+    self:Hide()
+    self.endTime = nil
+    self.endCooldown = nil
+    self.nextUpdate = nil
+end
+
 local function Cooldown_UnbuggedTime(timer)
-	if timer.buggedTime then
-		return time() - GetTime()
-	else
-		return GetTime()
-	end
+	return timer.buggedTime and (time() - GetTime()) or GetTime()
 end
 
 do
@@ -53,82 +61,89 @@ local function Cooldown_IsEnabled(self)
     end
 end
 
-local function Cooldown_StopTimer(self)
-    self:Hide()
-end
-
-local function Cooldown_BelowScale(self)
-    return self.fontScale and (self.fontScale < MIN_SCALE)
-end
-
 local function Cooldown_OnUpdate(self, elapsed)
-    if self.paused then return 0 end
+    if self.paused then return end
 
-    local forced = elapsed == -1
-    if forced then
+    -- throttle
+    if elapsed ~= -1 then
+        local nextUpdate = self.nextUpdate
+        if nextUpdate and nextUpdate > 0 then
+            nextUpdate = nextUpdate - elapsed
+            if nextUpdate > 0 then
+                self.nextUpdate = nextUpdate
+                return
+            end
+        end
+    else
         self.nextUpdate = 0
-    elseif self.nextUpdate > 0 then
-        self.nextUpdate = self.nextUpdate - elapsed
-        return 1
     end
 
     if not Cooldown_IsEnabled(self) then
         Cooldown_StopTimer(self)
-        return 2
-    else
-        local now = Cooldown_UnbuggedTime(self)
+        return
+    end
 
-        if self.endCooldown and now >= self.endCooldown then
-            Cooldown_StopTimer(self)
-        elseif Cooldown_BelowScale(self) then
-            self.text:SetText("")
-            if not forced then
-                self.nextUpdate = 500
-            end
-        elseif self.endTime then
-            local text, nextUpdate = GW.GetTimeInfo(self.endTime - now, true)
-            if not forced then
-                self.nextUpdate = nextUpdate
-            end
-            self.text:SetText(text)
+    if Cooldown_BelowScale(self) then
+        self.text:SetText("")
+        self.nextUpdate = 0.5
+        return
+    end
+
+    local now = Cooldown_UnbuggedTime(self)
+
+    if self.endCooldown and now >= self.endCooldown then
+        return Cooldown_StopTimer(self)
+    end
+
+    if self.endTime then
+        local remaining = self.endTime - now
+        if remaining <= 0 then
+            return Cooldown_StopTimer(self)
         end
+
+        local text, nextUpdate = GW.GetTimeInfo(remaining, true)
+        self.text:SetText(text)
+        self.nextUpdate = nextUpdate or 0.5
     end
 end
 
 local function Cooldown_TimerUpdate(timer)
-    local status = Cooldown_OnUpdate(timer, -1)
-    if not status then
-        timer:Show()
+    if not timer.endTime or Cooldown_BelowScale(timer) then
+        timer:Hide()
+        return
     end
+    timer:Show()
+    Cooldown_OnUpdate(timer, -1)
 end
 
 local function ToggleBlizzardCooldownText(self, timer, request)
-    -- we should hide the blizzard cooldown
-    if timer and self and self.SetHideCountdownNumbers then
-        local forceHide = timer.hideBlizzard
-        if request then
-            return forceHide or Cooldown_IsEnabled(timer)
-        else
-            self:SetHideCountdownNumbers(forceHide or Cooldown_IsEnabled(timer))
-        end
+    if not (timer and self and self.SetHideCountdownNumbers) then
+        return
+    end
+    local hide = (timer.hideBlizzard ~= false) and Cooldown_IsEnabled(timer) or false
+    if request then
+        return hide
+    else
+        self:SetHideCountdownNumbers(hide)
     end
 end
 GW.ToggleBlizzardCooldownText = ToggleBlizzardCooldownText
 
 local function Cooldown_OnSizeChanged(self, width, force)
-    local scale = width and (floor(width + 0.5) / ICON_SIZE)
-
-    -- dont bother updating when the fontScale is the same, unless we are passing the force arg
-    if scale and (scale == self.fontScale) and (force ~= true) then return end
+    local scale = width and (floor(width + 0.5) / ICON_SIZE) or 1
+    if (not force) and (scale == self.fontScale) then return end
     self.fontScale = scale
 
-    -- this is needed because of skipScale variable, we wont allow a font size under the minscale
-    if self.fontScale and (self.fontScale < MIN_SCALE) then
+    if scale and (scale < MIN_SCALE) then
         scale = MIN_SCALE
     end
 
     if scale then
         self.text:SetFont(UNIT_NAME_FONT, (scale * FONT_SIZE), "OUTLINE")
+    end
+
+    if self.parent and self.endTime then
+        Cooldown_TimerUpdate(self)
     end
 end
 
@@ -146,12 +161,11 @@ local function CreateCooldownTimer(parent)
     timer.text = text
 
     timer.hideBlizzard = true
-
     ToggleBlizzardCooldownText(parent, timer)
 
-    Cooldown_OnSizeChanged(timer, parent:GetWidth())
+    Cooldown_OnSizeChanged(timer, parent:GetWidth(), true)
     parent:SetScript("OnSizeChanged", function(_, width)
-        Cooldown_OnSizeChanged(timer, width)
+        Cooldown_OnSizeChanged(timer, width, true)
     end)
 
     -- keep this after Cooldown_OnSizeChanged
@@ -163,7 +177,7 @@ end
 local function OnSetCooldown(self, start, duration)
     if self.isHooked ~= 1 then return end
 
-    if (not self.forceDisabled) and (start and duration) and (duration > MIN_DURATION) then
+    if (not self.forceDisabled) and start and duration and duration > MIN_DURATION then
         local timer = self.timer or CreateCooldownTimer(self)
         timer.start = start
         timer.duration = duration
@@ -203,9 +217,7 @@ local function OnResumeCooldown(self)
         local now = Cooldown_UnbuggedTime(timer)
 		timer.endTime = timer.start + timer.duration + (now - timer.paused)
         timer.endCooldown = timer.endTime - 0.05
-
         timer.paused = nil
-
         Cooldown_TimerUpdate(self.timer)
     end
 end
