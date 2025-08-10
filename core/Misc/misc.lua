@@ -51,7 +51,7 @@ local function QuestRewardMostValueIcon()
         local questLink = GetQuestItemLink("choice", i)
         local _, _, amount = GetQuestItemInfo("choice", i)
         local itemSellPrice = questLink and select(11, C_Item.GetItemInfo(questLink))
-        local itemIsUpgrade = PawnShouldItemLinkHaveUpgradeArrow and PawnShouldItemLinkHaveUpgradeArrow(questLink)
+        local itemIsUpgrade = questLink and PawnShouldItemLinkHaveUpgradeArrow and PawnShouldItemLinkHaveUpgradeArrow(questLink)
         local upgradeIconByPawn = upgradeIconsByPawn[i]
 
         if itemIsUpgrade then
