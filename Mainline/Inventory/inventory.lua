@@ -69,10 +69,8 @@ local function ReskinItemButton(b, overrideIconSize)
                 b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
             end)
         else --bank_slots
-            hooksecurefunc(b.IconQuestTexture, "SetTexture", function(_, tex)
-                if tex ~= "Interface/AddOns/GW2_UI/textures/icons/icon-quest" then
-                    b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
-                end
+            hooksecurefunc(b, "Refresh", function()
+                b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
             end)
         end
     end
