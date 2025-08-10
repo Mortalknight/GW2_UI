@@ -409,7 +409,12 @@ function GwQuesttrackerScenarioBlockMixin:TimerUpdate(...)
         local timerID = select(i, ...)
         local _, _, wtype = GetWorldElapsedTime(timerID)
         if wtype == LE_WORLD_ELAPSED_TIMER_TYPE_CHALLENGE_MODE then
-            local mapID = C_ChallengeMode.GetActiveChallengeMapID()
+            local mapID
+            if GW.Retail then
+                mapID = C_ChallengeMode.GetActiveChallengeMapID()
+            elseif GW.Mists then
+                _, _, _, _, _, _, _, mapID = GetInstanceInfo()
+            end
             if mapID then
                 local timeLimit, time2, time3
                 if GW.Retail then

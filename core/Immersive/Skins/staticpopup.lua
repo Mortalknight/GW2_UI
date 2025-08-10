@@ -75,10 +75,13 @@ local function LoadStaticPopupSkin()
         GW.SkinTextBox(_G["StaticPopup" .. i .. "MoneyInputFrameCopperMiddle"], _G["StaticPopup" .. i .. "MoneyInputFrameCopperLeft"], _G["StaticPopup" .. i .. "MoneyInputFrameCopperRight"], nil, nil, 5, -10)
 
         local editbox = StaticPopup.editBox or StaticPopup.EditBox
+        if editbox.NineSlice then
+            editbox.NineSlice:GwStripTextures()
+        end
         editbox:SetFrameLevel(editbox:GetFrameLevel() + 1)
         editbox:SetPoint("TOPLEFT", -2, -4)
         editbox:SetPoint("BOTTOMRIGHT", 2, 4)
-        GW.SkinTextBox(_G["StaticPopup" .. i .. "EditBoxMid"], _G["StaticPopup" .. i .. "EditBoxLeft"], _G["StaticPopup" .. i .. "EditBoxRight"], nil, nil, 5)
+        GW.SkinTextBox(_G["StaticPopup" .. i .. "EditBoxMid"], _G["StaticPopup" .. i .. "EditBoxLeft"], _G["StaticPopup" .. i .. "EditBoxRight"], nil, nil, 5, nil, nil, editbox)
 
         if _G["StaticPopup" .. i .. "ItemFrameNameFrame"] then
             _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:GwKill()
