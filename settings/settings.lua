@@ -38,11 +38,9 @@ local function UpdateScrollVisibility(panel)
 
     parent:SetHeight(contentHeight)
     scroll:SetScrollChild(parent)
-    scroll.maxScroll = maxScroll
 
     -- Slider Setup
     local slider = scroll.slider
-    if not slider then return end
     slider:SetMinMaxValues(0, maxScroll)
     slider:SetValue(GW.Clamp(slider:GetValue() or 0, 0, maxScroll))
 

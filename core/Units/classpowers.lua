@@ -480,7 +480,7 @@ GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
 local function powerEclipsOnUpdate(self)
     local pwrMax = UnitPowerMax(self.unit, Enum.PowerType.Balance)
     local pwr = UnitPower(self.unit, Enum.PowerType.Balance)
-    if (self.oldEclipsPower ~= nil and self.oldEclipsPower == pwr) then
+    if self.oldEclipsPower == pwr then
         return
     end
 
