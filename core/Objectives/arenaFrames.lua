@@ -191,6 +191,7 @@ end
 function GwObjectivesArenaContainerMixin:RegisterFrame(i)
     local arenaFrame = CreateFrame("Button", "GwArenaFrame" .. i, GwQuestTracker, GW.Retail and "GwQuestTrackerArenaFramePingableTemplate" or "GwQuestTrackerArenaFrameTemplate")
     local unit = "arena" .. i
+    Mixin(arenaFrame, GwArenaFrameMixin)
 
     arenaFrame.unit = unit
     arenaFrame.id = i

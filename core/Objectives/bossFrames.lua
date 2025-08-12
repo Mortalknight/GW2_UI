@@ -151,6 +151,7 @@ end
 function GwObjectivesBossContainerMixin:RegisterFrame(i, eventless)
     local bossFrame = CreateFrame("Button", "GwBossFrame" .. i, GwQuestTracker, GW.Retail and "GwQuestTrackerBossFramePingableTemplate" or "GwQuestTrackerBossFrameTemplate")
     local unit = "boss" .. i
+    Mixin(bossFrame, GwBossFrameMixin)
 
     bossFrame.id = i
     bossFrame.unit = unit
