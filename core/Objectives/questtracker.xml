@@ -12,7 +12,12 @@
                 </FontString>
             </Layer>
             <Layer level="BORDER">
-                <Texture parentKey="icon"/>
+                <Texture parentKey="icon">
+                    <Size x="26" y="26"/>
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
                 <FontString parentKey="Count" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true">
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-3" y="2"/>
@@ -24,7 +29,7 @@
             <Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
         <NormalTexture parentKey="NormalTexture" file="Interface\AddOns\GW2_UI\textures\bag\bagnormal">
-            <Size x="42" y="42"/>
+            <Size x="26" y="26"/>
             <Anchors>
                 <Anchor point="CENTER"/>
             </Anchors>
