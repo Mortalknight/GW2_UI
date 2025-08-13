@@ -1678,13 +1678,14 @@ local function powerStagger(self, event, ...)
             end
             fb.ironskin:Hide()
             fb.ironskin.ironartwork:Hide()
+            fb.ironskin.expires = nil
         end
 
         --This can be optimized by checking aura payload for changes rather then scaning auras
-       auraData = findBuff("player", 124275)   -- light stagger
-        if auraData and auraData.duration == nil then
+        auraData = findBuff("player", 124275)         -- light stagger
+        if not auraData or auraData.duration == nil then
             auraData = findBuff("player", 124274)     -- medium stagger
-            if auraData and auraData.duration == nil then
+            if not auraData or auraData.duration == nil then
                 auraData = findBuff("player", 124273) -- heavy stagger
             end
         end
