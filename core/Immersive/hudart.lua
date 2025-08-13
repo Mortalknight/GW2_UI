@@ -171,19 +171,17 @@ local function combatHealthState(self)
 end
 GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
 
---classic
 registerActionHudAura(
     5487,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_bear",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_bear",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_bear",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_bear",
     "player"
 )
 
---cata
 registerActionHudAura(
     768,
-    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_cat",
-    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_cat",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_cat",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_cat",
     "player"
 )
 
