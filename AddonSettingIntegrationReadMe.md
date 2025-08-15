@@ -1,7 +1,7 @@
 # GW2_UI — External Settings Panel API (for Addon Authors)
 
 Let your addon register its own settings panel inside GW2_UI’s Settings UI. This gives you
-search integration, 2-column layout, dependencies, profiles/namespaces, and consistent look & feel.
+search integration, 2-column layout, dependencies and consistent look & feel.
 
 ---
 
@@ -29,46 +29,30 @@ search integration, 2-column layout, dependencies, profiles/namespaces, and cons
 
     ```lua
     panel:AddGroupHeader("General")
-    panel:AddOption("Enable Feature", "Toggles the main feature", { getterSetter = "enableFeature" })
+    panel:AddOption("Enable Feature", "Toggles the main feature", { getter = function() return "opt" end, setter = function(value) print(value) end, getDefault = function() return "opt1" end })
     panel:AddOptionDropdown("Mode", "Choose a mode", {
       getterSetter = "mode",
-      optionsList  = {"opt1","opt2"},
-      optionNames  = {"Option 1","Option 2"}
+      optionsList  = {"opt1", "opt2"},
+      optionNames  = {"Option 1", "Option 2"}
     })
     panel:AddOptionSlider("Opacity", nil, {
-      getterSetter   = "opacity",
+      getter = function() return 2 end, setter = function(value) print(value) end, getDefault = function() return 1 end,
       min = 0, max = 1, step = 0.01, decimalNumbers = 2,
       dependence     = { enableFeature = true }, -- shown/enabled only if enableFeature is true
     })
     ```
 
-4. Provide defaults **scoped to your addon namespace**
+4. Register the panel with namespace support, returnes the namespace DB object
 
     ```lua
-    local defaults = {
-      profile = {
-        enableFeature = true,
-        mode         = "opt1",
-        opacity      = 0.8,
-      }
-    }
-    
-
-5. Register the panel with namespace support, returnes the namespace DB object
-
-    ```lua
-    --    AddSettingsPanel(basePanel, name, desc, subFramesOrNil, isAddon, addonName, defaults)
+    --    AddSettingsPanel(basePanel, name, desc, subFramesOrNil, isAddon)
     local db = settingsTab:AddSettingsPanel(panel,
       "YOUR ADDON SETTINGS",
       "Description of your addon.",
       nil,              -- no sub-panels
-      true,             -- isAddon = true (enables namespaced storage)
-      "YourAddonName",  -- namespace key under GW.settings.namespaces
-      defaults
+      true,             -- isAddon
     )
     ```
-    You can access your settings via: db."settingsName" like db.mode or db.opacity
-
 
 ## Panel API
 Each method creates a widget and returns its option object. The final layout is handled
@@ -78,7 +62,7 @@ by GW2_UI (two columns where possible, full row if forced).
 
     Creates a *boolean toggle* (checkbox).
     General ``values`` *keys* (apply to all API calls; listed later in detail):
-    ``getterSetter``, ``callback``, ``dependence``, ``forceNewLine``, ``incompatibleAddons``,
+    ``getter``, ``setter``, ``getDefault``, ``callback``, ``dependence``, ``forceNewLine``, ``incompatibleAddons``,
     ``groupHeaderName``, ``optionUpdateFunc``
 
     _No type-specific keys for ``AddOption``_.
@@ -124,7 +108,7 @@ by GW2_UI (two columns where possible, full row if forced).
 
 ### General ``values`` (all controls)
 These keys are available on every API method:
-- ``getterSetter`` _(string, recommended)_
+- ``getter``, ``setter``, ``getDefault`` _(string, recommended)_
 
   The storage key for this option within your namespace (e.g., "enableFeature").
   GW2_UI binds this to a proxy (via CreateSettingProxy) so get()/set() use your addon's namespace.
@@ -182,18 +166,10 @@ These keys are available on every API method:
     basePanel.sub:SetText("External added settings panel for testing purposes.")
 
     basePanel:AddGroupHeader("Group Header")
-    basePanel:AddOption("Checkbox", "Setting description", { getterSetter = "settingCheckbox", callback = function(value) print("Checkbox set to value:", value) end })
-    basePanel:AddOptionDropdown(GW.NewSign .. "Dropdown", "Description", { getterSetter = "settingDropdown", callback = function(value) print("Dropdown set to value:", value) end, optionsList = {"opt1", "opt2"}, optionNames = {"Option 1", "Option 2"}, dependence = {settingCheckbox = true, }, checkbox = false, groupHeaderName = "Group Header"})
-    basePanel:AddOptionSlider(GW.NewSign .. "Slider", nil, { getterSetter = "settingSlider", callback = function(value) print("Slider set to value:", value) end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, dependence = {XPBAR_ENABLED = true},  groupHeaderName = "Group Header"})
+    basePanel:AddOption("Checkbox", "Setting description", { getter = function() return true end, setter = function(value) print(value) end, getDefault = function() return false end, callback = function(value) print("Checkbox set to value:", value) end })
+    basePanel:AddOptionDropdown(GW.NewSign .. "Dropdown", "Description", { getter = function() return "opt1" end, setter = function(value) print(value) end, getDefault = function() return "opt1" end, callback = function(value) print("Dropdown set to value:", value) end, optionsList = {"opt1", "opt2"}, optionNames = {"Option 1", "Option 2"}, dependence = {settingCheckbox = true, }, checkbox = false, groupHeaderName = "Group Header"})
+    basePanel:AddOptionSlider(GW.NewSign .. "Slider", nil, { getter = function() return 1 end, setter = function(value) print(value) end, getDefault = function() return 2 end, callback = function(value) print("Slider set to value:", value) end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, dependence = {XPBAR_ENABLED = true},  groupHeaderName = "Group Header"})
 
-    local defaults = {
-        profile = {
-            settingCheckbox = true,
-            settingDropdown = "opt1",
-            settingSlider = 2,
-        }
-    }
-
-    local db = frame:AddSettingsPanel(basePanel, "TEST ADDON SETTINGS", "External added settings panel for testing purposes.", nil, true, "MyAddonName", defaults)
+    frame:AddSettingsPanel(basePanel, "TEST ADDON SETTINGS", "External added settings panel for testing purposes.", nil, true)
   end
   ```

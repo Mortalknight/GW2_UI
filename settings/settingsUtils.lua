@@ -3,7 +3,7 @@ local L = GW.L
 local RoundDec = GW.RoundDec
 
 --helper functions for settings
-local function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect, addonNamespaceName)
+local function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect)
     local keys = {}
     for key in string.gmatch(fullPath, "[^%.]+") do
         table.insert(keys, key)
@@ -11,7 +11,7 @@ local function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect, add
 
     return {
         get = function(optionKey)
-            local ref = addonNamespaceName and GW.globalSettings[addonNamespaceName].profile or (isPrivateSetting and GW.private) or GW.settings
+            local ref =(isPrivateSetting and GW.private) or GW.settings
             for i = 1, #keys - 1 do
                 ref = ref[keys[i]]
                 if not ref then return nil end
@@ -27,7 +27,7 @@ local function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect, add
         end,
 
         set = function(value, optionKey)
-            local ref = addonNamespaceName and GW.globalSettings[addonNamespaceName].profile or (isPrivateSetting and GW.private) or GW.settings
+            local ref = (isPrivateSetting and GW.private) or GW.settings
             for i = 1, #keys - 1 do
                 if not ref[keys[i]] then ref[keys[i]] = {} end
                 ref = ref[keys[i]]
@@ -43,7 +43,7 @@ local function CreateSettingProxy(fullPath, isPrivateSetting, isMultiselect, add
         end,
 
         getDefault = function(optionKey)
-            local ref = addonNamespaceName and GW.AddonSettingDefault[addonNamespaceName].profile or (isPrivateSetting and GW.privateDefaults.profile) or GW.globalDefault.profile
+            local ref = (isPrivateSetting and GW.privateDefaults.profile) or GW.globalDefault.profile
             for i = 1, #keys - 1 do
                 ref = ref[keys[i]]
                 if not ref then return nil end
@@ -125,7 +125,7 @@ local function CreateOption(optionType, panel, name, desc, values)
     local opt = {
         name = name,
         desc = desc or "",
-        optionName = values.getterSetter,
+        optionName = values.getterSetter, -- forbidden for addons
         optionType = optionType,
         callback = values.callback,
         dependence = values.dependence,
@@ -136,6 +136,10 @@ local function CreateOption(optionType, panel, name, desc, values)
         groupHeaderName = values.groupHeaderName,
         isPrivateSetting = values.isPrivateSetting, -- forbidden for addons
         optionUpdateFunc = values.optionUpdateFunc,
+
+        getter = values.getter, --for addons
+        setter = values.setter, --for addons
+        getDefault = values.getDefault, --for addons
     }
 
     if values.getterSetter then
@@ -143,6 +147,10 @@ local function CreateOption(optionType, panel, name, desc, values)
         opt.get = proxy.get
         opt.set = proxy.set
         opt.getDefault = proxy.getDefault
+    elseif values.getter and values.setter then
+        opt.get = values.getter
+        opt.set = values.setter
+        opt.getDefault = values.getDefault
     end
 
     table.insert(panel.gwOptions, opt)

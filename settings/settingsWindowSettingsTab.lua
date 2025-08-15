@@ -385,49 +385,7 @@ end
 -- =========================
 -- API for adding panels
 -- =========================
-GW.AddonSettingDefault = {}
-function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc, subFrameData, isAddon, addonName, addonDefaults)
-    if isAddon then
-        if not addonName then
-            GW.Notice("|cffff0000[ERROR]|r: Addon name is required when adding a settings panel for an addon.")
-            return
-        end
-        if not addonDefaults or type(addonDefaults) ~= "table" then
-            GW.Notice("|cffff0000[ERROR]|r: Addon defaults are required when adding a settings panel for an addon and must be a table.")
-            return
-        end
-        -- add a namespace for the addon
-        local nameSpaceName = addonName:gsub("%s+", ""):lower()
-        GW.globalSettings[nameSpaceName] = GW.globalSettings:GetNamespace(nameSpaceName, true) or GW.globalSettings:RegisterNamespace(nameSpaceName, addonDefaults)
-        GW.AddonSettingDefault[nameSpaceName] = addonDefaults
-        if basePanel.gwOptions then
-            for _, opt in ipairs(basePanel.gwOptions) do
-                if opt.optionName then
-                    local proxy = GW.CreateSettingProxy(opt.optionName, opt.isPrivateSetting, opt.checkbox, nameSpaceName)
-                    opt.get = proxy.get
-                    opt.set = proxy.set
-                    opt.getDefault = proxy.getDefault
-                end
-                opt.isAddon = true
-            end
-        end
-        if subFrameData and #subFrameData > 0 then
-            for _, sub in ipairs(subFrameData) do
-                if sub.frame.gwOptions then
-                    for _, opt in ipairs(sub.frame.gwOptions) do
-                        if opt.optionName then
-                            local proxy = GW.CreateSettingProxy(opt.optionName, opt.isPrivateSetting, opt.checkbox, nameSpaceName)
-                            opt.get = proxy.get
-                            opt.set = proxy.set
-                            opt.getDefault = proxy.getDefault
-                        end
-                        opt.isAddon = true
-                    end
-                end
-            end
-        end
-    end
-
+function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc, subFrameData, isAddon)
     tinsert(menuItems, {
         basePanel = basePanel,
         name = name, desc = desc,
@@ -448,9 +406,26 @@ function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc
     if isAddon then
         self.menu.ScrollBox:SetDataProvider(CreateDataProvider(BuildFlatMenuData()), ScrollBoxConstants.RetainScrollPosition)
         SwitchPanel(currentPanelIndex or 1)
-        return GW.globalSettings[addonName:gsub("%s+", ""):lower()].profile
     end
 end
+
+  function GWAddSettingsPanel()
+    local frame = GW2_ADDON.GetSettingsTabFrame()
+    local basePanel = CreateFrame("Frame", "GwTestPanel", frame, "GwSettingsPanelTmpl")
+    basePanel.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    basePanel.header:SetTextColor(GW2_ADDON.TextColors.LIGHT_HEADER.r, GW2_ADDON.TextColors.LIGHT_HEADER.g, GW2_ADDON.TextColors.LIGHT_HEADER.b)
+    basePanel.header:SetText("TEST ADDON SETTINGS")
+    basePanel.sub:SetFont(UNIT_NAME_FONT, 12)
+    basePanel.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    basePanel.sub:SetText("External added settings panel for testing purposes.")
+
+    basePanel:AddGroupHeader("Group Header")
+    basePanel:AddOption("Checkbox", "Setting description", { getter = function() return true end, setter = function(value) print(value) end, getDefault = function() return false end, callback = function(value) print("Checkbox set to value:", value) end })
+    basePanel:AddOptionDropdown(GW.NewSign .. "Dropdown", "Description", { getter = function() return "opt1" end, setter = function(value) print(value) end, getDefault = function() return "opt1" end, callback = function(value) print("Dropdown set to value:", value) end, optionsList = {"opt1", "opt2"}, optionNames = {"Option 1", "Option 2"}, dependence = {settingCheckbox = true, }, checkbox = false, groupHeaderName = "Group Header"})
+    basePanel:AddOptionSlider(GW.NewSign .. "Slider", nil, { getter = function() return 1 end, setter = function(value) print(value) end, getDefault = function() return 2 end, callback = function(value) print("Slider set to value:", value) end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, dependence = {XPBAR_ENABLED = true},  groupHeaderName = "Group Header"})
+
+    frame:AddSettingsPanel(basePanel, "TEST ADDON SETTINGS", "External added settings panel for testing purposes.", nil, true)
+  end
 
 -- With this also other addons can add panels to the settings
 local function GetSettingsTabFrame()
