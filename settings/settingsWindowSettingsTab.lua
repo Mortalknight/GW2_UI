@@ -2,7 +2,7 @@ local _, GW = ...
 
 local menuItems = {}
 local menuItemSelectionBehavior
-local settingsWindowFrmae
+local settingsWindowFrame
 local settingsMenuFrame
 local currentPanelIndex
 local searchPanel
@@ -388,7 +388,8 @@ end
 function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc, subFrameData, isAddon)
     tinsert(menuItems, {
         basePanel = basePanel,
-        name = name, desc = desc,
+        name = name,
+        desc = desc,
         isExpanded = false,
         hasSubFrames = subFrameData and #subFrameData > 0,
         subFrameData = subFrameData,
@@ -409,27 +410,27 @@ function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc
     end
 end
 
-  function GWAddSettingsPanel()
-    local frame = GW2_ADDON.GetSettingsTabFrame()
-    local basePanel = CreateFrame("Frame", "GwTestPanel", frame, "GwSettingsPanelTmpl")
-    basePanel.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    basePanel.header:SetTextColor(GW2_ADDON.TextColors.LIGHT_HEADER.r, GW2_ADDON.TextColors.LIGHT_HEADER.g, GW2_ADDON.TextColors.LIGHT_HEADER.b)
-    basePanel.header:SetText("TEST ADDON SETTINGS")
-    basePanel.sub:SetFont(UNIT_NAME_FONT, 12)
-    basePanel.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    basePanel.sub:SetText("External added settings panel for testing purposes.")
-
-    basePanel:AddGroupHeader("Group Header")
-    basePanel:AddOption("Checkbox", "Setting description", { getter = function() return true end, setter = function(value) print(value) end, getDefault = function() return false end, callback = function(value) print("Checkbox set to value:", value) end })
-    basePanel:AddOptionDropdown(GW.NewSign .. "Dropdown", "Description", { getter = function() return "opt1" end, setter = function(value) print(value) end, getDefault = function() return "opt1" end, callback = function(value) print("Dropdown set to value:", value) end, optionsList = {"opt1", "opt2"}, optionNames = {"Option 1", "Option 2"}, dependence = {settingCheckbox = true, }, checkbox = false, groupHeaderName = "Group Header"})
-    basePanel:AddOptionSlider(GW.NewSign .. "Slider", nil, { getter = function() return 1 end, setter = function(value) print(value) end, getDefault = function() return 2 end, callback = function(value) print("Slider set to value:", value) end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, dependence = {XPBAR_ENABLED = true},  groupHeaderName = "Group Header"})
-
-    frame:AddSettingsPanel(basePanel, "TEST ADDON SETTINGS", "External added settings panel for testing purposes.", nil, true)
-  end
+function GwSettingsWindowSettingsTabMixin:OpenSettingsToPanel(panelName)
+    local foundItem
+    settingsMenuFrame.ScrollBox:GetDataProvider():ForEach(function(ed) if ed.itemData.name == panelName then foundItem = ed; return true end end)
+    if foundItem then
+        SwitchPanel(foundItem.index)
+        settingsMenuFrame.ScrollBox:ScrollToElementDataByPredicate(function(ed) return ed == foundItem end)
+        C_Timer.After(0, function()
+            local btn = settingsMenuFrame.ScrollBox:FindFrame(foundItem)
+            if btn and not menuItemSelectionBehavior:IsSelected(btn) then menuItemSelectionBehavior:Select(btn) end
+        end)
+    end
+    if not GwSettingsWindow:IsShown() then
+        ShowUIPanel(GwSettingsWindow)
+        GwSettingsWindow:SwitchTab(settingsWindowFrame.name)
+    end
+end
+--/run GW2_ADDON.GetSettingsTabFrame():OpenSettingsToPanel("TEST ADDON SETTINGS")
 
 -- With this also other addons can add panels to the settings
 local function GetSettingsTabFrame()
-    return settingsWindowFrmae
+    return settingsWindowFrame
 end
 GW.GetSettingsTabFrame = GetSettingsTabFrame
 
@@ -682,6 +683,7 @@ local function InitMenuButton(button, elementData)
     button.text:SetPoint("LEFT", button, "LEFT", 20 + (elementData.isSubCat and 10 or 0), 0)
     button.text:SetText(elementData.itemData.name)
 
+    button.name = elementData.itemData.name
     button.itemData = elementData.itemData
     button.isSubCat = elementData.isSubCat
     button.hasSubCat = elementData.itemData.hasSubFrames
@@ -758,7 +760,7 @@ GW.GetAllSettingsWidgets = GetAllSettingsWidgets
 
 local function LoadSettingsTab(container)
     local settingsTab = CreateFrame("Frame", nil, container, "GwSettingsSettingsTabTemplate")
-    settingsWindowFrmae = settingsTab
+    settingsWindowFrame = settingsTab
     settingsMenuFrame = settingsTab.menu
     searchEdit = settingsTab.menu.search.input
 

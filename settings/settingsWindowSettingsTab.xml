@@ -13,17 +13,6 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.$parent.tabContent.menu" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.$parent.tabContent.menu" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
-                <Layers>
-                    <Layer>
-                        <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
-                            <Size x="585" y="2"></Size>
-                            <TexCoords left="0" right="1" top="0" bottom="1"/>
-                            <Anchors>
-                                <Anchor point="BOTTOMLEFT" x="0" y="-5"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
                 <Frames>
                     <Frame parentKey="search" inherits="GwStandardInputField">
                         <Anchors>

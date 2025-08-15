@@ -152,6 +152,28 @@ These keys are available on every API method:
 
   If your addon has multiple sections, you can pass a list of subframes to ``AddSettingsPanel`` (as ``subFramesOrNil``).
   Each subframe should be created with the same ``"GwSettingsPanelTmpl"`` and populated with the APIs above.
+  Structure =
+  ```lua
+  {{frame = panel, name = "Panel 1"}, {frame = panel, name = "Panel 2"}, ...}
+  ```
+  if you use sub frames the base panel need only works as a container:
+  ```lua
+    local p = CreateFrame("Frame", nil, GW2_ADDON.GetSettingsTabFrame(), "GwSettingsPanelTmpl")
+    p.header:Hide()
+    p.sub:Hide()
+    p.scroll:Hide()
+  ```
+
+## Open settings panel to a named tab
+
+  You can directly open the settings panel with a simple api call.
+  The panel name is the 2. ``parameter`` from ``AddSettingsPanel`` or for sub panels the ``name`` tag
+  ```lua
+  function OpenSettingsPanel()
+    local frame = GW2_ADDON.GetSettingsTabFrame()
+    frame:OpenSettingsToPanel("TEST ADDON SETTINGS")
+  end
+  ```
 
 ## Example
   ```lua
