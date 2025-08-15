@@ -4,9 +4,9 @@ local function ApplyMissingIncompatibleAddonsDefaults()
     for category, defaultData in pairs(GW.globalDefault.profile.IncompatibleAddons) do
 
         if not GW.settings.IncompatibleAddons[category] then
-            GW.settings.IncompatibleAddons[category] = GW.copyTable(nil, defaultData)
+            GW.settings.IncompatibleAddons[category] = GW.CopyTable(defaultData)
         else
-            GW.settings.IncompatibleAddons[category].Addons = GW.copyTable(nil, defaultData.Addons)
+            GW.settings.IncompatibleAddons[category].Addons = GW.CopyTable(defaultData.Addons)
         end
     end
 end

@@ -169,7 +169,7 @@ GW.ShortPrefixValues = {}
 local function BuildPrefixValues()
     if next(GW.ShortPrefixValues) then wipe(GW.ShortPrefixValues) end
 
-    GW.ShortPrefixValues = GW.copyTable(GW.ShortPrefixValues, GW.ShortPrefixStyles[GW.settings.ShortHealthValuePrefixStyle])
+    GW.ShortPrefixValues = GW.CopyTable(GW.ShortPrefixStyles[GW.settings.ShortHealthValuePrefixStyle])
     local shortValueDec = format("%%.%df", GW.settings.ShortHealthValuesDecimalLength or 1)
 
     for _, style in ipairs(GW.ShortPrefixValues) do

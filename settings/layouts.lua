@@ -12,7 +12,7 @@ local function UpdateMatchingLayout(self, new_point)
         for i = 0, #layout.frames do
             if layout.frames[i] and layout.frames[i].settingName == self.setting then
                 layout.frames[i].point = nil
-                layout.frames[i].point = GW.copyTable(nil, new_point)
+                layout.frames[i].point = GW.CopyTable(new_point)
 
                 frameFound = true
                 break
@@ -24,13 +24,14 @@ local function UpdateMatchingLayout(self, new_point)
             local newIdx = #layout.frames + 1
             layout.frames[newIdx] = {}
             layout.frames[newIdx].settingName = self.setting
-            layout.frames[newIdx].point = GW.copyTable(nil, new_point)
+            layout.frames[newIdx].point = GW.CopyTable(new_point)
         end
     end
 end
 GW.UpdateMatchingLayout = UpdateMatchingLayout
 
 local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdown, startUp)
+    if not layout then return end
     if updateDropdown then
         GW.private.Layouts.currentSelected = layout.name
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown:GenerateMenu()
@@ -169,7 +170,7 @@ local function RenameSelectedLayout(self)
                 return
             end
             GW.global.layouts[GW.private.Layouts.currentSelected].name = layoutName
-            GW.global.layouts[layoutName] = GW.copyTable(nil, GW.global.layouts[GW.private.Layouts.currentSelected])
+            GW.global.layouts[layoutName] = GW.CopyTable(GW.global.layouts[GW.private.Layouts.currentSelected])
             GW.global.layouts[GW.private.Layouts.currentSelected] = nil
             GW.private.Layouts.currentSelected = layoutName
             self:GetParent().savedLayoutDropDown:GenerateMenu()

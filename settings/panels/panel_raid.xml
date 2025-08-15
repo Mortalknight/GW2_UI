@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwSettingsRaidPanelTmpl" inherits="GwSettingsPanelScrollTmpl" virtual="true">
+    <Frame name="GwSettingsRaidPanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
         <Frames>
             <Button parentKey="preview" inherits="GwStandardButton" text="PREVIEW">
                 <Size x="50" y="24" />

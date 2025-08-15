@@ -1,7 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwSettingsSplashPanelTmpl" inherits="GwSettingsPanelScrollTmpl" virtual="true">
+    <Frame name="GwSettingsOverviewTempl" hidden="true" virtual="true">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent.tabContent.panel" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.tabContent.panel" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+        </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentkey="splashart" file="Interface\AddOns\GW2_UI\textures\uistuff\settingartwork">
@@ -28,40 +32,50 @@
                     </Anchors>
                 </Texture>
             </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="header" text="Header" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="512" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.pageblock" relativePoint="TOPLEFT" x="20" y="10"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
         </Layers>
         <Frames>
-            <Frame parentKey="menu" inherits="GwHeroPanelMenuTemplate">
+            <Frame parentKey="menu">
                 <Anchors>
-                    <Anchor point="TOPLEFT" x="-231" y="-102"></Anchor>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.$parent.tabContent.menu" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.$parent.tabContent.menu" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
                 <Frames>
-                    <Button parentKey="welcomebtn" inherits="GwSettingsOverviewMenuButton"  text="Welcome"/>
+                    <Button parentKey="welcomebtn" inherits="GwSettingsOverviewMenuButton" text="Welcome"/>
                     <Button parentKey="keybindingsbtn" inherits="GwSettingsOverviewMenuButton"  text="Keybindings">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.welcomebtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="movehudbtn" inherits="GwSettingsOverviewMenuButton"  text="Move HUD">
+                    <Button parentKey="movehudbtn" inherits="GwSettingsOverviewMenuButton" text="Move HUD">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.keybindingsbtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="discordbtn" inherits="GwSettingsOverviewMenuButton"  text="Join Discord">
+                    <Button parentKey="discordbtn" inherits="GwSettingsOverviewMenuButton" text="Join Discord">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.movehudbtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="reportbtn" inherits="GwSettingsOverviewMenuButton"  text="StatusReport">
+                    <Button parentKey="reportbtn" inherits="GwSettingsOverviewMenuButton" text="StatusReport">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.discordbtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="changelog" inherits="GwSettingsOverviewMenuButton"  text="Changelog">
+                    <Button parentKey="changelog" inherits="GwSettingsOverviewMenuButton" text="Changelog">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.reportbtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="creditsbtn" inherits="GwSettingsOverviewMenuButton"  text="Credits">
+                    <Button parentKey="creditsbtn" inherits="GwSettingsOverviewMenuButton" text="Credits">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.changelog" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>
@@ -69,7 +83,6 @@
                 </Frames>
             </Frame>
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
-                <Size x="600" y="390"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.pageblock" relativePoint="TOPLEFT" x="0" y="-5"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativeKey="$parent.pageblock" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>

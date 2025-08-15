@@ -1,0 +1,133 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwSettingsSettingsTabTemplate" virtual="true"  Mixin="GwSettingsWindowSettingsTabMixin">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent.tabContent.panel" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent.tabContent.panel" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+        </Anchors>
+
+        <Frames>
+            <Frame parentKey="menu">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.$parent.tabContent.menu" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.$parent.tabContent.menu" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                            <Size x="585" y="2"></Size>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" x="0" y="-5"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Frame parentKey="search" inherits="GwStandardInputField">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" x="10" y="-5"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-10" y="-30"></Anchor>
+                        </Anchors>
+                    </Frame>
+                    <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.search" relativePoint="BOTTOMLEFT" x="5" y="-10"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="10"></Anchor>
+                        </Anchors>
+                    </Frame>
+                    <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="-8" y="0"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-8" y="0"/>
+                        </Anchors>
+                    </EventFrame>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+
+    <Button name ="GwSettingsSettingsTabMenuButtonTemplate" inherits="GwHeroPanelMenuButtonTemplate" virtual="true">
+        <Size x="221" y="36"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer textureSubLevel="OVERLAY">
+                <FontString parentKey="text" inherits="gw_button_font_menu_light" justifyH="LEFT"/>
+                <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
+
+    <Frame name="GwSettingsPanelTmpl" virtual="true" Mixin="GwSettingsPanelMixin">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
+            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\settingspanelsep">
+                    <Size x="4" y="512"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="header" text="Header" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="512" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="5" y="-10"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="breadcrumb" text="" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="512" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.header" relativePoint="RIGHT" x="10" y="0"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="sub" text="Subheader" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="500" y="25"/>
+                    <Color r="0.6" b="0.6" g="0.6"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="5" y="-30"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="scroll">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-50" />
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                </Anchors>
+                <Frames>
+                    <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        </Anchors>
+                    </Frame>
+                    <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="-20" y="0"/>
+                            <Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="-20" y="0"/>
+                        </Anchors>
+                    </EventFrame>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+
+    <Frame name="GwFrameTemplate" virtual="true"/>
+
+</Ui>

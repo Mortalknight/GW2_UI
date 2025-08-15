@@ -345,7 +345,7 @@ local function mover_OnDragStop(self)
 
         self:ClearAllPoints()
         self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
-        self.savedPoint = GW.copyTable(nil, new_point)
+        self.savedPoint = GW.CopyTable(new_point)
 
         self:SetMovable(true)
         self:SetUserPlaced(true)
@@ -583,7 +583,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, tags, size
     if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
         -- use default position
         moveframe:SetPoint(moveframe.defaultPoint.point, UIParent, moveframe.defaultPoint.relativePoint, moveframe.defaultPoint.xOfs, moveframe.defaultPoint.yOfs)
-        moveframe.savedPoint = GW.copyTable(nil, moveframe.defaultPoint)
+        moveframe.savedPoint = GW.CopyTable(moveframe.defaultPoint)
     else
         moveframe:SetPoint(moveframe.savedPoint.point, UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
     end

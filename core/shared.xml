@@ -397,5 +397,96 @@
         </Anchors>
     </Frame>
 
+    <Frame name="GwStandardInputField" virtual="true">
+        <Size x="226" y="26"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <Color r="1" g="1" b="1" a="0.5"></Color>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                    <Size x="314" y="1"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"   relativeKey="$parent.background" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.background" relativePoint="TOPRIGHT"  x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                    <Size x="314" y="1"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.background" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.background" relativePoint="BOTTOMRIGHT"  x="0" y="0"/>
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="1" bottom="0" />
+                </Texture>
+
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+                    <Size x="1" y="2"/>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativeKey="$parent.background" relativePoint="TOPRIGHT" x="1" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.background" relativePoint="BOTTOMRIGHT" x="1" y="0"/>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+                    <Size x="2" y="2"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.background" relativePoint="TOPLEFT" x="-1" y="0"/>
+                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.background" relativePoint="BOTTOMLEFT" x="-1" y="0"/>
+                    </Anchors>
+                    <TexCoords left="1" right="0" top="0" bottom="1" />
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <EditBox parentKey="input" autoFocus="false">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="0"></Anchor>
+                </Anchors>
+                <FontString inherits="GameFontNormalSmall">
+                    <Color r="1" b="1" g="1"/>
+                </FontString>
+                <Frames>
+                    <Button parentKey="clearButton" hidden="true">
+                        <Size x="17" y="17"/>
+                        <Anchors>
+                            <Anchor point="RIGHT" x="-3" y="0"/>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture atlas="common-search-clearbutton" useAtlasSize="false" alpha="0.5" parentKey="texture">
+                                    <Size x="10" y="10"/>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="3" y="-3"/>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Scripts>
+                            <OnEnter>
+                                self.texture:SetAlpha(1.0);
+                            </OnEnter>
+                            <OnLeave>
+                                self.texture:SetAlpha(0.5);
+                            </OnLeave>
+                            <OnMouseDown>
+                                if self:IsEnabled() then
+                                    self.texture:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4);
+                                end
+                            </OnMouseDown>
+                            <OnMouseUp>
+                                self.texture:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3);
+                            </OnMouseUp>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </EditBox>
+        </Frames>
+    </Frame>
+
 
 </Ui>

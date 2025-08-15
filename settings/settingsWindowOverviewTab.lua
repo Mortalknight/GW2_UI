@@ -1,9 +1,7 @@
 local _, GW = ...
+
 local L = GW.L
-local createCat = GW.CreateCat
-local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
-local settingMenuToggle = GW.settingMenuToggle
 
 local CreditsSection = {
     GW.Gw2Color .. L["Created by: "]:gsub(":", "")  .. "|r",
@@ -229,111 +227,75 @@ local function InitButton(button, elementData)
     end
 end
 
-local function LoadOverviewPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsSplashPanelTmpl")
-    p.scroll:Hide()
+local function LoadSettingsOverview(container)
+    local settingsOverview = CreateFrame("Frame", nil, container, "GwSettingsOverviewTempl")
 
-    sWindow.splashart = p.splashart
-    p.splashart:AddMaskTexture(sWindow.backgroundMask)
-    sWindow.splashart2 = p.splashart2
-    p.splashart2:AddMaskTexture(sWindow.backgroundMask)
+    settingsOverview.name = "GwSettingsOverview"
+    settingsOverview.headerBreadcrumbText = OVERVIEW
+    settingsOverview.hasSearch = false
+    container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_overview", settingsOverview)
+
+    settingsOverview.splashart:AddMaskTexture(container.backgroundMask)
+    settingsOverview.splashart2:AddMaskTexture(container.backgroundMask)
 
     if GW.Retail then
-        p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail")
-        p.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail-dark")
+        settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail")
+        settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail-dark")
     elseif GW.Classic then
-        p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic")
-        p.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic")
+        settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic")
+        settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic")
     elseif GW.Mists then
-        p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata")
-        p.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata")
+        settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata")
+        settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata")
     end
 
-    CharacterMenuButton_OnLoad(p.menu.welcomebtn, true)
-    CharacterMenuButton_OnLoad(p.menu.keybindingsbtn, false)
-    CharacterMenuButton_OnLoad(p.menu.movehudbtn, true)
-    CharacterMenuButton_OnLoad(p.menu.discordbtn, false)
-    CharacterMenuButton_OnLoad(p.menu.reportbtn, true)
-    CharacterMenuButton_OnLoad(p.menu.changelog, false)
-    CharacterMenuButton_OnLoad(p.menu.creditsbtn, true)
+    CharacterMenuButton_OnLoad(settingsOverview.menu.welcomebtn, true)
+    CharacterMenuButton_OnLoad(settingsOverview.menu.keybindingsbtn, false)
+    CharacterMenuButton_OnLoad(settingsOverview.menu.movehudbtn, true)
+    CharacterMenuButton_OnLoad(settingsOverview.menu.discordbtn, false)
+    CharacterMenuButton_OnLoad(settingsOverview.menu.reportbtn, true)
+    CharacterMenuButton_OnLoad(settingsOverview.menu.changelog, false)
+    CharacterMenuButton_OnLoad(settingsOverview.menu.creditsbtn, true)
 
-    p.header:SetFont(DAMAGE_TEXT_FONT, 30)
-    p.header:SetTextColor(1,1,1)
-    p.header:ClearAllPoints()
-    p.header:SetPoint("BOTTOMLEFT",p.pageblock,"TOPLEFT",20,10)
+    settingsOverview.header:SetFont(DAMAGE_TEXT_FONT, 30)
 
-    p.sub:SetFont(UNIT_NAME_FONT, 12)
-    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(L["Enable or disable the modules you need and don't need."])
-    p.sub:Hide()
+    settingsOverview.menu.welcomebtn:SetText(L["Setup"])
+    settingsOverview.menu.welcomebtn:SetScript("OnClick", welcome_OnClick)
 
-    local fnGSWMH_OnClick = function()
+    settingsOverview.menu.reportbtn:SetText(L["System info"])
+    settingsOverview.menu.reportbtn:SetScript("OnClick", statusReport_OnClick)
+
+    settingsOverview.menu.changelog:SetText(L["Changelog"])
+    settingsOverview.menu.changelog:SetScript("OnClick", function() ShowChangelog(settingsOverview.ScrollBox) end)
+
+    settingsOverview.menu.creditsbtn:SetText(L["Credits"])
+    settingsOverview.menu.creditsbtn:SetScript("OnClick", function() ShowCredits(settingsOverview.ScrollBox) end)
+
+    settingsOverview.menu.movehudbtn:SetText(L["Move HUD"])
+    settingsOverview.menu.movehudbtn:SetScript("OnClick", function()
         if InCombatLockdown() then
             GW.Notice(L["You can not move elements during combat!"])
             return
         end
         GW.moveHudObjects(GW.MoveHudScaleableFrame)
-    end
-    local fnGSWD_OnClick = function()
+    end)
+    settingsOverview.menu.keybindingsbtn:SetText(KEY_BINDING)
+    settingsOverview.menu.keybindingsbtn:SetScript("OnClick", function() container:Hide() GW.DisplayHoverBinding() end)
+    settingsOverview.menu.discordbtn:SetText(L["Join Discord"])
+    settingsOverview.menu.discordbtn:SetScript("OnClick", function()
         GW.ShowPopup({text = L["Join Discord"],
-            hasEditBox = true,
-            inputText = "https://discord.gg/MZZtRWt",
-            EditBoxOnEscapePressed = function(popup) popup:Hide() end,
-            hideOnEscape = true}
-        )
-    end
-    local fmGSWKB_OnClick = function()
-        sWindow:Hide()
-        GW.DisplayHoverBinding()
-    end
-    GwSettingsWindowMoveHud = p.menu.movehudbtn
-
-    p.menu.welcomebtn:SetParent(p)
-    p.menu.welcomebtn.settings = sWindow
-    p.menu.welcomebtn:SetText(L["Setup"])
-    p.menu.welcomebtn:SetScript("OnClick", welcome_OnClick)
-
-    p.menu.reportbtn:SetParent(p)
-    p.menu.reportbtn.settings = sWindow
-    p.menu.reportbtn:SetText(L["System info"])
-    p.menu.reportbtn:SetScript("OnClick", statusReport_OnClick)
-
-    p.menu.changelog:SetParent(p)
-    p.menu.changelog.settings = sWindow
-    p.menu.changelog:SetText(L["Changelog"])
-    p.menu.changelog:SetScript("OnClick", function() ShowChangelog(p.ScrollBox) end)
-
-    p.menu.creditsbtn:SetParent(p)
-    p.menu.creditsbtn.settings = sWindow
-    p.menu.creditsbtn:SetText(L["Credits"])
-    p.menu.creditsbtn:SetScript("OnClick", function() ShowCredits(p.ScrollBox) end)
-
-    p.menu.movehudbtn:SetText(L["Move HUD"])
-    p.menu.movehudbtn:SetScript("OnClick", fnGSWMH_OnClick)
-    p.menu.keybindingsbtn:SetText(KEY_BINDING)
-    p.menu.keybindingsbtn:SetScript("OnClick", fmGSWKB_OnClick)
-    p.menu.discordbtn:SetText(L["Join Discord"])
-    p.menu.discordbtn:SetScript("OnClick", fnGSWD_OnClick)
-
-    sWindow.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
-    sWindow.versionString:SetFont(UNIT_NAME_FONT, 12)
-    sWindow.versionString:SetText(GW.VERSION_STRING)
-    sWindow.headerString:SetText(CHAT_CONFIGURATION)
-
-    sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
-    sWindow.headerBreadcrumb:SetFont(DAMAGE_TEXT_FONT, 14)
-    sWindow.headerBreadcrumb:SetText(CHAT_CONFIGURATION)
-
-    createCat(L["Modules"], L["Enable and disable components"], p, false, nil, true, "Interface/AddOns/GW2_UI/textures/uistuff/tabicon_overview")
-
-    InitPanel(p)
+        hasEditBox = true,
+        inputText = "https://discord.gg/MZZtRWt",
+        EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+        hideOnEscape = true})
+    end)
 
     -- setup scrollframe
     local view = CreateScrollBoxListLinearView()
     view:SetElementInitializer("GwSettingsChangeLogCreditsTemplate", function(button, elementData)
         InitButton(button, elementData);
     end)
-    ScrollUtil.InitScrollBoxListWithScrollBar(p.ScrollBox, p.ScrollBar, view)
+    ScrollUtil.InitScrollBoxListWithScrollBar(settingsOverview.ScrollBox, settingsOverview.ScrollBar, view)
     view:SetElementExtentCalculator(function(dataIndex, elementData)
         if elementData.isHeader ~= nil and elementData.isHeader == true then
             return 36
@@ -341,21 +303,18 @@ local function LoadOverviewPanel(sWindow)
             return elementData.neededHeight or 36
         end
     end)
-    ScrollUtil.AddResizableChildrenBehavior(p.ScrollBox)
-    GW.HandleTrimScrollBar(p.ScrollBar)
-    GW.HandleScrollControls(p)
-    p.ScrollBar:SetHideIfUnscrollable(true)
+    ScrollUtil.AddResizableChildrenBehavior(settingsOverview.ScrollBox)
+    GW.HandleTrimScrollBar(settingsOverview.ScrollBar)
+    GW.HandleScrollControls(settingsOverview)
+    settingsOverview.ScrollBar:SetHideIfUnscrollable(true)
 
-    UpdateScrollBox(p.ScrollBox, "changelog")
-
-    p:SetScript("OnShow", function()
-        settingMenuToggle(false)
-        sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
-        sWindow.headerBreadcrumb:SetText(OVERVIEW)
-    end)
+    UpdateScrollBox(settingsOverview.ScrollBox, "changelog")
 
     if GW.Retail then
-        GW.InitBeledarsSplashScreen(p)
+        GW.InitBeledarsSplashScreen(settingsOverview)
     end
+
+    return settingsOverview
 end
-GW.LoadOverviewPanel = LoadOverviewPanel
+GW.LoadSettingsOverview = LoadSettingsOverview
+

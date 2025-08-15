@@ -81,7 +81,7 @@ local function DatabaseMigration(globalDb, privateDb)
                             GW.globalSettings:SetProfile(profileName)
                             for settings, value in next, profileTbl do
                                 if type(value) == "table" then
-                                    GW.settings[settings] = GW.copyTable(value)
+                                    GW.settings[settings] = GW.CopyTable(value)
                                 else
                                     GW.settings[settings] = value
                                 end

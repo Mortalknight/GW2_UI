@@ -156,22 +156,27 @@ end
 -- Locale doesn't exist yet, make it exist
 GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI")
 
-local function copyTable(newTable, tableToCopy)
-    if type(newTable) ~= "table" then newTable = {} end
+local function CopyTable(src, preserveMeta, seen)
+    if type(src) ~= "table" then return src end
+    seen = seen or {}
+    if seen[src] then return seen[src] end
 
-    if type(tableToCopy) == "table" then
-        for option, value in pairs(tableToCopy) do
-            if type(value) == "table" then
-                value = copyTable(newTable[option], value)
-            end
+    local dst = {}
+    seen[src] = dst
 
-            newTable[option] = value
-        end
+    for k, v in pairs(src) do
+        local nk = (type(k) == "table") and CopyTable(k, preserveMeta, seen) or k
+        local nv = (type(v) == "table") and CopyTable(v, preserveMeta, seen) or v
+        dst[nk] = nv
     end
-
-    return newTable
+    if preserveMeta then
+        local mt = getmetatable(src)
+        if mt then setmetatable(dst, mt) end
+    end
+    return dst
 end
-GW.copyTable = copyTable
+GW.CopyTable = CopyTable
+
 
 --Add Shared Media
 --Font

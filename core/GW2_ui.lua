@@ -536,7 +536,8 @@ local function evPlayerLogin(self)
         GW.BuildPrefixValues()
     end
     GW.LoadMovers(lm.layoutFrame)
-    GW.LoadSettings()
+    GW.BuildSettingsWindow()
+    --GW.LoadSettings()
     if not GW.Retail then
         GW.LoadHoverBinds()
     end

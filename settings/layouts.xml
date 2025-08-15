@@ -1,0 +1,77 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwLayoutView" virtual="true" hidden="false">
+        <Size x="180" y="285"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="GwSmallSettingsContainer" relativePoint="TOPLEFT" x="180" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <FontString parentKey="desc" text="Some text" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="148" y="160"/>
+                    <Color r="0.6" g="0.6" b="0.6"/>
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="60"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <DropdownButton parentKey="savedLayoutDropDown" inherits="WowStyle1DropdownTemplate">
+                <Size x="125" y="25"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.desc" relativePoint="BOTTOMLEFT" x="-10" y="0"/>
+				</Anchors>
+                <Layers>
+					<Layer level="BACKGROUND">
+						<FontString parentKey="title" inherits="GameFontNormal" text="Layouts" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="8" y="3"/>
+							</Anchors>
+						</FontString>
+				  	</Layer>
+				</Layers>
+			</DropdownButton>
+
+            <Button parentKey="rename" inherits="GwStandardButtonNoOutline" text="">
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/rename-quill"/>
+                <DisabledTexture file="Interface/AddOns/GW2_UI/textures/uistuff/rename-quill"/>
+                <Size x="20" y="18" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.savedLayoutDropDown" relativePoint="RIGHT" x="3" y="-2"/>
+                </Anchors>
+            </Button>
+
+            <Button parentKey="new" inherits="GwStandardButton" text="NEW">
+                <Size x="69" y="15" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.savedLayoutDropDown" relativePoint="BOTTOMLEFT" x="7" y="-5"/>
+                </Anchors>
+            </Button>
+            <Button parentKey="delete" inherits="GwStandardButton" text="DELETE">
+                <Size x="69" y="15" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.new" relativePoint="RIGHT" x="5" y="0"/>
+                </Anchors>
+            </Button>
+
+            <DropdownButton parentKey="specsDropDown" inherits="WowStyle1DropdownTemplate">
+                <Size x="150" y="25"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.new" relativePoint="BOTTOMLEFT" x="-7" y="-30"/>
+				</Anchors>
+                <Layers>
+					<Layer level="BACKGROUND">
+						<FontString parentKey="title" inherits="GameFontNormal" text="Layouts" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="8" y="3"/>
+							</Anchors>
+						</FontString>
+				  	</Layer>
+				</Layers>
+			</DropdownButton>
+        </Frames>
+    </Frame>
+
+</Ui>

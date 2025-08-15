@@ -1,0 +1,216 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Button name="GwOptionBoxTmpl" frameStrata="HIGH" virtual="true">
+        <Size x="244" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="200" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="35" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <CheckButton parentKey="checkbutton" checked="true">
+                <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                <Size x="16" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                </Anchors>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
+            </CheckButton>
+        </Frames>
+    </Button>
+
+    <Button name="GwOptionBoxSliderTmpl" frameStrata="HIGH" virtual="true">
+        <Size x="500" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="200" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">
+                <Size x="205" y="20"/>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-60"/>
+                </Anchors>
+                <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
+                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle">
+                    <Size x="16" y="16"/>
+                </ThumbTexture>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Slider>
+            <Frame parentKey="inputFrame" inherits="GwStandardInputField">
+                <Size x="35" y="20"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="10" y="0"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Button>
+
+    <Button name="GwOptionBoxColorPickerTmpl" frameStrata="HIGH" virtual="true">
+        <Size x="500" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="235" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button parentKey="button">
+                <Size x="250" y="20"/>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                            <Anchors>
+                               <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK" textureSubLevel="2">
+                        <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+    </Button>
+
+    <Button name="GwOptionBoxDropDownTmpl" frameStrata="HIGH" virtual="true">
+        <Size x="500" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="235" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+       <Frames>
+            <DropdownButton parentKey="dropDown" inherits="WowStyle1DropdownTemplate">
+                <Size x="260" y="25"/>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
+                </Anchors>
+            </DropdownButton>
+        </Frames>
+    </Button>
+
+    <Button name="GwOptionBoxTextTmpl" frameStrata="HIGH" virtual="true">
+        <Size x="500" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="256" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="5" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="inputFrame" inherits="GwStandardInputField">
+                <Size x="250" y="20"/>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-15" y="0"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Button>
+
+    <Button name="GwButtonTextTmpl" inherits="GwStandardButton" frameStrata="HIGH" virtual="true">
+        <Size x="244" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="200" y="25"/>
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
+
+    <Frame name="GwOptionBoxHeader" frameStrata="HIGH" virtual="true">
+        <Size x="600" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="SettingsHeader" inherits="GameFontNormal" justifyH="LEFT">
+                    <Size x="600" y="25"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="0" y="-10"/>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                    <Size x="600" y="2"></Size>
+                    <TexCoords left="0.5" right="1" top="0" bottom="1"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" x="0" y="-10"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
+</Ui>
