@@ -17,6 +17,7 @@ search integration, 2-column layout, dependencies and consistent look & feel.
 
     ```lua
     local panel = CreateFrame("Frame", "GwYourAddonPanel", settingsTab, "GwSettingsPanelTmpl")
+    panel.panelId = "Unique Addon ID" -- required
     panel.header:SetFont(DAMAGE_TEXT_FONT, 20)
     panel.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
     panel.header:SetText("YOUR ADDON SETTINGS")
@@ -154,24 +155,25 @@ These keys are available on every API method:
   Each subframe should be created with the same ``"GwSettingsPanelTmpl"`` and populated with the APIs above.
   Structure =
   ```lua
-  {{frame = panel, name = "Panel 1"}, {frame = panel, name = "Panel 2"}, ...}
+  {{frame = subMenuOne, name = "Panel 1"}, {frame = subMenuTwo, name = "Panel 2"}, ...}
   ```
   if you use sub frames the base panel need only works as a container:
   ```lua
-    local p = CreateFrame("Frame", nil, GW2_ADDON.GetSettingsTabFrame(), "GwSettingsPanelTmpl")
-    p.header:Hide()
-    p.sub:Hide()
-    p.scroll:Hide()
+    local container = CreateFrame("Frame", nil, GW2_ADDON.GetSettingsTabFrame(), "GwSettingsPanelTmpl")
+
+    local subMenuOne = CreateFrame("Frame", nil, container, "GwSettingsPanelTmpl")
+
+    local subMenuTwo = CreateFrame("Frame", nil, container, "GwSettingsPanelTmpl")
   ```
 
 ## Open settings panel to a named tab
 
   You can directly open the settings panel with a simple api call.
-  The panel name is the 2. ``parameter`` from ``AddSettingsPanel`` or for sub panels the ``name`` tag
+  The panel id needs to be set for every panel and must be unique.
   ```lua
   function OpenSettingsPanel()
     local frame = GW2_ADDON.GetSettingsTabFrame()
-    frame:OpenSettingsToPanel("TEST ADDON SETTINGS")
+    frame:OpenSettingsToPanel("MyAddon_General")
   end
   ```
 
@@ -179,7 +181,8 @@ These keys are available on every API method:
   ```lua
   function AddSettingsPanel()
     local frame = GW2_ADDON.GetSettingsTabFrame()
-    local basePanel = CreateFrame("Frame", "GwTestPanel", frame, "GwSettingsPanelTmpl")
+    local basePanel = CreateFrame("Frame", nil, frame, "GwSettingsPanelTmpl")
+    basePanel.panelId = "MyAddon_General"
     basePanel.header:SetFont(DAMAGE_TEXT_FONT, 20)
     basePanel.header:SetTextColor(GW2_ADDON.TextColors.LIGHT_HEADER.r, GW2_ADDON.TextColors.LIGHT_HEADER.g, GW2_ADDON.TextColors.LIGHT_HEADER.b)
     basePanel.header:SetText("TEST ADDON SETTINGS")

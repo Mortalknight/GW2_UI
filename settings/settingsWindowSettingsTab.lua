@@ -400,6 +400,9 @@ function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc
         for _, sub in ipairs(subFrameData) do
             InitOptionPanel(sub.frame)
         end
+        basePanel.header:Hide()
+        basePanel.sub:Hide()
+        basePanel.scroll:Hide()
     else
         InitOptionPanel(basePanel)
     end
@@ -410,9 +413,14 @@ function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc
     end
 end
 
-function GwSettingsWindowSettingsTabMixin:OpenSettingsToPanel(panelName)
+function GwSettingsWindowSettingsTabMixin:OpenSettingsToPanel(panelId)
     local foundItem
-    settingsMenuFrame.ScrollBox:GetDataProvider():ForEach(function(ed) if ed.itemData.name == panelName then foundItem = ed; return true end end)
+    settingsMenuFrame.ScrollBox:GetDataProvider():ForEach(function(ed)
+        if (ed.isSubCat and ed.itemData.frame.panelId == panelId) or (not ed.isSubCat and ed.itemData.basePanel.panelId == panelId) then
+            foundItem = ed
+            return true
+        end
+    end)
     if foundItem then
         SwitchPanel(foundItem.index)
         settingsMenuFrame.ScrollBox:ScrollToElementDataByPredicate(function(ed) return ed == foundItem end)
@@ -423,10 +431,10 @@ function GwSettingsWindowSettingsTabMixin:OpenSettingsToPanel(panelName)
     end
     if not GwSettingsWindow:IsShown() then
         ShowUIPanel(GwSettingsWindow)
-        GwSettingsWindow:SwitchTab(settingsWindowFrame.name)
     end
+    GwSettingsWindow:SwitchTab(settingsWindowFrame.name)
 end
---/run GW2_ADDON.GetSettingsTabFrame():OpenSettingsToPanel("TEST ADDON SETTINGS")
+--/run GW2_ADDON.GetSettingsTabFrame():OpenSettingsToPanel("raid10")
 
 -- With this also other addons can add panels to the settings
 local function GetSettingsTabFrame()
@@ -690,12 +698,10 @@ local function InitMenuButton(button, elementData)
     button.elementData = elementData
 
     if elementData.isSubCat then
-        button.frameToShow = button.itemData.frame
         button.index = elementData.index
     elseif elementData.itemData.hasSubFrames then
         button.index = elementData.index + 1
     else
-        button.frameToShow = button.itemData.basePanel
         button.index = elementData.index
     end
 

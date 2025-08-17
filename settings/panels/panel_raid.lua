@@ -7,6 +7,7 @@ local StrLower = GW.StrLower
 --general Grid Settings
 local function LoadGeneralGridSettings(panel)
     local general = CreateFrame("Frame", nil, panel, "GwSettingsPanelTmpl")
+    general.panelId = "raid_general"
     general.header:SetFont(DAMAGE_TEXT_FONT, 20)
     general.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     general.header:SetText(L["Group Frames"])
@@ -27,6 +28,7 @@ end
 -- Profiles
 local function LoadRaid10Profile(panel)
     local raid10 = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    raid10.panelId = "raid10"
     raid10.header:SetFont(DAMAGE_TEXT_FONT, 20)
     raid10.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     raid10.header:SetText(L["Group Frames"])
@@ -116,6 +118,7 @@ local function LoadRaid10Profile(panel)
 end
 local function LoadRaid25Profile(panel)
     local raid25 = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    raid25.panelId = "raid25"
     raid25.header:SetFont(DAMAGE_TEXT_FONT, 20)
     raid25.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     raid25.header:SetText(L["Group Frames"])
@@ -205,6 +208,7 @@ local function LoadRaid25Profile(panel)
 end
 local function LoadRaid40Profile(panel)
     local raid40 = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    raid40.panelId = "raid40"
     raid40.header:SetFont(DAMAGE_TEXT_FONT, 20)
     raid40.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     raid40.header:SetText(L["Group Frames"])
@@ -291,6 +295,7 @@ local function LoadRaid40Profile(panel)
 end
 local function LoadRaidPetProfile(panel)
     local p = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    p.panelId = "raid_pet"
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p.header:SetText(L["Group Frames"])
@@ -371,6 +376,7 @@ local function LoadRaidPetProfile(panel)
 end
 local function LoadPartyProfile(panel)
     local party = CreateFrame("Frame", "GwSettingsRaidPartyPanel", panel, "GwSettingsRaidPanelTmpl")
+    party.panelId = "raid_party"
     party.header:SetFont(DAMAGE_TEXT_FONT, 20)
     party.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     party.header:SetText(L["Group Frames"])
@@ -461,6 +467,7 @@ end
 
 local function LoadMaintankProfile(panel)
     local tank = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    tank.panelId = "raid_maintank"
     tank.header:SetFont(DAMAGE_TEXT_FONT, 20)
     tank.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     tank.header:SetText(L["Group Frames"])
@@ -541,10 +548,6 @@ end
 
 local function LoadRaidPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
-    p.header:Hide()
-    p.sub:Hide()
-    p.scroll:Hide()
-
     local profilePanles = {LoadGeneralGridSettings(p), LoadRaid40Profile(p), LoadRaid25Profile(p), LoadRaid10Profile(p), LoadMaintankProfile(p), LoadRaidPetProfile(p), LoadPartyProfile(p)}
 
     sWindow:AddSettingsPanel(p, L["Group Frames"], L["Edit the party and raid options to suit your needs."], {{name = GENERAL, frame = profilePanles[1]}, {name = RAID..": 40", frame = profilePanles[2]}, {name = RAID..": 25", frame = profilePanles[3]}, {name = RAID..": 10", frame = profilePanles[4]}, {name = MAINTANK, frame = profilePanles[5]}, {name = PET, frame = profilePanles[6]}, {name = PARTY, frame = profilePanles[7]}})

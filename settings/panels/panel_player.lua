@@ -4,11 +4,9 @@ local StrUpper = GW.StrUpper
 
 local function LoadPlayerPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
-    p.header:Hide()
-    p.sub:Hide()
-    p.scroll:Hide()
 
     local p_player = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    p_player.panelId = "player_general"
     p_player.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_player.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p_player.header:SetText(PLAYER)
@@ -21,6 +19,7 @@ local function LoadPlayerPanel(sWindow)
     p_player.breadcrumb:SetText(GENERAL)
 
     local p_player_aura = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    p_player_aura.panelId = "player_aura"
     p_player_aura.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_player_aura.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p_player_aura.header:SetText(PLAYER)
@@ -33,6 +32,7 @@ local function LoadPlayerPanel(sWindow)
     p_player_aura.sub:SetText("")
 
     local p_player_debuff = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    p_player_debuff.panelId = "player_debuff"
     p_player_debuff.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_player_debuff.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p_player_debuff.header:SetText(PLAYER)
@@ -45,6 +45,7 @@ local function LoadPlayerPanel(sWindow)
     p_player_debuff.breadcrumb:SetText(L["Debuffs"])
 
     local fader = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    fader.panelId = "player_fader"
     fader.header:SetFont(DAMAGE_TEXT_FONT, 20)
     fader.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     fader.header:SetText(PLAYER)

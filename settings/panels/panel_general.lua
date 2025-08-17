@@ -3,11 +3,9 @@ local L = GW.L
 
 local function LoadGeneralPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
-    p.header:Hide()
-    p.sub:Hide()
-    p.scroll:Hide()
 
-    local general = CreateFrame("Frame", "nil", p, "GwSettingsPanelTmpl")
+    local general = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    general.panelId = "general_general"
     general.header:SetFont(DAMAGE_TEXT_FONT, 20)
     general.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     general.header:SetText(GENERAL)
@@ -20,6 +18,7 @@ local function LoadGeneralPanel(sWindow)
     general.breadcrumb:SetText(GENERAL)
 
     local classcolors = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    classcolors.panelId = "general_classcolors"
     classcolors.header:SetFont(DAMAGE_TEXT_FONT, 20)
     classcolors.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     classcolors.header:SetText(GENERAL)
@@ -31,7 +30,8 @@ local function LoadGeneralPanel(sWindow)
     classcolors.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     classcolors.breadcrumb:SetText(L["Custom Class Colors"])
 
-    local blizzardFix = CreateFrame("Frame", "TetFixes", p, "GwSettingsPanelTmpl")
+    local blizzardFix = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    blizzardFix.panelId = "general_blizzardfix"
     blizzardFix.header:SetFont(DAMAGE_TEXT_FONT, 20)
     blizzardFix.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     blizzardFix.header:SetText(GENERAL)

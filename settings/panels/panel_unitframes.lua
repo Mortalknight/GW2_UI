@@ -3,11 +3,9 @@ local L = GW.L
 
 local function LoadTargetPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
-    p.header:Hide()
-    p.sub:Hide()
-    p.scroll:Hide()
 
     local pPlayerPet = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    pPlayerPet.panelId = "player_pet"
     pPlayerPet.header:SetFont(DAMAGE_TEXT_FONT, 20)
     pPlayerPet.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     pPlayerPet.header:SetText(UNITFRAME_LABEL)
@@ -20,6 +18,7 @@ local function LoadTargetPanel(sWindow)
     pPlayerPet.breadcrumb:SetText(PET)
 
     local p_target = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    p_target.panelId = "target_general"
     p_target.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_target.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p_target.header:SetText(UNITFRAME_LABEL)
@@ -32,6 +31,7 @@ local function LoadTargetPanel(sWindow)
     p_target.breadcrumb:SetText(TARGET)
 
     local pTargetOfTarget = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    pTargetOfTarget.panelId = "target_of_target"
     pTargetOfTarget.header:SetFont(DAMAGE_TEXT_FONT, 20)
     pTargetOfTarget.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     pTargetOfTarget.header:SetText(UNITFRAME_LABEL)
@@ -44,6 +44,7 @@ local function LoadTargetPanel(sWindow)
     pTargetOfTarget.breadcrumb:SetText(SHOW_TARGET_OF_TARGET_TEXT)
 
     local p_focus = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    p_focus.panelId = "focus_general"
     p_focus.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_focus.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p_focus.header:SetText(UNITFRAME_LABEL)
@@ -56,6 +57,7 @@ local function LoadTargetPanel(sWindow)
     p_focus.breadcrumb:SetText(FOCUS)
 
     local pTargetOfFocus = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    pTargetOfFocus.panelId = "target_of_focus"
     pTargetOfFocus.header:SetFont(DAMAGE_TEXT_FONT, 20)
     pTargetOfFocus.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     pTargetOfFocus.header:SetText(UNITFRAME_LABEL)

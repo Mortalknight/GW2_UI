@@ -3,11 +3,9 @@ local L = GW.L
 
 local function LoadAurasPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
-    p.header:Hide()
-    p.sub:Hide()
-    p.scroll:Hide()
 
     local p_auras = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    p_auras.panelId = "auras_general"
     p_auras.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_auras.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p_auras.header:SetText(L["Raid Auras"])
@@ -20,6 +18,7 @@ local function LoadAurasPanel(sWindow)
     p_auras.breadcrumb:SetText(GENERAL)
 
     local p_indicator = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    p_indicator.panelId = "auras_indicators"
     p_indicator.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_indicator.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p_indicator.header:SetText(L["Raid Auras"])
@@ -32,6 +31,7 @@ local function LoadAurasPanel(sWindow)
     p_indicator.breadcrumb:SetText(L["Raid Indicators"])
 
     local p_missingBuffs = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    p_missingBuffs.panelId = "auras_missing"
     p_missingBuffs.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_missingBuffs.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p_missingBuffs.header:SetText(L["Raid Auras"])

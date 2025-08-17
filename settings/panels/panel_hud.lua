@@ -3,11 +3,9 @@ local L = GW.L
 
 local function LoadHudPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
-    p.header:Hide()
-    p.sub:Hide()
-    p.scroll:Hide()
 
     local general = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    general.panelId = "hud_general"
     general.header:SetFont(DAMAGE_TEXT_FONT, 20)
     general.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     general.header:SetText(UIOPTIONS_MENU)
@@ -20,6 +18,7 @@ local function LoadHudPanel(sWindow)
     general.breadcrumb:SetText(GENERAL)
 
     local minimap = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    minimap.panelId = "hud_minimap"
     minimap.header:SetFont(DAMAGE_TEXT_FONT, 20)
     minimap.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     minimap.header:SetText(UIOPTIONS_MENU)
@@ -32,6 +31,7 @@ local function LoadHudPanel(sWindow)
     minimap.breadcrumb:SetText(MINIMAP_LABEL)
 
     local worldmap = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    worldmap.panelId = "hud_worldmap"
     worldmap.header:SetFont(DAMAGE_TEXT_FONT, 20)
     worldmap.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     worldmap.header:SetText(UIOPTIONS_MENU)
@@ -44,6 +44,7 @@ local function LoadHudPanel(sWindow)
     worldmap.breadcrumb:SetText(WORLDMAP_BUTTON)
 
     local fct = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    fct.panelId = "hud_fct"
     fct.header:SetFont(DAMAGE_TEXT_FONT, 20)
     fct.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     fct.header:SetText(UIOPTIONS_MENU)

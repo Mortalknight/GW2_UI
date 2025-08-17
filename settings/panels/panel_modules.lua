@@ -3,7 +3,7 @@ local L = GW.L
 
 local function LoadModulesPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
-
+    p.panelId = "modules_general"
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p.header:SetText(L["Modules"])

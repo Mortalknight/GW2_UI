@@ -17,12 +17,9 @@ AddForProfiling("panel_actionbar", "setMultibarCols", setMultibarCols)
 
 local function LoadActionbarPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
-    p.header:Hide()
-    p.sub:Hide()
-    p.scroll:Hide()
-    sWindow.actionbarPanel = p
 
     local general = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    general.panelId = "actionbar_general"
     general.header:SetFont(DAMAGE_TEXT_FONT, 20)
     general.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     general.header:SetText(BINDING_HEADER_ACTIONBAR)
@@ -33,9 +30,9 @@ local function LoadActionbarPanel(sWindow)
     general.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     general.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     general.breadcrumb:SetText(GENERAL)
-    p.general = general
 
     local mainBar = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    mainBar.panelId = "actionbar_main"
     mainBar.header:SetFont(DAMAGE_TEXT_FONT, 20)
     mainBar.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     mainBar.header:SetText(BINDING_HEADER_ACTIONBAR)
@@ -46,9 +43,9 @@ local function LoadActionbarPanel(sWindow)
     mainBar.sub:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     mainBar.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     mainBar.sub:SetText("")
-    p.mainBar = mainBar
 
     local extraBars = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    extraBars.panelId = "actionbar_extra"
     extraBars.header:SetFont(DAMAGE_TEXT_FONT, 20)
     extraBars.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     extraBars.header:SetText(BINDING_HEADER_ACTIONBAR)
@@ -59,9 +56,9 @@ local function LoadActionbarPanel(sWindow)
     extraBars.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     extraBars.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     extraBars.breadcrumb:SetText(BINDING_HEADER_MULTIACTIONBAR)
-    p.extraBars = extraBars
 
     local totemBar = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    totemBar.panelId = "actionbar_totem"
     totemBar.header:SetFont(DAMAGE_TEXT_FONT, 20)
     totemBar.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     totemBar.header:SetText(BINDING_HEADER_ACTIONBAR)
@@ -72,10 +69,10 @@ local function LoadActionbarPanel(sWindow)
     totemBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     totemBar.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     totemBar.breadcrumb:SetText(TUTORIAL_TITLE47) --"Totem bar"
-    p.totemBar = totemBar
 
 
     local stanceBar = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    stanceBar.panelId = "actionbar_stance"
     stanceBar.header:SetFont(DAMAGE_TEXT_FONT, 20)
     stanceBar.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     stanceBar.header:SetText(BINDING_HEADER_ACTIONBAR)
@@ -86,11 +83,9 @@ local function LoadActionbarPanel(sWindow)
     stanceBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     stanceBar.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     stanceBar.breadcrumb:SetText(HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance bar"])
-    p.stanceBar = stanceBar
 
     -- GENERAL
     general:AddOption(L["Hide Empty Slots"], L["Hide the empty action bar slots."], { getterSetter = "HIDEACTIONBAR_BACKGROUND_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["ACTIONBARS_ENABLED"] = true}, incompatibleAddons = "Actionbars", hidden = GW.Retail})
-
     general:AddOption(L["Automatic Bar Layout"], L["Enable or disable the automatic layout management of the primary action bars and associated frames (pet, buffs); required for auto bar fading and some other features"], { getterSetter = "BAR_LAYOUT_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["ACTIONBARS_ENABLED"] = true}, incompatibleAddons = "Actionbars", hidden = not GW.Retail})
     general:AddOptionSlider(L["Empty slots alpha"], L["Set the empty action bar slots alpha value."], { getterSetter = "ACTIONBAR_BACKGROUND_ALPHA", callback = function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, min = 0, max = 1, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true}, hidden = GW.Retail})
     general:AddOption(L["Action Button Labels"], L["Enable or disable the action button assignment text"], { getterSetter = "BUTTON_ASSIGNMENTS", callback = function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, dependence = {["ACTIONBARS_ENABLED"] = true}, incompatibleAddons = "Actionbars"})

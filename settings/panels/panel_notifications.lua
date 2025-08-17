@@ -6,6 +6,7 @@ local function LoadNotificationsPanel(sWindow)
     if GW.Classic then return end
 
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
+    p.panelId = "notifications_general"
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     p.header:SetText(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL)
