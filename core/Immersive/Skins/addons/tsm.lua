@@ -1,7 +1,6 @@
 local _, GW = ...
 
 local skinLoaded = false
-local libAhTab = LibStub:GetLibrary("LibAHTab-1-0", true)
 
 local function AddTsmTab(_, tabId)
     if skinLoaded or tabId ~= "TSM_AH_TAB" then return end
@@ -22,10 +21,13 @@ end
 
 local function LoadTSMAddonSkin()
     if not GW.settings.AuctionHouseSkinEnabled or not TSM_API then return end
-    local eventFrame = CreateFrame("Frame")
-    eventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
-    eventFrame:SetScript("OnEvent", function()
-        hooksecurefunc(libAhTab, "CreateTab", AddTsmTab)
-    end)
+    local libAhTab = LibStub:GetLibrary("LibAHTab-1-0", true)
+    if libAhTab then
+        local eventFrame = CreateFrame("Frame")
+        eventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
+        eventFrame:SetScript("OnEvent", function()
+            hooksecurefunc(libAhTab, "CreateTab", AddTsmTab)
+        end)
+    end
 end
 GW.LoadTSMAddonSkin = LoadTSMAddonSkin
