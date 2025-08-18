@@ -27,7 +27,7 @@ local function LoadChatPanel(sWindow)
     p:AddOptionSlider(L["History Size"], nil, { getterSetter = "historySize", min = 10, max = 500, decimalNumbers = 0, step = 1, dependence = {["CHATFRAME_ENABLED"] = true, ["chatHistory"] = true}})
     p:AddOptionButton(L["Reset History"], nil, {callback = function() GW.private.ChatHistoryLog = {} end})
 
-    p:AddOptionDropdown(TIMESTAMPS_LABEL, OPTION_TOOLTIP_TIMESTAMPS, { getterSetter = "timeStampFormat", optionsList = {"NONE", "%I:%M ", "%I:%M:%S ", "%I:%M %p ", "%I:%M:%S %p ", "%H:%M ", "%H:%M:%S "}, optionNames = {NONE, "03:27", "03:27:32", "03:27 PM", "03:27:32 PM", "15:27", "15:27:32"}})
+    p:AddOptionDropdown(TIMESTAMPS_LABEL, OPTION_TOOLTIP_TIMESTAMPS, { getterSetter = "timeStampFormat", optionsList = {"NONE", "%I:%M ", "%I:%M:%S ", "%I:%M %p ", "%I:%M:%S %p ", "%H:%M ", "%H:%M:%S "}, optionNames = {NONE, "03:27", "03:27:32", "03:27 PM", "03:27:32 PM", "15:27", "15:27:32"}, dependence = {["CHATFRAME_ENABLED"] = true}})
     p:AddOptionDropdown(L["Announce Interrupts"], L["Announce when you interrupt a spell to the specified chat channel"], { getterSetter = "interruptAnnounce", callback = GW.ToggleInterruptAnncouncement, optionsList = {"NONE", "SAY", "YELL", "PARTY", "RAID", "RAID_ONLY", "EMOTE"}, optionNames = {NONE, SAY, YELL, L["Party Only"], L["Party / Raid"], L["Raid Only"], EMOTE}})
 
     local soundKeys = {}

@@ -71,6 +71,9 @@ local function AddDependenciesToOptionWidgetTooltip()
                 if settingsWidget then
                     local displayName = settingsWidget and settingsWidget.displayName or settingName
                     local currentVal = settingsWidget and settingsWidget.get()
+                    if settingsWidget.isIncompatibleAddonLoaded and not settingsWidget.isIncompatibleAddonLoadedButOverride then
+                        currentVal = false
+                    end
                     local match = false
 
                     local expectedText = ""
@@ -292,8 +295,11 @@ local function CheckDependencies()
             local allDepsMet = true
 
             for settingName, expectedValue in pairs(v.dependence) do
-                local of = GW.FindSettingsWidgetByOption(settingName, v.isAddon)
+                local of = GW.FindSettingsWidgetByOption(settingName)
                 local currentVal = (of and of.get and of.get())
+                if of.isIncompatibleAddonLoaded and not of.isIncompatibleAddonLoadedButOverride then
+                    currentVal = false
+                end
 
                 if type(expectedValue) == "table" then
                     local matched = false

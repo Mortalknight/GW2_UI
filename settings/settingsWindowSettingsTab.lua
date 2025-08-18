@@ -117,7 +117,7 @@ local function GetOrderedPanelBuckets()
 end
 
 local function RegisterOptionWidget(widget, meta)
-   if not widget or widget.__gwRegEntry then return widget and widget.__gwRegEntry end
+    if not widget or widget.__gwRegEntry then return widget and widget.__gwRegEntry end
 
     local panel = meta and (meta.panel or meta.parentPanel) or widget:GetParent()
     local header = panel and panel.header and panel.header.GetText and panel.header:GetText() or ""
@@ -142,6 +142,7 @@ local function RegisterOptionWidget(widget, meta)
         path       = meta and meta.path or widget.settingsPath,
         pathNorm   = Norm(widget.settingsPath or ""),
         groupHeaderNorm = Norm(widget.groupHeaderName or ""),
+        isNew      = title and title:find(GW.NewSign, 1, true) ~= nil,
         type       = meta and meta.type or widget.optionType,
         optionName = meta and meta.key  or widget.optionName,
         desc       = meta and meta.desc or widget.desc,
@@ -172,11 +173,16 @@ local function SearchWidgetsByText(query)
 
     local groups = {}
     local buckets = GetOrderedPanelBuckets()
+    local searchNew = q == NEW:lower() or q == "!"
 
     for _, bucket in ipairs(buckets) do
         local hits = {}
         for _, e in ipairs(bucket.entries) do
-            if e.titleNorm:find(q, 1, true) or e.groupHeaderNorm:find(q, 1, true) or e.descNorm:find(q, 1, true) then
+            if searchNew then
+                if e.isNew then
+                    hits[#hits+1] = e
+                end
+            elseif e.titleNorm:find(q, 1, true) or e.groupHeaderNorm:find(q, 1, true) or e.descNorm:find(q, 1, true) then
                 hits[#hits+1] = e
             end
         end
@@ -393,6 +399,7 @@ function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc
         isExpanded = false,
         hasSubFrames = subFrameData and #subFrameData > 0,
         subFrameData = subFrameData,
+        isAddon = isAddon,
     })
 
     -- init panel
@@ -723,32 +730,18 @@ local function InitMenuButton(button, elementData)
 end
 
 -- =========================
--- Globl Search API
+-- Global Search API
 -- =========================
-local function FindWidgetsByOption(settingName, isAddon)
+local function FindWidgetsByOption(settingName)
     local idx = GW.SettingsWidgetRegistry.byOptionName[settingName]
     if not idx or #idx == 0 then
         return {}
     end
-    if not isAddon then
-        return idx
-    end
-    local out = {}
-    for _, e in ipairs(idx) do
-        if e.widget.isAddon == isAddon then
-            table.insert(out, e)
-        end
-    end
-    if #out == 0 then
-        -- maybe an addon added an dept on a GW2 setting
-        return idx
-    end
-    table.sort(out, function(a,b) return a.widgetIndex < b.widgetIndex end)
-    return out
+    return idx
 end
 
-local function FindWidgetByOption(settingName, isAddon)
-    local matches = FindWidgetsByOption(settingName, isAddon)
+local function FindWidgetByOption(settingName)
+    local matches = FindWidgetsByOption(settingName)
     return (matches[1] and matches[1].widget) or nil
 end
 GW.FindSettingsWidgetByOption = FindWidgetByOption
@@ -845,7 +838,7 @@ local function LoadSettingsTab(container)
     searchPanel = CreateFrame("Frame", nil, container, "GwSettingsPanelTmpl")
     searchPanel.header:SetFont(DAMAGE_TEXT_FONT, 26)
     searchPanel.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
-    searchPanel.header:SetText(SEARCH)
+    searchPanel.header:SetText(SETTINGS_SEARCH_RESULTS)
     searchPanel.sub:SetFont(UNIT_NAME_FONT, 12)
     searchPanel.sub:SetTextColor(181/255, 160/255, 128/255)
     searchPanel.sub:SetText(SETTINGS_SEARCH_NOTHING_FOUND)
@@ -885,6 +878,12 @@ local function LoadSettingsTab(container)
         local edit = self:GetParent()
         SearchClear(edit, searchPanel)
     end)
+    settingsTab.menu.search.input:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(settingsTab.menu.search.input, "ANCHOR_TOP")
+        GameTooltip:SetText(GW.L["Type '%s' or '!' to show all new settings"]:format(NEW), 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    settingsTab.menu.search.input:SetScript("OnLeave", GameTooltip_Hide)
 
     settingsTab:SetScript("OnShow", function()
         if GetCVarBool("useUiScale") then

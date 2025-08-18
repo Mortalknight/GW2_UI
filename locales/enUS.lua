@@ -705,3 +705,4 @@ L["Range"] = true
 L["Size"] = true
 L["Height"] = true
 L["Keep Size Ratio"] = true
+L["Type '%s' or '!' to show all new settings"] = true
