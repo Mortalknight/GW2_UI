@@ -26,7 +26,7 @@ local function setBagHeaders()
             header:Hide()
         end
     end
-    _G["GwBagFrameGwBagHeader0"].nameString:SetText(strlen(GW.settings.BAG_HEADER_NAME0) > 0 and GW.settings.BAG_HEADER_NAME0 or BACKPACK_TOOLTIP)
+    _G["GwBagFrameGwBagHeader0"].nameString:SetText(GW.settings.BAG_HEADER_NAME0 and strlen(GW.settings.BAG_HEADER_NAME0) > 0 and GW.settings.BAG_HEADER_NAME0 or BACKPACK_TOOLTIP)
 end
 
 -- adjusts the ItemButton layout flow when the bag window size changes (or on open)
