@@ -20,7 +20,7 @@ local function setBagHeaders()
                 color = GW.GetQualityColor(itemRarity)
             end
 
-            header.nameString:SetText(strlen(GW.settings["BAG_HEADER_NAME" .. i]) > 0 and GW.settings["BAG_HEADER_NAME" .. i] or itemName and itemName or UNKNOWN)
+            header.nameString:SetText(GW.settings["BAG_HEADER_NAME" .. i] and strlen(GW.settings["BAG_HEADER_NAME" .. i]) > 0 and GW.settings["BAG_HEADER_NAME" .. i] or itemName and itemName or UNKNOWN)
             header.nameString:SetTextColor(color.r, color.g, color.b, 1)
         else
             header:Hide()
