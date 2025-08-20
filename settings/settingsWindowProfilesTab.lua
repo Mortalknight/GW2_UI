@@ -136,13 +136,13 @@ local function createImportExportFrame()
         end
 
         -- decode only (preview)
-        if GW.GetImportStringType(txt) == "Deflate" then
-            local profileName, profilePlayer, version = GW.DecodeProfile(txt)
-            if not profileName or not profilePlayer or version ~= "Retail" then
+        if GW.GetImportStringType(txt) == "Deflate" then --TODO
+            local profileName, profilePlayer = GW.DecodeProfile(txt)
+            if not profileName or not profilePlayer then
                 frame.subheader:SetText("")
                 frame.result:SetFormattedText("|cffff0000%s|r", L["Error decoding profile: Invalid or corrupt string!"])
             else
-                frame.subheader:SetText(("%s - %s - %s"):format(profileName, profilePlayer, version))
+                frame.subheader:SetText(("%s - %s"):format(profileName, profilePlayer))
                 frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully decoded!"])
             end
         else
@@ -394,7 +394,7 @@ local function AddProfile(name, addNewProfile, importProfileString)
     end
 
     if importProfileString then
-        GW.globalSettings.profiles[name] = importProfileString
+        GW.globalSettings.profiles[name] = GW.ConvertDbStringToInteger(importProfileString)
     elseif addNewProfile then
         local currentProfile = GW.globalSettings:GetCurrentProfile()
         GW.globalSettings:SetProfile(name)

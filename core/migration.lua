@@ -27,8 +27,20 @@ local function ConvertDBIntegerBackToIntegers()
         end
     end
 end
-GW.ConvertDBIntegerBackToIntegers = ConvertDBIntegerBackToIntegers
---/run GW2_ADDON.ConvertDBIntegerBackToIntegers()
+
+local function ConvertDbStringToInteger(tbl)
+    for setting, value in next, tbl do
+        if type(value) == "table" then
+            loopTableForIntConv(value, tbl[setting])
+        else
+            if tonumber(value) then
+                tbl[setting] = tonumber(value)
+            end
+        end
+    end
+    return tbl
+end
+GW.ConvertDbStringToInteger = ConvertDbStringToInteger
 
 local function DatabaseMigration(globalDb, privateDb)
     local oldActiveProfileId, oldActiveProfileName
