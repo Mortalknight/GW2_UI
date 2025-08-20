@@ -2,11 +2,13 @@ local _, GW = ...
 
 local skinLoaded = false
 
-local function AddTsmTab(_, tabId)
-    if skinLoaded or tabId ~= "TSM_AH_TAB" then return end
+local function AddTsmTab()
+    if skinLoaded then return end
+    local libAhTab = LibStub:GetLibrary("LibAHTab-1-0", true)
     skinLoaded = true
 
     local tab = libAhTab:GetButton("TSM_AH_TAB")
+    if not tab then return end
     if not tab.isSkinned then
         local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_tsm"
         GW.SkinSideTabButton(tab, iconTexture, "TSM")
@@ -21,13 +23,6 @@ end
 
 local function LoadTSMAddonSkin()
     if not GW.settings.AuctionHouseSkinEnabled or not TSM_API then return end
-    local libAhTab = LibStub:GetLibrary("LibAHTab-1-0", true)
-    if libAhTab then
-        local eventFrame = CreateFrame("Frame")
-        eventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
-        eventFrame:SetScript("OnEvent", function()
-            hooksecurefunc(libAhTab, "CreateTab", AddTsmTab)
-        end)
-    end
+    hooksecurefunc(AuctionatorAHFrameMixin, "OnShow", AddTsmTab)
 end
 GW.LoadTSMAddonSkin = LoadTSMAddonSkin

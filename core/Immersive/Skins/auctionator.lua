@@ -63,7 +63,7 @@ local function SkinAuctionator()
                         id = "addon_cancel"
                     elseif details.name == "Auctionator" then
                         id = "auctionator"
-                    elseif details.name == "Collecting(s)" then
+                    elseif details.name == "Collecting(s)" or details.name == "Collecting" then
                         id = "addon_collecting"
                     end
                     local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id
