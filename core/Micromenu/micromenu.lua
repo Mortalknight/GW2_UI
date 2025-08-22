@@ -244,24 +244,32 @@ local function reskinMicroButton(btn, name, mbf, hook)
 
     --hackfix for texture size
     local t = btn:GetDisabledTexture()
-    t:ClearAllPoints()
-    t:SetPoint("CENTER",btn,"CENTER",0,0)
-    t:SetSize(32,32)
+    if t then
+        t:ClearAllPoints()
+        t:SetPoint("CENTER",btn,"CENTER", 0, 0)
+        t:SetSize(32, 32)
+    end
 
     t = btn:GetNormalTexture()
-    t:ClearAllPoints()
-    t:SetPoint("CENTER",btn,"CENTER",0,0)
-    t:SetSize(32,32)
+    if t then
+        t:ClearAllPoints()
+        t:SetPoint("CENTER",btn,"CENTER", 0, 0)
+        t:SetSize(32, 32)
+    end
 
     t = btn:GetPushedTexture()
-    t:ClearAllPoints()
-    t:SetPoint("CENTER",btn,"CENTER",0,0)
-    t:SetSize(32,32)
+    if t then
+        t:ClearAllPoints()
+        t:SetPoint("CENTER",btn,"CENTER", 0, 0)
+        t:SetSize(32, 32)
+    end
 
     t = btn:GetHighlightTexture()
-    t:ClearAllPoints()
-    t:SetPoint("CENTER",btn,"CENTER",0,0)
-    t:SetSize(32,32)
+    if t then
+        t:ClearAllPoints()
+        t:SetPoint("CENTER",btn,"CENTER", 0, 0)
+        t:SetSize(32, 32)
+    end
 
     if btn.PushedBackground then btn.PushedBackground:SetTexture() end
     if btn.PushedShadow then btn.PushedShadow:SetTexture() end

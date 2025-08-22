@@ -3,6 +3,9 @@ local _, GW = ...
 local skinLoaded = false
 
 local function AddTsmTab()
+    if AuctionHouseFrame:GetScale() < 0.5 then
+        return
+    end
     if skinLoaded then return end
     local libAhTab = LibStub:GetLibrary("LibAHTab-1-0", true)
     skinLoaded = true
@@ -22,7 +25,7 @@ local function AddTsmTab()
 end
 
 local function LoadTSMAddonSkin()
-    if not GW.settings.AuctionHouseSkinEnabled or not TSM_API then return end
+    if not GW.settings.AuctionHouseSkinEnabled or not TSM_API or not AuctionatorAHFrameMixin then return end
     hooksecurefunc(AuctionatorAHFrameMixin, "OnShow", AddTsmTab)
 end
 GW.LoadTSMAddonSkin = LoadTSMAddonSkin

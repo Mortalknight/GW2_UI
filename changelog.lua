@@ -15,6 +15,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("8.3.2",{
+    {ct.bug, [=[Fix micromenu issue with consoleport addon]=]},
+})
+
 addChange("8.3.1",{
     {ct.change, [=[Settingsframe rework, addons can now hook into it]=]},
     {ct.bug, [=[Fix TSM Loading issue]=]},
