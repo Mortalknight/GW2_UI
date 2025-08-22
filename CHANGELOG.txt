@@ -1,3 +1,15 @@
+8.3.1
+CHANGES
+    - Settingsframe rework, addons can now hook into it
+
+FIXES
+    - Fix TSM Loading issue
+    - Fix DB migration for old profiles
+    - Fix druid bear hud background
+    - Fix quest item not clickable (retail)
+    - Fix quest item texture too big (era)
+    - Fix druid eclipsebar (mists)
+
 8.3.0
 CHANGES
     - 11.2.0 support

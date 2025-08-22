@@ -4,7 +4,7 @@ local addChange = GW.addChange
 local ct = {
   bug = 1,
   feature = 2,
-  change = 3,
+  bugchange = 3,
 }
 GW.CHANGELOGS_TYPES = ct
 --[[
@@ -14,6 +14,16 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+
+addChange("8.3.1",{
+    {ct.change, [=[Settingsframe rework, addons can now hook into it]=]},
+    {ct.bug, [=[Fix TSM Loading issue]=]},
+    {ct.bug, [=[Fix DB migration for old profiles]=]},
+    {ct.bug, [=[Fix druid bear hud background]=]},
+    {ct.bug, [=[Fix quest item not clickable (retail)]=]},
+    {ct.bug, [=[Fix quest item texture too big (era)]=]},
+    {ct.bug, [=[Fix druid eclipsebar (mists)]=]},
+})
 
 addChange("8.3.0",{
     {ct.change, [=[11.2.0 support]=]},
