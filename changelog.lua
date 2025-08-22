@@ -4,7 +4,7 @@ local addChange = GW.addChange
 local ct = {
   bug = 1,
   feature = 2,
-  bugchange = 3,
+  change = 3,
 }
 GW.CHANGELOGS_TYPES = ct
 --[[
