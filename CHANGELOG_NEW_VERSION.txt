@@ -1,3 +1,8 @@
+8.3.3
+FIXES
+    - Fix wrong classpower color for warlocks (Mists)
+    - Fix settings lua error is UI Scale is used
+
 8.3.2
 FIXES
     - Fix micromenu issue with consoleport addon

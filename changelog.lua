@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.3.3",{
+    {ct.bug, [=[Fix wrong classpower color for warlocks (Mists)]=]},
+    {ct.bug, [=[Fix settings lua error is UI Scale is used]=]},
+})
 
 addChange("8.3.2",{
     {ct.bug, [=[Fix micromenu issue with consoleport addon]=]},
