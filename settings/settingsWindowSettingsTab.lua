@@ -450,7 +450,7 @@ end
 GW.GetSettingsTabFrame = GetSettingsTabFrame
 
 -- =========================
--- Suche (ScrollBox)
+-- Search (ScrollBox)
 -- =========================
 local function EnsureSearchState(sp)
    if not sp._search then
@@ -887,8 +887,11 @@ local function LoadSettingsTab(container)
 
     settingsTab:SetScript("OnShow", function()
         if GetCVarBool("useUiScale") then
-            local of = GW.getOptionFrame("PIXEL_PERFECTION")
-            of.checkbutton:SetChecked(false)
+            local of = FindWidgetByOption("PIXEL_PERFECTION")
+            if of then
+                of.checkbutton:SetChecked(false)
+                GW.settings.PIXEL_PERFECTION = false
+            end
         end
         GW.CheckDependencies()
     end)
