@@ -160,10 +160,14 @@ local function updateTextureBasedOnCondition(self)
                 self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard-green")
             end
         else
-            self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare")
-            self.warlock.shardFragment.barFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill")
+            local textureShardFlare = self.useRedTexture and "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-red" or "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare"
+            local textureShardFragmentFill = self.useRedTexture and "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-red" or "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill"
+            local textureShardShard = self.useRedTexture and "Interface/AddOns/GW2_UI/textures/altpower/soulshard-red" or "Interface/AddOns/GW2_UI/textures/altpower/soulshard"
+
+            self.warlock.shardFlare:SetTexture(textureShardFlare)
+            self.warlock.shardFragment.barFill:SetTexture(textureShardFragmentFill)
             for i = 1, 5 do
-                self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard")
+                self.warlock["shard" .. i]:SetTexture(textureShardShard)
             end
         end
     end
@@ -1577,7 +1581,7 @@ local function setWarlock(f)
     end
     -- Register "LEARNED_SPELL_IN_TAB" so we can check for the green fire spell and check an login
     f:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    updateTextureBasedOnCondition(f)
+    f.useRedTexture = false
 
     if GW.Retail then
         f.warlock.powerType = Enum.PowerType.SoulShards
@@ -1599,16 +1603,13 @@ local function setWarlock(f)
             f:SetScript("OnEvent", powerDemonicFury)
             powerDemonicFury(f, "CLASS_POWER_INIT")
         elseif GW.myspec == 3 then
-            f.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-red")
-            f.warlock.shardFragment.barFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-red")
-            for i = 1, 5 do
-                f.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard-red")
-            end
             f.warlock.powerType = Enum.PowerType.BurningEmbers
             f:SetScript("OnEvent", powerSoulshard)
             powerSoulshard(f, "CLASS_POWER_INIT")
         end
     end
+
+     updateTextureBasedOnCondition(f)
 
     return true
 end
