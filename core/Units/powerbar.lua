@@ -400,7 +400,7 @@ local function LoadPowerBar()
     playerPowerBar.runicmask:SetSize(playerPowerBar:GetSize())
     playerPowerBar.runeoverlay:AddMaskTexture(playerPowerBar.runicmask)
 
-    playerPowerBar.decay = GW.CreateAnimatedStatusBar("GwPlayerPowerBarDecay",UIParent,nil,true)
+    playerPowerBar.decay = GW.CreateAnimatedStatusBar("GwPlayerPowerBarDecay", UIParent, nil, true)
 
     playerPowerBar.decay:SetFillAmount(0)
     playerPowerBar.decay:SetFrameLevel(playerPowerBar.decay:GetFrameLevel() - 1)
@@ -423,6 +423,7 @@ local function LoadPowerBar()
     end
     if not GW.Classic then
         GW.MixinHideDuringPetAndOverride(playerPowerBar)
+        GW.MixinHideDuringPetAndOverride(playerPowerBar.decay)
     end
 
     playerPowerBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
