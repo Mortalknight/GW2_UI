@@ -85,7 +85,7 @@
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.pageblock" relativePoint="TOPLEFT" x="0" y="-5"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.pageblock" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.pageblock" relativePoint="BOTTOMRIGHT" x="-5" y="0"></Anchor>
                 </Anchors>
             </Frame>
             <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
@@ -135,10 +135,10 @@
                     </Layer>
                     <Layer level="BORDER">
                         <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\uistuff\changelogicons">
-                        <Size x="16" y="16"/>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
-                        </Anchors>
+                            <Size x="16" y="16"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+                            </Anchors>
                         </Texture>
                         <FontString parentKey="text" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="TOP">
                             <Size x="546" y="1000"/>

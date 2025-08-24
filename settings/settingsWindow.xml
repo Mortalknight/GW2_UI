@@ -114,7 +114,7 @@
                             <Layer level="BACKGROUND" textureSubLevel="3">
                                 <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\236menubg">
                                     <Anchors>
-                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-41"></Anchor>
+                                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                                     </Anchors>
                                 </Texture>

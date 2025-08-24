@@ -95,6 +95,7 @@ GW.AchievementFrameSkinFunction = {}
 GW.CreditsList = {}
 GW.texts = {}
 GW.instanceIconByName = {}
+GW.changelog = {}
 
 -- money
 GW.earnedMoney = 0

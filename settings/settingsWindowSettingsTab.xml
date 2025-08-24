@@ -22,8 +22,8 @@
                     </Frame>
                     <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.search" relativePoint="BOTTOMLEFT" x="5" y="-10"></Anchor>
-                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="10"></Anchor>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.search" relativePoint="BOTTOMLEFT" x="-10" y="-10"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="10"></Anchor>
                         </Anchors>
                     </Frame>
                     <EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">

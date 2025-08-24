@@ -43,58 +43,73 @@ local function QuestRewardMostValueIcon()
     local firstItem = QuestInfoRewardsFrameQuestInfoItem1
     if not firstItem then return end
 
-    local numQuests = GetNumQuestChoices()
-    if numQuests < 2 then return end
+    local numQuestChoices = GetNumQuestChoices()
+    if numQuestChoices < 2 then return end
 
+    local questRewards = {}
     local bestValue, bestItem = 0, 0
-    for i = 1, numQuests do
-        local questLink = GetQuestItemLink("choice", i)
-        local _, _, amount = GetQuestItemInfo("choice", i)
-        local itemSellPrice = questLink and select(11, C_Item.GetItemInfo(questLink))
-        local itemIsUpgrade = questLink and PawnShouldItemLinkHaveUpgradeArrow and PawnShouldItemLinkHaveUpgradeArrow(questLink)
-        local upgradeIconByPawn = upgradeIconsByPawn[i]
+    for i = 1, numQuestChoices do
+        local itemLink = GetQuestItemLink("choice", i)
+        local _, _, amount, _, usable = GetQuestItemInfo("choice", i)
+        local itemSellPrice = itemLink and select(11, C_Item.GetItemInfo(itemLink))
+        local item = PawnGetItemData and PawnGetItemData(itemLink)
 
-        if itemIsUpgrade then
-            if not upgradeIconByPawn then
-                upgradeIconByPawn = _G["QuestInfoRewardsFrameQuestInfoItem" .. i]:CreateTexture(nil, "OVERLAY")
-                upgradeIconByPawn:SetPoint("BOTTOMRIGHT", _G["QuestInfoRewardsFrameQuestInfoItem" .. i], "BOTTOMRIGHT", -2, 2)
-                upgradeIconByPawn:SetSize(15, 15)
-                upgradeIconByPawn:SetAtlas("bags-greenarrow", true)
-                upgradeIconByPawn:SetDrawLayer("OVERLAY", 7)
-                upgradeIconByPawn:Hide()
-
-                upgradeIconsByPawn[i] = upgradeIconByPawn
-            end
-            upgradeIconByPawn:Show()
+        if item then
+			tinsert(questRewards, { Item = item, RewardType = "choice", Usable = usable, Index = i })
         end
 
-        local totalValue = (itemSellPrice and itemSellPrice * amount) or 0
-        if totalValue > bestValue then
-            bestValue = totalValue
-            bestItem = i
+        if itemSellPrice and itemSellPrice > 0 then
+            local totalValue = (amount and amount > 0) and (itemSellPrice * amount) or 0
+			if totalValue > bestValue then
+				bestValue = totalValue
+				bestItem = i
+			end
         end
     end
 
-    if bestItem > 0 then
+    if bestItem then
         local btn = _G["QuestInfoRewardsFrameQuestInfoItem" .. bestItem]
         if btn and btn.type == "choice" then
             mostValue:ClearAllPoints()
-            mostValue:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -2, -2)
-            mostValue:Show()
+			mostValue:Point('TOPRIGHT', btn, 'TOPRIGHT', -2, -2)
+			mostValue:SetFrameStrata('HIGH')
+			mostValue:Show()
         end
     end
-end
 
-local function MiscFrameOnEvent(_, event)
-    if event == "QUEST_COMPLETE" then
-        QuestRewardMostValueIcon()
-    end
+    if PawnFindInterestingItems then PawnFindInterestingItems(questRewards) end
+
+    for _, reward in pairs(questRewards) do
+		local itemButton = QuestInfo_GetRewardButton(QuestInfoFrame.rewardsFrame, reward.Index)
+		if itemButton then
+			local overlay = upgradeIconsByPawn[reward.Index]
+			if not overlay then
+				overlay = itemButton:CreateTexture(nil, "OVERLAY", "PawnUI_QuestAdvisorTexture")
+				overlay:SetDrawLayer("OVERLAY", 7)
+
+				upgradeIconsByPawn[reward.Index] = overlay
+			end
+			if reward.Result == "upgrade" then
+				overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
+				overlay:SetTexCoord(0, .5, 0, .5)
+				overlay:Show()
+			elseif reward.Result == "vendor" then
+				overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
+				overlay:SetTexCoord(0, .5, .5, 1)
+				overlay:Show()
+			elseif reward.Result == "trinket" then -- trinkets or relics
+				overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
+				overlay:SetTexCoord(.5, 1, .5, 1)
+				overlay:Show()
+			end
+		end
+	end
 end
 
 local function InitializeMiscFunctions()
     local MiscFrame = CreateFrame("Frame")
 
-     mostValue = CreateFrame("Frame", "GW2UI_QuestRewardGoldIconFrame", QuestInfoRewardsFrame)
+    mostValue = CreateFrame("Frame", "GW2UI_QuestRewardGoldIconFrame", QuestInfoRewardsFrame)
     mostValue:SetFrameStrata("HIGH")
     mostValue:SetSize(15, 15)
     mostValue:Hide()
@@ -112,7 +127,7 @@ local function InitializeMiscFunctions()
 
     MiscFrame:RegisterEvent("QUEST_COMPLETE") -- used for quest gold reward icon
 
-    MiscFrame:SetScript("OnEvent", MiscFrameOnEvent)
+    MiscFrame:SetScript("OnEvent", QuestRewardMostValueIcon)
 
     --Add (+X%) to quest rewards experience text
     hooksecurefunc("QuestInfo_Display", QuestXPPercent)

@@ -542,21 +542,6 @@ local function collectAllIcons()
 end
 
 ------------------------------------------------------------
--- Small helper
-------------------------------------------------------------
-local function CharacterMenuButton_OnLoad(self, odd)
-    self.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
-    self.limitHoverStripAmount = 1
-    if odd then
-        self:ClearNormalTexture()
-    else
-        self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
-    end
-    self:GetFontString():SetJustifyH("LEFT")
-    self:GetFontString():SetPoint("LEFT", 5, 0)
-end
-
-------------------------------------------------------------
 -- Entry point
 ------------------------------------------------------------
 local function LoadSettingsProfileTab(container)
@@ -569,9 +554,9 @@ local function LoadSettingsProfileTab(container)
 
     collectAllIcons()
 
-    CharacterMenuButton_OnLoad(settingsProfile.menu.newProfile, true)
-    CharacterMenuButton_OnLoad(settingsProfile.menu.importProfile, false)
-    CharacterMenuButton_OnLoad(settingsProfile.menu.convertOldProfileString, true)
+    GW.SettingsMenuButtonSetUp(settingsProfile.menu.newProfile, true)
+    GW.SettingsMenuButtonSetUp(settingsProfile.menu.importProfile, false)
+    GW.SettingsMenuButtonSetUp(settingsProfile.menu.convertOldProfileString, true)
 
     -- List
     local view = CreateScrollBoxListLinearView()

@@ -718,3 +718,17 @@ local function SettingsInitOptionWidget(of, v, panel)
     end
 end
 GW.SettingsInitOptionWidget = SettingsInitOptionWidget
+
+local function SettingsMenuButtonSetUp(self, odd)
+    self.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
+    if odd then
+        self:ClearNormalTexture()
+    else
+        self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+    end
+
+    self:GetFontString():SetJustifyH("LEFT")
+    self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
+end
+GW.SettingsMenuButtonSetUp = SettingsMenuButtonSetUp
