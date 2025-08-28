@@ -2,8 +2,8 @@ local _, GW = ...
 local L = GW.L
 
 local savedPlayerTitles = {}
-local showEarned = true;
-local showUnearned = false;
+local showEarned = true
+local showUnearned = false
 
 local function title_OnClick(self)
     if not self.titleId then
@@ -46,7 +46,7 @@ local function Titles_InitButton(button, elementData)
     end
 
     if playerTitle.isKnown then
-        button:Enable();
+        button:Enable()
         button.name:SetTextColor(1, 1, 1)
     else
         button:Disable();
@@ -58,40 +58,34 @@ end
 
 local function saveKnowenTitles(titlewin, searchString)
     wipe(savedPlayerTitles)
-    if not showEarned and not showUnearned then
+    if not (showEarned or showUnearned) then
         UpdateScrollBox(titlewin)
         return
     end
-    local tableIndex = 0
-    if showEarned then
-        savedPlayerTitles[1] = {}
-        savedPlayerTitles[1].name = "       "
-        savedPlayerTitles[1].id = -1
-        savedPlayerTitles[1].isKnown = true
 
-        tableIndex = 1
-    end
+    local query = searchString and searchString:lower() or nil
 
     for i = 1, GetNumTitles() do
-        if (showEarned and IsTitleKnown(i)) or (showUnearned and not IsTitleKnown(i)) then
+        local isKnown = IsTitleKnown(i)
+        if (isKnown and showEarned) or (not isKnown and showUnearned) then
             local tempName, playerTitle = GetTitleName(i)
-            if tempName and playerTitle and ((searchString and string.find(string.lower(tempName), string.lower(searchString)) or searchString == nil)) then
-                tableIndex = tableIndex + 1
-                savedPlayerTitles[tableIndex] = savedPlayerTitles[tableIndex] or {}
-                savedPlayerTitles[tableIndex].name = strtrim(tempName)
-                savedPlayerTitles[tableIndex].id = i
-                savedPlayerTitles[tableIndex].isKnown = IsTitleKnown(i)
+            if tempName and playerTitle then
+                tempName = strtrim(tempName)
+                if (not query) or (tempName:lower():find(query, 1, true)) then
+                    tinsert(savedPlayerTitles, {name = tempName, id = i, isKnown = isKnown})
+                end
             end
         end
     end
 
-    table.sort(
-        savedPlayerTitles,
+    table.sort(savedPlayerTitles,
         function(a, b)
             return a.name < b.name
         end
     )
-    savedPlayerTitles[1].name = PLAYER_TITLE_NONE
+    if showEarned then
+        tinsert(savedPlayerTitles, 1, {name = PLAYER_TITLE_NONE, id = -1, isKnown = true})
+    end
 
     UpdateScrollBox(titlewin)
 end
