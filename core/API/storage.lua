@@ -18,7 +18,7 @@ local function SetMigrateData(realm, name, key, value)
     storage[realm][name][key] = value
 end
 
-local LoadStorage = function ()
+local function LoadStorage()
     GW2UI_STORAGE2 = GW2UI_STORAGE2 or {}
     storage = GW2UI_STORAGE2
 
@@ -60,7 +60,7 @@ end
 GW.LoadStorage = LoadStorage
 
 -- Set a storage value by REALM CHARNAME key = values
-local SetStorage = function (key, value)
+local function SetStorage(key, value)
     local s = EnsureCharScope()
     if not s then return end
     s[key] = value
@@ -69,7 +69,7 @@ GW.SetStorage = SetStorage
 
 -- Get a storage value by passing the key or a tableScope to get the complete table or without an parameter to get char table
 -- tableScope: "REALM" | "CHAR" | nil  (nil behaves like "CHAR")
-local GetStorage = function (key, tableScope)
+local function GetStorage(key, tableScope)
     if not storage then return end
     tableScope = tableScope or "CHAR"
 
@@ -79,7 +79,11 @@ local GetStorage = function (key, tableScope)
         if not GW.myname then return end
         local s = storage[GW.myrealm] and storage[GW.myrealm][GW.myname]
         if not s then return end
-        return key ~= nil and s[key] or s
+        if key ~= nil then
+            return s[key]
+        else
+            return s
+        end
     end
 
     return nil
@@ -87,7 +91,7 @@ end
 GW.GetStorage = GetStorage
 
 -- Clear the whole storage or just a part of it
-local ClearStorage = function (key, overrideCharacter)
+local function ClearStorage(key, overrideCharacter)
     if not storage then return end
     local name = overrideCharacter or GW.myname
     local realmTbl = storage[GW.myrealm]
