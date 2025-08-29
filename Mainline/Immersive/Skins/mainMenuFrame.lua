@@ -54,12 +54,15 @@ local function applyButtonStyle(b)
         b:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
     end
     b:SetSize(180, 25)
-    b:HookScript("OnEnter", function()
-        b:GetNormalTexture():SetBlendMode("ADD")
-    end)
-    b:HookScript("OnLeave", function()
-        b:GetNormalTexture():SetBlendMode("BLEND")
-    end)
+    if b:GetNormalTexture() then
+        b:HookScript("OnEnter", function()
+            b:GetNormalTexture():SetBlendMode("ADD")
+        end)
+        b:HookScript("OnLeave", function()
+            b:GetNormalTexture():SetBlendMode("BLEND")
+        end)
+    end
+
     if not b.gw2IconTex then
         local tex = b:CreateTexture(nil, "OVERLAY")
         tex:SetPoint("LEFT", b, "LEFT", 0, 0)

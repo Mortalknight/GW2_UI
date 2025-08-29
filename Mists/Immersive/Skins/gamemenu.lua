@@ -74,12 +74,14 @@ local function applyButtonStyle()
             b.Text:SetPoint("LEFT", b, "LEFT", 32, 0)
             b:SetSize(150, 25)
 
-            b:HookScript("OnEnter", function()
-                b:GetNormalTexture():SetBlendMode("ADD")
-            end)
-            b:HookScript("OnLeave", function()
-                b:GetNormalTexture():SetBlendMode("BLEND")
-            end)
+            if b:GetNormalTexture() then
+                b:HookScript("OnEnter", function()
+                    b:GetNormalTexture():SetBlendMode("ADD")
+                end)
+                b:HookScript("OnLeave", function()
+                    b:GetNormalTexture():SetBlendMode("BLEND")
+                end)
+            end
 
             local tex = b:CreateTexture("bg", "OVERLAY")
             tex:SetPoint("LEFT",b ,"LEFT" , 0, 0)
