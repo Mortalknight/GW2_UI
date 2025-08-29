@@ -115,6 +115,9 @@ end
 local function LoadWhoList(tabContainer)
     local WhoWindow = CreateFrame("Frame", "GwWhoWindow", tabContainer, "GwWhoWindow")
 
+    WhoWindow.list.EditBox.instructionText = WHO_LIST_SEARCH_INSTRUCTIONS
+    WhoWindow.list.EditBox.instructionsFontObject = UserScaledFontGameDisableSmall
+
     local view = CreateScrollBoxListLinearView()
     view:SetElementInitializer("GW_WhoListButtonTemplate", function(button, elementData)
         Who_InitButton(button, elementData);
@@ -191,14 +194,37 @@ local function LoadWhoList(tabContainer)
     WhoWindow.list.InviteButton:SetScript("OnClick", function() C_PartyInfo.InviteUnit(WhoWindow.selectedName) end)
     WhoWindow.list.AddFriendButton:SetScript("OnClick", function() C_FriendList.AddFriend(WhoWindow.selectedName) end)
     WhoWindow.list.RefreshButton:SetScript("OnClick", function(self)
-        WhoFrameEditBox_OnEnterPressed(self:GetParent().EditBox.input)
+        WhoWindow.list.EditBox:OnEnterPressed(self:GetParent().EditBox)
         self:GetParent():GetParent().selectedWho = nil
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end)
 
-    WhoWindow.list.EditBox.input:SetScript("OnEnterPressed", WhoFrameEditBox_OnEnterPressed)
-    WhoWindow.list.EditBox.input:SetScript("OnShow", EditBox_ClearFocus)
-    WhoWindow.list.EditBox.input:SetScript("OnEscapePressed", EditBox_ClearFocus)
+    WhoWindow.list.EditBox.Instructions:SetFontObject(WhoWindow.list.EditBox.instructionsFontObject)
+    WhoWindow.list.EditBox.Instructions:SetMaxLines(2)
+    WhoWindow.list.EditBox.Instructions:SetTextColor(0.5, 0.5, 0.5)
+    WhoWindow.list.EditBox.Instructions:SetText(WHO_LIST_SEARCH_INSTRUCTIONS)
+    WhoWindow.list.EditBox:SetScript("OnEnterPressed", WhoWindow.list.EditBox.OnEnterPressed)
+    WhoWindow.list.EditBox:SetScript("OnShow", WhoWindow.list.EditBox.OnShow)
+    WhoWindow.list.EditBox:SetScript("OnEscapePressed", EditBox_ClearFocus)
+    WhoWindow.list.EditBox:SetScript("OnHide", WhoWindow.list.EditBox.OnHide)
+    WhoWindow.list.EditBox:HookScript("OnTextChanged", function(self)
+        local text = self:GetText()
+        if text == "" then
+            self.clearButton:Hide()
+            return
+        end
+        self.clearButton:Show()
+    end)
+    WhoWindow.list.EditBox:SetScript("OnEditFocusGained", function(self) self.clearButton:Show() end)
+    WhoWindow.list.EditBox:SetScript("OnEditFocusLost", function(self)
+        if self:GetText() == "" then
+            self.clearButton:Hide()
+        end
+    end)
+    WhoWindow.list.EditBox.clearButton:SetScript("OnClick", function(self)
+        self:GetParent():ClearFocus()
+        self:GetParent():SetText("")
+    end)
 
     UpdateScrollBox(WhoWindow.list)
 

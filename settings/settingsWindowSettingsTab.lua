@@ -899,4 +899,3 @@ local function LoadSettingsTab(container)
     return settingsTab
 end
 GW.LoadSettingsTab = LoadSettingsTab
-
