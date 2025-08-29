@@ -11,7 +11,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame inherits="MoneyFrameTemplate" parentKey="reqMoney">
+            <Frame name="GwQuestReqItemsFrameReqMoney" inherits="MoneyFrameTemplate" parentKey="reqMoney">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.required" relativePoint="BOTTOMLEFT" x="5" y="-5"/>
                 </Anchors>
