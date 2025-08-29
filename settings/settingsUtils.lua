@@ -297,7 +297,7 @@ local function CheckDependencies()
             for settingName, expectedValue in pairs(v.dependence) do
                 local of = GW.FindSettingsWidgetByOption(settingName)
                 local currentVal = (of and of.get and of.get())
-                if of.isIncompatibleAddonLoaded and not of.isIncompatibleAddonLoadedButOverride then
+                if of and of.isIncompatibleAddonLoaded and not of.isIncompatibleAddonLoadedButOverride then
                     currentVal = false
                 end
 
