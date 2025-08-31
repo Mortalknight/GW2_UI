@@ -12,22 +12,6 @@ local  petStateSprite = {
 
 GwPlayerPetFrameMixin = {}
 
-local function UpdatePetActionBarIcons()
-    PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
-    PetActionButton2Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
-    PetActionButton3Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
-
-    if PetActionButton8Icon:GetTexture() == 524348 then
-        PetActionButton8Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
-    end
-    if PetActionButton9Icon:GetTexture() == 132110 then
-        PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
-    end
-    if PetActionButton10Icon:GetTexture() == 132311 then
-        PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
-    end
-end
-GW.AddForProfiling("petbar", "UpdatePetActionBarIcons", UpdatePetActionBarIcons)
 
 function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
     local BUTTON_SIZE = 28
@@ -111,87 +95,65 @@ function GwPlayerPetFrameMixin:UpdatePetBarButtons()
     end
 end
 
-function GwPlayerPetFrameMixin:UpdateAutoCast()
-    for i, button in ipairs(self.buttons) do
-        local _, _, _, _, _, autoCastEnabled = GetPetActionInfo(i)
-        local autoCast = button.AutoCastOverlay or _G["PetActionButton" .. i .. "AutoCastable"]
-        autoCast:SetShown(autoCastEnabled)
-    end
-end
-
 function GwPlayerPetFrameMixin:Update(event, unit)
     if (event == "UNIT_FLAGS" and unit ~= "pet") or (event == "UNIT_PET" and unit ~= "player") then return end
 
     for i, button in ipairs(self.buttons) do
-        local name, texture, isToken, isActive, _, _, spellID = GetPetActionInfo(i)
-        button:SetAlpha(1)
-        button.isToken = isToken
-        button.icon:Show()
+        local name, texture, isToken, _, _, autoCastEnabled, spellID = GetPetActionInfo(i)
+        local autoCast = button.AutoCastOverlay or _G["PetActionButton" .. i .. "AutoCastable"]
 
-        if i > 3 and i < 8 then
-            if not isToken then
-                button.icon:SetTexture(texture)
-                button.tooltipName = name
-            else
-                button.icon:SetTexture(_G[texture])
-                button.tooltipName = _G[name]
-            end
-        end
+        autoCast:SetShown(autoCastEnabled)
+        autoCast:ShowAutoCastEnabled(autoCastEnabled)
+
+        if ( not isToken ) then
+			button.tooltipName = name
+		else
+			button.tooltipName = _G[name]
+		end
+		button.isToken = isToken
 
         if spellID then
-            local spell = Spell:CreateFromSpellID(spellID)
-            button.spellDataLoadedCancelFunc = spell:ContinueWithCancelOnSpellLoad(function()
-                button.tooltipSubtext = spell:GetSpellSubtext()
-            end)
-        end
+			local spell = Spell:CreateFromSpellID(spellID);
+			button.spellDataLoadedCancelFunc = spell:ContinueWithCancelOnSpellLoad(function()
+				button.tooltipSubtext = spell:GetSpellSubtext()
+			end)
+		end
 
-        button:SetChecked(isActive and name ~= "PET_ACTION_FOLLOW")
-        if isActive then
-            if IsPetAttackAction(i) then
-                if PetActionButton_StartFlash then
-                    PetActionButton_StartFlash(button)
-                else
-                    button:StartFlash()
-                end
-            else
-                if PetActionButton_StopFlash then
-                    PetActionButton_StopFlash(button)
-                else
-                    button:StopFlash()
-                end
+        if i <= 3 then
+            if i == 1 then
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
+            elseif i == 2 then
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
+            elseif i == 3 then
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
             end
         else
-            if PetActionButton_StopFlash then
-                PetActionButton_StopFlash(button)
+            if name == "PET_MODE_ASSIST" then
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
+            elseif name == "PET_MODE_DEFENSIVE" then
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
+            elseif name == "PET_MODE_PASSIVE" then
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
             else
-                button:StopFlash()
+                button.icon:SetTexture(texture)
             end
         end
-    end
 
-    self:UpdateAutoCast()
-end
-
-function GwPlayerPetFrameMixin:UpdatePetCooldown()
-    local forbidden = GameTooltip:IsForbidden()
-    local owner = GameTooltip:GetOwner()
-
-    for i, button in ipairs(self.buttons) do
-        local start, duration = GetPetActionCooldown(i)
-        button.cooldown:SetCooldown(start, duration)
-
-        if not forbidden and owner == button then
-            if GW.Retail then
-                button:OnEnter(button)
-            else
-                PetActionButton_OnEnter(button)
-            end
+        if texture then
+            if GetPetActionSlotUsable(i) then
+				button.icon:SetVertexColor(1, 1, 1)
+			else
+				button.icon:SetVertexColor(0.4, 0.4, 0.4)
+			end
+            button.icon:Show()
+        else
+            button.icon:Hide()
         end
     end
 end
 
 function GwPlayerPetFrameMixin:UpdateHappiness()
-local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
+    local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
     local _, isHunterPet = HasPetUI()
 
     if not happiness or not isHunterPet then
@@ -252,10 +214,7 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
             self:UpdateHealthBar()
             self:UpdatePowerBar(true)
             self.auras:ForceUpdate()
-            self:UpdatePetCooldown()
         end
-    elseif event == "PET_BAR_UPDATE_COOLDOWN" then
-        self:UpdatePetCooldown()
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
         self:UpdateHealthBar()
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
@@ -354,9 +313,9 @@ local function LoadPetFrame(lm)
         PetActionBar.ignoreFramePositionManager = true
         PetActionBar:GwKillEditMode()
 
-        hooksecurefunc(PetActionBar, "Update", function() playerPetFrame:UpdateAutoCast() end)
+        hooksecurefunc(PetActionBar, "Update", function() playerPetFrame:Update() end)
     else
-        hooksecurefunc("PetFrame_Update", function() playerPetFrame:UpdateAutoCast() end)
+        hooksecurefunc("PetFrame_Update", function() playerPetFrame:Update() end)
     end
 
     playerPetFrame:SetAttribute("*type1", "target")
@@ -427,7 +386,6 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
     playerPetFrame:RegisterEvent("SPELLS_CHANGED")
     playerPetFrame:RegisterEvent("UNIT_FLAGS")
-    playerPetFrame:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
     playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     playerPetFrame:RegisterEvent("PET_BAR_UPDATE_USABLE")
     playerPetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -451,12 +409,6 @@ local function LoadPetFrame(lm)
         playerPetFrame.buttons[i] = button
     end
     playerPetFrame:SetActionButtonPositionAndStyle()
-    if GW.Retail then
-        hooksecurefunc(PetActionBar, "Update", UpdatePetActionBarIcons)
-    else
-        hooksecurefunc("PetActionBar_Update", UpdatePetActionBarIcons)
-    end
-    UpdatePetActionBarIcons()
 
     -- hook hotkey update calls so we can override styling changes
     local hotkeyEventTrackerFrame = CreateFrame("Frame")
