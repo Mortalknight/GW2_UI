@@ -113,27 +113,25 @@ function GwPlayerPetFrameMixin:Update(event, unit)
 		button.isToken = isToken
 
         if spellID then
-			local spell = Spell:CreateFromSpellID(spellID);
+			local spell = Spell:CreateFromSpellID(spellID)
 			button.spellDataLoadedCancelFunc = spell:ContinueWithCancelOnSpellLoad(function()
 				button.tooltipSubtext = spell:GetSpellSubtext()
 			end)
 		end
 
-        if i <= 3 then
-            if i == 1 then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
-            elseif i == 2 then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
-            elseif i == 3 then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
-            end
+        if i == 1 then
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
+        elseif i == 2 then
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
+        elseif i == 3 then
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
         else
             if name == "PET_MODE_ASSIST" then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
-            elseif name == "PET_MODE_DEFENSIVE" then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
+            elseif name == "PET_MODE_DEFENSIVEASSIST" then
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
             elseif name == "PET_MODE_PASSIVE" then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
             else
                 button.icon:SetTexture(texture)
             end
