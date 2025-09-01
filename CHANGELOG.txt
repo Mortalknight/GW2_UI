@@ -1,3 +1,14 @@
+8.3.4
+FIXES
+    - Player powerbar is now correctly hidden in specific situations
+    - Fixed Lua error for fresh characters
+    - Fixed Game Menu skin issue when using ConsolePort
+    - Fixed fading issue with player pet frame icon
+    - Fixed Lua error in Who-list
+    - Fixed Lua error when opening the settings menu
+    - Fixed Lua error in immersive questing when required money is missing (Era & Mists)
+
+
 8.3.3
 FIXES
     - Fix wrong classpower color for warlocks (Mists)

@@ -18,6 +18,16 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.3.4", {
+    {GW.ChangelogType.bug, [=[Player powerbar is now correctly hidden in specific situations]=]},
+    {GW.ChangelogType.bug, [=[Fixed Lua error for fresh characters]=]},
+    {GW.ChangelogType.bug, [=[Fixed Game Menu skin issue when using ConsolePort]=]},
+    {GW.ChangelogType.bug, [=[Fixed fading issue with player pet frame icon]=]},
+    {GW.ChangelogType.bug, [=[Fixed Lua error in Who-list]=]},
+    {GW.ChangelogType.bug, [=[Fixed Lua error when opening the settings menu]=]},
+    {GW.ChangelogType.bug, [=[Fixed Lua error in immersive questing when required money is missing (Era & Mists)]=]},
+})
+
 addChange("8.3.3",{
     {GW.ChangelogType.bug, [=[Fix wrong classpower color for warlocks (Mists)]=]},
     {GW.ChangelogType.bug, [=[Fix settings lua error is UI Scale is used]=]},
