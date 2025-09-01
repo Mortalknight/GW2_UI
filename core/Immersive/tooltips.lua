@@ -805,8 +805,16 @@ local function SetItemRef(link)
     ItemRefTooltip:Show()
 end
 
+function SetCompareItems(tt, value)
+    if GW.Retail and tt == GameTooltip then
+        tt.supportsItemComparison = value
+    end
+end
+
 local function GameTooltip_SetDefaultAnchor(self, parent)
     if self:IsForbidden() or self:GetAnchorType() ~= "ANCHOR_NONE" then return end
+
+    SetCompareItems(self, true)
 
     if self.StatusBar then
         self.StatusBar:SetAlpha(GW.settings.TOOLTIP_HEALTHBAER_POSITION == "DISABLED" and 0 or 1)
