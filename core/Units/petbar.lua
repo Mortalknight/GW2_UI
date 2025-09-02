@@ -355,16 +355,6 @@ local function LoadPetFrame(lm)
         local button = _G["PetActionButton" .. i]
         button:Show()
         playerPetFrame.buttons[i] = button
-        if not button.StartFlash and PetActionButton_StartFlash then
-            button.StartFlash = function()
-                PetActionButton_StartFlash(button)
-            end
-        end
-        if not button.StopFlash and PetActionButton_StopFlash then
-            button.StopFlash = function()
-                PetActionButton_StopFlash(button)
-            end
-        end
     end
     playerPetFrame:SetActionButtonPositionAndStyle()
 
