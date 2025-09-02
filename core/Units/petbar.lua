@@ -107,9 +107,9 @@ function GwPlayerPetFrameMixin:Update()
         elseif i == 3 then
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
         else
-            if name == "PET_MODE_ASSIST" then
+            if name == "PET_MODE_ASSIST" or name == "PET_MODE_AGGRESSIVE" then
                 button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
-            elseif name == "PET_MODE_DEFENSIVEASSIST" then
+            elseif name == "PET_MODE_DEFENSIVEASSIST" or name == "PET_MODE_DEFENSIVE" then
                 button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
             elseif name == "PET_MODE_PASSIVE" then
                 button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
@@ -364,7 +364,7 @@ local function LoadPetFrame(lm)
 
         hooksecurefunc(PetActionBar, "Update", function() playerPetFrame:Update() end)
     else
-        hooksecurefunc("PetFrame_Update", function() playerPetFrame:Update() end)
+        hooksecurefunc("PetActionBar_Update", function() playerPetFrame:Update() end)
     end
 
     -- hook hotkey update calls so we can override styling changes
