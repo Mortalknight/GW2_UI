@@ -3,7 +3,7 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local LoadAuras = GW.LoadAuras
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
-local  petStateSprite = {
+local petStateSprite = {
     width = 512,
     height = 128,
     colums = 4,
@@ -26,7 +26,8 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
         elseif i == 8 then
             point, relativeFrame, relativePoint, x, y = "BOTTOM", _G["PetActionButton5"], "TOP", 0, BUTTON_MARGIN
         else
-            point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", _G["PetActionButton" .. (i - 1)], "BOTTOMRIGHT", BUTTON_MARGIN, 0
+            point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", _G["PetActionButton" .. (i - 1)], "BOTTOMRIGHT",
+                BUTTON_MARGIN, 0
         end
 
         local size = (i < 4) and 32 or BUTTON_SIZE
@@ -95,29 +96,9 @@ function GwPlayerPetFrameMixin:UpdatePetBarButtons()
     end
 end
 
-function GwPlayerPetFrameMixin:Update(event, unit)
-    if (event == "UNIT_FLAGS" and unit ~= "pet") or (event == "UNIT_PET" and unit ~= "player") then return end
-
+function GwPlayerPetFrameMixin:Update()
     for i, button in ipairs(self.buttons) do
-        local name, texture, isToken, _, _, autoCastEnabled, spellID = GetPetActionInfo(i)
-        local autoCast = button.AutoCastOverlay or _G["PetActionButton" .. i .. "AutoCastable"]
-
-        autoCast:SetShown(autoCastEnabled)
-        autoCast:ShowAutoCastEnabled(autoCastEnabled)
-
-        if ( not isToken ) then
-			button.tooltipName = name
-		else
-			button.tooltipName = _G[name]
-		end
-		button.isToken = isToken
-
-        if spellID then
-			local spell = Spell:CreateFromSpellID(spellID)
-			button.spellDataLoadedCancelFunc = spell:ContinueWithCancelOnSpellLoad(function()
-				button.tooltipSubtext = spell:GetSpellSubtext()
-			end)
-		end
+        local name, texture = GetPetActionInfo(i)
 
         if i == 1 then
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
@@ -136,17 +117,6 @@ function GwPlayerPetFrameMixin:Update(event, unit)
                 button.icon:SetTexture(texture)
             end
         end
-
-        if texture then
-            if GetPetActionSlotUsable(i) then
-				button.icon:SetVertexColor(1, 1, 1)
-			else
-				button.icon:SetVertexColor(0.4, 0.4, 0.4)
-			end
-            button.icon:Show()
-        else
-            button.icon:Hide()
-        end
     end
 end
 
@@ -162,7 +132,7 @@ function GwPlayerPetFrameMixin:UpdateHappiness()
 
     self.happiness.icon:SetTexCoord(GW.getSprite(petStateSprite, happiness, 1))
 
-    self.happiness.tooltip = _G["PET_HAPPINESS"  ..  happiness]
+    self.happiness.tooltip = _G["PET_HAPPINESS" .. happiness]
     self.happiness.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage)
 
     if loyaltyRate < 0 then
@@ -186,7 +156,6 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
         SetPortraitTexture(self.portrait, "pet")
-        self:Update(event, unit)
         self:UpdateHealthBar()
         self:UpdatePowerBar(true)
         if GW.Classic then
@@ -207,7 +176,6 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     elseif GW.IsIn(event, "PLAYER_TARGET_CHANGED", "PET_BAR_UPDATE_USABLE", "PET_UI_UPDATE", "PET_BAR_UPDATE", "PLAYER_CONTROL_GAINED", "PLAYER_CONTROL_LOST", "PLAYER_FARSIGHT_FOCUS_CHANGED", "SPELLS_CHANGED", "UNIT_FLAGS") or (event == "UNIT_PET" and unit == "player") then
         SetPortraitTexture(self.portrait, "pet")
-        self:Update(event, unit)
         if event == "UNIT_PET" then
             self:UpdateHealthBar()
             self:UpdatePowerBar(true)
@@ -219,12 +187,6 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
         self:UpdatePowerBar()
     elseif event == "UNIT_HAPPINESS" then
         self:UpdateHappiness()
-    elseif event == "PET_BAR_HIDEGRID" then
-        if GW.Retail then
-            PetActionBar:Update()
-        else
-            PetActionBar_Update()
-        end
     end
 end
 
@@ -293,7 +255,8 @@ function GwPlayerPetFrameMixin:UpdateSettings()
 end
 
 local function LoadPetFrame(lm)
-    local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, GW.Retail and "GwPlayerPetFramePingableTemplate" or "GwPlayerPetFrameTemplate")
+    local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent,
+        GW.Retail and "GwPlayerPetFramePingableTemplate" or "GwPlayerPetFrameTemplate")
 
     GW.AddStatusbarAnimation(playerPetFrame.health, true)
     GW.AddStatusbarAnimation(playerPetFrame.powerbar, true)
@@ -303,25 +266,13 @@ local function LoadPetFrame(lm)
 
     playerPetFrame.buttons = {}
 
-    if GW.Retail then
-        PetActionBar:UnregisterEvent("PET_BAR_UPDATE")
-        PetActionBar:UnregisterEvent("UNIT_PET")
-        PetActionBar:UnregisterEvent("PET_UI_UPDATE")
-        PetActionBar:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-        PetActionBar.ignoreFramePositionManager = true
-        PetActionBar:GwKillEditMode()
-
-        hooksecurefunc(PetActionBar, "Update", function() playerPetFrame:Update() end)
-    else
-        hooksecurefunc("PetFrame_Update", function() playerPetFrame:Update() end)
-    end
-
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
     playerPetFrame:SetAttribute("unit", "pet")
     playerPetFrame:EnableMouse(true)
     playerPetFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    RegisterStateDriver(playerPetFrame, "visibility", "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
+    RegisterStateDriver(playerPetFrame, "visibility",
+        "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
 
     playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     playerPetFrame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
@@ -388,13 +339,12 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("PET_BAR_UPDATE_USABLE")
     playerPetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     playerPetFrame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
-    playerPetFrame:RegisterEvent("PET_BAR_HIDEGRID")
     if GW.Classic then
         playerPetFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "pet")
         playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
     end
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, {"default", "scaleable"}, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, { "default", "scaleable" }, true)
     lm:RegisterPetFrame(playerPetFrame)
 
     playerPetFrame:ClearAllPoints()
@@ -405,8 +355,27 @@ local function LoadPetFrame(lm)
         local button = _G["PetActionButton" .. i]
         button:Show()
         playerPetFrame.buttons[i] = button
+        if not button.StartFlash and PetActionButton_StartFlash then
+            button.StartFlash = function()
+                PetActionButton_StartFlash(button)
+            end
+        end
+        if not button.StopFlash and PetActionButton_StopFlash then
+            button.StopFlash = function()
+                PetActionButton_StopFlash(button)
+            end
+        end
     end
     playerPetFrame:SetActionButtonPositionAndStyle()
+
+    if GW.Retail then
+        PetActionBar.ignoreFramePositionManager = true
+        PetActionBar:GwKillEditMode()
+
+        hooksecurefunc(PetActionBar, "Update", function() playerPetFrame:Update() end)
+    else
+        hooksecurefunc("PetFrame_Update", function() playerPetFrame:Update() end)
+    end
 
     -- hook hotkey update calls so we can override styling changes
     local hotkeyEventTrackerFrame = CreateFrame("Frame")
