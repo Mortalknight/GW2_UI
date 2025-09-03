@@ -151,18 +151,24 @@ local function setPowerTypeRend(self)
 end
 
 local function updateTextureBasedOnCondition(self)
-    if GW.myClassID == 9 then        -- Warlock
+    if GW.myClassID == 9 then           -- Warlock
         -- Hook green fire
         if GW.IsSpellKnown(101508) then -- check for spell id 101508
             self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-green")
-            self.warlock.shardFragment.barFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-green")
+            self.warlock.shardFragment.barFill:SetTexture(
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-green")
             for i = 1, 5 do
                 self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard-green")
             end
         else
-            local textureShardFlare = self.useRedTexture and "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-red" or "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare"
-            local textureShardFragmentFill = self.useRedTexture and "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-red" or "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill"
-            local textureShardShard = self.useRedTexture and "Interface/AddOns/GW2_UI/textures/altpower/soulshard-red" or "Interface/AddOns/GW2_UI/textures/altpower/soulshard"
+            local textureShardFlare = self.useRedTexture and
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-red" or
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare"
+            local textureShardFragmentFill = self.useRedTexture and
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-red" or
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill"
+            local textureShardShard = self.useRedTexture and "Interface/AddOns/GW2_UI/textures/altpower/soulshard-red" or
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshard"
 
             self.warlock.shardFlare:SetTexture(textureShardFlare)
             self.warlock.shardFragment.barFill:SetTexture(textureShardFragmentFill)
@@ -312,7 +318,7 @@ local function findBuffs(unit, ...)
         end
     end
 
-   return #results > 0 and results or nil
+    return #results > 0 and results or nil
 end
 GW.AddForProfiling("classpowers", "findBuffs", findBuffs)
 
@@ -849,7 +855,7 @@ GW.AddForProfiling("classpowers", "powerSotR", powerSotR)
 
 local function powerHoly(self, event, ...)
     local pType = select(2, ...)
-    if event ~= "CLASS_POWER_INIT" and pType ~= "HOLY_POWER"  then
+    if event ~= "CLASS_POWER_INIT" and pType ~= "HOLY_POWER" then
         return
     end
 
@@ -1016,7 +1022,7 @@ GW.AddForProfiling("classpowers", "setRogue", setRogue)
 
 -- PRIEST
 local function shadowOrbs(self, event, ...)
-   local pType = select(2, ...)
+    local pType = select(2, ...)
     if event ~= "CLASS_POWER_INIT" and pType ~= "SHADOW_ORBS" then
         return
     end
@@ -1547,7 +1553,7 @@ local function powerDemonicFury(self, event, ...)
     end
 
     local power = UnitPower("player", Enum.PowerType.DemonicFury)
-	local maxPower = UnitPowerMax("player", Enum.PowerType.DemonicFury)
+    local maxPower = UnitPowerMax("player", Enum.PowerType.DemonicFury)
     local percent = power / maxPower
     if event == "CLASS_POWER_INIT" then
         self.customResourceBar:ForceFillAmount(percent)
@@ -1606,10 +1612,11 @@ local function setWarlock(f)
             f.warlock.powerType = Enum.PowerType.BurningEmbers
             f:SetScript("OnEvent", powerSoulshard)
             powerSoulshard(f, "CLASS_POWER_INIT")
+            f.useRedTexture = true
         end
     end
 
-     updateTextureBasedOnCondition(f)
+    updateTextureBasedOnCondition(f)
 
     return true
 end
@@ -1670,7 +1677,7 @@ local function powerStagger(self, event, ...)
             if fb.ironskin.ticker then
                 fb.ironskin.ticker:Cancel()
             end
-            fb.ironskin.ticker = C_Timer.NewTicker(0.01, function() ironSkin_OnUpdate(fb.ironskin) end )
+            fb.ironskin.ticker = C_Timer.NewTicker(0.01, function() ironSkin_OnUpdate(fb.ironskin) end)
             fb.ironskin:Show()
             fb.ironskin.ironartwork:Show()
         else
@@ -1816,7 +1823,7 @@ local function setDruid(f)
         if GW.myspec == 1 and form == nil then
             barType = "eclips"
         end
-        if form == CAT_FORM then -- cat
+        if form == CAT_FORM then                   -- cat
             barType = "combo|little_mana"
         elseif form == BEAR_FORM or form == 8 then --bear
             barType = "little_mana"
@@ -1824,7 +1831,7 @@ local function setDruid(f)
             barType = "eclips"
         end
     elseif GW.Classic then
-        if form == CAT_FORM then -- cat
+        if form == CAT_FORM then                   -- cat
             barType = "combo|little_mana"
         elseif form == BEAR_FORM or form == 8 then --bear
             barType = "little_mana"
@@ -1979,8 +1986,10 @@ GW.UpdateClasspowerBar = barChange_OnEvent
 local function UpdateExtraManabar()
     if not GW.settings.CLASS_POWER then return end
     if GW.settings.POWERBAR_ENABLED then
-        local anchorFrame = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame or GwPlayerPowerBar
-        local barWidth = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
+        local anchorFrame = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame or
+            GwPlayerPowerBar
+        local barWidth = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and
+            GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
 
         GwPlayerAltClassLmb:ClearAllPoints()
         if GW.settings.PLAYER_AS_TARGET_FRAME then
@@ -1996,7 +2005,7 @@ local function UpdateExtraManabar()
         GwPlayerAltClassLmb:SetParent(UIParent)
 
         barChange_OnEvent(GwPlayerClassPower.decay, "FORCE_UPDATE")
-      else
+    else
         GwPlayerAltClassLmb:SetParent(GW.HiddenFrame)
     end
 end
@@ -2031,7 +2040,8 @@ local function LoadClassPowers()
     cpf.customResourceBar:ClearAllPoints()
     cpf.customResourceBar:SetPoint("LEFT", cpf, "LEFT", 0, -11)
 
-    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", { 312, 32 }, { "default", "scaleable" }, true)
+    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", { 312, 32 },
+        { "default", "scaleable" }, true)
 
     -- position mover
     if (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not cpf.isMoved then
@@ -2039,7 +2049,8 @@ local function LoadClassPowers()
         local yOff = not GW.settings.XPBAR_ENABLED and 14 or 0
         local xOff = GW.settings.PLAYER_AS_TARGET_FRAME and 52 or 0
         cpf.gwMover:ClearAllPoints()
-        cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
+        cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff,
+            framePoint.yOfs - yOff)
     end
     cpf:ClearAllPoints()
     cpf:SetPoint("TOPLEFT", cpf.gwMover)
