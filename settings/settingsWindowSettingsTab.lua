@@ -241,6 +241,9 @@ local function CreateOrGetOptionWidget(panel, opt)
     GW.SettingsInitOptionWidget(of, opt, panel)
 
     opt.__widget = of
+
+    RegisterOptionWidget(of, { panel=panel, title=of.displayName, path=of.settingsPath, type=of.optionType, key=of.optionName, desc=of.desc })
+
     return of
 end
 
@@ -320,9 +323,6 @@ local function InitRow(row, elementData)
         if row.leftAssigned  then StashWidget(row.leftAssigned,  panel); row.leftAssigned  = nil end
         if row.rightAssigned then StashWidget(row.rightAssigned, panel); row.rightAssigned = nil end
     end
-
-    if leftW  and not leftW.__gwRegEntry  then RegisterOptionWidget(leftW,  { panel=panel, title=leftW.displayName,  path=leftW.settingsPath,  type=leftW.optionType, key=leftW.optionName, desc=leftW.desc }) end
-    if rightW and not rightW.__gwRegEntry then RegisterOptionWidget(rightW, { panel=panel, title=rightW.displayName, path=rightW.settingsPath, type=rightW.optionType, key=rightW.optionName, desc=rightW.desc }) end
 end
 
 local function InitOptionPanel(panel)
