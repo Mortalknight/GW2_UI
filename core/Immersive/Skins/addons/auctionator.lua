@@ -191,6 +191,36 @@ local function SkinAuctionator()
     end
 
     -- buying
+    local frame = AuctionatorBuyItemFrame
+    frame.BackButton:GwSkinButton(false, true)
+    frame.Inset:GwStripTextures()
+    frame.ResultsListing:GwStripTextures()
+    GW.HandleTrimScrollBar(frame.ResultsListing.ScrollArea.ScrollBar)
+    GW.HandleScrollControls(frame.ResultsListing.ScrollArea)
+    GW.HandleSrollBoxHeaders(frame.ResultsListing)
+    GW.AddDetailsBackground(frame.Inset)
+
+    GW.HandleIcon(frame.IconAndName.Icon, true, GW.BackdropTemplates.ColorableBorderOnly, true)
+    GW.HandleIconBorder(frame.IconAndName.QualityBorder, frame.IconAndName.Icon.backdrop)
+    frame.IconAndName.Icon.backdrop:GwSetOutside(frame.IconAndName.Icon)
+    frame.IconAndName:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, nil, -5, nil, -5)
+
+    hooksecurefunc(frame.ResultsListing.ScrollArea.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
+
+    for _, child in next, {frame:GetChildren()} do
+        if child.iconAtlas == "UI-RefreshButton" then
+            child:GwSkinButton(false, true)
+            child.Icon:SetDesaturated(true)
+            break
+        end
+    end
+
+    frame.BuyDialog:GwStripTextures()
+    frame.BuyDialog:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    frame.BuyDialog.Buy:GwSkinButton(false, true)
+    frame.BuyDialog.Cancel:GwSkinButton(false, true)
+
+
     local list = AuctionatorShoppingFrame
     local buyingFrame = AuctionatorBuyCommodityFrame
     list.ResultsListing:GwStripTextures()
@@ -300,6 +330,7 @@ local function SkinAuctionator()
         if child.iconAtlas == "UI-RefreshButton" then
             child:GwSkinButton(false, true)
             child.Icon:SetDesaturated(true)
+            break
         end
     end
 
