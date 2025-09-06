@@ -3,6 +3,7 @@
     <Include file = "settingsWidgetTemplates.xml"/>
     <Include file = "settingsWindow.xml"/>
     <Include file = "settingsWindowSettingsTab.xml"/>
+    <Include file = "settingsWindowProfilesTab.xml"/>
     <Include file = "settingsWindowOverviewTab.xml"/>
     <Include file = "smallSettingFrame.xml"/>
     <Include file = "welcome.xml"/>

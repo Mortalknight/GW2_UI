@@ -79,15 +79,13 @@ local function ResetToDefault()
         oldUsername = GW.globalSettings.profiles[activeProfile].profileCreatedCharacter
         GW.globalSettings:ResetProfile()
         GW.globalSettings.profiles[activeProfile].profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"])
-        GW.globalSettings.profiles[activeProfile].profileCreatedCharacter = oldUsername or UNKNOWN
+        GW.globalSettings.profiles[activeProfile].profileCreatedCharacter = oldUsername or "GW2_UI"
 
         -- also rest the matching profile layout
         local profileName = GW.L["Profiles"] .. " - " .. activeProfile
         if allLayouts[profileName] then
             GW.global.layouts[profileName] = nil
         end
-
-        return
     end
 end
 GW.ResetToDefault = ResetToDefault

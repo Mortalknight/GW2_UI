@@ -1,6 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="panel_modules.xml"/>
-    <Include file ="panel_profiles.xml"/>
     <Include file ="panel_raid.xml"/>
     <Include file ="panel_party.xml"/>
     <Script file ="panel_general.lua"/>

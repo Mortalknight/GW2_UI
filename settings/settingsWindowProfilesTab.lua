@@ -579,10 +579,6 @@ local function LoadSettingsProfileTab(container)
     -- Spec switch block
     GW.InititateProfileSpecSwitchSettings(settingsProfile)
 
-    settingsProfile.resetToDefaultFrame:SetScript("OnEnter", item_OnEnter)
-    settingsProfile.resetToDefaultFrame:SetScript("OnLeave", item_OnLeave)
-    item_OnLoad(settingsProfile.resetToDefaultFrame)
-
     -- Reset to default card
     settingsProfile.resetToDefaultFrame:SetScript("OnEnter", item_OnEnter)
     settingsProfile.resetToDefaultFrame:SetScript("OnLeave", item_OnLeave)
@@ -602,6 +598,7 @@ local function LoadSettingsProfileTab(container)
 
     settingsProfile.resetToDefaultFrame.name:SetText(L["Default Settings"])
     settingsProfile.resetToDefaultFrame.desc:SetText(L["Load the default addon settings to the current profile."])
+    settingsProfile.resetToDefaultFrame.defaultSettings:Show()
     settingsProfile.resetToDefaultFrame.defaultSettings:SetText(L["Load"])
     settingsProfile.resetToDefaultFrame.defaultSettings:SetScript("OnClick", function()
         GW.ShowPopup({

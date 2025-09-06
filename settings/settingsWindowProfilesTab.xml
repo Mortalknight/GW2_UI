@@ -239,18 +239,6 @@
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="5"/>
                 </Anchors>
-                <!--
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/uistuff/rename-quill">
-                            <Size x="20" y="20"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-                -->
             </Button>
 
             <Button hidden="true" inherits="GwStandardButton" text="CALENDAR_COPY_EVENT" parentKey="copy">
