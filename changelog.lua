@@ -19,6 +19,15 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("8.3.4", {
+    {GW.ChangelogType.bug, [=[Fix settings dependecies tooltip]=]},
+    {GW.ChangelogType.bug, [=[Fix reset profile option]=]},
+    {GW.ChangelogType.bug, [=[Fix Paladin classpower]=]},
+    {GW.ChangelogType.change, [=[Add missing auctionator frame skin]=]},
+    {GW.ChangelogType.change, [=[Update classpower aura handling, this should be a performace boost, if your class has a classpower based on a de/buff]=]},
+
+})
+
+addChange("8.3.4", {
     {GW.ChangelogType.bug, [=[Player powerbar is now correctly hidden in specific situations]=]},
     {GW.ChangelogType.bug, [=[Fixed Lua error for fresh characters]=]},
     {GW.ChangelogType.bug, [=[Fixed Game Menu skin issue when using ConsolePort]=]},
