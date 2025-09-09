@@ -5,6 +5,84 @@ local animations = GW.animations
 
 local CPWR_FRAME
 
+local playerAuras = {buffs = {}, debuffs = {}}
+local petAuras = {buffs = {}, debuffs = {}}
+
+local function HandleUnitAuraEvent(unit, ...)
+    local auraUpdateInfo = ...
+    local isFullUpdate = not auraUpdateInfo or auraUpdateInfo.isFullUpdate
+    local buffsChanged = false
+    local debuffsChanged = false
+    local dataTable = unit == "pet" and petAuras or unit == "player" and playerAuras or nil
+    if not dataTable then return end
+
+    if isFullUpdate then
+        table.wipe(dataTable.buffs)
+        table.wipe(dataTable.debuffs)
+        local slots = {C_UnitAuras.GetAuraSlots(unit, "HELPFUL")}
+        for i = 2, #slots do -- #1 return is continuationToken, we don't care about it
+            local data = C_UnitAuras.GetAuraDataBySlot(unit, slots[i])
+
+            if data and data.name then
+                dataTable.buffs[data.auraInstanceID] = data
+            end
+        end
+
+        slots = {C_UnitAuras.GetAuraSlots(unit, "HARMFUL")}
+        for i = 2, #slots do -- #1 return is continuationToken, we don't care about it
+            local data = C_UnitAuras.GetAuraDataBySlot(unit, slots[i])
+
+            if data and data.name then
+                dataTable.debuffs[data.auraInstanceID] = data
+            end
+        end
+    else
+        if auraUpdateInfo.addedAuras then
+            for _, data in next, auraUpdateInfo.addedAuras do
+                if (data.isHelpful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL")) then
+                    if data and data.name then
+                        dataTable.buffs[data.auraInstanceID] = data
+                        buffsChanged = true
+                    end
+                elseif (data.isHarmful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL")) then
+                    if data and data.name then
+                        dataTable.debuffs[data.auraInstanceID] = data
+                        debuffsChanged = true
+                    end
+                end
+            end
+        end
+
+        if auraUpdateInfo.updatedAuraInstanceIDs then
+            for _, auraInstanceID in next, auraUpdateInfo.updatedAuraInstanceIDs do
+                if(dataTable.buffs[auraInstanceID]) then
+                    dataTable.buffs[auraInstanceID] = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID)
+                    buffsChanged = true
+                elseif(dataTable.debuffs[auraInstanceID]) then
+                    dataTable.debuffs[auraInstanceID] = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID)
+                    debuffsChanged = true
+                end
+            end
+        end
+
+        if auraUpdateInfo.removedAuraInstanceIDs then
+            for _, auraInstanceID in next, auraUpdateInfo.removedAuraInstanceIDs do
+                if(dataTable.buffs[auraInstanceID]) then
+                    dataTable.buffs[auraInstanceID] = nil
+                    buffsChanged = true
+                elseif(dataTable.debuffs[auraInstanceID]) then
+                    dataTable.debuffs[auraInstanceID] = nil
+                    debuffsChanged = true
+                end
+            end
+        end
+    end
+
+    if buffsChanged or debuffsChanged or isFullUpdate then
+        EventRegistry:TriggerEvent("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", unit, dataTable)
+    end
+end
+
 local function UpdateVisibility(self, inCombat)
     local shouldBeVisible = self.shouldShowBar and (not self.onlyShowInCombat or inCombat)
     local targetAlpha = shouldBeVisible and 1 or 0
@@ -229,49 +307,31 @@ local function decayCounterFlash_OnAnim(p)
 end
 GW.AddForProfiling("classpowers", "decayCounterFlash_OnAnim", decayCounterFlash_OnAnim)
 
-local function maelstromCounter_OnAnim()
-    local f = CPWR_FRAME
-    local fms = f.maelstrom
-    local p = animations["MAELSTROMCOUNTER_BAR"].progress
-    local px = p * 262
-    fms.precentage = p
-    fms.bar:SetValue(p)
-    fms.bar.spark:ClearAllPoints()
-    fms.bar.spark:SetPoint("RIGHT", fms.bar, "LEFT", px, 0)
-    fms.bar.spark:SetWidth(math.min(15, math.max(1, px)))
-end
-GW.AddForProfiling("classpowers", "maelstromCounter_OnAnim", maelstromCounter_OnAnim)
+local function GetAuraData(unit, unitSource, filter, ...)
+    local searchIDs = {}
+    local results = {}
+    local multipleIds = select("#", ...) > 1
+    for i = 1, select("#", ...) do
+        searchIDs[select(i, ...)] = true
+    end
 
-local function maelstromCounterFlash_OnAnim()
-    local f = CPWR_FRAME
-    local fms = f.maelstrom
-    fms.flash:SetAlpha(math.min(1, math.max(0, animations["MAELSTROMCOUNTER_TEXT"].progress)))
-end
-GW.AddForProfiling("classpowers", "maelstromCounterFlash_OnAnim", maelstromCounterFlash_OnAnim)
-
-local function decay_OnAnim(p)
-    local f = CPWR_FRAME
-    local fd = f.decay
-    local px = p * 310
-    fd.precentage = p
-    fd.bar:SetValue(p)
-    fd.bar.spark:ClearAllPoints()
-    fd.bar.spark:SetPoint("RIGHT", fd.bar, "LEFT", px, 0)
-    fd.bar.spark:SetWidth(math.min(15, math.max(1, px)))
-end
-GW.AddForProfiling("classpowers", "decay_OnAnim", decay_OnAnim)
-
-local function findBuff(unit, searchID)
-    if unit == "player" then
-        local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(searchID)
-        if auraInfo then
-            return auraInfo
+    if (unit == "player" or unit == "pet") and filter == "HELPFUL" then
+        for _, auraData in pairs((unit == "player" and playerAuras.buffs) or (unit == "pet" and petAuras.buffs) or {}) do
+            if searchIDs[auraData.spellId] then
+                results[#results + 1] = auraData
+            end
         end
-    else
-        local auraData
+    elseif (unit == "player" or unit == "pet") and filter == "HARMFUL" then
+        for _, auraData in pairs((unit == "player" and playerAuras.debuffs) or (unit == "pet" and petAuras.debuffs) or {}) do
+            if searchIDs[auraData.spellId] then
+                results[#results + 1] = auraData
+            end
+        end
+    elseif unitSource and filter == "HARMFUL" then
         for i = 1, 40 do
-            auraData = C_UnitAuras.GetAuraDataByIndex(unit, i)
-            if auraData and auraData.spellId == searchID then
+            local auraData = C_UnitAuras.GetDebuffDataByIndex(unit, i)
+
+            if auraData and (unitSource == auraData.sourceUnit and searchIDs[auraData.spellId]) then
                 return auraData
             elseif not auraData then
                 break
@@ -279,48 +339,12 @@ local function findBuff(unit, searchID)
         end
     end
 
-    return nil, nil, nil, nil
-end
-GW.AddForProfiling("classpowers", "findBuff", findBuff)
-
-local function findDebuff(unit, searchID, unitSource)
-    local auraData
-    for i = 1, 40 do
-        auraData = C_UnitAuras.GetDebuffDataByIndex(unit, i)
-
-        if auraData and ((unitSource == auraData.sourceUnit and auraData.spellId == searchID) or (unitSource == nil and auraData.spellId == searchID)) then
-            return auraData
-        elseif not auraData then
-            break
-        end
+    if multipleIds then
+        return #results > 0 and results or nil
+    else
+        return #results > 0 and results[1] or nil
     end
-
-    return nil, nil, nil, nil
 end
-GW.AddForProfiling("classpowers", "findDebuff", findDebuff)
-
-local searchIDs = {}
-local function findBuffs(unit, ...)
-    table.wipe(searchIDs)
-    for i = 1, select("#", ...) do
-        searchIDs[select(i, ...)] = true
-    end
-
-    local results = {}
-
-    for i = 1, 40 do
-        local auraData = C_UnitAuras.GetBuffDataByIndex(unit, i)
-        if not auraData then
-            break
-        end
-        if searchIDs[auraData.spellId] then
-            results[#results + 1] = { auraData.name, auraData.applications, auraData.duration, auraData.expirationTime }
-        end
-    end
-
-    return #results > 0 and results or nil
-end
-GW.AddForProfiling("classpowers", "findBuffs", findBuffs)
 
 -- MANA (multi class use)
 local function powerMana(self, event, ...)
@@ -523,18 +547,18 @@ local function powerEclipsOnUpdate(self)
     )
 end
 
-local function eclipsUnitAura(self)
-    local hasLunarEclipse = C_UnitAuras.GetPlayerAuraBySpellID(ECLIPSE_BAR_LUNAR_BUFF_ID) ~= nil
-    local hasSolarEclipse = C_UnitAuras.GetPlayerAuraBySpellID(ECLIPSE_BAR_SOLAR_BUFF_ID) ~= nil
+local function eclipsUnitAura()
+    local hasLunarEclipse = GetAuraData("player", nil, "HELPFUL", ECLIPSE_BAR_LUNAR_BUFF_ID) ~= nil
+    local hasSolarEclipse = GetAuraData("player", nil, "HELPFUL", ECLIPSE_BAR_SOLAR_BUFF_ID) ~= nil
     if hasLunarEclipse then
-        self.eclips.lunar:Show()
-        self.eclips.solar:Hide()
+        CPWR_FRAME.eclips.lunar:Show()
+        CPWR_FRAME.eclips.solar:Hide()
     elseif hasSolarEclipse then
-        self.eclips.lunar:Hide()
-        self.eclips.solar:Show()
+        CPWR_FRAME.eclips.lunar:Hide()
+        CPWR_FRAME.eclips.solar:Show()
     else
-        self.eclips.lunar:Hide()
-        self.eclips.solar:Hide()
+        CPWR_FRAME.eclips.lunar:Hide()
+        CPWR_FRAME.eclips.solar:Hide()
     end
 end
 
@@ -550,9 +574,9 @@ local function powerEclips(self, event, ...)
             self.eclips.solar:Hide()
         end
     elseif event == "UNIT_AURA" then
-        eclipsUnitAura(self)
+        HandleUnitAuraEvent(...)
     elseif event == "CLASS_POWER_INIT" then
-        eclipsUnitAura(self)
+        eclipsUnitAura()
         powerEclipsOnUpdate(self)
     end
 end
@@ -569,6 +593,7 @@ local function setEclips(f)
 
     f:RegisterUnitEvent("UNIT_AURA", "player")
     f:RegisterEvent("ECLIPSE_DIRECTION_CHANGE")
+    EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", eclipsUnitAura, "GW2_UI")
 end
 
 -- EVOKER
@@ -654,7 +679,27 @@ local function powerEssence(self, event, ...)
 end
 GW.AddForProfiling("classpowers", "powerEssence", powerEssence)
 
-local function setEssenceBar(f)
+-- this needs also the essence bar
+local function evokerEbonMight()
+    local auraInfo = GetAuraData("player", nil, "HELPFUL", 395296)
+    local auraExpirationTime = auraInfo and auraInfo.expirationTime or nil
+
+    if auraInfo and auraExpirationTime ~= CPWR_FRAME.auraExpirationTime then
+        CPWR_FRAME.auraExpirationTime = auraExpirationTime
+
+        local remainingPrecantage = math.min(1, (auraExpirationTime - GetTime()) / 20) -- hard coded max duration of 20 sec like blizzard
+        CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, auraInfo.duration)
+    end
+end
+local function evokerEvent(self, event, ...)
+    if event == "UNIT_AURA" then
+        HandleUnitAuraEvent(...)
+    else
+        powerEssence(self, event, ...)
+    end
+end
+
+local function setEvoker(f)
     f:ClearAllPoints()
     f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
     f.barType = "essence"
@@ -663,48 +708,11 @@ local function setEssenceBar(f)
     f:SetHeight(32)
     f.evoker:Show()
 
-    f:SetScript("OnEvent", powerEssence)
+    f:SetScript("OnEvent", evokerEvent)
     powerEssence(f, "CLASS_POWER_INIT")
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     f:RegisterUnitEvent("UNIT_POWER_POINT_CHARGE", "player")
-end
-GW.AddForProfiling("classpowers", "setEssenceBar", setEssenceBar)
-
--- this needs also the essence bar
-local function powerEbonMight(self, event, ...)
-    if event == "UNIT_AURA" then
-        local unitToken, auraUpdateInfo = ...
-        if unitToken ~= "player" or auraUpdateInfo == nil then
-            return
-        end
-
-        -- It's possible for UI to get a UNIT_AURA event with no update info, avoid reacting to that
-        local isUpdatePopulated = auraUpdateInfo.isFullUpdate
-            or (auraUpdateInfo.addedAuras ~= nil and #auraUpdateInfo.addedAuras > 0)
-            or (auraUpdateInfo.removedAuraInstanceIDs ~= nil and #auraUpdateInfo.removedAuraInstanceIDs > 0)
-            or (auraUpdateInfo.updatedAuraInstanceIDs ~= nil and #auraUpdateInfo.updatedAuraInstanceIDs > 0)
-
-        if isUpdatePopulated then
-            local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(395296)
-            local auraExpirationTime = auraInfo and auraInfo.expirationTime or nil
-
-            if auraInfo and auraExpirationTime ~= self.auraExpirationTime then
-                self.auraExpirationTime = auraExpirationTime
-
-                local remainingPrecantage = math.min(1, (auraExpirationTime - GetTime()) / 20) -- hard coded max duration of 20 sec like blizzard
-                self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, auraInfo.duration)
-            end
-        end
-    else
-        powerEssence(self, event, ...)
-    end
-end
-
-local function setEvoker(f)
-    setEssenceBar(f)
-    f.background:SetTexture(nil)
-    f.fill:SetTexture(nil)
 
     if GW.myspec == 3 then
         f.customResourceBar:SetWidth(115)
@@ -713,92 +721,89 @@ local function setEvoker(f)
         f.customResourceBar:Show()
 
         setPowerTypeEbonMight(f.customResourceBar)
-        f:SetScript("OnEvent", powerEbonMight)
-        powerEbonMight(f)
         f:RegisterUnitEvent("UNIT_AURA", "player")
-    else
-        f:UnregisterEvent("UNIT_AURA")
+        EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", evokerEbonMight, "GW2_UI")
     end
     return true
 end
 
 -- DEAMONHUNTER
-local function timerMetamorphosis(self)
-    local results = findBuffs("player", 162264, 187827)
+local function timerMetamorphosis()
+    local results = GetAuraData("player", nil, "HELPFUL", 162264, 187827)
     if results == nil then
-        self.customResourceBar:Hide()
+        CPWR_FRAME.customResourceBar:Hide()
         return
     end
 
     local duration = -1
     local expires = -1
     for i = 1, #results do
-        if results[i][4] > expires then
-            expires = results[i][4]
-            duration = results[i][3]
+        if results[i].expirationTime > expires then
+            expires = results[i].expirationTime
+            duration = results[i].duration
         end
     end
 
     if duration ~= nil then
-        self.customResourceBar:Show()
+        CPWR_FRAME.customResourceBar:Show()
         local remainingPrecantage = (expires - GetTime()) / duration
         local remainingTime = duration * remainingPrecantage
-        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
+        CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     else
-        self.customResourceBar:Hide()
+        CPWR_FRAME.customResourceBar:Hide()
     end
 end
 GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
 
 -- WARRIOR
-local function powerRend(self)
-    local auraData = findDebuff("target", 388539, "player")
+local function powerRend()
+    local auraData = GetAuraData("target", "player", "HARMFUL", 388539)
     if auraData and auraData.duration ~= nil then
-        self.customResourceBar:Show()
+        CPWR_FRAME.customResourceBar:Show()
         local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
         local remainingTime = auraData.duration * remainingPrecantage
-        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
+        CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     else
-        self.customResourceBar:Hide()
+        CPWR_FRAME.customResourceBar:Hide()
     end
 end
-local function powerEnrage(self)
-    local auraData = findBuff("player", 184362)
+local function powerEnrage()
+    local auraData = GetAuraData("player", nil, "HELPFUL", 184362)
     if auraData and auraData.duration ~= nil then
-        self.customResourceBar:Show()
+        CPWR_FRAME.customResourceBar:Show()
         local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
         local remainingTime = auraData.duration * remainingPrecantage
-        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
+        CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     else
-        self.customResourceBar:Hide()
+        CPWR_FRAME.customResourceBar:Hide()
     end
 end
 GW.AddForProfiling("classpowers", "powerEnrage", powerEnrage)
 
-local function powerSBlock(self)
+local function powerSBlock()
     local results
-    if self.gw_BolsterSelected then
-        results = findBuffs("player", 132404, 871, 12975)
+    if CPWR_FRAME.gw_BolsterSelected then
+        results = GetAuraData("player", nil, "HELPFUL", 132404, 871, 12975)
     else
-        results = findBuffs("player", 132404, 871)
+        results = GetAuraData("player", nil, "HELPFUL", 132404, 871)
     end
     if results == nil then
-        self.customResourceBar:Hide()
+        CPWR_FRAME.customResourceBar:Hide()
         return
     end
-    self.customResourceBar:Show()
+    CPWR_FRAME.customResourceBar:Show()
     local duration = -1
     local expires = -1
     for i = 1, #results do
-        if results[i][4] > expires then
-            expires = results[i][4]
-            duration = results[i][3]
+        if results[i].expirationTime > expires then
+            expires = results[i].expirationTime
+            duration = results[i].duration
         end
     end
     if expires > 0 then
         local remainingPrecantage = (expires - GetTime()) / duration
         local remainingTime = duration * remainingPrecantage
-        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
+        CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     end
 end
 GW.AddForProfiling("classpowers", "powerSBlock", powerSBlock)
@@ -810,21 +815,23 @@ local function setWarrior(f)
     if GW.myspec == 1 then --arms rend
         setPowerTypeRend(f.customResourceBar)
         f:SetScript("OnEvent", powerRend)
-        powerRend(f)
+        powerRend()
         f:RegisterUnitEvent("UNIT_AURA", "target")
         f:RegisterEvent("PLAYER_TARGET_CHANGED")
     elseif GW.myspec == 2 then -- fury
         setPowerTypeEnrage(f.customResourceBar)
-        f:SetScript("OnEvent", powerEnrage)
-        powerEnrage(f)
+        f:SetScript("OnEvent", function(_, _, unit, ...) HandleUnitAuraEvent(unit, ...) end)
+        powerEnrage()
         f:RegisterUnitEvent("UNIT_AURA", "player")
+        EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", powerEnrage, "GW2_UI")
     elseif GW.myspec == 3 then -- prot
         -- determine if bolster talent is selected
         setPowerTYpeBolster(f.customResourceBar)
         f.gw_BolsterSelected = GW.IsSpellTalented(12975)
-        f:SetScript("OnEvent", powerSBlock)
-        powerSBlock(f)
+        f:SetScript("OnEvent", function(_, _, unit, ...) HandleUnitAuraEvent(unit, ...) end)
+        powerSBlock()
         f:RegisterUnitEvent("UNIT_AURA", "player")
+        EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", powerSBlock, "GW2_UI")
     end
 
     return true
@@ -833,36 +840,41 @@ GW.AddForProfiling("classpowers", "setWarrior", setWarrior)
 
 -- PALADIN
 local function powerSotR()
-    local results = findBuffs("player", 132403, 31850, 212641)
+    local results = GetAuraData("player", nil, "HELPFUL", 132403, 31850, 212641)
     if results == nil then
         return
     end
     local duration = -1
     local expires = -1
     for i = 1, #results do
-        if results[i][4] > expires then
-            expires = results[i][4]
-            duration = results[i][3]
+        if results[i].expirationTime > expires then
+            expires = results[i].expirationTime
+            duration = results[i].duration
         end
     end
     if expires > 0 then
         local pre = (expires - GetTime()) / duration
-        GW.AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), decay_OnAnim, "noease")
+        GW.AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), function()
+            local remainingPrecantage = (expires - GetTime()) / duration
+            local remainingTime = duration * remainingPrecantage
+            CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
+        end, "noease")
     end
 end
-GW.AddForProfiling("classpowers", "powerSotR", powerSotR)
 
 
 local function powerHoly(self, event, ...)
+    if event == "UNIT_AURA" then
+        HandleUnitAuraEvent(...)
+        return
+    end
+
     local pType = select(2, ...)
     if event ~= "CLASS_POWER_INIT" and pType ~= "HOLY_POWER" then
         return
     end
 
     local old_power = self.gwPower
-    --empty v:SetTexCoord(0,0.5,0,0.5)
-    --full  v:SetTexCoord(0.5,1,0,0.5)
-    --current  v:SetTexCoord(0,0.5,0.5,1)
     local pwr = UnitPower("player", 9)
     local pwrThreshold = (GW.Retail and 3 or 1)
     if pwr < pwrThreshold then
@@ -929,6 +941,7 @@ local function setPaladin(f)
         setPowerTypePaladinShield(f.customResourceBar)
 
         f:RegisterUnitEvent("UNIT_AURA", "player")
+        EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", powerSotR, "GW2_UI")
     end
 
     return true
@@ -936,24 +949,24 @@ end
 GW.AddForProfiling("classpowers", "setPaladin", setPaladin)
 
 -- HUNTER
-local function powerFrenzy(self, event)
-    local fdc = self.decayCounter
-    local auraData = findBuff("pet", 272790)
+local function powerFrenzy(event)
+    local fdc = CPWR_FRAME.decayCounter
+    local auraData = GetAuraData("pet", nil, "HELPFUL", 272790)
 
     if auraData and auraData.duration == nil or not auraData then
         fdc.count:SetText(0)
-        self.gwPower = -1
+        CPWR_FRAME.gwPower = -1
         return
     end
 
     fdc.count:SetText(auraData.applications)
-    local old_expires = self.gwPower
+    local old_expires = CPWR_FRAME.gwPower
     old_expires = old_expires or -1
-    self.gwPower = auraData.expirationTime
+    CPWR_FRAME.gwPower = auraData.expirationTime
     if event == "CLASS_POWER_INIT" or auraData.expirationTime > old_expires then
         local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
         local remainingTime = auraData.duration * remainingPrecantage
-        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
+        CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
         if event ~= "CLASS_POWER_INIT" then
             GW.AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
         end
@@ -961,24 +974,24 @@ local function powerFrenzy(self, event)
 end
 GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
 
-local function powerMongoose(self, event)
-    local fdc = self.decayCounter
-    local auraData = findBuff("player", 259388)
+local function powerMongoose(event)
+    local fdc = CPWR_FRAME.decayCounter
+    local auraData = GetAuraData("player", nil, "HELPFUL", 259388)
 
     if auraData and auraData.duration == nil or not auraData then
         fdc.count:SetText(0)
-        self.gwPower = -1
+        CPWR_FRAME.gwPower = -1
         return
     end
 
     fdc.count:SetText(auraData.applications)
-    local old_expires = self.gwPower
+    local old_expires = CPWR_FRAME.gwPower
     old_expires = old_expires or -1
-    self.gwPower = auraData.expirationTime
+    CPWR_FRAME.gwPower = auraData.expirationTime
     if event == "CLASS_POWER_INIT" or auraData.expirationTime > old_expires then
         local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
         local remainingTime = auraData.duration * remainingPrecantage
-        self.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
+        CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
         if event ~= "CLASS_POWER_INIT" then
             GW.AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
         end
@@ -995,13 +1008,15 @@ local function setHunter(f)
         f.decayCounter:Show()
 
         if GW.myspec == 1 then -- beast mastery
-            f:SetScript("OnEvent", powerFrenzy)
-            powerFrenzy(f, "CLASS_POWER_INIT")
+            f:SetScript("OnEvent", function(_, _, unit, ...) HandleUnitAuraEvent(unit, ...) end)
+            powerFrenzy("CLASS_POWER_INIT")
             f:RegisterUnitEvent("UNIT_AURA", "pet")
+            EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", powerFrenzy, "GW2_UI")
         elseif GW.myspec == 3 then -- survival
-            f:SetScript("OnEvent", powerMongoose)
-            powerMongoose(f, "CLASS_POWER_INIT")
+            f:SetScript("OnEvent", function(_, _, unit, ...) HandleUnitAuraEvent(unit, ...) end)
+            powerMongoose("CLASS_POWER_INIT")
             f:RegisterUnitEvent("UNIT_AURA", "player")
+            EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", powerMongoose, "GW2_UI")
         end
 
         return true
@@ -1300,30 +1315,30 @@ end
 GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
 
 -- SHAMAN
-local function powerMaelstrom(self)
-    local auraData = findBuff("player", 344179)
+local function powerMaelstrom()
+    local auraData = GetAuraData("player", nil, "HELPFUL", 344179)
 
     if auraData and auraData.duration == nil then
-        self.gwPower = -1
+        CPWR_FRAME.gwPower = -1
         auraData.applications = 0
     end
 
     if auraData and auraData.applications >= 5 then
-        self.maelstrom.flare1:Show()
+        CPWR_FRAME.maelstrom.flare1:Show()
     else
-        self.maelstrom.flare1:Hide()
+        CPWR_FRAME.maelstrom.flare1:Hide()
     end
     if auraData and auraData.applications >= 10 then
-        self.maelstrom.flare2:Show()
+        CPWR_FRAME.maelstrom.flare2:Show()
     else
-        self.maelstrom.flare2:Hide()
+        CPWR_FRAME.maelstrom.flare2:Hide()
     end
 
     for i = 1, 10 do
         if auraData and auraData.applications >= i then
-            self.maelstrom["rune" .. i]:Show()
+            CPWR_FRAME.maelstrom["rune" .. i]:Show()
         else
-            self.maelstrom["rune" .. i]:Hide()
+            CPWR_FRAME.maelstrom["rune" .. i]:Hide()
         end
     end
 end
@@ -1343,9 +1358,10 @@ local function setShaman(f)
             local fms = f.maelstrom
             fms:Show()
 
-            f:SetScript("OnEvent", powerMaelstrom)
-            powerMaelstrom(f)
+            f:SetScript("OnEvent", function(_, _, unit, ...) HandleUnitAuraEvent(unit, ...) end)
+            powerMaelstrom()
             f:RegisterUnitEvent("UNIT_AURA", "player")
+            EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", powerMaelstrom, "GW2_UI")
             return true
         end
     else
@@ -1399,19 +1415,19 @@ local function powerArcane(self, event, ...)
 end
 GW.AddForProfiling("classpowers", "powerArcane", powerArcane)
 
-local function powerFrost(self, event)
-    local auraData = findBuff("player", 205473)
+local function powerFrost(event)
+    local auraData = GetAuraData("player", nil, "HELPFUL", 205473)
     local count = auraData and auraData.applications or 0
 
-    local old_power = self.gwPower
+    local old_power = CPWR_FRAME.gwPower
     old_power = old_power or -1
 
-    self.gwPower = count
-    self.background:SetTexCoord(0, 1, 0.125 * 5, 0.125 * (5 + 1))
-    self.fill:SetTexCoord(0, 1, 0.125 * count, 0.125 * (count + 1))
+    CPWR_FRAME.gwPower = count
+    CPWR_FRAME.background:SetTexCoord(0, 1, 0.125 * 5, 0.125 * (5 + 1))
+    CPWR_FRAME.fill:SetTexCoord(0, 1, 0.125 * count, 0.125 * (count + 1))
 
     if old_power < count and count > 0 and event ~= "CLASS_POWER_INIT" then
-        animFlare(self, 32, -16, 2, true)
+        animFlare(CPWR_FRAME, 32, -16, 2, true)
     end
 end
 
@@ -1456,9 +1472,10 @@ local function setMage(f)
         f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/frostmage-altpower")
         f.background:SetVertexColor(0, 0, 0, 0.5)
 
-        f:SetScript("OnEvent", powerFrost)
-        powerFrost(f, "CLASS_POWER_INIT")
+        f:SetScript("OnEvent", function(_, _, unit, ...) HandleUnitAuraEvent(unit, ...) end)
+        powerFrost("CLASS_POWER_INIT")
         f:RegisterUnitEvent("UNIT_AURA", "player")
+        EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", powerFrost, "GW2_UI")
 
         return true
     end
@@ -1658,6 +1675,49 @@ local function ironSkin_OnUpdate(self)
 end
 GW.AddForProfiling("classpowers", "ironSkin_OnUpdate", ironSkin_OnUpdate)
 
+local function setStaggerBar()
+    local fb = CPWR_FRAME.brewmaster
+    local auraData = GetAuraData("player", nil, "HELPFUL", GW.Mists and 115307 or 215479)
+
+    if auraData and auraData.expirationTime then
+        fb.ironskin.expires = auraData.expirationTime
+        if fb.ironskin.ticker then
+            fb.ironskin.ticker:Cancel()
+        end
+        fb.ironskin.ticker = C_Timer.NewTicker(0.01, function() ironSkin_OnUpdate(fb.ironskin) end)
+        fb.ironskin:Show()
+        fb.ironskin.ironartwork:Show()
+    else
+        if fb.ironskin.ticker then
+            fb.ironskin.ticker:Cancel()
+        end
+        fb.ironskin:Hide()
+        fb.ironskin.ironartwork:Hide()
+        fb.ironskin.expires = nil
+    end
+
+    auraData = GetAuraData("player", nil, "HARMFUL", 124275)         -- light stagger
+    if not auraData or auraData.duration == nil then
+        auraData = GetAuraData("player", nil, "HARMFUL", 124274)     -- medium stagger
+        if not auraData or auraData.duration == nil then
+            auraData = GetAuraData("player", nil, "HARMFUL", 124273) -- heavy stagger
+        end
+    end
+
+    if auraData and auraData.duration then
+        local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
+        local remainingTime = auraData.duration * remainingPrecantage
+
+        local pwrMax = UnitHealthMax("player")
+        local pwr = UnitStagger("player")
+
+        local staggarPrec = pwr / pwrMax
+
+        staggarPrec = math.max(0, math.min(staggarPrec, 1))
+        CPWR_FRAME.customResourceBar:SetCustomAnimation(staggarPrec, 0, remainingTime)
+    end
+end
+
 local function powerStagger(self, event, ...)
     local unit = select(1, ...)
     local fb = self.brewmaster
@@ -1670,46 +1730,7 @@ local function powerStagger(self, event, ...)
     end
 
     if unit == "player" and event == "UNIT_AURA" then
-        local auraData = findBuff("player", GW.Mists and 115307 or 215479)
-
-        if auraData and auraData.expirationTime then
-            fb.ironskin.expires = auraData.expirationTime
-            if fb.ironskin.ticker then
-                fb.ironskin.ticker:Cancel()
-            end
-            fb.ironskin.ticker = C_Timer.NewTicker(0.01, function() ironSkin_OnUpdate(fb.ironskin) end)
-            fb.ironskin:Show()
-            fb.ironskin.ironartwork:Show()
-        else
-            if fb.ironskin.ticker then
-                fb.ironskin.ticker:Cancel()
-            end
-            fb.ironskin:Hide()
-            fb.ironskin.ironartwork:Hide()
-            fb.ironskin.expires = nil
-        end
-
-        --This can be optimized by checking aura payload for changes rather then scaning auras
-        auraData = findBuff("player", 124275)         -- light stagger
-        if not auraData or auraData.duration == nil then
-            auraData = findBuff("player", 124274)     -- medium stagger
-            if not auraData or auraData.duration == nil then
-                auraData = findBuff("player", 124273) -- heavy stagger
-            end
-        end
-
-        if auraData and auraData.duration then
-            local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
-            local remainingTime = auraData.duration * remainingPrecantage
-
-            local pwrMax = UnitHealthMax("player")
-            local pwr = UnitStagger("player")
-
-            local staggarPrec = pwr / pwrMax
-
-            staggarPrec = math.max(0, math.min(staggarPrec, 1))
-            self.customResourceBar:SetCustomAnimation(staggarPrec, 0, remainingTime)
-        end
+        HandleUnitAuraEvent(...)
     end
 end
 GW.AddForProfiling("classpowers", "powerStagger", powerStagger)
@@ -1732,6 +1753,8 @@ local function setMonk(f)
             f:RegisterUnitEvent("UNIT_AURA", "player")
             f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
             f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+            EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", setStaggerBar, "GW2_UI")
+
             return true
         elseif GW.myspec == 3 then -- ww
             f:ClearAllPoints()
@@ -1866,14 +1889,13 @@ local function setDeamonHunter(f)
     if GW.myspec == 1 then -- havoc
         setPowerTypeMeta(f.customResourceBar)
         f.customResourceBar:Show()
-        --f:ClearAllPoints()
-        --f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -15)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
 
-        f:SetScript("OnEvent", timerMetamorphosis)
-        timerMetamorphosis(f)
+        f:SetScript("OnEvent", function(_, _, unit, ...) HandleUnitAuraEvent(unit, ...) end)
+        timerMetamorphosis()
         f:RegisterUnitEvent("UNIT_AURA", "player")
+        EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", timerMetamorphosis, "GW2_UI")
 
         return true
     end
@@ -1884,6 +1906,7 @@ GW.AddForProfiling("classpowers", "setDeamonHunter", setDeamonHunter)
 
 local function selectType(f)
     f:SetScript("OnEvent", nil)
+    EventRegistry:UnregisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", "GW2_UI")
     f:UnregisterAllEvents()
 
     -- hide all class power sub-pieces and reset anything needed
