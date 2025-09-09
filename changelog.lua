@@ -18,7 +18,7 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-addChange("8.3.4", {
+addChange("8.3.5", {
     {GW.ChangelogType.bug, [=[Fix settings dependecies tooltip]=]},
     {GW.ChangelogType.bug, [=[Fix reset profile option]=]},
     {GW.ChangelogType.bug, [=[Fix Paladin classpower]=]},
