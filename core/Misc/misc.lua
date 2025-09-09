@@ -55,15 +55,15 @@ local function QuestRewardMostValueIcon()
         local item = PawnGetItemData and PawnGetItemData(itemLink)
 
         if item then
-			tinsert(questRewards, { Item = item, RewardType = "choice", Usable = usable, Index = i })
+            tinsert(questRewards, { Item = item, RewardType = "choice", Usable = usable, Index = i })
         end
 
         if itemSellPrice and itemSellPrice > 0 then
             local totalValue = (amount and amount > 0) and (itemSellPrice * amount) or 0
-			if totalValue > bestValue then
-				bestValue = totalValue
-				bestItem = i
-			end
+            if totalValue > bestValue then
+                bestValue = totalValue
+                bestItem = i
+            end
         end
     end
 
@@ -71,39 +71,39 @@ local function QuestRewardMostValueIcon()
         local btn = _G["QuestInfoRewardsFrameQuestInfoItem" .. bestItem]
         if btn and btn.type == "choice" then
             mostValue:ClearAllPoints()
-			mostValue:Point('TOPRIGHT', btn, 'TOPRIGHT', -2, -2)
-			mostValue:SetFrameStrata('HIGH')
-			mostValue:Show()
+            mostValue:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -2, -2)
+            mostValue:SetFrameStrata("HIGH")
+            mostValue:Show()
         end
     end
 
     if PawnFindInterestingItems then PawnFindInterestingItems(questRewards) end
 
     for _, reward in pairs(questRewards) do
-		local itemButton = QuestInfo_GetRewardButton(QuestInfoFrame.rewardsFrame, reward.Index)
-		if itemButton then
-			local overlay = upgradeIconsByPawn[reward.Index]
-			if not overlay then
-				overlay = itemButton:CreateTexture(nil, "OVERLAY", "PawnUI_QuestAdvisorTexture")
-				overlay:SetDrawLayer("OVERLAY", 7)
+        local itemButton = QuestInfo_GetRewardButton(QuestInfoFrame.rewardsFrame, reward.Index)
+        if itemButton then
+            local overlay = upgradeIconsByPawn[reward.Index]
+            if not overlay then
+                overlay = itemButton:CreateTexture(nil, "OVERLAY", "PawnUI_QuestAdvisorTexture")
+                overlay:SetDrawLayer("OVERLAY", 7)
 
-				upgradeIconsByPawn[reward.Index] = overlay
-			end
-			if reward.Result == "upgrade" then
-				overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
-				overlay:SetTexCoord(0, .5, 0, .5)
-				overlay:Show()
-			elseif reward.Result == "vendor" then
-				overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
-				overlay:SetTexCoord(0, .5, .5, 1)
-				overlay:Show()
-			elseif reward.Result == "trinket" then -- trinkets or relics
-				overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
-				overlay:SetTexCoord(.5, 1, .5, 1)
-				overlay:Show()
-			end
-		end
-	end
+                upgradeIconsByPawn[reward.Index] = overlay
+            end
+            if reward.Result == "upgrade" then
+                overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
+                overlay:SetTexCoord(0, .5, 0, .5)
+                overlay:Show()
+            elseif reward.Result == "vendor" then
+                overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
+                overlay:SetTexCoord(0, .5, .5, 1)
+                overlay:Show()
+            elseif reward.Result == "trinket" then -- trinkets or relics
+                overlay:SetTexture("Interface/AddOns/Pawn/Textures/UpgradeArrowBig")
+                overlay:SetTexCoord(.5, 1, .5, 1)
+                overlay:Show()
+            end
+        end
+    end
 end
 
 local function InitializeMiscFunctions()
