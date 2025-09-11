@@ -36,7 +36,7 @@
                         <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="2" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
+                <Texture parentKey="Left" file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
                     <Size x="40" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />

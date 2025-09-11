@@ -56,7 +56,7 @@ local function layoutBagItems(f)
     local lcf = inv.layoutContainerFrame
     for i = iS, iE, iD do
         local bag_id = i
-        local slotID, itemID
+        local itemID
         local cf = f.Containers[bag_id]
         local header = parent["bagHeader" .. i]
         if sep then
@@ -81,13 +81,7 @@ local function layoutBagItems(f)
         parent.unfinishedRow = parent.unfinishedRow + (unfinishedRow and 1 or 0)
         parent.finishedRow = parent.finishedRow + finishedRows
 
-        if not rev and bag_id <= 3 then
-            slotID = GetInventorySlotInfo("Bag" .. bag_id .. "Slot")
-            itemID = GetInventoryItemID("player", slotID)
-        elseif rev and bag_id <= 4 and bag_id > 0 then
-            slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
-            itemID = GetInventoryItemID("player", slotID)
-        end
+        itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(bag_id))
 
         if (sep and (bag_id == 0 or bag_id >= 4)) or (sep and itemID) then
             if col ~= 0 then

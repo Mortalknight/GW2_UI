@@ -36,7 +36,7 @@
                         <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="2" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
+                <Texture parentKey="Left" file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
                     <Size x="40" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -150,11 +150,11 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentGwBagHeader0" inherits="GwBagHeaderTemplate"/>
-            <Button name="$parentGwBagHeader1" inherits="GwBagHeaderTemplate"/>
-            <Button name="$parentGwBagHeader2" inherits="GwBagHeaderTemplate"/>
-            <Button name="$parentGwBagHeader3" inherits="GwBagHeaderTemplate"/>
-            <Button name="$parentGwBagHeader4" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader0" id="0" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader1" id="1" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader2" id="2" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader3" id="3" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader4" id="4" inherits="GwBagHeaderTemplate"/>
             <Button parentKey="currency" framelevel="50">
                 <Size x="32" y="32"></Size>
                 <Anchors>
