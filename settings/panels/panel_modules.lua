@@ -44,6 +44,9 @@ local function LoadModulesPanel(sWindow)
     p:AddOption(L["Alert Frames"], nil, {getterSetter = "ALERTFRAME_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = GW.Classic})
     p:AddOption(FRIENDS, nil, {getterSetter = "USE_SOCIAL_WINDOW", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
 
+    p:AddOption(GW.NewSign .. L["Micro Bar"], nil, {getterSetter = "micromenu.enabled", callback = function() GW.ShowRlPopup = true end})
+
+
     sWindow:AddSettingsPanel(p, L["Modules"], L["Enable or disable the modules you need and don't need."])
 end
 GW.LoadModulesPanel = LoadModulesPanel

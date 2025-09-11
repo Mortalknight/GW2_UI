@@ -1037,8 +1037,7 @@ end
 AFP("mbf_OnLeave", mbf_OnLeave)
 
 local function LoadMicroMenu()
-    -- compatability with ElvUI (this one is their fault)
-    if checkElvUI() then
+    if checkElvUI() or not GW.settings.micromenu.enabled then
         return
     end
 

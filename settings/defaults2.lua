@@ -102,6 +102,10 @@ GW.globalDefault = {
         PETBAR_ENABLED = true,
         BORDER_ENABLED = true,
 
+        micromenu = {
+            enabled = true,
+        },
+
         NumberFormat = "POINT",
 
         FONT_STYLE_TEMPLATE = "GW2",
