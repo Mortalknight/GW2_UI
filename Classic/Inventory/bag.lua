@@ -101,9 +101,13 @@ local function layoutBagItems(f)
             if unfinishedRow then parent.unfinishedRow = parent.unfinishedRow  + 1 end
             parent.finishedRow = parent.finishedRow + finishedRows
 
-            itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(bag_id))
+            if not rev and bag_id < 4 then
+                itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(bag_id))
+            elseif rev and bag_id < 5 and bag_id > 0 then
+                itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(bag_id - 1))
+            end
 
-            if (sep and bag_id == 0) or (sep and itemID) or (sep and rev and bag_id == 5) then
+            if sep and (bag_id == 0 or itemID or (rev and bag_id == 5)) then
                 if col ~= 0 then
                     row = row + 2
                     col = 0
