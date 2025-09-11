@@ -35,6 +35,10 @@ local function worldMapSkin()
     WorldMapFrame.backdrop:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 0, -30)
     WorldMapFrame.backdrop:SetPoint("BOTTOMRIGHT", WorldMapFrame, "BOTTOMRIGHT", 0, 0)
 
+    -- for questie
+    WorldMapFrame.BorderFrame.headerText = WorldMapFrame.BorderFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    WorldMapFrame.BorderFrame.headerText:SetAlpha(0)
+
     MiniWorldMapTitle:Hide()
     WorldMapTitleButton:GwKill()
 

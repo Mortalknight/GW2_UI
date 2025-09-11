@@ -688,6 +688,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
             titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
             titleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
             titleText:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+            header.headerText = titleText
         else
             header.headerText = header:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             header.headerText:ClearAllPoints()
