@@ -862,7 +862,7 @@ local function LoadInventory()
     helpers.onMoverDragStop = onMoverDragStop
 
     bag_resize = GW.LoadBag(helpers)
-    bank_resize = GW.LoadBank(helpers) --TODO NEW Bank
+    bank_resize = GW.LoadBank(helpers)
 
     -- Skin StackSplit
     StackSplitFrame:GwStripTextures()

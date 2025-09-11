@@ -9,30 +9,32 @@ local BAG_ITEM_LARGE_SIZE = 40
 local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
 
-local function setBagHeaders()
+local function setBagHeaders(frame)
     for i = 1, 4 do
         local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
         local itemID = GetInventoryItemID("player", slotID)
         local customBagHeaderName = GW.settings["BAG_HEADER_NAME" .. i]
+        local header = frame["bagHeader" .. i]
 
         if itemID then
             local r, g, b = 1, 1, 1
             local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
             if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
 
-            _G["GwBagFrameGwBagHeader" .. i].nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName and itemName or UNKNOWN)
-            _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(r, g, b, 1)
+            header.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName and itemName or UNKNOWN)
+            header.nameString:SetTextColor(r, g, b, 1)
         else
-            _G["GwBagFrameGwBagHeader" .. i]:Hide()
+            header:Hide()
         end
     end
     local customBagHeaderName = GW.settings.BAG_HEADER_NAME0
-    _G["GwBagFrameGwBagHeader0"].nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or BACKPACK_TOOLTIP)
+    frame.bagHeader0.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or BACKPACK_TOOLTIP)
 end
 
 -- adjusts the ItemButton layout flow when the bag window size changes (or on open)
 local function layoutBagItems(f)
-    local max_col = f:GetParent().gw_bag_cols
+    local parent = f:GetParent()
+    local max_col = parent.gw_bag_cols
     local col = 0
     local rev = GW.settings.BAG_REVERSE_SORT
     local sep = GW.settings.BAG_SEPARATE_BAGS
@@ -49,14 +51,14 @@ local function layoutBagItems(f)
         iS = NUM_BAG_SLOTS
         iD = -1
     end
-    f:GetParent().unfinishedRow = 0
-    f:GetParent().finishedRow = 0
+    parent.unfinishedRow = 0
+    parent.finishedRow = 0
     local lcf = inv.layoutContainerFrame
     for i = iS, iE, iD do
         local bag_id = i
         local slotID, itemID
         local cf = f.Containers[bag_id]
-
+        local header = parent["bagHeader" .. i]
         if sep then
             if bag_id == 5 and not rev then
                 if col ~= 0 then
@@ -65,13 +67,12 @@ local function layoutBagItems(f)
                     row = row + 1
                 end
             end
-            _G["GwBagFrameGwBagHeader" .. bag_id]:Show()
-            _G["GwBagFrameGwBagHeader" .. bag_id]:ClearAllPoints()
-            _G["GwBagFrameGwBagHeader" .. bag_id]:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off)
-            _G["GwBagFrameGwBagHeader" .. bag_id]:SetWidth(GW.settings.BAG_WIDTH - BAG_ITEM_PADDING)
-            _G["GwBagFrameGwBagHeader" .. bag_id].background:SetWidth(GW.settings.BAG_WIDTH - BAG_ITEM_PADDING)
+            header:Show()
+            header:ClearAllPoints()
+            header:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off)
+            header:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, (-row + 1) * item_off)
         else
-            _G["GwBagFrameGwBagHeader" .. bag_id] :Hide()
+            header:Hide()
         end
         if sep and rev and bag_id == 5 and not cf then
             row = 2
@@ -87,8 +88,8 @@ local function layoutBagItems(f)
                 cf:Show()
             end
 
-            if unfinishedRow then f:GetParent().unfinishedRow = f:GetParent().unfinishedRow  + 1 end
-            f:GetParent().finishedRow = f:GetParent().finishedRow + finishedRows
+            if unfinishedRow then parent.unfinishedRow = parent.unfinishedRow  + 1 end
+            parent.finishedRow = parent.finishedRow + finishedRows
 
             if not rev and bag_id < 4 then
                 slotID = GetInventorySlotInfo("Bag" .. bag_id .. "Slot")
@@ -108,7 +109,7 @@ local function layoutBagItems(f)
             end
         end
     end
-    setBagHeaders()
+    setBagHeaders(parent)
 end
 GW.AddForProfiling("bag", "layoutBagItems", layoutBagItems)
 
@@ -500,9 +501,9 @@ end
 GW.AddForProfiling("bag", "bag_OnEvent", bag_OnEvent)
 
 local function bagHeader_OnClick(self, btn)
-    local bag_id = string.sub(self:GetName(), -1)
+    local bag_id = self:GetID()
     if btn == "LeftButton" then
-        self:GetParent().ItemFrame.Containers[tonumber(bag_id)].shouldShow = not self.icon:IsShown()
+        self:GetParent().ItemFrame.Containers[bag_id].shouldShow = not self.icon:IsShown()
         self.icon:SetShown(not self.icon:IsShown())
         self.icon2:SetShown(not self.icon:IsShown())
 
@@ -512,7 +513,7 @@ local function bagHeader_OnClick(self, btn)
         GW.ShowPopup({text = L["New Bag Name"],
             OnAccept = function(promptFrame)
                 GW.settings["BAG_HEADER_NAME" .. bag_id] = promptFrame.input:GetText()
-                _G["GwBagFrameGwBagHeader" .. bag_id].nameString:SetText(GW.settings["BAG_HEADER_NAME" .. bag_id])
+                self.nameString:SetText(GW.settings["BAG_HEADER_NAME" .. bag_id])
             end,
             hasEditBox = true,
             button1 = SAVE,
@@ -520,7 +521,7 @@ local function bagHeader_OnClick(self, btn)
             EditBoxOnEscapePressed = function(popup) popup:Hide() end,
             OnCancel = function()
                 GW.settings["BAG_HEADER_NAME" .. bag_id] = ""
-                if tonumber(bag_id) > 0 then
+                if bag_id > 0 then
                     local slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
                     local itemID = GetInventoryItemID("player", slotID)
 
@@ -531,11 +532,11 @@ local function bagHeader_OnClick(self, btn)
                             color = GW.GetQualityColor(itemRarity)
                         end
 
-                        _G["GwBagFrameGwBagHeader" .. bag_id].nameString:SetText(itemName or UNKNOWN)
-                        _G["GwBagFrameGwBagHeader" .. bag_id].nameString:SetTextColor(color.r, color.g, color.b, 1)
+                        self.nameString:SetText(itemName or UNKNOWN)
+                        self.nameString:SetTextColor(color.r, color.g, color.b, 1)
                     end
                 else
-                    _G["GwBagFrameGwBagHeader" .. bag_id].nameString:SetText(BACKPACK_TOOLTIP)
+                    self.nameString:SetText(BACKPACK_TOOLTIP)
                 end
             end,
             inputText = (function()
@@ -543,7 +544,7 @@ local function bagHeader_OnClick(self, btn)
                 if string.len(customName) == 0 then
                     customName = nil
                 end
-                if tonumber(bag_id) > 0 then
+                if bag_id > 0 then
                     local slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
                     local itemID = GetInventoryItemID("player", slotID)
 
@@ -581,6 +582,8 @@ local function LoadBag(helpers)
     f:SetWidth(GW.settings.BAG_WIDTH)
     f.Header:SetWidth(GW.settings.BAG_WIDTH)
     onBagFrameChangeSize(f, nil, nil, true)
+    f:SetClampedToScreen(true)
+	f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
 
     -- setup show/hide
     f:SetScript("OnShow", bag_OnShow)
@@ -604,7 +607,7 @@ local function LoadBag(helpers)
 
     -- setup bagheader stuff
     for i = 0, 4 do
-        local header = _G["GwBagFrameGwBagHeader" .. i]
+        local header = f["bagHeader" .. i]
         header.nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
         header.nameString:SetTextColor(1, 1, 1)
         header.nameString:SetShadowColor(0, 0, 0, 0)

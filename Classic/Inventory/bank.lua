@@ -381,6 +381,8 @@ local function LoadBank(helpers)
     f:ClearAllPoints()
     f:SetWidth(BANK_WINDOW_SIZE)
     onBankFrameChangeSize(f, nil, nil, true)
+    f:SetClampedToScreen(true)
+	f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
 
     -- setup show/hide
     f:SetScript("OnShow", bank_OnShow)

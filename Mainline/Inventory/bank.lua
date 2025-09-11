@@ -281,7 +281,7 @@ local function LoadBank(helpers)
     f:SetWidth(GW.settings.BANK_WIDTH)
     onBankFrameChangeSize(f)
     f:SetClampedToScreen(true)
-    f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, 0)
+    f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
 
     -- setup show/hide
     f:SetScript("OnShow", OnShow)

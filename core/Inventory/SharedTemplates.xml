@@ -1,0 +1,42 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Button name="GwBagHeaderTemplate" registerForClicks="LeftButtonUp,RightButtonUp" framelevel="50" virtual="true">
+        <Size y="32"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" />
+            <Anchor point="TOPRIGHT" />
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep">
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="2">
+                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down">
+                    <Size x="28" y="28"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down" rotation="90">
+                    <Size x="28" y="28"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="nameString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="28" y="-5" />
+                    </Anchors>
+                    <Size x="300" y="24" />
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
+
+</Ui>
