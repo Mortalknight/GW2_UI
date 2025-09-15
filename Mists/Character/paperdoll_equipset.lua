@@ -93,6 +93,7 @@ local function outfitEditButton_OnClick(self)
         rootDescription:CreateButton(EQUIPMENT_SET_EDIT, function()
             GearSetButton_Edit(self:GetParent())
         end)
+        --[[
         rootDescription:CreateTitle(EQUIPMENT_SET_ASSIGN_TO_SPEC)
 
         do
@@ -109,7 +110,7 @@ local function outfitEditButton_OnClick(self)
                         C_EquipmentSet.UnassignEquipmentSetSpec(self:GetParent().setID)
                     end
 
-                    GearSetButton_UpdateSpecInfo(self:GetParent())
+                    --GearSetButton_UpdateSpecInfo(self:GetParent())
                     PaperDollEquipmentManagerPane_Update(true)
                 end
 
@@ -118,6 +119,7 @@ local function outfitEditButton_OnClick(self)
                 rootDescription:CreateCheckbox(text, IsSelected, SetSelected, i)
             end
         end
+        ]]
     end)
 end
 GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
@@ -221,8 +223,6 @@ drawItemSetList = function()
             frame:SetText(name)
             frame.setName = name
             frame.setID = setID
-
-            --GearSetButton_UpdateSpecInfo(frame)
 
             if texture then
                 frame.icon:SetTexture(texture)
