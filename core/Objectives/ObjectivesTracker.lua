@@ -54,7 +54,7 @@ local function ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKe
     if isMythicKeystone then
         if isWeightedProgress then
             local percent = mythicKeystoneCurrentValue / totalQuantity * 100
-            return string.format("%.2f%% (%d/%d) %s", percent, mythicKeystoneCurrentValue, totalQuantity, criteriaString)
+            return string.format("%s (%d/%d) %s", GW.GetLocalizedNumber(format("%.2f%%", percent)), mythicKeystoneCurrentValue, totalQuantity, criteriaString)
         end
         return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
     end
