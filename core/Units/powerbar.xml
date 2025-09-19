@@ -64,7 +64,7 @@
           </MaskTexture>
         </Layer>
         <Layer level="OVERLAY" textureSubLevel="4">
-            <FontString parentKey="label" text="Unknown" justifyH="CENTER" justifyV="MIDDLE">
+            <FontString parentKey="label" text="" justifyH="CENTER" justifyV="MIDDLE">
                 <Size x="200" y="14"></Size>
                 <Anchors>
                     <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>

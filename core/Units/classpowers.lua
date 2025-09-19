@@ -1695,18 +1695,12 @@ local function setStaggerBar()
         fb.ironskin.ironartwork:Hide()
         fb.ironskin.expires = nil
     end
-
-    auraData = GetAuraData("player", nil, "HARMFUL", 124275)         -- light stagger
-    if not auraData or auraData.duration == nil then
-        auraData = GetAuraData("player", nil, "HARMFUL", 124274)     -- medium stagger
-        if not auraData or auraData.duration == nil then
-            auraData = GetAuraData("player", nil, "HARMFUL", 124273) -- heavy stagger
-        end
-    end
-
-    if auraData and auraData.duration then
-        local remainingPrecantage = (auraData.expirationTime - GetTime()) / auraData.duration
-        local remainingTime = auraData.duration * remainingPrecantage
+    auraData = nil
+    auraData = GetAuraData("player", nil, "HARMFUL", 124275, 124274, 124273)
+    local data = auraData and auraData[1] or nil
+    if data and data.duration then
+        local remainingPrecantage = (data.expirationTime - GetTime()) / data.duration
+        local remainingTime = data.duration * remainingPrecantage
 
         local pwrMax = UnitHealthMax("player")
         local pwr = UnitStagger("player")
@@ -1715,6 +1709,10 @@ local function setStaggerBar()
 
         staggarPrec = math.max(0, math.min(staggarPrec, 1))
         CPWR_FRAME.customResourceBar:SetCustomAnimation(staggarPrec, 0, remainingTime)
+        CPWR_FRAME.customResourceBar.label:SetText(GW.GetLocalizedNumber(pwr))
+    else
+        CPWR_FRAME.customResourceBar:ForceFillAmount(0)
+        CPWR_FRAME.customResourceBar.label:SetText("0")
     end
 end
 
@@ -2062,6 +2060,10 @@ local function LoadClassPowers()
 
     cpf.customResourceBar:ClearAllPoints()
     cpf.customResourceBar:SetPoint("LEFT", cpf, "LEFT", 0, -11)
+
+    cpf.customResourceBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    cpf.customResourceBar.label:SetShadowColor(0, 0, 0, 1)
+    cpf.customResourceBar.label:SetShadowOffset(1, -1)
 
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", { 312, 32 },
         { "default", "scaleable" }, true)
