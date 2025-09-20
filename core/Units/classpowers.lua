@@ -1675,6 +1675,12 @@ local function ironSkin_OnUpdate(self)
 end
 GW.AddForProfiling("classpowers", "ironSkin_OnUpdate", ironSkin_OnUpdate)
 
+local staggerTextColors = {
+    {r = 0.4, g = 0.9, b = 0.4},
+    {r = 0.95, g = 0.85, b = 0.3},
+    {r = 0.9, g = 0.4, b = 0.4}
+}
+
 local function setStaggerBar()
     local fb = CPWR_FRAME.brewmaster
     local auraData = GetAuraData("player", nil, "HELPFUL", GW.Mists and 115307 or 215479)
@@ -1684,7 +1690,7 @@ local function setStaggerBar()
         if fb.ironskin.ticker then
             fb.ironskin.ticker:Cancel()
         end
-        fb.ironskin.ticker = C_Timer.NewTicker(0.01, function() ironSkin_OnUpdate(fb.ironskin) end)
+        fb.ironskin.ticker = C_Timer.NewTicker(0.05, function() ironSkin_OnUpdate(fb.ironskin) end)
         fb.ironskin:Show()
         fb.ironskin.ironartwork:Show()
     else
@@ -1695,24 +1701,61 @@ local function setStaggerBar()
         fb.ironskin.ironartwork:Hide()
         fb.ironskin.expires = nil
     end
-    auraData = nil
+
+    local debuff
     auraData = GetAuraData("player", nil, "HARMFUL", 124275, 124274, 124273)
-    local data = auraData and auraData[1] or nil
-    if data and data.duration then
-        local remainingPrecantage = (data.expirationTime - GetTime()) / data.duration
-        local remainingTime = data.duration * remainingPrecantage
+    debuff = auraData and auraData[1] or nil
+
+    local bar = CPWR_FRAME.customResourceBar
+
+    if debuff and debuff.duration and debuff.expirationTime then
+        local now = GetTime()
+        local remaining = max(0, debuff.expirationTime - now)
+        local remainingPercentage = max(0, min(remaining / debuff.duration, 1))
+        local remainingTime = debuff.duration * remainingPercentage
+
 
         local pwrMax = UnitHealthMax("player")
-        local pwr = UnitStagger("player")
+        local stagger = UnitStagger("player") or 0
 
-        local staggarPrec = pwr / pwrMax
+        local staggerPrec = math.max(0, math.min(stagger / pwrMax, 1))
+        local colorToUse = staggerTextColors[1]
+        if staggerPrec >= 0.75 then
+            colorToUse = staggerTextColors[3]
+        elseif staggerPrec >= 0.5 then
+            colorToUse = staggerTextColors[2]
+        end
 
-        staggarPrec = math.max(0, math.min(staggarPrec, 1))
-        CPWR_FRAME.customResourceBar:SetCustomAnimation(staggarPrec, 0, remainingTime)
-        CPWR_FRAME.customResourceBar.label:SetText(GW.GetLocalizedNumber(pwr))
+        if bar._lastFill ~= staggerPrec or bar._lastRemain ~= remaining then
+            bar:SetCustomAnimation(staggerPrec, 0, remainingTime)
+            bar._lastFill = staggerPrec
+            bar._lastRemain = remaining
+        end
+
+        local staggerText = GW.GetLocalizedNumber(format("%.2f%%", staggerPrec * 100))
+        if bar.label._lastText ~= staggerText then
+            bar.label:SetText(staggerText)
+            bar.label._lastText = staggerText
+        end
+        if not (bar.label._lastR == colorToUse.r and bar.label._lastG == colorToUse.g and bar.label._lastB == colorToUse.b) then
+            bar.label:SetTextColor(colorToUse.r, colorToUse.g, colorToUse.b)
+            bar.label._lastR, bar.label._lastG, bar.label._lastB = colorToUse.r, colorToUse.g, colorToUse.b
+        end
     else
-        CPWR_FRAME.customResourceBar:ForceFillAmount(0)
-        CPWR_FRAME.customResourceBar.label:SetText("0")
+        if bar._lastFill ~= 0 then
+            bar:ForceFillAmount(0)
+            bar._lastFill, bar._lastRemain = 0, 0
+        end
+        local staggerText = GW.GetLocalizedNumber(format("%.2f%%", 0))
+        if bar.label._lastText ~= staggerText then
+            bar.label:SetText(staggerText)
+            bar.label._lastText = staggerText
+        end
+        local c = staggerTextColors[1]
+        if not (bar.label._lastR == c.r and bar.label._lastG == c.g and bar.label._lastB == c.b) then
+            bar.label:SetTextColor(c.r, c.g, c.b)
+            bar.label._lastR, bar.label._lastG, bar.label._lastB = c.r, c.g, c.b
+        end
     end
 end
 
@@ -1964,12 +2007,6 @@ local function selectType(f)
         showBar = setEvoker(f)
     end
 
-    if showBar and f:GetAlpha() == 0 then
-        showBar = true
-    elseif not showBar and f:GetAlpha() == 1 then
-        showBar = false
-    end
-
     f.shouldShowBar = showBar
 
     UpdateVisibility(f)
@@ -1988,7 +2025,7 @@ local function barChange_OnEvent(self, event)
         end
         f.gwPlayerForm = s
         selectType(f)
-    elseif event == "PLAYER_SPECIALIZATION_CHANGED" or event == "FORCE_UPDATE" then
+    elseif event == "PLAYER_SPECIALIZATION_CHANGED" or event == "CHARACTER_POINTS_CHANGED" or event == "FORCE_UPDATE" then
         f.gwPlayerForm = GetShapeshiftFormID()
         GW.CheckRole()
         selectType(f)
