@@ -2009,7 +2009,7 @@ local function selectType(f)
 
     f.shouldShowBar = showBar
 
-    UpdateVisibility(f)
+    UpdateVisibility(f, InCombatLockdown())
 end
 GW.AddForProfiling("classpowers", "selectType", selectType)
 
