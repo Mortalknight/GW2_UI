@@ -1019,6 +1019,9 @@ local function hook_UpdateMicroButtons()
             AchievementMicroButton:ClearAllPoints()
             AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)
 
+            CollectionsMicroButton:ClearAllPoints()
+            CollectionsMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
+
             PVPMicroButton:ClearAllPoints()
             PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
 
