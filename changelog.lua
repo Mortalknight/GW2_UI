@@ -18,13 +18,22 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.4.0", {
+    {GW.ChangelogType.feature, [=[FAdded option to disable micromenu module]=]},
+    {GW.ChangelogType.feature, [=[Added monk stagger value to classpower bar]=]},
+    {GW.ChangelogType.bug, [=[Fix Questie Map Coords error (Era & Mists)]=]},
+    {GW.ChangelogType.bug, [=[Fix classpower 'Only show in combat' option when leaving a vehicle]=]},
+    {GW.ChangelogType.change, [=[Refactor seperate bag option]=]},
+    {GW.ChangelogType.change, [=[TOC update (Mists)]=]},
+
+})
+
 addChange("8.3.5", {
     {GW.ChangelogType.bug, [=[Fix settings dependecies tooltip]=]},
     {GW.ChangelogType.bug, [=[Fix reset profile option]=]},
     {GW.ChangelogType.bug, [=[Fix Paladin classpower]=]},
     {GW.ChangelogType.change, [=[Add missing auctionator frame skin]=]},
     {GW.ChangelogType.change, [=[Update classpower aura handling, this should be a performace boost, if your class has a classpower based on a de/buff]=]},
-
 })
 
 addChange("8.3.4", {

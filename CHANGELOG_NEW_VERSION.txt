@@ -1,44 +1,12 @@
-8.3.5
+8.4.0
+NEW
+    - Added option to disable micromenu module
+    - Added monk stagger value to classpower bar
+
 FIXES
-    - Fix settings dependecies tooltip
-    - Fix reset profile option
-    - Fix Paladin classpower
+    - Fix Questie Map Coords error (Era & Mists)
+    - Fix classpower 'Only show in combat' option when leaving a vehicle
 
 CHANGES
-    - Add missing auctionator frame skin
-    - Update classpower aura handling, this should be a performace boost, if your class has a classpower based on a de/buff
-
-8.3.4
-FIXES
-    - Player powerbar is now correctly hidden in specific situations
-    - Fixed Lua error for fresh characters
-    - Fixed Game Menu skin issue when using ConsolePort
-    - Fixed fading issue with player pet frame icon
-    - Fixed Lua error in Who-list
-    - Fixed Lua error when opening the settings menu
-    - Fixed Lua error in immersive questing when required money is missing (Era & Mists)
-
-8.3.3
-FIXES
-    - Fix wrong classpower color for warlocks (Mists)
-    - Fix settings lua error is UI Scale is used
-
-8.3.2
-FIXES
-    - Fix micromenu issue with consoleport addon
-
-8.3.1
-CHANGES
-    - Settingsframe rework, addons can now hook into it
-
-FIXES
-    - Fix TSM Loading issue
-    - Fix DB migration for old profiles
-    - Fix druid bear hud background
-    - Fix quest item not clickable (retail)
-    - Fix quest item texture too big (era)
-    - Fix druid eclipsebar (mists)
-
-8.3.0
-CHANGES
-    - 11.2.0 support
+    - Refactor seperate bag option
+    - TOC update (Mists)

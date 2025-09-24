@@ -1,3 +1,16 @@
+8.4.0
+NEW
+    - Added option to disable micromenu module
+    - Added monk stagger value to classpower bar
+
+FIXES
+    - Fix Questie Map Coords error (Era & Mists)
+    - Fix classpower 'Only show in combat' option when leaving a vehicle
+
+CHANGES
+    - Refactor seperate bag option
+    - TOC update (Mists)
+
 8.3.5
 FIXES
     - Fix settings dependecies tooltip
