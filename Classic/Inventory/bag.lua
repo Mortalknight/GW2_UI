@@ -233,6 +233,7 @@ GW.AddForProfiling("bag", "bag_OnClick", bag_OnClick)
 
 -- creates the bag slot icons for the ItemFrame
 local function createBagBar(f)
+    local parent = f:GetParent()
     f.bags = {}
 
     -- steal the existing main backpack button
@@ -294,21 +295,22 @@ local function createBagBar(f)
     GW.SetItemButtonQualityForBags(b, 1)
     b:SetScript("OnClick",
         function(self)
-            if IsBagOpen(KEYRING_CONTAINER) then
-                GwBagFrame.ItemFrame.Containers[KEYRING_CONTAINER].shouldShow = false
+            local isKeyringBagOpen = IsBagOpen(KEYRING_CONTAINER)
+            if isKeyringBagOpen then
+                parent.ItemFrame.Containers[KEYRING_CONTAINER].shouldShow = false
                 CloseBag(KEYRING_CONTAINER)
                 self.border:Hide()
                 self.IconBorder:Show()
-                updateBagContainers(GwBagFrame)
-                rescanBagContainers(GwBagFrame)
+                updateBagContainers(parent)
+                rescanBagContainers(parent)
             else
-                GwBagFrame.ItemFrame.Containers[KEYRING_CONTAINER].shouldShow = true
+                parent.ItemFrame.Containers[KEYRING_CONTAINER].shouldShow = true
                 OpenBag(KEYRING_CONTAINER)
                 self.border:Show()
                 self.IconBorder:Hide()
             end
-            GwBagFrameGwBagHeader5.icon:SetShown(IsBagOpen(KEYRING_CONTAINER))
-            GwBagFrameGwBagHeader5.icon2:SetShown(not IsBagOpen(KEYRING_CONTAINER))
+            parent.bagHeader5.icon:SetShown(isKeyringBagOpen)
+            parent.bagHeader5.icon2:SetShown(not isKeyringBagOpen)
         end
     )
 end

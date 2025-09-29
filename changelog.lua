@@ -18,14 +18,17 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.4.1", {
+    {GW.ChangelogType.bug, [=[Bag lua error (Era)]=]},
+})
+
 addChange("8.4.0", {
-    {GW.ChangelogType.feature, [=[FAdded option to disable micromenu module]=]},
+    {GW.ChangelogType.feature, [=[Added option to disable micromenu module]=]},
     {GW.ChangelogType.feature, [=[Added monk stagger value to classpower bar]=]},
     {GW.ChangelogType.bug, [=[Fix Questie Map Coords error (Era & Mists)]=]},
     {GW.ChangelogType.bug, [=[Fix classpower 'Only show in combat' option when leaving a vehicle]=]},
     {GW.ChangelogType.change, [=[Refactor seperate bag option]=]},
     {GW.ChangelogType.change, [=[TOC update (Mists)]=]},
-
 })
 
 addChange("8.3.5", {
