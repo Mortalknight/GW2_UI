@@ -36,9 +36,18 @@ function GwObjectivesBlockTemplateMixin:OnEnter()
 
     self.hover:Show()
 
-    for _, v in pairs(self.objectiveBlocks) do
-        if not v.StatusBar.notHide then
-            v.StatusBar.progress:Show()
+    if self.objectiveBlocks then
+        for _, v in pairs(self.objectiveBlocks) do
+            if not v.StatusBar.notHide then
+                v.StatusBar.progress:Show()
+            end
+        end
+    else
+        -- here we have a frame pool
+        for frame in self.objectivesPool:EnumerateActive() do
+            if not frame.StatusBar.notHide then
+                frame.StatusBar.progress:Show()
+            end
         end
     end
 
@@ -78,9 +87,18 @@ function GwObjectivesBlockTemplateMixin:OnLeave()
         self.hover:Hide()
     end
 
-    for _, v in pairs(self.objectiveBlocks) do
-        if not v.StatusBar.notHide then
-            v.StatusBar.progress:Hide()
+    if self.objectiveBlocks then
+        for _, v in pairs(self.objectiveBlocks) do
+            if not v.StatusBar.notHide then
+                v.StatusBar.progress:Hide()
+            end
+        end
+    else
+        -- here we have a frame pool
+        for frame in self.objectivesPool:EnumerateActive() do
+            if not frame.StatusBar.notHide then
+                frame.StatusBar.progress:Hide()
+            end
         end
     end
 

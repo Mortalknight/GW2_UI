@@ -1,6 +1,7 @@
 8.4.1
 FIXES
     - Bag lua error (Era)
+    - Fix PetTracker lua error (Retail)
 
 8.4.0
 NEW

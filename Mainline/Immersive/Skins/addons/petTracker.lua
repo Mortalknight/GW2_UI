@@ -33,7 +33,7 @@ local function AddSpecie(block, specie, quality, level)
 end
 
 local function setUpProgressbar(block, progress)
-    local progessbarObjective = block:GetParent().objectivesPool:Acquire()
+    local progessbarObjective = block.objectivesPool:Acquire()
     local petsOwned = 0
     local h
 
@@ -83,7 +83,7 @@ function GwPetTrackerContainerMixin:UpdateLayout()
     local prevBlock = nil
 
     -- hide always all objectives
-    self.objectivesPool:ReleaseAll()
+    self.mainBlock.objectivesPool:ReleaseAll()
 
     if PetTracker.sets.zoneTracker and progress.total > 0 then
         if self.collapsed then
@@ -103,14 +103,14 @@ function GwPetTrackerContainerMixin:UpdateLayout()
                 for level = 0, PetTracker.MaxLevel do
                     for _, specie in ipairs(progress[quality][level] or {}) do
                         if counter <= maxEntries then
-                            local petObjectives = self.objectivesPool:Acquire()
+                            local petObjectives = self.mainBlock.objectivesPool:Acquire()
                             if AddSpecie(petObjectives, specie, quality, level) then
                                 petObjectives:SetPoint("TOPRIGHT", prevBlock, "BOTTOMRIGHT", 0, (counter == 2 and 10 or 0))
                                 height = height + petObjectives:GetHeight()
                                 counter = counter + 1
                                 prevBlock = petObjectives
                             elseif petObjectives then
-                                self.objectivesPool:Release(petObjectives)
+                                self.mainBlock.objectivesPool:Release(petObjectives)
                             end
                         else
                             break
@@ -164,7 +164,7 @@ function GwPetTrackerContainerMixin:InitModule()
     self.mainBlock.Header:Hide()
     self.mainBlock.animationName = "PetTrackerOnEnterOnLeave"
 
-    self.objectivesPool = CreateFramePool("Frame", self.mainBlock, "GwQuesttrackerObjectiveTemplate")
+    self.mainBlock.objectivesPool = CreateFramePool("Frame", self.mainBlock, "GwQuesttrackerObjectiveTemplate")
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown",
