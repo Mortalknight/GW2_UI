@@ -767,9 +767,9 @@ local function LoadGossipSkin()
             GossipFrame.GreetingPanel.ScrollBox.view:SetElementExtentCalculator(function(_, elementData)
                 if elementData.greetingTextFrame then
                     setGreetingsText(elementData.text)
-                    return 0
+                    return 0.1
                 elseif elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER then
-                    return 0
+                    return 0.1
                 elseif elementData.titleOptionButton then
                     elementData.titleOptionButton:Setup(elementData.info)
                     return math.max(32, elementData.titleOptionButton:GetHeight())

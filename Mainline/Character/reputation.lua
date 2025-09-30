@@ -465,7 +465,7 @@ local function detailsInactive_OnClick(self)
     local categories, details = CollectFactionData()
     C_Reputation.SetFactionActive(parent.data.factionIndex, shouldBeActive)
     UpdateCategories(GwPaperReputation.Categories, categories)
-    local firstCategory = GwPaperReputation.Categories:Find(1)
+    local firstCategory = GwPaperReputation.Categories:FindElementData(1)
     if firstCategory then
         SetSelectedHeaderIndexRange(firstCategory.idx, firstCategory.idxLast)
         categories, details = CollectFactionData()
@@ -806,7 +806,7 @@ local function LoadReputation(tabContainer)
     isSearchResult = nil
     local categories, details = CollectFactionData(true)
     UpdateCategories(fmGPR.Categories, categories)
-    local firstCategory = fmGPR.Categories:Find(1)
+    local firstCategory = fmGPR.Categories:FindElementData(1)
     if firstCategory then
         SetSelectedHeaderIndexRange(firstCategory.idx, firstCategory.idxLast)
         _, details = CollectFactionData()

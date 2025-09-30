@@ -789,7 +789,7 @@ local function LoadSettingsTab(container)
     local view = CreateScrollBoxListLinearView()
     view:SetElementExtentCalculator(function(_, ed)
         if ed.isSubCat and ed.parent and not ed.parent.isExpanded then
-            return 0
+            return 0.1
         end
         return 36
     end)

@@ -152,7 +152,7 @@ local function SkinLookingForGroupFrames()
     -- copy from blizzard and modified
     PVEFrame:HookScript("OnShow", function(self)
         -- If timerunning enabled, hide PVP and M+, and re-anchor delves to Dungeons tab
-        if self:TimerunningEnabled() then
+        if TimerunningUtil.TimerunningEnabledForPlayer() then
             self.tab2:Hide()
             self.tab3:Hide()
             if self.tab4:IsShown() then
@@ -284,52 +284,55 @@ local function SkinLookingForGroupFrames()
         end
     end)
 
-    for i = 1, 4 do
-        local bu = GroupFinderFrame["groupButton" .. i]
-        GroupFinderFrame.groupButton1:GetText()
-        bu.ring:GwKill()
-        bu.bg:GwKill()
-        bu:GwSkinButton(false, true)
+    hooksecurefunc("GroupFinderFrame_EvaluateButtonVisibility", function()
+        for i = 1, 4 do
+            local bu = GroupFinderFrame["groupButton" .. i]
+            GroupFinderFrame.groupButton1:GetText()
+            bu.ring:GwKill()
+            bu.bg:GwKill()
+            bu:GwSkinButton(false, true)
 
-        bu:SetHeight(36)
+            bu:SetHeight(36)
 
-        bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
-        bu.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
-        bu.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
-        if i % 2 == 1 then
             bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
-        else
-            bu:ClearNormalTexture()
-        end
-
-        bu.arrow = bu:CreateTexture(nil, "OVERLAY")
-        bu.arrow:SetSize(10, 20)
-        bu.arrow:SetPoint("RIGHT", bu, "RIGHT", 0, 0)
-        bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow")
-
-        bu.name:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
-        bu.name:SetJustifyH("LEFT")
-        bu.name:SetPoint("LEFT", bu, "LEFT", 5, 0)
-        bu.name:SetWidth(bu:GetWidth())
-        hooksecurefunc(bu.name, "SetText", function()
-            if not bu.name.SetTextGw2 then
-                bu.name.SetTextGw2 = true
-                bu.name:SetText(bu.name:GetText():gsub("-\n", ""):gsub("\n", ""))
-                bu.name.SetTextGw2 = false
+            bu.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+            bu.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
+            if i % 2 == 1 then
+                bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+            else
+                bu:ClearNormalTexture()
             end
-        end)
 
-        bu.gwBorderFrame:Hide()
+            bu.arrow = bu:CreateTexture(nil, "OVERLAY")
+            bu.arrow:SetSize(10, 20)
+            bu.arrow:SetPoint("RIGHT", bu, "RIGHT", 0, 0)
+            bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow")
 
-        bu.icon:Hide()
+            bu.name:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+            bu.name:SetJustifyH("LEFT")
+            bu.name:SetPoint("LEFT", bu, "LEFT", 5, 0)
+            bu.name:SetWidth(bu:GetWidth())
+            hooksecurefunc(bu.name, "SetText", function()
+                if not bu.name.SetTextGw2 then
+                    bu.name.SetTextGw2 = true
+                    bu.name:SetText(bu.name:GetText():gsub("-\n", ""):gsub("\n", ""))
+                    bu.name.SetTextGw2 = false
+                end
+            end)
 
-        bu:ClearAllPoints()
-        if i == 1 then
-            bu:SetPoint("TOPLEFT", 10, -40)
-        else
-            bu:SetPoint("TOP", GroupFinderFrame["groupButton" .. i - 1], "BOTTOM", 0, 0)
+            bu.gwBorderFrame:Hide()
+
+            bu.icon:Hide()
+
+            bu:ClearAllPoints()
+            if i == 1 then
+                bu:SetPoint("TOPLEFT", 10, -40)
+            else
+                bu:SetPoint("TOP", GroupFinderFrame["groupButton" .. i - 1], "BOTTOM", 0, 0)
+            end
         end
-    end
+    end)
+
     hooksecurefunc("GroupFinderFrame_SelectGroupButton", function(idx)
         for i = 1, 4 do
             local bu = GroupFinderFrame["groupButton" .. i]

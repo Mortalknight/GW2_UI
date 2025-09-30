@@ -540,6 +540,7 @@ local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdown
     tex:SetPoint("RIGHT", frame.backdrop, -3, 0)
     tex:SetRotation(3.14)
     tex:SetSize(14, 14)
+    frame.gw2Arrow = tex
 
     if text then
         text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)

@@ -258,11 +258,11 @@ local function LoadFriendList(tabContainer)
 
         button.background:Hide()
 
-        CreateOrUpdateTexture(button, "background", "BACKGROUND", 32, 32)
+        CreateOrUpdateTexture(button, "background", "BACKGROUND")
         SetGradientColor(button.efl.background, StatusColor[status].Inside, StatusColor[status].Outside)
 
         button.highlight:SetVertexColor(0, 0, 0, 0)
-        CreateOrUpdateTexture(button, "highlight", "HIGHLIGHT", 32, 32)
+        CreateOrUpdateTexture(button, "highlight", "HIGHLIGHT")
         SetGradientColor(button.efl.highlight, StatusColor[status].Inside, StatusColor[status].Outside)
 
         if button.Favorite and button.Favorite:IsShown() then
@@ -281,7 +281,10 @@ local function LoadFriendList(tabContainer)
     GW.HandleTrimScrollBar(FriendsFriendsFrame.ScrollBar, true)
     GW.HandleScrollControls(FriendsFriendsFrame)
 
-    FriendsFrameBattlenetFrame.BroadcastButton:GwKill()
+    FriendsFrameBattlenetFrame.ContactsMenuButton:GwHandleDropDownBox(GW.BackdropTemplates.ColorableBorderOnly, nil, nil, 32)
+    FriendsFrameBattlenetFrame.ContactsMenuButton.backdrop:SetBackdropBorderColor(0, 0, 0, 0)
+    FriendsFrameBattlenetFrame.ContactsMenuButton.gw2Arrow:SetPoint("CENTER")
+    FriendsFrameBattlenetFrame.ContactsMenuButton.gw2Arrow:SetSize(28, 28)
     FriendsFrameBattlenetFrame:GwStripTextures()
     FriendsFrameBattlenetFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     FriendsFrameBattlenetFrame.Tag:GwKill()
