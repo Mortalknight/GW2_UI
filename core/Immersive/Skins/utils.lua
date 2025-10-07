@@ -3,21 +3,21 @@ local _, GW = ...
 --middle left right
 local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, leftOffset, rightOffset, noTop, frame)
     if middleTex then
-        middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
+        middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
         middleTex:ClearAllPoints()
         middleTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
         middleTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
         middleTex:SetAlpha(1)
     elseif frame then
         frame.middleTex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
-        frame.middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
+        frame.middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
         frame.middleTex:ClearAllPoints()
         frame.middleTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
         frame.middleTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
         frame.middleTex:SetAlpha(1)
     end
     if leftTex then
-        leftTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
+        leftTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png")
         leftTex:SetWidth(2)
         leftTex:ClearAllPoints()
         leftTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
@@ -26,7 +26,7 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
         leftTex:SetAlpha(1)
     elseif frame then
         frame.leftTex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
-        frame.leftTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
+        frame.leftTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png")
         frame.leftTex:SetWidth(2)
         frame.leftTex:ClearAllPoints()
         frame.leftTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
@@ -35,7 +35,7 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
         frame.leftTex:SetAlpha(1)
     end
     if rightTex then
-        rightTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
+        rightTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png")
         rightTex:SetWidth(1)
         rightTex:ClearAllPoints()
         rightTex:SetPoint("TOPRIGHT", (rightOffset or 0), 0)
@@ -43,7 +43,7 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
         rightTex:SetAlpha(1)
     elseif frame then
         frame.rightTex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
-        frame.rightTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
+        frame.rightTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png")
         frame.rightTex:SetWidth(1)
         frame.rightTex:ClearAllPoints()
         frame.rightTex:SetPoint("TOPRIGHT", (rightOffset or 0), 0)
@@ -58,7 +58,7 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
         topTex:SetHeight(2)
         topTex:SetPoint("BOTTOMLEFT", pframe, "TOPLEFT", -(leftOffset or 0), 0)
         topTex:SetPoint("BOTTOMRIGHT", pframe, "TOPRIGHT", (rightOffset or 0), 0)
-        topTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+        topTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
         topTex:SetAlpha(1)
     elseif pframe and not noTop then
         local top = pframe:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -67,7 +67,7 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
         top:SetHeight(2)
         top:SetPoint("BOTTOMLEFT", pframe, "TOPLEFT", -(leftOffset or 0), 0)
         top:SetPoint("BOTTOMRIGHT", pframe, "TOPRIGHT", (rightOffset or 0), 0)
-        top:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+        top:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
         if middleTex then return end
     end
     if bottomTex and pframe then
@@ -75,7 +75,7 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
         bottomTex:SetHeight(2)
         bottomTex:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT", -(leftOffset or 0), 0)
         bottomTex:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",( rightOffset or 0), 0)
-        bottomTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+        bottomTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
         bottomTex:SetTexCoord(0, 1, 1, 0)
         bottomTex:SetAlpha(1)
     elseif pframe and not noTop then
@@ -85,7 +85,7 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, left
         bottom:SetHeight(2)
         bottom:SetPoint("TOPLEFT", pframe, "BOTTOMLEFT", -(leftOffset or 0), 0)
         bottom:SetPoint("TOPRIGHT", pframe, "BOTTOMRIGHT", (rightOffset or 0), 0)
-        bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+        bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
         bottom:SetTexCoord(0, 1, 1, 0)
     end
 end
@@ -137,7 +137,7 @@ local function SkinNavBarButtons(self)
         tex:SetPoint("TOP", navButton, "TOP")
         tex:SetPoint("BOTTOM", navButton, "BOTTOM")
         tex:SetPoint("RIGHT", navButton, "RIGHT")
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
         navButton.tex = tex
         navButton.tex:SetAlpha(1)
 
@@ -152,7 +152,7 @@ local function SkinNavBarButtons(self)
         if navButton.MenuArrowButton then
             navButton.MenuArrowButton:GwStripTextures()
             if navButton.MenuArrowButton.Art then
-                navButton.MenuArrowButton.Art:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                navButton.MenuArrowButton.Art:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
                 navButton.MenuArrowButton.Art:SetTexCoord(0, 1, 0, 1)
                 navButton.MenuArrowButton.Art:SetSize(16, 16)
             end
@@ -204,7 +204,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
     if createBackdrop and not frame.backdrop then
         frame:GwCreateBackdrop({
             edgeFile = "",
-            bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
+            bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png",
             edgeSize = 1
         }, true, 50, 50, nil, 25)
     end
@@ -363,7 +363,7 @@ local function HandleScrollControls(self, specifiedScrollBar)
     bg:ClearAllPoints()
     bg:SetPoint("TOP", 0, 0)
     bg:SetPoint("BOTTOM", 0, 0)
-    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg.png")
 
     scrollBar.Back:ClearAllPoints()
     scrollBar.Back:SetPoint("BOTTOM", scrollBar, "TOP", 0, -13)
@@ -372,7 +372,7 @@ local function HandleScrollControls(self, specifiedScrollBar)
     bg:ClearAllPoints();
     bg:SetPoint("TOPLEFT",0,0)
     bg:SetPoint("BOTTOMRIGHT",0,0)
-    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton.png")
 
     scrollBar.Forward:ClearAllPoints()
     scrollBar.Forward:SetPoint("TOP", scrollBar, "BOTTOM", 0, 13)
@@ -381,7 +381,7 @@ local function HandleScrollControls(self, specifiedScrollBar)
     bg:ClearAllPoints();
     bg:SetPoint("TOPLEFT",0,0)
     bg:SetPoint("BOTTOMRIGHT",0,0)
-    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton.png")
     bg:SetTexCoord(0,1,1,0)
 end
 GW.HandleScrollControls = HandleScrollControls
@@ -408,7 +408,7 @@ local function HandleTrimScrollBar(frame)
         thumb.Middle:Hide()
         thumb:DisableDrawLayer("BACKGROUND")
         thumb.gwTex = thumb:CreateTexture(nil, "ARTWORK")
-        thumb.gwTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
+        thumb.gwTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle.png")
         thumb.gwTex:SetAllPoints(thumb)
         thumb:SetWidth(12)
     end
@@ -553,7 +553,7 @@ local function HandleTabs(self, direction, textures, setDesaturated)
         self.tex:SetPoint("TOP", self, "TOP")
         self.tex:SetPoint("BOTTOM", self, "BOTTOM")
         self.tex:SetPoint("RIGHT", self, "RIGHT")
-        self.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
+        self.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
         self.tex:SetAlpha(1)
 
         self.borderFrame = CreateFrame("Frame", nil, self, "GwLightButtonBorder")
@@ -563,16 +563,16 @@ local function HandleTabs(self, direction, textures, setDesaturated)
         self.background:SetPoint("TOP", self, "TOP")
         self.background:SetPoint("BOTTOM", self, "BOTTOM")
         self.background:SetPoint("RIGHT", self, "RIGHT")
-        self.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
+        self.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header.png")
         if direction == "top" then
             self.borderFrame.bottom:Hide()
         elseif direction == "left" then
-            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tab-tex-right-left")
+            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tab-tex-right-left.png")
             self.background:SetTexCoord(1, 0, 0, 1)
             self.borderFrame.right:Hide()
             self.borderFrame.bottom:Show()
         elseif direction == "right" then
-            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tab-tex-right-left")
+            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tab-tex-right-left.png")
             self.background:SetTexCoord(0, 1, 0, 1)
             self.borderFrame.left:Hide()
             self.borderFrame.bottom:Show()
@@ -703,7 +703,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     local tex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
     tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
     tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background.png")
     frame.tex = tex
 
     if detailBackgrounds then
@@ -711,7 +711,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
             local detailBg = v:CreateTexture(nil, "BACKGROUND", nil, 0)
             detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", detailBackgroundsXOffset or 0, 0)
             detailBg:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", 0, 0)
-            detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+            detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
             detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
             v.tex = detailBg
         end
@@ -727,7 +727,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
         bgMask:SetPoint("TOPLEFT", frame, "TOPLEFT", -64, 64)
         bgMask:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", -64, 0)
         bgMask:SetTexture(
-            "Interface/AddOns/GW2_UI/textures/masktest",
+            "Interface/AddOns/GW2_UI/textures/masktest.png",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -757,7 +757,7 @@ local function AddDetailsBackground(frame, detailBackgroundsXOffset, detailBackg
     local detailBg = frame:CreateTexture(nil, "BACKGROUND", nil, 7)
     detailBg:SetPoint("TOPLEFT", frame, "TOPLEFT", detailBackgroundsXOffset or 0, detailBackgroundsYOffset or 0)
     detailBg:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-    detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
     detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
     frame.tex = detailBg
 end
@@ -846,20 +846,20 @@ local function AddListItemChildHoverTexture(child)
         child.Background:GwStripTextures()
     end
     child.Background = child:CreateTexture(nil, "BACKGROUND", nil, 0)
-    child.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+    child.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
     child.Background:ClearAllPoints()
     child.Background:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
     child.Background:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
     child.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if child.HighlightTexture then
-        child.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        child.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
         child.HighlightTexture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
         child.HighlightTexture:GwSetInside(child.Background)
         child:HookScript("OnEnter", function()
             GW.TriggerButtonHoverAnimation(child, child.HighlightTexture)
         end)
     elseif child.Highlight then
-        child.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        child.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
         child.Highlight:SetVertexColor(0.8, 0.8, 0.8, 0.8)
         child.Highlight:GwSetInside(child.Background)
         child:HookScript("OnEnter", function()
@@ -867,7 +867,7 @@ local function AddListItemChildHoverTexture(child)
         end)
     else -- create hover texture
         child.gwHoverTexture = child:CreateTexture(nil, "ARTWORK", nil, 0)
-        child.gwHoverTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        child.gwHoverTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
         child.gwHoverTexture:SetVertexColor(0.8, 0.8, 0.8, 0.8)
         child.gwHoverTexture:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
         child.gwHoverTexture:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
@@ -881,7 +881,7 @@ local function AddListItemChildHoverTexture(child)
         end)
 
         child.gwSelected = child:CreateTexture(nil, "ARTWORK", nil, 0)
-        child.gwSelected:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        child.gwSelected:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
         child.gwSelected:SetVertexColor(0.8, 0.8, 0.8, 1)
         child.gwSelected:SetPoint("TOPLEFT", child, "TOPLEFT", 0, 0)
         child.gwSelected:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
@@ -1015,7 +1015,7 @@ local function HandleItemReward(frame, isMap)
     end
 
     if frame.IconBorder then
-        frame.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     end
 
     if frame.Count then
@@ -1031,7 +1031,7 @@ local function HandleItemReward(frame, isMap)
             frame.NameFrame:SetAlpha(0)
         else
             frame.NameFrame:SetAlpha(0.75)
-            frame.NameFrame:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/nameframe")
+            frame.NameFrame:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/nameframe.png")
         end
     end
 
@@ -1145,7 +1145,7 @@ local function QuestInfo_Display(template, parentFrame)
     _G.QuestInfoGroupSize:SetTextColor(1, 1, 1)
     _G.QuestInfoRewardText:SetTextColor(1, 1, 1)
     _G.QuestInfoQuestType:SetTextColor(1, 1, 1)
-    select(1, _G.QuestInfoItemHighlight:GetRegions()):SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/questitemhighlight")
+    select(1, _G.QuestInfoItemHighlight:GetRegions()):SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/questitemhighlight.png")
     fRwd.ItemChooseText:SetTextColor(1, 1, 1)
     fRwd.ItemReceiveText:SetTextColor(1, 1, 1)
     if GW.Retail then

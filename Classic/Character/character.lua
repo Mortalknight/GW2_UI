@@ -397,10 +397,10 @@ end
 GW.PaperDollUpdatePetStats = PaperDollUpdatePetStats
 
 local function PaperDollSetStatIcon(self, stat)
-    local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon-classic"
+    local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon-classic.png"
 
     if stat == "DURABILITY" then
-        newTexture = "Interface/AddOns/GW2_UI/textures/globe/repair"
+        newTexture = "Interface/AddOns/GW2_UI/textures/globe/repair.png"
     elseif STATS_ICONS[stat] then
         self.icon:SetTexCoord(GW.getSprite(statsIconsSprite,STATS_ICONS[stat].x,STATS_ICONS[stat].y))
     end
@@ -891,7 +891,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
         slot.icon = icon
     end
     if slot.IconBorder then
-        slot.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        slot.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         slot.IconBorder:SetAllPoints(slot)
         slot.IconBorder:SetParent(slot)
     end
@@ -900,14 +900,14 @@ local function grabDefaultSlots(slot, anchor, parent, size)
 
     local high = slot:GetHighlightTexture()
     high:SetAllPoints(slot)
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
     if slot ~= CharacterAmmoSlot then
         slot.repairIcon = slot:CreateTexture(nil, "OVERLAY")
         slot.repairIcon:SetPoint("BOTTOMRIGHT", slot, "BOTTOMRIGHT", 0, 0)
-        slot.repairIcon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
+        slot.repairIcon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair.png")
         slot.repairIcon:SetTexCoord(0, 1, 0.5, 1)
         slot.repairIcon:SetSize(20, 20)
 
@@ -973,7 +973,7 @@ local function LoadPaperDoll()
         if not button.IsGW2Hooked then return end
         local textureName = GetInventoryItemTexture("player", button:GetID())
         if not textureName then
-            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg-classic")
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg-classic.png")
             button.icon:SetTexCoord(unpack(PlayerSlots[button:GetName()]))
             if button == CharacterRangedSlot then
                 if UnitHasRelicSlot("player") then

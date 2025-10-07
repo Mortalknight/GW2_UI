@@ -3,12 +3,12 @@ local _, GW = ...
 --Message caches
 local messageToSender = {}
 
-local bgTexture         = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background"
-local bgInvTexture      = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background-inverted"
-local borderHoriTexture = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori"
-local borderHoriInvTex  = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori-inverted"
-local borderTexture     = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border"
-local borderInvTexture  = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted"
+local bgTexture         = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background.png"
+local bgInvTexture      = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background-inverted.png"
+local borderHoriTexture = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori.png"
+local borderHoriInvTex  = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori-inverted.png"
+local borderTexture     = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border.png"
+local borderInvTexture  = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted.png"
 
 local function UpdateBubbleBorder(self)
     local backdrop = self.backdrop

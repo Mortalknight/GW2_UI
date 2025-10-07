@@ -100,7 +100,7 @@ local function HandleShoppingCardButtons(button)
 
     if not button.bgSetTexture then
         button.bgSetTexture = button:CreateTexture(nil, "BACKGROUND")
-        button.bgSetTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/white")
+        button.bgSetTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
         button.bgSetTexture:GwSetInside(button)
     end
 
@@ -208,13 +208,13 @@ local function SkinPerksProgram()
             self.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
             self.Text:SetShadowOffset(0, 0)
             self.Text:SetTextColor(0, 0, 0)
-            self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+            self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
         end)
         PerksProgramFrame.ProductsFrame.PerksProgramFilter:HookScript("OnMouseDown", function(self)
             self.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
             self.Text:SetShadowOffset(0, 0)
             self.Text:SetTextColor(0, 0, 0)
-            self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+            self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
         end)
 
         PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Text:SetFont("UNIT_NAME_FONT", 30)

@@ -338,7 +338,7 @@ local function setReputationDetails(frame, data)
         local currentRankText = majorFactionData and RENOWN_LEVEL_LABEL:format(majorFactionData.renownLevel) or friendInfo.friendshipFactionID and friendInfo.reaction or currentRank
 
         if hasRewardPending then
-            frame.name:SetText(frame.name:GetText() .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon:32:32:0:0|t")
+            frame.name:SetText(frame.name:GetText() .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon.png:32:32:0:0|t")
         end
 
         frame.currentRank:SetText(currentRankText)

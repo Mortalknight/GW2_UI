@@ -9,7 +9,7 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep.png">
                     <Anchors>
                         <Anchor point="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT"></Anchor>
@@ -17,13 +17,13 @@
                 </Texture>
             </Layer>
             <Layer textureSubLevel="2">
-                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down">
+                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png">
                     <Size x="28" y="28"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down" rotation="90">
+                <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png" rotation="90">
                     <Size x="28" y="28"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT"></Anchor>

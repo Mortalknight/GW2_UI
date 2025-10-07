@@ -63,34 +63,34 @@ local function selectBg(self)
         return
     end
 
-    local right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow"
-    local left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow"
+    local right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow.png"
+    local left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow.png"
     local modelFX = nil
 
     if UnitIsDeadOrGhost("player") then
-        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_dead"
-        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_dead"
+        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_dead.png"
+        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_dead.png"
     end
 
     if GW.myClassID == 11 then --Druid
         local form = GetShapeshiftFormID()
         if form == BEAR_FORM then
-            right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_bear"
-            left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_bear"
+            right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_bear.png"
+            left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_bear.png"
         elseif form == CAT_FORM then
-            right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_cat"
-            left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_cat"
+            right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow_cat.png"
+            left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow_cat.png"
         end
     end
 
     if GW.Libs.GW2Lib:IsPlayerSkyRiding() then
-        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow-dragon"
-        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow-dragon"
+        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow-dragon.png"
+        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow-dragon.png"
     end
 
     if UnitAffectingCombat("player") then
-        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadowcombat"
-        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadowcombat"
+        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadowcombat.png"
+        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadowcombat.png"
 
         local auraFound = false
         for spellID, auraData in pairs(actionHudPlayerAuras) do
@@ -173,77 +173,77 @@ GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
 
 registerActionHudAura(
     5487,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_bear",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_bear",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_bear.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_bear.png",
     "player"
 )
 
 registerActionHudAura(
     768,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_cat",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_cat",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_cat.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_cat.png",
     "player"
 )
 
 --retail
 registerActionHudAura(
     31842,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_holy",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_holy",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_holy.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_holy.png",
     "player"
 )
 registerActionHudAura(
     31884,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_holy",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_holy",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_holy.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_holy.png",
     "player"
 )
 registerActionHudAura(
     51271,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_frost",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_frost",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_frost.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_frost.png",
     "player"
 )
 registerActionHudAura(
     162264,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_metamorph",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_metamorph",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_metamorph.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_metamorph.png",
     "player"
 )
 registerActionHudAura(
     187827,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_metamorph",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_metamorph",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_metamorph.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_metamorph.png",
     "player"
 )
 registerActionHudAura(
     215785,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_fire",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_fire",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_fire.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_fire.png",
     "player"
 )
 registerActionHudAura(
     77762,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_fire",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_fire",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_fire.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_fire.png",
     "player"
 )
 registerActionHudAura(
     201846,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_storm",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_storm",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_shaman_storm.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_shaman_storm.png",
     "player"
 )
 registerActionHudAura(
     63560,
-    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_unholy",
-    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_unholy",
+    "Interface/AddOns/GW2_UI/textures/hud/leftshadow_unholy.png",
+    "Interface/AddOns/GW2_UI/textures/hud/rightshadow_unholy.png",
     "pet"
 )
 registerActionHudAura(
     375087,
-    "Interface/AddOns/GW2_UI/textures/hud/evokerdpsLeft",
-    "Interface/AddOns/GW2_UI/textures/hud/evokerdpsRight",
+    "Interface/AddOns/GW2_UI/textures/hud/evokerdpsleft.png",
+    "Interface/AddOns/GW2_UI/textures/hud/evokerdpsright.png",
     "player", {
         anchor = {
             point = "BOTTOM",
@@ -262,8 +262,8 @@ registerActionHudAura(
 -- Lunar Eclipse
 registerActionHudAura(
     48518,
-    "Interface/AddOns/GW2_UI/textures/hud/left_lunareclipse",
-    "Interface/AddOns/GW2_UI/textures/hud/right_lunareclipse",
+    "Interface/AddOns/GW2_UI/textures/hud/left_lunareclipse.png",
+    "Interface/AddOns/GW2_UI/textures/hud/right_lunareclipse.png",
     "player",
     {
         anchor = {
@@ -288,8 +288,8 @@ registerActionHudAura(
 --Solar Eclipse
 registerActionHudAura(
     48517,
-    "Interface/AddOns/GW2_UI/textures/hud/left_solareclips",
-    "Interface/AddOns/GW2_UI/textures/hud/right_solareclips",
+    "Interface/AddOns/GW2_UI/textures/hud/left_solareclips.png",
+    "Interface/AddOns/GW2_UI/textures/hud/right_solareclips.png",
     "player",
     {
         anchor = {
@@ -340,7 +340,7 @@ local function createCoordDebugInput(self, labelText, index)
     f:SetText("")
 
     f.bg = f:CreateTexture(nil, "ARTWORK", nil, 1)
-    f.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg") -- add custom overlay texture here
+    f.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png") -- add custom overlay texture here
     f.bg:SetAllPoints()
 
     f.label = f:CreateFontString(nil, "ARTWORK")
@@ -360,7 +360,7 @@ local function loadFXModelDebug()
     debugModelPositionData:SetSize(300, 300)
     debugModelPositionData:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     debugModelPositionData.bg = debugModelPositionData:CreateTexture(nil, "ARTWORK", nil, 1)
-    debugModelPositionData.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg") -- add custom overlay texture here
+    debugModelPositionData.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png") -- add custom overlay texture here
     debugModelPositionData.bg:SetAllPoints()
     debugModelPositionData.bg:SetSize(300, 300)
 

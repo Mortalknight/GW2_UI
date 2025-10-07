@@ -168,7 +168,7 @@ local function Enable(self, unit)
 		self:RegisterEvent('READY_CHECK_CONFIRM', Path, true)
 		self:RegisterEvent('READY_CHECK_FINISHED', Path, true)
 
-		element:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
+		element:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck.png")
 
 		return true
 	end

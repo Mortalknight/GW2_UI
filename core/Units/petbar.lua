@@ -62,7 +62,7 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
 
         if button.Shine then
             button.Shine:SetSize(size, size)
-            autoCast:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
+            autoCast:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast.png")
             autoCast.size = size + 5
             hooksecurefunc(autoCast, "SetSize", function()
                 local w = autoCast:GetSize()
@@ -101,18 +101,18 @@ function GwPlayerPetFrameMixin:Update()
         local name, texture = GetPetActionInfo(i)
 
         if i == 1 then
-            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack.png")
         elseif i == 2 then
-            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow.png")
         elseif i == 3 then
-            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place.png")
         else
             if name == "PET_MODE_ASSIST" or name == "PET_MODE_AGGRESSIVE" then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist.png")
             elseif name == "PET_MODE_DEFENSIVEASSIST" or name == "PET_MODE_DEFENSIVE" then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense.png")
             elseif name == "PET_MODE_PASSIVE" then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
+                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive.png")
             else
                 button.icon:SetTexture(texture)
             end

@@ -63,7 +63,7 @@ local function MinimapPostDrag(self)
 end
 
 local function lfgAnimPvPStop()
-    MiniMapBattlefieldFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\LFDMicroButton-Down")
+    MiniMapBattlefieldFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\lfdmicroButton-down.png")
     MiniMapBattlefieldFrame.animationCircle:Hide()
     MiniMapBattlefieldFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
 end
@@ -327,8 +327,8 @@ local function LoadMinimap()
     MiniMapLFGFrameBorder:GwKill()
     MiniMapLFGFrame.eye:GwKill()
     MiniMapLFGFrame:SetSize(26, 26)
-    MiniMapLFGFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
-    MiniMapLFGFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")
+    MiniMapLFGFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/lfgminimapbutton-highlight.png")
+    MiniMapLFGFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/lfganimation-1.png")
     MiniMapLFGFrame:HookScript("OnShow", function()
         if not Minimap:IsShown() then return end
         GwLfgQueueIcon.animation:Play()
@@ -442,9 +442,9 @@ local function LoadMinimap()
 
     hooksecurefunc("GameTimeFrame_SetDate", function()
         GameTimeFrame:GwStripTextures()
-        GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar")
-        GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar")
-        GameTimeFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar")
+        GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar.png")
+        GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar.png")
+        GameTimeFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar.png")
         GameTimeFrame:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
         GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
         GameTimeFrame:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
@@ -545,6 +545,6 @@ local function LoadMinimap()
         MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
     end
 
-    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow")
+    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
 end
 GW.LoadMinimap = LoadMinimap

@@ -8,17 +8,17 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                     <Size x="316" y="18"></Size>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentKey="fill" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                <Texture parentKey="fill" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                     <Size x="316" y="18"></Size>
                 </Texture>
             </Layer>
             <Layer textureSubLevel="8" level="OVERLAY">
-                <Texture parentKey="flare" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                <Texture parentKey="flare" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare.png">
                     <Color r="1" g="1" b="1" a="0"></Color>
                     <Size x="256" y="256"></Size>
                     <Anchors>
@@ -35,42 +35,42 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="runeTex1" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTex1" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex2" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTex2" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="42" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex3" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTex3" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="84" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex4" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTex4" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="126" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex5" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTex5" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="168" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex6" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTex6" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Color r="0" g="0" b="0" a="0.7"></Color>
                             <Size x="32" y="32"></Size>
                             <Anchors>
@@ -79,37 +79,37 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="runeTexFill1" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTexFill1" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTexFill2" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTexFill2" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="42" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTexFill3" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTexFill3" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="84" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTexFill4" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTexFill4" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="126" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTexFill5" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTexFill5" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="168" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTexFill6" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                        <Texture parentKey="runeTexFill6" file="Interface\AddOns\GW2_UI\textures\altpower/runes.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="210" y="0"></Anchor>
@@ -117,37 +117,37 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY" textureSubLevel="2">
-                        <Texture parentKey="flare1" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                        <Texture parentKey="flare1" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare.png">
                             <Size x="256" y="256"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent.runeTexFill1" relativePoint="CENTER" x="0" y="10"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="flare2" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                        <Texture parentKey="flare2" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare.png">
                             <Size x="256" y="256"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent.runeTexFill2" relativePoint="CENTER" x="0" y="10"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="flare3" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                        <Texture parentKey="flare3" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare.png">
                              <Size x="256" y="256"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent.runeTexFill3" relativePoint="CENTER" x="0" y="10"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="flare4" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                        <Texture parentKey="flare4" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare.png">
                            <Size x="256" y="256"></Size>
                             <Anchors>
                                 <Anchor point="CENTER"  relativeKey="$parent.runeTexFill4" relativePoint="CENTER" x="0" y="10"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="flare5"  file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                        <Texture parentKey="flare5"  file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare.png">
                             <Size x="256" y="256"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent.runeTexFill5" relativePoint="CENTER" x="0" y="10"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="flare6" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare">
+                        <Texture parentKey="flare6" file="Interface\AddOns\GW2_UI\textures\altpower\holypower-flare.png">
                             <Size x="256" y="256"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent.runeTexFill6" relativePoint="CENTER" x="0" y="10"></Anchor>
@@ -164,7 +164,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture name="$parentBackground" alpha="0" parentKey="flash" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash">
+                        <Texture name="$parentBackground" alpha="0" parentKey="flash" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash.png">
                             <Size x="80" y="80"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="RIGHT" x="20" y="20"></Anchor>
@@ -190,13 +190,13 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                    <Texture parentKey="flare1" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentFlareLeft">
+                    <Texture parentKey="flare1" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentflareleft.png">
                         <Size x="256" y="64"></Size>
                         <Anchors>
                             <Anchor point="RIGHT" relativePoint="CENTER" x="30" y="0"></Anchor>
                         </Anchors>
                     </Texture>
-                    <Texture parentKey="flare2" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentFlareRight">
+                    <Texture parentKey="flare2" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentflareright.png">
                         <Size x="256" y="64"></Size>
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="CENTER" x="-30" y="0"></Anchor>
@@ -204,70 +204,70 @@
                     </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="rune1" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                        <Texture parentKey="rune1" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentbars.png">
                             <TexCoords left="0" right="0.226" top="0" bottom="0.3125" />
                             <Size x="29" y="10"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="rune2" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                        <Texture parentKey="rune2" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentbars.png">
                             <TexCoords left="0.226" right="0.4531" top="0" bottom="0.3125" />
                             <Size x="29" y="10"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="31" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="rune3" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                        <Texture parentKey="rune3" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentbars.png">
                             <TexCoords left="0.4531" right="0.679" top="0" bottom="0.3125" />
                             <Size x="29" y="10"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="62" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="rune4" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                        <Texture parentKey="rune4" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentbars.png">
                             <TexCoords left="0.679" right="0.906" top="0" bottom="0.3125" />
                             <Size x="29" y="10"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="93" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="rune5" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                        <Texture parentKey="rune5" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentbars.png">
                             <TexCoords left="0" right="0.226" top="0.3125" bottom="0.625" />
                             <Size x="29" y="10"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="124" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="rune10" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                        <Texture parentKey="rune10" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentbars.png">
                             <TexCoords left="0.226" right="0.4531" top="0.3125" bottom="0.625" />
                             <Size x="29" y="10"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="rune9" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                        <Texture parentKey="rune9" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentbars.png">
                             <TexCoords left="0.4531" right="0.679" top="0.3125" bottom="0.625" />
                             <Size x="29" y="10"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="-31" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="rune8" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                        <Texture parentKey="rune8" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentbars.png">
                             <TexCoords left="0.679" right="0.906" top="0.3125" bottom="0.625" />
                             <Size x="29" y="10"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="-62" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="rune7" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                        <Texture parentKey="rune7" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentbars.png">
                             <TexCoords left="0" right="0.226" top="0.625" bottom="0.9375" />
                             <Size x="29" y="10"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="-93" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="rune6" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentBars">
+                        <Texture parentKey="rune6" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentbars.png">
                             <TexCoords left="0.226" right="0.4531" top="0.625" bottom="0.9375" />
                             <Size x="29" y="10"></Size>
                             <Anchors>
@@ -285,21 +285,21 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture name="$parentBackground" parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                        <Texture name="$parentBackground" parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"/>
                             </Anchors>
                         </Texture>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
                             <Size x="318" y="2"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="2"/>
                                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="1" y="2"/>
                             </Anchors>
                         </Texture>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
                             <Size x="318" y="2"/>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-1" y="-2"/>
@@ -307,14 +307,14 @@
                             </Anchors>
                             <TexCoords left="0" right="1" top="1" bottom="0" />
                         </Texture>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
                             <Size x="2" y="2"/>
                             <Anchors>
                                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="2" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="2" y="0"/>
                             </Anchors>
                         </Texture>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
                             <Size x="2" y="2"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="0"/>
@@ -324,7 +324,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BACKGROUND" textureSubLevel="2">
-                        <Texture name="$parentfill" parentKey="fill" file="Interface/AddOns/GW2_UI/textures/bartextures/eclips">
+                        <Texture name="$parentfill" parentKey="fill" file="Interface/AddOns/GW2_UI/textures/bartextures/eclips.png">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"/>
@@ -332,13 +332,13 @@
                         </Texture>
                     </Layer>
                     <Layer level="BACKGROUND" textureSubLevel="3">
-                        <Texture name="$parentfill" hidden="true" parentKey="lunar" file="Interface/AddOns/GW2_UI/textures/bartextures/lunareclips">
+                        <Texture name="$parentfill" hidden="true" parentKey="lunar" file="Interface/AddOns/GW2_UI/textures/bartextures/lunareclips.png">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"/>
                             </Anchors>
                         </Texture>
-                        <Texture name="$parentfill" parentKey="solar" hidden="true" file="Interface/AddOns/GW2_UI/textures/bartextures/solar">
+                        <Texture name="$parentfill" parentKey="solar" hidden="true" file="Interface/AddOns/GW2_UI/textures/bartextures/solar.png">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"/>
@@ -346,14 +346,14 @@
                         </Texture>
                     </Layer>
                     <Layer level="BACKGROUND" textureSubLevel="3">
-                        <Texture name="$parentfill" hidden="true" parentKey="lunar" file="Interface/AddOns/GW2_UI/textures/bartextures/lunareclips">
+                        <Texture name="$parentfill" hidden="true" parentKey="lunar" file="Interface/AddOns/GW2_UI/textures/bartextures/lunareclips.png">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"/>
                             </Anchors>
                         </Texture>
-                        <Texture name="$parentfill" parentKey="solar" hidden="true" file="Interface/AddOns/GW2_UI/textures/bartextures/solar">
+                        <Texture name="$parentfill" parentKey="solar" hidden="true" file="Interface/AddOns/GW2_UI/textures/bartextures/solar.png">
                             <Size x="318" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -362,7 +362,7 @@
                         </Texture>
                             </Layer>
                             <Layer level="BACKGROUND" textureSubLevel="4">
-                        <Texture name="$parentarrow" parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/altpower/eclipsarrow">
+                        <Texture name="$parentarrow" parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/altpower/eclipsarrow.png">
                             <Size x="18" y="18"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"/>
@@ -378,35 +378,35 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="shardBg1" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                        <Texture parentKey="shardBg1" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard.png" hidden="true">
                             <TexCoords left="0.5" right="1" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shardBg2" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                        <Texture parentKey="shardBg2" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard.png" hidden="true">
                             <TexCoords left="0.5" right="1" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shardBg3" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                        <Texture parentKey="shardBg3" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard.png" hidden="true">
                             <TexCoords left="0.5" right="1" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shardBg4" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                        <Texture parentKey="shardBg4" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard.png" hidden="true">
                             <TexCoords left="0.5" right="1" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shardBg5" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                        <Texture parentKey="shardBg5" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard.png" hidden="true">
                           <TexCoords left="0.5" right="1" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
@@ -415,35 +415,35 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="shard1" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                        <Texture parentKey="shard1" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard.png" hidden="true">
                             <TexCoords left="0" right="0.5" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shard2" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                        <Texture parentKey="shard2" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard.png" hidden="true">
                             <TexCoords left="0" right="0.5" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shard3" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                        <Texture parentKey="shard3" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard.png" hidden="true">
                             <TexCoords left="0" right="0.5" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shard4" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                        <Texture parentKey="shard4" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard.png" hidden="true">
                             <TexCoords left="0" right="0.5" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="shard5" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard" hidden="true">
+                        <Texture parentKey="shard5" file="Interface\AddOns\GW2_UI\textures\altpower/soulshard.png" hidden="true">
                             <TexCoords left="0" right="0.5" top="1" bottom="0" />
                             <Size x="32" y="32"></Size>
                             <Anchors>
@@ -452,7 +452,7 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="8" level="OVERLAY">
-                        <Texture parentKey="shardFlare" file="Interface\AddOns\GW2_UI\textures\altpower\soulshardFlare" hidden="true">
+                        <Texture parentKey="shardFlare" file="Interface\AddOns\GW2_UI\textures\altpower\soulshardflare.png" hidden="true">
                             <Size x="256" y="128"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="LEFT" x="128" y="0"></Anchor>
@@ -468,7 +468,7 @@
                         </Anchors>
                         <Layers>
                             <Layer level="BACKGROUND">
-                                <Texture parentKey="barBg" file="Interface\AddOns\GW2_UI\textures\altpower/soulshardFragmentBarBg">
+                                <Texture parentKey="barBg" file="Interface\AddOns\GW2_UI\textures\altpower/soulshardfragmentbarbg.png">
                                     <Size x="132" y="10"></Size>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -476,13 +476,13 @@
                                 </Texture>
                             </Layer>
                             <Layer level="OVERLAY">
-                                <Texture parentKey="barFill" file="Interface\AddOns\GW2_UI\textures\altpower/soulshardFragmentBarFill">
+                                <Texture parentKey="barFill" file="Interface\AddOns\GW2_UI\textures\altpower/soulshardfragmentbarfill.png">
                                     <Size x="130" y="8"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                                     </Anchors>
                                 </Texture>
-                                <Texture parentKey="flare" file="Interface\AddOns\GW2_UI\textures\altpower/soulshardFragmentFlare">
+                                <Texture parentKey="flare" file="Interface\AddOns\GW2_UI\textures\altpower/soulshardfragmentflare.png">
                                     <Size x="32" y="64"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativeKey="$parent.barFill" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -500,63 +500,63 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="runeTex1" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="runeTex1" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex2" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="runeTex2" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex3" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="runeTex3" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex4" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="runeTex4" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex5" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="runeTex5" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="128" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex6" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="runeTex6" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="160" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex7" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="runeTex7" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="192" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex8" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="runeTex8" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="224" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="runeTex9" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="runeTex9" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
@@ -565,7 +565,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="comboFlare" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash" hidden="true">
+                        <Texture parentKey="comboFlare" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash.png" hidden="true">
                             <Size x="70" y="70"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="LEFT" x="128" y="0"></Anchor>
@@ -573,63 +573,63 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY" textureSubLevel="8">
-                        <Texture parentKey="combo1" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints" hidden="true">
+                        <Texture parentKey="combo1" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png" hidden="true">
                             <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="combo2" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="combo2" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="combo3" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="combo3" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="combo4" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="combo4" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="combo5" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="combo5" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="128" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="combo6" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="combo6" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="160" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="combo7" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="combo7" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="192" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="combo8" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="combo8" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="224" y="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="combo9" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                        <Texture parentKey="combo9" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                             <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                             <Size x="32" y="32"></Size>
                             <Anchors>
@@ -647,19 +647,19 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="8">
-                      <Texture parentKey="1" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\shadoworbs\power" hidden="false">
+                      <Texture parentKey="1" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\shadoworbs\power.png" hidden="false">
                             <Size x="64" y="64"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="4"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="2" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\shadoworbs\power" hidden="false">
+                        <Texture parentKey="2" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\shadoworbs\power.png" hidden="false">
                             <Size x="64" y="64"></Size>
                              <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="35" y="4"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="3" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\shadoworbs\power" hidden="false">
+                        <Texture parentKey="3" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\shadoworbs\power.png" hidden="false">
                             <Size x="64" y="64"></Size>
                              <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="70" y="4"></Anchor>
@@ -676,31 +676,31 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="8">
-                      <Texture parentKey="1" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power" hidden="false">
+                      <Texture parentKey="1" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power.png" hidden="false">
                             <Size x="64" y="64"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="-16" y="4"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="2" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power" hidden="false">
+                        <Texture parentKey="2" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power.png" hidden="false">
                             <Size x="64" y="64"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="9" y="-3"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="3" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power" hidden="false">
+                        <Texture parentKey="3" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power.png" hidden="false">
                             <Size x="64" y="64"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="34" y="4"></Anchor>
                             </Anchors>
                         </Texture>
-                           <Texture parentKey="4" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power" hidden="false">
+                           <Texture parentKey="4" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power.png" hidden="false">
                             <Size x="64" y="64"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="59" y="-3"></Anchor>
                             </Anchors>
                         </Texture>
-                            <Texture parentKey="5" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power" hidden="false">
+                            <Texture parentKey="5" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power.png" hidden="false">
                             <Size x="64" y="64"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="84" y="4"></Anchor>
@@ -728,7 +728,7 @@
                         </Anchors>
                         <Layers>
                             <Layer level="ARTWORK" textureSublevel="1">
-                                <Texture parentKey="ironartwork" hidden="true" file="Interface\AddOns\GW2_UI\textures\altpower\monk\art-ironskin">
+                                <Texture parentKey="ironartwork" hidden="true" file="Interface\AddOns\GW2_UI\textures\altpower\monk\art-ironskin.png">
                                     <Size x="512" y="64"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="30"></Anchor>
@@ -736,7 +736,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORK" textureSublevel="2">
-                                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\altpower\monk\ironskin-bg">
+                                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\altpower\monk\ironskin-bg.png">
                                     <Size x="256" y="8"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="2" y="12"></Anchor>
@@ -744,7 +744,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORK" textureSublevel="3">
-                                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\altpower\monk\ironskin">
+                                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\altpower\monk\ironskin.png">
                                     <Size x="256" y="8"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativeKey="$parent.background" x="1" y="-1"></Anchor>
@@ -752,7 +752,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORK" textureSublevel="4">
-                                <Texture parentKey="indicator" file="Interface\AddOns\GW2_UI\textures\altpower\monk\duration-bg">
+                                <Texture parentKey="indicator" file="Interface\AddOns\GW2_UI\textures\altpower\monk\duration-bg.png">
                                     <Size x="32" y="16"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="3" y="19"></Anchor>
@@ -780,7 +780,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                             <Size x="316" y="18"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0"></Anchor>
@@ -812,7 +812,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                             <Size x="314" y="18"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0"></Anchor>
@@ -826,17 +826,17 @@
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="4" y="0"></Anchor>
                         </Anchors>
-                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
+                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png"/>
                         <BarColor r="0.95" g="0.25" b="0.05"></BarColor>
                         <Layers>
                             <Layer level="ARTWORK" textureSubLevel="1">
-                                <Texture parentKey="texture1" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation">
+                                <Texture parentKey="texture1" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation.png">
                                     <Size x="310" y="14"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                                     </Anchors>
                                 </Texture>
-                                <Texture parentKey="texture2" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation2">
+                                <Texture parentKey="texture2" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation2.png">
                                     <Size x="310" y="14"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -844,7 +844,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="ARTWORK" textureSubLevel="2">
-                                <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
+                                <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white.png">
                                     <Size x="1" y="14"></Size>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -864,63 +864,63 @@
         <Size x="215" y="30"></Size>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="runeTex1" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="runeTex1" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="runeTex2" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="runeTex2" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="runeTex3" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="runeTex3" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="runeTex4" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="runeTex4" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="runeTex5" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="runeTex5" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="128" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="runeTex6" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="runeTex6" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="160" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="runeTex7" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="runeTex7" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="192" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="runeTex8" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="runeTex8" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="224" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="runeTex9" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="runeTex9" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0" right="0.5" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
@@ -929,7 +929,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentKey="comboFlare" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash" hidden="true">
+                <Texture parentKey="comboFlare" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash.png" hidden="true">
                     <Size x="64" y="64"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="LEFT" x="128" y="0"></Anchor>
@@ -937,63 +937,63 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY" textureSubLevel="8">
-                <Texture parentKey="combo1" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints" hidden="true">
+                <Texture parentKey="combo1" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png" hidden="true">
                     <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="combo2" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="combo2" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="combo3" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="combo3" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="combo4" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="combo4" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="combo5" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="combo5" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="128" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="combo6" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="combo6" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="160" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="combo7" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="combo7" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="192" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="combo8" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="combo8" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="224" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="combo9" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints">
+                <Texture parentKey="combo9" file="Interface\AddOns\GW2_UI\textures\altpower/combopoints.png">
                     <TexCoords left="0.5" right="1" top="0.5" bottom="0"/>
                     <Size x="18" y="18"></Size>
                     <Anchors>

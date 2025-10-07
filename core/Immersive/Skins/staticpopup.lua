@@ -3,15 +3,15 @@ local _, GW = ...
 local function gwSetStaticPopupSize()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
-        StaticPopup.AlertIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon")
+        StaticPopup.AlertIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon.png")
         if _G["StaticPopup" .. i .. "ItemFrameNameFrame"] then
             _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:SetTexture(nil)
-            _G["StaticPopup" .. i .. "ItemFrame"].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            _G["StaticPopup" .. i .. "ItemFrame"].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
             _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             _G["StaticPopup" .. i .. "ItemFrameNormalTexture"]:SetTexture(nil)
         else
             StaticPopup.ItemFrame.NameFrame:SetTexture(nil)
-            StaticPopup.ItemFrame.Item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            StaticPopup.ItemFrame.Item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
             StaticPopup.ItemFrame.Item.icon:SetTexCoord(0.9, 0.1, 0.9, 0.1)
             StaticPopup.ItemFrame.Item.icon:GwSetInside()
         end
@@ -51,7 +51,7 @@ local function LoadStaticPopupSkin()
         local tex = StaticPopup:CreateTexture(nil, "BACKGROUND")
         tex:SetPoint("TOPLEFT", StaticPopup, "TOPLEFT", 0, 0)
         tex:SetPoint("BOTTOMRIGHT", StaticPopup, "BOTTOMRIGHT", 0, 0)
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
         StaticPopup.tex = tex
 
         --Style Buttons
@@ -120,7 +120,7 @@ local function LoadStaticPopupSkin()
             local tex = self.closeDialog:CreateTexture(nil, "BACKGROUND")
             tex:SetPoint("TOPLEFT", self.closeDialog, "TOPLEFT", 0, 0)
             tex:SetPoint("BOTTOMRIGHT", self.closeDialog, "BOTTOMRIGHT", 0, 0)
-            tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+            tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
             self.closeDialog.tex = tex
 
             local dialogName = self.closeDialog.GetName and self.closeDialog:GetName()
@@ -142,7 +142,7 @@ local function LoadStaticPopupSkin()
             local tex = self.CloseDialog:CreateTexture(nil, "BACKGROUND")
             tex:SetPoint("TOPLEFT", self.closeDialog, "TOPLEFT", 0, 0)
             tex:SetPoint("BOTTOMRIGHT", self.closeDialog, "BOTTOMRIGHT", 0, 0)
-            tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+            tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
             self.CloseDialog.tex = tex
 
             self.CloseDialog.ConfirmButton:GwSkinButton(false, true)

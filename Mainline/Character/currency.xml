@@ -5,7 +5,7 @@
         <Size x="512" y="55"></Size>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/character/menu-bg">
+                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/character/menu-bg.png">
                     <Size x="32" y="55"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -63,7 +63,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                     <Size x="608" y="621"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>

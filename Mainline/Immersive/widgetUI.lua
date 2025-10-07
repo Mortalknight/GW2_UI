@@ -14,7 +14,7 @@ local function BelowMinimap_CaptureBar(self)
         end
     end
 
-    local texturePath = "Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg"
+    local texturePath = "Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png"
     self.LeftBar:SetTexture(texturePath)
     self.RightBar:SetTexture(texturePath)
     self.NeutralBar:SetTexture(texturePath)

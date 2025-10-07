@@ -21,12 +21,12 @@ local function skinButton(button)
     button.typeName:SetTextColor(0.5, 0.5, 0.5, 1)
 
     button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+    button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
     button:GetNormalTexture():SetBlendMode("ADD")
     button:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
-    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
     button:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
-    button.selectedTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+    button.selectedTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
     button.selectedTex:SetTexCoord(0, 1, 0, 1)
 end
 

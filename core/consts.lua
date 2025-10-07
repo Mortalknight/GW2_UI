@@ -57,16 +57,16 @@ GW.BAG_TYP_COLORS = {
 }
 
 GW.nameRoleIcon = {
-    TANK = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:0:64:64:4:60:4:60|t ",
-    HEALER = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:0:64:64:4:60:4:60|t ",
-    DAMAGER = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:0:0:0:0:64:64:4:60:4:60|t ",
+    TANK = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank.png:0:0:0:0:64:64:4:60:4:60|t ",
+    HEALER = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-healer.png:0:0:0:0:64:64:4:60:4:60|t ",
+    DAMAGER = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-dps.png:0:0:0:0:64:64:4:60:4:60|t ",
     NONE = ""
 }
 
 GW.nameRoleIconPure = {
-    TANK = "Interface/AddOns/GW2_UI/textures/party/roleicon-tank",
-    HEALER = "Interface/AddOns/GW2_UI/textures/party/roleicon-healer",
-    DAMAGER = "Interface/AddOns/GW2_UI/textures/party/roleicon-dps",
+    TANK = "Interface/AddOns/GW2_UI/textures/party/roleicon-tank.png",
+    HEALER = "Interface/AddOns/GW2_UI/textures/party/roleicon-healer.png",
+    DAMAGER = "Interface/AddOns/GW2_UI/textures/party/roleicon-dps.png",
     NONE = ""
 }
 
@@ -235,34 +235,34 @@ GW.FACTION_COLOR = {
 }
 
 GW.TARGET_FRAME_ART = {
-    minus = "Interface/AddOns/GW2_UI/textures/units/targetshadow",
-    normal = "Interface/AddOns/GW2_UI/textures/units/targetshadow",
-    elite = "Interface/AddOns/GW2_UI/textures/units/targetShadowElit",
-    rare = "Interface/AddOns/GW2_UI/textures/units/targetShadowRare",
-    rareelite = "Interface/AddOns/GW2_UI/textures/units/targetShadowRare",
-    worldboss = "Interface/AddOns/GW2_UI/textures/units/targetshadow_boss",
-    boss = "Interface/AddOns/GW2_UI/textures/units/targetshadow_boss",
-    prestige1 = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p1",
-    prestige2 = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p2",
-    prestige3 = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p3",
-    prestige4 = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p4",
-    realboss = "Interface/AddOns/GW2_UI/textures/units/targetshadow-raidboss"
+    minus = "Interface/AddOns/GW2_UI/textures/units/targetshadow.png",
+    normal = "Interface/AddOns/GW2_UI/textures/units/targetshadow.png",
+    elite = "Interface/AddOns/GW2_UI/textures/units/targetshadowelit.png",
+    rare = "Interface/AddOns/GW2_UI/textures/units/targetshadowrare.png",
+    rareelite = "Interface/AddOns/GW2_UI/textures/units/targetshadowrare.png",
+    worldboss = "Interface/AddOns/GW2_UI/textures/units/targetshadow_boss.png",
+    boss = "Interface/AddOns/GW2_UI/textures/units/targetshadow_boss.png",
+    prestige1 = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p1.png",
+    prestige2 = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p2.png",
+    prestige3 = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p3.png",
+    prestige4 = "Interface/AddOns/GW2_UI/textures/units/targetshadow_p4.png",
+    realboss = "Interface/AddOns/GW2_UI/textures/units/targetshadow-raidboss.png"
 }
 
 GW.REALM_FLAGS = {
-    enUS = "|TInterface/AddOns/GW2_UI/textures/flags/us:10:12:0:0|t",
-    ptBR = "|TInterface/AddOns/GW2_UI/textures/flags/br:10:12:0:0|t",
-    ptPT = "|TInterface/AddOns/GW2_UI/textures/flags/pt:10:12:0:0|t",
-    esMX = "|TInterface/AddOns/GW2_UI/textures/flags/mx:10:12:0:0|t",
-    deDE = "|TInterface/AddOns/GW2_UI/textures/flags/de:10:12:0:0|t",
-    enGB = "|TInterface/AddOns/GW2_UI/textures/flags/gb:10:12:0:0|t",
-    koKR = "|TInterface/AddOns/GW2_UI/textures/flags/kr:10:12:0:0|t",
-    frFR = "|TInterface/AddOns/GW2_UI/textures/flags/fr:10:12:0:0|t",
-    esES = "|TInterface/AddOns/GW2_UI/textures/flags/es:10:12:0:0|t",
-    itIT = "|TInterface/AddOns/GW2_UI/textures/flags/it:10:12:0:0|t",
-    ruRU = "|TInterface/AddOns/GW2_UI/textures/flags/ru:10:12:0:0|t",
-    zhTW = "|TInterface/AddOns/GW2_UI/textures/flags/tw:10:12:0:0|t",
-    zhCN = "|TInterface/AddOns/GW2_UI/textures/flags/cn:10:12:0:0|t"
+    enUS = "|TInterface/AddOns/GW2_UI/textures/flags/us.png:10:12:0:0|t",
+    ptBR = "|TInterface/AddOns/GW2_UI/textures/flags/br.png:10:12:0:0|t",
+    ptPT = "|TInterface/AddOns/GW2_UI/textures/flags/pt.png:10:12:0:0|t",
+    esMX = "|TInterface/AddOns/GW2_UI/textures/flags/mx.png:10:12:0:0|t",
+    deDE = "|TInterface/AddOns/GW2_UI/textures/flags/de.png:10:12:0:0|t",
+    enGB = "|TInterface/AddOns/GW2_UI/textures/flags/gb.png:10:12:0:0|t",
+    koKR = "|TInterface/AddOns/GW2_UI/textures/flags/kr.png:10:12:0:0|t",
+    frFR = "|TInterface/AddOns/GW2_UI/textures/flags/fr.png:10:12:0:0|t",
+    esES = "|TInterface/AddOns/GW2_UI/textures/flags/es.png:10:12:0:0|t",
+    itIT = "|TInterface/AddOns/GW2_UI/textures/flags/it.png:10:12:0:0|t",
+    ruRU = "|TInterface/AddOns/GW2_UI/textures/flags/ru.png:10:12:0:0|t",
+    zhTW = "|TInterface/AddOns/GW2_UI/textures/flags/tw.png:10:12:0:0|t",
+    zhCN = "|TInterface/AddOns/GW2_UI/textures/flags/cn.png:10:12:0:0|t"
 }
 
 GW.ShortPrefixStyles = {

@@ -32,7 +32,7 @@ function GwWorldQuestTrackerContainerMixin:UpdateLayout()
             wqtFrame.Zone:SetPoint ("TOPLEFT", wqtFrame, "TOPLEFT", 10, -7)
             wqtFrame.Circle:Hide()
             wqtFrame.Shadow:Hide()
-            wqtFrame.SuperTracked:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
+            wqtFrame.SuperTracked:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border.png")
             wqtFrame.SuperTracked:SetSize(20, 20)
 
             objectiveDetailBlock:Show()

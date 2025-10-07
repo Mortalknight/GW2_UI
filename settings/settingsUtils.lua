@@ -579,7 +579,7 @@ local function SettingsInitOptionWidget(of, v, panel)
                     end
 
                     if v.hasSound then
-                        local soundButton = MenuTemplates.AttachAutoHideButton(button, "Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on")
+                        local soundButton = MenuTemplates.AttachAutoHideButton(button, "Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on.png")
                         soundButton:SetSize(14, 14)
                         soundButton:SetPoint("RIGHT")
                         soundButton:SetScript("OnClick", function()
@@ -720,12 +720,12 @@ end
 GW.SettingsInitOptionWidget = SettingsInitOptionWidget
 
 local function SettingsMenuButtonSetUp(self, odd)
-    self.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+    self.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
     self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if odd then
         self:ClearNormalTexture()
     else
-        self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+        self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
     end
 
     self:GetFontString():SetJustifyH("LEFT")

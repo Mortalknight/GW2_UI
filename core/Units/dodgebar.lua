@@ -422,13 +422,13 @@ function GwDodgeBarMixin:LoadSkiridingBar(parent)
     af.maskr_normal:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
     af.maskr_fraction:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
 
-    fmdb.arcfill.fill:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill-small")
-    fmdb.arcfill.fillFractions:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill-small")
-    af.maskr_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall")
-    af.maskr_fraction:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall")
-    af.mask_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall")
+    fmdb.arcfill.fill:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill-small.png")
+    fmdb.arcfill.fillFractions:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill-small.png")
+    af.maskr_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
+    af.maskr_fraction:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
+    af.mask_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
 
-    fmdb.border.normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/border-normal-small")
+    fmdb.border.normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/border-normal-small.png")
 
     -- create the arc drain/fill animations
     local ag = af.fill:CreateAnimationGroup()

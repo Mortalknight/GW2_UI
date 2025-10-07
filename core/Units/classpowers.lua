@@ -130,19 +130,19 @@ local function AnimationStagger(self)
 end
 ---Styling for powerbars
 local function setPowerTypePaladinShield(self)
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark")
-    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster-intensity")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark.png")
+    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster-intensity.png")
     self.runeoverlay:SetAlpha(1)
     self.spark:SetBlendMode("ADD")
     self.spark:SetAlpha(0.3)
     self.customMaskSize = 30
 end
 local function setPowerTypeEbonMight(self)
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/agu")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/agu-intensity", "REPEAT")
-    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/agu-intensity2", "REPEAT")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/agu.png")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/agu-intensity.png", "REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/agu-intensity2.png", "REPEAT")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark.png")
     self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
@@ -152,10 +152,10 @@ local function setPowerTypeEbonMight(self)
     self.scrollSpeedMultiplier = -5
 end
 local function setPowerTypeMeta(self)
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity", "REPEAT")
-    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity2", "REPEAT")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury.png")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity.png", "REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity2.png", "REPEAT")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark.png")
     self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
@@ -164,12 +164,12 @@ local function setPowerTypeMeta(self)
     -- self.onUpdateAnimation = AnimationFury
 end
 local function setPowerTypeStagger(self)
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll", "REPEAT")
-    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2", "REPEAT")
-    self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-intensity")
-    self.intensity2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-intensity2")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger.png")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll.png", "REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2.png", "REPEAT")
+    self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-intensity.png")
+    self.intensity2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-intensity2.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark.png")
     self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(0)
     self.scrollTexture2:SetAlpha(0)
@@ -179,10 +179,10 @@ local function setPowerTypeStagger(self)
 end
 
 local function setPowerTypeEnrage(self)
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/rage")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/enrage-intensity", "REPEAT", "REPEAT")
-    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/enrage-intensity2", "REPEAT", "REPEAT")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/rage.png")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/enrage-intensity.png", "REPEAT", "REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/enrage-intensity2.png", "REPEAT", "REPEAT")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark.png")
     self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureVerticalParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(0.5)
     self.scrollTexture2:SetAlpha(0.5)
@@ -193,19 +193,19 @@ local function setPowerTypeEnrage(self)
     self.scrollSpeedMultiplier = 5
 end
 local function setPowerTYpeBolster(self)
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark")
-    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster-intensity")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark.png")
+    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster-intensity.png")
     self.runeoverlay:SetAlpha(1)
     self.spark:SetBlendMode("ADD")
     self.spark:SetAlpha(0.3)
     self.customMaskSize = 30
 end
 local function setPowerTYpeFrenzy(self)
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzy")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzyspark")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll", "REPEAT")
-    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2", "REPEAT")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzy.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzyspark.png")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll.png", "REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2.png", "REPEAT")
     self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollSpeedMultiplier = -3
     self.scrollTexture:SetAlpha(1)
@@ -215,10 +215,10 @@ local function setPowerTYpeFrenzy(self)
     self.customMaskSize = 128
 end
 local function setPowerTypeRend(self)
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzy")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzyspark")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll", "REPEAT")
-    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2", "REPEAT")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzy.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzyspark.png")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll.png", "REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2.png", "REPEAT")
     self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollSpeedMultiplier = -3
     self.scrollTexture:SetAlpha(1)
@@ -232,21 +232,21 @@ local function updateTextureBasedOnCondition(self)
     if GW.myClassID == 9 then           -- Warlock
         -- Hook green fire
         if GW.IsSpellKnown(101508) then -- check for spell id 101508
-            self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-green")
+            self.warlock.shardFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshardflare-green.png")
             self.warlock.shardFragment.barFill:SetTexture(
-                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-green")
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshardfragmentbarfill-green.png")
             for i = 1, 5 do
-                self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard-green")
+                self.warlock["shard" .. i]:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/soulshard-green.png")
             end
         else
             local textureShardFlare = self.useRedTexture and
-                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare-red" or
-                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFlare"
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshardflare-red.png" or
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshardflare.png"
             local textureShardFragmentFill = self.useRedTexture and
-                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill-red" or
-                "Interface/AddOns/GW2_UI/textures/altpower/soulshardFragmentBarFill"
-            local textureShardShard = self.useRedTexture and "Interface/AddOns/GW2_UI/textures/altpower/soulshard-red" or
-                "Interface/AddOns/GW2_UI/textures/altpower/soulshard"
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshardfragmentbarfill-red.png" or
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshardfragmentbarfill.png"
+            local textureShardShard = self.useRedTexture and "Interface/AddOns/GW2_UI/textures/altpower/soulshard-red.png" or
+                "Interface/AddOns/GW2_UI/textures/altpower/soulshard.png"
 
             self.warlock.shardFlare:SetTexture(textureShardFlare)
             self.warlock.shardFragment.barFill:SetTexture(textureShardFragmentFill)
@@ -913,7 +913,7 @@ local function setPaladin(f)
     f.paladin:SetPoint("BOTTOMLEFT", f.gwMover, 0, 0)
     f.background:SetPoint("LEFT", f.gwMover, "LEFT", 0, 2)
 
-    f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower/background")
+    f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower/background.png")
 
     f.fill:Hide()
 
@@ -1083,7 +1083,7 @@ local function setPriest(f)
             f.priest:SetPoint("BOTTOMLEFT", f.gwMover, 0, 0)
             f.background:SetPoint("LEFT", f.gwMover, "LEFT", 0, 2)
 
-            f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/shadoworbs/background")
+            f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/shadoworbs/background.png")
 
             f.fill:Hide()
 
@@ -1106,10 +1106,10 @@ local RUNETYPE_UNHOLY = 3
 local RUNETYPE_DEATH = 4
 
 local iconTextures = {
-    [RUNETYPE_BLOOD] = "Interface/AddOns/GW2_UI/textures/altpower/runes-blood",
-    [RUNETYPE_FROST] = "Interface/AddOns/GW2_UI/textures/altpower/runes",
-    [RUNETYPE_UNHOLY] = "Interface/AddOns/GW2_UI/textures/altpower/runes-unholy",
-    [RUNETYPE_DEATH] = "Interface/AddOns/GW2_UI/textures/altpower/runes-death"
+    [RUNETYPE_BLOOD] = "Interface/AddOns/GW2_UI/textures/altpower/runes-blood.png",
+    [RUNETYPE_FROST] = "Interface/AddOns/GW2_UI/textures/altpower/runes.png",
+    [RUNETYPE_UNHOLY] = "Interface/AddOns/GW2_UI/textures/altpower/runes-unholy.png",
+    [RUNETYPE_DEATH] = "Interface/AddOns/GW2_UI/textures/altpower/runes-death.png"
 }
 local RUNE_TIMER_ANIMATIONS = {
     [1] = 0,
@@ -1259,7 +1259,7 @@ local function setDeathKnight(f)
     f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -10)
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
-    f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
+    f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash.png")
     f.flare:SetWidth(256)
     f.flare:SetHeight(128)
     fr:Show()
@@ -1277,11 +1277,11 @@ local function setDeathKnight(f)
             local fTex = fr["runeTex" .. i]
             local fFlare = fr["flare" .. i]
 
-            fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
-            fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
+            fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture .. ".png")
+            fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture .. ".png")
             fFlare:SetRotation(1.5708)
             fFlare:SetVertexColor(1, 1, 1, 0)
-            fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
+            fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash.png")
         end
     elseif GW.Mists then
         for i = 1, 6 do
@@ -1298,11 +1298,11 @@ local function setDeathKnight(f)
                 texture = "runes"
             end
 
-            fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
-            fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture)
+            fFill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture .. ".png")
+            fTex:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/" .. texture .. ".png")
             fFlare:SetRotation(1.5708)
             fFlare:SetVertexColor(1, 1, 1, 0)
-            fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
+            fFlare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash.png")
         end
     end
 
@@ -1439,14 +1439,14 @@ local function setMage(f)
         f:SetWidth(512)
         f.background:SetHeight(64)
         f.background:SetWidth(512)
-        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane")
+        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane.png")
         f.background:SetTexCoord(0, 1, 0.125 * 3, 0.125 * (3 + 1))
-        f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane-flash")
+        f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane-flash.png")
         f.flare:SetWidth(256)
         f.flare:SetHeight(256)
         f.fill:SetHeight(64)
         f.fill:SetWidth(512)
-        f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane")
+        f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane.png")
         f.background:SetVertexColor(0, 0, 0, 0.5)
 
         f:SetScript("OnEvent", powerArcane)
@@ -1462,14 +1462,14 @@ local function setMage(f)
         f:SetWidth(256)
         f.background:SetHeight(32)
         f.background:SetWidth(256)
-        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/frostmage-altpower")
+        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/frostmage-altpower.png")
         f.background:SetTexCoord(0, 1, 0.125 * 5, 0.125 * (5 + 1))
-        f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane-flash")
+        f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/arcane-flash.png")
         f.flare:SetWidth(128)
         f.flare:SetHeight(128)
         f.fill:SetHeight(32)
         f.fill:SetWidth(256)
-        f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/frostmage-altpower")
+        f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/frostmage-altpower.png")
         f.background:SetVertexColor(0, 0, 0, 0.5)
 
         f:SetScript("OnEvent", function(_, _, unit, ...) HandleUnitAuraEvent(unit, ...) end)
@@ -1804,12 +1804,12 @@ local function setMonk(f)
             f:SetWidth(256)
             f.background:SetHeight(32)
             f.background:SetWidth(320)
-            f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi")
+            f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi.png")
             f.background:SetTexCoord(0, 1, 0.5, 1)
-            f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi-flare")
+            f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi-flare.png")
             f.fill:SetHeight(32)
             f.fill:SetWidth(256)
-            f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi")
+            f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi.png")
 
             f:SetScript("OnEvent", powerChi)
             powerChi(f, "CLASS_POWER_INIT")
@@ -1825,12 +1825,12 @@ local function setMonk(f)
         f:SetWidth(256)
         f.background:SetHeight(32)
         f.background:SetWidth(320)
-        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi")
+        f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi.png")
         f.background:SetTexCoord(0, 1, 0.5, 1)
-        f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi-flare")
+        f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi-flare.png")
         f.fill:SetHeight(32)
         f.fill:SetWidth(256)
-        f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi")
+        f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/chi.png")
 
         f:SetScript("OnEvent", powerChi)
         powerChi(f, "CLASS_POWER_INIT")

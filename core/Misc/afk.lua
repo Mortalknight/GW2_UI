@@ -222,7 +222,7 @@ local function LoadAFKAnimation()
     local playerName = GW.myname
 
     local BackdropFrame = {
-        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg",
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg.png",
         edgeFile = "",
         tile = false,
         tileSize = 64,

@@ -674,11 +674,11 @@ end
 -- =========================
 local function InitMenuButton(button, elementData)
     if not button.isGwInit then
-        button.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        button.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
         button.limitHoverStripAmount = 1
         button.arrow:ClearAllPoints()
         button.arrow:SetPoint("LEFT", 5, 0)
-        button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+        button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png")
         button.arrow:SetSize(16, 16)
         button:SetScript("OnClick", function()
             CloseSearch()
@@ -691,7 +691,7 @@ local function InitMenuButton(button, elementData)
     if elementData.index % 2 == 0 then
         button:ClearNormalTexture()
     else
-        button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+        button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
     end
 
     button.arrow:SetShown(elementData.itemData.hasSubFrames)
@@ -766,7 +766,7 @@ local function LoadSettingsTab(container)
     settingsTab.name = "GwSettingsSettings"
     settingsTab.headerBreadcrumbText = SETTINGS
     settingsTab.hasSearch = false
-    container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_settings", settingsTab)
+    container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_settings.png", settingsTab)
 
     --load settings panels
     GW.LoadModulesPanel(settingsTab)

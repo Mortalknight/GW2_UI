@@ -2,8 +2,8 @@ local _, GW = ...
 
 -- global for this deprecated in 8.3; from ContainerFrame.lua
 local MAX_CONTAINER_ITEMS = 36
-local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder"
-local BACKDROP_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop"
+local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
+local BACKDROP_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop.png"
 
 -- reskins an ItemButton to use GW2_UI styling
 local function ReskinItemButton(b, overrideIconSize)
@@ -60,17 +60,17 @@ local function ReskinItemButton(b, overrideIconSize)
 
     if b.IconQuestTexture then
         b.IconQuestTexture:ClearAllPoints()
-        b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+        b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest.png")
         b.IconQuestTexture:SetSize(25, 25)
         b.IconQuestTexture:SetPoint("TOPLEFT", -7, 1)
         b.IconQuestTexture:SetVertexColor(221 / 255, 198 / 255, 68 / 255)
         if b.UpdateQuestItem then
             hooksecurefunc(b, "UpdateQuestItem", function()
-                b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+                b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest.png")
             end)
         else --bank_slots
             hooksecurefunc(b, "Refresh", function()
-                b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+                b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest.png")
             end)
         end
     end
@@ -172,8 +172,8 @@ local function UpdateItemVisuals(b, overrideIconSize)
             b.IconQuestTexture:ClearAllPoints()
              b.IconQuestTexture:SetPoint("TOPLEFT", -7, 1)
         end
-        if b.IconQuestTexture:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/icons/icon-quest" then
-            b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+        if b.IconQuestTexture:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/icons/icon-quest.png" then
+            b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest.png")
         end
     end
 
@@ -452,7 +452,7 @@ local function reskinBagBar(b, ha)
 
     if b.SlotHighlightTexture then
         b.SlotHighlightTexture:SetAlpha(highlightAlpha)
-        b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+        b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
     end
 end
 GW.AddForProfiling("inventory", "reskinBagBar", reskinBagBar)
@@ -471,7 +471,7 @@ local function reskinSearchBox(sb)
 
     sb.Left:SetTexture(nil)
     sb.Right:SetTexture(nil)
-    sb.Middle:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg")
+    sb.Middle:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg.png")
 
     sb.Middle:SetPoint("RIGHT", sb, "RIGHT", 0, 0)
 
@@ -881,7 +881,7 @@ local function LoadInventory()
     StackSplitFrame.LeftButton:SetPoint("RIGHT", StackSplitFrame, "CENTER", -50, 18)
 
     StackSplitFrame.textboxbg = StackSplitFrame:CreateTexture(nil, "BACKGROUND")
-    StackSplitFrame.textboxbg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    StackSplitFrame.textboxbg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png")
     StackSplitFrame.textboxbg:SetPoint("TOPLEFT", 35, -20)
     StackSplitFrame.textboxbg:SetPoint("BOTTOMRIGHT", -35, 55)
 end

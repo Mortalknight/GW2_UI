@@ -10,8 +10,8 @@ end
 GW.Construct_ReadyCheck = Construct_ReadyCheck
 
 local function UpdateReadyCheckSettings(frame)
-    frame.readyTexture = "Interface/AddOns/GW2_UI/textures/party/readycheck"
-    frame.notReadyTexture = "Interface/AddOns/GW2_UI/textures/party/readycheck"
-    frame.waitingTexture = "Interface/AddOns/GW2_UI/textures/party/readycheck"
+    frame.readyTexture = "Interface/AddOns/GW2_UI/textures/party/readycheck.png"
+    frame.notReadyTexture = "Interface/AddOns/GW2_UI/textures/party/readycheck.png"
+    frame.waitingTexture = "Interface/AddOns/GW2_UI/textures/party/readycheck.png"
 end
 GW.UpdateReadyCheckSettings = UpdateReadyCheckSettings

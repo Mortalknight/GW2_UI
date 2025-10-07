@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                     <Size x="608" y="621"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -60,7 +60,7 @@
                 </FontString>
             </Layer>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                     <Size x="608" y="615"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>

@@ -49,7 +49,7 @@ local function LoadDressUpFrameSkin()
     tex:SetPoint("TOP", DressUpFrame, "TOP", 0, 20)
     local w, h = DressUpFrame:GetSize()
     tex:SetSize(w + 50, h + 30)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
     DressUpFrame.tex = tex
 
     DressUpFrame.ModelBackground:SetDrawLayer("BACKGROUND", 2)

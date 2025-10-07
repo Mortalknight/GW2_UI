@@ -116,7 +116,7 @@ local function InitializeMiscFunctions()
 
     mostValue.Icon = mostValue:CreateTexture(nil, "OVERLAY")
     mostValue.Icon:SetAllPoints(mostValue)
-    mostValue.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/Coins")
+    mostValue.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/coins.png")
     mostValue.Icon:SetTexCoord(0.33, 0.66, 0.022, 0.66)
 
     hooksecurefunc(QuestFrameRewardPanel, "Hide", function()

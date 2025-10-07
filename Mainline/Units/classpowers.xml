@@ -6,7 +6,7 @@
             <Frame parentKey="EssenceFilling" setAllPoints="true" frameStrata="MEDIUM" hidden="true">
 				<Layers>
 					<Layer level="BACKGROUND">
-						<Texture parentKey="EssenceBG" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+						<Texture parentKey="EssenceBG" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker.png">
                             <Size x="32" y="32" />
                             <TexCoords left="0.5" right="1" top="0" bottom="1"/>
 							<Anchors>
@@ -106,7 +106,7 @@
 						</Texture>
 					</Layer>
 					<Layer level="ARTWORK" textureSubLevel="1">
-						<Texture parentKey="EssenceIcon" alpha="0" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+						<Texture parentKey="EssenceIcon" alpha="0" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker.png">
                             <Size x="32" y="32" />
                             <TexCoords left="0" right="0.5" top="0" bottom="1"/>
 							<Anchors>
@@ -148,7 +148,7 @@
 			<Frame parentKey="EssenceEmpty" setAllPoints="true"  frameStrata="MEDIUM" hidden="true">
 				<Layers>
 					<Layer level="ARTWORK">
-						<Texture parentKey="EssenceBG" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+						<Texture parentKey="EssenceBG" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker.png">
                             <Size x="32" y="32" />
                             <TexCoords left="0.5" right="1" top="0" bottom="1"/>
 							<Anchors>
@@ -162,7 +162,7 @@
 			<Frame parentKey="EssenceFull" setAllPoints="true"  frameStrata="MEDIUM" hidden="true">
 				<Layers>
 					<Layer level="ARTWORK">
-						<Texture parentKey="EssenceIconActive" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+						<Texture parentKey="EssenceIconActive" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker.png">
                             <Size x="32" y="32" />
                             <TexCoords left="0" right="0.5" top="0" bottom="1"/>
 							<Anchors>
@@ -176,7 +176,7 @@
 			<Frame parentKey="EssenceDepleting" setAllPoints="true" frameStrata="MEDIUM" hidden="true">
 				<Layers>
 					<Layer level="BACKGROUND">
-						<Texture parentKey="EssenceBG" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+						<Texture parentKey="EssenceBG" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker.png">
                             <Size x="32" y="32" />
                             <TexCoords left="0.5" right="1" top="0" bottom="1"/>
 							<Anchors>
@@ -185,7 +185,7 @@
 						</Texture>
 					</Layer>
 					<Layer level="BORDER">
-						<Texture parentKey="FXDepBG" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+						<Texture parentKey="FXDepBG" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker.png">
                             <Size x="32" y="32" />
                             <TexCoords left="0.5" right="1" top="0" bottom="1"/>
 							<Anchors>
@@ -194,7 +194,7 @@
 						</Texture>
 					</Layer>
 					<Layer level="BORDER" textureSubLevel="1">
-						<Texture parentKey="EssenceIcon" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+						<Texture parentKey="EssenceIcon" alpha="1" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\altpower/evoker.png">
                             <Size x="32" y="32" />
                             <TexCoords left="0" right="0.5" top="0" bottom="1"/>
 							<Anchors>

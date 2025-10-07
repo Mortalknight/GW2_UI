@@ -360,7 +360,7 @@ function GwQuesttrackerScenarioBlockMixin:UpdateAffixes(fakeIds)
     if not affixes or (#affixes == 0) then
         for _, v in ipairs(self.affixeFrame.affixes) do
             v.affixID = nil
-            v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
+            v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss.png")
         end
         self.affixeFrame:Hide()
         self.affixeFrame:SetHeight(1) -- needed for anchor points
@@ -485,7 +485,7 @@ function GwQuesttrackerScenarioBlockMixin:TimerUpdate(...)
 
     for _, v in ipairs(self.affixeFrame.affixes) do
         v.affixID = nil
-        v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
+        v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss.png")
     end
     self.affixeFrame:Hide()
     self.affixeFrame:SetHeight(1) -- needed for anchor points

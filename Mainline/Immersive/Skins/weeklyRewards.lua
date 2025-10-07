@@ -111,7 +111,7 @@ local function ApplyWeeklyRewardsSkin()
     if not GW.settings.WEEKLY_REWARDS_SKIN_ENABLED then return end
 
     WeeklyRewardsFrame:GwStripTextures()
-    GW.CreateFrameHeaderWithBody(WeeklyRewardsFrame, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {WeeklyRewardsFrame}, nil, false, true)
+    GW.CreateFrameHeaderWithBody(WeeklyRewardsFrame, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {WeeklyRewardsFrame}, nil, false, true)
 
     WeeklyRewardsFrame.titleText = WeeklyRewardsFrame:CreateFontString(nil, "OVERLAY")
     WeeklyRewardsFrame.titleText:SetParent(WeeklyRewardsFrame.gwHeader)

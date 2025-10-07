@@ -6,15 +6,15 @@ local function LoadImmersionAddonSkin()
     local ImmersionFrame = _G.ImmersionFrame
 
     if ImmersionFrame then
-        ImmersionFrame.TalkBox.MainFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
-        ImmersionFrame.TalkBox.MainFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
-        ImmersionFrame.TalkBox.MainFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
-        ImmersionFrame.TalkBox.MainFrame.CloseButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
+        ImmersionFrame.TalkBox.MainFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png")
+        ImmersionFrame.TalkBox.MainFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png")
+        ImmersionFrame.TalkBox.MainFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png")
+        ImmersionFrame.TalkBox.MainFrame.CloseButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png")
         ImmersionFrame.TalkBox.MainFrame.CloseButton:SetSize(25, 25)
         ImmersionFrame.TalkBox.MainFrame.CloseButton:ClearAllPoints()
         ImmersionFrame.TalkBox.MainFrame.CloseButton:SetPoint("TOPRIGHT", -30, -8)
 
-        ImmersionFrame.TalkBox.BackgroundFrame.TextBackground:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+        ImmersionFrame.TalkBox.BackgroundFrame.TextBackground:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
 
         ImmersionFrame.TalkBox.Hilite:Hide()
 

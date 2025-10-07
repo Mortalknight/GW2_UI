@@ -386,10 +386,10 @@ local function HandleExpansionButton()
             garrison.title = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
             garrison.description = GARRISON_TYPE_9_0_LANDING_PAGE_TOOLTIP
         end
-        garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
-        garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
-        garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
-        garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
+        garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up.png")
+        garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down.png")
+        garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down.png")
+        garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up.png")
     else
         local minimapDisplayInfo = ExpansionLandingPage:GetOverlayMinimapDisplayInfo();
         if minimapDisplayInfo then
@@ -398,15 +398,15 @@ local function HandleExpansionButton()
         end
         local expansionLandingPageType = ExpansionLandingPage:GetLandingPageType()
         if expansionLandingPageType == Enum.ExpansionLandingPageType.Dragonflight then
-            garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
-            garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
-            garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
-            garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
+            garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon.png")
+            garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon.png")
+            garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon.png")
+            garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon.png")
         elseif expansionLandingPageType == Enum.ExpansionLandingPageType.WarWithin then
-            garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-tww")
-            garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-tww-active")
-            garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-tww-active")
-            garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-tww-active")
+            garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-tww.png")
+            garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-tww-active.png")
+            garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-tww-active.png")
+            garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-tww-active.png")
         end
     end
 end
@@ -640,9 +640,9 @@ local function LoadMinimap()
 
     hooksecurefunc("GameTimeFrame_SetDate", function()
         GameTimeFrame:GwStripTextures()
-        GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/calendar")
-        GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/calendar")
-        GameTimeFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/calendar")
+        GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/calendar.png")
+        GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/calendar.png")
+        GameTimeFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/calendar.png")
         GameTimeFrame:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
         GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
         GameTimeFrame:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
@@ -672,7 +672,7 @@ local function LoadMinimap()
         end
     end)
 
-    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow")
+    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
 
     hideMiniMapIcons()
 
@@ -684,23 +684,23 @@ local function LoadMinimap()
     QueueStatusButton:SetSize(26, 26)
     QueueStatusButtonIcon:GwKill()
     QueueStatusButtonIcon.texture:SetTexture(nil)
-    QueueStatusButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")
-    QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
+    QueueStatusButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/lfgminimapbutton.png")
+    QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/lfgminimapbutton-highlight.png")
     QueueStatusButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
     local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", QueueStatusButton, "GwLfgQueueIcon")
     GwLfgQueueIcon:SetPoint("CENTER", QueueStatusButton, "CENTER", 0, 0)
     hooksecurefunc(QueueStatusButtonIcon, "PlayAnim", function()
         if not Minimap:IsShown() then return end
-        QueueStatusButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")
-        QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")
-        QueueStatusButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")
+        QueueStatusButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/lfganimation-1.png")
+        QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/lfganimation-1-highlight.png")
+        QueueStatusButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/lfganimation-1-highlight.png")
         GwLfgQueueIcon.animation:Play()
     end)
     hooksecurefunc(QueueStatusButtonIcon, "StopAnimating", function()
         GwLfgQueueIcon.animation:Stop()
-        QueueStatusButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")
-        QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
-        QueueStatusButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
+        QueueStatusButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/lfgminimapbutton.png")
+        QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/lfgminimapbutton-highlight.png")
+        QueueStatusButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/lfgminimapbutton-highlight.png")
     end)
 
     -- Minimap Tracking Button

@@ -10,9 +10,9 @@ local function PVPCaptureBar(self)
     self.Glow2:SetAlpha(0)
     self.Glow3:SetAlpha(0)
 
-    self.LeftBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    self.RightBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    self.NeutralBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    self.LeftBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png")
+    self.RightBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png")
+    self.NeutralBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png")
 
     self.LeftBar:SetVertexColor(0.2, 0.6, 1.0)
     self.RightBar:SetVertexColor(0.9, 0.2, 0.2)

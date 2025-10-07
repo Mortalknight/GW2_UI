@@ -26,7 +26,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-4">
-                <Texture parentKey="glyphBackground" file="Interface\AddOns\GW2_UI\textures\character\windowbg-glyphs">
+                <Texture parentKey="glyphBackground" file="Interface\AddOns\GW2_UI\textures\character\windowbg-glyphs.png">
                     <Size x="853" y="853"></Size>
                     <Color r="1" g="1" b="1" a="1"></Color>
                     <Anchors>
@@ -35,7 +35,7 @@
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="-3">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\glyphbackground">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\glyphbackground.png">
                     <Size x="400" y="400"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER" x="120" y="0"/>
@@ -51,7 +51,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND" textureSubLevel="-2">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\spellbookmenu_background">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\spellbookmenu_background.png">
                             <Size x="241" y="512"/>
                             <Color r="1" g="1" b="1" a="1"></Color>
                             <Anchors>
@@ -138,7 +138,7 @@
     <Button name="GwGlyphTemplate" virtual="true">
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-1">
-                <Texture parentKey="GwBackground" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajor" >
+                <Texture parentKey="GwBackground" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajor.png" >
                     <Size x="140" y="140"/>
                     <Anchors>
                         <Anchor point="CENTER">
@@ -148,7 +148,7 @@
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="1">
-                <Texture parentKey="GwUnlocked" file="Interface\AddOns\GW2_UI\textures\character\glypbgmajorunlocked">
+                <Texture parentKey="GwUnlocked" file="Interface\AddOns\GW2_UI\textures\character\glypbgmajorunlocked.png">
                     <Size x="140" y="140"/>
                     <Anchors>
                         <Anchor point="CENTER">
@@ -158,7 +158,7 @@
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="2">
-                <Texture parentKey="GwEquiped" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajorequip">
+                <Texture parentKey="GwEquiped" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajorequip.png">
                     <Size x="140" y="140"/>
                     <Anchors>
                         <Anchor point="CENTER">
@@ -166,7 +166,7 @@
                         </Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="selectable" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajorhighlight" hidden="true">
+                <Texture parentKey="selectable" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajorhighlight.png" hidden="true">
                     <Size x="160" y="160"/>
                     <Anchors>
                         <Anchor point="CENTER">
@@ -195,7 +195,7 @@
         </HitRectInsets>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar">
+                <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar.png">
                     <Size x="32" y="32"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -204,19 +204,19 @@
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" >
-                <Texture parentKey="bg" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                <Texture parentKey="bg" file="Interface\AddOns\GW2_UI\textures\character\menu-bg.png">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="bgstatic" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                <Texture parentKey="bgstatic" file="Interface\AddOns\GW2_UI\textures\character\menu-bg.png">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="background" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\uistuff\button_hover" hidden="true">
+                <Texture parentKey="background" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\uistuff\button_hover.png" hidden="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
@@ -225,7 +225,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentkey="icon" file="Interface\AddOns\GW2_UI\textures\levelreward-icon">
+                <Texture parentkey="icon" file="Interface\AddOns\GW2_UI\textures\levelreward-icon.png">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="10" y="0"/>

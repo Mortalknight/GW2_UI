@@ -4,7 +4,7 @@
         <Size x="460" y="32"/>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png">
                     <Size x="20" y="20"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
@@ -64,7 +64,7 @@
                                 <Anchor point="BOTTOM" x="0" y="60"/>
                             </Anchors>
                         </FontString>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg.png">
                             <Size x="540" y="513"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-10" y="10"/>

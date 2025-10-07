@@ -62,7 +62,7 @@ function CooldownManagerFunctions:SkinIcon(container, icon)
             local atlas = region:GetAtlas()
 
             if texture == 6707800 then
-                region:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/white")
+                region:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
             elseif atlas == "UI-HUD-CoolDownManager-IconOverlay" then -- 6704514
                 region:SetAlpha(0)
             end
@@ -92,7 +92,7 @@ function CooldownManagerFunctions:SkinBar(frame, bar)
                 region:SetPoint("TOPLEFT", 1, 0)
                 region:SetPoint("BOTTOMLEFT", -1, 0)
                 region:SetTexCoord(0, 1, 0, 1)
-                region:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar")
+                region:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
             elseif atlas == "UI-HUD-CoolDownManager-Bar-BG" then
                 region:GwStripTextures()
             end
@@ -119,7 +119,7 @@ do
 
     function CooldownManagerFunctions:SkinItemFrame(frame)
         if frame.Cooldown then
-            frame.Cooldown:SetSwipeTexture("Interface/AddOns/GW2_UI/textures/uistuff/white")
+            frame.Cooldown:SetSwipeTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
 
             if not frame.Cooldown.isHooked then
                 GW.RegisterCooldown(frame.Cooldown)

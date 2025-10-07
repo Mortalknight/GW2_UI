@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
+                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow.png">
                     <Size x="16" y="32"></Size>
                     <Anchors>
                         <Anchor point="LEFT" x="0"></Anchor>
@@ -24,7 +24,7 @@
         <Size x="49" y="49"></Size>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
+                <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg.png">
                     <Size x="49" y="49"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -41,7 +41,7 @@
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture name="$parentRepair" hidden="true" parentKey="repairIcon" file="Interface/AddOns/GW2_UI/textures/globe/repair">
+                <Texture name="$parentRepair" hidden="true" parentKey="repairIcon" file="Interface/AddOns/GW2_UI/textures/globe/repair.png">
                     <Size x="20" y="20"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -59,7 +59,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg.png">
                     <Size x="256" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -91,7 +91,7 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture  parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\tabicon_character">
+                <Texture  parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\tabicon_character.png">
                     <Size x="64" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER"  relativePoint="CENTER"></Anchor>
@@ -109,7 +109,7 @@
         </Anchors>
         <Layers>
             <Layer level="OVERLAY">
-                <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\statsicon">
+                <Texture name="$parentIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\statsicon.png">
                     <Size x="35" y="35"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT"></Anchor>
@@ -143,10 +143,10 @@
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
         </Anchors>
-        <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
+        <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg.png"></NormalTexture>
         <Layers>
             <Layer textureSubLevel="OVERLAY">
-                <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
+                <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover.png" hidden="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
@@ -154,7 +154,7 @@
                 </Texture>
             </Layer>
             <Layer>
-                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
+                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\character\menu-arrow.png">
                     <Size x="10" y="20"></Size>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
@@ -167,7 +167,7 @@
     <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButtonNoOutline" virtual="true">
         <Layers>
             <Layer level="OVERLAY" textureSubLevel="8">
-                <Texture parentKey="backarrow" file="Interface\AddOns\GW2_UI\textures\character\backicon">
+                <Texture parentKey="backarrow" file="Interface\AddOns\GW2_UI\textures\character\backicon.png">
                     <Size x="32" y="32"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
@@ -180,7 +180,7 @@
     <Button name="GwCharacterMenuBlank" inherits="GwStandardButtonNoOutline" text="Not yet loaded" virtual="true">
         <Scripts>
             <OnLoad>
-                self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+                self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover.png")
                 self.limitHoverStripAmount = 1
                 self:ClearNormalTexture()
                 local fontString = self:GetFontString()
@@ -240,8 +240,8 @@
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
         </Anchors>
-        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
-        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png"></NormalTexture>
+        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png"></CheckedTexture>
     </CheckButton>
 
     <Frame name="GwPetPaperdoll" inherits="SecureHandlerBaseTemplate" virtual="true">
@@ -251,7 +251,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg-pet">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg-pet.png">
                     <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
@@ -259,7 +259,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="classIcon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\character\pet-happiness">
+                <Texture parentKey="classIcon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\character\pet-happiness.png">
                     <Size x="64" y="64"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-145" y="-45"></Anchor>
@@ -317,10 +317,10 @@
                         <Anchors>
                             <Anchor point="BOTTOM" relativePoint="BOTTOM"  x="0" y="40"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar"/>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar.png"/>
                         <Layers>
                             <Layer level="BACKGROUND">
-                                <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar-bg">
+                                <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar-bg.png">
                                     <Anchors>
                                     <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="-2" y="2"></Anchor>
                                     <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="2" y="-2"></Anchor>
@@ -328,7 +328,7 @@
                             </Texture>
                         </Layer>
                             <Layer level="ARTWORK">
-                                <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\uistuff\statusbar-spark-white">
+                                <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\uistuff\statusbar-spark-white.png">
                                     <Size x="10" y="4"></Size>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -371,7 +371,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\character\statsbg">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\character\statsbg.png">
                             <Size x="256" y="512"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -423,7 +423,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                     <Size x="608" y="621"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -459,7 +459,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                     <Size x="608" y="621"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -495,7 +495,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                     <Size x="608" y="621"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -503,7 +503,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="classIcon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                <Texture parentKey="classIcon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\party\classicons.png">
                     <Size x="50" y="50"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-145" y="-45"></Anchor>
@@ -567,7 +567,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\character\statsbg">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\character\statsbg.png">
                             <Size x="256" y="512"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -586,7 +586,7 @@
                 <Scripts>
                     <OnLoad>
                         self.header:SetFont(DAMAGE_TEXT_FONT, 14, "")
-                        self.header:SetText("|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:1|t " .. STAT_CATEGORY_ATTRIBUTES)
+                        self.header:SetText("|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer.png:12:12:0:1|t " .. STAT_CATEGORY_ATTRIBUTES)
                         self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
                         self:RegisterEvent("CHARACTER_POINTS_CHANGED")
@@ -657,25 +657,25 @@
         <Size x="853" y="627"></Size>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg.png">
                     <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader">
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader.png">
                     <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader-right">
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader-right.png">
                     <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                    <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
+                    <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel.png">
                     <Size x="40" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="20" />
@@ -684,13 +684,13 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture name="$parentLeft" parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon">
+                <Texture name="$parentLeft" parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon.png">
                     <Size x="84" y="84"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPLEFT" x="18" y="-22" />
                     </Anchors>
                 </Texture>
-                <Texture  file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
+                <Texture  file="Interface\AddOns\GW2_UI\textures\bag\bottom-right.png">
                     <Size x="128" y="128"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
@@ -721,7 +721,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/uistuff/resize">
+                        <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/uistuff/resize.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -735,9 +735,9 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface\AddOns\GW2_UI\textures\uistuff\window-close-button-normal"/>
-                <PushedTexture file="Interface\AddOns\GW2_UI\textures\uistuff\window-close-button-hover"/>
-                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\uistuff\window-close-button-hover"/>
+                <NormalTexture file="Interface\AddOns\GW2_UI\textures\uistuff\window-close-button-normal.png"/>
+                <PushedTexture file="Interface\AddOns\GW2_UI\textures\uistuff\window-close-button-hover.png"/>
+                <HighlightTexture file="Interface\AddOns\GW2_UI\textures\uistuff\window-close-button-hover.png"/>
                 <NormalFont style="ChatBubbleFont"/>
                 <HighlightFont style="ChatBubbleFont"/>
             </Button>

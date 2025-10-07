@@ -368,7 +368,7 @@ function GwUnitFrameMixin:UnitFrameData(lvl)
     local name = UnitName(self.unit)
 
     if UnitIsGroupLeader(self.unit) then
-        name = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:18:18|t" .. name
+        name = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:18:18|t" .. name
     end
 
     self.nameString:SetText(name)
@@ -482,7 +482,7 @@ function GwUnitFrameMixin:UpdateCastValues()
         barTexture = GW.CASTINGBAR_TEXTURES.GREEN.NORMAL
     end
 
-    self.castingbarNormal.internalBar:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barTexture)
+    self.castingbarNormal.internalBar:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barTexture .. ".png")
 
     local isChargeSpell = numStages and numStages > 0 or false
 

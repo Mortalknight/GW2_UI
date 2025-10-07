@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg.png">
                     <Size x="530" y="610"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="-7"/>

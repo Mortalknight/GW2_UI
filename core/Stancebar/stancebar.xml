@@ -3,8 +3,8 @@
 
    <Button name="GwStanceBarButton" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" virtual="true">
         <Size x="30" y="30"></Size>
-        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/stance-icon"/>
-        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/stance-icon"/>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/stance-icon.png"/>
+        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/stance-icon.png"/>
         <Frames>
             <Frame parentKey="container" protected="true" hidden="true">
                 <Size x="35" y="35"/>

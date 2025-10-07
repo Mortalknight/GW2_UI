@@ -6,7 +6,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="1">
-                <Texture file="Interface/AddOns/GW2_UI/textures/questview/border">
+                <Texture file="Interface/AddOns/GW2_UI/textures/questview/border.png">
                     <Size x="1024" y="512"></Size>
                     <Anchors>
                         <Anchor point="center" x="0" y="0" />
@@ -22,7 +22,7 @@
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="3">
-                <Texture file="Interface/AddOns/GW2_UI/textures/questview/overlay_top">
+                <Texture file="Interface/AddOns/GW2_UI/textures/questview/overlay_top.png">
                     <Size x="950" y="237"></Size>
                     <Anchors>
                         <Anchor point="center" x="0" y="119"/>
@@ -73,7 +73,7 @@
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture file="Interface/AddOns/GW2_UI/textures/questview/overlay_bottom">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/questview/overlay_bottom.png">
                                     <Size x="952" y="475"></Size>
                                     <Anchors>
                                         <Anchor point="bottom" x="0" y="-1"/>

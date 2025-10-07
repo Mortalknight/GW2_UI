@@ -138,20 +138,20 @@ local function updateActionbarBorders(btn)
 end
 
 local function changeFlyoutStyle(self)
-    self.Background.End:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    self.Background.HorizontalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    self.Background.VerticalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    self.Background.Start:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    self.Background.End:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png")
+    self.Background.HorizontalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png")
+    self.Background.VerticalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png")
+    self.Background.Start:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png")
 
     local i = 1
     local btn = _G["SpellFlyoutPopupButton" .. i]
     while btn do
         if btn.NormalTexture then
-            btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
+            btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal.png")
         end
         btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
-        btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+        btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
+        btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
         i = i + 1
         btn = _G["SpellFlyoutPopupButton" .. i]
     end
@@ -461,13 +461,13 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.Border:SetBlendMode("BLEND")
         if isStanceButton then
             btn.Border:Show()
-            btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border")
+            btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border.png")
         else
-            btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+            btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder.png")
         end
     end
     if btn.NormalTexture then
-        btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
+        btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal.png")
     end
 
     if _G[buttonName .. "FloatingBG"] then
@@ -504,7 +504,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
     end
 
     if btn.SpellCastAnimFrame and not btn.gwSpellCastAnimFrameFillMask then
-        btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+        btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder.png")
         btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetVertexColor(0, 0, 0, 0)
 
         -- create our own mask
@@ -512,7 +512,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.gwSpellCastAnimFrameMask = btn.SpellCastAnimFrame.EndBurst:CreateMaskTexture()
         btn.gwSpellCastAnimFrameMask:SetPoint("CENTER", btn.SpellCastAnimFrame.EndBurst, "CENTER", 0, 0)
         btn.gwSpellCastAnimFrameMask:SetTexture(
-            "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg",
+            "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg.png",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -523,7 +523,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.gwSpellCastAnimFrameFillMask = btn.SpellCastAnimFrame.Fill:CreateMaskTexture()
         btn.gwSpellCastAnimFrameFillMask:SetPoint("CENTER", btn.SpellCastAnimFrame.Fill, "CENTER", 0, 0)
         btn.gwSpellCastAnimFrameFillMask:SetTexture(
-            "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg",
+            "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg.png",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -545,7 +545,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.gwInterruptDisplayMask = btn.InterruptDisplay.Highlight:CreateMaskTexture()
         btn.gwInterruptDisplayMask:SetPoint("CENTER", btn.InterruptDisplay.Highlight, "CENTER", 0, 0)
         btn.gwInterruptDisplayMask:SetTexture(
-            "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg",
+            "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg.png",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -553,7 +553,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.InterruptDisplay.Highlight.HighlightTexture:AddMaskTexture(btn.gwInterruptDisplayMask)
 
         btn.InterruptDisplay.Base.Base:SetSize(btnWidth, btnWidth)
-        btn.InterruptDisplay.Base.Base:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+        btn.InterruptDisplay.Base.Base:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder.png")
         btn.InterruptDisplay.Base.Base:SetVertexColor(1, 0, 0)
     end
 
@@ -563,7 +563,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.gwTargetReticleAnimFrameMask = btn.InterruptDisplay.Highlight:CreateMaskTexture()
         btn.gwTargetReticleAnimFrameMask:SetPoint("CENTER", btn.TargetReticleAnimFrame.Highlight, "CENTER", 0, 0)
         btn.gwTargetReticleAnimFrameMask:SetTexture(
-            "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg",
+            "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg.png",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -581,14 +581,14 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.icon:RemoveMaskTexture(btn.IconMask)
     end
 
-    btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
-    btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+    btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
+    btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
 
     if btn.HighlightTexture then
         btn.HighlightTexture:SetSize(btnWidth, btnWidth)
     end
     if btn.SetCheckedTexture then
-        btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+        btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
     end
     btn.CheckedTexture:SetSize(btnWidth, btnWidth)
 

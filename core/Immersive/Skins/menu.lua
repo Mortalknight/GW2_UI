@@ -6,10 +6,10 @@ local function SkinUIDropDownMenu()
         local listFrameName = listFrame:GetName()
         local expandArrow = _G[listFrameName .. "Button" .. index .. "ExpandArrow"];
         if expandArrow then
-            expandArrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-            expandArrow:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-            expandArrow:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-            expandArrow:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+            expandArrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
+            expandArrow:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
+            expandArrow:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
+            expandArrow:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
         end
 
         local Backdrop = _G[listFrameName .. "Backdrop"]
@@ -39,16 +39,16 @@ local function SkinDropDownList()
             local arrow = _G["DropDownList" .. level .. "Button" .. i .. "ExpandArrow"]
             local highlight = _G["DropDownList" .. level .. "Button" .. i .. "Highlight"]
 
-            highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
+            highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")
             highlight:SetBlendMode("BLEND")
             highlight:SetDrawLayer("BACKGROUND")
             highlight:SetAlpha(0.5)
             highlight:GwSetOutside(button, 8)
 
-            check:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked")
+            check:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png")
             check:SetTexCoord(unpack(GW.TexCoords))
             check:SetSize(13, 13)
-            uncheck:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox")
+            uncheck:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
             uncheck:SetTexCoord(unpack(GW.TexCoords))
             uncheck:SetSize(13, 13)
             if not button.backdrop then
@@ -56,7 +56,7 @@ local function SkinDropDownList()
             end
 
             if button.hasArrow then
-                arrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+                arrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png")
             end
 
             if not button.notCheckable then

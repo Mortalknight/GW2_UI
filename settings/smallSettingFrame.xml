@@ -15,7 +15,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/bag/bagbg">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/bag/bagbg.png">
                     <Size x="180" y="160"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
@@ -24,19 +24,19 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader.png">
                     <Size x="180" y="40"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader-right">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader-right.png">
                     <Size x="180" y="32"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel.png">
                     <Size x="16" y="180"/>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -45,7 +45,7 @@
                 </Texture>
             </Layer>
             <Layer textureSubLevel="3">
-                <Texture file="Interface/AddOns/GW2_UI/textures/icons/settingsicon">
+                <Texture file="Interface/AddOns/GW2_UI/textures/icons/settingsicon.png">
                     <Size x="52" y="52"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-7" y="10" />
@@ -60,7 +60,7 @@
                 </FontString>
             </Layer>
             <Layer level="ARTWORK">
-                <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png">
                     <Size x="1" y="285"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="182" y="0"/>
@@ -116,12 +116,12 @@
                                     <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>
                                 </Anchors>
                                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle">
+                                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle.png">
                                     <Size x="12" y="12"/>
                                 </ThumbTexture>
                                 <Layers>
                                     <Layer>
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg">
+                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg.png">
                                             <Anchors>
                                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
@@ -137,7 +137,7 @@
                                 </Anchors>
                                 <Layers>
                                     <Layer level="BACKGROUND">
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                                             <Anchors>
                                                 <Anchor point="TOPLEFT" x="-5" y="3"/>
                                                 <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
@@ -175,12 +175,12 @@
                                     <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>
                                 </Anchors>
                                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle">
+                                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle.png">
                                     <Size x="12" y="12"/>
                                 </ThumbTexture>
                                 <Layers>
                                     <Layer>
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg">
+                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg.png">
                                             <Anchors>
                                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
@@ -196,7 +196,7 @@
                                 </Anchors>
                                 <Layers>
                                     <Layer level="BACKGROUND">
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                                             <Anchors>
                                                 <Anchor point="TOPLEFT" x="-5" y="3"/>
                                                 <Anchor point="BOTTOMRIGHT" x="5" y="-3"/>
@@ -265,7 +265,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="2">
-                        <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                        <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png">
                             <Size x="180" y="2"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="0" y="-5" />
@@ -320,12 +320,12 @@
                                     <Anchor point="TOPLEFT" relativeKey="$parent.showGrid" relativePoint="TOPLEFT" x="0" y="0" />
                                 </Anchors>
                                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle">
+                                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle.png">
                                     <Size x="16" y="16"/>
                                 </ThumbTexture>
                                 <Layers>
                                     <Layer>
-                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg">
+                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg.png">
                                             <Anchors>
                                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>

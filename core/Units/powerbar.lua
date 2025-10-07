@@ -12,7 +12,7 @@ function GwPlayerPowerBarMixin:ResetPowerBarVisuals()
     self.bar.scrollTexture2:SetAlpha(0)
     self.bar.scrollTexture:SetBlendMode("BLEND")
     self.bar.scrollTexture2:SetBlendMode("BLEND")
-    self:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar")
+    self:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
     self.intensity:SetAlpha(0)
     self.intensity2:SetAlpha(0)
     self.runeoverlay:SetAlpha(0)
@@ -160,9 +160,9 @@ function GwPlayerPowerBarMixin:AnimationEnergy(animationProgress)
 end
 
 function GwPlayerPowerBarMixin:SetPowerTypeFocus()
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/ragespark")
-    self.decay:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/focus-intensity")
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/focus")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/ragespark.png")
+    self.decay:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/focus-intensity.png")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/focus.png")
 
     self.onUpdateAnimation = self.AnimationFocus
     self.animationType = GW.BarAnimateTypes.Regenerate
@@ -177,10 +177,10 @@ function GwPlayerPowerBarMixin:SetPowerTypeFocus()
 end
 
 function GwPlayerPowerBarMixin:SetPowerTypeFury()
-  self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/fury-intensity","REPEAT")
-    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/fury-intensity2","REPEAT")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+  self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury.png")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/fury-intensity.png","REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/fury-intensity2.png","REPEAT")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark.png")
     self.animator:SetScript("OnUpdate",function(_,delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
@@ -189,30 +189,30 @@ function GwPlayerPowerBarMixin:SetPowerTypeFury()
 end
 
 function GwPlayerPowerBarMixin:SetPowerTypeRunic()
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity2","REPEAT")
-    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity","REPEAT")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower.png")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity2.png","REPEAT")
+    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity.png","REPEAT")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark.png")
     self.spark:SetAlpha(1)
     self.onUpdateAnimation = self.AnimationRunicPower
     self.animator:SetScript("OnUpdate",function(_,delta) self:ScrollTextureOnUpdate(delta) end)
 end
 
 function GwPlayerPowerBarMixin:SetPowerTypeLunarPower()
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar")
-    self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar-intensity")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar-intensity2","REPEAT")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar.png")
+    self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar-intensity.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark.png")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar-intensity2.png","REPEAT")
     self.scrollTexture:SetAlpha(0.5)
     self.onUpdateAnimation = self.AnimationLunarGlow
     self.animator:SetScript("OnUpdate",function(_,delta) self:ScrollTextureOnUpdate(delta) end)
 end
 
 function GwPlayerPowerBarMixin:SetPowerTypeRage()
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/ragespark")
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/rage")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll", "REPEAT")
-    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2", "REPEAT")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/ragespark.png")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/rage.png")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll.png", "REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2.png", "REPEAT")
     self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
 
     self.onUpdateAnimation = function(self, animationProgress)
@@ -230,29 +230,29 @@ end
 
 function GwPlayerPowerBarMixin:SetPowerTypeEnergy()
     self.spark:SetAlpha(0)
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark")
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/energy")
-    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/energy-intensity","REPEAT")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark.png")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/energy.png")
+    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/energy-intensity.png","REPEAT")
     self.onUpdateAnimation = self.AnimationEnergy
 end
 
 function GwPlayerPowerBarMixin:SetPowerTypeMana()
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/mana")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/manaspark")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/mana.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/manaspark.png")
     self.spark:SetAlpha(1)
 
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/mana-intensity","REPEAT")
-    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/mana-intensity2","REPEAT")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/mana-intensity.png","REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/mana-intensity2.png","REPEAT")
     self.animator:SetScript("OnUpdate",function(_,delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
 end
 function GwPlayerPowerBarMixin:SetPowerTypeInsanity()
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-scroll","REPEAT")
-    self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-intensity")
-    self.intensity2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-intensity2")
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanityspark")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-scroll.png","REPEAT")
+    self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-intensity.png")
+    self.intensity2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-intensity2.png")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanityspark.png")
     self.onUpdateAnimation = self.AnimationIntensityGlow
     self.animator:SetScript("OnUpdate",function(_,delta) self:ScrollTextureOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(1)

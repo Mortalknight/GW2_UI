@@ -45,8 +45,8 @@ local function hook_NotifyDialogShow(_, dialog)
             dialog.MinimizeButton:SetSize(16, 16)
 
             dialog.MinimizeButton.tex = dialog.MinimizeButton:CreateTexture(nil, "OVERLAY")
-            dialog.MinimizeButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
-            dialog.MinimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button", "ADD")
+            dialog.MinimizeButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png")
+            dialog.MinimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png", "ADD")
         end
         dialog.isSkinned = true
     end
@@ -55,14 +55,14 @@ AFP("hook_NotifyDialogShow", hook_NotifyDialogShow)
 
 local function updateCollapse(self, collapsed)
     if collapsed then
-        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
         self.Icon:SetRotation(1.570796325)
-        self:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+        self:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
         self:GetHighlightTexture():SetRotation(1.570796325)
     else
-        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
         self.Icon:SetRotation(0)
-        self:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+        self:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
         self:GetHighlightTexture():SetRotation(0)
     end
 end
@@ -73,8 +73,8 @@ local function hook_QuestLogQuests_Update()
             if not button.IsSkinned then
                 button:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
                 button.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-                button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
-                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+                button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
                 button:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
 
                 if button.CollapseButton then
@@ -93,9 +93,9 @@ local function hook_QuestLogQuests_Update()
                 hooksecurefunc(button.Checkbox.CheckMark, "SetShown", function(self, isTracked)
                     self:Show()
                     if isTracked then
-                        self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked")
+                        self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png")
                     else
-                        self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox")
+                        self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
                     end
                 end)
             end
@@ -109,8 +109,8 @@ local function hook_QuestLogQuests_Update()
             header.minimumCollapsedHeight = 25
             header.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
             header.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-            header.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
-            header.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+            header.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+            header.Highlight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
             header.Highlight:SetColorTexture(1, 0.93, 0.73, 0.25)
             hooksecurefunc(header.CollapseButton, "UpdateCollapsedState", updateCollapse)
             header.IsSkinned = true
@@ -131,13 +131,13 @@ AFP("mover_OnDragStop", mover_OnDragStop)
 
 local EventsFrameHookedElements = {}
 local function EventsFrameHighlightTexture(element)
-    element:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+    element:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
     element:SetVertexColor(0.8, 0.8, 0.8, 0.8)
 end
 
 local function EventsFrameBackgroundNormal(element, texture)
-    if texture ~= "Interface/AddOns/GW2_UI/textures/character/menu-hover" then
-        element:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+    if texture ~= "Interface/AddOns/GW2_UI/textures/character/menu-hover.png" then
+        element:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
         element:SetVertexColor(0.8, 0.8, 0.8, 0.8)
 
         local parent = element:GetParent()
@@ -153,7 +153,7 @@ local EventsFrameFunctions = {
             element.Background:GwStripTextures()
             element.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
             element.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-            element.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+            element.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
         end
 
         element.Label:SetTextColor(1, 1, 1)
@@ -169,7 +169,7 @@ local EventsFrameFunctions = {
             element.Background:GwStripTextures()
             element.Background:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly, true)
             element.Background.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-            element.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+            element.Background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
         end
 
         element.Label:SetTextColor(1, 1, 1)
@@ -197,7 +197,7 @@ end
 
 local function worldMapSkin()
     WorldMapFrame:GwStripTextures()
-    GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {QuestMapFrame}, nil, false, true)
+    GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {QuestMapFrame}, nil, false, true)
     WorldMapFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     WorldMapFrame.BorderFrame:GwStripTextures()
@@ -211,7 +211,7 @@ local function worldMapSkin()
     local navBarTex = WorldMapFrame.NavBar:CreateTexture(nil, "BACKGROUND", nil, 0)
     navBarTex:SetPoint("TOPLEFT", WorldMapFrame.NavBar, "TOPLEFT", 0,20)
     navBarTex:SetPoint("BOTTOMRIGHT", WorldMapFrame.NavBar, "BOTTOMRIGHT", 0, -10)
-    navBarTex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
+    navBarTex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header.png")
     WorldMapFrame.NavBar.tex = navBarTex
 
     WorldMapFrame.ScrollContainer:GwCreateBackdrop()
@@ -231,7 +231,7 @@ local function worldMapSkin()
     tex:SetPoint("TOP", WorldMapFrame.NavBar.homeButton, "TOP")
     tex:SetPoint("BOTTOM", WorldMapFrame.NavBar.homeButton, "BOTTOM")
     tex:SetPoint("RIGHT", WorldMapFrame.NavBar.homeButton, "RIGHT")
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
     WorldMapFrame.NavBar.homeButton.tex = tex
     WorldMapFrame.NavBar.homeButton.tex:SetAlpha(1)
 
@@ -354,7 +354,7 @@ local function worldMapSkin()
 
     -- player pin
     for pin in WorldMapFrame:EnumeratePinsByTemplate("GroupMembersPinTemplate") do
-        pin:SetPinTexture("player", "Interface/AddOns/GW2_UI/textures/icons/player_arrow")
+        pin:SetPinTexture("player", "Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
         pin.dataProvider:GetUnitPinSizesTable().player = 34
         pin:SynchronizePinSizes()
         break

@@ -65,7 +65,7 @@ end
 
 local function Construct_HealthBar(frame)
     local healthPredictionbar = GW.CreateAnimatedStatusBar('$parent_HealthPredictionBar', frame, "GwStatusBarBarNoAnchorNoSize", false)
-    healthPredictionbar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    healthPredictionbar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     healthPredictionbar:SetPoint('TOPLEFT', frame, "TOPLEFT")
     healthPredictionbar:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
     healthPredictionbar:SetMinMaxValues(0, 1)
@@ -75,7 +75,7 @@ local function Construct_HealthBar(frame)
     healthPredictionbar:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
     local absorbBar = GW.CreateAnimatedStatusBar('$parent_AbsorbBar', healthPredictionbar, "GwStatusBarBarNoAnchorNoSize", true)
-    absorbBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb")
+    absorbBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
     absorbBar:SetPoint('TOPLEFT', healthPredictionbar, "TOPLEFT")
     absorbBar:SetPoint('BOTTOMRIGHT', healthPredictionbar, 'BOTTOMRIGHT')
     absorbBar:SetMinMaxValues(0, 1)
@@ -91,7 +91,7 @@ local function Construct_HealthBar(frame)
     health.strechMask = true
 
     local healAbsorbBar = GW.CreateAnimatedStatusBar('$parent_AntiHealBar', health, "GwStatusBarBarNoAnchorNoSize", true)
-    healAbsorbBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal")
+    healAbsorbBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
     healAbsorbBar:SetPoint('TOPLEFT', health, "TOPLEFT")
     healAbsorbBar:SetPoint('BOTTOMRIGHT', health, 'BOTTOMRIGHT')
     healAbsorbBar:SetMinMaxValues(0, 1)
@@ -99,7 +99,7 @@ local function Construct_HealthBar(frame)
     healAbsorbBar.strechMask = true
 
     local overAbsorb = GW.CreateAnimatedStatusBar('$parent_AbsorbOverlayHealBar', healAbsorbBar, "GwStatusBarBarNoAnchorNoSize", true)
-    overAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb")
+    overAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
     overAbsorb:SetPoint('TOPLEFT', healAbsorbBar, "TOPLEFT")
     overAbsorb:SetPoint('BOTTOMRIGHT', healAbsorbBar, 'BOTTOMRIGHT')
     overAbsorb:SetMinMaxValues(0, 1)
@@ -119,14 +119,14 @@ local function Construct_HealthBar(frame)
     health.bg = frame:CreateTexture(nil, 'BORDER')
     health.bg:SetPoint("TOPLEFT", 0, 0)
     health.bg:SetPoint("BOTTOMRIGHT", 0, 0)
-    health.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    health.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     health.bg:SetVertexColor(0, 0, 0, 1)
     health.bg.multiplier = 1
 
     health.highlightBorder = frame:CreateTexture(nil, 'BORDER', nil, -7)
     health.highlightBorder:SetPoint("TOPLEFT", -1, 1)
     health.highlightBorder:SetPoint("BOTTOMRIGHT", 1, -1)
-    health.highlightBorder:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    health.highlightBorder:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     health.highlightBorder:SetVertexColor(0, 0, 0, 1)
     health.highlightBorder.multiplier = 1
 

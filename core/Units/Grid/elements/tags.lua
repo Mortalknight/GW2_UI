@@ -18,7 +18,7 @@ local function Create_Tags()
         local setting = stringtoboolean[...]
         if not setting then return "" end
         if( UnitIsGroupLeader(unit)) then
-            return "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t "
+            return "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:0:0:0:-2:64:64:4:60:4:60|t "
         end
     end)
 
@@ -26,7 +26,7 @@ local function Create_Tags()
         local setting = stringtoboolean[...]
         if not setting then return "" end
         if( UnitIsGroupAssistant(unit)) then
-            return"|TInterface/AddOns/GW2_UI/textures/party/icon-assist:0:0:0:-2:64:64:4:60:4:60|t "
+            return"|TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:0:0:0:-2:64:64:4:60:4:60|t "
         end
     end)
 
@@ -64,9 +64,9 @@ local function Create_Tags()
             local raidName, _, _, _, _, _, _, _, _, role2 = GetRaidRosterInfo(i)
             if( raidName == name ) then
                 if role2 == "MAINTANK" then
-                    return "|TInterface/AddOns/GW2_UI/textures/party/icon-maintank:15:15:0:-2|t "
+                    return "|TInterface/AddOns/GW2_UI/textures/party/icon-maintank.png:15:15:0:-2|t "
                 elseif role2 == "MAINASSIST" then
-                    return "|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist:15:15:0:-1|t "
+                    return "|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist.png:15:15:0:-1|t "
                 end
             end
         end

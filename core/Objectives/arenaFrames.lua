@@ -12,8 +12,8 @@ local arenaFrames = {}
 local arenaPrepFrames = {}
 
 local FractionIcon = {
-    Alliance = "|TInterface/AddOns/GW2_UI/textures/battleground/Alliance:16:16:0:0|t ",
-    Horde    = "|TInterface/AddOns/GW2_UI/textures/battleground/Horde:16:16:0:0|t ",
+    Alliance = "|TInterface/AddOns/GW2_UI/textures/battleground/alliance.png:16:16:0:0|t ",
+    Horde    = "|TInterface/AddOns/GW2_UI/textures/battleground/horde.png:16:16:0:0|t ",
     NONE     = ""
 }
 
@@ -211,7 +211,7 @@ function GwObjectivesArenaContainerMixin:RegisterFrame(i)
     arenaFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
     arenaFrame.name:SetShadowOffset(1, -1)
     arenaFrame.marker:Hide()
-    arenaFrame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
+    arenaFrame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons.png")
 
     arenaFrame.power.value:Hide()
 

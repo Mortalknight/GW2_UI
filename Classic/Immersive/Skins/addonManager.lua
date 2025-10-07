@@ -5,7 +5,7 @@ local function LoadAddonListSkin()
     local AddonList = _G.AddonList
     GW.HandlePortraitFrame(AddonList)
 
-    GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {AddonListScrollFrame}, nil, nil, true)
+    GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {AddonListScrollFrame}, nil, nil, true)
 
     _G.AddonListBg:Hide()
     AddonList.TitleBg:Hide()

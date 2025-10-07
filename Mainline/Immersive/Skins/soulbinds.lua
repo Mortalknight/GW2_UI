@@ -6,7 +6,7 @@ local function ApplySoulbindsSkin()
 	SoulbindViewer:GwStripTextures()
 	local tex = SoulbindViewer:CreateTexture(nil, "BACKGROUND", nil, -7)
 	tex:SetPoint("TOP", SoulbindViewer, "TOP", 0, 25)
-	tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+	tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
 	local w, h = SoulbindViewer:GetSize()
 	tex:SetSize(w + 50, h + 50)
 	SoulbindViewer.tex = tex

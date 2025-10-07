@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
+                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow.png">
                     <Size x="16" y="32"></Size>
                     <Anchors>
                         <Anchor point="LEFT" x="0"></Anchor>
@@ -25,7 +25,7 @@
         </Anchors>
         <Layers>
             <Layer level="OVERLAY">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\statsicon">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\statsicon.png">
                     <Size x="30" y="30"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT"></Anchor>
@@ -52,15 +52,15 @@
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
         </Anchors>
-        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
-        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png"></NormalTexture>
+        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png"></CheckedTexture>
     </CheckButton>
 
     <ItemButton name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp, RightButtonUp" mixin="ContainerFrameItemButtonMixin" inherits="SecureHandlerClickTemplate,PaperDollAzeriteItemOverlayTemplate" virtual="true">
         <Size x="49" y="49"></Size>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
+                <Texture parentKey="BACKGROUND" file="Interface\AddOns\GW2_UI\textures\character\slot-bg.png">
                     <Size x="49" y="49"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -77,7 +77,7 @@
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="2"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture hidden="true" parentKey="repairIcon" file="Interface/AddOns/GW2_UI/textures/globe/repair">
+                <Texture hidden="true" parentKey="repairIcon" file="Interface/AddOns/GW2_UI/textures/globe/repair.png">
                     <Size x="20" y="20"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -94,7 +94,7 @@
         <Size x="220" y="49"/>
         <Layers>
             <Layer level="OVERLAY">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\slot-bg">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\slot-bg.png">
                     <Size x="49" y="49"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -103,7 +103,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK">
-                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/character/menu-bg">
+                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/character/menu-bg.png">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
@@ -164,7 +164,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-up.png">
                             <Size x="20" y="20"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -199,7 +199,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg.png">
                     <Size x="256" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -224,7 +224,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg.png">
                     <Size x="256" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-8" y="7"/>
@@ -267,7 +267,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg.png">
                     <Size x="256" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="7"></Anchor>
@@ -292,7 +292,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                     <Size x="608" y="621"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -300,7 +300,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="classIcon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                <Texture parentKey="classIcon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\party\classicons.png">
                     <Size x="50" y="50"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-145" y="-45"></Anchor>
@@ -343,7 +343,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\character\statsbg">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\character\statsbg.png">
                             <Size x="256" y="512"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>

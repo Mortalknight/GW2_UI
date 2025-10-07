@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\talents_header.png">
                     <Size x="512" y="32"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
@@ -33,7 +33,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-2">
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\talent_background">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\talent_background.png">
                     <Size x="255" y="512"></Size>
                     <Color r="1" g="1" b="1" a="1"></Color>
                     <Anchors>
@@ -50,7 +50,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive.png">
                             <Size x="85" y="128"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
@@ -58,7 +58,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\tabicon_general">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\tabicon_general.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
@@ -74,7 +74,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg.png">
                             <Size x="85" y="128"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
@@ -82,7 +82,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\classicons.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
@@ -99,7 +99,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg.png">
                             <Size x="85" y="128"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
@@ -107,7 +107,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/character/statsicon">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/character/statsicon.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
@@ -124,7 +124,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive.png">
                             <Size x="85" y="128"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
@@ -132,7 +132,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\tabicon_pvp">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\tabicon_pvp.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
@@ -148,7 +148,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spellbooktab_bg_inactive.png">
                             <Size x="80" y="128"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
@@ -156,7 +156,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\tabicon_pet">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\talents\tabicon_pet.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
@@ -182,7 +182,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\lock">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\lock.png">
                     <Size x="48" y="48"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" x="0" y="-50"></Anchor>
@@ -213,7 +213,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\warmode_off">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\warmode_off.png">
                             <Size x="245" y="61"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -229,7 +229,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spell-sep">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spell-sep.png">
                             <Size x="254" y="32"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -262,7 +262,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spell-sep">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\talents\spell-sep.png">
                             <Size x="254" y="32"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -286,7 +286,7 @@
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border.png">
                     <Size x="50" y="50"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -303,7 +303,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow" parentKey="arrow">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow.png" parentKey="arrow">
                     <Size x="16" y="32"></Size>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="5"></Anchor>
@@ -352,7 +352,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\autocast" parentKey="autocast">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\autocast.png" parentKey="autocast">
                     <Size x="55" y="55"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER" x="0"></Anchor>
@@ -360,7 +360,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight.png" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -402,7 +402,7 @@
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline.png">
                     <Size x="50" y="50"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -443,7 +443,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\passive_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\passive_highlight.png" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -479,7 +479,7 @@
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border.png">
                     <Size x="50" y="50"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -511,7 +511,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight.png" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -532,7 +532,7 @@
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline.png">
                     <Size x="50" y="50"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -549,7 +549,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\passive_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\passive_highlight.png" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -564,7 +564,7 @@
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border.png">
                     <Size x="50" y="50"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -572,7 +572,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon">
+                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon.png">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -588,7 +588,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight.png" parentKey="highlight">
                     <Size x="40" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>

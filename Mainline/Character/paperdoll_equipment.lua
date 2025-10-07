@@ -256,10 +256,10 @@ local function actionButtonGlobalStyle(self)
     self:GetNormalTexture():SetSize(self:GetSize())
     self:GetNormalTexture():Hide()
     self:GetNormalTexture():SetTexture(nil)
-    self.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    self.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
 
-    self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
-    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
+    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     self:GetHighlightTexture():SetBlendMode("ADD")
     self:GetHighlightTexture():SetAlpha(0.33)
 
@@ -488,12 +488,12 @@ end
 GW.AddForProfiling("paperdoll_equipment", "updateBagItemListAll", updateBagItemListAll)
 
 local function setStatIcon(self, stat)
-    local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon"
+    local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon.png"
     if STATS_ICONS[stat] then
         -- If mastery we use need to use class icon
         if stat == "MASTERY" then
             SetClassIcon(self.icon, GW.myClassID)
-            newTexture = "Interface/AddOns/GW2_UI/textures/party/classicons"
+            newTexture = "Interface/AddOns/GW2_UI/textures/party/classicons.png"
         else
             self.icon:SetTexCoord(STATS_ICONS[stat].l, STATS_ICONS[stat].r, STATS_ICONS[stat].t, STATS_ICONS[stat].b)
         end
@@ -582,7 +582,7 @@ local function updateStats(self)
     durabilityFrame:Show()
     durabilityFrame.stat = "DURABILITY"
     durabilityFrame.onEnterFunc = nil
-    durabilityFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
+    durabilityFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair.png")
     durabilityFrame.icon:SetTexCoord(0, 1, 0, 0.5)
     durabilityFrame.icon:SetDesaturated(true)
     durabilityFrame:SetScript("OnEnter", GW.DurabilityTooltip)
@@ -718,7 +718,7 @@ local function CreateItemSetGlow(slot, size, parent)
     slot.itemSetBorderShimmer:SetFrameLevel(slot:GetFrameLevel() + 2)
     slot.itemSetBorderShimmer:SetClipsChildren(true)
 
-    local shimmerTexPath = "Interface/AddOns/GW2_UI/textures/uistuff/glow"
+    local shimmerTexPath = "Interface/AddOns/GW2_UI/textures/uistuff/glow.png"
     local shimmerA = slot.itemSetBorderShimmer:CreateTexture(nil, "OVERLAY")
     shimmerA:SetTexture(shimmerTexPath)
     shimmerA:SetSize(size, size)
@@ -737,7 +737,7 @@ local function CreateItemSetGlow(slot, size, parent)
     shimmerB:SetScale(4)
 
     slot.itemSetBorderShimmer.Lightning = slot.itemSetBorderShimmer:CreateTexture(nil, "OVERLAY")
-    slot.itemSetBorderShimmer.Lightning:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/sparks")
+    slot.itemSetBorderShimmer.Lightning:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/sparks.png")
     slot.itemSetBorderShimmer.Lightning:SetPoint("TOPLEFT", slot.itemSetBorderShimmer, "TOPLEFT", -size, size)
     slot.itemSetBorderShimmer.Lightning:SetPoint("BOTTOMRIGHT", slot.itemSetBorderShimmer, "BOTTOMRIGHT", size, -size)
     slot.itemSetBorderShimmer.Lightning:SetBlendMode("ADD")
@@ -851,7 +851,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     setupTexture(slot.icon, slot, nil, {0.07, 0.93, 0.07, 0.93})
     slot.icon:SetAlpha(0.9)
 
-    setupTexture(slot.IconBorder, slot, nil, "Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    setupTexture(slot.IconBorder, slot, nil, "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     slot.IconBorder:SetParent(slot)
 
     -- Remove normal texture
@@ -863,12 +863,12 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     GW.RegisterCooldown(_G[slot:GetName()..'Cooldown'])
 
     local high = slot:GetHighlightTexture()
-    setupTexture(high, slot, nil, "Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    setupTexture(high, slot, nil, "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
     slot.repairIcon = slot:CreateTexture(nil, "OVERLAY")
-    setupTexture(slot.repairIcon, slot, {"BOTTOMRIGHT", slot, "BOTTOMRIGHT"}, "Interface/AddOns/GW2_UI/textures/globe/repair", {0, 1, 0.5, 1}, {20, 20})
+    setupTexture(slot.repairIcon, slot, {"BOTTOMRIGHT", slot, "BOTTOMRIGHT"}, "Interface/AddOns/GW2_UI/textures/globe/repair.png", {0, 1, 0.5, 1}, {20, 20})
 
     CreateItemSetGlow(slot, size, parent)
 
@@ -891,7 +891,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.overlayButton = CreateFrame("Button", nil, slot)
     slot.overlayButton:SetAllPoints()
     slot.overlayButton:Hide()
-    slot.overlayButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    slot.overlayButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     slot.overlayButton:GetHighlightTexture():SetBlendMode("ADD")
     slot.overlayButton:GetHighlightTexture():SetAlpha(0.33)
     slot.overlayButton.isEquipmentSelected = false
@@ -918,7 +918,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
     hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
     hooksecurefunc(slot.IconBorder, "SetVertexColor", function(self)
-        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     end)
 
     slot:HookScript("OnShow", CorruptionIcon)
@@ -1123,7 +1123,7 @@ local function LoadPDBagList(fmMenu, parent)
         if not button.IsGW2Hooked then return end
         local textureName = GetInventoryItemTexture("player", button:GetID())
         if not textureName then
-            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg")
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg.png")
             button.icon:SetTexCoord(unpack(PlayerSlots[button:GetName()]))
         else
             button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)

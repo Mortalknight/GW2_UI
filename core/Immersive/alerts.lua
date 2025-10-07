@@ -110,7 +110,7 @@ local VignetteBlackListIDs = {
 }
 
 local constBackdropAlertFrame = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-bg",
+    bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-bg.png",
     edgeFile = "",
     tile = false,
     tileSize = 64,
@@ -120,7 +120,7 @@ local constBackdropAlertFrame = {
 GW.BackdropTemplates.AlertFrame = constBackdropAlertFrame
 
 local constBackdropLevelUpAlertFrame = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-levelup",
+    bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-levelup.png",
     edgeFile = "",
     tile = false,
     tileSize = 64,
@@ -163,14 +163,14 @@ local function AddFlare(frame, flarFrame)
 
     if not flarFrame.flare then
         flarFrame.flare = flarFrame:CreateTexture(nil, "BACKGROUND")
-        flarFrame.flare:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-up-flare")
+        flarFrame.flare:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-up-flare.png")
         flarFrame.flare:SetPoint("CENTER")
         flarFrame.flare:SetSize(120, 120)
         flarFrame.flare:Show()
     end
     if not flarFrame.flare2 then
         flarFrame.flare2 = flarFrame:CreateTexture(nil, "BACKGROUND")
-        flarFrame.flare2:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-up-flare")
+        flarFrame.flare2:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-up-flare.png")
         flarFrame.flare2:SetPoint("CENTER")
         flarFrame.flare2:SetSize(120, 120)
         flarFrame.flare2:Show()
@@ -234,7 +234,7 @@ local function skinAchievementAlert(frame)
         frame.Icon.Texture.b:SetAllPoints(frame.Icon.Texture)
         frame.Icon.Texture:SetParent(frame.Icon.Texture.b)
         frame.Icon.iconBorder = frame.Icon.Texture.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.Texture.b)
     end
 
@@ -272,7 +272,7 @@ local function skinCriteriaAlert(frame)
         frame.Icon.Texture.b:SetAllPoints(frame.Icon.Texture)
         frame.Icon.Texture:SetParent(frame.Icon.Texture.b)
         frame.Icon.iconBorder = frame.Icon.Texture.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.Texture.b)
     end
     frame.Icon.Texture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -312,7 +312,7 @@ local function skinWorldQuestCompleteAlert(frame)
         frame.QuestTexture.b:SetAllPoints(frame.QuestTexture)
         frame.QuestTexture:SetParent(frame.QuestTexture.b)
         frame.QuestTexture.iconBorder = frame.QuestTexture.b:CreateTexture(nil, "ARTWORK")
-        frame.QuestTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.QuestTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.QuestTexture.iconBorder:SetAllPoints(frame.QuestTexture.b)
 
         --flare
@@ -363,7 +363,7 @@ local function skinDungeonCompletionAlert(frame)
         frame.dungeonTexture.b:SetAllPoints(frame.dungeonTexture)
         frame.dungeonTexture:SetParent(frame.dungeonTexture.b)
         frame.dungeonTexture.iconBorder = frame.dungeonTexture.b:CreateTexture(nil, "ARTWORK")
-        frame.dungeonTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.dungeonTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.dungeonTexture.iconBorder:SetAllPoints(frame.dungeonTexture.b)
     end
 
@@ -410,7 +410,7 @@ local function skinGuildChallengeAlert(frame)
         EmblemIcon.b:SetPoint("BOTTOMRIGHT", EmblemIcon, "BOTTOMRIGHT", 3, -2)
         EmblemIcon:SetParent(EmblemIcon.b)
         EmblemIcon.iconBorder = EmblemIcon.b:CreateTexture(nil, "ARTWORK")
-        EmblemIcon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        EmblemIcon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         EmblemIcon.iconBorder:SetAllPoints(EmblemIcon.b)
     end
     SetLargeGuildTabardTextures("player", EmblemIcon)
@@ -437,7 +437,7 @@ local function skinHonorAwardedAlert(frame)
         frame.Icon.b:SetAllPoints(frame.Icon)
         frame.Icon:SetParent(frame.Icon.b)
         frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
     end
 
@@ -471,7 +471,7 @@ local function skinLegendaryItemAlert(frame, itemLink)
         frame.Icon.b:SetAllPoints(frame.Icon)
         frame.Icon:SetParent(frame.Icon.b)
         frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
         --Create Backdrop
         frame:GwCreateBackdrop(constBackdropAlertFrame)
@@ -580,7 +580,7 @@ local function skinMoneyWonAlert(frame)
         frame.Icon.b:SetAllPoints(frame.Icon)
         frame.Icon:SetParent(frame.Icon.b)
         frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
     end
 
@@ -625,7 +625,7 @@ local function skinEntitlementDeliveredAlert(frame)
         frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
         frame.Icon:SetParent(frame.Icon.b)
         frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
     end
 
@@ -664,7 +664,7 @@ local function skinRafRewardDeliveredAlert(frame)
         frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
         frame.Icon:SetParent(frame.Icon.b)
         frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
     end
 
@@ -731,7 +731,7 @@ local function skinNewRecipeLearnedAlert(frame)
         frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
         frame.Icon:SetParent(frame.Icon.b)
         frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
     end
 
@@ -764,7 +764,7 @@ local function skinNewPetAlert(frame)
         frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
         frame.Icon:SetParent(frame.Icon.b)
         frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
     end
 
@@ -806,7 +806,7 @@ local function skinInvasionAlert(frame)
                     icon.b:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 2, -2)
                     icon:SetParent(icon.b)
                     icon.iconBorder = icon.b:CreateTexture(nil, "ARTWORK")
-                    icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+                    icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
                     icon.iconBorder:SetAllPoints(icon.b)
                     icon:SetDrawLayer("OVERLAY")
                     icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -861,7 +861,7 @@ local function skinScenarioAlert(frame)
         frame.dungeonTexture.b:SetPoint("BOTTOMRIGHT", frame.dungeonTexture, "BOTTOMRIGHT", 2, -2)
         frame.dungeonTexture:SetParent(frame.dungeonTexture.b)
         frame.dungeonTexture.iconBorder = frame.dungeonTexture.b:CreateTexture(nil, "ARTWORK")
-        frame.dungeonTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.dungeonTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.dungeonTexture.iconBorder:SetAllPoints(frame.dungeonTexture.b)
     end
 
@@ -963,7 +963,7 @@ local function skinGarrisonTalentAlert(frame)
         frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
         frame.Icon:SetParent(frame.Icon.b)
         frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
         --Create Backdrop
         frame:GwCreateBackdrop(constBackdropAlertFrame)
@@ -993,7 +993,7 @@ local function skinGarrisonBuildingAlert(frame)
         frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
         frame.Icon:SetParent(frame.Icon.b)
         frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
 
         frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
@@ -1031,7 +1031,7 @@ local function skinGarrisonMissionAlert(frame)
         frame.MissionType.b:SetPoint("BOTTOMRIGHT", frame.MissionType, "BOTTOMRIGHT", 2, -2)
         frame.MissionType:SetParent(frame.MissionType.b)
         frame.MissionType.iconBorder = frame.MissionType.b:CreateTexture(nil, "ARTWORK")
-        frame.MissionType.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.MissionType.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.MissionType.iconBorder:SetAllPoints(frame.MissionType.b)
 
         frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
@@ -1067,7 +1067,7 @@ local function skinGarrisonShipMissionAlert(frame)
         frame.MissionType.b:SetPoint("BOTTOMRIGHT", frame.MissionType, "BOTTOMRIGHT", 2, -2)
         frame.MissionType:SetParent(frame.MissionType.b)
         frame.MissionType.iconBorder = frame.MissionType.b:CreateTexture(nil, "ARTWORK")
-        frame.MissionType.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.MissionType.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.MissionType.iconBorder:SetAllPoints(frame.MissionType.b)
 
         --flare
@@ -1102,7 +1102,7 @@ local function skinGarrisonRandomMissionAlert(frame, _, _, _, _, _, quality)
         frame.MissionType.b:SetPoint("BOTTOMRIGHT", frame.MissionType, "BOTTOMRIGHT", 2, -2)
         frame.MissionType:SetParent(frame.MissionType.b)
         frame.MissionType.iconBorder = frame.MissionType.b:CreateTexture(nil, "ARTWORK")
-        frame.MissionType.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        frame.MissionType.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.MissionType.iconBorder:SetAllPoints(frame.MissionType.b)
 
         --flare
@@ -1137,7 +1137,7 @@ local function skinBonusRollMoney()
     frame.Icon.b:SetPoint("BOTTOMRIGHT", frame.Icon, "BOTTOMRIGHT", 2, -2)
     frame.Icon:SetParent(frame.Icon.b)
     frame.Icon.iconBorder = frame.Icon.b:CreateTexture(nil, "ARTWORK")
-    frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
 
     --Create Backdrop
@@ -1168,7 +1168,7 @@ local function skinBonusRollLoot()
     lootItem.Icon.b:SetPoint("BOTTOMRIGHT", lootItem.Icon, "BOTTOMRIGHT", 2, -2)
     lootItem.Icon:SetParent(lootItem.Icon.b)
     lootItem.Icon.iconBorder = lootItem.Icon.b:CreateTexture(nil, "ARTWORK")
-    lootItem.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    lootItem.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     lootItem.Icon.iconBorder:SetAllPoints(lootItem.Icon.b)
 
     --Create Backdrop
@@ -1308,7 +1308,7 @@ local function alertEvents()
     local num = C_Calendar.GetNumPendingInvites()
     if num ~= numInvites then
         if num > 0 then
-            GW.AlertSystem:AddAlert(GW.L["You have %s pending calendar invite(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
+            GW.AlertSystem:AddAlert(GW.L["You have %s pending calendar invite(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock.png", false)
             showAlert = true
         end
         numInvites = num
@@ -1322,8 +1322,8 @@ local function alertGuildEvents()
     local showAlert = false
     local num = GetGuildInvites()
     if num > 0 then
-        -- /run GW.AlertSystem:AddAlert("tt", nil, CALENDAR_STATUS_INVITED, function() if not CalendarFrame then C_AddOns.LoadAddOn("Blizzard_Calendar") end ShowUIPanel(CalendarFrame) end , "Interface/AddOns/GW2_UI/textures/icons/clock", false)
-        GW.AlertSystem:AddAlert(GW.L["You have %s pending guild event(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
+        -- /run GW.AlertSystem:AddAlert("tt", nil, CALENDAR_STATUS_INVITED, function() if not CalendarFrame then C_AddOns.LoadAddOn("Blizzard_Calendar") end ShowUIPanel(CalendarFrame) end , "Interface/AddOns/GW2_UI/textures/icons/clock.png", false)
+        GW.AlertSystem:AddAlert(GW.L["You have %s pending guild event(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock.png", false)
         showAlert = true
     end
 
@@ -1382,16 +1382,16 @@ local function AlertContainerFrameOnEvent(self, event, ...)
     local currentTime = GetTime()
     if event == "PLAYER_LEVEL_UP" and GW.settings.ALERTFRAME_NOTIFICATION_LEVEL_UP then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
-        GW.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
-        -- /run GW2_ADDON.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+        GW.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
+        -- /run GW2_ADDON.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
 
         if talentPoints and talentPoints > 0 then
-            GW.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
-            --/run GW.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
+            GW.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon.png", false)
+            --/run GW.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon.png", false)
         end
         if GW.Retail and C_SpecializationInfo.CanPlayerUsePVPTalentUI() and numNewPvpTalentSlots and numNewPvpTalentSlots > 0 then
-            GW.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
-            --/run GW.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
+            GW.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon.png", false)
+            --/run GW.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon.png", false)
         end
 
         -- if we learn a spell here we should show the new spell so we remove the event from the toastQueue list
@@ -1431,8 +1431,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             hasMail = newMail
 
             if hasMail then
-                -- /run GW.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
-                GW.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
+                -- /run GW.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon.png", false)
+                GW.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon.png", false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND), "Master")
             end
         end
@@ -1453,8 +1453,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         if showRepair and value < 20 then
             showRepair = false
             C_Timer.After(30, function() showRepair = true end)
-            -- /run GW.AlertSystem:AddAlert(format("%s slot needs to repair, current durability is %d.", INVTYPE_HEAD, 20), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
-            GW.AlertSystem:AddAlert(format(GW.L["%s slot needs to repair, current durability is %d."], slots[1][2], value), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
+            -- /run GW.AlertSystem:AddAlert(format("%s slot needs to repair, current durability is %d.", INVTYPE_HEAD, 20), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair.png", false)
+            GW.AlertSystem:AddAlert(format(GW.L["%s slot needs to repair, current durability is %d."], slots[1][2], value), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair.png", false)
             PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_REPAIR_SOUND), "Master")
         end
     elseif event == "QUEST_ACCEPTED" and GW.settings.ALERTFRAME_NOTIFICATION_PARAGON then
@@ -1529,8 +1529,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         if ((IsTank and forTank) or (IsHealer and forHealer) or (IsDamage and forDamage)) and not ingroup then
             if currentTime - LFG_Timer > 20 then
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND), "Master")
-                -- /run GW2_ADDON.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
-                GW.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
+                -- /run GW2_ADDON.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up.png", false)
+                GW.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up.png", false)
                 LFG_Timer = currentTime
             end
         end

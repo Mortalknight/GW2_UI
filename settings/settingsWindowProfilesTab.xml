@@ -53,7 +53,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\menu-bg.png">
                             <size x="480" y="80"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -61,7 +61,7 @@
                             </Anchors>
                             <TexCoords left="0" right="1" top="0" bottom="0.5" />
                         </Texture>
-                        <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                        <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png">
                             <Size x="585" y="2"></Size>
                             <TexCoords left="0" right="1" top="0" bottom="1"/>
                             <Anchors>
@@ -70,7 +70,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="activeProfile" file="Interface\AddOns\GW2_UI\textures\uistuff\achievementhover">
+                        <Texture parentKey="activeProfile" file="Interface\AddOns\GW2_UI\textures\uistuff\achievementhover.png">
                             <size x="480" y="80"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -110,8 +110,8 @@
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-2"/>
                                 </Anchors>
-                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
-                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
+                                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png"/>
+                                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png"/>
                             </CheckButton>
                         </Frames>
                     </Button>
@@ -123,7 +123,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                        <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png">
                             <Size x="585" y="2"></Size>
                             <TexCoords left="0" right="1" top="0" bottom="1"/>
                             <Anchors>
@@ -152,7 +152,7 @@
         <Size x="585" y="66"/>
         <Layers>
             <Layer>
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\menu-bg.png">
                     <size x="480" y="66"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -162,7 +162,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture parentKey="hightlight" file="Interface\AddOns\GW2_UI\textures\character\menu-hover">
+                <Texture parentKey="hightlight" file="Interface\AddOns\GW2_UI\textures\character\menu-hover.png">
                     <size x="480" y="66"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -172,7 +172,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentKey="activeProfile" file="Interface\AddOns\GW2_UI\textures\uistuff\achievementhover">
+                <Texture parentKey="activeProfile" file="Interface\AddOns\GW2_UI\textures\uistuff\achievementhover.png">
                     <size x="480" y="66"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -181,7 +181,7 @@
                 </Texture>
             </Layer>
             <Layer textureSubLevel="3">
-                <Texture parentKey="portraitframe" file="Interface/AddOns/GW2_UI/textures/profiles/portraitframe">
+                <Texture parentKey="portraitframe" file="Interface/AddOns/GW2_UI/textures/profiles/portraitframe.png">
                     <size x="64" y="64"/>
                     <Anchors>
                         <Anchor point="LEFT" x="1"/>
@@ -211,7 +211,7 @@
                 </Anchors>
                 <Layers>
                     <Layer textureSubLevel="2">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/gwlogo">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/gwlogo.png">
                             <size x="56" y="56"/>
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                         </Texture>

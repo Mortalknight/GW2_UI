@@ -5,7 +5,7 @@
         <Size x="350" y="1"/>
         <Layers>
             <Layer>
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/party/manage-group-bg">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png">
                     <Anchors>
                         <Anchor point="TOPLEFT"/>
                         <Anchor point="BOTTOMRIGHT"/>
@@ -15,7 +15,7 @@
                 </Texture>
             </Layer>
             <Layer textureSubLevel="2">
-                <Texture parentKey="alertIcono" file="Interface/AddOns/GW2_UI/textures/icons/warning-icon">
+                <Texture parentKey="alertIcono" file="Interface/AddOns/GW2_UI/textures/icons/warning-icon.png">
                     <Size x="50" y="50"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="15" y="-15"/>
@@ -39,26 +39,26 @@
                 <FontString inherits="ChatFontNormal" />
                 <Layers>
                     <Layer>
-                        <Texture parentKey="middle" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
+                        <Texture parentKey="middle" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png">
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-3" y="0"/>
                                 <Anchor point="BOTTOMRIGHT"  x="3" y="0"/>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="left" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+                        <Texture parentKey="left" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-3" y="0"/>
                                 <Anchor point="BOTTOMLEFT" x="-3" y="0"/>
                             </Anchors>
                             <TexCoords left="0" right="1" top="1" bottom="0" />
                         </Texture>
-                        <Texture parentKey="right" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+                        <Texture parentKey="right" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
                             <Anchors>
                                 <Anchor point="TOPRIGHT" x="3" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" x="3" y="0"/>
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="top" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                        <Texture parentKey="top" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-3" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="3" y="0"/>

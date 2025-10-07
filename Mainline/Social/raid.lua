@@ -159,14 +159,14 @@ local function LoadRaidList(tabContainer)
     RaidFrameAllAssistCheckButton:SetPoint("TOPLEFT", 10, -23)
     RaidFrameAllAssistCheckButton.text:ClearAllPoints()
     RaidFrameAllAssistCheckButton.text:SetPoint("LEFT", RaidFrameAllAssistCheckButton, "RIGHT", 5, -2)
-    RaidFrameAllAssistCheckButton.text:SetText(ALL .. " |TInterface/AddOns/GW2_UI/textures/party/icon-assist:25:25:0:-3|t")
+    RaidFrameAllAssistCheckButton.text:SetText(ALL .. " |TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:25:25:0:-3|t")
     --ALL_ASSIST_LABEL
     RaidFrame.RoleCount:ClearAllPoints()
     RaidFrame.RoleCount:SetPoint("TOP", -80, -25)
 
-    RaidFrame.RoleCount.TankIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
-    RaidFrame.RoleCount.HealerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
-    RaidFrame.RoleCount.DamagerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
+    RaidFrame.RoleCount.TankIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank.png")
+    RaidFrame.RoleCount.HealerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer.png")
+    RaidFrame.RoleCount.DamagerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps.png")
     RaidFrame.RoleCount.DamagerIcon:SetSize(20, 20)
 
     RaidFrameAllAssistCheckButton:GwSkinCheckButton()
@@ -239,17 +239,17 @@ local function LoadRaidList(tabContainer)
             local _, rank, _, _, _, _, _, _, _, role = GetRaidRosterInfo(i)
 
             if rank == 2 then
-                _G["RaidGroupButton" .. i .. "RankTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-groupleader")
+                _G["RaidGroupButton" .. i .. "RankTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-groupleader.png")
             elseif rank == 1 then
-                _G["RaidGroupButton" .. i .. "RankTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-assist")
+                _G["RaidGroupButton" .. i .. "RankTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-assist.png")
             else
                 _G["RaidGroupButton" .. i .. "RankTexture"]:SetTexture("")
             end
 
             if role == "MAINTANK" then
-                _G["RaidGroupButton" .. i .. "RoleTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-maintank")
+                _G["RaidGroupButton" .. i .. "RoleTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-maintank.png")
             elseif role == "MAINASSIST" then
-                _G["RaidGroupButton" .. i .. "RoleTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-mainassist")
+                _G["RaidGroupButton" .. i .. "RoleTexture"]:SetTexture("Interface/AddOns/GW2_UI/textures/party/icon-mainassist.png")
             else
                 _G["RaidGroupButton" .. i .. "RoleTexture"]:SetTexture("")
             end

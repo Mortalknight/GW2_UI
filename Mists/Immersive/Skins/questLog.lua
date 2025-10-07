@@ -265,9 +265,9 @@ local function LoadQuestLogFrameSkin()
 				local _, _, _, isHeader, isCollapsed = GetQuestLogTitle(questIndex)
 				if isHeader then
 					if isCollapsed then
-						buttons[i]:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
+						buttons[i]:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right.png")
 					else
-						buttons[i]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+						buttons[i]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
 					end
 				end
 			end
@@ -414,7 +414,7 @@ local function LoadQuestLogFrameSkin()
 	QuestFramePushQuestButton:SetPoint('LEFT', QuestLogFrameAbandonButton, 'RIGHT', 1, 0)
 	QuestFramePushQuestButton:SetPoint('RIGHT', QuestLogFrameTrackButton, 'LEFT', -1, 0)
 
-	GW.CreateFrameHeaderWithBody(QuestLogFrame, QuestLogTitleText:GetText(), "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {QuestLogListScrollFrame, QuestLogDetailScrollFrame}, 2, nil, true)
+	GW.CreateFrameHeaderWithBody(QuestLogFrame, QuestLogTitleText:GetText(), "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {QuestLogListScrollFrame, QuestLogDetailScrollFrame}, 2, nil, true)
 	QuestLogFrameCancelButton:SetPoint('BOTTOMRIGHT', QuestLogFrame, 'BOTTOMRIGHT', -25, 12)
 
 	QuestLogTitleText:Hide()
@@ -430,7 +430,7 @@ local function LoadQuestLogFrameSkin()
 	QuestLogDetailFrame.tex = QuestLogDetailFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
    	QuestLogDetailFrame.tex:SetPoint("TOPLEFT", QuestLogDetailFrame.NineSlice, "TOPLEFT", -10, 20)
     QuestLogDetailFrame.tex:SetPoint("BOTTOMRIGHT", QuestLogDetailFrame.NineSlice, "BOTTOMRIGHT", 20, -20)
-    QuestLogDetailFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    QuestLogDetailFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
 
 	QuestGreetingFrameHorizontalBreak:GwKill()
 
@@ -468,7 +468,7 @@ local function LoadQuestLogFrameSkin()
     QuestFrame.tex = QuestFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
    	QuestFrame.tex:SetPoint("TOPLEFT", QuestFrame.NineSlice, "TOPLEFT", -10, 20)
     QuestFrame.tex:SetPoint("BOTTOMRIGHT", QuestFrame.NineSlice, "BOTTOMRIGHT", 20, -20)
-    QuestFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    QuestFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
 
     QuestFrameCloseButton:GwSkinButton(true)
     QuestFrameCloseButton:SetSize(20, 20)

@@ -276,7 +276,7 @@ local function updateOverview(fmOverview)
                 fm.background:SetTexCoord(0, txR, txT / 1024, (txT + txH) / 1024)
                 fm.background:SetAlpha(0.5)
             else
-                fm.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/paperdollbg")
+                fm.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/paperdollbg.png")
                 fm.background:SetTexCoord(0, 1, 1, 0)
                 fm.background:SetAlpha(1.0)
             end
@@ -319,7 +319,7 @@ local function updateOverview(fmOverview)
             fm.StatusBar:Hide()
             fm.btn1:Hide()
             fm.btn2:Hide()
-            fm.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/paperdollbg")
+            fm.background:SetTexture("Interface/AddOns/GW2_UI/textures/character/paperdollbg.png")
             fm.background:SetTexCoord(0, 1, 1, 0)
             fm.background:SetAlpha(1.0)
             SetDesaturation(fm.background, true)
@@ -389,7 +389,7 @@ local function loadOverview(parent)
         local mask = UIParent:CreateMaskTexture()
         mask:SetPoint("CENTER", fm.icon, "CENTER", 0, 0)
         mask:SetTexture(
-            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
+            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border.png",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -405,7 +405,7 @@ local function loadOverview(parent)
 
             fm.unspendedKnowledgePointsFrame.icon:SetSize(18, 18)
             fm.unspendedKnowledgePointsFrame.icon:SetPoint("CENTER", fm.unspendedKnowledgePointsFrame, "CENTER")
-            fm.unspendedKnowledgePointsFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
+            fm.unspendedKnowledgePointsFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop.png")
             fm.unspendedKnowledgePointsFrame.icon:SetVertexColor(0, 0, 0, 0.7)
 
             fm.unspendedKnowledgePointsFrame.Text:SetSize(24, 24)
@@ -499,6 +499,6 @@ local function LoadProfessions(tabContainer)
 
     CharacterMenuButton_OnLoad(fmMenu.overviewMenu, false)
 
-    fmMenu.overviewMenu:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    fmMenu.overviewMenu:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover.png")
 end
 GW.LoadProfessions = LoadProfessions

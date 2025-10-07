@@ -89,7 +89,7 @@ function GwPartyFrameMixin:UpdateAwayData()
     end
 
     if not readyCheckStatus and not UnitHasIncomingResurrection(self.unit) and not (GW.Retail and C_IncomingSummon.HasIncomingSummon(self.unit)) then
-        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
         SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
     end
 
@@ -123,7 +123,7 @@ function GwPartyFrameMixin:UpdateAwayData()
     end
 
     if readyCheckStatus then
-        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
+        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck.png")
         if readyCheckStatus == "waiting" then
             self.classicon:SetTexCoord(0, 1, 0, 0.25)
         elseif readyCheckStatus == "notready" then
@@ -170,7 +170,7 @@ function GwPartyFrameMixin:SetUnitName()
     end
 
     if UnitIsGroupLeader(self.unit) then
-        nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:18:18:0:-3|t" .. nameString
+        nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:18:18:0:-3|t" .. nameString
     end
 
     self.name:SetText(nameString)
@@ -243,7 +243,7 @@ function GwPartyFrameMixin:OnEvent(event, unit, ...)
     elseif event == "READY_CHECK_FINISHED" then
         C_Timer.After(1.5, function()
             if UnitInParty(self.unit) then
-                self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+                self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
                 SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
             end
         end)

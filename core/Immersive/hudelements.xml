@@ -10,20 +10,20 @@
 
     <Button name="GwAddonToggle" frameStrata="MEDIUM" virtual="true">
         <Size x="38" y="38"/>
-        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout">
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout.png">
             <Size x="38" y="38"></Size>
             <Anchors>
                 <Anchor point="CENTER"></Anchor>
             </Anchors>
         </NormalTexture>
-        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout" alphaMode="ADD" alpha="0.5">
+        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout.png" alphaMode="ADD" alpha="0.5">
             <Size x="38" y="38"></Size>
             <Anchors>
                 <Anchor point="CENTER"></Anchor>
             </Anchors>
 
         </HighlightTexture>
-        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout" alpha="0.5">
+        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout.png" alpha="0.5">
             <Size x="38" y="38"></Size>
             <Anchors>
                 <Anchor point="CENTER"></Anchor>
@@ -56,7 +56,7 @@
         </Animations>
         <Layers>
             <Layer level="OVERLAY">
-                <Texture name="lfg2" file="Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-2" alpha="0">
+                <Texture name="lfg2" file="Interface/AddOns/GW2_UI/textures/icons/lfganimation-2.png" alpha="0">
                     <TexCoords left="0" right="1" top="0" bottom="1" />
                     <Size x="26" y="26"></Size>
                     <Anchors>
@@ -65,7 +65,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture name="lfg3" file="Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-3" alpha="0">
+                <Texture name="lfg3" file="Interface/AddOns/GW2_UI/textures/icons/lfganimation-3.png" alpha="0">
                     <TexCoords left="0" right="1" top="0" bottom="1" />
                     <Size x="26" y="26"></Size>
                     <Anchors>
@@ -74,7 +74,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture name="lfg4" file="Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-4" alpha="0">
+                <Texture name="lfg4" file="Interface/AddOns/GW2_UI/textures/icons/lfganimation-4.png" alpha="0">
                     <TexCoords left="0" right="1" top="0" bottom="1" />
                     <Size x="26" y="26"></Size>
                     <Anchors>
@@ -83,7 +83,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture name="lfg5" file="Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-5" alpha="0">
+                <Texture name="lfg5" file="Interface/AddOns/GW2_UI/textures/icons/lfganimation-5.png" alpha="0">
                     <TexCoords left="0" right="1" top="0" bottom="1" />
                     <Size x="26" y="26"></Size>
                     <Anchors>
@@ -98,7 +98,7 @@
         <Size x="32" y="32"></Size>
         <Layers>
             <Layer>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gradient">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gradient.png">
                     <Color r="0" g="0" b="0" a="0.7"></Color>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -124,7 +124,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\Textures\icons/track-icons-map">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\Textures\icons/track-icons-map.png">
                     <Size>
                         <AbsDimension x="40" y="40"/>
                     </Size>
@@ -164,7 +164,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\Textures\icons\track-icons-map">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\Textures\icons\track-icons-map.png">
                     <Size>
                         <AbsDimension x="30" y="30"/>
                     </Size>
@@ -230,7 +230,7 @@
         <Size x="20" y="4"></Size>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="-1">
-                <Texture name="$parentTexture" parentKey="texture" file="Interface/AddOns/GW2_UI/textures/chat/chatframebackground">
+                <Texture name="$parentTexture" parentKey="texture" file="Interface/AddOns/GW2_UI/textures/chat/chatframebackground.png">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -240,7 +240,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="0">
-                <Texture name="$parentRight" file="Interface/AddOns/GW2_UI/textures/chat/chatframeborder">
+                <Texture name="$parentRight" file="Interface/AddOns/GW2_UI/textures/chat/chatframeborder.png">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
@@ -248,7 +248,7 @@
                     </Anchors>
                 </Texture>
 
-                <Texture name="$parentRight" file="Interface/AddOns/GW2_UI/textures/chat/chatdockbg">
+                <Texture name="$parentRight" file="Interface/AddOns/GW2_UI/textures/chat/chatdockbg.png">
                     <Size x="2" y="25"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -257,7 +257,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="0">
-                <Texture name="$parentEditBox" parentKey="EditBox" file="Interface/AddOns/GW2_UI/textures/chat/chateditboxmid">
+                <Texture name="$parentEditBox" parentKey="EditBox" file="Interface/AddOns/GW2_UI/textures/chat/chateditboxmid.png">
                     <Size x="2" y="32"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
@@ -276,14 +276,14 @@
         <Layers>
             <Layer>
 
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
                     <Size x="314" y="2"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="1"/>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="0" y="1"/>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
                     <Size x="314" y="2"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="-1"/>
@@ -292,14 +292,14 @@
                     <TexCoords left="0" right="1" top="1" bottom="0" />
                 </Texture>
 
-            <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+            <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
                 <Size x="2" y="2"/>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="1" y="1"/>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"/>
                 </Anchors>
             </Texture>
-            <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+            <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
                 <Size x="2" y="2"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"/>
@@ -318,7 +318,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="4">
-                <Texture parentKey="line" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
+                <Texture parentKey="line" file="Interface/AddOns/GW2_UI/textures/units/castingbarsdf.png">
                     <Size x="1" y="15"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -343,7 +343,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/units/castingbarsdf.png">
                     <Size x="176" y="15"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -379,11 +379,11 @@
         <Frames>
             <StatusBar parentKey="progress" inherits="GwStatusBarBar">
                  <Size x="176" y="15"></Size>
-                 <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm"/>
+                 <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png"/>
                 <BarColor r="1" g="1" b ="1" a="1"/>
                     <Layers>
                      <Layer level="ARTWORK" textureSubLevel="3">
-                         <Texture parentKey="latency" file="Interface/AddOns/GW2_UI/textures/units/castingbars/red-norm" hidden="true">
+                         <Texture parentKey="latency" file="Interface/AddOns/GW2_UI/textures/units/castingbars/red-norm.png" hidden="true">
                            <Size x="176" y="15"></Size>
                                 <Anchors>
                                     <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
@@ -393,7 +393,7 @@
                             </Texture>
                         </Layer>
                         <Layer level="ARTWORK" textureSubLevel="4">
-                            <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
+                            <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white.png">
                                 <Size x="32" y="18"></Size>
                                 <Anchors>
                                     <Anchor point="LEFT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -401,7 +401,7 @@
                       
                                 <Color r="1" g="1" b="1" a="0.7"></Color>
                             </Texture>
-                            <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm" hidden="true">
+                            <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png" hidden="true">
                                 <Size x="176" y="15"></Size>
                                 <Anchors>
                                     <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
@@ -421,35 +421,35 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="-8">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/chat/ChatBubble-Background">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/chat/chatbubble-background.png">
                     <Size x="1" y="1"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="left" file="Interface/AddOns/GW2_UI/textures/chat/bubble-left">
+                <Texture parentKey="left" file="Interface/AddOns/GW2_UI/textures/chat/bubble-left.png">
                     <Size x="32" y="1"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="right" file="Interface/AddOns/GW2_UI/textures/chat/bubble-right">
+                <Texture parentKey="right" file="Interface/AddOns/GW2_UI/textures/chat/bubble-right.png">
                     <Size x="32" y="1"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="bottom" file="Interface/AddOns/GW2_UI/textures/chat/bubble-bottom">
+                <Texture parentKey="bottom" file="Interface/AddOns/GW2_UI/textures/chat/bubble-bottom.png">
                     <Size x="1" y="16"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-10"></Anchor>
                         <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="top" file="Interface/AddOns/GW2_UI/textures/chat/bubble-top">
+                <Texture parentKey="top" file="Interface/AddOns/GW2_UI/textures/chat/bubble-top.png">
                     <Size x="1" y="16"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-10"></Anchor>
@@ -457,14 +457,14 @@
                     </Anchors>
                 </Texture>
 
-                <Texture parentKey="cornerTopRight" file="Interface/AddOns/GW2_UI/textures/chat/bubble-corner-top-right">
+                <Texture parentKey="cornerTopRight" file="Interface/AddOns/GW2_UI/textures/chat/bubble-corner-top-right.png">
                     <Size x="32" y="16"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPRIGHT" x="-25"></Anchor>
 
                     </Anchors>
                 </Texture>
-                <Texture parentKey="cornerBottomRight" file="Interface/AddOns/GW2_UI/textures/chat/bubble-corner-bottom-right">
+                <Texture parentKey="cornerBottomRight" file="Interface/AddOns/GW2_UI/textures/chat/bubble-corner-bottom-right.png">
                     <Size x="32" y="16"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="BOTTOMRIGHT" x="0"></Anchor>
@@ -489,7 +489,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="-8">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/hud/lfd-animation">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/hud/lfd-animation.png">
                     <Size x="1" y="1"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>

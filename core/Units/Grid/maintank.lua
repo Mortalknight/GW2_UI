@@ -17,7 +17,7 @@ local function GW2_GridMaintankStyleRegister(self)
     self.bg = self:CreateTexture(nil, 'BORDER')
     self.bg:SetPoint("TOPLEFT", 0, 0)
     self.bg:SetPoint("BOTTOMRIGHT", 0, 0)
-    self.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    self.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     self.bg:SetVertexColor(0, 0, 0, 1)
     self.bg.multiplier = 1
 

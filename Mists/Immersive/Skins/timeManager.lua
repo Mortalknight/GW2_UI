@@ -19,7 +19,7 @@ local function LoadTimeManagerSkin()
     local w, h = TimeManagerFrame:GetSize()
     TimeManagerFrame.tex:SetPoint("TOP", TimeManagerFrame, "TOP", 0, 20)
     TimeManagerFrame.tex:SetSize(w + 50, h + 20)
-    TimeManagerFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    TimeManagerFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
 
     TimeManagerFrame.CloseButton:GwSkinButton(true)
     TimeManagerFrame.CloseButton:SetSize(20, 20)

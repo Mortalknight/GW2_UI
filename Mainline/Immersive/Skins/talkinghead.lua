@@ -46,7 +46,7 @@ local function InitTalkingHeadFrame()
     TalkingHeadFrame.MainFrame.CloseButton:ClearAllPoints()
     TalkingHeadFrame.MainFrame.CloseButton:SetPoint("TOPRIGHT", -30, -8)
 
-    TalkingHeadFrame.BackgroundFrame.TextBackground:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    TalkingHeadFrame.BackgroundFrame.TextBackground:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
 
     ScaleTalkingHeadFrame()
 end

@@ -82,7 +82,7 @@ local function ApplyCovenantSanctumSkin()
 
             local tex = CovenantSanctumFrame:CreateTexture(nil, "BACKGROUND")
             tex:SetPoint("TOP", CovenantSanctumFrame, "TOP", 0, 25)
-            tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+            tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
             local w, h = CovenantSanctumFrame:GetSize()
             tex:SetSize(w + 50, h + 50)
             CovenantSanctumFrame.tex = tex

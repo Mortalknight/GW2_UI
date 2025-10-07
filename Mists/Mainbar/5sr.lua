@@ -141,11 +141,11 @@ local function createStatusbar(playerFrame)
 
     fsr.background = fsr:CreateTexture(nil, "BACKGROUND")
     fsr.background:SetSize(width, 20)
-    fsr.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    fsr.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png")
 
     fsr.bar = fsr:CreateTexture(nil, "BORDER")
     fsr.bar:SetSize(width, 1)
-    fsr.bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    fsr.bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     fsr.bar:SetPoint("LEFT", 0, 0)
     fsr.bar:SetPoint("RIGHT", fsr, "LEFT", 0, 0)
 
@@ -154,7 +154,7 @@ local function createStatusbar(playerFrame)
     fsr.statusBar:SetPoint("LEFT", fsr, "LEFT", 0, 0)
     fsr.statusBar:SetMinMaxValues(0, 5)
     fsr.statusBar:SetValue(0)
-    fsr.statusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    fsr.statusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
 
     fsr.statusBar.label = fsr.statusBar:CreateFontString(nil, "OVERLAY")
     fsr.statusBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL, "", -4)

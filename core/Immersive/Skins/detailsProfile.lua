@@ -11,7 +11,7 @@ local function LoadDetailsSkin()
     end
 
     details:InstallSkin("GW2 UI Default", {
-        file = "Interface/AddOns/GW2_UI/textures/addonSkins/details_skin",
+        file = "Interface/AddOns/GW2_UI/textures/addonSkins/details_skin.png",
         author = "GW2 UI",
         version = "1.1.0",
         site = "unknown",
@@ -70,7 +70,7 @@ local function LoadDetailsSkin()
                 1, -- [2]
                 ["side"] = 2
             },
-            ["toolbar_icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_toolbar_icons",
+            ["toolbar_icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_toolbar_icons.png",
             ["menu_icons"] = {
                 true, -- [1]
                 true, -- [2]
@@ -121,7 +121,7 @@ local function LoadDetailsSkin()
                     false, -- [3]
                 },
                 ["alpha"] = 1,
-                ["icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_class_icons",
+                ["icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_class_icons.png",
                 ["no_icon"] = false,
                 ["start_after_icon"] = false,
                 ["icon_size_offset"] = 1.5,
@@ -161,7 +161,7 @@ local function LoadDetailsSkin()
     })
 
     details:InstallSkin("GW2 UI Colored", {
-        file = "Interface/AddOns/GW2_UI/textures/addonSkins/details_skin",
+        file = "Interface/AddOns/GW2_UI/textures/addonSkins/details_skin.png",
         author = "GW2 UI",
         version = "1.1.0",
         site = "unknown",
@@ -220,7 +220,7 @@ local function LoadDetailsSkin()
                 1, -- [2]
                 ["side"] = 2
             },
-            ["toolbar_icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_toolbar_icons",
+            ["toolbar_icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_toolbar_icons.png",
             ["menu_icons"] = {
                 true, -- [1]
                 true, -- [2]
@@ -271,7 +271,7 @@ local function LoadDetailsSkin()
                     false, -- [3]
                 },
                 ["alpha"] = 1,
-                ["icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_class_icons_colored",
+                ["icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_class_icons_colored.png",
                 ["no_icon"] = false,
                 ["start_after_icon"] = false,
                 ["icon_size_offset"] = 1.5,

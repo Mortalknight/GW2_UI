@@ -67,15 +67,15 @@ local function reskinAccountBagBar(b)
     end
 
     b.IconBorder:SetAllPoints(b)
-    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     b.IconBorder:Show()
     hooksecurefunc(b.IconBorder, "SetTexture", function()
         if b.IconBorder:GetTexture() and b.IconBorder:GetTexture() > 0 and b.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
-            b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         end
     end)
 
-    b.SelectedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
+    b.SelectedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border.png")
     b.SelectedTexture:GwSetOutside()
     if not b.gwHooked then
         hooksecurefunc(b, "OnClick", function(self)
@@ -86,7 +86,7 @@ local function reskinAccountBagBar(b)
     end
 
     local high = b:GetHighlightTexture()
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
     high:SetSize(bag_size, bag_size)
@@ -367,7 +367,7 @@ local function LoadBank(helpers)
     BankCleanUpConfirmationPopup.tex = BankCleanUpConfirmationPopup:CreateTexture(nil, "BACKGROUND")
     BankCleanUpConfirmationPopup.tex:SetPoint("TOPLEFT", BankCleanUpConfirmationPopup, "TOPLEFT", 0, 0)
     BankCleanUpConfirmationPopup.tex:SetPoint("BOTTOMRIGHT", BankCleanUpConfirmationPopup, "BOTTOMRIGHT", 0, 0)
-    BankCleanUpConfirmationPopup.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    BankCleanUpConfirmationPopup.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
     BankCleanUpConfirmationPopup.Text:SetTextColor(1, 1, 1)
     BankCleanUpConfirmationPopup.AcceptButton:GwSkinButton(false, true)
     BankCleanUpConfirmationPopup.CancelButton:GwSkinButton(false, true)

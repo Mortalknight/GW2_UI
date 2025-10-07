@@ -80,7 +80,7 @@ local function BuildSettingsWindow()
     settingsContainer.backgroundMask = UIParent:CreateMaskTexture()
     settingsContainer.backgroundMask:SetPoint("TOPLEFT", settingsContainer, "TOPLEFT", -64, 64)
     settingsContainer.backgroundMask:SetPoint("BOTTOMRIGHT", settingsContainer, "BOTTOMLEFT",-64, 0)
-    settingsContainer.backgroundMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    settingsContainer.backgroundMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     settingsContainer.background:AddMaskTexture(settingsContainer.backgroundMask)
 
     settingsContainer:HookScript("OnShow", function()

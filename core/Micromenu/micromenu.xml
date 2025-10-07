@@ -11,7 +11,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/uistuff/windowcornermenu">
+                        <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/uistuff/windowcornermenu.png">
                             <Size x="512" y="128"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"/>

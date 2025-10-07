@@ -7,7 +7,7 @@
             <Button parentKey="item" setAllPoints="true" hidden="true">
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/hud/levelrewardframe">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/hud/levelrewardframe.png">
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                             <Size x="40" y="40"></Size>
                             <Anchors>
@@ -15,7 +15,7 @@
                             </Anchors>
                         </Texture>
 
-                        <Texture file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png">
                             <Size x="512" y="2"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="TOP" x="0" y="0"></Anchor>
@@ -23,7 +23,7 @@
                         </Texture>
 
 
-                        <Texture file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png">
                             <Size x="512" y="2"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="BOTTOM" y="0"></Anchor>
@@ -57,7 +57,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/hud/levelrewardframe">
+                <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/hud/levelrewardframe.png">
                     <Size x="512" y="512"></Size>
                     <Anchors>
                         <Anchor point="CENTER"></Anchor>

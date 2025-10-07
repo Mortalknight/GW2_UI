@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\manage-group-icons">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\manage-group-icons.png">
                     <Size x="38" y="38"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -17,7 +17,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
+                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow.png">
                     <Size x="16" y="32"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="RIGHT" x="-15"></Anchor>
@@ -34,7 +34,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg.png">
                     <Size x="200" y="80"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-10" y="10"></Anchor>
@@ -43,28 +43,28 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border.png">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border.png">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
                         <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border.png">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border.png">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
@@ -82,7 +82,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
 
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-5" y="3"></Anchor>
@@ -139,14 +139,14 @@
                 </Layers>
                 <Frames>
                     <Button parentKey="readyCheck" inherits="GwStandardButton" text="READY_CHECK">
-                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button.png"></NormalTexture>
                         <Size x="190" y="20" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-305"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture file="Interface/AddOns/GW2_UI/textures/party/readycheck-icon">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/party/readycheck-icon.png">
                                     <Size x="15" y="15"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1"></Anchor>
@@ -156,14 +156,14 @@
                         </Layers>
                     </Button>
                     <Button parentKey="countdown" inherits="GwStandardButton" text="PLAYER_COUNTDOWN_BUTTON">
-                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button.png"></NormalTexture>
                         <Size x="165" y="20" />
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.readyCheck" relativePoint="BOTTOMLEFT"  x="0" y="-5"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture file="Interface/AddOns/GW2_UI/textures/party/readycheck-icon">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/party/readycheck-icon.png">
                                     <Size x="15" y="15"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1"></Anchor>
@@ -202,7 +202,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg.png">
                     <Size x="35" y="35" />
                     <Anchors>
                         <Anchor point="CENTER"></Anchor>
@@ -220,7 +220,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg.png">
                     <Size x="35" y="35" />
                     <Anchors>
                         <Anchor point="CENTER"></Anchor>

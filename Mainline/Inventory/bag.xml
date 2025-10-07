@@ -8,7 +8,7 @@
         <Size x="512" y="512"></Size>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="Texture" file="Interface/AddOns/GW2_UI/textures/bag/bagbg">
+                <Texture parentKey="Texture" file="Interface/AddOns/GW2_UI/textures/bag/bagbg.png">
                     <Size x="512" y="512"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
@@ -17,26 +17,26 @@
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture parentKey="Header" file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
+                <Texture parentKey="Header" file="Interface/AddOns/GW2_UI/textures/bag/bagheader.png">
                     <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader-right">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader-right.png">
                     <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagfooter">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagfooter.png">
                     <Size x="512" y="70"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="2" />
                         <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="2" />
                     </Anchors>
                 </Texture>
-                <Texture parentKey="Left" file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
+                <Texture parentKey="Left" file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel.png">
                     <Size x="40" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -46,13 +46,13 @@
             </Layer>
 
             <Layer level="BORDER">
-                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bottom-right">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bottom-right.png">
                     <Size x="128" y="128"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagicon">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagicon.png">
                     <Size x="84" y="84"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-16" y="16" />
@@ -77,7 +77,7 @@
                         <Anchor point="BOTTOMRIGHT" x="-20" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture file="Interface/AddOns/GW2_UI/textures/icons/Coins">
+                <Texture file="Interface/AddOns/GW2_UI/textures/icons/coins.png">
                     <TexCoords left="0" right="0.33" top="0.022" bottom="0.66"/>
                     <Size x="11" y="11"></Size>
                     <Anchors>
@@ -90,7 +90,7 @@
                         <Anchor point="BOTTOMRIGHT" x="-60" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture file="Interface/AddOns/GW2_UI/textures/icons/Coins">
+                <Texture file="Interface/AddOns/GW2_UI/textures/icons/coins.png">
                     <TexCoords left="0.66" right="0.99" top="0.022" bottom="0.66"/>
                     <Size x="11" y="11"></Size>
                     <Anchors>
@@ -103,7 +103,7 @@
                         <Anchor point="BOTTOMRIGHT" x="-100" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture file="Interface/AddOns/GW2_UI/textures/icons/Coins">
+                <Texture file="Interface/AddOns/GW2_UI/textures/icons/coins.png">
                     <TexCoords left="0.33" right="0.66" top="0.022" bottom="0.66"/>
                     <Size x="11" y="11"></Size>
                     <Anchors>
@@ -181,7 +181,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="2" y="-2" />
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/currency-icon"></NormalTexture>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/currency-icon.png"></NormalTexture>
             </Button>
             <Button parentKey="moneyFrame" registerForClicks="RightButtonUp">
                 <Size x="180" y="40"></Size>
@@ -254,7 +254,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture name="$parentTexture" file="Interface/AddOns/GW2_UI/textures/uistuff/resize">
+                        <Texture name="$parentTexture" file="Interface/AddOns/GW2_UI/textures/uistuff/resize.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -268,9 +268,9 @@
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-8" />
                 </Anchors>
                 <Size x="24" y="24" />
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up"></NormalTexture>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Down"></PushedTexture >
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Down"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-up.png"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-down.png"></PushedTexture >
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-down.png"></HighlightTexture >
             </Button>
             <Button parentKey="buttonSort" text="">
                 <Anchors>
@@ -280,9 +280,9 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/BagMicroButton-Up"></NormalTexture>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/BagMicroButton-Down"></PushedTexture >
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/BagMicroButton-Down"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/bagmicrobutton-up.png"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/bagmicrobutton-down.png"></PushedTexture >
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/bagmicrobutton-down.png"></HighlightTexture >
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
@@ -292,9 +292,9 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal"></NormalTexture>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover"></PushedTexture >
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png"></PushedTexture >
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png"></HighlightTexture >
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>

@@ -21,7 +21,7 @@ local function ApplyItemUpgradeSkin()
     local w, h = ItemUpgradeFrame:GetSize()
     ItemUpgradeFrame.tex:SetPoint("TOP", ItemUpgradeFrame, "TOP", 0, 20)
     ItemUpgradeFrame.tex:SetSize(w + 50, h + 70)
-    ItemUpgradeFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    ItemUpgradeFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
 
     ItemUpgradeFrame.UpgradeCostFrame.BGTex:GwStripTextures()
 

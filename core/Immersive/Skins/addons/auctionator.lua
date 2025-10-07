@@ -8,7 +8,7 @@ local function SkinItem(item)
         GW.HandleIconBorder(item.IconBorder, item.Icon.backdrop)
         item.Icon:GwSetInside(item.backdrop)
         item.EmptySlot:Hide()
-        item:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
+        item:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
         item:GetHighlightTexture():Hide()
         item:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
     end
@@ -28,8 +28,8 @@ local function SetGroupTitleFrame(header)
         if not button.backdrop then
             button:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
             button.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
-            button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
-            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+            button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
             button:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
             button.HighlightTexture:GwKill()
             button:GetNormalTexture():GwSetInside()
@@ -66,7 +66,7 @@ local function SkinAuctionator()
                     elseif details.name == "Collecting(s)" or details.name == "Collecting" then
                         id = "addon_collecting"
                     end
-                    local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id
+                    local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id .. ".png"
                     GW.SkinSideTabButton(tab, iconTexture, details.tabHeader)
                 end
 
@@ -262,7 +262,7 @@ local function SkinAuctionator()
             if not child.arrow then
                 -- add arrows
                 child.arrow = child:CreateTexture(nil, "BACKGROUND", nil, 1)
-                child.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+                child.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png")
                 child.arrow:SetSize(16, 16)
                 child.arrow:ClearAllPoints()
 			    child.arrow:SetPoint("LEFT", 0, 0)

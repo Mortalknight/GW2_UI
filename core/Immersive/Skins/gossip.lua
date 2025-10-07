@@ -227,7 +227,7 @@ local function skinGossipOption(self)
         self.Icon:ClearAllPoints()
         self.Icon:SetPoint("LEFT", self, "LEFT", 0, 0)
         self.Icon:SetSize(32, 32)
-        self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/gossip/optionhover")
+        self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/gossip/optionhover.png")
 
         local hl = self:GetHighlightTexture()
         hl:ClearAllPoints()
@@ -235,7 +235,7 @@ local function skinGossipOption(self)
         hl:SetBlendMode("BLEND")
         hl:SetDrawLayer("BACKGROUND", -7)
         hl:SetPoint("LEFT", 16, 0)
-        hl:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/optionhover")
+        hl:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/optionhover.png")
         hl:SetVertexColor(1, 1, 1, 1)
         hl:Hide()
         self:HookScript("OnEnter", function()
@@ -288,7 +288,7 @@ local function updateGossipOption(self, elementData)
         local atlas = self.Icon:GetAtlas()
         if atlas then
             if CUSTOM_ATLAS[atlas] then
-                self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. atlas)
+                self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. atlas .. ".png")
             else
                 GW.Debug("Missing Gossip atlas: ", atlas)
                 self.Icon:SetAtlas(atlas, true)
@@ -296,7 +296,7 @@ local function updateGossipOption(self, elementData)
         else
             local t = self.Icon:GetTexture()
             if CUSTOM_ICONS[t] then
-                self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. CUSTOM_ICONS[t])
+                self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. CUSTOM_ICONS[t] .. ".png")
             else
                 GW.Debug("Missing Gossip Icon ID: ", t)
             end
@@ -452,7 +452,7 @@ local function createCoordDebugInput(self, labelText, index)
     f:SetText("")
 
     f.bg = f:CreateTexture(nil, "ARTWORK", nil, 1)
-    f.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg") -- add custom overlay texture here
+    f.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png") -- add custom overlay texture here
     f.bg:SetAllPoints()
 
     f.label = f:CreateFontString(nil, "ARTWORK")
@@ -474,7 +474,7 @@ local function loadPortraitDebugMode()
     debugModelPositionData:SetSize(300, 300)
     debugModelPositionData:SetPoint("TOPLEFT", GwGossipModelFrame, "BOTTOMRIGHT", 0, 0)
     debugModelPositionData.bg = debugModelPositionData:CreateTexture(nil, "ARTWORK", nil, 1)
-    debugModelPositionData.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg") -- add custom overlay texture here
+    debugModelPositionData.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png") -- add custom overlay texture here
     debugModelPositionData.bg:SetAllPoints()
     debugModelPositionData.bg:SetSize(300, 300)
 
@@ -542,7 +542,7 @@ local function LoadGossipSkin()
     local w, h = ItemTextFrame:GetSize()
     tex:SetPoint("TOP", ItemTextFrame, "TOP", 0, 20)
     tex:SetSize(w + 50, h + 70)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
     ItemTextFrame.tex = tex
 
     ItemTextScrollFrame:GwStripTextures()
@@ -556,14 +556,14 @@ local function LoadGossipSkin()
 
     tex:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 0, 0)
     tex:SetSize(1024, 512)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/background")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/background.png")
     GossipFrame.tex = tex
 
     local bgMask = UIParent:CreateMaskTexture()
     bgMask:SetPoint("TOPLEFT", tex, "TOPLEFT", 0, 0)
     bgMask:SetPoint("BOTTOMRIGHT", tex, "BOTTOMLEFT", 0, 0)
     bgMask:SetTexture(
-        "Interface/AddOns/GW2_UI/textures/masktest",
+        "Interface/AddOns/GW2_UI/textures/masktest.png",
         "CLAMPTOBLACKADDITIVE",
         "CLAMPTOBLACKADDITIVE"
     )
@@ -574,7 +574,7 @@ local function LoadGossipSkin()
     tex = GossipFrame:CreateTexture(nil, "BACKGROUND", nil, 1)
     tex:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 70, -175)
     tex:SetSize(566, 512)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/listbg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/listbg.png")
     GossipFrame.ListBackground = tex
     --create portrait
     local portraitFrame = CreateFrame("BUTTON", "GwGossipModelFrame", GossipFrame)
@@ -607,7 +607,7 @@ local function LoadGossipSkin()
     portraitFrame.modelFrame:SetSize(500, 500)
 
     portraitFrame.maskLayer = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 1)
-    portraitFrame.maskLayer:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/modelmask") -- add custom overlay texture here
+    portraitFrame.maskLayer:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/modelmask.png") -- add custom overlay texture here
     portraitFrame.maskLayer:SetPoint("TOPLEFT", GossipFrame.tex)
     portraitFrame.maskLayer:SetSize(1024, 256)
     portraitFrame.maskLayer:AddMaskTexture(GossipFrame.bgMask)
@@ -624,7 +624,7 @@ local function LoadGossipSkin()
 
     -- npc name label
     portraitFrame.npcNameLabel = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 2)
-    portraitFrame.npcNameLabel:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/npcname")
+    portraitFrame.npcNameLabel:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/npcname.png")
     portraitFrame.npcNameLabel:SetSize(200, 32)
     portraitFrame.npcNameLabel:SetPoint("TOPLEFT", portraitFrame, "TOPLEFT", -3, -170)
 
@@ -654,9 +654,9 @@ local function LoadGossipSkin()
     GossipFrame.CloseButton:SetSize(20, 20)
     GossipFrame.CloseButton:ClearAllPoints()
     GossipFrame.CloseButton:SetPoint("BOTTOMLEFT", portraitFrame.npcNameLabel, "BOTTOMRIGHT", -10, 0)
-    GossipFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
-    GossipFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
-    GossipFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
+    GossipFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton.png")
+    GossipFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton.png")
+    GossipFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton.png")
     if ItemTextFrameCloseButton then
         ItemTextFrameCloseButton:GwSkinButton(true)
         ItemTextFrameCloseButton:SetSize(20, 20)
@@ -787,9 +787,9 @@ local function LoadGossipSkin()
     NPCFriendshipStatusBar:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "TOPRIGHT", 5, 3)
     NPCFriendshipStatusBar:SetHeight(16)
     NPCFriendshipStatusBar:GwStripTextures()
-    NPCFriendshipStatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    NPCFriendshipStatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     NPCFriendshipStatusBar.bg = NPCFriendshipStatusBar:CreateTexture(nil, "BACKGROUND")
-    NPCFriendshipStatusBar.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    NPCFriendshipStatusBar.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png")
     NPCFriendshipStatusBar.bg:SetPoint("TOPLEFT", NPCFriendshipStatusBar, "TOPLEFT", -3, 3)
     NPCFriendshipStatusBar.bg:SetPoint("BOTTOMRIGHT", NPCFriendshipStatusBar, "BOTTOMRIGHT", 3, -3)
 
@@ -807,7 +807,7 @@ local function LoadGossipSkin()
         w, h = QuestFrame:GetSize()
         QuestFrame.tex:SetPoint("TOP", QuestFrame, "TOP", 0, 20)
         QuestFrame.tex:SetSize(w + 50, h + 70)
-        QuestFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+        QuestFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
 
         QuestFrame.CloseButton:GwSkinButton(true)
         QuestFrame.CloseButton:SetSize(20, 20)
@@ -943,7 +943,7 @@ local function LoadGossipSkin()
         w, h = QuestLogPopupDetailFrame:GetSize()
         tex:SetPoint("TOP", QuestLogPopupDetailFrame, "TOP", 0, 20)
         tex:SetSize(w + 50, h + 70)
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
         QuestLogPopupDetailFrame.tex = tex
 
         QuestLogPopupDetailFrameAbandonButton:GwSkinButton(false, true)

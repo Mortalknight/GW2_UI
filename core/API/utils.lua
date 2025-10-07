@@ -209,13 +209,13 @@ local function FormatMoneyForChat(amount)
     local copper = mod(value, COPPER_PER_SILVER)
 
     if gold > 0 then
-        str = format("%s%s |r|TInterface/AddOns/GW2_UI/textures/icons/Coins:12:12:0:0:64:32:22:42:1:20|t%s", goldcolor, GW.GetLocalizedNumber(gold), " ")
+        str = format("%s%s |r|TInterface/AddOns/GW2_UI/textures/icons/coins.png:12:12:0:0:64:32:22:42:1:20|t%s", goldcolor, GW.GetLocalizedNumber(gold), " ")
     end
     if silver > 0 or gold > 0 then
-        str = format("%s%s%d |r|TInterface/AddOns/GW2_UI/textures/icons/Coins:12:12:0:0:64:32:43:64:1:20|t%s", str, silvercolor, silver, (copper > 0 or gold > 0) and " " or "")
+        str = format("%s%s%d |r|TInterface/AddOns/GW2_UI/textures/icons/coins.png:12:12:0:0:64:32:43:64:1:20|t%s", str, silvercolor, silver, (copper > 0 or gold > 0) and " " or "")
     end
     if copper > 0 or value == 0 or value > 0 then
-        str = format("%s%s%d |r|TInterface/AddOns/GW2_UI/textures/icons/Coins:12:12:0:0:64:32:0:21:1:20|t", str, coppercolor, copper)
+        str = format("%s%s%d |r|TInterface/AddOns/GW2_UI/textures/icons/coins.png:12:12:0:0:64:32:0:21:1:20|t", str, coppercolor, copper)
     end
 
     return str
@@ -1144,14 +1144,14 @@ local function GetClassIconStringWithStyle(class, width, height)
 
 
     if not width and not height then
-        return format("|T%s:0|t", "Interface/Addons/GW2_UI/Textures/classicons/" .. class .. "_flat")
+        return format("|T%s:0|t", "Interface/Addons/GW2_UI/Textures/classicons/" .. class .. "_flat.png")
     end
 
     if not height then
         height = width
     end
 
-    return format("|T%s:%d:%d:0:0:64:64:0:64:0:64|t", "Interface/Addons/GW2_UI/Textures/classicons/" .. class .. "_flat", height, width)
+    return format("|T%s:%d:%d:0:0:64:64:0:64:0:64|t", "Interface/Addons/GW2_UI/Textures/classicons/" .. class .. "_flat.png", height, width)
 end
 GW.GetClassIconStringWithStyle = GetClassIconStringWithStyle
 
@@ -1295,24 +1295,24 @@ end
 GW.GetInstanceImages = GetInstanceImages
 
 local function BlizzardDropdownRadioButtonInitializer(button, description, menu, isSelected, data)
-    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
+    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")
     button.highlight:SetDrawLayer("BACKGROUND")
     button.highlight:SetBlendMode("BLEND")
     button.highlight:SetAlpha(0.5)
     if GW.Retail then
         button.leftTexture1:SetSize(13, 13)
-        button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/radio-unselected")
+        button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/radio-unselected.png")
         button.leftTexture1:SetPoint("LEFT", 0, 0)
         if button.leftTexture2 then
             button.leftTexture2:SetSize(13, 13)
-            button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/radio-selected")
+            button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/radio-selected.png")
             button.leftTexture2:SetPoint("CENTER", button.leftTexture1, "CENTER", 0, 0)
         end
     else
         if isSelected(data) then
-            button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked")
+            button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png")
         else
-            button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox")
+            button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
         end
     end
     if not button.gwHooked then
@@ -1327,23 +1327,23 @@ end
 GW.BlizzardDropdownRadioButtonInitializer = BlizzardDropdownRadioButtonInitializer
 
 local function BlizzardDropdownCheckButtonInitializer(button, description, menu, isSelected, data)
-    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
+    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")
     button.highlight:SetDrawLayer("BACKGROUND")
     button.highlight:SetBlendMode("BLEND")
     button.highlight:SetAlpha(0.5)
     button.leftTexture1:SetSize(13, 13)
     if GW.Retail then
-        button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox")
+        button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
         if button.leftTexture2 then
             button.leftTexture2:SetSize(13, 13)
-            button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked")
+            button.leftTexture2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png")
             button.leftTexture2:SetPoint("CENTER", button.leftTexture1, "CENTER", 0, 0)
         end
     else
         if isSelected(data) then
-            button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked")
+            button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png")
         else
-            button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox")
+            button.leftTexture1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
         end
     end
     if not button.gwHooked then
@@ -1358,7 +1358,7 @@ end
 GW.BlizzardDropdownCheckButtonInitializer = BlizzardDropdownCheckButtonInitializer
 
 local function BlizzardDropdownButtonInitializer(button, description, menu)
-    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
+    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")
     button.highlight:SetDrawLayer("BACKGROUND")
     button.highlight:SetBlendMode("BLEND")
     button.highlight:SetAlpha(0.5)

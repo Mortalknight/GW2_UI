@@ -21,7 +21,7 @@ local function DelayedMajorFactionList(frame)
 end
 
 local function ExpansionLadningPageSkin()
-    GW.CreateFrameHeaderWithBody(ExpansionLandingPage, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", nil, nil, false, true)
+    GW.CreateFrameHeaderWithBody(ExpansionLandingPage, nil, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", nil, nil, false, true)
 
     local factionList = LandingPageMajorFactionList
     if factionList then

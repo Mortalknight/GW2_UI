@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/party/manage-group-bg">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png">
                     <Size x="350" y="150"/>
                     <Anchors>
                         <Anchor point="TOPLEFT"/>
@@ -19,7 +19,7 @@
                 </Texture>
             </Layer>
             <Layer textureSubLevel="2">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/icons/warning-icon">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/icons/warning-icon.png">
                     <Size x="50" y="50"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="15" y="-15"/>

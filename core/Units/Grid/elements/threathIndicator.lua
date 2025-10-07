@@ -33,7 +33,7 @@ local function Construct_ThreathIndicator(frame)
     local threatIndicator = frame.RaisedElementParent.TextureParent:CreateTexture(nil, "BORDER")
     threatIndicator:SetPoint("TOPLEFT", frame, 0, 0)
     threatIndicator:SetPoint("BOTTOMRIGHT", frame, 0, 0)
-    threatIndicator:SetTexture("Interface/AddOns/GW2_UI/textures/party/aggroborder")
+    threatIndicator:SetTexture("Interface/AddOns/GW2_UI/textures/party/aggroborder.png")
 
     threatIndicator.Override = Update
 

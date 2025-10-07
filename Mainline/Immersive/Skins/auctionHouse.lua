@@ -44,7 +44,7 @@ local function HandleTabs(arg1)
 	for index, tab in next, AuctionHouseFrame.Tabs do
 		if not tab.isSkinned then
 			local id = index == 1 and "buy" or index == 2 and "sell" or "listings"
-			local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id
+			local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_" .. id .. ".png"
 			GW.SkinSideTabButton(tab, iconTexture, tab:GetText())
 		end
 
@@ -65,7 +65,7 @@ local function HandleSellFrame(frame)
 	if ItemButton.IconMask then ItemButton.IconMask:Hide() end
 
 	ItemButton.EmptyBackground:Hide()
-	ItemButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
+	ItemButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
 	ItemButton.Highlight:SetColorTexture(1, 1, 1, .25)
 	ItemButton.Highlight:SetAllPoints(ItemButton.Icon)
 
@@ -146,7 +146,7 @@ local function HandleTokenSellFrame(frame)
 	if ItemButton.IconMask then ItemButton.IconMask:Hide() end
 
 	ItemButton.EmptyBackground:Hide()
-	ItemButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
+	ItemButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
 	ItemButton.Highlight:SetColorTexture(1, 1, 1, .25)
 	ItemButton.Highlight:SetAllPoints(ItemButton.Icon)
 
@@ -213,7 +213,7 @@ local function ApplyAuctionHouseSkin()
 	AuctionHouseFrameAuctionsFrame.BidsList:GwStripTextures()
 	AuctionHouseFrame.WoWTokenResults:GwStripTextures()
 
-	GW.CreateFrameHeaderWithBody(AuctionHouseFrame, AuctionHouseFrameTitleText, "Interface/AddOns/GW2_UI/textures/icons/auction-window-icon", {AuctionHouseFrame.CategoriesList,
+	GW.CreateFrameHeaderWithBody(AuctionHouseFrame, AuctionHouseFrameTitleText, "Interface/AddOns/GW2_UI/textures/icons/auction-window-icon.png", {AuctionHouseFrame.CategoriesList,
 								AuctionHouseFrame.BrowseResultsFrame,
 								AuctionHouseFrame.CommoditiesBuyFrame,
 								AuctionHouseFrame.CommoditiesBuyFrame.ItemList,
@@ -233,7 +233,7 @@ local function ApplyAuctionHouseSkin()
 								}
 								, nil, true, true)
 	AuctionHouseFrame:SetWidth(810)
-	AuctionHouseFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/windowbg")
+	AuctionHouseFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/Auction/windowbg.png")
 	AuctionHouseFrame.tex:SetTexCoord(0, 1, 0, 0.74)
 	AuctionHouseFrame.gwHeader.windowIcon:ClearAllPoints()
 	AuctionHouseFrame.gwHeader.windowIcon:SetPoint("CENTER", AuctionHouseFrame.gwHeader, "BOTTOMLEFT", -26, 35)
@@ -284,7 +284,7 @@ local function ApplyAuctionHouseSkin()
 
 		if not button.IsSkinned then
 			button.Background = button:CreateTexture(nil, "BACKGROUND", nil, 0)
-			button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+			button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
 			button.Background:ClearAllPoints()
 			button.Background:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
 			button.Background:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
@@ -298,7 +298,7 @@ local function ApplyAuctionHouseSkin()
 
 			-- add arrows
 			button.arrow = button:CreateTexture(nil, "BACKGROUND", nil, 1)
-			button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+			button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png")
 			button.arrow:SetSize(16,16)
 			button.arrow:Hide()
 
@@ -311,9 +311,9 @@ local function ApplyAuctionHouseSkin()
 		button.SelectedTexture:SetHeight(28)
 		button.HighlightTexture:SetHeight(28)
 		button.SelectedTexture:SetColorTexture(r, g, b, .25)
-		button.SelectedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+		button.SelectedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
 		button.HighlightTexture:SetColorTexture(1, 1, 1, .1)
-		button.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+		button.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
 
 		button.Text:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 		button.Text:SetShadowColor(0, 0, 0, 0)
@@ -553,7 +553,7 @@ local function ApplyAuctionHouseSkin()
 	local progressBar = multisellFrame.ProgressBar
 	progressBar:GwStripTextures()
 	progressBar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-	progressBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
+	progressBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white.png")
 
 	progressBar.Text:ClearAllPoints()
 	progressBar.Text:SetPoint("BOTTOM", progressBar, "TOP", 0, 5)

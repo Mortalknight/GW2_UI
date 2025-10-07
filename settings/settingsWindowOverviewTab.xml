@@ -8,14 +8,14 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentkey="splashart" file="Interface\AddOns\GW2_UI\textures\uistuff\settingartwork">
+                <Texture parentkey="splashart" file="Interface\AddOns\GW2_UI\textures\uistuff\settingartwork.png">
                     <Size x="612" y="400"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-20" y="0"></Anchor>
                     </Anchors>
                     <TexCoords left="0" right="0.763671875" top="0" bottom="1" />
                 </Texture>
-                 <Texture parentkey="splashart2" file="Interface\AddOns\GW2_UI\textures\uistuff\settingartwork-dark">
+                 <Texture parentkey="splashart2" file="Interface\AddOns\GW2_UI\textures\uistuff\settingartwork-dark.png">
                     <Size x="612" y="400"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-20" y="0"></Anchor>
@@ -24,7 +24,7 @@
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="2">
-                <Texture parentKey="pageblock" file="Interface/AddOns/GW2_UI/textures/uistuff/settingspanelblank">
+                <Texture parentKey="pageblock" file="Interface/AddOns/GW2_UI/textures/uistuff/settingspanelblank.png">
                     <Size x="612" y="320"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="10"></Anchor>
@@ -103,7 +103,7 @@
             <Frame parentKey="title" setAllPoints="true" hidden="true">
                 <Layers>
                     <Layer level="BACKGROUND">
-                    <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                    <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\menu-bg.png">
                         <Size x="612" y="320"/>
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -125,7 +125,7 @@
             <Frame parentKey="content" setAllPoints="true" hidden="true">
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\menu-bg.png">
                         <Size x="612" y="320"/>
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -134,7 +134,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\uistuff\changelogicons">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\uistuff\changelogicons.png">
                             <Size x="16" y="16"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>

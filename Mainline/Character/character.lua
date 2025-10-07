@@ -12,7 +12,7 @@ windowsList[1] = {
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwPaperDoll",
     ["TabIcon"] = "tabicon_character",
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/character-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/character-window-icon.png",
     ["HeaderText"] = CHARACTER,
     ["TooltipText"] = CHARACTER_BUTTON,
     ["Bindings"] = {
@@ -29,7 +29,7 @@ windowsList[2] = {
     ["SettingName"] = "USE_PROFESSION_WINDOW",
     ["RefName"] = "GwProfessionsFrame",
     ["TabIcon"] = "tabicon_professions",
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon.png",
     ["HeaderText"] = TRADE_SKILLS,
     ["TooltipText"] = TRADE_SKILLS,
     ["Bindings"] = {
@@ -46,7 +46,7 @@ windowsList[3] = {
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwCurrencyFrame",
     ["TabIcon"] = "tabicon_currency",
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon.png",
     ["HeaderText"] = CURRENCY,
     ["TooltipText"] = CURRENCY,
     ["Bindings"] = {
@@ -63,7 +63,7 @@ windowsList[4] = {
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwReputationFrame",
     ["TabIcon"] = "tabicon_reputation",
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/reputation-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/reputation-window-icon.png",
     ["HeaderText"] = REPUTATION,
     ["TooltipText"] = REPUTATION,
     ["Bindings"] = {
@@ -333,7 +333,7 @@ local function LoadBaseFrame()
     fmGCW.backgroundMask:SetPoint("TOPLEFT", fmGCW, "TOPLEFT", -64, 64)
     fmGCW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGCW, "BOTTOMLEFT",-64, 0)
     fmGCW.backgroundMask:SetTexture(
-        "Interface/AddOns/GW2_UI/textures/masktest",
+        "Interface/AddOns/GW2_UI/textures/masktest.png",
         "CLAMPTOBLACKADDITIVE",
         "CLAMPTOBLACKADDITIVE"
     )
@@ -446,7 +446,7 @@ GW.AddForProfiling("character", "setTabIconState", setTabIconState)
 
 local function createTabIcon(iconName, tabIndex)
     local f = CreateFrame("Button", nil, GwCharacterWindow, "GwCharacterTabSelect")
-    f.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\" .. iconName)
+    f.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\" .. iconName .. ".png")
     f:SetPoint("TOP", GwCharacterWindow, "TOPLEFT", -32, -25 + -((tabIndex - 1) * 45))
     setTabIconState(f, false)
     return f
@@ -521,7 +521,7 @@ GW.LoadCharacter = LoadCharacter
 
 -- stuff for standard menu functionality
 local function CharacterMenuBlank_OnLoad(self)
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover.png")
     self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     self:ClearNormalTexture()
     local fontString = self:GetFontString()
@@ -537,12 +537,12 @@ local function CharacterMenuButton_OnLoad(self, odd)
         odd = GW.nextHeroPanelMenuButtonShadowOdd
     end
 
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover.png")
     self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if odd then
         self:ClearNormalTexture()
     else
-        self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
+        self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg.png")
     end
 
     self:GetFontString():SetJustifyH("LEFT")
@@ -552,7 +552,7 @@ end
 GW.CharacterMenuButton_OnLoad = CharacterMenuButton_OnLoad
 
 local function CharacterMenuButtonBack_OnLoad(self)
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover.png")
     self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     self:ClearNormalTexture()
 

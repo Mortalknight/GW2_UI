@@ -9,7 +9,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                     <Size x="608" y="621"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -21,7 +21,7 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-50"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\talents_header" parentKey="background">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\talents_header.png" parentKey="background">
                     <Size x="512" y="32"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-50"></Anchor>
@@ -89,7 +89,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                     <Size x="588" y="140"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -106,7 +106,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -138,7 +138,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                        <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                             <Size x="80" y="80"></Size>
                             <Anchors>
                                 <Anchor point="CENTER"></Anchor>
@@ -152,7 +152,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK" textureSubLevel="5">
-                        <Texture parentKey="roleIconBg" file="Interface/AddOns/GW2_UI/textures/hud/notification-backdrop">
+                        <Texture parentKey="roleIconBg" file="Interface/AddOns/GW2_UI/textures/hud/notification-backdrop.png">
                             <Size x="27" y="27"></Size>
                             <Color r="0" g="0" b="0" a="0.7"/>
                             <Anchors>
@@ -161,7 +161,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                        <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline.png">
                             <Size x="110" y="110"></Size>
                             <Anchors>
                                 <Anchor point="CENTER"></Anchor>
@@ -180,7 +180,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border.png">
                     <Size x="44" y="44"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -197,14 +197,14 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight" hidden="true">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight.png" parentKey="highlight" hidden="true">
                     <Size x="34" y="34"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                     </Anchors>
                     <Color r="1" b="0.6" g="1" a="0.9"></Color>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="legendaryHighlight" hidden="true">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\active_highlight.png" parentKey="legendaryHighlight" hidden="true">
                     <Size x="34" y="34"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -222,7 +222,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="line" file="Interface\AddOns\GW2_UI\textures\talents\line">
+                <Texture parentKey="line" file="Interface\AddOns\GW2_UI\textures\talents\line.png">
                     <Size x="66" y="66"></Size>
                 </Texture>
             </Layer>

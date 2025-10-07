@@ -404,13 +404,13 @@ end
 GW.PaperDollUpdatePetStats = PaperDollUpdatePetStats
 
 local function PaperDollSetStatIcon(self, stat)
-    local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon-cata"
+    local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon-cata.png"
 
     if stat == "DURABILITY" then
-        newTexture = "Interface/AddOns/GW2_UI/textures/globe/repair"
+        newTexture = "Interface/AddOns/GW2_UI/textures/globe/repair.png"
     elseif stat == "MASTERY" then
         GW.SetClassIcon(self.icon, GW.myClassID)
-        newTexture = "Interface/AddOns/GW2_UI/textures/party/classicons"
+        newTexture = "Interface/AddOns/GW2_UI/textures/party/classicons.png"
     elseif STATS_ICONS[stat] then
         self.icon:SetTexCoord(GW.getSprite(statsIconsSprite,STATS_ICONS[stat].x,STATS_ICONS[stat].y))
     end
@@ -550,7 +550,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
         slot.icon = icon
     end
     if slot.IconBorder then
-        slot.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        slot.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         slot.IconBorder:SetAllPoints(slot)
         slot.IconBorder:SetParent(slot)
     end
@@ -561,13 +561,13 @@ local function grabDefaultSlots(slot, anchor, parent, size)
 
     local high = slot:GetHighlightTexture()
     high:SetAllPoints(slot)
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
     slot.repairIcon = slot:CreateTexture(nil, "OVERLAY")
     slot.repairIcon:SetPoint("BOTTOMRIGHT", slot, "BOTTOMRIGHT", 0, 0)
-    slot.repairIcon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
+    slot.repairIcon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair.png")
     slot.repairIcon:SetTexCoord(0, 1, 0.5, 1)
     slot.repairIcon:SetSize(20, 20)
 
@@ -582,7 +582,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.overlayButton = CreateFrame("Button", nil, slot)
     slot.overlayButton:SetAllPoints()
     slot.overlayButton:Hide()
-    slot.overlayButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    slot.overlayButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     slot.overlayButton:GetHighlightTexture():SetBlendMode("ADD")
     slot.overlayButton:GetHighlightTexture():SetAlpha(0.33)
     slot.overlayButton.isEquipmentSelected = false
@@ -678,7 +678,7 @@ local function LoadPaperDoll()
         if not button.IsGW2Hooked then return end
         local textureName = GetInventoryItemTexture("player", button:GetID())
         if not textureName then
-            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg-cata")
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg-cata.png")
             button.icon:SetTexCoord(unpack(PlayerSlots[button:GetName()]))
             PaperDollSlotButton_Update(button)
         else

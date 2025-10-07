@@ -8,19 +8,19 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="MID" file="Interface\AddOns\GW2_UI\textures\battleground\teamflag-mid">
+                <Texture parentKey="MID" file="Interface\AddOns\GW2_UI\textures\battleground\teamflag-mid.png">
                     <Size x="2" y="64"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\battleground\teamflag-bg" parentKey="leftFlag">
+                <Texture file="Interface\AddOns\GW2_UI\textures\battleground\teamflag-bg.png" parentKey="leftFlag">
                     <Size x="256" y="128"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativeKey="$parent.MID" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\battleground\teamflag-bg" parentKey="rightFlag">
+                <Texture file="Interface\AddOns\GW2_UI\textures\battleground\teamflag-bg.png" parentKey="rightFlag">
                     <Size x="256" y="128"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.MID" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
@@ -55,7 +55,7 @@
         <Size x="32" y="32"></Size>
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="3">
-                <Texture parentKey="IconBackground" file="Interface\AddOns\GW2_UI\textures\battleground\base-background">
+                <Texture parentKey="IconBackground" file="Interface\AddOns\GW2_UI\textures\battleground\base-background.png">
                     <Size x="32" y="32"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>

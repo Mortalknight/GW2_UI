@@ -11,7 +11,7 @@ windowsList[1] = {
     ['OnLoad'] = "LoadPaperDoll",
     ['SettingName'] = 'USE_CHARACTER_WINDOW',
     ['TabIcon'] = 'tabicon_character',
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/character-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/character-window-icon.png",
     ["HeaderText"] = CHARACTER,
     ["Bindings"] = {
         ["TOGGLECHARACTER0"] = "PaperDoll",
@@ -26,7 +26,7 @@ windowsList[2] = {
     ['OnLoad'] = "LoadReputation",
     ['SettingName'] = 'USE_CHARACTER_WINDOW',
     ['TabIcon'] = 'tabicon_reputation',
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/character-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/character-window-icon.png",
     ["HeaderText"] = REPUTATION,
     ["Bindings"] = {
         ["TOGGLECHARACTER2"] = "Reputation"
@@ -40,7 +40,7 @@ windowsList[3] = {
     ['OnLoad'] = "LoadTalents",
     ['SettingName'] = "USE_TALENT_WINDOW",
     ['TabIcon'] = 'tabicon-talents',
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/talents-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/talents-window-icon.png",
     ["HeaderText"] = TALENTS,
     ["Bindings"] = {
         ["TOGGLETALENTS"] = "Talents"
@@ -54,7 +54,7 @@ windowsList[4] = {
     ['OnLoad'] = "LoadSpellBook",
     ['SettingName'] = "USE_SPELLBOOK_WINDOW",
     ['TabIcon'] = 'tabicon_spellbook',
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon.png",
     ["HeaderText"] = SPELLS,
     ["Bindings"] = {
         ["TOGGLESPELLBOOK"] = "SpellBook",
@@ -69,7 +69,7 @@ windowsList[5] = {
     ['OnLoad'] = "LoadGlyphes",
     ['SettingName'] = "USE_TALENT_WINDOW",
     ['TabIcon'] = 'tabicon-glyph',
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/glyph-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/glyph-window-icon.png",
     ["HeaderText"] = GLYPHS,
     ["Bindings"] = {
         ["TOGGLEINSCRIPTION"] = "Glyphes"
@@ -83,7 +83,7 @@ windowsList[6] = {
     ["OnLoad"] = "LoadCurrency",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["TabIcon"] = "tabicon_currency",
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon.png",
     ["HeaderText"] = CURRENCY,
     ["TooltipText"] = CURRENCY,
     ["Bindings"] = {
@@ -100,7 +100,7 @@ windowsList[8] = {
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwProfessionsFrame",
     ["TabIcon"] = "tabicon_professions",
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon.png",
     ["HeaderText"] = TRADE_SKILLS,
     ["TooltipText"] = TRADE_SKILLS,
     ["Bindings"] = {
@@ -628,7 +628,7 @@ end
 
 local function createTabIcon(iconName, tabIndex)
     local f = CreateFrame('Button', nil, GwCharacterWindow, 'CharacterWindowTabSelect')
-    f.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\' .. iconName)
+    f.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\' .. iconName .. ".png")
     f:SetPoint('TOP', GwCharacterWindow, 'TOPLEFT', -32, -25 + -((tabIndex - 1) * 45))
     setTabIconState(f, false)
 
@@ -659,7 +659,7 @@ local function charTab_OnEnter(self)
 end
 
 local function CharacterMenuBlank_OnLoad(self)
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover.png")
     self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     self:ClearNormalTexture()
     local fontString = self:GetFontString()
@@ -671,12 +671,12 @@ end
 GW.CharacterMenuBlank_OnLoad = CharacterMenuBlank_OnLoad
 
 local function CharacterMenuButton_OnLoad(self, odd, addGwHeroPanelFrameRef)
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover.png")
     self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if not odd then
         self:ClearNormalTexture()
     else
-        self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
+        self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg.png")
     end
     if self:GetFontString() then
         self:GetFontString():SetTextColor(1, 1, 1, 1)
@@ -694,7 +694,7 @@ end
 GW.CharacterMenuButton_OnLoad = CharacterMenuButton_OnLoad
 
 local function CharacterMenuButtonBack_OnLoad(self)
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover.png")
     self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     self:ClearNormalTexture()
     local fontString = self:GetFontString()

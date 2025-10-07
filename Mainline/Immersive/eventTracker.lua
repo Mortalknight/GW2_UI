@@ -258,7 +258,7 @@ local function reskinStatusBar(bar)
     bar:SetFrameLevel(bar:GetFrameLevel() + 1)
     bar:GwStripTextures()
     bar:GwCreateBackdrop(GW.BackdropTemplates.StatusBar, true)
-    bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
+    bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white.png")
     bar.backdrop:GwSetOutside(bar, 4, 4)
 end
 

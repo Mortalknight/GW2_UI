@@ -19,20 +19,20 @@ local function reskinItemButton(b, overrideIconSize)
     b.icon:SetAlpha(0.9)
 
     b.IconBorder:SetAllPoints(b)
-    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
 
     local norm = b:GetNormalTexture()
     norm:SetTexture(nil)
 
     local high = b:GetHighlightTexture()
     high:SetAllPoints(b)
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
     if not b.gwBackdrop then
         local bd = b:CreateTexture(nil, "BACKGROUND")
-        bd:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
+        bd:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop.png")
         bd:SetAllPoints(b)
         b.gwBackdrop = bd
     end
@@ -67,7 +67,7 @@ local function reskinItemButton(b, overrideIconSize)
 
     if not b.questIcon then
         b.questIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
-        b.questIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest")
+        b.questIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest.png")
         b.questIcon:SetSize(25, 25)
         b.questIcon:SetPoint("TOPLEFT", -7, 1)
         b.questIcon:SetVertexColor(221 / 255, 198 / 255, 68 / 255)
@@ -132,7 +132,7 @@ end
 GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 
 local function SetItemButtonQualityForBags(button, quality)
-    button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     button.IconOverlay:Hide()
     button.IconBorder:SetAlpha(0.9)
 
@@ -184,7 +184,7 @@ local function hookItemQuality(button, quality, itemIDOrLink)
     button.IconOverlay:Hide()
     local t = button.IconBorder
     local colorCommon = GW.GetBagItemQualityColor(Enum.ItemQuality.Common)
-    t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     t:SetAlpha(0.9)
     t:SetVertexColor(colorCommon.r, colorCommon.g, colorCommon.b)
 
@@ -202,7 +202,7 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         if quality == nil then quality = 0 end
 
         if isQuestItem == LE_ITEM_CLASS_QUESTITEM then
-            t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
+            t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border.png")
             button.questIcon:Show()
         else
             button.questIcon:Hide()
@@ -368,10 +368,10 @@ local function reskinBagBar(b)
     norm:SetTexture(nil)
 
     b.IconBorder:SetAllPoints(b)
-    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
 
     local high = b:GetHighlightTexture()
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
     high:SetSize(bag_size, bag_size)
@@ -380,7 +380,7 @@ local function reskinBagBar(b)
 
     if b.SlotHighlightTexture then
         b.SlotHighlightTexture:SetAlpha(0)
-        b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+        b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
     end
 end
 GW.AddForProfiling("inventory", "reskinBagBar", reskinBagBar)
@@ -399,7 +399,7 @@ local function reskinSearchBox(sb)
 
     sb.Left:SetTexture(nil)
     sb.Right:SetTexture(nil)
-    sb.Middle:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg")
+    sb.Middle:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg.png")
 
     sb.Middle:SetPoint("RIGHT", sb, "RIGHT", 0, 0)
 

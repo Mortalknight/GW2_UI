@@ -43,7 +43,7 @@ local statusReport_OnClick = function()
 end
 
 local function getChangeLogIcon(self, tag)
-    self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/changelogicons")
+    self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/changelogicons.png")
     if tonumber(tag) == GW.ChangelogType.bug then
         self:SetTexCoord(0, 0.5, 0, 0.5)
     elseif tonumber(tag) == GW.ChangelogType.feature then
@@ -54,7 +54,7 @@ local function getChangeLogIcon(self, tag)
 end
 local function getCreditsIcon(self, type)
     self:SetTexCoord(0, 1, 0, 1)
-    self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/credits_" .. (type and type:lower() or ""))
+    self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/credits_" .. (type and type:lower() or "") .. ".png")
 end
 
 local function ConvertChangeLogTableToOneTable()
@@ -164,20 +164,20 @@ local function LoadSettingsOverview(container)
     settingsOverview.name = "GwSettingsOverview"
     settingsOverview.headerBreadcrumbText = OVERVIEW
     settingsOverview.hasSearch = false
-    container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_overview", settingsOverview)
+    container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_overview.png", settingsOverview)
 
     settingsOverview.splashart:AddMaskTexture(container.backgroundMask)
     settingsOverview.splashart2:AddMaskTexture(container.backgroundMask)
 
     if GW.Retail then
-        settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail")
-        settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail-dark")
+        settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail.png")
+        settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail-dark.png")
     elseif GW.Classic then
-        settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic")
-        settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic")
+        settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic.png")
+        settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic.png")
     elseif GW.Mists then
-        settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata")
-        settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata")
+        settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata.png")
+        settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-cata.png")
     end
 
     local buttons = {

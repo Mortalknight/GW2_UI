@@ -332,7 +332,7 @@ local function xpbar_OnEvent(self, event)
 
     local animationSpeed = 15
     local maxPlayerLevel = GetMaxLevelForPlayerExpansion()
-    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or ""
+    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon.png:16:16:0:0|t " or ""
     local showExp = (GW.mylevel < maxPlayerLevel)
     local level = GW.mylevel
     local Nextlevel = GW.mylevel < maxPlayerLevel and (GW.mylevel + 1) or GW.mylevel
@@ -377,11 +377,11 @@ local function xpbar_OnEvent(self, event)
             Nextlevel = AzeritLevel + 1 --Max azerit level is infinity
             self.NextLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
             self.CurrentLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
-            self.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
-            self.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
+            self.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit.png")
+            self.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit.png")
         end
     else
-        local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or "Interface/AddOns/GW2_UI/textures/hud/level-label"
+        local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit.png" or "Interface/AddOns/GW2_UI/textures/hud/level-label.png"
         self.NextLevel:SetTextColor(1, 1, 1)
         self.CurrentLevel:SetTextColor(1, 1, 1)
         self.labelRight:SetTexture(texture)
@@ -449,7 +449,7 @@ local function xpbar_OnEvent(self, event)
     experiencebarAnimation = valPrec
 
     if GW.IsUpcomingSpellAvalible() then
-        Nextlevel = Nextlevel .. " |TInterface\\AddOns\\GW2_UI\\textures/icons/levelreward-icon:20:20:0:0|t"
+        Nextlevel = Nextlevel .. " |TInterface\\AddOns\\GW2_UI\\textures/icons/levelreward-icon.png:20:20:0:0|t"
     end
     if GW.mylevel ~= UnitEffectiveLevel("player") then
         level = level .. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"

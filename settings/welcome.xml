@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/settingssplash">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/settingssplash.png">
                 <Size x="1024" y="1024"/>
                     <Anchors>
                         <Anchor point="CENTER"/>

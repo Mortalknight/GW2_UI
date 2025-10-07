@@ -26,7 +26,7 @@ local function worldMapSkin()
         end
     end
 
-    GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {QuestScrollFrame}, 0, nil, true)
+    GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon.png", {QuestScrollFrame}, 0, nil, true)
     WorldMapFrame.BorderFrame:GwStripTextures()
     WorldMapFrame.BorderFrame:SetFrameStrata(WorldMapFrame:GetFrameStrata())
     WorldMapFrame.MiniBorderFrame:GwKill()
@@ -160,7 +160,7 @@ local function worldMapSkin()
 
     scaleHandle.t = scaleHandle:CreateTexture(nil, "OVERLAY")
     scaleHandle.t:SetAllPoints()
-    scaleHandle.t:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize")
+    scaleHandle.t:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
     scaleHandle.t:SetDesaturated(true)
 
     -- Create scale frame
@@ -253,7 +253,7 @@ local function worldMapSkin()
 
     -- player pin
     for pin in WorldMapFrame:EnumeratePinsByTemplate("GroupMembersPinTemplate") do
-        pin:SetPinTexture("player", "Interface/AddOns/GW2_UI/textures/icons/player_arrow")
+        pin:SetPinTexture("player", "Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
         pin.dataProvider:GetUnitPinSizesTable().player = 34
         pin:SynchronizePinSizes()
         break

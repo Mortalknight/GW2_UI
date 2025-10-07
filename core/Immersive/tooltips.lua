@@ -605,17 +605,17 @@ local function AddRoleInfo(self, unit)
         local raidRole = ""
         if raidId then
             local raidR = select(10, GetRaidRosterInfo(raidId))
-            if raidR == "MAINTANK" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-maintank:0:0:0:-3:64:64:4:60:4:60|t " .. MAINTANK .. ")" end
-            if raidR == "MAINASSIST" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist:0:0:0:-1:64:64:4:60:4:60|t " .. MAIN_ASSIST .. ")" end
+            if raidR == "MAINTANK" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-maintank.png:0:0:0:-3:64:64:4:60:4:60|t " .. MAINTANK .. ")" end
+            if raidR == "MAINASSIST" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist.png:0:0:0:-1:64:64:4:60:4:60|t " .. MAIN_ASSIST .. ")" end
         end
 
         self:AddDoubleLine(format("%s:", ROLE), role .. raidRole, nil, nil, nil, r, g, b)
         if isGroupLeader or isGroupAssist then
             local roleString
             if isGroupLeader then
-                roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t " .. (IsInRaid() and RAID_LEADER or PARTY_LEADER)
+                roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:0:0:0:-2:64:64:4:60:4:60|t " .. (IsInRaid() and RAID_LEADER or PARTY_LEADER)
             else
-                roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist:0:0:0:-2:64:64:4:60:4:60|t " .. RAID_ASSISTANT
+                roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:0:0:0:-2:64:64:4:60:4:60|t " .. RAID_ASSISTANT
             end
             self:AddDoubleLine(" ", roleString, nil, nil, nil, r, g, b)
         end
@@ -928,7 +928,7 @@ local function GameTooltip_ShowProgressBar(self)
         sb.Bar:GwStripTextures()
         sb.Bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
         sb.Bar.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
-        sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
+        sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar.png")
     end
 end
 
@@ -941,7 +941,7 @@ local function GameTooltip_ShowStatusBar(self)
     sb:GwStripTextures()
     sb:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
     sb.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
-    sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
+    sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar.png")
 end
 
 local function SkinItemRefTooltipCloseButton()
@@ -959,8 +959,8 @@ end
 local function SkinQueueStatusFrame()
     QueueStatusFrame:GwStripTextures()
     QueueStatusFrame:GwCreateBackdrop({
-        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
+        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-border.png",
         tile = false,
         tileSize = 64,
         edgeSize = 32,
@@ -996,13 +996,13 @@ local function SetStyle(self, _, isEmbedded)
     end
 
     self.NineSlice:SetBackdrop({
-        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
         edgeSize = GW.Scale(1)
     })
 
     local backdrop = {
-        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
         edgeSize = GW.Scale(1)
     }
 
@@ -1157,9 +1157,9 @@ local function LoadTooltips()
     end
 
     if FloatingBattlePetTooltip then
-        FloatingBattlePetTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
-        FloatingBattlePetTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
-        FloatingBattlePetTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
+        FloatingBattlePetTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png")
+        FloatingBattlePetTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png")
+        FloatingBattlePetTooltip.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png")
         FloatingBattlePetTooltip.CloseButton:SetSize(20, 20)
         FloatingBattlePetTooltip.CloseButton:ClearAllPoints()
         FloatingBattlePetTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
@@ -1175,7 +1175,7 @@ local function LoadTooltips()
     end
 
     -- Skin GameTooltip Status Bar
-    GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
+    GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white.png")
     GameTooltipStatusBar:GwCreateBackdrop()
     GameTooltipStatusBar:ClearAllPoints()
     GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))

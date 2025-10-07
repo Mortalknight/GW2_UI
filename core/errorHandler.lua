@@ -20,7 +20,7 @@ local function CreateErrorLogWindow()
 
     frame.bg = frame:CreateTexture(nil, "ARTWORK")
     frame.bg:SetAllPoints()
-    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg")
+    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg.png")
 
     frame.header = frame:CreateFontString(nil, "OVERLAY")
     frame.header:SetFont(DAMAGE_TEXT_FONT, 28, "OUTLINE")
@@ -45,7 +45,7 @@ local function CreateErrorLogWindow()
     end)
     frame.scrollArea.bg = frame.scrollArea:CreateTexture(nil, "ARTWORK")
     frame.scrollArea.bg:SetAllPoints()
-    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground")
+    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground.png")
 
     frame.editBox = CreateFrame("EditBox", nil, frame)
     frame.editBox:SetMultiLine(true)

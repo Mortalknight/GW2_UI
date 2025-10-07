@@ -36,7 +36,7 @@ local function LoadWorldMapSkin()
         end
     end
 
-    GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 30, nil, true)
+    GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon.png", nil, 30, nil, true)
     WorldMapFrame.gwHeader.BGLEFT:SetWidth(100)
     WorldMapFrame.gwHeader.BGRIGHT:SetWidth(WorldMapFrame.BorderFrame:GetWidth())
     WorldMapFrame.BorderFrame:GwStripTextures()
@@ -154,7 +154,7 @@ local function LoadWorldMapSkin()
 
     scaleHandle.t = scaleHandle:CreateTexture(nil, "OVERLAY")
     scaleHandle.t:SetAllPoints()
-    scaleHandle.t:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize")
+    scaleHandle.t:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
     scaleHandle.t:SetDesaturated(true)
 
     -- Create scale frame

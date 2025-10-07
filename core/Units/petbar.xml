@@ -10,14 +10,14 @@
         </HitRectInsets>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar" parentKey="Background">
+                <Texture name="$parentBarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png" parentKey="Background">
                     <Color r="0" g="0" b="0" a="0.8"/>
                     <Size x="232" y="18"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" x="0" y="4"/>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="portraitBackground" file="Interface/AddOns/GW2_UI/textures/units/petportrait">
+                <Texture parentKey="portraitBackground" file="Interface/AddOns/GW2_UI/textures/units/petportrait.png">
                     <Size x="60" y="60"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.Background" x="0" y="-3"></Anchor>
@@ -40,7 +40,7 @@
                 <Anchors>
                     <Anchor point="left" relativePoint="LEFT" relativeKey="$parent.Background" x="1" y="0"/>
                 </Anchors>
-                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar"/>
+                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png"/>
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString name="$parentString" parentKey="text" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
@@ -58,7 +58,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.health" x="0" y="-2"/>
                 </Anchors>
-                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar"/>
+                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png"/>
             </StatusBar>
             <Frame parentKey="auras">
                 <Size x="230" y="100"/>
@@ -73,7 +73,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar" parentKey="Background">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar.png" parentKey="Background">
                             <Color r="0" g="0" b="0" a="0.8"/>
                             <Size x="25" y="25"/>
                             <Anchors>
@@ -82,7 +82,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK" textureSubLevel="2">
-                        <Texture parentKey="icon" alphaMode="add" file="Interface\AddOns\GW2_UI\textures\character\pet-happiness">
+                        <Texture parentKey="icon" alphaMode="add" file="Interface\AddOns\GW2_UI\textures\character\pet-happiness.png">
                             <Size x="25" y="25"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" relativeKey="$parent.Background" x="0" y="1"></Anchor>

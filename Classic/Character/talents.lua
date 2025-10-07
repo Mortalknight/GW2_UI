@@ -74,7 +74,7 @@ local function hookTalentButton(talentButton, container, row, index)
     local mask = UIParent:CreateMaskTexture()
 
     mask:SetPoint("CENTER", talentButton, 'CENTER', 0, 0)
-    mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(talentButton:GetSize())
     talentButton.mask = mask
     talentButton.points:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
@@ -341,15 +341,15 @@ local function updateTalentTrees()
                 button.known = (preview and previewRank or rank) == maxRank
 
                 if ispassive then
-                    button.legendaryHighlight:SetTexture('Interface/AddOns/GW2_UI/textures/talents/passive_highlight')
-                    button.highlight:SetTexture('Interface/AddOns/GW2_UI/textures/talents/passive_highlight')
+                    button.legendaryHighlight:SetTexture('Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png')
+                    button.highlight:SetTexture('Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png')
                     button.icon:AddMaskTexture(button.mask)
-                    button.outline:SetTexture('Interface/AddOns/GW2_UI/textures/talents/passive_outline')
+                    button.outline:SetTexture('Interface/AddOns/GW2_UI/textures/talents/passive_outline.png')
                 else
-                    button.highlight:SetTexture('Interface/AddOns/GW2_UI/textures/talents/active_highlight')
-                    button.legendaryHighlight:SetTexture('Interface/AddOns/GW2_UI/textures/talents/active_highlight')
+                    button.highlight:SetTexture('Interface/AddOns/GW2_UI/textures/talents/active_highlight.png')
+                    button.legendaryHighlight:SetTexture('Interface/AddOns/GW2_UI/textures/talents/active_highlight.png')
                     button.icon:RemoveMaskTexture(button.mask)
-                    button.outline:SetTexture('Interface/AddOns/GW2_UI/textures/talents/background_border')
+                    button.outline:SetTexture('Interface/AddOns/GW2_UI/textures/talents/background_border.png')
                 end
 
                 button:EnableMouse(true)
@@ -396,7 +396,7 @@ local function loadTalentsFrames()
     local mask = UIParent:CreateMaskTexture()
 
     mask:SetPoint("TOPLEFT", GwCharacterWindow, 'TOPLEFT', 0, 0)
-    mask:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg-mask.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
 
     for i = 1, GetNumTalentTabs(false, isPetTalents) do

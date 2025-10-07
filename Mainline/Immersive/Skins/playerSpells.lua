@@ -75,7 +75,7 @@ local function UpdateSpecFrame(frame)
             local role = LFGRoleEnumToString[GetSpecializationRoleEnum(specContentFrame.specIndex, false, false)]
             specContentFrame.Description:SetTextColor(1, 1, 1)
             specContentFrame.RoleName:SetTextColor(1, 1, 1)
-            specContentFrame.RoleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
+            specContentFrame.RoleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon.png")
 
             --SpecName
             specContentFrame.SpecName:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
@@ -153,7 +153,7 @@ end
 
 local function skinPlayerSpells()
     GW.HandlePortraitFrame(PlayerSpellsFrame)
-    GW.CreateFrameHeaderWithBody(PlayerSpellsFrame, PlayerSpellsFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {PlayerSpellsFrame.SpecFrame, PlayerSpellsFrame.TalentsFrame}, -3, false, true)
+    GW.CreateFrameHeaderWithBody(PlayerSpellsFrame, PlayerSpellsFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {PlayerSpellsFrame.SpecFrame, PlayerSpellsFrame.TalentsFrame}, -3, false, true)
     PlayerSpellsFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
     -- Specialisation
     hooksecurefunc(PlayerSpellsFrame.SpecFrame, "UpdateSpecFrame", UpdateSpecFrame)

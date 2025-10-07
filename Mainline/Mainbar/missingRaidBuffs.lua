@@ -81,8 +81,8 @@ function ButtonMixin:Init(parent, anchor, isFirst)
     self.icon:SetPoint("BOTTOMRIGHT", -2, 2)
 
     -- Setze Standard-Pushed/Highlight Texturen
-    self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
-    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+    self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
+    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
 end
 
 function ButtonMixin:UpdateStyle(haveBuff, settings, glowLib, classColor)

@@ -190,7 +190,7 @@ local function setDetailEx(
     --if factionIndex % 2 == 0 then
     frame.background:SetTexture(nil)
     --else
-    --frame.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
+    --frame.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg.png")
     --end
 
     if savedHeaderName ~= nil and savedHeaderName ~= "" and savedHeaderName ~= name then
@@ -325,7 +325,7 @@ local function setDetailEx(
             until (currentValue < 10000)
         end
 
-        frame.name:SetText(hasRewardPending and name .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon:32:32:0:0|t" or name)
+        frame.name:SetText(hasRewardPending and name .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon.png:32:32:0:0|t" or name)
 
         frame.currentRank:SetText(currentRank)
         frame.nextRank:SetText(L["Paragon"])

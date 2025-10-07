@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg-brushed">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg-brushed.png">
                     <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -38,8 +38,8 @@
                         <Anchors>
                             <Anchor point="RIGHT" relativePoint="RIGHT" x="5"/>
                         </Anchors>
-                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
-                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png"/>
+                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png"/>
                         <Scripts>
                             <OnShow>
                                 self:SetChecked( GetCVarBool("ShowAllSpellRanks"))
@@ -59,7 +59,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="headerbg" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
+                <Texture parentKey="headerbg" file="Interface\AddOns\GW2_UI\textures\talents\talents_header.png">
                     <Size x="512" y="32"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -92,7 +92,7 @@
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="12"></Anchor>
                 </Anchors>
-                <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbarmiddle">
+                <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbarmiddle.png">
                     <Size x="12" y="100"/>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" ></Anchor>
@@ -100,7 +100,7 @@
                 </ThumbTexture>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbg">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbg.png">
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"></Anchor>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
@@ -125,7 +125,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbutton">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbutton.png">
                             <Size x="12" y="12"></Size>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -141,7 +141,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbutton">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbutton.png">
                             <Size x="12" y="12"></Size>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -178,7 +178,7 @@
         <Size x="40" y="40"/>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border.png">
                     <Size x="50" y="50"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
@@ -195,7 +195,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow" parentKey="arrow">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow.png" parentKey="arrow">
                     <Size x="16" y="32"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="5"/>
@@ -203,13 +203,13 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\autocast" parentKey="autocast">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\autocast.png" parentKey="autocast">
                     <Size x="55" y="55"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER" x="0"/>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spell-lock" parentKey="lock">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spell-lock.png" parentKey="lock">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
@@ -222,7 +222,7 @@
                 </FontString>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight.png" parentKey="highlight">
                     <Size x="40" y="40"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
@@ -260,7 +260,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg.png">
                     <Size x="245" y="100"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -268,7 +268,7 @@
                     </Anchors>
                     <Color r="1" g="1" b="1" a="0.5"></Color>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border.png">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-2" y="0"></Anchor>
@@ -276,7 +276,7 @@
                     </Anchors>
                     <Color r="0" g="0" b="0" a="0.5"></Color>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border.png">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-2"></Anchor>
@@ -284,7 +284,7 @@
                     </Anchors>
                     <Color r="0" g="0" b="0" a="0.5"></Color>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border.png">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
@@ -292,7 +292,7 @@
                     </Anchors>
                     <Color r="0" g="0" b="0" a="0.5"></Color>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border.png">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>

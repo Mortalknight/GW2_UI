@@ -45,7 +45,7 @@
         <Layers>
             <Layer textureSubLevel="OVERLAY">
                 <FontString parentKey="text" inherits="gw_button_font_menu_light" justifyH="LEFT"/>
-                <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
+                <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover.png" hidden="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
@@ -62,7 +62,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\settingspanelsep">
+                <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\settingspanelsep.png">
                     <Size x="4" y="512"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>

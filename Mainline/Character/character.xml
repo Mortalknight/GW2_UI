@@ -15,7 +15,7 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\tabicon_character">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\tabicon_character.png">
                     <Size x="64" y="40"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
@@ -33,25 +33,25 @@
         <Size x="853" y="627"></Size>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\windowbg.png">
                     <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader">
+                <Texture name="$parentHeader" file="Interface\AddOns\GW2_UI\textures\bag\bagheader.png">
                     <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-40" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture name="$parentHeaderRight" file="Interface\AddOns\GW2_UI\textures\bag\bagheader-right">
+                <Texture name="$parentHeaderRight" file="Interface\AddOns\GW2_UI\textures\bag\bagheader-right.png">
                     <Size x="512" y="64"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-                <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel">
+                <Texture name="$parentLeft" file="Interface\AddOns\GW2_UI\textures\bag\bagleftpanel.png">
                     <Size x="40" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -62,13 +62,13 @@
             </Layer>
 
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon">
+                <Texture parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\character-window-icon.png">
                     <Size x="84" y="84"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPLEFT" x="18" y="-22" />
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\bag\bottom-right">
+                <Texture file="Interface\AddOns\GW2_UI\textures\bag\bottom-right.png">
                     <Size x="128" y="128"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
@@ -103,7 +103,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/uistuff/resize">
+                        <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/uistuff/resize.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -118,9 +118,9 @@
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal"></NormalTexture>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover"></PushedTexture >
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover"></HighlightTexture >
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png"></PushedTexture >
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png"></HighlightTexture >
 
                 <NormalFont style="ChatBubbleFont"></NormalFont>
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>

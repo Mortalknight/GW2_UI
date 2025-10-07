@@ -9,7 +9,7 @@
     </Anchors>
     <Layers>
       <Layer level="BACKGROUND" textureSubLevel="0">
-        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
+        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel.png">
           <Size x="40" y="512"/>
           <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
@@ -28,7 +28,7 @@
         </Anchors>
         <Layers>
           <Layer level="BORDER" textureSubLevel="1">
-              <Texture parentKey="left" file="Interface\AddOns\GW2_UI\textures\uistuff\blackbackdropedge"  hWrapMode="CLAMP">
+              <Texture parentKey="left" file="Interface\AddOns\GW2_UI\textures\uistuff\blackbackdropedge.png"  hWrapMode="CLAMP">
                   <Size x="8" y="8"></Size>
                   <Anchors>
                       <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0" />
@@ -36,7 +36,7 @@
                   </Anchors>
                     <TexCoords left="0.0000" right="0.125+0000" top="0" bottom="1" />
               </Texture>
-              <Texture parentKey="right" file="Interface\AddOns\GW2_UI\textures\uistuff\blackbackdropedge" >
+              <Texture parentKey="right" file="Interface\AddOns\GW2_UI\textures\uistuff\blackbackdropedge.png" >
                   <Size x="8" y="8"></Size>
                   <Anchors>
                       <Anchor point="TOPRIGHT"  relativePoint="TOPRIGHT" x="0" y="0" />
@@ -44,7 +44,7 @@
                   </Anchors>
                   <TexCoords left="0.125" right="0.250" top="0" bottom="1" />
               </Texture>
-              <Texture parentKey="top" file="Interface\AddOns\GW2_UI\textures\uistuff\blackbackdropedge" >
+              <Texture parentKey="top" file="Interface\AddOns\GW2_UI\textures\uistuff\blackbackdropedge.png" >
                   <Size x="8" y="8"></Size>
                   <Anchors>
                       <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0" />
@@ -52,7 +52,7 @@
                   </Anchors>
                   <TexCoords left="0.270" right="0.300" top="0" bottom="1" />
               </Texture>
-              <Texture parentKey="bottom" file="Interface\AddOns\GW2_UI\textures\uistuff\blackbackdropedge" >
+              <Texture parentKey="bottom" file="Interface\AddOns\GW2_UI\textures\uistuff\blackbackdropedge.png" >
                   <Size x="8" y="8"></Size>
                   <Anchors>
                       <Anchor point="BOTTOMLEFT"  relativePoint="BOTTOMLEFT" x="0" y="0" />

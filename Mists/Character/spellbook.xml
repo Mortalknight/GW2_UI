@@ -30,7 +30,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-2">
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spellbookmenu_background">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spellbookmenu_background.png">
                     <Size x="241" y="512"/>
                     <Color r="1" g="1" b="1" a="1"></Color>
                     <Anchors>
@@ -51,19 +51,19 @@
         </HitRectInsets>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="bg" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                <Texture parentKey="bg" file="Interface\AddOns\GW2_UI\textures\character\menu-bg.png">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="bgstatic" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                <Texture parentKey="bgstatic" file="Interface\AddOns\GW2_UI\textures\character\menu-bg.png">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="background" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\uistuff\button_hover" hidden="true">
+                <Texture parentKey="background" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\uistuff\button_hover.png" hidden="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
@@ -72,7 +72,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentkey="icon" file="Interface\AddOns\GW2_UI\textures\levelreward-icon">
+                <Texture parentkey="icon" file="Interface\AddOns\GW2_UI\textures\levelreward-icon.png">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="10" y="0"/>
@@ -98,7 +98,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="headerbg" file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
+                <Texture parentKey="headerbg" file="Interface\AddOns\GW2_UI\textures\talents\talents_header.png">
                     <Size x="512" y="32"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -216,7 +216,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="8">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
@@ -232,7 +232,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="8">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\character\forwardicon">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\character\forwardicon.png">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
@@ -248,7 +248,7 @@
         <Size x="40" y="40"/>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border.png">
                     <Size x="50" y="50"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
@@ -265,7 +265,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow" parentKey="arrow">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow.png" parentKey="arrow">
                     <Size x="16" y="32"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="5"/>
@@ -273,13 +273,13 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\autocast" parentKey="autocast">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\autocast.png" parentKey="autocast">
                     <Size x="55" y="55"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER" x="0"/>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spell-lock" parentKey="lock" hidden="true">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spell-lock.png" parentKey="lock" hidden="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
@@ -292,7 +292,7 @@
                 </FontString>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight.png" parentKey="highlight">
                     <Size x="40" y="40"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
@@ -319,7 +319,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg-brushed">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\windowbg-brushed.png">
                     <Size x="853" y="853"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -333,7 +333,7 @@
         <Size x="40" y="40"/>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border.png">
                     <Size x="50" y="50"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
@@ -350,7 +350,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow" parentKey="arrow">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow.png" parentKey="arrow">
                     <Size x="16" y="32"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="5"/>
@@ -358,13 +358,13 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\autocast" parentKey="autocast">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\autocast.png" parentKey="autocast">
                     <Size x="55" y="55"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER" x="0"/>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spell-lock" parentKey="lock">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spell-lock.png" parentKey="lock">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
@@ -372,7 +372,7 @@
                 </Texture>
             </Layer>
             <Layer level="HIGHLIGHT">
-                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
+                <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight.png" parentKey="highlight">
                     <Size x="40" y="40"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>

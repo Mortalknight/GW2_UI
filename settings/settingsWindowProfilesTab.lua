@@ -41,7 +41,7 @@ local function createImportExportFrame()
 
     frame.bg = frame:CreateTexture(nil, "ARTWORK")
     frame.bg:SetAllPoints()
-    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg")
+    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg.png")
 
     frame.header = frame:CreateFontString(nil, "OVERLAY")
     frame.header:SetFont(DAMAGE_TEXT_FONT, 30, "OUTLINE")
@@ -64,7 +64,7 @@ local function createImportExportFrame()
     frame.scrollArea.ScrollBar:GwSkinScrollBar()
     frame.scrollArea.bg = frame.scrollArea:CreateTexture(nil, "ARTWORK")
     frame.scrollArea.bg:SetAllPoints()
-    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground")
+    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground.png")
 
     frame.description = frame:CreateFontString(nil, "OVERLAY")
     frame.description:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
@@ -550,7 +550,7 @@ local function LoadSettingsProfileTab(container)
     settingsProfile.panelName = "GwSettingsProfilePanel"
     settingsProfile.headerBreadcrumbText = L["Profiles"]
     settingsProfile.hasSearch = false
-    container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_profiles", settingsProfile)
+    container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_profiles.png", settingsProfile)
 
     collectAllIcons()
 
@@ -584,7 +584,7 @@ local function LoadSettingsProfileTab(container)
     settingsProfile.resetToDefaultFrame:SetScript("OnLeave", item_OnLeave)
     item_OnLoad(settingsProfile.resetToDefaultFrame)
 
-    settingsProfile.resetToDefaultFrame.activateButton.icon:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo")
+    settingsProfile.resetToDefaultFrame.activateButton.icon:SetTexture("Interface/AddOns/GW2_UI/textures/gwlogo.png")
     settingsProfile.resetToDefaultFrame.activateButton.icon:SetTexCoord(0, 1, 0, 1)
 
     settingsProfile.resetToDefaultFrame.hasOptions = false

@@ -46,7 +46,7 @@ local function applyButtonStyle(b)
     if b.Center then
         b.Center:Hide()
     end
-    b:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton")
+    b:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton.png")
     b:ClearHighlightTexture()
     if b.GetFontString and b:GetFontString() then
         b:GetFontString():ClearAllPoints()
@@ -67,7 +67,7 @@ local function applyButtonStyle(b)
         local tex = b:CreateTexture(nil, "OVERLAY")
         tex:SetPoint("LEFT", b, "LEFT", 0, 0)
         tex:SetSize(32, 32)
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons")
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons.png")
         b.gw2IconTex = tex
     end
     local buttonSprint = BUTTONS[b:GetText()]
@@ -91,7 +91,7 @@ local function SkinMainMenu()
     local tex = GameMenuFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -30)
     tex:SetSize(286, 525)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubg.png")
 
     GameMenuFrame.Border:Hide()
     GameMenuFrame.Header:Hide()

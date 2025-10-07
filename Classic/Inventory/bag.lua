@@ -291,7 +291,7 @@ local function createBagBar(f)
     --Add Keyringbutton here
     local b = CreateFrame("Button", "GWkeyringbutton", f, "GwKeyRingButtonTemp")
     b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
-    b:SetHighlightTexture('Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress')
+    b:SetHighlightTexture('Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png')
     GW.SetItemButtonQualityForBags(b, 1)
     b:SetScript("OnClick",
         function(self)

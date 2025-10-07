@@ -210,7 +210,7 @@ local function LoadSpecializations(parentContainer)
         container.activateButton.mask = container.activateButton:CreateMaskTexture()
         container.activateButton.mask:SetPoint("CENTER", container.activateButton.icon, "CENTER", 0, 0)
         container.activateButton.mask:SetTexture(
-            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
+            "Interface/AddOns/GW2_UI/textures/talents/passive_border.png",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -230,13 +230,13 @@ local function LoadSpecializations(parentContainer)
 
         container.activateButton.roleIcon:ClearAllPoints()
         if role == "TANK" then
-            container.activateButton.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
+            container.activateButton.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank.png")
             container.activateButton.roleIcon:SetPoint("BOTTOMRIGHT", container.activateButton.icon, "BOTTOMRIGHT", -6, -6)
         elseif role == "HEALER" then
-            container.activateButton.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
+            container.activateButton.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer.png")
             container.activateButton.roleIcon:SetPoint("BOTTOMRIGHT", container.activateButton.icon, "BOTTOMRIGHT", -8, -5)
         elseif role == "DAMAGER" then
-            container.activateButton.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
+            container.activateButton.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps.png")
             container.activateButton.roleIcon:SetSize(30, 30)
             container.activateButton.roleIcon:SetPoint("BOTTOMRIGHT", container.activateButton.icon, "BOTTOMRIGHT", -3, -10)
         end

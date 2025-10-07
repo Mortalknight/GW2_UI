@@ -14,7 +14,7 @@ local function setSpecTabIconAndTooltip(tab)
     local spec = C_SpecializationInfo.GetSpecialization()
     if spec then
         local role = GetSpecializationRole(spec)
-        tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon")
+        tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon.png")
         if role == "DAMAGER" then
             tab.icon:SetTexCoord(0.75, 1, 0.75, 1)
         elseif role == "TANK" then
@@ -23,7 +23,7 @@ local function setSpecTabIconAndTooltip(tab)
             tab.icon:SetTexCoord(0.25, 0.5, 0.75, 1)
         else
             -- set default icon
-            tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/lock")
+            tab.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/lock.png")
             tab.icon:SetTexCoord(0, 1, 0, 1)
         end
     end
@@ -570,7 +570,7 @@ local function passivePool_Resetter(_, btn)
         btn.mask = UIParent:CreateMaskTexture()
         btn.mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
         btn.mask:SetTexture(
-            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
+            "Interface/AddOns/GW2_UI/textures/talents/passive_border.png",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -804,11 +804,11 @@ local function LoadSpellbook(tabContainer)
     fmSpellbook:SetFrameRef("GwspellbookTab4", fmSpellbook.tab4)
     fmSpellbook:SetFrameRef("GwspellbookTab5", fmSpellbook.tab5)
     fmSpellbook.UnselectAllTabs = function()
-        fmSpellbook.tab1.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
-        fmSpellbook.tab2.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
-        fmSpellbook.tab3.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
-        fmSpellbook.tab4.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
-        fmSpellbook.tab5.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
+        fmSpellbook.tab1.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive.png")
+        fmSpellbook.tab2.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive.png")
+        fmSpellbook.tab3.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive.png")
+        fmSpellbook.tab4.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive.png")
+        fmSpellbook.tab5.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive.png")
     end
     fmSpellbook.SelectTab = function(_, tab)
         local frame
@@ -823,7 +823,7 @@ local function LoadSpellbook(tabContainer)
         elseif tab == 5 then
             frame = fmSpellbook.tab5
         end
-        frame.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg")
+        frame.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg.png")
     end
     fmSpellbook:SetAttribute(
         "_onattributechanged",

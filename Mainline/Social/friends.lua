@@ -16,30 +16,29 @@ local ONE_YEAR = 12 * ONE_MONTH
 
 local icons = {
     Game = {
-        Alliance = { Name = FACTION_ALLIANCE, Order = 1, Launcher = MediaPath.."GameIcons/Launcher/Alliance" },
-        Horde    = { Name = FACTION_HORDE,    Order = 2, Launcher = MediaPath.."GameIcons/Launcher/Horde" },
-        Neutral  = { Name = FACTION_STANDING_LABEL4, Order = 3, Launcher = MediaPath.."GameIcons/Launcher/WoW" },
-        App      = { Name = L["App"], Order = 4, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/BattleNet" },
-        CLNT     = { Name = L["App"], Order = 4, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/BattleNet" },
-        BSAp     = { Name = L["Mobile"], Order = 5, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/Mobile" },
-        D3       = { Name = L["Diablo 3"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/D3" },
-        Fen      = { Name = L["Diablo 4"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/D4" },
-        WTCG     = { Name = L["Hearthstone"], Color = "FFB100", Launcher = MediaPath.."GameIcons/Launcher/Hearthstone" },
-        S1       = { Name = L["Starcraft"], Color = "C495DD", Launcher = MediaPath.."GameIcons/Launcher/SC" },
-        S2       = { Name = L["Starcraft 2"], Color = "C495DD", Launcher = MediaPath.."GameIcons/Launcher/SC2" },
-        Hero     = { Name = L["Hero of the Storm"], Color = "00CCFF", Launcher = MediaPath.."GameIcons/Launcher/Heroes" },
-        Pro      = { Name = L["Overwatch"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/Overwatch" },
-        VIPR     = { Name = L["Call of Duty 4"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/COD4" },
-        ODIN     = { Name = L["Call of Duty Modern Warfare"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/CODMW" },
-        W3       = { Name = L["Warcraft 3 Reforged"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/WC3R" },
-        LAZR     = { Name = L["Call of Duty Modern Warfare 2"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/CODMW2" },
-        ZEUS     = { Name = L["Call of Duty Cold War"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/CODCW" },
-        WLBY     = { Name = L["Crash Bandicoot 4"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/CB4" },
-        OSI      = { Name = L["Diablo II Resurrected"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/D2" },
-        FORE     = { Name = L["Call of Duty Vanguard"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/CODVanguard" },
-        RTRO     = { Name = L["Arcade Collection"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/Arcade" },
-        ANBS     = { Name = L["Diablo Immortal"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/DI" },
-        GRY      = { Name = L["Warcraft Arclight Rumble"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/Arclight" },
+        Alliance = { Name = FACTION_ALLIANCE, Order = 1, Launcher = MediaPath.."GameIcons/Launcher/alliance.png" },        Horde    = { Name = FACTION_HORDE,    Order = 2, Launcher = MediaPath.."GameIcons/Launcher/horde.png" },
+        Neutral  = { Name = FACTION_STANDING_LABEL4, Order = 3, Launcher = MediaPath.."GameIcons/Launcher/wow.png" },
+        App      = { Name = L["App"], Order = 4, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/battlenet.png" },
+        CLNT     = { Name = L["App"], Order = 4, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/battlenet.png" },
+        BSAp     = { Name = L["Mobile"], Order = 5, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/mobile.png" },
+        D3       = { Name = L["Diablo 3"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/d3.png" },
+        Fen      = { Name = L["Diablo 4"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/d4.png" },
+        WTCG     = { Name = L["Hearthstone"], Color = "FFB100", Launcher = MediaPath.."GameIcons/Launcher/hearthstone.png" },
+        S1       = { Name = L["Starcraft"], Color = "C495DD", Launcher = MediaPath.."GameIcons/Launcher/sc.png" },
+        S2       = { Name = L["Starcraft 2"], Color = "C495DD", Launcher = MediaPath.."GameIcons/Launcher/sc2.png" },
+        Hero     = { Name = L["Hero of the Storm"], Color = "00CCFF", Launcher = MediaPath.."GameIcons/Launcher/heroes.png" },
+        Pro      = { Name = L["Overwatch"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/overwatch.png" },
+        VIPR     = { Name = L["Call of Duty 4"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/cod4.png" },
+        ODIN     = { Name = L["Call of Duty Modern Warfare"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/codmw.png" },
+        W3       = { Name = L["Warcraft 3 Reforged"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/wc3r.png" },
+        LAZR     = { Name = L["Call of Duty Modern Warfare 2"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/codmw2.png" },
+        ZEUS     = { Name = L["Call of Duty Cold War"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/codcw.png" },
+        WLBY     = { Name = L["Crash Bandicoot 4"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/cb4.png" },
+        OSI      = { Name = L["Diablo II Resurrected"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/d2.png" },
+        FORE     = { Name = L["Call of Duty Vanguard"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/codvanguard.png" },
+        RTRO     = { Name = L["Arcade Collection"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/arcade.png" },
+        ANBS     = { Name = L["Diablo Immortal"], Color = "C41F3B", Launcher = MediaPath.."GameIcons/Launcher/di.png" },
+        GRY      = { Name = L["Warcraft Arclight Rumble"], Color = "FFFFFF", Launcher = MediaPath.."GameIcons/Launcher/arclight.png" },
     },
     Status = {
         Online  = { Name = FRIENDS_LIST_ONLINE, Order = 1, Default = FRIENDS_TEXTURE_ONLINE, Square = MediaPath.."StatusIcons/Square/Online", D3 = MediaPath.."StatusIcons/D3/Online", Color = {0.243, 0.57, 1} },
@@ -65,8 +64,8 @@ end
 
 local function CreateOrUpdateTexture(button, type, layer)
     if button.efl and button.efl[type] then
-        button.efl[type].Left:SetTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
-        button.efl[type].Right:SetTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
+        button.efl[type].Left:SetTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar.png")
+        button.efl[type].Right:SetTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar.png")
         return
     end
 

@@ -5,8 +5,8 @@ local ClearStorage = GW.ClearStorage
 local UpdateCharData = GW.UpdateCharData
 local FormatMoneyForChat = GW.FormatMoneyForChat
 
-local ALLIANCE_ICON = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/Alliance:13:13|t"
-local HORDE_ICON = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/Horde:13:13|t"
+local ALLIANCE_ICON = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/alliance.png:13:13|t"
+local HORDE_ICON = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/horde.png:13:13|t"
 local NEUTRAL_ICON = "|TInterface/Timer/Panda-Logo:14|t"
 
 local Ticker = nil

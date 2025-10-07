@@ -11,7 +11,7 @@
 ## AddonCompartmentFuncOnEnter: GW2_ADDON_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: GW2_ADDON_OnAddonCompartmentLeave
 ## AddonCompartmentFunc: GW2_ADDON_AddonCompartmentOnClickFunc
-## IconTexture: Interface\AddOns\GW2_UI\Textures\gwlogo
+## IconTexture: Interface\AddOns\GW2_UI\Textures\gwlogo.png
 ## Category-enUS: UI Overhaul
 ## Category-deDE: UI-Überholung
 ## Category-esES: Renovación de la Interfaz de Usuario

@@ -37,7 +37,7 @@ function GwObjectivesItemButtonMixin:SetItem(block)
         self:SetAttribute("item", "item:" .. tostring(self.itemID))
         self:SetNormalTexture(validTexture)
         self:SetPushedTexture(validTexture)
-        self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+        self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
         self:GetNormalTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
         self:GetPushedTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
 

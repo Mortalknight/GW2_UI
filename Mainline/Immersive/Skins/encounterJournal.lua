@@ -11,8 +11,8 @@ local lootQuality = {
 }
 
 local constBackdropArgs = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-border.png",
     tile = false,
     tileSize = 64,
     edgeSize = 32,
@@ -110,7 +110,7 @@ local function SkinAbilitiesInfo()
         if not header.isSkinned then
             header.flashAnim.Play = GW.NoOp
 
-            header.descriptionBG:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+            header.descriptionBG:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png")
             header.descriptionBGBottom:SetAlpha(0)
             for i = 4, 18 do
                 select(i, header.button:GetRegions()):SetTexture()
@@ -234,7 +234,7 @@ local function encounterJournalSkin()
     EJ.LootJournalItems:GwStripTextures()
     EncounterJournalMonthlyActivitiesFrame.FilterList:GwStripTextures()
 
-    GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {EJ.LootJournalItems, EncounterJournalMonthlyActivitiesFrame.FilterList}, nil, false, true)
+    GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon.png", {EJ.LootJournalItems, EncounterJournalMonthlyActivitiesFrame.FilterList}, nil, false, true)
     EncounterJournalTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     EJ:SetClampedToScreen(true)
@@ -252,12 +252,12 @@ local function encounterJournalSkin()
     EJ.navBar.tex = EJ.navBar:CreateTexture(nil, "BACKGROUND", nil, 0)
     EJ.navBar.tex:SetPoint("TOPLEFT", EJ.navBar, "TOPLEFT", 0, 20)
     EJ.navBar.tex:SetPoint("BOTTOMRIGHT", EJ.navBar, "BOTTOMRIGHT", 0, 1)
-    EJ.navBar.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
+    EJ.navBar.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header.png")
 
     EJ.innertex = EJ:CreateTexture(nil, "BACKGROUND", nil, 7)
     EJ.innertex:SetPoint("TOPLEFT", EJ.navBar, "BOTTOMLEFT", -1, 1)
     EJ.innertex:SetPoint("BOTTOMRIGHT", EJ, "BOTTOMRIGHT", 1, -1)
-    EJ.innertex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    EJ.innertex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
     EJ.innertex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
     EJ.navBar.homeButton:GwStripTextures()
@@ -273,7 +273,7 @@ local function encounterJournalSkin()
     EJ.navBar.homeButton.tex:SetPoint("TOP", EJ.navBar.homeButton, "TOP")
     EJ.navBar.homeButton.tex:SetPoint("BOTTOM", EJ.navBar.homeButton, "BOTTOM")
     EJ.navBar.homeButton.tex:SetPoint("RIGHT", EJ.navBar.homeButton, "RIGHT")
-    EJ.navBar.homeButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
+    EJ.navBar.homeButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
     EJ.navBar.homeButton.tex:SetAlpha(1)
 
     EJ.navBar.homeButton.borderFrame = CreateFrame("Frame", nil, EJ.navBar.homeButton, "GwLightButtonBorder")
@@ -485,7 +485,7 @@ local function encounterJournalSkin()
     suggestion.tex = suggestion:CreateTexture(nil, "BACKGROUND", nil, 0)
     suggestion.tex:SetPoint("TOPLEFT", suggestion, "TOPLEFT", -1, 1)
     suggestion.tex:SetPoint("BOTTOMRIGHT", suggestion, "BOTTOMRIGHT", 1, -1)
-    suggestion.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    suggestion.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
     suggestion.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
     local centerDisplay = suggestion.centerDisplay
@@ -507,7 +507,7 @@ local function encounterJournalSkin()
         suggestion.tex = suggestion:CreateTexture(nil, "BACKGROUND", nil, 0)
         suggestion.tex:SetPoint("TOPLEFT", suggestion, "TOPLEFT", -1, 1)
         suggestion.tex:SetPoint("BOTTOMRIGHT", suggestion, "BOTTOMRIGHT", 1, -1)
-        suggestion.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+        suggestion.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
         suggestion.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
         centerDisplay = suggestion.centerDisplay
@@ -557,7 +557,7 @@ local function encounterJournalSkin()
                 if child.SetDisabledTexture then child:SetDisabledTexture("") end
                 child:GwCreateBackdrop(GW.BackdropTemplates.Default, true, 4, 4)
                 child.hovertex = child:CreateTexture(nil, "ARTWORK", nil, 7)
-                child.hovertex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border")
+                child.hovertex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border.png")
                 child.hovertex:SetAllPoints(child)
                 child.hovertex:Hide()
                 child:HookScript("OnEnter", SetModifiedBackdrop)
@@ -630,11 +630,11 @@ local function encounterJournalSkin()
                     child.icon:SetSize(32, 32)
                     child.icon:SetPoint("TOPLEFT", 3 , -7)
                     GW.HandleIcon(child.icon)
-                    child.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+                    child.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
                     if not child.IconBorder.hooked then
                         hooksecurefunc(child.IconBorder, "SetTexture", function()
-                            if child.IconBorder:GetTexture() and child.IconBorder:GetTexture() > 0 and child.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
-                                child.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+                            if child.IconBorder:GetTexture() and child.IconBorder:GetTexture() > 0 and child.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png" then
+                                child.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
                             end
                         end)
                         child.IconBorder.hooked = true

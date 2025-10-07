@@ -5,7 +5,7 @@
         <Size x="200" y="32"/>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/character/menu-bg">
+                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/character/menu-bg.png">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
@@ -31,7 +31,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg.png">
                     <Size x="256" y="512"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-8" y="7"/>
@@ -57,9 +57,9 @@
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.input" relativePoint="RIGHT" x="5" y="0"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up"></NormalTexture>
-                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Down"></PushedTexture>
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Down"></HighlightTexture>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-up.png"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-down.png"></PushedTexture>
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/mainmenumicrobutton-down.png"></HighlightTexture>
             </Button>
             <Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
                 <Size x="210" y="480"></Size>

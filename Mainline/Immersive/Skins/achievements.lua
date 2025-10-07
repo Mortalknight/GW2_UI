@@ -7,8 +7,8 @@ Background alignment after comparison
 ]]
 
 local AchievementBackgroundTextures = {
-    blue = "Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg",
-    red = "Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred"
+    blue = "Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg.png",
+    red = "Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred.png"
 }
 GW.AchievementFrameSkinFunction.AchievementBackgroundTextures = AchievementBackgroundTextures
 
@@ -243,7 +243,7 @@ local function HandleAchivementsScrollControls(self)
     bg:ClearAllPoints();
     bg:SetPoint("TOP",0,0)
     bg:SetPoint("BOTTOM",0,0)
-    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg.png")
 
 
     self.ScrollBar.Back:ClearAllPoints()
@@ -253,7 +253,7 @@ local function HandleAchivementsScrollControls(self)
     bg:ClearAllPoints();
     bg:SetPoint("TOPLEFT",0,0)
     bg:SetPoint("BOTTOMRIGHT",0,0)
-    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton.png")
 
     self.ScrollBar.Forward:ClearAllPoints()
     self.ScrollBar.Forward:SetPoint("TOP",self.ScrollBar,"BOTTOM",0,0)
@@ -262,7 +262,7 @@ local function HandleAchivementsScrollControls(self)
     bg:ClearAllPoints();
     bg:SetPoint("TOPLEFT",0,0)
     bg:SetPoint("BOTTOMRIGHT",0,0)
-    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton.png")
     bg:SetTexCoord(0,1,1,0)
 end
 
@@ -300,9 +300,9 @@ local function catMenuButtonState(self, selected)
     end
 
     --for summary and watchlist
-    local iconTexture = "Interface/AddOns/GW2_UI/textures/uistuff/arrow_right"
+    local iconTexture = "Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png"
     if self.categoryID=="summary" or self.categoryID=="watchlist" then
-        iconTexture = self.categoryID=="watchlist" and "Interface/AddOns/GW2_UI/textures/uistuff/watchicon" or "Interface/AddOns/GW2_UI/textures/uistuff/hamburger"
+        iconTexture = self.categoryID=="watchlist" and "Interface/AddOns/GW2_UI/textures/uistuff/watchicon.png" or "Interface/AddOns/GW2_UI/textures/uistuff/hamburger.png"
         self.Button.arrow:SetTexture(iconTexture)
         self.Button.arrow:SetSize(25,25)
         self.Button.arrow:Show()
@@ -318,7 +318,7 @@ local function CatMenuButton(_, button)
     button.arrow = arrow
     button.arrow:ClearAllPoints();
     button.arrow:SetPoint("LEFT",10,0)
-    button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+    button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png")
     button.arrow:SetSize(16,16)
 
     button.Label:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
@@ -332,7 +332,7 @@ end
 local function SetupButtonHighlight(button, background)
     if not button then return end
 
-    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
     button.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     local hl = button:GetHighlightTexture()
     hl:SetVertexColor(0.8, 0.8, 0.8, 0.8)
@@ -347,7 +347,7 @@ local function skinAchievementSummaryHeaders(self)
     local texture = _G[fname.."Header"] or _G[fname.."Texture"]
     local text = _G[fname.."Title"]
     self:SetHeight(32)
-    texture:SetTexture("Interface/AddOns/GW2_UI/textures/talents/talents_header")
+    texture:SetTexture("Interface/AddOns/GW2_UI/textures/talents/talents_header.png")
     texture:ClearAllPoints()
     texture:SetPoint("TOPLEFT")
     texture:SetPoint("BOTTOMRIGHT")
@@ -375,13 +375,13 @@ local function skinAchievementSummaryStatusBar(self)
         self.spark:ClearAllPoints();
         self.spark:SetPoint("RIGHT",fill,"RIGHT", 0,0)
         self.spark:SetSize(10,fill:GetHeight())
-        self.spark:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white")
+        self.spark:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white.png")
     end
 
-    fill:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    fill:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     self:SetStatusBarColor(GW_CLASS_COLORS[GW.myclass].r,GW_CLASS_COLORS[GW.myclass].g,GW_CLASS_COLORS[GW.myclass].b,1)
 
-    bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/StatusBar")
+    bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
     bar:SetVertexColor(1, 1, 1, 0.5)
     bar:GwSetOutside()
     title:ClearAllPoints()
@@ -434,8 +434,8 @@ local function skinCriteriaStatusbar(parentFrame,self)
     local bar = select(1,self:GetRegions())
     local fill = select(6,self:GetRegions())
 
-    fill:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
-    bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/StatusBar")
+    fill:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
     bar:SetVertexColor(1,1,1,0.5)
 
     local bColor = barColors.incomplete
@@ -510,11 +510,11 @@ local function skinAchievementFrameSummaryAchievement(self)
     self.fBackground:ClearAllPoints()
     self.fBackground:SetPoint("TOPLEFT")
     self.fBackground:SetPoint("BOTTOMRIGHT")
-    self.fBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
+    self.fBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
     self.fBackground:SetVertexColor(1,1,1,0.2)
 
     self.Highlight:GwStripTextures()
-    self.Highlight.Bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover")
+    self.Highlight.Bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover.png")
     self.Highlight.Bottom:SetBlendMode("ADD")
     self.Highlight.Bottom:ClearAllPoints()
     self.Highlight.Bottom:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
@@ -559,24 +559,24 @@ local function skinAchievementFrameListAchievement(self)
     self.cBackground:ClearAllPoints();
     self.cBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
     self.cBackground:SetSize(self:GetHeight(),self:GetHeight())
-    self.cBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
+    self.cBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
     self.cBackground:SetVertexColor(1,1,1,0.4)
 
     self.trackBackground = self:CreateTexture(nil, "BACKGROUND", nil, 1)
     self.trackBackground:ClearAllPoints();
     self.trackBackground:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",0,0)
     self.trackBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
-    self.trackBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfootertracked")
+    self.trackBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfootertracked.png")
 
     local tbg = select(2,self.Tracked:GetRegions())
     local highlight = select(3,self.Tracked:GetRegions())
     local tText = select(1,self.Tracked:GetRegions())
     local hover = select(4,self.Tracked:GetRegions())
     local checked = select(5,self.Tracked:GetRegions())
-    tbg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon")
-    highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchiconactive")
-    checked:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchiconactive")
-    hover:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon")
+    tbg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon.png")
+    highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchiconactive.png")
+    checked:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchiconactive.png")
+    hover:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon.png")
     tText:Hide()
 
     self.gwBackdrop = CreateFrame("Frame",nil,self,"GwDarkInsetBorder")
@@ -597,7 +597,7 @@ local function skinAchievementFrameListAchievement(self)
     self.rewardIcon = self:CreateTexture(nil, "BORDER", nil, 0)
     self.rewardIcon:ClearAllPoints();
     self.rewardIcon:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",125,3)
-    self.rewardIcon:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/rewardchestsmall")
+    self.rewardIcon:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/rewardchestsmall.png")
     self.rewardIcon:SetSize(24,24)
 
     hooksecurefunc(self.Reward, "Hide", function() self.rewardIcon:Hide() end)
@@ -676,7 +676,7 @@ local function skinAchievementFrameListAchievement(self)
         self.fBackground:ClearAllPoints();
         self.fBackground:SetPoint("TOPLEFT")
         self.fBackground:SetPoint("BOTTOMRIGHT")
-        self.fBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
+        self.fBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
         self.fBackground:SetVertexColor(1,1,1,0.2)
     end
     if not self.bottomBar then
@@ -684,7 +684,7 @@ local function skinAchievementFrameListAchievement(self)
         self.bottomBar:ClearAllPoints();
         self.bottomBar:SetPoint("BOTTOMRIGHT")
         self.bottomBar:SetSize(512,64)
-        self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooter")
+        self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooter.png")
     end
     if not self.completedBackground then
         self.completedBackground = self:CreateTexture(nil, "BACKGROUND", nil, 3)
@@ -706,7 +706,7 @@ local function skinAchievementFrameListAchievement(self)
     end)
 
     self.Highlight:GwStripTextures()
-    self.Highlight.Bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover")
+    self.Highlight.Bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover.png")
     self.Highlight.Bottom:SetBlendMode("ADD")
     self.Highlight.Bottom:ClearAllPoints()
     self.Highlight.Bottom:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
@@ -766,17 +766,17 @@ local function UpdateAchievementFrameListAchievement(self)
         self.Tracked:Show()
         self.DateCompleted:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",-50,5)
         self.DateCompleted:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",0,5)
-        self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooter")
+        self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooter.png")
     else
         self.Tracked:Hide()
         self.DateCompleted:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",-5,5)
         self.DateCompleted:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",0,5)
-        self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooternotrack")
+        self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooternotrack.png")
     end
 
     if C_ContentTracking.IsTracking(Enum.ContentTrackingType.Achievement, id) then
         self.trackBackground:Show()
-        self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooternotrack")
+        self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooternotrack.png")
     else
         self.trackBackground:Hide()
     end
@@ -799,7 +799,7 @@ end
 local function skinAchievementFrameListStats(self)
     self.skinned = true
 
-    self.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+    self.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
     setNormalText(self.Text)
     setNormalText(self.Value)
     setTitleText(self.Title)
@@ -818,7 +818,7 @@ local function skinAchievementFrameListStats(self)
         self.Right2:Hide()
     end
 
-    self.Middle:SetTexture("Interface/AddOns/GW2_UI/textures/talents/talents_header")
+    self.Middle:SetTexture("Interface/AddOns/GW2_UI/textures/talents/talents_header.png")
 end
 local function UpdateAchievementFrameListStats(self)
     if not self.skinned then
@@ -845,11 +845,11 @@ local function skinAchievementFrameTab(self,index)
     self.icon:SetAllPoints()
 
     if index==1 then
-        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_achievement")
+        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_achievement.png")
     elseif index==2 then
-        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_guild")
+        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_guild.png")
     else
-        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_stats")
+        self.icon:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_stats.png")
     end
     self.icon:SetTexCoord(0.51, 1, 0, 0.625)
 end
@@ -961,7 +961,7 @@ local function skinAchievementComparison(self,isPlayer)
         parent.fBackground:ClearAllPoints()
         parent.fBackground:SetPoint("TOPLEFT")
         parent.fBackground:SetPoint("BOTTOMRIGHT")
-        parent.fBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
+        parent.fBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
         parent.fBackground:SetVertexColor(1,1,1,0.2)
     end
 end
@@ -1015,16 +1015,16 @@ local function skinAchievementCompareSummaryStatusBar(self,isPlayer)
         self.spark:ClearAllPoints();
         self.spark:SetPoint("RIGHT",fill,"RIGHT", 0,0)
         self.spark:SetSize(10,fill:GetHeight())
-        self.spark:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white")
+        self.spark:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white.png")
     end
     local color = isPlayer and GW_CLASS_COLORS[GW.myclass] or GW_CLASS_COLORS[select(2,UnitClass("Target"))]
     if color and color.r then
         self:SetStatusBarColor(color.r,color.g,color.b,1)
     end
 
-    bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/StatusBar")
+    bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
     bar:SetVertexColor(1,1,1,0.5)
-    self:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    self:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     title:ClearAllPoints()
     title:SetPoint("BOTTOMLEFT",self,"TOPLEFT",0,5)
     setNormalText(title)
@@ -1042,7 +1042,7 @@ local function updatePointsDisplay()
     AchievementFrame.Header.Points:SetPoint("LEFT",AchievementFrame.Header.Shield,"RIGHT",5,0)
     AchievementFrame.Header.Points:SetJustifyH("LEFT")
     if AchievementFrame.selectedTab and AchievementFrame.selectedTab == 2 then
-        AchievementFrame.Header.Shield:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementpointiconguild");
+        AchievementFrame.Header.Shield:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementpointiconguild.png");
     else
         if AchievementFrame.selectedTab==1 then
             AchievementFrame.cacheAchievementPoints = AchievementFrame.Header.Points:GetText()
@@ -1051,7 +1051,7 @@ local function updatePointsDisplay()
             AchievementFrame.Header.Points:SetText(AchievementFrame.cacheAchievementPoints)
             AchievementFrame.Header.Points:SetTextColor(1,1,1)
         end
-        AchievementFrame.Header.Shield:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementpointicon");
+        AchievementFrame.Header.Shield:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementpointicon.png");
     end
     AchievementFrame.Header.Shield:ClearAllPoints()
     AchievementFrame.Header.Shield:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",10,-25)
@@ -1099,11 +1099,11 @@ local function skinAchevement()
 
     AchievementFrame.Header.Title:Hide()
 
-    GW.CreateFrameHeaderWithBody(AchievementFrame, nil, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 0, true, true)
+    GW.CreateFrameHeaderWithBody(AchievementFrame, nil, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon.png", nil, 0, true, true)
     AchivementFrameLeftPanel = AchievementFrame.LeftSidePanel -- needed for krowis skin
     AchievementFrameHeader.windowIcon:ClearAllPoints()
     AchievementFrameHeader.windowIcon:SetPoint("CENTER", AchievementFrameHeader, "BOTTOMLEFT", -26, 26)
-    AchievementFrameHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/achievements-window-icon")
+    AchievementFrameHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/achievements-window-icon.png")
     AchievementFrameHeader.header = AchievementFrameHeader:CreateFontString(nil, "OVERLAY")
     AchievementFrameHeader.breadCrumb = AchievementFrameHeader:CreateFontString(nil, "OVERLAY")
     AchievementFrameHeader.header:SetPoint("BOTTOMLEFT", 20, 8)
@@ -1145,7 +1145,7 @@ local function skinAchevement()
     AchievementFrame.tex:SetTexCoord(0, 1, 0, 0.73633)
     AchievementFrame.tex:SetPoint("TOPLEFT", AchievementFrame, "TOPLEFT", 0, 0)
     AchievementFrame.tex:SetPoint("BOTTOMRIGHT", AchievementFrame, "BOTTOMRIGHT", 0, 0)
-    AchievementFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg")
+    AchievementFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg.png")
 
     AchievementFrameCloseButton:GwSkinButton(true)
     AchievementFrameCloseButton:SetSize(20, 20)
@@ -1198,13 +1198,13 @@ local function skinAchevement()
     dropdownDummyFrame:SetAlpha(0.3)
 
     dropdownDummyFrame.bg = dropdownDummyFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
-    dropdownDummyFrame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
+    dropdownDummyFrame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
     dropdownDummyFrame.bg:SetPoint("CENTER", dropdownDummyFrame, "CENTER")
     dropdownDummyFrame.bg:SetSize(dropdownDummyFrame:GetSize())
 
 
     dropdownDummyFrame.arrow = dropdownDummyFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
-    dropdownDummyFrame.arrow:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+    dropdownDummyFrame.arrow:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
     dropdownDummyFrame.arrow:SetPoint("RIGHT", dropdownDummyFrame, "RIGHT", -12, 0)
     dropdownDummyFrame.arrow:SetSize(23, 23)
 
@@ -1221,7 +1221,7 @@ local function skinAchevement()
     local tex = AchievementFrameCategories:CreateTexture(nil, "BACKGROUND", nil, 0)
     tex:SetPoint("TOPLEFT", AchievementFrameCategories, "TOPLEFT", 0, 0)
     tex:SetSize(256, 512)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/236menubg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/236menubg.png")
     AchievementFrameCategories.tex = tex
 
     AchievementFrameCategories.ScrollBox:SetPoint("TOPLEFT", 0, 0)
@@ -1255,7 +1255,7 @@ local function skinAchevement()
         if button then
             if not button.IsSkinned then
                 button:GwStripTextures()
-                button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+                button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
                 button.Background:ClearAllPoints()
                 button.Background:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
                 button.Background:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
@@ -1332,7 +1332,7 @@ local function skinAchevement()
     AchievementFrameComparison:SetSize(582 - 10, 621 - 20)
 
     AchievementFrameComparison.Background = AchievementFrameComparison:CreateTexture(nil, "BACKGROUND", nil, 0)
-    AchievementFrameComparison.Background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/listbackground")
+    AchievementFrameComparison.Background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/listbackground.png")
     AchievementFrameComparison.Background:ClearAllPoints()
     AchievementFrameComparison.Background:SetPoint("TOPLEFT", AchievementFrameComparison, "TOPLEFT", 0, 0)
     AchievementFrameComparison.Background:SetSize(608, 621)
@@ -1357,7 +1357,7 @@ local function skinAchevement()
     AchievementFrameComparison.Summary.bg = AchievementFrameComparison.Summary:CreateTexture(nil, "BACKGROUND", nil, 0)
     AchievementFrameComparison.Summary.bg:ClearAllPoints()
     AchievementFrameComparison.Summary.bg:SetAllPoints()
-    AchievementFrameComparison.Summary.bg:SetTexture("Interface/AddOns/GW2_UI/textures/talents/talents_header")
+    AchievementFrameComparison.Summary.bg:SetTexture("Interface/AddOns/GW2_UI/textures/talents/talents_header.png")
 
     skinAchievementCompareSummaryStatusBar(AchievementFrameComparison.Summary.Player.StatusBar, true)
     skinAchievementCompareSummaryStatusBar(AchievementFrameComparison.Summary.Friend.StatusBar, false)
@@ -1412,7 +1412,7 @@ local function skinAchevement()
 
     local LoadAchievementFrameAchievements = false
     hooksecurefunc(AchievementFrameAchievements.ScrollBox, "Update", function(frame)
-        AchievementFrameAchievements.Background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/listbackground")
+        AchievementFrameAchievements.Background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/listbackground.png")
         AchievementFrameAchievements.Background:ClearAllPoints()
         AchievementFrameAchievements.Background:SetPoint("TOPLEFT", AchievementFrameSummary, "TOPLEFT", -11, -9)
         AchievementFrameAchievements.Background:SetSize(608, 621)
@@ -1452,7 +1452,7 @@ local function skinAchevement()
     local LoadAchievementFrameStats = false
 
     AchievementFrameStats.Background = AchievementFrameStats:CreateTexture(nil, "BACKGROUND", nil, 0)
-    AchievementFrameStats.Background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/listbackground")
+    AchievementFrameStats.Background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/listbackground.png")
     AchievementFrameStats.Background:ClearAllPoints()
     AchievementFrameStats.Background:SetPoint("TOPLEFT", AchievementFrameSummary, "TOPLEFT", -11, -9)
     AchievementFrameStats.Background:SetSize(608, 621)
@@ -1469,7 +1469,7 @@ local function skinAchevement()
     end)
 
     hooksecurefunc("AchievementFrame_RefreshView", function()
-        AchievementFrameSummary.Background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/listbackground")
+        AchievementFrameSummary.Background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/listbackground.png")
         AchievementFrameSummary.Background:ClearAllPoints()
         AchievementFrameSummary.Background:SetPoint("TOPLEFT", AchievementFrameSummary, "TOPLEFT", -11, -9)
         AchievementFrameSummary.Background:SetSize(608, 621)

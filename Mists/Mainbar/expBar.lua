@@ -85,7 +85,7 @@ local function xpbar_OnEvent(self, event)
     local showBar2 = select(2, HasPetUI()) and UnitLevel("pet") < level -- Pet
     local showBar3 = false -- Repu
 
-    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or ""
+    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon.png:16:16:0:0|t " or ""
 
     if rested == nil or (rested / valMax) == 0 then
         rested = 0
@@ -152,8 +152,8 @@ local function xpbar_OnEvent(self, event)
 
     self.NextLevel:SetTextColor(1, 1, 1)
     self.CurrentLevel:SetTextColor(1, 1, 1)
-    self.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label")
-    self.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label")
+    self.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label.png")
+    self.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label.png")
 
     local GainBigExp = false
     local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (GW.mylevel / GetMaxPlayerLevel())))

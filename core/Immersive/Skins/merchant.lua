@@ -50,7 +50,7 @@ local function SkinMerchantFrameItemButton(i)
     icon:SetPoint("TOPLEFT", 1, -1)
     icon:SetPoint("BOTTOMRIGHT", -1, 1)
 
-    iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     iconBorder:SetAllPoints(button)
     iconBorder:SetParent(button)
 
@@ -73,7 +73,7 @@ local function LoadMerchantFrameSkin()
     MerchantFrame.NineSlice:Hide()
     MerchantFrame.TopTileStreaks:Hide()
 
-    GW.CreateFrameHeaderWithBody(MerchantFrame, MerchantFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MerchantFrameInset, MerchantMoneyInset}, nil, false, true)
+    GW.CreateFrameHeaderWithBody(MerchantFrame, MerchantFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon.png", {MerchantFrameInset, MerchantMoneyInset}, nil, false, true)
     MerchantFrame.gwHeader.windowIcon:SetSize(65, 65)
     MerchantFrame.gwHeader.windowIcon:ClearAllPoints()
     MerchantFrame.gwHeader.windowIcon:SetPoint("CENTER", MerchantFrame.gwHeader.BGLEFT, "LEFT", 25, -5)
@@ -195,11 +195,11 @@ local function LoadMerchantFrameSkin()
         UndoFrame.Arrow:SetPoint("CENTER", MerchantBuyBackItemItemButton, "CENTER")
     end
 
-    MerchantBuyBackItemItemButton.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    MerchantBuyBackItemItemButton.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     MerchantBuyBackItemItemButton.IconBorder:SetAllPoints(MerchantBuyBackItemItemButton)
     MerchantBuyBackItemItemButton.IconBorder:SetParent(MerchantBuyBackItemItemButton)
     hooksecurefunc(MerchantBuyBackItemItemButton.IconBorder, "SetVertexColor", function(self)
-        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     end)
 
     MerchantBuyBackItemItemButtonIconTexture:SetTexCoord(0.07, 0.93, 0.07, 0.93)

@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                     <Size x="588" y="140"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -54,7 +54,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK" textureSubLevel="5">
-                        <Texture parentKey="roleIconBg" file="Interface/AddOns/GW2_UI/textures/hud/notification-backdrop">
+                        <Texture parentKey="roleIconBg" file="Interface/AddOns/GW2_UI/textures/hud/notification-backdrop.png">
                             <Size x="27" y="27"></Size>
                             <Color r="0" g="0" b="0" a="0.7"/>
                             <Anchors>
@@ -63,7 +63,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                             <Size x="80" y="80"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -72,7 +72,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                        <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline.png">
                             <Size x="90" y="90"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER" x="0"></Anchor>
@@ -97,7 +97,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg.png">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>

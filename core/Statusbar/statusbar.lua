@@ -41,7 +41,7 @@ local function getAnimationDurationDynamic(self, val1, val2, width)
     return (width * abs(val1 - val2)) / speed
 end
 function GwAnimatedStatusBarMixin:AddMask(mask)
-    self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. mask)
+    self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. mask .. ".png")
 end
 
 function GwAnimatedStatusBarMixin:GetFillAmount()
@@ -297,7 +297,7 @@ local function PreloadStatusBarMaskTextures()
     f:SetPoint("TOPLEFT", -5000)
     for i = 0, numSpritesInAnimation do
         f.preLoader = f:CreateTexture(nil, "BACKGROUND")
-        f.preLoader:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. i)
+        f.preLoader:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. i .. ".png")
         f.preLoader:SetSize(1, 1)
     end
 end

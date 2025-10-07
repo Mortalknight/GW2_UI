@@ -501,7 +501,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
     local iconInfo = icons[data.TYPE]
 
     if iconInfo then
-        self.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex)
+        self.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex .. ".png")
         self.iconFrame.icon:SetTexCoord(iconInfo.l, iconInfo.r, iconInfo.t, iconInfo.b)
 
         if data.TYPE == GW.TRACKER_TYPE.DELVE then
@@ -532,7 +532,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
         self.compass.dataIndex = data.ID
 
         if iconInfo then
-            self.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex)
+            self.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex .. ".png")
             self.compass.icon:SetTexCoord(iconInfo.l, iconInfo.r, iconInfo.t, iconInfo.b)
         else
             self.compass.icon:SetTexture(nil)

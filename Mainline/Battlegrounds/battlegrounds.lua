@@ -61,7 +61,7 @@ local function iconOverrider(self, icon)
         bgs[activeBg]["icons"][icon][3],
         bgs[activeBg]["icons"][icon][4]
 
-    self.icon:SetTexture("Interface/AddOns/GW2_UI/Textures/battleground/objective-icons")
+    self.icon:SetTexture("Interface/AddOns/GW2_UI/Textures/battleground/objective-icons.png")
 
     self.icon:SetTexCoord(0.25, 0.5, 0, 1)
     self.icon:SetTexCoord(x1, x2, y1, y2)

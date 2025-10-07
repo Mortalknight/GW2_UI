@@ -247,14 +247,14 @@ end
 function GwCastingBarMixin:AddFinishAnimation(isStopped, isChanneling)
     self.animating = true
     local highlightColor = isStopped and CASTINGBAR_TEXTURES.RED.HIGHLIGHT or CASTINGBAR_TEXTURES.YELLOW.HIGHLIGHT
-    self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. highlightColor)
+    self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. highlightColor .. ".png")
     self.highlight:SetWidth(176)
     self.highlight:SetTexCoord(0, 1, 0, 1)
 
     if isStopped then
         self.progress:SetFillAmount(1)
-        self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. highlightColor)
-        self.progress:SetStatusBarTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. CASTINGBAR_TEXTURES.RED.NORMAL)
+        self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. highlightColor .. ".png")
+        self.progress:SetStatusBarTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. CASTINGBAR_TEXTURES.RED.NORMAL .. ".png")
     end
 
     if isChanneling then
@@ -366,8 +366,8 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
             self.reverseChanneling = false
         end
 
-        self.progress:SetStatusBarTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barTexture)
-        self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barHighlightTexture)
+        self.progress:SetStatusBarTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barTexture .. ".png")
+        self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barHighlightTexture .. ".png")
 
         self:Reset()
 

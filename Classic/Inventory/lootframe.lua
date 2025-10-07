@@ -4,7 +4,7 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local function updateLootFrameButtons()
     for i = 1, 4 do
         _G["LootButton" .. i]:ClearNormalTexture()
-        _G["LootButton" .. i].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        _G["LootButton" .. i].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     end
 end
 
@@ -59,25 +59,25 @@ local function LoadLootFrameSkin()
     LootFrameCloseButton:ClearAllPoints()
     LootFrameCloseButton:SetPoint("RIGHT", GwLootFrameTitle.BGRIGHT, "RIGHT", -5, -2)
     LootFrameCloseButton:SetSize(20, 20)
-    LootFrameCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
-    LootFrameCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
-    LootFrameCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
+    LootFrameCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png")
+    LootFrameCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png")
+    LootFrameCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png")
 
     LootFrameNext:SetFont(UNIT_NAME_FONT, 12)
     LootFramePrev:SetFont(UNIT_NAME_FONT, 12)
     LootFrameNext:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     LootFramePrev:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
-    LootFrameDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
-    LootFrameDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
-    LootFrameDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
+    LootFrameDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up.png")
+    LootFrameDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up.png")
+    LootFrameDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up.png")
 
-    LootFrameUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
-    LootFrameUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
-    LootFrameUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
+    LootFrameUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
+    LootFrameUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
+    LootFrameUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
 
     for i = 1, 4 do
-        _G["LootButton" .. i .. "NameFrame"]:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        _G["LootButton" .. i .. "NameFrame"]:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
         _G["LootButton" .. i .. "NameFrame"]:SetHeight(_G["LootButton" .. i]:GetHeight())
         _G["LootButton" .. i .. "NameFrame"]:SetPoint("LEFT", _G["LootButton" .. i], "RIGHT", 0, 0)
 

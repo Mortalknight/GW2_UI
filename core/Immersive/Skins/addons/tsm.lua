@@ -13,7 +13,7 @@ local function AddTsmTab()
     local tab = libAhTab:GetButton("TSM_AH_TAB")
     if not tab then return end
     if not tab.isSkinned then
-        local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_tsm"
+        local iconTexture = "Interface/AddOns/GW2_UI/textures/Auction/tabicon_addon_tsm.png"
         GW.SkinSideTabButton(tab, iconTexture, "TSM")
     end
 

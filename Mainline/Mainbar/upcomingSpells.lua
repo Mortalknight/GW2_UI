@@ -91,7 +91,7 @@ local function LoadUpcomingRewarsIntoScrollFrame(self)
             slot.item.id = upcomingLevelRewards[idx].id
             slot.item.level = upcomingLevelRewards[idx].level
 
-            slot.item.levelString:SetText(slot.item.level .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:24:24:0:0|t")
+            slot.item.levelString:SetText(slot.item.level .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon.png:24:24:0:0|t")
 
             if slot.item.mask then
                 slot.item.icon:RemoveMaskTexture(slot.item.mask)
@@ -106,7 +106,7 @@ local function LoadUpcomingRewarsIntoScrollFrame(self)
                         slot.item.mask = UIParent:CreateMaskTexture()
                         slot.item.mask:SetPoint("CENTER", slot.item.icon, "CENTER", 0, 0)
                         slot.item.mask:SetTexture(
-                            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
+                            "Interface/AddOns/GW2_UI/textures/talents/passive_border.png",
                             "CLAMPTOBLACKADDITIVE",
                             "CLAMPTOBLACKADDITIVE"
                         )

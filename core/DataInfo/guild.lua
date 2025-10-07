@@ -14,8 +14,8 @@ local mobilestatus = {
 local TIMERUNNING_ATLAS = "|A:timerunning-glues-icon-small:%s:%s:0:0|a"
 local TIMERUNNING_SMALL = format(TIMERUNNING_ATLAS, 12, 10)
 
-local FACTION_ALLIANCE = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/Alliance:13:13|t"
-local FACTION_HORDE = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/Horde:13:13|t"
+local FACTION_ALLIANCE = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/alliance.png:13:13|t"
+local FACTION_HORDE = "|TInterface/AddOns/GW2_UI/Textures/social/GameIcons/Launcher/horde.png:13:13|t"
 
 local tthead = GW.myfaction == "Alliance" and GW.FACTION_COLOR[2] or GW.FACTION_COLOR[1]
 local ttsubh = {r = 1, g = 0.93, b = 0.73}

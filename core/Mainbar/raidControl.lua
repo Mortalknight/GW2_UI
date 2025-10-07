@@ -54,7 +54,7 @@ local function fnGMIG_OnEvent(self)
             end
         end
     end
-    self.groupCounter:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:2:64:64:4:60:4:60|t " .. numTank .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:2:64:64:4:60:4:60|t " .. numHeal .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:15:15:0:0:64:64:4:60:4:60|t " .. numDamage)
+    self.groupCounter:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank.png:0:0:0:2:64:64:4:60:4:60|t " .. numTank .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-healer.png:0:0:0:2:64:64:4:60:4:60|t " .. numHeal .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-dps.png:15:15:0:0:64:64:4:60:4:60|t " .. numDamage)
 end
 
 local function ToggleVisibility()
@@ -171,7 +171,7 @@ local function CreateRaidControlFrame()
         DoReadyCheck()
     end
     GwGroupManage.inGroup.readyCheck:SetScript("OnClick", fnGGRC_OnClick)
-    GwGroupManage.inGroup.readyCheck.hover:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck-button-hover")
+    GwGroupManage.inGroup.readyCheck.hover:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck-button-hover.png")
     GwGroupManage.inGroup.readyCheck:GetFontString():SetTextColor(218 / 255, 214 / 255, 200 / 255)
     GwGroupManage.inGroup.readyCheck:GetFontString():SetShadowColor(0, 0, 0, 1)
     GwGroupManage.inGroup.readyCheck:GetFontString():SetShadowOffset(1, -1)
@@ -187,7 +187,7 @@ local function CreateRaidControlFrame()
     end
 
     GwGroupManage.inGroup.countdown:SetScript("OnClick", fmGGCD_OnClick)
-    GwGroupManage.inGroup.countdown.hover:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck-button-hover")
+    GwGroupManage.inGroup.countdown.hover:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck-button-hover.png")
     GwGroupManage.inGroup.countdown:GetFontString():SetTextColor(218 / 255, 214 / 255, 200 / 255)
     GwGroupManage.inGroup.countdown:GetFontString():SetShadowColor(0, 0, 0, 1)
     GwGroupManage.inGroup.countdown:GetFontString():SetShadowOffset(1, -1)
@@ -285,7 +285,7 @@ local function CreateRaidControlFrame()
             f:SetScript("OnLeave", fnF_OnLeave)
             f:ClearAllPoints()
             f:SetPoint("TOPLEFT", GwGroupManage.inGroup, "TOPLEFT", x, y)
-            f:SetNormalTexture(i < 9 and "Interface/AddOns/GW2_UI/textures/party/GM_" .. i or "Interface/BUTTONS/UI-GROUPLOOT-PASS-DOWN")
+            f:SetNormalTexture(i < 9 and "Interface/AddOns/GW2_UI/textures/party/gm_" .. i .. ".png" or "Interface/BUTTONS/UI-GROUPLOOT-PASS-DOWN")
             f:SetAttribute("type", "macro")
             f:SetAttribute("macrotext", (i < 9 and "/wm " .. i or "/cwm 9"))
             f:RegisterForClicks("AnyUp", "AnyDown")

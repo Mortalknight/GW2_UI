@@ -130,7 +130,7 @@ local function button1_OnClick()
             end
 
             if not GW.Classic then
-                GW.AlertSystem:AddAlert(L["Complete"], nil, L["Setup Chat"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+                GW.AlertSystem:AddAlert(L["Complete"], nil, L["Setup Chat"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
             end
 
             step = 2
@@ -168,7 +168,7 @@ local function button1_OnClick()
             C_CVar.SetCVar("whisperMode", "inline")
 
             if not GW.Classic then
-                GW.AlertSystem:AddAlert(L["Complete"], nil, L["Setup CVars"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+                GW.AlertSystem:AddAlert(L["Complete"], nil, L["Setup CVars"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
             end
 
             step = 3
@@ -192,7 +192,7 @@ local function button1_OnClick()
             GW.PixelPerfection()
 
             if not GW.Classic then
-                GW.AlertSystem:AddAlert(L["Pixel Perfect Mode"], nil, L["Turn Pixel Perfect Mode On"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+                GW.AlertSystem:AddAlert(L["Pixel Perfect Mode"], nil, L["Turn Pixel Perfect Mode On"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
             end
 
             step = 4

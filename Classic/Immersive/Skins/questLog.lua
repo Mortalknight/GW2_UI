@@ -263,14 +263,14 @@ local function LoadQuestLogFrameSkin()
 
 			if type(texture) == 'number' then
 				if texture == 130838 then -- Interface\Buttons\UI-PlusButton-UP
-					button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right", true)
+					button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right.png", true)
 				elseif texture == 130821 then -- Interface\Buttons\UI-MinusButton-UP
-					button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down", true)
+					button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png", true)
 				end
 			elseif strfind(texture, 'Plus') or strfind(texture, 'Closed') then
-				button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right", true)
+				button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right.png", true)
 			elseif strfind(texture, 'Minus') or strfind(texture, 'Open') then
-				button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down", true)
+				button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png", true)
 			end
 		end
 		GW.UpdateCollapseTexture = UpdateCollapseTexture
@@ -441,7 +441,7 @@ local function LoadQuestLogFrameSkin()
     QuestFrameGreetingPanel:HookScript('OnUpdate', UpdateGreetingFrame)
 	hooksecurefunc('QuestFrameGreetingPanel_OnShow', UpdateGreetingFrame)
 
-	GW.CreateFrameHeaderWithBody(QuestLogFrame, QuestLogTitleText:GetText(), "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {QuestLogListScrollFrame, QuestLogDetailScrollFrame}, nil, nil, true)
+	GW.CreateFrameHeaderWithBody(QuestLogFrame, QuestLogTitleText:GetText(), "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {QuestLogListScrollFrame, QuestLogDetailScrollFrame}, nil, nil, true)
 	QuestLogListScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder, true, 2, 2)
     QuestLogDetailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder, true, 2, 4)
 
@@ -480,7 +480,7 @@ local function LoadQuestLogFrameSkin()
     QuestFrame.tex = QuestFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
     QuestFrame.tex:SetPoint("TOP", QuestFrame, "TOP", 0, 20)
     QuestFrame.tex:SetSize(QuestFrame:GetSize())
-    QuestFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    QuestFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
 
     QuestFrameCloseButton:GwSkinButton(true)
     QuestFrameCloseButton:SetSize(20, 20)
@@ -519,7 +519,7 @@ local function LoadQuestLogFrameSkin()
     QuestNPCModelTextFrame.tex = QuestNPCModelTextFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
     QuestNPCModelTextFrame.tex:SetPoint("TOP", QuestNPCModelTextFrame, "TOP", 0, 20)
     QuestNPCModelTextFrame.tex:SetSize(w + 30, h + 60)
-    QuestNPCModelTextFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    QuestNPCModelTextFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
 
 	hooksecurefunc(QuestLogCollapseAllButton, 'SetNormalTexture', GW.UpdateCollapseTexture)
 	GW.UpdateCollapseTexture(QuestLogCollapseAllButton, QuestLogCollapseAllButton:GetNormalTexture():GetTexture())

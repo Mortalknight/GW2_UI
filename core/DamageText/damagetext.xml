@@ -5,7 +5,7 @@
         <Size x="50" y="30"></Size>
         <Layers>
           <Layer level="BACKGROUND" textureSubLevel="-8">
-                <Texture parentKey="peroidicBackground" hidden="false"  file="Interface\AddOns\GW2_UI\textures\uistuff\periodic-bg">
+                <Texture parentKey="peroidicBackground" hidden="false"  file="Interface\AddOns\GW2_UI\textures\uistuff\periodic-bg.png">
                 <Size x="24" y="20"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.string" relativePoint="TOPLEFT" x="-24" y="-3"></Anchor>
@@ -14,13 +14,13 @@
             </Texture>
           </Layer>
             <Layer level="BACKGROUND" textureSubLevel="-7">
-                <Texture parentKey="critTexture" hidden="true" file="Interface\AddOns\GW2_UI\textures\uistuff\combattext-critical">
+                <Texture parentKey="critTexture" hidden="true" file="Interface\AddOns\GW2_UI\textures\uistuff\combattext-critical.png">
                     <Size x="64" y="32"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="bleedTexture" hidden="true" file="Interface\AddOns\GW2_UI\textures\icons\elementicon">
+                <Texture parentKey="bleedTexture" hidden="true" file="Interface\AddOns\GW2_UI\textures\icons\elementicon.png">
                     <Size x="24" y="24"></Size>
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.string" relativePoint="LEFT" x="0" y="0"></Anchor>

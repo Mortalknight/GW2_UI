@@ -11,8 +11,8 @@ local constBackdropDropDown = {
 GW.BackdropTemplates.DopwDown = constBackdropDropDown
 
 local constBackdropFrame = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-border.png",
     tile = false,
     tileSize = 64,
     edgeSize = 32,
@@ -22,7 +22,7 @@ GW.BackdropTemplates.Default = constBackdropFrame
 
 local constBackdropFrameBorder = {
     bgFile = "",
-    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-border.png",
     tile = false,
     tileSize = 64,
     edgeSize = 32,
@@ -31,8 +31,8 @@ local constBackdropFrameBorder = {
 GW.BackdropTemplates.OnlyBorder = constBackdropFrameBorder
 
 local constBackdropFrameSmallerBorder = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-border.png",
     tile = false,
     tileSize = 64,
     edgeSize = 18,
@@ -41,21 +41,21 @@ local constBackdropFrameSmallerBorder = {
 GW.BackdropTemplates.DefaultWithSmallBorder = constBackdropFrameSmallerBorder
 
 local constBackdropFrameStatusBar = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/StatusBar",
-    --edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png",
+    --edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-border.png",
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
 GW.BackdropTemplates.StatusBar = constBackdropFrameStatusBar
 
 local constBackdropFrameColorBorder = {
-    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
     edgeSize = 1
 }
 GW.BackdropTemplates.DefaultWithColorableBorder = constBackdropFrameColorBorder
 
 local constBackdropFrameColorBorderNoBackground = {
-    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
     bgFile = "",
     edgeSize = 1
 }

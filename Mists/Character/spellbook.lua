@@ -149,7 +149,7 @@ local function GetSpellbookActionButton(tab, container, index)
     button = CreateFrame("Button", nil, container, "GwSpellbookActionbutton")
     button.mask = UIParent:CreateMaskTexture()
     button.mask:SetPoint("CENTER", button, "CENTER", 0, 0)
-    button.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    button.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     button.mask:SetSize(40, 40)
     button.mask:SetParent(button)
 
@@ -245,13 +245,13 @@ local function setButtonStyle(btn, isPassive, spellID, slotType, icon, spellbook
     end
 
     if btn.isPassive then
-        btn.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight")
+        btn.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png")
         btn.icon:AddMaskTexture(btn.mask)
-        btn.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_outline")
+        btn.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_outline.png")
     else
-        btn.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight")
+        btn.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight.png")
         btn.icon:RemoveMaskTexture(btn.mask)
-        btn.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border")
+        btn.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border.png")
     end
 
     btn.icon:SetDesaturated(isOffSpec)
@@ -413,7 +413,7 @@ local function updateSpellbookTab(self)
             numSpells = HasPetSpells() or 0
             offset = 0
             name = PET
-            texture = "Interface/AddOns/GW2_UI/textures/talents/tabicon_pet"
+            texture = "Interface/AddOns/GW2_UI/textures/talents/tabicon_pet.png"
         end
 
         local boxIndex = 1
@@ -563,7 +563,7 @@ local function LoadSpellBook()
 
     local mask = UIParent:CreateMaskTexture()
     mask:SetPoint("TOPLEFT", GwCharacterWindow, "TOPLEFT", 0, 0)
-    mask:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg-mask.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
 
     for tab = 1, 5 do
@@ -579,7 +579,7 @@ local function LoadSpellBook()
         menuItem.title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
         menuItem.title:SetTextColor(0.7, 0.7, 0.5, 1)
         menuItem.bg:SetVertexColor(1, 1, 1, zebra)
-        menuItem.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        menuItem.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
         menuItem:ClearNormalTexture()
         menuItem:SetText("")
 

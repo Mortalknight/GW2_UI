@@ -27,7 +27,7 @@ local function ApplyMacroOptionsSkin()
 
     MacroFrameInset:GwStripTextures()
     MacroFrame.MacroSelector.ScrollBox:GwStripTextures()
-    GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox}, nil, false, true)
+    GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon.png", {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox}, nil, false, true)
     MacroFrame.gwHeader.BGLEFT:ClearAllPoints()
     MacroFrame.gwHeader.BGLEFT:SetPoint("BOTTOMLEFT", MacroFrame.gwHeader, "BOTTOMLEFT", 0, 0)
     MacroFrame.gwHeader.BGLEFT:SetPoint("TOPRIGHT", MacroFrame.gwHeader, "TOPRIGHT", 0, 0)
@@ -98,7 +98,7 @@ local function ApplyMacroOptionsSkin()
     MacroFrameSelectedMacroButton.Icon:GwSetInside()
     MacroFrameSelectedMacroButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     MacroFrameSelectedMacroBackground:GwKill()
-    MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+    MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
 
     MacroFrameSelectedMacroName:SetTextColor(1, 1, 1)
 

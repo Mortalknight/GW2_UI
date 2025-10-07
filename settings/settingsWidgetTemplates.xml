@@ -24,8 +24,8 @@
                 <Anchors>
                     <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                 </Anchors>
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
-                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png"/>
+                <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png"/>
             </CheckButton>
         </Frames>
     </Button>
@@ -53,12 +53,12 @@
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-60"/>
                 </Anchors>
                 <HitRectInsets left="0" right="0" top="-10" bottom="-10"/>
-                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle">
+                <ThumbTexture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle.png">
                     <Size x="16" y="16"/>
                 </ThumbTexture>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg.png">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
@@ -100,7 +100,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                             <Anchors>
                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
@@ -108,7 +108,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK" textureSubLevel="2">
-                        <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                        <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"/>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
@@ -202,7 +202,7 @@
                         <Anchor point="LEFT" x="0" y="-10"/>
                     </Anchors>
                 </FontString>
-                <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png">
                     <Size x="600" y="2"></Size>
                     <TexCoords left="0.5" right="1" top="0" bottom="1"/>
                     <Anchors>

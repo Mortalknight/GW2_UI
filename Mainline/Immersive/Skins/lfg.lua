@@ -105,7 +105,7 @@ local function SkinLookingForGroupFrames()
     RaidFinderFrame:GwStripTextures()
     RaidFinderQueueFrame:GwStripTextures(true)
 
-    GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon", {
+    GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon.png", {
         LFDQueueFrame,
         RaidFinderQueueFrame,
         LFGListPVEStub
@@ -124,19 +124,19 @@ local function SkinLookingForGroupFrames()
     for idx, tab in pairs(tabs) do
         if not tab.isSkinned then
             local id = idx == 1 and "dungeon" or idx == 2 and "pvp" or idx == 3 and "mythic" or idx == 4 and "delve" or "dungeon"
-            local iconTexture = "Interface/AddOns/GW2_UI/Textures/Groups/tabicon_" .. id
+            local iconTexture = "Interface/AddOns/GW2_UI/Textures/Groups/tabicon_" .. id .. ".png"
 
 
             tab:HookScript("OnClick", function(self)
                 if panels[self:GetID()].check and not  panels[self:GetID()].check() then return end
                 if idx == 1 then
-                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon")
+                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/dungeon-window-icon.png")
                 elseif idx == 2 then
-                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/pvp-window-icon")
+                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/pvp-window-icon.png")
                 elseif idx == 3 then
-                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/mythic-window-icon")
+                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/mythic-window-icon.png")
                 elseif idx == 4 then
-                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/delve-window-icon")
+                    PVEFrame.gwHeader.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/Groups/delve-window-icon.png")
                 end
             end)
 
@@ -294,11 +294,11 @@ local function SkinLookingForGroupFrames()
 
             bu:SetHeight(36)
 
-            bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
-            bu.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+            bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
+            bu.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
             bu.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
             if i % 2 == 1 then
-                bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+                bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
             else
                 bu:ClearNormalTexture()
             end
@@ -306,7 +306,7 @@ local function SkinLookingForGroupFrames()
             bu.arrow = bu:CreateTexture(nil, "OVERLAY")
             bu.arrow:SetSize(10, 20)
             bu.arrow:SetPoint("RIGHT", bu, "RIGHT", 0, 0)
-            bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow")
+            bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow.png")
 
             bu.name:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
             bu.name:SetJustifyH("LEFT")
@@ -393,9 +393,9 @@ local function SkinLookingForGroupFrames()
     hooksecurefunc("LFGDungeonListButton_SetDungeon", function(button)
         if button and button.expandOrCollapseButton:IsShown() then
             if button.isCollapsed then
-                button.expandOrCollapseButton:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
+                button.expandOrCollapseButton:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right.png")
             else
-                button.expandOrCollapseButton:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                button.expandOrCollapseButton:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
             end
         end
     end)
@@ -733,7 +733,7 @@ local function SkinLookingForGroupFrames()
                     if class then
                         if not icon.line then
                             local line = parent:CreateTexture(nil, "ARTWORK")
-                            line:SetTexture("Interface/Addons/GW2_UI/Textures/uistuff/gwstatusbar")
+                            line:SetTexture("Interface/Addons/GW2_UI/Textures/uistuff/gwstatusbar.png")
                             line:SetSize(16, 3)
                             line:SetPoint("TOP", icon, "BOTTOM", 0, -1)
                             icon.line = line
@@ -813,11 +813,11 @@ local function ApplyPvPUISkin()
 
         bu:SetHeight(36)
 
-        bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
-        bu.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+        bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
+        bu.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
         bu.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
         if i % 2 == 1 then
-            bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+            bu:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg.png")
         else
             bu:ClearNormalTexture()
         end
@@ -825,7 +825,7 @@ local function ApplyPvPUISkin()
         bu.arrow = bu:CreateTexture(nil, "OVERLAY")
         bu.arrow:SetSize(10, 20)
         bu.arrow:SetPoint("RIGHT", bu, "RIGHT", 0, 0)
-        bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow")
+        bu.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-arrow.png")
 
         bu.Name:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
         bu.Name:SetShadowColor(0, 0, 0, 0)
@@ -1020,8 +1020,8 @@ local function ApplyPvPUISkin()
     if GW.settings.TOOLTIPS_ENABLED then
         ConquestTooltip.NineSlice:Hide()
         ConquestTooltip:GwCreateBackdrop({
-            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
+            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-border.png",
             edgeSize = GW.Scale(32),
             insets = {left = 2, right = 2, top = 2, bottom = 2}
         })
@@ -1100,7 +1100,7 @@ local function ApplyChallengesUISkin()
     -- Mythic+ KeyStoneFrame
     local tex = ChallengesKeystoneFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", ChallengesKeystoneFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
     local w, h = ChallengesKeystoneFrame:GetSize()
     tex:SetSize(w + 50, h + 50)
     ChallengesKeystoneFrame.tex = tex
@@ -1218,7 +1218,7 @@ local function ApplyDelvesDifficultyPickerSkin()
 
     local tex = backround:CreateTexture(nil, "BACKGROUND", nil, -7)
     tex:SetPoint("TOP", DelvesDifficultyPickerFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
     local w, h = DelvesDifficultyPickerFrame:GetSize()
     tex:SetSize(w + 50, h + 50)
     backround.tex = tex

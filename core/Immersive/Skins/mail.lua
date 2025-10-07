@@ -19,7 +19,7 @@ local function AddFrameSeperator()
     MailFrame.mailFrameSepTexture = MailFrame:CreateTexture(nil, "ARTWORK")
     MailFrame.mailFrameSepTexture:SetSize(600, 2)
     MailFrame.mailFrameSepTexture:SetPoint("BOTTOMRIGHT", MailFrame, "BOTTOMRIGHT", 110, 50)
-    MailFrame.mailFrameSepTexture:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep")
+    MailFrame.mailFrameSepTexture:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png")
 end
 
 local function AddOnClickHandlers()
@@ -64,16 +64,16 @@ end
 local function SkinPager()
     local r = { InboxPrevPageButton:GetRegions() }
     r[1]:SetTextColor(1, 1, 1, 1)
-    r[2]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon")
-    r[3]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon")
-    r[4]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon")
+    r[2]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon.png")
+    r[3]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon.png")
+    r[4]:SetTexture("Interface/AddOns/GW2_UI/textures/character/backicon.png")
     SetDesaturation(r[4], true)
 
     r = { InboxNextPageButton:GetRegions() }
     r[1]:SetTextColor(1, 1, 1, 1)
-    r[2]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon")
-    r[3]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon")
-    r[4]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon")
+    r[2]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon.png")
+    r[3]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon.png")
+    r[4]:SetTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon.png")
     SetDesaturation(r[4], true)
 end
 
@@ -148,23 +148,23 @@ local function SkinOpenMailFrame()
         b:GwStripTextures()
 
         if b then
-            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
             local r = { b:GetRegions() }
             local ii = 1
             for _, c in pairs(r) do
                 if c:GetObjectType() == "Texture" then
                     if ii == 1 then
-                        c:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
+                        c:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop.png")
                         c:SetSize(b:GetSize())
                     end
                     ii = ii + 1
                 end
             end
             hooksecurefunc(b.IconBorder, "SetVertexColor", function(self)
-                self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+                self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
             end)
 
-            b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         end
 
         if t then t:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
@@ -179,13 +179,13 @@ local function SkinMailFrameSendItems()
     for i = 1, _G.ATTACHMENTS_MAX_SEND do
         local b = _G["SendMailAttachment" .. i]
         if b then
-            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
             local r = { b:GetRegions() }
             local ii = 1
             for _, c in pairs(r) do
                 if c:GetObjectType() == "Texture" then
                     if ii == 1 then
-                        c:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
+                        c:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop.png")
                         c:SetSize(b:GetSize())
                     end
                     ii = ii + 1
@@ -343,7 +343,7 @@ local function ClearMailTextures()
         t:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
         bg.gwZebra = bg:CreateTexture(nil, "BACKGROUND")
-        bg.gwZebra:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+        bg.gwZebra:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
         bg.gwZebra:SetSize(32, 32)
         bg.gwZebra:SetPoint("TOPLEFT", bg, "TOPLEFT")
         bg.gwZebra:SetPoint("BOTTOMRIGHT", bg, "BOTTOMRIGHT")
@@ -354,7 +354,7 @@ local function ClearMailTextures()
         ib:SetPoint("TOPLEFT", t, "TOPLEFT", -2, 2)
         ib:SetPoint("BOTTOMRIGHT", t, "BOTTOMRIGHT", 2, -2)
         hooksecurefunc(ib, "SetVertexColor", function(self)
-            self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         end)
     end
     MailFrameTab1:Hide()
@@ -396,14 +396,14 @@ local function LoadMailSkin()
     MailFrame.mailFrameBgTexture = MailFrame:CreateTexture(nil, "BACKGROUND", nil, -7)
     MailFrame.mailFrameBgTexture:SetSize(newWidth, newHeight)
     MailFrame.mailFrameBgTexture:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 0, 5)
-    MailFrame.mailFrameBgTexture:SetTexture("Interface/AddOns/GW2_UI/textures/hud/mailboxwindow-background")
+    MailFrame.mailFrameBgTexture:SetTexture("Interface/AddOns/GW2_UI/textures/hud/mailboxwindow-background.png")
     MailFrame.mailFrameBgTexture:SetTexCoord(0, 0.7099, 0, 0.955);
 
     -- Configure Mail Heading
     MailFrame.heading = MailFrame:CreateTexture(nil, "BACKGROUND")
     MailFrame.heading:SetSize(newWidth, 64)
     MailFrame.heading:SetPoint("BOTTOMLEFT", MailFrame, "TOPLEFT", 0, 0)
-    MailFrame.heading:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader")
+    MailFrame.heading:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader.png")
 
     MailFrame.heading.Title = MailFrame:CreateFontString("MailFrameTitle", "ARTWORK")
     MailFrame.heading.Title:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 50, 30)
@@ -414,12 +414,12 @@ local function LoadMailSkin()
     MailFrame.icon = MailFrame:CreateTexture(nil, "ARTWORK")
     MailFrame.icon:SetSize(80, 80)
     MailFrame.icon:SetPoint("CENTER", MailFrame, "TOPLEFT", 12, 25)
-    MailFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mail-window-icon")
+    MailFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mail-window-icon.png")
 
     MailFrame.headingRight = MailFrame:CreateTexture(nil, "BACKGROUND")
     MailFrame.headingRight:SetSize(newWidth, 64)
     MailFrame.headingRight:SetPoint("BOTTOMRIGHT", MailFrame, "TOPRIGHT", 0, 0)
-    MailFrame.headingRight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader-right")
+    MailFrame.headingRight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader-right.png")
 
     MailFrame.CloseButton:GwSkinButton(true, false)
     MailFrame.CloseButton:SetSize(20, 20)
@@ -432,7 +432,7 @@ local function LoadMailSkin()
     MailFrame.footer:SetSize(newWidth, 70)
     MailFrame.footer:SetPoint("TOPLEFT", MailFrame, "BOTTOMLEFT", 0, 5)
     MailFrame.footer:SetPoint("TOPRIGHT", MailFrame, "BOTTOMRIGHT", 0, 5)
-    MailFrame.footer:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagfooter")
+    MailFrame.footer:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagfooter.png")
 
     InboxFrame:SetWidth(331)
 

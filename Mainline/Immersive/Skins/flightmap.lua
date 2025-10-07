@@ -6,7 +6,7 @@ local function ApplyFlightMapSkin()
     local tex = FlightMapFrame:CreateTexture(nil, "BACKGROUND")
     local w, h = FlightMapFrame:GetSize()
     tex:SetPoint("TOP", FlightMapFrame, "TOP", 10, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
     tex:SetSize(w + 120, h + 80 )
     FlightMapFrame.tex = tex
 
@@ -25,7 +25,7 @@ local function ApplyFlightMapSkin()
     local tex = TaxiFrame:CreateTexture(nil, "BACKGROUND")
     local w, h = TaxiFrame:GetSize()
     tex:SetPoint("TOP", TaxiFrame, "TOP", 0, 20)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
     tex:SetSize(w + 100, h + 60 )
     TaxiFrame.tex = tex
 

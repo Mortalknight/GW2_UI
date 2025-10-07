@@ -68,7 +68,7 @@ local function CreateSlotStrings()
 
             local bg = slot:CreateTexture(nil, "BACKGROUND")
             bg:SetAlpha(0.6)
-            bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover")
+            bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover.png")
             bg:SetPoint("TOPLEFT", slot.enchantText, "TOPLEFT", -2, 2)
             bg:SetPoint("BOTTOMRIGHT", slot.enchantText, "BOTTOMRIGHT", 2, -2)
             bg:Hide()

@@ -1,9 +1,9 @@
 local _, GW = ...
 
-local passiveHighlight = "Interface/AddOns/GW2_UI/textures/talents/passive_highlight"
-local activeHighlight = "Interface/AddOns/GW2_UI/textures/talents/active_highlight"
-local passiveOutline = "Interface/AddOns/GW2_UI/textures/talents/passive_outline"
-local activeOutline = "Interface/AddOns/GW2_UI/textures/talents/background_border"
+local passiveHighlight = "Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png"
+local activeHighlight = "Interface/AddOns/GW2_UI/textures/talents/active_highlight.png"
+local passiveOutline = "Interface/AddOns/GW2_UI/textures/talents/passive_outline.png"
+local activeOutline = "Interface/AddOns/GW2_UI/textures/talents/background_border.png"
 
 local function Update_InspectPaperDollItemSlotButton(button)
     local unit = button.hasItem and InspectFrame.unit
@@ -23,7 +23,7 @@ local function UpdateGlyph(frame)
     if iconFilename then
         SetPortraitToTexture(frame.texture, iconFilename)
     else
-        frame.texture:SetTexture("Interface/AddOns/GW2_UI/textures/character/glyphs/237647")
+        frame.texture:SetTexture("Interface/AddOns/GW2_UI/textures/character/glyphs/237647.png")
     end
     frame.ring:SetTexCoord(0, 1, 0, 1)
     if glyphType == 1 then
@@ -37,7 +37,7 @@ local function SkinInspectFrameOnLoad()
     if not GW.settings.INSPECTION_SKIN_ENABLED then return end
 
     InspectFrame:GwStripTextures()
-    GW.CreateFrameHeaderWithBody(InspectFrame, InspectNameText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {}, 20)
+    GW.CreateFrameHeaderWithBody(InspectFrame, InspectNameText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {}, 20)
     InspectFrame.gwHeader.windowIcon:SetSize(65, 65)
     InspectFrame.gwHeader.windowIcon:ClearAllPoints()
     InspectFrame.gwHeader.windowIcon:SetPoint("CENTER", InspectFrame.gwHeader.BGLEFT, "LEFT", 25, -5)
@@ -224,13 +224,13 @@ local function SkinInspectFrameOnLoad()
                 button.highlight:SetSize(30, 30)
 
                 button.outline = button:CreateTexture(nil, "BACKGROUND")
-                button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border")
+                button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border.png")
                 button.outline:SetSize(40, 40)
                 button.outline:SetPoint("CENTER", button, "CENTER", 0, 0)
 
                 button.mask = button:CreateMaskTexture()
                 button.mask:SetPoint("CENTER", button, "CENTER", 0, 0)
-                button.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+                button.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
                 button.mask:SetSize(30, 30)
 
                 if button.icon then
@@ -253,7 +253,7 @@ local function SkinInspectFrameOnLoad()
 
             glyph.highlight:SetTexture(nil)
             glyph.glyph:GwKill()
-            glyph.ring:SetTexture("Interface/AddOns/GW2_UI/textures/character/glyphbgmajorequip")
+            glyph.ring:SetTexture("Interface/AddOns/GW2_UI/textures/character/glyphbgmajorequip.png")
 
             glyph:SetSize(i % 2 == 1 and 30 or 50, i % 2 == 1 and 30 or 50)
 

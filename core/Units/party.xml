@@ -10,20 +10,20 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="portraitBackground" file="Interface\AddOns\GW2_UI\textures\party\portraits">
+                <Texture parentKey="portraitBackground" file="Interface\AddOns\GW2_UI\textures\party\portraits.png">
                     <Size x="81" y="66"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT"></Anchor>
                     </Anchors>
                     <TexCoords left="0" right="0.828" top="0.332" bottom="0.664"/>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                     <Size x="67" y="10"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-66"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                     <Size x="67" y="5"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-76"></Anchor>
@@ -39,7 +39,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="3">
-                <Texture parentKey="iconbg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                <Texture parentKey="iconbg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png">
                     <Size x="20" y="40"></Size>
                     <Color r="0" b="0" g="0" a="0.8"></Color>
                     <Anchors>
@@ -48,7 +48,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentKey="classicon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                <Texture parentKey="classicon" file="Interface\AddOns\GW2_UI\textures\party\classicons.png">
                     <Size x="22" y="22"></Size>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOPLEFT" y="-10"></Anchor>
@@ -78,7 +78,7 @@
                 </Anchors>
             </Frame>
             <StatusBar parentKey="powerbar" name="$parentPowerBar" defaultValue="1" minValue="0" maxValue="1" inherits="GwStatusBarTemplate">
-                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
+                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png"/>
                 <Size x="65" y="3"/>
                  <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-77"></Anchor>
@@ -102,13 +102,13 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                     <Size x="67" y="10"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-9"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
                     <Size x="67" y="3"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-19"></Anchor>
@@ -133,7 +133,7 @@
                 </Anchors>
             </Frame>
             <StatusBar parentKey="powerbar" name="$parentPowerBar" defaultValue="1" minValue="0" maxValue="1" inherits="GwStatusBarTemplate">
-                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
+                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png"/>
                 <Size x="65" y="3"/>
                  <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-19"></Anchor>

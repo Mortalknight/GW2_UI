@@ -23,7 +23,7 @@ local function ApplySocketUISkin()
     tex:SetPoint("TOP", ItemSocketingFrame, "TOP", 0, 20)
     local w, h = ItemSocketingFrame:GetSize()
     tex:SetSize(w + 50, h + 70)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png")
     ItemSocketingFrame.tex = tex
 
 

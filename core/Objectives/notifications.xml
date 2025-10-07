@@ -8,7 +8,7 @@
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
-                <Texture parentKey="compassBG" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
+                <Texture parentKey="compassBG" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg.png">
                     <Color r="1" g="1" b="1" a="0.3"></Color>
                     <Size x="300" y="70"></Size>
                     <Anchors>
@@ -39,7 +39,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture name="$parenticon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
+                        <Texture name="$parenticon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg.png">
                             <Size x="30" y="30"></Size>
                             <Anchors>
                                 <Anchor point="CENTER"></Anchor>
@@ -55,7 +55,7 @@
                 </Anchors>
                 <Layers>
                     <Layer textureSubLevel="2" Level="BACKGROUND">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\questview\bonusobjective-background">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\questview\bonusobjective-background.png">
                             <Size x="40" y="40"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0"></Anchor>
@@ -69,7 +69,7 @@
                         <Anchors>
                             <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface\AddOns\GW2_UI\textures\questview\bonusobjective-fill" />
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\questview\bonusobjective-fill.png" />
                     </StatusBar>
                 </Frames>
             </Frame>
@@ -80,7 +80,7 @@
                 </Anchors>
                 <Layers>
                     <Layer textureSubLevel="2" Level="BACKGROUND">
-                        <Texture parentKey="roundTexture" file="Interface/AddOns/GW2_UI/textures/questview/compass-rad-bg">
+                        <Texture parentKey="roundTexture" file="Interface/AddOns/GW2_UI/textures/questview/compass-rad-bg.png">
                             <Size x="60" y="60"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
@@ -88,7 +88,7 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="3" Level="BACKGROUND">
-                        <Texture parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/questview/compass-arrow">
+                        <Texture parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/questview/compass-arrow.png">
                             <Size x="60" y="60"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
@@ -96,13 +96,13 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="4" Level="BACKGROUND">
-                        <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-objective">
+                        <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-objective.png">
                             <Size x="30" y="30"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="0"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture name="$parentFlare" parentKey="flare" hidden="false" file="Interface/AddOns/GW2_UI/textures/hud/expflare">
+                        <Texture name="$parentFlare" parentKey="flare" hidden="false" file="Interface/AddOns/GW2_UI/textures/hud/expflare.png">
                             <Size x="150" y="150"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="LEFT" y="0" x="20"></Anchor>

@@ -5,7 +5,7 @@ local function ApplyFlightMapSkin()
 
     TaxiFrame:GwStripTextures()
 
-    GW.CreateFrameHeaderWithBody(TaxiFrame, TaxiMerchant, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", nil, nil, nil, true)
+    GW.CreateFrameHeaderWithBody(TaxiFrame, TaxiMerchant, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", nil, nil, nil, true)
     TaxiFrame.gwHeader.windowIcon:SetSize(65, 65)
     TaxiFrame.gwHeader.windowIcon:ClearAllPoints()
     TaxiFrame.gwHeader.windowIcon:SetPoint("CENTER", TaxiFrame.gwHeader.BGLEFT, "LEFT", 25, -5)

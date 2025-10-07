@@ -210,7 +210,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
     end
     if name == "SpellbookMicroButton" then name = "PlayerSpellsMicroButton" end
     if name == "SocialsMicroButton" then name = "GuildMicroButton" end
-    local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-Up"
+    local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-up.png"
 
     btn:SetSize(24, 24)
     btn:SetHitRectInsets(0, 0, 0, 0)
@@ -301,13 +301,13 @@ local function reskinMicroButton(btn, name, mbf, hook)
 
         btn.GwNotify:SetSize(18, 18)
         btn.GwNotify:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
-        btn.GwNotify:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
+        btn.GwNotify:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop.png")
         btn.GwNotify:SetVertexColor(1, 0, 0, 1)
         btn.GwNotify:Hide()
 
         btn.GwNotifyDark:SetSize(18, 18)
         btn.GwNotifyDark:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
-        btn.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
+        btn.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop.png")
         btn.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
         btn.GwNotifyDark:Hide()
 
@@ -418,10 +418,10 @@ local function hook_MainMenuMicroButton_OnUpdate(self, elapsed)
     if self.updateInterval ~= PERFORMANCE_BAR_UPDATE_INTERVAL then
         return
     end
-    self:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
-    self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
-    self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
-    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    self:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/mainmenumicrobutton-up.png")
+    self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/mainmenumicrobutton-up.png")
+    self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/mainmenumicrobutton-up.png")
+    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/mainmenumicrobutton-up.png")
     if self.MainMenuBarPerformanceBar then
         self.MainMenuBarPerformanceBar:SetAlpha(0)
         self.MainMenuBarPerformanceBar:SetScale(0.00001)
@@ -689,10 +689,10 @@ local function setupMicroButtons(mbf)
             gref:GetPushedTexture():SetAlpha(1)
             gref:GetHighlightTexture():SetAlpha(1)
 
-            gref:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
-            gref:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
-            gref:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
-            gref:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+            gref:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
+            gref:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
+            gref:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
+            gref:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
         end)
     end
     updateGuildButton(gref, "GUILD_ROSTER_UPDATE")
@@ -991,10 +991,10 @@ AFP("checkElvUI", checkElvUI)
 local function hook_UpdateMicroButtons()
     HelpMicroButton:Show()
     local m = GW.Classic and SocialsMicroButton or GuildMicroButton
-    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
-    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
-    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
-    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
+    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
+    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
+    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
 
     if MicroButtonPortrait then MicroButtonPortrait:Hide() end
 

@@ -227,34 +227,34 @@ local function updateCollapse(texture, atlas)
         local parent = texture:GetParent()
         if parent:IsCollapsed() then
             if texture.SetTexture then
-                texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
                 texture:SetRotation(1.570796325)
             else
-                texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
                 texture:GetNormalTexture():SetRotation(1.570796325)
             end
             if texture.GetPushedTexture then
-                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
                 texture:GetPushedTexture():SetRotation(1.570796325)
             end
             if texture.GetHighlightTexture then
-                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
                 texture:GetPushedTexture():SetRotation(1.570796325)
             end
         else
             if texture.SetTexture then
-                texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
                 texture:SetRotation(0)
             else
-                texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetNormalTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
                 texture:GetNormalTexture():SetRotation(0)
             end
             if texture.GetPushedTexture then
-                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
                 texture:GetPushedTexture():SetRotation(0)
             end
             if texture.GetHighlightTexture then
-                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
                 texture:GetPushedTexture():SetRotation(0)
             end
         end
@@ -314,7 +314,7 @@ local function UpdateTokenSkins(frame)
                 child.Content.Count:SetJustifyH("RIGHT")
                 child.Content.Name:SetJustifyV("MIDDLE")
                 child.Content.Count:SetJustifyV("MIDDLE")
-                child.Content.WatchedCurrencyCheck:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon")
+                child.Content.WatchedCurrencyCheck:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/watchicon.png")
 
                 if child.Content.BackgroundHighlight then
                     child.Content.BackgroundHighlight:GwKill()
@@ -334,7 +334,7 @@ local function UpdateTokenSkins(frame)
 
             if child.elementData and child.elementData.isHeader then
                 child.gwBackground = child:CreateTexture(nil, "BACKGROUND")
-                child.gwBackground:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep")
+                child.gwBackground:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
                 child.gwBackground:SetAllPoints(child)
                 child.gwBackground:SetPoint("TOPLEFT")
             end
@@ -479,7 +479,7 @@ local function UpdateTransferHistorySkins(self)
             end
 
             if child.Arrow then
-                child.Arrow:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                child.Arrow:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
                 child.Arrow:SetRotation(1.570796325)
                 child.Arrow:ClearAllPoints()
                 child.Arrow:SetPoint("LEFT", child.SourceName, "RIGHT", 3, 0)

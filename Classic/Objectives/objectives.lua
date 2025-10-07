@@ -114,9 +114,9 @@ local function UpdateBlockInternal(self, parent, quest)
     self.title = quest.title
     local text = ""
     if quest.questGroup == "Elite" then
-        text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon:12:12:0:0|t] "
+        text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-group-icon.png:12:12:0:0|t] "
     elseif quest.questGroup == "Dungeon" then
-        text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon:12:12:0:0|t] "
+        text = "[" .. quest.questLevel .. "|TInterface/AddOns/GW2_UI/textures/icons/quest-dungeon-icon.png:12:12:0:0|t] "
     elseif quest.questGroup then
         text = "[" .. quest.questLevel .. "+] "
     else

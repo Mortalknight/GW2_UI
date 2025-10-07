@@ -8,10 +8,10 @@ local talentsPerRow = 3
 local TAXIROUTE_LINEFACTOR = 32 / 30 -- Multiplying factor for texture coordinates
 local TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2 -- Half o that
 
-local passiveHighlight = "Interface/AddOns/GW2_UI/textures/talents/passive_highlight"
-local activeHighlight = "Interface/AddOns/GW2_UI/textures/talents/active_highlight"
-local passiveOutline = "Interface/AddOns/GW2_UI/textures/talents/passive_outline"
-local activeOutline = "Interface/AddOns/GW2_UI/textures/talents/background_border"
+local passiveHighlight = "Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png"
+local activeHighlight = "Interface/AddOns/GW2_UI/textures/talents/active_highlight.png"
+local passiveOutline = "Interface/AddOns/GW2_UI/textures/talents/passive_outline.png"
+local activeOutline = "Interface/AddOns/GW2_UI/textures/talents/background_border.png"
 
 local function drawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
     if (not relPoint) then
@@ -101,11 +101,11 @@ local function GetSpellPreviewButton(self, index)
     spellButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     spellButton.border = spellButton:CreateTexture(nil, "BACKGROUND")
     spellButton.border:SetSize(32, 32)
-    spellButton.border:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty")
+    spellButton.border:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty.png")
     spellButton.border:SetPoint("CENTER", spellButton, "CENTER", 0, 0)
     spellButton.mask = spellButton:CreateMaskTexture()
     spellButton.mask:SetPoint("CENTER", spellButton, "CENTER", 0, 0)
-    spellButton.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    spellButton.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     spellButton.mask:SetSize(34, 34)
 
     spellButton:EnableMouse(true)
@@ -161,13 +161,13 @@ local function UpdateTrees(self, currentSpec)
 
         container.icon.roleIcon:ClearAllPoints()
         if role == "TANK" then
-            container.icon.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
+            container.icon.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank.png")
             container.icon.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 14, -6)
         elseif role == "HEALER" then
-            container.icon.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
+            container.icon.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer.png")
             container.icon.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 12, -5)
         elseif role == "DAMAGER" then
-            container.icon.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
+            container.icon.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps.png")
             container.icon.roleIcon:SetSize(30, 30)
             container.icon.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", 17, -10)
         end
@@ -480,7 +480,7 @@ local function LoadTalents()
         container:RegisterForClicks("AnyUp")
         local mask = UIParent:CreateMaskTexture()
         mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
-        mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         mask:SetSize(80, 80)
         container.icon.texture:AddMaskTexture(mask)
         container:SetScript("OnEnter", nil)
@@ -550,7 +550,7 @@ local function LoadTalents()
                 talentButton:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (38)), -10 + ((-42 * index) + 40))
                 talentButton.mask = talentButton:CreateMaskTexture()
                 talentButton.mask:SetPoint("CENTER", talentButton, "CENTER", 0, 0)
-                talentButton.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+                talentButton.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
                 talentButton.mask:SetSize(34, 34)
 
                 if fistOnRow == nil then
@@ -595,7 +595,7 @@ local function LoadTalents()
     talentContainer:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     talentContainer:RegisterEvent("BAG_UPDATE_DELAYED")
     talentContainer:SetScript('OnEvent', function(_, event)
-        C_Timer.After(0.1, function() talentContainer.topBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player") .. " |TInterface/AddOns/GW2_UI/textures/icons/talent-icon:24:24:0:0:0.1875:0.828125:0.1875:0.828125|t") end)
+        C_Timer.After(0.1, function() talentContainer.topBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player") .. " |TInterface/AddOns/GW2_UI/textures/icons/talent-icon.png:24:24:0:0:0.1875:0.828125:0.1875:0.828125|t") end)
 
         if event == "PLAYER_SPECIALIZATION_CHANGED" then
             local activeTalentGroup = C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents)

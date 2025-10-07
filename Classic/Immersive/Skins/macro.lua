@@ -17,7 +17,7 @@ local function LoadMacroOptionsSkin()
         end
     end
 
-    GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox}, nil, nil, true)
+    GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon.png", {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox}, nil, nil, true)
 
     MacroFrameBg:Hide()
 
@@ -80,7 +80,7 @@ local function LoadMacroOptionsSkin()
     MacroFrameSelectedMacroButton.Icon:GwSetInside()
     MacroFrameSelectedMacroButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     MacroFrameSelectedMacroBackground:GwKill()
-    MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+    MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
 
     hooksecurefunc(MacroFrame.MacroSelector.ScrollBox, "Update", function()
         for _, button in next, { MacroFrame.MacroSelector.ScrollBox.ScrollTarget:GetChildren() } do
@@ -96,14 +96,14 @@ local function LoadMacroOptionsSkin()
         local t = _G["MacroButton" .. i .. "Icon"]
 
         if b then
-            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
-            b:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+            b:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
             local r = {b:GetRegions()}
             local ii = 1
             for _,c in pairs(r) do
                 if c:GetObjectType() == "Texture" then
                     if ii == 1 then
-                        c:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty")
+                        c:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty.png")
                         c:SetSize(b:GetSize())
                     end
                     ii = ii + 1
@@ -155,7 +155,7 @@ local function LoadMacroOptionsSkin()
 
         for _, button in next, { MacroPopupFrame.IconSelector.ScrollBox.ScrollTarget:GetChildren() } do
             local icon, texture = button.Icon, nil
-            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
             if icon then
                 icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
                 icon:GwSetInside(button)

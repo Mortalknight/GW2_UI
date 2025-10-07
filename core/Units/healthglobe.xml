@@ -7,42 +7,42 @@
         <Size x="88" y="88"></Size>
         <Frames>
             <StatusBar parentKey="healPrediction" inherits="GwStatusBarBar">
-                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globewhite"/>
+                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globewhite.png"/>
                 <Size x="88" y="88"/>
                 <Anchors>
                     <Anchor point="CENTER"/>
                 </Anchors>
                 <Frames>
                     <StatusBar parentKey="absorbbg" inherits="GwStatusBarBar">
-                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeabsorb"/>
+                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeabsorb.png"/>
                         <Size x="88" y="88"/>
                         <Anchors>
                             <Anchor point="CENTER"/>
                         </Anchors>
                         <Frames>
                             <StatusBar parentKey="candy" inherits="GwStatusBarBar">
-                                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globetexturedcandy"/>
+                                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globetexturedcandy.png"/>
                                 <Size x="88" y="88"/>
                                 <Anchors>
                                     <Anchor point="CENTER"/>
                                 </Anchors>
                                 <Frames>
                                     <StatusBar parentKey="health" inherits="GwStatusBarBar">
-                                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globetextured"/>
+                                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globetextured.png"/>
                                         <Size x="88" y="88"/>
                                         <Anchors>
                                             <Anchor point="CENTER"/>
                                         </Anchors>
                                         <Frames>
                                             <StatusBar parentKey="antiHeal" inherits="GwStatusBarBar">
-                                                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeantiheal"/>
+                                                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeantiheal.png"/>
                                                 <Size x="88" y="88"/>
                                                 <Anchors>
                                                     <Anchor point="CENTER"/>
                                                 </Anchors>
                                                 <Frames>
                                                     <StatusBar parentKey="absorbOverlay"  inherits="GwStatusBarBar">
-                                                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeabsorb"/>
+                                                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeabsorb.png"/>
                                                         <Size x="88" y="88"/>
                                                         <Anchors>
                                                             <Anchor point="CENTER"/>
@@ -206,7 +206,7 @@
                                                                 </Anchors>
                                                                 <Layers>
                                                                     <Layer level="OVERLAY">
-                                                                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/globe/repair">
+                                                                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/globe/repair.png">
                                                                             <Size x="21" y="21"></Size>
                                                                             <TexCoords top="0" bottom="0.5" left="0" right="1"/>
                                                                         </Texture>
@@ -232,12 +232,12 @@
                 </Anchors>
                 <Layers>
                   <Layer level="BORDER" textureSubLevel="5">
-                      <Texture parentKey="normal" file="Interface/AddOns/GW2_UI/textures/globe/globewhite">
+                      <Texture parentKey="normal" file="Interface/AddOns/GW2_UI/textures/globe/globewhite.png">
                           <Color r="0" b="0" g="0"></Color>
                       </Texture>
                   </Layer>
                     <Layer level="BORDER" textureSubLevel="6">
-                        <Texture parentKey="rborder" file="Interface/AddOns/GW2_UI/textures/globe/globeborder"/>
+                        <Texture parentKey="rborder" file="Interface/AddOns/GW2_UI/textures/globe/globeborder.png"/>
                     </Layer>
                 </Layers>
             </Frame>
@@ -248,14 +248,14 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="ally" file="Interface/AddOns/GW2_UI/textures/globe/pvpmode" hidden="true">
+                        <Texture parentKey="ally" file="Interface/AddOns/GW2_UI/textures/globe/pvpmode.png" hidden="true">
                             <Size x="128" y="128"></Size>
                             <TexCoords top="0" bottom="0.5" left="0" right="1"/>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP" x="0" y="23" />
                             </Anchors>
                         </Texture>
-                        <Texture parentKey="horde" file="Interface/AddOns/GW2_UI/textures/globe/pvpmode" hidden="true">
+                        <Texture parentKey="horde" file="Interface/AddOns/GW2_UI/textures/globe/pvpmode.png" hidden="true">
                             <Size x="138" y="138"></Size>
                             <TexCoords top="0.51" bottom="1" left="0" right="1"/>
                             <Anchors>

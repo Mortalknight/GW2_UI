@@ -220,11 +220,11 @@ local function updateBagBar(f)
         elseif bag_idx > bank_slots then
             if not full and bag_idx == bank_slots + 1 then
                 b.tooltipText = BANK_BAG_PURCHASE
-                b.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon")
+                b.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon.png")
                 b.icon:SetTexCoord(0.2, 0.8, 0.2, 0.8)
             else
                 b.tooltipText = GUILDBANK_TAB_LOCKED
-                b.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/lock")
+                b.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/lock.png")
                 b.icon:SetTexCoord(0.15, 0.85, 0.07, 0.85)
             end
         elseif slot_tex ~= nil then

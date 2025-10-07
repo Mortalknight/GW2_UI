@@ -46,7 +46,7 @@ local function LoadBNToastSkin()
 
         skins[i]:SetBackdrop({
             edgeFile = "",
-            bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
+            bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png",
             edgeSize = GW.Scale(1)
         })
     end
@@ -61,7 +61,7 @@ local function LoadBNToastSkin()
 
     ReportFrame:SetBackdrop({
         edgeFile = "",
-        bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
+        bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png",
         edgeSize = GW.Scale(1)
     })
 
@@ -83,7 +83,7 @@ local function LoadBNToastSkin()
 
     BattleTagInviteFrame:SetBackdrop({
         edgeFile = "",
-        bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
+        bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg.png",
         edgeSize = GW.Scale(1)
     })
 

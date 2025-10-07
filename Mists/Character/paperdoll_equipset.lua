@@ -231,14 +231,14 @@ drawItemSetList = function()
             end
 
             if textureC == 1 then
-                frame:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
+                frame:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg.png")
                 textureC = 2
             else
                 frame:ClearNormalTexture()
                 textureC = 1
             end
             if isEquipped then
-                frame:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+                frame:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover.png")
             end
             if numLost > 0 then
                 frame:GetFontString():SetTextColor(1, 0.3, 0.3)

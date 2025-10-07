@@ -132,9 +132,9 @@ local tabTexs = {
 }
 
 local rolePaths = {
-    TANK = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-tank:12:12:0:0:64:64:2:56:2:56|t ",
-    HEALER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-healer:12:12:0:0:64:64:2:56:2:56|t ",
-    DAMAGER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-dps:15:15:-2:0:64:64:2:56:2:56|t"
+    TANK = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-tank.png:12:12:0:0:64:64:2:56:2:56|t ",
+    HEALER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-healer.png:12:12:0:0:64:64:2:56:2:56|t ",
+    DAMAGER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-dps.png:15:15:-2:0:64:64:2:56:2:56|t"
 }
 
 local gw_fade_frames = {
@@ -145,7 +145,7 @@ local gw_fade_frames = {
     ChatFrameToggleVoiceMuteButton
 }
 
-local gw2StaffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:14|t"
+local gw2StaffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label.png:14:14|t"
 local gw2StaffList = {
     -- Glow
     ["Zâmarâ-Antonidas"] = gw2StaffIcon,
@@ -1069,7 +1069,7 @@ local function AddMessageEdits(frame, msg, alwaysAddTimestamp, isHistory, histor
         end
 
         if GW.settings.copyChatLines then
-            msg = format("|Hcpl:%s|h%s|h %s", frame:GetID(), format("|T%s:14|t", "Interface/AddOns/GW2_UI/textures/uistuff/arrow_right"), msg)
+            msg = format("|Hcpl:%s|h%s|h %s", frame:GetID(), format("|T%s:14|t", "Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png"), msg)
         end
     end
 
@@ -1783,7 +1783,7 @@ local function styleChatWindow(frame)
 
         if (GW.Retail and texName == "Active") or (not GW.Retail and texName == "Selected") then
             if left then
-                left:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
+                left:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft.png")
                 if GW.Retail then
                     left:ClearAllPoints()
                     left:SetPoint("TOPRIGHT", tab.Left, "TOPRIGHT", 0, 2)
@@ -1793,7 +1793,7 @@ local function styleChatWindow(frame)
             end
 
             if middle then
-                middle:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
+                middle:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive.png")
                 if GW.Retail then
                     middle:ClearAllPoints()
                     middle:SetPoint("LEFT", tab.Middle, "LEFT", 0, 2)
@@ -1803,7 +1803,7 @@ local function styleChatWindow(frame)
                 middle:SetVertexColor(1, 1, 1, 1)
             end
             if right then
-                right:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
+                right:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright.png")
                 if GW.Retail then
                     right:ClearAllPoints()
                     right:SetPoint("TOPRIGHT", tab.Right, "TOPRIGHT", 0, 2)
@@ -1822,9 +1822,9 @@ local function styleChatWindow(frame)
         if right then right:SetHeight(28) end
     end
 
-    scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
-    scrollToBottom:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
+    scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up.png")
+    scrollToBottom:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
     scrollToBottom.Flash:GwKill()
     scrollToBottom:SetSize(24, 24)
     scrollToBottom:SetPoint("BOTTOMRIGHT", frame.ResizeButton, "TOPRIGHT", 7, -2)
@@ -1834,35 +1834,35 @@ local function styleChatWindow(frame)
     end
 
     if not GW.Retail then
-        _G[name .. "ButtonFrameBottomButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_down")
-        _G[name .. "ButtonFrameBottomButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_up")
-        _G[name .. "ButtonFrameBottomButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_down")
+        _G[name .. "ButtonFrameBottomButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_down.png")
+        _G[name .. "ButtonFrameBottomButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_up.png")
+        _G[name .. "ButtonFrameBottomButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_down.png")
         _G[name .. "ButtonFrameBottomButton"]:SetHeight(24)
         _G[name .. "ButtonFrameBottomButton"]:SetWidth(24)
 
-        _G[name .. "ButtonFrameDownButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_down")
-        _G[name .. "ButtonFrameDownButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_up")
-        _G[name .. "ButtonFrameDownButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_down")
+        _G[name .. "ButtonFrameDownButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_down.png")
+        _G[name .. "ButtonFrameDownButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_up.png")
+        _G[name .. "ButtonFrameDownButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowdown_down.png")
         _G[name .. "ButtonFrameDownButton"]:SetHeight(24)
         _G[name .. "ButtonFrameDownButton"]:SetWidth(24)
 
-        _G[name .. "ButtonFrameUpButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowup_down")
-        _G[name .. "ButtonFrameUpButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowup_up")
-        _G[name .. "ButtonFrameUpButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowup_down")
+        _G[name .. "ButtonFrameUpButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowup_down.png")
+        _G[name .. "ButtonFrameUpButton"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowup_up.png")
+        _G[name .. "ButtonFrameUpButton"]:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\arrowup_down.png")
         _G[name .. "ButtonFrameUpButton"]:SetHeight(24)
         _G[name .. "ButtonFrameUpButton"]:SetWidth(24)
     end
 
-    ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
-    ChatFrameMenuButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_up")
-    ChatFrameMenuButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
+    ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down.png")
+    ChatFrameMenuButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_up.png")
+    ChatFrameMenuButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down.png")
     ChatFrameMenuButton:SetHeight(20)
     ChatFrameMenuButton:SetWidth(20)
 
     if frame.buttonFrame.minimizeButton then
-        frame.buttonFrame.minimizeButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
-        frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
-        frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
+        frame.buttonFrame.minimizeButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png")
+        frame.buttonFrame.minimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png")
+        frame.buttonFrame.minimizeButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button.png")
         frame.buttonFrame.minimizeButton:SetSize(24, 24)
         frame.buttonFrame:GwStripTextures()
     end
@@ -1961,7 +1961,7 @@ local function styleChatWindow(frame)
 
     frame.copyButton.tex = frame.copyButton:CreateTexture(nil, "OVERLAY")
     frame.copyButton.tex:SetAllPoints()
-    frame.copyButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
+    frame.copyButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button.png")
 
     frame.copyButton:SetScript("OnMouseUp", CopyButtonOnMouseUp)
 
@@ -1985,7 +1985,7 @@ local function styleChatWindow(frame)
 
         frame.buttonEmote.tex = frame.buttonEmote:CreateTexture(nil, "OVERLAY")
         frame.buttonEmote.tex:SetAllPoints()
-        frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/Smile")
+        frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/smile.png")
         frame.buttonEmote.tex:SetDesaturated(true)
 
         frame.buttonEmote:SetScript("OnMouseUp", function()
@@ -2000,14 +2000,14 @@ local function styleChatWindow(frame)
             GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 6)
             GameTooltip:AddLine(L["Click to open Emoticon Frame"])
             GameTooltip:Show()
-            frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/OpenMouth")
+            frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/openmouth.png")
             frame.buttonEmote.tex:SetDesaturated(false)
             frame.buttonEmote.tex:SetAlpha(1)
         end)
 
         frame.buttonEmote:SetScript("OnLeave", function()
             GameTooltip:Hide()
-            frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/Smile")
+            frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/smile.png")
             frame.buttonEmote.tex:SetDesaturated(true)
             frame.buttonEmote.tex:SetAlpha(.45)
         end)
@@ -2023,7 +2023,7 @@ local function BuildCopyChatFrame()
 
     frame.bg = frame:CreateTexture(nil, "ARTWORK")
     frame.bg:SetAllPoints()
-    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground")
+    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground.png")
 
     frame:SetSize(700, 200)
     frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 15)
@@ -2195,74 +2195,74 @@ local function SetupSmileys()
         wipe(SmileysForMenu)
     end
     -- new keys
-    AddSmiley(":angry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t", true)
-    AddSmiley(":blush:", "|TInterface/AddOns/GW2_UI/textures/emoji/Blush:16:16|t", true)
-    AddSmiley(":broken_heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t", true)
-    AddSmiley(":call_me:", "|TInterface/AddOns/GW2_UI/textures/emoji/CallMe:16:16|t", true)
-    AddSmiley(":cry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t", true)
-    AddSmiley(":grin:", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t", true)
-    AddSmiley(":heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/Heart:16:16|t", true)
-    AddSmiley(":heart_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/HeartEyes:16:16|t", true)
-    AddSmiley(":joy:", "|TInterface/AddOns/GW2_UI/textures/emoji/Joy:16:16|t", true)
-    AddSmiley(":middle_finger:", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t", true)
-    AddSmiley(":ok_hand:", "|TInterface/AddOns/GW2_UI/textures/emoji/OkHand:16:16|t", true)
-    AddSmiley(":open_mouth:", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t", true)
-    AddSmiley(":poop:", "|TInterface/AddOns/GW2_UI/textures/emoji/Poop:16:16|t", true)
-    AddSmiley(":rage:", "|TInterface/AddOns/GW2_UI/textures/emoji/Rage:16:16|t", true)
-    AddSmiley(":scream:", "|TInterface/AddOns/GW2_UI/textures/emoji/Scream:16:16|t", true)
-    AddSmiley(":scream_cat:", "|TInterface/AddOns/GW2_UI/textures/emoji/ScreamCat:16:16|t", true)
-    AddSmiley(":slight_frown:", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t", true)
-    AddSmiley(":smile:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t", true)
-    AddSmiley(":smirk:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t", true)
-    AddSmiley(":sob:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sob:16:16|t", true)
-    AddSmiley(":sunglasses:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sunglasses:16:16|t", true)
-    AddSmiley(":thinking:", "|TInterface/AddOns/GW2_UI/textures/emoji/Thinking:16:16|t", true)
-    AddSmiley(":thumbs_up:", "|TInterface/AddOns/GW2_UI/textures/emoji/ThumbsUp:16:16|t", true)
-    AddSmiley(":wink:", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t", true)
-    AddSmiley(":zzz:", "|TInterface/AddOns/GW2_UI/textures/emoji/ZZZ:16:16|t", true)
-    AddSmiley(":stuck_out_tongue:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t", true)
-    AddSmiley(":stuck_out_tongue_closed_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t", true)
+    AddSmiley(":angry:", "|TInterface/AddOns/GW2_UI/textures/emoji/angry.png:16:16|t", true)
+    AddSmiley(":blush:", "|TInterface/AddOns/GW2_UI/textures/emoji/blush.png:16:16|t", true)
+    AddSmiley(":broken_heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/brokenheart.png:16:16|t", true)
+    AddSmiley(":call_me:", "|TInterface/AddOns/GW2_UI/textures/emoji/callme.png:16:16|t", true)
+    AddSmiley(":cry:", "|TInterface/AddOns/GW2_UI/textures/emoji/cry.png:16:16|t", true)
+    AddSmiley(":grin:", "|TInterface/AddOns/GW2_UI/textures/emoji/grin.png:16:16|t", true)
+    AddSmiley(":heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/heart.png:16:16|t", true)
+    AddSmiley(":heart_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/hearteyes.png:16:16|t", true)
+    AddSmiley(":joy:", "|TInterface/AddOns/GW2_UI/textures/emoji/joy.png:16:16|t", true)
+    AddSmiley(":middle_finger:", "|TInterface/AddOns/GW2_UI/textures/emoji/middlefinger.png:16:16|t", true)
+    AddSmiley(":ok_hand:", "|TInterface/AddOns/GW2_UI/textures/emoji/okhand.png:16:16|t", true)
+    AddSmiley(":open_mouth:", "|TInterface/AddOns/GW2_UI/textures/emoji/openmouth.png:16:16|t", true)
+    AddSmiley(":poop:", "|TInterface/AddOns/GW2_UI/textures/emoji/poop.png:16:16|t", true)
+    AddSmiley(":rage:", "|TInterface/AddOns/GW2_UI/textures/emoji/rage.png:16:16|t", true)
+    AddSmiley(":scream:", "|TInterface/AddOns/GW2_UI/textures/emoji/scream.png:16:16|t", true)
+    AddSmiley(":scream_cat:", "|TInterface/AddOns/GW2_UI/textures/emoji/screamcat.png:16:16|t", true)
+    AddSmiley(":slight_frown:", "|TInterface/AddOns/GW2_UI/textures/emoji/slightfrown.png:16:16|t", true)
+    AddSmiley(":smile:", "|TInterface/AddOns/GW2_UI/textures/emoji/smile.png:16:16|t", true)
+    AddSmiley(":smirk:", "|TInterface/AddOns/GW2_UI/textures/emoji/smirk.png:16:16|t", true)
+    AddSmiley(":sob:", "|TInterface/AddOns/GW2_UI/textures/emoji/sob.png:16:16|t", true)
+    AddSmiley(":sunglasses:", "|TInterface/AddOns/GW2_UI/textures/emoji/sunglasses.png:16:16|t", true)
+    AddSmiley(":thinking:", "|TInterface/AddOns/GW2_UI/textures/emoji/thinking.png:16:16|t", true)
+    AddSmiley(":thumbs_up:", "|TInterface/AddOns/GW2_UI/textures/emoji/thumbsup.png:16:16|t", true)
+    AddSmiley(":wink:", "|TInterface/AddOns/GW2_UI/textures/emoji/wink.png:16:16|t", true)
+    AddSmiley(":zzz:", "|TInterface/AddOns/GW2_UI/textures/emoji/zzz.png:16:16|t", true)
+    AddSmiley(":stuck_out_tongue:", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongue.png:16:16|t", true)
+    AddSmiley(":stuck_out_tongue_closed_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongueclosedeyes.png:16:16|t", true)
 
-    AddSmiley(",,!,,", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
-    AddSmiley(":%-@", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
-    AddSmiley(":@", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
-    AddSmiley(":%-%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
-    AddSmiley(":%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
-    AddSmiley(":D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-    AddSmiley(":%-D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-    AddSmiley(";%-D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-    AddSmiley(";D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-    AddSmiley("=D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-    AddSmiley("xD", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-    AddSmiley("XD", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-    AddSmiley(":%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
-    AddSmiley(":%(", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
-    AddSmiley(":o", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-    AddSmiley(":%-o", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-    AddSmiley(":%-O", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-    AddSmiley(":O", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-    AddSmiley(":%-0", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-    AddSmiley(":P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-    AddSmiley(":%-P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-    AddSmiley(":p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-    AddSmiley(":%-p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-    AddSmiley("=P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-    AddSmiley("=p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-    AddSmiley(";%-p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
-    AddSmiley(";p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
-    AddSmiley(";P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
-    AddSmiley(";%-P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
-    AddSmiley(";%-%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
-    AddSmiley(";%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
-    AddSmiley(":S", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
-    AddSmiley(":%-S", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
-    AddSmiley(":,%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
-    AddSmiley(":,%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
-    AddSmiley(":\"%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
-    AddSmiley(":\"%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
-    AddSmiley(":F", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
-    AddSmiley("<3", "|TInterface/AddOns/GW2_UI/textures/emoji/Heart:16:16|t")
-    AddSmiley("</3", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t")
+    AddSmiley(",,!,,", "|TInterface/AddOns/GW2_UI/textures/emoji/middlefinger.png:16:16|t")
+    AddSmiley(":%-@", "|TInterface/AddOns/GW2_UI/textures/emoji/angry.png:16:16|t")
+    AddSmiley(":@", "|TInterface/AddOns/GW2_UI/textures/emoji/angry.png:16:16|t")
+    AddSmiley(":%-%)", "|TInterface/AddOns/GW2_UI/textures/emoji/smile.png:16:16|t")
+    AddSmiley(":%)", "|TInterface/AddOns/GW2_UI/textures/emoji/smile.png:16:16|t")
+    AddSmiley(":D", "|TInterface/AddOns/GW2_UI/textures/emoji/grin.png:16:16|t")
+    AddSmiley(":%-D", "|TInterface/AddOns/GW2_UI/textures/emoji/grin.png:16:16|t")
+    AddSmiley(";%-D", "|TInterface/AddOns/GW2_UI/textures/emoji/grin.png:16:16|t")
+    AddSmiley(";D", "|TInterface/AddOns/GW2_UI/textures/emoji/grin.png:16:16|t")
+    AddSmiley("=D", "|TInterface/AddOns/GW2_UI/textures/emoji/grin.png:16:16|t")
+    AddSmiley("xD", "|TInterface/AddOns/GW2_UI/textures/emoji/grin.png:16:16|t")
+    AddSmiley("XD", "|TInterface/AddOns/GW2_UI/textures/emoji/grin.png:16:16|t")
+    AddSmiley(":%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/slightfrown.png:16:16|t")
+    AddSmiley(":%(", "|TInterface/AddOns/GW2_UI/textures/emoji/slightfrown.png:16:16|t")
+    AddSmiley(":o", "|TInterface/AddOns/GW2_UI/textures/emoji/openmouth.png:16:16|t")
+    AddSmiley(":%-o", "|TInterface/AddOns/GW2_UI/textures/emoji/openmouth.png:16:16|t")
+    AddSmiley(":%-O", "|TInterface/AddOns/GW2_UI/textures/emoji/openmouth.png:16:16|t")
+    AddSmiley(":O", "|TInterface/AddOns/GW2_UI/textures/emoji/openmouth.png:16:16|t")
+    AddSmiley(":%-0", "|TInterface/AddOns/GW2_UI/textures/emoji/openmouth.png:16:16|t")
+    AddSmiley(":P", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongue.png:16:16|t")
+    AddSmiley(":%-P", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongue.png:16:16|t")
+    AddSmiley(":p", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongue.png:16:16|t")
+    AddSmiley(":%-p", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongue.png:16:16|t")
+    AddSmiley("=P", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongue.png:16:16|t")
+    AddSmiley("=p", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongue.png:16:16|t")
+    AddSmiley(";%-p", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongueclosedeyes.png:16:16|t")
+    AddSmiley(";p", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongueclosedeyes.png:16:16|t")
+    AddSmiley(";P", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongueclosedeyes.png:16:16|t")
+    AddSmiley(";%-P", "|TInterface/AddOns/GW2_UI/textures/emoji/stuckouttongueclosedeyes.png:16:16|t")
+    AddSmiley(";%-%)", "|TInterface/AddOns/GW2_UI/textures/emoji/wink.png:16:16|t")
+    AddSmiley(";%)", "|TInterface/AddOns/GW2_UI/textures/emoji/wink.png:16:16|t")
+    AddSmiley(":S", "|TInterface/AddOns/GW2_UI/textures/emoji/smirk.png:16:16|t")
+    AddSmiley(":%-S", "|TInterface/AddOns/GW2_UI/textures/emoji/smirk.png:16:16|t")
+    AddSmiley(":,%(", "|TInterface/AddOns/GW2_UI/textures/emoji/cry.png:16:16|t")
+    AddSmiley(":,%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/cry.png:16:16|t")
+    AddSmiley(":\"%(", "|TInterface/AddOns/GW2_UI/textures/emoji/cry.png:16:16|t")
+    AddSmiley(":\"%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/cry.png:16:16|t")
+    AddSmiley(":F", "|TInterface/AddOns/GW2_UI/textures/emoji/middlefinger.png:16:16|t")
+    AddSmiley("<3", "|TInterface/AddOns/GW2_UI/textures/emoji/heart.png:16:16|t")
+    AddSmiley("</3", "|TInterface/AddOns/GW2_UI/textures/emoji/brokenheart.png:16:16|t")
 end
 
 local function CollectLfgRolesForChatIcons()
@@ -2432,10 +2432,10 @@ local function LoadChat()
     chatModuleInit = true
 
     if QuickJoinToastButton then
-        QuickJoinToastButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
-        QuickJoinToastButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton")
-        QuickJoinToastButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
-        QuickJoinToastButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
+        QuickJoinToastButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton-highlight.png")
+        QuickJoinToastButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton.png")
+        QuickJoinToastButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton-highlight.png")
+        QuickJoinToastButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton-highlight.png")
         QuickJoinToastButton:SetSize(25, 25)
         QuickJoinToastButton:ClearAllPoints()
         QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
@@ -2457,10 +2457,10 @@ local function LoadChat()
     end
 
     if not GW.Retail then
-        FriendsMicroButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
-        FriendsMicroButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton")
-        FriendsMicroButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
-        FriendsMicroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
+        FriendsMicroButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton-highlight.png")
+        FriendsMicroButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton.png")
+        FriendsMicroButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton-highlight.png")
+        FriendsMicroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton-highlight.png")
         FriendsMicroButton:SetSize(25, 25)
         FriendsMicroButton:ClearAllPoints()
         FriendsMicroButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
@@ -2554,9 +2554,9 @@ local function LoadChat()
             if not chatFrame.minFrame.minimiizeStyled then
                 chatFrame.minFrame:GwStripTextures(true)
                 chatFrame.minFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
-                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
-                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
+                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button.png")
+                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button.png")
+                _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button.png")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetSize(20, 20)
                 chatFrame.minFrame.minimiizeStyled = true
             end
@@ -2653,7 +2653,7 @@ local function LoadChat()
             end)
     end
 
-    CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
 
     CombatLogQuickButtonFrame_CustomTexture:Hide()
     BuildCopyChatFrame()
@@ -2679,19 +2679,19 @@ local function LoadChat()
     ChatFrameChannelButton.Icon:GwKill()
     hooksecurefunc(ChatFrameChannelButton, "SetIconToState", function(self, joined)
         if joined then
-            self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
-            self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc")
-            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
-            self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
+            self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight.png")
+            self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc.png")
+            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight.png")
+            self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight.png")
             if GW.Retail then
                 ChatFrameToggleVoiceMuteButton:Show()
                 ChatFrameToggleVoiceDeafenButton:Show()
             end
         else
-            self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
-            self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal")
-            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
-            self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
+            self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight.png")
+            self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal.png")
+            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight.png")
+            self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight.png")
             if GW.Retail then
                 ChatFrameToggleVoiceMuteButton:Hide()
                 ChatFrameToggleVoiceDeafenButton:Hide()
@@ -2704,21 +2704,21 @@ local function LoadChat()
         ChatFrameToggleVoiceMuteButton.Icon:GwKill()
         hooksecurefunc(ChatFrameToggleVoiceMuteButton, "SetIconToState", function(self, state)
             if state == MUTE_SILENCE_STATE_NONE then -- mic on
-                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on_highlight")
-                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on")
-                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on_highlight")
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on_highlight.png")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on.png")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on_highlight.png")
             elseif state == MUTE_SILENCE_STATE_MUTE then -- mic off
-                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off_highlight")
-                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off")
-                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off_highlight")
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off_highlight.png")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off.png")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off_highlight.png")
             elseif state == MUTE_SILENCE_STATE_SILENCE then -- mic silenced on
-                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on_highlight")
-                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on")
-                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on_highlight")
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on_highlight.png")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on.png")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on_highlight.png")
             elseif state == MUTE_SILENCE_STATE_MUTE_AND_SILENCE then -- mic silenced off
-                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off_highlight")
-                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off")
-                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off_highlight")
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off_highlight.png")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off.png")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off_highlight.png")
             end
         end)
         ChatFrameToggleVoiceDeafenButton:SetHeight(20)
@@ -2726,13 +2726,13 @@ local function LoadChat()
         ChatFrameToggleVoiceDeafenButton.Icon:GwKill()
         hooksecurefunc(ChatFrameToggleVoiceDeafenButton, "SetIconToState", function(self, deafened)
             if deafened then
-                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off_highlight")
-                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off")
-                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off_highlight")
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off_highlight.png")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off.png")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off_highlight.png")
             else
-                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight")
-                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on")
-                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight")
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight.png")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on.png")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight.png")
             end
         end)
     end

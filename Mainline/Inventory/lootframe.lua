@@ -12,7 +12,7 @@ local function updateLootFrameButtons(self)
 
             GW.HandleIcon(item.icon, true, GW.BackdropTemplates.DefaultWithColorableBorder)
             GW.HandleIconBorder(item.IconBorder, item.icon.backdrop)
-            item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         end
 
         if button.BorderFrame then
@@ -29,7 +29,7 @@ local function updateLootFrameButtons(self)
         end
 
         if button.NameFrame then
-            button.NameFrame:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+            button.NameFrame:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover.png")
             button.NameFrame:SetHeight(button:GetHeight())
             button.NameFrame:SetPoint("LEFT", button, "RIGHT", 0, 0)
         end
@@ -65,7 +65,7 @@ local function LoadLootFrameSkin()
 
     LootFrame:SetBackdrop({
         edgeFile = "",
-        bgFile = "Interface/AddOns/GW2_UI/textures/bag/lootframebg",
+        bgFile = "Interface/AddOns/GW2_UI/textures/bag/lootframebg.png",
         edgeSize = 1
     })
 
@@ -90,9 +90,9 @@ local function LoadLootFrameSkin()
     LootFrame.ClosePanelButton:ClearAllPoints()
     LootFrame.ClosePanelButton:SetPoint("RIGHT", GwLootFrameTitle.BGRIGHT, "RIGHT", -5, -2)
     LootFrame.ClosePanelButton:SetSize(20,20)
-    LootFrame.ClosePanelButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
-    LootFrame.ClosePanelButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
-    LootFrame.ClosePanelButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
+    LootFrame.ClosePanelButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png")
+    LootFrame.ClosePanelButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png")
+    LootFrame.ClosePanelButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png")
 
     hooksecurefunc(LootFrame.ScrollBox, "Update", updateLootFrameButtons)
 end

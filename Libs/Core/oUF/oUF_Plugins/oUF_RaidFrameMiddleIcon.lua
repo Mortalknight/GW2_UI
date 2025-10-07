@@ -26,7 +26,7 @@ local function Update(self)
         shouldShowIcon = true
     elseif UnitIsDeadOrGhost(self.unit) then -- deathicon
         if self.useClassColor then
-            element:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+            element:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
         end
         ns.SetDeadIcon(element)
         self.Name:SetTextColor(255, 0, 0)
@@ -44,7 +44,7 @@ local function Update(self)
     elseif not self.useClassColor and not self.hideClassIcon then -- class icon only if option is active
 
         local _, _, classIndex = UnitClass(self.unit)
-        element:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+        element:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
         ns.SetClassIcon(element, classIndex)
 
         shouldShowIcon = true

@@ -453,7 +453,7 @@ local function loadBaseFrame()
     fmGSW.backgroundMask = UIParent:CreateMaskTexture()
     fmGSW.backgroundMask:SetPoint("TOPLEFT", fmGSW, "TOPLEFT", -64, 64)
     fmGSW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGSW, "BOTTOMLEFT",-64, 0)
-    fmGSW.backgroundMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    fmGSW.backgroundMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     fmGSW.background:AddMaskTexture(fmGSW.backgroundMask)
 
     fmGSW:HookScript("OnShow", function()
@@ -486,7 +486,7 @@ GW.AddForProfiling("social", "setTabIconState", setTabIconState)
 
 local function createTabIcon(iconName, tabIndex, notify)
     local f = CreateFrame("Button", nil, GwSocialWindow, "GwSocialTabSelect")
-    f.icon:SetTexture("Interface/AddOns/GW2_UI/textures/social/" .. iconName)
+    f.icon:SetTexture("Interface/AddOns/GW2_UI/textures/social/" .. iconName .. ".png")
     f:SetPoint("TOP", GwSocialWindow, "TOPLEFT", -32, -25 + -((tabIndex - 1) * 45))
     setTabIconState(f, false)
 
@@ -496,7 +496,7 @@ local function createTabIcon(iconName, tabIndex, notify)
 
         f.GwNotifyRed:SetSize(18, 18)
         f.GwNotifyRed:SetPoint("CENTER", f, "BOTTOM", 23, 7)
-        f.GwNotifyRed:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
+        f.GwNotifyRed:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop.png")
         f.GwNotifyRed:SetVertexColor(0.7, 0, 0, 0.7)
         f.GwNotifyRed:Hide()
 

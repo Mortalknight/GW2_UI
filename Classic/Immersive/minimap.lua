@@ -76,7 +76,7 @@ local function MinimapPostDrag(self)
 end
 
 local function lfgAnimPvPStop()
-    MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFGMicroButton-Down")
+    MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\lfgmicrobutton-down.png")
     MiniMapBattlefieldFrame.animationCircle:Hide()
     MiniMapBattlefieldIcon:SetTexCoord(unpack(GW.TexCoords))
 end
@@ -293,8 +293,8 @@ local function SetUpLfgFrame()
     if LFGMinimapFrameBorder then LFGMinimapFrameBorder:GwKill() end
     if LFGMinimapFrameIconTexture then LFGMinimapFrameIconTexture:GwKill() end
     LFGMinimapFrame:SetSize(26, 26)
-    LFGMinimapFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
-    LFGMinimapFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")
+    LFGMinimapFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/lfgminimapbutton-highlight.png")
+    LFGMinimapFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/lfganimation-1.png")
     hooksecurefunc(LFGMinimapFrameIcon, "StartAnimating", function()
         if not Minimap:IsShown() then return end
         GwLfgQueueIcon.animation:Play()
@@ -563,6 +563,6 @@ local function LoadMinimap()
 
     C_Timer.After(0.1, hoverMiniMapOut)
 
-    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow")
+    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
 end
 GW.LoadMinimap = LoadMinimap

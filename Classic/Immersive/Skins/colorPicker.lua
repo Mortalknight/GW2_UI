@@ -151,7 +151,7 @@ local function SkinAndEnhanceColorPicker()
         end
     end
 
-    GW.CreateFrameHeaderWithBody(ColorPickerFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon", nil, nil, nil, true)
+    GW.CreateFrameHeaderWithBody(ColorPickerFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon.png", nil, nil, nil, true)
 
     ColorPickerFrame.TopEdge:Hide()
     ColorPickerFrame.RightEdge:Hide()

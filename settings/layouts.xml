@@ -35,8 +35,8 @@
 			</DropdownButton>
 
             <Button parentKey="rename" inherits="GwStandardButtonNoOutline" text="">
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/rename-quill"/>
-                <DisabledTexture file="Interface/AddOns/GW2_UI/textures/uistuff/rename-quill"/>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/rename-quill.png"/>
+                <DisabledTexture file="Interface/AddOns/GW2_UI/textures/uistuff/rename-quill.png"/>
                 <Size x="20" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.savedLayoutDropDown" relativePoint="RIGHT" x="3" y="-2"/>

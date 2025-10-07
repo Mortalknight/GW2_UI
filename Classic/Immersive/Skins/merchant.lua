@@ -16,12 +16,12 @@ local function SkinMerchantFrameItemButton(i)
     icon:SetPoint("TOPLEFT", 1, -1)
     icon:SetPoint("BOTTOMRIGHT", -1, 1)
 
-    iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     iconBorder:SetAllPoints(button)
     iconBorder:SetParent(button)
 
     hooksecurefunc(iconBorder, "SetVertexColor", function(self)
-        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     end)
 
     _G["MerchantItem" .. i .. "MoneyFrame"]:ClearAllPoints()
@@ -49,7 +49,7 @@ local function LoadMerchantFrameSkin()
         end
     end
 
-    GW.CreateFrameHeaderWithBody(MerchantFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MerchantFrameInset, MerchantMoneyInset}, nil, nil, true)
+    GW.CreateFrameHeaderWithBody(MerchantFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon.png", {MerchantFrameInset, MerchantMoneyInset}, nil, nil, true)
     MerchantFrame.gwHeader.windowIcon:SetSize(65, 65)
     MerchantFrame.gwHeader.windowIcon:ClearAllPoints()
     MerchantFrame.gwHeader.windowIcon:SetPoint("CENTER", MerchantFrame.gwHeader.BGLEFT, "LEFT", 25, -5)
@@ -107,11 +107,11 @@ local function LoadMerchantFrameSkin()
     backDrop:SetPoint("BOTTOMRIGHT", MerchantBuyBackItemItemButton, "BOTTOMRIGHT", backDropSize, -backDropSize)
     MerchantBuyBackItemItemButton.gwBackdrop = backDrop
 
-    MerchantBuyBackItemItemButton.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    MerchantBuyBackItemItemButton.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     MerchantBuyBackItemItemButton.IconBorder:SetAllPoints(MerchantBuyBackItemItemButton)
     MerchantBuyBackItemItemButton.IconBorder:SetParent(MerchantBuyBackItemItemButton)
     hooksecurefunc(MerchantBuyBackItemItemButton.IconBorder, "SetVertexColor", function(self)
-        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     end)
 
     MerchantBuyBackItemItemButtonIconTexture:SetTexCoord(0.07, 0.93, 0.07, 0.93)

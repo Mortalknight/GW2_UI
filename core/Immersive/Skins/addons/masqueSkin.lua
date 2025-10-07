@@ -14,7 +14,7 @@ local function AddMasqueSkin()
         Shape = "Square",
         Masque_Version = 110000,
         Backdrop = {
-            Texture = [[Interface/AddOns/GW2_UI/textures/addonSkins/Backdrop]],
+            Texture = [[Interface/AddOns/GW2_UI/textures/addonSkins/backdrop.png]],
             Color = {1,1,1,1},
             Width = 38,
             Height = 38,
@@ -36,10 +36,10 @@ local function AddMasqueSkin()
         Pushed = {
             Width = 38,
             Height = 38,
-            Texture = [[Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed]],
+            Texture = [[Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png]],
         },
         Normal = {
-            Texture = [[Interface\AddOns\GW2_UI\textures\bag\bagnormal]],
+            Texture = [[Interface\AddOns\GW2_UI\textures\bag\bagnormal.png]],
             Width = 38,
             Height = 38,
             Static = true,
@@ -52,7 +52,7 @@ local function AddMasqueSkin()
             Height = 38,
             BlendMode = "ADD",
             Color = {1, 1, 1, 1},
-            Texture = [[Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress]],
+            Texture = [[Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png]],
         },
         Border = {
             Width = 38,
@@ -61,7 +61,7 @@ local function AddMasqueSkin()
             Color = {0, 0, 0, 1},
             OffsetX = 0,
             OffsetY = 0,
-            Texture = [[Interface\AddOns\GW2_UI\textures\addonSkins\Border]],
+            Texture = [[Interface\AddOns\GW2_UI\textures\addonSkins\border.png]],
         },
         Gloss = {
             Hide = true,

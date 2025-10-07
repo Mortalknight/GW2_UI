@@ -101,19 +101,19 @@ local function updatePicks(self)
                 slot.icon:SetTexture(icon)
                 if isPassive then
                     slot.icon:AddMaskTexture(slot.mask)
-                    slot.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight")
-                    slot.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_outline")
+                    slot.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png")
+                    slot.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_outline.png")
                 else
                     slot.icon:RemoveMaskTexture(slot.mask)
-                    slot.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight")
-                    slot.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border")
+                    slot.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight.png")
+                    slot.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border.png")
                 end
             else
                 slot.talentId = nil
-                slot.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon")
+                slot.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon.png")
                 slot.icon:RemoveMaskTexture(slot.mask)
-                slot.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight")
-                slot.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border")
+                slot.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight.png")
+                slot.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border.png")
             end
         end
     end
@@ -232,12 +232,12 @@ local function setSlotButton(btn, info)
 
     if btn.isEnabled then
         btn.highlight:SetAlpha(1)
-        btn.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border")
-        btn.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon")
+        btn.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border.png")
+        btn.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon.png")
         btn.outline:SetSize(50, 50)
     else
         btn.highlight:SetAlpha(0)
-        btn.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/lock")
+        btn.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/lock.png")
         btn.icon:SetTexture(nil)
         btn.outline:SetSize(40, 40)
     end
@@ -362,13 +362,13 @@ local function slotPool_Resetter(_, btn)
     btn.isFuture = nil
     btn.talentId = nil
     btn.spellId = nil
-    btn.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon")
+    btn.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon.png")
 
     if not btn.mask then
         btn.mask = UIParent:CreateMaskTexture()
         btn.mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
         btn.mask:SetTexture(
-            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
+            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border.png",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -409,7 +409,7 @@ local function passivePool_Resetter(_, btn)
         btn.mask = UIParent:CreateMaskTexture()
         btn.mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
         btn.mask:SetTexture(
-            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
+            "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border.png",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
@@ -440,10 +440,10 @@ local function toggle_OnClick(self)
 
         if (warmodeEnabled) then
             PlaySound(SOUNDKIT.UI_WARMODE_DECTIVATE)
-            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/warmode_off")
+            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/warmode_off.png")
         else
             PlaySound(SOUNDKIT.UI_WARMODE_ACTIVATE)
-            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/warmode_on")
+            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/warmode_on.png")
         end
         C_PvP.ToggleWarMode()
     end
@@ -510,7 +510,7 @@ local function CreatePvPTab(fmSpellbook)
     warGroup.toggle:SetScript("OnClick", toggle_OnClick)
     warGroup.toggle:SetEnabled(true)
     if C_PvP.IsWarModeDesired() then
-        warGroup.toggle.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/warmode_on")
+        warGroup.toggle.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/warmode_on.png")
     end
 
     slotGroup:ClearAllPoints()
