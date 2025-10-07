@@ -1,7 +1,5 @@
 manual-changelog: CHANGELOG.txt
 ignore:
-  - assets
-  - tools
   - README.md
   - _MACOSX
   - .previews
