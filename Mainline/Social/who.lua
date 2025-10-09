@@ -115,8 +115,8 @@ end
 local function LoadWhoList(tabContainer)
     local WhoWindow = CreateFrame("Frame", "GwWhoWindow", tabContainer, "GwWhoWindow")
 
-    WhoWindow.list.EditBox.instructionText = WHO_LIST_SEARCH_INSTRUCTIONS
-    WhoWindow.list.EditBox.instructionsFontObject = UserScaledFontGameDisableSmall
+    WhoWindow.list.input.instructionText = WHO_LIST_SEARCH_INSTRUCTIONS
+    WhoWindow.list.input.instructionsFontObject = UserScaledFontGameDisableSmall
 
     local view = CreateScrollBoxListLinearView()
     view:SetElementInitializer("GW_WhoListButtonTemplate", function(button, elementData)
@@ -194,20 +194,20 @@ local function LoadWhoList(tabContainer)
     WhoWindow.list.InviteButton:SetScript("OnClick", function() C_PartyInfo.InviteUnit(WhoWindow.selectedName) end)
     WhoWindow.list.AddFriendButton:SetScript("OnClick", function() C_FriendList.AddFriend(WhoWindow.selectedName) end)
     WhoWindow.list.RefreshButton:SetScript("OnClick", function(self)
-        WhoWindow.list.EditBox:OnEnterPressed(self:GetParent().EditBox)
+        WhoWindow.list.input:OnEnterPressed(self:GetParent().input)
         self:GetParent():GetParent().selectedWho = nil
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end)
 
-    WhoWindow.list.EditBox.Instructions:SetFontObject(WhoWindow.list.EditBox.instructionsFontObject)
-    WhoWindow.list.EditBox.Instructions:SetMaxLines(2)
-    WhoWindow.list.EditBox.Instructions:SetTextColor(0.5, 0.5, 0.5)
-    WhoWindow.list.EditBox.Instructions:SetText(WHO_LIST_SEARCH_INSTRUCTIONS)
-    WhoWindow.list.EditBox:SetScript("OnEnterPressed", WhoWindow.list.EditBox.OnEnterPressed)
-    WhoWindow.list.EditBox:SetScript("OnShow", WhoWindow.list.EditBox.OnShow)
-    WhoWindow.list.EditBox:SetScript("OnEscapePressed", EditBox_ClearFocus)
-    WhoWindow.list.EditBox:SetScript("OnHide", WhoWindow.list.EditBox.OnHide)
-    WhoWindow.list.EditBox:HookScript("OnTextChanged", function(self)
+    WhoWindow.list.input.Instructions:SetFontObject(WhoWindow.list.input.instructionsFontObject)
+    WhoWindow.list.input.Instructions:SetMaxLines(2)
+    WhoWindow.list.input.Instructions:SetTextColor(0.5, 0.5, 0.5)
+    WhoWindow.list.input.Instructions:SetText(WHO_LIST_SEARCH_INSTRUCTIONS)
+    WhoWindow.list.input:SetScript("OnEnterPressed", WhoWindow.list.input.OnEnterPressed)
+    WhoWindow.list.input:SetScript("OnShow", WhoWindow.list.input.OnShow)
+    WhoWindow.list.input:SetScript("OnEscapePressed", EditBox_ClearFocus)
+    WhoWindow.list.input:SetScript("OnHide", WhoWindow.list.input.OnHide)
+    WhoWindow.list.input:HookScript("OnTextChanged", function(self)
         local text = self:GetText()
         if text == "" then
             self.clearButton:Hide()
@@ -215,13 +215,13 @@ local function LoadWhoList(tabContainer)
         end
         self.clearButton:Show()
     end)
-    WhoWindow.list.EditBox:SetScript("OnEditFocusGained", function(self) self.clearButton:Show() end)
-    WhoWindow.list.EditBox:SetScript("OnEditFocusLost", function(self)
+    WhoWindow.list.input:SetScript("OnEditFocusGained", function(self) self.clearButton:Show() end)
+    WhoWindow.list.input:SetScript("OnEditFocusLost", function(self)
         if self:GetText() == "" then
             self.clearButton:Hide()
         end
     end)
-    WhoWindow.list.EditBox.clearButton:SetScript("OnClick", function(self)
+    WhoWindow.list.input.clearButton:SetScript("OnClick", function(self)
         self:GetParent():ClearFocus()
         self:GetParent():SetText("")
     end)
@@ -238,7 +238,7 @@ local function LoadWhoList(tabContainer)
         end
         GwSocialWindow:SetAttribute("windowpanelopen", "wholist")
 
-        GwWhoWindow.list.EditBox.input:SetText(msg)
+        WhoWindow.list.input:SetText(msg)
         C_FriendList.SendWho(msg)
     end
 end
