@@ -4,7 +4,7 @@ local CooldownManagerFunctions = {}
 
 function CooldownManagerFunctions:CountText(text, parent)
     text:ClearAllPoints()
-    text:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -2, -2)
+    text:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, 0)
     text:SetJustifyH("RIGHT")
     text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     text:SetTextColor(1, 1, 0.6)
@@ -124,7 +124,7 @@ do
             if not frame.Cooldown.isHooked then
                 GW.RegisterCooldown(frame.Cooldown)
 
-                for key, func in next, hookFunctions do
+               for key, func in next, hookFunctions do
                     if frame[key] then
                         hooksecurefunc(frame, key, func)
                     end
