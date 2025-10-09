@@ -4,9 +4,9 @@ local CooldownManagerFunctions = {}
 
 function CooldownManagerFunctions:CountText(text, parent)
     text:ClearAllPoints()
-    text:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -3, -3)
+    text:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -2, -2)
     text:SetJustifyH("RIGHT")
-    text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+    text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     text:SetTextColor(1, 1, 0.6)
 end
 
