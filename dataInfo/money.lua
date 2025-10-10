@@ -13,6 +13,7 @@ local function GetGraysValue()
             local itemLink = C_Container.GetContainerItemLink(bag, slot)
             if itemLink then
                 local _, _, rarity, _, _, itype, _, _, _, _, itemPrice = GetItemInfo(itemLink)
+
                 if itemPrice then
                     local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
                     local stackPrice = itemPrice * (itemInfo.stackCount or 1)

@@ -237,7 +237,7 @@ local function reskinMicroButton(btn, name, mbf)
 
     local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-Up"
 
-    btn:SetSize(24, 24)
+    btn:SetSize(32, 32)
     btn:SetDisabledTexture(tex)
     btn:SetNormalTexture(tex)
     btn:SetPushedTexture(tex)
@@ -375,8 +375,11 @@ AFP("update_OnEnter", update_OnEnter)
 
 -- mail icon
 local function mailIconOnEvent(self, event)
+    
     if event == "UPDATE_PENDING_MAIL" then
+    
         if HasNewMail() then
+    
             self:Show()
             self.GwNotify:Show()
             if GameTooltip:IsOwned(self) then
@@ -494,7 +497,7 @@ local function setupMicroButtons(mbf)
 
     bref:ClearAllPoints()
     bref:SetPoint("BOTTOMLEFT", cref, "BOTTOMRIGHT", 4, 0)
-    --bref:HookScript("OnClick", ToggleAllBags) -- tainting TODO
+    bref:HookScript("OnClick", ToggleAllBags) 
     bref.interval = 0
     bref:HookScript("OnUpdate", bag_OnUpdate)
     bref:HookScript("OnEnter", GW.Bags_OnEnter)
@@ -579,6 +582,7 @@ local function setupMicroButtons(mbf)
     GuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
     GuildMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
     GuildMicroButton:RegisterEvent("GUILD_MOTD")
+    GuildMicroButton.onClickOldHandler = GuildMicroButton:GetScript("OnClick");
     GuildMicroButton:HookScript("OnEvent", updateGuildButton)
     GuildMicroButton:HookScript("OnEnter", GW.Guild_OnEnter)
     GuildMicroButton:SetScript("OnClick", GW.Guild_OnClick)
@@ -682,7 +686,7 @@ local function SetupNotificationArea(mbf)
     updateIcon.tooltipText = ""
     reskinMicroButton(updateIcon, "UpdateMicroButton", mbf)
     updateIcon:ClearAllPoints()
-    updateIcon:SetPoint("BOTTOMLEFT", Gw2GreateVaultMicroMenuButton, "BOTTOMRIGHT", 4, 0)
+    updateIcon:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
     updateIcon:Hide()
     updateIcon:HookScript("OnEnter", update_OnEnter)
     updateIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
@@ -694,7 +698,7 @@ local function SetupNotificationArea(mbf)
     mailIcon.tooltipText = ""
     reskinMicroButton(mailIcon, "MailMicroButton", mbf)
     mailIcon:ClearAllPoints()
-    mailIcon:SetPoint("BOTTOMLEFT", updateIcon, "BOTTOMRIGHT", 4, 0)
+    mailIcon:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
     mailIcon:Hide()
     mailIcon:HookScript("OnEnter", mailIconOnEnter)
     mailIcon:HookScript("OnLeave", GameTooltip_Hide)

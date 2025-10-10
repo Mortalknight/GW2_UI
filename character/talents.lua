@@ -7,7 +7,9 @@ local IsIn = GW.IsIn
 local maxTalentRows = 7
 local talentsPerRow = 3
 
-local TAXIROUTE_LINEFACTOR = 32 / 30 -- Multiplying factor for texture coordinates
+local hidePlayerTalentFrame = false;
+
+local TAXIROUTE_LINEFACTOR = 32 / 30                    -- Multiplying factor for texture coordinates
 local TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2 -- Half o that
 
 -- T        - Texture
@@ -139,7 +141,7 @@ local function updateActiveSpec()
         return
     end
 
-  --  setSpecTabIconAndTooltip(GwSpellbookMenu.tab3)
+    setSpecTabIconAndTooltip(GwSpellbookMenu.tab3)
 
     for i = 1, GetNumSpecializations() do
         local container = _G["GwSpecFrame" .. i]
@@ -166,7 +168,8 @@ local function updateActiveSpec()
             local sel = nil
             for index = 1, talentsPerRow do
                 local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
-                local talentID, _, texture, selected, available, spellid, _, _, _, _, known = GetTalentInfo(row, index, 1, false, "player")
+                local talentID, _, texture, selected, available, spellid, _, _, _, _, known = GetTalentInfo(row, index, 1,
+                    false, "player")
 
                 if not available then
                     allAvalible = false
@@ -394,11 +397,11 @@ local function loadTalents()
             for index = 1, talentsPerRow do
                 local talentButton =
                     CreateFrame(
-                    "Button",
-                    "GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index,
-                    container,
-                    "GwTalentButton"
-                )
+                        "Button",
+                        "GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index,
+                        container,
+                        "GwTalentButton"
+                    )
                 talentButton:SetScript("OnEnter", fnTalentButton_OnEnter)
                 talentButton:SetScript("OnLeave", GameTooltip_Hide)
                 talentButton:SetScript("OnDragStart", fnTalentButton_OnDragStart)
@@ -413,7 +416,8 @@ local function loadTalents()
                 end
             end
             if i == 1 then
-                local numberDisplay = CreateFrame("Frame", "GwTalentsLevelLabel" .. row, GwSpecContainerFrame, "GwTalentsLevelLabel")
+                local numberDisplay = CreateFrame("Frame", "GwTalentsLevelLabel" .. row, GwSpecContainerFrame,
+                    "GwTalentsLevelLabel")
                 numberDisplay.title:SetFont(DAMAGE_TEXT_FONT, 14)
                 numberDisplay.title:SetTextColor(0.7, 0.7, 0.7, 1)
                 numberDisplay.title:SetShadowColor(0, 0, 0, 0)
@@ -430,7 +434,7 @@ local function spellButton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
 
-    if  self.canClickBind then
+    if self.canClickBind then
         GameTooltip:AddLine(CLICK_BINDING_NOT_AVAILABLE, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
         GameTooltip:Show();
         return;
@@ -479,14 +483,14 @@ local function spellButton_GlyphApply(self, unit, button, actionType)
                         "CONFIRM_GLYPH_REMOVAL",
                         nil,
                         nil,
-                        {name = GetCurrentGlyphNameForSpell(spellId), id = spellId}
+                        { name = GetCurrentGlyphNameForSpell(spellId), id = spellId }
                     )
                 else
                     StaticPopup_Show(
                         "CONFIRM_GLYPH_PLACEMENT",
                         nil,
                         nil,
-                        {name = GetPendingGlyphName(), currentName = GetCurrentGlyphNameForSpell(spellId), id = spellId}
+                        { name = GetPendingGlyphName(), currentName = GetCurrentGlyphNameForSpell(spellId), id = spellId }
                     )
                 end
             else
@@ -501,7 +505,7 @@ end
 GW.AddForProfiling("talents", "spellButton_GlyphApply", spellButton_GlyphApply)
 
 local spellButtonSecure_OnDragStart =
-    [=[
+[=[
     local isPickable = self:GetAttribute("ispickable")
     local spellId = self:GetAttribute("spell")
 
@@ -823,7 +827,7 @@ GW.AddForProfiling("talents", "queueUpdateActiveSpec", queueUpdateActiveSpec)
 local function spellTab_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
-    GameTooltip:AddLine( self.gwTipLabel)
+    GameTooltip:AddLine(self.gwTipLabel)
     GameTooltip:Show()
 end
 GW.AddForProfiling("talents", "spellTab_OnEnter", spellTab_OnEnter)
@@ -1126,7 +1130,7 @@ local function LoadTalents(tabContainer)
         ]=]
     )
     fmSpellbook.tab3:Hide()
-  --[[LEGION  fmSpellbook.tab3:SetFrameRef("GwSpellbookMenu", fmSpellbook)
+    --[[LEGION  fmSpellbook.tab3:SetFrameRef("GwSpellbookMenu", fmSpellbook)
     fmSpellbook.tab3:SetAttribute(
         "_onclick",
         [=[
@@ -1158,7 +1162,7 @@ local function LoadTalents(tabContainer)
     fmSpellbook.UnselectAllTabs = function()
         fmSpellbook.tab1.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
         fmSpellbook.tab2.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
-  --LEGION      fmSpellbook.tab3.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
+        --LEGION      fmSpellbook.tab3.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
         fmSpellbook.tab4.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
         fmSpellbook.tab5.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
     end
@@ -1168,8 +1172,8 @@ local function LoadTalents(tabContainer)
             frame = fmSpellbook.tab1
         elseif tab == 2 then
             frame = fmSpellbook.tab2
-      --LEGION  elseif tab == 3 then
-      --LEGION      frame = fmSpellbook.tab3
+            --LEGION  elseif tab == 3 then
+            --LEGION      frame = fmSpellbook.tab3
         elseif tab == 4 then
             frame = fmSpellbook.tab4
         elseif tab == 5 then
@@ -1177,7 +1181,7 @@ local function LoadTalents(tabContainer)
         end
         frame.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg")
     end
-  --[[LEGIOn  fmSpellbook:SetAttribute(
+    --[[LEGIOn  fmSpellbook:SetAttribute(
         "_onattributechanged",
         [=[
             if name ~= 'tabopen' then return end
@@ -1249,7 +1253,7 @@ local function LoadTalents(tabContainer)
     local _, specName = GetSpecializationInfo(GW.myspec)
     fmSpellbook.tab1.gwTipLabel = GENERAL_SPELLS
     fmSpellbook.tab2.gwTipLabel = GW.myLocalizedClass
-  --  fmSpellbook.tab3.gwTipLabel = specName
+    --  fmSpellbook.tab3.gwTipLabel = specName
     fmSpellbook.tab4.gwTipLabel = PVP_LABEL_PVP_TALENTS
     fmSpellbook.tab5.gwTipLabel = PET
 
@@ -1257,8 +1261,8 @@ local function LoadTalents(tabContainer)
     fmSpellbook.tab1:SetScript("OnLeave", GameTooltip_Hide)
     fmSpellbook.tab2:SetScript("OnEnter", spellTab_OnEnter)
     fmSpellbook.tab2:SetScript("OnLeave", GameTooltip_Hide)
-  --  fmSpellbook.tab3:SetScript("OnEnter", spellTab_OnEnter)
-  --  fmSpellbook.tab3:SetScript("OnLeave", GameTooltip_Hide)
+    --  fmSpellbook.tab3:SetScript("OnEnter", spellTab_OnEnter)
+    --  fmSpellbook.tab3:SetScript("OnLeave", GameTooltip_Hide)
     fmSpellbook.tab4:SetScript("OnEnter", spellTab_OnEnter)
     fmSpellbook.tab4:SetScript("OnLeave", GameTooltip_Hide)
     fmSpellbook.tab5:SetScript("OnEnter", spellTab_OnEnter)
@@ -1266,7 +1270,7 @@ local function LoadTalents(tabContainer)
 
     -- set tab 2/3 to class/spec icon
     SetClassIcon(fmSpellbook.tab2.icon, GW.myClassID)
-  --  setSpecTabIconAndTooltip(fmSpellbook.tab3)
+    --  setSpecTabIconAndTooltip(fmSpellbook.tab3)
 
     GwTalentFrame:HookScript(
         "OnShow",
@@ -1278,10 +1282,34 @@ local function LoadTalents(tabContainer)
             updateActiveSpec()
         end
     )
+    local dummyFrame = CreateFrame("Frame", UIParent, nil)
+    dummyFrame:SetScript("OnUpdate", function()
 
+        if PlayerTalentFrame ~= nil then
+            PlayerTalentFrame:SetScript(
+                "OnShow",
+                function()
+                    if hidePlayerTalentFrame then
+                        HideUIPanel(PlayerTalentFrame)
+                    end
+                    hidePlayerTalentFrame = true
+                end)
+            PlayerTalentFrame:UnregisterAllEvents()
+            dummyFrame:SetScript("OnUpdate", nil)
+        end
+    end)
+    --[[
+
+    )
+
+
+    ]]
+    print(ToggleTalentFrame)
     -- TODO: not sure if we want these or not
     hooksecurefunc("ToggleTalentFrame", toggleTalentFrame)
     hooksecurefunc("ToggleSpellBook", toggleSpellBook)
+
+
 
     return GwTalentFrame
 end

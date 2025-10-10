@@ -54,7 +54,7 @@ local function SetUpExtendedVendor()
         return
     end
 
-    MERCHANT_ITEMS_PER_PAGE = GetSetting("EXTENDED_VENDOR_NUM_PAGES") * 10
+    MERCHANT_ITEMS_PER_PAGE = GetSetting("EXTENDED_VENDOR_NUM_PAGES") * 20
     MerchantFrame:SetWidth(30 + GetSetting("EXTENDED_VENDOR_NUM_PAGES") * 330)
 
     for i = 1, MERCHANT_ITEMS_PER_PAGE do

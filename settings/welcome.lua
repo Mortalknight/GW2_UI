@@ -63,9 +63,9 @@ local function button1_OnClick()
                 elseif id == 2 then
                     FCF_SetWindowName(frame, GUILD_EVENT_LOG)
                 elseif id == 3 then
-                    VoiceTranscriptionFrame_UpdateVisibility(frame)
-                    VoiceTranscriptionFrame_UpdateVoiceTab(frame)
-                    VoiceTranscriptionFrame_UpdateEditBox(frame)
+                  --  VoiceTranscriptionFrame_UpdateVisibility(frame)
+                  --  VoiceTranscriptionFrame_UpdateVoiceTab(frame)
+                  --  VoiceTranscriptionFrame_UpdateEditBox(frame)
                 elseif id == 4 then
                     FCF_SetWindowName(frame, LOOT .. " / " .. TRADE)
                 end

@@ -6,8 +6,9 @@ local BUTTONS = {
     {button = _G.GameMenuButtonHelp         , sprite = {1, 1}},
     {button = _G.GameMenuButtonStore        , sprite = {2, 1}},
     {button = _G.GameMenuButtonWhatsNew     , sprite = {3, 1}},
-    {button = _G.GameMenuButtonSettings      , sprite = {4, 1}},
-  --  {button = _G.GameMenuButtonEditMode    , sprite = {1, 2}}, --TODO new Icon
+    {button = _G.GameMenuButtonOptions      , sprite = {4, 1}},
+    {button = _G.GameMenuButtonUIOptions    , sprite = {1, 2}},
+    {button = _G.GameMenuButtonKeybindings  , sprite = {2, 2}},
     {button = _G.GameMenuButtonMacros       , sprite = {3, 2}},
     {button = _G.GameMenuButtonAddons       , sprite = {4, 2}},
     {button = _G.GameMenuButtonLogout       , sprite = {1, 3}},
@@ -28,13 +29,13 @@ local ICON_SPRITES = {
 
 local function PositionGameMenuButton()
     GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() - 4)
-  --  local _, relTo, _, _, offY = GameMenuButtonEditMode:GetPoint()
---if relTo ~= GameMenuFrame[GW.addonName] then
-     --   GameMenuFrame[GW.addonName]:ClearAllPoints()
- --       GameMenuFrame[GW.addonName]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
-       -- GameMenuButtonEditMode:ClearAllPoints()
-       -- GameMenuButtonEditMode:SetPoint("TOPLEFT", GameMenuFrame[GW.addonName], "BOTTOMLEFT", 0, offY)
- --   end
+    local _, relTo, _, _, offY = GameMenuButtonKeybindings:GetPoint()
+    if relTo ~= GameMenuFrame[GW.addonName] then
+        GameMenuFrame[GW.addonName]:ClearAllPoints()
+        GameMenuFrame[GW.addonName]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
+        GameMenuButtonKeybindings:ClearAllPoints()
+        GameMenuButtonKeybindings:SetPoint("TOPLEFT", GameMenuFrame[GW.addonName], "BOTTOMLEFT", 0, offY)
+    end
 end
 GW.PositionGameMenuButton = PositionGameMenuButton
 
@@ -81,6 +82,7 @@ end
 
 local function SkinMainMenu()
     local GameMenuFrame = _G.GameMenuFrame
+    GameMenuFrame:SetBackdrop(nil)
 
     local GwMainMenuFrame = CreateFrame("Button", nil, GameMenuFrame, "GameMenuButtonTemplate")
     GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
@@ -91,11 +93,9 @@ local function SkinMainMenu()
                 DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
                 return
             end
-            if not GW.InMoveHudMode then
-                ShowUIPanel(GwSettingsWindow)
-                --UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
-                HideUIPanel(GameMenuFrame)
-            end
+            ShowUIPanel(GwSettingsWindow)
+            UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+            HideUIPanel(GameMenuFrame)
         end
     )
     GameMenuFrame[GW.addonName] = GwMainMenuFrame
@@ -117,17 +117,17 @@ local function SkinMainMenu()
 
     local tex = GameMenuFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -10)
-    tex:SetSize(256, 500)
+    tex:SetSize(256, 512)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubg")
 
-   -- GameMenuFrame.Border:Hide()
-   -- GameMenuFrame.Header:Hide()
+    --LEGION GameMenuFrame.Border:Hide()
+      --LEGION GameMenuFrame.Header:Hide()
 
     applyButtonStyle()
 
     -- remove elvui transparent bg if ours is enabled
-    if IsAddOnLoaded("ElvUI") then
-        _G.GameMenuFrame.backdrop:Hide()
-    end
+
+     --   _G.GameMenuFrame.backdrop:Hide()
+        _G.GameMenuFrameHeader:Hide()
 end
 GW.SkinMainMenu = SkinMainMenu

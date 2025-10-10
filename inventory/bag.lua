@@ -667,13 +667,13 @@ local function LoadBag(helpers)
 
     -- take the original search box
     inv.reskinSearchBox(BagItemSearchBox)
-  --[[NYI  hooksecurefunc(ContainerFrame1,
-        "UpdateSearchBox",
+   hooksecurefunc(
+        "ContainerFrame_Update",
         function()
             inv.relocateSearchBox(BagItemSearchBox, f)
         end
     )
-]]
+
     inv.relocateSearchBox(BagItemSearchBox, f)
 
     -- when we take ownership of ItemButtons, we need parent containers with IDs

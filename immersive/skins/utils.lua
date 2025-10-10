@@ -391,6 +391,7 @@ end
 GW.Scale = Scale
 
 local function ReskinScrollBarArrow(frame, direction)
+  
     GW.HandleNextPrevButton(frame, direction)
 
     if frame.Texture then
@@ -441,6 +442,8 @@ end
 GW.HandleAchivementsScrollControls = HandleAchivementsScrollControls
 
 local function HandleTrimScrollBar(frame, small)
+    frame:GwSkinScrrollBar()
+   --[[
     frame:GwStripTextures()
 
     ReskinScrollBarArrow(frame.Back, "up")
@@ -467,6 +470,7 @@ local function HandleTrimScrollBar(frame, small)
             thumb.backdrop:SetPoint("BOTTOM", -4, 1)
         end
     end
+]]
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
 

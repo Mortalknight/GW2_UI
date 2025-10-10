@@ -1075,6 +1075,9 @@ local function LoadXPBar()
     experiencebar.CurrentLevel:SetFont(UNIT_NAME_FONT, 12)
 
     updateBarSize(experiencebar)
+    UIParent:HookScript("OnSizeChanged", function(self, width, height)
+        updateBarSize(experiencebar)
+    end)
     xpbar_OnEvent(experiencebar)
 
     experiencebar:SetScript("OnEvent", xpbar_OnEvent)

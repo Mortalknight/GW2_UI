@@ -20,12 +20,14 @@ GW.VERSION_STRING = "GW2_UI @project-version@"
 GW2_ADDON = GW
 
 if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
-    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r You have installed GW2_UI retail version. Please install the classic version to use GW2_UI."):gsub("*", GW.Gw2Color))
+    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r You have installed GW2_UI retail version. Please install the classic version to use GW2_UI.")
+        :gsub("*", GW.Gw2Color))
     return
 end
 
 if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
-    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r"):gsub("*", GW.Gw2Color))
+    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
+        :gsub("*", GW.Gw2Color))
 end
 
 local loaded = false
@@ -93,8 +95,8 @@ GW.AddToAnimation = AddToAnimation
     colums = 5,
     rows = 3
 }
-]]--
-local function getSprite(map,x,y)
+]] --
+local function getSprite(map, x, y)
     local pw = (map.width / map.colums) / map.width
     local ph = (map.height / map.rows) / map.height
 
@@ -113,19 +115,19 @@ local function getSpriteByIndex(map, index)
         return 0, 0, 0, 0
     end
 
-    local tileWidth =  map.width / map.colums
-    local tileHeight =  map.height / map.rows
+    local tileWidth = map.width / map.colums
+    local tileHeight = map.height / map.rows
 
     local tilesPerColums = map.width / tileWidth
     --local tilesPerRow = map.height / tileHeight
 
     local left = tileWidth * (index % tilesPerColums)
-    local top =  tileHeight * math.floor(index / tilesPerColums)
+    local top = tileHeight * math.floor(index / tilesPerColums)
 
     local bottom = top + tileHeight
     local right = left + tileWidth
 
-    return left / map.width, right / map.width, top / map.height,bottom / map.height
+    return left / map.width, right / map.width, top / map.height, bottom / map.height
 end
 GW.getSpriteByIndex = getSpriteByIndex
 
@@ -149,7 +151,7 @@ local function TriggerButtonHoverAnimation(self, hover, to, duration)
             lerp2 = math.max(0.4, math.min(1, lerp2))
 
             if lerp2 > 1 then lerp2 = 1 end
-            hover:SetPoint("RIGHT", self, "LEFT", math.min(w, lerp) , 0)
+            hover:SetPoint("RIGHT", self, "LEFT", math.min(w, lerp), 0)
             hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
             hover:SetTexCoord(0, stripAmount, 0, 1)
         end
@@ -257,7 +259,7 @@ local function AddUpdateCB(func, payload)
         return
     end
 
-    tinsert(updateCB,{func = func, payload = payload})
+    tinsert(updateCB, { func = func, payload = payload })
 end
 GW.AddUpdateCB = AddUpdateCB
 
@@ -413,7 +415,8 @@ local function evAddonLoaded(_, addonName)
         -- setup default values on load, which are required for same skins
         if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
             PixelPerfection()
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r"):gsub("*", GW.Gw2Color))
+            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
+                :gsub("*", GW.Gw2Color))
         else
             GW.scale = UIParent:GetScale()
             GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
@@ -435,11 +438,14 @@ local function evAddonLoaded(_, addonName)
     end
     Debug("DeModal status:", GW.HasDeModal)
 
+
+    GW.LoadWorldMapSkin()
+    GW.LoadEncounterJournalSkin()
     -- TODO: moving skinning from player login to here
     -- Skins: BLizzard & Addons
     --[[WIP
-   GW.LoadWorldMapSkin()
-    GW.LoadEncounterJournalSkin()
+
+
     GW.LoadAchivementSkin()
     GW.LoadAlliedRacesUISkin()
     GW.LoadBarShopUISkin()
@@ -456,10 +462,10 @@ local function evAddonLoaded(_, addonName)
     GW.LoadSoulbindsSkin()
     GW.LoadWeeklyRewardsSkin()
     GW.LoadPerksProgramSkin()
-    
+
     ]]
     GW.preLoadStatusBarMaskTextures()
-  --  GW.LoadStatusbarTest()
+    --  GW.LoadStatusbarTest()
 end
 AFP("evAddonLoaded", evAddonLoaded)
 
@@ -535,8 +541,9 @@ local function evPlayerLogin(self)
     GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
 
     if GW.inDebug then
-    --NYI    GW.AlertTestsSetup()
+        --NYI    GW.AlertTestsSetup()
     end
+
     GW.CombatQueue_Initialize()
 
     --Create the mainbar layout manager
@@ -555,9 +562,10 @@ local function evPlayerLogin(self)
     GW.UpdateMinimapSystemDataInfoSettings()
 
     -- load alert settings
-   --NYI GW.LoadAlertSystem()
-   --NYI GW.SetupAlertFramePosition()
-    --NYI GW.LoadOurAlertSubSystem()
+    GW.LoadAlertSystem()
+    GW.SetupAlertFramePosition()
+    GW.LoadOurAlertSubSystem()
+    --GW.loadLootToast()
 
     -- disable Move Anything bag handling
     disableMABags()
@@ -580,7 +588,8 @@ local function evPlayerLogin(self)
             "OnClick",
             function()
                 if InCombatLockdown() then
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*",
+                        GW.Gw2Color))
                     return
                 end
                 ShowUIPanel(GwSettingsWindow)
@@ -596,9 +605,14 @@ local function evPlayerLogin(self)
             hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
         end
     end
-
+    GW.MakeAltPowerBarMovable()
+    GW.LoadMerchantFrameSkin()
+    GW.LoadGossipSkin()
+    GW.loadLootToast()
+    GW.LoadMailSkin()
+    GW.LoadLootFrameSkin()
     -- Skins: BLizzard & Addons
-    --[[WIP 
+    --[[WIP
     GW.LoadStaticPopupSkin()
     GW.LoadBNToastSkin()
     GW.LoadDropDownSkin()
@@ -607,12 +621,12 @@ local function evPlayerLogin(self)
     GW.LoadTalkingHeadSkin()
     GW.LoadMiscBlizzardFrameSkins()
     GW.LoadAddonListSkin()
-    GW.LoadMailSkin()
+
     GW.LoadDressUpFrameSkin()
     GW.LoadHelperFrameSkin()
-    GW.LoadGossipSkin()
+
     GW.LoadTimeManagerSkin()
-    GW.LoadMerchantFrameSkin()
+
     GW.LoadLootFrameSkin()
 
     GW.LoadDetailsSkin()
@@ -621,7 +635,7 @@ local function evPlayerLogin(self)
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
     GW.LoadVehicleButton()
-    GW.MakeAltPowerBarMovable()
+
     GW.WidgetUISetup()
     ]]
 
@@ -651,17 +665,17 @@ local function evPlayerLogin(self)
         if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
             C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
             if GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS") then
-           --     C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
             else
-          --      C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
             end
             GW.LoadDamageText(true)
         elseif GetSetting("GW_COMBAT_TEXT_MODE") == "BLIZZARD" then
             C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
-           -- C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+            C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
         else
             C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
-           -- C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+            C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
         end
     end
 
@@ -671,7 +685,7 @@ local function evPlayerLogin(self)
     end
 
     if GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true) then
-         GW.LoadMinimap()
+        GW.LoadMinimap()
     end
 
     if GetSetting("QUESTTRACKER_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
@@ -679,66 +693,66 @@ local function evPlayerLogin(self)
     end
 
     if GetSetting("TOOLTIPS_ENABLED") then
-       GW.LoadTooltips()
+        GW.LoadTooltips()
     end
 
     if GetSetting("QUESTVIEW_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("ImmersiveQuesting", true) then
-      --NYI  GW.LoadQuestview()
+        GW.LoadQuestview()
     end
 
     if GetSetting("CHATFRAME_ENABLED") then
-      --NYI  GW.LoadChat()
+        GW.LoadChat()
     end
 
     --Create player hud
     if GetSetting("HEALTHGLOBE_ENABLED") and not GetSetting("PLAYER_AS_TARGET_FRAME") then
         local hg = GW.LoadHealthGlobe()
         GW.LoadDodgeBar(hg, false)
-     --   GW.LoadDragonBar(hg, false)
+        --   GW.LoadDragonBar(hg, false)
     elseif GetSetting("HEALTHGLOBE_ENABLED") and GetSetting("PLAYER_AS_TARGET_FRAME") then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
-      --  GW.LoadDragonBar(hg, true)
+        --  GW.LoadDragonBar(hg, true)
     end
 
     if GetSetting("POWERBAR_ENABLED") and (GetSetting("PLAYER_AS_TARGET_FRAME") and GetSetting("PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR") or not GetSetting("PLAYER_AS_TARGET_FRAME")) then
-       GW.LoadPowerBar()
+        GW.LoadPowerBar()
     end
 
     if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("BAGS_ENABLED") then
-           GW.LoadInventory()
+            GW.LoadInventory()
         end
     end
 
-    --NYI GW.SetUpExtendedVendor()
+    GW.SetUpExtendedVendor()
 
     if GetSetting("USE_BATTLEGROUND_HUD") then
-      --NYI  GW.LoadBattlegrounds()
+        --NYI  GW.LoadBattlegrounds()
     end
 
     GW.LoadCharacter()
 
-   --NYI GW.LoadSocialFrame()
+    -- GW.LoadSocialFrame()
 
-   --NYI GW.Create_Raid_Counter()
+    --NYI GW.Create_Raid_Counter()
     GW.LoadRaidbuffReminder()
 
-   --NYI GW.LoadMirrorTimers()
+    --NYI GW.LoadMirrorTimers()
     GW.LoadAutoRepair()
-   --NYI GW.LoadDragonFlightWorldEvents()
+    --NYI GW.LoadDragonFlightWorldEvents()
 
     --Create unitframes
     if GetSetting("FOCUS_ENABLED") then
-      GW.LoadFocus()
+        GW.LoadFocus()
         if GetSetting("focus_TARGET_ENABLED") then
-        GW.LoadTargetOfUnit("Focus")
+            GW.LoadTargetOfUnit("Focus")
         end
     end
     if GetSetting("TARGET_ENABLED") then
         GW.LoadTarget()
-      if GetSetting("target_TARGET_ENABLED") then
-        GW.LoadTargetOfUnit("Target")
+        if GetSetting("target_TARGET_ENABLED") then
+            GW.LoadTargetOfUnit("Target")
         end
 
         -- move zone text frame
@@ -755,26 +769,26 @@ local function evPlayerLogin(self)
         end
     end
 
-   GW.LoadMarkers()
+    GW.LoadMarkers()
 
     if GetSetting("CLASS_POWER") then
-       GW.LoadClassPowers()
+        GW.LoadClassPowers()
     end
 
     -- create action bars
     if GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         GW.LoadActionBars(lm)
-    --NYI    GW.ExtraAB_BossAB_Setup()
+        --NYI    GW.ExtraAB_BossAB_Setup()
     end
 
     -- create pet frame
     if GetSetting("PETBAR_ENABLED") then
-       GW.LoadPetFrame(lm)
+        GW.LoadPetFrame(lm)
     end
 
     -- create buff frame
     if GetSetting("PLAYER_BUFFS_ENABLED") then
-       GW.LoadPlayerAuras(lm)
+        GW.LoadPlayerAuras(lm)
     end
 
     if not IsIncompatibleAddonLoadedOrOverride("DynamicCam", true) then -- Only touch this setting if no other addon for this is loaded
@@ -794,23 +808,23 @@ local function evPlayerLogin(self)
         end)
     end
 
-   --NYI GW.loadAFKAnimation()
+    --GW.loadAFKAnimation()
 
     if GetSetting("CHATBUBBLES_ENABLED") then
-    --NYI    GW.LoadChatBubbles()
+        GW.LoadChatBubbles()
     end
     -- create new microbuttons
     GW.LoadMicroMenu()
-   --NYI GW.LoadOrderBar()
+    GW.LoadOrderBar()
 
     if GetSetting("PARTY_FRAMES") then
-       GW.LoadPartyFrames()
+        GW.LoadPartyFrames()
     end
 
     if GetSetting("RAID_FRAMES") then
-       GW.LoadRaidFrames()
-      GW.LoadPartyGrid()
-      GW.LoadPetGrid()
+        GW.LoadRaidFrames()
+        GW.LoadPartyGrid()
+        GW.LoadPetGrid()
     end
 
     GW.UpdateHudScale()
@@ -833,7 +847,7 @@ local function evPlayerLogin(self)
     self:SetScript("OnUpdate", gw_OnUpdate)
     GW.UpdateCharData()
 
-  --  GW.HandleBlizzardEditMode()
+    --  GW.HandleBlizzardEditMode()
 end
 AFP("evPlayerLogin", evPlayerLogin)
 
@@ -894,7 +908,7 @@ local function wait_OnUpdate(_, elapse)
         local f = tremove(waitRecord, 1)
         local p = tremove(waitRecord, 1)
         if (d > elapse) then
-            tinsert(waitTable, i, {d - elapse, f, p})
+            tinsert(waitTable, i, { d - elapse, f, p })
             i = i + 1
         else
             count = count - 1
@@ -912,7 +926,7 @@ local function Wait(delay, func, ...)
         waitFrame = CreateFrame("Frame", "GwWaitFrame", UIParent)
         waitFrame:SetScript("OnUpdate", wait_OnUpdate)
     end
-    tinsert(waitTable, {delay, func, {...}})
+    tinsert(waitTable, { delay, func, { ... } })
     return true
 end
 GW.Wait = Wait

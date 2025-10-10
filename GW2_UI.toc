@@ -1,4 +1,4 @@
-## Interface: 100007
+## Interface: 70300
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
@@ -40,6 +40,7 @@ core\init.lua
 settings\defaults.lua
 settings\api.lua
 
+core\backdropTemplates.lua
 core\staticPopupDialogs.lua
 core\raid_debuffs.lua
 core\toolkit.lua
@@ -57,6 +58,8 @@ core\notaint.lua
 core\LFGPlayerInfo.lua
 core\statusbars.xml
 core\statusbars.lua
+
+
 
 settings\settings_menu.lua
 settings\settings.xml
@@ -197,6 +200,8 @@ immersive\tooltips.lua
 immersive\damagetext.xml
 immersive\damagetext.lua
 immersive\eventTracker.lua
+immersive\lootToast.lua
+
 
 objectives\scenarioWidgets\heroicVisions.lua
 objectives\scenarioWidgets\jailersTower.lua

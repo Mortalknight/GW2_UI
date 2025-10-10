@@ -758,7 +758,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot:SetPoint(unpack(anchor))
     slot:SetParent(parent)
     slot:SetSize(size, size)
-  --  slot:StripTextures()
+    slot:GwStripTextures()
 
     slot.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     slot.icon:SetAlpha(0.9)

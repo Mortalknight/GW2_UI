@@ -225,10 +225,8 @@ end
 
 local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
-    if not frame.backdrop then 
-     return 
-    end
-    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
+ 
+    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, nil)
     if not frame.backdrop then frame.backdrop = backdrop end
 
     if not backdrop.SetBackdrop then
@@ -532,6 +530,7 @@ local function GwHandleMaxMinFrame(frame)
 end
 
 local function HandleNextPrevButton(button, arrowDir, noBackdrop)
+    if button==nil then return end
     if button.isSkinned then return end
 
     if not arrowDir then

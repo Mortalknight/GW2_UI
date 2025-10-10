@@ -152,12 +152,14 @@ local function UpdatePetActionBar(self, event, unit)
             end
         end
 
+        --[[
         if spellID then
             local spell = Spell:CreateFromSpellID(spellID)
             button.spellDataLoadedCancelFunc = spell:ContinueWithCancelOnSpellLoad(function()
                 button.tooltipSubtext = spell:GetSpellSubtext()
             end)
         end
+        ]]
 
         if isActive and name ~= "PET_ACTION_FOLLOW" then
             button:SetChecked(true)
@@ -239,7 +241,7 @@ local function updatePetData(self, event, unit)
         SetPortraitTexture(self.portrait, "pet")
         UpdatePetActionBar(self, event, unit)
 
-        if event  ~= "UNIT_PET" then return end
+        if event ~= "UNIT_PET" then return end
     elseif event == "PET_BAR_UPDATE_COOLDOWN" then
         UpdatePetCooldown(self)
     end
@@ -307,7 +309,7 @@ local function LoadPetFrame(lm)
     PetFrame:UnregisterEvent("PET_UI_UPDATE")
     PetFrame:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
     PetFrame.ignoreFramePositionManager = true
-   -- PetFrame:GwKillEditMode()
+    -- PetFrame:GwKillEditMode()
 
     --hooksecurefunc(PetActPetFrameionBar, "Update", UpdateAutoCast)
 
@@ -316,7 +318,8 @@ local function LoadPetFrame(lm)
     playerPetFrame:SetAttribute("unit", "pet")
     playerPetFrame:EnableMouse(true)
     playerPetFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    RegisterStateDriver(playerPetFrame, "visibility", "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
+    RegisterStateDriver(playerPetFrame, "visibility",
+        "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
 
     playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11)
@@ -365,7 +368,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
     playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, {"default", "scaleable"}, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, { "default", "scaleable" }, true)
     lm:RegisterPetFrame(playerPetFrame)
 
     playerPetFrame:ClearAllPoints()
@@ -388,7 +391,7 @@ local function LoadPetFrame(lm)
     hotkeyEventTrackerFrame:SetScript("OnEvent", function()
         for _, button in ipairs(GwPlayerPetFrame.buttons) do
             GW.updateHotkey(button)
-   --         GW.FixHotKeyPosition(button, false, true)
+            --         GW.FixHotKeyPosition(button, false, true)
         end
     end)
 

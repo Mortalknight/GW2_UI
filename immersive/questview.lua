@@ -497,12 +497,11 @@ end
 function QuestViewMixin:showQuestFrame()
     local mapId = GW.Libs.GW2Lib:GetPlayerLocationMapID() or C_Map.GetBestMapForUnit("player") or 0 -- as fallback if location service is to slow
     local mapTex
-    repeat
         local mapInfo = C_Map.GetMapInfo(mapId)
         Debug("current map", mapInfo.mapID, mapInfo.name, mapInfo.mapType, mapInfo.parentMapID)
         mapTex = mapBGs[mapInfo.mapID] or mapBGs[mapInfo.parentMapID]
         mapId = mapInfo.parentMapID
-    until not mapInfo or mapTex or mapInfo.parentMapID == 0
+    
     if not mapTex then
         mapTex = "default"
     end

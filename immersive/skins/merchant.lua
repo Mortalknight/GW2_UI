@@ -36,11 +36,11 @@ local function LoadMerchantFrameSkin()
     if not GetSetting("MERCHANT_SKIN_ENABLED") then return end
 
     MerchantFrame:GwStripTextures()
-    MerchantFrame.NineSlice:Hide()
+   -- MerchantFrame.NineSlice:Hide()
     MerchantFrame.TopTileStreaks:Hide()
     MerchantFrame:GwCreateBackdrop()
 
-    MerchantFrameInset.NineSlice:Hide()
+   -- MerchantFrameInset.NineSlice:Hide()
     MerchantFrameInset:GwCreateBackdrop(constBackdropFrameBorder)
 
     MerchantFrameCloseButton:GwSkinButton(true)

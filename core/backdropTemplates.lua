@@ -1,5 +1,5 @@
 local _, GW = ...
-
+GW.BackdropTemplates={}
 local constBackdropDropDown = {
     bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar",
     edgeFile = "",

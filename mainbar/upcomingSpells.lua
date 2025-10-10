@@ -179,6 +179,9 @@ local function LoadUpcomingSpells()
 
     upcomingSpellsFrame.CloseButton:SetScript("OnClick", GW.Parent_Hide)
     upcomingSpellsFrame.CloseButton:SetText(CLOSE)
+    upcomingSpellsFrame.CloseButton:SetScript("OnClick", function()
+        upcomingSpellsFrame:Hide()
+     end)
 
     upcomingSpellsFrame:SetScript("OnShow", UpcomingSpellsFrameOnShow)
 

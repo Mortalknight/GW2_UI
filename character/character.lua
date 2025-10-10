@@ -36,8 +36,8 @@ windowsList[2] = {
     ["HeaderText"] = SPELLS,
     ["TooltipText"] = SPELLS,
     ["Bindings"] = {
-        ["TOGGLESPELLBOOK"] = "SpellBook",
-
+         ["TOGGLESPELLBOOK"] = "SpellBook",
+        ["TOGGLETALENTS"] = "Talents",
         ["TOGGLEPETBOOK"] = "PetBook"
     },
     ["OnClick"] = [=[
@@ -107,7 +107,9 @@ windowsList[6] = {
     ["HeaderText"] = TALENTS,
     ["TooltipText"] = TALENTS_BUTTON,
     ["Bindings"] = {
-
+         ["TOGGLESPELLBOOK"] = "SpellBook",
+        ["TOGGLETALENTS"] = "Talents",
+        ["TOGGLEPETBOOK"] = "PetBook"
     },
     ["OnClick"] = [=[
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
@@ -136,7 +138,7 @@ local charSecure_OnClick =
         f:SetAttribute("windowpanelopen", "spellbook")
     elseif button == "Talents" then
         f:SetAttribute("keytoggle", true)
-        f:SetAttribute("windowpanelopen", "talents")
+        f:SetAttribute("windowpanelopen", "spellbook")
     elseif button == "PetBook" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "petbook")
@@ -180,13 +182,12 @@ local charSecure_OnAttributeChanged =
             showSpell = true
         end
     elseif fmTal ~= nil and value == "talents" then
-        if keytoggle and fmTal:IsVisible() and fmTaM and fmTaM:GetAttribute("tabopen") == 1 then
+        if keytoggle and fmTal:IsVisible() then
             self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
         else
             showTal = true
-            fmTaM:SetAttribute("tabopen", 1)
         end
     elseif fmSpell ~= nil and value == "spellbook" then
         if keytoggle and fmSpell:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 2 then

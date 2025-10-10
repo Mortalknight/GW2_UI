@@ -127,7 +127,7 @@ local function LoadOverviewPanel(sWindow)
     end
     local fmGSWKB_OnClick = function()
         sWindow:Hide()
-        GW.DisplayHoverBinding()
+        GW.HoverKeyBinds()
     end
     GwSettingsWindowMoveHud = p.menu.movehudbtn
     p.menu.movehudbtn:SetScript("OnClick", fnGSWMH_OnClick)

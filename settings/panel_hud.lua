@@ -267,18 +267,18 @@ local function LoadHudPanel(sWindow)
             if value == "GW2" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
                 if GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS") then
-              --      C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+                   C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
                 else
                     C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
                 end
                 GW.LoadDamageText(true)
             elseif value == "BLIZZARD" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
-             --   C_CVar.SetCVar("floatingCombatTextCombafloatingCombatTextCombatHealingtDamage", "1")
+               C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
                 GW.FloatingCombatTextToggleFormat(false)
             else
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
-           --     C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+               C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
                 GW.FloatingCombatTextToggleFormat(false)
             end
 

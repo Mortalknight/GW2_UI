@@ -186,8 +186,9 @@ local function whisperClick(_, playerName)
 end
 
 local function Guild_OnClick(self, button)
+   
     if button == "LeftButton" then
-        self:OnClick()
+        self.onClickOldHandler()
     elseif button == "RightButton" and IsInGuild() then
         local menuCountWhispers = 0
         local menuCountInvites = 0

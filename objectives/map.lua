@@ -64,7 +64,8 @@ GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
 local function mapCoordsMiniMap_setCoords(self)
     local x, y, xT, yT = GW.Libs.GW2Lib:GetPlayerLocationCoords()
     if x and y then
-        self.Coords:SetText(RoundDec(xT, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(yT, self.MapCoordsMiniMapPrecision))
+        self.Coords:SetText(RoundDec(xT, self.MapCoordsMiniMapPrecision) ..
+        ", " .. RoundDec(yT, self.MapCoordsMiniMapPrecision))
     else
         self.Coords:SetText(NOT_APPLICABLE)
     end
@@ -126,7 +127,7 @@ GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
 local function setMinimapButtons(side)
     local expButton = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
-   QueueStatusMinimapButton:ClearAllPoints()
+    QueueStatusMinimapButton:ClearAllPoints()
     GameTimeFrame:ClearAllPoints()
     expButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
@@ -158,7 +159,7 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
     end
 
-  --  QueueStatusMinimapButton:SetParent(UIParent)
+    --  QueueStatusMinimapButton:SetParent(UIParent)
 end
 GW.setMinimapButtons = setMinimapButtons
 
@@ -248,11 +249,11 @@ local function MapCanvas_OnMouseDown(_, btn)
     end
 end
 
-local function Minimap_OnMouseWheel(_, d)
-    if d > 0 then
-        Minimap.ZoomIn:Click()
-    elseif d < 0 then
-        Minimap.ZoomOut:Click()
+local function Minimap_OnMouseWheel(self, delta)
+    if delta > 0 and self:GetZoom() < 5 then
+        MinimapZoomIn:Click()
+    elseif delta < 0 and self:GetZoom() > 0 then
+        MinimapZoomOut:Click()
     end
 end
 
@@ -340,7 +341,7 @@ local function HandleExpansionButton()
             garrison.description = minimapDisplayInfo.description;
         end
         ]]
-    
+
         garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
         garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
         garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
@@ -377,7 +378,8 @@ local function LoadMinimap()
     local size = GetSetting("MINIMAP_SCALE")
     Minimap:SetSize(size, size)
 
-    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", ALL .. ",Blizzard,Map", {Minimap:GetSize()}, {"default"}, nil, MinimapPostDrag)
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", ALL .. ",Blizzard,Map", { Minimap:GetSize() },
+        { "default" }, nil, MinimapPostDrag)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("CENTER", Minimap.gwMover)
 
@@ -434,16 +436,16 @@ local function LoadMinimap()
     Minimap:HookScript("OnShow", minimap_OnShow)
     Minimap:HookScript("OnHide", minimap_OnHide)
 
-   -- MinimapCluster.ZoneTextButton:GwKill()
+    -- MinimapCluster.ZoneTextButton:GwKill()
     TimeManagerClockButton:GwKill()
-   -- MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
+    -- MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
 
     GwMapGradient.location = GwMapGradient:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font_Small", 7)
     GwMapGradient.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
     GwMapGradient.location:SetJustifyH("CENTER")
     GwMapGradient.location:SetJustifyV("MIDDLE")
     GwMapGradient.location:SetIgnoreParentScale(true)
-   -- GwMapGradient.location:SetScale(1)
+    -- GwMapGradient.location:SetScale(1)
 
     local killFrames = {
         MinimapBorder,
@@ -453,7 +455,7 @@ local function LoadMinimap()
         MinimapNorthTag,
         MinimapZoneTextButton,
         MiniMapWorldMapButton,
-        MiniMapMailBorder,
+        MiniMapMailFrame,
         MiniMapTracking,
         Minimap.ZoomIn,
         Minimap.ZoomOut,
@@ -461,14 +463,14 @@ local function LoadMinimap()
         MinimapCluster.IndicatorFrame
     }
 
-   -- MinimapCluster.BorderTop:GwStripTextures()
-   -- MinimapCluster.Tracking.Background:GwStripTextures()
+    -- MinimapCluster.BorderTop:GwStripTextures()
+    -- MinimapCluster.Tracking.Background:GwStripTextures()
 
     for _, frame in next, killFrames do
         frame:GwKill()
     end
 
-   --[[NYI
+    --[[NYI
     if ExpansionLandingPageMinimapButton.UpdateIcon then
         hooksecurefunc(ExpansionLandingPageMinimapButton, "UpdateIcon", HandleExpansionButton)
         --ExpansionLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter) -- This was for SL
@@ -571,7 +573,7 @@ local function LoadMinimap()
     C_Timer.After(0.2, hoverMiniMapOut)
 
     GW.SkinMinimapInstanceDifficult()
---
+    --
     QueueStatusMinimapButton:SetSize(26, 26)
     QueueStatusMinimapButtonBorder:GwKill()
     QueueStatusMinimapButtonIcon:GwKill()
@@ -595,7 +597,5 @@ local function LoadMinimap()
         QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
     end)
     ]]
-
-
 end
 GW.LoadMinimap = LoadMinimap

@@ -9,17 +9,17 @@ local numInvites = 0
 local LFG_Timer = 0
 local guildInviteCache = {}
 local slots = {
-    [1] = {1, INVTYPE_HEAD, 1000},
-    [2] = {3, INVTYPE_SHOULDER, 1000},
-    [3] = {5, INVTYPE_ROBE, 1000},
-    [4] = {6, INVTYPE_WAIST, 1000},
-    [5] = {9, INVTYPE_WRIST, 1000},
-    [6] = {10, INVTYPE_HAND, 1000},
-    [7] = {7, INVTYPE_LEGS, 1000},
-    [8] = {8, INVTYPE_FEET, 1000},
-    [9] = {16, INVTYPE_WEAPONMAINHAND, 1000},
-    [10] = {17, INVTYPE_WEAPONOFFHAND, 1000},
-    [11] = {18, INVTYPE_RANGED, 1000}
+    [1] = { 1, INVTYPE_HEAD, 1000 },
+    [2] = { 3, INVTYPE_SHOULDER, 1000 },
+    [3] = { 5, INVTYPE_ROBE, 1000 },
+    [4] = { 6, INVTYPE_WAIST, 1000 },
+    [5] = { 9, INVTYPE_WRIST, 1000 },
+    [6] = { 10, INVTYPE_HAND, 1000 },
+    [7] = { 7, INVTYPE_LEGS, 1000 },
+    [8] = { 8, INVTYPE_FEET, 1000 },
+    [9] = { 16, INVTYPE_WEAPONMAINHAND, 1000 },
+    [10] = { 17, INVTYPE_WEAPONOFFHAND, 1000 },
+    [11] = { 18, INVTYPE_RANGED, 1000 }
 }
 
 local ignoreDragonRidingSpells = {
@@ -31,53 +31,53 @@ local ignoreDragonRidingSpells = {
 
 local PARAGON_QUEST_ID = { --[questID] = {factionID}
     --Legion
-    [48976] = {2170}, -- Argussian Reach
-    [46777] = {2045}, -- Armies of Legionfall
-    [48977] = {2165}, -- Army of the Light
-    [46745] = {1900}, -- Court of Farondis
-    [46747] = {1883}, -- Dreamweavers
-    [46743] = {1828}, -- Highmountain Tribes
-    [46748] = {1859}, -- The Nightfallen
-    [46749] = {1894}, -- The Wardens
-    [46746] = {1948}, -- Valarjar
+    [48976] = { 2170 },    -- Argussian Reach
+    [46777] = { 2045 },    -- Armies of Legionfall
+    [48977] = { 2165 },    -- Army of the Light
+    [46745] = { 1900 },    -- Court of Farondis
+    [46747] = { 1883 },    -- Dreamweavers
+    [46743] = { 1828 },    -- Highmountain Tribes
+    [46748] = { 1859 },    -- The Nightfallen
+    [46749] = { 1894 },    -- The Wardens
+    [46746] = { 1948 },    -- Valarjar
 
     --Battle for Azeroth
     --Neutral
-    [54453] = {2164}, --Champions of Azeroth
-    [58096] = {2415}, --Rajani
-    [55348] = {2391}, --Rustbolt Resistance
-    [54451] = {2163}, --Tortollan Seekers
-    [58097] = {2417}, --Uldum Accord
+    [54453] = { 2164 }, --Champions of Azeroth
+    [58096] = { 2415 }, --Rajani
+    [55348] = { 2391 }, --Rustbolt Resistance
+    [54451] = { 2163 }, --Tortollan Seekers
+    [58097] = { 2417 }, --Uldum Accord
 
     --Horde
-    [54460] = {2156}, --Talanji's Expedition
-    [54455] = {2157}, --The Honorbound
-    [53982] = {2373}, --The Unshackled
-    [54461] = {2158}, --Voldunai
-    [54462] = {2103}, --Zandalari Empire
+    [54460] = { 2156 }, --Talanji's Expedition
+    [54455] = { 2157 }, --The Honorbound
+    [53982] = { 2373 }, --The Unshackled
+    [54461] = { 2158 }, --Voldunai
+    [54462] = { 2103 }, --Zandalari Empire
 
     --Alliance
-    [54456] = {2161}, --Order of Embers
-    [54458] = {2160}, --Proudmoore Admiralty
-    [54457] = {2162}, --Storm's Wake
-    [54454] = {2159}, --The 7th Legion
-    [55976] = {2400}, --Waveblade Ankoan
+    [54456] = { 2161 }, --Order of Embers
+    [54458] = { 2160 }, --Proudmoore Admiralty
+    [54457] = { 2162 }, --Storm's Wake
+    [54454] = { 2159 }, --The 7th Legion
+    [55976] = { 2400 }, --Waveblade Ankoan
 
     --Shadowlands
-    [61100] = {2413}, --Court of Harvesters
-    [61097] = {2407}, --The Ascended
-    [61095] = {2410}, --The Undying Army
-    [61098] = {2465}, --The Wild Hunt
-    [64012] = {2470}, --The Death Advance
-    [64266] = {2472}, --The Archivist's Codex
-    [64267] = {2432}, --Ve'nari
-    [64867] = {2478}, --The Enlightened
+    [61100] = { 2413 }, --Court of Harvesters
+    [61097] = { 2407 }, --The Ascended
+    [61095] = { 2410 }, --The Undying Army
+    [61098] = { 2465 }, --The Wild Hunt
+    [64012] = { 2470 }, --The Death Advance
+    [64266] = { 2472 }, --The Archivist's Codex
+    [64267] = { 2432 }, --Ve'nari
+    [64867] = { 2478 }, --The Enlightened
 }
 
 local VignetteExclusionMapIDs = {
-    [579] = true, -- Lunarfall: Alliance garrison
-    [585] = true, -- Frostwall: Horde garrison
-    [646] = true, -- Scenario: The Broken Shore
+    [579] = true,  -- Lunarfall: Alliance garrison
+    [585] = true,  -- Frostwall: Horde garrison
+    [646] = true,  -- Scenario: The Broken Shore
     [1911] = true, -- Thorgast
     [1912] = true, -- Thorgast
 }
@@ -101,7 +101,7 @@ local constBackdropAlertFrame = {
     tile = false,
     tileSize = 64,
     edgeSize = 32,
-    insets = {left = 2, right = 2, top = 2, bottom = 2}
+    insets = { left = 2, right = 2, top = 2, bottom = 2 }
 }
 local constBackdropLevelUpAlertFrame = {
     bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-levelup",
@@ -109,7 +109,7 @@ local constBackdropLevelUpAlertFrame = {
     tile = false,
     tileSize = 64,
     edgeSize = 32,
-    insets = {left = 2, right = 2, top = 2, bottom = 2}
+    insets = { left = 2, right = 2, top = 2, bottom = 2 }
 }
 
 local function forceAlpha(self, alpha, forced)
@@ -656,7 +656,7 @@ local function skinDigsiteCompleteAlert(frame)
     frame.DigsiteTypeTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     frame.DigsiteTypeTexture:SetDrawLayer("ARTWORK", 7)
     frame.DigsiteTypeTexture:ClearAllPoints()
-    frame.DigsiteTypeTexture:SetPoint("LEFT", frame.backdrop, 25,-18)
+    frame.DigsiteTypeTexture:SetPoint("LEFT", frame.backdrop, 25, -18)
 end
 
 local function skinNewRecipeLearnedAlert(frame)
@@ -815,7 +815,7 @@ local function skinScenarioAlert(frame)
     frame.dungeonTexture:SetDrawLayer("OVERLAY")
 
     -- Icon border
-    if not frame.dungeonTexture.b then        
+    if not frame.dungeonTexture.b then
         frame.dungeonTexture.b = CreateFrame("Frame", nil, frame)
         frame.dungeonTexture.b:SetPoint("TOPLEFT", frame.dungeonTexture, "TOPLEFT", -2, 2)
         frame.dungeonTexture.b:SetPoint("BOTTOMRIGHT", frame.dungeonTexture, "BOTTOMRIGHT", 2, -2)
@@ -824,7 +824,7 @@ local function skinScenarioAlert(frame)
         frame.dungeonTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         frame.dungeonTexture.iconBorder:SetAllPoints(frame.dungeonTexture.b)
     end
-    
+
     --flare
     AddFlare(frame, frame.dungeonTexture.b)
 end
@@ -1102,9 +1102,10 @@ local function skinBonusRollMoney()
 
     --Create Backdrop
     frame:GwCreateBackdrop(constBackdropAlertFrame)
-    frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
-    frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
-
+    if frame.backdrop ~= nil then
+        frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
+        frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
+    end
     --flare
     AddFlare(frame, frame.Icon.b)
 end
@@ -1146,7 +1147,7 @@ local function GW2_UIAlertFrame_OnClick(self, ...)
         self.delay = 0
     end
     if (self.onClick) then
-        if (AlertFrame_OnClick(self, ...)) then  return  end -- Handle right-clicking to hide the frame.
+        if (AlertFrame_OnClick(self, ...)) then return end   -- Handle right-clicking to hide the frame.
         self.onClick(self, ...)
     elseif (self.onClick == false) then
         AlertFrame_OnClick(self, ...)
@@ -1221,7 +1222,7 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
     frame.Icon.Texture:ClearAllPoints()
     frame.Icon.Texture:SetPoint("LEFT", frame, 7, 0)
 
-    if icon and C_Texture.GetAtlasInfo(icon) then
+    if icon and GetAtlasInfo(icon) then
         frame.Icon.Texture:SetAtlas(icon)
     else
         frame.Icon.Texture:SetTexture(icon)
@@ -1238,6 +1239,7 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
 end
 
 local function GetGuildInvites()
+    --[[
     local numGuildInvites = 0
     local date = C_DateAndTime.GetCurrentCalendarTime()
     for index = 1, C_Calendar.GetNumGuildEvents() do
@@ -1255,6 +1257,8 @@ local function GetGuildInvites()
     end
 
     return numGuildInvites
+    ]]
+    return 0
 end
 
 local function toggleCalendar()
@@ -1265,10 +1269,11 @@ end
 local function alertEvents()
     if CalendarFrame and CalendarFrame:IsShown() then return false end
     local showAlert = false
-    local num = C_Calendar.GetNumPendingInvites()
+    local num = 0 -- NYI C_Calendar.GetNumPendingInvites()
     if num ~= numInvites then
         if num > 0 then
-            GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["You have %s pending calendar invite(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["You have %s pending calendar invite(s)."]:format(num), nil,
+                CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
             showAlert = true
         end
         numInvites = num
@@ -1283,7 +1288,8 @@ local function alertGuildEvents()
     local num = GetGuildInvites()
     if num > 0 then
         -- /run GW2_UIAlertSystem.AlertSystem:AddAlert("tt", nil, CALENDAR_STATUS_INVITED, function() if not CalendarFrame then LoadAddOn("Blizzard_Calendar") end ShowUIPanel(CalendarFrame) end , "Interface/AddOns/GW2_UI/textures/icons/clock", false)
-        GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["You have %s pending guild event(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
+        GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["You have %s pending guild event(s)."]:format(num), nil,
+            CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
         showAlert = true
     end
 
@@ -1323,15 +1329,18 @@ GW.UpdateAlertSettings = UpdateSettings
 local function AlertContainerFrameOnEvent(self, event, ...)
     if event == "PLAYER_LEVEL_UP" and settings.showLevelUp then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
-        GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+        GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP,
+            false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
         -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
         if talentPoints and talentPoints > 0 then
-            GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false,
+                "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
             --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
         end
         if C_SpecializationInfo.CanPlayerUsePVPTalentUI() and numNewPvpTalentSlots and numNewPvpTalentSlots > 0 then
-            GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false,
+                "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
             --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
         end
 
@@ -1346,15 +1355,16 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         local spellID = ...
         if ignoreDragonRidingSpells[spellID] then return end
         local name, _, icon = GetSpellInfo(spellID)
-        toastQueue[#toastQueue + 1] = {name = name, spellID = spellID, icon = icon, event = event}
+        toastQueue[#toastQueue + 1] = { name = name, spellID = spellID, icon = icon, event = event }
         C_Timer.After(1.5, function()
             for _, v in pairs(toastQueue) do
                 if v ~= nil then
-                    GW2_UIAlertSystem.AlertSystem:AddAlert(SPELL_BUCKET_ABILITIES_UNLOCKED, nil, v.name, false, v.icon, false, v.spellID)
+                    GW2_UIAlertSystem.AlertSystem:AddAlert(SPELL_BUCKET_ABILITIES_UNLOCKED, nil, v.name, false, v.icon,
+                        false, v.spellID)
                 end
             end
             wipe(toastQueue)
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound",settings.newSpellSound), "Master")
+            PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.newSpellSound), "Master")
         end)
         -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(GetSpellInfo(48181), nil, LEVEL_UP_ABILITY, false, select(3, GetSpellInfo(48181)), false, 48181)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" and settings.showNewSpell then
@@ -1373,7 +1383,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
             if hasMail then
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false,
+                    "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.newMailSound), "Master")
             end
         end
@@ -1395,17 +1406,21 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             showRepair = false
             C_Timer.After(30, function() showRepair = true end)
             -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s slot needs to repair, current durability is %d.", INVTYPE_HEAD, 20), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
-            GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s slot needs to repair, current durability is %d."], slots[1][2], value), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(
+            format(GW.L["%s slot needs to repair, current durability is %d."], slots[1][2], value), nil,
+                MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
             PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.repairSound), "Master")
         end
     elseif event == "QUEST_ACCEPTED" and settings.showParagon then
         local questId = ...
         if PARAGON_QUEST_ID[questId] then
-            local text = GW.RGBToHex(0.22, 0.37, 0.98) .. (GetFactionInfoByID(PARAGON_QUEST_ID[questId][1]) or UNKNOWN) .. "|r"
+            local text = GW.RGBToHex(0.22, 0.37, 0.98) ..
+            (GetFactionInfoByID(PARAGON_QUEST_ID[questId][1]) or UNKNOWN) .. "|r"
             local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questId))
             -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("|cff00c0fa%s|r", GetFactionInfoByID(2407)), nil, format("|cff00c0fa%s|r", "TESTE"), false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
-            GW2_UIAlertSystem.AlertSystem:AddAlert(name, nil, text, false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound",settings.paragonSound), "Master")
+            GW2_UIAlertSystem.AlertSystem:AddAlert(name, nil, text, false,
+                "Interface\\Icons\\Achievement_Quests_Completed_08", false)
+            PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.paragonSound), "Master")
         end
     elseif event == "VIGNETTE_MINIMAP_UPDATED" and settings.showRare then
         if VignetteExclusionMapIDs[GW.Libs.GW2Lib:GetPlayerLocationMapID()] or IsInGroup() or IsInRaid() or IsPartyLFG() then return end
@@ -1419,7 +1434,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
             if vignetteGUID ~= self.lastMinimapRare.id then
                 vignetteInfo.nameColored = format("|cff00c0fa%s|r", vignetteInfo.name)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil, vignetteInfo.nameColored, false, vignetteInfo.atlasName, false, nil, vignetteInfo.name)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil,
+                    vignetteInfo.nameColored, false, vignetteInfo.atlasName, false, nil, vignetteInfo.name)
                 self.lastMinimapRare.id = vignetteGUID
 
                 local time = GetTime()
@@ -1455,7 +1471,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             if GetTime() - LFG_Timer > 20 then
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.callToArmsSound), "Master")
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager),
+                    nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
                 LFG_Timer = GetTime()
             end
         end
@@ -1472,24 +1489,29 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             if settings.showMageTable and spellID == 190336 then -- Refreshment Table
                 local name, _, icon = GetSpellInfo(190336)
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s created a table of Conjured Refreshments.", "Hansi"), nil, GetSpellInfo(190336), false, select(3, GetSpellInfo(190336)), false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s created a table of Conjured Refreshments."], srcName), nil, name, false, icon, false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(
+                format(GW.L["%s created a table of Conjured Refreshments."], srcName), nil, name, false, icon, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.mageTableSound), "Master")
             end
         elseif subEvent == "SPELL_CREATE" then
             if settings.showRitualOfSummoning and spellID == 698 then -- Ritual of Summoning
                 local name, _, icon = GetSpellInfo(698)
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s is performing a Ritual of Summoning.", "Hansi"), nil, GetSpellInfo(698), false, select(3, GetSpellInfo(698)), false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s is performing a Ritual of Summoning."], srcName), nil, name, false, icon, false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s is performing a Ritual of Summoning."], srcName),
+                    nil, name, false, icon, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.ritualOfSummoningSound), "Master")
             elseif settings.showSpoulwell and spellID == 29893 then -- Soul Well
                 local name, _, icon = GetSpellInfo(29893)
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s created a Soulwell.", "Hansi"), nil, GetSpellInfo(29893), false, select(3, GetSpellInfo(29893)), false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s created a Soulwell."], srcName), nil, name, false, icon, false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s created a Soulwell."], srcName), nil, name, false,
+                    icon, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.spoulwellSound), "Master")
             elseif settings.showMagePortal and GW.MagePortals[spellID] then
                 local name, _, icon = GetSpellInfo(spellID)
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", GetSpellInfo(224871):gsub("^.+:%s+", "")), nil, GetSpellInfo(224871), false, select(3, GetSpellInfo(224871)), false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, name:gsub("^.+:%s+", "")), nil, name, false, icon, false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(
+                format(GW.L["%s placed a portal to %s."], srcName, name:gsub("^.+:%s+", "")), nil, name, false, icon,
+                    false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.magePortalSound), "Master")
             end
         end
@@ -1507,7 +1529,7 @@ local function LoadAlertSystem()
         -- Achievements
         hooksecurefunc(AchievementAlertSystem, "setUpFunction", skinAchievementAlert)
         hooksecurefunc(CriteriaAlertSystem, "setUpFunction", skinCriteriaAlert)
-        hooksecurefunc(MonthlyActivityAlertSystem, "setUpFunction", skinCriteriaAlert)
+        --    hooksecurefunc(MonthlyActivityAlertSystem, "setUpFunction", skinCriteriaAlert)
 
         -- Encounters
         hooksecurefunc(DungeonCompletionAlertSystem, "setUpFunction", skinDungeonCompletionAlert)
@@ -1521,8 +1543,8 @@ local function LoadAlertSystem()
         hooksecurefunc(LootAlertSystem, "setUpFunction", skinLootWonAlert)
         hooksecurefunc(LootUpgradeAlertSystem, "setUpFunction", skinLootUpgradeAlert)
         hooksecurefunc(MoneyWonAlertSystem, "setUpFunction", skinMoneyWonAlert)
-        hooksecurefunc(EntitlementDeliveredAlertSystem, "setUpFunction", skinEntitlementDeliveredAlert)
-        hooksecurefunc(RafRewardDeliveredAlertSystem, "setUpFunction", skinRafRewardDeliveredAlert)
+        --       hooksecurefunc(EntitlementDeliveredAlertSystem, "setUpFunction", skinEntitlementDeliveredAlert)
+        --   hooksecurefunc(RafRewardDeliveredAlertSystem, "setUpFunction", skinRafRewardDeliveredAlert)
 
         -- Professions
         hooksecurefunc(DigsiteCompleteAlertSystem, "setUpFunction", skinDigsiteCompleteAlert)
@@ -1534,10 +1556,10 @@ local function LoadAlertSystem()
         -- Pets/Mounts
         hooksecurefunc(NewPetAlertSystem, "setUpFunction", skinNewPetAlert)
         hooksecurefunc(NewMountAlertSystem, "setUpFunction", skinNewPetAlert)
-        hooksecurefunc(NewToyAlertSystem, "setUpFunction", skinNewPetAlert)
+        --   hooksecurefunc(NewToyAlertSystem, "setUpFunction", skinNewPetAlert)
 
         -- Cosmetics
-        hooksecurefunc(NewCosmeticAlertFrameSystem, "setUpFunction", skinNewPetAlert)
+        --   hooksecurefunc(NewCosmeticAlertFrameSystem, "setUpFunction", skinNewPetAlert)
 
         -- Garrisons
         hooksecurefunc(GarrisonFollowerAlertSystem, "setUpFunction", skinGarrisonFollowerAlert)
@@ -1554,7 +1576,7 @@ local function LoadAlertSystem()
         --Bonus Roll Loot
         skinBonusRollLoot()
     end
-
+--[[
     -- add flare animation
     hooksecurefunc("AlertFrame_PlayIntroAnimation", function(self)
         -- show flare
@@ -1578,6 +1600,7 @@ local function LoadAlertSystem()
             end)
         end
     end)
+    ]]
 
     if GetSetting("ALERTFRAME_ENABLED") then
         GW.AlertContainerFrame = CreateFrame("Frame", nil, UIParent)
@@ -1601,7 +1624,8 @@ local function LoadAlertSystem()
             end
         end
 
-        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"], "AlertPos", ALL .. ",Blizzard,Widgets", {300, 5}, {"default"}, nil, postDragFunction)
+        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"], "AlertPos", ALL .. ",Blizzard,Widgets",
+            { 300, 5 }, { "default" }, nil, postDragFunction)
 
         GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
         GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
@@ -1616,7 +1640,7 @@ local function LoadAlertSystem()
         GW.AlertContainerFrame:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
         GW.AlertContainerFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
-        GW.AlertContainerFrame.lastMinimapRare = {time = 0, id = nil}
+        GW.AlertContainerFrame.lastMinimapRare = { time = 0, id = nil }
 
         GW.AlertContainerFrame:SetScript("OnEvent", AlertContainerFrameOnEvent)
     end
@@ -1630,7 +1654,8 @@ local function LoadOurAlertSubSystem()
 
     -- Add customs alert system
     if not GW2_UIAlertSystem.AlertSystem then
-        GW2_UIAlertSystem.AlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate", GW2_UIAlertFrame_SetUp, 4, math.huge)
+        GW2_UIAlertSystem.AlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate",
+            GW2_UIAlertFrame_SetUp, 4, math.huge)
     end
 end
 GW.LoadOurAlertSubSystem = LoadOurAlertSubSystem

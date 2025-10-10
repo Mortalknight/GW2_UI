@@ -328,7 +328,7 @@
                 <Scripts>
                     <OnEnter>
                         local avgItemLevel, avgItemLevelEquipped, avgItemLevelPVP = GetAverageItemLevel()
-                        local minItemLevel = C_PaperDollInfo.GetMinItemLevel()
+                        local minItemLevel = 0
                         local displayItemLevel = math.max(minItemLevel or 0, avgItemLevelEquipped)
 
                         displayItemLevel = floor(displayItemLevel)
