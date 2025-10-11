@@ -109,7 +109,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         return
     end
 
-    local stageName, stageDescription, numCriteria, _, _, _, _, _, _, questID = C_Scenario.GetStepInfo()
+    local stageName, stageDescription, numCriteria, _, _, _, _, _, allSpellInfo = C_Scenario.GetStepInfo()
     local _, _, difficultyID, difficultyName = GetInstanceInfo()
     local isMythicKeystone = difficultyID == 8
     stageDescription = stageDescription or ""
@@ -219,7 +219,8 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         block:UpdateFindGroupButton(scenarioID, true)
     end
 
-    GW.CombatQueue_Queue(nil, block.UpdateObjectiveActionButton, {block})
+    -- add spells
+    GW.CombatQueue_Queue(nil, block.UpdateScenarioSpell, {block, allSpellInfo})
 
     for criteriaIndex = 1, numCriteria do
         local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
@@ -660,6 +661,8 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     self.timerBlock:SetScript("OnEvent", self.timerBlock.TimerBlockOnEvent)
 
     self.block = self:GetBlock(1, "SCENARIO", true)
+    Mixin(self.block.actionButton, ScenarioSpellButtonMixin)
+    self.block.actionButton:SetScript("OnEnter", self.block.actionButton.OnEnter)
     self.block:ClearAllPoints()
     self.block:SetPoint("TOPRIGHT", self.timerBlock, "BOTTOMRIGHT", 0, 0)
     self.block.Header:SetText("")

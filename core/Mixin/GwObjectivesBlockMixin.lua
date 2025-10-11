@@ -322,6 +322,25 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
     end
 end
 
+function GwObjectivesBlockTemplateMixin:UpdateScenarioSpell(spellInfo)
+    local btn = self.actionButton
+    self.hasItem = false
+
+    if not GW.Classic then
+        if spellInfo and spellInfo[1] then
+            local data = spellInfo[1]
+            btn:SetSpell(data)
+            btn:SetAttribute("type", "spell")
+            btn:SetAttribute("spell", data.spellID)
+            btn:Show()
+            self.hasItem = true
+            return
+        end
+        btn:Hide()
+        btn:SetScript("OnUpdate", nil)
+    end
+end
+
 function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type)
     if not self.actionButton or not self.hasItem then
         return
@@ -332,7 +351,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type
         height = height + GW.ObjectiveTrackerContainer.Scenario:GetHeight()
     end
     if not GW.Classic then
-        height = height +GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()
+        height = height + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()
     end
 
     if GW.ObjectiveTrackerContainer.Notification:IsShown() then
@@ -341,7 +360,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type
         height = height - 40
     end
     if type == "SCENARIO" then
-        height = height - (GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight())
+        height = height - (GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight())
     end
     if type == "EVENT" then
         height = height + GW.ObjectiveTrackerContainer.Quests:GetHeight() + GW.ObjectiveTrackerContainer.Campaign:GetHeight()

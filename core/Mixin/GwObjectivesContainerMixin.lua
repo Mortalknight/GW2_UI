@@ -66,6 +66,7 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
         newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
         newBlock.actionButton.NormalTexture:SetTexture(nil)
         newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        newBlock.actionButton.Icon = newBlock.actionButton.icon
         if GW.Retail then
             Mixin(newBlock.actionButton, QuestObjectiveItemButtonMixin)
             Mixin(newBlock.actionButton.GlowAnim, QuestObjectiveItemGlowAnimMixin)

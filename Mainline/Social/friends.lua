@@ -16,7 +16,8 @@ local ONE_YEAR = 12 * ONE_MONTH
 
 local icons = {
     Game = {
-        Alliance = { Name = FACTION_ALLIANCE, Order = 1, Launcher = MediaPath.."GameIcons/Launcher/alliance.png" },        Horde    = { Name = FACTION_HORDE,    Order = 2, Launcher = MediaPath.."GameIcons/Launcher/horde.png" },
+        Alliance = { Name = FACTION_ALLIANCE, Order = 1, Launcher = MediaPath.."GameIcons/Launcher/alliance.png" },
+        Horde    = { Name = FACTION_HORDE,    Order = 2, Launcher = MediaPath.."GameIcons/Launcher/horde.png" },
         Neutral  = { Name = FACTION_STANDING_LABEL4, Order = 3, Launcher = MediaPath.."GameIcons/Launcher/wow.png" },
         App      = { Name = L["App"], Order = 4, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/battlenet.png" },
         CLNT     = { Name = L["App"], Order = 4, Color = "82C5FF", Launcher = MediaPath.."GameIcons/Launcher/battlenet.png" },
