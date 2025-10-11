@@ -346,7 +346,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type
         return
     end
 
-    local height = self.fromContainerTopHeight
+    local height = self.fromContainerTopHeight or 0
     if GW.Retail then
         height = height + GW.ObjectiveTrackerContainer.Scenario:GetHeight()
     end
