@@ -312,9 +312,10 @@ local function HandleExpansionButton()
     end
 
     local garrisonType = C_Garrison.GetLandingPageGarrisonType()
-    garrison.garrisonType = garrisonType
 
-    if garrison.garrisonMode then
+    garrison.garrisonType = garrisonType
+ 
+    if garrison.garrisonType then
         if (garrisonType == Enum.GarrisonType.Type_6_0) then
             garrison.faction = UnitFactionGroup("player")
             garrison.title = GARRISON_LANDING_PAGE_TITLE;
@@ -470,15 +471,15 @@ local function LoadMinimap()
         frame:GwKill()
     end
 
-    --[[NYI
-    if ExpansionLandingPageMinimapButton.UpdateIcon then
+
+    if ExpansionLandingPageMinimapButton and ExpansionLandingPageMinimapButton.UpdateIcon then
         hooksecurefunc(ExpansionLandingPageMinimapButton, "UpdateIcon", HandleExpansionButton)
         --ExpansionLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter) -- This was for SL
     else
         hooksecurefunc("GarrisonLandingPageMinimapButton_UpdateIcon", HandleExpansionButton)
         --GarrisonLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter) -- This was for SL
     end
-    ]]
+ 
     HandleExpansionButton()
 
     QueueStatusFrame:SetClampedToScreen(true)

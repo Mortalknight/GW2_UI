@@ -88,7 +88,7 @@ local function Guild_OnEnter(self)
     if not IsInGuild() then return end
 
     GameTooltip:ClearLines()
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
     -- get blizzard tooltip infos:
     GameTooltip_SetTitle(GameTooltip, self.tooltipText)
     if not self:IsEnabled() then

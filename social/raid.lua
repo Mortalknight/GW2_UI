@@ -167,6 +167,8 @@ local function LoadRaidList(tabContainer)
     RaidFrameAllAssistCheckButton.text:SetPoint("LEFT", RaidFrameAllAssistCheckButton, "RIGHT", 5, -2)
     RaidFrameAllAssistCheckButton.text:SetText(ALL .. " |TInterface/AddOns/GW2_UI/textures/party/icon-assist:25:25:0:-3|t")
     --ALL_ASSIST_LABEL
+    --[[
+
     RaidFrame.RoleCount:ClearAllPoints()
     RaidFrame.RoleCount:SetPoint("TOP", -80, -25)
 
@@ -174,7 +176,7 @@ local function LoadRaidList(tabContainer)
     RaidFrame.RoleCount.HealerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
     RaidFrame.RoleCount.DamagerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
     RaidFrame.RoleCount.DamagerIcon:SetSize(20, 20)
-
+    ]]
     RaidFrameAllAssistCheckButton:GwSkinCheckButton()
     RaidFrameAllAssistCheckButton:SetSize(18, 18)
 

@@ -366,7 +366,7 @@ AFP("hook_MainMenuMicroButton_OnUpdate", hook_MainMenuMicroButton_OnUpdate)
 
 local function update_OnEnter(self)
     GameTooltip:ClearLines()
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
     GameTooltip_SetTitle(GameTooltip, L["GW2 UI Update"])
     GameTooltip:AddLine(self.tooltipText)
     GameTooltip:Show()
@@ -393,7 +393,7 @@ local function mailIconOnEvent(self, event)
 end
 
 local function mailIconOnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
     if GameTooltip:IsOwned(self) then
         MinimapMailFrameUpdate()
     end
@@ -414,7 +414,7 @@ local function workOrderIconOnEvent(self, event)
 end
 
 local function workOrderIconOnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
     local wrap = false
     GameTooltip_AddNormalLine(GameTooltip, MAILFRAME_CRAFTING_ORDERS_TOOLTIP_TITLE, wrap)
     for _, countInfo in ipairs(self.countInfos) do

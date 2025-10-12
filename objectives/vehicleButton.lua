@@ -10,6 +10,7 @@ local function SetPosition(_ ,_, relativeTo)
 end
 
 local function LoadVehicleButton()
+    --MainMenuBarVehicleLeaveButton
     if not VehicleSeatIndicator.PositionVehicleFrameHooked then
         hooksecurefunc(VehicleSeatIndicator, "SetPoint", SetPosition)
 
@@ -26,7 +27,7 @@ local function LoadVehicleButton()
             VehicleSeatIndicator:Hide()
             VehicleSeatIndicator.currSkin = nil
 
-            DurabilityFrame:SetAlerts()
+        --    DurabilityFrame:SetAlerts()
        end
     end
 end

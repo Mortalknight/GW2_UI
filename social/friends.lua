@@ -88,7 +88,7 @@ local function LoadFriendList(tabContainer)
         icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
 
         name:SetFont(UNIT_NAME_FONT, 14)
-        info:SetFont(UNIT_NAME_FONT, 13)
+        info:SetFont(UNIT_NAME_FONT, 12)
 
         icon:ClearAllPoints()
         icon:SetPoint("RIGHT", button, "RIGHT", -24, 0)

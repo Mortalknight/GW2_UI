@@ -896,7 +896,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             if not found or not info then
                 local eventType, channelID = arg1, arg7
                 if not ChatFrame_CheckAddChannel(frame, eventType, channelID) then
-                    return true
+                 --   return true
                 end
             end
         end

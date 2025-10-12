@@ -454,7 +454,7 @@ local function LoadDodgeBar(hg, asTargetFrame)
 
     -- setup hook to hide the dodge bar when in vehicle/override UI
     MixinHideDuringPetAndOverride(fmdb)
-
+        updateAnim(fmdb, GetTime(), 0.1, 0, 1)
     Debug("LoadDodgeBar done")
     return fmdb
 end

@@ -9,7 +9,7 @@ end
 
 local function LoadRecruitAFriendList(tabContainer)
     local RAFFrame = CreateFrame("Frame", "GwRAFWindow", tabContainer, "GwRAFWindow")
-
+    --[[
     RecruitAFriendFrame.RewardClaiming:SetParent(RAFFrame.claming)
     RecruitAFriendFrame.RewardClaiming:ClearAllPoints()
     RecruitAFriendFrame.RewardClaiming:SetAllPoints(RAFFrame.claming)
@@ -37,6 +37,7 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendFrame.RewardClaiming.NextRewardButton.CircleMask:Hide()
 	RecruitAFriendFrame.RewardClaiming.NextRewardButton.IconBorder:GwKill()
     RecruitAFriendFrame.RewardClaiming.NextRewardButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+  
 
     RecruitAFriendFrame.RecruitList:SetParent(RAFFrame.RecruitList)
     RecruitAFriendFrame.RecruitList:ClearAllPoints()
@@ -65,5 +66,6 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendRewardsFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
     hooksecurefunc(RecruitAFriendRewardsFrame, "UpdateRewards", RAFRewards)
     RAFRewards()
+      ]]--
 end
 GW.LoadRecruitAFriendList = LoadRecruitAFriendList

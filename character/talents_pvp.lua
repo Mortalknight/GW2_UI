@@ -12,7 +12,7 @@ local function spellButton_OnEnter(self)
 
     if self.isFuture then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(self.unlockLevel), 1, 1, 1)
+        GameTooltip:AddLine(UNLOCKED_AT_LEVEL:format(self.unlockLevel), 1, 1, 1)
     elseif self:GetParent():GetParent().pickingSlot then
         GameTooltip:AddLine(PVP_TALENT_SLOT_EMPTY, GREEN_FONT_COLOR:GetRGB())
     end

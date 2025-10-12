@@ -2,6 +2,7 @@ local _, GW = ...
 local mapInfoWatcher = CreateFrame("Frame")
 local coordsWatcher = CreateFrame("Frame")
 local mapRects, tempVec2D = {}, CreateVector2D(0, 0)
+local  HBD = nil
 
 local function GetPlayerMapPos(mapID)
     tempVec2D.x, tempVec2D.y = UnitPosition("player")
@@ -128,6 +129,7 @@ local function MapInfoWatcherOnEvent(self,event)
 end
 
 local function InitLocationDataHandler()
+    HBD = LibStub("HereBeDragons-1.0")
     mapInfoWatcher:RegisterEvent("LOADING_SCREEN_DISABLED")
     mapInfoWatcher:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     mapInfoWatcher:RegisterEvent("ZONE_CHANGED")

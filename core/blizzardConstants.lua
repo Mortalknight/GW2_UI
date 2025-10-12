@@ -164,9 +164,9 @@ function IsPlayerAtEffectiveMaxLevel()
     return (UnitLevel("player") >= GetMaxLevelForPlayerExpansion())
 end
 
-function C_CVar.SetCVar(k,v)
+function C_CVar.SetCVar(k, v)
     if not GetCVar(k) then return end
-    SetCVar(k,v)
+    SetCVar(k, v)
 end
 
 function C_CVar.GetCVar(v)
@@ -312,7 +312,8 @@ function C_Container.GetContainerNumSlots(i)
 end
 
 function C_Container.GetContainerItemInfo(i, b)
-    local iconFileID, stackCount, isLocked, quality, isReadable, hasLoot, hyperlink, isFiltered, hasNoValue, itemID, isBound = GetContainerItemInfo(i, b)
+    local iconFileID, stackCount, isLocked, quality, isReadable, hasLoot, hyperlink, isFiltered, hasNoValue, itemID, isBound =
+        GetContainerItemInfo(i, b)
     local element = {}
     element.iconFileID = iconFileID
     element.stackCount = stackCount
@@ -426,6 +427,12 @@ function C_GossipInfo.GetFriendshipReputation(factionID)
     return t
 end
 
+function C_GossipInfo.GetFriendshipReputationRanks(friendID)
+    local t = {}
+    t.currentLevel, t.maxLevel = GetFriendshipReputationRanks(friendID)
+    return t
+end
+
 function C_Reputation.IsMajorFaction(factionID)
     return false
 end
@@ -447,6 +454,10 @@ function C_SpecializationInfo.CanPlayerUseTalentSpecUI()
         return true
     end
     return false
+end
+
+function C_SpecializationInfo.CanPlayerUsePVPTalentUI()
+    return GW.mylevel == 100
 end
 
 function C_SpecializationInfo.GetSpellsDisplay(specializationID)
@@ -482,10 +493,59 @@ function C_FriendList.GetNumFriends()
     return numberOfFriends or 0
 end
 
+function C_FriendList.GetFriendInfoByIndex(index)
+    local t = {}
+    t.name, t.level, t.className, t.area, t.connected, t.notes, t.afk, t.guid = GetFriendInfo(index)
+    return t
+    --[[
+
+connected 	boolean 	If the friend is online
+name 	string 	
+className 	string? 	Friend's class, or "Unknown" (if offline)
+area 	string? 	Current location, or "Unknown" (if offline)
+notes 	string? 	
+guid 	string 	GUID, example: "Player-1096-085DE703"
+level 	number 	Friend's level, or 0 (if offline)
+dnd 	boolean 	If the friend's current status flag is DND
+afk 	boolean 	If the friend's current status flag is AFK
+rafLinkType 	Enum.RafLinkType🔗 	
+mobile 	boolean
+    ]]
+end
+
 function C_FriendList.GetNumOnlineFriends()
     local onlineFriends, numberOfFriends = getNumberFirends();
 
     return onlineFriends or 0
+end
+
+function C_FriendList.GetNumIgnores()
+    return GetNumIgnores()
+end
+
+function C_FriendList.GetNumWhoResults()
+    return GetNumWhoResults()
+end
+
+function C_FriendList.SetWhoToUi()
+    return SetWhoToUI()
+end
+
+function C_FriendList.GetWhoInfo(index)
+    local t = {}
+    t.fullName, t.fullGuildName, t.level, t.raceStr, t.classStr, t.area, t.filename, t.gender = GetWhoInfo(index)
+    return t
+    --[[
+fullName 	string 	Character-Realm name
+fullGuildName 	string 	Guild name
+level 	number 	
+raceStr 	string 	
+classStr 	string 	Localized class name
+area 	string 	The character's current zone
+filename 	string? 	Localization-independent classFilename
+gender 	number 	Sex of the character. 2 for male, 3 for female
+timerunningSeasonID 	number? 	10.2.7
+    ]]
 end
 
 function C_MountJournal.GetCollectedDragonridingMounts()
@@ -515,8 +575,6 @@ end
 function C_TooltipInfo.GetInventoryItem(unit, slot)
     return {}
 end
-
-
 
 function C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
     --[[

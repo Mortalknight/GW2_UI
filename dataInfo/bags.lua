@@ -7,7 +7,7 @@ local iconString = "|T%s:14:14:0:0:64:64:4:60:4:60|t "
 
 local function Bags_OnEnter(self)
     GameTooltip:ClearLines()
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
     -- get blizzard tooltip infos:
     GameTooltip_SetTitle(GameTooltip, self.tooltipText)
     if not self:IsEnabled() then

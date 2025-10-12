@@ -610,7 +610,7 @@ local function LoadGossipSkin()
     ItemTextFrameCloseButton:SetSize(20, 20)
 
     GossipGreetingScrollFrame:ClearAllPoints()
-    GossipGreetingScrollFrame:SetPoint("TOPLEFT", GossipFrame.ListBackground, "TOPLEFT",10,0)
+    GossipGreetingScrollFrame:SetPoint("TOPLEFT", GossipFrame.ListBackground, "TOPLEFT", 10, 0)
     GossipGreetingScrollFrame:SetPoint("BOTTOMRIGHT", GossipFrame.ListBackground, "BOTTOMRIGHT", 0, 126)
     GW.HandleNextPrevButton(ItemTextPrevPageButton)
     GW.HandleNextPrevButton(ItemTextNextPageButton)
@@ -746,12 +746,16 @@ local function LoadGossipSkin()
     QuestGreetingScrollFrame:GwStripTextures()
 
     QuestFrameGreetingPanel:HookScript("OnShow", function(frame)
-        for button in frame.titleButtonPool:EnumerateActive() do
-            button.Icon:SetDrawLayer("ARTWORK")
+        for i = 1, 20 do
+            local button = _G["QuestTitleButton" .. i]
+            if button ~= nil then
+                local Icon = _G["QuestTitleButton" .. i.."QuestIcon"]
+                Icon:SetDrawLayer("ARTWORK")
 
-            local text = button:GetFontString():GetText()
-            if text and strfind(text, "|cff000000") then
-                button:GetFontString():SetText(gsub(text, "|cff000000", "|cffffe519"))
+                local text = button:GetFontString():GetText()
+                if text and strfind(text, "|cff000000") then
+                    button:GetFontString():SetText(gsub(text, "|cff000000", "|cffffe519"))
+                end
             end
         end
     end)

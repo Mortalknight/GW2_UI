@@ -608,9 +608,11 @@ local function evPlayerLogin(self)
     GW.MakeAltPowerBarMovable()
     GW.LoadMerchantFrameSkin()
     GW.LoadGossipSkin()
-    GW.loadLootToast()
+   -- GW.loadLootToast()
     GW.LoadMailSkin()
     GW.LoadLootFrameSkin()
+    GW.LoadVehicleButton()
+    GW.LoadMiscBlizzardFrameSkins()
     -- Skins: BLizzard & Addons
     --[[WIP
     GW.LoadStaticPopupSkin()
@@ -619,7 +621,7 @@ local function evPlayerLogin(self)
     GW.LoadLFGSkins()
     GW.LoadReadyCheckSkin()
     GW.LoadTalkingHeadSkin()
-    GW.LoadMiscBlizzardFrameSkins()
+    
     GW.LoadAddonListSkin()
 
     GW.LoadDressUpFrameSkin()
@@ -627,14 +629,13 @@ local function evPlayerLogin(self)
 
     GW.LoadTimeManagerSkin()
 
-    GW.LoadLootFrameSkin()
 
     GW.LoadDetailsSkin()
     GW.LoadImmersionAddonSkin()
 
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
-    GW.LoadVehicleButton()
+    
 
     GW.WidgetUISetup()
     ]]
@@ -733,7 +734,7 @@ local function evPlayerLogin(self)
 
     GW.LoadCharacter()
 
-    -- GW.LoadSocialFrame()
+    GW.LoadSocialFrame()
 
     --NYI GW.Create_Raid_Counter()
     GW.LoadRaidbuffReminder()

@@ -367,7 +367,7 @@ local function loadTalents()
             if self:GetParent().active ~= true then
                 return
             end
-            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
+            GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, 0)
             GameTooltip:ClearLines()
             GameTooltip:SetTalent(self.talentID)
             GameTooltip:Show()
@@ -453,10 +453,10 @@ local function spellButton_OnEnter(self)
     if self.isFuture then
         if self.unlockLevel then
             GameTooltip:AddLine(" ")
-            GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(self.unlockLevel), 1, 1, 1)
+            GameTooltip:AddLine(UNLOCKED_AT_LEVEL:format(self.unlockLevel), 1, 1, 1)
         elseif GetSpellLevelLearned(self.spellId) > 0 then
             GameTooltip:AddLine(" ")
-            GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(GetSpellLevelLearned(self.spellId)), 1, 1, 1)
+            GameTooltip:AddLine(UNLOCKED_AT_LEVEL:format(GetSpellLevelLearned(self.spellId)), 1, 1, 1)
         end
     end
     GameTooltip:Show()
@@ -1304,7 +1304,6 @@ local function LoadTalents(tabContainer)
 
 
     ]]
-    print(ToggleTalentFrame)
     -- TODO: not sure if we want these or not
     hooksecurefunc("ToggleTalentFrame", toggleTalentFrame)
     hooksecurefunc("ToggleSpellBook", toggleSpellBook)

@@ -26,7 +26,7 @@ end
 
 local function TalentButton_OnEnter(self)
     GameTooltip:ClearLines()
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
     -- get blizzard tooltip infos:
     GameTooltip:AddLine( self.tooltipText)
     if not self:IsEnabled() then
