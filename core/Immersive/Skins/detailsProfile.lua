@@ -121,7 +121,7 @@ local function LoadDetailsSkin()
                     false, -- [3]
                 },
                 ["alpha"] = 1,
-                ["icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_class_icons.png",
+                ["icon_file"] = GW.Libs.LSM:Fetch("icon", "GW2_UI_Details_Classicons"),
                 ["no_icon"] = false,
                 ["start_after_icon"] = false,
                 ["icon_size_offset"] = 1.5,
@@ -271,7 +271,7 @@ local function LoadDetailsSkin()
                     false, -- [3]
                 },
                 ["alpha"] = 1,
-                ["icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_class_icons_colored.png",
+                ["icon_file"] = GW.Libs.LSM:Fetch("icon", "GW2_UI_Details_Classicons_colored"),
                 ["no_icon"] = false,
                 ["start_after_icon"] = false,
                 ["icon_size_offset"] = 1.5,

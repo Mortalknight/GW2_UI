@@ -267,6 +267,9 @@ GW.Libs.LSM:Register("icon", "GW2_UI_Calendar", "Interface/AddOns/GW2_UI/texture
 GW.Libs.LSM:Register("icon", "GW2_UI_Close", "Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal.png")
 GW.Libs.LSM:Register("icon", "GW2_UI_Close_Hover", "Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover.png")
 
+GW.Libs.LSM:Register("icon", "GW2_UI_Details_Classicons_colored", "Interface/AddOns/GW2_UI/textures/addonSkins/details_class_icons_colored.png")
+GW.Libs.LSM:Register("icon", "GW2_UI_Details_Classicons", "Interface/AddOns/GW2_UI/textures/addonSkins/details_class_icons.png")
+
 GW.Libs.LSM:Register("statusbar", "GW2_UI_Details", "Interface/Addons/GW2_UI/textures/addonSkins/details_statusbar.png")
 GW.Libs.LSM:Register("border", "GW2_UI", "Interface/Addons/GW2_UI/textures/uistuff/ui-tooltip-border.png")
 
