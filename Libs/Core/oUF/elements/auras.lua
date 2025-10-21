@@ -84,7 +84,7 @@ local function UpdateTooltip(self)
         else
             GameTooltip:SetUnitBuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
         end
-    else
+    elseif self.index then
         GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self.index, self.isHarmful and "HARMFUL" or "HELPFUL")
     end
 end
