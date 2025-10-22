@@ -18,6 +18,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.4.2", {
+    {GW.ChangelogType.change, [=[F1.15.8 fixes]=]},
+})
+
 addChange("8.4.1", {
     {GW.ChangelogType.bug, [=[Fix Bag lua error (Era)]=]},
     {GW.ChangelogType.bug, [=[Fix PetTracker lua error (Retail)]=]},
