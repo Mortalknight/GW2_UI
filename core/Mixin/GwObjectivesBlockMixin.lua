@@ -279,7 +279,9 @@ function GwObjectivesBlockTemplateMixin:IsQuestAutoTurnInOrAutoAccept(blockQuest
 end
 
 function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
+    if not self.actionButton then return end
     local btn = self.actionButton
+
     self.hasItem = false
 
     if not GW.Classic then

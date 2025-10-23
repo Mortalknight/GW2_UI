@@ -362,13 +362,18 @@ local function PaperDollUpdatePetStats()
     local y = 0
 
     GwDressingRoomPet.model:SetUnit("pet")
-    GwDressingRoomPet.characterName:SetText((UnitName("pet") or "") .. " - " .. format(UNIT_LEVEL_TEMPLATE, (UnitLevel("pet") or ""), ""))
+    if UnitCreatureFamily("pet") then
+		GwDressingRoomPet.characterName:SetText((UnitName("pet") or "") .. " - " .. format(UNIT_LEVEL_TEMPLATE, (UnitLevel("pet") or "")) .. " - " .. (UnitCreatureFamily("pet") or ""))
+	else
+        GwDressingRoomPet.characterName:SetText((UnitName("pet") or "") .. " - " .. format(UNIT_LEVEL_TEMPLATE, (UnitLevel("pet") or "")))
+    end
 
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
     if isHunterPet then
         local currXP, nextXP = GetPetExperience()
 
-        GwDressingRoomPet.model.expBar:SetValue(currXP / nextXP)
+        GwDressingRoomPet.model.expBar:SetMinMaxValues(min(0, currXP), nextXP)
+        GwDressingRoomPet.model.expBar:SetValue(currXP)
         GwDressingRoomPet.model.expBar.value:SetText(GW.CommaValue(currXP) .. " / " .. GW.CommaValue(nextXP) .. " - " .. math.floor(currXP / nextXP * 100) .. "%")
         GwDressingRoomPet.classIcon:Hide()
         GwDressingRoomPet.characterData:Hide()
