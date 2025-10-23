@@ -1,3 +1,9 @@
+8.4.3
+FIXES
+    - Fix talent tooltip (era)
+    - Fix rare hunter pet name error (era & mists)
+    - Fix objectives tracker (mists)
+
 8.4.2
 FIXES
     - 1.15.8 fixes

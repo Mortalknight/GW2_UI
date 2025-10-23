@@ -19,7 +19,13 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("8.4.2", {
-    {GW.ChangelogType.change, [=[F1.15.8 fixes]=]},
+    {GW.ChangelogType.bug, [=[Fix talent tooltip (era)]=]},
+    {GW.ChangelogType.bug, [=[Fix rare hunter pet name error (era & mists)]=]},
+    {GW.ChangelogType.bug, [=[Fix objectives tracker (mists)]=]},
+})
+
+addChange("8.4.2", {
+    {GW.ChangelogType.change, [=[1.15.8 fixes]=]},
 })
 
 addChange("8.4.1", {

@@ -109,7 +109,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         return
     end
 
-    local stageName, stageDescription, numCriteria, _, _, _, _, _, allSpellInfo = C_Scenario.GetStepInfo()
+    local stageName, stageDescription, numCriteria, _, _, _, _, _, allSpellInfo, _, questID = C_Scenario.GetStepInfo()
     local _, _, difficultyID, difficultyName = GetInstanceInfo()
     local isMythicKeystone = difficultyID == 8
     stageDescription = stageDescription or ""
@@ -214,13 +214,11 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         block.questLogIndex = (GW.Retail and C_QuestLog.GetLogIndexForQuestID or GetQuestLogIndexByID)(questID)
     end
 
-    --check for groupfinder button
+    --check for groupfinder button and add spells
     if GW.Retail then
         block:UpdateFindGroupButton(scenarioID, true)
+        GW.CombatQueue_Queue(nil, block.UpdateScenarioSpell, {block, allSpellInfo})
     end
-
-    -- add spells
-    GW.CombatQueue_Queue(nil, block.UpdateScenarioSpell, {block, allSpellInfo})
 
     for criteriaIndex = 1, numCriteria do
         local scenarioCriteriaInfo = C_ScenarioInfo.GetCriteriaInfo(criteriaIndex)
@@ -660,9 +658,12 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     end
     self.timerBlock:SetScript("OnEvent", self.timerBlock.TimerBlockOnEvent)
 
-    self.block = self:GetBlock(1, "SCENARIO", true)
-    Mixin(self.block.actionButton, ScenarioSpellButtonMixin)
-    self.block.actionButton:SetScript("OnEnter", self.block.actionButton.OnEnter)
+    self.block = self:GetBlock(1, "SCENARIO", GW.Retail) -- only create an actionbutton for retail here
+    if GW.Retail then
+        Mixin(self.block.actionButton, ScenarioSpellButtonMixin)
+        self.block.actionButton:SetScript("OnEnter", self.block.actionButton.OnEnter)
+    end
+
     self.block:ClearAllPoints()
     self.block:SetPoint("TOPRIGHT", self.timerBlock, "BOTTOMRIGHT", 0, 0)
     self.block.Header:SetText("")

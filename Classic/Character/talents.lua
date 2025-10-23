@@ -20,7 +20,7 @@ end
 
 local function UpdateTalentPoints()
     local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
-	local unspentPoints = talentPoints - GetGroupPreviewTalentPointsSpent(isPetTalents ,openSpec);
+    local unspentPoints = talentPoints - GetGroupPreviewTalentPointsSpent(isPetTalents ,openSpec);
 
     return unspentPoints
 end
@@ -29,7 +29,17 @@ local function talentBunnton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
 
-    GameTooltip:SetTalent(self.talentFrameId, self.talentid, false, isPetTalents, openSpec, GetCVarBool("previewTalentsOption"))
+    local talentInfoQuery = {}
+    talentInfoQuery.specializationIndex = self.talentFrameId
+    talentInfoQuery.talentIndex = self.talentid
+    talentInfoQuery.isInspect = false
+    talentInfoQuery.isPet = isPetTalents
+    talentInfoQuery.groupIndex = openSpec
+    local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+    if talentInfo then
+        GameTooltip:SetTalent(talentInfo.talentID, false, isPetTalents, openSpec)
+    end
+
     self.UpdateTooltip = talentBunnton_OnEnter
 end
 
@@ -59,9 +69,9 @@ local function hookTalentButton(talentButton, container, row, index)
                 end
             end
         elseif button == "RightButton" and openSpec == activeSpec  then
-			if GetCVarBool("previewTalentsOption") then
-				AddPreviewTalentPoints(self.talentFrameId, self.talentid, -1, isPetTalents, openSpec)
-			end
+            if GetCVarBool("previewTalentsOption") then
+                AddPreviewTalentPoints(self.talentFrameId, self.talentid, -1, isPetTalents, openSpec)
+            end
         end
     end)
     talentButton:SetScript("OnEvent", function(self)
@@ -193,8 +203,8 @@ local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesa
     for i = 1, select('#', ...), 4 do
         local tier, column, isLearnable, isPreviewLearnable = select(i, ...)
         if ( forceDesaturated or
-			 (preview and not isPreviewLearnable) or
-			 (not preview and not isLearnable) ) then
+            (preview and not isPreviewLearnable) or
+            (not preview and not isLearnable) ) then
             requirementsMet = nil
         end
         getLinePath(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
@@ -231,18 +241,18 @@ local function UpdatePreviewControls(isPreview)
     if (isPetTalents or openSpec) and talentPoints > 0 and isPreview then
         GwTalentFrame.bottomBar.prevLearn:Show()
         GwTalentFrame.bottomBar.prevCancel:Show()
-		-- enable accept/cancel buttons if preview talent points were spent
-		if GetGroupPreviewTalentPointsSpent(isPetTalents, openSpec) > 0 then
-			GwTalentFrame.bottomBar.prevLearn:Enable();
-			GwTalentFrame.bottomBar.prevCancel:Enable();
-		else
-			GwTalentFrame.bottomBar.prevLearn:Disable();
-			GwTalentFrame.bottomBar.prevCancel:Disable();
-		end
-	else
-		GwTalentFrame.bottomBar.prevLearn:Hide()
+        -- enable accept/cancel buttons if preview talent points were spent
+        if GetGroupPreviewTalentPointsSpent(isPetTalents, openSpec) > 0 then
+            GwTalentFrame.bottomBar.prevLearn:Enable();
+            GwTalentFrame.bottomBar.prevCancel:Enable();
+        else
+            GwTalentFrame.bottomBar.prevLearn:Disable();
+            GwTalentFrame.bottomBar.prevCancel:Disable();
+        end
+    else
+        GwTalentFrame.bottomBar.prevLearn:Hide()
         GwTalentFrame.bottomBar.prevCancel:Hide()
-	end
+    end
 end
 
 local function updateTalentTrees()
@@ -382,7 +392,7 @@ local function updateTalentTrees()
             end
         end
     end
-   -- Clean up unsuded slots
+-- Clean up unsuded slots
     for i = 1, GetNumTalentTabs(false, isPetTalents) do
         for y = 1, 15 do
             for j = 1, NUM_TALENT_COLUMNS do

@@ -362,7 +362,8 @@ local function PaperDollUpdatePetStats()
     local y = 0
 
     GwDressingRoomPet.model:SetUnit("pet")
-    GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. GUILD_RECRUITMENT_LEVEL .. " " .. UnitLevel("pet"))
+    GwDressingRoomPet.characterName:SetText((UnitName("pet") or "") .. " - " .. format(UNIT_LEVEL_TEMPLATE, (UnitLevel("pet") or ""), ""))
+
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
     if isHunterPet then
         local currXP, nextXP = GetPetExperience()
@@ -719,13 +720,6 @@ local function LoadPaperDoll()
     C_Timer.After(1, function()
         PaperDollUpdateStats()
         PaperDollUpdatePetStats()
-    end)
-
-    GwDressingRoomPet.model.expBar:SetScript("OnEnter", function(self)
-        self.value:Show()
-    end)
-    GwDressingRoomPet.model.expBar:SetScript("OnLeave", function(self)
-        self.value:Hide()
     end)
 
     GwDressingRoom.stats.advancedChatStatsFrame = CreateFrame("Frame", nil, GwDressingRoom.stats)

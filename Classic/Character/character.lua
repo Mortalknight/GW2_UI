@@ -343,7 +343,12 @@ local function PaperDollUpdatePetStats()
 
     GwCharacterMenu.petMenu:Enable()
     GwDressingRoomPet.model:SetUnit("pet")
-    GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. GUILD_RECRUITMENT_LEVEL .. " " .. UnitLevel("pet"))
+    if UnitCreatureFamily("pet") then
+		GwDressingRoomPet.characterName:SetText((UnitName("pet") or "") .. " - " .. format(UNIT_LEVEL_TEMPLATE, (UnitLevel("pet") or ""), "") .. " " .. (UnitCreatureFamily("pet") or ""))
+	else
+        GwDressingRoomPet.characterName:SetText((UnitName("pet") or "") .. " - " .. format(UNIT_LEVEL_TEMPLATE, (UnitLevel("pet") or ""), ""))
+    end
+
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
     if isHunterPet then
         local happiness = GetPetHappiness()
@@ -1046,13 +1051,6 @@ local function LoadPaperDoll()
 
     GwPaperHonor.buttons = {}
     LoadHonorTab()
-
-    GwDressingRoomPet.model.expBar:SetScript("OnEnter", function(self)
-        self.value:Show()
-    end)
-    GwDressingRoomPet.model.expBar:SetScript("OnLeave", function(self)
-        self.value:Hide()
-    end)
 
     GwDressingRoom.stats.advancedChatStatsFrame = CreateFrame("Frame", nil, GwDressingRoom.stats)
     GwDressingRoom.stats.advancedChatStatsFrame:SetPoint("TOPLEFT", GwDressingRoom.stats, "TOPLEFT", 0, -1)

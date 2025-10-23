@@ -329,12 +329,12 @@
                         </Layer>
                             <Layer level="ARTWORK">
                                 <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\uistuff\statusbar-spark-white.png">
-                                    <Size x="10" y="4"></Size>
+                                    <Size x="10" y="10"></Size>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
                                     </Anchors>
                                 </Texture>
-                                <FontString parentKey="value" text="%s / %s" justifyH="CENTER" hidden="true">
+                                <FontString parentKey="value" text="%s / %s" justifyH="CENTER">
                                     <Size x="380" y="8"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER"></Anchor>
@@ -345,11 +345,10 @@
                         <Scripts>
                             <OnLoad>
                                 self:SetMinMaxValues(0, 1)
-                                self:SetStatusBarColor(240/255, 240/255, 155/255)
+                                self:SetStatusBarColor(GW2_ADDON.FACTION_BAR_COLORS[4].r, GW2_ADDON.FACTION_BAR_COLORS[4].g, GW2_ADDON.FACTION_BAR_COLORS[4].b)
                                 self.value:SetFont(UNIT_NAME_FONT, 12, "")
-                                self.value:SetShadowColor(0.8, 0.8, 0.8, 1)
+                                self.value:SetShadowColor(0, 0, 0, 1)
                                 self.value:SetShadowOffset(1, -1)
-                                self.value:SetTextColor(0, 0, 0, 1)
 
                                 local BNAME = self:GetName()
                                 hooksecurefunc(self, "SetValue", function(self)
