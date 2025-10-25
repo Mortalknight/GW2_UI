@@ -1,9 +1,6 @@
 local _, GW = ...
 local L = GW.L
 
-local GetSpecialization = C_SpecializationInfo.GetSpecialization or GetSpecialization or GetActiveTalentGroup
-local GetSpecializationInfo = (GW.Libs.LCS and GW.Libs.LCS.GetSpecializationInfo) or C_SpecializationInfo.GetSpecializationInfo or GetSpecializationInfo
-
 local function UpdateMatchingLayout(self, new_point)
     local selectedLayoutName = GW.private.Layouts.currentSelected
     local layout = selectedLayoutName and GW.GetLayoutByName(selectedLayoutName) or nil
@@ -184,7 +181,7 @@ local function RenameSelectedLayout(self)
 end
 
 local function specSwitchHandlerOnEvent(self, event)
-    local currentSpecIdx = GetSpecialization()
+    local currentSpecIdx = C_SpecializationInfo.GetSpecialization()
 
     if (event == "PLAYER_SPECIALIZATION_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED") and self.currentSpecIdx == currentSpecIdx then
         return
@@ -357,10 +354,10 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
             endIdx = hasDualSpec and 2 or 1
         end
         for index = 1, endIdx do
-            local id, name, _, icon, role = GetSpecializationInfo(index)
+            local id, name, _, icon, role = C_SpecializationInfo.GetSpecializationInfo(index)
             if id then
                 specs[index] = {}
-                specs[index].name = format("|T%s:14:14:0:0:64:64:4:60:4:60|t %s |cFF888888(%s)|r", icon, name, getglobal(role))
+                specs[index].name = format("|T%s:14:14:0:0:64:64:4:60:4:60|t %s |cFF888888(%s)|r", icon, name, (role and getglobal(role) or ""))
                 specs[index].id = id
                 specs[index].idx = index
             end
@@ -409,7 +406,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
 
     -- specswitch detaction things
     local specSwitchHandler = CreateFrame("Frame")
-    specSwitchHandler.currentSpecIdx = GetSpecialization() -- sometimes PLAYER_SPECIALIZATION_CHANGED fired twice, so we prevent a double call
+    specSwitchHandler.currentSpecIdx = C_SpecializationInfo.GetSpecialization() -- sometimes PLAYER_SPECIALIZATION_CHANGED fired twice, so we prevent a double call
 
     specSwitchHandler:RegisterEvent("PLAYER_ENTERING_WORLD") -- for start up
     if GW.Retail then

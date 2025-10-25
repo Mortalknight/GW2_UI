@@ -7,6 +7,11 @@ local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
 local isPetTalents = false
 
+local function GetTalentSpec()
+    return openSpec, isPetTalents
+end
+GW.GetTalentSpec = GetTalentSpec
+
 local function UpdateActiveSpec(activeTalentGroup)
     -- set the active spec
     activeSpec = 1
@@ -300,10 +305,8 @@ local function updateTalentTrees()
     for f = 1, GetNumTalentTabs(false, isPetTalents) do
         local forceDesaturated
         local talentPoints = UpdateTalentPoints()
-        local _, name, _, _, _, _, pointsSpent, background, previewPointsSpent, _ = C_SpecializationInfo.GetSpecializationInfo(f, false, isPetTalents, openSpec)
-
+        local _, name, _, _, _, _, pointsSpent, _, previewPointsSpent, _ = C_SpecializationInfo.GetSpecializationInfo(f, false, isPetTalents, openSpec)
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
-
         TalentFrame.pointsSpent = pointsSpent + previewPointsSpent
 
         if pointsSpent < 1 then
@@ -392,9 +395,9 @@ local function updateTalentTrees()
             end
         end
     end
--- Clean up unsuded slots
+    -- Clean up unused slots
     for i = 1, GetNumTalentTabs(false, isPetTalents) do
-        for y = 1, 15 do
+        for y = 1, MAX_NUM_TALENT_TIERS do
             for j = 1, NUM_TALENT_COLUMNS do
                 local button = _G['GwLegacyTalentTree' .. i .. 'Teir' .. y .. 'index' .. j]
                 if button.talentid == nil then
@@ -427,7 +430,7 @@ local function loadTalentsFrames()
             updateTalentTrees()
         end)
 
-        for y = 1, 15 do
+        for y = 1, MAX_NUM_TALENT_TIERS do
             TALENT_BRANCH_ARRAY[i][y] = {}
             for j = 1, NUM_TALENT_COLUMNS do
                 TALENT_BRANCH_ARRAY[i][y][j] = {id = nil, up = 0, left = 0, right = 0, down = 0, leftArrow = 0, rightArrow = 0, topArrow = 0}

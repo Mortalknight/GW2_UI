@@ -27,12 +27,12 @@ local CHAR_EQUIP_SLOTS = {
 }
 
 local enchants = {
-    Biznick = "2523", --3% Hit from Biznick
-    Bracer_Mana_Reg = "2565" ,-- 4 MP5
-    PROPHETIC_AURA = "2590", -- 4 MP5 for priest ZG Enchant
-    BRILLIANT_MANA_OIL = "2629", -- 12 MP5
-    LESSER_MANA_OIL = "2625", -- 8 MP5
-    MINOR_MANA_OIL = "2624", -- 4 MP5
+    Biznick = 2523, --3% Hit from Biznick
+    Bracer_Mana_Reg = 2565,-- 4 MP5
+    PROPHETIC_AURA = 2590, -- 4 MP5 for priest ZG Enchant
+    BRILLIANT_MANA_OIL = 2629, -- 12 MP5
+    LESSER_MANA_OIL = 2625, -- 8 MP5
+    MINOR_MANA_OIL = 2624, -- 4 MP5
 }
 
 local schools = {
@@ -135,12 +135,12 @@ local function _GetMissChanceByDifference(weaponSkill, defenseValue)
 end
 
 local function GetEnchantFromItemLink(itemLink)
-    if  not itemLink then return nil end
+    if not itemLink then return nil end
 
     local _, itemStrLink = C_Item.GetItemInfo(itemLink)
     if itemStrLink then
         local _, _, enchant = strfind(itemStrLink, "item:%d+:(%d*)")
-        return enchant
+        return tonumber(enchant)
     end
 end
 
@@ -156,7 +156,7 @@ local function _GetRangeHitBonus()
 
     -- From Enchant
     local rangedEnchant = GetEnchantForEquipSlot(CHAR_EQUIP_SLOTS["Range"])
-    if rangedEnchant and rangedEnchant == enchants.Biznick then 
+    if rangedEnchant and rangedEnchant == enchants.Biznick then
         hitValue = hitValue + 3
     end
 
@@ -173,8 +173,16 @@ local function _GetTalentModifierDefense()
     local mod = 0
 
     if GW.myClassID == ClassIndex.WARRIOR then
-        local _, _, _, _, points = GetTalentInfo(3, 2)
-        mod = points * 2 -- 0-10 Anticipation
+        local talentInfoQuery = {}
+        talentInfoQuery.isInspect = false
+        talentInfoQuery.isPet = false
+        talentInfoQuery.groupIndex = GW.GetTalentSpec()
+        talentInfoQuery.specializationIndex = 3
+		talentInfoQuery.talentIndex = 2
+        local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        if talentInfo then
+            mod = talentInfo.rank * 2 -- 0-10 Anticipation
+        end
     end
 
     return mod
@@ -183,16 +191,32 @@ GW.stats._GetTalentModifierDefense = _GetTalentModifierDefense
 
 local function _GetTalentModifierMP5()
     local mod = 0
+    local talentInfoQuery = {}
+    talentInfoQuery.isInspect = false
+    talentInfoQuery.isPet = false
+    talentInfoQuery.groupIndex = GW.GetTalentSpec()
 
     if GW.myClassID == ClassIndex.PRIEST then
-        local _, _, _, _, points = GetTalentInfo(1, 8)
-        mod = points * 0.05 -- 0-15% from Meditation
+        talentInfoQuery.specializationIndex = 1
+		talentInfoQuery.talentIndex = 8
+        local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        if talentInfo then
+            mod = talentInfo.rank * 0.05 -- 0-15% from Meditation
+        end
     elseif GW.myClassID == ClassIndex.MAGE then
-        local _, _, _, _, points= GetTalentInfo(1, 12)
-        mod = points * 0.05 -- 0-15% Arcane Meditation
+        talentInfoQuery.specializationIndex = 1
+		talentInfoQuery.talentIndex = 12
+        local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        if talentInfo then
+            mod = talentInfo.rank * 0.05 -- 0-15% Arcane Meditation
+        end
     elseif GW.myClassID == ClassIndex.DRUID then
-        local _, _, _, _, points = GetTalentInfo(3, 6)
-        mod = points * 0.05 -- 0-15% from Reflection
+        talentInfoQuery.specializationIndex = 3
+		talentInfoQuery.talentIndex = 6
+        local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        if talentInfo then
+            mod = talentInfo.rank * 0.05 -- 0-15% from Reflection
+        end
     end
 
     return mod
@@ -201,8 +225,16 @@ end
 local function _GetBlessingOfWisdomModifier()
     local mod = 0
     if GW.myClassID == ClassIndex.PALADIN then
-        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 10)
-        mod = points * 0.1 -- 0-20% from Improved Blessing of Wisdom
+        local talentInfoQuery = {}
+        talentInfoQuery.isInspect = false
+        talentInfoQuery.isPet = false
+        talentInfoQuery.groupIndex = GW.GetTalentSpec()
+        talentInfoQuery.specializationIndex = 1
+		talentInfoQuery.talentIndex = 10
+        local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        if talentInfo then
+            mod = talentInfo.rank * 0.1 -- 0-20% from Improved Blessing of Wisdom
+        end
     end
     return mod
 end
@@ -212,8 +244,9 @@ local function _GetAuraModifier()
     local bonus = 0
 
     for i = 1, 40 do
-        local _, _, _, _, _, _, _, _, _, spellId = UnitAura("player", i, "HELPFUK")
-        if not spellId then break end
+        local aura = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
+        if not aura then break end
+        local spellId = aura.spellId
         if spellId == 6117 or spellId == 22782 or spellId == 22783 then
             mod = mod + 0.3 -- 30% Mage Armor
         elseif spellId == 24363 then
@@ -298,8 +331,16 @@ local function _GetGeneralTalentModifier()
     local mod = 0
 
     if GW.myClassID == ClassIndex.MAGE then -- Mage
-        local _, _, _, _, points = GetTalentInfo(1, 15)
-        mod = points * 1 -- 0-3% Arcane Instability
+        local talentInfoQuery = {}
+        talentInfoQuery.isInspect = false
+        talentInfoQuery.isPet = false
+        talentInfoQuery.groupIndex = GW.GetTalentSpec()
+        talentInfoQuery.specializationIndex = 1
+		talentInfoQuery.talentIndex = 15
+        local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        if talentInfo then
+            mod = talentInfo.rank * 1 -- 0-3% Arcane Instability
+        end
     end
 
     return mod
@@ -307,13 +348,25 @@ end
 
 local function _GetTalentModifierSpellHit()
     local mod = 0
+    local talentInfoQuery = {}
+    talentInfoQuery.isInspect = false
+    talentInfoQuery.isPet = false
+    talentInfoQuery.groupIndex = GW.GetTalentSpec()
 
     if GW.myClassID == ClassIndex.PRIEST then -- Priest
-        local _, _, _, _, points = GetTalentInfo(3, 5)
-        mod = points * 2 -- 0-10% from Shadow Focus
+        talentInfoQuery.specializationIndex = 3
+        talentInfoQuery.talentIndex = 5
+        local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        if talentInfo then
+            mod = talentInfo.rank * 2 -- 0-10% from Shadow Focus
+        end
     elseif GW.myClassID == ClassIndex.MAGE then -- Mage
-        local _, _, _, _, points = GetTalentInfo(3, 3)
-        mod = points * 2 -- 0-6% from Elemental Precision
+        talentInfoQuery.specializationIndex = 3
+        talentInfoQuery.talentIndex = 3
+        local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        if talentInfo then
+            mod = talentInfo.rank * 2 -- 0-6% from Elemental Precision
+        end
     end
 
     return mod
@@ -344,7 +397,6 @@ local function _GetMP5ValueOnItems()
 
     -- Check weapon enchants (e.g. Mana Oil)
     local hasMainEnchant, _, _, mainHandEnchantID = GetWeaponEnchantInfo()
-    mainHandEnchantID = tostring(mainHandEnchantID)
     if (hasMainEnchant) then
         if mainHandEnchantID == enchants.BRILLIANT_MANA_OIL then
             mp5 = mp5 + 12
@@ -543,8 +595,16 @@ local function _GetTalentModifierHolyCrit()
     local mod = 0
 
     if GW.myClassID == ClassIndex.PRIEST then -- Priest
-        local _, _, _, _, points = GetTalentInfo(2, 3)
-        mod = points * 1 -- 0-5% Holy Specialization
+        local talentInfoQuery = {}
+        talentInfoQuery.isInspect = false
+        talentInfoQuery.isPet = false
+        talentInfoQuery.groupIndex = GW.GetTalentSpec()
+        talentInfoQuery.specializationIndex = 2
+		talentInfoQuery.talentIndex = 3
+        local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        if talentInfo then
+            mod = talentInfo.rank * 1 -- 0-5% Holy Specialization
+        end
     end
 
     return mod
@@ -554,8 +614,16 @@ local function _GetTalentModifierFireCrit()
     local mod = 0
 
     if GW.myClassID == ClassIndex.MAGE then -- Mage
-        local _, _, _, _, points = GetTalentInfo(2, 13)
-        mod = points * 2 -- 0-6% Critical Mass
+        local talentInfoQuery = {}
+        talentInfoQuery.isInspect = false
+        talentInfoQuery.isPet = false
+        talentInfoQuery.groupIndex = GW.GetTalentSpec()
+        talentInfoQuery.specializationIndex = 2
+		talentInfoQuery.talentIndex = 13
+        local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+        if talentInfo then
+            mod = talentInfo.rank * 2 -- 0-6% Critical Mass
+        end
     end
 
     return mod

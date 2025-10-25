@@ -1,7 +1,5 @@
 local _, GW = ...
 
-local GetSpecializationInfo = (GW.Libs.LCS and GW.Libs.LCS.GetSpecializationInfo) or C_SpecializationInfo.GetSpecializationInfo or GetSpecializationInfo
-
 local function AreOtherAddOnsEnabled()
     for i = 1, C_AddOns.GetNumAddOns() do
         local name = C_AddOns.GetAddOnInfo(i)
@@ -86,7 +84,7 @@ local EnglishSpecName = {
 }
 
 local function GetEnglishSpecName()
-    return EnglishSpecName[GetSpecializationInfo(GW.myspec)] or "Unknown"
+    return EnglishSpecName[C_SpecializationInfo.GetSpecializationInfo(GW.myspec)] or "Unknown"
 end
 
 local function CreateContentLines(num, parent, anchorTo)

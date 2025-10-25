@@ -544,26 +544,6 @@
                 </Anchors>
             </Frame>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self:RegisterEvent("PLAYER_PVP_KILLS_CHANGED")
-                self:RegisterEvent("PLAYER_ENTERING_WORLD")
-                self:RegisterEvent("PLAYER_PVP_RANK_CHANGED")
-                self:RegisterEvent("UNIT_LEVEL")
-                self:RegisterEvent("PLAYER_GUILD_UPDATE")
-            </OnLoad>
-            <OnEvent>
-                if event == "PLAYER_PVP_KILLS_CHANGED" or event == "PLAYER_PVP_RANK_CHANGED" then
-                    UpdateHonorTab()
-                elseif event == "PLAYER_ENTERING_WORLD" then
-                    UpdateHonorTab(1)
-                elseif event == "UNIT_LEVEL" then
-                    UpdateHonorTab()
-                elseif event == "PLAYER_GUILD_UPDATE" then
-                    UpdateHonorTab()
-                end
-            </OnEvent>
-        </Scripts>
     </Frame>
 
     <Frame name="GwHonorInfoRow" virtual="true" frameStrata="HIGH">
@@ -573,26 +553,26 @@
         </Anchors>
         <Layers>
             <Layer textureSubLevel="3">
-                <FontString name="GWPVPHEADER" parentKey="Header" text="Header" inherits="GameFontNormal" justifyV="TOP" justifyH="LEFT">
+                <FontString parentKey="Header" text="Header" inherits="GameFontNormal" justifyV="TOP" justifyH="LEFT">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-10" />
                     </Anchors>
                 </FontString>
                 <FontString parentKey="Rank" inherits="GameFontNormalSmall" justifyV="TOP" justifyH="LEFT">
                     <Anchors>
-                        <Anchor point="LEFT" relativeTo="GWPVPHEADER" relativePoint="RIGHT" x="5" y="-1"/>
+                        <Anchor point="LEFT" relativeKey="$parent.Header" relativePoint="RIGHT" x="5" y="-1"/>
                     </Anchors>
                 </FontString>
-                <Texture name="GWHonorFramePvPIcon">
+                <Texture parentKey="icon">
                     <Size x="24" y="24"/>
                     <Anchors>
-                        <Anchor point="RIGHT" relativeTo="GWPVPHEADER" relativePoint="LEFT" x="-5" y="0"/>
+                        <Anchor point="RIGHT" relativeKey="$parent.Header" relativePoint="LEFT" x="-5" y="0"/>
                     </Anchors>
                 </Texture>
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="GWHonorFrameProgressBar" drawLayer="BORDER" minValue="0" maxValue="1" defaultValue="0" hidden="true">
+            <StatusBar parentKey="progressBar" drawLayer="BORDER" minValue="0" maxValue="1" defaultValue="0" hidden="true">
                 <Size x="468" y="29"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" x="22" y="-45"/>

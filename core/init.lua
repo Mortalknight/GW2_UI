@@ -37,12 +37,9 @@ end
 GW.GetPlayerRole = GetPlayerRole
 
 local function CheckRole()
-    local GetSpecialization = (GW.Libs.LCS and GW.Libs.LCS.GetSpecialization) or C_SpecializationInfo.GetSpecialization or GetSpecialization
-    local GetSpecializationInfo = (GW.Libs.LCS and GW.Libs.LCS.GetSpecializationInfo) or C_SpecializationInfo.GetSpecializationInfo or GetSpecializationInfo
-
-    GW.myspec = GetSpecialization()
+    GW.myspec = C_SpecializationInfo.GetSpecialization()
     if GW.myspec then
-        GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecRole = GetSpecializationInfo(GW.myspec)
+        GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecRole =  C_SpecializationInfo.GetSpecializationInfo(GW.myspec)
     end
     GW.myrole = GetPlayerRole()
 
@@ -130,15 +127,6 @@ do
     AddLib("LEMO", "LibEditModeOverride-1.0-GW2", true)
     AddLib("Dispel", "LibDispel-1.0-GW", true)
     AddLib("GW2Lib", "LibGW2-1.0", true)
-
-    if GW.Classic then
-        AddLib("LibDetours", "LibDetours-1.0", true)
-        AddLib("CI", "LibClassicInspector", true)
-    end
-
-    if not (GW.Retail or GW.Mists) then
-        AddLib("LCS", "LibClassicSpecs-GW2", true)
-    end
 end
 
 -- triger GetCurrentRegion() for LRI to unpack all data on startup

@@ -9,8 +9,6 @@ local settingsPanel
 local mixin = {}
 local databaseEnhanced = false
 
-local GetSpecializationInfoForClassID = GetSpecializationInfoForClassID
-local GetSpecialization = C_SpecializationInfo.GetSpecialization or GetSpecialization or GetActiveTalentGroup
 local CanPlayerUseTalentSpecUI = C_SpecializationInfo.CanPlayerUseTalentSpecUI or function()
 	return true, HELPFRAME_CHARACTER_BULLET5
 end
@@ -169,28 +167,28 @@ local function InititateProfileSpecSwitchSettings(panel)
         dropDown.title:SetFont(UNIT_NAME_FONT, 10)
         dropDown.title:SetText(i == currentSpec and format(L["%s - Active"], specNames[i]) or specNames[i])
         if GW.Classic then
-           dropDown:SetScript("OnEnter", function(self)
-            local specIndex = i
-            local highPointsSpentIndex = nil
-            for treeIndex = 1, 3 do
-                local _, name, _, _, pointsSpent, _, previewPointsSpent = GetTalentTabInfo(treeIndex, nil, nil, specIndex)
-                if name then
-                    local displayPointsSpent = pointsSpent + previewPointsSpent
-                    points[treeIndex] = displayPointsSpent
-                    if displayPointsSpent > 0 and (not highPointsSpentIndex or displayPointsSpent > points[highPointsSpentIndex]) then
-                        highPointsSpentIndex = treeIndex
+            dropDown:SetScript("OnEnter", function(self)
+                local specIndex = i
+                local highPointsSpentIndex = nil
+                for treeIndex = 1, 3 do
+                    local _, name, _, _, _, _, pointsSpent, _, previewPointsSpent, _ = C_SpecializationInfo.GetSpecializationInfo(treeIndex, false, false, specIndex)
+                    if name then
+                        local displayPointsSpent = pointsSpent + previewPointsSpent
+                        points[treeIndex] = displayPointsSpent
+                        if displayPointsSpent > 0 and (not highPointsSpentIndex or displayPointsSpent > points[highPointsSpentIndex]) then
+                            highPointsSpentIndex = treeIndex
+                        end
+                    else
+                        points[treeIndex] = 0
                     end
-                else
-                    points[treeIndex] = 0
                 end
-            end
-            if highPointsSpentIndex then
-                points[highPointsSpentIndex] = GREEN_FONT_COLOR:WrapTextInColorCode(points[highPointsSpentIndex])
-            end
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText(("|cffffffff%s / %s / %s|r"):format(unpack(points)))
-            GameTooltip:Show()
-           end)
+                if highPointsSpentIndex then
+                    points[highPointsSpentIndex] = GREEN_FONT_COLOR:WrapTextInColorCode(points[highPointsSpentIndex])
+                end
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(("|cffffffff%s / %s / %s|r"):format(unpack(points)))
+                GameTooltip:Show()
+            end)
            dropDown:SetScript("OnLeave", GameTooltip_Hide)
         end
 
@@ -239,7 +237,7 @@ end
 GW.InititateProfileSpecSwitchSettings = InititateProfileSpecSwitchSettings
 
 local function eventHandler(self, event)
-    local spec = GetSpecialization() or 0
+    local spec = C_SpecializationInfo.GetSpecialization() or 0
     -- Newly created characters start at 5 instead of 1 in 9.0.1.
     if spec == 5 or not CanPlayerUseTalentSpecUI() then
         spec = 0

@@ -405,11 +405,17 @@ end
 local function depIsTalentAndLearned(name)
     for i = 1, GetNumTalentTabs(false, false) do
         for y = 1, MAX_NUM_TALENTS do
-            local name2, _, _, _, rank, maxRank, isExceptional = GetTalentInfo(i, y)
-            if isExceptional then
-                local spellId = select(7, GetSpellInfo(name2))
-                if name == name2 then
-                    return true, (rank == maxRank and spellId ~= nil and spellId > 0)
+            local talentInfoQuery = {}
+            talentInfoQuery.isInspect = false
+            talentInfoQuery.isPet = false
+            talentInfoQuery.groupIndex = GW.GetTalentSpec()
+            talentInfoQuery.specializationIndex = i
+            talentInfoQuery.talentIndex = y
+            local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+            if talentInfo and talentInfo.isExceptional then
+                local spellInfo = C_Spell.GetSpellInfo(talentInfo.name)
+                if spellInfo and name == talentInfo.name then
+                    return true, (talentInfo.rank == talentInfo.maxRank and spellInfo.spellID ~= nil and pellInfo.spellID > 0)
                 end
             end
 
