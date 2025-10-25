@@ -15,5 +15,4 @@
     <Script file="..\Core\LibBase64-1.0\LibBase64-1.0.lua"/>
     <Script file="..\Core\LibDispel\LibDispel.lua"/>
     <Script file="..\Core\LibGW2\LibGW2.lua"/>
-    <Script file='..\Core\LibClassicSpecs\LibClassicSpecs.lua'/>
 </Ui>

@@ -18,7 +18,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-addChange("8.4.2", {
+addChange("8.4.4", {
+    {GW.ChangelogType.bug, [=[Remove not needed and outdated libs]=]},
+})
+
+addChange("8.4.3", {
     {GW.ChangelogType.bug, [=[Fix talent tooltip (era)]=]},
     {GW.ChangelogType.bug, [=[Fix rare hunter pet name error (era & mists)]=]},
     {GW.ChangelogType.bug, [=[Fix objectives tracker (mists)]=]},
