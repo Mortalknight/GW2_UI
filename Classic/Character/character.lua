@@ -694,11 +694,11 @@ local function UpdateHonorTab(self, updateAll)
 
     -- Set icon
     if rankNumber > 0 then
-        self.buttons[1].icon:SetTexture(format("%s%02d","Interface/PvPRankBadges/PvPRank", rankNumber))
+        self.buttons[1].icon:SetTexture(format("%s%02d", "Interface/PvPRankBadges/PvPRank", rankNumber))
         self.buttons[1].icon:Show()
         slot.Header:SetPoint("TOPLEFT", self, "TOPLEFT" , 50, -15)
     else
-        GWHonorFramePvPIcon:Hide()
+        self.buttons[1].icon:Hide()
     end
 
     -- Set rank progress and bar color

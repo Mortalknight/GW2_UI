@@ -38,8 +38,13 @@ local function _GetDistanceToClosestObjective(spawn, zone, name)
     if not GW.Libs.GW2Lib:GetPlayerLocationCoords() or not mapId then
         return nil
     end
-    local _, player = C_Map.GetWorldPosFromMapPos(mapId, C_Map.GetPlayerMapPosition(mapId, "player"))
 
+    local position = C_Map.GetPlayerMapPosition(mapId, "player")
+    if not position then
+        return nil
+    end
+
+    local _, player = C_Map.GetWorldPosFromMapPos(mapId, position)
     if not player then
         return nil
     end
