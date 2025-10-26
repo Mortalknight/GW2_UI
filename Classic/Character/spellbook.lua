@@ -415,7 +415,7 @@ local function depIsTalentAndLearned(name)
             if talentInfo and talentInfo.isExceptional then
                 local spellInfo = C_Spell.GetSpellInfo(talentInfo.name)
                 if spellInfo and name == talentInfo.name then
-                    return true, (talentInfo.rank == talentInfo.maxRank and spellInfo.spellID ~= nil and pellInfo.spellID > 0)
+                    return true, (talentInfo.rank == talentInfo.maxRank and spellInfo.spellID ~= nil and spellInfo.spellID > 0)
                 end
             end
 
@@ -672,10 +672,6 @@ local function updateSpellbookTab()
             local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
             local nameSpell, rank, spellID = GetSpellBookItemName(spellIndex, BOOKTYPE)
             local ispassive = IsPassiveSpell(spellID)
-
-            if spellBookTabs == 2 then
-                local hidden = GetClassicExpansionLevel() < LE_EXPANSION_WRATH_OF_THE_LICH_KING and spellIndex and IsSpellHidden(spellIndex, BOOKTYPE);
-            end
 
             rank = rank and rank:gsub(RANK, "") or ""
 

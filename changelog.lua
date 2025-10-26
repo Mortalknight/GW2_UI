@@ -18,6 +18,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.4.5", {
+    {GW.ChangelogType.bug, [=[Fix spellbook lua error (era)]=]},
+})
+
+
 addChange("8.4.4", {
     {GW.ChangelogType.bug, [=[Remove not needed and outdated libs]=]},
 })
