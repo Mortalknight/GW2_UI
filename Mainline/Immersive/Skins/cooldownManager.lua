@@ -92,9 +92,20 @@ function CooldownManagerFunctions:SkinBar(frame, bar)
                 region:SetPoint("TOPLEFT", 1, 0)
                 region:SetPoint("BOTTOMLEFT", -1, 0)
                 region:SetTexCoord(0, 1, 0, 1)
-                region:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+                region:SetVertexColor(1, 1, 1, 1)
+                region:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/rage.png")
+            elseif atlas == "UI-HUD-CoolDownManager-Bar-Pip" then
+                region:SetTexCoord(0, 1, 0, 1)
+                region:SetHeight(bar:GetHeight())
+                region:SetWidth(6)
+                region:SetBlendMode("BLEND")
+                region:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/ragespark.png")
             elseif atlas == "UI-HUD-CoolDownManager-Bar-BG" then
-                region:GwStripTextures()
+                region:SetAlpha(0)
+                frame.GwStatusBarBackground = CreateFrame("Frame", nil, frame, "GwStatusBarBackground")
+                frame.GwStatusBarBackground:ClearAllPoints()
+                frame.GwStatusBarBackground:SetAllPoints(frame.Bar)
+                frame.GwStatusBarBackground:SetFrameStrata("BACKGROUND")
             end
         end
     end
@@ -134,15 +145,6 @@ do
 
         if frame.Bar then
             CooldownManagerFunctions:SkinBar(frame, frame.Bar)
-            if not frame.Bar.isHooked then
-                frame.Bar.isHooked = true
-
-                hooksecurefunc(frame, "RefreshCooldownInfo", CooldownManagerFunctions.RefreshCooldownInfo)
-                frame.GwStatusBarBackground = CreateFrame("Frame", nil, frame, "GwStatusBarBackground")
-                frame.GwStatusBarBackground:ClearAllPoints()
-                frame.GwStatusBarBackground:SetAllPoints(frame.Bar)
-                frame.GwStatusBarBackground:SetFrameStrata("BACKGROUND")
-            end
         elseif frame.Icon then
             CooldownManagerFunctions:SkinIcon(frame, frame.Icon)
         end
