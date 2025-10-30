@@ -2,6 +2,57 @@ local _, GW = ...
 
 local CooldownManagerFunctions = {}
 
+local function updateCollapse(self, collapsed)
+    if collapsed then
+        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        self.Icon:SetRotation(1.570796325)
+    else
+        self.Icon:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        self.Icon:SetRotation(0)
+    end
+end
+
+local function updateTextColor(self, r, g, b)
+    if r ~= 1 or g ~= 1 or b ~= 1 then
+        self:SetTextColor(1, 1, 1)
+    end
+end
+
+local function SkinHeaders(header)
+    if header.IsSkinned then return end
+
+    if header.HighlightMiddle then header.HighlightMiddle:SetAlpha(0) end
+    if header.HighlightLeft then header.HighlightLeft:SetAlpha(0) end
+    if header.HighlightRight then header.HighlightRight:SetAlpha(0) end
+    if header.Middle then header.Middle:Hide() end
+    if header.Left then header.Left:Hide() end
+    if header.Right then header.Right:Hide() end
+
+    header:GwCreateBackdrop(GW.BackdropTemplates.ColorableBorderOnly)
+    header.backdrop:SetBackdropBorderColor(1, 1, 1, 0.2)
+    header:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+    header:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/bag/bag-sep.png")
+    header:GetHighlightTexture():SetColorTexture(1, 0.93, 0.73, 0.25)
+
+    header:GetNormalTexture():ClearAllPoints()
+    header:GetNormalTexture():SetPoint("TOPLEFT", header, "TOPLEFT", 1, -1)
+    header:GetNormalTexture():SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -1, 1)
+
+    header:GetHighlightTexture():ClearAllPoints()
+    header:GetHighlightTexture():SetPoint("TOPLEFT", header, "TOPLEFT", 1, -1)
+    header:GetHighlightTexture():SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -1, 1)
+
+    header.Name:SetTextColor(1, 1, 1)
+    header.Icon = header:CreateTexture(nil, "ARTWORK")
+    header.Icon:SetSize(16, 16)
+    header.Icon:SetPoint("RIGHT", header, "RIGHT", -4, 0)
+    updateCollapse(header, false)
+    hooksecurefunc(header, "UpdateCollapsedState", updateCollapse)
+    hooksecurefunc(header.Name, "SetTextColor", updateTextColor)
+
+    header.IsSkinned = true
+end
+
 function CooldownManagerFunctions:CountText(text, parent)
     text:ClearAllPoints()
     text:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, 0)
@@ -88,27 +139,31 @@ function CooldownManagerFunctions:SkinBar(frame, bar)
         if region:IsObjectType("Texture") then
             local atlas = region:GetAtlas()
 
-            if atlas == "UI-HUD-CoolDownManager-Bar" then
-                region:SetPoint("TOPLEFT", 1, 0)
-                region:SetPoint("BOTTOMLEFT", -1, 0)
-                region:SetTexCoord(0, 1, 0, 1)
-                region:SetVertexColor(1, 1, 1, 1)
-                region:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/rage.png")
-            elseif atlas == "UI-HUD-CoolDownManager-Bar-Pip" then
-                region:SetTexCoord(0, 1, 0, 1)
-                region:SetHeight(bar:GetHeight())
-                region:SetWidth(6)
-                region:SetBlendMode("BLEND")
-                region:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/ragespark.png")
-            elseif atlas == "UI-HUD-CoolDownManager-Bar-BG" then
+            if atlas == "UI-HUD-CoolDownManager-Bar-BG" then
                 region:SetAlpha(0)
                 frame.GwStatusBarBackground = CreateFrame("Frame", nil, frame, "GwStatusBarBackground")
                 frame.GwStatusBarBackground:ClearAllPoints()
                 frame.GwStatusBarBackground:SetAllPoints(frame.Bar)
                 frame.GwStatusBarBackground:SetFrameStrata("BACKGROUND")
+                break
             end
         end
     end
+
+    local barTex = bar:GetStatusBarTexture()
+    barTex:SetTexCoord(0, 1, 0, 1)
+    barTex:SetVertexColor(1, 1, 1, 1)
+    barTex:ClearAllPoints()
+    barTex:GwSetInside(frame.GwStatusBarBackground)
+    bar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/rage.png")
+
+    bar.Pip:SetHeight(bar:GetHeight())
+    bar.Pip:SetTexCoord(0, 1, 0, 1)
+    bar.Pip:SetWidth(6)
+    bar.Pip:SetBlendMode("BLEND")
+    bar.Pip:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/ragespark.png")
+
+    
 end
 
 function CooldownManagerFunctions:RefreshSpellCooldownInfo()
@@ -135,7 +190,7 @@ do
             if not frame.Cooldown.isHooked then
                 GW.RegisterCooldown(frame.Cooldown)
 
-               for key, func in next, hookFunctions do
+            for key, func in next, hookFunctions do
                     if frame[key] then
                         hooksecurefunc(frame, key, func)
                     end
@@ -163,6 +218,19 @@ function CooldownManagerFunctions:HandleViewer(element)
     end
 end
 
+function CooldownManagerFunctions:SkinCategoryHeaders()
+    if not CooldownViewerSettings or not CooldownViewerSettings.CooldownScroll then return end
+
+    local content = CooldownViewerSettings.CooldownScroll.Content
+    if not content then return end
+
+    for _, child in next, { content:GetChildren() } do
+        if child.Header then
+            SkinHeaders(child.Header)
+        end
+    end
+end
+
 local function ApplyCooldownManagerSkin()
     if not GW.settings.CooldownManagerSkinEnabled then return end
 
@@ -170,6 +238,31 @@ local function ApplyCooldownManagerSkin()
     CooldownManagerFunctions:HandleViewer(BuffBarCooldownViewer)
     CooldownManagerFunctions:HandleViewer(BuffIconCooldownViewer)
     CooldownManagerFunctions:HandleViewer(EssentialCooldownViewer)
+
+    if CooldownViewerSettings then
+        GW.HandlePortraitFrame(CooldownViewerSettings)
+        GW.CreateFrameHeaderWithBody(CooldownViewerSettings, CooldownViewerSettings.TitleContainer.TitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {CooldownViewerSettings.CooldownScroll}, nil, nil, true)
+
+        GW.SkinTextBox(CooldownViewerSettings.SearchBox.Middle, CooldownViewerSettings.SearchBox.Left, CooldownViewerSettings.SearchBox.Right)
+        GW.HandleTrimScrollBar(CooldownViewerSettings.CooldownScroll.ScrollBar)
+        GW.HandleScrollControls(CooldownViewerSettings.CooldownScroll)
+        CooldownViewerSettings.UndoButton:GwSkinButton(false, true)
+
+        local lastTab = nil
+        for i, tab in next, { CooldownViewerSettings.SpellsTab, CooldownViewerSettings.AurasTab } do
+            GW.HandleTabs(tab, "right", {tab.Icon}, true)
+            if i > 1 then
+                tab:ClearAllPoints()
+                tab:SetPoint("TOP", lastTab, "BOTTOM", 0, 1)
+            else
+                tab:ClearAllPoints()
+                tab:SetPoint("TOPLEFT", CooldownViewerSettings, "TOPRIGHT", 0, -30)
+            end
+            lastTab = tab
+        end
+        CooldownManagerFunctions:SkinCategoryHeaders()
+        hooksecurefunc(CooldownViewerSettings, 'RefreshLayout', CooldownManagerFunctions.SkinCategoryHeaders)
+    end
 end
 
 local function LoadCooldownManagerSkin()
