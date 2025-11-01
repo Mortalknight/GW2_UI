@@ -82,6 +82,14 @@ local function MapTable(T, fn, withKey, fnKeyValue)
 end
 GW.MapTable = MapTable
 
+local function StringWithRGB(string, color)
+    if not color then
+        return string
+    end
+    return format("|cFF%02x%02x%02x%s|r", color.r * 255, color.g * 255, color.b * 255, string)
+end
+GW.StringWithRGB = StringWithRGB
+
 local function CombatQueue_Initialize()
     C_Timer.NewTicker(0.1, function()
         if InCombatLockdown() then

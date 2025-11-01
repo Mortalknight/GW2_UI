@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="social.xml"/>
+    <Include file ="recentAllies.xml"/>
     <Include file ="ignoreList.xml"/>
     <Include file ="raf.xml"/>
     <Include file ="friends.xml"/>
@@ -7,6 +8,7 @@
     <Include file ="quickjoin.xml"/>
     <Include file ="raid.xml"/>
     <Script file ="raid.lua"/>
+    <Script file ="recentAllies.lua"/>
     <Script file ="quickjoin.lua"/>
     <Script file ="who.lua"/>
     <Script file ="friends.lua"/>

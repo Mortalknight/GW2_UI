@@ -22,6 +22,20 @@ windowsList[1] = {
 }
 
 windowsList[2] = {
+    ["OnLoad"] = "LoadRecentAlliesFrame",
+    ["SettingName"] = "USE_SOCIAL_WINDOW",
+    ["RefName"] = "GwRecentList",
+    ["TabIcon"] = "tabicon_friends",
+    ["HeaderText"] = CONTACTS_RECENT_ALLIES_TITLE,
+    ["HeaderTipText"] = CONTACTS_RECENT_ALLIES_TITLE,
+    ["Bindings"] = {},
+    ["OnClick"] = [=[
+        self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "recentList")
+    ]=]
+}
+
+
+windowsList[3] = {
     ["OnLoad"] = "LoadIgnoreList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwIgnoreList",
@@ -34,7 +48,7 @@ windowsList[2] = {
     ]=]
 }
 
-windowsList[3] = {
+windowsList[4] = {
     ["OnLoad"] = "LoadRecruitAFriendList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwRecruitAFriendList",
@@ -47,7 +61,7 @@ windowsList[3] = {
     ]=]
 }
 
-windowsList[4] = {
+windowsList[5] = {
     ["OnLoad"] = "LoadWhoList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwWhoList",
@@ -62,7 +76,7 @@ windowsList[4] = {
     ]=]
 }
 
-windowsList[5] = {
+windowsList[6] = {
     ["OnLoad"] = "LoadQuickJoinList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwQuickList",
@@ -77,7 +91,7 @@ windowsList[5] = {
     ]=]
 }
 
-windowsList[6] = {
+windowsList[7] = {
     ["OnLoad"] = "LoadRaidList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwRaidList",
@@ -125,6 +139,8 @@ local socialSecure_OnAttributeChanged =
     local showFriend = false
     local fmIgnore = self:GetFrameRef("GwIgnoreList")
     local showIgnore = false
+    local fmRecent = self:GetFrameRef("GwRecentList")
+    local showRecent = false
     local fmRecruitAFriend = self:GetFrameRef("GwRecruitAFriendList")
     local showRecruitAFriend = false
     local fmWho = self:GetFrameRef("GwWhoList")
@@ -152,6 +168,14 @@ local socialSecure_OnAttributeChanged =
             return
         else
             showIgnore = true
+        end
+    elseif fmRecent ~= nil and value == "recentList" then
+        if keytoggle and fmRecent:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showRecent = true
         end
     elseif fmRecruitAFriend ~= nil and value == "recruitafriendlist" then
         if keytoggle and fmRecruitAFriend:IsVisible() then
@@ -198,6 +222,13 @@ local socialSecure_OnAttributeChanged =
             fmFriend:Show()
         else
             fmFriend:Hide()
+        end
+    end
+    if fmRecent then
+        if showRecent and not close then
+            fmRecent:Show()
+        else
+            fmRecent:Hide()
         end
     end
     if fmIgnore then
