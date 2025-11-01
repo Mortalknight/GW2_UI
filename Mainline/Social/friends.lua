@@ -98,7 +98,7 @@ GW.friendsList.clientData = {
 }
 
 GW.friendsList.timerunningSeasonIcon = {
-    [2] = MediaPath .. "GameIcons\\WOW_LEG",
+    [2] = MediaPath .. "GameIcons/WOW_LEG",
 }
 
 GW.friendsList.expansionData = {
@@ -106,43 +106,43 @@ GW.friendsList.expansionData = {
         name = "Retail",
         suffix = nil,
         maxLevel = GetMaxLevelForPlayerExpansion(),
-        icon = MediaPath .. "GameIcons\\WOW_Retail",
+        icon = MediaPath .. "GameIcons/WOW_Retail",
     },
     [WOW_PROJECT_CLASSIC] = {
         name = "Classic",
         suffix = "Classic",
         maxLevel = 60,
-        icon = MediaPath .. "GameIcons\\WOW_Classic",
+        icon = MediaPath .. "GameIcons/WOW_Classic",
     },
     [WOW_PROJECT_BURNING_CRUSADE_CLASSIC] = {
         name = "TBC",
         suffix = "TBC",
         maxLevel = 70,
-        icon = MediaPath .. "GameIcons\\WOW_TBC",
+        icon = MediaPath .. "GameIcons/WOW_TBC",
     },
     [WOW_PROJECT_WRATH_CLASSIC] = {
         name = "WotLK",
         suffix = "WotLK",
         maxLevel = 80,
-        icon = MediaPath .. "GameIcons\\WOW_WotLK",
+        icon = MediaPath .. "GameIcons/WOW_WotLK",
     },
     [WOW_PROJECT_CATACLYSM_CLASSIC] = {
         name = "Cata",
         suffix = "Cata",
         maxLevel = 85,
-        icon = MediaPath .. "GameIcons\\WOW_Cata",
+        icon = MediaPath .. "GameIcons/WOW_Cata",
     },
     [WOW_PROJECT_MISTS_CLASSIC] = {
         name = "MoP",
         suffix = "MoP",
         maxLevel = 90,
-        icon = MediaPath .. "GameIcons\\WOW_MoP",
+        icon = MediaPath .. "GameIcons/WOW_MoP",
     },
 }
 
 GW.friendsList.factionIcons = {
-    ["Alliance"] = MediaPath .. "GameIcons\\Alliance",
-    ["Horde"] = MediaPath .. "GameIcons\\Horde",
+    ["Alliance"] = MediaPath .. "GameIcons/Alliance",
+    ["Horde"] = MediaPath .. "GameIcons/Horde",
 }
 
 GW.friendsList.statusIcons = {
@@ -153,16 +153,10 @@ GW.friendsList.statusIcons = {
         AFK = FRIENDS_TEXTURE_AFK,
     },
     square = {
-        Online = MediaPath .. "StatusIcons\\Square\\Online",
-        Offline = MediaPath .. "StatusIcons\\Square\\Offline",
-        DND = MediaPath .. "StatusIcons\\Square\\DND",
-        AFK = MediaPath .. "StatusIcons\\Square\\AFK",
-    },
-    d3 = {
-        Online = MediaPath .. "StatusIcons\\D3\\Online",
-        Offline = MediaPath .. "StatusIcons\\D3\\Offline",
-        DND = MediaPath .. "StatusIcons\\D3\\DND",
-        AFK = MediaPath .. "StatusIcons\\D3\\AFK",
+        Online = MediaPath .. "StatusIcons/Square/Online",
+        Offline = MediaPath .. "StatusIcons/Square/Offline",
+        DND = MediaPath .. "StatusIcons/Square/DND",
+        AFK = MediaPath .. "StatusIcons/Square/AFK",
     },
     color = {
         Online  = { Color = {0.243, 0.57, 1} },
@@ -336,7 +330,7 @@ local function UpdateFriendButton(button)
     end
 
     if status then
-        button.status:SetTexture(GW.friendsList.statusIcons.default[status])
+        button.status:SetTexture(GW.friendsList.statusIcons.square[status])
     end
 
     button.gameIcon:SetTexCoord(0, 1, 0, 1)

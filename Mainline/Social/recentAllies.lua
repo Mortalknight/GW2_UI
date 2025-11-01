@@ -53,7 +53,7 @@ local function ReskinRecentAllyButton(button)
 
     if status then
         if GW.friendsList.statusIcons.default[status] then
-            button.OnlineStatusIcon:SetTexture(GW.friendsList.statusIcons.default[status])
+            button.OnlineStatusIcon:SetTexture(GW.friendsList.statusIcons.square[status])
         end
     end
 
