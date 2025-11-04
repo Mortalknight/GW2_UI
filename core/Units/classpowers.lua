@@ -1910,7 +1910,7 @@ local function setDruid(f)
         return true
     elseif barType == "little_mana" and GW.settings.POWERBAR_ENABLED then -- classic
         setLittleManaBar(f, "combo")
-        return false
+        return true
     elseif barType == "combo|little_mana" then
         setComboBar(f)
         if GW.settings.POWERBAR_ENABLED then
