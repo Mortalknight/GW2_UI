@@ -1,39 +1,8 @@
-8.4.6
-FIXES
-    - Fix era honor lua error
-
-8.4.5
-FIXES
-    - Fix spellbook lua error (era)
-
-8.4.4
-FIXES
-    - Remove not needed and outdated libs
-
-8.4.3
-FIXES
-    - Fix talent tooltip (era)
-    - Fix rare hunter pet name error (era & mists)
-    - Fix objectives tracker (mists)
-
-8.4.2
-FIXES
-    - 1.15.8 fixes
-
-8.4.1
-FIXES
-    - Bag lua error (Era)
-    - Fix PetTracker lua error (Retail)
-
-8.4.0
+8.5.0
 NEW
-    - Added option to disable micromenu module
-    - Added monk stagger value to classpower bar
+    - Added Recent Alliens tab to social panel (retail)
+    - Add CD Manager skin (retail)
 
 FIXES
-    - Fix Questie Map Coords error (Era & Mists)
-    - Fix classpower 'Only show in combat' option when leaving a vehicle
-
-CHANGES
-    - Refactor seperate bag option
-    - TOC update (Mists)
+    - Fix character stats lus error (mists)
+    - Fix druid mana bar in bear form

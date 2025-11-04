@@ -18,10 +18,18 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("8.5.0", {
+    {GW.ChangelogType.feature, [=[Added Recent Alliens tab to social panel (retail)]=]},
+    {GW.ChangelogType.feature, [=[Add CD Manager skin (retail)]=]},
+    {GW.ChangelogType.bug, [=[Fix character stats lus error (mists)]=]},
+    {GW.ChangelogType.bug, [=[Fix druid mana bar in bear form]=]},
+})
+
+
 addChange("8.4.6", {
     {GW.ChangelogType.bug, [=[Fix era honor lua error]=]},
 })
-
 
 addChange("8.4.5", {
     {GW.ChangelogType.bug, [=[Fix spellbook lua error (era)]=]},

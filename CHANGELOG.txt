@@ -1,3 +1,12 @@
+8.5.0
+NEW
+    - Added Recent Alliens tab to social panel (retail)
+    - Add CD Manager skin (retail)
+
+FIXES
+    - Fix character stats lus error (mists)
+    - Fix druid mana bar in bear form
+
 8.4.6
 FIXES
     - Fix era honor lua error
