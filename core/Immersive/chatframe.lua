@@ -997,7 +997,7 @@ local function SaveChatHistory(event, ...)
         local coloredName, battleTag
         if tempHistory[13] and tempHistory[13] > 0 then coloredName, battleTag = GetBNFriendColor(tempHistory[2], tempHistory[13], true) end
         if battleTag then tempHistory[53] = battleTag end -- store the battletag, only when the person is known by battletag, so we can replace arg2 later in the function
-        tempHistory[52] = coloredName or GetColoredName(event, ...)
+        tempHistory[52] = coloredName or (GetColoredName or ChatFrameUtil.GetDecoratedSenderName)(event, ...)
 
         tinsert(data, tempHistory)
         while #data >= GW.settings.historySize do
@@ -1349,20 +1349,29 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             return
         end
 
-        local chatFilters = ChatFrame_GetMessageEventFilters(event)
-        if chatFilters then
-            for _, filterFunc in next, chatFilters do
-                local filter, new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
-                if filter then
-                    return true
-                elseif new1 then
-                    arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17
+        if ChatFrame_GetMessageEventFilters then
+            local chatFilters = ChatFrame_GetMessageEventFilters(event)
+            if chatFilters then
+                for _, filterFunc in next, chatFilters do
+                    local filter, new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+                    if filter then
+                        return true
+                    elseif new1 then
+                        arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17
+                    end
                 end
+            end
+        else
+            local filter, new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17  = ChatFrameUtil.ProcessMessageEventFilters(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+            if filter then
+                return true
+            elseif new1 then
+                arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17
             end
         end
 
         -- fetch the name color to use
-        local coloredName = GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+        local coloredName = (GetColoredName or ChatFrameUtil.GetDecoratedSenderName)(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
 
         local channelLength = strlen(arg4)
         local infoType = chatType
@@ -1617,12 +1626,18 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 end
 GW.ChatFrame_MessageEventHandler = ChatFrame_MessageEventHandler
 
-local function ChatFrame_ConfigEventHandler(...)
-    return _G.ChatFrame_ConfigEventHandler(...)
+local function ChatFrame_ConfigEventHandler(frame, event, ...)
+    if _G.ChatFrame_ConfigEventHandler then
+        return _G.ChatFrame_ConfigEventHandler(frame, event, ...)
+    end
+    return frame:ConfigEventHandler(event, ...)
 end
 
 local function ChatFrame_SystemEventHandler(frame, event, message, ...)
-    return _G.ChatFrame_SystemEventHandler(frame, event, message, ...)
+    if _G.ChatFrame_SystemEventHandler then
+        return _G.ChatFrame_SystemEventHandler(frame, event, message, ...)
+    end
+    return frame:SystemEventHandler(event, event, message, ...)
 end
 GW.ChatFrame_SystemEventHandler = ChatFrame_SystemEventHandler
 
@@ -1635,7 +1650,11 @@ end
 
 local function FloatingChatFrameOnEvent(...)
     ChatFrame_OnEvent(...)
-    FloatingChatFrame_OnEvent(...)
+    if FloatingChatFrame_OnEvent then
+        FloatingChatFrame_OnEvent(...)
+    elseif ScrollingMessageFrame and ScrollingMessageFrame.OnEvent then
+        ScrollingMessageFrame:OnEvent(...)
+    end
 end
 
 local function ChatFrame_OnMouseScroll(self, delta)
@@ -1909,6 +1928,9 @@ local function styleChatWindow(frame)
     editbox.editboxHasFocus = false
     editbox:Hide()
     GW.SkinTextBox(_G[name .. "EditBoxMid"], _G[name .. "EditBoxLeft"], _G[name .. "EditBoxRight"])
+    if _G[name .. "EditBoxFocusMid"] then
+        GW.SkinTextBox(_G[name .. "EditBoxFocusMid"], _G[name .. "EditBoxFocusLeft"], _G[name .. "EditBoxFocusRight"])
+    end
 
     --Character count
     local charCount = editbox:CreateFontString(nil, "ARTWORK")
