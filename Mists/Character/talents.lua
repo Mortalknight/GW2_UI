@@ -418,6 +418,75 @@ local function SpecIconOnEnter(self)
     GameTooltip:Show()
 end
 
+local function TalentButtonOnClick(self, button)
+    if IsModifiedClick("CHATLINK") then
+        local link = GetSpellLink(self.spellId)
+        ChatEdit_InsertLink(link)
+        return
+    end
+    if button == "LeftButton" and not self.selected then
+        local _, selectedTalentColumn, _ = GetTalentTierInfo(self.row, C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents))
+        if selectedTalentColumn ~= 0 then
+            local talentInfoQuery = {}
+            talentInfoQuery.tier = self.row
+            talentInfoQuery.column = self.column
+            talentInfoQuery.groupIndex = PlayerTalentFrame.talentGroup
+            talentInfoQuery.isInspect = PlayerTalentFrame.inspect
+            talentInfoQuery.target = "player"
+            local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+            if talentInfo then
+                StaticPopup_Show("CONFIRM_UNLEARN_AND_SWITCH_TALENT", nil, nil, {tier = self.row, oldID = talentInfo.talentID, id = self.talentID})
+            end
+        else
+            LearnTalents(self.talentID)
+        end
+    end
+end
+
+local function TalentButtonOnEnter(self)
+    if self:GetParent().active ~= true then
+        return
+    end
+    GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
+    GameTooltip:ClearLines()
+    GameTooltip:SetTalent(self.talentID)
+    GameTooltip:Show()
+end
+
+local function TalentButtonOnDragStart(self)
+    if InCombatLockdown() or self.isPassive then
+        return
+    end
+    PickupSpell(self.spellId)
+end
+
+local function ContainerOnUpdate(self, elapsed)
+    if MouseIsOver(self) then
+        local r = self.background:GetVertexColor()
+        r = math.min(1, math.max(0, r + (1 * elapsed)))
+
+        if not self.active then
+            self.background:SetVertexColor(r, r, r, r)
+        end
+        return
+    end
+    if not self.active then
+        self.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
+    end
+end
+local function ContainerOnShow(self)
+    self:SetScript("OnUpdate", ContainerOnUpdate)
+end
+local function ContainerOnHide(self)
+    self:SetScript("OnUpdate", nil)
+end
+local function ContainerOnClick(self)
+    local currentSpec = C_SpecializationInfo.GetSpecialization(nil, isPetTalents, openSpec)
+    if (isPetTalents and self.specIndex ~= currentSpec and IsPetActive()) or ((not currentSpec or currentSpec > GetNumSpecializations(false, isPetTalents)) and C_SpecializationInfo.CanPlayerUseTalentSpecUI()) then
+        GW.ShowPopup({text = CONFIRM_LEARN_SPEC, OnAccept = function() SetSpecialization(self.specIndex, isPetTalents) end, button1 = YES, button2 = NO})
+    end
+end
+
 local function LoadTalents()
     TalentFrame_LoadUI()
     local talentWindow = CreateFrame("Frame", "GwTalentFrame", GwCharacterWindow, "GwCharacterTabContainer")
@@ -447,33 +516,6 @@ local function LoadTalents()
         txMH = 1024
     end
 
-    local fnContainer_OnUpdate = function(self, elapsed)
-        if MouseIsOver(self) then
-            local r = self.background:GetVertexColor()
-            r = math.min(1, math.max(0, r + (1 * elapsed)))
-
-            if not self.active then
-                self.background:SetVertexColor(r, r, r, r)
-            end
-            return
-        end
-        if not self.active then
-            self.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
-        end
-    end
-    local fnContainer_OnShow = function(self)
-        self:SetScript("OnUpdate", fnContainer_OnUpdate)
-    end
-    local fnContainer_OnHide = function(self)
-        self:SetScript("OnUpdate", nil)
-    end
-    local fnContainer_OnClick = function(self)
-        local currentSpec = C_SpecializationInfo.GetSpecialization(nil, isPetTalents, openSpec)
-        if (isPetTalents and self.specIndex ~= currentSpec and IsPetActive()) or ((not currentSpec or currentSpec > GetNumSpecializations(false, isPetTalents)) and C_SpecializationInfo.CanPlayerUseTalentSpecUI()) then
-            GW.ShowPopup({text = CONFIRM_LEARN_SPEC, OnAccept = function() SetSpecialization(self.specIndex, isPetTalents) end, button1 = YES, button2 = NO})
-        end
-    end
-
     for i = 1, specs do
         local container = CreateFrame("Button", nil, talentContainer, "GwSpecFrame")
 
@@ -486,10 +528,10 @@ local function LoadTalents()
         container:SetScript("OnEnter", nil)
         container:SetScript("OnLeave", nil)
         container:SetScript("OnUpdate", nil)
-        container:SetScript("OnShow", fnContainer_OnShow)
-        container:SetScript("OnHide", fnContainer_OnHide)
-        container:SetScript("OnClick", fnContainer_OnClick)
-        container.icon:SetScript("OnMouseDown", function() fnContainer_OnClick(container) end)
+        container:SetScript("OnShow", ContainerOnShow)
+        container:SetScript("OnHide", ContainerOnHide)
+        container:SetScript("OnClick", ContainerOnClick)
+        container.icon:SetScript("OnMouseDown", function() ContainerOnClick(container) end)
         container.icon:SetScript("OnEnter", SpecIconOnEnter)
         container.icon:SetScript("OnLeave", GameTooltip_Hide)
         container:SetPoint("TOPLEFT", talentContainer, "TOPLEFT", 10, (-140 * i) + 60)
@@ -503,31 +545,6 @@ local function LoadTalents()
         container.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/" .. GW.myClassID)
         container.background:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
 
-        local fnTalentButton_OnEnter = function(self)
-            if self:GetParent().active ~= true then
-                return
-            end
-            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
-            GameTooltip:ClearLines()
-            GameTooltip:SetTalent(self.talentID)
-            GameTooltip:Show()
-        end
-        local fnTalentButton_OnDragStart = function(self)
-            if InCombatLockdown() or self.isPassive then
-                return
-            end
-            PickupSpell(self.spellId)
-        end
-        local fnTalentButton_OnClick = function(self, button)
-            if IsModifiedClick("CHATLINK") then
-                local link = GetSpellLink(self.spellId)
-                ChatEdit_InsertLink(link)
-                return
-            end
-            if ( button == "LeftButton" and not self.selected ) then
-                LearnTalents(self.talentID)
-			end
-        end
         for row = 1, maxTalentRows do
             local fistOnRow
             local line = CreateFrame("Frame", nil, container, "GwTalentLine")
@@ -538,10 +555,10 @@ local function LoadTalents()
 
             for index = 1, talentsPerRow do
                 local talentButton = CreateFrame("Button", nil, container, "GwTalentButton")
-                talentButton:SetScript("OnEnter", fnTalentButton_OnEnter)
+                talentButton:SetScript("OnEnter", TalentButtonOnEnter)
                 talentButton:SetScript("OnLeave", GameTooltip_Hide)
-                talentButton:SetScript("OnDragStart", fnTalentButton_OnDragStart)
-                talentButton:HookScript("OnClick", fnTalentButton_OnClick)
+                talentButton:SetScript("OnDragStart", TalentButtonOnDragStart)
+                talentButton:HookScript("OnClick", TalentButtonOnClick)
 
                 talentButton:RegisterForClicks("AnyUp")
                 talentButton:RegisterForDrag("LeftButton")
@@ -552,6 +569,9 @@ local function LoadTalents()
                 talentButton.mask:SetPoint("CENTER", talentButton, "CENTER", 0, 0)
                 talentButton.mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
                 talentButton.mask:SetSize(34, 34)
+
+                talentButton.row = row
+                talentButton.column = index
 
                 if fistOnRow == nil then
                     fistOnRow = talentButton

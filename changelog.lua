@@ -18,6 +18,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.5.1", {
+    {GW.ChangelogType.change, [=[Talent switch works again (Mists)]=]},
+})
+
 
 addChange("8.5.0", {
     {GW.ChangelogType.feature, [=[Added Recent Alliens tab to social panel (retail)]=]},
@@ -25,7 +29,6 @@ addChange("8.5.0", {
     {GW.ChangelogType.bug, [=[Fix character stats lus error (mists)]=]},
     {GW.ChangelogType.bug, [=[Fix druid mana bar in bear form]=]},
 })
-
 
 addChange("8.4.6", {
     {GW.ChangelogType.bug, [=[Fix era honor lua error]=]},

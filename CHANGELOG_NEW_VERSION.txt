@@ -1,3 +1,7 @@
+8.5.1
+CHANGES
+    - Talent switch works again (Mists)
+
 8.5.0
 NEW
     - Added Recent Alliens tab to social panel (retail)
