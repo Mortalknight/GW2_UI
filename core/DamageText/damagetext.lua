@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local math, table, string, bit = math, table, string, bit
+local math, table, bit = math, table, bit
 local UnitGUID = UnitGUID
 local GetTime = GetTime
 local CreateFrame = CreateFrame
@@ -10,7 +10,6 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local ToggleMover = GW.ToggleMover
 
 local AFP = GW.AddProfiling
-local CountTable  = GW.CountTable
 local MoveTowards = GW.MoveTowards
 local getSpriteByIndex = GW.getSpriteByIndex
 
@@ -59,16 +58,18 @@ local function GenerateExplosiveGrid(maxDistance)
     end
 
     visited[key(0, 0)] = true
-    table.insert(queue, {0, 0})
-    while #queue > 0 do
-        local current = table.remove(queue, 1)
+    queue[1] = {0, 0}
+    local head = 1
+    while head <= #queue do
+        local current = queue[head]
+        head = head + 1
         local cx, cy = current[1], current[2]
         for _, offset in ipairs(neighborOrder) do
             local nx, ny = cx + offset[1], cy + offset[2]
             if math.abs(nx) <= maxDistance and math.abs(ny) <= maxDistance and not visited[key(nx, ny)] then
                 visited[key(nx, ny)] = true
-                table.insert(result, {x = nx, y = ny})
-                table.insert(queue, {nx, ny})
+                result[#result + 1] = {x = nx, y = ny}
+                queue[#queue + 1] = {nx, ny}
             end
         end
     end
@@ -159,13 +160,13 @@ end
 
 --STACKING
 local function stackingContainerOnUpdate()
-    local activeCount = CountTable(stackingContainer.activeFrames)
+    local activeCount = #stackingContainer.activeFrames
     if activeCount <= 0 then return end
     local index = 0
     local newOffsetValue = -((activeCount * (20 / 2)))
     local currentOffsetValue = stackingContainer.offsetValue or 0
     stackingContainer.offsetValue = MoveTowards(currentOffsetValue, newOffsetValue, STACKING_MOVESPEED)
-    for _, f in pairs(stackingContainer.activeFrames) do
+    for _, f in ipairs(stackingContainer.activeFrames) do
         local offsetY = 20 * index + stackingContainer.offsetValue + (f.offsetY or 0)
         if not f.oldOffsetY then f.oldOffsetY = offsetY end
         f.oldOffsetY = MoveTowards(f.oldOffsetY, offsetY, activeCount)
@@ -452,7 +453,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         end
     elseif GW.settings.GW_COMBAT_TEXT_STYLE == formats.Stacking then
         f.anchorFrame = stackingContainer
-        table.insert(stackingContainer.activeFrames, f)
+        stackingContainer.activeFrames[#stackingContainer.activeFrames + 1] = f
         setElementData(f, critical, source, missType, blocked, absorbed, periodic, school)
         if critical then
             CRITICAL_ANIMATION(f)
@@ -464,60 +465,62 @@ end
 AFP("displayDamageText", displayDamageText)
 
 local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, ...)
-    if GW.myguid == sourceGUID and GW.myguid ~= destGUID then
-        local periodic = false
-        if string.find(event, "_DAMAGE") then
-            local spellName, amount, blocked, absorbed, critical, localElement
-            if string.find(event, "SWING") then
-                spellName, amount, _, _, _, blocked, absorbed, critical = "melee", ...
-            elseif string.find(event, "ENVIRONMENTAL") then
-                spellName, amount, _, _, _, blocked, absorbed, critical = ...
-            elseif string.find(event, "PERIODIC") then
-                _, spellName, localElement, amount, _, _, _, blocked, absorbed, critical = ...
-                periodic = true
-            else
-                _, spellName, _, amount, _, _, _, blocked, absorbed, critical = ...
-            end
-            displayDamageText(self, destGUID, amount, critical, spellName, nil, blocked, absorbed, periodic, localElement)
-        elseif string.find(event, "_MISSED") then
-            local missType
-            if string.find(event, "RANGE") or string.find(event, "SPELL") then
-                missType = select(4, ...)
-            elseif string.find(event, "SWING") then
-                missType = ...
-            else
-                _, _, _, missType = ...
-            end
-            displayDamageText(self, destGUID, nil, nil, nil, missType)
-        elseif ((GW.settings.GW_COMBAT_TEXT_STYLE == formats.Stacking or (GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic and GW.settings.GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR == "Center"))) and GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS and string.find(event, "_HEAL") then
-            local amount, overhealing, absorbed, critical = select(4, ...)
-            if amount - overhealing > 0 then
-                displayDamageText(self, destGUID, (amount - overhealing), critical, "heal", nil, nil, (absorbed > 0 and absorbed or nil))
-            end
+    if not destGUID then return end
+
+    local isMine = GW.myguid == sourceGUID
+    local isPet = bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) > 0
+    local isGuardianOrPet = isPet and (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) > 0 or bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) > 0)
+    if not isMine and not isGuardianOrPet then
+        return
+    end
+
+    local isDamage = event:find("_DAMAGE", 1, true)
+    local isMiss = not isDamage and event:find("_MISSED", 1, true)
+    local isHeal = not isDamage and not isMiss and event:find("_HEAL", 1, true)
+
+    -- Damage events
+    if isDamage then
+        local spellName, amount, blocked, absorbed, critical, localElement
+        local periodic = event:find("PERIODIC", 1, true)
+        if event:find("SWING", 1, true) then
+            spellName, amount, _, _, _, blocked, absorbed, critical = "melee", ...
+        elseif event:find("ENVIRONMENTAL", 1, true) then
+            spellName, amount, _, _, _, blocked, absorbed, critical = ...
+        else
+            _, spellName, localElement, amount, _, _, _, blocked, absorbed, critical = ...
         end
-    elseif (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) > 0 or bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) > 0) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) > 0 then
-        if string.find(event, "_DAMAGE") then
-            local amount, blocked, absorbed, critical
-            if string.find(event, "SWING") then
-                _, amount, _, _, _, blocked, absorbed, critical = "pet", ...
-            elseif string.find(event, "ENVIRONMENTAL") then
-                _, amount, _, _, _, blocked, absorbed, critical = ...
-            else
-                _, _, _, amount, _, _, _, blocked, absorbed, critical = ...
-            end
-            displayDamageText(self, destGUID, amount, critical, "pet", nil, blocked, absorbed)
-        elseif string.find(event, "_MISSED") then
-            local missType
-            if string.find(event, "RANGE") or string.find(event, "SPELL") then
-                missType = select(4, ...)
-            elseif string.find(event, "SWING") then
-                missType = ...
-            end
-            displayDamageText(self, destGUID, nil, nil, "pet", missType)
+        displayDamageText(self, destGUID, amount, critical, isGuardianOrPet and "pet" or spellName, nil, blocked, absorbed, periodic, localElement)
+        return
+    end
+
+    -- Miss events
+    if isMiss then
+        local missType
+        if event:find("RANGE", 1, true) or event:find("SPELL", 1, true) then
+            missType = select(4, ...)
+        elseif event:find("SWING", 1, true) then
+            missType = ...
+        elseif not isGuardianOrPet then
+            _, _, _, missType = ...
+        end
+        displayDamageText(self, destGUID, nil, nil, isGuardianOrPet and "pet" or nil, missType)
+        return
+    end
+
+    -- Heal events (only relevant styles)
+    if isHeal and ((GW.settings.GW_COMBAT_TEXT_STYLE == formats.Stacking) or (GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic and GW.settings.GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR == "Center")) and GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
+        local amount, overhealing, absorbed, critical = select(4, ...)
+        if amount and amount > (overhealing or 0) then
+            displayDamageText(self, destGUID, (amount - overhealing), critical, "heal", nil, nil, (absorbed and absorbed > 0) and absorbed or nil)
         end
     end
 end
 AFP("handleCombatLogEvent", handleCombatLogEvent)
+
+local function freeClassicGrid(namePlate)
+    local grid = namePlateClassicGrid[namePlate]
+    if grid then wipe(grid) end
+end
 
 local function onNamePlateAdded(_, _, unitID)
     local guid = UnitGUID(unitID)
@@ -532,6 +535,7 @@ local function onNamePlateRemoved(_, _, unitID)
     local guid = unitToGuid[unitID]
     unitToGuid[unitID] = nil
     guidToUnit[guid] = nil
+    freeClassicGrid(unitID)
     if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic then
         return
     end
