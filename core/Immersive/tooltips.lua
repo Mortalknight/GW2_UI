@@ -1015,12 +1015,10 @@ local function SetStyle(self, _, isEmbedded)
             end
         end)
 
-        if PawnSetTooltipBorderColor then
-            hooksecurefunc("PawnSetTooltipBorderColor", function(_, r, g, b, a)
-                if r ~= 0.05 or g ~= 0.05 or b ~= 0.05 or a ~= 1 then
-                    self.NineSlice:SetBackdropBorderColor(0.05, 0.05, 0.05, 1)
-                end
-            end)
+        if PawnRegisterThirdPartyTooltip then
+            PawnRegisterThirdPartyTooltip("GW2_UI", {
+                SetBackdropBorderColor = function() end,
+            })
         end
 
         self.NineSlice.gwHookedBorderColor = true
