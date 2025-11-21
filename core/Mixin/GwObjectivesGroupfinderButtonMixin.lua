@@ -1,4 +1,5 @@
 GwObjectivesGroupfinderButtonMixin = {}
+local isOpeningGroupFinder = false
 
 function GwObjectivesGroupfinderButtonMixin:SetUp(id, isScenario)
 	self.id = id
@@ -17,10 +18,15 @@ function GwObjectivesGroupfinderButtonMixin:OnLeave()
 end
 
 function GwObjectivesGroupfinderButtonMixin:OnClick()
+    if isOpeningGroupFinder then
+        return
+    end
 	local isFromGreenEyeButton = true
+    isOpeningGroupFinder = true
     if not self.isScenario then
-	    LFGListUtil_FindQuestGroup(self.id, isFromGreenEyeButton)
+        LFGListUtil_FindQuestGroup(self.id, isFromGreenEyeButton)
     else
         LFGListUtil_FindScenarioGroup(self.id, true)
     end
+    isOpeningGroupFinder = false
 end
