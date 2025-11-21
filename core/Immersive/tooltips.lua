@@ -6,6 +6,7 @@ local GWGetClassColor = GW.GWGetClassColor
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local nameRoleIcon = GW.nameRoleIcon
 
+local pawnTooltipBorderRegistered = false
 
 local MountIDs = {}
 local targetList = {}
@@ -1015,10 +1016,12 @@ local function SetStyle(self, _, isEmbedded)
             end
         end)
 
-        if PawnRegisterThirdPartyTooltip then
+        if PawnRegisterThirdPartyTooltip and not pawnTooltipBorderRegistered then
             PawnRegisterThirdPartyTooltip("GW2_UI", {
                 SetBackdropBorderColor = function(tt, r, g, b, a) end,
             })
+
+            pawnTooltipBorderRegistered = true
         end
 
         self.NineSlice.gwHookedBorderColor = true
