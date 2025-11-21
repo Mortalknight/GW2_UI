@@ -2,6 +2,8 @@ local _, GW = ...
 
 --Message caches
 local messageToSender = {}
+local messageOrder = {}
+local MESSAGE_CAP = 200
 
 local bgTexture         = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background.png"
 local bgInvTexture      = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background-inverted.png"
@@ -147,10 +149,19 @@ end
 local function ChatBubble_OnEvent(_, event, msg, sender)
     if event == "PLAYER_ENTERING_WORLD" then
         wipe(messageToSender)
+        wipe(messageOrder)
     else
         local unit = (event == "CHAT_MSG_MONSTER_SAY" or event == "CHAT_MSG_MONSTER_YELL") and 1 or 0
         local senderName = TRP3_API and TRP3_API.register.getUnitRPNameWithID(sender) or Ambiguate(sender, "none")
         messageToSender[msg] = { unitType = unit, senderName = senderName }
+        tinsert(messageOrder, msg)
+        -- keep table bounded; always retain newest entry for the next OnUpdate pass
+        while #messageOrder > MESSAGE_CAP do
+            local oldMsg = table.remove(messageOrder, 1)
+            if oldMsg ~= msg then
+                messageToSender[oldMsg] = nil
+            end
+        end
     end
 end
 

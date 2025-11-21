@@ -10,8 +10,6 @@ local CoordsTicker = nil
 local frame = CreateFrame("Frame")
 local mapRects, tempVec2D = {}, CreateVector2D(0, 0)
 local cleuEventListener = {}
-local asyncQueue = {}
-local cleuTicker = nil
 
 local isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 local isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
@@ -57,30 +55,11 @@ end
 
 local function EnableCLEU()
     frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-    if cleuTicker then
-        cleuTicker:Cancel()
-        cleuTicker = nil
-    end
     GW.Debug("CLEU ENABLED")
-
-    cleuTicker = C_Timer.NewTicker(0.1, function()
-        local queuedFunc = table.remove(asyncQueue, 1)
-        while queuedFunc do
-            if queuedFunc then
-                queuedFunc()
-            end
-            queuedFunc = table.remove(asyncQueue, 1)
-        end
-    end)
 end
 
 local function DisableCLEU()
     frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-    if cleuTicker then
-        cleuTicker:Cancel()
-        cleuTicker = nil
-    end
-
     GW.Debug("CLEU DISABLED")
 end
 
@@ -101,11 +80,9 @@ function lib:UnregisterCombatEvent(frm, event)
         cleuEventListener[event][frm] = nil
     end
 
-    if cleuEventListener[event] and cleuEventListener[event][frm] then
-        cleuEventListener[event][frm] = nil
-        if not next(cleuEventListener[event]) then
-            cleuEventListener[event] = nil
-        end
+    -- prune empty event tables so we can actually disable CLEU when nothing listens
+    if cleuEventListener[event] and not next(cleuEventListener[event]) then
+        cleuEventListener[event] = nil
     end
 
     if not next(cleuEventListener) then
@@ -134,8 +111,7 @@ local function HandlingCLEU(_, subEvent, _, sourceGUID, srcName, sourceFlags, _,
         if subEvent == eventKey or strmatch(subEvent, eventKey) then
             for frm, func in pairs(frameListeners) do
                 if type(func) == "function" then
-                    local args = {...}
-                    table.insert(asyncQueue, function() func(frm, _, subEvent, _, sourceGUID, srcName, sourceFlags, _, destGUID, destName, _, _, unpack(args)) end)
+                    func(frm, _, subEvent, _, sourceGUID, srcName, sourceFlags, _, destGUID, destName, _, _, ...)
                 end
             end
         end
