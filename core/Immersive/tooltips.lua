@@ -1017,7 +1017,7 @@ local function SetStyle(self, _, isEmbedded)
 
         if PawnRegisterThirdPartyTooltip then
             PawnRegisterThirdPartyTooltip("GW2_UI", {
-                SetBackdropBorderColor = function() end,
+                SetBackdropBorderColor = function(tt, r, g, b, a) end,
             })
         end
 
