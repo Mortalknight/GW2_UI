@@ -543,7 +543,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
             self.compass.icon:SetTexture(nil)
         end
 
-        if not currentCompassData or currentCompassData ~= self.compass.dataIndex then
+        if (not currentCompassData or currentCompassData ~= self.compass.dataIndex) or not self.compass.Timer then
             currentCompassData = self.compass.dataIndex
             if self.compass.Timer then
                 self.compass.Timer:Cancel()

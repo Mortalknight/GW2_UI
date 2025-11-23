@@ -696,13 +696,6 @@ local function main_OnEvent(_, event, ...)
 end
 AFP("main_OnEvent", main_OnEvent)
 
-local function helper_OnEvent(_, event, ...)
-    --Debug("helper event", event, ...)
-    if (event == "ACTION_RANGE_CHECK_UPDATE") then
-        helper_RangeUpdate(...)
-    end
-end
-
 local function skinMainBar()
     local bar = MainMenuBar or MainActionBar
 
@@ -749,16 +742,10 @@ local function skinMainBar()
         end
     end
 
-   -- event/update handlers
-    --AddUpdateCB(actionBar_OnUpdate, fmActionbar)
-    local f = CreateFrame("Frame")
-    GW.actionbar_helper_frame = f
-    f:SetScript("OnEvent", helper_OnEvent)
-    --f:RegisterEvent("ACTION_USABLE_CHANGED")
-    f:RegisterEvent("ACTION_RANGE_CHECK_UPDATE")
-    --helperFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-    --helperFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-    --helperFrame:RegisterEvent("PLAYER_LEVEL_UP")
+    -- helper frame placeholder (events are wired in updateMainBar)
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:SetScript("OnEvent", main_OnEvent)
+    eventFrame:RegisterEvent("ACTION_RANGE_CHECK_UPDATE")
 end
 AFP("skinMainBar", skinMainBar)
 
@@ -812,14 +799,12 @@ local function updateMainBar()
                     _G[borname]:SetVertexColor(0, 1, 0, 1)
                 end
             end
-
             local rangeIndicator = CreateFrame("FRAME", nil, hotkey:GetParent(), "GwActionRangeIndicatorTmpl")
             rangeIndicator:SetFrameStrata("BACKGROUND")
             rangeIndicator:SetPoint("TOPLEFT", btn, "BOTTOMLEFT", -1, -2)
             rangeIndicator:SetPoint("TOPRIGHT", btn, "BOTTOMRIGHT", 1, -2)
             rangeIndicator.texture:SetVertexColor(147 / 255, 19 / 255, 2 / 255)
             rangeIndicator:Hide()
-
             btn.gw_RangeIndicator = rangeIndicator
 
             btn:ClearAllPoints()
@@ -837,13 +822,15 @@ local function updateMainBar()
 
     -- event/update handlers
     AddUpdateCB(actionBar_OnUpdate, fmActionbar)
-    local helperFrame = CreateFrame("Frame")
-    helperFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-    helperFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-    helperFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-    helperFrame:RegisterEvent("PLAYER_LEVEL_UP")
-    helperFrame:RegisterEvent("ACTION_RANGE_CHECK_UPDATE")
-    helperFrame:HookScript("OnEvent", main_OnEvent)
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+    eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    eventFrame:RegisterEvent("PLAYER_LEVEL_UP")
+    eventFrame:RegisterEvent("ACTION_RANGE_CHECK_UPDATE")
+    -- add a reposition hook to spec switches
+    eventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    eventFrame:HookScript("OnEvent", main_OnEvent)
 
     -- disable default main action bar behaviors
     --MainMenuBar:UnregisterAllEvents()
@@ -860,9 +847,6 @@ local function updateMainBar()
         MainActionBar:SetMovable(0)
         MainActionBar.ignoreFramePositionManager = true
     end
-
-    -- add a reposition hook to spec switches
-    helperFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
     -- set fader logic
     createFaderAnim(fmActionbar, true)

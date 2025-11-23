@@ -104,7 +104,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         timerBlock.timer:Hide()
         timerBlock.height = 1
         timerBlock:SetHeight(timerBlock.height)
-        GW.TerminateScenarioWidgetTimer()
+        GW.TerminateScenarioWidgetTimer(timerBlock)
 
         return
     end
@@ -303,7 +303,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             block:AddObjective(text, numCriteriaPrev + 1, { finished = false, objectiveType = objectiveType, qty = quantity, firstObjectivesYValue = -5 })
             numCriteriaPrev = numCriteriaPrev + 1
             if not showTimerAsBonus then
-                GW.TerminateScenarioWidgetTimer()
+                GW.TerminateScenarioWidgetTimer(timerBlock)
             end
         end
     end
