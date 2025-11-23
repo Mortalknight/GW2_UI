@@ -59,7 +59,7 @@ windowsList[3] = {
 
 windowsList[4] = {
     ["OnLoad"] = "LoadReputation",
-    ["FrameName"] = "GwReputationyDetailsFrame",
+    ["FrameName"] = "GwReputationDetailsFrame",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwReputationFrame",
     ["TabIcon"] = "tabicon_reputation",
@@ -392,6 +392,9 @@ local function LoadBaseFrame()
         heroFrameNormalScale = fmGCW:GetScale()
         heroFrameX,heroFrameY = heroFrameLeft, heroFrameTop - (UIParent:GetHeight() / heroFrameNormalScale)
         heroFrameEffectiveScale = fmGCW:GetEffectiveScale()
+        if heroFrameEffectiveScale == 0 then
+            heroFrameEffectiveScale = UIParent:GetEffectiveScale()
+        end
         moveDistance = GetScaleDistance()
         self:SetScript("OnUpdate", function()
             local scale = GetScaleDistance() / moveDistance * heroFrameNormalScale

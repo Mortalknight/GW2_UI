@@ -258,7 +258,7 @@ local function LoadCurrency()
     local currencyWindow = CreateFrame("Frame", "GwCurrencyDetailsFrame", GwCharacterWindow, "GwCharacterTabContainer")
 
     -- setup the currency window as a HybridScrollFrame and init each of the faux frame buttons
-    local curwin_outer = CreateFrame("Frame", "GWCharacterCurrenyRaidInfoFrame", currencyWindow, "GwCurrencyWindow")
+    local curwin_outer = CreateFrame("Frame", "GwCharacterCurrencyRaidInfoFrame", currencyWindow, "GwCurrencyWindow")
     local curwin = curwin_outer.CurrencyScroll
 
     curwin.update = loadCurrency

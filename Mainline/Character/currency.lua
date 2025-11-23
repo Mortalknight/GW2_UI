@@ -107,7 +107,7 @@ local function raidInfo_OnClick(self)
         self.extendButton.selectedRaidID = self.longInstanceID
         self.extendButton.selectedWorldBossID = self.worldBossID
         selectedLongInstanceID = self.longInstanceID
-        UpdateRaidInfoScrollBox(GWCharacterCurrenyRaidInfoFrame.RaidLocks)
+        UpdateRaidInfoScrollBox(GwCharacterCurrencyRaidInfoFrame.RaidLocks)
     end
 end
 GW.AddForProfiling("currency", "raidInfo_OnClick", raidInfo_OnClick)
@@ -498,7 +498,7 @@ local function UpdateTransferHistorySkins(self)
 end
 
 local function LoadCurrency(tabContainer)
-    local curwin_outer = CreateFrame("Frame", "GWCharacterCurrenyRaidInfoFrame", tabContainer, "GwCurrencyWindow")
+    local curwin_outer = CreateFrame("Frame", "GwCharacterCurrencyRaidInfoFrame", tabContainer, "GwCurrencyWindow")
 
     --take over TokenFrame
     TokenFrame:Show()

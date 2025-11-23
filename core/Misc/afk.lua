@@ -59,8 +59,14 @@ local function SetAFK(self, status)
         self:Hide()
         MoveViewLeftStop()
 
-        self.timer:Cancel()
-        if self.animTimer then self.animTimer:Cancel() end
+        if self.timer then
+            self.timer:Cancel()
+            self.timer = nil
+        end
+        if self.animTimer then
+            self.animTimer:Cancel()
+            self.animTimer = nil
+        end
 
         self.bottom.time:SetText("00:00")
 
@@ -108,7 +114,13 @@ local function OnKeyDown(self, key)
         Screenshot()
     else
         SetAFK(self, false)
-        C_Timer.After(60, function() AFKMode_OnEvent(self) end)
+        if not self.nextCheck or GetTime() >= self.nextCheck then
+            self.nextCheck = GetTime() + 60
+            C_Timer.After(60, function()
+                self.nextCheck = nil
+                AFKMode_OnEvent(self)
+            end)
+        end
     end
 end
 
