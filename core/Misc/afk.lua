@@ -11,12 +11,60 @@ local ignoreKeys = {
     RSHIFT = true,
 }
 local printKeys = {
-    ["PRINTSCREEN"] = true,
+    PRINTSCREEN = true,
 }
+
+local animations = {
+    wave = { id = 67, facing = 6, wait = 5, offsetX = -200, offsetY = 220, duration = 2.3 },
+    dance = { id = 69, facing = 6, wait = 30, offsetX = -200, offsetY = 220, duration = 300 },
+    sleep = { id = 71, facing = 1, wait = 30, offsetX = -200, offsetY = 220, duration = 3000 }
+}
+
+local function CancelTimer(timer)
+    if timer then
+        timer:Cancel()
+    end
+    return nil
+end
 
 local function UpdateTimer(self)
     local time = GetTime() - self.startTime
     self.bottom.time:SetFormattedText("%02d:%02d", floor(time / 60), time % 60)
+end
+
+local function GetAnimation(key)
+    if not key then
+        -- get next animation in row
+        local current = AFKMode.bottom.model.curAnimation
+        if current == "wave" then
+            key = "dance"
+        elseif current == "dance" then
+            key = "sleep"
+        else
+            key = "wave"
+        end
+    end
+
+    return animations[key], key
+end
+
+local function SetAnimation(key)
+    local options, usedKey = GetAnimation(key)
+
+    local model = AFKMode.bottom.model
+    model.curAnimation = usedKey
+    model.duration = options.duration
+    model.idleDuration = options.wait
+    model.startTime = GetTime()
+    model.isIdle = nil
+
+    model:SetFacing(options.facing)
+    model:SetAnimation(options.id)
+
+    if AFKMode.bottom.modelHolder then
+        AFKMode.bottom.modelHolder:ClearAllPoints()
+        AFKMode.bottom.modelHolder:SetPoint("BOTTOMRIGHT", AFKMode.bottom, options.offsetX, options.offsetY)
+    end
 end
 
 local function SetAFK(self, status)
@@ -33,20 +81,10 @@ local function SetAFK(self, status)
             self.bottom.guild:SetText(L["No Guild"])
         end
 
-        self.bottom.model.curAnimation = "wave"
-        self.bottom.model.startTime = GetTime()
-        self.bottom.model.duration = 2.3
-        self.bottom.model:SetUnit("player")
-        self.bottom.model.isIdle = nil
-        self.bottom.model:SetAnimation(67)
-        self.bottom.model:SetFacing(6)
-        self.bottom.model:SetCamDistanceScale(4.5)
-        self.bottom.model.idleDuration = 1
+        SetAnimation("wave")
+
         self.startTime = GetTime()
-        if self.timer then
-            self.timer:Cancel()
-            self.timer = nil
-        end
+        self.timer = CancelTimer(self.timer)
         self.timer = C_Timer.NewTicker(1, function() UpdateTimer(self) end)
 
         self.chat:RegisterEvent("CHAT_MSG_WHISPER")
@@ -58,15 +96,8 @@ local function SetAFK(self, status)
         UIParent:Show()
         self:Hide()
         MoveViewLeftStop()
-
-        if self.timer then
-            self.timer:Cancel()
-            self.timer = nil
-        end
-        if self.animTimer then
-            self.animTimer:Cancel()
-            self.animTimer = nil
-        end
+        self.timer = CancelTimer(self.timer)
+        self.animTimer = CancelTimer(self.animTimer)
 
         self.bottom.time:SetText("00:00")
 
@@ -81,24 +112,21 @@ local function SetAFK(self, status)
     end
 end
 
-local function AFKMode_OnEvent(self, event, arg1, ...)
-    if IsIn(event, "PLAYER_REGEN_DISABLED", "LFG_PROPOSAL_SHOW", "UPDATE_BATTLEFIELD_STATUS") then
-        if event ~= "UPDATE_BATTLEFIELD_STATUS" or (GetBattlefieldStatus(arg1, ...) == "confirm") then
-			SetAFK(self, false)
-		end
+local function AFKMode_OnEvent(self, event, arg1)
+    if event == "PLAYER_REGEN_ENABLED" then
+        self:UnregisterEvent(event)
+    elseif IsIn(event, "PLAYER_REGEN_DISABLED", "LFG_PROPOSAL_SHOW", "UPDATE_BATTLEFIELD_STATUS") then
+        if event ~= "UPDATE_BATTLEFIELD_STATUS" or (GetBattlefieldStatus(arg1) == "confirm") then
+            SetAFK(self, false)
+        end
 
         if event == "PLAYER_REGEN_DISABLED" then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
         end
         return
-    end
-
-    if event == "PLAYER_REGEN_ENABLED" then
-        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    end
-
-    if (event == "PLAYER_FLAGS_CHANGED" and arg1 ~= "player") or (InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown()) then return end
-    if UnitCastingInfo("player") ~= nil then
+    elseif not GW.settings.AFK_MODE or (event == "PLAYER_FLAGS_CHANGED" and arg1 ~= "player") or (InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown()) then
+        return
+    elseif UnitCastingInfo("player") then
         --Don't activate afk if player is crafting stuff, check back in 30 seconds
         C_Timer.After(30, function() AFKMode_OnEvent(self) end)
         return
@@ -112,7 +140,7 @@ local function OnKeyDown(self, key)
 
     if printKeys[key] then
         Screenshot()
-    else
+    elseif self.isAFK then
         SetAFK(self, false)
         if not self.nextCheck or GetTime() >= self.nextCheck then
             self.nextCheck = GetTime() + 60
@@ -137,12 +165,14 @@ local function Chat_OnMouseWheel(self, delta)
 end
 
 local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
-    local coloredName = GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+    local coloredName
     local chatType = strsub(event, 10)
     local info = ChatTypeInfo[chatType]
 
     if event == "CHAT_MSG_BN_WHISPER" then
-        coloredName = format("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, arg2)
+        coloredName = GW.GetBNFriendColor(arg2, arg13)
+    else
+        coloredName = (GetColoredName or ChatFrameUtil.GetDecoratedSenderName)(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
     end
 
     arg1 = RemoveExtraSpaces(arg1)
@@ -193,26 +223,6 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
     self:AddMessage(body, info.r, info.g, info.b, info.id, false, accessID, typeID)
 end
 
-local function LoopAnimations(self)
-    if self.curAnimation == "wave" then
-        self:SetAnimation(69)
-        self.curAnimation = "dance"
-        self.startTime = GetTime()
-        self.duration = 300
-        self.isIdle = false
-        self.idleDuration = 120
-    elseif self.curAnimation == "dance" then
-        self:SetAnimation(71)
-        self:SetCamDistanceScale(5.5)
-        self:SetFacing(1)
-        self.curAnimation = "sleep"
-        self.startTime = GetTime()
-        self.duration = 3000
-        self.isIdle = false
-        self.idleDuration = 120
-    end
-end
-
 local function ToggelAfkMode()
     if GW.settings.AFK_MODE then
         AFKMode:RegisterEvent("PLAYER_FLAGS_CHANGED")
@@ -220,11 +230,17 @@ local function ToggelAfkMode()
         AFKMode:RegisterEvent("LFG_PROPOSAL_SHOW")
         AFKMode:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
         AFKMode:SetScript("OnEvent", AFKMode_OnEvent)
+        AFKMode.chat:SetScript("OnEvent", Chat_OnEvent)
+
         C_CVar.SetCVar("autoClearAFK", "1")
     else
         AFKMode:UnregisterAllEvents()
         AFKMode:SetScript("OnEvent", nil)
-        C_CVar.SetCVar("autoClearAFK", "1")
+
+        AFKMode.chat:SetScript("OnEvent", nil)
+        AFKMode.chat:Clear()
+        AFKMode.timer = CancelTimer(AFKMode.timer)
+        AFKMode.animTimer = CancelTimer(AFKMode.animTimer)
     end
 end
 GW.ToggelAfkMode = ToggelAfkMode
@@ -279,45 +295,6 @@ local function LoadAFKAnimation()
         factionGroup, size, offsetX, offsetY, nameOffsetX, nameOffsetY = "Panda", 90, 15, 10, 20, -5
     end
 
-    local modelOffsetY = 205
-    if GW.myrace == "Human" then
-        modelOffsetY = 195
-    elseif GW.myrace == "Worgen" then
-        modelOffsetY = 280
-    elseif GW.myrace == "Tauren" or GW.myrace == "HighmountainTauren" then
-        modelOffsetY = 250
-    elseif GW.myrace == "Draenei" or GW.myrace == "LightforgedDraenei" then
-        if GW.mysex == 2 then modelOffsetY = 250 end
-    elseif GW.myrace == "Pandaren" then
-        if GW.mysex == 2 then
-            modelOffsetY = 220
-        elseif GW.mysex == 3 then
-            modelOffsetY = 280
-        end
-    elseif GW.myrace == "KulTiran" then
-        if GW.mysex == 2 then
-            modelOffsetY = 220
-        elseif GW.mysex == 3 then
-            modelOffsetY = 240
-        end
-    elseif GW.myrace == "Goblin" then
-        if GW.mysex == 2 then
-            modelOffsetY = 240
-        elseif GW.mysex == 3 then
-            modelOffsetY = 220
-        end
-    elseif GW.myrace == "Troll" or GW.myrace == "ZandalariTroll" then
-        if GW.mysex == 2 then
-            modelOffsetY = 250
-        elseif GW.mysex == 3 then
-            modelOffsetY = 280
-        end
-    elseif GW.myrace == "Dwarf" or GW.myrace == "DarkIronDwarf" then
-        if GW.mysex == 2 then modelOffsetY = 250 end
-    elseif GW.myrace == "Vulpera" then
-        modelOffsetY = 140
-    end
-
     AFKMode.bottom.faction = AFKMode.bottom:CreateTexture(nil, "OVERLAY")
     AFKMode.bottom.faction:SetPoint("BOTTOMLEFT", AFKMode.bottom, "BOTTOMLEFT", offsetX, offsetY)
     AFKMode.bottom.faction:SetTexture("Interface/Timer/" .. factionGroup .. "-Logo")
@@ -344,19 +321,21 @@ local function LoadAFKAnimation()
     --Use this frame to control position of the model
     AFKMode.bottom.modelHolder = CreateFrame("Frame", nil, AFKMode.bottom)
     AFKMode.bottom.modelHolder:SetSize(150, 150)
-    AFKMode.bottom.modelHolder:SetPoint("BOTTOMRIGHT", AFKMode.bottom, "BOTTOMRIGHT", -200, modelOffsetY)
 
     AFKMode.bottom.model = CreateFrame("PlayerModel", nil, AFKMode.bottom.modelHolder)
     AFKMode.bottom.model:SetPoint("CENTER", AFKMode.bottom.modelHolder, "CENTER")
     AFKMode.bottom.model:SetSize(GetScreenWidth() * 2, GetScreenHeight() * 2)
     AFKMode.bottom.model:SetCamDistanceScale(4.5)
-    AFKMode.bottom.model:SetFacing(6)
+    AFKMode.bottom.model:SetUnit("player")
     AFKMode.bottom.model:SetScript("OnUpdate", function(self)
+        if self.isIdle then return end
         local timePassed = GetTime() - self.startTime
-        if timePassed > self.duration and self.isIdle ~= true then
+        if timePassed >= self.duration then
             self:SetAnimation(0)
             self.isIdle = true
-            AFKMode.animTimer = C_Timer.NewTimer(self.idleDuration, function() LoopAnimations(self) end)
+
+            AFKMode.animTimer = CancelTimer(AFKMode.animTimer)
+            AFKMode.animTimer = C_Timer.NewTimer(self.idleDuration, function() SetAnimation() end)
         end
     end)
 

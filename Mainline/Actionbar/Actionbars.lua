@@ -672,7 +672,10 @@ local function saveVertexColor(self, r, g, b, a, bypass)
     if a == nil then
         a = 1
     end
-    self.savedVertexColor = {["r"] = r, ["g"] = g, ["b"] = b, ["a"] = a}
+    -- reuse the same table to avoid allocating on every SetVertexColor call
+    self.savedVertexColor = self.savedVertexColor or {}
+    local saved = self.savedVertexColor
+    saved.r, saved.g, saved.b, saved.a = r, g, b, a
 end
 
 local function main_OnEvent(_, event, ...)

@@ -905,6 +905,7 @@ local function GetBNFriendColor(name, id, useBTag)
     local Color = Class and GW.GWGetClassColor(Class, true, true, true)
     return (Color and format("|c%s%s|r", Color.colorStr, TAG or name)) or TAG or name, BNET_TAG
 end
+GW.GetBNFriendColor = GetBNFriendColor
 
 -- chat histroy
 local function DisplayChatHistory()
