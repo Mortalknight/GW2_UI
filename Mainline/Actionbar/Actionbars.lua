@@ -1231,14 +1231,14 @@ AFP("multiButtons_OnUpdate", multiButtons_OnUpdate)
 local updateCap = 1 / 60 -- cap updates to 60 FPS
 actionBar_OnUpdate = function(self, elapsed)
     local testFade = false
-    self.rangeTimer = self.rangeTimer - elapsed
-    self.fadeTimer = self.fadeTimer - elapsed
-    self.elapsedTimer = self.elapsedTimer - elapsed
-
-    if self.elapsedTimer > 0 then
+    self.elapsedTimer = (self.elapsedTimer or 0) + elapsed
+    if self.elapsedTimer < updateCap then
         return
     end
-    self.elapsedTimer = updateCap
+    local elapsedToProcess = self.elapsedTimer
+    self.elapsedTimer = 0
+    self.rangeTimer = self.rangeTimer - elapsedToProcess
+    self.fadeTimer = self.fadeTimer - elapsedToProcess
 
     if self.rangeTimer <= 0 then
         self.rangeTimer = TOOLTIP_UPDATE_TIME
@@ -1256,30 +1256,30 @@ actionBar_OnUpdate = function(self, elapsed)
 
     -- update action bar buttons
     if self.gw_FadeShowing then
-        actionButtons_OnUpdate(self, elapsed)
+        actionButtons_OnUpdate(self, elapsedToProcess)
     end
 
     -- update multibar buttons
     if self.gw_Bar1.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar1, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar1, elapsedToProcess)
     end
     if self.gw_Bar2.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar2, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar2, elapsedToProcess)
     end
     if self.gw_Bar3.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar3, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar3, elapsedToProcess)
     end
     if self.gw_Bar4.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar4, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar4, elapsedToProcess)
     end
     if self.gw_Bar5.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar5, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar5, elapsedToProcess)
     end
     if self.gw_Bar6.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar6, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar6, elapsedToProcess)
     end
     if self.gw_Bar7.gw_FadeShowing then
-        multiButtons_OnUpdate(self.gw_Bar7, elapsed)
+        multiButtons_OnUpdate(self.gw_Bar7, elapsedToProcess)
     end
 end
 AFP("actionBar_OnUpdate", actionBar_OnUpdate)

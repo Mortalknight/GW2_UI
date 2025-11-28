@@ -14,102 +14,89 @@ local settings = {
 local LeftButtonIcon = "|TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:13:11:0:-1:512:512:12:66:230:307|t"
 
 local function UpdateSettings()
-    settings.twwProfessions = {
-        enabled = GW.settings.WORLD_EVENTS_TWW_PROFESSIONS_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_TWW_PROFESSIONS_DESATURATE,
-    }
+    settings.twwProfessions = settings.twwProfessions or {}
+    settings.twwProfessions.enabled = GW.settings.WORLD_EVENTS_TWW_PROFESSIONS_ENABLED
+    settings.twwProfessions.desaturate = GW.settings.WORLD_EVENTS_TWW_PROFESSIONS_DESATURATE
 
-    settings.khazAlgarEmissary = {
-        enabled = GW.settings.WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_DESATURATE,
-    }
+    settings.khazAlgarEmissary = settings.khazAlgarEmissary or {}
+    settings.khazAlgarEmissary.enabled = GW.settings.WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_ENABLED
+    settings.khazAlgarEmissary.desaturate = GW.settings.WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_DESATURATE
 
-    settings.ringingDeeps = {
-        enabled = GW.settings.WORLD_EVENTS_RINGING_DEEPS_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_RINGING_DEEPS_DESATURATE,
-    }
+    settings.ringingDeeps = settings.ringingDeeps or {}
+    settings.ringingDeeps.enabled = GW.settings.WORLD_EVENTS_RINGING_DEEPS_ENABLED
+    settings.ringingDeeps.desaturate = GW.settings.WORLD_EVENTS_RINGING_DEEPS_DESATURATE
 
-    settings.spreadingTheLight = {
-        enabled = GW.settings.WORLD_EVENTS_SPREADING_THE_LIGHT_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_SPREADING_THE_LIGHT_DESATURATE,
-    }
+    settings.spreadingTheLight = settings.spreadingTheLight or {}
+    settings.spreadingTheLight.enabled = GW.settings.WORLD_EVENTS_SPREADING_THE_LIGHT_ENABLED
+    settings.spreadingTheLight.desaturate = GW.settings.WORLD_EVENTS_SPREADING_THE_LIGHT_DESATURATE
 
-    settings.underworldOperative = {
-        enabled = GW.settings.WORLD_EVENTS_UNDERWORLD_OPERATIVE_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_UNDERWORLD_OPERATIVE_DESATURATE,
-    }
+    settings.underworldOperative = settings.underworldOperative or {}
+    settings.underworldOperative.enabled = GW.settings.WORLD_EVENTS_UNDERWORLD_OPERATIVE_ENABLED
+    settings.underworldOperative.desaturate = GW.settings.WORLD_EVENTS_UNDERWORLD_OPERATIVE_DESATURATE
 
-    settings.theaterTroupe = {
-        enabled = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_THEATER_TROUPE_DESATURATE,
-        alert = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ALERT,
-        alertSeconds = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ALERT_SECONDS,
-        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_THEATER_TROUPE_STOP_ALERT_IF_COMPLETED,
-        flashTaskbar = GW.settings.WORLD_EVENTS_THEATER_TROUPE_FLASH_TASKBAR
-    }
+    settings.theaterTroupe = settings.theaterTroupe or {}
+    settings.theaterTroupe.enabled = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ENABLED
+    settings.theaterTroupe.desaturate = GW.settings.WORLD_EVENTS_THEATER_TROUPE_DESATURATE
+    settings.theaterTroupe.alert = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ALERT
+    settings.theaterTroupe.alertSeconds = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ALERT_SECONDS
+    settings.theaterTroupe.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_THEATER_TROUPE_STOP_ALERT_IF_COMPLETED
+    settings.theaterTroupe.flashTaskbar = GW.settings.WORLD_EVENTS_THEATER_TROUPE_FLASH_TASKBAR
 
-    settings.communityFeast = {
-        enabled = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE,
-        alert = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ALERT,
-        alertSeconds = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS,
-        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED,
-        flashTaskbar = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR
-    }
+    settings.communityFeast = settings.communityFeast or {}
+    settings.communityFeast.enabled = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ENABLED
+    settings.communityFeast.desaturate = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE
+    settings.communityFeast.alert = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ALERT
+    settings.communityFeast.alertSeconds = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS
+    settings.communityFeast.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED
+    settings.communityFeast.flashTaskbar = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR
 
-    settings.dragonbaneKeep = {
-        enabled = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE,
-        alert = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ALERT,
-        alertSeconds = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS,
-        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED,
-        flashTaskbar = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_FLASH_TASKBAR
-    }
+    settings.dragonbaneKeep = settings.dragonbaneKeep or {}
+    settings.dragonbaneKeep.enabled = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED
+    settings.dragonbaneKeep.desaturate = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE
+    settings.dragonbaneKeep.alert = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ALERT
+    settings.dragonbaneKeep.alertSeconds = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS
+    settings.dragonbaneKeep.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED
+    settings.dragonbaneKeep.flashTaskbar = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_FLASH_TASKBAR
 
-    settings.researchersUnderFire = {
-        enabled = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_DESATURATE,
-        alert = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT,
-        alertSeconds = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS,
-        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED,
-        flashTaskbar = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR
-    }
+    settings.researchersUnderFire = settings.researchersUnderFire or {}
+    settings.researchersUnderFire.enabled = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED
+    settings.researchersUnderFire.desaturate = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_DESATURATE
+    settings.researchersUnderFire.alert = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT
+    settings.researchersUnderFire.alertSeconds = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS
+    settings.researchersUnderFire.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED
+    settings.researchersUnderFire.flashTaskbar = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR
 
-    settings.timeRiftThaldraszus = {
-        enabled = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_DESATURATE,
-        alert = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT,
-        alertSeconds = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS,
-        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED,
-        flashTaskbar = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR
-    }
+    settings.timeRiftThaldraszus = settings.timeRiftThaldraszus or {}
+    settings.timeRiftThaldraszus.enabled = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED
+    settings.timeRiftThaldraszus.desaturate = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_DESATURATE
+    settings.timeRiftThaldraszus.alert = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT
+    settings.timeRiftThaldraszus.alertSeconds = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS
+    settings.timeRiftThaldraszus.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED
+    settings.timeRiftThaldraszus.flashTaskbar = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR
 
-    settings.superBloom = {
-        enabled = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_SUPER_BLOOM_DESATURATE,
-        alert = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ALERT,
-        alertSeconds = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS,
-        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_SUPER_BLOOM_STOP_ALERT_IF_COMPLETED,
-        flashTaskbar = GW.settings.WORLD_EVENTS_SUPER_BLOOM_FLASH_TASKBAR
-    }
+    settings.superBloom = settings.superBloom or {}
+    settings.superBloom.enabled = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ENABLED
+    settings.superBloom.desaturate = GW.settings.WORLD_EVENTS_SUPER_BLOOM_DESATURATE
+    settings.superBloom.alert = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ALERT
+    settings.superBloom.alertSeconds = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS
+    settings.superBloom.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_SUPER_BLOOM_STOP_ALERT_IF_COMPLETED
+    settings.superBloom.flashTaskbar = GW.settings.WORLD_EVENTS_SUPER_BLOOM_FLASH_TASKBAR
 
-    settings.bigDig = {
-        enabled = GW.settings.WORLD_EVENTS_BIG_DIG_ENABLED,
-        desaturate = GW.settings.WORLD_EVENTS_BIG_DIG_DESATURATE,
-        alert = GW.settings.WORLD_EVENTS_BIG_DIG_ALERT,
-        alertSeconds = GW.settings.WORLD_EVENTS_BIG_DIG_ALERT_SECONDS,
-        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_BIG_DIG_STOP_ALERT_IF_COMPLETED,
-        flashTaskbar = GW.settings.WORLD_EVENTS_BIG_DIG_FLASH_TASKBAR
-    }
+    settings.bigDig = settings.bigDig or {}
+    settings.bigDig.enabled = GW.settings.WORLD_EVENTS_BIG_DIG_ENABLED
+    settings.bigDig.desaturate = GW.settings.WORLD_EVENTS_BIG_DIG_DESATURATE
+    settings.bigDig.alert = GW.settings.WORLD_EVENTS_BIG_DIG_ALERT
+    settings.bigDig.alertSeconds = GW.settings.WORLD_EVENTS_BIG_DIG_ALERT_SECONDS
+    settings.bigDig.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_BIG_DIG_STOP_ALERT_IF_COMPLETED
+    settings.bigDig.flashTaskbar = GW.settings.WORLD_EVENTS_BIG_DIG_FLASH_TASKBAR
 
-    settings.iskaaranFishingNet = {
-        enabled = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED,
-        alert = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT,
-        disableAlertAfterHours = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS,
-        flashTaskbar = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_FLASH_TASKBAR,
-        -- this are player settings no global ones
-        playerData = GW.private.ISKAARAN_FISHING_NET_DATA
-    }
+    settings.iskaaranFishingNet = settings.iskaaranFishingNet or {}
+    settings.iskaaranFishingNet.enabled = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED
+    settings.iskaaranFishingNet.alert = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT
+    settings.iskaaranFishingNet.disableAlertAfterHours = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS
+    settings.iskaaranFishingNet.flashTaskbar = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_FLASH_TASKBAR
+    -- this are player settings no global ones
+    settings.iskaaranFishingNet.playerData = GW.private.ISKAARAN_FISHING_NET_DATA
 end
 GW.UpdateEventTrackerSettings = UpdateSettings
 

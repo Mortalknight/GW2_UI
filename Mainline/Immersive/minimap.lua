@@ -141,7 +141,13 @@ local function minimap_OnHide()
 end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
+local lastMinimapSide
 local function setMinimapButtons(side)
+    if side == lastMinimapSide then
+        return
+    end
+    lastMinimapSide = side
+
     local expButton = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
     QueueStatusButton:ClearAllPoints()
     GameTimeFrame:ClearAllPoints()
@@ -204,18 +210,21 @@ local function ToogleMinimapCoordsLable()
         GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
         GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
 
-        hooksecurefunc(GwMapCoords, "SetAlpha", function(self, a)
-            if a == 1 then
-                if not self.CoordsTimer then
-                    self.CoordsTimer = C_Timer.NewTicker(0.3, function() mapCoordsMiniMap_setCoords(self) end)
+        if not GwMapCoords.gwAlphaHooked then
+            hooksecurefunc(GwMapCoords, "SetAlpha", function(self, a)
+                if a == 1 then
+                    if not self.CoordsTimer then
+                        self.CoordsTimer = C_Timer.NewTicker(0.3, function() mapCoordsMiniMap_setCoords(self) end)
+                    end
+                elseif a == 0 then
+                    if self.CoordsTimer then
+                        self.CoordsTimer:Cancel()
+                        self.CoordsTimer = nil
+                    end
                 end
-            elseif a == 0 then
-                if self.CoordsTimer then
-                    self.CoordsTimer:Cancel()
-                    self.CoordsTimer = nil
-                end
-            end
-        end)
+            end)
+            GwMapCoords.gwAlphaHooked = true
+        end
     else
         GwMapCoords:Hide()
         GwMapCoords:SetScript("OnEnter", nil)
