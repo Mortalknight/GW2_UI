@@ -141,13 +141,7 @@ local function minimap_OnHide()
 end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
-local lastMinimapSide
 local function setMinimapButtons(side)
-    if side == lastMinimapSide then
-        return
-    end
-    lastMinimapSide = side
-
     local expButton = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
     QueueStatusButton:ClearAllPoints()
     GameTimeFrame:ClearAllPoints()
