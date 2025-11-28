@@ -430,8 +430,8 @@ local function TalentButtonOnClick(self, button)
             local talentInfoQuery = {}
             talentInfoQuery.tier = self.row
             talentInfoQuery.column = self.column
-            talentInfoQuery.groupIndex = PlayerTalentFrame.talentGroup
-            talentInfoQuery.isInspect = PlayerTalentFrame.inspect
+            talentInfoQuery.groupIndex = openSpec
+            talentInfoQuery.isInspect = false
             talentInfoQuery.target = "player"
             local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
             if talentInfo then

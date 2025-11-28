@@ -18,10 +18,13 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.5.2", {
+    {GW.ChangelogType.change, [=[Updates for 11.2.7]=]},
+})
+
 addChange("8.5.1", {
     {GW.ChangelogType.change, [=[Talent switch works again (Mists)]=]},
 })
-
 
 addChange("8.5.0", {
     {GW.ChangelogType.feature, [=[Added Recent Alliens tab to social panel (retail)]=]},
