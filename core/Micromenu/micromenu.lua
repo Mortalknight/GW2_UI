@@ -674,7 +674,7 @@ local function setupMicroButtons(mbf)
 
     -- Retail HousingMicroButton
     local qref = QuestLogMicroButton
-    if HousingMicroButton then
+    if HousingMicroButton and HousingMicroButton:IsShown() then
         HousingMicroButton:ClearAllPoints()
         HousingMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
         qref = HousingMicroButton
