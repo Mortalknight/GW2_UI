@@ -341,42 +341,15 @@ function GwDodgeBarMixin:UpdateSkyridingBarState(state, isLogin)
     if not state and self:IsShown() then
         self:Hide()
         self.dodgeBar.skyringingBarShown = false
-        if GW.settings.HIDE_BLIZZARD_VIGOR_BAR and not EncounterBar:IsVisible() then
-            C_Timer.After(0.5, function() EncounterBar:Show() end)
-        end
     elseif (state and not self:IsShown()) or (state and isLogin and self:IsShown()) then
         self:Show()
         self.dodgeBar:OnLeave()
         self.dodgeBar.skyringingBarShown = true
-
-        if GW.settings.HIDE_BLIZZARD_VIGOR_BAR and EncounterBar:IsVisible() then
-            EncounterBar:Hide()
-        end
     end
 end
 
 function GwDodgeBarMixin:SkyridingBarOnEvent(event, ...)
-    if event == "UNIT_POWER_UPDATE" then
-        local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(4460)
-        if widgetInfo then
-            local fraction = (self.lastPower and self.lastPower > widgetInfo.numFullFrames) and 0 or nil
-            if not self.gwMaxCharges or (widgetInfo.numTotalFrames > self.gwMaxCharges and widgetInfo.numTotalFrames >= 3) then
-                self.gwMaxCharges = widgetInfo.numTotalFrames
-                self:SetupSkyridingBar()
-            end
-            self:AnimateSkyridingBar(widgetInfo.numFullFrames, fraction, widgetInfo.numTotalFrames)
-            self.lastPower = widgetInfo.numFullFrames
-        end
-    elseif event == "UPDATE_UI_WIDGET" then
-        local widget = ...
-        if widget.widgetSetID ~= 283 or not self:IsShown() then return end
-        local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(4460)
-        if widgetInfo then
-            self:AnimateSkyridingBar(widgetInfo.numFullFrames, (widgetInfo.fillValue / widgetInfo.fillMax), widgetInfo.numTotalFrames)
-            self.tooltip = widgetInfo.tooltip
-            self.gwMaxCharges = widgetInfo.numTotalFrames
-        end
-    elseif event == "GW2_PLAYER_SKYRIDING_STATE_CHANGE" then
+    if event == "GW2_PLAYER_SKYRIDING_STATE_CHANGE" then
         local state, isLogin = ...
         self:UpdateSkyridingBarState(state, isLogin)
     end
@@ -415,6 +388,8 @@ function GwDodgeBarMixin:LoadSkiridingBar(parent)
         GW.RegisterScaleFrame(fmdb, 1.1)
     end
 
+    fmdb.spellId = 372608 -- Skyward Leap
+
     -- setting these values in the XML creates animation glitches so we do it here instead
     local af = fmdb.arcfill
 
@@ -443,11 +418,11 @@ function GwDodgeBarMixin:LoadSkiridingBar(parent)
     af.gwAnimFill = a2
 
     af.fillFractions:SetRotation(EMPTY_IN_RAD)
-    ag:SetScript("OnFinished", fmdb.OnFinished)
 
     -- setup dodgebar event handling
     fmdb:OnLeave(nil, true)
-    fmdb:SetScript("OnEvent", fmdb.SkyridingBarOnEvent)
+    fmdb:RegisterEvent("SPELL_UPDATE_CHARGES")
+    fmdb:SetScript("OnEvent", fmdb.OnEvent)
 
     GW.Libs.GW2Lib.RegisterCallback(fmdb, "GW2_PLAYER_SKYRIDING_STATE_CHANGE", function(event, ...)
         fmdb:SkyridingBarOnEvent(event, ...)

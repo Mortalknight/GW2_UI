@@ -152,17 +152,17 @@ local function TalProfButton_OnModifiedClick(self)
             local spell, subSpell = C_SpellBook.GetSpellBookItemName(slot, book)
             if spell and not IsPassiveSpell(slot, book) then
                 if subSpell and strlen(subSpell) > 0 then
-                    ChatEdit_InsertLink(spell .. "(" .. subSpell .. ")")
+                    ChatFrameUtil.InsertLink(spell .. "(" .. subSpell .. ")")
                 else
-                    ChatEdit_InsertLink(spell)
+                    ChatFrameUtil.InsertLink(spell)
                 end
             end
         else
             local profLink, profId = GetSpellTradeSkillLink(slot, book)
             if profId then
-                ChatEdit_InsertLink(profLink)
+                ChatFrameUtil.InsertLink(profLink)
             else
-                ChatEdit_InsertLink(GetSpellLink(slot, book))
+                ChatFrameUtil.InsertLink(GetSpellLink(slot, book))
             end
         end
     elseif IsModifiedClick("PICKUPACTION") and not InCombatLockdown() and not IsPassiveSpell(slot, book) then

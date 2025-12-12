@@ -109,7 +109,7 @@ function GwBonusObjectivesTrackerContainerMixin:BlockOnClick(button)
     local isThreatQuest = C_QuestLog.IsThreatQuest(self.questID)
     if self.parentModule.showWorldQuests or isThreatQuest then
         if button == "LeftButton" then
-            if not ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
+            if not ChatFrameUtil.TryInsertQuestLinkForQuestID(self.questID) then
                 if IsShiftKeyDown() then
                     if QuestUtils_IsQuestWatched(self.questID) and not isThreatQuest then
                         QuestUtil.UntrackWorldQuest(self.questID)

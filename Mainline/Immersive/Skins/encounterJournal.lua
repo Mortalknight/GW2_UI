@@ -342,7 +342,8 @@ local function encounterJournalSkin()
 		EncounterJournalDungeonTab,
 		EncounterJournalRaidTab,
 		EncounterJournalLootJournalTab,
-		EncounterJournalMonthlyActivitiesTab
+		EncounterJournalMonthlyActivitiesTab,
+        EncounterJournal.TutorialsTab
 	} do
 		GW.HandleTabs(tab)
 	end
@@ -372,7 +373,14 @@ local function encounterJournalSkin()
     EncounterJournalLootJournalTab.ClearAllPoints = GW.NoOp
     EncounterJournalLootJournalTab.SetPoint = GW.NoOp
 
+    EncounterJournal.TutorialsTab:ClearAllPoints()
+	EncounterJournal.TutorialsTab:SetPoint('LEFT', EncounterJournalLootJournalTab, 'RIGHT', 0, 0)
+    EncounterJournal.TutorialsTab.ClearAllPoints = GW.NoOp
+    EncounterJournal.TutorialsTab.SetPoint = GW.NoOp
+
     EncounterJournalMonthlyActivitiesFrame.HelpButton:GwKill()
+
+    EncounterJournal.TutorialsFrame.Contents.StartButton:GwSkinButton(false, true)
 
     local EncounterInfo = EJ.encounter.info
     EncounterInfo.encounterTitle:GwKill()

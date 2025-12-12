@@ -1,6 +1,9 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
+local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
+local ChatEdit_InsertLink = ChatFrameUtil and ChatFrameUtil.InsertLink or ChatEdit_InsertLink
+
 local MAX_OBJECTIVES = 10
 GwAchievementTrackerBlockMixin = {}
 function GwAchievementTrackerBlockMixin:UpdateBlock(parent)

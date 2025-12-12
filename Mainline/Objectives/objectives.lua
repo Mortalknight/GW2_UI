@@ -378,7 +378,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
 end
 
 function GwQuestLogMixin:BlockOnClick(button)
-    if ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
+    if ChatFrameUtil.TryInsertQuestLinkForQuestID(self.questID) then
         return
     end
 

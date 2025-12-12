@@ -152,7 +152,6 @@ GW.globalDefault = {
         PIXEL_PERFECTION = false,
         XPBAR_ENABLED = true,
         ALERTFRAME_ENABLED = true,
-        HIDE_BLIZZARD_VIGOR_BAR = true,
 
         interruptAnnounce = "NONE",
 

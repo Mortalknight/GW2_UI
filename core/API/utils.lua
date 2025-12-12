@@ -1424,8 +1424,8 @@ local function AddGw2Layout(init)
         end
         GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
 
-        GW.Libs.LEMO:SetFrameSetting(MainMenuBar or MainActionBar, Enum.EditModeActionBarSetting.IconSize, 5)
-        GW.Libs.LEMO:SetFrameSetting(MainMenuBar or MainActionBar, Enum.EditModeActionBarSetting.HideBarArt, 1)
+        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.IconSize, 5)
+        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.HideBarArt, 1)
         GW.Libs.LEMO:SetFrameSetting(MultiBarBottomLeft, Enum.EditModeActionBarSetting.IconSize, 5)
         GW.Libs.LEMO:SetFrameSetting(MultiBarBottomRight, Enum.EditModeActionBarSetting.IconSize, 5)
         GW.Libs.LEMO:SetFrameSetting(MultiBarRight, Enum.EditModeActionBarSetting.IconSize, 5)
@@ -1434,13 +1434,13 @@ local function AddGw2Layout(init)
         GW.Libs.LEMO:SetFrameSetting(MultiBar6, Enum.EditModeActionBarSetting.IconSize, 5)
         GW.Libs.LEMO:SetFrameSetting(MultiBar7, Enum.EditModeActionBarSetting.IconSize, 5)
         -- Main Actionbar
-        GW.Libs.LEMO:SetFrameSetting(MainMenuBar or MainActionBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal)
-        GW.Libs.LEMO:SetFrameSetting(MainMenuBar or MainActionBar, Enum.EditModeActionBarSetting.NumRows, 1)
-        GW.Libs.LEMO:SetFrameSetting(MainMenuBar or MainActionBar, Enum.EditModeActionBarSetting.NumIcons, 12)
-        GW.Libs.LEMO:ReanchorFrame(MainMenuBar or MainActionBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.HUD_SCALE) or 1)))
+        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal)
+        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.NumRows, 1)
+        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.NumIcons, 12)
+        GW.Libs.LEMO:ReanchorFrame(MainActionBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.HUD_SCALE) or 1)))
 
         -- PossessActionBar
-        GW.Libs.LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar or MainActionBar, "TOP", -110, 40)
+        GW.Libs.LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainActionBar, "TOP", -110, 40)
         GW.Libs.LEMO:ApplyChanges()
     end
 

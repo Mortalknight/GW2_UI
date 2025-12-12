@@ -3,6 +3,9 @@ local L = GW.L
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
 
+local GetColoredName = ChatFrameUtil and ChatFrameUtil.GetDecoratedSenderName or GetColoredName
+local GetChatCategory = ChatFrameUtil and ChatFrameUtil.GetChatCategory or Chat_GetChatCategory
+
 local AFKMode
 
 local ignoreKeys = {
@@ -165,62 +168,51 @@ local function Chat_OnMouseWheel(self, delta)
 end
 
 local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
-    local coloredName
-    local chatType = strsub(event, 10)
-    local info = ChatTypeInfo[chatType]
+    local infoType = strsub(event, 10)
+    local info = ChatTypeInfo[infoType]
 
-    if event == "CHAT_MSG_BN_WHISPER" then
-        coloredName = GW.GetBNFriendColor(arg2, arg13)
-    else
-        coloredName = (GetColoredName or ChatFrameUtil.GetDecoratedSenderName)(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
-    end
-
-    arg1 = RemoveExtraSpaces(arg1)
-
-    local chatGroup = Chat_GetChatCategory(chatType)
+    local chatGroup = GetChatCategory(infoType)
     local chatTarget
     if chatGroup == "BN_CONVERSATION" then
         chatTarget = tostring(arg8)
     elseif chatGroup == "WHISPER" or chatGroup == "BN_WHISPER" then
-        if not(strsub(arg2, 1, 2) == "|K") then
-            chatTarget = arg2:upper()
-        else
-            chatTarget = arg2
-        end
+        chatTarget = (not issecretvalue or not issecretvalue(arg2)) and strsub(arg2, 1, 2) ~= "|K" and strupper(arg2) or arg2
     end
 
     local playerLink
-    if chatType ~= "BN_WHISPER" and chatType ~= "BN_CONVERSATION" then
-        playerLink = "|Hplayer:" .. arg2 .. ":" .. arg11 .. ":" .. chatGroup .. (chatTarget and ":" .. chatTarget or "") .. "|h"
+    local linkTarget = chatTarget and (":"..chatTarget) or ""
+    if infoType ~= "BN_WHISPER" and infoType ~= "BN_CONVERSATION" then
+        playerLink = format("|Hplayer:%s:%s:%s%s|h", arg2, arg11, chatGroup, linkTarget)
     else
-        playerLink = "|HBNplayer:" .. arg2 .. ":" .. arg13 .. ":" .. arg11 .. ":" .. chatGroup .. (chatTarget and ":" .. chatTarget or "") .. "|h"
+        playerLink = format("|HBNplayer:%s:%s:%s:%s%s|h", arg2, arg13, arg11, chatGroup, linkTarget)
     end
 
-    --Escape any % characters, as it may otherwise cause an "invalid option in format" error in the next step
-    arg1 = gsub(arg1, "%%", "%%%%")
-
-    --Remove groups of many spaces
-    arg1 = RemoveExtraSpaces(arg1)
-
-    -- isMobile
-    if arg14 then
-        arg1 = ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b) .. arg1
+    local isProtected = GW.ChatFunctions:IsMessageProtected(arg1)
+    if not isProtected then
+        arg1 = gsub(arg1, "%%", "%%%%")
+        arg1 = RemoveExtraSpaces(arg1)
     end
 
-    local _, body = pcall(format, _G["CHAT_" .. chatType .. "_GET"] .. arg1, playerLink .. "[" .. coloredName .. "]" .. "|h")
+    local isMobile = arg14 and ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b)
+    local message = format("%s%s", isMobile or "", arg1)
 
-    local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget)
-    local typeID = ChatHistory_GetAccessID(chatType, chatTarget, arg12 == "" and arg13 or arg12)
+    local coloredName = (infoType == "BN_WHISPER" and GW.GetBNFriendColor(arg2, arg13)) or GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+    local senderLink = format("%s[%s]|h", playerLink, coloredName)
+    local success, msg = pcall(format, _G["CHAT_" .. infoType .. "_GET"] .. "%s", senderLink, message)
+    if not success then return end
 
-    if GW.settings.CHAT_SHORT_CHANNEL_NAMES then
-        body = body:gsub("|Hchannel:(.-)|h%[(.-)%]|h", GW.ShortChannel)
-        body = body:gsub("^(.-|h) " .. CHAT_WHISPER_GET:format("~"):gsub("~ ", ""):gsub(": ", ""), "%1")
-        body = body:gsub("<" .. AFK .. ">", "[|cffFF0000" .. AFK .. "|r] ")
-        body = body:gsub("<" .. DND .. ">", "[|cffE7E716" .. DND .. "|r] ")
-        body = body:gsub("%[BN_CONVERSATION:", "%[".."")
+    if not isProtected and GW.settings.CHAT_SHORT_CHANNEL_NAMES then
+        msg = msg:gsub("|Hchannel:(.-)|h%[(.-)%]|h", GW.ShortChannel)
+        msg = msg:gsub("^(.-|h) " .. CHAT_WHISPER_GET:format("~"):gsub("~ ", ""):gsub(": ", ""), "%1")
+        msg = msg:gsub("<" .. AFK .. ">", "[|cffFF0000" .. AFK .. "|r] ")
+        msg = msg:gsub("<" .. DND .. ">", "[|cffE7E716" .. DND .. "|r] ")
+        msg = msg:gsub("^%[" .. RAID_WARNING .. "%]", "[" .. L["RW"] .. "]")
+        msg = msg:gsub("%[BN_CONVERSATION:", "%[".."")
     end
 
-    self:AddMessage(body, info.r, info.g, info.b, info.id, false, accessID, typeID)
+    local accessID = GW.ChatFunctions:GetAccessID(chatGroup, chatTarget)
+    local typeID = GW.ChatFunctions:GetAccessID(infoType, chatTarget, arg12 or arg13)
+    self:AddMessage(msg, info.r, info.g, info.b, info.id, false, accessID, typeID)
 end
 
 local function ToggelAfkMode()

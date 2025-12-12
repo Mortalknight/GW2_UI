@@ -1,6 +1,8 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
+local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
+
 
 GwObjectivesMonthlyActivitiesBlockMixin = {}
 
@@ -103,7 +105,7 @@ end
 function GwObjectivesMonthlyActivitiesContainerMixin:BlockOnClick(button)
     if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
 		local perksActivityLink = C_PerksActivities.GetPerksActivityChatLink(self.id)
-		ChatEdit_InsertLink(perksActivityLink)
+		ChatFrameUtil.InsertLink(perksActivityLink)
 	elseif button ~= "RightButton" then
 		if not EncounterJournal then
 			EncounterJournal_LoadUI()

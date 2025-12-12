@@ -2,6 +2,10 @@ local _, GW = ...
 local L = GW.L
 local AddForProfiling = GW.AddForProfiling
 
+local ChatFrame_AddMessageGroup = ChatFrameMixin and ChatFrameMixin.AddMessageGroup or ChatFrame_AddMessageGroup
+local ChatFrame_RemoveAllMessageGroups = ChatFrameMixin and ChatFrameMixin.RemoveAllMessageGroups or ChatFrame_RemoveAllMessageGroups
+local ChatFrame_RemoveChannel = ChatFrameMixin and ChatFrameMixin.RemoveChannel or ChatFrame_RemoveChannel
+
 local LEMO = GW.Libs.LEMO
 
 local wpanel

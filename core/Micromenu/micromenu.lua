@@ -12,6 +12,7 @@ local MICRO_BUTTONS_LOCAL = {
     "AchievementMicroButton",
     "TalentMicroButton",
     "QuestLogMicroButton",
+    "HousingMicroButton",
     "GuildMicroButton",
     "SocialsMicroButton", -- none Retail
     "LFDMicroButton",
@@ -671,10 +672,18 @@ local function setupMicroButtons(mbf)
     QuestLogMicroButton:HookScript("OnEvent", updateQuestLogButton)
     updateQuestLogButton()
 
+    -- Retail HousingMicroButton
+    local qref = QuestLogMicroButton
+    if HousingMicroButton then
+        HousingMicroButton:ClearAllPoints()
+        HousingMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
+        qref = HousingMicroButton
+    end
+
     -- GuildMicroButton
     local gref = GW.Classic and SocialsMicroButton or GuildMicroButton
     gref:ClearAllPoints()
-    gref:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
+    gref:SetPoint("BOTTOMLEFT", qref, "BOTTOMRIGHT", 4, 0)
     gref.Ticker = C_Timer.NewTicker(15, function() C_GuildInfo.GuildRoster() end)
     gref:RegisterEvent("GUILD_ROSTER_UPDATE")
     gref:RegisterEvent("MODIFIER_STATE_CHANGED")

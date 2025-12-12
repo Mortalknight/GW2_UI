@@ -148,11 +148,11 @@ local function button_OnModifiedClick(self)
     if IsModifiedClick("CHATLINK") then
         if MacroFrameText and MacroFrameText:HasFocus() then
             if name and not isPassive then
-                ChatEdit_InsertLink(name)
+                ChatFrameUtil.InsertLink(name)
             end
         else
             local link = GetPvpTalentLink(tid)
-            ChatEdit_InsertLink(link)
+            ChatFrameUtil.InsertLink(link)
         end
     elseif IsModifiedClick("PICKUPACTION") and not InCombatLockdown() and not isPassive then
         PickupPvpTalent(tid)

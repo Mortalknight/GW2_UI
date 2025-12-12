@@ -1,6 +1,8 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
+local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
+
 local tomTomWaypoint = nil
 
 local function AddTomTomWaypoint(questId, objective)

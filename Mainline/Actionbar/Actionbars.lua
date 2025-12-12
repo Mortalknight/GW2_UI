@@ -9,19 +9,19 @@ local AFP = GW.AddProfiling
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 
 local GW_BLIZZARD_HIDE_FRAMES = {
-    MainMenuBar or MainActionBar,
-    (MainMenuBar or MainActionBar).Background,
+    MainActionBar,
+    MainActionBar.Background,
     MainMenuBarOverlayFrame,
     MainMenuBarTexture0,
     MainMenuBarTexture1,
     MainMenuBarTexture2,
     MainMenuBarTexture3,
-    (MainMenuBar or MainActionBar).EndCaps.LeftEndCap,
-    (MainMenuBar or MainActionBar).EndCaps.RightEndCap,
-    (MainMenuBar or MainActionBar).ActionBarPageNumber,
-    (MainMenuBar or MainActionBar).ActionBarPageNumber.UpButton,
-    (MainMenuBar or MainActionBar).ActionBarPageNumber.DownButton,
-    (MainMenuBar or MainActionBar).BorderArt,
+    MainActionBar.EndCaps.LeftEndCap,
+    MainActionBar.EndCaps.RightEndCap,
+    MainActionBar.ActionBarPageNumber,
+    MainActionBar.ActionBarPageNumber.UpButton,
+    MainActionBar.ActionBarPageNumber.DownButton,
+    MainActionBar.BorderArt,
     ReputationWatchBar,
     HonorWatchBar,
     ArtifactWatchBar,
@@ -88,7 +88,7 @@ local function hideBlizzardsActionbars()
         object:Hide()
     end
 
-    (MainMenuBar or MainActionBar):EnableMouse(false)
+    MainActionBar:EnableMouse(false)
 end
 AFP("hideBlizzardsActionbars", hideBlizzardsActionbars)
 
@@ -624,7 +624,7 @@ local function helper_RangeUpdate(slot, inRange, checkRange)
     local indicator = "RED_OVERLAY"
     local barPrefix = GW.settings.BAR_LAYOUT_ENABLED and "Gw" or ""
     if slot <= 24 then
-        btn = (MainMenuBar or MainActionBar).gw_Buttons[slot]
+        btn = MainActionBar.gw_Buttons[slot]
         indicator = GW.settings.MAINBAR_RANGEINDICATOR
         -- 13 to 24 is page 2
     elseif slot <= 36 then
@@ -685,7 +685,7 @@ local function main_OnEvent(_, event, ...)
         actionBarEquipUpdate()
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         local forceCombat = event == "PLAYER_REGEN_DISABLED"
-        fadeCheck(MainMenuBar or MainActionBar, forceCombat)
+        fadeCheck(MainActionBar, forceCombat)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
         C_Timer.After(1.1, GW.AddGw2Layout)
     end
@@ -700,7 +700,7 @@ end
 AFP("main_OnEvent", main_OnEvent)
 
 local function skinMainBar()
-    local bar = MainMenuBar or MainActionBar
+    local bar = MainActionBar
 
     bar.gw_Buttons = {}
     for i = 1, 12 do
@@ -753,7 +753,7 @@ end
 AFP("skinMainBar", skinMainBar)
 
 local function updateMainBar()
-    local fmActionbar = MainMenuBar or MainActionBar
+    local fmActionbar = MainActionBar
 
     fmActionbar:GwKillEditMode()
 
@@ -836,20 +836,10 @@ local function updateMainBar()
     eventFrame:HookScript("OnEvent", main_OnEvent)
 
     -- disable default main action bar behaviors
-    --MainMenuBar:UnregisterAllEvents()
-    --MainMenuBar:SetScript("OnUpdate", nil)
-    --MainMenuBar:EnableMouse(false)
-    if MainMenuBar then
-        MainMenuBar:SetMovable(1)
-        MainMenuBar:SetUserPlaced(true)
-        MainMenuBar:SetMovable(0)
-        MainMenuBar.ignoreFramePositionManager = true
-    else
-        MainActionBar:SetMovable(1)
-        MainActionBar:SetUserPlaced(true)
-        MainActionBar:SetMovable(0)
-        MainActionBar.ignoreFramePositionManager = true
-    end
+    MainActionBar:SetMovable(1)
+    MainActionBar:SetUserPlaced(true)
+    MainActionBar:SetMovable(0)
+    MainActionBar.ignoreFramePositionManager = true
 
     -- set fader logic
     createFaderAnim(fmActionbar, true)
@@ -860,7 +850,7 @@ end
 AFP("updateMainBar", updateMainBar)
 
 local function trackBarChanges()
-    local fmActionbar = MainMenuBar or MainActionBar
+    local fmActionbar = MainActionBar
     if not fmActionbar then
         return
     end
@@ -1078,7 +1068,7 @@ end
 AFP("updateMultiBar", updateMultiBar)
 
 local function UpdateMultibarButtons()
-    local fmActionbar = MainMenuBar or MainActionBar
+    local fmActionbar = MainActionBar
     local fmMultiBar
 
     for y = 1, 7 do
@@ -1134,7 +1124,7 @@ end
 GW.UpdateMultibarButtons = UpdateMultibarButtons
 
 local function setLeaveVehicleButton()
-    MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar or MainActionBar)
+    MainMenuBarVehicleLeaveButton:SetParent(MainActionBar)
     MainMenuBarVehicleLeaveButton:ClearAllPoints()
     MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
 
@@ -1285,7 +1275,7 @@ end
 AFP("actionBar_OnUpdate", actionBar_OnUpdate)
 
 local function UpdateMainBarHot()
-    local fmActionbar = MainMenuBar or MainActionBar
+    local fmActionbar = MainActionBar
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
     local btn_padding = GW.settings.MAINBAR_MARGIIN
 
@@ -1315,7 +1305,7 @@ local function UpdateMainBarHot()
     fmActionbar:SetSize(btn_padding, used_height)
     fmActionbar.gw_Width = btn_padding
 
-    actionButtons_OnUpdate(MainMenuBar or MainActionBar, 0)
+    actionButtons_OnUpdate(MainActionBar, 0)
 end
 GW.UpdateMainBarHot = UpdateMainBarHot
 

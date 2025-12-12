@@ -99,7 +99,7 @@ GW.AddForProfiling("currency", "raidInfo_OnEnter", raidInfo_OnEnter)
 local function raidInfo_OnClick(self)
     if IsModifiedClick("CHATLINK") then
         if self.instanceID then
-            ChatEdit_InsertLink(GetSavedInstanceChatLink(self.RaidInfoIdx))
+            ChatFrameUtil.InsertLink(GetSavedInstanceChatLink(self.RaidInfoIdx))
         else
             -- No chat links for World Boss locks yet
         end
