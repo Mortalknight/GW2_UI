@@ -37,8 +37,12 @@ local function ApplySocketUISkin()
     for i = 1, MAX_NUM_SOCKETS  do
         local button_bracket = _G[("ItemSocketingSocket%dBracketFrame"):format(i)]
         local button_icon = _G[("ItemSocketingSocket%dIconTexture"):format(i)]
-        button_bracket:GwKill()
-        button_icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        if button_bracket then
+            button_bracket:GwKill()
+        end
+        if button_icon then
+            button_icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        end
     end
 
     ItemSocketingSocketButton:ClearAllPoints()
