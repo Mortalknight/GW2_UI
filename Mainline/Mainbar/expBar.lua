@@ -11,6 +11,7 @@ local experiencebarAnimation = 0
 
 local gw_reputation_vals = nil
 local gw_honor_vals = nil
+local housingTooltipText = nil
 
 local function xpbar_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
@@ -29,6 +30,10 @@ local function xpbar_OnEnter(self)
 
     if gw_honor_vals ~= nil then
         GameTooltip:AddLine(gw_honor_vals, 1, 1, 1)
+    end
+
+    if housingTooltipText then
+        GameTooltip:AddLine(housingTooltipText, 1, 1, 1)
     end
 
     if not IsPlayerAtEffectiveMaxLevel() then
@@ -323,12 +328,19 @@ local function LayoutBars(self, showExp, showAzerite, showRepu)
     end
 end
 
-local function xpbar_OnEvent(self, event)
+local houseLevelFavor
+local function xpbar_OnEvent(self, event, ...)
     if event == "UPDATE_FACTION" and not GW.inWorld then
         return
     end
 
+    if event == "HOUSE_LEVEL_FAVOR_UPDATED" then
+        houseLevelFavor = ...
+    end
+
     gw_reputation_vals = nil
+    gw_honor_vals = nil
+    housingTooltipText = nil
 
     local animationSpeed = 15
     local maxPlayerLevel = GetMaxLevelForPlayerExpansion()
@@ -347,8 +359,6 @@ local function xpbar_OnEvent(self, event)
         Nextlevel = repuNextLevel
     end
 
-    gw_honor_vals = nil
-
     if (GW.mylevel == maxPlayerLevel and (UnitInBattleground("player") or event == "PLAYER_ENTERING_BATTLEGROUND")) or IsWatchingHonorAsXP() then
         showExp = true
         level = UnitHonorLevel("player")
@@ -361,6 +371,29 @@ local function xpbar_OnEvent(self, event)
         gw_honor_vals = HONOR .. " " .. GW.GetLocalizedNumber(currentHonor) .. " / " .. GW.GetLocalizedNumber(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
         self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
     end
+
+    if C_Housing.GetTrackedHouseGuid() then
+        showExp = true
+
+        level = houseLevelFavor and houseLevelFavor.houseLevel or 0
+        Nextlevel = level + 1
+        local currentHouseEp = houseLevelFavor and houseLevelFavor.houseFavor or 0
+		local maxBar = C_Housing.GetHouseLevelFavorForLevel(level + 1)
+        valPrec = (maxBar > 0) and (math.min(currentHouseEp, maxBar) / maxBar) or 0
+
+        local houseInfo = C_Housing.GetCurrentHouseInfo()
+        local houseOwner = ""
+        if houseInfo then
+            houseOwner = houseInfo.ownerName
+        end
+
+        housingTooltipText = string.format("%s: %s / %s |cffa6a6a6 (%d%%)|r",
+            format(HOUSING_DASHBOARD_OWNERS_HOUSE, houseOwner),
+            math.min(maxBar, currentHouseEp), maxBar,
+            math.floor(valPrec * 100)
+        )
+    end
+
 
     if showAzerite then
         self.AzeritBarCandy:SetValue(AzeritVal)
@@ -585,6 +618,8 @@ local function LoadXPBar()
     experiencebar:RegisterEvent("PLAYER_ENTERING_WORLD")
     experiencebar:RegisterEvent("PLAYER_LEVEL_CHANGED")
     experiencebar:RegisterEvent("UPDATE_EXHAUSTION")
+    experiencebar:RegisterEvent("TRACKED_HOUSE_CHANGED")
+    experiencebar:RegisterEvent("HOUSE_LEVEL_FAVOR_UPDATED")
     hooksecurefunc("SetWatchingHonorAsXP", function()
         xpbar_OnEvent(experiencebar)
     end)
