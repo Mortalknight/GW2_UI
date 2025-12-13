@@ -1029,7 +1029,7 @@ tremove(ChatTypeGroup.GUILD, 2)
 local function DelayGuildMOTD()
     local delay, checks, delayFrame, chat = 0, 0, CreateFrame("Frame")
     tinsert(ChatTypeGroup.GUILD, 2, "GUILD_MOTD")
-    delayFrame:SetScript("OnUpdate", function(df, elapsed)
+    delayFrame:SetScript("OnUpdate", function(self, elapsed)
         delay = delay + elapsed
         if delay < 5 then return end
         local msg = GetGuildRosterMOTD()
@@ -1041,11 +1041,11 @@ local function DelayGuildMOTD()
                     chat:RegisterEvent("GUILD_MOTD")
                 end
             end
-            df:SetScript("OnUpdate", nil)
+            self:SetScript("OnUpdate", nil)
         else -- 5 seconds sometimes to fast, limit to 5 checks
             delay, checks = 0, checks + 1
             if checks >= 5 then
-                df:SetScript("OnUpdate", nil)
+                self:SetScript("OnUpdate", nil)
             end
         end
     end)
@@ -1709,26 +1709,23 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 end
 GW.ChatFrame_MessageEventHandler = ChatFrame_MessageEventHandler
 
-local function ChatFrame_ConfigEventHandler(frame, event, ...)
-    if _G.ChatFrame_ConfigEventHandler then
-        return _G.ChatFrame_ConfigEventHandler(frame, event, ...)
-    end
-    return frame:ConfigEventHandler(event, ...)
+local function ChatFrame_ConfigEventHandler(...)
+    local configEventhandler = _G.ChatFrameMixin and _G.ChatFrameMixin.ConfigEventHandler or _G.ChatFrame_ConfigEventHandler
+    return configEventhandler(...)
 end
 
-local function ChatFrame_SystemEventHandler(frame, event, message, ...)
-    if _G.ChatFrame_SystemEventHandler then
-        return _G.ChatFrame_SystemEventHandler(frame, event, message, ...)
-    end
-    return frame:SystemEventHandler(event, event, message, ...)
+local function ChatFrame_SystemEventHandler(...)
+    local systemEventHandler = _G.ChatFrameMixin and _G.ChatFrameMixin.SystemEventHandler or _G.ChatFrame_SystemEventHandler
+	return systemEventHandler(...)
 end
 GW.ChatFrame_SystemEventHandler = ChatFrame_SystemEventHandler
 
-local function ChatFrame_OnEvent(frame, event, ...)
-    if frame.customEventHandler and frame.customEventHandler(frame, event, ...) then return end
-    if ChatFrame_ConfigEventHandler(frame, event, ...) then return end
-    if ChatFrame_SystemEventHandler(frame, event, ...) then return end
-    if ChatFrame_MessageEventHandler(frame, event, ...) then return end
+local function ChatFrame_OnEvent(frame, ...)
+    if frame.customEventHandler and frame.customEventHandler(...) then return end
+
+    if ChatFrame_ConfigEventHandler(frame, ...) then return end
+    if ChatFrame_SystemEventHandler(frame, ...) then return end
+    if ChatFrame_MessageEventHandler(frame, ...) then return end
 end
 
 local function FloatingChatFrameOnEvent(...)
