@@ -49,7 +49,7 @@ local function BuildSettingsWindow()
     settingsContainer.headerBreadcrumb:SetText(CHAT_CONFIGURATION)
     settingsContainer.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
     settingsContainer.versionString:SetFont(UNIT_NAME_FONT, 12)
-    settingsContainer.versionString:SetText(GW.VERSION_STRING)
+    settingsContainer.versionString:SetText(GW.GetVersionString())
     settingsContainer.headerString:SetText(CHAT_CONFIGURATION)
 
     settingsContainer.close:SetScript("OnClick", function() settingsContainer:Hide() end)

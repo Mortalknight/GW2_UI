@@ -250,7 +250,7 @@ local function createPanel()
     wpanel.subHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
     wpanel.subHeader:SetTextColor(0.9,0.85,0.7,1)
 
-    wpanel.subHeader:SetText(GW.VERSION_STRING)
+    wpanel.subHeader:SetText(GW.GetVersionString())
 
     -- settings button
     wpanel.settings.target = GwSettingsWindow

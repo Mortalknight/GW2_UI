@@ -204,7 +204,7 @@ local function CreateStatusFrame()
     StatusFrame.Section4.Content:SetPoint("TOP", StatusFrame.Section4.Header, "BOTTOM", 0, 0)
 
     --Content lines
-    StatusFrame.Section1.Content.Line1.Text:SetFormattedText("GW2 UI version: |cff4beb2c%s|r", GW.VERSION_STRING)
+    StatusFrame.Section1.Content.Line1.Text:SetFormattedText("GW2 UI version: |cff4beb2c%s|r", GW.GetVersionString())
     StatusFrame.Section1.Content.Line2.Text:SetFormattedText("Other AddOns Enabled: |cff4beb2c%s|r", AreOtherAddOnsEnabled())
     StatusFrame.Section1.Content.Line3.Text:SetFormattedText("Paste Addon Enabled: %s", CheckForPasteAddon() and "|cffff0000Yes|r" or "|cff4beb2cNo|r")
     StatusFrame.Section1.Content.Line4.Text:SetFormattedText("Recommended Scale: |cff4beb2c%s|r", GW.getBestPixelScale())

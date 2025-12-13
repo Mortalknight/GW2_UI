@@ -857,11 +857,11 @@ local function evPlayerLogin(self)
     --Check if we should show Welcomepage or Changelog
     if GW.private.GW2_UI_VERSION == "WELCOME" then
         GW.ShowWelcomePanel()
-    elseif GW.private.GW2_UI_VERSION ~= GW.VERSION_STRING then
+    elseif GW.private.GW2_UI_VERSION ~= GW.GetVersionString() then
         ShowUIPanel(GwSettingsWindow)
         HideUIPanel(GameMenuFrame)
     end
-    GW.private.GW2_UI_VERSION = GW.VERSION_STRING
+    GW.private.GW2_UI_VERSION = GW.GetVersionString()
 
     self:SetScript("OnUpdate", gw_OnUpdate)
     GW.UpdateCharData()

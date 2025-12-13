@@ -1,8 +1,6 @@
 
 local addonName, GW = ...
 
-GW.VERSION_STRING = "GW2_UI @project-version@"
-
 -- Make a global GW variable , so others cann access our functions
 GW2_ADDON = GW
 
@@ -28,6 +26,16 @@ do -- Expansions
     local IsEngravingEnabled = C_Engraving and C_Engraving.IsEngravingEnabled
     GW.IsEngravingEnabled = IsEngravingEnabled and IsEngravingEnabled()
 end
+
+local function GetVersionString()
+    local version = C_AddOns.GetAddOnMetadata(addonName, "Version")
+    if version:find("@project%-version@") then
+        return "GW2_UI Development Version"
+    else
+        return "GW2_UI " .. version
+    end
+end
+GW.GetVersionString = GetVersionString
 
 -- init: store API, to reduce the API usage
 local function GetPlayerRole()

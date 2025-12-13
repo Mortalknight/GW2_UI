@@ -85,7 +85,7 @@ function Gw2ErrorHandlerMixin:Toggle()
         self.editBox:SetText("")
         self:Hide()
     else
-        local txt = ("Version: %s Date: %s Locale: %s Build %s %s"):format(GW.VERSION_STRING or "?", date("%m/%d/%y %H:%M:%S") or "?", GW.mylocal or "?", GW.wowpatch, GW.wowbuild)
+        local txt = ("Version: %s Date: %s Locale: %s Build %s %s"):format(GW.GetVersionString() or "?", date("%m/%d/%y %H:%M:%S") or "?", GW.mylocal or "?", GW.wowpatch, GW.wowbuild)
         txt = txt .. "\n" .. GW.Join("\n", self.log)
         self.editBox:SetText(txt)
         self.editBox:HighlightText()

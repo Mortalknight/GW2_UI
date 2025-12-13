@@ -31,11 +31,11 @@ do
     local SendMessageWaiting
     local function SendMessage()
         if IsInRaid() then
-            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, (not IsInRaid(LE_PARTY_CATEGORY_HOME) and IsInRaid(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "RAID")
+            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.GetVersionString(), (not IsInRaid(LE_PARTY_CATEGORY_HOME) and IsInRaid(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "RAID")
         elseif IsInGroup() then
-            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, (not IsInGroup(LE_PARTY_CATEGORY_HOME) and IsInGroup(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "PARTY")
+            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.GetVersionString(), (not IsInGroup(LE_PARTY_CATEGORY_HOME) and IsInGroup(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "PARTY")
         elseif IsInGuild() then
-            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, "GUILD")
+            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.GetVersionString(), "GUILD")
         end
 
         SendMessageWaiting = nil
@@ -51,7 +51,7 @@ do
             if sender == myName then return end
             if prefix == "GW2UI_VERSIONCHK" then
                 local version, subversion, hotfix = string.match(message, "GW2_UI (%d+).(%d+).(%d+)")
-                local currentVersion, currentSubversion, currentHotfix = string.match(GW.VERSION_STRING, "GW2_UI (%d+).(%d+).(%d+)")
+                local currentVersion, currentSubversion, currentHotfix = string.match(GW.GetVersionString(), "GW2_UI (%d+).(%d+).(%d+)")
                 local isUpdate = false
                 if version == nil or subversion == nil or hotfix == nil or currentVersion == nil or currentSubversion == nil or currentHotfix == nil then return end
 
