@@ -34,7 +34,7 @@ if GW.Retail then
         GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_NONE");
         GameTooltip:SetPoint("TOPRIGHT", menuButtonFrame, "BOTTOMRIGHT", 0, 0)
         GameTooltip:ClearLines()
-        GameTooltip:AddDoubleLine(addonName, C_AddOns.GetAddOnMetadata(addonName, "Version"))
+        GameTooltip:AddDoubleLine(addonName, GW.GetVersionString())
         GameTooltip:Show()
     end
 

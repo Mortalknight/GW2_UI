@@ -30,7 +30,8 @@ end
 local function GetVersionString()
     local version = C_AddOns.GetAddOnMetadata(addonName, "Version")
     if version:find("@project%-version@") then
-        return "GW2_UI Development Version"
+        local currentVersion = GW.changelog[1].version
+        return "GW2_UI " .. currentVersion .. " Development Version"
     else
         return "GW2_UI " .. version
     end
