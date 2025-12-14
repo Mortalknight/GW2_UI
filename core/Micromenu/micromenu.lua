@@ -220,6 +220,14 @@ local function reskinMicroButton(btn, name, mbf, hook)
     btn:SetPushedTexture(tex)
     btn:SetHighlightTexture(tex)
 
+    -- temp till we have a own texture (TODO)
+    if name == "HousingMicroButton" then
+        btn:GetNormalTexture():SetDesaturated(true)
+        btn:GetDisabledTexture():SetDesaturated(true)
+        btn:GetPushedTexture():SetDesaturated(true)
+        btn:GetHighlightTexture():SetDesaturated(true)
+    end
+
     if hook and not btn.gwButtonTextureHooked then
         btn:HookScript("OnEnter", function()
             btn:SetDisabledTexture(tex)
