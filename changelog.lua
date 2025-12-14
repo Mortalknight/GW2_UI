@@ -18,6 +18,12 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.5.3", {
+    {GW.ChangelogType.change, [=[Add housing micro button]=]},
+    {GW.ChangelogType.bug, [=[Many chat related fixes]=]},
+    {GW.ChangelogType.bug, [=[Socket skin error (Mists)]=]},
+})
+
 addChange("8.5.2", {
     {GW.ChangelogType.change, [=[Updates for 11.2.7]=]},
 })

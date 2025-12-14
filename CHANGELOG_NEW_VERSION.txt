@@ -1,3 +1,11 @@
+8.5.3
+CHANGES
+    - Add housing micro button
+
+FIXES
+    - Many chat related fixes
+    - Socket skin error (Mists)
+
 8.5.2
 CHANGES
     - Updates for 11.2.7
