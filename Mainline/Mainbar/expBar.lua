@@ -381,14 +381,8 @@ local function xpbar_OnEvent(self, event, ...)
 		local maxBar = C_Housing.GetHouseLevelFavorForLevel(level + 1)
         valPrec = (maxBar > 0) and (math.min(currentHouseEp, maxBar) / maxBar) or 0
 
-        local houseInfo = C_Housing.GetCurrentHouseInfo()
-        local houseOwner = ""
-        if houseInfo then
-            houseOwner = houseInfo.ownerName
-        end
-
         housingTooltipText = string.format("%s: %s / %s |cffa6a6a6 (%d%%)|r",
-            format(HOUSING_DASHBOARD_OWNERS_HOUSE, houseOwner),
+            format(HOUSING_DASHBOARD_OWNERS_HOUSE, GW.myname),
             math.min(maxBar, currentHouseEp), maxBar,
             math.floor(valPrec * 100)
         )
