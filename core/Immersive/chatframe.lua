@@ -1119,7 +1119,8 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
     if not channelName then
         return false
     end
-    return ChatFrame_AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil;
+    local AddChannel = chatFrame.AddChannel or ChatFrame_AddChannel
+    return AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil
 end
 
 local function AddMessageEdits(frame, msg, alwaysAddTimestamp, isHistory, historyTime)
