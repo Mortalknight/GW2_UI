@@ -35,19 +35,24 @@ local function ApplySocketUISkin()
     GW.HandleScrollControls(ItemSocketingScrollFrame)
 
     for i = 1, MAX_NUM_SOCKETS  do
-        local button_bracket = _G[("ItemSocketingSocket%dBracketFrame"):format(i)]
-        local button_icon = _G[("ItemSocketingSocket%dIconTexture"):format(i)]
-        if button_bracket then
-            button_bracket:GwKill()
-        end
-        if button_icon then
-            button_icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        local button = ItemSocketingFrame.SocketingContainer["Socket" .. i]
+
+        if button then
+            if button.BracketFrame then
+                button.BracketFrame:GwKill()
+            end
+            if button.Icon then
+                button.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            end
         end
     end
 
-    ItemSocketingSocketButton:ClearAllPoints()
-    ItemSocketingSocketButton:SetPoint("BOTTOMRIGHT", ItemSocketingFrame, "BOTTOMRIGHT", -5, -10)
-    ItemSocketingSocketButton:GwSkinButton(false, true)
+    local ApplySocketsButton = ItemSocketingFrame.SocketingContainer.ApplySocketsButton
+    if ApplySocketsButton then
+        ApplySocketsButton:ClearAllPoints()
+        ApplySocketsButton:SetPoint("BOTTOMRIGHT", ItemSocketingFrame, "BOTTOMRIGHT", -5, -10)
+        ApplySocketsButton:GwSkinButton(false, true)
+    end
 
     ItemSocketingFrame.mover = CreateFrame("Frame", nil, ItemSocketingFrame)
     ItemSocketingFrame.mover:EnableMouse(true)
