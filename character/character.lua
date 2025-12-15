@@ -102,15 +102,15 @@ end
 
 local function PaperDollUpdateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
-    local spec = GW.api.GetSpecialization()
-    local _, specName = GW.api.GetSpecializationInfo(spec, nil, nil, nil, GW.mysex)
+    local _, name = C_SpecializationInfo.GetSpecializationInfo(GW.myspec)
     local color = GWGetClassColor(GW.myclass, true)
     GW.SetClassIcon(GwDressingRoom.classIcon, GW.myclass)
 
-    GwDressingRoom.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
+   GwDressingRoom.classIcon:SetVertexColor(color.r, color.g, color.b, color.a)
 
-    if specName ~= nil then
-        GwDressingRoom.characterData:SetText(GUILD_RECRUITMENT_LEVEL .. " " .. GW.mylevel.. " " .. specName .. " " .. GW.myLocalizedClass)
+    if name ~= nil then
+        local data = GUILD_RECRUITMENT_LEVEL .. " " .. GW.mylevel .. " " .. name .. " " .. GW.myLocalizedClass
+        GwDressingRoom.characterData:SetText(data)
     else
         GwDressingRoom.characterData:SetFormattedText(PLAYER_LEVEL, GW.mylevel, GW.myLocalizedRace, GW.myLocalizedClass)
     end
@@ -290,29 +290,20 @@ local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x
     return grid, x, y, index + 1
 end
 
-local function UpdateItemLevelAndGearScore(gearScoreData)
-    local gearScore, avgItemLevelEquipped, r, g, b
-    if gearScoreData then
-        gearScore, avgItemLevelEquipped = gearScoreData.GearScore, gearScoreData.AvgItemLevel
-        r, g, b = gearScoreData.Color.r, gearScoreData.Color.g, gearScoreData.Color.b
-    else
-        gearScore, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
-        r, g, b = GW.api.GetItemLevelColor(gearScore)
+local function UpdateItemLevelAndGearScore()
+    local avgItemLevel, avgItemLevelEquipped = GW.GetAverageItemLevel()
+    local r, g,b = GW.GetItemLevelColor(avgItemLevel)
+
+    avgItemLevelEquipped = avgItemLevelEquipped and avgItemLevelEquipped or 0
+    avgItemLevel = avgItemLevel and avgItemLevel or 0
+    avgItemLevelEquipped = math.floor(avgItemLevelEquipped)
+    avgItemLevel = math.floor(avgItemLevel)
+    if avgItemLevelEquipped < avgItemLevel then
+        avgItemLevelEquipped = math.floor(avgItemLevel) .. " (" .. math.floor(avgItemLevelEquipped) .. ")"
     end
-
-    local hexColor = ""
-
-    if gearScore > 0 and avgItemLevelEquipped > 0 then
-        avgItemLevelEquipped = avgItemLevelEquipped and math.floor(avgItemLevelEquipped) or 0
-
-        gearScore = gearScore and gearScore or 0
-        hexColor = GW.RGBToHex(r, g, b)
-
-        avgItemLevelEquipped = "GearScore: " .. hexColor .. gearScore .. "|r\n" .. STAT_AVERAGE_ITEM_LEVEL .. ": " .. hexColor .. avgItemLevelEquipped .."|r"
-        GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
-    else
-        GwDressingRoom.itemLevel:SetText("")
-    end
+    avgItemLevelEquipped = avgItemLevelEquipped == 0 and "" or avgItemLevelEquipped
+    GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
+    GwDressingRoom.itemLevel:SetTextColor(r, g,b)
 end
 
 local function PaperDollUpdateStats()
@@ -895,11 +886,6 @@ local function LoadPaperDoll()
 
     -- setup gearscore
     UpdateItemLevelAndGearScore()
-    GW.Libs.LibGearScore.RegisterCallback("GW2_UI", "LibGearScore_Update", function(_, _, gearScore)
-        if gearScore and gearScore.PlayerName == GW.myname then
-            UpdateItemLevelAndGearScore(gearScore)
-        end
-    end)
 
     GwDressingRoomPet.model.expBar:SetScript("OnEnter", function(self)
         self.value:Show()

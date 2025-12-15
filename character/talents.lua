@@ -303,7 +303,7 @@ local function updateTalentTrees()
 
     GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints())
 
-    for f = 1, GW.api.GetNumSpecializations(isPetTalents) do
+    for f = 1, GetNumTalentTabs(false, isPetTalents) do
         local forceDesaturated
         local talentPoints = UpdateTalentPoints()
         local name, _, pointsSpent, _, previewPointsSpent = GetTalentTabInfo(f, false, isPetTalents, openSpec)
@@ -395,7 +395,7 @@ local function updateTalentTrees()
         end
     end
     -- Clean up unsuded slots
-    for i = 1, GW.api.GetNumSpecializations(isPetTalents) do
+    for i = 1, GetNumTalentTabs(false, isPetTalents) do
         for y = 1, 15 do
             for j = 1, NUM_TALENT_COLUMNS do
                 local button = _G['GwLegacyTalentTree' .. i .. 'Teir' .. y .. 'index' .. j]
@@ -415,7 +415,7 @@ local function loadTalentsFrames()
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
 
-    for i = 1, GW.api.GetNumSpecializations(isPetTalents) do
+    for i = 1, GetNumTalentTabs(false, isPetTalents) do
         TALENT_BRANCH_ARRAY[i] = {}
         local container = CreateFrame('Button', 'GwLegacyTalentTree' .. i, GwTalentFrame, 'GwLegacyTalentTree')
 

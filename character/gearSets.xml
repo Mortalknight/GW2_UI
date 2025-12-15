@@ -48,11 +48,13 @@
     </Frame>
 
      <Button name="GwGearSetsButtonTemplate" inherits="GwCharacterMenuBlank,SecureActionButtonTemplate,SecureHandlerDragTemplate"  enableMouse="true" virtual="true" >
+        <HitRectInsets>
+            <AbsInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
+        </HitRectInsets>
         <Size x="200" y="44"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
         </Anchors>
-        <RelInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
         <Layers>
             <Layer level="ARTWORK">
                 <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar">

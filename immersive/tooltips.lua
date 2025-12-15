@@ -5,7 +5,7 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local RGBToHex = GW.RGBToHex
 local GWGetClassColor = GW.GWGetClassColor
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local CI = GW.Libs.CI
+
 
 local targetList = {}
 local classification = {
@@ -235,31 +235,6 @@ local function AddTargetInfo(self, unit)
     end
 end
 
-local function AddInspectInfo(self, unit, numTries, r, g, b)
-    if not unit or numTries > 3 or not CanInspect(unit) then return end
-
-    local unitGUID = UnitGUID(unit)
-    if not unitGUID then return end
-    local specIndex = CI:GetSpecialization(unitGUID) or 1
-    local x1, x2, x3 = 0, 0, 0
-
-    x1, x2, x3 = CI:GetTalentPoints(unitGUID)
-    GW.Libs.LibGearScore:NotifyInspect(unitGUID)
-    local _, gearScore = GW.Libs.LibGearScore:GetScore(unitGUID)
-
-    if unitGUID == UnitGUID("player") then
-        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(GW.myclass, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)
-    else
-        local _, className = UnitClass(unit)
-        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(className, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)
-    end
-
-    if gearScore then
-        self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":" , gearScore.AvgItemLevel, nil, nil, nil, 1, 1, 1)
-        self:AddDoubleLine("GearScore:" , gearScore.GearScore, nil, nil, nil, 1, 1, 1)
-    end
-end
-
 local function GameTooltip_OnTooltipSetUnit(self)
     if self:IsForbidden() then return end
 
@@ -267,7 +242,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
     local isPlayerUnit = UnitIsPlayer(unit)
 
     if not unit then
-        local GMF = GetMouseFocus()
+        local GMF = GetMouseFoci()
         local focusUnit = GMF and GMF.GetAttribute and GMF:GetAttribute("unit")
         if focusUnit then unit = focusUnit end
         if not unit or not UnitExists(unit) then
@@ -283,10 +258,6 @@ local function GameTooltip_OnTooltipSetUnit(self)
 
     if GetSetting("ADVANCED_TOOLTIP_SHOW_TARGET_INFO") and not isShiftKeyDown and not isControlKeyDown then
         AddTargetInfo(self, unit)
-    end
-
-    if isShiftKeyDown and color then
-        AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
     end
 
     if unit and not isPlayerUnit and IsModKeyDown() then
@@ -315,7 +286,7 @@ local function GameTooltipStatusBar_OnValueChanged(self, value)
 
     local _, unit = self:GetParent():GetUnit()
     if not unit then
-        local frame = GetMouseFocus()
+        local frame = GetMouseFoci()
         if frame and frame.GetAttribute then
             unit = frame:GetAttribute("unit")
         end

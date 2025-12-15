@@ -100,15 +100,15 @@ local function updateGuildButton(self, event)
 
         GW.FetchGuildMembers()
 
-        if GetMouseFocus() == self then
+        if GetMouseFoci() == self then
             GW.Guild_OnEnter(self)
         end
     elseif event == "MODIFIER_STATE_CHANGED" then
-        if not IsAltKeyDown() and GetMouseFocus() == self then
+        if not IsAltKeyDown() and GetMouseFoci() == self then
             GW.Guild_OnEnter(self)
         end
     elseif event == "GUILD_MOTD" then
-        if GetMouseFocus() == self then
+        if GetMouseFoci() == self then
             GW.Guild_OnEnter(self)
         end
     end

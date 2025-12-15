@@ -402,7 +402,7 @@ local function Friends_OnEvent(self, event, message)
     end
     dataValid = false
 
-    if not IsAltKeyDown() and event == "MODIFIER_STATE_CHANGED" and GetMouseFocus() == self then
+    if not IsAltKeyDown() and event == "MODIFIER_STATE_CHANGED" and GetMouseFoci() == self then
         Friends_OnEnter(self)
     end
 end
