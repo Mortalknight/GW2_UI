@@ -438,6 +438,9 @@ local function HandleAddonCompartmentButton()
             AddonCompartmentFrame.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
             AddonCompartmentFrame:SetSize(18, 18)
             AddonCompartmentFrame.gw2Handled = true
+
+
+            GW.MixinHideDuringPetAndOverride(AddonCompartmentFrame)
         end
 
         if GW.settings.MINIMAP_ADDON_COMPARTMENT_TOGGLE then

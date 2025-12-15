@@ -431,6 +431,8 @@ function GwDodgeBarMixin:LoadSkiridingBar(parent)
     fmdb:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
     fmdb:RegisterEvent("UPDATE_UI_WIDGET")
 
+    MixinHideDuringPetAndOverride(fmdb)
+
     Debug("LoadSkiridingBar done")
     return fmdb
 end

@@ -9,9 +9,20 @@ local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 -- forward function defs
 local experiencebarAnimation = 0
 
-local gw_reputation_vals = nil
-local gw_honor_vals = nil
-local housingTooltipText = nil
+local petBattleTooltipText
+local reputationTooltipText
+local honorTooltipText
+local housingTooltipText
+local houseInfoCache = {}
+
+local queueTimer
+
+local STATUSBAR_COLORS = {
+    Xp = {r = 0.83, g = 0.57, b = 0},
+    PetXp = {r = 0.58, g = 0, b = 0.55},
+    Honor = {r = 1, g = 0.2, b = 0.2},
+    House = {r = 0.85, g = 0.7, b = 0.43},
+}
 
 local function xpbar_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
@@ -20,20 +31,21 @@ local function xpbar_OnEnter(self)
     local valCurrent = UnitXP("player")
     local valMax = UnitXPMax("player")
     local rested = GetXPExhaustion()
-    local isRestingString = ""
+    local isRestingString = IsResting() and L[" (Resting)"] or ""
 
-    if IsResting() then
-        isRestingString = L[" (Resting)"]
-    end
-
+    -- headerLine
     GameTooltip:AddLine(COMBAT_XP_GAIN .. isRestingString, 1, 1, 1)
 
-    if gw_honor_vals ~= nil then
-        GameTooltip:AddLine(gw_honor_vals, 1, 1, 1)
+    if honorTooltipText then
+        GameTooltip:AddLine(honorTooltipText, 1, 1, 1)
     end
 
     if housingTooltipText then
         GameTooltip:AddLine(housingTooltipText, 1, 1, 1)
+    end
+
+    if petBattleTooltipText then
+        GameTooltip:AddLine(petBattleTooltipText, 1, 1, 1)
     end
 
     if not IsPlayerAtEffectiveMaxLevel() then
@@ -59,21 +71,8 @@ local function xpbar_OnEnter(self)
         )
     end
 
-    if self.expBarShouldShow then
-        UIFrameFadeOut(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 0)
-    end
     if self.azeritBarShouldShow then
-        UIFrameFadeOut(self.AzeritBar, 0.2, self.AzeritBar:GetAlpha(), 0)
-    end
-    if self.repuBarShouldShow then
-        UIFrameFadeOut(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 0)
-    end
-
-    local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and
-        C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
-
-    if shouldShowAzeritBar then
+        local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
         local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
         local xpPct
         if xpForNextPoint > 0 then
@@ -84,18 +83,25 @@ local function xpbar_OnEnter(self)
         GameTooltip:AddLine(
             AZERITE_POWER_BAR:format(
                 GW.GetLocalizedNumber(azeriteXP) .. " / " .. GW.GetLocalizedNumber(xpForNextPoint) .. " |cffa6a6a6 (" .. xpPct .. ")|r"
-            ),
-            1,
-            1,
-            1
+            ), 1, 1, 1
         )
     end
 
-    if gw_reputation_vals ~= nil then
-        GameTooltip:AddLine(gw_reputation_vals, 1, 1, 1)
+    if reputationTooltipText then
+        GameTooltip:AddLine(reputationTooltipText, 1, 1, 1)
     end
 
     GameTooltip:Show()
+
+    if self.expBarShouldShow then
+        UIFrameFadeOut(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 0)
+    end
+    if self.azeritBarShouldShow then
+        UIFrameFadeOut(self.AzeritBar, 0.2, self.AzeritBar:GetAlpha(), 0)
+    end
+    if self.repuBarShouldShow then
+        UIFrameFadeOut(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 0)
+    end
 end
 GW.AddForProfiling("hud", "xpbar_OnEnter", xpbar_OnEnter)
 
@@ -138,6 +144,23 @@ local function flareAnim(self)
 end
 GW.AddForProfiling("hud", "flareAnim", flareAnim)
 
+local function UpdatePetXP(self, index, level)
+    local name = C_PetBattles.GetName(Enum.BattlePetOwner.Ally, index)
+    local rarity = C_PetBattles.GetBreedQuality(Enum.BattlePetOwner.Ally, index)
+    local cur, max = C_PetBattles.GetXP(Enum.BattlePetOwner.Ally, index)
+    local valPrec = (max > 0) and (cur / max) or 0
+
+    petBattleTooltipText = string.format("%s: %s / %s |cffa6a6a6 (%d%%)|r",
+        ITEM_QUALITY_COLORS[rarity].color:WrapTextInColorCode(name),
+        math.min(max, cur), max,
+        math.floor(valPrec * 100)
+    )
+
+    local color = STATUSBAR_COLORS.PetXp
+    self.ExpBar:SetStatusBarColor(color.r, color.g, color.b)
+    return true, valPrec, level + 1
+end
+
 local function UpdateXPValues(self)
     local valCurrent = UnitXP("player")
     local valMax = UnitXPMax("player")
@@ -148,119 +171,146 @@ local function UpdateXPValues(self)
         rested = math.min(rested / (valMax - valCurrent), 1)
     end
 
-    self.ExpBar:SetStatusBarColor(0.83, 0.57, 0)
-    return valPrec, rested
+    local color = STATUSBAR_COLORS.Xp
+    self.ExpBar:SetStatusBarColor(color.r, color.g, color.b)
+    return true, valPrec, rested
 end
 
-local function UpdateReputation(self, lockLevelTextUnderMaxLevel)
-    local watchedFactionData = C_Reputation.GetWatchedFactionData()
-
+local function UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
     local showRepu = false
     local valPrecRepu = 0
     local repuLevel, repuNextLevel = nil, nil
     local level, nextLevel
+    local friendReputationInfo = C_GossipInfo.GetFriendshipReputation(data.factionID)
+    local isParagon, isFriend, isMajor, isNormal = false, false, false, false
+    showRepu = true
 
-    if watchedFactionData and watchedFactionData.factionID and watchedFactionData.factionID > 0 then
-        local friendReputationInfo = C_GossipInfo.GetFriendshipReputation(watchedFactionData.factionID)
-        local isParagon, isFriend, isMajor, isNormal = false, false, false, false
-        showRepu = true
-
-        if C_Reputation.IsFactionParagon(watchedFactionData.factionID) then
-            local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(watchedFactionData.factionID)
-            currentValue = currentValue % maxValueParagon
-            valPrecRepu = (maxValueParagon > 0) and (currentValue / maxValueParagon) or 0
-            gw_reputation_vals = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
-                watchedFactionData.name, REPUTATION,
-                GW.GetLocalizedNumber(currentValue), GW.GetLocalizedNumber(maxValueParagon), math.floor(valPrecRepu * 100))
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
-            isParagon = true
-            isFriend = (friendReputationInfo and friendReputationInfo.friendshipFactionID > 0)
-        elseif friendReputationInfo and friendReputationInfo.friendshipFactionID > 0 then
-            if friendReputationInfo.nextThreshold then
-                valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) /
-                                (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
-                gw_reputation_vals = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
-                    friendReputationInfo.name, REPUTATION,
-                    GW.GetLocalizedNumber(friendReputationInfo.standing - friendReputationInfo.reactionThreshold),
-                    GW.GetLocalizedNumber(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold),
-                    math.floor(valPrecRepu * 100))
-            else
-                valPrecRepu = 1
-                gw_reputation_vals = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
-                    friendReputationInfo.name, REPUTATION,
-                    GW.GetLocalizedNumber(friendReputationInfo.maxRep), GW.GetLocalizedNumber(friendReputationInfo.maxRep), 100)
-            end
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
-            isFriend = true
-        elseif C_Reputation.IsMajorFaction(watchedFactionData.factionID) then
-            local majorFactionData = C_MajorFactions.GetMajorFactionData(watchedFactionData.factionID)
-            if majorFactionData then
-                repuLevel = majorFactionData.renownLevel
-                repuNextLevel = C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) and majorFactionData.renownLevel or (majorFactionData.renownLevel + 1)
-                if C_MajorFactions.HasMaximumRenown(watchedFactionData.factionID) then
-                    valPrecRepu = 1
-                else
-                    valPrecRepu = (majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold
-                end
-                gw_reputation_vals = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
-                    watchedFactionData.name, REPUTATION,
-                    GW.GetLocalizedNumber(majorFactionData.renownReputationEarned or 0),
-                    GW.GetLocalizedNumber(majorFactionData.renownLevelThreshold),
-                    math.floor(valPrecRepu * 100))
-                self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
-                isMajor = true
-            end
+    if C_Reputation.IsFactionParagon(data.factionID) then
+        local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(data.factionID)
+        currentValue = currentValue % maxValueParagon
+        valPrecRepu = (maxValueParagon > 0) and (currentValue / maxValueParagon) or 0
+        reputationTooltipText = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
+            data.name, REPUTATION,
+            GW.GetLocalizedNumber(currentValue), GW.GetLocalizedNumber(maxValueParagon), math.floor(valPrecRepu * 100))
+        self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
+        isParagon = true
+        isFriend = (friendReputationInfo and friendReputationInfo.friendshipFactionID > 0)
+    elseif friendReputationInfo and friendReputationInfo.friendshipFactionID > 0 then
+        if friendReputationInfo.nextThreshold then
+            valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) /
+                            (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
+            reputationTooltipText = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
+                friendReputationInfo.name, REPUTATION,
+                GW.GetLocalizedNumber(friendReputationInfo.standing - friendReputationInfo.reactionThreshold),
+                GW.GetLocalizedNumber(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold),
+                math.floor(valPrecRepu * 100))
         else
-            -- Normaler Ruf
-            local currentStanding = watchedFactionData.currentStanding or 0
-            local currentThreshold = watchedFactionData.currentReactionThreshold or 0
-            local nextThreshold = watchedFactionData.nextReactionThreshold or 0
-            if (currentStanding - currentThreshold) == 0 then
+            valPrecRepu = 1
+            reputationTooltipText = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
+                friendReputationInfo.name, REPUTATION,
+                GW.GetLocalizedNumber(friendReputationInfo.maxRep), GW.GetLocalizedNumber(friendReputationInfo.maxRep), 100)
+        end
+        self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+        isFriend = true
+    elseif C_Reputation.IsMajorFaction(data.factionID) then
+        local majorFactionData = C_MajorFactions.GetMajorFactionData(data.factionID)
+        if majorFactionData then
+            repuLevel = majorFactionData.renownLevel
+            repuNextLevel = C_MajorFactions.HasMaximumRenown(data.factionID) and majorFactionData.renownLevel or (majorFactionData.renownLevel + 1)
+            if C_MajorFactions.HasMaximumRenown(data.factionID) then
                 valPrecRepu = 1
-                gw_reputation_vals = string.format("%s %s 21,000 / 21,000 |cffa6a6a6 (%d%%)|r", watchedFactionData.name, REPUTATION, 100)
             else
-                valPrecRepu = (currentStanding - currentThreshold) / (nextThreshold - currentThreshold)
-                gw_reputation_vals = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
-                    watchedFactionData.name, REPUTATION,
-                    GW.GetLocalizedNumber(currentStanding - currentThreshold),
-                    GW.GetLocalizedNumber(nextThreshold - currentThreshold),
-                    math.floor(valPrecRepu * 100))
+                valPrecRepu = (majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold
             end
-            local reaction = watchedFactionData.reaction or 1
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
-            isNormal = true
+            reputationTooltipText = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
+                data.name, REPUTATION,
+                GW.GetLocalizedNumber(majorFactionData.renownReputationEarned or 0),
+                GW.GetLocalizedNumber(majorFactionData.renownLevelThreshold),
+                math.floor(valPrecRepu * 100))
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+            isMajor = true
         end
-         -- Setze das Level-Label basierend auf Rufdaten:
-        if not lockLevelTextUnderMaxLevel then
-            local nextId = (watchedFactionData.reaction and watchedFactionData.reaction + 1) or 1
-            -- Hier wird level überschrieben, je nach Fraktionstyp:
-            level = isMajor and repuLevel or
-                isFriend and friendReputationInfo.reaction or
-                isParagon and L["Paragon"] or
-                isNormal and getglobal("FACTION_STANDING_LABEL" .. (watchedFactionData.reaction or 1))
-            nextLevel = isParagon and L["Paragon"] or
-                isFriend and "" or
-                isMajor and repuNextLevel or
-                isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
+    else
+        -- Normaler Ruf
+        local currentStanding = data.currentStanding or 0
+        local currentThreshold = data.currentReactionThreshold or 0
+        local nextThreshold = data.nextReactionThreshold or 0
+        if (currentStanding - currentThreshold) == 0 then
+            valPrecRepu = 1
+            reputationTooltipText = string.format("%s %s 21,000 / 21,000 |cffa6a6a6 (%d%%)|r", data.name, REPUTATION, 100)
+        else
+            valPrecRepu = (currentStanding - currentThreshold) / (nextThreshold - currentThreshold)
+            reputationTooltipText = string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
+                data.name, REPUTATION,
+                GW.GetLocalizedNumber(currentStanding - currentThreshold),
+                GW.GetLocalizedNumber(nextThreshold - currentThreshold),
+                math.floor(valPrecRepu * 100))
         end
+        local reaction = data.reaction or 1
+        self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
+        isNormal = true
     end
+        -- Setze das Level-Label basierend auf Rufdaten:
+    if not lockLevelTextUnderMaxLevel then
+        local nextId = (data.reaction and data.reaction + 1) or 1
+        -- Hier wird level überschrieben, je nach Fraktionstyp:
+        level = isMajor and repuLevel or
+            isFriend and friendReputationInfo.reaction or
+            isParagon and L["Paragon"] or
+            isNormal and getglobal("FACTION_STANDING_LABEL" .. (data.reaction or 1))
+        nextLevel = isParagon and L["Paragon"] or
+            isFriend and "" or
+            isMajor and repuNextLevel or
+            isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
+    end
+
     return showRepu, valPrecRepu, level, nextLevel
 end
 
-local function UpdateAzerite(self)
-    local showAzerite = false
+local function UpdateAzerite(self, azeriteItem)
     local AzeritVal, AzeritLevel = 0, 0
-    local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-    local shouldShowAzerite = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
-    if shouldShowAzerite then
-        showAzerite = true
-        local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-        AzeritLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
-        AzeritVal = (xpForNextPoint > 0) and (azeriteXP / xpForNextPoint) or 0
-        self.AzeritBar:SetStatusBarColor(FACTION_BAR_COLORS[10].r, FACTION_BAR_COLORS[10].g, FACTION_BAR_COLORS[10].b)
-        self.AzeritBar.animation:Show()
+    local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItem)
+    AzeritLevel = C_AzeriteItem.GetPowerLevel(azeriteItem)
+    AzeritVal = (xpForNextPoint > 0) and (azeriteXP / xpForNextPoint) or 0
+    self.AzeritBar:SetStatusBarColor(FACTION_BAR_COLORS[10].r, FACTION_BAR_COLORS[10].g, FACTION_BAR_COLORS[10].b)
+    self.AzeritBar.animation:Show()
+
+    return true, AzeritVal, AzeritLevel
+end
+
+local function UpdateHouseXP(self, data)
+    local level = data.houseLevel
+    local cur = data.houseFavor
+    local max = C_Housing.GetHouseLevelFavorForLevel(level + 1)
+    local valPrec = (max > 0) and (math.min(cur, max) / max) or 0
+
+    housingTooltipText = string.format("%s: %s / %s |cffa6a6a6 (%d%%)|r",
+        format(HOUSING_DASHBOARD_OWNERS_HOUSE, data.houseName or GW.myname),
+        math.min(max, cur), max,
+        math.floor(valPrec * 100)
+    )
+
+    if cur >= max then
+        housingTooltipText = housingTooltipText .. "\n" .. HOUSING_DASHBOARD_VISIT_NPC
     end
-    return showAzerite, AzeritVal, AzeritLevel
+
+    local color = STATUSBAR_COLORS.House
+    self.ExpBar:SetStatusBarColor(color.r, color.g, color.b)
+
+    return true, valPrec, level, level + 1
+end
+
+local function UpdateHonor(self)
+    local level = UnitHonorLevel("player")
+    local currentHonor = UnitHonor("player")
+    local maxHonor = UnitHonorMax("player")
+    local valPrec = (maxHonor > 0) and (currentHonor / maxHonor) or 0
+
+    honorTooltipText = HONOR .. " " .. GW.GetLocalizedNumber(currentHonor) .. " / " .. GW.GetLocalizedNumber(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
+
+    local color = STATUSBAR_COLORS.Honor
+    self.ExpBar:SetStatusBarColor(color.r, color.g, color.b)
+    return true, valPrec, level, level + 1
 end
 
 local function SetBarLayout(bar, candy, spark, height, offset)
@@ -328,80 +378,69 @@ local function LayoutBars(self, showExp, showAzerite, showRepu)
     end
 end
 
-local houseLevelFavor
-local function xpbar_OnEvent(self, event, ...)
-    if event == "UPDATE_FACTION" and not GW.inWorld then
-        return
-    end
-
-    if event == "HOUSE_LEVEL_FAVOR_UPDATED" then
-        houseLevelFavor = ...
-    end
-
-    gw_reputation_vals = nil
-    gw_honor_vals = nil
+local function UpdateData(self)
+    petBattleTooltipText = nil
+    reputationTooltipText = nil
+    honorTooltipText = nil
     housingTooltipText = nil
 
     local animationSpeed = 15
     local maxPlayerLevel = GetMaxLevelForPlayerExpansion()
     local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon.png:16:16:0:0|t " or ""
-    local showExp = (GW.mylevel < maxPlayerLevel)
+    local showExp, showRepu, showAzerite = false, false, false
     local level = GW.mylevel
-    local Nextlevel = GW.mylevel < maxPlayerLevel and (GW.mylevel + 1) or GW.mylevel
-    local lockLevelTextUnderMaxLevel = level < Nextlevel
+    local nextLevel = GW.mylevel < maxPlayerLevel and (GW.mylevel + 1) or GW.mylevel
+    local lockLevelTextUnderMaxLevel = level < nextLevel
+    local valPrec, rested = 0, 0
+    local valPrecRepu
+    local valPrecAzerite, azeritLevel
 
-    local valPrec, rested = UpdateXPValues(self)
-    local showRepu, valPrecRepu, repuLevel, repuNextLevel = UpdateReputation(self, lockLevelTextUnderMaxLevel)
-    local showAzerite, AzeritVal, AzeritLevel = UpdateAzerite(self)
+    if C_PetBattles.IsInBattle() then
+        local i = C_PetBattles.GetActivePet(Enum.BattlePetOwner.Ally)
+        level = C_PetBattles.GetLevel(Enum.BattlePetOwner.Ally, i)
+        if level and level < 25 then
+            showExp, valPrec, nextLevel = UpdatePetXP(self, i, level)
+        end
+    else
+        if not IsXPUserDisabled() and not IsPlayerAtEffectiveMaxLevel() then
+            showExp, valPrec, rested = UpdateXPValues(self)
+        end
 
-    if repuLevel and repuNextLevel then
-        level = repuLevel
-        Nextlevel = repuNextLevel
+        if not showExp and (IsWatchingHonorAsXP() or C_PvP.IsActiveBattlefield() or IsInActiveWorldPVP()) then
+            showExp, valPrec, level, nextLevel = UpdateHonor(self)
+        end
+
+        local guid = C_Housing.GetTrackedHouseGuid()
+        if not showExp and guid and houseInfoCache[guid] and houseInfoCache[guid].houseLevel then
+            showExp, valPrec, level, nextLevel = UpdateHouseXP(self, houseInfoCache[guid])
+        end
+
+        local data = C_Reputation.GetWatchedFactionData()
+        if data and data.factionID and data.factionID > 0 then
+            showRepu, valPrecRepu, level, nextLevel = UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
+        end
+
+        if not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
+            local azeriteItem = C_AzeriteItem.FindActiveAzeriteItem()
+            if azeriteItem and azeriteItem:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItem) then
+                showAzerite, valPrecAzerite, azeritLevel = UpdateAzerite(self, azeriteItem)
+            end
+        end
     end
-
-    if (GW.mylevel == maxPlayerLevel and (UnitInBattleground("player") or event == "PLAYER_ENTERING_BATTLEGROUND")) or IsWatchingHonorAsXP() then
-        showExp = true
-        level = UnitHonorLevel("player")
-        Nextlevel = level + 1
-
-        local currentHonor = UnitHonor("player")
-        local maxHonor = UnitHonorMax("player")
-        valPrec = (maxHonor > 0) and (currentHonor / maxHonor) or 0
-
-        gw_honor_vals = HONOR .. " " .. GW.GetLocalizedNumber(currentHonor) .. " / " .. GW.GetLocalizedNumber(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
-        self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
-    end
-
-    if C_Housing.GetTrackedHouseGuid() then
-        showExp = true
-
-        level = houseLevelFavor and houseLevelFavor.houseLevel or 0
-        Nextlevel = level + 1
-        local currentHouseEp = houseLevelFavor and houseLevelFavor.houseFavor or 0
-		local maxBar = C_Housing.GetHouseLevelFavorForLevel(level + 1)
-        valPrec = (maxBar > 0) and (math.min(currentHouseEp, maxBar) / maxBar) or 0
-
-        housingTooltipText = string.format("%s: %s / %s |cffa6a6a6 (%d%%)|r",
-            format(HOUSING_DASHBOARD_OWNERS_HOUSE, GW.myname),
-            math.min(maxBar, currentHouseEp), maxBar,
-            math.floor(valPrec * 100)
-        )
-    end
-
 
     if showAzerite then
-        self.AzeritBarCandy:SetValue(AzeritVal)
-        GW.AddToAnimation("AzeritBarAnimation", self.AzeritBar.AzeritBarAnimation, AzeritVal, GetTime(), animationSpeed,
+        self.AzeritBarCandy:SetValue(valPrecAzerite)
+        GW.AddToAnimation("AzeritBarAnimation", self.AzeritBar.AzeritBarAnimation, valPrecAzerite, GetTime(), animationSpeed,
             function(p)
                 self.AzeritBar.Spark:SetWidth(math.max(8, math.min(9, self.AzeritBar:GetWidth() * p)))
                 self.AzeritBar:SetValue(p)
                 self.AzeritBar.Spark:SetPoint("LEFT", self.AzeritBar:GetWidth() * p - 8, 0)
             end)
-        self.AzeritBar.AzeritBarAnimation = AzeritVal
+        self.AzeritBar.AzeritBarAnimation = valPrecAzerite
 
         if maxPlayerLevel == GW.mylevel then
-            level = AzeritLevel
-            Nextlevel = AzeritLevel + 1 --Max azerit level is infinity
+            level = azeritLevel
+            nextLevel = azeritLevel + 1 --Max azerit level is infinity
             self.NextLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
             self.CurrentLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
             self.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit.png")
@@ -476,17 +515,69 @@ local function xpbar_OnEvent(self, event, ...)
     experiencebarAnimation = valPrec
 
     if GW.IsUpcomingSpellAvalible() then
-        Nextlevel = Nextlevel .. " |TInterface\\AddOns\\GW2_UI\\textures/icons/levelreward-icon.png:20:20:0:0|t"
+        nextLevel = nextLevel .. " |TInterface\\AddOns\\GW2_UI\\textures/icons/levelreward-icon.png:20:20:0:0|t"
     end
     if GW.mylevel ~= UnitEffectiveLevel("player") then
         level = level .. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"
     end
 
-    self.NextLevel:SetText(Nextlevel)
+    self.NextLevel:SetText(nextLevel)
     self.CurrentLevel:SetText(restingIconString .. level)
     self.expBarShouldShow = showExp
     self.azeritBarShouldShow = showAzerite
     self.repuBarShouldShow = showRepu
+end
+
+local function queueUpdate(self)
+    UpdateData(self)
+    queueTimer = nil
+end
+
+local function xpbar_OnEvent(self, event, ...)
+    if event == "UPDATE_FACTION" and not GW.inWorld then
+        return
+
+    elseif event == "PLAYER_EQUIPMENT_CHANGED" then
+        local slot = ...
+        if slot == Enum.InventoryType.IndexNeckType then
+            if not queueTimer then
+                queueTimer = C_Timer.NewTimer(0.1, function() queueUpdate(self) end)
+            end
+        end
+    elseif event == "HOUSE_LEVEL_FAVOR_UPDATED" then
+        local info = ...
+        houseInfoCache[info.houseGUID] = houseInfoCache[info.houseGUID] or {}
+        houseInfoCache[info.houseGUID].houseLevel = info.houseLevel
+        houseInfoCache[info.houseGUID].houseFavor = info.houseFavor
+
+        if not queueTimer then
+            queueTimer = C_Timer.NewTimer(0.1, function() queueUpdate(self) end)
+        end
+    elseif event == "PLAYER_HOUSE_LIST_UPDATED" then
+        local info = ...
+        for _, data in next, info do
+            houseInfoCache[data.houseGUID] = houseInfoCache[data.houseGUID] or {}
+            houseInfoCache[data.houseGUID].houseName = data.houseName
+        end
+
+        local guid = C_Housing.GetTrackedHouseGuid()
+        if guid and houseInfoCache[guid].houseLevel and not queueTimer then
+            queueTimer = C_Timer.NewTimer(0.1, function() queueUpdate(self) end)
+        end
+    elseif event == "TRACKED_HOUSE_CHANGED" then
+        local guid = ...
+        if guid then
+            C_Housing.GetCurrentHouseLevelFavor(guid)
+        else
+            if not queueTimer then
+                queueTimer = C_Timer.NewTimer(0.1, function() queueUpdate(self) end)
+            end
+        end
+    else
+        if not queueTimer then
+            queueTimer = C_Timer.NewTimer(0.1, function() queueUpdate(self) end)
+        end
+    end
 end
 
 local function animateAzeriteBar(self, elapsed)
@@ -543,10 +634,11 @@ GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
 
 local function LoadXPBar()
     StatusTrackingBarManager:GwKill()
+    PetBattleFrameXPBar:GwKill()
     GW.LoadUpcomingSpells()
 
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
-    GW.MixinHideDuringPet(experiencebar)
+    GW.MixinHideDuringOverride(experiencebar)
     experiencebar.rightButton:SetScript("OnClick", xpbar_OnClick)
     experiencebar.rightButton:SetScript(
         "OnEnter",
@@ -597,25 +689,81 @@ local function LoadXPBar()
     experiencebar.PetBarCandy:Hide()
 
     updateBarSize(experiencebar)
-    xpbar_OnEvent(experiencebar)
 
     experiencebar:SetScript("OnEvent", xpbar_OnEvent)
-
-    experiencebar:RegisterEvent("PLAYER_XP_UPDATE")
-    experiencebar:RegisterEvent("UPDATE_FACTION")
-    experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-    experiencebar:RegisterEvent("ARTIFACT_XP_UPDATE")
-    experiencebar:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED")
+    -- all
+    experiencebar:RegisterEvent("PET_BATTLE_CLOSE")
+    experiencebar:RegisterEvent("PET_BATTLE_OPENING_START")
     experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING")
-    experiencebar:RegisterEvent("HONOR_XP_UPDATE")
-    experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
-    experiencebar:RegisterEvent("PLAYER_ENTERING_WORLD")
-    experiencebar:RegisterEvent("PLAYER_LEVEL_CHANGED")
     experiencebar:RegisterEvent("UPDATE_EXHAUSTION")
-    experiencebar:RegisterEvent("TRACKED_HOUSE_CHANGED")
+    -- honor
+    experiencebar:RegisterEvent("HONOR_XP_UPDATE")
+    experiencebar:RegisterEvent("ZONE_CHANGED")
+    experiencebar:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    --azerite
+    experiencebar:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED")
+    experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    -- xp
+    experiencebar:RegisterEvent("DISABLE_XP_GAIN")
+    experiencebar:RegisterEvent("ENABLE_XP_GAIN")
+    experiencebar:RegisterEvent("PLAYER_LEVEL_UP")
+    experiencebar:RegisterEvent("PLAYER_XP_UPDATE")
+    experiencebar:RegisterEvent("UPDATE_EXPANSION_LEVEL")
+    -- pet xp
+    experiencebar:RegisterEvent("PET_BATTLE_LEVEL_CHANGED")
+    experiencebar:RegisterEvent("PET_BATTLE_PET_CHANGED")
+    experiencebar:RegisterEvent("PET_BATTLE_XP_CHANGED")
+    -- rep
+    experiencebar:RegisterEvent("UPDATE_FACTION")
+    -- house xp
     experiencebar:RegisterEvent("HOUSE_LEVEL_FAVOR_UPDATED")
+    experiencebar:RegisterEvent("PLAYER_HOUSE_LIST_UPDATED")
+    experiencebar:RegisterEvent("TRACKED_HOUSE_CHANGED")
+
+    local isHonorBarHooked = false
+    local function hookHonor()
+        if not isHonorBarHooked then
+            PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:SetScript("OnMouseUp", function()
+                if IsShiftKeyDown() then
+                    if IsWatchingHonorAsXP() then
+                        PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
+                        SetWatchingHonorAsXP(false)
+                    else
+                        PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
+                        SetWatchingHonorAsXP(true)
+                    end
+
+                    UpdateData(experiencebar)
+                end
+            end)
+
+            PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:HookScript("OnEnter", function()
+                GameTooltip:AddLine(" ")
+                GameTooltip:AddLine("|cffaaaaaa" .. L["Shift-Click to show as experience bar."] .. "|r")
+                GameTooltip:Show()
+            end)
+
+            PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:HookScript("OnLeave", function()
+                GameTooltip:Hide()
+            end)
+
+            isHonorBarHooked = true
+        end
+    end
+
+    if C_AddOns.IsAddOnLoaded("Blizzard_PVPUI") then
+        hookHonor()
+    else
+        hooksecurefunc("UIParentLoadAddOn", function(addOnName)
+            if addOnName == "Blizzard_PVPUI" then
+                hookHonor()
+            end
+        end)
+    end
+
+
     hooksecurefunc("SetWatchingHonorAsXP", function()
-        xpbar_OnEvent(experiencebar)
+        --xpbar_OnEvent(experiencebar)
     end)
 
     experiencebar:SetScript("OnEnter", xpbar_OnEnter)
@@ -635,5 +783,13 @@ local function LoadXPBar()
             end
         end
     )
+
+    -- to fetch and cache the tracked house data
+    local guid = C_Housing.GetTrackedHouseGuid()
+    if guid then
+        C_Housing.GetCurrentHouseLevelFavor(guid)
+    end
+
+    UpdateData(experiencebar)
 end
 GW.LoadXPBar = LoadXPBar
