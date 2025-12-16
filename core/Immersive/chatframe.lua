@@ -1731,10 +1731,11 @@ end
 
 local function FloatingChatFrameOnEvent(...)
     ChatFrame_OnEvent(...)
-    if FloatingChatFrame_OnEvent then
-        FloatingChatFrame_OnEvent(...)
-    elseif ScrollingMessageFrame and ScrollingMessageFrame.OnEvent then
-        ScrollingMessageFrame:OnEvent(...)
+
+    if _G.FloatingChatFrame_OnEvent then
+        _G.FloatingChatFrame_OnEvent(...)
+    elseif _G.ScrollingMessageFrame and _G.ScrollingMessageFrame.OnEvent then
+        _G.ScrollingMessageFrame:OnEvent(...)
     end
 end
 
