@@ -1722,7 +1722,7 @@ end
 GW.ChatFrame_SystemEventHandler = ChatFrame_SystemEventHandler
 
 local function ChatFrame_OnEvent(frame, ...)
-    if frame.customEventHandler and frame.customEventHandler(...) then return end
+    if frame.customEventHandler and frame.customEventHandler(frame, ...) then return end
 
     if ChatFrame_ConfigEventHandler(frame, ...) then return end
     if ChatFrame_SystemEventHandler(frame, ...) then return end
@@ -1731,10 +1731,11 @@ end
 
 local function FloatingChatFrameOnEvent(...)
     ChatFrame_OnEvent(...)
-    if FloatingChatFrame_OnEvent then
-        FloatingChatFrame_OnEvent(...)
-    elseif ScrollingMessageFrame and ScrollingMessageFrame.OnEvent then
-        ScrollingMessageFrame:OnEvent(...)
+
+    if _G.FloatingChatFrame_OnEvent then
+        _G.FloatingChatFrame_OnEvent(...)
+    elseif _G.ScrollingMessageFrame and _G.ScrollingMessageFrame.OnEvent then
+        _G.ScrollingMessageFrame:OnEvent(...)
     end
 end
 
