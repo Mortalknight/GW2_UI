@@ -22,6 +22,11 @@ StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
     preferredIndex = 4
 }
 
+local function GetTalentSpec()
+    return openSpec, isPetTalents
+end
+GW.GetTalentSpec = GetTalentSpec
+
 local function UpdateActiveSpec(activeTalentGroup)
     -- set the active spec
     activeSpec = 1
@@ -44,7 +49,17 @@ local function talentBunnton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
 
-    GameTooltip:SetTalent(self.talentFrameId, self.talentid, false, isPetTalents, openSpec, GetCVarBool("previewTalents"))
+    local talentInfoQuery = {}
+    talentInfoQuery.specializationIndex = self.talentFrameId
+    talentInfoQuery.talentIndex = self.talentid
+    talentInfoQuery.isInspect = false
+    talentInfoQuery.isPet = isPetTalents
+    talentInfoQuery.groupIndex = openSpec
+    local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
+    if talentInfo then
+        GameTooltip:SetTalent(talentInfo.talentID, false, isPetTalents, openSpec)
+    end
+
     self.UpdateTooltip = talentBunnton_OnEnter
 end
 
@@ -326,36 +341,43 @@ local function updateTalentTrees()
 
         local numTalents = GetNumTalents(f, false, isPetTalents)
         for i = 1, MAX_NUM_TALENTS do
-            local name, texture, tier, column, rank, maxRank, isExceptional, available, previewRank, meetsPreviewPrereq = GetTalentInfo(f, i, false, isPetTalents, openSpec)
-            local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
+            local talentInfoQuery = {};
+            talentInfoQuery.specializationIndex = f
+            talentInfoQuery.talentIndex = i
+            talentInfoQuery.isInspect = false
+            talentInfoQuery.isPet = isPetTalents
+            talentInfoQuery.groupIndex = openSpec
+            local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
 
-            if name and i <= numTalents then
-                TALENT_BRANCH_ARRAY[f][tier][column].id = i
-                button.icon:SetTexture(texture)
-                button.points:SetText((preview and previewRank or rank) .. " / " .. maxRank)
+            if talentInfo and i <= numTalents then
+                local button = _G["GwLegacyTalentTree" .. f .. 'Teir' .. talentInfo.tier .. 'index' .. talentInfo.column]
+
+                TALENT_BRANCH_ARRAY[f][talentInfo.tier][talentInfo.column].id = i
+                button.icon:SetTexture(talentInfo.icon)
+                button.points:SetText((preview and talentInfo.previewRank or talentInfo.rank) .. " / " .. talentInfo.maxRank)
                 button.talentid = i
                 button.talentFrameId = f
                 button:Show()
                 button.active = true
 
                 -- If player has no talent points or this is the inactive talent group then show only talents with points in them
-                if (TalentFrame.talentPoints <= 0 or not openSpec == activeTalentGroup) and (preview and previewRank or rank) == 0 then
+                if (TalentFrame.talentPoints <= 0 or not openSpec == activeTalentGroup) and (preview and talentInfo.previewRank or talentInfo.rank) == 0 then
                     forceDesaturated = 1
                 else
                     forceDesaturated = nil
                 end
                 -- If the player has spent at least 5 talent points in the previous tier
                 local tierUnlocked = nil
-                if (tier - 1) * 5 <= TalentFrame.pointsSpent then
+                if (talentInfo.tier - 1) * 5 <= TalentFrame.pointsSpent then
                     tierUnlocked = 1
                 end
 
-                local ispassive = not isExceptional
-                local Prereqs = TalentFrame_SetPrereqs(f, tier, column, forceDesaturated, tierUnlocked, preview, GetTalentPrereqs(f, i, false, isPetTalents, openSpec))
+                local ispassive = not talentInfo.isExceptional
+                local Prereqs = TalentFrame_SetPrereqs(f, talentInfo.tier, talentInfo.column, forceDesaturated, tierUnlocked, preview, GetTalentPrereqs(f, i, false, isPetTalents, openSpec))
 
                 button.talentID = i
-                button.available = preview and meetsPreviewPrereq or available
-                button.known = (preview and previewRank or rank) == maxRank
+                button.available = preview and talentInfo.meetsPreviewPrereq or talentInfo.available
+                button.known = (preview and talentInfo.previewRank or talentInfo.rank) == talentInfo.maxRank
 
                 if ispassive then
                     button.legendaryHighlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight')
@@ -370,11 +392,11 @@ local function updateTalentTrees()
                 end
 
                 button:EnableMouse(true)
-                if Prereqs and ((preview and meetsPreviewPrereq) or (not preview and available)) then
+                if Prereqs and ((preview and talentInfo.meetsPreviewPrereq) or (not preview and talentInfo.available)) then
                     button.icon:SetDesaturated(openSpec ~= activeTalentGroup)
                     button.icon:SetVertexColor(1, 1, 1, 1)
                     button:SetAlpha(1)
-                    if rank < maxRank then
+                    if talentInfo.rank < talentInfo.maxRank then
                         button.highlight:Hide()
                         button.points:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
                     else
@@ -387,16 +409,12 @@ local function updateTalentTrees()
                     button.highlight:Hide()
                     button.points:SetText("")
                 end
-            else
-                if button and button.talentid == nil then
-                    button:Hide()
-                end
             end
         end
     end
     -- Clean up unsuded slots
     for i = 1, GetNumTalentTabs(false, isPetTalents) do
-        for y = 1, 15 do
+        for y = 1, MAX_NUM_TALENT_TIERS do
             for j = 1, NUM_TALENT_COLUMNS do
                 local button = _G['GwLegacyTalentTree' .. i .. 'Teir' .. y .. 'index' .. j]
                 if button.talentid == nil then
