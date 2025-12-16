@@ -1722,7 +1722,7 @@ end
 GW.ChatFrame_SystemEventHandler = ChatFrame_SystemEventHandler
 
 local function ChatFrame_OnEvent(frame, ...)
-    if frame.customEventHandler and frame.customEventHandler(...) then return end
+    if frame.customEventHandler and frame.customEventHandler(frame, ...) then return end
 
     if ChatFrame_ConfigEventHandler(frame, ...) then return end
     if ChatFrame_SystemEventHandler(frame, ...) then return end
