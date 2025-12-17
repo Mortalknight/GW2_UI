@@ -23,14 +23,16 @@ function GwQuestReqItemsFrameMixin:UpdateFrame()
     local stuff = qReq.stuff
     for i = 1, #stuff do
         local f = self["reqItem" .. i]
-        f.type = "required"
-        f.objectType = "item"
-        f:SetID(i)
-        local name, texture, numItems = stuff[i][1], stuff[i][2], stuff[i][3]
-        SetItemButtonCount(f, numItems)
-        SetItemButtonTexture(f, texture)
-        f.Name:SetText(name)
-        f:Show()
+        if f then
+            f.type = "required"
+            f.objectType = "item"
+            f:SetID(i)
+            local name, texture, numItems = stuff[i][1], stuff[i][2], stuff[i][3]
+            SetItemButtonCount(f, numItems)
+            SetItemButtonTexture(f, texture)
+            f.Name:SetText(name)
+            f:Show()
+        end
     end
 
     local currency = qReq.currency
@@ -41,15 +43,17 @@ function GwQuestReqItemsFrameMixin:UpdateFrame()
             break
         end
         local f = self["reqItem" .. btnIdx]
-        f.type = "required"
-        f.objectType = "currency"
-        f:SetID(i)
-        local currencyInfo = currency[i]
-        if currencyInfo then
-            SetItemButtonCount(f, currencyInfo.requiredAmount)
-            SetItemButtonTexture(f, currencyInfo.texture)
-            f.Name:SetText(currencyInfo.name)
-            f:Show()
+        if f then
+            f.type = "required"
+            f.objectType = "currency"
+            f:SetID(i)
+            local currencyInfo = currency[i]
+            if currencyInfo then
+                SetItemButtonCount(f, currencyInfo.requiredAmount)
+                SetItemButtonTexture(f, currencyInfo.texture)
+                f.Name:SetText(currencyInfo.name)
+                f:Show()
+            end
         end
     end
 end
