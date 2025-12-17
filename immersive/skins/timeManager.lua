@@ -8,7 +8,7 @@ local function LoadTimeManagerSkin()
     for _,region in pairs(regions) do
         if region:IsObjectType("FontString") then
             if region:GetText() == TIMEMANAGER_TITLE then
-                region:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
+                region:SetFont(DAMAGE_TEXT_FONT, 20, "")
                 break
             end
         end
