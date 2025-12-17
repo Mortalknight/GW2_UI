@@ -3,6 +3,7 @@ local GetSetting = GW.GetSetting
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local lerp = GW.lerp
+local gossipOptionPointer = {}
 
 local CUSTOM_ICONS = {
     [646979]= 646979,
@@ -32,7 +33,16 @@ local CUSTOM_ICONS = {
     [1673939]= 1673939,
   }
 
-  local DEBUG_ENABLED = false
+local CUSTOM_ATLAS = {
+    ["CampaignActiveDailyQuestIcon"] = true,
+    ["CampaignActiveQuestIcon"] = true,
+    ["CampaignAvailableDailyQuestIcon"] = true,
+    ["CampaignAvailableQuestIcon"] = true,
+    ["CampaignIncompleteQuestIcon"] = true,
+    ["Recurringavailablequesticon"] = true,
+}
+
+local DEBUG_ENABLED = false
 local MODEL_POSITION_OVERRIDERS = {
     {
         --Baby dragons
@@ -118,31 +128,49 @@ local function splitQuest(inputstr)
     return t
 end
 
-local function ReplaceGossipFormat(button, textFormat, text)
-    local newFormat, count = gsub(textFormat, "000000", "ffffff")
-    if count > 0 then
-        button:SetFormattedText(newFormat, text)
-    end
-end
-
 local ReplacedGossipColor = {
     ["000000"] = "ffffff",
     ["414141"] = "7b8489",
 }
-local function ReplaceGossipText(button, text)
-    if text and text ~= "" then
-        local newText, count = gsub(text, ":32:32:0:0", ":32:32:0:0:64:64:5:59:5:59")
-        if count > 0 then
-            text = newText
-            button:SetFormattedText("%s", text)
-        end
 
-        local colorStr, rawText = strmatch(text, "|c[fF][fF](%x%x%x%x%x%x)(.-)|r")
-        colorStr = ReplacedGossipColor[colorStr]
-        if colorStr and rawText then
-            button:SetFormattedText("|cff%s%s|r", colorStr, rawText)
-        end
+local function Gossip_SetTextColor(text, r, g, b)
+    if r ~= 1 or g ~= 1 or b ~= 1 then
+        text:SetTextColor(1, 1, 1)
     end
+end
+
+local function Gossip_ReplaceColor(color)
+    return "|cFF" .. (ReplacedGossipColor[color] or color)
+end
+
+local function ReplaceGossipFormat(button, textFormat, text, skip)
+    if skip or not text or text == "" then return end
+
+    local newFormat, count = gsub(textFormat, "|c[fF][fF](%x%x%x%x%x%x)", Gossip_ReplaceColor)
+    if count > 0 then
+        button:SetFormattedText(newFormat, text, true)
+    end
+end
+
+local function ReplaceGossipText(button, text)
+    if not text and text == "" then return end
+    local startText = text
+
+    local iconText, iconCount = gsub(text, ":32:32:0:0", ":32:32:0:0:64:64:5:59:5:59")
+    if iconCount > 0 then
+        text = iconText
+    end
+
+    local colorStr, colorCount = gsub(text, "|c[fF][fF](%x%x%x%x%x%x)", Gossip_ReplaceColor)
+    if colorCount > 0 then text = colorStr end
+
+    if startText ~= text then
+        button:SetFormattedText("%s", text, true)
+    end
+end
+
+local function Resize(self)
+    self:SetHeight(math.max(32, self:GetTextHeight() + 2, self.Icon:GetHeight()))
 end
 
 local function skinGossipOption(self)
@@ -150,74 +178,85 @@ local function skinGossipOption(self)
 
     if self.Icon then
         self.Icon:ClearAllPoints()
-        self.Icon:SetPoint("LEFT",self,"LEFT",0,0)
-        self.Icon:SetSize(32,32)
+        self.Icon:SetPoint("LEFT", self, "LEFT", 0, 0)
+        self.Icon:SetSize(32, 32)
         self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/gossip/optionhover")
 
         local hl = self:GetHighlightTexture()
         hl:ClearAllPoints()
-        hl:SetSize(512,64)
+        hl:SetSize(512, 64)
         hl:SetBlendMode("BLEND")
-        hl:SetDrawLayer("BACKGROUND",-7)
-        hl:SetPoint("LEFT",16,0)
+        hl:SetDrawLayer("BACKGROUND", -7)
+        hl:SetPoint("LEFT", 16, 0)
         hl:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/optionhover")
-        hl:SetVertexColor(1, 1,1, 1)
+        hl:SetVertexColor(1, 1, 1, 1)
         hl:Hide()
-        --self:GwSetInside(background)
         self:HookScript("OnEnter", function()
             hl:Show()
             hl:SetAlpha(0.2)
-            AddToAnimation("GOSSIP_OPTIONHOVER", 0, 1, GetTime(), 0.2,
-                function()
-                    local p = animations["GOSSIP_OPTIONHOVER"].progress
-                    p = math.max(0.2,p)
+            GW.AddToAnimation("GOSSIP_OPTIONHOVER", 0, 1, GetTime(), 0.2,
+                function(p)
+                    p = math.max(0.2, p)
                     hl:SetAlpha(p)
                 end
             )
         end)
-        self:HookScript("OnLeave",function()
-        hl:Hide()
+        self:HookScript("OnLeave", function()
+            hl:Hide()
         end)
     end
 
-    local buttonText = select(3, self:GetRegions())
+    local buttonText = self.GetFontString and self:GetFontString() or select(3, self:GetRegions())
     if buttonText and buttonText:IsObjectType("FontString") then
         buttonText:ClearAllPoints()
         buttonText:SetPoint("LEFT", self, "LEFT", 40, 0)
+        buttonText:SetTextColor(1, 1, 1)
+        hooksecurefunc(buttonText, "SetTextColor", Gossip_SetTextColor)
+
         ReplaceGossipText(self, self:GetText())
         hooksecurefunc(self, "SetText", ReplaceGossipText)
         hooksecurefunc(self, "SetFormattedText", ReplaceGossipFormat)
+        hooksecurefunc(self, "Resize", Resize)
     end
 end
 
-local function updateGossipOption(self)
+local function updateGossipOption(self, elementData)
     if not self.skinned then
         skinGossipOption(self)
     end
-    self:SetHeight(32)
-    if self.GetElementData then
-        local elementData = self:GetElementData()
+
+    if elementData then
         if elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER or elementData.buttonType == GOSSIP_BUTTON_TYPE_TITLE then
-        self:SetHeight(0)
+            self:SetHeight(0)
+        else
+            if elementData.index then
+                gossipOptionPointer[elementData.index] = self
+                self:GetFontString():SetText("[" .. elementData.index .. "] " .. (elementData.info.name or elementData.info.title))
+            end
         end
     end
 
     if self.Icon then
-        self.Icon:SetSize(32,32)
+        self.Icon:SetSize(32, 32)
         local atlas = self.Icon:GetAtlas()
         if atlas then
-        self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. atlas)
+            if CUSTOM_ATLAS[atlas] then
+                self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. atlas)
+            else
+                GW.Debug("Missing Gossip atlas: ", atlas)
+                self.Icon:SetAtlas(atlas, true)
+            end
         else
-
-        local t = self.Icon:GetTexture()
-        if CUSTOM_ICONS[t] then
-            self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. CUSTOM_ICONS[t])
-        else
-            GW.Debug("Missing Gossip Icon ID: ", t)
-        end
+            local t = self.Icon:GetTexture()
+            if CUSTOM_ICONS[t] then
+                self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. CUSTOM_ICONS[t])
+            else
+                GW.Debug("Missing Gossip Icon ID: ", t)
+            end
         end
     end
 end
+
 local function comparePosition(p1, p2)
     p1 = string.format("%.5f", p1)
     p2 = string.format("%.5f", p2)
@@ -417,8 +456,9 @@ local function LoadGossipSkin()
     GossipFrame.GreetingPanel.GoodbyeButton:GwStripTextures()
     GossipFrame.GreetingPanel.GoodbyeButton:GwSkinButton(false, true)
 
+    local statusbar = NPCFriendshipStatusBar or GossipFrame.FriendshipStatusBar
     for i = 1, 4 do
-        local notch =  NPCFriendshipStatusBar["Notch" .. i]
+        local notch =  statusbar["Notch" .. i]
         if notch then
             notch:SetColorTexture(0, 0, 0)
             notch:SetSize(1, 16)
@@ -588,6 +628,21 @@ local function LoadGossipSkin()
         setGreetingsTextPaging(-1)
     end)
 
+    GossipFrame:SetPropagateKeyboardInput(true)
+    GossipFrame:HookScript("OnKeyDown", function(_, key)
+        --Brut force the key to number.
+        --Downside if butto name contains a number it will be used. example JoyStick1
+        local numKey = tonumber(key)
+        local foundUsableKey = false
+        if numKey and gossipOptionPointer[numKey] then
+            gossipOptionPointer[numKey]:Click()
+            foundUsableKey = true
+        end
+        if not InCombatLockdown() then
+            GossipFrame:SetPropagateKeyboardInput(not foundUsableKey)
+        end
+    end)
+
     GossipFrame:HookScript("OnShow",function()
         GossipFrame.CloseButton:Hide()
 
@@ -607,41 +662,46 @@ local function LoadGossipSkin()
 
     local GreetingPanelFirstLoad = true
     hooksecurefunc(GossipFrame.GreetingPanel.ScrollBox, "Update", function(frame)
-        for _, button in next, {frame.ScrollTarget:GetChildren()} do
-            updateGossipOption(button)
-        end
+       --Reset pointers for buttons
+        gossipOptionPointer = {}
         -- we need to check each button for button type so we dont count titles and spacers
-        local numButtons = 0
-        GossipFrame.GreetingPanel.ScrollBox:ForEachFrame(function(self)
-            local elementData = self:GetElementData()
+        local hasButton = false
+        GossipFrame.GreetingPanel.ScrollBox:ForEachFrame(function(self, elementData)
             if elementData.buttonType ~= GOSSIP_BUTTON_TYPE_DIVIDER and elementData.buttonType ~= GOSSIP_BUTTON_TYPE_TITLE then
-                numButtons = numButtons + 1
+                hasButton = true
             end
+            updateGossipOption(self, elementData)
         end)
-        if numButtons > 0 then
-          GossipFrame.ListBackground:Show()
+        if hasButton then
+            GossipFrame.ListBackground:Show()
+            GossipFrame.GreetingPanel:Show()
         else
-          GossipFrame.ListBackground:Hide()
+            GossipFrame.ListBackground:Hide()
+            GossipFrame.GreetingPanel:Hide()
         end
 
         if GreetingPanelFirstLoad then
             GreetingPanelFirstLoad = false
             -- replace the element default size calculator
+            GossipFrame.GreetingPanel.ScrollBar:SetHideIfUnscrollable(true)
             GossipFrame.GreetingPanel.ScrollBox.view:SetPadding(10, 10, 10, 10, 0)
             GossipFrame.GreetingPanel.ScrollBox.view:SetElementExtentCalculator(function(_, elementData)
-        		if elementData.greetingTextFrame then
-        			setGreetingsText(elementData.text)
-        			return 0
-        		elseif elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER then
-                    return 0
+                if elementData.greetingTextFrame then
+                    setGreetingsText(elementData.text)
+                    return 0.1
+                elseif elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER then
+                    return 0.1
+                elseif elementData.titleOptionButton then
+                    elementData.titleOptionButton:Setup(elementData.info)
+                    return math.max(32, elementData.titleOptionButton:GetHeight())
                 else
-        			return 32
-        		end
-        	end)
+                    return 32
+                end
+            end)
         end
     end)
 
-    local NPCFriendshipStatusBar = NPCFriendshipStatusBar
+    local NPCFriendshipStatusBar = NPCFriendshipStatusBar or GossipFrame.FriendshipStatusBar
     NPCFriendshipStatusBar:ClearAllPoints()
     NPCFriendshipStatusBar:SetPoint("BOTTOMLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 3)
     NPCFriendshipStatusBar:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "TOPRIGHT", -5, 3)
@@ -657,7 +717,14 @@ local function LoadGossipSkin()
     NPCFriendshipStatusBar.icon:SetPoint("RIGHT", NPCFriendshipStatusBar, "LEFT", 0, -3)
     NPCFriendshipStatusBar.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
-    ItemTextCloseButton:GwSkinButton(true)
-    ItemTextCloseButton:SetSize(20, 20)
+    if ItemTextFrameCloseButton then
+        ItemTextFrameCloseButton:GwSkinButton(true)
+        ItemTextFrameCloseButton:SetSize(20, 20)
+    end
+
+    if ItemTextCloseButton then
+        ItemTextCloseButton:GwSkinButton(true)
+        ItemTextCloseButton:SetSize(20, 20)
+    end
 end
 GW.LoadGossipSkin = LoadGossipSkin
