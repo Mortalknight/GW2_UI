@@ -33,11 +33,17 @@ local function achievement_OnClick(block, mouseButton)
             end
         end
     else
-        local dropDown = WatchFrameDropDown
-        dropDown.type = "ACHIEVEMENT"
-		dropDown.index = block.id
-
-        --ToggleDropDownMenu(1, nil, dropDown, "cursor", 3, -3) TODO
+         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            local _, achievementName = GetAchievementInfo(block.id);
+            rootDescription:CreateTitle(achievementName)
+            rootDescription:CreateButton(OBJECTIVES_VIEW_ACHIEVEMENT, function() OpenAchievementFrameToAchievement(block.id) end)
+            rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()
+                WatchFrame_StopTrackingAchievement(_, block.id)
+                if AchievementFrameAchievements_ForceUpdate then
+                    AchievementFrameAchievements_ForceUpdate();
+                end
+            end)
+        end)
     end
 end
 GW.AddForProfiling("achievement", "achievement_OnClick", achievement_OnClick)
