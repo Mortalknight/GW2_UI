@@ -7,14 +7,13 @@ end
 GW.GetPlayerRole = GetPlayerRole
 
 local function CheckRole()
+    GW.myspec = C_SpecializationInfo.GetSpecialization()
+    if GW.myspec then
+        GW.myspecID, GW.myspecName, GW.myspecDesc, GW.myspecIcon, GW.myspecRole =  C_SpecializationInfo.GetSpecializationInfo(GW.myspec)
+    end
     GW.myrole = GetPlayerRole()
 
     -- myrole = group role; TANK, HEALER, DAMAGER
-
-    local dispel = GW.DispelClasses[GW.myclass]
-    if GW.myrole and (GW.myclass ~= "PRIEST" and dispel ~= nil) then
-        dispel.Magic = (GW.myrole == "HEALER")
-    end
 end
 GW.CheckRole = CheckRole
 

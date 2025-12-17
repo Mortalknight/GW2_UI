@@ -291,8 +291,8 @@ local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x
 end
 
 local function UpdateItemLevelAndGearScore()
-    local avgItemLevel, avgItemLevelEquipped = GW.GetAverageItemLevel()
-    local r, g,b = GW.GetItemLevelColor(avgItemLevel)
+    local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
+    local r, g,b = GW.api.GetItemLevelColor(avgItemLevel)
 
     avgItemLevelEquipped = avgItemLevelEquipped and avgItemLevelEquipped or 0
     avgItemLevel = avgItemLevel and avgItemLevel or 0
