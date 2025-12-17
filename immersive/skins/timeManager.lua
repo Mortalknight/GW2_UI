@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local function LoadTimeManagerSkin()
-    if not GW.settings.TIMEMANAGER_SKIN_ENABLED then return end
+    if not GW.GetSetting("TIMEMANAGER_SKIN_ENABLED") then return end
     local TimeManagerFrame = _G.TimeManagerFrame
 
     local regions = {TimeManagerFrame:GetRegions()}
