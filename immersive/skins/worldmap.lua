@@ -55,9 +55,9 @@ local function worldMapSkin()
     WorldMapFrame.BorderFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
     WorldMapFrame.MiniBorderFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
 
-    WorldMapContinentDropdown:GwSkinDropDownMenu()
-    WorldMapZoneDropdown:GwSkinDropDownMenu()
-    WorldMapZoneMinimapDropdown:GwSkinDropDownMenu()
+    WorldMapContinentDropdown:GwHandleDropDownBox()
+    WorldMapZoneDropdown:GwHandleDropDownBox()
+    WorldMapZoneMinimapDropdown:GwHandleDropDownBox()
 
     WorldMapTrackQuest:GwSkinCheckButton()
     WorldMapQuestShowObjectives:GwSkinCheckButton()

@@ -23,15 +23,7 @@ local function ApplyMacroOptionsSkin()
     MacroFrameBg:Hide()
     MacroFrame.TitleBg:Hide()
     MacroFrame.TopTileStreaks:Hide()
-
-    _G.MacroFrameInsetInsetTopBorder:Hide()
-    _G.MacroFrameInsetInsetBottomBorder:Hide()
-    _G.MacroFrameInsetInsetLeftBorder:Hide()
-    _G.MacroFrameInsetInsetRightBorder:Hide()
-    _G.MacroFrameInsetInsetTopLeftCorner:Hide()
-    _G.MacroFrameInsetInsetTopRightCorner:Hide()
-    _G.MacroFrameInsetInsetBotRightCorner:Hide()
-    _G.MacroFrameInsetInsetBotLeftCorner:Hide()
+    MacroFrameInset:GwStripTextures()
 
     MacroFrame:GwCreateBackdrop()
 

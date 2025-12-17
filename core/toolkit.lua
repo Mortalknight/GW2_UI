@@ -242,8 +242,10 @@ end
 
 local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
-    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent)
     if not frame.backdrop then frame.backdrop = backdrop end
+
+    frame.template = template or "Default"
 
     if not backdrop.SetBackdrop then
         _G.Mixin(backdrop, _G.BackdropTemplateMixin)
@@ -260,16 +262,17 @@ local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xSh
     end
 
     if isBorder then
-        local trunc = function(s) return s >= 0 and s-s%01 or s-s%-1 end
-        local round = function(s) return s >= 0 and s-s%-1 or s-s%01 end
-        local x = (GW.mult == 1 or (xOffset or 2) == 0) and (xOffset or 2) or ((GW.mult < 1 and trunc((xOffset or 2) / GW.mult) or round((xOffset or 2) / GW.mult)) * GW.mult)
-        local y = (GW.mult == 1 or (yOffset or 2) == 0) and (yOffset or 2) or ((GW.mult < 1 and trunc((yOffset or 2) / GW.mult) or round((yOffset or 2) / GW.mult)) * GW.mult)
+        local trunc = function(s) return s >= 0 and s - s % 01 or s - s % -1 end
+        local round = function(s) return s >= 0 and s - s % -1 or s - s % 01 end
+        local x = (GW.mult == 1 or (xOffset or 2) == 0) and (xOffset or 2) or
+        ((GW.mult < 1 and trunc((xOffset or 2) / GW.mult) or round((xOffset or 2) / GW.mult)) * GW.mult)
+        local y = (GW.mult == 1 or (yOffset or 2) == 0) and (yOffset or 2) or
+        ((GW.mult < 1 and trunc((yOffset or 2) / GW.mult) or round((yOffset or 2) / GW.mult)) * GW.mult)
 
         xShift = xShift or 0
         yShift = yShift or 0
         backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -(x + xShift), (y - yShift))
         backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", (x - xShift), -(y + yShift))
-
     else
         backdrop:SetAllPoints()
     end
@@ -278,29 +281,27 @@ local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xSh
     if template == "Transparent" then
         backdrop:SetBackdrop({
             edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background",
             edgeSize = GW.Scale(1)
         })
     elseif template == "Transparent White" then
         backdrop:SetBackdrop({
-			edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-			edgeSize = GW.Scale(1)
-		})
+            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            edgeSize = GW.Scale(1)
+        })
 
         backdrop:SetBackdropColor(1, 1, 1, 0.4)
     elseif template == "ScrollBar" then
         backdrop:SetBackdrop({
-			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle",
-			edgeSize = GW.Scale(1)
-		})
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle",
+            edgeSize = GW.Scale(1)
+        })
     elseif template then
         backdrop:SetBackdrop(template)
     else
         backdrop:SetBackdrop(nil)
     end
-
-    BackdropFrameLower(backdrop, parent)
 end
 
 local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover, strip, transparent)

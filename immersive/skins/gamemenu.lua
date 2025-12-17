@@ -1,5 +1,6 @@
 local _, GW = ...
 local L = GW.L
+local hookDone = false
 
 local BUTTONS = {
     {button = _G.GameMenuButtonHelp         , sprite = {1, 1}},
@@ -13,7 +14,9 @@ local BUTTONS = {
     {button = _G.GameMenuButtonQuit         , sprite = {2, 3}},
     {button = _G.GameMenuButtonContinue     , sprite = {3, 3}},
     {button = _G.GameMenuButtonRatings      , sprite = {3, 1}},
-    {button = _G.GameMenuButtonMoveAnything , sprite = {4, 1}} -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
+    {button = _G.GameMenuButtonMoveAnything , sprite = {4, 1}}, -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
+    {button = btn163                        , sprite = {4, 2}, onHook = true, addOn = "!!!EaseAddonController"},
+    {button = _G.GameMenuFrame              , sprite = {4, 2}},
 }
 
 local ICON_SPRITES = {
@@ -22,6 +25,18 @@ local ICON_SPRITES = {
     colums = 4,
     rows = 4
 }
+
+local function ToggleGw2Settings()
+    if InCombatLockdown() then
+        GW.Notice(L["Settings are not available in combat!"])
+        return
+    end
+    if not GW.InMoveHudMode then
+        ShowUIPanel(GwSettingsWindow)
+        HideUIPanel(GameMenuFrame)
+    end
+end
+GW.ToggleGw2Settings = ToggleGw2Settings
 
 local function PositionGameMenuButton()
     GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() - 4)
@@ -37,8 +52,19 @@ GW.PositionGameMenuButton = PositionGameMenuButton
 
 local function applyButtonStyle()
     for _, f in pairs(BUTTONS) do
+        if f.onHook and not hookDone then
+            GameMenuFrame:HookScript("OnShow", function()
+                if not hookDone then
+                    applyButtonStyle()
+                    hookDone= true
+                end
+            end)
+        end
         local b = f.button
+        if b == _G.GameMenuFrame then b = b.ElvUI end
+        if b == btn163 and f.addOn and C_AddOns.IsAddOnLoaded(f.addOn) then b = GameMenuFrame.btn163 end
         if b then
+            if b == GameMenuFrame.btn163 then b.logo:Hide() end
             b.Right:Hide()
             b.Left:Hide()
             b.Middle:Hide()
@@ -47,27 +73,19 @@ local function applyButtonStyle()
             b.Text:ClearAllPoints()
             b.Text:SetPoint("LEFT", b, "LEFT", 32, 0)
             b:SetSize(150, 25)
-
-            b:HookScript("OnEnter", function()
-                b:GetNormalTexture():SetBlendMode("ADD")
-            end)
-            b:HookScript("OnLeave", function()
-                b:GetNormalTexture():SetBlendMode("BLEND")
-            end)
-
-            local tex = b:CreateTexture("bg", "OVERLAY")
-            tex:SetPoint("LEFT",b ,"LEFT" , 0, 0)
+            if b:GetNormalTexture() then
+                b:HookScript("OnEnter", function()
+                    b:GetNormalTexture():SetBlendMode("ADD")
+                end)
+                b:HookScript("OnLeave", function()
+                    b:GetNormalTexture():SetBlendMode("BLEND")
+                end)
+            end
+            local tex = b:CreateTexture(nil, "OVERLAY")
+            tex:SetPoint("LEFT", b, "LEFT", 0, 0)
             tex:SetSize(32, 32)
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons")
             tex:SetTexCoord(GW.getSprite(ICON_SPRITES, f.sprite[1], f.sprite[2]))
-
-            local r = {b:GetRegions()}
-            for _, c in pairs(r) do
-                if c:GetObjectType() == "Texture" and c:GetName() == nil then
-                    c:SetTexCoord(unpack(GW.TexCoords))
-                    c:SetSize(155, 30)
-                end
-            end
         end
     end
 end
@@ -77,26 +95,13 @@ local function SkinMainMenu()
 
     local GwMainMenuFrame = CreateFrame("Button", nil, GameMenuFrame, "GameMenuButtonTemplate")
     GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
-    GwMainMenuFrame:SetScript(
-        "OnClick",
-        function()
-            if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
-                return
-            end
-            if not GW.InMoveHudMode then
-                ShowUIPanel(GwSettingsWindow)
-                UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
-                HideUIPanel(GameMenuFrame)
-            end
-        end
-    )
+    GwMainMenuFrame:SetScript("OnClick", ToggleGw2Settings)
     GameMenuFrame[GW.addonName] = GwMainMenuFrame
     BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3}}
 
-    if not IsAddOnLoaded("ConsolePortUI_Menu") then
+    if not C_AddOns.IsAddOnLoaded("ConsolePortUI_Menu") then
         GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
-        GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
+        GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
         hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", PositionGameMenuButton)
     end
 
@@ -106,9 +111,10 @@ local function SkinMainMenu()
             c:Hide()
         end
     end
-    GameMenuFrame:SetBackdrop(nil)
+    GameMenuFrame:GwStripTextures()
+    GameMenuFrame:GwCreateBackdrop(nil)
 
-    local tex = GameMenuFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = GameMenuFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -10)
     tex:SetSize(256, 464)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubg")
@@ -118,8 +124,8 @@ local function SkinMainMenu()
     applyButtonStyle()
 
     -- remove elvui transparent bg if ours is enabled
-    if IsAddOnLoaded("ElvUI") and GameMenuFrame.backdrop then
-        GameMenuFrame.backdrop:Hide()
+    if C_AddOns.IsAddOnLoaded("ElvUI") then
+        _G.GameMenuFrame.backdrop:Hide()
     end
 end
 GW.SkinMainMenu = SkinMainMenu

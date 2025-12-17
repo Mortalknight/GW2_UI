@@ -134,18 +134,24 @@ local function onValueChanged(frame, value)
 end
 
 local function SkinAndEnhanceColorPicker()
-    if IsAddOnLoaded("ColorPickerPlus") then return end
+    if C_AddOns.IsAddOnLoaded("ColorPickerPlus") then return end
+
+    ColorPickerFrame.swatchFunc = GW.NoOp
 
     ColorPickerFrame:SetClampedToScreen(true)
 
     ColorPickerFrame:SetHeight(ColorPickerFrame:GetHeight() + 40)
 
-    local tex = ColorPickerFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
-    tex:SetPoint("TOP", ColorPickerFrame, "TOP", 0, 20)
-    local w, h = ColorPickerFrame:GetSize()
-    tex:SetSize(w + 50, h + 30)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    ColorPickerFrame.tex = tex
+    local headerText
+    local r = {ColorPickerFrame:GetRegions()}
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "FontString" then
+            headerText = c
+            break
+        end
+    end
+
+    GW.CreateFrameHeaderWithBody(ColorPickerFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon", nil, nil, nil, true)
 
     ColorPickerFrame.TopEdge:Hide()
     ColorPickerFrame.RightEdge:Hide()
@@ -157,7 +163,6 @@ local function SkinAndEnhanceColorPicker()
     ColorPickerFrame.TopRightCorner:Hide()
 
     ColorPickerFrameHeader:GwStripTextures()
-    --ColorPickerFrameHeader.Text:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
     ColorPickerCancelButton:ClearAllPoints()
     ColorPickerOkayButton:ClearAllPoints()
@@ -266,9 +271,9 @@ local function SkinAndEnhanceColorPicker()
 
     ColorPPBoxA:SetPoint("RIGHT", ColorPickerCancelButton, "RIGHT", 0, 20)
     ColorPPBoxH:SetPoint("RIGHT", ColorPPBoxA, "LEFT", -15, 0)
-    ColorPPBoxB:SetPoint("RIGHT", ColorPPBoxH, "LEFT", -40, 0)
-    ColorPPBoxG:SetPoint("RIGHT", ColorPPBoxB, "LEFT", -25, 0)
-    ColorPPBoxR:SetPoint("RIGHT", ColorPPBoxG, "LEFT", -25, 0)
+    ColorPPBoxB:SetPoint("RIGHT", ColorPPBoxH, "LEFT", -15, 0)
+    ColorPPBoxG:SetPoint("RIGHT", ColorPPBoxB, "LEFT", -15, 0)
+    ColorPPBoxR:SetPoint("RIGHT", ColorPPBoxG, "LEFT", -15, 0)
 
     -- make the color picker movable.
     local mover = CreateFrame("Frame", nil, ColorPickerFrame)
