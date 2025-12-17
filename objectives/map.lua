@@ -552,11 +552,11 @@ local function LoadMinimap()
                 local mbutton = MiniMapTrackingButton
                 if mbutton then
                     mbutton:OpenMenu()
-                    if button.menu then
+                    if mbutton.menu then
                     local pos = Minimap.gwMover:GetPoint()
                     local left = pos and pos:match('RIGHT')
-                    button.menu:ClearAllPoints()
-                    button.menu:SetPoint(left and 'TOPRIGHT' or 'TOPLEFT', Minimap, left and 'LEFT' or 'RIGHT', left and -4 or 4, 0)
+                    mbutton.menu:ClearAllPoints()
+                    mbutton.menu:SetPoint(left and 'TOPRIGHT' or 'TOPLEFT', Minimap, left and 'LEFT' or 'RIGHT', left and -4 or 4, 0)
                 end
                     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
                 end
