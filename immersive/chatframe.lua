@@ -1997,18 +1997,11 @@ local function LoadChat()
     end
 
     --Skin ChatMenus
-    local ChatMenus = {
-        "ChatMenu",
-        "EmoteMenu",
-        "LanguageMenu",
-        "VoiceMacroMenu",
-    }
-
-    for i = 1, #ChatMenus do
-        _G[ChatMenus[i]]:HookScript("OnShow",
+    for _, menu in next, { ChatMenu, EmoteMenu, LanguageMenu, VoiceMacroMenu } do
+        menu:HookScript("OnShow",
             function(self)
                 self:GwStripTextures()
-                self:GwCreateBackdrop(GW.skins.constBackdropFrame)
+                self:GwCreateBackdrop(GW.BackdropTemplates.Default)
             end)
     end
 
