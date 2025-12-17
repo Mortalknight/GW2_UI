@@ -37,7 +37,7 @@ local function achievement_OnClick(block, mouseButton)
         dropDown.type = "ACHIEVEMENT"
 		dropDown.index = block.id
 
-        ToggleDropDownMenu(1, nil, dropDown, "cursor", 3, -3)
+        --ToggleDropDownMenu(1, nil, dropDown, "cursor", 3, -3) TODO
     end
 end
 GW.AddForProfiling("achievement", "achievement_OnClick", achievement_OnClick)

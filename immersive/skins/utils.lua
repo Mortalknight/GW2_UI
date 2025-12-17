@@ -219,10 +219,38 @@ local function SkinDropDownList()
     end)
 end
 
+local backdrops = {}
+local function SkinFrame(frame)
+    frame:GwStripTextures()
+
+    if backdrops[frame] then
+        frame.backdrop = backdrops[frame] -- relink it back
+    else
+        frame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+        backdrops[frame] = frame.backdrop
+
+        if frame.ScrollBar then
+            GW.HandleTrimScrollBar(frame.ScrollBar)
+        end
+    end
+end
+
+local function OpenMenu(manager, region, menuDescription)
+    local menu = manager:GetOpenMenu()
+    if menu then
+        SkinFrame(menu)
+        menuDescription:AddMenuAcquiredCallback(SkinFrame)
+    end
+end
+
 local function SkinDropDown()
     if not GW.GetSetting("DROPDOWN_SKIN_ENABLED") then return end
     SkinDropDownList()
     SkinUIDropDownMenu()
+
+    local manager = Menu.GetManager()
+    hooksecurefunc(manager, "OpenMenu", OpenMenu)
+    hooksecurefunc(manager, "OpenContextMenu", OpenMenu)
 end
 GW.SkinDropDown = SkinDropDown
 
