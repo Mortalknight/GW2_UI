@@ -411,26 +411,24 @@ local function LoadMinimap()
         MiniMapChallengeMode:SetScale(0.8)
     end
 
-    GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
-    local icontype = MiniMapTrackingIcon:GetTexture()
+    GwMiniMapTrackingFrame = CreateFrame("DropdownButton", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrameDropDownTemplate")
+    GwMiniMapTrackingFrame:OnLoad()
+    GwMiniMapTrackingFrame:Show()
+    local icontype = MiniMapTrackingIcon:GetTexture() or 136025
     if icontype == 132328 then icontype = icontype .. GW.myClassID end
-    if icontype and trackingTypes[icontype] then
-        GwMiniMapTrackingFrame.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
-        GwMiniMapTrackingFrame:Show()
-    else
-        GwMiniMapTrackingFrame:Hide()
+    if trackingTypes[icontype] == nil then
+        icontype = 136025
     end
+    GwMiniMapTrackingFrame.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
 
     GwMiniMapTrackingFrame:RegisterEvent("MINIMAP_UPDATE_TRACKING")
-    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self)
-        local icontype = MiniMapTrackingIcon:GetTexture()
+    GwMiniMapTrackingFrame:HookScript("OnEvent", function(self)
+        local icontype = MiniMapTrackingIcon:GetTexture() or 136025
         if icontype == 132328 then icontype = icontype .. GW.myClassID end
-        if icontype and trackingTypes[icontype] then
-            self.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
-            self:Show()
-        else
-            self:Hide()
+        if trackingTypes[icontype] == nil then
+            icontype = 136025
         end
+        self.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
     end)
     GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", -30, 0)
 
@@ -541,27 +539,6 @@ local function LoadMinimap()
                 MinimapZoomIn:Click()
             elseif delta < 0 and self:GetZoom() > 0 then
                 MinimapZoomOut:Click()
-            end
-        end
-    )
-
-    Minimap:SetScript(
-        "OnMouseDown",
-        function(self, button)
-            if button == "RightButton" then
-                local mbutton = MiniMapTrackingButton
-                if mbutton then
-                    mbutton:OpenMenu()
-                    if mbutton.menu then
-                    local pos = Minimap.gwMover:GetPoint()
-                    local left = pos and pos:match('RIGHT')
-                    mbutton.menu:ClearAllPoints()
-                    mbutton.menu:SetPoint(left and 'TOPRIGHT' or 'TOPLEFT', Minimap, left and 'LEFT' or 'RIGHT', left and -4 or 4, 0)
-                end
-                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-                end
-            else
-                Minimap_OnClick(self)
             end
         end
     )
