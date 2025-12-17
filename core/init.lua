@@ -40,6 +40,7 @@ GW.tocversion = tonumber(GW.tocversion)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
 
 --Tables
+GW.BackdropTemplates = {}
 GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}
 GW.locationData = {}
