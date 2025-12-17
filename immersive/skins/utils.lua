@@ -249,8 +249,10 @@ local function SkinDropDown()
     SkinUIDropDownMenu()
 
     local manager = Menu.GetManager()
-    hooksecurefunc(manager, "OpenMenu", OpenMenu)
-    hooksecurefunc(manager, "OpenContextMenu", OpenMenu)
+    if manager then
+        hooksecurefunc(manager, "OpenMenu", OpenMenu)
+        hooksecurefunc(manager, "OpenContextMenu", OpenMenu)
+    end
 end
 GW.SkinDropDown = SkinDropDown
 

@@ -83,7 +83,7 @@
         </Layers>
     </Frame>
 
-    <DropdownButton name="GwMiniMapTrackingFrameDropDownTemplate" mixin="MiniMapTrackingButtonMixin" enableMouse="true" hidden="true" virtual="true">
+    <Frame name="GwMiniMapTrackingFrame" enableMouse="true" hidden="true" virtual="true">
         <Size>
             <AbsDimension x="30" y="30"/>
         </Size>
@@ -107,10 +107,20 @@
             </Layer>
         </Layers>
         <Scripts>
-            <OnEnter method="OnEnter"/>
-			<OnLeave method="OnLeave"/>
+            <OnMouseUp>
+                ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
+            </OnMouseUp>
+            <OnEnter>
+                GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+                GameTooltip:SetText(TRACKING, 1, 1, 1);
+                GameTooltip:AddLine(MINIMAP_TRACKING_TOOLTIP_NONE, nil, nil, nil, true);
+                GameTooltip:Show();
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
         </Scripts>
-    </DropdownButton>
+    </Frame>
 
     <Button name="GwMapTime" frameStrata="LOW" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" frameLevel="2" virtual="true">
         <Size x="50" y="20"></Size>

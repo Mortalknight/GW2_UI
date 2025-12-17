@@ -411,9 +411,7 @@ local function LoadMinimap()
         MiniMapChallengeMode:SetScale(0.8)
     end
 
-    GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrameDropDownTemplate")
-    GwMiniMapTrackingFrame:OnLoad()
-    GwMiniMapTrackingFrame:Show()
+    GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
     local icontype = MiniMapTrackingIcon:GetTexture()
     if icontype == 132328 then icontype = icontype .. GW.myClassID end
     if icontype and trackingTypes[icontype] then
@@ -424,7 +422,7 @@ local function LoadMinimap()
     end
 
     GwMiniMapTrackingFrame:RegisterEvent("MINIMAP_UPDATE_TRACKING")
-    GwMiniMapTrackingFrame:HookScript("OnEvent", function(self)
+    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self)
         local icontype = MiniMapTrackingIcon:GetTexture()
         if icontype == 132328 then icontype = icontype .. GW.myClassID end
         if icontype and trackingTypes[icontype] then
@@ -543,6 +541,21 @@ local function LoadMinimap()
                 MinimapZoomIn:Click()
             elseif delta < 0 and self:GetZoom() > 0 then
                 MinimapZoomOut:Click()
+            end
+        end
+    )
+
+    Minimap:SetScript(
+        "OnMouseDown",
+        function(self, button)
+            if button == "RightButton" then
+                local button = MiniMapTrackingButton
+                if button then
+                    button:OpenMenu()
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+                end
+            else
+                Minimap_OnClick(self)
             end
         end
     )
