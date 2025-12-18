@@ -1,24 +1,6 @@
-8.5.3
-CHANGES
-    - Add housing micro button
-
-FIXES
-    - Many chat related fixes
-    - Socket skin error (Mists)
-
-8.5.2
-CHANGES
-    - Updates for 11.2.7
-
-8.5.1
-CHANGES
-    - Talent switch works again (Mists)
-
-8.5.0
+8.6.0
 NEW
-    - Added Recent Alliens tab to social panel (retail)
-    - Add CD Manager skin (retail)
+    - Add option to invert multi actionbars, to follow the blizzard layout
 
 FIXES
-    - Fix character stats lus error (mists)
-    - Fix druid mana bar in bear form
+    - Chatframe fixes

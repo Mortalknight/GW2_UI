@@ -18,6 +18,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("8.6.0", {
+    {GW.ChangelogType.feature, [=[Add option to invert multiactionbars, to follow the blizzard layout]=]},
+    {GW.ChangelogType.bug, [=[Chatframe fixes]=]},
+})
+
 addChange("8.5.3", {
     {GW.ChangelogType.change, [=[Add housing micro button]=]},
     {GW.ChangelogType.bug, [=[Many chat related fixes]=]},
