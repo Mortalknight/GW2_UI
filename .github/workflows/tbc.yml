@@ -6,17 +6,15 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+-Wrath'
 
-env:
-  # for github releases, this secret is automatically provided to the workflow
-  GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
-  CF_API_KEY: ${{ secrets.CF_API_KEY }}
-
 jobs:
   release: # "release" is a job, you can name it anything you want
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-
+      - uses: actions/checkout@v4
       - uses: BigWigsMods/packager@master
         with:
           args: -g wrath
+        env:
+          # for github releases, this secret is automatically provided to the workflow
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
