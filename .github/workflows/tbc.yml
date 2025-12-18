@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: BigWigsMods/packager@master
         with:
-          args: -g wrath
+          args: -g titan
         env:
           # for github releases, this secret is automatically provided to the workflow
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
