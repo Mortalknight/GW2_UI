@@ -1,4 +1,5 @@
 manual-changelog: CHANGELOG_NEW_VERSION.txt
+package-as: GW2_UI
 ignore:
   - assets
   - tools
