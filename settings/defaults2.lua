@@ -93,6 +93,7 @@ GW.globalDefault = {
         CASTINGBAR_ENABLED = true,
         SHOWACTIONBAR_MACRO_NAME_ENABLED = false,
         ACTIONBAR_BACKGROUND_ALPHA = 0.3,
+        HIDEACTIONBAR_BACKGROUND_ENABLED = false,
         SHOW_QUESTTRACKER_COMPASS = true,
         QUESTTRACKER_STATUSBARS_ENABLED = true,
         MINIMAP_ALWAYS_SHOW_HOVER_DETAILS = {CLOCK = false, ZONE = false, COORDS = false,},
@@ -296,7 +297,6 @@ GW.globalDefault = {
         },
         FCT_STACKING_CONTAINER_scale= 1,
 
-
         FADE_MULTIACTIONBAR_1= "ALWAYS",
         FADE_MULTIACTIONBAR_2= "ALWAYS",
         FADE_MULTIACTIONBAR_3= "ALWAYS",
@@ -437,6 +437,7 @@ GW.globalDefault = {
             size= 38,
             ButtonsPerRow= 6,
             hideDefaultBackground= true,
+            invert = false,
         },
         MultiBarBottomLeft_scale= 1,
 
@@ -449,6 +450,7 @@ GW.globalDefault = {
             size= 38,
             ButtonsPerRow= 6,
             hideDefaultBackground= true,
+            invert = false,
         },
         MultiBarBottomRight_scale= 1,
 
@@ -461,6 +463,7 @@ GW.globalDefault = {
             size= 38,
             ButtonsPerRow= 1,
             hideDefaultBackground= true,
+            invert = false,
         },
         MultiBarRight_scale= 1,
 
@@ -473,6 +476,7 @@ GW.globalDefault = {
             size= 38,
             ButtonsPerRow= 1,
             hideDefaultBackground= true,
+            invert = false,
         },
         MultiBarLeft_scale= 1,
 
@@ -485,6 +489,7 @@ GW.globalDefault = {
             size= 38,
             ButtonsPerRow= 1,
             hideDefaultBackground= true,
+            invert = false,
         },
         MultiBar5_scale= 1,
 
@@ -497,6 +502,7 @@ GW.globalDefault = {
             size= 38,
             ButtonsPerRow= 1,
             hideDefaultBackground= true,
+            invert = false,
         },
         MultiBar6_scale= 1,
 
@@ -509,6 +515,7 @@ GW.globalDefault = {
             size= 38,
             ButtonsPerRow= 1,
             hideDefaultBackground= true,
+            invert = false,
         },
         MultiBar7_scale= 1,
 

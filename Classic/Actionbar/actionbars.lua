@@ -474,6 +474,14 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
 
         btn.gwBackdrop = backDrop
+
+        if not isStanceButton and not isPet then
+            btn.gwBackdrop.bg:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+            btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+            btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+            btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+            btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        end
     end
 
     if hideUnused == true then
@@ -658,23 +666,42 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local btn_padding_y = 0
     local btn_this_row = 0
     local showName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
-
+    local hideActionBarBG = GW.settings.HIDEACTIONBAR_BACKGROUND_ENABLED
+    local first = 1
+    local last = 12
+    local buttonOrder = {}
+    local buttonsPerRow = settings.ButtonsPerRow or (last - first + 1)
+    local totalRows = math.ceil((last - first + 1) / buttonsPerRow)
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
 
-    if actionPage ~= nil then
+    if actionPage then
         fmMultibar:SetAttribute("actionpage", actionPage)
         fmMultibar:SetFrameStrata("LOW")
     end
     fmMultibar.gw_Buttons = {}
     fmMultibar.originalBarName = barName
 
-    local hideActionBarBG = GW.settings.HIDEACTIONBAR_BACKGROUND_ENABLED
-    for i = 1, 12 do
+    if settings.invert then
+        for row = totalRows - 1, 0, -1 do
+            for col = 0, buttonsPerRow - 1 do
+                local idx = first + row * buttonsPerRow + col
+                if idx <= last then
+                    buttonOrder[#buttonOrder + 1] = idx
+                end
+            end
+        end
+    else
+        for i = first, last do
+            buttonOrder[#buttonOrder + 1] = i
+        end
+    end
+
+    for _, i in ipairs(buttonOrder) do
         local btn = _G[buttonName .. i]
         fmMultibar.gw_Buttons[i] = btn
 
-        if btn ~= nil then
-            if actionPage ~= nil then
+        if btn then
+            if actionPage then
                 -- reparent button to our action bar
                 btn:SetParent(fmMultibar)
             end
@@ -775,10 +802,7 @@ local function UpdateMultibarButtons()
     C_CVar.SetCVar("alwaysShowActionBars", tostring(HIDE_ACTIONBARS_CVAR))
 
     for y = 1, 4 do
-        if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
-        if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
-        if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
-        if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
+        fmMultiBar = fmActionbar["gw_Bar" .. y]
         if fmMultiBar and fmMultiBar.gw_IsEnabled then
             local settings = GW.settings[fmMultiBar.originalBarName]
             local used_height = 0
@@ -786,7 +810,26 @@ local function UpdateMultibarButtons()
             local btn_padding_y = 0
             local btn_this_row = 0
             local used_width = 0
-            for i = 1, 12 do
+            local buttonOrder = {}
+            local buttonsPerRow = settings.ButtonsPerRow or 12
+            local totalRows = math.ceil(12 / buttonsPerRow)
+
+            if settings.invert then
+                for row = totalRows - 1, 0, -1 do
+                    for col = 0, buttonsPerRow - 1 do
+                        local idx = row * buttonsPerRow + col + 1
+                        if idx <= 12 then
+                            buttonOrder[#buttonOrder + 1] = idx
+                        end
+                    end
+                end
+            else
+                for i = 1, 12 do
+                    buttonOrder[#buttonOrder + 1] = i
+                end
+            end
+
+            for _, i in ipairs(buttonOrder) do
                 local btn = fmMultiBar.gw_Buttons[i]
 
                 btn:ClearAllPoints()
@@ -802,6 +845,12 @@ local function UpdateMultibarButtons()
                     btn_padding = 0
                     used_height = used_height + settings.size + margin
                 end
+
+                btn.gwBackdrop.bg:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+                btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+                btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+                btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+                btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
 
                 if hideActionbuttonBackdrop then
                     btn.gwBackdrop:Hide()
