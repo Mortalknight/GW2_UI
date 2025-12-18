@@ -448,7 +448,7 @@ local function loadTalentsFrames()
             updateTalentTrees()
         end)
 
-        for y = 1, 15 do
+        for y = 1, MAX_NUM_TALENT_TIERS do
             TALENT_BRANCH_ARRAY[i][y] = {}
             for j = 1, NUM_TALENT_COLUMNS do
                 TALENT_BRANCH_ARRAY[i][y][j] = {id = nil, up = 0, left = 0, right = 0, down = 0, leftArrow = 0, rightArrow = 0, topArrow = 0}
