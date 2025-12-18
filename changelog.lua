@@ -9,7 +9,7 @@ local ct = {
 
 GW.CHANGELOGS_TYPES = ct
 
-addChange("2.3.",{
+addChange("2.3.0",{
     {ct.bug,[=[Titan support]=]},
 })
 
