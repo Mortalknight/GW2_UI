@@ -1,3 +1,6 @@
+2.3.0-Wrath
+    - Titan support
+
 2.2.10-Wrath
     - Fix details profile
 

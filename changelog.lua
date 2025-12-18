@@ -9,6 +9,10 @@ local ct = {
 
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.3.",{
+    {ct.bug,[=[Titan support]=]},
+})
+
 addChange("2.2.10",{
     {ct.bug,[=[Fix details profile]=]},
 })
