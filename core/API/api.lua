@@ -67,7 +67,7 @@ local function GetWatchedFactionInfo()
     if C_Reputation and C_Reputation.GetWatchedFactionData then
         return C_Reputation.GetWatchedFactionData()
     else
-        local name, standing, min, max, value, factionID = GetWatchedFactionInfo()
+        local name, standing, min, max, value, factionID = _G.GetWatchedFactionInfo()
         local watchedInfo = {
             factionID = factionID,
             name = name,
@@ -105,6 +105,10 @@ GW.IsPlayerSpell = IsPlayerSpellWrapper
 local function CropRatio(width, height, mult)
 	local left, right, top, bottom = 0.05, 0.95, 0.05, 0.95
 	if not mult then mult = 0.5 end
+
+	if not height or height == 0 then
+		return left, right, top, bottom
+	end
 
 	local ratio = width / height
 	if ratio > 1 then
@@ -180,11 +184,10 @@ do
                 PawnLoaded = true
                 PostRefresh(true)
             end
-		elseif event == "PLAYER_EQUIPMENT_CHANGED" then
-            local slot = ...do
-                if slot >= C_Container.ContainerIDToInventoryID(1) then
-                    return
-                end
+        elseif event == "PLAYER_EQUIPMENT_CHANGED" then
+            local slot = ...
+            if slot >= C_Container.ContainerIDToInventoryID(1) then
+                return
             end
 			PostRefresh(true)
 			upgradeCache = {}
