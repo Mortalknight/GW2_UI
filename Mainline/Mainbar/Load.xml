@@ -5,5 +5,4 @@
     <Include file ="orderbar.xml"/>
     <Script file ="orderbar.lua"/>
     <Script file ="mirrortimer.lua"/>
-    <Script file ="expBar.lua"/>
 </Ui>

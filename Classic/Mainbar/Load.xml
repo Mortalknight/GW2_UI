@@ -1,6 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="mirrortimer.xml"/>
-    <Script file ="expBar.lua"/>
     <Script file ="mirrortimer.lua"/>
     <Script file ="5sr.lua"/>
 </Ui>

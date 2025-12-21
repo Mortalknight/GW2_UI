@@ -62,6 +62,36 @@ local function IsSpellKnownWrapper(spellID, isPet)
 end
 GW.IsSpellKnown = IsSpellKnownWrapper
 
+
+local function GetWatchedFactionInfo()
+    if C_Reputation and C_Reputation.GetWatchedFactionData then
+        return C_Reputation.GetWatchedFactionData()
+    else
+        local name, standing, min, max, value, factionID = GetWatchedFactionInfo()
+        local watchedInfo = {
+            factionID = factionID,
+            name = name,
+            description = "",
+            reaction = standing,
+            currentReactionThreshold = min,
+            nextReactionThreshold = max,
+            currentStanding = value,
+            atWarWith = false,
+            canToggleAtWar = false,
+            isChild = false,
+            isHeader = false,
+            isHeaderWithRep = false,
+            isCollapsed = false,
+            isWatched = false,
+            hasBonusRepGain = false,
+            canSetInactive = false,
+            isAccountWide = false
+        }
+        return watchedInfo
+    end
+end
+GW.GetWatchedFactionInfo = GetWatchedFactionInfo
+
 local function IsPlayerSpellWrapper(spellID)
     if C_SpellBook and C_SpellBook.IsSpellKnown then
         local spellBank = Enum.SpellBookSpellBank.Player
