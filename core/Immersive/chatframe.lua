@@ -2626,10 +2626,12 @@ local function LoadChat()
                 local fmGCC = CreateFrame("FRAME", nil, UIParent, "GwChatContainer")
                 fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
                 fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
+
+                local anchorFrame = not GW.Retail and _G[frameName .. "EditBoxRight"] or _G[frameName .. "EditBoxFocusRight"]
                 if not frame.isDocked then
-                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
+                    fmGCC:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
                 else
-                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, 0)
+                    fmGCC:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMRIGHT", 5, 0)
                 end
                 if not frame.isDocked then fmGCC.EditBox:Hide() end
                 frame.Container = fmGCC
