@@ -142,6 +142,11 @@ end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
 local function setMinimapButtons(side)
+    if InCombatLockdown() then
+        GW.CombatQueue_Queue("Update Minimap Buttons", setMinimapButtons, {side})
+        return
+    end
+
     local expButton = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
     QueueStatusButton:ClearAllPoints()
     GameTimeFrame:ClearAllPoints()
@@ -182,7 +187,6 @@ local function setMinimapButtons(side)
 
     QueueStatusButton:SetParent(UIParent)
 end
-GW.setMinimapButtons = setMinimapButtons
 
 local function MinimapPostDrag(self)
     MinimapBackdrop:ClearAllPoints()
@@ -191,9 +195,9 @@ local function MinimapPostDrag(self)
     local x = self.gwMover:GetCenter()
     local screenWidth = UIParent:GetRight()
     if x > (screenWidth / 2) then
-        GW.setMinimapButtons("left")
+        setMinimapButtons("left")
     else
-        GW.setMinimapButtons("right")
+        setMinimapButtons("right")
     end
 end
 

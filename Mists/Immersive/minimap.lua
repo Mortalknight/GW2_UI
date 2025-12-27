@@ -16,6 +16,11 @@ local minimapDetails = {
 }
 
 local function setMinimapButtons(side)
+    if InCombatLockdown() then
+        GW.CombatQueue_Queue("Update Minimap Buttons", setMinimapButtons, {side})
+        return
+    end
+
     MiniMapBattlefieldFrame:ClearAllPoints()
     GameTimeFrame:ClearAllPoints()
     MiniMapLFGFrame:ClearAllPoints()

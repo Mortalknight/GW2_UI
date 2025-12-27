@@ -29,6 +29,11 @@ end
 GW.SetMinimapHover = SetMinimapHover
 
 local function setMinimapButtons(side)
+    if InCombatLockdown() then
+        GW.CombatQueue_Queue("Update Minimap Buttons", setMinimapButtons, {side})
+        return
+    end
+
     MiniMapBattlefieldFrame:ClearAllPoints()
     if LFGMinimapFrame then
         LFGMinimapFrame:ClearAllPoints()
