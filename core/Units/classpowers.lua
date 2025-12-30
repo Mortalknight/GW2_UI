@@ -1603,7 +1603,9 @@ local function setWarlock(f)
         f:RegisterEvent("UNIT_DISPLAYPOWER")
     end
     -- Register "LEARNED_SPELL_IN_TAB" so we can check for the green fire spell and check an login
-    f:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    if not GW.Retail then
+        f:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    end
     f.useRedTexture = false
 
     if GW.Retail then

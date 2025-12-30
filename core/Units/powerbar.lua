@@ -4,15 +4,17 @@ local PowerBarColorCustom = GW.PowerBarColorCustom
 GwPlayerPowerBarMixin = {}
 
 function GwPlayerPowerBarMixin:ResetPowerBarVisuals()
-    self.animator:SetScript("OnUpdate", nil)
+    self:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
     self.bar:SetStatusBarColor(1, 1, 1, 1)
     self.bar.spark:SetAlpha(0)
     self.bar.spark:SetBlendMode("BLEND")
+
+    if GW.Retail then return end
+    self.animator:SetScript("OnUpdate", nil)
     self.bar.scrollTexture:SetAlpha(0)
     self.bar.scrollTexture2:SetAlpha(0)
     self.bar.scrollTexture:SetBlendMode("BLEND")
     self.bar.scrollTexture2:SetBlendMode("BLEND")
-    self:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
     self.intensity:SetAlpha(0)
     self.intensity2:SetAlpha(0)
     self.runeoverlay:SetAlpha(0)
@@ -161,9 +163,10 @@ end
 
 function GwPlayerPowerBarMixin:SetPowerTypeFocus()
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/ragespark.png")
-    self.decay:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/focus-intensity.png")
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/focus.png")
 
+    if GW.Retail then return end
+    self.decay:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/focus-intensity.png")
     self.onUpdateAnimation = self.AnimationFocus
     self.animationType = GW.BarAnimateTypes.Regenerate
     self.onAnimationStart = function(self, value)
@@ -177,23 +180,27 @@ function GwPlayerPowerBarMixin:SetPowerTypeFocus()
 end
 
 function GwPlayerPowerBarMixin:SetPowerTypeFury()
-  self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury.png")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark.png")
+    self.spark:SetAlpha(0.5)
+
+    if GW.Retail then return end
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/fury-intensity.png","REPEAT")
     self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/fury-intensity2.png","REPEAT")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark.png")
     self.animator:SetScript("OnUpdate",function(_,delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
-    self.spark:SetAlpha(0.5)
     self.onUpdateAnimation = self.AnimationFury
 end
 
 function GwPlayerPowerBarMixin:SetPowerTypeRunic()
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower.png")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity2.png","REPEAT")
-    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity.png","REPEAT")
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark.png")
     self.spark:SetAlpha(1)
+
+    if GW.Retail then return end
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity2.png","REPEAT")
+    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity.png","REPEAT")
     self.onUpdateAnimation = self.AnimationRunicPower
     self.animator:SetScript("OnUpdate",function(_,delta) self:ScrollTextureOnUpdate(delta) end)
 end
@@ -209,8 +216,10 @@ function GwPlayerPowerBarMixin:SetPowerTypeLunarPower()
 end
 
 function GwPlayerPowerBarMixin:SetPowerTypeRage()
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/ragespark.png")
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/rage.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/ragespark.png")
+
+    if GW.Retail then return end
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll.png", "REPEAT")
     self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2.png", "REPEAT")
     self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
@@ -229,9 +238,11 @@ function GwPlayerPowerBarMixin:SetPowerTypeRage()
 end
 
 function GwPlayerPowerBarMixin:SetPowerTypeEnergy()
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/energy.png")
     self.spark:SetAlpha(0)
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark.png")
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/energy.png")
+
+    if GW.Retail then return end
     self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/energy-intensity.png","REPEAT")
     self.onUpdateAnimation = self.AnimationEnergy
 end
@@ -241,18 +252,22 @@ function GwPlayerPowerBarMixin:SetPowerTypeMana()
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/manaspark.png")
     self.spark:SetAlpha(1)
 
+    if GW.Retail then return end
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/mana-intensity.png","REPEAT")
     self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/mana-intensity2.png","REPEAT")
     self.animator:SetScript("OnUpdate",function(_,delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
 end
+
 function GwPlayerPowerBarMixin:SetPowerTypeInsanity()
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanityspark.png")
+
+    if GW.Retail then return end
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-scroll.png","REPEAT")
     self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-intensity.png")
     self.intensity2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-intensity2.png")
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity.png")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanityspark.png")
     self.onUpdateAnimation = self.AnimationIntensityGlow
     self.animator:SetScript("OnUpdate",function(_,delta) self:ScrollTextureOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(1)
@@ -264,6 +279,7 @@ function GwPlayerPowerBarMixin:SetPowerBarVisuals(powerType, powerToken)
         return
     end
     self.pType = powerType
+
     self:ResetPowerBarVisuals()
 
     if powerType == Enum.PowerType.Insanity then
@@ -299,6 +315,7 @@ function GwPlayerPowerBarMixin:SetPowerBarVisuals(powerType, powerToken)
 end
 
 function GwPlayerPowerBarMixin:OnUpdate()
+    print("UPDATE")
     if not self.lostKnownPower or not self.powerMax or not self.lastUpdate or self.animating then
         return
     end
@@ -313,17 +330,28 @@ function GwPlayerPowerBarMixin:OnUpdate()
     local addPower = regen * ((GetTime() - self.lastUpdate) / decayRate)
     local power = self.lostKnownPower + addPower
     local powerMax = self.powerMax
-    local powerPrec = (power > 0 and powerMax > 0) and min(1, power / powerMax) or 0
+    local powerPrec
 
-    if powerPrec == 0 then
-        self:Hide()
-    else
+    if GW.Retail then
+        powerPrec = UnitPowerPercent("player", self.powerType)
+        self:SetValue(0, Enum.StatusBarInterpolation.StatusBarInterpolation)
         self:Show()
+    else
+        powerPrec = (power >= 0 and powerMax > 0) and min(1, power / powerMax) or 0
+        self:SetFillAmount(0)
+        if powerPrec == 0 then
+            self:Hide()
+        else
+            self:Show()
+        end
     end
-    self:SetFillAmount(0)
 
     if self.textUpdate < GetTime() then
-        self.powerBarString:SetText(GW.GetLocalizedNumber(powerMax * powerPrec))
+        if GW.Retail then
+            self.powerBarString:SetText(power)
+        else
+            self.powerBarString:SetText(GW.GetLocalizedNumber(powerMax * powerPrec))
+        end
         self.textUpdate = GetTime() + 0.2
     end
 end
@@ -337,7 +365,14 @@ function GwPlayerPowerBarMixin:UpdatePowerData(forcePowerType, powerToken)
     local power = UnitPower("player", forcePowerType)
     local powerMax = UnitPowerMax("player", forcePowerType)
     local powerBarWidth = self:GetWidth()
-    local powerPrec = (power >= 0 and powerMax > 0) and (power / powerMax) or 0
+    local powerPrec
+
+    if GW.Retail then
+        powerPrec = UnitPowerPercent("player", forcePowerType)
+    else
+        powerPrec = (power >= 0 and powerMax > 0) and (power / powerMax) or 0
+    end
+
     self.powerType = forcePowerType
     self.lostKnownPower = power
     self.powerMax = powerMax
@@ -346,13 +381,23 @@ function GwPlayerPowerBarMixin:UpdatePowerData(forcePowerType, powerToken)
 
     self:SetPowerBarVisuals(forcePowerType, powerToken)
 
-    self:SetFillAmount(powerPrec)
-    self.label:SetText(GW.GetLocalizedNumber(self.lostKnownPower))
+    if GW.Retail then
+        self.label:SetText(power)
+        self:SetValue(powerPrec, Enum.StatusBarInterpolation.StatusBarInterpolation)
+    else
+        self.label:SetText(GW.GetLocalizedNumber(self.lostKnownPower))
+        self:SetFillAmount(powerPrec)
+    end
 
     if self.lastPowerType ~= self.powerType and self == GwPlayerPowerBar then
         self.lastPowerType = self.powerType
         self.powerBarString = self.label
-        self:ForceFillAmount(powerPrec)
+
+        if GW.Retail then
+            self:SetValue(powerPrec, Enum.StatusBarInterpolation.StatusBarInterpolation)
+        else
+            self:SetFillAmount(powerPrec)
+        end
         if (not self.powerType) or (self.powerType == 1 or self.powerType == 6 or self.powerType == 13 or self.powerType == 8) then
             self.barOnUpdate = nil
         else
@@ -376,37 +421,49 @@ end
 function GwPlayerPowerBarMixin:ToggleBar()
     if GW.settings.POWERBAR_ENABLED and ((GW.settings.PLAYER_AS_TARGET_FRAME and GW.settings.PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR) or not GW.settings.PLAYER_AS_TARGET_FRAME) then
         self:SetParent(UIParent)
-        self.decay:SetParent(UIParent)
+        if self.decay then
+            self.decay:SetParent(UIParent)
+        end
         self:SetScript("OnEvent", OnEvent)
         self:UpdatePowerData()
         GW.ToggleMover(self.gwMover, true)
     else
         self:SetParent(GW.HiddenFrame)
-        self.decay:SetParent(GW.HiddenFrame)
+        if self.decay then
+            self.decay:SetParent(GW.HiddenFrame)
+        end
         self:SetScript("OnEvent", nil)
         GW.ToggleMover(self.gwMover, false)
     end
 end
 
 local function LoadPowerBar()
-    local playerPowerBar = GW.CreateAnimatedStatusBar("GwPlayerPowerBar", UIParent, "GwStatusPowerBar", true)
-    playerPowerBar.customMaskSize = 64
+    local playerPowerBar
+
+    if GW.Retail then
+        playerPowerBar = CreateFrame("StatusBar", "GwPlayerPowerBar", UIParent, "GwStatusPowerBarRetailTemplate")
+        playerPowerBar.spark:ClearAllPoints()
+        playerPowerBar.spark:SetPoint("RIGHT", playerPowerBar:GetStatusBarTexture(), "RIGHT", 0, 0)
+    else
+        playerPowerBar = GW.CreateAnimatedStatusBar("GwPlayerPowerBar", UIParent, "GwStatusPowerBar", true)
+        playerPowerBar.customMaskSize = 64
+        playerPowerBar:AddToBarMask(playerPowerBar.intensity)
+        playerPowerBar:AddToBarMask(playerPowerBar.intensity2)
+        playerPowerBar:AddToBarMask(playerPowerBar.scrollTexture)
+        playerPowerBar:AddToBarMask(playerPowerBar.scrollTexture2)
+        playerPowerBar:AddToBarMask(playerPowerBar.runeoverlay)
+        playerPowerBar.runicmask:SetSize(playerPowerBar:GetSize())
+        playerPowerBar.runeoverlay:AddMaskTexture(playerPowerBar.runicmask)
+
+        playerPowerBar.decay = GW.CreateAnimatedStatusBar("GwPlayerPowerBarDecay", UIParent, nil, true)
+        playerPowerBar.decay:SetFillAmount(0)
+
+        playerPowerBar.decay:SetFrameLevel(playerPowerBar.decay:GetFrameLevel() - 1)
+        playerPowerBar.decay:ClearAllPoints()
+        playerPowerBar.decay:SetPoint("TOPLEFT", playerPowerBar, "TOPLEFT", 0, 0)
+        playerPowerBar.decay:SetPoint("BOTTOMRIGHT", playerPowerBar, "BOTTOMRIGHT", 0, 0)
+    end
     playerPowerBar.bar = playerPowerBar
-    playerPowerBar:AddToBarMask(playerPowerBar.intensity)
-    playerPowerBar:AddToBarMask(playerPowerBar.intensity2)
-    playerPowerBar:AddToBarMask(playerPowerBar.scrollTexture)
-    playerPowerBar:AddToBarMask(playerPowerBar.scrollTexture2)
-    playerPowerBar:AddToBarMask(playerPowerBar.runeoverlay)
-    playerPowerBar.runicmask:SetSize(playerPowerBar:GetSize())
-    playerPowerBar.runeoverlay:AddMaskTexture(playerPowerBar.runicmask)
-
-    playerPowerBar.decay = GW.CreateAnimatedStatusBar("GwPlayerPowerBarDecay", UIParent, nil, true)
-
-    playerPowerBar.decay:SetFillAmount(0)
-    playerPowerBar.decay:SetFrameLevel(playerPowerBar.decay:GetFrameLevel() - 1)
-    playerPowerBar.decay:ClearAllPoints()
-    playerPowerBar.decay:SetPoint("TOPLEFT", playerPowerBar, "TOPLEFT", 0, 0)
-    playerPowerBar.decay:SetPoint("BOTTOMRIGHT", playerPowerBar, "BOTTOMRIGHT", 0, 0)
 
     GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", ALL .. ",Unitframe,Power", nil, {"default", "scaleable"}, true)
 

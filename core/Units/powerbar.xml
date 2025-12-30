@@ -16,7 +16,7 @@
               <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
           </Anchors>
         </Texture>
-        <Texture parentKey="intensity2"  alpha="0" file="Interface/AddOns/GW2_UI/textures/bartextures/insanity-intensity2.png">
+        <Texture parentKey="intensity2" alpha="0" file="Interface/AddOns/GW2_UI/textures/bartextures/insanity-intensity2.png">
           <Size x="32" y="18"></Size>
           <Anchors>
               <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -25,7 +25,7 @@
         </Texture>
       </Layer>
       <Layer level="OVERLAY" textureSubLevel="1">
-        <Texture parentKey="runeoverlay"  alpha="0" file="Interface/AddOns/GW2_UI/textures/bartextures/runicpower-intensity2.png">
+        <Texture parentKey="runeoverlay" alpha="0" file="Interface/AddOns/GW2_UI/textures/bartextures/runicpower-intensity2.png">
           <Size x="32" y="18"></Size>
           <Anchors>
               <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -113,6 +113,29 @@
         <Frame parentKey="animator">
         </Frame>
     </Frames>
-</StatusBar>
+  </StatusBar>
+
+  <StatusBar name="GwStatusPowerBarRetailTemplate" minValue="0" maxValue="1" virtual="true" mixin="GwPlayerPowerBarMixin" inherits="GwStatusBarBackground">
+      <Size x="313" y="14"></Size>
+      <Anchors>
+          <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+      </Anchors>
+      <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png"/>
+      <Layers>
+        <Layer level="OVERLAY" textureSubLevel="3">
+          <Texture parentKey="spark" alpha="0" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/bartextures/ragespark.png">
+            <Size x="8" y="14"></Size>
+          </Texture>
+        </Layer>
+        <Layer level="OVERLAY" textureSubLevel="4">
+          <FontString parentKey="label" text="" justifyH="CENTER" justifyV="MIDDLE">
+              <Size x="200" y="14"></Size>
+              <Anchors>
+                  <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+              </Anchors>
+          </FontString>
+        </Layer>
+      </Layers>
+  </StatusBar>
 
 </Ui>

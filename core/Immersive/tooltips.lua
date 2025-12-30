@@ -704,7 +704,12 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
     if not GW.settings.ADVANCED_TOOLTIP then return end
     if self ~= GameTooltip or self:IsForbidden() then return end
 
-    local _, unit = self:GetUnit()
+    local unit
+    if GW.Retail then
+        unit = "mouseover"
+    else
+        _, unit = self:GetUnit()
+    end
     local isPlayerUnit = UnitIsPlayer(unit)
 
     if not unit then
@@ -720,13 +725,14 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
 
     local isShiftKeyDown = IsShiftKeyDown()
     local isControlKeyDown = IsControlKeyDown()
+    local isInCombat = InCombatLockdown()
     local color = SetUnitText(self, unit, isPlayerUnit)
 
     if GW.settings.ADVANCED_TOOLTIP_SHOW_TARGET_INFO and not isShiftKeyDown and not isControlKeyDown then
         AddTargetInfo(self, unit)
     end
 
-    if (GW.Retail or GW.Mists) and GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown then
+    if (GW.Retail or GW.Mists) and GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown and not isInCombat then
         AddMountInfo(self, unit)
     end
 
@@ -734,11 +740,11 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         AddRoleInfo(self, unit)
     end
 
-    if GW.Retail and GW.settings.ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE then
+    if GW.Retail and not isInCombat and GW.settings.ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE then
         AddMythicInfo(self, unit)
     end
 
-    if (GW.Retail or GW.Mists) and isShiftKeyDown and isPlayerUnit and not InCombatLockdown() and not self.ItemLevelShown then
+    if (GW.Retail or GW.Mists) and not isInCombat and isShiftKeyDown and isPlayerUnit and not InCombatLockdown() and not self.ItemLevelShown then
         if color then
             AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
         else
@@ -760,7 +766,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         self.StatusBar:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
     end
 
-    if self.StatusBar.text then
+    if self.StatusBar.text and not GW.Retail then
         local textWidth = self.StatusBar.text:GetStringWidth()
         if textWidth then
             self:SetMinimumWidth(textWidth)
@@ -772,7 +778,12 @@ local function GameTooltipStatusBar_OnValueChanged(self, value)
     if not GW.settings.ADVANCED_TOOLTIP then return end
     if self:IsForbidden() or not value or not self.text or not GW.settings.ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT then return end
 
-    local _, unit = self:GetParent():GetUnit()
+    local unit
+    if GW.Retail then
+        unit = "mouseover"
+    else
+        _, unit = self:GetParent():GetUnit()
+    end
     if not unit then
         local frame = GetMouseFoci()
         if frame and frame.GetAttribute then
@@ -780,22 +791,19 @@ local function GameTooltipStatusBar_OnValueChanged(self, value)
         end
     end
 
-    if value == 0 or (unit and UnitIsDeadOrGhost(unit)) then
-        self.text:SetText(DEAD)
-    else
-        local max
-        if unit then -- try to get real health values
-            value, max = UnitHealth(unit), UnitHealthMax(unit)
-        else
-            _, max = self:GetMinMaxValues()
-        end
-        if value > 0 and max == 1 then
-            self.text:SetFormattedText("%d%%", floor(value * 100))
-            self:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
-        else
-            self.text:SetText(GW.GetLocalizedNumber(value) .. " / " .. GW.GetLocalizedNumber(max))
-        end
-    end
+    if unit and UnitIsDeadOrGhost(unit) then
+		self.text:SetText(DEAD)
+	else
+		local maximum, _
+		if unit then -- try to get the real health values if possible
+			value, maximum = UnitHealth(unit), UnitHealthMax(unit)
+		else
+			_, maximum = self:GetMinMaxValues()
+		end
+
+		self.text:SetFormattedText('%d / %d', value or 1, maximum or 1)
+        self:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
+	end
 end
 
 local function SetItemRef(link)
@@ -807,7 +815,7 @@ local function SetItemRef(link)
 end
 
 function SetCompareItems(tt, value)
-    if GW.Retail and tt == GameTooltip then
+    if not GW.Retail or tt ~= GameTooltip then
         tt.supportsItemComparison = value
     end
 end
@@ -970,7 +978,13 @@ local function SkinQueueStatusFrame()
 end
 
 local function shouldHiddenInCombat(tooltip)
-    local _, unit = tooltip:GetUnit()
+    local unit
+    if GW.Retail then
+        unit = "mouseover"
+    else
+        _, unit = tooltip:GetUnit()
+    end
+
     if unit then
         local unitReaction = UnitReaction("player", unit)
         if not unitReaction then return false end

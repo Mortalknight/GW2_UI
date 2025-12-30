@@ -232,6 +232,6 @@ local function LoadHudPanel(sWindow)
     fct:AddOptionSlider(FONT_SIZE .. ": " .. L["Crit modifier"], nil, { getterSetter = "GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
     fct:AddOptionSlider(FONT_SIZE .. ": " .. L["Pet number modifier"], nil, { getterSetter = "GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
 
-    sWindow:AddSettingsPanel(p, UIOPTIONS_MENU, L["Edit the modules in the Heads-Up Display for more customization."], {{name = GENERAL, frame = general}, {name = MINIMAP_LABEL, frame = minimap}, {name = WORLDMAP_BUTTON, frame = worldmap}, {name = COMBAT_TEXT_LABEL, frame = fct}})
+    sWindow:AddSettingsPanel(p, UIOPTIONS_MENU, L["Edit the modules in the Heads-Up Display for more customization."], {{name = GENERAL, frame = general}, {name = MINIMAP_LABEL, frame = minimap}, {name = WORLDMAP_BUTTON, frame = worldmap}, not GW.Retail and {name = COMBAT_TEXT_LABEL, frame = fct} or nil})
 end
 GW.LoadHudPanel = LoadHudPanel

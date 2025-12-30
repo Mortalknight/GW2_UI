@@ -3,6 +3,8 @@ local _, GW = ...
 local actionHudPlayerAuras = {}
 local actionHudPlayerPetAuras = {}
 
+local curveOne, curveTwo
+
 local function registerActionHudAura(auraID, left, right, unit, modelFX)
     if unit == "player" then
         actionHudPlayerAuras[auraID] = {}
@@ -93,26 +95,29 @@ local function selectBg(self)
         left = "Interface/AddOns/GW2_UI/textures/hud/leftshadowcombat.png"
 
         local auraFound = false
-        for spellID, auraData in pairs(actionHudPlayerAuras) do
-            if C_UnitAuras.GetPlayerAuraBySpellID(spellID) then
-                right = auraData.right
-                left = auraData.left
-                modelFX = auraData.modelFX
-                auraFound = true
-                break
-            end
-        end
-
-        -- pet buffs
-        if not auraFound then
-            for i = 1, 40 do
-                local auraData = C_UnitAuras.GetBuffDataByIndex("pet", i)
-                local petAura = auraData and actionHudPlayerPetAuras[auraData.spellId]
-                if petAura and petAura.unit == "pet" then
-                    right = petAura.right
-                    left = petAura.left
-                    modelFX = petAura.modelFX
+        if not GW.Retail then
+            for spellID, auraData in pairs(actionHudPlayerAuras) do
+                if C_UnitAuras.GetPlayerAuraBySpellID(spellID) then
+                    C_UnitAuras.GetPlayerAuraBySpellID(375087)
+                    right = auraData.right
+                    left = auraData.left
+                    modelFX = auraData.modelFX
+                    auraFound = true
                     break
+                end
+            end
+
+            -- pet buffs
+            if not auraFound then
+                for i = 1, 40 do
+                    local auraData = C_UnitAuras.GetBuffDataByIndex("pet", i)
+                    local petAura = auraData and actionHudPlayerPetAuras[auraData.spellId]
+                    if petAura and petAura.unit == "pet" then
+                        right = petAura.right
+                        left = petAura.left
+                        modelFX = petAura.modelFX
+                        break
+                    end
                 end
             end
         end
@@ -126,6 +131,7 @@ local function selectBg(self)
 
     if currentTexture ~= left then
         currentTexture = left
+
         self.actionBarHud.Right:SetTexture(right)
         self.actionBarHud.Left:SetTexture(left)
 
@@ -141,20 +147,19 @@ local function combatHealthState(self)
     if not GW.settings.HUD_BACKGROUND then
         return
     end
+    local healthPercentage = UnitHealth("player") / UnitHealthMax("player")
 
-    local unitHealthPrecentage = UnitHealth("player") / UnitHealthMax("player")
-
-    if unitHealthPrecentage < 0.5 and not UnitIsDeadOrGhost("player") then
-        unitHealthPrecentage = unitHealthPrecentage / 0.5
-        local alpha = 1 - unitHealthPrecentage - 0.2
+    if healthPercentage < 0.5 and not UnitIsDeadOrGhost("player") then
+        healthPercentage = healthPercentage / 0.5
+        local alpha = 1 - healthPercentage - 0.2
         if alpha < 0 then alpha = 0 end
         if alpha > 1 then alpha = 1 end
 
-        self.actionBarHud.Left:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
-        self.actionBarHud.Right:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        self.actionBarHud.Left:SetVertexColor(1, healthPercentage, healthPercentage)
+        self.actionBarHud.Right:SetVertexColor(1, healthPercentage, healthPercentage)
 
-        self.actionBarHud.RightSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
-        self.actionBarHud.LeftSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        self.actionBarHud.RightSwim:SetVertexColor(1, healthPercentage, healthPercentage)
+        self.actionBarHud.LeftSwim:SetVertexColor(1, healthPercentage, healthPercentage)
 
         self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, alpha)
         self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, alpha)
@@ -169,7 +174,35 @@ local function combatHealthState(self)
         self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, 0)
     end
 end
-GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
+
+local function combatHealthStateRetail(self)
+    if not GW.settings.HUD_BACKGROUND then
+        return
+    end
+
+    if not UnitIsDeadOrGhost("player") then
+        local colorOne = UnitHealthPercent("player", true, curveOne)
+        local colorTwo = UnitHealthPercent("player", true, curveTwo)
+
+        self.actionBarHud.Left:SetVertexColor(colorOne:GetRGB())
+        self.actionBarHud.Right:SetVertexColor(colorOne:GetRGB())
+
+        self.actionBarHud.RightSwim:SetVertexColor(colorOne:GetRGB())
+        self.actionBarHud.LeftSwim:SetVertexColor(colorOne:GetRGB())
+
+        self.actionBarHud.LeftBlood:SetVertexColor(colorTwo:GetRGBA())
+        self.actionBarHud.RightBlood:SetVertexColor(colorTwo:GetRGBA())
+    else
+        self.actionBarHud.Left:SetVertexColor(1, 1, 1)
+        self.actionBarHud.Right:SetVertexColor(1, 1, 1)
+
+        self.actionBarHud.LeftSwim:SetVertexColor(1, 1, 1)
+        self.actionBarHud.RightSwim:SetVertexColor(1, 1, 1)
+
+        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 0)
+        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, 0)
+    end
+end
 
 registerActionHudAura(
     5487,
@@ -391,7 +424,11 @@ local function hud_OnEvent(self, event, ...)
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         selectBg(self)
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
-        combatHealthState(self)
+        if GW.Retail then
+            combatHealthStateRetail(self)
+        else
+            combatHealthState(self)
+        end
     end
 end
 GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
@@ -426,6 +463,20 @@ local function LoadHudArt()
         GW.MixinHideDuringPetAndOverride(hudArtFrame)
     end
 
+    if GW.Retail then
+        curveOne = C_CurveUtil.CreateColorCurve()
+        curveOne:SetType(Enum.LuaCurveType.Linear)
+        curveOne:AddPoint(0.0, CreateColor(1, 0, 0, 1))
+        curveOne:AddPoint(0.5, CreateColor(1, 1, 1, 1))
+        curveOne:AddPoint(1.0, CreateColor(1, 1, 1, 1))
+
+        curveTwo = C_CurveUtil.CreateColorCurve()
+        curveTwo:SetType(Enum.LuaCurveType.Linear)
+        curveTwo:AddPoint(0.0, CreateColor(1, 1, 1, 0.8))
+        curveTwo:AddPoint(0.5, CreateColor(1, 1, 1, 1))
+        curveTwo:AddPoint(1.0, CreateColor(1, 1, 1, 0))
+    end
+
     ToggleHudBackground()
     GW.RegisterScaleFrame(hudArtFrame.actionBarHud)
 
@@ -445,8 +496,13 @@ local function LoadHudArt()
     if GW.Classic then
         hudArtFrame:RegisterEvent("UNIT_HEALTH_FREQUENT")
     end
+
     selectBg(hudArtFrame)
-    combatHealthState(hudArtFrame)
+    if GW.Retail then
+        combatHealthStateRetail(hudArtFrame)
+    else
+        combatHealthState(hudArtFrame)
+    end
 
     --Loss Of Control Icon Skin
     if LossOfControlFrame then

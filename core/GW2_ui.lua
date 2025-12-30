@@ -655,26 +655,28 @@ local function evPlayerLogin(self)
         hudArtFrame.edgeTintBottomCornerRight:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
     end
 
-    if not GW.ShouldBlockIncompatibleAddon("FloatingCombatText") then -- Only touch this setting if no other addon for this is loaded
-        if GW.settings.GW_COMBAT_TEXT_MODE == "GW2" then
-            C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
-            if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
-                C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
-            else
+    if not GW.Retail then
+        if not GW.ShouldBlockIncompatibleAddon("FloatingCombatText") then -- Only touch this setting if no other addon for this is loaded
+            if GW.settings.GW_COMBAT_TEXT_MODE == "GW2" then
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
+                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+                else
+                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+                end
+                GW.LoadDamageText(true)
+            elseif GW.settings.GW_COMBAT_TEXT_MODE == "BLIZZARD" then
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
                 C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+                GW.LoadDamageText(false)
+            else
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+                GW.LoadDamageText(false)
             end
-            GW.LoadDamageText(true)
-        elseif GW.settings.GW_COMBAT_TEXT_MODE == "BLIZZARD" then
-            C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
-            C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
-            GW.LoadDamageText(false)
         else
-            C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
-            C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
             GW.LoadDamageText(false)
         end
-    else
-        GW.LoadDamageText(false)
     end
 
     if GW.settings.CASTINGBAR_ENABLED then
@@ -745,14 +747,16 @@ local function evPlayerLogin(self)
 
     if GW.Retail then
         GW.LoadSocialFrame()
-        GW.LoadRaidbuffReminder()
+        --GW.LoadRaidbuffReminder() - Auras a secret not possible anymore
         GW.LoadWorldEventTimer()
     end
 
     GW.Create_Raid_Counter()
     GW.LoadMirrorTimers()
     GW.LoadAutoRepair()
-    GW.ToggleInterruptAnncouncement()
+    if not GW.Retail then
+        GW.ToggleInterruptAnncouncement()
+    end
 
     --Create unitframes
     if not GW.Classic and GW.settings.FOCUS_ENABLED then
@@ -845,7 +849,7 @@ local function evPlayerLogin(self)
     end
 
     if GW.settings.RAID_FRAMES then
-        GW.InitializeRaidFrames()
+        --GW.InitializeRaidFrames() TODO
     end
 
     GW.UpdateHudScale()

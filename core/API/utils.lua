@@ -699,6 +699,7 @@ local function normPetAndOverride(f, stateType)
 end
 
 local function MixinHideDuringPet(f)
+    if not f then return end
     -- TODO: figure out how to do real mixins
     if f:IsProtected() then
         return securePetAndOverride(f, "petbattle")
@@ -709,6 +710,7 @@ end
 GW.MixinHideDuringPet = MixinHideDuringPet
 
 local function MixinHideDuringOverride(f)
+    if not f then return end
     if f:IsProtected() then
         return securePetAndOverride(f, "override")
     else
@@ -718,6 +720,7 @@ end
 GW.MixinHideDuringOverride = MixinHideDuringOverride
 
 local function MixinHideDuringPetAndOverride(f)
+    if not f then return end
     if f:IsProtected() then
         return securePetAndOverride(f)
     else
@@ -726,6 +729,7 @@ local function MixinHideDuringPetAndOverride(f)
 end
 GW.MixinHideDuringPetAndOverride = MixinHideDuringPetAndOverride
 local function MixinHideDuringPetAndMountedOverride(f)
+    if not f then return end
     if f:IsProtected() then
         return secureHideDurinPetAndMountedgMounted(f)
     else

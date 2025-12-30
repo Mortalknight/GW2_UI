@@ -29,6 +29,27 @@ GW.ClassIndex = {
     EVOKER = 13,
 }
 
+GW.DispelType = {
+	-- https://wago.tools/db2/SpellDispelType
+	None = 0,
+	Magic = 1,
+	Curse = 2,
+	Disease = 3,
+	Poison = 4,
+	Enrage = 9,
+	Bleed = 11,
+}
+
+GW.DebuffColors = {
+    [GW.DispelType.None] = CreateColor(220 / 255, 0, 0),
+    [GW.DispelType.Curse] = CreateColor(97 / 255, 72 / 255, 177 / 255),
+    [GW.DispelType.Disease] = CreateColor(177 / 255, 114 / 255, 72 / 255),
+    [GW.DispelType.Magic] = CreateColor(72 / 255, 94 / 255, 177 / 255),
+    [GW.DispelType.Poison] = CreateColor(94 / 255, 177 / 255, 72 / 255),
+    [GW.DispelType.Bleed] = CreateColor(1, 0.2, 0.6),
+    [GW.DispelType.Enrage] = CreateColor(243/255, 95/255, 245/255),
+}
+
 GW.PowerBarColorCustom = {
     MANA = { r = 37 / 255, g = 133 / 255, b = 240 / 255 },
     RAGE = { r = 240 / 255, g = 66 / 255, b = 37 / 255 },

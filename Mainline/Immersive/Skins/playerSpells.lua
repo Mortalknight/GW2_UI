@@ -170,12 +170,12 @@ local function skinPlayerSpells()
     TalentsFrame.InspectCopyButton:GwSkinButton(false, true)
 
     TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
-    TalentsFrame.ClassCurrencyDisplay.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 8)
+    TalentsFrame.ClassCurrencyDisplay.CurrentAmountContainer.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 8)
 
     TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
     TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
-    TalentsFrame.SpecCurrencyDisplay.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 8)
+    TalentsFrame.SpecCurrencyDisplay.CurrentAmountContainer.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 8)
 
     TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 

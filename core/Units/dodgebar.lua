@@ -488,7 +488,9 @@ local function LoadDodgeBar(parent, asTargetFrame)
     fmdb:RegisterEvent("SPELLS_CHANGED")
     fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-    fmdb:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    if not GW.Retail then
+        fmdb:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    end
 
     -- setup hook to hide the dodge bar when in vehicle/override UI
     MixinHideDuringPetAndOverride(fmdb)

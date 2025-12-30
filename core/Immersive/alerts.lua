@@ -1341,11 +1341,6 @@ local function CLEUHandling(self, _, subEvent, _, sourceGUID, srcName, sourceFla
         end
 
         if subEvent == "SPELL_CAST_SUCCESS" then
-            if GW.settings.alertFrameNotificatioFeast and GW.FeastList[spellID] then
-                local spellInfo = C_Spell.GetSpellInfo(spellID)
-                GW.AlertSystem:AddAlert(format(GW.L["%s created a feast."], srcName), nil, spellInfo.name, false, spellInfo.iconID, false)
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.alertFrameNotificatioFeastSound), "Master")
-            end
             if GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE and spellID == 190336 then -- Refreshment Table
                 local spellInfo = C_Spell.GetSpellInfo(190336)
                 -- /run GW.AlertSystem:AddAlert(format("%s created a table of Conjured Refreshments.", "Hansi"), nil, C_Spell.GetSpellInfo(190336), false, select(3, C_Spell.GetSpellInfo(190336)), false)
@@ -1353,11 +1348,6 @@ local function CLEUHandling(self, _, subEvent, _, sourceGUID, srcName, sourceFla
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND), "Master")
             end
         elseif subEvent == "SPELL_CREATE" then
-            if GW.settings.alertFrameNotificatioBot and GW.BotList[spellID] then
-                local spellInfo = C_Spell.GetSpellInfo(spellID)
-                GW.AlertSystem:AddAlert(format(GW.L["%s created a Bot."], srcName), nil, spellInfo.name, false, spellInfo.iconID, false)
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.alertFrameNotificatioBotSound), "Master")
-            end
             if GW.settings.ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING and spellID == 698 then -- Ritual of Summoning
                 local spellInfo = C_Spell.GetSpellInfo(698)
                 -- /run GW.AlertSystem:AddAlert(format("%s is performing a Ritual of Summoning.", "Hansi"), nil, C_Spell.GetSpellInfo(698), false, select(3, C_Spell.GetSpellInfo(698)), false)
@@ -1646,7 +1636,11 @@ local function LoadAlertSystem()
         GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"], "AlertPos", ALL .. ",Blizzard,Widgets", {300, 5}, {"default"}, nil, postDragFunction)
 
         GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
-        GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+        if not GW.Retail then
+            GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+            GW.Libs.GW2Lib:RegisterCombatEvent(GW.AlertContainerFrame, "SPELL_CAST_SUCCESS", CLEUHandling)
+            GW.Libs.GW2Lib:RegisterCombatEvent(GW.AlertContainerFrame, "SPELL_CREATE", CLEUHandling)
+        end
         GW.AlertContainerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
         GW.AlertContainerFrame:RegisterEvent("UPDATE_PENDING_MAIL")
         GW.AlertContainerFrame:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
@@ -1659,9 +1653,6 @@ local function LoadAlertSystem()
         if GW.Retail then
             GW.AlertContainerFrame:RegisterEvent("VIGNETTE_MINIMAP_UPDATED")
         end
-
-        GW.Libs.GW2Lib:RegisterCombatEvent(GW.AlertContainerFrame, "SPELL_CAST_SUCCESS", CLEUHandling)
-        GW.Libs.GW2Lib:RegisterCombatEvent(GW.AlertContainerFrame, "SPELL_CREATE", CLEUHandling)
 
         GW.AlertContainerFrame.lastMinimapRare = {time = 0, id = nil}
         GW.AlertContainerFrame.ignoreNewSpells = true

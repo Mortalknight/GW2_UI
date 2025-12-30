@@ -26,23 +26,23 @@ local function LoadDressUpFrameSkin()
     -- 9.1.5 part
     if DressUpFrame.LinkButton then
         DressUpFrame.LinkButton:GwSkinButton(false, true)
-        DressUpFrame.ToggleOutfitDetailsButton:GwCreateBackdrop()
-        DressUpFrame.ToggleOutfitDetailsButton:GwSkinButton(false, true, false, true)
+        DressUpFrame.ToggleCustomSetDetailsButton:GwCreateBackdrop()
+        DressUpFrame.ToggleCustomSetDetailsButton:GwSkinButton(false, true, false, true)
 
-        local icon = DressUpFrame.ToggleOutfitDetailsButton:CreateTexture(nil, "OVERLAY")
+        local icon = DressUpFrame.ToggleCustomSetDetailsButton:CreateTexture(nil, "OVERLAY")
         icon:SetPoint("TOPLEFT", 0, 0)
         icon:SetPoint("BOTTOMRIGHT", 0, 0)
         icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
         icon:SetTexture(1392954)
 
-        DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("BACKGROUND")
-        DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("OVERLAY")
-        DressUpFrame.OutfitDetailsPanel:GwCreateBackdrop(GW.BackdropTemplates.Default)
+        DressUpFrame.CustomSetDetailsPanel:DisableDrawLayer("BACKGROUND")
+        DressUpFrame.CustomSetDetailsPanel:DisableDrawLayer("OVERLAY")
+        DressUpFrame.CustomSetDetailsPanel:GwCreateBackdrop(GW.BackdropTemplates.Default)
     end
 
-    DressUpFrame.OutfitDropdown:GwHandleDropDownBox()
-    DressUpFrame.OutfitDropdown.SaveButton:GwSkinButton(false, true)
-    DressUpFrame.OutfitDropdown.SaveButton:SetPoint("LEFT", DressUpFrame.OutfitDropdown, "RIGHT", -7, -1)
+    DressUpFrameCustomSetDropdown:GwHandleDropDownBox()
+    DressUpFrameCustomSetDropdown.SaveButton:GwSkinButton(false, true)
+    DressUpFrameCustomSetDropdown.SaveButton:SetPoint("LEFT", DressUpFrameCustomSetDropdown, "RIGHT", -7, -1)
     DressUpFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
 
     local tex = DressUpFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -63,8 +63,8 @@ local function LoadDressUpFrameSkin()
     end)
 
     -- 9.1.5 part
-    if DressUpFrame.OutfitDetailsPanel then
-        hooksecurefunc(DressUpFrame.OutfitDetailsPanel, "Refresh", function(self)
+    if DressUpFrame.CustomSetDetailsPanel then
+        hooksecurefunc(DressUpFrame.CustomSetDetailsPanel, "Refresh", function(self)
             if not self.slotPool then return end
 
             for slot in self.slotPool:EnumerateActive() do
@@ -78,22 +78,10 @@ local function LoadDressUpFrameSkin()
             end
         end)
         hooksecurefunc(DressUpFrame, "ConfigureSize", function(self)
-            self.OutfitDetailsPanel:ClearAllPoints()
-            self.OutfitDetailsPanel:SetPoint("TOPLEFT", self, "TOPRIGHT", 4, 0)
+            self.CustomSetDetailsPanel:ClearAllPoints()
+            self.CustomSetDetailsPanel:SetPoint("TOPLEFT", self, "TOPRIGHT", 4, 0)
         end)
     end
-
-    -- Wardrobe edit frame
-   -- WardrobeOutfitFrame:GwStripTextures(true)
-    --WardrobeOutfitFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-
-    WardrobeOutfitEditFrame:GwStripTextures(true)
-    WardrobeOutfitEditFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-    WardrobeOutfitEditFrame.EditBox:GwStripTextures()
-    GW.SkinTextBox(WardrobeOutfitEditFrame.EditBox.MiddleTexture, WardrobeOutfitEditFrame.EditBox.LeftTexture, WardrobeOutfitEditFrame.EditBox.RightTexture)
-    WardrobeOutfitEditFrame.AcceptButton:GwSkinButton(false, true)
-    WardrobeOutfitEditFrame.CancelButton:GwSkinButton(false, true)
-    WardrobeOutfitEditFrame.DeleteButton:GwSkinButton(false, true)
 
     -- SideDressUpFrame
     SideDressUpFrameCloseButton:GwSkinButton(true)

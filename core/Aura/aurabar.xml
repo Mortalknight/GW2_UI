@@ -56,7 +56,7 @@
                                 <Anchor point="BOTTOMRIGHT" x="-1" y="0"/>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="duration" text="0.00" justifyH="CENTER" justifyV="TOP">
+                        <FontString parentKey="duration" text="" justifyH="CENTER" justifyV="TOP">
                             <Size x="32" y="13"/>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="-4"/>

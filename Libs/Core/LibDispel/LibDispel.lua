@@ -16,6 +16,7 @@ DebuffColors.Poison = {r = 94 / 255, g = 177 / 255, b = 72 / 255}
 DebuffColors.Bleed = { r = 1, g = 0.2, b = 0.6 }
 DebuffColors.BadDispel = { r = 0.05, g = 0.85, b = 0.94 }
 DebuffColors.Stealable = { r = 0.93, g = 0.91, b = 0.55 }
+DebuffColors.Enrage = CreateColor(243/255, 95/255, 245/255)
 DebuffColors[""] = DebuffColors.none
 lib.DebuffTypeColor = DebuffColors
 
@@ -1131,7 +1132,9 @@ do
     local frame = lib.frame
     frame:SetScript("OnEvent", UpdateDispels)
     frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    if not Retail then
+        frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    end
     frame:RegisterEvent("PLAYER_LOGIN")
 
     if Retail or Cata then
