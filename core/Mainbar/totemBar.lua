@@ -8,16 +8,28 @@ local function UpdateButton(button, totem)
     if not (button and totem) then return end
 
     local haveTotem, _, startTime, duration, icon = GetTotemInfo(totem.slot)
-    button:SetShown(haveTotem and duration > 0)
-
-    if haveTotem then
+    if GW.Retail then
+        button:SetAlphaFromBoolean(haveTotem, 1, 0)
         button.iconTexture:SetTexture(icon)
-        button.cooldown:SetCooldown(startTime, duration)
+        button.cooldown:SetCooldownDuration(duration)
 
         if totem:GetParent() ~= button.holder then
             totem:ClearAllPoints()
             totem:SetParent(button.holder)
             totem:SetAllPoints(button.holder)
+        end
+    else
+        button:SetShown(haveTotem and duration > 0)
+
+        if haveTotem then
+            button.iconTexture:SetTexture(icon)
+            button.cooldown:SetCooldown(startTime, duration)
+
+            if totem:GetParent() ~= button.holder then
+                totem:ClearAllPoints()
+                totem:SetParent(button.holder)
+                totem:SetAllPoints(button.holder)
+            end
         end
     end
 end
@@ -27,9 +39,9 @@ local function OnEvent(self)
 
     if GW.Retail then
         for _, button in ipairs(self) do
-            if button:IsShown() then
-                button:SetShown(false)
-            end
+            --if button:GetAlpha() then
+                button:SetAlpha(0)
+            --end
         end
 
         for totem in TotemFrame.totemPool:EnumerateActive() do
@@ -110,7 +122,12 @@ local function CreateTotemBar()
 
         backDrop:SetPoint("TOPLEFT", button, "TOPLEFT", -backDropSize, backDropSize)
         backDrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", backDropSize, -backDropSize)
-        button:Hide()
+        if GW.Retail then
+            button:SetAlpha(0)
+            button:EnableMouse(false)
+        else
+            button:Hide()
+        end
 
         button.holder = CreateFrame("Frame", nil, button)
         button.holder:SetAlpha(0)

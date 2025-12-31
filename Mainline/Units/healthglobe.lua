@@ -16,11 +16,15 @@ function GwHealthglobeMixin:FlashAnimation(delta, t)
 end
 
 local function formatHealthValue(value)
-    return GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES and AbbreviateNumbers(value) or value
+    if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
+        return AbbreviateNumbers(value)
+    end
+
+    return BreakUpLargeNumbers(value)
 end
 
 local function formatShieldValue(value)
-    return GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES and AbbreviateNumbers(value) or value
+    return GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES and AbbreviateNumbers(value) or BreakUpLargeNumbers(value)
 end
 
 function GwHealthglobeMixin:UpdateHealthData()
@@ -48,11 +52,11 @@ function GwHealthglobeMixin:UpdateHealthData()
     self.healAbsorb:SetValue(healAbsorbAmount, Enum.StatusBarInterpolation.StatusBarInterpolation)
 
     if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
-        healthValue = string.format("%s%%", UnitHealthPercent("player", true, CurveConstants.ScaleTo100))
+        healthValue = string.format("%.0f%%", UnitHealthPercent("player", true, CurveConstants.ScaleTo100))
     elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
         healthValue = formatHealthValue(health)
     elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
-        healthValue = string.format("%s\n%s%%", formatHealthValue(health), UnitHealthPercent("player", true, CurveConstants.ScaleTo100))
+        healthValue = string.format("%s\n%.0f%%", formatHealthValue(health), UnitHealthPercent("player", true, CurveConstants.ScaleTo100))
     end
 
     if GW.settings.PLAYER_UNIT_ABSORB == "VALUE" then

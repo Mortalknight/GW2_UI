@@ -85,21 +85,13 @@ local function setShortCD(self, expires, duration, stackCount)
     self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
 end
 
-local function setRetailCooldown(self, auraInstanceID, durationObject)
-    self.cooldown:SetCooldownFromDurationObject(durationObject)
-    self.cooldown:SetAlphaFromBoolean(C_UnitAuras.DoesAuraHaveExpirationTime("player", auraInstanceID), 1, 0)
-
-    self.status.stacks:SetShadowColor(0, 0, 0, 1)
-    self.status.stacks:SetShadowOffset(1, -1)
-    self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
-
-    self.status:ClearAllPoints()
-    self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4)
-    self.status:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -4, 4)
-
-    self.border:ClearAllPoints()
-    self.border:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-    self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
+local function setRetailCooldown(self, auraData, durationObject)
+    if durationObject then
+        self.cooldown:SetCooldownFromDurationObject(durationObject)
+        self.cooldown:SetAlphaFromBoolean(C_UnitAuras.DoesAuraHaveExpirationTime("player", auraData.auraInstanceID), 1, 0)
+    else
+        self.cooldown:SetCooldown(auraData.expirationTime - auraData.duration, auraData.duration)
+    end
 end
 
 local function SetTooltip(self)
@@ -117,12 +109,15 @@ local function AuraOnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", -5, -5)
 
     if GW.Retail then
-        GameTooltip:SetUnitAuraByAuraInstanceID("player", self.auraInstanceID)
+        if self:GetAttribute("target-slot") then
+            GameTooltip:SetInventoryItem("player", self:GetID())
+        else
+            GameTooltip:SetUnitAuraByAuraInstanceID("player", self.auraInstanceID)
+        end
     else
         self.elapsed = 1
     end
 end
-GW.AddForProfiling("aurabar_secure", "aura_OnEnter", AuraOnEnter)
 
 local function AuraOnShow(self)
     if self.enchantIndex then
@@ -205,7 +200,10 @@ local function ClearAuraTime(self)
     self.endTime = nil
     self.auraInstanceID = nil
     self.status.duration:SetText("")
-    setLongCD(self, 0) -- to reset border and timer
+
+    if not GW.Retail then
+        setLongCD(self, 0) -- to reset border and timer
+    end
 end
 
 local function UpdateTime(self, expires)
@@ -230,7 +228,7 @@ local function SetCD(self, auraData, auraType, durationObject)
     end
 
     if GW.Retail then
-        setRetailCooldown(self, auraData.auraInstanceID, durationObject)
+        setRetailCooldown(self, auraData, durationObject)
     else
         UpdateTime(self, self.endTime)
         self.elapsed = 0
@@ -260,7 +258,12 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
         self.border.inner:SetVertexColor(0, 0, 0)
     else
         if GW.Retail then
-            local color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
+            local color
+            if issecretvalue(auraType) then
+                color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
+            else
+                color = GW.DebuffColors[auraType]
+            end
             self.border.inner:SetVertexColor(color:GetRGB())
         else
             if auraType == 2 then
@@ -316,7 +319,7 @@ end
 local function UpdateTempEnchant(self, index, expires)
     if expires then
         self:SetIcon(GetInventoryItemTexture("player", index), nil, 2)
-        self:SetCount(0)
+        self.status.stacks:SetText("")
         local auraData = {
             expirationTime = (expires / 1000) + GetTime(),
             duration = (expires / 1000),
@@ -433,23 +436,6 @@ function GwAuraTmpl_OnLoad(self)
     self.cooldown:SetReverse(false)
     self.cooldown:SetHideCountdownNumbers(not GW.Retail)
 
-    -- for retail get cooldown font string and curve debuff color
-    if GW.Retail then
-        local r = {self.cooldown:GetRegions()}
-        for _, c in pairs(r) do
-            if c:GetObjectType() == "FontString" then
-                self.cooldown.durationString = c
-                self.cooldown.durationString:SetPoint("TOP", self.status, "BOTTOM", 0, -4)
-                self.cooldown.durationString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, nil, -1)
-                self.cooldown.durationString:SetShadowColor(0, 0, 0, 1)
-                self.cooldown.durationString:SetShadowOffset(1, -1)
-                break
-            end
-        end
-
-        self.UpdateTooltip = AuraOnEnter
-    end
-
     self.SetCD = SetCD
     self.SetCount = SetCount
     self.SetIcon = SetIcon
@@ -484,6 +470,35 @@ function GwAuraTmpl_OnLoad(self)
     self:SetScript("OnShow", AuraOnShow)
     self:SetScript("OnHide", AuraOnHide)
     self:SetScript("OnLeave", GameTooltip_Hide)
+
+        -- for retail get cooldown font string and curve debuff color
+    if GW.Retail then
+        local r = {self.cooldown:GetRegions()}
+        for _, c in pairs(r) do
+            if c:GetObjectType() == "FontString" then
+                self.cooldown.durationString = c
+                self.cooldown.durationString:SetPoint("TOP", self.status, "BOTTOM", 0, -4)
+                self.cooldown.durationString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, nil, -1)
+                self.cooldown.durationString:SetShadowColor(0, 0, 0, 1)
+                self.cooldown.durationString:SetShadowOffset(1, -1)
+                break
+            end
+        end
+
+        self.UpdateTooltip = AuraOnEnter
+
+        self.status.stacks:SetShadowColor(0, 0, 0, 1)
+        self.status.stacks:SetShadowOffset(1, -1)
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+
+        self.status:ClearAllPoints()
+        self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4)
+        self.status:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -4, 4)
+
+        self.border:ClearAllPoints()
+        self.border:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
+        self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
+    end
 
     UpdateIcon(self)
 

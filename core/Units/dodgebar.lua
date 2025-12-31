@@ -199,6 +199,11 @@ function GwDodgeBarMixin:SetupBar()
         return
     end
 
+    if GW.Retail and InCombatLockdown() then
+        GW.CombatQueue_Queue("Dodgebar Update", self.SetupBar, {self})
+        return
+    end
+
     local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
     local start, duration = spellChargeInfo and spellChargeInfo.cooldownStartTime, spellChargeInfo and spellChargeInfo.cooldownDuration
 
@@ -237,6 +242,7 @@ function GwDodgeBarMixin:SetupBar()
     self:UpdateAnim(start or 0, duration or 0, spellChargeInfo.currentCharges or 0, spellChargeInfo.maxCharges or 0)
 end
 
+--TODO: Does not work on retail: local spellCooldownInfo is secret in restricted situtations
 function GwDodgeBarMixin:OnEvent(event, ...)
     if event == "UNIT_SPELLCAST_SUCCEEDED" then
         -- we don't track anything until we first see our dodge skill cast

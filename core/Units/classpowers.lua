@@ -8,6 +8,12 @@ local CPWR_FRAME
 local playerAuras = {buffs = {}, debuffs = {}}
 local petAuras = {buffs = {}, debuffs = {}}
 
+local staggerTextColors = {
+    {r = 0.4, g = 0.9, b = 0.4},
+    {r = 0.95, g = 0.85, b = 0.3},
+    {r = 0.9, g = 0.4, b = 0.4}
+}
+
 local function HandleUnitAuraEvent(unit, ...)
     local auraUpdateInfo = ...
     local isFullUpdate = not auraUpdateInfo or auraUpdateInfo.isFullUpdate
@@ -89,11 +95,14 @@ local function UpdateVisibility(self, inCombat)
     for _, frame in ipairs({
         self,
         self.customResourceBar,
+        self.customResourceBar,
         self.customResourceBar.decay,
         self.lmb,
         self.lmb.decay,
+        self.lmbSecret,
         self.exbar,
         self.exbar.decay,
+        self.exbarSecret
     }) do
         if frame then
             GW.SetAlphaRecursive(frame, targetAlpha)
@@ -151,8 +160,10 @@ local function setPowerTypeEbonMight(self)
     self.spark:SetAlpha(1)
     self.scrollSpeedMultiplier = -5
 end
-local function setPowerTypeMeta(self)
+local function setPowerTypeMeta(self, lightVersion)
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury.png")
+
+    if lightVersion then return end
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity.png", "REPEAT")
     self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity2.png", "REPEAT")
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark.png")
@@ -161,19 +172,21 @@ local function setPowerTypeMeta(self)
     self.scrollTexture2:SetAlpha(1)
     self.spark:SetAlpha(0.5)
     self.scrollSpeedMultiplier = 5
-    -- self.onUpdateAnimation = AnimationFury
 end
 local function setPowerTypeStagger(self)
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger.png")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark.png")
+    self.spark:SetAlpha(0.5)
+
+    if GW.Retail then return end
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll.png", "REPEAT")
     self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2.png", "REPEAT")
     self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-intensity.png")
     self.intensity2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-intensity2.png")
-    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark.png")
     self.animator:SetScript("OnUpdate", function(_, delta) self:ScrollTextureParalaxOnUpdate(delta) end)
     self.scrollTexture:SetAlpha(0)
     self.scrollTexture2:SetAlpha(0)
-    self.spark:SetAlpha(0.5)
+
     self.scrollSpeedMultiplier = -1
     self.onUpdateAnimation = AnimationStagger
 end
@@ -350,36 +363,52 @@ end
 local function powerMana(self, event, ...)
     local ptype = select(2, ...)
     if event == "CLASS_POWER_INIT" or ptype == "MANA" then
-        self.exbar:UpdatePowerData(0, "MANA")
+        if GW.Retail then
+            self.exbarSecret:UpdatePowerData(0, ptype)
+        else
+            self.exbar:UpdatePowerData(0, ptype)
+        end
 
         C_Timer.After(0.12, function()
             if GwPlayerPowerBar and GwPlayerPowerBar.powerType == 0 then
                 self.exbar:Hide()
                 self.exbar.decay:Hide()
+                self.exbarSecret:Hide()
             else
                 if self.barType == "mana" then
-                    self.exbar:Show()
-                    self.exbar.decay:Show()
+                    if GW.Retail then
+                        self.exbarSecret:Show()
+                    else
+                        self.exbar:Show()
+                        self.exbar.decay:Show()
+                    end
                 end
             end
         end)
     end
 end
-GW.AddForProfiling("classpowers", "powerMana", powerMana)
 
 local function powerLittleMana(self, event, ...)
     local ptype = select(2, ...)
     if event == "CLASS_POWER_INIT" or ptype == "MANA" then
-        self:GetParent().lmb:UpdatePowerData(0, "MANA")
+        if GW.Retail then
+            self:GetParent().lmbSecret:UpdatePowerData(0, "MANA")
+        else
+            self:GetParent().lmb:UpdatePowerData(0, "MANA")
+        end
+        
     end
 end
-GW.AddForProfiling("classpowers", "powerLittleMana", powerLittleMana)
 
 local function setManaBar(f)
     f.barType = "mana"
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
-    f.exbar:Show()
+    if GW.Retail then
+        f.exbarSecret:Show()
+    else
+        f.exbar:Show()
+    end
     f:SetHeight(14)
 
     f:ClearAllPoints()
@@ -394,12 +423,15 @@ local function setManaBar(f)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
-GW.AddForProfiling("classpowers", "setManaBar", setManaBar)
 
 local function setLittleManaBar(f, barType)
     f.barType = barType -- used in druid feral form and evoker ebon might bar
-    f.lmb:Show()
-    f.lmb.decay:Show()
+    if GW.Retail then
+        f.lmbSecret:Show()
+    else
+        f.lmb:Show()
+        f.lmb.decay:Show()
+    end
 
     f.littleManaBarEventFrame:SetScript("OnEvent", powerLittleMana)
     powerLittleMana(f.littleManaBarEventFrame, "CLASS_POWER_INIT")
@@ -493,7 +525,6 @@ local function powerCombo(self, event, ...)
         end
     end
 end
-GW.AddForProfiling("classpowers", "powerCombo", powerCombo)
 
 local function setComboBar(f)
     f:ClearAllPoints()
@@ -509,7 +540,6 @@ local function setComboBar(f)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
-GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
 
 local function powerEclipsOnUpdate(self)
     local pwrMax = UnitPowerMax(self.unit, Enum.PowerType.Balance)
@@ -680,20 +710,37 @@ end
 GW.AddForProfiling("classpowers", "powerEssence", powerEssence)
 
 -- this needs also the essence bar
-local function evokerEbonMight()
-    local auraInfo = GetAuraData("player", nil, "HELPFUL", 395296)
-    local auraExpirationTime = auraInfo and auraInfo.expirationTime or nil
 
-    if auraInfo and auraExpirationTime ~= CPWR_FRAME.auraExpirationTime then
-        CPWR_FRAME.auraExpirationTime = auraExpirationTime
+-- Ebon Might Spell that applies Aura on Self
+local EBON_MIGHT_SELF_AURA_SPELL_ID = 395296;
+-- Design-specified, useful visual range from testing, roughly based on upper potential duration range
+local EBON_MIGHT_DISPLAY_MAX = 20
+local function evokerEbonMight(unitToken, auraUpdateInfo)
+    if unitToken ~= "player" or auraUpdateInfo == nil then
+        return
+    end
 
-        local remainingPrecantage = math.min(1, (auraExpirationTime - GetTime()) / 20) -- hard coded max duration of 20 sec like blizzard
-        CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, auraInfo.duration)
+    local isUpdatePopulated = auraUpdateInfo.isFullUpdate
+        or (auraUpdateInfo.addedAuras ~= nil and #auraUpdateInfo.addedAuras > 0)
+        or (auraUpdateInfo.removedAuraInstanceIDs ~= nil and #auraUpdateInfo.removedAuraInstanceIDs > 0)
+        or (auraUpdateInfo.updatedAuraInstanceIDs ~= nil and #auraUpdateInfo.updatedAuraInstanceIDs > 0)
+
+    if isUpdatePopulated then
+        local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(EBON_MIGHT_SELF_AURA_SPELL_ID)
+        local auraExpirationTime = auraInfo and auraInfo.expirationTime or nil
+
+        if auraInfo and auraExpirationTime ~= CPWR_FRAME.auraExpirationTime then
+            CPWR_FRAME.auraExpirationTime = auraExpirationTime
+
+            local remainingPrecantage = math.min(1, (auraExpirationTime - GetTime()) / EBON_MIGHT_DISPLAY_MAX) -- hard coded max duration of 20 sec like blizzard
+            CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, auraInfo.duration)
+        end
     end
 end
 local function evokerEvent(self, event, ...)
     if event == "UNIT_AURA" then
-        HandleUnitAuraEvent(...)
+        local unitToken, auraUpdateInfo = ...
+        evokerEbonMight(unitToken, auraUpdateInfo)
     else
         powerEssence(self, event, ...)
     end
@@ -722,38 +769,9 @@ local function setEvoker(f)
 
         setPowerTypeEbonMight(f.customResourceBar)
         f:RegisterUnitEvent("UNIT_AURA", "player")
-        EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", evokerEbonMight, "GW2_UI")
     end
     return true
 end
-
--- DEAMONHUNTER
-local function timerMetamorphosis()
-    local results = GetAuraData("player", nil, "HELPFUL", 162264, 187827)
-    if results == nil then
-        CPWR_FRAME.customResourceBar:Hide()
-        return
-    end
-
-    local duration = -1
-    local expires = -1
-    for i = 1, #results do
-        if results[i].expirationTime > expires then
-            expires = results[i].expirationTime
-            duration = results[i].duration
-        end
-    end
-
-    if duration ~= nil then
-        CPWR_FRAME.customResourceBar:Show()
-        local remainingPrecantage = (expires - GetTime()) / duration
-        local remainingTime = duration * remainingPrecantage
-        CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
-    else
-        CPWR_FRAME.customResourceBar:Hide()
-    end
-end
-GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
 
 -- WARRIOR
 local function powerRend()
@@ -841,6 +859,8 @@ GW.AddForProfiling("classpowers", "setWarrior", setWarrior)
 -- PALADIN
 local function powerSotR()
     local results = GetAuraData("player", nil, "HELPFUL", 132403, 31850, 212641)
+
+    C_Secrets.ShouldSpellAuraBeSecret(212641)
     if results == nil then
         return
     end
@@ -899,7 +919,6 @@ local function powerHoly(self, event, ...)
     end
     self.gwPower = pwr
 end
-GW.AddForProfiling("classpowers", "powerHoly", powerHoly)
 
 local function setPaladin(f)
     f.paladin:Show()
@@ -932,7 +951,7 @@ local function setPaladin(f)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
-    if GW.myspec == 2 then
+    if GW.myspec == 2 and not GW.Retail then
         f.customResourceBar:SetWidth(164)
         f.customResourceBar:ClearAllPoints()
         f.customResourceBar:SetPoint("RIGHT", f.gwMover, 2, 0)
@@ -946,7 +965,6 @@ local function setPaladin(f)
 
     return true
 end
-GW.AddForProfiling("classpowers", "setPaladin", setPaladin)
 
 -- HUNTER
 local function powerFrenzy(event)
@@ -1024,7 +1042,6 @@ local function setHunter(f)
 
     return false
 end
-GW.AddForProfiling("classpowers", "setHunter", setHunter)
 
 -- ROGUE
 local function setRogue(f)
@@ -1033,7 +1050,6 @@ local function setRogue(f)
     setComboBar(f)
     return true
 end
-GW.AddForProfiling("classpowers", "setRogue", setRogue)
 
 -- PRIEST
 local function shadowOrbs(self, event, ...)
@@ -1312,11 +1328,10 @@ local function setDeathKnight(f)
 
     return true
 end
-GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
 
 -- SHAMAN
 local function powerMaelstrom()
-    local auraData = GetAuraData("player", nil, "HELPFUL", 344179)
+    local auraData = C_UnitAuras.GetPlayerAuraBySpellID(344179) -- None Secret
 
     if auraData and auraData.duration == nil then
         CPWR_FRAME.gwPower = -1
@@ -1346,11 +1361,11 @@ GW.AddForProfiling("classpowers", "powerMaelstrom", powerMaelstrom)
 
 local function setShaman(f)
     if GW.Retail then
-        if GW.myspec == 1 then
+        if GW.myspec == 1 then --DONE
             -- ele use extra mana bar on left
             setManaBar(f)
             return true
-        elseif GW.myspec == 2 then -- enh
+        elseif GW.myspec == 2 then -- enh -- DONE
             f:ClearAllPoints()
             f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -10)
             f.background:SetTexture(nil)
@@ -1358,10 +1373,9 @@ local function setShaman(f)
             local fms = f.maelstrom
             fms:Show()
 
-            f:SetScript("OnEvent", function(_, _, unit, ...) HandleUnitAuraEvent(unit, ...) end)
+            f:SetScript("OnEvent", powerMaelstrom)
             powerMaelstrom()
             f:RegisterUnitEvent("UNIT_AURA", "player")
-            EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", powerMaelstrom, "GW2_UI")
             return true
         end
     else
@@ -1389,7 +1403,6 @@ local function setShaman(f)
 
     return false
 end
-GW.AddForProfiling("classpowers", "setShaman", setShaman)
 
 -- MAGE
 local function powerArcane(self, event, ...)
@@ -1417,6 +1430,8 @@ GW.AddForProfiling("classpowers", "powerArcane", powerArcane)
 
 local function powerFrost(event)
     local auraData = GetAuraData("player", nil, "HELPFUL", 205473)
+
+    C_Secrets.ShouldSpellAuraBeSecret(205473)
     local count = auraData and auraData.applications or 0
 
     local old_power = CPWR_FRAME.gwPower
@@ -1455,7 +1470,7 @@ local function setMage(f)
         f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
         return true
-    elseif GW.myspec == 3 then --frost
+    elseif GW.myspec == 3 and not GW.Retail then --frost
         f:ClearAllPoints()
         f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
         f:SetHeight(32)
@@ -1482,7 +1497,6 @@ local function setMage(f)
 
     return false
 end
-GW.AddForProfiling("classpowers", "setMage", setMage)
 
 -- WARLOCK
 local function powerSoulshard(self, event, ...)
@@ -1639,7 +1653,6 @@ local function setWarlock(f)
 
     return true
 end
-GW.AddForProfiling("classpowers", "setWarlock", setWarlock)
 
 -- MONK
 local function powerChi(self, event, ...)
@@ -1677,87 +1690,54 @@ local function ironSkin_OnUpdate(self)
 end
 GW.AddForProfiling("classpowers", "ironSkin_OnUpdate", ironSkin_OnUpdate)
 
-local staggerTextColors = {
-    {r = 0.4, g = 0.9, b = 0.4},
-    {r = 0.95, g = 0.85, b = 0.3},
-    {r = 0.9, g = 0.4, b = 0.4}
-}
-
 local function setStaggerBar()
     local fb = CPWR_FRAME.brewmaster
-    local auraData = GetAuraData("player", nil, "HELPFUL", GW.Mists and 115307 or 215479)
 
-    if auraData and auraData.expirationTime then
-        fb.ironskin.expires = auraData.expirationTime
-        if fb.ironskin.ticker then
-            fb.ironskin.ticker:Cancel()
+    if not GW.Retail then
+        local auraData = GetAuraData("player", nil, "HELPFUL", GW.Mists and 115307 or 215479)
+
+        if auraData and auraData.expirationTime then
+            fb.ironskin.expires = auraData.expirationTime
+            if fb.ironskin.ticker then
+                fb.ironskin.ticker:Cancel()
+            end
+            fb.ironskin.ticker = C_Timer.NewTicker(0.05, function() ironSkin_OnUpdate(fb.ironskin) end)
+            fb.ironskin:Show()
+            fb.ironskin.ironartwork:Show()
+        else
+            if fb.ironskin.ticker then
+                fb.ironskin.ticker:Cancel()
+            end
+            fb.ironskin:Hide()
+            fb.ironskin.ironartwork:Hide()
+            fb.ironskin.expires = nil
         end
-        fb.ironskin.ticker = C_Timer.NewTicker(0.05, function() ironSkin_OnUpdate(fb.ironskin) end)
-        fb.ironskin:Show()
-        fb.ironskin.ironartwork:Show()
-    else
-        if fb.ironskin.ticker then
-            fb.ironskin.ticker:Cancel()
-        end
-        fb.ironskin:Hide()
-        fb.ironskin.ironartwork:Hide()
-        fb.ironskin.expires = nil
     end
 
-    local debuff
-    auraData = GetAuraData("player", nil, "HARMFUL", 124275, 124274, 124273)
-    debuff = auraData and auraData[1] or nil
 
-    local bar = CPWR_FRAME.customResourceBar
+    local bar = CPWR_FRAME.defaultResourceBar
+    local pwrMax = UnitHealthMax("player")
+    local stagger = UnitStagger("player") or 0
 
-    if debuff and debuff.duration and debuff.expirationTime then
-        local now = GetTime()
-        local remaining = max(0, debuff.expirationTime - now)
-        local remainingPercentage = max(0, min(remaining / debuff.duration, 1))
-        local remainingTime = debuff.duration * remainingPercentage
+    bar:SetMinMaxValues(0, pwrMax)
+    bar:SetValue(stagger, Enum.StatusBarInterpolation.StatusBarInterpolation)
 
+    local staggerPrec = math.max(0, math.min(stagger / pwrMax, 1))
+    local colorToUse = staggerTextColors[1]
+    if staggerPrec >= 0.75 then
+        colorToUse = staggerTextColors[3]
+    elseif staggerPrec >= 0.5 then
+        colorToUse = staggerTextColors[2]
+    end
 
-        local pwrMax = UnitHealthMax("player")
-        local stagger = UnitStagger("player") or 0
-
-        local staggerPrec = math.max(0, math.min(stagger / pwrMax, 1))
-        local colorToUse = staggerTextColors[1]
-        if staggerPrec >= 0.75 then
-            colorToUse = staggerTextColors[3]
-        elseif staggerPrec >= 0.5 then
-            colorToUse = staggerTextColors[2]
-        end
-
-        if bar._lastFill ~= staggerPrec or bar._lastRemain ~= remaining then
-            bar:SetCustomAnimation(staggerPrec, 0, remainingTime)
-            bar._lastFill = staggerPrec
-            bar._lastRemain = remaining
-        end
-
-        local staggerText = GW.GetLocalizedNumber(format("%.2f%%", staggerPrec * 100))
-        if bar.label._lastText ~= staggerText then
-            bar.label:SetText(staggerText)
-            bar.label._lastText = staggerText
-        end
-        if not (bar.label._lastR == colorToUse.r and bar.label._lastG == colorToUse.g and bar.label._lastB == colorToUse.b) then
-            bar.label:SetTextColor(colorToUse.r, colorToUse.g, colorToUse.b)
-            bar.label._lastR, bar.label._lastG, bar.label._lastB = colorToUse.r, colorToUse.g, colorToUse.b
-        end
-    else
-        if bar._lastFill ~= 0 then
-            bar:ForceFillAmount(0)
-            bar._lastFill, bar._lastRemain = 0, 0
-        end
-        local staggerText = GW.GetLocalizedNumber(format("%.2f%%", 0))
-        if bar.label._lastText ~= staggerText then
-            bar.label:SetText(staggerText)
-            bar.label._lastText = staggerText
-        end
-        local c = staggerTextColors[1]
-        if not (bar.label._lastR == c.r and bar.label._lastG == c.g and bar.label._lastB == c.b) then
-            bar.label:SetTextColor(c.r, c.g, c.b)
-            bar.label._lastR, bar.label._lastG, bar.label._lastB = c.r, c.g, c.b
-        end
+    local staggerText = GW.GetLocalizedNumber(format("%.2f%%", staggerPrec * 100))
+    if bar.label._lastText ~= staggerText then
+        bar.label:SetText(staggerText)
+        bar.label._lastText = staggerText
+    end
+    if not (bar.label._lastR == colorToUse.r and bar.label._lastG == colorToUse.g and bar.label._lastB == colorToUse.b) then
+        bar.label:SetTextColor(colorToUse.r, colorToUse.g, colorToUse.b)
+        bar.label._lastR, bar.label._lastG, bar.label._lastB = colorToUse.r, colorToUse.g, colorToUse.b
     end
 end
 
@@ -1773,22 +1753,21 @@ local function powerStagger(self, event, ...)
     end
 
     if unit == "player" and event == "UNIT_AURA" then
-        HandleUnitAuraEvent(...)
+        setStaggerBar()
     end
 end
-GW.AddForProfiling("classpowers", "powerStagger", powerStagger)
 
 local function setMonk(f)
     if GW.Retail then
         if GW.myspec == 1 then -- brewmaster
             f.background:SetTexture(nil)
             f.fill:SetTexture(nil)
-            setPowerTypeStagger(f.customResourceBar)
+            setPowerTypeStagger(f.defaultResourceBar)
             f.brewmaster:Show()
-            f.customResourceBar:Show()
-            f.customResourceBar:SetWidth(312)
-            f.customResourceBar:ClearAllPoints()
-            f.customResourceBar:SetPoint("LEFT", f.gwMover, 0, -5)
+            f.defaultResourceBar:Show()
+            f.defaultResourceBar:SetWidth(312)
+            f.defaultResourceBar:ClearAllPoints()
+            f.defaultResourceBar:SetPoint("LEFT", f.gwMover, 0, -5)
 
             f:SetScript("OnEvent", powerStagger)
             powerStagger(f, "CLASS_POWER_INIT")
@@ -1796,7 +1775,6 @@ local function setMonk(f)
             f:RegisterUnitEvent("UNIT_AURA", "player")
             f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
             f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
-            EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", setStaggerBar, "GW2_UI")
 
             return true
         elseif GW.myspec == 3 then -- ww
@@ -1926,19 +1904,40 @@ local function setDruid(f)
         return false
     end
 end
-GW.AddForProfiling("classpowers", "setDruid", setDruid)
+
+-- DEAMONHUNTER
+local function voidMetamorphosisUpdatePower()
+    CPWR_FRAME.defaultResourceBar:SetValue(CPWR_FRAME.currentPoints, Enum.StatusBarInterpolation.StatusBarInterpolation)
+    CPWR_FRAME.defaultResourceBar:SetMinMaxValues(0, CPWR_FRAME.maxPoints)
+    CPWR_FRAME.defaultResourceBar.label:SetText(CPWR_FRAME.currentPoints)
+end
+
+local function counterVoidMetamorphosis()
+    local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(1225789)
+    if auraInfo then
+        CPWR_FRAME.currentPoints = auraInfo.applications
+        CPWR_FRAME.maxPoints = C_Spell.GetSpellMaxCumulativeAuraApplications(Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID)
+    else
+        CPWR_FRAME.currentPoints = 0
+    end
+
+    voidMetamorphosisUpdatePower()
+end
 
 local function setDeamonHunter(f)
-    if GW.myspec == 1 then -- havoc
-        setPowerTypeMeta(f.customResourceBar)
-        f.customResourceBar:Show()
+    if GW.myspec == 3 then
+        setPowerTypeMeta(f.defaultResourceBar, true)
+        f.defaultResourceBar:Show()
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
 
-        f:SetScript("OnEvent", function(_, _, unit, ...) HandleUnitAuraEvent(unit, ...) end)
-        timerMetamorphosis()
+        f.currentPoints = 0
+        f.maxPoints = C_Spell.GetSpellMaxCumulativeAuraApplications(Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID)
+        f.defaultResourceBar:SetMinMaxValues(0, f.maxPoints)
+
+        f:SetScript("OnEvent", counterVoidMetamorphosis)
+        counterVoidMetamorphosis()
         f:RegisterUnitEvent("UNIT_AURA", "player")
-        EventRegistry:RegisterCallback("GW2_UI_CLASSPOWER_PLAYER_UNIT_AURA", timerMetamorphosis, "GW2_UI")
 
         return true
     end
@@ -1953,8 +1952,11 @@ local function selectType(f)
     f:UnregisterAllEvents()
 
     -- hide all class power sub-pieces and reset anything needed
+    f.defaultResourceBar:SetValue(0)
+    f.defaultResourceBar:Hide()
     f.customResourceBar:ForceFillAmount(0)
     f.customResourceBar:ResetPowerBarVisuals()
+    f.customResourceBar:SetMinMaxValues(0, 1)
     f.customResourceBar:Hide()
     f.customResourceBar:SetWidth(313)
     f.runeBar:Hide()
@@ -1966,6 +1968,7 @@ local function selectType(f)
     f.disc:Hide()
     f.decay:Hide()
     f.exbar:Hide()
+    f.exbarSecret:Hide()
     f.exbar.decay:Hide()
     f.warlock:Hide()
     f.combopoints:Hide()
@@ -1975,18 +1978,19 @@ local function selectType(f)
     if GW.settings.POWERBAR_ENABLED then
         f.lmb:Hide()
         f.lmb.decay:Hide()
+        f.lmbSecret:Hide()
     end
     f.gwPower = -1
     local showBar = false
 
     if f.unit == "vehicle" then
         showBar = false
-    elseif GW.myClassID == 1 and GW.Retail then
-        showBar = setWarrior(f)
+    --elseif GW.myClassID == 1 and GW.Retail then   -- Was only Retail and here we cant track auras any more. No whitelistetd auras used here
+    --    showBar = setWarrior(f)
     elseif GW.myClassID == 2 and not GW.Classic then
         showBar = setPaladin(f)
-    elseif GW.myClassID == 3 and GW.Retail then
-        showBar = setHunter(f)
+    --elseif GW.myClassID == 3 and GW.Retail then   -- Was only Retail and here we cant track auras any more. No whitelistetd auras used here
+        --showBar = setHunter(f)
     elseif GW.myClassID == 4 then
         showBar = setRogue(f)
     elseif GW.myClassID == 5 and not GW.Classic then
@@ -2051,22 +2055,33 @@ local function UpdateExtraManabar()
         local barWidth = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and
             GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
 
+        GwPlayerAltClassLmbSecret:ClearAllPoints()
         GwPlayerAltClassLmb:ClearAllPoints()
         if GW.settings.PLAYER_AS_TARGET_FRAME then
             GwPlayerAltClassLmb:SetPoint("TOPLEFT", anchorFrame.powerbar, "BOTTOMLEFT", 0, -3)
             GwPlayerAltClassLmb:SetPoint("TOPRIGHT", anchorFrame.powerbar, "BOTTOMRIGHT", 0, -3)
             GwPlayerAltClassLmb:SetSize(barWidth + 2, 3)
+
+            GwPlayerAltClassLmbSecret:SetPoint("TOPLEFT", anchorFrame.powerbar, "BOTTOMLEFT", 0, -3)
+            GwPlayerAltClassLmbSecret:SetPoint("TOPRIGHT", anchorFrame.powerbar, "BOTTOMRIGHT", 0, -3)
+            GwPlayerAltClassLmbSecret:SetSize(barWidth + 2, 3)
         else
             GwPlayerAltClassLmb:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 0)
             GwPlayerAltClassLmb:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 0)
             GwPlayerAltClassLmb:SetSize(barWidth, 5)
+
+            GwPlayerAltClassLmbSecret:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 0)
+            GwPlayerAltClassLmbSecret:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 0)
+            GwPlayerAltClassLmbSecret:SetSize(barWidth, 5)
         end
 
         GwPlayerAltClassLmb:SetParent(UIParent)
+        GwPlayerAltClassLmbSecret:SetParent(UIParent)
 
         barChange_OnEvent(GwPlayerClassPower.decay, "FORCE_UPDATE")
     else
         GwPlayerAltClassLmb:SetParent(GW.HiddenFrame)
+        GwPlayerAltClassLmbSecret:SetParent(GW.HiddenFrame)
     end
 end
 GW.UpdateClassPowerExtraManabar = UpdateExtraManabar
@@ -2074,6 +2089,17 @@ GW.UpdateClassPowerExtraManabar = UpdateExtraManabar
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
     CPWR_FRAME = cpf
+
+    cpf.defaultResourceBar = CreateFrame("StatusBar", "GwCustomResourceBar", cpf, "GwStatusPowerBarRetailTemplate")
+    cpf.defaultResourceBar:SetSize(313, 14)
+    cpf.defaultResourceBar:ClearAllPoints()
+    cpf.defaultResourceBar:SetPoint("LEFT", cpf, "LEFT", 0, -11)
+    cpf.defaultResourceBar.spark:SetHeight(3)
+    cpf.defaultResourceBar.spark:ClearAllPoints()
+    cpf.defaultResourceBar.spark:SetPoint("RIGHT", cpf.defaultResourceBar:GetStatusBarTexture(), "RIGHT", 0, 0)
+    cpf.defaultResourceBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    cpf.defaultResourceBar.label:SetShadowColor(0, 0, 0, 1)
+    cpf.defaultResourceBar.label:SetShadowOffset(1, -1)
 
     cpf.customResourceBar = GW.CreateAnimatedStatusBar("GwCustomResourceBar", cpf, "GwStatusPowerBar", true)
     cpf.customResourceBar.customMaskSize = 64
@@ -2154,6 +2180,20 @@ local function LoadClassPowers()
     lmb.label:SetShadowColor(0, 0, 0, 1)
     lmb.label:SetShadowOffset(1, -1)
 
+    --create extra mana power for retail
+    cpf.lmbSecret = CreateFrame("StatusBar", "GwPlayerAltClassLmbSecret", cpf, "GwStatusPowerBarRetailTemplate")
+    cpf.lmbSecret.bar = cpf.lmbSecret
+    cpf.lmbSecret:SetSize(313, 14)
+    cpf.lmbSecret:ClearAllPoints()
+    cpf.lmbSecret:SetPoint("TOPLEFT", cpf)
+    cpf.lmbSecret:SetFrameStrata("MEDIUM")
+    cpf.lmbSecret.spark:SetHeight(3)
+    cpf.lmbSecret.spark:ClearAllPoints()
+    cpf.lmbSecret.spark:SetPoint("RIGHT", cpf.lmbSecret:GetStatusBarTexture(), "RIGHT", 0, 0)
+    cpf.lmbSecret.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+    cpf.lmbSecret.label:SetShadowColor(0, 0, 0, 1)
+    cpf.lmbSecret.label:SetShadowOffset(1, -1)
+
     -- create an extra mana power bar that is used sometimes
     local exbar = GW.CreateAnimatedStatusBar("GwPlayerAltClassExBar", cpf, "GwStatusPowerBar", true)
     exbar.customMaskSize = 64
@@ -2173,13 +2213,29 @@ local function LoadClassPowers()
     exbar.decay:SetPoint("TOPLEFT", exbar, "TOPLEFT", 0, 0)
     exbar.decay:SetPoint("BOTTOMRIGHT", exbar, "BOTTOMRIGHT", 0, 0)
 
+    --create extra mana power for retail
+    cpf.exbarSecret = CreateFrame("StatusBar", "GwPlayerAltClassExBarSecret", cpf, "GwStatusPowerBarRetailTemplate")
+    cpf.exbarSecret.bar = cpf.exbarSecret
+    cpf.exbarSecret:SetSize(313, 14)
+    cpf.exbarSecret:ClearAllPoints()
+    cpf.exbarSecret:SetPoint("TOPLEFT", cpf)
+    cpf.exbarSecret:SetFrameStrata("MEDIUM")
+    cpf.exbarSecret.spark:ClearAllPoints()
+    cpf.exbarSecret.spark:SetPoint("RIGHT", cpf.exbarSecret:GetStatusBarTexture(), "RIGHT", 0, 0)
+    cpf.exbarSecret.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    cpf.exbarSecret.label:SetShadowColor(0, 0, 0, 1)
+    cpf.exbarSecret.label:SetShadowOffset(1, -1)
+
     if not GW.Classic then
         GW.MixinHideDuringPetAndOverride(cpf)
+        GW.MixinHideDuringPetAndOverride(cpf.defaultResourceBar)
         GW.MixinHideDuringPetAndOverride(cpf.customResourceBar)
         GW.MixinHideDuringPetAndOverride(cpf.customResourceBar.decay)
         GW.MixinHideDuringPetAndOverride(lmb)
         GW.MixinHideDuringPetAndOverride(lmb.decay)
+        GW.MixinHideDuringPetAndOverride(cpf.lmbSecret)
         GW.MixinHideDuringPetAndOverride(exbar)
+        GW.MixinHideDuringPetAndOverride(cpf.exbarSecret)
         GW.MixinHideDuringPetAndOverride(exbar.decay)
     end
     cpf.exbar = exbar

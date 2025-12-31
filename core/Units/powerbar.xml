@@ -124,7 +124,7 @@
       <Layers>
         <Layer level="OVERLAY" textureSubLevel="3">
           <Texture parentKey="spark" alpha="0" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/bartextures/ragespark.png">
-            <Size x="8" y="14"></Size>
+            <Size x="3" y="14"></Size>
           </Texture>
         </Layer>
         <Layer level="OVERLAY" textureSubLevel="4">

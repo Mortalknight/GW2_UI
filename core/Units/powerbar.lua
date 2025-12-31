@@ -207,8 +207,10 @@ end
 
 function GwPlayerPowerBarMixin:SetPowerTypeLunarPower()
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar.png")
-    self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar-intensity.png")
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark.png")
+
+    if GW.Retail then return end
+    self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar-intensity.png")
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar-intensity2.png","REPEAT")
     self.scrollTexture:SetAlpha(0.5)
     self.onUpdateAnimation = self.AnimationLunarGlow
@@ -315,7 +317,6 @@ function GwPlayerPowerBarMixin:SetPowerBarVisuals(powerType, powerToken)
 end
 
 function GwPlayerPowerBarMixin:OnUpdate()
-    print("UPDATE")
     if not self.lostKnownPower or not self.powerMax or not self.lastUpdate or self.animating then
         return
     end
@@ -382,7 +383,7 @@ function GwPlayerPowerBarMixin:UpdatePowerData(forcePowerType, powerToken)
     self:SetPowerBarVisuals(forcePowerType, powerToken)
 
     if GW.Retail then
-        self.label:SetText(power)
+        self.label:SetText(BreakUpLargeNumbers(power))
         self:SetValue(powerPrec, Enum.StatusBarInterpolation.StatusBarInterpolation)
     else
         self.label:SetText(GW.GetLocalizedNumber(self.lostKnownPower))
