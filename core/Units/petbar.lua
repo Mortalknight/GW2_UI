@@ -83,7 +83,9 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
         button.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
 
         GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
-        GW.RegisterCooldown(button.cooldown)
+        if not GW.Retail then
+            GW.RegisterCooldown(button.cooldown)
+        end
     end
 end
 
@@ -240,10 +242,18 @@ function GwPlayerPetFrameMixin:UpdateHealthTextString(health)
     local formatFunction
     GW.Debug("OVERRIDEN FUNCTION: UpdateHealthTextString")
 
-    if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
-        formatFunction = GW.ShortValue
+    if GW.Retail then
+        if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
+            formatFunction = AbbreviateNumbers
+        else
+            formatFunction = BreakUpLargeNumbers
+        end
     else
-        formatFunction = GW.GetLocalizedNumber
+        if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
+            formatFunction = GW.ShortValue
+        else
+            formatFunction = GW.GetLocalizedNumber
+        end
     end
 
     self.health.text:SetText(formatFunction(health))
@@ -258,8 +268,17 @@ local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent,
         GW.Retail and "GwPlayerPetFramePingableTemplate" or "GwPlayerPetFrameTemplate")
 
-    GW.AddStatusbarAnimation(playerPetFrame.health, true)
-    GW.AddStatusbarAnimation(playerPetFrame.powerbar, true)
+    if GW.Retail then
+        playerPetFrame.hpValues = CreateUnitHealPredictionCalculator()
+        playerPetFrame.hpValues:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MissingHealth)
+        playerPetFrame.hpValues:SetHealAbsorbClampMode(Enum.UnitHealAbsorbClampMode.CurrentHealth)
+        playerPetFrame.hpValues:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MissingHealth)
+        playerPetFrame.hpValues:SetHealAbsorbMode(Enum.UnitHealAbsorbMode.ReducedByIncomingHeals)
+        playerPetFrame.hpValues:SetIncomingHealOverflowPercent(1)
+    else
+        GW.AddStatusbarAnimation(playerPetFrame.health, true)
+        GW.AddStatusbarAnimation(playerPetFrame.powerbar, true)
+    end
 
     playerPetFrame.health.customMaskSize = 64
     playerPetFrame.powerbar.customMaskSize = 64

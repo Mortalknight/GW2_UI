@@ -145,7 +145,9 @@ local function CreateTotemBar()
         button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", GW.border, -GW.border)
         button.cooldown:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -GW.border, GW.border)
 
-        GW.RegisterCooldown(button.cooldown)
+        if not GW.Retail then
+            GW.RegisterCooldown(button.cooldown)
+        end
 
         totemBar[i] = button
     end

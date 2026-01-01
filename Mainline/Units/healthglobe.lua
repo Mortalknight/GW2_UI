@@ -33,23 +33,23 @@ function GwHealthglobeMixin:UpdateHealthData()
     local absorbValue = 0
 
     self.health:SetMinMaxValues(0, healthMax)
-    self.health:SetValue(health, Enum.StatusBarInterpolation.StatusBarInterpolation)
+    self.health:SetValue(health, Enum.StatusBarInterpolation.ExponentialEaseOut)
 
     -- absorb
     UnitGetDetailedHealPrediction("player", nil, self.hpValues)
     local allHeal = self.hpValues:GetIncomingHeals()
     local allValues = self.hpValues:GetPredictedValues()
     self.healPrediction:SetMinMaxValues(0, healthMax)
-    self.healPrediction:SetValue(allHeal, Enum.StatusBarInterpolation.StatusBarInterpolation)
+    self.healPrediction:SetValue(allHeal, Enum.StatusBarInterpolation.ExponentialEaseOut)
 
     local damageAbsorbAmount, damageAbsorbClamped = self.hpValues:GetDamageAbsorbs()
     self.damageAbsorb:SetMinMaxValues(0, healthMax)
-    self.damageAbsorb:SetValue(damageAbsorbAmount, Enum.StatusBarInterpolation.StatusBarInterpolation)
+    self.damageAbsorb:SetValue(damageAbsorbAmount, Enum.StatusBarInterpolation.ExponentialEaseOut)
     self.damageAbsorb.overDamageAbsorbIndicator:SetAlphaFromBoolean(damageAbsorbClamped, 1, 0)
 
     local healAbsorbAmount = self.hpValues:GetHealAbsorbs()
     self.healAbsorb:SetMinMaxValues(0, healthMax)
-    self.healAbsorb:SetValue(healAbsorbAmount, Enum.StatusBarInterpolation.StatusBarInterpolation)
+    self.healAbsorb:SetValue(healAbsorbAmount, Enum.StatusBarInterpolation.ExponentialEaseOut)
 
     if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
         healthValue = string.format("%.0f%%", UnitHealthPercent("player", true, CurveConstants.ScaleTo100))

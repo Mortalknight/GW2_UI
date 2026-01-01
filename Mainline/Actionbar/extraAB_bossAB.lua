@@ -124,7 +124,7 @@ local function ExtraAB_BossAB_Setup()
 
                 if spellButton.Cooldown then
                     spellButton.Cooldown.CooldownOverride = "actionbar"
-                    GW.RegisterCooldown(spellButton.Cooldown)
+                    --GW.RegisterCooldown(spellButton.Cooldown) --secret
                     spellButton.Cooldown:GwSetInside(spellButton)
                 end
 
@@ -144,7 +144,7 @@ local function ExtraAB_BossAB_Setup()
                 cooldown:GwSetInside()
                 cooldown:SetDrawEdge(false)
                 cooldown:SetSwipeColor(0, 0, 0, 1)
-                GW.RegisterCooldown(cooldown)
+                --GW.RegisterCooldown(cooldown) --secret
             end
 
             ActionButton_UpdateCooldown(button)

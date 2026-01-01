@@ -87,6 +87,13 @@ function CooldownManagerFunctions:UpdateTextBar(bar)
     end
 end
 
+--TODO
+function CooldownManagerFunctions:RefreshIconBorder()
+    if self.DebuffBorder then
+        self.DebuffBorder.Texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+	end
+end
+
 function CooldownManagerFunctions:SkinIcon(container, icon)
     CooldownManagerFunctions:UpdateTextContainer(container)
     icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -162,8 +169,6 @@ function CooldownManagerFunctions:SkinBar(frame, bar)
     bar.Pip:SetWidth(6)
     bar.Pip:SetBlendMode("BLEND")
     bar.Pip:SetTexture("Interface/AddOns/GW2_UI/textures/bartextures/ragespark.png")
-
-    
 end
 
 function CooldownManagerFunctions:RefreshSpellCooldownInfo()
@@ -180,7 +185,8 @@ end
 do
     local hookFunctions = {
         RefreshSpellCooldownInfo = CooldownManagerFunctions.RefreshSpellCooldownInfo,
-        SetTimerShown = CooldownManagerFunctions.SetTimerShown
+        SetTimerShown = CooldownManagerFunctions.SetTimerShown,
+        RefreshIconBorder = CooldownManagerFunctions.RefreshIconBorder
     }
 
     function CooldownManagerFunctions:SkinItemFrame(frame)
@@ -188,9 +194,7 @@ do
             frame.Cooldown:SetSwipeTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
 
             if not frame.Cooldown.isHooked then
-                GW.RegisterCooldown(frame.Cooldown)
-
-            for key, func in next, hookFunctions do
+                for key, func in next, hookFunctions do
                     if frame[key] then
                         hooksecurefunc(frame, key, func)
                     end
@@ -247,6 +251,7 @@ local function ApplyCooldownManagerSkin()
         GW.HandleTrimScrollBar(CooldownViewerSettings.CooldownScroll.ScrollBar)
         GW.HandleScrollControls(CooldownViewerSettings.CooldownScroll)
         CooldownViewerSettings.UndoButton:GwSkinButton(false, true)
+        CooldownViewerSettings.LayoutDropdown:GwHandleDropDownBox()
 
         local lastTab = nil
         for i, tab in next, { CooldownViewerSettings.SpellsTab, CooldownViewerSettings.AurasTab } do

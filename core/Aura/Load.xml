@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="aurabar_legacy.xml"/>
     <Script file ="auras.lua"/>
+    <Script file ="aurasSecret.lua"/>
     <Include file ="aurabar.xml"/>
     <Script file ="aurabar.lua"/>
 </Ui>

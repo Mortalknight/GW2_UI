@@ -45,7 +45,7 @@ local function PostUpdateButton(self, button, unit, data, position)
         local isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
         if isImportant or isDispellable then
             if isImportant and isDispellable then
-                size = size * GW.GetDebuffScaleBasedOnPrio()
+                size = size * GW.GetDebuffScaleBasedOnPrio() -- not on retail (removed)
             elseif isImportant then
                 size = size * tonumber(parent.raidDebuffScale)
             elseif isDispellable then

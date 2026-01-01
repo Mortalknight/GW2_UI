@@ -335,7 +335,7 @@ function GwPlayerPowerBarMixin:OnUpdate()
 
     if GW.Retail then
         powerPrec = UnitPowerPercent("player", self.powerType)
-        self:SetValue(0, Enum.StatusBarInterpolation.StatusBarInterpolation)
+        self:SetValue(0, Enum.StatusBarInterpolation.ExponentialEaseOut)
         self:Show()
     else
         powerPrec = (power >= 0 and powerMax > 0) and min(1, power / powerMax) or 0
@@ -384,7 +384,7 @@ function GwPlayerPowerBarMixin:UpdatePowerData(forcePowerType, powerToken)
 
     if GW.Retail then
         self.label:SetText(BreakUpLargeNumbers(power))
-        self:SetValue(powerPrec, Enum.StatusBarInterpolation.StatusBarInterpolation)
+        self:SetValue(powerPrec, Enum.StatusBarInterpolation.ExponentialEaseOut)
     else
         self.label:SetText(GW.GetLocalizedNumber(self.lostKnownPower))
         self:SetFillAmount(powerPrec)
@@ -395,7 +395,7 @@ function GwPlayerPowerBarMixin:UpdatePowerData(forcePowerType, powerToken)
         self.powerBarString = self.label
 
         if GW.Retail then
-            self:SetValue(powerPrec, Enum.StatusBarInterpolation.StatusBarInterpolation)
+            self:SetValue(powerPrec, Enum.StatusBarInterpolation.ExponentialEaseOut)
         else
             self:SetFillAmount(powerPrec)
         end

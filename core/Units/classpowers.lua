@@ -1720,7 +1720,7 @@ local function setStaggerBar()
     local stagger = UnitStagger("player") or 0
 
     bar:SetMinMaxValues(0, pwrMax)
-    bar:SetValue(stagger, Enum.StatusBarInterpolation.StatusBarInterpolation)
+    bar:SetValue(stagger, Enum.StatusBarInterpolation.ExponentialEaseOut)
 
     local staggerPrec = math.max(0, math.min(stagger / pwrMax, 1))
     local colorToUse = staggerTextColors[1]
@@ -1907,7 +1907,7 @@ end
 
 -- DEAMONHUNTER
 local function voidMetamorphosisUpdatePower()
-    CPWR_FRAME.defaultResourceBar:SetValue(CPWR_FRAME.currentPoints, Enum.StatusBarInterpolation.StatusBarInterpolation)
+    CPWR_FRAME.defaultResourceBar:SetValue(CPWR_FRAME.currentPoints, Enum.StatusBarInterpolation.ExponentialEaseOut)
     CPWR_FRAME.defaultResourceBar:SetMinMaxValues(0, CPWR_FRAME.maxPoints)
     CPWR_FRAME.defaultResourceBar.label:SetText(CPWR_FRAME.currentPoints)
 end
