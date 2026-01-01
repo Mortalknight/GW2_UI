@@ -496,8 +496,8 @@ function GwAuraTmpl_OnLoad(self)
         self.status:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -4, 4)
 
         self.border:ClearAllPoints()
-        self.border:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-        self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
+        self.border:SetPoint("TOPLEFT", self, "TOPLEFT", 2, -2)
+        self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 2)
     end
 
     UpdateIcon(self)

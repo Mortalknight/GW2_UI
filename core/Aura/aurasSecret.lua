@@ -87,8 +87,8 @@ local function setAuraType(self, typeAura)
         self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
         self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE", -1)
     elseif typeAura == "bigBuff" then
-        self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
-        self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -3, 3)
+        self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 2, -2)
+        self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 2)
         self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
         self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
     end
@@ -215,6 +215,7 @@ local function updateAura(element, unit, data, position, isBuff)
         else
             button.stealableBorder:SetAlpha(0)
         end
+        button.background:SetVertexColor(0, 0, 0)
     end
     button.background:Show()
 
@@ -457,11 +458,11 @@ local function LoadAuras(self)
     self.auras.ForceUpdate = ForceUpdate
     self.auras.__owner = self
 
-    self.dispelColorCurve = C_CurveUtil.CreateColorCurve()
-    self.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
+    self.auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
+    self.auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
     for _, dispelIndex in next, GW.DispelType do
         if GW.DebuffColors[dispelIndex] then
-            self.dispelColorCurve:AddPoint(dispelIndex, GW.DebuffColors[dispelIndex])
+            self.auras.dispelColorCurve:AddPoint(dispelIndex, GW.DebuffColors[dispelIndex])
         end
     end
 
