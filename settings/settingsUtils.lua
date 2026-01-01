@@ -284,6 +284,10 @@ local function setDependenciesOption(type, settingName, SetEnable, deactivateCol
         if of.button then
             of.button:SetEnabled(enabled)
         end
+    elseif type == "boolean" then
+        if of.checkbutton then
+            of.checkbutton:SetEnabled(enabled)
+        end
     end
 end
 
@@ -300,6 +304,8 @@ local function CheckDependencies()
                 if of and of.isIncompatibleAddonLoaded and not of.isIncompatibleAddonLoadedButOverride then
                     currentVal = false
                 end
+
+                if not of then currentVal = false end
 
                 if type(expectedValue) == "table" then
                     local matched = false
@@ -686,6 +692,7 @@ local function SettingsInitOptionWidget(of, v, panel)
             end
         end)
         of:SetScript("OnClick", function(self, button)
+            if not of.checkbutton:IsEnabled() then return end
             if not HandleIncompatibility(v, button) then
                 local toSet = true
                 if self.checkbutton:GetChecked() then

@@ -289,6 +289,13 @@ local function DatabaseValueMigration()
         GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF = nil
         GW.settings.PlayerDebuffFrame_MaxWraps = nil
     end
+
+
+    --Midnight migration
+    if GW.Retail then
+        GW.settings.target_BUFFS_FILTER_IMPORTANT = false
+        GW.settings.focus_BUFFS_FILTER_IMPORTANT = false
+    end
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
 
