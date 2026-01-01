@@ -4,6 +4,7 @@
     <Script file ="healthglobe.lua"/>
     <Script file ="playerFrame.lua"/>
     <Include file ="unitframes.xml"/>
+    <Include file ="unitframesRetail.xml"/>
     <Script file ="unitframes.lua"/>
     <Include file ="dodgebar.xml"/>
     <Script file ="dodgebar.lua"/>

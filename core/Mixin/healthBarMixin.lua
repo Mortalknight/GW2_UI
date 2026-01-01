@@ -3,19 +3,31 @@ local _, GW = ...
 GwUnitHealthbarMixin = {}
 
 function GwUnitHealthbarMixin:UpdateHealthTextString(health, healthPrecentage)
-    local formatFunc = self.shortendHealthValues and GW.ShortValue or GW.GetLocalizedNumber
-    local pctText = GW.RoundDec(healthPrecentage * 100, 0) .. "%"
+    local text = ""
+    if GW.Retail then
+        local formatFunc = self.shortendHealthValues and AbbreviateNumbers or BreakUpLargeNumbers
+        local pctText = string.format("%.0f%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100))
+        if self.showHealthValue and self.showHealthPrecentage then
+            text = self.frameInvert and (string.format("%s - %s", pctText, formatFunc(health))) or (string.format("%s - %s", formatFunc(health), pctText))
+        elseif self.showHealthValue then
+            text = formatFunc(health)
+        elseif self.showHealthPrecentage then
+            text = pctText
+        end
+    else
+        local formatFunc = self.shortendHealthValues and GW.ShortValue or GW.GetLocalizedNumber
+        local pctText = GW.RoundDec(healthPrecentage * 100, 0) .. "%"
 
-    local text
-    if self.showHealthValue and self.showHealthPrecentage then
-        text = self.frameInvert and (pctText .. " - " .. formatFunc(health)) or (formatFunc(health) .. " - " .. pctText)
-    elseif self.showHealthValue then
-        text = formatFunc(health)
-    elseif self.showHealthPrecentage then
-        text = pctText
+        if self.showHealthValue and self.showHealthPrecentage then
+            text = self.frameInvert and (pctText .. " - " .. formatFunc(health)) or (formatFunc(health) .. " - " .. pctText)
+        elseif self.showHealthValue then
+            text = formatFunc(health)
+        elseif self.showHealthPrecentage then
+            text = pctText
+        end
     end
 
-    self.healthString:SetText(text or "")
+    self.healthString:SetText(text)
 end
 
 function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
@@ -24,7 +36,7 @@ function GwUnitHealthbarMixin:UpdateHealthBar(forceUpdate)
         local unit = self.unit
         local health = UnitHealth(unit)
         local healthMax = UnitHealthMax(unit)
-        local healthPrecentage = UnitHealthPercent("player")
+        local healthPrecentage = UnitHealthPercent(unit)
 
         UnitGetDetailedHealPrediction(unit, nil, self.hpValues)
         local allHeal = self.hpValues:GetIncomingHeals()

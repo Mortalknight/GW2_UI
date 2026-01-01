@@ -30,7 +30,7 @@ local function CreateAuraFrame(name, parent)
     for _, c in pairs(r) do
         if c:GetObjectType() == "FontString" then
             f.duration = c
-            f.duration:SetPoint("TOPLEFT", f.status, "BOTTOMLEFT", -10, 0)
+            f.duration:SetPoint("TOPLEFT", f.status, "BOTTOMLEFT", -10, -2)
             f.duration:SetPoint("TOPRIGHT", f.status, "BOTTOMRIGHT", 10, 0)
             f.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
             f.duration:SetShadowOffset(1, -1)

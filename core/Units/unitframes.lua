@@ -15,9 +15,9 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
     local template
     if GW.Retail then
         if revert then
-            template = "GwNormalUnitFramePingableInvert"
+            template = "GwNormalUnitFrameInvertRetailTemplate"
         else
-            template = "GwNormalUnitFramePingable"
+            template = "GwNormalUnitFramePingableRetailTemplate"
         end
     else
         if revert then
@@ -29,56 +29,107 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
     local f = CreateFrame("Button", name, UIParent, template)
 
     local hg = f.healthContainer
-    f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
-    f.antiHeal      = hg.healPrediction.absorbbg.health.antiHeal
-    f.health        = hg.healPrediction.absorbbg.health
-    f.absorbbg      = hg.healPrediction.absorbbg
-    f.healPrediction= hg.healPrediction
-    f.healthString  = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
 
-    GW.AddStatusbarAnimation(f.absorbOverlay, true)
-    GW.AddStatusbarAnimation(f.antiHeal, true)
-    GW.AddStatusbarAnimation(f.health, true)
-    GW.AddStatusbarAnimation(f.absorbbg, true)
-    GW.AddStatusbarAnimation(f.healPrediction, false)
-    GW.AddStatusbarAnimation(f.castingbarNormal, false)
+    if GW.Retail then
+        f.absorbOverlay = hg.health.overDamageAbsorbIndicator
+        f.antiHeal      = hg.healAbsorb
+        f.health        = hg.health
+        f.absorbbg      = hg.damageAbsorb
+        f.healPrediction= hg.healPrediction
+        f.healthString  = hg.health.healthString
 
-    if animatedPowerbar then
-        f.powerbarContainer.powerbar = GW.CreateAnimatedStatusBar(name .. "Powerbar", f, "GwStatusPowerBar", true)
+        f.hpValues = CreateUnitHealPredictionCalculator()
+        f.hpValues:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MissingHealth)
+        f.hpValues:SetHealAbsorbClampMode(Enum.UnitHealAbsorbClampMode.CurrentHealth)
+        f.hpValues:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MissingHealth)
+        f.hpValues:SetHealAbsorbMode(Enum.UnitHealAbsorbMode.ReducedByIncomingHeals)
+        f.hpValues:SetIncomingHealOverflowPercent(1)
+
+        --setting up the statusbars
+        local anchor1, anchor2 = "LEFT", "RIGHT"
+
+        if revert then
+            anchor1 = "RIGHT"
+            anchor2 = "LEFT"
+        end
+        f.healPrediction:ClearAllPoints()
+        f.healPrediction:SetPoint("TOP")
+        f.healPrediction:SetPoint("BOTTOM")
+        f.healPrediction:SetPoint(anchor1, f.health:GetStatusBarTexture(), anchor2)
+
+        f.absorbbg:ClearAllPoints()
+        f.absorbbg:SetPoint("TOP")
+        f.absorbbg:SetPoint("BOTTOM")
+        f.absorbbg:SetPoint(anchor1, f.healPrediction:GetStatusBarTexture(), anchor2)
+
+        f.antiHeal:ClearAllPoints()
+        f.antiHeal:SetPoint("TOP")
+        f.antiHeal:SetPoint("BOTTOM")
+        f.antiHeal:SetPoint(anchor2, f.health:GetStatusBarTexture())
+        f.antiHeal:SetReverseFill(true)
+
+        f.absorbOverlay:ClearAllPoints()
+        f.absorbOverlay:SetPoint("TOP")
+        f.absorbOverlay:SetPoint("BOTTOM")
+        f.absorbOverlay:SetPoint(anchor1, f.health, anchor2, revert and 4 or -1, 0)
+        f.absorbOverlay:SetWidth(10)
+
+        f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusPowerBarRetailTemplate")
         f.powerbar = f.powerbarContainer.powerbar
-        f.powerbar.bar = f.powerbar
-        f.powerbar:AddToBarMask(f.powerbar.intensity)
-        f.powerbar:AddToBarMask(f.powerbar.intensity2)
-        f.powerbar:AddToBarMask(f.powerbar.scrollTexture)
-        f.powerbar:AddToBarMask(f.powerbar.scrollTexture2)
-        f.powerbar:AddToBarMask(f.powerbar.runeoverlay)
-        f.powerbar.runicmask:SetSize(f.powerbar:GetSize())
-        f.powerbar.runeoverlay:AddMaskTexture(f.powerbar.runicmask)
-
-        f.powerbar.decay = GW.CreateAnimatedStatusBar(name .. "decay", f.powerbar, nil, true)
-
-        f.powerbar.decay:SetFillAmount(0)
-        f.powerbar.decay:SetFrameLevel(f.powerbar.decay:GetFrameLevel() - 1)
-        f.powerbar.decay:ClearAllPoints()
-        f.powerbar.decay:SetPoint("TOPLEFT", f.powerbar, "TOPLEFT", 0, 0)
-        f.powerbar.decay:SetPoint("BOTTOMRIGHT", f.powerbar, "BOTTOMRIGHT", 0, 0)
-
-        f.powerbar.label:SetPoint("LEFT", f.powerbar, "LEFT", 5, 0)
-        f.powerbar.label:SetJustifyH("LEFT")
     else
-        f.powerbarContainer.powerbar = GW.CreateAnimatedStatusBar(name .. "Powerbar", f, nil, true)
-        f.powerbar = f.powerbarContainer.powerbar
+        f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+        f.antiHeal      = hg.healPrediction.absorbbg.health.antiHeal
+        f.health        = hg.healPrediction.absorbbg.health
+        f.absorbbg      = hg.healPrediction.absorbbg
+        f.healPrediction= hg.healPrediction
+        f.healthString  = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+
+        GW.AddStatusbarAnimation(f.absorbOverlay, true)
+        GW.AddStatusbarAnimation(f.antiHeal, true)
+        GW.AddStatusbarAnimation(f.health, true)
+        GW.AddStatusbarAnimation(f.absorbbg, true)
+        GW.AddStatusbarAnimation(f.healPrediction, false)
+        GW.AddStatusbarAnimation(f.castingbarNormal, false)
+
+        if animatedPowerbar then
+            f.powerbarContainer.powerbar = GW.CreateAnimatedStatusBar(name .. "Powerbar", f, "GwStatusPowerBar", true)
+            f.powerbar = f.powerbarContainer.powerbar
+            f.powerbar.bar = f.powerbar
+            f.powerbar:AddToBarMask(f.powerbar.intensity)
+            f.powerbar:AddToBarMask(f.powerbar.intensity2)
+            f.powerbar:AddToBarMask(f.powerbar.scrollTexture)
+            f.powerbar:AddToBarMask(f.powerbar.scrollTexture2)
+            f.powerbar:AddToBarMask(f.powerbar.runeoverlay)
+            f.powerbar.runicmask:SetSize(f.powerbar:GetSize())
+            f.powerbar.runeoverlay:AddMaskTexture(f.powerbar.runicmask)
+
+            f.powerbar.decay = GW.CreateAnimatedStatusBar(name .. "decay", f.powerbar, nil, true)
+
+            f.powerbar.decay:SetFillAmount(0)
+            f.powerbar.decay:SetFrameLevel(f.powerbar.decay:GetFrameLevel() - 1)
+            f.powerbar.decay:ClearAllPoints()
+            f.powerbar.decay:SetPoint("TOPLEFT", f.powerbar, "TOPLEFT", 0, 0)
+            f.powerbar.decay:SetPoint("BOTTOMRIGHT", f.powerbar, "BOTTOMRIGHT", 0, 0)
+
+            f.powerbar.label:SetPoint("LEFT", f.powerbar, "LEFT", 5, 0)
+            f.powerbar.label:SetJustifyH("LEFT")
+        else
+            f.powerbarContainer.powerbar = GW.CreateAnimatedStatusBar(name .. "Powerbar", f, nil, true)
+            f.powerbar = f.powerbarContainer.powerbar
+        end
+
+        local elements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.castingbarNormal, f.powerbar}
+        for _, element in ipairs(elements) do
+            element.customMaskSize = 64
+        end
+
+        f.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     end
+
     f.powerbarContainer.powerbar:SetSize(213, 3)
     f.powerbar:SetAllPoints(f.powerbarContainer)
     f.powerbar.label:Hide()
 
-    local elements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.castingbarNormal, f.powerbar}
-    for _, element in ipairs(elements) do
-        element.customMaskSize = 64
-    end
-
-    f.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     f.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     f.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
@@ -86,13 +137,13 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
 
     if revert then
         f.healthString:ClearAllPoints()
-        f.healthString:SetPoint("RIGHT", f.absorbOverlay, "RIGHT", -5, 0)
+        f.healthString:SetPoint("RIGHT", f.health, "RIGHT", -5, 0)
         f.healthString:SetJustifyH("RIGHT")
         f.powerbar.label:SetPoint("RIGHT", f.powerbar, "RIGHT", -5, 0)
         f.powerbar.label:SetJustifyH("RIGHT")
         local reverseElements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.powerbar, f.castingbarNormal, f.powerbar.decay }
         for _, bar in ipairs(reverseElements) do
-            if bar then
+            if bar and bar.SetReverseFill then
                 bar:SetReverseFill(true)
             end
         end
@@ -134,32 +185,78 @@ end
 GW.CreateUnitFrame = CreateUnitFrame
 
 local function CreateSmallUnitFrame(name)
-    local f = CreateFrame("Button", name, UIParent, GW.Retail and "GwNormalUnitFramePingableSmall" or "GwNormalUnitFrameSmall")
+    local f = CreateFrame("Button", name, UIParent, GW.Retail and "GwNormalUnitFramePingableSmallRetailTemplate" or "GwNormalUnitFrameSmall")
 
     local hg = f.healthContainer
-    f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
-    f.antiHeal      = hg.healPrediction.absorbbg.health.antiHeal
-    f.health        = hg.healPrediction.absorbbg.health
-    f.absorbbg      = hg.healPrediction.absorbbg
-    f.healPrediction= hg.healPrediction
-    f.healthString  = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
-    f.powerbarContainer.powerbar = GW.CreateAnimatedStatusBar(name .. "Powerbar", f, nil, true)
-    f.powerbar = f.powerbarContainer.powerbar
-    f.powerbar:SetAllPoints(f.powerbarContainer)
 
-    GW.AddStatusbarAnimation(f.absorbOverlay, true)
-    GW.AddStatusbarAnimation(f.antiHeal, true)
-    GW.AddStatusbarAnimation(f.health, true)
-    GW.AddStatusbarAnimation(f.absorbbg, true)
-    GW.AddStatusbarAnimation(f.healPrediction, false)
-    GW.AddStatusbarAnimation(f.castingbarNormal, false)
+    if GW.Retail then
+        f.absorbOverlay = hg.health.overDamageAbsorbIndicator
+        f.antiHeal      = hg.healAbsorb
+        f.health        = hg.health
+        f.absorbbg      = hg.damageAbsorb
+        f.healPrediction= hg.healPrediction
+        f.healthString  = hg.health.healthString
 
-    local elements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.castingbarNormal, f.powerbar }
-    for _, element in ipairs(elements) do
-        element.customMaskSize = 64
+        f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusBarBackground")
+        f.powerbar = f.powerbarContainer.powerbar
+        f.powerbar:SetAllPoints(f.powerbarContainer)
+
+        f.hpValues = CreateUnitHealPredictionCalculator()
+        f.hpValues:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MissingHealth)
+        f.hpValues:SetHealAbsorbClampMode(Enum.UnitHealAbsorbClampMode.CurrentHealth)
+        f.hpValues:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MissingHealth)
+        f.hpValues:SetHealAbsorbMode(Enum.UnitHealAbsorbMode.ReducedByIncomingHeals)
+        f.hpValues:SetIncomingHealOverflowPercent(1)
+
+        --setting up the statusbars
+        f.healPrediction:ClearAllPoints()
+        f.healPrediction:SetPoint("TOP")
+        f.healPrediction:SetPoint("BOTTOM")
+        f.healPrediction:SetPoint("LEFT", f.health:GetStatusBarTexture(), "RIGHT")
+
+        f.absorbbg:ClearAllPoints()
+        f.absorbbg:SetPoint("TOP")
+        f.absorbbg:SetPoint("BOTTOM")
+        f.absorbbg:SetPoint("LEFT", f.healPrediction:GetStatusBarTexture(), "RIGHT")
+
+        f.antiHeal:ClearAllPoints()
+        f.antiHeal:SetPoint("TOP")
+        f.antiHeal:SetPoint("BOTTOM")
+        f.antiHeal:SetPoint("RIGHT", f.health:GetStatusBarTexture())
+        f.antiHeal:SetReverseFill(true)
+
+        f.absorbOverlay:ClearAllPoints()
+        f.absorbOverlay:SetPoint("TOP")
+        f.absorbOverlay:SetPoint("BOTTOM")
+        f.absorbOverlay:SetPoint("LEFT", f.health, "RIGHT", -1, 0)
+        f.absorbOverlay:SetWidth(10)
+    else
+        f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+        f.antiHeal      = hg.healPrediction.absorbbg.health.antiHeal
+        f.health        = hg.healPrediction.absorbbg.health
+        f.absorbbg      = hg.healPrediction.absorbbg
+        f.healPrediction= hg.healPrediction
+        f.healthString  = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+
+        f.powerbarContainer.powerbar = GW.CreateAnimatedStatusBar(name .. "Powerbar", f, nil, true)
+        f.powerbar = f.powerbarContainer.powerbar
+        f.powerbar:SetAllPoints(f.powerbarContainer)
+
+        GW.AddStatusbarAnimation(f.absorbOverlay, true)
+        GW.AddStatusbarAnimation(f.antiHeal, true)
+        GW.AddStatusbarAnimation(f.health, true)
+        GW.AddStatusbarAnimation(f.absorbbg, true)
+        GW.AddStatusbarAnimation(f.healPrediction, false)
+        GW.AddStatusbarAnimation(f.castingbarNormal, false)
+
+        local elements = { f.absorbOverlay, f.antiHeal, f.health, f.absorbbg, f.healPrediction, f.castingbarNormal, f.powerbar }
+        for _, element in ipairs(elements) do
+            element.customMaskSize = 64
+        end
+
+        f.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     end
 
-    f.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     f.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     f.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
@@ -456,6 +553,8 @@ function GwUnitFrameMixin:HideCastBar()
     if self.castingbar then self.castingbar:Hide() end
     if self.castingbarSpark then self.castingbarSpark:Hide() end
     if self.castingbarNormal then self.castingbarNormal:Hide() end
+    if self.castingbarNormal.shieldLeft then self.castingbarNormal.shieldLeft:SetAlpha(0) end
+    if self.castingbarNormal.shieldRight then self.castingbarNormal.shieldRight:SetAlpha(0) end
 
     self:ClearStages()
     self:SetUnitPortrait()
@@ -471,23 +570,38 @@ end
 function GwUnitFrameMixin:UpdateCastValues()
     local numStages = 0
     local barTexture = GW.CASTINGBAR_TEXTURES.YELLOW.NORMAL
+    local direction, duration
 
+    if GW.Retail then
+        direction = Enum.StatusBarTimerDirection.ElapsedTime
+    end
+
+    local isEmpowered = false
     local isCasting, isChanneling, reverseChanneling = true, false, false
+    local name, _, texture, startTime, endTime, _, _, notInterruptible, spellID, castID = UnitCastingInfo(self.unit)
 
-    local name, _, texture, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(self.unit)
-
-    if not name then
-        name, _, texture, startTime, endTime, _, notInterruptible, _, _, numStages = UnitChannelInfo(self.unit)
+    if name then
+        if GW.Retail then
+            duration = UnitCastingDuration(self.unit)
+        end
+    else
+        name, _, texture, startTime, endTime, _, notInterruptible, spellID, isEmpowered, numStages, castID = UnitChannelInfo(self.unit)
         isCasting, isChanneling, reverseChanneling = false, true, false
         barTexture = GW.CASTINGBAR_TEXTURES.GREEN.NORMAL
+
+        if GW.Retail then
+            if isEmpowered then
+                duration = UnitEmpoweredChannelDuration(self.unit)
+            else
+                duration = UnitChannelDuration(self.unit)
+                direction = Enum.StatusBarTimerDirection.RemainingTime
+            end
+        end
     end
 
     self.castingbarNormal.internalBar:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barTexture .. ".png")
 
-    local isChargeSpell = numStages and numStages > 0 or false
-
-    if isChargeSpell then
-        endTime = endTime + GetUnitEmpowerHoldAtMaxTime(self.unit)
+    if isEmpowered then
         isCasting, isChanneling, reverseChanneling = true, false, true
     end
 
@@ -496,12 +610,17 @@ function GwUnitFrameMixin:UpdateCastValues()
         return
     end
 
+    self.delay = 0
+    self.castID = castID
     self.isCasting = isCasting
     self.isChanneling = isChanneling
     self.reverseChanneling = reverseChanneling
-    self.numStages = numStages and (numStages + 1) or 0
-    self.maxValue = (endTime - startTime) / 1000
-    startTime, endTime = startTime / 1000, endTime / 1000
+    --self.numStages = numStages and (numStages + 1) or 0
+
+    if not GW.Retail then
+        self.maxValue = (endTime - startTime) / 1000
+        startTime, endTime = startTime / 1000, endTime / 1000
+    end
 
     if texture and self.portrait and self.activePortrait ~= texture then
         self.portrait:SetTexture(texture)
@@ -523,50 +642,61 @@ function GwUnitFrameMixin:UpdateCastValues()
         self.castingTimeString:Show()
     end
 
-    if notInterruptible then
+    if notInterruptible and not GW.Retail then
         self.castingString:SetText(name)
         self.castingbarNormal:Hide()
-        self.castingbar:Show()
-        self.castingbarSpark:Show()
+        if self.castingbar then self.castingbar:Show() end
+        if self.castingbarSpark then self.castingbarSpark:Show() end
     else
         self.castingbarNormal.castingString:SetText(name)
         self.castingString:Hide()
         if self.castingTimeString then self.castingTimeString:Hide() end
-        self.castingbar:Hide()
-        self.castingbarSpark:Hide()
+        if self.castingbar then self.castingbar:Hide() end
+        if self.castingbarSpark then self.castingbarSpark:Hide() end
         self.castingbarNormal:Show()
     end
 
-    if reverseChanneling then
+    --TODO
+    if isEmpowered then
         self:AddStages(cbBackground, self.barWidth)
     else
         self:ClearStages()
     end
 
+    if GW.Retail then
+        self.castingbarNormal:SetTimerDuration(duration, Enum.StatusBarInterpolation.Immediate, direction)
+        self.castingbarNormal.shieldLeft:SetAlphaFromBoolean(notInterruptible, 1, 0)
+        self.castingbarNormal.shieldRight:SetAlphaFromBoolean(notInterruptible, 1, 0)
+    end
+
     GW.AddToAnimation(
-        "GwUnitFrame" .. self.unit .. "Cast",
-        0,
-        1,
-        startTime,
-        endTime - startTime,
-        function(p)
-            if self.showCastingbarData and self.castingTimeString then
+    "GwUnitFrame" .. self.unit .. "Cast",
+    0,
+    1,
+    startTime,
+    endTime - startTime,
+    function(p)
+        if self.showCastingbarData and self.castingTimeString then
+            if GW.Retail then
+                local durationTime = self.castingbarNormal:GetTimerDuration():GetRemainingDuration()
+                self.castingbarNormal.castingTimeString:SetFormattedText("%.1fs", durationTime)
+            else
                 if notInterruptible then
                     self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
                 else
                     self.castingbarNormal.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
                 end
-            end
-            p = self.isChanneling and (1 - p) or p
 
-            if notInterruptible then
-                self:ProtectedCastAnimation(p)
-            else
-                self:NormalCastBarAnimation(p)
+                p = self.isChanneling and (1 - p) or p
+                if notInterruptible then
+                    self:ProtectedCastAnimation(p)
+                else
+                    self:NormalCastBarAnimation(p)
+                end
             end
-        end,
-        "noease"
-    )
+        end
+    end,
+    "noease")
 end
 
 function GwUnitFrameMixin:UpdateThreatValues()
