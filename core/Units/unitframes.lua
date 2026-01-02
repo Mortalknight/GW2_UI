@@ -11,6 +11,13 @@ local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
+local function castingbarOnUpdate(self)
+    if (self.casting or self.channeling or self.empowering) and self.showCastingbarData and self.castingTimeString then
+        local durationTime = self.castingbarNormal:GetTimerDuration():GetRemainingDuration()
+        self.castingbarNormal.castingTimeString:SetFormattedText("%.1fs", durationTime)
+    end
+end
+
 local function CreateUnitFrame(name, revert, animatedPowerbar)
     local template
     if GW.Retail then
@@ -76,6 +83,8 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
 
         f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusPowerBarRetailTemplate")
         f.powerbar = f.powerbarContainer.powerbar
+
+        f.castingbarNormal:SetScript("OnUpdate", castingbarOnUpdate)
     else
         f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
         f.antiHeal      = hg.healPrediction.absorbbg.health.antiHeal
@@ -556,6 +565,12 @@ function GwUnitFrameMixin:HideCastBar()
     if self.castingbarNormal.shieldLeft then self.castingbarNormal.shieldLeft:SetAlpha(0) end
     if self.castingbarNormal.shieldRight then self.castingbarNormal.shieldRight:SetAlpha(0) end
 
+    self.spellID = nil
+    self.castID = nil
+    self.channeling = false
+    self.casting = false
+    self.empowering = false
+
     self:ClearStages()
     self:SetUnitPortrait()
 
@@ -567,8 +582,7 @@ function GwUnitFrameMixin:HideCastBar()
     end
 end
 
-function GwUnitFrameMixin:UpdateCastValues()
-    local numStages = 0
+function GwUnitFrameMixin:StartCastbar()
     local barTexture = GW.CASTINGBAR_TEXTURES.YELLOW.NORMAL
     local direction, duration
 
@@ -576,34 +590,32 @@ function GwUnitFrameMixin:UpdateCastValues()
         direction = Enum.StatusBarTimerDirection.ElapsedTime
     end
 
-    local isEmpowered = false
-    local isCasting, isChanneling, reverseChanneling = true, false, false
     local name, _, texture, startTime, endTime, _, _, notInterruptible, spellID, castID = UnitCastingInfo(self.unit)
-
     if name then
+        self.casting = true
         if GW.Retail then
             duration = UnitCastingDuration(self.unit)
         end
     else
-        name, _, texture, startTime, endTime, _, notInterruptible, spellID, isEmpowered, numStages, castID = UnitChannelInfo(self.unit)
-        isCasting, isChanneling, reverseChanneling = false, true, false
+        local isEmpowered
+        name, _, texture, startTime, endTime, _, notInterruptible, spellID, isEmpowered, _, castID = UnitChannelInfo(self.unit)
         barTexture = GW.CASTINGBAR_TEXTURES.GREEN.NORMAL
 
         if GW.Retail then
             if isEmpowered then
+                self.empowering = true
                 duration = UnitEmpoweredChannelDuration(self.unit)
             else
+                self.channeling = true
                 duration = UnitChannelDuration(self.unit)
                 direction = Enum.StatusBarTimerDirection.RemainingTime
             end
+        else
+            self.channeling = true
         end
     end
 
     self.castingbarNormal.internalBar:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. barTexture .. ".png")
-
-    if isEmpowered then
-        isCasting, isChanneling, reverseChanneling = true, false, true
-    end
 
     if not name or not self.showCastbar then
         self:HideCastBar()
@@ -612,10 +624,7 @@ function GwUnitFrameMixin:UpdateCastValues()
 
     self.delay = 0
     self.castID = castID
-    self.isCasting = isCasting
-    self.isChanneling = isChanneling
-    self.reverseChanneling = reverseChanneling
-    --self.numStages = numStages and (numStages + 1) or 0
+    self.spellID = spellID
 
     if not GW.Retail then
         self.maxValue = (endTime - startTime) / 1000
@@ -642,7 +651,7 @@ function GwUnitFrameMixin:UpdateCastValues()
         self.castingTimeString:Show()
     end
 
-    if notInterruptible and not GW.Retail then
+    if not GW.Retail and notInterruptible then
         self.castingString:SetText(name)
         self.castingbarNormal:Hide()
         if self.castingbar then self.castingbar:Show() end
@@ -657,7 +666,7 @@ function GwUnitFrameMixin:UpdateCastValues()
     end
 
     --TODO
-    if isEmpowered then
+    if self.empowering then
         self:AddStages(cbBackground, self.barWidth)
     else
         self:ClearStages()
@@ -667,36 +676,32 @@ function GwUnitFrameMixin:UpdateCastValues()
         self.castingbarNormal:SetTimerDuration(duration, Enum.StatusBarInterpolation.Immediate, direction)
         self.castingbarNormal.shieldLeft:SetAlphaFromBoolean(notInterruptible, 1, 0)
         self.castingbarNormal.shieldRight:SetAlphaFromBoolean(notInterruptible, 1, 0)
+
+    else
+        GW.AddToAnimation(
+            "GwUnitFrame" .. self.unit .. "Cast",
+            0,
+            1,
+            startTime,
+            endTime - startTime,
+            function(p)
+                if self.showCastingbarData and self.castingTimeString then
+                    if notInterruptible then
+                        self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+                    else
+                        self.castingbarNormal.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+                    end
+
+                    p = self.channeling and (1 - p) or p
+                    if notInterruptible then
+                        self:ProtectedCastAnimation(p)
+                    else
+                        self:NormalCastBarAnimation(p)
+                    end
+                end
+            end,
+            "noease")
     end
-
-    GW.AddToAnimation(
-    "GwUnitFrame" .. self.unit .. "Cast",
-    0,
-    1,
-    startTime,
-    endTime - startTime,
-    function(p)
-        if self.showCastingbarData and self.castingTimeString then
-            if GW.Retail then
-                local durationTime = self.castingbarNormal:GetTimerDuration():GetRemainingDuration()
-                self.castingbarNormal.castingTimeString:SetFormattedText("%.1fs", durationTime)
-            else
-                if notInterruptible then
-                    self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
-                else
-                    self.castingbarNormal.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
-                end
-
-                p = self.isChanneling and (1 - p) or p
-                if notInterruptible then
-                    self:ProtectedCastAnimation(p)
-                else
-                    self:NormalCastBarAnimation(p)
-                end
-            end
-        end
-    end,
-    "noease")
 end
 
 function GwUnitFrameMixin:UpdateThreatValues()
@@ -761,8 +766,8 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             if secondaryFrame then secondaryFrame:UpdatePowerBar() end
         end
 
-        self:UpdateCastValues()
-        if secondaryFrame then secondaryFrame:UpdateCastValues() end
+        self:StartCastbar()
+        if secondaryFrame then secondaryFrame:StartCastbar() end
         self:UpdateRaidMarkers()
         if secondaryFrame then secondaryFrame:UpdateRaidMarkers() end
 
@@ -788,7 +793,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
                 secondaryFrame:UnitFrameData()
                 secondaryFrame:UpdateHealthBar(true)
                 secondaryFrame:UpdatePowerBar(true)
-                secondaryFrame:UpdateCastValues()
+                secondaryFrame:StartCastbar()
                 secondaryFrame:UpdateRaidMarkers()
             end
         end
@@ -813,7 +818,9 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UNIT_DISPLAYPOWER") then
             self:UpdatePowerBar()
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
-            self:UpdateCastValues()
+            self:StartCastbar()
+        elseif IsIn(event, "UNIT_SPELLCAST_DELAYED", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_EMPOWER_UPDATE") then
+            self:StartCastbar()
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
             self:HideCastBar()
         elseif event == "UNIT_FACTION" then
@@ -967,8 +974,10 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_START", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", unit)
+    unitframe:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_STOP", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", unit)
+    unitframe:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unit)
     unitframe:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
     unitframe:RegisterEvent("UNIT_DISPLAYPOWER")
@@ -1023,7 +1032,7 @@ function GwTargetUnitFrameMixin:OnUpdate(elapsed)
     self:UpdateRaidMarkers()
     self:UpdateHealthBar(true)
     self:UpdatePowerBar(true)
-    self:UpdateCastValues()
+    self:StartCastbar()
 end
 
 function GwTargetUnitFrameMixin:ToggleSettings()
