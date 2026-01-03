@@ -155,13 +155,13 @@ local function SkinLookingForGroupFrames()
         if TimerunningUtil.TimerunningEnabledForPlayer() then
             self.tab2:Hide()
             self.tab3:Hide()
-            if self.tab4:IsShown() then
+            if self.tab4 and self.tab4:IsShown() then
                 self.tab4:ClearAllPoints()
                 self.tab4:SetPoint("TOPRIGHT", self.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * (2 - 1))) -- 4 = index but here 2 because 2 and 3 are hidden
             end
         else
         -- Otherwise, anchor Delves tab to PVP if M+ hidden, or to M+ if both are shown - to prevent a gap if the player is ineligible for M+ and we hide the tab
-            if self.tab4:IsShown() then
+            if self.tab4 and self.tab4:IsShown() then
                 if self.tab2:IsShown() and not self.tab3:IsShown() then
                     self.tab4:ClearAllPoints()
                     self.tab4:SetPoint("TOPRIGHT", self.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * (3 - 1))) -- 4 = index but here 3 because 3 is hidden
@@ -806,7 +806,7 @@ local function ApplyPvPUISkin()
     PVPUIFrame:GwStripTextures()
 
     for i = 1, 4 do
-        local bu = _G["PVPQueueFrameCategoryButton" .. i]
+        local bu = PVPQueueFrame["CategoryButton" .. i]
         bu.Ring:GwKill()
         bu.Background:GwKill()
         bu:GwSkinButton(false, true)
@@ -851,12 +851,12 @@ local function ApplyPvPUISkin()
         if i == 1 then
             bu:SetPoint("TOPLEFT", 10, -40)
         else
-            bu:SetPoint("TOP", _G["PVPQueueFrameCategoryButton" .. i - 1], "BOTTOM", 0, 0)
+            bu:SetPoint("TOP", PVPQueueFrame["CategoryButton" .. i - 1], "BOTTOM", 0, 0)
         end
     end
     hooksecurefunc("PVPQueueFrame_SelectButton", function(idx)
-        for i = 1, 3 do
-            local bu = _G["PVPQueueFrameCategoryButton" .. i]
+        for i = 1, 4 do
+            local bu = PVPQueueFrame["CategoryButton" .. i]
             if i == idx then
                 bu.hover.skipHover = true
                 bu.hover:SetAlpha(1)
@@ -961,24 +961,24 @@ local function ApplyPvPUISkin()
         if s.bg then s.bg:SetDesaturated(true) end
     end)
 
-    HonorFrame.TankIcon.checkButton:GwSkinCheckButton()
-    HonorFrame.HealerIcon.checkButton:GwSkinCheckButton()
-    HonorFrame.DPSIcon.checkButton:GwSkinCheckButton()
-    HonorFrame.TankIcon.checkButton:SetSize(15, 15)
-    HonorFrame.HealerIcon.checkButton:SetSize(15, 15)
-    HonorFrame.DPSIcon.checkButton:SetSize(15, 15)
+    HonorFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton()
+    HonorFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton()
+    HonorFrame.RoleList.DPSIcon.checkButton:GwSkinCheckButton()
+    HonorFrame.RoleList.TankIcon.checkButton:SetSize(15, 15)
+    HonorFrame.RoleList.HealerIcon.checkButton:SetSize(15, 15)
+    HonorFrame.RoleList.DPSIcon.checkButton:SetSize(15, 15)
 
     -- Conquest Frame
     ConquestFrame.ShadowOverlay:Hide()
 
     ConquestJoinButton:GwSkinButton(false, true)
 
-    ConquestFrame.TankIcon.checkButton:GwSkinCheckButton()
-    ConquestFrame.HealerIcon.checkButton:GwSkinCheckButton()
-    ConquestFrame.DPSIcon.checkButton:GwSkinCheckButton()
-    ConquestFrame.TankIcon.checkButton:SetSize(15, 15)
-    ConquestFrame.HealerIcon.checkButton:SetSize(15, 15)
-    ConquestFrame.DPSIcon.checkButton:SetSize(15, 15)
+    ConquestFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton()
+    ConquestFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton()
+    ConquestFrame.RoleList.DPSIcon.checkButton:GwSkinCheckButton()
+    ConquestFrame.RoleList.TankIcon.checkButton:SetSize(15, 15)
+    ConquestFrame.RoleList.HealerIcon.checkButton:SetSize(15, 15)
+    ConquestFrame.RoleList.DPSIcon.checkButton:SetSize(15, 15)
 
     for _, bu in pairs({ConquestFrame.RatedSoloShuffle, ConquestFrame.Arena2v2, ConquestFrame.Arena3v3, ConquestFrame.RatedBG}) do
         local reward = bu.Reward
