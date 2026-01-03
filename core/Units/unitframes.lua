@@ -629,15 +629,15 @@ function GwUnitFrameMixin:StartCastbar()
     if not GW.Retail then
         self.maxValue = (endTime - startTime) / 1000
         startTime, endTime = startTime / 1000, endTime / 1000
-    end
 
-    if texture and self.portrait and self.activePortrait ~= texture then
-        self.portrait:SetTexture(texture)
-        self.activePortrait = texture
-        if self.frameInvert then
-            self.portrait:SetTexCoord(1, 0, 0, 1)
-        else
-            self.portrait:SetTexCoord(0, 1, 0, 1)
+        if texture and self.portrait and self.activePortrait ~= texture then
+            self.portrait:SetTexture(texture)
+            self.activePortrait = texture
+            if self.frameInvert then
+                self.portrait:SetTexCoord(1, 0, 0, 1)
+            else
+                self.portrait:SetTexCoord(0, 1, 0, 1)
+            end
         end
     end
 
