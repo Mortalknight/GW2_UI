@@ -567,6 +567,7 @@ function GwUnitFrameMixin:HideCastBar()
 
     self.spellID = nil
     self.castID = nil
+    self.notInterruptible = nil
     self.channeling = false
     self.casting = false
     self.empowering = false
@@ -582,7 +583,15 @@ function GwUnitFrameMixin:HideCastBar()
     end
 end
 
-function GwUnitFrameMixin:StartCastbar()
+function GwUnitFrameMixin:CastInterruptible(event)
+    if not self.castingbarNormal:IsShown() then return end
+
+    self.notInterruptible = event == 'UNIT_SPELLCAST_NOT_INTERRUPTIBLE'
+    self.castingbarNormal.shieldLeft:SetAlphaFromBoolean(self.notInterruptible, 1, 0)
+    self.castingbarNormal.shieldRight:SetAlphaFromBoolean(self.notInterruptible, 1, 0)
+end
+
+function GwUnitFrameMixin:StartCastbar(event)
     local barTexture = GW.CASTINGBAR_TEXTURES.YELLOW.NORMAL
     local direction, duration
 
@@ -625,6 +634,7 @@ function GwUnitFrameMixin:StartCastbar()
     self.delay = 0
     self.castID = castID
     self.spellID = spellID
+    self.notInterruptible = notInterruptible
 
     if not GW.Retail then
         self.maxValue = (endTime - startTime) / 1000
@@ -675,7 +685,6 @@ function GwUnitFrameMixin:StartCastbar()
         self.castingbarNormal:SetTimerDuration(duration, Enum.StatusBarInterpolation.Immediate, direction)
         self.castingbarNormal.shieldLeft:SetAlphaFromBoolean(notInterruptible, 1, 0)
         self.castingbarNormal.shieldRight:SetAlphaFromBoolean(notInterruptible, 1, 0)
-
     else
         GW.AddToAnimation(
             "GwUnitFrame" .. self.unit .. "Cast",
@@ -818,6 +827,8 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             self:UpdatePowerBar()
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
             self:StartCastbar()
+        elseif GW.Retail and IsIn(event, "UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "UNIT_SPELLCAST_INTERRUPTIBLE") then
+            self:CastInterruptible()
         elseif IsIn(event, "UNIT_SPELLCAST_DELAYED", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_EMPOWER_UPDATE") then
             self:StartCastbar()
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
@@ -977,6 +988,7 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unit)
+    unitframe:RegisterUnitEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", unit)
     unitframe:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
     unitframe:RegisterEvent("UNIT_DISPLAYPOWER")
 
