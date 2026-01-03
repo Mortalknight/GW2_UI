@@ -284,7 +284,7 @@
             </Layers>
           </StatusBar>
             <Frame parentKey="auras">
-                <Size x="257" y="100"/>
+                <Size x="148" y="100"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.castingbarBackground" relativePoint="BOTTOMLEFT" x="2" y="-2"></Anchor>
                 </Anchors>
