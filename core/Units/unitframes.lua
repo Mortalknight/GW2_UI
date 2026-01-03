@@ -571,7 +571,7 @@ function GwUnitFrameMixin:HideCastBar()
     self.casting = false
     self.empowering = false
 
-    self:ClearStages()
+    self.castingbarNormal:ClearStages()
     self:SetUnitPortrait()
 
     local animKey = "GwUnitFrame" .. self.unit .. "Cast"
@@ -665,11 +665,10 @@ function GwUnitFrameMixin:StartCastbar()
         self.castingbarNormal:Show()
     end
 
-    --TODO
     if self.empowering then
-        self:AddStages(cbBackground, self.barWidth)
+        self.castingbarNormal:AddStages(UnitEmpoweredStagePercentages(self.unit, true), self.unit)
     else
-        self:ClearStages()
+        self.castingbarNormal:ClearStages()
     end
 
     if GW.Retail then
@@ -949,8 +948,7 @@ local function LoadUnitFrame(unit, frameInvert)
         unitframe.healthContainer:SetPoint("RIGHT", unitframe.healthbarBackground, "RIGHT", -1, 0)
     end
 
-    unitframe.segments = {}
-    unitframe.StagePoints = {}
+    unitframe.castingbarNormal.Pips = {}
 
     unitframe:SetAttribute("*type1", "target")
     unitframe:SetAttribute("*type2", "togglemenu")
@@ -1086,8 +1084,7 @@ local function LoadTargetOfUnit(unit, parentUnitFrame)
     f.parentUnitFrame = parentUnitFrame
     f.parentUnitId = unit:lower()
 
-    f.segments = {}
-    f.StagePoints = {}
+    f.castingbarNormal.Pips = {}
 
     RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", ALL .. ",Unitframe", nil, {"default", "scaleable"})
 
