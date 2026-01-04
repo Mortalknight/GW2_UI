@@ -241,6 +241,12 @@ local function detailsControls_OnShow(self)
         self.atwar:Hide()
     end
 
+    if self.viewRenown.isShowAble then
+        self.viewRenown:Show()
+    else
+        self.viewRenown:Hide()
+    end
+
     if self.inactive.isShowAble then
         self.inactive:Show()
     else
@@ -309,6 +315,7 @@ local function setReputationDetails(frame, data)
         frame.controles.atwar.icon:SetTexCoord(0, 0.5, 0, 0.5)
     end
 
+    frame.controles.viewRenown.isShowAble = data.factionID and C_Reputation.IsMajorFaction(data.factionID)
     frame.controles.atwar.isShowAble = data.canToggleAtWar
     frame.controles.showAsBar.checkbutton:SetChecked(data.isWatched)
     frame.controles.inactive.isShowAble = data.canSetInactive
@@ -483,6 +490,20 @@ local function detailsAtwar_OnClick(self)
     end
 end
 
+local function detailsViewRenown_OnClick(self)
+    if not EncounterJournal then
+		EncounterJournal_LoadUI()
+	end
+
+	if not EncounterJournal:IsShown() then
+		ShowUIPanel(EncounterJournal)
+	end
+
+    local parent = self:GetParent():GetParent()
+	EJ_ContentTab_Select(EncounterJournal.JourneysTab:GetID())
+	EncounterJournalJourneysFrame:ResetView(nil, parent.data.factionID)
+end
+
 local function detailsShowAsBar_OnClick(self)
     local parent = self:GetParent():GetParent()
     if parent.data.isWatched then
@@ -523,6 +544,7 @@ local function InitDetailsButton(button, elementData)
         button.controles.atwar:SetScript("OnEnter", detailsAtwar_OnEnter)
         button.controles.atwar:SetScript("OnLeave", detailsAtwar_OnLeave)
         button.controles.atwar:SetScript("OnClick", detailsAtwar_OnClick)
+        button.controles.viewRenown:SetScript("OnClick", detailsViewRenown_OnClick)
         button.controles.inactive:SetScript("OnEnter", detailsInactive_OnEnter)
         button.controles.inactive:SetScript("OnLeave", GameTooltip_Hide)
         button.controles.inactive.checkbutton:SetScript("OnEnter", detailsInactive_OnEnter)
