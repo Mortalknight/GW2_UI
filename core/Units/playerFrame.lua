@@ -61,9 +61,12 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
     -- ressourcebar size
     if GW.settings.PlayerTargetFrameExtendRessourcebar then
         self.powerbarContainer:SetHeight(10)
+        self.powerbar.spark:SetHeight(10)
         self.powerbar.label:Show()
+
     else
         self.powerbarContainer:SetHeight(3)
+        self.powerbar.spark:SetHeight(3)
         self.powerbar.label:Hide()
     end
 
@@ -77,6 +80,13 @@ local function LoadPlayerFrame()
     frame.type = "NormalTarget"
 
     Mixin(frame, GwPlayerUnitFrameMixin)
+
+    if GW.Retail then
+        frame.powerbar.spark:ClearAllPoints()
+        frame.powerbar.spark:SetPoint("RIGHT", frame.powerbar:GetStatusBarTexture(), "RIGHT", 0, 0)
+    end
+
+    frame.powerbar.label:SetJustifyH("LEFT")
 
     RegisterMovableFrame(frame, PLAYER, "player_pos",  ALL .. ",Unitframe", nil, {"default", "scaleable"})
 
@@ -200,8 +210,8 @@ local function LoadPlayerFrame()
     frame.castingbarBackground:Hide()
     frame.castingString:Hide()
     frame.castingTimeString:Hide()
-    frame.castingbar:Hide()
-    frame.castingbarSpark:Hide()
+    if frame.castingbar then frame.castingbar:Hide() end
+    if frame.castingbarSpark then frame.castingbarSpark:Hide() end
     frame.castingbarNormal:Hide()
     frame.raidmarker:Hide()
     frame.prestigebg:Hide()

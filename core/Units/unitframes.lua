@@ -87,6 +87,10 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
         f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusPowerBarRetailTemplate")
         f.powerbar = f.powerbarContainer.powerbar
 
+        if animatedPowerbar then
+            f.powerbar.bar = f.powerbar
+        end
+
         f.castingbarNormal:SetScript("OnUpdate", castingbarOnUpdate)
     else
         f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
