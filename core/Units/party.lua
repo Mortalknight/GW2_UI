@@ -14,6 +14,13 @@ local GW_PORTRAIT_BACKGROUND = {
 }
 
 local partyFrames = {}
+local healtTextColorCurve
+
+if GW.Retail then
+    healtTextColorCurve = C_CurveUtil.CreateColorCurve()
+    healtTextColorCurve:SetType(Enum.LuaCurveType.Linear)
+    healtTextColorCurve:AddPoint(0, CreateColor(1, 1, 1, 1))
+end
 
 local function GetPartyUnit(i)
     return (i == 1 and GW.settings.PARTY_PLAYER_FRAME) and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
@@ -27,24 +34,28 @@ local function FilterAura(element, unit, data, isBuff)
     if isBuff then
         return data and data.name
     else
-        if data and data.name then
-            local shouldDisplay = false
+        if GW.Retail then
+            return GW.settings.PARTY_SHOW_DEBUFFS and data and data.name
+        else
+            if data and data.name then
+                local shouldDisplay = false
 
-            if GW.settings.PARTY_SHOW_DEBUFFS then
-                if GW.settings.PARTY_ONLY_DISPELL_DEBUFFS then
-                    if data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
+                if GW.settings.PARTY_SHOW_DEBUFFS then
+                    if GW.settings.PARTY_ONLY_DISPELL_DEBUFFS then
+                        if data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
+                            shouldDisplay = data.name and not (data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
+                        end
+                    else
                         shouldDisplay = data.name and not (data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
                     end
-                else
-                    shouldDisplay = data.name and not (data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
                 end
-            end
 
-            if GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF and not shouldDisplay then
-                shouldDisplay = GW.ImportantRaidDebuff[data.spellId] or false
-            end
+                if GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF and not shouldDisplay then
+                    shouldDisplay = GW.ImportantRaidDebuff[data.spellId] or false
+                end
 
-            return shouldDisplay
+                return shouldDisplay
+            end
         end
     end
 end
@@ -182,20 +193,37 @@ function GwPartyFrameMixin:UpdateHealthTextString(healthCur, healthPrec, healthM
         return
     end
 
-    local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and GW.ShortValue or GW.GetLocalizedNumber
-    if GW.settings.PARTY_UNIT_HEALTH == "PREC" then
-        self.healthString:SetText(RoundDec(healthPrec * 100, 0) .. "%")
-        self.healthString:SetJustifyH("LEFT")
-    elseif GW.settings.PARTY_UNIT_HEALTH == "HEALTH" then
-        self.healthString:SetText(formatFunc(healthCur))
-        self.healthString:SetJustifyH("LEFT")
-    elseif GW.settings.PARTY_UNIT_HEALTH == "LOSTHEALTH" then
-        local lost = (healthMax - healthCur > 0) and formatFunc(healthMax - healthCur) or ""
-        self.healthString:SetText(lost)
-        self.healthString:SetJustifyH("RIGHT")
-    end
+    if GW.Retail then
+        local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and AbbreviateNumbers or BreakUpLargeNumbers
 
-    self.healthString:SetTextColor(healthCur == 0 and 255 or 1, healthCur == 0 and 0 or 1, healthCur == 0 and 0 or 1)
+        if GW.settings.PARTY_UNIT_HEALTH == "PREC" then
+            self.healthString:SetText(string.format("%.0f%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100)))
+            self.healthString:SetJustifyH("LEFT")
+        elseif GW.settings.PARTY_UNIT_HEALTH == "HEALTH" then
+            self.healthString:SetText(formatFunc(healthCur))
+            self.healthString:SetJustifyH("LEFT")
+        elseif GW.settings.PARTY_UNIT_HEALTH == "LOSTHEALTH" then
+            self.healthString:SetText(formatFunc(UnitHealthMissing(self.unit)))
+            self.healthString:SetJustifyH("RIGHT")
+        end
+        local color = UnitHealthPercent(self.unit, true, healtTextColorCurve)
+        self.healthString:SetTextColor(color:GetRGB())
+    else
+        local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and GW.ShortValue or GW.GetLocalizedNumber
+        if GW.settings.PARTY_UNIT_HEALTH == "PREC" then
+            self.healthString:SetText(RoundDec(healthPrec * 100, 0) .. "%")
+            self.healthString:SetJustifyH("LEFT")
+        elseif GW.settings.PARTY_UNIT_HEALTH == "HEALTH" then
+            self.healthString:SetText(formatFunc(healthCur))
+            self.healthString:SetJustifyH("LEFT")
+        elseif GW.settings.PARTY_UNIT_HEALTH == "LOSTHEALTH" then
+            local lost = (healthMax - healthCur > 0) and formatFunc(healthMax - healthCur) or ""
+            self.healthString:SetText(lost)
+            self.healthString:SetJustifyH("RIGHT")
+        end
+
+        self.healthString:SetTextColor(healthCur == 0 and 255 or 1, healthCur == 0 and 0 or 1, healthCur == 0 and 0 or 1)
+    end
     self.healthString:Show()
 end
 
@@ -341,22 +369,61 @@ GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
 
 local function CreatePartyFrame(i, isPlayer)
     local registerUnit = isPlayer and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
-    local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, GW.Retail and "GwPartyFramePingableTemplate" or "GwPartyFrameTemplate")
+    local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, GW.Retail and "GwPartyFrameRetailTemplate" or "GwPartyFrameTemplate")
 
     local hg = frame.healthContainer
-    frame.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
-    frame.antiHeal = hg.healPrediction.absorbbg.health.antiHeal
-    frame.health = hg.healPrediction.absorbbg.health
-    frame.absorbbg = hg.healPrediction.absorbbg
-    frame.healPrediction = hg.healPrediction
-    frame.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+    if GW.Retail then
+        frame.absorbOverlay = hg.health.overDamageAbsorbIndicator
+        frame.antiHeal      = hg.healAbsorb
+        frame.health        = hg.health
+        frame.absorbbg      = hg.damageAbsorb
+        frame.healPrediction= hg.healPrediction
+        frame.healthString  = hg.health.healthString
 
-    for _, bar in ipairs({ frame.absorbOverlay, frame.antiHeal, frame.health, frame.absorbbg, frame.healPrediction, frame.powerbar }) do
-        GW.AddStatusbarAnimation(bar, true)
+        frame.hpValues = CreateUnitHealPredictionCalculator()
+        frame.hpValues:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MissingHealth)
+        frame.hpValues:SetHealAbsorbClampMode(Enum.UnitHealAbsorbClampMode.CurrentHealth)
+        frame.hpValues:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MissingHealth)
+        frame.hpValues:SetHealAbsorbMode(Enum.UnitHealAbsorbMode.ReducedByIncomingHeals)
+        frame.hpValues:SetIncomingHealOverflowPercent(1)
+
+        frame.healPrediction:ClearAllPoints()
+        frame.healPrediction:SetPoint("TOP")
+        frame.healPrediction:SetPoint("BOTTOM")
+        frame.healPrediction:SetPoint("LEFT", frame.health:GetStatusBarTexture(), "RIGHT")
+
+        frame.absorbbg:ClearAllPoints()
+        frame.absorbbg:SetPoint("TOP")
+        frame.absorbbg:SetPoint("BOTTOM")
+        frame.absorbbg:SetPoint("LEFT", frame.healPrediction:GetStatusBarTexture(), "RIGHT")
+
+        frame.antiHeal:ClearAllPoints()
+        frame.antiHeal:SetPoint("TOP")
+        frame.antiHeal:SetPoint("BOTTOM")
+        frame.antiHeal:SetPoint("RIGHT", frame.health:GetStatusBarTexture())
+        frame.antiHeal:SetReverseFill(true)
+
+        frame.absorbOverlay:ClearAllPoints()
+        frame.absorbOverlay:SetPoint("TOP")
+        frame.absorbOverlay:SetPoint("BOTTOM")
+        frame.absorbOverlay:SetPoint("LEFT", frame.health, "RIGHT", -1, 0)
+        frame.absorbOverlay:SetWidth(10)
+    else
+        frame.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+        frame.antiHeal = hg.healPrediction.absorbbg.health.antiHeal
+        frame.health = hg.healPrediction.absorbbg.health
+        frame.absorbbg = hg.healPrediction.absorbbg
+        frame.healPrediction = hg.healPrediction
+        frame.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+
+        for _, bar in ipairs({ frame.absorbOverlay, frame.antiHeal, frame.health, frame.absorbbg, frame.healPrediction, frame.powerbar }) do
+            GW.AddStatusbarAnimation(bar, true)
+        end
+        GW.AddStatusbarAnimation(frame.healPrediction, false)
+
+        frame.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     end
-    GW.AddStatusbarAnimation(frame.healPrediction, false)
 
-    frame.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     frame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     frame.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
@@ -366,26 +433,72 @@ local function CreatePartyFrame(i, isPlayer)
     frame.level:SetFont(UNIT_NAME_FONT, 12, "OUTLINE")
     frame.healthString:SetFontObject(GameFontNormalSmall)
 
+
+    --Create party pet frame
     local petUnit = (registerUnit == "player") and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
-    local petFrame = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, GW.Retail and "GwPartyPetFramePingableTemplate" or "GwPartyPetFrameTemplate")
+    local petFrame = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, GW.Retail and "GwPartyPetFrameRetailTemplate" or "GwPartyPetFrameTemplate")
     petFrame.unit = petUnit
     petFrame:SetAttribute("unit", petUnit)
     petFrame.isPet = true
 
     local phg = petFrame.healthContainer
-    petFrame.absorbOverlay = phg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
-    petFrame.antiHeal = phg.healPrediction.absorbbg.health.antiHeal
-    petFrame.health = phg.healPrediction.absorbbg.health
-    petFrame.absorbbg = phg.healPrediction.absorbbg
-    petFrame.healPrediction = phg.healPrediction
-    petFrame.healthString = phg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+    if GW.Retail then
+        petFrame.absorbOverlay = phg.health.overDamageAbsorbIndicator
+        petFrame.antiHeal      = phg.healAbsorb
+        petFrame.health        = phg.health
+        petFrame.absorbbg      = phg.damageAbsorb
+        petFrame.healPrediction= phg.healPrediction
+        petFrame.healthString  = phg.health.healthString
 
-    for _, bar in ipairs({ petFrame.absorbOverlay, petFrame.antiHeal, petFrame.health, petFrame.absorbbg, petFrame.healPrediction, petFrame.powerbar }) do
-        GW.AddStatusbarAnimation(bar, true)
+        petFrame.hpValues = CreateUnitHealPredictionCalculator()
+        petFrame.hpValues:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MissingHealth)
+        petFrame.hpValues:SetHealAbsorbClampMode(Enum.UnitHealAbsorbClampMode.CurrentHealth)
+        petFrame.hpValues:SetIncomingHealClampMode(Enum.UnitIncomingHealClampMode.MissingHealth)
+        petFrame.hpValues:SetHealAbsorbMode(Enum.UnitHealAbsorbMode.ReducedByIncomingHeals)
+        petFrame.hpValues:SetIncomingHealOverflowPercent(1)
+
+        petFrame.healPrediction:ClearAllPoints()
+        petFrame.healPrediction:SetPoint("TOP")
+        petFrame.healPrediction:SetPoint("BOTTOM")
+        petFrame.healPrediction:SetPoint("LEFT", petFrame.health:GetStatusBarTexture(), "RIGHT")
+
+        petFrame.absorbbg:ClearAllPoints()
+        petFrame.absorbbg:SetPoint("TOP")
+        petFrame.absorbbg:SetPoint("BOTTOM")
+        petFrame.absorbbg:SetPoint("LEFT", petFrame.healPrediction:GetStatusBarTexture(), "RIGHT")
+
+        petFrame.antiHeal:ClearAllPoints()
+        petFrame.antiHeal:SetPoint("TOP")
+        petFrame.antiHeal:SetPoint("BOTTOM")
+        petFrame.antiHeal:SetPoint("RIGHT", petFrame.health:GetStatusBarTexture())
+        petFrame.antiHeal:SetReverseFill(true)
+
+        petFrame.absorbOverlay:ClearAllPoints()
+        petFrame.absorbOverlay:SetPoint("TOP")
+        petFrame.absorbOverlay:SetPoint("BOTTOM")
+        petFrame.absorbOverlay:SetPoint("LEFT", petFrame.health, "RIGHT", -1, 0)
+        petFrame.absorbOverlay:SetWidth(10)
+    else
+        petFrame.absorbOverlay = phg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+        petFrame.antiHeal = phg.healPrediction.absorbbg.health.antiHeal
+        petFrame.health = phg.healPrediction.absorbbg.health
+        petFrame.absorbbg = phg.healPrediction.absorbbg
+        petFrame.healPrediction = phg.healPrediction
+        petFrame.healthString = phg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+
+        for _, bar in ipairs({ frame.absorbOverlay, frame.antiHeal, frame.health, frame.absorbbg, frame.healPrediction, frame.powerbar }) do
+            GW.AddStatusbarAnimation(bar, true)
+        end
+        GW.AddStatusbarAnimation(frame.healPrediction, false)
+
+        for _, bar in ipairs({ petFrame.absorbOverlay, petFrame.antiHeal, petFrame.health, petFrame.absorbbg, petFrame.healPrediction, petFrame.powerbar }) do
+            GW.AddStatusbarAnimation(bar, true)
+        end
+        GW.AddStatusbarAnimation(petFrame.healPrediction, false)
+
+        petFrame.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     end
-    GW.AddStatusbarAnimation(petFrame.healPrediction, false)
 
-    petFrame.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     petFrame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     petFrame.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
@@ -397,7 +510,7 @@ local function CreatePartyFrame(i, isPlayer)
     petFrame:RegisterForClicks("AnyDown")
 
     -- Standard Auras und Buffs für Pet-Frame
-    petFrame.auras.FilterAura = FilterAura
+    --petFrame.auras.FilterAura = FilterAura
     petFrame.auras.SetPosition = AuraSetPoint
     petFrame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
     petFrame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6

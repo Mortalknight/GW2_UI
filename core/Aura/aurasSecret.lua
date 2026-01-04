@@ -188,7 +188,7 @@ local function updateAura(element, unit, data, position, isBuff)
     if data.isPlayerAura then
         setAuraType(button, "bigBuff")
         size = button.bigSize
-        local duration = C_UnitAuras.GetAuraDuration(unit, data.auraInstanceID)
+        local duration = not element.hideDuration and C_UnitAuras.GetAuraDuration(unit, data.auraInstanceID) or nil
 		if duration then
             button.Cooldown:SetCooldownFromDurationObject(duration)
             button.Cooldown:Show()
@@ -233,7 +233,7 @@ local function updateAura(element, unit, data, position, isBuff)
     button.neededSize = size
 end
 
-local function FilterAura(element, unit, data)
+local function FilterAura(element, unit, data, isBuff)
     if (element.onlyShowPlayer and data.isPlayerAura) or not element.onlyShowPlayer then
 		return true
 	end
@@ -277,7 +277,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
             if data then
                 auras.allBuffs[data.auraInstanceID] = data
 
-                if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
+                if ((auras.FilterAura or FilterAura)(auras, unit, data, true)) then
                     auras.activeBuffs[data.auraInstanceID] = true
                 end
             end
@@ -293,7 +293,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
             if data then
                 auras.allDebuffs[data.auraInstanceID] = data
 
-                if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
+                if ((auras.FilterAura or FilterAura)(auras, unit, data, false)) then
                     auras.activeDebuffs[data.auraInstanceID] = true
                 end
             end
@@ -313,7 +313,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
                     if data then
                         auras.allBuffs[data.auraInstanceID] = data
 
-                        if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
+                        if ((auras.FilterAura or FilterAura)(auras, unit, data, true)) then
                             auras.activeBuffs[data.auraInstanceID] = true
                             buffsChanged = true
                         end
@@ -323,7 +323,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
                     if data then
                         auras.allDebuffs[data.auraInstanceID] = data
 
-                        if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
+                        if ((auras.FilterAura or FilterAura)(auras, unit, data, false)) then
                             auras.activeDebuffs[data.auraInstanceID] = true
                             debuffsChanged = true
                         end
