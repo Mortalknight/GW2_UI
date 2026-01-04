@@ -81,6 +81,9 @@ local function SkinFrame(frame)
 
     if backdrops[frame] then
         frame.backdrop = backdrops[frame] -- relink it back
+        if GW.Retail then
+            frame.backdrop:SetFrameLevel(frame:GetFrameLevel() - 1)
+        end
     else
         frame:GwCreateBackdrop(GW.BackdropTemplates.Default)
         backdrops[frame] = frame.backdrop
