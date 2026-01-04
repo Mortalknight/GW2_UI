@@ -25,15 +25,6 @@
                     <Color r="0" g="0" b="0"></Color>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK" textureSubLevel="6">
-                <Texture parentKey="stealableBorder" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                    </Anchors>
-                    <Color r="0" g="0" b="0"></Color>
-                </Texture>
-            </Layer>
         </Layers>
         <Frames>
             <Cooldown parentKey="Cooldown">

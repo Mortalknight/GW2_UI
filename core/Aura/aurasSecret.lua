@@ -2,6 +2,9 @@ local _, GW = ...
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 
+local stealableColor = CreateColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
+local normalColor = CreateColor(0, 0, 0)
+
 local function UpdateTooltip(self)
     if GameTooltip:IsForbidden() then return end
 
@@ -24,7 +27,6 @@ local function CreateAuraFrame(name, parent)
     f.Cooldown:SetHideCountdownNumbers(false)
 
     f.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE", -1)
-    f.stealableBorder:SetVertexColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
 
     local r = {f.Cooldown:GetRegions()}
     for _, c in pairs(r) do
@@ -201,21 +203,19 @@ local function updateAura(element, unit, data, position, isBuff)
         data.newBuffAnimation = false
     end
 
-    if not isBuff then
-        if data.isHarmfulAura then
-            local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelColorCurve)
-
+    if isBuff then
+        if not UnitCanCooperate("player", unit) then
+            button.background:SetVertexColorFromBoolean(data.isStealable, stealableColor, normalColor)
+        else
+            button.background:SetVertexColor(normalColor:GetRGB())
+        end
+    else
+        local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelColorCurve)
+        if color then
             button.background:SetVertexColor(color:GetRGB())
         else
             button.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
         end
-    else
-        if not UnitCanCooperate("player", unit) then
-            button.stealableBorder:SetAlphaFromBoolean(data.isStealable, 1, 0)
-        else
-            button.stealableBorder:SetAlpha(0)
-        end
-        button.background:SetVertexColor(0, 0, 0)
     end
     button.background:Show()
 
@@ -243,7 +243,6 @@ local function processData(unit, data, filter, newBuffAnimation)
     if not data then return end
 
     data.isPlayerAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, filter .. '|PLAYER')
-    data.isHarmfulAura = filter == 'HARMFUL' -- "isHarmful" is a secret, use a different name
     data.newBuffAnimation = newBuffAnimation
 
     return data
