@@ -453,11 +453,12 @@ end
 
 function GwUnitFrameMixin:UpdateRaidMarkers()
     local i = GetRaidTargetIndex(self.unit)
-    if i == nil then
-        self.raidmarker:SetTexture(nil)
-        return
+    if i then
+        SetRaidTargetIconTexture(self.raidmarker, i)
+        self.raidmarker:Show()
+    else
+        self.raidmarker:Hide()
     end
-    self.raidmarker:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i)
 end
 
 function GwUnitFrameMixin:SetUnitPortrait()

@@ -716,7 +716,7 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-17" y="-5"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="marker" hidden="true" file="Interface\AddOns\GW2_UI\textures\icons\icon-dead.png">
+                <Texture parentKey="marker" hidden="true" file="Interface/TargetingFrame/UI-RaidTargetingIcons">
                     <Size x="24" y="24"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-17" y="-5"></Anchor>

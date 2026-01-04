@@ -151,6 +151,7 @@ local function ChatBubble_OnEvent(_, event, msg, sender)
         wipe(messageToSender)
         wipe(messageOrder)
     else
+        if GW.Retail and C_RestrictedActions.IsAddOnRestrictionActive(Enum.AddOnRestrictionType.Map) then return end
         local unit = (event == "CHAT_MSG_MONSTER_SAY" or event == "CHAT_MSG_MONSTER_YELL") and 1 or 0
         local senderName = TRP3_API and TRP3_API.register.getUnitRPNameWithID(sender) or Ambiguate(sender, "none")
         messageToSender[msg] = { unitType = unit, senderName = senderName }

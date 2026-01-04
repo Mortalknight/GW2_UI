@@ -14,34 +14,47 @@ end
 function GwObjectivesUnitFrameMixin:UpdateHealth()
     local health = UnitHealth(self.unit)
     local maxHealth = UnitHealthMax(self.unit)
-    local healthPercentage = (health > 0 and maxHealth > 0) and (health / maxHealth) or 0
-
     self.health:SetMinMaxValues(0, maxHealth)
-    self.health:SetValue(health)
-    self.health.value:SetText(GW.RoundInt(healthPercentage * 100) .. "%")
+
+    if GW.Retail then
+        self.health:SetValue(health, Enum.StatusBarInterpolation.ExponentialEaseOut)
+        self.health.value:SetText(string.format("%.0f%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100)))
+    else
+        local healthPercentage = (health > 0 and maxHealth > 0) and (health / maxHealth) or 0
+        self.health:SetValue(health)
+        self.health.value:SetText(GW.RoundInt(healthPercentage * 100) .. "%")
+    end
 end
 
 function GwObjectivesUnitFrameMixin:UpdatePower()
     local powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     local power = UnitPower(self.unit, powerType)
     local powerMax = UnitPowerMax(self.unit, powerType)
-    local powerPercentage = (power > 0 and powerMax > 0) and (power / powerMax) or 0
 
-    if GW.PowerBarColorCustom[powerToken] then
+    self.power:SetMinMaxValues(0, powerMax)
+
+     if GW.PowerBarColorCustom[powerToken] then
         local pwcolor = GW.PowerBarColorCustom[powerToken]
         self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     else
         self.power:SetStatusBarColor(altR or 0, altG or 0, altB or 0)
     end
 
-    self.power:SetMinMaxValues(0, powerMax)
-    self.power:SetValue(power)
-    self.power.value:SetText(GW.RoundInt(powerPercentage * 100) .. "%")
+    if GW.Retail then
+        self.power:SetValue(power, Enum.StatusBarInterpolation.ExponentialEaseOut)
+        self.power.value:SetText(string.format("%.0f%%", UnitPowerPercent(self.unit, powerType, CurveConstants.ScaleTo100)))
+    else
+        local powerPercentage = (power > 0 and powerMax > 0) and (power / powerMax) or 0
+        self.power:SetValue(power)
+        self.power.value:SetText(GW.RoundInt(powerPercentage * 100) .. "%")
+    end
 end
 
 function GwObjectivesUnitFrameMixin:UpdateName()
     local name = UnitName(self.unit)
     self.name:SetText(name)
+
+    if GW.Retail then return end -- guid is secret
     self.guid = UnitGUID(self.unit)
     if self.guid == UnitGUID("target") then
         self.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)

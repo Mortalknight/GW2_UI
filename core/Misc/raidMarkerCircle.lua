@@ -31,6 +31,7 @@ local function RaidMarkShowIcons()
 end
 
 function GW_RaidMark_HotkeyPressed(keystate)
+    if GW.Retail then return end
     ButtonIsDown = (keystate == "down") and RaidMarkCanMark()
     if ButtonIsDown and RaidMarkFrame then
         RaidMarkShowIcons()
@@ -57,7 +58,7 @@ end
 
 local function RaidMarkButton_OnClick(self, button)
     PlaySound(1115)
-    SetRaidTarget("target", (button ~= "RightButton") and self:GetID() or 0)
+    SetRaidTarget("target", (button ~= "RightButton") and self:GetID() or 0) -- not possible on Retail
     RaidMarkFrame:Hide()
 end
 

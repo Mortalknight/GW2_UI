@@ -17,14 +17,14 @@ end
 
 local function formatHealthValue(value)
     if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
-        return AbbreviateNumbers(value)
+        return AbbreviateLargeNumbers(value)
     end
 
     return BreakUpLargeNumbers(value)
 end
 
 local function formatShieldValue(value)
-    return GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES and AbbreviateNumbers(value) or BreakUpLargeNumbers(value)
+    return GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES and AbbreviateLargeNumbers(value) or BreakUpLargeNumbers(value)
 end
 
 function GwHealthglobeMixin:UpdateHealthData()
@@ -60,7 +60,7 @@ function GwHealthglobeMixin:UpdateHealthData()
     end
 
     if GW.settings.PLAYER_UNIT_ABSORB == "VALUE" then
-        absorbValue = allValues.totalDamageAbsorbs --Not yet possible C_StringUtil.TruncateWhenZero only acceps numbers and AbbreviateNumbers returns a string. formatShieldValue(allValues.totalDamageAbsorbs)
+        absorbValue = allValues.totalDamageAbsorbs --Not yet possible C_StringUtil.TruncateWhenZero only acceps numbers and AbbreviateLargeNumbers returns a string. formatShieldValue(allValues.totalDamageAbsorbs)
     end
 
     self.text_h.value:SetText(healthValue)

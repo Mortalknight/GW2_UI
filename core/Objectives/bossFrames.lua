@@ -7,7 +7,7 @@ GwBossFrameMixin = CreateFromMixins(GwObjectivesUnitFrameMixin)
 function GwBossFrameMixin:UpdateRaidMarkers()
     local index = GetRaidTargetIndex(self.unit)
     if index then
-        self.marker:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. index)
+        SetRaidTargetIconTexture(self.marker, index)
         self.marker:Show()
         self.icon:Hide()
     else

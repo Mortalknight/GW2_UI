@@ -194,7 +194,7 @@ function GwPartyFrameMixin:UpdateHealthTextString(healthCur, healthPrec, healthM
     end
 
     if GW.Retail then
-        local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and AbbreviateNumbers or BreakUpLargeNumbers
+        local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and AbbreviateLargeNumbers or BreakUpLargeNumbers
 
         if GW.settings.PARTY_UNIT_HEALTH == "PREC" then
             self.healthString:SetText(string.format("%.0f%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100)))
@@ -510,7 +510,7 @@ local function CreatePartyFrame(i, isPlayer)
     petFrame:RegisterForClicks("AnyDown")
 
     -- Standard Auras und Buffs für Pet-Frame
-    --petFrame.auras.FilterAura = FilterAura
+    petFrame.auras.FilterAura = FilterAura
     petFrame.auras.SetPosition = AuraSetPoint
     petFrame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
     petFrame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
@@ -565,6 +565,7 @@ local function CreatePartyFrame(i, isPlayer)
     frame.auras.hideDuration = true
     frame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
     frame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
+    frame.auras.debuffFilter = GW.settings.PARTY_ONLY_DISPELL_DEBUFFS and "RAID|HARMFUL" or "HARMFUL" --TESTING
     GW.LoadAuras(frame)
 
     RegisterStateDriver(frame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format(registerUnit))

@@ -263,6 +263,7 @@ local function CreateRaidControlFrame()
         f:SetPoint("TOPLEFT", GwGroupManage.inGroup, "TOPLEFT", x, y)
         f:SetNormalTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i)
         f:SetScript("OnClick", function()
+            if GW.Retail then return end -- Secret TODO after blizzard fix
             PlaySound(1115)
             SetRaidTargetIcon("target", i)
         end)

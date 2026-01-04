@@ -36,7 +36,8 @@ local function Update(self)
     elseif self.showTargetmarker and GetRaidTargetIndex(self.unit) then -- targetmarker
         local index = GetRaidTargetIndex(self.unit)
         if index then
-            element:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. index)
+            element:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcons")
+            SetRaidTargetIconTexture(element, index)
             element:SetTexCoord(unpack(ns.TexCoords))
 
             shouldShowIcon = true
