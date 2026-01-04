@@ -150,20 +150,6 @@
                             </Anchors>
                         </FontString>
                     </Layer>
-                    <Layer level="OVERLAY">
-                        <Texture parentKey="shieldLeft" file="Interface/AddOns/GW2_UI/textures/icons/garrison-up.png">
-                            <Size x="20" y="20"/>
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent" x="-10" y="0"/>
-                            </Anchors>
-                        </Texture>
-                        <Texture parentKey="shieldRight" file="Interface/AddOns/GW2_UI/textures/icons/garrison-up.png">
-                            <Size x="20" y="20"/>
-                            <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent" x="10" y="0"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
                 </Layers>
             </StatusBar>
             <Frame parentKey="auras">
@@ -266,20 +252,6 @@
                             <Anchor point="RIGHT"   relativePoint="RIGHT" x="-10" y="0"></Anchor>
                         </Anchors>
                     </FontString>
-                </Layer>
-                <Layer level="OVERLAY">
-                    <Texture parentKey="shieldLeft" file="Interface/AddOns/GW2_UI/textures/icons/garrison-up.png">
-                        <Size x="20" y="20"/>
-                        <Anchors>
-                            <Anchor point="LEFT" relativeKey="$parent" x="-10" y="0"/>
-                        </Anchors>
-                    </Texture>
-                    <Texture parentKey="shieldRight" file="Interface/AddOns/GW2_UI/textures/icons/garrison-up.png">
-                        <Size x="20" y="20"/>
-                        <Anchors>
-                            <Anchor point="RIGHT" relativeKey="$parent" x="10" y="0"/>
-                        </Anchors>
-                    </Texture>
                 </Layer>
             </Layers>
           </StatusBar>
@@ -439,20 +411,6 @@
                                 <Anchor point="LEFT" relativePoint="LEFT" x="10" y="0"></Anchor>
                             </Anchors>
                         </FontString>
-                    </Layer>
-                    <Layer level="OVERLAY">
-                        <Texture parentKey="shieldLeft" file="Interface/AddOns/GW2_UI/textures/icons/garrison-up.png">
-                            <Size x="20" y="20"/>
-                            <Anchors>
-                                <Anchor point="LEFT" relativeKey="$parent" x="-10" y="0"/>
-                            </Anchors>
-                        </Texture>
-                        <Texture parentKey="shieldRight" file="Interface/AddOns/GW2_UI/textures/icons/garrison-up.png">
-                            <Size x="20" y="20"/>
-                            <Anchors>
-                                <Anchor point="RIGHT" relativeKey="$parent" x="10" y="0"/>
-                            </Anchors>
-                        </Texture>
                     </Layer>
                 </Layers>
             </StatusBar>

@@ -11,6 +11,9 @@ local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
+local colorNormal = CreateColor(1, 1, 1)
+local colorProtected = CreateColor(0.7, 0.7, 0.7)
+
 local function castingbarOnUpdate(self)
     if (self.casting or self.channeling or self.empowering) and self.showCastingbarData and self.castingTimeString then
         local durationTime = self.castingbarNormal:GetTimerDuration():GetRemainingDuration()
@@ -563,8 +566,6 @@ function GwUnitFrameMixin:HideCastBar()
     if self.castingbar then self.castingbar:Hide() end
     if self.castingbarSpark then self.castingbarSpark:Hide() end
     if self.castingbarNormal then self.castingbarNormal:Hide() end
-    if self.castingbarNormal.shieldLeft then self.castingbarNormal.shieldLeft:SetAlpha(0) end
-    if self.castingbarNormal.shieldRight then self.castingbarNormal.shieldRight:SetAlpha(0) end
 
     self.spellID = nil
     self.castID = nil
@@ -588,8 +589,9 @@ function GwUnitFrameMixin:CastInterruptible(event)
     if not self.castingbarNormal:IsShown() then return end
 
     self.notInterruptible = event == 'UNIT_SPELLCAST_NOT_INTERRUPTIBLE'
-    self.castingbarNormal.shieldLeft:SetAlphaFromBoolean(self.notInterruptible, 1, 0)
-    self.castingbarNormal.shieldRight:SetAlphaFromBoolean(self.notInterruptible, 1, 0)
+
+    self.castingbarNormal.GetStatusBarTexture():SetVertexColorFromBoolean(self.notInterruptible, colorProtected, colorNormal)
+    self.castingbarNormal:GetStatusBarTexture():SetDesaturated(self.notInterruptible)
 end
 
 function GwUnitFrameMixin:StartCastbar(event)
@@ -684,8 +686,8 @@ function GwUnitFrameMixin:StartCastbar(event)
 
     if GW.Retail then
         self.castingbarNormal:SetTimerDuration(duration, Enum.StatusBarInterpolation.Immediate, direction)
-        self.castingbarNormal.shieldLeft:SetAlphaFromBoolean(notInterruptible, 1, 0)
-        self.castingbarNormal.shieldRight:SetAlphaFromBoolean(notInterruptible, 1, 0)
+        self.castingbarNormal:GetStatusBarTexture():SetVertexColorFromBoolean(notInterruptible, colorProtected, colorNormal)
+        self.castingbarNormal:GetStatusBarTexture():SetDesaturated(notInterruptible)
     else
         GW.AddToAnimation(
             "GwUnitFrame" .. self.unit .. "Cast",
