@@ -101,7 +101,7 @@ local function LoadWorldMapSkin()
     --HideUIPanel(WorldMapFrame)
 
     table.insert(UISpecialFrames, "WorldMapFrame")
-    WorldMapFrame:SetScale(0.8)
+    WorldMapFrame:SetScale(GW.settings.WORLDMAP_SCALE)
     WorldMapFrame:EnableKeyboard(false)
     WorldMapFrame:EnableMouse(true)
     WorldMapFrame:SetFrameStrata("HIGH")

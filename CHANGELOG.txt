@@ -1,3 +1,10 @@
+8.6.1
+FIXES
+    - Worldmap position and scale is not saved (era)
+
+CHANGES
+    - XP bar rework
+
 8.6.0
 NEW
     - Add option to invert multi actionbars, to follow the blizzard layout
