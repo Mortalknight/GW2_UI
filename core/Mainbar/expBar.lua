@@ -649,7 +649,7 @@ local function LoadXPBar()
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
     experiencebar.tooltip = {}
 
-    if not GW.Retail then
+    if GW.Mists then
         GW.MixinHideDuringOverride(experiencebar)
     end
 
