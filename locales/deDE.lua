@@ -11,8 +11,8 @@ L["Created by: "] = "Erstellt von: "
 L["Last updated: "] = "Zuletzt aktualisiert: "
 L["%s and then %s"] = "%s und dann %s"
 L["%s Indicator"] = "Indikator %s"
-L[": Show numbers with commas"] = ": Zahlen mir Komma anzeigen"
-L[": Use Blizzard colors"] = ": Blizzard Farben verwenden"
+L["Show numbers with commas"] = "Zahlen mir Komma anzeigen"
+L["Use Blizzard colors"] = "Blizzard Farben verwenden"
 L[ [=[A |cFFFF0000major|r update is available.
 It's strongly recommended that you update.]=] ] = [=[Ein |cFFFF0000wichtiges|r Update ist verfügbar.
 Es wird drigend empfohlen ein Update durchzuführen.]=]

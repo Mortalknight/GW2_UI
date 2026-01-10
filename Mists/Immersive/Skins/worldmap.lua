@@ -107,7 +107,6 @@ local function worldMapSkin()
     end
 
     table.insert(UISpecialFrames, "WorldMapFrame")
-    WorldMapFrame:SetScale(0.8)
     WorldMapFrame:EnableKeyboard(false)
     WorldMapFrame:EnableMouse(true)
     WorldMapFrame:SetFrameStrata("HIGH")

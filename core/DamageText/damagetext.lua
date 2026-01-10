@@ -228,6 +228,9 @@ AFP("animateTextNormalForStackingFormat", animateTextNormalForStackingFormat)
 local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
     GW.AddToAnimation(frame:GetDebugName(), 0, 1, GetTime(), CRITICAL_ANIMATION_DURATION,
         function(p)
+            if not frame.anchorFrame or not frame.anchorFrame:IsShown() then
+                frame.anchorFrame = ClassicDummyFrame
+            end
             if p < 0.25 then
                 frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)), frame.textScaleModifier, p / 0.25))
             else
@@ -254,6 +257,10 @@ AFP("animateTextCriticalForDefaultFormat", animateTextCriticalForDefaultFormat)
 local function animateTextNormalForDefaultFormat(frame, offsetIndex)
     GW.AddToAnimation(frame:GetDebugName(), 0, 1, GetTime(), NORMAL_ANIMATION_DURATION,
         function(p)
+            if not frame.anchorFrame or not frame.anchorFrame:IsShown() then
+                frame.anchorFrame = ClassicDummyFrame
+
+            end
             local offsetY = NORMAL_ANIMATION_OFFSET_Y * p
             frame:SetScale(1 * frame.textScaleModifier)
             if offsetIndex == 0 then
@@ -408,7 +415,7 @@ local function formatDamageValue(amount)
 end
 AFP("formatDamageValue", formatDamageValue)
 
-local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic,school)
+local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic, school)
     local f = getFontElement(self)
     f.string:SetText(missType and _G[missType] or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
 
@@ -536,11 +543,11 @@ local function onNamePlateRemoved(_, _, unitID)
     unitToGuid[unitID] = nil
     guidToUnit[guid] = nil
     freeClassicGrid(unitID)
-    if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic then
+    if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic or GW.settings.GW_COMBAT_TEXT_STYLE == formats.Default then
         return
     end
     for _, f in pairs(fontStringList) do
-        if f.unit and f.unit == unitID then
+        if f.unit and f.unit == unitID  then
             f:Hide()
         end
     end
@@ -584,6 +591,7 @@ local function ToggleFormat(activate)
             ToggleMover(stackingContainer.gwMover, false)
             stackingContainer:SetScript("OnUpdate", nil)
             stackingContainer:Hide()
+            ClassicDummyFrame:Show()
             wipe(stackingContainer.activeFrames)
             NUM_OBJECTS_HARDLIMIT = 20
             if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic then
@@ -599,9 +607,7 @@ local function ToggleFormat(activate)
                     wipe(unitToGuid)
                     wipe(guidToUnit)
                 end
-                ClassicDummyFrame:Show()
             else
-                ClassicDummyFrame:Hide()
                 CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
                 NORMAL_ANIMATION = animateTextNormalForDefaultFormat
                 eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
