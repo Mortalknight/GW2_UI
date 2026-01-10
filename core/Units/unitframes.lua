@@ -16,8 +16,11 @@ local colorProtected = CreateColor(0.7, 0.7, 0.7)
 
 local function castingbarOnUpdate(self)
     if (self.casting or self.channeling or self.empowering) and self.showCastingbarData and self.castingTimeString then
-        local durationTime = self.castingbarNormal:GetTimerDuration():GetRemainingDuration()
-        self.castingbarNormal.castingTimeString:SetFormattedText("%.1fs", durationTime)
+        local durationObject = self:GetTimerDuration()
+        if durationObject then
+            local durationTime = durationObject:GetRemainingDuration()
+            self.castingbarNormal.castingTimeString:SetFormattedText("%.1fs", durationTime)
+        end
     end
 end
 
