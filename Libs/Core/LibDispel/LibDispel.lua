@@ -1132,7 +1132,9 @@ do
     local frame = lib.frame
     frame:SetScript("OnEvent", UpdateDispels)
     frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    if not Retail then
+    if Retail then
+        frame:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+    else
         frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
     end
     frame:RegisterEvent("PLAYER_LOGIN")
