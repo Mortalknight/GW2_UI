@@ -2,6 +2,8 @@ local _, GW = ...
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 
+if not GW.Retail then return end
+
 local stealableColor = CreateColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
 local normalColor = CreateColor(0, 0, 0)
 

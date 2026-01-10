@@ -22,7 +22,7 @@
 
     <Button name="GwNormalUnitFramePingable" parent="UIParent" inherits="GwNormalUnitFrame,PingableUnitFrameTemplate" virtual="true"/>
 
-    <Button name="GwNormalUnitFrame" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true" mixin="GwCastingBarMixin,GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
+    <Button name="GwNormalUnitFrame" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
         <Size x="300" y="64"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="0"></Anchor>
@@ -164,7 +164,7 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.healthContainer" relativePoint="BOTTOMLEFT" x="0" y="-1"></Anchor>
                 </Anchors>
             </Frame>
-            <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
+            <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar" mixin="GwCastingBarMixin">
                 <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png"/>
                 <Size x="213" y="13"/>
                 <Anchors>
@@ -198,7 +198,7 @@
 
     <Button name="GwNormalUnitFramePingableSmall" parent="UIParent" inherits="GwNormalUnitFrameSmall,PingableUnitFrameTemplate" virtual="true"/>
 
-    <Button name="GwNormalUnitFrameSmall" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true" mixin="GwCastingBarMixin,GwUnitFrameMixin,GwTargetUnitFrameMixin,GwUnitPowerbarMixin,GwUnitHealthbarMixin">
+    <Button name="GwNormalUnitFrameSmall" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true" mixin="GwUnitFrameMixin,GwTargetUnitFrameMixin,GwUnitPowerbarMixin,GwUnitHealthbarMixin">
         <Size x="148" y="64"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="0"></Anchor>
@@ -285,7 +285,7 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.healthContainer" relativePoint="BOTTOMLEFT" x="0" y="-1"></Anchor>
                 </Anchors>
             </Frame>
-          <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
+          <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar" mixin="GwCastingBarMixin">
             <BarTexture parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png"/>
             <Size x="148" y="13"/>
             <Anchors>
@@ -319,7 +319,7 @@
 
     <Button name="GwNormalUnitFramePingableInvert" parent="UIParent" inherits="GwNormalUnitFrameInvert,PingableUnitFrameTemplate" virtual="true"/>
 
-    <Button name="GwNormalUnitFrameInvert" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true" mixin="GwCastingBarMixin,GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
+    <Button name="GwNormalUnitFrameInvert" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
         <Size x="300" y="64"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="0"></Anchor>
@@ -461,7 +461,7 @@
                     <Anchor point="TOPRIGHT" relativeKey="$parent.healthContainer" relativePoint="BOTTOMRIGHT" x="0" y="-1"></Anchor>
                 </Anchors>
             </Frame>
-            <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
+            <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar" mixin="GwCastingBarMixin">
                 <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png"/>
                 <Size x="211" y="13"/>
                 <Anchors>
