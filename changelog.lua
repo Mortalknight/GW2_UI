@@ -20,6 +20,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("8.6.1", {
     {GW.ChangelogType.bug, [=[Worldmap position and scale is not saved (era)]=]},
+    {GW.ChangelogType.change, [=[FCT default style uses now a fallback from on nameplate anchor]=]},
     {GW.ChangelogType.change, [=[XP bar rework]=]},
 })
 

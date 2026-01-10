@@ -1,6 +1,7 @@
 8.6.1
 FIXES
     - Worldmap position and scale is not saved (era)
+    - FCT default style uses now a fallback from on nameplate anchor
 
 CHANGES
     - XP bar rework
