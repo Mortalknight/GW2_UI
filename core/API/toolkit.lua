@@ -258,6 +258,17 @@ local function GwSkinSliderFrame(frame)
     end
 end
 
+local function OffsetFrameLevel(frame, offset, referenceFrame)
+    if not referenceFrame then
+        referenceFrame = frame
+    end
+
+    local frameLevel = referenceFrame.GetFrameLevel and referenceFrame:GetFrameLevel()
+    if frameLevel then
+        frame:SetFrameLevel(math.max(0, frameLevel + (offset or 0)))
+    end
+end
+
 local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
     local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent)
@@ -817,6 +828,7 @@ local function addapi(object)
     if not object.GwKillEditMode then mt.GwKillEditMode = GwKillEditMode end
     if not object.GwHandleDropDownBox then mt.GwHandleDropDownBox = GwHandleDropDownBox end
     if not object.GwSetFontTemplate then mt.GwSetFontTemplate = GwSetFontTemplate end
+    if not object.OffsetFrameLevel then mt.OffsetFrameLevel = OffsetFrameLevel end
 end
 
 local handled = { Frame = true }
