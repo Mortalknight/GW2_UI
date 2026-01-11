@@ -235,6 +235,80 @@ do
     end
 end
 
+local function GW_GetPlayerInfoByGUID(guid)
+    if issecretvalue and issecretvalue(guid) then return end
+
+    local data = GuidCache[guid]
+    if not data then
+        local ok, localizedClass, englishClass, localizedRace, englishRace, sex, name, realm = pcall(GetPlayerInfoByGUID, guid)
+        if not (ok and englishClass) then return end
+
+        if realm == "" then realm = nil end
+        local shortRealm, nameWithRealm = realm and gsub(realm, "[%s%-]", ""), nil
+        if name and name ~= "" then
+            nameWithRealm = (shortRealm and name .. "-" .. shortRealm) or name .. "-" .. PLAYER_REALM
+        end
+
+        data = {
+            localizedClass = localizedClass,
+            englishClass = englishClass,
+            localizedRace = localizedRace,
+            englishRace = englishRace,
+            sex = sex,
+            name = name,
+            realm = realm,
+            nameWithRealm = nameWithRealm
+        }
+
+        -- add it to ClassNames
+        if name then
+            ClassNames[strlower(name)] = englishClass
+        end
+        if nameWithRealm then
+            ClassNames[strlower(nameWithRealm)] = englishClass
+        end
+
+        -- push into the cache
+        GuidCache[guid] = data
+    end
+
+    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true, true) end
+
+    return data
+end
+
+function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg12)
+    if not arg2 then return end -- guild deaths is called here with no arg2
+
+    if issecretvalue and issecretvalue(arg2) then
+        return arg2
+    end
+
+    local chatType = strsub(event, 10)
+    local subType = strsub(chatType, 1, 7)
+    if subType == "WHISPER" then
+        chatType = "WHISPER"
+    elseif subType == "CHANNEL" then
+        chatType = "CHANNEL" .. arg8
+    end
+
+    -- ambiguate guild chat names
+    local name = Ambiguate(arg2, (chatType == "GUILD" and "guild") or "none")
+
+    -- handle the class color
+    local ShouldColorChatByClass = _G.ChatFrameUtil and _G.ChatFrameUtil.ShouldColorChatByClass or _G.Chat_ShouldColorChatByClass
+    local info = name and arg12 and _G.ChatTypeInfo[chatType]
+    if info and ShouldColorChatByClass(info) then
+        local data = GW_GetPlayerInfoByGUID(arg12)
+        local color = data and data.classColor
+        if color then
+            return format("|cff%.2x%.2x%.2x%s|r", color.r * 255, color.g * 255, color.b * 255, name)
+        end
+    end
+
+    return name
+end
+
 do
     local function GetLink(linkType, displayText, ...)
         local text = ""
@@ -910,48 +984,6 @@ local function HandleChatMessageFilter(_, event, message, author, ...)
     end
 end
 
-local function GW_GetPlayerInfoByGUID(guid)
-    if issecretvalue and issecretvalue(guid) then return end
-
-    local data = GuidCache[guid]
-    if not data then
-        local ok, localizedClass, englishClass, localizedRace, englishRace, sex, name, realm = pcall(GetPlayerInfoByGUID, guid)
-        if not (ok and englishClass) then return end
-
-        if realm == "" then realm = nil end
-        local shortRealm, nameWithRealm = realm and gsub(realm, "[%s%-]", ""), nil
-        if name and name ~= "" then
-            nameWithRealm = (shortRealm and name .. "-" .. shortRealm) or name .. "-" .. PLAYER_REALM
-        end
-
-        data = {
-            localizedClass = localizedClass,
-            englishClass = englishClass,
-            localizedRace = localizedRace,
-            englishRace = englishRace,
-            sex = sex,
-            name = name,
-            realm = realm,
-            nameWithRealm = nameWithRealm
-        }
-
-        -- add it to ClassNames
-        if name then
-            ClassNames[strlower(name)] = englishClass
-        end
-        if nameWithRealm then
-            ClassNames[strlower(nameWithRealm)] = englishClass
-        end
-
-        -- push into the cache
-        GuidCache[guid] = data
-    end
-
-    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true, true) end
-
-    return data
-end
-
 local function GetBNFirstToonClassColor(id)
     if not id then return end
     for i = 1, BNGetNumFriends() do
@@ -1083,7 +1115,7 @@ local function SaveChatHistory(event, ...)
         local coloredName, battleTag
         if tempHistory[13] and tempHistory[13] > 0 then coloredName, battleTag = GetBNFriendColor(tempHistory[2], tempHistory[13], true) end
         if battleTag then tempHistory[53] = battleTag end -- store the battletag, only when the person is known by battletag, so we can replace arg2 later in the function
-        tempHistory[52] = coloredName or GetColoredName(event, ...)
+        tempHistory[52] = coloredName or GW.ChatFunctions:GetColoredName(event, ...)
 
         tinsert(data, tempHistory)
         while #data >= GW.settings.historySize do
@@ -1124,40 +1156,42 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
 end
 
 local function AddMessageEdits(frame, msg, alwaysAddTimestamp, isHistory, historyTime)
-    if not strmatch(msg, "^%s*$") and not strmatch(msg, "^|Hgwtime|h") and not strmatch(msg, "^|Hcpl:") then
+    local isProtected = GW.ChatFunctions:IsMessageProtected(msg)
+    if isProtected or (not isProtected and (strmatch(msg, "^%s*$") or strmatch(msg, "^|Hgwtime|h") or strmatch(msg, "^|Hcpl:"))) then
+        return msg
+    end
 
-        local historyTimestamp
-        if isHistory == "GW2UI_ChatHistory" then historyTimestamp = historyTime end
+    local historyTimestamp
+    if isHistory == "GW2UI_ChatHistory" then historyTimestamp = historyTime end
 
-        if GW.settings.timeStampFormat and GW.settings.timeStampFormat ~= "NONE" and (GW.settings.CHAT_ADD_TIMESTAMP_TO_ALL or alwaysAddTimestamp) then
-            local timeStamp = BetterDate(GW.settings.timeStampFormat, historyTimestamp or time())
-            timeStamp = gsub(timeStamp, " ", "")
-            timeStamp = gsub(timeStamp, "AM", " AM")
-            timeStamp = gsub(timeStamp, "PM", " PM")
+    if GW.settings.timeStampFormat and GW.settings.timeStampFormat ~= "NONE" and (GW.settings.CHAT_ADD_TIMESTAMP_TO_ALL or alwaysAddTimestamp) then
+        local timeStamp = BetterDate(GW.settings.timeStampFormat, historyTimestamp or time())
+        timeStamp = gsub(timeStamp, " ", "")
+        timeStamp = gsub(timeStamp, "AM", " AM")
+        timeStamp = gsub(timeStamp, "PM", " PM")
 
-            if GW.settings.CHAT_USE_GW2_STYLE then
-                msg = format("|Hgwtime|h|c%s[%s]|r|h %s", "FF888888", timeStamp, msg)
-            else
-                msg = format("|Hgwtime|h[%s]|h %s", timeStamp, msg)
-            end
-        end
-
-        -- color channel in light grey
         if GW.settings.CHAT_USE_GW2_STYLE then
-            -- color channel in light grey
-            msg = msg:gsub(" |Hchannel:(.-)|h%[(.-)%]|h", function(channelLink, channelTag)
-                return string.format("|Hchannel:%s|h|c%s[%s]|r|h", channelLink, "FFD0D0D0", channelTag)
-            end)
-
-            -- remove square brackets from message name in chat
-            msg = msg:gsub("|h%[(|c(.-)|r)%]|h: ", function(coloredPlayer)
-                return string.format("|h%s|h: ", coloredPlayer)
-            end)
+            msg = format("|Hgwtime|h|c%s[%s]|r|h %s", "FF888888", timeStamp, msg)
+        else
+            msg = format("|Hgwtime|h[%s]|h %s", timeStamp, msg)
         end
+    end
 
-        if GW.settings.copyChatLines then
-            msg = format("|Hcpl:%s|h%s|h %s", frame:GetID(), format("|T%s:14|t", "Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png"), msg)
-        end
+    -- color channel in light grey
+    if GW.settings.CHAT_USE_GW2_STYLE then
+        -- color channel in light grey
+        msg = msg:gsub(" |Hchannel:(.-)|h%[(.-)%]|h", function(channelLink, channelTag)
+            return string.format("|Hchannel:%s|h|c%s[%s]|r|h", channelLink, "FFD0D0D0", channelTag)
+        end)
+
+        -- remove square brackets from message name in chat
+        msg = msg:gsub("|h%[(|c(.-)|r)%]|h: ", function(coloredPlayer)
+            return string.format("|h%s|h: ", coloredPlayer)
+        end)
+    end
+
+    if GW.settings.copyChatLines then
+        msg = format("|Hcpl:%s|h%s|h %s", frame:GetID(), format("|T%s:14|t", "Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png"), msg)
     end
 
     return msg
@@ -1345,8 +1379,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
 
     -- Player Flags
     local pflag = GetPFlag(arg6, arg7, arg12)
-    if not bossMonster and (not issecretvalue or not issecretvalue(arg12)) then
-
+    if not bossMonster and (not issecretvalue or (not issecretvalue(arg12) and not issecretvalue(playerName))) then
 
         local lfgRole = (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == "RAID_LEADER" or chatType == "INSTANCE_CHAT" or chatType == "INSTANCE_CHAT_LEADER") and lfgRoles[playerName]
         if lfgRole then
@@ -1446,7 +1479,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         end
 
         -- fetch the name color to use
-        local coloredName = historySavedName or GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+        local coloredName = historySavedName or GW.ChatFunctions:GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
 
         local channelLength = strlen(arg4)
         local infoType = chatType
@@ -1717,7 +1750,7 @@ end
 
 local function ChatFrame_SystemEventHandler(...)
     local systemEventHandler = _G.ChatFrameMixin and _G.ChatFrameMixin.SystemEventHandler or _G.ChatFrame_SystemEventHandler
-	return systemEventHandler(...)
+    return systemEventHandler(...)
 end
 GW.ChatFrame_SystemEventHandler = ChatFrame_SystemEventHandler
 
@@ -1734,8 +1767,6 @@ local function FloatingChatFrameOnEvent(...)
 
     if _G.FloatingChatFrame_OnEvent then
         _G.FloatingChatFrame_OnEvent(...)
-    elseif _G.ScrollingMessageFrame and _G.ScrollingMessageFrame.OnEvent then
-        _G.ScrollingMessageFrame:OnEvent(...)
     end
 end
 
