@@ -1908,24 +1908,40 @@ local function setDruid(f)
 end
 
 -- DEAMONHUNTER
-local function voidMetamorphosisUpdatePower()
-    CPWR_FRAME.defaultResourceBar:SetValue(CPWR_FRAME.currentPoints, Enum.StatusBarInterpolation.ExponentialEaseOut)
-    CPWR_FRAME.defaultResourceBar:SetMinMaxValues(0, CPWR_FRAME.maxPoints)
-    CPWR_FRAME.defaultResourceBar.label:SetText(CPWR_FRAME.currentPoints)
+local function voidMetamorphosisUpdatePower(self)
+    self.defaultResourceBar:SetMinMaxValues(0, self.maxPoints)
+    self.defaultResourceBar:SetValue(self.currentPoints, Enum.StatusBarInterpolation.ExponentialEaseOut)
+    self.defaultResourceBar.label:SetText(self.currentPoints)
 end
 
-local function counterVoidMetamorphosis()
-    local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(1225789)
-    if auraInfo then
-        CPWR_FRAME.currentPoints = auraInfo.applications
-        CPWR_FRAME.maxPoints = C_Spell.GetSpellMaxCumulativeAuraApplications(Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID)
+local function VoidMetamorphosisGetCurrentMinMaxPower(self)
+	if self.inVoidMetamorphosis then
+		self.maxPoints = GetCollapsingStarCost()
+	else
+		self.maxPoints = C_Spell.GetSpellMaxCumulativeAuraApplications(Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID)
+	end
+end
+
+local function counterVoidMetamorphosis(self)
+    local inVoidMetamorphosis = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.VOID_METAMORPHOSIS_SPELL_ID)
+    self.currentPoints = 0
+
+    if inVoidMetamorphosis then
+        local silenceTheWhispersAura = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.SILENCE_THE_WHISPERS_SPELL_ID)
+        if silenceTheWhispersAura then
+			self.currentPoints = silenceTheWhispersAura.applications;
+		end
     else
-        CPWR_FRAME.currentPoints = 0
+        local darkHeartAura = C_UnitAuras.GetPlayerAuraBySpellID(Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID)
+		if darkHeartAura then
+			self.currentPoints = darkHeartAura.applications;
+		end
     end
 
-    voidMetamorphosisUpdatePower()
+    VoidMetamorphosisGetCurrentMinMaxPower(self)
+    voidMetamorphosisUpdatePower(self)
 end
-
+-- Error because blizzard forgott to whitelist the sopells
 local function setDeamonHunter(f)
     if GW.myspec == 3 then
         setPowerTypeMeta(f.defaultResourceBar, true)
@@ -1933,12 +1949,8 @@ local function setDeamonHunter(f)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
 
-        f.currentPoints = 0
-        f.maxPoints = C_Spell.GetSpellMaxCumulativeAuraApplications(Constants.UnitPowerSpellIDs.DARK_HEART_SPELL_ID)
-        f.defaultResourceBar:SetMinMaxValues(0, f.maxPoints)
-
         f:SetScript("OnEvent", counterVoidMetamorphosis)
-        counterVoidMetamorphosis()
+        counterVoidMetamorphosis(f)
         f:RegisterUnitEvent("UNIT_AURA", "player")
 
         return true
