@@ -232,29 +232,29 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.healthContainer" relativePoint="BOTTOMLEFT" x="0" y="-1"></Anchor>
                 </Anchors>
             </Frame>
-          <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar" mixin="GwCastingBarMixin">
-            <BarTexture parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png"/>
-            <Size x="148" y="13"/>
-            <Anchors>
-                <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
-            </Anchors>
-            <Layers>
-                <Layer textureSubLevel="2">
-                    <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
-                        <Size x="215" y="15"/>
-                        <Anchors>
-                            <Anchor point="LEFT"  relativePoint="LEFT" x="7" y="0"></Anchor>
-                        </Anchors>
-                    </FontString>
-                    <FontString parentKey="castingTimeString" justifyH="RIGHT" justifyV="MIDDLE">
-                        <Size x="70" y="15"></Size>
-                        <Anchors>
-                            <Anchor point="RIGHT"   relativePoint="RIGHT" x="-10" y="0"></Anchor>
-                        </Anchors>
-                    </FontString>
-                </Layer>
-            </Layers>
-          </StatusBar>
+            <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar" mixin="GwCastingBarMixin">
+                <BarTexture parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png"/>
+                <Size x="148" y="13"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer textureSubLevel="2">
+                        <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
+                            <Size x="215" y="15"/>
+                            <Anchors>
+                                <Anchor point="LEFT"  relativePoint="LEFT" x="7" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="castingTimeString" justifyH="RIGHT" justifyV="MIDDLE">
+                            <Size x="70" y="15"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT"   relativePoint="RIGHT" x="-10" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </StatusBar>
             <Frame parentKey="auras">
                 <Size x="148" y="100"/>
                 <Anchors>
@@ -391,7 +391,7 @@
                     <Anchor point="TOPRIGHT" relativeKey="$parent.healthContainer" relativePoint="BOTTOMRIGHT" x="0" y="-1"></Anchor>
                 </Anchors>
             </Frame>
-            <StatusBar parentKey="c" inherits="GwStatusBarBar" mixin="GwCastingBarMixin">
+            <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar" mixin="GwCastingBarMixin">
                 <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png"/>
                 <Size x="211" y="13"/>
                 <Anchors>

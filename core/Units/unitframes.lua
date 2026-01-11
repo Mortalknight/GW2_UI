@@ -84,8 +84,8 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
         f.absorbOverlay:ClearAllPoints()
         f.absorbOverlay:SetPoint("TOP")
         f.absorbOverlay:SetPoint("BOTTOM")
-        f.absorbOverlay:SetPoint(anchor1, f.health, anchor2, revert and 4 or -1, 0)
-        f.absorbOverlay:SetWidth(10)
+        f.absorbOverlay:SetPoint(anchor1, f.health, anchor2, revert and 14 or -8, 0)
+        f.absorbOverlay:SetWidth(16)
 
         f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusPowerBarRetailTemplate")
         f.powerbar = f.powerbarContainer.powerbar
@@ -167,7 +167,9 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
             end
         end
         f.castingbarNormal.internalBar:SetTexCoord(1, 0, 0, 1)
-        f.castingbarSpark:SetTexCoord(1, 0, 0, 1)
+        if f.castingbarSpark then
+            f.castingbarSpark:SetTexCoord(1, 0, 0, 1)
+        end
     end
 
     f.powerbar.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
@@ -247,8 +249,8 @@ local function CreateSmallUnitFrame(name)
         f.absorbOverlay:ClearAllPoints()
         f.absorbOverlay:SetPoint("TOP")
         f.absorbOverlay:SetPoint("BOTTOM")
-        f.absorbOverlay:SetPoint("LEFT", f.health, "RIGHT", -1, 0)
-        f.absorbOverlay:SetWidth(10)
+        f.absorbOverlay:SetPoint("LEFT", f.health, "RIGHT", -8, 0)
+        f.absorbOverlay:SetWidth(16)
     else
         f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
         f.antiHeal      = hg.healPrediction.absorbbg.health.antiHeal

@@ -406,8 +406,8 @@ local function CreatePartyFrame(i, isPlayer)
         frame.absorbOverlay:ClearAllPoints()
         frame.absorbOverlay:SetPoint("TOP")
         frame.absorbOverlay:SetPoint("BOTTOM")
-        frame.absorbOverlay:SetPoint("LEFT", frame.health, "RIGHT", -1, 0)
-        frame.absorbOverlay:SetWidth(10)
+        frame.absorbOverlay:SetPoint("LEFT", frame.health, "RIGHT", -8, 0)
+        frame.absorbOverlay:SetWidth(16)
     else
         frame.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
         frame.antiHeal = hg.healPrediction.absorbbg.health.antiHeal
@@ -476,8 +476,8 @@ local function CreatePartyFrame(i, isPlayer)
         petFrame.absorbOverlay:ClearAllPoints()
         petFrame.absorbOverlay:SetPoint("TOP")
         petFrame.absorbOverlay:SetPoint("BOTTOM")
-        petFrame.absorbOverlay:SetPoint("LEFT", petFrame.health, "RIGHT", -1, 0)
-        petFrame.absorbOverlay:SetWidth(10)
+        petFrame.absorbOverlay:SetPoint("LEFT", petFrame.health, "RIGHT", -8, 0)
+        petFrame.absorbOverlay:SetWidth(16)
     else
         petFrame.absorbOverlay = phg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
         petFrame.antiHeal = phg.healPrediction.absorbbg.health.antiHeal
