@@ -101,7 +101,7 @@ local function LoadWorldMapSkin()
     --HideUIPanel(WorldMapFrame)
 
     table.insert(UISpecialFrames, "WorldMapFrame")
-    WorldMapFrame:SetScale(GW.settings.WORLDMAP_SCALE)
+    WorldMapFrame:SetScale(GW.settings.WORLDMAP_POSITION_scale)
     WorldMapFrame:EnableKeyboard(false)
     WorldMapFrame:EnableMouse(true)
     WorldMapFrame:SetFrameStrata("HIGH")
@@ -189,7 +189,7 @@ local function LoadWorldMapSkin()
     scaleMouse:SetScript("OnMouseUp", function(frame)
         frame:SetScript("OnUpdate", nil)
         frame:SetAllPoints(scaleHandle)
-        GW.settings.WORLDMAP_SCALE = WorldMapFrame:GetScale()
+        GW.settings.WORLDMAP_POSITION_scale = WorldMapFrame:GetScale()
         WorldMapFrame:SetScale(WorldMapFrame:GetScale())
         -- Save map frame position
         local pos = GW.settings.WORLDMAP_POSITION
