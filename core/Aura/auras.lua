@@ -9,13 +9,7 @@ if GW.Retail then return end
 local function UpdateTooltip(self)
     if GameTooltip:IsForbidden() then return end
 
-    if GW.Retail then
-        if self.isHarmful then
-            GameTooltip:SetUnitDebuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
-        else
-            GameTooltip:SetUnitBuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
-        end
-    elseif self.index then
+    if self.index then
         GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self.index, self.isHarmful and "HARMFUL" or "HELPFUL")
     end
 end
@@ -233,18 +227,16 @@ local function updateAura(element, unit, data, position, isBuff)
     button.isHarmful = data.isHarmful
     button.index = nil -- reset
 
-    if not GW.Retail then
-         --loop to get the index
-        for i = 1, 40 do
-            local auraData = C_UnitAuras.GetAuraDataByIndex(unit, i, data.isHelpful and "HELPFUL" or "HARMFUL")
-            if auraData then
-                if auraData.auraInstanceID == data.auraInstanceID then
-                    button.index = i
-                    break
-                end
-            else
+    --loop to get the index
+    for i = 1, 40 do
+        local auraData = C_UnitAuras.GetAuraDataByIndex(unit, i, data.isHelpful and "HELPFUL" or "HARMFUL")
+        if auraData then
+            if auraData.auraInstanceID == data.auraInstanceID then
+                button.index = i
                 break
             end
+        else
+            break
         end
     end
 
