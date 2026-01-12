@@ -57,6 +57,37 @@ local RAD_AT_END = -1
 
 GwDodgeBarMixin = {}
 
+-- Retail specifgic code
+function GwDodgeBarMixin:UpdateCooldown(durationObject)
+    local statusbar = self.statusbar
+    if not statusbar then return end
+
+    if durationObject then
+        statusbar:SetTimerDuration(durationObject, Enum.StatusBarInterpolation.ExponentialEaseOut)
+    end
+end
+
+function GwDodgeBarMixin:UpdateChargeText(currentCharges, maxCharges)
+    local text = self.chargeText
+    if not text then return end
+
+    text:SetText(currentCharges)
+    text:SetAlphaFromBoolean(self.hasCharges, 1, 0)
+end
+
+function GwDodgeBarMixin:SetBarProgress(progress)
+    local statusbar = self.statusbar
+    if not statusbar then return end
+
+    if progress < 0 then
+        progress = 0
+    elseif progress > 1 then
+        progress = 1
+    end
+    statusbar:SetValue(progress, Enum.StatusBarInterpolation.ExponentialEaseOut)
+end
+--- end
+
 function GwDodgeBarMixin:OnFinished()
     -- on finishing refill, unregister any event notifications until next spellcast
     -- also force bar to "full" state just in case weirdness happened somewhere
@@ -138,6 +169,7 @@ function GwDodgeBarMixin:InitBar(pew)
     -- do everything required to make the dodge bar a secure clickable button
     local overrideSpellID = GW.private.PLAYER_TRACKED_DODGEBAR_SPELL_ID
     self.gwMaxCharges = nil
+    self.hasCharges = false
     self.spellId = overrideSpellID and overrideSpellID > 0 and overrideSpellID or nil
 
     if pew or not InCombatLockdown() then
@@ -205,7 +237,28 @@ function GwDodgeBarMixin:SetupBar()
     end
 
     local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
+    if GW.Retail then
+        local maxCharges = spellChargeInfo and spellChargeInfo.maxCharges
+        self.hasCharges = maxCharges and maxCharges > 1
+        self:UpdateChargeText(spellChargeInfo.currentCharges, maxCharges)
+
+        local durationObject
+        if self.hasCharges then
+            durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
+        elseif C_Spell.GetSpellCooldownDuration then
+            durationObject = C_Spell.GetSpellCooldownDuration(self.spellId)
+        end
+        if durationObject then
+            self:UpdateCooldown(durationObject)
+        else
+            self:SetBarProgress(1)
+        end
+
+        return
+    end
+
     local start, duration = spellChargeInfo and spellChargeInfo.cooldownStartTime, spellChargeInfo and spellChargeInfo.cooldownDuration
+
 
     if not spellChargeInfo or (spellChargeInfo and (not spellChargeInfo.currentCharges or not spellChargeInfo.maxCharges or spellChargeInfo.currentCharges > spellChargeInfo.maxCharges)) then
         spellChargeInfo = spellChargeInfo or {}
@@ -249,7 +302,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
         local spellId = select(3, ...)
         if spellId ~= self.spellId then return end
         self.gwNeedDrain = true
-        if (self.gwMaxCharges and self.gwMaxCharges > 1) then
+        if (GW.Retail and self.hasCharges) or (not GW.Retail and self.gwMaxCharges and self.gwMaxCharges > 1) then
             self:RegisterEvent("SPELL_UPDATE_CHARGES")
         else
             self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
@@ -257,16 +310,37 @@ function GwDodgeBarMixin:OnEvent(event, ...)
     elseif event == "SPELL_UPDATE_COOLDOWN" then
         -- only registered when our dodge skill is actively on cooldown
         if not GW.inWorld or not self.spellId then return end
-        local spellCooldownInfo = GW.GetSpellCooldown(self.spellId)
-        if spellCooldownInfo.startTime and spellCooldownInfo.startTime ~= 0 and spellCooldownInfo.duration and spellCooldownInfo.duration ~= 0 then
-            self:UpdateAnim(spellCooldownInfo.startTime, spellCooldownInfo.duration, 0, 1)
+        if GW.Retail then
+            local durationObject = C_Spell.GetSpellCooldownDuration(self.spellId)
+            if durationObject then
+                self:UpdateCooldown(durationObject)
+            else
+                self:SetBarProgress(1)
+            end
+        else
+            local spellCooldownInfo = GW.GetSpellCooldown(self.spellId)
+            if spellCooldownInfo.startTime and spellCooldownInfo.startTime ~= 0 and spellCooldownInfo.duration and spellCooldownInfo.duration ~= 0 then
+                self:UpdateAnim(spellCooldownInfo.startTime, spellCooldownInfo.duration, 0, 1)
+            end
         end
     elseif event == "SPELL_UPDATE_CHARGES" then
         -- only registered when our dodge skill is actively on cooldown
         if not GW.inWorld or not self.spellId then return end
         local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
-        if spellChargeInfo.cooldownStartTime and spellChargeInfo.cooldownStartTime ~= 0 and spellChargeInfo.cooldownDuration and spellChargeInfo.cooldownDuration ~= 0 then
-            self:UpdateAnim(spellChargeInfo.cooldownStartTime, spellChargeInfo.cooldownDuration, spellChargeInfo.currentCharges, spellChargeInfo.maxCharges)
+        if GW.Retail and not self.isSkyrindingBar then -- skyriding is not secret
+            local durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
+            local currentCharges = spellChargeInfo and spellChargeInfo.currentCharges or nil
+            local maxCharges = spellChargeInfo and spellChargeInfo.maxCharges or nil
+            self:UpdateChargeText(currentCharges, maxCharges)
+            if durationObject then
+                self:UpdateCooldown(durationObject)
+            else
+                self:SetBarProgress(1)
+            end
+        else
+            if spellChargeInfo.cooldownStartTime and spellChargeInfo.cooldownStartTime ~= 0 and spellChargeInfo.cooldownDuration and spellChargeInfo.cooldownDuration ~= 0 then
+                self:UpdateAnim(spellChargeInfo.cooldownStartTime, spellChargeInfo.cooldownDuration, spellChargeInfo.currentCharges, spellChargeInfo.maxCharges)
+            end
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- do the stuff that must be done before combat lockdown takes effect
@@ -284,15 +358,18 @@ end
 
 function GwDodgeBarMixin:OnEnter(_, override)
     local bar = override and self or self.skyringingBarShown and self.skyrindingBar or self
-    local af = bar.arcfill
-    for _, v in ipairs(af.masked) do
-        v:AddMaskTexture(af.mask_hover)
-        v:RemoveMaskTexture(af.mask_normal)
+
+    if not GW.Retail or self.skyringingBarShown then
+        local af = bar.arcfill
+        for _, v in ipairs(af.masked) do
+            v:AddMaskTexture(af.mask_hover)
+            v:RemoveMaskTexture(af.mask_normal)
+        end
+        af.fill:AddMaskTexture(af.maskr_hover)
+        af.fill:RemoveMaskTexture(af.maskr_normal)
+        bar.border.normal:Hide()
+        bar.border.hover:Show()
     end
-    af.fill:AddMaskTexture(af.maskr_hover)
-    af.fill:RemoveMaskTexture(af.maskr_normal)
-    bar.border.normal:Hide()
-    bar.border.hover:Show()
 
     if bar.spellId then
         GameTooltip_SetDefaultAnchor(GameTooltip, bar)
@@ -307,18 +384,20 @@ end
 
 function GwDodgeBarMixin:OnLeave(_, override)
     local bar = override and self or self.skyringingBarShown and self.skyrindingBar or self
-    local af = bar.arcfill
-    for _, v in ipairs(af.masked) do
-        v:AddMaskTexture(af.mask_normal)
-        v:RemoveMaskTexture(af.mask_hover)
+    if not GW.Retail or self.skyringingBarShown or override then
+        local af = bar.arcfill
+        for _, v in ipairs(af.masked) do
+            v:AddMaskTexture(af.mask_normal)
+            v:RemoveMaskTexture(af.mask_hover)
+        end
+        af.fill:AddMaskTexture(af.maskr_normal)
+        af.fill:RemoveMaskTexture(af.maskr_hover)
+        af.fillFractions:AddMaskTexture(af.maskr_fraction)
+        af.spark:AddMaskTexture(af.maskr_normal)
+        af.spark:RemoveMaskTexture(af.maskr_hover)
+        bar.border.hover:Hide()
+        bar.border.normal:Show()
     end
-    af.fill:AddMaskTexture(af.maskr_normal)
-    af.fill:RemoveMaskTexture(af.maskr_hover)
-    af.fillFractions:AddMaskTexture(af.maskr_fraction)
-    af.spark:AddMaskTexture(af.maskr_normal)
-    af.spark:RemoveMaskTexture(af.maskr_hover)
-    bar.border.hover:Hide()
-    bar.border.normal:Show()
 
     -- hide the spell tooltip
     GameTooltip_Hide()
@@ -373,6 +452,7 @@ function GwDodgeBarMixin:LoadSkiridingBar(parent)
     fmdb.asTargetFrame = self.asTargetFrame
     fmdb.dodgeBar = self
     self.skyrindingBar = fmdb
+    fmdb.isSkyrindingBar = true
     GW.AddMouseMotionPropagationToChildFrames(self.arcfill)
     GW.AddMouseMotionPropagationToChildFrames(self.border)
 
@@ -435,9 +515,6 @@ function GwDodgeBarMixin:LoadSkiridingBar(parent)
         fmdb:SkyridingBarOnEvent(event, ...)
     end)
 
-    fmdb:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
-    fmdb:RegisterEvent("UPDATE_UI_WIDGET")
-
     MixinHideDuringPetAndOverride(fmdb)
 
     Debug("LoadSkiridingBar done")
@@ -448,16 +525,18 @@ local function LoadDodgeBar(parent, asTargetFrame)
     Debug("LoadDodgeBar start")
 
     -- this bar gets a global name for use in key bindings
-    local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, "GwDodgeBarTmpl")
+    local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, GW.Retail and "GwDodgeBarRetailTmpl" or "GwDodgeBarTmpl")
     fmdb.asTargetFrame = asTargetFrame
     fmdb:RegisterForClicks("AnyUp", "AnyDown")
     if fmdb.asTargetFrame then
         parent.dodgebar = fmdb
         fmdb.arcfill:SetSize(80, 72)
         fmdb.arcfill.mask_normal:SetSize(80, 72)
-        fmdb.arcfill.mask_hover:SetSize(80, 72)
         fmdb.arcfill.maskr_normal:SetSize(80, 72)
-        fmdb.arcfill.maskr_hover:SetSize(80, 72)
+        if not GW.Retail then
+            fmdb.arcfill.mask_hover:SetSize(80, 72)
+            fmdb.arcfill.maskr_hover:SetSize(80, 72)
+        end
         fmdb.border:SetSize(80, 72)
         fmdb:SetPoint("TOPLEFT", parent, "TOPLEFT", -9.5, 5)
         fmdb:SetFrameStrata("BACKGROUND")
@@ -472,23 +551,45 @@ local function LoadDodgeBar(parent, asTargetFrame)
 
     -- setting these values in the XML creates animation glitches so we do it here instead
     local af = fmdb.arcfill
-    af.fill:SetRotation(FULL_IN_RAD)
-    af.maskr_hover:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
     af.maskr_normal:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
+    if GW.Retail then
+        af.bg:AddMaskTexture(af.mask_normal)
 
-    -- create the arc drain/fill animations
-    local ag = af.fill:CreateAnimationGroup()
-    local a1 = ag:CreateAnimation("rotation")
-    local a2 = ag:CreateAnimation("rotation")
-    a1:SetOrder(1)
-    a2:SetOrder(2)
-    af.gwAnimGroup = ag
-    af.gwAnimDrain = a1
-    af.gwAnimFill = a2
+        fmdb.statusbar = CreateFrame("StatusBar", nil, fmdb)
+        fmdb.statusbar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill.png")
+        fmdb.statusbar:SetPoint("TOPLEFT", af, "TOPLEFT", 8, 0)
+        fmdb.statusbar:SetPoint("BOTTOMRIGHT", af, "BOTTOMRIGHT", -8, 0)
+        fmdb.statusbar:SetStatusBarColor(1.0, 0.682, 0.031, 1.0)
+        local statusTexture = fmdb.statusbar:GetStatusBarTexture()
+        statusTexture:SetTexCoord(0.08, 0.92, 0.0, 1.0)
+        af.maskr_normal:SetPoint("CENTER", af, "CENTER", 0, 0)
+        statusTexture:AddMaskTexture(af.maskr_normal)
+
+        fmdb.chargeText = fmdb.statusbar:CreateFontString(nil, "OVERLAY")
+        fmdb.chargeText:SetPoint("CENTER", fmdb.statusbar, "CENTER", 0, 47)
+        fmdb.chargeText:SetFont(UNIT_NAME_FONT, 7, "OUTLINE")
+        fmdb.chargeText:SetShadowColor(0, 0, 0, 1)
+        fmdb.chargeText:SetShadowOffset(1, -1)
+        fmdb.chargeText:SetTextColor(1.0, 0.95, 0.8, 0.85)
+        fmdb.chargeText:Show()
+    else
+        af.fill:SetRotation(FULL_IN_RAD)
+        af.maskr_hover:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
+
+        -- create the arc drain/fill animations
+        local ag = af.fill:CreateAnimationGroup()
+        local a1 = ag:CreateAnimation("rotation")
+        local a2 = ag:CreateAnimation("rotation")
+        a1:SetOrder(1)
+        a2:SetOrder(2)
+        af.gwAnimGroup = ag
+        af.gwAnimDrain = a1
+        af.gwAnimFill = a2
+    end
 
     -- setup dodgebar event handling
     fmdb.skyringingBarShown = false
-    fmdb:OnLeave(nil, true)
+    fmdb:OnLeave(nil, not GW.Retail)
     fmdb:SetScript("OnEnter", fmdb.OnEnter)
     fmdb:SetScript("OnLeave", fmdb.OnLeave)
     fmdb:SetScript("OnEvent", fmdb.OnEvent)

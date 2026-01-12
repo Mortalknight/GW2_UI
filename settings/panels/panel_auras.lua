@@ -2,6 +2,8 @@ local _, GW = ...
 local L = GW.L
 
 local function LoadAurasPanel(sWindow)
+    if GW.Retail then return end
+
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
 
     local p_auras = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
@@ -15,7 +17,7 @@ local function LoadAurasPanel(sWindow)
     p_auras.header:SetWidth(p_auras.header:GetStringWidth())
     p_auras.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     p_auras.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
-    p_auras.breadcrumb:SetText(GENERAL)
+    p_auras.breadcrumb:SetText("")
 
     local p_indicator = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     p_indicator.panelId = "auras_indicators"
@@ -132,14 +134,13 @@ local function LoadAurasPanel(sWindow)
         end)
     end
 
-    --[[ -- Auras a secret and we can not check them
     p_missingBuffs:AddOptionDropdown(L["Show Missing Raid Buffs Bar"], L["Whether to display a floating bar showing your missing buffs. This can be moved via the 'Move HUD' interface."], { getterSetter = "MISSING_RAID_BUFF", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateVisibility() end end, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["In raid"], L["In group or in raid"]}, hidden = not GW.Retail})
     p_missingBuffs:AddOption(L["Dimmed"], nil, { getterSetter = "MISSING_RAID_BUFF_dimmed", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end, hidden = not GW.Retail})
     p_missingBuffs:AddOption(L["Greyed out"], nil, { getterSetter = "MISSING_RAID_BUFF_grayed_out", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end, hidden = not GW.Retail})
     p_missingBuffs:AddOption(L["Animated"], L["If enabled, an animated border will surround the missing raid buffs"], { getterSetter = "MISSING_RAID_BUFF_animated", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end, hidden = not GW.Retail})
     p_missingBuffs:AddOption(L["Invert raid buff bar"], L["If enabled, the above settings will apply to buffs you have, instead of buffs you are missing"], { getterSetter = "MISSING_RAID_BUFF_INVERT", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end, forceNewLine = true, hidden = not GW.Retail})
     p_missingBuffs:AddOptionText(L["Custom buff"], L["Enter the spell ID of the buff you wish to track. Only one spell ID is supported. To find the spell ID of the buff you want to track, enable IDs in the tooltip settings and mouse over the icon in your aura bar."], { getterSetter = "MISSING_RAID_BUFF_custom_id", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateCustomSpell() end end, hidden = not GW.Retail})
-]]
+
     sWindow:AddSettingsPanel(p, L["Raid Auras"], L["Edit which buffs and debuffs are shown."], {{name = GENERAL, frame = p_auras}, {name = L["Raid Indicators"], frame = p_indicator}})
 end
 GW.LoadAurasPanel = LoadAurasPanel

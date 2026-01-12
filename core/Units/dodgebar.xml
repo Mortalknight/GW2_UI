@@ -3,6 +3,8 @@
 
     <Button name="GwDodgeBarTmpl" virtual="true" inherits="SecureActionButtonTemplate,SecureHandlerStateTemplate,UnsecureDodgeBar" frameStrata="MEDIUM" frameLevel="1"/>
 
+    <Button name="GwDodgeBarRetailTmpl" virtual="true" inherits="SecureActionButtonTemplate,SecureHandlerStateTemplate,UnsecureDodgeBarRetailTemplate" frameStrata="MEDIUM" frameLevel="1"/>
+
     <Button name="UnsecureDodgeBar" virtual="true"  frameStrata="MEDIUM" frameLevel="1" mixin="GwDodgeBarMixin">
         <Size x="128" y="48"></Size>
         <Frames>
@@ -13,7 +15,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND" textureSubLevel="1">
-                        <Texture parentArray="masked" file="Interface/AddOns/GW2_UI/textures/dodgebar/fill.png">
+                        <Texture parentKey="bg" parentArray="masked" file="Interface/AddOns/GW2_UI/textures/dodgebar/fill.png">
                             <Color r="0.0" g="0.0" b="0.0" a="0.66"/>
                         </Texture>
                     </Layer>
@@ -111,5 +113,52 @@
             </Frame>
         </Frames>
     </Button>
+
+     <Button name="UnsecureDodgeBarRetailTemplate" virtual="true"  frameStrata="MEDIUM" frameLevel="1" mixin="GwDodgeBarMixin">
+        <Size x="128" y="48"></Size>
+        <Frames>
+            <Frame parentKey="arcfill">
+                <Size x="128" y="128"/>
+                <Anchors>
+                    <Anchor point="TOP"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND" textureSubLevel="1">
+                        <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/dodgebar/fill.png">
+                            <Color r="0.0" g="0.0" b="0.0" a="0.66"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <MaskTexture parentKey="mask_normal" file="Interface/AddOns/GW2_UI/textures/dodgebar/mask-normal.png" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+                            <Size x="128" y="128"/>
+                            <Anchors>
+                                <Anchor point="CENTER"/>
+                            </Anchors>
+                        </MaskTexture>
+
+                        <!-- masks for the rotating fill bar -->
+                       <MaskTexture parentKey="maskr_normal" file="Interface/AddOns/GW2_UI/textures/dodgebar/mask-normal.png" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+                            <Size x="128" y="128"/>
+                            <Anchors>
+                                <Anchor point="CENTER"/>
+                            </Anchors>
+                        </MaskTexture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame parentKey="border">
+                <Size x="128" y="128"/>
+                <Anchors>
+                    <Anchor point="TOP"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BORDER" textureSubLevel="3">
+                        <Texture parentKey="normal" file="Interface/AddOns/GW2_UI/textures/dodgebar/border-normal.png"/>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Button>
+
 
 </Ui>
