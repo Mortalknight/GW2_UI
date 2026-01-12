@@ -553,7 +553,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
         statusTexture:AddMaskTexture(af.maskr_normal)
 
         fmdb.chargeText = fmdb.statusbar:CreateFontString(nil, "OVERLAY")
-        fmdb.chargeText:SetPoint("CENTER", fmdb.statusbar, "CENTER", 0, 47)
+        fmdb.chargeText:SetPoint("CENTER", fmdb.statusbar, "CENTER", 0, (fmdb.asTargetFrame and 27 or 47))
         fmdb.chargeText:SetFont(UNIT_NAME_FONT, 7, "OUTLINE")
         fmdb.chargeText:SetShadowColor(0, 0, 0, 1)
         fmdb.chargeText:SetShadowOffset(1, -1)
