@@ -907,7 +907,7 @@ local function ApplyPvPUISkin()
     HonorFrame:GwStripTextures()
     ConquestFrame:GwStripTextures()
 
-    for _, v in pairs({ HonorFrame, ConquestFrame, LFGListPVPStub }) do
+    for _, v in pairs({ HonorFrame, ConquestFrame, LFGListPVPStub, TrainingGroundsFrame }) do
         GW.AddDetailsBackground(v, nil, -10)
     end
 
@@ -1026,7 +1026,6 @@ local function ApplyPvPUISkin()
             insets = {left = 2, right = 2, top = 2, bottom = 2}
         })
     end
-    --- FEHLER
 
     -- PvP StatusBars
     for _, Frame in pairs({ HonorFrame, ConquestFrame }) do
@@ -1086,6 +1085,20 @@ local function ApplyPvPUISkin()
             end
         end
     end)
+
+    --12.0 Training Ground
+    TrainingGroundsFrame.QueueButton:GwSkinButton(false, true)
+    TrainingGroundsFrameTypeDropdown:GwHandleDropDownBox()
+    TrainingGroundsFrame.BonusTrainingGroundList.ShadowOverlay:Hide()
+    TrainingGroundsFrame.BonusTrainingGroundList.WorldBattlesTexture:Hide()
+    GW.HandleTrimScrollBar(TrainingGroundsFrame.SpecificTrainingGroundList.ScrollBar)
+    TrainingGroundsFrame.Inset:GwStripTextures()
+    TrainingGroundsFrame.RoleList.TankIcon.checkButton:GwSkinCheckButton()
+    TrainingGroundsFrame.RoleList.HealerIcon.checkButton:GwSkinCheckButton()
+    TrainingGroundsFrame.RoleList.DPSIcon.checkButton:GwSkinCheckButton()
+    TrainingGroundsFrame.RoleList.TankIcon.checkButton:SetSize(15, 15)
+    TrainingGroundsFrame.RoleList.HealerIcon.checkButton:SetSize(15, 15)
+    TrainingGroundsFrame.RoleList.DPSIcon.checkButton:SetSize(15, 15)
 
 end
 
