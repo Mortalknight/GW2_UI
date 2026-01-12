@@ -74,18 +74,6 @@ function GwDodgeBarMixin:UpdateChargeText(currentCharges)
     text:SetText(currentCharges)
     text:SetAlphaFromBoolean(self.hasCharges, 1, 0)
 end
-
-function GwDodgeBarMixin:SetBarProgress(progress)
-    local statusbar = self.statusbar
-    if not statusbar then return end
-
-    if progress < 0 then
-        progress = 0
-    elseif progress > 1 then
-        progress = 1
-    end
-    statusbar:SetValue(progress, Enum.StatusBarInterpolation.ExponentialEaseOut)
-end
 --- end
 
 function GwDodgeBarMixin:OnFinished()
@@ -251,7 +239,7 @@ function GwDodgeBarMixin:SetupBar()
         if durationObject then
             self:UpdateCooldown(durationObject)
         else
-            self:SetBarProgress(1)
+            self.statusbar:SetValue(1, Enum.StatusBarInterpolation.ExponentialEaseOut)
         end
 
         return
@@ -315,7 +303,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
             if durationObject then
                 self:UpdateCooldown(durationObject)
             else
-                self:SetBarProgress(1)
+                self.statusbar:SetValue(1, Enum.StatusBarInterpolation.ExponentialEaseOut)
             end
         else
             local spellCooldownInfo = GW.GetSpellCooldown(self.spellId)
@@ -334,7 +322,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
             if durationObject then
                 self:UpdateCooldown(durationObject)
             else
-                self:SetBarProgress(1)
+                self.statusbar:SetValue(1, Enum.StatusBarInterpolation.ExponentialEaseOut)
             end
         else
             if spellChargeInfo.cooldownStartTime and spellChargeInfo.cooldownStartTime ~= 0 and spellChargeInfo.cooldownDuration and spellChargeInfo.cooldownDuration ~= 0 then
