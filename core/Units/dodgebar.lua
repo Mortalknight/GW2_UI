@@ -67,7 +67,7 @@ function GwDodgeBarMixin:UpdateCooldown(durationObject)
     end
 end
 
-function GwDodgeBarMixin:UpdateChargeText(currentCharges, maxCharges)
+function GwDodgeBarMixin:UpdateChargeText(currentCharges)
     local text = self.chargeText
     if not text then return end
 
@@ -240,7 +240,7 @@ function GwDodgeBarMixin:SetupBar()
     if GW.Retail then
         local maxCharges = spellChargeInfo and spellChargeInfo.maxCharges
         self.hasCharges = maxCharges and maxCharges > 1
-        self:UpdateChargeText(spellChargeInfo.currentCharges, maxCharges)
+        self:UpdateChargeText(spellChargeInfo.currentCharges)
 
         local durationObject
         if self.hasCharges then
@@ -329,9 +329,8 @@ function GwDodgeBarMixin:OnEvent(event, ...)
         local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
         if GW.Retail and not self.isSkyrindingBar then -- skyriding is not secret
             local durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
-            local currentCharges = spellChargeInfo and spellChargeInfo.currentCharges or nil
-            local maxCharges = spellChargeInfo and spellChargeInfo.maxCharges or nil
-            self:UpdateChargeText(currentCharges, maxCharges)
+            local currentCharges = spellChargeInfo and spellChargeInfo.currentCharges
+            self:UpdateChargeText(currentCharges)
             if durationObject then
                 self:UpdateCooldown(durationObject)
             else
