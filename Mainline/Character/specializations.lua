@@ -46,6 +46,7 @@ local SPEC_FORMAT_STRINGS = {
 	[270] = "monk-mistweaver",
 	[577] = "demonhunter-havoc",
 	[581] = "demonhunter-vengeance",
+    [1480] = "demonhunter-devourer",
 	[1467] = "evoker-devastation",
 	[1468] = "evoker-preservation",
     [1473] = "evoker-augmentation",

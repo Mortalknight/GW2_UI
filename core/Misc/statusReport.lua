@@ -79,8 +79,10 @@ local EnglishSpecName = {
     [73] = "Protection",
     [577] = "Havoc",
     [581] = "Vengeance",
+    [1480] = "Devourer",
     [1467] = "Devastation",
     [1468] = "Preservation",
+    [1473] = "Augmentation",
 }
 
 local function GetEnglishSpecName()
