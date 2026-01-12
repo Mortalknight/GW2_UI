@@ -230,12 +230,7 @@ function GwDodgeBarMixin:SetupBar()
         self.hasCharges = maxCharges and maxCharges > 1
         self:UpdateChargeText(spellChargeInfo.currentCharges)
 
-        local durationObject
-        if self.hasCharges then
-            durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
-        elseif C_Spell.GetSpellCooldownDuration then
-            durationObject = C_Spell.GetSpellCooldownDuration(self.spellId)
-        end
+        local durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
         if durationObject then
             self:UpdateCooldown(durationObject)
         else
@@ -299,7 +294,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
         -- only registered when our dodge skill is actively on cooldown
         if not GW.inWorld or not self.spellId then return end
         if GW.Retail then
-            local durationObject = C_Spell.GetSpellCooldownDuration(self.spellId)
+            local durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
             if durationObject then
                 self:UpdateCooldown(durationObject)
             else
