@@ -11,9 +11,6 @@ local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
-local colorNormal = CreateColor(1, 1, 1)
-local colorProtected = CreateColor(0.7, 0.7, 0.7)
-
 local function castingbarOnUpdate(self)
     if (self.casting or self.channeling or self.empowering) and self.showCastingbarData and self.castingTimeString then
         local durationObject = self:GetTimerDuration()
@@ -599,7 +596,6 @@ function GwUnitFrameMixin:CastInterruptible(event)
 
     self.notInterruptible = event == 'UNIT_SPELLCAST_NOT_INTERRUPTIBLE'
 
-    self.castingbarNormal.GetStatusBarTexture():SetVertexColorFromBoolean(self.notInterruptible, colorProtected, colorNormal)
     self.castingbarNormal:GetStatusBarTexture():SetDesaturated(self.notInterruptible)
 end
 
@@ -695,7 +691,6 @@ function GwUnitFrameMixin:StartCastbar(event)
 
     if GW.Retail then
         self.castingbarNormal:SetTimerDuration(duration, Enum.StatusBarInterpolation.Immediate, direction)
-        self.castingbarNormal:GetStatusBarTexture():SetVertexColorFromBoolean(notInterruptible, colorProtected, colorNormal)
         self.castingbarNormal:GetStatusBarTexture():SetDesaturated(notInterruptible)
     else
         GW.AddToAnimation(
