@@ -1,3 +1,7 @@
+9.0.0
+NEW
+    - TBC support
+
 8.6.2
 FIXES
     - Used wrong setting for worldmap scale for era

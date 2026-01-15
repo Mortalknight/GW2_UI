@@ -6,6 +6,7 @@ if not lib then return end
 local Retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 local Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 local Cata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+local TBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 
 local DebuffColors = {}
 DebuffColors.none = {r = 220 / 255, g = 0, b = 0}
@@ -1131,10 +1132,15 @@ do
     local frame = lib.frame
     frame:SetScript("OnEvent", UpdateDispels)
     frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
     frame:RegisterEvent("PLAYER_LOGIN")
 
-    if Retail or Cata then
+    if TBC then
+        frame:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+    else
+        frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    end
+
+    if not Classic then
         frame:RegisterEvent("PLAYER_TALENT_UPDATE")
     end
 

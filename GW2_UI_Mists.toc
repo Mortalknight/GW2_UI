@@ -8,6 +8,18 @@
 ## X-Curse-Project-ID: 94310
 ## X-Wago-ID: Mj6jXpGR
 ## DefaultState: Enabled
+## IconTexture: Interface\AddOns\GW2_UI\Textures\gwlogo.png
+## Category-enUS: UI Overhaul
+## Category-deDE: UI-Überholung
+## Category-esES: Renovación de la Interfaz de Usuario
+## Category-esMX: Renovación de la Interfaz de Usuario
+## Category-frFR: Révision de l'Interface Utilisateur
+## Category-itIT: Revisione dell'interfaccia utent
+## Category-koKR: UI 개편
+## Category-ptBR: Reformulação da Interface do Usuário
+## Category-ruRU: Переработка UI
+## Category-zhCN: UI整合
+## Category-zhTW: UI大改
 
 ## Author: deadend06, Winglord89(Nils89), nezroy
 

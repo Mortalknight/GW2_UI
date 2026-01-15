@@ -358,7 +358,7 @@ local function LoadPetFrame(lm)
     end
     playerPetFrame:SetActionButtonPositionAndStyle()
 
-    if GW.Retail then
+    if GW.Retail or GW.TBC then
         PetActionBar.ignoreFramePositionManager = true
         PetActionBar:GwKillEditMode()
 

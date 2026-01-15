@@ -1231,15 +1231,20 @@ local function LoadTooltips()
     hooksecurefunc(GameTooltip, "SetHyperlink", SetHyperlink)
     hooksecurefunc(ItemRefTooltip, "SetHyperlink", SetHyperlink)
 
-    if TooltipDataProcessor and not GW.Mists then
+    if GW.Retail then
         hooksecurefunc("EmbeddedItemTooltip_SetSpellWithTextureByID", EmbeddedItemTooltip_ID)
         hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
-        hooksecurefunc(GameTooltip, "SetUnitDebuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)
-        hooksecurefunc(GameTooltip, "SetUnitBuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)
-        hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
         hooksecurefunc("TaskPOI_OnEnter", AddQuestID)
         hooksecurefunc("BattlePetToolTip_Show", AddBattlePetID)
+        hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
+    end
 
+    if GameTooltip.SetUnitDebuffByAuraInstanceID then
+        hooksecurefunc(GameTooltip, "SetUnitDebuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)
+        hooksecurefunc(GameTooltip, "SetUnitBuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)
+    end
+
+    if TooltipDataProcessor and not GW.Mists then
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetItem)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)

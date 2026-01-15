@@ -1486,7 +1486,7 @@ GW.AddForProfiling("classpowers", "setMage", setMage)
 
 -- WARLOCK
 local function powerSoulshard(self, event, ...)
-    if event == "LEARNED_SPELL_IN_TAB" then
+    if event == "LEARNED_SPELL_IN_TAB" or event == "LEARNED_SPELL_IN_SKILL_LINE" then
         updateTextureBasedOnCondition(self)
         return
     end
@@ -1603,7 +1603,11 @@ local function setWarlock(f)
         f:RegisterEvent("UNIT_DISPLAYPOWER")
     end
     -- Register "LEARNED_SPELL_IN_TAB" so we can check for the green fire spell and check an login
-    f:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    if GW.TBC then
+        f:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+    else
+        f:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    end
     f.useRedTexture = false
 
     if GW.Retail then

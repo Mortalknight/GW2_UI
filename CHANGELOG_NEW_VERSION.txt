@@ -1,18 +1,3 @@
-8.6.2
-FIXES
-    - Used wrong setting for worldmap scale for era
-
-8.6.1
-FIXES
-    - Worldmap position and scale is not saved (era)
-    - FCT default style uses now a fallback from on nameplate anchor
-
-CHANGES
-    - XP bar rework
-
-8.6.0
+9.0.0
 NEW
-    - Add option to invert multi actionbars, to follow the blizzard layout
-
-FIXES
-    - Chatframe fixes
+    - TBC support

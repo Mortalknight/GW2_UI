@@ -55,7 +55,7 @@
         </Layers>
     </Button>
 
-    <Frame name="GwSettingsPanelTmpl" virtual="true" Mixin="GwSettingsPanelMixin">
+    <Frame name="GwSettingsPanelTmpl" virtual="true" Mixin="GwSettingsPanelMixin" hidden="true">
         <Anchors>
             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
             <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"/>

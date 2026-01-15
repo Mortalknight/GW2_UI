@@ -653,8 +653,11 @@ local function LoadXPBar()
         GW.MixinHideDuringOverride(experiencebar)
     end
 
-    if GW.Retail then
+    if GW.Retail or GW.TBC then
         StatusTrackingBarManager:GwKill()
+    end
+
+    if GW.Retail then
         PetBattleFrameXPBar:GwKill()
         GW.LoadUpcomingSpells()
 

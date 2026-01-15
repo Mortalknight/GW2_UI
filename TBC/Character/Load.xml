@@ -1,0 +1,14 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file ="character.xml"/>
+    <Include file ="reputation.xml"/>
+    <Include file ="spellbook.xml"/>
+    <Include file ="talents.xml"/>
+    <Script file ="stats.lua"/>
+    <Script file ="advanced_stats.lua"/>
+    <Script file ="character.lua"/>
+    <Script file ="reputation.lua"/>
+    <Script file ="skills.lua"/>
+    <Script file ="spellbook.lua"/>
+    <Script file ="talents.lua"/>
+    <Script file ="windowManager.lua"/>
+</Ui>

@@ -291,9 +291,7 @@ local function LoadHealthGlobe()
     rep:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     -- grab the TotemFramebuttons to our own Totem Frame
-    if not GW.Classic then
-        GW.CreateTotemBar()
-    end
+    GW.CreateTotemBar()
 
     -- setup anim to flash the PvP marker
     local pvp = hg.pvp

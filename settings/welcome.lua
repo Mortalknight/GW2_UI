@@ -73,7 +73,7 @@ local function button1_OnClick()
 
                 -- move general bottom left
                 if id == 1 then
-                    if GW.Retail then
+                    if GW.Retail or GW.TBC then
                         -- this needs to be done via the edit mode lib
                         LEMO:LoadLayouts()
                         local doesGw2LayoutExists = LEMO:DoesLayoutExist("GW2_Layout")

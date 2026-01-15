@@ -1,0 +1,14 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Script file="gamemenu.lua"/>
+    <Script file="addonManager.lua"/>
+    <Script file="macro.lua"/>
+    <Script file="worldmap.lua"/>
+    <Script file="flightmap.lua"/>
+    <Script file="timeManager.lua"/>
+    <Script file="merchant.lua"/>
+    <Script file="questLog.lua"/>
+    <Script file="questTimers.lua"/>
+    <Script file="colorPicker.lua"/>
+</Ui>

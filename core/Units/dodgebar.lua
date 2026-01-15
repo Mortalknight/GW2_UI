@@ -265,9 +265,9 @@ function GwDodgeBarMixin:OnEvent(event, ...)
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- do the stuff that must be done before combat lockdown takes effect
         self:InitBar(true)
-    elseif event == "SPELLS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" or event == "LEARNED_SPELL_IN_TAB" then
+    elseif event == "SPELLS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" or event == "LEARNED_SPELL_IN_TAB" or event == "LEARNED_SPELL_IN_SKILL_LINE" then
         -- do remaining spell detail stuff that is (usually) not available yet in PEW or if we are not in world
-        if event ~= "LEARNED_SPELL_IN_TAB" and (not GW.inWorld or not self.spellId) then return end
+        if (event ~= "LEARNED_SPELL_IN_TAB" and event ~= "LEARNED_SPELL_IN_SKILL_LINE") and (not GW.inWorld or not self.spellId) then return end
         -- add a delay because spell infos sometimes not ready
         C_Timer.After(0.33, function()
             self:InitBar(false)
@@ -488,8 +488,11 @@ local function LoadDodgeBar(parent, asTargetFrame)
     fmdb:RegisterEvent("SPELLS_CHANGED")
     fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-    fmdb:RegisterEvent("LEARNED_SPELL_IN_TAB")
-
+    if GW.TBC then
+        fmdb:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+    elseif GW.Mists then
+        fmdb:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    end
     -- setup hook to hide the dodge bar when in vehicle/override UI
     MixinHideDuringPetAndOverride(fmdb)
 

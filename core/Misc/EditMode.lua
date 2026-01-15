@@ -24,7 +24,9 @@ local function ApplyBlizzardEditModeChanges()
     end
     GW.AddGw2Layout(true)
 
-    MirrorTimerContainer:Show()
+    if MirrorTimerContainer then
+        MirrorTimerContainer:Show()
+    end
 
     hasAppliedChanges = true
 end

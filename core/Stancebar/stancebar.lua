@@ -220,7 +220,7 @@ end
 local function CreateStanceBar()
     local StanceButtonHolder = CreateStanceBarButtonHolder()
 
-    if GW.Retail then
+    if GW.Retail or GW.TBC then
         StanceBar:GwKillEditMode()
     else
         StanceBarFrame:GwKill()

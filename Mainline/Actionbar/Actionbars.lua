@@ -120,7 +120,6 @@ local function changeVertexColorActionbars(btn)
             btn.icon:SetVertexColor(out_R, out_G, out_B)
         end
     end
-
 end
 AFP("changeVertexColorActionbars", changeVertexColorActionbars)
 
