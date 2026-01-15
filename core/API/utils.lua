@@ -1437,6 +1437,7 @@ local function AddGw2Layout(init)
         GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal)
         GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.NumRows, 1)
         GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.NumIcons, 12)
+        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.HideBarScrolling, 1)
         GW.Libs.LEMO:ReanchorFrame(MainActionBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.HUD_SCALE) or 1)))
 
         -- PossessActionBar
@@ -1449,3 +1450,31 @@ local function AddGw2Layout(init)
     end
 end
 GW.AddGw2Layout = AddGw2Layout
+
+local function MakeActionbuttonsVisible()
+    if not GW.Libs.LEMO:IsReady() then
+        GW.Notice("LEMO not ready, cannot make action buttons visible")
+        return
+    end
+
+    GW.Libs.LEMO:LoadLayouts()
+
+    if GW.Libs.LEMO:DoesLayoutExist("GW2_Layout")then
+        GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
+
+        GW.Libs.LEMO:SetFrameSetting(MainActionBar, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
+        GW.Libs.LEMO:SetFrameSetting(MultiBarBottomLeft, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
+        GW.Libs.LEMO:SetFrameSetting(MultiBarBottomRight, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
+        GW.Libs.LEMO:SetFrameSetting(MultiBarRight, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
+        GW.Libs.LEMO:SetFrameSetting(MultiBarLeft, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
+        GW.Libs.LEMO:SetFrameSetting(MultiBar5, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
+        GW.Libs.LEMO:SetFrameSetting(MultiBar6, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
+        GW.Libs.LEMO:SetFrameSetting(MultiBar7, Enum.EditModeActionBarSetting.AlwaysShowButtons, 1)
+        GW.Libs.LEMO:ApplyChanges()
+
+        GW.Notice("Making action buttons visible via LEMO")
+    else
+        GW.Notice("Could not make action buttons visible via LEMO, GW2_Layout not found")
+    end
+end
+GW.MakeActionbuttonsVisible = MakeActionbuttonsVisible
