@@ -74,7 +74,7 @@ local function LoadAurasPanel(sWindow)
             if spellInfo then
                 local name = format("%s |cFF888888(%d)|r", spellInfo.name, spellID)
 
-                if GW.Classic then
+                if GW.Classic or GW.TBC then
                     local rank = GetSpellSubtext(spellID)
                     rank = rank and string.match(rank, "[%d]") or nil
                     name = name .. (rank and " |cFF888888(" .. RANK .. " " .. rank .. ")|r" or "")
@@ -93,7 +93,7 @@ local function LoadAurasPanel(sWindow)
                 if spellInfo then
                     local name = format("%s |cFF888888(%d)|r", spellInfo.name, spellID)
 
-                    if GW.Classic then
+                    if GW.Classic or GW.TBC then
                         local rank = GetSpellSubtext(spellID)
                         rank = rank and string.match(rank, "[%d]") or nil
                         name = name .. (rank and " |cFF888888(" .. RANK .. " " .. rank .. ")|r" or "")
@@ -120,7 +120,7 @@ local function LoadAurasPanel(sWindow)
         p_indicator:AddOptionDropdown(L["%s Indicator"]:format(t), L["Edit %s raid aura indicator."]:format(t), {getterSetter = key, callback = function() GW.settings[key] = tonumber(GW.settings[key]); GW.UpdateGridSettings("ALL", false) end, optionsList = auraKeys, optionNames = auraVals, optionUpdateFunc = auraNamesUpdateFunction, dependence = {["RAID_FRAMES"] = true}, tooltipType = "spell"})
     end
 
-    if GW.Classic then
+    if GW.Classic or GW.TBC then
         -- Rank info are not there after game start
         C_Timer.After(3, function()
             for _, pos in ipairs(GW.INDICATORS) do

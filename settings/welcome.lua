@@ -137,7 +137,7 @@ local function button1_OnClick()
                 ToggleChatColorNamesByClassGroup(true, v)
             end
 
-            if not GW.Classic and not GW.TBC then
+            if not (GW.Classic or GW.TBC) then
                 GW.AlertSystem:AddAlert(L["Complete"], nil, L["Setup Chat"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
             end
 
@@ -175,7 +175,7 @@ local function button1_OnClick()
             C_CVar.SetCVar("fstack_preferParentKeys", "0")
             C_CVar.SetCVar("whisperMode", "inline")
 
-            if not GW.Classic and not GW.TBC then
+            if not (GW.Classic or GW.TBC) then
                 GW.AlertSystem:AddAlert(L["Complete"], nil, L["Setup CVars"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
             end
 
@@ -199,7 +199,7 @@ local function button1_OnClick()
             GW.settings.PIXEL_PERFECTION = true
             GW.PixelPerfection()
 
-            if not GW.Classic and not GW.TBC then
+            if not (GW.Classic or GW.TBC) then
                 GW.AlertSystem:AddAlert(L["Pixel Perfect Mode"], nil, L["Turn Pixel Perfect Mode On"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup.png", true)
             end
 

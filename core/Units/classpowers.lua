@@ -1900,7 +1900,7 @@ local function setDruid(f)
         elseif form == MOONKIN_FORM then           --Moonkin
             barType = "eclips"
         end
-    elseif GW.Classic then
+    elseif GW.Classic or GW.TBC then
         if form == CAT_FORM then                   -- cat
             barType = "combo|little_mana"
         elseif form == BEAR_FORM or form == 8 then --bear
@@ -1987,21 +1987,21 @@ local function selectType(f)
         showBar = false
     elseif GW.myClassID == 1 and GW.Retail then
         showBar = setWarrior(f)
-    elseif GW.myClassID == 2 and not GW.Classic then
+    elseif GW.myClassID == 2 and not (GW.Classic or GW.TBC) then
         showBar = setPaladin(f)
     elseif GW.myClassID == 3 and GW.Retail then
         showBar = setHunter(f)
     elseif GW.myClassID == 4 then
         showBar = setRogue(f)
-    elseif GW.myClassID == 5 and not GW.Classic then
+    elseif GW.myClassID == 5 and not (GW.Classic or GW.TBC) then
         showBar = setPriest(f)
-    elseif GW.myClassID == 6 and not GW.Classic then
+    elseif GW.myClassID == 6 and not (GW.Classic or GW.TBC) then
         showBar = setDeathKnight(f)
-    elseif GW.myClassID == 7 and not GW.Classic then
+    elseif GW.myClassID == 7 and not (GW.Classic or GW.TBC) then
         showBar = setShaman(f)
     elseif GW.myClassID == 8 and GW.Retail then
         showBar = setMage(f)
-    elseif GW.myClassID == 9 and not GW.Classic then
+    elseif GW.myClassID == 9 and not (GW.Classic or GW.TBC) then
         showBar = setWarlock(f)
     elseif GW.myClassID == 10 and (GW.Retail or GW.Mists) then
         showBar = setMonk(f)
@@ -2177,7 +2177,7 @@ local function LoadClassPowers()
     exbar.decay:SetPoint("TOPLEFT", exbar, "TOPLEFT", 0, 0)
     exbar.decay:SetPoint("BOTTOMRIGHT", exbar, "BOTTOMRIGHT", 0, 0)
 
-    if not GW.Classic then
+    if not (GW.Classic or GW.TBC) then
         GW.MixinHideDuringPetAndOverride(cpf)
         GW.MixinHideDuringPetAndOverride(cpf.customResourceBar)
         GW.MixinHideDuringPetAndOverride(cpf.customResourceBar.decay)

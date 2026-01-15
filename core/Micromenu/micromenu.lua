@@ -710,7 +710,7 @@ local function setupMicroButtons(mbf)
     gref:HookScript("OnEvent", updateGuildButton)
     gref:HookScript("OnEnter", GW.Guild_OnEnter)
     gref:SetScript("OnClick", GW.Guild_OnClick)
-    if not GW.Classic and not GW.TBC then
+    if not (GW.Classic or GW.TBC) then
         hooksecurefunc(gref, "UpdateTabard", function()
             gref:GetDisabledTexture():SetAlpha(1)
             gref:GetNormalTexture():SetAlpha(1)

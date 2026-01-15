@@ -37,7 +37,7 @@ elseif GW.Mists then
     DODGEBAR_SPELLS["DRUID"] = "9821"
     DODGEBAR_SPELLS["DEATHKNIGHT"] = "444347,48265" -- Death's Advance
     DODGEBAR_SPELLS["SHAMAN"] = "[spec:2] 58875,2645" -- Spirit Walk if Enhance
-elseif GW.Classic then
+elseif GW.Classic or GW.TBC then
     DODGEBAR_SPELLS["WARRIOR"] = "100" -- Charge
     DODGEBAR_SPELLS["HUNTER"] = "781" -- Disengage
     DODGEBAR_SPELLS["ROGUE"] = "2983" -- Sprint
