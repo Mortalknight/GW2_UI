@@ -591,6 +591,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
 
         btn.gwBackdrop = backDrop
+        btn.gwBackdrop:SetFrameLevel(btn:GetFrameLevel() - 1)
 
         if not isStanceButton and not isPet then
             btn.gwBackdrop.bg:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))

@@ -80,6 +80,14 @@ local function MinimapPostDrag(self)
     end
 end
 
+local function Minimap_OnMouseDown(self, btn)
+    if btn == "RightButton" then
+        self.gwTrackingButton:OpenMenu()
+    else
+        Minimap.OnClick(self)
+    end
+end
+
 local function lfgAnimPvPStop()
     MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\lfgmicrobutton-down.png")
     MiniMapBattlefieldFrame.animationCircle:Hide()
@@ -529,6 +537,8 @@ local function LoadMinimap()
             end
         end
     )
+    Minimap:SetScript("OnMouseDown", Minimap_OnMouseDown)
+    Minimap:SetScript("OnMouseUp", GW.NoOp)
 
     Minimap:HookScript("OnShow", minimap_OnShow)
     Minimap:HookScript("OnHide", minimap_OnHide)
@@ -565,5 +575,13 @@ local function LoadMinimap()
     C_Timer.After(0.1, hoverMiniMapOut)
 
     Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
+
+    -- Minimap Tracking Button
+    Minimap.gwTrackingButton = CreateFrame("DropdownButton")
+    Minimap.gwTrackingButton:SetFrameStrata("BACKGROUND")
+    Mixin(Minimap.gwTrackingButton, MinimapTrackingDropdownMixin)
+    Minimap.gwTrackingButton:OnLoad()
+    Minimap.gwTrackingButton:SetScript("OnEvent", Minimap.gwTrackingButton.OnEvent)
+    Minimap.gwTrackingButton:SetAllPoints(Minimap)
 end
 GW.LoadMinimap = LoadMinimap

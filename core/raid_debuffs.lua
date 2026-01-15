@@ -1055,4 +1055,161 @@ elseif GW.Classic then
         21056, -- Mark of Kazzak
         24814, -- Seeping Fog
     })
+
+elseif GW.TBC then
+    -------------------------------------------------
+-------------------- Phase 1 --------------------
+-------------------------------------------------
+-- Karazhan
+    -- Attument the Huntsman
+    SetDefaults({
+        29833, -- Intangible Presence
+        29711, -- Knockdown
+    })
+    -- Moroes
+    SetDefaults({
+        29425, -- Gouge
+        34694, -- Blind
+        37066, -- Garrote
+    })
+    -- Opera Hall Event
+    SetDefaults({
+        30822, -- Poisoned Thrust
+        30889, -- Powerful Attraction
+        30890, -- Blinding Passion
+    })
+    -- Maiden of Virtue
+    SetDefaults({
+        29511, -- Repentance
+        29522, -- Holy Fire
+        29512, -- Holy Ground
+    })
+    -- The Curator
+    -- Terestian Illhoof
+    SetDefaults({
+        30053, -- Amplify Flames
+        30115, -- Sacrifice
+    })
+    -- Shade of Aran
+    SetDefaults({
+        29946, -- Flame Wreath
+        29947, -- Flame Wreath
+        29990, -- Slow
+        29991, -- Chains of Ice
+        29954, -- Frostbolt
+        29951, -- Blizzard
+    })
+    -- Netherspite
+    SetDefaults({
+        38637, -- Nether Exhaustion (Red)
+        38638, -- Nether Exhaustion (Green)
+        38639, -- Nether Exhaustion (Blue)
+        30400, -- Nether Beam - Perseverence
+        30401, -- Nether Beam - Serenity
+        30402, -- Nether Beam - Dominance
+        30421, -- Nether Portal - Perseverence
+        30422, -- Nether Portal - Serenity
+        30423, -- Nether Portal - Dominance
+        30466, -- Nether Portal - Perseverence
+    })
+    -- Chess Event
+    SetDefaults({
+        30529, -- Recently In Game
+    })
+    -- Prince Malchezaar
+    SetDefaults({
+        39095, -- Amplify Damage
+        30898, -- Shadow Word: Pain 1
+        30854, -- Shadow Word: Pain 2
+    })
+    -- Nightbane
+    SetDefaults({
+        37091, -- Rain of Bones
+        30210, -- Smoldering Breath
+        30129, -- Charred Earth
+        30127, -- Searing Cinders
+        36922, -- Bellowing Roar
+    })
+-- Gruul's Lair
+    -- High King Maulgar
+    SetDefaults({
+        36032, -- Arcane Blast
+        11726, -- Enslave Demon
+        33129, -- Dark Decay
+        33175, -- Arcane Shock
+        33061, -- Blast Wave
+        33130, -- Death Coil
+        16508, -- Intimidating Roar
+    })
+    -- Gruul the Dragonkiller
+    SetDefaults({
+        38927, -- Fel Ache
+        36240, -- Cave In
+        33652, -- Stoned
+        33525, -- Ground Slam
+    })
+-- Magtheridon's Lair
+    -- Magtheridon
+    SetDefaults({
+        44032, -- Mind Exhaustion
+        30530, -- Fear
+        38927, -- Fel Ache
+    })
+-------------------------------------------------
+-------------------- Phase 2 --------------------
+-------------------------------------------------
+-- Serpentshrine Cavern
+    -- Hydross the Unstable
+    -- The Lurker Below
+    -- Leotheras the Blind
+    -- Fathom-Lord Karathress
+    -- Morogrim Tidewalker
+    -- Lady Vashj
+-- The Eye
+    -- Al'ar
+    -- Void Reaver
+    -- High Astromancer Solarian
+    -- Kael'thas Sunstrider
+-------------------------------------------------
+-------------------- Phase 3 --------------------
+-------------------------------------------------
+-- The Battle for Mount Hyjal
+    -- Rage Winterchill
+    -- Anetheron
+    -- Kaz'rogal
+    -- Azgalor
+    -- Archimonde
+-- Black Temple
+    -- High Warlord Naj'entus
+    -- Supremus
+    -- Shade of Akama
+    -- Teron Gorefiend
+    -- Gurtogg Bloodboil
+    -- Reliquary of Souls
+    -- Mother Shahraz
+    -- Illidari Council
+    -- Illidan Stormrage
+-------------------------------------------------
+-------------------- Phase 4 --------------------
+-------------------------------------------------
+-- Zul'Aman
+    -- Nalorakk
+    -- Jan'alai
+    -- Akil'zon
+    -- Halazzi
+    -- Hexxlord Jin'Zakk
+    -- Zul'jin
+-------------------------------------------------
+-------------------- Phase 5 --------------------
+-------------------------------------------------
+-- Sunwell Plateau
+    -- Kalecgos
+    -- Sathrovarr
+    -- Brutallus
+    -- Felmyst
+    -- Alythess
+    -- Sacrolash
+    -- M'uru
+    -- Kil'Jaeden
+
 end

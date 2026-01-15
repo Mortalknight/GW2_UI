@@ -18,6 +18,15 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("9.0.2", {
+    {GW.ChangelogType.bug, [=[Added missing raid debuffs for TBC]=]},
+    {GW.ChangelogType.bug, [=[Added many TBC checks]=]},
+    {GW.ChangelogType.bug, [=[Fix tooltip (TBC)]=]},
+    {GW.ChangelogType.bug, [=[Fix gossip skin (TBC)]=]},
+    {GW.ChangelogType.bug, [=[Added missing minimap tracking (TBC)]=]},
+})
+
 addChange("9.0.1", {
     {GW.ChangelogType.bug, [=[Pet happines is now active on TBC]=]},
     {GW.ChangelogType.bug, [=[Questlog skin updates for TBC]=]},

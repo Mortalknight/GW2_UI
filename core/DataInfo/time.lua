@@ -83,7 +83,7 @@ local function Time_OnEnter(self)
         end
     end
 
-    if not (GW.Classic or GW.TBC) then
+    if not GW.Classic then
         local addedLine = false
         local worldbossLockoutList = {}
         for i = 1, GetNumSavedWorldBosses() do

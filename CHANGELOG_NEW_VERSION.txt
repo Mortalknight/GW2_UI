@@ -1,3 +1,11 @@
+9.0.2
+FIXES
+    - Added missing raid debuffs for TBC
+    - Added many TBC checks
+    - Fix tooltip (TBC)
+    - Fix gossip skin (TBC)
+    - Added missing minimap tracking (TBC)
+
 9.0.1
 FIXES
     - Pet happines is now active on TBC
