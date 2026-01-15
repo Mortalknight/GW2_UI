@@ -3,7 +3,7 @@ local L = GW.L
 
 
 local function LoadNotificationsPanel(sWindow)
-    if GW.Classic then return end
+    if GW.Classic or GW.TBC then return end
 
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
     p.panelId = "notifications_general"

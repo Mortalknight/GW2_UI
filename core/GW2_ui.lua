@@ -410,7 +410,7 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.LoadMajorFactionsFrameSkin()
     end
 
-    if not GW.Classic and not GW.TBC then
+    if not (GW.Classic or GW.TBC) then
         GW.LoadSocketUISkin()
         GW.LoadInspectFrameSkin()
     end
@@ -617,7 +617,7 @@ local function evPlayerLogin(self)
         GW.LoadQuestTimersSkin()
     end
 
-    if not GW.Classic and not GW.TBC then
+    if not (GW.Classic or GW.TBC) then
         GW.MakeAltPowerBarMovable()
         GW.LoadLFGSkins()
         GW.LoadMailSkin()
@@ -633,7 +633,7 @@ local function evPlayerLogin(self)
     end
 
     -- load alert settings
-    if not GW.Classic and not GW.TBC then
+    if not (GW.Classic or GW.TBC) then
         GW.LoadAlertSystem()
         GW.SetupAlertFramePosition()
         GW.LoadOurAlertSubSystem()
@@ -759,7 +759,7 @@ local function evPlayerLogin(self)
     end
 
     --Create unitframes
-    if not GW.Classic and GW.settings.FOCUS_ENABLED then
+    if not (GW.Classic or GW.TBC) and GW.settings.FOCUS_ENABLED then
         local unitFrame = GW.LoadUnitFrame("Focus", GW.settings.focus_FRAME_INVERT)
         GW.LoadTargetOfUnit("Focus", unitFrame)
     end

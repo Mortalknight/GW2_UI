@@ -328,7 +328,7 @@ function GwObjectivesBlockTemplateMixin:UpdateScenarioSpell(spellInfo)
     local btn = self.actionButton
     self.hasItem = false
 
-    if not GW.Classic and not GW.TBC then
+    if not (GW.Classic or GW.TBC)  then
         if spellInfo and spellInfo[1] then
             local data = spellInfo[1]
             btn:SetSpell(data)
@@ -352,7 +352,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type
     if GW.Retail then
         height = height + GW.ObjectiveTrackerContainer.Scenario:GetHeight()
     end
-    if not GW.Classic and not GW.TBC then
+    if not (GW.Classic or GW.TBC) then
         height = height + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()
     end
 

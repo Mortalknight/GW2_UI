@@ -360,7 +360,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
         if unitLevel == -1 then border = "boss" end
     end
 
-    if not GW.Classic and canInspect then
+    if not (GW.Classic or GW.TBC) and canInspect then
         if self.showItemLevel == "ITEM_LEVEL" then
             local guid = UnitGUID(self.unit)
             if guid then

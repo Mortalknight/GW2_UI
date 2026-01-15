@@ -707,3 +707,5 @@ L["Height"] = true
 L["Keep Size Ratio"] = true
 L["Type '%s' or '!' to show all new settings"] = true
 L["Shift-Click to show as experience bar."] = true
+L["Fix: Restore empty action bar slots"] = true
+L["Restores empty slots across all 8 action bars when they were hidden in Blizzard Edit Mode."] = true

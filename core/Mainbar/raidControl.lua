@@ -91,7 +91,7 @@ local function CreateRaidControlFrame()
         end
     ]=])
 
-    GwGroupManage:SetAttribute("maxHeight", not GW.Classic and 450 or 320)
+    GwGroupManage:SetAttribute("maxHeight", not (GW.Classic or GW.TBC) and 450 or 320)
     GwGroupManage:SetFrameRef("GroupManagerGroup", GwGroupManage.inGroup)
     GwGroupManage:SetAttribute("_onshow", [=[
         local ref = self:GetFrameRef("GroupManagerGroup")
@@ -276,7 +276,7 @@ local function CreateRaidControlFrame()
         GwGroupManage.inGroup.markers[i] = f
     end
 
-    if not GW.Classic then
+    if not (GW.Classic or GW.TBC) then
         GwGroupManage.inGroup.header2:Show()
         y = y + -65
         x = 15

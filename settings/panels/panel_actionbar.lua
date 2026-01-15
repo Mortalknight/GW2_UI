@@ -90,6 +90,9 @@ local function LoadActionbarPanel(sWindow)
     general:AddOptionSlider(L["Empty slots alpha"], L["Set the empty action bar slots alpha value."], { getterSetter = "ACTIONBAR_BACKGROUND_ALPHA", callback = function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, min = 0, max = 1, decimalNumbers = 1, step = 0.1, dependence = {["ACTIONBARS_ENABLED"] = true}})
     general:AddOption(L["Action Button Labels"], L["Enable or disable the action button assignment text"], { getterSetter = "BUTTON_ASSIGNMENTS", callback = function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, dependence = {["ACTIONBARS_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
     general:AddOption(L["Show Macro Name"], L["Show Macro Name on Action Button"], { getterSetter = "SHOWACTIONBAR_MACRO_NAME_ENABLED", callback = function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons(); if GwPlayerPetFrame then GwPlayerPetFrame:UpdatePetBarButtons() end end, dependence = {["ACTIONBARS_ENABLED"] = true}, incompatibleAddons = "Actionbars"})
+
+    general:AddOptionButton(L["Fix: Restore empty action bar slots"], L["Restores empty slots across all 8 action bars when they were hidden in Blizzard Edit Mode."], {callback = GW.MakeActionbuttonsVisible, hidden = GW.Mists or GW.Classic})
+
     -- MAINBAR
     mainBar:AddOptionSlider(L["Button Spacing"], nil, { getterSetter = "MAINBAR_MARGIIN", callback = function() GW.UpdateMainBarHot() end, min = 0, max = 10, decimalNumbers = 1, step = 0.1, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)()})
 
