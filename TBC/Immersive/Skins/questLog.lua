@@ -318,11 +318,6 @@ local function LoadQuestLogFrameSkin()
 		end
 	end)
 
-	hooksecurefunc('QuestLog_Update', function()
-		QuestLogQuestCount:ClearAllPoints()
-		QuestLogQuestCount:SetPoint('BOTTOMLEFT', QuestLogListScrollFrame.backdrop, 'TOPLEFT', 0, 5)
-	end)
-
     local textR, textG, textB = 1, 1, 1
 	local titleR, titleG, titleB = 1, 0.80, 0.10
     hooksecurefunc('QuestFrameItems_Update', function()
@@ -455,7 +450,7 @@ local function LoadQuestLogFrameSkin()
 
 	QuestLogListScrollFrame:SetWidth(303)
 	QuestLogDetailScrollFrame:SetWidth(303)
-	QuestLogFrameAbandonButton:SetWidth(129)
+	QuestLogFrameAbandonButton:SetWidth(123)
 
 	QuestLogHighlightFrame:SetWidth(303)
 	QuestLogHighlightFrame.SetWidth = GW.NoOp
@@ -528,6 +523,12 @@ local function LoadQuestLogFrameSkin()
 	QuestLogCollapseAllButton:SetPoint('TOPLEFT', -45, 7)
 	QuestLogCollapseAllButton:GetNormalTexture():SetSize(16, 16)
 	QuestLogCollapseAllButton:ClearHighlightTexture()
+
+	QuestLogCount:GwStripTextures()
+    QuestLogCount:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+	QuestLogQuestCount:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.SMALL)
+	QuestLogQuestCount:SetTextColor(1, 1, 1)
+	QuestLogCount.backdrop:SetFrameLevel(QuestLogFrame:GetFrameLevel() + 1)
 
 end
 GW.LoadQuestLogFrameSkin = LoadQuestLogFrameSkin

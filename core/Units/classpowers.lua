@@ -1366,7 +1366,9 @@ local function setShaman(f)
         end
     else
         if not InCombatLockdown() then
-            UIPARENT_MANAGED_FRAME_POSITIONS.MultiCastActionBarFrame = nil
+            if UIPARENT_MANAGED_FRAME_POSITIONS then
+                UIPARENT_MANAGED_FRAME_POSITIONS.MultiCastActionBarFrame = nil
+            end
 
             MultiCastActionBarFrame:SetParent(f)
             MultiCastActionBarFrame:ClearAllPoints()

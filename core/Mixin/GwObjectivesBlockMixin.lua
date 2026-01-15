@@ -284,7 +284,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
 
     self.hasItem = false
 
-    if not GW.Classic then
+    if GW.Retail or GW.Mists then
         if self.questLogIndex then
             local link, item, charges, showWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
 
@@ -310,7 +310,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
         end
         btn:Hide()
         btn:SetScript("OnUpdate", nil)
-    elseif GW.Classic then
+    elseif GW.Classic or GW.TBC then
         if self.sourceItemId and not self.isComplete and btn:SetItem(self) then
             btn:SetScript("OnUpdate", btn.OnUpdate)
             btn:Show()
@@ -328,7 +328,7 @@ function GwObjectivesBlockTemplateMixin:UpdateScenarioSpell(spellInfo)
     local btn = self.actionButton
     self.hasItem = false
 
-    if not GW.Classic then
+    if not GW.Classic and not GW.TBC then
         if spellInfo and spellInfo[1] then
             local data = spellInfo[1]
             btn:SetSpell(data)
@@ -352,7 +352,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type
     if GW.Retail then
         height = height + GW.ObjectiveTrackerContainer.Scenario:GetHeight()
     end
-    if not GW.Classic then
+    if not GW.Classic and not GW.TBC then
         height = height + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight()
     end
 

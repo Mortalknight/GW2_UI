@@ -603,7 +603,7 @@ local function setupMicroButtons(mbf)
     local sref
     if not GW.Retail then
         if GW.settings.USE_SPELLBOOK_WINDOW then
-            sref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+            sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
             sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
             sref.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
             reskinMicroButton(sref, "SpellbookMicroButton", mbf)
@@ -662,9 +662,13 @@ local function setupMicroButtons(mbf)
             end
         else
             -- TalentMicroButton
-            tref = TalentMicroButton:IsShown() and TalentMicroButton or sref
-            tref:ClearAllPoints()
-            tref:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+            if TalentMicroButton:IsShown() then
+                tref = TalentMicroButton
+                tref:ClearAllPoints()
+                tref:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+            else
+                tref = sref
+            end
         end
     else
         tref = sref
@@ -672,7 +676,7 @@ local function setupMicroButtons(mbf)
 
     -- AchievementMicroButton
     local aref
-    if not GW.Classic and not GW.TBC then
+    if GW.Retail or GW.Mists then
         AchievementMicroButton:ClearAllPoints()
         AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
         aref = AchievementMicroButton
@@ -1031,8 +1035,10 @@ local function hook_UpdateMicroButtons()
         local tref
         if GW.settings.USE_TALENT_WINDOW then
             tref = GwTalentMicroButton
-        else
+        elseif TalentMicroButton:IsShown() then
             tref = TalentMicroButton
+        else
+            tref = GW.settings.USE_SPELLBOOK_WINDOW and GwPlayerSpellsMicroButton or SpellbookMicroButton
         end
         if not InCombatLockdown() then
             QuestLogMicroButton:ClearAllPoints()
