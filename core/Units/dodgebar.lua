@@ -227,8 +227,9 @@ function GwDodgeBarMixin:SetupBar()
     local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
     if GW.Retail then
         local maxCharges = spellChargeInfo and spellChargeInfo.maxCharges
+        local currentCharges = spellChargeInfo and spellChargeInfo.currentCharges
         self.hasCharges = maxCharges and maxCharges > 1
-        self:UpdateChargeText(spellChargeInfo.currentCharges)
+        self:UpdateChargeText(currentCharges)
 
         local durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
         if durationObject then
