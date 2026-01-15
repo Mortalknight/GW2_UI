@@ -4,7 +4,7 @@ local addonName, GW = ...
 -- Make a global GW variable , so others cann access our functions
 GW2_ADDON = GW
 
---assert(GW.oUF, "GW2_UI was unable to locate oUF.")
+assert(GW.oUF, "GW2_UI was unable to locate oUF.")
 
 do -- Expansions
     GW.Classic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC

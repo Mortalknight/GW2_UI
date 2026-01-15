@@ -128,6 +128,165 @@ local settings = {
 GW.GridSettings = settings
 
 local settingsEventFrame = CreateFrame("Frame")
+local pendingProfiles = {}
+local settingsHelperValidated = false
+
+-- Helper-only mapping to simplify future settings updates (not wired yet).
+local SETTINGS_HELPER_MAP = {
+    enabled = {
+        PARTY = "RAID_STYLE_PARTY",
+        RAID_PET = "RAID_PET_FRAMES",
+        RAID40 = "RAID_FRAMES",
+        RAID25 = "RAID25_ENABLED",
+        RAID10 = "RAID10_ENABLED",
+        TANK = "RAID_MAINTANK_FRAMES_ENABLED",
+    },
+    horizontalSpacing = {
+        PARTY = "RAID_UNITS_HORIZONTAL_SPACING_PARTY",
+        RAID_PET = "RAID_UNITS_HORIZONTAL_SPACING_PET",
+        RAID40 = "RAID_UNITS_HORIZONTAL_SPACING",
+        RAID25 = "RAID_UNITS_HORIZONTAL_SPACING_RAID25",
+        RAID10 = "RAID_UNITS_HORIZONTAL_SPACING_RAID10",
+        TANK = "RAID_UNITS_HORIZONTAL_SPACING_TANK",
+    },
+    verticalSpacing = {
+        PARTY = "RAID_UNITS_VERTICAL_SPACING_PARTY",
+        RAID_PET = "RAID_UNITS_VERTICAL_SPACING_PET",
+        RAID40 = "RAID_UNITS_VERTICAL_SPACING",
+        RAID25 = "RAID_UNITS_VERTICAL_SPACING_RAID25",
+        RAID10 = "RAID_UNITS_VERTICAL_SPACING_RAID10",
+        TANK = "RAID_UNITS_VERTICAL_SPACING_TANK",
+    },
+    groupSpacing = {
+        PARTY = "RAID_UNITS_GROUP_SPACING_PARTY",
+        RAID_PET = "RAID_UNITS_GROUP_SPACING_PET",
+        RAID40 = "RAID_UNITS_GROUP_SPACING",
+        RAID25 = "RAID_UNITS_GROUP_SPACING_RAID25",
+        RAID10 = "RAID_UNITS_GROUP_SPACING_RAID10",
+        TANK = "RAID_UNITS_GROUP_SPACING_TANK",
+    },
+    raidWidth = {
+        PARTY = "RAID_WIDTH_PARTY",
+        RAID_PET = "RAID_WIDTH_PET",
+        RAID40 = "RAID_WIDTH",
+        RAID25 = "RAID_WIDTH_RAID25",
+        RAID10 = "RAID_WIDTH_RAID10",
+        TANK = "RAID_WIDTH_TANK",
+    },
+    raidHeight = {
+        PARTY = "RAID_HEIGHT_PARTY",
+        RAID_PET = "RAID_HEIGHT_PET",
+        RAID40 = "RAID_HEIGHT",
+        RAID25 = "RAID_HEIGHT_RAID25",
+        RAID10 = "RAID_HEIGHT_RAID10",
+        TANK = "RAID_HEIGHT_TANK",
+    },
+    startFromCenter = {
+        PARTY = "UNITFRAME_ANCHOR_FROM_CENTER_PARTY",
+        RAID_PET = "UNITFRAME_ANCHOR_FROM_CENTER_PET",
+        RAID40 = "UNITFRAME_ANCHOR_FROM_CENTER",
+        RAID25 = "UNITFRAME_ANCHOR_FROM_CENTER_RAID25",
+        RAID10 = "UNITFRAME_ANCHOR_FROM_CENTER_RAID10",
+        TANK = "UNITFRAME_ANCHOR_FROM_CENTER_TANK",
+    },
+    raidGrow = {
+        PARTY = "RAID_GROW_PARTY",
+        RAID_PET = "RAID_GROW_PET",
+        RAID40 = "RAID_GROW",
+        RAID25 = "RAID_GROW_RAID25",
+        RAID10 = "RAID_GROW_RAID10",
+        TANK = "RAID_GROW_TANK",
+    },
+    groupsPerColumnRow = {
+        PARTY = "RAID_GROUPS_PER_COLUMN_PARTY",
+        RAID_PET = "RAID_GROUPS_PER_COLUMN_PET",
+        RAID40 = "RAID_GROUPS_PER_COLUMN",
+        RAID25 = "RAID_GROUPS_PER_COLUMN_RAID25",
+        RAID10 = "RAID_GROUPS_PER_COLUMN_RAID10",
+        TANK = "RAID_GROUPS_PER_COLUMN_TANK",
+    },
+    raidWideSorting = {
+        PARTY = "RAID_WIDE_SORTING_PARTY",
+        RAID_PET = "RAID_WIDE_SORTING_PET",
+        RAID40 = "RAID_WIDE_SORTING",
+        RAID25 = "RAID_WIDE_SORTING_RAID25",
+        RAID10 = "RAID_WIDE_SORTING_RAID10",
+        TANK = "RAID_WIDE_SORTING_TANK",
+    },
+    groupBy = {
+        PARTY = "RAID_GROUP_BY_PARTY",
+        RAID_PET = "RAID_GROUP_BY_PET",
+        RAID40 = "RAID_GROUP_BY",
+        RAID25 = "RAID_GROUP_BY_RAID25",
+        RAID10 = "RAID_GROUP_BY_RAID10",
+        TANK = "RAID_GROUP_BY_TANK",
+    },
+    sortDirection = {
+        PARTY = "RAID_SORT_DIRECTION_PARTY",
+        RAID_PET = "RAID_SORT_DIRECTION_PET",
+        RAID40 = "RAID_SORT_DIRECTION",
+        RAID25 = "RAID_SORT_DIRECTION_RAID25",
+        RAID10 = "RAID_SORT_DIRECTION_RAID10",
+        TANK = "RAID_SORT_DIRECTION_TANK",
+    },
+    sortMethod = {
+        PARTY = "RAID_RAID_SORT_METHOD_PARTY",
+        RAID_PET = "RAID_RAID_SORT_METHOD_PET",
+        RAID40 = "RAID_RAID_SORT_METHOD",
+        RAID25 = "RAID_RAID_SORT_METHOD_RAID25",
+        RAID10 = "RAID_RAID_SORT_METHOD_RAID10",
+        TANK = "RAID_RAID_SORT_METHOD_TANK",
+    },
+}
+
+local SETTINGS_HELPER_TONUMBER = {
+    raidWidth = true,
+    raidHeight = true,
+    groupsPerColumnRow = true,
+}
+
+local function ValidateSettingsHelper()
+    if settingsHelperValidated then return end
+    settingsHelperValidated = true
+
+    print("Validating SETTINGS_HELPER_MAP...")
+
+    for settingName, mapping in pairs(SETTINGS_HELPER_MAP) do
+        for profile, _ in pairs(profiles) do
+            if mapping[profile] == nil then
+                GW.Notice("settings", "SETTINGS_HELPER_MAP missing", settingName, profile)
+            end
+        end
+    end
+
+    GW.Notice("settings", "SETTINGS_HELPER_MAP validated")
+end
+
+local function ApplySettingsHelper()
+    ValidateSettingsHelper()
+    for settingName, mapping in pairs(SETTINGS_HELPER_MAP) do
+        local target = settings[settingName]
+        if target then
+            local needsNumber = SETTINGS_HELPER_TONUMBER[settingName]
+            for profile, gwKey in pairs(mapping) do
+                local value = GW.settings[gwKey]
+                if needsNumber then
+                    value = tonumber(value)
+                end
+                target[profile] = value
+            end
+        end
+    end
+end
+
+local function MarkPending(profile)
+    settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    if profile == "ALL" then
+        pendingProfiles.ALL = true
+    else
+        pendingProfiles[profile] = true
+    end
+end
 
 local headerGroupBy = {
 	CLASS = function(header, profile)
@@ -175,98 +334,7 @@ local headerGroupBy = {
 local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     if GW.disableGridUpdate then return end
 
-    --frame enabled settings -- needed for config mode
-    settings.enabled.RAID_PET = GW.settings.RAID_PET_FRAMES
-    settings.enabled.PARTY = GW.settings.RAID_STYLE_PARTY
-    settings.enabled.RAID40 = GW.settings.RAID_FRAMES
-    settings.enabled.RAID25 = GW.settings.RAID25_ENABLED
-    settings.enabled.RAID10 = GW.settings.RAID10_ENABLED
-    settings.enabled.TANK = GW.settings.RAID_MAINTANK_FRAMES_ENABLED
-
-    -- profile settings for the header
-    settings.horizontalSpacing.PARTY = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_PARTY
-    settings.horizontalSpacing.RAID_PET = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_PET
-    settings.horizontalSpacing.RAID40 = GW.settings.RAID_UNITS_HORIZONTAL_SPACING
-    settings.horizontalSpacing.RAID25 = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_RAID25
-    settings.horizontalSpacing.RAID10 = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_RAID10
-    settings.horizontalSpacing.TANK = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_TANK
-
-    settings.verticalSpacing.PARTY = GW.settings.RAID_UNITS_VERTICAL_SPACING_PARTY
-    settings.verticalSpacing.RAID_PET = GW.settings.RAID_UNITS_VERTICAL_SPACING_PET
-    settings.verticalSpacing.RAID40 = GW.settings.RAID_UNITS_VERTICAL_SPACING
-    settings.verticalSpacing.RAID25 = GW.settings.RAID_UNITS_VERTICAL_SPACING_RAID25
-    settings.verticalSpacing.RAID10 = GW.settings.RAID_UNITS_VERTICAL_SPACING_RAID10
-    settings.verticalSpacing.TANK = GW.settings.RAID_UNITS_VERTICAL_SPACING_TANK
-
-    settings.groupSpacing.PARTY = GW.settings.RAID_UNITS_GROUP_SPACING_PARTY
-    settings.groupSpacing.RAID_PET = GW.settings.RAID_UNITS_GROUP_SPACING_PET
-    settings.groupSpacing.RAID40 = GW.settings.RAID_UNITS_GROUP_SPACING
-    settings.groupSpacing.RAID25 = GW.settings.RAID_UNITS_GROUP_SPACING_RAID25
-    settings.groupSpacing.RAID10 = GW.settings.RAID_UNITS_GROUP_SPACING_RAID10
-    settings.groupSpacing.TANK = GW.settings.RAID_UNITS_GROUP_SPACING_TANK
-
-    settings.raidWidth.PARTY = tonumber(GW.settings.RAID_WIDTH_PARTY)
-    settings.raidWidth.RAID_PET = tonumber(GW.settings.RAID_WIDTH_PET)
-    settings.raidWidth.RAID40 = tonumber(GW.settings.RAID_WIDTH)
-    settings.raidWidth.RAID25 = tonumber(GW.settings.RAID_WIDTH_RAID25)
-    settings.raidWidth.RAID10 = tonumber(GW.settings.RAID_WIDTH_RAID10)
-    settings.raidWidth.TANK = tonumber(GW.settings.RAID_WIDTH_TANK)
-
-    settings.raidHeight.PARTY = tonumber(GW.settings.RAID_HEIGHT_PARTY)
-    settings.raidHeight.RAID_PET = tonumber(GW.settings.RAID_HEIGHT_PET)
-    settings.raidHeight.RAID40 = tonumber(GW.settings.RAID_HEIGHT)
-    settings.raidHeight.RAID25 = tonumber(GW.settings.RAID_HEIGHT_RAID25)
-    settings.raidHeight.RAID10 = tonumber(GW.settings.RAID_HEIGHT_RAID10)
-    settings.raidHeight.TANK = tonumber(GW.settings.RAID_HEIGHT_TANK)
-
-    settings.startFromCenter.PARTY = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_PARTY
-    settings.startFromCenter.RAID_PET = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_PET
-    settings.startFromCenter.RAID40 = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER
-    settings.startFromCenter.RAID25 = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_RAID25
-    settings.startFromCenter.RAID10 = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_RAID10
-    settings.startFromCenter.RAID10 = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_TANK
-
-    settings.raidGrow.PARTY = GW.settings.RAID_GROW_PARTY
-    settings.raidGrow.RAID_PET = GW.settings.RAID_GROW_PET
-    settings.raidGrow.RAID40 = GW.settings.RAID_GROW
-    settings.raidGrow.RAID25 = GW.settings.RAID_GROW_RAID25
-    settings.raidGrow.RAID10 = GW.settings.RAID_GROW_RAID10
-    settings.raidGrow.TANK = GW.settings.RAID_GROW_TANK
-
-    settings.groupsPerColumnRow.PARTY = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN_PARTY)
-    settings.groupsPerColumnRow.RAID_PET = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN_PET)
-    settings.groupsPerColumnRow.RAID40 = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN)
-    settings.groupsPerColumnRow.RAID25 = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN_RAID25)
-    settings.groupsPerColumnRow.RAID10 = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN_RAID10)
-    settings.groupsPerColumnRow.TANK = tonumber(GW.settings.RAID_GROUPS_PER_COLUMN_TANK)
-
-    settings.raidWideSorting.PARTY = GW.settings.RAID_WIDE_SORTING_PARTY
-    settings.raidWideSorting.RAID_PET = GW.settings.RAID_WIDE_SORTING_PET
-    settings.raidWideSorting.RAID40 = GW.settings.RAID_WIDE_SORTING
-    settings.raidWideSorting.RAID25 = GW.settings.RAID_WIDE_SORTING_RAID25
-    settings.raidWideSorting.RAID10 = GW.settings.RAID_WIDE_SORTING_RAID10
-    settings.raidWideSorting.TANK = GW.settings.RAID_WIDE_SORTING_TANK
-
-    settings.groupBy.PARTY = GW.settings.RAID_GROUP_BY_PARTY
-    settings.groupBy.RAID_PET = GW.settings.RAID_GROUP_BY_PET
-    settings.groupBy.RAID40 = GW.settings.RAID_GROUP_BY
-    settings.groupBy.RAID25 = GW.settings.RAID_GROUP_BY_RAID25
-    settings.groupBy.RAID10 = GW.settings.RAID_GROUP_BY_RAID10
-    settings.groupBy.TANK = GW.settings.RAID_GROUP_BY_TANK
-
-    settings.sortDirection.PARTY = GW.settings.RAID_SORT_DIRECTION_PARTY
-    settings.sortDirection.RAID_PET = GW.settings.RAID_SORT_DIRECTION_PET
-    settings.sortDirection.RAID40 = GW.settings.RAID_SORT_DIRECTION
-    settings.sortDirection.RAID25 = GW.settings.RAID_SORT_DIRECTION_RAID25
-    settings.sortDirection.RAID10 = GW.settings.RAID_SORT_DIRECTION_RAID10
-    settings.sortDirection.TANK = GW.settings.RAID_SORT_DIRECTION_TANK
-
-    settings.sortMethod.PARTY = GW.settings.RAID_RAID_SORT_METHOD_PARTY
-    settings.sortMethod.RAID_PET = GW.settings.RAID_RAID_SORT_METHOD_PET
-    settings.sortMethod.RAID40 = GW.settings.RAID_RAID_SORT_METHOD
-    settings.sortMethod.RAID25 = GW.settings.RAID_RAID_SORT_METHOD_RAID25
-    settings.sortMethod.RAID10 = GW.settings.RAID_RAID_SORT_METHOD_RAID10
-    settings.sortMethod.TANK = GW.settings.RAID_RAID_SORT_METHOD_TANK
+    ApplySettingsHelper()
 
     -- grid specific settings
     settings.partyGridShowPlayer = GW.settings.RAID_SHOW_PLAYER_PARTY
@@ -274,8 +342,18 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     -- Update this settings on a spec switch
     if not settingsEventFrame.isSetup then
         settingsEventFrame:SetScript("OnEvent", function(_, event)
-            UpdateSettings(profile, false, true)
-            if event == "PLAYER_REGEN_ENABLED" then settingsEventFrame:UnregisterEvent(event) end
+            if event == "PLAYER_REGEN_ENABLED" then
+                if pendingProfiles.ALL then
+                    UpdateSettings("ALL", false, true)
+                else
+                    for pendingProfile, _ in pairs(pendingProfiles) do
+                        UpdateSettings(pendingProfile, false, true)
+                    end
+                end
+
+                wipe(pendingProfiles)
+                settingsEventFrame:UnregisterEvent(event)
+            end
         end)
 
         settingsEventFrame.isSetup = true
@@ -283,7 +361,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
 
     if not onlyHeaderUpdate or updateHeaderAndFrames then
         if InCombatLockdown() then
-            settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+            MarkPending(profile)
         end
         for headerProfile, header in pairs(headers) do
             if profile == "ALL" or headerProfile == profile then
@@ -299,7 +377,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
 
     if (onlyHeaderUpdate or updateHeaderAndFrames) and (headers[profile] or profile == "ALL") then
         if InCombatLockdown() then
-            settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+            MarkPending(profile)
         else
             if profile == "ALL" then
                 for headerProfile, _ in pairs(headers) do
@@ -345,48 +423,40 @@ local function CreateRaisedElement(frame)
 end
 GW.CreateRaisedElement = CreateRaisedElement
 
+local function GetHeaderVisibility(profile)
+    if profile == "RAID40" then
+        if not GW.settings.RAID_FRAMES then
+            return "hide"
+        end
+        if GW.settings.RAID25_ENABLED then
+            return GW.settings.RAID10_ENABLED and profiles.RAID40.visibility or profiles.RAID40.visibilityIncl25
+        end
+        return GW.settings.RAID10_ENABLED and profiles.RAID40.visibilityIncl25 or profiles.RAID40.visibilityAll
+    elseif profile == "RAID25" then
+        if not GW.settings.RAID25_ENABLED then
+            return "hide"
+        end
+        return GW.settings.RAID10_ENABLED and profiles.RAID25.visibility or profiles.RAID25.visibilityIncl10
+    elseif profile == "RAID10" then
+        return GW.settings.RAID10_ENABLED and profiles.RAID10.visibility or "hide"
+    elseif profile == "RAID_PET" then
+        return GW.settings.RAID_PET_FRAMES and profiles.RAID_PET.visibility or "hide"
+    end
+
+    return nil
+end
+
 local function UpdateGroupVisibility(header, profile, enabled)
     if not header.isForced then
         local numGroups = header.numGroups
         local raidWideSorting = settings.raidWideSorting[profile]
         local visibilityToUseForGroups
+        local headerVisibility = GetHeaderVisibility(profile)
 
-        if profile == "RAID40" then
-            if GW.settings.RAID_FRAMES and GW.settings.RAID25_ENABLED and GW.settings.RAID10_ENABLED then
-                RegisterStateDriver(header, "visibility", profiles.RAID40.visibility)
-                visibilityToUseForGroups = profiles.RAID40.visibility
-            elseif GW.settings.RAID_FRAMES and not GW.settings.RAID25_ENABLED and GW.settings.RAID10_ENABLED then
-                RegisterStateDriver(header, "visibility", profiles.RAID40.visibilityIncl25)
-                visibilityToUseForGroups = profiles.RAID40.visibilityIncl25
-            elseif GW.settings.RAID_FRAMES and not GW.settings.RAID25_ENABLED and not GW.settings.RAID10_ENABLED then
-                RegisterStateDriver(header, "visibility", profiles.RAID40.visibilityAll)
-                visibilityToUseForGroups = profiles.RAID40.visibilityAll
-            elseif not GW.settings.RAID_FRAMES then
-                RegisterStateDriver(header, "visibility", "hide")
-            end
-        elseif profile == "RAID25" then
-            if GW.settings.RAID25_ENABLED and GW.settings.RAID10_ENABLED then
-                RegisterStateDriver(header, "visibility", profiles.RAID25.visibility)
-                visibilityToUseForGroups = profiles.RAID25.visibility
-            elseif GW.settings.RAID25_ENABLED and not GW.settings.RAID10_ENABLED then
-                RegisterStateDriver(header, "visibility", profiles.RAID25.visibilityIncl10)
-                visibilityToUseForGroups = profiles.RAID25.visibilityIncl10
-            elseif not GW.settings.RAID25_ENABLED then
-                RegisterStateDriver(header, "visibility", "hide")
-            end
-        elseif profile == "RAID10" then
-            if GW.settings.RAID10_ENABLED then
-                RegisterStateDriver(header, "visibility", profiles.RAID10.visibility)
-                visibilityToUseForGroups = profiles.RAID10.visibility
-            else
-                RegisterStateDriver(header, "visibility", "hide")
-            end
-        elseif profile == "RAID_PET" then
-            if GW.settings.RAID_PET_FRAMES then
-                RegisterStateDriver(header, "visibility", profiles.RAID_PET.visibility)
-                visibilityToUseForGroups = profiles.RAID_PET.visibility
-            else
-                RegisterStateDriver(header, "visibility", "hide")
+        if headerVisibility then
+            RegisterStateDriver(header, "visibility", headerVisibility)
+            if headerVisibility ~= "hide" then
+                visibilityToUseForGroups = headerVisibility
             end
         end
 
@@ -395,14 +465,12 @@ local function UpdateGroupVisibility(header, profile, enabled)
             if group then
                 if enabled then
                     -- register the correct visibility state driver
-                    if numGroups > 1 and i > 1 then
-                        if raidWideSorting then
-                            RegisterStateDriver(group, "visibility", "hide")
-                        else
-                            RegisterStateDriver(group, "visibility", visibilityToUseForGroups)
+                    if numGroups > 1 then
+                        local groupVisibility = visibilityToUseForGroups
+                        if i > 1 and raidWideSorting then
+                            groupVisibility = "hide"
                         end
-                    elseif numGroups > 1 and i == 1 then
-                        RegisterStateDriver(group, "visibility", visibilityToUseForGroups)
+                        RegisterStateDriver(group, "visibility", groupVisibility)
                     end
                 else
                     RegisterStateDriver(group, "visibility", "hide")
@@ -418,8 +486,9 @@ local function UpdateGridHeader(profile)
     local header = headers[profile]
     if header.isUpdating then return end
     header.isUpdating = true
-
-    local x, y = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[(settings.raidGrow[profile] or "DOWN+RIGHT")], DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[(settings.raidGrow[profile] or "DOWN+RIGHT")]
+    local direction = settings.raidGrow[profile] or "DOWN+RIGHT"
+    local point = DIRECTION_TO_POINT[direction]
+    local x, y = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[direction], DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[direction]
     local numGroups = header.numGroups
     local isParty = profile == "PARTY"
     local groupsPerRowCol = isParty and 1 or tonumber(settings.groupsPerColumnRow[profile])
@@ -456,8 +525,6 @@ local function UpdateGridHeader(profile)
                 child = group:GetAttribute("child"..idx)
             end
 
-
-            local point = DIRECTION_TO_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")]
             group:SetAttribute("point", point)
 
             if point == "LEFT" or point == "RIGHT" then
@@ -479,7 +546,7 @@ local function UpdateGridHeader(profile)
                 group:SetAttribute("startingIndex", 1)
             end
 
-            group:SetAttribute("columnAnchorPoint", DIRECTION_TO_COLUMN_ANCHOR_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")])
+            group:SetAttribute("columnAnchorPoint", DIRECTION_TO_COLUMN_ANCHOR_POINT[direction])
 
             if not group.isForced then
                 group:SetAttribute("maxColumns", raidWideSorting and numGroups or 1)
@@ -512,13 +579,13 @@ local function UpdateGridHeader(profile)
             end
         end
 
-        local point = DIRECTION_TO_GROUP_ANCHOR_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")]
+        point = DIRECTION_TO_GROUP_ANCHOR_POINT[direction]
         if (isParty or raidWideSorting) and settings.startFromCenter[profile] then
-			point = DIRECTION_TO_GROUP_ANCHOR_POINT["OUT+" .. (settings.raidGrow[profile] or "DOWN+RIGHT")]
+			point = DIRECTION_TO_GROUP_ANCHOR_POINT["OUT+" .. direction]
 		end
 
         if lastGroup == 0 then
-            if DIRECTION_TO_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")] == "LEFT" or DIRECTION_TO_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")] == "RIGHT" then
+            if DIRECTION_TO_POINT[direction] == "LEFT" or DIRECTION_TO_POINT[direction] == "RIGHT" then
                 if group then group:SetPoint(point, header, point, 0, height * y) end
                 height = height + HEIGHT + groupSpacing
                 newRows = newRows + 1
@@ -528,7 +595,7 @@ local function UpdateGridHeader(profile)
                 newCols = newCols + 1
             end
         else
-            if DIRECTION_TO_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")] == "LEFT" or DIRECTION_TO_POINT[(settings.raidGrow[profile] or "DOWN+RIGHT")] == "RIGHT" then
+            if DIRECTION_TO_POINT[direction] == "LEFT" or DIRECTION_TO_POINT[direction] == "RIGHT" then
                 if newRows == 1 then
                     if group then group:SetPoint(point, header, point, width * x, 0) end
                     width = width + WIDTH_FIVE + groupSpacing
