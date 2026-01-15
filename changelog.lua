@@ -18,6 +18,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("9.0.0", {
+    {GW.ChangelogType.feature, [=[TBC support]=]},
+})
+
 addChange("8.6.2", {
     {GW.ChangelogType.bug, [=[Used wrong setting for worldmap scale for era]=]},
 })

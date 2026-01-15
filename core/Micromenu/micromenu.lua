@@ -103,7 +103,7 @@ end
 
 local function updateGuildButton(self, event)
     if event == "GUILD_ROSTER_UPDATE" then
-        local gmb = GW.Classic and SocialsMicroButton or GuildMicroButton
+        local gmb = (GW.Classic or GW.TBC) and SocialsMicroButton or GuildMicroButton
         if gmb == nil then
             return
         end
@@ -257,6 +257,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
         t:ClearAllPoints()
         t:SetPoint("CENTER",btn,"CENTER", 0, 0)
         t:SetSize(32, 32)
+        t:SetTexCoord(0, 1, 0, 1)
     end
 
     t = btn:GetNormalTexture()
@@ -264,6 +265,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
         t:ClearAllPoints()
         t:SetPoint("CENTER",btn,"CENTER", 0, 0)
         t:SetSize(32, 32)
+        t:SetTexCoord(0, 1, 0, 1)
     end
 
     t = btn:GetPushedTexture()
@@ -271,6 +273,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
         t:ClearAllPoints()
         t:SetPoint("CENTER",btn,"CENTER", 0, 0)
         t:SetSize(32, 32)
+        t:SetTexCoord(0, 1, 0, 1)
     end
 
     t = btn:GetHighlightTexture()
@@ -278,6 +281,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
         t:ClearAllPoints()
         t:SetPoint("CENTER",btn,"CENTER", 0, 0)
         t:SetSize(32, 32)
+        t:SetTexCoord(0, 1, 0, 1)
     end
 
     if btn.PushedBackground then btn.PushedBackground:SetTexture() end
@@ -434,6 +438,9 @@ local function hook_MainMenuMicroButton_OnUpdate(self, elapsed)
     if self.MainMenuBarPerformanceBar then
         self.MainMenuBarPerformanceBar:SetAlpha(0)
         self.MainMenuBarPerformanceBar:SetScale(0.00001)
+    elseif MainMenuMicroButton.PerformanceIndicator then
+        MainMenuMicroButton.PerformanceIndicator:SetAlpha(0)
+        MainMenuMicroButton.PerformanceIndicator:SetScale(0.00001)
     else
         MainMenuBarPerformanceBarFrame:Hide()
         if MainMenuMicroButton.hover then
@@ -645,7 +652,7 @@ local function setupMicroButtons(mbf)
                 ]=]
             )
 
-            if GW.Classic then
+            if GW.Classic or GW.TBC then
                 disableMicroButton(TalentMicroButton, true)
             elseif GW.Mists then
                 TalentMicroButton:ClearAllPoints()
@@ -655,7 +662,7 @@ local function setupMicroButtons(mbf)
             end
         else
             -- TalentMicroButton
-            tref = TalentMicroButton
+            tref = TalentMicroButton:IsShown() and TalentMicroButton or sref
             tref:ClearAllPoints()
             tref:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
         end
@@ -665,7 +672,7 @@ local function setupMicroButtons(mbf)
 
     -- AchievementMicroButton
     local aref
-    if not GW.Classic then
+    if not GW.Classic and not GW.TBC then
         AchievementMicroButton:ClearAllPoints()
         AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
         aref = AchievementMicroButton
@@ -689,7 +696,7 @@ local function setupMicroButtons(mbf)
     end
 
     -- GuildMicroButton
-    local gref = GW.Classic and SocialsMicroButton or GuildMicroButton
+    local gref = (GW.Classic or GW.TBC) and SocialsMicroButton or GuildMicroButton
     gref:ClearAllPoints()
     gref:SetPoint("BOTTOMLEFT", qref, "BOTTOMRIGHT", 4, 0)
     gref.Ticker = C_Timer.NewTicker(15, function() C_GuildInfo.GuildRoster() end)
@@ -699,7 +706,7 @@ local function setupMicroButtons(mbf)
     gref:HookScript("OnEvent", updateGuildButton)
     gref:HookScript("OnEnter", GW.Guild_OnEnter)
     gref:SetScript("OnClick", GW.Guild_OnClick)
-    if not GW.Classic then
+    if not GW.Classic and not GW.TBC then
         hooksecurefunc(gref, "UpdateTabard", function()
             gref:GetDisabledTexture():SetAlpha(1)
             gref:GetNormalTexture():SetAlpha(1)
@@ -805,6 +812,9 @@ local function setupMicroButtons(mbf)
     if MainMenuMicroButton.MainMenuBarPerformanceBar then
         MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
         MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
+    elseif MainMenuMicroButton.PerformanceIndicator then
+        MainMenuMicroButton.PerformanceIndicator:SetAlpha(0)
+        MainMenuMicroButton.PerformanceIndicator:SetScale(0.00001)
     else
         MainMenuBarPerformanceBar:SetAlpha(0)
         MainMenuBarPerformanceBar:SetScale(0.00001)
@@ -1007,7 +1017,7 @@ AFP("checkElvUI", checkElvUI)
 
 local function hook_UpdateMicroButtons()
     HelpMicroButton:Show()
-    local m = GW.Classic and SocialsMicroButton or GuildMicroButton
+    local m = (GW.Classic or GW.TBC) and SocialsMicroButton or GuildMicroButton
     m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
     m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
     m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
@@ -1017,7 +1027,7 @@ local function hook_UpdateMicroButtons()
 
     reskinMicroButtons(Gw2MicroBarFrame.cf)
 
-    if GW.Classic then
+    if GW.Classic or GW.TBC then
         local tref
         if GW.settings.USE_TALENT_WINDOW then
             tref = GwTalentMicroButton
@@ -1061,7 +1071,7 @@ local function LoadMicroMenu()
         return
     end
 
-    if GW.Retail then
+    if GW.Retail or GW.TBC then
         MicroMenuContainer:GwKillEditMode()
     elseif GW.Classic then
         PERFORMANCEBAR_UPDATE_INTERVAL = 1
@@ -1091,7 +1101,7 @@ local function LoadMicroMenu()
         ToggleEventTimerIcon(mbf.cf)
     end
 
-    if not GW.Retail then
+    if not GW.Retail and not GW.TBC then
         for i = 1, #MICRO_BUTTONS do
             MICRO_BUTTONS[i] = nil
         end

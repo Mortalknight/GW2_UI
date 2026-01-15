@@ -7,7 +7,8 @@ local classic = { [1] = 2, [2] = 1, [3] = 4, [4] = 3 }
 local function UpdateButton(button, totem)
     if not (button and totem) then return end
 
-    local haveTotem, _, startTime, duration, icon = GetTotemInfo(totem.slot)
+    local haveTotem, _, startTime, duration, icon = GetTotemInfo((GW.Classic or GW.TBC) and totem or totem.slot)
+
     if GW.Retail then
         button:SetAlphaFromBoolean(haveTotem, 1, 0)
         button.iconTexture:SetTexture(icon)

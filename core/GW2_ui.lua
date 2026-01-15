@@ -410,7 +410,7 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.LoadMajorFactionsFrameSkin()
     end
 
-    if not GW.Classic then
+    if not GW.Classic and not GW.TBC then
         GW.LoadSocketUISkin()
         GW.LoadInspectFrameSkin()
     end
@@ -617,7 +617,7 @@ local function evPlayerLogin(self)
         GW.LoadQuestTimersSkin()
     end
 
-    if not GW.Classic then
+    if not GW.Classic and not GW.TBC then
         GW.MakeAltPowerBarMovable()
         GW.LoadLFGSkins()
         GW.LoadMailSkin()
@@ -633,7 +633,7 @@ local function evPlayerLogin(self)
     end
 
     -- load alert settings
-    if not GW.Classic then
+    if not GW.Classic and not GW.TBC then
         GW.LoadAlertSystem()
         GW.SetupAlertFramePosition()
         GW.LoadOurAlertSubSystem()
@@ -872,6 +872,9 @@ local function evPlayerLogin(self)
 
     if GW.Retail then
         GW.SetupSingingSockets()
+    end
+
+    if GW.Retail or GW.TBC then
         GW.HandleBlizzardEditMode()
     end
 end

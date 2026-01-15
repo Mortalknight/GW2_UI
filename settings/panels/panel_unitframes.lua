@@ -69,11 +69,22 @@ local function LoadTargetPanel(sWindow)
     pTargetOfFocus.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     pTargetOfFocus.breadcrumb:SetText(L["Focus target"])
 
+    local panels = {
+        {name = PET, frame = pPlayerPet},
+        {name = TARGET, frame = p_target},
+        {name = SHOW_TARGET_OF_TARGET_TEXT, frame = pTargetOfTarget},
+    }
+
+    if not (GW.Classic or GW.TBC) then
+        table.insert(panels, {name = FOCUS, frame = p_focus})
+        table.insert(panels, {name = L["Focus target"], frame = pTargetOfFocus})
+    end
+
     --PET
     pPlayerPet:AddOption(L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], {getterSetter = "PET_FLOATING_COMBAT_TEXT", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleCombatFeedback() end end, dependence = {["PETBAR_ENABLED"] = true}})
     pPlayerPet:AddOption(L["Show auras below"], nil, {getterSetter = "PET_AURAS_UNDER", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleAuraPosition() end end, dependence = {["PETBAR_ENABLED"] = true}})
     pPlayerPet:AddOption(L["Shorten health values"], nil, {getterSetter = "PET_UNIT_HEALTH_SHORT_VALUES", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateHealthBar() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = not GW.Retail})
-    pPlayerPet:AddOption(L["Show absorb bar"], nil, {getterSetter = "PET_SHOW_ABSORB_BAR", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic})
+    pPlayerPet:AddOption(L["Show absorb bar"], nil, {getterSetter = "PET_SHOW_ABSORB_BAR", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
 
     pPlayerPet:AddGroupHeader(L["Fader"])
     pPlayerPet:AddOptionDropdown(GW.NewSign .. L["Fader"], nil, { getterSetter = "petFrameFader", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["PETBAR_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"]})
@@ -98,7 +109,7 @@ local function LoadTargetPanel(sWindow)
     p_target:AddOption(L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], {getterSetter = "target_FLOATING_COMBAT_TEXT", callback = function() GwTargetUnitFrame:ToggleTargetFrameCombatFeedback() end, dependence = {["TARGET_ENABLED"] = true}})
     p_target:AddOption(L["Invert target frame"], nil, {getterSetter = "target_FRAME_INVERT", callback = function() GW.ShowRlPopup = true end, dependence = {["TARGET_ENABLED"] = true}})
     p_target:AddOption(L["Show alternative background texture"], nil, {getterSetter = "target_FRAME_ALT_BACKGROUND", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOption(L["Show absorb bar"], nil, {getterSetter = "target_SHOW_ABSORB_BAR", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, hidden = GW.Classic})
+    p_target:AddOption(L["Show absorb bar"], nil, {getterSetter = "target_SHOW_ABSORB_BAR", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
 
 
     p_target:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "target_ILVL", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["TARGET_ENABLED"] = true}, hidden = GW.Classic})
@@ -112,7 +123,7 @@ local function LoadTargetPanel(sWindow)
     --TARGET OF TARGET
     pTargetOfTarget:AddOption(SHOW_TARGET_OF_TARGET_TEXT, L["Enable the target of target frame."], {getterSetter = "target_TARGET_ENABLED", callback = function() GwTargetTargetUnitFrame:ToggleUnitFrame() end, dependence = {["TARGET_ENABLED"] = true}})
     pTargetOfTarget:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "target_TARGET_SHOW_CASTBAR", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
-    pTargetOfTarget:AddOption(L["Show absorb bar"], nil, {getterSetter = "target_TARGET_SHOW_ABSORB_BAR", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}, hidden = GW.Classic})
+    pTargetOfTarget:AddOption(L["Show absorb bar"], nil, {getterSetter = "target_TARGET_SHOW_ABSORB_BAR", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
 
     pTargetOfTarget:AddGroupHeader(L["Fader"])
     pTargetOfTarget:AddOptionDropdown(GW.NewSign .. L["Fader"], nil, { getterSetter = "targettargetFrameFader", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"]})
@@ -137,25 +148,26 @@ local function LoadTargetPanel(sWindow)
     p_focus:AddOption(L["Show absorb bar"], nil, {getterSetter = "focus_SHOW_ABSORB_BAR", callback = function() GwFocusUnitFrame:ToggleSettings(); GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
 
 
-    p_focus:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "focus_ILVL", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
+    p_focus:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "focus_ILVL", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
 
-    p_focus:AddGroupHeader(L["Fader"], {hidden = GW.Classic})
-    p_focus:AddOptionDropdown(GW.NewSign .. L["Fader"], nil, { getterSetter = "focusFrameFader", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["FOCUS_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"], hidden = GW.Classic})
-    p_focus:AddOptionSlider(GW.NewSign .. L["Smooth"], nil, { getterSetter = "focusFrameFader.smooth", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOptionSlider(GW.NewSign .. L["Min Alpha"], nil, { getterSetter = "focusFrameFader.minAlpha", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    p_focus:AddOptionSlider(GW.NewSign .. L["Max Alpha"], nil, { getterSetter = "focusFrameFader.maxAlpha", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
+    p_focus:AddGroupHeader(L["Fader"], {hidden = GW.Classic or GW.TBC})
+    p_focus:AddOptionDropdown(GW.NewSign .. L["Fader"], nil, { getterSetter = "focusFrameFader", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["FOCUS_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"], hidden = GW.Classic or GW.TBC})
+    p_focus:AddOptionSlider(GW.NewSign .. L["Smooth"], nil, { getterSetter = "focusFrameFader.smooth", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
+    p_focus:AddOptionSlider(GW.NewSign .. L["Min Alpha"], nil, { getterSetter = "focusFrameFader.minAlpha", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
+    p_focus:AddOptionSlider(GW.NewSign .. L["Max Alpha"], nil, { getterSetter = "focusFrameFader.maxAlpha", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
 
     --TARGET OF FOCUS
-    pTargetOfFocus:AddOption(MINIMAP_TRACKING_FOCUS, L["Display the focus target frame."], {getterSetter = "focus_TARGET_ENABLED", callback = function() GwFocusTargetUnitFrame:ToggleUnitFrame() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
-    pTargetOfFocus:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "focus_TARGET_SHOW_CASTBAR", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic})
-    pTargetOfFocus:AddOption(L["Show absorb bar"], nil, {getterSetter = "focus_TARGET_SHOW_ABSORB_BAR", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic})
+    pTargetOfFocus:AddOption(MINIMAP_TRACKING_FOCUS, L["Display the focus target frame."], {getterSetter = "focus_TARGET_ENABLED", callback = function() GwFocusTargetUnitFrame:ToggleUnitFrame() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
+    pTargetOfFocus:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "focus_TARGET_SHOW_CASTBAR", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
+    pTargetOfFocus:AddOption(L["Show absorb bar"], nil, {getterSetter = "focus_TARGET_SHOW_ABSORB_BAR", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
 
-    pTargetOfFocus:AddGroupHeader(L["Fader"], {hidden = GW.Classic})
-    pTargetOfFocus:AddOptionDropdown(GW.NewSign .. L["Fader"], nil, { getterSetter = "focustargetFrameFader", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, UNIT_TARGET, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"], hidden = GW.Classic})
-    pTargetOfFocus:AddOptionSlider(GW.NewSign .. L["Smooth"], nil, { getterSetter = "focusFrameFader.smooth", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic})
-    pTargetOfFocus:AddOptionSlider(GW.NewSign .. L["Min Alpha"], nil, { getterSetter = "focusFrameFader.minAlpha", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic})
-    pTargetOfFocus:AddOptionSlider(GW.NewSign .. L["Max Alpha"], nil, { getterSetter = "focusFrameFader.maxAlpha", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic})
+    pTargetOfFocus:AddGroupHeader(L["Fader"], {hidden = GW.Classic or GW.TBC})
+    pTargetOfFocus:AddOptionDropdown(GW.NewSign .. L["Fader"], nil, { getterSetter = "focustargetFrameFader", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, UNIT_TARGET, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"], hidden = GW.Classic or GW.TBC})
+    pTargetOfFocus:AddOptionSlider(GW.NewSign .. L["Smooth"], nil, { getterSetter = "focusFrameFader.smooth", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
+    pTargetOfFocus:AddOptionSlider(GW.NewSign .. L["Min Alpha"], nil, { getterSetter = "focusFrameFader.minAlpha", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
+    pTargetOfFocus:AddOptionSlider(GW.NewSign .. L["Max Alpha"], nil, { getterSetter = "focusFrameFader.maxAlpha", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
 
-    sWindow:AddSettingsPanel(p, UNITFRAME_LABEL, L["Modify the player pet frame settings."], {{name = PET, frame = pPlayerPet}, {name = TARGET, frame = p_target}, {name = SHOW_TARGET_OF_TARGET_TEXT, frame = pTargetOfTarget}, not GW.Classic and {name = FOCUS, frame = p_focus} or nil, not GW.Classic and {name = L["Focus target"], frame = pTargetOfFocus} or nil})
+
+    sWindow:AddSettingsPanel(p, UNITFRAME_LABEL, L["Modify the player pet frame settings."], panels)
 end
 GW.LoadTargetPanel = LoadTargetPanel
