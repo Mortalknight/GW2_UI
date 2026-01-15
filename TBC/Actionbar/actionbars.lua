@@ -6,7 +6,6 @@ local CountTable = GW.CountTable
 local AddUpdateCB = GW.AddUpdateCB
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
-local MAIN_MENU_BAR_BUTTON_MARGIN = 5
 
 local GW_BLIZZARD_HIDE_FRAMES = {
     MainMenuBarOverlayFrame,
@@ -775,6 +774,7 @@ local function updateMainBar()
     MainActionBar:SetMovable(1)
     MainActionBar:SetUserPlaced(true)
     MainActionBar:SetMovable(0)
+    MainActionBar:SetFrameLevel(1)
     MainActionBar.ignoreFramePositionManager = true
 
     -- set fader logic
