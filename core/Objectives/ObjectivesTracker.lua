@@ -170,7 +170,7 @@ local function DisableBlizzardsObjevtiveTracker()
         WatchFrame:SetUserPlaced(true)
         WatchFrame:GwKill()
         WatchFrame:SetScript("OnShow",function() WatchFrame:Hide() end)
-    elseif GW.Classic then
+    elseif GW.Classic or GW.TBC then
         QuestWatchFrame:SetMovable(1)
         QuestWatchFrame:SetUserPlaced(true)
         QuestWatchFrame:Hide()
@@ -242,10 +242,10 @@ local function LoadObjectivesTracker()
     -- container configuration
     local objectivesTrackerConfiguration = {
         { name = "GwObjectivesNotification", scrollable = false, mixin = GwObjectivesTrackerNotificationMixin, enumName = "Notification", template = "GwObjectivesNotification", load = true },
-        { name = "GwQuesttrackerContainerBossFrames", scrollable = false, mixin = GwObjectivesBossContainerMixin, enumName = "BossFrames", load = not GW.Classic },
-        { name = "GwQuesttrackerContainerArenaBGFrames", scrollable = false, mixin = GwObjectivesArenaContainerMixin, enumName = "ArenaFrames", load = not GW.Classic },
-        { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enumName = "Scenario", load = not GW.Classic },
-        { name = "GwQuesttrackerContainerAchievement", scrollable = true, mixin = GwAchievementTrackerContainerMixin, enumName = "Achievement", load = not GW.Classic },
+        { name = "GwQuesttrackerContainerBossFrames", scrollable = false, mixin = GwObjectivesBossContainerMixin, enumName = "BossFrames", load = not (GW.Classic or GW.TBC) },
+        { name = "GwQuesttrackerContainerArenaBGFrames", scrollable = false, mixin = GwObjectivesArenaContainerMixin, enumName = "ArenaFrames", load = not (GW.Classic or GW.TBC) },
+        { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enumName = "Scenario", load = not (GW.Classic or GW.TBC) },
+        { name = "GwQuesttrackerContainerAchievement", scrollable = true, mixin = GwAchievementTrackerContainerMixin, enumName = "Achievement", load = not (GW.Classic or GW.TBC) },
         { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Campaign", load = GW.Retail },
         { name = "GwQuesttrackerContainerQuests", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Quests", load = true },
         { name = "GwQuesttrackerContainerBonus", scrollable = true, mixin = GwBonusObjectivesTrackerContainerMixin, enumName = "Bonus", load = GW.Retail },

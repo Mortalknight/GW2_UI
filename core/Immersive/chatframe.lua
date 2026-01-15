@@ -1290,11 +1290,11 @@ GW.ShortChannel = ShortChannel
 
 -- Clone from ChatFrame.xml with changes
 local function FlashTabIfNotShown(frame, info, chatType, chatGroup, chatTarget)
-    if not frame:IsShown() and ((frame == DEFAULT_CHAT_FRAME and info.flashTabOnGeneral) or (frame ~= DEFAULT_CHAT_FRAME and info.flashTab)) then
-        if (not CHAT_OPTIONS.HIDE_FRAME_ALERTS or chatType == "WHISPER" or chatType == "BN_WHISPER")
-        and not FCFManager_ShouldSuppressMessageFlash(frame, chatGroup, chatTarget) then
-            FCF_StartAlertFlash(frame)
-        end
+    if frame:IsShown() then return end
+
+    local allowAlerts = ((frame ~= DEFAULT_CHAT_FRAME and info.flashTab) or (frame == DEFAULT_CHAT_FRAME and info.flashTabOnGeneral)) and ((chatType == "WHISPER" or chatType == "BN_WHISPER") or (CHAT_OPTIONS and not CHAT_OPTIONS.HIDE_FRAME_ALERTS))
+    if allowAlerts and not FCFManager_ShouldSuppressMessageFlash(frame, chatGroup, chatTarget) then
+        FCF_StartAlertFlash(frame)
     end
 end
 

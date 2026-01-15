@@ -18,6 +18,18 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("9.0.1", {
+    {GW.ChangelogType.bug, [=[Pet happines is now active on TBC]=]},
+    {GW.ChangelogType.bug, [=[Questlog skin updates for TBC]=]},
+    {GW.ChangelogType.bug, [=[Update Honor Tab for TBC]=]},
+    {GW.ChangelogType.bug, [=[Many actionbar fixes for TBC]=]},
+    {GW.ChangelogType.bug, [=[Disable some objectives tracker modules which are not supported in TBC, like Boss frames]=]},
+    {GW.ChangelogType.bug, [=[Fix micromenu lua error]=]},
+    {GW.ChangelogType.bug, [=[Fix chatframe lua error]=]},
+    {GW.ChangelogType.bug, [=[Added missing consts for TBC]=]},
+    {GW.ChangelogType.bug, [=[Fix shaman classpowe error on TBC]=]},
+})
+
 addChange("9.0.0", {
     {GW.ChangelogType.feature, [=[TBC support]=]},
 })

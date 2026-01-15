@@ -1,3 +1,15 @@
+9.0.1
+FIXES
+    - Pet happines is now active on TBC
+    - Questlog skin updates for TBC
+    - Update Honor Tab for TBC
+    - Many actionbar fixes for TBC
+    - Disable some objectives tracker modules which are not supported in TBC, like Boss frames
+    - Fix micromenu lua error
+    - Fix chatframe lua error
+    - Added missing consts for TBC
+    - Fix shaman classpowe error on TBC
+
 9.0.0
 NEW
     - TBC support

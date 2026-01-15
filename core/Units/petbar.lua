@@ -160,7 +160,7 @@ function GwPlayerPetFrameMixin:OnEvent(event, unit, ...)
         SetPortraitTexture(self.portrait, "pet")
         self:UpdateHealthBar()
         self:UpdatePowerBar(true)
-        if GW.Classic then
+        if GW.Classic or GW.TBC then
             C_Timer.After(0.1, function() self:UpdateHappiness() end)
         end
     elseif event == "UNIT_AURA" then
@@ -358,7 +358,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("PET_BAR_UPDATE_USABLE")
     playerPetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     playerPetFrame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
-    if GW.Classic then
+    if GW.Classic or GW.TBC then
         playerPetFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "pet")
         playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
     end

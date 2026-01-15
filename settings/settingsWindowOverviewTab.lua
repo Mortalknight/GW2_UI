@@ -172,7 +172,7 @@ local function LoadSettingsOverview(container)
     if GW.Retail then
         settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail.png")
         settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-retail-dark.png")
-    elseif GW.Classic then
+    elseif GW.Classic or GW.TBC then
         settingsOverview.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic.png")
         settingsOverview.splashart2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/splashscreen/settingartwork-classic.png")
     elseif GW.Mists then
