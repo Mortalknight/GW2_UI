@@ -838,6 +838,8 @@ local function LoadBag(helpers)
     for i = 0, 3 do
         _G["CharacterBag" .. i .. "Slot"]:Hide()
     end
+    KeyRingButton:Hide()
+    hooksecurefunc(KeyRingButton, "Show", GW.Self_Hide)
 
     -- Create sell junk banner
     local smsj = CreateFrame("FRAME", nil, MerchantFrame)
