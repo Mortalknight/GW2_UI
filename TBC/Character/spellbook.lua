@@ -155,7 +155,7 @@ local function GetSpellbookActionButton(tab, container, index)
     button.mask:SetParent(button)
 
     button.modifiedClick = SpellButton_OnModifiedClick
-    button:RegisterForClicks("AnyUp")
+    button:RegisterForClicks("AnyUp", "AnyDown")
     button:RegisterForDrag("LeftButton")
     button:RegisterEvent("SPELL_UPDATE_COOLDOWN")
     button:RegisterEvent("PET_BAR_UPDATE")
