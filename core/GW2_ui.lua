@@ -708,10 +708,8 @@ local function evPlayerLogin(self)
     elseif GW.settings.HEALTHGLOBE_ENABLED and GW.settings.PLAYER_AS_TARGET_FRAME then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
-        if not GW.Retail then
-            if GW.settings.PLAYER_ENERGY_MANA_TICK then
-                GW.Load5SR(hg)
-            end
+        if (GW.Classic or GW.TBC) and GW.settings.PLAYER_ENERGY_MANA_TICK then
+            GW.Load5SR(hg)
         end
     end
 
