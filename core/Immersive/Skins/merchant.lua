@@ -93,6 +93,7 @@ local function LoadMerchantFrameSkin()
 
     MerchantFrameCloseButton:GwSkinButton(true)
     MerchantFrameCloseButton:SetSize(20, 20)
+    MerchantFrameCloseButton:SetPoint("TOPRIGHT", MerchantFrame, "TOPRIGHT", -10, -2)
     MerchantFramePortrait:Hide()
 
     hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
