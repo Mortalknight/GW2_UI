@@ -73,13 +73,16 @@ local function LoadMerchantFrameSkin()
     MerchantFrame.NineSlice:Hide()
     MerchantFrame.TopTileStreaks:Hide()
 
-    local r = {MerchantFrame:GetRegions()}
-    local i = 1
-    local headerText
-    for _,c in pairs(r) do
-        if c:GetObjectType() == "FontString" then
-            if i == 2 then headerText = c break end
-            i = i + 1
+    local headerText = MerchantFrameTitleText
+
+    if not GW.Retail then
+        local r = {MerchantFrame:GetRegions()}
+        local i = 1
+        for _,c in pairs(r) do
+            if c:GetObjectType() == "FontString" then
+                if i == 2 then headerText = c break end
+                i = i + 1
+            end
         end
     end
 
