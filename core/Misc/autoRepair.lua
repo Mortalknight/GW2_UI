@@ -4,6 +4,10 @@ local FormatMoneyForChat = GW.FormatMoneyForChat
 
 local STATUS, TYPE, COST, canRepair
 
+if GUILDBANK_REPAIR_INSUFFICIENT_FUNDS == nil then
+    GUILDBANK_REPAIR_INSUFFICIENT_FUNDS = L["Insufficient funds to repair all items"]
+end
+
 local function autoRepair(overrideSettings)
     STATUS, TYPE, COST, canRepair = "", GW.settings.AUTO_REPAIR, GetRepairAllCost()
 
