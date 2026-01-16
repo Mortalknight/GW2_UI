@@ -73,11 +73,21 @@ local function LoadMerchantFrameSkin()
     MerchantFrame.NineSlice:Hide()
     MerchantFrame.TopTileStreaks:Hide()
 
-    GW.CreateFrameHeaderWithBody(MerchantFrame, MerchantFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon.png", {MerchantFrameInset, MerchantMoneyInset}, nil, false, true)
+    local r = {MerchantFrame:GetRegions()}
+    local i = 1
+    local headerText
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "FontString" then
+            if i == 2 then headerText = c break end
+            i = i + 1
+        end
+    end
+
+    GW.CreateFrameHeaderWithBody(MerchantFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon.png", {MerchantFrameInset, MerchantMoneyInset}, nil, false, true)
     MerchantFrame.gwHeader.windowIcon:SetSize(65, 65)
     MerchantFrame.gwHeader.windowIcon:ClearAllPoints()
     MerchantFrame.gwHeader.windowIcon:SetPoint("CENTER", MerchantFrame.gwHeader.BGLEFT, "LEFT", 25, -5)
-    MerchantFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+    headerText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
 
     MerchantFrameInset.NineSlice:Hide()
 
