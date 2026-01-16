@@ -84,7 +84,7 @@ local function Minimap_OnMouseDown(self, btn)
     if btn == "RightButton" then
         self.gwTrackingButton:OpenMenu()
     else
-        Minimap.OnClick(self)
+        Minimap_OnClick(self)
     end
 end
 
