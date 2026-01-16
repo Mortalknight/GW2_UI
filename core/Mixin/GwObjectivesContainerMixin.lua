@@ -78,11 +78,11 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
             Mixin(newBlock.actionButton, GwObjectivesItemButtonMixin)
             newBlock.actionButton:SetAttribute("type1", "item")
             newBlock.actionButton:SetAttribute("type2", "stop")
-            if GW.Classic or GW.TBC then
+            if GW.Classic then
                 newBlock.actionButton:FakeHide()
             end
         end
-        if GW.Retail then
+        if GW.Retail or GW.TBC then
             newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
         else
             newBlock.actionButton:RegisterForClicks("AnyDown")

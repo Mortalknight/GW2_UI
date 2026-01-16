@@ -284,16 +284,15 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
 
     self.hasItem = false
 
-    if GW.Retail or GW.Mists then
+    if GW.Retail or GW.Mists or GW.TBC then
         if self.questLogIndex then
             local link, item, charges, showWhenComplete = GetQuestLogSpecialItemInfo(self.questLogIndex)
-
-            local isComplete = GW.Retail and (self.questID and QuestCache:Get(self.questID):IsComplete()) or GW.Mists and (self.isComplete) or false
+            local isComplete = GW.Retail and (self.questID and QuestCache:Get(self.questID):IsComplete()) or self.isComplete
             if item and (not isComplete or showWhenComplete) then
                 self.hasItem = true
                 if GW.Retail then
                     btn:SetUp(self.questLogIndex)
-                else
+                elseif GW.Mists or GW.TBC then
                     btn.questLogIndex = self.questLogIndex
                     btn.charges = charges
                     btn.rangeTimer = -1
@@ -310,7 +309,7 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButton()
         end
         btn:Hide()
         btn:SetScript("OnUpdate", nil)
-    elseif GW.Classic or GW.TBC then
+    elseif GW.Classic then
         if self.sourceItemId and not self.isComplete and btn:SetItem(self) then
             btn:SetScript("OnUpdate", btn.OnUpdate)
             btn:Show()
