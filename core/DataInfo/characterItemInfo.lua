@@ -191,7 +191,7 @@ local function UpdateCharacterInfo(self, event)
         for name, _ in pairs(InspectItems) do
             local frame = _G[name]
             if frame then
-                GW.UpdateCharacterPanelItemSlot(frame)
+                --GW.UpdateCharacterPanelItemSlot(frame)
             end
         end
         self.needsUpdate = false

@@ -728,7 +728,7 @@ local function addAddonButton(name, setting, shadow, anchor, showFunction, hideO
         nextAnchor = GwHeroPanelMenu[name]
 
         if name == "GearQuipper-TBC" then
-            GwHeroPanelMenu[name]:SetText("GearQuipper Wrath")
+            GwHeroPanelMenu[name]:SetText("GearQuipper")
             GqUiFrame:ClearAllPoints()
             GqUiFrame:SetParent(GwCharacterWindow)
             GqUiFrame:SetPoint("TOPRIGHT", GwCharacterWindow, "TOPRIGHT", 350, -12)

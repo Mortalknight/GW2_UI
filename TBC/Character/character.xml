@@ -81,16 +81,10 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.skillsMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentRunes" parentKey="runeMenu" inherits="GwHeroPanelMenuButtonTemplate,SecureHandlerClickTemplate" text="RUNES">
+            <Button name="$parentPet" parentKey="petMenu" inherits="GwHeroPanelMenuButtonTemplate,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET">
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.honorMenu" relativePoint="BOTTOMLEFT"></Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentPet" parentKey="petMenu" inherits="GwHeroPanelMenuButtonTemplate,SecureHandlerClickTemplate" text="PET">
-                <Size x="231" y="36"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.runeMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
         </Frames>
@@ -98,7 +92,6 @@
             <OnLoad>
                 self.skillsMenu:SetText(SKILLS)
                 self.honorMenu:SetText(PVP)
-                self.runeMenu:SetText(RUNES)
                 self.petMenu:SetText(PET)
             </OnLoad>
         </Scripts>

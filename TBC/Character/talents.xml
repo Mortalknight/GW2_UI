@@ -96,6 +96,28 @@
         </Layers>
     </Button>
 
+    <Frame name="GwSpellbookActionButtonHeaderTemplate" virtual="true">
+        <Size x="304" y="64"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BORDER">
+                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-10"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="subTitle" text="" justifyH="LEFT" justifyV="MIDDLE">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.title" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+                    </Anchors>
+                    <Color r="0.5" g="0.5" b="0.5" a="1"/>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+
     <Frame name="GwSpellbookMenu" inherits="SecureHandlerAttributeTemplate" virtual="true">
         <Size x="241" y="621"/>
         <Anchors>
@@ -266,6 +288,17 @@
                 <Scripts>
                     <OnShow>
                         self:GetParent().pages:SetText(7)
+                    </OnShow>
+                </Scripts>
+            </Frame>
+            <Frame name="$parentcontainer8" parentKey="container8" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
+                <Size x="608" y="541"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:GetParent().pages:SetText(8)
                     </OnShow>
                 </Scripts>
             </Frame>
