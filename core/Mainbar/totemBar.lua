@@ -14,9 +14,12 @@ local function UpdateButton(button, totem)
         button.iconTexture:SetTexture(icon)
         button.cooldown:SetCooldown(startTime, duration)
 
-        if totem:GetParent() ~= button.holder then
-            totem:ClearAllPoints()
-            totem:SetParent(button.holder)
+        if GW.Retail or GW.Mists then
+            if totem:GetParent() ~= button.holder then
+                totem:ClearAllPoints()
+                totem:SetParent(button.holder)
+            end
+
             totem:SetAllPoints(button.holder)
         end
     end
