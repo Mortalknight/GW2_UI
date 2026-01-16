@@ -3,7 +3,6 @@
 
     <Button name="GwAuraTmpl" inherits="GwAuraSecureTmpl" registerForClicks="RightButtonUp,RightButtonDown" virtual="true" framelevel="4"/>
 
-
     <Frame name="GwPrivateAuraTmpl" mixin="BuffFramePrivateAuraAnchorMixin" parentArray="PrivateAuraAnchors" virtual="true">
         <Size x="40" y="40"></Size>
         <Frames>
