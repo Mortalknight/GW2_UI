@@ -307,7 +307,6 @@ local function LoadGuildList(tabContainer)
     _G.GuildStatus_Update = GuildStatus_Update
     _G.GuildFrameGuildListToggleButton_OnClick = GuildFrameGuildListToggleButton_OnClick
     _G.GuildControlPopupFrameRemoveRankButton_OnUpdate = GuildControlPopupFrameRemoveRankButton_OnUpdate
-    _G.GuildFramePopup_Show = GuildFramePopup_Show
 
     GUILDMEMBERS_TO_DISPLAY = 22
 
