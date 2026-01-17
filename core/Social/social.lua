@@ -83,7 +83,7 @@ local windowsConfiguration = {
         HeaderText = GUILD,
         HeaderTipText = GUILD,
         Bindings = {
-            TOGGLERAIDTAB = "GuildList"
+            TOGGLEGUILDTAB = "GuildList"
         },
         OnClick = [=[
             self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "guildlist")
