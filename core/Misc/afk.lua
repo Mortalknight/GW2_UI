@@ -5,6 +5,7 @@ local IsIn = GW.IsIn
 
 local GetColoredName = ChatFrameUtil and ChatFrameUtil.GetDecoratedSenderName or GetColoredName
 local GetChatCategory = ChatFrameUtil and ChatFrameUtil.GetChatCategory or Chat_GetChatCategory
+local GetMobileEmbeddedTexture = (ChatFrameUtil and ChatFrameUtil.GetMobileEmbeddedTexture) or ChatFrame_GetMobileEmbeddedTexture
 
 local AFKMode
 
@@ -193,7 +194,7 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
         arg1 = RemoveExtraSpaces(arg1)
     end
 
-    local isMobile = arg14 and ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b)
+    local isMobile = arg14 and GetMobileEmbeddedTexture(info.r, info.g, info.b)
     local message = format("%s%s", isMobile or "", arg1)
 
     local coloredName = (infoType == "BN_WHISPER" and GW.GetBNFriendColor(arg2, arg13)) or GW.ChatFunctions:GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)

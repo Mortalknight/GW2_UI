@@ -54,7 +54,7 @@ local function hookTalentButton(talentButton, container, row, index)
     local x = (w / NUM_TALENT_COLUMNS) * (index - 1)
     local y = (h / MAX_NUM_TALENT_TIERS) * (row - 1)
 
-    talentButton:RegisterForClicks("AnyUp")
+    talentButton:RegisterForClicks("AnyUp", "AnyDown")
     talentButton:SetPoint('TOPLEFT', container, 'TOPLEFT', x + (talentButton:GetWidth() / 4), -(y + (talentButton:GetHeight() / 4)))
 
     talentButton:SetScript("OnEnter", talentBunnton_OnEnter)

@@ -7,7 +7,6 @@
     <Script file="worldmap.lua"/>
     <Script file="flightmap.lua"/>
     <Script file="timeManager.lua"/>
-    <Script file="merchant.lua"/>
     <Script file="questLog.lua"/>
     <Script file="questTimers.lua"/>
     <Script file="colorPicker.lua"/>

@@ -593,7 +593,7 @@ local function newHeader(filter)
     h.visibility.frame = h
     h.name = name
 
-    if GW.Retail then
+    if GW.Retail or GW.TBC then
         h.visibility:RegisterEvent("WEAPON_ENCHANT_CHANGED")
     end
 

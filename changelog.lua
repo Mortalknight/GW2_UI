@@ -18,6 +18,21 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("9.1.0", {
+    {GW.ChangelogType.feature, [=[Social frame for TBC]=]},
+    {GW.ChangelogType.bug, [=[Chat frame fixes (TBC)]=]},
+    {GW.ChangelogType.bug, [=[Questlog skin fixes (TBC)]=]},
+    {GW.ChangelogType.bug, [=[Hide Keyring if actionbar not enabled (TBC & Era)]=]},
+    {GW.ChangelogType.bug, [=[Fix minimap left click lua error (TBC)]=]},
+    {GW.ChangelogType.bug, [=[Fix spellbook and talents not clickable (TBC)]=]},
+    {GW.ChangelogType.bug, [=[Fix totembar lua error (TBC)]=]},
+    {GW.ChangelogType.bug, [=[Update spellbook (TBC)]=]},
+    {GW.ChangelogType.bug, [=[Fix objectives tracker actionbutton (TBC)]=]},
+    {GW.ChangelogType.bug, [=[Fix customs classcolor on none retail clients]=]},
+    {GW.ChangelogType.bug, [=[Fix merchant skin (TBC))]=]},
+    {GW.ChangelogType.bug, [=[Fix missing auto repair text (TBC)]=]},
+    {GW.ChangelogType.bug, [=[Fix not cancable player auras (TBC)]=]},
+})
 
 addChange("9.0.2", {
     {GW.ChangelogType.bug, [=[Added missing raid debuffs for TBC]=]},

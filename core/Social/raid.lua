@@ -1,5 +1,19 @@
 local _, GW = ...
 
+local function UpdateRaidFrame()
+    local update = RaidFrame_Update or (RaidFrame and RaidFrame.Update)
+    if update then
+        update(RaidFrame)
+    end
+end
+
+local function RaidInfoFrameUpdate()
+    local update = RaidInfoFrame_Update or (RaidInfoFrame and RaidInfoFrame.UpdateRaids)
+    if update then
+        update(RaidInfoFrame)
+    end
+end
+
 local function RaidGroupButton_OnDragStart(raidButton)
     if InCombatLockdown() then return end
     if ( not UnitIsGroupLeader("player") and not UnitIsGroupAssistant("player") ) then
@@ -41,7 +55,7 @@ end
 local function RaidFrame_OnEvent(self, event, ...)
     if event == "PLAYER_REGEN_ENABLED" then
         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-        RaidFrame_Update()
+        UpdateRaidFrame()
     end
 
     if ( event == "PLAYER_ENTERING_WORLD" ) then
@@ -49,14 +63,14 @@ local function RaidFrame_OnEvent(self, event, ...)
     elseif ( event == "PLAYER_LOGIN" ) then
         if ( IsInRaid() ) then
             RaidFrame_LoadUI();
-            if not InCombatLockdown() then RaidFrame_Update() end
+            if not InCombatLockdown() then UpdateRaidFrame() end
         end
     elseif ( event == "GROUP_ROSTER_UPDATE" ) then
         RaidFrame_LoadUI();
         if InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
         else
-            RaidFrame_Update()
+            UpdateRaidFrame()
         end
         RaidPullout_RenewFrames();
     elseif ( event == "READY_CHECK" or
@@ -79,12 +93,12 @@ local function RaidFrame_OnEvent(self, event, ...)
         else
             RaidFrameRaidInfoButton:Disable();
         end
-        RaidInfoFrame_Update(true);
+        RaidInfoFrameUpdate()
     elseif (event == "PARTY_LEADER_CHANGED" or event == "PARTY_LFG_RESTRICTED" ) then
         if InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
         else
-            RaidFrame_Update()
+            UpdateRaidFrame()
         end
     end
 end
@@ -125,7 +139,7 @@ end
 
 local function LoadRaidList(tabContainer)
     RaidFrame_LoadUI()
-    RaidFrame_Update()
+    UpdateRaidFrame()
     RequestRaidInfo()
 
     RaidFrame:SetScript("OnEvent", RaidGroupFrame_OnEvent);
@@ -138,39 +152,50 @@ local function LoadRaidList(tabContainer)
     RaidFrame:SetPoint("BOTTOMRIGHT", raidFrame, "BOTTOMRIGHT", 0, 0)
 
     RaidFrame:SetScript("OnShow", function(self)
-        ButtonFrameTemplate_ShowAttic(self:GetParent())
+        if GW.Retail then
+            ButtonFrameTemplate_ShowAttic(self:GetParent())
+        end
 
         if InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
         else
-            RaidFrame_Update()
+            UpdateRaidFrame()
         end
         RequestRaidInfo()
     end)
 
-    RaidFrameNotInRaid.ScrollingDescription:ClearAllPoints()
-    RaidFrameNotInRaid.ScrollingDescription:SetPoint("TOPLEFT", RaidFrameNotInRaid, "TOPLEFT", 0, -73)
-    RaidFrameNotInRaid.ScrollingDescription:SetPoint("BOTTOMRIGHT", RaidFrameNotInRaid, "BOTTOMRIGHT", 0, 0)
-    RaidFrameNotInRaid.ScrollingDescription.ScrollBox.FontStringContainer.FontString:SetJustifyH("CENTER")
-    RaidFrameNotInRaid.ScrollingDescription.ScrollBox.FontStringContainer.FontString:SetJustifyV("TOP")
-    RaidFrameNotInRaid.ScrollingDescription.ScrollBox.FontStringContainer.FontString:SetTextColor(1, 1, 1)
+    if RaidFrameNotInRaid.ScrollingDescription then
+        RaidFrameNotInRaid.ScrollingDescription:ClearAllPoints()
+        RaidFrameNotInRaid.ScrollingDescription:SetPoint("TOPLEFT", RaidFrameNotInRaid, "TOPLEFT", 0, -73)
+        RaidFrameNotInRaid.ScrollingDescription:SetPoint("BOTTOMRIGHT", RaidFrameNotInRaid, "BOTTOMRIGHT", 0, 0)
+        RaidFrameNotInRaid.ScrollingDescription.ScrollBox.FontStringContainer.FontString:SetJustifyH("CENTER")
+        RaidFrameNotInRaid.ScrollingDescription.ScrollBox.FontStringContainer.FontString:SetJustifyV("TOP")
+        RaidFrameNotInRaid.ScrollingDescription.ScrollBox.FontStringContainer.FontString:SetTextColor(1, 1, 1)
+    end
 
     RaidFrameAllAssistCheckButton:ClearAllPoints()
     RaidFrameAllAssistCheckButton:SetPoint("TOPLEFT", 10, -23)
     RaidFrameAllAssistCheckButton.text:ClearAllPoints()
     RaidFrameAllAssistCheckButton.text:SetPoint("LEFT", RaidFrameAllAssistCheckButton, "RIGHT", 5, -2)
     RaidFrameAllAssistCheckButton.text:SetText(ALL .. " |TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:25:25:0:-3|t")
-    --ALL_ASSIST_LABEL
-    RaidFrame.RoleCount:ClearAllPoints()
-    RaidFrame.RoleCount:SetPoint("TOP", -80, -25)
 
-    RaidFrame.RoleCount.TankIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank.png")
-    RaidFrame.RoleCount.HealerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer.png")
-    RaidFrame.RoleCount.DamagerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps.png")
-    RaidFrame.RoleCount.DamagerIcon:SetSize(20, 20)
+    --ALL_ASSIST_LABEL
+    if RaidFrame.RoleCount then
+        RaidFrame.RoleCount:ClearAllPoints()
+        RaidFrame.RoleCount:SetPoint("TOP", -80, -25)
+
+        RaidFrame.RoleCount.TankIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank.png")
+        RaidFrame.RoleCount.HealerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer.png")
+        RaidFrame.RoleCount.DamagerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps.png")
+        RaidFrame.RoleCount.DamagerIcon:SetSize(20, 20)
+    end
 
     RaidFrameAllAssistCheckButton:GwSkinCheckButton()
     RaidFrameAllAssistCheckButton:SetSize(18, 18)
+
+    if RaidFrameReadyCheckButton then
+        RaidFrameReadyCheckButton:GwSkinButton(false, true)
+    end
 
     RaidFrameConvertToRaidButton:GwSkinButton(false, true)
     RaidFrameRaidInfoButton:GwSkinButton(false, true)
@@ -224,7 +249,12 @@ local function LoadRaidList(tabContainer)
         _G["RaidGroupButton" .. i]:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
         _G["RaidGroupButton" .. i .. "Name"]:SetFont(UNIT_NAME_FONT, 10)
         _G["RaidGroupButton" .. i .. "Level"]:SetFont(UNIT_NAME_FONT, 10)
-        _G["RaidGroupButton" .. i .. "Class"]:SetFont(UNIT_NAME_FONT, 10)
+
+        if _G["RaidGroupButton" .. i .. "Class"].SetFont then
+            _G["RaidGroupButton" .. i .. "Class"]:SetFont(UNIT_NAME_FONT, 10)
+        else
+            _G["RaidGroupButton" .. i .. "Class"].text:SetFont(UNIT_NAME_FONT, 10)
+        end
 
         _G["RaidGroupButton" .. i .. "Name"]:SetSize(60, 19)
         _G["RaidGroupButton" .. i .. "Level"]:SetSize(37, 19)

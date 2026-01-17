@@ -5,4 +5,5 @@
     <Script file ="altPowerBar.lua"/>
     <Script file ="totemBar.lua"/>
     <Script file ="expbar.lua"/>
+    <Script file ="5sr.lua"/>
 </Ui>

@@ -40,11 +40,9 @@ local function setMinimapButtons(side)
     end
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
-    GwMiniMapTrackingFrame:ClearAllPoints()
 
     if side == "left" then
-        GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
-        MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 3, -6)
+        MiniMapBattlefieldFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
         if LFGMinimapFrame then
             LFGMinimapFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
         end
@@ -54,8 +52,7 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
     else
-        GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 0, 0)
-        MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 3, -6)
+        MiniMapBattlefieldFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 0, 0)
         if LFGMinimapFrame then
             LFGMinimapFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 5, -7)
         end
@@ -84,7 +81,7 @@ local function Minimap_OnMouseDown(self, btn)
     if btn == "RightButton" then
         self.gwTrackingButton:OpenMenu()
     else
-        Minimap.OnClick(self)
+        Minimap_OnClick(self)
     end
 end
 
@@ -409,33 +406,6 @@ local function LoadMinimap()
         MiniMapChallengeMode:SetScale(0.8)
     end
 
-    GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
-    MiniMapTracking:UnregisterAllEvents()
-    MiniMapTracking:SetScript("OnEvent", nil)
-    MiniMapTracking:Hide()
-    local icontype = MiniMapTrackingIcon:GetTexture()
-    if icontype == 132328 then icontype = icontype .. GW.myClassID end
-    if icontype and trackingTypes[icontype] then
-        GwMiniMapTrackingFrame.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
-        GwMiniMapTrackingFrame:Show()
-    else
-        GwMiniMapTrackingFrame:Hide()
-    end
-
-    GwMiniMapTrackingFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    GwMiniMapTrackingFrame:RegisterEvent("MINIMAP_UPDATE_TRACKING")
-    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self, event)
-        local icontype = GetTrackingTexture()
-        if icontype == 132328 then icontype = icontype .. GW.myClassID end
-        if icontype and trackingTypes[icontype] then
-            GwMiniMapTrackingFrame.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
-            GwMiniMapTrackingFrame:Show()
-        else
-            GwMiniMapTrackingFrame:Hide()
-        end
-    end)
-    GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", -30, 0)
-
     --Time
     GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
     TimeManager_LoadUI()
@@ -478,10 +448,6 @@ local function LoadMinimap()
 
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
-    --MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
-    --MiniMapLFGFrame:ClearAllPoints()
-    --MiniMapLFGFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
-
     MinimapZoneText:SetTextColor(1, 1, 1)
 
     hooksecurefunc(

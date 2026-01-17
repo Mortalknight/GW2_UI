@@ -1,6 +1,8 @@
 local _, GW = ...
 local L = GW.L
 
+local HIGHEST_CLASS_ID = 13 -- api does not work in none retail clients
+
 local function LoadGeneralPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
 
@@ -51,19 +53,23 @@ local function LoadGeneralPanel(sWindow)
     general:AddOptionSlider(L["Extended Vendor"], L["The number of pages shown in the merchant frame. Set 1 to disable."], { getterSetter = "EXTENDED_VENDOR_NUM_PAGES", callback = function() GW.ShowRlPopup = true end, min = 1, max = 6, decimalNumbers = 0, step = 1})
 
     classcolors:AddOption(L["Blizzard Class Colors"], nil, {getterSetter = "BLIZZARDCLASSCOLOR_ENABLED", callback = function(value)
-        for i = 1, #CLASS_SORT_ORDER do
-            local _, tag = GetClassInfo(i)
-            local settingsButton = GW.FindSettingsWidgetByOption("Gw2ClassColor." .. tag)
-            local color = value == true and RAID_CLASS_COLORS[tag] or settingsButton.getDefault()
+        for i = 1, HIGHEST_CLASS_ID do
+            local classInfo = C_CreatureInfo.GetClassInfo(i)
+            if classInfo then
+                local settingsButton = GW.FindSettingsWidgetByOption("Gw2ClassColor." .. classInfo.classFile)
+                local color = value == true and RAID_CLASS_COLORS[classInfo.classFile] or settingsButton.getDefault()
 
-            settingsButton.button.bg:SetColorTexture(color.r,  color.g,  color.b)
-            GW.UpdateGw2ClassColor(tag, color.r, color.g, color.b, true)
+                settingsButton.button.bg:SetColorTexture(color.r,  color.g,  color.b)
+                GW.UpdateGw2ClassColor(classInfo.classFile, color.r, color.g, color.b, true)
+            end
         end
     end, groupHeaderName = L["Custom Class Colors"]})
 
-    for i = 1, #CLASS_SORT_ORDER do
-        local name, tag = GetClassInfo(i)
-        classcolors:AddOptionColorPicker(name, nil, {getterSetter = "Gw2ClassColor." .. tag, callback = function(r, g, b, changed) GW.UpdateGw2ClassColor(tag, r, g, b, changed) end, groupHeaderName = L["Custom Class Colors"], dependence = {["BLIZZARDCLASSCOLOR_ENABLED"] = false}, isPrivateSetting = true})
+    for i = 1, HIGHEST_CLASS_ID do
+        local classInfo = C_CreatureInfo.GetClassInfo(i)
+        if classInfo then
+            classcolors:AddOptionColorPicker(classInfo.className, nil, {getterSetter = "Gw2ClassColor." .. classInfo.classFile, callback = function(r, g, b, changed) GW.UpdateGw2ClassColor(classInfo.classFile, r, g, b, changed) end, groupHeaderName = L["Custom Class Colors"], dependence = {["BLIZZARDCLASSCOLOR_ENABLED"] = false}, isPrivateSetting = true})
+        end
     end
 
     -- blizzard fixes

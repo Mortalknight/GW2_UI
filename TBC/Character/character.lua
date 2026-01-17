@@ -112,13 +112,13 @@ local function PaperDollPetStats_OnEvent(self, event, ...)
     if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and unit == "player") then
         if GwPetContainer:IsVisible() and not HasPetUI() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
-            GwCharacterMenu.petMenu:Disable()
+            GwHeroPanelMenu.petMenu:Disable()
             return
         end
     elseif event == "PET_UI_CLOSE" then
         if GwPetContainer:IsVisible() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
-            GwCharacterMenu.petMenu:Disable()
+            GwHeroPanelMenu.petMenu:Disable()
             return
         end
     end
@@ -333,7 +333,7 @@ GW.PaperDollUpdateStats = PaperDollUpdateStats
 local function PaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
     local statText, tooltip1, tooltip2
-    GwCharacterMenu.petMenu:SetShown(GW.myClassID == 3 or GW.myClassID == 9)
+    GwHeroPanelMenu.petMenu:SetShown(GW.myClassID == 3 or GW.myClassID == 9)
     if not hasUI then return end
 
     local numShownStats = 1
@@ -341,7 +341,7 @@ local function PaperDollUpdatePetStats()
     local x = 0
     local y = 0
 
-    GwCharacterMenu.petMenu:Enable()
+    GwHeroPanelMenu.petMenu:Enable()
     GwDressingRoomPet.model:SetUnit("pet")
     if UnitCreatureFamily("pet") then
 		GwDressingRoomPet.characterName:SetText((UnitName("pet") or "") .. " - " .. format(UNIT_LEVEL_TEMPLATE, (UnitLevel("pet") or ""), "") .. " " .. (UnitCreatureFamily("pet") or ""))
@@ -622,108 +622,17 @@ function GWupdateSkills()
     GwPaperSkills.scroll.slider:SetMinMaxValues (0,math.max(0,totlaHeight - GwPaperSkills.scroll:GetHeight()))
 end
 
-local function checkHonorSpy()
-    if not LibStub then
-        return nil
-    end
-    local ace = LibStub("AceAddon-3.0", true)
-    if not ace then
-        return nil
-    end
-    local HonorSpy = ace:GetAddon("HonorSpy", true)
-    if not HonorSpy then
-        return nil
-    end
-
-    return HonorSpy
-end
-
-local function UpdateHonorTab(self, updateAll)
-    -- If HonorSpy is installed, display this data in our Honor tab
-    local HonorSpy = checkHonorSpy()
-
-    local slot = self.buttons[1]
-    local hk, dk, contribution, rank, highestRank, rankName, rankNumber
-    -- This only gets set on player entering the world
-    if updateAll then
-        -- Yesterday's values
-        hk, dk, contribution = GetPVPYesterdayStats()
-        GWHonorFrameYesterdayHKValue:SetText(hk)
-        GWHonorFrameYesterdayContributionValue:SetText(contribution)
-        -- This Week's values
-        hk, contribution = GetPVPThisWeekStats()
-        GWHonorFrameThisWeekHKValue:SetText(hk)
-        if HonorSpy then
-            GWHonorFrameThisWeekContributionValue:SetText(format("%d (%d)", contribution, HonorSpy.db.char.estimated_honor))
-        else
-            GWHonorFrameThisWeekContributionValue:SetText(contribution)
-        end
-        -- Last Week's values
-        hk, dk, contribution, rank = GetPVPLastWeekStats()
-        GWHonorFrameLastWeekHKValue:SetText(hk)
-        GWHonorFrameLastWeekContributionValue:SetText(contribution)
-        GWHonorFrameLastWeekStandingValue:SetText(rank)
-    end
-
-    -- This session's values (today)
-    hk, dk = GetPVPSessionStats()
-    if HonorSpy then
-        GWHonorFrameCurrentHKValue:SetText(format("%d |cfff2ca45(%s: %s)|r", hk, HONOR, HonorSpy.db.char.estimated_honor - HonorSpy.db.char.original_honor))
-    else
-        GWHonorFrameCurrentHKValue:SetText(hk)
-    end
-    GWHonorFrameCurrentDKValue:SetText(dk)
-
-    -- Lifetime stats
-    hk, dk, highestRank = GetPVPLifetimeStats()
-    GWHonorFrameLifeTimeHKValue:SetText(hk)
-    GWHonorFrameLifeTimeDKValue:SetText(dk)
-    rankName, rankNumber = GetPVPRankInfo(highestRank)
-    if not rankName then
-        rankName = NONE
-    end
-    GWHonorFrameLifeTimeRankValue:SetText(rankName)
-
-    -- Set rank name and number
-    rankName, rankNumber = GetPVPRankInfo(UnitPVPRank("player"))
-    if not rankName then
-        rankName = NONE
-    end
-    slot.Header:SetText(rankName)
-    slot.Rank:SetText(format("(%s %d) %d%%", RANK, rankNumber, GetPVPRankProgress() * 100))
-
-    -- Set icon
-    if rankNumber > 0 then
-        self.buttons[1].icon:SetTexture(format("%s%02d", "Interface/PvPRankBadges/PvPRank", rankNumber))
-        self.buttons[1].icon:Show()
-        slot.Header:SetPoint("TOPLEFT", self, "TOPLEFT" , 50, -15)
-    else
-        self.buttons[1].icon:Hide()
-    end
-
-    -- Set rank progress and bar color
-    if GW.myfaction == "Alliance" then
-        self.buttons[1].progressBar:SetStatusBarColor(0.05, 0.15, 0.36)
-    else
-        self.buttons[1].progressBar:SetStatusBarColor(0.63, 0.09, 0.09)
-    end
-    self.buttons[1].progressBar:SetValue(GetPVPRankProgress())
-
-    -- Recenter rank text
-    slot.Header:SetPoint("TOP", self, "TOP", - slot.Rank:GetWidth() / 2 + 20, -83)
-end
-
 function LoadPVPTab(self)
     PVPFrame.Hide = PVPFrame.Show
     PVPFrame:Show()
-    PVPFrame:SetParent(GwPaperHonor)
+    PVPFrame:SetParent(self)
     PVPFrame:ClearAllPoints()
-    PVPFrame:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT", 0, 0)
-    PVPFrame:SetPoint("BOTTOMRIGHT", GwPaperHonor, "BOTTOMRIGHT", 0, 8)
+    PVPFrame:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
+    PVPFrame:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 8)
 
     PVPFrameBackground:ClearAllPoints()
-    PVPFrameBackground:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT", 0, 0)
-    PVPFrameBackground:SetPoint("BOTTOMRIGHT", GwPaperHonor, "BOTTOMRIGHT", 0, 8)
+    PVPFrameBackground:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
+    PVPFrameBackground:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 8)
 
     PVPFrame:GwStripTextures(true)
 
@@ -766,7 +675,7 @@ function GwToggleCharacter(tab, onlyShow)
 
     local CHARACTERFRAME_DEFAULTFRAMES= {}
 
-    CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwCharacterMenu
+    CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwHeroPanelMenu
     CHARACTERFRAME_DEFAULTFRAMES["ReputationFrame"] = GwPaperReputation
     CHARACTERFRAME_DEFAULTFRAMES["SkillFrame"] = GwPaperSkills
     CHARACTERFRAME_DEFAULTFRAMES["PetPaperDollFrame"] = GwPetContainer
@@ -867,7 +776,7 @@ end
 local function LoadPaperDoll()
     CreateFrame("Frame", "GwCharacterWindowContainer", GwCharacterWindow, "GwCharacterWindowContainer")
     CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
-    CreateFrame("Frame", "GwCharacterMenu", GwCharacterWindowContainer, "GwCharacterMenuFilledTemplate")
+    CreateFrame("Frame", "GwHeroPanelMenu", GwCharacterWindowContainer, "GwCharacterMenuFilledTemplate")
     local GwPaperHonor = CreateFrame("Frame", "GwPaperHonor", GwCharacterWindowContainer, "GwPaperHonor")
     CreateFrame("Frame", "GwPaperSkills", GwCharacterWindowContainer, "GwPaperSkills")
 

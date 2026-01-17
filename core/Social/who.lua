@@ -51,7 +51,6 @@ local function WhoFrameDropdown_OnLoad(self)
 	end
 end
 
-
 local function Who_InitButton(button, elementData)
     local index = elementData.index
 	local info = elementData.info
@@ -135,6 +134,10 @@ local function LoadWhoList(tabContainer)
 
     WhoWindow.list.Totals:SetTextColor(1, 1, 1)
 
+    if GW.Retail then
+        Mixin(WhoWindow.list.input, WhoFrameEditBoxMixin)
+    end
+
     -- Create Dropdown
     WhoWindow.list.ColumnHeader2.Dropdown = CreateFrame("DropdownButton", nil, WhoWindow.list.ColumnHeader2, "WowStyle1DropdownTemplate")
     WhoWindow.list.ColumnHeader2.Dropdown:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2, "TOPLEFT", 0, 0)
@@ -144,6 +147,9 @@ local function LoadWhoList(tabContainer)
     WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:Hide()
     WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:SetPoint("TOPLEFT")
     WhoWindow.list.ColumnHeader2.Dropdown.HighlightTexture:SetPoint("BOTTOMRIGHT")
+    if WhoWindow.list.ColumnHeader2.Dropdown.Background then
+        WhoWindow.list.ColumnHeader2.Dropdown.Background:Hide()
+    end
     WhoWindow.list.ColumnHeader2.Dropdown.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
 
     WhoFrameDropdown_OnLoad(WhoWindow.list.ColumnHeader2.Dropdown)
@@ -194,7 +200,11 @@ local function LoadWhoList(tabContainer)
     WhoWindow.list.InviteButton:SetScript("OnClick", function() C_PartyInfo.InviteUnit(WhoWindow.selectedName) end)
     WhoWindow.list.AddFriendButton:SetScript("OnClick", function() C_FriendList.AddFriend(WhoWindow.selectedName) end)
     WhoWindow.list.RefreshButton:SetScript("OnClick", function(self)
-        WhoWindow.list.input:OnEnterPressed(self:GetParent().input)
+        if GW.Retail then
+            WhoWindow.list.input:OnEnterPressed(self:GetParent().input)
+        else
+            WhoFrameEditBox_OnEnterPressed(self:GetParent().input)
+        end
         self:GetParent():GetParent().selectedWho = nil
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end)
@@ -203,8 +213,8 @@ local function LoadWhoList(tabContainer)
     WhoWindow.list.input.Instructions:SetMaxLines(2)
     WhoWindow.list.input.Instructions:SetTextColor(0.5, 0.5, 0.5)
     WhoWindow.list.input.Instructions:SetText(WHO_LIST_SEARCH_INSTRUCTIONS)
-    WhoWindow.list.input:SetScript("OnEnterPressed", WhoWindow.list.input.OnEnterPressed)
-    WhoWindow.list.input:SetScript("OnShow", WhoWindow.list.input.OnShow)
+    WhoWindow.list.input:SetScript("OnEnterPressed", GW.Retail and WhoWindow.list.input.OnEnterPressed or WhoFrameEditBox_OnEnterPressed)
+    WhoWindow.list.input:SetScript("OnShow", GW.Retail and WhoWindow.list.input.OnShow or EditBox_ClearFocus)
     WhoWindow.list.input:SetScript("OnEscapePressed", EditBox_ClearFocus)
     WhoWindow.list.input:SetScript("OnHide", WhoWindow.list.input.OnHide)
     WhoWindow.list.input:HookScript("OnTextChanged", function(self)

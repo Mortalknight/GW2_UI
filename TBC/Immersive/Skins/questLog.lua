@@ -440,6 +440,12 @@ local function LoadQuestLogFrameSkin()
 	QuestLogListScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder, true, 2, 2)
     QuestLogDetailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.OnlyBorder, true, 2, 4)
 
+	local detailBg = QuestLogFrame:CreateTexture(nil, "BACKGROUND", nil, 6)
+	detailBg:SetPoint("TOPLEFT", QuestLogFrame, "TOPLEFT", 19, -75)
+	detailBg:SetPoint("BOTTOMRIGHT", QuestLogTitle6, "BOTTOMRIGHT", 19, -5)
+	detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background.png")
+	detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+
 	QuestLogTitleText:Hide()
 
 	QuestLogFrameCloseButton:SetPoint("TOPRIGHT", QuestLogFrame, "TOPRIGHT", -5, -3)
@@ -449,8 +455,15 @@ local function LoadQuestLogFrameSkin()
 	QuestGreetingFrameHorizontalBreak:GwKill()
 
 	QuestLogListScrollFrame:SetWidth(303)
-	QuestLogDetailScrollFrame:SetWidth(303)
 	QuestLogFrameAbandonButton:SetWidth(123)
+	QuestLogDetailScrollFrame:SetSize(335, 300)
+
+	QuestLogFrameAbandonButton:ClearAllPoints()
+	QuestFramePushQuestButton:ClearAllPoints()
+	QuestFrameExitButton:ClearAllPoints()
+	QuestLogFrameAbandonButton:SetPoint("BOTTOMLEFT", QuestLogFrame, "BOTTOMLEFT", 20, 8)
+	QuestFramePushQuestButton:SetPoint("LEFT", QuestLogFrameAbandonButton, "RIGHT", 5, 0)
+	QuestFrameExitButton:SetPoint("LEFT", QuestFramePushQuestButton, "RIGHT", 5, 0)
 
 	QuestLogHighlightFrame:SetWidth(303)
 	QuestLogHighlightFrame.SetWidth = GW.NoOp

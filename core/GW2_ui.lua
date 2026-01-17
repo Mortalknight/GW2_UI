@@ -710,10 +710,8 @@ local function evPlayerLogin(self)
     elseif GW.settings.HEALTHGLOBE_ENABLED and GW.settings.PLAYER_AS_TARGET_FRAME then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
-        if not GW.Retail then
-            if GW.settings.PLAYER_ENERGY_MANA_TICK then
-                GW.Load5SR(hg)
-            end
+        if (GW.Classic or GW.TBC) and GW.settings.PLAYER_ENERGY_MANA_TICK then
+            GW.Load5SR(hg)
         end
     end
 
@@ -745,9 +743,12 @@ local function evPlayerLogin(self)
 
     GW.LoadCharacter()
 
-    if GW.Retail then
+    if GW.Retail or GW.TBC then
         GW.LoadSocialFrame()
-        --GW.LoadRaidbuffReminder() - Auras a secret not possible anymore
+    end
+
+    if GW.Retail then
+        --GW.LoadRaidbuffReminder() --auras are secret
         GW.LoadWorldEventTimer()
     end
 
