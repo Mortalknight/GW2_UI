@@ -21,6 +21,7 @@
     <Script file ="cooldowns.lua"/>
     <Script file ="disableBlizzard.lua"/>
     <Script file ="notaint.lua"/>
+    <Include file ="Social\Load.xml"/>
     <Include file ="Mainbar\Load.xml"/>
     <Include file ="DataInfo\Load.xml"/>
     <Include file ="Aura\Load.xml"/>

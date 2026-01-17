@@ -7,6 +7,7 @@
     <Include file ="who.xml"/>
     <Include file ="quickjoin.xml"/>
     <Include file ="raid.xml"/>
+    <Include file ="guild.xml"/>
     <Script file ="raid.lua"/>
     <Script file ="recentAllies.lua"/>
     <Script file ="quickjoin.lua"/>
@@ -14,5 +15,6 @@
     <Script file ="friends.lua"/>
     <Script file ="raf.lua"/>
     <Script file ="ignoreList.lua"/>
+    <Script file ="guild.lua"/>
     <Script file ="social.lua"/>
 </Ui>

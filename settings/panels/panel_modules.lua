@@ -42,7 +42,7 @@ local function LoadModulesPanel(sWindow)
         end, incompatibleAddons = "DynamicCam"})
     p:AddOption(CHAT_BUBBLES_TEXT, L["Replace the default UI chat bubbles. (Only in not protected areas)"], {getterSetter = "CHATBUBBLES_ENABLED", callback = function() GW.ShowRlPopup = true end})
     p:AddOption(L["Alert Frames"], nil, {getterSetter = "ALERTFRAME_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = GW.Classic or GW.TBC})
-    p:AddOption(FRIENDS, nil, {getterSetter = "USE_SOCIAL_WINDOW", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
+    p:AddOption(FRIENDS, nil, {getterSetter = "USE_SOCIAL_WINDOW", callback = function() GW.ShowRlPopup = true end, hidden = not (GW.Retail or GW.TBC)})
 
     p:AddOption(GW.NewSign .. L["Micro Bar"], nil, {getterSetter = "micromenu.enabled", callback = function() GW.ShowRlPopup = true end})
 

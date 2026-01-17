@@ -1,109 +1,125 @@
 local _, GW = ...
 local L = GW.L
 
-local windowsList = {}
 local hasBeenLoaded = false
 local moveDistance, socialFrameX, socialFrameY, socialFrameLeft, socialFrameTop, socialFrameNormalScale, socialFrameEffectiveScale = 0, 0, 0, 0, 0, 1, 0
 
-windowsList[1] = {
-    ["OnLoad"] = "LoadFriendList",
-    ["SettingName"] = "USE_SOCIAL_WINDOW",
-    ["RefName"] = "GwFriendList",
-    ["TabIcon"] = "tabicon_friends",
-    ["HeaderText"] = FRIENDS_LIST,
-    ["HeaderTipText"] = FRIENDS,
-    ["Bindings"] = {
-        ["TOGGLEFRIENDSTAB"] = "FriendList",
-        ["TOGGLESOCIAL"] = "FriendList"
+local windowsConfiguration = {
+    {
+        OnLoad = "LoadFriendList",
+        SettingName = "USE_SOCIAL_WINDOW",
+        RefName = "GwFriendList",
+        TabIcon = "tabicon_friends",
+        HeaderText = FRIENDS_LIST,
+        HeaderTipText = FRIENDS,
+        Bindings = {
+            TOGGLEFRIENDSTAB = "FriendList",
+            TOGGLESOCIAL = "FriendList"
+        },
+        OnClick = [=[
+            self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "friendlist")
+        ]=],
+        load = true
     },
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "friendlist")
-    ]=]
-}
-
-windowsList[2] = {
-    ["OnLoad"] = "LoadRecentAlliesFrame",
-    ["SettingName"] = "USE_SOCIAL_WINDOW",
-    ["RefName"] = "GwRecentList",
-    ["TabIcon"] = "tabicon_friends",
-    ["HeaderText"] = CONTACTS_RECENT_ALLIES_TITLE,
-    ["HeaderTipText"] = CONTACTS_RECENT_ALLIES_TITLE,
-    ["Bindings"] = {},
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "recentList")
-    ]=]
-}
-
-
-windowsList[3] = {
-    ["OnLoad"] = "LoadIgnoreList",
-    ["SettingName"] = "USE_SOCIAL_WINDOW",
-    ["RefName"] = "GwIgnoreList",
-    ["TabIcon"] = "tabicon_ignore",
-    ["HeaderText"] = IGNORE_LIST,
-    ["HeaderTipText"] = IGNORE,
-    ["Bindings"] = {},
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "ignorelist")
-    ]=]
-}
-
-windowsList[4] = {
-    ["OnLoad"] = "LoadRecruitAFriendList",
-    ["SettingName"] = "USE_SOCIAL_WINDOW",
-    ["RefName"] = "GwRecruitAFriendList",
-    ["TabIcon"] = "tabicon_reqruit",
-    ["HeaderText"] = RECRUIT_A_FRIEND,
-    ["HeaderTipText"] = RECRUIT_A_FRIEND,
-    ["Bindings"] = {},
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "recruitafriendlist")
-    ]=]
-}
-
-windowsList[5] = {
-    ["OnLoad"] = "LoadWhoList",
-    ["SettingName"] = "USE_SOCIAL_WINDOW",
-    ["RefName"] = "GwWhoList",
-    ["TabIcon"] = "tabicon_who",
-    ["HeaderText"] = WHO_LIST,
-    ["HeaderTipText"] = WHO,
-    ["Bindings"] = {
-        ["TOGGLEWHOTAB"] = "WhoList"
+    {
+        OnLoad = "LoadRecentAlliesFrame",
+        SettingName = "USE_SOCIAL_WINDOW",
+        RefName = "GwRecentList",
+        TabIcon = "tabicon_friends",
+        HeaderText = CONTACTS_RECENT_ALLIES_TITLE,
+        HeaderTipText = CONTACTS_RECENT_ALLIES_TITLE,
+        Bindings = {},
+        OnClick = [=[
+            self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "recentList")
+        ]=],
+        load = GW.Retail
     },
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "wholist")
-    ]=]
-}
-
-windowsList[6] = {
-    ["OnLoad"] = "LoadQuickJoinList",
-    ["SettingName"] = "USE_SOCIAL_WINDOW",
-    ["RefName"] = "GwQuickList",
-    ["TabIcon"] = "tabicon_quickjoin",
-    ["HeaderText"] = QUICK_JOIN,
-    ["HeaderTipText"] = QUICK_JOIN,
-    ["Bindings"] = {
-        ["TOGGLEQUICKJOINTAB"] = "QuickJoin"
+    {
+        OnLoad = "LoadIgnoreList",
+        SettingName = "USE_SOCIAL_WINDOW",
+        RefName = "GwIgnoreList",
+        TabIcon = "tabicon_ignore",
+        HeaderText = IGNORE_LIST,
+        HeaderTipText = IGNORE,
+        Bindings = {},
+        OnClick = [=[
+            self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "ignorelist")
+        ]=],
+        load = true
     },
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "quicklist")
-    ]=]
-}
-
-windowsList[7] = {
-    ["OnLoad"] = "LoadRaidList",
-    ["SettingName"] = "USE_SOCIAL_WINDOW",
-    ["RefName"] = "GwRaidList",
-    ["TabIcon"] = "tabicon_raid",
-    ["HeaderText"] = RAID,
-    ["HeaderTipText"] = RAID,
-    ["Bindings"] = {
-        ["TOGGLERAIDTAB"] = "RaidList"
+    {
+        OnLoad = "LoadRecruitAFriendList",
+        SettingName = "USE_SOCIAL_WINDOW",
+        RefName = "GwRecruitAFriendList",
+        TabIcon = "tabicon_reqruit",
+        HeaderText = RECRUIT_A_FRIEND,
+        HeaderTipText = RECRUIT_A_FRIEND,
+        Bindings = {},
+        OnClick = [=[
+            self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "recruitafriendlist")
+        ]=],
+        load = GW.Retail
     },
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "raidlist")
-    ]=]
+    {
+        OnLoad = "LoadWhoList",
+        SettingName = "USE_SOCIAL_WINDOW",
+        RefName = "GwWhoList",
+        TabIcon = "tabicon_who",
+        HeaderText = WHO_LIST,
+        HeaderTipText = WHO,
+        Bindings = {
+            TOGGLEWHOTAB = "WhoList"
+        },
+        OnClick = [=[
+            self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "wholist")
+        ]=],
+        load = true
+    },
+    {
+        OnLoad = "LoadGuildList",
+        SettingName = "USE_SOCIAL_WINDOW",
+        RefName = "GwGuildList",
+        TabIcon = "tabicon_friends",
+        HeaderText = GUILD,
+        HeaderTipText = GUILD,
+        Bindings = {
+            TOGGLERAIDTAB = "GuildList"
+        },
+        OnClick = [=[
+            self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "guildlist")
+        ]=],
+        load = GW.TBC
+    },
+    {
+        OnLoad = "LoadQuickJoinList",
+        SettingName = "USE_SOCIAL_WINDOW",
+        RefName = "GwQuickList",
+        TabIcon = "tabicon_quickjoin",
+        HeaderText = QUICK_JOIN,
+        HeaderTipText = QUICK_JOIN,
+        Bindings = {
+            TOGGLEQUICKJOINTAB = "QuickJoin"
+        },
+        OnClick = [=[
+            self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "quicklist")
+        ]=],
+        load = GW.Retail
+    },
+    {
+        OnLoad = "LoadRaidList",
+        SettingName = "USE_SOCIAL_WINDOW",
+        RefName = "GwRaidList",
+        TabIcon = "tabicon_raid",
+        HeaderText = RAID,
+        HeaderTipText = RAID,
+        Bindings = {
+            TOGGLERAIDTAB = "RaidList"
+        },
+        OnClick = [=[
+            self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "raidlist")
+        ]=],
+        load = true
+    }
 }
 
 -- turn click events (generated from key bind overrides) into the correct tab show/hide calls
@@ -149,6 +165,8 @@ local socialSecure_OnAttributeChanged =
     local showQuick = false
     local fmRaid = self:GetFrameRef("GwRaidList")
     local showRaid = false
+    local fmGuild = self:GetFrameRef("GwGuildList")
+    local showGuild = false
 
     local close = false
     local keytoggle = self:GetAttribute("keytoggle")
@@ -160,6 +178,14 @@ local socialSecure_OnAttributeChanged =
             return
         else
             showFriend = true
+        end
+    elseif fmGuild ~= nil and value == "guildlist" then
+        if keytoggle and fmFriend:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showGuild = true
         end
     elseif fmIgnore ~= nil and value == "ignorelist" then
         if keytoggle and fmIgnore:IsVisible() then
@@ -222,6 +248,13 @@ local socialSecure_OnAttributeChanged =
             fmFriend:Show()
         else
             fmFriend:Hide()
+        end
+    end
+    if fmGuild then
+        if showGuild and not close then
+            fmGuild:Show()
+        else
+            fmGuild:Hide()
         end
     end
     if fmRecent then
@@ -355,7 +388,7 @@ local function click_OnEvent(self, event)
     end
     ClearOverrideBindings(self)
 
-    for _, win in pairs(windowsList) do
+    for _, win in pairs(windowsConfiguration) do
         if win.TabFrame and win.Bindings then
             for key, click in pairs(win.Bindings) do
                 local keyBind, keyBind2 = GetBindingKey(key)
@@ -389,7 +422,9 @@ local function loadBaseFrame()
     -- create the social window and secure bind its tab open/close functions
     local fmGSW = CreateFrame("Frame", "GwSocialWindow", UIParent, "GwSocialWindowTemplate")
 
-    FriendsFrame.Show = FriendsFrame.Hide
+    if GW.Retail then
+        FriendsFrame.Show = FriendsFrame.Hide --CHECK: Really needed for tbc?
+    end
 
     table.insert(UISpecialFrames, fmGSW:GetName())
     fmGSW.WindowHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
@@ -565,11 +600,20 @@ GW.AddForProfiling("social", "socialTab_OnEnter", socialTab_OnEnter)
 local function GWFriendsFrame_OnEvent(_, event, ...)
     if ( event == "SPELL_UPDATE_COOLDOWN" ) then
         if ( GwSocialWindow:IsShown() ) then
-            FriendsListFrame.ScrollBox:ForEachFrame(function(button)
-                if button.summonButton and button.summonButton:IsShown() then
-                    FriendsFrame_SummonButton_Update(button.summonButton);
+            if GW.Retail then
+                FriendsListFrame.ScrollBox:ForEachFrame(function(button)
+                    if button.summonButton and button.summonButton:IsShown() then
+                        FriendsFrame_SummonButton_Update(button.summonButton);
+                    end
+                end)
+            elseif GW.TBC then
+                local buttons = FriendsFrameFriendsScrollFrame.buttons;
+                for _, button in pairs(buttons) do
+                    if ( button.summonButton:IsShown() ) then
+                        FriendsFrame_SummonButton_Update(button.summonButton);
+                    end
                 end
-            end)
+            end
         end
     elseif ( event == "FRIENDLIST_UPDATE" or event == "GROUP_ROSTER_UPDATE" ) then
         FriendsList_Update();
@@ -621,14 +665,16 @@ local function GWFriendsFrame_OnEvent(_, event, ...)
         FriendsFrame_CheckBattlenetStatus();
         -- We want to remove any friends from the frame so they don't linger when it's first re-opened.
         if (event == "BN_DISCONNECTED") then
-            FriendsList_Update(true);
+            FriendsList_Update(true)
         end
     elseif ( event == "BATTLETAG_INVITE_SHOW" ) then
         BattleTagInviteFrame_Show(...);
     elseif ( event == "SOCIAL_QUEUE_UPDATE" or event == "GROUP_LEFT" or event == "GROUP_JOINED" ) then
         if ( GwSocialWindow:IsVisible() ) then
             FriendsFrame_Update(); --TODO - Only update the buttons that need updating
-            FriendsFrame_UpdateQuickJoinTab(#C_SocialQueue.GetAllGroups());
+            if GW.Retail then
+                FriendsFrame_UpdateQuickJoinTab(#C_SocialQueue.GetAllGroups())
+            end
         end
     elseif ( event == "GUILD_ROSTER_UPDATE" ) then
         if ( GwSocialWindow:IsVisible() ) then
@@ -636,6 +682,11 @@ local function GWFriendsFrame_OnEvent(_, event, ...)
             if ( canRequestGuildRoster ) then
                 C_GuildInfo.GuildRoster();
             end
+
+            if GuildStatus_Update then
+                GuildStatus_Update()
+            end
+
         end
     elseif ( event == "PLAYER_GUILD_UPDATE") then
         C_GuildInfo.GuildRoster()
@@ -646,8 +697,8 @@ end
 
 local function LoadSocialFrame()
     local anyThingToLoad = false
-    for _, v in pairs(windowsList) do
-        if GW.settings[v.SettingName] then
+    for _, v in pairs(windowsConfiguration) do
+        if GW.settings[v.SettingName] and v.load then
             anyThingToLoad = true
         end
     end
@@ -660,10 +711,10 @@ local function LoadSocialFrame()
     FriendsFrame:SetScript("OnEvent", GWFriendsFrame_OnEvent)
 
     local tabIndex = 1
-    for _, v in pairs(windowsList) do
-        if GW.settings[v.SettingName] then
+    for _, v in pairs(windowsConfiguration) do
+        if GW.settings[v.SettingName] and v.load then
             local container = CreateFrame("Frame", nil, GwSocialWindow, "GwSocialTabContainer")
-            local tab = createTabIcon(v.TabIcon, tabIndex, v.RefName == "GwQuickList" and true or false)
+            local tab = createTabIcon(v.TabIcon, tabIndex, v.RefName == "GwQuickList")
 
             GwSocialWindow:SetFrameRef(v.RefName, container)
 

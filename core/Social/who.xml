@@ -138,7 +138,7 @@
                             <Anchor point="RIGHT" relativeKey="$parent.AddFriendButton" relativePoint="LEFT" x="0" y="0"/>
                         </Anchors>
                     </Button>
-                    <EditBox parentKey="input" inherits="GwSearchBoxTemplate" mixin="WhoFrameEditBoxMixin" frameStrata="HIGH">
+                    <EditBox parentKey="input" inherits="GwSearchBoxTemplate" frameStrata="HIGH">
                         <Size x="460" y="25"/>
                         <Anchors>
                             <Anchor point="BOTTOM" x="0" y="35"/>

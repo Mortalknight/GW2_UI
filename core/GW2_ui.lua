@@ -741,8 +741,11 @@ local function evPlayerLogin(self)
 
     GW.LoadCharacter()
 
-    if GW.Retail then
+    if GW.Retail or GW.TBC then
         GW.LoadSocialFrame()
+    end
+
+    if GW.Retail then
         GW.LoadRaidbuffReminder()
         GW.LoadWorldEventTimer()
     end

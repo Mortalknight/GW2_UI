@@ -118,10 +118,12 @@ local function LoadIgnoreList(tabContainer)
         end
     end)
 
-    hooksecurefunc(FriendsFrame.IgnoreListWindow, "ToggleFrame", function()
-        if InCombatLockdown() then return end
-        GwSocialWindow:SetAttribute("windowpanelopen", "ignorelist")
-    end)
+    if FriendsFrame.IgnoreListWindow then
+        hooksecurefunc(FriendsFrame.IgnoreListWindow, "ToggleFrame", function()
+            if InCombatLockdown() then return end
+            GwSocialWindow:SetAttribute("windowpanelopen", "ignorelist")
+        end)
+    end
 
 
     SlashCmdList["IGNORE"] = function(msg)

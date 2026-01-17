@@ -2,7 +2,6 @@
     <Script file ="Misc\LFGPlayerInfo.lua"/>
     <Include file ="Auras\Load.xml"/>
     <Include file ="Actionbar\Load.xml"/>
-    <Include file ="Social\Load.xml"/>
     <Include file ="Units\Load.xml"/>
     <Include file ="Mainbar\Load.xml"/>
     <Include file ="Immersive\Load.xml"/>
