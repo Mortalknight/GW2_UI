@@ -11,6 +11,8 @@ local ChatEdit_ChooseBoxForSend = ChatFrameUtil and ChatFrameUtil.ChooseBoxForSe
 local ChatEdit_SetLastTellTarget = ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or ChatEdit_SetLastTellTarget
 local ChatFrame_AddMessageEventFilter = ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter or ChatFrame_AddMessageEventFilter
 local GetClientTexture = BNet_GetClientEmbeddedAtlas or BNet_GetClientEmbeddedTexture
+local GetMobileEmbeddedTexture = (ChatFrameUtil and ChatFrameUtil.GetMobileEmbeddedTexture) or ChatFrame_GetMobileEmbeddedTexture
+local ResolvePrefixedChannelName = (ChatFrameUtil and ChatFrameUtil.ResolvePrefixedChannelName) or ChatFrame_ResolvePrefixedChannelName
 
 local FindURL_Events = {
     "CHAT_MSG_WHISPER",
@@ -1291,7 +1293,12 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         arg1 = RemoveExtraSpaces(arg1)
 
         -- Search for icon links and replace them with texture links.
-        arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup)) -- If arg17 is true, don"t convert to raid icons
+        -- If arg17 is true, don't convert to raid icons
+        if ChatFrameUtil and ChatFrameUtil.CanChatGroupPerformExpressionExpansion then
+			arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrameUtil.CanChatGroupPerformExpressionExpansion(chatGroup))
+		else
+			arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup))
+        end
     end
 
     -- Get class colored name for BattleNet friend
@@ -1340,7 +1347,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         playerLink = GW.ChatFunctions:GetPlayerLink(playerName, playerLinkDisplayText, lineID, chatGroup, chatTarget)
     end
 
-    local isMobile = arg14 and ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b)
+    local isMobile = arg14 and GetMobileEmbeddedTexture(info.r, info.g, info.b)
     local message = format("%s%s", isMobile or "", arg1)
 
     -- Player Flags
@@ -1377,7 +1384,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
 
     -- Add Channel
     if channelLength > 0 then
-        body = "|Hchannel:channel:" .. arg8 .. "|h[" .. ChatFrame_ResolvePrefixedChannelName(arg4) .. "]|h " .. body
+        body = "|Hchannel:channel:" .. arg8 .. "|h[" .. ResolvePrefixedChannelName(arg4) .. "]|h " .. body
     end
 
     if not isProtected and GW.settings.CHAT_SHORT_CHANNEL_NAMES and (chatType ~= "EMOTE" and chatType ~= "TEXT_EMOTE") then
@@ -1603,7 +1610,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                     end
                 end
 
-                frame:AddMessage(format(globalstring, arg8, ChatFrame_ResolvePrefixedChannelName(arg4)), info.r, info.g, info.b, info.id, accessID, typeID, nil, nil, nil, isHistory, historyTime)
+                frame:AddMessage(format(globalstring, arg8, ResolvePrefixedChannelName(arg4)), info.r, info.g, info.b, info.id, accessID, typeID, nil, nil, nil, isHistory, historyTime)
             end
         elseif chatType == "BN_INLINE_TOAST_ALERT" then
             local globalstring = _G["BN_INLINE_TOAST_"..arg1]
