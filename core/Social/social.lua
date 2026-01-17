@@ -425,9 +425,7 @@ local function loadBaseFrame()
     -- create the social window and secure bind its tab open/close functions
     local fmGSW = CreateFrame("Frame", "GwSocialWindow", UIParent, "GwSocialWindowTemplate")
 
-    if GW.Retail then
-        FriendsFrame.Show = FriendsFrame.Hide --CHECK: Really needed for tbc?
-    end
+    FriendsFrame.Show = FriendsFrame.Hide
 
     table.insert(UISpecialFrames, fmGSW:GetName())
     fmGSW.WindowHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)

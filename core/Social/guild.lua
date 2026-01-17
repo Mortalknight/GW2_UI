@@ -300,18 +300,6 @@ local function GuildControlPopupFrameRemoveRankButton_OnUpdate()
 	end
 end
 
-function GuildFramePopup_Show(frame)
-	local name = frame:GetName();
-	for index, value in ipairs(GUILDFRAME_POPUPS) do
-		if ( name ~= value ) then
-			_G[value]:Hide();
-		end
-	end
-    FriendsFrame:Show()
-    GuildFrame:Show()
-	frame:Show();
-end
-
 local function LoadGuildList(tabContainer)
     local guildFrame = CreateFrame("Frame", "GwGuildFrame", tabContainer, "GwGuildFrameTemplate")
     guildFrame.Container = tabContainer
@@ -405,6 +393,11 @@ local function LoadGuildList(tabContainer)
     GuildControlPopupFrame:SetPoint("TOPLEFT", guildFrame, "TOPRIGHT", 40, 6)
     GuildInfoFrame:SetPoint("TOPLEFT", guildFrame, "TOPRIGHT", 40, 6)
     GuildMemberDetailFrame:SetPoint("TOPLEFT", guildFrame, "TOPRIGHT", 40, 6)
+
+	GuildControlPopupFrame:SetParent(guildFrame)
+	GuildInfoFrame:SetParent(guildFrame)
+	GuildMemberDetailFrame:SetParent(guildFrame)
+	GuildEventLogFrame:SetParent(guildFrame)
 
     for _, object in pairs(Headers) do
         local frame = _G[object]
