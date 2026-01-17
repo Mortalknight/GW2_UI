@@ -369,7 +369,7 @@ local function LoadGuildList(tabContainer)
     GuildFrame.SetAllPoints = GW.NoOp
     GuildFrame.SetPoint = GW.NoOp
 
-
+	GW.HandleNextPrevButton(GuildFrameGuildListToggleButton, "right")
     GuildFrameAddMemberButton:GwSkinButton(false, true)
     GuildFrameGuildInformationButton:GwSkinButton(false, true)
     GuildFrameControlButton:GwSkinButton(false, true)
