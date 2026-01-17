@@ -135,6 +135,9 @@ local socialSecure_OnClick =
     elseif button == "WhoList" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "wholist")
+    elseif button == "GuildList" then
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "guildlist")
     elseif button == "QuickJoin" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "quicklist")
