@@ -756,7 +756,7 @@ local function evPlayerLogin(self)
     GW.ToggleInterruptAnncouncement()
 
     --Create unitframes
-    if not (GW.Classic or GW.TBC) and GW.settings.FOCUS_ENABLED then
+    if not GW.Classic and GW.settings.FOCUS_ENABLED then
         local unitFrame = GW.LoadUnitFrame("Focus", GW.settings.focus_FRAME_INVERT)
         GW.LoadTargetOfUnit("Focus", unitFrame)
     end
