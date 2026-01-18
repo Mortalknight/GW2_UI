@@ -425,6 +425,7 @@ local function LoadBank(helpers)
     EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
     f.buttonSettings:SetScript("OnClick", function(self)
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:SetMinimumWidth(1)
             local check = rootDescription:CreateCheckbox(L["Compact Icons"], function() return GW.settings.BAG_ITEM_SIZE == BANK_ITEM_COMPACT_SIZE end, compactToggle)
             check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 

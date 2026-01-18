@@ -107,6 +107,7 @@ end
 
 local function ShowFiterDropDown(self)
     local menu = MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+        rootDescription:SetMinimumWidth(1)
         local check = rootDescription:CreateCheckbox(ACHIEVEMENTFRAME_FILTER_COMPLETED,function() return showEarned end, function() showEarned = not showEarned; GwTitleWindow.input:SetText(""); GwTitleWindow.input.clearButton:Hide(); saveKnowenTitles(GwTitleWindow) end)
         check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
 

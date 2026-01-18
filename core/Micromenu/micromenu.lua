@@ -196,7 +196,11 @@ end
 AFP("bag_OnUpdate", bag_OnUpdate)
 
 local function reskinMicroButton(btn, name, mbf, hook)
-    if btn:IsProtected() and InCombatLockdown() then return end
+    if InCombatLockdown() and btn:IsProtected() then
+        GW.CombatQueue_Queue("Update Micromenu: " .. name, reskinMicroButton, {btn, name, mbf, hook})
+        return
+    end
+
     if not btn.gwSetParentHooked then
         if btn:GetParent() ~= mbf then
             btn:SetParent(mbf)
@@ -1031,6 +1035,11 @@ local function hook_UpdateMicroButtons()
 
     reskinMicroButtons(Gw2MicroBarFrame.cf)
 
+    if InCombatLockdown() then
+        GW.CombatQueue_Queue("Update Micromenu", hook_UpdateMicroButtons)
+        return
+    end
+
     if GW.Classic or GW.TBC then
         local tref
         if GW.settings.USE_TALENT_WINDOW then
@@ -1040,27 +1049,23 @@ local function hook_UpdateMicroButtons()
         else
             tref = GW.settings.USE_SPELLBOOK_WINDOW and GwPlayerSpellsMicroButton or SpellbookMicroButton
         end
-        if not InCombatLockdown() then
-            QuestLogMicroButton:ClearAllPoints()
-            QuestLogMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
+        QuestLogMicroButton:ClearAllPoints()
+        QuestLogMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
 
-            SocialsMicroButton:ClearAllPoints()
-            SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-        end
+        SocialsMicroButton:ClearAllPoints()
+        SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
     elseif GW.Mists then
-        if not InCombatLockdown() then
-            AchievementMicroButton:ClearAllPoints()
-            AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)
+        AchievementMicroButton:ClearAllPoints()
+        AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)
 
-            CollectionsMicroButton:ClearAllPoints()
-            CollectionsMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
+        CollectionsMicroButton:ClearAllPoints()
+        CollectionsMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
 
-            PVPMicroButton:ClearAllPoints()
-            PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
+        PVPMicroButton:ClearAllPoints()
+        PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
 
-            MainMenuMicroButton:ClearAllPoints()
-            MainMenuMicroButton:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
-        end
+        MainMenuMicroButton:ClearAllPoints()
+        MainMenuMicroButton:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
     end
 end
 AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)

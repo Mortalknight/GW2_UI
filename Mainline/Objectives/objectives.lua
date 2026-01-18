@@ -397,6 +397,7 @@ function GwQuestLogMixin:BlockOnClick(button)
         end
     else
         MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
+            rootDescription:SetMinimumWidth(1)
             local questID = self.questID
             rootDescription:CreateTitle(C_QuestLog.GetTitleForQuestID(questID))
 

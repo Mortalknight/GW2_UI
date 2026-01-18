@@ -411,6 +411,7 @@ GW.Friends_OnEvent = Friends_OnEvent
 local function Friends_OnClick(self, button)
     if button == "RightButton" then
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:SetMinimumWidth(1)
             local tempTeble = {}
 
             rootDescription:CreateTitle(OPTIONS_MENU)

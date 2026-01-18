@@ -42,6 +42,7 @@ local function Money_OnClick(self, button)
     if button == "RightButton" then
         if IsShiftKeyDown() then
             MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+                rootDescription:SetMinimumWidth(1)
                 rootDescription:CreateTitle(DELETE)
                 for _, char in pairs(GetStorage(nil, "REALM") or {}) do
                     if char and type(char) == "table" and char.money and char.money >= 0 then

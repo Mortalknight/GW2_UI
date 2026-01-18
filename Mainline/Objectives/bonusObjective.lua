@@ -129,6 +129,7 @@ function GwBonusObjectivesTrackerContainerMixin:BlockOnClick(button)
             end
 
             MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
+                rootDescription:SetMinimumWidth(1)
                 local title = C_TaskQuest.GetQuestInfoByQuestID(self.questID)
                 rootDescription:CreateTitle(title)
                 rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function()

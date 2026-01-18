@@ -5,11 +5,9 @@ local UpdateMoney = GW.UpdateMoney
 local EnableTooltip = GW.EnableTooltip
 local inv
 
-local BAG_ITEM_SIZE = 40
 local BAG_ITEM_LARGE_SIZE = 40
 local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
-local BAG_WINDOW_SIZE = 480
 
 local function setBagHeaders(frame)
     for i = 1, 5 do
@@ -46,7 +44,7 @@ local function layoutBagItems(f)
     local rev = GW.settings.BAG_REVERSE_SORT
     local sep = GW.settings.BAG_SEPARATE_BAGS
     local row = sep and 1 or 0
-    local item_off = BAG_ITEM_SIZE + BAG_ITEM_PADDING
+    local item_off = GW.settings.BAG_ITEM_SIZE + BAG_ITEM_PADDING
     local unfinishedRow = false
     local finishedRows = 0
 
@@ -138,7 +136,7 @@ local function snapFrameSize(f)
     if f.ItemFrame:IsShown() then
         cfs = f.ItemFrame.Containers
     end
-    inv.snapFrameSize(f, cfs, BAG_ITEM_SIZE, BAG_ITEM_PADDING, 350)
+    inv.snapFrameSize(f, cfs, GW.settings.BAG_ITEM_SIZE, BAG_ITEM_PADDING, 350)
 end
 GW.AddForProfiling("bag", "snapFrameSize", snapFrameSize)
 
@@ -328,7 +326,9 @@ local function updateBagBar(f)
         local bag_tex = GetInventoryItemTexture("player", inv_id)
         local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)
 
+        b.tooltipText = nil
         b.icon:Show()
+        b.icon:SetDesaturated(false)
         b.gwHasBag = false -- flag used by OnClick hook to pop up context menu when valid
         local norm = b:GetNormalTexture()
         norm:SetVertexColor(1, 1, 1, 0.75)
@@ -367,15 +367,14 @@ end
 GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
 
 local function onBagResizeStop(self)
-    BAG_WINDOW_SIZE = self:GetWidth()
-    GW.settings.BAG_WIDTH = BAG_WINDOW_SIZE
-    GwBagFrame.Header:SetWidth(BAG_WINDOW_SIZE)
+    GW.settings.BAG_WIDTH = self:GetWidth()
+    GwBagFrame.Header:SetWidth(GW.settings.BAG_WIDTH)
     inv.onMoved(self, "BAG_POSITION", snapFrameSize)
 end
 GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
 
 local function onBagFrameChangeSize(self, _, _, skip)
-    local cols = inv.colCount(BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
+    local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
 
     self.Header:SetWidth(self:GetWidth())
     if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
@@ -389,15 +388,13 @@ GW.AddForProfiling("bag", "onBagFrameChangeSize", onBagFrameChangeSize)
 
 -- toggles the setting for compact/large icons
 local function compactToggle()
-    if BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
-        BAG_ITEM_SIZE = BAG_ITEM_COMPACT_SIZE
-        GW.settings.BAG_ITEM_SIZE = BAG_ITEM_SIZE
+    if GW.settings.BAG_ITEM_SIZE == BAG_ITEM_LARGE_SIZE then
+        GW.settings.BAG_ITEM_SIZE = BAG_ITEM_COMPACT_SIZE
         inv.resizeInventory()
         return true
     end
 
-    BAG_ITEM_SIZE = BAG_ITEM_LARGE_SIZE
-    GW.settings.BAG_ITEM_SIZE = BAG_ITEM_SIZE
+    GW.settings.BAG_ITEM_SIZE = BAG_ITEM_LARGE_SIZE
     inv.resizeInventory()
     return false
 end
@@ -517,7 +514,7 @@ local function bag_OnEvent(self, event, ...)
         end
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
-        if (bag_id <= NUM_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER) or bag == KEYRING_CONTAINER then
+        if (bag_id <= NUM_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER) or bag_id == KEYRING_CONTAINER then
             self.gw_need_bag_update = true
         end
     elseif event == "BAG_UPDATE_DELAYED" then
@@ -632,10 +629,7 @@ end
 local function LoadBag(helpers)
     inv = helpers
 
-    BAG_WINDOW_SIZE = GW.settings.BAG_WIDTH
-    BAG_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE
-    if BAG_ITEM_SIZE > 40 then
-        BAG_ITEM_SIZE = 40
+    if GW.settings.BAG_ITEM_SIZE > 40 then
         GW.settings.BAG_ITEM_SIZE = 40
     end
 
@@ -644,8 +638,8 @@ local function LoadBag(helpers)
     tinsert(UISpecialFrames, "GwBagFrame")
     f.gw_state = "closed"
     f:ClearAllPoints()
-    f:SetWidth(BAG_WINDOW_SIZE)
-    f.Header:SetWidth(BAG_WINDOW_SIZE)
+    f:SetWidth(GW.settings.BAG_WIDTH)
+    f.Header:SetWidth(GW.settings.BAG_WIDTH)
     onBagFrameChangeSize(f, nil, nil, true)
     f:SetClampedToScreen(true)
 	f:SetClampRectInsets(-f.Left:GetWidth(), 0, f.Header:GetHeight() - 10, -35)
@@ -829,10 +823,8 @@ local function LoadBag(helpers)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()
-        BAG_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE
         layoutItems(f)
         snapFrameSize(f)
-        -- TODO: update the text on the compact icons config option
     end
 
     for i = 0, 3 do

@@ -478,9 +478,6 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
     end
     if btn.AutoCastOverlay then
         btn.AutoCastOverlay:SetSize(btnWidth, btnWidth)
-        --btn.AutoCastOverlay.Mask:ClearAllPoints()
-        --btn.AutoCastOverlay.Mask:SetPoint("TOPLEFT", 1, -1)
-        --btn.AutoCastOverlay.Mask:SetPoint("BOTTOMRIGHT", -1, 1)
     end
     if btn.NewActionTexture then
         btn.NewActionTexture:SetSize(btnWidth, btnWidth)
@@ -600,8 +597,6 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
             btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
             btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         end
-        --btn:HookScript("OnHide", hideBackdrop)
-        --btn:HookScript("OnShow", showBackdrop)
     end
 end
 GW.setActionButtonStyle = setActionButtonStyle
