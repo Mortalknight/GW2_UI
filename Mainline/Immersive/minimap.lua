@@ -318,6 +318,7 @@ local function ExpansionLandingPageMinimapButtonDropdown(self)
             end
 
             MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+                rootDescription:SetMinimumWidth(1)
                 UpdateUxpansionLandingPageTable()
 
                 sort(expansionLandingPageTable, function(a, b)

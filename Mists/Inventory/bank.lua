@@ -49,7 +49,6 @@ local function layoutReagentItems(f)
     local cf = f.Containers[REAGENTBANK_CONTAINER]
     inv.layoutContainerFrame(cf, max_col, row, col, true, item_off)
 end
-GW.AddForProfiling("bank", "layoutReagentItems", layoutReagentItems)
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutItems(f)

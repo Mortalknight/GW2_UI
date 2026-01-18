@@ -119,6 +119,7 @@ function GwObjectivesMonthlyActivitiesContainerMixin:BlockOnClick(button)
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	else
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:SetMinimumWidth(1)
             rootDescription:CreateTitle(self.title)
             rootDescription:CreateButton(OBJECTIVES_VIEW_IN_QUESTLOG, function()
                 if not EncounterJournal then

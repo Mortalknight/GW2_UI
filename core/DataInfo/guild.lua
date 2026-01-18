@@ -234,6 +234,7 @@ local function Guild_OnClick(self, button)
         self:OnClick()
     elseif button == "RightButton" and IsInGuild() then
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:SetMinimumWidth(1)
             rootDescription:CreateTitle(OPTIONS)
             local submenuInvite = rootDescription:CreateButton(INVITE)
             local submenuWisper = rootDescription:CreateButton(CHAT_MSG_WHISPER_INFORM)

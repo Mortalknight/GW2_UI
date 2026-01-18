@@ -107,6 +107,7 @@ function GwAchievementTrackerContainerMixin:BlockOnClick(mouseButton)
         end
     else
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:SetMinimumWidth(1)
             local _, achievementName = GetAchievementInfo(self.id);
             rootDescription:CreateTitle(achievementName)
             rootDescription:CreateButton(OBJECTIVES_VIEW_ACHIEVEMENT, function() OpenAchievementFrameToAchievement(self.id) end)

@@ -604,6 +604,7 @@ local function bag_OnMouseDown(self, button)
         local cf = getContainerFrame(bag_id)
         if cf then
             MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+                rootDescription:SetMinimumWidth(1)
                 if not (ContainerFrame_IsHeldBag(bag_id) or ContainerFrame_IsBankBag(bag_id)) then
                     return
                 end

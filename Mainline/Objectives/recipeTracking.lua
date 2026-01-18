@@ -192,6 +192,7 @@ function GwObjectivesRecipeContainerMixin:BlockOnClick(button)
         end
     else
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            rootDescription:SetMinimumWidth(1)
             rootDescription:CreateTitle(self.title)
             if not IsRecraftBlock(self) then
                 rootDescription:CreateButton(PROFESSIONS_TRACKING_VIEW_RECIPE, function()

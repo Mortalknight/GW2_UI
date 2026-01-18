@@ -172,6 +172,7 @@ function GwPetTrackerContainerMixin:InitModule()
             if button == "RightButton" then
                 if not self.collapsed then
                     MenuUtil.CreateContextMenu(self.header, function(ownerRegion, drop)
+                        rootDescription:SetMinimumWidth(1)
                         drop:CreateTitle('|TInterface/Addons/PetTracker/art/compass:16:16|t PetTracker')
                         drop:CreateCheckbox(petTrackerLocals.ZoneTracker, PetTracker.GetOption, PetTracker.ToggleOption, 'zoneTracker')
                         drop:CreateCheckbox(petTrackerLocals.CapturedPets, PetTracker.GetOption, PetTracker.ToggleOption, 'capturedPets')

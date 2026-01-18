@@ -96,6 +96,7 @@ GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveB
 
 local function outfitEditButton_OnClick(self)
     MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+        rootDescription:SetMinimumWidth(1)
         rootDescription:CreateButton(EQUIPMENT_SET_EDIT, function()
             GearSetButton_Edit(self:GetParent())
         end)

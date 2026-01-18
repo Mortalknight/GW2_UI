@@ -213,6 +213,7 @@ function GwObjectivesCollectionContainerMixin:BlockOnClick(button)
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
         else
             MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+                rootDescription:SetMinimumWidth(1)
                 rootDescription:CreateTitle(self.title)
                 rootDescription:CreateButton(CONTENT_TRACKING_OPEN_JOURNAL_OPTION, function() TransmogUtil.OpenCollectionToItem(self.trackableID) end)
                 rootDescription:CreateButton(OBJECTIVES_STOP_TRACKING, function() C_ContentTracking.StopTracking(self.trackableType, self.trackableID, Enum.ContentTrackingStopType.Manual) end)
