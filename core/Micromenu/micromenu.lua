@@ -196,7 +196,11 @@ end
 AFP("bag_OnUpdate", bag_OnUpdate)
 
 local function reskinMicroButton(btn, name, mbf, hook)
-    if btn:IsProtected() or InCombatLockdown() then return end
+    if InCombatLockdown() and btn:IsProtected() then
+        GW.CombatQueue_Queue("Update Micromenu: " .. name, reskinMicroButton, {btn, name, mbf, hook})
+        return
+    end
+
     if not btn.gwSetParentHooked then
         if btn:GetParent() ~= mbf then
             btn:SetParent(mbf)
@@ -1033,6 +1037,7 @@ local function hook_UpdateMicroButtons()
 
     if InCombatLockdown() then
         GW.CombatQueue_Queue("Update Micromenu", hook_UpdateMicroButtons)
+        return
     end
 
     if GW.Classic or GW.TBC then
