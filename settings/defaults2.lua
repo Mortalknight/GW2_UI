@@ -186,6 +186,8 @@ GW.globalDefault = {
         PLAYER_UNIT_HEALTH= "VALUE",
         PLAYER_UNIT_ABSORB= "VALUE",
 
+        QUESTTRACKER_SHOW_XP = true,
+
         BAG_WIDTH= 480,
         BAG_REVERSE_NEW_LOOT= false,
         BAG_REVERSE_SORT= false,
