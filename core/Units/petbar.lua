@@ -38,6 +38,9 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
         button:EnableMouse(true)
         button:SetSize(size, size)
         button:SetPoint(point, relativeFrame, relativePoint, x, y)
+        if button.SlotBackground then
+            button.SlotBackground:SetAlpha(0)
+        end
 
         GW.updateHotkey(button)
         button.noGrid = nil
