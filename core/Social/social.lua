@@ -83,7 +83,6 @@ local windowsConfiguration = {
         HeaderText = GUILD,
         HeaderTipText = GUILD,
         Bindings = {
-            TOGGLEGUILDTAB = "GuildList"
         },
         OnClick = [=[
             self:GetFrameRef("GwSocialWindow"):SetAttribute("windowpanelopen", "guildlist")
@@ -146,6 +145,14 @@ local socialSecure_OnClick =
         f:SetAttribute("windowpanelopen", "raidlist")
     end
     ]=]
+
+local function SocialWindowToggleTab(tabKey)
+    if not InCombatLockdown() then
+        GwSocialWindow:SetAttribute("keytoggle", true)
+        GwSocialWindow:SetAttribute("windowpanelopen", tabKey)
+    end
+end
+GW.SocialWindowToggleTab = SocialWindowToggleTab
 
 -- use the windowpanelopen attr to show/hide the social frame with correct tab open
 local socialSecure_OnAttributeChanged =
