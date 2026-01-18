@@ -675,6 +675,22 @@ local function resetSpellbookPages(self)
     end
 end
 
+local function buildSubSpellName(spellIndex, specName, isPassive, subSpellName)
+    if subSpellName ~= "" then
+        return subSpellName
+    end
+    if specName and specName ~= "" then
+        return isPassive and (specName .. ", " .. SPELL_PASSIVE_SECOND) or specName
+    end
+    if IsTalentSpell(spellIndex, BOOKTYPE) then
+        return isPassive and TALENT_PASSIVE or TALENT
+    end
+    if isPassive then
+        return SPELL_PASSIVE
+    end
+    return ""
+end
+
 local function updateSpellbookTab(self)
     if self.updating then return end
     self.updating = true
@@ -761,29 +777,14 @@ local function updateSpellbookTab(self)
                     local specName = table.concat(specs, PLAYER_LIST_DELIMITER)
                     local spell = Spell:CreateFromSpellID(spellID)
                     spell:ContinueOnSpellLoad(function()
-                        local subSpellName = spell:GetSpellSubtext()
-                        if subSpellName == "" then
-                            if specName and specName ~= "" then
-                                if isPassive then
-                                    subSpellName = specName .. ", " .. SPELL_PASSIVE_SECOND
-                                else
-                                    subSpellName = specName
-                                end
-                            elseif IsTalentSpell(spellIndex, BOOKTYPE) then
-                                if isPassive then
-                                    subSpellName = TALENT_PASSIVE
-                                else
-                                    subSpellName = TALENT
-                                end
-                            elseif isPassive then
-                                subSpellName = SPELL_PASSIVE
-                            end
-                        end
+                        local subSpellName = buildSubSpellName(spellIndex, specName, isPassive, spell:GetSpellSubtext())
+
                         if showAllRanks then
                             button.rank:SetText(subSpellName:gsub(RANK, "") or "")
                         else
                             button.rank:SetText("")
                         end
+
                         header.subTitle:SetText(needNewHeader and subSpellName or "")
                     end)
                 end

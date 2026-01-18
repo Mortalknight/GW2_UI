@@ -153,6 +153,9 @@ local function GetSpellbookActionButton(tab, container, index)
     button.mask:SetSize(40, 40)
     button.mask:SetParent(button)
 
+    button.rank:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
+    button.rank:SetTextColor(0.9, 0.9, 0.8, 1)
+
     button.modifiedClick = SpellButton_OnModifiedClick
     button:RegisterForClicks("AnyUp")
     button:RegisterForDrag("LeftButton")
@@ -386,6 +389,22 @@ local function resetSpellbookPages(self)
     end
 end
 
+local function buildSubSpellName(spellIndex, specName, isPassive, subSpellName)
+    if subSpellName ~= "" then
+        return subSpellName
+    end
+    if specName and specName ~= "" then
+        return isPassive and (specName .. ", " .. SPELL_PASSIVE_SECOND) or specName
+    end
+    if IsTalentSpell(spellIndex, BOOKTYPE) then
+        return isPassive and TALENT_PASSIVE or TALENT
+    end
+    if isPassive then
+        return SPELL_PASSIVE
+    end
+    return ""
+end
+
 local function updateSpellbookTab(self)
     if self.updating then return end
     self.updating = true
@@ -394,6 +413,8 @@ local function updateSpellbookTab(self)
         self.updating = false
         return
     end
+
+    local showAllRanks = GetCVarBool("ShowAllSpellRanks")
 
     resetSpellbookPages(self)
 
@@ -463,35 +484,23 @@ local function updateSpellbookTab(self)
                     header.buttons = 1
                     header.height = 80
                     header:Show()
+                end
+                -- get subtext
+                if spellID and (needNewHeader or showAllRanks) then
+                    local specs =  {GetSpecsForSpell(spellIndex, BOOKTYPE)}
+                    local specName = table.concat(specs, PLAYER_LIST_DELIMITER)
+                    local spell = Spell:CreateFromSpellID(spellID)
+                    spell:ContinueOnSpellLoad(function()
+                        local subSpellName = buildSubSpellName(spellIndex, specName, isPassive, spell:GetSpellSubtext())
 
-                    -- get subtext
-                    if spellID then
-                        local specs =  {GetSpecsForSpell(spellIndex, BOOKTYPE)}
-                        local specName = table.concat(specs, PLAYER_LIST_DELIMITER)
-                        local spell = Spell:CreateFromSpellID(spellID)
-                        spell:ContinueOnSpellLoad(function()
-                            local subSpellName = spell:GetSpellSubtext()
-                            if subSpellName == "" then
-                                if specName and specName ~= "" then
-                                    if isPassive then
-                                        subSpellName = specName .. ", " .. SPELL_PASSIVE_SECOND
-                                    else
-                                        subSpellName = specName
-                                    end
-                                elseif IsTalentSpell(spellIndex, BOOKTYPE) then
-                                    if isPassive then
-                                        subSpellName = TALENT_PASSIVE
-                                    else
-                                        subSpellName = TALENT
-                                    end
-                                elseif isPassive then
-                                    subSpellName = SPELL_PASSIVE
-                                end
-                            end
+                        if showAllRanks then
+                            button.rank:SetText(subSpellName:gsub(RANK, "") or "")
+                        else
+                            button.rank:SetText("")
+                        end
 
-                            header.subTitle:SetText(subSpellName)
-                        end)
-                    end
+                        header.subTitle:SetText(needNewHeader and subSpellName or "")
+                    end)
                 end
 
                 button:ClearAllPoints()
