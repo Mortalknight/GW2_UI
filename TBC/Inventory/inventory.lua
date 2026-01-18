@@ -697,7 +697,7 @@ local function onMoverDragStop(self)
 end
 GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
 
-local function LoadInventory() 
+local function LoadInventory()
     BagsBar:GwKillEditMode()
 
     item_size = GW.settings.BAG_ITEM_SIZE
