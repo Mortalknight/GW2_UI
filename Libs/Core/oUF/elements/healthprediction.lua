@@ -140,44 +140,30 @@ local function Update(self, event, unit)
 			element.overDamageAbsorbIndicator:SetAlphaFromBoolean(damageAbsorbClamped, 1, 0)
 		end
 
+		if(element.overHealIndicator) then
+			element.overHealIndicator:SetAlphaFromBoolean(healClamped, 1, 0)
+		end
+
 	else
-		playerHeal = UnitGetIncomingHeals(unit, 'player') or 0
 		allHeal = UnitGetIncomingHeals(unit) or 0
 		damageAbsorbAmount = (self.showAbsorbBar and UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(unit)) or 0 --GW2 change
 		healAbsorbAmount = UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs(unit) or 0
 
-		if(healAbsorbAmount > allHeal) then
-			healAbsorbAmount = healAbsorbAmount - allHeal
-			allHeal = 0
-			playerHeal = 0
-
-			if(health < healAbsorbAmount) then
-				healAbsorbAmount = health
-			end
-		else
-			allHeal = allHeal - healAbsorbAmount
-			healAbsorbAmount = 0
-
-			if(health + allHeal > maxHealth) then
-				allHeal = maxHealth
-			end
-
-			if(allHeal < playerHeal) then
-				playerHeal = allHeal
+		if allHeal > 0 then
+			if (allHeal + health) > maxHealth then
+				allHeal = maxHealth - health
 			end
 		end
 
-		local hasOverAbsorb = false
-		if(health + allHeal + damageAbsorbAmount >= maxHealth) then
-			if(damageAbsorbAmount > 0) then
-				hasOverAbsorb = true
+		if damageAbsorbAmount > 0 then
+			if (allHeal + health + damageAbsorbAmount) > maxHealth then
+				damageAbsorbAmount = maxHealth - health - allHeal
+				damageAbsorbClamped = true
 			end
-
-			damageAbsorbAmount = math.max(0, maxHealth - health - allHeal)
 		end
 
 		if(element.overDamageAbsorbIndicator) then
-			if(hasOverAbsorb) then
+			if(damageAbsorbClamped) then
 				element.overDamageAbsorbIndicator:Show()
 			else
 				element.overDamageAbsorbIndicator:Hide()
@@ -192,14 +178,10 @@ local function Update(self, event, unit)
 
 	if(element.healingOther) then
 		element.healingOther:SetMinMaxValues(0, maxHealth)
-		element.healingOther:SetValue(playerHeal)
+		element.healingOther:SetValue(otherHeal)
 	end
 
-	if(element.overHealIndicator) then
-		element.overHealIndicator:SetAlphaFromBoolean(healClamped, 1, 0)
-	end
-
-	if(element.damageAbsorb) then
+	if(element.damageAbsorb and self.showAbsorbBar) then
 		element.damageAbsorb:SetMinMaxValues(0, maxHealth)
 		element.damageAbsorb:SetValue(damageAbsorbAmount)
 	end
