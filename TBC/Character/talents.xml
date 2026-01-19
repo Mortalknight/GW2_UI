@@ -515,7 +515,7 @@
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY" textureSubLevel="2">
-                                <FontString parentKey="title" text="Toggle Talent Preview" inherits="ChatBubbleFont" justifyH="RIGHT">
+                                <FontString parentKey="title" text="Talent Preview" inherits="ChatBubbleFont" justifyH="RIGHT">
                                     <Size x="250" y="30"/>
                                     <Color r="1" b="1" g="1"/>
                                     <Anchors>

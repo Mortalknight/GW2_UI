@@ -103,7 +103,10 @@ end
 
 local function updateGuildButton(self, event)
     if event == "GUILD_ROSTER_UPDATE" then
-        local gmb = (GW.Classic or GW.TBC) and SocialsMicroButton or GuildMicroButton
+        local gmb = GW.Classic and SocialsMicroButton or GuildMicroButton
+        if GW.TBC and SocialsMicroButton:IsShown() then
+            gmb = SocialsMicroButton
+        end
         if gmb == nil then
             return
         end
@@ -704,30 +707,42 @@ local function setupMicroButtons(mbf)
     end
 
     -- GuildMicroButton
-    local gref = (GW.Classic or GW.TBC) and SocialsMicroButton or GuildMicroButton
-    gref:ClearAllPoints()
-    gref:SetPoint("BOTTOMLEFT", qref, "BOTTOMRIGHT", 4, 0)
-    gref.Ticker = C_Timer.NewTicker(15, function() C_GuildInfo.GuildRoster() end)
-    gref:RegisterEvent("GUILD_ROSTER_UPDATE")
-    gref:RegisterEvent("MODIFIER_STATE_CHANGED")
-    gref:RegisterEvent("GUILD_MOTD")
-    gref:HookScript("OnEvent", updateGuildButton)
-    gref:HookScript("OnEnter", GW.Guild_OnEnter)
-    gref:SetScript("OnClick", GW.Guild_OnClick)
-    if not (GW.Classic or GW.TBC) then
-        hooksecurefunc(gref, "UpdateTabard", function()
-            gref:GetDisabledTexture():SetAlpha(1)
-            gref:GetNormalTexture():SetAlpha(1)
-            gref:GetPushedTexture():SetAlpha(1)
-            gref:GetHighlightTexture():SetAlpha(1)
+   local gref
+    for i = 1, (GW.Clasic or GW.TBC) and 2 or 1 do
+        if i == 1 then
+            gref = GuildMicroButton
+        else
+            gref = SocialsMicroButton
+        end
+        gref:ClearAllPoints()
+        gref:SetPoint("BOTTOMLEFT", qref, "BOTTOMRIGHT", 4, 0)
+        gref.Ticker = C_Timer.NewTicker(15, function() C_GuildInfo.GuildRoster() end)
+        gref:RegisterEvent("GUILD_ROSTER_UPDATE")
+        gref:RegisterEvent("MODIFIER_STATE_CHANGED")
+        gref:RegisterEvent("GUILD_MOTD")
+        gref:HookScript("OnEvent", updateGuildButton)
+        gref:HookScript("OnEnter", GW.Guild_OnEnter)
+        gref:SetScript("OnClick", GW.Guild_OnClick)
+        if not (GW.Classic or GW.TBC) then
+            hooksecurefunc(gref, "UpdateTabard", function()
+                gref:GetDisabledTexture():SetAlpha(1)
+                gref:GetNormalTexture():SetAlpha(1)
+                gref:GetPushedTexture():SetAlpha(1)
+                gref:GetHighlightTexture():SetAlpha(1)
 
-            gref:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
-            gref:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
-            gref:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
-            gref:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
-        end)
+                gref:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
+                gref:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
+                gref:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
+                gref:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
+            end)
+        end
+        updateGuildButton(gref, "GUILD_ROSTER_UPDATE")
+
+        if i == 2 and GW.TBC and GW.settings.USE_SOCIAL_WINDOW and not gref.isHooked then
+            gref:SetScript("OnClick", function() GW.SocialWindowToggleTab("guildlist") end)
+            gref.isHooked = true
+        end
     end
-    updateGuildButton(gref, "GUILD_ROSTER_UPDATE")
 
     local pref
     if GW.Retail then
@@ -1025,7 +1040,10 @@ AFP("checkElvUI", checkElvUI)
 
 local function hook_UpdateMicroButtons()
     HelpMicroButton:Show()
-    local m = (GW.Classic or GW.TBC) and SocialsMicroButton or GuildMicroButton
+    local m = GW.Classic and SocialsMicroButton or GuildMicroButton
+    if GW.TBC and SocialsMicroButton:IsShown() then
+        mailIconTooltip = SocialsMicroButton
+    end
     m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
     m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
     m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
@@ -1054,6 +1072,9 @@ local function hook_UpdateMicroButtons()
 
         SocialsMicroButton:ClearAllPoints()
         SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
+
+        GuildMicroButton:ClearAllPoints()
+        GuildMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
     elseif GW.Mists then
         AchievementMicroButton:ClearAllPoints()
         AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)

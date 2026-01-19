@@ -158,7 +158,7 @@ local function GetSpellbookActionButton(tab, container, index)
     button.rank:SetTextColor(0.9, 0.9, 0.8, 1)
 
     button.modifiedClick = SpellButton_OnModifiedClick
-    button:RegisterForClicks("AnyUp", "AnyDown")
+    button:RegisterForClicks("AnyDown")
     button:RegisterForDrag("LeftButton")
     button:RegisterEvent("SPELL_UPDATE_COOLDOWN")
     button:RegisterEvent("PET_BAR_UPDATE")
