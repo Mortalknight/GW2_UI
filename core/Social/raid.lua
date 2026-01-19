@@ -199,7 +199,7 @@ local function LoadRaidList(tabContainer)
 
     RaidFrameConvertToRaidButton:GwSkinButton(false, true)
     RaidFrameRaidInfoButton:GwSkinButton(false, true)
-    if GW.settings.USE_CHARACTER_WINDOW and (GW.Retai or GW.Mists) then
+    if GW.settings.USE_CHARACTER_WINDOW and (GW.Retail or GW.Mists) then
         RaidFrameRaidInfoButton:SetScript("OnClick", function()
             if InCombatLockdown() then return end
             if GwCharacterCurrencyRaidInfoFrame.RaidLocks:IsVisible() then
