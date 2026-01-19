@@ -46,8 +46,8 @@ local function Construct_PowerBar(frame)
     power:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
 
     power.bg = power:CreateTexture(nil, 'BORDER')
-    power.bg:SetPoint("TOPLEFT", 0, 1)
-    power.bg:SetPoint("BOTTOMRIGHT", 0, 0)
+    power.bg:SetPoint("TOPLEFT", -1, 1)
+    power.bg:SetPoint("BOTTOMRIGHT", 1, -1)
     power.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     power.bg:SetVertexColor(0, 0, 0, 1)
 

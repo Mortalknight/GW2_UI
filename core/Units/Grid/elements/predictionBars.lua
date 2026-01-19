@@ -37,12 +37,14 @@ local function Construct_PredictionBar(frame)
         healAbsorb = healAbsorb,
         overDamageAbsorbIndicator = overDamageAbsorbIndicator,
         maxOverflow = 1,
-        damageAbsorbClampMode = Enum.UnitDamageAbsorbClampMode.MissingHealth,
-        healAbsorbClampMode = Enum.UnitHealAbsorbClampMode.CurrentHealth,
-        healAbsorbMode = Enum.UnitHealAbsorbMode.ReducedByIncomingHeals,
-        incomingHealClampMode = Enum.UnitIncomingHealClampMode.MissingHealth,
         incomingHealOverflow = 1,
     }
+    if GW.Retail then
+        frame.HealthPrediction.damageAbsorbClampMode = Enum.UnitDamageAbsorbClampMode.MissingHealth
+        frame.HealthPrediction.healAbsorbClampMode = Enum.UnitHealAbsorbClampMode.CurrentHealth
+        frame.HealthPrediction.healAbsorbMode = Enum.UnitHealAbsorbMode.ReducedByIncomingHeals
+        frame.HealthPrediction.incomingHealClampMode = Enum.UnitIncomingHealClampMode.MissingHealth
+    end
 end
 GW.Construct_PredictionBar = Construct_PredictionBar
 

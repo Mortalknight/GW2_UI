@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function GW2_GridRaidPetStyleRegister(self)
+local function GridRaidPetStyleRegister(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript("OnLeave", function()
         GameTooltip_Hide()
@@ -33,7 +33,7 @@ local function GW2_GridRaidPetStyleRegister(self)
 
     return self
 end
-GW.GW2_GridRaidPetStyleRegister = GW2_GridRaidPetStyleRegister
+GW.GridRaidPetStyleRegister = GridRaidPetStyleRegister
 
 local function UpdateGridRaidPetFrame(frame)
     -- set frame settings

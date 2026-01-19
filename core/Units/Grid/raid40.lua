@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function GW2_GridRaid40StyleRegister(self)
+local function GridRaid40StyleRegister(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript("OnLeave", function()
         GameTooltip_Hide()
@@ -32,7 +32,7 @@ local function GW2_GridRaid40StyleRegister(self)
 
     return self
 end
-GW.GW2_GridRaid40StyleRegister = GW2_GridRaid40StyleRegister
+GW.GridRaid40StyleRegister = GridRaid40StyleRegister
 
 local function UpdateGridRaid40Frame(frame)
     -- set frame settings

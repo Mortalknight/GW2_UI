@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function GW2_GridMaintankStyleRegister(self)
+local function GridMaintankStyleRegister(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript("OnLeave", function()
         GameTooltip_Hide()
@@ -38,7 +38,7 @@ local function GW2_GridMaintankStyleRegister(self)
 
     return self
 end
-GW.GW2_GridMaintankStyleRegister = GW2_GridMaintankStyleRegister
+GW.GridMaintankStyleRegister = GridMaintankStyleRegister
 
 local function UpdateGridMaintankFrame(frame)
     -- set frame settings

@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function GW2_GridPartyStyleRegister(self)
+local function GridPartyStyleRegister(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript("OnLeave", function()
         GameTooltip_Hide()
@@ -31,7 +31,7 @@ local function GW2_GridPartyStyleRegister(self)
 
     return self
 end
-GW.GW2_GridPartyStyleRegister = GW2_GridPartyStyleRegister
+GW.GridPartyStyleRegister = GridPartyStyleRegister
 
 local function UpdateGridPartyFrame(frame)
     -- set frame settings

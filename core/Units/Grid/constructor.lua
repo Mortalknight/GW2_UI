@@ -8,12 +8,16 @@ local profiles = {
     PARTY = {
         name = "Party",
         visibility = "[@raid1,exists][@party1,noexists] hide;show",
-        numGroups = 1
+        numGroups = 1,
+        styleFunc = GW.GridPartyStyleRegister,
+        updateFunc = GW.UpdateGridPartyFrame
     },
     RAID_PET = {
         name = "RaidPet",
         visibility = "[@raid1,exists] show; hide",
-        numGroups = 8
+        numGroups = 8,
+        styleFunc = GW.GridRaidPetStyleRegister,
+        updateFunc = GW.UpdateGridRaidPetFrame
     },
     RAID40 = {
         name = "Raid40",
@@ -21,25 +25,33 @@ local profiles = {
         visibility = "[@raid26,noexists] hide; show",
         visibilityAll = "[group:raid] show;hide",
         visibilityIncl25 = "[@raid11,noexists] hide; show",
-        numGroups = 8
+        numGroups = 8,
+        styleFunc = GW.GridRaid40StyleRegister,
+        updateFunc = GW.UpdateGridRaid40Frame
     },
     RAID25 = {
         name = "Raid25",
         size = 25,
         visibility = "[@raid11,noexists][@raid26,exists] hide;show",
         visibilityIncl10 = "[@raid1,noexists][@raid26,exists] hide; show",
-        numGroups = 5
+        numGroups = 5,
+        styleFunc = GW.GridRaid25StyleRegister,
+        updateFunc = GW.UpdateGridRaid25Frame
     },
     RAID10 = {
         name = "Raid10",
         size = 10,
         visibility = "[@raid1,noexists][@raid11,exists] hide;show",
         numGroups = 5,
+        styleFunc = GW.GridRaid10StyleRegister,
+        updateFunc = GW.UpdateGridRaid10Frame
     },
     TANK = {
         name = "Maintank",
         visibility = "[group:raid] show; hide",
         numGroups = 1,
+        styleFunc = GW.GridMaintankStyleRegister,
+        updateFunc = GW.UpdateGridMaintankFrame
     },
 }
 
@@ -129,7 +141,6 @@ GW.GridSettings = settings
 
 local settingsEventFrame = CreateFrame("Frame")
 local pendingProfiles = {}
-local settingsHelperValidated = false
 
 -- Helper-only mapping to simplify future settings updates (not wired yet).
 local SETTINGS_HELPER_MAP = {
@@ -245,7 +256,7 @@ local SETTINGS_HELPER_TONUMBER = {
     groupsPerColumnRow = true,
 }
 
-local function ApplySettingsHelper()
+local function ApplySettings()
     for settingName, mapping in pairs(SETTINGS_HELPER_MAP) do
         local target = settings[settingName]
         if target then
@@ -259,6 +270,8 @@ local function ApplySettingsHelper()
             end
         end
     end
+
+    settings.partyGridShowPlayer = GW.settings.RAID_SHOW_PLAYER_PARTY
 end
 
 local function MarkPending(profile)
@@ -313,23 +326,22 @@ local headerGroupBy = {
     end,
 }
 
-local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
+local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndFrames, skipSettings)
     if GW.disableGridUpdate then return end
 
-    ApplySettingsHelper()
-
-    -- grid specific settings
-    settings.partyGridShowPlayer = GW.settings.RAID_SHOW_PLAYER_PARTY
+    if not skipSettings then
+        ApplySettings()
+    end
 
     -- Update this settings on a spec switch
     if not settingsEventFrame.isSetup then
         settingsEventFrame:SetScript("OnEvent", function(_, event)
             if event == "PLAYER_REGEN_ENABLED" then
                 if pendingProfiles.ALL then
-                    UpdateSettings("ALL", false, true)
+                    UpdateFramesAndHeader("ALL", false, true)
                 else
                     for pendingProfile, _ in pairs(pendingProfiles) do
-                        UpdateSettings(pendingProfile, false, true)
+                        UpdateFramesAndHeader(pendingProfile, false, true)
                     end
                 end
 
@@ -350,7 +362,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
                 for i = 1, header.numGroups do
                     local group = header.groups[i]
                     for _, child in ipairs({ group:GetChildren() }) do
-                        GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
+                        header.updateFunc(child, header.groupName)
                     end
                 end
             end
@@ -371,7 +383,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
         end
     end
 end
-GW.UpdateGridSettings = UpdateSettings
+GW.UpdateGridSettings = UpdateFramesAndHeader
 
 local function GetGroupHeaderForProfile(profile)
     for headerProfile, header in pairs(GW.GridGroupHeaders) do
@@ -660,17 +672,23 @@ local function CreateHeader(parent, profile, options, overrideName, groupFilter)
     header.groupName = profile
     header.profileName = options.name
     header.numGroups = options.numGroups
+    header.updateFunc = options.updateFunc
+    header.updateFunc = options.updateFunc
 
     header:SetVisibility("custom " .. options.visibility)
 
     return header
 end
 
-local function Setup(self)
+local function Initialize()
+    GW.CreateRaidControlFrame()
+    GW.Create_Tags()
+    ApplySettings()
+
     -- create headers and groups for all profiles
     for profile, options in pairs(profiles) do
-        self:RegisterStyle("GW2_Grid" .. options.name, GW["GW2_Grid" .. options.name .. "StyleRegister"])
-        self:SetActiveStyle("GW2_Grid" .. options.name)
+        GW_UF:RegisterStyle("GW2_Grid" .. options.name, options.styleFunc)
+        GW_UF:SetActiveStyle("GW2_Grid" .. options.name)
 
         -- Create a holding header
         local Header = CreateFrame("Frame", "GW2_" .. options.name .. "GridContainer", UIParent, "SecureHandlerStateTemplate")
@@ -678,13 +696,15 @@ local function Setup(self)
         Header.groupName = profile
         Header.numGroups = options.numGroups
         Header.profileName = options.name
+        Header.styleFunc = options.styleFunc
+        Header.updateFunc = options.updateFunc
         headers[profile] = Header
 
-        Header.groups[1] = CreateHeader(self, profile, options, "GW2_" .. options.name .. "Group1")
+        Header.groups[1] = CreateHeader(GW_UF, profile, options, "GW2_" .. options.name .. "Group1")
 
         while options.numGroups > #Header.groups do
             local index = tostring(#Header.groups + 1)
-            tinsert(Header.groups, CreateHeader(self, profile, options, "GW2_" .. options.name .. "Group" .. index, index))
+            tinsert(Header.groups, CreateHeader(GW_UF, profile, options, "GW2_" .. options.name .. "Group" .. index, index))
         end
 
         RegisterStateDriver(Header, "visibility", options.visibility)
@@ -706,24 +726,8 @@ local function Setup(self)
 
         Header:ClearAllPoints()
         Header:SetPoint("TOPLEFT", Header.gwMover)
-
-        UpdateGridHeader(profile)
     end
 
-    C_Timer.After(0, function()
-        for profile, _ in pairs(profiles) do
-            UpdateSettings(profile)
-        end
-    end)
-end
-local function Initialize()
-    GW.CreateRaidControlFrame()
-
-    for profile, _ in pairs(profiles) do
-        UpdateSettings(profile)
-    end
-
-    GW.Create_Tags()
-    Setup(GW_UF)
+    UpdateFramesAndHeader("ALL", false, true, true)
 end
 GW.InitializeRaidFrames = Initialize
