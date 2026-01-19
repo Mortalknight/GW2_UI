@@ -850,7 +850,7 @@ local function evPlayerLogin(self)
     end
 
     if GW.settings.RAID_FRAMES then
-        --GW.InitializeRaidFrames() TODO
+        GW.InitializeRaidFrames() --TODO
     end
 
     GW.UpdateHudScale()

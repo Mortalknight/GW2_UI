@@ -3,6 +3,7 @@ local oUF = ns.oUF
 local Private = oUF.Private
 
 local frame_metatable = Private.frame_metatable
+local nierror = Private.nierror
 
 local colorMixin = {
 	SetRGBA = function(self, r, g, b, a)
@@ -22,6 +23,10 @@ local colorMixin = {
 		self.hex = string.format('ff%02x%02x%02x', self:GetRGBAsBytes())
 	end,
 	SetAtlas = function(self, atlas)
+		local info = C_Texture.GetAtlasInfo(atlas)
+		if(not info) then
+			return nierror(string.format('"%s" is an invalid atlas.', atlas))
+		end
 		self.atlas = atlas
 	end,
 	GetAtlas = function(self)
@@ -30,11 +35,35 @@ local colorMixin = {
 	GenerateHexColor = function(self)
 		return self.hex
 	end,
+	SetCurve = function(self, ...)
+		if(...) then
+			if(self.curve) then
+				self.curve:ClearPoints()
+			else
+				self.curve = C_CurveUtil.CreateColorCurve()
+			end
+
+			if(type(...) == 'table') then
+				for x, y in next, (...) do
+					self.curve:AddPoint(x, y)
+				end
+			else
+				for i = 1, select('#', ...), 2 do
+					self.curve:AddPoint(select(i, ...), select(i+1, ...))
+				end
+			end
+		else
+			self.curve = nil
+		end
+	end,
+	GetCurve = function(self)
+		return self.curve
+	end,
 }
 
 --[[ Colors: oUF:CreateColor(r, g, b[, a])
-Wrapper for [SharedXML\Color.lua's ColorMixin](https://warcraft.wiki.gg/wiki/ColorMixin), extended to support indexed colors used in oUF, as
-well as extra methods for dealing with atlases.
+Wrapper for [Blizzard_SharedXMLBase/Color.lua's ColorMixin](https://warcraft.wiki.gg/wiki/ColorMixin), extended with extra methods for dealing with
+atlases and curves.
 
 The rgb values can be either normalized (0-1) or bytes (0-255).
 
@@ -49,8 +78,23 @@ The rgb values can be either normalized (0-1) or bytes (0-255).
 * color - the ColorMixin-based object
 --]]
 function oUF:CreateColor(r, g, b, a)
+	if(r > 1 or g > 1 or b > 1) then
+		r, g, b = r / 255, g / 255, b / 255
+	end
+
 	local color = Mixin({}, ColorMixin, colorMixin)
 	color:SetRGBA(r, g, b, a)
+
+	-- provide a default curve for smooth colors
+	if C_CurveUtil then
+		color:SetCurve({
+			[  0] = CreateColor(1, 0, 0),
+
+
+			[0.5] = CreateColor(1, 1, 0),
+			[  1] = CreateColor(0, 1, 0),
+		})
+	end
 
 	return color
 end
@@ -70,22 +114,22 @@ local colors = {
 		oUF:CreateColor(173, 235, 66), -- unholy
 	},
 	selection = {
-		[ 0] = oUF:CreateColor(255, 0, 0), -- HOSTILE
-		[ 1] = oUF:CreateColor(255, 129, 0), -- UNFRIENDLY
-		[ 2] = oUF:CreateColor(255, 255, 0), -- NEUTRAL
-		[ 3] = oUF:CreateColor(0, 255, 0), -- FRIENDLY
-		[ 4] = oUF:CreateColor(0, 0, 255), -- PLAYER_SIMPLE
-		[ 5] = oUF:CreateColor(96, 96, 255), -- PLAYER_EXTENDED
-		[ 6] = oUF:CreateColor(170, 170, 255), -- PARTY
-		[ 7] = oUF:CreateColor(170, 255, 170), -- PARTY_PVP
-		[ 8] = oUF:CreateColor(83, 201, 255), -- FRIEND
-		[ 9] = oUF:CreateColor(128, 128, 128), -- DEAD
-		-- [10] = {}, -- COMMENTATOR_TEAM_1, unavailable to players
-		-- [11] = {}, -- COMMENTATOR_TEAM_2, unavailable to players
-		[12] = oUF:CreateColor(255, 255, 139), -- SELF, buggy
-		[13] = oUF:CreateColor(0, 153, 0), -- BATTLEGROUND_FRIENDLY_PVP
+		-- https://warcraft.wiki.gg/wiki/API_UnitSelectionColor
+		[oUF.Enum.SelectionType.Hostile] = oUF:CreateColor(255, 0, 0),
+		[oUF.Enum.SelectionType.Unfriendly] = oUF:CreateColor(255, 128, 0),
+		[oUF.Enum.SelectionType.Neutral] = oUF:CreateColor(255, 255, 0),
+		[oUF.Enum.SelectionType.Friendly] = oUF:CreateColor(0, 255, 0),
+		[oUF.Enum.SelectionType.PlayerSimple] = oUF:CreateColor(0, 0, 255),
+		[oUF.Enum.SelectionType.PlayerExtended] = oUF:CreateColor(96, 96, 255),
+		[oUF.Enum.SelectionType.Party] = oUF:CreateColor(170, 170, 255),
+		[oUF.Enum.SelectionType.PartyPvP] = oUF:CreateColor(170, 255, 170),
+		[oUF.Enum.SelectionType.Friend] = oUF:CreateColor(83, 201, 255),
+		[oUF.Enum.SelectionType.Dead] = oUF:CreateColor(128, 128, 128),
+		[oUF.Enum.SelectionType.PartyPvPInBattleground] = oUF:CreateColor(0, 153, 0),
+		[oUF.Enum.SelectionType.RecentAlly] = oUF:CreateColor(83, 201, 255),
 	},
 	class = {},
+	dispel = {},
 	debuff = {},
 	reaction = {},
 	power = {},
@@ -134,9 +178,19 @@ if(ns.settings or not customClassColors()) then
 	]]
 end
 
-for debuffType, color in next, _G.DebuffTypeColor do
-	colors.debuff[debuffType] = oUF:CreateColor(color.r, color.g, color.b)
-end
+-- MAYBE FOR NONE RETAIL?
+--for debuffType, color in next, _G.DebuffTypeColor do
+--	colors.debuff[debuffType] = oUF:CreateColor(color.r, color.g, color.b)
+--end
+
+-- copy of DEBUFF_DISPLAY_INFO from AuraUtil
+colors.dispel[oUF.Enum.DispelType.None] = _G.DEBUFF_TYPE_NONE_COLOR
+colors.dispel[oUF.Enum.DispelType.Magic] = _G.DEBUFF_TYPE_MAGIC_COLOR
+colors.dispel[oUF.Enum.DispelType.Curse] = _G.DEBUFF_TYPE_CURSE_COLOR
+colors.dispel[oUF.Enum.DispelType.Disease] = _G.DEBUFF_TYPE_DISEASE_COLOR
+colors.dispel[oUF.Enum.DispelType.Poison] = _G.DEBUFF_TYPE_POISON_COLOR
+colors.dispel[oUF.Enum.DispelType.Bleed] = _G.DEBUFF_TYPE_BLEED_COLOR
+colors.dispel[oUF.Enum.DispelType.Enrage] = oUF:CreateColor(243, 95, 245)
 
 for eclass, color in next, _G.FACTION_BAR_COLORS do
 	colors.reaction[eclass] = oUF:CreateColor(color.r, color.g, color.b)
@@ -155,6 +209,10 @@ for power, color in next, PowerBarColor do
 
 			if(color.atlas) then
 				colors.power[power]:SetAtlas(color.atlas)
+			end
+
+			if(color.atlasElementName) then
+				colors.power[power]:SetAtlas("UI-HUD-UnitFrame-Player-PortraitOn-Bar-" .. color.atlasElementName)
 			end
 		else
 			-- special handling for stagger

@@ -137,13 +137,21 @@ local function UpdateColor(self, event, unit)
 	elseif(element.colorReaction and UnitReaction(unit, 'player')) then
 		color = self.colors.reaction[UnitReaction(unit, 'player')]
 	elseif(element.colorSmooth) then
-		r, g, b = self:ColorGradient(element.cur or 1, element.max or 1, unpack(element.smoothGradient or self.colors.smooth))
+		if oUF.isRetail and self.colors.health:GetCurve() then
+			color = UnitHealthPercent(unit, true, self.colors.health:GetCurve())
+		elseif not oUF.isRetail then
+			r, g, b = self:ColorGradient(element.cur or 1, element.max or 1, unpack(element.smoothGradient or self.colors.smooth))
+		end
 	elseif(element.colorHealth) then
 		color = self.colors.health
 	end
 
 	if(color) then
-		r, g, b = color[1], color[2], color[3]
+		if oUF.isRetail then
+			element:GetStatusBarTexture():SetVertexColor(color:GetRGB())
+		else
+			r, g, b = color[1], color[2], color[3]
+		end
 	end
 
 	if(b) then
@@ -164,9 +172,10 @@ local function UpdateColor(self, event, unit)
 	* r    - the red component of the used color (number)[0-1]
 	* g    - the green component of the used color (number)[0-1]
 	* b    - the blue component of the used color (number)[0-1]
+	* color - the used ColorMixin-based object (table?)
 	--]]
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(unit, r, g, b)
+		element:PostUpdateColor(unit, r, g, b, color)
 	end
 end
 
@@ -182,6 +191,7 @@ local function ColorPath(self, ...)
 end
 
 local function Update(self, event, unit)
+	if (self.isForced and event ~= 'Gw2_UpdateAllElements') then return end -- GW2 changed
 	if(not unit or self.unit ~= unit) then return end
 	local element = self.Health
 
@@ -199,9 +209,9 @@ local function Update(self, event, unit)
 	element:SetMinMaxValues(0, max)
 
 	if(UnitIsConnected(unit)) then
-		element:SetValue(cur)
+		element:SetValue(cur, element.smoothing)
 	else
-		element:SetValue(max)
+		element:SetValue(max, element.smoothing)
 	end
 
 	element.cur = cur
@@ -209,9 +219,8 @@ local function Update(self, event, unit)
 
 	local lossPerc = 0
 	if(element.TempLoss) then
-		lossPerc = Clamp(GetUnitTotalModifiedMaxHealthPercent(unit), 0, 1)
-
-		element.TempLoss:SetValue(lossPerc)
+		lossPerc = GetUnitTotalModifiedMaxHealthPercent(unit)
+		element.TempLoss:SetValue(lossPerc, element.smoothing)
 	end
 
 	--[[ Callback: Health:PostUpdate(unit, cur, max, lossPerc)
@@ -294,7 +303,24 @@ local function SetColorTapping(element, state, isForced)
 		element.colorTapping = state
 		if(state) then
 			element.__owner:RegisterEvent('UNIT_FACTION', ColorPath)
-		else
+		elseif(not element.colorReaction) then
+			element.__owner:UnregisterEvent('UNIT_FACTION', ColorPath)
+		end
+	end
+end
+
+--[[ Health:SetColorReaction(state, isForced)
+Used to toggle coloring by the unit's reaction.
+* self     - the Health element
+* state    - the desired state (boolean)
+* isForced - forces the event update even if the state wasn't changed (boolean)
+--]]
+local function SetColorReaction(element, state, isForced)
+	if(element.colorReaction ~= state or isForced) then
+		element.colorReaction = state
+		if(state) then
+			element.__owner:RegisterEvent('UNIT_FACTION', ColorPath)
+		elseif(not element.colorTapping) then
 			element.__owner:UnregisterEvent('UNIT_FACTION', ColorPath)
 		end
 	end
@@ -326,12 +352,17 @@ local function Enable(self)
 		element.SetColorDisconnected = SetColorDisconnected
 		element.SetColorSelection = SetColorSelection
 		element.SetColorTapping = SetColorTapping
+		element.SetColorReaction = SetColorReaction
 		element.SetColorThreat = SetColorThreat
 
 		if oUF.isRetail then
 			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
 		elseif oUF.isClassic then
 			self:RegisterEvent('UNIT_HEALTH_FREQUENT', Path)
+		end
+
+		if(not element.smoothing and ns.Retail) then
+			element.smoothing = Enum.StatusBarInterpolation.Immediate
 		end
 
 		if(element.colorDisconnected) then
@@ -342,7 +373,7 @@ local function Enable(self)
 			self:RegisterEvent('UNIT_FLAGS', ColorPath)
 		end
 
-		if(element.colorTapping) then
+		if(element.colorTapping or element.colorReaction) then
 			self:RegisterEvent('UNIT_FACTION', ColorPath)
 		end
 
@@ -362,10 +393,10 @@ local function Enable(self)
 		if(element.TempLoss) then
 			if(element.TempLoss:IsObjectType('StatusBar')) then
 				element.TempLoss:SetMinMaxValues(0, 1)
-				element.TempLoss:SetValue(0)
+				element.TempLoss:SetValue(0, element.smoothing)
 
 				if(not element.TempLoss:GetStatusBarTexture()) then
-					element.TempLoss:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+					element.TempLoss:SetStatusBarTexture('UI-HUD-UnitFrame-Target-PortraitOn-Bar-TempHPLoss')
 				end
 			end
 

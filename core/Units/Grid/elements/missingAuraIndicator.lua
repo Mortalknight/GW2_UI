@@ -1,6 +1,8 @@
 local _, GW = ...
 
 local function Construct_MissingAuraIndicator(frame)
+    if GW.Retail then return nil end
+
     local missingbuffFrame = CreateFrame('StatusBar', '$parent_MissingBuffIndicatorFrame', frame)
 
     missingbuffFrame:SetFrameLevel(21)

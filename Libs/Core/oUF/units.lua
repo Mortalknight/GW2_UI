@@ -55,13 +55,21 @@ local function updateArenaPreparationElements(self, event, elementName, specID)
 			elseif(element.colorReaction) then
 				color = self.colors.reaction[2]
 			elseif(element.colorSmooth) then
-				_, _, _, _, _, _, r, g, b = unpack(element.smoothGradient or self.colors.smooth)
+				if ns.Retail and self.colors.health:GetCurve() then
+					color = self.colors.health:GetCurve():Evaluate(1)
+				elseif not ns.Retail then
+					_, _, _, _, _, _, r, g, b = unpack(element.smoothGradient or self.colors.smooth)
+				end
 			elseif(element.colorHealth and elementName == 'Health') then
 				color = self.colors.health
 			end
 
 			if(color) then
-				r, g, b = color[1], color[2], color[3]
+				if ns.Retail then
+					element:GetStatusBarTexture():SetVertexColor(color:GetRGB())
+				else
+					r, g, b = color[1], color[2], color[3]
+				end
 			end
 
 			if(r or g or b) then

@@ -78,32 +78,38 @@ local function Create_Tags()
         local health = UnitHealth(unit)
         local healthMax = UnitHealthMax(unit)
         local healthPrec = 0
-        local formatFunction
+        local formatFunc
 
         shortendHealthValue = stringtoboolean[shortendHealthValue]
 
-        if shortendHealthValue then
-            formatFunction = GW.ShortValue
+        if GW.Retail then
+            formatFunc = shortendHealthValue and AbbreviateLargeNumbers or BreakUpLargeNumbers
         else
-            formatFunction = GW.GetLocalizedNumber
-        end
-
-        if healthMax > 0 then
-            healthPrec = health / healthMax
+            formatFunc = shortendHealthValue and GW.ShortValue or GW.GetLocalizedNumber
+            if healthMax > 0 then
+                healthPrec = health / healthMax
+            end
         end
 
         if healthDisplaySetting == "NONE" then
             return ""
         end
         if healthDisplaySetting == "PREC" then
-            return GW.RoundDec(healthPrec * 100, 0) .. "%"
+            if GW.Retail then
+                return string.format("%.0f%%", UnitHealthPercent(unit, true, CurveConstants.ScaleTo100))
+            else
+                return GW.RoundDec(healthPrec * 100, 0) .. "%"
+            end
         elseif healthDisplaySetting == "HEALTH" then
-            return formatFunction(health)
+            return formatFunc(health)
         elseif healthDisplaySetting == "LOSTHEALTH" then
-            if healthMax - health > 0 then healthstring = formatFunction(healthMax - health) end
-            return healthstring
+            if GW.Retail then
+                return formatFunc(UnitHealthMissing(unit))
+            else
+                if healthMax - health > 0 then healthstring = formatFunc(healthMax - health) end
+                return healthstring
+            end
         end
     end)
-
 end
 GW.Create_Tags = Create_Tags

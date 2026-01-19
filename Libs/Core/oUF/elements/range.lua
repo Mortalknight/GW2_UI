@@ -42,36 +42,33 @@ local function Update(self, event)
 	end
 
 	-- GW2 modiefied
-	local inRange, checkedRange
-	local connected = UnitIsConnected(unit)
-	if(connected) then
-		inRange, checkedRange = UnitInRange(unit)
-		local phaseReason
+	local inRange
+	local isEligible = UnitIsConnected(unit) and UnitInParty(unit)
+	if(isEligible) then
+		inRange = UnitInRange(unit)
         if ns.Retail then
-            phaseReason = UnitPhaseReason(unit)
+			self:SetAlphaFromBoolean(inRange, element.insideAlpha, element.outsideAlpha)
         else
-            phaseReason = not UnitInPhase(unit)
+			if inRange then
+				self:SetAlpha(element.outsideAlpha)
+			else
+				self:SetAlpha(element.insideAlpha)
+			end
         end
-		if(checkedRange and not inRange) or phaseReason then
-			self.Health.healthPredictionbar:SetAlpha(element.outsideAlpha)
-		else
-			self.Health.healthPredictionbar:SetAlpha(element.insideAlpha)
-		end
 	else
-		self.Health.healthPredictionbar:SetAlpha(element.insideAlpha)
+		self:SetAlpha(element.insideAlpha)
 	end
 
 	--[[ Callback: Range:PostUpdate(object, inRange, checkedRange, isConnected)
 	Called after the element has been updated.
 
-	* self         - the Range element
-	* object       - the parent object
-	* inRange      - indicates if the unit was within 40 yards of the player (boolean)
-	* checkedRange - indicates if the range check was actually performed (boolean)
-	* isConnected  - indicates if the unit is online (boolean)
+	* self       - the Range element
+	* object     - the parent object
+	* inRange    - indicates if the unit is within 40 yards of the player (boolean)
+	* isEligible - indicates if the unit is eligible for the range check (boolean)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(self, inRange, checkedRange, connected)
+		return element:PostUpdate(self, inRange, isEligible)
 	end
 end
 

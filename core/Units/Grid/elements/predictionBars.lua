@@ -59,7 +59,7 @@ local function UpdatePredictionBarsOverride(self, event, unit)
 end
 
 local function Construct_PredictionBar(frame)
-    frame.HealthPrediction.Override  = UpdatePredictionBarsOverride
+    --frame.HealthPrediction.Override  = UpdatePredictionBarsOverride
 end
 GW.Construct_PredictionBar = Construct_PredictionBar
 

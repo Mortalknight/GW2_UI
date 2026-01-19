@@ -107,8 +107,7 @@ type and zero for the minimum value.
 
 * self - the Power element
 --]]
-local function GetDisplayPower(element)
-	local unit = element.__owner.unit
+local function GetDisplayPower(element, unit)
 	local barInfo = GetUnitPowerBarInfo(unit)
 	if(barInfo and barInfo.showOnRaid and (UnitInParty(unit) or UnitInRaid(unit))) then
 		return ALTERNATE_POWER_INDEX, barInfo.minPower
@@ -120,7 +119,6 @@ local function UpdateColor(self, event, unit)
 	local element = self.Power
 
 	local isPlayer = UnitIsPlayer(unit) or (oUF.isRetail and UnitInPartyIsAI(unit))
-	local pType, pToken, altR, altG, altB = UnitPowerType(unit)
 
 	local r, g, b, color, atlas
 	if(element.colorDisconnected and not UnitIsConnected(unit)) then
@@ -130,27 +128,31 @@ local function UpdateColor(self, event, unit)
 	elseif(element.colorThreat and not UnitPlayerControlled(unit) and UnitThreatSituation('player', unit)) then
 		color =  self.colors.threat[UnitThreatSituation('player', unit)]
 	elseif(element.colorPower) then
-		if(element.displayType ~= ALTERNATE_POWER_INDEX) then
-			color = self.colors.power[pToken]
-			if(not color) then
-				if(element.GetAlternativeColor) then
-					r, g, b = element:GetAlternativeColor(unit, pType, pToken, altR, altG, altB)
-				elseif(altR) then
-					r, g, b = altR, altG, altB
-					if(r > 1 or g > 1 or b > 1) then
-						-- BUG: As of 7.0.3, altR, altG, altB may be in 0-1 or 0-255 range.
-						r, g, b = r / 255, g / 255, b / 255
-					end
-				else
-					color = self.colors.power[pType] or self.colors.power.MANA
-				end
-			end
-		else
-			color = self.colors.power[ALTERNATE_POWER_INDEX]
+		if(element.displayType) then
+			color = self.colors.power[element.displayType]
 		end
 
-		if(element.useAtlas and color and color.atlas) then
-			atlas = color.atlas
+		if(not color) then
+			local pType, pToken, altR, altG, altB = UnitPowerType(unit)
+			color = self.colors.power[pToken]
+			if(not color and altR) then
+				r, g, b = altR, altG, altB
+
+				if(r > 1 or g > 1 or b > 1) then
+					-- BUG: As of 7.0.3, altR, altG, altB may be in 0-1 or 0-255 range.
+					r, g, b = r / 255, g / 255, b / 255
+				end
+			else
+				color = self.colors.power[pType] or self.colors.power.MANA
+			end
+		end
+
+		if(element.colorPowerAtlas and color) then
+			atlas = color:GetAtlas()
+		end
+
+		if(oUF.isRetail and element.colorPowerSmooth and color and color:GetCurve()) then
+			color = UnitPowerPercent(unit, true, color:GetCurve())
 		end
 	elseif(element.colorClass and isPlayer)
 		or (element.colorClassNPC and not isPlayer)
@@ -168,20 +170,16 @@ local function UpdateColor(self, event, unit)
 
 	if(atlas) then
 		element:SetStatusBarTexture(atlas)
-		element:SetStatusBarColor(1, 1, 1)
+		element:GetStatusBarTexture():SetVertexColor(1, 1, 1)
 	else
-		if(color) then
-			r, g, b = color[1], color[2], color[3]
+		if(element.__texture) then
+			element:SetStatusBarTexture(element.__texture)
 		end
 
 		if(b) then
-			element:SetStatusBarColor(r, g, b)
-
-			local bg = element.bg
-			if(bg) then
-				local mu = bg.multiplier or 1
-				bg:SetVertexColor(r * mu, g * mu, b * mu)
-			end
+			element:GetStatusBarTexture():SetVertexColor(r, g, b)
+		elseif(color) then
+			element:GetStatusBarTexture():SetVertexColor(color:GetRGB())
 		end
 	end
 
@@ -196,7 +194,7 @@ local function UpdateColor(self, event, unit)
 	* atlas - the atlas used instead of color (string)
 	--]]
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(unit, r, g, b, atlas)
+		element:PostUpdateColor(unit, r, g, b, atlas, color)
 	end
 end
 
@@ -227,7 +225,7 @@ local function Update(self, event, unit)
 
 	local displayType, min
 	if(oUF.isRetail and element.displayAltPower) then
-		displayType, min = element:GetDisplayPower()
+		displayType, min = element:GetDisplayPower(unit)
 	end
 
 	local cur, max = UnitPower(unit, displayType), UnitPowerMax(unit, displayType)
@@ -238,9 +236,9 @@ local function Update(self, event, unit)
 	element:SetMinMaxValues(min, max)
 
 	if(UnitIsConnected(unit)) then
-		element:SetValue(cur)
+		element:SetValue(cur, element.smoothing)
 	else
-		element:SetValue(max)
+		element:SetValue(max, element.smoothing)
 	end
 
 	element.cur = cur
@@ -333,7 +331,24 @@ local function SetColorTapping(element, state, isForced)
 		element.colorTapping = state
 		if(state) then
 			element.__owner:RegisterEvent('UNIT_FACTION', ColorPath)
-		else
+		elseif(not element.colorReaction) then
+			element.__owner:UnregisterEvent('UNIT_FACTION', ColorPath)
+		end
+	end
+end
+
+--[[ Power:SetColorReaction(state, isForced)
+Used to toggle coloring by the unit's reaction.
+* self     - the Power element
+* state    - the desired state (boolean)
+* isForced - forces the event update even if the state wasn't changed (boolean)
+--]]
+local function SetColorReaction(element, state, isForced)
+	if(element.colorReaction ~= state or isForced) then
+		element.colorReaction = state
+		if(state) then
+			element.__owner:RegisterEvent('UNIT_FACTION', ColorPath)
+		elseif(not element.colorTapping) then
 			element.__owner:UnregisterEvent('UNIT_FACTION', ColorPath)
 		end
 	end
@@ -385,6 +400,7 @@ local function Enable(self)
 		element.SetColorDisconnected = SetColorDisconnected
 		element.SetColorSelection = SetColorSelection
 		element.SetColorTapping = SetColorTapping
+		element.SetColorReaction = SetColorReaction
 		element.SetColorThreat = SetColorThreat
 		element.SetFrequentUpdates = SetFrequentUpdates
 
@@ -396,7 +412,7 @@ local function Enable(self)
 			self:RegisterEvent('UNIT_FLAGS', ColorPath)
 		end
 
-		if(element.colorTapping) then
+		if(element.colorTapping or element.colorReaction) then
 			self:RegisterEvent('UNIT_FACTION', ColorPath)
 		end
 

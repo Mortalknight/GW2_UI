@@ -86,20 +86,24 @@ local oUF = ns.oUF
 local function UpdateSize(self, event, unit)
 	local element = self.HealthPrediction
 
-	if(element.myBar) then
-		element.myBar[element.isHoriz and 'SetWidth' or 'SetHeight'](element.myBar, element.size)
+	if(element.healingAll) then
+		element.healingAll[element.isHoriz and 'SetWidth' or 'SetHeight'](element.healingAll, element.size)
 	end
 
-	if(element.otherBar) then
-		element.otherBar[element.isHoriz and 'SetWidth' or 'SetHeight'](element.otherBar, element.size)
+	if(element.healingPlayer) then
+		element.healingPlayer[element.isHoriz and 'SetWidth' or 'SetHeight'](element.healingPlayer, element.size)
 	end
 
-	if(element.absorbBar) then
-		element.absorbBar[element.isHoriz and 'SetWidth' or 'SetHeight'](element.absorbBar, element.size)
+	if(element.healingOther) then
+		element.healingOther[element.isHoriz and 'SetWidth' or 'SetHeight'](element.healingOther, element.size)
 	end
 
-	if(element.healAbsorbBar) then
-		element.healAbsorbBar[element.isHoriz and 'SetWidth' or 'SetHeight'](element.healAbsorbBar, element.size)
+	if(element.damageAbsorb) then
+		element.damageAbsorb[element.isHoriz and 'SetWidth' or 'SetHeight'](element.damageAbsorb, element.size)
+	end
+
+	if(element.healAbsorb) then
+		element.healAbsorb[element.isHoriz and 'SetWidth' or 'SetHeight'](element.healAbsorb, element.size)
 	end
 end
 
@@ -118,90 +122,93 @@ local function Update(self, event, unit)
 		element:PreUpdate(unit)
 	end
 
-	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
-	local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
-	local absorb = (self.showAbsorbBar and UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(unit)) or 0 --GW2 change
-	local healAbsorb = UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs(unit) or 0
 	local health, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
-	local otherIncomingHeal = 0
-	local hasOverHealAbsorb = false
+	local allHeal, playerHeal, otherHeal, healClamped
+	local damageAbsorbAmount, damageAbsorbClamped = 0, false
+	local healAbsorbAmount
+	if ns.Retail then
+		UnitGetDetailedHealPrediction(unit, 'player', element.values)
 
-	if(healAbsorb > allIncomingHeal) then
-		healAbsorb = healAbsorb - allIncomingHeal
-		allIncomingHeal = 0
-		myIncomingHeal = 0
-
-		if(health < healAbsorb) then
-			hasOverHealAbsorb = true
-			healAbsorb = health
+		allHeal, playerHeal, otherHeal, healClamped = element.values:GetIncomingHeals()
+		if self.showAbsorbBar  then
+			damageAbsorbAmount, damageAbsorbClamped = element.values:GetDamageAbsorbs()
 		end
+
+		healAbsorbAmount = element.values:GetHealAbsorbs()
+
+		if(element.overDamageAbsorbIndicator) then
+			element.overDamageAbsorbIndicator:SetAlphaFromBoolean(damageAbsorbClamped, 1, 0)
+		end
+
 	else
-		allIncomingHeal = allIncomingHeal - healAbsorb
-		healAbsorb = 0
+		playerHeal = UnitGetIncomingHeals(unit, 'player') or 0
+		allHeal = UnitGetIncomingHeals(unit) or 0
+		damageAbsorbAmount = (self.showAbsorbBar and UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(unit)) or 0 --GW2 change
+		healAbsorbAmount = UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs(unit) or 0
 
-		if(health + allIncomingHeal > maxHealth * element.maxOverflow) then
-			allIncomingHeal = maxHealth * element.maxOverflow - health
-		end
+		if(healAbsorbAmount > allHeal) then
+			healAbsorbAmount = healAbsorbAmount - allHeal
+			allHeal = 0
+			playerHeal = 0
 
-		if(allIncomingHeal < myIncomingHeal) then
-			myIncomingHeal = allIncomingHeal
+			if(health < healAbsorbAmount) then
+				healAbsorbAmount = health
+			end
 		else
-			otherIncomingHeal = allIncomingHeal - myIncomingHeal
+			allHeal = allHeal - healAbsorbAmount
+			healAbsorbAmount = 0
+
+			if(health + allHeal > maxHealth) then
+				allHeal = maxHealth
+			end
+
+			if(allHeal < playerHeal) then
+				playerHeal = allHeal
+			end
+		end
+
+		local hasOverAbsorb = false
+		if(health + allHeal + damageAbsorbAmount >= maxHealth) then
+			if(damageAbsorbAmount > 0) then
+				hasOverAbsorb = true
+			end
+
+			damageAbsorbAmount = math.max(0, maxHealth - health - allHeal)
+		end
+
+		if(element.overDamageAbsorbIndicator) then
+			if(hasOverAbsorb) then
+				element.overDamageAbsorbIndicator:Show()
+			else
+				element.overDamageAbsorbIndicator:Hide()
+			end
 		end
 	end
 
-	local hasOverAbsorb = false
-	if(element.showRawAbsorb) then
-		if(absorb > maxHealth) then
-			hasOverAbsorb = true
-		end
-	elseif(health + allIncomingHeal + absorb >= maxHealth) then
-		if(absorb > 0) then
-			hasOverAbsorb = true
-		end
-
-		absorb = math.max(0, maxHealth - health - allIncomingHeal)
+	if(element.healingAll) then
+		element.healingAll:SetMinMaxValues(0, maxHealth)
+		element.healingAll:SetValue(allHeal)
 	end
 
-	if(element.myBar) then
-		element.myBar:SetMinMaxValues(0, maxHealth)
-		element.myBar:SetValue(myIncomingHeal)
-		element.myBar:Show()
+	if(element.healingOther) then
+		element.healingOther:SetMinMaxValues(0, maxHealth)
+		element.healingOther:SetValue(playerHeal)
 	end
 
-	if(element.otherBar) then
-		element.otherBar:SetMinMaxValues(0, maxHealth)
-		element.otherBar:SetValue(otherIncomingHeal)
-		element.otherBar:Show()
+	if(element.overHealIndicator) then
+		element.overHealIndicator:SetAlphaFromBoolean(healClamped, 1, 0)
 	end
 
-	if(element.absorbBar) then
-		element.absorbBar:SetMinMaxValues(0, maxHealth)
-		element.absorbBar:SetValue(absorb)
-		element.absorbBar:Show()
+	if(element.damageAbsorb) then
+		element.damageAbsorb:SetMinMaxValues(0, maxHealth)
+		element.damageAbsorb:SetValue(damageAbsorbAmount)
 	end
 
-	if(element.healAbsorbBar) then
-		element.healAbsorbBar:SetMinMaxValues(0, maxHealth)
-		element.healAbsorbBar:SetValue(healAbsorb)
-		element.healAbsorbBar:Show()
+	if(element.healAbsorb) then
+		element.healAbsorb:SetMinMaxValues(0, maxHealth)
+		element.healAbsorb:SetValue(healAbsorbAmount)
 	end
 
-	if(element.overAbsorb) then
-		if(hasOverAbsorb) then
-			element.overAbsorb:Show()
-		else
-			element.overAbsorb:Hide()
-		end
-	end
-
-	if(element.overHealAbsorb) then
-		if(hasOverHealAbsorb) then
-			element.overHealAbsorb:Show()
-		else
-			element.overHealAbsorb:Hide()
-		end
-	end
 
 	--[[ Callback: HealthPrediction:PostUpdate(unit, myIncomingHeal, otherIncomingHeal, absorb, healAbsorb, hasOverAbsorb, hasOverHealAbsorb)
 	Called after the element has been updated.
@@ -267,6 +274,34 @@ local function Enable(self)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
+		if ns.Retail then
+			if(element.values) then
+				element.values:Reset()
+			else
+				element.values = CreateUnitHealPredictionCalculator()
+			end
+
+			if(element.damageAbsorbClampMode) then
+				element.values:SetDamageAbsorbClampMode(element.damageAbsorbClampMode)
+			end
+
+			if(element.healAbsorbClampMode) then
+				element.values:SetHealAbsorbClampMode(element.healAbsorbClampMode)
+			end
+
+			if(element.healAbsorbMode) then
+				element.values:SetHealAbsorbMode(element.healAbsorbMode)
+			end
+
+			if(element.incomingHealClampMode) then
+				element.values:SetIncomingHealClampMode(element.incomingHealClampMode)
+			end
+
+			if(element.incomingHealOverflow) then
+				element.values:SetIncomingHealOverflowPercent(element.incomingHealOverflow)
+			end
+		end
+
 		self:RegisterEvent('UNIT_HEALTH', Path)
 		self:RegisterEvent('UNIT_MAXHEALTH', Path)
 		self:RegisterEvent('UNIT_HEAL_PREDICTION', Path)
@@ -281,45 +316,55 @@ local function Enable(self)
 			self:RegisterEvent('UNIT_MAX_HEALTH_MODIFIERS_CHANGED', Path)
 		end
 
-		if(not element.maxOverflow) then
-			element.maxOverflow = 1.05
-		end
 
-		if(element.myBar) then
-			if(element.myBar:IsObjectType('StatusBar') and not element.myBar:GetStatusBarTexture()) then
-				element.myBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		if(element.healingAll) then
+			if(element.healingAll:IsObjectType('StatusBar') and not element.healingAll:GetStatusBarTexture()) then
+				element.healingAll:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
-		if(element.otherBar) then
-			if(element.otherBar:IsObjectType('StatusBar') and not element.otherBar:GetStatusBarTexture()) then
-				element.otherBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		if(element.healingPlayer) then
+			if(element.healingPlayer:IsObjectType('StatusBar') and not element.healingPlayer:GetStatusBarTexture()) then
+				element.healingPlayer:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
-		if(element.absorbBar) then
-			if(element.absorbBar:IsObjectType('StatusBar') and not element.absorbBar:GetStatusBarTexture()) then
-				element.absorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		if(element.healingOther) then
+			if(element.healingOther:IsObjectType('StatusBar') and not element.healingOther:GetStatusBarTexture()) then
+				element.healingOther:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
-		if(element.healAbsorbBar) then
-			if(element.healAbsorbBar:IsObjectType('StatusBar') and not element.healAbsorbBar:GetStatusBarTexture()) then
-				element.healAbsorbBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		if(element.overHealIndicator) then
+			if(element.overHealIndicator:IsObjectType('Texture') and not element.overHealIndicator:GetTexture()) then
+				element.overHealIndicator:SetTexture([[Interface\RaidFrame\Shield-Overshield]])
+				element.overHealIndicator:SetBlendMode('ADD')
 			end
 		end
 
-		if(element.overAbsorb) then
-			if(element.overAbsorb:IsObjectType('Texture') and not element.overAbsorb:GetTexture()) then
-				element.overAbsorb:SetTexture([[Interface\RaidFrame\Shield-Overshield]])
-				element.overAbsorb:SetBlendMode('ADD')
+		if(element.damageAbsorb) then
+			if(element.damageAbsorb:IsObjectType('StatusBar') and not element.damageAbsorb:GetStatusBarTexture()) then
+				element.damageAbsorb:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
-		if(element.overHealAbsorb) then
-			if(element.overHealAbsorb:IsObjectType('Texture') and not element.overHealAbsorb:GetTexture()) then
-				element.overHealAbsorb:SetTexture([[Interface\RaidFrame\Absorb-Overabsorb]])
-				element.overHealAbsorb:SetBlendMode('ADD')
+		if(element.healAbsorb) then
+			if(element.healAbsorb:IsObjectType('StatusBar') and not element.healAbsorb:GetStatusBarTexture()) then
+				element.healAbsorb:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			end
+		end
+
+		if(element.overDamageAbsorbIndicator) then
+			if(element.overDamageAbsorbIndicator:IsObjectType('Texture') and not element.overDamageAbsorbIndicator:GetTexture()) then
+				element.overDamageAbsorbIndicator:SetTexture([[Interface\RaidFrame\Shield-Overshield]])
+				element.overDamageAbsorbIndicator:SetBlendMode('ADD')
+			end
+		end
+
+		if(element.overHealAbsorbIndicator) then
+			if(element.overHealAbsorbIndicator:IsObjectType('Texture') and not element.overHealAbsorbIndicator:GetTexture()) then
+				element.overHealAbsorbIndicator:SetTexture([[Interface\RaidFrame\Absorb-Overabsorb]])
+				element.overHealAbsorbIndicator:SetBlendMode('ADD')
 			end
 		end
 
@@ -330,28 +375,36 @@ end
 local function Disable(self)
 	local element = self.HealthPrediction
 	if(element) then
-		if(element.myBar) then
-			element.myBar:Hide()
+		if(element.healingAll) then
+			element.healingAll:Hide()
 		end
 
-		if(element.otherBar) then
-			element.otherBar:Hide()
+		if(element.healingPlayer) then
+			element.healingPlayer:Hide()
 		end
 
-		if(element.absorbBar) then
-			element.absorbBar:Hide()
+		if(element.healingOther) then
+			element.healingOther:Hide()
 		end
 
-		if(element.healAbsorbBar) then
-			element.healAbsorbBar:Hide()
+		if(element.overHealIndicator) then
+			element.overHealIndicator:Hide()
 		end
 
-		if(element.overAbsorb) then
-			element.overAbsorb:Hide()
+		if(element.damageAbsorb) then
+			element.damageAbsorb:Hide()
 		end
 
-		if(element.overHealAbsorb) then
-			element.overHealAbsorb:Hide()
+		if(element.healAbsorb) then
+			element.healAbsorb:Hide()
+		end
+
+		if(element.overDamageAbsorbIndicator) then
+			element.overDamageAbsorbIndicator:Hide()
+		end
+
+		if(element.overHealAbsorbIndicator) then
+			element.overHealAbsorbIndicator:Hide()
 		end
 
 		self:UnregisterEvent('UNIT_HEALTH', Path)

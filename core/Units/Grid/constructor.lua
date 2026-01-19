@@ -245,25 +245,7 @@ local SETTINGS_HELPER_TONUMBER = {
     groupsPerColumnRow = true,
 }
 
-local function ValidateSettingsHelper()
-    if settingsHelperValidated then return end
-    settingsHelperValidated = true
-
-    print("Validating SETTINGS_HELPER_MAP...")
-
-    for settingName, mapping in pairs(SETTINGS_HELPER_MAP) do
-        for profile, _ in pairs(profiles) do
-            if mapping[profile] == nil then
-                GW.Notice("settings", "SETTINGS_HELPER_MAP missing", settingName, profile)
-            end
-        end
-    end
-
-    GW.Notice("settings", "SETTINGS_HELPER_MAP validated")
-end
-
 local function ApplySettingsHelper()
-    ValidateSettingsHelper()
     for settingName, mapping in pairs(SETTINGS_HELPER_MAP) do
         local target = settings[settingName]
         if target then
@@ -579,37 +561,37 @@ local function UpdateGridHeader(profile)
             end
         end
 
-        point = DIRECTION_TO_GROUP_ANCHOR_POINT[direction]
+        local pointInner = DIRECTION_TO_GROUP_ANCHOR_POINT[direction]
         if (isParty or raidWideSorting) and settings.startFromCenter[profile] then
-			point = DIRECTION_TO_GROUP_ANCHOR_POINT["OUT+" .. direction]
+			pointInner = DIRECTION_TO_GROUP_ANCHOR_POINT["OUT+" .. direction]
 		end
 
         if lastGroup == 0 then
             if DIRECTION_TO_POINT[direction] == "LEFT" or DIRECTION_TO_POINT[direction] == "RIGHT" then
-                if group then group:SetPoint(point, header, point, 0, height * y) end
+                if group then group:SetPoint(pointInner, header, pointInner, 0, height * y) end
                 height = height + HEIGHT + groupSpacing
                 newRows = newRows + 1
             else
-                if group then group:SetPoint(point, header, point, width * x, 0) end
+                if group then group:SetPoint(pointInner, header, pointInner, width * x, 0) end
                 width = width + WIDTH + groupSpacing
                 newCols = newCols + 1
             end
         else
             if DIRECTION_TO_POINT[direction] == "LEFT" or DIRECTION_TO_POINT[direction] == "RIGHT" then
                 if newRows == 1 then
-                    if group then group:SetPoint(point, header, point, width * x, 0) end
+                    if group then group:SetPoint(pointInner, header, pointInner, width * x, 0) end
                     width = width + WIDTH_FIVE + groupSpacing
                     newCols = newCols + 1
                 elseif group then
-                    group:SetPoint(point, header, point, ((WIDTH_FIVE * lastGroup) + lastGroup * groupSpacing) * x, ((HEIGHT + groupSpacing) * (newRows - 1)) * y)
+                    group:SetPoint(pointInner, header, pointInner, ((WIDTH_FIVE * lastGroup) + lastGroup * groupSpacing) * x, ((HEIGHT + groupSpacing) * (newRows - 1)) * y)
                 end
             else
                 if newCols == 1 then
-                    if group then group:SetPoint(point, header, point, 0, height * y) end
+                    if group then group:SetPoint(pointInner, header, pointInner, 0, height * y) end
                     height = height + HEIGHT_FIVE + groupSpacing
                     newRows = newRows + 1
                 elseif group then
-                    group:SetPoint(point, header, point, ((WIDTH + groupSpacing) * (newCols - 1)) * x, ((HEIGHT_FIVE * lastGroup) + lastGroup * groupSpacing) * y)
+                    group:SetPoint(pointInner, header, pointInner, ((WIDTH + groupSpacing) * (newCols - 1)) * x, ((HEIGHT_FIVE * lastGroup) + lastGroup * groupSpacing) * y)
                 end
             end
         end
@@ -668,7 +650,7 @@ GW.UpdateGridHeader = UpdateGridHeader
 local function CreateHeader(parent, profile, options, overrideName, groupFilter)
     parent:SetActiveStyle("GW2_Grid" .. options.name)
 
-    local header = parent:SpawnHeader(overrideName, (options.name == "RaidPet" and "SecureGroupPetHeaderTemplate" or nil), "custom " .. options.visibility,
+    local header = parent:SpawnHeader(overrideName, (options.name == "RaidPet" and "SecureGroupPetHeaderTemplate" or nil),
         "showParty", true,
         "showRaid", options.name ~= "Party",
         "showPlayer", true,
@@ -680,6 +662,8 @@ local function CreateHeader(parent, profile, options, overrideName, groupFilter)
     header.groupName = profile
     header.profileName = options.name
     header.numGroups = options.numGroups
+
+    header:SetVisibility("custom " .. options.visibility)
 
     return header
 end

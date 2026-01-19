@@ -24,13 +24,13 @@ local function PostUpdatePowerColor(self, unit)
     local parent = self.origParent or self:GetParent()
     if parent.isForced then
         local color = self.fakeToken or GetRandomPowerColor()
-        self:SetStatusBarColor(color.r, color.g, color.b)
+        self:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
         self.fakeToken = color
     else
         local _, powerToken = UnitPowerType(unit)
         if PowerBarColorCustom[powerToken] then
             local pwcolor = PowerBarColorCustom[powerToken]
-            self:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+            self:GetStatusBarTexture():SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
         end
         self.fakeToken = nil
     end
@@ -50,11 +50,11 @@ local function Construct_PowerBar(frame)
     power.bg:SetPoint("BOTTOMRIGHT", 0, 0)
     power.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     power.bg:SetVertexColor(0, 0, 0, 1)
-    power.bg.multiplier = 1
 
 	power.useAtlas = false
 	power.colorDisconnected = false
 	power.colorTapping = false
+    power.smoothing = Enum.StatusBarInterpolation and Enum.StatusBarInterpolation.ExponentialEaseOut or nil
 
 	return power
 end

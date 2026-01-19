@@ -39,35 +39,48 @@ GW.Construct_AuraIcon = Construct_AuraIcon
 
 local function PostUpdateButton(self, button, unit, data, position)
     local parent = self:GetParent()
-    if button.isHarmful then
-        local size = 16
-        local isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
-        local isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
-        if isImportant or isDispellable then
-            if isImportant and isDispellable then
-                size = size * GW.GetDebuffScaleBasedOnPrio() -- not on retail (removed)
-            elseif isImportant then
-                size = size * tonumber(parent.raidDebuffScale)
-            elseif isDispellable then
-                size = size * tonumber(parent.raidDispelDebuffScale)
-            end
-        end
 
-        if data.dispelName and DebuffColors[data.dispelName] then
-            button.background:SetVertexColor(DebuffColors[data.dispelName].r, DebuffColors[data.dispelName].g, DebuffColors[data.dispelName].b)
+    if GW.Retail then
+        if button.isHarmfulAura then
+            local color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, element.dispelColorCurve)
+            button.background:SetVertexColor(color:GetRGBA())
+            button.background:Show()
+            button.backdrop:Hide()
         else
-            button.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+            button.background:Hide()
+            button.backdrop:Show()
         end
-
-        button:SetSize(size, size)
-        button.background:Show()
-        button.backdrop:Hide()
-
-        -- redo the position
-        self:ForceUpdate(true)
     else
-        button.background:Hide()
-        button.backdrop:Show()
+        if button.isHarmful then
+            local size = 16
+            local isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
+            local isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
+            if isImportant or isDispellable then
+                if isImportant and isDispellable then
+                    size = size * GW.GetDebuffScaleBasedOnPrio() -- not on retail (removed)
+                elseif isImportant then
+                    size = size * tonumber(parent.raidDebuffScale)
+                elseif isDispellable then
+                    size = size * tonumber(parent.raidDispelDebuffScale)
+                end
+            end
+
+            if data.dispelName and DebuffColors[data.dispelName] then
+                button.background:SetVertexColor(DebuffColors[data.dispelName].r, DebuffColors[data.dispelName].g, DebuffColors[data.dispelName].b)
+            else
+                button.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+            end
+
+            button:SetSize(size, size)
+            button.background:Show()
+            button.backdrop:Hide()
+
+            -- redo the position
+            self:ForceUpdate(true)
+        else
+            button.background:Hide()
+            button.backdrop:Show()
+        end
     end
 
     -- aura tooltips
@@ -226,15 +239,22 @@ local function Construct_Auras(frame)
 
     -- init settings
     auras.initialAnchor = "BOTTOMRIGHT"
-    auras['growth-x'] = "LEFT"
-    auras['spacing-x'] = 2
-    auras['spacing-y'] = 2
+    auras.growthX = "LEFT"
+    auras.spacingX = 2
+    auras.spacingY = 2
     auras.disableCooldown = true
     auras.reanchorIfVisibleChanged = true
 
+    if GW.Retail then
+        auras.debuffFilter = "RAID"
+        auras.buffFilter = "PLAYER"
+    end
+
     auras.PostCreateButton = Construct_AuraIcon
     auras.PostUpdateButton = PostUpdateButton
-    auras.FilterAura = FilterAura
+    if not GW.Retail then
+        auras.FilterAura = FilterAura
+    end
     auras.PostUpdateInfoRemovedAuraID = PostUpdateInfoRemovedAuraID
     auras.PostProcessAuraData = PostProcessAuraData
 
@@ -244,59 +264,61 @@ local function Construct_Auras(frame)
     frame:RegisterEvent("PLAYER_REGEN_ENABLED", HandleTooltip, true)
 
 
-    -- construct the aura indicators
-    local indicatorTopleft = CreateFrame("Frame", '$parentIndicatorTopleft', frame, "GwGridFrameAuraIndicator")
-    indicatorTopleft:SetPoint("TOPLEFT", frame, "TOPLEFT", 0.3, -0.3)
-    indicatorTopleft:SetFrameLevel(20)
-    auras.indicatorTOPLEFT = indicatorTopleft
+    if not GW.Retail then
+        -- construct the aura indicators
+        local indicatorTopleft = CreateFrame("Frame", '$parentIndicatorTopleft', frame, "GwGridFrameAuraIndicator")
+        indicatorTopleft:SetPoint("TOPLEFT", frame, "TOPLEFT", 0.3, -0.3)
+        indicatorTopleft:SetFrameLevel(20)
+        auras.indicatorTOPLEFT = indicatorTopleft
 
-    local indicatorTop = CreateFrame("Frame", '$parentIndicatorTop', frame, "GwGridFrameAuraIndicator")
-    indicatorTop:SetPoint("TOP", frame, "TOP", 0, -0.3)
-    indicatorTop:SetFrameLevel(20)
-    auras.indicatorTOP = indicatorTop
+        local indicatorTop = CreateFrame("Frame", '$parentIndicatorTop', frame, "GwGridFrameAuraIndicator")
+        indicatorTop:SetPoint("TOP", frame, "TOP", 0, -0.3)
+        indicatorTop:SetFrameLevel(20)
+        auras.indicatorTOP = indicatorTop
 
-    local indicatorLeft = CreateFrame("Frame", '$parentIndicatorLeft', frame, "GwGridFrameAuraIndicator")
-    indicatorLeft:SetPoint("LEFT", frame, "LEFT", 0.3, 0)
-    indicatorLeft:SetFrameLevel(20)
-    auras.indicatorLEFT = indicatorLeft
+        local indicatorLeft = CreateFrame("Frame", '$parentIndicatorLeft', frame, "GwGridFrameAuraIndicator")
+        indicatorLeft:SetPoint("LEFT", frame, "LEFT", 0.3, 0)
+        indicatorLeft:SetFrameLevel(20)
+        auras.indicatorLEFT = indicatorLeft
 
-    local indicatorTopright = CreateFrame("Frame", '$parentIndicatorTopright', frame, "GwGridFrameAuraIndicator")
-    indicatorTopright:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -0.3, -0.3)
-    indicatorTopright:SetFrameLevel(20)
-    auras.indicatorTOPRIGHT = indicatorTopright
+        local indicatorTopright = CreateFrame("Frame", '$parentIndicatorTopright', frame, "GwGridFrameAuraIndicator")
+        indicatorTopright:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -0.3, -0.3)
+        indicatorTopright:SetFrameLevel(20)
+        auras.indicatorTOPRIGHT = indicatorTopright
 
-    local indicatorCenter = CreateFrame("Frame", '$parentIndicatorCenter', frame, "GwGridFrameAuraIndicator")
-    indicatorCenter:SetPoint("CENTER", frame, "CENTER", 0, 0)
-    indicatorCenter:SetFrameLevel(20)
-    auras.indicatorCENTER = indicatorCenter
+        local indicatorCenter = CreateFrame("Frame", '$parentIndicatorCenter', frame, "GwGridFrameAuraIndicator")
+        indicatorCenter:SetPoint("CENTER", frame, "CENTER", 0, 0)
+        indicatorCenter:SetFrameLevel(20)
+        auras.indicatorCENTER = indicatorCenter
 
-    local indicatorRight = CreateFrame("Frame", '$parentIndicatorRight', frame, "GwGridFrameAuraIndicator")
-    indicatorRight:SetPoint("RIGHT", frame, "RIGHT", -0.3, 0)
-    indicatorRight:SetFrameLevel(20)
-    auras.indicatorRIGHT = indicatorRight
+        local indicatorRight = CreateFrame("Frame", '$parentIndicatorRight', frame, "GwGridFrameAuraIndicator")
+        indicatorRight:SetPoint("RIGHT", frame, "RIGHT", -0.3, 0)
+        indicatorRight:SetFrameLevel(20)
+        auras.indicatorRIGHT = indicatorRight
 
-    local indicatorBar = CreateFrame("StatusBar", '$parentIndicatorBar', frame)
-    indicatorBar:SetFrameLevel(20)
-    indicatorBar:SetOrientation("VERTICAL")
-    indicatorBar:SetMinMaxValues(0, 1)
-    indicatorBar:SetSize(2, 2)
-    indicatorBar:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 3, 0)
-    indicatorBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 3, 0)
-    indicatorBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-    indicatorBar:SetStatusBarColor(1, 0.5, 0)
-    indicatorBar:SetScript("OnUpdate", function(self)
-        if self:IsShown() and self.expires and self.duration then
-            self:SetValue(math.max(0, math.min(1, (self.expires - GetTime()) / self.duration)))
-        end
-    end)
-    indicatorBar:Hide()
+        local indicatorBar = CreateFrame("StatusBar", '$parentIndicatorBar', frame)
+        indicatorBar:SetFrameLevel(20)
+        indicatorBar:SetOrientation("VERTICAL")
+        indicatorBar:SetMinMaxValues(0, 1)
+        indicatorBar:SetSize(2, 2)
+        indicatorBar:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 3, 0)
+        indicatorBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 3, 0)
+        indicatorBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+        indicatorBar:SetStatusBarColor(1, 0.5, 0)
+        indicatorBar:SetScript("OnUpdate", function(self)
+            if self:IsShown() and self.expires and self.duration then
+                self:SetValue(math.max(0, math.min(1, (self.expires - GetTime()) / self.duration)))
+            end
+        end)
+        indicatorBar:Hide()
 
-    indicatorBar.bg = indicatorBar:CreateTexture(nil, "BORDER")
-    indicatorBar.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-    indicatorBar.bg:SetPoint("TOPLEFT", indicatorBar, "TOPLEFT", 0, 1)
-    indicatorBar.bg:SetPoint("BOTTOMRIGHT", indicatorBar, "BOTTOMRIGHT", 1, -1)
-    indicatorBar.bg:SetVertexColor(0, 0, 0, 1)
-    auras.indicatorBAR = indicatorBar
+        indicatorBar.bg = indicatorBar:CreateTexture(nil, "BORDER")
+        indicatorBar.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+        indicatorBar.bg:SetPoint("TOPLEFT", indicatorBar, "TOPLEFT", 0, 1)
+        indicatorBar.bg:SetPoint("BOTTOMRIGHT", indicatorBar, "BOTTOMRIGHT", 1, -1)
+        indicatorBar.bg:SetVertexColor(0, 0, 0, 1)
+        auras.indicatorBAR = indicatorBar
+    end
 
 	return auras
 end
@@ -312,9 +334,9 @@ local function UpdateAurasSettings(frame)
     end
 
     frame.Auras.initialAnchor = "BOTTOMRIGHT"
-    frame.Auras['growth-x'] = "LEFT"
-    frame.Auras['spacing-x'] = 2
-    frame.Auras['spacing-y'] = 2
+    frame.Auras.growthX = "LEFT"
+    frame.Auras.spacingX = 2
+    frame.Auras.spacingY = 2
     frame.Auras:SetSize(frame.unitWidth - 2, frame.unitHeight - 2)
     frame.Auras.forceShow = frame.forceShowAuras
 
