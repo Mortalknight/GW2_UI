@@ -12,6 +12,8 @@ end
 GW.Construct_MissingAuraIndicator = Construct_MissingAuraIndicator
 
 local function Update_MissingAuraIndicator(frame)
+    if GW.Retail then return nil end
+
     local missingbuffFrame = frame.MissingBuffFrame
     missingbuffFrame:SetHeight(16)
     missingbuffFrame:ClearAllPoints()

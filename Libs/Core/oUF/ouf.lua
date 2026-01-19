@@ -243,8 +243,18 @@ local function updateRaid(self, event)
 	end
 end
 
+-- boss6-10 exsist in some encounters, but unit event registration seems to be
+-- completely broken for them, so instead we use OnUpdate to update them.
+local eventlessUnits = {
+	boss6 = true,
+	boss7 = true,
+	boss8 = true,
+	boss9 = true,
+	boss10 = true,
+}
+
 local function isEventlessUnit(unit)
-	return unit:match('%w+target')
+	return unit:match('%w+target') or eventlessUnits[unit]
 end
 
 local function initObject(unit, style, styleFunc, header, ...)
@@ -402,7 +412,7 @@ function oUF:RegisterStyle(name, func)
 	argcheck(name, 2, 'string')
 	argcheck(func, 3, 'function', 'table')
 
-	if(styles[name]) then nierror(string.format('Style [%s] already registered.', name)) end
+	if(styles[name]) then return nierror(string.format('Style [%s] already registered.', name)) end
 	if(not style) then style = name end
 
 	styles[name] = func
@@ -649,6 +659,7 @@ do
 		local header = Mixin(CreateFrame('Frame', name, PetBattleFrameHider, template), headerMixin)
 
 		header:SetAttribute('template', 'SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate' .. (ns.Retail and ', PingableUnitFrameTemplate' or ''))
+
 		if(...) then
 			if(type(...) == 'table') then
 				for att, val in next, (...) do
@@ -734,7 +745,7 @@ function oUF:Spawn(unit, overrideName)
 	unit = unit:lower()
 
 	local name = overrideName or generateName(unit)
-	local object = CreateFrame('Button', name, PetBattleFrameHider, 'SecureUnitButtonTemplate' .. (ns.Retail and ', PingableUnitFrameTemplate' or ''))
+	local object = CreateFrame('Button', name, PetBattleFrameHider, 'SecureUnitButtonTemplate, PingableUnitFrameTemplate')
 	Private.UpdateUnits(object, unit)
 
 	self:DisableBlizzard(unit)
@@ -920,8 +931,10 @@ do
 
 	--[[ oUF:SpawnNamePlates(prefix)
 	Used to create nameplates and apply the currently active style to them.
+
 	* self      - the global oUF object
 	* prefix    - prefix for the global name of the nameplate. Defaults to an auto-generated prefix (string?)
+
 	PingableUnitFrameTemplate is inherited for Ping support.
 	--]]
 	function oUF:SpawnNamePlates(namePrefix)

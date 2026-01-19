@@ -115,18 +115,12 @@ local _PATTERN = '%[..-%]+'
 local _ENV = {
 	Hex = function(r, g, b)
 		if(type(r) == 'table') then
-			if(r.r) then
-				r, g, b = r.r, r.g, r.b
-			else
-				r, g, b = unpack(r)
-			end
+			return '|c' .. (C_ColorUtil and C_ColorUtil.GenerateTextColorCode(r) or "")
 		end
 		return string.format('|cff%02x%02x%02x', r * 255, g * 255, b * 255)
 	end,
+	ColorMixin = ColorMixin, -- not available in restricted env for some reason
 }
-_ENV.ColorGradient = function(...)
-	return _ENV._FRAME:ColorGradient(...)
-end
 
 local _PROXY = setmetatable(_ENV, {__index = _G})
 
@@ -206,17 +200,8 @@ local tagStrings = {
 		end
 	end]],
 
-	['deficit:name'] = [[function(u)
-		local missinghp = _TAGS['missinghp'](u)
-		if(missinghp) then
-			return '-' .. missinghp
-		else
-			return _TAGS['name'](u)
-		end
-	end]],
-
 	['difficulty'] = [[function(u)
-		if UnitCanAttack('player', u) then
+		if(UnitCanAttack('player', u)) then
 			local l = UnitEffectiveLevel(u)
 			return Hex(GetCreatureDifficultyColor((l > 0) and l or 999))
 		end
@@ -275,17 +260,11 @@ local tagStrings = {
 	end]],
 
 	['missinghp'] = [[function(u)
-		local current = UnitHealthMax(u) - UnitHealth(u)
-		if(current > 0) then
-			return current
-		end
+		return C_StringUtil.TruncateWhenZero(UnitHealthMissing(u))
 	end]],
 
 	['missingpp'] = [[function(u)
-		local current = UnitPowerMax(u) - UnitPower(u)
-		if(current > 0) then
-			return current
-		end
+		return C_StringUtil.TruncateWhenZero(UnitPowerMissing(u))
 	end]],
 
 	['name'] = [[function(u, r)
@@ -299,21 +278,11 @@ local tagStrings = {
 	end]],
 
 	['perhp'] = [[function(u)
-		local m = UnitHealthMax(u)
-		if(m == 0) then
-			return 0
-		else
-			return math.floor(UnitHealth(u) / m * 100 + .5)
-		end
+		return string.format('%d', UnitHealthPercent(u, true, CurveConstants.ScaleTo100))
 	end]],
 
 	['perpp'] = [[function(u)
-		local m = UnitPowerMax(u)
-		if(m == 0) then
-			return 0
-		else
-			return math.floor(UnitPower(u) / m * 100 + .5)
-		end
+		return string.format('%d', UnitPowerPercent(u, nil, true, CurveConstants.ScaleTo100))
 	end]],
 
 	['plus'] = [[function(u)
@@ -325,9 +294,9 @@ local tagStrings = {
 
 	['powercolor'] = [[function(u)
 		local pType, pToken, altR, altG, altB = UnitPowerType(u)
-		local t = _COLORS.power[pToken]
+		local color = _COLORS.power[pToken]
 
-		if(not t) then
+		if(not color) then
 			if(altR) then
 				if(altR > 1 or altG > 1 or altB > 1) then
 					return Hex(altR / 255, altG / 255, altB / 255)
@@ -335,11 +304,11 @@ local tagStrings = {
 					return Hex(altR, altG, altB)
 				end
 			else
-				return Hex(_COLORS.power[pType] or _COLORS.power.MANA)
+				color =_COLORS.power[pType] or _COLORS.power.MANA
 			end
 		end
 
-		return Hex(t)
+		return color:GenerateHexColorMarkup()
 	end]],
 
 	['pvp'] = [[function(u)
@@ -351,14 +320,14 @@ local tagStrings = {
 	['raidcolor'] = [[function(u)
 		local _, class = UnitClass(u)
 		if(class) then
-			return Hex(_COLORS.class[class])
+			return _COLORS.class[class]:GenerateHexColorMarkup()
 		else
 			local id = u:match('arena(%d)$')
 			if(id) then
 				local specID = GetArenaOpponentSpec(tonumber(id))
 				if(specID and specID > 0) then
 					_, _, _, _, _, class = GetSpecializationInfoByID(specID)
-					return Hex(_COLORS.class[class])
+					return _COLORS.class[class]:GenerateHexColorMarkup()
 				end
 			end
 		end
@@ -468,7 +437,7 @@ local tagStrings = {
 	end]],
 
 	['threatcolor'] = [[function(u)
-		return Hex(GetThreatStatusColor(UnitThreatSituation(u) or 0))
+		return _COLORS.threat[UnitThreatSituation(u) or 0]:GenerateHexColorMarkup()
 	end]],
 }
 
@@ -535,17 +504,19 @@ _ENV._VARS = vars
 
 local tagEvents = {
 	['affix']               = 'UNIT_CLASSIFICATION_CHANGED',
+	['arcanecharges']       = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE',
 	['arenaspec']           = 'ARENA_PREP_OPPONENT_SPECIALIZATIONS',
+	['chi']                 = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE',
 	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['cpoints']             = 'UNIT_POWER_FREQUENT PLAYER_TARGET_CHANGED',
 	['curhp']               = 'UNIT_HEALTH UNIT_MAXHEALTH',
 	['curmana']             = 'UNIT_POWER_UPDATE UNIT_MAXPOWER',
 	['curpp']               = 'UNIT_POWER_UPDATE UNIT_MAXPOWER',
 	['dead']                = 'UNIT_HEALTH',
-	['deficit:name']        = 'UNIT_HEALTH UNIT_MAXHEALTH UNIT_NAME_UPDATE',
 	['difficulty']          = 'UNIT_FACTION',
 	['faction']             = 'NEUTRAL_FACTION_SELECT_RESULT',
 	['group']               = 'GROUP_ROSTER_UPDATE',
+	['holypower']           = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE',
 	['leader']              = 'PARTY_LEADER_CHANGED',
 	['leaderlong']          = 'PARTY_LEADER_CHANGED',
 	['level']               = 'UNIT_LEVEL PLAYER_LEVEL_UP',
@@ -570,7 +541,6 @@ local tagEvents = {
 	['status']              = 'UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION',
 	['threat']              = 'UNIT_THREAT_SITUATION_UPDATE',
 	['threatcolor']         = 'UNIT_THREAT_SITUATION_UPDATE',
-	['chi']                 = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
 }
 
 local unitlessEvents = {
@@ -579,26 +549,11 @@ local unitlessEvents = {
 	NEUTRAL_FACTION_SELECT_RESULT = true,
 	PARTY_LEADER_CHANGED = true,
 	PLAYER_LEVEL_UP = true,
+	PLAYER_TALENT_UPDATE = true,
 	PLAYER_TARGET_CHANGED = true,
 	PLAYER_UPDATE_RESTING = true,
 	RUNE_POWER_UPDATE = true,
 }
-
-
-if oUF.isRetail then
-	tagEvents['arcanecharges']       = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
-	tagEvents['chi']                 = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
-	tagEvents['holypower']           = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
-	unitlessEvents.PLAYER_TALENT_UPDATE = true
-elseif oUF.isMists then
-	tagEvents['chi']                 = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
-	tagEvents['holypower']           = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE'
-	unitlessEvents.PLAYER_TALENT_UPDATE = true
-end
-
-for tag, events in pairs(tagEvents) do -- UNIT_HEALTH is bugged on TBC, use same method to convert as E.AddTag
-	tagEvents[tag] = (oUF.isClassic and gsub(events, 'UNIT_HEALTH([^%s_]?)', 'UNIT_HEALTH_FREQUENT%1')) or gsub(events, 'UNIT_HEALTH_FREQUENT', 'UNIT_HEALTH')
-end
 
 local eventFontStrings = {}
 local stringsToUpdate = {}
@@ -749,8 +704,8 @@ local function getTagFunc(tagstr)
 								str = tag(unit, realUnit)
 							end
 
-							if(str and str ~= '') then
-								return prefix .. str .. suffix
+							if(str and (issecretvalue(str) or str ~= '')) then
+								return C_StringUtil.WrapString(str, prefix, suffix)
 							end
 						end
 					else
@@ -762,7 +717,7 @@ local function getTagFunc(tagstr)
 								str = tag(unit, realUnit)
 							end
 
-							if(str and str ~= '') then
+							if(str and (issecretvalue(str) or str ~= '')) then
 								return str
 							end
 						end
