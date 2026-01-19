@@ -1,65 +1,48 @@
 local _, GW = ...
 
-local function UpdatePredictionBarsOverride(self, event, unit)
-    if(self.unit ~= unit) then return end
-
-	local element = self.HealthPrediction
-
-    if(element.PreUpdate) then
-		element:PreUpdate(unit)
-	end
-
-    local health = UnitHealth(unit)
-    local healthMax = UnitHealthMax(unit)
-    local healthPrecentage = 0
-
-    local absorb = UnitGetTotalAbsorbs and UnitGetTotalAbsorbs(unit) or 0
-    local absorbPrecentage = 0
-    local absorbAmount = 0
-    local absorbAmount2 = 0
-
-    local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
-    local allIncomingHealPrecentage = 0
-
-    local healAbsorb = UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs(unit) or 0
-    local healAbsorbPrecentage = 0
-
-    if healthMax > 0 then
-        healthPrecentage = health / healthMax
-    end
-
-    if absorb > 0 and healthMax > 0 then
-        absorbPrecentage = absorb / healthMax
-        absorbAmount = healthPrecentage + absorbPrecentage
-        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
-    end
-    if allIncomingHeal > 0 and healthMax > 0 then
-        allIncomingHealPrecentage = math.min((healthPrecentage) + (allIncomingHeal / healthMax), 1)
-    end
-
-    if healAbsorb > 0 and healthMax > 0 then
-        healAbsorbPrecentage = min(1, healAbsorb / healthMax)
-    end
-
-    if not self.Forced then
-        element.healthPredictionbar:SetFillAmount(allIncomingHealPrecentage)
-        element.absorbBar:SetFillAmount(absorbAmount)
-        element.overAbsorb:SetFillAmount(absorbAmount2)
-        element.healAbsorbBar:SetFillAmount(healAbsorbPrecentage)
-    else
-        element.healthPredictionbar:ForceFillAmount(allIncomingHealPrecentage)
-        element.absorbBar:ForceFillAmount(absorbAmount)
-        element.overAbsorb:ForceFillAmount(absorbAmount2)
-        element.healAbsorbBar:ForceFillAmount(healAbsorbPrecentage)
-    end
-
-    if(element.PostUpdate) then
-		--return element:PostUpdate(unit, myIncomingHeal, otherIncomingHeal, absorb, healAbsorb, hasOverAbsorb, hasOverHealAbsorb)
-	end
-end
-
 local function Construct_PredictionBar(frame)
-    --frame.HealthPrediction.Override  = UpdatePredictionBarsOverride
+    local healingAll = CreateFrame("StatusBar", nil, frame.Health)
+    healingAll:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    healingAll:SetPoint('TOP')
+    healingAll:SetPoint('BOTTOM')
+    healingAll:SetPoint('LEFT', frame.Health:GetStatusBarTexture(), 'RIGHT')
+    healingAll:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
+    local damageAbsorb = CreateFrame('StatusBar', nil, frame.Health)
+    damageAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
+    damageAbsorb:SetStatusBarColor(1,1,1,0.66)
+    damageAbsorb:SetPoint('TOP')
+    damageAbsorb:SetPoint('BOTTOM')
+    damageAbsorb:SetPoint('LEFT', healingAll:GetStatusBarTexture(), 'RIGHT')
+
+    local healAbsorb = CreateFrame('StatusBar', nil, frame.Health)
+    healAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
+    healAbsorb:SetPoint('TOP')
+    healAbsorb:SetPoint('BOTTOM')
+    healAbsorb:SetPoint('RIGHT', frame.Health:GetStatusBarTexture())
+    healAbsorb:SetReverseFill(true)
+
+    local overDamageAbsorbIndicator = frame.Health:CreateTexture(nil, "OVERLAY")
+    overDamageAbsorbIndicator:SetTexture("Interface/RaidFrame/Shield-Overshield")
+    overDamageAbsorbIndicator:SetBlendMode("ADD")
+    overDamageAbsorbIndicator:SetPoint('TOP')
+    overDamageAbsorbIndicator:SetPoint('BOTTOM')
+    overDamageAbsorbIndicator:SetPoint('LEFT', frame.Health, 'RIGHT', -8, 0)
+    overDamageAbsorbIndicator:SetWidth(16)
+
+    -- Register with oUF
+    frame.HealthPrediction = {
+        healingAll = healingAll,
+        damageAbsorb = damageAbsorb,
+        healAbsorb = healAbsorb,
+        overDamageAbsorbIndicator = overDamageAbsorbIndicator,
+        maxOverflow = 1,
+        damageAbsorbClampMode = Enum.UnitDamageAbsorbClampMode.MissingHealth,
+        healAbsorbClampMode = Enum.UnitHealAbsorbClampMode.CurrentHealth,
+        healAbsorbMode = Enum.UnitHealAbsorbMode.ReducedByIncomingHeals,
+        incomingHealClampMode = Enum.UnitIncomingHealClampMode.MissingHealth,
+        incomingHealOverflow = 1,
+    }
 end
 GW.Construct_PredictionBar = Construct_PredictionBar
 

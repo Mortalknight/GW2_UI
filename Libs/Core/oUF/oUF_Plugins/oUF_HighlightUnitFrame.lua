@@ -4,10 +4,12 @@ local oUF = ns.oUF
 local _FRAMES = {}
 local CheckHighlightFrame
 
+local normalColor = CreateColor(1, 1, 1, 1)
+local noColor = CreateColor(0, 0, 0, 0)
+
 local function Update(self, event)
 	local element = self.Health.highlightBorder
-    local guid = UnitGUID(self.unit)
-    local guidTarget = UnitGUID("target")
+    local isSameUnit = UnitIsUnit(self.unit, "target")
 
     element:SetVertexColor(0, 0, 0, 1)
 
@@ -16,8 +18,10 @@ local function Update(self, event)
         return
     end
 
-    if guidTarget then
-        if guid == guidTarget then
+    if ns.Retail then
+        element:SetVertexColorFromBoolean(isSameUnit, normalColor, noColor)
+    else
+        if isSameUnit then
             element:SetVertexColor(1, 1, 1, 1)
         else
             element:SetVertexColor(0, 0, 0, 1)

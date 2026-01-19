@@ -320,6 +320,10 @@ local function SortAuras(a, b)
 		return a.isPlayerAura
 	end
 
+	if ns.Retail then
+		return a.auraInstanceID < b.auraInstanceID
+	end
+
 	if(a.canApplyAura ~= b.canApplyAura) then
 		return a.canApplyAura
 	end
@@ -913,16 +917,6 @@ local function Enable(self)
 			auras.visibleButtons = 0
 			auras.tooltipAnchor = auras.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
 
-			if oUF.isRetail then
-				auras.dispelColorCurve = auras.dispelColorCurve or C_CurveUtil.CreateColorCurve()
-				auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
-				for _, dispelIndex in next, oUF.Enum.DispelType do
-					if(self.colors.dispel[dispelIndex]) then
-						auras.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
-					end
-				end
-			end
-
 			auras:Show()
 		end
 
@@ -938,16 +932,6 @@ local function Enable(self)
 			buffs.visibleButtons = 0
 			buffs.tooltipAnchor = buffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
 
-			if oUF.isRetail then
-				auras.dispelColorCurve = auras.dispelColorCurve or C_CurveUtil.CreateColorCurve()
-				auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
-				for _, dispelIndex in next, oUF.Enum.DispelType do
-					if(self.colors.dispel[dispelIndex]) then
-						auras.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
-					end
-				end
-			end
-
 			buffs:Show()
 		end
 
@@ -962,16 +946,6 @@ local function Enable(self)
 			debuffs.anchoredButtons = 0
 			debuffs.visibleButtons = 0
 			debuffs.tooltipAnchor = debuffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
-
-			if oUF.isRetail then
-				auras.dispelColorCurve = auras.dispelColorCurve or C_CurveUtil.CreateColorCurve()
-				auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
-				for _, dispelIndex in next, oUF.Enum.DispelType do
-					if(self.colors.dispel[dispelIndex]) then
-						auras.dispelColorCurve:AddPoint(dispelIndex, self.colors.dispel[dispelIndex])
-					end
-				end
-			end
 
 			debuffs:Show()
 		end

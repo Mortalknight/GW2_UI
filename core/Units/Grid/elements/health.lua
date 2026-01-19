@@ -9,10 +9,11 @@ local function UnitClassRnd(unit)
     return LOCALIZED_CLASS_NAMES_MALE[classToken], classToken
 end
 
-local function PostUpdateHealth(self, _, max)
+local function PostUpdateHealth(self)
     local parent = self:GetParent()
     if parent.isForced then
-        self.cur = self.fakeValue or random(1, max)
+        self.cur = self.fakeValue or random(1, 100)
+        self:SetMinMaxValues(0, 100)
         self:SetValue(self.cur)
         self.fakeValue = self.cur
     else
@@ -47,49 +48,11 @@ local function Construct_HealthBar(frame)
     health:SetPoint('RIGHT')
     health:SetFrameLevel(10)
 
-    local healingAll = CreateFrame("StatusBar", nil, health)
-    healingAll:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-    healingAll:SetPoint('TOP')
-    healingAll:SetPoint('BOTTOM')
-    healingAll:SetPoint('LEFT', health:GetStatusBarTexture(), 'RIGHT')
-    healingAll:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
-
-    local damageAbsorb = CreateFrame('StatusBar', nil, health)
-    damageAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
-    damageAbsorb:SetStatusBarColor(1,1,1,0.66)
-    damageAbsorb:SetPoint('TOP')
-    damageAbsorb:SetPoint('BOTTOM')
-    damageAbsorb:SetPoint('LEFT', healingAll:GetStatusBarTexture(), 'RIGHT')
-
-    local healAbsorb = CreateFrame('StatusBar', nil, health)
-    healAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
-    healAbsorb:SetPoint('TOP')
-    healAbsorb:SetPoint('BOTTOM')
-    healAbsorb:SetPoint('RIGHT', health:GetStatusBarTexture())
-    healAbsorb:SetReverseFill(true)
-
-    local overDamageAbsorbIndicator = health:CreateTexture(nil, "OVERLAY")
-    overDamageAbsorbIndicator:SetTexture("Interface/RaidFrame/Shield-Overshield")
-    overDamageAbsorbIndicator:SetBlendMode("ADD")
-    overDamageAbsorbIndicator:SetPoint('TOP')
-    overDamageAbsorbIndicator:SetPoint('BOTTOM')
-    overDamageAbsorbIndicator:SetPoint('LEFT', health, 'RIGHT')
-    overDamageAbsorbIndicator:SetWidth(10)
-
-    -- Register with oUF
-    frame.HealthPrediction = {
-        healingAll = healingAll,
-        damageAbsorb = damageAbsorb,
-        healAbsorb = healAbsorb,
-        overDamageAbsorbIndicator = overDamageAbsorbIndicator,
-        maxOverflow = 1,
-    }
-
     health.bg = frame:CreateTexture(nil, 'BORDER')
-    health.bg:SetPoint("TOPLEFT", 0, 0)
-    health.bg:SetPoint("BOTTOMRIGHT", 0, 0)
+    health.bg:SetPoint("TOPLEFT", -1, 1)
+    health.bg:SetPoint("BOTTOMRIGHT", 1, -1)
     health.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-    health.bg:SetVertexColor(0, 0, 0, 1)
+    health.bg:SetVertexColor(1, 1, 1, 1)
 
     health.highlightBorder = frame:CreateTexture(nil, 'BORDER', nil, -7)
     health.highlightBorder:SetPoint("TOPLEFT", -1, 1)

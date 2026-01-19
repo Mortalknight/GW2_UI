@@ -42,7 +42,7 @@ local function PostUpdateButton(self, button, unit, data, position)
 
     if GW.Retail then
         if button.isHarmfulAura then
-            local color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, element.dispelColorCurve)
+            local color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, button.dispelColorCurve)
             button.background:SetVertexColor(color:GetRGBA())
             button.background:Show()
             button.backdrop:Hide()
@@ -246,8 +246,8 @@ local function Construct_Auras(frame)
     auras.reanchorIfVisibleChanged = true
 
     if GW.Retail then
-        auras.debuffFilter = "RAID"
-        auras.buffFilter = "PLAYER"
+        auras.debuffFilter = "HARMFUL|RAID"
+        auras.buffFilter = "HELPFUL|RAID"
     end
 
     auras.PostCreateButton = Construct_AuraIcon
@@ -318,6 +318,14 @@ local function Construct_Auras(frame)
         indicatorBar.bg:SetPoint("BOTTOMRIGHT", indicatorBar, "BOTTOMRIGHT", 1, -1)
         indicatorBar.bg:SetVertexColor(0, 0, 0, 1)
         auras.indicatorBAR = indicatorBar
+    else
+        auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
+        auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
+        for _, dispelIndex in next, GW.DispelType do
+            if GW.DebuffColors[dispelIndex] then
+                auras.dispelColorCurve:AddPoint(dispelIndex, GW.DebuffColors[dispelIndex])
+            end
+        end
     end
 
 	return auras
