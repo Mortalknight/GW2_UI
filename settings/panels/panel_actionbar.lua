@@ -68,7 +68,7 @@ local function LoadActionbarPanel(sWindow)
     totemBar.header:SetWidth(totemBar.header:GetStringWidth())
     totemBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     totemBar.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
-    totemBar.breadcrumb:SetText(TUTORIAL_TITLE47) --"Totem bar"
+    totemBar.breadcrumb:SetText(L["Totem Bar"])
 
 
     local stanceBar = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
