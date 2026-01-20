@@ -72,7 +72,7 @@ local function RemoveTrashLines(self)
     end
 end
 
-local function AddMountInfoToAuraTooltip (self, auraData)
+local function ShowAuraInfo(self, auraData)
     local mountID, mountText = MountIDs[auraData.spellId], ""
 
     if mountID then
@@ -107,8 +107,9 @@ local function SetUnitAura(self, unit, index, filter)
     if not self or self:IsForbidden() then return end
 
     local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
-    if not auraData then return end
-    AddMountInfoToAuraTooltip(self, auraData)
+    if not auraData or GW.IsSecretValue(auraData.spellId) then return end
+
+    ShowAuraInfo(self, auraData)
 end
 
 local function SetUnitAuraByAuraInstanceId(self, unit, auraInstanceId)
@@ -116,9 +117,9 @@ local function SetUnitAuraByAuraInstanceId(self, unit, auraInstanceId)
     if not self or self:IsForbidden() then return end
 
     local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceId)
-    if not auraData then return end
+    if not auraData or GW.IsSecretValue(auraData.spellId) then return end
 
-    AddMountInfoToAuraTooltip(self, auraData)
+    ShowAuraInfo(self, auraData)
 end
 
 local function GameTooltip_OnTooltipSetSpell(self, data)
@@ -1204,10 +1205,6 @@ local function LoadTooltips()
     hooksecurefunc("GameTooltip_AddQuestRewardsToTooltip", GameTooltip_AddQuestRewardsToTooltip) -- Color Progress Bars
     hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
 
-
-     if GW.Retail then
-        return --TODO_ Wait for blizzard fix
-    end
     -- Functions
     MountIDs = {}
     if GW.Retail or GW.Mists then
@@ -1221,6 +1218,10 @@ local function LoadTooltips()
 
     --Tooltip Fonts
     SetTooltipFonts()
+
+    if GW.Retail then
+        return --TODO_ Wait for blizzard fix
+    end
 
     RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", ALL .. ",Blizzard", {230, 80}, {"default"})
 

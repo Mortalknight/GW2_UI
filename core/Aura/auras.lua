@@ -1,7 +1,6 @@
 local _, GW = ...
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
-local BleedList = GW.Libs.Dispel:GetBleedList()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 
 if GW.Retail then return end
@@ -260,9 +259,6 @@ local function updateAura(element, unit, data, position, isBuff)
     if not isBuff then
         if data.dispelName and BadDispels[data.spellId] and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
             data.dispelName = "BadDispel"
-        end
-        if not data.dispelName and BleedList[data.spellId] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
-            data.dispelName = "Bleed"
         end
 
         if data.dispelName then

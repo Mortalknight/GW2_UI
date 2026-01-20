@@ -704,7 +704,7 @@ local function getTagFunc(tagstr)
 								str = tag(unit, realUnit)
 							end
 
-							if(str and (issecretvalue and issecretvalue(str) or str ~= '')) then
+							if(str and (ns.IsSecretValue(str) or str ~= '')) then
 								if C_StringUtil then
 									return C_StringUtil.WrapString(str, prefix, suffix)
 								else
@@ -721,7 +721,7 @@ local function getTagFunc(tagstr)
 								str = tag(unit, realUnit)
 							end
 
-							if(str and (issecretvalue and issecretvalue(str) or str ~= '')) then
+							if(str and (ns.IsSecretValue(str) or str ~= '')) then
 								return str
 							end
 						end

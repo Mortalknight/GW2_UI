@@ -398,7 +398,7 @@ local function Friends_OnEvent(self, event, message)
     isBNOnline = BNConnected()
 
     if event == "CHAT_MSG_SYSTEM" then
-        if not (strfind(message, friendOnline) or strfind(message, friendOffline)) then return end
+        if GW.IsSecretValue(message) or (not strfind(message, friendOnline) and not strfind(message, friendOffline)) then return end
     end
     dataValid = false
 

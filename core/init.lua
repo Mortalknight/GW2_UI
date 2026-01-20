@@ -154,7 +154,7 @@ end
 -- Locale doesn't exist yet, make it exist
 GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI")
 
-local function CopyTable(src, preserveMeta, seen)
+function GW.CopyTable(src, preserveMeta, seen)
     if type(src) ~= "table" then return src end
     seen = seen or {}
     if seen[src] then return seen[src] end
@@ -173,7 +173,18 @@ local function CopyTable(src, preserveMeta, seen)
     end
     return dst
 end
-GW.CopyTable = CopyTable
+
+function GW.IsSecretValue(value)
+    if issecretvalue and issecretvalue(value) then
+        return true
+    end
+end
+
+function GW.NotSecretValue(value)
+    if not issecretvalue or not issecretvalue(value) then
+        return true
+    end
+end
 
 
 --Add Shared Media

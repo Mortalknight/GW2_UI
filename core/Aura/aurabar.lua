@@ -1,7 +1,6 @@
 local _, GW = ...
 local Debug = GW.Debug
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
-local BleedList = GW.Libs.Dispel:GetBleedList()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
@@ -259,7 +258,7 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
     else
         if GW.Retail then
             local color
-            if issecretvalue(auraType) then
+            if GW.IsSecretValue(auraType) then
                 color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
             else
                 color = GW.DebuffColors[auraType]
@@ -272,9 +271,6 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
 
             if dtype and BadDispels[spellId] and GW.Libs.Dispel:IsDispellableByMe(dtype) then
                 dtype = "BadDispel"
-            end
-            if not dtype and BleedList[spellId] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
-                dtype = "Bleed"
             end
 
             local c = DebuffColors[dtype]

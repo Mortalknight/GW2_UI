@@ -1,6 +1,5 @@
 local _, GW = ...
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
-local BleedList = GW.Libs.Dispel:GetBleedList()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local INDICATORS = GW.INDICATORS
@@ -177,9 +176,6 @@ local function FilterAura(self, unit, data)
 
         if data.dispelName and BadDispels[data.spellId] and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
             data.dispelName = "BadDispel"
-        end
-        if not data.dispelName and BleedList[data.spellId] and GW.Libs.Dispel:IsDispellableByMe("Bleed") and DebuffColors.Bleed then
-            data.dispelName = "Bleed"
         end
 
         if parent.showAllDebuffs then

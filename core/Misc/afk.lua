@@ -177,7 +177,7 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
     if chatGroup == "BN_CONVERSATION" then
         chatTarget = tostring(arg8)
     elseif chatGroup == "WHISPER" or chatGroup == "BN_WHISPER" then
-        chatTarget = (not issecretvalue or not issecretvalue(arg2)) and strsub(arg2, 1, 2) ~= "|K" and strupper(arg2) or arg2
+        chatTarget = (GW.NotSecretValue(arg2) and strsub(arg2, 1, 2) ~= "|K") and strupper(arg2) or arg2
     end
 
     local playerLink

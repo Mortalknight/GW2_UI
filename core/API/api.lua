@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function GetSpellCooldownWrapper(spellID)
+function GW.GetSpellCooldown(spellID)
 	if not spellID then return end
 
 	if GetSpellCooldown then
@@ -13,7 +13,6 @@ local function GetSpellCooldownWrapper(spellID)
 		end
 	end
 end
-GW.GetSpellCooldown = GetSpellCooldownWrapper
 
 -- add tooltip data api
 local function CompatibleTooltip(tt)
@@ -40,7 +39,7 @@ end
 CompatibleTooltip(GameTooltip)
 CompatibleTooltip(GW.ScanTooltip)
 
-local function IsSpellKnownOrOverridesKnownWrapper(spellID, isPet)
+function GW.IsSpellKnownOrOverridesKnown(spellID, isPet)
     if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
         local spellBank = isPet and Enum.SpellBookSpellBank.Pet or Enum.SpellBookSpellBank.Player
         local includeOverrides = true
@@ -49,9 +48,8 @@ local function IsSpellKnownOrOverridesKnownWrapper(spellID, isPet)
         return IsSpellKnownOrOverridesKnown(spellID, isPet)
     end
 end
-GW.IsSpellKnownOrOverridesKnown = IsSpellKnownOrOverridesKnownWrapper
 
-local function IsSpellKnownWrapper(spellID, isPet)
+function GW.IsSpellKnown(spellID, isPet)
     if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
         local spellBank = isPet and Enum.SpellBookSpellBank.Pet or Enum.SpellBookSpellBank.Player
         local includeOverrides = false
@@ -60,8 +58,6 @@ local function IsSpellKnownWrapper(spellID, isPet)
         return IsSpellKnown(spellID, isPet)
     end
 end
-GW.IsSpellKnown = IsSpellKnownWrapper
-
 
 local function GetWatchedFactionInfo()
     if C_Reputation and C_Reputation.GetWatchedFactionData then
@@ -92,7 +88,7 @@ local function GetWatchedFactionInfo()
 end
 GW.GetWatchedFactionInfo = GetWatchedFactionInfo
 
-local function IsPlayerSpellWrapper(spellID)
+function GW.IsPlayerSpell(spellID)
     if C_SpellBook and C_SpellBook.IsSpellKnown then
         local spellBank = Enum.SpellBookSpellBank.Player
         return C_SpellBook.IsSpellKnown(spellID, spellBank)
@@ -100,7 +96,6 @@ local function IsPlayerSpellWrapper(spellID)
         return IsSpellKnown(spellID)
     end
 end
-GW.IsPlayerSpell = IsPlayerSpellWrapper
 
 local function CropRatio(width, height, mult)
 	local left, right, top, bottom = 0.05, 0.95, 0.05, 0.95
@@ -249,7 +244,7 @@ do
         end
     end
 
-    local function RegisterPawnUpgradeIcon(button, itemLink)
+    function GW.RegisterPawnUpgradeIcon(button, itemLink)
         local result = upgradeCache[itemLink]
         if result ~= nil then
             button.UpgradeIcon:SetShown(result)
@@ -264,5 +259,4 @@ do
 			button.UpgradeIcon:SetShown(result)
         end
     end
-    GW.RegisterPawnUpgradeIcon = RegisterPawnUpgradeIcon
 end

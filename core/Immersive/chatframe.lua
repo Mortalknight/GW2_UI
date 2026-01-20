@@ -200,7 +200,7 @@ do
 
     local function GetToken(chatType, chatTarget, chanSender) -- ChatHistory_GetToken
         local target = chatTarget and strlower(chatTarget) or ""
-        local sender = (not issecretvalue or not issecretvalue(chanSender)) and chanSender and strlower(chanSender) or ""
+        local sender = GW.NotSecretValue(chanSender) and chanSender and strlower(chanSender) or ""
 
         return format("%s;;%s;;%s", strlower(chatType), target, sender)
     end
@@ -238,7 +238,7 @@ do
 end
 
 local function GW_GetPlayerInfoByGUID(guid)
-    if issecretvalue and issecretvalue(guid) then return end
+    if GW.IsSecretValue(guid) then return end
 
     local data = GuidCache[guid]
     if not data then
@@ -282,7 +282,7 @@ end
 function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg12)
     if not arg2 then return end -- guild deaths is called here with no arg2
 
-    if issecretvalue and issecretvalue(arg2) then
+    if GW.IsSecretValue(arg2) then
         return arg2
     end
 
@@ -323,7 +323,7 @@ do
 
     function GW.ChatFunctions:GetPlayerLink(characterName, displayText, lineID, chatType, chatTarget)
         if lineID or chatType or chatTarget then
-            return GetLink(LinkTypes.Player, displayText, characterName, lineID or 0, chatType or 0, (not issecretvalue or not issecretvalue(chatTarget)) and chatTarget or "")
+            return GetLink(LinkTypes.Player, displayText, characterName, lineID or 0, chatType or 0, GW.NotSecretValue(chatTarget) and chatTarget or "")
         else
             return GetLink(LinkTypes.Player, displayText, characterName)
         end
@@ -344,7 +344,7 @@ local canChangeMessage = function(arg1, id)
 end
 
 function GW.ChatFunctions:IsMessageProtected(message)
-    if issecretvalue and issecretvalue(message) then return true end
+    if GW.IsSecretValue(message) then return true end
 
     return message and (message ~= gsub(message, "(:?|?)|K(.-)|k", canChangeMessage))
 end
@@ -935,7 +935,7 @@ end
 GW.DisableChatThrottle = DisableChatThrottle
 
 local function PrepareMessage(author, message)
-    if issecretvalue and (issecretvalue(author) or issecretvalue(message)) then return end
+    if GW.IsSecretValue(author) or GW.IsSecretValue(message) then return end
 
     if author and author ~= "" and message and message ~= "" then
         return strupper(author) .. message
@@ -1224,7 +1224,7 @@ local function GetPFlag(specialFlag, zoneChannelID, unitGUID)
         end
     end
 
-    if GW.Retail and unitGUID and (not issecretvalue or not issecretvalue(unitGUID)) then
+    if GW.Retail and unitGUID and GW.NotSecretValue(unitGUID) then
         if C_ChatInfo.IsTimerunningPlayer(unitGUID) then
             flag = flag .. format("|A:timerunning-glues-icon-small:%s:%s:0:0|a ", 12, 10)
         end
@@ -1279,7 +1279,7 @@ local function FCFManager_GetChatTarget(chatGroup, playerTarget, channelTarget)
     if chatGroup == "CHANNEL" then
         chatTarget = tostring(channelTarget)
     elseif chatGroup == "WHISPER" or chatGroup == "BN_WHISPER" then
-        chatTarget = (not issecretvalue or not issecretvalue(playerTarget)) and strsub(playerTarget, 1, 2) ~= "|K" and strupper(playerTarget) or playerTarget
+        chatTarget = GW.NotSecretValue(playerTarget) and strsub(playerTarget, 1, 2) ~= "|K" and strupper(playerTarget) or playerTarget
     end
 
     return chatTarget
@@ -1386,8 +1386,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
 
     -- Player Flags
     local pflag = GetPFlag(arg6, arg7, arg12)
-    if not bossMonster and (not issecretvalue or (not issecretvalue(arg12) and not issecretvalue(playerName))) then
-
+    if not bossMonster and GW.NotSecretValue(arg12) and GW.NotSecretValue(playerName) then
         local lfgRole = (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == "RAID_LEADER" or chatType == "INSTANCE_CHAT" or chatType == "INSTANCE_CHAT_LEADER") and lfgRoles[playerName]
         if lfgRole then
             pflag = pflag .. lfgRole
@@ -1408,7 +1407,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         local classLink = playerLink and (info.colorNameByClass and gsub(playerLink, "(|h|c.-)|r|h$","%1-"..realm.."|r|h") or gsub(playerLink, "(|h.-)|h$","%1-"..realm.."|h"))
         body = classLink and gsub(message, arg2.."%-"..realm, pflag..classLink, 1) or message
     elseif chatType == "TEXT_EMOTE" then
-        body = ((not issecretvalue or not issecretvalue(arg2)) and arg2 ~= senderLink) and gsub(message, arg2, senderLink, 1) or message
+        body = (GW.NotSecretValue(arg2) and arg2 ~= senderLink) and gsub(message, arg2, senderLink, 1) or message
     elseif not showLink then
         body = format(_G["CHAT_"..chatType.."_GET"]..message, pflag..senderLink)
     else
@@ -1447,7 +1446,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         notChatHistory = true
     end
 
-    local isProtected = issecretvalue and issecretvalue(arg2)
+    local isProtected = GW.IsSecretValue(arg2)
 
     if TextToSpeechFrame_MessageEventHandler and notChatHistory then
         TextToSpeechFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
