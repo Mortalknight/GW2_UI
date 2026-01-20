@@ -105,7 +105,7 @@ GW.friendsList.expansionData = {
     [WOW_PROJECT_MAINLINE] = {
         name = "Retail",
         suffix = nil,
-        maxLevel = GetMaxLevelForPlayerExpansion(),
+        maxLevel = (GetMaxLevelForPlayerExpansion and GetMaxLevelForPlayerExpansion() or GetMaxPlayerLevel()),
         icon = MediaPath .. "GameIcons/WOW_Retail",
     },
     [WOW_PROJECT_CLASSIC] = {
