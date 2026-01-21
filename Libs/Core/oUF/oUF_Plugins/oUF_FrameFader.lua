@@ -17,24 +17,22 @@ end
 
 local function UpdateRange(self, unit)
     local element = self.Fader
-    local inRange, checkedRange
-    local connected = UnitIsConnected(unit)
-    if connected then
-        inRange, checkedRange = UnitInRange(unit)
-        local phaseReason
+    local inRange
+	local isEligible = UnitIsConnected(unit) and UnitInParty(unit)
+	if(isEligible) then
+		inRange = UnitInRange(unit)
         if ns.Retail then
-            phaseReason = UnitPhaseReason(unit)
+			self:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
         else
-            phaseReason = not UnitInPhase(unit)
+			if not inRange then
+                element.RangeAlpha = element.MinAlpha
+            else
+                element.RangeAlpha = element.MaxAlpha
+            end
         end
-        if(checkedRange and not inRange) or phaseReason then
-            element.RangeAlpha = element.MinAlpha
-        else
-            element.RangeAlpha = element.MaxAlpha
-        end
-    else
-        element.RangeAlpha = element.MaxAlpha
-    end
+	else
+		element.RangeAlpha = element.MaxAlpha
+	end
 end
 
 local function ToggleAlpha(self, element, endAlpha)
@@ -73,7 +71,7 @@ local function Update(self, event, unit)
     -- range fader
     if element.Range then
 		UpdateRange(self, unit)
-        if element.RangeAlpha then
+        if element.RangeAlpha and not ns.Retail then
             ToggleAlpha(self, element, element.RangeAlpha)
         end
 
