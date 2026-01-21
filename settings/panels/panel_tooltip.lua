@@ -11,6 +11,8 @@ local function LoadTooltipPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
 
+    if GW.Retail then return end
+
     p:AddOption(L["Cursor Tooltips"], L["Anchor the tooltips to the cursor."], {getterSetter = "TOOLTIP_MOUSE", dependence = {["TOOLTIPS_ENABLED"] = true}})
     p:AddOption(L["Advanced Tooltips"], L["Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"], {getterSetter = "ADVANCED_TOOLTIP", dependence = {["TOOLTIPS_ENABLED"] = true}})
     p:AddOption(L["Current Mount"], L["Display current mount the unit is riding."], {getterSetter = "ADVANCED_TOOLTIP_SHOW_MOUNT", dependence = {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true}, hidden = GW.Classic or GW.TBC})
