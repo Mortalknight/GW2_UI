@@ -72,7 +72,6 @@ function GwDodgeBarMixin:UpdateChargeText(currentCharges)
     if not text then return end
 
     text:SetText(currentCharges)
-    text:SetAlphaFromBoolean(self.hasCharges, 1, 0)
 end
 --- end
 
@@ -157,7 +156,6 @@ function GwDodgeBarMixin:InitBar(pew)
     -- do everything required to make the dodge bar a secure clickable button
     local overrideSpellID = GW.private.PLAYER_TRACKED_DODGEBAR_SPELL_ID
     self.gwMaxCharges = nil
-    self.hasCharges = false
     self.spellId = overrideSpellID and overrideSpellID > 0 and overrideSpellID or nil
 
     if pew or not InCombatLockdown() then
@@ -226,9 +224,7 @@ function GwDodgeBarMixin:SetupBar()
 
     local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
     if GW.Retail then
-        local maxCharges = spellChargeInfo and spellChargeInfo.maxCharges
         local currentCharges = spellChargeInfo and spellChargeInfo.currentCharges
-        self.hasCharges = (maxCharges or 0) > 1
         self:UpdateChargeText(currentCharges)
 
         local durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
@@ -286,7 +282,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
         local spellId = select(3, ...)
         if spellId ~= self.spellId then return end
         self.gwNeedDrain = true
-        if (GW.Retail and self.hasCharges) or (not GW.Retail and self.gwMaxCharges and self.gwMaxCharges > 1) then
+        if (GW.Retail) or (not GW.Retail and self.gwMaxCharges and self.gwMaxCharges > 1) then
             self:RegisterEvent("SPELL_UPDATE_CHARGES")
         else
             self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
@@ -294,18 +290,9 @@ function GwDodgeBarMixin:OnEvent(event, ...)
     elseif event == "SPELL_UPDATE_COOLDOWN" then
         -- only registered when our dodge skill is actively on cooldown
         if not GW.inWorld or not self.spellId then return end
-        if GW.Retail then
-            local durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
-            if durationObject then
-                self:UpdateCooldown(durationObject)
-            else
-                self.statusbar:SetValue(1, Enum.StatusBarInterpolation.ExponentialEaseOut)
-            end
-        else
-            local spellCooldownInfo = GW.GetSpellCooldown(self.spellId)
-            if spellCooldownInfo.startTime and spellCooldownInfo.startTime ~= 0 and spellCooldownInfo.duration and spellCooldownInfo.duration ~= 0 then
-                self:UpdateAnim(spellCooldownInfo.startTime, spellCooldownInfo.duration, 0, 1)
-            end
+        local spellCooldownInfo = GW.GetSpellCooldown(self.spellId)
+        if spellCooldownInfo.startTime and spellCooldownInfo.startTime ~= 0 and spellCooldownInfo.duration and spellCooldownInfo.duration ~= 0 then
+            self:UpdateAnim(spellCooldownInfo.startTime, spellCooldownInfo.duration, 0, 1)
         end
     elseif event == "SPELL_UPDATE_CHARGES" then
         -- only registered when our dodge skill is actively on cooldown

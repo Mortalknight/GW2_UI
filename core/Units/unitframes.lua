@@ -393,7 +393,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
 
     --if DBM or BigWigs is load, check if target is a boss and set boss frame
     local foundBossMod = false
-    if DBM and DBM.ModLists then
+    if not GW.Retail and DBM and DBM.ModLists then
         local npcId = GW.GetUnitCreatureId(unit)
         if npcId ~= nil then
             for _, mods in pairs(DBM.ModLists) do
@@ -409,7 +409,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
                 end
             end
         end
-    elseif BigWigs then
+    elseif not GW.Retail and BigWigs then
         local npcId = GW.GetUnitCreatureId(unit)
         if npcId ~= nil then
             for _, module in BigWigs:IterateBossModules() do

@@ -68,7 +68,7 @@ local function UIWidgetTemplateStatusBar(self)
         end
     end
 
-    if not bar.backdrop then
+    if not bar.backdrop and not GW.IsSecretValue(bar:GetWidth()) then
         bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
         if self.Label then -- title

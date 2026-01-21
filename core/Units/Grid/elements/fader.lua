@@ -6,6 +6,9 @@ end
 GW.Construct_Faderframe = Construct_Faderframe
 
 local function Update_Faderframe(frame, profile)
+    if GW.Retail then return end
+
+    print(12313)
     local frameFaderSettings = GW.settings[profile .. "FrameFader"]
     local RangeframeFaderSettings = GW.settings[profile .. "FrameFaderRange"]
     if RangeframeFaderSettings or frameFaderSettings.health or frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.vehicle or frameFaderSettings.playertarget then

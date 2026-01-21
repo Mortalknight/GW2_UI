@@ -1011,6 +1011,8 @@ local function SetStyle(self, _, isEmbedded)
         self.NineSlice:HookScript("OnSizeChanged", self.NineSlice.OnBackdropSizeChanged)
     end
 
+    if GW.IsSecretValue(self:GetWidth()) then return end
+
     self.NineSlice:SetBackdrop({
         edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",

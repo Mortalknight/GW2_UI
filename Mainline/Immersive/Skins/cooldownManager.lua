@@ -119,9 +119,9 @@ function CooldownManagerFunctions:SkinIcon(container, icon)
             local texture = region:GetTexture()
             local atlas = region:GetAtlas()
 
-            if texture == 6707800 then
+            if GW.NotSecretValue(texture) and texture == 6707800 then
                 region:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/white.png")
-            elseif atlas == "UI-HUD-CoolDownManager-IconOverlay" then -- 6704514
+            elseif GW.NotSecretValue(atlas) and atlas == "UI-HUD-CoolDownManager-IconOverlay" then -- 6704514
                 region:SetAlpha(0)
             end
         end

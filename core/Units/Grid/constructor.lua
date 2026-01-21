@@ -362,7 +362,7 @@ local function UpdateFramesAndHeader(profile, onlyHeaderUpdate, updateHeaderAndF
                 for i = 1, header.numGroups do
                     local group = header.groups[i]
                     for _, child in ipairs({ group:GetChildren() }) do
-                        header.updateFunc(child, header.groupName)
+                        header.updateFunc(child)
                     end
                 end
             end
@@ -672,7 +672,7 @@ local function CreateHeader(parent, profile, options, overrideName, groupFilter)
     header.groupName = profile
     header.profileName = options.name
     header.numGroups = options.numGroups
-    header.updateFunc = options.updateFunc
+    header.styleFunc = options.styleFunc
     header.updateFunc = options.updateFunc
 
     header:SetVisibility("custom " .. options.visibility)
@@ -726,6 +726,8 @@ local function Initialize()
 
         Header:ClearAllPoints()
         Header:SetPoint("TOPLEFT", Header.gwMover)
+
+        UpdateGridHeader(profile)
     end
 
     UpdateFramesAndHeader("ALL", false, true, true)
