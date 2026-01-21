@@ -99,6 +99,16 @@ local function FilterAura(self, unit, data)
     local shouldDisplay = false
     local isImportant, isDispellable
 
+    if GW.Retail then
+        if data.isHarmfulAura then
+            if not parent.showAllDebuffs then
+                return false
+            end
+        end
+
+        return true
+    end
+
     if data.isHelpful then
         local isPlayerBuff = data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"
         -- missing buffs: needs a custom plugin
@@ -242,8 +252,8 @@ local function Construct_Auras(frame)
     auras.reanchorIfVisibleChanged = true
 
     if GW.Retail then
-        auras.debuffFilter = "HARMFUL|RAID"
-        auras.buffFilter = "HELPFUL|RAID"
+        auras.debuffFilter = "HARMFUL"
+        auras.buffFilter = "HELPFUL|PLAYER|RAID"
     end
 
     auras.PostCreateButton = Construct_AuraIcon
@@ -343,6 +353,15 @@ local function UpdateAurasSettings(frame)
     frame.Auras.spacingY = 2
     frame.Auras:SetSize(frame.unitWidth - 2, frame.unitHeight - 2)
     frame.Auras.forceShow = frame.forceShowAuras
+
+    -- filtering only over filter options
+    if GW.Retail then
+        local debuffFilterString = "HARMFUL"
+        if frame.showOnlyDispelDebuffs then
+            debuffFilterString = debuffFilterString .. "|RAID"
+        end
+        frame.Auras.debuffFilter = debuffFilterString
+    end
 
     frame.Auras:ForceUpdate()
 end

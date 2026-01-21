@@ -244,7 +244,7 @@ local function updateAura(element, unit, data, position)
 
 	if(button.Overlay) then
 		if oUF.isRetail then
-			if(element.showType or (data.isHarmfulAura and element.showDebuffType) or (not data.isHarmfulAura and element.showBuffType)) then
+			if((data.isHarmfulAura and element.showDebuffType) or (not data.isHarmfulAura and element.showBuffType)) then
 				local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelColorCurve)
 				button.Overlay:SetVertexColor(color:GetRGBA())
 				button.Overlay:Show()
@@ -336,7 +336,7 @@ local function processData(element, unit, data, filter)
 
 	if oUF.isRetail then
 		data.isPlayerAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, filter .. '|PLAYER')
-		data.isHarmfulAura = filter == 'HARMFUL' -- "isHarmful" is a secret, use a different name
+		data.isHarmfulAura = type(filter) == "string" and string.find(filter, "HARMFUL", 1, true) ~= nil -- "isHarmful" is a secret, use a different name
 	else
 		data.isPlayerAura = data.sourceUnit and (UnitIsUnit('player', data.sourceUnit) or UnitIsOwnerOrControllerOfUnit('player', data.sourceUnit))
 	end

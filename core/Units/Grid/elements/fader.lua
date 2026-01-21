@@ -6,8 +6,6 @@ end
 GW.Construct_Faderframe = Construct_Faderframe
 
 local function Update_Faderframe(frame, profile)
-    if GW.Retail then return end
-
     local frameFaderSettings = GW.settings[profile .. "FrameFader"]
     local RangeframeFaderSettings = GW.settings[profile .. "FrameFaderRange"]
     if RangeframeFaderSettings or frameFaderSettings.health or frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.vehicle or frameFaderSettings.playertarget then
@@ -15,7 +13,6 @@ local function Update_Faderframe(frame, profile)
         if not frame:IsElementEnabled("Fader") then
             frame:EnableElement("Fader")
         end
-        frame.Fader.rangeFaderObject = frame.Health.healthPredictionbar
         frame.Fader:SetOption("Range", RangeframeFaderSettings)
         frame.Fader:SetOption("Health", frameFaderSettings.health)
         frame.Fader:SetOption("Hover", frameFaderSettings.hover)

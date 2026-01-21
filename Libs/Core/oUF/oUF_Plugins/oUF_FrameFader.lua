@@ -74,7 +74,7 @@ local function Update(self, event, unit)
     if element.Range then
 		UpdateRange(self, unit)
         if element.RangeAlpha then
-            ToggleAlpha(element.rangeFaderObject or self, element, element.RangeAlpha)
+            ToggleAlpha(self, element, element.RangeAlpha)
         end
 
         return
@@ -90,9 +90,9 @@ local function Update(self, event, unit)
         (element.Vehicle and (oUF.isRetail or oUF.isMists) and UnitHasVehicleUI(unit)) or
         (element.Hover and GetMouseFocus(self))
     then
-        ToggleAlpha(element.rangeFaderObject or self, element, element.MaxAlpha)
+        ToggleAlpha(self, element, element.MaxAlpha)
     else
-        ToggleAlpha(element.rangeFaderObject or self, element, element.MinAlpha)
+        ToggleAlpha(self, element, element.MinAlpha)
     end
 end
 
@@ -341,8 +341,7 @@ local function Disable(self)
 
         self.Fader.count = nil
         self.Fader:ClearTimers()
-        local faderObject = self.Fader.rangeFaderObject or self
-        ns.AddToAnimation(faderObject:GetDebugName(), faderObject:GetAlpha(), 1, GetTime(), 0.33, function(p) faderObject:SetAlpha(p) end, 1)
+        ns.AddToAnimation(self:GetDebugName(), self:GetAlpha(), 1, GetTime(), 0.33, function(p) self:SetAlpha(p) end, 1)
     end
 end
 oUF:AddElement("Fader", nil, Enable, Disable)
