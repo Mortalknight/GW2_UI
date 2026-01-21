@@ -18,6 +18,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.0.0", {
+    {GW.ChangelogType.feature, [=[Midnight support]=]},
+})
+
 addChange("9.1.0", {
     {GW.ChangelogType.feature, [=[Social frame for TBC]=]},
     {GW.ChangelogType.bug, [=[Chat frame fixes (TBC)]=]},

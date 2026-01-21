@@ -1,3 +1,6 @@
+10.0.0
+    - Midnight support
+
 9.1.0
 NEW
     - Social frame for TBC

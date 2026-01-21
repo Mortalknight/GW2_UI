@@ -1,17 +1,2 @@
-9.1.0
-NEW
-    - Social frame for TBC
-
-FIXES
-    - Chat frame fixes (TBC)
-    - Questlog skin fixes (TBC)
-    - Hide Keyring if actionbar not enabled (TBC & Era)
-    - Fix minimap left click lua error (TBC)
-    - Fix spellbook and talents not clickable (TBC)
-    - Fix totembar lua error (TBC)
-    - Update spellbook (TBC)
-    - Fix objectives tracker actionbutton (TBC)
-    - Fix customs classcolor on none retail clients
-    - Fix merchant skin (TBC)
-    - Fix missing auto repair text (TBC)
-    - Fix not cancable player auras (TBC)
+10.0.0
+    - Midnight support
