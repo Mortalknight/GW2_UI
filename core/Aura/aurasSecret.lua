@@ -100,21 +100,6 @@ local function setAuraType(self, typeAura)
     self.typeAura = typeAura
 end
 
-local function auraAnimateIn(self)
-    local endWidth = self:GetWidth()
-
-    GW.AddToAnimation(
-        self:GetDebugName(),
-        endWidth * 2,
-        endWidth,
-        GetTime(),
-        0.2,
-        function(step)
-            self:SetSize(step, step)
-        end
-    )
-end
-
 local function SetPosition(element, from, to, unit, isInvert, auraPositon)
     local anchorTo = unit == "pet" and "TOPRIGHT" or isInvert and "TOPRIGHT" or "TOPLEFT"
     local growthx = isInvert and -1 or (unit == "pet" and -1) or 1
@@ -202,7 +187,6 @@ local function updateAura(element, unit, data, position, isBuff)
     else
         setAuraType(button, "smallbuff")
         button.Cooldown:Hide()
-        data.newBuffAnimation = false
     end
 
     if isBuff then
@@ -225,10 +209,6 @@ local function updateAura(element, unit, data, position, isBuff)
     button.stacks:SetText(C_UnitAuras.GetAuraApplicationDisplayCount(unit, data.auraInstanceID, 2, 999))
     button:SetSize(size, size)
 
-    if data.newBuffAnimation == true then
-        auraAnimateIn(button)
-        data.newBuffAnimation = false
-    end
     button:EnableMouse(true)
     button:Show()
 
@@ -241,11 +221,10 @@ local function FilterAura(element, unit, data, isBuff)
 	end
 end
 
-local function processData(unit, data, filter, newBuffAnimation)
+local function processData(unit, data, filter)
     if not data then return end
 
     data.isPlayerAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, filter .. '|PLAYER')
-    data.newBuffAnimation = newBuffAnimation
 
     return data
 end
