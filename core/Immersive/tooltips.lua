@@ -37,7 +37,6 @@ local function IsModKeyDown(setting)
 end
 
 local function EmbeddedItemTooltip_ID(self, id)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self:IsForbidden() then return end
     if self.Tooltip:IsShown() and IsModKeyDown() then
         self.Tooltip:AddLine(format(IDLine, ID, id))
@@ -46,7 +45,6 @@ local function EmbeddedItemTooltip_ID(self, id)
 end
 
 local function EmbeddedItemTooltip_QuestReward(self)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self:IsForbidden() then return end
     if self.Tooltip:IsShown() and IsModKeyDown() then
         self.Tooltip:AddLine(format(IDLine, ID, self.itemID or self.spellID))
@@ -103,7 +101,6 @@ local function ShowAuraInfo(self, auraData)
 end
 
 local function SetUnitAura(self, unit, index, filter)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if not self or self:IsForbidden() then return end
 
     local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
@@ -113,7 +110,6 @@ local function SetUnitAura(self, unit, index, filter)
 end
 
 local function SetUnitAuraByAuraInstanceId(self, unit, auraInstanceId)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if not self or self:IsForbidden() then return end
 
     local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceId)
@@ -123,7 +119,6 @@ local function SetUnitAuraByAuraInstanceId(self, unit, auraInstanceId)
 end
 
 local function GameTooltip_OnTooltipSetSpell(self, data)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
 
     local spellID
@@ -200,7 +195,6 @@ local function ScanKeystone(self, link)
 end
 
 local function SetHyperlink(self, link)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self:IsForbidden() then return end
 
     if select(3, string.find(link, "(%a-):")) == "achievement" then
@@ -233,38 +227,50 @@ local function SetHyperlink(self, link)
     ScanKeystone(self, link)
 end
 
-local function GameTooltip_OnTooltipSetToy(self, data)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
-    if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
-
-    local spellID
-    if data then
-        spellID = data.id
-    end
-
-    if spellID then
-        self:AddLine(format(IDLine, ID, spellID))
+local function SetToyByItemID(self, id)
+    if self:IsForbidden() then return end
+    if id and IsModKeyDown() then
+        self:AddLine(" ")
+        self:AddLine(format(IDLine, ID, id))
         self:Show()
     end
 end
 
-local function GameTooltip_OnTooltipSetCurrency(self, data)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
-    if (self ~= GameTooltip) or self:IsForbidden() or not IsModKeyDown() then return end
-
-    local spellID
-    if data then
-        spellID = data.id
+local function SetBackpackToken(self, id)
+    if self:IsForbidden() then return end
+    if id and TT:IsModKeyDown() then
+        local info = C_CurrencyInfo.GetBackpackCurrencyInfo(id)
+        if info and info.currencyTypesID then
+            self:AddLine(format(IDLine, ID, info.currencyTypesID))
+            self:Show()
+        end
     end
+end
 
-    if spellID then
-        self:AddLine(format(IDLine, ID, spellID))
+local function SetCurrencyToken(self, index)
+    if self:IsForbidden() or not IsModKeyDown() then return end
+
+    local link = index and C_CurrencyInfo.GetCurrencyListLink(index)
+    local id = link and tonumber(strmatch(link, "currency:(%d+)"))
+    if not id then return end
+
+    self:AddLine(" ")
+    self:AddLine(format(IDLine, ID, id))
+    self:Show()
+end
+
+
+local function SetCurrencyByID(self, id)
+    if self:IsForbidden() then return end
+
+    if id and IsModKeyDown() then
+        self:AddLine(" ")
+        self:AddLine(format(IDLine, ID, id))
         self:Show()
     end
 end
 
 local function AddQuestID(frame)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if GameTooltip:IsForbidden() then return end
 
     local questID = IsModKeyDown() and (frame.questLogIndex and C_QuestLog.GetQuestIDForLogIndex(frame.questLogIndex) or frame.questID)
@@ -280,7 +286,6 @@ local function AddQuestID(frame)
 end
 
 local function AddBattlePetID()
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if not BattlePetTooltip or not BattlePetTooltip.speciesID or not IsModKeyDown() then return end
 
     BattlePetTooltip:AddLine(" ")
@@ -289,7 +294,6 @@ local function AddBattlePetID()
 end
 
 local function GameTooltip_OnTooltipCleared(self)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self:IsForbidden() then return end
 
     self.ItemLevelShown = nil
@@ -306,11 +310,10 @@ local function GameTooltip_OnTooltipCleared(self)
 end
 
 local function GameTooltip_OnTooltipSetItem(self, data)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if (self ~= GameTooltip and self ~= ShoppingTooltip1 and self ~= ShoppingTooltip2) or self:IsForbidden() then return end
 
     local owner = self:GetOwner()
-	local ownerName = owner and owner.GetName and owner:GetName()
+    local ownerName = owner and owner.GetName and owner:GetName()
     local itemID
     local bagCount, bankCount, stackSize
     local modKey = IsModKeyDown()
@@ -320,9 +323,9 @@ local function GameTooltip_OnTooltipSetItem(self, data)
         local name, link = GetItem(self)
 
         if not GW.Retail and name == "" and _G.CraftFrame and _G.CraftFrame:IsShown() then
-			local reagentIndex = ownerName and tonumber(strmatch(ownerName, "Reagent(%d+)"))
-			if reagentIndex then link = GetCraftReagentItemLink(GetCraftSelectionIndex(), reagentIndex) end
-		end
+            local reagentIndex = ownerName and tonumber(strmatch(ownerName, "Reagent(%d+)"))
+            if reagentIndex then link = GetCraftReagentItemLink(GetCraftSelectionIndex(), reagentIndex) end
+        end
 
         if not link then return end
 
@@ -544,8 +547,10 @@ local function AddTargetInfo(self, unit)
     if IsInGroup() then
         local isInRaid = IsInRaid()
         for i = 1, GetNumGroupMembers() do
-            local groupUnit = (isInRaid and "raid" or "party")..i
-            if UnitIsUnit(groupUnit.."target", unit) and not UnitIsUnit(groupUnit,"player") then
+            local groupUnit = (isInRaid and "raid" or "party") .. i
+            local unitIsTarget = UnitIsUnit(groupUnit .. "target", unit)
+            local unitIsMe = UnitIsUnit(groupUnit, "player")
+            if GW.NotSecretValue(unitIsTarget) and unitIsTarget and not unitIsMe then
                 local _, class = UnitClass(groupUnit)
                 local classColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
                 tinsert(targetList, format("|c%s%s|r", classColor.colorStr, UnitName(groupUnit)))
@@ -702,18 +707,11 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
 end
 
 local function GameTooltip_OnTooltipSetUnit(self, data)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if self ~= GameTooltip or self:IsForbidden() then return end
 
-    local unit
-    if GW.Retail then
-        unit = "mouseover"
-    else
-        _, unit = self:GetUnit()
-    end
-    local isPlayerUnit = UnitIsPlayer(unit)
-
-    if not unit then
+    local color
+    local _, unit = self:GetUnit()
+    if GW.NotSecretValue(unit) and not unit then
         local GMF = GetMouseFoci()
         local focusUnit = GMF and GMF.GetAttribute and GMF:GetAttribute("unit")
         if focusUnit then unit = focusUnit end
@@ -722,69 +720,73 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         end
     end
 
-    RemoveTrashLines(self)
+    if GW.NotSecretValue(unit) then
+        local isShiftKeyDown = IsShiftKeyDown()
+        local isControlKeyDown = IsControlKeyDown()
+        local isInCombat = InCombatLockdown()
 
-    local isShiftKeyDown = IsShiftKeyDown()
-    local isControlKeyDown = IsControlKeyDown()
-    local isInCombat = InCombatLockdown()
-    local color = SetUnitText(self, unit, isPlayerUnit)
+        RemoveTrashLines(self)
 
-    if GW.settings.ADVANCED_TOOLTIP_SHOW_TARGET_INFO and not isShiftKeyDown and not isControlKeyDown then
-        AddTargetInfo(self, unit)
-    end
+        local isPlayerUnit = UnitIsPlayer(unit)
+        color = SetUnitText(self, unit, isPlayerUnit)
 
-    if (GW.Retail or GW.Mists) and GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown and not isInCombat then
-        AddMountInfo(self, unit)
-    end
-
-    if GW.settings.ADVANCED_TOOLTIP_SHOW_ROLE and GW.allowRoles then
-        AddRoleInfo(self, unit)
-    end
-
-    if GW.Retail and not isInCombat and GW.settings.ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE then
-        AddMythicInfo(self, unit)
-    end
-
-    if (GW.Retail or GW.Mists) and not isInCombat and isShiftKeyDown and isPlayerUnit and not InCombatLockdown() and not self.ItemLevelShown then
-        if color then
-            AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
-        else
-            AddInspectInfo(self, unit, 0, 0.9, 0.9, 0.9)
+        if GW.settings.ADVANCED_TOOLTIP_SHOW_TARGET_INFO and not isShiftKeyDown and not isControlKeyDown then
+            AddTargetInfo(self, unit)
         end
-    end
 
-    if not isPlayerUnit and IsModKeyDown() and not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()) then
-        local guid = (data and data.guid) or UnitGUID(unit) or ""
-        local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
-        if id then -- NPC ID"s
-            self:AddLine(format(IDLine, ID, id))
+        if (GW.Retail or GW.Mists) and GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown and not isInCombat then
+            AddMountInfo(self, unit)
+        end
+
+        if GW.settings.ADVANCED_TOOLTIP_SHOW_ROLE and GW.allowRoles then
+            AddRoleInfo(self, unit)
+        end
+
+        if GW.Retail and not isInCombat and GW.settings.ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE then
+            AddMythicInfo(self, unit)
+        end
+
+        if (GW.Retail or GW.Mists) and not isInCombat and isShiftKeyDown and isPlayerUnit and not InCombatLockdown() and not self.ItemLevelShown then
+            if color then
+                AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
+            else
+                AddInspectInfo(self, unit, 0, 0.9, 0.9, 0.9)
+            end
+        end
+
+        if not isPlayerUnit and IsModKeyDown() and not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()) then
+            local guid = (data and data.guid) or UnitGUID(unit) or ""
+            local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
+            if id then -- NPC ID"s
+                self:AddLine(format(IDLine, ID, id))
+            end
         end
     end
 
     if color and color.r and color.g and color.b then
         self.StatusBar:SetStatusBarColor(color.r, color.g, color.b)
     else
-        self.StatusBar:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
-    end
-
-    if self.StatusBar.text and not GW.Retail then
-        local textWidth = self.StatusBar.text:GetStringWidth()
-        if textWidth then
-            self:SetMinimumWidth(textWidth)
-        end
+        self.StatusBar:SetStatusBarColor(0.6, 0.6, 0.6)
     end
 end
 
-local function GameTooltipStatusBar_OnValueChanged(self, value)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
-    if self:IsForbidden() or not value or not self.text or not GW.settings.ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT then return end
+local function GameTooltipStatusBar_UpdateUnitHealth(bar)
+    if not bar.Text or not GW.settings.ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT then return end
 
-    local unit
-    if GW.Retail then
-        unit = "mouseover"
+    local tt = bar:GetParent()
+    if not tt then return end
+    local _, unit = tt:GetUnit()
+    if GW.NotSecretValue(unit) and unit and (UnitIsUnit(unit, "player") or UnitInParty(unit) or UnitInRaid(unit)) then
+        bar.Text:SetFormattedText("%d", UnitHealthPercent(unit, true, CurveConstants.ScaleTo100))
     else
-        _, unit = self:GetParent():GetUnit()
+        bar.Text:SetText("")
     end
+end
+
+local function GameTooltipStatusBar_OnValueChanged(bar, value)
+    if not value or not bar.Text or not GW.settings.ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT then return end
+
+    local _, unit = bar:GetParent():GetUnit()
     if not unit then
         local frame = GetMouseFoci()
         if frame and frame.GetAttribute then
@@ -793,22 +795,21 @@ local function GameTooltipStatusBar_OnValueChanged(self, value)
     end
 
     if unit and UnitIsDeadOrGhost(unit) then
-		self.text:SetText(DEAD)
-	else
-		local maximum, _
-		if unit then -- try to get the real health values if possible
-			value, maximum = UnitHealth(unit), UnitHealthMax(unit)
-		else
-			_, maximum = self:GetMinMaxValues()
-		end
+        bar.Text:SetText(DEAD)
+    else
+        local maximum, _
+        if unit then -- try to get the real health values if possible
+            value, maximum = UnitHealth(unit), UnitHealthMax(unit)
+        else
+            _, maximum = bar:GetMinMaxValues()
+        end
 
-		self.text:SetFormattedText('%d / %d', value or 1, maximum or 1)
-        self:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
-	end
+        bar.Text:SetFormattedText("%d / %d", value or 1, maximum or 1)
+        bar:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
+    end
 end
 
 local function SetItemRef(link)
-    if not GW.settings.ADVANCED_TOOLTIP then return end
     if IsModifierKeyDown() or not (link and strfind(link, "^spell:")) then return end
 
     ItemRefTooltip:AddLine(format(IDLine, ID, strmatch(link, ":(%d+)")))
@@ -826,38 +827,26 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
 
     SetCompareItems(self, true)
 
-    if self.StatusBar then
-        self.StatusBar:SetAlpha(GW.settings.TOOLTIP_HEALTHBAER_POSITION == "DISABLED" and 0 or 1)
+    if GameTooltipStatusBar then
+        GameTooltipStatusBar:SetAlpha(GW.settings.TOOLTIP_HEALTHBAER_POSITION == "DISABLED" and 0 or 1)
         if GW.settings.TOOLTIP_HEALTHBAER_POSITION == "BOTTOM" then
-            if self.StatusBar.anchoredToTop then
-                self.StatusBar:ClearAllPoints()
-                self.StatusBar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
-                self.StatusBar:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))
-                self.StatusBar.anchoredToTop = false
-
-                if self.StatusBar.text then
-                    self.StatusBar.text:SetPoint("CENTER", self.StatusBar, 0, 0)
-                end
-            end
+            GameTooltipStatusBar:ClearAllPoints()
+            GameTooltipStatusBar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
+            GameTooltipStatusBar:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))
         elseif GW.settings.TOOLTIP_HEALTHBAER_POSITION == "TOP" then
-            if not self.StatusBar.anchoredToTop then
-                self.StatusBar:ClearAllPoints()
-                self.StatusBar:SetPoint("BOTTOMLEFT", self, "TOPLEFT", GW.BorderSize, (GW.SpacingSize * 3))
-                self.StatusBar:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", -GW.BorderSize, (GW.SpacingSize * 3))
-                self.StatusBar.anchoredToTop = true
-
-                if self.StatusBar.text then
-                    self.StatusBar.text:SetPoint("CENTER", self.StatusBar, 0, 0)
-                end
-            end
+            GameTooltipStatusBar:ClearAllPoints()
+            GameTooltipStatusBar:SetPoint("BOTTOMLEFT", self, "TOPLEFT", GW.BorderSize, (GW.SpacingSize * 3))
+            GameTooltipStatusBar:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", -GW.BorderSize, (GW.SpacingSize * 3))
         end
     end
 
-    if GW.settings.TOOLTIP_MOUSE then
-        self:SetOwner(parent, GW.settings.CURSOR_ANCHOR_TYPE, GW.settings.ANCHOR_CURSOR_OFFSET_X, GW.settings.ANCHOR_CURSOR_OFFSET_Y)
-        return
-    else
-        self:SetOwner(parent, "ANCHOR_NONE")
+    if parent then
+        if GW.settings.TOOLTIP_MOUSE then
+            self:SetOwner(parent, GW.settings.CURSOR_ANCHOR_TYPE, GW.settings.ANCHOR_CURSOR_OFFSET_X, GW.settings.ANCHOR_CURSOR_OFFSET_Y)
+            return
+        else
+            self:SetOwner(parent, "ANCHOR_NONE")
+        end
     end
 
     local TooltipMover = GameTooltip.gwMover
@@ -865,8 +854,8 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
 
     if anchor == nil or anchor == TooltipMover or anchor == GameTooltipDefaultContainer or anchor == UIParent then
         self:ClearAllPoints()
-        local point = GW.GetScreenQuadrant(TooltipMover)
 
+        local point = GW.GetScreenQuadrant(TooltipMover)
         if point == "TOPLEFT" then
             self:SetPoint("TOPLEFT", TooltipMover, "TOPLEFT", 0, 0)
         elseif point == "TOPRIGHT" then
@@ -899,6 +888,7 @@ local function SetTooltipFonts()
             _G["GameTooltipMoneyFrame" .. i .. "CopperButtonText"]:SetFont(font, textSize, fontOutline)
         end
     end
+
 
     if DatatextTooltip then
         DatatextTooltipTextLeft1:SetFont(font, textSize, fontOutline)
@@ -979,14 +969,8 @@ local function SkinQueueStatusFrame()
 end
 
 local function shouldHiddenInCombat(tooltip)
-    local unit
-    if GW.Retail then
-        unit = "mouseover"
-    else
-        _, unit = tooltip:GetUnit()
-    end
-
-    if unit then
+    local _, unit = tooltip:GetUnit()
+    if GW.NotSecretValue(unit) and unit then
         local unitReaction = UnitReaction("player", unit)
         if not unitReaction then return false end
 
@@ -1001,19 +985,20 @@ local function shouldHiddenInCombat(tooltip)
 end
 
 local function SetStyle(self, _, isEmbedded)
-    if not self or (isEmbedded or self.IsEmbedded or not self.NineSlice) or self:IsForbidden() then return end
+    if not self or isEmbedded or self.IsEmbedded or self:IsForbidden() then return end
 
     if self.Delimiter1 then self.Delimiter1:SetTexture() end
     if self.Delimiter2 then self.Delimiter2:SetTexture() end
-
-    if not self.NineSlice.SetBackdrop then
-        _G.Mixin(self.NineSlice, _G.BackdropTemplateMixin)
-        self.NineSlice:HookScript("OnSizeChanged", self.NineSlice.OnBackdropSizeChanged)
-    end
+    if self.NineSlice then self.NineSlice:SetAlpha(0) end
 
     if GW.IsSecretValue(self:GetWidth()) then return end
 
-    self.NineSlice:SetBackdrop({
+    if not self.SetBackdrop then
+        _G.Mixin(self, _G.BackdropTemplateMixin)
+        self:HookScript("OnSizeChanged", self.OnBackdropSizeChanged)
+    end
+
+    self:SetBackdrop({
         edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
         edgeSize = GW.Scale(1)
@@ -1024,10 +1009,10 @@ local function SetStyle(self, _, isEmbedded)
         edgeSize = GW.Scale(1)
     }
 
-    self.NineSlice:SetBackdropBorderColor(0.05, 0.05, 0.05, 1)
+    self:SetBackdropBorderColor(0.05, 0.05, 0.05, 1)
 
-    if not self.NineSlice.gwHookedBorderColor then
-        hooksecurefunc(self.NineSlice, "SetBackdropBorderColor", function(self, r, g, b, a)
+    if not self.gwHookedBorderColor then
+        hooksecurefunc(self, "SetBackdropBorderColor", function(self, r, g, b, a)
             if r ~= 0.05 or g ~= 0.05 or b ~= 0.05 or a ~= 1 then
                 self:SetBackdropBorderColor(0.05, 0.05, 0.05, 1)
             end
@@ -1041,26 +1026,26 @@ local function SetStyle(self, _, isEmbedded)
             pawnTooltipBorderRegistered = true
         end
 
-        self.NineSlice.gwHookedBorderColor = true
+        self.gwHookedBorderColor = true
     end
 
-    local level = self.NineSlice:GetFrameLevel()
-    if not self.NineSlice.iborder then
-        local border = CreateFrame("Frame", nil, self.NineSlice, "BackdropTemplate")
+    local level = self:GetFrameLevel()
+    if not self.iborder then
+        local border = CreateFrame("Frame", nil, self, "BackdropTemplate")
         border:SetBackdrop(backdrop)
         border:SetBackdropBorderColor(0, 0, 0, 1)
         border:SetFrameLevel(level)
-        border:GwSetInside(self.NineSlice, 1, 1)
-        self.NineSlice.iborder = border
+        border:GwSetInside(self, 1, 1)
+        self.iborder = border
     end
 
-    if not self.NineSlice.oborder then
-        local border = CreateFrame("Frame", nil, self.NineSlice, "BackdropTemplate")
+    if not self.oborder then
+        local border = CreateFrame("Frame", nil, self, "BackdropTemplate")
         border:SetBackdrop(backdrop)
         border:SetBackdropBorderColor(0, 0, 0, 1)
         border:SetFrameLevel(level)
-        border:GwSetOutside(self.NineSlice, 1, 1)
-        self.NineSlice.oborder = border
+        border:GwSetOutside(self, 1, 1)
+        self.oborder = border
     end
 end
 
@@ -1087,6 +1072,15 @@ local function AddPremadeGroupInfo(tooltip, resultID)
 
     tooltip:Show()
 end
+
+local function GameTooltip_Hide()
+    if GameTooltip:IsForbidden() then return end
+
+    if GameTooltipStatusBar:IsShown() then
+        GameTooltipStatusBar:Hide()
+    end
+end
+
 local function StyleTooltips()
     for _, tt in next, {
         ItemRefTooltip,
@@ -1163,12 +1157,17 @@ local function StyleTooltips()
     end
 end
 
-
-
 local function LoadTooltips()
     StyleTooltips()
     SkinItemRefTooltipCloseButton()
     SkinQueueStatusFrame()
+
+    local statusText = GameTooltipStatusBar:CreateFontString(nil, "OVERLAY")
+    statusText:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
+    statusText:SetPoint("CENTER", GameTooltipStatusBar)
+    GameTooltipStatusBar.Text = statusText
+
+    SetTooltipFonts()
 
     if GW.Retail then
         QuestScrollFrame.StoryTooltip:SetFrameLevel(4)
@@ -1218,13 +1217,6 @@ local function LoadTooltips()
         end
     end
 
-    --Tooltip Fonts
-    SetTooltipFonts()
-
-    if GW.Retail then
-        return --TODO_ Wait for blizzard fix
-    end
-
     RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", ALL .. ",Blizzard", {230, 80}, {"default"})
 
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
@@ -1237,12 +1229,6 @@ local function LoadTooltips()
         end
     end
 
-    GameTooltip.StatusBar = GameTooltipStatusBar
-    GameTooltip.StatusBar:SetScript("OnValueChanged", nil)
-    GameTooltip.StatusBar.text = GameTooltip.StatusBar:CreateFontString(nil, "OVERLAY")
-    GameTooltip.StatusBar.text:SetPoint("CENTER", GameTooltip.StatusBar, 0, 0)
-    GameTooltip.StatusBar.text:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
-
     hooksecurefunc("SetItemRef", SetItemRef)
     hooksecurefunc("EmbeddedItemTooltip_SetItemByID", EmbeddedItemTooltip_ID)
     hooksecurefunc("EmbeddedItemTooltip_SetCurrencyByID", EmbeddedItemTooltip_ID)
@@ -1252,18 +1238,12 @@ local function LoadTooltips()
     hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitAura)
     hooksecurefunc(GameTooltip, "SetHyperlink", SetHyperlink)
     hooksecurefunc(ItemRefTooltip, "SetHyperlink", SetHyperlink)
-
-    if GW.Retail then
-        hooksecurefunc("EmbeddedItemTooltip_SetSpellWithTextureByID", EmbeddedItemTooltip_ID)
-        hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
-        hooksecurefunc("TaskPOI_OnEnter", AddQuestID)
-        hooksecurefunc("BattlePetToolTip_Show", AddBattlePetID)
-        hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
-    end
+    GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
 
     if GameTooltip.SetUnitDebuffByAuraInstanceID then
         hooksecurefunc(GameTooltip, "SetUnitDebuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)
         hooksecurefunc(GameTooltip, "SetUnitBuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)
+        hooksecurefunc(GameTooltip, "SetUnitAuraByAuraInstanceID", SetUnitAuraByAuraInstanceId)
     end
 
     if TooltipDataProcessor and not (GW.TBC or GW.Mists) then
@@ -1271,32 +1251,51 @@ local function LoadTooltips()
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, GameTooltip_OnTooltipSetSpell)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Currency, GameTooltip_OnTooltipSetCurrency)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Toy, GameTooltip_OnTooltipSetToy)
+
+        hooksecurefunc(GameTooltip, "Hide", GameTooltip_Hide)
     else
         GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_OnTooltipSetUnit)
         GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
-        GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
         GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
     end
 
+    if GW.Retail or GW.Mists then
+        hooksecurefunc("BattlePetToolTip_Show", AddBattlePetID)
+    end
+
     local eventFrame = CreateFrame("Frame")
+
+    if GW.Retail then
+        hooksecurefunc("EmbeddedItemTooltip_SetSpellWithTextureByID", EmbeddedItemTooltip_ID)
+        hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
+        hooksecurefunc(GameTooltipStatusBar, "UpdateUnitHealth", GameTooltipStatusBar_UpdateUnitHealth)
+        hooksecurefunc("TaskPOI_OnEnter", AddQuestID)
+        hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
+
+        hooksecurefunc(GameTooltip, "SetCurrencyByID", SetCurrencyByID)
+        hooksecurefunc(GameTooltip, "SetToyByItemID", SetToyByItemID)
+        hooksecurefunc(GameTooltip, "SetCurrencyToken", SetCurrencyToken)
+        hooksecurefunc(GameTooltip, "SetBackpackToken", SetBackpackToken)
+    else
+        GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
+    end
+
     eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
     eventFrame:SetScript("OnEvent", function()
         if not GameTooltip:IsForbidden() and GameTooltip:IsShown() then
             local owner = GameTooltip:GetOwner()
             if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame) or (GwPlayerUnitFrame and owner == GwPlayerUnitFrame)) and UnitExists("mouseover") then
                 if GW.Retail then
-                    GameTooltip:RefreshData()
+                    local _, unit = GameTooltip:GetUnit()
+                    if GW.NotSecretValue(unit) then
+                        GameTooltip:RefreshData()
+                    end
                 else
                     GameTooltip:SetUnit("mouseover")
                 end
             end
         end
     end)
-
-    GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
-    GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
 
     local eventFrame2 = CreateFrame("Frame")
     eventFrame2:RegisterEvent("PLAYER_REGEN_DISABLED")

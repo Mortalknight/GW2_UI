@@ -121,7 +121,6 @@ GW.globalDefault = {
         FONTS_OUTLINE = "",
 
         TOOLTIP_MOUSE = false,
-        ADVANCED_TOOLTIP = true,
         TOOLTIP_HEADER_FONT_SIZE = 16,
         TOOLTIP_SMALL_FONT_SIZE = 12,
         TOOLTIP_FONT_SIZE = 14,
