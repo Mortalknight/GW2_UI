@@ -5,4 +5,5 @@
     <Script file ="recipeTracking.lua"/>
     <Script file ="collectionTracking.lua"/>
     <Script file ="monthlyActivitiesTracking.lua"/>
+    <Script file ="housingInitiative.lua"/>
 </Ui>

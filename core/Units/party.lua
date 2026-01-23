@@ -174,7 +174,6 @@ end
 function GwPartyFrameMixin:SetUnitName()
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit) or UNKNOWNOBJECT
-    self.nameNotLoaded = (nameString and nameString ~= UNKNOWNOBJECT)
 
     if nameRoleIcon[role] then
         nameString = nameRoleIcon[role] .. nameString
@@ -245,10 +244,6 @@ function GwPartyFrameMixin:OnEvent(event, unit, ...)
     if event == "load" then
         self:UpdateFrame()
         self.auras:ForceUpdate()
-    end
-
-    if not self.nameNotLoaded then
-        self:SetUnitName()
     end
 
     if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_HEAL_PREDICTION" or event == "UNIT_ABSORB_AMOUNT_CHANGED" or event == "UNIT_HEAL_ABSORB_AMOUNT_CHANGED" then
@@ -553,7 +548,6 @@ local function CreatePartyFrame(i, isPlayer)
     frame.unit = registerUnit
     frame.guid = UnitGUID(registerUnit)
     frame.ready = -1
-    frame.nameNotLoaded = false
     frame:SetAttribute("unit", registerUnit)
     frame:SetAttribute("*type1", "target")
     frame:SetAttribute("*type2", "togglemenu")

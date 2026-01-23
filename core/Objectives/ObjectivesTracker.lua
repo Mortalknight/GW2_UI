@@ -252,6 +252,7 @@ local function LoadObjectivesTracker()
         { name = "GwQuesttrackerContainerRecipe", scrollable = true, mixin = GwObjectivesRecipeContainerMixin, enumName = "Recipe", load = GW.Retail },
         { name = "GwQuesttrackerContainerMonthlyActivity", scrollable = true, mixin = GwObjectivesMonthlyActivitiesContainerMixin, enumName = "MonthlyActivity", load = GW.Retail },
         { name = "GwQuesttrackerContainerCollection", scrollable = true, mixin = GwObjectivesCollectionContainerMixin, enumName = "Collection", load = GW.Retail },
+        { name = "GwQuesttrackerContainerHousingInitiative", scrollable = true, mixin = GwObjectivesHousingInitiativeContainerMixin, enumName = "HousingInitiative", load = GW.Retail },
         -- ADDONS
         { name = "GwQuesttrackerContainerWQT", scrollable = true, mixin = GwWorldQuestTrackerContainerMixin, enumName = "WQT", addonName = "WorldQuestTracker", load = GW.Retail },
         { name = "GwQuesttrackerContainerPetTracker", scrollable = true, mixin = GwPetTrackerContainerMixin, enumName = "PetTracker", addonName = "PetTracker_Config", load = GW.Retail },
