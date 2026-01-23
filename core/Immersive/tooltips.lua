@@ -1240,7 +1240,6 @@ local function LoadTooltips()
     if GameTooltip.SetUnitDebuffByAuraInstanceID then
         hooksecurefunc(GameTooltip, "SetUnitDebuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)
         hooksecurefunc(GameTooltip, "SetUnitBuffByAuraInstanceID", SetUnitAuraByAuraInstanceId)
-        hooksecurefunc(GameTooltip, "SetUnitAuraByAuraInstanceID", SetUnitAuraByAuraInstanceId)
     end
 
     if TooltipDataProcessor and not (GW.TBC or GW.Mists) then
@@ -1273,6 +1272,8 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetToyByItemID", SetToyByItemID)
         hooksecurefunc(GameTooltip, "SetCurrencyToken", SetCurrencyToken)
         hooksecurefunc(GameTooltip, "SetBackpackToken", SetBackpackToken)
+
+        hooksecurefunc(GameTooltip, "SetUnitAuraByAuraInstanceID", SetUnitAuraByAuraInstanceId)
     else
         GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
     end
