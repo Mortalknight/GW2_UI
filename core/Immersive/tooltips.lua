@@ -997,33 +997,45 @@ local function SetStyle(self, _, isEmbedded)
     if self.Delimiter2 then self.Delimiter2:SetTexture() end
     if self.NineSlice then self.NineSlice:SetAlpha(0) end
 
-    if GW.IsSecretValue(self:GetWidth()) then return end
-
-    if not self.SetBackdrop then
-        _G.Mixin(self, _G.BackdropTemplateMixin)
-        self:HookScript("OnSizeChanged", self.OnBackdropSizeChanged)
-    end
-
-    self:SetBackdrop({
-        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
-        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
-        edgeSize = GW.Scale(1)
-    })
-
-    local backdrop = {
-        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
-        edgeSize = GW.Scale(1)
-    }
-
-    self:SetBackdropBorderColor(0.05, 0.05, 0.05, 1)
-
-    if not self.gwHookedBorderColor then
-        hooksecurefunc(self, "SetBackdropBorderColor", function(self, r, g, b, a)
-            if r ~= 0.05 or g ~= 0.05 or b ~= 0.05 or a ~= 1 then
-                self:SetBackdropBorderColor(0.05, 0.05, 0.05, 1)
+    if GW.NotSecretValue(self:GetWidth()) then
+        if not self.SetBackdrop then
+            _G.Mixin(self, _G.BackdropTemplateMixin)
+           if self.OnSizeChanged then
+                self:HookScript("OnSizeChanged", self.OnBackdropSizeChanged)
             end
-        end)
+        end
 
+        self:SetBackdrop({
+            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
+            edgeSize = GW.Scale(1)
+        })
+
+        local backdrop = {
+            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
+            edgeSize = GW.Scale(1)
+        }
+
+        local level = self:GetFrameLevel()
+        if not self.iborder then
+            local border = CreateFrame("Frame", nil, self, "BackdropTemplate")
+            border:SetBackdrop(backdrop)
+            border:SetBackdropBorderColor(0, 0, 0, 1)
+            border:SetFrameLevel(level)
+            border:GwSetInside(self, 1, 1)
+            self.iborder = border
+        end
+
+        if not self.oborder then
+            local border = CreateFrame("Frame", nil, self, "BackdropTemplate")
+            border:SetBackdrop(backdrop)
+            border:SetBackdropBorderColor(0, 0, 0, 1)
+            border:SetFrameLevel(level)
+            border:GwSetOutside(self, 1, 1)
+            self.oborder = border
+        end
+
+        self:SetBackdropBorderColor(0.05, 0.05, 0.05, 1)
         if PawnRegisterThirdPartyTooltip and not pawnTooltipBorderRegistered then
             PawnRegisterThirdPartyTooltip("GW2_UI", {
                 SetBackdropBorderColor = function(tt, r, g, b, a) end,
@@ -1031,27 +1043,6 @@ local function SetStyle(self, _, isEmbedded)
 
             pawnTooltipBorderRegistered = true
         end
-
-        self.gwHookedBorderColor = true
-    end
-
-    local level = self:GetFrameLevel()
-    if not self.iborder then
-        local border = CreateFrame("Frame", nil, self, "BackdropTemplate")
-        border:SetBackdrop(backdrop)
-        border:SetBackdropBorderColor(0, 0, 0, 1)
-        border:SetFrameLevel(level)
-        border:GwSetInside(self, 1, 1)
-        self.iborder = border
-    end
-
-    if not self.oborder then
-        local border = CreateFrame("Frame", nil, self, "BackdropTemplate")
-        border:SetBackdrop(backdrop)
-        border:SetBackdropBorderColor(0, 0, 0, 1)
-        border:SetFrameLevel(level)
-        border:GwSetOutside(self, 1, 1)
-        self.oborder = border
     end
 end
 
