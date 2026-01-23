@@ -1,3 +1,7 @@
+10.0.2
+FIXES
+    - Tooltip error on TBC
+
 10.0.1
 FIXES
     - Tooltip error on TBC

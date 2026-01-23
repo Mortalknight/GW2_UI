@@ -1275,7 +1275,7 @@ local function LoadTooltips()
 
         hooksecurefunc(GameTooltip, "SetUnitAuraByAuraInstanceID", SetUnitAuraByAuraInstanceId)
     else
-        GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
+        GameTooltipStatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
     end
 
     eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")

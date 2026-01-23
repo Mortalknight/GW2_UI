@@ -18,6 +18,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.0.2", {
+    {GW.ChangelogType.bug, [=[Tooltip error on TBC]=]},
+})
+
 addChange("10.0.1", {
     {GW.ChangelogType.bug, [=[Tooltip error on TBC]=]},
 })
