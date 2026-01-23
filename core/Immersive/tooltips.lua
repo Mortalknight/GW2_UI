@@ -384,14 +384,16 @@ local function GetLevelLine(self, offset, raw)
 
     for i, line in next, info.lines, offset do
         local text = line and line.leftText
-        if not text or text == "" then return end
+        if GW.NotSecretValue(text) then
+            if not text or text == "" then return end
 
-        local lower = strlower(text)
-        if lower and (strfind(lower, LEVEL1) or strfind(lower, LEVEL2)) then
-            if raw then
-                return line, info.lines[i + 1]
-            else
-                return _G["GameTooltipTextLeft" .. i], _G["GameTooltipTextLeft" .. i + 1]
+            local lower = strlower(text)
+            if lower and (strfind(lower, LEVEL1) or strfind(lower, LEVEL2)) then
+                if raw then
+                    return line, info.lines[i + 1]
+                else
+                    return _G["GameTooltipTextLeft" .. i], _G["GameTooltipTextLeft" .. i + 1]
+                end
             end
         end
     end
@@ -569,28 +571,32 @@ local function AddMountInfo(self, unit)
     local index = 1
     local auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
     while auraData do
-        local mountID = MountIDs[auraData.spellId]
-        if mountID then
-            self:AddDoubleLine(format("%s:", MOUNT), auraData.name, nil, nil, nil, 1, 1, 1)
+        if GW.IsSecretValue(auraData.spellId) then
+			break
+        else
+            local mountID = MountIDs[auraData.spellId]
+            if mountID then
+                self:AddDoubleLine(format("%s:", MOUNT), auraData.name, nil, nil, nil, 1, 1, 1)
 
-            local sourceText = mountID.sourceText
-            local mountText = sourceText and IsControlKeyDown() and gsub(sourceText, "|n%s+|n", "|n")
-            if mountText then
-                local sourceModified = gsub(mountText, "|n", "\10")
-                for x in gmatch(sourceModified, "[^\10]+\10?") do
-                    local left, right = strmatch(x, "(.-|r)%s?([^\10]+)\10?")
-                    if left and right then
-                        self:AddDoubleLine(left, right, nil, nil, nil, 1, 1, 1)
-                    else
-                        self:AddDoubleLine(FROM, gsub(mountText, "|c%x%x%x%x%x%x%x%x",""), nil, nil, nil, 1, 1, 1)
+                local sourceText = mountID.sourceText
+                local mountText = sourceText and IsControlKeyDown() and gsub(sourceText, "|n%s+|n", "|n")
+                if mountText then
+                    local sourceModified = gsub(mountText, "|n", "\10")
+                    for x in gmatch(sourceModified, "[^\10]+\10?") do
+                        local left, right = strmatch(x, "(.-|r)%s?([^\10]+)\10?")
+                        if left and right then
+                            self:AddDoubleLine(left, right, nil, nil, nil, 1, 1, 1)
+                        else
+                            self:AddDoubleLine(FROM, gsub(mountText, "|c%x%x%x%x%x%x%x%x",""), nil, nil, nil, 1, 1, 1)
+                        end
                     end
                 end
-            end
 
-            break
-        else
-            index = index + 1
-            auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
+                break
+            else
+                index = index + 1
+                auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
+            end
         end
     end
 end
@@ -640,7 +646,7 @@ local function AddMythicInfo(self, unit)
 end
 
 local function TT_OnEvent(_, event, unitGUID)
-    if UnitExists("mouseover") and UnitGUID("mouseover") == unitGUID then
+    if GW.UnitExists("mouseover") and UnitGUID("mouseover") == unitGUID then
         local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel("mouseover")
         if itemLevel == "tooSoon" then
             GW.Wait(0.05, function()
@@ -1285,13 +1291,12 @@ local function LoadTooltips()
         if not GameTooltip:IsForbidden() and GameTooltip:IsShown() then
             local owner = GameTooltip:GetOwner()
             if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame) or (GwPlayerUnitFrame and owner == GwPlayerUnitFrame)) and UnitExists("mouseover") then
-                if GW.Retail then
-                    local _, unit = GameTooltip:GetUnit()
-                    if GW.NotSecretValue(unit) then
+                if GW.UnitExists("mouseover") then
+                    if GW.Retail then
                         GameTooltip:RefreshData()
+                    else
+                        GameTooltip:SetUnit("mouseover")
                     end
-                else
-                    GameTooltip:SetUnit("mouseover")
                 end
             end
         end

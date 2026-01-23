@@ -260,3 +260,9 @@ do
         end
     end
 end
+
+function GW.UnitExists(unit)
+	if ShouldUnitIdentityBeSecret and ShouldUnitIdentityBeSecret(unit) then return end
+
+	return unit and (UnitExists(unit) or UnitIsVisible(unit))
+end

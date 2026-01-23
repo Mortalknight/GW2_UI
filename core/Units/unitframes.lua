@@ -428,7 +428,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
 end
 
 function GwUnitFrameMixin:UpdateAvgItemLevel(guid)
-    if guid ~= UnitGUID(self.unit) or not UnitIsPlayer(self.unit) or (GW.Mists and not InCombatLockdown() and not CheckInteractDistance(self.unit, 4)) or not CanInspect(self.unit) then return end
+    if (GW.NotSecretValue(self.unit) and GW.NotSecretValue(guid)) and (guid ~= UnitGUID(self.unit) or not UnitIsPlayer(self.unit) or (GW.Mists and not InCombatLockdown() and not CheckInteractDistance(self.unit, 4)) or not CanInspect(self.unit)) then return end
 
     local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel(self.unit)
 
