@@ -11,10 +11,10 @@ local function Update(self, event)
 	local element = self.Health.highlightBorder
     local isSameUnit = UnitIsUnit(self.unit, "target")
 
-    element:SetVertexColor(0, 0, 0, 1)
+    element:SetVertexColor(noColor:GetRGBA())
 
     if self:IsMouseOver() then
-        element:SetVertexColor(1, 1, 1, 1)
+        element:SetVertexColor(normalColor:GetRGBA())
         return
     end
 
@@ -22,9 +22,9 @@ local function Update(self, event)
         element:SetVertexColorFromBoolean(isSameUnit, normalColor, noColor)
     else
         if isSameUnit then
-            element:SetVertexColor(1, 1, 1, 1)
+            element:SetVertexColor(normalColor:GetRGBA())
         else
-            element:SetVertexColor(0, 0, 0, 1)
+            element:SetVertexColor(noColor:GetRGBA())
         end
     end
 end
