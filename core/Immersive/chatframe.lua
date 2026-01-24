@@ -4,7 +4,6 @@ local L = GW.L
 GW.ChatFunctions = {}
 
 local GetMentorChannelStatus = ChatFrameUtil and ChatFrameUtil.GetMentorChannelStatus or ChatFrame_GetMentorChannelStatus
-local GetColoredName = ChatFrameUtil and ChatFrameUtil.GetDecoratedSenderName or GetColoredName
 local Chat_GetChatCategory = ChatFrameUtil and ChatFrameUtil.GetChatCategory or Chat_GetChatCategory
 local ChatEdit_ActivateChat = ChatFrameUtil and ChatFrameUtil.ActivateChat or ChatEdit_ActivateChat
 local ChatEdit_ChooseBoxForSend = ChatFrameUtil and ChatFrameUtil.ChooseBoxForSend or ChatEdit_ChooseBoxForSend
@@ -1094,10 +1093,12 @@ local function SaveChatHistory(event, ...)
         local message, author = ...
         local when = time()
 
-        ChatThrottleHandler(author, message, when)
+        if GW.NotSecretValue(message) or GW.NotSecretValue(author) then
+            ChatThrottleHandler(author, message, when)
 
-        if ChatThrottleBlockFlag(author, message, when) then
-            return
+            if ChatThrottleBlockFlag(author, message, when) then
+                return
+            end
         end
     end
 
@@ -1107,7 +1108,9 @@ local function SaveChatHistory(event, ...)
 
     local tempHistory = {}
     for i = 1, select("#", ...) do
-        tempHistory[i] = select(i, ...) or false
+        if GW.NotSecretValue(select(i, ...) ) then
+            tempHistory[i] = select(i, ...) or false
+        end
     end
 
     if #tempHistory > 0 and not GW.ChatFunctions:IsMessageProtected(tempHistory[1]) then

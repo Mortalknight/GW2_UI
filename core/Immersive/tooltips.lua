@@ -823,7 +823,7 @@ local function SetItemRef(link)
 end
 
 function SetCompareItems(tt, value)
-    if not GW.Retail or tt ~= GameTooltip then
+    if GW.Retail or tt ~= GameTooltip then
         tt.supportsItemComparison = value
     end
 end
@@ -1285,7 +1285,10 @@ local function LoadTooltips()
             if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame) or (GwPlayerUnitFrame and owner == GwPlayerUnitFrame)) and UnitExists("mouseover") then
                 if GW.UnitExists("mouseover") then
                     if GW.Retail then
-                        GameTooltip:RefreshData()
+                        local _, unit = GameTooltip:GetUnit()
+                        if GW.NotSecretValue(unit) then
+                            GameTooltip:RefreshData()
+                        end
                     else
                         GameTooltip:SetUnit("mouseover")
                     end
