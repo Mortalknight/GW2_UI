@@ -253,7 +253,7 @@ local function Construct_Auras(frame)
 
     if GW.Retail then
         auras.debuffFilter = "HARMFUL"
-        auras.buffFilter = "HELPFUL|PLAYER|INCLUDE_NAME_PLATE_ONLY"
+        auras.buffFilter = "HELPFUL|PLAYER|INCLUDE_NAME_PLATE_ONLY|RAID"
     end
 
     auras.PostCreateButton = Construct_AuraIcon
