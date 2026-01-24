@@ -73,11 +73,7 @@ local function Create_Tags()
     end)
 
     AddTag("GW2_Grid:healtValue", "UNIT_HEALTH UNIT_MAXHEALTH", function(unit, realUnit, ...)
-        local healthstring = ""
         local healthDisplaySetting, shortendHealthValue = ...
-        local health = UnitHealth(unit)
-        local healthMax = UnitHealthMax(unit)
-        local healthPrec = 0
         local formatFunc
 
         shortendHealthValue = stringtoboolean[shortendHealthValue]
@@ -86,9 +82,6 @@ local function Create_Tags()
             formatFunc = shortendHealthValue and AbbreviateLargeNumbers or BreakUpLargeNumbers
         else
             formatFunc = shortendHealthValue and GW.ShortValue or GW.GetLocalizedNumber
-            if healthMax > 0 then
-                healthPrec = health / healthMax
-            end
         end
 
         if healthDisplaySetting == "NONE" then
@@ -98,18 +91,26 @@ local function Create_Tags()
             if GW.Retail then
                 return string.format("%.0f%%", UnitHealthPercent(unit, true, CurveConstants.ScaleTo100))
             else
-                return GW.RoundDec(healthPrec * 100, 0) .. "%"
+                local healthMax = UnitHealthMax(unit)
+                local healthPrecentage = (healthMax > 0) and (UnitHealth(unit) / healthMax) or 0
+                return GW.RoundDec(healthPrecentage * 100, 0) .. "%"
             end
         elseif healthDisplaySetting == "HEALTH" then
-            return formatFunc(health)
+            return formatFunc(UnitHealth(unit))
         elseif healthDisplaySetting == "LOSTHEALTH" then
             if GW.Retail then
                 return formatFunc(UnitHealthMissing(unit))
             else
-                if healthMax - health > 0 then healthstring = formatFunc(healthMax - health) end
-                return healthstring
+                local healthMax = UnitHealthMax(unit)
+                local health = UnitHealth(unit)
+                if (healthMax - health) > 0 then
+                    return formatFunc(healthMax - health)
+                end
+                return ""
             end
         end
+
+        return ""
     end)
 end
 GW.Create_Tags = Create_Tags
