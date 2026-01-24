@@ -978,7 +978,7 @@ local function shouldHiddenInCombat(tooltip)
     local _, unit = tooltip:GetUnit()
     if GW.NotSecretValue(unit) and unit then
         local unitReaction = UnitReaction("player", unit)
-        if not unitReaction then return false end
+        if GW.IsSecretValue(unit) or not unitReaction then return false end
 
         if GW.settings.HIDE_TOOLTIP_IN_COMBAT_UNIT == "ALL" or
             (string.find(GW.settings.HIDE_TOOLTIP_IN_COMBAT_UNIT, "HOSTILE") and unitReaction <= 3 or

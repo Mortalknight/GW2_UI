@@ -111,7 +111,8 @@ local function AuraOnEnter(self)
         if self:GetAttribute("target-slot") then
             GameTooltip:SetInventoryItem("player", self:GetID())
         else
-            GameTooltip:SetUnitAuraByAuraInstanceID("player", self.auraInstanceID)
+            --GameTooltip:SetUnitAuraByAuraInstanceID("player", self.auraInstanceID)
+            GameTooltip:SetUnitAura(self.header:GetAttribute("unit"), self:GetID(), self:GetFilter())
         end
     else
         self.elapsed = 1
