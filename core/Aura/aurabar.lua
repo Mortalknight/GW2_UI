@@ -112,10 +112,7 @@ local function AuraOnEnter(self)
             GameTooltip:SetInventoryItem("player", self:GetID())
         else
             --GameTooltip:SetUnitAuraByAuraInstanceID("player", self.auraInstanceID)
-            print("unit", GW.IsSecretValue(self.header:GetAttribute("unit")))
-            print("ID", GW.IsSecretValue(self:GetID()))
-            print("filter", GW.IsSecretValue(self:GetFilter()))
-            GameTooltip:SetUnitAura(self.header:GetAttribute("unit"), self:GetID(), self:GetFilter())
+            GameTooltip:SetUnitAura("player", self:GetID(), self:GetFilter())
         end
     else
         self.elapsed = 1
