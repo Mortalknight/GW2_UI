@@ -7,33 +7,19 @@ local classic = { [1] = 2, [2] = 1, [3] = 4, [4] = 3 }
 local function UpdateButton(button, totem)
     if not (button and totem) then return end
 
-    local haveTotem, _, startTime, duration, icon = GetTotemInfo((GW.Classic or GW.TBC) and totem or totem.slot)
+    local _, _, startTime, duration, icon = GetTotemInfo((GW.Classic or GW.TBC) and totem or totem.slot)
+    button:SetShown(startTime and GW.NotSecretValue(duration) and (duration > 0))
 
-    if GW.Retail then
-        button:SetAlphaFromBoolean(haveTotem, 1, 0)
+    if startTime then
         button.iconTexture:SetTexture(icon)
-        button.cooldown:SetCooldownDuration(duration)
+        button.cooldown:SetCooldown(startTime, duration)
 
         if GW.Retail or GW.Mists then
             if totem:GetParent() ~= button.holder then
-                totem:ClearAllPoints()
                 totem:SetParent(button.holder)
             end
 
             totem:SetAllPoints(button.holder)
-        end
-    else
-        button:SetShown(haveTotem and duration > 0)
-
-        if haveTotem then
-            button.iconTexture:SetTexture(icon)
-            button.cooldown:SetCooldown(startTime, duration)
-
-            if totem:GetParent() ~= button.holder then
-                totem:ClearAllPoints()
-                totem:SetParent(button.holder)
-                totem:SetAllPoints(button.holder)
-            end
         end
     end
 end
@@ -43,9 +29,9 @@ local function OnEvent(self)
 
     if GW.Retail then
         for _, button in ipairs(self) do
-            --if button:GetAlpha() then
-                button:SetAlpha(0)
-            --end
+            if button:IsShown() then
+                button:SetShown(false)
+            end
         end
 
         for totem in TotemFrame.totemPool:EnumerateActive() do
@@ -53,8 +39,8 @@ local function OnEvent(self)
         end
     else
         for i = 1, MAX_TOTEMS do
-			UpdateButton(self[priority[i]], _G["TotemFrameTotem"..i] or classic[i])
-		end
+            UpdateButton(self[priority[i]], _G["TotemFrameTotem"..i] or classic[i])
+        end
     end
 end
 
@@ -126,12 +112,8 @@ local function CreateTotemBar()
 
         backDrop:SetPoint("TOPLEFT", button, "TOPLEFT", -backDropSize, backDropSize)
         backDrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", backDropSize, -backDropSize)
-        if GW.Retail then
-            button:SetAlpha(0)
-            button:EnableMouse(false)
-        else
-            button:Hide()
-        end
+
+        button:Hide()
 
         button.holder = CreateFrame("Frame", nil, button)
         button.holder:SetAlpha(0)
