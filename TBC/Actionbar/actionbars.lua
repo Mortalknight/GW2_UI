@@ -634,6 +634,7 @@ local function helper_RangeUpdate(slot, inRange, checkRange)
     end
 
     if checkRange and not inRange then
+        btn.isOutOfRange = true
         if indicator == "RED_INDICATOR" or indicator == "BOTH" then
             btn.gw_RangeIndicator:Show()
         end
@@ -641,6 +642,7 @@ local function helper_RangeUpdate(slot, inRange, checkRange)
             btn.icon:SetVertexColor(red_R, red_G, red_B, 1, true)
         end
     else
+        btn.isOutOfRange = false
         if btn.gw_RangeIndicator then
             btn.gw_RangeIndicator:Hide()
         end
@@ -660,6 +662,12 @@ local function saveVertexColor(self, r, g, b, a, bypass)
     self.savedVertexColor = self.savedVertexColor or {}
     local saved = self.savedVertexColor
     saved.r, saved.g, saved.b, saved.a = r, g, b, a
+
+    -- keep out of range active
+    if self:GetParent().isOutOfRange then
+        r, g, b, a = RED_FONT_COLOR:GetRGBA()
+        self:SetVertexColor(r, g, b, a, true)
+    end
 end
 
 local function main_OnEvent(_, event, ...)

@@ -592,12 +592,21 @@ local function saveVertexColor(self, r, g, b, a, bypass)
     if a == nil then
         a = 1
     end
-    self.savedVertexColor = {["r"] = r, ["g"] = g, ["b"] = b, ["a"] = a}
+    -- reuse the same table to avoid allocating on every SetVertexColor call
+    self.savedVertexColor = self.savedVertexColor or {}
+    local saved = self.savedVertexColor
+    saved.r, saved.g, saved.b, saved.a = r, g, b, a
+
+    -- keep out of range active
+    if self:GetParent().isOutOfRange then
+        r, g, b, a = RED_FONT_COLOR:GetRGBA()
+        self:SetVertexColor(r, g, b, a, true)
+    end
 end
 
 local function main_OnEvent(_, event, ...)
     if event == "ACTION_RANGE_CHECK_UPDATE" then
-        helper_RangeUpdate(...)
+        --helper_RangeUpdate(...)
     elseif event == "PLAYER_EQUIPMENT_CHANGED" then
         actionBarEquipUpdate()
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
@@ -716,7 +725,7 @@ local function updateMainBar()
     helperFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     helperFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     helperFrame:RegisterEvent("PLAYER_LEVEL_UP")
-    helperFrame:RegisterEvent("ACTION_RANGE_CHECK_UPDATE")
+    --helperFrame:RegisterEvent("ACTION_RANGE_CHECK_UPDATE")
     helperFrame:HookScript("OnEvent", main_OnEvent)
 
     -- disable default main action bar behaviors
@@ -1101,6 +1110,7 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
             local checksRange = (valid ~= nil)
             local inRange = checksRange and valid
             if checksRange and not inRange then
+                btn.isOutOfRange = true
                 if btn.rangeIndicatorSetting == "RED_INDICATOR"  or btn.rangeIndicatorSetting == "BOTH" then
                     btn.gw_RangeIndicator:Show()
                 end
@@ -1108,6 +1118,7 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
                     btn.icon:SetVertexColor(out_R, out_G, out_B, 1, true)
                 end
             else
+                btn.isOutOfRange = false
                 if btn.gw_RangeIndicator then
                     btn.gw_RangeIndicator:Hide()
                 end
