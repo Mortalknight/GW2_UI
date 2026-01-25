@@ -145,7 +145,9 @@ local function CreateButton(element, index)
 	stealable:SetBlendMode('ADD')
 	button.Stealable = stealable
 
-	button.UpdateTooltip = UpdateTooltip
+	if not ns.Retail then --Remove then blizzards hotfix is live
+		button.UpdateTooltip = UpdateTooltip
+	end
 	button:SetScript('OnEnter', onEnter)
 	button:SetScript('OnLeave', onLeave)
 

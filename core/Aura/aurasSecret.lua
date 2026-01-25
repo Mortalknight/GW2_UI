@@ -47,7 +47,8 @@ local function CreateAuraFrame(name, parent)
     f.stacks = f.status.stacks
     f.icon = f.status.icon
 
-    f.UpdateTooltip = UpdateTooltip
+    --wait for blizzard fix
+    --f.UpdateTooltip = UpdateTooltip
     f:SetScript("OnEnter", auraFrame_OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
 
