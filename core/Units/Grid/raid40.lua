@@ -89,7 +89,6 @@ local function UpdateGridRaid40Frame(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
     GW.UpdatePrivateAurasSettings(frame)
-    --GW.Update_RangeIndicator(frame)
     GW.Update_Faderframe(frame, "grid40")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")

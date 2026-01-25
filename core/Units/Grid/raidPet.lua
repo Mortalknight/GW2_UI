@@ -90,7 +90,6 @@ local function UpdateGridRaidPetFrame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    --GW.Update_RangeIndicator(frame)
     GW.Update_Faderframe(frame, "gridPet")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")

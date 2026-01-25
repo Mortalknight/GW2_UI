@@ -14,13 +14,6 @@ local function GridMaintankStyleRegister(self)
         end
     )
 
-    self.bg = self:CreateTexture(nil, 'BORDER')
-    self.bg:SetPoint("TOPLEFT", 0, 0)
-    self.bg:SetPoint("BOTTOMRIGHT", 0, 0)
-    self.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-    self.bg:SetVertexColor(0, 0, 0, 1)
-    self.bg.multiplier = 1
-
     self.RaisedElementParent = GW.CreateRaisedElement(self)
 	self.Health = GW.Construct_HealthBar(self, true)
     self.Name = GW.Construct_NameText(self)
@@ -94,7 +87,6 @@ local function UpdateGridMaintankFrame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    --GW.Update_RangeIndicator(frame)
     GW.Update_Faderframe(frame, "gridTank")
 
     frame:UpdateAllElements("Gw2_UpdateAllElements")

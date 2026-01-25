@@ -56,7 +56,7 @@ local function Construct_HealthBar(frame)
     health.highlightBorder:SetPoint("TOPLEFT", -1, 1)
     health.highlightBorder:SetPoint("BOTTOMRIGHT", 1, -1)
     health.highlightBorder:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-    health.highlightBorder:SetVertexColor(0, 0, 0, 1)
+    health.highlightBorder:SetVertexColor(0, 0, 0, 0)
 
     health.PostUpdateColor = PostUpdateHealthColor
     health.PostUpdate = PostUpdateHealth
