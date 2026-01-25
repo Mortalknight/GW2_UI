@@ -45,7 +45,7 @@ local function UpdateGridRaid10Frame(frame)
     frame.unitWidth = tonumber(GW.settings.RAID_WIDTH_RAID10)
     frame.unitHeight = tonumber(GW.settings.RAID_HEIGHT_RAID10)
     frame.raidShowImportantInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID10
-    frame.showAllDebuffs = GW.settings.RAID_SHOW_DEBUFFS_RAID10
+    frame.showDebuffs = GW.settings.RAID_SHOW_DEBUFFS_RAID10
     frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_RAID10
     frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_RAID10
     frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
@@ -64,6 +64,13 @@ local function UpdateGridRaid10Frame(frame)
     frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_RAID10
     frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_RAID10
     frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_RAID10
+
+    -- retail filtering
+    frame.showPlayerDebuffs = GW.settings.RAID_10_AURAS.playerDebuff
+    frame.showRaidDebuffs = GW.settings.RAID_10_AURAS.raidDebuff
+    frame.showPlayerBuffs = GW.settings.RAID_10_AURAS.playerBuff
+    frame.showRaidBuffs = GW.settings.RAID_10_AURAS.raidBuff
+    frame.showDefensiveBuffs  = GW.settings.RAID_10_AURAS.defensiveBuff
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)

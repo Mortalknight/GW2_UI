@@ -46,7 +46,7 @@ local function UpdateGridRaidPetFrame(frame)
     frame.unitWidth = tonumber(GW.settings.RAID_WIDTH_PET)
     frame.unitHeight = tonumber(GW.settings.RAID_HEIGHT_PET)
     frame.raidShowImportantInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET
-    frame.showAllDebuffs = GW.settings.RAID_SHOW_DEBUFFS_PET
+    frame.showDebuffs = GW.settings.RAID_SHOW_DEBUFFS_PET
     frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_PET
     frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PET
     frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
@@ -65,6 +65,13 @@ local function UpdateGridRaidPetFrame(frame)
     frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_PET
     frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_PET
     frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_PET
+
+        -- retail filtering
+    frame.showPlayerDebuffs = GW.settings.RAID_PET_AURAS.playerDebuff
+    frame.showRaidDebuffs = GW.settings.RAID_PET_AURAS.raidDebuff
+    frame.showPlayerBuffs = GW.settings.RAID_PET_AURAS.playerBuff
+    frame.showRaidBuffs = GW.settings.RAID_PET_AURAS.raidBuff
+    frame.showDefensiveBuffs  = GW.settings.RAID_PET_AURAS.defensiveBuff
 
     if not InCombatLockdown() then
         frame:DisableElement("MiddleIcon")

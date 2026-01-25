@@ -16,19 +16,27 @@ local UnitFrameFader = {
 }
 
 local PlayerAuraSettings = {
-        Seperate = 0,
-        SortDir = "+",
-        SortMethod = "INDEX",
-        IconSize = 32,
-        IconHeight = 32,
-        KeepSizeRatio = true,
-        GrowDirection = "UP",
-        HorizontalSpacing = 1,
-        VerticalSpacing = 34,
-        MaxWraps = 3,
-        WrapAfter = 7,
-        NewAuraAnimation = true,
-    }
+    Seperate = 0,
+    SortDir = "+",
+    SortMethod = "INDEX",
+    IconSize = 32,
+    IconHeight = 32,
+    KeepSizeRatio = true,
+    GrowDirection = "UP",
+    HorizontalSpacing = 1,
+    VerticalSpacing = 34,
+    MaxWraps = 3,
+    WrapAfter = 7,
+    NewAuraAnimation = true,
+}
+
+local GridAuraFilter = {
+    playerDebuff = true,
+    raidDebuff = true,
+    playerBuff = true,
+    raidBuff = false,
+    defensiveBuff = true,
+}
 
 --private
 GW.privateDefaults = {
@@ -792,6 +800,7 @@ GW.globalDefault = {
         RAID_SHOW_LEADER_ICON_TANK= true,
         RAID_SHORT_HEALTH_VALUES_TANK = false,
         RAID_SHOW_ABSORB_BAR_TANK = true,
+        RAID_MAINTANK_AURAS = CopyTable(GridAuraFilter),
         raidMaintank_pos= {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",
@@ -850,6 +859,7 @@ GW.globalDefault = {
         RAID_SHOW_LEADER_ICON_PET= false, -- always
         RAID_SHORT_HEALTH_VALUES_PET = false,
         RAID_SHOW_ABSORB_BAR_PET = true,
+        RAID_PET_AURAS = CopyTable(GridAuraFilter),
 
         raid_pet_pos= {
             point= "TOPLEFT",
@@ -887,6 +897,7 @@ GW.globalDefault = {
         RAID_SHOW_LEADER_ICON= true,
         RAID_SHORT_HEALTH_VALUES = false,
         RAID_SHOW_ABSORB_BAR = true,
+        RAID_AURAS = CopyTable(GridAuraFilter),
 
         raid_pos= {
             point= "TOPLEFT",
@@ -925,6 +936,7 @@ GW.globalDefault = {
         RAID_SHOW_LEADER_ICON_RAID25= true,
         RAID_SHORT_HEALTH_VALUES_RAID25 = false,
         RAID_SHOW_ABSORB_BAR_RAID25 = true,
+        RAID_25_AURAS = CopyTable(GridAuraFilter),
 
         raid25_pos= {
             point= "TOPLEFT",
@@ -963,6 +975,7 @@ GW.globalDefault = {
         RAID_SHOW_LEADER_ICON_RAID10= true,
         RAID_SHORT_HEALTH_VALUES_RAID10 = false,
         RAID_SHOW_ABSORB_BAR_RAID10 = true,
+        RAID_10_AURAS = CopyTable(GridAuraFilter),
 
         raid10_pos= {
             point= "TOPLEFT",
@@ -1001,6 +1014,8 @@ GW.globalDefault = {
         RAID_SHORT_HEALTH_VALUES_PARTY = false,
         RAID_SHOW_PLAYER_PARTY = true, -- only for party grid
         RAID_SHOW_ABSORB_BAR_PARTY = true,
+        RAID_PARTY_AURAS = CopyTable(GridAuraFilter),
+
         raid_party_pos= {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",

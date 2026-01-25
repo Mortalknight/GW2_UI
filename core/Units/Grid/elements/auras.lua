@@ -101,12 +101,16 @@ local function FilterAura(self, unit, data)
 
     if GW.Retail then
         if data.isHarmfulAura then
-            if not parent.showAllDebuffs then
+            if not parent.showDebuffs then
                 return false
+            else
+                shouldDisplay = (parent.showPlayerDebuffs and data.isPlayerAura) or (parent.showRaidDebuffs and data.isRaidAura)
             end
+        else
+            shouldDisplay = (parent.showPlayerBuffs and data.isPlayerAura) or (parent.showRaidBuffs and data.isRaidAura) or (parent.showDefensiveBuffs and data.isDefensiveAura)
         end
 
-        return true
+        return shouldDisplay
     end
 
     if data.isHelpful then
@@ -188,7 +192,7 @@ local function FilterAura(self, unit, data)
             data.dispelName = "BadDispel"
         end
 
-        if parent.showAllDebuffs then
+        if parent.showDebuffs then
             if parent.showOnlyDispelDebuffs then
                 if isDispellable then
                     shouldDisplay = data.name and not (parent.ignoredAuras and parent.ignoredAuras[data.name] or data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
@@ -251,16 +255,10 @@ local function Construct_Auras(frame)
     auras.disableCooldown = true
     auras.reanchorIfVisibleChanged = true
 
-    if GW.Retail then
-        auras.debuffFilter = "HARMFUL"
-        auras.buffFilter = "HELPFUL|PLAYER|INCLUDE_NAME_PLATE_ONLY|RAID"
-    end
-
     auras.PostCreateButton = Construct_AuraIcon
     auras.PostUpdateButton = PostUpdateButton
-    if not GW.Retail then
-        auras.FilterAura = FilterAura
-    end
+    auras.FilterAura = FilterAura
+
     auras.PostUpdateInfoRemovedAuraID = PostUpdateInfoRemovedAuraID
     auras.PostProcessAuraData = PostProcessAuraData
 
