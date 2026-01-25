@@ -1,3 +1,11 @@
+10.0.4
+CHANGES
+    - Added grid aura filter options for retail, that are all blizzard allows at the moment
+
+FIXES
+    - Totembar error on none Retail clients
+    - Grid backgorund on none Retail clients
+
 10.0.3
 FIXES
     - Tooltip error on TBC

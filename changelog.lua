@@ -18,6 +18,13 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("10.0.4", {
+    {GW.ChangelogType.change, [=[Added grid aura filter options for retail, that are all blizzard allows at the moment]=]},
+    {GW.ChangelogType.bug, [=[Totembar error on none Retail clients]=]},
+    {GW.ChangelogType.bug, [=[Grid backgorund on none Retail clients]=]},
+})
+
 addChange("10.0.3", {
     {GW.ChangelogType.bug, [=[Tooltip error on TBC]=]},
 })
