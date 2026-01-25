@@ -908,11 +908,13 @@ local function HandleItemListScrollBoxHover(self)
         end
 
         --zebra
-        local zebra = child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 or false
-        if zebra then
-            child.Background:SetVertexColor(1, 1, 1, 1)
-        else
-            child.Background:SetVertexColor(0, 0, 0, 0)
+        if child.Background then
+            local zebra = child.GetOrderIndex and (child:GetOrderIndex() % 2) == 1 or false
+            if zebra then
+                child.Background:SetVertexColor(1, 1, 1, 1)
+            else
+                child.Background:SetVertexColor(0, 0, 0, 0)
+            end
         end
 
         if child.NormalTexture then
