@@ -831,7 +831,10 @@ end
 local function GameTooltip_SetDefaultAnchor(self, parent)
     if self:IsForbidden() or self:GetAnchorType() ~= "ANCHOR_NONE" then return end
 
-    SetCompareItems(self, true)
+    -- Remove when blizzard applyed the fix
+    if not GW.Retail then
+        SetCompareItems(self, true)
+    end
 
     if GameTooltipStatusBar then
         GameTooltipStatusBar:SetAlpha(GW.settings.TOOLTIP_HEALTHBAER_POSITION == "DISABLED" and 0 or 1)
@@ -1155,7 +1158,10 @@ local function StyleTooltips()
 end
 
 local function LoadTooltips()
-    StyleTooltips()
+    -- Remove when blizzard applyed the fix
+    if not GW.Retail then
+        StyleTooltips()
+    end
     SkinItemRefTooltipCloseButton()
     SkinQueueStatusFrame()
 
@@ -1177,7 +1183,10 @@ local function LoadTooltips()
         FloatingBattlePetTooltip.CloseButton:SetSize(20, 20)
         FloatingBattlePetTooltip.CloseButton:ClearAllPoints()
         FloatingBattlePetTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
-        hooksecurefunc("SharedPetBattleAbilityTooltip_SetAbility", SetStyle)
+        -- Remove when blizzard applyed the fix
+        if not GW.Retail then
+            hooksecurefunc("SharedPetBattleAbilityTooltip_SetAbility", SetStyle)
+        end
     end
 
     local ItemTT = GameTooltip.ItemTooltip
@@ -1201,7 +1210,11 @@ local function LoadTooltips()
     hooksecurefunc("GameTooltip_ShowProgressBar", GameTooltip_ShowProgressBar) -- Skin Progress Bars
     hooksecurefunc("GameTooltip_ClearProgressBars", GameTooltip_ClearProgressBars)
     hooksecurefunc("GameTooltip_AddQuestRewardsToTooltip", GameTooltip_AddQuestRewardsToTooltip) -- Color Progress Bars
-    hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
+
+    -- Remove when blizzard applyed the fix
+    if not GW.Retail then
+        hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
+    end
 
     -- Functions
     MountIDs = {}
