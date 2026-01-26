@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+<!--
     <Include file ="social.xml"/>
     <Include file ="recentAllies.xml"/>
     <Include file ="ignoreList.xml"/>
@@ -17,4 +18,6 @@
     <Script file ="ignoreList.lua"/>
     <Script file ="guild.lua"/>
     <Script file ="social.lua"/>
+-->
+    <Script file ="friendsFrame.lua"/>
 </Ui>

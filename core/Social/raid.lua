@@ -174,7 +174,7 @@ local function LoadRaidList(tabContainer)
     end
 
     RaidFrameAllAssistCheckButton:ClearAllPoints()
-    RaidFrameAllAssistCheckButton:SetPoint("TOPLEFT", 10, -23)
+    RaidFrameAllAssistCheckButton:SetPoint("TOPLEFT", 10, -35)
     RaidFrameAllAssistCheckButton.text:ClearAllPoints()
     RaidFrameAllAssistCheckButton.text:SetPoint("LEFT", RaidFrameAllAssistCheckButton, "RIGHT", 5, -2)
     RaidFrameAllAssistCheckButton.text:SetText(ALL .. " |TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:25:25:0:-3|t")
@@ -182,7 +182,7 @@ local function LoadRaidList(tabContainer)
     --ALL_ASSIST_LABEL
     if RaidFrame.RoleCount then
         RaidFrame.RoleCount:ClearAllPoints()
-        RaidFrame.RoleCount:SetPoint("TOP", -80, -25)
+        RaidFrame.RoleCount:SetPoint("TOP", -80, -35)
 
         RaidFrame.RoleCount.TankIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank.png")
         RaidFrame.RoleCount.HealerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer.png")
@@ -199,6 +199,7 @@ local function LoadRaidList(tabContainer)
 
     RaidFrameConvertToRaidButton:GwSkinButton(false, true)
     RaidFrameRaidInfoButton:GwSkinButton(false, true)
+    RaidFrameRaidInfoButton:SetPoint("TOPRIGHT", -7, -35)
     if GW.settings.USE_CHARACTER_WINDOW and (GW.Retail or GW.Mists) then
         RaidFrameRaidInfoButton:SetScript("OnClick", function()
             if InCombatLockdown() then return end
