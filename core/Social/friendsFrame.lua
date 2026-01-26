@@ -9,9 +9,8 @@ local WOW_PROJECT_WRATH_CLASSIC = 11
 local WOW_PROJECT_CATACLYSM_CLASSIC = 14
 local WOW_PROJECT_MISTS_CLASSIC = 19
 
-
+local moveDistance, socialFrameX, socialFrameY, socialFrameLeft, socialFrameTop, socialFrameNormalScale, socialFrameEffectiveScale = 0, 0, 0, 0, 0, 1, 0
 local MediaPath = "Interface/AddOns/GW2_UI/Textures/social/"
-
 local delimiter = format("|cff%s | |r", "979fad")
 
 GW.friendsList = {}
@@ -166,6 +165,15 @@ GW.friendsList.statusIcons = {
         AFK     = { Color = {1, 1, 0} },
     },
 }
+
+local function GetScaleDistance()
+    local left, top = socialFrameLeft, socialFrameTop
+    local scale = socialFrameEffectiveScale
+    local x, y = GetCursorPosition()
+    x = x / scale - left
+    y = top - y / scale
+    return sqrt(x * x + y * y)
+end
 
 
 local function ReskinWhoFrameButton(button)
@@ -616,7 +624,87 @@ function GW.LoadSocialFrame()
     FriendsFrame:SetClampedToScreen(true)
     FriendsFrame:SetClampRectInsets(-40, 0, FriendsFrame.gwHeader:GetHeight() - 30, 0)
     FriendsFrame:SetSize(500, 627)
-    GW.MakeFrameMovable(FriendsFrame, nil, "SOCIAL_POSITION", true)
+
+    FriendsFrame:SetScale(GW.settings.SOCIAL_POSITION_SCALE)
+    FriendsFrame:SetMovable(true)
+    FriendsFrame:RegisterForDrag("LeftButton")
+    FriendsFrame:SetScript("OnDragStart", function()
+        FriendsFrame:StartMoving()
+    end)
+    FriendsFrame:SetScript("OnDragStop", function()
+        FriendsFrame:StopMovingOrSizing()
+        FriendsFrame:SetUserPlaced(false)
+        -- Save map frame position
+        local pos = GW.settings.SOCIAL_POSITION
+        if pos then
+            wipe(pos)
+        else
+            pos = {}
+        end
+        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = FriendsFrame:GetPoint()
+        GW.settings.SOCIAL_POSITION = pos
+    end)
+    FriendsFrame:HookScript("OnShow", function()
+        local pos = GW.settings.SOCIAL_POSITION
+        FriendsFrame:ClearAllPoints()
+        FriendsFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    end)
+
+    FriendsFrame.sizer = CreateFrame("Frame", nil, FriendsFrame)
+    FriendsFrame.sizer:EnableMouse(true)
+    FriendsFrame.sizer:SetSize(32, 32)
+    FriendsFrame.sizer:SetPoint("BOTTOMRIGHT", FriendsFrame, "BOTTOMRIGHT", 2, -2)
+    FriendsFrame.sizer.texture = FriendsFrame.sizer:CreateTexture(nil, "OVERLAY")
+    FriendsFrame.sizer.texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize.png")
+    FriendsFrame.sizer.texture:SetSize(32, 32)
+    FriendsFrame.sizer.texture:SetPoint("BOTTOMRIGHT", FriendsFrame.sizer, "BOTTOMRIGHT", 0, 0)
+    FriendsFrame.sizer.texture:SetDesaturated(true)
+    FriendsFrame.sizer:SetScript("OnEnter", function(self)
+        self.texture:SetDesaturated(false)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 10, 30)
+        GameTooltip:ClearLines()
+        GameTooltip_SetTitle(GameTooltip, GW.L["Scale with Right Click"])
+        GameTooltip:Show()
+    end)
+    FriendsFrame.sizer:SetScript("OnLeave", function(self)
+        self.texture:SetDesaturated(true)
+        GameTooltip_Hide()
+    end)
+    FriendsFrame.sizer:SetFrameStrata(FriendsFrame:GetFrameStrata())
+    FriendsFrame.sizer:SetFrameLevel(FriendsFrame:GetFrameLevel() + 15)
+    FriendsFrame.sizer:SetScript("OnMouseDown", function(self, btn)
+        if btn ~= "RightButton" then
+            return
+        end
+        socialFrameLeft, socialFrameTop = FriendsFrame:GetLeft(), FriendsFrame:GetTop()
+        socialFrameNormalScale = FriendsFrame:GetScale()
+        socialFrameX, socialFrameY = socialFrameLeft, socialFrameTop - (UIParent:GetHeight() / socialFrameNormalScale)
+        socialFrameEffectiveScale = FriendsFrame:GetEffectiveScale()
+        moveDistance = GetScaleDistance()
+        self:SetScript("OnUpdate", function()
+            local scale = GetScaleDistance() / moveDistance * socialFrameNormalScale
+            if scale < 0.2 then scale = 0.2 elseif scale > 3.0 then scale = 3.0 end
+            FriendsFrame:SetScale(scale)
+            local s = socialFrameNormalScale / FriendsFrame:GetScale()
+            local x = socialFrameX * s
+            local y = socialFrameY * s
+            FriendsFrame:ClearAllPoints()
+            FriendsFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
+        end)
+    end)
+    FriendsFrame.sizer:SetScript("OnMouseUp", function(self)
+        self:SetScript("OnUpdate", nil)
+        GW.settings.SOCIAL_POSITION_SCALE = FriendsFrame:GetScale()
+        -- Save hero frame position
+        local pos = GW.settings.SOCIAL_POSITION
+        if pos then
+            wipe(pos)
+        else
+            pos = {}
+        end
+        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = FriendsFrame:GetPoint()
+        GW.settings.SOCIAL_POSITION = pos
+    end)
 
     --Friends frame
     if GW.Retail then
