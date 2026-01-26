@@ -937,7 +937,13 @@ local function SkinSideTabButton(self, iconTexture, tooltipText)
     self.isSkinned = true
     self:GwStripTextures()
     self:SetSize(64, 40)
-    self.Text:Hide()
+    if self.Text then
+        self.Text:Hide()
+    end
+
+    if _G[self:GetName() .. "Text"] then
+        _G[self:GetName() .. "Text"]:Hide()
+    end
 
     self.icon = self:CreateTexture(nil, "BACKGROUND", nil, 0)
     self.icon:SetAllPoints()

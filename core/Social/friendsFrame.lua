@@ -326,7 +326,12 @@ end
 local function HandleTabs()
     for idx, tab in ipairs({FriendsFrameTab1, FriendsFrameTab2, FriendsFrameTab3, FriendsFrameTab4}) do
         if not tab.isSkinned then
-            local iconName = idx == 1 and "tabicon_friends" or idx == 2 and "tabicon_who" or idx == 3 and "tabicon_raid" or "tabicon_quickjoin"
+            local iconName
+            if GW.Retail then
+                iconName = idx == 1 and "tabicon_friends" or idx == 2 and "tabicon_who" or idx == 3 and "tabicon_raid" or "tabicon_quickjoin"
+            else
+                iconName = idx == 1 and "tabicon_friends" or idx == 2 and "tabicon_who" or idx == 3 and "tabicon_friends" or "tabicon_raid"
+            end
 
             local iconTexture = "Interface/AddOns/GW2_UI/textures/social/" .. iconName .. ".png"
             GW.SkinSideTabButton(tab, iconTexture, tab:GetText())
@@ -336,8 +341,20 @@ local function HandleTabs()
         tab:SetPoint("TOPRIGHT", FriendsFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * friendsFrameTabsAdded))
         tab:SetParent(FriendsFrame.LeftSidePanel)
         tab:SetSize(64, 40)
+        friendsFrameTabsAdded = friendsFrameTabsAdded + 1
 
-        if idx == 4 then
+        if GW.TBC then
+            hooksecurefunc("FriendsFrame_UpdateGuildTabVisibility", function()
+                FriendsFrameTab4:ClearAllPoints()
+                if FriendsFrameTab3:IsShown() then
+                    FriendsFrameTab4:SetPoint("TOPRIGHT", FriendsFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * 3))
+                else
+                    FriendsFrameTab4:SetPoint("TOPRIGHT", FriendsFrame.LeftSidePanel, "TOPLEFT", 1, -32 + (-40 * 2))
+                end
+            end)
+        end
+
+        if idx == 4 and GW.Retail then
             tab.GwNotifyRed = tab:CreateTexture(nil, "ARTWORK", nil, 7)
             tab.GwNotifyText = tab:CreateFontString(nil, "OVERLAY")
 
@@ -354,8 +371,6 @@ local function HandleTabs()
             tab.GwNotifyText:SetShadowColor(0, 0, 0, 0)
             tab.GwNotifyText:Hide()
         end
-
-        friendsFrameTabsAdded = friendsFrameTabsAdded + 1
     end
 end
 
@@ -582,10 +597,13 @@ function GW.LoadSocialFrame()
 
     GW.CreateFrameHeaderWithBody(FriendsFrame, FriendsFrameTitleText, "Interface/AddOns/GW2_UI/textures/social/social-windowheader.png", {
         FriendsListFrame.ScrollBox,
-        RecentAlliesFrame.List,
-        RecruitAFriendFrame.RecruitList.ScrollBox,
+        FriendsFrameFriendsScrollFrame,
+        FriendsFrameIgnoreScrollFrame,
+        RecentAlliesFrame and RecentAlliesFrame.List,
+        RecruitAFriendFrame and RecruitAFriendFrame.RecruitList.ScrollBox,
         WhoFrame.ScrollBox,
-        QuickJoinFrame.ScrollBox
+        WhoListScrollFrame,
+        QuickJoinFrame and QuickJoinFrame.ScrollBox
         }
         , nil, true, true)
 
@@ -598,12 +616,21 @@ function GW.LoadSocialFrame()
     FriendsFrame:SetClampedToScreen(true)
     FriendsFrame:SetClampRectInsets(-40, 0, FriendsFrame.gwHeader:GetHeight() - 30, 0)
     FriendsFrame:SetSize(500, 627)
+    GW.MakeFrameMovable(FriendsFrame, nil, "SOCIAL_POSITION", true)
 
     --Friends frame
-    for i = 1, 3 do
-        local tabId = i == 1 and FriendsTabHeader.friendsTabID or i == 2 and FriendsTabHeader.recentAlliesTabID or FriendsTabHeader.recruitAFriendTabID
-        local tab = FriendsTabHeader.TabSystem:GetTabButton(tabId)
-        GW.HandleTabs(tab, "top")
+    if GW.Retail then
+        for i = 1, 3 do
+            local tabId = i == 1 and FriendsTabHeader.friendsTabID or i == 2 and FriendsTabHeader.recentAlliesTabID or FriendsTabHeader.recruitAFriendTabID
+            local tab = FriendsTabHeader.TabSystem:GetTabButton(tabId)
+            GW.HandleTabs(tab, "top")
+        end
+    else
+        GW.HandleTabs(FriendsTabHeaderTab1, "top")
+        GW.HandleTabs(FriendsTabHeaderTab2, "top")
+        FriendsTabHeaderTab1:SetHeight(25)
+        FriendsTabHeaderTab2:SetHeight(25)
+        FriendsTabHeaderTab1:SetPoint("TOPLEFT", 18, -63)
     end
 
     FriendsFrameStatusDropdown:GwHandleDropDownBox()
@@ -616,7 +643,12 @@ function GW.LoadSocialFrame()
         GW.HandleScrollControls(FriendsListFrame)
         hooksecurefunc(FriendsListFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
     elseif GW.TBC then
+        FriendsFrameFriendsScrollFrame:ClearAllPoints()
+        FriendsFrameFriendsScrollFrame:SetPoint("TOPLEFT", FriendsFrame, 8, -87)
+        FriendsFrameFriendsScrollFrame:SetPoint("BOTTOMRIGHT", FriendsFrame, -25, 35)
+        FriendsFrameFriendsScrollFrame:SetHeight(480)
         HybridScrollFrame_CreateButtons(FriendsFrameFriendsScrollFrame, "FriendsFrameButtonTemplate")
+
         FriendsFrameFriendsScrollFrameScrollBar:GwSkinScrollBar()
         FriendsFrameFriendsScrollFrame:GwSkinScrollFrame()
     end
@@ -737,6 +769,18 @@ function GW.LoadSocialFrame()
         RecruitAFriendRecruitmentFrame.CloseButton:SetSize(15, 15)
     end
 
+    if GW.TBC then
+        IgnoreListFrameTop:Hide()
+        IgnoreListFrameMiddle:Hide()
+        IgnoreListFrameBottom:Hide()
+
+        FriendsFrameIgnorePlayerButton:GwSkinButton(false, true)
+        FriendsFrameUnsquelchButton:GwSkinButton(false, true)
+        FriendsFrameIgnoreScrollFrame:SetHeight(600)
+        FriendsFrameIgnoreScrollFrame:GwSkinScrollFrame()
+        FriendsFrameIgnoreScrollFrameScrollBar:GwSkinScrollBar()
+    end
+
     -- recentAllies
     if GW.Retail then
         hooksecurefunc(RecentAlliesFrame.List.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
@@ -806,13 +850,34 @@ function GW.LoadSocialFrame()
     WhoFrameTotals:SetTextColor(1, 1, 1)
     WhoFrameListInset:SetAlpha(0)
 
-    GW.HandleTrimScrollBar(WhoFrame.ScrollBar)
-    GW.HandleScrollControls(WhoFrame)
-    hooksecurefunc(WhoFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
-    hooksecurefunc(WhoFrame.ScrollBox, "Update", function(scrollBox)
-        scrollBox:ForEachFrame(ReskinWhoFrameButton)
-    end)
-    WhoFrameEditBox.Backdrop:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg.png")
+    if GW.Retail then
+        GW.HandleTrimScrollBar(WhoFrame.ScrollBar)
+        GW.HandleScrollControls(WhoFrame)
+
+        hooksecurefunc(WhoFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
+        hooksecurefunc(WhoFrame.ScrollBox, "Update", function(scrollBox)
+            scrollBox:ForEachFrame(ReskinWhoFrameButton)
+        end)
+    else
+        WHOS_TO_DISPLAY = 30
+        for i = 18, 30 do
+		    local button = CreateFrame("Button", "WhoFrameButton"..i, WhoFrame, "FriendsFrameWhoButtonTemplate");
+            button:SetID(i);
+            button:SetPoint("TOP", _G["WhoFrameButton"..(i-1)], "BOTTOM");
+        end
+        WhoListScrollFrame:ClearAllPoints()
+        WhoListScrollFrame:SetPoint("TOPLEFT", WhoFrame, 8, -87)
+        WhoListScrollFrame:SetPoint("BOTTOMRIGHT", WhoFrame, -25, 60)
+        WhoListScrollFrame:SetHeight(480)
+
+        WhoListScrollFrame:GwStripTextures()
+        WhoListScrollFrame:GwSkinScrollFrame()
+        WhoListScrollFrameScrollBar:GwSkinScrollBar()
+    end
+
+    if WhoFrameEditBox.Backdrop then
+        WhoFrameEditBox.Backdrop:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg.png")
+    end
     WhoFrameEditBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     WhoFrameEditBox.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     WhoFrameEditBox.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
@@ -845,6 +910,9 @@ function GW.LoadSocialFrame()
     WhoFrameDropdown:HookScript("OnMouseDown", function(self)
         self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
     end)
+    if WhoFrameDropdown.Background then
+        WhoFrameDropdown.Background:Hide()
+    end
 
     WhoFrameColumnHeader1:SetPoint("BOTTOMLEFT", WhoFrameListInset, "TOPLEFT", 5, 0)
     WhoFrameWhoButton:GwSkinButton(false, true)

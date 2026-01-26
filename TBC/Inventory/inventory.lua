@@ -452,6 +452,7 @@ local function reskinSearchBox(sb)
 
     sb.searchIcon:Hide()
 end
+GW.SkinBagSearchBox = reskinSearchBox
 GW.AddForProfiling("inventory", "reskinSearchBox", reskinSearchBox)
 
 -- (re)steals the default search boxes
