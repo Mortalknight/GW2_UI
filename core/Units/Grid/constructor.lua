@@ -56,9 +56,9 @@ local profiles = {
 }
 
 
+--SecureCmdOptionParse("[@raid1,noexists][@raid26,exists] hide; show")
+--SecureCmdOptionParse("[@raid11,noexists] hide; show")
 --SecureCmdOptionParse("[@raid1,noexists][@raid11,exists] hide;show")
---SecureCmdOptionParse("[@raid11,noexists][@raid26,exists] hide;show")
---SecureCmdOptionParse("[@raid1,exists][@party1,noexists] hide;show")
 local DIRECTION_TO_POINT = {
 	["DOWN+RIGHT"] = "TOP",
 	["DOWN+LEFT"] = "TOP",
@@ -423,7 +423,7 @@ local function GetHeaderVisibility(profile)
             return "hide"
         end
         if GW.settings.RAID25_ENABLED then
-            return GW.settings.RAID10_ENABLED and profiles.RAID40.visibility or profiles.RAID40.visibilityIncl25
+            return GW.settings.RAID10_ENABLED and profiles.RAID40.visibility
         end
         return GW.settings.RAID10_ENABLED and profiles.RAID40.visibilityIncl25 or profiles.RAID40.visibilityAll
     elseif profile == "RAID25" then
