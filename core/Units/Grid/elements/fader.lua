@@ -13,7 +13,7 @@ local function Update_Faderframe(frame, profile)
         if not frame:IsElementEnabled("Fader") then
             frame:EnableElement("Fader")
         end
-        frame.Fader:SetOption("Range", not GW.Retail and RangeframeFaderSettings or false)
+        frame.Fader:SetOption("Range", RangeframeFaderSettings)
         frame.Fader:SetOption("Health", frameFaderSettings.health)
         frame.Fader:SetOption("Hover", frameFaderSettings.hover)
         frame.Fader:SetOption("Combat", frameFaderSettings.combat)

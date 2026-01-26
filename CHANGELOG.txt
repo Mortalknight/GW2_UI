@@ -1,3 +1,14 @@
+10.0.5
+FIXES
+    - Gamemenu skin on TBC
+    - Aura tooltip works again
+    - Chatframe secret value
+    - Forbidden tooltips
+    - Socal frame lua error
+    - Frame fader fixes
+    - Raid target fix
+
+
 10.0.4
 CHANGES
     - Added grid aura filter options for retail, that are all blizzard allows at the moment

@@ -38,7 +38,6 @@ local function Update(self)
         if index then
             element:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcons")
             SetRaidTargetIconTexture(element, index)
-            element:SetTexCoord(unpack(ns.TexCoords))
 
             shouldShowIcon = true
         end

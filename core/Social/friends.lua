@@ -417,14 +417,16 @@ local function UpdateFriendButton(button)
     end
 
     button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-
     button.background:Hide()
-    CreateOrUpdateTexture(button, "background", "BACKGROUND")
-    SetGradientColor(button.efl.background, StatusColor[status].Inside, StatusColor[status].Outside)
 
-    button.highlight:SetVertexColor(0, 0, 0, 0)
-    CreateOrUpdateTexture(button, "highlight", "HIGHLIGHT")
-    SetGradientColor(button.efl.highlight, StatusColor[status].Inside, StatusColor[status].Outside)
+    if status then
+        CreateOrUpdateTexture(button, "background", "BACKGROUND")
+        SetGradientColor(button.efl.background, StatusColor[status].Inside, StatusColor[status].Outside)
+
+        CreateOrUpdateTexture(button, "highlight", "HIGHLIGHT")
+        SetGradientColor(button.efl.highlight, StatusColor[status].Inside, StatusColor[status].Outside)
+        button.highlight:SetVertexColor(0, 0, 0, 0)
+    end
 
     if button.Favorite and button.Favorite:IsShown() then
         button.Favorite:ClearAllPoints()

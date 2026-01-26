@@ -198,10 +198,8 @@ do
     local accessSender = {}	-- indexed
 
     local function GetToken(chatType, chatTarget, chanSender) -- ChatHistory_GetToken
-        local target = chatTarget and strlower(chatTarget) or ""
         local sender = GW.NotSecretValue(chanSender) and chanSender and strlower(chanSender) or ""
-
-        return format("%s;;%s;;%s", strlower(chatType), target, sender)
+        return format("%s;;%s;;%s", strlower(chatType), chatTarget or "", sender)
     end
 
     function GW.ChatFunctions:GetAccessID(chatType, chatTarget, chanSender) -- ChatHistory_GetAccessID
@@ -1332,9 +1330,9 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         -- Search for icon links and replace them with texture links.
         -- If arg17 is true, don't convert to raid icons
         if ChatFrameUtil and ChatFrameUtil.CanChatGroupPerformExpressionExpansion then
-			arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrameUtil.CanChatGroupPerformExpressionExpansion(chatGroup))
-		else
-			arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup))
+            arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrameUtil.CanChatGroupPerformExpressionExpansion(chatGroup))
+        else
+            arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup))
         end
     end
 
@@ -1403,7 +1401,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
 
     local senderLink = showLink and playerLink or arg2
     if usingDifferentLanguage then
-    body = format(_G["CHAT_" .. chatType .. "_GET"] .. "[%s] %s", pflag .. senderLink, arg3, message)
+        body = format(_G["CHAT_" .. chatType .. "_GET"] .. "[%s] %s", pflag .. senderLink, arg3, message) -- arg3 is language header
     elseif not isProtected and chatType == "GUILD_ITEM_LOOTED" then
         body = gsub(message, "$s", senderLink, 1)
     elseif not isProtected and realm and chatType == "TEXT_EMOTE" then
@@ -1411,8 +1409,6 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         body = classLink and gsub(message, arg2.."%-"..realm, pflag..classLink, 1) or message
     elseif chatType == "TEXT_EMOTE" then
         body = (GW.NotSecretValue(arg2) and arg2 ~= senderLink) and gsub(message, arg2, senderLink, 1) or message
-    elseif not showLink then
-        body = format(_G["CHAT_"..chatType.."_GET"]..message, pflag..senderLink)
     else
         body = format(_G["CHAT_"..chatType.."_GET"]..message, pflag..senderLink)
     end

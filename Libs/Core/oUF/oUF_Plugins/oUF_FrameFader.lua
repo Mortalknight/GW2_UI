@@ -18,21 +18,22 @@ end
 local function UpdateRange(self, unit)
     local element = self.Fader
     local inRange
-	local isEligible = UnitIsConnected(unit) and UnitInParty(unit)
-	if(isEligible) then
-		inRange = UnitInRange(unit)
+    local isEligible = UnitIsConnected(unit) and UnitInParty(unit)
+    if(isEligible) then
+        inRange = UnitInRange(unit)
         if ns.Retail then
-			self:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
+            element.RangeAlpha = nil
+            self:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
         else
-			if not inRange then
+            if not inRange then
                 element.RangeAlpha = element.MinAlpha
             else
                 element.RangeAlpha = element.MaxAlpha
             end
         end
-	else
-		element.RangeAlpha = element.MaxAlpha
-	end
+    else
+        element.RangeAlpha = element.MaxAlpha
+    end
 end
 
 local function ToggleAlpha(self, element, endAlpha)
@@ -52,6 +53,8 @@ local function Update(self, event, unit)
     if self.isForced or (not element or not element.count or element.count <= 0) then
         self:SetAlpha(1)
         return
+    elseif element.Range and event ~= "OnRangeUpdate" then
+        return
     end
 
     -- stuff for Skyriding
@@ -70,21 +73,22 @@ local function Update(self, event, unit)
 
     -- range fader
     if element.Range then
-		UpdateRange(self, unit)
-        if element.RangeAlpha and not ns.Retail then
+        UpdateRange(self, unit)
+        if element.RangeAlpha then
             ToggleAlpha(self, element, element.RangeAlpha)
         end
 
         return
     end
 
+    local currentHealth = UnitHealth(unit)
     -- normal fader
     if (element.Casting and (UnitCastingInfo(unit) or UnitChannelInfo(unit))) or
         (element.Combat and UnitAffectingCombat(unit)) or
-        (element.PlayerTarget and UnitExists("target")) or
-        (element.UnitTarget and UnitExists(unit .. "target")) or
+        (element.PlayerTarget and ns.UnitExists("target")) or
+        (element.UnitTarget and ns.UnitExists(unit .. "target")) or
         (element.DynamicFlight and oUF.isRetail and not isGliding) or
-        (element.Health and UnitHealth(unit) < UnitHealthMax(unit)) or
+        (element.Health and ns.NotSecretValue(currentHealth) and (currentHealth < UnitHealthMax(unit))) or
         (element.Vehicle and (oUF.isRetail or oUF.isMists) and UnitHasVehicleUI(unit)) or
         (element.Hover and GetMouseFocus(self))
     then
@@ -98,18 +102,18 @@ local function ForceUpdate(element, event)
     return Update(element.__owner, event or "ForceUpdate", element.__owner.unit)
 end
 
-local function onRangeUpdate(frame, elapsed)
-	frame.timer = (frame.timer or 0) + elapsed
+local function OnRangeUpdate(frame, elapsed)
+    frame.timer = (frame.timer or 0) + elapsed
 
-	if (frame.timer >= .20) then
-		for _, object in next, onRangeObjects do
-			if object:IsVisible() then
-				object.Fader:ForceUpdate('OnRangeUpdate')
-			end
-		end
+    if (frame.timer >= .20) then
+        for _, object in next, onRangeObjects do
+            if object:IsVisible() then
+                object.Fader:ForceUpdate('OnRangeUpdate')
+            end
+        end
 
-		frame.timer = 0
-	end
+        frame.timer = 0
+    end
 end
 
 local function HoverScript(self)
@@ -138,7 +142,7 @@ local options = {
             else
                 if not onRangeFrame then
                     onRangeFrame = CreateFrame('Frame')
-                    onRangeFrame:SetScript('OnUpdate', onRangeUpdate)
+                    onRangeFrame:SetScript('OnUpdate', OnRangeUpdate)
                 end
 
                 onRangeFrame:Show()
@@ -163,7 +167,7 @@ local options = {
                     end
                 end
             end
-		end,
+        end,
     },
     Hover = {
         enable = function(self)

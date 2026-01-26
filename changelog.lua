@@ -18,6 +18,16 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.0.5", {
+    {GW.ChangelogType.bug, [=[Gamemenu skin on TBC]=]},
+    {GW.ChangelogType.bug, [=[Aura tooltip works again]=]},
+    {GW.ChangelogType.bug, [=[Chatframe secret value]=]},
+    {GW.ChangelogType.bug, [=[Forbidden tooltips]=]},
+    {GW.ChangelogType.bug, [=[Socal frame lua error]=]},
+    {GW.ChangelogType.bug, [=[Frame fader fixes]=]},
+    {GW.ChangelogType.bug, [=[Raid target fix]=]},
+})
+
 
 addChange("10.0.4", {
     {GW.ChangelogType.change, [=[Added grid aura filter options for retail, that are all blizzard allows at the moment]=]},

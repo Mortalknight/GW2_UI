@@ -849,7 +849,7 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
         end
     end
 
-    if parent then
+    if parent and not parent:IsForbidden() then
         if GW.settings.TOOLTIP_MOUSE then
             self:SetOwner(parent, GW.settings.CURSOR_ANCHOR_TYPE, GW.settings.ANCHOR_CURSOR_OFFSET_X, GW.settings.ANCHOR_CURSOR_OFFSET_Y)
             return
