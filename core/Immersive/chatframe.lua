@@ -198,8 +198,7 @@ do
     local accessSender = {}	-- indexed
 
     local function GetToken(chatType, chatTarget, chanSender) -- ChatHistory_GetToken
-        local sender = GW.NotSecretValue(chanSender) and chanSender and strlower(chanSender) or ""
-        return format("%s;;%s;;%s", strlower(chatType), chatTarget or "", sender)
+         return format("%s;;%s;;%s", strlower(chatType), chatTarget or '', chanSender or '')
     end
 
     function GW.ChatFunctions:GetAccessID(chatType, chatTarget, chanSender) -- ChatHistory_GetAccessID
