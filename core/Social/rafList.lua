@@ -24,18 +24,15 @@ local function RAFRewards()
     end
 end
 
-local function LoadRecruitAFriendList(tabContainer)
-    local RAFFrame = CreateFrame("Frame", "GwRAFWindow", tabContainer, "GwRAFWindow")
-    for tab in RecruitAFriendRewardsFrame.rewardTabPool:EnumerateActive() do
-        tab:HookScript("OnClick", function(self)
-            RecruitAFriendFrame:SetSelectedRAFVersion(self.rafVersion);
-        end)
-    end
+function GW.SkinRecruitAFriendList()
+    if not GW.Retail then return end
 
-    RecruitAFriendFrame.RewardClaiming:SetParent(RAFFrame.claming)
-    RecruitAFriendFrame.RewardClaiming:ClearAllPoints()
-    RecruitAFriendFrame.RewardClaiming:SetAllPoints(RAFFrame.claming)
-    RecruitAFriendFrame.RewardClaiming.Background:SetAllPoints(RAFFrame.claming)
+    RecruitAFriendRecruitmentFrame:GwStripTextures()
+    RecruitAFriendRecruitmentFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    GW.SkinTextBox(RecruitAFriendRecruitmentFrame.EditBox.Middle, RecruitAFriendRecruitmentFrame.EditBox.Left, RecruitAFriendRecruitmentFrame.EditBox.Right)
+    RecruitAFriendRecruitmentFrame.GenerateOrCopyLinkButton:GwSkinButton(false, true)
+    RecruitAFriendRecruitmentFrame.CloseButton:GwSkinButton(true)
+    RecruitAFriendRecruitmentFrame.CloseButton:SetSize(15, 15)
 
     RecruitAFriendFrame.RewardClaiming.Inset:Hide()
     RecruitAFriendFrame.RewardClaiming.Bracket_TopLeft:Hide()
@@ -49,12 +46,6 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendFrame.RewardClaiming.MonthCount:SetPoint("TOPLEFT", 120, -15)
     RecruitAFriendFrame.RewardClaiming.MonthCount:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
-    RecruitAFriendFrame.RewardClaiming.NextRewardName:ClearAllPoints()
-    RecruitAFriendFrame.RewardClaiming.NextRewardName:SetPoint("TOPLEFT", 120, -48)
-
-    RecruitAFriendFrame.RewardClaiming.EarnInfo:ClearAllPoints()
-    RecruitAFriendFrame.RewardClaiming.EarnInfo:SetPoint("TOPLEFT", 120, -33)
-
     RecruitAFriendFrame.RewardClaiming.NextRewardButton:ClearAllPoints()
     RecruitAFriendFrame.RewardClaiming.NextRewardButton:SetPoint("CENTER", RecruitAFriendFrame.RewardClaiming, "LEFT", 65, 0)
     RecruitAFriendFrame.RewardClaiming.NextRewardButton.CircleMask:Hide()
@@ -65,11 +56,8 @@ local function LoadRecruitAFriendList(tabContainer)
     RAFRewardQuality(RecruitAFriendFrame.RewardClaiming.NextRewardButton)
     RecruitAFriendFrame.RewardClaiming.Watermark:SetAlpha(0)
     RecruitAFriendFrame.RewardClaiming.Background:SetAlpha(0)
-    RecruitAFriendFrame.RewardClaiming:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
-
-    RecruitAFriendFrame.RecruitList:SetParent(RAFFrame.RecruitList)
-    RecruitAFriendFrame.RecruitList:ClearAllPoints()
-    RecruitAFriendFrame.RecruitList:SetAllPoints(RAFFrame.RecruitList)
+    RecruitAFriendFrame.RewardClaiming:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    RecruitAFriendFrame.RewardClaiming.backdrop:SetFrameLevel(RecruitAFriendFrame.RewardClaiming:GetFrameLevel())
 
     RecruitAFriendFrame.RecruitList.ScrollFrameInset:GwStripTextures()
     GW.HandleTrimScrollBar(RecruitAFriendFrame.RecruitList.ScrollBar, true)
@@ -81,7 +69,6 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendFrame.RecruitList.Header.RecruitedFriends:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
     RecruitAFriendFrame.RecruitList.Header.RecruitedFriends:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
 
-    RecruitAFriendFrame.RecruitmentButton:SetParent(RAFFrame.RecruitList)
     RecruitAFriendFrame.RecruitmentButton:ClearAllPoints()
     RecruitAFriendFrame.RecruitmentButton:SetPoint("BOTTOMLEFT", RecruitAFriendFrame.RecruitList.ScrollBox,  "BOTTOMLEFT", 4, -20)
     RecruitAFriendFrame.RecruitmentButton:GwSkinButton(false, true)
@@ -99,4 +86,3 @@ local function LoadRecruitAFriendList(tabContainer)
     hooksecurefunc(RecruitAFriendRewardsFrame, "UpdateRewards", RAFRewards)
     RAFRewards()
 end
-GW.LoadRecruitAFriendList = LoadRecruitAFriendList

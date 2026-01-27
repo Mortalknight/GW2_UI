@@ -7,10 +7,7 @@ local WOW_PROJECT_WRATH_CLASSIC = 11
 local WOW_PROJECT_CATACLYSM_CLASSIC = 14
 local WOW_PROJECT_MISTS_CLASSIC = 19
 
-local cache = {}
-
 local MediaPath = "Interface/AddOns/GW2_UI/Textures/social/"
-
 local delimiter = format("|cff%s | |r", "979fad")
 
 GW.friendsList = {}
@@ -166,43 +163,6 @@ GW.friendsList.statusIcons = {
     },
 }
 
-local StatusColor = {}
-for name, info in next, GW.friendsList.statusIcons.color do
-    local r, g, b = unpack(info.Color)
-    StatusColor[name] = {
-        Inside = CreateColor(r, g, b, 0.15),
-        Outside = CreateColor(r, g, b, 0)
-    }
-end
-
-local function SetGradientColor(button, color1, color2)
-    button.Left:SetGradient("Horizontal", color1, color2)
-    button.Right:SetGradient("Horizontal", color2, color1)
-end
-
-local function CreateOrUpdateTexture(button, type, layer)
-    if button.efl and button.efl[type] then
-        button.efl[type].Left:SetTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar.png")
-        button.efl[type].Right:SetTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar.png")
-        return
-    end
-
-    button.efl = button.efl or {}
-    button.efl[type] = {}
-
-    button.efl[type].Left = button:CreateTexture(nil, layer)
-    button.efl[type].Left:SetHeight(32)
-    button.efl[type].Left:SetPoint("LEFT", button, "CENTER")
-    button.efl[type].Left:SetPoint("TOPLEFT", button, "TOPLEFT")
-    button.efl[type].Left:SetTexture("Interface/Buttons/WHITE8X8")
-
-    button.efl[type].Right = button:CreateTexture(nil, layer)
-    button.efl[type].Right:SetHeight(32)
-    button.efl[type].Right:SetPoint("RIGHT", button, "CENTER")
-    button.efl[type].Right:SetPoint("TOPRIGHT", button, "TOPRIGHT")
-    button.efl[type].Right:SetTexture("Interface/Buttons/WHITE8X8")
-
-end
 local function HandleInviteTexNormal(self)
     self:SetTexture("Interface/AddOns/GW2_UI/textures/icons/lfdmicrobutton-down.png")
     self:SetTexCoord(0, 1, 0, 1)
@@ -398,35 +358,8 @@ local function UpdateFriendButton(button)
         end
     end
 
-    if not cache.name then
-        local fontName, size, style = button.name:GetFont()
-        cache.name = {
-            name = fontName,
-            size = size,
-            style = style,
-        }
-    end
-
-    if not cache.info then
-        local fontName, size, style = button.info:GetFont()
-        cache.info = {
-            name = fontName,
-            size = size,
-            style = style,
-        }
-    end
-
     button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-    button.background:Hide()
-
-    if status then
-        CreateOrUpdateTexture(button, "background", "BACKGROUND")
-        SetGradientColor(button.efl.background, StatusColor[status].Inside, StatusColor[status].Outside)
-
-        CreateOrUpdateTexture(button, "highlight", "HIGHLIGHT")
-        SetGradientColor(button.efl.highlight, StatusColor[status].Inside, StatusColor[status].Outside)
-        button.highlight:SetVertexColor(0, 0, 0, 0)
-    end
+    button.info:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
 
     if button.Favorite and button.Favorite:IsShown() then
         button.Favorite:ClearAllPoints()
@@ -437,82 +370,44 @@ local function UpdateFriendButton(button)
     button.name:SetWidth(400)
 end
 
-local function LoadFriendList(tabContainer)
-    local GWFriendFrame = CreateFrame("Frame", "GWFriendFrame", tabContainer, "GWFriendFrame")
-    GWFriendFrame.Container = tabContainer
 
-    GWFriendFrame:SetScript("OnShow", function()
-        local onGlues = C_Glue.IsOnGlueScreen()
-        local inPlunderstorm = C_GameRules.GetActiveGameMode() == Enum.GameMode.Plunderstorm
-        if GW.Retail and not onGlues and not inPlunderstorm then
-            FriendsFrame_CheckQuickJoinHelpTip()
-            FriendsFrame_UpdateQuickJoinTab(#C_SocialQueue.GetAllGroups())
-            C_GuildInfo.GuildRoster()
+function GW.SkinFriendList()
+    if GW.Retail then
+        for i = 1, 3 do
+            local tabId = i == 1 and FriendsTabHeader.friendsTabID or i == 2 and FriendsTabHeader.recentAlliesTabID or FriendsTabHeader.recruitAFriendTabID
+            local tab = FriendsTabHeader.TabSystem:GetTabButton(tabId)
+            GW.HandleTabs(tab, "top")
         end
-        FriendsList_Update(true)
-        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-        FriendsFrame_Update()
-    end)
-
-    FriendsFrameBattlenetFrame:SetParent(GWFriendFrame.headerBN)
-    FriendsFrameBattlenetFrame:ClearAllPoints()
-    FriendsFrameBattlenetFrame:SetAllPoints(GWFriendFrame.headerBN)
+    else
+        GW.HandleTabs(FriendsTabHeaderTab1, "top")
+        GW.HandleTabs(FriendsTabHeaderTab2, "top")
+        FriendsTabHeaderTab1:SetHeight(25)
+        FriendsTabHeaderTab2:SetHeight(25)
+        FriendsTabHeaderTab1:SetPoint("TOPLEFT", 18, -63)
+    end
 
     FriendsFrameStatusDropdown:GwHandleDropDownBox()
     FriendsFrameStatusDropdown:SetWidth(55)
-    FriendsFrameStatusDropdown:SetParent(GWFriendFrame.headerDD)
     FriendsFrameStatusDropdown:ClearAllPoints()
-    FriendsFrameStatusDropdown:SetPoint("TOPLEFT", GWFriendFrame.headerDD, "TOPLEFT", 5, -2)
+    FriendsFrameStatusDropdown:SetPoint("TOPLEFT", FriendsFrame.gwHeader, "BOTTOMLEFT", 5, 0)
 
     if GW.Retail then
-        FriendsListFrame.ScrollBox:SetParent(GWFriendFrame.list)
-        FriendsListFrame.ScrollBox:ClearAllPoints()
-        FriendsListFrame.ScrollBox:SetAllPoints(GWFriendFrame.list)
-        FriendsListFrame.ScrollBox.SetParent = GW.NoOp
-        FriendsListFrame.ScrollBox.ClearAllPoints = GW.NoOp
-        FriendsListFrame.ScrollBox.SetAllPoints = GW.NoOp
-        FriendsListFrame.ScrollBox.SetPoint = GW.NoOp
-
         GW.HandleTrimScrollBar(FriendsListFrame.ScrollBar, true)
         GW.HandleScrollControls(FriendsListFrame)
         hooksecurefunc(FriendsListFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
     elseif GW.TBC then
-        FriendsFrameFriendsScrollFrame:SetParent(GWFriendFrame.list)
         FriendsFrameFriendsScrollFrame:ClearAllPoints()
-        FriendsFrameFriendsScrollFrame:SetAllPoints(GWFriendFrame.list)
-        FriendsFrameFriendsScrollFrame.SetParent = GW.NoOp
-        FriendsFrameFriendsScrollFrame.ClearAllPoints = GW.NoOp
-        FriendsFrameFriendsScrollFrame.SetAllPoints = GW.NoOp
-        FriendsFrameFriendsScrollFrame.SetPoint = GW.NoOp
+        FriendsFrameFriendsScrollFrame:SetPoint("TOPLEFT", FriendsFrame, 8, -87)
+        FriendsFrameFriendsScrollFrame:SetPoint("BOTTOMRIGHT", FriendsFrame, -25, 35)
+        FriendsFrameFriendsScrollFrame:SetHeight(480)
         HybridScrollFrame_CreateButtons(FriendsFrameFriendsScrollFrame, "FriendsFrameButtonTemplate")
 
         FriendsFrameFriendsScrollFrameScrollBar:GwSkinScrollBar()
         FriendsFrameFriendsScrollFrame:GwSkinScrollFrame()
-
-        FriendsFrameFriendsScrollFrameScrollBar:ClearAllPoints()
-        FriendsFrameFriendsScrollFrameScrollBar:SetPoint("TOPRIGHT", GWFriendFrame.list, "TOPRIGHT", 24, -10)
-        FriendsFrameFriendsScrollFrameScrollBar:SetPoint("BOTTOMRIGHT", GWFriendFrame.list, "BOTTOMRIGHT", 24, 10)
     end
 
-    FriendsListFrame.RIDWarning:SetParent(GWFriendFrame.list)
-    FriendsListFrame.RIDWarning:ClearAllPoints()
-    FriendsListFrame.RIDWarning:SetAllPoints(GWFriendFrame.list)
-
-    FriendsListFrame:SetParent(GWFriendFrame.list)
-    FriendsListFrame:ClearAllPoints()
-    FriendsListFrame:SetAllPoints(GWFriendFrame.list)
-
-    FriendsFrameAddFriendButton:SetParent(GWFriendFrame.list)
-    FriendsFrameAddFriendButton:ClearAllPoints()
-    FriendsFrameAddFriendButton:SetPoint("BOTTOMLEFT", GWFriendFrame.list, "BOTTOMLEFT", 4, -40)
     FriendsFrameAddFriendButton:GwSkinButton(false, true)
-
-    FriendsFrameSendMessageButton:SetParent(GWFriendFrame.list)
-    FriendsFrameSendMessageButton:ClearAllPoints()
-    FriendsFrameSendMessageButton:SetPoint("BOTTOMRIGHT", GWFriendFrame.list, "BOTTOMRIGHT", -4, -40)
     FriendsFrameSendMessageButton:GwSkinButton(false, true)
-
-    FriendsTooltip:SetParent(GWFriendFrame.list)
     hooksecurefunc("FriendsFrame_UpdateFriendButton", UpdateFriendButton)
 
     --View Friends BN Frame
@@ -532,15 +427,16 @@ local function LoadFriendList(tabContainer)
     FriendsFriendsFrame:GwStripTextures()
     FriendsFriendsFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
     FriendsFriendsFrameDropdown:GwHandleDropDownBox()
+
     if GW.Retail then
         FriendsFriendsFrame.ScrollFrameBorder:Hide()
-
         FriendsFriendsFrame.SendRequestButton:GwSkinButton(false, true)
         FriendsFriendsFrame.CloseButton:GwSkinButton(false, true)
 
         GW.HandleTrimScrollBar(FriendsFriendsFrame.ScrollBar, true)
         GW.HandleScrollControls(FriendsFriendsFrame)
 
+        FriendsFrameBattlenetFrame.ContactsMenuButton:SetPoint("TOPRIGHT", FriendsFrame.gwHeader, "BOTTOMRIGHT", 5, 0)
         FriendsFrameBattlenetFrame.ContactsMenuButton:GwHandleDropDownBox(GW.BackdropTemplates.ColorableBorderOnly, nil, nil, 32)
         FriendsFrameBattlenetFrame.ContactsMenuButton.backdrop:SetBackdropBorderColor(0, 0, 0, 0)
         FriendsFrameBattlenetFrame.ContactsMenuButton.gw2Arrow:SetPoint("CENTER")
@@ -561,6 +457,8 @@ local function LoadFriendList(tabContainer)
         end)
     end
 
+    FriendsFrameBattlenetFrame:ClearAllPoints()
+    FriendsFrameBattlenetFrame:SetPoint("TOP", FriendsFrame.gwHeader, "BOTTOM", 0, 0)
     FriendsFrameBattlenetFrame:GwStripTextures()
     FriendsFrameBattlenetFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     FriendsFrameBattlenetFrame.Tag:GwKill()
@@ -582,7 +480,7 @@ local function LoadFriendList(tabContainer)
     FriendsFrameBattlenetFrame.BroadcastFrame:GwStripTextures()
     FriendsFrameBattlenetFrame.BroadcastFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
     FriendsFrameBattlenetFrame.BroadcastFrame:ClearAllPoints()
-    FriendsFrameBattlenetFrame.BroadcastFrame:SetPoint("TOPLEFT", GWFriendFrame.headerBN, "TOPRIGHT", 45, 1)
+    FriendsFrameBattlenetFrame.BroadcastFrame:SetPoint("TOPLEFT", FriendsFrame.gwHeader, "BOTTOMRIGHT", 45, 1)
     if GW.Retail then
         FriendsFrameBattlenetFrame.BroadcastFrame.EditBox:GwStripTextures()
         GW.HandleBlizzardRegions(FriendsFrameBattlenetFrame.BroadcastFrame.EditBox)
@@ -604,31 +502,5 @@ local function LoadFriendList(tabContainer)
     AddFriendEntryFrameCancelButton:GwSkinButton(false, true)
     GW.SkinTextBox(_G["AddFriendNameEditBoxMiddle"], _G["AddFriendNameEditBoxLeft"], _G["AddFriendNameEditBoxRight"])
     FriendsFrameBattlenetFrame.UnavailableInfoFrame:ClearAllPoints()
-    FriendsFrameBattlenetFrame.UnavailableInfoFrame:SetPoint("TOPLEFT", GWFriendFrame.headerBN, "TOPRIGHT", 1, -18)
-
-    if GW.Retail then
-        RecruitAFriendRecruitmentFrame:GwStripTextures()
-        RecruitAFriendRecruitmentFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        GW.SkinTextBox(RecruitAFriendRecruitmentFrame.EditBox.Middle, RecruitAFriendRecruitmentFrame.EditBox.Left, RecruitAFriendRecruitmentFrame.EditBox.Right)
-        RecruitAFriendRecruitmentFrame.GenerateOrCopyLinkButton:GwSkinButton(false, true)
-        RecruitAFriendRecruitmentFrame.CloseButton:GwSkinButton(true)
-        RecruitAFriendRecruitmentFrame.CloseButton:SetSize(15, 15)
-    end
-
-    SlashCmdList["FRIENDS"] = function(msg)
-        if InCombatLockdown() then return end
-
-        if msg == "" and UnitIsPlayer("target") then
-            msg = GetUnitName("target", true)
-        end
-        if not msg or msg == "" then
-            GwSocialWindow:SetAttribute("windowpanelopen", "friendlist")
-        else
-            local player, note = strmatch(msg, "%s*([^%s]+)%s*(.*)")
-            if player then
-                C_FriendList.AddOrRemoveFriend(player, note)
-            end
-        end
-    end
+    FriendsFrameBattlenetFrame.UnavailableInfoFrame:SetPoint("TOPLEFT", FriendsFrame.gwHeader, "TOPRIGHT", 1, -18)
 end
-GW.LoadFriendList = LoadFriendList

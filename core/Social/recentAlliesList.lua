@@ -127,39 +127,14 @@ local function ReskinRecentAllyButton(button)
     end
 end
 
-local function LoadRecentAlliesFrame(tabContainer)
-    local GWRecentAlliesFrame = CreateFrame("Frame", "GWRecentAlliesFrame", tabContainer, "GWRecentAlliesFrame")
-    GWRecentAlliesFrame.Container = tabContainer
-
-    GWRecentAlliesFrame:SetScript("OnShow", function()
-        FriendsList_Update(true)
-        PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-        FriendsFrame_Update()
-    end)
-
-    RecentAlliesFrame:SetParent(GWRecentAlliesFrame)
-    RecentAlliesFrame:ClearAllPoints()
-    RecentAlliesFrame:SetPoint("TOPLEFT", GWRecentAlliesFrame, "TOPLEFT", 0, 0)
-    RecentAlliesFrame:SetPoint("BOTTOMRIGHT", GWRecentAlliesFrame, "BOTTOMRIGHT", 0, 0)
-
-    RecentAlliesFrame.List.ScrollBox:SetParent(GWRecentAlliesFrame)
-    RecentAlliesFrame.List.ScrollBox:ClearAllPoints()
-    RecentAlliesFrame.List.ScrollBox:SetPoint("TOPLEFT", GWRecentAlliesFrame, "TOPLEFT", 0, -15)
-    RecentAlliesFrame.List.ScrollBox:SetPoint("BOTTOMRIGHT", GWRecentAlliesFrame, "BOTTOMRIGHT", 0, 0)
-    RecentAlliesFrame.List.ScrollBox.SetParent = GW.NoOp
-    RecentAlliesFrame.List.ScrollBox.ClearAllPoints = GW.NoOp
-    RecentAlliesFrame.List.ScrollBox.SetAllPoints = GW.NoOp
-    RecentAlliesFrame.List.ScrollBox.SetPoint = GW.NoOp
+function GW.SkinRecentAlliesList()
+    if not GW.Retail then return end
 
     hooksecurefunc(RecentAlliesFrame.List.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
     GW.HandleTrimScrollBar(RecentAlliesFrame.List.ScrollBar, true)
     GW.HandleScrollControls(RecentAlliesFrame.List)
-
-    RecentAlliesFrame.Hide = RecentAlliesFrame.Show
-
     hooksecurefunc(RecentAlliesFrame.List.ScrollBox, "Update", function(scrollBox)
         scrollBox:ForEachFrame(ReskinRecentAllyButton)
     end)
-
 end
-GW.LoadRecentAlliesFrame = LoadRecentAlliesFrame
+

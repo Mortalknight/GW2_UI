@@ -1,23 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-<!--
-    <Include file ="social.xml"/>
-    <Include file ="recentAllies.xml"/>
-    <Include file ="ignoreList.xml"/>
-    <Include file ="raf.xml"/>
-    <Include file ="friends.xml"/>
-    <Include file ="who.xml"/>
-    <Include file ="quickjoin.xml"/>
-    <Include file ="raid.xml"/>
-    <Include file ="guild.xml"/>
-    <Script file ="raid.lua"/>
-    <Script file ="recentAllies.lua"/>
-    <Script file ="quickjoin.lua"/>
-    <Script file ="who.lua"/>
-    <Script file ="friends.lua"/>
-    <Script file ="raf.lua"/>
+    <Script file ="raidList.lua"/>
+    <Script file ="recentAlliesList.lua"/>
+    <Script file ="quickjoinList.lua"/>
+    <Script file ="whoList.lua"/>
+    <Script file ="friendsList.lua"/>
+    <Script file ="rafList.lua"/>
     <Script file ="ignoreList.lua"/>
-    <Script file ="guild.lua"/>
-    <Script file ="social.lua"/>
--->
+    <Script file ="guildList.lua"/>
     <Script file ="friendsFrame.lua"/>
 </Ui>
