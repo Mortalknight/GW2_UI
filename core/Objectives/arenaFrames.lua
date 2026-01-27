@@ -50,7 +50,6 @@ function GwArenaFrameMixin:UpdateName()
     end
 
     self.name:SetText(nameString)
-    self.guid = UnitGUID(self.unit)
     self.class = select(2, UnitClass(self.unit))
     self.classIndex = select(3, UnitClass(self.unit))
     if self.class then
@@ -58,6 +57,9 @@ function GwArenaFrameMixin:UpdateName()
         local color = GWGetClassColor(self.class, true)
         self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
     end
+
+    if GW.Retail then return end
+    self.guid = UnitGUID(self.unit)
     if self.guid == UnitGUID("target") then
         self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     else

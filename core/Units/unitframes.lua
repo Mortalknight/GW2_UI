@@ -750,7 +750,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
         if event == "PLAYER_TARGET_CHANGED" and self.unit == "target" and UnitIsPlayer(self.unit) and (self.showItemLevel == "PVP_LEVEL" or self.showItemLevel == "ITEM_LEVEL")
             and (not GW.Mists or (not InCombatLockdown() and CheckInteractDistance(self.unit, 4))) and CanInspect(self.unit) then
             local guid = UnitGUID(self.unit)
-            if guid and (not GW.unitIlvlsCache[guid] or (GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel == nil)) then
+            if GW.NotSecretValue(guid) and guid and (not GW.unitIlvlsCache[guid] or (GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel == nil)) then
                 local _, englishClass = UnitClass(self.unit)
                 local color = GWGetClassColor(englishClass, true, true)
                 GW.unitIlvlsCache[guid] = {unitColor = {color.r, color.g, color.b}}
