@@ -2,9 +2,25 @@ local _, GW = ...
 
 local MIN_ALPHA, MAX_ALPHA = 0.35, 1
 local onRangeObjects, onRangeFrame = {}
+local pendingFrameHooks = {}
+local createFrameHooked = false
 
-local function GetMouseFocus(self)
-    return GW.DoesAncestryIncludeAny(self, GetMouseFoci())
+local function GetMouseFocus(self, element)
+    if GW.DoesAncestryIncludeAny(self, GetMouseFoci()) then
+        return true
+    end
+
+    if element.correspondingFrames then
+        for _, frameName in ipairs(element.correspondingFrames) do
+            local frame = _G[frameName]
+            if frame then
+                if GW.DoesAncestryIncludeAny(frame, GetMouseFoci()) then
+                    return true
+                end
+            end
+        end
+    end
+    return false
 end
 
 local function ClearTimers(element)
@@ -23,12 +39,13 @@ local function UpdateRange(self, unit)
             element.RangeAlpha = nil
             self:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
             if element.correspondingFrames then
-            for _, frame in ipairs(element.correspondingFrames) do
-                if frame then
-                    frame:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
+                for _, frameName in ipairs(element.correspondingFrames) do
+                    local frame = _G[frameName]
+                    if frame then
+                        frame:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
+                    end
                 end
             end
-        end
         else
             if not inRange then
                 element.RangeAlpha = element.MinAlpha
@@ -47,22 +64,28 @@ local function ToggleAlpha(self, element, endAlpha)
     if element.Smooth then
         GW.AddToAnimation(self:GetDebugName(), self:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) self:SetAlpha(p) end, 1)
         if element.correspondingFrames then
-            for _, frame in ipairs(element.correspondingFrames) do
+            for _, frameName in ipairs(element.correspondingFrames) do
+                local frame = _G[frameName]
                 if frame then
                     GW.AddToAnimation(frame:GetDebugName(), frame:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) frame:SetAlpha(p) end, 1)
+                    if frame.UpdateAlphaFader then frame.UpdateAlphaFader(endAlpha) end
                 end
             end
         end
     else
         self:SetAlpha(endAlpha)
         if element.correspondingFrames then
-            for _, frame in ipairs(element.correspondingFrames) do
+            for _, frameName in ipairs(element.correspondingFrames) do
+                local frame = _G[frameName]
                 if frame then
                     frame:SetAlpha(endAlpha)
+                    if frame.UpdateAlphaFader then frame.UpdateAlphaFader(endAlpha) end
                 end
             end
         end
     end
+
+    element.currentAlpha = endAlpha
 end
 
 local isGliding = false
@@ -74,9 +97,11 @@ local function Update(self, event, unit)
     if self.isForced or (not element or not element.count or element.count <= 0) then
         self:SetAlpha(1)
         if element.correspondingFrames then
-            for _, frame in ipairs(element.correspondingFrames) do
+            for _, frameName in ipairs(element.correspondingFrames) do
+                local frame = _G[frameName]
                 if frame then
                     frame:SetAlpha(1)
+                    if frame.UpdateAlphaFader then frame.UpdateAlphaFader(1) end
                 end
             end
         end
@@ -118,7 +143,7 @@ local function Update(self, event, unit)
         (element.DynamicFlight and GW.Retail and not isGliding) or
         (element.Health and GW.NotSecretValue(currentHealth) and (currentHealth < UnitHealthMax(unit))) or
         (element.Vehicle and (GW.Retail or GW.Mists) and UnitHasVehicleUI(unit)) or
-        (element.Hover and GetMouseFocus(self))
+        (element.Hover and GetMouseFocus(self, element))
     then
         ToggleAlpha(self, element, element.MaxAlpha)
     else
@@ -158,9 +183,11 @@ local function TargetScript(self)
             fader:ForceUpdate("TargetScript")
         else
             self:SetAlpha(0)
-            for _, frame in ipairs(self.correspondingFrames) do
+            for _, frameName in ipairs(fader.correspondingFrames) do
+                local frame = _G[frameName]
                 if frame then
                     frame:SetAlpha(0)
+                    if frame.UpdateAlphaFader then frame.UpdateAlphaFader(0) end
                 end
             end
         end
@@ -351,8 +378,45 @@ local function SetOption(element, opt, state)
     end
 end
 
-local function AddCorrespondingFrames(element, frame)
-    tinsert(element.correspondingFrames, frame)
+local function AddCorrespondingFrames(element, frameName)
+    tinsert(element.correspondingFrames, frameName)
+    if element.Hover then
+        if not element._faderHookedFrames[frameName] then
+            local frame = _G[frameName]
+            if frame then
+                frame:HookScript("OnEnter", function() HoverScript(element.__owner) end)
+                frame:HookScript("OnLeave", function() HoverScript(element.__owner) end)
+                element._faderHookedFrames[frameName] = true
+            else
+                pendingFrameHooks[frameName] = pendingFrameHooks[frameName] or {}
+                tinsert(pendingFrameHooks[frameName], element)
+
+                if not createFrameHooked then
+                    hooksecurefunc("CreateFrame", function(_, name)
+                        if not name then return end
+                        local list = pendingFrameHooks[name]
+                        if not list then return end
+                        local created = _G[name]
+                        if not created then return end
+
+                        for _, el in ipairs(list) do
+                            if not el._faderHookedFrames[name] then
+                                created:SetScript("OnEnter", function() HoverScript(el.__owner) end)
+                                created:SetScript("OnLeave", function() HoverScript(el.__owner) end)
+                                el._faderHookedFrames[name] = true
+                            end
+                        end
+                        pendingFrameHooks[name] = nil
+                    end)
+                    createFrameHooked = true
+                end
+            end
+        end
+    end
+end
+
+local function IsEnabled(self)
+    return self.enabled
 end
 
 local function Enable(self)
@@ -364,13 +428,17 @@ local function Enable(self)
     self.Fader.SetOption = SetOption
     self.Fader.AddCorrespondingFrames = AddCorrespondingFrames
     self.Fader.ClearTimers = ClearTimers
+    self.Fader.IsEnabled = IsEnabled
 
     self.Fader.MinAlpha = MIN_ALPHA
     self.Fader.MaxAlpha = MAX_ALPHA
+    self.Fader.currentAlpha = MIN_ALPHA
 
     self.Fader.correspondingFrames = self.Fader.correspondingFrames or {}
+    self.Fader._faderHookedFrames = self.Fader._faderHookedFrames or {}
 
     self.Fader:SetScript("OnEvent", function(_, event, ...) Update(self, event, ...) end)
+    self.Fader.enabled = true
 end
 
 local function Disable(self)
@@ -384,12 +452,14 @@ local function Disable(self)
             end
         end
 
-        wipe(self.Fader.correspondingFrames)
+        wipe(self.Fader._faderHookedFrames or {})
+        wipe(self.Fader.correspondingFrames or {})
         self.Fader.count = nil
         self.Fader:ClearTimers()
         GW.AddToAnimation(self:GetDebugName(), self:GetAlpha(), 1, GetTime(), 0.33, function(p) self:SetAlpha(p) end, 1)
 
         self.Fader:SetScript("OnEvent", nil)
+        self.Fader.enabled = false
     end
 end
 GW.FrameFadeEnable = Enable

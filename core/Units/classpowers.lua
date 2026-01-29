@@ -89,9 +89,33 @@ local function HandleUnitAuraEvent(unit, ...)
     end
 end
 
+local function UpdateAlphaFader(alpha)
+    for _, frame in ipairs({
+        CPWR_FRAME,
+        CPWR_FRAME.customResourceBar,
+        CPWR_FRAME.customResourceBar,
+        CPWR_FRAME.customResourceBar.decay,
+        CPWR_FRAME.lmb,
+        CPWR_FRAME.lmb.decay,
+        CPWR_FRAME.lmbSecret,
+        CPWR_FRAME.exbar,
+        CPWR_FRAME.exbar.decay,
+        CPWR_FRAME.exbarSecret
+    }) do
+        if frame then
+            GW.SetAlphaRecursive(frame, alpha)
+        end
+    end
+end
+
 local function UpdateVisibility(self, inCombat)
     local shouldBeVisible = self.shouldShowBar and (not self.onlyShowInCombat or inCombat)
     local targetAlpha = shouldBeVisible and 1 or 0
+
+    if GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame.Fader:IsEnabled() then
+        targetAlpha = GwPlayerUnitFrame.Fader.currentAlpha
+    end
+
     for _, frame in ipairs({
         self,
         self.customResourceBar,
@@ -2282,6 +2306,8 @@ local function LoadClassPowers()
     cpf.gwPlayerForm = GetShapeshiftFormID()
     cpf.unit = "player"
     cpf:Show()
+
+    cpf.UpdateAlphaFader = UpdateAlphaFader
 
     updateVisibilitySetting(cpf, false)
     selectType(cpf)
