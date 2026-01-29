@@ -37,6 +37,7 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
     self.showHealthPrecentage = GW.settings.PLAYER_UNIT_HEALTH == "PREC" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
     self.classColor = GW.settings.player_CLASS_COLOR
     self.showAbsorbBar = GW.settings.PLAYER_SHOW_ABSORB_BAR
+    self.powerbar.showBarValues = GW.settings.CLASSPOWER_SHOW_VALUE
 
     local frameFaderSettings = GW.settings.playerFrameFader
     if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health or frameFaderSettings.vehicle or frameFaderSettings.playertarget then
@@ -55,7 +56,6 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
         self.Fader:AddCorrespondingFrames("GwPlayerPowerBar")
         self.Fader:AddCorrespondingFrames("GwPlayerClassPower")
 
-
         self.Fader:ClearTimers()
         self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)
     elseif self.Fader then
@@ -73,9 +73,9 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
         self.powerbar.spark:SetHeight(3)
         self.powerbar.label:Hide()
     end
-    self.powerbar.showBarValues = GW.settings.CLASSPOWER_SHOW_VALUE
 
     self:UpdateHealthBar()
+    self.powerbar:UpdatePowerData()
     self:UnitFrameData()
 end
 

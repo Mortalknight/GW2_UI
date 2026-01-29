@@ -241,29 +241,11 @@ function GwPlayerPetFrameMixin:ToggleCombatFeedback()
     end
 end
 
-function GwPlayerPetFrameMixin:UpdateHealthTextString(health)
-    local formatFunction
-    GW.Debug("OVERRIDEN FUNCTION: UpdateHealthTextString")
-
-    if GW.Retail then
-        if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
-            formatFunction = AbbreviateNumbers
-        else
-            formatFunction = BreakUpLargeNumbers
-        end
-    else
-        if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
-            formatFunction = GW.ShortValue
-        else
-            formatFunction = GW.GetLocalizedNumber
-        end
-    end
-
-    self.health.text:SetText(formatFunction(health))
-end
-
 function GwPlayerPetFrameMixin:UpdateSettings()
     self.showAbsorbBar = GW.settings.PET_SHOW_ABSORB_BAR
+    self.shortendHealthValues = GW.settings.PET_UNIT_HEALTH_SHORT_VALUES
+    self.showHealthValue = GW.settings.PET_HEALTH_VALUE_RAW
+    self.showHealthPrecentage = GW.settings.PET_HEALTH_VALUE_PERCENT
     self:OnEvent("UNIT_PET", "player")
 end
 
@@ -283,6 +265,7 @@ local function LoadPetFrame(lm)
         GW.AddStatusbarAnimation(playerPetFrame.powerbar, true)
     end
 
+    playerPetFrame.healthString = playerPetFrame.health.text
     playerPetFrame.health.customMaskSize = 64
     playerPetFrame.powerbar.customMaskSize = 64
 

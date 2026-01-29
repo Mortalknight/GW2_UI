@@ -180,6 +180,9 @@ GW.globalDefault = {
         PET_FLOATING_COMBAT_TEXT= false,
         PET_AURAS_UNDER= false,
         PET_SHOW_ABSORB_BAR = true,
+        PET_HEALTH_VALUE_RAW = true,
+        PET_HEALTH_VALUE_PERCENT = false,
+
 
         BUTTON_ASSIGNMENTS= true,
 
