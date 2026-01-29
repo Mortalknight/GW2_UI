@@ -17,14 +17,14 @@ end
 
 local function formatHealthValue(value)
     if GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES then
-        return AbbreviateLargeNumbers(value)
+        return AbbreviateNumbers(value)
     end
 
     return BreakUpLargeNumbers(value)
 end
 
 local function formatShieldValue(value)
-    return GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES and AbbreviateLargeNumbers(value) or BreakUpLargeNumbers(value)
+    return GW.settings.PLAYER_UNIT_SHIELD_SHORT_VALUES and AbbreviateNumbers(value) or BreakUpLargeNumbers(value)
 end
 
 function GwHealthglobeMixin:UpdateHealthData()

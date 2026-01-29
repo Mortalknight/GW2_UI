@@ -193,7 +193,7 @@ function GwPartyFrameMixin:UpdateHealthTextString(healthCur, healthPrec, healthM
     end
 
     if GW.Retail then
-        local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and AbbreviateLargeNumbers or BreakUpLargeNumbers
+        local formatFunc = GW.settings.PARTY_UNIT_HEALTH_SHORT_VALUES and AbbreviateNumbers or BreakUpLargeNumbers
 
         if GW.settings.PARTY_UNIT_HEALTH == "PREC" then
             self.healthString:SetText(string.format("%.0f%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100)))

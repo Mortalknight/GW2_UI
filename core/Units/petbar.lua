@@ -247,7 +247,7 @@ function GwPlayerPetFrameMixin:UpdateHealthTextString(health)
 
     if GW.Retail then
         if GW.settings.PET_UNIT_HEALTH_SHORT_VALUES then
-            formatFunction = AbbreviateLargeNumbers
+            formatFunction = AbbreviateNumbers
         else
             formatFunction = BreakUpLargeNumbers
         end

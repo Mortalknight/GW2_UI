@@ -5,7 +5,7 @@ GwUnitHealthbarMixin = {}
 function GwUnitHealthbarMixin:UpdateHealthTextString(health, healthPrecentage)
     local text = ""
     if GW.Retail then
-        local formatFunc = self.shortendHealthValues and AbbreviateLargeNumbers or BreakUpLargeNumbers
+        local formatFunc = self.shortendHealthValues and AbbreviateNumbers or BreakUpLargeNumbers
         local pctText = string.format("%.0f%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100))
         if self.showHealthValue and self.showHealthPrecentage then
             text = self.frameInvert and (string.format("%s - %s", pctText, formatFunc(health))) or (string.format("%s - %s", formatFunc(health), pctText))
