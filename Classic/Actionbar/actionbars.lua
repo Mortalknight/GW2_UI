@@ -354,6 +354,10 @@ local function updateHotkey(self)
         hotkey:SetText(text)
     else
         hotkey:SetText("")
+        hotkey:Hide()
+        if self.hkBg then
+            self.hkBg.texture:Hide()
+        end
     end
 end
 GW.updateHotkey = updateHotkey

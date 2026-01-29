@@ -130,11 +130,19 @@ local function updateActionbarBorders(btn)
         btn.gwBackdrop.border2:SetAlpha(1)
         btn.gwBackdrop.border3:SetAlpha(1)
         btn.gwBackdrop.border4:SetAlpha(1)
+        btn.HotKey:Show()
+        if btn.hkBg then
+            btn.hkBg.texture:Show()
+        end
     else
         btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        btn.HotKey:Hide()
+        if btn.hkBg then
+            btn.hkBg.texture:Hide()
+        end
     end
 end
 
@@ -345,11 +353,6 @@ AFP("createFaderAnim", createFaderAnim)
 
 local function updateHotkey(self)
     local hotkey = self.HotKey
-    local text = hotkey:GetText()
-
-    if text == nil then
-        return
-    end
 
     if GW.settings.BUTTON_ASSIGNMENTS then
         hotkey:Show()
@@ -363,29 +366,34 @@ local function updateHotkey(self)
         end
     end
 
-    text = gsub(text, "(s%-)", "S")
-    text = gsub(text, "(a%-)", "A")
-    text = gsub(text, "(c%-)", "C")
-    text = gsub(text, KEY_BUTTON3, "M3") --middle mouse Button
-    text = gsub(text, gsub(KEY_BUTTON4, " 4", ""), "M") -- mouse button
-    text = gsub(text, KEY_PAGEUP, "PU")
-    text = gsub(text, KEY_PAGEDOWN, "PD")
-    text = gsub(text, KEY_SPACE, "SpB")
-    text = gsub(text, KEY_INSERT, "Ins")
-    text = gsub(text, KEY_HOME, "Hm")
-    text = gsub(text, KEY_DELETE, "Del")
-    text = gsub(text, KEY_LEFT, "LT")
-    text = gsub(text, KEY_RIGHT, "RT")
-    text = gsub(text, KEY_UP, "UP")
-    text = gsub(text, KEY_DOWN, "DN")
-    text = gsub(text, gsub(KEY_NUMPADPLUS, "%+", ""), "N") -- for all numpad keys
-    text = gsub(text, KEY_MOUSEWHEELDOWN, 'MwD')
-    text = gsub(text, KEY_MOUSEWHEELUP, 'MwU')
+    local text = hotkey:GetText()
+    if text and text ~= RANGE_INDICATOR then
+        text = gsub(text, "(s%-)", "S")
+        text = gsub(text, "(a%-)", "A")
+        text = gsub(text, "(c%-)", "C")
+        text = gsub(text, KEY_BUTTON3, "M3") --middle mouse Button
+        text = gsub(text, gsub(KEY_BUTTON4, " 4", ""), "M") -- mouse button
+        text = gsub(text, KEY_PAGEUP, "PU")
+        text = gsub(text, KEY_PAGEDOWN, "PD")
+        text = gsub(text, KEY_SPACE, "SpB")
+        text = gsub(text, KEY_INSERT, "Ins")
+        text = gsub(text, KEY_HOME, "Hm")
+        text = gsub(text, KEY_DELETE, "Del")
+        text = gsub(text, KEY_LEFT, "LT")
+        text = gsub(text, KEY_RIGHT, "RT")
+        text = gsub(text, KEY_UP, "UP")
+        text = gsub(text, KEY_DOWN, "DN")
+        text = gsub(text, gsub(KEY_NUMPADPLUS, "%+", ""), "N") -- for all numpad keys
+        text = gsub(text, KEY_MOUSEWHEELDOWN, 'MwD')
+        text = gsub(text, KEY_MOUSEWHEELUP, 'MwU')
 
-    if hotkey:GetText() == RANGE_INDICATOR then
-        hotkey:SetText("")
-    else
         hotkey:SetText(text)
+    else
+        hotkey:SetText("")
+        hotkey:Hide()
+        if self.hkBg then
+            self.hkBg.texture:Hide()
+        end
     end
 end
 GW.updateHotkey = updateHotkey

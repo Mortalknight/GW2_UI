@@ -117,11 +117,19 @@ local function updateActionbarBorders(btn)
         btn.gwBackdrop.border2:SetAlpha(1)
         btn.gwBackdrop.border3:SetAlpha(1)
         btn.gwBackdrop.border4:SetAlpha(1)
+        btn.HotKey:Show()
+        if btn.hkBg then
+            btn.hkBg.texture:Show()
+        end
     else
         btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        btn.HotKey:Hide()
+        if btn.hkBg then
+            btn.hkBg.texture:Hide()
+        end
     end
 end
 
@@ -328,6 +336,7 @@ local function createFaderAnim(self, state)
 end
 
 local function updateHotkey(self)
+    self:HasAction()
     local hotkey = self.HotKey
 
     if GW.settings.BUTTON_ASSIGNMENTS then
@@ -374,6 +383,10 @@ local function updateHotkey(self)
         hotkey:SetText(text)
     else
         hotkey:SetText("")
+        hotkey:Hide()
+        if self.hkBg then
+            self.hkBg.texture:Hide()
+        end
     end
 end
 GW.updateHotkey = updateHotkey
