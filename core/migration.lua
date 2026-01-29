@@ -296,6 +296,24 @@ local function DatabaseValueMigration()
         GW.settings.target_BUFFS_FILTER_IMPORTANT = false
         GW.settings.focus_BUFFS_FILTER_IMPORTANT = false
     end
+
+    -- raid power bar settings
+    if GW.settings.RAID_POWER_BARS_RAID10 ~= nil then
+        GW.settings.raid10_show_powerbar = GW.settings.RAID_POWER_BARS_RAID10 and "ALL" or "NONE"
+        GW.settings.RAID_POWER_BARS_RAID10 = nil
+    end
+    if GW.settings.RAID_POWER_BARS_RAID25 ~= nil then
+        GW.settings.raid25_show_powerbar = GW.settings.RAID_POWER_BARS_RAID25 and "ALL" or "NONE"
+        GW.settings.RAID_POWER_BARS_RAID25 = nil
+    end
+    if GW.settings.RAID_POWER_BARS ~= nil then
+        GW.settings.raid40_show_powerbar = GW.settings.RAID_POWER_BARS and "ALL" or "NONE"
+        GW.settings.RAID_POWER_BARS = nil
+    end
+    if GW.settings.RAID_POWER_BARS_PARTY ~= nil then
+        GW.settings.party_grid_show_powerbar = GW.settings.RAID_POWER_BARS_PARTY and "ALL" or "NONE"
+        GW.settings.RAID_POWER_BARS_PARTY = nil
+    end
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
 

@@ -39,7 +39,7 @@ local function UpdateGridRaidPetFrame(frame)
     -- set frame settings
     frame.useClassColor = GW.settings.RAID_CLASS_COLOR_PET
     frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON_PET
-    frame.showResscoureBar = GW.settings.RAID_POWER_BARS_PET
+    frame.showResscoureBar = GW.settings.pet_show_powerbar
     frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_PET
     frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_PET
     frame.showTargetmarker = GW.settings.RAID_UNIT_MARKERS_PET

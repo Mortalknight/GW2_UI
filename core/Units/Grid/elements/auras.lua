@@ -267,7 +267,6 @@ local function Construct_Auras(frame)
     frame:RegisterEvent("PLAYER_REGEN_DISABLED", HandleTooltip, true)
     frame:RegisterEvent("PLAYER_REGEN_ENABLED", HandleTooltip, true)
 
-
     if not GW.Retail then
         -- construct the aura indicators
         local indicatorTopleft = CreateFrame("Frame", '$parentIndicatorTopleft', frame, "GwGridFrameAuraIndicator")
@@ -339,16 +338,12 @@ GW.Construct_Auras = Construct_Auras
 local function UpdateAurasSettings(frame)
     frame.Auras:ClearAllPoints()
     frame.Auras:SetPoint('TOPLEFT', frame, 'TOPLEFT')
-    if frame.showResscoureBar then
+    if frame.showResscoureBar == "ALL" or frame.showResscoureBar == "HEALER" then
         frame.Auras:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -2, 5)
     else
         frame.Auras:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', -2, 2)
     end
 
-    frame.Auras.initialAnchor = "BOTTOMRIGHT"
-    frame.Auras.growthX = "LEFT"
-    frame.Auras.spacingX = 2
-    frame.Auras.spacingY = 2
     frame.Auras:SetSize(frame.unitWidth - 2, frame.unitHeight - 2)
     frame.Auras.forceShow = frame.forceShowAuras
 

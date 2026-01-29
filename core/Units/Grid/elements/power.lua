@@ -7,6 +7,15 @@ local function GetRandomPowerColor()
     return color
 end
 
+local function GetRole(frame)
+    if frame.isForced then
+		local rnd = random(1, 3)
+		return (rnd == 1 and 'TANK') or (rnd == 2 and 'HEALER') or 'DAMAGER'
+	else
+		return GW.allowRoles and UnitGroupRolesAssigned(frame.unit)
+	end
+end
+
 local function PostUpdatePower(self)
     local parent = self.origParent or self:GetParent()
     if parent.isForced then
@@ -33,6 +42,15 @@ local function PostUpdatePowerColor(self, unit)
             self:GetStatusBarTexture():SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
         end
         self.fakeToken = nil
+    end
+
+    local onlyHealer = parent.showResscoureBar == "HEALER"
+    local all = parent.showResscoureBar == "ALL"
+
+    if all or (onlyHealer and GetRole(parent) == "HEALER") then
+        self:Show()
+    else
+        self:Hide()
     end
 end
 
@@ -67,8 +85,6 @@ local function Update_Powerbar(frame)
     power:ClearAllPoints()
     power:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
     power:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-
-    power:SetShown(frame.showResscoureBar)
 
     if not power.origParent.isForced then
         power.fakeToken = nil

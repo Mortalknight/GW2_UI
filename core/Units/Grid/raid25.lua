@@ -38,7 +38,7 @@ local function UpdateGridRaid25Frame(frame)
     -- set frame settings
     frame.useClassColor = GW.settings.RAID_CLASS_COLOR_RAID25
     frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON_RAID25
-    frame.showResscoureBar = GW.settings.RAID_POWER_BARS_RAID25
+    frame.showResscoureBar = GW.settings.raid25_show_powerbar
     frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_RAID25
     frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_RAID25
     frame.showTargetmarker = GW.settings.RAID_UNIT_MARKERS_RAID25

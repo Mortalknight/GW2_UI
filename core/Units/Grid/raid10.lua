@@ -20,7 +20,7 @@ local function GridRaid10StyleRegister(self)
     self.HealthValueText = GW.Construct_HealtValueText(self)
     self.Power = GW.Construct_PowerBar(self)
     self.MiddleIcon = GW.Construct_MiddleIcon(self)
-    self.ThreatIndicator = GW.Construct_ThreathIndicator(self) 
+    self.ThreatIndicator = GW.Construct_ThreathIndicator(self)
     self.ReadyCheckIndicator = GW.Construct_ReadyCheck(self)
     self.SummonIndicator = GW.Construct_SummonIcon(self)
     self.ResurrectIndicator = GW.Construct_ResurrectionIcon(self)
@@ -38,7 +38,7 @@ local function UpdateGridRaid10Frame(frame)
     -- set frame settings
     frame.useClassColor = GW.settings.RAID_CLASS_COLOR_RAID10
     frame.hideClassIcon = GW.settings.RAID_HIDE_CLASS_ICON_RAID10
-    frame.showResscoureBar = GW.settings.RAID_POWER_BARS_RAID10
+    frame.showResscoureBar = GW.settings.raid10_show_powerbar
     frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_RAID10
     frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_RAID10
     frame.showTargetmarker = GW.settings.RAID_UNIT_MARKERS_RAID10
