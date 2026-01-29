@@ -267,6 +267,8 @@ local function LoadObjectivesTracker()
     objectivesTracker.ScrollFrame = objectivesTracker:CreateTrackerScrollFrame("GwQuestTrackerScroll", GW.settings.QuestTracker_pos_height)
     objectivesTracker.ScrollFrame.Child = CreateFrame("Frame", "GwQuestTrackerScrollChild", objectivesTracker.ScrollFrame, objectivesTracker)
 
+    GW.MixinHideDuringPet(objectivesTracker)
+
     GW.QuestTrackerFixedContainer = {}
     GW.QuestTrackerScrollableContainer = {}
 

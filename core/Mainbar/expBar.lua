@@ -649,8 +649,9 @@ local function LoadXPBar()
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
     experiencebar.tooltip = {}
 
-    if GW.Mists then
-        GW.MixinHideDuringOverride(experiencebar)
+    if PetBattleFrame then
+        PetBattleFrame.BottomFrame:SetPoint("BOTTOM", PetBattleFrame, "BOTTOM", 0, 14)
+        PetBattleFrame.BottomFrame:SetFrameLevel(PetBattleFrame.BottomFrame:GetFrameLevel() + 5)
     end
 
     if GW.Retail or GW.TBC then
