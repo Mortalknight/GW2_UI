@@ -349,9 +349,9 @@ function GwPlayerPowerBarMixin:OnUpdate()
 
     if self.textUpdate < GetTime() then
         if GW.Retail then
-            self.powerBarString:SetText(power)
+            self.powerBarString:SetText(self.showBarValues and power or "")
         else
-            self.powerBarString:SetText(GW.GetLocalizedNumber(powerMax * powerPrec))
+            self.powerBarString:SetText(self.showBarValues and GW.GetLocalizedNumber(powerMax * powerPrec) or "")
         end
         self.textUpdate = GetTime() + 0.2
     end
@@ -383,10 +383,10 @@ function GwPlayerPowerBarMixin:UpdatePowerData(forcePowerType, powerToken)
     self:SetPowerBarVisuals(forcePowerType, powerToken)
 
     if GW.Retail then
-        self.label:SetText(BreakUpLargeNumbers(power))
+        self.label:SetText(self.showBarValues and BreakUpLargeNumbers(power) or "")
         self:SetValue(powerPrec, Enum.StatusBarInterpolation.ExponentialEaseOut)
     else
-        self.label:SetText(GW.GetLocalizedNumber(self.lostKnownPower))
+        self.label:SetText(self.showBarValues and GW.GetLocalizedNumber(self.lostKnownPower) or "")
         self:SetFillAmount(powerPrec)
     end
 
@@ -436,6 +436,11 @@ function GwPlayerPowerBarMixin:ToggleBar()
         self:SetScript("OnEvent", nil)
         GW.ToggleMover(self.gwMover, false)
     end
+end
+
+function GwPlayerPowerBarMixin:ToggleSettings()
+    self.showBarValues = GW.settings.CLASSPOWER_SHOW_VALUE
+    self:UpdatePowerData()
 end
 
 local function LoadPowerBar()
@@ -493,6 +498,7 @@ local function LoadPowerBar()
     playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
     playerPowerBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
+    playerPowerBar:ToggleSettings()
     playerPowerBar:ToggleBar()
 
     if (GW.Classic or GW.TBC) and GW.settings.PLAYER_ENERGY_MANA_TICK then

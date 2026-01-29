@@ -920,7 +920,7 @@ function GwUnitFrameMixin:ToggleSettings()
     end
 
     if GwPlayerClassPower then
-        GW.UpdateClasspowerBar(GwPlayerClassPower.decay, "FORCE_UPDATE")
+        GW.UpdateClasspowerSetting(GwPlayerClassPower)
     end
 
     if unit == "target" then

@@ -73,6 +73,7 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
         self.powerbar.spark:SetHeight(3)
         self.powerbar.label:Hide()
     end
+    self.powerbar.showBarValues = GW.settings.CLASSPOWER_SHOW_VALUE
 
     self:UpdateHealthBar()
     self:UnitFrameData()

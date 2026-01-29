@@ -57,25 +57,43 @@ local function LoadPlayerPanel(sWindow)
     fader.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     fader.breadcrumb:SetText(L["Fader"])
 
+    local classpower = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    classpower.panelId = "player_classpower"
+    classpower.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    classpower.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    classpower.header:SetText(PLAYER)
+    classpower.sub:SetFont(UNIT_NAME_FONT, 12)
+    classpower.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    classpower.sub:SetText("")
+    classpower.header:SetWidth(fader.header:GetStringWidth())
+    classpower.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    classpower.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    classpower.breadcrumb:SetText(L["Class Power"])
+
     p_player:AddOption(L["Player frame in target frame style"], nil, {getterSetter = "PLAYER_AS_TARGET_FRAME", callback = function() GW.ShowRlPopup = true end, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
     p_player:AddOption(L["Show alternative background texture"], nil, {getterSetter = "PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
     p_player:AddOption(L["Show absorb bar"], nil, {getterSetter = "PLAYER_SHOW_ABSORB_BAR", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}, hidden = GW.Classic or GW.TBC})
 
-    p_player:AddOption(L["Extend Ressourcebar size"], nil, {getterSetter = "PlayerTargetFrameExtendRessourcebar", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
-    p_player:AddOption(RAID_USE_CLASS_COLORS, nil, {getterSetter = "player_CLASS_COLOR", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
-    p_player:AddOption(L["Show an additional resource bar"], nil, {getterSetter = "PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR", callback = function() GwPlayerPowerBar:ToggleBar(); GW.UpdateClassPowerExtraManabar() end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true, ["POWERBAR_ENABLED"] = true}})
+        p_player:AddOption(RAID_USE_CLASS_COLORS, nil, {getterSetter = "player_CLASS_COLOR", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
     p_player:AddOption(L["PvP Indicator"], nil, {getterSetter = "PLAYER_SHOW_PVP_INDICATOR", dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
-    p_player:AddOption(L["Energy/Mana Ticker"], L["5 second rule: display remaining time"], {getterSetter = "PLAYER_ENERGY_MANA_TICK", PLAYER_ENERGY_MANA_TICK_HIDE_OFC = GW.Update5SrHot,  dependence = {["POWERBAR_ENABLED"] = true}, hidden = GW.Retail or GW.Mists})
-    p_player:AddOption(L["Show Energy/Mana Ticker only in combat"], nil, {getterSetter = "PLAYER_ENERGY_MANA_TICK", callback = GW.Update5SrHot,  dependence = {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true}, hidden = GW.Retail or GW.Mists})
     p_player:AddOption(L["Show spell queue window on castingbar"], nil, {getterSetter = "PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW", dependence = {["CASTINGBAR_ENABLED"] = true, ["CASTINGBAR_DATA"] = true}})
     p_player:AddOption(L["Show character item info"], L["Display gems and enchants on the GW2 character panel"], {getterSetter = "SHOW_CHARACTER_ITEM_INFO", callback = function() if not (GW.Classic or GW.TBC) then GW.ToggleCharacterItemInfo() end end, dependence = {["USE_CHARACTER_WINDOW"] = true}})
-    p_player:AddOption(L["Show classpower bar only in combat"], nil, {getterSetter = "CLASSPOWER_ONLY_SHOW_IN_COMBAT", callback = function() GW.UpdateClassPowerVisibilitySetting(GwPlayerClassPower, true) end, dependence = {["CLASS_POWER"] = true}, hidden = GW.Classic or GW.TBC})
     p_player:AddOption(L["Shorten health values"], nil, {getterSetter = "PLAYER_UNIT_HEALTH_SHORT_VALUES", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
     p_player:AddOption(L["Shorten shield values"], nil, {getterSetter = "PLAYER_UNIT_SHIELD_SHORT_VALUES", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Retail})
     p_player:AddOption(L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], {getterSetter = "CASTINGBAR_DATA", callback = function(value) GW.TogglePlayerEnhancedCastbar(GwCastingBarPlayer, value); GW.TogglePlayerEnhancedCastbar(GwCastingBarPet, value); end, dependence = {["CASTINGBAR_ENABLED"] = true}})
     p_player:AddOption(L["Ticks"], L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."], {getterSetter = "showPlayerCastBarTicks", dependence = {["CASTINGBAR_ENABLED"] = true}})
     p_player:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "PLAYER_UNIT_HEALTH", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = {"NONE", "PREC", "VALUE", "BOTH"}, optionNames = {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH}, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
-    p_player:AddOptionDropdown(L["Show Shield Value"], nil, { getterSetter = "PLAYER_UNIT_ABSORB", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = {"NONE", "PREC", "VALUE", "BOTH"}, optionNames = {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH}, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = false}, hidden = GW.Classic or GW.TBC or GW.Retail})
+
+    local absorbSettingsList = {"NONE", "PREC", "VALUE", "BOTH"}
+    local absorbSettingsNames = {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH}
+    if GW.Retail then
+        tremove(absorbSettingsList, 4)
+        tremove(absorbSettingsList, 4)
+        tremove(absorbSettingsNames, 2)
+        tremove(absorbSettingsNames, 2)
+    end
+
+    p_player:AddOptionDropdown(L["Show Shield Value"], nil, { getterSetter = "PLAYER_UNIT_ABSORB", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = absorbSettingsList, optionNames = absorbSettingsNames, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = false}, hidden = GW.Classic or GW.TBC})
 
     p_player:AddOptionText(L["Dodge Bar Ability"], L["Enter the spell ID which should be tracked by the dodge bar.\nIf no ID is entered, the default abilities based on your specialization and talents are tracked."], { getterSetter = "PLAYER_TRACKED_DODGEBAR_SPELL", callback = function(self)
             local spellId = self:GetNumber()
@@ -129,6 +147,17 @@ local function LoadPlayerPanel(sWindow)
     fader:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "playerFrameFader.minAlpha", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
     fader:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "playerFrameFader.maxAlpha", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
 
-    sWindow:AddSettingsPanel(p, PLAYER, L["Modify the player frame settings."], {{name = GENERAL, frame = p_player}, {name = L["Buffs"], frame = p_player_aura}, {name = L["Debuffs"], frame = p_player_debuff}, {name = L["Fader"], frame = fader}})
+
+    -- Classpower
+    classpower:AddOption(L["Show value on bar"], nil, {getterSetter = "CLASSPOWER_SHOW_VALUE", callback = function() GW.UpdateClasspowerSetting(GwPlayerClassPower); GwPlayerPowerBar:ToggleSettings(); if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["CLASS_POWER"] = true}, hidden = GW.Classic or GW.TBC})
+    classpower:AddOption(L["Anchor classpower bar to center"], nil, {getterSetter = "CLASSPOWER_ANCHOR_TO_CENTER", callback = function() GW.UpdateClasspowerSetting(GwPlayerClassPower) end, dependence = {["CLASS_POWER"] = true}, hidden = GW.Classic or GW.TBC})
+    classpower:AddOption(L["Show classpower bar only in combat"], nil, {getterSetter = "CLASSPOWER_ONLY_SHOW_IN_COMBAT", callback = function() GW.UpdateClassPowerVisibilitySetting(GwPlayerClassPower, true) end, dependence = {["CLASS_POWER"] = true}, hidden = GW.Classic or GW.TBC})
+    classpower:AddOption(L["Extend Ressourcebar size"], nil, {getterSetter = "PlayerTargetFrameExtendRessourcebar", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
+    classpower:AddOption(L["Energy/Mana Ticker"], L["5 second rule: display remaining time"], {getterSetter = "PLAYER_ENERGY_MANA_TICK", PLAYER_ENERGY_MANA_TICK_HIDE_OFC = GW.Update5SrHot,  dependence = {["POWERBAR_ENABLED"] = true}, hidden = GW.Retail or GW.Mists})
+    classpower:AddOption(L["Show Energy/Mana Ticker only in combat"], nil, {getterSetter = "PLAYER_ENERGY_MANA_TICK", callback = GW.Update5SrHot,  dependence = {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true}, hidden = GW.Retail or GW.Mists})
+    classpower:AddOption(L["Show an additional resource bar"], nil, {getterSetter = "PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR", callback = function() GwPlayerPowerBar:ToggleBar(); GW.UpdateClassPowerExtraManabar() end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true, ["POWERBAR_ENABLED"] = true}})
+
+
+    sWindow:AddSettingsPanel(p, PLAYER, L["Modify the player frame settings."], {{name = GENERAL, frame = p_player}, {name = L["Buffs"], frame = p_player_aura}, {name = L["Debuffs"], frame = p_player_debuff}, {name = L["Fader"], frame = fader}, {name = L["Class Power"], frame = classpower}})
 end
 GW.LoadPlayerPanel = LoadPlayerPanel
