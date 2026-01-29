@@ -992,7 +992,6 @@ GW.globalDefault = {
         RAID_UNIT_MARKERS_PARTY= false,
         RAID_WIDTH_PARTY= 500,
         RAID_HEIGHT_PARTY= 80,
-        RAID_POWER_BARS_PARTY= true,
         RAID_GROUPS_PER_COLUMN_PARTY= 1,
         RAID_GROW_PARTY= "DOWN+RIGHT",
         RAID_SHOW_DEBUFFS_PARTY= true,
