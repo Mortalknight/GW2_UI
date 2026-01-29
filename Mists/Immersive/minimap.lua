@@ -324,6 +324,14 @@ do
     GW.SetupZoomReset = SetupZoomReset
 end
 
+function GW.UpdateMinimapSettings()
+    local width, height = GW.settings.MINIMAP_SIZE, (GW.settings.Minimap.KeepSizeRatio and GW.settings.MINIMAP_SIZE) or GW.settings.Minimap.Height
+    Minimap:SetSize(width, height)
+    Minimap.gwMover:SetSize(width, height)
+    Minimap:SetScale(GW.settings.MinimapScale)
+    Minimap.gwMover:SetScale(GW.settings.MinimapScale)
+end
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = getMinimapShape
@@ -530,14 +538,13 @@ local function LoadMinimap()
      --Reset Zoom function
     hooksecurefunc(Minimap, "SetZoom", GW.SetupZoomReset)
 
-    Minimap:SetScale(GW.settings.MinimapScale)
-    local size = GW.settings.MINIMAP_SIZE
-    Minimap:SetSize(size, size)
-
     -- mobeable stuff
     GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", ALL .. ",Blizzard,Map", {Minimap:GetSize()}, {"default"}, nil, MinimapPostDrag)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
+
+    GW.UpdateMinimapSettings()
+
     -- check on which side we need to set the buttons
     local x = Minimap:GetCenter()
     local screenWidth = UIParent:GetRight()
