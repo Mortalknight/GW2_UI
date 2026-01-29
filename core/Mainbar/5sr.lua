@@ -126,7 +126,7 @@ local function fsr_OnEvent(self, event, ...)
 end
 
 local function createStatusbar(playerFrame)
-    local fsr = CreateFrame("Frame", nil, playerFrame and playerFrame or GwPlayerPowerBar)
+    local fsr = CreateFrame("Frame", "GW2EnergyTicker", playerFrame and playerFrame or GwPlayerPowerBar)
     local width = playerFrame and 215 or 316
 
     fsr:ClearAllPoints()

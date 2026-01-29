@@ -30,6 +30,7 @@ function GwPlayerUnitFrameMixin:OnEvent(event, ...)
 end
 
 function GwPlayerUnitFrameMixin:ToggleSettings()
+    print("1322374t517238131")
     self.altBg:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
 
     self.shortendHealthValues = GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES
@@ -51,6 +52,16 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
         self.Fader:SetOption("Health", frameFaderSettings.health)
         self.Fader:SetOption("Vehicle", frameFaderSettings.vehicle)
         self.Fader:SetOption("PlayerTarget", frameFaderSettings.playertarget)
+
+        if (GW.Classic or GW.TBC) and GW.settings.PLAYER_ENERGY_MANA_TICK then
+            self.Fader:AddCorrespondingFrames(GW2EnergyTicker)
+        end
+        print(12313131)
+        if GW.settings.PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR then
+            print("Added")
+            self.Fader:AddCorrespondingFrames(GwPlayerPowerBar)
+        end
+
 
         self.Fader:ClearTimers()
         self.Fader.configTimer = C_Timer.NewTimer(0.25, function() self.Fader:ForceUpdate() end)

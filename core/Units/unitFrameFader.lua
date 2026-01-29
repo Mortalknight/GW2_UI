@@ -13,7 +13,6 @@ local function ClearTimers(element)
         element.configTimer = nil
     end
 end
-
 local function UpdateRange(self, unit)
     local element = self.Fader
     local isEligible = UnitIsConnected(unit) and UnitInParty(unit)
@@ -23,6 +22,13 @@ local function UpdateRange(self, unit)
         if GW.Retail then
             element.RangeAlpha = nil
             self:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
+            if element.correspondingFrames then
+            for _, frame in ipairs(element.correspondingFrames) do
+                if frame then
+                    frame:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
+                end
+            end
+        end
         else
             if not inRange then
                 element.RangeAlpha = element.MinAlpha
@@ -40,8 +46,22 @@ local function ToggleAlpha(self, element, endAlpha)
 
     if element.Smooth then
         GW.AddToAnimation(self:GetDebugName(), self:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) self:SetAlpha(p) end, 1)
+        if element.correspondingFrames then
+            for _, frame in ipairs(element.correspondingFrames) do
+                if frame then
+                    GW.AddToAnimation(frame:GetDebugName(), frame:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) frame:SetAlpha(p) end, 1)
+                end
+            end
+        end
     else
         self:SetAlpha(endAlpha)
+        if element.correspondingFrames then
+            for _, frame in ipairs(element.correspondingFrames) do
+                if frame then
+                    frame:SetAlpha(endAlpha)
+                end
+            end
+        end
     end
 end
 
@@ -53,6 +73,13 @@ local function Update(self, event, unit)
     local element = self.Fader
     if self.isForced or (not element or not element.count or element.count <= 0) then
         self:SetAlpha(1)
+        if element.correspondingFrames then
+            for _, frame in ipairs(element.correspondingFrames) do
+                if frame then
+                    frame:SetAlpha(1)
+                end
+            end
+        end
         return
     elseif element.Range and event ~= "OnRangeUpdate" then
         return
@@ -131,6 +158,11 @@ local function TargetScript(self)
             fader:ForceUpdate("TargetScript")
         else
             self:SetAlpha(0)
+            for _, frame in ipairs(self.correspondingFrames) do
+                if frame then
+                    frame:SetAlpha(0)
+                end
+            end
         end
     end
 end
@@ -319,6 +351,10 @@ local function SetOption(element, opt, state)
     end
 end
 
+local function AddCorrespondingFrames(element, frame)
+    tinsert(element.correspondingFrames, frame)
+end
+
 local function Enable(self)
     if not self.Fader then
         self.Fader = CreateFrame("Frame")
@@ -326,10 +362,13 @@ local function Enable(self)
     self.Fader.__owner = self
     self.Fader.ForceUpdate = ForceUpdate
     self.Fader.SetOption = SetOption
+    self.Fader.AddCorrespondingFrames = AddCorrespondingFrames
     self.Fader.ClearTimers = ClearTimers
 
     self.Fader.MinAlpha = MIN_ALPHA
     self.Fader.MaxAlpha = MAX_ALPHA
+
+    self.Fader.correspondingFrames = self.Fader.correspondingFrames or {}
 
     self.Fader:SetScript("OnEvent", function(_, event, ...) Update(self, event, ...) end)
 end
@@ -345,6 +384,7 @@ local function Disable(self)
             end
         end
 
+        wipe(self.Fader.correspondingFrames)
         self.Fader.count = nil
         self.Fader:ClearTimers()
         GW.AddToAnimation(self:GetDebugName(), self:GetAlpha(), 1, GetTime(), 0.33, function(p) self:SetAlpha(p) end, 1)
