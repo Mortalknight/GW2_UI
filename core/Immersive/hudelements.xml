@@ -213,7 +213,7 @@
     <Button name="GwMapFPS" frameStrata="MEDIUM" enableMouse="false" frameLevel="2" virtual="true">
         <Size x="50" y="20"></Size>
         <Anchors>
-            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-5" y="0"></Anchor>
         </Anchors>
         <Layers>
             <Layer>
