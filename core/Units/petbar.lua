@@ -246,6 +246,8 @@ function GwPlayerPetFrameMixin:UpdateSettings()
     self.shortendHealthValues = GW.settings.PET_UNIT_HEALTH_SHORT_VALUES
     self.showHealthValue = GW.settings.PET_HEALTH_VALUE_RAW
     self.showHealthPrecentage = GW.settings.PET_HEALTH_VALUE_PERCENT
+
+    self:SetScale(GW.settings.pet_pos_scale)
     self:OnEvent("UNIT_PET", "player")
 end
 
@@ -349,7 +351,7 @@ local function LoadPetFrame(lm)
         playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
     end
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, { "default", "scaleable" }, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, { "default" }, true)
     lm:RegisterPetFrame(playerPetFrame)
 
     playerPetFrame:ClearAllPoints()

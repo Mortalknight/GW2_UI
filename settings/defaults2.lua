@@ -391,6 +391,18 @@ GW.globalDefault = {
             hasMoved= false,
         },
         target_pos_scale= 1,
+        targetFrameHealthBarSize = {
+            height = 13,
+            width = 213,
+        },
+        targetFramePowerBarSize = {
+            height = 3,
+            width = 213,
+        },
+        targetFrameHealthBarTextOffset = {
+            x = 5,
+            y = 0,
+        },
 
         pet_pos= {
             point= "BOTTOMRIGHT",
@@ -418,6 +430,14 @@ GW.globalDefault = {
             hasMoved= false,
         },
         targettarget_pos_scale= 1,
+        targettargetFrameHealthBarSize = {
+            height = 13,
+            width = 148,
+        },
+        targettargetFramePowerBarSize = {
+            height = 3,
+            width = 148,
+        },
 
         focus_pos= {
             point= "CENTER",
@@ -427,6 +447,18 @@ GW.globalDefault = {
             hasMoved= false,
         },
         focus_pos_scale= 1,
+        focusFrameHealthBarSize = {
+            height = 13,
+            width = 213,
+        },
+        focusFrameHealthBarTextOffset = {
+            x = 5,
+            y = 0,
+        },
+        focusFramePowerBarSize = {
+            height = 3,
+            width = 213,
+        },
 
         focustarget_pos= {
             point= "CENTER",
@@ -436,6 +468,14 @@ GW.globalDefault = {
             hasMoved= false,
         },
         focustarget_pos_scale= 1,
+        focustargetFrameHealthBarSize = {
+            height = 13,
+            width = 148,
+        },
+        focustargetFramePowerBarSize = {
+            height = 3,
+            width = 148,
+        },
 
         MULTIBAR_MARGIIN = 2,
         MAINBAR_MARGIIN = 5,
@@ -1253,7 +1293,6 @@ GW.globalDefault = {
         CLASSPOWER_ONLY_SHOW_IN_COMBAT= false,
         CLASSPOWER_ANCHOR_TO_CENTER = false,
         CLASSPOWER_SHOW_VALUE = true,
-        PlayerTargetFrameExtendRessourcebar = false,
 
         player_pos= {
             point= "CENTER",
@@ -1263,6 +1302,22 @@ GW.globalDefault = {
             hasMoved= false,
         },
         player_pos_scale= 1,
+        playerFrameHealthBarSize = {
+            height = 13,
+            width = 213,
+        },
+        playerFramePowerBarSize = {
+            height = 3,
+            width = 213,
+        },
+        playerFrameHealthBarTextOffset = {
+            x = 5,
+            y = 0,
+        },
+        playerFramePowerBarTextOffset = {
+            x = 5,
+            y = 0,
+        },
 
         --general raid tag update rate
         tagUpdateRate = 0.2, -- eventTimerThreshold

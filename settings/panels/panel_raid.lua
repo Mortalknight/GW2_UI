@@ -495,7 +495,7 @@ local function LoadPartyProfile(panel)
     party:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "gridPartyFrameFader.maxAlpha", callback = function() GW.UpdateGridSettings("PARTY") end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
 
     -- Size and Positions
-    party:AddGroupHeader( L["Size and Positions"])
+    party:AddGroupHeader(L["Size and Positions"])
     party:AddOptionDropdown(L["Set Raid Growth Direction"], L["Set the grow direction for raid frames."], { getterSetter = "RAID_GROW_PARTY", callback = function() GW.UpdateGridSettings("PARTY", true) end, optionsList = grow, optionNames = MapTable(
         grow,
         function(dir)

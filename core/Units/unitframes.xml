@@ -112,18 +112,6 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString parentKey="nameString" text="unknown" inherits="GameFontNormalMed3" justifyH="LEFT" justifyV="MIDDLE">
-                    <Size x="200" y="15"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
-                    </Anchors>
-                </FontString>
-                <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="MIDDLE">
-                    <Size x="500" y="15"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
-                    </Anchors>
-                </FontString>
                 <FontString parentKey="threatString" text="" justifyH="CENTER" justifyV="MIDDLE">
                     <Size x="38" y="30"/>
                     <Anchors>
@@ -252,18 +240,6 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString parentKey="nameString" text="unknown" inherits="GameFontNormalMed3" justifyH="LEFT" justifyV="MIDDLE">
-                    <Size x="120" y="15"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
-                    </Anchors>
-                </FontString>
-                <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="MIDDLE">
-                    <Size x="30" y="15"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
-                    </Anchors>
-                </FontString>
                 <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="146" y="15"/>
                     <Anchors>
@@ -410,18 +386,6 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString parentKey="nameString" text="unknown" inherits="GameFontNormalMed3" justifyH="RIGHT" justifyV="MIDDLE">
-                    <Size x="200" y="15"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
-                    </Anchors>
-                </FontString>
-                <FontString parentKey="levelString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
-                    <Size x="213" y="15"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
-                    </Anchors>
-                </FontString>
                 <FontString parentKey="threatString" text="" justifyH="CENTER" justifyV="MIDDLE">
                     <Size x="38" y="30"/>
                     <Anchors>
@@ -540,6 +504,18 @@
                                         <Size x="215" y="15"/>
                                         <Anchors>
                                             <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="0"></Anchor>
+                                        </Anchors>
+                                    </FontString>
+                                    <FontString parentKey="nameString" text="unknown" inherits="GameFontNormalMed3" justifyH="LEFT" justifyV="MIDDLE">
+                                        <Size x="200" y="15"/>
+                                        <Anchors>
+                                            <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
+                                        </Anchors>
+                                    </FontString>
+                                    <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="MIDDLE">
+                                        <Size x="50" y="15"/>
+                                        <Anchors>
+                                            <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
                                         </Anchors>
                                     </FontString>
                                   </Layer>

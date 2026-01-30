@@ -94,6 +94,13 @@ local function LoadTargetPanel(sWindow)
     pPlayerPet:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "petFrameFader.minAlpha", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["PETBAR_ENABLED"] = true}})
     pPlayerPet:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "petFrameFader.maxAlpha", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["PETBAR_ENABLED"] = true}})
 
+    pPlayerPet:AddGroupHeader(L["Size"])
+    pPlayerPet:AddOptionSlider(L["Scale"], nil, { getterSetter = "pet_pos_scale", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence =  {["PETBAR_ENABLED"] = true}})
+
+    
+
+
+
     --TARGET
     p_target:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "target_SHOW_CASTBAR", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
     p_target:AddOption(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, L["Show health as a numerical value."], {getterSetter = "target_HEALTH_VALUE_ENABLED", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
@@ -112,8 +119,6 @@ local function LoadTargetPanel(sWindow)
     p_target:AddOption(L["Invert target frame"], nil, {getterSetter = "target_FRAME_INVERT", callback = function() GW.ShowRlPopup = true end, dependence = {["TARGET_ENABLED"] = true}})
     p_target:AddOption(L["Show alternative background texture"], nil, {getterSetter = "target_FRAME_ALT_BACKGROUND", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
     p_target:AddOption(L["Show absorb bar"], nil, {getterSetter = "target_SHOW_ABSORB_BAR", callback = function() GwTargetUnitFrame:ToggleSettings(); GwTargetTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
-
-
     p_target:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "target_ILVL", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["TARGET_ENABLED"] = true}, hidden = GW.Classic})
 
     p_target:AddGroupHeader(L["Fader"])
@@ -121,6 +126,18 @@ local function LoadTargetPanel(sWindow)
     p_target:AddOptionSlider(L["Smooth"], nil, { getterSetter = "targetFrameFader.smooth", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["TARGET_ENABLED"] = true}})
     p_target:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "targetFrameFader.minAlpha", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["TARGET_ENABLED"] = true}})
     p_target:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "targetFrameFader.maxAlpha", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence =  {["TARGET_ENABLED"] = true}})
+
+    p_target:AddGroupHeader(L["Size"])
+    p_target:AddOptionSlider(L["Scale"], nil, { getterSetter = "target_pos_scale", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence =  {["TARGET_ENABLED"] = true}})
+
+    p_target:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "targetFrameHealthBarSize.height", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
+    p_target:AddOptionSlider(L["Healthbar Width"], nil, { getterSetter = "targetFrameHealthBarSize.width", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
+    p_target:AddOptionSlider(L["Healthbar text x-offset"], nil, { getterSetter = "targetFrameHealthBarTextOffset.x", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
+    p_target:AddOptionSlider(L["Healthbar text y-offset"], nil, { getterSetter = "targetFrameHealthBarTextOffset.y", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})    
+
+    p_target:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "targetFramePowerBarSize.height", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
+    p_target:AddOptionSlider(L["Powerbar Width"], nil, { getterSetter = "targetFramePowerBarSize.width", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
+
 
     --TARGET OF TARGET
     pTargetOfTarget:AddOption(SHOW_TARGET_OF_TARGET_TEXT, L["Enable the target of target frame."], {getterSetter = "target_TARGET_ENABLED", callback = function() GwTargetTargetUnitFrame:ToggleUnitFrame() end, dependence = {["TARGET_ENABLED"] = true}})
@@ -132,6 +149,14 @@ local function LoadTargetPanel(sWindow)
     pTargetOfTarget:AddOptionSlider(L["Smooth"], nil, { getterSetter = "targettargetFrameFader.smooth", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
     pTargetOfTarget:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "targettargetFrameFader.minAlpha", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
     pTargetOfTarget:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "targettargetFrameFader.maxAlpha", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
+
+    pTargetOfTarget:AddGroupHeader(L["Size"])
+    pTargetOfTarget:AddOptionSlider(L["Scale"], nil, { getterSetter = "targettarget_pos_scale", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
+    pTargetOfTarget:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "targettargetFrameHealthBarSize.height", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
+    pTargetOfTarget:AddOptionSlider(L["Healthbar Width"], nil, { getterSetter = "targettargetFrameHealthBarSize.width", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
+    pTargetOfTarget:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "targettargetFramePowerBarSize.height", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
+    pTargetOfTarget:AddOptionSlider(L["Powerbar Width"], nil, { getterSetter = "targettargetFramePowerBarSize.width", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
+
 
     --FOCUS
     p_focus:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "focus_SHOW_CASTBAR", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
@@ -149,7 +174,6 @@ local function LoadTargetPanel(sWindow)
     p_focus:AddOption(L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], {getterSetter = "focus_CASTINGBAR_DATA", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
     p_focus:AddOption(L["Show absorb bar"], nil, {getterSetter = "focus_SHOW_ABSORB_BAR", callback = function() GwFocusUnitFrame:ToggleSettings(); GwFocusTargetUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic or GW.TBC})
 
-
     p_focus:AddOptionDropdown(L["Display additional information (ilvl, pvp level)"], L["Display the average item level, prestige level for friendly units or disable it."], { getterSetter = "focus_ILVL", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"ITEM_LEVEL", "PVP_LEVEL", "NONE"}, optionNames = {STAT_AVERAGE_ITEM_LEVEL, L["PvP Level"], NONE}, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic })
 
     p_focus:AddGroupHeader(L["Fader"], {hidden = GW.Classic})
@@ -157,6 +181,16 @@ local function LoadTargetPanel(sWindow)
     p_focus:AddOptionSlider(L["Smooth"], nil, { getterSetter = "focusFrameFader.smooth", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
     p_focus:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "focusFrameFader.minAlpha", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
     p_focus:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "focusFrameFader.maxAlpha", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
+
+    p_focus:AddGroupHeader(L["Size"])
+    p_focus:AddOptionSlider(L["Scale"], nil, { getterSetter = "focus_pos_scale", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence =  {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "focusFrameHealthBarSize.height", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSlider(L["Healthbar Width"], nil, { getterSetter = "focusFrameHealthBarSize.width", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSlider(L["Healthbar text x-offset"], nil, { getterSetter = "focusFrameHealthBarTextOffset.x", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSlider(L["Healthbar text y-offset"], nil, { getterSetter = "focusFrameHealthBarTextOffset.y", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "focusFramePowerBarSize.height", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSlider(L["Powerbar Width"], nil, { getterSetter = "focusFramePowerBarSize.width", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
+
 
     --TARGET OF FOCUS
     pTargetOfFocus:AddOption(MINIMAP_TRACKING_FOCUS, L["Display the focus target frame."], {getterSetter = "focus_TARGET_ENABLED", callback = function() GwFocusTargetUnitFrame:ToggleUnitFrame() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
@@ -166,8 +200,15 @@ local function LoadTargetPanel(sWindow)
     pTargetOfFocus:AddGroupHeader(L["Fader"], {hidden = GW.Classic})
     pTargetOfFocus:AddOptionDropdown(L["Fader"], nil, { getterSetter = "focustargetFrameFader", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, UNIT_TARGET, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"], hidden = GW.Classic})
     pTargetOfFocus:AddOptionSlider(L["Smooth"], nil, { getterSetter = "focusFrameFader.smooth", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic})
-    pTargetOfFocus:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "focusFrameFader.minAlpha", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic })
+    pTargetOfFocus:AddOptionSlider(L["Min Alpha"], nil, { getterSetter = "focusFrameFader.minAlpha", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic})
     pTargetOfFocus:AddOptionSlider(L["Max Alpha"], nil, { getterSetter = "focusFrameFader.maxAlpha", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0, max = 1, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}, hidden = GW.Classic})
+
+    pTargetOfFocus:AddGroupHeader(L["Size"])
+    pTargetOfFocus:AddOptionSlider(L["Scale"], nil, { getterSetter = "focustarget_pos_scale", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
+    pTargetOfFocus:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "focustargetFrameHealthBarSize.height", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
+    pTargetOfFocus:AddOptionSlider(L["Healthbar Width"], nil, { getterSetter = "focustargetFrameHealthBarSize.width", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
+    pTargetOfFocus:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "focustargetFramePowerBarSize.height", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
+    pTargetOfFocus:AddOptionSlider(L["Powerbar Width"], nil, { getterSetter = "focustargetFramePowerBarSize.width", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
 
 
     sWindow:AddSettingsPanel(p, UNITFRAME_LABEL, L["Modify the player pet frame settings."], panels)

@@ -39,6 +39,16 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
     self.showAbsorbBar = GW.settings.PLAYER_SHOW_ABSORB_BAR
     self.powerbar.showBarValues = GW.settings.CLASSPOWER_SHOW_VALUE
 
+    self:SetScale(GW.settings.player_pos_scale)
+    self.healthContainer:SetSize(GW.settings.playerFrameHealthBarSize.width, GW.settings.playerFrameHealthBarSize.height)
+    self.powerbarContainer:SetSize(GW.settings.playerFramePowerBarSize.width, GW.settings.playerFramePowerBarSize.height)
+    self.powerbar.spark:SetHeight(GW.settings.playerFramePowerBarSize.height)
+    self.powerbar.label:SetShown(GW.settings.playerFramePowerBarSize.height >= 10)
+    self.healthString:ClearAllPoints()
+    self.healthString:SetPoint("LEFT", self.health, "LEFT", GW.settings.playerFrameHealthBarTextOffset.x, GW.settings.playerFrameHealthBarTextOffset.y)
+    self.powerbar.label:ClearAllPoints()
+    self.powerbar.label:SetPoint("LEFT", self.powerbar, "LEFT", GW.settings.playerFramePowerBarTextOffset.x, GW.settings.playerFramePowerBarTextOffset.y)
+
     local frameFaderSettings = GW.settings.playerFrameFader
     if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health or frameFaderSettings.vehicle or frameFaderSettings.playertarget then
         GW.FrameFadeEnable(self)
@@ -62,18 +72,6 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
         GW.FrameFadeDisable(self)
     end
 
-    -- ressourcebar size
-    if GW.settings.PlayerTargetFrameExtendRessourcebar then
-        self.powerbarContainer:SetHeight(10)
-        self.powerbar.spark:SetHeight(10)
-        self.powerbar.label:Show()
-
-    else
-        self.powerbarContainer:SetHeight(3)
-        self.powerbar.spark:SetHeight(3)
-        self.powerbar.label:Hide()
-    end
-
     self:UpdateHealthBar()
     self.powerbar:UpdatePowerData()
     self:UnitFrameData()
@@ -93,7 +91,7 @@ local function LoadPlayerFrame()
 
     frame.powerbar.label:SetJustifyH("LEFT")
 
-    RegisterMovableFrame(frame, PLAYER, "player_pos",  ALL .. ",Unitframe", nil, {"default", "scaleable"})
+    RegisterMovableFrame(frame, PLAYER, "player_pos",  ALL .. ",Unitframe", nil, {"default"})
 
     frame:ClearAllPoints()
     frame:SetPoint("TOPLEFT", frame.gwMover)

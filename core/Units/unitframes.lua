@@ -47,6 +47,8 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
         f.absorbbg      = hg.damageAbsorb
         f.healPrediction= hg.healPrediction
         f.healthString  = hg.health.healthString
+        f.nameString    = hg.health.nameString
+        f.levelString   = hg.health.levelString
 
         f.hpValues = CreateUnitHealPredictionCalculator()
         f.hpValues:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MissingHealth)
@@ -99,6 +101,8 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
         f.absorbbg      = hg.healPrediction.absorbbg
         f.healPrediction= hg.healPrediction
         f.healthString  = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+        f.nameString    = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.nameString
+        f.levelString   = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.levelString
 
         GW.AddStatusbarAnimation(f.absorbOverlay, true)
         GW.AddStatusbarAnimation(f.antiHeal, true)
@@ -192,9 +196,6 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
     f.prestigebg:Hide()
     f.prestigeString:Hide()
 
-    f.healthValue = 0
-    f.barWidth = 214
-
     f:SetScript("OnEnter", f.OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
 
@@ -214,6 +215,8 @@ local function CreateSmallUnitFrame(name)
         f.absorbbg      = hg.damageAbsorb
         f.healPrediction= hg.healPrediction
         f.healthString  = hg.health.healthString
+        f.nameString    = hg.health.nameString
+        f.levelString   = hg.health.levelString
 
         f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusBarBackground")
         f.powerbar = f.powerbarContainer.powerbar
@@ -255,6 +258,8 @@ local function CreateSmallUnitFrame(name)
         f.absorbbg      = hg.healPrediction.absorbbg
         f.healPrediction= hg.healPrediction
         f.healthString  = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+        f.nameString    = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.nameString
+        f.levelString   = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.levelString
 
         f.powerbarContainer.powerbar = GW.CreateAnimatedStatusBar(name .. "Powerbar", f, nil, true)
         f.powerbar = f.powerbarContainer.powerbar
@@ -290,9 +295,6 @@ local function CreateSmallUnitFrame(name)
     f.castingbarNormal.castingString:SetShadowOffset(1, -1)
     f.castingbarNormal.castingTimeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
     f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
-
-    f.healthValue = 0
-    f.barWidth = 149
 
     f:SetScript("OnEnter", f.OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
@@ -540,7 +542,7 @@ function GwUnitFrameMixin:NormalCastBarAnimation(powerPrec)
 end
 
 function GwUnitFrameMixin:ProtectedCastAnimation(powerPrec)
-    local powerBarWidth = self.barWidth
+    local powerBarWidth = self.healthContainer:GetWidth()
     local bit = powerBarWidth / 16
     local spark = bit * math.floor(16 * (powerPrec))
     local segment = math.floor(16 * (powerPrec))
@@ -895,6 +897,16 @@ function GwUnitFrameMixin:ToggleSettings()
     self.debuffFilter = GW.settings[unit .. "_BUFFS_FILTER_ALL"] and "HARMFUL" or "PLAYER|HARMFUL"
     self.debuffFilterShowImportant = GW.settings[unit .. "_BUFFS_FILTER_IMPORTANT"]
 
+    self:SetScale(GW.settings[self.unit .. "_pos_scale"])
+    self.healthContainer:SetSize(GW.settings[self.unit .. "FrameHealthBarSize"].width, GW.settings[self.unit .. "FrameHealthBarSize"].height)
+    self.powerbarContainer:SetSize(GW.settings[self.unit .. "FramePowerBarSize"].width, GW.settings[self.unit .. "FramePowerBarSize"].height)
+    self.healthString:ClearAllPoints()
+    if self.frameInvert then
+        self.healthString:SetPoint("RIGHT", self.health, "RIGHT", GW.settings[self.unit .. "FrameHealthBarTextOffset"].x, GW.settings[self.unit .. "FrameHealthBarTextOffset"].y)
+    else
+        self.healthString:SetPoint("LEFT", self.health, "LEFT", GW.settings[self.unit .. "FrameHealthBarTextOffset"].x, GW.settings[self.unit .. "FrameHealthBarTextOffset"].y)
+    end
+
     self:OnEvent("FORCE_UPDATE")
 
     --frame fader
@@ -946,7 +958,7 @@ local function LoadUnitFrame(unit, frameInvert)
 
     LoadAuras(unitframe)
 
-    RegisterMovableFrame(unitframe, unit == "target" and TARGET or FOCUS, unit .. "_pos", ALL .. ",Unitframe", nil, {"default", "scaleable"})
+    RegisterMovableFrame(unitframe, unit == "target" and TARGET or FOCUS, unit .. "_pos", ALL .. ",Unitframe", nil, {"default"})
 
     unitframe:ClearAllPoints()
     unitframe:SetPoint("TOPLEFT", unitframe.gwMover)
@@ -1081,6 +1093,10 @@ function GwTargetUnitFrameMixin:ToggleSettings()
         GW.FrameFadeDisable(self)
     end
 
+    self:SetScale(GW.settings[self.unit .. "_pos_scale"])
+    self.healthContainer:SetSize(GW.settings[self.unit .. "FrameHealthBarSize"].width, GW.settings[self.unit .. "FrameHealthBarSize"].height)
+    self.powerbarContainer:SetSize(GW.settings[self.unit .. "FramePowerBarSize"].width, GW.settings[self.unit .. "FramePowerBarSize"].height)
+
     self.parentUnitFrame:OnEvent("FORCE_UPDATE")
 end
 
@@ -1106,7 +1122,7 @@ local function LoadTargetOfUnit(unit, parentUnitFrame)
 
     f.castingbarNormal.Pips = {}
 
-    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", ALL .. ",Unitframe", nil, {"default", "scaleable"})
+    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", ALL .. ",Unitframe", nil, {"default"})
 
     f:ClearAllPoints()
     f:SetPoint("TOPLEFT", f.gwMover)
