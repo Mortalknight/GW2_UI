@@ -12,12 +12,16 @@ function GW.UpdateMinimapSize()
 
     Minimap:ClearAllPoints()
     Minimap.location:ClearAllPoints()
+    if Minimap.northTag then
+        Minimap.northTag:ClearAllPoints()
+    end
     MinimapBackdrop:ClearAllPoints()
     if GW.settings.Minimap.KeepSizeRatio then
         Minimap:SetMaskTexture(130937)
         Minimap:SetHitRectInsets(0, 0, 0, 0)
         Minimap:SetPoint("CENTER", Minimap.gwMover)
         Minimap.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
+        Minimap.northTag:SetPoint("TOP", Minimap, 0, 0)
         Minimap.gwMover:SetSize(size, size)
         Minimap.gwMover:SetClampRectInsets(0, 0, 0, 0)
         Minimap.gwBorder:SetSize(size, size)
@@ -46,8 +50,10 @@ function GW.UpdateMinimapSize()
     Minimap:SetMaskTexture(texturePath)
     Minimap:SetHitRectInsets(0, 0, halfDiff, halfDiff)
 
-    if Minimap.location then
-        Minimap.location:SetPoint("TOP", Minimap, 0, -4 - halfDiff)
+    Minimap.location:SetPoint("TOP", Minimap, 0, -4 - halfDiff)
+
+    if Minimap.northTag then
+        Minimap.northTag:SetPoint("TOP", Minimap, 0, -4 - halfDiff)
     end
 
     if HybridMinimap then

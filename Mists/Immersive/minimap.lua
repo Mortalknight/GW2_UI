@@ -430,18 +430,18 @@ local function LoadMinimap()
 
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)
+    Minimap.northTag = MinimapNorthTag
 
     MinimapCluster:SetAlpha(0.0)
     MinimapBorder:Hide()
     MiniMapWorldMapButton:GwKill()
 
     MinimapZoneText:ClearAllPoints()
-
+    MinimapZoneText:SetPoint("TOP", Minimap, 0, -5)
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
-    MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
-
     MinimapZoneText:SetTextColor(1, 1, 1)
+    Minimap.location = MinimapZoneText
 
     hooksecurefunc(
         MinimapZoneText,
@@ -469,7 +469,7 @@ local function LoadMinimap()
     MiniMapLFGFrame:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
-    GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "sidePanel", -5, 0)
+    GameTimeFrame:SetPoint("TOP", Minimap, "sidePanel", -5, 0)
     MiniMapBattlefieldFrame:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
     MiniMapLFGFrame:SetPoint("TOP", MiniMapBattlefieldFrame, "BOTTOM", 0, 0)
     GwAddonToggle:SetPoint("TOP", MiniMapLFGFrame, "BOTTOM", -3, 0)
@@ -478,8 +478,6 @@ local function LoadMinimap()
     hooksecurefunc(Minimap, "SetScale", function() end)
 
     Minimap:SetScale(1.2)
-    MinimapZoneText:ClearAllPoints()
-    MinimapZoneText:SetPoint("TOP", Minimap, 0, -5)
 
     hideMiniMapIcons()
 

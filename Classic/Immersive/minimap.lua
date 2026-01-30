@@ -277,6 +277,9 @@ GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 local function SetUpLfgFrame()
     if not LFGMinimapFrame then return end
 
+    LFGMinimapFrame:ClearAllPoints()
+    LFGMinimapFrame:SetPoint("TOP", GwAddonToggle, "BOTTOM", 0, 0)
+
     local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", LFGMinimapFrame, "GwLfgQueueIcon")
     GwLfgQueueIcon:SetAllPoints(LFGMinimapFrame)
     if LFGMinimapFrameBorder then LFGMinimapFrameBorder:GwKill() end
@@ -458,6 +461,7 @@ local function LoadMinimap()
     GwMapFPS.fps:SetText(NOT_APPLICABLE)
     ToogleMinimapFpsLable()
 
+    GW.CreateMinimapButtonsSack()
     MiniMapBattlefieldFrame:ClearAllPoints()
     if LFGMinimapFrame then
         LFGMinimapFrame:ClearAllPoints()
@@ -465,25 +469,28 @@ local function LoadMinimap()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
     GwMiniMapTrackingFrame:ClearAllPoints()
-    GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", sidePanel, "TOPLEFT", -7, 0)
-    MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 3, -6)
-    if LFGMinimapFrame then
-        LFGMinimapFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
-    end
-    GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -127)
+
+    GwMiniMapTrackingFrame:SetPoint("TOP", Minimap.sidePanel, "TOP", -7, 0)
+    MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 0, 0)
+    GwAddonToggle:SetPoint("TOP", MiniMapBattlefieldFrame, "BOTTOM", 0, -20)
     GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
+    if LFGMinimapFrame then
+        LFGMinimapFrame:SetPoint("TOP", GwAddonToggle, "BOTTOM", 0, 0)
+    end
 
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)
+    Minimap.northTag = MinimapNorthTag
 
     MinimapCluster:SetAlpha(0.0)
     MinimapBorder:Hide()
 
     MinimapZoneText:ClearAllPoints()
-
+    MinimapZoneText:SetPoint("TOP", Minimap, 0, -5)
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
     MinimapZoneText:SetTextColor(1, 1, 1)
+    Minimap.location = MinimapZoneText
 
     hooksecurefunc(
         MinimapZoneText,
@@ -504,10 +511,7 @@ local function LoadMinimap()
         end
     )
 
-    GW.CreateMinimapButtonsSack()
-
-    MinimapZoneText:ClearAllPoints()
-    MinimapZoneText:SetPoint("TOP", Minimap, 0, -5)
+    
 
     hideMiniMapIcons()
 

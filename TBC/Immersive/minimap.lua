@@ -284,6 +284,9 @@ GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 local function SetUpLfgFrame()
     if not LFGMinimapFrame then return end
 
+    LFGMinimapFrame:ClearAllPoints()
+    LFGMinimapFrame:SetPoint("TOP", GwAddonToggle, "BOTTOM", 0, 0)
+
     local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", LFGMinimapFrame, "GwLfgQueueIcon")
     GwLfgQueueIcon:SetAllPoints(LFGMinimapFrame)
     if LFGMinimapFrameBorder then LFGMinimapFrameBorder:GwKill() end
@@ -404,7 +407,7 @@ local function LoadMinimap()
     panel:SetHeight(25)
     Minimap.lowerPanel = panel
 
-    local sidePanel = CreateFrame("Frame", nil, Minimap)
+    local sidePanel = CreateFrame("Frame", "afaadasdad", Minimap)
     sidePanel:SetPoint("TOPRIGHT", Minimap.gwBorder, "TOPLEFT")
     sidePanel:SetPoint("BOTTOMRIGHT", Minimap.gwBorder, "BOTTOMLEFT")
     sidePanel:SetWidth(40)
@@ -444,15 +447,18 @@ local function LoadMinimap()
 
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)
+    Minimap.northTag = MinimapNorthTag
 
     MinimapCluster:SetAlpha(0.0)
     MinimapBorder:Hide()
 
     MinimapZoneText:ClearAllPoints()
-
+    MinimapZoneText:SetPoint("TOP", Minimap, 0, -5)
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
     MinimapZoneText:SetTextColor(1, 1, 1)
+    Minimap.location = MinimapZoneText
+
 
     hooksecurefunc(
         MinimapZoneText,
@@ -479,14 +485,11 @@ local function LoadMinimap()
         LFGMinimapFrame:ClearAllPoints()
     end
     GwAddonToggle:ClearAllPoints()
-    MiniMapBattlefieldFrame:SetPoint("TOPRIGHT", sidePanel, "TOPLEFT", -7, 0)
+    MiniMapBattlefieldFrame:SetPoint("TOP", Minimap.sidePanel, "TOP", -7, 0)
+    GwAddonToggle:SetPoint("TOP", MiniMapBattlefieldFrame, "BOTTOM", 0, -20)
     if LFGMinimapFrame then
-        LFGMinimapFrame:SetPoint("BOTTOMRIGHT", sidePanel, "BOTTOMLEFT", -5, -5)
+        LFGMinimapFrame:SetPoint("TOP", GwAddonToggle, "BOTTOM", 0, 0)
     end
-    GwAddonToggle:SetPoint("TOPRIGHT", sidePanel, "TOPLEFT", -5, -127)
-
-    MinimapZoneText:ClearAllPoints()
-    MinimapZoneText:SetPoint("TOP", Minimap, 0, -5)
 
     hideMiniMapIcons()
 

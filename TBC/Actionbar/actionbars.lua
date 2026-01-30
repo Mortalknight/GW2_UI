@@ -336,7 +336,6 @@ local function createFaderAnim(self, state)
 end
 
 local function updateHotkey(self)
-    self:HasAction()
     local hotkey = self.HotKey
 
     if GW.settings.BUTTON_ASSIGNMENTS then
