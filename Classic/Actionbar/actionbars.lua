@@ -309,8 +309,11 @@ end
 
 local function updateHotkey(self)
     local hotkey = self.HotKey
+    local text = hotkey:GetText()
+    local shouldShow = GW.settings.BUTTON_ASSIGNMENTS
+    local hasText = text and text ~= RANGE_INDICATOR
 
-    if GW.settings.BUTTON_ASSIGNMENTS then
+    if shouldShow then
         hotkey:Show()
         if self.hkBg then
             self.hkBg.texture:Show()
@@ -320,11 +323,9 @@ local function updateHotkey(self)
         if self.hkBg then
             self.hkBg.texture:Hide()
         end
-        return
     end
 
-    local text = hotkey:GetText()
-    if text and text ~= RANGE_INDICATOR then
+    if hasText then
         text = gsub(text, "(s%-)", "S")
         text = gsub(text, "(a%-)", "A")
         text = gsub(text, "(c%-)", "C")
@@ -355,12 +356,6 @@ local function updateHotkey(self)
         hotkey:SetText(text)
     else
         hotkey:SetText("")
-        if GW.settings.BUTTON_ASSIGNMENTS_USED_ONLY then
-            hotkey:Hide()
-            if self.hkBg then
-                self.hkBg.texture:Hide()
-            end
-        end
     end
 end
 GW.updateHotkey = updateHotkey
@@ -568,7 +563,7 @@ local function updateMainBar()
                 end
             end
 
-            local rangeIndicator =CreateFrame("FRAME", "GwActionRangeIndicator" .. i, hotkey:GetParent(), "GwActionRangeIndicatorTmpl")
+            local rangeIndicator = CreateFrame("FRAME", "GwActionRangeIndicator" .. i, hotkey:GetParent(), "GwActionRangeIndicatorTmpl")
             rangeIndicator:SetFrameStrata("BACKGROUND", 1)
             rangeIndicator:SetPoint("TOPLEFT", btn, "BOTTOMLEFT", -1, -2)
             rangeIndicator:SetPoint("TOPRIGHT", btn, "BOTTOMRIGHT", 1, -2)
