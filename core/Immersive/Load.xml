@@ -18,4 +18,5 @@
     <Include file ="toast.xml"/>
     <Script file ="alertPosition.lua"/>
     <Script file ="alerts.lua"/>
+    <Script file ="minimap.lua"/>
 </Ui>

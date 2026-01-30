@@ -29,38 +29,22 @@ end
 GW.SetMinimapHover = SetMinimapHover
 
 local function setMinimapButtons(side)
-    if InCombatLockdown() then
-        GW.CombatQueue_Queue("Update Minimap Buttons", setMinimapButtons, {side})
-        return
-    end
-
-    MiniMapBattlefieldFrame:ClearAllPoints()
-    if LFGMinimapFrame then
-        LFGMinimapFrame:ClearAllPoints()
-    end
-    GwAddonToggle:ClearAllPoints()
+    Minimap.sidePanel:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
-    GwMiniMapTrackingFrame:ClearAllPoints()
 
     if side == "left" then
-        GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
-        MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 3, -6)
-        if LFGMinimapFrame then
-            LFGMinimapFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
-        end
-        GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -127)
+        Minimap.sidePanel:SetPoint("TOPRIGHT", Minimap.gwBorder, "TOPLEFT", 5, 0)
+        Minimap.sidePanel:SetPoint("BOTTOMRIGHT", Minimap.gwBorder, "BOTTOMLEFT", 5, 0)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
+        --flip GwAddonToggle icon
         GwAddonToggle:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
     else
-        GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 0, 0)
-        MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 3, -6)
-        if LFGMinimapFrame then
-            LFGMinimapFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 5, -7)
-        end
-        GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -127)
+        Minimap.sidePanel:SetPoint("TOPLEFT", Minimap.gwBorder, "TOPRIGHT")
+        Minimap.sidePanel:SetPoint("BOTTOMLEFT", Minimap.gwBorder, "BOTTOMRIGHT")
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
+        --flip GwAddonToggle icon
         GwAddonToggle:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
@@ -68,9 +52,6 @@ local function setMinimapButtons(side)
 end
 
 local function MinimapPostDrag(self)
-    MinimapBackdrop:ClearAllPoints()
-    MinimapBackdrop:SetAllPoints(Minimap)
-
     local x = self.gwMover:GetCenter()
     local screenWidth = UIParent:GetRight()
     if x > (screenWidth / 2) then
@@ -366,19 +347,9 @@ do
     GW.SetupZoomReset = SetupZoomReset
 end
 
-function GW.UpdateMinimapSettings()
-    local width, height = GW.settings.MINIMAP_SIZE, (GW.settings.Minimap.KeepSizeRatio and GW.settings.MINIMAP_SIZE) or GW.settings.Minimap.Height
-    Minimap:SetSize(width, height)
-    Minimap.gwMover:SetSize(width, height)
-    Minimap:SetScale(GW.settings.MinimapScale)
-    Minimap.gwMover:SetScale(GW.settings.MinimapScale)
-end
-
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = getMinimapShape
-
-    local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
 
     SetMinimapHover()
 
@@ -386,10 +357,13 @@ local function LoadMinimap()
     Minimap:SetParent(UIParent)
     Minimap:SetFrameStrata("LOW")
 
-    GwMapGradient = CreateFrame("Frame", "GwMapGradient", GwMinimapShadow, "GwMapGradient")
-    GwMapGradient:SetParent(GwMinimapShadow)
-    GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
-    GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
+    Minimap.gwBorder = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
+    Minimap.gwBorder:ClearAllPoints()
+    Minimap.gwBorder:SetPoint("CENTER", Minimap)
+    Minimap.gwBorder.gradient = CreateFrame("Frame", "GwMapGradient", Minimap.gwBorder, "GwMapGradient")
+    Minimap.gwBorder.gradient:SetParent(Minimap.gwBorder)
+    Minimap.gwBorder.gradient:SetPoint("TOPLEFT", Minimap.gwBorder, "TOPLEFT", 0, 0)
+    Minimap.gwBorder.gradient:SetPoint("TOPRIGHT", Minimap.gwBorder, "TOPRIGHT", 0, 0)
 
     if MiniMapInstanceDifficulty then
         MiniMapInstanceDifficulty:SetParent(Minimap)
@@ -406,6 +380,24 @@ local function LoadMinimap()
         MiniMapChallengeMode:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
         MiniMapChallengeMode:SetScale(0.8)
     end
+
+    local panel = CreateFrame("Frame", nil, Minimap)
+    panel:SetPoint("BOTTOMLEFT", Minimap.gwBorder, "BOTTOMLEFT")
+    panel:SetPoint("BOTTOMRIGHT", Minimap.gwBorder, "BOTTOMRIGHT")
+    panel:SetHeight(25)
+    Minimap.lowerPanel = panel
+
+    local topPanel = CreateFrame("Frame", nil, Minimap)
+    topPanel:SetPoint("TOPLEFT", Minimap.gwBorder, "TOPLEFT")
+    topPanel:SetPoint("TOPRIGHT", Minimap.gwBorder, "TOPRIGHT")
+    topPanel:SetHeight(25)
+    Minimap.topPanel = topPanel
+
+    local sidePanel = CreateFrame("Frame", nil, Minimap)
+    sidePanel:SetPoint("TOPRIGHT", Minimap.gwBorder, "TOPLEFT")
+    sidePanel:SetPoint("BOTTOMRIGHT", Minimap.gwBorder, "BOTTOMLEFT")
+    sidePanel:SetWidth(40)
+    Minimap.sidePanel = sidePanel
 
     GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
     MiniMapTracking:UnregisterAllEvents()
@@ -432,10 +424,10 @@ local function LoadMinimap()
             GwMiniMapTrackingFrame:Hide()
         end
     end)
-    GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", -30, 0)
+    GwMiniMapTrackingFrame:SetPoint("TOPLEFT", topPanel, "TOPRIGHT", -30, 0)
 
     --Time
-    GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
+    GwMapTime = CreateFrame("Button", "GwMapTime", panel, "GwMapTime")
     TimeManager_LoadUI()
     TimeManagerClockButton:Hide()
     GwMapTime:RegisterForClicks("LeftButtonUp", "RightButtonUp")
@@ -451,7 +443,7 @@ local function LoadMinimap()
     GwMapTime:SetScript("OnEvent", GW.Time_OnEvent)
 
     --coords
-    GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
+    GwMapCoords = CreateFrame("Button", "GwMapCoords", panel, "GwMapCoords")
     GwMapCoords.Coords:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.NORMAL)
     GwMapCoords.Coords:SetTextColor(1, 1, 1)
     GwMapCoords.Coords:SetShadowOffset(2, -2)
@@ -459,12 +451,27 @@ local function LoadMinimap()
     ToogleMinimapCoordsLable()
 
     --FPS
-    GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
+    GwMapFPS = CreateFrame("Button", "GwMapFPS", panel, "GwMapFPS")
     GwMapFPS.fps:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.NORMAL)
     GwMapFPS.fps:SetTextColor(1, 1, 1)
     GwMapFPS.fps:SetShadowOffset(2, -2)
     GwMapFPS.fps:SetText(NOT_APPLICABLE)
     ToogleMinimapFpsLable()
+
+    MiniMapBattlefieldFrame:ClearAllPoints()
+    if LFGMinimapFrame then
+        LFGMinimapFrame:ClearAllPoints()
+    end
+    GwAddonToggle:ClearAllPoints()
+    GwAddonToggle.container:ClearAllPoints()
+    GwMiniMapTrackingFrame:ClearAllPoints()
+    GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", sidePanel, "TOPLEFT", -7, 0)
+    MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 3, -6)
+    if LFGMinimapFrame then
+        LFGMinimapFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
+    end
+    GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -127)
+    GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
 
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)
@@ -476,10 +483,6 @@ local function LoadMinimap()
 
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
-    --MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
-    --MiniMapLFGFrame:ClearAllPoints()
-    --MiniMapLFGFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
-
     MinimapZoneText:SetTextColor(1, 1, 1)
 
     hooksecurefunc(
@@ -555,7 +558,6 @@ local function LoadMinimap()
     GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", ALL .. ",Blizzard,Map", {Minimap:GetSize()}, {"default"}, nil, MinimapPostDrag)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
-    GW.UpdateMinimapSettings()
 
     if not GW.ShouldBlockIncompatibleAddon("Objectives") then
         MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
@@ -577,5 +579,7 @@ local function LoadMinimap()
     C_Timer.After(0.1, hoverMiniMapOut)
 
     Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
+
+    GW.UpdateMinimapSize()
 end
 GW.LoadMinimap = LoadMinimap

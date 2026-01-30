@@ -1057,7 +1057,7 @@ GW.globalDefault = {
         MINIMAP_COORDS_PRECISION= 0,
         MINIMAP_ADDON_COMPARTMENT_TOGGLE= true,
         Minimap = {
-            Height = 170,
+            HeightPercentage = 100,
             KeepSizeRatio = true
         },
         WORLDMAP_COORDS_TOGGLE= false,
