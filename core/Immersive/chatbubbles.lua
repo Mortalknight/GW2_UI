@@ -11,6 +11,7 @@ local borderHoriTexture = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/bor
 local borderHoriInvTex  = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori-inverted.png"
 local borderTexture     = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border.png"
 local borderInvTexture  = "Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted.png"
+GW2TEST_BUBBLESCALE = 1
 
 local function UpdateBubbleBorder(self)
     local backdrop = self.backdrop
@@ -26,6 +27,7 @@ local function UpdateBubbleBorder(self)
     self.background:SetPoint("TOPLEFT", messageText, "TOPLEFT",-8,8)
     self.background:SetPoint("BOTTOMRIGHT", messageText, "BOTTOMRIGHT",8,-8)
     messageText:SetWidth(math.min(200,messageText:GetWidth()))
+    self:SetScale(GW2TEST_BUBBLESCALE)
 
     if self.Name and self.Name:GetText() then
         self.Name:SetText("")

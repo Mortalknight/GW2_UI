@@ -7,19 +7,31 @@ local classic = { [1] = 2, [2] = 1, [3] = 4, [4] = 3 }
 local function UpdateButton(button, totem)
     if not (button and totem) then return end
 
-    local _, _, startTime, duration, icon = GetTotemInfo((GW.Classic or GW.TBC) and totem or totem.slot)
-    button:SetShown(startTime and GW.NotSecretValue(duration) and (duration > 0))
+    local haveTotem, _, startTime, duration, icon = GetTotemInfo((GW.Classic or GW.TBC) and totem or totem.slot)
 
-    if startTime then
+    if GW.Retail then
+        button:SetAlphaFromBoolean(haveTotem, 1, 0)
         button.iconTexture:SetTexture(icon)
-        button.cooldown:SetCooldown(startTime, duration)
+        button.cooldown:SetCooldownDuration(duration)
 
-        if GW.Retail or GW.Mists then
-            if totem:GetParent() ~= button.holder then
-                totem:SetParent(button.holder)
+        if totem:GetParent() ~= button.holder then
+            totem:SetParent(button.holder)
+        end
+
+        totem:SetAllPoints(button.holder)
+    else
+        button:SetShown(startTime and duration > 0)
+        if startTime then
+            button.iconTexture:SetTexture(icon)
+            button.cooldown:SetCooldown(startTime, duration)
+
+            if GW.Mists then
+                if totem:GetParent() ~= button.holder then
+                    totem:SetParent(button.holder)
+                end
+
+                totem:SetAllPoints(button.holder)
             end
-
-            totem:SetAllPoints(button.holder)
         end
     end
 end
@@ -29,9 +41,7 @@ local function OnEvent(self)
 
     if GW.Retail then
         for _, button in ipairs(self) do
-            if button:IsShown() then
-                button:SetShown(false)
-            end
+            button:SetAlpha(0)
         end
 
         for totem in TotemFrame.totemPool:EnumerateActive() do
@@ -113,7 +123,12 @@ local function CreateTotemBar()
         backDrop:SetPoint("TOPLEFT", button, "TOPLEFT", -backDropSize, backDropSize)
         backDrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", backDropSize, -backDropSize)
 
-        button:Hide()
+        if GW.Retail then
+            button:SetAlpha(0)
+            button:EnableMouse(false)
+        else
+            button:Hide()
+        end
 
         button.holder = CreateFrame("Frame", nil, button)
         button.holder:SetAlpha(0)
