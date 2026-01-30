@@ -1158,10 +1158,7 @@ local function StyleTooltips()
 end
 
 local function LoadTooltips()
-    -- Remove when blizzard applyed the fix
-    if not GW.Retail then
-        StyleTooltips()
-    end
+    StyleTooltips()
     SkinItemRefTooltipCloseButton()
     SkinQueueStatusFrame()
 
@@ -1183,10 +1180,7 @@ local function LoadTooltips()
         FloatingBattlePetTooltip.CloseButton:SetSize(20, 20)
         FloatingBattlePetTooltip.CloseButton:ClearAllPoints()
         FloatingBattlePetTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
-        -- Remove when blizzard applyed the fix
-        if not GW.Retail then
-            hooksecurefunc("SharedPetBattleAbilityTooltip_SetAbility", SetStyle)
-        end
+        hooksecurefunc("SharedPetBattleAbilityTooltip_SetAbility", SetStyle)
     end
 
     local ItemTT = GameTooltip.ItemTooltip
@@ -1210,11 +1204,7 @@ local function LoadTooltips()
     hooksecurefunc("GameTooltip_ShowProgressBar", GameTooltip_ShowProgressBar) -- Skin Progress Bars
     hooksecurefunc("GameTooltip_ClearProgressBars", GameTooltip_ClearProgressBars)
     hooksecurefunc("GameTooltip_AddQuestRewardsToTooltip", GameTooltip_AddQuestRewardsToTooltip) -- Color Progress Bars
-
-    -- Remove when blizzard applyed the fix
-    if not GW.Retail then
-        hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
-    end
+    hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
 
     -- Functions
     MountIDs = {}
@@ -1256,8 +1246,7 @@ local function LoadTooltips()
     end
 
     if TooltipDataProcessor and not (GW.TBC or GW.Mists) then
-        -- readd if hotfix is applied
-        --TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetItem)
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetItem)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
         TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Macro, GameTooltip_OnTooltipSetSpell)
