@@ -17,7 +17,7 @@ local minimapDetails = {
 
 local function setMinimapButtons(side)
     Minimap.sidePanel:ClearAllPoints()
-     GwAddonToggle.container:ClearAllPoints()
+    GwAddonToggle.container:ClearAllPoints()
 
     if side == "left" then
         Minimap.sidePanel:SetPoint("TOPRIGHT", Minimap.gwBorder, "TOPLEFT", 5, 0)
@@ -469,13 +469,11 @@ local function LoadMinimap()
     MiniMapLFGFrame:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
-    GameTimeFrame:SetPoint("TOP", Minimap, "sidePanel", -5, 0)
+    GameTimeFrame:SetPoint("TOP", sidePanel, "TOP", -5, 0)
     MiniMapBattlefieldFrame:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
     MiniMapLFGFrame:SetPoint("TOP", MiniMapBattlefieldFrame, "BOTTOM", 0, 0)
     GwAddonToggle:SetPoint("TOP", MiniMapLFGFrame, "BOTTOM", -3, 0)
     GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
-
-    hooksecurefunc(Minimap, "SetScale", function() end)
 
     Minimap:SetScale(1.2)
 
