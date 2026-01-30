@@ -266,3 +266,29 @@ function GW.UnitExists(unit)
 
 	return unit and (UnitExists(unit) or UnitIsVisible(unit))
 end
+
+function GW.GetWowheadLinkForLanguage()
+    local langShort = string.sub(GW.mylocal, 1, 2) .. "/"
+    if langShort == "en/" then
+        langShort = ""
+    elseif langShort == "zh/" then
+        langShort = "cn/"
+    end
+
+    local xpac
+    if GW.Mists then
+        xpac = "mop-classic/"
+    elseif GW.Cata then
+        xpac = "cata/"
+    elseif GW.WOTLK then
+        xpac = "wotlk/"
+    elseif GW.TBC then
+        xpac = "tbc/"
+    elseif GW.Retail then
+        xpac = ""
+    else
+        xpac = "classic/" -- era/sod/hardcore are all on this URL
+    end
+
+    return "https://www.wowhead.com/".. xpac .. langShort
+end

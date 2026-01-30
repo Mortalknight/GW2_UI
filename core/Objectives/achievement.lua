@@ -121,6 +121,19 @@ function GwAchievementTrackerContainerMixin:BlockOnClick(mouseButton)
                     AchievementFrameAchievements_ForceUpdate();
                 end
             end)
+            rootDescription:CreateButton("Wowhead URL", function()
+                GW.ShowPopup({text = "WoWHead URL",
+                    hasEditBox = true,
+                    hideOnEscape = true,
+                    EditBoxOnEnterPressed = function(popup) popup:Hide() end,
+                    EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+                    button2 = CLOSE,
+                    inputText = (function()
+                        return GW.GetWowheadLinkForLanguage() .. "achievement=" .. self.id
+
+                    end)(),
+                    })
+            end)
         end)
     end
 end

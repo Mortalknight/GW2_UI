@@ -433,6 +433,19 @@ function GwQuestLogMixin:BlockOnClick(button)
             rootDescription:CreateButton(ABANDON_QUEST_ABBREV, function()
                 QuestMapQuestOptions_AbandonQuest(questID)
             end)
+            rootDescription:CreateButton("Wowhead URL", function()
+                GW.ShowPopup({text = "WoWHead URL",
+                    hasEditBox = true,
+                    hideOnEscape = true,
+                    EditBoxOnEnterPressed = function(popup) popup:Hide() end,
+                    EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+                    button2 = CLOSE,
+                    inputText = (function()
+                        return GW.GetWowheadLinkForLanguage() .. "quest=" .. questID
+
+                    end)(),
+                    })
+            end)
         end)
     end
 end
