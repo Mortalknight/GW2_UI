@@ -653,15 +653,9 @@ end
 
 local function HyperLinkedSQU(data)
     if strsub(data, 1, 3) == "squ" then
-        if GW.settings.USE_SOCIAL_WINDOW then
-            if InCombatLockdown() then return end
-            GwSocialWindow:SetAttribute("windowpanelopen", "quicklist")
-        else
-            if not QuickJoinFrame:IsShown() then
-                ToggleQuickJoinPanel()
-            end
+        if not QuickJoinFrame:IsShown() then
+            ToggleQuickJoinPanel()
         end
-
         local guid = strsub(data, 5)
         if guid and guid ~= "" then
             QuickJoinFrame:SelectGroup(guid)
