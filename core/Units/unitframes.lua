@@ -899,7 +899,7 @@ function GwUnitFrameMixin:ToggleSettings()
 
     self:SetScale(GW.settings[self.unit .. "_pos_scale"])
     self.healthContainer:SetSize(GW.settings[self.unit .. "FrameHealthBarSize"].width, GW.settings[self.unit .. "FrameHealthBarSize"].height)
-    self.powerbarContainer:SetSize(GW.settings[self.unit .. "FramePowerBarSize"].width, GW.settings[self.unit .. "FramePowerBarSize"].height)
+    self.powerbarContainer:SetSize(GW.settings[self.unit .. "FrameHealthBarSize"].width, GW.settings[self.unit .. "FramePowerBarSize"].height) --width is shared
     self.healthString:ClearAllPoints()
     if self.frameInvert then
         self.healthString:SetPoint("RIGHT", self.health, "RIGHT", GW.settings[self.unit .. "FrameHealthBarTextOffset"].x, GW.settings[self.unit .. "FrameHealthBarTextOffset"].y)
@@ -1095,7 +1095,7 @@ function GwTargetUnitFrameMixin:ToggleSettings()
 
     self:SetScale(GW.settings[self.unit .. "_pos_scale"])
     self.healthContainer:SetSize(GW.settings[self.unit .. "FrameHealthBarSize"].width, GW.settings[self.unit .. "FrameHealthBarSize"].height)
-    self.powerbarContainer:SetSize(GW.settings[self.unit .. "FramePowerBarSize"].width, GW.settings[self.unit .. "FramePowerBarSize"].height)
+    self.powerbarContainer:SetSize(GW.settings[self.unit .. "FrameHealthBarSize"].width, GW.settings[self.unit .. "FramePowerBarSize"].height) -- width is shared
 
     self.parentUnitFrame:OnEvent("FORCE_UPDATE")
 end

@@ -398,7 +398,6 @@ GW.globalDefault = {
         },
         targetFramePowerBarSize = {
             height = 3,
-            width = 213,
         },
         targetFrameHealthBarTextOffset = {
             x = 5,
@@ -437,7 +436,6 @@ GW.globalDefault = {
         },
         targettargetFramePowerBarSize = {
             height = 3,
-            width = 148,
         },
 
         focus_pos= {
@@ -458,7 +456,6 @@ GW.globalDefault = {
         },
         focusFramePowerBarSize = {
             height = 3,
-            width = 213,
         },
 
         focustarget_pos= {
@@ -475,7 +472,6 @@ GW.globalDefault = {
         },
         focustargetFramePowerBarSize = {
             height = 3,
-            width = 148,
         },
 
         MULTIBAR_MARGIIN = 2,
@@ -1309,7 +1305,6 @@ GW.globalDefault = {
         },
         playerFramePowerBarSize = {
             height = 3,
-            width = 213,
         },
         playerFrameHealthBarTextOffset = {
             x = 5,

@@ -130,13 +130,11 @@ local function LoadTargetPanel(sWindow)
     p_target:AddGroupHeader(L["Size"])
     p_target:AddOptionSlider(L["Scale"], nil, { getterSetter = "target_pos_scale", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence =  {["TARGET_ENABLED"] = true}})
 
+    p_target:AddOptionSlider(L["Bar Width"], nil, { getterSetter = "targetFrameHealthBarSize.width", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
     p_target:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "targetFrameHealthBarSize.height", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOptionSlider(L["Healthbar Width"], nil, { getterSetter = "targetFrameHealthBarSize.width", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOptionSlider(L["Healthbar text x-offset"], nil, { getterSetter = "targetFrameHealthBarTextOffset.x", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOptionSlider(L["Healthbar text y-offset"], nil, { getterSetter = "targetFrameHealthBarTextOffset.y", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})    
-
-    p_target:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "targetFramePowerBarSize.height", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
-    p_target:AddOptionSlider(L["Powerbar Width"], nil, { getterSetter = "targetFramePowerBarSize.width", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
+    p_target:AddOptionSlider(L["Healthbar Text X-Offset"], nil, { getterSetter = "targetFrameHealthBarTextOffset.x", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
+    p_target:AddOptionSlider(L["Healthbar Text Y-Offset"], nil, { getterSetter = "targetFrameHealthBarTextOffset.y", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})    
+    p_target:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "targetFramePowerBarSize.height", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
 
 
     --TARGET OF TARGET
@@ -152,11 +150,9 @@ local function LoadTargetPanel(sWindow)
 
     pTargetOfTarget:AddGroupHeader(L["Size"])
     pTargetOfTarget:AddOptionSlider(L["Scale"], nil, { getterSetter = "targettarget_pos_scale", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
+    pTargetOfTarget:AddOptionSlider(L["Bar Width"], nil, { getterSetter = "targettargetFrameHealthBarSize.width", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
     pTargetOfTarget:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "targettargetFrameHealthBarSize.height", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
-    pTargetOfTarget:AddOptionSlider(L["Healthbar Width"], nil, { getterSetter = "targettargetFrameHealthBarSize.width", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
     pTargetOfTarget:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "targettargetFramePowerBarSize.height", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
-    pTargetOfTarget:AddOptionSlider(L["Powerbar Width"], nil, { getterSetter = "targettargetFramePowerBarSize.width", callback = function() GwTargetTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true, ["target_TARGET_ENABLED"] = true}})
-
 
     --FOCUS
     p_focus:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "focus_SHOW_CASTBAR", callback = function() GwFocusUnitFrame:ToggleSettings() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
@@ -184,13 +180,11 @@ local function LoadTargetPanel(sWindow)
 
     p_focus:AddGroupHeader(L["Size"])
     p_focus:AddOptionSlider(L["Scale"], nil, { getterSetter = "focus_pos_scale", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence =  {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSlider(L["Bar Width"], nil, { getterSetter = "focusFrameHealthBarSize.width", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
     p_focus:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "focusFrameHealthBarSize.height", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
-    p_focus:AddOptionSlider(L["Healthbar Width"], nil, { getterSetter = "focusFrameHealthBarSize.width", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
-    p_focus:AddOptionSlider(L["Healthbar text x-offset"], nil, { getterSetter = "focusFrameHealthBarTextOffset.x", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
-    p_focus:AddOptionSlider(L["Healthbar text y-offset"], nil, { getterSetter = "focusFrameHealthBarTextOffset.y", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSlider(L["Healthbar Text X-Offset"], nil, { getterSetter = "focusFrameHealthBarTextOffset.x", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSlider(L["Healthbar Text Y-Offset"], nil, { getterSetter = "focusFrameHealthBarTextOffset.y", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
     p_focus:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "focusFramePowerBarSize.height", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
-    p_focus:AddOptionSlider(L["Powerbar Width"], nil, { getterSetter = "focusFramePowerBarSize.width", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true}})
-
 
     --TARGET OF FOCUS
     pTargetOfFocus:AddOption(MINIMAP_TRACKING_FOCUS, L["Display the focus target frame."], {getterSetter = "focus_TARGET_ENABLED", callback = function() GwFocusTargetUnitFrame:ToggleUnitFrame() end, dependence = {["FOCUS_ENABLED"] = true}, hidden = GW.Classic})
@@ -205,11 +199,9 @@ local function LoadTargetPanel(sWindow)
 
     pTargetOfFocus:AddGroupHeader(L["Size"])
     pTargetOfFocus:AddOptionSlider(L["Scale"], nil, { getterSetter = "focustarget_pos_scale", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
+    pTargetOfFocus:AddOptionSlider(L["Bar Width"], nil, { getterSetter = "focustargetFrameHealthBarSize.width", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
     pTargetOfFocus:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "focustargetFrameHealthBarSize.height", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
-    pTargetOfFocus:AddOptionSlider(L["Healthbar Width"], nil, { getterSetter = "focustargetFrameHealthBarSize.width", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
     pTargetOfFocus:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "focustargetFramePowerBarSize.height", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
-    pTargetOfFocus:AddOptionSlider(L["Powerbar Width"], nil, { getterSetter = "focustargetFramePowerBarSize.width", callback = function() GwFocusTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["FOCUS_ENABLED"] = true, ["focus_TARGET_ENABLED"] = true}})
-
 
     sWindow:AddSettingsPanel(p, UNITFRAME_LABEL, L["Modify the player pet frame settings."], panels)
 end
