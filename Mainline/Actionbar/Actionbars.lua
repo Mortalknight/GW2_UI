@@ -1108,7 +1108,7 @@ local function UpdateMultibarButtons()
 
     for y = 1, 7 do
         fmMultiBar = fmActionbar["gw_Bar" .. y]
-        if fmMultiBar.gw_IsEnabled then
+        if fmMultiBar and fmMultiBar.gw_IsEnabled then
             local settings = GW.settings[fmMultiBar.originalBarName]
             local used_height = 0
             local btn_padding = 0

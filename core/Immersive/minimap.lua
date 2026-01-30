@@ -21,7 +21,9 @@ function GW.UpdateMinimapSize()
         Minimap:SetHitRectInsets(0, 0, 0, 0)
         Minimap:SetPoint("CENTER", Minimap.gwMover)
         Minimap.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
-        Minimap.northTag:SetPoint("TOP", Minimap, 0, 0)
+        if Minimap.northTag then
+            Minimap.northTag:SetPoint("TOP", Minimap, 0, 0)
+        end
         Minimap.gwMover:SetSize(size, size)
         Minimap.gwMover:SetClampRectInsets(0, 0, 0, 0)
         Minimap.gwBorder:SetSize(size, size)
