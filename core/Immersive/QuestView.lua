@@ -118,6 +118,7 @@ function QuestGiverMixin:setQuestGiverAnimation(count)
 end
 
 local function GetCreatureIDFromGUID(guid)
+    if GW.IsSecretValue(guid) then return end
     return tonumber(string.match(guid, "Creature%-.-%-.-%-.-%-.-%-(.-)%-"));
 end
 
