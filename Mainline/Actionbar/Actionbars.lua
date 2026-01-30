@@ -124,24 +124,29 @@ end
 AFP("changeVertexColorActionbars", changeVertexColorActionbars)
 
 local function updateActionbarBorders(btn)
+    if not btn.gwBackdrop then return end
     local texture = GetActionTexture(btn.action)
     if texture then
         btn.gwBackdrop.border1:SetAlpha(1)
         btn.gwBackdrop.border2:SetAlpha(1)
         btn.gwBackdrop.border3:SetAlpha(1)
         btn.gwBackdrop.border4:SetAlpha(1)
-        btn.HotKey:Show()
-        if btn.hkBg then
-            btn.hkBg.texture:Show()
+        if GW.settings.BUTTON_ASSIGNMENTS then
+            btn.HotKey:Show()
+            if btn.hkBg then
+                btn.hkBg.texture:Show()
+            end
         end
     else
         btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
-        btn.HotKey:Hide()
-        if btn.hkBg then
-            btn.hkBg.texture:Hide()
+        if GW.settings.BUTTON_ASSIGNMENTS_USED_ONLY then
+            btn.HotKey:Hide()
+            if btn.hkBg then
+                btn.hkBg.texture:Hide()
+            end
         end
     end
 end
@@ -364,6 +369,7 @@ local function updateHotkey(self)
         if self.hkBg then
             self.hkBg.texture:Hide()
         end
+        return
     end
 
     local text = hotkey:GetText()
@@ -390,9 +396,11 @@ local function updateHotkey(self)
         hotkey:SetText(text)
     else
         hotkey:SetText("")
-        hotkey:Hide()
-        if self.hkBg then
-            self.hkBg.texture:Hide()
+        if GW.settings.BUTTON_ASSIGNMENTS_USED_ONLY then
+            hotkey:Hide()
+            if self.hkBg then
+                self.hkBg.texture:Hide()
+            end
         end
     end
 end

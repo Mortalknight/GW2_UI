@@ -320,6 +320,7 @@ local function updateHotkey(self)
         if self.hkBg then
             self.hkBg.texture:Hide()
         end
+        return
     end
 
     local text = hotkey:GetText()
@@ -354,9 +355,11 @@ local function updateHotkey(self)
         hotkey:SetText(text)
     else
         hotkey:SetText("")
-        hotkey:Hide()
-        if self.hkBg then
-            self.hkBg.texture:Hide()
+        if GW.settings.BUTTON_ASSIGNMENTS_USED_ONLY then
+            hotkey:Hide()
+            if self.hkBg then
+                self.hkBg.texture:Hide()
+            end
         end
     end
 end
@@ -565,29 +568,17 @@ local function updateMainBar()
                 end
             end
 
-            local rangeIndicator =
-                CreateFrame("FRAME", "GwActionRangeIndicator" .. i, hotkey:GetParent(), "GwActionRangeIndicatorTmpl")
+            local rangeIndicator =CreateFrame("FRAME", "GwActionRangeIndicator" .. i, hotkey:GetParent(), "GwActionRangeIndicatorTmpl")
             rangeIndicator:SetFrameStrata("BACKGROUND", 1)
             rangeIndicator:SetPoint("TOPLEFT", btn, "BOTTOMLEFT", -1, -2)
             rangeIndicator:SetPoint("TOPRIGHT", btn, "BOTTOMRIGHT", 1, -2)
             _G["GwActionRangeIndicator" .. i .. "Texture"]:SetVertexColor(147 / 255, 19 / 255, 2 / 255)
             rangeIndicator:Hide()
 
-            btn["gw_RangeIndicator"] = rangeIndicator
-            btn["gw_HotKey"] = hotkey
-
-            if GW.settings.BUTTON_ASSIGNMENTS then
-                local hkBg =
-                    CreateFrame(
-                    "Frame",
-                    "GwHotKeyBackDropActionButton" .. i,
-                    hotkey:GetParent(),
-                    "GwActionHotkeyBackdropTmpl"
-                )
-
-                hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
-                _G["GwHotKeyBackDropActionButton" .. i .. "Texture"]:SetParent(hotkey:GetParent())
-            end
+            btn.gw_RangeIndicator = rangeIndicator
+            btn.hkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(), "GwActionHotkeyBackdropTmpl")
+            btn.hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
+            btn.hkBg.texture:SetParent(hotkey:GetParent())
 
             btn:ClearAllPoints()
             btn:SetPoint(

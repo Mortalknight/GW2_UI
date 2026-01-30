@@ -350,6 +350,7 @@ local function updateHotkey(self)
         if self.hkBg then
             self.hkBg.texture:Hide()
         end
+        return
     end
 
     local text = hotkey:GetText()
@@ -384,9 +385,11 @@ local function updateHotkey(self)
         hotkey:SetText(text)
     else
         hotkey:SetText("")
-        hotkey:Hide()
-        if self.hkBg then
-            self.hkBg.texture:Hide()
+        if GW.settings.BUTTON_ASSIGNMENTS_USED_ONLY then
+            hotkey:Hide()
+            if self.hkBg then
+                self.hkBg.texture:Hide()
+            end
         end
     end
 end
@@ -401,18 +404,22 @@ local function UpdateActionbarBorders(btn)
         btn.gwBackdrop.border2:SetAlpha(1)
         btn.gwBackdrop.border3:SetAlpha(1)
         btn.gwBackdrop.border4:SetAlpha(1)
-        btn.HotKey:Show()
-        if btn.hkBg then
-            btn.hkBg.texture:Show()
+        if GW.settings.BUTTON_ASSIGNMENTS then
+            btn.HotKey:Show()
+            if btn.hkBg then
+                btn.hkBg.texture:Show()
+            end
         end
     else
         btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
-        btn.HotKey:Hide()
-        if btn.hkBg then
-            btn.hkBg.texture:Hide()
+        if GW.settings.BUTTON_ASSIGNMENTS_USED_ONLY then
+            btn.HotKey:Hide()
+            if btn.hkBg then
+                btn.hkBg.texture:Hide()
+            end
         end
     end
 end
@@ -698,20 +705,9 @@ local function updateMainBar()
             rangeIndicator:Hide()
 
             btn.gw_RangeIndicator = rangeIndicator
-            btn["gw_HotKey"] = hotkey
-
-            if GW.settings.BUTTON_ASSIGNMENTS then
-                local hkBg =
-                    CreateFrame(
-                    "Frame",
-                    "GwHotKeyBackDropActionButton" .. i,
-                    hotkey:GetParent(),
-                    "GwActionHotkeyBackdropTmpl"
-                )
-
-                hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
-                _G["GwHotKeyBackDropActionButton" .. i .. "Texture"]:SetParent(hotkey:GetParent())
-            end
+            btn.hkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(),"GwActionHotkeyBackdropTmpl")
+            btn.hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
+            btn.hkBg.texture:SetParent(hotkey:GetParent())
 
             btn:ClearAllPoints()
             btn:SetPoint("LEFT", fmActionbar, "LEFT", btn_padding - GW.settings.MAINBAR_MARGIIN - MAIN_MENU_BAR_BUTTON_SIZE, (GW.settings.XPBAR_ENABLED and 0 or -14))

@@ -185,6 +185,7 @@ GW.globalDefault = {
 
 
         BUTTON_ASSIGNMENTS= true,
+        BUTTON_ASSIGNMENTS_USED_ONLY = false,
 
         singingSockets = true,
 
