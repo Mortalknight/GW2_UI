@@ -624,7 +624,6 @@ local function addAddonButton(name, setting, shadow, anchor, showFunction, hideO
             GqUiFrame:ClearAllPoints()
             GqUiFrame:SetParent(GwCharacterWindow)
             GqUiFrame:SetPoint("TOPRIGHT", GwCharacterWindow, "TOPRIGHT", 350, -12)
-            GW.SkinGearQuipper()
         end
     end
 end

@@ -658,6 +658,9 @@ local function LoadMinimap()
     GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
     expButton:SetPoint("BOTTOMRIGHT", Minimap.sidePanel, "BOTTOMLEFT", 0, -3)
     QueueStatusButton:SetPoint("TOP", GwAddonToggle, "BOTTOM", 0, 0)
+    QueueStatusButton.SetPoint = GW.NoOp
+    QueueStatusButton.SetParent = GW.NoOp
+    QueueStatusButton.ClearAllPoints = GW.NoOp
     hooksecurefunc(QueueStatusButton, "SetPoint", function(_, _, parent)
         if parent ~= GwAddonToggle then
             QueueStatusButton:ClearAllPoints()
