@@ -1490,7 +1490,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
         if chatType == "VOICE_TEXT" and not GetCVarBool("speechToText") then
             return
-        elseif chatType == "COMMUNITIES_CHANNEL" or ((strsub(chatType, 1, 7) == "CHANNEL") and (chatType ~= "CHANNEL_LIST") and ((arg1 ~= "INVITE") or (chatType ~= "CHANNEL_NOTICE_USER"))) then
+        elseif chatType == "COMMUNITIES_CHANNEL" or ((strsub(chatType, 1, 7) == "CHANNEL") and (chatType ~= "CHANNEL_LIST") and ((GW.NotSecretValue(arg1) and arg1 ~= "INVITE") or (chatType ~= "CHANNEL_NOTICE_USER"))) then
             if arg1 == "WRONG_PASSWORD" then
                 local _, popup = StaticPopup_Visible("CHAT_CHANNEL_PASSWORD")
                 if popup and strupper(popup.data) == strupper(arg9) then
