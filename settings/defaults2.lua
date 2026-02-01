@@ -117,6 +117,8 @@ GW.globalDefault = {
 
         NumberFormat = "POINT",
 
+        showSkyridingbar = true,
+
         FONT_STYLE_TEMPLATE = "GW2",
         FONT_NORMAL = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf",
         FONT_HEADERS = "",

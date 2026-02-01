@@ -298,7 +298,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
         -- only registered when our dodge skill is actively on cooldown
         if not GW.inWorld or not self.spellId then return end
         local spellChargeInfo = C_Spell.GetSpellCharges(self.spellId)
-        if GW.Retail and not self.isSkyrindingBar then -- skyriding is not secret
+        if GW.Retail and not self.isSkyridingBar then -- skyriding is not secret
             local durationObject = C_Spell.GetSpellChargeDuration(self.spellId)
             local currentCharges = spellChargeInfo and spellChargeInfo.currentCharges
             self:UpdateChargeText(currentCharges)
@@ -327,7 +327,7 @@ function GwDodgeBarMixin:OnEvent(event, ...)
 end
 
 function GwDodgeBarMixin:OnEnter(_, override)
-    local bar = override and self or self.skyringingBarShown and self.skyrindingBar or self
+    local bar = override and self or self.skyringingBarShown and self.skyridingBar or self
 
     if not GW.Retail or self.skyringingBarShown then
         local af = bar.arcfill
@@ -353,7 +353,7 @@ function GwDodgeBarMixin:OnEnter(_, override)
 end
 
 function GwDodgeBarMixin:OnLeave(_, override)
-    local bar = override and self or self.skyringingBarShown and self.skyrindingBar or self
+    local bar = override and self or self.skyringingBarShown and self.skyridingBar or self
     if not GW.Retail or self.skyringingBarShown or override then
         local af = bar.arcfill
         for _, v in ipairs(af.masked) do
@@ -410,7 +410,26 @@ function GwDodgeBarMixin:SkyridingBarOnEvent(event, ...)
     end
 end
 
-function GwDodgeBarMixin:LoadSkiridingBar(parent)
+function GwDodgeBarMixin:ToggleSkyridingBar()
+    if GW.settings.showSkyridingbar then
+        self.skyridingBar:RegisterEvent("SPELL_UPDATE_CHARGES")
+        self.skyridingBar:SetScript("OnEvent", self.skyridingBar.OnEvent)
+
+        GW.Libs.GW2Lib.RegisterCallback(self.skyridingBar, "GW2_PLAYER_SKYRIDING_STATE_CHANGE", function(event, ...)
+            self.skyridingBar:SkyridingBarOnEvent(event, ...)
+        end)
+
+        self.skyridingBar:SkyridingBarOnEvent("GW2_PLAYER_SKYRIDING_STATE_CHANGE", GW.Libs.GW2Lib:IsPlayerSkyRiding())
+    else
+        self.skyridingBar:UnregisterEvent("SPELL_UPDATE_CHARGES")
+        self.skyridingBar:SetScript("OnEvent", nil)
+
+        GW.Libs.GW2Lib.UnregisterCallback(self.skyridingBar, "GW2_PLAYER_SKYRIDING_STATE_CHANGE")
+        self.skyridingBar:Hide()
+    end
+end
+
+function GwDodgeBarMixin:LoadSkyridingBar(parent)
     Debug("LoadSkiridingBar start")
 
     -- this bar gets a global name for use in key bindings
@@ -421,13 +440,13 @@ function GwDodgeBarMixin:LoadSkiridingBar(parent)
     fmdb.arcfill.fillFractions:SetVertexColor(100/255,100/255,100/255)
     fmdb.asTargetFrame = self.asTargetFrame
     fmdb.dodgeBar = self
-    self.skyrindingBar = fmdb
-    fmdb.isSkyrindingBar = true
+    self.skyridingBar = fmdb
+    fmdb.isSkyridingBar = true
     GW.AddMouseMotionPropagationToChildFrames(self.arcfill)
     GW.AddMouseMotionPropagationToChildFrames(self.border)
 
     if fmdb.asTargetFrame then
-        parent.skyrindingBar = fmdb
+        parent.skyridingBar = fmdb
         fmdb.arcfill:SetSize(80, 72)
         fmdb.arcfill.mask_normal:SetSize(80, 72)
         fmdb.arcfill.mask_hover:SetSize(80, 72)
@@ -478,14 +497,9 @@ function GwDodgeBarMixin:LoadSkiridingBar(parent)
 
     -- setup dodgebar event handling
     fmdb:OnLeave(nil, true)
-    fmdb:RegisterEvent("SPELL_UPDATE_CHARGES")
-    fmdb:SetScript("OnEvent", fmdb.OnEvent)
-
-    GW.Libs.GW2Lib.RegisterCallback(fmdb, "GW2_PLAYER_SKYRIDING_STATE_CHANGE", function(event, ...)
-        fmdb:SkyridingBarOnEvent(event, ...)
-    end)
-
     MixinHideDuringPetAndOverride(fmdb)
+
+    self:ToggleSkyridingBar()
 
     Debug("LoadSkiridingBar done")
     return fmdb
@@ -578,7 +592,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
 
     Debug("LoadDodgeBar done")
     if GW.Retail then
-        fmdb:LoadSkiridingBar(parent)
+        fmdb:LoadSkyridingBar(parent)
     end
     return fmdb
 end
