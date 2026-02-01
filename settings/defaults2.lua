@@ -1409,6 +1409,13 @@ GW.globalDefault = {
                     "Dominos",
                 },
             },
+            PetFrame = {
+                Override = false,
+                Addons = {
+                    "Bartender4",
+                    "Dominos",
+                },
+            },
             ImmersiveQuesting = {
                 Override = false,
                 Addons = {

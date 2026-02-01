@@ -234,14 +234,14 @@ local function setDependenciesOption(type, settingName, SetEnable, deactivateCol
 
     local color, inputColor, enabled = {1, 1, 1}, {0.82, 0.82, 0.82}, true
 
-    if deactivateColor then
-        color = {0.82, 0, 0}
-        inputColor = color
-        enabled = false
-    elseif overrideColor then
+    if overrideColor then
         color = {1, 0.65, 0}
         inputColor = color
-        enabled = false
+        enabled = true
+    elseif deactivateColor then
+        color = {0.82, 0, 0}
+        inputColor = color
+        enabled = true
     elseif not SetEnable then
         color = {0.4, 0.4, 0.4}
         inputColor = color
@@ -452,15 +452,16 @@ local function RefreshSettingsAfterProfileSwitch()
 end
 GW.RefreshSettingsAfterProfileSwitch = RefreshSettingsAfterProfileSwitch
 
-local function HandleIncompatibility(v, button)
+local function HandleIncompatibility(v, button, override)
+    if (IsControlKeyDown() and button and button == "LeftButton") or button == nil then
+        GW.SetOverrideIncompatibleAddons(v.incompatibleAddonsType, override)
+        return true
+    end
+    return false
+end
+
+local function ShouldHandleIncompatibility(v)
     if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
-        if IsControlKeyDown() and (button and button == "LeftButton" or button == nil) then
-            if v.isIncompatibleAddonLoaded and not v.isIncompatibleAddonLoadedButOverride then
-                GW.SetOverrideIncompatibleAddons(v.incompatibleAddonsType, true)
-            elseif not v.isIncompatibleAddonLoaded and v.isIncompatibleAddonLoadedButOverride then
-                GW.SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
-            end
-        end
         return true
     end
     return false
@@ -510,7 +511,13 @@ local function SettingsInitOptionWidget(of, v, panel)
     elseif v.optionType == "dropdown" then
         of.dropDown.OnButtonStateChanged = GW.NoOp
         of.dropDown:GwHandleDropDownBox(nil, nil, nil, 260)
-        of.dropDown:HookScript("OnMouseDown", function(_, button) HandleIncompatibility(v, button) end)
+        of.dropDown:HookScript("OnMouseDown", function(_, button)
+            if ShouldHandleIncompatibility(v) then
+                if not HandleIncompatibility(v, button, not v.isIncompatibleAddonLoadedButOverride) then
+                    return
+                end
+            end
+        end)
         of.dropDown:SetSelectionText(function(selections)
             if #selections == 0 then
                 return L["No option selected"]
@@ -619,53 +626,59 @@ local function SettingsInitOptionWidget(of, v, panel)
         if v.step then of.slider:SetValueStep(v.step) end
         of.slider:SetObeyStepOnDrag(true)
         of.slider:SetScript("OnValueChanged", function(self)
-            if HandleIncompatibility(v) then
-                self:SetValue(of.get())
-            else
-                local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
-
-                of.set(tonumber(roundValue))
-                self:GetParent().inputFrame.input:SetText(roundValue)
-                if v.callback then
-                    v.callback(tonumber(roundValue))
+            if ShouldHandleIncompatibility(v) then
+                if not HandleIncompatibility(v, nil, not v.isIncompatibleAddonLoadedButOverride) then
+                    self:SetValue(of.get())
+                    return
                 end
+            end
+            local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
+
+            of.set(tonumber(roundValue))
+            self:GetParent().inputFrame.input:SetText(roundValue)
+            if v.callback then
+                v.callback(tonumber(roundValue))
             end
         end)
         of.inputFrame.input:SetText(RoundDec(of.get(), of.decimalNumbers))
         of.inputFrame.input:SetScript("OnEnterPressed", function(self)
-            if HandleIncompatibility(v) then
-                self:SetText(RoundDec(of.get(), of.decimalNumbers))
-            else
-                local roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
-
-                self:ClearFocus()
-                if tonumber(roundValue) > v.max then self:SetText(v.max) end
-                if tonumber(roundValue) < v.min then self:SetText(v.min) end
-                roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
-                if v.step and v.step > 0 then
-                    local min_value = v.min or 0
-                    roundValue = floor((roundValue - min_value) / v.step + 0.5) * v.step + min_value
+            if ShouldHandleIncompatibility(v) then
+                if not HandleIncompatibility(v, nil, not v.isIncompatibleAddonLoadedButOverride) then
+                    self:SetText(RoundDec(of.get(), of.decimalNumbers))
+                    return
                 end
-                self:GetParent():GetParent().slider:SetValue(roundValue)
-                self:SetText(roundValue)
+            end
 
-                of.set(tonumber(roundValue))
-                if v.callback then
-                    v.callback(tonumber(roundValue))
-                end
+            local roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
+            self:ClearFocus()
+            if tonumber(roundValue) > v.max then self:SetText(v.max) end
+            if tonumber(roundValue) < v.min then self:SetText(v.min) end
+            roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
+            if v.step and v.step > 0 then
+                local min_value = v.min or 0
+                roundValue = floor((roundValue - min_value) / v.step + 0.5) * v.step + min_value
+            end
+            self:GetParent():GetParent().slider:SetValue(roundValue)
+            self:SetText(roundValue)
+
+            of.set(tonumber(roundValue))
+            if v.callback then
+                v.callback(tonumber(roundValue))
             end
         end)
     elseif v.optionType == "text" then
         of.inputFrame.input:SetText(of.get() or "")
         of.inputFrame.input:SetScript("OnEnterPressed", function(self)
-            if HandleIncompatibility(v) then
-                self:SetText(of.get() or "")
-            else
-                self:ClearFocus()
-                of.set(self:GetText())
-                if v.callback then
-                    v.callback(self)
+            if ShouldHandleIncompatibility(v) then
+                if not HandleIncompatibility(v, nil, not v.isIncompatibleAddonLoadedButOverride) then
+                    self:SetText(of.get() or "")
+                    return
                 end
+            end
+            self:ClearFocus()
+            of.set(self:GetText())
+            if v.callback then
+                v.callback(self)
             end
         end)
     elseif v.optionType == "boolean" then
@@ -675,48 +688,56 @@ local function SettingsInitOptionWidget(of, v, panel)
         end
         of.checkbutton:SetChecked(state)
         of.checkbutton:SetScript("OnClick", function(self, button)
-            if HandleIncompatibility(v, button) then
-                self:SetChecked(not self:GetChecked())
-            else
-                local toSet = false
-                if self:GetChecked() then
-                    toSet = true
-                end
-                of.set(toSet)
-
-                if v.callback then
-                    v.callback(toSet, of.optionName)
-                end
-                --Check all dependencies on this option
-                CheckDependencies()
+            local toSet = false
+            if self:GetChecked() then
+                toSet = true
             end
+            if ShouldHandleIncompatibility(v) then
+                if not HandleIncompatibility(v, button, toSet) then
+                    self:SetChecked(not self:GetChecked())
+                    return
+                end
+            end
+            of.set(toSet)
+
+            if v.callback then
+                v.callback(toSet, of.optionName)
+            end
+            --Check all dependencies on this option
+            CheckDependencies()
         end)
         of:SetScript("OnClick", function(self, button)
             if not of.checkbutton:IsEnabled() then return end
-            if not HandleIncompatibility(v, button) then
-                local toSet = true
-                if self.checkbutton:GetChecked() then
-                    toSet = false
-                end
-                self.checkbutton:SetChecked(toSet)
-                of.set(toSet)
-
-                if v.callback ~= nil then
-                    v.callback(toSet, of.optionName)
-                end
-                --Check all dependencies on this option
-                CheckDependencies()
+            local toSet = true
+            if self.checkbutton:GetChecked() then
+                toSet = false
             end
+            if ShouldHandleIncompatibility(v) then
+                if not HandleIncompatibility(v, button, toSet) then
+                    return
+                end
+            end
+            self.checkbutton:SetChecked(toSet)
+            of.set(toSet)
+
+            if v.callback ~= nil then
+                v.callback(toSet, of.optionName)
+            end
+            --Check all dependencies on this option
+            CheckDependencies()
         end)
     elseif v.optionType == "button" then
         of:SetScript("OnClick", function(_, button)
-            if not HandleIncompatibility(v, button) then
-                if v.callback then
-                    v.callback()
+            if ShouldHandleIncompatibility(v) then
+                if not HandleIncompatibility(v, button, not v.isIncompatibleAddonLoadedButOverride) then
+                    return
                 end
-                --Check all dependencies on this option
-                CheckDependencies()
             end
+            if v.callback then
+                v.callback()
+            end
+            --Check all dependencies on this option
+            CheckDependencies()
         end)
         of.title:SetTextColor(0, 0, 0)
         of.title:SetShadowColor(0, 0, 0, 0)

@@ -810,7 +810,7 @@ local function evPlayerLogin(self)
     end
 
     -- create pet frame
-    if GW.settings.PETBAR_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
+    if GW.settings.PETBAR_ENABLED and not GW.ShouldBlockIncompatibleAddon("PetFrame") then
         GW.LoadPetFrame(lm)
     end
 
