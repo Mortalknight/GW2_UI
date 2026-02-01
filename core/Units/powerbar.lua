@@ -428,6 +428,7 @@ function GwPlayerPowerBarMixin:ToggleBar()
         self:SetScript("OnEvent", OnEvent)
         self:UpdatePowerData()
         GW.ToggleMover(self.gwMover, true)
+        self.shouldShow = true
     else
         self:SetParent(GW.HiddenFrame)
         if self.decay then
@@ -435,6 +436,7 @@ function GwPlayerPowerBarMixin:ToggleBar()
         end
         self:SetScript("OnEvent", nil)
         GW.ToggleMover(self.gwMover, false)
+        self.shouldShow = false
     end
 end
 

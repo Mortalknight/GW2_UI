@@ -41,7 +41,7 @@ local function UpdateRange(self, unit)
             if element.correspondingFrames then
                 for _, frameName in ipairs(element.correspondingFrames) do
                     local frame = _G[frameName]
-                    if frame then
+                    if frame and frame.shouldShow then
                         frame:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
                     end
                 end
@@ -66,7 +66,7 @@ local function ToggleAlpha(self, element, endAlpha)
         if element.correspondingFrames then
             for _, frameName in ipairs(element.correspondingFrames) do
                 local frame = _G[frameName]
-                if frame then
+                if frame and frame.shouldShow then
                     GW.AddToAnimation(frame:GetDebugName(), frame:GetAlpha(), endAlpha, GetTime(), element.Smooth, function(p) frame:SetAlpha(p) end, 1)
                     if frame.UpdateAlphaFader then frame.UpdateAlphaFader(endAlpha) end
                 end
@@ -77,7 +77,7 @@ local function ToggleAlpha(self, element, endAlpha)
         if element.correspondingFrames then
             for _, frameName in ipairs(element.correspondingFrames) do
                 local frame = _G[frameName]
-                if frame then
+                if frame and frame.shouldShow then
                     frame:SetAlpha(endAlpha)
                     if frame.UpdateAlphaFader then frame.UpdateAlphaFader(endAlpha) end
                 end
@@ -99,7 +99,7 @@ local function Update(self, event, unit)
         if element.correspondingFrames then
             for _, frameName in ipairs(element.correspondingFrames) do
                 local frame = _G[frameName]
-                if frame then
+                if frame and frame.shouldShow then
                     frame:SetAlpha(1)
                     if frame.UpdateAlphaFader then frame.UpdateAlphaFader(1) end
                 end
@@ -185,7 +185,7 @@ local function TargetScript(self)
             self:SetAlpha(0)
             for _, frameName in ipairs(fader.correspondingFrames) do
                 local frame = _G[frameName]
-                if frame then
+                if frame and frame.shouldShow then
                     frame:SetAlpha(0)
                     if frame.UpdateAlphaFader then frame.UpdateAlphaFader(0) end
                 end

@@ -78,6 +78,7 @@ local function fsr_OnEvent(self, event, ...)
     elseif event == "PLAYER_REGEN_DISABLED" then
         self:Show()
     end
+    self.shouldShow = self:IsShown()
 
     if self.powerType ~= Enum.PowerType.Mana then
         return
@@ -164,7 +165,6 @@ local function createStatusbar(playerFrame)
 
     fsr.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
     fsr.mp5StartTime = 0
-    fsr.showTick = GW.GetSetting("PLAYER_5SR_MANA_TICK")
 
     fsr.LastTickTime = GetTime()
     fsr.CurrentValue = UnitPower("player")
@@ -212,12 +212,10 @@ local function Update5SrHot()
 
     if fsrMana then
         fsrMana.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
-        fsrMana.showTick = GW.GetSetting("PLAYER_5SR_MANA_TICK")
     end
 
     if fsrEnergy then
         fsrEnergy.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
-        fsrEnergy.showTick = GW.GetSetting("PLAYER_5SR_MANA_TICK")
     end
 end
 GW.Update5SrHot = Update5SrHot

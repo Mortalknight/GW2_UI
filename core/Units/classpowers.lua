@@ -112,7 +112,7 @@ local function UpdateVisibility(self, inCombat)
     local shouldBeVisible = self.shouldShowBar and (not self.onlyShowInCombat or inCombat)
     local targetAlpha = shouldBeVisible and 1 or 0
 
-    if GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame.Fader and GwPlayerUnitFrame.Fader:IsEnabled() then
+    if self.shouldShowBar and GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame.Fader and GwPlayerUnitFrame.Fader:IsEnabled() then
         targetAlpha = GwPlayerUnitFrame.Fader.currentAlpha
     end
 
