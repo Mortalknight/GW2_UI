@@ -223,6 +223,21 @@ function GwObjectivesRecipeContainerMixin:InitModule()
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText(PROFESSIONS_TRACKER_HEADER_PROFESSION)
 
+    if C_AddOns.IsAddOnLoaded("Auctionator") then
+        self.header.SearchButton = CreateFrame("Frame", nil, self.header)
+        self.header.SearchButton.text = self.header.SearchButton:CreateFontString(nil, "ARTWORK")
+        self.header.SearchButton.text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        self.header.SearchButton.text:SetShadowOffset(1, -1)
+        self.header.SearchButton.text:SetTextColor(TRACKER_TYPE_COLOR.RECIPE.r, TRACKER_TYPE_COLOR.RECIPE.g, TRACKER_TYPE_COLOR.RECIPE.b)
+        self.header.SearchButton.text:SetText(SEARCH)
+        self.header.SearchButton.text:SetPoint("RIGHT", self.header, "RIGHT", -5, 0)
+        self.header.SearchButton.SearchButton = self.header.SearchButton
+        Mixin(self.header.SearchButton, AuctionatorCraftingInfoObjectiveTrackerFrameMixin)
+        self.header.SearchButton:OnLoad()
+        self.header.SearchButton:SetScript("OnEvent", self.header.SearchButton.OnEvent)
+        self.header.SearchButton.text:SetScript("OnMouseUp", function() self.header.SearchButton:SearchButtonClicked() end)
+    end
+
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
     self.header.title:SetTextColor(TRACKER_TYPE_COLOR.RECIPE.r, TRACKER_TYPE_COLOR.RECIPE.g, TRACKER_TYPE_COLOR.RECIPE.b)
