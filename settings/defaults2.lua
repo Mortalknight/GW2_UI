@@ -610,6 +610,7 @@ GW.globalDefault = {
         ZoneAbilityFramePos_scale= 1,
 
         TalkingHeadFrameScale= 0.9,
+        ChatBubbleScale = 1,
 
         HealthGlobe_pos= {
             point= "BOTTOM",

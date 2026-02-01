@@ -79,6 +79,7 @@ local function LoadHudPanel(sWindow)
         end})
     general:AddOptionDropdown(L["Show Role Bar"], L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."], { getterSetter = "ROLE_BAR", callback = GW.UpdateRaidCounterVisibility, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["Raid Only"], L["Party / Raid"]}})
     general:AddOptionSlider(L["Talking Head Scale"], nil, { getterSetter = "TalkingHeadFrameScale", callback = GW.ScaleTalkingHeadFrame, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["TALKINGHEAD_SKIN_ENABLED"] = true}, hidden = not GW.Retail})
+    general:AddOptionSlider(L["Chatbubble Scale"], nil, { getterSetter = "ChatBubbleScale", min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["CHATBUBBLES_ENABLED"] = true}, hidden = not GW.Retail})
 
     --MINIMAP
     minimap:AddOption(L["Addon Compartment"], nil, {getterSetter = "MINIMAP_ADDON_COMPARTMENT_TOGGLE", callback = GW.HandleAddonCompartmentButton, dependence = {["MINIMAP_ENABLED"] = true}, incompatibleAddons = "Minimap", hidden = not GW.Retail})

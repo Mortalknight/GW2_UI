@@ -709,3 +709,16 @@ L["Type '%s' or '!' to show all new settings"] = true
 L["Shift-Click to show as experience bar."] = true
 L["Fix: Restore empty action bar slots"] = true
 L["Restores empty slots across all 8 action bars when they were hidden in Blizzard Edit Mode."] = true
+
+L["Chatbubble Scale"] = true
+L["Healthbar Width"] = true
+L["Healthbar Height"] = true
+L["Healthbar Text X-Offset"] = true
+L["Healthbar Text Y-Offset"] = true
+L["Powerbar Height"] = true
+L["Powerbar Text X-Offset"] = true
+L["Powerbar Text Y-Offset"] = true
+L["Show value on bar"] = true
+L["Anchor classpower bar to center"] = true
+L["Action Button Labels only on used slots"] = true
+L["Shows the assignments only on used slots"] = true

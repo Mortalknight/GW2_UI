@@ -97,9 +97,6 @@ local function LoadTargetPanel(sWindow)
     pPlayerPet:AddGroupHeader(L["Size"])
     pPlayerPet:AddOptionSlider(L["Scale"], nil, { getterSetter = "pet_pos_scale", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence =  {["PETBAR_ENABLED"] = true}})
 
-    
-
-
 
     --TARGET
     p_target:AddOption(SHOW_ENEMY_CAST, nil, {getterSetter = "target_SHOW_CASTBAR", callback = function() GwTargetUnitFrame:ToggleSettings() end, dependence = {["TARGET_ENABLED"] = true}})
@@ -134,7 +131,7 @@ local function LoadTargetPanel(sWindow)
     p_target:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "targetFrameHealthBarSize.height", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
     p_target:AddOptionSlider(L["Healthbar Text X-Offset"], nil, { getterSetter = "targetFrameHealthBarTextOffset.x", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
     p_target:AddOptionSlider(L["Healthbar Text Y-Offset"], nil, { getterSetter = "targetFrameHealthBarTextOffset.y", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})    
-    p_target:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "targetFramePowerBarSize.height", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
+    p_target:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "targetFramePowerBarSize.height", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["TARGET_ENABLED"] = true}})
 
 
     --TARGET OF TARGET
