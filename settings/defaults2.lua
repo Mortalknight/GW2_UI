@@ -117,6 +117,7 @@ GW.globalDefault = {
 
         NumberFormat = "POINT",
 
+        showDodgebar = true,
         showSkyridingbar = true,
 
         FONT_STYLE_TEMPLATE = "GW2",

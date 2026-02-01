@@ -723,3 +723,4 @@ L["Anchor classpower bar to center"] = true
 L["Action Button Labels only on used slots"] = true
 L["Shows the assignments only on used slots"] = true
 L["Show Skyridingbar"] = true
+L["Show Dodgebar"] = true

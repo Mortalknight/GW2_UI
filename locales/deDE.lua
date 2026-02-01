@@ -753,3 +753,4 @@ L["Anchor classpower bar to center"] = "Klassenpowerbalken an der Mitte ausricht
 L["Action Button Labels only on used slots"] = "Aktionsbutton-Beschriftungen nur auf belegten Plätzen"
 L["Shows the assignments only on used slots"] = "Zeigt die Zuweisungen nur auf belegten Plätzen"
 L["Show Skyridingbar"] = "Zeige Himmelsreitenbar"
+L["Show Dodgebar"] = "Zeige Ausweichzauberbar"

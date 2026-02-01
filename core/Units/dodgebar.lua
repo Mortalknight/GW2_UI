@@ -419,6 +419,26 @@ function GwDodgeBarMixin:ToggleSkyridingBar()
             self.skyridingBar:SkyridingBarOnEvent(event, ...)
         end)
 
+        if GW.settings.showDodgebar then
+            self.skyridingBar.arcfill.maskr_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
+            self.skyridingBar.arcfill.maskr_fraction:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
+            self.skyridingBar.arcfill.mask_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
+            self.skyridingBar.border.normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/border-normal-small.png")
+            self.skyridingBar.arcfill.fill:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill-small.png")
+            self.skyridingBar.arcfill.fillFractions:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill-small.png")
+            self.skyridingBar.arcfill.fill:SetVertexColor(1, 1, 1, 1.)
+            self.skyridingBar.arcfill.fillFractions:SetVertexColor(1, 1, 1, 1)
+        else
+            self.skyridingBar.arcfill.maskr_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/mask-normal.png")
+            self.skyridingBar.arcfill.maskr_fraction:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/mask-normal.png")
+            self.skyridingBar.arcfill.mask_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/mask-normal.png")
+            self.skyridingBar.border.normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/border-normal.png")
+            self.skyridingBar.arcfill.fill:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill.png")
+            self.skyridingBar.arcfill.fillFractions:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill.png")
+            self.skyridingBar.arcfill.fill:SetVertexColor(0.454, 0.85, 0.983, 1.0)
+            self.skyridingBar.arcfill.fillFractions:SetVertexColor(0.454, 0.85, 0.983, 1.0)
+        end
+
         self.skyridingBar:SkyridingBarOnEvent("GW2_PLAYER_SKYRIDING_STATE_CHANGE", GW.Libs.GW2Lib:IsPlayerSkyRiding())
     else
         self.skyridingBar:UnregisterEvent("SPELL_UPDATE_CHARGES")
@@ -473,13 +493,6 @@ function GwDodgeBarMixin:LoadSkyridingBar(parent)
     af.maskr_normal:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
     af.maskr_fraction:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
 
-    fmdb.arcfill.fill:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill-small.png")
-    fmdb.arcfill.fillFractions:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill-small.png")
-    af.maskr_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
-    af.maskr_fraction:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
-    af.mask_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall.png")
-
-    fmdb.border.normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/border-normal-small.png")
 
     -- create the arc drain/fill animations
     local ag = af.fill:CreateAnimationGroup()
@@ -505,12 +518,46 @@ function GwDodgeBarMixin:LoadSkyridingBar(parent)
     return fmdb
 end
 
+function GwDodgeBarMixin:ToggleDodgeBar()
+    if GW.settings.showDodgebar then
+        self:SetScript("OnEnter", self.OnEnter)
+        self:SetScript("OnLeave", self.OnLeave)
+        self:SetScript("OnEvent", self.OnEvent)
+        self:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
+        self:RegisterEvent("SPELLS_CHANGED")
+        self:RegisterEvent("PLAYER_ENTERING_WORLD")
+        self:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+        if GW.Retail or GW.TBC then
+            self:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+        else
+            self:RegisterEvent("LEARNED_SPELL_IN_TAB")
+        end
+        self:InitBar(false)
+        self:SetupBar()
+    else
+        self:SetScript("OnEnter", nil)
+        self:SetScript("OnLeave", nil)
+        self:SetScript("OnEvent", nil)
+        self:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+        self:UnregisterEvent("SPELLS_CHANGED")
+        self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        self:UnregisterEvent("UPDATE_SHAPESHIFT_FORM")
+        if GW.Retail or GW.TBC then
+            self:UnregisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+        else
+            self:UnregisterEvent("LEARNED_SPELL_IN_TAB")
+        end
+        self:Hide()
+    end
+end
+
 local function LoadDodgeBar(parent, asTargetFrame)
     Debug("LoadDodgeBar start")
 
     -- this bar gets a global name for use in key bindings
     local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, GW.Retail and "GwDodgeBarRetailTmpl" or "GwDodgeBarTmpl")
     fmdb.asTargetFrame = asTargetFrame
+    fmdb.parent = parent
     fmdb:RegisterForClicks("AnyUp", "AnyDown")
     if fmdb.asTargetFrame then
         parent.dodgebar = fmdb
@@ -574,18 +621,7 @@ local function LoadDodgeBar(parent, asTargetFrame)
     -- setup dodgebar event handling
     fmdb.skyringingBarShown = false
     fmdb:OnLeave(nil, not GW.Retail)
-    fmdb:SetScript("OnEnter", fmdb.OnEnter)
-    fmdb:SetScript("OnLeave", fmdb.OnLeave)
-    fmdb:SetScript("OnEvent", fmdb.OnEvent)
-    fmdb:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
-    fmdb:RegisterEvent("SPELLS_CHANGED")
-    fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
-    fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-    if GW.Retail or GW.TBC then
-        fmdb:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
-    else
-        fmdb:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    end
+    fmdb:ToggleDodgeBar()
 
     -- setup hook to hide the dodge bar when in vehicle/override UI
     MixinHideDuringPetAndOverride(fmdb)

@@ -114,7 +114,7 @@
         </Frames>
     </Button>
 
-     <Button name="UnsecureDodgeBarRetailTemplate" virtual="true"  frameStrata="MEDIUM" frameLevel="1" mixin="GwDodgeBarMixin">
+     <Button name="UnsecureDodgeBarRetailTemplate" virtual="true" frameStrata="MEDIUM" frameLevel="1" mixin="GwDodgeBarMixin">
         <Size x="128" y="48"></Size>
         <Frames>
             <Frame parentKey="arcfill">
