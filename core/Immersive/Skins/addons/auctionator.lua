@@ -41,6 +41,32 @@ local function SetGroupTitleFrame(header)
     end
 end
 
+local function SkinDialog()
+    for i = 1, 10 do
+        local frame = _G["AuctionatorDialog" .. i]
+        if frame and not frame.gw2Skinned then
+            frame.gw2Skinned = true
+            frame:GwStripTextures()
+            frame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+        end
+        if frame then
+            if frame.acceptButton then
+                frame.acceptButton:GwSkinButton(false, true)
+            end
+            if frame.cancelButton then
+                frame.cancelButton:GwSkinButton(false, true)
+            end
+            if frame.altButton then
+                frame.altButton:GwSkinButton(false, true)
+            end
+            if frame.editBox and not frame.editBox.isSkinned then
+                frame.editBox.isSkinned = true
+                GW.SkinTextBox(frame.editBox.Middle, frame.editBox.Left, frame.editBox.Right, nil, nil, 5, 5)
+            end
+        end
+    end
+end
+
 local function SkinAuctionator()
     if AuctionHouseFrame:GetScale() < 0.5 then
         return
@@ -445,6 +471,12 @@ local function SkinAuctionator()
     extendedSearch.QualityContainer.DropDown.DropDown:GwHandleDropDownBox()
     extendedSearch.ExpansionContainer.DropDown.DropDown:GwHandleDropDownBox()
     extendedSearch.TierContainer.DropDown.DropDown:GwHandleDropDownBox()
+
+    -- dialogs
+    hooksecurefunc(Auctionator.Dialogs, "ShowEditBox", SkinDialog)
+    hooksecurefunc(Auctionator.Dialogs, "ShowConfirm", SkinDialog)
+    hooksecurefunc(Auctionator.Dialogs, "ShowConfirmAlt", SkinDialog)
+    hooksecurefunc(Auctionator.Dialogs, "ShowMoney", SkinDialog)
 end
 
 local function LoadAuctionatorAddonSkin()
