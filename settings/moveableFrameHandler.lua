@@ -650,7 +650,7 @@ local function LoadMovers(layoutManager)
     smallSettingsContainer.headerString:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
     smallSettingsContainer.headerString:SetText(L["Extra Frame Options"] .. " & Layouts")
 
-    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.5, 1.5)
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.1, 2)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetValue(1)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetScript("OnValueChanged", sliderValueChange)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetText(1)
