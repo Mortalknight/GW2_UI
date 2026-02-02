@@ -337,7 +337,7 @@ local function setReputationDetails(frame, data)
         frame.repbg:SetAlpha(0)
     end
 
-    if data.factionID and C_Reputation.IsFactionParagon(data.factionID) then
+    if data.factionID and C_Reputation.IsFactionParagonForCurrentPlayer(data.factionID) then
         local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(data.factionID)
         local value = currentValue % threshold
         local isMajorFaction = C_Reputation.IsMajorFaction(data.factionID)

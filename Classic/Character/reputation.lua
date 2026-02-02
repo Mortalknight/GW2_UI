@@ -316,7 +316,7 @@ local function setDetailEx(
         frame.repbg:SetAlpha(0)
     end
 
-    if factionID and C_Reputation.IsFactionParagon and C_Reputation.IsFactionParagon(factionID) then
+    if factionID and C_Reputation.IsFactionParagonForCurrentPlayer and C_Reputation.IsFactionParagonForCurrentPlayer(factionID) then
         local currentValue, maxValueParagon, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
 
         if currentValue > 10000 then

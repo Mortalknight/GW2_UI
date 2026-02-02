@@ -157,7 +157,7 @@ local function UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
     local isParagon, isFriend, isMajor, isNormal = false, false, false, false
     showRepu = true
 
-    if C_Reputation.IsFactionParagon and C_Reputation.IsFactionParagon(data.factionID) then
+    if C_Reputation.IsFactionParagonForCurrentPlayer and C_Reputation.IsFactionParagonForCurrentPlayer(data.factionID) then
         local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(data.factionID)
         currentValue = currentValue % maxValueParagon
         valPrecRepu = (maxValueParagon > 0) and (currentValue / maxValueParagon) or 0
