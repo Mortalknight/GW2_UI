@@ -1,11 +1,16 @@
 local _, GW = ...
 
 local function HandleIconString(self, text)
+    if self._gw2SetText then return end
     if not text then text = self:GetText() end
     if not text or text == "" then return end
 
     local new, count = gsub(text, "|T([^:]-):[%d+:]+|t", "|T%1:14:14:0:0:64:64:5:59:5:59|t")
-    if count > 0 then self:SetFormattedText("%s", new) end
+    if count > 0 and new ~= text then
+        self._gw2SetText = true
+        self:SetFormattedText("%s", new)
+        self._gw2SetText = false
+    end
 end
 
 local function ReskinTalents(self)

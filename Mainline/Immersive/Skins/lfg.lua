@@ -312,13 +312,15 @@ local function SkinLookingForGroupFrames()
             bu.name:SetJustifyH("LEFT")
             bu.name:SetPoint("LEFT", bu, "LEFT", 5, 0)
             bu.name:SetWidth(bu:GetWidth())
-            hooksecurefunc(bu.name, "SetText", function()
-                if not bu.name.SetTextGw2 then
-                    bu.name.SetTextGw2 = true
-                    bu.name:SetText(bu.name:GetText():gsub("-\n", ""):gsub("\n", ""))
-                    bu.name.SetTextGw2 = false
-                end
-            end)
+            if not bu.name._gw2TextHooked then
+                bu.name._gw2TextHooked = true
+                hooksecurefunc(bu.name, "SetText", function(self, text)
+                    if self._gw2SetText then return end
+                    self._gw2SetText = true
+                    self:SetText((text or self:GetText() or ""):gsub("-\n", ""):gsub("\n", ""))
+                    self._gw2SetText = false
+                end)
+            end
 
             bu.gwBorderFrame:Hide()
 
@@ -698,13 +700,15 @@ local function SkinLookingForGroupFrames()
                 button.Label:SetShadowColor(0, 0, 0, 0)
                 button.Label:SetShadowOffset(1, -1)
 
-                hooksecurefunc(button.Label, "SetText", function()
-                    if not button.Label.SetTextGw2 then
-                        button.Label.SetTextGw2 = true
-                        button.Label:SetText(button.Label:GetText():gsub("-\n", ""):gsub("\n", ""))
-                        button.Label.SetTextGw2 = false
-                    end
-                end)
+                if not button.Label._gw2TextHooked then
+                    button.Label._gw2TextHooked = true
+                    hooksecurefunc(button.Label, "SetText", function(self, text)
+                        if self._gw2SetText then return end
+                        self._gw2SetText = true
+                        self:SetText((text or self:GetText() or ""):gsub("-\n", ""):gsub("\n", ""))
+                        self._gw2SetText = false
+                    end)
+                end
 
                 button.isSkinned = true
             end
@@ -835,12 +839,11 @@ local function ApplyPvPUISkin()
         bu.Name:SetWidth(bu:GetWidth())
         bu.Name:SetText(bu.Name:GetText():gsub("-|n", ""):gsub("|n", ""))
 
-        hooksecurefunc(bu.Name, "SetText", function()
-            if not bu.Name.SetTextGw2 then
-                bu.Name.SetTextGw2 = true
-                bu.Name:SetText(bu.Name:GetText():gsub("-|n", ""):gsub("|n", ""))
-                bu.Name.SetTextGw2 = false
-            end
+        hooksecurefunc(bu.Name, "SetText", function(self, text)
+            if self._gw2SetText then return end
+            self._gw2SetText = true
+            self:SetText((text or self:GetText() or ""):gsub("-|n", ""):gsub("|n", ""))
+            self._gw2SetText = false
         end)
 
         bu.gwBorderFrame:Hide()

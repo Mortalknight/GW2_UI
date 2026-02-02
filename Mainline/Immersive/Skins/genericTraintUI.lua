@@ -1,11 +1,16 @@
 local _, GW = ...
 
 local function ReplaceIconString(frame, text)
+    if frame._gw2SetText then return end
     if not text then text = frame:GetText() end
     if not text or text == "" then return end
 
     local newText, count = gsub(text, "|T(%d+):24:24[^|]*|t", " |T%1:16:16:0:0:64:64:5:59:5:59|t")
-    if count > 0 then frame:SetFormattedText("%s", newText) end
+    if count > 0 and newText ~= text then
+        frame._gw2SetText = true
+        frame:SetFormattedText("%s", newText)
+        frame._gw2SetText = false
+    end
 end
 
 local function RemoveTexture(self)

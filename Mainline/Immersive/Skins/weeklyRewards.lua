@@ -100,11 +100,16 @@ local function SkinActivityFrame(frame, isObject)
 end
 
 local function ReplaceIconString(self, text)
+    if self._gw2SetText then return end
     if not text then text = self:GetText() end
     if not text or text == "" then return end
 
     local newText, count = gsub(text, "24:24:0:%-2", "14:14:0:0:64:64:5:59:5:59")
-    if count > 0 then self:SetFormattedText("%s", newText) end
+    if count > 0 and newText ~= text then
+        self._gw2SetText = true
+        self:SetFormattedText("%s", newText)
+        self._gw2SetText = false
+    end
 end
 
 local function ApplyWeeklyRewardsSkin()
