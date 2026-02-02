@@ -724,3 +724,5 @@ L["Action Button Labels only on used slots"] = true
 L["Shows the assignments only on used slots"] = true
 L["Show Skyridingbar"] = true
 L["Show Dodgebar"] = true
+L["Health Bar Values"] = true
+L["Shorten Health bar text"] = true

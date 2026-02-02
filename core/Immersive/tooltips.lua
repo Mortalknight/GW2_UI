@@ -777,20 +777,37 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
 end
 
 local function GameTooltipStatusBar_UpdateUnitHealth(bar)
-    if not bar.Text or not GW.settings.ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT then return end
+    if not bar.Text then return end
+
+    if GW.settings.TooltipHealthBarValues == "NONE" then
+        bar.Text:SetText("")
+        return
+    end
 
     local tt = bar:GetParent()
     if not tt then return end
     local _, unit = tt:GetUnit()
-    if GW.NotSecretValue(unit) and unit and (UnitIsUnit(unit, "player") or UnitInParty(unit) or UnitInRaid(unit)) then
-        bar.Text:SetFormattedText("%d", UnitHealthPercent(unit, true, CurveConstants.ScaleTo100))
+    if GW.NotSecretValue(unit) and unit then
+        local formatFunction = GW.settings.TooltipHealthBarValuesShortend and AbbreviateNumbers or BreakUpLargeNumbers
+        if GW.settings.TooltipHealthBarValues == "RAW" then
+            bar.Text:SetFormattedText("%s", formatFunction(UnitHealth(unit)))
+        elseif GW.settings.TooltipHealthBarValues == "PERCENTAGE" then
+            bar.Text:SetFormattedText("%d%%", UnitHealthPercent(unit, true, CurveConstants.ScaleTo100))
+        else
+            bar.Text:SetFormattedText("%s (%d%%)", formatFunction(UnitHealth(unit)), UnitHealthPercent(unit, true, CurveConstants.ScaleTo100))
+        end
     else
         bar.Text:SetText("")
     end
 end
 
 local function GameTooltipStatusBar_OnValueChanged(bar, value)
-    if not value or not bar.Text or not GW.settings.ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT then return end
+    if not value or not bar.Text then return end
+
+    if GW.settings.TooltipHealthBarValues == "NONE" then
+        bar.Text:SetText("")
+        return
+    end
 
     local _, unit = bar:GetParent():GetUnit()
     if not unit then
@@ -803,14 +820,20 @@ local function GameTooltipStatusBar_OnValueChanged(bar, value)
     if unit and UnitIsDeadOrGhost(unit) then
         bar.Text:SetText(DEAD)
     else
+        local formatFunction = GW.settings.TooltipHealthBarValuesShortend and AbbreviateNumbers or BreakUpLargeNumbers
         local maximum, _
         if unit then -- try to get the real health values if possible
             value, maximum = UnitHealth(unit), UnitHealthMax(unit)
         else
             _, maximum = bar:GetMinMaxValues()
         end
-
-        bar.Text:SetFormattedText("%d / %d", value or 1, maximum or 1)
+        if GW.settings.TooltipHealthBarValues == "RAW" then
+            bar.Text:SetFormattedText("%s", formatFunction(value or 1))
+        elseif GW.settings.TooltipHealthBarValues == "PERCENTAGE" then
+            bar.Text:SetFormattedText("%d%%", ((value or 1) / (maximum or 1)) * 100)
+        else
+            bar.Text:SetFormattedText("%s (%d%%)", formatFunction(value or 1), ((value or 1) / (maximum or 1)) * 100)
+        end
         bar:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
     end
 end
@@ -887,6 +910,7 @@ local function SetTooltipFonts()
     GameTooltipHeaderText:SetFont(DAMAGE_TEXT_FONT, headerSize, fontOutline)
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
     GameTooltipText:SetFont(font, textSize, fontOutline)
+    GameTooltipStatusBar.Text:SetFont(DAMAGE_TEXT_FONT, GW.settings.TooltipHealthBarTextFontSize, "OUTLINE")
 
     if GameTooltip.hasMoney then
         for i = 1, GameTooltip.numMoneyFrames do
@@ -1163,7 +1187,7 @@ local function LoadTooltips()
     SkinQueueStatusFrame()
 
     local statusText = GameTooltipStatusBar:CreateFontString(nil, "OVERLAY")
-    statusText:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
+    statusText:SetFont(DAMAGE_TEXT_FONT, GW.settings.TooltipHealthBarTextFontSize, "OUTLINE")
     statusText:SetPoint("CENTER", GameTooltipStatusBar)
     GameTooltipStatusBar.Text = statusText
 
@@ -1204,7 +1228,7 @@ local function LoadTooltips()
     hooksecurefunc("GameTooltip_ShowProgressBar", GameTooltip_ShowProgressBar) -- Skin Progress Bars
     hooksecurefunc("GameTooltip_ClearProgressBars", GameTooltip_ClearProgressBars)
     hooksecurefunc("GameTooltip_AddQuestRewardsToTooltip", GameTooltip_AddQuestRewardsToTooltip) -- Color Progress Bars
-    hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
+    --hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
 
     -- Functions
     MountIDs = {}

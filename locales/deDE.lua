@@ -754,3 +754,5 @@ L["Action Button Labels only on used slots"] = "Aktionsbutton-Beschriftungen nur
 L["Shows the assignments only on used slots"] = "Zeigt die Zuweisungen nur auf belegten Plätzen"
 L["Show Skyridingbar"] = "Zeige Himmelsreitenbar"
 L["Show Dodgebar"] = "Zeige Ausweichzauberbar"
+L["Health Bar Values"] = "Gesundheitsbarwerte"
+L["Shorten Health bar text"] = "Gesundheitsbarwerte verkürzen"
