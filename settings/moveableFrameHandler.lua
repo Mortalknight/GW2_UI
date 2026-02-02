@@ -420,13 +420,13 @@ local function sliderValueChange(self)
 end
 
 local function sliderEditBoxValueChanged(self)
-    local roundValue = GW.RoundDec(self:GetNumber(), 2) or 0.5
+    local roundValue = GW.RoundDec(self:GetNumber(), 2) or 0.1
     local moverFrame = self:GetParent():GetParent():GetParent().child
 
     self:ClearFocus()
-    if tonumber(roundValue) > 1.5 then self:SetText(1.5) end
-    if tonumber(roundValue) < 0.5 then self:SetText(0.5) end
-    roundValue = GW.RoundDec(self:GetNumber(), 2) or 0.5
+    if tonumber(roundValue) > 2 then self:SetText(2) end
+    if tonumber(roundValue) < 0.1 then self:SetText(0.1) end
+    roundValue = GW.RoundDec(self:GetNumber(), 2) or 0.1
 
     self:GetParent().slider:SetValue(roundValue)
     self:SetText(roundValue)
