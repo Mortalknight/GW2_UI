@@ -53,7 +53,7 @@ local function Update(self, event, unit)
     if self.isForced or (not element or not element.count or element.count <= 0) then
         self:SetAlpha(1)
         return
-    elseif element.Range and event ~= "OnRangeUpdate" then
+    elseif element.Range and (event ~= "OnRangeUpdate" and event ~= "UNIT_IN_RANGE_UPDATE") then
         return
     end
 
