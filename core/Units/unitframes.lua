@@ -879,25 +879,30 @@ function GwUnitFrameMixin:ToggleSettings()
     self.altBg:SetShown(GW.settings[unit .. "_FRAME_ALT_BACKGROUND"])
 
     self.auras:ClearAllPoints()
-    self.auras:SetPoint("TOPLEFT", self.castingbarBackground, "BOTTOMLEFT", 2, -15)
-
     if self.auraPositionTop then
-        local yOff = GW.settings[unit .. "_FRAME_ALT_BACKGROUND"] and 22 or 17
-        self.auras:ClearAllPoints()
         if self.frameInvert then
-            self.auras:SetPoint("TOPRIGHT", self.levelString, "TOPRIGHT", -2, yOff)
+            self.auras:SetPoint("TOPRIGHT", self.levelString, "TOPRIGHT", -2, 17)
         else
-            self.auras:SetPoint("TOPLEFT", self.nameString, "TOPLEFT", 2, yOff)
+            self.auras:SetPoint("TOPLEFT", self.nameString, "TOPLEFT", 2, 17)
         end
-    elseif GW.settings[unit .. "_HOOK_COMBOPOINTS"] and (GW.myClassID == 4 or GW.myClassID == 11) then
-        self.auras:ClearAllPoints()
-        self.auras:SetPoint("TOPLEFT", self.castingbarBackground, "BOTTOMLEFT", 2, -23)
+    else
+        local comboOffset = (GW.settings[unit .. "_HOOK_COMBOPOINTS"] and (GW.myClassID == 4 or GW.myClassID == 11) and -23) or -15
+        if self.frameInvert then
+            self.auras:SetPoint("TOPRIGHT", self.castingbarBackground, "BOTTOMRIGHT", 2, comboOffset)
+        else
+            self.auras:SetPoint("TOPLEFT", self.castingbarBackground, "BOTTOMLEFT", 2, comboOffset)
+        end
     end
 
     self.debuffFilter = GW.settings[unit .. "_BUFFS_FILTER_ALL"] and "HARMFUL" or "PLAYER|HARMFUL"
     self.debuffFilterShowImportant = GW.settings[unit .. "_BUFFS_FILTER_IMPORTANT"]
 
     self:SetScale(GW.settings[self.unit .. "_pos_scale"])
+    self.castingbarBackground:SetWidth(GW.settings[self.unit .. "FrameHealthBarSize"].width)
+    self.castingbarNormal:SetWidth(GW.settings[self.unit .. "FrameHealthBarSize"].width)
+    if self.castingbar then
+        self.castingbar:SetWidth(GW.settings[self.unit .. "FrameHealthBarSize"].width)
+    end
     self.healthContainer:SetSize(GW.settings[self.unit .. "FrameHealthBarSize"].width, GW.settings[self.unit .. "FrameHealthBarSize"].height)
     self.powerbarContainer:SetSize(GW.settings[self.unit .. "FrameHealthBarSize"].width, GW.settings[self.unit .. "FramePowerBarSize"].height) --width is shared
     self.healthString:ClearAllPoints()
@@ -1096,7 +1101,11 @@ function GwTargetUnitFrameMixin:ToggleSettings()
     self:SetScale(GW.settings[self.unit .. "_pos_scale"])
     self.healthContainer:SetSize(GW.settings[self.unit .. "FrameHealthBarSize"].width, GW.settings[self.unit .. "FrameHealthBarSize"].height)
     self.powerbarContainer:SetSize(GW.settings[self.unit .. "FrameHealthBarSize"].width, GW.settings[self.unit .. "FramePowerBarSize"].height) -- width is shared
-
+    self.castingbarBackground:SetWidth(GW.settings[self.unit .. "FrameHealthBarSize"].width)
+    self.castingbarNormal:SetWidth(GW.settings[self.unit .. "FrameHealthBarSize"].width)
+    if self.castingbar then
+        self.castingbar:SetWidth(GW.settings[self.unit .. "FrameHealthBarSize"].width)
+    end
     self.parentUnitFrame:OnEvent("FORCE_UPDATE")
 end
 

@@ -711,7 +711,7 @@ L["Fix: Restore empty action bar slots"] = true
 L["Restores empty slots across all 8 action bars when they were hidden in Blizzard Edit Mode."] = true
 
 L["Chatbubble Scale"] = true
-L["Healthbar Width"] = true
+L["Bar Width"] = true
 L["Healthbar Height"] = true
 L["Healthbar Text X-Offset"] = true
 L["Healthbar Text Y-Offset"] = true
