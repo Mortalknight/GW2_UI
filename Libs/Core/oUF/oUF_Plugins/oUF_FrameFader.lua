@@ -32,7 +32,11 @@ local function UpdateRange(self, unit)
             end
         end
     else
-        element.RangeAlpha = element.MaxAlpha
+        if ns.Retail then
+            self:SetAlphaFromBoolean(isEligible, element.MaxAlpha, element.MaxAlpha)
+        else
+            element.RangeAlpha = element.MaxAlpha
+        end
     end
 end
 
