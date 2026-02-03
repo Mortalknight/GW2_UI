@@ -14,6 +14,18 @@ local function GridRaid40StyleRegister(self)
         end
     )
 
+    self.bg = self:CreateTexture(nil, 'BORDER')
+    self.bg:SetPoint("TOPLEFT", -1, 1)
+    self.bg:SetPoint("BOTTOMRIGHT", 1, -1)
+    self.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    self.bg:SetVertexColor(0, 0, 0, 1)
+
+    self.highlightBorder = self:CreateTexture(nil, 'BORDER', nil, 1)
+    self.highlightBorder:SetPoint("TOPLEFT", -1, 1)
+    self.highlightBorder:SetPoint("BOTTOMRIGHT", 1, -1)
+    self.highlightBorder:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    self.highlightBorder:SetVertexColor(0, 0, 0, 0)
+
     self.RaisedElementParent = GW.CreateRaisedElement(self)
 	self.Health = GW.Construct_HealthBar(self, true)
     self.Name = GW.Construct_NameText(self)

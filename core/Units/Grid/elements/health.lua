@@ -46,18 +46,6 @@ local function Construct_HealthBar(frame)
     health:SetPoint('RIGHT')
     health:SetFrameLevel(10)
 
-    health.bg = frame:CreateTexture(nil, 'BORDER')
-    health.bg:SetPoint("TOPLEFT", -1, 1)
-    health.bg:SetPoint("BOTTOMRIGHT", 1, -1)
-    health.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-    health.bg:SetVertexColor(0, 0, 0, 1)
-
-    health.highlightBorder = frame:CreateTexture(nil, 'BORDER', nil, -7)
-    health.highlightBorder:SetPoint("TOPLEFT", -1, 1)
-    health.highlightBorder:SetPoint("BOTTOMRIGHT", 1, -1)
-    health.highlightBorder:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-    health.highlightBorder:SetVertexColor(0, 0, 0, 0)
-
     health.PostUpdateColor = PostUpdateHealthColor
     health.PostUpdate = PostUpdateHealth
 

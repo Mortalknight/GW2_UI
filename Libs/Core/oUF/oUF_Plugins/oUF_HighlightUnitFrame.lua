@@ -8,7 +8,7 @@ local normalColor = CreateColor(1, 1, 1, 1)
 local noColor = CreateColor(0, 0, 0, 0)
 
 local function Update(self, event)
-	local element = self.Health.highlightBorder
+	local element = self.highlightBorder
     local isSameUnit = UnitIsUnit(self.unit, "target")
 
     element:SetVertexColor(noColor:GetRGBA())
