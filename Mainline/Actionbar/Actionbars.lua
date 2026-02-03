@@ -123,8 +123,21 @@ local function changeVertexColorActionbars(btn)
 end
 AFP("changeVertexColorActionbars", changeVertexColorActionbars)
 
+local function setButtonBackgroundAlpha(btn, alpha)
+    btn.gwBackdrop.bg:SetAlpha(alpha)
+    btn.gwBackdrop.border1:SetAlpha(alpha)
+    btn.gwBackdrop.border2:SetAlpha(alpha)
+    btn.gwBackdrop.border3:SetAlpha(alpha)
+    btn.gwBackdrop.border4:SetAlpha(alpha)
+
+    if btn.SlotBackground then
+        btn.SlotBackground:SetAlpha(alpha)
+    end
+    btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+end
+
 local function updateActionbarBorders(btn)
-    if not btn.gwBackdrop then return end
+    if not btn.gwBackdrop or btn.ShowGrid then return end
     local texture = GetActionTexture(btn.action)
 
     if texture then
@@ -135,27 +148,25 @@ local function updateActionbarBorders(btn)
                 shouldShowHotKey =  text and text ~= RANGE_INDICATOR
             end
         end
-        btn.gwBackdrop.border1:SetAlpha(1)
-        btn.gwBackdrop.border2:SetAlpha(1)
-        btn.gwBackdrop.border3:SetAlpha(1)
-        btn.gwBackdrop.border4:SetAlpha(1)
+        setButtonBackgroundAlpha(btn, 1)
         if shouldShowHotKey then
             btn.HotKey:Show()
             if btn.hkBg then
                 btn.hkBg.texture:Show()
             end
         end
+        btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed.png")
+        btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
         btn.hasAction = true
     else
-        btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
-        btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
-        btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
-        btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        setButtonBackgroundAlpha(btn, tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         if GW.settings.BUTTON_ASSIGNMENTS_USED_ONLY or not GW.settings.BUTTON_ASSIGNMENTS then
             btn.HotKey:Hide()
             if btn.hkBg then
                 btn.hkBg.texture:Hide()
             end
+            btn:ClearPushedTexture()
+            btn:ClearHighlightTexture()
         end
         btn.hasAction = false
     end
@@ -433,16 +444,6 @@ local function updateMacroName(self)
 end
 GW.updateMacroName = updateMacroName
 
-local function hideBackdrop(self)
-    self.gwBackdrop:Hide()
-end
-AFP("hideBackdrop", hideBackdrop)
-
-local function showBackdrop(self)
-    self.gwBackdrop:Show()
-end
-AFP("showBackdrop", showBackdrop)
-
 local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
     button.HotKey:ClearAllPoints()
     if isPetButton or isStanceButton then
@@ -638,8 +639,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
             btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
             btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         end
-        --btn:HookScript("OnHide", hideBackdrop)
-        --btn:HookScript("OnShow", showBackdrop)
+
     end
 end
 GW.setActionButtonStyle = setActionButtonStyle
@@ -1172,14 +1172,9 @@ local function UpdateMultibarButtons()
                     used_height = used_height + settings.size + GW.settings.MULTIBAR_MARGIIN
                 end
 
-                btn.gwBackdrop.bg:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
-                btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
-                btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
-                btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
-                btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
-
                 btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
                 updateMacroName(btn)
+                updateActionbarBorders(btn)
                 updateHotkey(btn)
             end
 
@@ -1412,20 +1407,45 @@ local function LoadActionBars(lm, skinOnly)
     setLeaveVehicleButton()
 
     -- hook hotkey update calls so we can override styling changes
-    local hotkeyEventTrackerFrame = CreateFrame("Frame")
-    hotkeyEventTrackerFrame:RegisterEvent("UPDATE_BINDINGS")
-    hotkeyEventTrackerFrame:SetScript("OnEvent", function()
-        local fmMultiBar
-        for y = 0, 7 do
-            if y == 0 then
-                fmMultiBar = fmActionbar
-            else
-                fmMultiBar = fmActionbar["gw_Bar" .. y]
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("UPDATE_BINDINGS")
+    eventFrame:RegisterEvent("ACTIONBAR_SHOWGRID")
+    eventFrame:RegisterEvent("ACTIONBAR_HIDEGRID")
+    eventFrame:SetScript("OnEvent", function(_, event)
+        if event == "UPDATE_BINDINGS" then
+            local fmMultiBar
+            for y = 0, 7 do
+                if y == 0 then
+                    fmMultiBar = fmActionbar
+                else
+                    fmMultiBar = fmActionbar["gw_Bar" .. y]
+                end
+                if fmMultiBar.gw_IsEnabled then
+                    for i = 1, 12 do
+                        updateHotkey(fmMultiBar.gw_Buttons[i])
+                        FixHotKeyPosition(fmMultiBar.gw_Buttons[i], false, false, y == 0)
+                    end
+                end
             end
-            if fmMultiBar.gw_IsEnabled then
-                for i = 1, 12 do
-                    updateHotkey(fmMultiBar.gw_Buttons[i])
-                    FixHotKeyPosition(fmMultiBar.gw_Buttons[i], false, false, y == 0)
+        elseif event == "ACTIONBAR_SHOWGRID" or event == "ACTIONBAR_HIDEGRID" then
+            local fmMultiBar
+            local needShow = event == "ACTIONBAR_SHOWGRID"
+            for y = 0, 7 do
+                if y == 0 then
+                    fmMultiBar = fmActionbar
+                else
+                    fmMultiBar = fmActionbar["gw_Bar" .. y]
+                end
+                if fmMultiBar.gw_IsEnabled then
+                    for i = 1, 12 do
+                        local btn = fmMultiBar.gw_Buttons[i]
+                        btn.ShowGrid = needShow
+                        if needShow then
+                            setButtonBackgroundAlpha(btn, 1)
+                        else
+                            updateActionbarBorders(btn)
+                        end
+                    end
                 end
             end
         end
