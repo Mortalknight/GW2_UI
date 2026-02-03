@@ -911,6 +911,7 @@ function GwUnitFrameMixin:ToggleSettings()
     else
         self.healthString:SetPoint("LEFT", self.health, "LEFT", GW.settings[self.unit .. "FrameHealthBarTextOffset"].x, GW.settings[self.unit .. "FrameHealthBarTextOffset"].y)
     end
+    self.nameString:SetWidth(GW.settings[self.unit .. "FrameHealthBarSize"].width - 15)
 
     self:OnEvent("FORCE_UPDATE")
 
@@ -1106,6 +1107,9 @@ function GwTargetUnitFrameMixin:ToggleSettings()
     if self.castingbar then
         self.castingbar:SetWidth(GW.settings[self.unit .. "FrameHealthBarSize"].width)
     end
+
+    self.nameString:SetWidth(GW.settings[self.unit .. "FrameHealthBarSize"].width - 15)
+
     self.parentUnitFrame:OnEvent("FORCE_UPDATE")
 end
 
