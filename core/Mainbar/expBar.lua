@@ -39,7 +39,7 @@ local function xpbar_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
 
-    local isRestingString = IsResting() and L[" (Resting)"] or ""
+    local isRestingString = IsResting() and not IsAtMaxLevel() and L[" (Resting)"] or ""
 
     GameTooltip:AddLine(COMBAT_XP_GAIN .. isRestingString, 1, 1, 1)
 
