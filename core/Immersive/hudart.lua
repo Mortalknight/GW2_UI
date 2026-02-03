@@ -474,6 +474,7 @@ local function LoadHudArt()
         curveTwo:SetType(Enum.LuaCurveType.Linear)
         curveTwo:AddPoint(0.0, CreateColor(1, 1, 1, 0.8))
         curveTwo:AddPoint(0.5, CreateColor(1, 1, 1, 1))
+        curveTwo:AddPoint(0.5000001, CreateColor(1, 1, 1, 0))
         curveTwo:AddPoint(1.0, CreateColor(1, 1, 1, 0))
     end
 
