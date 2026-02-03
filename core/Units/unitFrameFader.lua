@@ -33,10 +33,10 @@ local function UpdateRange(self, unit)
     local element = self.Fader
     local isEligible = UnitIsConnected(unit) and UnitInParty(unit)
     local inRange
+    if GW.Retail then element.RangeAlpha = nil end
     if isEligible then
         inRange = UnitInRange(unit)
         if GW.Retail then
-            element.RangeAlpha = nil
             self:SetAlphaFromBoolean(inRange, element.MaxAlpha, element.MinAlpha)
             if element.correspondingFrames then
                 for _, frameName in ipairs(element.correspondingFrames) do
