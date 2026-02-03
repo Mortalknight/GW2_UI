@@ -885,7 +885,7 @@ function GwUnitFrameMixin:ToggleSettings()
         local yOff = GW.settings[unit .. "_FRAME_ALT_BACKGROUND"] and 22 or 17
         self.auras:ClearAllPoints()
         if self.frameInvert then
-            self.auras:SetPoint("TOPRIGHT", self.nameString, "TOPRIGHT", -2, yOff)
+            self.auras:SetPoint("TOPRIGHT", self.levelString, "TOPRIGHT", -2, yOff)
         else
             self.auras:SetPoint("TOPLEFT", self.nameString, "TOPLEFT", 2, yOff)
         end
