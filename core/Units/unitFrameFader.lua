@@ -110,7 +110,7 @@ local function Update(self, event, unit)
             end
         end
         return
-    elseif element.Range and event ~= "OnRangeUpdate" then
+    elseif element.Range and (event ~= "OnRangeUpdate" and event ~= "UNIT_IN_RANGE_UPDATE") then
         return
     end
 
@@ -201,9 +201,9 @@ end
 local options = {
     Range = {
         enable = function(self)
-            if GW.Retail then
-                self:RegisterEvent("UNIT_IN_RANGE_UPDATE", Update)
-            else
+            --if GW.Retail then
+            --    self:RegisterEvent("UNIT_IN_RANGE_UPDATE", Update)
+            --else
                 if not onRangeFrame then
                     onRangeFrame = CreateFrame('Frame')
                     onRangeFrame:SetScript('OnUpdate', OnRangeUpdate)
@@ -211,12 +211,12 @@ local options = {
 
                 onRangeFrame:Show()
                 tinsert(onRangeObjects, self)
-            end
+            --end
         end,
         disable = function(self)
-            if GW.Retail then
-                self:UnregisterEvent('UNIT_IN_RANGE_UPDATE', Update)
-            else
+            --if GW.Retail then
+            --    self:UnregisterEvent('UNIT_IN_RANGE_UPDATE', Update)
+            --else
                 if onRangeFrame then
                     for idx, obj in next, onRangeObjects do
                         if obj == self then
@@ -230,7 +230,7 @@ local options = {
                         onRangeFrame:Hide()
                     end
                 end
-            end
+            --end
         end,
     },
     Hover = {
