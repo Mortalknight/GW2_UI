@@ -69,7 +69,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="1">
-                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\hud\notification-backdrop.png">
+                <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\hud\notification-backdrop.png">
                     <Color r="0" g="0" b="0" a="0.9"></Color>
                     <Size x="20" y="20">
                     </Size>
