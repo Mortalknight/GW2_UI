@@ -4,27 +4,24 @@ local oUF = ns.oUF
 local _FRAMES = {}
 local CheckHighlightFrame
 
-local normalColor = CreateColor(1, 1, 1, 1)
-local noColor = CreateColor(0, 0, 0, 0)
-
 local function Update(self, event)
 	local element = self.highlightBorder
     local isSameUnit = UnitIsUnit(self.unit, "target")
 
-    element:SetVertexColor(noColor:GetRGBA())
+    element:SetAlpha(0)
 
     if self:IsMouseOver() then
-        element:SetVertexColor(normalColor:GetRGBA())
+        element:SetAlpha(1)
         return
     end
 
     if ns.Retail then
-        element:SetVertexColorFromBoolean(isSameUnit, normalColor, noColor)
+        element:SetAlphaFromBoolean(isSameUnit, 1, 0)
     else
         if isSameUnit then
-            element:SetVertexColor(normalColor:GetRGBA())
+            element:SetAlpha(1)
         else
-            element:SetVertexColor(noColor:GetRGBA())
+            element:SetAlpha(0)
         end
     end
 end
