@@ -402,6 +402,20 @@ local function worldMapSkin()
             end
             lastTab = tab
         end
+
+        if C_AddOns.IsAddOnLoaded("WorldQuestTab") then
+            GW.HandleTabs(WQT_QuestMapTab, "right", {WQT_QuestMapTab.Icon}, true)
+            WQT_QuestMapTab:ClearAllPoints()
+            WQT_QuestMapTab:SetPoint("TOP", lastTab, "BOTTOM", 0, 1)
+
+            FML:GwHandleDropDownBox()
+            WQT_ListContainer.TopBar.FilterDropdown:GwHandleDropDownBox(GW.BackdropTemplates.DopwDown, true)
+            WQT_ListContainer.TopBar.FilterDropdown:SetWidth(125)
+            GW.HandleTrimScrollBar(WQT_ListContainer.ScrollBar)
+            WQTBorder:GwStripTextures()
+            WQT_ListContainer.Background:GwKill()
+            WQT_ListContainer:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+        end
     end)
 
     -- 11.1 Event Tab
