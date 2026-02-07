@@ -142,6 +142,12 @@ GW.AddForProfiling("character_equipset", "outfitDeleteButton_OnClick", outfitDel
 
 local function EquipmentSet_InitButton(button, elementData)
     if not button.isSkinned then
+        button:RegisterForDrag("LeftButton")
+        button:SetScript("OnDragStart", function()
+            if button.setID then
+                C_EquipmentSet.PickupEquipmentSet(button.setID)
+            end
+        end)
         button:SetScript("OnClick", outfitListButton_OnClick)
         button:SetScript("OnLeave", GameTooltip_Hide)
         button:SetScript("OnEnter",
