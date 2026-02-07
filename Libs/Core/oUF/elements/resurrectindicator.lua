@@ -24,6 +24,7 @@ A default texture will be applied if the widget is a Texture and doesn't have a 
 
 local _, ns = ...
 local oUF = ns.oUF
+local SUMMON_ICON_PREFIX = oUF.isRetail and 'RaidFrame-Icon-' or 'Raid-Icon-'
 
 -- gw2 modified
 
@@ -97,8 +98,8 @@ local function Enable(self)
 
 		self:RegisterEvent('INCOMING_RESURRECT_CHANGED', Path)
 
-		if(element:IsObjectType('Texture') and not element:GetTexture()) then
-			element:SetTexture([[Interface\RaidFrame\Raid-Icon-Rez]])
+		if(element:IsObjectType('Texture') and not element:GetAtlas()) then
+			element:SetAtlas(SUMMON_ICON_PREFIX .. 'Rez')
 		end
 
 		return true
