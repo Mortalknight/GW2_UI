@@ -92,7 +92,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
-                <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd.png">
+                <Texture parentKey="raidmarker" file="Interface/TargetingFrame/UI-RaidTargetingIcons">
                     <Size x="28" y="28"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativeKey="$parent.portrait" relativePoint="TOPRIGHT" x="2" y="15"></Anchor>
@@ -193,7 +193,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd.png">
+                <Texture parentKey="raidmarker" file="Interface/TargetingFrame/UI-RaidTargetingIcons">
                     <Size x="20" y="20"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="LEFT" x="5" y="28"></Anchor>
@@ -366,7 +366,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
-                <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd.png">
+                <Texture parentKey="raidmarker" file="Interface/TargetingFrame/UI-RaidTargetingIcons">
                     <Size x="28" y="28"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.portrait" relativePoint="TOPLEFT" x="-2" y="15"></Anchor>

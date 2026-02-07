@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file="..\Core\oUF\oUF_Classic.xml"/>
+    <Include file="..\Core\oUF\oUF_TBC.xml"/>
     <Include file="..\Core\oUF\oUF_Plugins\oUF_Plugins.xml"/>
     <Include file="..\Core\UTF8\UTF8.xml"/>
     <Script file="..\Core\LibStub\LibStub.lua"/>
