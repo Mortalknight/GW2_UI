@@ -342,9 +342,6 @@ local function encounterJournalSkin()
     EncounterJournalJourneysFrame.JourneyProgress.LevelSkipButton:GwSkinButton(false, true)
     EncounterJournalJourneysFrame.JourneyProgress.OverviewBtn:GwSkinButton(false, true)
     EncounterJournalJourneysFrame.JourneyOverview.OverviewBtn:GwSkinButton(false, true)
-    --EncounterJournalInstanceSelect.GreatVaultButton:GwSkinButton(false, false, false, false, false, true, true) --TODO
-
-
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
     GW.HandleScrollControls(InstanceSelect)
@@ -356,9 +353,12 @@ local function encounterJournalSkin()
 		EncounterJournalRaidTab,
 		EncounterJournalLootJournalTab,
 		EncounterJournalMonthlyActivitiesTab,
-        EncounterJournal.TutorialsTab
+        EncounterJournal.TutorialsTab,
+        EncounterJournal.DelvesTab
 	} do
-		GW.HandleTabs(tab)
+        if tab then
+		    GW.HandleTabs(tab)
+        end
 	end
 
     EncounterJournalJourneysTab:ClearAllPoints()
@@ -395,6 +395,13 @@ local function encounterJournalSkin()
 	EncounterJournal.TutorialsTab:SetPoint('LEFT', EncounterJournalLootJournalTab, 'RIGHT', 0, 0)
     EncounterJournal.TutorialsTab.ClearAllPoints = GW.NoOp
     EncounterJournal.TutorialsTab.SetPoint = GW.NoOp
+
+    if EncounterJournal.DelvesTab then
+        EncounterJournal.DelvesTab:ClearAllPoints()
+        EncounterJournal.DelvesTab:SetPoint('LEFT', EncounterJournal.TutorialsTab, 'RIGHT', 0, 0)
+        EncounterJournal.DelvesTab.ClearAllPoints = GW.NoOp
+        EncounterJournal.DelvesTab.SetPoint = GW.NoOp
+    end
 
     EncounterJournalMonthlyActivitiesFrame.HelpButton:GwKill()
 
