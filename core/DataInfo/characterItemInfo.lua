@@ -174,27 +174,31 @@ do
     GW.UpdatePageInfo = UpdatePageInfo
 end
 
+local characterInfoWaitScheduled = false
+local characterInfoQueued = false
+
+local function RunCharacterInfoUpdate(self)
+    characterInfoWaitScheduled = false
+    if characterInfoQueued then
+        characterInfoQueued = false
+        if GwCharacterWindow:IsShown() and self.needsUpdate then
+            GW.UpdatePageInfo()
+            self.needsUpdate = false
+        end
+    end
+end
+
 local function UpdateCharacterInfo(self, event)
     if not GW.settings.SHOW_CHARACTER_ITEM_INFO then return end
     -- set the values for the next time the char window gets open
     if event == "PLAYER_EQUIPMENT_CHANGED" or (event == "UPDATE_INVENTORY_DURABILITY" and GwCharacterWindow:IsShown()) then
-        local timeNow = GetTime()
-        if event == "PLAYER_EQUIPMENT_CHANGED" or (timeNow - (self.lastUpdateTime or 0)) >= 3 then
-            self.needsUpdate = true
-            self.lastUpdateTime = timeNow
-        end
+        self.needsUpdate = true
     end
 
-    if GwCharacterWindow:IsShown() and self.needsUpdate then
-        GW.UpdatePageInfo()
-        --update itemborder
-        for name, _ in pairs(InspectItems) do
-            local frame = _G[name]
-            if frame then
-                --GW.UpdateCharacterPanelItemSlot(frame)
-            end
-        end
-        self.needsUpdate = false
+    characterInfoQueued = true
+    if not characterInfoWaitScheduled then
+        characterInfoWaitScheduled = true
+        GW.Wait(1, RunCharacterInfoUpdate, self)
     end
 end
 
@@ -205,7 +209,6 @@ local function ToggleCharacterItemInfo(setup)
 
     if GW.settings.SHOW_CHARACTER_ITEM_INFO then
         f.needsUpdate = true
-        f.lastUpdateTime = GetTime()
         f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
         f:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
         f:SetScript("OnEvent", UpdateCharacterInfo)
@@ -225,7 +228,6 @@ local function ToggleCharacterItemInfo(setup)
         f:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
         f:UnregisterEvent("UPDATE_INVENTORY_DURABILITY")
         f.needsUpdate = false
-        f.lastUpdateTime = 0
         for name, _ in pairs(InspectItems) do
             local inspectItem = _G[name]
             if inspectItem then

@@ -5,6 +5,9 @@ local SetClassIcon = GW.SetClassIcon
 
 local IsIn = GW.IsIn
 
+local bagItemListWaitScheduled = false
+local bagItemListQueued = false
+
 local modelPositions = {
     Human = {0.4, 0, -0.05},
     Worgen = {0.1, 0, -0.1},
@@ -485,7 +488,22 @@ local function updateBagItemListAll()
         end
     end
 end
-GW.AddForProfiling("paperdoll_equipment", "updateBagItemListAll", updateBagItemListAll)
+
+local function bagItemListRun()
+    bagItemListWaitScheduled = false
+    if bagItemListQueued then
+        bagItemListQueued = false
+        updateBagItemListAll()
+    end
+end
+
+local function bagItemListOnEvent(self)
+    bagItemListQueued = true
+    if not bagItemListWaitScheduled then
+        bagItemListWaitScheduled = true
+        GW.Wait(1, bagItemListRun)
+    end
+end
 
 local function setStatIcon(self, stat)
     local newTexture = "Interface/AddOns/GW2_UI/textures/character/statsicon.png"
@@ -597,7 +615,6 @@ local function stats_QueuedUpdate(self)
     self:SetScript("OnUpdate", nil)
     updateStats(self:GetParent())
 end
-GW.AddForProfiling("paperdoll_equipment", "stats_QueuedUpdate", stats_QueuedUpdate)
 
 local function updateUnitData(self)
     self.characterName:SetText(UnitPVPName("player"))
@@ -1169,7 +1186,7 @@ local function LoadPDBagList(fmMenu, parent)
     fmGDR.itemLevelFrame:SetScript("OnEnter", ItemLevelTooltip)
     fmGDR.itemLevelFrame:SetScript("OnLeave", GameTooltip_Hide)
 
-    fmGPDBIL:SetScript("OnEvent", updateBagItemListAll)
+    fmGPDBIL:SetScript("OnEvent", bagItemListOnEvent)
     fmGPDBIL:SetScript("OnHide", resetBagInventory)
     fmGPDBIL:SetScript("OnShow", GwPaperDollBagItemList_OnShow)
     fmGPDBIL:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
