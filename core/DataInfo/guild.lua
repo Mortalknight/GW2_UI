@@ -33,6 +33,10 @@ local moreMembersOnlineString = strjoin("", "+%d ", FRIENDS_LIST_ONLINE, "...")
 local noteString = strjoin("", "|cff999999   ", LABEL_NOTE, ":|r %s")
 local officerNoteString = strjoin("", "|cff999999   ", GUILD_RANK1_DESC, ":|r %s")
 local clubTable, guildTable = {}, {}
+local isFetchingGuild = false
+local fetchingGuildWaitQueued = false
+local lastGuildFetch = 0
+local GUILD_FETCH_INTERVAL = 3
 
 local function sortByRank(a, b)
     if a and b then
@@ -61,7 +65,9 @@ local function inGroup(name)
     return (UnitInParty(name) or UnitInRaid(name)) and "|cffaaaaaa*|r" or ""
 end
 
-local function FetchGuildMembers()
+local function FetchGuildMembers_Internal()
+    isFetchingGuild = true
+    lastGuildFetch = GetTime()
     wipe(guildTable)
     wipe(clubTable)
 
@@ -88,7 +94,7 @@ local function FetchGuildMembers()
     local totalMembers = GetNumGuildMembers() or 0
     for i = 1, totalMembers do
         local name, rank, rankIndex, level, _, zone, note, officerNote, connected, memberstatus, className, _, _, isMobile, _, _, guid = GetGuildRosterInfo(i)
-        if not name then return end
+        if not name then break end
 
         local statusInfo = isMobile and mobilestatus[memberstatus] or onlinestatus[memberstatus]
         zone = (isMobile and not connected) and REMOTE_CHAT or zone
@@ -117,6 +123,32 @@ local function FetchGuildMembers()
 
             guildTable[#guildTable + 1] = data
         end
+    end
+
+    isFetchingGuild = false
+end
+
+local function FetchGuildMembersRun()
+    if isFetchingGuild then
+        GW.Wait(0.5, FetchGuildMembersRun)
+        return
+    end
+
+    local now = GetTime()
+    local elapsed = now - lastGuildFetch
+    if elapsed < GUILD_FETCH_INTERVAL then
+        GW.Wait(GUILD_FETCH_INTERVAL - elapsed, FetchGuildMembersRun)
+        return
+    end
+
+    FetchGuildMembers_Internal()
+    fetchingGuildWaitQueued = false
+end
+
+local function FetchGuildMembers()
+    if not fetchingGuildWaitQueued then
+        fetchingGuildWaitQueued = true
+        GW.Wait(0.1, FetchGuildMembersRun)
     end
 end
 GW.FetchGuildMembers = FetchGuildMembers
