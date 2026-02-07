@@ -205,7 +205,6 @@ GW.Libs.LSM:Register("statusbar", "GW2_UI_Yellow", "Interface/Addons/GW2_UI/text
 GW.Libs.LSM:Register("statusbar", "GW2_UI_Blue", "Interface/Addons/GW2_UI/textures/hud/breathmeter.png")
 GW.Libs.LSM:Register("statusbar", "GW2_UI", "Interface/Addons/GW2_UI/textures/hud/castinbar-white.png")
 GW.Libs.LSM:Register("statusbar", "GW2_UI_2", "Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar.png")
-GW.Libs.LSM:Register("statusbar", "GW2_UI_3", "Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
 GW.Libs.LSM:Register("statusbar", "GW2_UI_2_DEFAULT", "Interface/Addons/GW2_UI/textures/bartextures/statusbar.png")
 GW.Libs.LSM:Register("icon", "GW2_UI_Bag", "Interface/AddOns/GW2_UI/textures/bag/bagicon.png")
 GW.Libs.LSM:Register("border", "GW2_UI_Bag_Foot", "Interface/AddOns/GW2_UI/textures/bag/bagfooter.png")
