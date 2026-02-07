@@ -239,8 +239,6 @@ GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 local function Minimap_OnMouseDown(self, btn)
     if btn == "RightButton" then
         self.gwTrackingButton:OpenMenu()
-    else
-        Minimap.OnClick(self)
     end
 end
 
@@ -509,9 +507,22 @@ local function LoadMinimap()
         Minimap.backdrop:SetScale(1)
     end
 
-    Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
-    Minimap:SetScript("OnMouseDown", Minimap_OnMouseDown)
-    Minimap:SetScript("OnMouseUp", GW.NoOp)
+    local clickHandler = CreateFrame("Frame", "Gw2UI_MinimapClickHandler", Minimap)
+    clickHandler:SetPassThroughButtons("LeftButton")
+    clickHandler:SetPropagateMouseMotion(true)
+    clickHandler:SetAllPoints()
+
+    clickHandler:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
+    clickHandler:SetScript("OnMouseDown", Minimap_OnMouseDown)
+
+    -- Minimap Tracking Button
+    clickHandler.gwTrackingButton = CreateFrame("DropdownButton")
+    clickHandler.gwTrackingButton:SetFrameStrata("BACKGROUND")
+    MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
+    Mixin(clickHandler.gwTrackingButton, MiniMapTrackingButtonMixin)
+    clickHandler.gwTrackingButton:OnLoad()
+    clickHandler.gwTrackingButton:SetScript("OnEvent", clickHandler.gwTrackingButton.OnEvent)
+    clickHandler.gwTrackingButton:SetAllPoints(Minimap)
 
     Minimap:HookScript("OnEnter", hoverMiniMapIn)
     Minimap:HookScript("OnLeave", hoverMiniMapOut)
@@ -720,15 +731,6 @@ local function LoadMinimap()
         QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/lfgminimapbutton-highlight.png")
         QueueStatusButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/lfgminimapbutton-highlight.png")
     end)
-
-    -- Minimap Tracking Button
-    Minimap.gwTrackingButton = CreateFrame("DropdownButton")
-    Minimap.gwTrackingButton:SetFrameStrata("BACKGROUND")
-    MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
-    Mixin(Minimap.gwTrackingButton, MiniMapTrackingButtonMixin)
-    Minimap.gwTrackingButton:OnLoad()
-    Minimap.gwTrackingButton:SetScript("OnEvent", Minimap.gwTrackingButton.OnEvent)
-    Minimap.gwTrackingButton:SetAllPoints(Minimap)
 
     GW.UpdateMinimapSize()
 end
