@@ -140,6 +140,12 @@ local function getNewEquipmentSetButton(i)
     end
 
     local f = CreateFrame("Button", "GwPaperDollOutfitsButton" .. i, GwPaperDollOutfits, "GwPaperDollOutfitsButton")
+    f:RegisterForDrag("LeftButton")
+    f:SetScript("OnDragStart", function()
+        if f.setID then
+            C_EquipmentSet.PickupEquipmentSet(f.setID)
+        end
+    end)
     f:SetScript("OnClick", outfitListButton_OnClick)
     f:SetScript("OnLeave", GameTooltip_Hide)
     GW.CharacterMenuBlank_OnLoad(f)
