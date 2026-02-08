@@ -1406,8 +1406,10 @@ local function LoadActionBars(lm, skinOnly)
                 end
                 if fmMultiBar.gw_IsEnabled then
                     for i = 1, 12 do
-                        updateHotkey(fmMultiBar.gw_Buttons[i])
-                        FixHotKeyPosition(fmMultiBar.gw_Buttons[i], false, false, y == 0)
+                        local btn = fmMultiBar.gw_Buttons[i]
+                        updateActionbarBorders(btn)
+                        updateHotkey(btn)
+                        FixHotKeyPosition(btn, false, false, y == 0)
                     end
                 end
             end

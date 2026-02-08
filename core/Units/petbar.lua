@@ -12,7 +12,6 @@ local petStateSprite = {
 
 GwPlayerPetFrameMixin = {}
 
-
 function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
     local BUTTON_SIZE = 28
     local BUTTON_MARGIN = 3
@@ -24,10 +23,9 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
         if i == 1 then
             point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", self, "BOTTOMLEFT", 3, 30
         elseif i == 8 then
-            point, relativeFrame, relativePoint, x, y = "BOTTOM", _G["PetActionButton5"], "TOP", 0, BUTTON_MARGIN
+            point, relativeFrame, relativePoint, x, y = "BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN
         else
-            point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", _G["PetActionButton" .. (i - 1)], "BOTTOMRIGHT",
-                BUTTON_MARGIN, 0
+            point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", _G["PetActionButton" .. (i - 1)], "BOTTOMRIGHT", BUTTON_MARGIN, 0
         end
 
         local size = (i < 4) and 32 or BUTTON_SIZE
@@ -76,13 +74,6 @@ function GwPlayerPetFrameMixin:SetActionButtonPositionAndStyle()
             end)
         end
 
-        if i <= 3 or i >= 8 then
-            button:SetScript("OnDragStart", nil)
-            button:SetAttribute("_ondragstart", nil)
-            button:SetScript("OnReceiveDrag", nil)
-            button:SetAttribute("_onreceivedrag", nil)
-        end
-
         button.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
 
         GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
@@ -105,22 +96,20 @@ function GwPlayerPetFrameMixin:Update()
     for i, button in ipairs(self.buttons) do
         local name, texture = GetPetActionInfo(i)
 
-        if i == 1 then
+        if name == "PET_ACTION_ATTACK" then
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack.png")
-        elseif i == 2 then
+        elseif name == "PET_ACTION_FOLLOW" then
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow.png")
-        elseif i == 3 then
+        elseif name == "PET_ACTION_MOVE_TO"then
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place.png")
+        elseif name == "PET_MODE_ASSIST" or name == "PET_MODE_AGGRESSIVE" then
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist.png")
+        elseif name == "PET_MODE_DEFENSIVEASSIST" or name == "PET_MODE_DEFENSIVE" then
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense.png")
+        elseif name == "PET_MODE_PASSIVE" then
+            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive.png")
         else
-            if name == "PET_MODE_ASSIST" or name == "PET_MODE_AGGRESSIVE" then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist.png")
-            elseif name == "PET_MODE_DEFENSIVEASSIST" or name == "PET_MODE_DEFENSIVE" then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense.png")
-            elseif name == "PET_MODE_PASSIVE" then
-                button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive.png")
-            else
-                button.icon:SetTexture(texture)
-            end
+            button.icon:SetTexture(texture)
         end
     end
 end
