@@ -1,32 +1,19 @@
-10.0.5
-FIXES
-    - Gamemenu skin on TBC
-    - Aura tooltip works again
-    - Chatframe secret value
-    - Forbidden tooltips
-    - Socal frame lua error
-    - Frame fader fixes
-    - Raid target fix
+10.1.0
+NEW
+    - Added bar size settings to: Targetframe, Target of targetframe, Focusframe, Target of focusframe and playerframe
+    - Added option to change chatbubble size
+    - Added option to toggle the dodgebar
+    - Added option to toggle the skyridingbar
+    - Added option to anchor the classpower bar to center to have them alligned when using profile on different characters
+    - Added option to show keybinds only on used slots
+    - Added option for a rectangle minimap (Read the setting notes)
 
-10.0.4
 CHANGES
-    - Added grid aura filter options for retail, that are all blizzard allows at the moment
+    - Gear manager: Gears can now be draged to the actionbars
+    - Dodgebar, skyridingbar and player ressourcebars now fades with player frame
 
 FIXES
-    - Totembar error on none Retail clients
-    - Grid backgorund on none Retail clients
-
-10.0.3
-FIXES
-    - Tooltip error on TBC
-
-10.0.2
-FIXES
-    - Tooltip error on TBC
-
-10.0.1
-FIXES
-    - Tooltip error on TBC
-
-10.0.0
-    - Midnight support
+    - Some more secrets (retail)
+    - Grid range fader is working again
+    - Raidmarkers are now showing correclty
+    - Many more fixes

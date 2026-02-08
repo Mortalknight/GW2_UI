@@ -18,6 +18,22 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.1.0", {
+    {GW.ChangelogType.feature, [=[Added bar size settings to: Targetframe, Target of targetframe, Focusframe, Target of focusframe and playerframe]=]},
+    {GW.ChangelogType.feature, [=[Added option to change chatbubble size]=]},
+    {GW.ChangelogType.feature, [=[Added option to toggle the dodgebar]=]},
+    {GW.ChangelogType.feature, [=[Added option to toggle the skyridingbar]=]},
+    {GW.ChangelogType.feature, [=[Added option to anchor the classpower bar to center to have them alligned when using profile on different characters]=]},
+    {GW.ChangelogType.feature, [=[Added option to show keybinds only on used slots]=]},
+    {GW.ChangelogType.feature, [=[Added option for a rectangle minimap (Read the setting notes)]=]},
+    {GW.ChangelogType.change, [=[Gear manager: Gears can now be draged to the actionbars]=]},
+    {GW.ChangelogType.change, [=[ Dodgebar, skyridingbar and player ressourcebars now fades with player frame)]=]},
+    {GW.ChangelogType.bug, [=[Some more secrets (retail)]=]},
+    {GW.ChangelogType.bug, [=[Grid range fader is working again]=]},
+    {GW.ChangelogType.bug, [=[Raidmarkers are now showing correclty]=]},
+    {GW.ChangelogType.bug, [=[Many more fixes]=]},
+})
+
 addChange("10.0.5", {
     {GW.ChangelogType.bug, [=[Gamemenu skin on TBC]=]},
     {GW.ChangelogType.bug, [=[Aura tooltip works again]=]},
@@ -27,7 +43,6 @@ addChange("10.0.5", {
     {GW.ChangelogType.bug, [=[Frame fader fixes]=]},
     {GW.ChangelogType.bug, [=[Raid target fix]=]},
 })
-
 
 addChange("10.0.4", {
     {GW.ChangelogType.change, [=[Added grid aura filter options for retail, that are all blizzard allows at the moment]=]},
