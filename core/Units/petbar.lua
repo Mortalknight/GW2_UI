@@ -261,12 +261,14 @@ local function LoadPetFrame(lm)
     playerPetFrame.powerbar.customMaskSize = 64
 
     playerPetFrame.buttons = {}
+    playerPetFrame.unit = "pet"
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
-    playerPetFrame:SetAttribute("unit", "pet")
+    playerPetFrame:SetAttribute("unit", playerPetFrame.unit)
     playerPetFrame:EnableMouse(true)
-    playerPetFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    playerPetFrame:RegisterForClicks("AnyDown")
+    GW.AddToClique(playerPetFrame)
     RegisterStateDriver(playerPetFrame, "visibility",
         "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
 
@@ -274,15 +276,11 @@ local function LoadPetFrame(lm)
     playerPetFrame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
 
     playerPetFrame:SetScript("OnEnter", function(self)
-        if self.unit then
-            GameTooltip:ClearLines()
-            GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
-            GameTooltip:SetUnit(self.unit)
-            GameTooltip:Show()
-        end
+        GameTooltip:ClearLines()
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetUnit(self.unit)
+        GameTooltip:Show()
     end)
-
-    playerPetFrame.unit = "pet"
 
     playerPetFrame.debuffFilter = "PLAYER|HARMFUL"
     playerPetFrame.displayBuffs = 32
@@ -357,6 +355,7 @@ local function LoadPetFrame(lm)
     if GW.Retail or GW.TBC then
         PetActionBar.ignoreFramePositionManager = true
         PetActionBar:GwKillEditMode()
+        PetActionBar:SetParent(GW.HiddenFrame)
 
         hooksecurefunc(PetActionBar, "Update", function() playerPetFrame:Update() end)
     else

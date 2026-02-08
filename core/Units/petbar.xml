@@ -5,12 +5,9 @@
 
     <Button name="GwPlayerPetFrameTemplate" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="MEDIUM" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate" virtual="true" mixin="GwUnitHealthbarMixin,GwUnitPowerbarMixin,GwPlayerPetFrameMixin">
         <Size x="316" y="100"></Size>
-        <HitRectInsets>
-            <AbsInset left="0" right="0" top="0" bottom="30"/>
-        </HitRectInsets>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png" parentKey="Background">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png" parentKey="Background">
                     <Color r="0" g="0" b="0" a="0.8"/>
                     <Size x="232" y="18"/>
                     <Anchors>
@@ -25,7 +22,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="portrait" alphaMode="add" name="$parentPortrait">
+                <Texture parentKey="portrait" alphaMode="add">
                     <Size x="60" y="60"></Size>
                     <TexCoords left="1" right="0" top="0" bottom="1" />
                     <Anchors>
@@ -35,7 +32,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentHealth" parentKey="health" inherits="GwStatusBarTemplate">
+            <StatusBar parentKey="health" inherits="GwStatusBarTemplate">
                 <Size x="230" y="16"/>
                 <Anchors>
                     <Anchor point="left" relativePoint="LEFT" relativeKey="$parent.Background" x="1" y="0"/>
@@ -43,7 +40,7 @@
                 <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png"/>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentString" parentKey="text" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="text" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Color r="1" g="1" b="1"></Color>
                             <Size x="180" y="16"/>
                             <Anchors>

@@ -410,7 +410,6 @@ end
 local function sliderValueChange(self)
     local roundValue = GW.RoundDec(self:GetValue(), 2)
     local moverFrame = self:GetParent():GetParent():GetParent().child
-    moverFrame:SetScale(roundValue)
     moverFrame.parent:SetScale(roundValue)
     self:GetParent().input:SetText(roundValue)
     GW.settings[moverFrame.setting .."_scale"] = roundValue
@@ -493,6 +492,9 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf:SetFrameStrata("DIALOG")
     mf:GwCreateBackdrop("Transparent White")
     mf:SetScale(parent:GetScale())
+    hooksecurefunc(parent, "SetScale", function(self, scale)
+        mf:SetScale(scale)
+    end)
 
     if size then
         mf:SetSize(unpack(size))
