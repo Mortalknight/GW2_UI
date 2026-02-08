@@ -726,3 +726,6 @@ L["Show Skyridingbar"] = true
 L["Show Dodgebar"] = true
 L["Health Bar Values"] = true
 L["Shorten Health bar text"] = true
+L["Height Percentage"] = true
+L["With this setting you are not able anymore to move the minimap complety to othe top or buttom of the screen. This is not allowed from Blizzard."] = true
+L["Aura size"] = true

@@ -95,7 +95,7 @@ local function LoadPlayerPanel(sWindow)
 
     p_player:AddOptionDropdown(L["Show Shield Value"], nil, { getterSetter = "PLAYER_UNIT_ABSORB", callback = function() if GW2_PlayerFrame then GW2_PlayerFrame:ToggleSettings() end; if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, optionsList = absorbSettingsList, optionNames = absorbSettingsNames, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = false}, hidden = GW.Classic or GW.TBC})
 
-    p_player:AddOption(L["Show Dodgebar"], nil, {getterSetter = "showDodgebar", callback = function() if GwDodgeBar then GwDodgeBar:ToggleDodgeBar(); GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
+    p_player:AddOption(GW.NewSign .. L["Show Dodgebar"], nil, {getterSetter = "showDodgebar", callback = function() if GwDodgeBar then GwDodgeBar:ToggleDodgeBar(); GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
 
     p_player:AddOptionText(L["Dodge Bar Ability"], L["Enter the spell ID which should be tracked by the dodge bar.\nIf no ID is entered, the default abilities based on your specialization and talents are tracked."], { getterSetter = "PLAYER_TRACKED_DODGEBAR_SPELL", callback = function(self)
             local spellId = self:GetNumber()
@@ -112,21 +112,21 @@ local function LoadPlayerPanel(sWindow)
                 GwDodgeBar:SetupBar()
             end
         end, dependence = {["HEALTHGLOBE_ENABLED"] = true, ["showDodgebar"] = true}, isPrivateSetting = true})
-    p_player:AddOption(L["Show Skyridingbar"], nil, {getterSetter = "showSkyridingbar", callback = function() if GwDodgeBar then GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true}, hidden = not GW.Retail})
+    p_player:AddOption(GW.NewSign .. L["Show Skyridingbar"], nil, {getterSetter = "showSkyridingbar", callback = function() if GwDodgeBar then GwDodgeBar:ToggleSkyridingBar() end end, dependence = {["HEALTHGLOBE_ENABLED"] = true}, hidden = not GW.Retail})
 
 
 
     p_player:AddGroupHeader(L["Size"])
     p_player:AddOptionSlider(L["Scale"], nil, { getterSetter = "player_pos_scale", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 0.5, max = 1.5, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
 
-    p_player:AddOptionSlider(L["Bar Width"], nil, { getterSetter = "playerFrameHealthBarSize.width", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
-    p_player:AddOptionSlider(L["Healthbar Height"], nil, { getterSetter = "playerFrameHealthBarSize.height", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
-    p_player:AddOptionSlider(L["Healthbar Text X-Offset"], nil, { getterSetter = "playerFrameHealthBarTextOffset.x", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
-    p_player:AddOptionSlider(L["Healthbar Text Y-Offset"], nil, { getterSetter = "playerFrameHealthBarTextOffset.y", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
+    p_player:AddOptionSlider(GW.NewSign .. L["Bar Width"], nil, { getterSetter = "playerFrameHealthBarSize.width", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 50, max = 500, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
+    p_player:AddOptionSlider(GW.NewSign .. L["Healthbar Height"], nil, { getterSetter = "playerFrameHealthBarSize.height", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 5, max = 150, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
+    p_player:AddOptionSlider(GW.NewSign .. L["Healthbar Text X-Offset"], nil, { getterSetter = "playerFrameHealthBarTextOffset.x", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
+    p_player:AddOptionSlider(GW.NewSign .. L["Healthbar Text Y-Offset"], nil, { getterSetter = "playerFrameHealthBarTextOffset.y", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
 
-    p_player:AddOptionSlider(L["Powerbar Height"], nil, { getterSetter = "playerFramePowerBarSize.height", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
-    p_player:AddOptionSlider(L["Powerbar Text X-Offset"], nil, { getterSetter = "playerFramePowerBarTextOffset.x", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
-    p_player:AddOptionSlider(L["Powerbar Text Y-Offset"], nil, { getterSetter = "playerFramePowerBarTextOffset.y", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
+    p_player:AddOptionSlider(GW.NewSign .. L["Powerbar Height"], nil, { getterSetter = "playerFramePowerBarSize.height", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = 1, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
+    p_player:AddOptionSlider(GW.NewSign .. L["Powerbar Text X-Offset"], nil, { getterSetter = "playerFramePowerBarTextOffset.x", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
+    p_player:AddOptionSlider(GW.NewSign .. L["Powerbar Text Y-Offset"], nil, { getterSetter = "playerFramePowerBarTextOffset.y", callback = function() if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, min = -100, max = 100, decimalNumbers = 0, step = 1, groupHeaderName = L["Size"], dependence = {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true}})
 
 
     -- BUFF
@@ -167,8 +167,8 @@ local function LoadPlayerPanel(sWindow)
 
 
     -- Classpower
-    classpower:AddOption(L["Show value on bar"], nil, {getterSetter = "CLASSPOWER_SHOW_VALUE", callback = function() GW.UpdateClasspowerSetting(GwPlayerClassPower); GwPlayerPowerBar:ToggleSettings(); if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["CLASS_POWER"] = true}, hidden = GW.Classic or GW.TBC})
-    classpower:AddOption(L["Anchor classpower bar to center"], nil, {getterSetter = "CLASSPOWER_ANCHOR_TO_CENTER", callback = function() GW.UpdateClasspowerSetting(GwPlayerClassPower) end, dependence = {["CLASS_POWER"] = true}, hidden = GW.Classic or GW.TBC})
+    classpower:AddOption(GW.NewSign .. L["Show value on bar"], nil, {getterSetter = "CLASSPOWER_SHOW_VALUE", callback = function() GW.UpdateClasspowerSetting(GwPlayerClassPower); GwPlayerPowerBar:ToggleSettings(); if GwPlayerUnitFrame then GwPlayerUnitFrame:ToggleSettings() end end, dependence = {["CLASS_POWER"] = true}, hidden = GW.Classic or GW.TBC})
+    classpower:AddOption(GW.NewSign .. L["Anchor classpower bar to center"], nil, {getterSetter = "CLASSPOWER_ANCHOR_TO_CENTER", callback = function() GW.UpdateClasspowerSetting(GwPlayerClassPower) end, dependence = {["CLASS_POWER"] = true}, hidden = GW.Classic or GW.TBC})
     classpower:AddOption(L["Show classpower bar only in combat"], nil, {getterSetter = "CLASSPOWER_ONLY_SHOW_IN_COMBAT", callback = function() GW.UpdateClassPowerVisibilitySetting(GwPlayerClassPower, true) end, dependence = {["CLASS_POWER"] = true}, hidden = GW.Classic or GW.TBC})
     classpower:AddOption(L["Energy/Mana Ticker"], nil, {getterSetter = "PLAYER_ENERGY_MANA_TICK", callback = GW.Update5SrHot,  dependence = {["POWERBAR_ENABLED"] = true}, hidden = GW.Retail or GW.Mists})
     classpower:AddOption(L["5 second rule: display remaining time"], nil, {getterSetter = "PLAYER_5SR_TIMER", callback = GW.Update5SrHot,  dependence = {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true}, hidden = GW.Retail or GW.Mists})

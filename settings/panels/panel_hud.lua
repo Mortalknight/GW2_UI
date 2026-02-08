@@ -79,7 +79,7 @@ local function LoadHudPanel(sWindow)
         end})
     general:AddOptionDropdown(L["Show Role Bar"], L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."], { getterSetter = "ROLE_BAR", callback = GW.UpdateRaidCounterVisibility, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["Raid Only"], L["Party / Raid"]}})
     general:AddOptionSlider(L["Talking Head Scale"], nil, { getterSetter = "TalkingHeadFrameScale", callback = GW.ScaleTalkingHeadFrame, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["TALKINGHEAD_SKIN_ENABLED"] = true}, hidden = not GW.Retail})
-    general:AddOptionSlider(L["Chatbubble Scale"], nil, { getterSetter = "ChatBubbleScale", min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["CHATBUBBLES_ENABLED"] = true}, hidden = not GW.Retail})
+    general:AddOptionSlider(GW.NewSign .. L["Chatbubble Scale"], nil, { getterSetter = "ChatBubbleScale", min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["CHATBUBBLES_ENABLED"] = true}, hidden = not GW.Retail})
 
     --MINIMAP
     minimap:AddOption(L["Addon Compartment"], nil, {getterSetter = "MINIMAP_ADDON_COMPARTMENT_TOGGLE", callback = GW.HandleAddonCompartmentButton, dependence = {["MINIMAP_ENABLED"] = true}, incompatibleAddons = "Minimap", hidden = not GW.Retail})
@@ -90,8 +90,8 @@ local function LoadHudPanel(sWindow)
     minimap:AddOptionSlider(L["Minimap Scale"], L["Adjust the scale of the minimap and also the pins. Eg: Quests, Resource nodes, Group members"], { getterSetter = "MinimapScale", callback = function() GW.UpdateMinimapSize() end, min = 0.1, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["MINIMAP_ENABLED"] = true}})
     minimap:AddOptionSlider(L["Reset Zoom"], L["Reset Minimap Zoom to default value. Set 0 to disable it"], { getterSetter = "MinimapResetZoom", min = 0, max = 15, decimalNumbers = 0, step = 1, dependence = {["MINIMAP_ENABLED"] = true}})
     minimap:AddOptionSlider(L["Minimap Size"], L["Change the Minimap size."], { getterSetter = "MINIMAP_SIZE", callback = function() GW.UpdateMinimapSize() end, min = 160, max = 420, decimalNumbers = 0, step = 1, dependence = {["MINIMAP_ENABLED"] = true}})
-    minimap:AddOptionSlider(L["Height Percentage"], nil, { getterSetter = "Minimap.HeightPercentage", callback = function() GW.UpdateMinimapSize() end, min = 1, max = 100, decimalNumbers = 0, step = 1, dependence = {["MINIMAP_ENABLED"] = true, ["Minimap.KeepSizeRatio"] = false}})
-    minimap:AddOption(L["Keep Size Ratio"], L["With this setting you are not able anymore to move the minimap complety to othe top or buttom of the screen. This is not allowed from Blizzard."], {getterSetter = "Minimap.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("MINIMAP_SIZE"); widget.title:SetText(value == true and L["Minimap Size"] or L["Width"]); GW.UpdateMinimapSize() end, dependence = {["MINIMAP_ENABLED"] = true}})
+    minimap:AddOptionSlider(GW.NewSign .. L["Height Percentage"], nil, { getterSetter = "Minimap.HeightPercentage", callback = function() GW.UpdateMinimapSize() end, min = 1, max = 100, decimalNumbers = 0, step = 1, dependence = {["MINIMAP_ENABLED"] = true, ["Minimap.KeepSizeRatio"] = false}})
+    minimap:AddOption(GW.NewSign .. L["Keep Size Ratio"], L["With this setting you are not able anymore to move the minimap complety to othe top or buttom of the screen. This is not allowed from Blizzard."], {getterSetter = "Minimap.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("MINIMAP_SIZE"); widget.title:SetText(value == true and L["Minimap Size"] or L["Width"]); GW.UpdateMinimapSize() end, dependence = {["MINIMAP_ENABLED"] = true}})
 
     --WORLDMAP
     -- world map coordinates
