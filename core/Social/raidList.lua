@@ -17,6 +17,7 @@ local function LoadRaidFrame()
     if raidInit then return end
     if InCombatLockdown() then
         GW.CombatQueue_Queue(nil,  LoadRaidFrame)
+        return
     end
     raidInit = true
     for _, object in pairs(StripAllTextures) do

@@ -784,8 +784,12 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
             if secondaryFrame then secondaryFrame:UpdatePowerBar() end
         end
 
+        self:HideCastBar()
         self:StartCastbar()
-        if secondaryFrame then secondaryFrame:StartCastbar() end
+        if secondaryFrame then
+            secondaryFrame:HideCastBar()
+            secondaryFrame:StartCastbar()
+        end
         self:UpdateRaidMarkers()
         if secondaryFrame then secondaryFrame:UpdateRaidMarkers() end
 
@@ -811,6 +815,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
                 secondaryFrame:UnitFrameData()
                 secondaryFrame:UpdateHealthBar(true)
                 secondaryFrame:UpdatePowerBar(true)
+                secondaryFrame:HideCastBar()
                 secondaryFrame:StartCastbar()
                 secondaryFrame:UpdateRaidMarkers()
             end
