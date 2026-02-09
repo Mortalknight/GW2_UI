@@ -766,6 +766,7 @@ local function LoadSettingsTab(container)
     settingsTab.name = "GwSettingsSettings"
     settingsTab.headerBreadcrumbText = SETTINGS
     settingsTab.hasSearch = false
+    settingsTab.callbackOnClose = CloseSearch
     container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_settings.png", settingsTab)
 
     --load settings panels

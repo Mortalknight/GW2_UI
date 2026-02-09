@@ -24,6 +24,9 @@ function GwSettingsWindowMixin:SwitchTab(panelName)
             tab:Show()
             UIFrameFadeIn(tab, 0.2, 0, 1)
         else
+            if tab:IsShown() and tab.callbackOnClose then
+                tab.callbackOnClose()
+            end
             tab:Hide()
         end
     end

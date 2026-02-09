@@ -547,7 +547,7 @@ end
 local function LoadSettingsProfileTab(container)
     local settingsProfile = CreateFrame("Frame", "GW2ProfileSettingsView", container, "GwSettingsProfilePanelTmpl")
 
-    settingsProfile.panelName = "GwSettingsProfilePanel"
+    settingsProfile.name = "GwSettingsProfilePanel"
     settingsProfile.headerBreadcrumbText = L["Profiles"]
     settingsProfile.hasSearch = false
     container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_profiles.png", settingsProfile)
