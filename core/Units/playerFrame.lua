@@ -30,7 +30,7 @@ function GwPlayerUnitFrameMixin:OnEvent(event, ...)
 end
 
 function GwPlayerUnitFrameMixin:ToggleSettings()
-    self.altBg:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
+    self.backgroundOverlay:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
 
     self.shortendHealthValues = GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES
     self.showHealthValue = GW.settings.PLAYER_UNIT_HEALTH == "VALUE" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
@@ -48,6 +48,22 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
     self.healthString:SetPoint("LEFT", self.health, "LEFT", GW.settings.playerFrameHealthBarTextOffset.x, GW.settings.playerFrameHealthBarTextOffset.y)
     self.powerbar.label:ClearAllPoints()
     self.powerbar.label:SetPoint("LEFT", self.powerbar, "LEFT", GW.settings.playerFramePowerBarTextOffset.x, GW.settings.playerFramePowerBarTextOffset.y)
+
+    local powerHeight = self.powerbarContainer:GetHeight()
+    local yOffset = (powerHeight + 1) / 2
+
+    self.healthContainer:ClearAllPoints()
+    self.healthContainer:SetPoint("LEFT", self.portrait, "RIGHT", 4, yOffset)
+
+    self.powerbarContainer:ClearAllPoints()
+    self.powerbarContainer:SetPoint("TOPLEFT", self.healthContainer, "BOTTOMLEFT", 0, -1)
+
+    self.healthbarBackground:ClearAllPoints()
+    self.healthbarBackground:SetPoint("TOPLEFT", self.healthContainer, "TOPLEFT", 0, 0)
+    self.healthbarBackground:SetSize(self.healthContainer:GetWidth(), self.healthContainer:GetHeight())
+
+    self:SetHeight(40 + self.healthContainer:GetHeight() + self.powerbarContainer:GetHeight())
+    self:SetWidth(90 + self.healthContainer:GetWidth())
 
     local frameFaderSettings = GW.settings.playerFrameFader
     if frameFaderSettings.hover or frameFaderSettings.combat or frameFaderSettings.casting or frameFaderSettings.dynamicflight or frameFaderSettings.health or frameFaderSettings.vehicle or frameFaderSettings.playertarget then
@@ -102,10 +118,6 @@ local function LoadPlayerFrame()
     RegisterUnitWatch(frame)
     frame:EnableMouse(true)
     frame:RegisterForClicks("AnyDown")
-
-    frame.altBg = CreateFrame("Frame", nil, frame, "GwAlternativeUnitFrameBackground")
-    frame.altBg:SetAllPoints(frame)
-    frame.altBg:SetFrameLevel(0)
 
     frame.mask = UIParent:CreateMaskTexture()
     frame.mask:SetPoint("CENTER", frame.portrait, "CENTER", 0, 0)

@@ -1,26 +1,25 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
 
-
     <Button name="GwNormalUnitFramePingableRetailTemplate" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
         <Size x="300" y="64"></Size>
-        <Anchors>
-            <Anchor point="CENTER" x="0" y="0"></Anchor>
-        </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/units/targetshadow.png">
                     <Size x="512" y="128"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="-108.5" y="4"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="backgroundOverlay" file="Interface/AddOns/GW2_UI/textures/units/targetshadowoverlay.png">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="60" y="50"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="-50"/>
                     </Anchors>
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="0">
                 <Texture parentKey="portrait" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\asd.png">
                     <Size x="58" y="58"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="25" y="-7"></Anchor>
-                    </Anchors>
                 </Texture>
                 <Texture parentKey="threattabbg" file="Interface/AddOns/GW2_UI/textures/units/unittab.png" alpha="0.0">
                     <Size x="40" y="33"/>
@@ -34,7 +33,7 @@
                 <Texture parentKey="healthbarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png">
                     <Size x="213" y="13"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.portrait" relativePoint="RIGHT" x="4" y="-2"></Anchor>
+                        <Anchor point="LEFT" relativeKey="$parent.portrait" relativePoint="RIGHT" x="4" y="0"></Anchor>
                     </Anchors>
                     <Color r="1" g="1" b="1" a="0"></Color>
                 </Texture>
@@ -69,12 +68,6 @@
                         <Anchor point="CENTER" relativeKey="$parent.prestigeString" relativePoint="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-hightlight.png" hidden="true">
-                    <Size x="213" y="12"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
             </Layer>
             <Layer level="OVERLAY">
                 <FontString parentKey="threatString" text="" justifyH="CENTER" justifyV="MIDDLE">
@@ -105,6 +98,12 @@
             </Layer>
         </Layers>
         <Frames>
+            <Frame parentKey="portraitAnchor">
+                <Size x="58" y="58"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="25" y="0"></Anchor>
+                </Anchors>
+            </Frame>
             <Frame parentKey="healthContainer" inherits="GwHealthBarTemplateRetailTemplate">
                 <Size x="213" y="13"/>
                 <Anchors>
@@ -118,7 +117,7 @@
                 </Anchors>
             </Frame>
             <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar" mixin="GwCastingBarMixin">
-                <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png"/>
+                <BarTexture parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm.png"/>
                 <Size x="213" y="13"/>
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
@@ -128,13 +127,13 @@
                         <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                             <Size x="215" y="15"/>
                             <Anchors>
-                                <Anchor point="LEFT"  relativePoint="LEFT" x="7" y="0"></Anchor>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="7" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString parentKey="castingTimeString" justifyH="RIGHT" justifyV="MIDDLE">
                             <Size x="70" y="15"></Size>
                             <Anchors>
-                                <Anchor point="RIGHT"  relativePoint="RIGHT" x="-10" y="0"></Anchor>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -151,10 +150,16 @@
 
     <Button name="GwNormalUnitFramePingableSmallRetailTemplate" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwTargetUnitFrameMixin,GwUnitPowerbarMixin,GwUnitHealthbarMixin">
         <Size x="148" y="64"></Size>
-        <Anchors>
-            <Anchor point="CENTER" x="0" y="0"></Anchor>
-        </Anchors>
         <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="backgroundOverlay" file="Interface/AddOns/GW2_UI/textures/units/targettargetshadowoverlay.png">
+                    <TexCoords left="0" right="1" top="1" bottom="0"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-15" y="50"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="15" y="-35"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd.png">
                     <Size x="20" y="20"></Size>
@@ -176,14 +181,6 @@
                     </Anchors>
                     <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                     <Color r="1" g="1" b="1" a="0.6"></Color>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="6">
-                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-highlight.png" hidden="true">
-                    <Size x="148" y="12"></Size>
-                    <Anchors>
-                       <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
-                    </Anchors>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
@@ -219,13 +216,13 @@
                         <FontString parentKey="castingString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                             <Size x="215" y="15"/>
                             <Anchors>
-                                <Anchor point="LEFT"  relativePoint="LEFT" x="7" y="0"></Anchor>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="7" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                         <FontString parentKey="castingTimeString" justifyH="RIGHT" justifyV="MIDDLE">
                             <Size x="70" y="15"></Size>
                             <Anchors>
-                                <Anchor point="RIGHT"   relativePoint="RIGHT" x="-10" y="0"></Anchor>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"></Anchor>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -240,27 +237,28 @@
         </Frames>
     </Button>
 
-    <Button name="GwNormalUnitFrameInvertRetailTemplate" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
+    <Button name="GwNormalUnitFrameInvertPingableRetailTemplate" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true" mixin="GwUnitFrameMixin,GwUnitHealthbarMixin,GwUnitPowerbarMixin">
         <Size x="300" y="64"></Size>
-        <Anchors>
-            <Anchor point="CENTER" x="0" y="0"></Anchor>
-        </Anchors>
         <Layers>
-         <Layer level="BACKGROUND">
+            <Layer level="BACKGROUND">
                 <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/units/targetshadow.png">
                     <Size x="512" y="128"></Size>
                     <TexCoords left="1" right="0" top="0" bottom="1"/>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="108.5" y="4"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="backgroundOverlay" file="Interface/AddOns/GW2_UI/textures/units/targetshadowoverlay.png">
+                    <TexCoords left="1" right="0" top="0" bottom="1"/>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-60" y="50"/>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="-50"/>
                     </Anchors>
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="1">
                 <Texture parentKey="portrait" alphaMode="BLEND" file="Interface\AddOns\GW2_UI\textures\asd.png">
-                    <Size x="58" y="58"/>
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-25" y="-7"></Anchor>
-                    </Anchors>
+                    <Size x="58" y="58"></Size>
                 </Texture>
                 <Texture parentKey="threattabbg" file="Interface/AddOns/GW2_UI/textures/units/unittab.png" alpha="0.0">
                     <Size x="40" y="33"/>
@@ -274,7 +272,7 @@
                 <Texture parentKey="healthbarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png">
                     <Size x="213" y="13"/>
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.portrait" relativePoint="LEFT" x="-4" y="-2"></Anchor>
+                        <Anchor point="RIGHT" relativeKey="$parent.portrait" relativePoint="LEFT" x="-4" y="0"></Anchor>
                     </Anchors>
                     <Color r="1" g="1" b="1" a="0"></Color>
                 </Texture>
@@ -308,12 +306,6 @@
                         <Anchor point="CENTER" relativeKey="$parent.prestigeString" relativePoint="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-highlight.png" hidden="true">
-                    <Size x="213" y="12"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
             </Layer>
             <Layer level="OVERLAY">
                 <FontString parentKey="threatString" text="" justifyH="CENTER" justifyV="MIDDLE">
@@ -343,6 +335,12 @@
             </Layer>
         </Layers>
         <Frames>
+            <Frame parentKey="portraitAnchor">
+                <Size x="58" y="58"></Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="-25" y="0"></Anchor>
+                </Anchors>
+            </Frame>
             <Frame parentKey="healthContainer" inherits="GwHealthBarTemplateRetailTemplate">
                 <Size x="213" y="13"/>
                 <Anchors>
@@ -403,7 +401,7 @@
                             <Size x="215" y="15"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="0"/>
-                                <Anchor point="RIGHT"  relativeKey="$parent" relativePoint="RIGHT" x="-5" y="0"/>
+                                <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" y="0"/>
                             </Anchors>
                         </FontString>
                         <FontString parentKey="nameString" text="unknown" inherits="GameFontNormalMed3" justifyH="LEFT" justifyV="MIDDLE">

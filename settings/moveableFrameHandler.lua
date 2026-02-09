@@ -492,15 +492,30 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf:SetFrameStrata("DIALOG")
     mf:GwCreateBackdrop("Transparent White")
     mf:SetScale(parent:GetScale())
-    hooksecurefunc(parent, "SetScale", function(self, scale)
-        mf:SetScale(scale)
-    end)
+    parent.gwMover = mf
 
     if size then
+        mf.ignoreSize = true
         mf:SetSize(unpack(size))
     else
         mf:SetSize(parent:GetSize())
     end
+    hooksecurefunc(parent, "SetScale", function(self, scale)
+        mf:SetScale(scale)
+    end)
+    hooksecurefunc(parent, "SetWidth", function(self, width)
+        if self.gwMover.ignoreSize == true then return end
+        mf:SetWidth(width)
+    end)
+    hooksecurefunc(parent, "SetHeight", function(self, height)
+        if self.gwMover.ignoreSize == true then return end
+        mf:SetHeight(height)
+    end)
+    hooksecurefunc(parent, "SetSize", function(self, width, height)
+        if self.gwMover.ignoreSize == true then return end
+        mf:SetSize(width, height)
+    end)
+
     mf:Hide()
 
     local fs = mf:CreateFontString(nil, "OVERLAY")
@@ -550,8 +565,6 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
             mf.optionHeight = true
         end
     end
-
-    parent.gwMover = mf
 
     mf:SetScript("OnDragStart", mover_OnDragStart)
     mf:SetScript("OnDragStop", mover_OnDragStop)

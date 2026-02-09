@@ -447,6 +447,11 @@ local function ForceUpdate(element)
     UpdateBuffLayout(parent, "ForceUpdate", parent.unit)
 end
 
+local function UpdateAuraSettings(self)
+    self.auras.maxWidth = self.auras:GetWidth()
+end
+GW.UpdateUnitAuraSettings = UpdateAuraSettings
+
 -- No use for player (not secure)
 local function LoadAuras(self)
     self.auras.visibleButtons = 0

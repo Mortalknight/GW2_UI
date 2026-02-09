@@ -156,7 +156,7 @@ local function SetPosition(element, from, to, unit, isInvert, auraPositon)
     local marginY = 20
     local marginX = 3
     local smallSize = 20
-    local maxWidth = element:GetWidth()
+    local maxWidth = element.maxWidth
     local usedWidth = 0
     local usedWidth2 = 0
     local maxHeightInRow = smallSize
@@ -535,5 +535,7 @@ local function LoadAuras(self)
     self.auras.anchoredButtons = 0
     self.auras.ForceUpdate = ForceUpdate
     self.auras.__owner = self
+
+    self.auras.maxWidth = self.auras:GetWidth()
 end
 GW.LoadAuras = LoadAuras
