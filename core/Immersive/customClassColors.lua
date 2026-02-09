@@ -48,6 +48,11 @@ function GW.UpdateGw2ClassColor(classTag, r, g, b, changed)
 
     if color then
         color.r, color.g, color.b = r, g, b
+
+        -- verify the object is mixed
+        if color and not color.GetRGB then
+            Mixin(color, ColorMixin)
+        end
     end
 
     local db = GW.private.Gw2ClassColor[classTag]

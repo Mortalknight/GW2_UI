@@ -12,6 +12,7 @@ local ChatFrame_AddMessageEventFilter = ChatFrameUtil and ChatFrameUtil.AddMessa
 local GetClientTexture = BNet_GetClientEmbeddedAtlas or BNet_GetClientEmbeddedTexture
 local GetMobileEmbeddedTexture = (ChatFrameUtil and ChatFrameUtil.GetMobileEmbeddedTexture) or ChatFrame_GetMobileEmbeddedTexture
 local ResolvePrefixedChannelName = (ChatFrameUtil and ChatFrameUtil.ResolvePrefixedChannelName) or ChatFrame_ResolvePrefixedChannelName
+local ShouldColorChatByClass = (ChatFrameUtil and ChatFrameUtil.ShouldColorChatByClass) or Chat_ShouldColorChatByClass
 
 local FindURL_Events = {
     "CHAT_MSG_WHISPER",
@@ -277,7 +278,11 @@ local function GW_GetPlayerInfoByGUID(guid)
 end
 
 function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg12)
-    if GW.IsSecretValue(arg2) then
+    if GW.IsSecretValue(arg12) then
+        local _, englishClass = GetPlayerInfoByGUID(arg12)
+        local classColor = C_ClassColor.GetClassColor(englishClass)
+        return (classColor and classColor:WrapTextInColorCode(arg2)) or arg2
+    elseif GW.IsSecretValue(arg2) then
         return arg2
     end
 
@@ -298,13 +303,13 @@ function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _,
     local name = Ambiguate(arg2, (chatType == "GUILD" and "guild") or "none")
 
     -- handle the class color
-    local ShouldColorChatByClass = _G.ChatFrameUtil and _G.ChatFrameUtil.ShouldColorChatByClass or _G.Chat_ShouldColorChatByClass
+
     local info = name and arg12 and _G.ChatTypeInfo[chatType]
     if info and ShouldColorChatByClass(info) then
         local data = GW_GetPlayerInfoByGUID(arg12)
         local color = data and data.classColor
         if color then
-            return format("|cff%.2x%.2x%.2x%s|r", color.r * 255, color.g * 255, color.b * 255, name)
+            return color:WrapTextInColorCode(name)
         end
     end
 
@@ -816,8 +821,10 @@ local function CheckKeyword(message, author)
 
                 if wordMatch then
                     local classColorTable = GW.GWGetClassColor(classMatch, true, true, true)
-                    if classColorTable then
-                        word = gsub(word, gsub(tempWord, "%-","%%-"), format("\124cff%.2x%.2x%.2x%s\124r", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
+                    local classColoredName = classColorTable and classColorTable:WrapTextInColorCode(tempWord)
+                    if classColoredName then
+                        local tempstr = gsub(tempWord, "%-", "%%-")
+						word = gsub(word, tempstr, classColoredName)
                     end
                 end
             end
@@ -931,31 +938,30 @@ GW.DisableChatThrottle = DisableChatThrottle
 local function PrepareMessage(author, message)
     if GW.IsSecretValue(author) or GW.IsSecretValue(message) then return end
 
-    if author and author ~= "" and message and message ~= "" then
+    if author and author ~= "" and author ~= PLAYER_NAME and message and message ~= "" then
         return strupper(author) .. message
     end
 end
 
 local function ChatThrottleHandler(author, message, when)
     local msg = PrepareMessage(author, message)
-    if msg then
-        for savedMessage, object in pairs(throttle) do
-            if difftime(when, object.time) >= GW.settings.CHAT_SPAM_INTERVAL_TIMER then
-                throttle[savedMessage] = nil
-            end
-        end
+    if not msg then return end
 
-        if not throttle[msg] then
-            throttle[msg] = {time = time(), count = 1}
-        else
-            throttle[msg].count = throttle[msg].count + 1
+    for savedMessage, object in pairs(throttle) do
+        if difftime(when, object.time) >= GW.settings.CHAT_SPAM_INTERVAL_TIMER then
+            throttle[savedMessage] = nil
         end
+    end
+
+    if not throttle[msg] then
+        throttle[msg] = {time = time(), count = 1}
+    else
+        throttle[msg].count = throttle[msg].count + 1
     end
 end
 
 local function ChatThrottleBlockFlag(author, message, when)
-    local msg = (author ~= PLAYER_NAME) and GW.settings.CHAT_SPAM_INTERVAL_TIMER ~= 0 and PrepareMessage(author, message)
-
+    local msg = GW.settings.CHAT_SPAM_INTERVAL_TIMER ~= 0 and PrepareMessage(author, message)
     local object = msg and throttle[msg]
 
     return object and object.time and object.count and object.count > 1 and (difftime(when, object.time) <= GW.settings.CHAT_SPAM_INTERVAL_TIMER), object
@@ -1090,12 +1096,10 @@ local function SaveChatHistory(event, ...)
         local message, author = ...
         local when = time()
 
-        if GW.NotSecretValue(message) or GW.NotSecretValue(author) then
-            ChatThrottleHandler(author, message, when)
+        ChatThrottleHandler(author, message, when)
 
-            if ChatThrottleBlockFlag(author, message, when) then
-                return
-            end
+        if ChatThrottleBlockFlag(author, message, when) then
+            return
         end
     end
 
@@ -1105,9 +1109,7 @@ local function SaveChatHistory(event, ...)
 
     local tempHistory = {}
     for i = 1, select("#", ...) do
-        if GW.NotSecretValue(select(i, ...) ) then
-            tempHistory[i] = select(i, ...) or false
-        end
+        tempHistory[i] = select(i, ...) or false
     end
 
     if #tempHistory > 0 and not GW.ChatFunctions:IsMessageProtected(tempHistory[1]) then
@@ -1257,7 +1259,7 @@ local function ChatFrame_ReplaceIconAndGroupExpressions(message, noIconReplaceme
                     if name and subgroup == groupIndex then
                         local classColorTable = GW.GWGetClassColor(classFileName, true, true)
                         if classColorTable then
-                            name = format("|cff%.2x%.2x%.2x%s|r", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, name)
+                            name = classColorTable:WrapTextInColorCode(name)
                         end
                         groupList = groupList..(groupList == "[" and "" or _G.PLAYER_LIST_DELIMITER)..name
                     end
