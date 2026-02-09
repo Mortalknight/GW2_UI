@@ -12,6 +12,13 @@ local profiles = {
         styleFunc = GW.GridPartyStyleRegister,
         updateFunc = GW.UpdateGridPartyFrame
     },
+    PARTY_PET = {
+        name = "PartyPet",
+        visibility = "[@raid1,exists][@party1,noexists] hide;show",
+        numGroups = 1,
+        styleFunc = GW.GridPartyPetStyleRegister,
+        updateFunc = GW.UpdateGridPartyPetFrame
+    },
     RAID_PET = {
         name = "RaidPet",
         visibility = "[@raid1,exists] show; hide",
@@ -146,6 +153,7 @@ local pendingProfiles = {}
 local SETTINGS_HELPER_MAP = {
     enabled = {
         PARTY = "RAID_STYLE_PARTY",
+        PARTY_PET = "PARTY_PET_FRAMES_ENABLED",
         RAID_PET = "RAID_PET_FRAMES",
         RAID40 = "RAID_FRAMES",
         RAID25 = "RAID25_ENABLED",
@@ -154,6 +162,7 @@ local SETTINGS_HELPER_MAP = {
     },
     horizontalSpacing = {
         PARTY = "RAID_UNITS_HORIZONTAL_SPACING_PARTY",
+        PARTY_PET = "PARTY_UNITS_HORIZONTAL_SPACING_PET",
         RAID_PET = "RAID_UNITS_HORIZONTAL_SPACING_PET",
         RAID40 = "RAID_UNITS_HORIZONTAL_SPACING",
         RAID25 = "RAID_UNITS_HORIZONTAL_SPACING_RAID25",
@@ -162,6 +171,7 @@ local SETTINGS_HELPER_MAP = {
     },
     verticalSpacing = {
         PARTY = "RAID_UNITS_VERTICAL_SPACING_PARTY",
+        PARTY_PET = "PARTY_UNITS_VERTICAL_SPACING_PET",
         RAID_PET = "RAID_UNITS_VERTICAL_SPACING_PET",
         RAID40 = "RAID_UNITS_VERTICAL_SPACING",
         RAID25 = "RAID_UNITS_VERTICAL_SPACING_RAID25",
@@ -170,6 +180,7 @@ local SETTINGS_HELPER_MAP = {
     },
     groupSpacing = {
         PARTY = "RAID_UNITS_GROUP_SPACING_PARTY",
+        PARTY_PET = "PARTY_UNITS_GROUP_SPACING_PET",
         RAID_PET = "RAID_UNITS_GROUP_SPACING_PET",
         RAID40 = "RAID_UNITS_GROUP_SPACING",
         RAID25 = "RAID_UNITS_GROUP_SPACING_RAID25",
@@ -178,6 +189,7 @@ local SETTINGS_HELPER_MAP = {
     },
     raidWidth = {
         PARTY = "RAID_WIDTH_PARTY",
+        PARTY_PET = "PARTY_WIDTH_PET",
         RAID_PET = "RAID_WIDTH_PET",
         RAID40 = "RAID_WIDTH",
         RAID25 = "RAID_WIDTH_RAID25",
@@ -186,6 +198,7 @@ local SETTINGS_HELPER_MAP = {
     },
     raidHeight = {
         PARTY = "RAID_HEIGHT_PARTY",
+        PARTY_PET = "PARTY_HEIGHT_PET",
         RAID_PET = "RAID_HEIGHT_PET",
         RAID40 = "RAID_HEIGHT",
         RAID25 = "RAID_HEIGHT_RAID25",
@@ -194,6 +207,7 @@ local SETTINGS_HELPER_MAP = {
     },
     startFromCenter = {
         PARTY = "UNITFRAME_ANCHOR_FROM_CENTER_PARTY",
+        PARTY_PET = "PARTY_PET_UNITFRAME_ANCHOR_FROM_CENTER",
         RAID_PET = "UNITFRAME_ANCHOR_FROM_CENTER_PET",
         RAID40 = "UNITFRAME_ANCHOR_FROM_CENTER",
         RAID25 = "UNITFRAME_ANCHOR_FROM_CENTER_RAID25",
@@ -202,6 +216,7 @@ local SETTINGS_HELPER_MAP = {
     },
     raidGrow = {
         PARTY = "RAID_GROW_PARTY",
+        PARTY_PET = "PARTY_GROW_PET",
         RAID_PET = "RAID_GROW_PET",
         RAID40 = "RAID_GROW",
         RAID25 = "RAID_GROW_RAID25",
@@ -210,6 +225,7 @@ local SETTINGS_HELPER_MAP = {
     },
     groupsPerColumnRow = {
         PARTY = "RAID_GROUPS_PER_COLUMN_PARTY",
+        PARTY_PET = "PARTY_GROUPS_PER_COLUMN_PET",
         RAID_PET = "RAID_GROUPS_PER_COLUMN_PET",
         RAID40 = "RAID_GROUPS_PER_COLUMN",
         RAID25 = "RAID_GROUPS_PER_COLUMN_RAID25",
@@ -218,6 +234,7 @@ local SETTINGS_HELPER_MAP = {
     },
     raidWideSorting = {
         PARTY = "RAID_WIDE_SORTING_PARTY",
+        PARTY_PET = "PARTY_WIDE_SORTING_PET",
         RAID_PET = "RAID_WIDE_SORTING_PET",
         RAID40 = "RAID_WIDE_SORTING",
         RAID25 = "RAID_WIDE_SORTING_RAID25",
@@ -226,6 +243,7 @@ local SETTINGS_HELPER_MAP = {
     },
     groupBy = {
         PARTY = "RAID_GROUP_BY_PARTY",
+        PARTY_PET = "PARTY_GROUP_BY_PET",
         RAID_PET = "RAID_GROUP_BY_PET",
         RAID40 = "RAID_GROUP_BY",
         RAID25 = "RAID_GROUP_BY_RAID25",
@@ -234,6 +252,7 @@ local SETTINGS_HELPER_MAP = {
     },
     sortDirection = {
         PARTY = "RAID_SORT_DIRECTION_PARTY",
+        PARTY_PET = "PARTY_SORT_DIRECTION_PET",
         RAID_PET = "RAID_SORT_DIRECTION_PET",
         RAID40 = "RAID_SORT_DIRECTION",
         RAID25 = "RAID_SORT_DIRECTION_RAID25",
@@ -242,6 +261,7 @@ local SETTINGS_HELPER_MAP = {
     },
     sortMethod = {
         PARTY = "RAID_RAID_SORT_METHOD_PARTY",
+        PARTY_PET = "PARTY_RAID_SORT_METHOD_PET",
         RAID_PET = "RAID_RAID_SORT_METHOD_PET",
         RAID40 = "RAID_RAID_SORT_METHOD",
         RAID25 = "RAID_RAID_SORT_METHOD_RAID25",
@@ -660,9 +680,9 @@ end
 GW.UpdateGridHeader = UpdateGridHeader
 
 local function CreateHeader(parent, profile, options, overrideName, groupFilter)
-    local header = parent:SpawnHeader(overrideName, (options.name == "RaidPet" and "SecureGroupPetHeaderTemplate" or nil),
+    local header = parent:SpawnHeader(overrideName, ((options.name == "RaidPet" or options.name == "PartyPet") and "SecureGroupPetHeaderTemplate" or nil),
         "showParty", true,
-        "showRaid", options.name ~= "Party",
+        "showRaid", options.name ~= "Party" and options.name ~= "PartyPet",
         "showPlayer", true,
         "groupFilter", groupFilter,
         "groupingOrder", "1,2,3,4,5,6,7,8",
@@ -712,6 +732,8 @@ local function Initialize()
         -- movable frame for the container
         if profile == "PARTY" then
             GW.RegisterMovableFrame(Header, GW.L["Group Frames"], "raid_party_pos",  ALL .. ",Unitframe,Group", nil, {"default", "default"})
+        elseif profile == "PARTY_PET" then
+            GW.RegisterMovableFrame(Header, GW.L["Party pet's Grid"], "party_pet_pos",  ALL .. ",Unitframe,Group", nil, {"default", "default"})
         elseif profile == "RAID_PET" then
             GW.RegisterMovableFrame(Header, GW.L["Raid pet's Grid"], "raid_pet_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
         elseif profile == "RAID40" then

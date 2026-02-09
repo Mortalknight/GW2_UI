@@ -19,6 +19,7 @@
     <Script file ="raid25.lua"/>
     <Script file ="raid10.lua"/>
     <Script file ="party.lua"/>
+    <Script file ="partyPet.lua"/>
     <Script file ="raidPet.lua"/>
     <Script file ="maintank.lua"/>
     <Script file ="constructor.lua"/>

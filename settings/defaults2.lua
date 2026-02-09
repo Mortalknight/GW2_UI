@@ -871,6 +871,8 @@ GW.globalDefault = {
         grid40FrameFader = CopyTable(UnitFrameFader),
         gridPartyFrameFaderRange = true,
         gridPartyFrameFader = CopyTable(UnitFrameFader),
+        gridPartyPetFrameFaderRange = true,
+        gridPartyPetFrameFader = CopyTable(UnitFrameFader),
         gridPetFrameFaderRange = true,
         gridPetFrameFader = CopyTable(UnitFrameFader),
         gridTankFrameFaderRange = true,
@@ -908,6 +910,45 @@ GW.globalDefault = {
         pet_show_powerbar = "NONE", -- always
 
         raid_pet_pos= {
+            point= "TOPLEFT",
+            relativePoint= "TOPLEFT",
+            xOfs= 315,
+            yOfs= -60,
+            hasMoved= false,
+        },
+
+        -- Party Pet
+        PARTY_PET_FRAMES_ENABLED = false,
+        PARTY_CLASS_COLOR_PET = true, -- always
+        PARTY_HIDE_CLASS_ICON_PET = false, -- always
+        PARTY_UNIT_FLAGS_PET= "NONE", -- always
+        PARTY_UNIT_MARKERS_PET= false,
+        PARTY_WIDTH_PET= 50,
+        PARTY_HEIGHT_PET= 25,
+        PARTY_GROUPS_PER_COLUMN_PET= 1, -- fixed
+        PARTY_GROW_PET= "DOWN+RIGHT",
+        PARTY_SHOW_DEBUFFS_PET= true,
+        PARTY_ONLY_DISPELL_DEBUFFS_PET= false,
+        PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET= true,
+        PARTY_AURA_TOOLTIP_INCOMBAT_PET= "IN_COMBAT",
+        PARTY_UNIT_HEALTH_PET= "NONE",
+        PARTY_PET_UNITFRAME_ANCHOR_FROM_CENTER= false,
+        PARTY_WIDE_SORTING_PET= true,
+        PARTY_GROUP_BY_PET= "ROLE",
+        PARTY_SORT_DIRECTION_PET= "ASC",
+        PARTY_RAID_SORT_METHOD_PET= "NAME",
+        PARTY_UNITS_HORIZONTAL_SPACING_PET= 2,
+        PARTY_UNITS_VERTICAL_SPACING_PET= 2,
+        PARTY_UNITS_GROUP_SPACING_PET= 0,
+        PARTY_SHOW_ROLE_ICON_PET= false, -- always
+        PARTY_SHOW_TANK_ICON_PET= false, -- always
+        PARTY_SHOW_LEADER_ICON_PET= false, -- always
+        PARTY_SHORT_HEALTH_VALUES_PET = false,
+        PARTY_SHOW_ABSORB_BAR_PET = true,
+        PARTY_PET_AURAS = CopyTable(GridAuraFilter),
+        party_pet_show_powerbar = "NONE", -- always
+
+        party_pet_pos= {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",
             xOfs= 315,
