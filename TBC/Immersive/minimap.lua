@@ -407,7 +407,7 @@ local function LoadMinimap()
     panel:SetHeight(25)
     Minimap.lowerPanel = panel
 
-    local sidePanel = CreateFrame("Frame", "afaadasdad", Minimap)
+    local sidePanel = CreateFrame("Frame", nil, Minimap)
     sidePanel:SetPoint("TOPRIGHT", Minimap.gwBorder, "TOPLEFT")
     sidePanel:SetPoint("BOTTOMRIGHT", Minimap.gwBorder, "BOTTOMLEFT")
     sidePanel:SetWidth(40)
