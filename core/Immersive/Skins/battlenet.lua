@@ -1,6 +1,5 @@
 local _, GW = ...
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local AFP = GW.AddProfiling
 
 local function BNTostPostDrag(self)
     local x, y = self.gwMover:GetCenter()
@@ -18,7 +17,6 @@ local function BNTostPostDrag(self)
     BNToastFrame:ClearAllPoints()
     BNToastFrame:SetPoint(anchorPoint, self.gwMover)
 end
-AFP("BNTostPostDrag", BNTostPostDrag)
 
 local function hook_SetPoint(self, _, anchor)
     if anchor ~= self.gwMover then
@@ -26,8 +24,6 @@ local function hook_SetPoint(self, _, anchor)
         self:SetPoint(self.gwMover.anchorPoint or "TOPLEFT", self.gwMover, self.gwMover.anchorPoint or "TOPLEFT")
     end
 end
-AFP("hook_SetPoint", hook_SetPoint)
-
 
 local function LoadBNToastSkin()
     if not GW.settings.BNTOASTFRAME_SKIN_ENABLED then return end
@@ -98,6 +94,7 @@ local function LoadBNToastSkin()
     if BNToastFrame and BNToastFrame.mover and BNToastFrame.mover:GetName() == "BNETMover" then return end
 
     RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", ALL .. ",Blizzard", nil, {"default", "scaleable"}, nil, BNTostPostDrag)
+    BNToastFrame.gwMover.ignoreSize = true
 
     hooksecurefunc(BNToastFrame, "SetPoint", hook_SetPoint)
 end
