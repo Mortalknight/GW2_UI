@@ -37,7 +37,6 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
         end
     end
     local f = CreateFrame("Button", name, UIParent, template)
-    --/run GwTargetUnitFrame.background:ClearAllPoints(); GwTargetUnitFrame.background:SetPoint("LEFT", GwTargetUnitFrame, "LEFT", -100, 0)
 
     local hg = f.healthContainer
     f.portrait:ClearAllPoints()
@@ -221,7 +220,7 @@ local function CreateSmallUnitFrame(name)
         f.nameString    = hg.health.nameString
         f.levelString   = hg.health.levelString
 
-        f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusBarBackground")
+        f.powerbarContainer.powerbar = CreateFrame("StatusBar", name .. "Powerbar", f, "GwStatusPowerBarRetailTemplate")
         f.powerbar = f.powerbarContainer.powerbar
         f.powerbar:SetAllPoints(f.powerbarContainer)
 
