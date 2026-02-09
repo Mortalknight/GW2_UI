@@ -132,8 +132,6 @@ local function UpdateSettings(targetFrame)
     local point = 0
     local anchorPoint = targetFrame.frameInvert and "RIGHT" or "LEFT"
     for i = 1, 9 do
-        comboBar["runeTex" .. i]:SetSize(18, 18)
-        comboBar["combo" .. i]:SetSize(18, 18)
         comboBar["runeTex" .. i]:ClearAllPoints()
         comboBar["combo" .. i]:ClearAllPoints()
         comboBar["runeTex" .. i]:SetPoint(anchorPoint, comboBar, anchorPoint, point, 0)
