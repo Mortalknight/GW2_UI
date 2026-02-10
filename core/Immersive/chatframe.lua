@@ -1140,7 +1140,7 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
     end
 
     -- Only add if the user is joining a channel
-    if eventType ~= "YOU_CHANGED" then
+    if GW.NotSecretValue(eventType) and eventType ~= "YOU_CHANGED" then
         return false;
     end
 
