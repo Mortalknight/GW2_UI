@@ -729,3 +729,7 @@ L["Shorten Health bar text"] = true
 L["Height Percentage"] = true
 L["With this setting you are not able anymore to move the minimap complety to othe top or buttom of the screen. This is not allowed from Blizzard."] = true
 L["Aura size"] = true
+L["Is Cancelable"] = true
+L["Not Cancelable"] = true
+L["Crowd Control"] = true
+L["Big Defensive"] = true

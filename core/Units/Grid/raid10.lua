@@ -66,11 +66,8 @@ local function UpdateGridRaid10Frame(frame)
     frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_RAID10
 
     -- retail filtering
-    frame.showPlayerDebuffs = GW.settings.RAID_10_AURAS.playerDebuff
-    frame.showRaidDebuffs = GW.settings.RAID_10_AURAS.raidDebuff
-    frame.showPlayerBuffs = GW.settings.RAID_10_AURAS.playerBuff
-    frame.showRaidBuffs = GW.settings.RAID_10_AURAS.raidBuff
-    frame.showDefensiveBuffs  = GW.settings.RAID_10_AURAS.defensiveBuff
+    frame.debuffFilters = GW.settings.RAID_10_DEBUFF_FILTER
+    frame.buffFilters = GW.settings.RAID_10_BUFF_FILTER
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)

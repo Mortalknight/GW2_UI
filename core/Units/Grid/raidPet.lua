@@ -66,12 +66,9 @@ local function UpdateGridRaidPetFrame(frame)
     frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_PET
     frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_PET
 
-        -- retail filtering
-    frame.showPlayerDebuffs = GW.settings.RAID_PET_AURAS.playerDebuff
-    frame.showRaidDebuffs = GW.settings.RAID_PET_AURAS.raidDebuff
-    frame.showPlayerBuffs = GW.settings.RAID_PET_AURAS.playerBuff
-    frame.showRaidBuffs = GW.settings.RAID_PET_AURAS.raidBuff
-    frame.showDefensiveBuffs  = GW.settings.RAID_PET_AURAS.defensiveBuff
+    -- retail filtering
+    frame.debuffFilters = GW.settings.RAID_PET_DEBUFF_FILTER
+    frame.buffFilters = GW.settings.RAID_PET_BUFF_FILTER
 
     if not InCombatLockdown() then
         frame:DisableElement("MiddleIcon")

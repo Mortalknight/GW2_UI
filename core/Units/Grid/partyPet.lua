@@ -66,12 +66,9 @@ local function UpdateGridPartyPetFrame(frame)
     frame.showTankIcon = GW.settings.PARTY_SHOW_TANK_ICON_PET
     frame.showLeaderAssistIcon = GW.settings.PARTY_SHOW_LEADER_ICON_PET
 
-        -- retail filtering
-    frame.showPlayerDebuffs = GW.settings.PARTY_PET_AURAS.playerDebuff
-    frame.showRaidDebuffs = GW.settings.PARTY_PET_AURAS.raidDebuff
-    frame.showPlayerBuffs = GW.settings.PARTY_PET_AURAS.playerBuff
-    frame.showRaidBuffs = GW.settings.PARTY_PET_AURAS.raidBuff
-    frame.showDefensiveBuffs  = GW.settings.PARTY_PET_AURAS.defensiveBuff
+    -- retail filtering
+    frame.debuffFilters = GW.settings.PARTY_PET_DEBUFF_FILTER
+    frame.buffFilters = GW.settings.PARTY_PET_BUFF_FILTER
 
     if not InCombatLockdown() then
         frame:DisableElement("MiddleIcon")

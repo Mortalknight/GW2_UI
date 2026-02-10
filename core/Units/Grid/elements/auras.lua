@@ -94,6 +94,22 @@ local function PostUpdateButton(self, button, unit, data, position)
     end
 end
 
+local function CheckFilter(data, filters)
+    if not filters or filters.noFilter then return true end
+
+    return (filters.isAuraImportant and data.isAuraImportant)
+        or (filters.isAuraCrowdControl and data.isAuraCrowdControl)
+        or (filters.isAuraBigDefensive and data.isAuraBigDefensive)
+        or (filters.isAuraRaidInCombat and data.isAuraRaidInCombat)
+        or (filters.isAuraRaidPlayerDispellable and data.isAuraRaidPlayerDispellable)
+        or (filters.isAuraDefensive and data.isAuraExternalDefensive)
+        or (filters.isAuraCancelable and data.isAuraCancelable)
+        or (filters.notAuraCancelable and not data.isAuraCancelable)
+        or (filters.isAuraPlayer and data.isAuraPlayer)
+        or (filters.isAuraRaid and data.isAuraRaid)
+end
+
+
 local function FilterAura(self, unit, data)
     local parent = self:GetParent()
     local shouldDisplay = false
@@ -104,13 +120,11 @@ local function FilterAura(self, unit, data)
             if not parent.showDebuffs then
                 return false
             else
-                shouldDisplay = (parent.showPlayerDebuffs and data.isPlayerAura) or (parent.showRaidDebuffs and data.isRaidAura)
+                return CheckFilter(data, parent.debuffFilters)
             end
         else
-            shouldDisplay = (parent.showPlayerBuffs and data.isPlayerAura) or (parent.showRaidBuffs and data.isRaidAura) or (parent.showDefensiveBuffs and data.isDefensiveAura)
+            return CheckFilter(data, parent.buffFilters)
         end
-
-        return shouldDisplay
     end
 
     if data.isHelpful then
@@ -335,6 +349,34 @@ local function Construct_Auras(frame)
 end
 GW.Construct_Auras = Construct_Auras
 
+local function UpdateFiltering(frame)
+    local isImportant = frame.debuffFilters.isAuraImportant
+	local isCrowdControl = frame.debuffFilters.isAuraCrowdControl
+	local isBigDefensive = frame.debuffFilters.isAuraBigDefensive
+	local isRaidInCombat = frame.debuffFilters.isAuraRaidInCombat
+	local isRaidPlayerDispellable = frame.debuffFilters.isAuraRaidPlayerDispellable
+	local isDefensive = frame.debuffFilters.isAuraDefensive
+	local isCancelable = frame.debuffFilters.isAuraCancelable
+	local notCancelable = frame.debuffFilters.notAuraCancelable
+	local isPlayer = frame.debuffFilters.isAuraPlayer
+	local isRaid = frame.debuffFilters.isAuraRaid
+
+    frame.debuffFilters.noFilter = not (isImportant or isCrowdControl or isBigDefensive or isRaidInCombat or isRaidPlayerDispellable or isDefensive or isCancelable or notCancelable or isPlayer or isRaid)
+
+    isImportant = frame.buffFilters.isAuraImportant
+	isCrowdControl = frame.buffFilters.isAuraCrowdControl
+    isBigDefensive = frame.buffFilters.isAuraBigDefensive
+	isRaidInCombat = frame.buffFilters.isAuraRaidInCombat
+	isRaidPlayerDispellable = frame.buffFilters.isAuraRaidPlayerDispellable
+	isDefensive = frame.buffFilters.isAuraDefensive
+	isCancelable = frame.buffFilters.isAuraCancelable
+	notCancelable = frame.buffFilters.notAuraCancelable
+	isPlayer = frame.buffFilters.isAuraPlayer
+	isRaid = frame.buffFilters.isAuraRaid
+
+    frame.buffFilters.noFilter = not (isImportant or isCrowdControl or isBigDefensive or isRaidInCombat or isRaidPlayerDispellable or isDefensive or isCancelable or notCancelable or isPlayer or isRaid)
+end
+
 local function UpdateAurasSettings(frame)
     frame.Auras:ClearAllPoints()
     frame.Auras:SetPoint('TOPLEFT', frame, 'TOPLEFT')
@@ -349,11 +391,7 @@ local function UpdateAurasSettings(frame)
 
     -- filtering only over filter options
     if GW.Retail then
-        local debuffFilterString = "HARMFUL"
-        if frame.showOnlyDispelDebuffs then
-            debuffFilterString = debuffFilterString .. "|RAID"
-        end
-        frame.Auras.debuffFilter = debuffFilterString
+        UpdateFiltering(frame)
     end
 
     frame.Auras:ForceUpdate()

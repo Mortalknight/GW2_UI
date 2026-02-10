@@ -68,11 +68,8 @@ local function UpdateGridRaid40Frame(frame)
     frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS
 
     -- retail filtering
-    frame.showPlayerDebuffs = GW.settings.RAID_AURAS.playerDebuff
-    frame.showRaidDebuffs = GW.settings.RAID_AURAS.raidDebuff
-    frame.showPlayerBuffs = GW.settings.RAID_AURAS.playerBuff
-    frame.showRaidBuffs = GW.settings.RAID_AURAS.raidBuff
-    frame.showDefensiveBuffs  = GW.settings.RAID_AURAS.defensiveBuff
+    frame.debuffFilters = GW.settings.RAID_DEBUFF_FILTER
+    frame.buffFilters = GW.settings.RAID_BUFF_FILTER
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)

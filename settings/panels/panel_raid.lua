@@ -25,6 +25,34 @@ local function LoadGeneralGridSettings(panel)
     return general
 end
 
+local function CreateAuraFilterSection(panel, profile, buffDb, debuffDb, showDebuffs, dependence)
+    panel:AddGroupHeader(L["Buffs"], {hidden = not GW.Retail})
+    panel:AddOption(PLAYER, nil, {getterSetter = buffDb .. ".isAuraPlayer", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOption(RAID, nil, {getterSetter =  buffDb .. ".isAuraRaid", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOption(L["Is Cancelable"], nil, {getterSetter =  buffDb .. ".isAuraCancelable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOption(L["Not Cancelable"], nil, {getterSetter =  buffDb .. ".notAuraCancelable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOption(MAP_LEGEND_IMPORTANT, nil, {getterSetter =  buffDb .. ".isAuraImportant", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOption(L["Crowd Control"], nil, {getterSetter =  buffDb .. ".isAuraCrowdControl", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOption(L["Big Defensive"], nil, {getterSetter =  buffDb .. ".isAuraBigDefensive", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOption(RAID_FRAMES_LABEL, nil, {getterSetter =  buffDb .. ".isAuraRaidInCombat", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOption(COMPACT_UNIT_FRAME_PROFILE_DISPELLABLE_INDICATOR_TYPE_ME, nil, {getterSetter =  buffDb .. ".isAuraRaidPlayerDispellable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOption(EXTERNAL_DEFENSIVES_LABEL, nil, {getterSetter = buffDb .. ".isAuraDefensive", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+
+    panel:AddGroupHeader(L["Debuffs"])
+    panel:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = showDebuffs, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Debuffs"]})
+
+    panel:AddOption(PLAYER, nil, {getterSetter = debuffDb .. ".isAuraPlayer", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOption(RAID, nil, {getterSetter = debuffDb .. ".isAuraRaid", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOption(L["Is Cancelable"], nil, {getterSetter = debuffDb .. ".isAuraCancelable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOption(L["Not Cancelable"], nil, {getterSetter = debuffDb .. ".notAuraCancelable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOption(MAP_LEGEND_IMPORTANT, nil, {getterSetter = debuffDb .. ".isAuraImportant", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOption(L["Crowd Control"], nil, {getterSetter = debuffDb .. ".isAuraCrowdControl", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOption(L["Big Defensive"], nil, {getterSetter = debuffDb .. ".isAuraBigDefensive", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOption(RAID_FRAMES_LABEL, nil, {getterSetter = debuffDb .. ".isAuraRaidInCombat", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOption(COMPACT_UNIT_FRAME_PROFILE_DISPELLABLE_INDICATOR_TYPE_ME, nil, {getterSetter = debuffDb .. ".isAuraRaidPlayerDispellable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOption(EXTERNAL_DEFENSIVES_LABEL, nil, {getterSetter = debuffDb .. ".isAuraDefensive", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+end
+
 -- Profiles
 local function LoadRaid10Profile(panel)
     local raid10 = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
@@ -80,18 +108,11 @@ local function LoadRaid10Profile(panel)
         end
     end
 
-    raid10:AddGroupHeader(L["Buffs"], {hidden = not GW.Retail})
-    raid10:AddOption(L["Raid Buffs"], nil, {getterSetter = "RAID_10_AURAS.raidBuff", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    raid10:AddOption(L["Player Buffs"], nil, {getterSetter = "RAID_10_AURAS.playerBuff", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    raid10:AddOption(L["Defensive Buffs"], nil, {getterSetter = "RAID_10_AURAS.defensiveBuff", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-
-    raid10:AddGroupHeader(L["Debuffs"])
-    raid10:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "RAID_SHOW_DEBUFFS_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}, groupHeaderName = L["Debuffs"]})
+    -- retail only filter
+    CreateAuraFilterSection(raid10, "RAID10", "RAID_10_BUFF_FILTER", "RAID_10_DEBUFF_FILTER", "RAID_SHOW_DEBUFFS_RAID10", "RAID10_ENABLED")
+    -- none retail debuff filter
     raid10:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_RAID10"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     raid10:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
-
-    raid10:AddOption(L["Raid Debuffs"], nil, {getterSetter = "RAID_10_AURAS.raidDebuff", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_RAID10"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    raid10:AddOption(L["Player Debuffs"], nil, {getterSetter = "RAID_10_AURAS.playerDebuff", callback = function() GW.UpdateGridSettings("RAID10") end, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_RAID10"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
 
 
     --fader
@@ -183,18 +204,11 @@ local function LoadRaid25Profile(panel)
         end
     end
 
-    raid25:AddGroupHeader(L["Buffs"], {hidden = not GW.Retail})
-    raid25:AddOption(L["Raid Buffs"], nil, {getterSetter = "RAID_25_AURAS.raidBuff", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    raid25:AddOption(L["Player Buffs"], nil, {getterSetter = "RAID_25_AURAS.playerBuff", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    raid25:AddOption(L["Defensive Buffs"], nil, {getterSetter = "RAID_25_AURAS.defensiveBuff", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-
-    raid25:AddGroupHeader(L["Debuffs"])
-    raid25:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "RAID_SHOW_DEBUFFS_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}, groupHeaderName = L["Debuffs"]})
+    -- retail only filter
+    CreateAuraFilterSection(raid25, "RAID25", "RAID_25_BUFF_FILTER", "RAID_25_DEBUFF_FILTER", "RAID_SHOW_DEBUFFS_RAID25", "RAID25_ENABLED")
+    -- none retail debuff filter
     raid25:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_RAID25"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     raid25:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
-
-    raid25:AddOption(L["Raid Debuffs"], nil, {getterSetter = "RAID_25_AURAS.raidDebuff", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_RAID25"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    raid25:AddOption(L["Player Debuffs"], nil, {getterSetter = "RAID_25_AURAS.playerDebuff", callback = function() GW.UpdateGridSettings("RAID25") end, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_RAID25"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
 
 
     --fader
@@ -284,18 +298,12 @@ local function LoadRaid40Profile(panel)
         end
     end
 
-    raid40:AddGroupHeader(L["Buffs"], {hidden = not GW.Retail})
-    raid40:AddOption(L["Raid Buffs"], nil, {getterSetter = "RAID_AURAS.raidBuff", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    raid40:AddOption(L["Player Buffs"], nil, {getterSetter = "RAID_AURAS.playerBuff", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    raid40:AddOption(L["Defensive Buffs"], nil, {getterSetter = "RAID_AURAS.defensiveBuff", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-
-    raid40:AddGroupHeader(L["Debuffs"])
-    raid40:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "RAID_SHOW_DEBUFFS", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, groupHeaderName = L["Debuffs"]})
+    -- retail only filter
+    CreateAuraFilterSection(raid40, "RAID40", "RAID_BUFF_FILTER", "RAID_DEBUFF_FILTER", "RAID_SHOW_DEBUFFS", "RAID_FRAMES")
+    -- none retail debuff filter
     raid40:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     raid40:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
 
-    raid40:AddOption(L["Raid Debuffs"], nil, {getterSetter = "RAID_AURAS.raidDebuff", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    raid40:AddOption(L["Player Debuffs"], nil, {getterSetter = "RAID_AURAS.playerDebuff", callback = function() GW.UpdateGridSettings("RAID40") end, dependence = {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
 
     --fader
     raid40:AddGroupHeader(L["Fader"])
@@ -383,18 +391,11 @@ local function LoadMaintankProfile(panel)
         end
     end
 
-    tank:AddGroupHeader(L["Buffs"], {hidden = not GW.Retail})
-    tank:AddOption(L["Raid Buffs"], nil, {getterSetter = "RAID_MAINTANK_AURAS.raidBuff", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    tank:AddOption(L["Player Buffs"], nil, {getterSetter = "RAID_MAINTANK_AURAS.playerBuff", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    tank:AddOption(L["Defensive Buffs"], nil, {getterSetter = "RAID_MAINTANK_AURAS.defensiveBuff", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-
-    tank:AddGroupHeader(L["Debuffs"])
-    tank:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "RAID_SHOW_DEBUFFS_TANK", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}, groupHeaderName = L["Debuffs"]})
+    -- retail only filter
+    CreateAuraFilterSection(tank, "TANK", "RAID_MAINTANK_BUFF_FILTER", "RAID_MAINTANK_DEBUFF_FILTER", "RAID_SHOW_DEBUFFS_TANK", "RAID_MAINTANK_FRAMES_ENABLED")
+    -- none retail debuff filter
     tank:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_TANK", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_TANK"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     tank:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_TANK", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
-
-    tank:AddOption(L["Raid Debuffs"], nil, {getterSetter = "RAID_MAINTANK_AURAS.raidDebuff", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_TANK"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    tank:AddOption(L["Player Debuffs"], nil, {getterSetter = "RAID_MAINTANK_AURAS.playerDebuff", callback = function() GW.UpdateGridSettings("TANK") end, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true, ["RAID_SHOW_DEBUFFS_TANK"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
 
 
     --fader
@@ -468,18 +469,11 @@ local function LoadRaidPetProfile(panel)
         end
     end
 
-    p:AddGroupHeader(L["Buffs"], {hidden = not GW.Retail})
-    p:AddOption(L["Raid Buffs"], nil, {getterSetter = "RAID_PET_AURAS.raidBuff", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    p:AddOption(L["Player Buffs"], nil, {getterSetter = "RAID_PET_AURAS.playerBuff", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    p:AddOption(L["Defensive Buffs"], nil, {getterSetter = "RAID_PET_AURAS.defensiveBuff", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-
-    p:AddGroupHeader(L["Debuffs"])
-    p:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "RAID_SHOW_DEBUFFS_PET", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}, groupHeaderName = L["Debuffs"]})
+    -- retail only filter
+    CreateAuraFilterSection(p, "RAID_PET", "RAID_PET_BUFF_FILTER", "RAID_PET_DEBUFF_FILTER", "RAID_SHOW_DEBUFFS_PET", "RAID_PET_FRAMES")
+    -- none retail debuff filter
     p:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_PET", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     p:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
-
-    p:AddOption(L["Raid Debuffs"], nil, {getterSetter = "RAID_PET_AURAS.raidDebuff", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    p:AddOption(L["Player Debuffs"], nil, {getterSetter = "RAID_PET_AURAS.playerDebuff", callback = function() GW.UpdateGridSettings("RAID_PET") end, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
 
     --fader
     p:AddGroupHeader(L["Fader"])
@@ -567,18 +561,11 @@ local function LoadPartyProfile(panel)
         end
     end
 
-    party:AddGroupHeader(L["Buffs"], {hidden = not GW.Retail})
-    party:AddOption(L["Raid Buffs"], nil, {getterSetter = "RAID_PARTY_AURAS.raidBuff", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    party:AddOption(L["Player Buffs"], nil, {getterSetter = "RAID_PARTY_AURAS.playerBuff", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    party:AddOption(L["Defensive Buffs"], nil, {getterSetter = "RAID_PARTY_AURAS.defensiveBuff", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-
-    party:AddGroupHeader(L["Debuffs"])
-    party:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "RAID_SHOW_DEBUFFS_PARTY", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Debuffs"]})
+    -- retail only filter
+    CreateAuraFilterSection(party, "PARTY", "RAID_PARTY_BUFF_FILTER", "RAID_PARTY_DEBUFF_FILTER", "RAID_SHOW_DEBUFFS_PARTY", "RAID_STYLE_PARTY")
+    -- none retail debuff filter
     party:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], {getterSetter = "RAID_ONLY_DISPELL_DEBUFFS_PARTY", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     party:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
-
-    party:AddOption(L["Raid Debuffs"], nil, {getterSetter = "RAID_PARTY_AURAS.raidDebuff", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    party:AddOption(L["Player Debuffs"], nil, {getterSetter = "RAID_PARTY_AURAS.playerDebuff", callback = function() GW.UpdateGridSettings("PARTY") end, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
 
 
     --fader
@@ -658,18 +645,11 @@ local function LoadPartyPetProfile(panel)
         end
     end
 
-    p:AddGroupHeader(L["Buffs"], {hidden = not GW.Retail})
-    p:AddOption(L["Raid Buffs"], nil, {getterSetter = "PARTY_PET_AURAS.raidBuff", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    p:AddOption(L["Player Buffs"], nil, {getterSetter = "PARTY_PET_AURAS.playerBuff", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    p:AddOption(L["Defensive Buffs"], nil, {getterSetter = "PARTY_PET_AURAS.defensiveBuff", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-
-    p:AddGroupHeader(L["Debuffs"])
-    p:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = "PARTY_SHOW_DEBUFFS_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Debuffs"]})
+    -- retail only filter
+    CreateAuraFilterSection(p, "PARTY_PET", "PARTY_PET_BUFF_FILTER", "PARTY_PET_DEBUFF_FILTER", "PARTY_SHOW_DEBUFFS_PET", "PARTY_PET_FRAMES_ENABLED")
+    -- none retail debuff filter
     p:AddOption(DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], {getterSetter = "PARTY_ONLY_DISPELL_DEBUFFS_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true, ["PARTY_SHOW_DEBUFFS_PET"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
     p:AddOption(L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], {getterSetter = "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}, groupHeaderName = L["Debuffs"], hidden = GW.Retail})
-
-    p:AddOption(L["Raid Debuffs"], nil, {getterSetter = "PARTY_PET_AURAS.raidDebuff", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true, ["PARTY_SHOW_DEBUFFS_PET"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    p:AddOption(L["Player Debuffs"], nil, {getterSetter = "PARTY_PET_AURAS.playerDebuff", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true, ["PARTY_SHOW_DEBUFFS_PET"] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
 
     --fader
     p:AddGroupHeader(L["Fader"])
