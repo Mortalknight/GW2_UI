@@ -169,7 +169,7 @@ local function SetPosition(element, from, to, unit, isInvert, auraPositon)
     end
 end
 
-local function updateAura(element, unit, data, position, isBuff)
+local function updateAura(element, unit, data, position)
     if not data then return end
 
     local button = element[position]
@@ -203,7 +203,7 @@ local function updateAura(element, unit, data, position, isBuff)
         data.newBuffAnimation = false
     end
 
-    if isBuff then
+    if data.isHelpfulAura then
         if not UnitCanCooperate("player", unit) then
             button.background:SetVertexColorFromBoolean(data.isStealable, stealableColor, normalColor)
         else
@@ -233,17 +233,56 @@ local function updateAura(element, unit, data, position, isBuff)
     button.neededSize = size
 end
 
-local function FilterAura(element, unit, data, isBuff)
-    if (element.onlyShowPlayer and data.isPlayerAura) or not element.onlyShowPlayer then
-		return true
+local function CheckFilter(data, filters)
+    if not filters or filters.noFilter then return true end
+
+    return (filters.isAuraImportant and data.isAuraImportant)
+        or (filters.isAuraCrowdControl and data.isAuraCrowdControl)
+        or (filters.isAuraBigDefensive and data.isAuraBigDefensive)
+        or (filters.isAuraRaidInCombat and data.isAuraRaidInCombat)
+        or (filters.isAuraRaidPlayerDispellable and data.isAuraRaidPlayerDispellable)
+        or (filters.isAuraDefensive and data.isAuraExternalDefensive)
+        or (filters.isAuraCancelable and data.isAuraCancelable)
+        or (filters.notAuraCancelable and not data.isAuraCancelable)
+        or (filters.isAuraPlayer and data.isAuraPlayer)
+        or (filters.isAuraRaid and data.isAuraRaid)
+end
+
+local function FilterAura(element, unit, data)
+    if data.isHelpfulAura then
+        if element.buffFilter == "advanced" then
+            return CheckFilter(data, element.buffAdvancedFilters)
+        elseif element.buffFilter == "all" then
+            return true
+        end
+    elseif data.isHarmfulAura then
+        if element.debuffFilter == "advanced" then
+            return CheckFilter(data, element.debuffAdvancedFilters)
+        elseif element.debuffFilter == "player" then
+            return data.isPlayerAura
+        elseif element.debuffFilter == "all" then
+            return true
+        end
 	end
 end
 
-local function processData(unit, data, filter, newBuffAnimation)
+local function processData(unit, data, newBuffAnimation)
     if not data then return end
 
-    data.isPlayerAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, filter .. '|PLAYER')
     data.newBuffAnimation = newBuffAnimation
+
+    data.isHarmfulAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL")
+    data.isHelpfulAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL")
+
+    data.isAuraImportant = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|IMPORTANT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|IMPORTANT")
+    data.isAuraCancelable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CANCELABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CANCELABLE")
+    data.isAuraCrowdControl = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CROWD_CONTROL") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CROWD_CONTROL")
+    data.isAuraBigDefensive = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|BIG_DEFENSIVE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|BIG_DEFENSIVE")
+    data.isAuraExternalDefensive = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|EXTERNAL_DEFENSIVE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|EXTERNAL_DEFENSIVE")
+    data.isAuraPlayer = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|PLAYER") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|PLAYER")
+    data.isAuraRaid = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|RAID") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|RAID")
+    data.isAuraRaidInCombat = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|RAID_IN_COMBAT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|RAID_IN_COMBAT")
+    data.isAuraRaidPlayerDispellable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|RAID_PLAYER_DISPELLABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
 
     return data
 end
@@ -272,11 +311,11 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
 
         local slots = {C_UnitAuras.GetAuraSlots(unit, buffFilter)}
         for i = 2, #slots do -- #1 return is continuationToken, we don't care about it
-            local data = processData(unit, C_UnitAuras.GetAuraDataBySlot(unit, slots[i]), buffFilter)
+            local data = processData(unit, C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
             if data then
                 auras.allBuffs[data.auraInstanceID] = data
 
-                if ((auras.FilterAura or FilterAura)(auras, unit, data, true)) then
+                if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
                     auras.activeBuffs[data.auraInstanceID] = true
                 end
             end
@@ -288,11 +327,11 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
 
         slots = {C_UnitAuras.GetAuraSlots(unit, debuffFilter)}
         for i = 2, #slots do
-            local data = processData(unit, C_UnitAuras.GetAuraDataBySlot(unit, slots[i]), debuffFilter)
+            local data = processData(unit, C_UnitAuras.GetAuraDataBySlot(unit, slots[i]))
             if data then
                 auras.allDebuffs[data.auraInstanceID] = data
 
-                if ((auras.FilterAura or FilterAura)(auras, unit, data, false)) then
+                if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
                     auras.activeDebuffs[data.auraInstanceID] = true
                 end
             end
@@ -306,21 +345,21 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
         if updateInfo.addedAuras then
             for _, data in next, updateInfo.addedAuras do
                 if (not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, buffFilter)) then
-                    data = processData(unit, data, buffFilter, true)
+                    data = processData(unit, data, true)
                     if data then
                         auras.allBuffs[data.auraInstanceID] = data
 
-                        if ((auras.FilterAura or FilterAura)(auras, unit, data, true)) then
+                        if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
                             auras.activeBuffs[data.auraInstanceID] = true
                             buffsChanged = true
                         end
                     end
                 elseif (not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, debuffFilter)) then
-                    data = processData(unit, data, debuffFilter)
+                    data = processData(unit, data)
                     if data then
                         auras.allDebuffs[data.auraInstanceID] = data
 
-                        if ((auras.FilterAura or FilterAura)(auras, unit, data, false)) then
+                        if ((auras.FilterAura or FilterAura)(auras, unit, data)) then
                             auras.activeDebuffs[data.auraInstanceID] = true
                             debuffsChanged = true
                         end
@@ -332,7 +371,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
         if updateInfo.updatedAuraInstanceIDs then
             for _, auraInstanceID in next, updateInfo.updatedAuraInstanceIDs do
                 if(auras.allBuffs[auraInstanceID]) then
-                    auras.allBuffs[auraInstanceID] = processData(unit, C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID), buffFilter)
+                    auras.allBuffs[auraInstanceID] = processData(unit, C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID))
 
                     -- only update if it's actually active
                     if(auras.activeBuffs[auraInstanceID]) then
@@ -340,7 +379,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
                         buffsChanged = true
                     end
                 elseif(auras.allDebuffs[auraInstanceID]) then
-                    auras.allDebuffs[auraInstanceID] = processData(unit, C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID), debuffFilter)
+                    auras.allDebuffs[auraInstanceID] = processData(unit, C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID))
 
                     if(auras.activeDebuffs[auraInstanceID]) then
                         auras.activeDebuffs[auraInstanceID] = true
@@ -388,7 +427,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
             numVisible = math.min(numBuffs, numTotal, #auras.sortedBuffs)
 
             for i = 1, numVisible do
-                updateAura(auras, unit, auras.sortedBuffs[i], i, true)
+                updateAura(auras, unit, auras.sortedBuffs[i], i)
             end
         else
             numVisible = math.min(numBuffs, numTotal, #auras.sortedBuffs)
@@ -409,7 +448,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
 
         -- any changes to buffs will affect debuffs, so just redraw them even if nothing changed
         for i = 1, numDebuffs do
-            updateAura(auras, unit, auras.sortedDebuffs[i], numVisible + i, false)
+            updateAura(auras, unit, auras.sortedDebuffs[i], numVisible + i)
         end
 
         numVisible = numVisible + numDebuffs

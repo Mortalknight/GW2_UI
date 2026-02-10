@@ -30,8 +30,8 @@ local function GetPartyPetUnit(i)
     return (i == 1 and GW.settings.PARTY_PLAYER_FRAME) and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
 end
 
-local function FilterAura(element, unit, data, isBuff)
-    if isBuff then
+local function FilterAura(element, unit, data)
+    if data.isHelpfulAura then
         return data and data.name
     else
         if GW.Retail then

@@ -856,6 +856,34 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
     end
 end
 
+local function UpdateFiltering(frame)
+    local isImportant = frame.debuffAdvancedFilters.isAuraImportant
+	local isCrowdControl = frame.debuffAdvancedFilters.isAuraCrowdControl
+	local isBigDefensive = frame.debuffAdvancedFilters.isAuraBigDefensive
+	local isRaidInCombat = frame.debuffAdvancedFilters.isAuraRaidInCombat
+	local isRaidPlayerDispellable = frame.debuffAdvancedFilters.isAuraRaidPlayerDispellable
+	local isDefensive = frame.debuffAdvancedFilters.isAuraDefensive
+	local isCancelable = frame.debuffAdvancedFilters.isAuraCancelable
+	local notCancelable = frame.debuffAdvancedFilters.notAuraCancelable
+	local isPlayer = frame.debuffAdvancedFilters.isAuraPlayer
+	local isRaid = frame.debuffAdvancedFilters.isAuraRaid
+
+    frame.debuffAdvancedFilters.noFilter = not (isImportant or isCrowdControl or isBigDefensive or isRaidInCombat or isRaidPlayerDispellable or isDefensive or isCancelable or notCancelable or isPlayer or isRaid)
+
+    isImportant = frame.buffAdvancedFilters.isAuraImportant
+	isCrowdControl = frame.buffAdvancedFilters.isAuraCrowdControl
+    isBigDefensive = frame.buffAdvancedFilters.isAuraBigDefensive
+	isRaidInCombat = frame.buffAdvancedFilters.isAuraRaidInCombat
+	isRaidPlayerDispellable = frame.buffAdvancedFilters.isAuraRaidPlayerDispellable
+	isDefensive = frame.buffAdvancedFilters.isAuraDefensive
+	isCancelable = frame.buffAdvancedFilters.isAuraCancelable
+	notCancelable = frame.buffAdvancedFilters.notAuraCancelable
+	isPlayer = frame.buffAdvancedFilters.isAuraPlayer
+	isRaid = frame.buffAdvancedFilters.isAuraRaid
+
+    frame.buffAdvancedFilters.noFilter = not (isImportant or isCrowdControl or isBigDefensive or isRaidInCombat or isRaidPlayerDispellable or isDefensive or isCancelable or notCancelable or isPlayer or isRaid)
+end
+
 function GwUnitFrameMixin:ToggleSettings()
     local unit = self.unit:lower()
 
@@ -867,8 +895,14 @@ function GwUnitFrameMixin:ToggleSettings()
 
     self.showCastingbarData = GW.settings[unit .. "_CASTINGBAR_DATA"]
 
-    self.displayBuffs = GW.settings[unit .. "_BUFFS"] and 32 or 0
-    self.displayDebuffs = GW.settings[unit .. "_DEBUFFS"] and 40 or 0
+    self.displayBuffs = GW.settings[unit .. "_Buff_Filter"] == "none" and 0 or 32
+    self.auras.buffFilter = GW.settings[unit .. "_Buff_Filter"]
+    self.auras.buffAdvancedFilters = GW.settings[unit .. "_Buff_Filter_advanced"]
+
+    self.displayDebuffs = GW.settings[unit .. "_Debuff_Filter"] == "none" and 0 or 40
+    self.auras.debuffFilter = GW.settings[unit .. "_Debuff_Filter"]
+    self.auras.debuffAdvancedFilters = GW.settings[unit .. "_Debuff_Filter_advanced"]
+    UpdateFiltering(self.auras)
 
     self.auras.smallSize = 20
     self.auras.bigSize = 26
@@ -900,9 +934,6 @@ function GwUnitFrameMixin:ToggleSettings()
             self.auras:SetPoint("TOPLEFT", self.castingbarBackground, "BOTTOMLEFT", 2, comboOffset)
         end
     end
-
-    self.debuffFilter = GW.settings[unit .. "_BUFFS_FILTER_ALL"] and "HARMFUL" or "PLAYER|HARMFUL"
-    self.debuffFilterShowImportant = GW.settings[unit .. "_BUFFS_FILTER_IMPORTANT"]
 
     self:SetScale(GW.settings[self.unit .. "_pos_scale"])
     self.castingbarBackground:SetWidth(GW.settings[self.unit .. "FrameHealthBarSize"].width)

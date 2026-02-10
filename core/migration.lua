@@ -290,13 +290,6 @@ local function DatabaseValueMigration()
         GW.settings.PlayerDebuffFrame_MaxWraps = nil
     end
 
-
-    --Midnight migration
-    if GW.Retail then
-        GW.settings.target_BUFFS_FILTER_IMPORTANT = false
-        GW.settings.focus_BUFFS_FILTER_IMPORTANT = false
-    end
-
     -- raid power bar settings
     if GW.settings.RAID_POWER_BARS_RAID10 ~= nil then
         GW.settings.raid10_show_powerbar = GW.settings.RAID_POWER_BARS_RAID10 and "ALL" or "NONE"

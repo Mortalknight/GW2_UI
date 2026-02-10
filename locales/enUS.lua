@@ -733,3 +733,6 @@ L["Is Cancelable"] = true
 L["Not Cancelable"] = true
 L["Crowd Control"] = true
 L["Big Defensive"] = true
+L["Buffs: Advanced Filtering"] = true
+L["Debuffs: Advanced Filtering"] = true
+L["Advanced Filtering"] = true
