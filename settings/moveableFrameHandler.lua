@@ -482,7 +482,7 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function CreateMoverFrame(parent, displayName, settingsName, size, frameOptions, mhf, postdrag, tags)
+local function CreateMoverFrame(parent, displayName, settingsName, size, frameOptions, mhf, postdrag, tags, ignoreParentSize)
     local mf = CreateFrame("Button", "Gw_" .. settingsName, UIParent, "SecureHandlerStateTemplate")
     mf:SetClampedToScreen(true)
     mf:SetMovable(true)
@@ -492,6 +492,7 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf:SetFrameStrata("DIALOG")
     mf:GwCreateBackdrop("Transparent White")
     mf:SetScale(parent:GetScale())
+    mf.ignoreSize = ignoreParentSize
     parent.gwMover = mf
 
     if size then
@@ -591,8 +592,8 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     return mf
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, tags, size, frameOptions, mhf, postdrag)
-    local moveframe = CreateMoverFrame(frame, displayName, settingsName, size, frameOptions, mhf, postdrag, tags)
+local function RegisterMovableFrame(frame, displayName, settingsName, tags, size, frameOptions, mhf, postdrag, ignoreParentSize)
+    local moveframe = CreateMoverFrame(frame, displayName, settingsName, size, frameOptions, mhf, postdrag, tags, ignoreParentSize)
 
     moveframe:ClearAllPoints()
     if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
