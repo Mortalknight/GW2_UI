@@ -2525,7 +2525,7 @@ local function SocialQueueEvent(...)
         if firstQueue.queueData.lfgListID then
             local searchResultInfo = C_LFGList.GetSearchResultInfo(firstQueue.queueData.lfgListID)
             if searchResultInfo then
-                activityID, name, leaderName = searchResultInfo.activityID, searchResultInfo.name, searchResultInfo.leaderName
+                activityID, name, leaderName = searchResultInfo.activityIDs[1], searchResultInfo.name, searchResultInfo.leaderName
                 isLeader = SocialQueueIsLeader(playerName, leaderName)
             end
         end
@@ -2534,7 +2534,7 @@ local function SocialQueueEvent(...)
             activityInfo = C_LFGList.GetActivityInfoTable(activityID or firstQueue.queueData.activityID)
         end
 
-        SocialQueueMessage(guid, format(name and "%s %s: [%s] |cff00CCFF%s|r" or "%s %s: |cff00CCFF%s|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], activityInfo and activityInfo.fullName or UNKNOWN, name))
+        SocialQueueMessage(guid, format(name and "%s %s: |cffFFFF00[%s:%s]|r" or "%s %s: |cffFFFF00[%s]|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], activityInfo and activityInfo.fullName or UNKNOWN, name))
     elseif firstQueue then
             local output, outputCount, queueCount = "", "", 0
         for _, queue in pairs(queues) do
