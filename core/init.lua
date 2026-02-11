@@ -186,6 +186,12 @@ function GW.NotSecretValue(value)
     end
 end
 
+function GW.NotSecretTable(table)
+    if not issecrettable or not issecrettable(table) then
+        return true
+    end
+end
+
 
 --Add Shared Media
 --Font

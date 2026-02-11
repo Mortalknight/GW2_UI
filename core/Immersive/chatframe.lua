@@ -1519,7 +1519,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                         infoType = "CHANNEL"..arg8
                         info = ChatTypeInfo[infoType]
 
-                        if chatType == "CHANNEL_NOTICE" and GW.NotSecretValue(arg1) and arg1 == "YOU_LEFT" then
+                        if chatType == "CHANNEL_NOTICE" and GW.NotSecretValue(arg1) and arg1 == "YOU_LEFT" and GW.NotSecretTable(frame.zoneChannelList) then
                             frame.channelList[index] = nil
                             frame.zoneChannelList[index] = nil
                         end
