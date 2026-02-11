@@ -1,3 +1,12 @@
+10.2.0
+NEW
+    - Added all new aura filter options to grids (retail)
+    - Added party pet grid
+    - Added new aura filter options to target unitframe
+
+FIXES
+    - More secrets with 12.0.1
+
 10.1.0
 NEW
     - Added bar size settings to: Targetframe, Target of targetframe, Focusframe, Target of focusframe and playerframe

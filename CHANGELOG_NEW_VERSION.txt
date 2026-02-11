@@ -1,19 +1,8 @@
-10.1.0
+10.2.0
 NEW
-    - Added bar size settings to: Targetframe, Target of targetframe, Focusframe, Target of focusframe and playerframe
-    - Added option to change chatbubble size
-    - Added option to toggle the dodgebar
-    - Added option to toggle the skyridingbar
-    - Added option to anchor the classpower bar to center to have them alligned when using profile on different characters
-    - Added option to show keybinds only on used slots
-    - Added option for a rectangle minimap (Read the setting notes)
-
-CHANGES
-    - Gear manager: Gears can now be draged to the actionbars
-    - Dodgebar, skyridingbar and player ressourcebars now fades with player frame
+    - Added all new aura filter options to grids (retail)
+    - Added party pet grid
+    - Added new aura filter options to target unitframe
 
 FIXES
-    - Some more secrets (retail)
-    - Grid range fader is working again
-    - Raidmarkers are now showing correclty
-    - Many more fixes
+    - More secrets with 12.0.1
