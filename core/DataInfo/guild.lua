@@ -72,7 +72,7 @@ local function FetchGuildMembers_Internal()
     wipe(clubTable)
 
     local clubs = C_Club.GetSubscribedClubs()
-    if clubs then -- use this to get the timerunning flag (and other info?)
+    if GW.NotSecretValue(clubs) and clubs then -- use this to get the timerunning flag (and other info?)
         local guildClubID
         for _, data in next, clubs do
             if data.clubType == Enum.ClubType.Guild then
@@ -106,8 +106,8 @@ local function FetchGuildMembers_Internal()
                 rank = rank,
                 level = level,
                 zone = zone,
-                note = note,
-                officerNote = officerNote,
+                note = GW.NotSecretValue(note) and note or "",
+                officerNote = GW.NotSecretValue(officerNote) and officerNote or "",
                 online = connected,
                 status = statusInfo,
                 class = className,

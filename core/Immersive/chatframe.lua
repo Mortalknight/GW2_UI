@@ -824,7 +824,7 @@ local function CheckKeyword(message, author)
                     local classColoredName = classColorTable and classColorTable:WrapTextInColorCode(tempWord)
                     if classColoredName then
                         local tempstr = gsub(tempWord, "%-", "%%-")
-						word = gsub(word, tempstr, classColoredName)
+                        word = gsub(word, tempstr, classColoredName)
                     end
                 end
             end
@@ -1438,6 +1438,10 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
     return body
 end
 
+local function ChatFrame_GetZoneChannel(frame, index)
+    return frame.zoneChannelList[index]
+end
+
 local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, isHistory, historyTime, historyName, historyBTag)
     local notChatHistory, historySavedName
     if isHistory == "GW2UI_ChatHistory" then
@@ -1504,8 +1508,12 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             local found = false
             for index, value in pairs(frame.channelList) do
                 if channelLength > strlen(value) then
-                    -- arg9 is the channel name without the number in front...
-                    if (arg7 > 0 and frame.zoneChannelList[index] == arg7) or (strupper(value) == strupper(arg9)) then
+                    local match = strupper(value) == strupper(arg9)
+                    if not match then -- arg9 is the channel name without the number in front
+                        local success, zoneChannel = pcall(ChatFrame_GetZoneChannel, frame, index)
+                        match = success and arg7 > 0 and arg7 == zoneChannel
+                    end
+                    if match then
                         found = true
 
                         infoType = "CHANNEL"..arg8
@@ -2434,6 +2442,8 @@ end
 GW.CollectLfgRolesForChatIcons = CollectLfgRolesForChatIcons
 
 local function SocialQueueIsLeader(playerName, leaderName)
+    if GW.IsSecretValue(leaderName) then return end
+
     if leaderName == playerName then
         return true
     end
@@ -2524,13 +2534,9 @@ local function SocialQueueEvent(...)
             activityInfo = C_LFGList.GetActivityInfoTable(activityID or firstQueue.queueData.activityID)
         end
 
-        if name then
-            SocialQueueMessage(guid, format("%s %s: |cffFFFF00[%s: %s]|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], (activityInfo and activityInfo.fullName) or UNKNOWN, name))
-        else
-            SocialQueueMessage(guid, format("%s %s: |cffFFFF00[%s]|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], (activityInfo and activityInfo.fullName) or UNKNOWN))
-        end
+        SocialQueueMessage(guid, format(name and "%s %s: [%s] |cff00CCFF%s|r" or "%s %s: |cff00CCFF%s|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], activityInfo and activityInfo.fullName or UNKNOWN, name))
     elseif firstQueue then
-        local output, outputCount, queueCount = "", "", 0
+            local output, outputCount, queueCount = "", "", 0
         for _, queue in pairs(queues) do
             if type(queue) == "table" and queue.eligible then
                 local queueName = (queue.queueData and SocialQueueUtil_GetQueueName(queue.queueData)) or ""

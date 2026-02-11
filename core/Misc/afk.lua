@@ -136,7 +136,7 @@ local function AFKMode_OnEvent(self, event, arg1)
         return
     end
 
-    SetAFK(self, UnitIsAFK("player") and not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()))
+    SetAFK(self, GW.UnitIsAFK("player") and not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()))
 end
 
 local function OnKeyDown(self, key)

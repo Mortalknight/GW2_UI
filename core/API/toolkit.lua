@@ -88,6 +88,27 @@ local function HandleBlizzardRegions(frame)
 end
 GW.HandleBlizzardRegions = HandleBlizzardRegions
 
+-- 12.0 secret restrictions break SetBackdrop (width is secret...)
+function GW.NotSizeRestricted(frame)
+    if not frame or not frame.GetSize then return true end
+
+    local width, height = frame:GetSize()
+    return GW.NotSecretValue(width) and GW.NotSecretValue(height)
+end
+
+function GW.SetupTextureCoordinates(self)
+    if GW.NotSizeRestricted(self) then
+        _G.BackdropTemplateMixin.SetupTextureCoordinates(self)
+    end
+end
+
+-- temp until blizzard fixes the backdrop mixin from this error
+function GW.ReplaceSetupTextureCoordinates(frame)
+    if GW.Retail and frame.SetupTextureCoordinates ~= GW.SetupTextureCoordinates then
+        frame.SetupTextureCoordinates = GW.SetupTextureCoordinates
+    end
+end
+
 local upButtons = {"ScrollUpButton", "UpButton", "ScrollUp", {"scrollUp", true}, "Back"}
 local downButtons = {"ScrollDownButton", "DownButton", "ScrollDown", {"scrollDown", true}, "Forward"}
 local thumbButtons = {"ThumbTexture", "thumbTexture", "Thumb"}
@@ -306,6 +327,8 @@ local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xSh
         backdrop:SetAllPoints()
     end
 
+    GW.ReplaceSetupTextureCoordinates(backdrop)
+
 
     if template == "Transparent" then
         backdrop:SetBackdrop({
@@ -319,7 +342,6 @@ local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xSh
             bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/white.png",
             edgeSize = GW.Scale(1)
         })
-
         backdrop:SetBackdropColor(1, 1, 1, 0.4)
     elseif template == "ScrollBar" then
         backdrop:SetBackdrop({

@@ -1,40 +1,40 @@
 local _, GW = ...
 
 function GW.GetSpellCooldown(spellID)
-	if not spellID then return end
+    if not spellID then return end
 
-	if GetSpellCooldown then
-		local startTime, duration, isEnabled, modRate = GetSpellCooldown(spellID)
-		return {startTime = startTime, duration = duration, isEnabled = isEnabled, modRate = modRate}
-	else
-		local info = C_Spell.GetSpellCooldown(spellID)
-		if info then
-			return info
-		end
-	end
+    if GetSpellCooldown then
+        local startTime, duration, isEnabled, modRate = GetSpellCooldown(spellID)
+        return {startTime = startTime, duration = duration, isEnabled = isEnabled, modRate = modRate}
+    else
+        local info = C_Spell.GetSpellCooldown(spellID)
+        if info then
+            return info
+        end
+    end
 end
 
 -- add tooltip data api
 local function CompatibleTooltip(tt)
-	if tt.GetTooltipData then return end
+    if tt.GetTooltipData then return end
 
-	tt.GetTooltipData = function()
-		local info = { name = tt:GetName(), lines = {} }
-		info.leftTextName = info.name .. "TextLeft"
-		info.rightTextName = info.name .. "TextRight"
+    tt.GetTooltipData = function()
+        local info = { name = tt:GetName(), lines = {} }
+        info.leftTextName = info.name .. "TextLeft"
+        info.rightTextName = info.name .. "TextRight"
 
-		for i = 1, tt:NumLines() do
-			local left = _G[info.leftTextName..i]
-			local leftText = left and left:GetText() or nil
+        for i = 1, tt:NumLines() do
+            local left = _G[info.leftTextName..i]
+            local leftText = left and left:GetText() or nil
 
-			local right = _G[info.rightTextName..i]
-			local rightText = right and right:GetText() or nil
+            local right = _G[info.rightTextName..i]
+            local rightText = right and right:GetText() or nil
 
-			tinsert(info.lines, i, { lineIndex = i, leftText = leftText, rightText = rightText })
-		end
+            tinsert(info.lines, i, { lineIndex = i, leftText = leftText, rightText = rightText })
+        end
 
-		return info
-	end
+        return info
+    end
 end
 CompatibleTooltip(GameTooltip)
 CompatibleTooltip(GW.ScanTooltip)
@@ -98,25 +98,25 @@ function GW.IsPlayerSpell(spellID)
 end
 
 local function CropRatio(width, height, mult)
-	local left, right, top, bottom = 0.05, 0.95, 0.05, 0.95
-	if not mult then mult = 0.5 end
+    local left, right, top, bottom = 0.05, 0.95, 0.05, 0.95
+    if not mult then mult = 0.5 end
 
-	if not height or height == 0 then
-		return left, right, top, bottom
-	end
+    if not height or height == 0 then
+        return left, right, top, bottom
+    end
 
-	local ratio = width / height
-	if ratio > 1 then
-		local trimAmount = (1 - (1 / ratio)) * mult
-		top = top + trimAmount
-		bottom = bottom - trimAmount
-	else
-		local trimAmount = (1 - ratio) * mult
-		left = left + trimAmount
-		right = right - trimAmount
-	end
+    local ratio = width / height
+    if ratio > 1 then
+        local trimAmount = (1 - (1 / ratio)) * mult
+        top = top + trimAmount
+        bottom = bottom - trimAmount
+    else
+        local trimAmount = (1 - ratio) * mult
+        left = left + trimAmount
+        right = right - trimAmount
+    end
 
-	return left, right, top, bottom
+    return left, right, top, bottom
 end
 GW.CropRatio = CropRatio
 
@@ -131,19 +131,19 @@ end
 GW.SetAlphaRecursive = SetAlphaRecursive
 
 local function SafeGetParent(obj)
-	if type(obj) ~= "table" then
-		return nil
-	end
+    if type(obj) ~= "table" then
+        return nil
+    end
 
-	local hasMethod = obj.GetParent and type(obj.GetParent) == "function"
-	if hasMethod then
-		local ok, parent = pcall(obj.GetParent, obj)
-		if ok then
-			return parent
-		end
-	end
+    local hasMethod = obj.GetParent and type(obj.GetParent) == "function"
+    if hasMethod then
+        local ok, parent = pcall(obj.GetParent, obj)
+        if ok then
+            return parent
+        end
+    end
 
-	return nil
+    return nil
 end
 GW.SafeGetParent = SafeGetParent
 
@@ -160,13 +160,13 @@ do
     local left = 0
     local lastRefresh = 0
 
-	local function PostRefresh(forceUpdate)
+    local function PostRefresh(forceUpdate)
         local now = GetTime()
         if (now - lastRefresh < 0.1) and not forceUpdate then
             return
         end
         lastRefresh = now
-		ContainerFrame_UpdateAll()
+        ContainerFrame_UpdateAll()
     end
 
     local function OnEvent(self, event, ...)
@@ -184,13 +184,13 @@ do
             if slot >= C_Container.ContainerIDToInventoryID(1) then
                 return
             end
-			PostRefresh(true)
-			upgradeCache = {}
+            PostRefresh(true)
+            upgradeCache = {}
         end
     end
 
     frame:RegisterEvent("PLAYER_LEVEL_UP")
-	frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
     frame:RegisterEvent("ADDON_LOADED")
     frame:SetScript("OnEvent", OnEvent)
 
@@ -219,12 +219,12 @@ do
         left = left - elapsed
         if result ~= nil then
             upgradeCache[itemLink] = result
-           	return result
+            return result
         end
 
         if C_Item.IsItemDataCachedByID(itemLink) then
-        	upgradeCache[itemLink] = false
-           	return false
+            upgradeCache[itemLink] = false
+            return false
         end
         return nil
     end
@@ -233,7 +233,7 @@ do
         for _, data in pairs(pending) do
             local result = GetPawnUpgradeStatus(data.itemLink)
             if result ~= nil then
-				data.button.UpgradeIcon:SetShown(result)
+                data.button.UpgradeIcon:SetShown(result)
                 pending[data.itemLink] = nil
             end
         end
@@ -256,15 +256,27 @@ do
             frame:SetScript("OnUpdate", OnUpdate)
         else
             upgradeCache[itemLink] = result
-			button.UpgradeIcon:SetShown(result)
+            button.UpgradeIcon:SetShown(result)
         end
     end
 end
 
 function GW.UnitExists(unit)
-	if ShouldUnitIdentityBeSecret and ShouldUnitIdentityBeSecret(unit) then return end
+    if ShouldUnitIdentityBeSecret and ShouldUnitIdentityBeSecret(unit) then return end
 
-	return unit and (UnitExists(unit) or UnitIsVisible(unit))
+    return unit and (UnitExists(unit) or UnitIsVisible(unit))
+end
+
+function GW.UnitIsAFK(unit)
+    local afk = UnitIsAFK(unit)
+
+    return GW.NotSecretValue(afk) and afk or nil
+end
+
+function GW.UnitIsDND(unit)
+    local dnd = UnitIsDND(unit)
+
+    return GW.NotSecretValue(dnd) and dnd or nil
 end
 
 function GW.GetWowheadLinkForLanguage()
