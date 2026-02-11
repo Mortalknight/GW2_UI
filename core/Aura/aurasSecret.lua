@@ -55,16 +55,16 @@ local function CreateAuraFrame(name, parent)
 end
 
 local function sortAuras(a, b)
-    if a.isPlayerAura ~= b.isPlayerAura then
-		return a.isPlayerAura
+    if a.isAuraPlayer ~= b.isAuraPlayer then
+		return a.isAuraPlayer
 	end
 
     return a.auraInstanceID < b.auraInstanceID
 end
 
 local function sortAurasRevert(a, b)
-   if a.isPlayerAura ~= b.isPlayerAura then
-		return a.isPlayerAura
+   if a.isAuraPlayer ~= b.isAuraPlayer then
+		return a.isAuraPlayer
 	end
 
     return a.auraInstanceID > b.auraInstanceID
@@ -187,7 +187,7 @@ local function updateAura(element, unit, data, position)
     button.auraInstanceID = data.auraInstanceID
     button.isHarmfulAura = data.isHarmfulAura
 
-    if data.isPlayerAura then
+    if data.isAuraPlayer then
         setAuraType(button, "bigBuff")
         size = button.bigSize
         local duration = not element.hideDuration and C_UnitAuras.GetAuraDuration(unit, data.auraInstanceID) or nil

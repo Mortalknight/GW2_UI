@@ -308,15 +308,15 @@ local function updateAura(element, unit, data, position)
 end
 
 local function FilterAura(element, unit, data, filter)
-    if((element.onlyShowPlayer and data.isPlayerAura) or (not element.onlyShowPlayer)) then
+    if((element.onlyShowPlayer and data.isAuraPlayer) or (not element.onlyShowPlayer)) then
         return true
     end
 end
 
 -- see AuraUtil.DefaultAuraCompare
 local function SortAuras(a, b)
-    if(a.isPlayerAura ~= b.isPlayerAura) then
-        return a.isPlayerAura
+    if(a.isAuraPlayer ~= b.isAuraPlayer) then
+        return a.isAuraPlayer
     end
 
     if ns.Retail then
@@ -347,7 +347,7 @@ local function processData(element, unit, data, filter)
         data.isAuraRaidInCombat = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|RAID_IN_COMBAT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|RAID_IN_COMBAT")
         data.isAuraRaidPlayerDispellable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|RAID_PLAYER_DISPELLABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|RAID_PLAYER_DISPELLABLE")
     else
-        data.isPlayerAura = data.sourceUnit and (UnitIsUnit('player', data.sourceUnit) or UnitIsOwnerOrControllerOfUnit('player', data.sourceUnit))
+        data.isAuraPlayer = data.sourceUnit and (UnitIsUnit('player', data.sourceUnit) or UnitIsOwnerOrControllerOfUnit('player', data.sourceUnit))
     end
     --[[ Callback: Auras:PostProcessAuraData(unit, data)
     Called after the aura data has been processed.
