@@ -736,3 +736,5 @@ L["Big Defensive"] = true
 L["Buffs: Advanced Filtering"] = true
 L["Debuffs: Advanced Filtering"] = true
 L["Advanced Filtering"] = true
+L["Unitframes Auras"] = true
+L["Edit general unitframe aura settings."] = true

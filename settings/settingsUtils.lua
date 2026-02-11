@@ -545,73 +545,84 @@ local function SettingsInitOptionWidget(of, v, panel)
             rootDescription:SetScrollMode(buttonSize * maxButtons)
 
             for idx, option in pairs(v.optionsList) do
-                local function IsSelected(data)
-                    if v.hasCheckbox then
-                        local isSelected = of.get(data.option)
-                        if GW.IsInProfileSwitch and v.callback and isSelected then
-                            v.callback(isSelected, data.option)
-                        end
-                        return isSelected
-                    else
-                        local isSelected = of.get(data.optionName) == data.option
-                        if GW.IsInProfileSwitch and v.callback and isSelected then
-                            v.callback(data.option)
-                        end
-                        return isSelected
+                if option == "HEADER" then
+                    if idx > 1 then
+                        rootDescription:CreateDivider()
                     end
-                end
-                local function SetSelected(data)
-                    if v.hasCheckbox then
-                        local isSelected = not of.get(data.option)
-                        of.set(isSelected, data.option)
-
-                        if v.callback then
-                            v.callback(isSelected, data.option)
-                        end
-                    else
-                        of.set(data.option)
-                        if v.callback then
-                            v.callback(data.option)
-                        end
-                    end
-                    CheckDependencies()
-                end
-
-                local entryButton
-                if v.hasCheckbox then
-                    entryButton = rootDescription:CreateCheckbox(v.optionsNames[idx], IsSelected, SetSelected, {optionName = v.optionName, option = option})
+                    local title = rootDescription:CreateTitle(v.optionsNames[idx])
+                    title:AddInitializer(function(frame, description, menu)
+                        frame.fontString:SetTextColor(GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
+                    end)
                 else
-                    entryButton = rootDescription:CreateRadio(v.optionsNames[idx], IsSelected, SetSelected, {optionName = v.optionName, option = option})
-                end
+                    local function IsSelected(data)
+                        if v.hasCheckbox then
+                            local isSelected = of.get(data.option)
+                            if GW.IsInProfileSwitch and v.callback and isSelected then
+                                v.callback(isSelected, data.option)
+                            end
+                            return isSelected
+                        else
+                            local isSelected = of.get(data.optionName) == data.option
+                            if GW.IsInProfileSwitch and v.callback and isSelected then
+                                v.callback(data.option)
+                            end
+                            return isSelected
+                        end
+                    end
+                    local function SetSelected(data)
+                        if v.hasCheckbox then
+                            local isSelected = not of.get(data.option)
+                            of.set(isSelected, data.option)
 
-                entryButton:AddInitializer(function(button, description, menu)
+                            if v.callback then
+                                v.callback(isSelected, data.option)
+                            end
+                        else
+                            of.set(data.option)
+                            if v.callback then
+                                v.callback(data.option)
+                            end
+                        end
+                        CheckDependencies()
+                    end
+
+
+                    local entryButton
                     if v.hasCheckbox then
-                        GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, IsSelected,  {optionName = v.optionName, option = option})
+                        entryButton = rootDescription:CreateCheckbox(v.optionsNames[idx], IsSelected, SetSelected, {optionName = v.optionName, option = option})
                     else
-                        GW.BlizzardDropdownRadioButtonInitializer(button, description, menu, IsSelected,  {optionName = v.optionName, option = option})
+                        entryButton = rootDescription:CreateRadio(v.optionsNames[idx], IsSelected, SetSelected, {optionName = v.optionName, option = option})
                     end
 
-                    if v.hasSound then
-                        local soundButton = MenuTemplates.AttachAutoHideButton(button, "Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on.png")
-                        soundButton:SetSize(14, 14)
-                        soundButton:SetPoint("RIGHT")
-                        soundButton:SetScript("OnClick", function()
-                            PlaySoundFile(GW.Libs.LSM:Fetch("sound", option), "Master")
-                        end)
-                    end
-                end)
+                    entryButton:AddInitializer(function(button, description, menu)
+                        if v.hasCheckbox then
+                            GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, IsSelected,  {optionName = v.optionName, option = option})
+                        else
+                            GW.BlizzardDropdownRadioButtonInitializer(button, description, menu, IsSelected,  {optionName = v.optionName, option = option})
+                        end
 
-                if v.tooltipType then
-                    if v.tooltipType == "spell" then
-                        entryButton:SetTooltip(function(tooltip, elementDescription)
-                            GameTooltip:SetSpellByID(option)
-                        end)
-                    elseif v.tooltipType == "encounter" then
-                        entryButton:SetTooltip(function(tooltip, elementDescription)
-                            local name, desc = EJ_GetEncounterInfo(option)
-                            GameTooltip:AddLine(name, 1, 1, 1)
-                            GameTooltip:AddLine(desc, 1, 1, 1, true)
-                        end)
+                        if v.hasSound then
+                            local soundButton = MenuTemplates.AttachAutoHideButton(button, "Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on.png")
+                            soundButton:SetSize(14, 14)
+                            soundButton:SetPoint("RIGHT")
+                            soundButton:SetScript("OnClick", function()
+                                PlaySoundFile(GW.Libs.LSM:Fetch("sound", option), "Master")
+                            end)
+                        end
+                    end)
+
+                    if v.tooltipType then
+                        if v.tooltipType == "spell" then
+                            entryButton:SetTooltip(function(tooltip, elementDescription)
+                                GameTooltip:SetSpellByID(option)
+                            end)
+                        elseif v.tooltipType == "encounter" then
+                            entryButton:SetTooltip(function(tooltip, elementDescription)
+                                local name, desc = EJ_GetEncounterInfo(option)
+                                GameTooltip:AddLine(name, 1, 1, 1)
+                                GameTooltip:AddLine(desc, 1, 1, 1, true)
+                            end)
+                        end
                     end
                 end
             end

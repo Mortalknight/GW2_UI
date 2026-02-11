@@ -308,16 +308,16 @@ end
 local function CheckFilter(data, filters)
     if not filters or filters.noFilter then return true end
 
-    return (filters.isAuraImportant and data.isAuraImportant)
-        or (filters.isAuraCrowdControl and data.isAuraCrowdControl)
-        or (filters.isAuraBigDefensive and data.isAuraBigDefensive)
-        or (filters.isAuraRaidInCombat and data.isAuraRaidInCombat)
-        or (filters.isAuraRaidPlayerDispellable and data.isAuraRaidPlayerDispellable)
-        or (filters.isAuraDefensive and data.isAuraExternalDefensive)
-        or (filters.isAuraCancelable and data.isAuraCancelable)
-        or (filters.notAuraCancelable and not data.isAuraCancelable)
-        or (filters.isAuraPlayer and data.isAuraPlayer)
-        or (filters.isAuraRaid and data.isAuraRaid)
+    local player, cancel = data.isAuraPlayer, data.isAuraCancelable
+    local other, perma = not player, not cancel
+
+    return (filters.isAuraPlayer and player)
+        or (filters.isAuraCancelable and cancel and other)
+        or (filters.isAuraCancelablePlayer and cancel and player)
+        or (filters.notAuraCancelable and perma and other)
+        or (filters.notAuraCancelablePlayer and perma and player)
+        or (filters.isAuraRaid and data.isAuraRaid and other)
+        or (filters.isAuraRaidPlayer and data.isAuraRaid and player)
 end
 
 local function FilterAura(element, unit, data)
@@ -340,14 +340,14 @@ local function FilterAura(element, unit, data)
 	end
 end
 
-local function processData(unit, data, newBuffAnimation)
+local function processData(unit, data, filter, newBuffAnimation)
     if not data or not data.name then return end
 
     data.timeRemaining = data.duration <= 0 and 500000 or data.expirationTime - GetTime()
     data.newBuffAnimation = newBuffAnimation
 
-    data.isHarmfulAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL")
-    data.isHelpfulAura = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL")
+    data.isHarmfulAura = filter:match("HARMFUL")
+    data.isHelpfulAura = not data.isHarmfulAura
 
     data.isAuraCancelable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CANCELABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CANCELABLE")
     data.isAuraPlayer = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|PLAYER") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|PLAYER")
@@ -380,7 +380,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
 
         local slots = {C_UnitAuras.GetAuraSlots(unit, buffFilter)}
         for i = 2, #slots do -- #1 return is continuationToken, we don't care about it
-            local data = processData(unit, C_UnitAuras.GetAuraDataBySlot(unit, slots[i]), false)
+            local data = processData(unit, C_UnitAuras.GetAuraDataBySlot(unit, slots[i]), buffFilter, false)
             if data then
                 auras.allBuffs[data.auraInstanceID] = data
 
@@ -396,7 +396,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
 
         slots = {C_UnitAuras.GetAuraSlots(unit, debuffFilter)}
         for i = 2, #slots do
-            local data = processData(unit, C_UnitAuras.GetAuraDataBySlot(unit, slots[i]), false)
+            local data = processData(unit, C_UnitAuras.GetAuraDataBySlot(unit, slots[i]), debuffFilter, false)
             if data then
                 auras.allDebuffs[data.auraInstanceID] = data
 
@@ -414,7 +414,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
         if updateInfo.addedAuras then
             for _, data in next, updateInfo.addedAuras do
                 if(data.isHelpful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, buffFilter)) then
-                    data = processData(unit, data, true)
+                    data = processData(unit, data, buffFilter, true)
                     if data then
                         auras.allBuffs[data.auraInstanceID] = data
 
@@ -424,7 +424,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
                         end
                     end
                 elseif(data.isHarmful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, debuffFilter)) then
-                    data = processData(unit, data, false)
+                    data = processData(unit, data, debuffFilter, false)
                     if data then
                         auras.allDebuffs[data.auraInstanceID] = data
 
@@ -440,7 +440,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
         if updateInfo.updatedAuraInstanceIDs then
             for _, auraInstanceID in next, updateInfo.updatedAuraInstanceIDs do
                 if(auras.allBuffs[auraInstanceID]) then
-                    auras.allBuffs[auraInstanceID] = processData(unit, C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID), false)
+                    auras.allBuffs[auraInstanceID] = processData(unit, C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID), buffFilter, false)
 
                     -- only update if it's actually active
                     if(auras.activeBuffs[auraInstanceID]) then
@@ -448,7 +448,7 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
                         buffsChanged = true
                     end
                 elseif(auras.allDebuffs[auraInstanceID]) then
-                    auras.allDebuffs[auraInstanceID] = processData(unit, C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID), false)
+                    auras.allDebuffs[auraInstanceID] = processData(unit, C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID), debuffFilter, false)
 
                     if(auras.activeDebuffs[auraInstanceID]) then
                         auras.activeDebuffs[auraInstanceID] = true

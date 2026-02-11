@@ -1,7 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file ="panel_modules.xml"/>
-    <Include file ="panel_raid.xml"/>
-    <Include file ="panel_party.xml"/>
     <Script file ="panel_general.lua"/>
     <Script file ="panel_chat.lua"/>
     <Script file ="panel_objectives.lua"/>
@@ -11,7 +8,6 @@
     <Script file ="panel_actionbar.lua"/>
     <Script file ="panel_hud.lua"/>
     <Script file ="panel_tooltip.lua"/>
-    <Script file ="panel_party.lua"/>
     <Script file ="panel_raid.lua"/>
     <Script file ="panel_auras.lua"/>
     <Script file ="panel_notifications.lua"/>

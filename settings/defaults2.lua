@@ -33,14 +33,22 @@ local PlayerAuraSettings = {
 local GridAuraFilter = {
     isAuraPlayer = false,
     isAuraRaid = false,
-    isAuraDefensive = false,
-    isAuraImportant = false,
-    isAuraCrowdControl = false,
-    isAuraBigDefensive = false,
-    isAuraRaidInCombat = false,
+    isAuraRaidPlayer = false,
     isAuraRaidPlayerDispellable = false,
+    isAuraExternalDefensive = false,
+    isAuraExternalDefensivePlayer = false,
+    isAuraImportant = false,
+    isAuraImportantPlayer = false,
+    isAuraCrowdControl = false,
+    isAuraCrowdControlPlayer = false,
+    isAuraBigDefensive = false,
+    isAuraBigDefensivePlayer = false,
+    isAuraRaidInCombat = false,
+    isAuraRaidInCombatPlayer = false,
     isAuraCancelable = false,
+    isAuraCancelablePlayer = false,
     notAuraCancelable = false,
+    notAuraCancelablePlayer = false,
 }
 
 --private
@@ -1544,21 +1552,25 @@ GW.globalDefault = {
 
 -- aura filter defaults:
 GW.globalDefault.profile.RAID_PARTY_BUFF_FILTER.isAuraBigDefensive = true
-GW.globalDefault.profile.RAID_PARTY_BUFF_FILTER.isAuraRaidInCombat = true
+GW.globalDefault.profile.RAID_PARTY_BUFF_FILTER.isAuraRaidInCombatPlayer = true
 GW.globalDefault.profile.RAID_PARTY_DEBUFF_FILTER.isAuraImportant = true
+GW.globalDefault.profile.RAID_PARTY_DEBUFF_FILTER.isAuraImportantPlayer = true
 GW.globalDefault.profile.RAID_PARTY_DEBUFF_FILTER.isAuraRaidPlayerDispellable = true
 
 GW.globalDefault.profile.RAID_BUFF_FILTER.isAuraBigDefensive = true
-GW.globalDefault.profile.RAID_BUFF_FILTER.isAuraRaidInCombat = true
+GW.globalDefault.profile.RAID_BUFF_FILTER.isAuraRaidInCombatPlayer = true
 GW.globalDefault.profile.RAID_DEBUFF_FILTER.isAuraImportant = true
+GW.globalDefault.profile.RAID_DEBUFF_FILTER.isAuraImportantPlayer = true
 GW.globalDefault.profile.RAID_DEBUFF_FILTER.isAuraRaidPlayerDispellable = true
 
 GW.globalDefault.profile.RAID_25_BUFF_FILTER.isAuraBigDefensive = true
-GW.globalDefault.profile.RAID_25_BUFF_FILTER.isAuraRaidInCombat = true
+GW.globalDefault.profile.RAID_25_BUFF_FILTER.isAuraRaidInCombatPlayer = true
 GW.globalDefault.profile.RAID_25_DEBUFF_FILTER.isAuraImportant = true
+GW.globalDefault.profile.RAID_25_DEBUFF_FILTER.isAuraImportantPlayer = true
 GW.globalDefault.profile.RAID_25_DEBUFF_FILTER.isAuraRaidPlayerDispellable = true
 
 GW.globalDefault.profile.RAID_10_BUFF_FILTER.isAuraBigDefensive = true
-GW.globalDefault.profile.RAID_10_BUFF_FILTER.isAuraRaidInCombat = true
+GW.globalDefault.profile.RAID_10_BUFF_FILTER.isAuraRaidInCombatPlayer = true
 GW.globalDefault.profile.RAID_10_DEBUFF_FILTER.isAuraImportant = true
+GW.globalDefault.profile.RAID_10_DEBUFF_FILTER.isAuraImportantPlayer = true
 GW.globalDefault.profile.RAID_10_DEBUFF_FILTER.isAuraRaidPlayerDispellable = true

@@ -4,6 +4,19 @@ local MapTable = GW.MapTable
 local StrUpper = GW.StrUpper
 local StrLower = GW.StrLower
 
+
+local playerTag = " |cFF888888(" .. PLAYER .. ")|r"
+local otherTag = " |cFF888888(" .. OTHER .. ")|r"
+local auraOptions = {"isAuraPlayer", "isAuraRaidPlayerDispellable", "HEADER", "isAuraRaidPlayer", "isAuraCancelablePlayer", "notAuraCancelablePlayer", "isAuraImportantPlayer", "isAuraCrowdControlPlayer", "isAuraBigDefensivePlayer", "isAuraRaidInCombatPlayer", "isAuraExternalDefensivePlayer"}
+local auraOptionsNames = {PLAYER, COMPACT_UNIT_FRAME_PROFILE_DISPELLABLE_INDICATOR_TYPE_ME, PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag, MAP_LEGEND_IMPORTANT .. playerTag, L["Crowd Control"] .. playerTag, L["Big Defensive"] .. playerTag, RAID_FRAMES_LABEL .. playerTag, EXTERNAL_DEFENSIVES_LABEL .. playerTag}
+local auraOptionsOther = {"HEADER", "isAuraRaid", "isAuraCancelable", "notAuraCancelable", "isAuraImportant", "isAuraCrowdControl", "isAuraBigDefensive", "isAuraRaidInCombat", "isAuraExternalDefensive"}
+local auraOptionsNamesOther = {OTHER, RAID .. otherTag, L["Is Cancelable"] .. otherTag, L["Not Cancelable"] .. otherTag, MAP_LEGEND_IMPORTANT .. otherTag, L["Crowd Control"] .. otherTag, L["Big Defensive"] .. otherTag, RAID_FRAMES_LABEL .. otherTag, EXTERNAL_DEFENSIVES_LABEL .. otherTag}
+
+for i = 1, #auraOptionsOther do
+    tinsert(auraOptions, auraOptionsOther[i])
+    tinsert(auraOptionsNames, auraOptionsNamesOther[i])
+end
+
 --general Grid Settings
 local function LoadGeneralGridSettings(panel)
     local general = CreateFrame("Frame", nil, panel, "GwSettingsPanelTmpl")
@@ -27,35 +40,16 @@ end
 
 local function CreateAuraFilterSection(panel, profile, buffDb, debuffDb, showDebuffs, dependence)
     panel:AddGroupHeader(L["Buffs"], {hidden = not GW.Retail})
-    panel:AddOption(PLAYER, nil, {getterSetter = buffDb .. ".isAuraPlayer", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    panel:AddOption(RAID, nil, {getterSetter =  buffDb .. ".isAuraRaid", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    panel:AddOption(L["Is Cancelable"], nil, {getterSetter =  buffDb .. ".isAuraCancelable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    panel:AddOption(L["Not Cancelable"], nil, {getterSetter =  buffDb .. ".notAuraCancelable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    panel:AddOption(MAP_LEGEND_IMPORTANT, nil, {getterSetter =  buffDb .. ".isAuraImportant", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    panel:AddOption(L["Crowd Control"], nil, {getterSetter =  buffDb .. ".isAuraCrowdControl", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    panel:AddOption(L["Big Defensive"], nil, {getterSetter =  buffDb .. ".isAuraBigDefensive", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    panel:AddOption(RAID_FRAMES_LABEL, nil, {getterSetter =  buffDb .. ".isAuraRaidInCombat", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    panel:AddOption(COMPACT_UNIT_FRAME_PROFILE_DISPELLABLE_INDICATOR_TYPE_ME, nil, {getterSetter =  buffDb .. ".isAuraRaidPlayerDispellable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
-    panel:AddOption(EXTERNAL_DEFENSIVES_LABEL, nil, {getterSetter = buffDb .. ".isAuraDefensive", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOptionDropdown(L["Buffs"], nil, {getterSetter = buffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
 
     panel:AddGroupHeader(L["Debuffs"])
     panel:AddOption(SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, {getterSetter = showDebuffs, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Debuffs"]})
-
-    panel:AddOption(PLAYER, nil, {getterSetter = debuffDb .. ".isAuraPlayer", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    panel:AddOption(RAID, nil, {getterSetter = debuffDb .. ".isAuraRaid", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    panel:AddOption(L["Is Cancelable"], nil, {getterSetter = debuffDb .. ".isAuraCancelable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    panel:AddOption(L["Not Cancelable"], nil, {getterSetter = debuffDb .. ".notAuraCancelable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    panel:AddOption(MAP_LEGEND_IMPORTANT, nil, {getterSetter = debuffDb .. ".isAuraImportant", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    panel:AddOption(L["Crowd Control"], nil, {getterSetter = debuffDb .. ".isAuraCrowdControl", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    panel:AddOption(L["Big Defensive"], nil, {getterSetter = debuffDb .. ".isAuraBigDefensive", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    panel:AddOption(RAID_FRAMES_LABEL, nil, {getterSetter = debuffDb .. ".isAuraRaidInCombat", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    panel:AddOption(COMPACT_UNIT_FRAME_PROFILE_DISPELLABLE_INDICATOR_TYPE_ME, nil, {getterSetter = debuffDb .. ".isAuraRaidPlayerDispellable", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
-    panel:AddOption(EXTERNAL_DEFENSIVES_LABEL, nil, {getterSetter = debuffDb .. ".isAuraDefensive", callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
+    panel:AddOptionDropdown(L["Debuffs"], nil, {getterSetter = debuffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
 end
 
 -- Profiles
 local function LoadRaid10Profile(panel)
-    local raid10 = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    local raid10 = CreateFrame("Frame", nil, panel, "GwSettingsPanelPreviewTmpl")
     raid10.panelId = "raid10"
     raid10.header:SetFont(DAMAGE_TEXT_FONT, 20)
     raid10.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
@@ -152,7 +146,7 @@ local function LoadRaid10Profile(panel)
 end
 
 local function LoadRaid25Profile(panel)
-    local raid25 = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    local raid25 = CreateFrame("Frame", nil, panel, "GwSettingsPanelPreviewTmpl")
     raid25.panelId = "raid25"
     raid25.header:SetFont(DAMAGE_TEXT_FONT, 20)
     raid25.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
@@ -248,7 +242,7 @@ local function LoadRaid25Profile(panel)
 end
 
 local function LoadRaid40Profile(panel)
-    local raid40 = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    local raid40 = CreateFrame("Frame", nil, panel, "GwSettingsPanelPreviewTmpl")
     raid40.panelId = "raid40"
     raid40.header:SetFont(DAMAGE_TEXT_FONT, 20)
     raid40.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
@@ -341,7 +335,7 @@ local function LoadRaid40Profile(panel)
 end
 
 local function LoadMaintankProfile(panel)
-    local tank = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    local tank = CreateFrame("Frame", nil, panel, "GwSettingsPanelPreviewTmpl")
     tank.panelId = "raid_maintank"
     tank.header:SetFont(DAMAGE_TEXT_FONT, 20)
     tank.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
@@ -425,7 +419,7 @@ local function LoadMaintankProfile(panel)
 end
 
 local function LoadRaidPetProfile(panel)
-    local p = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    local p = CreateFrame("Frame", nil, panel, "GwSettingsPanelPreviewTmpl")
     p.panelId = "raid_pet"
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
@@ -509,7 +503,7 @@ local function LoadRaidPetProfile(panel)
     return p
 end
 local function LoadPartyProfile(panel)
-    local party = CreateFrame("Frame", "GwSettingsRaidPartyPanel", panel, "GwSettingsRaidPanelTmpl")
+    local party = CreateFrame("Frame", "GwSettingsRaidPartyPanel", panel, "GwSettingsPanelPreviewTmpl")
     party.panelId = "raid_party"
     party.header:SetFont(DAMAGE_TEXT_FONT, 20)
     party.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
@@ -601,7 +595,7 @@ local function LoadPartyProfile(panel)
 end
 
 local function LoadPartyPetProfile(panel)
-    local p = CreateFrame("Frame", nil, panel, "GwSettingsRaidPanelTmpl")
+    local p = CreateFrame("Frame", nil, panel, "GwSettingsPanelPreviewTmpl")
     p.panelId = "party_pet"
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)

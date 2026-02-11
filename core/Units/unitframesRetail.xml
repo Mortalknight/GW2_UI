@@ -397,20 +397,20 @@
                  <Layers>
                     <Layer level="OVERLAY">
                         <Texture parentKey="overDamageAbsorbIndicator" file="Interface\RaidFrame\Shield-Overshield" alphaMode="ADD"/>
-                        <FontString parentKey="healthString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
+                        <FontString parentKey="healthString" justifyH="LEFT" justifyV="MIDDLE">
                             <Size x="215" y="15"/>
                             <Anchors>
                                 <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="0"/>
                                 <Anchor point="RIGHT" relativeKey="$parent" relativePoint="RIGHT" x="-5" y="0"/>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="nameString" text="unknown" inherits="GameFontNormalMed3" justifyH="LEFT" justifyV="MIDDLE">
+                        <FontString parentKey="nameString" inherits="GameFontNormalMed3" justifyH="LEFT" justifyV="MIDDLE">
                             <Size x="200" y="15"/>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="levelString" text="unknown" justifyH="RIGHT" justifyV="MIDDLE">
+                        <FontString parentKey="levelString" justifyH="RIGHT" justifyV="MIDDLE">
                             <Size x="50" y="15"/>
                             <Anchors>
                                 <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>

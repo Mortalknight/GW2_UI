@@ -55,6 +55,17 @@
         </Layers>
     </Button>
 
+    <Frame name="GwSettingsPanelPreviewTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
+        <Frames>
+            <Button parentKey="preview" inherits="GwStandardButton" text="PREVIEW">
+                <Size x="50" y="24" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" x="-10" y="-7" />
+                </Anchors>
+            </Button>
+        </Frames>
+    </Frame>
+
     <Frame name="GwSettingsPanelTmpl" virtual="true" Mixin="GwSettingsPanelMixin" hidden="true">
         <Anchors>
             <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"/>
