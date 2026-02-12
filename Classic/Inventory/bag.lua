@@ -122,7 +122,7 @@ local function layoutBagItems(f)
         setBagHeaders(parent)
     end
 end
-GW.AddForProfiling("bag", "layoutBagItems", layoutBagItems)
+
 
 -- adjusts the ItemButton layout flow when the bag window size changes (or on open)
 local function layoutItems(f)
@@ -130,7 +130,7 @@ local function layoutItems(f)
         layoutBagItems(f.ItemFrame)
     end
 end
-GW.AddForProfiling("bag", "layoutItems", layoutItems)
+
 
 -- adjusts the bag frame size to snap to the exact row/col sizing of contents
 local function snapFrameSize(f)
@@ -140,7 +140,7 @@ local function snapFrameSize(f)
     end
     inv.snapFrameSize(f, cfs, BAG_ITEM_SIZE, BAG_ITEM_PADDING, 350)
 end
-GW.AddForProfiling("bag", "snapFrameSize", snapFrameSize)
+
 
 local function updateMoney(self)
     if not self then
@@ -158,19 +158,19 @@ local function updateMoney(self)
 
     UpdateMoney()
 end
-GW.AddForProfiling("bag", "updateMoney", updateMoney)
+
 
 local function updateFreeSpaceString(free, full)
     local space_string = free .. " / " .. full
     GwBagFrame.spaceString:SetText(space_string)
 end
-GW.AddForProfiling("bag", "updateFreeSpaceString", updateFreeSpaceString)
+
 
 -- update the number of free bag slots available and set the display for it
 local function updateFreeBagSlots()
     inv.updateFreeSlots(GwBagFrame.spaceString, 1, NUM_BAG_SLOTS, BACKPACK_CONTAINER)
 end
-GW.AddForProfiling("bag", "updateFreeBagSlots", updateFreeBagSlots)
+
 
 -- update all backpack bag items
 local function updateBagContainers(f)
@@ -180,7 +180,7 @@ local function updateBagContainers(f)
         snapFrameSize(f)
     end
 end
-GW.AddForProfiling("bag", "updateBagContainers", updateBagContainers)
+
 
 -- rescan ALL bag ItemButtons
 local function rescanBagContainers(f)
@@ -193,7 +193,7 @@ local function rescanBagContainers(f)
     end
     updateBagContainers(f)
 end
-GW.AddForProfiling("bag", "rescanBagContainers", rescanBagContainers)
+
 
 -- draws the backpack bag slots in the correct order
 local function setBagBarOrder(f)
@@ -219,7 +219,7 @@ local function setBagBarOrder(f)
     end
     return x, y
 end
-GW.AddForProfiling("bag", "setBagBarOrder", setBagBarOrder)
+
 
 local function bag_OnClick(self, button)
     -- on left click, ensure that the bag stays open despite default toggle behavior
@@ -229,7 +229,7 @@ local function bag_OnClick(self, button)
         end
     end
 end
-GW.AddForProfiling("bag", "bag_OnClick", bag_OnClick)
+
 
 -- creates the bag slot icons for the ItemFrame
 local function createBagBar(f)
@@ -314,7 +314,7 @@ local function createBagBar(f)
         end
     )
 end
-GW.AddForProfiling("bag", "createBagBar", createBagBar)
+
 
 -- updates the contents of the backpack bag slots
 local function updateBagBar(f)
@@ -360,7 +360,7 @@ local function updateBagBar(f)
         GWkeyringbutton.IconBorder:Show()
     end
 end
-GW.AddForProfiling("bag", "updateBagBar", updateBagBar)
+
 
 local function onBagResizeStop(self)
     BAG_WINDOW_SIZE = self:GetWidth()
@@ -368,7 +368,7 @@ local function onBagResizeStop(self)
     GwBagFrame.Header:SetWidth(BAG_WINDOW_SIZE)
     inv.onMoved(self, "BAG_POSITION", snapFrameSize)
 end
-GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
+
 
 local function onBagFrameChangeSize(self, _, _, skip)
     local cols = inv.colCount(BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
@@ -381,7 +381,7 @@ local function onBagFrameChangeSize(self, _, _, skip)
         end
     end
 end
-GW.AddForProfiling("bag", "onBagFrameChangeSize", onBagFrameChangeSize)
+
 
 -- toggles the setting for compact/large icons
 local function compactToggle()
@@ -397,7 +397,7 @@ local function compactToggle()
     inv.resizeInventory()
     return false
 end
-GW.AddForProfiling("bag", "compactToggle", compactToggle)
+
 
 -- deal with all the stupid permutations in which these can be called
 local function hookOpenBag(bag_id)
@@ -409,11 +409,11 @@ local function hookOpenBag(bag_id)
         C_Timer.After(0, function() f:Show() end)
     end
 end
-GW.AddForProfiling("bag", "hookOpenBag", hookOpenBag)
+
 local function hookOpenBackpack()
     hookOpenBag(BACKPACK_CONTAINER)
 end
-GW.AddForProfiling("bag", "hookOpenBackpack", hookOpenBackpack)
+
 local function hookCloseBag(bag_id)
     if not bag_id or bag_id ~= BACKPACK_CONTAINER then
         return
@@ -423,11 +423,11 @@ local function hookCloseBag(bag_id)
         C_Timer.After(0, function() f:Hide() end)
     end
 end
-GW.AddForProfiling("bag", "hookCloseBag", hookCloseBag)
+
 local function hookCloseBackpack()
     hookCloseBag(BACKPACK_CONTAINER)
 end
-GW.AddForProfiling("bag", "hookCloseBackpack", hookCloseBackpack)
+
 local function hookToggleBackpack()
     local f = GwBagFrame
     if IsBagOpen(0) then
@@ -440,14 +440,14 @@ local function hookToggleBackpack()
         end
     end
 end
-GW.AddForProfiling("bag", "hookToggleBackpack", hookToggleBackpack)
+
 local function hookToggleBag(bag_id)
     if not bag_id or bag_id ~= BACKPACK_CONTAINER then
         return
     end
     hookToggleBackpack()
 end
-GW.AddForProfiling("bag", "hookToggleBag", hookToggleBag)
+
 
 local function bag_OnShow(self)
     PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
@@ -473,7 +473,7 @@ local function bag_OnShow(self)
     updateBagBar(self.ItemFrame)
     updateBagContainers(self)
 end
-GW.AddForProfiling("bag", "bag_OnShow", bag_OnShow)
+
 
 local function bag_OnHide(self)
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
@@ -490,7 +490,7 @@ local function bag_OnHide(self)
         CloseBag(KEYRING_CONTAINER)
     end
 end
-GW.AddForProfiling("bag", "bag_OnHide", bag_OnHide)
+
 
 local function bag_OnEvent(self, event, ...)
     if event == "ITEM_LOCKED" or event == "ITEM_UNLOCKED" then
@@ -538,7 +538,7 @@ local function bag_OnEvent(self, event, ...)
         end
     end
 end
-GW.AddForProfiling("bag", "bag_OnEvent", bag_OnEvent)
+
 
 local function bagHeader_OnClick(self, btn)
     local bag_id = self:GetID()

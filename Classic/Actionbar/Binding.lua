@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local AddForProfiling = GW.AddForProfiling
 
 local bind = CreateFrame("Frame", "HoverBind", UIParent)
 local localmacros = 0
@@ -11,7 +10,6 @@ local function keyBindPrompt(text)
     bind.promtFrame.method = nil
     bind.promtFrame:Show()
 end
-AddForProfiling("hover_binding", "keyBindPrompt", keyBindPrompt)
 
 local function DisplayHoverBinding()
     if InCombatLockdown() then DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. ERR_AFFECTING_COMBAT) return end
@@ -298,13 +296,13 @@ local fmGWKB_accept_OnClick = function(self, button)
     bind:Deactivate(true)
     self:GetParent():Hide()
 end
-AddForProfiling("hover_binding", "fmGWKB_accept_OnClick", fmGWKB_accept_OnClick)
+
 
 local fmGWKB_cancel_OnClick = function(self, button)
     bind:Deactivate(false)
     self:GetParent():Hide()
 end
-AddForProfiling("hover_binding", "fmGWKB_cancel_OnClick", fmGWKB_cancel_OnClick)
+
 
 local function LoadHoverBinds()
     bind.promtFrame = CreateFrame("Frame", "GwKeyBindPrompt", UIParent, "GwKeyBindPromptTmpl")

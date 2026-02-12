@@ -380,7 +380,7 @@ end
 local function GetFilter(self)
     return self.header:GetFilter(self)
 end
-GW.AddForProfiling("aurabar_secure", "GetFilter", GetFilter)
+
 
 local function AuraOnAttributeChanged(self, attribute, value)
     if attribute == "index" then
@@ -613,7 +613,7 @@ local function newHeader(filter)
 
     return h
 end
-GW.AddForProfiling("aurabar_secure", "newHeader", newHeader)
+
 
 local function loadAuras(lm)
     -- create a new header for buffs

@@ -89,7 +89,7 @@ local function reskinItemButton(b, overrideIconSize)
     end
 end
 GW.SkinBagItemButton = reskinItemButton
-GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
+
 
 local function updateItemVisuals(b, overrideIconSize)
    if not b or not b:IsShown() then return end
@@ -154,7 +154,7 @@ local function getContainerFrame(bag_id)
 
     return nil
 end
-GW.AddForProfiling("inventory", "getContainerFrame", getContainerFrame)
+
 
 local function reskinItemButtons()
     for i = 1, NUM_CONTAINER_FRAMES do
@@ -168,7 +168,7 @@ local function reskinItemButtons()
         end
     end
 end
-GW.AddForProfiling("inventory", "reskinItemButtons", reskinItemButtons)
+
 
 local function hookUpdateAnchors()
     for i = 1, NUM_CONTAINER_FRAMES do
@@ -180,7 +180,7 @@ local function hookUpdateAnchors()
         end
     end
 end
-GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
+
 
 local function SetItemButtonQualityForBags(button, quality)
     button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
@@ -312,7 +312,7 @@ local function resizeInventory()
         bank_resize()
     end
 end
-GW.AddForProfiling("inventory", "resizeInventory", resizeInventory)
+
 
 local function freeItemButtons(cf, p)
     -- return all of the ItemButtons we previously took before taking new ones, as long as
@@ -333,7 +333,7 @@ local function freeItemButtons(cf, p)
         wipe(cf.gw_items)
     end
 end
-GW.AddForProfiling("inventory", "freeItemButtons", freeItemButtons)
+
 
 local function takeItemButtons(p, bag_id)
     if not p or not bag_id then
@@ -390,7 +390,7 @@ local function takeItemButtons(p, bag_id)
         end
     end
 end
-GW.AddForProfiling("inventory", "takeItemButtons", takeItemButtons)
+
 
 local function reskinBagBar(b)
     local bag_size = 28
@@ -427,7 +427,7 @@ local function reskinBagBar(b)
         b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
     end
 end
-GW.AddForProfiling("inventory", "reskinBagBar", reskinBagBar)
+
 
 -- reskins the default search boxes
 local function reskinSearchBox(sb)
@@ -453,7 +453,7 @@ local function reskinSearchBox(sb)
     sb.searchIcon:Hide()
 end
 GW.SkinBagSearchBox = reskinSearchBox
-GW.AddForProfiling("inventory", "reskinSearchBox", reskinSearchBox)
+
 
 -- (re)steals the default search boxes
 local function relocateSearchBox(sb, f)
@@ -467,7 +467,7 @@ local function relocateSearchBox(sb, f)
     sb:SetPoint("TOPRIGHT", f, "TOPRIGHT", -10, -40)
     sb:SetHeight(24)
 end
-GW.AddForProfiling("inventory", "relocateSearchBox", relocateSearchBox)
+
 
 -- on right click, open the bag filter dropdown (if valid) for this bag slot
 
@@ -501,7 +501,7 @@ local function bag_OnMouseDown(self, button)
         end)
     end
 end
-GW.AddForProfiling("inventory", "bag_OnMouseDown", bag_OnMouseDown)
+
 
 -- positions ItemButtons fluidly for this container
 local function layoutContainerFrame(cf, max_col, row, col, rev, item_off)
@@ -542,13 +542,13 @@ local function layoutContainerFrame(cf, max_col, row, col, rev, item_off)
 
     return col, row, unfinishedRow, finishedRows
 end
-GW.AddForProfiling("inventory", "layoutContainerFrame", layoutContainerFrame)
+
 
 local function updateFreeSpaceString(free, full)
     local bank_space_string = free .. " / " .. full
     GwBankFrame.spaceString:SetText(bank_space_string)
 end
-GW.AddForProfiling("inventory", "updateFreeSpaceString", updateFreeSpaceString)
+
 
 -- update the number of free bank slots available and set the display for it
 local function updateFreeSlots(sp_str, start_idx, end_idx, opt_container)
@@ -571,7 +571,7 @@ local function updateFreeSlots(sp_str, start_idx, end_idx, opt_container)
     sp_str:SetText((full - free) .. " / " .. full)
     return free, full
 end
-GW.AddForProfiling("inventory", "updateFreeSlots", updateFreeSlots)
+
 
 local function snapFrameSize(f, cfs, size, padding, min_height)
     if not f then
@@ -621,7 +621,7 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
         end
     end
 end
-GW.AddForProfiling("inventory", "snapFrameSize", snapFrameSize)
+
 
 local function onMoved(self, setting, snap_size)
     if not self then
@@ -659,13 +659,13 @@ local function onMoved(self, setting, snap_size)
         snap_size(self)
     end
 end
-GW.AddForProfiling("inventory", "onMoved", onMoved)
+
 
 local function colCount(size, padding, width)
     local isize = size + padding
     return math.floor((width - padding - 1) / isize)
 end
-GW.AddForProfiling("inventory", "colCount", colCount)
+
 
 local function onSizerMouseDown(self, btn)
     if btn ~= "LeftButton" then
@@ -674,7 +674,7 @@ local function onSizerMouseDown(self, btn)
     local bfm = self:GetParent()
     bfm:StartSizing("BOTTOMRIGHT")
 end
-GW.AddForProfiling("inventory", "onSizerMouseDown", onSizerMouseDown)
+
 
 local function onSizerMouseUp(self, btn)
     if btn ~= "LeftButton" then
@@ -686,17 +686,17 @@ local function onSizerMouseUp(self, btn)
         self.onResizeStop(bfm)
     end
 end
-GW.AddForProfiling("inventory", "onSizerMouseUp", onSizerMouseUp)
+
 
 local function onMoverDragStart(self)
     self:GetParent():StartMoving()
 end
-GW.AddForProfiling("inventory", "onMoverDragStart", onMoverDragStart)
+
 
 local function onMoverDragStop(self)
     onMoved(self:GetParent(), self.onMoveSetting)
 end
-GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
+
 
 local function LoadInventory()
     BagsBar:GwKillEditMode()

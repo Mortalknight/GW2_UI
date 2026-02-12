@@ -266,7 +266,7 @@ local function mover_SavePosition(self, x, y)
         GW.settings[setting] = pos
     end
 end
-GW.AddForProfiling("character", "mover_SavePosition", mover_SavePosition)
+
 
 local function click_OnEvent(self, event)
     if event ~= "UPDATE_BINDINGS" then
@@ -288,7 +288,7 @@ local function click_OnEvent(self, event)
         end
     end
 end
-GW.AddForProfiling("character", "click_OnEvent", click_OnEvent)
+
 
 local function GetScaleDistance()
     local left, top = heroFrameLeft, heroFrameTop
@@ -436,7 +436,7 @@ local function LoadBaseFrame()
 
     return fmGCW
 end
-GW.AddForProfiling("character", "LoadBaseFrame", LoadBaseFrame)
+
 
 local function setTabIconState(self, b)
     if b then
@@ -445,7 +445,7 @@ local function setTabIconState(self, b)
         self.icon:SetTexCoord(0.505, 1, 0, 0.625)
     end
 end
-GW.AddForProfiling("character", "setTabIconState", setTabIconState)
+
 
 local function createTabIcon(iconName, tabIndex)
     local f = CreateFrame("Button", nil, GwCharacterWindow, "GwCharacterTabSelect")
@@ -454,19 +454,19 @@ local function createTabIcon(iconName, tabIndex)
     setTabIconState(f, false)
     return f
 end
-GW.AddForProfiling("character", "createTabIcon", createTabIcon)
+
 
 local function container_OnShow(self)
     setTabIconState(self.TabFrame, true)
     self.CharWindow.windowIcon:SetTexture(self.HeaderIcon)
     self.CharWindow.WindowHeader:SetText(self.HeaderText)
 end
-GW.AddForProfiling("character", "container_OnShow", container_OnShow)
+
 
 local function container_OnHide(self)
     setTabIconState(self.TabFrame, false)
 end
-GW.AddForProfiling("character", "container_OnHide", container_OnHide)
+
 
 local function charTab_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 10, 30)
@@ -474,7 +474,7 @@ local function charTab_OnEnter(self)
     GameTooltip_SetTitle(GameTooltip, self.gwTipLabel)
     GameTooltip:Show()
 end
-GW.AddForProfiling("character", "charTab_OnEnter", charTab_OnEnter)
+
 
 local function LoadCharacter()
     local anyThingToLoad = false

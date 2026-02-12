@@ -62,7 +62,7 @@ local function UpdateUpcomingSpells()
     )
 end
 GW.UpdateUpcomingSpells = UpdateUpcomingSpells
-GW.AddForProfiling("upcomingSpells", "UpdateUpcomingSpells", UpdateUpcomingSpells)
+
 
 local function UpcomingSpellOnEnter(self)
     if self.type == "SPELL" then
@@ -159,7 +159,7 @@ local function UpcomingSpellsFrameOnShow(self)
         end
     )
 end
-GW.AddForProfiling("hud", "UpcomingSpellsFrameOnShow", UpcomingSpellsFrameOnShow)
+
 
 local function LoadUpcomingSpells()
     local upcomingSpellsFrame = CreateFrame("Frame", "GwLevelingRewards", UIParent, "GwLevelingRewards")

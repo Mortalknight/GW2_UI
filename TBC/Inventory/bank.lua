@@ -43,7 +43,7 @@ local function layoutBankItems(f)
         col, row = lcf(cf, max_col, row, col, (bag_id == BANK_CONTAINER), item_off)
     end
 end
-GW.AddForProfiling("bank", "layoutBankItems", layoutBankItems)
+
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutItems(f)
@@ -51,7 +51,7 @@ local function layoutItems(f)
         layoutBankItems(f.ItemFrame)
     end
 end
-GW.AddForProfiling("bank", "layoutItems", layoutItems)
+
 
 -- adjusts the bank frame size to snap to the exact row/col sizing of contents
 local function snapFrameSize(f)
@@ -61,7 +61,7 @@ local function snapFrameSize(f)
     end
     inv.snapFrameSize(f, cfs, GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, 370)
 end
-GW.AddForProfiling("bank", "snapFrameSize", snapFrameSize)
+
 
 -- update the number of free bank slots available and set the display for it
 local function updateFreeBankSlots(self)
@@ -72,7 +72,7 @@ local function updateFreeBankSlots(self)
         b.tooltipAddLine = string.format(NUM_FREE_SLOTS, free)
     end
 end
-GW.AddForProfiling("bank", "updateFreeBankSlots", updateFreeBankSlots)
+
 
 -- update all bank items and bank bags
 local function updateBankContainers(f)
@@ -88,7 +88,7 @@ local function updateBankContainers(f)
         snapFrameSize(f)
     end
 end
-GW.AddForProfiling("bank", "updateBankContainers", updateBankContainers)
+
 
 -- rescan ALL bank ItemButtons
 local function rescanBankContainers(f)
@@ -97,7 +97,7 @@ local function rescanBankContainers(f)
     end
     updateBankContainers(f)
 end
-GW.AddForProfiling("bank", "rescanBankContainers", rescanBankContainers)
+
 
 -- draws the bank bag slots in the correct order
 local function setBagBarOrder(f)
@@ -122,7 +122,7 @@ local function setBagBarOrder(f)
         end
     end
 end
-GW.AddForProfiling("bank", "setBagBarOrder", setBagBarOrder)
+
 
 local function bag_OnClick(self, button)
     -- on left click, test if this is a purchase slot and do purchase confirm,
@@ -138,7 +138,7 @@ local function bag_OnClick(self, button)
         end
     end
 end
-GW.AddForProfiling("bank", "bag_OnClick", bag_OnClick)
+
 
 -- creates the bank bag slot icons for the ItemFrame
 local function createBagBar(f)
@@ -187,7 +187,7 @@ local function createBagBar(f)
 
     setBagBarOrder(f)
 end
-GW.AddForProfiling("bank", "createBagBar", createBagBar)
+
 
 -- updates the contents of the bank bag slots
 local function updateBagBar(f)
@@ -242,13 +242,13 @@ local function updateBagBar(f)
         end
     end
 end
-GW.AddForProfiling("bank", "updateBagBar", updateBagBar)
+
 
 local function onBankResizeStop(self)
     GW.settings.BANK_WIDTH = self:GetWidth()
     inv.onMoved(self, "BANK_POSITION", snapFrameSize)
 end
-GW.AddForProfiling("bank", "onBankResizeStop", onBankResizeStop)
+
 
 local function onBankFrameChangeSize(self, _, _, skip)
     local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, self:GetWidth())
@@ -260,7 +260,7 @@ local function onBankFrameChangeSize(self, _, _, skip)
         end
     end
 end
-GW.AddForProfiling("bank", "onBankFrameChangeSize", onBankFrameChangeSize)
+
 
 -- toggles the setting for compact/large icons
 local function compactToggle()
@@ -274,7 +274,7 @@ local function compactToggle()
     inv.resizeInventory()
     return false
 end
-GW.AddForProfiling("bank", "compactToggle", compactToggle)
+
 
 -- reskin all the base BankFrame ItemButtons
 local function reskinBankItemButtons()
@@ -287,7 +287,7 @@ local function reskinBankItemButtons()
         end
     end
 end
-GW.AddForProfiling("bank", "reskinBankItemButtons", reskinBankItemButtons)
+
 
 local function bank_OnShow(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
@@ -306,7 +306,7 @@ local function bank_OnShow(self)
     updateBagBar(self.ItemFrame)
     updateBankContainers(self)
 end
-GW.AddForProfiling("bank", "bank_OnShow", bank_OnShow)
+
 
 local function bank_OnHide(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
@@ -315,7 +315,7 @@ local function bank_OnHide(self)
     self:RegisterEvent("BANKFRAME_CLOSED")
     CloseBankFrame()
 end
-GW.AddForProfiling("bank", "bank_OnHide", bank_OnHide)
+
 
 local function bank_OnEvent(self, event, ...)
     if event == "BANKFRAME_OPENED" then
@@ -362,7 +362,7 @@ local function bank_OnEvent(self, event, ...)
         end
     end
 end
-GW.AddForProfiling("bank", "bank_OnEvent", bank_OnEvent)
+
 
 local function LoadBank(helpers)
     inv = helpers

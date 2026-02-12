@@ -18,7 +18,7 @@ local function updateIngoredSlots(id)
         end
     end
 end
-GW.AddForProfiling("character_equipset", "updateIngoredSlots", updateIngoredSlots)
+
 
 local function toggleIgnoredSlots(show)
     for _, v in pairs(GW.char_equipset_SavedItems) do
@@ -29,7 +29,7 @@ local function toggleIgnoredSlots(show)
         end
     end
 end
-GW.AddForProfiling("character_equipset", "toggleIgnoredSlots", toggleIgnoredSlots)
+
 
 local function outfitListButton_OnClick(self)
     if not self.saveOutfit:IsShown() then
@@ -56,7 +56,7 @@ local function outfitListButton_OnClick(self)
         self:SetHeight(49)
     end
 end
-GW.AddForProfiling("character_equipset", "outfitListButton_OnClick", outfitListButton_OnClick)
+
 
 local function outfitEquipButton_OnClick()
     local selectedSetID = GwPaperDollOutfits.selectedSetID
@@ -66,7 +66,7 @@ local function outfitEquipButton_OnClick()
         C_EquipmentSet.UseEquipmentSet(selectedSetID)
     end
 end
-GW.AddForProfiling("character_equipset", "outfitEquipButton_OnClick", outfitEquipButton_OnClick)
+
 
 local function GearSetButton_Edit(self)
     GwGearManagerPopupFrame.mode = IconSelectorPopupFrameModes.Edit
@@ -86,7 +86,7 @@ local function outfitSaveButton_OnClick(self)
         end}
     )
 end
-GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveButton_OnClick)
+
 
 local function outfitEditButton_OnClick(self)
     MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
@@ -122,7 +122,7 @@ local function outfitEditButton_OnClick(self)
         ]]
     end)
 end
-GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
+
 
 local function outfitDeleteButton_OnClick(self)
     GW.ShowPopup({text = TRANSMOG_OUTFIT_CONFIRM_DELETE:format(self:GetParent().setName),
@@ -132,7 +132,7 @@ local function outfitDeleteButton_OnClick(self)
         end}
     )
 end
-GW.AddForProfiling("character_equipset", "outfitDeleteButton_OnClick", outfitDeleteButton_OnClick)
+
 
 local function getNewEquipmentSetButton(i)
     if _G["GwPaperDollOutfitsButton" .. i] then
@@ -188,7 +188,7 @@ local function getNewEquipmentSetButton(i)
 
     return f
 end
-GW.AddForProfiling("character_equipset", "getNewEquipmentSetButton", getNewEquipmentSetButton)
+
 
 drawItemSetList = function()
     if GwPaperDollOutfits.buttons == nil then
@@ -258,7 +258,7 @@ drawItemSetList = function()
         end
     end
 end
-GW.AddForProfiling("character_equipset", "drawItemSetList", drawItemSetList)
+
 
 --[[
 function local GwPaperDollOutfits_OnEvent(self, event, ...)

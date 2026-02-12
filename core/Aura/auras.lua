@@ -18,7 +18,7 @@ local function auraFrame_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
     self:UpdateTooltip()
 end
-GW.AddForProfiling("auras", "auraFrame_OnEnter", auraFrame_OnEnter)
+
 
 local function auraFrame_OnUpdate(self, elapsed)
     if not self.hideDuration then
@@ -41,7 +41,7 @@ local function auraFrame_OnUpdate(self, elapsed)
         self.elapsed = (self.elapsed or 0) + elapsed
     end
 end
-GW.AddForProfiling("auras", "auraFrame_OnUpdate", auraFrame_OnUpdate)
+
 
 local function CreateAuraFrame(name, parent)
     local f = CreateFrame("Button", name, parent, "GwAuraFrame")
@@ -89,7 +89,7 @@ local function sortAuras(a, b)
 
     return (b.sourceUnit ~= "player" and a.sourceUnit == "player")
 end
-GW.AddForProfiling("auras", "sortAuras", sortAuras)
+
 
 local function sortAurasRevert(a, b)
     if a.sourceUnit and b.sourceUnit and a.sourceUnit == b.sourceUnit then
@@ -98,7 +98,7 @@ local function sortAurasRevert(a, b)
 
     return (a.sourceUnit ~= "player" and b.sourceUnit == "player")
 end
-GW.AddForProfiling("auras", "sortAuras", sortAuras)
+
 
 
 local function sortAuraList(auraList, revert)
@@ -110,7 +110,7 @@ local function sortAuraList(auraList, revert)
 
     return auraList
 end
-GW.AddForProfiling("auras", "sortAuraList", sortAuraList)
+
 
 local function setAuraType(self, typeAura)
     if self.typeAura == typeAura then
@@ -131,7 +131,7 @@ local function setAuraType(self, typeAura)
 
     self.typeAura = typeAura
 end
-GW.AddForProfiling("auras", "setAuraType", setAuraType)
+
 
 local function auraAnimateIn(self)
     local endWidth = self:GetWidth()
@@ -147,7 +147,7 @@ local function auraAnimateIn(self)
         end
     )
 end
-GW.AddForProfiling("auras", "auraAnimateIn", auraAnimateIn)
+
 
 local function SetPosition(element, from, to, unit, isInvert, auraPositon)
     local anchorTo = unit == "pet" and "TOPRIGHT" or isInvert and "TOPRIGHT" or "TOPLEFT"

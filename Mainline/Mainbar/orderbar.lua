@@ -12,7 +12,7 @@ local function orderFollower_OnEnter(self)
         GameTooltip:Show()
     end
 end
-GW.AddForProfiling("orderbar", "orderFollower_OnEnter", orderFollower_OnEnter)
+
 
 local function createFollower(self, i)
     local newFrame = CreateFrame("FRAME", "GwOrderHallFollower" .. i, self, "GwOrderHallFollower")
@@ -25,7 +25,7 @@ local function createFollower(self, i)
     newFrame:SetPoint("LEFT", self.currency, "RIGHT", 100 * (i - 1), 0)
     return newFrame
 end
-GW.AddForProfiling("orderbar", "createFollower", createFollower)
+
 
 local function updateOrderBar(self)
     local categoryInfo = C_Garrison.GetClassSpecCategoryInfo(Enum.GarrisonFollowerType.FollowerType_7_0_GarrisonFollower)
@@ -46,7 +46,7 @@ local function updateOrderBar(self)
         categoryInfoFrame:Show()
     end
 end
-GW.AddForProfiling("orderbar", "updateOrderBar", updateOrderBar)
+
 
 local function orderBar_OnEvent(self, event)
     if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
@@ -69,7 +69,7 @@ local function orderBar_OnEvent(self, event)
 
     updateOrderBar(self)
 end
-GW.AddForProfiling("orderbar", "orderBar_OnEvent", orderBar_OnEvent)
+
 
 local function LoadOrderBar()
     CreateFrame("FRAME", "GwOrderhallBar", UIParent, "GwOrderhallBar")

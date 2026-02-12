@@ -60,7 +60,7 @@ local function xpbar_OnEnter(self)
         UIFrameFadeOut(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 0)
     end
 end
-GW.AddForProfiling("hud", "xpbar_OnEnter", xpbar_OnEnter)
+
 
 local function xpbar_OnClick()
     if not GW.Retail then
@@ -84,7 +84,7 @@ local function xpbar_OnClick()
         end
     end
 end
-GW.AddForProfiling("hud", "xpbar_OnClick", xpbar_OnClick)
+
 
 local function flareAnim(self)
     self.barOverlay.flare:Show()
@@ -103,7 +103,7 @@ local function flareAnim(self)
         end
     )
 end
-GW.AddForProfiling("hud", "flareAnim", flareAnim)
+
 
 local function UpdatePetXPBattle(self, index, level)
     local name = C_PetBattles.GetName(Enum.BattlePetOwner.Ally, index)
@@ -592,7 +592,7 @@ local function xpbar_OnEvent(self, event, ...)
         end
     end
 end
-GW.AddForProfiling("hud", "xpbar_OnEvent", xpbar_OnEvent)
+
 
 local function animateAzeriteBar(self, elapsed)
     local parent = self:GetParent():GetParent()
@@ -626,7 +626,7 @@ local function animateAzeriteBar(self, elapsed)
 
     self.texture2:SetTexCoord(1 - prog, prog, 1, 0)
 end
-GW.AddForProfiling("hud", "animateAzeriteBar", animateAzeriteBar)
+
 
 local function updateBarSize(self)
     local m = (UIParent:GetWidth() - 180) / 10
@@ -643,7 +643,7 @@ local function updateBarSize(self)
     self.barOverlay.dubbleBarSep:ClearAllPoints()
     self.barOverlay.dubbleBarSep:SetPoint("LEFT", self, "LEFT", 90, 0)
 end
-GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
+
 
 local function LoadXPBar()
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")

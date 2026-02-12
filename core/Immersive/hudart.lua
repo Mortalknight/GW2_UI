@@ -22,7 +22,7 @@ local function registerActionHudAura(auraID, left, right, unit, modelFX)
         actionHudPlayerPetAuras[auraID].modelFX = modelFX
     end
 end
-GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
+
 
 -- For creates a model effect somewhere on the hud with a trigger buff
 local function createModelFx(self, modelFX)
@@ -56,7 +56,7 @@ local function createModelFx(self, modelFX)
         GwHudFXDebug.rotation:SetText(modelPosition.rotation)
     end
 end
-GW.AddForProfiling("hud", "createModelFx", createModelFx)
+
 
 local currentTexture = nil
 
@@ -141,7 +141,7 @@ local function selectBg(self)
         end)
     end
 end
-GW.AddForProfiling("hud", "selectBg", selectBg)
+
 
 local function combatHealthState(self)
     if not GW.settings.HUD_BACKGROUND then
@@ -431,7 +431,7 @@ local function hud_OnEvent(self, event, ...)
         end
     end
 end
-GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
+
 
 local function ToggleHudBackground()
     if Gw2_HudBackgroud.actionBarHud.HUDBG then

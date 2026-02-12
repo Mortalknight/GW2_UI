@@ -1,7 +1,6 @@
 local _, GW = ...
 local L = GW.L
 local ResetToDefault = GW.ResetToDefault
-local AddForProfiling = GW.AddForProfiling
 
 local ICONS = {}
 local ImportExportFrame
@@ -167,14 +166,14 @@ local function deleteProfile(name)
         GW.global.layouts[profileName] = nil
     end
 end
-AddForProfiling("panel_profiles", "deleteProfile", deleteProfile)
+
 
 local function setProfile(profileName)
     if not profileName then return end
     GW.globalSettings:SetProfile(profileName)
     C_UI.Reload()
 end
-AddForProfiling("panel_profiles", "setProfile", setProfile)
+
 
 ------------------------------------------------------------
 -- Item handlers
@@ -189,7 +188,7 @@ local function delete_OnClick(self)
         end
     })
 end
-AddForProfiling("panel_profiles", "delete_OnClick", delete_OnClick)
+
 
 local function activate_OnClick(self)
     local p = self:GetParent()
@@ -201,7 +200,7 @@ local function activate_OnClick(self)
         end
     })
 end
-AddForProfiling("panel_profiles", "activate_OnClick", activate_OnClick)
+
 
 local function export_OnClick(self)
     local p = self:GetParent()
@@ -218,7 +217,7 @@ local function export_OnClick(self)
     ImportExportFrame.editBox:HighlightText()
     ImportExportFrame.editBox:SetFocus()
 end
-AddForProfiling("panel_profiles", "export_OnClick", export_OnClick)
+
 
 local function changeIcon_OnClick(btn)
     if not IconSelectionFrame then return end
@@ -320,7 +319,7 @@ local function item_OnLoad(self)
     self.changeIcon:SetScript("OnClick", changeIcon_OnClick)
     self.copy:SetScript("OnClick", copy_OnClick)
 end
-AddForProfiling("panel_profiles", "item_OnLoad", item_OnLoad)
+
 
 local function ItemActivateButtonOnEnter(self, triggeredFromParent)
     if self:GetParent().canActivate then
@@ -357,7 +356,7 @@ local function item_OnEnter(self)
     self.export:SetEnabled(self.canExport)
     self.copy:SetEnabled(self.canCopy)
 end
-AddForProfiling("panel_profiles", "item_OnEnter", item_OnEnter)
+
 
 local function item_OnLeave(self)
     if MouseIsOver(self) then return end
@@ -370,7 +369,7 @@ local function item_OnLeave(self)
     if self.canCopy then self.copy:Hide() end
     if self.canChangeIcon then self.changeIcon:Hide() end
 end
-AddForProfiling("panel_profiles", "item_OnLeave", item_OnLeave)
+
 
 ------------------------------------------------------------
 -- Add Profile (API)

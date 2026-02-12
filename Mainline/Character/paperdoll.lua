@@ -32,7 +32,7 @@ local function characterPanelToggle(frame)
     frame:Show()
     dressingRoom:Show()
 end
-GW.AddForProfiling("paperdoll", "characterPanelToggle", characterPanelToggle)
+
 
 local function toggleCharacter(tab, onlyShow)
     -- TODO: update bag frame to a secure stack, or at least the currency icon
@@ -58,17 +58,17 @@ local function toggleCharacter(tab, onlyShow)
         GwCharacterWindow:SetAttribute("windowpanelopen", "character")
     end
 end
-GW.AddForProfiling("paperdoll", "toggleCharacter", toggleCharacter)
+
 
 local function back_OnClick()
     characterPanelToggle(fmMenu)
 end
-GW.AddForProfiling("paperdoll", "back_OnClick", back_OnClick)
+
 
 local function menuItem_OnClick(self)
     characterPanelToggle(self.ToggleMe)
 end
-GW.AddForProfiling("paperdoll", "menuItem_OnClick", menuItem_OnClick)
+
 
 local function menu_SetupBackButton(_, fmBtn, key)
     fmBtn:SetText(key)
@@ -76,7 +76,7 @@ local function menu_SetupBackButton(_, fmBtn, key)
     CharacterMenuButtonBack_OnLoad(fmBtn)
     fmBtn:SetScript("OnClick", back_OnClick)
 end
-GW.AddForProfiling("paperdoll", "menu_SetupBackButton", menu_SetupBackButton)
+
 
 local isFirstAddonButton = true
 local function addAddonButton(name, setting, showFunction)

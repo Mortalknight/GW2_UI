@@ -77,7 +77,7 @@ local function hideBlizzardsActionbars()
 
     MainMenuBar:EnableMouse(false)
 end
-GW.AddForProfiling("Actionbars2", "hideBlizzardsActionbars", hideBlizzardsActionbars)
+
 
 -- other things can register callbacks for when actionbar visibility/fade changes
 local callback = {}
@@ -93,7 +93,7 @@ local function stateChanged()
         v()
     end
 end
-GW.AddForProfiling("Actionbars2", "stateChanged", stateChanged)
+
 
 hooksecurefunc("ValidateActionBarTransition", stateChanged)
 
@@ -151,7 +151,7 @@ local function fadeIn_OnFinished(self)
     end
     bar:SetAlpha(1.0)
 end
-GW.AddForProfiling("Actionbars2", "fadeIn_OnFinished", fadeIn_OnFinished)
+
 
 local function actionBarFrameShow(f, instant)
     f.fadeOut:Stop()
@@ -171,7 +171,7 @@ local function actionBarFrameShow(f, instant)
         f.fadeIn:Play()
     end
 end
-GW.AddForProfiling("Actionbars2", "actionBarFrameShow", actionBarFrameShow)
+
 
 local function fadeOut_OnFinished(self)
     local bar = self:GetParent()
@@ -180,7 +180,7 @@ local function fadeOut_OnFinished(self)
     end
     bar:SetAlpha(0.0)
 end
-GW.AddForProfiling("Actionbars2", "fadeOut_OnFinished", fadeOut_OnFinished)
+
 
 local function actionBarFrameHide(f, instant)
     f.fadeOut:Stop()
@@ -200,7 +200,7 @@ local function actionBarFrameHide(f, instant)
         f.fadeOut:Play()
     end
 end
-GW.AddForProfiling("Actionbars2", "actionBarFrameHide", actionBarFrameHide)
+
 
 -- gw_DirtySetting - set on load and by trackBarChanges; indicates we are pending changes; handled out of combat and then reset
 -- bar.gw_IsEnabled - set by trackBarChanges; directly tracks if bars are enabled or not; disabled bars never show
@@ -280,7 +280,7 @@ local function fadeCheck(self, forceCombat)
         self.gw_DirtySetting = false
     end
 end
-GW.AddForProfiling("Actionbars2", "fadeCheck", fadeCheck)
+
 
 local function createFaderAnim(self, state)
     self.fadeOut = self:CreateAnimationGroup("fadeOut")
@@ -379,12 +379,12 @@ GW.updateMacroName = updateMacroName
 local function hideBackdrop(self)
     self.gwBackdrop:Hide()
 end
-GW.AddForProfiling("Actionbars2", "hideBackdrop", hideBackdrop)
+
 
 local function showBackdrop(self)
     self.gwBackdrop:Show()
 end
-GW.AddForProfiling("Actionbars2", "showBackdrop", showBackdrop)
+
 
 local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
     button.HotKey:ClearAllPoints()
@@ -493,7 +493,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
     end
 end
 GW.setActionButtonStyle = setActionButtonStyle
-GW.AddForProfiling("Actionbars2", "setActionButtonStyle", setActionButtonStyle)
+
 
 local function main_OnEvent(self, event, ...)
     if event == "PLAYER_EQUIPMENT_CHANGED" then
@@ -503,7 +503,7 @@ local function main_OnEvent(self, event, ...)
         fadeCheck(self, forceCombat)
     end
 end
-GW.AddForProfiling("Actionbars2", "main_OnEvent", main_OnEvent)
+
 
 local function updateMainBar()
     local fmActionbar = MainMenuBarArtFrame
@@ -616,7 +616,7 @@ local function updateMainBar()
 
     return fmActionbar
 end
-GW.AddForProfiling("Actionbars2", "updateMainBar", updateMainBar)
+
 
 local function trackBarChanges()
     local fmActionbar = MainMenuBarArtFrame
@@ -774,7 +774,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
     return fmMultibar
 end
-GW.AddForProfiling("Actionbars2", "updateMultiBar", updateMultiBar)
+
 
 local function UpdateMultibarButtons()
     local margin = GW.settings.MULTIBAR_MARGIIN
@@ -869,17 +869,17 @@ local function vehicleLeave_OnUpdate()
     end
     MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
 end
-GW.AddForProfiling("Actionbars2", "vehicleLeave_OnUpdate", vehicleLeave_OnUpdate)
+
 
 local function vehicleLeave_OnShow()
     MainMenuBarVehicleLeaveButton:SetScript("OnUpdate", vehicleLeave_OnUpdate)
 end
-GW.AddForProfiling("Actionbars2", "vehicleLeave_OnShow", vehicleLeave_OnShow)
+
 
 local function vehicleLeave_OnHide()
     MainMenuBarVehicleLeaveButton:SetScript("OnUpdate", nil)
 end
-GW.AddForProfiling("Actionbars2", "vehicleLeave_OnHide", vehicleLeave_OnHide)
+
 
 local function setLeaveVehicleButton()
     MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar)
@@ -889,7 +889,7 @@ local function setLeaveVehicleButton()
     MainMenuBarVehicleLeaveButton:HookScript("OnShow", vehicleLeave_OnShow)
     MainMenuBarVehicleLeaveButton:HookScript("OnHide", vehicleLeave_OnHide)
 end
-GW.AddForProfiling("Actionbars2", "setLeaveVehicleButton", setLeaveVehicleButton)
+
 
 actionBarEquipUpdate = function()
     local bars = {
@@ -919,7 +919,7 @@ actionBarEquipUpdate = function()
         end
     end
 end
-GW.AddForProfiling("Actionbars2", "actionBarEquipUpdate", actionBarEquipUpdate)
+
 
 local function actionButtonFlashing(btn, elapsed)
     local flashtime = btn.flashtime
@@ -942,7 +942,7 @@ local function actionButtonFlashing(btn, elapsed)
 
     btn.flashtime = flashtime
 end
-GW.AddForProfiling("Actionbars2", "actionButtonFlashing", actionButtonFlashing)
+
 
 local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
 local function actionButtons_OnUpdate(self, elapsed, testRange)
@@ -1001,7 +1001,7 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
         end
     end
 end
-GW.AddForProfiling("Actionbars2", "actionButtons_OnUpdate", actionButtons_OnUpdate)
+
 
 local function changeVertexColorActionbars()
     local fmActionbar = MainMenuBarArtFrame
@@ -1027,7 +1027,7 @@ local function changeVertexColorActionbars()
         end
     end
 end
-GW.AddForProfiling("Actionbars2", "changeVertexColorActionbars", changeVertexColorActionbars)
+
 
 local function multiButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
@@ -1053,7 +1053,7 @@ local function multiButtons_OnUpdate(self, elapsed, testRange)
         end
     end
 end
-GW.AddForProfiling("Actionbars2", "multiButtons_OnUpdate", multiButtons_OnUpdate)
+
 
 local updateCap = 1 / 60 -- cap updates to 60 FPS
 actionBar_OnUpdate = function(self, elapsed)
@@ -1100,7 +1100,7 @@ actionBar_OnUpdate = function(self, elapsed)
         multiButtons_OnUpdate(self.gw_Bar4, elapsed, testRange)
     end
 end
-GW.AddForProfiling("Actionbars2", "actionBar_OnUpdate", actionBar_OnUpdate)
+
 
 -- overrides for the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua
 local function adjustFixedAnchors(self, relativeAlert)
@@ -1120,7 +1120,7 @@ local function adjustFixedAnchors(self, relativeAlert)
     end
     return relativeAlert
 end
-GW.AddForProfiling("Actionbars2", "adjustFixedAnchors", adjustFixedAnchors)
+
 
 local function updateAnchors(self)
     self:CleanAnchorPriorities()
@@ -1134,7 +1134,7 @@ local function updateAnchors(self)
         end
     end
 end
-GW.AddForProfiling("Actionbars2", "updateAnchors", updateAnchors)
+
 
 local function changeFlyoutStyle(self)
     if not self.FlyoutArrow then

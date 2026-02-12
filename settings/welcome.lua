@@ -1,7 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local AddForProfiling = GW.AddForProfiling
-
 local LEMO = GW.Libs.LEMO
 
 local wpanel
@@ -24,7 +22,7 @@ local function settings_OnClick(self)
     t:Show()
     UIFrameFadeIn(t, 0.2, 0, 1)
 end
-AddForProfiling("welcome", "settings_OnClick", settings_OnClick)
+
 
 local function button1_OnClick()
     -- reset font settings
@@ -223,7 +221,7 @@ local function button1_OnClick()
         end)
     end
 end
-AddForProfiling("welcome", "button1_OnClick", button1_OnClick)
+
 
 local function setDefaultOpenLayout()
     wpanel.welcome.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
@@ -266,7 +264,7 @@ local function createPanel()
     -- pixel perfect toggle
     wpanel.close:SetScript("OnClick", GW.Parent_Hide)
 end
-AddForProfiling("welcome", "createPanel", createPanel)
+
 
 local function ShowWelcomePanel()
     if not wpanel then

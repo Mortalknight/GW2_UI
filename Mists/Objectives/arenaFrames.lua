@@ -74,7 +74,7 @@ local function updateArenaFrameHeight(self)
     self.oldHeight = GW.RoundInt(self:GetHeight())
     self:SetHeight(i > 0 and (48 * i) or 1)
 end
-GW.AddForProfiling("arenaFrames", "updateArenaFrameHeight", updateArenaFrameHeight)
+
 
 local function updateArena_Health(self)
     local health = UnitHealth(self.unit)
@@ -89,7 +89,7 @@ local function updateArena_Health(self)
     self.health:SetValue(health)
     self.health.value:SetText(GW.RoundInt(healthPrecentage * 100) .. "%")
 end
-GW.AddForProfiling("arenaFrames", "updateArena_Health", updateArena_Health)
+
 
 local function updateArena_Power(self)
     local powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
@@ -112,7 +112,7 @@ local function updateArena_Power(self)
     self.power:SetValue(power)
     self.power.value:SetText(GW.RoundInt(powerPercentage * 100) .. "%")
 end
-GW.AddForProfiling("arenaFrames", "updateArena_Power", updateArena_Power)
+
 
 local function updateArena_Name(self)
     local inArena = C_PvP.GetZonePVPInfo()
@@ -159,7 +159,7 @@ local function updateArena_Name(self)
         self.name:SetFont(UNIT_NAME_FONT, 12)
     end
 end
-GW.AddForProfiling("arenaFrames", "updateArena_Name", updateArena_Name)
+
 
 local function arenaFrame_OnEvent(self, event)
     local _, instanceType = IsInInstance()
@@ -179,7 +179,7 @@ local function arenaFrame_OnEvent(self, event)
         updateArena_Name(self)
     end
 end
-GW.AddForProfiling("arenaFrames", "arenaFrame_OnEvent", arenaFrame_OnEvent)
+
 
 local function registerFrame(i, container)
     local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerAreanaFrameTemp")
@@ -253,7 +253,7 @@ local function registerFrame(i, container)
 
     return arenaFrame
 end
-GW.AddForProfiling("arenaFrames", "registerFrame", registerFrame)
+
 
 local function registerPrepFrame(container)
     local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFrameTemp")
@@ -273,7 +273,7 @@ local function registerPrepFrame(container)
 
     return arenaPrepFrame
 end
-GW.AddForProfiling("arenaFrames", "registerPrepFrame", registerPrepFrame)
+
 
 local function ArenaFrameOnEvent(self, event)
     -- handle compass header
@@ -327,7 +327,7 @@ local function ArenaFrameOnEvent(self, event)
         updateArenaFrameHeight(self)
     end
 end
-GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", ArenaFrameOnEvent)
+
 
 local function SetUpFramePosition()
     local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0

@@ -92,7 +92,7 @@ local function prioritys(a, b)
     end
     return notification_priority[a] > notification_priority[b]
 end
-GW.AddForProfiling("notifications", "prioritys", prioritys)
+
 
 local function getQuestPOIText(questLogIndex)
     local finalText, numFinished = "", 0
@@ -117,7 +117,7 @@ local function getQuestPOIText(questLogIndex)
 
     return numFinished == numObjectives and completionText or finalText
 end
-GW.AddForProfiling("notifications", "getQuestPOIText", getQuestPOIText)
+
 
 local function getNearestQuestPOIRetail()
     if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
@@ -232,7 +232,7 @@ local function getNearestQuestPOIRetail()
         QUESTID = closestQuestID
     }
 end
-GW.AddForProfiling("notifications", "getNearestQuestPOIRetail", getNearestQuestPOIRetail)
+
 
 local function getNearestQuestPOIClassic()
     if not GW.Libs.GW2Lib:GetPlayerLocationMapID() or not Questie or not Questie.started then
@@ -304,7 +304,7 @@ local function getNearestQuestPOIClassic()
         QUESTID = closestQuestID
     }
 end
-GW.AddForProfiling("notifications", "getNearestQuestPOIClassic", getNearestQuestPOIClassic)
+
 
 local function getNearestQuestPOIMists()
     if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
@@ -382,7 +382,7 @@ local function getBodyPOI()
         COMPASS = true
     }
 end
-GW.AddForProfiling("notifications", "getBodyPOI", getBodyPOI)
+
 
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
@@ -403,7 +403,7 @@ local function updateRadar(self)
     local cos_a = math.cos(angle) * square_half
     self.arrow:SetTexCoord(0.5 - sin_a, 0.5 + cos_a, 0.5 + cos_a, 0.5 + sin_a, 0.5 - cos_a, 0.5 - sin_a, 0.5 + sin_a, 0.5 - cos_a)
 end
-GW.AddForProfiling("notifications", "updateRadar", updateRadar)
+
 
 GwObjectivesTrackerNotificationMixin = {}
 function GwObjectivesTrackerNotificationMixin:AddNotification(data, forceUpdate)

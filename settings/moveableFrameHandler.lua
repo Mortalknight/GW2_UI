@@ -61,7 +61,7 @@ local function lockHudObjects(_, _, inCombatLockdown)
     GW.InMoveHudMode = false
 end
 GW.lockHudObjects = lockHudObjects
-GW.AddForProfiling("settings", "lockHudObjects", lockHudObjects)
+
 
 local function toggleHudPlaceholders()
     local show = not moveable_window_placeholders_visible
@@ -298,7 +298,7 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
     GwSmallSettingsContainer.layoutManager:SetAttribute("inMoveHudMode", true)
 end
 GW.ResetMoverFrameToDefaultValues = smallSettings_resetToDefault
-GW.AddForProfiling("index", "smallSettings_resetToDefault", smallSettings_resetToDefault)
+
 
 local function lockFrame_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
@@ -306,13 +306,13 @@ local function lockFrame_OnEnter(self)
     GameTooltip:SetText(SYSTEM_DEFAULT, 1, 1, 1)
     GameTooltip:Show()
 end
-GW.AddForProfiling("index", "lockFrame_OnEnter", lockFrame_OnEnter)
+
 
 local function mover_OnDragStart(self)
     self.IsMoving = true
     self:StartMoving()
 end
-GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
+
 
 local function CheckForDefaultPosition(frame, point, relativePoint, xOfs, yOfs, newPoint)
     if frame.defaultPoint.point == point and frame.defaultPoint.relativePoint == relativePoint and frame.defaultPoint.xOfs == xOfs and frame.defaultPoint.yOfs == yOfs then
@@ -359,7 +359,7 @@ local function mover_OnDragStop(self)
     end
     self.IsMoving = false
 end
-GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
+
 
 local function showExtraOptions(self)
     GW.MoveHudScaleableFrame.moverSettingsFrame.child = self

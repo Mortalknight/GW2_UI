@@ -60,7 +60,7 @@ local function SetupRaidExtendButton(self)
     end
     self.extendButton:Disable()
 end
-GW.AddForProfiling("currency", "SetupRaidExtendButton", SetupRaidExtendButton)
+
 
 
 local function UpdateRaidInfoScrollBox(self)
@@ -94,7 +94,7 @@ local function raidInfo_OnEnter(self)
         GameTooltip:Show()
     end
 end
-GW.AddForProfiling("currency", "raidInfo_OnEnter", raidInfo_OnEnter)
+
 
 local function raidInfo_OnClick(self)
     if IsModifiedClick("CHATLINK") then
@@ -110,7 +110,7 @@ local function raidInfo_OnClick(self)
         UpdateRaidInfoScrollBox(GwCharacterCurrencyRaidInfoFrame.RaidLocks)
     end
 end
-GW.AddForProfiling("currency", "raidInfo_OnClick", raidInfo_OnClick)
+
 
 local function raidInfoExtended_OnClick(self)
     if self:GetParent().RaidInfoIdx <= GetNumSavedInstances() then
@@ -119,7 +119,7 @@ local function raidInfoExtended_OnClick(self)
         RequestRaidInfo()
     end
 end
-GW.AddForProfiling("currency", "raidInfoExtended_OnClick", raidInfoExtended_OnClick)
+
 
 local function RaidInfo_InitButton(button, elementData)
     local instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled
@@ -201,7 +201,7 @@ local function RaidInfo_InitButton(button, elementData)
         button.extendButton:Hide()
     end
 end
-GW.AddForProfiling("currency", "raidInfoSetup", RaidInfo_InitButton)
+
 
 local function menuItem_OnClick(self)
     local menuItems = self:GetParent().items
@@ -215,7 +215,7 @@ local function menuItem_OnClick(self)
         RequestRaidInfo()
     end
 end
-GW.AddForProfiling("currency", "menuItem_OnClick", menuItem_OnClick)
+
 
 local oldAtlas = {
     Options_ListExpand_Right = 1,

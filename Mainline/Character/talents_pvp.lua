@@ -18,7 +18,7 @@ local function spellButton_OnEnter(self)
     end
     GameTooltip:Show()
 end
-GW.AddForProfiling("talents_pvp", "spellButton_OnEnter", spellButton_OnEnter)
+
 
 local function slotButton_OnDragStart(self)
     if InCombatLockdown() or self.isFuture or self.isPassive then
@@ -26,7 +26,7 @@ local function slotButton_OnDragStart(self)
     end
     PickupPvpTalent(self.talentId)
 end
-GW.AddForProfiling("talents_pvp", "slotButton_OnDragStart", slotButton_OnDragStart)
+
 
 local function slotButton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
@@ -46,7 +46,7 @@ local function slotButton_OnEnter(self)
     end
     GameTooltip:Show()
 end
-GW.AddForProfiling("talents_pvp", "slotButton_OnEnter", slotButton_OnEnter)
+
 
 local function updateButton(btn, slotInfo, selectedTalents)
     local btnAvail = true
@@ -77,7 +77,7 @@ local function updateButton(btn, slotInfo, selectedTalents)
         btn.isPickable = false
     end
 end
-GW.AddForProfiling("talents_pvp", "updateButton", updateButton)
+
 
 local function updatePicks(self)
     local fmTab = self:GetParent()
@@ -133,7 +133,7 @@ local function updatePicks(self)
         updateButton(btn, slotInfo, selectedTalents)
     end
 end
-GW.AddForProfiling("talents_pvp", "updatePicks", updatePicks)
+
 
 local function button_OnModifiedClick(self)
     local tid = self.talentId
@@ -158,7 +158,7 @@ local function button_OnModifiedClick(self)
         PickupPvpTalent(tid)
     end
 end
-GW.AddForProfiling("talents_pvp", "button_OnModifiedClick", button_OnModifiedClick)
+
 
 local function spellButton_OnClick(self)
     if IsModifiedClick() then
@@ -184,7 +184,7 @@ local function spellButton_OnClick(self)
     fmTab.pickingSlot = nil
     updatePicks(fmSlots)
 end
-GW.AddForProfiling("talents_pvp", "spellButton_OnClick", spellButton_OnClick)
+
 
 local function slotButton_OnClick(self)
     if not self.isEnabled then
@@ -209,7 +209,7 @@ local function slotButton_OnClick(self)
     end
     updatePicks(fmSlots)
 end
-GW.AddForProfiling("talents_pvp", "slotButton_OnClick", slotButton_OnClick)
+
 
 local function setSlotButton(btn, info)
     btn:EnableMouse(true)
@@ -242,7 +242,7 @@ local function setSlotButton(btn, info)
         btn.outline:SetSize(40, 40)
     end
 end
-GW.AddForProfiling("talents_pvp", "setSlotButton", setSlotButton)
+
 
 local talentIds = {}
 local function UpdatePvPTab(fmTab)
@@ -375,7 +375,7 @@ local function slotPool_Resetter(_, btn)
         btn.mask:SetSize(40, 40)
     end
 end
-GW.AddForProfiling("talents_pvp", "slotPool_Resetter", slotPool_Resetter)
+
 
 local function activePool_Resetter(_, btn)
     btn:EnableMouse(false)
@@ -390,7 +390,7 @@ local function activePool_Resetter(_, btn)
     btn.talentId = nil
     btn.icon:SetTexture(nil)
 end
-GW.AddForProfiling("talents_pvp", "activePool_Resetter", activePool_Resetter)
+
 
 local function passivePool_Resetter(_, btn)
     btn:EnableMouse(false)
@@ -417,21 +417,21 @@ local function passivePool_Resetter(_, btn)
         btn.icon:AddMaskTexture(btn.mask)
     end
 end
-GW.AddForProfiling("talents_pvp", "passivePool_Resetter", passivePool_Resetter)
+
 
 local function toggle_OnShow(self)
     self:RegisterEvent("PLAYER_FLAGS_CHANGED")
     self:RegisterEvent("ZONE_CHANGED")
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 end
-GW.AddForProfiling("talents_pvp", "toggle_OnShow", toggle_OnShow)
+
 
 local function toggle_OnHide(self)
     self:UnregisterEvent("PLAYER_FLAGS_CHANGED")
     self:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
     self:UnregisterEvent("ZONE_CHANGED")
 end
-GW.AddForProfiling("talents_pvp", "toggle_OnHide", toggle_OnHide)
+
 
 local function toggle_OnClick(self)
     if (C_PvP.CanToggleWarMode(not C_PvP.IsWarModeDesired())) then
@@ -448,7 +448,7 @@ local function toggle_OnClick(self)
         C_PvP.ToggleWarMode()
     end
 end
-GW.AddForProfiling("talents", "toggle_OnClick", toggle_OnClick)
+
 
 local function toggle_OnEnter(self)
     local canToggleWarmodeOFF = C_PvP.CanToggleWarMode(false)
@@ -470,7 +470,7 @@ local function toggle_OnEnter(self)
     end
     GameTooltip:Show()
 end
-GW.AddForProfiling("talents_pvp", "toggle_OnEnter", toggle_OnEnter)
+
 
 local function CreatePvPTab(fmSpellbook)
     local container = CreateFrame("Frame", nil, fmSpellbook, "GwSpellbookContainerTab")

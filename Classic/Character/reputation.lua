@@ -34,7 +34,7 @@ local function detailFaction(factionIndex, boolean)
     end
     expandedFactions[factionIndex] = nil
 end
-GW.AddForProfiling("reputation", "detailFaction", detailFaction)
+
 
 local function updateSavedReputation()
     for factionIndex = 1, GetNumFactions() do
@@ -56,7 +56,7 @@ local function updateSavedReputation()
             savedReputation[factionIndex].hasBonusRepGain = GetFactionInfo(factionIndex)
     end
 end
-GW.AddForProfiling("reputation", "updateSavedReputation", updateSavedReputation)
+
 
 local function returnReputationData(factionIndex)
     if savedReputation[factionIndex] == nil then
@@ -78,13 +78,13 @@ local function returnReputationData(factionIndex)
             savedReputation[factionIndex].factionID,
             savedReputation[factionIndex].hasBonusRepGain
 end
-GW.AddForProfiling("reputation", "returnReputationData", returnReputationData)
+
 
 local function showHeader(firstIndex, lastIndex)
     firstReputationCat = firstIndex
     lastReputationCat = lastIndex
 end
-GW.AddForProfiling("reputation", "showHeader", showHeader)
+
 
 local function detailsAtwar_OnEnter(self)
     self.icon:SetTexCoord(0.5, 1, 0, 0.5)
@@ -93,7 +93,7 @@ local function detailsAtwar_OnEnter(self)
     GameTooltip:SetText(REPUTATION_AT_WAR_DESCRIPTION, nil, nil, nil, nil, true)
     GameTooltip:Show()
 end
-GW.AddForProfiling("reputation", "detailsAtwar_OnEnter", detailsAtwar_OnEnter)
+
 
 local function detailsAtwar_OnLeave(self)
     if not self.isActive then
@@ -101,7 +101,7 @@ local function detailsAtwar_OnLeave(self)
     end
     GameTooltip:Hide()
 end
-GW.AddForProfiling("reputation", "detailsAtwar_OnLeave", detailsAtwar_OnLeave)
+
 
 local function detailsInactive_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -109,7 +109,7 @@ local function detailsInactive_OnEnter(self)
     GameTooltip:SetText(REPUTATION_MOVE_TO_INACTIVE, nil, nil, nil, nil, true)
     GameTooltip:Show()
 end
-GW.AddForProfiling("reputation", "detailsInactive_OnEnter", detailsInactive_OnEnter)
+
 
 local function detailsShowAsBar_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -117,7 +117,7 @@ local function detailsShowAsBar_OnEnter(self)
     GameTooltip:SetText(REPUTATION_SHOW_AS_XP, nil, nil, nil, nil, true)
     GameTooltip:Show()
 end
-GW.AddForProfiling("reputation", "detailsShowAsBar_OnEnter", detailsShowAsBar_OnEnter)
+
 
 local function detailsControls_OnShow(self)
     self:GetParent().details:Show()
@@ -129,13 +129,13 @@ local function detailsControls_OnShow(self)
         self.atwar:Hide()
     end
 end
-GW.AddForProfiling("reputation", "detailsControls_OnShow", detailsControls_OnShow)
+
 
 local function detailsControls_OnHide(self)
     self:GetParent().details:Hide()
     self:GetParent().detailsbg:Hide()
 end
-GW.AddForProfiling("reputation", "detailsControls_OnHide", detailsControls_OnHide)
+
 
 local function details_OnClick(self)
     if self.item.details:IsShown() then
@@ -153,7 +153,7 @@ local function details_OnClick(self)
     end
     updateOldData()
 end
-GW.AddForProfiling("reputation", "details_OnClick", details_OnClick)
+
 
 local function setDetailEx(
     frame,
@@ -380,7 +380,7 @@ local function setDetailEx(
         )
     end
 end
-GW.AddForProfiling("reputation", "setDetailEx", setDetailEx)
+
 
 local function setDetail(frame, dat)
     return setDetailEx(
@@ -399,7 +399,7 @@ local function setDetail(frame, dat)
         dat.factionID
     )
 end
-GW.AddForProfiling("reputation", "setDetail", setDetail)
+
 
 local facData = {}
 local facOrder = {}
@@ -484,7 +484,7 @@ updateDetails = function()
 
     reputationLastUpdateMethod = updateDetails
 end
-GW.AddForProfiling("reputation", "updateDetails", updateDetails)
+
 
 local function status_SetValue(self)
     local _, max = self:GetMinMaxValues()
@@ -498,7 +498,7 @@ local function status_SetValue(self)
         self.spark:Show()
     end
 end
-GW.AddForProfiling("reputation", "status_SetValue", status_SetValue)
+
 
 local function setupDetail(self)
     self.controles.atwar:SetScript("OnEnter", detailsAtwar_OnEnter)
@@ -583,7 +583,7 @@ local function setupDetail(self)
     self.repbg:SetTexCoord(0, 1, REPBG_T, REPBG_B)
     self.repbg:SetDesaturated(true)
 end
-GW.AddForProfiling("reputation", "setupDetail", setupDetail)
+
 
 local function reputationSetup(self)
     HybridScrollFrame_CreateButtons(
@@ -607,7 +607,7 @@ local function reputationSetup(self)
 
     updateDetails()
 end
-GW.AddForProfiling("reputation", "reputationSetup", reputationSetup)
+
 
 local function sortFactionsStatus(tbl)
     table.sort(tbl, function(a, b)
@@ -723,12 +723,12 @@ updateOldData = function()
         reputationLastUpdateMethod(reputationLastUpdateMethodParams)
     end
 end
-GW.AddForProfiling("reputation", "updateOldData", updateOldData)
+
 
 local function reputationSearch(a, b)
     return string.find(a, b)
 end
-GW.AddForProfiling("reputation", "reputationSearch", reputationSearch)
+
 
 local function updateDetailsSearch(s)
     local fm = GwRepDetailFrame.scroller
@@ -828,7 +828,7 @@ local function updateDetailsSearch(s)
     reputationLastUpdateMethod = updateDetailsSearch
     reputationLastUpdateMethodParams = s
 end
-GW.AddForProfiling("reputation", "updateDetailsSearch", updateDetailsSearch)
+
 
 local function dynamicOffset(_, offset)
     local heightSoFar = 0
@@ -857,7 +857,7 @@ local function dynamicOffset(_, offset)
 
     return element, scrollHeight
 end
-GW.AddForProfiling("reputation", "dynamicOffset", dynamicOffset)
+
 
 local function categoriesSetup(catwin)
     HybridScrollFrame_CreateButtons(catwin, "GwPaperDollReputationCat", 0, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")

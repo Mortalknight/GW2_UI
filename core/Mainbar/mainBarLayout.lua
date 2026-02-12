@@ -190,4 +190,4 @@ local function LoadMainbarLayout()
     return lm
 end
 GW.LoadMainbarLayout = LoadMainbarLayout
-GW.AddForProfiling("mainbar_layout", "LayoutManager", lm)
+

@@ -335,14 +335,14 @@ local function animFlare(f, scale, offset, duration, rotate)
         end
     )
 end
-GW.AddForProfiling("classpowers", "animFlare", animFlare)
+
 
 local function decayCounterFlash_OnAnim(p)
     local f = CPWR_FRAME
     local fdc = f.decayCounter
     fdc.flash:SetAlpha(math.min(1, math.max(0, p)))
 end
-GW.AddForProfiling("classpowers", "decayCounterFlash_OnAnim", decayCounterFlash_OnAnim)
+
 
 local function GetAuraData(unit, unitSource, filter, ...)
     local searchIDs = {}
@@ -465,7 +465,7 @@ local function setLittleManaBar(f, barType)
     f.littleManaBarEventFrame:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f.littleManaBarEventFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
-GW.AddForProfiling("classpowers", "setLittleManaBar", setLittleManaBar)
+
 
 -- COMBO POINTS (multi class use)
 local function powerCombo(self, event, ...)
@@ -734,7 +734,7 @@ local function powerEssence(self, event, ...)
         AnimIn(self.evoker["essence" .. pwr + 1], animationSpeedMultiplier)
     end
 end
-GW.AddForProfiling("classpowers", "powerEssence", powerEssence)
+
 
 -- this needs also the essence bar
 
@@ -823,7 +823,7 @@ local function powerEnrage()
         CPWR_FRAME.customResourceBar:Hide()
     end
 end
-GW.AddForProfiling("classpowers", "powerEnrage", powerEnrage)
+
 
 local function powerSBlock()
     local results
@@ -851,7 +851,7 @@ local function powerSBlock()
         CPWR_FRAME.customResourceBar:SetCustomAnimation(remainingPrecantage, 0, remainingTime)
     end
 end
-GW.AddForProfiling("classpowers", "powerSBlock", powerSBlock)
+
 
 local function setWarrior(f)
     f.background:SetTexture(nil)
@@ -881,7 +881,7 @@ local function setWarrior(f)
 
     return true
 end
-GW.AddForProfiling("classpowers", "setWarrior", setWarrior)
+
 
 -- PALADIN
 local function powerSotR()
@@ -1024,7 +1024,7 @@ local function powerFrenzy(event)
         end
     end
 end
-GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
+
 
 local function powerMongoose(event)
     local fdc = CPWR_FRAME.decayCounter
@@ -1049,7 +1049,7 @@ local function powerMongoose(event)
         end
     end
 end
-GW.AddForProfiling("classpowers", "powerMongoose", powerMongoose)
+
 
 local function setHunter(f)
     if GW.myspec == 1 or (GW.myspec == 3 and GW.IsSpellTalented(259387)) then -- 259387 = mangoose id
@@ -1114,7 +1114,7 @@ local function shadowOrbs(self, event, ...)
     end
     self.gwPower = currentOrbs
 end
-GW.AddForProfiling("classpowers", "shadowOrbs", shadowOrbs)
+
 
 local function setPriest(f)
     if GW.myspec == 3 then -- shadow
@@ -1152,7 +1152,7 @@ local function setPriest(f)
 
     return false
 end
-GW.AddForProfiling("classpowers", "setPriest", setPriest)
+
 
 -- DEATH KNIGHT
 local RUNETYPE_BLOOD = 1
@@ -1306,7 +1306,7 @@ local function powerRune(self)
         fTex:SetTexCoord(0, 0.5, 0, 1)
     end
 end
-GW.AddForProfiling("classpowers", "powerRune", powerRune)
+
 
 local function setDeathKnight(f)
     local fr = f.runeBar
@@ -1401,7 +1401,7 @@ local function powerMaelstrom()
         end
     end
 end
-GW.AddForProfiling("classpowers", "powerMaelstrom", powerMaelstrom)
+
 
 local function setShaman(f)
     if GW.Retail then
@@ -1476,7 +1476,7 @@ local function powerArcane(self, event, ...)
         animFlare(self, 64, -32, 2, true)
     end
 end
-GW.AddForProfiling("classpowers", "powerArcane", powerArcane)
+
 
 local function powerFrost(event)
     local auraData = GetAuraData("player", nil, "HELPFUL", 205473)
@@ -1629,7 +1629,7 @@ local function powerSoulshard(self, event, ...)
         self.warlock.shardFragment.amount = shardPower
     end
 end
-GW.AddForProfiling("classpowers", "powerSoulshard", powerSoulshard)
+
 
 local function powerDemonicFury(self, event, ...)
     local pType = select(2, ...)
@@ -1733,7 +1733,7 @@ local function powerChi(self, event, ...)
         animFlare(self)
     end
 end
-GW.AddForProfiling("classpowers", "powerChi", powerChi)
+
 
 local function ironSkin_OnUpdate(self)
     local precentage = math.min(1, math.max(0, (self.expires - GetTime()) / 23))
@@ -1744,7 +1744,7 @@ local function ironSkin_OnUpdate(self)
     self.indicator:SetPoint("LEFT", math.min(252, (precentage * 256)) - 13, 19)
     self.indicatorText:SetText(RoundInt(self.expires - GetTime()) .. "s")
 end
-GW.AddForProfiling("classpowers", "ironSkin_OnUpdate", ironSkin_OnUpdate)
+
 
 local function setStaggerBar()
     local fb = CPWR_FRAME.brewmaster
@@ -1883,7 +1883,7 @@ local function setMonk(f)
 
     return false
 end
-GW.AddForProfiling("classpowers", "setMonk", setMonk)
+
 
 -- DRUID
 local function setDruid(f)
@@ -2021,7 +2021,7 @@ local function setDeamonHunter(f)
 
     return false
 end
-GW.AddForProfiling("classpowers", "setDeamonHunter", setDeamonHunter)
+
 
 local function selectType(f)
     f:SetScript("OnEvent", nil)
@@ -2094,7 +2094,7 @@ local function selectType(f)
 
     UpdateVisibility(f, InCombatLockdown())
 end
-GW.AddForProfiling("classpowers", "selectType", selectType)
+
 
 local function barChange_OnEvent(self, event)
     if not self then return end

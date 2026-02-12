@@ -48,7 +48,7 @@ local function capStateChanged(self)
     end
     GW.AddToAnimation(self:GetDebugName(), 2, 1, GetTime(), 0.5, fnScale)
 end
-GW.AddForProfiling("battlegrounds", "capStateChanged", capStateChanged)
+
 
 local function iconOverrider(self, icon)
     if bgs[activeBg]["icons"][icon] == nil then
@@ -87,7 +87,7 @@ local function iconOverrider(self, icon)
 
     return true
 end
-GW.AddForProfiling("battlegrounds", "iconOverrider", iconOverrider)
+
 
 local function setIconAtlas(self, atlas)
     if self.savedIconIndex ~= atlas.file then
@@ -100,7 +100,7 @@ local function setIconAtlas(self, atlas)
     self.icon:SetTexCoord(x1, x2, y1, y2)
     self.icon:SetSize(20, 20)
 end
-GW.AddForProfiling("battlegrounds", "setIconAtlas", setIconAtlas)
+
 
 local function setIcon(self, icon)
     if self.savedIconIndex ~= icon then
@@ -117,7 +117,7 @@ local function setIcon(self, icon)
     self.icon:SetTexCoord(x1, x2, y1, y2)
     self.icon:SetSize(20, 20)
 end
-GW.AddForProfiling("battlegrounds", "setIcon", setIcon)
+
 
 local function getLandMarkFrame(i, hasTimer)
     if _G["GwBattleLandMarkFrame" .. i] == nil then
@@ -126,7 +126,7 @@ local function getLandMarkFrame(i, hasTimer)
     end
     return _G["GwBattleLandMarkFrame" .. i]
 end
-GW.AddForProfiling("battlegrounds", "getLandMarkFrame", getLandMarkFrame)
+
 
 local function PointsAndPOI_onEvent(self, event, ...)
     if not activeMap then
@@ -190,7 +190,7 @@ local function PointsAndPOI_onEvent(self, event, ...)
         end
     end
 end
-GW.AddForProfiling("battlegrounds", "PointsAndPOI_onEvent", PointsAndPOI_onEvent)
+
 
 local function OnlyPoints_onEvent(self, event, ...)
     if not activeMap then
@@ -211,7 +211,7 @@ local function OnlyPoints_onEvent(self, event, ...)
         self.timer:SetText("")
     end
 end
-GW.AddForProfiling("battlegrounds", "OnlyPoints_onEvent", OnlyPoints_onEvent)
+
 
 local function TimerFlag_OnUpdate(self, elapsed)
     self.elapsedTimer = self.elapsedTimer - elapsed
@@ -256,7 +256,7 @@ local function TimerFlag_OnUpdate(self, elapsed)
         gwbgs.MID:SetWidth(36 * counter)
     end
 end
-GW.AddForProfiling("battlegrounds", "TimerFlag_OnUpdate", TimerFlag_OnUpdate)
+
 
 local function pvpHud_onEvent(_, event)
     local playerInstanceMapId = GW.Libs.GW2Lib:GetPlayerInstanceMapID()
@@ -326,7 +326,7 @@ local function pvpHud_onEvent(_, event)
         end
     end
 end
-GW.AddForProfiling("battlegrounds", "pvpHud_onEvent", pvpHud_onEvent)
+
 
 local function LoadBattlegrounds()
     bgs = {

@@ -68,7 +68,7 @@ local function hideMiniMapIcons()
         end
     end
 end
-GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
+
 
 local function MapCoordsMiniMap_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
@@ -77,7 +77,7 @@ local function MapCoordsMiniMap_OnEnter(self)
     GameTooltip:SetMinimumWidth(100)
     GameTooltip:Show()
 end
-GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
+
 
 local function mapCoordsMiniMap_setCoords(self)
     local x, y, xT, yT = GW.Libs.GW2Lib:GetPlayerLocationCoords()
@@ -87,7 +87,7 @@ local function mapCoordsMiniMap_setCoords(self)
         self.Coords:SetText(NOT_APPLICABLE)
     end
 end
-GW.AddForProfiling("map", "mapCoordsMiniMap_setCoords", mapCoordsMiniMap_setCoords)
+
 
 local function MapCoordsMiniMap_OnClick(self, button)
     if button == "LeftButton" then
@@ -102,7 +102,7 @@ local function MapCoordsMiniMap_OnClick(self, button)
         mapCoordsMiniMap_setCoords(self)
     end
 end
-GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
+
 
 local function hoverMiniMapIn()
     for k, v in pairs(GW.settings.MINIMAP_ALWAYS_SHOW_HOVER_DETAILS) do
@@ -111,7 +111,7 @@ local function hoverMiniMapIn()
         end
     end
 end
-GW.AddForProfiling("map", "hoverMiniMapIn", hoverMiniMapIn)
+
 
 local function hoverMiniMapOut()
     for k, v in pairs(GW.settings.MINIMAP_ALWAYS_SHOW_HOVER_DETAILS) do
@@ -121,7 +121,7 @@ local function hoverMiniMapOut()
     end
 end
 GW.hoverMiniMapOut = hoverMiniMapOut
-GW.AddForProfiling("map", "hoverMiniMapOut", hoverMiniMapOut)
+
 
 local function GetMinimapShape()
     return "SQUARE"
@@ -132,14 +132,14 @@ local function minimap_OnShow()
         GwAddonToggle:Show()
     end
 end
-GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
+
 
 local function minimap_OnHide()
     if GwAddonToggle then
         GwAddonToggle:Hide()
     end
 end
-GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
+
 
 local function setMinimapButtons(side)
     Minimap.sidePanel:ClearAllPoints()

@@ -9,7 +9,6 @@ local C_NamePlate_GetNamePlates = C_NamePlate.GetNamePlates
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local ToggleMover = GW.ToggleMover
 
-local AFP = GW.AddProfiling
 local MoveTowards = GW.MoveTowards
 local getSpriteByIndex = GW.getSpriteByIndex
 
@@ -200,7 +199,7 @@ local function animateTextCriticalForStackingFormat(frame)
         end
     )
 end
-AFP("animateTextCriticalForStackingFormat", animateTextCriticalForStackingFormat)
+
 
 local function animateTextNormalForStackingFormat(frame)
     frame.oldOffsetY = nil
@@ -222,7 +221,7 @@ local function animateTextNormalForStackingFormat(frame)
         end
     )
 end
-AFP("animateTextNormalForStackingFormat", animateTextNormalForStackingFormat)
+
 
 -- DEFAULT
 local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
@@ -252,7 +251,7 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
         end
     )
 end
-AFP("animateTextCriticalForDefaultFormat", animateTextCriticalForDefaultFormat)
+
 
 local function animateTextNormalForDefaultFormat(frame, offsetIndex)
     GW.AddToAnimation(frame:GetDebugName(), 0, 1, GetTime(), NORMAL_ANIMATION_DURATION,
@@ -279,7 +278,7 @@ local function animateTextNormalForDefaultFormat(frame, offsetIndex)
         end
     )
 end
-AFP("animateTextNormalForDefaultFormat", animateTextNormalForDefaultFormat)
+
 
 --CLASSIC
 local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
@@ -310,7 +309,7 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
         end
     )
 end
-AFP("animateTextCriticalForClassicFormat", animateTextCriticalForClassicFormat)
+
 
 local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
     NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES + 1
@@ -339,7 +338,7 @@ local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
         end
     )
 end
-AFP("animateTextNormalForClassicFormat", animateTextNormalForClassicFormat)
+
 
 local createdFramesIndex = 0
 local function createNewFontElement(self)
@@ -354,7 +353,7 @@ local function createNewFontElement(self)
     createdFramesIndex = createdFramesIndex + 1
     return f
 end
-AFP("createNewFontElement", createNewFontElement)
+
 
 local function getFontElement(self)
     for _, f in pairs(fontStringList) do
@@ -368,7 +367,7 @@ local function getFontElement(self)
         return f
     end
 end
-AFP("getFontElement", getFontElement)
+
 
 local function setElementData(self, critical, source, missType, blocked, absorbed, periodic, school)
     if missType then
@@ -407,13 +406,13 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
     self:Show()
     self:ClearAllPoints()
 end
-AFP("setElementData", setElementData)
+
 
 local function formatDamageValue(amount)
     local formatFunction = GW.settings.GW_COMBAT_TEXT_SHORT_VALUES and GW.ShortValue or (GW.settings.GW_COMBAT_TEXT_COMMA_FORMAT and GW.GetLocalizedNumber or nil)
     return formatFunction and formatFunction(amount) or amount
 end
-AFP("formatDamageValue", formatDamageValue)
+
 
 local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic, school)
     local f = getFontElement(self)
@@ -469,7 +468,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         end
     end
 end
-AFP("displayDamageText", displayDamageText)
+
 
 local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, ...)
     if not destGUID then return end
@@ -522,7 +521,7 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
         end
     end
 end
-AFP("handleCombatLogEvent", handleCombatLogEvent)
+
 
 local function freeClassicGrid(namePlate)
     local grid = namePlateClassicGrid[namePlate]
@@ -536,7 +535,7 @@ local function onNamePlateAdded(_, _, unitID)
         guidToUnit[guid] = unitID
     end
 end
-AFP("onNamePlateAdded", onNamePlateAdded)
+
 
 local function onNamePlateRemoved(_, _, unitID)
     local guid = unitToGuid[unitID]
@@ -552,7 +551,7 @@ local function onNamePlateRemoved(_, _, unitID)
         end
     end
 end
-AFP("onNamePlateRemoved", onNamePlateRemoved)
+
 
 local function RescanAllNameplates()
     for _, frame in pairs(C_NamePlate_GetNamePlates(false)) do

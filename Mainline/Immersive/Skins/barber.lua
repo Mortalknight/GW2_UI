@@ -1,5 +1,4 @@
 local _, GW = ...
-local AFP = GW.AddProfiling
 
 local function HandleNextPrev(button)
     GW.HandleNextPrevButton(button)
@@ -112,7 +111,7 @@ local function SetSelectedCategory(list)
         end
     end
 end
-AFP("SetSelectedCategory", SetSelectedCategory)
+
 
 local function SkinCharacterCustomizeSkin()
     if not GW.settings.BARBERSHOP_SKIN_ENABLED then return end
@@ -126,7 +125,7 @@ local function SkinCharacterCustomizeSkin()
 
     hooksecurefunc(CharCustomizeFrame, "AddMissingOptions", SetSelectedCategory)
 end
-AFP("SkinCharacterCustomizeSkin", SkinCharacterCustomizeSkin)
+
 
 local function SkinBarShop()
     if not GW.settings.BARBERSHOP_SKIN_ENABLED then return end
@@ -138,7 +137,7 @@ local function SkinBarShop()
     BarberShopFrame.LeftBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
     BarberShopFrame.RightBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
 end
-AFP("SkinBarShop", SkinBarShop)
+
 
 local function LoadBarShopUISkin()
     GW.RegisterLoadHook(SkinBarShop, "Blizzard_BarbershopUI", BarberShopFrame)

@@ -14,7 +14,7 @@ local function title_OnClick(self)
     self:GetParent():GetParent():GetParent().input:SetText("")
     self:GetParent():GetParent():GetParent().input.clearButton:Hide()
 end
-GW.AddForProfiling("paperdoll_titles", "title_OnClick", title_OnClick)
+
 
 local function UpdateScrollBox(self)
     local dataProvider = CreateDataProvider();
@@ -89,7 +89,7 @@ local function saveKnowenTitles(titlewin, searchString)
 
     UpdateScrollBox(titlewin)
 end
-GW.AddForProfiling("paperdoll_titles", "saveKnowenTitles", saveKnowenTitles)
+
 
 local function SetSearchboxInstructions(editbox, text)
     editbox.Instructions:SetTextColor(0.5, 0.5, 0.5)

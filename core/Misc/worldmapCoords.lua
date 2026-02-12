@@ -1,5 +1,4 @@
 local _, GW = ...
-local AFP = GW.AddProfiling
 local CoordsFrame
 local MOUSE_LABEL = MOUSE_LABEL:gsub("|[TA].-|[ta]","")
 
@@ -38,7 +37,7 @@ local function UpdateCoords()
         end
     end
 end
-AFP("UpdateCoords", UpdateCoords)
+
 
 local function AddCoordsToWorldMap()
     local ticker

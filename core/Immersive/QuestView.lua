@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 
 local Debug = GW.Debug
-local AFP = GW.AddProfiling
 
 local model_tweaks = GW.QUESTVIEW_MODEL_TWEAKS
 local npc_tweaks = GW.QUESTVIEW_NPC_TWEAKS
@@ -20,7 +19,7 @@ local function splitIter(inputstr, pat)
         end
     end
 end
-AFP("splitIter", splitIter)
+
 
 local function splitQuest(inputstr)
     local sep = "[\\.|!|?|>]%s+"
@@ -37,10 +36,10 @@ local function splitQuest(inputstr)
     end
     return t
 end
-AFP("splitQuest", splitQuest)
+
 
 local QuestGiverMixin = {}
-AFP("QuestGiverMixin", QuestGiverMixin)
+
 
 -- emote IDs used for SetAnimation
 local emotes = {
@@ -174,7 +173,7 @@ function QuestGiverMixin:SetupModel()
 end
 
 local QuestPlayerMixin = {}
-AFP("QuestPlayerMixin", QuestPlayerMixin)
+
 
 local player_scales = GW.QUESTVIEW_PLAYER_SCALES
 function QuestPlayerMixin:SetupModel()
@@ -628,12 +627,12 @@ local function dialog_OnMouseUp(self, button, isInside)
         qview:nextGossip()
     end
 end
-AFP("dialog_OnMouseUp", dialog_OnMouseUp)
+
 
 local function decline_OnClick()
     CloseQuest()
 end
-AFP("decline_OnClick", decline_OnClick)
+
 
 local function accept_OnClick(self)
     local qview = self:GetParent():GetParent()
@@ -650,7 +649,7 @@ local function accept_OnClick(self)
         end
     end
 end
-AFP("accept_OnClick", accept_OnClick)
+
 
 function QuestViewMixin:OnLoad()
     Mixin(self.container.playerModel, QuestPlayerMixin)

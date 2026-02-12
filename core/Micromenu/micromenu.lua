@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local AFP = GW.AddProfiling
 local updateIcon
 
 local PERFORMANCE_BAR_UPDATE_INTERVAL = 1
@@ -40,7 +39,7 @@ do
 
         SendMessageWaiting = nil
     end
-    AFP("SendMessage", SendMessage)
+
 
     local SendRecieveGroupSize = 0
     local myRealm = gsub(GW.myrealm, "[%s%-]", "")
@@ -89,7 +88,7 @@ do
             end
         end
     end
-    AFP("SendRecieve", SendRecieve)
+
 
     C_ChatInfo.RegisterAddonMessagePrefix("GW2UI_VERSIONCHK")
 
@@ -141,7 +140,7 @@ local function updateGuildButton(self, event)
         end
     end
 end
-AFP("updateGuildButton", updateGuildButton)
+
 
 local function updateQuestLogButton(_, event)
     if event ~= "QUEST_LOG_UPDATE" then
@@ -170,7 +169,7 @@ local function updateQuestLogButton(_, event)
         qlmb.GwNotifyText:Hide()
     end
 end
-AFP("updateQuestLogButton", updateQuestLogButton)
+
 
 local bag_update_interval = 1/30 -- cap bag button updates to 30 FPS
 local function bag_OnUpdate(self, elapsed)
@@ -196,7 +195,7 @@ local function bag_OnUpdate(self, elapsed)
     end
     self.GwNotifyText:Show()
 end
-AFP("bag_OnUpdate", bag_OnUpdate)
+
 
 local function reskinMicroButton(btn, name, mbf, hook)
     if InCombatLockdown() and btn:IsProtected() then
@@ -339,7 +338,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
         btn.GwNotifyText:Hide()
     end
 end
-AFP("reskinMicroButton", reskinMicroButton)
+
 
 local function reskinMicroButtons(mbf, hook)
     for i = 1, #MICRO_BUTTONS_LOCAL do
@@ -350,7 +349,7 @@ local function reskinMicroButtons(mbf, hook)
         end
     end
 end
-AFP("reskinMicroButtons", reskinMicroButtons)
+
 
 local function disableMicroButton(btn, hideOnly)
     if hideOnly then
@@ -368,7 +367,7 @@ local function disableMicroButton(btn, hideOnly)
         btn:Hide()
     end
 end
-AFP("disableMicroButton", disableMicroButton)
+
 
 local function update_OnEnter(self)
     GameTooltip:ClearLines()
@@ -377,7 +376,7 @@ local function update_OnEnter(self)
     GameTooltip:AddLine(self.tooltipText)
     GameTooltip:Show()
 end
-AFP("update_OnEnter", update_OnEnter)
+
 
 local AddonMemoryArray = {}
 local function LatencyInfoToolTip()
@@ -455,7 +454,7 @@ local function hook_MainMenuMicroButton_OnUpdate(self, elapsed)
         end
     end
 end
-AFP("hook_MainMenuMicroButton_OnUpdate", hook_MainMenuMicroButton_OnUpdate)
+
 
 -- mail icon
 local function mailIconTooltip()
@@ -897,7 +896,7 @@ local function setupMicroButtons(mbf)
         end)
     end
 end
-AFP("setupMicroButtons", setupMicroButtons)
+
 
 local function UpdateHelpTicketButtonAnchor()
     local ticket = HelpOpenWebTicketButton
@@ -1036,7 +1035,7 @@ local function checkElvUI()
 
     return false
 end
-AFP("checkElvUI", checkElvUI)
+
 
 local function hook_UpdateMicroButtons()
     HelpMicroButton:Show()
@@ -1089,14 +1088,14 @@ local function hook_UpdateMicroButtons()
         MainMenuMicroButton:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
     end
 end
-AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)
+
 
 local function mbf_OnLeave(self)
     if not self:IsMouseOver() and GW.settings.FADE_MICROMENU then
         self:fadeOut()
     end
 end
-AFP("mbf_OnLeave", mbf_OnLeave)
+
 
 local function LoadMicroMenu()
     if checkElvUI() or not GW.settings.micromenu.enabled then

@@ -12,13 +12,13 @@ local PURCHASE_TAB_ID = -1
 local function layoutAccountBankItems(f)
     inv.layoutContainerFrame(f, f:GetParent().gw_bank_cols, 0, 0, false, GW.settings.BAG_ITEM_SIZE + BANK_ITEM_PADDING)
 end
-GW.AddForProfiling("bank", "layoutAccountBankItems", layoutAccountBankItems)
+
 
 -- adjusts the bank frame size to snap to the exact row/col sizing of contents
 local function snapFrameSize(f)
     inv.snapFrameSize(f, f.BankPanel, GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, 370)
 end
-GW.AddForProfiling("bank", "snapFrameSize", snapFrameSize)
+
 
 local function GrabBankItemButtons(self)
     local idx = 1
@@ -160,7 +160,7 @@ local function onBankResizeStop(self)
     GW.settings.BANK_WIDTH = self:GetWidth()
     inv.onMoved(self, "BANK_POSITION", snapFrameSize)
 end
-GW.AddForProfiling("bank", "onBankResizeStop", onBankResizeStop)
+
 
 local function onBankFrameChangeSize(self)
     local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, BANK_ITEM_PADDING, self:GetWidth())
@@ -182,7 +182,7 @@ local function compactToggle()
     inv.resizeInventory()
     return false
 end
-GW.AddForProfiling("bank", "compactToggle", compactToggle)
+
 
 local function OnShow(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
@@ -200,7 +200,7 @@ local function OnShow(self)
     snapFrameSize(self)
     inv.reskinItemButtons()
 end
-GW.AddForProfiling("bank", "OnShow", OnShow)
+
 
 local function OnHide(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
@@ -210,7 +210,7 @@ local function OnHide(self)
     CloseAllBags(self.BankPanel)
     C_Bank.CloseBankFrame()
 end
-GW.AddForProfiling("bank", "OnHide", OnHide)
+
 
 local function OnEvent(self, event, ...)
     if event == "BANKFRAME_OPENED" then
@@ -227,17 +227,17 @@ local function OnEvent(self, event, ...)
         end
     end
 end
-GW.AddForProfiling("bank", "OnEvent", OnEvent)
+
 
 local function tab_OnEnter(self)
     self.Icon:SetBlendMode("ADD")
 end
-GW.AddForProfiling("bank", "tab_OnEnter", tab_OnEnter)
+
 
 local function tab_OnLeave(self)
     self.Icon:SetBlendMode("BLEND")
 end
-GW.AddForProfiling("bank", "tab_OnLeave", tab_OnLeave)
+
 
 local function SkinAccountBankTabMenu(self)
     if self.isSkinned then return end

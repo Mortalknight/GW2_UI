@@ -101,7 +101,7 @@ local function profButton_OnEnter(self)
     GameTooltip:SetSpellBookItem(self.spellbookIndex, self.booktype)
     GameTooltip:Show()
 end
-GW.AddForProfiling("professions", "profButton_OnEnter", profButton_OnEnter)
+
 
 local profButtonSecure_OnDragStart =
     [=[
@@ -156,7 +156,7 @@ local function updateButton(self, spellIdx, unlearn)
         self:SetAlpha(0)
     end
 end
-GW.AddForProfiling("professions", "updateButton", updateButton)
+
 
 local function unlearn_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
@@ -164,7 +164,7 @@ local function unlearn_OnEnter(self)
     GameTooltip:SetText(UNLEARN_SKILL_TOOLTIP)
     GameTooltip:Show()
 end
-GW.AddForProfiling("professions", "unlearn_OnEnter", unlearn_OnEnter)
+
 
 local function unlearn_OnClick(self)
     if InCombatLockdown() then
@@ -175,7 +175,7 @@ local function unlearn_OnClick(self)
     local skill = self:GetParent()
     StaticPopup_Show("UNLEARN_SKILL", skill.skillName, nil, skill.profId)
 end
-GW.AddForProfiling("professions", "unlearn_OnClick", unlearn_OnClick)
+
 
 local function unlearnSpec_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
@@ -183,7 +183,7 @@ local function unlearnSpec_OnEnter(self)
     GameTooltip:SetText(UNLEARN_SPECIALIZATION_TOOLTIP)
     GameTooltip:Show()
 end
-GW.AddForProfiling("professions", "unlearnSpec_OnEnter", unlearnSpec_OnEnter)
+
 
 local function unlearnSpec_OnClick(self)
     if InCombatLockdown() then
@@ -194,7 +194,7 @@ local function unlearnSpec_OnClick(self)
     local skill = self:GetParent()
     StaticPopup_Show("UNLEARN_SPECIALIZATION", skill.skillName, nil, skill.specIdx)
 end
-GW.AddForProfiling("professions", "unlearnSpec_OnClick", unlearnSpec_OnClick)
+
 
 local function updateOverview(fmOverview)
     if InCombatLockdown() then
@@ -327,7 +327,7 @@ local function updateOverview(fmOverview)
         end
     end
 end
-GW.AddForProfiling("professions", "updateOverview", updateOverview)
+
 
 local function overview_OnUpdate(self, elapsed)
     if self.delay then
@@ -346,7 +346,7 @@ local function overview_OnUpdate(self, elapsed)
     end
     self.queuedUpdate = false
 end
-GW.AddForProfiling("professions", "overview_OnUpdate", overview_OnUpdate)
+
 
 local function queueUpdate(fm, delay, onlyKnowledgePoints)
     if fm.queuedUpdate then
@@ -358,7 +358,7 @@ local function queueUpdate(fm, delay, onlyKnowledgePoints)
     fm.onlyKnowledgePoints = onlyKnowledgePoints
     fm:SetScript("OnUpdate", overview_OnUpdate)
 end
-GW.AddForProfiling("professions", "queueUpdate", queueUpdate)
+
 
 local function overview_OnEvent(self, event)
     if event == "TRAIT_TREE_CURRENCY_INFO_UPDATED" or event == "TRAIT_CONFIG_UPDATED" then
@@ -367,13 +367,13 @@ local function overview_OnEvent(self, event)
         queueUpdate(self)
     end
 end
-GW.AddForProfiling("professions", "overview_OnEvent", overview_OnEvent)
+
 
 local function overview_OnShow(self)
     updateOverview(self)
     UpdateUnusedKnowledgePoints(self)
 end
-GW.AddForProfiling("professions", "overview_OnShow", overview_OnShow)
+
 
 local function loadOverview(parent)
     local fmOverview = CreateFrame("Frame", nil, parent, "GwProfessionsOverview")
@@ -484,7 +484,7 @@ local function loadOverview(parent)
 
     updateOverview(fmOverview)
 end
-GW.AddForProfiling("professions", "loadOverview", loadOverview)
+
 
 local function LoadProfessions(tabContainer)
     local fmMenu = CreateFrame("Frame", nil, tabContainer, "GwHeroPanelMenuTemplate")

@@ -1,5 +1,4 @@
 local _, GW =  ...
-local AFP = GW.AddProfiling
 
 local lootQuality = {
     ["loottab-set-itemborder-white"] = nil, -- dont show white
@@ -730,7 +729,7 @@ local function encounterJournalSkin()
         hooksecurefunc(ItemSetsFrame.ScrollBox, "Update", HandleItemSetsElements)
     end
 end
-AFP("encounterJournalSkin", encounterJournalSkin)
+
 
 local function LoadEncounterJournalSkin()
     if not GW.settings.ENCOUNTER_JOURNAL_SKIN_ENABLED then

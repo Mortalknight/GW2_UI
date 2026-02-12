@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local AddForProfiling = GW.AddForProfiling
 local StrUpper = GW.StrUpper
 
 local function setMultibarCols(barName, setting)
@@ -13,7 +12,7 @@ local function setMultibarCols(barName, setting)
     --#regionto update the cols
     GW.UpdateMultibarButtons()
 end
-AddForProfiling("panel_actionbar", "setMultibarCols", setMultibarCols)
+
 
 local function LoadActionbarPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")

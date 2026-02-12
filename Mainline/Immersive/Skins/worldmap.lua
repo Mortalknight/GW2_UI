@@ -1,5 +1,4 @@
 local _, GW = ...
-local AFP = GW.AddProfiling
 
 local function SkinHeaders(header)
     if header.IsSkinned then
@@ -17,7 +16,7 @@ local function SkinHeaders(header)
 
     header.IsSkinned = true
 end
-AFP("SkinHeaders", SkinHeaders)
+
 
 local sessionCommandToButtonAtlas = {
     [_G.Enum.QuestSessionCommand.Start] = "QuestSharing-DialogIcon",
@@ -32,7 +31,7 @@ local function UpdateExecuteCommandAtlases(frame, command)
         frame.ExecuteSessionCommand.normalIcon:SetAtlas(atlas)
     end
 end
-AFP("UpdateExecuteCommandAtlases", UpdateExecuteCommandAtlases)
+
 
 local function hook_NotifyDialogShow(_, dialog)
     if not dialog.isSkinned then
@@ -51,7 +50,7 @@ local function hook_NotifyDialogShow(_, dialog)
         dialog.isSkinned = true
     end
 end
-AFP("hook_NotifyDialogShow", hook_NotifyDialogShow)
+
 
 local function updateCollapse(self, collapsed)
     if collapsed then
@@ -117,17 +116,17 @@ local function hook_QuestLogQuests_Update()
         end
     end
 end
-AFP("hook_QuestLogQuests_Update", hook_QuestLogQuests_Update)
+
 
 local function mover_OnDragStart(self)
     self:GetParent():StartMoving()
 end
-AFP("mover_OnDragStart", mover_OnDragStart)
+
 
 local function mover_OnDragStop(self)
     self:GetParent():StopMovingOrSizing()
 end
-AFP("mover_OnDragStop", mover_OnDragStop)
+
 
 local EventsFrameHookedElements = {}
 local function EventsFrameHighlightTexture(element)
@@ -441,7 +440,7 @@ local function worldMapSkin()
 
     ScrollUtil.AddAcquiredFrameCallback(QuestMapFrame.EventsFrame.ScrollBox, EventsFrameCallback, QuestMapFrame.EventsFrame, true)
 end
-AFP("worldMapSkin", worldMapSkin)
+
 
 local function LoadWorldMapSkin()
     if not GW.settings.WORLDMAP_SKIN_ENABLED then return end

@@ -505,7 +505,7 @@ local function setChatBackgroundColor(chatFrame)
         end
     end
 end
-GW.AddForProfiling("chatframe", "setChatBackgroundColor", setChatBackgroundColor)
+
 
 local function handleChatFrameFadeIn(chatFrame, force)
     if not GW.settings.CHATFRAME_FADE and not force then
@@ -556,7 +556,7 @@ local function handleChatFrameFadeIn(chatFrame, force)
     UIFrameFadeIn(chatTab, 0.5, chatTab:GetAlpha(), 1)
     UIFrameFadeIn(chatFrame.buttonFrame, 0.5, chatFrame.buttonFrame:GetAlpha(), 1)
 end
-GW.AddForProfiling("chatframe", "handleChatFrameFadeIn", handleChatFrameFadeIn)
+
 
 local function handleChatFrameFadeOut(chatFrame, force)
     if not GW.settings.CHATFRAME_FADE and not force then
@@ -621,7 +621,7 @@ local function handleChatFrameFadeOut(chatFrame, force)
         end
     end
 end
-GW.AddForProfiling("chatframe", "handleChatFrameFadeOut", handleChatFrameFadeOut)
+
 
 local function chatBackgroundOnResize(self)
     local w, h = self:GetSize()
@@ -631,7 +631,7 @@ local function chatBackgroundOnResize(self)
 
     self.texture:SetTexCoord(0, w, 1 - h, 1)
 end
-GW.AddForProfiling("chatframe", "chatBackgroundOnResize", chatBackgroundOnResize)
+
 
 local function SetChatEditBoxMessage(message)
     local ChatFrameEditBox = ChatEdit_ChooseBoxForSend()

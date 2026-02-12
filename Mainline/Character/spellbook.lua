@@ -61,7 +61,7 @@ local function spellButton_OnEnter(self)
     end
     GameTooltip:Show()
 end
-GW.AddForProfiling("talents", "spellButton_OnEnter", spellButton_OnEnter)
+
 
 local function spellButton_OnDragStart(self)
     if InCombatLockdown() or self.isFuture then
@@ -69,7 +69,7 @@ local function spellButton_OnDragStart(self)
     end
     PickupSpellBookItem(self.spellbookIndex, self.booktype)
 end
-GW.AddForProfiling("talents", "spellButton_OnDragStart", spellButton_OnDragStart)
+
 
 local function spellButton_ClickBindCast(self)
     if InClickBindingMode() then
@@ -110,7 +110,7 @@ local function spellButton_GlyphApply(self, unit, button, actionType)
         end
     end
 end
-GW.AddForProfiling("talents", "spellButton_GlyphApply", spellButton_GlyphApply)
+
 
 local spellButtonSecure_OnDragStart =
     [=[
@@ -142,7 +142,7 @@ local function setButton(btn, spellId, skillType, icon, spellbookIndex, booktype
         btn.icon:SetAlpha(1)
     end
 end
-GW.AddForProfiling("talents", "setButton", setButton)
+
 
 local function TalProfButton_OnModifiedClick(self)
     local slot = self.spellbookIndex
@@ -212,7 +212,7 @@ local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, bo
     btn:RegisterForClicks("AnyUp", "AnyDown")
     btn:EnableMouse(true)
 end
-GW.AddForProfiling("talents", "setActiveButton", setActiveButton)
+
 
 local function setPassiveButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
     setButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
@@ -221,7 +221,7 @@ local function setPassiveButton(btn, spellId, skillType, icon, spellbookIndex, b
     btn:RegisterForClicks("AnyUp", "AnyDown")
     btn:EnableMouse(true)
 end
-GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)
+
 
 local function checkForClickBinding(btn, spellId, fmSpellbook)
     btn.canClickBind = false
@@ -447,7 +447,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     passiveGroup:ClearAllPoints()
     passiveGroup:SetPoint("TOPLEFT", fmTab, "TOPLEFT", -4, -offY)
 end
-GW.AddForProfiling("talents", "updateRegTab", updateRegTab)
+
 
 local function updateTab(fmSpellbook)
     if InCombatLockdown() then
@@ -463,14 +463,14 @@ local function updateTab(fmSpellbook)
         end
     end
 end
-GW.AddForProfiling("talents", "updateTab", updateTab)
+
 
 local function spellMenu_OnUpdate(self)
     self:SetScript("OnUpdate", nil)
     updateTab(self)
     self.queuedUpdateTab = false
 end
-GW.AddForProfiling("talents", "spellMenu_OnUpdate", spellMenu_OnUpdate)
+
 
 local function queueUpdateTab(fm)
     if fm.queuedUpdateTab then
@@ -480,13 +480,13 @@ local function queueUpdateTab(fm)
     fm.queuedUpdateTab = true
     fm:SetScript("OnUpdate", spellMenu_OnUpdate)
 end
-GW.AddForProfiling("talents", "queueUpdateTab", queueUpdateTab)
+
 
 local function talentFrame_OnUpdate(self)
     self:SetScript("OnUpdate", nil)
     self.queuedUpdateActiveSpec = false
 end
-GW.AddForProfiling("talents", "talentFrame_OnUpdate", talentFrame_OnUpdate)
+
 
 local function queueUpdateActiveSpec(fm)
     if fm.queuedUpdateActiveSpec then
@@ -496,7 +496,7 @@ local function queueUpdateActiveSpec(fm)
     fm.queuedUpdateActiveSpec = true
     fm:SetScript("OnUpdate", talentFrame_OnUpdate)
 end
-GW.AddForProfiling("talents", "queueUpdateActiveSpec", queueUpdateActiveSpec)
+
 
 local function spellTab_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
@@ -504,7 +504,7 @@ local function spellTab_OnEnter(self)
     GameTooltip_AddNormalLine(GameTooltip, self.gwTipLabel)
     GameTooltip:Show()
 end
-GW.AddForProfiling("talents", "spellTab_OnEnter", spellTab_OnEnter)
+
 
 local function activePoolCommon_Resetter(_, btn)
     btn:EnableMouse(false)
@@ -536,19 +536,19 @@ local function activePoolCommon_Resetter(_, btn)
     btn.modifiedClick = TalProfButton_OnModifiedClick
     btn.canClickBind = false
 end
-GW.AddForProfiling("talents", "activePoolCommon_Resetter", activePoolCommon_Resetter)
+
 
 local function activePool_Resetter(self, btn)
     activePoolCommon_Resetter(self, btn)
     btn:SetAttribute("_ondragstart", spellButtonSecure_OnDragStart)
 end
-GW.AddForProfiling("talents", "activePool_Resetter", activePool_Resetter)
+
 
 local function activePoolNSD_Resetter(self, btn)
     activePoolCommon_Resetter(self, btn)
     btn:SetScript("OnDragStart", spellButton_OnDragStart)
 end
-GW.AddForProfiling("talents", "activePoolNSD_Resetter", activePoolNSD_Resetter)
+
 
 local function passivePool_Resetter(_, btn)
     btn:EnableMouse(false)
@@ -578,7 +578,7 @@ local function passivePool_Resetter(_, btn)
         btn.icon:AddMaskTexture(btn.mask)
     end
 end
-GW.AddForProfiling("talents", "passivePool_Resetter", passivePool_Resetter)
+
 
 local function updateButton(self)
     if self.spellbookIndex and self.booktype then
@@ -593,7 +593,7 @@ local function updateButton(self)
         self.autocast:SetShown(autostate)
     end
 end
-GW.AddForProfiling("talents", "updateButton", updateButton)
+
 
 local function spellGroup_OnEvent(self)
     if not GwSpellbookFrame:IsShown() or not self.pool or not self.poolNSD or not GW.inWorld then
@@ -607,7 +607,7 @@ local function spellGroup_OnEvent(self)
         updateButton(btn)
     end
 end
-GW.AddForProfiling("talents", "spellGroup_OnEvent", spellGroup_OnEvent)
+
 
 local function toggleSpellBook(bookType)
     if InCombatLockdown() then
@@ -622,7 +622,7 @@ local function toggleSpellBook(bookType)
         GwCharacterWindow:SetAttribute("windowpanelopen", "spellbook")
     end
 end
-GW.AddForProfiling("talents", "toggleSpellBook", toggleSpellBook)
+
 
 local function spellBook_OnEvent(self, event, ...)
     if IsIn(event, "SPELLS_CHANGED", "LEARNED_SPELL_IN_TAB", "PLAYER_GUILD_UPDATE", "PLAYER_SPECIALIZATION_CHANGED", "PLAYER_LEVEL_UP", "") then
@@ -671,7 +671,7 @@ local function spellBook_OnEvent(self, event, ...)
         end
     end
 end
-GW.AddForProfiling("talents", "spellBook_OnEvent", spellBook_OnEvent)
+
 
 local function createRegTab(fmSpellbook, tab)
     local container = CreateFrame("Frame", nil, fmSpellbook, "GwSpellbookContainerTab")
@@ -718,7 +718,7 @@ local function createRegTab(fmSpellbook, tab)
 
     return container
 end
-GW.AddForProfiling("talents", "createRegTab", createRegTab)
+
 
 local function LoadSpellbook(tabContainer)
     local fmGTF = CreateFrame("Frame", "GwSpellbookFrame", tabContainer, "SecureHandlerStateTemplate,GwSpellbookFrame")
