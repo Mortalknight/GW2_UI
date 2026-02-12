@@ -112,18 +112,16 @@ local function LoadTargetPanel(sWindow)
     local debuffOptions = {"all", "player", "advanced", "none"}
     local debuffOptionNames = {ALL, PLAYER, L["Advanced Filtering"], NONE}
 
-    local advancedAuraOptions = {"isAuraPlayer", "HEADER", "isAuraRaidPlayer", "isAuraCancelablePlayer", "notAuraCancelablePlayer"}
-    local advancedAuraOptionsNames = {PLAYER, PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag}
+    local advancedAuraOptions = {"isAuraPlayer", "isAuraRaidPlayerDispellable", "HEADER", "isAuraRaidPlayer", "isAuraCancelablePlayer", "notAuraCancelablePlayer"}
+    local advancedAuraOptionsNames = {PLAYER,  L["Dispellable"], PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag}
     local advancedAuraOptionsOther = {"HEADER", "isAuraRaid", "isAuraCancelable", "notAuraCancelable"}
     local advancedAuraOptionsNamesOther = {OTHER, RAID .. otherTag, L["Is Cancelable"] .. otherTag, L["Not Cancelable"] .. otherTag}
 
     if GW.Retail then
-        tinsert(advancedAuraOptions, 2, "isAuraRaidPlayerDispellable")
-        tinsert(advancedAuraOptionsNames, 2, COMPACT_UNIT_FRAME_PROFILE_DISPELLABLE_INDICATOR_TYPE_ME .. playerTag)
         tinsert(advancedAuraOptions, "isAuraExternalDefensivePlayer")
-        tinsert(advancedAuraOptionsNames, EXTERNAL_DEFENSIVES_LABEL .. playerTag)
+        tinsert(advancedAuraOptionsNames, L["External Defensives"] .. playerTag)
         tinsert(advancedAuraOptions, "isAuraImportantPlayer")
-        tinsert(advancedAuraOptionsNames, MAP_LEGEND_IMPORTANT .. playerTag)
+        tinsert(advancedAuraOptionsNames, L["Important"] .. playerTag)
         tinsert(advancedAuraOptions, "isAuraCrowdControlPlayer")
         tinsert(advancedAuraOptionsNames, L["Crowd Control"] .. playerTag)
         tinsert(advancedAuraOptions, "isAuraBigDefensivePlayer")
@@ -132,9 +130,9 @@ local function LoadTargetPanel(sWindow)
         tinsert(advancedAuraOptionsNames, RAID_FRAMES_LABEL)
 
         tinsert(advancedAuraOptionsOther, "isAuraExternalDefensive")
-        tinsert(advancedAuraOptionsNamesOther, EXTERNAL_DEFENSIVES_LABEL .. otherTag)
+        tinsert(advancedAuraOptionsNamesOther, L["External Defensives"] .. otherTag)
         tinsert(advancedAuraOptionsOther, "isAuraImportant")
-        tinsert(advancedAuraOptionsNamesOther, MAP_LEGEND_IMPORTANT .. otherTag)
+        tinsert(advancedAuraOptionsNamesOther, L["Important"] .. otherTag)
         tinsert(advancedAuraOptionsOther, "isAuraCrowdControl")
         tinsert(advancedAuraOptionsNamesOther, L["Crowd Control"] .. otherTag)
         tinsert(advancedAuraOptionsOther, "isAuraBigDefensive")
@@ -193,8 +191,7 @@ local function LoadTargetPanel(sWindow)
         optionNames = advancedAuraOptionsNames,
         dependence = {["TARGET_ENABLED"] = true, ["target_Buff_Filter"] = {"advanced"}},
         checkbox = true,
-        groupHeaderName = AURAS,
-        hidden = not GW.Retail}
+        groupHeaderName = AURAS}
     )
 
     p_target:AddOptionDropdown(L["Debuffs"], L["Display the target's debuffs."], { getterSetter = "target_Debuff_Filter", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = debuffOptions, optionNames = debuffOptionNames, dependence = {["TARGET_ENABLED"] = true}, groupHeaderName = AURAS})
@@ -204,8 +201,7 @@ local function LoadTargetPanel(sWindow)
         optionNames = advancedAuraOptionsNames,
         dependence = {["TARGET_ENABLED"] = true, ["target_Debuff_Filter"] = {"advanced"}},
         checkbox = true,
-        groupHeaderName = AURAS,
-        hidden = not GW.Retail}
+        groupHeaderName = AURAS}
     )
 
     p_target:AddGroupHeader(L["Fader"])
@@ -262,8 +258,7 @@ local function LoadTargetPanel(sWindow)
         optionNames = advancedAuraOptionsNames,
         dependence = {["FOCUS_ENABLED"] = true, ["focus_Buff_Filter"] = {"advanced"}},
         checkbox = true,
-        groupHeaderName = AURAS,
-        hidden = GW.Classic}
+        groupHeaderName = AURAS}
     )
 
     p_focus:AddOptionDropdown(L["Debuffs"], L["Display the focus's debuffs."], { getterSetter = "focus_Debuff_Filter", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = debuffOptions, optionNames = debuffOptionNames, dependence = {["FOCUS_ENABLED"] = true}, groupHeaderName = AURAS})
@@ -273,8 +268,7 @@ local function LoadTargetPanel(sWindow)
         optionNames = advancedAuraOptionsNames,
         dependence = {["FOCUS_ENABLED"] = true, ["focus_Debuff_Filter"] = {"advanced"}},
         checkbox = true,
-        groupHeaderName = AURAS,
-        hidden = GW.Classic}
+        groupHeaderName = AURAS}
     )
 
     p_focus:AddGroupHeader(L["Fader"], {hidden = GW.Classic})

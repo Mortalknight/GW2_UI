@@ -318,6 +318,7 @@ local function CheckFilter(data, filters)
         or (filters.notAuraCancelablePlayer and perma and player)
         or (filters.isAuraRaid and data.isAuraRaid and other)
         or (filters.isAuraRaidPlayer and data.isAuraRaid and player)
+        or (filters.isAuraRaidPlayerDispellable and data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName))
 end
 
 local function FilterAura(element, unit, data)
@@ -333,9 +334,9 @@ local function FilterAura(element, unit, data)
         elseif element.debuffFilter == "player" then
             return data.isAuraPlayer
         elseif element.debuffFilter == "important" then
-            return element.showImportant and (data.sourceUnit == "player" or GW.ImportantRaidDebuff[data.spellId]) or not element.showImportant
+            return GW.ImportantRaidDebuff[data.spellId]
         elseif element.debuffFilter == "all" then
-            return true -- all
+            return true
         end
 	end
 end

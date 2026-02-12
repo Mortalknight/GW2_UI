@@ -8,9 +8,9 @@ local StrLower = GW.StrLower
 local playerTag = " |cFF888888(" .. PLAYER .. ")|r"
 local otherTag = " |cFF888888(" .. OTHER .. ")|r"
 local auraOptions = {"isAuraPlayer", "isAuraRaidPlayerDispellable", "HEADER", "isAuraRaidPlayer", "isAuraCancelablePlayer", "notAuraCancelablePlayer", "isAuraImportantPlayer", "isAuraCrowdControlPlayer", "isAuraBigDefensivePlayer", "isAuraRaidInCombatPlayer", "isAuraExternalDefensivePlayer"}
-local auraOptionsNames = {PLAYER, COMPACT_UNIT_FRAME_PROFILE_DISPELLABLE_INDICATOR_TYPE_ME, PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag, MAP_LEGEND_IMPORTANT .. playerTag, L["Crowd Control"] .. playerTag, L["Big Defensive"] .. playerTag, RAID_FRAMES_LABEL .. playerTag, EXTERNAL_DEFENSIVES_LABEL .. playerTag}
+local auraOptionsNames = {PLAYER, L["Dispellable"], PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag, L["Important"] .. playerTag, L["Crowd Control"] .. playerTag, L["Big Defensive"] .. playerTag, RAID_FRAMES_LABEL .. playerTag, L["External Defensives"] .. playerTag}
 local auraOptionsOther = {"HEADER", "isAuraRaid", "isAuraCancelable", "notAuraCancelable", "isAuraImportant", "isAuraCrowdControl", "isAuraBigDefensive", "isAuraRaidInCombat", "isAuraExternalDefensive"}
-local auraOptionsNamesOther = {OTHER, RAID .. otherTag, L["Is Cancelable"] .. otherTag, L["Not Cancelable"] .. otherTag, MAP_LEGEND_IMPORTANT .. otherTag, L["Crowd Control"] .. otherTag, L["Big Defensive"] .. otherTag, RAID_FRAMES_LABEL .. otherTag, EXTERNAL_DEFENSIVES_LABEL .. otherTag}
+local auraOptionsNamesOther = {OTHER, RAID .. otherTag, L["Is Cancelable"] .. otherTag, L["Not Cancelable"] .. otherTag, L["Important"] .. otherTag, L["Crowd Control"] .. otherTag, L["Big Defensive"] .. otherTag, RAID_FRAMES_LABEL .. otherTag, L["External Defensives"] .. otherTag}
 
 for i = 1, #auraOptionsOther do
     tinsert(auraOptions, auraOptionsOther[i])
