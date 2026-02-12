@@ -410,7 +410,7 @@ end
 local function sliderValueChange(self)
     local roundValue = GW.RoundDec(self:GetValue(), 2)
     local moverFrame = self:GetParent():GetParent():GetParent().child
-    moverFrame.parent:SetScale(roundValue)
+    moverFrame.parent:SetScale(roundValue, true)
     self:GetParent().input:SetText(roundValue)
     GW.settings[moverFrame.setting .."_scale"] = roundValue
 
@@ -509,8 +509,8 @@ local function ParentOnWidthChanged(self, width)
     self.gwMover:SetWidth(width)
 end
 
-local function ParentOnScaleChanged(self, scale)
-    if self.gwMover.ignoreSize == true then return end
+local function ParentOnScaleChanged(self, scale, override)
+    if not override and self.gwMover.ignoreSize == true then return end
     if InCombatLockdown() then
         GW.CombatQueue_Queue(self.gwMover:GetName() .. "Scale", ParentOnScaleChanged, {self, scale})
         return
