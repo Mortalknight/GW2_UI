@@ -482,6 +482,24 @@ local function moverframe_OnLeave(self)
     end
 end
 
+local function ParentOnSizeChanged(self, width, height)
+    if self.gwMover.ignoreSize == true then return end
+    if InCombatLockdown() then
+        GW.CombatQueue_Queue(self.gwMover:GetName() .. "Size", ParentOnScaleChanged, {self, width, height})
+        return
+    end
+    self.gwMover:SetSize(width, height)
+end
+
+local function ParentOnScaleChanged(self, scale)
+    if self.gwMover.ignoreSize == true then return end
+    if InCombatLockdown() then
+        GW.CombatQueue_Queue(self.gwMover:GetName() .. "Scale", ParentOnScaleChanged, {self, scale})
+        return
+    end
+    self.gwMover:SetScale(scale)
+end
+
 local function CreateMoverFrame(parent, displayName, settingsName, size, frameOptions, mhf, postdrag, tags, ignoreParentSize)
     local mf = CreateFrame("Button", "Gw_" .. settingsName, UIParent, "SecureHandlerStateTemplate")
     mf:SetClampedToScreen(true)
@@ -501,21 +519,8 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     else
         mf:SetSize(parent:GetSize())
     end
-    hooksecurefunc(parent, "SetScale", function(self, scale)
-        mf:SetScale(scale)
-    end)
-    hooksecurefunc(parent, "SetWidth", function(self, width)
-        if self.gwMover.ignoreSize == true then return end
-        mf:SetWidth(width)
-    end)
-    hooksecurefunc(parent, "SetHeight", function(self, height)
-        if self.gwMover.ignoreSize == true then return end
-        mf:SetHeight(height)
-    end)
-    hooksecurefunc(parent, "SetSize", function(self, width, height)
-        if self.gwMover.ignoreSize == true then return end
-        mf:SetSize(width, height)
-    end)
+    hooksecurefunc(parent, "SetScale", ParentOnScaleChanged)
+    hooksecurefunc(parent, "OnSizeChanged",ParentOnSizeChanged)
 
     mf:Hide()
 
