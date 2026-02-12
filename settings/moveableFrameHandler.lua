@@ -485,10 +485,28 @@ end
 local function ParentOnSizeChanged(self, width, height)
     if self.gwMover.ignoreSize == true then return end
     if InCombatLockdown() then
-        GW.CombatQueue_Queue(self.gwMover:GetName() .. "Size", ParentOnScaleChanged, {self, width, height})
+        GW.CombatQueue_Queue(self.gwMover:GetName() .. "Size", ParentOnSizeChanged, {self, width, height})
         return
     end
     self.gwMover:SetSize(width, height)
+end
+
+local function ParentOnHeightChanged(self, height)
+    if self.gwMover.ignoreSize == true then return end
+    if InCombatLockdown() then
+        GW.CombatQueue_Queue(self.gwMover:GetName() .. "Height", ParentOnHeightChanged, {self, height})
+        return
+    end
+    self.gwMover:SetHeight(height)
+end
+
+local function ParentOnWidthChanged(self, width)
+    if self.gwMover.ignoreSize == true then return end
+    if InCombatLockdown() then
+        GW.CombatQueue_Queue(self.gwMover:GetName() .. "Width", ParentOnWidthChanged, {self, width})
+        return
+    end
+    self.gwMover:SetWidth(width)
 end
 
 local function ParentOnScaleChanged(self, scale)
@@ -520,7 +538,9 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
         mf:SetSize(parent:GetSize())
     end
     hooksecurefunc(parent, "SetScale", ParentOnScaleChanged)
-    hooksecurefunc(parent, "OnSizeChanged",ParentOnSizeChanged)
+    hooksecurefunc(parent, "SetHeight", ParentOnHeightChanged)
+    hooksecurefunc(parent, "SetWidth", ParentOnWidthChanged)
+    hooksecurefunc(parent, "SetSize", ParentOnSizeChanged)
 
     mf:Hide()
 
