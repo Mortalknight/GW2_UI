@@ -41,7 +41,7 @@ local function PostUpdateButton(self, button, unit, data, position)
 
     if GW.Retail then
         if data.isHarmfulAura then
-            local color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, button.dispelColorCurve)
+            local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, self.dispelColorCurve)
             button.background:SetVertexColor(color:GetRGBA())
             button.background:Show()
             button.backdrop:Hide()

@@ -374,6 +374,9 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
     local auras = self.Auras
     if(auras) then
+        isFullUpdate = auras.needFullUpdate or isFullUpdate
+		auras.needFullUpdate = false
+
         --[[ Callback: Auras:PreUpdate(unit, isFullUpdate)
         Called before the element has been updated.
 
@@ -439,14 +442,6 @@ local function UpdateAuras(self, event, unit, updateInfo)
                 end
             end
         else
-            -- Partial updates can happen before any full update, so make sure caches exist.
-            auras.allBuffs = auras.allBuffs or {}
-            auras.activeBuffs = auras.activeBuffs or {}
-            auras.allDebuffs = auras.allDebuffs or {}
-            auras.activeDebuffs = auras.activeDebuffs or {}
-            auras.sortedBuffs = auras.sortedBuffs or {}
-            auras.sortedDebuffs = auras.sortedDebuffs or {}
-
             if(updateInfo.addedAuras) then
                 for _, data in next, updateInfo.addedAuras do
                     if(not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, buffFilter)) then
@@ -673,6 +668,9 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
     local buffs = self.Buffs
     if(buffs) then
+        isFullUpdate = auras.needFullUpdate or isFullUpdate
+		buffs.needFullUpdate = false
+
         if(buffs.PreUpdate) then buffs:PreUpdate(unit, isFullUpdate) end
 
         local buffsChanged = false
@@ -782,6 +780,9 @@ local function UpdateAuras(self, event, unit, updateInfo)
 
     local debuffs = self.Debuffs
     if(debuffs) then
+        isFullUpdate = auras.needFullUpdate or isFullUpdate
+		debuffs.needFullUpdate = false
+
         if(debuffs.PreUpdate) then debuffs:PreUpdate(unit, isFullUpdate) end
 
         local debuffsChanged = false
@@ -936,6 +937,17 @@ local function Enable(self)
             auras.anchoredButtons = 0
             auras.visibleButtons = 0
             auras.tooltipAnchor = auras.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
+            auras.needFullUpdate = true
+
+            if(not auras.dispelColorCurve) then
+				auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
+				auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
+				for _, dispelIndex in next, ns.DispelType do
+					if ns.DebuffColors[dispelIndex] then
+						auras.dispelColorCurve:AddPoint(dispelIndex, ns.DebuffColors[dispelIndex])
+					end
+				end
+			end
 
             auras:Show()
         end
@@ -951,6 +963,17 @@ local function Enable(self)
             buffs.anchoredButtons = 0
             buffs.visibleButtons = 0
             buffs.tooltipAnchor = buffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
+            buffs.needFullUpdate = true
+
+            if(not buffs.dispelColorCurve) then
+				buffs.dispelColorCurve = C_CurveUtil.CreateColorCurve()
+				buffs.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
+				for _, dispelIndex in next, ns.DispelType do
+					if ns.DebuffColors[dispelIndex] then
+						buffs.dispelColorCurve:AddPoint(dispelIndex, ns.DebuffColors[dispelIndex])
+					end
+				end
+			end
 
             buffs:Show()
         end
@@ -966,6 +989,17 @@ local function Enable(self)
             debuffs.anchoredButtons = 0
             debuffs.visibleButtons = 0
             debuffs.tooltipAnchor = debuffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
+            debuffs.needFullUpdate = true
+
+            if(not debuffs.dispelColorCurve) then
+				debuffs.dispelColorCurve = C_CurveUtil.CreateColorCurve()
+				debuffs.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
+				for _, dispelIndex in next, ns.DispelType do
+					if ns.DebuffColors[dispelIndex] then
+						debuffs.dispelColorCurve:AddPoint(dispelIndex, ns.DebuffColors[dispelIndex])
+					end
+				end
+			end
 
             debuffs:Show()
         end

@@ -374,6 +374,9 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
 
     local numTotal = auras.numTotal or numBuffs + numDebuffs
 
+    isFullUpdate = auras.needFullUpdate or isFullUpdate
+	auras.needFullUpdate = false
+
     if isFullUpdate then
         auras.allBuffs = table.wipe(auras.allBuffs or {})
         auras.activeBuffs = table.wipe(auras.activeBuffs or {})
@@ -407,13 +410,6 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
             end
         end
     else
-        auras.allBuffs = auras.allBuffs or {}
-        auras.activeBuffs = auras.activeBuffs or {}
-        auras.allDebuffs = auras.allDebuffs or {}
-        auras.activeDebuffs = auras.activeDebuffs or {}
-        auras.sortedBuffs = auras.sortedBuffs or {}
-        auras.sortedDebuffs = auras.sortedDebuffs or {}
-
         if updateInfo.addedAuras then
             for _, data in next, updateInfo.addedAuras do
                 if(data.isHelpful and not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, buffFilter)) then
@@ -565,6 +561,7 @@ local function LoadAuras(self)
     self.auras.anchoredButtons = 0
     self.auras.ForceUpdate = ForceUpdate
     self.auras.__owner = self
+    self.auras.needFullUpdate = true
 
     self.auras.maxWidth = self.auras:GetWidth()
 end

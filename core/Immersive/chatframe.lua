@@ -1629,23 +1629,37 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             local accessID = GW.ChatFunctions:GetAccessID(chatGroup, arg8)
             local typeID = GW.ChatFunctions:GetAccessID(infoType, arg8, arg12)
 
-            if GW.Retail and arg1 == "YOU_CHANGED" and C_ChatInfo.GetChannelRuleset(arg8) == Enum.ChatChannelRuleset.Mentor then
+            if GW.Retail and GW.NotSecretValue(arg1) and arg1 == "YOU_CHANGED" and C_ChatInfo.GetChannelRuleset(arg8) == Enum.ChatChannelRuleset.Mentor then
                 frame:UpdateDefaultChatTarget()
                 frame.editBox:UpdateNewcomerEditBoxHint()
             else
-                if GW.Retail and arg1 == "YOU_LEFT" then
+                if GW.Retail and GW.NotSecretValue(arg1) and arg1 == "YOU_LEFT" then
                     frame.editBox:UpdateNewcomerEditBoxHint(arg8)
                 end
 
                 local globalstring
-                if arg1 == "TRIAL_RESTRICTED" then
+                if GW.NotSecretValue(arg1)and arg1 == "TRIAL_RESTRICTED" then
                     globalstring = CHAT_TRIAL_RESTRICTED_NOTICE_TRIAL
                 else
-                    globalstring = _G["CHAT_"..arg1.."_NOTICE_BN"]
+                    if GW.IsSecretValue(arg1) then
+                        globalstring = C_StringUtil.WrapString(arg1, "CHAT_", "_NOTICE_BN")
+                    else
+                        globalstring = _G["CHAT_"..arg1.."_NOTICE_BN"]
+                    end
+
                     if not globalstring then
-                        globalstring = _G["CHAT_"..arg1.."_NOTICE"]
+                        if GW.IsSecretValue(arg1) then
+                            globalstring = C_StringUtil.WrapString(arg1, "CHAT_", "_NOTICE")
+                        else
+                            globalstring = _G["CHAT_"..arg1.."_NOTICE"]
+                        end
                         if not globalstring then
-                            GMError(("Missing global string for %q"):format("CHAT_"..arg1.."_NOTICE"))
+                            if GW.IsSecretValue(arg1) then
+                                globalstring = C_StringUtil.WrapString(arg1, "CHAT_", "_NOTICE")
+                            else
+                                globalstring = _G["CHAT_"..arg1.."_NOTICE"]
+                            end
+                            GMError(("Missing global string for %q"):format(globalstring))
                             return
                         end
                     end
@@ -2525,7 +2539,8 @@ local function SocialQueueEvent(...)
         if firstQueue.queueData.lfgListID then
             local searchResultInfo = C_LFGList.GetSearchResultInfo(firstQueue.queueData.lfgListID)
             if searchResultInfo then
-                activityID, name, leaderName = searchResultInfo.activityIDs[1], searchResultInfo.name, searchResultInfo.leaderName
+                activityID = GW.NotSecretTable(searchResultInfo.activityIDs) and searchResultInfo.activityIDs[1]
+                name, leaderName = searchResultInfo.name, searchResultInfo.leaderName
                 isLeader = SocialQueueIsLeader(playerName, leaderName)
             end
         end
