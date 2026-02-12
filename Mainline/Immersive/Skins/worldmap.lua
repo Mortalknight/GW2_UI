@@ -205,7 +205,11 @@ local function worldMapSkin()
     WorldMapFrame.NavBar:GwStripTextures()
     WorldMapFrame.NavBar.overlay:GwStripTextures()
     WorldMapFrame.NavBar:SetPoint("TOPLEFT", 1, -47)
-    WorldMapFrame.NavBar.SetPoint = GW.NoOp
+    hooksecurefunc(WorldMapFrame.NavBar, "SetPoint", function(self, point, _, _, x, y)
+        if x ~= 1 then
+            self:SetPoint("TOPLEFT", 1, -47)
+        end
+    end)
 
     local navBarTex = WorldMapFrame.NavBar:CreateTexture(nil, "BACKGROUND", nil, 0)
     navBarTex:SetPoint("TOPLEFT", WorldMapFrame.NavBar, "TOPLEFT", 0,20)
@@ -241,6 +245,8 @@ local function worldMapSkin()
     WorldMapFrame.BorderFrame.CloseButton:SetPoint("TOPRIGHT",-10,-2)
 
     WorldMapFrame.BorderFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
+
+    
 
     local QuestMapFrame = _G.QuestMapFrame
     QuestMapFrame.VerticalSeparator:Hide()
@@ -440,7 +446,6 @@ local function worldMapSkin()
 
     ScrollUtil.AddAcquiredFrameCallback(QuestMapFrame.EventsFrame.ScrollBox, EventsFrameCallback, QuestMapFrame.EventsFrame, true)
 end
-
 
 local function LoadWorldMapSkin()
     if not GW.settings.WORLDMAP_SKIN_ENABLED then return end
