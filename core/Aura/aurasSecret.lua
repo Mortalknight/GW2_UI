@@ -361,6 +361,8 @@ local function UpdateBuffLayout(self, event, unit, updateInfo)
         auras.activeBuffs = auras.activeBuffs or {}
         auras.allDebuffs = auras.allDebuffs or {}
         auras.activeDebuffs = auras.activeDebuffs or {}
+        auras.sortedBuffs = auras.sortedBuffs or {}
+        auras.sortedDebuffs = auras.sortedDebuffs or {}
 
         if updateInfo.addedAuras then
             for _, data in next, updateInfo.addedAuras do
