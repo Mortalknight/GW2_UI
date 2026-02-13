@@ -200,6 +200,7 @@ local function ClearAuraTime(self)
     self.endTime = nil
     self.auraInstanceID = nil
     self.status.duration:SetText("")
+    self.cooldown:SetAlpha(0)
 
     if not GW.Retail then
         setLongCD(self, 0) -- to reset border and timer
