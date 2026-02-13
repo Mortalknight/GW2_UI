@@ -57,7 +57,7 @@ local function updateBagItemButton(button)
 
         local  _, _, quality = C_Item.GetItemInfo(id)
         if quality then
-            GW.SetItemLevel(button, quality, button.ItemId)
+            GW.SetItemLevel(button, quality, button.itemLink)
             GW.SetItemButtonBorderQuality(button, quality)
         end
     end
@@ -80,11 +80,12 @@ local function updateBagItemListAll()
 
         GetInventoryItemsForSlot(id, bagItemList)
 
-        for location, _ in next, bagItemList do
+        for location, itemLink in next, bagItemList do
             if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
                 local itemFrame = getBagSlotFrame(itemIndex)
                 itemFrame.location = location
                 itemFrame.itemSlot = id
+                itemFrame.itemLink = itemLink
 
                 updateBagItemButton(itemFrame)
 
@@ -223,11 +224,12 @@ local function updateBagItemList(itemButton)
     local x = 10
     local y = 15
 
-    for location, _ in next, bagItemList do
+    for location, itemLink in next, bagItemList do
         if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
             local itemFrame = getBagSlotFrame(itemIndex)
             itemFrame.location = location
             itemFrame.itemSlot = id
+            itemFrame.itemLink = itemLink
 
             updateBagItemButton(itemFrame)
 
@@ -294,6 +296,7 @@ end
 getBagSlotFrame = function(i)
     local button = _G["gwPaperDollBagSlotButton" .. i]
     if button then
+        button.itemLink = nil
         button.__gwLastItemLink = nil
         return button
     end

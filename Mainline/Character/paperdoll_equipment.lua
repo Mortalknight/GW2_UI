@@ -217,10 +217,11 @@ local function updateBagItemList(itemButton)
     local gridIndex, itemIndex = 1, 1
     local x, y = 10, 15
 
-    for location in pairs(bagItemList) do
+    for location, itemLink in pairs(bagItemList) do
         if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
             local itemFrame = getBagSlotFrame()
             itemFrame.location = location
+            itemFrame.itemLink = itemLink
             itemFrame.itemSlot = id
 
             updateBagItemButton(itemFrame)
@@ -430,7 +431,7 @@ getBagSlotFrame = function()
             f.BACKGROUND:SetAlpha(1)
             f.itemlevel:SetAlpha(1)
             f.repairIcon:SetAlpha(1)
-            GW.SetItemLevel(f, f.quality, f.itemId)
+            GW.SetItemLevel(f, f.quality, f.itemLink)
         end)
 
         f.initialized = true
@@ -453,11 +454,12 @@ local function updateBagItemListAll()
     for _, id in ipairs(EquipSlotList) do
         bagItemList = wipe(bagItemList or {})
         GetInventoryItemsForSlot(id, bagItemList)
-        for location in pairs(bagItemList) do
+        for location, itemLink in pairs(bagItemList) do
             if not (location - id == ITEM_INVENTORY_LOCATION_PLAYER) then -- Remove the currently equipped item from the list
                 local itemFrame = getBagSlotFrame()
                 itemFrame.location = location
                 itemFrame.itemSlot = id
+                itemFrame.itemLink = itemLink
 
                 updateBagItemButton(itemFrame)
 
@@ -1047,6 +1049,7 @@ end
 local function ResetBagSlotFrame(_, f)
     f.location = nil
     f.itemSlot = nil
+    f.itemLink = nil
     f.itemId = nil
     f.quality = nil
     f.__gwLastItemLink = nil
