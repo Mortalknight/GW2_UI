@@ -18,13 +18,16 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+
 addChange("10.2.1", {
-    {GW.ChangelogType.feature, [=[More chat secrets]=]},
-    {GW.ChangelogType.feature, [=[Grid color error]=]},
-    {GW.ChangelogType.feature, [=[Equiptmentmanager item level]=]},
+    {GW.ChangelogType.bug, [=[More chat secrets]=]},
+    {GW.ChangelogType.bug, [=[Grid color error]=]},
+    {GW.ChangelogType.bug, [=[Equipment manager item level]=]},
     {GW.ChangelogType.bug, [=[Vehicle leave button on TBC]=]},
     {GW.ChangelogType.bug, [=[Missing widgets on TBC and Mists]=]},
     {GW.ChangelogType.bug, [=[PvP UI fixes]=]},
+    {GW.ChangelogType.change, [=[Grid buffs can be disabled (retail)]=]},
 })
 
 addChange("10.2.0", {

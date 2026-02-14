@@ -2,10 +2,13 @@
 FIXES
     - More chat secrets
     - Grid color error
-    - Equiptmentmanager item level
+    - Equipment manager item level
     - Vehicle leave button on TBC
     - Missing widgets on TBC and Mists
     - PvP UI fixes
+
+CHANGES
+    - Grid buffs can be disabled (retail)
 
 10.2.0
 NEW

@@ -67,6 +67,8 @@ local function UpdateGridRaid40Frame(frame)
     frame.showDebuffs = GW.settings.RAID_SHOW_DEBUFFS
     frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS
 
+    frame.showBuffs = GW.settings.RAID_SHOW_BUFFS
+
     -- retail filtering
     frame.debuffFilters = GW.settings.RAID_DEBUFF_FILTER
     frame.buffFilters = GW.settings.RAID_BUFF_FILTER

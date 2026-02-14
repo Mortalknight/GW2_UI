@@ -69,6 +69,7 @@ local function UpdateGridRaidPetFrame(frame)
     -- retail filtering
     frame.debuffFilters = GW.settings.RAID_PET_DEBUFF_FILTER
     frame.buffFilters = GW.settings.RAID_PET_BUFF_FILTER
+    frame.showBuffs = GW.settings.RAID_PET_SHOW_BUFFS
 
     if not InCombatLockdown() then
         frame:DisableElement("MiddleIcon")

@@ -859,6 +859,7 @@ GW.globalDefault = {
         RAID_SHOW_ABSORB_BAR_TANK = true,
         RAID_MAINTANK_DEBUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_MAINTANK_BUFF_FILTER = CopyTable(GridAuraFilter),
+        RAID_SHOW_BUFFS_TANK = false,
         maintank_show_powerbar = "NONE", -- always
         raidMaintank_pos= {
             point= "TOPLEFT",
@@ -921,6 +922,7 @@ GW.globalDefault = {
         RAID_SHOW_ABSORB_BAR_PET = true,
         RAID_PET_DEBUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_PET_BUFF_FILTER = CopyTable(GridAuraFilter),
+        RAID_PET_SHOW_BUFFS = false,
         pet_show_powerbar = "NONE", -- always
 
         raid_pet_pos= {
@@ -961,6 +963,7 @@ GW.globalDefault = {
         PARTY_SHOW_ABSORB_BAR_PET = true,
         PARTY_PET_DEBUFF_FILTER = CopyTable(GridAuraFilter),
         PARTY_PET_BUFF_FILTER = CopyTable(GridAuraFilter),
+        PARTY_PET_SHOW_BUFFS = false,
         -- defaults
         party_pet_show_powerbar = "NONE", -- always
 
@@ -1001,6 +1004,7 @@ GW.globalDefault = {
         RAID_SHOW_ABSORB_BAR = true,
         RAID_BUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_DEBUFF_FILTER = CopyTable(GridAuraFilter),
+        RAID_SHOW_BUFFS = false,
         raid40_show_powerbar = "ALL",
 
         raid_pos= {
@@ -1041,6 +1045,7 @@ GW.globalDefault = {
         RAID_SHOW_ABSORB_BAR_RAID25 = true,
         RAID_25_DEBUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_25_BUFF_FILTER = CopyTable(GridAuraFilter),
+        RAID_25_SHOW_BUFFS = false,
         raid25_show_powerbar = "ALL",
 
         raid25_pos= {
@@ -1081,6 +1086,7 @@ GW.globalDefault = {
         RAID_SHOW_ABSORB_BAR_RAID10 = true,
         RAID_10_DEBUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_10_BUFF_FILTER = CopyTable(GridAuraFilter),
+        RAID_10_SHOW_BUFFS = false,
         raid10_show_powerbar = "ALL",
 
         raid10_pos= {
@@ -1121,6 +1127,7 @@ GW.globalDefault = {
         RAID_SHOW_ABSORB_BAR_PARTY = true,
         RAID_PARTY_DEBUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_PARTY_BUFF_FILTER = CopyTable(GridAuraFilter),
+        RAID_PARTY_SHOW_BUFFS = false,
         party_grid_show_powerbar = "ALL",
 
         raid_party_pos= {

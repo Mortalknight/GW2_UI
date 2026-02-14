@@ -149,15 +149,13 @@ local function FilterAura(self, unit, data)
     local isImportant, isDispellable
 
     if GW.Retail then
-        if data.isHarmfulAura then
-            if not parent.showDebuffs then
-                return false
-            else
-                return CheckFilter(data, parent.debuffFilters)
-            end
-        else
-            return CheckFilter(data, parent.buffFilters)
+        local isDebuff = data.isHarmfulAura
+        local show = isDebuff and parent.showDebuffs or parent.showBuffs
+        if not show then
+            return false
         end
+        local filters = isDebuff and parent.debuffFilters or parent.buffFilters
+        return CheckFilter(data, filters)
     end
 
     if data.isHelpfulAura then

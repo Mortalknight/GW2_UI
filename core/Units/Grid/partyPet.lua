@@ -48,6 +48,7 @@ local function UpdateGridPartyPetFrame(frame)
     frame.PARTYShowImportantInstanceDebuffs = GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET
     frame.showDebuffs = GW.settings.PARTY_SHOW_DEBUFFS_PET
     frame.showOnlyDispelDebuffs = GW.settings.PARTY_ONLY_DISPELL_DEBUFFS_PET
+    frame.showBuffs = GW.settings.PARTY_PET_SHOW_BUFFS
     frame.showAuraTooltipInCombat = GW.settings.PARTY_AURA_TOOLTIP_INCOMBAT_PET
     frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
     --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
