@@ -149,14 +149,17 @@ local function WidgetUISetup()
     if not CheckElvUI() then
         BuildWidgetMover(UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", {58, 58})
         BuildWidgetMover(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", {100, 20})
-        BuildWidgetMover(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", {150, 30})
-        BuildWidgetMover(EventToastManagerFrame, "EventToastWidget", "EventToastWidget_pos", {200, 20})
-        BuildWidgetMover(BossBanner, "BossBannerWidget", "BossBannerWidget_pos", {200, 20})
         BuildWidgetMover(TicketStatusFrame, "GM Ticket Frame", "TicketStatusFrame_pos")
 
-        -- handle power bar widgets after reload as Setup will have fired before this
-        for _, widget in pairs(UIWidgetPowerBarContainerFrame.widgetFrames) do
-            UIWidgetTemplateStatusBar(widget)
+        if GW.Retail then
+            BuildWidgetMover(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", {150, 30})
+            BuildWidgetMover(EventToastManagerFrame, "EventToastWidget", "EventToastWidget_pos", {200, 20})
+            BuildWidgetMover(BossBanner, "BossBannerWidget", "BossBannerWidget_pos", {200, 20})
+
+            -- handle power bar widgets after reload as Setup will have fired before this
+            for _, widget in pairs(UIWidgetPowerBarContainerFrame.widgetFrames) do
+                UIWidgetTemplateStatusBar(widget)
+            end
         end
 
         hooksecurefunc(UIWidgetTemplateStatusBarMixin, "Setup", UIWidgetTemplateStatusBar)

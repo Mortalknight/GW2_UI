@@ -1,6 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="Skins\Load.xml"/>
     <Script file ="minimap.lua"/>
-    <Script file ="widgetUI.lua"/>
     <Script file ="vehicle.lua"/>
 </Ui>

@@ -19,4 +19,5 @@
     <Script file ="alertPosition.lua"/>
     <Script file ="alerts.lua"/>
     <Script file ="minimap.lua"/>
+    <Script file ="widgetUI.lua"/>
 </Ui>

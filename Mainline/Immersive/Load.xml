@@ -3,5 +3,4 @@
     <Script file ="eventTracker.lua"/>
     <Script file ="minimapInstanceDifficult.lua"/>
     <Script file ="minimap.lua"/>
-    <Script file ="widgetUI.lua"/>
 </Ui>
