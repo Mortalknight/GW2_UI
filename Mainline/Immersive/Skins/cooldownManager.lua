@@ -98,7 +98,7 @@ function CooldownManagerFunctions:SkinIcon(container, icon)
     CooldownManagerFunctions:UpdateTextContainer(container)
     icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
-    if not icon.gwBackdrop then
+    if not container.gwBackdrop then
         local backDrop = CreateFrame("Frame", nil, container, "GwActionButtonBackdropTmpl")
         local backDropSize = 1
 
@@ -148,10 +148,12 @@ function CooldownManagerFunctions:SkinBar(frame, bar)
 
             if atlas == "UI-HUD-CoolDownManager-Bar-BG" then
                 region:SetAlpha(0)
-                frame.GwStatusBarBackground = CreateFrame("Frame", nil, frame, "GwStatusBarBackground")
-                frame.GwStatusBarBackground:ClearAllPoints()
-                frame.GwStatusBarBackground:SetAllPoints(frame.Bar)
-                frame.GwStatusBarBackground:SetFrameStrata("BACKGROUND")
+                if not frame.GwStatusBarBackground then
+                    frame.GwStatusBarBackground = CreateFrame("Frame", nil, frame, "GwStatusBarBackground")
+                    frame.GwStatusBarBackground:ClearAllPoints()
+                    frame.GwStatusBarBackground:SetAllPoints(frame.Bar)
+                    frame.GwStatusBarBackground:SetFrameStrata("BACKGROUND")
+                end
                 break
             end
         end
@@ -199,6 +201,7 @@ do
                         hooksecurefunc(frame, key, func)
                     end
                 end
+                frame.Cooldown.isHooked = true
             end
         end
 
