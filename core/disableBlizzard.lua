@@ -128,6 +128,10 @@ local function DisableBlizzardFrames()
 			for _, frame in next, CompactArenaFrame.memberUnitFrames do
 				HandleFrame(frame, true)
 			end
+
+            for _, frame in ipairs(ArenaEnemyMatchFramesContainer.UnitFrames) do
+                HandleFrame(frame, true)
+            end
         end
     end
 

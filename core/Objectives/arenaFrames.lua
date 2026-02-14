@@ -157,23 +157,23 @@ function GwObjectivesArenaContainerMixin:SetCompass()
 end
 
 function GwObjectivesArenaContainerMixin:UpdateArenaFrameHeight()
-    local count = 0
+    local lastIndex = 0
 
-    for _, frame in pairs(arenaFrames) do
+    for index, frame in pairs(arenaFrames) do
         if frame:IsShown() then
-            count = count + 1
+            lastIndex = index
         end
     end
 
-    if count == 0 then
-        for _, frame in pairs(arenaPrepFrames) do
+    if lastIndex == 0 then
+        for index, frame in pairs(arenaPrepFrames) do
             if frame:IsShown() then
-                count = count + 1
+                lastIndex = index
             end
         end
     end
     self.oldHeight = GW.RoundInt(self:GetHeight())
-    self:SetHeight(count > 0 and (48 * count) or 1)
+    self:SetHeight(lastIndex > 0 and (48 * lastIndex) or 1)
 end
 
 function GwObjectivesArenaContainerMixin:SetUpFramePosition()
