@@ -2489,7 +2489,7 @@ local function RecentSocialQueue(currentTime, msg)
         for guid, tbl in pairs(socialQueueCache) do
             if currentTime and (difftime(currentTime, tbl[1]) >= 180) then
                 socialQueueCache[guid] = nil
-            elseif msg and (msg == tbl[2]) then
+            elseif GW.NotSecretValue(msg) and (msg == tbl[2]) then
                 previousMessage = true
             end
         end
@@ -2506,7 +2506,7 @@ local function SocialQueueMessage(guid, message)
 
     PlaySound(SOUNDKIT.UI_71_SOCIAL_QUEUEING_TOAST)
 
-    GW.Notice(format("|Hsqu:%s|h%s|h", guid, strtrim(message)))
+    GW.Notice(format("|Hsqu:%s|h%s|h", guid, message))
 end
 
 local function SocialQueueEvent(...)
