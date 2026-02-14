@@ -942,7 +942,7 @@ local function Enable(self)
             auras.tooltipAnchor = auras.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
             auras.needFullUpdate = true
 
-            if(not auras.dispelColorCurve) then
+            if(not auras.dispelColorCurve and C_CurveUtil) then
 				auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
 				auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 				for _, dispelIndex in next, oUF.Enum.DispelType do
@@ -968,7 +968,7 @@ local function Enable(self)
             buffs.tooltipAnchor = buffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
             buffs.needFullUpdate = true
 
-            if(not auras.dispelColorCurve) then
+            if(not auras.dispelColorCurve and C_CurveUtil) then
 				auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
 				auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 				for _, dispelIndex in next, oUF.Enum.DispelType do
@@ -994,7 +994,7 @@ local function Enable(self)
             debuffs.tooltipAnchor = debuffs.tooltipAnchor or 'ANCHOR_BOTTOMRIGHT'
             debuffs.needFullUpdate = true
 
-            if(not debuffs.dispelColorCurve) then
+            if(not debuffs.dispelColorCurve and C_CurveUtil) then
 				debuffs.dispelColorCurve = C_CurveUtil.CreateColorCurve()
 				debuffs.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
 				for _, dispelIndex in next, oUF.Enum.DispelType do
