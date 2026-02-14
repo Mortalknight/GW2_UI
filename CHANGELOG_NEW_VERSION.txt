@@ -1,3 +1,12 @@
+10.2.1
+FIXES
+    - More chat secrets
+    - Grid color error
+    - Equiptmentmanager item level
+    - Vehicle leave button on TBC
+    - Missing widgets on TBC and Mists
+    - PvP UI fixes
+
 10.2.0
 NEW
     - Added all new aura filter options to grids (retail)
