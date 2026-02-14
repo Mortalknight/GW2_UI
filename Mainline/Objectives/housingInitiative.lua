@@ -92,7 +92,7 @@ function GwObjectivesHousingInitiativeContainerMixin:OnEvent(event, ...)
         for i = 1, #trackedTasks do
             local taskID = trackedTasks[i]
             local taskInfo = C_NeighborhoodInitiative.GetInitiativeTaskInfo(taskID)
-            if completeTaskname == taskInfo.taskName then
+            if taskInfo and completeTaskname == taskInfo.taskName then
                 PlaySound(SOUNDKIT.TRADING_POST_UI_COMPLETING_ACTIVITIES)
                 self:UpdateLayout()
                 break
