@@ -266,7 +266,7 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
                 color = GW.DebuffColors[auraType]
             end
             if not color then
-                color = {r = 0, g = 0, b = 0, a = 0}
+                color = GW.FallbackColor
             end
             self.border.inner:SetVertexColor(color:GetRGB())
         else

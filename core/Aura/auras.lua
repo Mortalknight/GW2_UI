@@ -69,19 +69,6 @@ local function CreateAuraFrame(name, parent)
     return f
 end
 
-local function GetDebuffScaleBasedOnPrio()
-    local scale = 1
-
-    if GW.settings.RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO == "DISPELL" then
-        return tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
-    elseif GW.settings.RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO == "IMPORTANT" then
-        return tonumber(GW.settings.RAIDDEBUFFS_Scale)
-    end
-
-    return scale
-end
-GW.GetDebuffScaleBasedOnPrio = GetDebuffScaleBasedOnPrio
-
 local function sortAuras(a, b)
     if a.sourceUnit and b.sourceUnit and a.sourceUnit == b.sourceUnit then
         return tonumber(a.timeRemaining) < tonumber(b.timeRemaining)

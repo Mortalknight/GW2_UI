@@ -1483,5 +1483,16 @@ local function MakeActionbuttonsVisible()
 end
 GW.MakeActionbuttonsVisible = MakeActionbuttonsVisible
 
+local function GetDebuffScaleBasedOnPrio()
+    local scale = 1
 
+    if GW.settings.RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO == "DISPELL" then
+        return tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
+    elseif GW.settings.RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO == "IMPORTANT" then
+        return tonumber(GW.settings.RAIDDEBUFFS_Scale)
+    end
+
+    return scale
+end
+GW.GetDebuffScaleBasedOnPrio = GetDebuffScaleBasedOnPrio
 
