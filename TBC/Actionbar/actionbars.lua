@@ -1090,35 +1090,21 @@ local function UpdateMultibarButtons()
 end
 GW.UpdateMultibarButtons = UpdateMultibarButtons
 
-local function vehicleLeave_OnUpdate()
-    if InCombatLockdown() then
-        return
-    end
-    MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
-end
-
-
-local function vehicleLeave_OnShow()
-    MainMenuBarVehicleLeaveButton:SetScript("OnUpdate", vehicleLeave_OnUpdate)
-end
-
-
-local function vehicleLeave_OnHide()
-    MainMenuBarVehicleLeaveButton:SetScript("OnUpdate", nil)
-end
-
-
 local function setLeaveVehicleButton()
-    MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar)
+    MainMenuBarVehicleLeaveButton:SetParent(MainActionBar)
     MainMenuBarVehicleLeaveButton:ClearAllPoints()
     MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
 
     MainMenuBarVehicleLeaveButton:GwKillEditMode()
 
-    MainMenuBarVehicleLeaveButton:HookScript("OnShow", vehicleLeave_OnShow)
-    MainMenuBarVehicleLeaveButton:HookScript("OnHide", vehicleLeave_OnHide)
+    hooksecurefunc(MainMenuBarVehicleLeaveButton, "SetPoint", function(_, _, parent)
+        if parent ~= ActionButton12 then
+            MainMenuBarVehicleLeaveButton:ClearAllPoints()
+            MainMenuBarVehicleLeaveButton:SetParent(UIParent)
+            MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
+        end
+    end)
 end
-
 
 actionBarEquipUpdate = function()
     local bars = {
