@@ -301,12 +301,6 @@ local function GameTooltip_OnTooltipCleared(self)
     if self.ItemTooltip then
         self.ItemTooltip:Hide()
     end
-
-    -- This code is to reset stuck widgets.
-    GameTooltip_ClearMoney(self)
-    GameTooltip_ClearStatusBars(self)
-    GameTooltip_ClearProgressBars(self)
-    GameTooltip_ClearWidgetSet(self)
 end
 
 local function GameTooltip_OnTooltipSetItem(self, data)

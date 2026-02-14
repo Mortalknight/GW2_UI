@@ -398,6 +398,11 @@ local function LoadBattlegrounds()
             hasTimer = true,
             TrackFlag = true
         },
+        [2656] = { --Warsong
+            OnEvent = BattlegroundHudMixin.OnlyPointsOnEvent,
+            OnUpdate = BattlegroundHudMixin.TimerFlagOnUpdate,
+            TrackFlag = true
+        },
         [761] = { --Gilneas
             OnEvent = BattlegroundHudMixin.PointsAndPoiOnEvent,
             icons = {

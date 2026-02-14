@@ -608,7 +608,6 @@ local function evPlayerLogin(self)
         GW.LoadGenericTraitFrameSkin()
         GW.LoadCooldownManagerSkin()
         GW.LoadImmersionAddonSkin()
-        GW.WidgetUISetup()
         GW.LoadAuctionatorAddonSkin()
         GW.LoadTSMAddonSkin()
     else
@@ -624,6 +623,10 @@ local function evPlayerLogin(self)
 
     if GW.Mists then
         GW.SetUpVehicleFrameMover()
+    end
+
+    if GW.Mists or GW.Retail or GW.TBC then
+        GW.WidgetUISetup()
     end
 
     -- make sure to load the objetives tracker before we load the altert system prevent some errors with other addons
