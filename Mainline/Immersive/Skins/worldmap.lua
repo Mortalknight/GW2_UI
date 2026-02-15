@@ -205,10 +205,14 @@ local function worldMapSkin()
     WorldMapFrame.NavBar:GwStripTextures()
     WorldMapFrame.NavBar.overlay:GwStripTextures()
     WorldMapFrame.NavBar:SetPoint("TOPLEFT", 1, -47)
+    local navBarSetPointGuard = false
     hooksecurefunc(WorldMapFrame.NavBar, "SetPoint", function(self)
+        if navBarSetPointGuard then return end
         local point, relTo, _, x, y = self:GetPoint()
         if point ~= "TOPLEFT" or x ~= 1 or y ~= -47 then
+            navBarSetPointGuard = true
             self:SetPoint("TOPLEFT", relTo, "TOPLEFT", 1, -47)
+            navBarSetPointGuard = false
         end
     end)
 
