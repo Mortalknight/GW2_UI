@@ -151,20 +151,18 @@ end
 
 local function DisableBlizzardsObjevtiveTracker()
     if GW.Retail then
-        ObjectiveTrackerFrame:SetMovable(1)
-        ObjectiveTrackerFrame:SetUserPlaced(true)
         ObjectiveTrackerFrame:Hide()
-        ObjectiveTrackerFrame:SetScript(
-            "OnShow",
-            function()
-                ObjectiveTrackerFrame:Hide()
-            end
-        )
-
-        --ObjectiveTrackerFrame:UnregisterAllEvents()
+        ObjectiveTrackerFrame:UnregisterAllEvents()
         ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
-        ObjectiveTrackerFrame:SetScript("OnSizeChanged", nil)
-        --ObjectiveTrackerFrame:SetScript("OnEvent", nil)
+        hooksecurefunc(ObjectiveTrackerFrame, "Show", function(self)
+            self:Hide()
+        end)
+        hooksecurefunc(ObjectiveTrackerFrame, "SetShown", function(self, show)
+            if show then
+                self:Hide()
+            end
+        end)
+        EventRegistry:UnregisterFrameEventAndCallback("PLAYER_ENTERING_WORLD", ObjectiveTrackerManager)
     elseif GW.Mists then
         WatchFrame:SetMovable(1)
         WatchFrame:SetUserPlaced(true)

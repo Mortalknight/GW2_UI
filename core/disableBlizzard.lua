@@ -31,7 +31,7 @@ local function HandleFrame(frame, doNotReparent)
     end
 
     frame:UnregisterAllEvents()
-    frame:Hide()
+    pcall(frame.Hide, frame)
 
     for _, child in next, {
         frame.petFrame or frame.PetFrame,
@@ -119,18 +119,42 @@ local function DisableBlizzardFrames()
             unitFrame:UnregisterAllEvents() -- Arena Taint Fix
         end)
 
-        Arena_LoadUI = GW.NoOp
+        if GW.Retail then
+           if CompactArenaFrame then
+                HandleFrame(_G.CompactArenaFrame, 1)
 
-        if not isArenaHooked and CompactArenaFrame then
-            isArenaHooked = true
-            HandleFrame(CompactArenaFrame, 1)
+                for _, frame in next, CompactArenaFrame.memberUnitFrames do
+                    HandleFrame(frame, true)
+                end
+            elseif ArenaEnemyFrames then
+                ArenaEnemyFrames:UnregisterAllEvents()
+                ArenaPrepFrames:UnregisterAllEvents()
+                ArenaEnemyFrames:Hide()
+                ArenaPrepFrames:Hide()
 
-			for _, frame in next, CompactArenaFrame.memberUnitFrames do
-				HandleFrame(frame, true)
-			end
+                -- reference on oUF and clear the global frame reference, to fix ClearAllPoints taint
+                GW.oUF.ArenaEnemyFrames = ArenaEnemyFrames
+                GW.oUF.ArenaPrepFrames = ArenaPrepFrames
+                ArenaEnemyFrames = nil
+                ArenaPrepFrames = nil
+            end
 
-            for _, frame in ipairs(ArenaEnemyMatchFramesContainer.UnitFrames) do
-                HandleFrame(frame, true)
+            -- actually handle the sub frames now
+            for i = 1, MAX_ARENA_ENEMIES do
+                HandleFrame(_G['ArenaEnemyMatchFrame'..i], true)
+                HandleFrame(_G['ArenaEnemyPrepFrame'..i], true)
+            end
+        else
+            Arena_LoadUI = GW.NoOp
+
+            if not isArenaHooked and CompactArenaFrame then
+                isArenaHooked = true
+                HandleFrame(CompactArenaFrame, 1)
+
+                for _, frame in next, CompactArenaFrame.memberUnitFrames do
+                    HandleFrame(frame, true)
+                end
+
             end
         end
     end

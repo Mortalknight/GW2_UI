@@ -88,15 +88,10 @@ local function hook_QuestLogQuests_Update()
     for button in QuestScrollFrame.titleFramePool:EnumerateActive() do
         if not button.IsSkinned then
             if button.Checkbox then
-                button.Checkbox:DisableDrawLayer("BACKGROUND")
-                hooksecurefunc(button.Checkbox.CheckMark, "SetShown", function(self, isTracked)
-                    self:Show()
-                    if isTracked then
-                        self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked.png")
-                    else
-                        self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox.png")
-                    end
-                end)
+                if button.Checkbox then
+                    button.Checkbox:GwStripTextures(true)
+                    button.Checkbox:GwCreateBackdrop("Transparent")
+                end
             end
 
             button.IsSkinned = true
@@ -194,6 +189,13 @@ local function EventsFrameCallback(_, frame, elementData)
     end
 end
 
+local function WorldMap_QuestMapHide(self)
+	if self:GetParent() == QuestModelScene:GetParent() then -- variant of QuestFrame_HideQuestPortrait
+		QuestModelScene:SetParent(nil)
+		QuestModelScene:Hide()
+	end
+end
+
 local function worldMapSkin()
     WorldMapFrame:GwStripTextures()
     GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {QuestMapFrame}, nil, false, true)
@@ -202,29 +204,17 @@ local function worldMapSkin()
     WorldMapFrame.BorderFrame:GwStripTextures()
     WorldMapFrame.BorderFrame:SetFrameStrata(WorldMapFrame:GetFrameStrata())
     WorldMapFrame.BorderFrame.NineSlice:Hide()
+
     WorldMapFrame.NavBar:GwStripTextures()
     WorldMapFrame.NavBar.overlay:GwStripTextures()
     WorldMapFrame.NavBar:SetPoint("TOPLEFT", 1, -47)
-    local navBarSetPointGuard = false
-    hooksecurefunc(WorldMapFrame.NavBar, "SetPoint", function(self)
-        if navBarSetPointGuard then return end
-        local point, relTo, _, x, y = self:GetPoint()
-        if point ~= "TOPLEFT" or x ~= 1 or y ~= -47 then
-            navBarSetPointGuard = true
-            self:SetPoint("TOPLEFT", relTo, "TOPLEFT", 1, -47)
-            navBarSetPointGuard = false
-        end
-    end)
 
-    local navBarTex = WorldMapFrame.NavBar:CreateTexture(nil, "BACKGROUND", nil, 0)
-    navBarTex:SetPoint("TOPLEFT", WorldMapFrame.NavBar, "TOPLEFT", 0,20)
-    navBarTex:SetPoint("BOTTOMRIGHT", WorldMapFrame.NavBar, "BOTTOMRIGHT", 0, -10)
-    navBarTex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header.png")
-    WorldMapFrame.NavBar.tex = navBarTex
+    GW.HandleNavBarButtons(WorldMapFrame.NavBar, nil, true)
 
-    WorldMapFrame.ScrollContainer:GwCreateBackdrop()
-
-    QuestMapFrame:SetPoint("TOPRIGHT",WorldMapFrame,"TOPRIGHT",-3,-32)
+    WorldMapFrame.NavBar.tex = WorldMapFrame.NavBar:CreateTexture(nil, "BACKGROUND", nil, 0)
+    WorldMapFrame.NavBar.tex:SetPoint("TOPLEFT", WorldMapFrame.NavBar, "TOPLEFT", 0,20)
+    WorldMapFrame.NavBar.tex:SetPoint("BOTTOMRIGHT", WorldMapFrame.NavBar, "BOTTOMRIGHT", 0, -10)
+    WorldMapFrame.NavBar.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header.png")
 
     WorldMapFrame.NavBar.homeButton:GwStripTextures()
     local r = {WorldMapFrame.NavBar.homeButton:GetRegions()}
@@ -234,16 +224,18 @@ local function worldMapSkin()
             c:SetShadowOffset(0, 0)
         end
     end
-    local tex = WorldMapFrame.NavBar.homeButton:CreateTexture(nil, "BACKGROUND")
-    tex:SetPoint("LEFT", WorldMapFrame.NavBar.homeButton, "LEFT")
-    tex:SetPoint("TOP", WorldMapFrame.NavBar.homeButton, "TOP")
-    tex:SetPoint("BOTTOM", WorldMapFrame.NavBar.homeButton, "BOTTOM")
-    tex:SetPoint("RIGHT", WorldMapFrame.NavBar.homeButton, "RIGHT")
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
-    WorldMapFrame.NavBar.homeButton.tex = tex
-    WorldMapFrame.NavBar.homeButton.tex:SetAlpha(1)
 
+    WorldMapFrame.NavBar.homeButton.tex = WorldMapFrame.NavBar.homeButton:CreateTexture(nil, "BACKGROUND")
+    WorldMapFrame.NavBar.homeButton.tex :SetPoint("LEFT", WorldMapFrame.NavBar.homeButton, "LEFT")
+    WorldMapFrame.NavBar.homeButton.tex :SetPoint("TOP", WorldMapFrame.NavBar.homeButton, "TOP")
+    WorldMapFrame.NavBar.homeButton.tex :SetPoint("BOTTOM", WorldMapFrame.NavBar.homeButton, "BOTTOM")
+    WorldMapFrame.NavBar.homeButton.tex :SetPoint("RIGHT", WorldMapFrame.NavBar.homeButton, "RIGHT")
+    WorldMapFrame.NavBar.homeButton.tex :SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
+    WorldMapFrame.NavBar.homeButton.tex:SetAlpha(1)
     WorldMapFrame.NavBar.homeButton.borderFrame = CreateFrame("Frame", nil, WorldMapFrame.NavBar.homeButton, "GwLightButtonBorder")
+
+    WorldMapFrame.ScrollContainer:GwCreateBackdrop()
+    QuestMapFrame:SetPoint("TOPRIGHT",WorldMapFrame,"TOPRIGHT",-3,-32)
 
     WorldMapFrame.BorderFrame.CloseButton:GwSkinButton(true)
     WorldMapFrame.BorderFrame.CloseButton:SetSize(20, 20)
@@ -251,11 +243,9 @@ local function worldMapSkin()
 
     WorldMapFrame.BorderFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
 
-    
-
     local QuestMapFrame = _G.QuestMapFrame
     QuestMapFrame.VerticalSeparator:Hide()
-    QuestMapFrame:SetScript("OnHide", nil)
+    QuestMapFrame:SetScript("OnHide", WorldMap_QuestMapHide)
 
     QuestMapFrame.DetailsFrame:GwStripTextures(true)
 

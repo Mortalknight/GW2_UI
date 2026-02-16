@@ -36,11 +36,6 @@
         </NormalTexture>
         <PushedTexture file="Interface\AddOns\GW2_UI\textures\uistuff\actionbutton-pressed.png"/>
         <HighlightTexture file="Interface\AddOns\GW2_UI\textures\uistuff\ui-quickslot-depress.png" alphaMode="ADD"/>
-        <Animations>
-            <AnimationGroup parentKey="GlowAnim" looping="BOUNCE">
-				<Alpha childKey="Glow" fromAlpha="0" toAlpha="1" duration="1"/>
-			</AnimationGroup>
-        </Animations>
     </Button>
 
     <Button name="GwQuestTrackerHeader" virtual="true">

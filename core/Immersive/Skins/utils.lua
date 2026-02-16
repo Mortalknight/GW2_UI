@@ -116,57 +116,68 @@ local NavBarCheck = {
 }
 
 local function NavButtonXOffset(button, point, anchor, point2, _, yoffset, skip)
-    if not skip then
-        button:SetPoint(point, anchor, point2, -1, yoffset, true)
-    end
+    if skip then return end
+
+    button:SetPoint(point, anchor, point2, -1, yoffset, true)
 end
 
-local function SkinNavBarButtons(self)
-    local func = NavBarCheck[self:GetParent():GetName()]
-    if func and not func() then return end
+local function NavBarPoint(button, _, anchor, _, _, _, skip)
+    if skip then return end
 
-    local total = #self.navList
-    local navButton = self.navList[total]
-    if navButton and not navButton.isSkinned then
-        navButton:GwStripTextures()
-        navButton:GetFontString():SetTextColor(1, 1, 1, 1)
-        navButton:GetFontString():SetShadowOffset(0, 0)
+    button:SetPoint("TOPLEFT", anchor, "TOPLEFT", 1, -47, true)
+end
 
-        local tex = navButton:CreateTexture(nil, "BACKGROUND")
-        tex:SetPoint("LEFT", navButton, "LEFT")
-        tex:SetPoint("TOP", navButton, "TOP")
-        tex:SetPoint("BOTTOM", navButton, "BOTTOM")
-        tex:SetPoint("RIGHT", navButton, "RIGHT")
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
-        navButton.tex = tex
-        navButton.tex:SetAlpha(1)
+local function SkinNavBarButton(button, index)
+    if button and not button.isSkinned then
+        button:GwStripTextures()
+        button:GetFontString():SetTextColor(1, 1, 1, 1)
+        button:GetFontString():SetShadowOffset(0, 0)
 
-        navButton.borderFrame = CreateFrame("Frame", nil, navButton, "GwLightButtonBorder")
+        button.tex = button:CreateTexture(nil, "BACKGROUND")
+        button.tex:SetAllPoints(button)
+        button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightinner.png")
+        button.tex:SetAlpha(1)
 
-        hooksecurefunc(navButton, "SetWidth", function()
-            local w = navButton:GetWidth()
+        button.borderFrame = CreateFrame("Frame", nil, button, "GwLightButtonBorder")
 
-            navButton.tex:SetPoint("RIGHT", navButton, "LEFT", w, 0)
-        end)
-
-        if navButton.MenuArrowButton then
-            navButton.MenuArrowButton:GwStripTextures()
-            if navButton.MenuArrowButton.Art then
-                navButton.MenuArrowButton.Art:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                navButton.MenuArrowButton.Art:SetTexCoord(0, 1, 0, 1)
-                navButton.MenuArrowButton.Art:SetSize(16, 16)
+        if button.MenuArrowButton then
+            button.MenuArrowButton:GwStripTextures()
+            if button.MenuArrowButton.Art then
+                button.MenuArrowButton.Art:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+                button.MenuArrowButton.Art:SetTexCoord(0, 1, 0, 1)
+                button.MenuArrowButton.Art:SetSize(16, 16)
             end
         end
 
-        if total > 1 then
-            NavButtonXOffset(navButton, navButton:GetPoint())
-            hooksecurefunc(navButton, "SetPoint", NavButtonXOffset)
+        if index > 1 then
+            NavButtonXOffset(button, button:GetPoint())
+            hooksecurefunc(button, "SetPoint", NavButtonXOffset)
         end
 
-        navButton.isSkinned = true
+        button.isSkinned = true
     end
 end
-hooksecurefunc("NavBar_AddButton", SkinNavBarButtons)
+
+local function HandleNavBarButtons(self, data, hookPoint)
+    local func = NavBarCheck[self:GetParent():GetName()]
+    if func and not func() then return end
+
+    if not data then
+        for index, nav in next, self.navList do
+            SkinNavBarButton(nav, index)
+        end
+    else
+        local lastIndex = #self.navList
+        SkinNavBarButton(self.navList[lastIndex], lastIndex)
+    end
+
+    if hookPoint then
+        NavBarPoint(self, self:GetPoint())
+        hooksecurefunc(self, "SetPoint", NavBarPoint)
+    end
+end
+GW.HandleNavBarButtons = HandleNavBarButtons
+hooksecurefunc("NavBar_AddButton", HandleNavBarButtons)
 
 local function HandlePortraitFrame(frame, createBackdrop)
     local name = frame and frame.GetName and frame:GetName()
@@ -1182,7 +1193,7 @@ local function QuestInfo_Display(template, parentFrame)
     local objectives = _G.QuestInfoObjectivesFrame.Objectives
     local index = 0
 
-    local questID = GW.Retail and C_QuestLog.GetSelectedQuest() or GetQuestID()
+    questID = GW.Retail and C_QuestLog.GetSelectedQuest() or GetQuestID()
     local waypointText = GW.Retail and C_QuestLog.GetNextWaypointText(questID)
     if waypointText then
         index = index + 1

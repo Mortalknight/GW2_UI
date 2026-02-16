@@ -67,20 +67,11 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
         newBlock.actionButton.NormalTexture:SetTexture(nil)
         newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         newBlock.actionButton.Icon = newBlock.actionButton.icon
-        if GW.Retail then
-            Mixin(newBlock.actionButton, QuestObjectiveItemButtonMixin)
-            Mixin(newBlock.actionButton.GlowAnim, QuestObjectiveItemGlowAnimMixin)
-            newBlock.actionButton.Glow = newBlock.actionButton:CreateTexture(nil, "BACKGROUND", nil, 0)
-            newBlock.actionButton.Glow:SetAtlas("UI-QuestTrackerButton-QuestItem-Frame-Glow", true)
-            newBlock.actionButton.Glow:SetPoint("CENTER", newBlock.actionButton, "CENTER", 0, 0)
-            newBlock.actionButton.GlowAnim:SetScript("OnLoop", newBlock.actionButton.GlowAnim.OnLoop)
-        else
-            Mixin(newBlock.actionButton, GwObjectivesItemButtonMixin)
-            newBlock.actionButton:SetAttribute("type1", "item")
-            newBlock.actionButton:SetAttribute("type2", "stop")
-            if GW.Classic then
-                newBlock.actionButton:FakeHide()
-            end
+        Mixin(newBlock.actionButton, GwObjectivesItemButtonMixin)
+        newBlock.actionButton:SetAttribute("type1", "item")
+        newBlock.actionButton:SetAttribute("type2", "stop")
+        if GW.Classic then
+            newBlock.actionButton:FakeHide()
         end
         if GW.Retail or GW.TBC then
             newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
