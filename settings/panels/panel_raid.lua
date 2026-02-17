@@ -11,6 +11,7 @@ local auraOptions = {"isAuraPlayer", "isAuraRaidPlayerDispellable", "HEADER", "i
 local auraOptionsNames = {PLAYER, L["Dispellable"], PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag, L["Important"] .. playerTag, L["Crowd Control"] .. playerTag, L["Big Defensive"] .. playerTag, RAID_FRAMES_LABEL .. playerTag, L["External Defensives"] .. playerTag}
 local auraOptionsOther = {"HEADER", "isAuraRaid", "isAuraCancelable", "notAuraCancelable", "isAuraImportant", "isAuraCrowdControl", "isAuraBigDefensive", "isAuraRaidInCombat", "isAuraExternalDefensive"}
 local auraOptionsNamesOther = {OTHER, RAID .. otherTag, L["Is Cancelable"] .. otherTag, L["Not Cancelable"] .. otherTag, L["Important"] .. otherTag, L["Crowd Control"] .. otherTag, L["Big Defensive"] .. otherTag, RAID_FRAMES_LABEL .. otherTag, L["External Defensives"] .. otherTag}
+local statusBarTexturesOptions, statusBarTexturesLables = GW.GetStatusBarTextures()
 
 for i = 1, #auraOptionsOther do
     tinsert(auraOptions, auraOptionsOther[i])
@@ -94,7 +95,7 @@ local function LoadRaid10Profile(panel)
     raid10:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "RAID_UNIT_FLAGS_RAID10", callback = function() GW.UpdateGridSettings("RAID10") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE_KEY, L["Different Than Own"], ALL}, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}, hidden = not GW.Retail})
 
     raid10:AddOptionDropdown(DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], {getterSetter = "raid10_show_powerbar", callback = function() GW.UpdateGridSettings("RAID10") end, optionsList = {"ALL", "HEALER", "NONE"}, optionNames = {ALL, HEALER, NONE}, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}})
-
+    raid10:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "raid10_FrameHealthBarTexture", callback = function() GW.UpdateGridSettings("RAID10") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}})
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
     for i in pairs(dirs) do
@@ -191,6 +192,7 @@ local function LoadRaid25Profile(panel)
     raid25:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "RAID_UNIT_FLAGS_RAID25", callback = function() GW.UpdateGridSettings("RAID25") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE_KEY, L["Different Than Own"], ALL}, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}, hidden = not GW.Retail})
 
     raid25:AddOptionDropdown(DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], {getterSetter = "raid25_show_powerbar", callback = function() GW.UpdateGridSettings("RAID25") end, optionsList = {"ALL", "HEALER", "NONE"}, optionNames = {ALL, HEALER, NONE}, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}})
+    raid25:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "raid25_FrameHealthBarTexture", callback = function() GW.UpdateGridSettings("RAID25") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}})
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
     for i in pairs(dirs) do
@@ -284,7 +286,7 @@ local function LoadRaid40Profile(panel)
     raid40:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "RAID_UNIT_HEALTH", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"}, optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}, dependence = {["RAID_FRAMES"] = true}})
     raid40:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "RAID_UNIT_FLAGS", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE_KEY, L["Different Than Own"], ALL}, dependence = {["RAID_FRAMES"] = true}, hidden = not GW.Retail})
     raid40:AddOptionDropdown(DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], {getterSetter = "raid40_show_powerbar", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = {"ALL", "HEALER", "NONE"}, optionNames = {ALL, HEALER, NONE}, dependence = {["RAID_FRAMES"] = true}})
-
+    raid40:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "raid40_FrameHealthBarTexture", callback = function() GW.UpdateGridSettings("RAID40") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["RAID_FRAMES"] = true}})
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
     for i in pairs(dirs) do
@@ -378,6 +380,7 @@ local function LoadMaintankProfile(panel)
     tank:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "RAID_AURA_TOOLTIP_INCOMBAT_TANK", callback = function() GW.UpdateGridSettings("TANK") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}})
     tank:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "RAID_UNIT_HEALTH_TANK", callback = function() GW.UpdateGridSettings("TANK") end, optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"}, optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}})
     tank:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "RAID_UNIT_FLAGS_TANK", callback = function() GW.UpdateGridSettings("TANK") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE_KEY, L["Different Than Own"], ALL}, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}, hidden = not GW.Retail})
+    tank:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "maintank_FrameHealthBarTexture", callback = function() GW.UpdateGridSettings("TANK") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}})
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
     for i in pairs(dirs) do
@@ -456,6 +459,7 @@ local function LoadRaidPetProfile(panel)
 
     p:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "RAID_AURA_TOOLTIP_INCOMBAT_PET", callback = function() GW.UpdateGridSettings("RAID_PET") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}})
     p:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "RAID_UNIT_HEALTH_PET", callback = function() GW.UpdateGridSettings("RAID_PET") end, optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"}, optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}})
+    p:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "pet_FrameHealthBarTexture", callback = function() GW.UpdateGridSettings("RAID_PET") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}})
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
     for i in pairs(dirs) do
@@ -548,6 +552,7 @@ local function LoadPartyProfile(panel)
     party:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "RAID_UNIT_HEALTH_PARTY", callback = function() GW.UpdateGridSettings("PARTY") end, optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"}, optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
     party:AddOptionDropdown(L["Show Country Flag"], L["Display a country flag based on the unit's language"], { getterSetter = "RAID_UNIT_FLAGS_PARTY", callback = function() GW.UpdateGridSettings("PARTY") end, optionsList = {"NONE", "DIFFERENT", "ALL"}, optionNames = {NONE_KEY, L["Different Than Own"], ALL}, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}, hidden = not GW.Retail})
     party:AddOptionDropdown(DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], {getterSetter = "party_grid_show_powerbar", callback = function() GW.UpdateGridSettings("PARTY") end, optionsList = {"ALL", "HEALER", "NONE"}, optionNames = {ALL, HEALER, NONE}, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
+    party:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "party_grid_FrameHealthBarTexture", callback = function() GW.UpdateGridSettings("PARTY") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
     for i in pairs(dirs) do
@@ -625,13 +630,14 @@ local function LoadPartyPetProfile(panel)
     p.preview:SetEnabled(GW.settings.PARTY_PET_FRAMES_ENABLED)
 
     p:AddOption(L["Enable Party pet grid"], L["Show a separate grid for party pets"], {getterSetter = "PARTY_PET_FRAMES_ENABLED", callback = function(value) p.preview:SetEnabled(value); GW.UpdateGridSettings("PARTY_PET", nil, true) end, dependence = {["RAID_FRAMES"] = true}})
-    p:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "PARTY_UNIT_MARKERS_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}})
-    p:AddOption(L["Start Near Center"], L["The initial group will start near the center and grow out."], {getterSetter = "PARTY_PET_UNITFRAME_ANCHOR_FROM_CENTER", callback = function() GW.UpdateGridSettings("PARTY_PET", true) end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}})
-    p:AddOption(L["Shorten health values"], nil, {getterSetter = "PARTY_SHORT_HEALTH_VALUES_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}, hidden = not GW.Retail})
-    p:AddOption(L["Show absorb bar"], nil, {getterSetter = "PARTY_SHOW_ABSORB_BAR_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}, hidden = GW.Classic or GW.TBC})
+    p:AddOption(RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], {getterSetter = "PARTY_UNIT_MARKERS_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true, ["RAID_STYLE_PARTY"] = true}})
+    p:AddOption(L["Start Near Center"], L["The initial group will start near the center and grow out."], {getterSetter = "PARTY_PET_UNITFRAME_ANCHOR_FROM_CENTER", callback = function() GW.UpdateGridSettings("PARTY_PET", true) end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true, ["RAID_STYLE_PARTY"] = true}})
+    p:AddOption(L["Shorten health values"], nil, {getterSetter = "PARTY_SHORT_HEALTH_VALUES_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true, ["RAID_STYLE_PARTY"] = true}, hidden = not GW.Retail})
+    p:AddOption(L["Show absorb bar"], nil, {getterSetter = "PARTY_SHOW_ABSORB_BAR_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true, ["RAID_STYLE_PARTY"] = true}, hidden = GW.Classic or GW.TBC})
 
     p:AddOptionDropdown(L["Show Aura Tooltips"], L["Show tooltips of buffs and debuffs."], { getterSetter = "PARTY_AURA_TOOLTIP_INCOMBAT_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, optionsList = {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"}, optionNames = {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]}, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}})
     p:AddOptionDropdown(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, nil, { getterSetter = "PARTY_UNIT_HEALTH_PET", callback = function() GW.UpdateGridSettings("PARTY_PET") end, optionsList = {"NONE", "PREC", "HEALTH", "LOSTHEALTH"}, optionNames = {COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH, COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH}, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true,  ["RAID_STYLE_PARTY"] = true}})
+    p:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "party_pet_FrameHealthBarTexture", callback = function() GW.UpdateGridSettings("PARTY_PET") end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["RAID_FRAMES"] = true, ["PARTY_PET_FRAMES_ENABLED"] = true, ["RAID_STYLE_PARTY"] = true}})
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
     for i in pairs(dirs) do

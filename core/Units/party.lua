@@ -283,6 +283,31 @@ end
 
 local function UpdatePartyFrames()
     for _, frame in ipairs(partyFrames) do
+        -- statusbar texture
+        local textureKey =  GW.settings.partyFrameHealthBarTexture
+        if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
+            frame.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
+            frame.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+            frame.absorbbg:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
+            frame.healPrediction:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+
+            frame.PetFrame.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
+            frame.PetFrame.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+            frame.PetFrame.absorbbg:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
+            frame.PetFrame.healPrediction:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+        else
+            local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
+            frame.antiHeal:SetStatusBarTexture(texture)
+            frame.health:SetStatusBarTexture(texture)
+            frame.absorbbg:SetStatusBarTexture(texture)
+            frame.healPrediction:SetStatusBarTexture(texture)
+
+            frame.PetFrame.antiHeal:SetStatusBarTexture(texture)
+            frame.PetFrame.health:SetStatusBarTexture(texture)
+            frame.PetFrame.absorbbg:SetStatusBarTexture(texture)
+            frame.PetFrame.healPrediction:SetStatusBarTexture(texture)
+        end
+
         frame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
         frame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
         frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR
@@ -427,6 +452,20 @@ local function CreatePartyFrame(i, isPlayer)
         frame.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
     end
 
+    local textureKey =  GW.settings.partyFrameHealthBarTexture
+    if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
+        frame.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
+        frame.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+        frame.absorbbg:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
+        frame.healPrediction:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    else
+        local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
+        frame.antiHeal:SetStatusBarTexture(texture)
+        frame.health:SetStatusBarTexture(texture)
+        frame.absorbbg:SetStatusBarTexture(texture)
+        frame.healPrediction:SetStatusBarTexture(texture)
+    end
+
     frame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     frame.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
@@ -499,6 +538,19 @@ local function CreatePartyFrame(i, isPlayer)
         GW.AddStatusbarAnimation(petFrame.healPrediction, false)
 
         petFrame.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
+    end
+
+    if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
+        petFrame.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
+        petFrame.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+        petFrame.absorbbg:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
+        petFrame.healPrediction:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    else
+        local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
+        petFrame.antiHeal:SetStatusBarTexture(texture)
+        petFrame.health:SetStatusBarTexture(texture)
+        petFrame.absorbbg:SetStatusBarTexture(texture)
+        petFrame.healPrediction:SetStatusBarTexture(texture)
     end
 
     petFrame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)

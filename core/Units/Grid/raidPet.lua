@@ -65,6 +65,7 @@ local function UpdateGridRaidPetFrame(frame)
     frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_PET
     frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_PET
     frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_PET
+    frame.healthBarTexture = GW.settings.pet_FrameHealthBarTexture
 
     -- retail filtering
     frame.debuffFilters = GW.settings.RAID_PET_DEBUFF_FILTER

@@ -890,6 +890,21 @@ end
 function GwUnitFrameMixin:ToggleSettings()
     local unit = self.unit:lower()
 
+    -- statusbar texture
+    local textureKey =  GW.settings[unit .. "FrameHealthBarTexture"]
+    if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
+        self.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
+        self.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+        self.absorbbg:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
+        self.healPrediction:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    else
+        local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
+        self.antiHeal:SetStatusBarTexture(texture)
+        self.health:SetStatusBarTexture(texture)
+        self.absorbbg:SetStatusBarTexture(texture)
+        self.healPrediction:SetStatusBarTexture(texture)
+    end
+
     self.classColor = GW.settings[unit .. "_CLASS_COLOR"]
     self.showHealthValue = GW.settings[unit .. "_HEALTH_VALUE_ENABLED"]
     self.showHealthPrecentage = GW.settings[unit .. "_HEALTH_VALUE_TYPE"]
@@ -1145,6 +1160,21 @@ function GwTargetUnitFrameMixin:ToggleSettings()
     self.classColor = GW.settings[self.parentUnitId .. "_CLASS_COLOR"]
     self.showCastbar = GW.settings[self.parentUnitId .. "_TARGET_SHOW_CASTBAR"]
     self.showAbsorbBar = GW.settings[self.parentUnitId .. "_TARGET_SHOW_ABSORB_BAR"]
+
+    -- statusbar texture
+    local textureKey =  GW.settings[self.unit .. "FrameHealthBarTexture"]
+    if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
+        self.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
+        self.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+        self.absorbbg:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
+        self.healPrediction:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    else
+        local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
+        self.antiHeal:SetStatusBarTexture(texture)
+        self.health:SetStatusBarTexture(texture)
+        self.absorbbg:SetStatusBarTexture(texture)
+        self.healPrediction:SetStatusBarTexture(texture)
+    end
 
     self.backgroundOverlay:SetShown(GW.settings[self.parentUnitId .. "_FRAME_ALT_BACKGROUND"])
 

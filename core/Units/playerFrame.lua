@@ -32,6 +32,21 @@ end
 function GwPlayerUnitFrameMixin:ToggleSettings()
     self.backgroundOverlay:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
 
+    -- statusbar texture
+    local textureKey =  GW.settings.playerFrameHealthBarTexture
+    if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
+        self.antiHeal:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
+        self.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+        self.absorbbg:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
+        self.healPrediction:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    else
+        local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
+        self.antiHeal:SetStatusBarTexture(texture)
+        self.health:SetStatusBarTexture(texture)
+        self.absorbbg:SetStatusBarTexture(texture)
+        self.healPrediction:SetStatusBarTexture(texture)
+    end
+
     self.shortendHealthValues = GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES
     self.showHealthValue = GW.settings.PLAYER_UNIT_HEALTH == "VALUE" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"
     self.showHealthPrecentage = GW.settings.PLAYER_UNIT_HEALTH == "PREC" or GW.settings.PLAYER_UNIT_HEALTH == "BOTH"

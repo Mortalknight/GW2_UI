@@ -49,6 +49,22 @@ end
 GW.Construct_PredictionBar = Construct_PredictionBar
 
 local function Update_PredictionBars(frame)
-    --nothing atm
+    local healingAll = frame.HealthPrediction.healingAll
+    local damageAbsorb = frame.HealthPrediction.damageAbsorb
+    local healAbsorb = frame.HealthPrediction.healAbsorb
+
+
+    local textureKey =  frame.healthBarTexture
+    if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
+        healingAll:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+        damageAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
+        healAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
+    else
+        local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
+        healingAll:SetStatusBarTexture(texture)
+        damageAbsorb:SetStatusBarTexture(texture)
+        healAbsorb:SetStatusBarTexture(texture)
+    end
+
 end
 GW.Update_PredictionBars = Update_PredictionBars

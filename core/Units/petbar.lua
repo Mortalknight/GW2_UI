@@ -236,6 +236,10 @@ function GwPlayerPetFrameMixin:UpdateSettings()
     self.showHealthValue = GW.settings.PET_HEALTH_VALUE_RAW
     self.showHealthPrecentage = GW.settings.PET_HEALTH_VALUE_PERCENT
 
+    -- statusbar texture
+    local texture = GW.Libs.LSM:Fetch("statusbar", GW.settings.playerPetFrameHealthBarTexture)
+    self.health:SetStatusBarTexture(texture)
+
     self:SetScale(GW.settings.pet_pos_scale)
     self:OnEvent("UNIT_PET", "player")
 end

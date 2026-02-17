@@ -53,6 +53,7 @@ local function UpdateGridRaid25Frame(frame)
     frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
     frame.shortendHealthValue = GW.settings.RAID_SHORT_HEALTH_VALUES_RAID25
     frame.showAbsorbBar = GW.settings.RAID_SHOW_ABSORB_BAR_RAID25
+    frame.healthBarTexture = GW.settings.raid25_FrameHealthBarTexture
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do

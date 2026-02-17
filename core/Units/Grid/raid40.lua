@@ -61,6 +61,7 @@ local function UpdateGridRaid40Frame(frame)
     frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON
     frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON
     frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON
+    frame.healthBarTexture = GW.settings.raid40_FrameHealthBarTexture
 
     frame.raidShowImportantInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF
 

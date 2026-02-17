@@ -80,6 +80,14 @@ local function Update_Healtbar(frame)
     health.colorDisconnected = true
     health.showAbsorbBar = frame.showAbsorbBar
 
+    local textureKey =  frame.healthBarTexture
+    if textureKey == GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE then
+        health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
+    else
+        local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
+        health:SetStatusBarTexture(texture)
+    end
+
     if not frame.useClassColor then
         health.colorHealth = true
     end

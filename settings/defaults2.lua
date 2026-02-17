@@ -379,6 +379,7 @@ GW.globalDefault = {
         target_FRAME_ALT_BACKGROUND= false,
         target_ILVL = "PVP_LEVEL",
         target_SHORT_VALUES = false,
+        targetFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         focus_TARGET_ENABLED= true,
         focus_TARGET_SHOW_CASTBAR= true,
@@ -401,6 +402,7 @@ GW.globalDefault = {
         focus_FRAME_INVERT= false,
         focus_FRAME_ALT_BACKGROUND= false,
         focus_SHORT_VALUES = false,
+        focusFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         target_pos= {
             point= "TOP",
@@ -455,6 +457,7 @@ GW.globalDefault = {
         targettargetFramePowerBarSize = {
             height = 3,
         },
+        targettargetFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         focus_pos= {
             point= "CENTER",
@@ -491,6 +494,7 @@ GW.globalDefault = {
         focustargetFramePowerBarSize = {
             height = 3,
         },
+        focustargetFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         MULTIBAR_MARGIIN = 2,
         MAINBAR_MARGIIN = 5,
@@ -830,6 +834,28 @@ GW.globalDefault = {
         QuestTracker_pos_height= 700,
         QuestTracker_pos_scale= 1,
 
+        --frame fade
+        targetFrameFader = CopyTable(UnitFrameFader),
+        targettargetFrameFader = CopyTable(UnitFrameFader),
+        focusFrameFader = CopyTable(UnitFrameFader),
+        focustargetFrameFader = CopyTable(UnitFrameFader),
+        playerFrameFader = CopyTable(UnitFrameFader),
+        petFrameFader = CopyTable(UnitFrameFader),
+        grid10FrameFaderRange = true,
+        grid10FrameFader = CopyTable(UnitFrameFader),
+        grid25FrameFaderRange = true,
+        grid25FrameFader = CopyTable(UnitFrameFader),
+        grid40FrameFaderRange = true,
+        grid40FrameFader = CopyTable(UnitFrameFader),
+        gridPartyFrameFaderRange = true,
+        gridPartyFrameFader = CopyTable(UnitFrameFader),
+        gridPartyPetFrameFaderRange = true,
+        gridPartyPetFrameFader = CopyTable(UnitFrameFader),
+        gridPetFrameFaderRange = true,
+        gridPetFrameFader = CopyTable(UnitFrameFader),
+        gridTankFrameFaderRange = true,
+        gridTankFrameFader = CopyTable(UnitFrameFader),
+
         -- Maintank
         RAID_MAINTANK_FRAMES_ENABLED= true,
         RAID_CLASS_COLOR_TANK= true,
@@ -862,6 +888,7 @@ GW.globalDefault = {
         RAID_MAINTANK_BUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_SHOW_BUFFS_TANK = false,
         maintank_show_powerbar = "NONE", -- always
+        maintank_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
         raidMaintank_pos= {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",
@@ -870,28 +897,6 @@ GW.globalDefault = {
             hasMoved= false,
         },
 
-        --frame fade
-        targetFrameFader = CopyTable(UnitFrameFader),
-        targettargetFrameFader = CopyTable(UnitFrameFader),
-        focusFrameFader = CopyTable(UnitFrameFader),
-        focustargetFrameFader = CopyTable(UnitFrameFader),
-        playerFrameFader = CopyTable(UnitFrameFader),
-        petFrameFader = CopyTable(UnitFrameFader),
-
-        grid10FrameFaderRange = true,
-        grid10FrameFader = CopyTable(UnitFrameFader),
-        grid25FrameFaderRange = true,
-        grid25FrameFader = CopyTable(UnitFrameFader),
-        grid40FrameFaderRange = true,
-        grid40FrameFader = CopyTable(UnitFrameFader),
-        gridPartyFrameFaderRange = true,
-        gridPartyFrameFader = CopyTable(UnitFrameFader),
-        gridPartyPetFrameFaderRange = true,
-        gridPartyPetFrameFader = CopyTable(UnitFrameFader),
-        gridPetFrameFaderRange = true,
-        gridPetFrameFader = CopyTable(UnitFrameFader),
-        gridTankFrameFaderRange = true,
-        gridTankFrameFader = CopyTable(UnitFrameFader),
 
         -- Raid Pet
         RAID_PET_FRAMES= false,
@@ -925,6 +930,7 @@ GW.globalDefault = {
         RAID_PET_BUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_PET_SHOW_BUFFS = false,
         pet_show_powerbar = "NONE", -- always
+        pet_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         raid_pet_pos= {
             point= "TOPLEFT",
@@ -965,8 +971,8 @@ GW.globalDefault = {
         PARTY_PET_DEBUFF_FILTER = CopyTable(GridAuraFilter),
         PARTY_PET_BUFF_FILTER = CopyTable(GridAuraFilter),
         PARTY_PET_SHOW_BUFFS = false,
-        -- defaults
         party_pet_show_powerbar = "NONE", -- always
+        party_pet_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         party_pet_pos= {
             point= "TOPLEFT",
@@ -1007,6 +1013,7 @@ GW.globalDefault = {
         RAID_DEBUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_SHOW_BUFFS = false,
         raid40_show_powerbar = "ALL",
+        raid40_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         raid_pos= {
             point= "TOPLEFT",
@@ -1048,6 +1055,7 @@ GW.globalDefault = {
         RAID_25_BUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_25_SHOW_BUFFS = false,
         raid25_show_powerbar = "ALL",
+        raid25_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         raid25_pos= {
             point= "TOPLEFT",
@@ -1089,6 +1097,7 @@ GW.globalDefault = {
         RAID_10_BUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_10_SHOW_BUFFS = false,
         raid10_show_powerbar = "ALL",
+        raid10_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         raid10_pos= {
             point= "TOPLEFT",
@@ -1130,6 +1139,7 @@ GW.globalDefault = {
         RAID_PARTY_BUFF_FILTER = CopyTable(GridAuraFilter),
         RAID_PARTY_SHOW_BUFFS = false,
         party_grid_show_powerbar = "ALL",
+        party_grid_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         raid_party_pos= {
             point= "TOPLEFT",
@@ -1144,6 +1154,7 @@ GW.globalDefault = {
         PARTY_UNIT_HEALTH= "NONE",
         PARTY_SHOW_BUFFS = true,
         PARTY_SHOW_AURA_ICON_SIZE = 20,
+        partyFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
         PARTY_SHOW_DEBUFFS= true,
         PARTY_ONLY_DISPELL_DEBUFFS= false,
         PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF= false,
@@ -1390,6 +1401,7 @@ GW.globalDefault = {
             x = 5,
             y = 0,
         },
+        playerFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         --general raid tag update rate
         tagUpdateRate = 0.2, -- eventTimerThreshold
@@ -1400,6 +1412,7 @@ GW.globalDefault = {
         PLAYER_UNIT_SHIELD_SHORT_VALUES = false,
         PET_UNIT_HEALTH_SHORT_VALUES = false,
         PARTY_UNIT_HEALTH_SHORT_VALUES = false,
+        playerPetFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
         -- TWW
         WORLD_EVENTS_TWW_PROFESSIONS_ENABLED = true,

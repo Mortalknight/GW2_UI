@@ -65,6 +65,7 @@ local function UpdateGridRaid10Frame(frame)
     frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_RAID10
     frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_RAID10
     frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_RAID10
+    frame.healthBarTexture = GW.settings.raid10_FrameHealthBarTexture
 
     -- retail filtering
     frame.debuffFilters = GW.settings.RAID_10_DEBUFF_FILTER

@@ -66,6 +66,7 @@ local function UpdateGridPartyFrame(frame)
     frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_PARTY
     frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_PARTY
     frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_PARTY
+    frame.healthBarTexture = GW.settings.party_grid_FrameHealthBarTexture
 
     -- retail filtering
     frame.debuffFilters = GW.settings.RAID_PARTY_DEBUFF_FILTER

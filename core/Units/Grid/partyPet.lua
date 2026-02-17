@@ -39,7 +39,7 @@ local function UpdateGridPartyPetFrame(frame)
     -- set frame settings
     frame.useClassColor = GW.settings.PARTY_CLASS_COLOR_PET
     frame.hideClassIcon = GW.settings.PARTY_HIDE_CLASS_ICON_PET
-    frame.showResscoureBar = GW.settings.pet_show_powerbar
+    frame.showResscoureBar = GW.settings.party_pet_show_powerbar
     frame.showRealmFlags = GW.settings.PARTY_UNIT_FLAGS_PET
     frame.healthStringFormat = GW.settings.PARTY_UNIT_HEALTH_PET
     frame.showTargetmarker = GW.settings.PARTY_UNIT_MARKERS_PET
@@ -54,6 +54,7 @@ local function UpdateGridPartyPetFrame(frame)
     --frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
     frame.shortendHealthValue = GW.settings.PARTY_SHORT_HEALTH_VALUES_PET
     frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR_PET
+    frame.healthBarTexture = GW.settings.party_pet_FrameHealthBarTexture
 
     frame.raidIndicators = {}
     for _, pos in ipairs(GW.INDICATORS) do

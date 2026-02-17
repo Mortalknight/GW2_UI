@@ -64,6 +64,7 @@ local function UpdateGridMaintankFrame(frame)
     frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_TANK
     frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_TANK
     frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_TANK
+    frame.healthBarTexture = GW.settings.maintank_FrameHealthBarTexture
 
     frame.debuffFilters = GW.settings.RAID_MAINTANK_DEBUFF_FILTER
     frame.buffFilters = GW.settings.RAID_MAINTANK_BUFF_FILTER

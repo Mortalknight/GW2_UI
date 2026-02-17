@@ -173,3 +173,28 @@ local function ImportProfile(dataString)
     return profileName, profilePlayer
 end
 GW.ImportProfile = ImportProfile
+
+function GW.GetStatusBarTextures()
+    local assets = GW.Libs.LSM:List("statusbar")
+    local textureLabels, textureValues = {}, {}
+    local textureOtherLabels, textureOtherValues = {}, {}
+
+    for _, key in ipairs(assets) do
+        local file = GW.Libs.LSM:Fetch("statusbar", key)
+        if key:find("GW2", 1, true) then
+            table.insert(textureLabels, "|T".. file .. ":" .. 18 .. ":" .. 55 .. "|t " .. key)
+            table.insert(textureValues, key)
+        else
+            table.insert(textureOtherLabels, "|T".. file .. ":" .. 18 .. ":" .. 55 .. "|t [Custom] " .. key)
+            table.insert(textureOtherValues, key)
+        end
+        print(key)
+    end
+
+    for i = 1, #textureOtherLabels do
+        tinsert(textureLabels, textureOtherLabels[i])
+        tinsert(textureValues, textureOtherValues[i])
+    end
+
+    return textureValues, textureLabels
+end
