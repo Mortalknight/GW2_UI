@@ -777,7 +777,21 @@ local function skinMainBar()
             rangeIndicator:Hide()
 
             btn.gw_RangeIndicator = rangeIndicator
+
+            if GW.settings.ActionbarHealthglobeSpace then
+                local container = btn.container
+                local point, relTo, relPoint, x, y = container:GetPoint()
+                if i > 6  then
+                    x = x + 100
+                end
+                container:ClearAllPoints()
+                container:SetPoint(point, relTo, relPoint, x, y)
+            end
         end
+    end
+
+    if GW.settings.ActionbarHealthglobeSpace then
+        bar:SetWidth(bar:GetWidth() + 90)
     end
 
     -- helper frame placeholder (events are wired in updateMainBar)

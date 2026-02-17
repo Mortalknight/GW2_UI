@@ -635,7 +635,7 @@ local red_R, red_G, red_B = RED_FONT_COLOR:GetRGB()
 local function helper_RangeUpdate(slot, inRange, checkRange)
     local btn = nil
     local indicator = "RED_OVERLAY"
-    local barPrefix = GW.settings.BAR_LAYOUT_ENABLED and "Gw" or ""
+    local barPrefix = "Gw"
     if slot <= 24 then
         btn = MainActionBar.gw_Buttons[slot]
         indicator = GW.settings.MAINBAR_RANGEINDICATOR

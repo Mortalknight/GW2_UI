@@ -109,6 +109,7 @@ GW.globalDefault = {
         PLAYER_BUFFS_ENABLED = true,
         ACTIONBARS_ENABLED = true,
         BAR_LAYOUT_ENABLED = true,
+        ActionbarHealthglobeSpace = false,
         BAGS_ENABLED = true,
         NPC_CAM_ENABLED = false,
         CASTINGBAR_ENABLED = true,
