@@ -1,3 +1,9 @@
+10.2.2
+FIXES
+    - Fix lua error with housing
+    - Fix CD Manager Skin, which can cause that the CD Manager was disapearing
+    - Fix worldmap skin
+
 10.2.1
 FIXES
     - More chat secrets

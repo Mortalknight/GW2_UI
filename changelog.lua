@@ -18,7 +18,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-
+addChange("10.2.2", {
+    {GW.ChangelogType.bug, [=[Fix lua error with housing]=]},
+    {GW.ChangelogType.bug, [=[Fix CD Manager Skin, which can cause that the CD Manager was disapearing]=]},
+    {GW.ChangelogType.bug, [=[Fix worldmap skin]=]},
+})
 
 addChange("10.2.1", {
     {GW.ChangelogType.bug, [=[More chat secrets]=]},
