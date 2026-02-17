@@ -158,7 +158,7 @@ local function GetSpellbookActionButton(tab, container, index)
     button.rank:SetTextColor(0.9, 0.9, 0.8, 1)
 
     button.modifiedClick = SpellButton_OnModifiedClick
-    button:RegisterForClicks("AnyDown")
+    button:RegisterForClicks("AnyUp")
     button:RegisterForDrag("LeftButton")
     button:RegisterEvent("SPELL_UPDATE_COOLDOWN")
     button:RegisterEvent("PET_BAR_UPDATE")
@@ -217,6 +217,7 @@ local function setButtonStyle(btn, isPassive, spellID, slotType, icon, spellbook
         btn:SetAttribute("shift-type1", "modifiedClick")
         btn:SetAttribute("shift-type2", "modifiedClick")
     end
+    btn:SetAttribute("useOnKeyDown", false)
 
     if slotType ~= "FUTURESPELL" then
         if slotType == "SPELL" and isOffSpec then

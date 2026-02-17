@@ -38,7 +38,7 @@
         </Scripts>
     </Frame>
 
-    <Button name="GwTalentButton" registerForClicks="AnyDown" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
+    <Button name="GwTalentButton" registerForClicks="AnyUp" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
         <Size x="42" y="42"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"/>
