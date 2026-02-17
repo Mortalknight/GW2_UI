@@ -267,7 +267,7 @@ do
         end
 
         if forNameString and not useBlizzardClassColor then
-            colorForNameString = {r = min(1, color.r + 0.3), g = min(1, color.g + 0.3), b = min(1, color.b + 0.3), a = color.a, colorStr = GW.RGBToHex(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3), "ff")}
+            colorForNameString = CreateColor(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3))
         end
 
         return forNameString and colorForNameString or color

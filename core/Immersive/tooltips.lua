@@ -1,7 +1,6 @@
 local _, GW = ...
 local L = GW.L
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local RGBToHex = GW.RGBToHex
 local GWGetClassColor = GW.GWGetClassColor
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local nameRoleIcon = GW.nameRoleIcon
@@ -9,7 +8,6 @@ local nameRoleIcon = GW.nameRoleIcon
 local pawnTooltipBorderRegistered = false
 
 local MountIDs = {}
-local targetList = {}
 local classification = {
     worldboss = format("|cffAF5050 %s|r", BOSS),
     rareelite = format("|cffAF5050+ %s|r", ITEM_QUALITY3_DESC),
@@ -60,12 +58,14 @@ local function RemoveTrashLines(self)
 
     for i, line in next, info.lines, 3 do
         local text = line and line.leftText
-        if not text or text == "" then
-            break
-        elseif text == PVP or text == FACTION_ALLIANCE or text == FACTION_HORDE then
-            local left = _G["GameTooltipTextLeft" .. i]
-            left:SetText("")
-            left:Hide()
+        if GW.NotSecretValue(text) then
+            if not text or text == "" then
+                break
+            elseif text == PVP or text == FACTION_ALLIANCE or text == FACTION_HORDE then
+                local left = _G["GameTooltipTextLeft" .. i]
+                left:SetText("")
+                left:Hide()
+            end
         end
     end
 end
@@ -91,7 +91,7 @@ local function ShowAuraInfo(self, auraData)
         if auraData.sourceUnit then
             local _, class = UnitClass(auraData.sourceUnit)
             local color = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
-            self:AddDoubleLine(format(IDLine, ID, auraData.spellId), format("|c%s%s|r", color.colorStr, UnitName(auraData.sourceUnit) or UNKNOWN))
+            self:AddDoubleLine(format(IDLine, ID,  auraData.spellId), color:WrapTextInColorCode(UnitName(auraData.sourceUnit) or UNKNOWN))
         else
             self:AddLine(format(IDLine, ID, auraData.spellId))
         end
@@ -101,7 +101,7 @@ local function ShowAuraInfo(self, auraData)
 end
 
 local function SetUnitAura(self, unit, index, filter)
-    if not self or self:IsForbidden() then return end
+    if not self or self:IsForbidden() or self:NumLines() < 1 then return end
 
     local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
     if not auraData or GW.IsSecretValue(auraData.spellId) then return end
@@ -110,7 +110,7 @@ local function SetUnitAura(self, unit, index, filter)
 end
 
 local function SetUnitAuraByAuraInstanceId(self, unit, auraInstanceId)
-    if not self or self:IsForbidden() then return end
+    if not self or self:IsForbidden() or self:NumLines() < 1 then return end
 
     local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceId)
     if not auraData or GW.IsSecretValue(auraData.spellId) then return end
@@ -396,7 +396,7 @@ end
 local function SetUnitText(self, unit, isPlayerUnit)
     local name, realm = UnitName(unit)
 
-    if isPlayerUnit then
+    if isPlayerUnit and not GW.IsSecretUnit(unit) then
         local localeClass, class = UnitClass(unit)
         if not localeClass or not class then return end
 
@@ -423,7 +423,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         end
 
         local awayText = GW.UnitIsAFK(unit) and AFK_LABEL or GW.UnitIsDND(unit) and DND_LABEL or ""
-        GameTooltipTextLeft1:SetFormattedText("|c%s%s%s|r", nameColor.colorStr, name or UNKNOWN, awayText)
+        GameTooltipTextLeft1:SetFormattedText("%s%s", nameColor:WrapTextInColorCode(name or UNKNOWN), awayText)
 
         local levelLine, specLine = GetLevelLine(self, (guildName and not (GW.Classic or GW.TBC) and 2) or 1)
         if guildName then
@@ -460,13 +460,13 @@ local function SetUnitText(self, unit, isPlayerUnit)
             if GW.Retail then
                 local specText = specLine and specLine:GetText()
                 if specText then
-                    specLine:SetFormattedText("|c%s%s|r", nameColor.colorStr, specText)
+                    specLine:SetText(nameColor:WrapTextInColorCode(specText))
                 end
             else
-                levelText = format("%s |c%s%s|r", levelText, nameColor.colorStr, localeClass)
+                levelText = format("%s %s", levelText, nameColor:WrapTextInColorCode(localeClass))
             end
 
-            levelLine:SetFormattedText(levelText)
+            levelLine:SetText(levelText)
         end
 
         return nameColor
@@ -516,10 +516,9 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local unitReaction = UnitReaction(unit, "player")
         local nameColor = unitReaction and GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
         if unitReaction and unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
-        local nameColorStr = nameColor.colorStr or RGBToHex(nameColor.r, nameColor.g, nameColor.b, "ff")
 
         if not isPetCompanion then
-            GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
+            GameTooltipTextLeft1:SetText(nameColor:WrapTextInColorCode(name or UNKNOWN))
         end
 
         return (UnitIsTapDenied(unit) and {r = 159 / 255, g = 159 / 255, b = 159 / 255}) or nameColor
@@ -530,34 +529,46 @@ local function AddTargetInfo(self, unit)
     local unitTarget = unit .. "target"
     if unit ~= "player" and UnitExists(unitTarget) then
         local targetColor
-        if UnitIsPlayer(unitTarget) and (not GW.Retail or not UnitHasVehicleUI(unitTarget)) then
+        if GW.IsSecretUnit(unitTarget) then
+            local _, class = UnitClass(unitTarget)
+            targetColor = C_ClassColor.GetClassColor(class) or RAID_CLASS_COLORS.PRIEST
+        elseif UnitIsPlayer(unitTarget) and (not GW.Retail or not UnitHasVehicleUI(unitTarget)) then
             local _, class = UnitClass(unitTarget)
             targetColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
         else
             targetColor = GW.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
         end
+        local targetName = UnitName(unitTarget) or UNKNOWN
 
-        self:AddDoubleLine(format("%s:", TARGET), format("|cff%02x%02x%02x%s|r", targetColor.r * 255, targetColor.g * 255, targetColor.b * 255, UnitName(unitTarget)))
+        self:AddDoubleLine(format("%s:", TARGET), targetColor:WrapTextInColorCode(targetName))
     end
 
-    if IsInGroup() then
-        local isInRaid = IsInRaid()
-        for i = 1, GetNumGroupMembers() do
-            local groupUnit = (isInRaid and "raid" or "party") .. i
-            local unitIsTarget = UnitIsUnit(groupUnit .. "target", unit)
-            local unitIsMe = UnitIsUnit(groupUnit, "player")
-            if GW.NotSecretValue(unitIsTarget) and unitIsTarget and not unitIsMe then
-                local _, class = UnitClass(groupUnit)
-                local classColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
-                tinsert(targetList, format("|c%s%s|r", classColor.colorStr, UnitName(groupUnit)))
-            end
-        end
+    if not IsInGroup() then return end
 
-        local numList = #targetList
-        if numList > 0 then
-            self:AddLine(format("%s (|cffffffff%d|r): %s", L["Targeted by:"], numList, table.concat(targetList, ", ")), nil, nil, nil, true)
-            wipe(targetList)
+    local text, count = "", 0
+    local isInRaid = IsInRaid()
+    for i = 1, GetNumGroupMembers() do
+        local groupUnit = (isInRaid and "raid" or "party") .. i
+        local unitFound = not UnitIsUnit(groupUnit, "player") and UnitIsUnit(groupUnit .. "target", unit)
+
+        if GW.NotSecretValue(unitFound) and unitFound then
+            local _, class = UnitClass(groupUnit)
+            local classColor
+
+            if GW.IsSecretUnit(groupUnit) then
+                classColor = C_ClassColor.GetClassColor(class) or RAID_CLASS_COLORS.PRIEST
+            else
+                classColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
+            end
+
+            local unitName = UnitName(groupUnit) or UNKNOWN
+            text = format("%s, %s", text, classColor:WrapTextInColorCode(unitName))
+            count = count + 1
         end
+    end
+
+    if count > 0 then
+        self:AddLine(format("%s (|cffffffff%d|r): %s", L["Targeted by:"], count, text), nil, nil, nil, true)
     end
 end
 
@@ -566,7 +577,7 @@ local function AddMountInfo(self, unit)
     local auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
     while auraData do
         if GW.IsSecretValue(auraData.spellId) then
-			break
+            break
         else
             local mountID = MountIDs[auraData.spellId]
             if mountID then
@@ -596,37 +607,41 @@ local function AddMountInfo(self, unit)
 end
 
 local function AddRoleInfo(self, unit)
-    local r, g, b, role = 1, 1, 1, UnitGroupRolesAssigned(unit)
-    if IsInGroup() and (UnitInParty(unit) or UnitInRaid(unit)) and (role ~= "NONE") then
-        if role == "HEALER" then
-            role, r, g, b = nameRoleIcon[role] .. HEALER, 0, 1, 0.59
-        elseif role == "TANK" then
-            role, r, g, b = nameRoleIcon[role] .. TANK, 0.51, 0.67, 0.9
-        elseif role == "DAMAGER" then
-            role, r, g, b = nameRoleIcon[role] .. DAMAGER, 0.77, 0.12, 0.24
-        end
-        -- if in raid add also the assist function here eg: Role:      [] Tank ([] Maintank)
-        local isGroupLeader = UnitIsGroupLeader(unit)
-        local isGroupAssist = UnitIsGroupAssistant(unit)
-        local raidId = UnitInRaid(unit)
-        local raidRole = ""
-        if raidId then
-            local raidR = select(10, GetRaidRosterInfo(raidId))
-            if raidR == "MAINTANK" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-maintank.png:0:0:0:-3:64:64:4:60:4:60|t " .. MAINTANK .. ")" end
-            if raidR == "MAINASSIST" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist.png:0:0:0:-1:64:64:4:60:4:60|t " .. MAIN_ASSIST .. ")" end
-        end
+    if not IsInGroup() or not (UnitInParty(unit) or UnitInRaid(unit)) then return end
 
-        self:AddDoubleLine(format("%s:", ROLE), role .. raidRole, nil, nil, nil, r, g, b)
-        if isGroupLeader or isGroupAssist then
-            local roleString
-            if isGroupLeader then
-                roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:0:0:0:-2:64:64:4:60:4:60|t " .. (IsInRaid() and RAID_LEADER or PARTY_LEADER)
-            else
-                roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:0:0:0:-2:64:64:4:60:4:60|t " .. RAID_ASSISTANT
-            end
-            self:AddDoubleLine(" ", roleString, nil, nil, nil, r, g, b)
-        end
+    local role = UnitGroupRolesAssigned(unit)
+    if not role or role == "NONE" then return end
+
+    local r, g, b = 1, 1, 1
+    if role == "HEALER" then
+        role, r, g, b = nameRoleIcon[role] .. HEALER, 0, 1, 0.59
+    elseif role == "TANK" then
+        role, r, g, b = nameRoleIcon[role] .. TANK, 0.51, 0.67, 0.9
+    elseif role == "DAMAGER" then
+        role, r, g, b = nameRoleIcon[role] .. DAMAGER, 0.77, 0.12, 0.24
     end
+    -- if in raid add also the assist function here eg: Role:      [] Tank ([] Maintank)
+    local isGroupLeader = UnitIsGroupLeader(unit)
+    local isGroupAssist = UnitIsGroupAssistant(unit)
+    local raidId = UnitInRaid(unit)
+    local raidRole = ""
+    if raidId then
+        local raidR = select(10, GetRaidRosterInfo(raidId))
+        if raidR == "MAINTANK" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-maintank.png:0:0:0:-3:64:64:4:60:4:60|t " .. MAINTANK .. ")" end
+        if raidR == "MAINASSIST" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist.png:0:0:0:-1:64:64:4:60:4:60|t " .. MAIN_ASSIST .. ")" end
+    end
+
+    self:AddDoubleLine(format("%s:", ROLE), role .. raidRole, nil, nil, nil, r, g, b)
+    if isGroupLeader or isGroupAssist then
+        local roleString
+        if isGroupLeader then
+            roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader.png:0:0:0:-2:64:64:4:60:4:60|t " .. (IsInRaid() and RAID_LEADER or PARTY_LEADER)
+        else
+            roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist.png:0:0:0:-2:64:64:4:60:4:60|t " .. RAID_ASSISTANT
+        end
+        self:AddDoubleLine(" ", roleString, nil, nil, nil, r, g, b)
+    end
+
 end
 
 local function AddMythicInfo(self, unit)
@@ -706,64 +721,74 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
     end
 end
 
-local function GameTooltip_OnTooltipSetUnit(self, data)
-    if self ~= GameTooltip or self:IsForbidden() then return end
+local function SetUnitInfo(self, unit, data)
+    local isShiftKeyDown = IsShiftKeyDown()
+    local isControlKeyDown = IsControlKeyDown()
+    local isInCombat = InCombatLockdown()
 
-    local color
+    RemoveTrashLines(self)
+
+    local isPlayerUnit = UnitIsPlayer(unit)
+    local color = SetUnitText(self, unit, isPlayerUnit)
+
+    if GW.settings.ADVANCED_TOOLTIP_SHOW_TARGET_INFO and not isShiftKeyDown and not isControlKeyDown then
+        AddTargetInfo(self, unit)
+    end
+
+    if GW.settings.ADVANCED_TOOLTIP_SHOW_ROLE and GW.allowRoles then
+        AddRoleInfo(self, unit)
+    end
+
+    if GW.Retail and not isInCombat and GW.settings.ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE then
+        AddMythicInfo(self, unit)
+    end
+
+    if (GW.Retail or GW.Mists) and GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown and not isInCombat then
+        AddMountInfo(self, unit)
+    end
+
+    if (GW.Retail or GW.Mists) and not isInCombat and isShiftKeyDown and isPlayerUnit and not InCombatLockdown() and not self.ItemLevelShown then
+        if color then
+            AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
+        else
+            AddInspectInfo(self, unit, 0, 0.9, 0.9, 0.9)
+        end
+    end
+
+    if not isPlayerUnit and IsModKeyDown() and not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()) then
+        local guid = (data and data.guid) or UnitGUID(unit) or ""
+        local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
+        if id then -- NPC ID"s
+            self:AddLine(format(IDLine, ID, id))
+        end
+    end
+
+    return color
+end
+
+local function GetUnitToken(self)
+    if not self or self:IsForbidden() then return end
+
+    local mouseover = UnitExists("mouseover") and "mouseover"
     local _, unit = self:GetUnit()
-    if GW.NotSecretValue(unit) and not unit then
-        local GMF = GetMouseFoci()
-        local focusUnit = GMF and GMF.GetAttribute and GMF:GetAttribute("unit")
-        if focusUnit then unit = focusUnit end
-        if not unit or not UnitExists(unit) then
-            return
-        end
+    if unit then
+        return (GW.NotSecretValue(unit) and UnitExists(unit) and unit) or mouseover or nil
     end
 
-    if GW.NotSecretValue(unit) then
-        local isShiftKeyDown = IsShiftKeyDown()
-        local isControlKeyDown = IsControlKeyDown()
-        local isInCombat = InCombatLockdown()
-
-        RemoveTrashLines(self)
-
-        local isPlayerUnit = UnitIsPlayer(unit)
-        color = SetUnitText(self, unit, isPlayerUnit)
-
-        if GW.settings.ADVANCED_TOOLTIP_SHOW_TARGET_INFO and not isShiftKeyDown and not isControlKeyDown then
-            AddTargetInfo(self, unit)
-        end
-
-        if (GW.Retail or GW.Mists) and GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT and (isPlayerUnit and unit ~= "player") and not isShiftKeyDown and not isInCombat then
-            AddMountInfo(self, unit)
-        end
-
-        if GW.settings.ADVANCED_TOOLTIP_SHOW_ROLE and GW.allowRoles then
-            AddRoleInfo(self, unit)
-        end
-
-        if GW.Retail and not isInCombat and GW.settings.ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE then
-            AddMythicInfo(self, unit)
-        end
-
-        if (GW.Retail or GW.Mists) and not isInCombat and isShiftKeyDown and isPlayerUnit and not InCombatLockdown() and not self.ItemLevelShown then
-            if color then
-                AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
-            else
-                AddInspectInfo(self, unit, 0, 0.9, 0.9, 0.9)
-            end
-        end
-
-        if not isPlayerUnit and IsModKeyDown() and not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()) then
-            local guid = (data and data.guid) or UnitGUID(unit) or ""
-            local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
-            if id then -- NPC ID"s
-                self:AddLine(format(IDLine, ID, id))
-            end
-        end
+    local focus = GetMouseFoci()
+    local focusUnit = focus and focus.GetAttribute and focus:GetAttribute("unit")
+    if focusUnit then
+        return (GW.NotSecretValue(focusUnit) and UnitExists(focusUnit) and focusUnit) or mouseover or nil
     end
+end
 
-    if color and color.r and color.g and color.b then
+local function GameTooltip_OnTooltipSetUnit(self, data)
+    if (self ~= GameTooltip) or self:IsForbidden() then return end
+
+    local unit = GetUnitToken(self)
+    local color = unit and SetUnitInfo(self, unit, data)
+
+    if color then
         GameTooltipStatusBar:SetStatusBarColor(color.r, color.g, color.b)
     else
         GameTooltipStatusBar:SetStatusBarColor(0.6, 0.6, 0.6)
@@ -780,8 +805,8 @@ local function GameTooltipStatusBar_UpdateUnitHealth(bar)
 
     local tt = bar:GetParent()
     if not tt then return end
-    local _, unit = tt:GetUnit()
-    if GW.NotSecretValue(unit) and unit then
+    local unit = GetUnitToken(tt)
+    if unit then
         local formatFunction = GW.settings.TooltipHealthBarValuesShortend and AbbreviateNumbers or BreakUpLargeNumbers
         if GW.settings.TooltipHealthBarValues == "RAW" then
             bar.Text:SetFormattedText("%s", formatFunction(UnitHealth(unit)))
@@ -803,15 +828,10 @@ local function GameTooltipStatusBar_OnValueChanged(bar, value)
         return
     end
 
-    local _, unit = bar:GetParent():GetUnit()
-    if not unit then
-        local frame = GetMouseFoci()
-        if frame and frame.GetAttribute then
-            unit = frame:GetAttribute("unit")
-        end
-    end
+    local tt = bar:GetParent()
+    local unit = GetUnitToken(tt)
 
-    if unit and UnitIsDeadOrGhost(unit) then
+    if value == 0 or (unit and UnitIsDeadOrGhost(unit)) then
         bar.Text:SetText(DEAD)
     else
         local formatFunction = GW.settings.TooltipHealthBarValuesShortend and AbbreviateNumbers or BreakUpLargeNumbers
@@ -1021,7 +1041,7 @@ local function SetStyle(self, _, isEmbedded)
     if GW.NotSecretValue(self:GetWidth()) then
         if not self.SetBackdrop then
             _G.Mixin(self, _G.BackdropTemplateMixin)
-           if self.OnSizeChanged then
+        if self.OnSizeChanged then
                 self:HookScript("OnSizeChanged", self.OnBackdropSizeChanged)
             end
         end
@@ -1298,6 +1318,8 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetBackpackToken", SetBackpackToken)
 
         hooksecurefunc(GameTooltip, "SetUnitAuraByAuraInstanceID", SetUnitAuraByAuraInstanceId)
+
+        GameTooltipStatusBar:SetScript("OnValueChanged", nil)
     else
         GameTooltipStatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
     end

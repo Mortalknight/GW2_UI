@@ -174,21 +174,32 @@ function GW.CopyTable(src, preserveMeta, seen)
     return dst
 end
 
-function GW.IsSecretValue(value)
-    if issecretvalue and issecretvalue(value) then
-        return true
+do
+    local ShouldUnitIdentityBeSecret = C_Secrets and C_Secrets.ShouldUnitIdentityBeSecret
+    function GW.IsSecretValue(value)
+        if issecretvalue and issecretvalue(value) then
+            return true
+        end
     end
-end
 
-function GW.NotSecretValue(value)
-    if not issecretvalue or not issecretvalue(value) then
-        return true
+    function GW.NotSecretValue(value)
+        if not issecretvalue or not issecretvalue(value) then
+            return true
+        end
     end
-end
 
-function GW.NotSecretTable(table)
-    if not issecrettable or not issecrettable(table) then
-        return true
+    function GW.NotSecretTable(table)
+        if not issecrettable or not issecrettable(table) then
+            return true
+        end
+    end
+
+    function GW.IsSecretUnit(unit)
+        return ShouldUnitIdentityBeSecret and ShouldUnitIdentityBeSecret(unit)
+    end
+
+    function GW.NotSecretUnit(unit)
+        return not ShouldUnitIdentityBeSecret or not ShouldUnitIdentityBeSecret(unit)
     end
 end
 

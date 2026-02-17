@@ -71,30 +71,12 @@ local function LoadAurasPanel(sWindow)
     p_auras:AddOptionSlider(L["Set dispellable debuff scale"], nil, { getterSetter = "DISPELL_DEBUFFS_Scale", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01})
     p_auras:AddOptionDropdown(L["Important & dispellable debuff scale priority"], L["If both scales could apply to a debuff, which one should be used"], { getterSetter = "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO", optionsList = {"DISPELL", "IMPORTANT", "OFF"}, optionNames = {L["Dispell > Important"], L["Important > Dispell"], OFF}})
 
-    -- indicators
-    p_indicator:AddOption(L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], { getterSetter = "INDICATORS_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
-    p_indicator:AddOption(L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], { getterSetter = "INDICATORS_TIME", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
+    if not GW.Retail then
+        -- indicators
+        p_indicator:AddOption(L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], { getterSetter = "INDICATORS_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
+        p_indicator:AddOption(L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], { getterSetter = "INDICATORS_TIME", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
 
-    local auraKeys, auraVals = {0}, {NONE_KEY}
-    for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
-        if not indicator[4] then
-            local spellInfo = C_Spell.GetSpellInfo(spellID)
-            if spellInfo then
-                local name = format("%s |cFF888888(%d)|r", spellInfo.name, spellID)
-
-                if GW.Classic or GW.TBC then
-                    local rank = GetSpellSubtext(spellID)
-                    rank = rank and string.match(rank, "[%d]") or nil
-                    name = name .. (rank and " |cFF888888(" .. RANK .. " " .. rank .. ")|r" or "")
-                end
-                tinsert(auraKeys, spellID)
-                tinsert(auraVals, name)
-            end
-        end
-    end
-
-    local auraNamesUpdateFunction = function()
-        local newKey, newNames = {0}, {NONE_KEY}
+        local auraKeys, auraVals = {0}, {NONE_KEY}
         for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
             if not indicator[4] then
                 local spellInfo = C_Spell.GetSpellInfo(spellID)
@@ -106,38 +88,58 @@ local function LoadAurasPanel(sWindow)
                         rank = rank and string.match(rank, "[%d]") or nil
                         name = name .. (rank and " |cFF888888(" .. RANK .. " " .. rank .. ")|r" or "")
                     end
-                    tinsert(newKey, spellID)
-                    tinsert(newNames, name)
+                    tinsert(auraKeys, spellID)
+                    tinsert(auraVals, name)
                 end
             end
         end
 
-        for _, pos in ipairs(GW.INDICATORS) do
-            local settingsWidget = GW.FindSettingsWidgetByOption("INDICATOR_" .. pos)
-            if settingsWidget then
-                settingsWidget.optionsList = newKey
-                settingsWidget.optionNames = newNames
-                settingsWidget.dropDown:GenerateMenu()
+        local auraNamesUpdateFunction = function()
+            local newKey, newNames = {0}, {NONE_KEY}
+            for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
+                if not indicator[4] then
+                    local spellInfo = C_Spell.GetSpellInfo(spellID)
+                    if spellInfo then
+                        local name = format("%s |cFF888888(%d)|r", spellInfo.name, spellID)
+
+                        if GW.Classic or GW.TBC then
+                            local rank = GetSpellSubtext(spellID)
+                            rank = rank and string.match(rank, "[%d]") or nil
+                            name = name .. (rank and " |cFF888888(" .. RANK .. " " .. rank .. ")|r" or "")
+                        end
+                        tinsert(newKey, spellID)
+                        tinsert(newNames, name)
+                    end
+                end
             end
-        end
-    end
 
-    for v, pos in ipairs(GW.INDICATORS) do
-        local key = "INDICATOR_" .. pos
-        local t = L[GW.indicatorsText[v]]
-        p_indicator:AddOptionDropdown(L["%s Indicator"]:format(t), L["Edit %s raid aura indicator."]:format(t), {getterSetter = key, callback = function() GW.settings[key] = tonumber(GW.settings[key]); GW.UpdateGridSettings("ALL", false) end, optionsList = auraKeys, optionNames = auraVals, optionUpdateFunc = auraNamesUpdateFunction, dependence = {["RAID_FRAMES"] = true}, tooltipType = "spell"})
-    end
-
-    if GW.Classic or GW.TBC then
-        -- Rank info are not there after game start
-        C_Timer.After(3, function()
             for _, pos in ipairs(GW.INDICATORS) do
                 local settingsWidget = GW.FindSettingsWidgetByOption("INDICATOR_" .. pos)
-                if settingsWidget and settingsWidget.optionUpdateFunc then
-                   settingsWidget.optionUpdateFunc()
+                if settingsWidget then
+                    settingsWidget.optionsList = newKey
+                    settingsWidget.optionNames = newNames
+                    settingsWidget.dropDown:GenerateMenu()
                 end
             end
-        end)
+        end
+
+        for v, pos in ipairs(GW.INDICATORS) do
+            local key = "INDICATOR_" .. pos
+            local t = L[GW.indicatorsText[v]]
+            p_indicator:AddOptionDropdown(L["%s Indicator"]:format(t), L["Edit %s raid aura indicator."]:format(t), {getterSetter = key, callback = function() GW.settings[key] = tonumber(GW.settings[key]); GW.UpdateGridSettings("ALL", false) end, optionsList = auraKeys, optionNames = auraVals, optionUpdateFunc = auraNamesUpdateFunction, dependence = {["RAID_FRAMES"] = true}, tooltipType = "spell"})
+        end
+
+        if GW.Classic or GW.TBC then
+            -- Rank info are not there after game start
+            C_Timer.After(3, function()
+                for _, pos in ipairs(GW.INDICATORS) do
+                    local settingsWidget = GW.FindSettingsWidgetByOption("INDICATOR_" .. pos)
+                    if settingsWidget and settingsWidget.optionUpdateFunc then
+                    settingsWidget.optionUpdateFunc()
+                    end
+                end
+            end)
+        end
     end
 
     p_missingBuffs:AddOptionDropdown(L["Show Missing Raid Buffs Bar"], L["Whether to display a floating bar showing your missing buffs. This can be moved via the 'Move HUD' interface."], { getterSetter = "MISSING_RAID_BUFF", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateVisibility() end end, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["In raid"], L["In group or in raid"]}, hidden = not GW.Retail})

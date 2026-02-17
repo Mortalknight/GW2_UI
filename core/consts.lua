@@ -10,7 +10,7 @@ GW.TextSizeType = {
 }
 
 GW.TextColors = {
-    LIGHT_HEADER = { r = 1, g = 0.9450, b = 0.8196 }
+    LIGHT_HEADER = CreateColor(1, 0.9450, 0.8196)
 }
 
 GW.ClassIndex = {
@@ -53,30 +53,30 @@ GW.DebuffColors = {
 GW.FallbackColor = CreateColor(0, 0, 0, 0)
 
 GW.PowerBarColorCustom = {
-    MANA = { r = 37 / 255, g = 133 / 255, b = 240 / 255 },
-    RAGE = { r = 240 / 255, g = 66 / 255, b = 37 / 255 },
-    ENERGY = { r = 240 / 255, g = 200 / 255, b = 37 / 255 },
-    LUNAR_POWER = { r = 130 / 255, g = 172 / 255, b = 230 / 255 },
-    RUNIC_POWER = { r = 37 / 255, g = 214 / 255, b = 240 / 255 },
-    FOCUS = { r = 240 / 255, g = 121 / 255, b = 37 / 255 },
-    FURY = { r = 166 / 255, g = 37 / 255, b = 240 / 255 },
-    PAIN = { r = 255 / 255, g = 156 / 255, b = 0 },
-    MAELSTROM = { r = 0.00, g = 0.50, b = 1.00 },
-    INSANITY = { r = 0.40, g = 0, b = 0.80 },
-    CHI = { r = 0.71, g = 1.0, b = 0.92 },
+    MANA = CreateColor(37 / 255, 133 / 255, 240 / 255),
+    RAGE = CreateColor(240 / 255, 66 / 255, 37 / 255),
+    ENERGY = CreateColor(240 / 255, 200 / 255, 37 / 255),
+    LUNAR_POWER = CreateColor(130 / 255, 172 / 255, 230 / 255),
+    RUNIC_POWER = CreateColor(37 / 255, 214 / 255, 240 / 255),
+    FOCUS = CreateColor(240 / 255, 121 / 255, 37 / 255),
+    FURY = CreateColor(166 / 255, 37 / 255, 240 / 255),
+    PAIN = CreateColor(255 / 255, 156 / 255, 0),
+    MAELSTROM = CreateColor(0.00, 0.50, 1.00),
+    INSANITY = CreateColor(0.40, 0, 0.80),
+    CHI = CreateColor(0.71, 1.0, 0.92),
 
     -- vehicle colors
-    AMMOSLOT = { r = 0.80, g = 0.60, b = 0.00 },
-    FUEL = { r = 0.0, g = 0.55, b = 0.5 },
-    STAGGER = { r = 0.52, g = 1.0, b = 0.52 },
+    AMMOSLOT = CreateColor(0.80, 0.60, 0.00),
+    FUEL = CreateColor(0.0, 0.55, 0.5),
+    STAGGER = CreateColor(0.52, 1.0, 0.52),
 }
 
 GW.BAG_TYP_COLORS = {
-    [0x0001] = {r = 1, g = 1, b = 1},            --Quivers       1
-    [0x0002] = {r = 1, g = 1, b = 1},            --Quivers       2
-    [0x0004] = {r = 0.251, g = 0.878, b = 0.816},--Soul          3
-    [0x0020] = {r = 0.451, g = 1, b = 0},        --Herbs         6
-    [0x0040] = {r = 1, g = 0, b = 1}             --Enchanting    7
+    [0x0001] = CreateColor(1, 1, 1),            --Quivers       1
+    [0x0002] = CreateColor(1, 1, 1),            --Quivers       2
+    [0x0004] = CreateColor(0.251, 0.878, 0.816),--Soul          3
+    [0x0020] = CreateColor(0.451, 1, 0),        --Herbs         6
+    [0x0040] = CreateColor(1, 0, 1)             --Enchanting    7
 }
 
 GW.nameRoleIcon = {
@@ -94,15 +94,15 @@ GW.nameRoleIconPure = {
 }
 
 GW.professionBagColor = {
-    [8] = { r = .88, g = .73, b = .29 },  --leatherworking
-    [16] = { r = .29, g = .30, b = .88 }, --inscription
-    [32] = { r = .07, g = .71, b = .13 }, --herbs
-    [64] = { r = .76, g = .02, b = .8 },  --enchanting
-    [128] = { r = .91, g = .46, b = .18 }, --engineering
-    [512] = { r = .03, g = .71, b = .81 }, --gems
-    [1024] = { r = .54, g = .40, b = .04 }, --Mining Bag
-    [32768] = { r = .42, g = .59, b = 1 }, --fishing
-    [65536] = { r = .87, g = .05, b = .25 } --cooking
+    [8] = CreateColor(.88, .73, .29),  --leatherworking
+    [16] = CreateColor(.29, .30, .88), --inscription
+    [32] = CreateColor(.07, .71, .13), --herbs
+    [64] = CreateColor(.76, .02, .8),  --enchanting
+    [128] = CreateColor(.91, .46, .18), --engineering
+    [512] = CreateColor(.03, .71, .81), --gems
+    [1024] = CreateColor(.54, .40, .04), --Mining Bag
+    [32768] = CreateColor(.42, .59, 1), --fishing
+    [65536] = CreateColor(.87, .05, .25) --cooking
 }
 
 GW.trackingTypes = {
@@ -124,19 +124,19 @@ GW.trackingTypes = {
 }
 
 GW.TRACKER_TYPE_COLOR = {
-    QUEST = { r = 221 / 255, g = 198 / 255, b = 68 / 255 },
-    CAMPAIGN = { r = 121 / 255, g = 222 / 255, b = 47 / 255 },
-    EVENT = { r = 240 / 255, g = 121 / 255, b = 37 / 255 },
-    SCENARIO = { r = 171 / 255, g = 37 / 255, b = 240 / 255 },
-    BOSS = { r = 240 / 255, g = 37 / 255, b = 37 / 255 },
-    ARENA = { r = 240 / 255, g = 37 / 255, b = 37 / 255 },
-    ACHIEVEMENT = { r = 37 / 255, g = 240 / 255, b = 172 / 255 },
-    DAILY = { r = 68 / 255, g = 192 / 255, b = 250 / 255 },
-    TORGHAST = { r = 109 / 255, g = 161 / 255, b = 207 / 255 },
-    RECIPE = { r = 228 / 255, g = 157 / 255, b = 0 / 255 },
-    MONTHLYACTIVITY = { r = 228 / 255, g = 157 / 255, b = 0 / 255 },
-    HOUSINGINITIATIVE = {r = 0.85, g = 0.7, b = 0.43},
-    DELVE = { r = 171 / 255, g = 37 / 255, b = 240 / 255 }
+    QUEST = CreateColor(221 / 255, 198 / 255, 68 / 255),
+    CAMPAIGN = CreateColor(121 / 255, 222 / 255, 47 / 255),
+    EVENT = CreateColor(240 / 255, 121 / 255, 37 / 255),
+    SCENARIO = CreateColor(171 / 255, 37 / 255, 240 / 255),
+    BOSS = CreateColor(240 / 255, 37 / 255, 37 / 255),
+    ARENA = CreateColor(240 / 255, 37 / 255, 37 / 255),
+    ACHIEVEMENT = CreateColor(37 / 255, 240 / 255, 172 / 255),
+    DAILY = CreateColor(68 / 255, 192 / 255, 250 / 255),
+    TORGHAST = CreateColor(109 / 255, 161 / 255, 207 / 255),
+    RECIPE = CreateColor(228 / 255, 157 / 255, 0 / 255),
+    MONTHLYACTIVITY = CreateColor(228 / 255, 157 / 255, 0 / 255),
+    HOUSINGINITIATIVE = CreateColor(0.85, 0.7, 0.43),
+    DELVE = CreateColor(171 / 255, 37 / 255, 240 / 255)
 }
 
 GW.TRACKER_TYPE = {
@@ -157,23 +157,23 @@ GW.TRACKER_TYPE = {
 }
 
 GW.FACTION_BAR_COLORS = {
-    [1] = { r = 0.8, g = 0.3, b = 0.22 },
-    [2] = { r = 0.8, g = 0.3, b = 0.22 },
-    [3] = { r = 0.75, g = 0.27, b = 0 },
-    [4] = { r = 0.9, g = 0.7, b = 0 },
-    [5] = { r = 0, g = 0.6, b = 0.1 },
-    [6] = { r = 0, g = 0.6, b = 0.1 },
-    [7] = { r = 0, g = 0.6, b = 0.1 },
-    [8] = { r = 0, g = 0.6, b = 0.1 },
-    [9] = { r = 0.22, g = 0.37, b = 0.98 }, --Paragon
-    [10] = { r = 0.09, g = 0.29, b = 0.79 }, --Azerite
-    [11] = { r = 0, g = 0.74, b = 0.95 },  --(Renown)
+    [1] = CreateColor(0.8, 0.3, 0.22),
+    [2] = CreateColor(0.8, 0.3, 0.22),
+    [3] = CreateColor(0.75, 0.27, 0),
+    [4] = CreateColor(0.9, 0.7, 0),
+    [5] = CreateColor(0, 0.6, 0.1),
+    [6] = CreateColor(0, 0.6, 0.1),
+    [7] = CreateColor(0, 0.6, 0.1),
+    [8] = CreateColor(0, 0.6, 0.1),
+    [9] = CreateColor(0.22, 0.37, 0.98), --Paragon
+    [10] = CreateColor(0.09, 0.29, 0.79), --Azerite
+    [11] = CreateColor(0, 0.74, 0.95),  --(Renown)
 }
 
 GW.COLOR_FRIENDLY = {
-    [1] = { r = 88 / 255, g = 170 / 255, b = 68 / 255 }, --friendly #58aa44
-    [2] = { r = 159 / 255, g = 36 / 255, b = 20 / 255 }, --enemy    #9f2414
-    [3] = { r = 159 / 255, g = 159 / 255, b = 159 / 255 } --tapped   #9f9f9f
+    [1] = CreateColor(88 / 255, 170 / 255, 68 / 255), --friendly #58aa44
+    [2] = CreateColor(159 / 255, 36 / 255, 20 / 255), --enemy    #9f2414
+    [3] = CreateColor(159 / 255, 159 / 255, 159 / 255) --tapped   #9f9f9f
 }
 GW.BLOOD_SPARK = {
     [0] = { left = 0, right = 0.125, top = 0, bottom = 0.5 },
@@ -238,25 +238,25 @@ GW.CLASS_ICONS.DEMONHUNTER = GW.CLASS_ICONS[12]
 GW.CLASS_ICONS.EVOKER = GW.CLASS_ICONS[13]
 
 GW.GW_CLASS_COLORS = {
-    WARRIOR = { r = 90 / 255, g = 54 / 255, b = 38 / 255, a = 1 },
-    PALADIN = { r = 177 / 255, g = 72 / 255, b = 117 / 255, a = 1 },
-    HUNTER = { r = 99 / 255, g = 125 / 255, b = 53 / 255, a = 1 },
-    ROGUE = { r = 190 / 255, g = 183 / 255, b = 79 / 255, a = 1 },
-    PRIEST = { r = 205 / 255, g = 205 / 255, b = 205 / 255, a = 1 },
-    DEATHKNIGHT = { r = 148 / 255, g = 62 / 255, b = 62 / 255, a = 1 },
-    SHAMAN = { r = 30 / 255, g = 44 / 255, b = 149 / 255, a = 1 },
-    --MAGE = {r = 62 / 255, g = 121 / 255, b = 149 / 255, a = 1},
-    MAGE = { r = 101 / 255, g = 157 / 255, b = 184 / 255, a = 1 },
-    WARLOCK = { r = 125 / 255, g = 88 / 255, b = 154 / 255, a = 1 },
-    MONK = { r = 66 / 255, g = 151 / 255, b = 112 / 255, a = 1 },
-    DRUID = { r = 158 / 255, g = 103 / 255, b = 37 / 255, a = 1 },
-    DEMONHUNTER = { r = 72 / 255, g = 38 / 255, b = 148 / 255, a = 1 },
-    EVOKER = { r = 56 / 255, g = 99 / 255, b = 113 / 255, a = 1 }
+    WARRIOR = CreateColor(90 / 255, 54 / 255, 38 / 255, 1),
+    PALADIN = CreateColor(177 / 255, 72 / 255, 117 / 255, 1),
+    HUNTER = CreateColor(99 / 255, 125 / 255, 53 / 255, 1),
+    ROGUE = CreateColor(190 / 255, 183 / 255, 79 / 255, 1),
+    PRIEST = CreateColor(205 / 255, 205 / 255, 205 / 255, 1),
+    DEATHKNIGHT = CreateColor(148 / 255, 62 / 255, 62 / 255, 1),
+    SHAMAN = CreateColor(30 / 255, 44 / 255, 149 / 255, 1),
+    --MAGE = CreateColor(62 / 255, 121 / 255, 149 / 255, 1},
+    MAGE = CreateColor(101 / 255, 157 / 255, 184 / 255, 1),
+    WARLOCK = CreateColor(125 / 255, 88 / 255, 154 / 255, 1),
+    MONK = CreateColor(66 / 255, 151 / 255, 112 / 255, 1),
+    DRUID = CreateColor(158 / 255, 103 / 255, 37 / 255, 1),
+    DEMONHUNTER = CreateColor(72 / 255, 38 / 255, 148 / 255, 1),
+    EVOKER = CreateColor(56 / 255, 99 / 255, 113 / 255, 1)
 }
 
 GW.FACTION_COLOR = {
-    [1] = { r = 163 / 255, g = 46 / 255, b = 54 / 255 }, --Horde
-    [2] = { r = 57 / 255, g = 115 / 255, b = 186 / 255 } --Alliance
+    [1] = CreateColor(163 / 255, 46 / 255, 54 / 255), --Horde
+    [2] = CreateColor(57 / 255, 115 / 255, 186 / 255) --Alliance
 }
 
 GW.TARGET_FRAME_ART = {
@@ -300,16 +300,16 @@ GW.ShortPrefixStyles = {
 }
 
 GW.GemTypeInfo = {
-	Yellow			= { r = 0.97, g = 0.82, b = 0.29 },
-	Red				= { r = 1.00, g = 0.47, b = 0.47 },
-	Blue			= { r = 0.47, g = 0.67, b = 1.00 },
-	Hydraulic		= { r = 1.00, g = 1.00, b = 1.00 },
-	Cogwheel		= { r = 1.00, g = 1.00, b = 1.00 },
-	Meta			= { r = 1.00, g = 1.00, b = 1.00 },
-	Prismatic		= { r = 1.00, g = 1.00, b = 1.00 },
-	PunchcardRed	= { r = 1.00, g = 0.47, b = 0.47 },
-	PunchcardYellow	= { r = 0.97, g = 0.82, b = 0.29 },
-	PunchcardBlue	= { r = 0.47, g = 0.67, b = 1.00 },
+	Yellow			= CreateColor(0.97, 0.82, 0.29),
+	Red				= CreateColor(1.00, 0.47, 0.47),
+	Blue			= CreateColor(0.47, 0.67, 1.00),
+	Hydraulic		= CreateColor(1.00, 1.00, 1.00),
+	Cogwheel		= CreateColor(1.00, 1.00, 1.00),
+	Meta			= CreateColor(1.00, 1.00, 1.00),
+	Prismatic		= CreateColor(1.00, 1.00, 1.00),
+	PunchcardRed	= CreateColor(1.00, 0.47, 0.47),
+	PunchcardYellow	= CreateColor(0.97, 0.82, 0.29),
+	PunchcardBlue	= CreateColor(0.47, 0.67, 1.00),
 }
 
 GW.INDICATORS = { "BAR", "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT" }
@@ -317,101 +317,7 @@ GW.indicatorsText = { "Bar", "Top Left", "Top", "Top Right", "Left", "Center", "
 
 -- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
 -- Format: {class = {id = {r, g, b[, <spell-id-same-slot>]} ...}, ...}
-if GW.Retail then
-    GW.AURAS_INDICATORS = {
-        PRIEST = {
-            [194384] = { 1, 1, 0.66 },      -- Atonement
-            [214206] = { 1, 1, 0.66 },      -- Atonement (PvP)
-            [41635]  = { 1, 1, 0.66 },      -- Prayer of Mending
-            [193065] = { 0.54, 0.21, 0.78 }, -- Masochism
-            [139]    = { 0.4, 0.7, 0.2 },   -- Renew
-            [17]     = { 0.7, 0.7, 0.7 },   -- Power Word: Shield
-            [47788]  = { 0.86, 0.45, 0 },   -- Guardian Spirit
-            [33206]  = { 0.47, 0.35, 0.74 }, -- Pain Suppression
-            [6788]   = { 0.89, 0.1, 0.1 },  -- Weakened Soul
-            [10060]  = { 1, 0.81, 0.11 },   -- Power Infusion
-            [77489]  = { 0.75, 1, 0.3 },    -- Echo of Light
-        },
-        DRUID = {
-            [774] = { 0.8, 0.4, 0.8 },      -- Rejuvenation
-            [155777] = { 0.8, 0.4, 0.8 },   -- Germination
-            [8936] = { 0.2, 0.8, 0.2 },     -- Regrowth
-            [33763] = { 0.4, 0.8, 0.2 },    -- Lifebloom
-            [188550] = { 0.4, 0.8, 0.2 },   -- Lifebloom Legendary version
-            [48438] = { 0.8, 0.4, 0 },      -- Wild Growth
-            [207386] = { 0.4, 0.2, 0.8 },   -- Spring Blossoms
-            [102351] = { 0.2, 0.8, 0.8 },   -- Cenarion Ward (Initial Buff)
-            [102352] = { 0.2, 0.8, 0.8 },   -- Cenarion Ward (HoT)
-            [200389] = { 1, 1, 0.4 },       -- Cultivation
-            [203554] = { 1, 1, 0.4 },       -- Focused Growth (PvP)
-            [391891] = { 0.01, 0.75, 0.6 }, -- Adaptive Swarm
-            [157982] = { 0.75, 0.75, 0.75 }, -- Tranquility
-        },
-        PALADIN = {
-            [53563] = { 1, 0.3, 0 },         -- Beacon of Light
-            [156910] = { 0, 0.7, 1, 53563 }, -- Beacon of Faith
-            [200025] = { 1, 0.85, 0, 53563 }, -- Beacon of Virtue
-            [1022] = { 0.2, 0.2, 1 },        -- Hand of Protection
-            [1044] = { 0.89, 0.45, 0 },      -- Hand of Freedom
-            [6940] = { 0.89, 0.1, 0.1 },     -- Hand of Sacrifice
-            [223306] = { 0.7, 0.7, 0.3 },    -- Bestow Faith
-            [287280] = { 1, 0.5, 0 },        -- Glimmer of Light
-            [157047] = { 0.15, 0.58, 0.84 }, -- Saved by the Light (T25 Talent)
-            [204018] = { 0.2, 0.2, 1 },      -- Blessing of Spellwarding
-            [148039] = { 0.98, 0.5, 0.11 },  -- Barrier of Faith (accumulation)
-            [395180] = { 0.93, 0.8, 0.36 },  -- Barrier of Faith (absorbtion)
-        },
-        SHAMAN = {
-            [61295] = { 0.7, 0.3, 0.7 },      -- Riptide
-            [974] = { 0.91, 0.8, 0.44 },      -- Earth Shield
-            [383648] = { 0.91, 0.8, 0.44 },   -- Earth Shield (Elemental Orbit)
-        },
-        MONK = {
-            [115175] = { 0.6, 0.9, 0.9 },   -- Soothing Mist
-            [119611] = { 0.3, 0.8, 0.6 },   -- Renewing Mist
-            [116849] = { 0.2, 0.8, 0.2 },   -- Life Cocoon
-            [124682] = { 0.8, 0.8, 0.25 },  -- Enveloping Mist
-            [191840] = { 0.27, 0.62, 0.7 }, -- Essence Font
-            [116841] = { 0.12, 1.00, 0.53 }, -- Tiger's Lust (Freedom)
-            [325209] = { 0.3, 0.8, 0.6 },   -- Enveloping Breath
-        },
-        ROGUE = {
-            [57934] = { 0.89, 0.09, 0.05 } -- Tricks of the Trade
-        },
-        WARRIOR = {
-            [3411] = { 0.89, 0.09, 0.05 }  -- Intervene
-        },
-        HUNTER = {
-            [90361] = { 0.34, 0.47, 0.31 }, -- Spirit Mend (HoT)
-        },
-        DEMONHUNTER = {},
-        WARLOCK = {},
-        MAGE = {},
-        DEATHKNIGHT = {},
-        EVOKER = {
-            [355941] = { 0.33, 0.33, 0.77 }, -- Dream Breath
-            [363502] = { 0.33, 0.33, 0.7 }, -- Dream Flight
-            [366155] = { 0.14, 1.00, 0.88 }, -- Reversion
-            [364343] = { 0.13, 0.87, 0.50 }, -- Echo
-            [357170] = { 0.11, 0.57, 0.7 }, -- Time Dilation
-            [376788] = { 0.25, 0.25, 0.58 }, -- Dreaon Breath (echo)
-            [367364] = { 0.09, 0.69, 0.61 }, -- Reversion (echo)
-            [373267] = { 0.82, 0.29, 0.24 }, -- Life Bind (Verdant Embrace)
-            [360827] = { 0.33, 0.33, 0.77 }, -- Blistering Scales
-            [410089] = { 0.13, 0.87, 0.50 }, -- Prescience
-            [395296] = { 0.98, 0.44, 0.00 }, -- Ebon Might < self
-            [395152] = { 0.98, 0.44, 0.00 }, -- Ebon Might < others
-            [361022] = { 0.98, 0.44, 0.00 }, -- Sense Power
-            [406732] = { 0.82, 0.29, 0.24 }, -- Spatial Paradox
-            [406789] = { 0.82, 0.29, 0.24 }, -- Spatial Paradox
-        },
-        PET = {
-            [193396] = { 0.6, 0.2, 0.8 },   -- Demonic Empowerment
-            [19615] = { 0.89, 0.09, 0.05 }, -- Frenzy
-            [136] = { 0.2, 0.8, 0.2 }       -- Mend Pet
-        }
-    }
-elseif GW.Classic then
+if GW.Classic then
     GW.AURAS_INDICATORS = {
         PRIEST = {
             --[1243] =    {1, 1, 0.66},       -- Power Word: Fortitude Rank 1
@@ -904,14 +810,7 @@ elseif GW.TBC then
 end
 
 -- Never show theses auras
-if GW.Retail then
-    GW.AURAS_IGNORED = {
-        57723, -- Sated
-        57724, -- Exhaustion
-        80354, -- Temporal Displacement
-        264689 -- Fatigued
-    }
-elseif GW.Mists then
+if GW.Mists then
     GW.AURAS_IGNORED = {
         186403,	-- Sign of Battle
         377749,	-- Joyous Journeys
@@ -944,15 +843,7 @@ end
 
 
 -- Show these auras only when they are missing
-if GW.Retail then
-    GW.AURAS_MISSING = {
-        21562, -- Power Word: Fortitude
-        6673,  -- Battle Shout
-        1459   -- Arcane Intellect
-    }
-else
-    GW.AURAS_MISSING = {}
-end
+GW.AURAS_MISSING = {}
 
 GW.BotList = {
     [22700] = true,
