@@ -188,7 +188,6 @@ function GW.GetStatusBarTextures()
             table.insert(textureOtherLabels, "|T".. file .. ":" .. 18 .. ":" .. 55 .. "|t [Custom] " .. key)
             table.insert(textureOtherValues, key)
         end
-        print(key)
     end
 
     for i = 1, #textureOtherLabels do
