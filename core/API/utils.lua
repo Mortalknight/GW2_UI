@@ -1225,19 +1225,11 @@ local function moveFrameToPosition(frame, x, y)
         GW.settings[frame.gwSetting] = pos
     end
 
-    frame.ClearAllPoints = nil
-    frame.SetPoint = nil
     frame:ClearAllPoints()
     frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-    frame.SetPoint = GW.NoOp
-    frame.ClearAllPoints = GW.NoOp
 end
 
 local function MakeFrameMovable(frame, target, setting, moveFrameOnShow)
-    if frame:IsMovable() then
-        --return
-    end
-
     if not target then
         local point = GW.settings[setting]
         frame:ClearAllPoints()
@@ -1249,6 +1241,7 @@ local function MakeFrameMovable(frame, target, setting, moveFrameOnShow)
     target.gwSetting = setting
     frame:SetMovable(true)
     frame:EnableMouse(true)
+    frame:SetUserPlaced(false)
     frame:SetScript("OnMouseDown", function(_, button)
         if button == "LeftButton" then
             target:StartMoving()
@@ -1264,6 +1257,14 @@ local function MakeFrameMovable(frame, target, setting, moveFrameOnShow)
     if moveFrameOnShow then
         frame:HookScript("OnShow", function()
             moveFrameToPosition(target)
+        end)
+        hooksecurefunc(frame, "SetPoint", function(self)
+            if not self:IsShown() or self.gwApplyingPosition then
+                return
+            end
+            self.gwApplyingPosition = true
+            moveFrameToPosition(target)
+            self.gwApplyingPosition = nil
         end)
     end
 end
@@ -1495,4 +1496,3 @@ local function GetDebuffScaleBasedOnPrio()
     return scale
 end
 GW.GetDebuffScaleBasedOnPrio = GetDebuffScaleBasedOnPrio
-

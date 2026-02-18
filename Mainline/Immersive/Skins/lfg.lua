@@ -360,7 +360,6 @@ local function SkinLookingForGroupFrames()
         ScenarioQueueFrameFindGroupButton:GwSkinButton(false, true)
 
         ScenarioQueueFrameSpecificScrollFrame:GwStripTextures()
-        --GW.HandleTrimScrollBar(ScenarioQueueFrameSpecificScrollFrame.ScrollBar)
 
         if ScenarioQueueFrameRandomScrollFrameScrollBar then
             ScenarioQueueFrameRandomScrollFrameScrollBar:SetAlpha(0)
@@ -418,7 +417,6 @@ local function SkinLookingForGroupFrames()
     RaidFinderQueueFrameSelectionDropdownName:SetTextColor(1, 1, 1)
     RaidFinderQueueFrameSelectionDropdownName:ClearAllPoints()
     RaidFinderQueueFrameSelectionDropdownName:SetPoint("RIGHT", RaidFinderQueueFrameSelectionDropdown, "LEFT", 0, 0)
-
 
     RaidFinderFrameFindRaidButton:GwStripTextures()
     RaidFinderFrameFindRaidButton:GwSkinButton(false, true)
@@ -772,9 +770,9 @@ local function SkinLookingForGroupFrames()
                 }
 
                 for i = 1, result.numMembers do
-                    local role, class = C_LFGList.GetSearchResultMemberInfo(button.resultID, i)
-                    if role then
-                        tinsert(cache[role], {class = class, role = role})
+                    local memberInfo = C_LFGList.GetSearchResultPlayerInfo(button.resultID, i)
+                    if memberInfo and memberInfo.assignedRole then
+                        tinsert(cache[memberInfo.assignedRole], {class = memberInfo.classFilename, role = memberInfo.assignedRole})
                     end
                 end
 
