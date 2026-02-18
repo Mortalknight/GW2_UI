@@ -115,9 +115,10 @@ end
 
 function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
     for i = 1, 25 do
-        local campaignBlock = _G["GwQuesttrackerContainerCampaignBlock" .. i]
-        local questBlock = _G["GwQuesttrackerContainerQuestsBlock" .. i]
-        local bonusObjectiveBlock = _G["GwQuesttrackerContainerBlock" .. i]
+        local campaignBlock = GW.ObjectiveTrackerContainer.Campaign.blocks[i]
+        local questBlock = GW.ObjectiveTrackerContainer.Quests.blocks[i]
+        local bonusObjectiveBlock = GW.ObjectiveTrackerContainer.Bonus.blocks[i]
+
         if campaignBlock then
             if i <= GW.ObjectiveTrackerContainer.Campaign.numQuests then
                 GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. campaignBlock.index, campaignBlock.UpdateObjectiveActionButtonPosition, {campaignBlock})
