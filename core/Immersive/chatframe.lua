@@ -1607,14 +1607,9 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
             end
         elseif chatType == "CHANNEL_NOTICE_USER" then
-            local globalstring = _G["CHAT_"..arg1.."_NOTICE_BN"]
-            if not globalstring then
-                globalstring = _G["CHAT_"..arg1.."_NOTICE"]
-            end
-            if not globalstring then
-                GMError(("Missing global string for %q"):format("CHAT_"..arg1.."_NOTICE_BN"))
-                return
-            end
+            local globalstring = GW.NotSecretValue(arg1) and (_G["CHAT_" .. arg1 .. "_NOTICE_BN"] or _G["CHAT_" .. arg1 .. "_NOTICE"])
+            if not globalstring then return end
+
             if arg5 ~= "" then
                 frame:AddMessage(format(globalstring, arg8, arg4, arg2, arg5), info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
             elseif arg1 == "INVITE" then
@@ -1626,90 +1621,57 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 frame:AddMessage(CHAT_MSG_BLOCK_CHAT_CHANNEL_INVITE, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
             end
         elseif chatType == "CHANNEL_NOTICE" then
-            local accessID = GW.ChatFunctions:GetAccessID(chatGroup, arg8)
-            local typeID = GW.ChatFunctions:GetAccessID(infoType, arg8, arg12)
-
-            if GW.Retail and GW.NotSecretValue(arg1) and arg1 == "YOU_CHANGED" and C_ChatInfo.GetChannelRuleset(arg8) == Enum.ChatChannelRuleset.Mentor then
+            if GW.IsSecretValue(arg1) then
+                return
+            elseif GW.Retail and arg1 == "YOU_CHANGED" and (C_ChatInfo.GetChannelRuleset(arg8) == Enum.ChatChannelRuleset.Mentor) then
                 frame:UpdateDefaultChatTarget()
                 frame.editBox:UpdateNewcomerEditBoxHint()
             else
-                if GW.Retail and GW.NotSecretValue(arg1) and arg1 == "YOU_LEFT" then
+                if GW.Retail and arg1 == "YOU_LEFT" then
                     frame.editBox:UpdateNewcomerEditBoxHint(arg8)
                 end
 
-                local globalstring
-                if GW.NotSecretValue(arg1)and arg1 == "TRIAL_RESTRICTED" then
-                    globalstring = CHAT_TRIAL_RESTRICTED_NOTICE_TRIAL
-                else
-                    if GW.IsSecretValue(arg1) then
-                        globalstring = C_StringUtil.WrapString(arg1, "CHAT_", "_NOTICE_BN")
-                    else
-                        globalstring = _G["CHAT_"..arg1.."_NOTICE_BN"]
-                    end
-
-                    if not globalstring then
-                        if GW.IsSecretValue(arg1) then
-                            globalstring = C_StringUtil.WrapString(arg1, "CHAT_", "_NOTICE")
-                        else
-                            globalstring = _G["CHAT_"..arg1.."_NOTICE"]
-                        end
-                        if not globalstring then
-                            if GW.IsSecretValue(arg1) then
-                                globalstring = C_StringUtil.WrapString(arg1, "CHAT_", "_NOTICE")
-                            else
-                                globalstring = _G["CHAT_"..arg1.."_NOTICE"]
-                            end
-                            GMError(("Missing global string for %q"):format(globalstring))
-                            return
-                        end
-                    end
-                end
+                local globalstring = _G["CHAT_" .. arg1 .. "_NOTICE_TRIAL"] or _G["CHAT_" .. arg1 .. "_NOTICE_BN"] or _G["CHAT_" .. arg1 .. "_NOTICE"]
+                if not globalstring then return end
+                local accessID = GW.ChatFunctions:GetAccessID(chatGroup, arg8)
+                local typeID = GW.ChatFunctions:GetAccessID(infoType, arg8, arg12)
 
                 frame:AddMessage(format(globalstring, arg8, ResolvePrefixedChannelName(arg4)), info.r, info.g, info.b, info.id, accessID, typeID, nil, nil, nil, isHistory, historyTime)
             end
         elseif chatType == "BN_INLINE_TOAST_ALERT" then
-            if GW.NotSecretValue(arg1) then
-                local globalstring = _G["BN_INLINE_TOAST_"..arg1]
-                if not globalstring then
-                    GMError(("Missing global string for %q"):format("BN_INLINE_TOAST_"..arg1))
-                    return
-                end
+            local globalstring = GW.NotSecretValue(arg1) and _G["BN_INLINE_TOAST_" .. arg1]
+            if not globalstring then return end
 
-                local message
-                if arg1 == "FRIEND_REQUEST" then
-                    message = globalstring
-                elseif arg1 == "FRIEND_PENDING" then
-                    message = format(BN_INLINE_TOAST_FRIEND_PENDING, BNGetNumFriendInvites())
-                elseif arg1 == "FRIEND_REMOVED" or arg1 == "BATTLETAG_FRIEND_REMOVED" then
-                    message = format(globalstring, arg2)
-                elseif arg1 == "FRIEND_ONLINE" or arg1 == "FRIEND_OFFLINE" then
-                    local accountInfo = C_BattleNet.GetAccountInfoByID(arg13)
-                    local gameInfo = accountInfo and accountInfo.gameAccountInfo
-                    if gameInfo and gameInfo.clientProgram and gameInfo.clientProgram ~= "" then
-                        if C_Texture.GetTitleIconTexture then
-                                C_Texture.GetTitleIconTexture(gameInfo.clientProgram, Enum.TitleIconVersion.Small, function(success, texture)
-                                if success then
-                                    local characterName = BNet_GetValidatedCharacterNameWithClientEmbeddedTexture(gameInfo.characterName, accountInfo.battleTag, texture, 32, 32, 10)
-                                    local linkDisplayText = format("[%s] (%s)", arg2, characterName)
-                                    local playerLink = GW.ChatFunctions:GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
-                                    frame:AddMessage(format(globalstring, playerLink), info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
+            local message
+            if arg1 == "FRIEND_REQUEST" then
+                message = globalstring
+            elseif arg1 == "FRIEND_PENDING" then
+                message = format(BN_INLINE_TOAST_FRIEND_PENDING, BNGetNumFriendInvites())
+            elseif arg1 == "FRIEND_REMOVED" or arg1 == "BATTLETAG_FRIEND_REMOVED" then
+                message = format(globalstring, arg2)
+            elseif arg1 == "FRIEND_ONLINE" or arg1 == "FRIEND_OFFLINE" then
+                local accountInfo = C_BattleNet.GetAccountInfoByID(arg13)
+                local gameInfo = accountInfo and accountInfo.gameAccountInfo
+                if accountInfo and gameInfo and gameInfo.clientProgram and gameInfo.clientProgram ~= "" then
+                    if C_Texture.GetTitleIconTexture then
+                            C_Texture.GetTitleIconTexture(gameInfo.clientProgram, Enum.TitleIconVersion.Small, function(success, texture)
+                            if success then
+                                local characterName = BNet_GetValidatedCharacterNameWithClientEmbeddedTexture(gameInfo.characterName, accountInfo.battleTag, texture, 32, 32, 10)
+                                local linkDisplayText = format("[%s] (%s)", arg2, characterName)
+                                local playerLink = GW.ChatFunctions:GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
+                                frame:AddMessage(format(globalstring, playerLink), info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
 
-                                    if notChatHistory then
-                                        FlashTabIfNotShown(frame, info, chatType, chatGroup, chatTarget)
-                                    end
+                                if notChatHistory then
+                                    FlashTabIfNotShown(frame, info, chatType, chatGroup, chatTarget)
                                 end
-                            end)
+                            end
+                        end)
 
-                            return
-                        else
-                            local clientTexture = GetClientTexture(gameInfo.clientProgram, 14)
-                            local charName = BNet_GetValidatedCharacterName(gameInfo.characterName, accountInfo.battleTag, gameInfo.clientProgram) or ""
-                            local linkDisplayText = format("[%s] (%s%s)", arg2, clientTexture, charName)
-                            local playerLink = GW.ChatFunctions:GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
-                            message = format(globalstring, playerLink)
-                        end
+                        return
                     else
-                        local linkDisplayText = format("[%s]", arg2)
+                        local clientTexture = GetClientTexture(gameInfo.clientProgram, 14)
+                        local charName = BNet_GetValidatedCharacterName(gameInfo.characterName, accountInfo.battleTag, gameInfo.clientProgram) or ""
+                        local linkDisplayText = format("[%s] (%s%s)", arg2, clientTexture, charName)
                         local playerLink = GW.ChatFunctions:GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
                         message = format(globalstring, playerLink)
                     end
@@ -1718,8 +1680,12 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                     local playerLink = GW.ChatFunctions:GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
                     message = format(globalstring, playerLink)
                 end
-                frame:AddMessage(message, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
+            else
+                local linkDisplayText = format("[%s]", arg2)
+                local playerLink = GW.ChatFunctions:GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
+                message = format(globalstring, playerLink)
             end
+            frame:AddMessage(message, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
         elseif chatType == "BN_INLINE_TOAST_BROADCAST" then
             if GW.NotSecretValue(arg1) and arg1 ~= "" then
                 arg1 = RemoveNewlines(RemoveExtraSpaces(arg1))
@@ -1854,31 +1820,33 @@ do
     end
 
     local repeatedText
-    local function EditBoxOnTextChanged(self)
-        local userInput = self:GetText()
-        local len = strlen(userInput)
+    local function EditBoxOnTextChanged(self, userInput)
+        local text = self:GetText()
+        local len = strlen(text)
 
-        if GW.settings.CHAT_INCOMBAT_TEXT_REPEAT ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
-            local MIN_REPEAT_CHARACTERS = tonumber(GW.settings.CHAT_INCOMBAT_TEXT_REPEAT)
-            if len > MIN_REPEAT_CHARACTERS then
-                local repeatChar = true
-                for i = 1, MIN_REPEAT_CHARACTERS, 1 do
-                    local first = -1 - i
-                    if strsub(userInput, -i, -i) ~= strsub(userInput, first, first) then
-                        repeatChar = false
-                        break
+        if userInput then
+            if GW.settings.CHAT_INCOMBAT_TEXT_REPEAT ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(text, repeatedText, 1, true)) then
+                local MIN_REPEAT_CHARACTERS = tonumber(GW.settings.CHAT_INCOMBAT_TEXT_REPEAT)
+                if len > MIN_REPEAT_CHARACTERS then
+                    local repeatChar = true
+                    for i = 1, MIN_REPEAT_CHARACTERS, 1 do
+                        local first = -1 - i
+                        if strsub(text, -i, -i) ~= strsub(text, first, first) then
+                            repeatChar = false
+                            break
+                        end
                     end
-                end
-                if repeatChar then
-                    repeatedText = userInput
-                    self:Hide()
-                    return
+                    if repeatChar then
+                        repeatedText = text
+                        self:Hide()
+                        return
+                    end
                 end
             end
         end
 
         charCount = 0
-        gsub(userInput, "(|c%x-|H.-|h).-|h|r", CountLinkCharacters)
+        gsub(text, "(|c%x-|H.-|h).-|h|r", CountLinkCharacters)
         if charCount ~= 0 then len = len - charCount end
 
         self.characterCount:SetText(len > 0 and (255 - len) or "")
@@ -1886,12 +1854,66 @@ do
         if repeatedText then
             repeatedText = nil
         end
-
-        if repeatedText then
-            repeatedText = nil
-        end
     end
     GW.ChatFrameEditBoxOnTextChanged = EditBoxOnTextChanged
+end
+
+local function EditBoxOnKeyDown(self, key)
+    local lines = self.historyLines
+    if not lines then return end
+
+    if IsAltKeyDown() or GW.IsChatRestricted() then return end
+
+
+    local maxLines = #lines
+    if maxLines == 0 then return end
+
+    if key == "DOWN" then
+        self.historyIndex = self.historyIndex - 1
+
+        if self.historyIndex < 1 then
+            self.historyIndex = 0
+            self:SetText("")
+
+            return
+        end
+    elseif key == "UP" then
+        self.historyIndex = self.historyIndex + 1
+
+        if self.historyIndex > maxLines then
+            self.historyIndex = maxLines
+        end
+    else
+        return
+    end
+
+    local historyLine = maxLines - (self.historyIndex - 1)
+    local historyText = lines[historyLine]
+    if historyText then
+        self:SetText(historyText)
+    end
+end
+
+local function ChatEdit_AddHistory(self, line)
+    local lines = self.historyLines
+    local msg = lines and line and strtrim(line)
+    if not msg or strlen(msg) <= 0 then return end
+
+    local cmd = strmatch(msg, "^/%w+")
+    if cmd and IsSecureCmd(cmd) then return end -- block secure commands
+
+    for index, text in pairs(lines) do
+        if text == msg then
+            tremove(lines, index)
+            break
+        end
+    end
+
+    tinsert(lines, msg)
+
+    if #lines > 20 then
+        tremove(lines, 1)
+    end
 end
 
 local function styleChatWindow(frame)
@@ -2097,9 +2119,19 @@ local function styleChatWindow(frame)
         if GW.settings.CHATFRAME_EDITBOX_HIDE then
             editBox:Hide()
         end
+
+        editBox.historyIndex = 0
     end)
 
     editbox:HookScript("OnTextChanged", GW.ChatFrameEditBoxOnTextChanged)
+    editbox:HookScript("OnKeyDown", EditBoxOnKeyDown)
+
+    editbox.historyLines = GW.private.ChatEditHistory
+    editbox.historyIndex = 0
+
+    if editbox.AddHistoryLine then
+        hooksecurefunc(editbox, "AddHistoryLine", ChatEdit_AddHistory)
+    end
 
     if GW.settings.CHAT_USE_GW2_STYLE then
         local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")

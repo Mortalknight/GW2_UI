@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetAddOnRestrictionState = C_RestrictedActions and C_RestrictedActions.GetAddOnRestrictionState
 
 function GW.GetSpellCooldown(spellID)
     if not spellID then return end
@@ -277,6 +278,18 @@ function GW.UnitIsDND(unit)
     local dnd = UnitIsDND(unit)
 
     return GW.NotSecretValue(dnd) and dnd or nil
+end
+
+function GW.CheckRestrictionState(which)
+    local enum = Enum.AddOnRestrictionType or {}
+    local ok, state = pcall(GetAddOnRestrictionState, enum[which] or which)
+    if not ok then return 0 end
+
+    return state
+end
+
+function GW.IsChatRestricted()
+    return GW.CheckRestrictionState("ChallengeMode") > 1 or GW.CheckRestrictionState("Encounter") > 1
 end
 
 function GW.GetWowheadLinkForLanguage()
