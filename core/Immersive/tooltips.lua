@@ -1095,23 +1095,23 @@ local function AddPremadeGroupInfo(tooltip, resultID)
         return
     end
 
-    -- split line
-    tooltip:AddLine(" ")
-    tooltip:AddLine(L["Party Info"])
-
     -- add info
     local data = GW.LFGPI.GetPartyInfo(resultID)
-
-    for _, role in ipairs(GW.LFGPI.GetRoleOrder()) do
-        for _, line in ipairs(data[role]) do
-            tooltip:AddLine(line)
+    if data then
+        -- split line
+        tooltip:AddLine(" ")
+        tooltip:AddLine(MEMBERS_COLON)
+        for _, role in ipairs(GW.LFGPI.GetRoleOrder()) do
+            for _, line in ipairs(data[role]) do
+                tooltip:AddLine(line)
+            end
         end
+
+        tooltip:ClearAllPoints()
+        tooltip:SetPoint("TOPLEFT", LFGListFrame, "TOPRIGHT", 10, 0)
+
+        tooltip:Show()
     end
-
-    tooltip:ClearAllPoints()
-    tooltip:SetPoint("TOPLEFT", LFGListFrame, "TOPRIGHT", 10, 0)
-
-    tooltip:Show()
 end
 
 local function GameTooltip_Hide()

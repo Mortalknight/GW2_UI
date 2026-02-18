@@ -9,6 +9,11 @@ local roleOrder = {
     [3] = "DAMAGER"
 }
 local cache = {}
+local LFG_LIST_GROUP_DATA_ATLASES_BORDERLESS = {
+	TANK = "groupfinder-icon-role-micro-tank",
+	HEALER = "groupfinder-icon-role-micro-heal",
+	DAMAGER = "groupfinder-icon-role-micro-dps",
+}
 
 local function GetRoleOrder()
     return roleOrder
@@ -70,52 +75,42 @@ end
 
 -- Main logic
 local function Update(resultID)
-    local result = C_LFGList.GetSearchResultInfo(resultID)
+    local searchResultInfo = C_LFGList.GetSearchResultInfo(resultID)
+    local activityInfo = C_LFGList.GetActivityInfoTable(searchResultInfo.activityIDs[1], nil, searchResultInfo.isWarMode);
 
-    if not result then
+    if not searchResultInfo then
         GW.Debug("debug", "cache not updated correctly, the number of results is nil.")
     end
 
-    if not result.numMembers or result.numMembers == 0 then
+    if not searchResultInfo.numMembers or searchResultInfo.numMembers == 0 then
         GW.Debug("debug", "cache not updated correctly, the number of result.numMembers is nil or 0.")
     end
 
     ClearCache()
 
-    for i = 1, result.numMembers do
-        local role, class, _, spec = C_LFGList.GetSearchResultMemberInfo(resultID, i)
-
-        if not role then
-            GW.Debug("debug", "cache not updated correctly, the role is nil.")
-            return
+    for i = 1, searchResultInfo.numMembers do
+        local memberInfo = C_LFGList.GetSearchResultPlayerInfo(resultID, i)
+        if memberInfo and memberInfo.assignedRole then
+            AddPlayer(memberInfo.assignedRole, memberInfo.classFilename, memberInfo.specName)
         end
-
-        if not class then
-            GW.Debug("debug", "cache not updated correctly, the class is nil.")
-            return
-        end
-
-        if not spec then
-            GW.Debug("debug", "cache not updated correctly, the spec is nil.")
-            return
-        end
-
-        AddPlayer(role, class, spec)
     end
+
+    return GW.NotSecretTable(activityInfo) and activityInfo.displayType ~= Enum.LFGListDisplayType.ClassEnumerate and activityInfo.displayType ~= Enum.LFGListDisplayType.RoleEnumerate
 end
 
 local function CreateTooltipLine(role, class, spec, amount)
-    local specIcon = localizedSpecNameToIcon[class] and localizedSpecNameToIcon[class][spec]
     local color = GW.GWGetClassColor(class, true, true)
+    local roleIcon = CreateAtlasMarkup(LFG_LIST_GROUP_DATA_ATLASES_BORDERLESS[role], 13, 13, 0, 0)
 
-    return format("|T%s:16:16:0:0:64:64:4:60:4:60|t", GW.nameRoleIconPure[role]) .. GW.GetClassIconStringWithStyle(class, 14, 14) .. " " .. (specIcon and GW.GetIconString(specIcon, 14, 14, true) or "") ..
-    format(" |c%s", color.colorStr) .. (LOCALIZED_CLASS_NAMES_MALE[class] or "") .. " (" .. spec .. ")|r" .. (amount <= 1 and "" or " x " .. tostring(amount))
+    return roleIcon .. " " .. color:WrapTextInColorCode(string.format(LFG_LIST_TOOLTIP_CLASS_ROLE, (LOCALIZED_CLASS_NAMES_MALE[class] or ""), spec)) .. (amount <= 1 and "" or " x " .. tostring(amount))
 end
 
 local function GetPartyInfo(resultId)
     local dataTable = {}
 
-    Update(resultId)
+    local shouldAdd = Update(resultId)
+
+    if not shouldAdd then return end
 
     for _, role in ipairs(roleOrder) do
         dataTable[role] = {}
