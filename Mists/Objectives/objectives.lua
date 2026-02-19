@@ -32,7 +32,7 @@ end
 
 local function UntrackQuest(questLogIndex)
     RemoveQuestWatch(questLogIndex)
-    QuestWatch_Update()
+    WatchFrame_Update()
     QuestLog_Update()
 end
 
