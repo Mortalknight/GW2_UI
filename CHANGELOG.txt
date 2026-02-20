@@ -1,3 +1,18 @@
+10.3.0
+NEW
+    - Add option to change unitframe healtbar texture
+    - Add option ot add Healtglobe spacing to not manage actionsbars (Retail)
+    - Added own chat command history
+
+CHANGES
+    - Tooltips updates
+    - Color handling refactor
+    - Update TBC advanced stats
+
+FIXES
+    - Grid buff handling on none retail clients
+    - More bug fixes
+
 10.2.2
 FIXES
     - Fix lua error with housing
