@@ -344,7 +344,7 @@
                         </Layers>
                         <Scripts>
                             <OnLoad>
-                                self:SetStatusBarColor(GW2_ADDON.FACTION_BAR_COLORS[4].r, GW2_ADDON.FACTION_BAR_COLORS[4].g, GW2_ADDON.FACTION_BAR_COLORS[4].b)
+                                self:SetStatusBarColor(GW2_ADDON.Colors.FactionBarColors[4]:GetRGB())
                                 self.value:SetFont(UNIT_NAME_FONT, 12, "")
                                 self.value:SetShadowColor(0, 0, 0, 1)
                                 self.value:SetShadowOffset(1, -1)
