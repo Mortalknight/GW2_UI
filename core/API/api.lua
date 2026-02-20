@@ -60,11 +60,11 @@ function GW.IsSpellKnown(spellID, isPet)
     end
 end
 
-local function GetWatchedFactionInfo()
+function GW.GetWatchedFactionInfo()
     if C_Reputation and C_Reputation.GetWatchedFactionData then
         return C_Reputation.GetWatchedFactionData()
     else
-        local name, standing, min, max, value, factionID = _G.GetWatchedFactionInfo()
+        local name, standing, min, max, value, factionID = GetWatchedFactionInfo()
         local watchedInfo = {
             factionID = factionID,
             name = name,
@@ -87,7 +87,6 @@ local function GetWatchedFactionInfo()
         return watchedInfo
     end
 end
-GW.GetWatchedFactionInfo = GetWatchedFactionInfo
 
 function GW.IsPlayerSpell(spellID)
     if C_SpellBook and C_SpellBook.IsSpellKnown then

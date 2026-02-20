@@ -544,10 +544,6 @@ local function queueUpdate(self)
 end
 
 local function xpbar_OnEvent(self, event, ...)
-    if event == "UPDATE_FACTION" and not GW.inWorld then
-        return
-    end
-
     if event == "PLAYER_EQUIPMENT_CHANGED" then
         local slot = ...
         if slot == Enum.InventoryType.IndexNeckType then
