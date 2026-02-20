@@ -336,10 +336,10 @@ end
 local function processData(element, unit, data, filter)
     if(not data) then return end
 
-    if oUF.isRetail then
-        data.isHarmfulAura = filter:find("HARMFUL") and true
-        data.isHelpfulAura = not data.isHarmfulAura
+    data.isHarmfulAura = filter:find("HARMFUL") and true
+    data.isHelpfulAura = filter:find("HELPFUL") and true
 
+    if oUF.isRetail then
         data.isAuraImportant = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|IMPORTANT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|IMPORTANT")
         data.isAuraCancelable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CANCELABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CANCELABLE")
         data.isAuraCrowdControl = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CROWD_CONTROL") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CROWD_CONTROL")

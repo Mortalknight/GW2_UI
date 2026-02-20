@@ -334,7 +334,7 @@ local function processData(unit, data, filter, newBuffAnimation)
     data.newBuffAnimation = newBuffAnimation
 
     data.isHarmfulAura = filter:find("HARMFUL") and true
-    data.isHelpfulAura = not data.isHarmfulAura
+    data.isHelpfulAura = filter:find("HELPFUL") and true
 
     data.isAuraCancelable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CANCELABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CANCELABLE")
     data.isAuraPlayer = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|PLAYER") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|PLAYER")
