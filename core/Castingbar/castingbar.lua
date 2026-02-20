@@ -147,9 +147,9 @@ function GwCastingBarMixin:Init(unit, showTradeSkills)
     self.Pips = {}
     self.StagePoints = {}
 
-    self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     self.name:SetShadowOffset(1, -1)
-    self.time:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    self.time:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     self.time:SetShadowOffset(1, -1)
     self:SetAlpha(0)
 
@@ -488,7 +488,7 @@ end
 
 function GwCastingBarMixin:CreateNewBarSegment()
     local segment = CreateFrame("Frame", nil, self, "GwCastingBarSegmentSep")
-    segment.rank:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    segment.rank:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     segment.rank:SetShadowOffset(1, -1)
     return segment
 end

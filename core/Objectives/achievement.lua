@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
 local ChatEdit_InsertLink = ChatFrameUtil and ChatFrameUtil.InsertLink or ChatEdit_InsertLink
@@ -178,7 +177,7 @@ function GwAchievementTrackerContainerMixin:UpdateLayout(event, ...)
             end
 
             self.header:Show()
-            local block = self:GetBlock(shownIndex, "ACHIEVEMENT", false)
+            local block = self:GetBlock(shownIndex, GW.Enum.ObjectivesNotificationType.Achievement, false)
             block.id = achievementID
             block:UpdateBlock(self)
 
@@ -219,17 +218,13 @@ function GwAchievementTrackerContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0, 0.25)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText(TRACKER_HEADER_ACHIEVEMENTS)
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
-    self.header.title:SetTextColor(
-        TRACKER_TYPE_COLOR.ACHIEVEMENT.r,
-        TRACKER_TYPE_COLOR.ACHIEVEMENT.g,
-        TRACKER_TYPE_COLOR.ACHIEVEMENT.b
-    )
+    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Achievement]:GetRGB())
 
     self.timedCriteria = {}
     self.blockMixInTemplate = GwAchievementTrackerBlockMixin

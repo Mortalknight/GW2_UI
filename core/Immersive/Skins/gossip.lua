@@ -459,7 +459,7 @@ local function createCoordDebugInput(self, labelText, index)
     f.label:SetPoint("RIGHT", f, "LEFT", 0, 0)
     f.label:SetJustifyH("LEFT")
     f.label:SetJustifyV("MIDDLE")
-    f.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+    f.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
     f.label:SetText(labelText)
 
     f:SetScript("OnTextChanged", function() updateModelFrame(GwGossipModelFrame, nil, true) end)
@@ -618,7 +618,7 @@ local function LoadGossipSkin()
     greetings:SetPoint("BOTTOMRIGHT", portraitFrame.maskLayer, "TOPLEFT", 545, -165)
     greetings:SetJustifyH("LEFT")
     greetings:SetJustifyV("MIDDLE")
-    greetings:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+    greetings:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
     greetings:SetText("")
     GossipFrame.customGossipText = greetings
 
@@ -629,7 +629,7 @@ local function LoadGossipSkin()
     portraitFrame.npcNameLabel:SetPoint("TOPLEFT", portraitFrame, "TOPLEFT", -3, -170)
 
     portraitFrame.npcNameText = portraitFrame:CreateFontString(nil, "ARTWORK")
-    portraitFrame.npcNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+    portraitFrame.npcNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
     portraitFrame.npcNameText:SetTextColor(1, 1, 1)
     portraitFrame.npcNameText:ClearAllPoints()
     portraitFrame.npcNameText:SetPoint("TOPLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 0)
@@ -800,7 +800,7 @@ local function LoadGossipSkin()
     --QuestFrame
     if GW.Retail then
         local QuestFrame = QuestFrame
-        QuestFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
+        QuestFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE", 2)
         QuestFrame:GwStripTextures()
         QuestFrame:GwCreateBackdrop()
         QuestFrame.tex = QuestFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -919,7 +919,7 @@ local function LoadGossipSkin()
 
         QuestNPCModelNameText:ClearAllPoints()
         QuestNPCModelNameText:SetPoint("TOP", QuestModelScene, 0, -10)
-        QuestNPCModelNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+        QuestNPCModelNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
         QuestNPCModelNameText:SetTextColor(1, 1, 1)
 
         QuestNPCModelText:SetJustifyH("CENTER")

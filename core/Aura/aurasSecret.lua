@@ -1,5 +1,4 @@
 local _, GW = ...
-local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 
 if not GW.Retail then return end
@@ -28,7 +27,7 @@ local function CreateAuraFrame(name, parent)
     f.Cooldown:SetReverse(false)
     f.Cooldown:SetHideCountdownNumbers(false)
 
-    f.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE", -1)
+    f.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", -1)
 
     local r = {f.Cooldown:GetRegions()}
     for _, c in pairs(r) do
@@ -36,7 +35,7 @@ local function CreateAuraFrame(name, parent)
             f.duration = c
             f.duration:SetPoint("TOPLEFT", f.status, "BOTTOMLEFT", -10, -2)
             f.duration:SetPoint("TOPRIGHT", f.status, "BOTTOMRIGHT", 10, 0)
-            f.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
+            f.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
             f.duration:SetShadowOffset(1, -1)
             break
         end
@@ -88,13 +87,13 @@ local function setAuraType(self, typeAura)
     if typeAura == "smallbuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 1, -1)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, 1)
-        self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
-        self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE", -1)
+        self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
+        self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", -1)
     elseif typeAura == "bigBuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 2, -2)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 2)
-        self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-        self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+        self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
     end
 
     self.typeAura = typeAura
@@ -214,7 +213,7 @@ local function updateAura(element, unit, data, position)
         if color then
             button.background:SetVertexColor(color:GetRGB())
         else
-            button.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+            button.background:SetVertexColor(GW.Colors.FriendlyColors[2]:GetRGB())
         end
         if button.typeAura == "smallbuff" then
             if data.isAuraImportant and data.isAuraRaidPlayerDispellable then
@@ -291,7 +290,7 @@ local function processData(unit, data, filter, newBuffAnimation)
 
     data.newBuffAnimation = newBuffAnimation
 
-    data.isHarmfulAura = filter:match("HARMFUL")
+    data.isHarmfulAura = filter:find("HARMFUL") and true
     data.isHelpfulAura = not data.isHarmfulAura
 
     data.isAuraImportant = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|IMPORTANT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|IMPORTANT")
@@ -522,9 +521,9 @@ local function LoadAuras(self)
 
     self.auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
     self.auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
-    for _, dispelIndex in next, GW.DispelType do
-        if GW.DebuffColors[dispelIndex] then
-            self.auras.dispelColorCurve:AddPoint(dispelIndex, GW.DebuffColors[dispelIndex])
+    for _, dispelIndex in next, GW.Enum.DispelType do
+        if GW.Colors.DebuffColors[dispelIndex] then
+            self.auras.dispelColorCurve:AddPoint(dispelIndex, GW.Colors.DebuffColors[dispelIndex])
         end
     end
 

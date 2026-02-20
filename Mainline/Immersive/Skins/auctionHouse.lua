@@ -122,7 +122,7 @@ local function HandleSummaryIcons(frame)
 			if not child.IsSkinned then
 				GW.HandleIcon(child.Icon, true)
 
-				child.Text:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+				child.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
 				if child.IconBorder then
 					child.IconBorder:GwKill()
@@ -239,8 +239,8 @@ local function ApplyAuctionHouseSkin()
 	AuctionHouseFrame.gwHeader.windowIcon:SetPoint("CENTER", AuctionHouseFrame.gwHeader, "BOTTOMLEFT", -26, 35)
 	AuctionHouseFrameTitleText:ClearAllPoints()
 	AuctionHouseFrameTitleText:SetPoint("BOTTOMLEFT", AuctionHouseFrame.gwHeader, "BOTTOMLEFT", 25, 10)
-	AuctionHouseFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
-	AuctionHouseFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+	AuctionHouseFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader)
+	AuctionHouseFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
 
 	AuctionHouseFrame:SetClampedToScreen(true)
 	AuctionHouseFrame:SetClampRectInsets(-40, 0, AuctionHouseFrame.gwHeader:GetHeight() - 30, 0)
@@ -315,7 +315,7 @@ local function ApplyAuctionHouseSkin()
 		button.HighlightTexture:SetColorTexture(1, 1, 1, .1)
 		button.HighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
 
-		button.Text:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+		button.Text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 		button.Text:SetShadowColor(0, 0, 0, 0)
 		button.Text:SetShadowOffset(1, -1)
 		button.Text:SetFont(DAMAGE_TEXT_FONT, 13)

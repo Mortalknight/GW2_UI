@@ -164,7 +164,7 @@ local function SkinInspectFrameOnLoad()
             frame.roleIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             frame.roleName:SetTextColor(1, 1, 1)
             frame.specIcon:SetTexture(icon)
-            frame.specName:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+            frame.specName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
         end
 
         local talentInfoQuery = {

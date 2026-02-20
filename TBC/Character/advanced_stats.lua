@@ -1,6 +1,5 @@
 local _, GW = ...
 local RoundDec = GW.RoundDec
-local ClassIndex = GW.ClassIndex
 
 local lastManaReg = 0
 
@@ -112,7 +111,7 @@ local function IsSetBonusActive(setname, bonusLevel)
 end
 
 local function _IsRangeAttackClass()
-    return GW.myClassID == ClassIndex.WARRIOR or GW.myClassID == ClassIndex.ROGUE or GW.myClassID == ClassIndex.HUNTER
+    return GW.myClassID == GW.Enum.ClassIndex.Warrior or GW.myClassID == GW.Enum.ClassIndex.Rouge or GW.myClassID == GW.Enum.ClassIndex.Hunter
 end
 
 local function _IsShapeshifted()
@@ -172,7 +171,7 @@ end
 local function _GetTalentModifierDefense()
     local mod = 0
 
-    if GW.myClassID == ClassIndex.WARRIOR then
+    if GW.myClassID == GW.Enum.ClassIndex.Warrior then
         local talentInfoQuery = {}
         talentInfoQuery.isInspect = false
         talentInfoQuery.isPet = false
@@ -196,21 +195,21 @@ local function _GetTalentModifierMP5()
     talentInfoQuery.isPet = false
     talentInfoQuery.groupIndex = GW.GetTalentSpec()
 
-    if GW.myClassID == ClassIndex.PRIEST then
+    if GW.myClassID == GW.Enum.ClassIndex.Priest then
         talentInfoQuery.specializationIndex = 1
 		talentInfoQuery.talentIndex = 8
         local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
         if talentInfo then
             mod = talentInfo.rank * 0.05 -- 0-15% from Meditation
         end
-    elseif GW.myClassID == ClassIndex.MAGE then
+    elseif GW.myClassID == GW.Enum.ClassIndex.Mage then
         talentInfoQuery.specializationIndex = 1
 		talentInfoQuery.talentIndex = 12
         local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
         if talentInfo then
             mod = talentInfo.rank * 0.05 -- 0-15% Arcane Meditation
         end
-    elseif GW.myClassID == ClassIndex.DRUID then
+    elseif GW.myClassID == GW.Enum.ClassIndex.Druid then
         talentInfoQuery.specializationIndex = 3
 		talentInfoQuery.talentIndex = 6
         local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
@@ -224,7 +223,7 @@ end
 
 local function _GetBlessingOfWisdomModifier()
     local mod = 0
-    if GW.myClassID == ClassIndex.PALADIN then
+    if GW.myClassID == GW.Enum.ClassIndex.Paladin then
         local talentInfoQuery = {}
         talentInfoQuery.isInspect = false
         talentInfoQuery.isPet = false
@@ -300,9 +299,9 @@ local function _GetAuraModifier()
 end
 
 local function _HasSetBonusModifierMP5()
-    if GW.myClassID == ClassIndex.PRIEST then
+    if GW.myClassID == GW.Enum.ClassIndex.Priest then
         return IsSetBonusActive("Vestments of Transcendence", 3)
-    elseif GW.myClassID == ClassIndex.DRUID then
+    elseif GW.myClassID == GW.Enum.ClassIndex.Druid then
         return IsSetBonusActive("Stormrage Raiment", 3)
     end
 
@@ -310,16 +309,16 @@ local function _HasSetBonusModifierMP5()
 end
 
 local function GetSetBonusValueMP5()
-    if (GW.myClassID == ClassIndex.DRUID and IsSetBonusActive("Haruspex's Garb", 2))
-        or (GW.myClassID == ClassIndex.SHAMAN and IsSetBonusActive("Augur's Regalia", 2))
-        or (GW.myClassID == ClassIndex.PALADIN and IsSetBonusActive("Freethinker's Armor", 2)) then
+    if (GW.myClassID == GW.Enum.ClassIndex.Druid and IsSetBonusActive("Haruspex's Garb", 2))
+        or (GW.myClassID == GW.Enum.ClassIndex.Shaman and IsSetBonusActive("Augur's Regalia", 2))
+        or (GW.myClassID == GW.Enum.ClassIndex.Paladin and IsSetBonusActive("Freethinker's Armor", 2)) then
         return 4
     end
     return 0
 end
 
 local function HasSetBonusModifierNatureCrit()
-    if GW.myClassID == ClassIndex.SHAMAN then
+    if GW.myClassID == GW.Enum.ClassIndex.Shaman then
         return IsSetBonusActive("The Then Storms", 5)
     end
 
@@ -330,7 +329,7 @@ end
 local function _GetGeneralTalentModifier()
     local mod = 0
 
-    if GW.myClassID == ClassIndex.MAGE then -- Mage
+    if GW.myClassID == GW.Enum.ClassIndex.Mage then -- Mage
         local talentInfoQuery = {}
         talentInfoQuery.isInspect = false
         talentInfoQuery.isPet = false
@@ -353,14 +352,14 @@ local function _GetTalentModifierSpellHit()
     talentInfoQuery.isPet = false
     talentInfoQuery.groupIndex = GW.GetTalentSpec()
 
-    if GW.myClassID == ClassIndex.PRIEST then -- Priest
+    if GW.myClassID == GW.Enum.ClassIndex.Priest then -- Priest
         talentInfoQuery.specializationIndex = 3
         talentInfoQuery.talentIndex = 5
         local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
         if talentInfo then
             mod = talentInfo.rank * 2 -- 0-10% from Shadow Focus
         end
-    elseif GW.myClassID == ClassIndex.MAGE then -- Mage
+    elseif GW.myClassID == GW.Enum.ClassIndex.Mage then -- Mage
         talentInfoQuery.specializationIndex = 3
         talentInfoQuery.talentIndex = 3
         local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
@@ -372,7 +371,7 @@ local function _GetTalentModifierSpellHit()
     return mod
 end
 
-local function _GetMP5ValueOnItems() 
+local function _GetMP5ValueOnItems()
     local mp5 = 0
     for i = 1, 18 do
         local itemLink = GetInventoryItemLink("player", i)
@@ -594,7 +593,7 @@ end
 local function _GetTalentModifierHolyCrit()
     local mod = 0
 
-    if GW.myClassID == ClassIndex.PRIEST then -- Priest
+    if GW.myClassID == GW.Enum.ClassIndex.Priest then -- Priest
         local talentInfoQuery = {}
         talentInfoQuery.isInspect = false
         talentInfoQuery.isPet = false
@@ -613,7 +612,7 @@ end
 local function _GetTalentModifierFireCrit()
     local mod = 0
 
-    if GW.myClassID == ClassIndex.MAGE then -- Mage
+    if GW.myClassID == GW.Enum.ClassIndex.Mage then -- Mage
         local talentInfoQuery = {}
         talentInfoQuery.isInspect = false
         talentInfoQuery.isPet = false

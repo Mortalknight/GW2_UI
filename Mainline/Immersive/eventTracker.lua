@@ -975,7 +975,7 @@ local functionFactory = {
                         GameTooltip:AddDoubleLine(L["Bonus Net"], StringByTemplate(L["Not Set"], "danger"))
                     end
                 else
-                    GameTooltip:AddLine(GW.GetIconString(data.args.icon, 16, 16) .. " " .. data.args.eventName, GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
+                    GameTooltip:AddLine(GW.GetIconString(data.args.icon, 16, 16) .. " " .. data.args.eventName, GW.Colors.TextColors.LightHeader:GetRGB())
                     GameTooltip:AddDoubleLine(LOCATION_COLON, data.args.location, 1, 1, 1, 1, 1, 1)
 
                     if data.args.interval then
@@ -1046,11 +1046,11 @@ local functionFactory = {
             self.statusBar:SetPoint("TOPLEFT", self, "LEFT", 24, 2)
             self.statusBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 6)
 
-            self.timerText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE")
+            self.timerText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
             self.timerText:ClearAllPoints()
             self.timerText:SetPoint("TOPRIGHT", self, "TOPRIGHT", -2, -6)
 
-            self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE")
+            self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
             self.name:ClearAllPoints()
             self.name:SetPoint("TOPLEFT", self, "TOPLEFT", 25, -6)
             self.name:SetText(self.args.label)

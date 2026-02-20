@@ -127,13 +127,13 @@ function GW.SkinGuildList()
     GuildListScrollFrame:GwSkinScrollFrame()
      GuildListScrollFrame:SetPoint("TOPLEFT", GuildFrame, "TOPLEFT", 10, -60)
 
-    GuildFrameNotesLabel:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    GuildFrameNotesLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    GuildFrameNotesLabel:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+    GuildFrameNotesLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
-    GuildFrameTotals:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-    GuildFrameOnlineTotals:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-    GuildFrameNotesLabel:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-    GuildFrameNotesText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    GuildFrameTotals:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    GuildFrameOnlineTotals:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    GuildFrameNotesLabel:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    GuildFrameNotesText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
 
     GuildFrameLFGFrame:GwStripTextures()
 
@@ -143,7 +143,7 @@ function GW.SkinGuildList()
         local r = {frame:GetRegions()}
         for _,c in pairs(r) do
             if c:GetObjectType() == "FontString" then
-                c:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+                c:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
             end
         end
         GW.HandleScrollFrameHeaderButton(frame)

@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
@@ -41,12 +40,12 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         end
     end
 
-    GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.SCENARIO)
-    GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.TORGHAST)
-    GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.DELVE)
+    GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Scenario)
+    GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Torghast)
+    GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Delve)
 
     local compassData = {
-        TYPE = GW.TRACKER_TYPE.SCENARIO,
+        TYPE = GW.Enum.ObjectivesNotificationType.Scenario,
         TITLE = "Unknown Scenario",
         ID = "unknown",
         QUESTID = "unknown",
@@ -54,7 +53,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         MAPID = nil,
         X = nil,
         Y = nil,
-        COLOR = TRACKER_TYPE_COLOR.SCENARIO,
+        COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Scenario],
     }
 
     local block = self.block
@@ -84,14 +83,14 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             GwObjectivesNotification:AddNotification(compassData)
             block.height = block.height + 5
         else
-            GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.SCENARIO)
-            GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.TORGHAST)
+            GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Scenario)
+            GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Torghast)
             block:Hide()
         end
         GW.CombatQueue_Queue(nil, block.UpdateObjectiveActionButton, {block})
         if block.hasItem then
             block.fromContainerTopHeight = block.height
-            GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", block.UpdateObjectiveActionButtonPosition, {block, "SCENARIO"})
+            GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", block.UpdateObjectiveActionButtonPosition, {block})
         end
 
         for i = (block.numObjectives or 0) + 1, #block.objectiveBlocks do
@@ -144,8 +143,8 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             compassData.TITLE = difficultyName .. " |cFFFFFFFF " .. floor .. "|r"
         end
 
-        compassData.COLOR = TRACKER_TYPE_COLOR.TORGHAST
-        compassData.TYPE = GW.TRACKER_TYPE.TORGHAST
+        compassData.COLOR =GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Torghast]
+        compassData.TYPE = GW.Enum.ObjectivesNotificationType.Torghast
     end
 
     -- check for active delves
@@ -201,8 +200,8 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             block.delvesFrame.reward:Hide()
         end
 
-        compassData.COLOR = TRACKER_TYPE_COLOR.DELVE
-        compassData.TYPE = GW.TRACKER_TYPE.DELVE
+        compassData.COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Delve]
+        compassData.TYPE = GW.Enum.ObjectivesNotificationType.Delve
     end
 
     block:SetBlockColorByKey(compassData.TYPE)
@@ -315,7 +314,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
     block.height = block.height + 5
     if block.hasItem then
         block.fromContainerTopHeight = block.height
-        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", block.UpdateObjectiveActionButtonPosition, {block, "SCENARIO"})
+        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", block.UpdateObjectiveActionButtonPosition, {block})
     end
 
     local intGWQuestTrackerHeight = 0
@@ -589,17 +588,17 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     self.timerBlock.timerlabel = self.timerBlock.timer.timerlabel
     self.timerBlock.timerString = self.timerBlock.timer.timerString
 
-    self.timerBlock.timerlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    self.timerBlock.timerlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     self.timerBlock.timerlabel:SetTextColor(1, 1, 1)
     self.timerBlock.timerlabel:SetShadowOffset(1, -1)
-    self.timerBlock.timerString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    self.timerBlock.timerString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     self.timerBlock.timerString:SetTextColor(1, 1, 1)
     self.timerBlock.timerString:SetShadowOffset(1, -1)
 
-    self.timerBlock.chestoverlay.timerStringChest2:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
+    self.timerBlock.chestoverlay.timerStringChest2:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
     self.timerBlock.chestoverlay.timerStringChest2:SetTextColor(1, 1, 1)
     self.timerBlock.chestoverlay.timerStringChest2:SetShadowOffset(1, -1)
-    self.timerBlock.chestoverlay.timerStringChest3:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
+    self.timerBlock.chestoverlay.timerStringChest3:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
     self.timerBlock.chestoverlay.timerStringChest3:SetTextColor(1, 1, 1)
     self.timerBlock.chestoverlay.timerStringChest3:SetShadowOffset(1, -1)
 
@@ -612,10 +611,10 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     self.timerBlock.chestoverlay.timerStringChest2:SetPoint("RIGHT", self.timerBlock.chestoverlay.chest2, "LEFT", -2, -6)
     self.timerBlock.chestoverlay.timerStringChest3:SetPoint("RIGHT", self.timerBlock.chestoverlay.chest3, "LEFT", -2, -6)
 
-    self.timerBlock.deathcounter.counterlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
+    self.timerBlock.deathcounter.counterlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
     self.timerBlock.deathcounter.counterlabel:SetTextColor(1, 1, 1)
     self.timerBlock.deathcounter.counterlabel:SetShadowOffset(1, -1)
-    self.timerBlock.score.scoreString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    self.timerBlock.score.scoreString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
 
     for _, v in ipairs(self.timerBlock.affixeFrame.affixes) do
         v:SetScript("OnEnter", function(affixBlock)
@@ -658,7 +657,7 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     end
     self.timerBlock:SetScript("OnEvent", self.timerBlock.TimerBlockOnEvent)
 
-    self.block = self:GetBlock(1, "SCENARIO", GW.Retail) -- only create an actionbutton for retail here
+    self.block = self:GetBlock(1, GW.Enum.ObjectivesNotificationType.Scenario, GW.Retail) -- only create an actionbutton for retail here
     if GW.Retail then
         Mixin(self.block.actionButton, ScenarioSpellButtonMixin)
         self.block.actionButton:SetScript("OnEnter", self.block.actionButton.OnEnter)
@@ -686,7 +685,7 @@ function GwObjectivesScenarioContainerMixin:InitModule()
 
     self.block.delvesFrame.deathCounter:SetScript("OnEnter", UIWidgetTemplateTooltipFrameOnEnter)
     self.block.delvesFrame.deathCounter:SetScript("OnLeave", function() UIWidgetTemplateTooltipFrameMixin:OnLeave() end)
-    self.block.delvesFrame.deathCounter.counter:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    self.block.delvesFrame.deathCounter.counter:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
     C_Timer.After(0.8, function() self:UpdateLayout() end)
 

@@ -27,7 +27,7 @@ local function actionButtonGlobalStyle(self)
     self.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
     self.itemlevel:SetTextColor(1, 1, 1)
     self.itemlevel:SetJustifyH("LEFT")
-    self.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+    self.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
 end
 
 local function updateBagItemButton(button)

@@ -355,11 +355,11 @@ local function LoadBank(helpers)
     f.BankPanel.LockPrompt:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     -- setup money frame
-    f.BankPanel.MoneyFrame.MoneyDisplay.CopperButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.BankPanel.MoneyFrame.MoneyDisplay.CopperButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     f.BankPanel.MoneyFrame.MoneyDisplay.CopperButton.Text:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.BankPanel.MoneyFrame.MoneyDisplay.SilverButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.BankPanel.MoneyFrame.MoneyDisplay.SilverButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     f.BankPanel.MoneyFrame.MoneyDisplay.SilverButton.Text:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.BankPanel.MoneyFrame.MoneyDisplay.GoldButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.BankPanel.MoneyFrame.MoneyDisplay.GoldButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     f.BankPanel.MoneyFrame.MoneyDisplay.GoldButton.Text:SetTextColor(221 / 255, 187 / 255, 68 / 255)
 
     --sort popup
@@ -393,9 +393,9 @@ local function LoadBank(helpers)
     f.GetActiveBankType = function() return f.BankPanel:GetActiveBankType() end
 
     -- skin some things not done in XML
-    f.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
+    f.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
     f.headerString:SetText(BANK)
-    f.spaceString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.spaceString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 

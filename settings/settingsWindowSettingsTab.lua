@@ -837,7 +837,7 @@ local function LoadSettingsTab(container)
     -- Setup search
     searchPanel = CreateFrame("Frame", nil, container, "GwSettingsPanelTmpl")
     searchPanel.header:SetFont(DAMAGE_TEXT_FONT, 26)
-    searchPanel.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
+    searchPanel.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     searchPanel.header:SetText(SETTINGS_SEARCH_RESULTS)
     searchPanel.sub:SetFont(UNIT_NAME_FONT, 12)
     searchPanel.sub:SetTextColor(181/255, 160/255, 128/255)

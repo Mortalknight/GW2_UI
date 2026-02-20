@@ -17,7 +17,7 @@ local function LoadDressUpFrameSkin()
     if not GW.settings.INSPECTION_SKIN_ENABLED then return end
 
     DressUpFrame:GwStripTextures()
-    DressUpFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
+    DressUpFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE", 2)
     DressUpFrameCloseButton:GwSkinButton(true)
     DressUpFrameCloseButton:SetSize(20, 20)
     DressUpFrameResetButton:GwSkinButton(false, true)

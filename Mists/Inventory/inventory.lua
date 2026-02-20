@@ -1,5 +1,4 @@
 local _, GW = ...
-local BAG_TYP_COLORS = GW.BAG_TYP_COLORS
 
 BAG_FILTER_LABELS = {
     [LE_BAG_FILTER_FLAG_EQUIPMENT] = BAG_FILTER_EQUIPMENT,
@@ -39,7 +38,7 @@ local function reskinItemButton(b, overrideIconSize)
 
     b.Count:ClearAllPoints()
     b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
-    b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+    b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
     b.Count:SetJustifyH("RIGHT")
 
     local qtex = b.GetName and b:GetName() ~= nil and _G[b:GetName() .. "IconQuestTexture"] or nil
@@ -76,7 +75,7 @@ local function reskinItemButton(b, overrideIconSize)
 
     if not b.itemlevel then
         b.itemlevel = b:CreateFontString(nil, "OVERLAY")
-        b.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+        b.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
         b.itemlevel:SetPoint("BOTTOMRIGHT", 0, 0)
         b.itemlevel:SetText("")
     end
@@ -175,7 +174,7 @@ local function hookItemQuality(button, quality, itemIDOrLink)
     end
 
     local bag_id = button:GetParent():GetID()
-    local professionColors = BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
+    local professionColors = GW.Colors.BagTypeColors[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
     local showEquipmentSetName = GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME
 
@@ -357,7 +356,7 @@ local function reskinBagBar(b)
     if b.Count then
         b.Count:ClearAllPoints()
         b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
-        b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+        b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
         b.Count:SetJustifyH("RIGHT")
     end
 
@@ -391,8 +390,8 @@ local function reskinSearchBox(sb)
         return
     end
 
-    sb:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-    sb.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    sb:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    sb.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
     sb.Left:SetPoint("LEFT", 0, 0)

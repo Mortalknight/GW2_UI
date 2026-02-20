@@ -91,8 +91,8 @@ function GwQuestTrackerObjectiveMixin:OnHide()
 end
 
 function GwQuestTrackerObjectiveMixin:OnLoad()
-    self.ObjectiveText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-    self.StatusBar.progress:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    self.TimerBar.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    self.ObjectiveText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    self.StatusBar.progress:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    self.TimerBar.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     hooksecurefunc(self.StatusBar, "SetValue", statusBarSetValue)
 end

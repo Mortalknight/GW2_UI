@@ -41,7 +41,7 @@ local function fsr_OnUpdate(self, elapsed)
                 self.statusBar.label:SetText("")
                 self.statusBar:SetMinMaxValues(0, 2)
                 self.statusBar:SetValue(Timer)
-                local pwcolor = GW.PowerBarColorCustom[self.powerName]
+                local pwcolor = GW.Colors.PowerBarCustomColors[self.powerName]
                 self.statusBar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
                 self.allowPowerEvent = true
 
@@ -158,7 +158,7 @@ local function createStatusbar(playerFrame)
     fsr.statusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
 
     fsr.statusBar.label = fsr.statusBar:CreateFontString(nil, "OVERLAY")
-    fsr.statusBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL, "", -4)
+    fsr.statusBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small, "", -4)
     fsr.statusBar.label:SetText("")
     fsr.statusBar.label:SetPoint("CENTER", 0, 0)
     fsr.statusBar.label:SetTextColor(1, 1, 1)

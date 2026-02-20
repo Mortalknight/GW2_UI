@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local GWGetClassColor = GW.GWGetClassColor
-local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local nameRoleIcon = GW.nameRoleIcon
 
 local pawnTooltipBorderRegistered = false
@@ -303,9 +302,9 @@ local function GameTooltip_OnTooltipCleared(self)
     end
 
     GameTooltip_ClearMoney(self)
-	GameTooltip_ClearStatusBars(self)
-	GameTooltip_ClearProgressBars(self)
-	GameTooltip_ClearWidgetSet(self)
+    GameTooltip_ClearStatusBars(self)
+    GameTooltip_ClearProgressBars(self)
+    GameTooltip_ClearWidgetSet(self)
 end
 
 local function GameTooltip_OnTooltipSetItem(self, data)
@@ -519,14 +518,14 @@ local function SetUnitText(self, unit, isPlayerUnit)
         end
 
         local unitReaction = UnitReaction(unit, "player")
-        local nameColor = unitReaction and GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
-        if unitReaction and unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
+        local nameColor = unitReaction and GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR and GW.Colors.FactionBarColors[unitReaction] or RAID_CLASS_COLORS.PRIEST
+        if unitReaction and unitReaction >= 5 then nameColor = GW.Colors.FriendlyColors[1] end --Friend
 
         if not isPetCompanion then
             GameTooltipTextLeft1:SetText(nameColor:WrapTextInColorCode(name or UNKNOWN))
         end
 
-        return (UnitIsTapDenied(unit) and {r = 159 / 255, g = 159 / 255, b = 159 / 255}) or nameColor
+        return (UnitIsTapDenied(unit) and GW.Colors.TabDenied) or nameColor
     end
 end
 
@@ -541,7 +540,7 @@ local function AddTargetInfo(self, unit)
             local _, class = UnitClass(unitTarget)
             targetColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
         else
-            targetColor = GW.FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
+            targetColor = GW.Colors.FactionBarColors[UnitReaction(unitTarget, "player")]
         end
         local targetName = UnitName(unitTarget) or UNKNOWN
 
@@ -762,7 +761,7 @@ local function SetUnitInfo(self, unit, data)
 
     if not isPlayerUnit and IsModKeyDown() and not ((GW.Retail or GW.Mists) and C_PetBattles.IsInBattle()) then
         local guid = (data and data.guid) or UnitGUID(unit) or ""
-        local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
+        local id = GW.NotSecretValue(guid) and tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
         if id then -- NPC ID"s
             self:AddLine(format(IDLine, ID, id))
         end

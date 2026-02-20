@@ -1,5 +1,4 @@
 local _, GW = ...
-local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local LoadAuras = GW.LoadAuras
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
@@ -276,8 +275,8 @@ local function LoadPetFrame(lm)
     RegisterStateDriver(playerPetFrame, "visibility",
         "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
 
-    playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-    playerPetFrame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
+    playerPetFrame.health:SetStatusBarColor(GW.Colors.FriendlyColors[2]:GetRGB())
+    playerPetFrame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
 
     playerPetFrame:SetScript("OnEnter", function(self)
         GameTooltip:ClearLines()

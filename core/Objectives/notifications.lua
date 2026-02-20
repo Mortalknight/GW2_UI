@@ -1,29 +1,28 @@
 local _, GW = ...
 local L = GW.L
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local notifications = {}
 
 local icons = {
-    QUEST = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
-    CAMPAIGN = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
-    EVENT = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
-    SCENARIO = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
-    BOSS = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
-    DEAD = {tex = "icon-dead", l = 0, r = 1, t = 0, b = 1},
-    ARENA = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
-    DAILY = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
-    TORGHAST = {tex = "icon-objective", l = 0.5, r = 1, t = 0.5, b = 0.75},
-    DELVE = {tex = "icon-delve", l = 0, r = 1, t = 0, b = 1},
+    [GW.Enum.ObjectivesNotificationType.Quest] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
+    [GW.Enum.ObjectivesNotificationType.Campaign] = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
+    [GW.Enum.ObjectivesNotificationType.Event] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
+    [GW.Enum.ObjectivesNotificationType.Scenario] = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
+    [GW.Enum.ObjectivesNotificationType.Boss] = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
+    [GW.Enum.ObjectivesNotificationType.Dead] = {tex = "icon-dead", l = 0, r = 1, t = 0, b = 1},
+    [GW.Enum.ObjectivesNotificationType.Arena] = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
+    [GW.Enum.ObjectivesNotificationType.DailyQuest] = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
+    [GW.Enum.ObjectivesNotificationType.Torghast] = {tex = "icon-objective", l = 0.5, r = 1, t = 0.5, b = 0.75},
+    [GW.Enum.ObjectivesNotificationType.Delve] = {tex = "icon-delve", l = 0, r = 1, t = 0, b = 1},
 }
 
 local notification_priority = {
-    DELVE = 1,
-    TORGHAST = 1,
-    SCENARIO = 2,
-    EVENT = 3,
-    ARENA = 4,
-    BOSS = 5,
+    [GW.Enum.ObjectivesNotificationType.Delve] = 1,
+    [GW.Enum.ObjectivesNotificationType.Torghast] = 1,
+    [GW.Enum.ObjectivesNotificationType.Scenario] = 2,
+    [GW.Enum.ObjectivesNotificationType.Event] = 3,
+    [GW.Enum.ObjectivesNotificationType.Arena] = 4,
+    [GW.Enum.ObjectivesNotificationType.Boss] = 5,
 }
 
 -- Questie Helper
@@ -222,12 +221,12 @@ local function getNearestQuestPOIRetail()
         Y = poiY,
         DESC = objectiveText,
         TITLE = questData.title,
-        TYPE = isCampaign and GW.TRACKER_TYPE.CAMPAIGN or isFrequent and GW.TRACKER_TYPE.DAILY or isWQ and GW.TRACKER_TYPE.EVENT or GW.TRACKER_TYPE.QUEST,
+        TYPE = isCampaign and GW.Enum.ObjectivesNotificationType.Campaign or isFrequent and GW.Enum.ObjectivesNotificationType.DailyQuest or isWQ and GW.Enum.ObjectivesNotificationType.Event or GW.Enum.ObjectivesNotificationType.Quest,
         ID = closestQuestID,
-        COLOR = isCampaign and TRACKER_TYPE_COLOR.CAMPAIGN
-            or isFrequent and TRACKER_TYPE_COLOR.DAILY
-            or isWQ and TRACKER_TYPE_COLOR.EVENT
-            or TRACKER_TYPE_COLOR.QUEST,
+        COLOR = isCampaign and GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]
+            or isFrequent and GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.DailyQuest]
+            or isWQ and GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]
+            or GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest],
         COMPASS = true,
         QUESTID = closestQuestID
     }
@@ -297,9 +296,9 @@ local function getNearestQuestPOIClassic()
         Y = poiY,
         DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
         TITLE = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID)),
-        TYPE = isDaily and GW.TRACKER_TYPE.DAILY or GW.TRACKER_TYPE.QUEST,
+        TYPE = isDaily and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
         ID = closestQuestID,
-        COLOR = isDaily and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST,
+        COLOR = isDaily and GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.DailyQuest] or GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest],
         COMPASS = true,
         QUESTID = closestQuestID
     }
@@ -345,9 +344,9 @@ local function getNearestQuestPOIMists()
             Y = poiY,
             DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID)),
             TITLE = title,
-            TYPE = isFrequent and GW.TRACKER_TYPE.DAILY or GW.TRACKER_TYPE.QUEST,
+            TYPE = isFrequent and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest,
             ID = closestQuestID,
-            COLOR = isFrequent and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST,
+            COLOR = isFrequent and GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.DailyQuest] or GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest],
             COMPASS = true,
             QUESTID = closestQuestID
         }
@@ -376,9 +375,9 @@ local function getBodyPOI()
         X = x,
         Y = y,
         TITLE = L["Retrieve your corpse"],
-        TYPE = GW.TRACKER_TYPE.DEAD,
+        TYPE = GW.Enum.ObjectivesNotificationType.Dead,
         ID = "playerDead",
-        COLOR = TRACKER_TYPE_COLOR.DEAD,
+        COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Dead],
         COMPASS = true
     }
 end
@@ -509,7 +508,7 @@ function GwObjectivesTrackerNotificationMixin:SetObjectiveNotification()
         self.iconFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. iconInfo.tex .. ".png")
         self.iconFrame.icon:SetTexCoord(iconInfo.l, iconInfo.r, iconInfo.t, iconInfo.b)
 
-        if data.TYPE == GW.TRACKER_TYPE.DELVE then
+        if data.TYPE == GW.Enum.ObjectivesNotificationType.Delve then
             self.iconFrame:SetScript("OnEnter", function()
                 GameTooltip:SetOwner(self.iconFrame, "ANCHOR_LEFT")
                 GameTooltip:SetSpellByID(self.iconFrame.tooltipSpellID)
@@ -619,9 +618,9 @@ end
 function GwObjectivesTrackerNotificationMixin:InitModule()
     self.animatingState = false
     self.animating = false
-    self.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.title:SetShadowOffset(1, -1)
-    self.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    self.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     self.desc:SetShadowOffset(1, -1)
     self.bonusbar.bar:SetOrientation("VERTICAL")
     self.bonusbar.bar:SetMinMaxValues(0, 1)

@@ -38,12 +38,12 @@ local meta = {
 }
 
 local function SetupGw2ClassColors()
-    GW.GW_CLASS_COLORS = setmetatable(GW.GW_CLASS_COLORS, meta)
+    GW.Colors.ClassColors = setmetatable(GW.Colors.ClassColors, meta)
     setupDone = true
 end
 
 function GW.UpdateGw2ClassColor(classTag, r, g, b, changed)
-    local colors = GW.GW_CLASS_COLORS
+    local colors = GW.Colors.ClassColors
     local color = colors and colors[classTag]
 
     if color then
@@ -67,7 +67,7 @@ function GW.UpdateGw2ClassColors()
     if not setupDone then
         SetupGw2ClassColors()
     end
-    local custom = GW.GW_CLASS_COLORS
+    local custom = GW.Colors.ClassColors
     local colors = GW.private.Gw2ClassColor
 
     for classTag, db in next, colors do

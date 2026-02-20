@@ -3,7 +3,7 @@ local _, GW = ...
 local dataValid = false
 local friendTable, BNTable, tableList, clientSorted = {}, {}, {}, {}
 local totalOnlineString = strjoin("", FRIENDS_LIST_ONLINE, ": %s/%s")
-local tthead = GW.myfaction == "Alliance" and GW.FACTION_COLOR[2] or GW.FACTION_COLOR[1]
+local tthead = GW.myfaction == "Alliance" and GW.Colors.FactionColors.Alliance or GW.Colors.FactionColors.Horde
 local activezone, inactivezone = {r = 0.3, g = 1.0, b = 0.3}, {r = 0.65, g = 0.65, b = 0.65}
 local levelNameString = "|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r"
 local levelNameClassString = "|cff%02x%02x%02x%d|r %s%s%s"

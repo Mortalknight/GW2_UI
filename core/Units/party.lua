@@ -1,5 +1,4 @@
 local _, GW = ...
-local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local SetClassIcon = GW.SetClassIcon
 local RoundDec = GW.RoundDec
 local IsIn = GW.IsIn
@@ -469,7 +468,7 @@ local function CreatePartyFrame(i, isPlayer)
     frame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     frame.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
-    frame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    frame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(UNIT_NAME_FONT, 12, "OUTLINE")
@@ -582,7 +581,7 @@ local function CreatePartyFrame(i, isPlayer)
         GameTooltip:Show()
     end)
     GW.AddToClique(petFrame)
-    petFrame.health:SetStatusBarColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
+    petFrame.health:SetStatusBarColor(GW.Colors.FriendlyColors[1]:GetRGB())
     petFrame:SetScript("OnEvent", petFrame.OnEvent)
     -- Registriere Events für Pet-Frame
     for _, ev in ipairs({ "GROUP_ROSTER_UPDATE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "PORTRAITS_UPDATED", "PLAYER_TARGET_CHANGED" }) do
@@ -631,7 +630,7 @@ local function CreatePartyFrame(i, isPlayer)
         GameTooltip:Show()
     end)
     GW.AddToClique(frame)
-    frame.health:SetStatusBarColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
+    frame.health:SetStatusBarColor(GW.Colors.FriendlyColors[1]:GetRGB())
     for _, ev in ipairs({ "GROUP_ROSTER_UPDATE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED", "PLAYER_TARGET_CHANGED", "INCOMING_RESURRECT_CHANGED", "PORTRAITS_UPDATED" }) do
         frame:RegisterEvent(ev)
     end

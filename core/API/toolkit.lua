@@ -591,7 +591,7 @@ local function GwHandleDropDownBox(frame, backdropTemplate, hookLayout, dropdown
     frame.gw2Arrow = tex
 
     if text then
-        text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
         text:SetJustifyH("LEFT")
         text:SetJustifyV("MIDDLE")
@@ -637,7 +637,7 @@ local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textB
     if text then
         text:ClearAllPoints()
         text:SetPoint("RIGHT", button, "LEFT", -2, 0)
-        text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
         text:SetHeight(frame:GetHeight())
         text:SetJustifyV("MIDDLE")
@@ -816,13 +816,13 @@ local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddi
         object.gwFont, object.gwTextSizeType, object.gwStyle, object.gwTextSizeAddition = font, textSizeType, style, textSizeAddition
     end
 
-    if textSizeType == GW.TextSizeType.BIG_HEADER then
+    if textSizeType == GW.Enum.TextSizeType.BigHeader then
         object:SetFont(font, (GW.settings.FONTS_BIG_HEADER_SIZE or 18) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
-    elseif textSizeType == GW.TextSizeType.HEADER then
+    elseif textSizeType == GW.Enum.TextSizeType.Header then
         object:SetFont(font, (GW.settings.FONTS_HEADER_SIZE or 16) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
-    elseif textSizeType == GW.TextSizeType.NORMAL then
+    elseif textSizeType == GW.Enum.TextSizeType.Normal then
         object:SetFont(font, (GW.settings.FONTS_NORMAL_SIZE or 14) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
-    elseif textSizeType == GW.TextSizeType.SMALL then
+    elseif textSizeType == GW.Enum.TextSizeType.Small then
         object:SetFont(font, (GW.settings.FONTS_SMALL_SIZE or 12) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
     end
 

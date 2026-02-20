@@ -90,7 +90,7 @@ local function LoadMerchantFrameSkin()
     MerchantFrame.gwHeader.windowIcon:SetSize(65, 65)
     MerchantFrame.gwHeader.windowIcon:ClearAllPoints()
     MerchantFrame.gwHeader.windowIcon:SetPoint("CENTER", MerchantFrame.gwHeader.BGLEFT, "LEFT", 25, -5)
-    headerText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+    headerText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
 
     MerchantFrameInset.NineSlice:Hide()
 

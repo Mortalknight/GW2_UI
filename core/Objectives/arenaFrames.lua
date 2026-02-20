@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local SetClassIcon = GW.SetClassIcon
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
@@ -61,9 +60,9 @@ function GwArenaFrameMixin:UpdateName()
     if GW.Retail then return end
     self.guid = UnitGUID(self.unit)
     if self.guid == UnitGUID("target") then
-        self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     else
-        self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        self.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     end
 end
 
@@ -107,7 +106,7 @@ function GwArenaFrameMixin:OnHide()
     self.container:UpdateArenaFrameHeight()
     local _, instanceType = IsInInstance()
     if countArenaFrames < 1 and instanceType ~= "arena" and instanceType ~= "pvp" then
-        GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.ARENA)
+        GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Arena)
         countArenaFrames = 0
     end
 end
@@ -144,14 +143,14 @@ function GwObjectivesArenaContainerMixin:SetCompass()
 
     compassData.TITLE = compassTitle
     compassData.DESC = compassDesc
-    compassData.TYPE = GW.TRACKER_TYPE.ARENA
+    compassData.TYPE = GW.Enum.ObjectivesNotificationType.Arena
     compassData.ID = "arena_unknown"
     compassData.QUESTID = "unknown"
     compassData.COMPASS = false
     compassData.MAPID = nil
     compassData.X = nil
     compassData.Y = nil
-    compassData.COLOR = TRACKER_TYPE_COLOR.ARENA
+    compassData.COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Arena]
 
     GwObjectivesNotification:AddNotification(compassData, true)
 end
@@ -210,7 +209,7 @@ function GwObjectivesArenaContainerMixin:RegisterFrame(i)
     arenaFrame:EnableMouse(true)
     arenaFrame:RegisterForClicks("AnyDown")
 
-    arenaFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    arenaFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     arenaFrame.name:SetShadowOffset(1, -1)
     arenaFrame.marker:Hide()
     arenaFrame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons.png")
@@ -241,7 +240,7 @@ function GwObjectivesArenaContainerMixin:RegisterPrepFrame()
     arenaPrepFrame:RegisterForClicks("AnyDown")
     arenaPrepFrame.container = self
 
-    arenaPrepFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    arenaPrepFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     arenaPrepFrame.name:SetShadowOffset(1, -1)
 
     arenaPrepFrame:SetScript("OnShow", arenaPrepFrame.OnShow)

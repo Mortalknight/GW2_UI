@@ -38,8 +38,8 @@ local function ApplyMajorFactionsFrameSkin()
         MajorFactionRenownFrame.TrackFrame.Title:SetWidth(MajorFactionRenownFrame.TrackFrame.Title:GetStringWidth() + 20)
     end)
 
-    MajorFactionRenownFrame.TrackFrame.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
-    MajorFactionRenownFrame.TrackFrame.AccountWideLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    MajorFactionRenownFrame.TrackFrame.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    MajorFactionRenownFrame.TrackFrame.AccountWideLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     MajorFactionRenownFrame.TrackFrame.AccountWideLabel:SetTextColor(1, 1, 1)
 
     MajorFactionRenownFrame.TrackFrame.AccountWideLabel:ClearAllPoints()

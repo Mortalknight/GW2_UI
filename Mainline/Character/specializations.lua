@@ -140,7 +140,7 @@ local function SpecSwitchAnimation(self, playFlash)
 end
 
 local function LoadSpecializations(parentContainer) 
-    parentContainer.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    parentContainer.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     parentContainer.title:SetTextColor(1, 1, 1, 1)
     parentContainer.title:SetShadowColor(0, 0, 0, 1)
     parentContainer.title:SetShadowOffset(1, -1)
@@ -246,11 +246,11 @@ local function LoadSpecializations(parentContainer)
             container.activateButton.icon:SetAtlas(atlasName)
         end
 
-        container.info.specTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+        container.info.specTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         container.info.specTitle:SetTextColor(1, 1, 1, 1)
         container.info.specTitle:SetShadowColor(0, 0, 0, 1)
         container.info.specTitle:SetShadowOffset(1, -1)
-        container.info.specDesc:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        container.info.specDesc:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         container.info.specDesc:SetTextColor(0.8, 0.8, 0.8, 1)
         container.info.specDesc:SetShadowColor(0, 0, 0, 1)
         container.info.specDesc:SetShadowOffset(1, -1)

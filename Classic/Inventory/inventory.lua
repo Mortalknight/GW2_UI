@@ -39,7 +39,7 @@ local function reskinItemButton(b, overrideIconSize)
 
     b.Count:ClearAllPoints()
     b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
-    b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+    b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
     b.Count:SetJustifyH("RIGHT")
 
     if b.IconQuestTexture then
@@ -77,7 +77,7 @@ local function reskinItemButton(b, overrideIconSize)
 
     if not b.itemlevel then
         b.itemlevel = b:CreateFontString(nil, "OVERLAY")
-        b.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+        b.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
         b.itemlevel:SetPoint("BOTTOMRIGHT", 0, 0)
         b.itemlevel:SetText("")
     end
@@ -218,7 +218,7 @@ local function SetItemButtonData(button, quality, itemIDOrLink)
 
     local bag_id = button:GetParent():GetID()
     local keyring = (bag_id == KEYRING_CONTAINER)
-    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or GW.BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
+    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or GW.Colors.BagTypeColors[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
 
     button.bagID = bag_id
@@ -401,7 +401,7 @@ local function reskinBagBar(b)
     if b.Count then
         b.Count:ClearAllPoints()
         b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
-        b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+        b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
         b.Count:SetJustifyH("RIGHT")
     end
 
@@ -435,8 +435,8 @@ local function reskinSearchBox(sb)
         return
     end
 
-    sb:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-    sb.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    sb:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    sb.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
     sb.Left:SetPoint("LEFT", 0, 0)

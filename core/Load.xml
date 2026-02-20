@@ -4,6 +4,8 @@
     <Script file ="errorHandler.lua"/>
     <Include file ="shared.xml"/>
     <Script file="init.lua"/>
+    <Script file ="enum.lua"/>
+    <Script file ="color.lua"/>
     <Script file ="consts.lua"/>
     <Include file ="Api\Load.xml"/>
     <Script file ="..\changelog.lua"/>

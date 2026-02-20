@@ -33,8 +33,8 @@ function GwObjectivesUnitFrameMixin:UpdatePower()
 
     self.power:SetMinMaxValues(0, powerMax)
 
-     if GW.PowerBarColorCustom[powerToken] then
-        local pwcolor = GW.PowerBarColorCustom[powerToken]
+     if GW.Colors.PowerBarCustomColors[powerToken] then
+        local pwcolor = GW.Colors.PowerBarCustomColors[powerToken]
         self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     else
         self.power:SetStatusBarColor(altR or 0, altG or 0, altB or 0)
@@ -57,9 +57,9 @@ function GwObjectivesUnitFrameMixin:UpdateName()
     if GW.Retail then return end -- guid is secret
     self.guid = UnitGUID(self.unit)
     if self.guid == UnitGUID("target") then
-        self.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        self.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     else
-        self.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+        self.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
     end
 end
 

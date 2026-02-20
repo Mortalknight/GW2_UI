@@ -1,5 +1,4 @@
 local _, GW = ...
-local PowerBarColorCustom = GW.PowerBarColorCustom
 
 GwPlayerPowerBarMixin = {}
 
@@ -310,8 +309,8 @@ function GwPlayerPowerBarMixin:SetPowerBarVisuals(powerType, powerToken)
         return
     end
 
-    if PowerBarColorCustom[powerToken] then
-        local pwcolor = PowerBarColorCustom[powerToken]
+    if GW.Colors.PowerBarCustomColors[powerToken] then
+        local pwcolor = GW.Colors.PowerBarCustomColors[powerToken]
         self.bar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
 end
@@ -493,7 +492,7 @@ local function LoadPowerBar()
         GW.MixinHideDuringPetAndOverride(playerPowerBar.decay)
     end
 
-    playerPowerBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    playerPowerBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     playerPowerBar.label:SetShadowColor(0, 0, 0, 1)
     playerPowerBar.label:SetShadowOffset(1, -1)
     playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")

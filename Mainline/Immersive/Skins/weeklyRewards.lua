@@ -94,7 +94,7 @@ local function SkinActivityFrame(frame, isObject)
             frame.Background:GwCreateBackdrop("Transparent")
             frame.Background.backdrop.Center:SetDrawLayer("ARTWORK", 1)
 
-            frame.Name:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+            frame.Name:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
         end
     end
 end
@@ -121,8 +121,8 @@ local function ApplyWeeklyRewardsSkin()
     WeeklyRewardsFrame.titleText = WeeklyRewardsFrame:CreateFontString(nil, "OVERLAY")
     WeeklyRewardsFrame.titleText:SetParent(WeeklyRewardsFrame.gwHeader)
     WeeklyRewardsFrame.titleText:SetPoint("BOTTOMLEFT", WeeklyRewardsFrame.gwHeader, "BOTTOMLEFT", 64, 10)
-    WeeklyRewardsFrame.titleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
-    WeeklyRewardsFrame.titleText:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    WeeklyRewardsFrame.titleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
+    WeeklyRewardsFrame.titleText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     WeeklyRewardsFrame.titleText:SetText(RATED_PVP_WEEKLY_VAULT)
 
     WeeklyRewardsFrame.BorderContainer:GwStripTextures()

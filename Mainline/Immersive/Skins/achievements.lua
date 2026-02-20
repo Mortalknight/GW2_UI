@@ -1,5 +1,4 @@
 local _, GW = ...
-local GW_CLASS_COLORS = GW.GW_CLASS_COLORS
 local L = GW.L
 --[[
 TODO
@@ -22,17 +21,17 @@ local barColors = {
 GW.AchievementFrameSkinFunction.BarColors = barColors
 -- Text Helper functions
 local function setSmallText(self)
-    self:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    self:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     self:SetTextColor(0.7, 0.7, 0.7)
 end
 GW.AchievementFrameSkinFunction.SetSmallText = setSmallText
 local function setNormalText(self)
-    self:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    self:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     self:SetTextColor(1, 1, 1)
 end
 GW.AchievementFrameSkinFunction.SetNormalText = setNormalText
 local function setTitleText(self)
-    self:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self:SetTextColor(1, 1, 1)
 end
 GW.AchievementFrameSkinFunction.SetTitleText = setTitleText
@@ -321,10 +320,10 @@ local function CatMenuButton(_, button)
     button.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right.png")
     button.arrow:SetSize(16,16)
 
-    button.Label:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    button.Label:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     button.Label:SetShadowColor(0, 0, 0, 0)
     button.Label:SetShadowOffset(1, -1)
-    button.Label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    button.Label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     button.Label:SetJustifyH("LEFT")
     button.Label:SetJustifyV("MIDDLE")
 end
@@ -379,7 +378,7 @@ local function skinAchievementSummaryStatusBar(self)
     end
 
     fill:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
-    self:SetStatusBarColor(GW_CLASS_COLORS[GW.myclass].r,GW_CLASS_COLORS[GW.myclass].g,GW_CLASS_COLORS[GW.myclass].b,1)
+    self:SetStatusBarColor(GW.Colors.ClassColors[GW.myclass]:GetRGB())
 
     bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
     bar:SetVertexColor(1, 1, 1, 0.5)
@@ -390,7 +389,7 @@ local function skinAchievementSummaryStatusBar(self)
 
     text:ClearAllPoints()
     text:SetPoint("RIGHT",self,"RIGHT",-5,0)
-    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
     text:SetTextColor(1,1,1)
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
@@ -451,7 +450,7 @@ local function skinCriteriaStatusbar(parentFrame,self)
         bColor.b
     )
 
-    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
     text:SetTextColor(1,1,1)
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
@@ -1017,7 +1016,7 @@ local function skinAchievementCompareSummaryStatusBar(self,isPlayer)
         self.spark:SetSize(10,fill:GetHeight())
         self.spark:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white.png")
     end
-    local color = isPlayer and GW_CLASS_COLORS[GW.myclass] or GW_CLASS_COLORS[select(2,UnitClass("Target"))]
+    local color = isPlayer and GW.Colors.ClassColors[GW.myclass] or GW.Colors.ClassColors[select(2, UnitClass("Target"))]
     if color and color.r then
         self:SetStatusBarColor(color.r,color.g,color.b,1)
     end
@@ -1030,7 +1029,7 @@ local function skinAchievementCompareSummaryStatusBar(self,isPlayer)
     setNormalText(title)
     text:ClearAllPoints()
     text:SetPoint("RIGHT",self,"RIGHT",-5,0)
-    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+    text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
     text:SetTextColor(1,1,1)
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
@@ -1095,7 +1094,7 @@ local function skinAchevement()
 
     AchievementFrame.Header.Points:ClearAllPoints()
     AchievementFrame.Header.Points:SetPoint("LEFT", AchievementFrame.Header.Shield, "RIGHT", 10, 0)
-    AchievementFrame.Header.Points:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+    AchievementFrame.Header.Points:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
 
     AchievementFrame.Header.Title:Hide()
 
@@ -1108,10 +1107,10 @@ local function skinAchevement()
     AchievementFrameHeader.breadCrumb = AchievementFrameHeader:CreateFontString(nil, "OVERLAY")
     AchievementFrameHeader.header:SetPoint("BOTTOMLEFT", 20, 8)
     AchievementFrameHeader.breadCrumb:SetPoint("LEFT", AchievementFrameHeader.header, "RIGHT", 20, 0)
-    AchievementFrameHeader.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
-    AchievementFrameHeader.breadCrumb:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
-    AchievementFrameHeader.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
-    AchievementFrameHeader.breadCrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    AchievementFrameHeader.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
+    AchievementFrameHeader.breadCrumb:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+    AchievementFrameHeader.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    AchievementFrameHeader.breadCrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     AchievementFrameHeader.header:SetWidth(AchievementFrameHeader.header:GetStringWidth())
     AchievementFrameHeader.header:SetText(ACHIEVEMENTS)
     AchievementFrameHeader.breadCrumb:SetText("")
@@ -1158,12 +1157,12 @@ local function skinAchevement()
     AchievementFrame.SearchBox:ClearAllPoints()
     AchievementFrame.SearchBox:SetPoint("BOTTOMLEFT", AchievementFrameCategories, "TOPLEFT", 0, 10)
     AchievementFrame.SearchBox:SetWidth(237)
-    AchievementFrame.SearchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    AchievementFrame.SearchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     GW.SkinTextBox(AchievementFrame.SearchBox.Middle, AchievementFrame.SearchBox.Left, AchievementFrame.SearchBox.Right)
     AchievementFrame.SearchBox:SetHeight(26)
     AchievementFrame.SearchBox.searchIcon:Hide()
-    AchievementFrame.SearchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-    AchievementFrame.SearchBox.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    AchievementFrame.SearchBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    AchievementFrame.SearchBox.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     AchievementFrame.SearchBox.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
     AchievementFrame.SearchPreviewContainer:GwStripTextures()
@@ -1175,7 +1174,7 @@ local function skinAchevement()
         local sp = AchievementFrame.SearchPreviewContainer["SearchPreview" ..i ]
         if sp then
             sp:SetWidth(AchievementFrame.SearchPreviewContainer:GetWidth())
-            sp.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+            sp.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         end
     end
 

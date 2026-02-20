@@ -1,6 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
-
 
 local function IsQuestFrequency(q)
     local isFreq = q.frequency and q.frequency > 0
@@ -266,14 +264,14 @@ function GwQuestLogMixin:UpdateLayout()
                     end
 
                     local isFrequency = IsQuestFrequency(q)
-                    local colorKey = self.isCampaignContainer and "CAMPAIGN" or (isFrequency and "DAILY" or "QUEST")
+                    local colorKey = self.isCampaignContainer and GW.Enum.ObjectivesNotificationType.Campaign or (isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest)
                     local block = self:GetBlock(counterQuest, colorKey, true)
                     block.isFrequency = isFrequency
                     block:UpdateBlock(self, q)
                     block:Show()
                     savedContainerHeight = savedContainerHeight + block.height
                     block.fromContainerTopHeight = savedContainerHeight
-                    GW.CombatQueue_Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block, (not self.isCampaignContainer) and "QUEST" or nil})
+                    GW.CombatQueue_Queue("update_tracker_" .. frameName .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
                 else
                     counterQuest = counterQuest + 1
                     local block = self.blocks and self.blocks[counterQuest]
@@ -327,7 +325,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
 
     local questLogIndex = q:GetQuestLogIndex()
     local isFrequency = IsQuestFrequency(q)
-    local colorKey = self.isCampaignContainer and "CAMPAIGN" or (isFrequency and "DAILY" or "QUEST")
+    local colorKey = self.isCampaignContainer and GW.Enum.ObjectivesNotificationType.Campaign or (isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest)
     local block = self:GetOrCreateBlockByQuestId(questID, colorKey)
 
     if block and questLogIndex and questLogIndex > 0 then
@@ -370,7 +368,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
         end
 
         block.fromContainerTopHeight = heightForQuestItem
-        GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block, (not self.isCampaignContainer) and "QUEST" or nil})
+        GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, block.UpdateObjectiveActionButtonPosition, {block})
     end
 
     GwQuestTracker:LayoutChanged()
@@ -468,17 +466,17 @@ function GwObjectivesQuestContainerMixin:InitModule()
     self.isCampaignContainer = self:GetName() == "GwQuesttrackerContainerCampaign"
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
     if self.isCampaignContainer then
-        self.header.title:SetTextColor(TRACKER_TYPE_COLOR.CAMPAIGN.r, TRACKER_TYPE_COLOR.CAMPAIGN.g, TRACKER_TYPE_COLOR.CAMPAIGN.b)
+        self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]:GetRGB())
         self.header.icon:SetTexCoord(0.5, 1, 0, 0.25)
         self.header.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS)
     else
-        self.header.title:SetTextColor(TRACKER_TYPE_COLOR.QUEST.r, TRACKER_TYPE_COLOR.QUEST.g, TRACKER_TYPE_COLOR.QUEST.b)
+        self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:GetRGB())
         self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
         self.header.title:SetText(TRACKER_HEADER_QUESTS)
     end

@@ -1,9 +1,8 @@
 local _, GW = ...
-local PowerBarColorCustom = GW.PowerBarColorCustom
 
 local tokens = {[0]='MANA','RAGE','FOCUS','ENERGY','RUNIC_POWER'}
 local function GetRandomPowerColor()
-    local color = PowerBarColorCustom[tokens[random(0,4)]]
+    local color = GW.Colors.PowerBarCustomColors[tokens[random(0,4)]]
     return color
 end
 
@@ -33,13 +32,13 @@ local function PostUpdatePowerColor(self, unit)
     local parent = self.origParent or self:GetParent()
     if parent.isForced then
         local color = self.fakeToken or GetRandomPowerColor()
-        self:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
+        self:SetStatusBarColor(color.r, color.g, color.b)
         self.fakeToken = color
     else
         local _, powerToken = UnitPowerType(unit)
-        if PowerBarColorCustom[powerToken] then
-            local pwcolor = PowerBarColorCustom[powerToken]
-            self:GetStatusBarTexture():SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        if GW.Colors.PowerBarCustomColors[powerToken] then
+            local pwcolor = GW.Colors.PowerBarCustomColors[powerToken]
+            self:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
         end
         self.fakeToken = nil
     end

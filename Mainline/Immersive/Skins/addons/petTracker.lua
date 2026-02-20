@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local maxEntries = 30
 
@@ -146,17 +145,17 @@ function GwPetTrackerContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText("Pet Tracker")
-    self.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
+    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:GetRGB())
 
     self.blockPool = CreateFramePool("Frame", self, "GwObjectivesBlockTemplate")
 
     self.mainBlock = self.blockPool:Acquire()
     self.mainBlock:SetParent(self)
     self.mainBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -20)
-    self.mainBlock.color = TRACKER_TYPE_COLOR.EVENT
+    self.mainBlock.color = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]
     self.mainBlock.Header:SetTextColor(self.mainBlock.color.r, self.mainBlock.color.g, self.mainBlock.color.b)
     self.mainBlock.hover:SetVertexColor(self.mainBlock.color.r, self.mainBlock.color.g, self.mainBlock.color.b)
     self.mainBlock:Hide()

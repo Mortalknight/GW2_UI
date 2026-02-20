@@ -1,7 +1,6 @@
 local _, GW = ...
 local L = GW.L
 local RoundDec = GW.RoundDec
-local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 local RT = GW.REP_TEXTURES
 
 local isSearchResult = nil
@@ -360,15 +359,15 @@ local function setReputationDetails(frame, data)
         frame.StatusBar:SetMinMaxValues(0, 1)
         frame.StatusBar:SetValue((value - 0) / (threshold - 0))
 
-        frame.background2:SetVertexColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
-        frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
+        frame.background2:SetVertexColor(GW.Colors.FactionBarColors[9]:GetRGB())
+        frame.StatusBar:SetStatusBarColor(GW.Colors.FactionBarColors[9]:GetRGB())
     elseif friendInfo.friendshipFactionID > 0 then
         frame.StatusBar:SetMinMaxValues(0, 1)
         frame.currentRank:SetText(friendInfo.reaction)
         frame.nextRank:SetText()
 
-        frame.background2:SetVertexColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
-        frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+        frame.background2:SetVertexColor(GW.Colors.FactionBarColors[5]:GetRGB())
+        frame.StatusBar:SetStatusBarColor(GW.Colors.FactionBarColors[5]:GetRGB())
 
         if (friendInfo.nextThreshold) then
             frame.currentValue:SetText(GW.GetLocalizedNumber(friendInfo.standing - friendInfo.reactionThreshold))
@@ -395,8 +394,8 @@ local function setReputationDetails(frame, data)
         if majorFactionData then
             frame.StatusBar:SetMinMaxValues(0, 1)
 
-            frame.background2:SetVertexColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
-            frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+            frame.background2:SetVertexColor(GW.Colors.FactionBarColors[11]:GetRGB())
+            frame.StatusBar:SetStatusBarColor(GW.Colors.FactionBarColors[11]:GetRGB())
 
             if C_MajorFactions.HasMaximumRenown(data.factionID) then
                 --max rank
@@ -446,8 +445,8 @@ local function setReputationDetails(frame, data)
             frame.currentValue:SetText()
         end
 
-        frame.background2:SetVertexColor(FACTION_BAR_COLORS[data.reaction].r, FACTION_BAR_COLORS[data.reaction].g, FACTION_BAR_COLORS[data.reaction].b)
-        frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[data.reaction].r, FACTION_BAR_COLORS[data.reaction].g, FACTION_BAR_COLORS[data.reaction].b)
+        frame.background2:SetVertexColor(GW.Colors.FactionBarColors[data.reaction]:GetRGB())
+        frame.StatusBar:SetStatusBarColor(GW.Colors.FactionBarColors[data.reaction]:GetRGB())
     end
 end
 
@@ -516,16 +515,16 @@ end
 local function InitDetailsButton(button, elementData)
     if not button.isSkinned then
 
-        SetFontWithShadow(button.controles.inactive.string, UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        SetFontWithShadow(button.controles.showAsBar.string, UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        SetFontWithShadow(button.StatusBar.currentValue, UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        SetFontWithShadow(button.StatusBar.percentage, UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        SetFontWithShadow(button.StatusBar.nextValue, UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        SetFontWithShadow(button.controles.inactive.string, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        SetFontWithShadow(button.controles.showAsBar.string, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        SetFontWithShadow(button.StatusBar.currentValue, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        SetFontWithShadow(button.StatusBar.percentage, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        SetFontWithShadow(button.StatusBar.nextValue, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
 
-        SetFontWithShadow(button.currentRank, UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        SetFontWithShadow(button.nextRank, UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        SetFontWithShadow(button.name, DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-        SetFontWithShadow(button.details, UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        SetFontWithShadow(button.currentRank, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        SetFontWithShadow(button.nextRank, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        SetFontWithShadow(button.name, DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+        SetFontWithShadow(button.details, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
 
         button.currentRank:SetTextColor(0.6, 0.6, 0.6)
         button.nextRank:SetTextColor(0.6, 0.6, 0.6)
@@ -602,8 +601,8 @@ end
 
 local function InitCategorieButton(button, elementData)
     if not button.isSkinned then
-        SetFontWithShadow(button.name, DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-        SetFontWithShadow(button.StatusBar.percentage, UNIT_NAME_FONT, GW.TextSizeType.SMALL, -2)
+        SetFontWithShadow(button.name, DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+        SetFontWithShadow(button.StatusBar.percentage, UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, -2)
 
         button.name:SetTextColor(1, 1, 1, 1)
 
@@ -694,7 +693,7 @@ local function InitCategorieButton(button, elementData)
             button.StatusBar:SetStatusBarColor(171 / 255, 37 / 255, 240 / 255)
             button.StatusBar.Spark:Hide()
         else
-            button.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+            button.StatusBar:SetStatusBarColor(GW.Colors.FactionBarColors[5]:GetRGB())
         end
         button.StatusBar:Show()
         button.statusbarbg:Show()

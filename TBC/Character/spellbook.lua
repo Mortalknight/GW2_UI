@@ -80,8 +80,8 @@ local function getSpellBookHeader(self, tab)
     end
 
     header = CreateFrame("Frame", nil, self.container[tab], "GwSpellbookActionButtonHeaderTemplate")
-    header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
-    header.subTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL, "OUTLINE")
+    header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
+    header.subTitle:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
     tinsert(self.container[tab].headerFrame, header)
     return header
 end
@@ -881,13 +881,13 @@ local function LoadSpellBook()
         local menuItem = CreateFrame("Button", "GwspellbookTab" .. tab, menu, "GwspellbookTab")
         menuItem:SetPoint("TOPLEFT", menu, "TOPLEFT", 0, -menuItem:GetHeight() * (tab - 1))
         local container = CreateFrame("Frame", "GwSpellbookContainerTab" .. tab, spellBook,  "GwSpellbookContainerTab")
-        container.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE")
+        container.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE")
         container.title:SetTextColor(0.9, 0.9, 0.7, 1)
-        container.pages:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
+        container.pages:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE", 2)
         container.pages:SetTextColor(0.7, 0.7, 0.5, 1)
 
        local zebra = tab % 2
-        menuItem.title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
+        menuItem.title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
         menuItem.title:SetTextColor(0.7, 0.7, 0.5, 1)
         menuItem.bg:SetVertexColor(1, 1, 1, zebra)
         menuItem.hover:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
@@ -965,7 +965,7 @@ local function LoadSpellBook()
     container.title:SetText(L["Future Spells"])
     container:Hide()
     menuItem:SetPoint("TOPLEFT", GwSpellbookMenu, "TOPLEFT", 0, -menuItem:GetHeight() * 5)
-    menuItem.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+    menuItem.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
     menuItem.title:SetTextColor(0.7, 0.7, 0.5, 1)
     menuItem.title:SetText(L["Future Spells"])
     local hasPet = GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6

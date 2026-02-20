@@ -102,6 +102,9 @@ GW.CreditsList = {}
 GW.texts = {}
 GW.instanceIconByName = {}
 GW.changelog = {}
+GW.Enum = {}
+GW.Colors = {}
+GW.ObjectiveTrackerContainer = {}
 
 -- money
 GW.earnedMoney = 0

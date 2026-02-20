@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
 
@@ -49,7 +48,7 @@ function GwObjectivesHousingInitiativeContainerMixin:UpdateLayout()
         if taskInfo and not taskInfo.completed then
             local taskName = taskInfo.taskName
 			local requirements = taskInfo.requirementsList
-            local block = self:GetBlock(shownIndex, "HOUSINGINITIATIVE", false)
+            local block = self:GetBlock(shownIndex, GW.Enum.ObjectivesNotificationType.HousingInitiative, false)
             if block == nil then
                 return
             end
@@ -135,17 +134,13 @@ function GwObjectivesHousingInitiativeContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText(HOUSING_DASHBOARD_ENDEAVOR)
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
-    self.header.title:SetTextColor(
-        TRACKER_TYPE_COLOR.HOUSINGINITIATIVE.r,
-        TRACKER_TYPE_COLOR.HOUSINGINITIATIVE.g,
-        TRACKER_TYPE_COLOR.HOUSINGINITIATIVE.b
-    )
+    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.HousingInitiative]:GetRGB())
 
     self.blockMixInTemplate = GwObjectivesHousingInitiativeBlockMixin
 

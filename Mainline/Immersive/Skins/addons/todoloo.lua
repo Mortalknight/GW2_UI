@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 GwTodolooContainerMixin =  {}
 GwTodolooBlockMixin = {}
@@ -149,7 +148,7 @@ function GwTodolooContainerMixin:UpdateSingle(group, idx)
         return false
     end
 
-    local block = self:GetBlock(idx, "EVENT")
+    local block = self:GetBlock(idx, GW.Enum.ObjectivesNotificationType.Event)
     local isComplete = Todoloo.TaskManager:IsGroupComplete(group.id)
     local groupData = Todoloo.TaskManager:GetGroup(group.id)
     local groupHeaderText = group.name
@@ -163,14 +162,14 @@ function GwTodolooContainerMixin:UpdateSingle(group, idx)
     block.id = group.id
 
     if groupData and groupData.reset and (groupData.reset == TODOLOO_RESET_INTERVALS.Daily or groupData.reset == TODOLOO_RESET_INTERVALS.Weekly) then
-        block.color = TRACKER_TYPE_COLOR.DAILY
+        block.color = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.DailyQuest]
         groupReset = groupData.reset
     else
-        block.color = TRACKER_TYPE_COLOR.EVENT
+        block.color = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]
     end
 
     block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
-        block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
+    block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
 
     if isComplete and not Todoloo.Config.Get(Todoloo.Config.Options.SHOW_COMPLETED_TASKS) then
         block:DoTasks(isComplete, groupReset)
@@ -231,10 +230,10 @@ function GwTodolooContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText("Todoloo's")
-    self.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
+    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:GetRGB())
     self.header:Show()
 
     self.collapsed = false

@@ -416,7 +416,7 @@ local function HandleAddonCompartmentButton()
         if not AddonCompartmentFrame.gw2Handled then
             AddonCompartmentFrame:GwStripTextures()
             AddonCompartmentFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
-            AddonCompartmentFrame.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+            AddonCompartmentFrame.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
             AddonCompartmentFrame:SetSize(18, 18)
             AddonCompartmentFrame.gw2Handled = true
 
@@ -537,7 +537,7 @@ local function LoadMinimap()
     TimeManagerClockButton:GwKill()
 
     Minimap.gwBorder.gradient.location = Minimap.gwBorder.gradient:CreateFontString(nil, "OVERLAY")
-    Minimap.gwBorder.gradient.location:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
+    Minimap.gwBorder.gradient.location:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
     Minimap.gwBorder.gradient.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
     Minimap.gwBorder.gradient.location:SetJustifyH("CENTER")
     Minimap.gwBorder.gradient.location:SetJustifyV("MIDDLE")
@@ -615,7 +615,7 @@ local function LoadMinimap()
     --Time
     GwMapTime = CreateFrame("Button", "GwMapTime", panel, "GwMapTime")
     GwMapTime:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    GwMapTime.Time:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.NORMAL)
+    GwMapTime.Time:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     GwMapTime.Time:SetTextColor(1, 1, 1)
     GwMapTime.Time:SetShadowOffset(2, -2)
     GwMapTime.timeTimer = C_Timer.NewTicker(0.2, function()
@@ -629,7 +629,7 @@ local function LoadMinimap()
 
     --coords
     GwMapCoords = CreateFrame("Button", "GwMapCoords", panel, "GwMapCoords")
-    GwMapCoords.Coords:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.NORMAL)
+    GwMapCoords.Coords:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     GwMapCoords.Coords:SetTextColor(1, 1, 1)
     GwMapCoords.Coords:SetShadowOffset(2, -2)
     GwMapCoords.Coords:SetText(NOT_APPLICABLE)
@@ -637,7 +637,7 @@ local function LoadMinimap()
 
     --FPS
     GwMapFPS = CreateFrame("Button", "GwMapFPS", panel, "GwMapFPS")
-    GwMapFPS.fps:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.NORMAL)
+    GwMapFPS.fps:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     GwMapFPS.fps:SetTextColor(1, 1, 1)
     GwMapFPS.fps:SetShadowOffset(2, -2)
     GwMapFPS.fps:SetText(NOT_APPLICABLE)

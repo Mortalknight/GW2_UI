@@ -1,8 +1,5 @@
 local _, GW = ...
 
--- container enum
-GW.ObjectiveTrackerContainer = {}
-
 local addonContainerWaitingQueue = {}
 
 -- Helper functions
@@ -114,39 +111,19 @@ function GwObjectivesTrackerMixin:LayoutChanged()
 end
 
 function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
-    for i = 1, 25 do
-        local campaignBlock = GW.ObjectiveTrackerContainer.Campaign.blocks[i]
-        local questBlock = GW.ObjectiveTrackerContainer.Quests.blocks[i]
-        local bonusObjectiveBlock = GW.ObjectiveTrackerContainer.Bonus.blocks[i]
-
-        if campaignBlock then
-            if i <= GW.ObjectiveTrackerContainer.Campaign.numQuests then
-                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. campaignBlock.index, campaignBlock.UpdateObjectiveActionButtonPosition, {campaignBlock})
+    for _, container in next, { GW.ObjectiveTrackerContainer.Campaign, GW.ObjectiveTrackerContainer.Quests, GW.ObjectiveTrackerContainer.Bonus } do
+        for i = 1, #container.blocks do
+            local block = container.blocks[i]
+            if i <= container.numQuests then
+                GW.CombatQueue_Queue("UpdateTrackerItemButtonPositionForBlock: " .. container:GetDebugName(), block.UpdateObjectiveActionButtonPosition, {block})
             else
-                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, campaignBlock.UpdateObjectiveActionButton, {campaignBlock})
-            end
-        end
-        if questBlock then
-            if i <= GW.ObjectiveTrackerContainer.Quests.numQuests then
-                GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. questBlock.index, questBlock.UpdateObjectiveActionButtonPosition, {questBlock, "QUEST"})
-            else
-                GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, questBlock.UpdateObjectiveActionButton, {questBlock})
-            end
-        end
-
-        if i <= 20 then
-            if bonusObjectiveBlock then
-                if GW.ObjectiveTrackerContainer.Bonus.numEvents <= i then
-                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. i, bonusObjectiveBlock.UpdateObjectiveActionButtonPosition, {bonusObjectiveBlock, "EVENT"})
-                else
-                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, bonusObjectiveBlock.UpdateObjectiveActionButton, {bonusObjectiveBlock})
-                end
+                GW.CombatQueue_Queue("RemoveTrackerItemButtonForBlock: " .. container:GetDebugName(), block.UpdateObjectiveActionButton, {block})
             end
         end
     end
 
     if GW.ObjectiveTrackerContainer.Scenario and GW.ObjectiveTrackerContainer.Scenario.block.hasItem then
-        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GW.ObjectiveTrackerContainer.Scenario.block.UpdateObjectiveActionButtonPosition, {GW.ObjectiveTrackerContainer.Scenario.block, "SCENARIO"})
+        GW.CombatQueue_Queue("UpdateTrackerItemButtonPositionForBlock: " .. GW.ObjectiveTrackerContainer:GetDebugName(), GW.ObjectiveTrackerContainer.Scenario.block.UpdateObjectiveActionButtonPosition, {GW.ObjectiveTrackerContainer.Scenario.block})
     end
 end
 
@@ -193,9 +170,10 @@ function GwObjectivesTrackerMixin:CreateTrackerScrollFrame(name, height)
     return scrollFrame
 end
 
-function GwObjectivesTrackerMixin:CreateTrackerContainer(name, parent, mixin, template)
+function GwObjectivesTrackerMixin:CreateTrackerContainer(name, parent, mixin, template, enum)
     local frame = CreateFrame("Frame", name, parent, template or "GwQuesttrackerContainer")
     frame:SetParent(parent)
+    frame.type = enum
     if mixin then
         Mixin(frame, mixin)
     end
@@ -208,9 +186,9 @@ function GwObjectivesTrackerMixin:OnEvent(_, ...)
     local addonName = ...
     for id, config in ipairs(addonContainerWaitingQueue) do
         if config.addonName == addonName then
-            local frame = self:CreateTrackerContainer(config.name, self.ScrollFrame.Child, config.mixin, config.template)
+            local frame = self:CreateTrackerContainer(config.name, self.ScrollFrame.Child, config.mixin, config.template, config.enum)
 
-            GW.ObjectiveTrackerContainer[config.enumName] = frame
+            GW.ObjectiveTrackerContainer[GW.GetEnumName(GW.Enum.ObjectivesBlockType, config.enum)] = frame
             frame:SetPoint("TOPRIGHT", GW.QuestTrackerScrollableContainer[#GW.QuestTrackerScrollableContainer], "BOTTOMRIGHT")
 
             table.insert(GW.QuestTrackerScrollableContainer, frame)
@@ -240,22 +218,22 @@ end
 local function LoadObjectivesTracker()
     -- container configuration
     local objectivesTrackerConfiguration = {
-        { name = "GwObjectivesNotification", scrollable = false, mixin = GwObjectivesTrackerNotificationMixin, enumName = "Notification", template = "GwObjectivesNotification", load = true },
-        { name = "GwQuesttrackerContainerBossFrames", scrollable = false, mixin = GwObjectivesBossContainerMixin, enumName = "BossFrames", load = not (GW.Classic or GW.TBC) },
-        { name = "GwQuesttrackerContainerArenaBGFrames", scrollable = false, mixin = GwObjectivesArenaContainerMixin, enumName = "ArenaFrames", load = not GW.Classic },
-        { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enumName = "Scenario", load = not (GW.Classic or GW.TBC) },
-        { name = "GwQuesttrackerContainerAchievement", scrollable = true, mixin = GwAchievementTrackerContainerMixin, enumName = "Achievement", load = not (GW.Classic or GW.TBC) },
-        { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Campaign", load = GW.Retail },
-        { name = "GwQuesttrackerContainerQuests", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enumName = "Quests", load = true },
-        { name = "GwQuesttrackerContainerBonus", scrollable = true, mixin = GwBonusObjectivesTrackerContainerMixin, enumName = "Bonus", load = GW.Retail },
-        { name = "GwQuesttrackerContainerRecipe", scrollable = true, mixin = GwObjectivesRecipeContainerMixin, enumName = "Recipe", load = GW.Retail },
-        { name = "GwQuesttrackerContainerMonthlyActivity", scrollable = true, mixin = GwObjectivesMonthlyActivitiesContainerMixin, enumName = "MonthlyActivity", load = GW.Retail },
-        { name = "GwQuesttrackerContainerCollection", scrollable = true, mixin = GwObjectivesCollectionContainerMixin, enumName = "Collection", load = GW.Retail },
-        { name = "GwQuesttrackerContainerHousingInitiative", scrollable = true, mixin = GwObjectivesHousingInitiativeContainerMixin, enumName = "HousingInitiative", load = GW.Retail },
+        { name = "GwObjectivesNotification", scrollable = false, mixin = GwObjectivesTrackerNotificationMixin, enum = GW.Enum.ObjectivesBlockType.Notification, template = "GwObjectivesNotification", load = true },
+        { name = "GwQuesttrackerContainerBossFrames", scrollable = false, mixin = GwObjectivesBossContainerMixin, enum = GW.Enum.ObjectivesBlockType.BossFrames, load = not (GW.Classic or GW.TBC) },
+        { name = "GwQuesttrackerContainerArenaBGFrames", scrollable = false, mixin = GwObjectivesArenaContainerMixin, enum = GW.Enum.ObjectivesBlockType.ArenaFrames, load = not GW.Classic },
+        { name = "GwQuesttrackerContainerScenario", scrollable = false, mixin = GwObjectivesScenarioContainerMixin, enum = GW.Enum.ObjectivesBlockType.Scenario, load = not (GW.Classic or GW.TBC) },
+        { name = "GwQuesttrackerContainerAchievement", scrollable = true, mixin = GwAchievementTrackerContainerMixin, enum = GW.Enum.ObjectivesBlockType.Achievement, load = not (GW.Classic or GW.TBC) },
+        { name = "GwQuesttrackerContainerCampaign", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enum = GW.Enum.ObjectivesBlockType.Campaign, load = GW.Retail },
+        { name = "GwQuesttrackerContainerQuests", scrollable = true, mixin = GwObjectivesQuestContainerMixin, enum = GW.Enum.ObjectivesBlockType.Quests, load = true },
+        { name = "GwQuesttrackerContainerBonus", scrollable = true, mixin = GwBonusObjectivesTrackerContainerMixin, enum = GW.Enum.ObjectivesBlockType.Bonus, load = GW.Retail },
+        { name = "GwQuesttrackerContainerRecipe", scrollable = true, mixin = GwObjectivesRecipeContainerMixin, enum = GW.Enum.ObjectivesBlockType.Recipe, load = GW.Retail },
+        { name = "GwQuesttrackerContainerMonthlyActivity", scrollable = true, mixin = GwObjectivesMonthlyActivitiesContainerMixin, enum = GW.Enum.ObjectivesBlockType.MonthlyActivity, load = GW.Retail },
+        { name = "GwQuesttrackerContainerCollection", scrollable = true, mixin = GwObjectivesCollectionContainerMixin, enum = GW.Enum.ObjectivesBlockType.Collection, load = GW.Retail },
+        { name = "GwQuesttrackerContainerHousingInitiative", scrollable = true, mixin = GwObjectivesHousingInitiativeContainerMixin, enum = GW.Enum.ObjectivesBlockType.HousingInitiative, load = GW.Retail },
         -- ADDONS
-        { name = "GwQuesttrackerContainerWQT", scrollable = true, mixin = GwWorldQuestTrackerContainerMixin, enumName = "WQT", addonName = "WorldQuestTracker", load = GW.Retail },
-        { name = "GwQuesttrackerContainerPetTracker", scrollable = true, mixin = GwPetTrackerContainerMixin, enumName = "PetTracker", addonName = "PetTracker_Config", load = GW.Retail },
-        { name = "GwQuesttrackerContainerTodoloo", scrollable = true, mixin = GwTodolooContainerMixin, enumName = "Todoloo", addonName = "Todoloo", load = GW.Retail }
+        { name = "GwQuesttrackerContainerWQT", scrollable = true, mixin = GwWorldQuestTrackerContainerMixin, enum = GW.Enum.ObjectivesBlockType.WQT, addonName = "WorldQuestTracker", load = GW.Retail },
+        { name = "GwQuesttrackerContainerPetTracker", scrollable = true, mixin = GwPetTrackerContainerMixin, enum = GW.Enum.ObjectivesBlockType.PetTracker, addonName = "PetTracker_Config", load = GW.Retail },
+        { name = "GwQuesttrackerContainerTodoloo", scrollable = true, mixin = GwTodolooContainerMixin, enum = GW.Enum.ObjectivesBlockType.Todoloo, addonName = "Todoloo", load = GW.Retail }
     }
 
     DisableBlizzardsObjevtiveTracker()
@@ -283,9 +261,9 @@ local function LoadObjectivesTracker()
 
         if shouldLoad then
             local parent = config.scrollable and objectivesTracker.ScrollFrame.Child or objectivesTracker
-            local frame = objectivesTracker:CreateTrackerContainer(config.name, parent, config.mixin, config.template)
+            local frame = objectivesTracker:CreateTrackerContainer(config.name, parent, config.mixin, config.template, config.enum)
 
-            GW.ObjectiveTrackerContainer[config.enumName] = frame
+            GW.ObjectiveTrackerContainer[GW.GetEnumName(GW.Enum.ObjectivesBlockType, config.enum)] = frame
             if config.scrollable then
                 table.insert(GW.QuestTrackerScrollableContainer, frame)
             else
@@ -341,7 +319,7 @@ local function LoadObjectivesTracker()
         container.oldHeight = 1
         hooksecurefunc(container, "SetHeight", function(_, height)
             if container.oldHeight ~= GW.RoundInt(height) then
-                C_Timer.After(0.25, function()
+                C_Timer.After(0.1, function()
                     UpdateItemButtonPositionAndAdjustScrollFrame()
                 end)
             end

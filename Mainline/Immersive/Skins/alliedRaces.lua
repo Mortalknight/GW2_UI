@@ -32,9 +32,9 @@ local function ApplyAlliedRacesUISkin()
     AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.ObjectivesFrame:GwStripTextures()
 
     GW.AddDetailsBackground(AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.ObjectivesFrame)
-    AlliedRacesFrame.RaceInfoFrame.AlliedRacesRaceName:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    AlliedRacesFrame.RaceInfoFrame.AlliedRacesRaceName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RaceDescriptionText:SetTextColor(1, 1, 1)
-    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RacialTraitsLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    AlliedRacesFrame.RaceInfoFrame.ScrollFrame.Child.RacialTraitsLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
     AlliedRacesFrame:HookScript("OnShow", function(self)
         for button in self.abilityPool:EnumerateActive() do

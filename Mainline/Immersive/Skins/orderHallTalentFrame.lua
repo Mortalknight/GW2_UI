@@ -4,7 +4,7 @@ local function ApplyOrderHallTalentFrameSkin()
     if not GW.settings.ORDERRHALL_TALENT_FRAME_SKIN_ENABLED then return end
 
     GW.HandlePortraitFrame(OrderHallTalentFrame, true)
-    OrderHallTalentFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE")
+    OrderHallTalentFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE")
     OrderHallTalentFrame.BackButton:GwSkinButton(false, true)
     GW.HandleIcon(OrderHallTalentFrame.Currency.Icon, true)
     OrderHallTalentFrame.OverlayElements:SetAlpha(0)

@@ -182,7 +182,7 @@ local function EquipmentSet_InitButton(button, elementData)
             GameTooltip:Show()
         end)
         button.deleteOutfit:SetScript("OnLeave", GameTooltip_Hide)
-        button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         button.name:SetTextColor(1, 1, 1)
 
         button.SetSelected = function(self, selected)

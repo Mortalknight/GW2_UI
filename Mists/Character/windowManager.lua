@@ -528,8 +528,8 @@ local function loadBaseFrame()
     hasBeenLoaded = true
 
     local fmGCW = CreateFrame('Button', 'GwCharacterWindow', UIParent, 'GwCharacterWindow')
-    fmGCW.WindowHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
-    fmGCW.WindowHeader:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    fmGCW.WindowHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
+    fmGCW.WindowHeader:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     fmGCW:SetAttribute('windowpanelopen', nil)
     fmGCW.secure:SetAttribute("_onclick", charSecure_OnClick)
     fmGCW.secure:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
@@ -666,7 +666,7 @@ local function CharacterMenuBlank_OnLoad(self)
     fontString:SetTextColor(1, 1, 1, 1)
     fontString:SetShadowColor(0, 0, 0, 0)
     fontString:SetShadowOffset(1, -1)
-    fontString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    fontString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
 end
 GW.CharacterMenuBlank_OnLoad = CharacterMenuBlank_OnLoad
 
@@ -682,7 +682,7 @@ local function CharacterMenuButton_OnLoad(self, odd, addGwHeroPanelFrameRef)
         self:GetFontString():SetTextColor(1, 1, 1, 1)
         self:GetFontString():SetShadowColor(0, 0, 0, 0)
         self:GetFontString():SetShadowOffset(1, -1)
-        self:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        self:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
         self:GetFontString():SetJustifyH("LEFT")
         self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
     end
@@ -701,7 +701,7 @@ local function CharacterMenuButtonBack_OnLoad(self)
     fontString:SetTextColor(1, 1, 1, 1)
     fontString:SetShadowColor(0, 0, 0, 0)
     fontString:SetShadowOffset(1, -1)
-    fontString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    fontString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
 end
 GW.CharacterMenuButtonBack_OnLoad = CharacterMenuButtonBack_OnLoad
 

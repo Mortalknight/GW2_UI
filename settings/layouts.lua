@@ -242,16 +242,16 @@ end
 
 local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     smallSettingsFrame.layoutView = CreateFrame("Frame", nil, smallSettingsFrame, "GwLayoutView")
-    smallSettingsFrame.layoutView.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    smallSettingsFrame.layoutView.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     smallSettingsFrame.layoutView.desc:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     smallSettingsFrame.layoutView.desc:SetText(L["Assign layouts to a spec. The layout will be automatically changed on a spec switch.\n\nLayouts has always priority for profile settings."])
 
-    smallSettingsFrame.layoutView.savedLayoutDropDown.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
-    smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetTextColor(GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
+    smallSettingsFrame.layoutView.savedLayoutDropDown.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
+    smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetText("Layouts")
 
-    smallSettingsFrame.layoutView.specsDropDown.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
-    smallSettingsFrame.layoutView.specsDropDown.title:SetTextColor(GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
+    smallSettingsFrame.layoutView.specsDropDown.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
+    smallSettingsFrame.layoutView.specsDropDown.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     smallSettingsFrame.layoutView.specsDropDown.title:SetText(SPECIALIZATION)
 
     --create or get profile layout

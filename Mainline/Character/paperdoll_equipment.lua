@@ -121,7 +121,7 @@ local function UpdateAzeriteItem(self)
 
         self.AzeriteTexture:SetAlpha(0)
         self.RankFrame.Texture:SetTexture()
-        self.RankFrame.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+        self.RankFrame.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
     end
 end
 
@@ -284,7 +284,7 @@ local function actionButtonGlobalStyle(self)
     self.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
     self.itemlevel:SetTextColor(1, 1, 1)
     self.itemlevel:SetJustifyH("LEFT")
-    self.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+    self.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
 
     UpdateAzeriteItem(self)
 end
@@ -529,7 +529,7 @@ local function getStatListFrame(self)
     local frame = self.statsFramePool:Acquire()
 
     if not frame.initialized then
-        frame.Value:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        frame.Value:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         frame.Value:SetText(ERRORS)
         frame.Label:SetFont(UNIT_NAME_FONT, 1)
         frame.Label:SetTextColor(0, 0, 0, 0)
@@ -896,7 +896,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
     slot.itemlevel:SetTextColor(1, 1, 1)
     slot.itemlevel:SetJustifyH("LEFT")
-    slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+    slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
 
     slot.ignoreSlotCheck = CreateFrame("CheckButton", nil, slot, "GWIgnoreSlotCheck")
 
@@ -1172,14 +1172,14 @@ local function LoadPDBagList(fmMenu, parent)
     fmPD3M:SetScript("OnReceiveDrag", EquipCursorItem)
     fmPD3M:HookScript("OnMouseDown", EquipCursorItem)
 
-    fmGPDS.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    fmGPDS.header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     fmGPDS.header:SetText(STAT_CATEGORY_ATTRIBUTES)
     fmGPDS:SetScript("OnEvent", stats_OnEvent)
     RegisterStatsEvents(fmGPDS)
 
-    fmGDR.characterName:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
-    fmGDR.characterData:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-    fmGDR.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+    fmGDR.characterName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
+    fmGDR.characterData:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    fmGDR.itemLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
 
     local color = GWGetClassColor(GW.myclass, true)
     SetClassIcon(fmGDR.classIcon, GW.myClassID)

@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local ClassIndex = GW.ClassIndex
 
 local windowsList = {}
 local hasBeenLoaded = false
@@ -422,8 +421,8 @@ local function loadBaseFrame()
     hasBeenLoaded = true
 
     local fmGCW = CreateFrame('Button', 'GwCharacterWindow', UIParent, 'GwCharacterWindow')
-    fmGCW.WindowHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
-    fmGCW.WindowHeader:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    fmGCW.WindowHeader:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
+    fmGCW.WindowHeader:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     fmGCW:SetAttribute('windowpanelopen', nil)
     fmGCW.secure:SetAttribute("_onclick", charSecure_OnClick)
     fmGCW.secure:SetFrameRef("GwCharacterWindow", fmGCW)
@@ -563,7 +562,7 @@ local function styleCharacterMenuButton(self, shadow)
         self:GetFontString():SetTextColor(1,1,1,1)
         self:GetFontString():SetShadowColor(0,0,0,0)
         self:GetFontString():SetShadowOffset(1,-1)
-        self:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        self:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
         self:GetFontString():SetJustifyH('LEFT')
         self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
     else
@@ -572,7 +571,7 @@ local function styleCharacterMenuButton(self, shadow)
         self:GetFontString():SetTextColor(1,1,1,1)
         self:GetFontString():SetShadowColor(0,0,0,0)
         self:GetFontString():SetShadowOffset(1,-1)
-        self:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        self:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
         self:GetFontString():SetJustifyH('LEFT')
         self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
     end
@@ -589,7 +588,7 @@ local function styleCharacterMenuBackButton(self, key)
     fontString:SetTextColor(1,1,1,1)
     fontString:SetShadowColor(0,0,0,0)
     fontString:SetShadowOffset(1,-1)
-    fontString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    fontString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
 end
 
@@ -624,7 +623,7 @@ local function CharacterMenuButton_OnLoad(self, odd, addGwHeroPanelFrameRef)
     self:GetFontString():SetTextColor(1, 1, 1, 1)
     self:GetFontString():SetShadowColor(0, 0, 0, 0)
     self:GetFontString():SetShadowOffset(1, -1)
-    self:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    self:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     self:GetFontString():SetJustifyH("LEFT")
     self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
 
@@ -741,7 +740,7 @@ local function LoadCharacter()
                 styleCharacterMenuBackButton(GwDressingRoomPet.backButton, CHARACTER .. ": " .. PET)
 
                 -- add addon buttons here
-                firstAddonMenuButtonAnchor = GW.myClassID == ClassIndex.WARLOCK and GwCharacterMenu.petMenu or GW.myClassID  == ClassIndex.HUNTER and GwCharacterMenu.petMenu or GW.ClassicSOD and GwCharacterMenu.runeMenu or GwCharacterMenu.honorMenu
+                firstAddonMenuButtonAnchor = GW.myClassID == GW.Enum.ClassIndex.Warlock and GwCharacterMenu.petMenu or GW.myClassID  == GW.Enum.ClassIndex.Hunter and GwCharacterMenu.petMenu or GW.ClassicSOD and GwCharacterMenu.runeMenu or GwCharacterMenu.honorMenu
 
                 if firstAddonMenuButtonAnchor ~= GwCharacterMenu.petMenu then
                     nextHeroPanelMenuButtonShadowOdd = not nextHeroPanelMenuButtonShadowOdd

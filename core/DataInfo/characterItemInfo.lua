@@ -62,7 +62,7 @@ local function CreateSlotStrings()
 
             slot.enchantText = slot:CreateFontString(nil, "OVERLAY")
             slot.enchantText:SetSize(tbl.id >= 12 and 40 or 100, 30)
-            slot.enchantText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, tbl.id >= 12 and -4 or -2)
+            slot.enchantText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, tbl.id >= 12 and -4 or -2)
             slot.enchantText:SetJustifyH(tbl.id >= 12 and "CENTER" or "LEFT")
             slot.enchantText:SetPoint(justify, slot, point, x + (justify == "CENTER" and 5 or 0), y)
 
@@ -98,7 +98,7 @@ local function CreateSlotStrings()
                 enchantHoverFrame:SetScript("OnLeave", GameTooltip_Hide)
             end
 
-            slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+            slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
 
             for u = 1, 10 do
                 local offset = -((u - 1) * 13)

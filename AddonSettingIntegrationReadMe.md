@@ -19,7 +19,7 @@ search integration, 2-column layout, dependencies and consistent look & feel.
     local panel = CreateFrame("Frame", "GwYourAddonPanel", settingsTab, "GwSettingsPanelTmpl")
     panel.panelId = "Unique Addon ID" -- required
     panel.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    panel.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
+    panel.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     panel.header:SetText("YOUR ADDON SETTINGS")
     panel.sub:SetFont(UNIT_NAME_FONT, 12)
     panel.sub:SetTextColor(181/255, 160/255, 128/255)

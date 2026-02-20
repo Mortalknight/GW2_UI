@@ -170,16 +170,16 @@ local function UpdateColor(self, event, unit)
 
 	if(atlas) then
 		element:SetStatusBarTexture(atlas)
-		element:GetStatusBarTexture():SetVertexColor(1, 1, 1)
+		element:SetStatusBarColor(1, 1, 1)
 	else
 		if(element.__texture) then
 			element:SetStatusBarTexture(element.__texture)
 		end
 
 		if(b) then
-			element:GetStatusBarTexture():SetVertexColor(r, g, b)
+			element:SetStatusBarColor(r, g, b)
 		elseif(color) then
-			element:GetStatusBarTexture():SetVertexColor(color:GetRGB())
+			element:SetStatusBarColor(color:GetRGB())
 		end
 	end
 

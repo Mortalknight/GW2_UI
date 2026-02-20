@@ -1,5 +1,4 @@
 local _, GW = ...
-local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local TimeCount = GW.TimeCount
 local GWGetClassColor = GW.GWGetClassColor
 local TARGET_FRAME_ART = GW.TARGET_FRAME_ART
@@ -175,25 +174,25 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
         end
     end
 
-    f.powerbar.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
+    f.powerbar.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
     f.powerbar.label:SetShadowOffset(1, -1)
-    f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     f.healthString:SetShadowOffset(1, -1)
-    f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     f.nameString:SetShadowOffset(1, -1)
-    f.threatString:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.SMALL)
+    f.threatString:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.Enum.TextSizeType.Small)
     f.threatString:SetShadowOffset(1, -1)
-    f.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    f.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     f.levelString:SetShadowOffset(1, -1)
-    f.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    f.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     f.castingString:SetShadowOffset(1, -1)
-    f.castingbarNormal.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    f.castingbarNormal.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     f.castingbarNormal.castingString:SetShadowOffset(1, -1)
-    f.castingbarNormal.castingTimeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    f.castingbarNormal.castingTimeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
-    f.castingTimeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    f.castingTimeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     f.castingTimeString:SetShadowOffset(1, -1)
-    f.prestigeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+    f.prestigeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
     f.prestigebg:SetPoint("CENTER", f.prestigeString, "CENTER", -1, 1)
     f.prestigebg:Hide()
     f.prestigeString:Hide()
@@ -285,17 +284,17 @@ local function CreateSmallUnitFrame(name)
     f.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     f.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
-    f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.healthString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     f.healthString:SetShadowOffset(1, -1)
-    f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    f.nameString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     f.nameString:SetShadowOffset(1, -1)
-    f.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    f.levelString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     f.levelString:SetShadowOffset(1, -1)
-    f.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    f.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     f.castingString:SetShadowOffset(1, -1)
-    f.castingbarNormal.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    f.castingbarNormal.castingString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     f.castingbarNormal.castingString:SetShadowOffset(1, -1)
-    f.castingbarNormal.castingTimeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    f.castingbarNormal.castingTimeString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
 
     f:SetScript("OnEnter", f.OnEnter)
@@ -326,21 +325,21 @@ function GwUnitFrameMixin:UpdateHealthbarColor()
         nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
         local unitReaction = UnitReaction(unit, "player")
-        local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
+        local nameColor = unitReaction and GW.Colors.FactionBarColors[unitReaction] or RAID_CLASS_COLORS.PRIEST
         if unitReaction then
             if unitReaction <= 3 then
-                nameColor = COLOR_FRIENDLY[2]
+                nameColor = GW.Colors.FriendlyColors[2]
             elseif unitReaction >= 5 then
-                nameColor = COLOR_FRIENDLY[1]
+                nameColor = GW.Colors.FriendlyColors[1]
             end
         end
 
         if UnitIsTapDenied(unit) then
-            nameColor = { r = 159 / 255, g = 159 / 255, b = 159 / 255 }
+            nameColor = GW.Colors.TabDenied
         end
 
-        healthBar:SetStatusBarColor(nameColor.r, nameColor.g, nameColor.b, 1)
-        nameString:SetTextColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        healthBar:SetStatusBarColor(nameColor:GetRGB())
+        nameString:SetTextColor(nameColor:GetRGB())
     end
 
     if (UnitLevel(unit) - GW.mylevel) <= -5 then

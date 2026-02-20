@@ -450,7 +450,7 @@ local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
     elseif isMainBar then
         button.HotKey:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
         button.HotKey:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
-        button.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+        button.HotKey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
         button.HotKey:SetTextColor(1, 1, 1)
     else
         button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 0)
@@ -473,7 +473,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.Count:ClearAllPoints()
         btn.Count:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
         btn.Count:SetJustifyH("RIGHT")
-        btn.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+        btn.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 
@@ -759,7 +759,7 @@ local function skinMainBar()
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
-            hotkey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+            hotkey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
             hotkey:SetTextColor(1, 1, 1)
 
             if IsEquippedAction(btn.action) then
@@ -842,7 +842,7 @@ local function updateMainBar()
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
-            hotkey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+            hotkey:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
             hotkey:SetTextColor(1, 1, 1)
             btn.changedColor = false
             btn.rangeIndicatorSetting = GW.settings.MAINBAR_RANGEINDICATOR

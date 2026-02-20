@@ -82,7 +82,7 @@ local function LoadLootFrameSkin()
         _G["LootButton" .. i .. "NameFrame"]:SetPoint("LEFT", _G["LootButton" .. i], "RIGHT", 0, 0)
 
         _G["LootButton" .. i .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        _G["LootButton" .. i .. "Text"]:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        _G["LootButton" .. i .. "Text"]:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     end
 
     hooksecurefunc("LootFrame_Update", updateLootFrameButtons)

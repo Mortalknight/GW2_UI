@@ -591,7 +591,7 @@ local function LoadBag(helpers)
     -- setup bagheader stuff
     for i = 0, 5 do
         local header = f["bagHeader" .. i]
-        header.nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        header.nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         header.nameString:SetTextColor(1, 1, 1)
         header.nameString:SetShadowColor(0, 0, 0, 0)
         header.icon2:Hide()
@@ -641,9 +641,9 @@ local function LoadBag(helpers)
     createBagBar(f.ItemFrame)
 
     -- skin some things not done in XML
-    f.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
+    f.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
     f.headerString:SetText(INVENTORY_TOOLTIP)
-    f.spaceString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    f.spaceString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 
@@ -713,7 +713,7 @@ local function LoadBag(helpers)
 
     -- setup money frame
     for _, frameName in ipairs({"bronze", "silver", "gold"}) do
-        f[frameName]:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        f[frameName]:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     end
     f.bronze:SetTextColor(177/255, 97/255, 34/255)
     f.silver:SetTextColor(170/255, 170/255, 170/255)
@@ -741,7 +741,7 @@ local function LoadBag(helpers)
     -- setup watch currencies
     for i = 1, 4 do
         local currencyFrame = f["currency" .. i]
-        currencyFrame:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        currencyFrame:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         currencyFrame:SetTextColor(1, 1, 1)
         f["currency" .. i .. "Frame"]:SetScript("OnEnter", function(self)
             if self.CurrencyIdx then

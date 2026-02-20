@@ -34,7 +34,7 @@ local function ApplyMacroOptionsSkin()
     MacroFrame.gwHeader.BGRIGHT:ClearAllPoints()
     MacroFrame.gwHeader.BGRIGHT:SetPoint("BOTTOMRIGHT", MacroFrame.gwHeader, "BOTTOMRIGHT", 0, 0)
     MacroFrame.gwHeader.BGRIGHT:SetPoint("TOPLEFT", MacroFrame.gwHeader, "TOPLEFT", 0, 0)
-    macroHeaderText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+    macroHeaderText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
     MacroFrameBg:Hide()
 
     MacroFrame.NineSlice:Hide()

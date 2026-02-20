@@ -1,7 +1,6 @@
 local _, GW = ...
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BadDispels = GW.Libs.Dispel:GetBadList()
-local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local INDICATORS = GW.INDICATORS
 
 local function Construct_AuraIcon(self, button)
@@ -43,7 +42,7 @@ local function PostUpdateButton(self, button, unit, data, position)
         if data.isHarmfulAura then
             local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, self.dispelColorCurve)
             if not color then
-                color = GW.FallbackColor
+                color = GW.Colors.FallbackColor
             end
             button.background:SetVertexColor(color:GetRGBA())
             button.background:Show()
@@ -78,9 +77,9 @@ local function PostUpdateButton(self, button, unit, data, position)
             end
 
             if data.dispelName and DebuffColors[data.dispelName] then
-                button.background:SetVertexColor(DebuffColors[data.dispelName].r, DebuffColors[data.dispelName].g, DebuffColors[data.dispelName].b)
+                button.background:SetVertexColor(DebuffColors[data.dispelName]:GetRGB())
             else
-                button.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+                button.background:SetVertexColor(GW.Colors.FriendlyColors[2]:GetRGB())
             end
 
             button:SetSize(size, size)
@@ -369,9 +368,9 @@ local function Construct_Auras(frame)
     else
         auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
         auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
-        for _, dispelIndex in next, GW.DispelType do
-            if GW.DebuffColors[dispelIndex] then
-                auras.dispelColorCurve:AddPoint(dispelIndex, GW.DebuffColors[dispelIndex])
+        for _, dispelIndex in next, GW.Enum.DispelType do
+            if GW.Colors.DebuffColors[dispelIndex] then
+                auras.dispelColorCurve:AddPoint(dispelIndex, GW.Colors.DebuffColors[dispelIndex])
             end
         end
     end

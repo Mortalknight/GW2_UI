@@ -107,8 +107,8 @@ function GwObjectivesBlockTemplateMixin:OnLeave()
 end
 
 function GwObjectivesBlockTemplateMixin:OnLoad()
-    self.Header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-    self.SubHeader:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    self.Header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    self.SubHeader:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
     self.turnin:SetScript("OnShow", self.turnin.WiggleAnimation)
     self.turnin:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetDebugName()) end)
@@ -148,8 +148,8 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     end)
 end
 
-function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(string)
-    self.color = GW.TRACKER_TYPE_COLOR[string]
+function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(type)
+    self.color = GW.Colors.ObjectivesTypeColors[type]
 end
 
 function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectivesYValue)
@@ -338,7 +338,7 @@ function GwObjectivesBlockTemplateMixin:UpdateScenarioSpell(spellInfo)
     end
 end
 
-function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type)
+function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition()
     if not self.actionButton or not self.hasItem then
         return
     end
@@ -356,13 +356,13 @@ function GwObjectivesBlockTemplateMixin:UpdateObjectiveActionButtonPosition(type
     else
         height = height - 40
     end
-    if type == "SCENARIO" then
+    if self:GetParent().type == GW.Enum.ObjectivesBlockType.Scenario then
         height = height - (GW.ObjectiveTrackerContainer.Scenario:GetHeight() + GW.ObjectiveTrackerContainer.Achievement:GetHeight() + GW.ObjectiveTrackerContainer.BossFrames:GetHeight() + GW.ObjectiveTrackerContainer.ArenaFrames:GetHeight())
     end
-    if type == "EVENT" then
+    if self:GetParent().type == GW.Enum.ObjectivesBlockType.Bonus then
         height = height + GW.ObjectiveTrackerContainer.Quests:GetHeight() + GW.ObjectiveTrackerContainer.Campaign:GetHeight()
     end
-    if GW.Retail and type == "QUEST" then
+    if GW.Retail and self:GetParent().type == GW.Enum.ObjectivesBlockType.Quests then
         height = height + GW.ObjectiveTrackerContainer.Campaign:GetHeight()
     end
 

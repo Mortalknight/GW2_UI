@@ -44,9 +44,9 @@ end
 
 local function getChangeLogIcon(self, tag)
     self:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/changelogicons.png")
-    if tonumber(tag) == GW.ChangelogType.bug then
+    if tonumber(tag) == GW.Enum.ChangelogType.bug then
         self:SetTexCoord(0, 0.5, 0, 0.5)
-    elseif tonumber(tag) == GW.ChangelogType.feature then
+    elseif tonumber(tag) == GW.Enum.ChangelogType.feature then
         self:SetTexCoord(0.5, 1, 0, 0.5)
     else
         self:SetTexCoord(0, 0.5, 0.5, 1)
@@ -120,7 +120,7 @@ end
 local function InitButton(button, elementData)
     if not button.isSkinned then
         button.title.text:SetFont(DAMAGE_TEXT_FONT, 14)
-        button.title.text:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+        button.title.text:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
         button.content.text:SetFont(UNIT_NAME_FONT, 12)
         button.content.text:SetTextColor(181 / 255, 160 / 255, 128 / 255)

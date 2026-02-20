@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local function SortWorldQuestsHelper(questID1, questID2)
     local inArea1, onMap1 = GetTaskInfo(questID1)
@@ -156,12 +155,12 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
         local compassData = {}
 
         if isOnMap then
-            compassData.TYPE = GW.TRACKER_TYPE.EVENT
+            compassData.TYPE = GW.Enum.ObjectivesNotificationType.Event
             compassData.COMPASS = true
         end
         if numObjectives > 0 and treatAsInArea then
             if not self.collapsed then
-                local block = self:GetBlock(blockIndex, "EVENT", true)
+                local block = self:GetBlock(blockIndex, GW.Enum.ObjectivesNotificationType.Event, true)
                 compassData.TITLE = text
                 -- needed for tooltip
                 block.parentModule = { showWorldQuests = true }
@@ -191,9 +190,9 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 local objectiveProgress = 0
                 local playerMapID = GW.Libs.GW2Lib:GetPlayerLocationMapID()
 
-                compassData.TYPE = GW.TRACKER_TYPE.EVENT
+                compassData.TYPE = GW.Enum.ObjectivesNotificationType.Event
                 compassData.ID = questID
-                compassData.COLOR = TRACKER_TYPE_COLOR.EVENT
+                compassData.COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]
                 compassData.COMPASS = false
                 compassData.X = nil
                 compassData.Y = nil
@@ -239,7 +238,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 savedContainerHeight = savedContainerHeight + block.height + 10
                 block.fromContainerTopHeight = savedContainerHeight
                 if block.hasItem then
-                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. blockIndex, block.UpdateObjectiveActionButtonPosition, {block, "EVENT"})
+                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. blockIndex, block.UpdateObjectiveActionButtonPosition, {block})
                 end
 
                 block:Show()
@@ -262,7 +261,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateLayout(newQuestId)
 
     self.isUpdating = true
     local trackedEventIDs = {}
-    GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.EVENT)
+    GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Event)
 
     for i = 1, #self.blocks do
         local block = self.blocks[i]
@@ -337,13 +336,13 @@ function GwBonusObjectivesTrackerContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText(EVENTS_LABEL)
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
-    self.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
+    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:GetRGB())
 
     self:UpdateLayout()
 end

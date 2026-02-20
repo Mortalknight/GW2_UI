@@ -5,7 +5,7 @@ local function LoadChatPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
     p.panelId = "chat_general"
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    p.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     p.header:SetText(CHAT)
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)

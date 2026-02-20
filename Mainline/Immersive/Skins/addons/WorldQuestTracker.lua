@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 GwWorldQuestTrackerContainerMixin =  {}
 function GwWorldQuestTrackerContainerMixin:UpdateLayout()
@@ -20,7 +19,7 @@ function GwWorldQuestTrackerContainerMixin:UpdateLayout()
                 height = 20
             end
 
-            local block = self:GetBlock(counter, "EVENT", false)
+            local block = self:GetBlock(counter, GW.Enum.ObjectivesNotificationType.Event, false)
             block.Header:SetText(wqtFrame.Title:GetText())
             wqtFrame.Title:Hide()
             objectiveDetailBlock = block:GetObjectiveBlock(1)
@@ -70,10 +69,10 @@ function GwWorldQuestTrackerContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText("World Quest Tracker")
-    self.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
+    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:GetRGB())
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function

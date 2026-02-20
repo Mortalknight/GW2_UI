@@ -697,16 +697,16 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
             titleText:ClearAllPoints()
             titleText:SetParent(header)
             titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
-            titleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
-            titleText:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+            titleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
+            titleText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
             header.headerText = titleText
         else
             header.headerText = header:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             header.headerText:ClearAllPoints()
             header.headerText:SetParent(header)
             header.headerText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
-            header.headerText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
-            header.headerText:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+            header.headerText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
+            header.headerText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
             header.headerText:SetText(titleText)
         end
     end
@@ -1041,7 +1041,7 @@ local function HandleItemReward(frame, isMap)
         frame.Count:SetDrawLayer("OVERLAY")
         frame.Count:ClearAllPoints()
         frame.Count:SetPoint("TOPRIGHT", frame.Icon, "TOPRIGHT", 0, -3)
-        frame.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
+        frame.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
         frame.Count:SetJustifyH("RIGHT")
     end
 

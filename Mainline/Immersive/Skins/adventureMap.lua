@@ -25,9 +25,9 @@ local function ApplyAdventureMapSkin()
     -- Rewards
     hooksecurefunc(AdventureMapQuestChoiceDialog, 'RefreshRewards', SkinRewards)
     -- Quick Fix for the Font Color
-    AdventureMapQuestChoiceDialog.Details.Child.TitleHeader:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    AdventureMapQuestChoiceDialog.Details.Child.TitleHeader:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     AdventureMapQuestChoiceDialog.Details.Child.DescriptionText:SetTextColor(1, 1, 1)
-    AdventureMapQuestChoiceDialog.Details.Child.ObjectivesHeader:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    AdventureMapQuestChoiceDialog.Details.Child.ObjectivesHeader:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     AdventureMapQuestChoiceDialog.Details.Child.ObjectivesText:SetTextColor(1, 1, 1)
     --Buttons
     GW.HandleTrimScrollBar(AdventureMapQuestChoiceDialog.Details.ScrollBar)

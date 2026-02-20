@@ -92,13 +92,13 @@ local function ReskinRecentAllyButton(button)
             CharacterData.Name:SetText(nameString)
         end
 
-        CharacterData.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        CharacterData.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         CharacterData.Name.maxWidth = button:GetWidth() - 60
         CharacterData.Name:SetWidth(CharacterData.Name.maxWidth)
     end
 
     if CharacterData.MostRecentInteraction then
-        CharacterData.MostRecentInteraction:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        CharacterData.MostRecentInteraction:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     end
 
     if CharacterData.Location then
@@ -123,7 +123,7 @@ local function ReskinRecentAllyButton(button)
             CharacterData.Location:SetText(locationText)
         end
 
-        CharacterData.Location:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        CharacterData.Location:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     end
 end
 

@@ -1,9 +1,7 @@
 local _, GW = ...
 local AddTrackerNotification = GW.AddTrackerNotification
 local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local AddToClique = GW.AddToClique
-local PowerBarColorCustom = GW.PowerBarColorCustom
 local SetClassIcon = GW.SetClassIcon
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
@@ -43,14 +41,14 @@ local function setCompass()
 
     compassData.TITLE = compassTitle
     compassData.DESC = compassDesc
-    compassData.TYPE = GW.TRACKER_TYPE.ARENA
+    compassData.TYPE = GW.Enum.ObjectivesNotificationType.Arena
     compassData.ID = "arena_unknown"
     compassData.QUESTID = "unknown"
     compassData.COMPASS = false
     compassData.MAPID = nil
     compassData.X = nil
     compassData.Y = nil
-    compassData.COLOR = TRACKER_TYPE_COLOR.ARENA
+    compassData.COLOR = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Arena]
 
     AddTrackerNotification(compassData, true)
 end
@@ -97,8 +95,8 @@ local function updateArena_Power(self)
     local powerMax = UnitPowerMax(self.unit, powerType)
     local powerPercentage = 0
 
-    if PowerBarColorCustom[powerToken] then
-        local pwcolor = PowerBarColorCustom[powerToken]
+    if GW.Colors.PowerBarCustomColors[powerToken] then
+        local pwcolor = GW.Colors.PowerBarCustomColors[powerToken]
         self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     else
         self.power:SetStatusBarColor(altR or 0, altG or 0, altB or 0)

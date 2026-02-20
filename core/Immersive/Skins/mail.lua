@@ -51,13 +51,13 @@ end
 
 local function SkinMoneyFrame()
     -- setup money frame
-    SendMailMoneyFrameCopperButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    SendMailMoneyFrameCopperButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     SendMailMoneyFrameCopperButtonText:SetTextColor(177 / 255, 97 / 255, 34 / 255)
 
-    SendMailMoneyFrameSilverButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    SendMailMoneyFrameSilverButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     SendMailMoneyFrameSilverButtonText:SetTextColor(170 / 255, 170 / 255, 170 / 255)
 
-    SendMailMoneyFrameGoldButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    SendMailMoneyFrameGoldButtonText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     SendMailMoneyFrameGoldButtonText:SetTextColor(221 / 255, 187 / 255, 68 / 255)
 end
 
@@ -100,12 +100,12 @@ local function SkinOpenMailFrame()
 
     OpenMailSenderLabel:Hide()
     OpenMailSender.Name:SetPoint("TOPLEFT", OpenMailScrollFrame, "TOPLEFT", 0, 50)
-    OpenMailSender.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    OpenMailSender.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     OpenMailSender.Name:SetTextColor(1, 1, 1, 1)
 
     OpenMailSubjectLabel:Hide()
     OpenMailSubject:SetPoint("TOPLEFT", OpenMailSender.Name, "BOTTOMLEFT", 0, -10)
-    OpenMailSubject:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    OpenMailSubject:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     OpenMailSubject:SetTextColor(1, 1, 1, 1)
 
     OpenMailReportSpamButton:GwSkinButton(false, true)
@@ -407,7 +407,7 @@ local function LoadMailSkin()
 
     MailFrame.heading.Title = MailFrame:CreateFontString("MailFrameTitle", "ARTWORK")
     MailFrame.heading.Title:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 50, 30)
-    MailFrame.heading.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE", 2)
+    MailFrame.heading.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE", 2)
     MailFrame.heading.Title:SetText(MAIL_LABEL)
     MailFrame.heading.Title:SetTextColor(1, .93, .73)
 

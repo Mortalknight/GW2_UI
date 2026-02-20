@@ -4,83 +4,6 @@ GW.WINDOW_FADE_DURATION = 0.2
 
 GW.DEFAULT_UNITFRAME_STATUSBAR_TEXTURE = "GW2_UI_2_DEFAULT"
 
-GW.TextSizeType = {
-    BIG_HEADER = 1,
-    HEADER = 2,
-    NORMAL = 3,
-    SMALL = 4,
-}
-
-GW.TextColors = {
-    LIGHT_HEADER = CreateColor(1, 0.9450, 0.8196)
-}
-
-GW.ClassIndex = {
-    WARRIOR = 1,
-    PALADIN = 2,
-    HUNTER = 3,
-    ROGUE = 4,
-    PRIEST = 5,
-    DEATHKNIGHT = 6,
-    SHAMAN = 7,
-    MAGE = 8,
-    WARLOCK = 9,
-    MONK = 10,
-    DRUID = 11,
-    DEMONHUNTER = 12,
-    EVOKER = 13,
-}
-
-GW.DispelType = {
-	-- https://wago.tools/db2/SpellDispelType
-	None = 0,
-	Magic = 1,
-	Curse = 2,
-	Disease = 3,
-	Poison = 4,
-	Enrage = 9,
-	Bleed = 11,
-}
-
-GW.DebuffColors = {
-    [GW.DispelType.None] = CreateColor(220 / 255, 0, 0),
-    [GW.DispelType.Curse] = CreateColor(97 / 255, 72 / 255, 177 / 255),
-    [GW.DispelType.Disease] = CreateColor(177 / 255, 114 / 255, 72 / 255),
-    [GW.DispelType.Magic] = CreateColor(72 / 255, 94 / 255, 177 / 255),
-    [GW.DispelType.Poison] = CreateColor(94 / 255, 177 / 255, 72 / 255),
-    [GW.DispelType.Bleed] = CreateColor(1, 0.2, 0.6),
-    [GW.DispelType.Enrage] = CreateColor(243/255, 95/255, 245/255),
-}
-
-GW.FallbackColor = CreateColor(0, 0, 0, 0)
-
-GW.PowerBarColorCustom = {
-    MANA = CreateColor(37 / 255, 133 / 255, 240 / 255),
-    RAGE = CreateColor(240 / 255, 66 / 255, 37 / 255),
-    ENERGY = CreateColor(240 / 255, 200 / 255, 37 / 255),
-    LUNAR_POWER = CreateColor(130 / 255, 172 / 255, 230 / 255),
-    RUNIC_POWER = CreateColor(37 / 255, 214 / 255, 240 / 255),
-    FOCUS = CreateColor(240 / 255, 121 / 255, 37 / 255),
-    FURY = CreateColor(166 / 255, 37 / 255, 240 / 255),
-    PAIN = CreateColor(255 / 255, 156 / 255, 0),
-    MAELSTROM = CreateColor(0.00, 0.50, 1.00),
-    INSANITY = CreateColor(0.40, 0, 0.80),
-    CHI = CreateColor(0.71, 1.0, 0.92),
-
-    -- vehicle colors
-    AMMOSLOT = CreateColor(0.80, 0.60, 0.00),
-    FUEL = CreateColor(0.0, 0.55, 0.5),
-    STAGGER = CreateColor(0.52, 1.0, 0.52),
-}
-
-GW.BAG_TYP_COLORS = {
-    [0x0001] = CreateColor(1, 1, 1),            --Quivers       1
-    [0x0002] = CreateColor(1, 1, 1),            --Quivers       2
-    [0x0004] = CreateColor(0.251, 0.878, 0.816),--Soul          3
-    [0x0020] = CreateColor(0.451, 1, 0),        --Herbs         6
-    [0x0040] = CreateColor(1, 0, 1)             --Enchanting    7
-}
-
 GW.nameRoleIcon = {
     TANK = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank.png:0:0:0:0:64:64:4:60:4:60|t ",
     HEALER = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-healer.png:0:0:0:0:64:64:4:60:4:60|t ",
@@ -93,18 +16,6 @@ GW.nameRoleIconPure = {
     HEALER = "Interface/AddOns/GW2_UI/textures/party/roleicon-healer.png",
     DAMAGER = "Interface/AddOns/GW2_UI/textures/party/roleicon-dps.png",
     NONE = ""
-}
-
-GW.professionBagColor = {
-    [8] = CreateColor(.88, .73, .29),  --leatherworking
-    [16] = CreateColor(.29, .30, .88), --inscription
-    [32] = CreateColor(.07, .71, .13), --herbs
-    [64] = CreateColor(.76, .02, .8),  --enchanting
-    [128] = CreateColor(.91, .46, .18), --engineering
-    [512] = CreateColor(.03, .71, .81), --gems
-    [1024] = CreateColor(.54, .40, .04), --Mining Bag
-    [32768] = CreateColor(.42, .59, 1), --fishing
-    [65536] = CreateColor(.87, .05, .25) --cooking
 }
 
 GW.trackingTypes = {
@@ -125,58 +36,6 @@ GW.trackingTypes = {
     [132320] = {l = 0.625, r = 0.750, t = 0, b = 0.5}, --Hidden
 }
 
-GW.TRACKER_TYPE_COLOR = {
-    QUEST = CreateColor(221 / 255, 198 / 255, 68 / 255),
-    CAMPAIGN = CreateColor(121 / 255, 222 / 255, 47 / 255),
-    EVENT = CreateColor(240 / 255, 121 / 255, 37 / 255),
-    SCENARIO = CreateColor(171 / 255, 37 / 255, 240 / 255),
-    BOSS = CreateColor(240 / 255, 37 / 255, 37 / 255),
-    ARENA = CreateColor(240 / 255, 37 / 255, 37 / 255),
-    ACHIEVEMENT = CreateColor(37 / 255, 240 / 255, 172 / 255),
-    DAILY = CreateColor(68 / 255, 192 / 255, 250 / 255),
-    TORGHAST = CreateColor(109 / 255, 161 / 255, 207 / 255),
-    RECIPE = CreateColor(228 / 255, 157 / 255, 0 / 255),
-    MONTHLYACTIVITY = CreateColor(228 / 255, 157 / 255, 0 / 255),
-    HOUSINGINITIATIVE = CreateColor(0.85, 0.7, 0.43),
-    DELVE = CreateColor(171 / 255, 37 / 255, 240 / 255)
-}
-
-GW.TRACKER_TYPE = {
-    QUEST = "QUEST",
-    CAMPAIGN = "CAMPAIGN",
-    EVENT = "EVENT",
-    SCENARIO = "SCENARIO",
-    BOSS = "BOSS",
-    ARENA = "ARENA",
-    ACHIEVEMENT = "ACHIEVEMENT",
-    DAILY = "DAILY",
-    TORGHAST = "TORGHAST",
-    RECIPE = "RECIPE",
-    MONTHLYACTIVITY = "MONTHLYACTIVITY",
-    HOUSINGINITIATIVE = "HOUSINGINITIATIVE",
-    DELVE = "DELVE",
-    DEAD = "DEAD"
-}
-
-GW.FACTION_BAR_COLORS = {
-    [1] = CreateColor(0.8, 0.3, 0.22),
-    [2] = CreateColor(0.8, 0.3, 0.22),
-    [3] = CreateColor(0.75, 0.27, 0),
-    [4] = CreateColor(0.9, 0.7, 0),
-    [5] = CreateColor(0, 0.6, 0.1),
-    [6] = CreateColor(0, 0.6, 0.1),
-    [7] = CreateColor(0, 0.6, 0.1),
-    [8] = CreateColor(0, 0.6, 0.1),
-    [9] = CreateColor(0.22, 0.37, 0.98), --Paragon
-    [10] = CreateColor(0.09, 0.29, 0.79), --Azerite
-    [11] = CreateColor(0, 0.74, 0.95),  --(Renown)
-}
-
-GW.COLOR_FRIENDLY = {
-    [1] = CreateColor(88 / 255, 170 / 255, 68 / 255), --friendly #58aa44
-    [2] = CreateColor(159 / 255, 36 / 255, 20 / 255), --enemy    #9f2414
-    [3] = CreateColor(159 / 255, 159 / 255, 159 / 255) --tapped   #9f9f9f
-}
 GW.BLOOD_SPARK = {
     [0] = { left = 0, right = 0.125, top = 0, bottom = 0.5 },
     [1] = { left = 0, right = 0.125, top = 0, bottom = 0.5 },
@@ -209,7 +68,7 @@ GW.BLOOD_SPARK = {
 
 GW.CLASS_ICONS = {
     [0] = { l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1 },
-
+    dead = { l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1 },
     [1] = { l = 0.0625 * 11, r = 0.0625 * 12, t = 0, b = 1 },
     [2] = { l = 0.0625 * 10, r = 0.0625 * 11, t = 0, b = 1 },
     [3] = { l = 0.0625 * 9, r = 0.0625 * 10, t = 0, b = 1 },
@@ -223,8 +82,8 @@ GW.CLASS_ICONS = {
     [11] = { l = 0.0625 * 1, r = 0.0625 * 2, t = 0, b = 1 },
     [12] = { l = 0, r = 0.0625 * 1, t = 0, b = 1 },
     [13] = { l = 0.0625 * 13, r = 0.0625 * 14, t = 0, b = 1 },
-    dead = { l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1 }
 }
+
 GW.CLASS_ICONS.WARRIOR = GW.CLASS_ICONS[1]
 GW.CLASS_ICONS.PALADIN = GW.CLASS_ICONS[2]
 GW.CLASS_ICONS.HUNTER = GW.CLASS_ICONS[3]
@@ -238,28 +97,6 @@ GW.CLASS_ICONS.MONK = GW.CLASS_ICONS[10]
 GW.CLASS_ICONS.DRUID = GW.CLASS_ICONS[11]
 GW.CLASS_ICONS.DEMONHUNTER = GW.CLASS_ICONS[12]
 GW.CLASS_ICONS.EVOKER = GW.CLASS_ICONS[13]
-
-GW.GW_CLASS_COLORS = {
-    WARRIOR = CreateColor(90 / 255, 54 / 255, 38 / 255, 1),
-    PALADIN = CreateColor(177 / 255, 72 / 255, 117 / 255, 1),
-    HUNTER = CreateColor(99 / 255, 125 / 255, 53 / 255, 1),
-    ROGUE = CreateColor(190 / 255, 183 / 255, 79 / 255, 1),
-    PRIEST = CreateColor(205 / 255, 205 / 255, 205 / 255, 1),
-    DEATHKNIGHT = CreateColor(148 / 255, 62 / 255, 62 / 255, 1),
-    SHAMAN = CreateColor(30 / 255, 44 / 255, 149 / 255, 1),
-    --MAGE = CreateColor(62 / 255, 121 / 255, 149 / 255, 1},
-    MAGE = CreateColor(101 / 255, 157 / 255, 184 / 255, 1),
-    WARLOCK = CreateColor(125 / 255, 88 / 255, 154 / 255, 1),
-    MONK = CreateColor(66 / 255, 151 / 255, 112 / 255, 1),
-    DRUID = CreateColor(158 / 255, 103 / 255, 37 / 255, 1),
-    DEMONHUNTER = CreateColor(72 / 255, 38 / 255, 148 / 255, 1),
-    EVOKER = CreateColor(56 / 255, 99 / 255, 113 / 255, 1)
-}
-
-GW.FACTION_COLOR = {
-    [1] = CreateColor(163 / 255, 46 / 255, 54 / 255), --Horde
-    [2] = CreateColor(57 / 255, 115 / 255, 186 / 255) --Alliance
-}
 
 GW.TARGET_FRAME_ART = {
     minus = "Interface/AddOns/GW2_UI/textures/units/targetshadow.png",
@@ -299,19 +136,6 @@ GW.ShortPrefixStyles = {
     GERMAN = {{1e12, "Bio"}, {1e9, "Mrd"}, {1e6, "Mio"}, {1e3, "Tsd"}},
     KOREAN = {{1e8, "억"}, {1e4, "만"}, {1e3, "천"}},
     METRIC = {{1e12, "T"}, {1e9, "G"}, {1e6, "M"}, {1e3, "k"}}
-}
-
-GW.GemTypeInfo = {
-	Yellow			= CreateColor(0.97, 0.82, 0.29),
-	Red				= CreateColor(1.00, 0.47, 0.47),
-	Blue			= CreateColor(0.47, 0.67, 1.00),
-	Hydraulic		= CreateColor(1.00, 1.00, 1.00),
-	Cogwheel		= CreateColor(1.00, 1.00, 1.00),
-	Meta			= CreateColor(1.00, 1.00, 1.00),
-	Prismatic		= CreateColor(1.00, 1.00, 1.00),
-	PunchcardRed	= CreateColor(1.00, 0.47, 0.47),
-	PunchcardYellow	= CreateColor(0.97, 0.82, 0.29),
-	PunchcardBlue	= CreateColor(0.47, 0.67, 1.00),
 }
 
 GW.INDICATORS = { "BAR", "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT" }

@@ -124,13 +124,13 @@ end
 local function RaidInfo_InitButton(button, elementData)
     local instanceName, instanceID, instanceReset, _, locked, extended, instanceIDMostSig, _, _, difficultyName, _, _, extendDisabled
     if not button.isSkinned then
-        button.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+        button.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
         button.name:SetTextColor(1, 1, 1)
-        button.difficult:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        button.difficult:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         button.difficult:SetTextColor(1, 1, 1)
-        button.reset:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        button.reset:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
         button.reset:SetTextColor(1, 1, 1)
-        button.extended:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        button.extended:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         button.extended:SetTextColor(1, 1, 1)
         if not button.ScriptsHooked then
             button:SetScript("OnClick", raidInfo_OnClick)
@@ -298,18 +298,18 @@ local function UpdateTokenSkins(frame)
             end
 
             if child.Name then
-                child.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+                child.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
                 child.Name:SetTextColor(1, 1, 1)
             end
 
             if child.Text then
-                child.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+                child.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
                 child.Text:SetTextColor(1, 1, 1)
             end
 
             if child.Content then
-                child.Content.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-                child.Content.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+                child.Content.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+                child.Content.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
                 child.Content.Name:SetJustifyH("LEFT")
                 child.Content.Count:SetJustifyH("RIGHT")
                 child.Content.Name:SetJustifyV("MIDDLE")
@@ -394,7 +394,7 @@ local function SkinTokenFrame()
     TokenFramePopup.BackpackCheckbox.Text:ClearAllPoints()
     TokenFramePopup.BackpackCheckbox.Text:SetPoint("LEFT", TokenFramePopup.BackpackCheckbox, "RIGHT", 5, 0)
 
-    TokenFramePopup.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    TokenFramePopup.Title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     TokenFramePopup.Title:SetTextColor(1, 1, 1)
 
     local TokenPopupClose = TokenFramePopup["$parent.CloseButton"]
@@ -402,19 +402,19 @@ local function SkinTokenFrame()
         TokenPopupClose:GwSkinButton(true)
     end
 
-    CurrencyTransferMenuTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    CurrencyTransferMenuTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     CurrencyTransferMenuTitleText:SetTextColor(1, 1, 1)
 
-    CurrencyTransferMenu.Content.SourceSelector.SourceLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    CurrencyTransferMenu.Content.SourceSelector.SourceLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     CurrencyTransferMenu.Content.SourceSelector.SourceLabel:SetTextColor(1, 1, 1)
-    CurrencyTransferMenu.Content.SourceSelector.PlayerName:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    CurrencyTransferMenu.Content.SourceSelector.PlayerName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     CurrencyTransferMenu.Content.SourceSelector.PlayerName:SetTextColor(1, 1, 1)
-    CurrencyTransferMenu.Content.AmountSelector.TransferAmountLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    CurrencyTransferMenu.Content.AmountSelector.TransferAmountLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     CurrencyTransferMenu.Content.AmountSelector.TransferAmountLabel:SetTextColor(1, 1, 1)
-    CurrencyTransferMenu.Content.SourceBalancePreview.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    CurrencyTransferMenu.Content.SourceBalancePreview.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     CurrencyTransferMenu.Content.SourceBalancePreview.Label:SetTextColor(1, 1, 1)
     CurrencyTransferMenu.Content.SourceBalancePreview.BalanceInfo.CurrencyIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    CurrencyTransferMenu.Content.PlayerBalancePreview.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    CurrencyTransferMenu.Content.PlayerBalancePreview.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     CurrencyTransferMenu.Content.PlayerBalancePreview.Label:SetTextColor(1, 1, 1)
     CurrencyTransferMenu.Content.PlayerBalancePreview.BalanceInfo.CurrencyIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
@@ -451,21 +451,21 @@ local function UpdateTransferHistorySkins(self)
             child:SetHeight(32)
 
             if child.SourceName then
-                child.SourceName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+                child.SourceName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
                 child.SourceName:SetTextColor(1, 1, 1)
                 child.SourceName:ClearAllPoints()
                 child.SourceName:SetPoint("LEFT", child, "LEFT", 42, 0)
             end
 
             if child.DestinationName then
-                child.DestinationName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+                child.DestinationName:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
                 child.DestinationName:SetTextColor(1, 1, 1)
                 child.DestinationName:ClearAllPoints()
                 child.DestinationName:SetPoint("LEFT", child.Arrow, "RIGHT", 3, 0)
             end
 
             if child.CurrencyQuantity then
-                child.CurrencyQuantity:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+                child.CurrencyQuantity:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
                 child.CurrencyQuantity:SetTextColor(1, 1, 1)
                 child.CurrencyQuantity:ClearAllPoints()
                 child.CurrencyQuantity:SetPoint("RIGHT", child, "RIGHT", -25, 0)
@@ -592,7 +592,7 @@ local function LoadCurrency(tabContainer)
     item.ToggleMe = curwin_outer.Currency
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(CURRENCY)
-    item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
+    item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
     fmMenu.items.currency = item
@@ -601,7 +601,7 @@ local function LoadCurrency(tabContainer)
     item.ToggleMe = curHistroyWin
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(CURRENCY_TRANSFER_LOG_TITLE)
-    item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
+    item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu.items.currency, "BOTTOMLEFT")
     fmMenu.items.currencyTransferHistory = item
@@ -610,7 +610,7 @@ local function LoadCurrency(tabContainer)
     item.ToggleMe = curwin_outer.RaidLocks
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(RAID_INFORMATION)
-    item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
+    item:GetFontString():GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu.items.currencyTransferHistory, "BOTTOMLEFT")
     fmMenu.items.raidinfo = item

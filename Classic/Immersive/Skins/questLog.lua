@@ -76,7 +76,7 @@ local function handleItemButton(item)
     end
 
     if item.Name then
-        item.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        item.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     end
 
     if item.CircleBackground then
@@ -474,7 +474,7 @@ local function LoadQuestLogFrameSkin()
         self:StopMovingOrSizing()
     end)
 
-    QuestFrameNpcNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, "OUTLINE")
+    QuestFrameNpcNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE")
     QuestFrame:GwStripTextures()
     QuestFrame:GwCreateBackdrop()
     QuestFrame.tex = QuestFrame:CreateTexture(nil, "BACKGROUND", nil, 0)

@@ -44,7 +44,7 @@ function GW.SkinRecruitAFriendList()
 
     RecruitAFriendFrame.RewardClaiming.MonthCount:ClearAllPoints()
     RecruitAFriendFrame.RewardClaiming.MonthCount:SetPoint("TOPLEFT", 120, -15)
-    RecruitAFriendFrame.RewardClaiming.MonthCount:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    RecruitAFriendFrame.RewardClaiming.MonthCount:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
     RecruitAFriendFrame.RewardClaiming.NextRewardButton:ClearAllPoints()
     RecruitAFriendFrame.RewardClaiming.NextRewardButton:SetPoint("CENTER", RecruitAFriendFrame.RewardClaiming, "LEFT", 65, 0)
@@ -66,8 +66,8 @@ function GW.SkinRecruitAFriendList()
 
     RecruitAFriendFrame.RecruitList.Header:SetSize(450, 20)
     RecruitAFriendFrame.RecruitList.Header.Background:Hide()
-    RecruitAFriendFrame.RecruitList.Header.RecruitedFriends:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
-    RecruitAFriendFrame.RecruitList.Header.RecruitedFriends:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    RecruitAFriendFrame.RecruitList.Header.RecruitedFriends:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
+    RecruitAFriendFrame.RecruitList.Header.RecruitedFriends:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
     RecruitAFriendFrame.RecruitmentButton:ClearAllPoints()
     RecruitAFriendFrame.RecruitmentButton:SetPoint("BOTTOMLEFT", RecruitAFriendFrame.RecruitList.ScrollBox,  "BOTTOMLEFT", 4, -20)
@@ -81,7 +81,7 @@ function GW.SkinRecruitAFriendList()
     RecruitAFriendRewardsFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     RecruitAFriendRewardsFrame.Background:SetAlpha(0)
     RecruitAFriendRewardsFrame.Watermark:SetAlpha(0)
-    RecruitAFriendRewardsFrame.Title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    RecruitAFriendRewardsFrame.Title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
     hooksecurefunc(RecruitAFriendRewardsFrame, "UpdateRewards", RAFRewards)
     RAFRewards()

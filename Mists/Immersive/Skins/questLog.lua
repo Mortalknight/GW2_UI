@@ -76,7 +76,7 @@ local function handleItemButton(item)
     end
 
     if item.Name then
-        item.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        item.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     end
 
     if item.CircleBackground then
@@ -445,7 +445,7 @@ local function LoadQuestLogFrameSkin()
 
     QuestLogCount:GwStripTextures()
     QuestLogCount:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-	QuestLogQuestCount:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.TextSizeType.SMALL)
+	QuestLogQuestCount:GwSetFontTemplate(STANDARD_TEXT_FONT, GW.Enum.TextSizeType.Small)
 	QuestLogQuestCount:SetTextColor(1, 1, 1)
 	QuestLogCount.backdrop:SetFrameLevel(QuestLogFrame:GetFrameLevel() + 1)
 	QuestLogFrameShowMapButtonText:SetTextColor(1, 1, 1)
@@ -508,7 +508,7 @@ local function LoadQuestLogFrameSkin()
 
 	QuestNPCModelNameText:ClearAllPoints()
 	QuestNPCModelNameText:SetPoint("TOP", QuestModelScene, 0, -10)
-	QuestNPCModelNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, "OUTLINE")
+	QuestNPCModelNameText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "OUTLINE")
 	QuestNPCModelNameText:SetTextColor(1, 1, 1)
 
 	QuestNPCModelText:SetJustifyH("CENTER")

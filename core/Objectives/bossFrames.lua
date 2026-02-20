@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local bossFrames = {}
 
 GwBossFrameMixin = CreateFromMixins(GwObjectivesUnitFrameMixin)
@@ -19,22 +18,22 @@ end
 
 function GwBossFrameMixin:UpdateHealthbarColor()
     local unitReaction = UnitReaction(self.unit, "player")
-    local nameColor = (unitReaction and GW.FACTION_BAR_COLORS[unitReaction]) or RAID_CLASS_COLORS.PRIEST
+    local nameColor = (unitReaction and GW.Colors.FactionBarColors[unitReaction]) or RAID_CLASS_COLORS.PRIEST
 
     if unitReaction then
-        if unitReaction <= 3 then nameColor = GW.COLOR_FRIENDLY[2] end -- Feindlich
-        if unitReaction >= 5 then nameColor = GW.COLOR_FRIENDLY[1] end -- Freundlich
+        if unitReaction <= 3 then nameColor = GW.Colors.FriendlyColors[2] end -- Feindlich
+        if unitReaction >= 5 then nameColor = GW.Colors.FriendlyColors[1] end -- Freundlich
     end
 
     if UnitIsTapDenied(self.unit) then
-        nameColor = { r = 159 / 255, g = 159 / 255, b = 159 / 255 }
+        nameColor = GW.Colors.TabDenied
     end
-    self.health:SetStatusBarColor(nameColor.r, nameColor.g, nameColor.b, 1)
+    self.health:SetStatusBarColor(nameColor:GetRGB())
 end
 
 function GwBossFrameMixin:OnShow()
     local compassData = {
-        TYPE    = "BOSS",
+        TYPE    = GW.Enum.ObjectivesNotificationType.Boss,
         ID      = "boss_unknown",
         QUESTID = "unknown",
         COMPASS = false,
@@ -42,7 +41,7 @@ function GwBossFrameMixin:OnShow()
         MAPID   = nil,
         X       = nil,
         Y       = nil,
-        COLOR   = TRACKER_TYPE_COLOR.BOSS,
+        COLOR   = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Boss],
         TITLE   = UnitName(self.unit)
     }
     GwObjectivesNotification:AddNotification(compassData)
@@ -58,7 +57,7 @@ end
 function GwBossFrameMixin:OnHide()
     self.container:UpdateBossFrameHeight()
     if self.id == 1 then
-        GwObjectivesNotification:RemoveNotificationOfType(GW.TRACKER_TYPE.BOSS)
+        GwObjectivesNotification:RemoveNotificationOfType(GW.Enum.ObjectivesNotificationType.Boss)
     end
 end
 
@@ -141,11 +140,11 @@ function GwObjectivesBossContainerMixin:RegisterFrame(i)
     bossFrame:EnableMouse(true)
     bossFrame:RegisterForClicks("AnyDown")
 
-    bossFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    bossFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     bossFrame.name:SetShadowOffset(1, -1)
     bossFrame.marker:Hide()
 
-    bossFrame.icon:SetVertexColor(TRACKER_TYPE_COLOR.BOSS.r, TRACKER_TYPE_COLOR.BOSS.g, TRACKER_TYPE_COLOR.BOSS.b)
+    bossFrame.icon:SetVertexColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Boss]:GetRGB())
 
     bossFrame:RegisterEvent("RAID_TARGET_UPDATE")
     bossFrame:RegisterEvent("PLAYER_TARGET_CHANGED")

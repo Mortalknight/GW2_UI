@@ -1,5 +1,5 @@
 local _, GW = ...
-local GW_CLASS_COLORS = GW.GW_CLASS_COLORS
+local GW_CLASS_COLORS = GW.Colors.ClassColors
 
 local afterCombatQueue = {}
 local maxUpdatesPerCircle = 5
@@ -249,7 +249,7 @@ end
 GW.GetDefaultClassColor = GetDefaultClassColor
 
 do
-    local function GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
+    function GW.GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
         if not class or not useClassColor then
             return RAID_CLASS_COLORS.PRIEST
         end
@@ -258,7 +258,9 @@ do
         local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
         local colorForNameString
 
-        if type(color) ~= "table" then return end
+        if type(color) ~= "table" or not color.r or not color.g or not color.b then
+            return RAID_CLASS_COLORS.PRIEST
+        end
 
         if not color.colorStr then
             color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
@@ -267,12 +269,16 @@ do
         end
 
         if forNameString and not useBlizzardClassColor then
-            colorForNameString = CreateColor(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3))
+            color.forNameString = color.forNameString or CreateColor(
+                min(1, color.r + 0.3),
+                min(1, color.g + 0.3),
+                min(1, color.b + 0.3)
+            )
+            colorForNameString = color.forNameString
         end
 
         return forNameString and colorForNameString or color
     end
-    GW.GWGetClassColor = GWGetClassColor
 end
 
 
@@ -1496,3 +1502,8 @@ local function GetDebuffScaleBasedOnPrio()
     return scale
 end
 GW.GetDebuffScaleBasedOnPrio = GetDebuffScaleBasedOnPrio
+
+function GW.GetEnumName(enum, enumValue)
+    local keysByValue = tInvert(enum)
+    return keysByValue[enumValue] or UNKNOWN .. enumValue
+end

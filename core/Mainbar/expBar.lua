@@ -5,7 +5,6 @@ local lerp = GW.lerp
 local Diff = GW.Diff
 local animations = GW.animations
 
-local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 local FormatNumber = GW.GetLocalizedNumber or CommaValue or tostring
 
 -- forward function defs
@@ -164,7 +163,7 @@ local function UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
         tinsert(self.tooltip, string.format("%s %s %s / %s |cffa6a6a6 (%d%%)|r",
             data.name, REPUTATION,
             FormatNumber(currentValue), FormatNumber(maxValueParagon), math.floor(valPrecRepu * 100)))
-        self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
+        self.RepuBar:SetStatusBarColor(GW.Colors.FactionBarColors[9]:GetRGB())
         isParagon = true
         isFriend = (friendReputationInfo and friendReputationInfo.friendshipFactionID > 0)
     elseif friendReputationInfo and friendReputationInfo.friendshipFactionID > 0 then
@@ -182,7 +181,7 @@ local function UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
                 friendReputationInfo.name, REPUTATION,
                 FormatNumber(friendReputationInfo.maxRep), FormatNumber(friendReputationInfo.maxRep), 100))
         end
-        self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+        self.RepuBar:SetStatusBarColor(GW.Colors.FactionBarColors[5]:GetRGB())
         isFriend = true
     elseif C_Reputation.IsMajorFaction and C_Reputation.IsMajorFaction(data.factionID) then
         local majorFactionData = C_MajorFactions.GetMajorFactionData(data.factionID)
@@ -199,7 +198,7 @@ local function UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
                 FormatNumber(majorFactionData.renownReputationEarned or 0),
                 FormatNumber(majorFactionData.renownLevelThreshold),
                 math.floor(valPrecRepu * 100)))
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+            self.RepuBar:SetStatusBarColor(GW.Colors.FactionBarColors[11]:GetRGB())
             isMajor = true
         end
     else
@@ -218,7 +217,7 @@ local function UpdateReputation(self, data, lockLevelTextUnderMaxLevel)
                 math.floor(valPrecRepu * 100)))
         end
         local reaction = data.reaction or 1
-        self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
+        self.RepuBar:SetStatusBarColor(GW.Colors.FactionBarColors[reaction]:GetRGB())
         isNormal = true
     end
 
@@ -242,7 +241,7 @@ local function UpdateAzerite(self, azeriteItem)
     local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItem)
     AzeritLevel = C_AzeriteItem.GetPowerLevel(azeriteItem)
     AzeritVal = (xpForNextPoint > 0) and (azeriteXP / xpForNextPoint) or 0
-    self.AzeritBar:SetStatusBarColor(FACTION_BAR_COLORS[10].r, FACTION_BAR_COLORS[10].g, FACTION_BAR_COLORS[10].b)
+    self.AzeritBar:SetStatusBarColor(GW.Colors.FactionBarColors[10]:GetRGB())
     self.AzeritBar.animation:Show()
 
     tinsert(self.tooltip, AZERITE_POWER_BAR:format(
@@ -713,8 +712,8 @@ local function LoadXPBar()
     experiencebar.RepuBar.repuBarAnimation = 0
     experiencebar.PetBar.petBarAnimation = 0
     experiencebar.AzeritBar.AzeritBarAnimation = 0
-    experiencebar.NextLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-    experiencebar.CurrentLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    experiencebar.NextLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    experiencebar.CurrentLevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
     updateBarSize(experiencebar)
 

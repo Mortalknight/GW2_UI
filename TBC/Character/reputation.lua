@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
-local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 local RT = GW.REP_TEXTURES
 
 -- forward function defs
@@ -339,8 +338,8 @@ local function setDetailEx(
         frame.StatusBar:SetMinMaxValues(0, 1)
         frame.StatusBar:SetValue((currentValue - 0) / (maxValueParagon - 0))
 
-        frame.background2:SetVertexColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
-        frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
+        frame.background2:SetVertexColor(GW.Colors.FactionBarColors[9]:GetRGB())
+        frame.StatusBar:SetStatusBarColor(GW.Colors.FactionBarColors[9]:GetRGB())
     else
         frame.currentRank:SetText(currentRank)
         frame.nextRank:SetText(nextRank)
@@ -368,16 +367,8 @@ local function setDetailEx(
             frame.currentValue:SetText()
         end
 
-        frame.background2:SetVertexColor(
-            FACTION_BAR_COLORS[standingId].r,
-            FACTION_BAR_COLORS[standingId].g,
-            FACTION_BAR_COLORS[standingId].b
-        )
-        frame.StatusBar:SetStatusBarColor(
-            FACTION_BAR_COLORS[standingId].r,
-            FACTION_BAR_COLORS[standingId].g,
-            FACTION_BAR_COLORS[standingId].b
-        )
+        frame.background2:SetVertexColor(GW.Colors.FactionBarColors[standingId]:GetRGB())
+        frame.StatusBar:SetStatusBarColor(GW.Colors.FactionBarColors[standingId]:GetRGB())
     end
 end
 
@@ -511,17 +502,17 @@ local function setupDetail(self)
     self.controles.showAsBar:SetScript("OnLeave", GameTooltip_Hide)
     self.controles.showAsBar.checkbutton:SetScript("OnEnter", detailsShowAsBar_OnEnter)
     self.controles.showAsBar.checkbutton:SetScript("OnLeave", GameTooltip_Hide)
-    self.controles.inactive.string:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    self.controles.inactive.string:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     self.controles.inactive.string:SetText(FACTION_INACTIVE)
     self.controles.inactive:SetWidth(self.controles.inactive.string:GetWidth())
-    self.controles.showAsBar.string:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    self.controles.showAsBar.string:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     self.controles.showAsBar.string:SetText(SHOW_FACTION_ON_MAINSCREEN)
     self.controles.showAsBar:SetWidth(self.controles.showAsBar.string:GetWidth())
     self.controles:SetScript("OnShow", detailsControls_OnShow)
     self.controles:SetScript("OnHide", detailsControls_OnHide)
-    self.StatusBar.currentValue:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    self.StatusBar.percentage:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    self.StatusBar.nextValue:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    self.StatusBar.currentValue:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    self.StatusBar.percentage:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    self.StatusBar.nextValue:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
 
     self.StatusBar.currentValue:SetShadowColor(0, 0, 0, 1)
     self.StatusBar.percentage:SetShadowColor(0, 0, 0, 1)
@@ -543,22 +534,22 @@ local function setupDetail(self)
     self.currentRank:SetPoint("TOPLEFT", self.StatusBar, "BOTTOMLEFT", 0, -5)
     self.nextRank:SetPoint("TOPRIGHT", self.StatusBar, "BOTTOMRIGHT", 0, -5)
 
-    self.currentRank:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+    self.currentRank:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
     self.currentRank:SetTextColor(0.6, 0.6, 0.6)
     self.currentRank:SetShadowColor(0, 0, 0, 1)
     self.currentRank:SetShadowOffset(1, -1)
 
-    self.nextRank:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+    self.nextRank:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
     self.nextRank:SetTextColor(0.6, 0.6, 0.6)
     self.nextRank:SetShadowColor(0, 0, 0, 1)
     self.nextRank:SetShadowOffset(1, -1)
 
-    self.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    self.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     self.name:SetTextColor(1, 1, 1, 1)
     self.name:SetShadowColor(0, 0, 0, 1)
     self.name:SetShadowOffset(1, -1)
 
-    self.details:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    self.details:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     self.details:SetTextColor(0.8, 0.8, 0.8, 1)
     self.details:SetShadowColor(0, 0, 0, 1)
     self.details:SetShadowOffset(1, -1)
@@ -698,7 +689,7 @@ updateReputations = function()
                     cat.item.StatusBar:SetStatusBarColor(171 / 255, 37 / 255, 240 / 255)
                     cat.item.StatusBar.Spark:Hide()
                 else
-                    cat.item.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+                    cat.item.StatusBar:SetStatusBarColor(GW.Colors.FactionBarColors[5]:GetRGB())
                 end
             end
 
@@ -868,8 +859,8 @@ local function categoriesSetup(catwin)
         cat.item.name:SetTextColor(1, 1, 1, 1)
         cat.item.name:SetShadowColor(0, 0, 0, 1)
         cat.item.name:SetShadowOffset(1, -1)
-        cat.item.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-        cat.item.StatusBar.percentage:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "", -2)
+        cat.item.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+        cat.item.StatusBar.percentage:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "", -2)
         cat.item.StatusBar.percentage:SetShadowColor(0, 0, 0, 1)
         cat.item.StatusBar.percentage:SetShadowOffset(1, -1)
 

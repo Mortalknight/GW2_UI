@@ -50,7 +50,7 @@ local function Bags_OnEnter(self)
             if info then
                 if i == 1 then
                     GameTooltip:AddLine(" ")
-                    GameTooltip:AddLine(CURRENCY, GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
+                    GameTooltip:AddLine(CURRENCY, GW.Colors.TextColors.LightHeader:GetRGB())
                 end
                 if info.quantity then
                     GameTooltip:AddDoubleLine(format(iconString, info.iconFileID) .. info.name, info.quantity, 1, 1, 1, 1, 1, 1)

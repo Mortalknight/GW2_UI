@@ -380,7 +380,7 @@ local function createCoordDebugInput(self, labelText, index)
     f.label:SetPoint("RIGHT", f, "LEFT", 0, 0)
     f.label:SetJustifyH("LEFT")
     f.label:SetJustifyV("MIDDLE")
-    f.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+    f.label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
     f.label:SetText(labelText)
 
     f:SetScript("OnTextChanged", function() updateDebugPosition() end)

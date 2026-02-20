@@ -78,9 +78,9 @@ local function UpdateSpecFrame(frame)
             specContentFrame.RoleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/statsicon.png")
 
             --SpecName
-            specContentFrame.SpecName:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
-            specContentFrame.SampleAbilityText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
-            specContentFrame.SampleAbilityText:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+            specContentFrame.SpecName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+            specContentFrame.SampleAbilityText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
+            specContentFrame.SampleAbilityText:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
             if role == "DAMAGER" then
                 specContentFrame.RoleIcon:SetTexCoord(0.75, 1, 0.75, 1)
@@ -135,17 +135,17 @@ local function HandleHeroTalents(frame)
     for specFrame in frame.SpecContentFramePool:EnumerateActive() do
         if specFrame and not specFrame.IsSkinned then
             if specFrame.SpecName then
-                specFrame.SpecName:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
-                specFrame.SpecName:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+                specFrame.SpecName:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader)
+                specFrame.SpecName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
                 end
             if specFrame.Description then
-                specFrame.Description:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+                specFrame.Description:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
                 specFrame.Description:SetTextColor(1, 1, 1)
                 end
 
             if specFrame.CurrencyFrame then
-                specFrame.CurrencyFrame.LabelText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-                specFrame.CurrencyFrame.AmountText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
+                specFrame.CurrencyFrame.LabelText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+                specFrame.CurrencyFrame.AmountText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader)
             end
             specFrame.ActivateButton:GwSkinButton(false, true)
             specFrame.ApplyChangesButton:GwSkinButton(false, true)
@@ -158,7 +158,7 @@ end
 local function skinPlayerSpells()
     GW.HandlePortraitFrame(PlayerSpellsFrame)
     GW.CreateFrameHeaderWithBody(PlayerSpellsFrame, PlayerSpellsFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {PlayerSpellsFrame.SpecFrame, PlayerSpellsFrame.TalentsFrame}, -3, false, true)
-    PlayerSpellsFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+    PlayerSpellsFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
     -- Specialisation
     hooksecurefunc(PlayerSpellsFrame.SpecFrame, "UpdateSpecFrame", UpdateSpecFrame)
 
@@ -173,15 +173,15 @@ local function skinPlayerSpells()
 
     TalentsFrame.InspectCopyButton:GwSkinButton(false, true)
 
-    TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
-    TalentsFrame.ClassCurrencyDisplay.CurrentAmountContainer.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 8)
+    TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader)
+    TalentsFrame.ClassCurrencyDisplay.CurrentAmountContainer.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 8)
 
-    TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    TalentsFrame.ClassCurrencyDisplay.CurrencyLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
-    TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.BIG_HEADER)
-    TalentsFrame.SpecCurrencyDisplay.CurrentAmountContainer.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 8)
+    TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader)
+    TalentsFrame.SpecCurrencyDisplay.CurrentAmountContainer.CurrencyAmount:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 8)
 
-    TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    TalentsFrame.SpecCurrencyDisplay.CurrencyLabel:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
     GW.SkinTextBox(TalentsFrame.SearchBox.Middle, TalentsFrame.SearchBox.Left, TalentsFrame.SearchBox.Right)
     TalentsFrame.SearchBox:SetHeight(20)
@@ -233,7 +233,7 @@ local function skinPlayerSpells()
 
     -- Hero Talents
     local HeroTalentContainer = TalentsFrame.HeroTalentsContainer
-    HeroTalentContainer.HeroSpecLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.HEADER)
+    HeroTalentContainer.HeroSpecLabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Header)
 
     local TalentsSelect = HeroTalentsSelectionDialog
     if TalentsSelect then

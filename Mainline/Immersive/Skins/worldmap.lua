@@ -199,7 +199,7 @@ end
 local function worldMapSkin()
     WorldMapFrame:GwStripTextures()
     GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon.png", {QuestMapFrame}, nil, false, true)
-    WorldMapFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+    WorldMapFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
 
     WorldMapFrame.BorderFrame:GwStripTextures()
     WorldMapFrame.BorderFrame:SetFrameStrata(WorldMapFrame:GetFrameStrata())

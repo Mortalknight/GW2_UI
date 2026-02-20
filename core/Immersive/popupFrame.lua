@@ -196,7 +196,7 @@ end
 local function CreatePopupFrame()
     for i = 1, MAX_FRAMES do
         local popup = CreateFrame("Frame", "GwPopupFrame" .. i, UIParent, "GwPopupFrameTemplate")
-        popup.string:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        popup.string:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         popup.string:SetTextColor(1, 1, 1)
 
         popup:SetScript("OnShow", OnShow)

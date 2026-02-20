@@ -8,11 +8,11 @@ local function HandleAddonEntry(entry, treeNode)
         entry.LoadAddonButton:GwSkinButton(false, true)
         entry.LoadAddonButton.gwBorderFrame:Hide()
 
-        entry.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-        entry.Status:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        entry.Reload:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        entry.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        entry.Status:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        entry.Reload:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         entry.Reload:SetTextColor(1.0, 0.3, 0.3)
-        entry.LoadAddonButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        entry.LoadAddonButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
 
         GW.AddListItemChildHoverTexture(entry)
         entry.IsSkinned = true
@@ -45,7 +45,7 @@ local function LoadAddonListSkin()
 
     GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {AddonList.ScrollBox}, nil, false, true)
 
-    AddonListTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+    AddonListTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
     AddonList.CloseButton:GwSkinButton(true)
     AddonList.EnableAllButton:GwSkinButton(false, true)
     AddonList.DisableAllButton:GwSkinButton(false, true)
@@ -69,7 +69,7 @@ local function LoadAddonListSkin()
     AddonList.SearchBox:ClearAllPoints()
     AddonList.SearchBox:SetPoint("TOPRIGHT", AddonList, "TOPRIGHT", -10, -38)
 
-    AddonList.Performance.Header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    AddonList.Performance.Header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
     AddonList.CloseButton:SetSize(25, 25)
     AddonList.CloseButton:ClearAllPoints()

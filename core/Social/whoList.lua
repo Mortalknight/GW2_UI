@@ -2,7 +2,7 @@ local _, GW = ...
 
 local function ReskinWhoFrameButton(button)
     if not button.isSkinned then
-        button.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        button.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         button.Variable:SetFont(UNIT_NAME_FONT, 11)
         button.Level:SetFont(UNIT_NAME_FONT, 11)
         button.Class:SetFont(UNIT_NAME_FONT, 11)
@@ -43,8 +43,8 @@ function GW.SkinWhoList()
     if WhoFrameEditBox.Backdrop then
         WhoFrameEditBox.Backdrop:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagsearchbg.png")
     end
-    WhoFrameEditBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-    WhoFrameEditBox.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    WhoFrameEditBox:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    WhoFrameEditBox.Instructions:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     WhoFrameEditBox.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
     GW.SkinBagSearchBox(WhoFrameEditBox)
 
@@ -53,7 +53,7 @@ function GW.SkinWhoList()
         local r = {frame:GetRegions()}
         for _,c in pairs(r) do
             if c:GetObjectType() == "FontString" then
-                c:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+                c:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
             end
         end
     end
@@ -65,7 +65,7 @@ function GW.SkinWhoList()
     WhoFrameDropdown:GwStripTextures()
     WhoFrameDropdown.Arrow:ClearAllPoints()
     WhoFrameDropdown.Arrow:SetPoint("RIGHT", WhoFrameDropdown, "RIGHT", -5, -3)
-    WhoFrameDropdown.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    WhoFrameDropdown.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     WhoFrameDropdown.Text:SetShadowOffset(0, 0)
     WhoFrameDropdown.Text:SetTextColor(1, 1, 1)
     WhoFrameDropdown.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")

@@ -687,8 +687,8 @@ local function LoadMovers(layoutManager)
     local cos, sin = math.cos(angle), math.sin(angle)
     smallSettingsContainer.seperator:SetTexCoord((sin - cos), -(cos + sin), -cos, -sin, sin, -cos, 0, 0)
 
-    smallSettingsContainer.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
-    smallSettingsContainer.headerString:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    smallSettingsContainer.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    smallSettingsContainer.headerString:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     smallSettingsContainer.headerString:SetText(L["Extra Frame Options"] .. " & Layouts")
 
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.1, 2)
@@ -776,7 +776,7 @@ local function LoadMovers(layoutManager)
     --load tag dropdown
     local tagScrollFrame = smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown
     tagScrollFrame.title:SetFont(DAMAGE_TEXT_FONT, 12)
-    tagScrollFrame.title:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    tagScrollFrame.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     tagScrollFrame.title:SetText(L["Filter"])
     tagScrollFrame:GwHandleDropDownBox(nil, nil, nil, 125)
 

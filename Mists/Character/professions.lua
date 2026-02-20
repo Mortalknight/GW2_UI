@@ -1,5 +1,4 @@
 local _, GW = ...
-local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 
 local profs = {
     ["100"] = {["tag"] = "firstAid", ["icon"] = 133678},
@@ -365,24 +364,24 @@ local function loadOverview(parent)
         mask:SetSize(60, 60)
         fm.icon:AddMaskTexture(mask)
 
-        fm.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER)
+        fm.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader)
         fm.title:SetTextColor(1, 1, 1, 1)
         fm.title:SetShadowColor(0, 0, 0, 1)
         fm.title:SetShadowOffset(1, -1)
-        fm.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        fm.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         fm.desc:SetTextColor(0.8, 0.8, 0.8, 1)
         fm.desc:SetShadowColor(0, 0, 0, 1)
         fm.desc:SetShadowOffset(1, -1)
 
-        fm.StatusBar.currentValue:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        fm.StatusBar.currentValue:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         fm.StatusBar.currentValue:SetShadowColor(0, 0, 0, 1)
         fm.StatusBar.currentValue:SetShadowOffset(1, -1)
 
         fm.StatusBar:SetMinMaxValues(0, 1)
         fm.StatusBar:SetValue(0)
-        fm.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+        fm.StatusBar:SetStatusBarColor(GW.Colors.FactionBarColors[5]:GetRGB())
 
-        fm.btn1.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        fm.btn1.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         fm.btn1.name:SetTextColor(1, 1, 1, 1)
         fm.btn1.name:SetShadowColor(0, 0, 0, 1)
         fm.btn1.name:SetShadowOffset(1, -1)
@@ -391,7 +390,7 @@ local function loadOverview(parent)
         fm.btn1:EnableMouse(true)
         fm.btn1:RegisterForDrag("LeftButton")
 
-        fm.btn2.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        fm.btn2.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         fm.btn2.name:SetTextColor(1, 1, 1, 1)
         fm.btn2.name:SetShadowColor(0, 0, 0, 1)
         fm.btn2.name:SetShadowOffset(1, -1)

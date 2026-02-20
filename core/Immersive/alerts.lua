@@ -258,8 +258,8 @@ local function skinCriteriaAlert(frame)
 
     frame.Unlocked:SetTextColor(1, 1, 1)
     frame.Name:SetTextColor(1, 1, 0)
-    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    frame.Unlocked:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    frame.Unlocked:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     frame.Background:GwKill()
     frame.glow:GwKill()
     frame.shine:GwKill()
@@ -303,7 +303,7 @@ local function skinWorldQuestCompleteAlert(frame)
             end
         end
 
-        frame.ToastText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        frame.ToastText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
         --Icon
         frame.QuestTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -735,8 +735,8 @@ local function skinNewRecipeLearnedAlert(frame)
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
     end
 
-    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
     --flare
     AddFlare(frame, frame.Icon.b)
@@ -774,8 +774,8 @@ local function skinNewPetAlert(frame)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
     end
 
-    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-    frame.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    frame.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
     --flare
     AddFlare(frame, frame.Icon.b)
@@ -912,8 +912,8 @@ local function skinGarrisonFollowerAlert(frame, _, _, _, quality)
             cover:SetAllPoints(squareBG)
         end
 
-        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
         --flare
         AddFlare(frame, frame.PortraitFrame.squareBG)
@@ -943,9 +943,9 @@ local function skinGarrisonShipFollowerAlert(frame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -5, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 
-        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
-        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        frame.Class:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
+        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
+        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        frame.Class:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
 
         frame.isSkinned = true
     end
@@ -996,8 +996,8 @@ local function skinGarrisonBuildingAlert(frame)
         frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
 
-        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
         --flare
         AddFlare(frame, frame.Icon.b)
@@ -1034,8 +1034,8 @@ local function skinGarrisonMissionAlert(frame)
         frame.MissionType.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
         frame.MissionType.iconBorder:SetAllPoints(frame.MissionType.b)
 
-        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
-        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        frame.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
 
         --flare
         AddFlare(frame, frame.MissionType.b)
@@ -1198,9 +1198,9 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
     AchievementAlertFrame_SetUp(frame, 5208, true)
     frame:HookScript("OnClick", GW2_UIAlertFrame_OnClick)
     frame.Name:SetFormattedText(name)
-    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     frame.Unlocked:SetFormattedText(toptext or "")
-    frame.Unlocked:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+    frame.Unlocked:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
     frame.onClick = onClick
     frame.delay = delay
     frame.spellID = spellID

@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
 
@@ -58,7 +57,7 @@ function GwObjectivesRecipeContainerMixin:CreateTrackedBlock(idx, isRecraft, sav
     end
 
     self.header:Show()
-    local block = self:GetBlock(shownIndex, "RECIPE", false)
+    local block = self:GetBlock(shownIndex, GW.Enum.ObjectivesNotificationType.Recipe, false)
     if block == nil then
         return 0, 0
     end
@@ -219,16 +218,16 @@ function GwObjectivesRecipeContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText(PROFESSIONS_TRACKER_HEADER_PROFESSION)
 
     if C_AddOns.IsAddOnLoaded("Auctionator") then
         self.header.SearchButton = CreateFrame("Frame", nil, self.header)
         self.header.SearchButton.text = self.header.SearchButton:CreateFontString(nil, "ARTWORK")
-        self.header.SearchButton.text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        self.header.SearchButton.text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
         self.header.SearchButton.text:SetShadowOffset(1, -1)
-        self.header.SearchButton.text:SetTextColor(TRACKER_TYPE_COLOR.RECIPE.r, TRACKER_TYPE_COLOR.RECIPE.g, TRACKER_TYPE_COLOR.RECIPE.b)
+        self.header.SearchButton.text:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Recipe]:GetRGB())
         self.header.SearchButton.text:SetText(SEARCH)
         self.header.SearchButton.text:SetPoint("RIGHT", self.header, "RIGHT", -5, 0)
         self.header.SearchButton.SearchButton = self.header.SearchButton
@@ -240,7 +239,7 @@ function GwObjectivesRecipeContainerMixin:InitModule()
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
-    self.header.title:SetTextColor(TRACKER_TYPE_COLOR.RECIPE.r, TRACKER_TYPE_COLOR.RECIPE.g, TRACKER_TYPE_COLOR.RECIPE.b)
+    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Recipe]:GetRGB())
 
     self.blockMixInTemplate = GwObjectivesRecipeBlockMixin
 

@@ -54,7 +54,7 @@ local function applyButtonStyle(b)
     if b.GetFontString and b:GetFontString() then
         b:GetFontString():ClearAllPoints()
         b:GetFontString():SetPoint("LEFT", b, "LEFT", 32,0)
-        b:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        b:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     end
     b:SetSize(180, 25)
     if b:GetNormalTexture() then

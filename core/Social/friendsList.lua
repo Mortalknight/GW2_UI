@@ -358,8 +358,8 @@ local function UpdateFriendButton(button)
         end
     end
 
-    button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-    button.info:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
+    button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    button.info:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
 
     if button.Favorite and button.Favorite:IsShown() then
         button.Favorite:ClearAllPoints()

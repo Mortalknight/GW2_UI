@@ -231,29 +231,29 @@ local function LoadHealthGlobe()
         hg.text_a:ClearAllPoints()
         hg.text_a:SetPoint("CENTER", hg, "CENTER", 0, 25)
 
-        hg.text_a.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+        hg.text_a.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
         hg.text_a.value:SetShadowColor(1, 1, 1, 0)
 
         for i, v in ipairs(hg.text_a.shadow) do
-            v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.SMALL)
+            v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
             v:SetShadowColor(1, 1, 1, 0)
             v:SetTextColor(0, 0, 0, 1 / i)
         end
     else
-        hg.text_a.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+        hg.text_a.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
         hg.text_a.value:SetShadowColor(1, 1, 1, 0)
 
         for i, v in ipairs(hg.text_a.shadow) do
-            v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+            v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
             v:SetShadowColor(1, 1, 1, 0)
             v:SetTextColor(0, 0, 0, 1 / i)
         end
     end
-    hg.text_h.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, nil, -1)
+    hg.text_h.value:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, nil, -1)
     hg.text_h.value:SetShadowColor(1, 1, 1, 0)
 
     for i, v in ipairs(hg.text_h.shadow) do
-        v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER, nil, -1)
+        v:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, nil, -1)
         v:SetShadowColor(1, 1, 1, 0)
         v:SetTextColor(0, 0, 0, 1 / i)
     end

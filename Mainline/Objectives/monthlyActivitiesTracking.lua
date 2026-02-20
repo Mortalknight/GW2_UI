@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow
 
@@ -49,7 +48,7 @@ function GwObjectivesMonthlyActivitiesContainerMixin:UpdateLayout()
         if activityInfo and not activityInfo.completed then
             local activityName = activityInfo.activityName
 			local requirements = activityInfo.requirementsList
-            local block = self:GetBlock(shownIndex, "MONTHLYACTIVITY", false)
+            local block = self:GetBlock(shownIndex, GW.Enum.ObjectivesNotificationType.MonthlyActivity, false)
             if block == nil then
                 return
             end
@@ -142,17 +141,13 @@ function GwObjectivesMonthlyActivitiesContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText(TRACKER_HEADER_MONTHLY_ACTIVITIES)
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
-    self.header.title:SetTextColor(
-        TRACKER_TYPE_COLOR.MONTHLYACTIVITY.r,
-        TRACKER_TYPE_COLOR.MONTHLYACTIVITY.g,
-        TRACKER_TYPE_COLOR.MONTHLYACTIVITY.b
-    )
+    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.MonthlyActivity]:GetRGB())
 
     self.blockMixInTemplate = GwObjectivesMonthlyActivitiesBlockMixin
 

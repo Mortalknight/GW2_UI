@@ -1,8 +1,6 @@
 local _, GW = ...
-local FACTION_COLOR = GW.FACTION_COLOR
 
 local updateCap = 1 / 5
-
 local BattlegroundHudMixin = {}
 GwBattlegroundLandmarkMixin = {}
 
@@ -81,15 +79,15 @@ function GwBattlegroundLandmarkMixin:IconOverrider(icon)
         self.icon:SetVertexColor(0, 0, 0)
     elseif iconState == 1 then
         self.IconBackground:SetVertexColor(1, 1, 1)
-        self.icon:SetVertexColor(FACTION_COLOR[2].r, FACTION_COLOR[2].g, FACTION_COLOR[2].b)
+        self.icon:SetVertexColor(GW.Colors.FactionColors.Alliance:GetRGB())
     elseif iconState == 2 then
-        self.IconBackground:SetVertexColor(FACTION_COLOR[2].r, FACTION_COLOR[2].g, FACTION_COLOR[2].b)
+        self.IconBackground:SetVertexColor(GW.Colors.FactionColors.Alliance:GetRGB())
         self.icon:SetVertexColor(0, 0, 0)
     elseif iconState == 3 then
         self.IconBackground:SetVertexColor(1, 1, 1)
-        self.icon:SetVertexColor(FACTION_COLOR[1].r, FACTION_COLOR[1].g, FACTION_COLOR[1].b)
+        self.icon:SetVertexColor(GW.Colors.FactionColors.Horde:GetRGB())
     elseif iconState == 4 then
-        self.IconBackground:SetVertexColor(FACTION_COLOR[1].r, FACTION_COLOR[1].g, FACTION_COLOR[1].b)
+        self.IconBackground:SetVertexColor(GW.Colors.FactionColors.Horde:GetRGB())
         self.icon:SetVertexColor(0, 0, 0)
     end
 
@@ -144,9 +142,9 @@ function BattlegroundHudMixin:PointsAndPoiOnEvent(event, ...)
                     if GW.UnitExists("arena" .. y) then
                         local classificationFaction = PvPClassificationFaction[UnitPvpClassification("arena" .. y)]
                         if classificationFaction == "H" then
-                            f.IconBackground:SetVertexColor(FACTION_COLOR[1].r, FACTION_COLOR[1].g, FACTION_COLOR[1].b)
+                            f.IconBackground:SetVertexColor(GW.Colors.FactionColors.Horde:GetRGB())
                         elseif classificationFaction == "A" then
-                            f.IconBackground:SetVertexColor(FACTION_COLOR[2].r, FACTION_COLOR[2].g, FACTION_COLOR[2].b)
+                            f.IconBackground:SetVertexColor(GW.Colors.FactionColors.Alliance:GetRGB())
                         else
                             f.IconBackground:SetVertexColor(1, 1, 1)
                         end
@@ -197,9 +195,9 @@ function BattlegroundHudMixin:TimerFlagOnUpdate(elapsed)
 
                 local classificationFaction = PvPClassificationFaction[UnitPvpClassification("arena" .. i)]
                 if classificationFaction == "H" then
-                    f.IconBackground:SetVertexColor(FACTION_COLOR[1].r, FACTION_COLOR[1].g, FACTION_COLOR[1].b)
+                    f.IconBackground:SetVertexColor(GW.Colors.FactionColors.Horde:GetRGB())
                 elseif classificationFaction == "A" then
-                    f.IconBackground:SetVertexColor(FACTION_COLOR[2].r, FACTION_COLOR[2].g, FACTION_COLOR[2].b)
+                    f.IconBackground:SetVertexColor(GW.Colors.FactionColors.Alliance:GetRGB())
                 else
                     f.IconBackground:SetVertexColor(1, 1, 1)
                 end
@@ -425,8 +423,8 @@ local function LoadBattlegrounds()
         }
     }
 
-    hudManager.battlegroundHud.leftFlag:SetVertexColor(FACTION_COLOR[1].r, FACTION_COLOR[1].g, FACTION_COLOR[1].b)
-    hudManager.battlegroundHud.rightFlag:SetVertexColor(FACTION_COLOR[2].r, FACTION_COLOR[2].g, FACTION_COLOR[2].b)
+    hudManager.battlegroundHud.leftFlag:SetVertexColor(GW.Colors.FactionColors.Horde:GetRGB())
+    hudManager.battlegroundHud.rightFlag:SetVertexColor(GW.Colors.FactionColors.Alliance:GetRGB())
 
     hudManager.battlegroundHud.scoreLeft:SetFont(UNIT_NAME_FONT, 30)
     hudManager.battlegroundHud.scoreLeft:SetShadowColor(0, 0, 0, 1)
@@ -436,7 +434,7 @@ local function LoadBattlegrounds()
     hudManager.battlegroundHud.scoreRight:SetShadowColor(0, 0, 0, 1)
     hudManager.battlegroundHud.scoreRight:SetShadowOffset(1, -1)
 
-    hudManager.battlegroundHud.timer:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    hudManager.battlegroundHud.timer:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     hudManager.battlegroundHud.timer:SetShadowColor(0, 0, 0, 1)
     hudManager.battlegroundHud.timer:SetShadowOffset(1, -1)
 

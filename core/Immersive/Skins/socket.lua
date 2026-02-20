@@ -13,7 +13,7 @@ local function ApplySocketUISkin()
     for _,region in pairs(regions) do
         if region:IsObjectType("FontString") then
             if region:GetText() then
-                region:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 2)
+                region:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
                 break
             end
         end

@@ -28,7 +28,7 @@ local function Titles_InitButton(button, elementData)
     local playerTitle = elementData.playerTitle
 
     if not button.isSkinned then
-        button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+        button.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
         button:HookScript("OnClick", title_OnClick)
         GW.AddListItemChildHoverTexture(button)
 

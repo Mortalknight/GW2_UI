@@ -42,16 +42,16 @@ local AttributeInitialConfig = [[
 
 local function setLongCD(self, stackCount)
     self.cooldown:Hide()
-    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
+    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
     self.status.duration:SetShadowColor(0, 0, 0, 1)
     self.status.duration:SetShadowOffset(1, -1)
     self.status.stacks:SetShadowColor(0, 0, 0, 1)
     self.status.stacks:SetShadowOffset(1, -1)
 
     if stackCount and stackCount > 99 then
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE", -2)
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", -2)
     else
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE")
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
     end
 
     self.status:ClearAllPoints()
@@ -64,16 +64,16 @@ end
 
 local function setShortCD(self, expires, duration, stackCount)
     self.cooldown:SetCooldown(expires - duration, duration)
-    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, nil, -1)
+    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, nil, -1)
     self.status.duration:SetShadowColor(0, 0, 0, 1)
     self.status.duration:SetShadowOffset(1, -1)
     self.status.stacks:SetShadowColor(0, 0, 0, 1)
     self.status.stacks:SetShadowOffset(1, -1)
 
     if stackCount and stackCount > 99 then
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE", -2)
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", -2)
     else
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
     end
 
     self.status:ClearAllPoints()
@@ -263,10 +263,10 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
             if GW.IsSecretValue(auraType) then
                 color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
             else
-                color = GW.DebuffColors[auraType]
+                color = GW.Colors.DebuffColors[auraType]
             end
             if not color then
-                color = GW.FallbackColor
+                color = GW.Colors.FallbackColor
             end
             self.border.inner:SetVertexColor(color:GetRGB())
         else
@@ -479,7 +479,7 @@ function GwAuraTmpl_OnLoad(self)
             if c:GetObjectType() == "FontString" then
                 self.cooldown.durationString = c
                 self.cooldown.durationString:SetPoint("TOP", self.status, "BOTTOM", 0, -4)
-                self.cooldown.durationString:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, nil, -1)
+                self.cooldown.durationString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, nil, -1)
                 self.cooldown.durationString:SetShadowColor(0, 0, 0, 1)
                 self.cooldown.durationString:SetShadowOffset(1, -1)
                 break
@@ -490,7 +490,7 @@ function GwAuraTmpl_OnLoad(self)
 
         self.status.stacks:SetShadowColor(0, 0, 0, 1)
         self.status.stacks:SetShadowOffset(1, -1)
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
 
         self.status:ClearAllPoints()
         self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4)
@@ -724,9 +724,9 @@ local function LoadPlayerAuras(lm)
     if GW.Retail then
         debuffColorCurve = C_CurveUtil.CreateColorCurve()
         debuffColorCurve:SetType(Enum.LuaCurveType.Step)
-        for _, dispelIndex in next, GW.DispelType do
-            if GW.DebuffColors[dispelIndex] then
-                debuffColorCurve:AddPoint(dispelIndex, GW.DebuffColors[dispelIndex])
+        for _, dispelIndex in next, GW.Enum.DispelType do
+            if GW.Colors.DebuffColors[dispelIndex] then
+                debuffColorCurve:AddPoint(dispelIndex, GW.Colors.DebuffColors[dispelIndex])
             end
         end
     end

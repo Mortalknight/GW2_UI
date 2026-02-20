@@ -551,7 +551,7 @@ local function SettingsInitOptionWidget(of, v, panel)
                     end
                     local title = rootDescription:CreateTitle(v.optionsNames[idx])
                     title:AddInitializer(function(frame, description, menu)
-                        frame.fontString:SetTextColor(GW.TextColors.LIGHT_HEADER.r, GW.TextColors.LIGHT_HEADER.g, GW.TextColors.LIGHT_HEADER.b)
+                        frame.fontString:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
                     end)
                 else
                     local function IsSelected(data)

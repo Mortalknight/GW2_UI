@@ -8,14 +8,14 @@ local function LoadNotificationsPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
     p.panelId = "notifications_general"
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.header:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    p.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     p.header:SetText(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL)
     p.header:SetWidth(p.header:GetStringWidth())
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(nil)
     p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
-    p.breadcrumb:SetTextColor(GW.TextColors.LIGHT_HEADER.r,GW.TextColors.LIGHT_HEADER.g,GW.TextColors.LIGHT_HEADER.b)
+    p.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     p.breadcrumb:SetText(L["Vignettes"])
 
     local soundKeys = {}

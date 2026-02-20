@@ -1919,7 +1919,7 @@ end
 local function styleChatWindow(frame)
     local name = frame:GetName()
     local tab = GetTab(frame)
-    tab.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.NORMAL)
+    tab.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     tab.Text:SetTextColor(1, 1, 1)
 
     if frame.styled then return end
@@ -2534,7 +2534,9 @@ local function SocialQueueMessage(guid, message)
 
     local currentTime = time()
     if RecentSocialQueue(currentTime, message) then return end
-    socialQueueCache[guid] = {currentTime, message}
+    if GW.NotSecretValue(message) and GW.NotSecretValue(guid) then
+        socialQueueCache[guid] = {currentTime, message}
+    end
 
     PlaySound(SOUNDKIT.UI_71_SOCIAL_QUEUEING_TOAST)
 

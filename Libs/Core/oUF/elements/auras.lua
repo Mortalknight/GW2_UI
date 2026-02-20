@@ -337,7 +337,7 @@ local function processData(element, unit, data, filter)
     if(not data) then return end
 
     if oUF.isRetail then
-        data.isHarmfulAura = filter:match("HARMFUL")
+        data.isHarmfulAura = filter:find("HARMFUL") and true
         data.isHelpfulAura = not data.isHarmfulAura
 
         data.isAuraImportant = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|IMPORTANT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|IMPORTANT")

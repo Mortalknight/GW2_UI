@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local NavigableContentTrackingTargets = {
     [Enum.ContentTrackingTargetType.Vendor] = true,
@@ -85,7 +84,7 @@ local function updateCollectionLayout(self, trackableType, trackableID)
     if targetType then
         blockIndex = blockIndex + 1
 
-        local block = self:GetBlock(blockIndex, "RECIPE", false)
+        local block = self:GetBlock(blockIndex, GW.Enum.ObjectivesNotificationType.Recipe, false)
         block:Init() -- POIButtonOwnerTemplate
         block.poiButton = nil
         block.trackableID = trackableID
@@ -232,13 +231,13 @@ function GwObjectivesCollectionContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText(ADVENTURE_TRACKING_MODULE_HEADER_TEXT)
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
-    self.header.title:SetTextColor(TRACKER_TYPE_COLOR.RECIPE.r, TRACKER_TYPE_COLOR.RECIPE.g, TRACKER_TYPE_COLOR.RECIPE.b)
+    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Recipe]:GetRGB())
 
     self.blockMixInTemplate = GwObjectivesCollectionBlockMixin
 

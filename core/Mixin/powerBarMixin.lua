@@ -1,5 +1,4 @@
 local _, GW = ...
-local PowerBarColorCustom = GW.PowerBarColorCustom
 
 GwUnitPowerbarMixin = {}
 
@@ -14,8 +13,8 @@ function GwUnitPowerbarMixin:UpdatePowerBar(forceUpdate)
         self.powerbar:SetMinMaxValues(0, powerMax)
         self.powerbar:SetValue(power, statusBarAnimation)
 
-        if PowerBarColorCustom[powerToken] then
-            local color = PowerBarColorCustom[powerToken]
+        if GW.Colors.PowerBarCustomColors[powerToken] then
+            local color = GW.Colors.PowerBarCustomColors[powerToken]
             self.powerbar:SetStatusBarColor(color.r, color.g, color.b)
         end
     else
@@ -26,8 +25,8 @@ function GwUnitPowerbarMixin:UpdatePowerBar(forceUpdate)
 
         self.powerbar:Show()
 
-        if PowerBarColorCustom[powerToken] then
-            local color = PowerBarColorCustom[powerToken]
+        if GW.Colors.PowerBarCustomColors[powerToken] then
+            local color = GW.Colors.PowerBarCustomColors[powerToken]
             self.powerbar:SetStatusBarColor(color.r, color.g, color.b)
         end
 

@@ -1,5 +1,4 @@
 local _, GW = ...
-local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 
@@ -53,8 +52,8 @@ local function CreateAuraFrame(name, parent)
     f.Cooldown:SetHideCountdownNumbers(true)
     f.nextUpdate = 0
 
-    f.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE", -1)
-    f.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
+    f.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", -1)
+    f.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
     f.status.duration:SetShadowOffset(1, -1)
 
     f.duration = f.status.duration
@@ -107,13 +106,13 @@ local function setAuraType(self, typeAura)
     if typeAura == "smallbuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 1, -1)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, 1)
-        self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -1)
-        self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "OUTLINE", -1)
+        self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
+        self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", -1)
     elseif typeAura == "bigBuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -3, 3)
-        self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
-        self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL, "OUTLINE")
+        self.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        self.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
     end
 
     self.typeAura = typeAura
@@ -251,7 +250,7 @@ local function updateAura(element, unit, data, position)
         if data.dispelName then
             button.background:SetVertexColor(DebuffColors[data.dispelName].r, DebuffColors[data.dispelName].g, DebuffColors[data.dispelName].b)
         else
-            button.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+            button.background:SetVertexColor(GW.Colors.FriendlyColors[2]:GetRGB())
         end
     else
         if data.isStealable then
@@ -334,7 +333,7 @@ local function processData(unit, data, filter, newBuffAnimation)
     data.timeRemaining = data.duration <= 0 and 500000 or data.expirationTime - GetTime()
     data.newBuffAnimation = newBuffAnimation
 
-    data.isHarmfulAura = filter:match("HARMFUL")
+    data.isHarmfulAura = filter:find("HARMFUL") and true
     data.isHelpfulAura = not data.isHarmfulAura
 
     data.isAuraCancelable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CANCELABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CANCELABLE")

@@ -39,17 +39,17 @@ local function Create_Raid_Counter()
     raidCounterFrame:SetSize(100, 25)
 
     raidCounterFrame.tank = raidCounterFrame:CreateFontString(nil, "ARTWORK")
-    raidCounterFrame.tank:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    raidCounterFrame.tank:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     raidCounterFrame.tank:SetPoint("LEFT", raidCounterFrame, "LEFT", 5, 0)
     raidCounterFrame.tank:SetTextColor(1, 1, 1)
 
     raidCounterFrame.heal = raidCounterFrame:CreateFontString(nil, "ARTWORK")
-    raidCounterFrame.heal:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    raidCounterFrame.heal:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     raidCounterFrame.heal:SetPoint("CENTER", raidCounterFrame, "CENTER", 0, 0)
     raidCounterFrame.heal:SetTextColor(1, 1, 1)
 
     raidCounterFrame.damager = raidCounterFrame:CreateFontString(nil, "ARTWORK")
-    raidCounterFrame.damager:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL)
+    raidCounterFrame.damager:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
     raidCounterFrame.damager:SetPoint("RIGHT", raidCounterFrame, "RIGHT", -5, 0)
     raidCounterFrame.damager:SetTextColor(1, 1, 1)
 

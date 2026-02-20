@@ -28,7 +28,7 @@ local function SkinInspectFrameOnLoad()
     InspectFrame.gwHeader.BGRIGHT:ClearAllPoints()
     InspectFrame.gwHeader.BGRIGHT:SetPoint("BOTTOMRIGHT", InspectFrame.gwHeader, "BOTTOMRIGHT", 0, 0)
     InspectFrame.gwHeader.BGRIGHT:SetPoint("TOPLEFT", InspectFrame.gwHeader, "TOPLEFT", 0, 0)
-    InspectFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.BIG_HEADER, nil, 6)
+    InspectFrameTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
 
     hooksecurefunc(InspectFrame, "SetPortraitToUnit", function(self, unit)
         SetPortraitTexture(InspectFrame.gwHeader.windowIcon, unit);

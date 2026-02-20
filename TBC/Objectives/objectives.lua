@@ -1,5 +1,4 @@
 local _, GW = ...
-local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local lastAQW = GetTime()
 local tomTomWaypoint = nil
@@ -301,7 +300,7 @@ function GwQuestLogMixin:UpdateLayout()
                 end
 
                 local isFrequency = IsQuestFrequency(quest.questId)
-                local colorKey = isFrequency and "DAILY" or "QUEST"
+                local colorKey = isFrequency and GW.Enum.ObjectivesNotificationType.DailyQuest or GW.Enum.ObjectivesNotificationType.Quest
                 local block = self:GetBlock(counterQuest, colorKey, true)
                 block.isFrequency = isFrequency
                 block:UpdateBlock(self, quest)
@@ -518,12 +517,12 @@ function GwObjectivesQuestContainerMixin:InitModule()
     self.trackedQuests = {}
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.TextSizeType.HEADER)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
     self.header.title:SetShadowOffset(1, -1)
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
-    self.header.title:SetTextColor(TRACKER_TYPE_COLOR.QUEST.r, TRACKER_TYPE_COLOR.QUEST.g, TRACKER_TYPE_COLOR.QUEST.b)
+    self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:GetRGB())
     self.header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
     self.header.title:SetText(TRACKER_HEADER_QUESTS)
 

@@ -332,7 +332,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
 
         btn.GwNotifyText:SetSize(24, 24)
         btn.GwNotifyText:SetPoint("CENTER", btn, "BOTTOM", 7, 2)
-        btn.GwNotifyText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.NORMAL)
+        btn.GwNotifyText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         btn.GwNotifyText:SetTextColor(1, 1, 1, 1)
         btn.GwNotifyText:SetShadowColor(0, 0, 0, 0)
         btn.GwNotifyText:Hide()
@@ -736,11 +736,6 @@ local function setupMicroButtons(mbf)
             end)
         end
         updateGuildButton(gref, "GUILD_ROSTER_UPDATE")
-
-        if i == 2 and GW.TBC and GW.settings.USE_SOCIAL_WINDOW and not gref.isHooked then
-            gref:SetScript("OnClick", function() GW.SocialWindowToggleTab("guildlist") end)
-            gref.isHooked = true
-        end
     end
 
     local pref
