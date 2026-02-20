@@ -13,6 +13,8 @@ local GetClientTexture = BNet_GetClientEmbeddedAtlas or BNet_GetClientEmbeddedTe
 local GetMobileEmbeddedTexture = (ChatFrameUtil and ChatFrameUtil.GetMobileEmbeddedTexture) or ChatFrame_GetMobileEmbeddedTexture
 local ResolvePrefixedChannelName = (ChatFrameUtil and ChatFrameUtil.ResolvePrefixedChannelName) or ChatFrame_ResolvePrefixedChannelName
 local ShouldColorChatByClass = (ChatFrameUtil and ChatFrameUtil.ShouldColorChatByClass) or Chat_ShouldColorChatByClass
+local IsChannelRegionalForChannelID = C_ChatInfo.IsChannelRegionalForChannelID
+local GetChannelShortcutForChannelID = C_ChatInfo.GetChannelShortcutForChannelID
 
 local FindURL_Events = {
     "CHAT_MSG_WHISPER",
@@ -1136,27 +1138,24 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
 
     -- Only add to default (since multiple chat frames receive the event and we don't want to add to others)
     if chatFrame ~= DEFAULT_CHAT_FRAME then
-        return false;
+        return false
     end
 
     -- Only add if the user is joining a channel
-    if GW.NotSecretValue(eventType) and eventType ~= "YOU_CHANGED" then
-        return false;
+    if eventType ~= "YOU_CHANGED" then
+        return false
     end
 
     -- Only add regional channels
-    if GW.Retail then
-        if not C_ChatInfo.IsChannelRegionalForChannelID(channelID) then
-            return false;
-        end
-    end
-
-    local channelName = C_ChatInfo.GetChannelShortcutForChannelID(channelID)
-    if not channelName then
+    if not IsChannelRegionalForChannelID(channelID) then
         return false
     end
-    local AddChannel = chatFrame.AddChannel or ChatFrame_AddChannel
-    return AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil
+
+    if chatFrame.AddChannel then
+        return chatFrame:AddChannel(GetChannelShortcutForChannelID(channelID)) ~= nil
+    else
+        return ChatFrame_AddChannel(chatFrame, GetChannelShortcutForChannelID(channelID)) ~= nil
+    end
 end
 
 local function AddMessageEdits(frame, msg, alwaysAddTimestamp, isHistory, historyTime)
