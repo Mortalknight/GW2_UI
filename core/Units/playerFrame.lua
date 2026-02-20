@@ -57,6 +57,12 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
     self:SetScale(GW.settings.player_pos_scale)
     self.healthContainer:SetSize(GW.settings.playerFrameHealthBarSize.width, GW.settings.playerFrameHealthBarSize.height)
     self.powerbarContainer:SetSize(GW.settings.playerFrameHealthBarSize.width, GW.settings.playerFramePowerBarSize.height) -- width is shared
+    if self.fsrMana then
+        self.fsrMana:UpdateWidth(GW.settings.playerFrameHealthBarSize.width) -- width is shared
+    end
+    if self.fsrEnergy then
+        self.fsrEnergy:UpdateWidth(GW.settings.playerFrameHealthBarSize.width) -- width is shared
+    end
     self.powerbar.spark:SetHeight(GW.settings.playerFramePowerBarSize.height)
     self.powerbar.label:SetShown(GW.settings.playerFramePowerBarSize.height >= 10)
     self.healthString:ClearAllPoints()
