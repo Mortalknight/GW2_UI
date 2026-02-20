@@ -289,10 +289,6 @@ local function PaperDollUpdateStats()
         grid, x, y, numShownStats = setStatFrame("DEFENSE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
-    --getAttackBothHands
-    statText, tooltip1, tooltip2 = GW.stats.getAttackBothHands()
-    grid, x, y, numShownStats = setStatFrame("ATTACKRATING", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-
     --damage
     statText, tooltip1, tooltip2 = GW.stats.getDamage()
     grid, x, y, numShownStats = setStatFrame("DAMAGE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
@@ -300,12 +296,6 @@ local function PaperDollUpdateStats()
     --attack power
     statText, tooltip1, tooltip2 = GW.stats.getAttackPower()
     grid, x, y, numShownStats = setStatFrame("ATTACKPOWER", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-
-    --ranged attack
-    statText, tooltip1, tooltip2 = GW.stats.getRangedAttack()
-    if statText then
-        grid, x, y, numShownStats = setStatFrame("RANGEDATTACK", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-    end
 
     --ranged damage
     statText, tooltip1, tooltip2 = GW.stats.getRangedDamage()
@@ -897,8 +887,14 @@ local function LoadPaperDoll()
     GwDressingRoom.stats.advancedChatStatsFrame = CreateFrame("Frame", nil, GwDressingRoom.stats)
     GwDressingRoom.stats.advancedChatStatsFrame:SetPoint("TOPLEFT", GwDressingRoom.stats, "TOPLEFT", 0, -1)
     GwDressingRoom.stats.advancedChatStatsFrame:SetSize(180, 40)
+    GwDressingRoom.stats.advancedChatStatsFrame:SetScript("OnMouseUp", function(self)
+        GW.ShowAdvancedChatStats(self:GetParent())
+    end)
     GwDressingRoom.stats.advancedChatStatsFrame:SetScript("OnEnter", function(self)
-        GW.showAdvancedChatStats(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:ClearLines()
+        GameTooltip:SetText(ADVANCED_LABEL .. " " .. STAT_CATEGORY_ATTRIBUTES, nil, nil, nil, nil, true)
+        GameTooltip:Show()
     end)
     GwDressingRoom.stats.advancedChatStatsFrame:SetScript("OnLeave", GameTooltip_Hide)
 
