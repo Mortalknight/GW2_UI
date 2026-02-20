@@ -114,7 +114,8 @@ function GwObjectivesTrackerMixin:AdjustItemButtonPositions()
     for _, container in next, { GW.ObjectiveTrackerContainer.Campaign, GW.ObjectiveTrackerContainer.Quests, GW.ObjectiveTrackerContainer.Bonus } do
         for i = 1, #container.blocks do
             local block = container.blocks[i]
-            if i <= container.numQuests then
+            local counter = container.numQuests or container.numEvents or 0
+            if i <= counter then
                 GW.CombatQueue_Queue("UpdateTrackerItemButtonPositionForBlock: " .. container:GetDebugName(), block.UpdateObjectiveActionButtonPosition, {block})
             else
                 GW.CombatQueue_Queue("RemoveTrackerItemButtonForBlock: " .. container:GetDebugName(), block.UpdateObjectiveActionButton, {block})
