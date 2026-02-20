@@ -40,9 +40,9 @@ local function LoadGeneralGridSettings(panel)
 end
 
 local function CreateAuraFilterSection(panel, profile, buffDb, debuffDb, showBuffs, showDebuffs, dependence)
-    panel:AddGroupHeader(L["Buffs"], {hidden = not GW.Retail})
+    panel:AddGroupHeader(L["Buffs"])
 
-    panel:AddOption(SHOW_BUFFS, nil, {getterSetter = showBuffs, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
+    panel:AddOption(SHOW_BUFFS, nil, {getterSetter = showBuffs, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Buffs"]})
     panel:AddOptionDropdown(L["Buffs"], nil, {getterSetter = buffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showBuffs] = true}, groupHeaderName = L["Buffs"], hidden = not GW.Retail})
 
     panel:AddGroupHeader(L["Debuffs"])
