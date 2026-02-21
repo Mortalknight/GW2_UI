@@ -1,3 +1,10 @@
+10.3.1
+FIXES
+    - Some chat issues
+    - Coloring issues
+    - Experiencebar repuration tracking
+    - Objectives tracker error
+
 10.3.0
 NEW
     - Add option to change unitframe healtbar texture
