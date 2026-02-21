@@ -1147,7 +1147,7 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
     end
 
     -- Only add regional channels
-    if not IsChannelRegionalForChannelID(channelID) then
+    if not IsChannelRegionalForChannelID or not IsChannelRegionalForChannelID(channelID) then
         return false
     end
 
@@ -1478,7 +1478,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             local chatFilters = ChatFrame_GetMessageEventFilters(event)
             if chatFilters then
                 for _, filterFunc in next, chatFilters do
-                    local filter, new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+                    local filter, new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
                     if filter then
                         return true
                     elseif new1 then
@@ -1728,7 +1728,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         end
 
         return true
-    elseif event == "CHAT_MSG_OFFICERVOICE_CHAT_CHANNEL_TRANSCRIBING_CHANGED" then
+    elseif event == "VOICE_CHAT_CHANNEL_TRANSCRIBING_CHANGED" then
         if not frame.isTranscribing and arg2 then
             local info = _G.ChatTypeInfo.SYSTEM
             frame:AddMessage(_G.SPEECH_TO_TEXT_STARTED, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
@@ -1751,19 +1751,23 @@ end
 GW.ChatFrame_SystemEventHandler = ChatFrame_SystemEventHandler
 
 local function ChatFrame_OnEvent(frame, ...)
-    if frame.customEventHandler and frame.customEventHandler(frame, ...) then return end
+    if frame.customEventHandler and frame:customEventHandler(...) then return end
 
     if ChatFrame_ConfigEventHandler(frame, ...) then return end
     if ChatFrame_SystemEventHandler(frame, ...) then return end
     if ChatFrame_MessageEventHandler(frame, ...) then return end
 end
 
-local function FloatingChatFrameOnEvent(...)
+local function FloatingChatFrame_OnEvent(...)
     ChatFrame_OnEvent(...)
 
     if _G.FloatingChatFrame_OnEvent then
         _G.FloatingChatFrame_OnEvent(...)
     end
+end
+
+local function FloatingChatFrameOnEvent(...)
+    FloatingChatFrame_OnEvent(...)
 end
 
 local function ChatFrame_OnMouseScroll(self, delta)
