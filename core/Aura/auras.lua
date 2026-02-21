@@ -1,5 +1,4 @@
 local _, GW = ...
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 
 if GW.Retail then return end
@@ -248,13 +247,17 @@ local function updateAura(element, unit, data, position)
         end
 
         if data.dispelName then
-            button.background:SetVertexColor(DebuffColors[data.dispelName].r, DebuffColors[data.dispelName].g, DebuffColors[data.dispelName].b)
+            local color = GW.Colors.DebuffColors[data.dispelName]
+            if not color then
+                color = GW.Colors.DebuffColors.None
+            end
+            button.background:SetVertexColor(color:GetRGB())
         else
-            button.background:SetVertexColor(GW.Colors.FriendlyColors[2]:GetRGB())
+            button.background:SetVertexColor(GW.Colors.DebuffColors.None:GetRGB())
         end
     else
         if data.isStealable then
-            button.background:SetVertexColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
+            button.background:SetVertexColor(GW.Colors.DebuffColors.Stealable:GetRGB())
         else
             button.background:SetVertexColor(0, 0, 0)
         end
@@ -266,7 +269,7 @@ local function updateAura(element, unit, data, position)
     elseif UnitIsFriend(unit, "player") and data.isHarmfulAura and button.typeAura == "smallbuff" then
         -- debuffs
         if GW.ImportantRaidDebuff[data.spellId] and data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
-            size = size * GetDebuffScaleBasedOnPrio()
+            size = size * GW.GetDebuffScaleBasedOnPrio()
         elseif GW.ImportantRaidDebuff[data.spellId] then
             size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
         elseif data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then

@@ -1,6 +1,5 @@
 local _, GW = ...
 local Debug = GW.Debug
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
@@ -259,14 +258,9 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
         self.border.inner:SetVertexColor(0, 0, 0)
     else
         if GW.Retail then
-            local color
-            if GW.IsSecretValue(auraType) then
-                color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
-            else
-                color = GW.Colors.DebuffColors[auraType]
-            end
+            local color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
             if not color then
-                color = GW.Colors.FallbackColor
+                color = GW.Colors.DebuffColors.None
             end
             self.border.inner:SetVertexColor(color:GetRGB())
         else
@@ -278,9 +272,9 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
                 dtype = "BadDispel"
             end
 
-            local c = DebuffColors[dtype]
+            local c = GW.Colors.DebuffColors[dtype]
             if not c then
-                c = DebuffColors.none
+                c = GW.Colors.DebuffColors.None
             end
             self.border.inner:SetVertexColor(c.r, c.g, c.b)
         end

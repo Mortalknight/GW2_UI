@@ -30,10 +30,6 @@ lib.BlockList = BlockList
 local BadList = {} -- Spells that backfire when dispelled
 lib.BadList = BadList
 
-function lib:GetDebuffTypeColor()
-    return DebuffColors
-end
-
 function lib:GetBadList()
     return BadList
 end

@@ -457,15 +457,17 @@ local function CreatePartyFrame(i, isPlayer)
         frame.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
         frame.absorbbg:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
         frame.healPrediction:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+
+        frame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     else
         local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
         frame.antiHeal:SetStatusBarTexture(texture)
         frame.health:SetStatusBarTexture(texture)
         frame.absorbbg:SetStatusBarTexture(texture)
         frame.healPrediction:SetStatusBarTexture(texture)
-    end
 
-    frame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
+        frame.absorbbg:SetStatusBarColor(248/255, 232/255, 159/255, 0.66)
+    end
     frame.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
     frame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
@@ -544,15 +546,17 @@ local function CreatePartyFrame(i, isPlayer)
         petFrame.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
         petFrame.absorbbg:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
         petFrame.healPrediction:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+
+        petFrame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     else
         local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
         petFrame.antiHeal:SetStatusBarTexture(texture)
         petFrame.health:SetStatusBarTexture(texture)
         petFrame.absorbbg:SetStatusBarTexture(texture)
         petFrame.healPrediction:SetStatusBarTexture(texture)
-    end
 
-    petFrame.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
+        petFrame.absorbbg:SetStatusBarColor(248/255, 232/255, 159/255, 0.66)
+    end
     petFrame.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
     petFrame.healthString:SetFontObject(GameFontNormalSmall)

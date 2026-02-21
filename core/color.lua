@@ -13,8 +13,17 @@ GW.Colors.DebuffColors = {
     [GW.Enum.DispelType.Bleed] = CreateColor(1, 0.2, 0.6),
     [GW.Enum.DispelType.Enrage] = CreateColor(243/255, 95/255, 245/255),
 }
+GW.Colors.DebuffColors.None = GW.Colors.DebuffColors[GW.Enum.DispelType.None]
+GW.Colors.DebuffColors.Curse = GW.Colors.DebuffColors[GW.Enum.DispelType.Curse]
+GW.Colors.DebuffColors.Disease = GW.Colors.DebuffColors[GW.Enum.DispelType.Disease]
+GW.Colors.DebuffColors.Magic = GW.Colors.DebuffColors[GW.Enum.DispelType.Magic]
+GW.Colors.DebuffColors.Poison = GW.Colors.DebuffColors[GW.Enum.DispelType.Poison]
+GW.Colors.DebuffColors.Bleed = GW.Colors.DebuffColors[GW.Enum.DispelType.Bleed]
+GW.Colors.DebuffColors.Enrage = GW.Colors.DebuffColors[GW.Enum.DispelType.Enrage]
+GW.Colors.DebuffColors.BadDispel = CreateColor(0.05, 0.85, 0.94)
+GW.Colors.DebuffColors.Stealable = CreateColor(0.93, 0.91, 0.55)
 
-GW.Colors.FallbackColor = CreateColor(0, 0, 0, 0)
+GW.Colors.Fallback = CreateColor(0, 0, 0, 0)
 
 GW.Colors.TabDenied = CreateColor(159 / 255, 159 / 255, 159 / 255)
 

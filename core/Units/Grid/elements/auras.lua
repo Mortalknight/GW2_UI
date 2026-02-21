@@ -1,5 +1,4 @@
 local _, GW = ...
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 local INDICATORS = GW.INDICATORS
 
@@ -42,7 +41,7 @@ local function PostUpdateButton(self, button, unit, data, position)
         if data.isHarmfulAura then
             local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, self.dispelColorCurve)
             if not color then
-                color = GW.Colors.FallbackColor
+                color = GW.Colors.Fallback
             end
             button.background:SetVertexColor(color:GetRGBA())
             button.background:Show()
@@ -76,8 +75,8 @@ local function PostUpdateButton(self, button, unit, data, position)
                 size = size * tonumber(parent.raidDispelDebuffScale)
             end
 
-            if data.dispelName and DebuffColors[data.dispelName] then
-                button.background:SetVertexColor(DebuffColors[data.dispelName]:GetRGB())
+            if data.dispelName and GW.Colors.DebuffColors[data.dispelName] then
+                button.background:SetVertexColor(GW.Colors.DebuffColors[data.dispelName]:GetRGB())
             else
                 button.background:SetVertexColor(GW.Colors.FriendlyColors[2]:GetRGB())
             end

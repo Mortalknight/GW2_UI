@@ -135,7 +135,7 @@ local function Money_OnEnter(self)
     GameTooltip:AddLine(FRIENDS_LIST_REALM)
 
     if totalAlliance > 0 and totalHorde > 0 then
-        if totalAlliance > 0 then GameTooltip:AddDoubleLine(FACTION_ALLIANCE, FormatMoneyForChat(totalAlliance), GW.Colors.FactionColors.Alliance.r, GW.Colors.FactionColorsAlliance.g, GW.Colors.FactionColorsAlliance.b, 1, 1, 1) end
+        if totalAlliance > 0 then GameTooltip:AddDoubleLine(FACTION_ALLIANCE, FormatMoneyForChat(totalAlliance), GW.Colors.FactionColors.Alliance.r, GW.Colors.FactionColors.Alliance.g, GW.Colors.FactionColors.Alliance.b, 1, 1, 1) end
         if totalHorde > 0 then GameTooltip:AddDoubleLine(FACTION_HORDE, FormatMoneyForChat(totalHorde), GW.Colors.FactionColors.Horde.r, GW.Colors.FactionColors.Horde.g, GW.Colors.FactionColors.Horde.b, 1, 1, 1) end
         GameTooltip:AddLine(" ")
     end

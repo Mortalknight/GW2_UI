@@ -1,10 +1,6 @@
 local _, GW = ...
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 
 if not GW.Retail then return end
-
-local stealableColor = CreateColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
-local normalColor = CreateColor(0, 0, 0)
 
 local function UpdateTooltip(self)
     if GameTooltip:IsForbidden() then return end
@@ -204,9 +200,9 @@ local function updateAura(element, unit, data, position)
 
     if data.isHelpfulAura then
         if not UnitCanCooperate("player", unit) then
-            button.background:SetVertexColorFromBoolean(data.isStealable, stealableColor, normalColor)
+            button.background:SetVertexColorFromBoolean(data.isStealable, GW.Colors.DebuffColors.Stealable, GW.Colors.Fallback)
         else
-            button.background:SetVertexColor(normalColor:GetRGB())
+            button.background:SetVertexColor(GW.Colors.Fallback:GetRGB())
         end
     else
         local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelColorCurve)
