@@ -1758,7 +1758,7 @@ local function ChatFrame_OnEvent(frame, ...)
     if ChatFrame_MessageEventHandler(frame, ...) then return end
 end
 
-local function FloatingChatFrame_OnEvent(...)
+local function GwFloatingChatFrame_OnEvent(...)
     ChatFrame_OnEvent(...)
 
     if _G.FloatingChatFrame_OnEvent then
@@ -1767,7 +1767,7 @@ local function FloatingChatFrame_OnEvent(...)
 end
 
 local function FloatingChatFrameOnEvent(...)
-    FloatingChatFrame_OnEvent(...)
+    GwFloatingChatFrame_OnEvent(...)
 end
 
 local function ChatFrame_OnMouseScroll(self, delta)
