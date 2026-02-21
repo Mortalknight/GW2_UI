@@ -209,7 +209,7 @@ local function updateAura(element, unit, data, position)
         if color then
             button.background:SetVertexColor(color:GetRGB())
         else
-            button.background:SetVertexColor(GW.Colors.FriendlyColors[2]:GetRGB())
+            button.background:SetVertexColor(GW.Colors.DebuffColors.None:GetRGB())
         end
         if button.typeAura == "smallbuff" then
             if data.isAuraImportant and data.isAuraRaidPlayerDispellable then
@@ -522,6 +522,5 @@ local function LoadAuras(self)
             self.auras.dispelColorCurve:AddPoint(dispelIndex, GW.Colors.DebuffColors[dispelIndex])
         end
     end
-
 end
 GW.LoadAuras = LoadAuras
