@@ -89,6 +89,7 @@ local function setRetailCooldown(self, auraData, durationObject)
         self.cooldown:SetAlphaFromBoolean(C_UnitAuras.DoesAuraHaveExpirationTime("player", auraData.auraInstanceID), 1, 0)
     else
         self.cooldown:SetCooldown(auraData.expirationTime - auraData.duration, auraData.duration)
+        self.cooldown:SetAlpha(1)
     end
 end
 
@@ -110,7 +111,6 @@ local function AuraOnEnter(self)
         if self:GetAttribute("target-slot") then
             GameTooltip:SetInventoryItem("player", self:GetID())
         else
-            --GameTooltip:SetUnitAuraByAuraInstanceID("player", self.auraInstanceID)
             GameTooltip:SetUnitAura("player", self:GetID(), self:GetFilter())
         end
     else
