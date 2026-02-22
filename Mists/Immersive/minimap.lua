@@ -556,7 +556,6 @@ local function LoadMinimap()
     end
 
     if not GW.ShouldBlockIncompatibleAddon("Objectives") then
-        MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
         MinimapCluster:ClearAllPoints()
         MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
     end
