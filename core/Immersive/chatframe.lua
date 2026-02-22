@@ -1452,7 +1452,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
     local isProtected = GW.IsSecretValue(arg2)
 
-    if TextToSpeechFrame_MessageEventHandler and notChatHistory then
+    if not isProtected and TextToSpeechFrame_MessageEventHandler and notChatHistory then
         TextToSpeechFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
     end
 
