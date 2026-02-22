@@ -39,12 +39,16 @@ function GwPlayerUnitFrameMixin:ToggleSettings()
         self.health:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/statusbar.png")
         self.absorbbg:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
         self.healPrediction:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+
+        self.absorbbg:SetStatusBarColor(1, 1, 1, 0.66)
     else
         local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
         self.antiHeal:SetStatusBarTexture(texture)
         self.health:SetStatusBarTexture(texture)
         self.absorbbg:SetStatusBarTexture(texture)
         self.healPrediction:SetStatusBarTexture(texture)
+
+        self.absorbbg:SetStatusBarColor(248/255, 232/255, 159/255, 0.66)
     end
 
     self.shortendHealthValues = GW.settings.PLAYER_UNIT_HEALTH_SHORT_VALUES

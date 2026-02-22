@@ -59,11 +59,15 @@ local function Update_PredictionBars(frame)
         healingAll:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
         damageAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb.png")
         healAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal.png")
+
+        damageAbsorb:SetStatusBarColor(1, 1, 1, 0.66)
     else
         local texture = GW.Libs.LSM:Fetch("statusbar", textureKey)
         healingAll:SetStatusBarTexture(texture)
         damageAbsorb:SetStatusBarTexture(texture)
         healAbsorb:SetStatusBarTexture(texture)
+
+        damageAbsorb:SetStatusBarColor(248/255, 232/255, 159/255, 0.66)
     end
 
 end

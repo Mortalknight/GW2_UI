@@ -1,10 +1,6 @@
 local _, GW = ...
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 
 if not GW.Retail then return end
-
-local stealableColor = CreateColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
-local normalColor = CreateColor(0, 0, 0)
 
 local function UpdateTooltip(self)
     if GameTooltip:IsForbidden() then return end
@@ -204,16 +200,16 @@ local function updateAura(element, unit, data, position)
 
     if data.isHelpfulAura then
         if not UnitCanCooperate("player", unit) then
-            button.background:SetVertexColorFromBoolean(data.isStealable, stealableColor, normalColor)
+            button.background:SetVertexColorFromBoolean(data.isStealable, GW.Colors.DebuffColors.Stealable, GW.Colors.Fallback)
         else
-            button.background:SetVertexColor(normalColor:GetRGB())
+            button.background:SetVertexColor(GW.Colors.Fallback:GetRGB())
         end
     else
         local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, element.dispelColorCurve)
         if color then
             button.background:SetVertexColor(color:GetRGB())
         else
-            button.background:SetVertexColor(GW.Colors.FriendlyColors[2]:GetRGB())
+            button.background:SetVertexColor(GW.Colors.DebuffColors.None:GetRGB())
         end
         if button.typeAura == "smallbuff" then
             if data.isAuraImportant and data.isAuraRaidPlayerDispellable then
@@ -291,7 +287,7 @@ local function processData(unit, data, filter, newBuffAnimation)
     data.newBuffAnimation = newBuffAnimation
 
     data.isHarmfulAura = filter:find("HARMFUL") and true
-    data.isHelpfulAura = not data.isHarmfulAura
+    data.isHelpfulAura = filter:find("HELPFUL") and true
 
     data.isAuraImportant = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|IMPORTANT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|IMPORTANT")
     data.isAuraCancelable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CANCELABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CANCELABLE")
@@ -526,6 +522,5 @@ local function LoadAuras(self)
             self.auras.dispelColorCurve:AddPoint(dispelIndex, GW.Colors.DebuffColors[dispelIndex])
         end
     end
-
 end
 GW.LoadAuras = LoadAuras

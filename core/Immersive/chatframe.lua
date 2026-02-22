@@ -13,6 +13,8 @@ local GetClientTexture = BNet_GetClientEmbeddedAtlas or BNet_GetClientEmbeddedTe
 local GetMobileEmbeddedTexture = (ChatFrameUtil and ChatFrameUtil.GetMobileEmbeddedTexture) or ChatFrame_GetMobileEmbeddedTexture
 local ResolvePrefixedChannelName = (ChatFrameUtil and ChatFrameUtil.ResolvePrefixedChannelName) or ChatFrame_ResolvePrefixedChannelName
 local ShouldColorChatByClass = (ChatFrameUtil and ChatFrameUtil.ShouldColorChatByClass) or Chat_ShouldColorChatByClass
+local IsChannelRegionalForChannelID = C_ChatInfo.IsChannelRegionalForChannelID
+local GetChannelShortcutForChannelID = C_ChatInfo.GetChannelShortcutForChannelID
 
 local FindURL_Events = {
     "CHAT_MSG_WHISPER",
@@ -1136,27 +1138,24 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
 
     -- Only add to default (since multiple chat frames receive the event and we don't want to add to others)
     if chatFrame ~= DEFAULT_CHAT_FRAME then
-        return false;
+        return false
     end
 
     -- Only add if the user is joining a channel
-    if GW.NotSecretValue(eventType) and eventType ~= "YOU_CHANGED" then
-        return false;
+    if  GW.NotSecretValue(eventType) and eventType ~= "YOU_CHANGED" then
+        return false
     end
 
     -- Only add regional channels
-    if GW.Retail then
-        if not C_ChatInfo.IsChannelRegionalForChannelID(channelID) then
-            return false;
-        end
-    end
-
-    local channelName = C_ChatInfo.GetChannelShortcutForChannelID(channelID)
-    if not channelName then
+    if not IsChannelRegionalForChannelID or not IsChannelRegionalForChannelID(channelID) then
         return false
     end
-    local AddChannel = chatFrame.AddChannel or ChatFrame_AddChannel
-    return AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil
+
+    if chatFrame.AddChannel then
+        return chatFrame:AddChannel(GetChannelShortcutForChannelID(channelID)) ~= nil
+    else
+        return ChatFrame_AddChannel(chatFrame, GetChannelShortcutForChannelID(channelID)) ~= nil
+    end
 end
 
 local function AddMessageEdits(frame, msg, alwaysAddTimestamp, isHistory, historyTime)
@@ -1453,7 +1452,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
     local isProtected = GW.IsSecretValue(arg2)
 
-    if TextToSpeechFrame_MessageEventHandler and notChatHistory then
+    if not isProtected and TextToSpeechFrame_MessageEventHandler and notChatHistory then
         TextToSpeechFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
     end
 
@@ -1479,7 +1478,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             local chatFilters = ChatFrame_GetMessageEventFilters(event)
             if chatFilters then
                 for _, filterFunc in next, chatFilters do
-                    local filter, new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+                    local filter, new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
                     if filter then
                         return true
                     elseif new1 then
@@ -1729,7 +1728,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         end
 
         return true
-    elseif event == "CHAT_MSG_OFFICERVOICE_CHAT_CHANNEL_TRANSCRIBING_CHANGED" then
+    elseif event == "VOICE_CHAT_CHANNEL_TRANSCRIBING_CHANGED" then
         if not frame.isTranscribing and arg2 then
             local info = _G.ChatTypeInfo.SYSTEM
             frame:AddMessage(_G.SPEECH_TO_TEXT_STARTED, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
@@ -1752,19 +1751,23 @@ end
 GW.ChatFrame_SystemEventHandler = ChatFrame_SystemEventHandler
 
 local function ChatFrame_OnEvent(frame, ...)
-    if frame.customEventHandler and frame.customEventHandler(frame, ...) then return end
+    if frame.customEventHandler and frame:customEventHandler(...) then return end
 
     if ChatFrame_ConfigEventHandler(frame, ...) then return end
     if ChatFrame_SystemEventHandler(frame, ...) then return end
     if ChatFrame_MessageEventHandler(frame, ...) then return end
 end
 
-local function FloatingChatFrameOnEvent(...)
+local function GwFloatingChatFrame_OnEvent(...)
     ChatFrame_OnEvent(...)
 
     if _G.FloatingChatFrame_OnEvent then
         _G.FloatingChatFrame_OnEvent(...)
     end
+end
+
+local function FloatingChatFrameOnEvent(...)
+    GwFloatingChatFrame_OnEvent(...)
 end
 
 local function ChatFrame_OnMouseScroll(self, delta)

@@ -1,6 +1,5 @@
 local _, GW = ...
 local Debug = GW.Debug
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
@@ -90,6 +89,7 @@ local function setRetailCooldown(self, auraData, durationObject)
         self.cooldown:SetAlphaFromBoolean(C_UnitAuras.DoesAuraHaveExpirationTime("player", auraData.auraInstanceID), 1, 0)
     else
         self.cooldown:SetCooldown(auraData.expirationTime - auraData.duration, auraData.duration)
+        self.cooldown:SetAlpha(1)
     end
 end
 
@@ -111,7 +111,6 @@ local function AuraOnEnter(self)
         if self:GetAttribute("target-slot") then
             GameTooltip:SetInventoryItem("player", self:GetID())
         else
-            --GameTooltip:SetUnitAuraByAuraInstanceID("player", self.auraInstanceID)
             GameTooltip:SetUnitAura("player", self:GetID(), self:GetFilter())
         end
     else
@@ -255,36 +254,26 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
 
     self.status.icon:SetTexture(icon)
 
-    if auraType == 1 then
-        self.border.inner:SetVertexColor(0, 0, 0)
-    else
+    local color
+    if auraType == 0 then -- Debuff
         if GW.Retail then
-            local color
-            if GW.IsSecretValue(auraType) then
-                color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
-            else
-                color = GW.Colors.DebuffColors[auraType]
-            end
-            if not color then
-                color = GW.Colors.FallbackColor
-            end
-            self.border.inner:SetVertexColor(color:GetRGB())
+            color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
         else
-            if auraType == 2 then
-                dtype = "Curse"
-            end
-
             if dtype and BadDispels[spellId] and GW.Libs.Dispel:IsDispellableByMe(dtype) then
-                dtype = "BadDispel"
+                color = GW.Colors.DebuffColors.BadDispel
+            else
+                color = GW.Colors.DebuffColors[dtype]
             end
-
-            local c = DebuffColors[dtype]
-            if not c then
-                c = DebuffColors.none
-            end
-            self.border.inner:SetVertexColor(c.r, c.g, c.b)
         end
+        if not color then
+            color = GW.Colors.DebuffColors.None
+        end
+    elseif auraType == 1 then -- Buffs
+        color = GW.Colors.Fallback
+    elseif auraType == 2 then -- temp weapon enchant
+        color = GW.Colors.DebuffColors.Curse
     end
+    self.border.inner:SetVertexColor(color:GetRGB())
 end
 
 local function UpdateAura(self, index)

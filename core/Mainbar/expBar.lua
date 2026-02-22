@@ -34,6 +34,30 @@ local function GetMaxLevel()
     return GetMaxPlayerLevel()
 end
 
+local function SetStatusBarHover(bar, enable)
+    if not bar then
+        return
+    end
+
+    if enable then
+        if not bar.hoverColor then
+            local r, g, b = bar:GetStatusBarColor()
+            bar.hoverColor = {r = r, g = g, b = b}
+        end
+        local c = bar.hoverColor or {r = 1, g = 1, b = 1}
+        local t = 0.25
+        bar:SetStatusBarColor(
+            c.r + (1 - c.r) * t,
+            c.g + (1 - c.g) * t,
+            c.b + (1 - c.b) * t
+        )
+    else
+        if bar.hoverColor then
+            bar:SetStatusBarColor(bar.hoverColor.r, bar.hoverColor.g, bar.hoverColor.b)
+        end
+    end
+end
+
 local function xpbar_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
@@ -48,18 +72,12 @@ local function xpbar_OnEnter(self)
 
     GameTooltip:Show()
 
-    if self.expBarShouldShow then
-        UIFrameFadeOut(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 0)
-    end
-    if self.secondaryBarShouldShow then
-        local bar = GW.Retail and self.AzeritBar or self.PetBar
-        UIFrameFadeOut(bar, 0.2, bar:GetAlpha(), 0)
-    end
-    if self.repuBarShouldShow then
-        UIFrameFadeOut(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 0)
-    end
+    SetStatusBarHover(self.ExpBar, true)
+    SetStatusBarHover(self.Rested, true)
+    SetStatusBarHover(self.RepuBar, true)
+    SetStatusBarHover(self.PetBar, true)
+    SetStatusBarHover(self.AzeritBar, true)
 end
-
 
 local function xpbar_OnClick()
     if not GW.Retail then
@@ -84,7 +102,6 @@ local function xpbar_OnClick()
     end
 end
 
-
 local function flareAnim(self)
     self.barOverlay.flare:Show()
 
@@ -102,7 +119,6 @@ local function flareAnim(self)
         end
     )
 end
-
 
 local function UpdatePetXPBattle(self, index, level)
     local name = C_PetBattles.GetName(Enum.BattlePetOwner.Ally, index)
@@ -284,6 +300,7 @@ local function UpdateHonor(self)
 
     local color = STATUSBAR_COLORS.Honor
     self.ExpBar:SetStatusBarColor(color.r, color.g, color.b)
+
     return true, valPrec, level, level + 1
 end
 
@@ -544,10 +561,6 @@ local function queueUpdate(self)
 end
 
 local function xpbar_OnEvent(self, event, ...)
-    if event == "UPDATE_FACTION" and not GW.inWorld then
-        return
-    end
-
     if event == "PLAYER_EQUIPMENT_CHANGED" then
         local slot = ...
         if slot == Enum.InventoryType.IndexNeckType then
@@ -592,7 +605,6 @@ local function xpbar_OnEvent(self, event, ...)
     end
 end
 
-
 local function animateAzeriteBar(self, elapsed)
     local parent = self:GetParent():GetParent()
     local AzeritBar = parent.AzeritBar
@@ -626,7 +638,6 @@ local function animateAzeriteBar(self, elapsed)
     self.texture2:SetTexCoord(1 - prog, prog, 1, 0)
 end
 
-
 local function updateBarSize(self)
     local m = (UIParent:GetWidth() - 180) / 10
     local i = 1
@@ -642,7 +653,6 @@ local function updateBarSize(self)
     self.barOverlay.dubbleBarSep:ClearAllPoints()
     self.barOverlay.dubbleBarSep:SetPoint("LEFT", self, "LEFT", 90, 0)
 end
-
 
 local function LoadXPBar()
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
@@ -801,16 +811,11 @@ local function LoadXPBar()
         function(self)
             GameTooltip_Hide()
 
-            if self.expBarShouldShow then
-                UIFrameFadeIn(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 1)
-            end
-            if self.secondaryBarShouldShow then
-                local bar = GW.Retail and self.AzeritBar or self.PetBar
-                UIFrameFadeIn(bar, 0.2, bar:GetAlpha(), 1)
-            end
-            if self.repuBarShouldShow then
-                UIFrameFadeIn(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 1)
-            end
+            SetStatusBarHover(self.ExpBar, false)
+            SetStatusBarHover(self.Rested, false)
+            SetStatusBarHover(self.RepuBar, false)
+            SetStatusBarHover(self.PetBar, false)
+            SetStatusBarHover(self.AzeritBar, false)
         end
     )
 

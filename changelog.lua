@@ -12,6 +12,28 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.3.2", {
+    {GW.Enum.ChangelogType.bug, [=[Retail aura error]=]},
+})
+
+addChange("10.3.1", {
+    {GW.Enum.ChangelogType.bug, [=[Some chat issues]=]},
+    {GW.Enum.ChangelogType.bug, [=[Coloring issues]=]},
+    {GW.Enum.ChangelogType.bug, [=[Experiencebar repuration tracking]=]},
+    {GW.Enum.ChangelogType.bug, [=[Objectives tracker error]=]},
+})
+
+addChange("10.3.0", {
+    {GW.Enum.ChangelogType.feature, [=[Add option to change unitframe healtbar texture]=]},
+    {GW.Enum.ChangelogType.feature, [=[Add option ot add Healtglobe spacing to not manage actionsbars (Retail)]=]},
+    {GW.Enum.ChangelogType.feature, [=[Added own chat command history]=]},
+    {GW.Enum.ChangelogType.change, [=[Tooltips updates]=]},
+    {GW.Enum.ChangelogType.change, [=[Color handling refactor]=]},
+    {GW.Enum.ChangelogType.change, [=[Update TBC advanced stats]=]},
+    {GW.Enum.ChangelogType.bug, [=[Grid buff handling on none retail clients]=]},
+    {GW.Enum.ChangelogType.bug, [=[More bug fixes]=]},
+})
+
 addChange("10.2.2", {
     {GW.Enum.ChangelogType.bug, [=[Fix lua error with housing]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix CD Manager Skin, which can cause that the CD Manager was disapearing]=]},

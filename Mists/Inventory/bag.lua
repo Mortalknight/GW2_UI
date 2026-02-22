@@ -558,7 +558,7 @@ end
 local function LoadBag(helpers)
     inv = helpers
 
-    if GW.settings.BAG_ITEM_SIZE > 40 then
+    if GW.settings.BAG_ITEM_SIZE == nil or GW.settings.BAG_ITEM_SIZE > 40 then
         GW.settings.BAG_ITEM_SIZE = 40
     end
 

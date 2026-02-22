@@ -180,21 +180,15 @@ end
 do
     local ShouldUnitIdentityBeSecret = C_Secrets and C_Secrets.ShouldUnitIdentityBeSecret
     function GW.IsSecretValue(value)
-        if issecretvalue and issecretvalue(value) then
-            return true
-        end
+        return issecretvalue and issecretvalue(value)
     end
 
     function GW.NotSecretValue(value)
-        if not issecretvalue or not issecretvalue(value) then
-            return true
-        end
+        return not issecretvalue or not issecretvalue(value)
     end
 
     function GW.NotSecretTable(table)
-        if not issecrettable or not issecrettable(table) then
-            return true
-        end
+        return not issecrettable or not issecrettable(table)
     end
 
     function GW.IsSecretUnit(unit)

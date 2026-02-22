@@ -411,6 +411,7 @@ function GwDodgeBarMixin:SkyridingBarOnEvent(event, ...)
 end
 
 function GwDodgeBarMixin:ToggleSkyridingBar()
+    if not self.skyridingBar then return end
     if GW.settings.showSkyridingbar then
         self.skyridingBar:RegisterEvent("SPELL_UPDATE_CHARGES")
         self.skyridingBar:SetScript("OnEvent", self.skyridingBar.OnEvent)

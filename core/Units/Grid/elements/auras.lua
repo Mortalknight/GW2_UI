@@ -1,5 +1,4 @@
 local _, GW = ...
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 local INDICATORS = GW.INDICATORS
 
@@ -42,7 +41,7 @@ local function PostUpdateButton(self, button, unit, data, position)
         if data.isHarmfulAura then
             local color = C_UnitAuras.GetAuraDispelTypeColor(unit, data.auraInstanceID, self.dispelColorCurve)
             if not color then
-                color = GW.Colors.FallbackColor
+                color = GW.Colors.Fallback
             end
             button.background:SetVertexColor(color:GetRGBA())
             button.background:Show()
@@ -76,8 +75,8 @@ local function PostUpdateButton(self, button, unit, data, position)
                 size = size * tonumber(parent.raidDispelDebuffScale)
             end
 
-            if data.dispelName and DebuffColors[data.dispelName] then
-                button.background:SetVertexColor(DebuffColors[data.dispelName]:GetRGB())
+            if data.dispelName and GW.Colors.DebuffColors[data.dispelName] then
+                button.background:SetVertexColor(GW.Colors.DebuffColors[data.dispelName]:GetRGB())
             else
                 button.background:SetVertexColor(GW.Colors.FriendlyColors[2]:GetRGB())
             end
@@ -155,103 +154,103 @@ local function FilterAura(self, unit, data)
         end
         local filters = isDebuff and parent.debuffFilters or parent.buffFilters
         return CheckFilter(data, filters)
-    end
+    else
+        if data.isHelpfulAura then
+            local isPlayerBuff = data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"
 
-    if data.isHelpfulAura then
-        local isPlayerBuff = data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"
+            if parent.showBuffs then
+                local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(data.spellId, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+                if hasCustom then
+                    shouldDisplay = showForMySpec or (alwaysShowMine and (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"))
+                else
+                    shouldDisplay = (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle") and (data.canApplyAura or data.isAuraPlayer) and not SpellIsSelfBuff(data.spellId)
+                end
 
-        if parent.showBuffs then
-            local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(data.spellId, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-            if hasCustom then
-                shouldDisplay = showForMySpec or (alwaysShowMine and (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle"))
-            else
-                shouldDisplay = (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle") and (data.canApplyAura or data.isAuraPlayer) and not SpellIsSelfBuff(data.spellId)
-            end
-
-            if shouldDisplay and parent.ignoredAuras then
-                shouldDisplay = data.name and not parent.ignoredAuras[data.name]
-            end
-        end
-
-        -- check here for indicators
-        -- indicators
-        local indicators = GW.AURAS_INDICATORS[GW.myclass]
-        local indicator = indicators[data.spellId]
-        if indicator and isPlayerBuff then
-            for _, pos in ipairs(INDICATORS) do
-                if parent.raidIndicators and parent.raidIndicators[pos] and parent.raidIndicators[pos] == (indicator[4] or data.spellId) then
-                    local frame = self["indicator" .. pos]
-                    local r, g, b = unpack(indicator)
-
-                    frame.isBar = pos == "BAR"
-                    if frame.isBar then
-                        frame.expires = data.expirationTime
-                        frame.duration = data.duration
-                    else
-                        -- Stacks
-                        if data.applications > 1 then
-                            frame.text:SetText(data.applications)
-                            frame.text:SetFont(UNIT_NAME_FONT, data.applications > 9 and 9 or 11, "OUTLINE")
-                            frame.text:Show()
-                        else
-                            frame.text:Hide()
-                        end
-
-                        -- Icon
-                        if parent.showRaidIndicatorIcon then
-                            frame.icon:SetTexture(data.icon)
-                        else
-                            frame.icon:SetColorTexture(r, g, b)
-                        end
-
-                        -- Cooldown
-                        frame.cooldown:SetCooldown(data.expirationTime - data.duration, data.duration)
-                        if not frame.cooldown.hooked then
-                            frame.cooldown:HookScript("OnCooldownDone", function()
-                                frame:Hide()
-                                frame.auraInstanceId = nil
-                                frame.isBar = nil
-                            end)
-                        end
-                        if parent.showRaidIndicatorTimer then
-                            frame.cooldown:Show()
-                        else
-                            frame.cooldown:Hide()
-                        end
-
-                        -- do not show that buff as normal buff
-                        shouldDisplay = false
-                    end
-                    frame.auraInstanceId = data.auraInstanceID
-                    frame:Show()
+                if shouldDisplay and parent.ignoredAuras then
+                    shouldDisplay = data.name and not parent.ignoredAuras[data.name]
                 end
             end
-        end
 
-        return shouldDisplay
-    else
-        isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
-        isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
+            -- check here for indicators
+            -- indicators
+            local indicators = GW.AURAS_INDICATORS[GW.myclass]
+            local indicator = indicators[data.spellId]
+            if indicator and isPlayerBuff then
+                for _, pos in ipairs(INDICATORS) do
+                    if parent.raidIndicators and parent.raidIndicators[pos] and parent.raidIndicators[pos] == (indicator[4] or data.spellId) then
+                        local frame = self["indicator" .. pos]
+                        local r, g, b = unpack(indicator)
 
-        if data.dispelName and BadDispels[data.spellId] and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
-            data.dispelName = "BadDispel"
-        end
+                        frame.isBar = pos == "BAR"
+                        if frame.isBar then
+                            frame.expires = data.expirationTime
+                            frame.duration = data.duration
+                        else
+                            -- Stacks
+                            if data.applications > 1 then
+                                frame.text:SetText(data.applications)
+                                frame.text:SetFont(UNIT_NAME_FONT, data.applications > 9 and 9 or 11, "OUTLINE")
+                                frame.text:Show()
+                            else
+                                frame.text:Hide()
+                            end
 
-        if parent.showDebuffs then
-            if parent.showOnlyDispelDebuffs then
-                if isDispellable then
+                            -- Icon
+                            if parent.showRaidIndicatorIcon then
+                                frame.icon:SetTexture(data.icon)
+                            else
+                                frame.icon:SetColorTexture(r, g, b)
+                            end
+
+                            -- Cooldown
+                            frame.cooldown:SetCooldown(data.expirationTime - data.duration, data.duration)
+                            if not frame.cooldown.hooked then
+                                frame.cooldown:HookScript("OnCooldownDone", function()
+                                    frame:Hide()
+                                    frame.auraInstanceId = nil
+                                    frame.isBar = nil
+                                end)
+                            end
+                            if parent.showRaidIndicatorTimer then
+                                frame.cooldown:Show()
+                            else
+                                frame.cooldown:Hide()
+                            end
+
+                            -- do not show that buff as normal buff
+                            shouldDisplay = false
+                        end
+                        frame.auraInstanceId = data.auraInstanceID
+                        frame:Show()
+                    end
+                end
+            end
+
+            return shouldDisplay
+        else
+            isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
+            isImportant = (parent.raidShowImportantInstanceDebuffs and GW.ImportantRaidDebuff[data.spellId]) or false
+
+            if data.dispelName and BadDispels[data.spellId] and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) then
+                data.dispelName = "BadDispel"
+            end
+
+            if parent.showDebuffs then
+                if parent.showOnlyDispelDebuffs then
+                    if isDispellable then
+                        shouldDisplay = data.name and not (parent.ignoredAuras and parent.ignoredAuras[data.name] or data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
+                    end
+                else
                     shouldDisplay = data.name and not (parent.ignoredAuras and parent.ignoredAuras[data.name] or data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
                 end
-            else
-                shouldDisplay = data.name and not (parent.ignoredAuras and parent.ignoredAuras[data.name] or data.spellId == 6788 and data.sourceUnit and not UnitIsUnit(data.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
             end
-        end
 
-        if parent.raidShowImportantInstanceDebuffs and not shouldDisplay then
-            shouldDisplay = isImportant
-        end
+            if parent.raidShowImportantInstanceDebuffs and not shouldDisplay then
+                shouldDisplay = isImportant
+            end
 
-        return shouldDisplay
+            return shouldDisplay
+        end
     end
 end
 
