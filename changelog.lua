@@ -12,6 +12,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.3.2", {
+    {GW.Enum.ChangelogType.bug, [=[Retail aura error]=]},
+})
+
 addChange("10.3.1", {
     {GW.Enum.ChangelogType.bug, [=[Some chat issues]=]},
     {GW.Enum.ChangelogType.bug, [=[Coloring issues]=]},

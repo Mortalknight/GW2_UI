@@ -254,31 +254,26 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
 
     self.status.icon:SetTexture(icon)
 
-    if auraType == 1 then
-        self.border.inner:SetVertexColor(0, 0, 0)
-    else
+    local color
+    if auraType == 0 then -- Debuff
         if GW.Retail then
-            local color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
-            if not color then
-                color = GW.Colors.DebuffColors.None
-            end
-            self.border.inner:SetVertexColor(color:GetRGB())
+            color = C_UnitAuras.GetAuraDispelTypeColor("player", self.auraInstanceID, debuffColorCurve)
         else
-            if auraType == 2 then
-                dtype = "Curse"
-            end
-
             if dtype and BadDispels[spellId] and GW.Libs.Dispel:IsDispellableByMe(dtype) then
-                dtype = "BadDispel"
+                color = GW.Colors.DebuffColors.BadDispel
+            else
+                color = GW.Colors.DebuffColors[dtype]
             end
-
-            local c = GW.Colors.DebuffColors[dtype]
-            if not c then
-                c = GW.Colors.DebuffColors.None
-            end
-            self.border.inner:SetVertexColor(c.r, c.g, c.b)
         end
+        if not color then
+            color = GW.Colors.DebuffColors.None
+        end
+    elseif auraType == 1 then -- Buffs
+        color = GW.Colors.Fallback
+    elseif auraType == 2 then -- temp weapon enchant
+        color = GW.Colors.DebuffColors.Curse
     end
+    self.border.inner:SetVertexColor(color:GetRGB())
 end
 
 local function UpdateAura(self, index)

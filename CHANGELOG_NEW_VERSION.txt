@@ -1,3 +1,7 @@
+10.3.2
+FIXES
+    - Retail aura error
+
 10.3.1
 FIXES
     - Some chat issues
