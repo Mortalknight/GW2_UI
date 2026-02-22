@@ -171,7 +171,7 @@ local function InititateProfileSpecSwitchSettings(panel)
                 local specIndex = i
                 local highPointsSpentIndex = nil
                 for treeIndex = 1, 3 do
-                    local _, name, _, _, _, _, pointsSpent, _, previewPointsSpent, _ = C_SpecializationInfo.GetSpecializationInfo(treeIndex, false, false, specIndex)
+                    local _, name, _, _, _, _, pointsSpent, _, previewPointsSpent, _ = C_SpecializationInfo.GetSpecializationInfo(treeIndex, false, false, nil, nil, specIndex)
                     if name then
                         local displayPointsSpent = pointsSpent + previewPointsSpent
                         points[treeIndex] = displayPointsSpent

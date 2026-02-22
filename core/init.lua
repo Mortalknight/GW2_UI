@@ -184,7 +184,7 @@ do
     end
 
     function GW.NotSecretValue(value)
-        return not issecretvalue or not issecretvalue(value)
+        return not GW.IsSecretValue(value)
     end
 
     function GW.NotSecretTable(table)
@@ -192,11 +192,14 @@ do
     end
 
     function GW.IsSecretUnit(unit)
-        return ShouldUnitIdentityBeSecret and ShouldUnitIdentityBeSecret(unit)
+        local ok, value = pcall(ShouldUnitIdentityBeSecret, unit)
+        if ok then
+            return value
+        end
     end
 
     function GW.NotSecretUnit(unit)
-        return not ShouldUnitIdentityBeSecret or not ShouldUnitIdentityBeSecret(unit)
+        return not GW.IsSecretUnit(unit)
     end
 end
 

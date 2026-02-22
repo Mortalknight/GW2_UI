@@ -539,24 +539,6 @@
                 </Frames>
             </Frame>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self.bottomBar.unspentPoints:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-                self.bottomBar.unspentPoints:SetTextColor(0.87, 0.74, 0.29, 1)
-
-                self.bottomBar.dualSpecActiveTalentGroupe:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
-                self.bottomBar.dualSpecActiveTalentGroupe:SetTextColor(0.85, 0.70, 0.29, 1)
-
-                self.bottomBar.talentPreview.checkbutton:SetChecked(GetCVarBool("previewTalents"))
-
-                self:RegisterEvent("UNIT_MODEL_CHANGED")
-                self:RegisterEvent("UNIT_LEVEL")
-                self:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
-                self:RegisterEvent("CHARACTER_POINTS_CHANGED")
-                self:RegisterEvent("SPELLS_CHANGED")
-                self:RegisterEvent("PLAYER_LEVEL_UP")
-            </OnLoad>
-        </Scripts>
     </Frame>
 
     <Frame name="GwLegacyTalentTree" enableMouse="true" virtual="true">

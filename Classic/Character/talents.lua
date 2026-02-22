@@ -305,7 +305,7 @@ local function updateTalentTrees()
     for f = 1, GetNumTalentTabs(false, isPetTalents) do
         local forceDesaturated
         local talentPoints = UpdateTalentPoints()
-        local _, name, _, _, _, _, pointsSpent, _, previewPointsSpent, _ = C_SpecializationInfo.GetSpecializationInfo(f, false, isPetTalents, openSpec)
+        local _, name, _, _, _, _, pointsSpent, _, previewPointsSpent, _ = C_SpecializationInfo.GetSpecializationInfo(f, false, isPetTalents, nil, nil, openSpec)
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
         TalentFrame.pointsSpent = pointsSpent + previewPointsSpent
 
