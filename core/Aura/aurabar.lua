@@ -89,7 +89,7 @@ local function setRetailCooldown(self, auraData, durationObject)
         self.cooldown:SetAlphaFromBoolean(C_UnitAuras.DoesAuraHaveExpirationTime("player", auraData.auraInstanceID), 1, 0)
     else
         self.cooldown:SetCooldown(auraData.expirationTime - auraData.duration, auraData.duration)
-        self.cooldown:SetAlpha(1)
+        self.cooldown:SetAlpha(0)
     end
 end
 
