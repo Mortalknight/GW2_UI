@@ -710,13 +710,13 @@ function GwUnitFrameMixin:StartCastbar(event)
                     else
                         self.castingbarNormal.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
                     end
+                end
 
-                    p = self.channeling and (1 - p) or p
-                    if notInterruptible then
-                        self:ProtectedCastAnimation(p)
-                    else
-                        self:NormalCastBarAnimation(p)
-                    end
+                p = self.channeling and (1 - p) or p
+                if notInterruptible then
+                    self:ProtectedCastAnimation(p)
+                else
+                    self:NormalCastBarAnimation(p)
                 end
             end,
             "noease")
