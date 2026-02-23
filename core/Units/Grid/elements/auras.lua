@@ -78,7 +78,7 @@ local function PostUpdateButton(self, button, unit, data, position)
             if data.dispelName and GW.Colors.DebuffColors[data.dispelName] then
                 button.background:SetVertexColor(GW.Colors.DebuffColors[data.dispelName]:GetRGB())
             else
-                button.background:SetVertexColor(GW.Colors.FriendlyColors[2]:GetRGB())
+                button.background:SetVertexColor(GW.Colors.DebuffColors.None:GetRGB())
             end
 
             button:SetSize(size, size)
