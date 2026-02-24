@@ -137,7 +137,7 @@ local colors = {
 -- We do this because people edit the vars directly, and changing the default
 -- globals makes SPICE FLOW!
 local function customClassColors()
-	if(ns.Colors.ClassColors) then
+	if(ns.Colors and ns.Colors.ClassColors) then
 		local function updateColors()
 			for classToken, color in next, ns.Colors.ClassColors do
 				colors.class[classToken] = oUF:CreateColor(color.r, color.g, color.b)
