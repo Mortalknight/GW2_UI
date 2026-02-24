@@ -150,7 +150,7 @@ local function UpdateColor(self, event, unit)
 	* color - the used ColorMixin-based object (table?)
 	--]]
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(unit, r, g, b, color)
+		element:PostUpdateColor(unit, r, g, b, color, event)
 	end
 end
 
@@ -213,7 +213,7 @@ local function Update(self, event, unit)
 end
 
 local function Path(self, event, ...)
-	if (self.isForced and event ~= 'Gw2_UpdateAllElements') then return end -- GW2 changed
+	if (self.isForced and event ~= 'Gw2_UpdateAllElements' and event ~= "CUSTOM_CLASS_COLORS") then return end -- GW2 changed
 	--[[ Override: Health.Override(self, event, unit)
 	Used to completely override the internal update function.
 

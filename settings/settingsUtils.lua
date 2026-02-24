@@ -375,7 +375,6 @@ local function ShowColorPicker(frame)
     ColorPickerFrame.func = function() ColorPickerFrameCallback(nil, frame, frame.button.bg) end
     ColorPickerFrame.opacityFunc = function() ColorPickerFrameCallback(nil, frame, frame.button.bg) end
     ColorPickerFrame.cancelFunc = function(restore) ColorPickerFrameCallback(restore, frame, frame.button.bg) end
-
     if GwColorPPDefault and frame.getDefault then
         if not GwColorPPDefault.defaultColor then
             GwColorPPDefault.defaultColor = {}

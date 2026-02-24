@@ -255,7 +255,7 @@ do
 
         local useBlizzardClassColor = alwaysUseBlizzardColors or GW.settings.BLIZZARDCLASSCOLOR_ENABLED
         local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW.Colors.ClassColors[class]
-        local colorForNameString
+
 
         if type(color) ~= "table" or not color.r or not color.g or not color.b then
             return RAID_CLASS_COLORS.PRIEST
@@ -267,16 +267,18 @@ do
             color.colorStr = "ff" .. color.colorStr
         end
 
-        if forNameString and not useBlizzardClassColor then
-            color.forNameString = color.forNameString or CreateColor(
-                min(1, color.r + 0.3),
-                min(1, color.g + 0.3),
-                min(1, color.b + 0.3)
-            )
-            colorForNameString = color.forNameString
+        if not color.forNameString then
+            color.forNameString = CreateColor(
+                    min(1, color.r + 0.3),
+                    min(1, color.g + 0.3),
+                    min(1, color.b + 0.3)
+                )
         end
-
-        return forNameString and colorForNameString or color
+        if forNameString and not useBlizzardClassColor then
+            return color.forNameString
+        else
+            return color
+        end
     end
 end
 
@@ -1285,7 +1287,6 @@ local function UpdateFontSettings()
     end
 end
 GW.UpdateFontSettings = UpdateFontSettings
-
 
 local InstanceNameByID = {
     -- List of not matching instanceID from EJ_GetInstanceByIndex and from GetInstanceInfo

@@ -200,6 +200,8 @@ local function CreateUnitFrame(name, revert, animatedPowerbar)
     f:SetScript("OnEnter", f.OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
 
+    GW.Gw2ClassColorRegister(nil, function() f:UnitFrameData() end)
+
     return f
 end
 GW.CreateUnitFrame = CreateUnitFrame
@@ -300,6 +302,8 @@ local function CreateSmallUnitFrame(name)
     f:SetScript("OnEnter", f.OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
 
+    GW.Gw2ClassColorRegister(nil, function() f:UnitFrameData() end)
+
     return f
 end
 
@@ -321,8 +325,8 @@ function GwUnitFrameMixin:UpdateHealthbarColor()
     if self.classColor and (UnitIsPlayer(unit) or UnitInPartyIsAI(unit)) then
         local _, englishClass = UnitClass(unit)
         local color = GWGetClassColor(englishClass, true)
-        healthBar:SetStatusBarColor(color.r, color.g, color.b, color.a)
-        nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
+        healthBar:SetStatusBarColor(color:GetRGB())
+        nameString:SetTextColor(color.forNameString:GetRGB())
     else
         local unitReaction = UnitReaction(unit, "player")
         local nameColor = unitReaction and GW.Colors.FactionBarColors[unitReaction] or RAID_CLASS_COLORS.PRIEST
@@ -498,8 +502,8 @@ function GwUnitFrameMixin:UnitFrameData(lvl)
         local _, englishClass = UnitClass(self.unit)
         local color = GW.GWGetClassColor(englishClass, true)
 
-        self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
-        self.nameString:SetTextColor(math.min(color.r + 0.3, 1), math.min(color.g + 0.3, 1), math.min(color.b + 0.3, 1), color.a)
+        self.health:SetStatusBarColor(color:GetRGB())
+        self.nameString:SetTextColor(color.forNameString:GetRGB())
     else
         self:UpdateHealthbarColor()
     end

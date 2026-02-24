@@ -48,6 +48,8 @@ function GW.UpdateGw2ClassColor(classTag, r, g, b, changed)
 
     if color then
         color.r, color.g, color.b = r, g, b
+        color.colorStr = nil
+        color.forNameString = nil
 
         -- verify the object is mixed
         if color and not color.GetRGB then
@@ -59,6 +61,7 @@ function GW.UpdateGw2ClassColor(classTag, r, g, b, changed)
     if db then
         db.r, db.g, db.b = r, g, b
         db.colorStr = nil
+        db.forNameString = nil
     end
     GW.Gw2ClassColorNotify(nil, changed)
 end
