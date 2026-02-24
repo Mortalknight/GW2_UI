@@ -137,9 +137,9 @@ local colors = {
 -- We do this because people edit the vars directly, and changing the default
 -- globals makes SPICE FLOW!
 local function customClassColors()
-	if(ns.GW_CLASS_COLORS) then
+	if(ns.Colors.ClassColors) then
 		local function updateColors()
-			for classToken, color in next, ns.GW_CLASS_COLORS do
+			for classToken, color in next, ns.Colors.ClassColors do
 				colors.class[classToken] = oUF:CreateColor(color.r, color.g, color.b)
 			end
 
@@ -149,7 +149,7 @@ local function customClassColors()
 		end
 
 		updateColors()
-		ns.GW_CLASS_COLORS:RegisterCallback(updateColors)
+		ns.Colors.ClassColors:RegisterCallback(updateColors)
 
 		return true
 	end

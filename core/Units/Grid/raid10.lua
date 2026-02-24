@@ -82,7 +82,7 @@ local function UpdateGridRaid10Frame(frame)
         end
     end
 
-    GW.Update_Healtbar(frame)
+    GW.Update_Healthbar(frame)
     GW.Update_Powerbar(frame)
     GW.UpdateNameSettings(frame)
     GW.UpdateHealtValueTextSettings(frame)

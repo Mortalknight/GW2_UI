@@ -1,5 +1,4 @@
 local _, GW = ...
-local GW_CLASS_COLORS = GW.Colors.ClassColors
 
 local afterCombatQueue = {}
 local maxUpdatesPerCircle = 5
@@ -255,7 +254,7 @@ do
         end
 
         local useBlizzardClassColor = alwaysUseBlizzardColors or GW.settings.BLIZZARDCLASSCOLOR_ENABLED
-        local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
+        local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW.Colors.ClassColors[class]
         local colorForNameString
 
         if type(color) ~= "table" or not color.r or not color.g or not color.b then

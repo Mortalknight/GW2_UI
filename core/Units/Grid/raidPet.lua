@@ -84,7 +84,7 @@ local function UpdateGridRaidPetFrame(frame)
         end
     end
 
-    GW.Update_Healtbar(frame)
+    GW.Update_Healthbar(frame)
     GW.Update_Powerbar(frame)
     GW.UpdateNameSettings(frame)
     GW.UpdateHealtValueTextSettings(frame)

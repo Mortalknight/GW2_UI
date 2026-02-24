@@ -71,7 +71,7 @@ local function Construct_HealthBar(frame)
 end
 GW.Construct_HealthBar = Construct_HealthBar
 
-local function Update_Healtbar(frame)
+local function Update_Healthbar(frame)
     local health = frame.Health
 
     --settings
@@ -97,4 +97,4 @@ local function Update_Healtbar(frame)
         health.fakeValue = nil
     end
 end
-GW.Update_Healtbar = Update_Healtbar
+GW.Update_Healthbar = Update_Healthbar
