@@ -70,7 +70,7 @@ local function RemoveTrashLines(self)
 end
 
 local function ShowAuraInfo(self, auraData)
-    local mountID, mountText = MountIDs[auraData.spellId], ""
+    local mountID, mountText = GW.NotSecretValue(auraData.spellId) and MountIDs[auraData.spellId]
 
     if mountID then
         local sourceText = mountID.sourceText
@@ -88,9 +88,13 @@ local function ShowAuraInfo(self, auraData)
         end
 
         if auraData.sourceUnit then
-            local _, class = UnitClass(auraData.sourceUnit)
-            local color = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
-            self:AddDoubleLine(format(IDLine, ID,  auraData.spellId), color:WrapTextInColorCode(UnitName(auraData.sourceUnit) or UNKNOWN))
+            if GW.NotSecretValue(auraData.sourceUnit) then
+                local _, class = UnitClass(auraData.sourceUnit)
+                local color = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
+                self:AddDoubleLine(format(IDLine, ID, auraData.spellId), color:WrapTextInColorCode(UnitName(auraData.sourceUnit) or UNKNOWN))
+            else
+                self:AddDoubleLine(format(IDLine, ID, auraData.spellId), UnitName(auraData.sourceUnit) or UNKNOWN)
+            end
         else
             self:AddLine(format(IDLine, ID, auraData.spellId))
         end
@@ -103,7 +107,7 @@ local function SetUnitAura(self, unit, index, filter)
     if not self or self:IsForbidden() or self:NumLines() < 1 then return end
 
     local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
-    if not auraData or GW.IsSecretValue(auraData.spellId) then return end
+    if not auraData then return end
 
     ShowAuraInfo(self, auraData)
 end
@@ -112,7 +116,7 @@ local function SetUnitAuraByAuraInstanceId(self, unit, auraInstanceId)
     if not self or self:IsForbidden() or self:NumLines() < 1 then return end
 
     local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceId)
-    if not auraData or GW.IsSecretValue(auraData.spellId) then return end
+    if not auraData then return end
 
     ShowAuraInfo(self, auraData)
 end
