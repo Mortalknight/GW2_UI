@@ -3,7 +3,6 @@ local L = GW.L
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
 
-local GetColoredName = ChatFrameUtil and ChatFrameUtil.GetDecoratedSenderName or GetColoredName
 local GetChatCategory = ChatFrameUtil and ChatFrameUtil.GetChatCategory or Chat_GetChatCategory
 local GetMobileEmbeddedTexture = (ChatFrameUtil and ChatFrameUtil.GetMobileEmbeddedTexture) or ChatFrame_GetMobileEmbeddedTexture
 
@@ -238,6 +237,11 @@ local function ToggelAfkMode()
 end
 GW.ToggelAfkMode = ToggelAfkMode
 
+local function UpdateClasscolor()
+    local classColor = GWGetClassColor(GW.myclass, true, true)
+    AFKMode.bottom.name:SetTextColor(classColor.r, classColor.g, classColor.b)
+end
+
 local function LoadAFKAnimation()
     local classColor = GWGetClassColor(GW.myclass, true, true)
     local playerName = GW.myname
@@ -298,6 +302,7 @@ local function LoadAFKAnimation()
     AFKMode.bottom.name:SetFormattedText("%s-%s", playerName, GW.myrealm)
     AFKMode.bottom.name:SetPoint("TOPLEFT", AFKMode.bottom.faction, "TOPRIGHT", nameOffsetX, nameOffsetY)
     AFKMode.bottom.name:SetTextColor(classColor.r, classColor.g, classColor.b)
+    GW.Gw2ClassColorRegister(nil, UpdateClasscolor)
 
     AFKMode.bottom.guild = AFKMode.bottom:CreateFontString(nil, "OVERLAY")
     AFKMode.bottom.guild:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.BigHeader, nil, 2)
