@@ -143,80 +143,122 @@ GW.indicatorsText = { "Bar", "Top Left", "Top", "Top Right", "Left", "Center", "
 
 -- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
 -- Format: {class = {id = {r, g, b[, <spell-id-same-slot>]} ...}, ...}
-if GW.Classic then
+
+if GW.Retail then
+    GW.AURAS_INDICATORS = {
+        EVOKER = {
+            -- All
+            [381748]	= {0.17, 0.94, 0.75, {381732, 381741, 381746, 381749, 381750, 381751, 381752, 381753, 381754, 381756, 381757, 381758}}, -- Blessing of the Bronze
+            -- Preservation
+            [355941]	= {0.33, 0.33, 0.77}, -- Dream Breath
+            [376788]	= {0.25, 0.25, 0.58}, -- Dream Breath (echo)
+            [363502]	= {0.33, 0.33, 0.70}, -- Dream Flight
+            [366155]	= {0.14, 1.00, 0.88}, -- Reversion
+            [367364]	= {0.09, 0.69, 0.61}, -- Reversion (echo)
+            [373267]	= {0.82, 0.29, 0.24}, -- Life Bind (Verdant Embrace)
+            [364343]	= {0.13, 0.87, 0.50}, -- Echo
+            -- Augmentation
+            [360827]	= {0.33, 0.33, 0.77}, -- Blistering Scales
+            [410089]	= {0.13, 0.87, 0.50}, -- Prescience
+            [395152]	= {0.98, 0.44, 0.00}, -- Ebon Might
+            [410263]	= {0.02, 0.78, 0.43}, -- Inferno's Blessing
+            [410686]	= {0.18, 0.84, 0.78}, -- Symbiotic Bloom
+            [413984]	= {0.09, 0.89, 0.86}, -- Shifting Sands
+            [369459]	= {0.59, 0.50, 0.75}, -- Source of Magic
+        },
+        PRIEST = {
+            -- All
+            [21562]		= {0.17, 0.94, 0.75}, -- Power Word: Fortitude
+            -- Discipline
+            [194384]	= {1, 1, 0.66}, -- Atonement
+            [17]		= {0.7, 0.7, 0.7}, -- Power Word: Shield
+            [1253593]	= {0.71, 0.29, 0.38}, -- Void Shield
+            -- Holy
+            [41635]		= {0.2, 0.7, 0.2}, -- Prayer of Mending
+            [139]		= {0.4, 0.7, 0.2}, -- Renew
+            [77489]		= {0.75, 1.00, 0.30}, -- Echo of Light
+        },
+        DRUID = {
+            -- All
+            [1126]		= {0.17, 0.94, 0.75}, -- Mark of the Wild
+            [474754]	= {0.59, 0.50, 0.75}, -- Symbiotic Relationship
+            -- Restoration
+            [774]		= {0.8, 0.4, 0.8}, -- Rejuvenation
+            [33763]		= {0.4, 0.8, 0.2}, -- Lifebloom
+            [48438]		= {0.8, 0.4, 0}, -- Wild Growth
+            [8936]		= {0.2, 0.8, 0.2}, -- Regrowth
+            [155777]	= {0.8, 0.4, 0.8}, -- Germination
+        },
+        PALADIN = {
+            -- Holy
+            [53563]		= {0.7, 0.3, 0.7}, -- Beacon of Light
+            [156910]	= {0.7, 0.3, 0.7}, -- Beacon of Faith
+            [200025]	= {0.7, 0.3, 0.7}, -- Beacon of Virtue
+            [156322]	= {0.2, 0.8, 0.2}, -- Eternal Flame
+            [1244893]	= {0.06, 0.77, 0.34}, -- Beacon of the Savior
+        },
+        SHAMAN = {
+            -- All
+            [462854]	= {0.17, 0.94, 0.75}, -- Skyfury
+            -- Restoration
+            [61295]		= {0.7, 0.3, 0.7}, -- Riptide
+            [974]		= {0.91, 0.80, 0.44}, -- Earth Shield
+            [383648]	= {0.91, 0.80, 0.44}, -- Earth Shield (Elemental Orbit)
+        },
+        MONK = {
+            -- Mistweaver
+            [115175]	= {0.6, 0.9, 0.9}, -- Soothing Mist
+            [119611]	= {0.3, 0.8, 0.6}, -- Renewing Mist
+            [450769]	= {0.3, 0.8, 0.6}, -- Aspect of Harmony (Modified version of Renewing Mist)
+            [124682]	= {0.8, 0.8, 0.25}, -- Enveloping Mist
+        },
+        MAGE = {
+            [1459]		= {0.17, 0.94, 0.75}, -- Arcane Intellect
+        },
+        WARRIOR = {
+            [6673]		= {0.17, 0.94, 0.75}, -- Battle Shout
+        },
+        -- Not used for now
+        WARLOCK = {},
+        ROGUE = {},
+        HUNTER = {},
+        DEMONHUNTER = {},
+        DEATHKNIGHT = {},
+    }
+elseif GW.Classic then
     GW.AURAS_INDICATORS = {
         PRIEST = {
-            --[1243] =    {1, 1, 0.66},       -- Power Word: Fortitude Rank 1
-            --[1244] =    {1, 1, 0.66},       -- Power Word: Fortitude Rank 2
-            --[1245] =    {1, 1, 0.66},       -- Power Word: Fortitude Rank 3
-            --[2791] =    {1, 1, 0.66},       -- Power Word: Fortitude Rank 4
             [10937] =   {1, 1, 0.66},       -- Power Word: Fortitude Rank 5
             [10938] =   {1, 1, 0.66},       -- Power Word: Fortitude Rank 6
-            --[21562] =   {1, 1, 0.66},       -- Prayer of Fortitude Rank 1
             [21564] =   {1, 1, 0.66},       -- Prayer of Fortitude Rank 2
-            --[14752] =   {0.2, 0.7, 0.2},    -- Divine Spirit Rank 1
-            --[14818] =   {0.2, 0.7, 0.2},    -- Divine Spirit Rank 2
             [14819] =   {0.2, 0.7, 0.2},    -- Divine Spirit Rank 3
             [27841] =   {0.2, 0.7, 0.2},    -- Divine Spirit Rank 4
             [27581] =   {0.2, 0.7, 0.2},    -- Prayer of Spirit Rank 1
-            --[976] =     {0.7, 0.7, 0.7},    -- Shadow Protection Rank 1
             [10957] =   {0.7, 0.7, 0.7},    -- Shadow Protection Rank 2
             [10958] =   {0.7, 0.7, 0.7},    -- Shadow Protection Rank 3
             [27683] =   {0.7, 0.7, 0.7},    -- Prayer of Shadow Protection Rank 1
-            --[17] =      {0, 0, 1},          -- Power Word: Shield Rank 1
-            --[592] =     {0, 0, 1},          -- Power Word: Shield Rank 2
-            --[600] =     {0, 0, 1},          -- Power Word: Shield Rank 3
-            --[3747] =    {0, 0, 1},          -- Power Word: Shield Rank 4
-            --[6065] =    {0, 0, 1},          -- Power Word: Shield Rank 5
-            --[6066] =    {0, 0, 1},          -- Power Word: Shield Rank 6
             [10898] =   {0, 0, 1},          -- Power Word: Shield Rank 7
             [10899] =   {0, 0, 1},          -- Power Word: Shield Rank 8
             [10900] =   {0, 0, 1},          -- Power Word: Shield Rank 9
             [10901] =   {0, 0, 1},          -- Power Word: Shield Rank 10
-            --[139] =     {0.33, 0.73, 0.75}, -- Renew Rank 1
-            --[6074] =    {0.33, 0.73, 0.75}, -- Renew Rank 2
-            --[6075] =    {0.33, 0.73, 0.75}, -- Renew Rank 3
-            --[6076] =    {0.33, 0.73, 0.75}, -- Renew Rank 4
-            --[6077] =    {0.33, 0.73, 0.75}, -- Renew Rank 5
-            --[6078] =    {0.33, 0.73, 0.75}, -- Renew Rank 6
             [10927] =   {0.33, 0.73, 0.75}, -- Renew Rank 7
             [10928] =   {0.33, 0.73, 0.75}, -- Renew Rank 8
             [10929] =   {0.33, 0.73, 0.75}, -- Renew Rank 9
             [25315] =   {0.33, 0.73, 0.75}, -- Renew Rank 10
         },
         DRUID = {
-            --[1126] =    {0.2, 0.8, 0.8},    -- Mark of the Wild Rank 1
-            --[5232] =    {0.2, 0.8, 0.8},    -- Mark of the Wild Rank 2
-            --[6756] =    {0.2, 0.8, 0.8},    -- Mark of the Wild Rank 3
-            --[5234] =    {0.2, 0.8, 0.8},    -- Mark of the Wild Rank 4
             [8907] =    {0.2, 0.8, 0.8},    -- Mark of the Wild Rank 5
             [9884] =    {0.2, 0.8, 0.8},    -- Mark of the Wild Rank 6
             [16878] =   {0.2, 0.8, 0.8},    -- Mark of the Wild Rank 7
             [21849] =   {0.8, 0.8, 0.8},    -- Gift of the Wild Rank 1
             [21850] =   {0.2, 0.8, 0.8},    -- Gift of the Wild Rank 2
-            --[467] =     {0.4, 0.2, 0.8},    -- Thorns Rank 1
-            --[782] =     {0.4, 0.2, 0.8},    -- Thorns Rank 2
-            --[1075] =    {0.4, 0.2, 0.8},    -- Thorns Rank 3
             [8914] =    {0.4, 0.2, 0.8},    -- Thorns Rank 4
             [9756] =    {0.4, 0.2, 0.8},    -- Thorns Rank 5
             [9910] =    {0.4, 0.2, 0.8},    -- Thorns Rank 6
-            --[774] =     {0.83, 1, 0.25},    -- Rejuvenation Rank 1
-            --[1058] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 2
-            --[1430] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 3
-            --[2090] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 4
-            --[2091] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 5
-            --[3627] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 6
-            --[8910] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 7
             [9839] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 8
             [9840] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 9
             [9841] =    {0.83, 1, 0.25},    -- Rejuvenation Rank 10
             [25299] =   {0.83, 1, 0.25},    -- Rejuvenation Rank 11
-            --[8936] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 1
-            --[8938] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 2
-            --[8939] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 3
-            --[8940] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 4
-            --[8941] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 5
-            --[9750] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 6
             [9856] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 7
             [9857] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 8
             [9858] =    {0.33, 0.73, 0.75}, -- Regrowth  Rank 9
@@ -226,34 +268,16 @@ if GW.Classic then
             [1044] =    {0.89, 0.45, 0},    -- Blessing of Freedom
             [6940] =    {0.89, 0.1, 1},     -- Blessing Sacrifice Rank 1
             [20729] =   {0.89, 0.1, 1},     -- Blessing Sacrifice Rank 1
-            --[19740] =   {0.2, 0.8, 0.2},    -- Blessing of Might Rank 1
-            --[19834] =   {0.2, 0.8, 0.2},    -- Blessing of Might Rank 2
-            --[19835] =   {0.2, 0.8, 0.2},    -- Blessing of Might Rank 3
-            --[19836] =   {0.2, 0.8, 0.2},    -- Blessing of Might Rank 4
             [19837] =   {0.2, 0.8, 0.2},    -- Blessing of Might Rank 5
             [19838] =   {0.2, 0.8, 0.2},    -- Blessing of Might Rank 6
             [25291] =   {0.2, 0.8, 0.2},    -- Blessing of Might Rank 7
-            --[19742] =   {0.2, 0.8, 0.2},    -- Blessing of Wisdom Rank 1
-            --[19850] =   {0.2, 0.8, 0.2},    -- Blessing of Wisdom Rank 2
-            --[19852] =   {0.2, 0.8, 0.2},    -- Blessing of Wisdom Rank 3
-            --[19853] =   {0.2, 0.8, 0.2},    -- Blessing of Wisdom Rank 4
             [19854] =   {0.2, 0.8, 0.2},    -- Blessing of Wisdom Rank 5
             [25290] =   {0.2, 0.8, 0.2},    -- Blessing of Wisdom Rank 6
-            --[25782] =   {0.2, 0.8, 0.2},    -- Greater Blessing of Might Rank 1
             [25916] =   {0.2, 0.8, 0.2},    -- Greater Blessing of Might Rank 2
-            --[25894] =   {0.2, 0.8, 0.2},    -- Greater Blessing of Wisdom Rank 1
             [25918] =   {0.2, 0.8, 0.2},    -- Greater Blessing of Wisdom Rank 2
-            --[465] =     {0.58, 1, 0.5},     -- Devotion Aura Rank 1
-            --[10290] =   {0.58, 1, 0.5},     -- Devotion Aura Rank 2
-            --[643] =     {0.58, 1, 0.5},     -- Devotion Aura Rank 3
-            --[10291] =   {0.58, 1, 0.5},     -- Devotion Aura Rank 4
-            --[1032] =    {0.58, 1, 0.5},     -- Devotion Aura Rank 5
-            --[10292] =   {0.58, 1, 0.5},     -- Devotion Aura Rank 6
             [10293] =   {0.58, 1, 0.5},     -- Devotion Aura Rank 7
-            --[19977] =   {0.17, 1, 0.75},    -- Blessing of Light Rank 1
             [19978] =   {0.17, 1, 0.75},    -- Blessing of Light Rank 2
             [19979] =   {0.17, 1, 0.75},    -- Blessing of Light Rank 3
-            --[1022] =    {0.17, 1, 0.75},    -- Blessing of Protection Rank 1
             [5599] =    {0.17, 1, 0.75},    -- Blessing of Protection Rank 2
             [10278] =   {0.17, 1, 0.75},    -- Blessing of Protection Rank 3
             [19746] =   {0.83, 1, 0.07},    -- Concentration Aura
@@ -262,41 +286,24 @@ if GW.Classic then
             [29203] =   {0.7, 0.3, 0.7},    -- Healing Way
             [16237] =   {0.2, 0.2, 1},      -- Ancestral Fortitude
             [25909] =   {0, 0, 0.5},        -- Tranquil Air
-            --[8185] =    {0.05, 1, 0.5},     -- Fire Resistance Totem Rank 1
             [10534] =   {0.05, 1, 0.5},     -- Fire Resistance Totem Rank 2
             [10535] =   {0.05, 1, 0.5},     -- Fire Resistance Totem Rank 3
-            --[8182] =    {0.54, 0.53, 0.79}, -- Frost Resistance Totem Rank 1
             [10476] =   {0.54, 0.53, 0.79}, -- Frost Resistance Totem Rank 2
             [10477] =   {0.54, 0.53, 0.79}, -- Frost Resistance Totem Rank 3
-            --[10596] =   {0.33, 1, 0.2},     -- Nature Resistance Totem Rank 1
             [10598] =   {0.33, 1, 0.2},     -- Nature Resistance Totem Rank 2
             [10599] =   {0.33, 1, 0.2},     -- Nature Resistance Totem Rank 3
-            --[5672] =    {0.67, 1, 0.5},     -- Healing Stream Totem Rank 1
-            --[6371] =    {0.67, 1, 0.5},     -- Healing Stream Totem Rank 2
-            --[6372] =    {0.67, 1, 0.5},     -- Healing Stream Totem Rank 3
             [10460] =   {0.67, 1, 0.5},     -- Healing Stream Totem Rank 4
             [10461] =   {0.67, 1, 0.5},     -- Healing Stream Totem Rank 5
-            --[16191] =   {0.67, 1, 0.8},     -- Mana Tide Totem Rank 1
             [17355] =   {0.67, 1, 0.8},     -- Mana Tide Totem Rank 2
             [17360] =   {0.67, 1, 0.8},     -- Mana Tide Totem Rank 3
-            --[5677] =    {0.67, 1, 0.8},     -- Mana Spring Totem Rank 1
-            --[10491] =   {0.67, 1, 0.8},     -- Mana Spring Totem Rank 2
             [10493] =   {0.67, 1, 0.8},     -- Mana Spring Totem Rank 3
             [10494] =   {0.67, 1, 0.8},     -- Mana Spring Totem Rank 4
-            --[8072] =    {0, 0, 0.26},       -- Stoneskin Totem Rank 1
-            --[8156] =    {0, 0, 0.26},       -- Stoneskin Totem Rank 2
-            --[8157] =    {0, 0, 0.26},       -- Stoneskin Totem Rank 3
             [10403] =   {0, 0, 0.26},       -- Stoneskin Totem Rank 4
             [10404] =   {0, 0, 0.26},       -- Stoneskin Totem Rank 5
             [10405] =   {0, 0, 0.26},       -- Stoneskin Totem Rank 6
         },
         ROGUE = {}, --No buffs
         WARRIOR = {
-            --[6673] =    {0.2, 0.2, 1},      -- Battle Shout Rank 1
-            --[5242] =    {0.2, 0.2, 1},      -- Battle Shout Rank 2
-            --[6192] =    {0.2, 0.2, 1},      -- Battle Shout Rank 3
-            --[11549] =   {0.2, 0.2, 1},      -- Battle Shout Rank 4
-            --[11550] =   {0.2, 0.2, 1},      -- Battle Shout Rank 5
             [11551] =   {0.2, 0.2, 1},      -- Battle Shout Rank 6
             [25289] =   {0.2, 0.2, 1},      -- Battle Shout Rank 7
         },
@@ -312,21 +319,9 @@ if GW.Classic then
             [11743] =   {0.2, 0.8, 0.2},    -- Detect Invisibility
         },
         MAGE = {
-            --[1459] =    {0.89, 0.09, 0.05}, -- Arcane Intellect Rank 1
-            --[1460] =    {0.89, 0.09, 0.05}, -- Arcane Intellect Rank 2
-            --[1461] =    {0.89, 0.09, 0.05}, -- Arcane Intellect Rank 3
-            --[10156] =   {0.89, 0.09, 0.05}, -- Arcane Intellect Rank 4
             [10157] =   {0.89, 0.09, 0.05}, -- Arcane Intellect Rank 5
-            --[23028] =   {0.89, 0.09, 0.05}, -- Arcane Brilliance Rank 1
             [27127] =   {0.89, 0.09, 0.05}, -- Arcane Brilliance Rank 2
-            --[604] =     {0.2, 0.8, 0.2},    -- Dampen Magic Rank 1
-            --[8450] =    {0.2, 0.8, 0.2},    -- Dampen Magic Rank 2
-            --[8451] =    {0.2, 0.8, 0.2},    -- Dampen Magic Rank 3
-            --[10173] =   {0.2, 0.8, 0.2},    -- Dampen Magic Rank 4
             [10174] =   {0.2, 0.8, 0.2},    -- Dampen Magic Rank 5
-            --[1008] =    {0.2, 0.8, 0.2},    -- Amplify Magic Rank 1
-            --[8455] =    {0.2, 0.8, 0.2},    -- Amplify Magic Rank 2
-            --[10169] =   {0.2, 0.8, 0.2},    -- Amplify Magic Rank 3
             [10170] =   {0.2, 0.8, 0.2},    -- Amplify Magic Rank 4
             [12438] =   {0, 0, 0.5},        -- Slow Fall
         }
@@ -338,7 +333,7 @@ if GW.Classic then
         GW.AURAS_INDICATORS.PRIEST[401877] = {0.00, 0.00, 0.90} -- Prayer of Mending
         GW.AURAS_INDICATORS.PRIEST[402004] =  {0.00, 0.00, 0.83} -- Pain Suppression
     end
-elseif GW.Mists then --TODO
+elseif GW.Mists then
     GW.AURAS_INDICATORS = {
         PRIEST = {
             [17]	= {0.00, 0.00, 1.00}, -- Power Word: Shield
@@ -365,7 +360,7 @@ elseif GW.Mists then --TODO
             [53563]	= {0.7, 0.3, 0.7}, -- Beacon of Light
         },
         SHAMAN = {
-            [16177]	= {0.2, 0.2, {116236,16237}}, -- Ancestral Fortitude
+            [16177]	= {0.2, 0.2, {116236, 16237}}, -- Ancestral Fortitude
             [974]	= {0.08, 0.21, 0.43}, -- Earth Shield
             [61295] = {0.7, 0.3, 0.7}, -- Riptide
             [51945] = {0.7, 0.3, 0.7}, -- Earthliving
