@@ -227,7 +227,7 @@ local function CheckForAuraIndicators(self, parent, isPlayerBuff, data, shouldDi
                     end)
                     frame.cooldown.hooked = true
                 end
-                if pshowTimer then
+                if showTimer then
                     frame.cooldown:Show()
                 else
                     frame.cooldown:Hide()
