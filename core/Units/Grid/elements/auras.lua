@@ -239,7 +239,6 @@ local function CheckForAuraIndicators(self, parent, isPlayerBuff, data, shouldDi
 
             frame.auraInstanceId = data.auraInstanceID
             frame:Show()
-            break
         end
     end
 
