@@ -1,3 +1,13 @@
+10.4.0
+NEW
+    - Add aura indicator back to retail, only for whitelisted spells
+
+CHANGES
+    - Tooltips updates
+
+FIXES
+    - Class color issue on grids
+
 10.3.2
 FIXES
     - Retail aura error

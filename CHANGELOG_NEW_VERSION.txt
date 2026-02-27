@@ -1,25 +1,9 @@
-10.3.2
-FIXES
-    - Retail aura error
-
-10.3.1
-FIXES
-    - Some chat issues
-    - Coloring issues
-    - Experiencebar repuration tracking
-    - Objectives tracker error
-
-10.3.0
+10.4.0
 NEW
-    - Add option to change unitframe healtbar texture
-    - Add option ot add Healtglobe spacing to not manage actionsbars (Retail)
-    - Added own chat command history
+    - Add aura indicator back to retail, only for whitelisted spells
 
 CHANGES
     - Tooltips updates
-    - Color handling refactor
-    - Update TBC advanced stats
 
 FIXES
-    - Grid buff handling on none retail clients
-    - More bug fixes
+    - Class color issue on grids
