@@ -340,6 +340,18 @@ local function PostUpdateInfoRemovedAuraID(self, auraInstanceID)
     end
 end
 
+local function PreUpdateAuras(self, unit, isFullUpdate)
+    if not isFullUpdate then return end
+    for _, pos in ipairs(INDICATORS) do
+        local frame = self["indicator" .. pos]
+        if frame then
+            frame:Hide()
+            frame.isBar = nil
+            frame.auraInstanceId = nil
+        end
+    end
+end
+
 local function HandleTooltip(self, event)
     self.Auras:ForceUpdate()
 end
@@ -363,6 +375,7 @@ local function Construct_Auras(frame)
 
     auras.PostUpdateInfoRemovedAuraID = PostUpdateInfoRemovedAuraID
     auras.PostProcessAuraData = PostProcessAuraData
+    auras.PreUpdate = PreUpdateAuras
 
     auras.size = 14 -- dynamic
 
