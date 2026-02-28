@@ -143,7 +143,7 @@ local function LoadPlayerPanel(sWindow)
     p_player_aura:AddOptionSlider(L["Size"], nil, { getterSetter = "PlayerBuffs.IconSize", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
     p_player_aura:AddOptionSlider(L["Height"], nil, { getterSetter = "PlayerBuffs.IconHeight", callback = function() GW.UpdateAuraHeader(GW2UIPlayerBuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true, ["PlayerBuffs.KeepSizeRatio"] = false}})
     p_player_aura:AddOption(L["Keep Size Ratio"], nil, {getterSetter = "PlayerBuffs.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("PlayerBuffs.IconSize"); widget.title:SetText(value == true and L["Size"] or L["Width"]); GW.UpdateAuraHeader(GW2UIPlayerBuffs) end,dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
-    p_player_aura:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "PlayerBuffs.NewAuraAnimation", dependence = {["PLAYER_BUFFS_ENABLED"] = true}, hidden = GW.Retail})
+    p_player_aura:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "PlayerBuffs.NewAuraAnimation", dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
 
     -- DEBUFF
     p_player_debuff:AddOptionDropdown(L["Player Debuffs Growth Direction"], nil, { getterSetter = "PlayerDebuffs.GrowDirection", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame") end, optionsList = {"UP", "DOWN", "UPR", "DOWNR"}, optionNames = {StrUpper(L["Up"], 1, 1), StrUpper(L["Down"], 1, 1), L["Up and right"], L["Down and right"]}, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
@@ -157,7 +157,7 @@ local function LoadPlayerPanel(sWindow)
     p_player_debuff:AddOptionSlider(L["Size"], nil, { getterSetter = "PlayerDebuffs.IconSize", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
     p_player_debuff:AddOptionSlider(L["Height"], nil, { getterSetter = "PlayerDebuffs.IconHeight", callback = function() GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, min = 10, max = 80, decimalNumbers = 0, step = 1, dependence = {["PLAYER_BUFFS_ENABLED"] = true, ["PlayerDebuffs.KeepSizeRatio"] = false}})
     p_player_debuff:AddOption(L["Keep Size Ratio"], nil, {getterSetter = "PlayerDebuffs.KeepSizeRatio", callback = function(value) local widget = GW.FindSettingsWidgetByOption("PlayerDebuffs.IconSize"); widget.title:SetText(value == true and L["Size"] or L["Width"]); GW.UpdateAuraHeader(GW2UIPlayerDebuffs) end, dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
-    p_player_debuff:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "PlayerDebuffs.NewAuraAnimation", dependence = {["PLAYER_BUFFS_ENABLED"] = true}, hidden = GW.Retail})
+    p_player_debuff:AddOption(ANIMATION, L["Shows an animation for new de/buffs"], {getterSetter = "PlayerDebuffs.NewAuraAnimation", dependence = {["PLAYER_BUFFS_ENABLED"] = true}})
 
 
     -- FADER
