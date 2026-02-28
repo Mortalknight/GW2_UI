@@ -261,8 +261,9 @@ local function FilterAura(self, unit, data)
         else
             if not parent.showBuffs then
                 shouldDisplay = false
+            else
+                shouldDisplay = CheckFilter(data, parent.buffFilters)
             end
-            shouldDisplay = CheckFilter(data, parent.buffFilters)
 
             return CheckForAuraIndicators(self, parent, data.isAuraPlayer, data, shouldDisplay)
         end
