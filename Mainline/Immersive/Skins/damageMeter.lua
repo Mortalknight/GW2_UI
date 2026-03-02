@@ -55,9 +55,6 @@ local function HandleBackground(window, background, x1, y1, x2, y2)
     background:Hide()
 
     window:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
-    window.backdrop:GwNudgePoint(x1, y1, nil, "TOPLEFT")
-    window.backdrop:GwNudgePoint(x2, y2, nil, "BOTTOMRIGHT")
-
     window.backdrop:SetAlpha(window.backgroundAlpha or 1)
 
     hooksecurefunc(background, "SetAlpha", BackdropSetAlpha)
@@ -160,9 +157,6 @@ local function HandleHeader(window, header)
 
     header:SetTexture("Interface/Addons/GW2_UI/textures/uistuff/periodic-bg.png")
     header:SetVertexColor(0, 0, 0, 0.45)
-    header:ClearAllPoints()
-    header:SetPoint("TOPLEFT", 16, -2)
-    header:SetPoint("BOTTOMRIGHT", window, "TOPRIGHT", -22, -32)
 end
 
 local function HandleStatusBar(self)
@@ -187,17 +181,6 @@ local function ScrollBoxUpdate(self)
     self:ForEachFrame(HandleStatusBar)
 end
 
-do
-    local updating = false
-    function GW.ScrollBoxSetPoint(self, point)
-        if not updating and point == "TOPLEFT" then
-            updating = true
-            self:GwNudgePoint(-15)
-            updating = false
-        end
-    end
-end
-
 local function HandleScrollBoxes(window)
     local ScrollBar = window.GetScrollBar and window:GetScrollBar()
     if ScrollBar then
@@ -208,10 +191,8 @@ local function HandleScrollBoxes(window)
     local ScrollBox = window.GetScrollBox and window:GetScrollBox()
     if ScrollBox and not ScrollBox.IsSkinned then
         hooksecurefunc(ScrollBox, "Update", ScrollBoxUpdate)
-        hooksecurefunc(ScrollBox, "SetPoint", GW.ScrollBoxSetPoint)
 
         ScrollBoxUpdate(ScrollBox)
-        GW.ScrollBoxSetPoint(ScrollBox, "TOPLEFT")
 
         ScrollBox.IsSkinned = true
     end

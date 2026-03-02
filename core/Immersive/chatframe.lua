@@ -1069,6 +1069,7 @@ local function DelayGuildMOTD()
     local delay, checks, delayFrame, chat = 0, 0, CreateFrame("Frame")
     tinsert(ChatTypeGroup.GUILD, 2, "GUILD_MOTD")
     delayFrame:SetScript("OnUpdate", function(self, elapsed)
+        if InCombatLockdown() then return end
         delay = delay + elapsed
         if delay < 5 then return end
         local msg = C_GuildInfo_GetMOTD()
