@@ -1,5 +1,7 @@
 local _, GW = ...
 
+local C_GuildInfo_GetMOTD = C_GuildInfo and C_GuildInfo.GetMOTD or GetGuildRosterMOTD
+
 local onlinestatus = {
     [0] = "",
     [1] = format(" |cffFFFFFF[|r|cffFF9900%s|r|cffFFFFFF]|r", AFK),
@@ -188,9 +190,9 @@ local function Guild_OnEnter(self)
         GameTooltip:AddLine(guildRank, 1, 1, 1, 1)
     end
 
-    if GetGuildRosterMOTD() ~= "" then
+    if C_GuildInfo_GetMOTD() ~= "" then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(format(guildMotDString, GUILD_MOTD, GetGuildRosterMOTD()), tthead.r, tthead.g, tthead.b, 1)
+        GameTooltip:AddLine(format(guildMotDString, GUILD_MOTD, C_GuildInfo_GetMOTD()), tthead.r, tthead.g, tthead.b, 1)
     end
 
     local guildFactionData = C_Reputation.GetGuildFactionData()

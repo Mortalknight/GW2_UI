@@ -1328,6 +1328,11 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetUnitAuraByAuraInstanceID", SetUnitAuraByAuraInstanceId)
 
         GameTooltipStatusBar:SetScript("OnValueChanged", nil)
+
+        TooltipDataProcessor.AddLinePreCall(Enum.TooltipDataLineType.SellPrice, function(tooltip, lineData)
+            tooltip:AddLine(SELL_PRICE .. ": " .. GetMoneyString(lineData.price), WHITE_FONT_COLOR:GetRGB())
+            return true
+        end)
     else
         GameTooltipStatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
     end

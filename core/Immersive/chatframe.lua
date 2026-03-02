@@ -15,6 +15,7 @@ local ResolvePrefixedChannelName = (ChatFrameUtil and ChatFrameUtil.ResolvePrefi
 local ShouldColorChatByClass = (ChatFrameUtil and ChatFrameUtil.ShouldColorChatByClass) or Chat_ShouldColorChatByClass
 local IsChannelRegionalForChannelID = C_ChatInfo.IsChannelRegionalForChannelID
 local GetChannelShortcutForChannelID = C_ChatInfo.GetChannelShortcutForChannelID
+local C_GuildInfo_GetMOTD = C_GuildInfo and C_GuildInfo.GetMOTD or GetGuildRosterMOTD
 
 local FindURL_Events = {
     "CHAT_MSG_WHISPER",
@@ -1070,7 +1071,7 @@ local function DelayGuildMOTD()
     delayFrame:SetScript("OnUpdate", function(self, elapsed)
         delay = delay + elapsed
         if delay < 5 then return end
-        local msg = GetGuildRosterMOTD()
+        local msg = C_GuildInfo_GetMOTD()
         if msg and strlen(msg) > 0 then
             for _, frame in ipairs(CHAT_FRAMES) do
                 chat = _G[frame]
