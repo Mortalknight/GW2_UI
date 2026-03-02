@@ -407,6 +407,7 @@ local function evAddonLoaded(self, loadedAddonName)
         GW.LoadAuctionHouseSkin()
         GW.LoadBattlefieldMapSkin()
         GW.LoadMajorFactionsFrameSkin()
+        GW.LoadDamageMeterSkin()
     end
 
     if not (GW.Classic or GW.TBC) then

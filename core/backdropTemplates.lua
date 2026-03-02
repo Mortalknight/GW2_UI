@@ -20,6 +20,15 @@ local constBackdropFrame = {
 }
 GW.BackdropTemplates.Default = constBackdropFrame
 
+GW.BackdropTemplates.DefaultNoBorder = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-background.png",
+    edgeFile = "",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 32,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+
 local constBackdropFrameBorder = {
     bgFile = "",
     edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/ui-tooltip-border.png",

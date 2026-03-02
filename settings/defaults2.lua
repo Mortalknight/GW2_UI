@@ -1268,6 +1268,7 @@ GW.globalDefault = {
         BattlefieldMapSkinEnabled = true,
         MajorFactionSkinEnabled = true,
         CooldownManagerSkinEnabled = true,
+        DamageMeterSkinEnabled = true,
 
         QUESTTIMERS_SKIN_ENABLED = true,
         QUEST_TIMERS_FRAME_POSITION = {

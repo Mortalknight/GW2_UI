@@ -31,6 +31,7 @@
     <Script file="battlefieldMap.lua"/>
     <Script file="majorFaction.lua"/>
     <Script file="cooldownManager.lua"/>
+    <Script file="damageMeter.lua"/>
     <Script file="addons\immersion.lua"/>
     <Script file="addons\WorldQuestTracker.lua"/>
     <Script file="addons\petTracker.lua"/>

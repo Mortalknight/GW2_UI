@@ -279,7 +279,7 @@ local function GwSkinSliderFrame(frame)
     end
 end
 
-local function OffsetFrameLevel(frame, offset, referenceFrame)
+local function GwOffsetFrameLevel(frame, offset, referenceFrame)
     if not referenceFrame then
         referenceFrame = frame
     end
@@ -830,6 +830,42 @@ local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddi
     GW.texts[object] = true
 end
 
+local function GrabPoint(obj, pointValue)
+    if type(pointValue) == "string" then
+        local pointIndex = tonumber(pointValue)
+        if not pointIndex then
+            for i = 1, obj:GetNumPoints() do
+                local point, relativeTo, relativePoint, xOfs, yOfs = obj:GetPoint(i)
+                if not point then
+                    break
+                elseif point == pointValue then
+                    return point, relativeTo, relativePoint, xOfs, yOfs
+                end
+            end
+        end
+
+        pointValue = pointIndex
+    end
+
+    return obj:GetPoint(pointValue)
+end
+
+local function GwNudgePoint(obj, xAxis, yAxis, noScale, pointValue, clearPoints)
+    if not xAxis then xAxis = 0 end
+    if not yAxis then yAxis = 0 end
+
+    local x = (noScale and xAxis) or GW.Scale(xAxis)
+    local y = (noScale and yAxis) or GW.Scale(yAxis)
+
+    local point, relativeTo, relativePoint, xOfs, yOfs = GrabPoint(obj, pointValue)
+
+    if clearPoints or GW.SetPointsRestricted(obj) then
+        obj:ClearAllPoints()
+    end
+
+    obj:SetPoint(point, relativeTo, relativePoint, xOfs + x, yOfs + y)
+end
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.GwKill then mt.GwKill = GwKill end
@@ -850,7 +886,8 @@ local function addapi(object)
     if not object.GwKillEditMode then mt.GwKillEditMode = GwKillEditMode end
     if not object.GwHandleDropDownBox then mt.GwHandleDropDownBox = GwHandleDropDownBox end
     if not object.GwSetFontTemplate then mt.GwSetFontTemplate = GwSetFontTemplate end
-    if not object.OffsetFrameLevel then mt.OffsetFrameLevel = OffsetFrameLevel end
+    if not object.GwOffsetFrameLevel then mt.GwOffsetFrameLevel = GwOffsetFrameLevel end
+    if not object.GwNudgePoint then mt.GwNudgePoint = GwNudgePoint end
 end
 
 local handled = { Frame = true }

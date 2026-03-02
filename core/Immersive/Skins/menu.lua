@@ -91,7 +91,7 @@ local function SkinFrame(frame)
     end
 
     if frame.backdrop then
-        frame.backdrop:OffsetFrameLevel(-1, frame)
+        frame.backdrop:GwOffsetFrameLevel(-1, frame)
     end
 end
 

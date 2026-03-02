@@ -65,7 +65,7 @@ local function Construct_HealthBar(frame)
             edgeSize = GW.Scale(1)
         })
     frame.highlightBorder = frame.backdrop
-    frame.backdrop:OffsetFrameLevel(health:GetFrameLevel() + 1, frame)
+    frame.backdrop:GwOffsetFrameLevel(health:GetFrameLevel() + 1, frame)
     frame.backdrop:ClearAllPoints()
     frame.backdrop:SetPoint("TOPLEFT", -1, 1)
     frame.backdrop:SetPoint("BOTTOMRIGHT", 1, -1)
