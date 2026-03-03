@@ -49,6 +49,7 @@ function RaidMarkerButtonMixin:Clicked()
     PlaySound(1115)
     local parent = self:GetParent()
     if parent then
+        if GW.Retail and InCombatLockdown() then return end
         parent:Hide()
     end
 end
@@ -58,6 +59,7 @@ function GW_RaidMark_HotkeyPressed(keystate)
     if ButtonIsDown and raidMarker then
         raidMarker:RaidMarkShowIcons()
     elseif raidMarker then
+        if GW.Retail and InCombatLockdown() then return end
         raidMarker:Hide()
     end
 end
