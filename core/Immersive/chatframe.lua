@@ -1069,10 +1069,9 @@ local function DelayGuildMOTD()
     local delay, checks, delayFrame, chat = 0, 0, CreateFrame("Frame")
     tinsert(ChatTypeGroup.GUILD, 2, "GUILD_MOTD")
     delayFrame:SetScript("OnUpdate", function(self, elapsed)
-        if InCombatLockdown() then return end
         delay = delay + elapsed
         if delay < 5 then return end
-        local msg = C_GuildInfo_GetMOTD()
+        local msg = InCombatLockdown() and C_GuildInfo_GetMOTD()
         if msg and strlen(msg) > 0 then
             for _, frame in ipairs(CHAT_FRAMES) do
                 chat = _G[frame]
@@ -1537,40 +1536,42 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         local chatGroup = Chat_GetChatCategory(chatType)
         local chatTarget = FCFManager_GetChatTarget(chatGroup, arg2, arg8)
 
-        if FCFManager_ShouldSuppressMessage(frame, chatGroup, chatTarget) then
+        if GW.NotSecretValue(chatTarget) and FCFManager_ShouldSuppressMessage(frame, chatGroup, chatTarget) then
             return true
         end
 
-        if chatGroup == "WHISPER" or chatGroup == "BN_WHISPER" then
-            if frame.privateMessageList and not frame.privateMessageList[strlower(arg2)] then
+        if not isProtected and (chatGroup == "WHISPER" or chatGroup == "BN_WHISPER") then
+            local nameLower = strlower(arg2)
+            if frame.privateMessageList and not frame.privateMessageList[nameLower] then
                 return true
-            elseif frame.excludePrivateMessageList and frame.excludePrivateMessageList[strlower(arg2)] and ((chatGroup == "WHISPER" and GetCVar("whisperMode") ~= "popout_and_inline") or (chatGroup == "BN_WHISPER" and GetCVar("whisperMode") ~= "popout_and_inline")) then
-                return true
+            elseif frame.excludePrivateMessageList and frame.excludePrivateMessageList[nameLower] then
+				if GetCVar("whisperMode") ~= "popout_and_inline" then
+					return true
+				end
             end
         end
 
         if frame.privateMessageList then
-            -- Dedicated BN whisper windows need online/offline messages for only that player
-            if (chatGroup == "BN_INLINE_TOAST_ALERT" or chatGroup == "BN_WHISPER_PLAYER_OFFLINE") and not frame.privateMessageList[strlower(arg2)] then
-                return true
-            end
-
-            if chatGroup == "SYSTEM" then
-                local matchFound = false
-                local message = strlower(arg1)
+            if chatGroup == "SYSTEM" then -- HACK to put certain system messages into dedicated whisper windows
+				local found, msg = false, strlower(arg1)
                 for playerName in pairs(frame.privateMessageList) do
                     local playerNotFoundMsg = strlower(format(ERR_CHAT_PLAYER_NOT_FOUND_S, playerName))
                     local charOnlineMsg = strlower(format(ERR_FRIEND_ONLINE_SS, playerName, playerName))
                     local charOfflineMsg = strlower(format(ERR_FRIEND_OFFLINE_S, playerName))
-                    if message == playerNotFoundMsg or message == charOnlineMsg or message == charOfflineMsg then
-                        matchFound = true
+                    if msg == playerNotFoundMsg or msg == charOnlineMsg or msg == charOfflineMsg then
+                        found = true
                         break
                     end
                 end
 
-                if not matchFound then
+                if not found then
                     return true
                 end
+            elseif not isProtected and (chatGroup == "BN_INLINE_TOAST_ALERT" or chatGroup == "BN_WHISPER_PLAYER_OFFLINE") then
+				local nameLower = strlower(arg2)
+				if not frame.privateMessageList[nameLower] then
+					return true -- Dedicated BN whisper windows need online/offline messages for only that player
+				end
             end
         end
 

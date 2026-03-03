@@ -190,7 +190,8 @@ local function Guild_OnEnter(self)
         GameTooltip:AddLine(guildRank, 1, 1, 1, 1)
     end
 
-    if C_GuildInfo_GetMOTD() ~= "" then
+    local guildMotD = not InCombatLockdown() and C_GuildInfo_GetMOTD()
+    if guildMotD ~= "" then
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(format(guildMotDString, GUILD_MOTD, C_GuildInfo_GetMOTD()), tthead.r, tthead.g, tthead.b, 1)
     end

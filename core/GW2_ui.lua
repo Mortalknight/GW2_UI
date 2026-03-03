@@ -797,7 +797,7 @@ local function evPlayerLogin(self)
         if GW.Retail then
             if GW.settings.BAR_LAYOUT_ENABLED then
                 GW.LoadActionBars(lm, false)
-                GW.ExtraAB_BossAB_Setup()
+                --GW.ExtraAB_BossAB_Setup() -- Test
             else
                 GW.LoadActionBars(lm, true)
             end

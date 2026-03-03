@@ -1,11 +1,14 @@
 local _, GW = ...
 
 local ButtonIsDown
-local RaidMarkFrame = CreateFrame("Frame")
 local ANG_RAD = rad(360) / 7
+local raidMarker = CreateFrame("Frame")
 
-local function RaidMarkCanMark()
-    if not RaidMarkFrame then return false end
+local RaidMarkerButtonMixin = {}
+local RaidMarkerFrameMixin = {}
+
+function RaidMarkerFrameMixin:RaidMarkCanMark()
+    if not self then return false end
 
     if GetNumGroupMembers() > 0 then
         if UnitIsGroupLeader("player") or UnitIsGroupAssistant("player") then
@@ -21,67 +24,85 @@ local function RaidMarkCanMark()
     end
 end
 
-local function RaidMarkShowIcons()
+function RaidMarkerFrameMixin:RaidMarkShowIcons()
     if not UnitExists("target") or UnitIsDead("target")then
         return
     end
     local x, y = GetCursorPosition()
-    RaidMarkFrame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
-    RaidMarkFrame:Show()
+    if GW.Retail and InCombatLockdown() then return end
+    self:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
+    self:Show()
 end
 
-function GW_RaidMark_HotkeyPressed(keystate)
-    if GW.Retail then return end
-    ButtonIsDown = (keystate == "down") and RaidMarkCanMark()
-    if ButtonIsDown and RaidMarkFrame then
-        RaidMarkShowIcons()
-    elseif RaidMarkFrame then
-        RaidMarkFrame:Hide()
-    end
-end
 
-local function RaidMark_OnEvent()
-    if ButtonIsDown then
-        RaidMarkShowIcons()
-    end
-end
-
-local function RaidMarkButton_OnEnter(self)
+function RaidMarkerButtonMixin:OnEnter()
     self.Texture:ClearAllPoints()
     self.Texture:SetPoint("TOPLEFT", -10, 10)
     self.Texture:SetPoint("BOTTOMRIGHT", 10, -10)
 end
 
-local function RaidMarkButton_OnLeave(self)
+function RaidMarkerButtonMixin:OnLeave()
     self.Texture:SetAllPoints()
 end
 
-local function RaidMarkButton_OnClick(self, button)
+function RaidMarkerButtonMixin:Clicked()
     PlaySound(1115)
-    SetRaidTarget("target", (button ~= "RightButton") and self:GetID() or 0) -- not possible on Retail
-    RaidMarkFrame:Hide()
+    local parent = self:GetParent()
+    if parent then
+        parent:Hide()
+    end
+end
+
+function GW_RaidMark_HotkeyPressed(keystate)
+    ButtonIsDown = (keystate == "down") and raidMarker:RaidMarkCanMark()
+    if ButtonIsDown and raidMarker then
+        raidMarker:RaidMarkShowIcons()
+    elseif raidMarker then
+        raidMarker:Hide()
+    end
+end
+
+function RaidMarkerFrameMixin:OnEvent()
+    if ButtonIsDown and self then
+        self:RaidMarkShowIcons()
+    end
 end
 
 local function LoadRaidMarkerCircle()
-    _G["BINDING_NAME_RAID_MARKER"] = RAID_TARGET_ICON
+    BINDING_NAME_RAID_MARKER = RAID_TARGET_ICON
 
-    RaidMarkFrame:EnableMouse(true)
-    RaidMarkFrame:SetFrameStrata("DIALOG")
-    RaidMarkFrame:SetSize(100, 100)
-    RaidMarkFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-    RaidMarkFrame:SetScript("OnEvent", RaidMark_OnEvent)
+    Mixin(raidMarker, RaidMarkerFrameMixin)
+    raidMarker:EnableMouse(true)
+    raidMarker:SetFrameStrata("DIALOG")
+    raidMarker:SetSize(100, 100)
+    raidMarker:RegisterEvent("PLAYER_TARGET_CHANGED")
+    raidMarker:SetScript("OnEvent", raidMarker.OnEvent)
 
     for i = 1, 8 do
-        local button = CreateFrame("Button", "RaidMarkIconButton" .. i, RaidMarkFrame)
+        local tm = format("/tm %d", i)
+        local name = "RaidMarkIconButton" .. i
+        local button = CreateFrame("Button", name, raidMarker, "SecureActionButtonTemplate")
+        Mixin(button, RaidMarkerButtonMixin)
+
+        button:SetScript("OnEnter", button.OnEnter)
+        button:SetScript("OnLeave", button.OnLeave)
+        button:SetAttribute("type", "macro")
+        button:SetAttribute("macrotext", tm)
+        if GW.Retail or GW.TBC then
+            button:SetScript("OnMouseUp", button.Clicked)
+            button:RegisterForClicks("AnyDown", "AnyUp")
+        else
+            button:SetScript("OnMouseDown", button.Clicked)
+            button:RegisterForClicks("AnyDown")
+        end
         button:SetSize(40, 40)
         button:SetID(i)
-        button.Texture = button:CreateTexture(button:GetName() .. "NormalTexture", "ARTWORK")
-        button.Texture:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i)
+        button.Texture = button:CreateTexture(name .. "NormalTexture", "ARTWORK")
+        button.Texture:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcons")
         button.Texture:SetAllPoints()
-        button:RegisterForClicks("LeftbuttonUp","RightbuttonUp")
-        button:SetScript("OnClick", RaidMarkButton_OnClick)
-        button:SetScript("OnEnter", RaidMarkButton_OnEnter)
-        button:SetScript("OnLeave", RaidMarkButton_OnLeave)
+
+        SetRaidTargetIconTexture(button.Texture, i)
+
         if i == 8 then
             button:SetPoint("CENTER")
         else
