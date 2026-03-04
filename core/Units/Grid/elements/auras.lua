@@ -255,13 +255,11 @@ local function FilterAura(self, unit, data)
 
         if isDebuff then
             if not parent.showDebuffs then
-                return false
+                return shouldDisplay
             end
             return CheckFilter(data, parent.debuffFilters)
         else
-            if not parent.showBuffs then
-                shouldDisplay = false
-            else
+            if parent.showBuffs then
                 shouldDisplay = CheckFilter(data, parent.buffFilters)
             end
 
