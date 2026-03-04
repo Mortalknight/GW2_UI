@@ -204,6 +204,9 @@ if GW.Retail then
             [61295]		= {0.7, 0.3, 0.7}, -- Riptide
             [974]		= {0.91, 0.80, 0.44}, -- Earth Shield
             [383648]	= {0.91, 0.80, 0.44}, -- Earth Shield (Elemental Orbit)
+            [207400]	= {0.59, 0.23, 0.70}, -- Ancestral Vigor
+            [382024]	= {0.87, 0.98, 0.76}, -- Earthliving Weapon
+            [444490]	= {0.67, 1.00, 0.62}, -- Hydrobubble
         },
         MONK = {
             -- Mistweaver

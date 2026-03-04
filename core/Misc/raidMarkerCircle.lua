@@ -2,7 +2,7 @@ local _, GW = ...
 
 local ButtonIsDown
 local ANG_RAD = rad(360) / 7
-local raidMarker = CreateFrame("Frame")
+local raidMarker
 
 local RaidMarkerButtonMixin = {}
 local RaidMarkerFrameMixin = {}
@@ -56,35 +56,64 @@ end
 
 function GW_RaidMark_HotkeyPressed(keystate)
     ButtonIsDown = (keystate == "down") and raidMarker:RaidMarkCanMark()
-    if ButtonIsDown and raidMarker then
+
+    if not raidMarker then return end
+
+    if ButtonIsDown then
         raidMarker:RaidMarkShowIcons()
-    elseif raidMarker then
+    else
         if GW.Retail and InCombatLockdown() then return end
         raidMarker:Hide()
     end
 end
 
-function RaidMarkerFrameMixin:OnEvent()
-    if ButtonIsDown and self then
-        self:RaidMarkShowIcons()
+function RaidMarkerFrameMixin:OnEvent(event, cvar, keydown)
+    if event == "PLAYER_TARGET_CHANGED" then
+        if ButtonIsDown then
+            self:RaidMarkShowIcons()
+        end
+    elseif event == "CVAR_UPDATE" and cvar == "ActionButtonUseKeyDown" then
+        self:RaidMarkUpdateKeyDown(keydown == "1")
+    end
+end
+
+function RaidMarkerFrameMixin:RaidMarkUpdateKeyDown(keydown)
+    if not self or not self.buttons then return end
+
+    local useAttribute = GW.Retail or GW.TBC
+    if useAttribute and InCombatLockdown() then
+        GW.CombatQueue_Queue("Update Raid Marker CVAR", self.RaidMarkUpdateKeyDown, {keydown})
+        return
+    end
+    for _, button in next, self.buttons do
+        if useAttribute then
+            button:SetAttribute("useOnKeyDown", keydown)
+        else
+            button:RegisterForClicks(keydown and "AnyDown" or "AnyUp")
+        end
     end
 end
 
 local function LoadRaidMarkerCircle()
     BINDING_NAME_RAID_MARKER = RAID_TARGET_ICON
 
+    raidMarker = CreateFrame("Frame", nil, UIParent)
     Mixin(raidMarker, RaidMarkerFrameMixin)
     raidMarker:EnableMouse(true)
     raidMarker:SetFrameStrata("DIALOG")
     raidMarker:SetSize(100, 100)
     raidMarker:RegisterEvent("PLAYER_TARGET_CHANGED")
+    raidMarker:RegisterEvent("CVAR_UPDATE")
     raidMarker:SetScript("OnEvent", raidMarker.OnEvent)
+    raidMarker.buttons = {}
 
+    local keydown = GetCVarBool("ActionButtonUseKeyDown")
     for i = 1, 8 do
         local tm = format("/tm %d", i)
         local name = "RaidMarkIconButton" .. i
         local button = CreateFrame("Button", name, raidMarker, "SecureActionButtonTemplate")
         Mixin(button, RaidMarkerButtonMixin)
+        tinsert(raidMarker.buttons, button)
 
         button:SetScript("OnEnter", button.OnEnter)
         button:SetScript("OnLeave", button.OnLeave)
@@ -92,10 +121,11 @@ local function LoadRaidMarkerCircle()
         button:SetAttribute("macrotext", tm)
         if GW.Retail or GW.TBC then
             button:SetScript("OnMouseUp", button.Clicked)
+            button:SetAttribute("useOnKeyDown", keydown)
             button:RegisterForClicks("AnyDown", "AnyUp")
         else
             button:SetScript("OnMouseDown", button.Clicked)
-            button:RegisterForClicks("AnyDown")
+            button:RegisterForClicks(keydown and "AnyDown" or "AnyUp")
         end
         button:SetSize(40, 40)
         button:SetID(i)
