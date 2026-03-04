@@ -1,6 +1,7 @@
 10.4.0
 NEW
     - Add aura indicator back to retail, only for whitelisted spells
+    - Damage Meter skin (retail)
 
 CHANGES
     - Tooltips updates

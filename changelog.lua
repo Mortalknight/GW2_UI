@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("10.4.0", {
     {GW.Enum.ChangelogType.feature, [=[Add aura indicator back to retail, only for whitelisted spells]=]},
+    {GW.Enum.ChangelogType.feature, [=[Damage Meter skin (retail)]=]},
     {GW.Enum.ChangelogType.change, [=[Tooltips updates]=]},
     {GW.Enum.ChangelogType.bug, [=[Class color issue on grids]=]},
 })
