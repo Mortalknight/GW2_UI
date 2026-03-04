@@ -1,3 +1,7 @@
+10.4.1
+FIXES
+    - Loading issue on none retail clients
+
 10.4.0
 NEW
     - Add aura indicator back to retail, only for whitelisted spells

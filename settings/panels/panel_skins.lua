@@ -56,7 +56,7 @@ local function LoadSkinsPanel(sWindow)
     p:AddOption(TALENTS, nil, {getterSetter = "PLAYER_SPELLS_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
     p:AddOption(AUCTIONS, nil, {getterSetter = "AuctionHouseSkinEnabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
     p:AddOption(L["Major Factions"], nil, {getterSetter = "MajorFactionSkinEnabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
-    p:AddOption(GW.NewSign .. DAMAGE_METER_LABEL, nil, {getterSetter = "DamageMeterSkinEnabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
+    p:AddOption(GW.NewSign .. (DAMAGE_METER_LABEL or ""), nil, {getterSetter = "DamageMeterSkinEnabled", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
 
     p:AddOption("|cffaaaaaa[AddOn]|r World Quest Tracker", nil, {getterSetter = "SKIN_WQT_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["QUESTTRACKER_ENABLED"] = true}, incompatibleAddons = "Objectives", hidden = not GW.Retail})
     p:AddOption("|cffaaaaaa[AddOn]|r Immersion", nil, {getterSetter = "IMMERSIONADDON_SKIN_ENABLED", callback = function() GW.ShowRlPopup = true end, hidden = not GW.Retail})
