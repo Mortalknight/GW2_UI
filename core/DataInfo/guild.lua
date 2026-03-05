@@ -191,9 +191,9 @@ local function Guild_OnEnter(self)
     end
 
     local guildMotD = not InCombatLockdown() and C_GuildInfo_GetMOTD()
-    if guildMotD ~= "" then
+    if guildMotD and strlen(guildMotD) > 0 then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(format(guildMotDString, GUILD_MOTD, C_GuildInfo_GetMOTD()), tthead.r, tthead.g, tthead.b, 1)
+        GameTooltip:AddLine(format(guildMotDString, GUILD_MOTD, guildMotD), tthead.r, tthead.g, tthead.b, 1)
     end
 
     local guildFactionData = C_Reputation.GetGuildFactionData()

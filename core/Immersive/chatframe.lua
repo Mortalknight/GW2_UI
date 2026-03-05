@@ -1071,7 +1071,7 @@ local function DelayGuildMOTD()
     delayFrame:SetScript("OnUpdate", function(self, elapsed)
         delay = delay + elapsed
         if delay < 5 then return end
-        local msg = InCombatLockdown() and C_GuildInfo_GetMOTD()
+        local msg = not InCombatLockdown() and C_GuildInfo_GetMOTD()
         if msg and strlen(msg) > 0 then
             for _, frame in ipairs(CHAT_FRAMES) do
                 chat = _G[frame]
