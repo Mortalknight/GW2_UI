@@ -1903,17 +1903,17 @@ local function setDruid(f)
             if form == 1 then
                 -- show combo points and little mana bar in cat form
                 barType = "combo|little_mana"
-            elseif form == 5 then
+            --elseif form == 5 then
                 -- show mana bar in bear form
-                barType = "mana"
+                --barType = "mana"
             end
         elseif GW.myspec == 3 then -- guardian
             if form == 1 then
                 -- show combo points in cat form
                 barType = "combo|little_mana"
-            elseif form == 5 then
+            --elseif form == 5 then
                 -- show mana in bear form
-                barType = "mana"
+                --barType = "mana"
             end
         elseif GW.myspec == 4 then -- resto
             if form == 1 then
