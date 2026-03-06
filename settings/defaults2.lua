@@ -196,6 +196,7 @@ GW.globalDefault = {
         GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE= 14,
         GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER= 0.7,
         GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER= 1.5,
+        scrollingDamageTextShowIcons = false,
 
         PET_FLOATING_COMBAT_TEXT= false,
         PET_AURAS_UNDER= false,

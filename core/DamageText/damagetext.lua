@@ -414,9 +414,25 @@ local function formatDamageValue(amount)
 end
 
 
-local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic, school)
+local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic, school, spellId)
     local f = getFontElement(self)
-    f.string:SetText(missType and _G[missType] or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
+    local text = missType and _G[missType]
+        or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked))
+        or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed))
+        or formatDamageValue(amount)
+
+    setElementData(f, critical, source, missType, blocked, absorbed, periodic, school)
+
+    local iconString = ""
+    if GW.settings.scrollingDamageTextShowIcons and spellId then
+        local spellInfo = C_Spell.GetSpellInfo(spellId)
+        if spellInfo and spellInfo.iconID then
+            local _, fontSize = f.string:GetFont()
+            local iconSize = math.floor((fontSize or 12) + 2)
+            iconString = string.format("|T%d:%d:%d:0:0|t ", spellInfo.iconID, iconSize, iconSize)
+        end
+    end
+    f.string:SetText(iconString .. tostring(text or ""))
 
     if GW.settings.GW_COMBAT_TEXT_STYLE == formats.Default or GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic then
         local nameplate
@@ -438,7 +454,6 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         f.anchorFrame = nameplate
         f.dynamicScale = getAvrageHitModifier(amount, critical)
         f.dynamicScaleAdd = getAvrageHitModifier(amount, critical, true)
-        setElementData(f, critical, source, missType, blocked, absorbed, periodic, school)
         namePlatesOffsets[nameplate] = (namePlatesOffsets[nameplate] or -1) + 1
         if namePlatesOffsets[nameplate] > 2 then namePlatesOffsets[nameplate] = 0 end
 
@@ -460,7 +475,6 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
     elseif GW.settings.GW_COMBAT_TEXT_STYLE == formats.Stacking then
         f.anchorFrame = stackingContainer
         stackingContainer.activeFrames[#stackingContainer.activeFrames + 1] = f
-        setElementData(f, critical, source, missType, blocked, absorbed, periodic, school)
         if critical then
             CRITICAL_ANIMATION(f)
         else
@@ -486,38 +500,41 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
 
     -- Damage events
     if isDamage then
-        local spellName, amount, blocked, absorbed, critical, localElement
+        local spellId, spellName, amount, blocked, absorbed, critical, localElement
         local periodic = event:find("PERIODIC", 1, true)
         if event:find("SWING", 1, true) then
+            spellId = 6603
             spellName, amount, _, _, _, blocked, absorbed, critical = "melee", ...
         elseif event:find("ENVIRONMENTAL", 1, true) then
             spellName, amount, _, _, _, blocked, absorbed, critical = ...
         else
-            _, spellName, localElement, amount, _, _, _, blocked, absorbed, critical = ...
+            spellId, spellName, localElement, amount, _, _, _, blocked, absorbed, critical = ...
         end
-        displayDamageText(self, destGUID, amount, critical, isGuardianOrPet and "pet" or spellName, nil, blocked, absorbed, periodic, localElement)
+        displayDamageText(self, destGUID, amount, critical, isGuardianOrPet and "pet" or spellName, nil, blocked, absorbed, periodic, localElement, spellId)
         return
     end
 
     -- Miss events
     if isMiss then
-        local missType
+        local missType, spellId
         if event:find("RANGE", 1, true) or event:find("SPELL", 1, true) then
+            spellId = 6603
             missType = select(4, ...)
         elseif event:find("SWING", 1, true) then
             missType = ...
         elseif not isGuardianOrPet then
-            _, _, _, missType = ...
+            spellId, _, _, missType = ...
         end
-        displayDamageText(self, destGUID, nil, nil, isGuardianOrPet and "pet" or nil, missType)
+        displayDamageText(self, destGUID, nil, nil, isGuardianOrPet and "pet" or nil, missType, nil, nil, nil, nil, spellId)
         return
     end
 
     -- Heal events (only relevant styles)
     if isHeal and ((GW.settings.GW_COMBAT_TEXT_STYLE == formats.Stacking) or (GW.settings.GW_COMBAT_TEXT_STYLE == formats.Classic and GW.settings.GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR == "Center")) and GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
+        local spellId = ...
         local amount, overhealing, absorbed, critical = select(4, ...)
         if amount and amount > (overhealing or 0) then
-            displayDamageText(self, destGUID, (amount - overhealing), critical, "heal", nil, nil, (absorbed and absorbed > 0) and absorbed or nil)
+            displayDamageText(self, destGUID, (amount - overhealing), critical, "heal", nil, nil, (absorbed and absorbed > 0) and absorbed or nil, nil, nil, spellId)
         end
     end
 end
