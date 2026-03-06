@@ -428,8 +428,10 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         local spellInfo = C_Spell.GetSpellInfo(spellId)
         if spellInfo and spellInfo.iconID then
             local _, fontSize = f.string:GetFont()
-            local iconSize = math.floor((fontSize or 12) + 2)
-            iconString = string.format("|T%d:%d:%d:0:0|t ", spellInfo.iconID, iconSize, iconSize)
+            local baseSize = (fontSize or 12)
+            local iconScale = f.pet and 0.3 or 0.4
+            local iconSize = math.floor(baseSize * iconScale)
+            iconString = string.format("|T%d:%d:%d:0:0:64:64:4:60:4:60|t ", spellInfo.iconID, iconSize, iconSize)
         end
     end
     f.string:SetText(iconString .. tostring(text or ""))
