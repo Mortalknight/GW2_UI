@@ -216,6 +216,8 @@ local function LoadHudPanel(sWindow)
     fct:AddOption(L["Show numbers with commas"], nil, {getterSetter = "GW_COMBAT_TEXT_COMMA_FORMAT", callback = GW.UpdateDameTextSettings, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}, groupHeaderName = COMBAT_TEXT_LABEL, incompatibleAddons = "FloatingCombatText"})
     fct:AddOption(L["Show healing numbers"], nil, {getterSetter = "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", callback = function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, groupHeaderName = COMBAT_TEXT_LABEL, incompatibleAddons = "FloatingCombatText"})
     fct:AddOption(L["Shorten values"], nil, {getterSetter = "GW_COMBAT_TEXT_SHORT_VALUES", callback = GW.UpdateDameTextSettings, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}, groupHeaderName = COMBAT_TEXT_LABEL, incompatibleAddons = "FloatingCombatText"})
+    fct:AddOption(L["Show spell icons"], nil, {getterSetter = "scrollingDamageTextShowIcons", dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}, groupHeaderName = COMBAT_TEXT_LABEL, incompatibleAddons = "FloatingCombatText"})
+
     fct:AddOptionDropdown(L["GW2 floating combat text style"], nil, { getterSetter = "GW_COMBAT_TEXT_STYLE", callback = function()
             local enabled = GW.settings.GW_COMBAT_TEXT_MODE == "GW2" or GW.settings.GW_COMBAT_TEXT_MODE == "BLIZZARD" or false
             GW.UpdateDameTextSettings()
