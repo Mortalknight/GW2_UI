@@ -57,32 +57,32 @@ local env = {
 
 local colorPlatte = {
     blue = {
-        { r = 0.32941, g = 0.52157, b = 0.93333, a = 1 },
-        { r = 0.25882, g = 0.84314, b = 0.86667, a = 1 }
+        startColor = CreateColor(0.32941, 0.52157, 0.93333, 1),
+        endColor = CreateColor(0.25882, 0.84314,0.86667, 1)
     },
     red = {
-        { r = 0.92549, g = 0.00000, b = 0.54902, a = 1 },
-        { r = 0.98824, g = 0.40392, b = 0.40392, a = 1 }
+        startColor = CreateColor(0.92549, 0.00000, 0.54902, 1),
+        endColor = CreateColor(0.98824, 0.40392, 0.40392, 1)
     },
     green = {
-        {r = 0.40392, g = 0.92549, b = 0.54902, a = 1},
-        {r = 0.00000, g = 0.98824, b = 0.40392, a = 1}
+        startColor = CreateColor(0.40392, 0.92549, 0.54902, 1),
+        endColor = CreateColor(0.00000, 0.98824, 0.40392, 1)
     },
     purple = {
-        {r = 0.27843, g = 0.46275, b = 0.90196, a = 1},
-        {r = 0.55686, g = 0.32941, b = 0.91373, a = 1}
+        startColor = CreateColor(0.27843, 0.46275, 0.90196, 1),
+        endColor = CreateColor(0.55686, 0.32941, 0.91373, 1)
     },
     bronze = {
-        {r = 0.83000, g = 0.42000, b = 0.10000, a = 1},
-        {r = 0.56500, g = 0.40800, b = 0.16900, a = 1}
+        startColor = CreateColor(0.83000, 0.42000, 0.10000, 1),
+        endColor = CreateColor(0.56500, 0.40800, 0.16900, 1)
     },
     running = {
-        { r = 0 / 255, g = 148 / 255, 135 / 255, a = 1 },
-        { r = 0 / 255, g = 211 / 255, 144 / 255, a = 1 },
+        startColor = CreateColor(0 / 255, 148 / 255, 135 / 255, 1),
+        endColor = CreateColor(0 / 255, 211 / 255, 144 / 255, 1),
     },
     gray = {
-        { r = 159 / 255, g = 159 / 255, 159 / 255, a = 1 },
-        { r = 65 / 255, g = 65 / 255, 65 / 255, a = 1 }
+        startColor = CreateColor(159 / 255, 159 / 255, 159 / 255, 1),
+        endColor = CreateColor(65 / 255, 65 / 255, 65 / 255, 1)
     }
 }
 
@@ -96,10 +96,6 @@ local function secondToTime(second)
     else
         return format("%02d:%02d:%02d", hour, min, sec)
     end
-end
-
-local function CreateColorFromTable(colorTable)
-    return CreateColor(colorTable.r, colorTable.g, colorTable.b, colorTable.a)
 end
 
 local function StringWithHex(text, color)
@@ -991,7 +987,7 @@ local functionFactory = {
                     self.statusBar:SetValue(self.timeOver)
                     local tex = self.statusBar:GetStatusBarTexture()
                     local platte = self.args.runningBarColor or colorPlatte.running
-                    tex:SetGradient("HORIZONTAL", CreateColorFromTable(platte[1]), CreateColorFromTable(platte[2]))
+                    tex:SetGradient("HORIZONTAL", platte.startColor, platte.endColor)
                     if self.args.runningTextUpdater then
                         self.runningTip:SetText(self.args:runningTextUpdater())
                     end
@@ -1004,7 +1000,7 @@ local functionFactory = {
                     self.statusBar:SetValue(self.timeLeft)
 
                     local palette = self.args.barColor or colorPlatte.gray
-                    self.statusBar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColorFromTable(palette[1]), CreateColorFromTable(palette[2]))
+                    self.statusBar:GetStatusBarTexture():SetGradient("HORIZONTAL", palette.startColor, palette.endColor)
 
                     GW.StopFlash(self.runningTip)
                     self.runningTip:Hide()
