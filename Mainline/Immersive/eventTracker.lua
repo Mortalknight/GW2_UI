@@ -236,7 +236,7 @@ local eventData = {
 						if status == "inProgress" then
 							rightText = format("%s - %s", questName, StringByTemplate(IN_PROGRESS, "info"))
 						elseif status == "completed" then
-							rightText = format("%s - %s", questName, StringByTemplate(L["Completed"], "success"))
+							rightText = format("%s - %s", questName, StringByTemplate(CRITERIA_COMPLETED, "success"))
 						end
 					else
 						rightText = StringByTemplate(L["Not Accepted"], "warning")
@@ -852,7 +852,7 @@ local functionFactory = {
 
                 GameTooltip:Show()
             end,
-            onLeave = function(self)
+            onLeave = function()
                 GameTooltip:Hide()
             end,
         },
@@ -1086,7 +1086,7 @@ local functionFactory = {
                             local color = isCompleted and "success" or "danger"
                             local label = type(data.label) == "function" and data:label() or data.label
                             if type(label) == "string" then
-                                GameTooltip:AddDoubleLine(label, StringByTemplate(isCompleted and L["Completed"] or L["Not Completed"], color), 1, 1, 1)
+                                GameTooltip:AddDoubleLine(label, StringByTemplate(isCompleted and CRITERIA_COMPLETED or CRITERIA_NOT_COMPLETED, color), 1, 1, 1)
                             end
                         end
                     end
