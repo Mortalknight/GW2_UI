@@ -999,7 +999,7 @@ local functionFactory = {
                     self.statusBar:SetMinMaxValues(0, self.args.interval)
                     self.statusBar:SetValue(self.timeLeft)
 
-                    local palette = self.args.barColor or colorPlatte.gray
+                    local palette = self.args.barColor or colorPlatte.blue
                     self.statusBar:GetStatusBarTexture():SetGradient("HORIZONTAL", palette.startColor, palette.endColor)
 
                     GW.StopFlash(self.runningTip)
