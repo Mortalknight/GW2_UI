@@ -41,17 +41,17 @@ local infoColors = {
 
 local env = {
     ProfessionsWeeklyMN = {
-		[4620669] = 93690, -- 炼金术
-		[4620670] = 93691, -- 锻造
-		[4620672] = 93698, -- 附魔
-		[4620673] = 93692, -- 工程学
-		[4620675] = { 93700, 93702, 93703, 93704 }, -- 草药学
-		[4620676] = 93693, -- 铭文
-		[4620677] = 93694, -- 珠宝
-		[4620678] = 93695, -- 制皮
-		[4620679] = { 93705, 93706, 93708, 93709 }, -- 采矿
-		[4620680] = { 93710, 93711, 93714 }, -- 剥皮
-		[4620681] = 93696, -- 裁缝
+        [4620669] = 93690, -- 炼金术
+        [4620670] = 93691, -- 锻造
+        [4620672] = 93698, -- 附魔
+        [4620673] = 93692, -- 工程学
+        [4620675] = { 93700, 93702, 93703, 93704 }, -- 草药学
+        [4620676] = 93693, -- 铭文
+        [4620677] = 93694, -- 珠宝
+        [4620678] = 93695, -- 制皮
+        [4620679] = { 93705, 93706, 93708, 93709 }, -- 采矿
+        [4620680] = { 93710, 93711, 93714 }, -- 剥皮
+        [4620681] = 93696, -- 裁缝
     },
 }
 
@@ -126,158 +126,158 @@ local function GetWorldMapIDSetter(idOrFunc)
 end
 
 local function WeeklyName(iconID, name, position)
-	name = GW.GetIconString(iconID, 14, 16, true) .. " " .. name
-	if type(position) == "number" then
-		position = C_Map.GetMapInfo(position).name
-	end
+    name = GW.GetIconString(iconID, 14, 16, true) .. " " .. name
+    if type(position) == "number" then
+        position = C_Map.GetMapInfo(position).name
+    end
 
-	if position then
-		name = format("%s (%s)", name, StringByTemplate(position, "info"))
-	end
+    if position then
+        name = format("%s (%s)", name, StringByTemplate(position, "info"))
+    end
 
-	return name
+    return name
 end
 
 local eventData = {
     -- Midnight
     ProfessionsWeeklyMN = {
-		dbKey = "professionsWeeklyMN",
-		args = {
-			icon = 1392955,
-			type = "weekly",
-			questProgress = function()
-				local prof1, prof2 = GetProfessions()
-				local quests = {}
+        dbKey = "professionsWeeklyMN",
+        args = {
+            icon = 1392955,
+            type = "weekly",
+            questProgress = function()
+                local prof1, prof2 = GetProfessions()
+                local quests = {}
 
-				for _, prof in pairs({ prof1, prof2 }) do
-					if prof then
-						local name, iconID = GetProfessionInfo(prof)
-						local questData = env.ProfessionsWeeklyMN[iconID]
-						if questData then
-							tinsert(quests, {
-								questID = questData,
-								label = GW.GetIconString(iconID, 14, 14) .. " " .. name,
-							})
-						end
-					end
-				end
+                for _, prof in pairs({ prof1, prof2 }) do
+                    if prof then
+                        local name, iconID = GetProfessionInfo(prof)
+                        local questData = env.ProfessionsWeeklyMN[iconID]
+                        if questData then
+                            tinsert(quests, {
+                                questID = questData,
+                                label = GW.GetIconString(iconID, 14, 14) .. " " .. name,
+                            })
+                        end
+                    end
+                end
 
-				return quests
-			end,
-			hasWeeklyReward = false,
-			eventName = L["Professions Weekly"],
-			location = C_Map.GetMapInfo(2393).name,
-			label = L["Professions Weekly"],
-			onClick = GetWorldMapIDSetter(2393),
-			onClickHelpText = L["Click to show location"],
-		},
-	},
+                return quests
+            end,
+            hasWeeklyReward = false,
+            eventName = L["Professions Weekly"],
+            location = C_Map.GetMapInfo(2393).name,
+            label = L["Professions Weekly"],
+            onClick = GetWorldMapIDSetter(2393),
+            onClickHelpText = L["Click to show location"],
+        },
+    },
     WeeklyMN = {
-		dbKey = "weeklyMN",
-		args = {
-			icon = 236681,
-			type = "weekly",
-			questIDs = {
-				[WeeklyName(7578704, L["Liadrin 4 > 1"], 2393)] = {
-					-- https://www.wowhead.com/npc=256203/lady-liadrin
-					93767, -- 至暗之夜：奥术秘社
-					93889, -- 至暗之夜：萨瑟利尔的聚会
-					93909, -- 至暗之夜：地下堡
-					93911, -- 至暗之夜：地下城
-				},
-				[WeeklyName(5554512, L["Dungeon"], 2393)] = {
-					-- https://www.wowhead.com/npc=256210/halduron-brightwing
-					93753, -- 魔导师平台
-				},
+        dbKey = "weeklyMN",
+        args = {
+            icon = 236681,
+            type = "weekly",
+            questIDs = {
+                [WeeklyName(7578704, L["Liadrin 4 > 1"], 2393)] = {
+                    -- https://www.wowhead.com/npc=256203/lady-liadrin
+                    93767, -- 至暗之夜：奥术秘社
+                    93889, -- 至暗之夜：萨瑟利尔的聚会
+                    93909, -- 至暗之夜：地下堡
+                    93911, -- 至暗之夜：地下城
+                },
+                [WeeklyName(5554512, L["Dungeon"], 2393)] = {
+                    -- https://www.wowhead.com/npc=256210/halduron-brightwing
+                    93753, -- 魔导师平台
+                },
                 [WeeklyName(2066011, L["Soiree"], 2395)] = {
-					-- https://www.wowhead.com/item=268489/surplus-bag-of-party-favors
-					90573, -- 加固符文石：魔导师
-					90574, -- 加固符文石：血骑士
-					90575, -- 加固符文石：远行者
-					90576, -- 加固符文石：径巷之影
-				},
+                    -- https://www.wowhead.com/item=268489/surplus-bag-of-party-favors
+                    90573, -- 加固符文石：魔导师
+                    90574, -- 加固符文石：血骑士
+                    90575, -- 加固符文石：远行者
+                    90576, -- 加固符文石：径巷之影
+                },
                 [WeeklyName(7385004, L["Legend"], 2413)] = {
-					-- https://www.wowhead.com/npc=238170/zurashar-kassameh#ends
-					88993, -- 威南的结界
-					88994, -- 回响大锅
-					88995, -- 艾林哈籁之花
-					88996, -- 回响寂灭之焰
-					88997, -- 鲁斯苏拉之臂
-				},
-				[WeeklyName(7636650, L["Abundance"], 2437)] = {
-					-- https://www.wowhead.com/quest=89507/abundant-offerings
-					89507, -- 丰饶贡品
-				},
-			},
-			questProgress = function(args)
-				local questIDs = type(args.questIDs) == "function" and args:questIDs() or args.questIDs
-				local progress = {}
+                    -- https://www.wowhead.com/npc=238170/zurashar-kassameh#ends
+                    88993, -- 威南的结界
+                    88994, -- 回响大锅
+                    88995, -- 艾林哈籁之花
+                    88996, -- 回响寂灭之焰
+                    88997, -- 鲁斯苏拉之臂
+                },
+                [WeeklyName(7636650, L["Abundance"], 2437)] = {
+                    -- https://www.wowhead.com/quest=89507/abundant-offerings
+                    89507, -- 丰饶贡品
+                },
+            },
+            questProgress = function(args)
+                local questIDs = type(args.questIDs) == "function" and args:questIDs() or args.questIDs
+                local progress = {}
 
-				for storylineName, storylineQuests in pairs(questIDs) do
-					local weeklyQuestID, status
-					for _, questID in pairs(storylineQuests) do
-						if C_QuestLog.IsQuestFlaggedCompleted(questID) then
-							weeklyQuestID = questID
-							status = "completed"
-							break
-						end
+                for storylineName, storylineQuests in pairs(questIDs) do
+                    local weeklyQuestID, status
+                    for _, questID in pairs(storylineQuests) do
+                        if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+                            weeklyQuestID = questID
+                            status = "completed"
+                            break
+                        end
 
-						if C_QuestLog.IsOnQuest(questID) then
-							weeklyQuestID = questID
-							status = "inProgress"
-							break
-						end
-					end
+                        if C_QuestLog.IsOnQuest(questID) then
+                            weeklyQuestID = questID
+                            status = "inProgress"
+                            break
+                        end
+                    end
 
-					local rightText = ""
-					local questName = weeklyQuestID and C_QuestLog.GetTitleForQuestID(weeklyQuestID)
+                    local rightText = ""
+                    local questName = weeklyQuestID and C_QuestLog.GetTitleForQuestID(weeklyQuestID)
 
-					if questName then
-						if status == "inProgress" then
-							rightText = format("%s - %s", questName, StringByTemplate(IN_PROGRESS, "info"))
-						elseif status == "completed" then
-							rightText = format("%s - %s", questName, StringByTemplate(CRITERIA_COMPLETED, "success"))
-						end
-					else
-						rightText = StringByTemplate(L["Not Accepted"], "warning")
-					end
+                    if questName then
+                        if status == "inProgress" then
+                            rightText = format("%s - %s", questName, StringByTemplate(IN_PROGRESS, "info"))
+                        elseif status == "completed" then
+                            rightText = format("%s - %s", questName, StringByTemplate(CRITERIA_COMPLETED, "success"))
+                        end
+                    else
+                        rightText = StringByTemplate(L["Not Accepted"], "warning")
+                    end
 
-					tinsert(progress, { label = storylineName, rightText = rightText })
-				end
+                    tinsert(progress, { label = storylineName, rightText = rightText })
+                end
 
-				return progress
-			end,
-			eventName = format("%s (%s)", L["Weekly Quest"], L["[ABBR] Midnight"]),
-			location = C_Map.GetMapInfo(2537).name,
-			label = format("%s (%s)", L["Weekly Quest"], L["[ABBR] Midnight"]),
-			onClick = GetWorldMapIDSetter(2537),
-			onClickHelpText = L["Click to show location"],
-		},
-	},
+                return progress
+            end,
+            eventName = format("%s (%s)", L["Weekly Quest"], L["[ABBR] Midnight"]),
+            location = C_Map.GetMapInfo(2537).name,
+            label = format("%s (%s)", L["Weekly Quest"], L["[ABBR] Midnight"]),
+            onClick = GetWorldMapIDSetter(2537),
+            onClickHelpText = L["Click to show location"],
+        },
+    },
     StormarionAssault = {
         dbKey = "stormarionAssault",
         args = {
             icon = 7431083,
-			type = "loopTimer",
-			questIDs = { 90962 },
-			hasWeeklyReward = true,
-			duration = 15 * 60,
-			interval = 30 * 60,
-			eventName = L["Stormarion Assault"],
-			label = L["Stormarion Assault"],
-			location = C_Map.GetMapInfo(2405).name,
-			flash = true,
-			runningBarColor = colorPlatte.green,
-			runningText = IN_PROGRESS,
-			filter = function(args)
-				if args.stopAlertIfPlayerNotEnteredMidnight and not C_QuestLog.IsQuestFlaggedCompleted(91281) then
-					return false
-				end
-				return true
-			end,
-			startTimestamp = 1772728200,
-			onClick = GetWorldMapIDSetter(2405),
-			onClickHelpText = L["Click to show location"],
+            type = "loopTimer",
+            questIDs = { 90962 },
+            hasWeeklyReward = true,
+            duration = 15 * 60,
+            interval = 30 * 60,
+            eventName = L["Stormarion Assault"],
+            label = L["Stormarion Assault"],
+            location = C_Map.GetMapInfo(2405).name,
+            flash = true,
+            runningBarColor = colorPlatte.green,
+            runningText = IN_PROGRESS,
+            filter = function(args)
+                if args.stopAlertIfPlayerNotEnteredMidnight and not C_QuestLog.IsQuestFlaggedCompleted(91281) then
+                    return false
+                end
+                return true
+            end,
+            startTimestamp = 1772728200,
+            onClick = GetWorldMapIDSetter(2405),
+            onClickHelpText = L["Click to show location"],
         },
     },
     -- TWW
@@ -288,42 +288,42 @@ local eventData = {
             type = "weekly",
             questIDs = {
                 82449,
-				82452,
-				82453,
-				82482,
-				82483,
-				82485,
-				82486,
-				82487,
-				82488,
-				82489,
-				82490,
-				82491,
-				82492,
-				82493,
-				82494,
-				82495,
-				82496,
-				82497,
-				82498,
-				82499,
-				82500,
-				82501,
-				82502,
-				82503,
-				82504,
-				82505,
-				82506,
-				82507,
-				82508,
-				82509,
-				82510,
-				82511,
-				82512,
-				82516,
-				82659,
-				82678,
-				82708,
+                82452,
+                82453,
+                82482,
+                82483,
+                82485,
+                82486,
+                82487,
+                82488,
+                82489,
+                82490,
+                82491,
+                82492,
+                82493,
+                82494,
+                82495,
+                82496,
+                82497,
+                82498,
+                82499,
+                82500,
+                82501,
+                82502,
+                82503,
+                82504,
+                82505,
+                82506,
+                82507,
+                82508,
+                82509,
+                82510,
+                82511,
+                82512,
+                82516,
+                82659,
+                82678,
+                82708,
             },
             hasWeeklyReward = true,
             eventName = L["Khaz Algar Emissary"],
@@ -689,8 +689,10 @@ local functionFactory = {
 
             self.name:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
             self.name:ClearAllPoints()
-            self.name:SetPoint("TOPLEFT", self, "TOPLEFT", 30, -4)
+            self.name:SetPoint("TOPLEFT", self, "TOPLEFT", 30, -2)
+            self.name:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
             self.name:SetText(self.args.label)
+            self.name:SetJustifyH("LEFT")
 
             self.completed:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
             self.completed:ClearAllPoints()
@@ -702,81 +704,81 @@ local functionFactory = {
             interval = 2,
             dateUpdater = function(self)
                 if self.args.questProgress and not self.args.questIDs then
-					local questProgress = self.args.questProgress
-					if type(questProgress) == "function" then
-						questProgress = questProgress(self.args)
-					end
+                    local questProgress = self.args.questProgress
+                    if type(questProgress) == "function" then
+                        questProgress = questProgress(self.args)
+                    end
 
-					if questProgress then
-						local allCompleted = true
-						for _, data in ipairs(questProgress) do
-							local isCompleted = false
-							if data.questID then
-								if type(data.questID) == "table" then
-									for _, qid in ipairs(data.questID) do
-										if C_QuestLog.IsQuestFlaggedCompleted(qid) then
-											isCompleted = true
-											break
-										end
-									end
-								else
-									isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
-								end
-							end
-							if not isCompleted then
-								allCompleted = false
-								break
-							end
-						end
-						self.isCompleted = allCompleted
-					end
-					return
-				end
+                    if questProgress then
+                        local allCompleted = true
+                        for _, data in ipairs(questProgress) do
+                            local isCompleted = false
+                            if data.questID then
+                                if type(data.questID) == "table" then
+                                    for _, qid in ipairs(data.questID) do
+                                        if C_QuestLog.IsQuestFlaggedCompleted(qid) then
+                                            isCompleted = true
+                                            break
+                                        end
+                                    end
+                                else
+                                    isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
+                                end
+                            end
+                            if not isCompleted then
+                                allCompleted = false
+                                break
+                            end
+                        end
+                        self.isCompleted = allCompleted
+                    end
+                    return
+                end
 
                 if not self.args.questIDs then
-					return
-				end
+                    return
+                end
 
                 local questIDs = type(self.args.questIDs) == "function" and self.args:questIDs() or self.args.questIDs
                 if not questIDs or type(questIDs) ~= "table" then
-					return
-				end
+                    return
+                end
 
-				if type(questIDs) == "table" and type(next(questIDs)) ~= "number" then
-					local completedStorylines, totalStorylines = 0, 0
+                if type(questIDs) == "table" and type(next(questIDs)) ~= "number" then
+                    local completedStorylines, totalStorylines = 0, 0
 
-					for _, storylineQuests in pairs(questIDs) do
-						totalStorylines = totalStorylines + 1
-						local storylineCompleted = false
+                    for _, storylineQuests in pairs(questIDs) do
+                        totalStorylines = totalStorylines + 1
+                        local storylineCompleted = false
 
-						for _, questID in pairs(storylineQuests) do
-							if C_QuestLog.IsQuestFlaggedCompleted(questID) then
-								storylineCompleted = true
-								break
-							end
-						end
+                        for _, questID in pairs(storylineQuests) do
+                            if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+                                storylineCompleted = true
+                                break
+                            end
+                        end
 
-						if storylineCompleted then
-							completedStorylines = completedStorylines + 1
-						end
-					end
+                        if storylineCompleted then
+                            completedStorylines = completedStorylines + 1
+                        end
+                    end
 
-					self.isCompleted = (completedStorylines == totalStorylines)
-					return
-				end
+                    self.isCompleted = (completedStorylines == totalStorylines)
+                    return
+                end
 
-				local completed = 0
-				if self.args.checkAllCompleted then
-					completed = 1 - #questIDs
-				end
+                local completed = 0
+                if self.args.checkAllCompleted then
+                    completed = 1 - #questIDs
+                end
 
-				for _, questID in pairs(questIDs) do
-					if C_QuestLog.IsQuestFlaggedCompleted(questID) then
-						completed = completed + 1
-					end
-				end
+                for _, questID in pairs(questIDs) do
+                    if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+                        completed = completed + 1
+                    end
+                end
 
-				self.isCompleted = (completed > 0)
+                self.isCompleted = (completed > 0)
             end,
 
             uiUpdater = function(self)
@@ -818,17 +820,17 @@ local functionFactory = {
                     for _, data in ipairs(questProgress) do
                         local isCompleted = data.isCompleted
                         if not isCompleted and data.questID then
-							if type(data.questID) == "table" then
-								for _, qid in ipairs(data.questID) do
-									if C_QuestLog.IsQuestFlaggedCompleted(qid) then
-										isCompleted = true
-										break
-									end
-								end
-							else
-								isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
-							end
-						end
+                            if type(data.questID) == "table" then
+                                for _, qid in ipairs(data.questID) do
+                                    if C_QuestLog.IsQuestFlaggedCompleted(qid) then
+                                        isCompleted = true
+                                        break
+                                    end
+                                end
+                            else
+                                isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
+                            end
+                        end
                         local color = isCompleted and "success" or "danger"
                         local label = type(data.label) == "function" and data:label() or data.label
                         if type(label) == "string" then
@@ -1073,16 +1075,16 @@ local functionFactory = {
                     for _, data in ipairs(questProgress) do
                         if data.questID then
                             local isCompleted = false
-							if type(data.questID) == "table" then
-								for _, qid in ipairs(data.questID) do
-									if C_QuestLog.IsQuestFlaggedCompleted(qid) then
-										isCompleted = true
-										break
-									end
-								end
-							else
-								isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
-							end
+                            if type(data.questID) == "table" then
+                                for _, qid in ipairs(data.questID) do
+                                    if C_QuestLog.IsQuestFlaggedCompleted(qid) then
+                                        isCompleted = true
+                                        break
+                                    end
+                                end
+                            else
+                                isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
+                            end
                             local color = isCompleted and "success" or "danger"
                             local label = type(data.label) == "function" and data:label() or data.label
                             if type(label) == "string" then
@@ -1301,8 +1303,7 @@ local function UpdateTrackers()
 end
 GW.UpdateWorldEventTrackers = UpdateTrackers
 
-local function LoadWorldEventTimer()
-
+function GW.LoadWorldEventTimer()
     AddWorldMapFrame()
     UpdateTrackers()
 
@@ -1315,6 +1316,5 @@ local function LoadWorldEventTimer()
     EventRegistry:RegisterCallback("WorldMapMaximized", function() C_Timer.After(0.1, UpdateTrackers) end)
     QuestMapFrame:HookScript("OnShow", UpdateTrackers)
     QuestMapFrame:HookScript("OnHide", UpdateTrackers)
-
 end
-GW.LoadWorldEventTimer = LoadWorldEventTimer
+
