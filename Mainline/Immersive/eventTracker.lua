@@ -1,120 +1,20 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local L = GW.L
 
 --[[
     Credits: fang2hou -> ElvUI_Windtools
 ]]--
-
-local settings = {
-    iskaaranFishingNet = {
-        playerData = {}
-    }
-}
-
 local LeftButtonIcon = "|TInterface\\TUTORIALFRAME\\UI-TUTORIAL-FRAME:13:11:0:-1:512:512:12:66:230:307|t"
-
-local function UpdateSettings()
-    settings.twwProfessions = settings.twwProfessions or {}
-    settings.twwProfessions.enabled = GW.settings.WORLD_EVENTS_TWW_PROFESSIONS_ENABLED
-    settings.twwProfessions.desaturate = GW.settings.WORLD_EVENTS_TWW_PROFESSIONS_DESATURATE
-
-    settings.khazAlgarEmissary = settings.khazAlgarEmissary or {}
-    settings.khazAlgarEmissary.enabled = GW.settings.WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_ENABLED
-    settings.khazAlgarEmissary.desaturate = GW.settings.WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_DESATURATE
-
-    settings.ringingDeeps = settings.ringingDeeps or {}
-    settings.ringingDeeps.enabled = GW.settings.WORLD_EVENTS_RINGING_DEEPS_ENABLED
-    settings.ringingDeeps.desaturate = GW.settings.WORLD_EVENTS_RINGING_DEEPS_DESATURATE
-
-    settings.spreadingTheLight = settings.spreadingTheLight or {}
-    settings.spreadingTheLight.enabled = GW.settings.WORLD_EVENTS_SPREADING_THE_LIGHT_ENABLED
-    settings.spreadingTheLight.desaturate = GW.settings.WORLD_EVENTS_SPREADING_THE_LIGHT_DESATURATE
-
-    settings.underworldOperative = settings.underworldOperative or {}
-    settings.underworldOperative.enabled = GW.settings.WORLD_EVENTS_UNDERWORLD_OPERATIVE_ENABLED
-    settings.underworldOperative.desaturate = GW.settings.WORLD_EVENTS_UNDERWORLD_OPERATIVE_DESATURATE
-
-    settings.theaterTroupe = settings.theaterTroupe or {}
-    settings.theaterTroupe.enabled = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ENABLED
-    settings.theaterTroupe.desaturate = GW.settings.WORLD_EVENTS_THEATER_TROUPE_DESATURATE
-    settings.theaterTroupe.alert = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ALERT
-    settings.theaterTroupe.alertSeconds = GW.settings.WORLD_EVENTS_THEATER_TROUPE_ALERT_SECONDS
-    settings.theaterTroupe.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_THEATER_TROUPE_STOP_ALERT_IF_COMPLETED
-    settings.theaterTroupe.flashTaskbar = GW.settings.WORLD_EVENTS_THEATER_TROUPE_FLASH_TASKBAR
-
-    settings.communityFeast = settings.communityFeast or {}
-    settings.communityFeast.enabled = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ENABLED
-    settings.communityFeast.desaturate = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE
-    settings.communityFeast.alert = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ALERT
-    settings.communityFeast.alertSeconds = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS
-    settings.communityFeast.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED
-    settings.communityFeast.flashTaskbar = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR
-
-    settings.dragonbaneKeep = settings.dragonbaneKeep or {}
-    settings.dragonbaneKeep.enabled = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED
-    settings.dragonbaneKeep.desaturate = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE
-    settings.dragonbaneKeep.alert = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ALERT
-    settings.dragonbaneKeep.alertSeconds = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS
-    settings.dragonbaneKeep.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED
-    settings.dragonbaneKeep.flashTaskbar = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_FLASH_TASKBAR
-
-    settings.researchersUnderFire = settings.researchersUnderFire or {}
-    settings.researchersUnderFire.enabled = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED
-    settings.researchersUnderFire.desaturate = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_DESATURATE
-    settings.researchersUnderFire.alert = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT
-    settings.researchersUnderFire.alertSeconds = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS
-    settings.researchersUnderFire.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED
-    settings.researchersUnderFire.flashTaskbar = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR
-
-    settings.timeRiftThaldraszus = settings.timeRiftThaldraszus or {}
-    settings.timeRiftThaldraszus.enabled = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED
-    settings.timeRiftThaldraszus.desaturate = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_DESATURATE
-    settings.timeRiftThaldraszus.alert = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT
-    settings.timeRiftThaldraszus.alertSeconds = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS
-    settings.timeRiftThaldraszus.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED
-    settings.timeRiftThaldraszus.flashTaskbar = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR
-
-    settings.superBloom = settings.superBloom or {}
-    settings.superBloom.enabled = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ENABLED
-    settings.superBloom.desaturate = GW.settings.WORLD_EVENTS_SUPER_BLOOM_DESATURATE
-    settings.superBloom.alert = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ALERT
-    settings.superBloom.alertSeconds = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS
-    settings.superBloom.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_SUPER_BLOOM_STOP_ALERT_IF_COMPLETED
-    settings.superBloom.flashTaskbar = GW.settings.WORLD_EVENTS_SUPER_BLOOM_FLASH_TASKBAR
-
-    settings.bigDig = settings.bigDig or {}
-    settings.bigDig.enabled = GW.settings.WORLD_EVENTS_BIG_DIG_ENABLED
-    settings.bigDig.desaturate = GW.settings.WORLD_EVENTS_BIG_DIG_DESATURATE
-    settings.bigDig.alert = GW.settings.WORLD_EVENTS_BIG_DIG_ALERT
-    settings.bigDig.alertSeconds = GW.settings.WORLD_EVENTS_BIG_DIG_ALERT_SECONDS
-    settings.bigDig.stopAlertIfCompleted = GW.settings.WORLD_EVENTS_BIG_DIG_STOP_ALERT_IF_COMPLETED
-    settings.bigDig.flashTaskbar = GW.settings.WORLD_EVENTS_BIG_DIG_FLASH_TASKBAR
-
-    settings.iskaaranFishingNet = settings.iskaaranFishingNet or {}
-    settings.iskaaranFishingNet.enabled = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED
-    settings.iskaaranFishingNet.alert = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT
-    settings.iskaaranFishingNet.disableAlertAfterHours = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS
-    settings.iskaaranFishingNet.flashTaskbar = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_FLASH_TASKBAR
-    -- this are player settings no global ones
-    settings.iskaaranFishingNet.playerData = GW.private.ISKAARAN_FISHING_NET_DATA
-end
-GW.UpdateEventTrackerSettings = UpdateSettings
-
-local function UpdateIskaaranFishingNetPlayerData(key, value)
-    if not settings.iskaaranFishingNet.playerData[key] then
-        settings.iskaaranFishingNet.playerData[key] = {}
-    end
-    settings.iskaaranFishingNet.playerData[key] = value
-
-    GW.private.ISKAARAN_FISHING_NET_DATA = settings.iskaaranFishingNet.playerData
-end
-
 local mapFrame
 local eventHandlers = {}
 
 local eventList = {
+    -- Midnight
+    "WeeklyMN",
+    "ProfessionsWeeklyMN",
+    "StormarionAssault",
     -- TWW
-    --"TWWProfessions",
     "KhazAlgarEmissary",
     "TheaterTroupe",
     "RingingDeeps",
@@ -127,7 +27,6 @@ local eventList = {
     "TimeRiftThaldraszus",
     "SuperBloom",
     "BigDig",
-    "IskaaranFishingNet"
 }
 
 local infoColors = {
@@ -141,52 +40,18 @@ local infoColors = {
 }
 
 local env = {
-    fishingNetPosition = {
-        -- Waking Shores
-        [1] = {map = 2022, x = 0.63585, y = 0.75349},
-        [2] = {map = 2022, x = 0.64514, y = 0.74178},
-        -- Lava
-        [3] = {map = 2022, x = 0.33722, y = 0.65047},
-        [4] = {map = 2022, x = 0.34376, y = 0.64763},
-        -- Thaldraszus
-        [5] = {map = 2025, x = 0.56782, y = 0.65178},
-        [6] = {map = 2025, x = 0.57756, y = 0.65491},
-        -- Ohn'ahran Plains
-        [7] = {map = 2023, x = 0.80522, y = 0.78433},
-        [8] = {map = 2023, x = 0.80467, y = 0.77742},
-        -- 10.0.7
-        [9] = {map = 2151, x = 0.73951, y = 0.41047},
-    },
-    fishingNetWidgetIDToIndex = {
-        -- data mining: https://wow.tools/dbc/?dbc=uiwidget&build=10.0.5.47621#page=1&colFilter[3]=exact%3A2087
-        -- Waking Shores
-        [4203] = 1,
-        [4317] = 2,
-        -- Thaldraszus
-        [4388] = 5,
-        [4398] = 6,
-        --10.0.7
-        [4615] = 9,
-        --[4318] = 5,
-        --[4364] = 5,
-        --[4365] = 5,
-        --[4389] = 5,
-        --[4397] = 5,
-        --[4399] = 5,
-        --[4400] = 5,
-    },
-    twwProfessionsWeekly = {
-        [4620669] = 84133,
-        [4620670] = 84127,
-        [4620672] = 84084,
-        [4620673] = 84128,
-        --[4620675] = 84134,
-        [4620676] = 84129,
-        [4620677] = 84130,
-        [4620678] = 84131,
-        --[4620679] = 84128,
-        --[4620680] = 83097,
-        [4620681] = 84132,
+    ProfessionsWeeklyMN = {
+		[4620669] = 93690, -- 炼金术
+		[4620670] = 93691, -- 锻造
+		[4620672] = 93698, -- 附魔
+		[4620673] = 93692, -- 工程学
+		[4620675] = { 93700, 93702, 93703, 93704 }, -- 草药学
+		[4620676] = 93693, -- 铭文
+		[4620677] = 93694, -- 珠宝
+		[4620678] = 93695, -- 制皮
+		[4620679] = { 93705, 93706, 93708, 93709 }, -- 采矿
+		[4620680] = { 93710, 93711, 93714 }, -- 剥皮
+		[4620681] = 93696, -- 裁缝
     },
 }
 
@@ -212,8 +77,12 @@ local colorPlatte = {
         {r = 0.56500, g = 0.40800, b = 0.16900, a = 1}
     },
     running = {
-        { r = 0.00000, g = 0.94902, b = 0.37647, a = 1 },
-        { r = 0.01961, g = 0.45882, b = 0.90196, a = 1 }
+        { r = 0 / 255, g = 148 / 255, 135 / 255, a = 1 },
+        { r = 0 / 255, g = 211 / 255, 144 / 255, a = 1 },
+    },
+    gray = {
+        { r = 159 / 255, g = 159 / 255, 159 / 255, a = 1 },
+        { r = 65 / 255, g = 65 / 255, 65 / 255, a = 1 }
     }
 }
 
@@ -249,22 +118,7 @@ local function reskinStatusBar(bar)
     bar.backdrop:GwSetOutside(bar, 4, 4)
 end
 
-local function getGradientText(text, colorTable)
-    if not text or not colorTable then
-        return text
-    end
-    return GW.TextGradient(
-        text,
-        colorTable[1].r,
-        colorTable[1].g,
-        colorTable[1].b,
-        colorTable[2].r,
-        colorTable[2].g,
-        colorTable[2].b
-    )
-end
-
-local function worldMapIDSetter(idOrFunc)
+local function GetWorldMapIDSetter(idOrFunc)
     return function(...)
         if not WorldMapFrame or not WorldMapFrame:IsShown() or not WorldMapFrame.SetMapID then
             return
@@ -275,40 +129,162 @@ local function worldMapIDSetter(idOrFunc)
     end
 end
 
+local function WeeklyName(iconID, name, position)
+	name = GW.GetIconString(iconID, 14, 16, true) .. " " .. name
+	if type(position) == "number" then
+		position = C_Map.GetMapInfo(position).name
+	end
+
+	if position then
+		name = format("%s (%s)", name, StringByTemplate(position, "info"))
+	end
+
+	return name
+end
+
 local eventData = {
-    -- TWW
-    TWWProfessions = {
-        dbKey = "twwProfessions",
+    -- Midnight
+    ProfessionsWeeklyMN = {
+		dbKey = "professionsWeeklyMN",
+		args = {
+			icon = 1392955,
+			type = "weekly",
+			questProgress = function()
+				local prof1, prof2 = GetProfessions()
+				local quests = {}
+
+				for _, prof in pairs({ prof1, prof2 }) do
+					if prof then
+						local name, iconID = GetProfessionInfo(prof)
+						local questData = env.ProfessionsWeeklyMN[iconID]
+						if questData then
+							tinsert(quests, {
+								questID = questData,
+								label = GW.GetIconString(iconID, 14, 14) .. " " .. name,
+							})
+						end
+					end
+				end
+
+				return quests
+			end,
+			hasWeeklyReward = false,
+			eventName = L["Professions Weekly"],
+			location = C_Map.GetMapInfo(2393).name,
+			label = L["Professions Weekly"],
+			onClick = GetWorldMapIDSetter(2393),
+			onClickHelpText = L["Click to show location"],
+		},
+	},
+    WeeklyMN = {
+		dbKey = "weeklyMN",
+		args = {
+			icon = 236681,
+			type = "weekly",
+			questIDs = {
+				[WeeklyName(7578704, L["Liadrin 4 > 1"], 2393)] = {
+					-- https://www.wowhead.com/npc=256203/lady-liadrin
+					93767, -- 至暗之夜：奥术秘社
+					93889, -- 至暗之夜：萨瑟利尔的聚会
+					93909, -- 至暗之夜：地下堡
+					93911, -- 至暗之夜：地下城
+				},
+				[WeeklyName(5554512, L["Dungeon"], 2393)] = {
+					-- https://www.wowhead.com/npc=256210/halduron-brightwing
+					93753, -- 魔导师平台
+				},
+                [WeeklyName(2066011, L["Soiree"], 2395)] = {
+					-- https://www.wowhead.com/item=268489/surplus-bag-of-party-favors
+					90573, -- 加固符文石：魔导师
+					90574, -- 加固符文石：血骑士
+					90575, -- 加固符文石：远行者
+					90576, -- 加固符文石：径巷之影
+				},
+                [WeeklyName(7385004, L["Legend"], 2413)] = {
+					-- https://www.wowhead.com/npc=238170/zurashar-kassameh#ends
+					88993, -- 威南的结界
+					88994, -- 回响大锅
+					88995, -- 艾林哈籁之花
+					88996, -- 回响寂灭之焰
+					88997, -- 鲁斯苏拉之臂
+				},
+				[WeeklyName(7636650, L["Abundance"], 2437)] = {
+					-- https://www.wowhead.com/quest=89507/abundant-offerings
+					89507, -- 丰饶贡品
+				},
+			},
+			questProgress = function(args)
+				local questIDs = type(args.questIDs) == "function" and args:questIDs() or args.questIDs
+				local progress = {}
+
+				for storylineName, storylineQuests in pairs(questIDs) do
+					local weeklyQuestID, status
+					for _, questID in pairs(storylineQuests) do
+						if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+							weeklyQuestID = questID
+							status = "completed"
+							break
+						end
+
+						if C_QuestLog.IsOnQuest(questID) then
+							weeklyQuestID = questID
+							status = "inProgress"
+							break
+						end
+					end
+
+					local rightText = ""
+					local questName = weeklyQuestID and C_QuestLog.GetTitleForQuestID(weeklyQuestID)
+
+					if questName then
+						if status == "inProgress" then
+							rightText = format("%s - %s", questName, StringByTemplate(IN_PROGRESS, "info"))
+						elseif status == "completed" then
+							rightText = format("%s - %s", questName, StringByTemplate(L["Completed"], "success"))
+						end
+					else
+						rightText = StringByTemplate(L["Not Accepted"], "warning")
+					end
+
+					tinsert(progress, { label = storylineName, rightText = rightText })
+				end
+
+				return progress
+			end,
+			eventName = format("%s (%s)", L["Weekly Quest"], L["[ABBR] Midnight"]),
+			location = C_Map.GetMapInfo(2537).name,
+			label = format("%s (%s)", L["Weekly Quest"], L["[ABBR] Midnight"]),
+			onClick = GetWorldMapIDSetter(2537),
+			onClickHelpText = L["Click to show location"],
+		},
+	},
+    StormarionAssault = {
+        dbKey = "stormarionAssault",
         args = {
-            icon = 1392955,
-            type = "weekly",
-            checkAllCompleted = true,
-            questProgress = function()
-                local prof1, prof2 = GetProfessions()
-                local quests = {}
-
-                for _, prof in pairs({ prof1, prof2 }) do
-                    if prof then
-                        local name, iconID = GetProfessionInfo(prof)
-                        tinsert(quests, {
-                            questID = env.twwProfessionsWeekly[iconID],
-                            label = GW.GetIconString(iconID, 14, 14) .. " " .. name,
-                        })
-                    end
-                end
-
-                return quests
-            end,
-            hasWeeklyReward = false,
-            eventName = L["Professions Weekly"],
-            location = C_Map.GetMapInfo(2339).name,
-            label = L["Professions Weekly"],
-            completedText = CRITERIA_COMPLETED,
-            notCompletedText = CRITERIA_NOT_COMPLETED,
-            onClick = worldMapIDSetter(2339),
-            onClickHelpText = L["Click to show location"],
+            icon = 7431083,
+			type = "loopTimer",
+			questIDs = { 90962 },
+			hasWeeklyReward = true,
+			duration = 15 * 60,
+			interval = 30 * 60,
+			eventName = L["Stormarion Assault"],
+			label = L["Stormarion Assault"],
+			location = C_Map.GetMapInfo(2405).name,
+			flash = true,
+			runningBarColor = colorPlatte.green,
+			runningText = IN_PROGRESS,
+			filter = function(args)
+				if args.stopAlertIfPlayerNotEnteredMidnight and not C_QuestLog.IsQuestFlaggedCompleted(91281) then
+					return false
+				end
+				return true
+			end,
+			startTimestamp = 1772728200,
+			onClick = GetWorldMapIDSetter(2405),
+			onClickHelpText = L["Click to show location"],
         },
     },
+    -- TWW
     KhazAlgarEmissary = {
         dbKey = "khazAlgarEmissary",
         args = {
@@ -359,7 +335,7 @@ local eventData = {
             label = L["Khaz Algar Emissary"],
             completedText = CRITERIA_COMPLETED,
             notCompletedText = CRITERIA_NOT_COMPLETED,
-            onClick = worldMapIDSetter(2339),
+            onClick = GetWorldMapIDSetter(2339),
             onClickHelpText = L["Click to show location"],
         },
     },
@@ -397,7 +373,7 @@ local eventData = {
 
                 return timestampTable[region] or timestampTable[1]
             end)(),
-            onClick = worldMapIDSetter(2248),
+            onClick = GetWorldMapIDSetter(2248),
             onClickHelpText = L["Click to show location"],
         },
     },
@@ -413,7 +389,7 @@ local eventData = {
             label = L["Ringing Deeps"],
             completedText = CRITERIA_COMPLETED,
             notCompletedText = CRITERIA_NOT_COMPLETED,
-            onClick = worldMapIDSetter(2214),
+            onClick = GetWorldMapIDSetter(2214),
             onClickHelpText = L["Click to show location"],
         },
     },
@@ -429,7 +405,7 @@ local eventData = {
             label = L["Spreading The Light"],
             completedText = CRITERIA_COMPLETED,
             notCompletedText = CRITERIA_NOT_COMPLETED,
-            onClick = worldMapIDSetter(2215),
+            onClick = GetWorldMapIDSetter(2215),
             onClickHelpText = L["Click to show location"],
         },
     },
@@ -445,7 +421,7 @@ local eventData = {
             label = L["Underworld Operative"],
             completedText = CRITERIA_COMPLETED,
             notCompletedText = CRITERIA_NOT_COMPLETED,
-            onClick = worldMapIDSetter(2255),
+            onClick = GetWorldMapIDSetter(2255),
             onClickHelpText = L["Click to show location"],
         },
     },
@@ -487,7 +463,7 @@ local eventData = {
 
                 return timestampTable[region] or timestampTable[1]
             end)(),
-            onClick = worldMapIDSetter(2024),
+            onClick = GetWorldMapIDSetter(2024),
             onClickHelpText = L["Click to show location"]
         }
     },
@@ -528,7 +504,7 @@ local eventData = {
 
                 return timestampTable[region] or timestampTable[1]
             end)(),
-            onClick = worldMapIDSetter(2022),
+            onClick = GetWorldMapIDSetter(2022),
             onClickHelpText = L["Click to show location"]
         }
     },
@@ -568,7 +544,7 @@ local eventData = {
 
             return timestampTable[region] or timestampTable[1]
             end)(),
-            onClick = worldMapIDSetter(2133),
+            onClick = GetWorldMapIDSetter(2133),
             onClickHelpText = L["Click to show location"]
         }
     },
@@ -608,7 +584,7 @@ local eventData = {
 
             return timestampTable[region] or timestampTable[1]
             end)(),
-            onClick = worldMapIDSetter(2025),
+            onClick = GetWorldMapIDSetter(2025),
             onClickHelpText = L["Click to show location"]
         }
     },
@@ -687,95 +663,10 @@ local eventData = {
 
                 return timestampTable[region] or timestampTable[1]
             end)(),
-            onClick = worldMapIDSetter(2024),
+            onClick = GetWorldMapIDSetter(2024),
             onClickHelpText = L["Click to show location"]
         }
     },
-    IskaaranFishingNet = {
-        dbKey = "iskaaranFishingNet",
-        args = {
-            icon = 2159815,
-            type = "triggerTimer",
-            filter = function()
-                return C_QuestLog.IsQuestFlaggedCompleted(70871)
-            end,
-            barColor = colorPlatte.purple,
-            eventName = L["Iskaaran Fishing Net"],
-            label = L["Fishing Net"],
-            frame = nil,
-            events = {
-                {
-                    "UNIT_SPELLCAST_SUCCEEDED",
-                    function(unit, _, spellID)
-                        if not unit or unit ~= "player" then
-                            return
-                        end
-
-                        if not GW.Libs.GW2Lib:GetPlayerLocationMapID() or (spellID ~= 377887 and spellID ~= 377883) then
-                            return
-                        end
-
-                        local lengthMap = {}
-                        local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
-                        if not x or not y then return end
-
-                        for i, netPos in ipairs(env.fishingNetPosition) do
-                            if GW.Libs.GW2Lib:GetPlayerLocationMapID() == netPos.map then
-                                local length = math.pow(x - netPos.x, 2) + math.pow(y - netPos.y, 2)
-                                lengthMap[i] = length
-                            end
-                        end
-
-                        local min
-                        local netIndex = 0
-                        for i, length in pairs(lengthMap) do
-                            if not min or length < min then
-                                min = length
-                                netIndex = i
-                            end
-                        end
-
-                        if not min or netIndex <= 0 then
-                            return
-                        end
-
-                        local db = settings.iskaaranFishingNet.playerData
-
-                        if spellID == 377887 then -- Get Fish
-                            if db[netIndex] then
-                                db[netIndex] = nil
-                            end
-                        elseif spellID == 377883 then -- Set Net
-                            C_Timer.After(0.5, function()
-                                local namePlates = C_NamePlate.GetNamePlates(true)
-                                if #namePlates > 0 then
-                                    for _, namePlate in ipairs(namePlates) do
-                                        if namePlate and namePlate.UnitFrame and namePlate.UnitFrame.WidgetContainer then
-                                            local container = namePlate.UnitFrame.WidgetContainer
-                                            if container.timerWidgets then
-                                                for id, widget in pairs(container.timerWidgets) do
-                                                    if
-                                                        env.fishingNetWidgetIDToIndex[id] and
-                                                            env.fishingNetWidgetIDToIndex[id] == netIndex
-                                                    then
-                                                        if widget.Bar and widget.Bar.value and widget.Bar.range then
-                                                            UpdateIskaaranFishingNetPlayerData(netIndex, {time = GetServerTime() + widget.Bar.value, duration = widget.Bar.range})
-                                                        end
-                                                    end
-                                                end
-                                            end
-                                        end
-                                    end
-                                end
-                            end)
-                        end
-                    end
-                }
-            },
-            onClick = worldMapIDSetter(2024),
-            onClickHelpText = L["Click to show location"]
-        }
-    }
 }
 
 local functionFactory = {
@@ -814,37 +705,82 @@ local functionFactory = {
         ticker = {
             interval = 2,
             dateUpdater = function(self)
-                local completed = 0
-                if self.args.questIDs then
-                    local questIDs = type(self.args.questIDs) == "function" and self.args:questIDs() or self.args.questIDs
-                    -- lower than 0 means all quests need to be completed
-                    if self.args.checkAllCompleted then
-                        completed = 1 - #questIDs
-                    end
-                    for _, questID in pairs(questIDs) do
-                        if C_QuestLog.IsQuestFlaggedCompleted(questID) then
-                            completed = completed + 1
-                        end
-                    end
-                elseif self.args.questProgress then
-                    local questProgress = self.args.questProgress
-                    local numIds = 0
-                    if type(questProgress) == "function" then
-                        questProgress = questProgress(self.args)
-                    end
+                if self.args.questProgress and not self.args.questIDs then
+					local questProgress = self.args.questProgress
+					if type(questProgress) == "function" then
+						questProgress = questProgress(self.args)
+					end
 
-                    for _, data in pairs(questProgress) do
-                        if data.questID then numIds = numIds + 1 end
-                        if data.questID and C_QuestLog.IsQuestFlaggedCompleted(data.questID) then
-                            completed = completed + 1
-                        end
-                    end
+					if questProgress then
+						local allCompleted = true
+						for _, data in ipairs(questProgress) do
+							local isCompleted = false
+							if data.questID then
+								if type(data.questID) == "table" then
+									for _, qid in ipairs(data.questID) do
+										if C_QuestLog.IsQuestFlaggedCompleted(qid) then
+											isCompleted = true
+											break
+										end
+									end
+								else
+									isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
+								end
+							end
+							if not isCompleted then
+								allCompleted = false
+								break
+							end
+						end
+						self.isCompleted = allCompleted
+					end
+					return
+				end
 
-                    if self.args.checkAllCompleted then
-                        completed = completed < numIds and 0 or 1
-                    end
-                end
-                self.isCompleted = (completed > 0)
+                if not self.args.questIDs then
+					return
+				end
+
+                local questIDs = type(self.args.questIDs) == "function" and self.args:questIDs() or self.args.questIDs
+                if not questIDs or type(questIDs) ~= "table" then
+					return
+				end
+
+				if type(questIDs) == "table" and type(next(questIDs)) ~= "number" then
+					local completedStorylines, totalStorylines = 0, 0
+
+					for _, storylineQuests in pairs(questIDs) do
+						totalStorylines = totalStorylines + 1
+						local storylineCompleted = false
+
+						for _, questID in pairs(storylineQuests) do
+							if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+								storylineCompleted = true
+								break
+							end
+						end
+
+						if storylineCompleted then
+							completedStorylines = completedStorylines + 1
+						end
+					end
+
+					self.isCompleted = (completedStorylines == totalStorylines)
+					return
+				end
+
+				local completed = 0
+				if self.args.checkAllCompleted then
+					completed = 1 - #questIDs
+				end
+
+				for _, questID in pairs(questIDs) do
+					if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+						completed = completed + 1
+					end
+				end
+
+				self.isCompleted = (completed > 0)
             end,
 
             uiUpdater = function(self)
@@ -884,13 +820,23 @@ local functionFactory = {
                     GameTooltip:AddLine(" ")
                     GameTooltip:AddLine(L["Quest Progress"])
                     for _, data in ipairs(questProgress) do
-                        if data.questID then
-                            local isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
-                            local color = isCompleted and "success" or "danger"
-                            local label = type(data.label) == "function" and data:label() or data.label
-                            if type(label) == "string" then
-                                GameTooltip:AddDoubleLine(label, StringByTemplate(isCompleted and CRITERIA_COMPLETED or CRITERIA_NOT_COMPLETED, color), 1, 1, 1)
-                            end
+                        local isCompleted = data.isCompleted
+                        if not isCompleted and data.questID then
+							if type(data.questID) == "table" then
+								for _, qid in ipairs(data.questID) do
+									if C_QuestLog.IsQuestFlaggedCompleted(qid) then
+										isCompleted = true
+										break
+									end
+								end
+							else
+								isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
+							end
+						end
+                        local color = isCompleted and "success" or "danger"
+                        local label = type(data.label) == "function" and data:label() or data.label
+                        if type(label) == "string" then
+                            GameTooltip:AddDoubleLine(label, StringByTemplate(isCompleted and CRITERIA_COMPLETED or CRITERIA_NOT_COMPLETED, color), 1, 1, 1)
                         end
                     end
                 end
@@ -923,86 +869,34 @@ local functionFactory = {
         for _, event in ipairs(eventList) do
             local data = eventData[event]
 
-            if settings[data.dbKey].enabled then
-                if event  == "IskaaranFishingNet" then
-                    GameTooltip:AddLine(GW.GetIconString(data.args.icon, 16, 16) .. " " .. data.args.eventName, 1, 1, 1)
-                    GameTooltip:AddLine(" ")
+            if GW.settings[data.dbKey].enabled then
+                GameTooltip:AddLine(GW.GetIconString(data.args.icon, 16, 16) .. " " .. data.args.eventName, GW.Colors.TextColors.LightHeader:GetRGB())
+                GameTooltip:AddDoubleLine(LOCATION_COLON, data.args.location, 1, 1, 1, 1, 1, 1)
 
-                    if not data.netTable or #data.netTable == 0 then
-                        GameTooltip:AddLine(StringByTemplate(L["No Nets Set"], "danger"))
-                        GameTooltip:Show()
-                        return
-                    end
-                    GameTooltip:AddLine(L["Fishing Nets"])
-
-                    local netIndex1Status  -- Always
-                    local netIndex2Status  -- Always
-                    local bonusNetStatus  -- Bonus
-                    local bonusTimeLeft = 0
-
-                    for netIndex, timeData in pairs(data.frame.netTable) do
-                        local text
-                        if type(timeData) == "table" then
-                            if timeData.left <= 0 then
-                                text = StringByTemplate(L["Can be collected"], "success")
-                            else
-                                text = StringByTemplate(secondToTime(timeData.left), "info")
-                            end
-
-                            -- only show latest bonus net
-                            if netIndex > 2 and timeData.left > bonusTimeLeft then
-                                bonusTimeLeft = timeData.left
-                                bonusNetStatus = text
-                            end
-                        else
-                            if timeData == "NOT_STARTED" then
-                                text = StringByTemplate(L["Can be set"], "warning")
-                            end
-                        end
-
-                        if netIndex == 1 then
-                            netIndex1Status = text
-                        elseif netIndex == 2 then
-                            netIndex2Status = text
-                        end
-                    end
-
-                    GameTooltip:AddDoubleLine(format(L["Net #%d"], 1), netIndex1Status)
-                    GameTooltip:AddDoubleLine(format(L["Net #%d"], 2), netIndex2Status)
-                    if bonusNetStatus then
-                        GameTooltip:AddDoubleLine(L["Bonus Net"], bonusNetStatus)
-                    else -- no bonus net
-                        GameTooltip:AddDoubleLine(L["Bonus Net"], StringByTemplate(L["Not Set"], "danger"))
-                    end
-                else
-                    GameTooltip:AddLine(GW.GetIconString(data.args.icon, 16, 16) .. " " .. data.args.eventName, GW.Colors.TextColors.LightHeader:GetRGB())
-                    GameTooltip:AddDoubleLine(LOCATION_COLON, data.args.location, 1, 1, 1, 1, 1, 1)
-
-                    if data.args.interval then
-                        GameTooltip:AddDoubleLine(L["Interval"] .. ":", secondToTime(data.args.interval), 1, 1, 1, 1, 1, 1)
-                    end
-                    if data.args.duration then
-                        GameTooltip:AddDoubleLine(AUCTION_DURATION .. ":", secondToTime(data.args.duration), 1, 1, 1, 1, 1, 1)
-                    end
-                    if data.nextEventTimestamp then
-                        GameTooltip:AddDoubleLine(L["Next Event"] .. ":", date(L["TimeStamp m/d h:m:s"], data.nextEventTimestamp), 1, 1, 1, 1, 1, 1)
-                    end
-
-                    if data.frame.isRunning then
-                        GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(data.args.runningText, "success"), 1, 1, 1, 1, 1, 1)
-                    else
-                        GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(QUEUED_STATUS_WAITING, "greyLight"), 1, 1, 1, 1, 1, 1)
-                    end
-
-                    if data.args.hasWeeklyReward then
-                        if data.frame.isCompleted then
-                            GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_COMPLETED, "success"), 1, 1, 1, 1, 1, 1)
-                        else
-                            GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_NOT_COMPLETED, "danger"), 1, 1, 1, 1, 1, 1)
-                        end
-                    end
-                    GameTooltip:AddLine(" ")
+                if data.args.interval then
+                    GameTooltip:AddDoubleLine(L["Interval"] .. ":", secondToTime(data.args.interval), 1, 1, 1, 1, 1, 1)
                 end
+                if data.args.duration then
+                    GameTooltip:AddDoubleLine(AUCTION_DURATION .. ":", secondToTime(data.args.duration), 1, 1, 1, 1, 1, 1)
+                end
+                if data.nextEventTimestamp then
+                    GameTooltip:AddDoubleLine(L["Next Event"] .. ":", date(L["TimeStamp m/d h:m:s"], data.nextEventTimestamp), 1, 1, 1, 1, 1, 1)
+                end
+
+                if data.frame.isRunning then
+                    GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(data.args.runningText, "success"), 1, 1, 1, 1, 1, 1)
+                else
+                    GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(QUEUED_STATUS_WAITING, "greyLight"), 1, 1, 1, 1, 1, 1)
+                end
+
+                if data.args.hasWeeklyReward then
+                    if data.frame.isCompleted then
+                        GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_COMPLETED, "success"), 1, 1, 1, 1, 1, 1)
+                    else
+                        GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_NOT_COMPLETED, "danger"), 1, 1, 1, 1, 1, 1)
+                    end
+                end
+                GameTooltip:AddLine(" ")
             end
         end
 
@@ -1109,12 +1003,8 @@ local functionFactory = {
                     self.statusBar:SetMinMaxValues(0, self.args.interval)
                     self.statusBar:SetValue(self.timeLeft)
 
-                    if type(self.args.barColor[1]) == "number" then
-                        self.statusBar:SetStatusBarColor(unpack(self.args.barColor))
-                    else
-                        local tex = self.statusBar:GetStatusBarTexture()
-                        tex:SetGradient("HORIZONTAL", CreateColorFromTable(self.args.barColor[1]), CreateColorFromTable(self.args.barColor[2]))
-                    end
+                    local palette = self.args.barColor or colorPlatte.gray
+                    self.statusBar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColorFromTable(palette[1]), CreateColorFromTable(palette[2]))
 
                     GW.StopFlash(self.runningTip)
                     self.runningTip:Hide()
@@ -1144,8 +1034,9 @@ local functionFactory = {
                 if self.timeLeft <= self.args.alertSecond then
                     self.args.alertCache[self.nextEventIndex] = true
                     local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
-                    local gradientName = getGradientText(self.args.eventName, self.args.barColor)
-                    GW.Notice(format(L["%s will start in %s!"], eventIconString .. " " .. gradientName, secondToTime(self.timeLeft)))
+                    local eventName = StringByTemplate(self.args.eventName, "warning")
+                    local remainTime = StringByTemplate(secondToTime(self.timeLeft), "warning")
+                    GW.Notice(format(L["%s will start in %s!"], eventIconString .. " " .. eventName, remainTime))
                     if self.args.flashTaskbar then
                         FlashClientIcon()
                     end
@@ -1185,7 +1076,17 @@ local functionFactory = {
                     GameTooltip:AddLine(L["Quest Progress"])
                     for _, data in ipairs(questProgress) do
                         if data.questID then
-                            local isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
+                            local isCompleted = false
+							if type(data.questID) == "table" then
+								for _, qid in ipairs(data.questID) do
+									if C_QuestLog.IsQuestFlaggedCompleted(qid) then
+										isCompleted = true
+										break
+									end
+								end
+							else
+								isCompleted = C_QuestLog.IsQuestFlaggedCompleted(data.questID)
+							end
                             local color = isCompleted and "success" or "danger"
                             local label = type(data.label) == "function" and data:label() or data.label
                             if type(label) == "string" then
@@ -1227,297 +1128,6 @@ local functionFactory = {
             end,
         },
     },
-    triggerTimer = {
-        init = function(self)
-            self.icon = self:CreateTexture(nil, "ARTWORK")
-            self.icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-            self.icon.backdrop:GwSetOutside(self.icon, 1, 1)
-            self.statusBar = CreateFrame("StatusBar", nil, self)
-            self.name = self.statusBar:CreateFontString(nil, "OVERLAY")
-            self.timerText = self.statusBar:CreateFontString(nil, "OVERLAY")
-            self.runningTip = self.statusBar:CreateFontString(nil, "OVERLAY")
-
-            reskinStatusBar(self.statusBar)
-
-            self.statusBar.spark = self.statusBar:CreateTexture(nil, "ARTWORK", nil, 1)
-            self.statusBar.spark:SetTexture("Interface/CastingBar/UI-CastingBar-Spark")
-            self.statusBar.spark:SetBlendMode("ADD")
-            self.statusBar.spark:SetPoint("CENTER", self.statusBar:GetStatusBarTexture(), "RIGHT", 0, 0)
-            self.statusBar.spark:SetSize(4, 26)
-        end,
-        setup = function(self)
-            self.icon:SetTexture(self.args.icon)
-            self.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-            self.icon:SetSize(22, 22)
-            self.icon:ClearAllPoints()
-            self.icon:SetPoint("LEFT", self, "LEFT", 0, 0)
-
-            self.statusBar:ClearAllPoints()
-            self.statusBar:SetPoint("TOPLEFT", self, "LEFT", 26, 2)
-            self.statusBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 6)
-
-            self.timerText:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
-            self.timerText:ClearAllPoints()
-            self.timerText:SetPoint("TOPRIGHT", self, "TOPRIGHT", -2, -6)
-
-            self.name:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
-            self.name:ClearAllPoints()
-            self.name:SetPoint("TOPLEFT", self, "TOPLEFT", 30, -6)
-            self.name:SetText(self.args.label)
-
-            self.runningTip:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
-            self.runningTip:SetText(self.args.runningText)
-            self.runningTip:SetPoint("CENTER", self.statusBar, "BOTTOM", 0, 0)
-        end,
-        ticker = {
-            interval = 0.3,
-            dateUpdater = function(self)
-                if not C_QuestLog.IsQuestFlaggedCompleted(70871) then
-                    self.netTable = nil
-                    return
-                end
-
-                local db = settings.iskaaranFishingNet.playerData
-                if not db then
-                    return
-                end
-
-                self.netTable = {}
-                local now = GetServerTime()
-                for netIndex = 1, #env.fishingNetPosition do
-                    -- update db from old version
-                    if type(db[netIndex]) ~= "table" then
-                        db[netIndex] = nil
-                    end
-                    if not db[netIndex] or db[netIndex] == 0 then
-                        self.netTable[netIndex] = "NOT_STARTED"
-                    else
-                        self.netTable[netIndex] = {
-                            left = db[netIndex].time - now,
-                            duration = db[netIndex].duration
-                        }
-                    end
-                end
-            end,
-            uiUpdater = function(self)
-                local done = {}
-                local notStarted = {}
-                local waiting = {}
-
-                if self.netTable then
-                    for netIndex, timeData in pairs(self.netTable) do
-                        if type(timeData) == "string" then
-                            if timeData == "NOT_STARTED" then
-                                tinsert(notStarted, netIndex)
-                            end
-                        elseif type(timeData) == "table" then
-                            if timeData.left <= 0 then
-                                tinsert(done, netIndex)
-                            else
-                                tinsert(waiting, netIndex)
-                            end
-                        end
-                    end
-                end
-
-                local tip = ""
-
-                if #done == #env.fishingNetPosition then
-                    tip = StringByTemplate(L["All nets can be collected"], "success")
-                    self.timerText:SetText("")
-
-                    self.statusBar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColorFromTable(colorPlatte.running[1]), CreateColorFromTable(colorPlatte.running[2]))
-                    self.statusBar:SetMinMaxValues(0, 1)
-                    self.statusBar:SetValue(1)
-
-                    GW.FrameFlash(self.runningTip, 1, 0.3, 1, true)
-                elseif #waiting > 0 then
-                    if #done > 0 then
-                        local netsText = ""
-                        for i = 1, #done do
-                            netsText = netsText .. "#" .. done[i]
-                            if i ~= #done then
-                                netsText = netsText .. ", "
-                            end
-                        end
-                        tip = StringByTemplate(format(L["Net %s can be collected"], netsText), "success")
-                    else
-                        tip = QUEUED_STATUS_WAITING
-                    end
-
-                    local maxTimeIndex
-                    for _, index in pairs(waiting) do
-                        if not maxTimeIndex or self.netTable[index].left > self.netTable[maxTimeIndex].left then
-                            maxTimeIndex = index
-                        end
-                    end
-
-                    if type(self.args.barColor[1]) == "number" then
-                        self.statusBar:SetStatusBarColor(unpack(self.args.barColor))
-                    else
-                        self.statusBar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColorFromTable(self.args.barColor[1]), CreateColorFromTable(self.args.barColor[2]))
-                    end
-
-                    self.timerText:SetText(secondToTime(self.netTable[maxTimeIndex].left))
-                    self.statusBar:SetMinMaxValues(0, self.netTable[maxTimeIndex].duration)
-                    self.statusBar:SetValue(self.netTable[maxTimeIndex].left)
-
-                    GW.StopFlash(self.runningTip)
-                else
-                    self.timerText:SetText("")
-                    self.statusBar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColorFromTable(colorPlatte.running[1]), CreateColorFromTable(colorPlatte.running[2]))
-                    self.statusBar:SetMinMaxValues(0, 1)
-
-                    if #done > 0 then
-                        local netsText = ""
-                        for i = 1, #done do
-                            netsText = netsText .. "#" .. done[i]
-                            if i ~= #done then
-                                netsText = netsText .. ", "
-                            end
-                        end
-                        tip = StringByTemplate(format(L["Net %s can be collected"], netsText), "success")
-                        self.statusBar:SetValue(1)
-                    else
-                        tip = StringByTemplate(L["No Nets Set"], "danger")
-                        self.statusBar:SetValue(0)
-                    end
-
-                    GW.StopFlash(self.runningTip)
-                end
-
-                self.runningTip:SetText(tip)
-            end,
-            alert = function(self)
-                if not self.netTable then
-                    return
-                end
-
-                local db = settings.iskaaranFishingNet.playerData
-                if not db then
-                    return
-                end
-
-                if not self.args.alertCache then
-                    self.args.alertCache = {}
-                end
-
-                local needAnnounce = false
-                local readyNets = {}
-                local bonusReady = false
-
-                for netIndex, timeData in pairs(self.netTable) do
-                    if type(timeData) == "table" and timeData.left <= 0 then
-                        if not self.args.alertCache[netIndex] then
-                            self.args.alertCache[netIndex] = {}
-                        end
-
-                        if not self.args.alertCache[netIndex][db[netIndex].time] then
-                            self.args.alertCache[netIndex][db[netIndex].time] = true
-                            local hour = self.args.disableAlertAfterHours
-                            if not hour or hour == 0 or (hour * 60 * 60 + timeData.left) > 0 then
-                                readyNets[netIndex] = true
-                                if netIndex > 2 then
-                                    bonusReady = true
-                                end
-                                needAnnounce = true
-                            end
-                        end
-                    end
-                end
-
-                if needAnnounce then
-                    local netsText = ""
-
-                    if readyNets[1] and readyNets[2] then
-                        netsText = netsText .. format(L["Net #%d"], 1) .. ", " .. format(L["Net #%d"], 2)
-                    elseif readyNets[1] then
-                        netsText = netsText .. format(L["Net #%d"], 1)
-                    elseif readyNets[2] then
-                        netsText = netsText .. format(L["Net #%d"], 2)
-                    end
-                    if bonusReady then
-                        if readyNets[1] or readyNets[2] then
-                            netsText = netsText .. ", "
-                        end
-                        netsText = netsText .. L["Bonus Net"]
-                    end
-
-                    local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
-                    local gradientName = getGradientText(self.args.eventName, self.args.barColor)
-                    GW.Notice(format(eventIconString .. " " .. gradientName .. " " .. L["%s can be collected"], netsText))
-                    if self.args.flashTaskbar then
-                        FlashClientIcon()
-                    end
-                end
-            end
-        },
-        tooltip = {
-            onEnter = function(self)
-                GameTooltip:ClearLines()
-                GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 8)
-                GameTooltip:SetText(GW.GetIconString(self.args.icon, 16, 16) .. " " .. self.args.eventName, 1, 1, 1)
-                GameTooltip:AddLine(" ")
-
-                if not self.netTable or #self.netTable == 0 then
-                    GameTooltip:AddLine(StringByTemplate(L["No Nets Set"], "danger"))
-                    GameTooltip:Show()
-                    return
-                end
-                GameTooltip:AddLine(L["Fishing Nets"])
-
-                local netIndex1Status  -- Always
-                local netIndex2Status  -- Always
-                local bonusNetStatus  -- Bonus
-                local bonusTimeLeft = 0
-
-                for netIndex, timeData in pairs(self.netTable) do
-                    local text
-                    if type(timeData) == "table" then
-                        if timeData.left <= 0 then
-                            text = StringByTemplate(L["Can be collected"], "success")
-                        else
-                            text = StringByTemplate(secondToTime(timeData.left), "info")
-                        end
-
-                        -- only show latest bonus net
-                        if netIndex > 2 and timeData.left > bonusTimeLeft then
-                            bonusTimeLeft = timeData.left
-                            bonusNetStatus = text
-                        end
-                    else
-                        if timeData == "NOT_STARTED" then
-                            text = StringByTemplate(L["Can be set"], "warning")
-                        end
-                    end
-
-                    if netIndex == 1 then
-                        netIndex1Status = text
-                    elseif netIndex == 2 then
-                        netIndex2Status = text
-                    end
-                end
-
-                GameTooltip:AddDoubleLine(format(L["Net #%d"], 1), netIndex1Status)
-                GameTooltip:AddDoubleLine(format(L["Net #%d"], 2), netIndex2Status)
-                if bonusNetStatus then
-                    GameTooltip:AddDoubleLine(L["Bonus Net"], bonusNetStatus)
-                else -- no bonus net
-                    GameTooltip:AddDoubleLine(L["Bonus Net"], StringByTemplate(L["Not Set"], "danger"))
-                end
-
-                if self.args.onClickHelpText then
-                    GameTooltip:AddLine(" ")
-                    GameTooltip:AddLine(LeftButtonIcon .. " " .. self.args.onClickHelpText, 1, 1, 1)
-                end
-
-                GameTooltip:Show()
-            end,
-            onLeave = function()
-                GameTooltip:Hide()
-            end
-        }
-    }
 }
 GW.EventTrackerFunctions = functionFactory
 
@@ -1544,7 +1154,7 @@ local trackers = {
 local function isOneEventEnabled()
     for _, event in ipairs(eventList) do
         local data = eventData[event]
-        if settings[data.dbKey].enabled == true then
+        if GW.settings[data.dbKey].enabled == true then
             return true
         end
     end
@@ -1645,28 +1255,26 @@ local function AddWorldMapFrame()
 end
 
 local function UpdateTrackers()
-    UpdateSettings()
-
     local lastTracker = nil
     local usedWidth = 0
     local mapFrameWidth = WorldMapFrame:GetWidth()
     local rowIdx = 1
     for _, event in ipairs(eventList) do
         local data = eventData[event]
-        local tracker = settings[data.dbKey].enabled and trackers:get(event) or trackers:disable(event)
+        local tracker = GW.settings[data.dbKey].enabled and trackers:get(event) or trackers:disable(event)
         if tracker then
             if tracker.profileUpdate then
                 tracker.profileUpdate()
             end
 
-            tracker.args.desaturate = settings[data.dbKey].desaturate
-            tracker.args.flshTaskbar = settings[data.dbKey].flashTaskbar
+            tracker.args.desaturate = GW.settings[data.dbKey].desaturate
+            tracker.args.flshTaskbar = GW.settings[data.dbKey].flashTaskbar
 
-            if settings[data.dbKey].alert then
+            if GW.settings[data.dbKey].alert then
                 tracker.args.alert = true
-                tracker.args.alertSecond = tonumber(settings[data.dbKey].alertSeconds)
-                tracker.args.stopAlertIfCompleted = settings[data.dbKey].stopAlertIfCompleted
-                tracker.args.disableAlertAfterHours = tonumber(settings[data.dbKey].disableAlertAfterHours)
+                tracker.args.alertSecond = tonumber(GW.settings[data.dbKey].alertSeconds)
+                tracker.args.stopAlertIfCompleted = GW.settings[data.dbKey].stopAlertIfCompleted
+                tracker.args.disableAlertAfterHours = tonumber(GW.settings[data.dbKey].disableAlertAfterHours)
             else
                 tracker.args.alertSecond = nil
                 tracker.args.stopAlertIfCompleted = nil
@@ -1714,101 +1322,3 @@ local function LoadWorldEventTimer()
 
 end
 GW.LoadWorldEventTimer = LoadWorldEventTimer
-
-
-_G["SLASH_GWDEBUGSLASH1"] = "/gw2debug"
-
-SlashCmdList["GWDEBUGSLASH"] = function(msg)
-    if msg == "fnet forceUpdate" then
-        local map = C_Map.GetBestMapForUnit("player")
-        if not map then
-            return
-        end
-
-        local position = C_Map.GetPlayerMapPosition(map, "player")
-
-        if not position then
-            return
-        end
-
-        local lengthMap = {}
-
-        for i, netPos in ipairs(env.fishingNetPosition) do
-            if map == netPos.map then
-                local length = math.pow(position.x - netPos.x, 2) + math.pow(position.y - netPos.y, 2)
-                lengthMap[i] = length
-            end
-        end
-
-        local min
-        local netIndex = 0
-        for i, length in pairs(lengthMap) do
-            if not min or length < min then
-                min = length
-                netIndex = i
-            end
-        end
-
-        if not min or netIndex <= 0 then
-            return
-        end
-
-        local db = settings.iskaaranFishingNet.playerData
-
-        local namePlates = C_NamePlate.GetNamePlates(true)
-        if #namePlates > 0 then
-            for _, namePlate in ipairs(namePlates) do
-                if namePlate and namePlate.UnitFrame and namePlate.UnitFrame.WidgetContainer then
-                    local container = namePlate.UnitFrame.WidgetContainer
-                    if container.timerWidgets then
-                        for id, widget in pairs(container.timerWidgets) do
-                            if env.fishingNetWidgetIDToIndex[id] and env.fishingNetWidgetIDToIndex[id] == netIndex then
-                                if widget.Bar and widget.Bar.value then
-                                    db[netIndex] = {
-                                        time = GetServerTime() + widget.Bar.value,
-                                        duration = widget.Bar.range
-                                    }
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-
-    if msg == "findNet" then
-        local map = GW.Libs.GW2Lib:GetPlayerLocationMapID()
-        if not map then
-            return
-        end
-
-        local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
-
-        if not x or not y then
-            return
-        end
-
-        local namePlates = C_NamePlate.GetNamePlates(true)
-        if #namePlates > 0 then
-            for _, namePlate in ipairs(namePlates) do
-                if namePlate and namePlate.UnitFrame and namePlate.UnitFrame.WidgetContainer then
-                    local container = namePlate.UnitFrame.WidgetContainer
-                    if container.timerWidgets then
-                        for id, widget in pairs(container.timerWidgets) do
-                            if widget.Bar and widget.Bar.value then
-                                print("------------")
-                                print("mapID", map)
-                                print("mapName", C_Map.GetMapInfo(map).name)
-                                print("position", x, y)
-                                print("widgetID", id)
-                                print("timeLeft", widget.Bar.value, secondToTime(widget.Bar.value))
-                                print("------------")
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-end

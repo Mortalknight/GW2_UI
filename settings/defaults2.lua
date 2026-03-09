@@ -58,7 +58,6 @@ GW.privateDefaults = {
         Layouts = {},
         PLAYER_TRACKED_DODGEBAR_SPELL = "",
         PLAYER_TRACKED_DODGEBAR_SPELL_ID = 0,
-        ISKAARAN_FISHING_NET_DATA = {},
         CHAT_KEYWORDS_ALERT_COLOR = {r = .5, g = .5, b = .5},
         ChatHistoryLog = {},
         ChatEditHistory = {},
@@ -1417,76 +1416,99 @@ GW.globalDefault = {
         PARTY_UNIT_HEALTH_SHORT_VALUES = false,
         playerPetFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
 
+        -- Midnight
+        weeklyMN = {
+            enabled = true,
+            desaturate = false,
+        },
+        professionsWeeklyMN = {
+            enabled = true,
+            desaturate = false,
+        },
+        stormarionAssault = {
+            enabled = true,
+            desaturate = false,
+            alert = true,
+            alertSeconds = 300,
+            stopAlertIfCompleted = true,
+            flashTaskbar = true,
+        },
+
         -- TWW
-        WORLD_EVENTS_TWW_PROFESSIONS_ENABLED = true,
-        WORLD_EVENTS_TWW_PROFESSIONS_DESATURATE = false,
-
-        WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_ENABLED = true,
-        WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_DESATURATE = false,
-
-        WORLD_EVENTS_RINGING_DEEPS_ENABLED = true,
-        WORLD_EVENTS_RINGING_DEEPS_DESATURATE = false,
-
-        WORLD_EVENTS_SPREADING_THE_LIGHT_ENABLED = true,
-        WORLD_EVENTS_SPREADING_THE_LIGHT_DESATURATE = false,
-
-        WORLD_EVENTS_UNDERWORLD_OPERATIVE_ENABLED = true,
-        WORLD_EVENTS_UNDERWORLD_OPERATIVE_DESATURATE = false,
-
-        WORLD_EVENTS_THEATER_TROUPE_ENABLED= true,
-        WORLD_EVENTS_THEATER_TROUPE_DESATURATE= false,
-        WORLD_EVENTS_THEATER_TROUPE_ALERT= true,
-        WORLD_EVENTS_THEATER_TROUPE_ALERT_SECONDS= 600,
-        WORLD_EVENTS_THEATER_TROUPE_STOP_ALERT_IF_COMPLETED= true,
-        WORLD_EVENTS_THEATER_TROUPE_FLASH_TASKBAR= true,
+        khazAlgarEmissary = {
+            enabled = false,
+            desaturate = false,
+        },
+        ringingDeeps = {
+            enabled = false,
+            desaturate = false,
+        },
+        spreadingTheLight = {
+            enabled = false,
+            desaturate = false,
+        },
+        underworldOperative = {
+            enabled = false,
+            desaturate = false,
+        },
+        theaterTroupe = {
+            enabled = false,
+            desaturate = false,
+            alert = false,
+            alertSeconds = 300,
+            stopAlertIfCompleted = true,
+            flashTaskbar = true,
+        },
 
         -- DF
-        WORLD_EVENTS_COMMUNITY_FEAST_ENABLED= false,
-        WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE= false,
-        WORLD_EVENTS_COMMUNITY_FEAST_ALERT= true,
-        WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS= 600,
-        WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED= true,
-        WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR= true,
-
-        WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED= false,
-        WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE= false,
-        WORLD_EVENTS_DRAGONBANE_KEEP_ALERT= true,
-        WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS= 600,
-        WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED= true,
-        WORLD_EVENTS_DRAGONBANE_KEEP_FLASH_TASKBAR= true,
-
-        WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED= false,
-        WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT= true,
-        WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS= 48,
-        WORLD_EVENTS_ISKAARAN_FISHING_NET_FLASH_TASKBAR= false,
-
-        WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED= false,
-        WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_DESATURATE= false,
-        WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT= true,
-        WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS= 600,
-        WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED= true,
-        WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR= true,
-
-        WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED= false,
-        WORLD_EVENTS_TIME_RIFT_THALDRASZUS_DESATURATE= false,
-        WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT= true,
-        WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS= 600,
-        WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED= true,
-        WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR= true,
-
-        WORLD_EVENTS_SUPER_BLOOM_ENABLED= false,
-        WORLD_EVENTS_SUPER_BLOOM_DESATURATE= false,
-        WORLD_EVENTS_SUPER_BLOOM_ALERT= true,
-        WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS= 600,
-        WORLD_EVENTS_SUPER_BLOOM_STOP_ALERT_IF_COMPLETED= true,
-        WORLD_EVENTS_SUPER_BLOOM_FLASH_TASKBAR= true,
-
-        WORLD_EVENTS_BIG_DIG_ENABLED= false,
-        WORLD_EVENTS_BIG_DIG_DESATURATE= false,
-        WORLD_EVENTS_BIG_DIG_ALERT= true,
-        WORLD_EVENTS_BIG_DIG_ALERT_SECONDS= 600,
-        WORLD_EVENTS_BIG_DIGSTOP_ALERT_IF_COMPLETED= true,
-        WORLD_EVENTS_BIG_DIG_FLASH_TASKBAR= true,
+        communityFeast = {
+            enabled = false,
+            desaturate = false,
+            alert = false,
+            alertSeconds = 300,
+            stopAlertIfCompleted = true,
+            flashTaskbar = true,
+        },
+        dragonbaneKeep = {
+            enabled = false,
+            desaturate = false,
+            alert = false,
+            alertSeconds = 300,
+            stopAlertIfCompleted = true,
+            flashTaskbar = true,
+        },
+        researchersUnderFire = {
+            enabled = false,
+            desaturate = false,
+            alert = false,
+            alertSeconds = 300,
+            stopAlertIfCompleted = true,
+            flashTaskbar = true,
+        },
+        timeRiftThaldraszus = {
+            enabled = false,
+            desaturate = false,
+            alert = false,
+            alertSeconds = 300,
+            stopAlertIfCompleted = true,
+            flashTaskbar = true,
+        },
+        superBloom = {
+            enabled = false,
+            desaturate = false,
+            alert = false,
+            alertSeconds = 300,
+            stopAlertIfCompleted = true,
+            flashTaskbar = true,
+        },
+         bigDig = {
+            enabled = false,
+            desaturate = false,
+            alert = false,
+            alertSeconds = 300,
+            stopAlertIfCompleted = true,
+            flashTaskbar = true,
+        },
 
         SHOW_CHARACTER_ITEM_INFO= false,
 
