@@ -57,7 +57,7 @@ end
 local function Construct_PowerBar(frame)
     local power = CreateFrame('StatusBar', '$parent_PowerBar', frame)
 
-    power:SetFrameLevel(frame.Health:GetFrameLevel() + 1)
+    power:SetFrameLevel(frame.Health:GetFrameLevel() + 10)
     power.PostUpdate = PostUpdatePower
     power.PostUpdateColor = PostUpdatePowerColor
 
