@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function SkinMerchantFrameItemButton(i)
     local button = _G["MerchantItem" .. i .. "ItemButton"]

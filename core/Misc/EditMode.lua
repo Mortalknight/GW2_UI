@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local CheckActionBar = function() return (GW.settings.ACTIONBARS_ENABLED and GW.settings.BAR_LAYOUT_ENABLED) end
 local eventFrame = CreateFrame("Frame")

@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
     -- Pick a free dialog to use

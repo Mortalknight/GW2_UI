@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local L = GW.L
 local RoundDec = GW.RoundDec
 local RT = GW.REP_TEXTURES

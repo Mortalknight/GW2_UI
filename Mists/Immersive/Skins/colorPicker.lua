@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function alphaValue(num)
     return num and floor(((1 - num) * 100) + .05) or 0

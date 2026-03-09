@@ -1,4 +1,6 @@
-local GW2Name, GW = ...
+---@class GW2
+local GW = select(2, ...)
+local addonName = ...
 local L = GW.L
 
 local enteredInfo = false
@@ -147,7 +149,7 @@ local function FpsOnEnter(self, slow)
 
     local found = false
     for _, data in ipairs(infoDisplay) do
-        if GW.StripString(data.title) == GW2Name or data.name == GW2Name then
+        if GW.StripString(data.title) == addonName or data.name == addonName then
             found = true
             break
         end
@@ -155,7 +157,7 @@ local function FpsOnEnter(self, slow)
 
     if not found then
         for _, data in ipairs(infoTable) do
-            if (data.name == GW2Name or GW.StripString(data.title) == GW2Name) then
+            if (data.name == addonName or GW.StripString(data.title) == addonName) then
                 local mem = GetAddOnMemoryUsage(data.index)
                 local cpu = cpuProfiling and GetAddOnCPUUsage(data.index) or nil
 

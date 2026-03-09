@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local function GetAverageItemLevel()
     if GearScore_GetScore then
         return GearScore_GetScore(UnitName("player"), "player")

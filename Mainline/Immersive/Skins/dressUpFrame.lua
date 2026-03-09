@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function BG_Resize(self)
     local w, h = self:GetParent():GetParent():GetSize()

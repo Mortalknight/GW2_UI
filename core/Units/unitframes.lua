@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local TimeCount = GW.TimeCount
 local GWGetClassColor = GW.GWGetClassColor
 local TARGET_FRAME_ART = GW.TARGET_FRAME_ART

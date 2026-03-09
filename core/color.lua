@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 GW.Colors.TextColors = {
     LightHeader = CreateColor(1, 0.9450, 0.8196)

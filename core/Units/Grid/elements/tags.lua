@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local LRI = GW.Libs.LRI
 local REALM_FLAGS = GW.REALM_FLAGS
 

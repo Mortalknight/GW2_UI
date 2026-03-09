@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local toastQueue = {} --Prevent from showing all "new" spells after spec change
 local hasMail = false

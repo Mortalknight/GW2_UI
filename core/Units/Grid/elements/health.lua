@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function UnitClassRnd(unit)
     if unit:find('target') or unit:find('focus') then

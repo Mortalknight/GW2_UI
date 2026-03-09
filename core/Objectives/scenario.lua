@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8

@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local profs = {
     ["100"] = {["tag"] = "firstAid", ["icon"] = 133678},

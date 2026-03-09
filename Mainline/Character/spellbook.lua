@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local SetClassIcon = GW.SetClassIcon
 local UpdatePvPTab = GW.UpdatePvPTab
 local CreatePvPTab = GW.CreatePvPTab

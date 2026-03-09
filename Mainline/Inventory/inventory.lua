@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 -- global for this deprecated in 8.3; from ContainerFrame.lua
 local MAX_CONTAINER_ITEMS = 36

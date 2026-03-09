@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Wait = GW.Wait
 local Self_Hide = GW.Self_Hide

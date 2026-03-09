@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function LoadReadyCheckSkin()
     if not GW.settings.READYCHECK_SKIN_ENABLED then return end

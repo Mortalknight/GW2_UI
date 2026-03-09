@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function unitExists(unit)
 	return unit and (UnitExists(unit) or UnitIsVisible(unit))

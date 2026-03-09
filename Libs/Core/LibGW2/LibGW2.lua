@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local MAJOR, MINOR = "LibGW2-1.0", 3
 assert(LibStub, MAJOR .. " requires LibStub")
 local lib = LibStub:NewLibrary(MAJOR, MINOR)

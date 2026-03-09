@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function SetupMajorFaction(frame)
 	if frame.Divider then frame.Divider:Hide() end

@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function ApplyMacroOptionsSkin()
     if not GW.settings.MACRO_SKIN_ENABLED then return end

@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function CreateEntry(name, command, description)
     _G["BINDING_NAME_CLICK " .. name .. ":LeftButton"] = description

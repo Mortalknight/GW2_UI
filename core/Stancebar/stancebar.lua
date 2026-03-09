@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local NeedAdjustMaxStanceButtons = false
 local NeedStanceButtonStyling = false
 local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10

@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function addJailersTowerData(block, numCriteria)
     if GW.Retail and IsInJailersTower() then

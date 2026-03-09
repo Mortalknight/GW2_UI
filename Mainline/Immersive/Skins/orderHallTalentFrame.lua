@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function ApplyOrderHallTalentFrameSkin()
     if not GW.settings.ORDERRHALL_TALENT_FRAME_SKIN_ENABLED then return end

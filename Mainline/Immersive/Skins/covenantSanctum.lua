@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function HandleIconString(self, text)
     if self._gw2SetText then return end

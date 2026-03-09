@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
 

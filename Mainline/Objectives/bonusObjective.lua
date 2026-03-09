@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function SortWorldQuestsHelper(questID1, questID2)
     local inArea1, onMap1 = GetTaskInfo(questID1)

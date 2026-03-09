@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function SkinTimerTrackerFrame_OnShow(self)
     local Frame = _G[self:GetName() .. "StatusBar"]

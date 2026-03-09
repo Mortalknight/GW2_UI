@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local WOW_PROJECT_BURNING_CRUSADE_CLASSIC = 5
 local WOW_PROJECT_CLASSIC = 2

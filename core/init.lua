@@ -1,5 +1,7 @@
 
-local addonName, GW = ...
+---@class GW2
+local GW = select(2, ...)
+local addonName = ...
 
 -- Make a global GW variable , so others cann access our functions
 GW2_ADDON = GW

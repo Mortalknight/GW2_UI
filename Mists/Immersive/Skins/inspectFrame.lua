@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local passiveHighlight = "Interface/AddOns/GW2_UI/textures/talents/passive_highlight.png"
 local activeHighlight = "Interface/AddOns/GW2_UI/textures/talents/active_highlight.png"

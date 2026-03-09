@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function Construct_PrivateAura(frame)
     if not GW.Retail then return end

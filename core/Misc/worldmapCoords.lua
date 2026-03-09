@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local CoordsFrame
 local MOUSE_LABEL = MOUSE_LABEL:gsub("|[TA].-|[ta]","")
 

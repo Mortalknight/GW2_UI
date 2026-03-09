@@ -1,4 +1,6 @@
-local Name, GW = ...
+---@class GW2
+local GW = select(2, ...)
+local addonName = ...
 
 -- Thanks at Shrugal for the ErrorHandler
 
@@ -113,7 +115,7 @@ function Gw2ErrorHandlerMixin:HandleError(msg, stack, locals)
     stack = self:CleanFilePaths(stack)
 
     -- Just print the error message if HandleError or LogExport caused it
-    local filePattern = Name .. "[\\/]" .. "core[\\/]" .. "errorHandler%.lua[^\n]*"
+    local filePattern = addonName .. "[\\/]" .. "core[\\/]" .. "errorHandler%.lua[^\n]*"
     if stack:match(filePattern .. "HandleError") then
         self.errors = math.huge
         GW.Notice("|cffff0000[ERROR]|r " .. msg .. "\n\nThis is an error in the error-handling system itself. Please create a new ticket on Curse, Discord or GitHub, copy & paste the error message in there and add any additional info you might have. Thank you! =)")
@@ -121,7 +123,7 @@ function Gw2ErrorHandlerMixin:HandleError(msg, stack, locals)
         self.errorRate = max(0, self.errorRate - self.LOG_MAX_ERROR_RATE * (GetTime() - self.errorPrev)) + 1
         self.errorPrev = GetTime()
 
-        for match in stack:gmatch("%[?" .. Name .. "[\\/]+([^:%]]+)") do
+        for match in stack:gmatch("%[?" .. addonName .. "[\\/]+([^:%]]+)") do
             if match and not GW.StartsWith(match, "Libs") and not GW.StartsWith(match, "libs") then
                 self.errors = self.errors + 1
                 GW.Debug("ERROR", msg .. "\n" .. stack)

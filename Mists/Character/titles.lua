@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local BAG_TITLE_SIZE = 32
 local savedPlayerTitles = {}
 

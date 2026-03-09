@@ -1,4 +1,6 @@
-local addonName, GW = ...
+---@class GW2
+local GW = select(2, ...)
+local addonName = ...
 
 local function StaticPopup_Show(arg1, arg2)
 	if (arg1 == "ADDON_ACTION_FORBIDDEN" and addonName == arg2) then

@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local BLIZZARD_MERCHANT_ITEMS_PER_PAGE = 10
 
 local function UpdateBuybackPositions()

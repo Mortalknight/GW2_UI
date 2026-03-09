@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 -- this is the layout manager for all the pieces of the mainbar frame that
 -- have inter-related movement/visibility; it has intimate knowledge of the

@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function MakeAltPowerBarMovable()
     GW.RegisterMovableFrame(PlayerPowerBarAlt, ALTERNATE_RESOURCE_TEXT, "AltPowerBar_pos", ALL .. ",Blizzard,Widgets", {256, 64}, {"default", "scaleable"})

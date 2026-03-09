@@ -1,4 +1,6 @@
-local addonName, GW = ...
+---@class GW2
+local GW = select(2, ...)
+local addonName = ...
 local L = GW.L
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug

@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function orderFollower_OnEnter(self)
     if (self.name) then

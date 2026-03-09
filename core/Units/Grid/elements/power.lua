@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local tokens = {[0]='MANA','RAGE','FOCUS','ENERGY','RUNIC_POWER'}
 local function GetRandomPowerColor()

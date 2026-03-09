@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 -- Default 8 but none uses 8 talent rows in classic
 local MAX_NUM_TALENT_TIERS = 9
 local TALENT_BRANCH_ARRAY = {}

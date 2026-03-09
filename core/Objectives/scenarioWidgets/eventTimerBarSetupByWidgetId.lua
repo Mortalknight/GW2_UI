@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 --/dump  C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(5865)
 local function TerminateTimer(timerBlock)
     if timerBlock and timerBlock.ticker then

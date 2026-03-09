@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function addEmberCourtData(container, numCriteria)
     if GW.Libs.GW2Lib:GetPlayerLocationMapID() == 1644 then

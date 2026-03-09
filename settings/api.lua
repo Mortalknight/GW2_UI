@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local LibBase64 = GW.Libs.LibBase64
 local Compress = GW.Libs.Compress

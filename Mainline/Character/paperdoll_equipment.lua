@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 GW.char_equipset_SavedItems = {}
 local GWGetClassColor = GW.GWGetClassColor
 local SetClassIcon = GW.SetClassIcon

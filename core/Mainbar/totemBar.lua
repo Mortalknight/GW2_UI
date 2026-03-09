@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local TOTEM_BAR_BUTTON_SIZE = 48
 local TOTEM_BAR_BUTTON_MARGIN = 3
 

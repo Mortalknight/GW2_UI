@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local IterationCount, totalPrice = 500, 0
 local SellJunkFrame = CreateFrame("FRAME")

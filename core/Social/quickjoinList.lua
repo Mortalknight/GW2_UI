@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 function GW.SkinQuickJoinList()
     if not GW.Retail then return end

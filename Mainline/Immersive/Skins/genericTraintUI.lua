@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function ReplaceIconString(frame, text)
     if frame._gw2SetText then return end

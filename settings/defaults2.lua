@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo or GetSpellInfo
 
 local UnitFrameFader = {

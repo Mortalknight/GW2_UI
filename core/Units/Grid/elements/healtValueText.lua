@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function Construct_HealtValueText(frame)
     local healthValue = GW.CreateRaisedText(frame.RaisedElementParent)
