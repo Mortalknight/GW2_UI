@@ -212,6 +212,7 @@ local function getStageDuration(self, stage, unit)
 end
 
 function GwCastingBarMixin:AddStages(stages, unit)
+    if not stages then return end
     local sumDuration = 0
     local elementSize = self:GetWidth()
     local lastOffset = 0
