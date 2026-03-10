@@ -234,9 +234,9 @@ local eventData = {
 
                     if questName then
                         if status == "inProgress" then
-                            rightText = format("%s - %s", StringByTemplate(questName, "greyLight"), StringByTemplate(IN_PROGRESS, "warning"))
+                            rightText = format("%s - %s", StringByTemplate(questName, "warning"), StringByTemplate(IN_PROGRESS, "warning"))
                         elseif status == "completed" then
-                            rightText = format("%s - %s", StringByTemplate(questName, "greyLight"), StringByTemplate(CRITERIA_COMPLETED, "success"))
+                            rightText = format("%s - %s", StringByTemplate(questName, "warning"), StringByTemplate(CRITERIA_COMPLETED, "success"))
                         end
                     else
                         rightText = StringByTemplate(L["Not Accepted"], "danger")
@@ -835,7 +835,7 @@ local functionFactory = {
                         local textL = type(data.label) == "function" and data:label() or data.label
                         local textR = data.rightText or StringByTemplate(isCompleted and CRITERIA_COMPLETED or CRITERIA_NOT_COMPLETED, color)
                         if type(textL) == "string" then
-                            GameTooltip:AddDoubleLine(textL, textR, color, 1, 1, 1)
+                            GameTooltip:AddDoubleLine(textL, textR, 1, 1, 1)
                         end
                     end
                 end
@@ -1072,7 +1072,7 @@ local functionFactory = {
                     end
 
                     GameTooltip:AddLine(" ")
-                    GameTooltip:AddLine(L["Quest Progress"])
+                    GameTooltip:AddLine(L["Quest Progress:"], 1, 1, 1)
                     for _, data in ipairs(questProgress) do
                         if data.questID then
                             local isCompleted = false
