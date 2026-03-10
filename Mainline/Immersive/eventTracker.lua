@@ -835,7 +835,7 @@ local functionFactory = {
                         local textL = type(data.label) == "function" and data:label() or data.label
                         local textR = data.rightText or StringByTemplate(isCompleted and CRITERIA_COMPLETED or CRITERIA_NOT_COMPLETED, color)
                         if type(textL) == "string" then
-                            GameTooltip:AddDoubleLine(textL, textR, 1, 1, 1)
+                            GameTooltip:AddDoubleLine(textL, textR)
                         end
                     end
                 end
