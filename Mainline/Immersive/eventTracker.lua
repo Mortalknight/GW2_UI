@@ -180,33 +180,33 @@ local eventData = {
             questIDs = {
                 [WeeklyName(7578704, L["Liadrin 4 > 1"], 2393)] = {
                     -- https://www.wowhead.com/npc=256203/lady-liadrin
-                    93767, -- 至暗之夜：奥术秘社
-                    93889, -- 至暗之夜：萨瑟利尔的聚会
-                    93909, -- 至暗之夜：地下堡
-                    93911, -- 至暗之夜：地下城
+                    93767,
+                    93889,
+                    93909,
+                    93911,
                 },
                 [WeeklyName(5554512, L["Dungeon"], 2393)] = {
                     -- https://www.wowhead.com/npc=256210/halduron-brightwing
-                    93753, -- 魔导师平台
+                    93753,
                 },
                 [WeeklyName(2066011, L["Soiree"], 2395)] = {
                     -- https://www.wowhead.com/item=268489/surplus-bag-of-party-favors
-                    90573, -- 加固符文石：魔导师
-                    90574, -- 加固符文石：血骑士
-                    90575, -- 加固符文石：远行者
-                    90576, -- 加固符文石：径巷之影
+                    90573,
+                    90574,
+                    90575,
+                    90576,
                 },
                 [WeeklyName(7385004, L["Legend"], 2413)] = {
                     -- https://www.wowhead.com/npc=238170/zurashar-kassameh#ends
-                    88993, -- 威南的结界
-                    88994, -- 回响大锅
-                    88995, -- 艾林哈籁之花
-                    88996, -- 回响寂灭之焰
-                    88997, -- 鲁斯苏拉之臂
+                    88993,
+                    88994,
+                    88995,
+                    88996,
+                    88997,
                 },
                 [WeeklyName(7636650, L["Abundance"], 2437)] = {
                     -- https://www.wowhead.com/quest=89507/abundant-offerings
-                    89507, -- 丰饶贡品
+                    89507,
                 },
             },
             questProgress = function(args)
@@ -247,9 +247,9 @@ local eventData = {
 
                 return progress
             end,
-            eventName = format("%s (%s)", L["Weekly Quest"], L["[ABBR] Midnight"]),
+            eventName = format("%s (%s)", L["Weekly Quest"], L["Midnight"]),
             location = C_Map.GetMapInfo(2537).name,
-            label = format("%s (%s)", L["Weekly Quest"], L["[ABBR] Midnight"]),
+            label = format("%s (%s)", L["Weekly Quest"], L["Midnight"]),
             onClick = GetWorldMapIDSetter(2537),
             onClickHelpText = L["Click to show location"],
         },
@@ -832,9 +832,10 @@ local functionFactory = {
                             end
                         end
                         local color = isCompleted and "success" or "danger"
-                        local label = type(data.label) == "function" and data:label() or data.label
-                        if type(label) == "string" then
-                            GameTooltip:AddDoubleLine(label, StringByTemplate(isCompleted and CRITERIA_COMPLETED or CRITERIA_NOT_COMPLETED, color), 1, 1, 1)
+                        local textL = type(data.label) == "function" and data:label() or data.label
+                        local textR = data.rightText or StringByTemplate(isCompleted and CRITERIA_COMPLETED or CRITERIA_NOT_COMPLETED, color)
+                        if type(textL) == "string" then
+                            GameTooltip:AddDoubleLine(textL, textR, color, 1, 1, 1)
                         end
                     end
                 end
