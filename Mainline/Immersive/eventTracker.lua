@@ -234,12 +234,12 @@ local eventData = {
 
                     if questName then
                         if status == "inProgress" then
-                            rightText = format("%s - %s", questName, StringByTemplate(IN_PROGRESS, "info"))
+                            rightText = format("%s - %s", StringByTemplate(questName, "greyLight"), StringByTemplate(IN_PROGRESS, "warning"))
                         elseif status == "completed" then
-                            rightText = format("%s - %s", questName, StringByTemplate(CRITERIA_COMPLETED, "success"))
+                            rightText = format("%s - %s", StringByTemplate(questName, "greyLight"), StringByTemplate(CRITERIA_COMPLETED, "success"))
                         end
                     else
-                        rightText = StringByTemplate(L["Not Accepted"], "warning")
+                        rightText = StringByTemplate(L["Not Accepted"], "danger")
                     end
 
                     tinsert(progress, { label = storylineName, rightText = rightText })
@@ -249,7 +249,7 @@ local eventData = {
             end,
             eventName = format("%s (%s)", L["Weekly Quest"], L["Midnight"]),
             location = C_Map.GetMapInfo(2537).name,
-            label = format("%s (%s)", L["Weekly Quest"], L["Midnight"]),
+            label = format("%s (%s)", L["Weekly Quest"], L["MN"]),
             onClick = GetWorldMapIDSetter(2537),
             onClickHelpText = L["Click to show location"],
         },
@@ -270,7 +270,7 @@ local eventData = {
             runningBarColor = colorPlatte.green,
             runningText = IN_PROGRESS,
             filter = function(args)
-                if args.stopAlertIfPlayerNotEnteredMidnight and not C_QuestLog.IsQuestFlaggedCompleted(91281) then
+                if not C_QuestLog.IsQuestFlaggedCompleted(91281) then
                     return false
                 end
                 return true
@@ -816,7 +816,7 @@ local functionFactory = {
                     end
 
                     GameTooltip:AddLine(" ")
-                    GameTooltip:AddLine(L["Quest Progress"])
+                    GameTooltip:AddLine(L["Quest Progress:"], 1, 1, 1)
                     for _, data in ipairs(questProgress) do
                         local isCompleted = data.isCompleted
                         if not isCompleted and data.questID then
