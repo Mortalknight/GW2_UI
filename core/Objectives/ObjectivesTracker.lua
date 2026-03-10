@@ -25,6 +25,7 @@ local function ParseObjectiveString(block, text, numItems, numNeeded, overrideSh
 end
 GW.ParseObjectiveString = ParseObjectiveString
 local function ParseSimpleObjective(text)
+    if not text then return "" end
     local itemName, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
 
     if itemName == nil then
