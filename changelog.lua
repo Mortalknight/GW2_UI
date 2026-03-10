@@ -13,6 +13,14 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("10.5.0", {
+    {GW.Enum.ChangelogType.feature, [=[Added Midnight event tracker to worldmap]=]},
+    {GW.Enum.ChangelogType.feature, [=[Added option to show spell icons to the floating combat text (classic)]=]},
+    {GW.Enum.ChangelogType.change, [=[Hide druid mana in none related forms and specs (Retail)]=]},
+    {GW.Enum.ChangelogType.bug, [=[Fix GMOTD taint]=]},
+})
+
 addChange("10.4.1", {
     {GW.Enum.ChangelogType.bug, [=[Loading issue on none retail clients]=]},
 })
