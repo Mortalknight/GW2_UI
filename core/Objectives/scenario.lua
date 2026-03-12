@@ -30,8 +30,8 @@ local allowedWidgetUpdateIdsForStatusBar = {
 GwObjectivesScenarioContainerMixin = {}
 GwQuesttrackerScenarioBlockMixin = {}
 
+local widgetId = nil
 function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
-    local widgetId = nil
     if event == "UPDATE_UI_WIDGET" then
         local w = ...
         if not (w and (allowedWidgetUpdateIdsForTimer[w.widgetID] or allowedWidgetUpdateIdsForStatusBar[w.widgetID])) then
@@ -105,6 +105,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         timerBlock.height = 1
         timerBlock:SetHeight(timerBlock.height)
         GW.TerminateScenarioWidgetTimer(timerBlock)
+        widgetId = nil
 
         return
     end
@@ -293,7 +294,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
             local quantity = widgetInfo.barValue
             local text = GW.ParseCriteria(widgetInfo.barValue, widgetInfo.barMax, widgetInfo.text)
 
-            C_UIWidgetManager.GetStatusBarWidgetVisualizationInfo(6280)
             if widgetInfo.barValueTextType == Enum.StatusBarValueTextType.Percentage then
                 objectiveType = "progressbar"
                 quantity = math.min(1, widgetInfo.barValue / widgetInfo.barMax)
