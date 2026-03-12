@@ -20,7 +20,7 @@ local allowedWidgetUpdateIdsForTimer = {
     [6289] = {hasTimer = false}, -- Night (1370)
     [6287] = {hasTimer = false}, -- Night (1368)
     [6288] = {hasTimer = false}, -- Night (1369)
-    [6731] = {hasTimer = false}, -- Abundance
+    [6731] = {hasTimer = true}, -- Abundance
 }
 
 local allowedWidgetUpdateIdsForStatusBar = {
