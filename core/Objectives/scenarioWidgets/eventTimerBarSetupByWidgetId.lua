@@ -12,7 +12,7 @@ GW.TerminateScenarioWidgetTimer = TerminateTimer
 local function TimerFunction(timerBlock, widgetId)
     local widget = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(widgetId)
     if widget and widget.timerValue ~= widget.timerMax then
-        timerBlock.timer:SetValue(widget.timerValue / widget.timerMax)
+        timerBlock.timer:SetValue(ceil(widget.timerValue / widget.timerMax))
         timerBlock.timerString:SetText(SecondsToClock(widget.timerValue, false))
     else
         timerBlock.height = 1
@@ -32,7 +32,7 @@ local function addEventTimerBarByWidgetId(timerBlock, gwQuestTrackerTimerSavedHe
                 end
                 timerBlock.ticker = C_Timer.NewTicker(0.25, function() TimerFunction(timerBlock, widgetId) end)
             else
-                timerBlock.timer:SetValue(widget.timerValue / widget.timerMax)
+                timerBlock.timer:SetValue(ceil(widget.timerValue / widget.timerMax))
                 timerBlock.timerString:SetText(SecondsToClock(widget.timerValue, false))
             end
             timerBlock.timer:Show()
