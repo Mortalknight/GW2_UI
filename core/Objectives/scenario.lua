@@ -38,8 +38,8 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout(event, ...)
         local w = ...
         if not (w and (allowedWidgetUpdateIdsForTimer[w.widgetID] or allowedWidgetUpdateIdsForStatusBar[w.widgetID])) then
             return
-        else
-            widgetId = (allowedWidgetUpdateIdsForTimer[w.widgetID] and w.widgetID) or nil
+        elseif allowedWidgetUpdateIdsForTimer[w.widgetID] then
+            widgetId = w.widgetID
         end
     end
 
