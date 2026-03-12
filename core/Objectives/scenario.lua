@@ -20,11 +20,13 @@ local allowedWidgetUpdateIdsForTimer = {
     [6289] = {hasTimer = false}, -- Night (1370)
     [6287] = {hasTimer = false}, -- Night (1368)
     [6288] = {hasTimer = false}, -- Night (1369)
+    [6731] = {hasTimer = false}, -- Abundance
 }
 
 local allowedWidgetUpdateIdsForStatusBar = {
     [6758] = {additon = true}, -- 11.1.0
     [6280] = {additon = true}, -- 11.1.5
+    [6849] = {additon = true}, -- 12.0.1
 }
 
 GwObjectivesScenarioContainerMixin = {}
