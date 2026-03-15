@@ -180,14 +180,30 @@ local eventData = {
             questIDs = {
                 [WeeklyName(7578704, L["Liadrin 4 > 1"], 2393)] = {
                     -- https://www.wowhead.com/npc=256203/lady-liadrin
+                    93766,
                     93767,
+                    93769,
                     93889,
-                    93909,
-                    93911,
+                    93890,
+					93891,
+					93892,
+					93909,
+					93910,
+					93911,
+					93912,
+					93913,
+					94457,
                 },
                 [WeeklyName(5554512, L["Dungeon"], 2393)] = {
                     -- https://www.wowhead.com/npc=256210/halduron-brightwing
-                    93753,
+                    93751,
+					93752,
+					93753,
+					93754,
+					93755,
+					93756,
+					93757,
+					93758,
                 },
                 [WeeklyName(2066011, L["Soiree"], 2395)] = {
                     -- https://www.wowhead.com/item=268489/surplus-bag-of-party-favors
@@ -198,11 +214,7 @@ local eventData = {
                 },
                 [WeeklyName(7385004, L["Legend"], 2413)] = {
                     -- https://www.wowhead.com/npc=238170/zurashar-kassameh#ends
-                    88993,
-                    88994,
-                    88995,
-                    88996,
-                    88997,
+                    89268,
                 },
                 [WeeklyName(7636650, L["Abundance"], 2437)] = {
                     -- https://www.wowhead.com/quest=89507/abundant-offerings
@@ -217,7 +229,6 @@ local eventData = {
                     local weeklyQuestID, status
                     for _, questID in pairs(storylineQuests) do
                         if C_QuestLog.IsQuestFlaggedCompleted(questID) then
-                            weeklyQuestID = questID
                             status = "completed"
                             break
                         end
@@ -229,18 +240,11 @@ local eventData = {
                         end
                     end
 
-                    local rightText = ""
                     local questName = weeklyQuestID and C_QuestLog.GetTitleForQuestID(weeklyQuestID)
-
-                    if questName then
-                        if status == "inProgress" then
-                            rightText = format("%s - %s", StringByTemplate(questName, "warning"), StringByTemplate(IN_PROGRESS, "warning"))
-                        elseif status == "completed" then
-                            rightText = format("%s - %s", StringByTemplate(questName, "warning"), StringByTemplate(CRITERIA_COMPLETED, "success"))
-                        end
-                    else
-                        rightText = StringByTemplate(L["Not Accepted"], "danger")
-                    end
+                    questName = questName and questName .. " - " or ""
+                    local rightText = status == "inProgress" and questName .. StringByTemplate(IN_PROGRESS, "warning")
+                        or status == "completed" and questName .. StringByTemplate(CRITERIA_COMPLETED, "success")
+                        or StringByTemplate(L["Not Accepted"], "danger")
 
                     tinsert(progress, { label = storylineName, rightText = rightText })
                 end
