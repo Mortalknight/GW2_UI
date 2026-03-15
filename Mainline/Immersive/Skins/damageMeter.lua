@@ -228,6 +228,19 @@ local function HandleSourceWindow(window, sourceWindow)
     sourceWindow.IsSkinned = true
 end
 
+local function HandleLocalPlayerEntry(self)
+    local entry = self.LocalPlayerEntry
+
+    if not entry then return end
+
+    HandleStatusBar(entry)
+
+    local StatusBarBackground = entry.StatusBar and entry.StatusBar.Background
+    if StatusBarBackground then
+        StatusBarBackground:SetAlpha(1)
+    end
+end
+
 local function HandleSessionWindow(self)
     if self.IsSkinned then return end
 
@@ -240,6 +253,10 @@ local function HandleSessionWindow(self)
     HandleSessionTimer(self, self.SessionTimer)
     HandleScrollBoxes(self)
     RepositionResizeButton(self)
+
+    if self.ShowLocalPlayerEntry then
+        hooksecurefunc(self, "ShowLocalPlayerEntry", HandleLocalPlayerEntry)
+    end
 
     self.IsSkinned = true
 end
