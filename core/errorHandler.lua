@@ -158,8 +158,11 @@ local function CreateErrorHandler()
     errorFrame.errorRate = 0
 
     if BugGrabber then
-        BugGrabber.RegisterCallback(errorFrame, "BugGrabber_BugGrabbed", function (_, err)
-            errorFrame:OnError(err.message, err.stack, err.locals ~= "InCombatSkipped" and err.locals or "")
+        EventRegistry:RegisterCallback("BugGrabber.BugGrabbed", function(_, tableID)
+            local error = BugGrabber:GetErrorByID(tableID)
+            if error then
+                errorFrame:OnError(error.message, error.stack, error.locals ~= "InCombatSkipped" and error.locals or "")
+            end
         end)
     else
         local origHandler = geterrorhandler()
