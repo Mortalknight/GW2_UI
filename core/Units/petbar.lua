@@ -100,7 +100,7 @@ function GwPlayerPetFrameMixin:Update()
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack.png")
         elseif name == "PET_ACTION_FOLLOW" then
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow.png")
-        elseif name == "PET_ACTION_MOVE_TO"then
+        elseif name == "PET_ACTION_MOVE_TO" or name == "PET_ACTION_WAIT" then
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place.png")
         elseif name == "PET_MODE_ASSIST" or name == "PET_MODE_AGGRESSIVE" then
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist.png")
