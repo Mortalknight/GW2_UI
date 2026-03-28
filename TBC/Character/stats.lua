@@ -69,7 +69,11 @@ local function getPrimary(i, unit)
 
     -- Get class specific tooltip for that stat
     local _, classFileName = UnitClass(unit)
-    local classStatText = _G[strupper(classFileName) .. "_" .. PRIMARY_STATS[i] .. "_" .. "TOOLTIP"]
+    local classStatText
+    
+    if classFileName then
+        classStatText = _G[strupper(classFileName) .. "_" .. PRIMARY_STATS[i] .. "_" .. "TOOLTIP"]
+    end
 
     -- If can't find one use the default
     if not classStatText then
