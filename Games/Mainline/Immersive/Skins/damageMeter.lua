@@ -44,19 +44,18 @@ local function HandleResizeButton(button)
 end
 
 local function BackdropSetAlpha(self, alpha)
-    local parent = self:GetParent()
-    if parent and parent.backdrop then
-        parent.backdrop:SetAlpha(alpha)
+    if self.backdrop then
+        self.backdrop:SetAlpha(alpha)
     end
 end
 
 local function HandleBackground(window, background, x1, y1, x2, y2)
-    if not window or not background or window.backdrop then return end
+    if not window or not background or background.backdrop then return end
 
-    background:Hide()
+    background:SetTexture()
 
-    window:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
-    window.backdrop:SetAlpha(window.backgroundAlpha or 1)
+    background:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+    background.backdrop:SetAlpha(background:GetAlpha())
 
     hooksecurefunc(background, "SetAlpha", BackdropSetAlpha)
 end
@@ -135,7 +134,7 @@ local function HandleSettingsDropdown(window, dropdown)
     dropdown:GwSkinButton(false, false, false, true, false, true)
 
     dropdown:SetSize(20, 20)
-    dropdown:GwNudgePoint(15, -2)
+    dropdown:GwNudgePoint(2, 0)
 
     if dropdown.Icon then
         dropdown.Icon:SetAlpha(0)
@@ -199,8 +198,8 @@ local function HandleScrollBoxes(window)
     end
 end
 
-local function RepositionResizeButton(self)
-    local ResizeButton = self.backdrop and self.GetResizeButton and self:GetResizeButton()
+local function RepositionResizeButton(container)
+    local ResizeButton = container.ResizeButton
     if not ResizeButton then return end
 
     HandleResizeButton(ResizeButton)
@@ -208,11 +207,11 @@ local function RepositionResizeButton(self)
     ResizeButton:SetSize(20, 20)
     ResizeButton:ClearAllPoints()
 
-    local isRightSide = not self.IsRightSide or self:IsRightSide()
+    local isRightSide = not container.IsRightSide or container:IsRightSide()
     local point = isRightSide and "BOTTOMRIGHT" or "BOTTOMLEFT"
     local xOffset = isRightSide and -4 or 4
 
-    ResizeButton:SetPoint(point, self.backdrop, point, xOffset, 4)
+    ResizeButton:SetPoint(point, container.Background, point, xOffset, 4)
 end
 
 local function HandleSourceWindow(window, sourceWindow)
@@ -220,11 +219,9 @@ local function HandleSourceWindow(window, sourceWindow)
 
     HandleBackground(sourceWindow, sourceWindow.Background, -4, nil, -18)
     HandleScrollBoxes(sourceWindow)
-
     if sourceWindow.AnchorToSessionWindow then
         hooksecurefunc(sourceWindow, "AnchorToSessionWindow", RepositionResizeButton)
     end
-
     sourceWindow.IsSkinned = true
 end
 
@@ -241,18 +238,64 @@ local function HandleLocalPlayerEntry(self)
     end
 end
 
+local function SetMinimized(self, collapsed)
+    local MinimizeButton = self.MinimizeButton
+    if not MinimizeButton then return end
+
+    local normalTexture = MinimizeButton:GetNormalTexture()
+    local pushedTexture = MinimizeButton:GetPushedTexture()
+    local highlightTexture = MinimizeButton:GetHighlightTexture()
+
+    if collapsed then
+        normalTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        pushedTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        highlightTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        normalTexture:SetRotation(1.570796325)
+        pushedTexture:SetRotation(1.570796325)
+        highlightTexture:SetRotation(1.570796325)
+    else
+        normalTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        pushedTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        highlightTexture:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+        normalTexture:SetRotation(0)
+        pushedTexture:SetRotation(0)
+        highlightTexture:SetRotation(0)
+    end
+end
+
+local function HandleMinimizeContainer(window, container)
+    if not container or container.IsSkinned then return end
+
+    HandleBackground(window, container.Background, 13, nil, -18)
+    RepositionResizeButton(container)
+
+    container.IsSkinned = true
+end
+
+local function HandleMinimizeButton(window, button)
+    if not button or button.IsSkinned then return end
+
+    button:SetSize(16, 16)
+    button:GwNudgePoint(13)
+
+    SetMinimized(window, window.isMinimized)
+    hooksecurefunc(window, "SetMinimized", SetMinimized)
+
+    button.IsSkinned = true
+end
+
 local function HandleSessionWindow(self)
     if self.IsSkinned then return end
 
-    HandleBackground(self, self.Background, 13, nil, -18)
     HandleHeader(self, self.Header)
+    HandleMinimizeButton(self, self.MinimizeButton)
+    HandleMinimizeContainer(self, self.MinimizeContainer)
     HandleTypeDropdown(self, self.DamageMeterTypeDropdown)
     HandleSessionDropdown(self, self.SessionDropdown)
     HandleSettingsDropdown(self, self.SettingsDropdown)
-    HandleSourceWindow(self, self.SourceWindow)
+    HandleSourceWindow(self.MinimizeContainer, self.MinimizeContainer.SourceWindow)
     HandleSessionTimer(self, self.SessionTimer)
     HandleScrollBoxes(self)
-    RepositionResizeButton(self)
 
     if self.ShowLocalPlayerEntry then
         hooksecurefunc(self, "ShowLocalPlayerEntry", HandleLocalPlayerEntry)

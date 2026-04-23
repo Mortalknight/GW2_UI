@@ -1,8 +1,11 @@
+10.8.3
+CHANGES
+    - Update Damage Meter skin
+
 10.8.2
 FIXES
     - More secrets
     - Classic hero panel works again
-
 
 10.8.1
 FIXES

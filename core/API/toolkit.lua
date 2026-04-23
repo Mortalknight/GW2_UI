@@ -877,6 +877,30 @@ local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddi
     GW.texts[object] = true
 end
 
+local function GwLockTextColor(object, r, g, b, a)
+    if not object or not object.SetTextColor then return end
+
+    object.gwLockedTextColorR = r
+    object.gwLockedTextColorG = g
+    object.gwLockedTextColorB = b
+    object.gwLockedTextColorA = a or 1
+
+    if not object.GwTextColorLockedHooked then
+        hooksecurefunc(object, "SetTextColor", function(self)
+            if not self.gwLockedTextColorR or self.GWUpdatingLockedTextColor then return end
+
+            self.GWUpdatingLockedTextColor = true
+            self:SetTextColor(self.gwLockedTextColorR, self.gwLockedTextColorG, self.gwLockedTextColorB, self.gwLockedTextColorA)
+            self.GWUpdatingLockedTextColor = nil
+        end)
+
+        object.GwTextColorLockedHooked = true
+    end
+
+    object:SetTextColor(object.gwLockedTextColorR, object.gwLockedTextColorG, object.gwLockedTextColorB, object.gwLockedTextColorA)
+end
+GW.LockFontStringColor = GwLockTextColor
+
 local function GrabPoint(obj, pointValue)
     if type(pointValue) == "string" then
         local pointIndex = tonumber(pointValue)
@@ -933,6 +957,7 @@ local function addapi(object)
     if not object.GwKillEditMode then mt.GwKillEditMode = GwKillEditMode end
     if not object.GwHandleDropDownBox then mt.GwHandleDropDownBox = GwHandleDropDownBox end
     if not object.GwSetFontTemplate then mt.GwSetFontTemplate = GwSetFontTemplate end
+    if not object.GwLockTextColor then mt.GwLockTextColor = GwLockTextColor end
     if not object.GwOffsetFrameLevel then mt.GwOffsetFrameLevel = GwOffsetFrameLevel end
     if not object.GwNudgePoint then mt.GwNudgePoint = GwNudgePoint end
     if not object.GwSetFrameTemplate then mt.GwSetFrameTemplate = GwSetFrameTemplate end

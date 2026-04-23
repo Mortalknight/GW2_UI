@@ -91,7 +91,7 @@ local function raidInfo_OnEnter(self)
     else
         local instanceName = GetSavedWorldBossInfo(self.RaidInfoIdx)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(instanceName)
+        GameTooltip:SetText(instanceName, 1, 1, 1)
         GameTooltip:Show()
     end
 end
@@ -239,8 +239,8 @@ local function updateCollapse(texture, atlas)
                 texture:GetPushedTexture():SetRotation(1.570796325)
             end
             if texture.GetHighlightTexture then
-                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                texture:GetPushedTexture():SetRotation(1.570796325)
+                texture:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+                texture:GetHighlightTexture():SetRotation(1.570796325)
             end
         else
             if texture.SetTexture then
@@ -255,8 +255,8 @@ local function updateCollapse(texture, atlas)
                 texture:GetPushedTexture():SetRotation(0)
             end
             if texture.GetHighlightTexture then
-                texture:GetPushedTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
-                texture:GetPushedTexture():SetRotation(0)
+                texture:GetHighlightTexture():SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down.png")
+                texture:GetHighlightTexture():SetRotation(0)
             end
         end
     end
@@ -300,12 +300,12 @@ local function UpdateTokenSkins(frame)
 
             if child.Name then
                 child.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-                child.Name:SetTextColor(1, 1, 1)
+                child.Name:GwLockTextColor(1, 1, 1)
             end
 
             if child.Text then
                 child.Text:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-                child.Text:SetTextColor(1, 1, 1)
+                child.Text:GwLockTextColor(1, 1, 1)
             end
 
             if child.Content then
