@@ -12,7 +12,7 @@ local function LoadChatPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit chat settings."])
 
-    p:AddOption(L["GW2 chat message style"], L["Changes the chat font, timestamp color and name display"], { getterSetter = "CHAT_USE_GW2_STYLE", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
+    p:AddOption(L["GW2 Chat Message Style"], L["Changes the chat font, timestamp color and name display"], { getterSetter = "CHAT_USE_GW2_STYLE", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
     p:AddOption(L["Fade Chat"], L["Allow the chat to fade when not in use."], { getterSetter = "CHATFRAME_FADE", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
     p:AddOption(L["Hide Editbox"], L["Hide the chat editbox when not in focus."], { getterSetter = "CHATFRAME_EDITBOX_HIDE", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
     p:AddOption(L["URL Links"], L["Attempt to create URL links inside the chat."], { getterSetter = "CHAT_FIND_URL", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
