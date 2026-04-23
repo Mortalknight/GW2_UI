@@ -1196,7 +1196,7 @@ end
 
 local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon, levelup, spellID, targetName)
     -- An alert flagged as alreadyEarned has more space for the text to display since there's no shield+points icon.
-    AchievementAlertFrame_SetUp(frame, 5208, true)
+    AchievementAlertFrame_SetUp(frame, 2416, true)
     frame:HookScript("OnClick", GW2_UIAlertFrame_OnClick)
     frame.Name:SetFormattedText(name)
     frame.Name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
@@ -1323,7 +1323,7 @@ local function alertGuildEvents()
     local showAlert = false
     local num = GetGuildInvites()
     if num > 0 then
-        -- /run GW.AlertSystem:AddAlert("tt", nil, CALENDAR_STATUS_INVITED, function() if not CalendarFrame then C_AddOns.LoadAddOn("Blizzard_Calendar") end ShowUIPanel(CalendarFrame) end , "Interface/AddOns/GW2_UI/textures/icons/clock.png", false)
+        -- /run GW2_ADDON.AlertSystem:AddAlert("tt", nil, CALENDAR_STATUS_INVITED, function() if not CalendarFrame then C_AddOns.LoadAddOn("Blizzard_Calendar") end ShowUIPanel(CalendarFrame) end , "Interface/AddOns/GW2_UI/textures/icons/clock.png", false)
         GW.AlertSystem:AddAlert(GW.L["You have %s pending guild event(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock.png", false)
         showAlert = true
     end
