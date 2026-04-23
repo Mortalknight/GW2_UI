@@ -226,7 +226,7 @@ local function HandleSourceWindow(window, sourceWindow)
 end
 
 local function HandleLocalPlayerEntry(self)
-    local entry = self.LocalPlayerEntry
+    local entry = self.MinimizeContainer.LocalPlayerEntry
 
     if not entry then return end
 

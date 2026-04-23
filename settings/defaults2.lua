@@ -1176,6 +1176,8 @@ GW.globalDefault = {
 
         RAID_STYLE_PARTY= false,
         RAID_STYLE_PARTY_AND_FRAMES= false,
+        PARTY_FRAME_ORIENTATION = "VERTICAL",
+        PARTY_FRAME_SPACING = 5,
         PARTY_UNIT_HEALTH= "NONE",
         PARTY_SHOW_BUFFS = true,
         PARTY_SHOW_AURA_ICON_SIZE = 20,
@@ -1418,6 +1420,13 @@ GW.globalDefault = {
             hasMoved= false,
         },
         player_pos_scale= 1,
+        party_pos= {
+            point= "TOPLEFT",
+            relativePoint= "TOPLEFT",
+            xOfs= 20,
+            yOfs= -104,
+            hasMoved= false,
+        },
         playerFrameHealthBarSize = {
             height = 13,
             width = 213,

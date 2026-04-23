@@ -384,6 +384,10 @@ function GW.CheckRestrictionState(which)
     return state
 end
 
+function GW.IsPaperDollStatsRestricted()
+    return GW.CheckRestrictionState("ChallengeMode") > 1 or GW.CheckRestrictionState("Encounter") > 1 or GW.CheckRestrictionState("Combat") > 1 or GW.CheckRestrictionState("PvPMatch") > 1
+end
+
 function GW.IsChatRestricted()
     return C_CVar.GetCVarBool("addonChatRestrictionsForced") or GW.CheckRestrictionState("ChallengeMode") > 1 or GW.CheckRestrictionState("Encounter") > 1
 end

@@ -650,7 +650,7 @@ local function loadAuras(lm)
 
         -- creating a mover for private auras (2 atm) -- TODO: Maybe in a future update there is a skinning way
         local privateAurasheader = CreateFrame("Frame", nil, UIParent)
-        privateAurasheader:SetSize(80, 40)
+        privateAurasheader:SetSize(240, 40)
         RegisterMovableFrame(privateAurasheader, GW.L["Private Auras"], "PlayerPrivateAuras", ALL .. ",Blizzard,Aura", nil, {"default", "scaleable"}, true)
         privateAurasheader:ClearAllPoints()
         privateAurasheader:SetPoint("TOPLEFT", privateAurasheader.gwMover)
@@ -659,11 +659,7 @@ local function loadAuras(lm)
             local aura = privateAurasheader["privateAuraAnchor" .. i]
             aura = CreateFrame("Frame", nil, privateAurasheader, "GwPrivateAuraTmpl")
             aura.auraIndex = i
-            if i == 1 then
-                aura:SetPoint("TOPRIGHT")
-            else
-                aura:SetPoint("TOPLEFT")
-            end
+            aura:SetPoint("BOTTOMRIGHT", privateAurasheader, (28 * (i - 1)), 28 * 2)
             local auraAnchor = {
                 isContainer = false,
                 unitToken = "player",

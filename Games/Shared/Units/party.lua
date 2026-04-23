@@ -1,5 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
+local RegisterMovableFrame = GW.RegisterMovableFrame
 local SetClassIcon = GW.SetClassIcon
 local RoundDec = GW.RoundDec
 local IsIn = GW.IsIn
@@ -17,6 +18,18 @@ local partyFrames = {}
 local healtTextColorCurve
 local previewMode = false
 local SUMMON_ICON_PREFIX = GW.Retail and "RaidFrame-Icon-" or "Raid-Icon-"
+local PARTY_HORIZONTAL_AURA_SIZE = 16
+local PARTY_HORIZONTAL_AURAS_PER_ROW = 4
+local PARTY_HORIZONTAL_PET_AURA_SIZE = 12
+local PARTY_HORIZONTAL_PET_AURAS_PER_ROW = 6
+local PARTY_VERTICAL_AURA_SIZE = 20
+local PARTY_VERTICAL_AURA_X_OFFSET = 5
+local PARTY_VERTICAL_PET_AURA_X_OFFSET = 2
+local PARTY_VERTICAL_PET_X_OFFSET = 15
+local PARTY_VERTICAL_PET_Y_OFFSET = -17
+local PARTY_HORIZONTAL_AURA_GAP = 4
+local PARTY_HORIZONTAL_PET_GAP = 10
+local PARTY_HORIZONTAL_PET_AURA_GAP = 6
 
 if GW.Retail then
     healtTextColorCurve = C_CurveUtil.CreateColorCurve()
@@ -31,6 +44,172 @@ end
 local function GetPartyPetUnit(i)
     return (i == 1 and GW.settings.PARTY_PLAYER_FRAME) and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
 end
+
+local function GetVisiblePartyFrameCount()
+    return GW.settings.PARTY_PLAYER_FRAME and 5 or 4
+end
+
+local function ForceUpdateAuras(frame)
+    if frame and frame.auras and frame.auras.ForceUpdate then
+        frame.auras:ForceUpdate()
+    end
+end
+
+local function ApplyAuraContainerLayout(frame, point, relativeTo, relativePoint, xOffset, yOffset, width, height)
+    if not frame or not frame.auras then return end
+
+    frame.auras:ClearAllPoints()
+    frame.auras:SetPoint(point, relativeTo, relativePoint, xOffset or 0, yOffset or 0)
+
+    if width and height then
+        frame.auras:SetSize(width, height)
+    elseif width then
+        frame.auras:SetWidth(width)
+    elseif height then
+        frame.auras:SetHeight(height)
+    end
+end
+
+local function SyncAuraContainerHeight(frame)
+    if not frame or not frame.auras then return 0 end
+
+    local auraHeight = frame.auras.gwContentHeight or 0
+    frame.auras:SetHeight(math.max(auraHeight, frame.auras.smallSize or 1))
+
+    return auraHeight
+end
+
+local function UpdateAuraDisplaySettings(frame)
+    if not frame or not frame.auras then return end
+
+    local orientation = GW.settings.PARTY_FRAME_ORIENTATION or "VERTICAL"
+    if orientation == "HORIZONTAL" then
+        if frame.isPet then
+            frame.auras.smallSize = PARTY_HORIZONTAL_PET_AURA_SIZE
+            frame.auras.bigSize = PARTY_HORIZONTAL_PET_AURA_SIZE
+            frame.auras.gwButtonsPerRow = PARTY_HORIZONTAL_PET_AURAS_PER_ROW
+            frame.auras.gwGrowUp = true
+        else
+            frame.auras.smallSize = PARTY_HORIZONTAL_AURA_SIZE
+            frame.auras.bigSize = PARTY_HORIZONTAL_AURA_SIZE
+            frame.auras.gwButtonsPerRow = PARTY_HORIZONTAL_AURAS_PER_ROW
+            frame.auras.gwGrowUp = false
+        end
+    else
+        local auraSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE or PARTY_VERTICAL_AURA_SIZE
+        if frame.isPet then
+            frame.auras.smallSize = auraSize - 6
+            frame.auras.bigSize = auraSize - 6
+        else
+            frame.auras.smallSize = auraSize
+            frame.auras.bigSize = auraSize
+        end
+        frame.auras.gwButtonsPerRow = nil
+        frame.auras.gwGrowUp = nil
+    end
+end
+
+local function UpdatePartyFrameSubLayout(frame)
+    if not frame or not frame.healthContainer or not frame.auras or not frame.PetFrame then return 0 end
+
+    local orientation = GW.settings.PARTY_FRAME_ORIENTATION or "VERTICAL"
+    local showPets = GW.settings.PARTY_SHOW_PETS
+
+    if orientation == "HORIZONTAL" then
+        UpdateAuraDisplaySettings(frame.PetFrame)
+        frame.PetFrame:ClearAllPoints()
+        frame.PetFrame:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, PARTY_HORIZONTAL_PET_GAP)
+
+        ApplyAuraContainerLayout(
+            frame.PetFrame,
+            "BOTTOMLEFT",
+            frame.PetFrame.name,
+            "TOPLEFT",
+            0,
+            PARTY_HORIZONTAL_PET_AURA_GAP,
+            frame.PetFrame.powerbar:GetWidth(),
+            frame.PetFrame.auras.smallSize or 1
+        )
+        ForceUpdateAuras(frame.PetFrame)
+        local petAuraHeight = SyncAuraContainerHeight(frame.PetFrame)
+
+        UpdateAuraDisplaySettings(frame)
+        ApplyAuraContainerLayout(
+            frame,
+            "TOPLEFT",
+            frame.powerbar,
+            "BOTTOMLEFT",
+            0,
+            -PARTY_HORIZONTAL_AURA_GAP,
+            frame.powerbar:GetWidth(),
+            frame.auras.smallSize or GW.settings.PARTY_SHOW_AURA_ICON_SIZE or PARTY_VERTICAL_AURA_SIZE
+        )
+        ForceUpdateAuras(frame)
+        local auraHeight = SyncAuraContainerHeight(frame)
+
+        local extraHeight = auraHeight > 0 and (auraHeight + PARTY_HORIZONTAL_AURA_GAP) or 0
+        if showPets then
+            extraHeight = extraHeight + PARTY_HORIZONTAL_PET_GAP + frame.PetFrame:GetHeight()
+            if petAuraHeight > 0 then
+                extraHeight = extraHeight + PARTY_HORIZONTAL_PET_AURA_GAP + petAuraHeight
+            end
+        end
+
+        return extraHeight
+    end
+
+    UpdateAuraDisplaySettings(frame)
+    ApplyAuraContainerLayout(frame, "BOTTOMLEFT", frame.powerbar, "BOTTOMRIGHT", PARTY_VERTICAL_AURA_X_OFFSET, 0, PARTY_VERTICAL_AURA_SIZE, PARTY_VERTICAL_AURA_SIZE)
+    ForceUpdateAuras(frame)
+
+    frame.PetFrame:ClearAllPoints()
+    frame.PetFrame:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", PARTY_VERTICAL_PET_X_OFFSET, PARTY_VERTICAL_PET_Y_OFFSET)
+    UpdateAuraDisplaySettings(frame.PetFrame)
+
+    ApplyAuraContainerLayout(frame.PetFrame, "BOTTOMLEFT", frame.PetFrame.powerbar, "BOTTOMRIGHT", PARTY_VERTICAL_PET_AURA_X_OFFSET, 0, PARTY_VERTICAL_AURA_SIZE, PARTY_VERTICAL_AURA_SIZE)
+    ForceUpdateAuras(frame.PetFrame)
+
+    return 0
+end
+
+local function UpdatePartyLayout()
+    local anchorFrame = partyFrames[1]
+    if not anchorFrame then return end
+
+    local orientation = GW.settings.PARTY_FRAME_ORIENTATION or "VERTICAL"
+    local spacing = tonumber(GW.settings.PARTY_FRAME_SPACING) or 0
+    local visibleCount = GetVisiblePartyFrameCount()
+    local partyWidth = anchorFrame:GetWidth()
+    local partyHeight = anchorFrame:GetHeight()
+    local petWidth = GW.settings.PARTY_SHOW_PETS and (anchorFrame.PetFrame:GetWidth() + 15) or 0
+    local petHeight = GW.settings.PARTY_SHOW_PETS and (anchorFrame.PetFrame:GetHeight() + 17) or 0
+    local blockWidth = math.max(partyWidth, petWidth)
+    local horizontalExtraHeight = 0
+
+    for i, frame in ipairs(partyFrames) do
+        frame:ClearAllPoints()
+
+        if i == 1 then
+            frame:SetPoint("TOPLEFT", frame.gwMover)
+        elseif orientation == "HORIZONTAL" then
+            frame:SetPoint("TOPLEFT", partyFrames[i - 1], "TOPLEFT", blockWidth + spacing, 0)
+        else
+            local currentBlockHeight = frame:GetHeight() + (GW.settings.PARTY_SHOW_PETS and (frame.PetFrame:GetHeight() + 17) or 0)
+            frame:SetPoint("TOPLEFT", partyFrames[i - 1], "TOPLEFT", 0, -(currentBlockHeight + spacing))
+        end
+
+        horizontalExtraHeight = math.max(horizontalExtraHeight, UpdatePartyFrameSubLayout(frame))
+    end
+
+    if anchorFrame.gwMover then
+        local moverWidth = orientation == "HORIZONTAL" and (blockWidth * visibleCount) + (spacing * (visibleCount - 1)) or blockWidth
+        local blockHeight = partyHeight + (orientation == "HORIZONTAL" and horizontalExtraHeight or petHeight)
+        local moverHeight = orientation == "HORIZONTAL" and blockHeight or (blockHeight * visibleCount) + (spacing * (visibleCount - 1))
+
+        anchorFrame.gwMover:SetSize(moverWidth, moverHeight)
+    end
+end
+GW.UpdatePartyLayout = UpdatePartyLayout
 
 local function FilterAura(element, unit, data)
     if data.isHelpfulAura then
@@ -71,17 +250,36 @@ end
 
 local function AuraSetPoint(element, from, to)
     local x, y = 0, 0
+    local orientation = GW.settings.PARTY_FRAME_ORIENTATION
+    local rowWidth = element.GetWidth and element:GetWidth() or 0
+    local growUp = element.gwGrowUp
+    element.gwContentHeight = 0
     for i = from, to do
         local button = element[i]
         if not button then break end
 
-        if x > 10 then
+        local buttonsPerRow = element.gwButtonsPerRow or 11
+        if orientation == "HORIZONTAL" and rowWidth > 0 then
+            buttonsPerRow = element.gwButtonsPerRow or math.max(1, math.floor(rowWidth / math.max(button.neededSize, 1)))
+        end
+
+        if x >= buttonsPerRow then
             y = y + 1
             x = 0
         end
         button:ClearAllPoints()
-        button:SetPoint("BOTTOMRIGHT", ((button.neededSize - 1) * x), (button.neededSize + 2) * y)
+        if orientation == "HORIZONTAL" then
+            if growUp then
+                button:SetPoint("BOTTOMLEFT", ((button.neededSize - 1) * x), ((button.neededSize + 2) * y))
+            else
+                button:SetPoint("TOPLEFT", ((button.neededSize - 1) * x), -((button.neededSize + 2) * y))
+            end
+        else
+            button:SetPoint("BOTTOMRIGHT", ((button.neededSize - 1) * x), (button.neededSize + 2) * y)
+        end
         x = x + 1
+
+        element.gwContentHeight = ((y + 1) * (button.neededSize + 2))
     end
 end
 
@@ -272,8 +470,8 @@ function GwPartyFrameMixin:OnEvent(event, unit, ...)
         self:UpdatePortrait()
     elseif event == "UNIT_NAME_UPDATE" then
         self:SetUnitName()
-    elseif event == "UNIT_AURA" then
-        GW.UpdateBuffLayout(self, event, unit, ...)
+    elseif event == "UNIT_AURA" and unit == self.unit then
+        GW.UpdateBuffLayout(self, event, self.unit, ...)
     elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.unit) then
         self:UpdateAwayData()
     elseif event == "READY_CHECK_FINISHED" then
@@ -326,6 +524,8 @@ local function UpdatePartyFrames()
         frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR
         frame.PetFrame:OnEvent("load")
     end
+
+    UpdatePartyLayout()
 end
 GW.UpdatePartyFrames = UpdatePartyFrames
 
@@ -349,20 +549,14 @@ local function UpdatePetVisibility(alwaysHide)
             end
         end
     end
+
+    UpdatePartyLayout()
 end
 GW.UpdatePartyPetVisibility = UpdatePetVisibility
 
 local function UpdatePlayerInPartySetting(alwaysHide)
-    local prevFrame
     for i, frame in ipairs(partyFrames) do
         local petFrame = frame.PetFrame
-
-        frame:ClearAllPoints()
-        if i == 1 then
-            frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)
-        else
-            frame:SetPoint("BOTTOMLEFT", prevFrame, "BOTTOMLEFT", -15, -90)
-        end
 
         local unit = GetPartyUnit(i)
         frame.unit = unit
@@ -392,10 +586,9 @@ local function UpdatePlayerInPartySetting(alwaysHide)
                 frame:SetScript("OnEvent", frame.OnEvent)
             end
         end
-
-        prevFrame = frame.PetFrame
     end
 
+    UpdatePartyLayout()
     UpdatePetVisibility(alwaysHide)
 end
 GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
@@ -403,6 +596,10 @@ GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
 local function CreatePartyFrame(i, isPlayer)
     local registerUnit = isPlayer and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, GW.Retail and "GwPartyFrameRetailTemplate" or "GwPartyFrameTemplate")
+
+    if i == 1 then
+        RegisterMovableFrame(frame, PARTY, "party_pos", ALL .. ",Unitframe,Group", nil, {"default"})
+    end
 
     local hg = frame.healthContainer
     if GW.Retail then

@@ -248,14 +248,18 @@ function GwImmersiveQuestFrameMixin:showQuestFrame()
         if not did_set_unit then
             -- could not set the model automatically, try to figure out some common cases
             -- (TODO: some of these use English localized names, which only works for English clients)
-            if npc_name == "Warchief's Command Board" then
-                gm:SetBoardUnit("horde")
-            elseif npc_name == "Hero's Call Board" then
-                gm:SetBoardUnit("alliance")
-            elseif object_types[npc_name] then
-                gm:SetModelUnit(object_types[npc_name])
+            if GW.NotSecretValue(npc_name) then
+                if npc_name == "Warchief's Command Board" then
+                    gm:SetBoardUnit("horde")
+                elseif npc_name == "Hero's Call Board" then
+                    gm:SetBoardUnit("alliance")
+                elseif object_types[npc_name] then
+                    gm:SetModelUnit(object_types[npc_name])
+                else
+                    -- if we can't figure out a better option, have the player read a scroll
+                    pm:SetAction("read")
+                end
             else
-                -- if we can't figure out a better option, have the player read a scroll
                 pm:SetAction("read")
             end
         end

@@ -13,10 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-addChange("10.8.3", {
+addChange("10.9.0", {
+    {GW.Enum.ChangelogType.feature, [=[Added movable party frames with new spacing and horizontal/vertical layout options]=]},
     {GW.Enum.ChangelogType.change, [=[Update Damage Meter skin]=]},
 })
-
 
 addChange("10.8.2", {
     {GW.Enum.ChangelogType.bug, [=[More secrets]=]},
