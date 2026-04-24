@@ -1,0 +1,19 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file ="SharedItems.xml"/>
+    <Include file ="QuestReqItems.xml"/>
+    <Include file ="QuestSummary.xml"/>
+    <Include file ="ImmersiveQuestingFrame.xml"/>
+    <Include file ="DebugFrame.xml"/>
+
+    <Script file ="data\MiscData.lua"/>
+    <Script file ="data\MapData.lua"/>
+    <Script file ="data\ModelData.lua"/>
+    <Script file ="data\PlayerData.lua"/>
+
+    <Script file ="QuestGiverMixin.lua"/>
+    <Script file ="QuestPlayerMixin.lua"/>
+    <Script file ="QuestReqItems.lua"/>
+    <Script file ="QuestSummary.lua"/>
+    <Script file ="ImmersiveQuestingFrame.lua"/>
+    <Script file ="DebugFrame.lua"/>
+</Ui>

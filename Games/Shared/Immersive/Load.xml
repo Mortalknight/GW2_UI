@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file ="Skins\Load.xml"/>
+    <Include file ="Questing\!Load.xml"/>
     <Script file ="tooltips.lua"/>
     <Script file ="chatframe.lua"/>
     <Script file ="chatbubbles.lua"/>
