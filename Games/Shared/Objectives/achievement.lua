@@ -10,15 +10,16 @@ function GwAchievementTrackerBlockMixin:UpdateBlock(parent)
     local numIncomplete = 0
     local numCriteria = GetAchievementNumCriteria(self.id)
     local description = select(8, GetAchievementInfo(self.id))
+    local showCompletedObjectives = GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES
 
-    self.height = 35
+    self.height = GW.GetObjectivesWideBlockBaseHeight()
     self.numObjectives = 0
 
     if numCriteria > 0 then
         for criteriaIndex = 1, numCriteria do
             local criteriaString, criteriaType, criteriaCompleted, quantity, totalQuantity, _, flags, assetID, quantityString, _, eligible, duration, elapsed = GetAchievementCriteriaInfo(self.id, criteriaIndex)
 
-            if not criteriaCompleted and criteriaString then
+            if (not criteriaCompleted or showCompletedObjectives) and criteriaString then
                 numIncomplete = numIncomplete + 1
 
                 if (description and bit.band(flags, EVALUATION_TREE_FLAG_PROGRESS_BAR) == EVALUATION_TREE_FLAG_PROGRESS_BAR) then
@@ -40,9 +41,9 @@ function GwAchievementTrackerBlockMixin:UpdateBlock(parent)
 
                 local needTimer = duration and elapsed and elapsed < duration
 
-                self:AddObjective(criteriaString, numIncomplete, {isAchievement = true, qty = quantity, totalqty = totalQuantity, eligible = eligible, timerShown = needTimer, duration = duration, startTime = GetTime() - (elapsed or 0)})
+                self:AddObjective(criteriaString, {isAchievement = true, finished = criteriaCompleted, useCompletedLine = showCompletedObjectives, qty = quantity, totalqty = totalQuantity, eligible = eligible, timerShown = needTimer, duration = duration, startTime = GetTime() - (elapsed or 0)})
                 if numIncomplete == MAX_OBJECTIVES then
-                    self:AddObjective("...", numIncomplete + 1, {isAchievement = true, qty = nil, totalqty = nil, eligible = true, timerShown = false, duration = nil, startTime = nil})
+                    self:AddObjective("...", {isAchievement = true, qty = nil, totalqty = nil, eligible = true, timerShown = false, duration = nil, startTime = nil})
                     break
                 end
             end
@@ -69,7 +70,7 @@ function GwAchievementTrackerBlockMixin:UpdateBlock(parent)
 		end
         local eligible = (not timerFailed and IsAchievementEligible(self.id)) and true or false
 
-        self:AddObjective(description, 1, {isAchievement = true, qty = nil, totalqty = nil, eligible = eligible, timerShown = timerShown, duration = timerCriteriaDuration, startTime = timerCriteriaStartTime})
+        self:AddObjective(description, {isAchievement = true, qty = nil, totalqty = nil, eligible = eligible, timerShown = timerShown, duration = timerCriteriaDuration, startTime = timerCriteriaStartTime})
     end
 
     self:SetHeight(self.height)
@@ -228,7 +229,7 @@ function GwAchievementTrackerContainerMixin:UpdateLayout()
     if self.collapsed and numAchievements > 0 then
         self.header:Show()
         numAchievements = 0
-        savedHeight = 20
+        savedHeight = GW.GetObjectivesHeaderHeight()
     end
 
     for i = 1, numAchievements do
@@ -238,7 +239,7 @@ function GwAchievementTrackerContainerMixin:UpdateLayout()
 
         if not wasEarnedByMe then
             if shownIndex == 1 then
-                savedHeight = 20
+                savedHeight = GW.GetObjectivesHeaderHeight()
             end
 
             self.header:Show()

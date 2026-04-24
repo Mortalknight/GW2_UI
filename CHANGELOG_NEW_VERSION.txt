@@ -2,6 +2,7 @@
 NEW
     - Added movable party frames with new spacing and horizontal/vertical layout options
     - Added automatic Objectives Tracker collapsing with separate options for Mythic+/Challenge Mode, Raid, Party, Delve and Combat
+    - Added Objectives Tracker options for Supertracked Quest to Top, Show Completed Objectives and Compact Mode
 
 CHANGES
     - Update Damage Meter skin

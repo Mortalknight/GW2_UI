@@ -572,21 +572,19 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
             objectiveOptions.objectiveType = objectiveType
             objectiveOptions.qty = scenarioCriteriaInfo.quantity
             objectiveOptions.isMythicKeystone = isMythicKeystone
-            block:AddObjective(GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress), criteriaIndex, objectiveOptions)
+            block:AddObjective(GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description, isMythicKeystone, mythicKeystoneCurrentValue, scenarioCriteriaInfo.isWeightedProgress), objectiveOptions)
             if scenarioCriteriaInfo.duration > 0 and scenarioCriteriaInfo.elapsed <= scenarioCriteriaInfo.duration then
-                block:AddObjective(TIME_REMAINING, numCriteria + 1, {isQuest = false, qty = nil, totalqty = nil, timerShown = true, duration = scenarioCriteriaInfo.duration, startTime = GetTime() - scenarioCriteriaInfo.elapsed})
+                block:AddObjective(TIME_REMAINING, {isQuest = false, qty = nil, totalqty = nil, timerShown = true, duration = scenarioCriteriaInfo.duration, startTime = GetTime() - scenarioCriteriaInfo.elapsed})
             end
         end
     end
     -- add special widgets here
-    numCriteria = GW.addWarfrontData(block, numCriteria)
-    numCriteria = GW.addHeroicVisionsData(block, numCriteria)
-    numCriteria = GW.addJailersTowerData(block, numCriteria)
-    numCriteria = GW.addEmberCourtData(self, numCriteria)
+    GW.addWarfrontData(block)
+    GW.addHeroicVisionsData(block)
+    GW.addJailersTowerData(block)
+    GW.addEmberCourtData(self)
 
     local bonusSteps = C_Scenario.GetBonusSteps() or {}
-    local numCriteriaPrev = numCriteria
-
     for _, v in ipairs(bonusSteps) do
         local bonusStepIndex = v
         local _, _, numCriteriaForStep = C_Scenario.GetStepInfo(bonusStepIndex)
@@ -597,14 +595,13 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
 
             -- timer bar
             if scenarioCriteriaInfo.duration > 0 and scenarioCriteriaInfo.elapsed <= scenarioCriteriaInfo.duration and not (scenarioCriteriaInfo.failed or scenarioCriteriaInfo.completed) then
-                block:AddObjective(TIME_REMAINING, numCriteriaPrev + 1, {isQuest = false, qty = nil, totalqty = nil, timerShown = true, duration = scenarioCriteriaInfo.duration, startTime = GetTime() - scenarioCriteriaInfo.elapsed})
+                block:AddObjective(TIME_REMAINING, {isQuest = false, qty = nil, totalqty = nil, timerShown = true, duration = scenarioCriteriaInfo.duration, startTime = GetTime() - scenarioCriteriaInfo.elapsed})
             else
                 objectiveOptions.finished = IsScenarioCriteriaComplete(scenarioCriteriaInfo)
                 objectiveOptions.objectiveType = objectiveType
                 objectiveOptions.qty = scenarioCriteriaInfo.quantity
                 objectiveOptions.isMythicKeystone = false
-                block:AddObjective(GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description), numCriteriaPrev + 1, objectiveOptions)
-                numCriteriaPrev = numCriteriaPrev + 1
+                block:AddObjective(GW.ParseCriteria(scenarioCriteriaInfo.quantity, scenarioCriteriaInfo.totalQuantity, scenarioCriteriaInfo.description), objectiveOptions)
             end
         end
     end
@@ -624,8 +621,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
                 text = (widgetInfo.text or "") .. " " .. FormatPercentage(quantity)
                 quantity = quantity * 100
             end
-            block:AddObjective(text, numCriteriaPrev + 1, { finished = false, objectiveType = objectiveType, qty = quantity, firstObjectivesYValue = -5 })
-            numCriteriaPrev = numCriteriaPrev + 1
+            block:AddObjective(text, { finished = false, objectiveType = objectiveType, qty = quantity, firstObjectivesYValue = -5 })
         end
     end
     if hasVisibleStatusBarWidget and not self.timerWidgetManager:IsTimerRunning() then

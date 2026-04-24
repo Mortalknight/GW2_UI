@@ -65,16 +65,44 @@ function GwQuestTrackerObjectiveMixin:AddTimer(duration, startTime)
     self.startTime = startTime
     self.duration = duration
 
-    self:SetHeight(self:GetHeight() + 15)
+    self:SetHeight(self:GetHeight() + GW.GetObjectivesTimerSpacing())
 
     self.TimerBar:ClearAllPoints()
-    if self.StatusBar:IsShown() then
-        self.TimerBar:SetPoint("BOTTOMRIGHT", self.StatusBar, 0, -20)
+    if GW.IsObjectivesTrackerCompactMode() then
+        if self.StatusBar:IsShown() then
+            self.TimerBar:SetPoint("TOPRIGHT", self.StatusBar, "BOTTOMRIGHT", 0, -GW.GetObjectivesStatusBarGap())
+        else
+            self.TimerBar:SetPoint("TOPRIGHT", self.ObjectiveText, "BOTTOMRIGHT", 0, -GW.GetObjectivesStatusBarGap())
+        end
     else
-        self.TimerBar:SetPoint("BOTTOMRIGHT", self.ObjectiveText)
+        if self.StatusBar:IsShown() then
+            self.TimerBar:SetPoint("BOTTOMRIGHT", self.StatusBar, 0, -20)
+        else
+            self.TimerBar:SetPoint("BOTTOMRIGHT", self.ObjectiveText)
+        end
     end
 
     self:SetScript("OnUpdate", TimerBarOnUpdate)
+end
+
+function GwQuestTrackerObjectiveMixin:ApplyLayoutStyle()
+    self.ObjectiveText:GwSetFontTemplate(UNIT_NAME_FONT, GW.IsObjectivesTrackerCompactMode() and GW.Enum.TextSizeType.Small or GW.Enum.TextSizeType.Normal)
+    self.StatusBar.progress:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    self.TimerBar.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    self.ObjectiveText:ClearAllPoints()
+    self.ObjectiveText:SetPoint("TOPRIGHT", self, "TOPRIGHT", -10, GW.IsObjectivesTrackerCompactMode() and -3 or -5)
+    self.StatusBar:ClearAllPoints()
+    if GW.IsObjectivesTrackerCompactMode() then
+        self.StatusBar:SetPoint("TOPRIGHT", self.ObjectiveText, "BOTTOMRIGHT", 0, -GW.GetObjectivesStatusBarGap())
+    else
+        self.StatusBar:SetPoint("BOTTOMRIGHT", self.ObjectiveText)
+    end
+    self.TimerBar:ClearAllPoints()
+    if GW.IsObjectivesTrackerCompactMode() then
+        self.TimerBar:SetPoint("TOPRIGHT", self.ObjectiveText, "BOTTOMRIGHT", 0, -GW.GetObjectivesStatusBarGap())
+    else
+        self.TimerBar:SetPoint("BOTTOMRIGHT", self.ObjectiveText)
+    end
 end
 
 function GwQuestTrackerObjectiveMixin:OnShow()
@@ -92,9 +120,7 @@ function GwQuestTrackerObjectiveMixin:OnHide()
 end
 
 function GwQuestTrackerObjectiveMixin:OnLoad()
-    self.ObjectiveText:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    self.StatusBar.progress:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    self.TimerBar.Label:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    self:ApplyLayoutStyle()
     hooksecurefunc(self.StatusBar, "SetValue", statusBarSetValue)
 end
 

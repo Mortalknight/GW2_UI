@@ -125,22 +125,22 @@ local function UpdateBlockInternal(self, parent, quest)
     end
 
     if quest.requiredMoney and quest.requiredMoney > GetMoney() and not quest.isComplete then
-        self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), self.numObjectives + 1, {isQuest = true, finished = quest.isComplete, objectiveType = nil})
+        self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), {isQuest = true, finished = quest.isComplete, objectiveType = nil})
     end
 
     if quest.isComplete then
         if quest.isAutoComplete then
-            self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+            self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, {isQuest = true, finished = false, objectiveType = nil})
         else
             local completionText = GetQuestLogCompletionText(quest.questLogIndex)
             if completionText then
-                self:AddObjective(completionText, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+                self:AddObjective(completionText, {isQuest = true, finished = false, objectiveType = nil})
             else
-                self:AddObjective(QUEST_WATCH_QUEST_READY, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+                self:AddObjective(QUEST_WATCH_QUEST_READY, {isQuest = true, finished = false, objectiveType = nil})
             end
         end
     elseif quest.isFailed then
-        self:AddObjective(FAILED, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+        self:AddObjective(FAILED, {isQuest = true, finished = false, objectiveType = nil})
     end
 
     self.height = self.height + 5
@@ -150,15 +150,14 @@ end
 GwQuestLogBlockMixin = {}
 
 function GwQuestLogBlockMixin:UpdateBlockObjectives(numObjectives)
-    local addedObjectives = 1
+    local showCompletedObjectives = GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES
     local infos = C_QuestLog.GetQuestObjectives(self.questID)
     for objectiveIndex = 1, numObjectives do
         local text = infos[objectiveIndex].text
         local objectiveType = infos[objectiveIndex].type
         local finished = infos[objectiveIndex].finished
-        if not finished or not text then
-            self:AddObjective(text, addedObjectives, {isQuest = true, finished = finished, objectiveType = objectiveType})
-            addedObjectives = addedObjectives + 1
+        if text and (showCompletedObjectives or not finished) then
+            self:AddObjective(text, {isQuest = true, finished = finished, objectiveType = objectiveType, useCompletedLine = showCompletedObjectives})
         end
     end
 end

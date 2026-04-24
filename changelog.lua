@@ -16,6 +16,7 @@ AddChange(string addonVersion, table changeList)
 addChange("10.9.0", {
     {GW.Enum.ChangelogType.feature, [=[Added movable party frames with new spacing and horizontal/vertical layout options]=]},
     {GW.Enum.ChangelogType.feature, [=[Added automatic Objectives Tracker collapsing with separate options for Mythic+/Challenge Mode, Raid, Party, Delve and Combat]=]},
+    {GW.Enum.ChangelogType.feature, [=[Added Objectives Tracker options for Supertracked Quest to Top, Show Completed Objectives and Compact Mode]=]},
     {GW.Enum.ChangelogType.change, [=[Update Damage Meter skin]=]},
 })
 

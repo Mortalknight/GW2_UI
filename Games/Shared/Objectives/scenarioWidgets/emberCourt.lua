@@ -1,12 +1,11 @@
 ---@class GW2
 local GW = select(2, ...)
 
-local function addEmberCourtData(container, numCriteria)
+local function addEmberCourtData(container)
     if GW.Libs.GW2Lib:GetPlayerLocationMapID() == 1644 then
         if BottomScenarioWidgetContainerBlock.WidgetContainer:GetHeight() > 1.1 then
-            numCriteria = numCriteria + 1
-
-            local objectiveBlock = container.block:GetObjectiveBlock(numCriteria)
+            container.block.numObjectives = container.block.numObjectives + 1
+            local objectiveBlock = container.block:GetObjectiveBlock(container.block.numObjectives)
             BottomScenarioWidgetContainerBlock.gwBlock = objectiveBlock
             objectiveBlock:SetHeight(max(BottomScenarioWidgetContainerBlock.height, BottomScenarioWidgetContainerBlock.WidgetContainer:GetHeight()))
             BottomScenarioWidgetContainerBlock.SetParent = nil
@@ -27,7 +26,5 @@ local function addEmberCourtData(container, numCriteria)
             objectiveBlock.resetParent = true
         end
     end
-
-    return numCriteria
 end
 GW.addEmberCourtData = addEmberCourtData

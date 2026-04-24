@@ -17,27 +17,27 @@ function GwObjectivesCollectionBlockMixin:UpdateBlock()
 
     local objectiveText = C_ContentTracking.GetObjectiveText(self.targetType, self.targetID)
     if objectiveText then
-        self:AddObjective(objectiveText, 1, {})
+        self:AddObjective(objectiveText, {})
     else
-        self:AddObjective(CONTENT_TRACKING_RETRIEVING_INFO, 1, {})
+        self:AddObjective(CONTENT_TRACKING_RETRIEVING_INFO, {})
     end
 
     if NavigableContentTrackingTargets[self.targetType] then
         -- If data is still pending, show nothing extra and wait for it to load.
         if objectiveText and (trackingResult ~= Enum.ContentTrackingResult.DataPending) then
             if not self.endLocationUIMap then
-                self:AddObjective(CONTENT_TRACKING_LOCATION_UNAVAILABLE, 2, {})
+                self:AddObjective(CONTENT_TRACKING_LOCATION_UNAVAILABLE, {})
             else
                 local navigableTrackingResult, isNavigable = C_ContentTracking.IsNavigable(self.trackableType, self.trackableID)
                 if (navigableTrackingResult == Enum.ContentTrackingResult.Failure) or (navigableTrackingResult == Enum.ContentTrackingResult.Success and not isNavigable) then
-                    self:AddObjective(CONTENT_TRACKING_ROUTE_UNAVAILABLE, 2, {})
+                    self:AddObjective(CONTENT_TRACKING_ROUTE_UNAVAILABLE, {})
                 else
                     local superTrackedType, superTrackedID = C_SuperTrack.GetSuperTrackedContent()
                     if (self.trackableType == superTrackedType) and (self.trackableID == superTrackedID) then
                         local waypointText = C_ContentTracking.GetWaypointText(self.trackableType, self.trackableID)
                         if waypointText then
                             local formattedText = OPTIONAL_QUEST_OBJECTIVE_DESCRIPTION:format(waypointText)
-                            self:AddObjective(formattedText, 2, {})
+                            self:AddObjective(formattedText, {})
                         end
                     end
                 end
@@ -92,7 +92,7 @@ local function updateCollectionLayout(self, trackableType, trackableID)
         block.trackableType = trackableType
         block.targetType = targetType
         block.targetID = targetID
-        block.height = 35
+        block.height = GW.GetObjectivesWideBlockBaseHeight()
         block.numObjectives = 0
 
         local title = C_ContentTracking.GetTitle(trackableType, trackableID)
@@ -101,7 +101,7 @@ local function updateCollectionLayout(self, trackableType, trackableID)
         block:UpdateBlock()
 
         if blockIndex == 1 then
-            savedHeight = 20 -- for header
+            savedHeight = GW.GetObjectivesHeaderHeight()
         end
         savedHeight = savedHeight + block.height
 
@@ -150,7 +150,7 @@ local function EnumerateTrackables(self, callback)
         if not hasSomethingToTrack then
             self.header:Hide()
         else
-            savedHeight = 20 -- for header
+            savedHeight = GW.GetObjectivesHeaderHeight()
         end
         for i = 1, #self.blocks do
             self.blocks[i]:Hide()

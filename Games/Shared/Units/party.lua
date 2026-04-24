@@ -68,6 +68,7 @@ local function ApplyAuraContainerLayout(frame, point, relativeTo, relativePoint,
     elseif height then
         frame.auras:SetHeight(height)
     end
+    frame.auras.maxWidth = width
 end
 
 local function SyncAuraContainerHeight(frame)
@@ -251,7 +252,7 @@ end
 local function AuraSetPoint(element, from, to)
     local x, y = 0, 0
     local orientation = GW.settings.PARTY_FRAME_ORIENTATION
-    local rowWidth = element.GetWidth and element:GetWidth() or 0
+    local rowWidth = element.maxWidth
     local growUp = element.gwGrowUp
     element.gwContentHeight = 0
     for i = from, to do

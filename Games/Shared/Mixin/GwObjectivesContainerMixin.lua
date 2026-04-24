@@ -25,6 +25,7 @@ end
 function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     local block = self.blocks and self.blocks[idx]
     if block then
+        block:ApplyLayoutStyle()
         -- set the correct block color for an existing block here
         block:SetBlockColorByKey(colorKey)
         block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
@@ -46,7 +47,7 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     newBlock.objectiveBlocks = {}
 
     if count == 1 then
-        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -20)
+        newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -GW.GetObjectivesHeaderHeight())
     else
         newBlock:SetPoint("TOPRIGHT", self.blocks[count - 1], "BOTTOMRIGHT", 0, 0)
     end
@@ -61,6 +62,8 @@ function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     if self.blockMixInTemplate then
         Mixin(newBlock, self.blockMixInTemplate)
     end
+
+    newBlock:ApplyLayoutStyle()
 
     -- quest item button here
     if addItemButton then

@@ -27,9 +27,9 @@ function GwBonusObjectivesTrackerBlockMixin:TryAddingExpirationWarningLine(objec
                 objectiveBlock:Show()
                 objectiveBlock.ObjectiveText:SetText(text)
                 objectiveBlock.ObjectiveText:SetTextColor(DIM_RED_FONT_COLOR.r, DIM_RED_FONT_COLOR.g, DIM_RED_FONT_COLOR.b)
-                objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
+                objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + GW.GetObjectivesTextPadding())
                 objectiveBlock.StatusBar:Hide()
-                local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
+                local h = objectiveBlock.ObjectiveText:GetStringHeight() + GW.GetObjectivesEntrySpacing()
                 objectiveBlock:SetHeight(h)
                 self.height = self.height + objectiveBlock:GetHeight()
                 self.numObjectives = self.numObjectives + 1
@@ -166,7 +166,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 -- needed for tooltip
                 block.parentModule = { showWorldQuests = true }
                 block.event = true
-                block.height = 20
+                block.height = GW.GetObjectivesBlockBaseHeight()
                 block.numObjectives = 0
                 block.tickerSeconds = 0
                 block.questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
@@ -183,7 +183,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                 GW.CombatQueue:Queue(nil, block.UpdateObjectiveActionButton, {block})
 
                 if not foundEvent then
-                    savedContainerHeight = 20
+                    savedContainerHeight = GW.GetObjectivesHeaderHeight()
                 end
                 foundEvent = true
 
@@ -210,7 +210,7 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                         simpleDesc = simpleDesc .. ", " .. parsedObjective
                     end
 
-                    local progressValue = block:AddObjective(txt, objectiveIndex, { isBonusObjective = true, finished = finished, useCompletedLine = true, objectiveType = objectiveType })
+                    local progressValue = block:AddObjective(txt, { isBonusObjective = true, finished = finished, useCompletedLine = true, objectiveType = objectiveType })
                     if finished then
                         objectiveProgress = objectiveProgress + (1 / numObjectives)
                     else
@@ -236,19 +236,19 @@ function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
                     GwObjectivesNotification:AddNotification(compassData)
                 end
 
-                savedContainerHeight = savedContainerHeight + block.height + 10
+                savedContainerHeight = savedContainerHeight + block.height + GW.GetObjectivesEntrySpacing()
                 block.fromContainerTopHeight = savedContainerHeight
                 if block.hasItem then
                     GW.CombatQueue:Queue("update_tracker_bonus_itembutton_position" .. blockIndex, block.UpdateObjectiveActionButtonPosition, {block})
                 end
 
                 block:Show()
-                block:SetHeight(block.height + 10)
+                block:SetHeight(block.height + GW.GetObjectivesEntrySpacing())
                 shownBlocks = shownBlocks + 1
                 blockIndex = blockIndex + 1
             else
                 shownBlocks = shownBlocks + 1
-                savedContainerHeight = 20
+                savedContainerHeight = GW.GetObjectivesHeaderHeight()
             end
         end
     end

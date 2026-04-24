@@ -7,15 +7,16 @@ local ChatEdit_GetActiveWindow = ChatFrameUtil and ChatFrameUtil.GetActiveWindow
 GwObjectivesHousingInitiativeBlockMixin = {}
 
 function GwObjectivesHousingInitiativeBlockMixin:UpdateBlock(requirements)
-    self.height = 25
+    local showCompletedObjectives = GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES
+    self.height = GW.GetObjectivesBlockBaseHeight()
     self.numObjectives = 0
 
-    for idx, requirement in ipairs(requirements) do
-        if not requirement.completed then
+    for _, requirement in ipairs(requirements) do
+        if not requirement.completed or showCompletedObjectives then
             local criteriaString = requirement.requirementText
             criteriaString = string.gsub(criteriaString, " / ", "/")
             criteriaString = string.gsub(criteriaString, "- ", "")
-            self:AddObjective(criteriaString, idx, {isHousingInitiativ = true, finished = false})
+            self:AddObjective(criteriaString, {isHousingInitiativ = true, finished = requirement.completed, useCompletedLine = showCompletedObjectives})
         end
     end
 
@@ -39,7 +40,7 @@ function GwObjectivesHousingInitiativeContainerMixin:UpdateLayout()
     if self.collapsed and #trackedTasks > 0 then
         self.header:Show()
         wipe(trackedTasks)
-        savedHeight = 20
+        savedHeight = GW.GetObjectivesHeaderHeight()
     end
 
     for i = 1, #trackedTasks do
@@ -71,7 +72,7 @@ function GwObjectivesHousingInitiativeContainerMixin:UpdateLayout()
     end
 
     if showHeader and not self.collapsed then
-        savedHeight = savedHeight + 20
+        savedHeight = savedHeight + GW.GetObjectivesHeaderHeight()
     end
     self:SetHeight(savedHeight)
 

@@ -23,6 +23,10 @@ local function BrightenColor(r, g, b, factor)
         math.min(1, b + (1 - b) * factor)
 end
 
+local function ShouldSortSuperTrackedQuestToTop()
+    return GW.settings.OBJECTIVES_SUPERTRACKED_QUEST_TOP
+end
+
 local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
@@ -30,7 +34,7 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
     local isSuperTracked = (questID == C_SuperTrack.GetSuperTrackedQuestID())
     local shouldShowWaypoint = isSuperTracked or (questID == QuestMapFrame_GetFocusedQuestID())
 
-    self.height = 25
+    self.height = GW.GetObjectivesBlockBaseHeight()
     self.numObjectives = 0
     self.turnin:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "COMPLETE"))
     self.popupQuestAccept:SetShown(self:IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
@@ -66,60 +70,59 @@ local function UpdateBlockInternal(self, parent, quest, questID, questLogIndex)
 
     if isComplete then
         if quest.isAutoComplete then
-            self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+            self:AddObjective(QUEST_WATCH_CLICK_TO_COMPLETE, {isQuest = true, finished = false, objectiveType = nil})
         else
             local completionText = GetQuestLogCompletionText(questLogIndex)
             if completionText then
                 if shouldShowWaypoint then
                     local waypointText = C_QuestLog.GetNextWaypointText(questID)
                     if waypointText then
-                        self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+                        self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), {isQuest = true, finished = false, objectiveType = nil})
                     end
                 end
-                self:AddObjective(completionText, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+                self:AddObjective(completionText, {isQuest = true, finished = false, objectiveType = nil})
             else
                 local waypointText = C_QuestLog.GetNextWaypointText(questID)
                 if waypointText then
-                    self:AddObjective(waypointText, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+                    self:AddObjective(waypointText, {isQuest = true, finished = false, objectiveType = nil})
                 else
-                    self:AddObjective(QUEST_WATCH_QUEST_READY, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+                    self:AddObjective(QUEST_WATCH_QUEST_READY, {isQuest = true, finished = false, objectiveType = nil})
                 end
             end
         end
     elseif questFailed then
-        self:AddObjective(FAILED, self.numObjectives + 1, {isQuest = true, finished = false, objectiveType = nil})
+        self:AddObjective(FAILED, {isQuest = true, finished = false, objectiveType = nil})
     else
         if shouldShowWaypoint then
 			local waypointText = C_QuestLog.GetNextWaypointText(questID);
 			if waypointText  then
-                self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), self.numObjectives + 1, {isQuest = true, finished = isComplete, objectiveType = nil})
+                self:AddObjective(WAYPOINT_OBJECTIVE_FORMAT_OPTIONAL:format(waypointText), {isQuest = true, finished = isComplete, objectiveType = nil})
 			end
 		end
 
         if quest.requiredMoney > GetMoney() then
-            self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), self.numObjectives + 1, {isQuest = true, finished = isComplete, objectiveType = nil})
+            self:AddObjective(GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney), {isQuest = true, finished = isComplete, objectiveType = nil})
         end
 
         -- timer bar
 		local timeTotal, timeElapsed = C_QuestLog.GetTimeAllowed(questID)
 		if timeTotal and timeElapsed and timeElapsed < timeTotal then
-            self:AddObjective(TIME_REMAINING, self.numObjectives + 1, {isQuest = true, qty = nil, totalqty = nil, timerShown = true, duration = timeTotal, startTime = GetTime() - timeElapsed})
+            self:AddObjective(TIME_REMAINING, {isQuest = true, qty = nil, totalqty = nil, timerShown = true, duration = timeTotal, startTime = GetTime() - timeElapsed})
 		end
     end
 
-    self.height = self.height + 5
+    self.height = self.height + GW.GetObjectivesBottomPadding()
     self:SetHeight(self.height)
 end
 
 GwQuestLogBlockMixin = {}
 
 function GwQuestLogBlockMixin:UpdateBlockObjectives(numObjectives)
-    local addedObjectives = 1
+    local showCompletedObjectives = GW.settings.OBJECTIVES_SHOW_COMPLETED_OBJECTIVES
     for objectiveIndex = 1, numObjectives do
         local text, objectiveType, finished = GetQuestObjectiveInfo(self.questID, objectiveIndex, false)
-        if not finished or not text then
-            self:AddObjective(text, addedObjectives, {isQuest = true, finished = finished, objectiveType = objectiveType})
-            addedObjectives = addedObjectives + 1
+        if text and (showCompletedObjectives or not finished) then
+            self:AddObjective(text, {isQuest = true, finished = finished, useCompletedLine = showCompletedObjectives, objectiveType = objectiveType})
         end
     end
 end
@@ -303,9 +306,11 @@ function GwQuestLogMixin:UpdateLayout()
     self.isUpdating = true
 
     local counterQuest = 0
-    local savedContainerHeight = self.collapsed and 20 or 1
+    local savedContainerHeight = self.collapsed and GW.GetObjectivesHeaderHeight() or 1
     local shouldShowHeader = not self.collapsed
     local frameName = self:GetName()
+    local watchedQuestIDs = {}
+    local watchedQuestOrder = {}
 
     if self.collapsed then
         self.header:Show()
@@ -317,6 +322,27 @@ function GwQuestLogMixin:UpdateLayout()
     for i = 1, numQuests do
         local curQuestId = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
         if curQuestId then
+            watchedQuestOrder[curQuestId] = i
+            watchedQuestIDs[#watchedQuestIDs + 1] = curQuestId
+        end
+    end
+
+    if ShouldSortSuperTrackedQuestToTop() then
+        local superTrackedQuestID = C_SuperTrack.GetSuperTrackedQuestID()
+        table.sort(watchedQuestIDs, function(leftQuestID, rightQuestID)
+            local isLeftSuperTracked = leftQuestID == superTrackedQuestID
+            local isRightSuperTracked = rightQuestID == superTrackedQuestID
+
+            if isLeftSuperTracked ~= isRightSuperTracked then
+                return isLeftSuperTracked
+            end
+
+            return (watchedQuestOrder[leftQuestID] or 0) < (watchedQuestOrder[rightQuestID] or 0)
+        end)
+    end
+
+    for _, curQuestId in ipairs(watchedQuestIDs) do
+        if curQuestId then
             local q = QuestCache:Get(curQuestId)
             local isCampaign = q:IsCampaign()
             if (isCampaign and self.isCampaignContainer) or (not isCampaign and not self.isCampaignContainer) then
@@ -324,7 +350,7 @@ function GwQuestLogMixin:UpdateLayout()
                     self.header:Show()
                     counterQuest = counterQuest + 1
                     if counterQuest == 1 then
-                        savedContainerHeight = 20
+                        savedContainerHeight = GW.GetObjectivesHeaderHeight()
                     end
 
                     local isFrequency = IsQuestFrequency(q)
@@ -376,6 +402,13 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
     if self.isUpdating or not questID then
         return
     end
+
+    if ShouldSortSuperTrackedQuestToTop() then
+        self:UpdateLayout()
+        GwQuestTracker:LayoutChanged()
+        return
+    end
+
     self.isUpdating = true
 
     local questWatchId = self:GetQuestWatchId(questID)
@@ -403,7 +436,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
         end
     end
 
-    local newHeight = 20
+    local newHeight = GW.GetObjectivesHeaderHeight()
     local counterQuest = 0
 
     for i = 1, #self.blocks do
@@ -419,7 +452,7 @@ function GwQuestLogMixin:PartialUpdate(questID, added)
     self.header.title:SetText(self.isCampaignContainer and TRACKER_HEADER_CAMPAIGN_QUESTS .. headerCounterText or TRACKER_HEADER_QUESTS .. headerCounterText)
 
     if block and block.hasItem then
-        local heightForQuestItem = 20
+        local heightForQuestItem = GW.GetObjectivesHeaderHeight()
         for i = 1, #self.blocks do
             local b = self.blocks[i]
             if b:IsShown() then

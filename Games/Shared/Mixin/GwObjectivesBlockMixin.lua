@@ -112,8 +112,7 @@ function GwObjectivesBlockTemplateMixin:OnLeave()
 end
 
 function GwObjectivesBlockTemplateMixin:OnLoad()
-    self.Header:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    self.SubHeader:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    self:ApplyLayoutStyle()
 
     self.turnin:SetScript("OnShow", self.turnin.WiggleAnimation)
     self.turnin:SetScript("OnHide", function(btn) GW.StopAnimation(btn:GetDebugName()) end)
@@ -153,6 +152,19 @@ function GwObjectivesBlockTemplateMixin:OnLoad()
     end)
 end
 
+function GwObjectivesBlockTemplateMixin:ApplyLayoutStyle()
+    local compact = GW.IsObjectivesTrackerCompactMode()
+    local headerHeight = compact and 20 or 30
+
+    self.Header:GwSetFontTemplate(DAMAGE_TEXT_FONT, compact and GW.Enum.TextSizeType.Small or GW.Enum.TextSizeType.Normal)
+    self.SubHeader:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    self.Header:SetHeight(headerHeight)
+    self.SubHeader:SetHeight(headerHeight)
+    self.Difficulty:SetHeight(headerHeight)
+    self.SubHeader:ClearAllPoints()
+    self.SubHeader:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, compact and -17 or -25)
+end
+
 function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(type)
     self.color = GW.Colors.ObjectivesTypeColors[type]
 end
@@ -160,6 +172,13 @@ end
 function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectivesYValue)
     local objective = self.objectiveBlocks and self.objectiveBlocks[index]
     if objective then
+        objective:ClearAllPoints()
+        if index == 1 then
+            objective:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, (firstObjectivesYValue or GW.GetObjectivesFirstObjectiveOffset()))
+        else
+            objective:SetPoint("TOPRIGHT", self.objectiveBlocks[index - 1], "BOTTOMRIGHT", 0, 0)
+        end
+        objective:ApplyLayoutStyle()
         objective:SetScript("OnUpdate", nil)
         objective:SetScript("OnEnter", nil)
         objective:SetScript("OnLeave", nil)
@@ -169,16 +188,14 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectives
         return objective
     end
 
-    local count = #self.objectiveBlocks + 1
-
     local newObjective = CreateFrame("Frame", nil, self, "GwQuesttrackerObjectiveTemplate")
     newObjective:SetParent(self)
     tinsert(self.objectiveBlocks, newObjective)
 
-    if count == 1 then
-        newObjective:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, (firstObjectivesYValue or -25))
+    if index == 1 then
+        newObjective:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, (firstObjectivesYValue or GW.GetObjectivesFirstObjectiveOffset()))
     else
-        newObjective:SetPoint("TOPRIGHT", self.objectiveBlocks[count - 1], "BOTTOMRIGHT", 0, 0)
+        newObjective:SetPoint("TOPRIGHT", self.objectiveBlocks[index - 1], "BOTTOMRIGHT", 0, 0)
     end
 
     newObjective.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
@@ -191,16 +208,31 @@ function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectives
     newObjective.resetParent = false
     newObjective.isMythicKeystone = false
 
+    newObjective:ApplyLayoutStyle()
+
     return newObjective
 end
 
-function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, options)
+local function GetObjectiveTextHeight(objectiveText)
+    local textHeight = objectiveText:GetStringHeight() or 0
+    local lineHeight = objectiveText:GetLineHeight() or 0
+    local lineCount = objectiveText:GetNumLines() or 1
+
+    if lineHeight > 0 and lineCount > 0 then
+        textHeight = math.max(textHeight, lineHeight * lineCount)
+    end
+
+    return textHeight
+end
+
+function GwObjectivesBlockTemplateMixin:AddObjective(text, options)
     if not text then return end
     self.numObjectives = self.numObjectives + 1
-    local objectiveBlock = self:GetObjectiveBlock(objectiveIndex, options.firstObjectivesYValue)
+    local objectiveBlock = self:GetObjectiveBlock(self.numObjectives, options.firstObjectivesYValue)
     local precentageComplete = 0
     local objectiveText = objectiveBlock.ObjectiveText
     local statusBar = objectiveBlock.StatusBar
+    local objectiveSpacing = GW.GetObjectivesEntrySpacing()
 
     objectiveBlock:Show()
     local formattedText = text
@@ -212,8 +244,8 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
         formattedText = GW.FormatObjectiveNumbers(text)
     end
     objectiveText:SetText(formattedText)
-    local textHeight = objectiveText:GetStringHeight()
-    objectiveText:SetHeight(textHeight + 15)
+    local textHeight = GetObjectiveTextHeight(objectiveText)
+    objectiveText:SetHeight(textHeight + GW.GetObjectivesTextPadding())
 
     if objectiveBlock.hasObjectToHide then
         if objectiveBlock.resetParent then objectiveBlock.objectToHide.SetParent = nil end
@@ -225,7 +257,15 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
 
     if options.isAchievement then
         if options.eligible then
-            objectiveText:SetTextColor(WHITE_R, WHITE_G, WHITE_B, WHITE_A)
+            if options.finished then
+                if options.useCompletedLine then
+                    objectiveText:SetTextColor(0.72, 0.72, 0.72, 0.7)
+                else
+                    objectiveText:SetTextColor(0.8, 0.8, 0.8, 0.7)
+                end
+            else
+                objectiveText:SetTextColor(WHITE_R, WHITE_G, WHITE_B, WHITE_A)
+            end
         else
             objectiveText:SetTextColor(DIM_RED_R, DIM_RED_G, DIM_RED_B, DIM_RED_A)
         end
@@ -257,10 +297,10 @@ function GwObjectivesBlockTemplateMixin:AddObjective(text, objectiveIndex, optio
         statusBar:Hide()
     end
 
-    local h = textHeight + 10
+    local h = textHeight + objectiveSpacing
     objectiveBlock:SetHeight(h)
     if statusBar:IsShown() then
-        h = h + statusBar:GetHeight() + 10
+        h = h + statusBar:GetHeight() + objectiveSpacing
         objectiveBlock:SetHeight(h)
     end
 

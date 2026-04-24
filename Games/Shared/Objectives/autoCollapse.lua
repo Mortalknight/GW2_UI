@@ -37,21 +37,23 @@ end
 
 local function ApplyCollapseState(forceCollapse, inCombat)
     local shouldCollapse = forceCollapse or ShouldCollapseObjectives(inCombat or InCombatLockdown())
-    local forceOpen = not shouldCollapse
     if not GW.QuestTrackerScrollableContainer then return end
-
     for _, container in ipairs(GW.QuestTrackerScrollableContainer) do
         if container.shouldUpdate ~= nil then
             container.shouldUpdate = false
         end
         if container.CollapseHeader then
-            container:CollapseHeader(forceCollapse, forceOpen)
+            container:CollapseHeader(shouldCollapse, not shouldCollapse)
         end
     end
 end
 
 local function OnEvent(_, event)
-    ApplyCollapseState(nil, event == "PLAYER_REGEN_DISABLED")
+    local inCombat = nil
+    if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
+        inCombat = event == "PLAYER_REGEN_DISABLED"
+    end
+    ApplyCollapseState(nil, inCombat)
 end
 
 local function RegisterSupportedEvents()

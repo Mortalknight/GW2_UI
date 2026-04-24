@@ -3,6 +3,67 @@ local GW = select(2, ...)
 
 local addonContainerWaitingQueue = {}
 
+function GW.IsObjectivesTrackerCompactMode()
+    return GW.settings.OBJECTIVES_TRACKER_COMPACT_MODE
+end
+
+function GW.GetObjectivesHeaderHeight()
+    return GW.IsObjectivesTrackerCompactMode() and 16 or 20
+end
+
+function GW.GetObjectivesBlockBaseHeight()
+    return GW.IsObjectivesTrackerCompactMode() and 20 or 25
+end
+
+function GW.GetObjectivesWideBlockBaseHeight()
+    return GW.IsObjectivesTrackerCompactMode() and 28 or 35
+end
+
+function GW.GetObjectivesBottomPadding()
+    return GW.IsObjectivesTrackerCompactMode() and 4 or 5
+end
+
+function GW.GetObjectivesEntrySpacing()
+    return GW.IsObjectivesTrackerCompactMode() and 4 or 10
+end
+
+function GW.GetObjectivesStatusBarGap()
+    return GW.IsObjectivesTrackerCompactMode() and 1 or 0
+end
+
+function GW.GetObjectivesTextPadding()
+    return GW.IsObjectivesTrackerCompactMode() and 3 or 15
+end
+
+function GW.GetObjectivesFirstObjectiveOffset()
+    return GW.IsObjectivesTrackerCompactMode() and -14 or -25
+end
+
+function GW.GetObjectivesTimerSpacing()
+    return GW.IsObjectivesTrackerCompactMode() and 12 or 15
+end
+
+function GW.ApplyObjectivesHeaderStyle(header)
+    if not header then return end
+
+    local compact = GW.IsObjectivesTrackerCompactMode()
+    local headerHeight = GW.GetObjectivesHeaderHeight()
+
+    header:SetHeight(headerHeight)
+    if header.title then
+        header.title:SetHeight(headerHeight)
+        header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, compact and GW.Enum.TextSizeType.Normal or GW.Enum.TextSizeType.Header)
+        header.title:SetShadowOffset(1, -1)
+    end
+
+    if header.icon then
+        local iconSize = compact and 22 or 26
+        header.icon:SetSize(iconSize, iconSize)
+        header.icon:ClearAllPoints()
+        header.icon:SetPoint("CENTER", header, "LEFT", compact and -18 or -20, 0)
+    end
+end
+
 -- Helper functions
 local function ParseObjectiveString(block, text, numItems, numNeeded, overrideShowStatusbarSetting)
     block.StatusBar.precentage = false
@@ -201,6 +262,7 @@ function GwObjectivesTrackerMixin:OnEvent(_, ...)
             table.insert(GW.QuestTrackerScrollableContainer, frame)
 
             if frame.InitModule then frame:InitModule() end
+            GW.ApplyObjectivesHeaderStyle(frame.header)
 
             GW.ToggleCollapseObjectivesInChallangeMode()
             table.remove(addonContainerWaitingQueue, id)
@@ -220,6 +282,35 @@ function GwObjectivesTrackerMixin:AddAddonContainerLoadingToQueue(config)
         self:RegisterEvent("ADDON_LOADED")
         self:SetScript("OnEvent", self.OnEvent)
     end
+end
+
+function GW.RefreshObjectivesTrackerLayout()
+    if not GwQuestTracker or not GW.ObjectiveTrackerContainer then
+        return
+    end
+
+    local function RefreshObjectivesFrame(frame)
+        GW.ApplyObjectivesHeaderStyle(frame.header)
+
+        if frame == GW.ObjectiveTrackerContainer.Scenario then
+            frame.timerBlock:TimerBlockOnEvent(nil)
+        end
+
+        if frame.UpdateLayout then
+            frame:UpdateLayout()
+        end
+    end
+
+    for _, frame in ipairs(GW.QuestTrackerFixedContainer or {}) do
+        RefreshObjectivesFrame(frame)
+    end
+
+    for _, frame in ipairs(GW.QuestTrackerScrollableContainer or {}) do
+        RefreshObjectivesFrame(frame)
+    end
+
+    GwQuestTracker:LayoutChanged()
+    GwQuestTracker:AdjustItemButtonPositions()
 end
 
 local function LoadObjectivesTracker()
@@ -313,6 +404,8 @@ local function LoadObjectivesTracker()
     if GW.Retail then
         GW.ToggleCollapseObjectivesInChallangeMode()
     end
+
+    GW.RefreshObjectivesTrackerLayout()
 
      -- some hooks to set the itembuttons correct
     local UpdateItemButtonPositionAndAdjustScrollFrame = function()
