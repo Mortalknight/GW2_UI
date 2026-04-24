@@ -82,7 +82,7 @@ local function LoadActionbarPanel(sWindow)
     stanceBar.header:SetWidth(stanceBar.header:GetStringWidth())
     stanceBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     stanceBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    stanceBar.breadcrumb:SetText(HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance bar"])
+    stanceBar.breadcrumb:SetText(HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"])
 
     -- GENERAL
     general:AddOption(L["Hide Empty Slots"], L["Hide the empty action bar slots."], { getterSetter = "HIDEACTIONBAR_BACKGROUND_ENABLED", callback = function() GW.ShowRlPopup = true end, dependence = {["ACTIONBARS_ENABLED"] = true}, incompatibleAddons = "Actionbars", hidden = GW.Retail or GW.TBC or GW.Wrath})
@@ -167,6 +167,6 @@ local function LoadActionbarPanel(sWindow)
     stanceBar:AddOption(ENABLE, nil, { getterSetter = "StanceBarEnabled", callback = function() if GwStanceBar then GwStanceBar:UpdateVisibility() end end, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars"})
     stanceBar:AddOptionDropdown(L["Class Totems Growth Direction"], L["Set the growth direction of the stance bar."], { getterSetter = "StanceBar_GrowDirection", callback = function() if GwStanceBar then GwStanceBar:AdjustMaxStanceButtons() end end, optionsList = {"UP", "DOWN", "LEFT", "RIGHT"}, optionNames = {StrUpper(L["Up"], 1, 1), StrUpper(L["Down"], 1, 1), L["Left"], L["Right"]}, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true, ["StanceBarEnabled"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars"})
 
-    sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, ACTIONBARS_SUBTEXT, {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars}, {name = TUTORIAL_TITLE47, frame = totemBar}, {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance bar"], frame = stanceBar}})
+    sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, ACTIONBARS_SUBTEXT, {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars}, {name = TUTORIAL_TITLE47, frame = totemBar}, {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"], frame = stanceBar}})
 end
 GW.LoadActionbarPanel = LoadActionbarPanel
