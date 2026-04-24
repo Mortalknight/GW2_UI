@@ -73,6 +73,11 @@ L["Choose which side optional custom resource bars are placed on. Auto flips by 
 L["Custom resource bar gap"] = true
 L["Controls spacing between class power and optional custom resource bars."] = true
 L["Class Totems"] = true
+L["Collapse Objectives Automatically"] = true
+L["Choose when the Objective Tracker should collapse all sections automatically."] = true
+L["Mythic+"] = true
+L["Challenge Mode"] = true
+L["Delve"] = true
 L["Toggle Compass"] = true
 L["Enable or disable the quest tracker compass."] = true
 L["Copy of"] = true

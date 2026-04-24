@@ -1,6 +1,7 @@
 10.9.0
 NEW
     - Added movable party frames with new spacing and horizontal/vertical layout options
+    - Added automatic Objectives Tracker collapsing with separate options for Mythic+/Challenge Mode, Raid, Party, Delve and Combat
 
 CHANGES
     - Update Damage Meter skin

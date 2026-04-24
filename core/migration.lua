@@ -313,6 +313,11 @@ local function DatabaseValueMigration()
         GW.settings.immersiveQuesting.enabled = GW.settings.QUESTVIEW_ENABLED
         GW.settings.QUESTVIEW_ENABLED = nil
     end
+
+    if GW.settings.OBJECTIVES_COLLAPSE_IN_M_PLUS ~= nil then
+        GW.settings.ObjectivesAutoCollapse.MythicPlus = GW.settings.OBJECTIVES_COLLAPSE_IN_M_PLUS == true
+        GW.settings.OBJECTIVES_COLLAPSE_IN_M_PLUS = nil
+    end
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
 

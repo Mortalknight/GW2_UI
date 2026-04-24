@@ -87,7 +87,13 @@ GW.globalDefault = {
     profile = {
         -- reset settings
         Reset_Container_Loot_Order = false,
-        OBJECTIVES_COLLAPSE_IN_M_PLUS = false,
+        ObjectivesAutoCollapse = {
+            MythicPlus = false,
+            Raid = false,
+            Party = false,
+            Delve = false,
+            Combat = false,
+        },
 
         profileCreatedCharacter = "GW2_UI",
         profileCreatedDate = date(GW.L["TimeStamp m/d/y h:m:s"]),
@@ -111,7 +117,6 @@ GW.globalDefault = {
         BAR_LAYOUT_ENABLED = true,
         ActionbarHealthglobeSpace = false,
         BAGS_ENABLED = true,
-        NPC_CAM_ENABLED = false,
         CASTINGBAR_ENABLED = true,
         SHOWACTIONBAR_MACRO_NAME_ENABLED = false,
         ACTIONBAR_BACKGROUND_ALPHA = 0.3,

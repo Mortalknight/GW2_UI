@@ -12,7 +12,34 @@ local function LoadObjectivesPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit objectives settings."])
 
-    p:AddOption(L["Collapse all objectives in M+"], nil, {getterSetter = "OBJECTIVES_COLLAPSE_IN_M_PLUS", callback = GW.ToggleCollapseObjectivesInChallangeMode, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = not GW.Retail})
+    p:AddOptionDropdown(L["Collapse Objectives Automatically"], L["Choose when the Objective Tracker should collapse all sections automatically."], {
+        getterSetter = "ObjectivesAutoCollapse",
+        callback = GW.ToggleCollapseObjectivesInChallangeMode,
+        optionsList = (function()
+            local list = {"Raid", "Party", "Combat"}
+            if GW.Retail or GW.Mists then
+                tinsert(list, 1, "MythicPlus")
+            end
+            if GW.Retail then
+                tinsert(list, 4, "Delve")
+            end
+            return list
+        end)(),
+        optionNames = (function()
+            local list = {RAID, PARTY, COMBAT}
+            if GW.Retail then
+                tinsert(list, 1, L["Mythic+"])
+            elseif GW.Mists then
+                tinsert(list, 1, L["Challenge Mode"])
+            end
+            if GW.Retail then
+                tinsert(list, 4, L["Delve"])
+            end
+            return list
+        end)(),
+        checkbox = true,
+        dependence = {["QUESTTRACKER_ENABLED"] = true}
+    })
     p:AddOption(L["Toggle Compass"], L["Enable or disable the quest tracker compass."], {getterSetter = "SHOW_QUESTTRACKER_COMPASS", callback = function() if not (GW.Classic or GW.TBC or GW.Wrath) then GwQuesttrackerContainerBossFrames:SetUpFramePosition(); GwQuesttrackerContainerArenaBGFrames:SetUpFramePosition() end; GwObjectivesNotification:OnUpdate() end, dependence = {["QUESTTRACKER_ENABLED"] = true}})
     p:AddOption(L["Show Objective Tracker progress bars"], L["If disabled, progress bars will not be shown for various objective tracker items such as quests, achievements, etc."], {getterSetter = "QUESTTRACKER_STATUSBARS_ENABLED", callback = function() GwQuesttrackerContainerQuests:UpdateLayout(); GwQuesttrackerContainerAchievement:UpdateLayout(); GwQuesttrackerContainerBonus:UpdateLayout(); GwQuesttrackerContainerCollection:UpdateLayout(); GwQuesttrackerContainerMonthlyActivity:UpdateLayout(); GwQuesttrackerContainerRecipe:UpdateLayout(); GwQuesttrackerContainerScenario:UpdateLayout(); GwQuestTracker:LayoutChanged() end, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = not GW.Retail})
     p:AddOption(L["Show Quest XP in Quest Tracker"], nil, {getterSetter = "QUESTTRACKER_SHOW_XP", callback = function() GwQuesttrackerContainerQuests:UpdateLayout() end, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = GW.Retail or GW.Mists})
