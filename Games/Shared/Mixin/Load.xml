@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file ="powerBarMixin.lua"/>
-    <Script file ="healthBarMixin.lua"/>
+    <Script file ="GwUnitPowerbarMixin.lua"/>
+    <Script file ="GwUnitHealthbarMixin.lua"/>
 
     <Script file ="GwObjectivesAnimationMixin.lua"/>
     <Script file ="GwObjectivesBlockMixin.lua"/>
