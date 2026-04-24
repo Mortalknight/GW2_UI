@@ -51,7 +51,7 @@ local function ApplyCollapseState(forceCollapse, inCombat)
 end
 
 local function OnEvent(_, event)
-    ApplyCollapseState(event == "PLAYER_REGEN_DISABLED")
+    ApplyCollapseState(nil, event == "PLAYER_REGEN_DISABLED")
 end
 
 local function RegisterSupportedEvents()
