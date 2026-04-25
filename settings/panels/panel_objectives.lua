@@ -111,7 +111,7 @@ local function LoadObjectivesPanel(sWindow)
     p:AddOption(L["Show Completed Objectives"], L["Show completed quest objectives instead of hiding them."], {getterSetter = "OBJECTIVES_SHOW_COMPLETED_OBJECTIVES", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["QUESTTRACKER_ENABLED"] = true}, hidden = not GW.Retail})
     p:AddOption(L["Compact Mode"], L["Reduce spacing and font sizes across the Objective Tracker."], {getterSetter = "OBJECTIVES_TRACKER_COMPACT_MODE", callback = GW.RefreshObjectivesTrackerLayout, dependence = {["QUESTTRACKER_ENABLED"] = true}})
     local moduleOrderOptions, moduleOrderOptionNames = GetObjectiveTrackerModuleOrderOptions()
-    p:AddOptionList(L["Objective Tracker Module Order"], L["Set the order of Objective Tracker modules."], {
+    p:AddOptionSortableList(L["Objective Tracker Module Order"], L["Set the order of Objective Tracker modules."], {
         getterSetter = "OBJECTIVES_TRACKER_MODULE_ORDER",
         callback = GW.ApplyObjectivesTrackerModuleOrder,
         optionsList = moduleOrderOptions,

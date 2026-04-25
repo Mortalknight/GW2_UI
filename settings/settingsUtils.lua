@@ -206,7 +206,7 @@ function GwSettingsPanelMixin:AddOptionSlider(name, desc, values)
     return opt
 end
 
-function GwSettingsPanelMixin:AddOptionList(name, desc, values)
+function GwSettingsPanelMixin:AddOptionSortableList(name, desc, values)
     local opt = CreateOption("list", self, name, desc, values)
     if not opt then return end
 
@@ -215,10 +215,6 @@ function GwSettingsPanelMixin:AddOptionList(name, desc, values)
     opt.entryHeight = values.entryHeight or 24
 
     return opt
-end
-
-function GwSettingsPanelMixin:AddOptionSortableList(name, desc, values)
-    return self:AddOptionList(name, desc, values)
 end
 
 function GwSettingsPanelMixin:AddOptionText(name, desc, values)
