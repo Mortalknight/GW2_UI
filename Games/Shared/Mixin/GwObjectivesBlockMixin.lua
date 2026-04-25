@@ -169,14 +169,14 @@ function GwObjectivesBlockTemplateMixin:SetBlockColorByKey(type)
     self.color = GW.Colors.ObjectivesTypeColors[type]
 end
 
-function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectivesYValue)
+function GwObjectivesBlockTemplateMixin:GetObjectiveBlock(index, firstObjectivesYValue, overrideYOffet)
     local objective = self.objectiveBlocks and self.objectiveBlocks[index]
     if objective then
         objective:ClearAllPoints()
         if index == 1 then
             objective:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, (firstObjectivesYValue or GW.GetObjectivesFirstObjectiveOffset()))
         else
-            objective:SetPoint("TOPRIGHT", self.objectiveBlocks[index - 1], "BOTTOMRIGHT", 0, 0)
+            objective:SetPoint("TOPRIGHT", self.objectiveBlocks[index - 1], "BOTTOMRIGHT", 0, overrideYOffet or 0)
         end
         objective:ApplyLayoutStyle()
         objective:SetScript("OnUpdate", nil)

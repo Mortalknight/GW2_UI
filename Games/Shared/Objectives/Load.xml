@@ -1,4 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file ="scenarioWidgets\tieredEntranceTraits.lua"/>
+
     <Include file ="questtracker.xml"/>
     <Include file ="notifications.xml"/>
 

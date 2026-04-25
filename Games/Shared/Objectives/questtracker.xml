@@ -90,6 +90,137 @@
         </Anchors>
     </Frame>
 
+    <Frame name="GwScenarioCurrencyTemplate" virtual="true" hidden="true">
+        <Size x="48" y="25"></Size>
+        <Layers>
+            <layer>
+                <FontString parentKey="counter" justifyH="RIGHT">
+                    <Size x="20" y="28"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="icon">
+                    <Size x="24" y="24"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.counter" relativePoint="RIGHT" x="3" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </layer>
+        </Layers>
+    </Frame>
+
+    <Frame name="GwTieredEntranceTraitSpellTemplate" virtual="true" hidden="true" mixin="GwTieredEntranceTraitSpellMixin" enableMouse="true">
+        <Size x="32" y="32"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png">
+                    <Color r="0" g="0" b="0" a="0.45"></Color>
+                    <Size x="32" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Icon">
+                    <Size x="28" y="28"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture parentKey="border" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
+                    <Color r="1" g="1" b="1" a="0.35"></Color>
+                    <Size x="32" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter method="OnEnter"/>
+            <OnLeave method="OnLeave"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="GwTieredEntranceTraitsList" virtual="true" hidden="true" mixin="GwTieredEntranceTraitsListMixin" frameStrata="FULLSCREEN_DIALOG">
+        <Size x="300" y="72"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/character/menu-bg.png">
+                    <Size x="300" y="72"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Button name="GwTieredEntranceTraitsContainer" virtual="true" mixin="GwTieredEntranceTraitsContainerMixin" inherits="GwStandardButton" enableMouse="true">
+        <Size x="280" y="28"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
+                    <Size x="280" y="2"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="2"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="1" y="2"/>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png">
+                    <Size x="280" y="2"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-1" y="-2"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-2"/>
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="1" bottom="0"/>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
+                    <Size x="2" y="28"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="2" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="2" y="0"/>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixelvertical.png">
+                    <Size x="2" y="28"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="0"/>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-2" y="0"/>
+                    </Anchors>
+                    <TexCoords left="1" right="0" top="0" bottom="1"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="1">
+                <FontString parentKey="Arrow" inherits="GameFontNormal" justifyH="CENTER" justifyV="MIDDLE" hidden="true">
+                    <Size x="18" y="18"></Size>
+                    <Color r="1" g="1" b="1" a="1"></Color>
+                </FontString>
+                <FontString parentKey="Text" inherits="GameFontNormal" justifyH="CENTER" justifyV="MIDDLE" text="Challenges">
+                    <Size x="260" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="List" inherits="GwTieredEntranceTraitsList" hidden="true"/>
+        </Frames>
+        <Scripts>
+            <OnHide method="OnHide"/>
+            <OnClick method="OnClick"/>
+        </Scripts>
+    </Button>
+
     <Frame name="GwDelveSpellIconTemplate" virtual="true" hidden="true">
         <Size x="30" y="30"></Size>
         <Layers>
@@ -264,6 +395,37 @@
                     </Frame>
                 </Frames>
             </Frame>
+            <Frame parentKey="currenciesFrame" hidden="true">
+                <Size x="280" y="25"></Size>
+                <Frames>
+                    <Frame parentArray="currency" inherits="GwScenarioCurrencyTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                        </Anchors>
+                    </Frame>
+                    <Frame parentArray="currency" inherits="GwScenarioCurrencyTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-56" y="0"></Anchor>
+                        </Anchors>
+                    </Frame>
+                    <Frame parentArray="currency" inherits="GwScenarioCurrencyTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-112" y="0"></Anchor>
+                        </Anchors>
+                    </Frame>
+                    <Frame parentArray="currency" inherits="GwScenarioCurrencyTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-168" y="0"></Anchor>
+                        </Anchors>
+                    </Frame>
+                    <Frame parentArray="currency" inherits="GwScenarioCurrencyTemplate">
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-224" y="0"></Anchor>
+                        </Anchors>
+                    </Frame>
+                </Frames>
+            </Frame>
+            <Button parentKey="tieredEntranceTraitsFrame" inherits="GwTieredEntranceTraitsContainer" hidden="true"/>
             <Button hidden="true" parentKey="turnin" mixin="GwObjectivesAnimationMixin">
                 <size x="90" y="90"></size>
                 <Anchors>
