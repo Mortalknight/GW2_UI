@@ -70,7 +70,7 @@ local function updateArenaFrameHeight(self)
             end
         end
     end
-    self:SetHeight(i > 0 and (48 * i) or 1)
+    self:SetHeight(i > 0 and (48 * i) or 0.1)
 end
 
 

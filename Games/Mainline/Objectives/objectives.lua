@@ -306,7 +306,7 @@ function GwQuestLogMixin:UpdateLayout()
     self.isUpdating = true
 
     local counterQuest = 0
-    local savedContainerHeight = self.collapsed and GW.GetObjectivesHeaderHeight() or 1
+    local savedContainerHeight = self.collapsed and GW.GetObjectivesHeaderHeight() or 0.1
     local shouldShowHeader = not self.collapsed
     local frameName = self:GetName()
     local watchedQuestIDs = {}
@@ -374,7 +374,7 @@ function GwQuestLogMixin:UpdateLayout()
             end
         end
     end
-    self:SetHeight(counterQuest > 0 and savedContainerHeight or 1)
+    self:SetHeight(counterQuest > 0 and savedContainerHeight or 0.1)
     self.numQuests = counterQuest
 
     -- hide other quests
