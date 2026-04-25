@@ -374,8 +374,6 @@ function GwQuestLogMixin:UpdateLayout()
             end
         end
     end
-
-    self.oldHeight = GW.RoundInt(self:GetHeight())
     self:SetHeight(counterQuest > 0 and savedContainerHeight or 1)
     self.numQuests = counterQuest
 

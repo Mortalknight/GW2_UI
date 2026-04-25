@@ -78,7 +78,7 @@ end
 function GwObjectivesRecipeContainerMixin:ProcessUpdate()
     local numRecipes = #C_TradeSkillUI.GetRecipesTracked(true)
     local numRecipesRecraft = #C_TradeSkillUI.GetRecipesTracked(false)
-    local savedHeight = 1
+    local savedHeight = 0.1
     local shownIndex = 1
 
     self.header:Hide()

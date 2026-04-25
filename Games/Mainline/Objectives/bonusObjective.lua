@@ -141,7 +141,7 @@ function GwBonusObjectivesTrackerContainerMixin:BlockOnClick(button)
 end
 
 function GwBonusObjectivesTrackerContainerMixin:UpdateBlocks(questIDs)
-    local savedContainerHeight = 1
+    local savedContainerHeight = 0.1
     local shownBlocks = 0
     local blockIndex = 1
     local foundEvent = false

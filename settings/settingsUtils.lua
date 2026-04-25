@@ -77,7 +77,7 @@ local function AddDependenciesToOptionWidgetTooltip()
                     end
                     local match = false
 
-                    local expectedText = ""
+                    local expectedText
                     if type(expectedValue) == "table" then
                         local valuesList = {}
                         for _, v in ipairs(expectedValue) do
@@ -206,6 +206,21 @@ function GwSettingsPanelMixin:AddOptionSlider(name, desc, values)
     return opt
 end
 
+function GwSettingsPanelMixin:AddOptionList(name, desc, values)
+    local opt = CreateOption("list", self, name, desc, values)
+    if not opt then return end
+
+    opt.optionsList = values.optionsList
+    opt.optionsNames = values.optionNames or values.optionsNames
+    opt.entryHeight = values.entryHeight or 24
+
+    return opt
+end
+
+function GwSettingsPanelMixin:AddOptionSortableList(name, desc, values)
+    return self:AddOptionList(name, desc, values)
+end
+
 function GwSettingsPanelMixin:AddOptionText(name, desc, values)
     local opt = CreateOption("text", self, name, desc, values)
     if not opt then return end
@@ -288,6 +303,10 @@ local function setDependenciesOption(type, settingName, SetEnable, deactivateCol
     elseif type == "boolean" then
         if of.checkbutton then
             of.checkbutton:SetEnabled(enabled)
+        end
+    elseif type == "list" then
+        if of.SetListEnabled then
+            of:SetListEnabled(enabled, color)
         end
     end
 end
@@ -411,6 +430,10 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting, toDe
         of.button.bg:SetColorTexture(value.r, value.g, value.b)
     elseif of.optionType == "dropdown" then
         of.dropDown:GenerateMenu()
+    elseif of.optionType == "list" then
+        if of.RefreshList then
+            of:RefreshList()
+        end
     end
 end
 GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
@@ -441,6 +464,13 @@ local function RefreshSettingsAfterProfileSwitch()
             of.button.bg:SetColorTexture(color.r, color.g, color.b)
         elseif of.optionType == "dropdown" then
             of.dropDown:GenerateMenu()
+        elseif of.optionType == "list" then
+            if of.RefreshList then
+                of:RefreshList()
+            end
+            if of.callback then
+                of.callback((of.GetListOrder and of:GetListOrder()) or of.get())
+            end
         end
     end
     CheckDependencies()
@@ -465,6 +495,190 @@ local function ShouldHandleIncompatibility(v)
         return true
     end
     return false
+end
+
+local function CopyListValues(values)
+    local copy = {}
+    if type(values) ~= "table" then return copy end
+
+    for i = 1, #values do
+        copy[i] = values[i]
+    end
+
+    return copy
+end
+
+local function BuildListLabelMap(optionsList, optionsNames)
+    local labels = {}
+    if type(optionsList) ~= "table" then return labels end
+
+    for i, value in ipairs(optionsList) do
+        labels[value] = (type(optionsNames) == "table" and optionsNames[i]) or tostring(value)
+    end
+
+    return labels
+end
+
+local function GetOrderedListValues(of, v)
+    local optionsList = type(v.optionsList) == "table" and v.optionsList or {}
+    local validOptions = {}
+    local usedOptions = {}
+    local orderedValues = {}
+
+    for _, value in ipairs(optionsList) do
+        validOptions[value] = true
+    end
+
+    local currentValues = of.get and of.get()
+    if type(currentValues) == "table" then
+        for _, value in ipairs(currentValues) do
+            if validOptions[value] and not usedOptions[value] then
+                orderedValues[#orderedValues + 1] = value
+                usedOptions[value] = true
+            end
+        end
+    end
+
+    for _, value in ipairs(optionsList) do
+        if not usedOptions[value] then
+            orderedValues[#orderedValues + 1] = value
+            usedOptions[value] = true
+        end
+    end
+
+    return orderedValues
+end
+
+local function SetListButtonState(button, enabled)
+    if not button then return end
+
+    button:SetEnabled(enabled)
+    button:SetAlpha(enabled and 1 or 0.35)
+end
+
+local function CreateListMoveButton(parent, direction)
+    local button = CreateFrame("Button", nil, parent)
+    button:SetSize(20, 20)
+
+    if GW.HandleNextPrevButton then
+        GW.HandleNextPrevButton(button, direction, true)
+    else
+        button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
+        button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
+        button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
+        button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
+
+        if direction == "down" then
+            button:GetNormalTexture():SetRotation(3.14159)
+            button:GetPushedTexture():SetRotation(3.14159)
+            button:GetDisabledTexture():SetRotation(3.14159)
+            button:GetHighlightTexture():SetRotation(3.14159)
+        end
+    end
+
+    return button
+end
+
+local function RefreshListOption(of, v)
+    local values = GetOrderedListValues(of, v)
+    local labels = BuildListLabelMap(v.optionsList, v.optionsNames)
+    local entryHeight = v.entryHeight or 24
+    local listEnabled = of.listEnabled ~= false
+    local listTextColor = of.listTextColor or {1, 1, 1}
+
+    of.listRows = of.listRows or {}
+    of.list:SetHeight(math.max(#values, 1) * entryHeight)
+
+    for i = 1, #values do
+        local row = of.listRows[i]
+        if not row then
+            row = CreateFrame("Button", nil, of.list)
+            row:SetHeight(entryHeight - 2)
+
+            row.bg = row:CreateTexture(nil, "BACKGROUND")
+            row.bg:SetAllPoints()
+            row.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
+            row.bg:SetAlpha(0.45)
+
+            row:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover.png")
+            row:GetHighlightTexture():SetAllPoints()
+
+            row.label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            row.label:SetFont(UNIT_NAME_FONT, 12)
+            row.label:SetTextColor(1, 1, 1)
+            row.label:SetJustifyH("LEFT")
+            row.label:SetPoint("LEFT", 6, 0)
+            row.label:SetPoint("RIGHT", row, "RIGHT", -48, 0)
+
+            row.upButton = CreateListMoveButton(row, "up")
+            row.upButton:SetPoint("RIGHT", row, "RIGHT", -22, 0)
+
+            row.downButton = CreateListMoveButton(row, "down")
+            row.downButton:SetPoint("RIGHT", row, "RIGHT", -2, 0)
+
+            of.listRows[i] = row
+        end
+
+        row:ClearAllPoints()
+        row:SetPoint("TOPLEFT", of.list, "TOPLEFT", 0, -((i - 1) * entryHeight))
+        row:SetPoint("RIGHT", of.list, "RIGHT", 0, 0)
+        row.value = values[i]
+        row.index = i
+        row.label:SetText(labels[values[i]] or tostring(values[i]))
+        row.label:SetTextColor(unpack(listTextColor))
+        row:Show()
+
+        row.upButton:SetScript("OnClick", function(self, button)
+            if ShouldHandleIncompatibility(v) then
+                if not HandleIncompatibility(v, button, not v.isIncompatibleAddonLoadedButOverride) then
+                    return
+                end
+            end
+
+            local order = GetOrderedListValues(of, v)
+            local fromIndex = self:GetParent().index
+            if fromIndex <= 1 then return end
+
+            local movedValue = table.remove(order, fromIndex)
+            table.insert(order, fromIndex - 1, movedValue)
+            of.set(CopyListValues(order))
+            of:RefreshList()
+
+            if v.callback then
+                v.callback(order, movedValue, fromIndex, fromIndex - 1)
+            end
+            CheckDependencies()
+        end)
+
+        row.downButton:SetScript("OnClick", function(self, button)
+            if ShouldHandleIncompatibility(v) then
+                if not HandleIncompatibility(v, button, not v.isIncompatibleAddonLoadedButOverride) then
+                    return
+                end
+            end
+
+            local order = GetOrderedListValues(of, v)
+            local fromIndex = self:GetParent().index
+            if fromIndex >= #order then return end
+
+            local movedValue = table.remove(order, fromIndex)
+            table.insert(order, fromIndex + 1, movedValue)
+            of.set(CopyListValues(order))
+            of:RefreshList()
+
+            if v.callback then
+                v.callback(order, movedValue, fromIndex, fromIndex + 1)
+            end
+            CheckDependencies()
+        end)
+
+        SetListButtonState(row.upButton, listEnabled and i > 1)
+        SetListButtonState(row.downButton, listEnabled and i < #values)
+    end
+
+    for i = #values + 1, #of.listRows do
+        of.listRows[i]:Hide()
+    end
 end
 
 local function SettingsInitOptionWidget(of, v, panel)
@@ -631,6 +845,29 @@ local function SettingsInitOptionWidget(of, v, panel)
         of.dropDown.Text:SetFont(UNIT_NAME_FONT, 12)
         of.dropDown:Enable()
         of.dropDown.Text:SetTextColor(1, 1, 1)
+    elseif v.optionType == "list" then
+        of.title:ClearAllPoints()
+        of.title:SetPoint("TOPLEFT", 5, -2)
+
+        of.listEnabled = true
+        of.SetListEnabled = function(self, enabled, titleColor)
+            self.listEnabled = enabled
+            self.listTextColor = titleColor or {enabled and 1 or 0.4, enabled and 1 or 0.4, enabled and 1 or 0.4}
+            if titleColor then
+                self.title:SetTextColor(unpack(titleColor))
+            else
+                self.title:SetTextColor(enabled and 1 or 0.4, enabled and 1 or 0.4, enabled and 1 or 0.4)
+            end
+            self:RefreshList()
+        end
+        of.RefreshList = function(self)
+            RefreshListOption(self, v)
+        end
+        of.GetListOrder = function(self)
+            return GetOrderedListValues(self, v)
+        end
+
+        of:RefreshList()
     elseif v.optionType == "slider" then
         of.slider:SetMinMaxValues(v.min, v.max)
         of.slider:SetValue(RoundDec(of.get(), of.decimalNumbers))

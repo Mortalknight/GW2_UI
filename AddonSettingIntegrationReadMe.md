@@ -41,6 +41,12 @@ search integration, 2-column layout, dependencies and consistent look & feel.
       min = 0, max = 1, step = 0.01, decimalNumbers = 2,
       dependence     = { enableFeature = true }, -- shown/enabled only if enableFeature is true
     })
+    panel:AddOptionList("Priority", "Move entries up or down", {
+      getterSetter = "priorityOrder",
+      optionsList  = {"interrupts", "dispels", "cooldowns"},
+      optionNames  = {"Interrupts", "Dispels", "Cooldowns"},
+      callback = function(order) print(table.concat(order, ", ")) end
+    })
     ```
 
 4. Register the panel with namespace support, returnes the namespace DB object
@@ -105,6 +111,15 @@ by GW2_UI (two columns where possible, full row if forced).
     - ``tooltipType`` _(any, optional)_ — Custom tooltip type hook used by your template
     - ``hasSound`` _(boolean, optional)_ — Play a click sound on change
     - ``noNewLine`` _(boolean, optional)_ — When set, try to keep dropdown in a *half-width column* (overrides template default)
+8) ``panel:AddOptionList(name, desc, values)``
+
+    Creates a *sortable list* with up/down buttons for each entry. The stored value is an ordered array.
+    ``panel:AddOptionSortableList(...)`` is available as an alias.
+    Type-specific keys:
+    - ``optionsList`` _(table, required)_ — Array of values that can be ordered
+    - ``optionNames`` _(table, required)_ — Display labels matching ``optionsList``
+    - ``entryHeight`` _(number, optional, default 24)_ — Row height for each list entry
+    - ``callback`` _(function(order, movedValue, oldIndex, newIndex))_ — Called after an entry was moved
 
 
 ### General ``values`` (all controls)

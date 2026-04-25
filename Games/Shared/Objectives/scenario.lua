@@ -380,7 +380,7 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
     local name, instanceType, difficultyID, difficultyName = GetInstanceInfo()
     local isDelveScenario = GW.Retail and difficultyID == 208
 
-    block.height = 1
+    block.height = 0.1
 
     if timerBlock.timer:IsShown() then
         block.height = timerBlock.height
@@ -416,7 +416,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
         end
 
         block:SetHeight(block.height)
-        self.oldHeight = GW.RoundInt(self:GetHeight())
         self:SetHeight(block.height)
         if not timerBlock.needToShowTimer then
             timerBlock.timer:Hide()
@@ -648,7 +647,6 @@ function GwObjectivesScenarioContainerMixin:UpdateLayout()
 
     timerBlock:SetHeight(timerBlock.height)
     block:SetHeight(block.height - intGWQuestTrackerHeight)
-    self.oldHeight = GW.RoundInt(self:GetHeight())
     self:SetHeight(block.height)
 end
 

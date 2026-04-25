@@ -219,7 +219,7 @@ function GwAchievementTrackerContainerMixin:QueueUpdateLayout(event, ...)
 end
 
 function GwAchievementTrackerContainerMixin:UpdateLayout()
-    local savedHeight = 1
+    local savedHeight = 0.1
     local shownIndex = 1
     local trackedAchievements = GW.Retail and C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement) or {GetTrackedAchievements()}
 
@@ -259,7 +259,6 @@ function GwAchievementTrackerContainerMixin:UpdateLayout()
         end
     end
 
-    self.oldHeight = GW.RoundInt(self:GetHeight())
     self:SetHeight(savedHeight)
 
     for i = shownIndex, #self.blocks do

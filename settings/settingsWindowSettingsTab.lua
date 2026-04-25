@@ -13,6 +13,7 @@ local ROW_PAD_X = 8
 local ROW_PAD_Y = 8
 local COL_GAP   = 8
 local CONTENT_W = 550
+local DEFAULT_ROW_EXTENT = 40
 
 local SEARCH_ACTIVE = false
 
@@ -29,6 +30,7 @@ local optionTypes = {
     boolean     = {template = "GwOptionBoxTmpl", frame = "Button", newLine = false},
     slider      = {template = "GwOptionBoxSliderTmpl", frame = "Button", newLine = true},
     dropdown    = {template = "GwOptionBoxDropDownTmpl", frame = "Button", newLine = true},
+    list        = {template = "GwOptionBoxListTmpl", frame = "Button", newLine = true},
     text        = {template = "GwOptionBoxTextTmpl", frame = "Button", newLine = true},
     button      = {template = "GwButtonTextTmpl", frame = "Button", newLine = true},
     colorPicker = {template = "GwOptionBoxColorPickerTmpl", frame = "Button", newLine = true},
@@ -54,6 +56,27 @@ local function ResolveForceNewLine(opt)
         fnl = not opt.noNewLine
     end
     return fnl and true or false
+end
+
+local function GetOptionRowExtent(opt)
+    if opt and opt.optionType == "list" then
+        local optionsList = type(opt.optionsList) == "table" and opt.optionsList or {}
+        local entryCount = math.max(#optionsList, 1)
+        local entryHeight = opt.entryHeight or 24
+
+        return math.max(DEFAULT_ROW_EXTENT, ROW_PAD_Y * 2 + (entryCount * entryHeight))
+    end
+
+    return DEFAULT_ROW_EXTENT
+end
+
+local function GetPackedRowExtent(row)
+    local extent = DEFAULT_ROW_EXTENT
+    for _, opt in ipairs((row and row.cols) or {}) do
+        extent = math.max(extent, GetOptionRowExtent(opt))
+    end
+
+    return extent
 end
 
 local function StashWidget(w, panel)
@@ -331,7 +354,9 @@ local function InitOptionPanel(panel)
     panel._stash = panel._stash or CreateFrame("Frame", nil, panel)
     panel._stash:Hide()
 
-    view:SetElementExtent(40)
+    view:SetElementExtentCalculator(function(_, elementData)
+        return GetPackedRowExtent(elementData)
+    end)
     view:SetElementInitializer("GwFrameTemplate", InitRow)
     view:SetElementResetter(function(row)
         if row.leftAssigned  then StashWidget(row.leftAssigned,  row.__panel); row.leftAssigned  = nil end
@@ -849,7 +874,21 @@ local function LoadSettingsTab(container)
     searchPanel:SetPoint("BOTTOMRIGHT", settingsTab, "BOTTOMRIGHT", 0, 0)
 
     local searchView = CreateScrollBoxListLinearView()
-    searchView:SetElementExtent(40)
+    searchView:SetElementExtentCalculator(function(_, item)
+        if not item or item.kind == "breadcrumb" then
+            return DEFAULT_ROW_EXTENT
+        end
+
+        local extent = DEFAULT_ROW_EXTENT
+        if item.left and item.left.widget then
+            extent = math.max(extent, GetOptionRowExtent(item.left.widget))
+        end
+        if item.right and item.right.widget then
+            extent = math.max(extent, GetOptionRowExtent(item.right.widget))
+        end
+
+        return extent
+    end)
     searchView:SetElementInitializer("GwFrameTemplate", function(row, item)
         row.__searchPanel = searchPanel
         InitSearchRow(row, item)

@@ -135,7 +135,7 @@ end
 local function EnumerateTrackables(self, callback)
     local hasSomethingToTrack = false
     blockIndex = 0
-    savedHeight = 1
+    savedHeight = 0.1
 
     for _, trackableType in ipairs(C_ContentTracking.GetCollectableSourceTypes()) do
         local trackedIDs = C_ContentTracking.GetTrackedIDs(trackableType)

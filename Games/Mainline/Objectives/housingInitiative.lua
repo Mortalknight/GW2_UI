@@ -31,7 +31,7 @@ GwObjectivesHousingInitiativeContainerMixin = {}
 
 function GwObjectivesHousingInitiativeContainerMixin:UpdateLayout()
     local trackedTasks = C_NeighborhoodInitiative.GetTrackedInitiativeTasks().trackedIDs
-    local savedHeight = 1
+    local savedHeight = 0.1
     local shownIndex = 1
     local showHeader = false
 

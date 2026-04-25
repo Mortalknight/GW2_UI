@@ -74,7 +74,7 @@ local function RegisterSupportedEvents()
     end
 end
 
-local function ToggleCollapseObjectivesInChallangeMode()
+local function ToggleObjectivesAutoCollapse()
     if HasAnyAutoCollapseContextEnabled() then
         RegisterSupportedEvents()
         eventFrame:SetScript("OnEvent", OnEvent)
@@ -85,4 +85,4 @@ local function ToggleCollapseObjectivesInChallangeMode()
         ApplyCollapseState(false)
     end
 end
-GW.ToggleCollapseObjectivesInChallangeMode = ToggleCollapseObjectivesInChallangeMode
+GW.ToggleObjectivesAutoCollapse = ToggleObjectivesAutoCollapse

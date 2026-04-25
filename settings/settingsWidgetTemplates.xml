@@ -146,6 +146,32 @@
         </Frames>
     </Button>
 
+    <Button name="GwOptionBoxListTmpl" frameStrata="HIGH" virtual="true">
+        <Size x="500" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="235" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="5" y="-2"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="list">
+                <Size x="260" y="20"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="0"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Button>
+
     <Button name="GwOptionBoxTextTmpl" frameStrata="HIGH" virtual="true">
         <Size x="500" y="40"/>
         <Anchors>

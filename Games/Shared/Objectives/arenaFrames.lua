@@ -172,8 +172,7 @@ function GwObjectivesArenaContainerMixin:UpdateArenaFrameHeight()
             end
         end
     end
-    self.oldHeight = GW.RoundInt(self:GetHeight())
-    self:SetHeight(lastIndex > 0 and (48 * lastIndex) or 1)
+    self:SetHeight(lastIndex > 0 and (48 * lastIndex) or 0.1)
 end
 
 function GwObjectivesArenaContainerMixin:SetUpFramePosition()

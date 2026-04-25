@@ -31,7 +31,7 @@ GwObjectivesMonthlyActivitiesContainerMixin = {}
 
 function GwObjectivesMonthlyActivitiesContainerMixin:UpdateLayout()
     local trackedActivities = C_PerksActivities.GetTrackedPerksActivities().trackedIDs
-    local savedHeight = 1
+    local savedHeight = 0.1
     local shownIndex = 1
     local showHeader = false
 

@@ -106,8 +106,7 @@ function GwObjectivesBossContainerMixin:UpdateBossFrameHeight()
         end
     end
 
-    self.oldHeight = GW.RoundInt(self:GetHeight())
-    self:SetHeight(lastIndex > 0 and totalHeight or 1)
+    self:SetHeight(lastIndex > 0 and totalHeight or 0.1)
 end
 
 function GwObjectivesBossContainerMixin:SetUpFramePosition()

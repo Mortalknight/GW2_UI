@@ -126,6 +126,7 @@ GW.globalDefault = {
         OBJECTIVES_SUPERTRACKED_QUEST_TOP = false,
         OBJECTIVES_SHOW_COMPLETED_OBJECTIVES = false,
         OBJECTIVES_TRACKER_COMPACT_MODE = false,
+        OBJECTIVES_TRACKER_MODULE_ORDER = {"Achievement", "Campaign", "Quests", "Bonus", "Recipe", "MonthlyActivity", "Collection", "HousingInitiative", "WQT", "PetTracker", "Todoloo"},
         MINIMAP_ALWAYS_SHOW_HOVER_DETAILS = {CLOCK = false, ZONE = false, COORDS = false,},
         CLASS_POWER = true,
         RAID_FRAMES = true,
