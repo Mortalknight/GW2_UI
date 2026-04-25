@@ -18,6 +18,7 @@ addChange("10.9.0", {
     {GW.Enum.ChangelogType.feature, [=[Added automatic Objectives Tracker collapsing with separate options for Mythic+/Challenge Mode, Raid, Party, Delve and Combat]=]},
     {GW.Enum.ChangelogType.feature, [=[Added Objectives Tracker options for Supertracked Quest to Top, Show Completed Objectives and Compact Mode]=]},
     {GW.Enum.ChangelogType.feature, [=[Added option to change Objectives Tracker container order]=]},
+    {GW.Enum.ChangelogType.feature, [=[Added option to change grid class order sorting]=]},
     {GW.Enum.ChangelogType.change, [=[Update Damage Meter skin]=]},
 })
 

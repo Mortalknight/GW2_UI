@@ -4,6 +4,7 @@ NEW
     - Added automatic Objectives Tracker collapsing with separate options for Mythic+/Challenge Mode, Raid, Party, Delve and Combat
     - Added Objectives Tracker options for Supertracked Quest to Top, Show Completed Objectives and Compact Mode
     - Added option to change Objectives Tracker container order
+    - Added option to change grid class order sorting
 
 CHANGES
     - Update Damage Meter skin

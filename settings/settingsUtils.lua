@@ -301,9 +301,7 @@ local function setDependenciesOption(type, settingName, SetEnable, deactivateCol
             of.checkbutton:SetEnabled(enabled)
         end
     elseif type == "list" then
-        if of.SetListEnabled then
-            of:SetListEnabled(enabled, color)
-        end
+        of:SetListEnabled(enabled, color)
     end
 end
 
@@ -427,9 +425,7 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting, toDe
     elseif of.optionType == "dropdown" then
         of.dropDown:GenerateMenu()
     elseif of.optionType == "list" then
-        if of.RefreshList then
-            of:RefreshList()
-        end
+        of:RefreshList()
     end
 end
 GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
@@ -461,9 +457,7 @@ local function RefreshSettingsAfterProfileSwitch()
         elseif of.optionType == "dropdown" then
             of.dropDown:GenerateMenu()
         elseif of.optionType == "list" then
-            if of.RefreshList then
-                of:RefreshList()
-            end
+            of:RefreshList()
             if of.callback then
                 of.callback((of.GetListOrder and of:GetListOrder()) or of.get())
             end
@@ -848,11 +842,11 @@ local function SettingsInitOptionWidget(of, v, panel)
         of.listEnabled = true
         of.SetListEnabled = function(self, enabled, titleColor)
             self.listEnabled = enabled
-            self.listTextColor = titleColor or {enabled and 1 or 0.4, enabled and 1 or 0.4, enabled and 1 or 0.4}
+            self.listTextColor = {enabled and 1 or 0.4, enabled and 1 or 0.4, enabled and 1 or 0.4, enabled and 1 or 0.4}
             if titleColor then
                 self.title:SetTextColor(unpack(titleColor))
             else
-                self.title:SetTextColor(enabled and 1 or 0.4, enabled and 1 or 0.4, enabled and 1 or 0.4)
+                self.title:SetTextColor(enabled and 1 or 0.4, enabled and 1 or 0.4, enabled and 1 or 0.4, enabled and 1 or 0.4)
             end
             self:RefreshList()
         end

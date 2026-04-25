@@ -915,6 +915,7 @@ GW.globalDefault = {
         RAID_MAINTANK_PRIVATE_AURA_SIZE = 14,
         maintank_show_powerbar = "NONE", -- always
         maintank_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
+        MaintankGroupByClassOrder = {"DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK"},
         raidMaintank_pos= {
             point= "TOPLEFT",
             relativePoint= "TOPLEFT",
@@ -957,6 +958,7 @@ GW.globalDefault = {
         RAID_PET_SHOW_BUFFS = false,
         pet_show_powerbar = "NONE", -- always
         pet_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
+        PetGroupByClassOrder = {"DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK"},
 
         raid_pet_pos= {
             point= "TOPLEFT",
@@ -999,6 +1001,7 @@ GW.globalDefault = {
         PARTY_PET_SHOW_BUFFS = false,
         party_pet_show_powerbar = "NONE", -- always
         party_pet_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
+        PartyPetGroupByClassOrder = {"DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK"},
 
         party_pet_pos= {
             point= "TOPLEFT",
@@ -1042,6 +1045,7 @@ GW.globalDefault = {
         RAID_SHOW_BUFFS = false,
         raid40_show_powerbar = "ALL",
         raid40_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
+        Raid40GroupByClassOrder = {"DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK"},
 
         raid_pos= {
             point= "TOPLEFT",
@@ -1086,6 +1090,7 @@ GW.globalDefault = {
         RAID_25_SHOW_BUFFS = false,
         raid25_show_powerbar = "ALL",
         raid25_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
+        Raid25GroupByClassOrder = {"DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK"},
 
         raid25_pos= {
             point= "TOPLEFT",
@@ -1115,6 +1120,7 @@ GW.globalDefault = {
         UNITFRAME_ANCHOR_FROM_CENTER_RAID10= false,
         RAID_WIDE_SORTING_RAID10= false,
         RAID_GROUP_BY_RAID10= "ROLE",
+        Raid10GroupByClassOrder = {"DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK"},
         RAID_SORT_DIRECTION_RAID10= "ASC",
         RAID_RAID_SORT_METHOD_RAID10= "NAME",
         RAID_UNITS_HORIZONTAL_SPACING_RAID10= 2,
@@ -1174,6 +1180,7 @@ GW.globalDefault = {
         RAID_PARTY_SHOW_BUFFS = false,
         party_grid_show_powerbar = "ALL",
         party_grid_FrameHealthBarTexture = "GW2_UI_2_DEFAULT",
+        PartyGroupByClassOrder = {"DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK"},
 
         raid_party_pos= {
             point= "TOPLEFT",

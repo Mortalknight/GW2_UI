@@ -143,7 +143,8 @@ local settings = {
     raidWideSorting = {},
     groupBy = {},
     sortDirection = {},
-    sortMethod = {}
+    sortMethod = {},
+    classSortOrder = {}
 }
 GW.GridSettings = settings
 
@@ -269,6 +270,15 @@ local SETTINGS_HELPER_MAP = {
         RAID10 = "RAID_RAID_SORT_METHOD_RAID10",
         TANK = "RAID_RAID_SORT_METHOD_TANK",
     },
+    classSortOrder  = {
+        PARTY = "PartyGroupByClassOrder",
+        PARTY_PET = "PartyPetGroupByClassOrder",
+        RAID_PET = "PetGroupByClassOrder",
+        RAID40 = "Raid40GroupByClassOrder",
+        RAID25 = "Raid25GroupByClassOrder",
+        RAID10 = "Raid10GroupByClassOrder",
+        TANK = "MaintankGroupByClassOrder",
+    },
 }
 
 local SETTINGS_HELPER_TONUMBER = {
@@ -307,7 +317,8 @@ end
 local headerGroupBy = {
 	CLASS = function(header, profile)
 		local sortMethod = settings.sortMethod[profile]
-		header:SetAttribute("groupingOrder", "DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK")
+        local classSortOrder = settings.classSortOrder[profile]
+		header:SetAttribute("groupingOrder", table.concat(classSortOrder, ", "))
 		header:SetAttribute("sortMethod", sortMethod or "NAME")
 		header:SetAttribute("groupBy", "CLASS")
 	end,

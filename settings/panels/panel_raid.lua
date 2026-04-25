@@ -19,6 +19,21 @@ for i = 1, #auraOptionsOther do
     tinsert(auraOptionsNames, auraOptionsNamesOther[i])
 end
 
+local classOrderValues, classOrderNames = {}, {}
+
+for _, classFile in ipairs({"DEATHKNIGHT","DEMONHUNTER","DRUID","EVOKER","HUNTER","MAGE","PALADIN","PRIEST","ROGUE","SHAMAN","WARLOCK","WARRIOR","MONK"}) do
+    local maleName = LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[classFile]
+    local femaleName = LOCALIZED_CLASS_NAMES_FEMALE and LOCALIZED_CLASS_NAMES_FEMALE[classFile]
+    local className = maleName or femaleName
+    if className then
+        local index = #classOrderValues + 1
+        local color = RAID_CLASS_COLORS[classFile]
+
+        classOrderValues[index] = classFile
+        classOrderNames[index] =  color:WrapTextInColorCode(className)
+    end
+end
+
 --general Grid Settings
 local function LoadGeneralGridSettings(panel)
     local general = CreateFrame("Frame", nil, panel, "GwSettingsPanelTmpl")
@@ -51,6 +66,16 @@ local function CreateAuraFilterSection(panel, profile, buffDb, debuffDb, showBuf
     panel:AddOptionDropdown(L["Debuffs"], nil, {getterSetter = debuffDb, callback = function() GW.UpdateGridSettings(profile) end, optionsList = auraOptions, optionNames = auraOptionsNames, checkbox = true, dependence = {["RAID_FRAMES"] = true, [dependence] = true, [showDebuffs] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail})
     panel:AddOption(L["Private Auras"], nil, {getterSetter = showPrivateAuras, callback = function() GW.UpdateGridSettings(profile) end, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail or not showPrivateAuras})
     panel:AddOptionSlider(L["Private Auras size"], L["Set the size of Private Auras on this grid."], {getterSetter = privateAuraSize, callback = function() GW.UpdateGridSettings(profile) end, min = 8, max = 40, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true, [dependence] = true}, groupHeaderName = L["Debuffs"], hidden = not GW.Retail or not showPrivateAuras})
+end
+
+local function CreateClassSortebalList(panel, setting, dependence)
+    panel:AddOptionSortableList(L["Class Order"], L["Set the order of classes."], {
+        getterSetter = setting,
+        callback = nil,
+        optionsList = classOrderValues,
+        optionNames = classOrderNames,
+        dependence = {[dependence] = {"CLASS"}}
+    })
 end
 
 -- Profiles
@@ -148,6 +173,7 @@ local function LoadRaid10Profile(panel)
     raid10:AddOptionDropdown(L["Sort Direction"], nil, { getterSetter = "RAID_SORT_DIRECTION_RAID10", callback = function() GW.UpdateGridSettings("RAID10", true) end, optionsList = {"ASC", "DESC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}})
     raid10:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "RAID_RAID_SORT_METHOD_RAID10", callback = function() GW.UpdateGridSettings("RAID10", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true, ["RAID_GROUP_BY_RAID10"] = {"CLASS", "GROUP", "NAME", "ROLE"}}})
 
+    CreateClassSortebalList(raid10, "Raid10GroupByClassOrder", "RAID_GROUP_BY_RAID10")
     return raid10
 end
 
@@ -245,6 +271,7 @@ local function LoadRaid25Profile(panel)
     raid25:AddOptionDropdown(L["Sort Direction"], nil, { getterSetter = "RAID_SORT_DIRECTION_RAID25", callback = function() GW.UpdateGridSettings("RAID25", true) end, optionsList = {"ASC", "DESC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}})
     raid25:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "RAID_RAID_SORT_METHOD_RAID25", callback = function() GW.UpdateGridSettings("RAID25", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true, ["RAID_GROUP_BY_RAID25"] = {"CLASS", "GROUP", "NAME", "ROLE"}}})
 
+    CreateClassSortebalList(raid25, "Raid25GroupByClassOrder", "RAID_GROUP_BY_RAID25")
     return raid25
 end
 
@@ -337,7 +364,7 @@ local function LoadRaid40Profile(panel)
     raid40:AddOptionDropdown(L["Group By"], L["Set the order that the group will sort."], { getterSetter = "RAID_GROUP_BY", callback = function() GW.UpdateGridSettings("RAID40", true) end, optionsList = {"CLASS", "GROUP", "INDEX", "NAME", "ROLE"}, optionNames = {CLASS, GROUP, "Index", NAME, ROLE}, dependence = {["RAID_FRAMES"] = true}})
     raid40:AddOptionDropdown(L["Sort Direction"], nil, { getterSetter = "RAID_SORT_DIRECTION", callback = function() GW.UpdateGridSettings("RAID40", true) end, optionsList = {"ASC", "DESC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["RAID_FRAMES"] = true}})
     raid40:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "T", callback = function() GW.UpdateGridSettings("RAID40", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["RAID_FRAMES"] = true, ["RAID_GROUP_BY"] = {"CLASS", "GROUP", "NAME", "ROLE"}}})
-
+    CreateClassSortebalList(raid40, "Raid40GroupByClassOrder", "RAID_GROUP_BY")
     return raid40
 end
 
@@ -600,7 +627,7 @@ local function LoadPartyProfile(panel)
     party:AddOptionDropdown(L["Group By"], L["Set the order that the group will sort."], { getterSetter = "RAID_GROUP_BY_PARTY", callback = function() GW.UpdateGridSettings("PARTY", true) end, optionsList = {"CLASS", "GROUP", "INDEX", "NAME", "ROLE"}, optionNames = {CLASS, GROUP, "Index", NAME, ROLE}, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
     party:AddOptionDropdown(L["Sort Direction"], nil, { getterSetter = "RAID_SORT_DIRECTION_PARTY", callback = function() GW.UpdateGridSettings("PARTY", true) end, optionsList = {"ASC", "DESC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}})
     party:AddOptionDropdown(L["Sort Method"], nil, { getterSetter = "RAID_RAID_SORT_METHOD_PARTY", callback = function() GW.UpdateGridSettings("PARTY", true) end, optionsList = {"INDEX", "NAME"}, optionNames = {L["Index"], NAME}, dependence = {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true, ["RAID_GROUP_BY_PARTY"] = {"CLASS", "GROUP", "NAME", "ROLE"}}})
-
+    CreateClassSortebalList(party, "PartyGroupByClassOrder", "RAID_GROUP_BY_PARTY")
     return party
 end
 
