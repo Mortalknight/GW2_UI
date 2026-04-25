@@ -45,6 +45,7 @@ search integration, 2-column layout, dependencies and consistent look & feel.
       getterSetter = "priorityOrder",
       optionsList  = {"interrupts", "dispels", "cooldowns"},
       optionNames  = {"Interrupts", "Dispels", "Cooldowns"},
+      maxVisibleRows = 6,
       callback = function(order) print(table.concat(order, ", ")) end
     })
     ```
@@ -113,11 +114,12 @@ by GW2_UI (two columns where possible, full row if forced).
     - ``noNewLine`` _(boolean, optional)_ — When set, try to keep dropdown in a *half-width column* (overrides template default)
 8) ``panel:AddOptionSortableList(name, desc, values)``
 
-    Creates a *sortable list* with up/down buttons for each entry. The stored value is an ordered array.
+    Creates a *sortable list* with drag-and-drop rows and up/down buttons for each entry. The stored value is an ordered array.
     Type-specific keys:
     - ``optionsList`` _(table, required)_ — Array of values that can be ordered
     - ``optionNames`` _(table, required)_ — Display labels matching ``optionsList``
     - ``entryHeight`` _(number, optional, default 24)_ — Row height for each list entry
+    - ``maxVisibleRows`` _(number, optional)_ — Maximum visible rows before the list scrolls internally
     - ``callback`` _(function(order, movedValue, oldIndex, newIndex))_ — Called after an entry was moved
 
 

@@ -74,6 +74,7 @@ local function CreateClassSortebalList(panel, setting, dependence)
         callback = nil,
         optionsList = classOrderValues,
         optionNames = classOrderNames,
+        maxVisibleRows = 6,
         dependence = {[dependence] = {"CLASS"}}
     })
 end

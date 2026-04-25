@@ -63,6 +63,11 @@ local function GetOptionRowExtent(opt)
         local optionsList = type(opt.optionsList) == "table" and opt.optionsList or {}
         local entryCount = math.max(#optionsList, 1)
         local entryHeight = opt.entryHeight or 24
+        local maxVisibleRows = tonumber(opt.maxVisibleRows)
+
+        if maxVisibleRows and maxVisibleRows > 0 then
+            entryCount = math.min(entryCount, maxVisibleRows)
+        end
 
         return math.max(DEFAULT_ROW_EXTENT, ROW_PAD_Y * 2 + (entryCount * entryHeight))
     end

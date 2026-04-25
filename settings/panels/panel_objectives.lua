@@ -116,6 +116,7 @@ local function LoadObjectivesPanel(sWindow)
         callback = GW.ApplyObjectivesTrackerModuleOrder,
         optionsList = moduleOrderOptions,
         optionNames = moduleOrderOptionNames,
+        maxVisibleRows = 6,
         dependence = {["QUESTTRACKER_ENABLED"] = true},
         hidden = GW.Classic or GW.TBC
     })

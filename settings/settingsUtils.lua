@@ -213,6 +213,7 @@ function GwSettingsPanelMixin:AddOptionSortableList(name, desc, values)
     opt.optionsList = values.optionsList
     opt.optionsNames = values.optionNames or values.optionsNames
     opt.entryHeight = values.entryHeight or 24
+    opt.maxVisibleRows = values.maxVisibleRows
 
     return opt
 end
@@ -539,11 +540,307 @@ local function GetOrderedListValues(of, v)
     return orderedValues
 end
 
+local LIST_BUTTON_SPACE = 50
+local LIST_SCROLLBAR_WIDTH = 12
+local LIST_SCROLLBAR_GAP = 4
+
 local function SetListButtonState(button, enabled)
     if not button then return end
 
     button:SetEnabled(enabled)
     button:SetAlpha(enabled and 1 or 0.35)
+end
+
+local function ClampListScrollOffset(of, totalRows, visibleRows)
+    local maxOffset = math.max((totalRows or 0) - (visibleRows or 0), 0)
+    of.listScrollOffset = math.min(math.max(of.listScrollOffset or 0, 0), maxOffset)
+end
+
+local function GetListVisibleRows(totalRows, v)
+    local maxVisibleRows = tonumber(v.maxVisibleRows)
+    if maxVisibleRows and maxVisibleRows > 0 then
+        return math.min(totalRows, maxVisibleRows)
+    end
+
+    return totalRows
+end
+
+local function MoveListValue(of, v, fromIndex, toIndex)
+    local order = GetOrderedListValues(of, v)
+
+    if fromIndex == toIndex or fromIndex < 1 or toIndex < 1 or fromIndex > #order or toIndex > #order then
+        return
+    end
+
+    local movedValue = table.remove(order, fromIndex)
+    table.insert(order, toIndex, movedValue)
+    of.set(CopyListValues(order))
+
+    if of.RefreshList then
+        of:RefreshList()
+    end
+
+    if v.callback then
+        v.callback(order, movedValue, fromIndex, toIndex)
+    end
+    CheckDependencies()
+end
+
+local function GetListDropIndex(of, v)
+    local values = GetOrderedListValues(of, v)
+    if #values == 0 then return nil end
+
+    local cursorX, cursorY = GetCursorPosition()
+    local scale = of.list:GetEffectiveScale() or 1
+    if not cursorX or not cursorY then return nil end
+
+    local cursorListX = cursorX / scale
+    local cursorListY = cursorY / scale
+    local left = of.list:GetLeft()
+    local right = of.list:GetRight()
+    local top = of.list:GetTop()
+    local bottom = of.list:GetBottom()
+    if not left or not right or not top or not bottom then return nil end
+
+    if cursorListX < left or cursorListX > right or cursorListY > top or cursorListY < bottom then
+        return nil
+    end
+
+    local entryHeight = v.entryHeight or 24
+    local relativeY = top - cursorListY
+    local visibleIndex = math.floor(relativeY / entryHeight) + 1
+    local visibleRows = GetListVisibleRows(#values, v)
+
+    visibleIndex = math.min(math.max(visibleIndex, 1), math.max(visibleRows, 1))
+
+    return math.min((of.listScrollOffset or 0) + visibleIndex, #values)
+end
+
+local function EnsureListDragFrame(of, entryHeight)
+    if of.dragFrame then return of.dragFrame end
+
+    local dragFrame = CreateFrame("Frame", nil, UIParent)
+    dragFrame:SetFrameStrata("TOOLTIP")
+    dragFrame:SetHeight(entryHeight - 2)
+    dragFrame:Hide()
+
+    dragFrame.bg = dragFrame:CreateTexture(nil, "BACKGROUND")
+    dragFrame.bg:SetAllPoints()
+    dragFrame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar.png")
+    dragFrame.bg:SetAlpha(0.85)
+
+    dragFrame.label = dragFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    dragFrame.label:SetFont(UNIT_NAME_FONT, 12)
+    dragFrame.label:SetTextColor(1, 1, 1)
+    dragFrame.label:SetJustifyH("LEFT")
+    dragFrame.label:SetPoint("LEFT", 6, 0)
+    dragFrame.label:SetPoint("RIGHT", -6, 0)
+
+    of.dragFrame = dragFrame
+
+    return dragFrame
+end
+
+local function EnsureListDropIndicator(of)
+    if of.dropIndicator then return of.dropIndicator end
+
+    local indicator = of.list:CreateTexture(nil, "OVERLAY")
+    indicator:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarborderpixel.png")
+    indicator:SetVertexColor(1, 0.82, 0.25, 1)
+    indicator:SetHeight(2)
+    indicator:Hide()
+
+    of.dropIndicator = indicator
+
+    return indicator
+end
+
+local function UpdateListDragVisual(of, v)
+    if not of.dragIndex then return end
+
+    local cursorX, cursorY = GetCursorPosition()
+    local scale = UIParent:GetEffectiveScale() or 1
+    local dragFrame = EnsureListDragFrame(of, v.entryHeight or 24)
+    dragFrame:ClearAllPoints()
+    dragFrame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", (cursorX / scale) + 12, (cursorY / scale) - 8)
+
+    local dropIndex = GetListDropIndex(of, v)
+    local indicator = EnsureListDropIndicator(of)
+    if dropIndex then
+        local entryHeight = v.entryHeight or 24
+        local visibleIndex = dropIndex - (of.listScrollOffset or 0)
+        local values = GetOrderedListValues(of, v)
+        local visibleRows = GetListVisibleRows(math.max(#values, 1), v)
+        visibleIndex = math.min(math.max(visibleIndex, 1), visibleRows)
+
+        indicator:ClearAllPoints()
+        indicator:SetPoint("TOPLEFT", of.list, "TOPLEFT", 0, -((visibleIndex - 1) * entryHeight))
+        indicator:SetPoint("TOPRIGHT", of.list, "TOPRIGHT", -LIST_BUTTON_SPACE, -((visibleIndex - 1) * entryHeight))
+        indicator:Show()
+    else
+        indicator:Hide()
+    end
+end
+
+local function StopListDrag(of, v)
+    local fromIndex = of.dragIndex
+    local dragRow = of.dragRow
+
+    of.dragIndex = nil
+    of.dragRow = nil
+    of.list:SetScript("OnUpdate", nil)
+
+    if dragRow then
+        dragRow:SetAlpha(1)
+    end
+    if of.dragFrame then
+        of.dragFrame:Hide()
+    end
+    if of.dropIndicator then
+        of.dropIndicator:Hide()
+    end
+    if not fromIndex then return end
+
+    local toIndex = GetListDropIndex(of, v)
+    if not toIndex then return end
+
+    MoveListValue(of, v, fromIndex, toIndex)
+end
+
+local function StartListDrag(of, v, row)
+    if of.listEnabled == false then return end
+
+    of.dragIndex = row.index
+    of.dragRow = row
+    row:SetAlpha(0.55)
+
+    local dragFrame = EnsureListDragFrame(of, v.entryHeight or 24)
+    dragFrame:SetWidth((of.list:GetWidth() or 260) - LIST_BUTTON_SPACE)
+    dragFrame.label:SetText(row.label:GetText() or "")
+    dragFrame:Show()
+
+    of.list:SetScript("OnUpdate", function()
+        if not IsMouseButtonDown("LeftButton") then
+            StopListDrag(of, v)
+            return
+        end
+
+        UpdateListDragVisual(of, v)
+    end)
+    UpdateListDragVisual(of, v)
+end
+
+local function StopListScrollbarDrag(of)
+    if of.listScrollTrack then
+        of.listScrollTrack:SetScript("OnUpdate", nil)
+    end
+end
+
+local function SetListScrollOffsetFromCursor(of, v)
+    local values = GetOrderedListValues(of, v)
+    local visibleRows = GetListVisibleRows(math.max(#values, 1), v)
+    local maxOffset = math.max(#values - visibleRows, 0)
+    if maxOffset <= 0 or not of.listScrollTrack or not of.listScrollThumb then return end
+
+    local _, cursorY = GetCursorPosition()
+    if not cursorY then return end
+
+    local scale = of.listScrollTrack:GetEffectiveScale() or 1
+    local top = of.listScrollTrack:GetTop()
+    local trackHeight = of.listScrollTrack:GetHeight()
+    local thumbHeight = of.listScrollThumb:GetHeight()
+    if not top or not trackHeight or not thumbHeight then return end
+
+    local availableHeight = math.max(trackHeight - thumbHeight, 1)
+    local offset = math.min(math.max(top - (cursorY / scale) - (thumbHeight / 2), 0), availableHeight)
+
+    of.listScrollOffset = math.floor((offset / availableHeight) * maxOffset + 0.5)
+    ClampListScrollOffset(of, #values, visibleRows)
+    of:RefreshList()
+end
+
+local function ScrollListOption(of, v, delta)
+    local values = GetOrderedListValues(of, v)
+    local visibleRows = GetListVisibleRows(math.max(#values, 1), v)
+
+    of.listScrollOffset = (of.listScrollOffset or 0) + (delta > 0 and -1 or 1)
+
+    ClampListScrollOffset(of, #values, visibleRows)
+    of:RefreshList()
+end
+
+local function StartListScrollbarDrag(of, v)
+    if of.listEnabled == false then return end
+
+    SetListScrollOffsetFromCursor(of, v)
+
+    of.listScrollTrack:SetScript("OnUpdate", function()
+        if not IsMouseButtonDown("LeftButton") then
+            StopListScrollbarDrag(of)
+            return
+        end
+
+        SetListScrollOffsetFromCursor(of, v)
+    end)
+end
+
+local function UpdateListScrollbar(of, v, totalRows, visibleRows, entryHeight)
+    if not of.listScrollTrack then
+        of.listScrollTrack = CreateFrame("Frame", nil, of)
+        of.listScrollTrack:EnableMouse(true)
+        of.listScrollTrack:EnableMouseWheel(true)
+        of.listScrollTrack:SetSize(LIST_SCROLLBAR_WIDTH, 1)
+
+        of.listScrollTrack.bg = of.listScrollTrack:CreateTexture(nil, "BACKGROUND")
+        of.listScrollTrack.bg:SetAllPoints()
+        of.listScrollTrack.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg.png")
+
+        of.listScrollThumb = CreateFrame("Button", nil, of.listScrollTrack)
+        of.listScrollThumb:EnableMouse(true)
+        of.listScrollThumb:EnableMouseWheel(true)
+        of.listScrollThumb:SetSize(LIST_SCROLLBAR_WIDTH, 1)
+
+        of.listScrollThumb.texture = of.listScrollThumb:CreateTexture(nil, "ARTWORK")
+        of.listScrollThumb.texture:SetAllPoints()
+        of.listScrollThumb.texture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle.png")
+
+        for _, frame in ipairs({of.listScrollTrack, of.listScrollThumb}) do
+            frame:SetScript("OnMouseDown", function(_, button)
+                if button == "LeftButton" then
+                    StartListScrollbarDrag(of, v)
+                end
+            end)
+            frame:SetScript("OnMouseUp", function(_, button)
+                if button == "LeftButton" then
+                    StopListScrollbarDrag(of)
+                end
+            end)
+            frame:SetScript("OnMouseWheel", function(_, delta)
+                ScrollListOption(of, v, delta)
+            end)
+        end
+    end
+
+    local showScrollbar = totalRows > visibleRows
+    of.listScrollTrack:SetShown(showScrollbar)
+    of.listScrollThumb:SetShown(showScrollbar)
+    if not showScrollbar then
+        StopListScrollbarDrag(of)
+        return
+    end
+
+    local trackHeight = (visibleRows * entryHeight) - 2
+    local thumbHeight = math.max(12, trackHeight * (visibleRows / totalRows))
+    local maxOffset = math.max(totalRows - visibleRows, 1)
+    local thumbOffset = (trackHeight - thumbHeight) * ((of.listScrollOffset or 0) / maxOffset)
+
+    of.listScrollTrack:ClearAllPoints()
+    of.listScrollTrack:SetPoint("TOPLEFT", of.list, "TOPRIGHT", LIST_SCROLLBAR_GAP, -1)
+    of.listScrollTrack:SetHeight(trackHeight)
+
+    of.listScrollThumb:ClearAllPoints()
+    of.listScrollThumb:SetPoint("TOP", of.listScrollTrack, "TOP", 0, -thumbOffset)
+    of.listScrollThumb:SetHeight(thumbHeight)
 end
 
 local function CreateListMoveButton(parent, direction)
@@ -573,17 +870,22 @@ local function RefreshListOption(of, v)
     local values = GetOrderedListValues(of, v)
     local labels = BuildListLabelMap(v.optionsList, v.optionsNames)
     local entryHeight = v.entryHeight or 24
+    local visibleRows = GetListVisibleRows(math.max(#values, 1), v)
     local listEnabled = of.listEnabled ~= false
     local listTextColor = of.listTextColor or {1, 1, 1}
 
+    ClampListScrollOffset(of, #values, visibleRows)
+
     of.listRows = of.listRows or {}
-    of.list:SetHeight(math.max(#values, 1) * entryHeight)
+    of.list:SetHeight(visibleRows * entryHeight)
+    UpdateListScrollbar(of, v, #values, visibleRows, entryHeight)
 
     for i = 1, #values do
         local row = of.listRows[i]
         if not row then
             row = CreateFrame("Button", nil, of.list)
             row:SetHeight(entryHeight - 2)
+            row:EnableMouseWheel(true)
 
             row.bg = row:CreateTexture(nil, "BACKGROUND")
             row.bg:SetAllPoints()
@@ -598,69 +900,56 @@ local function RefreshListOption(of, v)
             row.label:SetTextColor(1, 1, 1)
             row.label:SetJustifyH("LEFT")
             row.label:SetPoint("LEFT", 6, 0)
-            row.label:SetPoint("RIGHT", row, "RIGHT", -48, 0)
+            row.label:SetPoint("RIGHT", row, "RIGHT", -50, 0)
 
             row.upButton = CreateListMoveButton(row, "up")
-            row.upButton:SetPoint("RIGHT", row, "RIGHT", -22, 0)
+            row.upButton:SetPoint("RIGHT", row, "RIGHT", -24, 0)
+            row.upButton:SetScript("OnClick", function(self, button)
+                if ShouldHandleIncompatibility(v) and not HandleIncompatibility(v, button, not v.isIncompatibleAddonLoadedButOverride) then
+                    return
+                end
+
+                MoveListValue(of, v, self:GetParent().index, self:GetParent().index - 1)
+            end)
 
             row.downButton = CreateListMoveButton(row, "down")
-            row.downButton:SetPoint("RIGHT", row, "RIGHT", -2, 0)
+            row.downButton:SetPoint("RIGHT", row, "RIGHT", -4, 0)
+            row.downButton:SetScript("OnClick", function(self, button)
+                if ShouldHandleIncompatibility(v) and not HandleIncompatibility(v, button, not v.isIncompatibleAddonLoadedButOverride) then
+                    return
+                end
+
+                MoveListValue(of, v, self:GetParent().index, self:GetParent().index + 1)
+            end)
+
+            row:SetScript("OnMouseDown", function(self, button)
+                if button == "LeftButton" then
+                    StartListDrag(of, v, self)
+                end
+            end)
+            row:SetScript("OnMouseUp", function(_, button)
+                if button == "LeftButton" then
+                    StopListDrag(of, v)
+                end
+            end)
+            row:SetScript("OnMouseWheel", function(_, delta)
+                ScrollListOption(of, v, delta)
+            end)
 
             of.listRows[i] = row
         end
 
+        local visibleIndex = i - (of.listScrollOffset or 0)
+        local isVisible = visibleIndex >= 1 and visibleIndex <= visibleRows
+
         row:ClearAllPoints()
-        row:SetPoint("TOPLEFT", of.list, "TOPLEFT", 0, -((i - 1) * entryHeight))
+        row:SetPoint("TOPLEFT", of.list, "TOPLEFT", 0, -((visibleIndex - 1) * entryHeight))
         row:SetPoint("RIGHT", of.list, "RIGHT", 0, 0)
         row.value = values[i]
         row.index = i
         row.label:SetText(labels[values[i]] or tostring(values[i]))
         row.label:SetTextColor(unpack(listTextColor))
-        row:Show()
-
-        row.upButton:SetScript("OnClick", function(self, button)
-            if ShouldHandleIncompatibility(v) then
-                if not HandleIncompatibility(v, button, not v.isIncompatibleAddonLoadedButOverride) then
-                    return
-                end
-            end
-
-            local order = GetOrderedListValues(of, v)
-            local fromIndex = self:GetParent().index
-            if fromIndex <= 1 then return end
-
-            local movedValue = table.remove(order, fromIndex)
-            table.insert(order, fromIndex - 1, movedValue)
-            of.set(CopyListValues(order))
-            of:RefreshList()
-
-            if v.callback then
-                v.callback(order, movedValue, fromIndex, fromIndex - 1)
-            end
-            CheckDependencies()
-        end)
-
-        row.downButton:SetScript("OnClick", function(self, button)
-            if ShouldHandleIncompatibility(v) then
-                if not HandleIncompatibility(v, button, not v.isIncompatibleAddonLoadedButOverride) then
-                    return
-                end
-            end
-
-            local order = GetOrderedListValues(of, v)
-            local fromIndex = self:GetParent().index
-            if fromIndex >= #order then return end
-
-            local movedValue = table.remove(order, fromIndex)
-            table.insert(order, fromIndex + 1, movedValue)
-            of.set(CopyListValues(order))
-            of:RefreshList()
-
-            if v.callback then
-                v.callback(order, movedValue, fromIndex, fromIndex + 1)
-            end
-            CheckDependencies()
-        end)
+        row:SetShown(isVisible)
 
         SetListButtonState(row.upButton, listEnabled and i > 1)
         SetListButtonState(row.downButton, listEnabled and i < #values)
@@ -838,6 +1127,8 @@ local function SettingsInitOptionWidget(of, v, panel)
     elseif v.optionType == "list" then
         of.title:ClearAllPoints()
         of.title:SetPoint("TOPLEFT", 5, -2)
+        of.list:ClearAllPoints()
+        of.list:SetPoint("TOPRIGHT", of, "TOPRIGHT", -28, 0)
 
         of.listEnabled = true
         of.SetListEnabled = function(self, enabled, titleColor)
@@ -856,6 +1147,15 @@ local function SettingsInitOptionWidget(of, v, panel)
         of.GetListOrder = function(self)
             return GetOrderedListValues(self, v)
         end
+        of.list:EnableMouseWheel(true)
+        of.list:SetScript("OnMouseUp", function(_, button)
+            if button ~= "LeftButton" then return end
+
+            StopListDrag(of, v)
+        end)
+        of.list:SetScript("OnMouseWheel", function(_, delta)
+            ScrollListOption(of, v, delta)
+        end)
 
         of:RefreshList()
     elseif v.optionType == "slider" then
