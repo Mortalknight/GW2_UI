@@ -35,6 +35,24 @@ local function HasAnyAutoCollapseContextEnabled()
     return settings.MythicPlus or settings.Raid or settings.Party or settings.Delve or settings.Combat
 end
 
+local function CollapseContainer(container)
+    if not container.collapsed then
+        container.collapsedByAutoCollapse = true
+        container:CollapseHeader(true, false)
+    end
+end
+
+local function ReleaseContainer(container)
+    if not container.collapsedByAutoCollapse then
+        return
+    end
+
+    container.collapsedByAutoCollapse = nil
+    if container.collapsed then
+        container:CollapseHeader(false, true)
+    end
+end
+
 local function ApplyCollapseState(forceCollapse, inCombat)
     local shouldCollapse = forceCollapse or ShouldCollapseObjectives(inCombat or InCombatLockdown())
     if not GW.QuestTrackerScrollableContainer then return end
@@ -43,7 +61,11 @@ local function ApplyCollapseState(forceCollapse, inCombat)
             container.shouldUpdate = false
         end
         if container.CollapseHeader then
-            container:CollapseHeader(shouldCollapse, not shouldCollapse)
+            if shouldCollapse then
+                CollapseContainer(container)
+            else
+                ReleaseContainer(container)
+            end
         end
     end
 end

@@ -12,6 +12,10 @@ function GwObjectivesContainerMixin:BlockOnClick()
 end
 
 function GwObjectivesContainerMixin:CollapseHeader(forceCollapse, forceOpen)
+    if not forceCollapse and not forceOpen then
+        self.collapsedByAutoCollapse = nil
+    end
+
     if (not self.collapsed or forceCollapse) and not forceOpen then
         self.collapsed = true
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
