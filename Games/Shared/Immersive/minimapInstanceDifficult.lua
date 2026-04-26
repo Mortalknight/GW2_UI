@@ -2,9 +2,9 @@
 local GW = select(2, ...)
 
 local difficulty = MinimapCluster.InstanceDifficulty
-local instance = difficulty and difficulty.Default
-local guild = difficulty and difficulty.Guild
-local challenge = difficulty and difficulty.ChallengeMode
+local instance = difficulty and difficulty.Default or MiniMapInstanceDifficulty
+local guild = difficulty and difficulty.Guild or GuildInstanceDifficulty
+local challenge = difficulty and difficulty.ChallengeMode or MiniMapChallengeMode
 
 local difficulties = {
     [1] = "normal",   -- 5ppl normal
