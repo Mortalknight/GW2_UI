@@ -8,41 +8,41 @@ local function GetObjectiveTrackerModuleOrderOptions()
 
     if not (GW.Classic or GW.TBC) then
         optionsList[#optionsList + 1] = "Achievement"
-        optionNames[#optionNames + 1] = ACHIEVEMENTS
+        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Achievement]:WrapTextInColorCode(ACHIEVEMENTS)
     end
 
     if GW.Retail then
         optionsList[#optionsList + 1] = "Campaign"
-        optionNames[#optionNames + 1] = L["Campaign"]
+        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]:WrapTextInColorCode(TRACKER_HEADER_CAMPAIGN_QUESTS)
     end
 
     optionsList[#optionsList + 1] = "Quests"
-    optionNames[#optionNames + 1] = TRACKER_HEADER_QUESTS or QUESTS_LABEL
+    optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Quest]:WrapTextInColorCode(TRACKER_HEADER_QUESTS or QUESTS_LABEL)
 
     if GW.Retail then
         optionsList[#optionsList + 1] = "Bonus"
-        optionNames[#optionNames + 1] = EVENTS_LABEL
+        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:WrapTextInColorCode(EVENTS_LABEL)
 
         optionsList[#optionsList + 1] = "Recipe"
-        optionNames[#optionNames + 1] = PROFESSIONS_TRACKER_HEADER_PROFESSION
+        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Recipe]:WrapTextInColorCode(PROFESSIONS_TRACKER_HEADER_PROFESSION)
 
         optionsList[#optionsList + 1] = "MonthlyActivity"
-        optionNames[#optionNames + 1] = TRACKER_HEADER_MONTHLY_ACTIVITIES
+        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.MonthlyActivity]:WrapTextInColorCode(TRACKER_HEADER_MONTHLY_ACTIVITIES)
 
         optionsList[#optionsList + 1] = "Collection"
-        optionNames[#optionNames + 1] = ADVENTURE_TRACKING_MODULE_HEADER_TEXT
+        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Recipe]:WrapTextInColorCode(ADVENTURE_TRACKING_MODULE_HEADER_TEXT)
 
         optionsList[#optionsList + 1] = "HousingInitiative"
-        optionNames[#optionNames + 1] = HOUSING_DASHBOARD_ENDEAVOR
+        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.HousingInitiative]:WrapTextInColorCode(HOUSING_DASHBOARD_ENDEAVOR)
 
         optionsList[#optionsList + 1] = "WQT"
-        optionNames[#optionNames + 1] = "|cffaaaaaa[AddOn]|r World Quest Tracker"
+        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:WrapTextInColorCode("|cffaaaaaa[AddOn]|r World Quest Tracker")
 
         optionsList[#optionsList + 1] = "PetTracker"
-        optionNames[#optionNames + 1] = "|cffaaaaaa[AddOn]|r Pet Tracker"
+        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:WrapTextInColorCode("|cffaaaaaa[AddOn]|r Pet Tracker")
 
         optionsList[#optionsList + 1] = "Todoloo"
-        optionNames[#optionNames + 1] = "|cffaaaaaa[AddOn]|r Todoloo's"
+        optionNames[#optionNames + 1] = GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:WrapTextInColorCode("|cffaaaaaa[AddOn]|r Todoloo's")
     end
 
     return optionsList, optionNames
