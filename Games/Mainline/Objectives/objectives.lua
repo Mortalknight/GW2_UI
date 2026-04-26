@@ -569,7 +569,7 @@ function GwObjectivesQuestContainerMixin:InitModule()
     self.header.title:SetShadowOffset(1, -1)
 
     self.collapsed = false
-    self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
+    self.header:SetScript("OnMouseDown", function() self:ToggleCollapsed() end) -- this way, otherwiese we have a wrong self at the function
     if self.isCampaignContainer then
         self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Campaign]:GetRGB())
         self.header.icon:SetTexCoord(0.5, 1, 0, 0.25)

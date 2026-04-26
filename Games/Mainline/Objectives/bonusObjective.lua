@@ -366,7 +366,7 @@ function GwBonusObjectivesTrackerContainerMixin:InitModule()
     self.header.title:SetText(EVENTS_LABEL)
 
     self.collapsed = false
-    self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
+    self.header:SetScript("OnMouseDown", function() self:ToggleCollapsed() end) -- this way, otherwiese we have a wrong self at the function
     self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:GetRGB())
     self.layoutUpdateFrame = CreateFrame("Frame", nil, self)
     self.layoutUpdateFrame.container = self

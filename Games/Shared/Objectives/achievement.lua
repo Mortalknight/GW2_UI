@@ -287,7 +287,7 @@ function GwAchievementTrackerContainerMixin:InitModule()
     self.header.title:SetText(TRACKER_HEADER_ACHIEVEMENTS)
 
     self.collapsed = false
-    self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
+    self.header:SetScript("OnMouseDown", function() self:ToggleCollapsed() end) -- this way, otherwiese we have a wrong self at the function
     self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Achievement]:GetRGB())
 
     self.timedCriteria = {}

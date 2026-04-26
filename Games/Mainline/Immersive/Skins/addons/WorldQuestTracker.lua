@@ -76,7 +76,7 @@ function GwWorldQuestTrackerContainerMixin:InitModule()
     self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:GetRGB())
 
     self.collapsed = false
-    self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
+    self.header:SetScript("OnMouseDown", function() self:ToggleCollapsed() end) -- this way, otherwiese we have a wrong self at the function
 
     self:UpdateLayout()
     hooksecurefunc(WorldQuestTrackerAddon, "RefreshTrackerAnchor", function() self:UpdateLayout() end)

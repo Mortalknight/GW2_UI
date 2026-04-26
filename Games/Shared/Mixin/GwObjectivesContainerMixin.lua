@@ -11,16 +11,48 @@ function GwObjectivesContainerMixin:BlockOnClick()
     -- override per module
 end
 
-function GwObjectivesContainerMixin:CollapseHeader(forceCollapse, forceOpen)
-    if not forceCollapse and not forceOpen then
+function GwObjectivesContainerMixin:SetCollapsed(collapsed, source)
+    local wasCollapsed = self.collapsed == true
+    collapsed = collapsed == true
+
+    if source == "autoCollapse" then
+        self.autoCollapseActive = collapsed
+
+        if collapsed then
+            if self.autoCollapseManualOverride then
+                return
+            end
+
+            if not wasCollapsed then
+                self.collapsedByAutoCollapse = true
+            end
+        else
+            self.autoCollapseManualOverride = nil
+
+            if not self.collapsedByAutoCollapse then
+                return
+            end
+
+            self.collapsedByAutoCollapse = nil
+        end
+    else
+        if self.autoCollapseActive and wasCollapsed and not collapsed then
+            self.autoCollapseManualOverride = true
+        elseif collapsed then
+            self.autoCollapseManualOverride = nil
+        end
+
         self.collapsedByAutoCollapse = nil
     end
 
-    if (not self.collapsed or forceCollapse) and not forceOpen then
-        self.collapsed = true
+    if wasCollapsed == collapsed then
+        return
+    end
+
+    self.collapsed = collapsed
+    if collapsed then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
     else
-        self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
     self:UpdateLayout()

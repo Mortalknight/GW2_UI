@@ -187,7 +187,7 @@ function GwPetTrackerContainerMixin:InitModule()
                     end)
                 end
             else
-                self:CollapseHeader(false, false)
+                self:ToggleCollapsed()
             end
         end
     )

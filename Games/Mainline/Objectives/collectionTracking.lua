@@ -237,7 +237,7 @@ function GwObjectivesCollectionContainerMixin:InitModule()
     self.header.title:SetText(ADVENTURE_TRACKING_MODULE_HEADER_TEXT)
 
     self.collapsed = false
-    self.header:SetScript("OnMouseDown", function() self:CollapseHeader() end) -- this way, otherwiese we have a wrong self at the function
+    self.header:SetScript("OnMouseDown", function() self:ToggleCollapsed() end) -- this way, otherwiese we have a wrong self at the function
     self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Recipe]:GetRGB())
 
     self.blockMixInTemplate = GwObjectivesCollectionBlockMixin
