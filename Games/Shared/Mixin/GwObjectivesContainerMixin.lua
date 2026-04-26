@@ -58,6 +58,10 @@ function GwObjectivesContainerMixin:SetCollapsed(collapsed, source)
     self:UpdateLayout()
 end
 
+function GwObjectivesContainerMixin:ToggleCollapsed()
+    self:SetCollapsed(not self.collapsed)
+end
+
 function GwObjectivesContainerMixin:GetBlock(idx, colorKey, addItemButton)
     local block = self.blocks and self.blocks[idx]
     if block then
