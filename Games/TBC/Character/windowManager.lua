@@ -80,12 +80,14 @@ local charSecure_OnClick = GW.BuildCharacterWindowClickHandler({
     Skills = "paperdollskills",
     SpellBook = "spellbook",
     Talents = "talents",
+    Titles = "titles",
 })
 
 local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHandler({
     managedRefs = {
         "GwPaperDoll",
         "GwHeroPanelMenu",
+        "GwPaperDollTitles",
         "GwDressingRoom",
         "GwReputationFrame",
         "GwPaperSkills",
@@ -108,13 +110,18 @@ local charSecure_OnAttributeChanged = GW.BuildCharacterWindowAttributeChangedHan
         {
             value = "paperdoll",
             toggleRef = "GwPaperDoll",
-            toggleHiddenRefs = {"GwPaperSkills", "GwPetContainer", "GwPaperHonor"},
+            toggleHiddenRefs = {"GwPaperSkills", "GwPaperDollTitles", "GwPetContainer", "GwPaperHonor"},
             showRefs = {"GwPaperDoll", "GwHeroPanelMenu", "GwDressingRoom"},
         },
         {
             value = "reputation",
             toggleRef = "GwReputationFrame",
             showRefs = {"GwReputationFrame"},
+        },
+        {
+            value = "titles",
+            toggleRef = "GwPaperDollTitles",
+            showRefs = {"GwPaperDoll", "GwPaperDollTitles", "GwDressingRoom"},
         },
         {
             value = "paperdollskills",

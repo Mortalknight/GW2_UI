@@ -724,6 +724,7 @@ local function LoadPaperDoll(tabContainer)
     PaperDollUpdateStats(dressingRoom)
     PaperDollUpdatePetStats(dressingRoomPet)
 
+    local titelFrame = GW.LoadPDTitles(tabContainer, heroPanelMenu)
     local skillsFrame = GW.LoadPDSkills(tabContainer, heroPanelMenu)
     LoadPVPTab(honorFrame)
     heroPanelMenu:SetupBackButton(honorFrame.backButton, CHARACTER .. ": " .. HONOR)
@@ -745,13 +746,16 @@ local function LoadPaperDoll(tabContainer)
 
     -- Secure stuff
     GW.CharacterMenuButton_OnLoad(heroPanelMenu.skillsMenu, true, true)
-    GW.CharacterMenuButton_OnLoad(heroPanelMenu.honorMenu, false, true)
-    GW.CharacterMenuButton_OnLoad(heroPanelMenu.petMenu, true, true)
+    GW.CharacterMenuButton_OnLoad(heroPanelMenu.titleMenu, false, true)
+    GW.CharacterMenuButton_OnLoad(heroPanelMenu.honorMenu, true, true)
+    GW.CharacterMenuButton_OnLoad(heroPanelMenu.petMenu, false, true)
     GW.SetCharacterWindowOpenAttribute(heroPanelMenu.skillsMenu, "paperdollskills")
+    GW.SetCharacterWindowOpenAttribute(heroPanelMenu.titleMenu, "titles")
     GW.SetCharacterWindowOpenAttribute(heroPanelMenu.honorMenu, "paperdollhonor")
     GW.SetCharacterWindowOpenAttribute(heroPanelMenu.petMenu, "paperdollpet")
 
     GwCharacterWindow:SetFrameRef("GwHeroPanelMenu", heroPanelMenu)
+    GwCharacterWindow:SetFrameRef("GwPaperDollTitles", titelFrame)
     GwCharacterWindow:SetFrameRef("GwPaperHonor", honorFrame)
     GwCharacterWindow:SetFrameRef("GwPaperSkills", skillsFrame)
     GwCharacterWindow:SetFrameRef("GwDressingRoom", dressingRoom)
@@ -759,11 +763,7 @@ local function LoadPaperDoll(tabContainer)
 
     -- add addon buttons here
     GwCharacterWindow:SetAttribute("myClassId", GW.myClassID)
-    if GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6 then
-        GwCharacterWindow:SetNextAddonMenuButtonShadowState(false)
-    else
-        GwCharacterWindow:SetNextAddonMenuButtonShadowState(true)
-    end
+    GwCharacterWindow:SetNextAddonMenuButtonShadowState(GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6)
     GwCharacterWindow:SetNextAddonMenuButtonAnchor((GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6) and heroPanelMenu.petMenu or heroPanelMenu.honorMenu)
     heroPanelMenu.Outfitter = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Outfitter",

@@ -1371,6 +1371,12 @@ end
 GW.GetInstanceImages = GetInstanceImages
 
 local function BlizzardDropdownRadioButtonInitializer(button, description, menu, isSelected, data)
+    if not isSelected and description.isSelected and type(description.isSelected) == "function" then
+        isSelected = description.isSelected
+    end
+    if not data and description.data then
+        data = description.data
+    end
     button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")
     button.highlight:SetDrawLayer("BACKGROUND")
     button.highlight:SetBlendMode("BLEND")
@@ -1403,6 +1409,12 @@ end
 GW.BlizzardDropdownRadioButtonInitializer = BlizzardDropdownRadioButtonInitializer
 
 local function BlizzardDropdownCheckButtonInitializer(button, description, menu, isSelected, data)
+    if not isSelected and description.isSelected and type(description.isSelected) == "function" then
+        isSelected = description.isSelected
+    end
+    if not data and description.data then
+        data = description.data
+    end
     button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover.png")
     button.highlight:SetDrawLayer("BACKGROUND")
     button.highlight:SetBlendMode("BLEND")

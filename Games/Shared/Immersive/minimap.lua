@@ -5,10 +5,9 @@ local L = GW.L
 local effectiveHeight
 local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailIcon
-MAP_FRAMES_HIDE[2] = MiniMapTrackingButton
-MAP_FRAMES_HIDE[3] = MiniMapTracking
-MAP_FRAMES_HIDE[4] = MinimapToggleButton
-MAP_FRAMES_HIDE[5] = not GW.Retail and GameTimeFrame
+MAP_FRAMES_HIDE[2] = MiniMapTracking
+MAP_FRAMES_HIDE[3] = MinimapToggleButton
+MAP_FRAMES_HIDE[4] = not GW.Retail and GameTimeFrame
 
 local M = CreateFrame("Frame")
 
@@ -686,6 +685,14 @@ function GW.LoadMinimap()
     clickHandler:SetAllPoints()
     clickHandler:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
     clickHandler:SetScript("OnMouseDown", Minimap_OnMouseDown)
+
+    if MiniMapTrackingButton then
+        MiniMapTrackingButton:SetParent(Minimap)
+        MiniMapTrackingButton:EnableMouse(false)
+        MiniMapTrackingButton:SetAlpha(0)
+        MiniMapTrackingButtonBorder:Hide()
+    end
+
 
     -- Minimap Tracking Button
     if GW.Retail then

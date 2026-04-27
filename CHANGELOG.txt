@@ -5,6 +5,7 @@ NEW
     - Added Objectives Tracker options for Supertracked Quest to Top, Show Completed Objectives and Compact Mode
     - Added option to change Objectives Tracker container order
     - Added option to change grid class order sorting
+    - Added titles to TBC
 
 CHANGES
     - Update Damage Meter skin

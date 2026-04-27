@@ -1,9 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 
-
-local hideCharframe = true
-
 local windowsList = {
     {
         OnLoad = "LoadPaperDoll",

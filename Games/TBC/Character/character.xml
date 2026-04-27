@@ -7,16 +7,22 @@
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-20"></Anchor>
         </Anchors>
         <Frames>
-            <Button name="$parentSkills" parentKey="skillsMenu" inherits="GwCharacterPanelMenuButtonTemplate,SecureHandlerClickTemplate" text="Skills">
+            <Button name="$parentSkills" parentKey="skillsMenu" inherits="GwCharacterPanelMenuButtonTemplate,SecureHandlerClickTemplate" text="SKILLS">
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentHonor" parentKey="honorMenu" inherits="GwCharacterPanelMenuButtonTemplate,SecureHandlerClickTemplate" text="PVP">
+            <Button name="$parentTitle" parentKey="titleMenu" inherits="GwCharacterPanelMenuButtonTemplate,SecureHandlerClickTemplate" text="PAPERDOLL_SIDEBAR_TITLES" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.skillsMenu" relativePoint="BOTTOMLEFT"></Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentHonor" parentKey="honorMenu" inherits="GwCharacterPanelMenuButtonTemplate,SecureHandlerClickTemplate" text="PVP">
+                <Size x="231" y="36"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.titleMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
             <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterPanelMenuButtonTemplate,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET">
@@ -26,13 +32,6 @@
                 </Anchors>
             </Button>
         </Frames>
-        <Scripts>
-            <OnLoad>
-                self.skillsMenu:SetText(SKILLS)
-                self.honorMenu:SetText(PVP)
-                self.petMenu:SetText(PET)
-            </OnLoad>
-        </Scripts>
     </Frame>
 
     <Frame name="GwPetPaperdoll" inherits="GwPetPaperdollBaseTemplate" virtual="true">
