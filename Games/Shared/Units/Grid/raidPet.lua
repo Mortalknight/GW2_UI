@@ -79,7 +79,9 @@ local function UpdateGridRaidPetFrame(frame)
     if not InCombatLockdown() then
         frame:DisableElement("MiddleIcon")
         frame:SetSize(frame.unitWidth, frame.unitHeight)
-        frame:ClearAllPoints()
+        if not frame.isForced then
+            frame:ClearAllPoints()
+        end
 
         if GW.settings.RAID_PET_FRAMES and not frame:IsEnabled() then
             frame:Enable()

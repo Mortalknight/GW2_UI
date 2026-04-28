@@ -78,7 +78,9 @@ local function UpdateGridMaintankFrame(frame)
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
-        frame:ClearAllPoints()
+        if not frame.isForced then
+            frame:ClearAllPoints()
+        end
 
         if GW.settings.RAID_MAINTANK_FRAMES_ENABLED and not frame:IsEnabled() then
             frame:Enable()

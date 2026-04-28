@@ -13,8 +13,9 @@ end
 local function PostUpdateHealth(self)
     local parent = self:GetParent()
     if parent.isForced then
-        self.cur = self.fakeValue or random(1, 100)
-        self:SetMinMaxValues(0, 100)
+        local data = parent.configModeData
+        self.cur = data and data.health or self.fakeValue or random(1, 100)
+        self:SetMinMaxValues(0, data and data.maxHealth or 100)
         self:SetValue(self.cur)
         self.fakeValue = self.cur
     else
@@ -28,13 +29,13 @@ local function PostUpdateHealthColor(self, unit, r, g, b, color, event)
     if parent.isForced then
         if parent.useClassColor then
             --if we are here we need to class color the frame
-            local _, englishClass = UnitClassRnd(unit)
+            local englishClass = parent.configModeData and parent.configModeData.classToken or select(2, UnitClassRnd(unit))
             if event == "CUSTOM_CLASS_COLORS" then
                 self.fakeColor = nil
             end
-            local color = self.fakeColor or GW.GWGetClassColor(englishClass, true)
-            self:SetStatusBarColor(color.r, color.g, color.b)
-            self.fakeColor = color
+            local classColor = self.fakeColor or GW.GWGetClassColor(englishClass, true)
+            self:SetStatusBarColor(classColor.r, classColor.g, classColor.b)
+            self.fakeColor = classColor
         end
     else
         self.fakeColor = nil

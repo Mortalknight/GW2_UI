@@ -314,47 +314,72 @@ local function MarkPending(profile)
     end
 end
 
+local function SetAttributeIfChanged(frame, attribute, value)
+    if frame:GetAttribute(attribute) ~= value then
+        frame:SetAttribute(attribute, value)
+    end
+end
+
+local function SetPointIfChanged(frame, point, relativeFrame, relativePoint, xOffset, yOffset)
+    if frame.gridLayoutPoint == point
+        and frame.gridLayoutRelativeFrame == relativeFrame
+        and frame.gridLayoutRelativePoint == relativePoint
+        and frame.gridLayoutXOffset == xOffset
+        and frame.gridLayoutYOffset == yOffset
+    then
+        return
+    end
+
+    frame:ClearAllPoints()
+    frame:SetPoint(point, relativeFrame, relativePoint, xOffset, yOffset)
+    frame.gridLayoutPoint = point
+    frame.gridLayoutRelativeFrame = relativeFrame
+    frame.gridLayoutRelativePoint = relativePoint
+    frame.gridLayoutXOffset = xOffset
+    frame.gridLayoutYOffset = yOffset
+end
+
 local headerGroupBy = {
 	CLASS = function(header, profile)
 		local sortMethod = settings.sortMethod[profile]
         local classSortOrder = settings.classSortOrder[profile]
-		header:SetAttribute("groupingOrder", table.concat(classSortOrder, ", "))
-		header:SetAttribute("sortMethod", sortMethod or "NAME")
-		header:SetAttribute("groupBy", "CLASS")
+		SetAttributeIfChanged(header, "groupingOrder", table.concat(classSortOrder, ", "))
+		SetAttributeIfChanged(header, "sortMethod", sortMethod or "NAME")
+		SetAttributeIfChanged(header, "groupBy", "CLASS")
 	end,
 	ROLE = function(header, profile)
 		local sortMethod = settings.sortMethod[profile]
-		header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
-		header:SetAttribute("sortMethod", sortMethod or "NAME")
-		header:SetAttribute("groupBy", "ASSIGNEDROLE")
+		SetAttributeIfChanged(header, "groupingOrder", "TANK,HEALER,DAMAGER,NONE")
+		SetAttributeIfChanged(header, "sortMethod", sortMethod or "NAME")
+		SetAttributeIfChanged(header, "groupBy", "ASSIGNEDROLE")
 	end,
 	NAME = function(header, profile)
-		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
-		header:SetAttribute("sortMethod", "NAME")
-		header:SetAttribute("groupBy", nil)
+		SetAttributeIfChanged(header, "groupingOrder", "1,2,3,4,5,6,7,8")
+		SetAttributeIfChanged(header, "sortMethod", "NAME")
+		SetAttributeIfChanged(header, "groupBy", nil)
 	end,
 	GROUP = function(header, profile)
 		local sortMethod = settings.sortMethod[profile]
-		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
-		header:SetAttribute("sortMethod", sortMethod or "INDEX")
-		header:SetAttribute("groupBy", "GROUP")
+		SetAttributeIfChanged(header, "groupingOrder", "1,2,3,4,5,6,7,8")
+		SetAttributeIfChanged(header, "sortMethod", sortMethod or "INDEX")
+		SetAttributeIfChanged(header, "groupBy", "GROUP")
 	end,
 	PETNAME = function(header, profile)
-		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
-		header:SetAttribute("sortMethod", "NAME")
-		header:SetAttribute("groupBy", nil)
-		header:SetAttribute("filterOnPet", true) --This is the line that matters. Without this, it sorts based on the owners name
+		SetAttributeIfChanged(header, "groupingOrder", "1,2,3,4,5,6,7,8")
+		SetAttributeIfChanged(header, "sortMethod", "NAME")
+		SetAttributeIfChanged(header, "groupBy", nil)
+		SetAttributeIfChanged(header, "filterOnPet", true) --This is the line that matters. Without this, it sorts based on the owners name
 	end,
 	INDEX = function(header, profile)
-		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
-		header:SetAttribute("sortMethod", "INDEX")
-		header:SetAttribute("groupBy", nil)
+		SetAttributeIfChanged(header, "groupingOrder", "1,2,3,4,5,6,7,8")
+		SetAttributeIfChanged(header, "sortMethod", "INDEX")
+		SetAttributeIfChanged(header, "groupBy", nil)
 	end,
     TANK = function(header, profile)
-        header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
-		header:SetAttribute("sortMethod", "INDEX")
-		header:SetAttribute("groupBy", nil)
-        header:SetAttribute("groupFilter", "MAINTANK")
+        SetAttributeIfChanged(header, "groupingOrder", "TANK,HEALER,DAMAGER,NONE")
+		SetAttributeIfChanged(header, "sortMethod", "INDEX")
+		SetAttributeIfChanged(header, "groupBy", nil)
+        SetAttributeIfChanged(header, "groupFilter", "MAINTANK")
     end,
 }
 
@@ -548,44 +573,46 @@ local function UpdateGridHeader(profile)
         local lastGroup = lastIndex % groupsPerRowCol
 
         if group then
-            group:ClearAllPoints()
+            local isConfigForced = header.forceShow or group.isForced
 
-            local idx = 1
-            local child = group:GetAttribute("child"..idx)
-            while child do
-                child:ClearAllPoints()
-                idx = idx + 1
-                child = group:GetAttribute("child"..idx)
+            if not isConfigForced then
+                local idx = 1
+                local child = group:GetAttribute("child"..idx)
+                while child do
+                    child:ClearAllPoints()
+                    idx = idx + 1
+                    child = group:GetAttribute("child"..idx)
+                end
             end
 
-            group:SetAttribute("point", point)
+            SetAttributeIfChanged(group, "point", point)
 
             if point == "LEFT" or point == "RIGHT" then
-                group:SetAttribute("xOffset", horizontalSpacing * x)
-                group:SetAttribute("yOffset", 0)
-                group:SetAttribute("columnSpacing", verticalSpacing)
+                SetAttributeIfChanged(group, "xOffset", horizontalSpacing * x)
+                SetAttributeIfChanged(group, "yOffset", 0)
+                SetAttributeIfChanged(group, "columnSpacing", verticalSpacing)
             else
-                group:SetAttribute("xOffset", 0)
-                group:SetAttribute("yOffset", verticalSpacing * y)
-                group:SetAttribute("columnSpacing", horizontalSpacing)
+                SetAttributeIfChanged(group, "xOffset", 0)
+                SetAttributeIfChanged(group, "yOffset", verticalSpacing * y)
+                SetAttributeIfChanged(group, "columnSpacing", horizontalSpacing)
             end
 
-            if not group.isForced then
+            if not isConfigForced then
                 if not group.initialized then
-                    group:SetAttribute("startingIndex", raidWideSorting and (-min(numGroups * (groupsPerRowCol * 5), MAX_RAID_MEMBERS) + 1) or -4)
+                    SetAttributeIfChanged(group, "startingIndex", raidWideSorting and (-min(numGroups * (groupsPerRowCol * 5), MAX_RAID_MEMBERS) + 1) or -4)
                     group:Show()
                     group.initialized = true
                 end
-                group:SetAttribute("startingIndex", 1)
+                SetAttributeIfChanged(group, "startingIndex", 1)
             end
 
-            group:SetAttribute("columnAnchorPoint", DIRECTION_TO_COLUMN_ANCHOR_POINT[direction])
+            SetAttributeIfChanged(group, "columnAnchorPoint", DIRECTION_TO_COLUMN_ANCHOR_POINT[direction])
 
-            if not group.isForced then
-                group:SetAttribute("maxColumns", raidWideSorting and numGroups or 1)
-                group:SetAttribute("unitsPerColumn", raidWideSorting and (groupsPerRowCol * 5) or 5)
-                group:SetAttribute("showPlayer", showPlayer)
-                group:SetAttribute("sortDir", sortDirection)
+            if not isConfigForced or header.forceConfigHeaderUpdate then
+                SetAttributeIfChanged(group, "maxColumns", raidWideSorting and numGroups or 1)
+                SetAttributeIfChanged(group, "unitsPerColumn", raidWideSorting and (groupsPerRowCol * 5) or 5)
+                SetAttributeIfChanged(group, "showPlayer", showPlayer)
+                SetAttributeIfChanged(group, "sortDir", sortDirection)
                 -- sorting
                 if profile == "RAID_PET" then
                     headerGroupBy.PETNAME(group)
@@ -599,11 +626,11 @@ local function UpdateGridHeader(profile)
 
             if profile ~= "TANK" then
                 local groupWide = i == 1 and raidWideSorting and strsub("1,2,3,4,5,6,7,8", 1, numGroups + numGroups-1)
-                group:SetAttribute("groupFilter", groupWide or tostring(i))
+                SetAttributeIfChanged(group, "groupFilter", groupWide or tostring(i))
             end
 
             -- register the correct visibility state driver
-            if profile == "PARTY" then
+            if profile == "PARTY" and not isConfigForced then
                 if not GW.settings.RAID_STYLE_PARTY and not GW.settings.RAID_STYLE_PARTY_AND_FRAMES then
                     RegisterStateDriver(group, "visibility", "hide")
                 else
@@ -619,30 +646,30 @@ local function UpdateGridHeader(profile)
 
         if lastGroup == 0 then
             if DIRECTION_TO_POINT[direction] == "LEFT" or DIRECTION_TO_POINT[direction] == "RIGHT" then
-                if group then group:SetPoint(pointInner, header, pointInner, 0, height * y) end
+                if group then SetPointIfChanged(group, pointInner, header, pointInner, 0, height * y) end
                 height = height + HEIGHT + groupSpacing
                 newRows = newRows + 1
             else
-                if group then group:SetPoint(pointInner, header, pointInner, width * x, 0) end
+                if group then SetPointIfChanged(group, pointInner, header, pointInner, width * x, 0) end
                 width = width + WIDTH + groupSpacing
                 newCols = newCols + 1
             end
         else
             if DIRECTION_TO_POINT[direction] == "LEFT" or DIRECTION_TO_POINT[direction] == "RIGHT" then
                 if newRows == 1 then
-                    if group then group:SetPoint(pointInner, header, pointInner, width * x, 0) end
+                    if group then SetPointIfChanged(group, pointInner, header, pointInner, width * x, 0) end
                     width = width + WIDTH_FIVE + groupSpacing
                     newCols = newCols + 1
                 elseif group then
-                    group:SetPoint(pointInner, header, pointInner, ((WIDTH_FIVE * lastGroup) + lastGroup * groupSpacing) * x, ((HEIGHT + groupSpacing) * (newRows - 1)) * y)
+                    SetPointIfChanged(group, pointInner, header, pointInner, ((WIDTH_FIVE * lastGroup) + lastGroup * groupSpacing) * x, ((HEIGHT + groupSpacing) * (newRows - 1)) * y)
                 end
             else
                 if newCols == 1 then
-                    if group then group:SetPoint(pointInner, header, pointInner, 0, height * y) end
+                    if group then SetPointIfChanged(group, pointInner, header, pointInner, 0, height * y) end
                     height = height + HEIGHT_FIVE + groupSpacing
                     newRows = newRows + 1
                 elseif group then
-                    group:SetPoint(pointInner, header, pointInner, ((WIDTH + groupSpacing) * (newCols - 1)) * x, ((HEIGHT_FIVE * lastGroup) + lastGroup * groupSpacing) * y)
+                    SetPointIfChanged(group, pointInner, header, pointInner, ((WIDTH + groupSpacing) * (newCols - 1)) * x, ((HEIGHT_FIVE * lastGroup) + lastGroup * groupSpacing) * y)
                 end
             end
         end

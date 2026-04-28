@@ -9,6 +9,9 @@ end
 
 local function GetRole(frame)
     if frame.isForced then
+        if frame.configModeData then
+            return frame.configModeData.role
+        end
 		local rnd = random(1, 3)
 		return (rnd == 1 and 'TANK') or (rnd == 2 and 'HEALER') or 'DAMAGER'
 	else
@@ -19,8 +22,9 @@ end
 local function PostUpdatePower(self)
     local parent = self.origParent or self:GetParent()
     if parent.isForced then
-        self.cur = self.fakeValue or random(1, 100)
-        self.max = 100
+        local data = parent.configModeData
+        self.cur = data and data.power or self.fakeValue or random(1, 100)
+        self.max = data and data.maxPower or 100
         self:SetMinMaxValues(0, self.max)
         self:SetValue(self.cur)
         self.fakeValue = self.cur
@@ -32,7 +36,8 @@ end
 local function PostUpdatePowerColor(self, unit)
     local parent = self.origParent or self:GetParent()
     if parent.isForced then
-        local color = self.fakeToken or GetRandomPowerColor()
+        local powerType = parent.configModeData and parent.configModeData.powerType
+        local color = powerType and GW.Colors.PowerBarCustomColors[powerType] or self.fakeToken or GetRandomPowerColor()
         self:SetStatusBarColor(color.r, color.g, color.b)
         self.fakeToken = color
     else

@@ -79,7 +79,9 @@ local function UpdateGridRaid10Frame(frame)
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
-        frame:ClearAllPoints()
+        if not frame.isForced then
+            frame:ClearAllPoints()
+        end
 
         if GW.settings.RAID10_ENABLED and not frame:IsEnabled() then
             frame:Enable()

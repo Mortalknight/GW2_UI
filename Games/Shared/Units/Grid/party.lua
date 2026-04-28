@@ -81,7 +81,9 @@ local function UpdateGridPartyFrame(frame)
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
-        frame:ClearAllPoints()
+        if not frame.isForced then
+            frame:ClearAllPoints()
+        end
 
         if GW.settings.RAID_STYLE_PARTY and not frame:IsEnabled() then
             frame:Enable()
