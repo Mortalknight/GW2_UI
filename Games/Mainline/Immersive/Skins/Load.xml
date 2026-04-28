@@ -10,7 +10,6 @@
     <Script file="inspectFrame.lua"/>
     <Script file="worldmap.lua"/>
     <Script file="itemUpgrade.lua"/>
-    <Script file="timeManager.lua"/>
     <Script file="encounterJournal.lua"/>
     <Script file="covenantSanctum.lua"/>
     <Script file="soulbinds.lua"/>

@@ -7,6 +7,7 @@
     <Script file="battlenet.lua"/>
     <Script file="misc.lua"/>
     <Script file="timetracker.lua"/>
+    <Script file="timeManager.lua"/>
     <Script file="ghostframe.lua"/>
     <Script file="helpFrame.lua"/>
     <Script file="gossip.lua"/>
