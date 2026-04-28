@@ -639,14 +639,10 @@ function GW.SetCharacterWindowBackAttribute(button, target, keytoggle)
     GW.SetCharacterWindowOpenAttribute(button, target or "paperdoll", keytoggle)
 end
 
-function GW.AddAddonMenuButtonToHeroPanelMenu(options)
-    if not characterWindowHeroPanelMenu or not options or not options.name then
-        return
+local function CreateAddonMenuButton(options)
+    if options.createdButton then
+        return options.createdButton
     end
-    if not C_AddOns.IsAddOnLoaded(options.name) or (options.setting ~= nil and options.setting ~= true) then
-        return
-    end
-
     local button = CreateFrame("Button", nil, characterWindowHeroPanelMenu, "SecureHandlerClickTemplate,GwCharacterPanelMenuButtonTemplate")
     button:SetText(options.label or select(2, C_AddOns.GetAddOnInfo(options.name)))
     button:ClearAllPoints()
@@ -676,5 +672,33 @@ function GW.AddAddonMenuButtonToHeroPanelMenu(options)
         options.onCreated(button)
     end
 
+    options.createdButton = button
+
     return button
+end
+
+local function IsAddonMenuButtonSettingDisabled(options)
+    return options.setting ~= nil and options.setting ~= true
+end
+
+local function AddAddonMenuButtonAfterLoad(options)
+    GW.RegisterLoadHook(function()
+        if InCombatLockdown() then
+            GW.CombatQueue:Queue(nil, CreateAddonMenuButton, {options})
+        else
+            CreateAddonMenuButton(options)
+        end
+    end, options.name)
+end
+
+function GW.AddAddonMenuButtonToHeroPanelMenu(options)
+    if not characterWindowHeroPanelMenu or not options or not options.name or IsAddonMenuButtonSettingDisabled(options) then
+        return
+    end
+    if not C_AddOns.IsAddOnLoaded(options.name) then
+        AddAddonMenuButtonAfterLoad(options)
+        return
+    end
+
+    return CreateAddonMenuButton(options)
 end

@@ -768,7 +768,7 @@ local function LoadPaperDoll(tabContainer)
     heroPanelMenu.Pawn = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Pawn",
         setting = GW.settings.USE_CHARACTER_WINDOW,
-        showFunction = PawnUIShow,
+        showFunction = function() PawnUIShow() end,
         hideOurFrame = false,
     })
 

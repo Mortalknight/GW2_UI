@@ -1,3 +1,7 @@
+10.9.1
+CHANGES
+    - Codex Addon support added
+
 10.9.0
 NEW
     - Added movable party frames with new spacing and horizontal/vertical layout options

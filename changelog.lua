@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.9.1", {
+    {GW.Enum.ChangelogType.change, [=[Codex Addon support added]=]},
+})
+
 addChange("10.9.0", {
     {GW.Enum.ChangelogType.feature, [=[Added movable party frames with new spacing and horizontal/vertical layout options]=]},
     {GW.Enum.ChangelogType.feature, [=[Added automatic Objectives Tracker collapsing with separate options for Mythic+/Challenge Mode, Raid, Party, Delve and Combat]=]},

@@ -307,7 +307,7 @@ end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
 -- Functions to run when various addons load. Registering these
--- works on the honor system for now; don't blow away a prior hook :)
+-- keeps all callbacks registered for the same addon name.
 -- Primarily for on-demand addons; if the addon has already loaded
 -- (based on the cond arg), the hook will run immediately.
 local function errorhandler(err)
@@ -322,7 +322,10 @@ local function RegisterLoadHook(func, name, cond)
     if cond then
         func(l)
     else
-        addonLoadHooks[name] = func
+        if not addonLoadHooks[name] then
+            addonLoadHooks[name] = {}
+        end
+        addonLoadHooks[name][#addonLoadHooks[name] + 1] = func
     end
 end
 GW.RegisterLoadHook = RegisterLoadHook
@@ -335,10 +338,12 @@ end
 
 local function evAddonLoaded(self, loadedAddonName)
     if loadedAddonName ~= "GW2_UI" then
-        local loadHook = addonLoadHooks[loadedAddonName]
-        if loadHook and type(loadHook) == "function" then
+        local loadHooks = addonLoadHooks[loadedAddonName]
+        if loadHooks then
             Debug("run load hook for addon", loadedAddonName)
-            xpcall(loadHook, errorhandler)
+            for _, loadHook in ipairs(loadHooks) do
+                xpcall(loadHook, errorhandler)
+            end
             addonLoadHooks[loadedAddonName] = nil
         end
         return

@@ -94,7 +94,7 @@ local function LoadPaperDoll(tabContainer)
     GwCharacterWindow:SetNextAddonMenuButtonAnchor(fmMenu.titlesMenu)
     fmMenu.Pawn = GW.AddAddonMenuButtonToHeroPanelMenu({
         name = "Pawn",
-        showFunction = PawnUIShow,
+        showFunction = function() PawnUIShow() end,
         hideOurFrame = true,
     })
 
@@ -129,6 +129,16 @@ local function LoadPaperDoll(tabContainer)
         name = "ItemUpgradeTip",
         showFunction = function() if ItemUpgradeTip then ItemUpgradeTip:ToggleView() end end,
         hideOurFrame = true,
+    })
+    fmMenu.ClassCodex = GW.AddAddonMenuButtonToHeroPanelMenu({
+        name = "ClassCodex",
+        showFunction = function() ClassCodexWidgetButton:GetScript("OnClick")() end,
+        hideOurFrame = false,
+        onCreated = function()
+            if ClassCodex and ClassCodex.RegisterDockHost then
+                ClassCodex.RegisterDockHost(GwCharacterWindow, { priority = 50 })
+            end
+         end
     })
 
     GW.ToggleCharacterItemInfo(true)
