@@ -73,25 +73,12 @@ local function LoadAurasPanel(sWindow)
     -- indicators
     p_indicator:AddOption(L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], { getterSetter = "INDICATORS_ICON", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
     p_indicator:AddOption(L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], { getterSetter = "INDICATORS_TIME", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
+    p_indicator:AddOption(L["Show Stack Count"], L["Show stack count text on raid aura indicators."], { getterSetter = "INDICATORS_STACKS", callback = function() GW.UpdateGridSettings("ALL", false) end, dependence = {["RAID_FRAMES"] = true}})
+    p_indicator:AddOptionSlider(L["Indicator Size"], nil, { getterSetter = "INDICATORS_SIZE", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 8, max = 20, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
+    p_indicator:AddOptionSlider(L["Indicator Bar Width"], nil, { getterSetter = "INDICATORS_BAR_WIDTH", callback = function() GW.UpdateGridSettings("ALL", false) end, min = 1, max = 5, decimalNumbers = 0, step = 1, dependence = {["RAID_FRAMES"] = true}})
 
-    local auraKeys, auraVals = {0}, {NONE_KEY}
-    for spellID, _ in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
-        local spellInfo = C_Spell.GetSpellInfo(spellID)
-        if spellInfo then
-            local name = format("%s |cFF888888(%d)|r", spellInfo.name, spellID)
-
-            if GW.Classic or GW.TBC or GW.Wrath then
-                local rank = GetSpellSubtext(spellID)
-                rank = rank and string.match(rank, "[%d]") or nil
-                name = name .. (rank and " |cFF888888(" .. RANK .. " " .. rank .. ")|r" or "")
-            end
-            tinsert(auraKeys, spellID)
-            tinsert(auraVals, name)
-        end
-    end
-
-    local auraNamesUpdateFunction = function()
-        local newKey, newNames = {0}, {NONE_KEY}
+    local function BuildIndicatorAuraOptions()
+        local auraKeys, auraVals = {0}, {NONE_KEY}
         for spellID, _ in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
             local spellInfo = C_Spell.GetSpellInfo(spellID)
             if spellInfo then
@@ -102,10 +89,17 @@ local function LoadAurasPanel(sWindow)
                     rank = rank and string.match(rank, "[%d]") or nil
                     name = name .. (rank and " |cFF888888(" .. RANK .. " " .. rank .. ")|r" or "")
                 end
-                tinsert(newKey, spellID)
-                tinsert(newNames, name)
+                tinsert(auraKeys, spellID)
+                tinsert(auraVals, name)
             end
         end
+
+        return auraKeys, auraVals
+    end
+
+    local auraKeys, auraVals = BuildIndicatorAuraOptions()
+    local auraNamesUpdateFunction = function()
+        local newKey, newNames = BuildIndicatorAuraOptions()
 
         for _, pos in ipairs(GW.INDICATORS) do
             local settingsWidget = GW.FindSettingsWidgetByOption("INDICATOR_" .. pos)
@@ -129,13 +123,27 @@ local function LoadAurasPanel(sWindow)
             for _, pos in ipairs(GW.INDICATORS) do
                 local settingsWidget = GW.FindSettingsWidgetByOption("INDICATOR_" .. pos)
                 if settingsWidget and settingsWidget.optionUpdateFunc then
-                settingsWidget.optionUpdateFunc()
+                    settingsWidget.optionUpdateFunc()
                 end
             end
         end)
     end
 
-    p_missingBuffs:AddOptionDropdown(L["Show Missing Raid Buffs Bar"], L["Whether to display a floating bar showing your missing buffs. This can be moved via the 'Move HUD' interface."], { getterSetter = "MISSING_RAID_BUFF", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateVisibility() end end, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["In raid"], L["In group or in raid"]}, hidden = not GW.Retail})
+    p_missingBuffs:AddOptionDropdown(
+        L["Show Missing Raid Buffs Bar"],
+        L["Whether to display a floating bar showing your missing buffs. This can be moved via the 'Move HUD' interface."],
+        {
+            getterSetter = "MISSING_RAID_BUFF",
+            callback = function()
+                if GwRaidBuffReminder then
+                    GwRaidBuffReminder:UpdateVisibility()
+                end
+            end,
+            optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"},
+            optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["In raid"], L["In group or in raid"]},
+            hidden = not GW.Retail
+        }
+    )
     p_missingBuffs:AddOption(L["Dimmed"], nil, { getterSetter = "MISSING_RAID_BUFF_dimmed", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end, hidden = not GW.Retail})
     p_missingBuffs:AddOption(L["Greyed out"], nil, { getterSetter = "MISSING_RAID_BUFF_grayed_out", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end, hidden = not GW.Retail})
     p_missingBuffs:AddOption(L["Animated"], L["If enabled, an animated border will surround the missing raid buffs"], { getterSetter = "MISSING_RAID_BUFF_animated", callback = function() if GwRaidBuffReminder then GwRaidBuffReminder:UpdateButtons() end end, hidden = not GW.Retail})

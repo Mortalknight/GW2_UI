@@ -2,6 +2,14 @@
 local GW = select(2, ...)
 local BadDispels = GW.Libs.Dispel:GetBadList()
 local INDICATORS = GW.INDICATORS
+local INDICATOR_CONFIG = {
+    TOPLEFT = { point = "TOPLEFT", x = 0.3, y = -0.3 },
+    TOP = { point = "TOP", x = 0, y = -0.3 },
+    LEFT = { point = "LEFT", x = 0.3, y = 0 },
+    TOPRIGHT = { point = "TOPRIGHT", x = -0.3, y = -0.3 },
+    CENTER = { point = "CENTER", x = 0, y = 0 },
+    RIGHT = { point = "RIGHT", x = -0.3, y = 0 },
+}
 
 local function BuildIndicatorSpellIndex(indicators)
     local index = {}
@@ -178,6 +186,89 @@ local function CheckFilter(data, filters)
     end
 end
 
+local function ClearIndicatorFrame(frame)
+    frame:Hide()
+    frame.auraInstanceId = nil
+    frame.isBar = nil
+    frame.expires = nil
+    frame.duration = nil
+
+    if frame.textFrame then
+        frame.textFrame.text:Hide()
+    end
+
+    if frame.cooldown then
+        frame.cooldown:Hide()
+    end
+
+    if frame.isIndicatorBar then
+        frame:SetValue(0)
+        frame:SetScript("OnUpdate", nil)
+    end
+end
+
+local function UpdateIndicatorBarValue(self)
+    if not self.auraInstanceId or not self.expires or not self.duration or self.duration <= 0 then
+        return false
+    end
+
+    local value = (self.expires - GetTime()) / self.duration
+    if value <= 0 then
+        return false
+    end
+
+    self:SetValue(math.min(1, value))
+    return true
+end
+
+local function IndicatorBar_OnUpdate(self)
+    if not UpdateIndicatorBarValue(self) then
+        ClearIndicatorFrame(self)
+    end
+end
+
+local function UpdateIndicatorStack(frame, parent, applications)
+    local text = frame.textFrame.text
+    if not parent.showRaidIndicatorStacks then
+        text:Hide()
+        return
+    end
+
+    applications = applications or 0
+    if applications > 1 then
+        text:SetText(applications)
+        text:SetFont(UNIT_NAME_FONT, applications > 9 and 8 or 10, "OUTLINE")
+        text:Show()
+    else
+        text:Hide()
+    end
+end
+
+local function UpdateIconIndicator(frame, parent, data)
+    UpdateIndicatorStack(frame, parent, data.applications)
+
+    if parent.showRaidIndicatorIcon then
+        frame.icon:SetTexture(data.icon)
+    else
+        local color = frame.color
+        frame.icon:SetColorTexture(color.r, color.g, color.b)
+    end
+
+    if data.expirationTime and data.duration and data.duration > 0 then
+        frame.cooldown:SetCooldown(data.expirationTime - data.duration, data.duration)
+    else
+        frame.cooldown:SetCooldown(0, 0)
+    end
+
+    if parent.showRaidIndicatorTimer then
+        frame.cooldown:Show()
+    else
+        frame.cooldown:Hide()
+    end
+
+    frame:Show()
+end
+
 local function CheckForAuraIndicators(self, parent, isPlayerBuff, data, shouldDisplay)
     local raidIndicators = parent.raidIndicators
     if not isPlayerBuff or not raidIndicators then
@@ -190,56 +281,31 @@ local function CheckForAuraIndicators(self, parent, isPlayerBuff, data, shouldDi
         return shouldDisplay
     end
 
-    local showIcon = parent.showRaidIndicatorIcon
-    local showTimer = parent.showRaidIndicatorTimer
     for _, pos in ipairs(INDICATORS) do
         if raidIndicators[pos] == indicatorSpellId then
             local frame = self["indicator" .. pos]
             local r, g, b = unpack(indicator)
 
             frame.isBar = pos == "BAR"
+            frame.auraInstanceId = data.auraInstanceID
+
             if frame.isBar then
                 frame.expires = data.expirationTime
                 frame.duration = data.duration
+                frame:SetScript("OnUpdate", IndicatorBar_OnUpdate)
+
+                if UpdateIndicatorBarValue(frame) then
+                    frame:Show()
+                else
+                    ClearIndicatorFrame(frame)
+                end
             else
-                -- Stacks
-                if data.applications > 1 then
-                    frame.text:SetText(data.applications)
-                    frame.text:SetFont(UNIT_NAME_FONT, data.applications > 9 and 9 or 11, "OUTLINE")
-                    frame.text:Show()
-                else
-                    frame.text:Hide()
-                end
-
-                -- Icon
-                if showIcon then
-                    frame.icon:SetTexture(data.icon)
-                else
-                    frame.icon:SetColorTexture(r, g, b)
-                end
-
-                -- Cooldown
-                frame.cooldown:SetCooldown(data.expirationTime - data.duration, data.duration)
-                if not frame.cooldown.hooked then
-                    frame.cooldown:HookScript("OnCooldownDone", function()
-                        frame:Hide()
-                        frame.auraInstanceId = nil
-                        frame.isBar = nil
-                    end)
-                    frame.cooldown.hooked = true
-                end
-                if showTimer then
-                    frame.cooldown:Show()
-                else
-                    frame.cooldown:Hide()
-                end
-
-                -- do not show that buff as normal buff
+                frame.color.r = r
+                frame.color.g = g
+                frame.color.b = b
+                UpdateIconIndicator(frame, parent, data)
                 shouldDisplay = false
             end
-
-            frame.auraInstanceId = data.auraInstanceID
-            frame:Show()
         end
     end
 
@@ -319,8 +385,13 @@ local function PostProcessAuraData(self, unit, data)
             if frame.isBar then
                 frame.expires = data.expirationTime
                 frame.duration = data.duration
+                frame:SetScript("OnUpdate", IndicatorBar_OnUpdate)
+
+                if not UpdateIndicatorBarValue(frame) then
+                    ClearIndicatorFrame(frame)
+                end
             else
-                frame.cooldown:SetCooldown(data.expirationTime - data.duration, data.duration)
+                UpdateIconIndicator(frame, self:GetParent(), data)
             end
         end
     end
@@ -332,9 +403,7 @@ local function PostUpdateInfoRemovedAuraID(self, auraInstanceID)
     for _, pos in ipairs(INDICATORS) do
         local frame = self["indicator" .. pos]
         if frame and frame.auraInstanceId and frame.auraInstanceId == auraInstanceID then
-            frame:Hide()
-            frame.isBar = nil
-            frame.auraInstanceId = nil
+            ClearIndicatorFrame(frame)
         end
     end
 end
@@ -344,15 +413,28 @@ local function PreUpdateAuras(self, unit, isFullUpdate)
     for _, pos in ipairs(INDICATORS) do
         local frame = self["indicator" .. pos]
         if frame then
-            frame:Hide()
-            frame.isBar = nil
-            frame.auraInstanceId = nil
+            ClearIndicatorFrame(frame)
         end
     end
 end
 
 local function HandleTooltip(self, event)
     self.Auras:ForceUpdate()
+end
+
+local function CreateAuraIndicator(frame, pos)
+    local config = INDICATOR_CONFIG[pos]
+    if not config then return nil end
+
+    local indicator = CreateFrame("Frame", nil, frame, "GwGridFrameAuraIndicator")
+
+    indicator:SetPoint(config.point, frame, config.point, config.x, config.y)
+    indicator.color = { r = 1, g = 1, b = 1 }
+    indicator.cooldown:HookScript("OnCooldownDone", function()
+        ClearIndicatorFrame(indicator)
+    end)
+
+    return indicator
 end
 
 local function Construct_Auras(frame)
@@ -382,35 +464,11 @@ local function Construct_Auras(frame)
     frame:RegisterEvent("PLAYER_REGEN_ENABLED", HandleTooltip, true)
 
     -- construct the aura indicators
-    local indicatorTopleft = CreateFrame("Frame", '$parentIndicatorTopleft', frame, "GwGridFrameAuraIndicator")
-    indicatorTopleft:SetPoint("TOPLEFT", frame, "TOPLEFT", 0.3, -0.3)
-    indicatorTopleft:SetFrameLevel(20)
-    auras.indicatorTOPLEFT = indicatorTopleft
-
-    local indicatorTop = CreateFrame("Frame", '$parentIndicatorTop', frame, "GwGridFrameAuraIndicator")
-    indicatorTop:SetPoint("TOP", frame, "TOP", 0, -0.3)
-    indicatorTop:SetFrameLevel(20)
-    auras.indicatorTOP = indicatorTop
-
-    local indicatorLeft = CreateFrame("Frame", '$parentIndicatorLeft', frame, "GwGridFrameAuraIndicator")
-    indicatorLeft:SetPoint("LEFT", frame, "LEFT", 0.3, 0)
-    indicatorLeft:SetFrameLevel(20)
-    auras.indicatorLEFT = indicatorLeft
-
-    local indicatorTopright = CreateFrame("Frame", '$parentIndicatorTopright', frame, "GwGridFrameAuraIndicator")
-    indicatorTopright:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -0.3, -0.3)
-    indicatorTopright:SetFrameLevel(20)
-    auras.indicatorTOPRIGHT = indicatorTopright
-
-    local indicatorCenter = CreateFrame("Frame", '$parentIndicatorCenter', frame, "GwGridFrameAuraIndicator")
-    indicatorCenter:SetPoint("CENTER", frame, "CENTER", 0, 0)
-    indicatorCenter:SetFrameLevel(20)
-    auras.indicatorCENTER = indicatorCenter
-
-    local indicatorRight = CreateFrame("Frame", '$parentIndicatorRight', frame, "GwGridFrameAuraIndicator")
-    indicatorRight:SetPoint("RIGHT", frame, "RIGHT", -0.3, 0)
-    indicatorRight:SetFrameLevel(20)
-    auras.indicatorRIGHT = indicatorRight
+    for _, pos in ipairs(INDICATORS) do
+        if INDICATOR_CONFIG[pos] then
+            auras["indicator" .. pos] = CreateAuraIndicator(frame, pos)
+        end
+    end
 
     local indicatorBar = CreateFrame("StatusBar", '$parentIndicatorBar', frame)
     indicatorBar:SetFrameLevel(20)
@@ -421,11 +479,7 @@ local function Construct_Auras(frame)
     indicatorBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 3, 0)
     indicatorBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
     indicatorBar:SetStatusBarColor(1, 0.5, 0)
-    indicatorBar:SetScript("OnUpdate", function(self)
-        if self:IsShown() and self.expires and self.duration then
-            self:SetValue(math.max(0, math.min(1, (self.expires - GetTime()) / self.duration)))
-        end
-    end)
+    indicatorBar.isIndicatorBar = true
     indicatorBar:Hide()
 
     indicatorBar.bg = indicatorBar:CreateTexture(nil, "BORDER")
@@ -480,6 +534,20 @@ local function UpdateFilters(frame)
     end
 end
 
+local function UpdateIndicatorSettings(frame)
+    local indicatorSize = tonumber(frame.raidIndicatorSize) or 13
+    local indicatorBarWidth = tonumber(frame.raidIndicatorBarWidth) or 2
+
+    for _, pos in ipairs(INDICATORS) do
+        if INDICATOR_CONFIG[pos] then
+            local indicator = frame.Auras["indicator" .. pos]
+            indicator:SetSize(indicatorSize, indicatorSize)
+        end
+    end
+
+    frame.Auras.indicatorBAR:SetWidth(indicatorBarWidth)
+end
+
 local function UpdateAurasSettings(frame)
     frame.Auras:ClearAllPoints()
     frame.Auras:SetPoint('TOPLEFT', frame, 'TOPLEFT')
@@ -491,11 +559,8 @@ local function UpdateAurasSettings(frame)
 
     frame.Auras:SetSize(frame.unitWidth - 2, frame.unitHeight - 2)
     frame.Auras.forceShow = frame.forceShowAuras
-
-    -- filtering only over filter options
-    if GW.Retail then
-        UpdateFilters(frame)
-    end
+    UpdateIndicatorSettings(frame)
+    UpdateFilters(frame)
 
     frame.Auras:ForceUpdate()
 end

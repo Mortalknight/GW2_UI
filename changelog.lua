@@ -19,6 +19,7 @@ addChange("10.9.0", {
     {GW.Enum.ChangelogType.feature, [=[Added Objectives Tracker options for Supertracked Quest to Top, Show Completed Objectives and Compact Mode]=]},
     {GW.Enum.ChangelogType.feature, [=[Added option to change Objectives Tracker container order]=]},
     {GW.Enum.ChangelogType.feature, [=[Added option to change grid class order sorting]=]},
+    {GW.Enum.ChangelogType.feature, [=[Added raid aura indicator settings for size, bar width and stack count visibility]=]},
     {GW.Enum.ChangelogType.feature, [=[Added titles to TBC]=]},
     {GW.Enum.ChangelogType.change, [=[Update Damage Meter skin]=]},
 })

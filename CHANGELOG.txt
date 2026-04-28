@@ -5,6 +5,7 @@ NEW
     - Added Objectives Tracker options for Supertracked Quest to Top, Show Completed Objectives and Compact Mode
     - Added option to change Objectives Tracker container order
     - Added option to change grid class order sorting
+    - Added raid aura indicator settings for size, bar width and stack count visibility
     - Added titles to TBC
 
 CHANGES
