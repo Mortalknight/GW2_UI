@@ -13,6 +13,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.9.2", {
+    {GW.Enum.ChangelogType.bug, [=[Fix Todooloo itegration]=]},
+})
+
+
 addChange("10.9.1", {
     {GW.Enum.ChangelogType.change, [=[Codex Addon support added]=]},
 })

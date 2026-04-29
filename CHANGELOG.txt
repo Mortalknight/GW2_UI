@@ -1,3 +1,7 @@
+10.9.2
+FIXES
+    - Fix Todooloo itegration
+
 10.9.1
 CHANGES
     - Codex Addon support added

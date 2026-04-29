@@ -205,7 +205,8 @@ function GwTodolooContainerMixin:UpdateLayout()
     end
 
     local foundTodo = false
-    if self.collapsed then
+    if self.collapsed or not Todoloo.TaskManager then
+    --if self.collapsed then
         self:SetHeight(20)
     else
         local groups = TodolooObjectiveTracker:BuildGroupInfos()
