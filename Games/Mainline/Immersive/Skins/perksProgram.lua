@@ -70,7 +70,7 @@ end
 
 local function HandleSortLabel(button)
     if button and button.Label then
-        button.Label:SetFont("UNIT_NAME_FONT", 14)
+        button.Label:SetFont(UNIT_NAME_FONT, 14)
         button.Label:SetTextColor(1, 1, 1, 1)
     end
 end
@@ -218,7 +218,7 @@ local function SkinPerksProgram()
             self.Arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down.png")
         end)
 
-        PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Text:SetFont("UNIT_NAME_FONT", 30)
+        PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Text:SetFont(UNIT_NAME_FONT, 30)
         GW.HandleIcon(PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Icon)
         PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Icon:SetSize(30, 30)
 
