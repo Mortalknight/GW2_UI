@@ -215,6 +215,7 @@ local eventData = {
                 [WeeklyName(7385004, L["Legend"], 2413)] = {
                     -- https://www.wowhead.com/npc=238170/zurashar-kassameh#ends
                     89268,
+					92713,
                 },
                 [WeeklyName(7636650, L["Abundance"], 2437)] = {
                     -- https://www.wowhead.com/quest=89507/abundant-offerings
