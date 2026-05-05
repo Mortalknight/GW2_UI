@@ -1,4 +1,7 @@
-10.9.2
+10.10.0
+NEW
+    - Added option to change unitframe reaction colors
+
 FIXES
     - Fix Todooloo itegration
 

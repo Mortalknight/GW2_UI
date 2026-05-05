@@ -27,8 +27,6 @@ GW.Colors.DebuffColors.Stealable = CreateColor(0.93, 0.91, 0.55)
 GW.Colors.Fallback = CreateColor(0, 0, 0, 1)
 GW.Colors.FallbackWhite = CreateColor(1, 1, 1, 1)
 
-GW.Colors.TabDenied = CreateColor(159 / 255, 159 / 255, 159 / 255)
-
 GW.Colors.PowerBarCustomColors = {
     MANA = CreateColor(37 / 255, 133 / 255, 240 / 255),
     RAGE = CreateColor(240 / 255, 66 / 255, 37 / 255),
@@ -99,11 +97,25 @@ GW.Colors.FactionBarColors = {
     [11] = CreateColor(0, 0.74, 0.95),  --(Renown)
 }
 
-GW.Colors.FriendlyColors = {
-    [1] = CreateColor(88 / 255, 170 / 255, 68 / 255), --friendly #58aa44
-    [2] = CreateColor(159 / 255, 36 / 255, 20 / 255), --enemy    #9f2414
-    [3] = CreateColor(159 / 255, 159 / 255, 159 / 255) --tapped   #9f9f9f
+local function CreateReactionColor(colorSettings, fallback)
+    if type(colorSettings) ~= "table" then
+        colorSettings = fallback
+    end
+
+    return CreateColor(colorSettings.r or fallback.r, colorSettings.g or fallback.g, colorSettings.b or fallback.b)
+end
+
+GW.Colors.UnitFrameReactionColors = { -- will be set with the first update on Addon load
+    -- friendly #58aa44
+    -- hostile #9f2414
+    -- tappedDenied #9f9f9f
 }
+
+function GW.UpdateUnitFrameReactionColors()
+    GW.Colors.UnitFrameReactionColors.Friendly = CreateReactionColor(GW.settings.UnitFrameReactionColors.Friendly, GW.globalDefault.profile.UnitFrameReactionColors.Friendly)
+    GW.Colors.UnitFrameReactionColors.Hostile = CreateReactionColor(GW.settings.UnitFrameReactionColors.Hostile, GW.globalDefault.profile.UnitFrameReactionColors.Hostile)
+    GW.Colors.UnitFrameReactionColors.TappedDenied = CreateReactionColor(GW.settings.UnitFrameReactionColors.TappedDenied, GW.globalDefault.profile.UnitFrameReactionColors.TappedDenied)
+end
 
 GW.Colors.ClassColors = {
     WARRIOR = CreateColor(90 / 255, 54 / 255, 38 / 255, 1),

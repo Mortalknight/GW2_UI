@@ -333,14 +333,14 @@ function GwUnitFrameMixin:UpdateHealthbarColor()
         local nameColor = unitReaction and GW.Colors.FactionBarColors[unitReaction] or RAID_CLASS_COLORS.PRIEST
         if unitReaction then
             if unitReaction <= 3 then
-                nameColor = GW.Colors.FriendlyColors[2]
+                nameColor = GW.Colors.UnitFrameReactionColors.Hostile
             elseif unitReaction >= 5 then
-                nameColor = GW.Colors.FriendlyColors[1]
+                nameColor = GW.Colors.UnitFrameReactionColors.Friendly
             end
         end
 
         if UnitIsTapDenied(unit) then
-            nameColor = GW.Colors.TabDenied
+            nameColor = GW.Colors.UnitFrameReactionColors.TappedDenied
         end
 
         healthBar:SetStatusBarColor(nameColor:GetRGB())

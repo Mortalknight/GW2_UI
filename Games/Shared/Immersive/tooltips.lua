@@ -522,13 +522,13 @@ local function SetUnitText(self, unit, isPlayerUnit)
 
         local unitReaction = UnitReaction(unit, "player")
         local nameColor = unitReaction and GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR and GW.Colors.FactionBarColors[unitReaction] or RAID_CLASS_COLORS.PRIEST
-        if unitReaction and unitReaction >= 5 then nameColor = GW.Colors.FriendlyColors[1] end --Friend
+        if unitReaction and unitReaction >= 5 then nameColor = GW.Colors.UnitFrameReactionColors.Friendly end --Friend
 
         if not isPetCompanion then
             GameTooltipTextLeft1:SetText(nameColor:WrapTextInColorCode(name or UNKNOWN))
         end
 
-        return (UnitIsTapDenied(unit) and GW.Colors.TabDenied) or nameColor
+        return (UnitIsTapDenied(unit) and GW.Colors.UnitFrameReactionColors.TappedDenied) or nameColor
     end
 end
 

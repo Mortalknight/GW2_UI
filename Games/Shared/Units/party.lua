@@ -515,6 +515,7 @@ local function UpdatePartyFrames()
         frame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
         frame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
         frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR
+        frame.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Friendly:GetRGB())
         frame.auras.smallSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
         frame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE
         frame:OnEvent("load")
@@ -522,6 +523,7 @@ local function UpdatePartyFrames()
         frame.PetFrame.auras.bigSize = GW.settings.PARTY_SHOW_AURA_ICON_SIZE - 6
         frame.PetFrame.displayDebuffs = (GW.settings.PARTY_SHOW_DEBUFFS or GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) and 40 or 0
         frame.PetFrame.displayBuffs = GW.settings.PARTY_SHOW_BUFFS and 32 or 0
+        frame.PetFrame.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Friendly:GetRGB())
         frame.showAbsorbBar = GW.settings.PARTY_SHOW_ABSORB_BAR
         frame.PetFrame:OnEvent("load")
     end
@@ -789,7 +791,7 @@ local function CreatePartyFrame(i, isPlayer)
         GameTooltip:Show()
     end)
     GW.AddToClique(petFrame)
-    petFrame.health:SetStatusBarColor(GW.Colors.FriendlyColors[1]:GetRGB())
+    petFrame.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Friendly:GetRGB())
     petFrame:SetScript("OnEvent", petFrame.OnEvent)
     -- Registriere Events für Pet-Frame
     for _, ev in ipairs({ "GROUP_ROSTER_UPDATE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "PORTRAITS_UPDATED", "PLAYER_TARGET_CHANGED" }) do
@@ -838,7 +840,7 @@ local function CreatePartyFrame(i, isPlayer)
         GameTooltip:Show()
     end)
     GW.AddToClique(frame)
-    frame.health:SetStatusBarColor(GW.Colors.FriendlyColors[1]:GetRGB())
+    frame.health:SetStatusBarColor(GW.Colors.UnitFrameReactionColors.Friendly:GetRGB())
     for _, ev in ipairs({ "GROUP_ROSTER_UPDATE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "READY_CHECK", "READY_CHECK_CONFIRM", "READY_CHECK_FINISHED", "PLAYER_TARGET_CHANGED", "INCOMING_RESURRECT_CHANGED", "PORTRAITS_UPDATED" }) do
         frame:RegisterEvent(ev)
     end

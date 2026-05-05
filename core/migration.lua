@@ -77,7 +77,7 @@ local function DatabaseMigration(globalDb, privateDb)
                     end
 
                     local profileName = profileTbl.profilename
-                    if not profileName == nil then
+                    if profileName ~= nil then
                         local skipProfile = false
                         if GW.globalSettings.profiles[profileName] then
                             local counter = 0
@@ -112,7 +112,7 @@ local function DatabaseMigration(globalDb, privateDb)
                         if not GW.globalSettings.global.layouts then GW.globalSettings.global.layouts = {} end
 
                         GW.globalSettings.global.layouts[profileTbl.name] = profileTbl
-                        if GW.globalSettings.global.layouts[profileTbl.name].profileLayout and GW.globalSettings.global.layouts[profileTbl.name].profileLayout == true and profileTbl.profileId 
+                        if GW.globalSettings.global.layouts[profileTbl.name].profileLayout and GW.globalSettings.global.layouts[profileTbl.name].profileLayout == true and profileTbl.profileId
                             and GW2UI_SETTINGS_PROFILES[profileTbl.profileId] and GW2UI_SETTINGS_PROFILES[profileTbl.profileId].profilename then
                             GW.globalSettings.global.layouts[profileTbl.name].profileName = GW2UI_SETTINGS_PROFILES[profileTbl.profileId].profilename
                         end

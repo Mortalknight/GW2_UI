@@ -134,6 +134,12 @@ GW.globalDefault = {
         PETBAR_ENABLED = true,
         BORDER_ENABLED = true,
 
+        UnitFrameReactionColors = {
+            Friendly = {r = 88 / 255, g = 170 / 255, b = 68 / 255},
+            Hostile = {r = 159 / 255, g = 36 / 255, b = 20 / 255},
+            TappedDenied = {r = 159 / 255, g = 159 / 255, b = 159 / 255},
+        },
+
         micromenu = {
             enabled = true,
         },

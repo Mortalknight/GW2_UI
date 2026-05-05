@@ -276,7 +276,7 @@ local function LoadPetFrame(lm)
     RegisterStateDriver(playerPetFrame, "visibility",
         "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
 
-    playerPetFrame.health:SetStatusBarColor(GW.Colors.FriendlyColors[2]:GetRGB())
+    playerPetFrame.health:SetStatusBarColor(GW.globalDefault.profile.UnitFrameReactionColors.Hostile.r, GW.globalDefault.profile.UnitFrameReactionColors.Hostile.g, GW.globalDefault.profile.UnitFrameReactionColors.Hostile.b)
     playerPetFrame.health.text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
 
     playerPetFrame:SetScript("OnEnter", function(self)

@@ -22,12 +22,12 @@ function GwBossFrameMixin:UpdateHealthbarColor()
     local nameColor = (unitReaction and GW.Colors.FactionBarColors[unitReaction]) or RAID_CLASS_COLORS.PRIEST
 
     if unitReaction then
-        if unitReaction <= 3 then nameColor = GW.Colors.FriendlyColors[2] end -- Feindlich
-        if unitReaction >= 5 then nameColor = GW.Colors.FriendlyColors[1] end -- Freundlich
+        if unitReaction <= 3 then nameColor = GW.Colors.UnitFrameReactionColors.Hostile end
+        if unitReaction >= 5 then nameColor = GW.Colors.UnitFrameReactionColors.Friendly end
     end
 
     if UnitIsTapDenied(self.unit) then
-        nameColor = GW.Colors.TabDenied
+        nameColor = GW.Colors.UnitFrameReactionColors.TappedDenied
     end
     self.health:SetStatusBarColor(nameColor:GetRGB())
 end
@@ -87,6 +87,15 @@ function GwBossFrameMixin:OnEvent(event, unit)
         self.container:UpdateBossFrameHeight()
     end
 end
+
+local function UpdateBossFramesHealthbarColor()
+    for _, frame in pairs(bossFrames) do
+        if frame:IsShown() then
+            frame:UpdateHealthbarColor()
+        end
+    end
+end
+GW.UpdateBossFramesHealthbarColor = UpdateBossFramesHealthbarColor
 
 GwObjectivesBossContainerMixin = {}
 

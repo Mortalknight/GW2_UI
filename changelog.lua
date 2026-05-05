@@ -13,7 +13,8 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-addChange("10.9.2", {
+addChange("10.10.0", {
+    {GW.Enum.ChangelogType.feature, [=[Added option to change unitframe reaction colors]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix Todooloo itegration]=]},
 })
 

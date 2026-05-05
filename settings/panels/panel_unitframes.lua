@@ -2,8 +2,44 @@
 local GW = select(2, ...)
 local L = GW.L
 
+local function UpdateUnitFrameReactionColors()
+    GW.UpdateUnitFrameReactionColors()
+
+    if GwTargetUnitFrame then
+        GwTargetUnitFrame:UnitFrameData()
+    end
+    if GwTargetTargetUnitFrame then
+        GwTargetTargetUnitFrame:UnitFrameData()
+    end
+    if GwFocusUnitFrame then
+        GwFocusUnitFrame:UnitFrameData()
+    end
+    if GwFocusTargetUnitFrame then
+        GwFocusTargetUnitFrame:UnitFrameData()
+    end
+    if GW.UpdatePartyFrames then
+        GW.UpdatePartyFrames()
+    end
+    if GW.UpdateBossFramesHealthbarColor then
+        GW.UpdateBossFramesHealthbarColor()
+    end
+end
+
 local function LoadTargetPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow, "GwSettingsPanelTmpl")
+
+    local general = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    general.panelId = "unitframes_general"
+    general.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    general.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    general.header:SetText(UNITFRAME_LABEL)
+    general.sub:SetFont(UNIT_NAME_FONT, 12)
+    general.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    general.sub:SetText(L["Edit general unitframe settings."])
+    general.header:SetWidth(general.header:GetStringWidth())
+    general.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    general.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    general.breadcrumb:SetText(GENERAL)
 
     local pPlayerPet = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     pPlayerPet.panelId = "player_pet"
@@ -94,6 +130,7 @@ local function LoadTargetPanel(sWindow)
     party.preview:SetEnabled(GW.settings.PARTY_FRAMES and not GW.settings.RAID_STYLE_PARTY)
 
     local panels = {
+        {name = GENERAL, frame = general},
         {name = PET, frame = pPlayerPet},
         {name = TARGET, frame = p_target},
         {name = SHOW_TARGET_OF_TARGET_TEXT, frame = pTargetOfTarget},
@@ -104,7 +141,7 @@ local function LoadTargetPanel(sWindow)
         table.insert(panels, {name = L["Focus target"], frame = pTargetOfFocus})
     end
 
-     table.insert(panels, {name = CHAT_MSG_PARTY, frame = party})
+    table.insert(panels, {name = CHAT_MSG_PARTY, frame = party})
 
     local playerTag = " |cFF888888(" .. PLAYER .. ")|r"
     local otherTag = " |cFF888888(" .. OTHER .. ")|r"
@@ -151,6 +188,12 @@ local function LoadTargetPanel(sWindow)
         tinsert(advancedAuraOptions, advancedAuraOptionsOther[i])
         tinsert(advancedAuraOptionsNames, advancedAuraOptionsNamesOther[i])
     end
+
+    --GENERAL
+    general:AddGroupHeader(L["Reaction Colors"])
+    general:AddOptionColorPicker(FRIENDLY, L["Color used for friendly unit frames."], {getterSetter = "UnitFrameReactionColors.Friendly", callback = UpdateUnitFrameReactionColors, groupHeaderName = L["Reaction Colors"]})
+    general:AddOptionColorPicker(ENEMY, L["Color used for enemy unit frames."], {getterSetter = "UnitFrameReactionColors.Hostile", callback = UpdateUnitFrameReactionColors, groupHeaderName = L["Reaction Colors"]})
+    general:AddOptionColorPicker(L["Tapped"], L["Color used for tapped unit frames."], {getterSetter = "UnitFrameReactionColors.TappedDenied", callback = UpdateUnitFrameReactionColors, groupHeaderName = L["Reaction Colors"]})
 
     --PET
     pPlayerPet:AddOption(ENABLE, L["Use the GW2 UI improved Pet bar."], {getterSetter = "PETBAR_ENABLED", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "PetFrame", isMasterToggle = true})
@@ -339,6 +382,6 @@ local function LoadTargetPanel(sWindow)
     party:AddOptionSlider(L["Aura size"], nil, { getterSetter = "PARTY_SHOW_AURA_ICON_SIZE", callback = GW.UpdatePartyFrames, min = 10, max = 40, decimalNumbers = 0, step = 2, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false, ["PARTY_FRAME_ORIENTATION"] = {"VERTICAL"}}})
     party:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "partyFrameHealthBarTexture", callback = function() GW.UpdatePartyFrames() end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false}})
 
-    sWindow:AddSettingsPanel(p, UNITFRAME_LABEL, L["Modify the player pet frame settings."], panels)
+    sWindow:AddSettingsPanel(p, UNITFRAME_LABEL, L["Edit general unitframe settings."], panels)
 end
 GW.LoadTargetPanel = LoadTargetPanel

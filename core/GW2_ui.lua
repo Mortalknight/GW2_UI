@@ -39,7 +39,7 @@ if GW.Retail then
         GameTooltip:Show()
     end
 
-    function GW2_ADDON_OnAddonCompartmentLeave(addonName, button)
+    function GW2_ADDON_OnAddonCompartmentLeave(_, _)
         GameTooltip:Hide()
     end
 end
@@ -334,6 +334,7 @@ local function UpdateDb()
     GW.settings = GW.globalSettings.profile
     GW.Migration()
     GW.DatabaseValueMigration()
+    GW.UpdateUnitFrameReactionColors()
 end
 
 local function evAddonLoaded(self, loadedAddonName)
@@ -381,6 +382,7 @@ local function evAddonLoaded(self, loadedAddonName)
 
         GW.DatabaseValueMigration()
         GW.ApplyMissingIncompatibleAddonsDefaults()
+        GW.UpdateUnitFrameReactionColors()
         GW.UpdateGw2ClassColors()
 
         -- setup default values on load, which are required for same skins
@@ -588,9 +590,9 @@ local function evPlayerLogin(self)
         GW.SkinMainMenu()
     else
         if GW.Retail or GW.TBC or GW.Wrath then
-            hooksecurefunc(GameMenuFrame, 'InitButtons', function(self)
-                self:AddSection()
-                self:AddButton(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName), GW.ToggleGw2Settings)
+            hooksecurefunc(GameMenuFrame, 'InitButtons', function(menuFrame)
+                menuFrame:AddSection()
+                menuFrame:AddButton(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName), GW.ToggleGw2Settings)
             end)
         else
             --Setup addon button
