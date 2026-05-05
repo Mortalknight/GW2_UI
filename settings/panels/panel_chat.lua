@@ -12,6 +12,7 @@ local function LoadChatPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit chat settings."])
 
+    p:AddOption(ENABLE, L["Enable the improved chat window."], {getterSetter = "CHATFRAME_ENABLED", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Chat", isMasterToggle = true})
     p:AddOption(L["GW2 Chat Message Style"], L["Changes the chat font, timestamp color and name display"], { getterSetter = "CHAT_USE_GW2_STYLE", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
     p:AddOption(L["Fade Chat"], L["Allow the chat to fade when not in use."], { getterSetter = "CHATFRAME_FADE", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})
     p:AddOption(L["Hide Editbox"], L["Hide the chat editbox when not in focus."], { getterSetter = "CHATFRAME_EDITBOX_HIDE", callback = GW.UpdateChatSettings, dependence = {["CHATFRAME_ENABLED"] = true}})

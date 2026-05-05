@@ -133,13 +133,14 @@ local function CreateOption(optionType, panel, name, desc, values)
         optionType = optionType,
         callback = values.callback,
         dependence = values.dependence,
-        forceNewLine = values.forceNewLine,
+        forceNewLine = values.isMasterToggle and values.forceNewLine == nil and true or values.forceNewLine,
         incompatibleAddonsType = values.incompatibleAddons,
         isIncompatibleAddonLoaded = false,
         isIncompatibleAddonLoadedButOverride = false,
         groupHeaderName = values.groupHeaderName,
         isPrivateSetting = values.isPrivateSetting, -- forbidden for addons
         optionUpdateFunc = values.optionUpdateFunc,
+        isMasterToggle = values.isMasterToggle,
 
         getter = values.getter, --for addons
         setter = values.setter, --for addons

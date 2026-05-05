@@ -91,6 +91,7 @@ GW.ShowRlPopup = false
 GW.InMoveHudMode = false
 
 --Tables
+GW.settings = {}
 GW.ActionBarCallbacks = {}
 GW.unitIlvlsCache = {}
 GW.TexCoords = {0, 1, 0, 1}

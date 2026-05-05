@@ -18,6 +18,32 @@ local function LoadHudPanel(sWindow)
     general.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     general.breadcrumb:SetText(GENERAL)
 
+    local microBar = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    microBar.panelId = "hud_microbar"
+    microBar.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    microBar.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    microBar.header:SetText(UIOPTIONS_MENU)
+    microBar.sub:SetFont(UNIT_NAME_FONT, 12)
+    microBar.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    microBar.sub:SetText(L["Edit micro bar settings."])
+    microBar.header:SetWidth(microBar.header:GetStringWidth())
+    microBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    microBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    microBar.breadcrumb:SetText(L["Micro Bar"])
+
+    local chatBubbles = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    chatBubbles.panelId = "hud_chatbubbles"
+    chatBubbles.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    chatBubbles.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    chatBubbles.header:SetText(UIOPTIONS_MENU)
+    chatBubbles.sub:SetFont(UNIT_NAME_FONT, 12)
+    chatBubbles.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    chatBubbles.sub:SetText(L["Edit chat bubble settings."])
+    chatBubbles.header:SetWidth(chatBubbles.header:GetStringWidth())
+    chatBubbles.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    chatBubbles.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    chatBubbles.breadcrumb:SetText(CHAT_BUBBLES_TEXT)
+
     local minimap = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     minimap.panelId = "hud_minimap"
     minimap.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -43,6 +69,19 @@ local function LoadHudPanel(sWindow)
     worldmap.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     worldmap.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     worldmap.breadcrumb:SetText(WORLDMAP_BUTTON)
+
+    local worldEvents = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    worldEvents.panelId = "hud_worldevents"
+    worldEvents.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    worldEvents.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    worldEvents.header:SetText(UIOPTIONS_MENU)
+    worldEvents.sub:SetFont(UNIT_NAME_FONT, 12)
+    worldEvents.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    worldEvents.sub:SetText(L["Edit world event tracker settings."])
+    worldEvents.header:SetWidth(worldEvents.header:GetStringWidth())
+    worldEvents.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    worldEvents.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    worldEvents.breadcrumb:SetText(L["World Events"])
 
     local fct = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     fct.panelId = "hud_fct"
@@ -73,6 +112,7 @@ local function LoadHudPanel(sWindow)
 
 
     --GENERAL
+    general:AddOption(XPBAR_LABEL, nil, {getterSetter = "XPBAR_ENABLED", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
     general:AddOption(L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], {getterSetter = "HUD_BACKGROUND", callback = GW.ToggleHudBackground})
     general:AddOption(L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], {getterSetter = "HUD_SPELL_SWAP", dependence = {["HUD_BACKGROUND"] = true}})
     general:AddOption(L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], {getterSetter = "QUEST_REWARDS_MOST_VALUE_ICON", callback = GW.ResetQuestRewardMostValueIcon})
@@ -93,15 +133,46 @@ local function LoadHudPanel(sWindow)
         end})
     general:AddOptionDropdown(L["Show Role Bar"], L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."], { getterSetter = "ROLE_BAR", callback = GW.UpdateRaidCounterVisibility, optionsList = {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"}, optionNames = {ALWAYS, NEVER, AGGRO_WARNING_IN_PARTY, L["Raid Only"], L["Party / Raid"]}})
     general:AddOptionSlider(L["Talking Head Scale"], nil, { getterSetter = "TalkingHeadFrameScale", callback = GW.ScaleTalkingHeadFrame, min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["TALKINGHEAD_SKIN_ENABLED"] = true}, hidden = not GW.Retail})
-    general:AddOptionSlider(GW.NewSign .. L["Chatbubble Scale"], nil, { getterSetter = "ChatBubbleScale", min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["CHATBUBBLES_ENABLED"] = true}, hidden = not GW.Retail})
 
-    general:AddGroupHeader(L["Micro Bar"])
-    general:AddOption(L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], {getterSetter = "FADE_MICROMENU", callback = function(value) if Gw2MicroBarFrame and Gw2MicroBarFrame.cf then Gw2MicroBarFrame.cf:SetAttribute("shouldFade", value) Gw2MicroBarFrame.cf:SetShown(not value) if value then Gw2MicroBarFrame.cf.fadeOut(Gw2MicroBarFrame.cf) else Gw2MicroBarFrame.cf.fadeIn(Gw2MicroBarFrame.cf) end end end, groupHeaderName = L["Micro Menu"], dependence = {["micromenu.enabled"] = true}})
-    general:AddOption(L["Show event timer micro menu icon"], L["Displays an micro menu icon for the world map event timers"], {getterSetter = "MICROMENU_EVENT_TIMER_ICON", callback = function() if Gw2MicroBarFrame and Gw2MicroBarFrame.cf then GW.ToggleEventTimerMicroMenuIcon(Gw2MicroBarFrame.cf) end end, hidden = not GW.Retail, groupHeaderName = L["Micro Menu"], dependence = {["micromenu.enabled"] = true}})
-    general:AddOption(L["Animate micro menu notification icons"], L["Play entrance animations and flashes for micro menu notification icons (mail, great vault, collections, encounter journal and work orders)."], {getterSetter = "MICROMENU_NOTIFICATION_ICON_ANIMATION", callback = GW.ToggleMicroMenuNotificationIconAnimation, groupHeaderName = L["Micro Menu"], dependence = {["micromenu.enabled"] = true}})
+    -- MICRO BAR
+    microBar:AddOption(ENABLE, L["Micro Bar"], {getterSetter = "micromenu.enabled", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
+    microBar:AddOption(L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], {
+        getterSetter = "FADE_MICROMENU",
+        callback = function(value)
+            if Gw2MicroBarFrame and Gw2MicroBarFrame.cf then
+                Gw2MicroBarFrame.cf:SetAttribute("shouldFade", value)
+                Gw2MicroBarFrame.cf:SetShown(not value)
+                if value then
+                    Gw2MicroBarFrame.cf.fadeOut(Gw2MicroBarFrame.cf)
+                else
+                    Gw2MicroBarFrame.cf.fadeIn(Gw2MicroBarFrame.cf)
+                end
+            end
+        end,
+        dependence = {["micromenu.enabled"] = true}
+    })
+    microBar:AddOption(L["Show event timer micro menu icon"], L["Displays an micro menu icon for the world map event timers"], {
+        getterSetter = "MICROMENU_EVENT_TIMER_ICON",
+        callback = function()
+            if Gw2MicroBarFrame and Gw2MicroBarFrame.cf then
+                GW.ToggleEventTimerMicroMenuIcon(Gw2MicroBarFrame.cf)
+            end
+        end,
+        hidden = not GW.Retail,
+        dependence = {["micromenu.enabled"] = true}
+    })
+    microBar:AddOption(L["Animate micro menu notification icons"], L["Play entrance animations and flashes for micro menu notification icons (mail, great vault, collections, encounter journal and work orders)."], {
+        getterSetter = "MICROMENU_NOTIFICATION_ICON_ANIMATION",
+        callback = GW.ToggleMicroMenuNotificationIconAnimation,
+        dependence = {["micromenu.enabled"] = true}
+    })
 
+    -- CHAT BUBBLES
+    chatBubbles:AddOption(ENABLE, L["Replace the default UI chat bubbles. (Only in not protected areas)"], {getterSetter = "CHATBUBBLES_ENABLED", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
+    chatBubbles:AddOptionSlider(GW.NewSign .. L["Chatbubble Scale"], nil, { getterSetter = "ChatBubbleScale", min = 0.5, max = 2, decimalNumbers = 2, step = 0.01, dependence = {["CHATBUBBLES_ENABLED"] = true}, hidden = not GW.Retail})
 
     --MINIMAP
+    minimap:AddOption(ENABLE, L["Use the GW2 UI Minimap frame."], {getterSetter = "MINIMAP_ENABLED", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Minimap", isMasterToggle = true})
     minimap:AddOption(L["Addon Compartment"], nil, {getterSetter = "MINIMAP_ADDON_COMPARTMENT_TOGGLE", callback = GW.HandleAddonCompartmentButton, dependence = {["MINIMAP_ENABLED"] = true}, incompatibleAddons = "Minimap", hidden = not GW.Retail})
     minimap:AddOption(L["Always show AddOn flyout button"], L["Always show the minimap AddOns flyout button, even when only one AddOn button is available."], {getterSetter = "MINIMAP_ADDON_FLYOUT_ALWAYS", callback = function() GW.UpdateMinimapButtonsSack() end, dependence = {["MINIMAP_ENABLED"] = true}, incompatibleAddons = "Minimap"})
     minimap:AddOption(L["Show FPS on minimap"], L["Show FPS on minimap"], {getterSetter = "MINIMAP_FPS", callback = GW.ToogleMinimapFpsLable, dependence = {["MINIMAP_ENABLED"] = true}, incompatibleAddons = "Minimap"})
@@ -123,112 +194,112 @@ local function LoadHudPanel(sWindow)
     worldmap:AddOptionSlider(L["Y-Offset"], nil, { getterSetter = "WORLDMAP_COORDS_Y_OFFSET", callback = GW.UpdateWorldMapCoordinateSettings, min = -200, max = 200, decimalNumbers = 0, step = 1, groupHeaderName = L["World Map Coordinates"], dependence = {["WORLDMAP_COORDS_TOGGLE"] = true}})
 
     -- Midnight
-    worldmap:AddGroupHeader(L["Midnight"], {hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Midnight"], {hidden = not GW.Retail})
     --Stormarion Assault
-    worldmap:AddGroupHeader(L["Stormarion Assault"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Stormarion Assault"], nil, {getterSetter = "stormarionAssault.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Stormarion Assault"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "stormarionAssault.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["stormarionAssault.enabled"] = true}, groupHeaderName = L["Stormarion Assault"], hidden = not GW.Retail})
-    worldmap:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "stormarionAssault.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["stormarionAssault.enabled"] = true}, groupHeaderName = L["Stormarion Assault"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "stormarionAssault.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["stormarionAssault.enabled"] = true, ["stormarionAssault.alert"] = true}, groupHeaderName = L["Stormarion Assault"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "stormarionAssault.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["stormarionAssault.enabled"] = true, ["stormarionAssault.alert"] = true}, groupHeaderName =L["Stormarion Assault"], hidden = not GW.Retail})
-    worldmap:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {getterSetter = "stormarionAssault.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Stormarion Assault"], dependence = {["stormarionAssault.enabled"] = true, ["stormarionAssault.alert"] = true}, hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Stormarion Assault"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Stormarion Assault"], nil, {getterSetter = "stormarionAssault.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Stormarion Assault"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "stormarionAssault.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["stormarionAssault.enabled"] = true}, groupHeaderName = L["Stormarion Assault"], hidden = not GW.Retail})
+    worldEvents:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "stormarionAssault.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["stormarionAssault.enabled"] = true}, groupHeaderName = L["Stormarion Assault"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "stormarionAssault.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["stormarionAssault.enabled"] = true, ["stormarionAssault.alert"] = true}, groupHeaderName = L["Stormarion Assault"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "stormarionAssault.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["stormarionAssault.enabled"] = true, ["stormarionAssault.alert"] = true}, groupHeaderName = L["Stormarion Assault"], hidden = not GW.Retail})
+    worldEvents:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {getterSetter = "stormarionAssault.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Stormarion Assault"], dependence = {["stormarionAssault.enabled"] = true, ["stormarionAssault.alert"] = true}, hidden = not GW.Retail})
 
     -- Weekly
-    worldmap:AddGroupHeader(L["Weekly Quest"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Weekly Quest"], nil, {getterSetter = "weeklyMN.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Weekly Quest"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "weeklyMN.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["weeklyMN.enabled"] = true}, groupHeaderName = L["Weekly Quest"], hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Weekly Quest"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Weekly Quest"], nil, {getterSetter = "weeklyMN.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Weekly Quest"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "weeklyMN.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["weeklyMN.enabled"] = true}, groupHeaderName = L["Weekly Quest"], hidden = not GW.Retail})
 
     -- Profession
-    worldmap:AddGroupHeader(L["Professions Weekly Quest"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Professions Weekly Quest"], nil, {getterSetter = "professionsWeeklyMN.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Professions Weekly Quest"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "professionsWeeklyMN.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["professionsWeeklyMN.enabled"] = true}, groupHeaderName = L["Professions Weekly Quest"], hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Professions Weekly Quest"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Professions Weekly Quest"], nil, {getterSetter = "professionsWeeklyMN.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Professions Weekly Quest"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "professionsWeeklyMN.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["professionsWeeklyMN.enabled"] = true}, groupHeaderName = L["Professions Weekly Quest"], hidden = not GW.Retail})
 
     -- TWW
-    worldmap:AddGroupHeader(L["The War Within"], {hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["The War Within"], {hidden = not GW.Retail})
     -- Khaz Algar Emissary
-    worldmap:AddGroupHeader(L["Khaz Algar Emissary"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Khaz Algar Emissary"], nil, {getterSetter = "khazAlgarEmissary.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Khaz Algar Emissary"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "khazAlgarEmissary.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["khazAlgarEmissary.enabled"] = true}, groupHeaderName = L["Khaz Algar Emissary"], hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Khaz Algar Emissary"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Khaz Algar Emissary"], nil, {getterSetter = "khazAlgarEmissary.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Khaz Algar Emissary"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "khazAlgarEmissary.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["khazAlgarEmissary.enabled"] = true}, groupHeaderName = L["Khaz Algar Emissary"], hidden = not GW.Retail})
 
     -- Ringing Deeps
-    worldmap:AddGroupHeader(L["Ringing Deeps"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Ringing Deeps"], nil, {getterSetter = "ringingDeeps.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Ringing Deeps"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "ringingDeeps.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["ringingDeeps.enabled"] = true}, groupHeaderName = L["Ringing Deeps"], hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Ringing Deeps"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Ringing Deeps"], nil, {getterSetter = "ringingDeeps.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Ringing Deeps"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "ringingDeeps.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["ringingDeeps.enabled"] = true}, groupHeaderName = L["Ringing Deeps"], hidden = not GW.Retail})
 
     -- Spreading The Light"
-    worldmap:AddGroupHeader(L["Spreading The Light"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Spreading The Light"], nil, {getterSetter = "spreadingTheLight.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Spreading The Light"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "spreadingTheLight.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["spreadingTheLight.enabled"] = true}, groupHeaderName = L["Spreading The Light"], hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Spreading The Light"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Spreading The Light"], nil, {getterSetter = "spreadingTheLight.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Spreading The Light"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "spreadingTheLight.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["spreadingTheLight.enabled"] = true}, groupHeaderName = L["Spreading The Light"], hidden = not GW.Retail})
 
     -- Underworld Operative
-    worldmap:AddGroupHeader(L["Underworld Operative"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Underworld Operative"], nil, {getterSetter = "underworldOperative.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Underworld Operative"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "underworldOperative.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["underworldOperative.enabled"] = true}, groupHeaderName = L["Underworld Operative"], hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Underworld Operative"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Underworld Operative"], nil, {getterSetter = "underworldOperative.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Underworld Operative"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "underworldOperative.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["underworldOperative.enabled"] = true}, groupHeaderName = L["Underworld Operative"], hidden = not GW.Retail})
 
     -- Theater Troupe
-    worldmap:AddGroupHeader(L["Theater Troupe"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Theater Troupe"], nil, {getterSetter = "theaterTroupe.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Theater Troupe"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "theaterTroupe.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["theaterTroupe.enabled"] = true}, groupHeaderName = L["Theater Troupe"], hidden = not GW.Retail})
-    worldmap:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "theaterTroupe.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["theaterTroupe.enabled"] = true}, groupHeaderName = L["Theater Troupe"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "theaterTroupe.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["theaterTroupe.enabled"] = true, ["theaterTroupe.alert"] = true}, groupHeaderName = L["Theater Troupe"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "theaterTroupe.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["theaterTroupe.enabled"] = true, ["theaterTroupe.alert"] = true}, groupHeaderName = L["Theater Troupe"], hidden = not GW.Retail})
-    worldmap:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {getterSetter = "theaterTroupe.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Theater Troupe"], dependence = {["theaterTroupe.enabled"] = true, ["theaterTroupe.alert"] = true}, hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Theater Troupe"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Theater Troupe"], nil, {getterSetter = "theaterTroupe.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Theater Troupe"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "theaterTroupe.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["theaterTroupe.enabled"] = true}, groupHeaderName = L["Theater Troupe"], hidden = not GW.Retail})
+    worldEvents:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "theaterTroupe.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["theaterTroupe.enabled"] = true}, groupHeaderName = L["Theater Troupe"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "theaterTroupe.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["theaterTroupe.enabled"] = true, ["theaterTroupe.alert"] = true}, groupHeaderName = L["Theater Troupe"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "theaterTroupe.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["theaterTroupe.enabled"] = true, ["theaterTroupe.alert"] = true}, groupHeaderName = L["Theater Troupe"], hidden = not GW.Retail})
+    worldEvents:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {getterSetter = "theaterTroupe.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Theater Troupe"], dependence = {["theaterTroupe.enabled"] = true, ["theaterTroupe.alert"] = true}, hidden = not GW.Retail})
 
     --DF
-    worldmap:AddGroupHeader(L["Dragonflight"], {hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Dragonflight"], {hidden = not GW.Retail})
     -- Community Feast
-    worldmap:AddGroupHeader(L["Community Feast"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Community Feast"], nil, {getterSetter = "communityFeast.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Community Feast"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "communityFeast.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["communityFeast.enabled"] = true}, groupHeaderName = L["Community Feast"], hidden = not GW.Retail})
-    worldmap:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "communityFeast.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["communityFeast.enabled"] = true}, groupHeaderName = L["Community Feast"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "communityFeast.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["communityFeast.enabled"] = true, ["communityFeast.alert"] = true}, groupHeaderName = L["Community Feast"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "communityFeast.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["communityFeast.enabled"] = true, ["communityFeast.alert"] = true}, groupHeaderName = L["Community Feast"], hidden = not GW.Retail})
-    worldmap:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {getterSetter = "communityFeast.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Community Feast"], dependence = {["communityFeast.enabled"] = true, ["communityFeast.alert"] = true}, hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Community Feast"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Community Feast"], nil, {getterSetter = "communityFeast.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Community Feast"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "communityFeast.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["communityFeast.enabled"] = true}, groupHeaderName = L["Community Feast"], hidden = not GW.Retail})
+    worldEvents:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "communityFeast.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["communityFeast.enabled"] = true}, groupHeaderName = L["Community Feast"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "communityFeast.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["communityFeast.enabled"] = true, ["communityFeast.alert"] = true}, groupHeaderName = L["Community Feast"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "communityFeast.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["communityFeast.enabled"] = true, ["communityFeast.alert"] = true}, groupHeaderName = L["Community Feast"], hidden = not GW.Retail})
+    worldEvents:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], {getterSetter = "communityFeast.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Community Feast"], dependence = {["communityFeast.enabled"] = true, ["communityFeast.alert"] = true}, hidden = not GW.Retail})
 
     -- Dragonbane Keep
-    worldmap:AddGroupHeader(L["Siege On Dragonbane Keep"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Siege On Dragonbane Keep"], nil, {getterSetter = "dragonbaneKeep.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Siege On Dragonbane Keep"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "dragonbaneKeep.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["dragonbaneKeep.enabled"] = true}, groupHeaderName = L["Siege On Dragonbane Keep"], hidden = not GW.Retail})
-    worldmap:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "dragonbaneKeep.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["dragonbaneKeep.enabled"] = true}, groupHeaderName = L["Siege On Dragonbane Keep"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "dragonbaneKeep.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["dragonbaneKeep.enabled"] = true, ["dragonbaneKeep.alert"] = true}, groupHeaderName = L["Siege On Dragonbane Keep"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "dragonbaneKeep.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["dragonbaneKeep.enabled"] = true, ["dragonbaneKeep.alert"] = true}, groupHeaderName = L["Siege On Dragonbane Keep"], hidden = not GW.Retail})
-    worldmap:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "dragonbaneKeep.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Siege On Dragonbane Keep"], dependence = {["dragonbaneKeep.enabled"] = true, ["dragonbaneKeep.alert"] = true}, hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Siege On Dragonbane Keep"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Siege On Dragonbane Keep"], nil, {getterSetter = "dragonbaneKeep.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Siege On Dragonbane Keep"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "dragonbaneKeep.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["dragonbaneKeep.enabled"] = true}, groupHeaderName = L["Siege On Dragonbane Keep"], hidden = not GW.Retail})
+    worldEvents:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "dragonbaneKeep.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["dragonbaneKeep.enabled"] = true}, groupHeaderName = L["Siege On Dragonbane Keep"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "dragonbaneKeep.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["dragonbaneKeep.enabled"] = true, ["dragonbaneKeep.alert"] = true}, groupHeaderName = L["Siege On Dragonbane Keep"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "dragonbaneKeep.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["dragonbaneKeep.enabled"] = true, ["dragonbaneKeep.alert"] = true}, groupHeaderName = L["Siege On Dragonbane Keep"], hidden = not GW.Retail})
+    worldEvents:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "dragonbaneKeep.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Siege On Dragonbane Keep"], dependence = {["dragonbaneKeep.enabled"] = true, ["dragonbaneKeep.alert"] = true}, hidden = not GW.Retail})
 
     -- Researchers Under Fire
-    worldmap:AddGroupHeader(L["Researchers"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Researchers"], nil, {getterSetter = "researchersUnderFire.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Researchers"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "researchersUnderFire.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["researchersUnderFire.enabled"] = true}, groupHeaderName = L["Researchers"], hidden = not GW.Retail})
-    worldmap:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "researchersUnderFire.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["researchersUnderFire.enabled"] = true}, groupHeaderName = L["Researchers"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "researchersUnderFire.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["researchersUnderFire.enabled"] = true, ["researchersUnderFire.alert"] = true}, groupHeaderName = L["Researchers"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "researchersUnderFire.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["researchersUnderFire.enabled"] = true, ["researchersUnderFire.alert"] = true}, groupHeaderName = L["Researchers"], hidden = not GW.Retail})
-    worldmap:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "researchersUnderFire.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Researchers"], dependence = {["researchersUnderFire.enabled"] = true, ["researchersUnderFire.alert"] = true}, hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Researchers"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Researchers"], nil, {getterSetter = "researchersUnderFire.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Researchers"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "researchersUnderFire.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["researchersUnderFire.enabled"] = true}, groupHeaderName = L["Researchers"], hidden = not GW.Retail})
+    worldEvents:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "researchersUnderFire.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["researchersUnderFire.enabled"] = true}, groupHeaderName = L["Researchers"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "researchersUnderFire.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["researchersUnderFire.enabled"] = true, ["researchersUnderFire.alert"] = true}, groupHeaderName = L["Researchers"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "researchersUnderFire.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["researchersUnderFire.enabled"] = true, ["researchersUnderFire.alert"] = true}, groupHeaderName = L["Researchers"], hidden = not GW.Retail})
+    worldEvents:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "researchersUnderFire.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Researchers"], dependence = {["researchersUnderFire.enabled"] = true, ["researchersUnderFire.alert"] = true}, hidden = not GW.Retail})
 
     -- Time Rift Thaldraszus
-    worldmap:AddGroupHeader(L["Time Rift"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Time Rift"], nil, {getterSetter = "timeRiftThaldraszus.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Time Rift"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "timeRiftThaldraszus.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["timeRiftThaldraszus.enabled"] = true}, groupHeaderName = L["Time Rift"], hidden = not GW.Retail})
-    worldmap:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "timeRiftThaldraszus.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["timeRiftThaldraszus.enabled"] = true}, groupHeaderName = L["Time Rift"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "timeRiftThaldraszus.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["timeRiftThaldraszus.enabled"] = true, ["timeRiftThaldraszus.alert"] = true}, groupHeaderName = L["Time Rift"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "timeRiftThaldraszus.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["timeRiftThaldraszus.enabled"] = true, ["timeRiftThaldraszus.alert"] = true}, groupHeaderName = L["Time Rift"], hidden = not GW.Retail})
-    worldmap:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "timeRiftThaldraszus.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Time Rift"], dependence = {["timeRiftThaldraszus.enabled"] = true, ["timeRiftThaldraszus.alert"] = true}, hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Time Rift"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Time Rift"], nil, {getterSetter = "timeRiftThaldraszus.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Time Rift"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "timeRiftThaldraszus.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["timeRiftThaldraszus.enabled"] = true}, groupHeaderName = L["Time Rift"], hidden = not GW.Retail})
+    worldEvents:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "timeRiftThaldraszus.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["timeRiftThaldraszus.enabled"] = true}, groupHeaderName = L["Time Rift"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "timeRiftThaldraszus.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["timeRiftThaldraszus.enabled"] = true, ["timeRiftThaldraszus.alert"] = true}, groupHeaderName = L["Time Rift"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "timeRiftThaldraszus.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["timeRiftThaldraszus.enabled"] = true, ["timeRiftThaldraszus.alert"] = true}, groupHeaderName = L["Time Rift"], hidden = not GW.Retail})
+    worldEvents:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "timeRiftThaldraszus.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Time Rift"], dependence = {["timeRiftThaldraszus.enabled"] = true, ["timeRiftThaldraszus.alert"] = true}, hidden = not GW.Retail})
 
     -- Superbloom
-    worldmap:AddGroupHeader(L["Superbloom"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Superbloom"], nil, {getterSetter = "superBloom.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Superbloom"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "superBloom.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["superBloom.enabled"] = true}, groupHeaderName = L["Superbloom"], hidden = not GW.Retail})
-    worldmap:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "superBloom.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["superBloom.enabled"] = true}, groupHeaderName = L["Superbloom"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "superBloom.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["superBloom.enabled"] = true, ["superBloom.alert"] = true}, groupHeaderName = L["Superbloom"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "superBloom.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["superBloom.enabled"] = true, ["superBloom.alert"] = true}, groupHeaderName = L["Superbloom"], hidden = not GW.Retail})
-    worldmap:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "superBloom.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Superbloom"], dependence = {["superBloom.enabled"] = true, ["superBloom.alert"] = true}, hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Superbloom"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Superbloom"], nil, {getterSetter = "superBloom.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Superbloom"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "superBloom.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["superBloom.enabled"] = true}, groupHeaderName = L["Superbloom"], hidden = not GW.Retail})
+    worldEvents:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "superBloom.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["superBloom.enabled"] = true}, groupHeaderName = L["Superbloom"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "superBloom.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["superBloom.enabled"] = true, ["superBloom.alert"] = true}, groupHeaderName = L["Superbloom"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "superBloom.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["superBloom.enabled"] = true, ["superBloom.alert"] = true}, groupHeaderName = L["Superbloom"], hidden = not GW.Retail})
+    worldEvents:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "superBloom.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Superbloom"], dependence = {["superBloom.enabled"] = true, ["superBloom.alert"] = true}, hidden = not GW.Retail})
 
     -- Big Dig
-    worldmap:AddGroupHeader(L["Big Dig"], {hidden = not GW.Retail})
-    worldmap:AddOption(L["Big Dig"], nil, {getterSetter = "bigDig.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Big Dig"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "bigDig.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["bigDig.enabled"] = true}, groupHeaderName = L["Big Dig"], hidden = not GW.Retail})
-    worldmap:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "bigDig.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["bigDig.enabled"] = true}, groupHeaderName = L["Big Dig"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "bigDig.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["bigDig.enabled"] = true, ["bigDig.alert"] = true}, groupHeaderName = L["Big Dig"], hidden = not GW.Retail})
-    worldmap:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "bigDig.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["bigDig.enabled"] = true, ["bigDig.alert"] = true}, groupHeaderName = L["Big Dig"], hidden = not GW.Retail})
-    worldmap:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "bigDig.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Big Dig"], dependence = {["bigDig.enabled"] = true, ["bigDig.alert"] = true}, hidden = not GW.Retail})
+    worldEvents:AddGroupHeader(L["Big Dig"], {hidden = not GW.Retail})
+    worldEvents:AddOption(L["Big Dig"], nil, {getterSetter = "bigDig.enabled", callback = GW.UpdateWorldEventTrackers, groupHeaderName = L["Big Dig"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Desaturate Icon"], L["Desaturate the icon if the event is completed this week."], {getterSetter = "bigDig.desaturate", callback = GW.UpdateWorldEventTrackers, dependence = {["bigDig.enabled"] = true}, groupHeaderName = L["Big Dig"], hidden = not GW.Retail})
+    worldEvents:AddOption(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, {getterSetter = "bigDig.alert", callback = GW.UpdateWorldEventTrackers, dependence = {["bigDig.enabled"] = true}, groupHeaderName = L["Big Dig"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Flash taskbar on reminder"], nil, {getterSetter = "bigDig.flashTaskbar", callback = GW.UpdateWorldEventTrackers, dependence = {["bigDig.enabled"] = true, ["bigDig.alert"] = true}, groupHeaderName = L["Big Dig"], hidden = not GW.Retail})
+    worldEvents:AddOption(L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], {getterSetter = "bigDig.stopAlertIfCompleted", callback = GW.UpdateWorldEventTrackers, dependence = {["bigDig.enabled"] = true, ["bigDig.alert"] = true}, groupHeaderName = L["Big Dig"], hidden = not GW.Retail})
+    worldEvents:AddOptionSlider(L["Alert Second"], L["Alert will be triggered when the remaining time is less than the set value."], { getterSetter = "bigDig.alertSeconds", callback = GW.UpdateWorldEventTrackers, min = 0, max = 3600, decimalNumbers = 0, step = 1, groupHeaderName = L["Big Dig"], dependence = {["bigDig.enabled"] = true, ["bigDig.alert"] = true}, hidden = not GW.Retail})
 
     --FCT
     fct:AddOptionDropdown(COMBAT_TEXT_LABEL, COMBAT_SUBTEXT, { getterSetter = "GW_COMBAT_TEXT_MODE", callback = function(value)
@@ -242,7 +313,7 @@ local function LoadHudPanel(sWindow)
                 GW.FloatingCombatTextToggleFormat(true)
             elseif value == "BLIZZARD" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
-                C_CVar.SetCVar("floatingCombatTextCombafloatingCombatTextCombatHealingtDamage", "1")
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
                 GW.FloatingCombatTextToggleFormat(false)
             else
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
@@ -277,6 +348,7 @@ local function LoadHudPanel(sWindow)
     fct:AddOptionSlider(L["Pet number modifier"], nil, { getterSetter = "GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER", callback = GW.UpdateDameTextSettings, min = 2, max = 50, decimalNumbers = 0, step = 1, incompatibleAddons = "FloatingCombatText", groupHeaderName = COMBAT_TEXT_LABEL, dependence = {["GW_COMBAT_TEXT_MODE"] = "GW2"}})
 
     -- Immersive questing
+    questing:AddOption(ENABLE, L["Enable the immersive questing view."], {getterSetter = "immersiveQuesting.enabled", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "ImmersiveQuesting", isMasterToggle = true})
     questing:AddOption(L["Lock Frame"], L["Prevents the Immersive Questing window from being moved from its current position."], {getterSetter = "immersiveQuesting.lockFrame", callback = function() if GwImmersiveQuestFrame then GwImmersiveQuestFrame:applyLockFrame() end end, dependence = {["immersiveQuesting.enabled"] = true}})
     questing:AddOptionSlider(L["Scale"], L["Adjusts the size of the Immersive Questing window."], { getterSetter = "immersiveQuesting.scale", callback = function() if GwImmersiveQuestFrame then GwImmersiveQuestFrame:UiScaleChanged() end end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.05, dependence = {["immersiveQuesting.enabled"] = true}})
     questing:AddOptionDropdown(L["Title Style"], L["Adjusts the style of the title bar."], { getterSetter = "immersiveQuesting.titleStyle", callback = function() if GwImmersiveQuestFrame then GwImmersiveQuestFrame:applyTitleStyle() end end, optionsList = {"DEFAULT", "THIN", "TRANSPARENT"}, optionNames = {DEFAULT, L["Thin"], L["Transparent"]}, dependence = {["immersiveQuesting.enabled"] = true}})
@@ -285,7 +357,21 @@ local function LoadHudPanel(sWindow)
     questing:AddOptionDropdown(L["Weapon Behavior"], L["Determines the default weapon visibility behavior."], { getterSetter = "immersiveQuesting.weaponMode", optionsList = {"STOW", "DRAW", "HIDE"}, optionNames = {L["Stow"], L["Draw"], HIDE}, dependence = {["immersiveQuesting.enabled"] = true}})
     questing:AddOptionSlider(L["Scale Player Model"], L["Adjusts the size of the player model for the current character."], { getterSetter = "immersiveQuesting.playerScale", callback = function() if GwImmersiveQuestFrame then GwImmersiveQuestFrame:UiScaleChanged() end end, min = 0.5, max = 2, decimalNumbers = 2, step = 0.05, dependence = {["immersiveQuesting.enabled"] = true}})
 
+    local panels = {
+        {name = GENERAL, frame = general},
+        {name = L["Micro Bar"], frame = microBar},
+        {name = CHAT_BUBBLES_TEXT, frame = chatBubbles},
+        {name = MINIMAP_LABEL, frame = minimap},
+        {name = WORLDMAP_BUTTON, frame = worldmap},
+    }
+    if GW.Retail then
+        tinsert(panels, {name = L["World Events"], frame = worldEvents})
+    end
+    tinsert(panels, {name = L["Immersive Questing"], frame = questing})
+    if not GW.Retail then
+        tinsert(panels, {name = COMBAT_TEXT_LABEL, frame = fct})
+    end
 
-    sWindow:AddSettingsPanel(p, UIOPTIONS_MENU, L["Edit the modules in the Heads-Up Display for more customization."], {{name = GENERAL, frame = general}, {name = MINIMAP_LABEL, frame = minimap}, {name = WORLDMAP_BUTTON, frame = worldmap}, {name = L["Immersive Questing"], frame = questing}, not GW.Retail and {name = COMBAT_TEXT_LABEL, frame = fct} or nil})
+    sWindow:AddSettingsPanel(p, UIOPTIONS_MENU, L["Edit the modules in the Heads-Up Display for more customization."], panels)
 end
 GW.LoadHudPanel = LoadHudPanel

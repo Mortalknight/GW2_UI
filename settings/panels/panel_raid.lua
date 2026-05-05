@@ -79,6 +79,8 @@ local function LoadGeneralGridSettings(panel)
     general.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     general.breadcrumb:SetText(GENERAL)
 
+    general:AddOption(ENABLE, RAID_FRAMES_SUBTEXT, {getterSetter = "RAID_FRAMES", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
+    general:AddOption(ENABLE, L["Replace the default UI group frames."], {getterSetter = "PARTY_FRAMES", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
     general:AddOptionSlider(L["Name Update Rate"], L["Maximum tick rate allowed for name updates per second."], { getterSetter = "tagUpdateRate", callback = function(value) GW.oUF.Tags:SetEventUpdateTimer(value) end, min = 0.05, max = 0.5, decimalNumbers = 2, step = 0.01})
 
     return general

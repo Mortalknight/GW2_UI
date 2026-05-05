@@ -262,9 +262,13 @@ local function CreateOrGetOptionWidget(panel, opt)
 
     -- Basistitle (falls vorhanden im Template)
     of.title:SetFont(DAMAGE_TEXT_FONT, 12)
-    of.title:SetTextColor(1, 1, 1)
     of.title:SetShadowColor(0, 0, 0, 1)
     of.title:SetText(of.displayName or "")
+    if of.isMasterToggle then
+        of.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    else
+        of.title:SetTextColor(1, 1, 1)
+    end
 
     -- Deine vorhandene Typ-spezifische Logik hier hinein:
     GW.SettingsInitOptionWidget(of, opt, panel)
@@ -801,20 +805,19 @@ local function LoadSettingsTab(container)
     container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_settings.png", settingsTab)
 
     --load settings panels
-    GW.LoadModulesPanel(settingsTab)
     GW.LoadGeneralPanel(settingsTab)
+    GW.LoadHudPanel(settingsTab)
+    GW.LoadActionbarPanel(settingsTab)
+    GW.LoadObjectivesPanel(settingsTab)
     GW.LoadPlayerPanel(settingsTab)
     GW.LoadTargetPanel(settingsTab)
     GW.LoadRaidPanel(settingsTab)
     GW.LoadAurasPanel(settingsTab)
-    GW.LoadActionbarPanel(settingsTab)
-    GW.LoadHudPanel(settingsTab)
-    GW.LoadObjectivesPanel(settingsTab)
-    GW.LoadFontsPanel(settingsTab)
     GW.LoadChatPanel(settingsTab)
     GW.LoadTooltipPanel(settingsTab)
     GW.LoadNotificationsPanel(settingsTab)
     GW.LoadSkinsPanel(settingsTab)
+    GW.LoadFontsPanel(settingsTab)
 
     -- Menü ScrollBox
     local view = CreateScrollBoxListLinearView()

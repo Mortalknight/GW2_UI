@@ -24,6 +24,7 @@ local function LoadNotificationsPanel(sWindow)
         tinsert(soundKeys, sound)
     end
 
+    p:AddOption(ENABLE, L["Alert Frames"], {getterSetter = "ALERTFRAME_ENABLED", callback = function() GW.ShowRlPopup = true end, isMasterToggle = true})
     p:AddOption(PLAYER_LEVEL_UP, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_LEVEL_UP", dependence = {["ALERTFRAME_ENABLED"] = true}})
     p:AddOptionDropdown(nil, nil, {getterSetter = "ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND", optionsList = soundKeys, optionNames = soundKeys, dependence = {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_LEVEL_UP"] = true}, hasSound = true, noNewLine = true})
 

@@ -79,6 +79,7 @@ local function LoadObjectivesPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit objectives settings."])
 
+    p:AddOption(ENABLE, L["Enable the revamped and improved quest tracker."], {getterSetter = "QUESTTRACKER_ENABLED", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "Objectives", isMasterToggle = true})
     p:AddOptionDropdown(L["Collapse Objectives Automatically"], L["Choose when the Objective Tracker should collapse all sections automatically."], {
         getterSetter = "ObjectivesAutoCollapse",
         callback = GW.ToggleObjectivesAutoCollapse,
