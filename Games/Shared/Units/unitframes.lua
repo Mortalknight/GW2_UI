@@ -361,7 +361,7 @@ function GwUnitFrameMixin:SetUnitPortraitFrame()
     local txt
     local unitLevel = UnitLevel(unit)
     local unitClassification = UnitClassification(unit)
-    local canInspect = UnitIsPlayer(unit) and (not GW.Mists or (not InCombatLockdown() and CheckInteractDistance(unit, 4))) and CanInspect(unit)
+    local canInspect = UnitIsPlayer(unit) and (not (GW.Mists or GW.Wrath) or (not InCombatLockdown() and CheckInteractDistance(unit, 4)) and CanInspect(unit))
 
     if TARGET_FRAME_ART[unitClassification] then
         border = unitClassification
