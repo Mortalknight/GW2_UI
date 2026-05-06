@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file ="panel_general.lua"/>
+    <Script file ="panel_interface_features.lua"/>
     <Script file ="panel_hud.lua"/>
     <Script file ="panel_actionbar.lua"/>
     <Script file ="panel_objectives.lua"/>

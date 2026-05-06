@@ -549,7 +549,6 @@ local function LoadSettingsProfileTab(container)
 
     settingsProfile.name = "GwSettingsProfilePanel"
     settingsProfile.headerBreadcrumbText = L["Profiles"]
-    settingsProfile.hasSearch = false
     container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_profiles.png", settingsProfile)
 
     collectAllIcons()

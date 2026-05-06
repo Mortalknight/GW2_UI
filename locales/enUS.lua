@@ -795,6 +795,8 @@ L["Fix: Restore empty action bar slots"] = true
 L["Restores empty slots across all 8 action bars when they were hidden in Blizzard Edit Mode."] = true
 L["Components"] = true
 L["UI Windows"] = true
+L["Interface Features"] = true
+L["Enable or disable standalone GW2 UI features."] = true
 L["Enable or disable UI window replacements."] = true
 L["Edit chat bubble settings."] = true
 

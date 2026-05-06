@@ -580,7 +580,6 @@ function GW.LoadSettingsOverview(container)
 
     settingsOverview.name = "GwSettingsOverview"
     settingsOverview.headerBreadcrumbText = OVERVIEW
-    settingsOverview.hasSearch = false
     container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_overview.png", settingsOverview)
 
     settingsOverview.splashart:AddMaskTexture(container.backgroundMask)

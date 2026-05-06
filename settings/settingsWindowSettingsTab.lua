@@ -8,6 +8,7 @@ local settingsMenuFrame
 local currentPanelIndex
 local searchPanel
 local searchEdit
+local DEFAULT_SETTINGS_PANEL_ID = "interface_features"
 
 local ROW_PAD_X = 8
 local ROW_PAD_Y = 8
@@ -423,6 +424,29 @@ local function SwitchPanel(panelIndex)
     settingsMenuFrame.ScrollBox:Rebuild(ScrollBoxConstants.RetainScrollPosition)
 end
 
+local function FindMenuItemByPanelId(panelId)
+    local foundItem
+    settingsMenuFrame.ScrollBox:GetDataProvider():ForEach(function(ed)
+        if (ed.isSubCat and ed.itemData.frame.panelId == panelId) or (not ed.isSubCat and ed.itemData.basePanel.panelId == panelId) then
+            foundItem = ed
+            return true
+        end
+    end)
+
+    return foundItem
+end
+
+local function SelectMenuItem(menuItem)
+    if not menuItem then return end
+
+    SwitchPanel(menuItem.index)
+    settingsMenuFrame.ScrollBox:ScrollToElementDataByPredicate(function(ed) return ed == menuItem end)
+    C_Timer.After(0, function()
+        local btn = settingsMenuFrame.ScrollBox:FindFrame(menuItem)
+        if btn and not menuItemSelectionBehavior:IsSelected(btn) then menuItemSelectionBehavior:Select(btn) end
+    end)
+end
+
 -- =========================
 -- API for adding panels
 -- =========================
@@ -456,21 +480,7 @@ function GwSettingsWindowSettingsTabMixin:AddSettingsPanel(basePanel, name, desc
 end
 
 function GwSettingsWindowSettingsTabMixin:OpenSettingsToPanel(panelId)
-    local foundItem
-    settingsMenuFrame.ScrollBox:GetDataProvider():ForEach(function(ed)
-        if (ed.isSubCat and ed.itemData.frame.panelId == panelId) or (not ed.isSubCat and ed.itemData.basePanel.panelId == panelId) then
-            foundItem = ed
-            return true
-        end
-    end)
-    if foundItem then
-        SwitchPanel(foundItem.index)
-        settingsMenuFrame.ScrollBox:ScrollToElementDataByPredicate(function(ed) return ed == foundItem end)
-        C_Timer.After(0, function()
-            local btn = settingsMenuFrame.ScrollBox:FindFrame(foundItem)
-            if btn and not menuItemSelectionBehavior:IsSelected(btn) then menuItemSelectionBehavior:Select(btn) end
-        end)
-    end
+    SelectMenuItem(FindMenuItemByPanelId(panelId))
     if not GwSettingsWindow:IsShown() then
         ShowUIPanel(GwSettingsWindow)
     end
@@ -800,11 +810,11 @@ local function LoadSettingsTab(container)
 
     settingsTab.name = "GwSettingsSettings"
     settingsTab.headerBreadcrumbText = SETTINGS
-    settingsTab.hasSearch = false
     settingsTab.callbackOnClose = CloseSearch
     container:AddTab("Interface/AddOns/GW2_UI/textures/uistuff/tabicon_settings.png", settingsTab)
 
     --load settings panels
+    GW.LoadInterfaceFeaturesPanel(settingsTab)
     GW.LoadGeneralPanel(settingsTab)
     GW.LoadHudPanel(settingsTab)
     GW.LoadActionbarPanel(settingsTab)
@@ -856,17 +866,12 @@ local function LoadSettingsTab(container)
     GW.HandleScrollControls(settingsTab.menu)
     settingsTab.menu.ScrollBar:SetHideIfUnscrollable(true)
 
-    --select first Panel
-    local firstMenuItem
-    settingsTab.menu.ScrollBox:GetDataProvider():ForEach(function(ed) if ed.index == 1 then firstMenuItem = ed; return true end end)
-    if firstMenuItem then
-        SwitchPanel(firstMenuItem.index)
-        settingsTab.menu.ScrollBox:ScrollToElementDataByPredicate(function(ed) return ed == firstMenuItem end)
-        C_Timer.After(0, function()
-            local btn = settingsTab.menu.ScrollBox:FindFrame(firstMenuItem)
-            if btn and not menuItemSelectionBehavior:IsSelected(btn) then menuItemSelectionBehavior:Select(btn) end
-        end)
+    --select default panel
+    local defaultMenuItem = FindMenuItemByPanelId(DEFAULT_SETTINGS_PANEL_ID)
+    if not defaultMenuItem then
+        settingsTab.menu.ScrollBox:GetDataProvider():ForEach(function(ed) if ed.index == 1 then defaultMenuItem = ed; return true end end)
     end
+    SelectMenuItem(defaultMenuItem)
 
     -- Setup search
     searchPanel = CreateFrame("Frame", nil, container, "GwSettingsPanelTmpl")

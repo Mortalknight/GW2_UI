@@ -9,7 +9,6 @@ function GwSettingsWindowMixin:AddTab(icon, panel)
     tabButton.icon:SetTexture(icon)
     tabButton.panelName = panel.name
     tabButton.headerBreadcrumbText = panel.headerBreadcrumbText
-    tabButton.hasSearch = panel.hasSearch
     tabButton:SetScript("OnClick", function()
         self:SwitchTab(panel.name)
     end)
@@ -36,7 +35,6 @@ function GwSettingsWindowMixin:SwitchTab(panelName)
         if button.panelName == panelName then
             button.icon:SetTexCoord(0, 0.5, 0, 0.625)
             self.headerBreadcrumb:SetText(button.headerBreadcrumbText)
-            self.hasSearch = button.hasSearch
         else
             button.icon:SetTexCoord(0.505, 1, 0, 0.625)
         end
