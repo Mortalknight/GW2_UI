@@ -81,7 +81,7 @@ local function Create_Tags()
         shortendHealthValue = stringtoboolean[shortendHealthValue]
 
         if GW.Retail then
-            formatFunc = shortendHealthValue and AbbreviateNumbers or BreakUpLargeNumbers
+            formatFunc = shortendHealthValue and GW.ShortValue or BreakUpLargeNumbers
         else
             formatFunc = shortendHealthValue and GW.ShortValue or GW.GetLocalizedNumber
         end

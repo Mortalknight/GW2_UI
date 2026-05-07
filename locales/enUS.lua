@@ -923,3 +923,4 @@ L["MN"] = true
 L["Midnight"] = true
 L["Stormarion Assault"] = true
 L["The War Within"] = true
+L["Character Pane"] = true

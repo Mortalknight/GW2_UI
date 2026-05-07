@@ -830,7 +830,7 @@ local function GameTooltipStatusBar_UpdateUnitHealth(bar)
     if not tt then return end
     local unit = GetUnitToken(tt)
     if unit then
-        local formatFunction = GW.settings.TooltipHealthBarValuesShortend and AbbreviateNumbers or BreakUpLargeNumbers
+        local formatFunction = GW.settings.TooltipHealthBarValuesShortend and GW.ShortValue or BreakUpLargeNumbers
         if GW.settings.TooltipHealthBarValues == "RAW" then
             bar.Text:SetFormattedText("%s", formatFunction(UnitHealth(unit)))
         elseif GW.settings.TooltipHealthBarValues == "PERCENTAGE" then
@@ -857,7 +857,7 @@ local function GameTooltipStatusBar_OnValueChanged(bar, value)
     if value == 0 or (unit and UnitIsDeadOrGhost(unit)) then
         bar.Text:SetText(DEAD)
     else
-        local formatFunction = GW.settings.TooltipHealthBarValuesShortend and AbbreviateNumbers or BreakUpLargeNumbers
+        local formatFunction = GW.settings.TooltipHealthBarValuesShortend and GW.ShortValue or BreakUpLargeNumbers
         local maximum, _
         if unit then -- try to get the real health values if possible
             value, maximum = UnitHealth(unit), UnitHealthMax(unit)
