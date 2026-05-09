@@ -476,7 +476,7 @@ local function LoadPowerBar()
     end
     playerPowerBar.bar = playerPowerBar
 
-    GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", ALL .. ",Unitframe,Power", nil, {"default", "scaleable"}, true)
+    GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", "Unitframe,Power", nil, {"default", "scaleable"}, true)
 
     playerPowerBar:ClearAllPoints()
     local point = GW.GetClassPowerAnchorPoint and GW.GetClassPowerAnchorPoint("TOPLEFT") or "TOPLEFT"

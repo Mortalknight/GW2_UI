@@ -77,6 +77,7 @@ local function ApplyMacroOptionsSkin()
     for i = 1, #buttons do
         buttons[i]:GwSkinButton(false, true)
     end
+    MacroDeleteButton:GwSkinNegativeButton()
     MacroNewButton:SetPoint("BOTTOMRIGHT", -86, 4)
 
     MacroFrameCloseButton:GwSkinButton(true)

@@ -56,6 +56,7 @@ local function LoadMacroOptionsSkin()
     for i = 1, #buttons do
         buttons[i]:GwSkinButton(false, true)
     end
+    _G.MacroDeleteButton:GwSkinNegativeButton()
 
     _G.MacroFrameCloseButton:GwSkinButton(true)
     _G.MacroFrameCloseButton:SetSize(25, 25)

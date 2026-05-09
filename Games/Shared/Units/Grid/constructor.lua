@@ -779,19 +779,19 @@ local function Initialize()
 
         -- movable frame for the container
         if profile == "PARTY" then
-            GW.RegisterMovableFrame(Header, GW.L["Group Frames"], "raid_party_pos",  ALL .. ",Unitframe,Group", nil, {"default", "default"})
+            GW.RegisterMovableFrame(Header, GW.L["Group Frames"], "raid_party_pos",  "Unitframe,Group", nil, {"default", "default"})
         elseif profile == "PARTY_PET" then
-            GW.RegisterMovableFrame(Header, GW.L["Party pet's Grid"], "party_pet_pos",  ALL .. ",Unitframe,Group", nil, {"default", "default"})
+            GW.RegisterMovableFrame(Header, GW.L["Party pet's Grid"], "party_pet_pos",  "Unitframe,Group", nil, {"default", "default"})
         elseif profile == "RAID_PET" then
-            GW.RegisterMovableFrame(Header, GW.L["Raid pet's Grid"], "raid_pet_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
+            GW.RegisterMovableFrame(Header, GW.L["Raid pet's Grid"], "raid_pet_pos",  "Unitframe,Raid", nil, {"default", "default"})
         elseif profile == "RAID40" then
-            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
+            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid_pos",  "Unitframe,Raid", nil, {"default", "default"})
         elseif profile == "RAID25" then
-            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid25_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
+            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid25_pos",  "Unitframe,Raid", nil, {"default", "default"})
         elseif profile == "RAID10" then
-            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid10_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
+            GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid10_pos",  "Unitframe,Raid", nil, {"default", "default"})
         elseif profile == "TANK" then
-            GW.RegisterMovableFrame(Header, MAINTANK, "raidMaintank_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
+            GW.RegisterMovableFrame(Header, MAINTANK, "raidMaintank_pos",  "Unitframe,Raid", nil, {"default", "default"})
         end
 
         Header:ClearAllPoints()

@@ -97,7 +97,9 @@ function GwImmersiveQuestingReqItemsFrameMixin:UpdateInfo()
             item_idx = item_idx + 1
         end
     end
-    for i = 1, GetNumQuestCurrencies() do
-        self.questReq.currency[i] = C_QuestOffer.GetQuestRequiredCurrencyInfo(i)
+    if C_QuestOffer and C_QuestOffer.GetQuestRequiredCurrencyInfo then
+        for i = 1, GetNumQuestCurrencies() do
+            self.questReq.currency[i] = C_QuestOffer.GetQuestRequiredCurrencyInfo(i)
+        end
     end
 end

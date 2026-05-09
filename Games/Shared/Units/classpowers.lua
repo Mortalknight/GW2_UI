@@ -2137,7 +2137,7 @@ local function LoadClassPowers()
     cpf.customResourceBar.label:SetShadowColor(0, 0, 0, 1)
     cpf.customResourceBar.label:SetShadowOffset(1, -1)
 
-    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", { 312, 32 },
+    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", "Unitframe,Power", { 312, 32 },
         { "default", "scaleable" }, true)
 
     -- position mover

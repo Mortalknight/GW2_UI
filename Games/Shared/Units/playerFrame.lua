@@ -133,7 +133,7 @@ local function LoadPlayerFrame()
 
     frame.powerbar.label:SetJustifyH("LEFT")
 
-    RegisterMovableFrame(frame, PLAYER, "player_pos",  ALL .. ",Unitframe", nil, {"default"})
+    RegisterMovableFrame(frame, PLAYER, "player_pos",  "Unitframe", nil, {"default"})
 
     frame:ClearAllPoints()
     frame:SetPoint("TOPLEFT", frame.gwMover)

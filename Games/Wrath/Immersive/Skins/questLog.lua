@@ -154,6 +154,7 @@ local function LoadQuestLogFrameSkin()
 		button:GwStripTextures()
 		button:GwSkinButton(false, true)
 	end
+	QuestLogFrameAbandonButton:GwSkinNegativeButton()
 
     local ScrollBars = {
 		QuestDetailScrollFrameScrollBar,

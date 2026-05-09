@@ -5,9 +5,99 @@ local L = GW.L
 local moveable_window_placeholders_visible = true
 local settings_window_open_before_change = false
 
-local allTags, allTagsSet = {}, {}
+local allTags, allTagsSet = {ALL}, {[ALL] = true}
 local selectedTag = ALL
 local grid
+
+local SMALL_SETTINGS_COMPACT_WIDTH = 190
+local SMALL_SETTINGS_EXPANDED_WIDTH = 370
+local SMALL_SETTINGS_COMPACT_HEADER_WIDTH = 82
+local SMALL_SETTINGS_EXPANDED_HEADER_WIDTH = 258
+local SMALL_SETTINGS_ACTIVE_ALPHA = 1
+local SMALL_SETTINGS_IDLE_ALPHA = 0.65
+
+local function SetLayoutManagerMoveHudMode(layoutManager, inMoveHudMode, refresh)
+    if not layoutManager then return end
+
+    layoutManager:SetAttribute("inMoveHudMode", inMoveHudMode)
+
+    if refresh then
+        layoutManager:GetScript("OnEvent")(layoutManager)
+    end
+end
+
+local function SetSmallSettingsHeader(text)
+    local frame = GW.MoveHudScaleableFrame
+    frame.headerBaseText = text
+    frame.headerString:SetText(text .. (frame.layoutViewShown and (" & " .. L["Layouts"]) or ""))
+end
+
+local function SetSmallSettingsLayoutToggleDirection(frame)
+    local button = frame and frame.layoutToggle
+
+    local rotation = frame.layoutViewShown and 1.57 or -1.57
+    button.arrow:SetRotation(rotation)
+    button.label:SetText(L["Layouts"])
+    button.label:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    button.arrow:SetVertexColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    button.bg:SetVertexColor(1, 1, 1, 0.6)
+    button.hover:SetVertexColor(1, 1, 1, 0)
+end
+
+local function SetSmallSettingsLayoutViewShown(frame, show)
+    frame.layoutViewShown = show
+    frame:SetWidth(show and SMALL_SETTINGS_EXPANDED_WIDTH or SMALL_SETTINGS_COMPACT_WIDTH)
+    frame.moverFrame:SetWidth(show and SMALL_SETTINGS_EXPANDED_WIDTH or SMALL_SETTINGS_COMPACT_WIDTH)
+    frame.layoutView:SetShown(show)
+    frame.seperator:SetShown(show)
+    frame.headerString:SetWidth(show and SMALL_SETTINGS_EXPANDED_HEADER_WIDTH or SMALL_SETTINGS_COMPACT_HEADER_WIDTH)
+    SetSmallSettingsLayoutToggleDirection(frame)
+
+    SetSmallSettingsHeader(frame.headerBaseText or L["Extra Frame Options"])
+end
+
+local function SetSmallSettingsAlpha(frame, alpha, instant)
+    if frame.targetAlpha == alpha and not instant then return end
+
+    frame.targetAlpha = alpha
+    UIFrameFadeRemoveFrame(frame)
+
+    if instant then
+        frame:SetAlpha(alpha)
+    elseif alpha > frame:GetAlpha() then
+        UIFrameFadeIn(frame, 0.12, frame:GetAlpha(), alpha)
+    else
+        UIFrameFadeOut(frame, 0.18, frame:GetAlpha(), alpha)
+    end
+end
+
+local function SetSmallSettingsActive(self)
+    SetSmallSettingsAlpha(self, SMALL_SETTINGS_ACTIVE_ALPHA)
+end
+
+local function SetSmallSettingsIdleIfMouseLeft(self)
+    C_Timer.After(0.05, function()
+        if self:IsShown() and not self:IsMouseOver() and not self.moverFrame:IsMouseOver() then
+            SetSmallSettingsAlpha(self, SMALL_SETTINGS_IDLE_ALPHA)
+        end
+    end)
+end
+
+local function HookSmallSettingsMouseFade(frame, container)
+    if frame.mouseFadeHooked then return end
+
+    frame.mouseFadeHooked = true
+    frame:HookScript("OnEnter", function()
+        SetSmallSettingsActive(container)
+    end)
+    frame:HookScript("OnLeave", function()
+        SetSmallSettingsIdleIfMouseLeft(container)
+    end)
+
+    for _, child in ipairs({frame:GetChildren()}) do
+        HookSmallSettingsMouseFade(child, container)
+    end
+end
 
 local function AddTagsCSV(tags)
     tags = tags or ""
@@ -29,7 +119,7 @@ local function filterHudMovers(filter)
     selectedTag = filter
     for _, mf in ipairs(GW.MOVABLE_FRAMES) do
         local show = mf.enable
-        if show and filter and mf.tagsSet then
+        if show and filter and filter ~= ALL and mf.tagsSet then
             show = mf.tagsSet[filter] == true
         end
         mf:SetShown(show)
@@ -37,8 +127,13 @@ local function filterHudMovers(filter)
 end
 
 local function lockHudObjects(_, _, inCombatLockdown)
-    GW.MoveHudScaleableFrame:UnregisterEvent("PLAYER_REGEN_DISABLED")
-    GW.MoveHudScaleableFrame:Hide()
+    local moveHudFrame = GW.MoveHudScaleableFrame
+    if not moveHudFrame then return end
+
+    GW.InMoveHudMode = false
+    moveHudFrame:UnregisterEvent("PLAYER_REGEN_DISABLED")
+    moveHudFrame:Hide()
+
     if settings_window_open_before_change and not inCombatLockdown then
         settings_window_open_before_change = false
         GwSettingsWindow:Show()
@@ -56,10 +151,7 @@ local function lockHudObjects(_, _, inCombatLockdown)
     GW.GridToggle(_, _, true)
 
     -- enable main bar layout manager and trigger the changes
-    GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
-    GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
-
-    GW.InMoveHudMode = false
+    SetLayoutManagerMoveHudMode(moveHudFrame.layoutManager, false, true)
 end
 GW.lockHudObjects = lockHudObjects
 
@@ -89,14 +181,15 @@ local function moveHudObjects(self)
     for _, mf in ipairs(GW.MOVABLE_FRAMES) do
         mf:EnableMouse(true)
         mf:SetMovable(true)
-        mf:SetShown(mf.enable)
     end
+    filterHudMovers(selectedTag)
     GW.MoveHudScaleableFrame.moverSettingsFrame.options:Hide()
     GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Show()
+    SetSmallSettingsLayoutViewShown(GW.MoveHudScaleableFrame, false)
     GW.MoveHudScaleableFrame:Show()
 
     -- disable main bar layout manager
-    GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", true)
+    SetLayoutManagerMoveHudMode(GW.MoveHudScaleableFrame.layoutManager, true)
 
     -- register event to close move hud in combat
     self:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -251,7 +344,7 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
         GW.updateSettingsFrameSettingsValue(mf.setting .. ".MaxWraps", nil, nil, true)
         GW.updateSettingsFrameSettingsValue(mf.setting .. ".WrapAfter", nil, nil, true)
         GW.updateSettingsFrameSettingsValue(mf.setting .. ".NewAuraAnimation", nil, nil, true)
-        GW.UpdateAuraHeader(mf.parent, mf.setting)
+        GW.UpdateAuraHeader(mf.parent)
     elseif mf.setting == "MicromenuPos" then
         -- Hide/Show BG here
         mf.parent.cf.bg:Show()
@@ -294,19 +387,10 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
     GW.UpdateMatchingLayout(mf, new_point)
 
     -- run layout manager
-    GwSmallSettingsContainer.layoutManager:SetAttribute("inMoveHudMode", false)
-    GwSmallSettingsContainer.layoutManager:GetScript("OnEvent")(GwSmallSettingsContainer.layoutManager)
-    GwSmallSettingsContainer.layoutManager:SetAttribute("inMoveHudMode", true)
+    SetLayoutManagerMoveHudMode(GwSmallSettingsContainer.layoutManager, false, true)
+    SetLayoutManagerMoveHudMode(GwSmallSettingsContainer.layoutManager, true)
 end
 GW.ResetMoverFrameToDefaultValues = smallSettings_resetToDefault
-
-
-local function lockFrame_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-    GameTooltip:ClearLines()
-    GameTooltip:SetText(SYSTEM_DEFAULT, 1, 1, 1)
-    GameTooltip:Show()
-end
 
 
 local function mover_OnDragStart(self)
@@ -332,14 +416,16 @@ local function mover_OnDragStop(self)
     local settingsName = self.setting
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
+    xOfs = xOfs and GW.RoundInt(xOfs) or 0
+    yOfs = yOfs and GW.RoundInt(yOfs) or 0
 
     -- for layouts: if newPoint is old point, do not update the setting
     if self.savedPoint.point ~= point or self.savedPoint.relativePoint ~= relativePoint or self.savedPoint.xOfs ~= xOfs or self.savedPoint.yOfs ~= yOfs then
         local new_point = GW.settings[settingsName]
         new_point.point = point
         new_point.relativePoint = relativePoint
-        new_point.xOfs = xOfs and GW.RoundInt(xOfs) or 0
-        new_point.yOfs = yOfs and GW.RoundInt(yOfs) or 0
+        new_point.xOfs = xOfs
+        new_point.yOfs = yOfs
 
         -- check if frame moved or back at default position
         CheckForDefaultPosition(self, point, relativePoint, xOfs, yOfs, new_point)
@@ -365,7 +451,7 @@ end
 local function showExtraOptions(self)
     GW.MoveHudScaleableFrame.moverSettingsFrame.child = self
     GW.MoveHudScaleableFrame.moverSettingsFrame.childMover = self
-    GW.MoveHudScaleableFrame.headerString:SetText(self.textString .. " & Layouts")
+    SetSmallSettingsHeader(self.textString)
     GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Hide()
     GW.MoveHudScaleableFrame.moverSettingsFrame.options:Show()
     -- options
@@ -393,7 +479,7 @@ end
 local function hideExtraOptions()
     GW.MoveHudScaleableFrame.moverSettingsFrame.child = nil
     GW.MoveHudScaleableFrame.moverSettingsFrame.childMover = nil
-    GW.MoveHudScaleableFrame.headerString:SetText(L["Extra Frame Options"] .. " & Layouts")
+    SetSmallSettingsHeader(L["Extra Frame Options"])
     GW.MoveHudScaleableFrame.moverSettingsFrame.options:Hide()
     GW.MoveHudScaleableFrame.moverSettingsFrame.desc:SetText(L["Left click on a moverframe to show extra frame options"])
     GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Show()
@@ -679,6 +765,7 @@ local function LoadMovers(layoutManager)
     smallSettingsContainer.moverSettingsFrame = CreateFrame("Frame", "GwSmallSettingsWindow", smallSettingsContainer, "GwSmallSettings")
     GW.MoveHudScaleableFrame = smallSettingsContainer
     smallSettingsContainer.layoutManager = layoutManager
+    smallSettingsContainer.moverFrame = mf
     smallSettingsContainer:Hide()
 
     tinsert(UISpecialFrames, "GwSmallSettingsContainer")
@@ -690,7 +777,30 @@ local function LoadMovers(layoutManager)
 
     smallSettingsContainer.headerString:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
     smallSettingsContainer.headerString:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    smallSettingsContainer.headerString:SetText(L["Extra Frame Options"] .. " & Layouts")
+    SetSmallSettingsHeader(L["Extra Frame Options"])
+
+    if smallSettingsContainer.layoutToggle then
+        smallSettingsContainer.layoutToggle:SetScript("OnEnter", function(self)
+            self.label:SetTextColor(1, 1, 1)
+            self.arrow:SetVertexColor(1, 1, 1)
+            self.bg:SetVertexColor(1, 1, 1, 0.4)
+            self.hover:SetVertexColor(1, 1, 1, 0.48)
+
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:ClearLines()
+            GameTooltip:SetText(L["Configure layouts"], 1, 1, 1)
+            GameTooltip:AddLine(L["Save, rename, delete, and assign HUD layouts to specializations."], 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        smallSettingsContainer.layoutToggle:SetScript("OnLeave", function(self)
+            GameTooltip_Hide(self)
+            SetSmallSettingsLayoutToggleDirection(self:GetParent())
+        end)
+        smallSettingsContainer.layoutToggle:SetScript("OnClick", function(self)
+            local container = self:GetParent()
+            SetSmallSettingsLayoutViewShown(container, not container.layoutViewShown)
+        end)
+    end
 
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.1, 2)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetValue(1)
@@ -727,18 +837,25 @@ local function LoadMovers(layoutManager)
 
     smallSettingsContainer:SetScript("OnShow", function()
         mf:Show()
+        SetSmallSettingsAlpha(smallSettingsContainer, SMALL_SETTINGS_IDLE_ALPHA, true)
     end)
     smallSettingsContainer:SetScript("OnHide", function()
-        lockHudObjects()
+        SetSmallSettingsAlpha(smallSettingsContainer, SMALL_SETTINGS_ACTIVE_ALPHA, true)
+        if GW.InMoveHudMode then
+            lockHudObjects()
+        end
         mf:Hide()
     end)
     smallSettingsContainer:SetScript("OnEvent", HandleMoveHudEvents)
 
     smallSettingsContainer.moverSettingsFrame.options.default:SetScript("OnClick", smallSettings_resetToDefault)
+    smallSettingsContainer.moverSettingsFrame.options.default:GwSkinNegativeButton()
 
     -- lock, placeholder and grid button
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.lockHud:SetScript("OnClick", lockHudObjects)
-    smallSettingsContainer.moverSettingsFrame.defaultButtons.lockHud:SetText(L["Lock HUD"])
+    local lockHudButton = smallSettingsContainer.moverSettingsFrame.defaultButtons.lockHud
+    lockHudButton:SetScript("OnClick", lockHudObjects)
+    lockHudButton:SetText(L["Lock HUD"])
+    lockHudButton:GwSkinNegativeButton()
 
     smallSettingsContainer.moverSettingsFrame.defaultButtons.hidePlaceholder:SetScript("OnClick", toggleHudPlaceholders)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.hidePlaceholder:SetText(L["Hide placeholders"])
@@ -814,6 +931,9 @@ local function LoadMovers(layoutManager)
 
     --Layout
     GW.LoadLayoutsFrame(smallSettingsContainer, layoutManager)
+    SetSmallSettingsLayoutViewShown(smallSettingsContainer, false)
+    HookSmallSettingsMouseFade(smallSettingsContainer, smallSettingsContainer)
+    HookSmallSettingsMouseFade(mf, smallSettingsContainer)
 
     smallSettingsContainer:Hide()
     mf:Hide()

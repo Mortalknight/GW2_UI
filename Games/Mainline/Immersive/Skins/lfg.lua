@@ -656,6 +656,7 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.ApplicationViewer.RefreshButton.Icon:SetDesaturated(true)
 
     LFGListFrame.ApplicationViewer.RemoveEntryButton:GwSkinButton(false, true)
+    LFGListFrame.ApplicationViewer.RemoveEntryButton:GwSkinNegativeButton()
     LFGListFrame.ApplicationViewer.EditButton:GwSkinButton(false, true)
     LFGListFrame.ApplicationViewer.BrowseGroupsButton:GwSkinButton(false, true)
     LFGListFrame.ApplicationViewer.EditButton:ClearAllPoints()

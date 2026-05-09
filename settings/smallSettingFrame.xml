@@ -2,14 +2,14 @@
 ..\FrameXML\UI.xsd">
 
     <Frame name="GwSmallSettingsMoverFrame" frameStrata="FULLSCREEN_DIALOG" enableMouse="true" movable="true" parent="UIParent" virtual="true">
-        <Size x="370" y="32"></Size>
+        <Size x="190" y="32"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="130"></Anchor>
         </Anchors>
     </Frame>
 
     <Frame name="GwSmallSettingsContainer" frameStrata="FULLSCREEN_DIALOG" enableMouse="true" parent="UIParent" virtual="true">
-        <Size x="370" y="285"/>
+        <Size x="190" y="285"/>
         <Anchors>
             <Anchor point="TOP" relativeTo="GwSmallSettingsMoverFrame" relativePoint="TOP" x="0" y="-20"></Anchor>
         </Anchors>
@@ -52,7 +52,7 @@
                     </Anchors>
                 </Texture>
                 <FontString parentKey="headerString" text="Special frame options and Layouts" inherits="GameFontNormalSmall" justifyH="LEFT">
-                    <Size x="350" y="12"/>
+                    <Size x="95" y="12"/>
                     <Color r="1" b="0.73" g="0.93"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="10" y="17"/>
@@ -68,6 +68,46 @@
                 </Texture>
             </Layer>
         </Layers>
+        <Frames>
+            <Button parentKey="layoutToggle">
+                <Size x="84" y="20"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-7" y="21"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="1"/>
+                                <Anchor point="BOTTOMRIGHT" x="0" y="-1"/>
+                            </Anchors>
+                            <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
+                        </Texture>
+                        <Texture parentKey="hover" alpha="0" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="1"/>
+                                <Anchor point="BOTTOMRIGHT" x="0" y="-1"/>
+                            </Anchors>
+                            <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLevel="2">
+                        <FontString parentKey="label" text="Layouts" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                            <Size x="60" y="12"/>
+                            <Anchors>
+                                <Anchor point="RIGHT" x="-19" y="0"/>
+                            </Anchors>
+                        </FontString>
+                        <Texture parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png">
+                            <Size x="14" y="14"/>
+                            <Anchors>
+                                <Anchor point="RIGHT" x="-3" y="0"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
     </Frame>
 
     <Frame name="GwSmallSettings" virtual="true" hidden="false">
@@ -274,22 +314,10 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Button parentKey="lockHud" inherits="GwStandardButton" text="LOCK HUD">
-                        <Size x="170" y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.seperator" relativePoint="BOTTOMLEFT" x="0" y="-3" />
-                        </Anchors>
-                    </Button>
-                    <Button parentKey="hidePlaceholder" inherits="GwStandardButton" text="HIDE PLACEHOLDERS">
-                        <Size x="170" y="20" />
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.lockHud" relativePoint="BOTTOMLEFT" x="0" y="-3" />
-                        </Anchors>
-                    </Button>
                     <DropdownButton parentKey="tagDropdown" inherits="WowStyle1DropdownTemplate">
                         <Size x="125" y="25"/>
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.hidePlaceholder" relativePoint="BOTTOMLEFT" x="50" y="-3"/>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.seperator" relativePoint="BOTTOMLEFT" x="50" y="-3"/>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY" textureSubLevel="2">
@@ -302,16 +330,28 @@
                             </Layer>
                         </Layers>
                     </DropdownButton>
-                    <Button parentKey="showGrid" inherits="GwStandardButton" text="SHOW GRID">
+                    <Button parentKey="hidePlaceholder" inherits="GwStandardButton" text="HIDE PLACEHOLDERS">
                         <Size x="170" y="20" />
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.tagDropdown" relativePoint="BOTTOMLEFT" x="-50" y="-3" />
                         </Anchors>
                     </Button>
+                    <Button parentKey="showGrid" inherits="GwStandardButton" text="SHOW GRID">
+                        <Size x="170" y="20" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.hidePlaceholder" relativePoint="BOTTOMLEFT" x="0" y="-3" />
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="lockHud" inherits="GwStandardButton" text="LOCK HUD">
+                        <Size x="170" y="20" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.showGrid" relativePoint="BOTTOMLEFT" x="0" y="-3" />
+                        </Anchors>
+                    </Button>
                     <Frame parentKey="gridSlider" hidden="true">
                         <Size x="170" y="20" />
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.showGrid" relativePoint="BOTTOMLEFT" x="0" y="-5" />
+                            <Anchor point="TOPLEFT" relativeKey="$parent.lockHud" relativePoint="BOTTOMLEFT" x="0" y="-5" />
                         </Anchors>
                         <Frames>
                             <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">

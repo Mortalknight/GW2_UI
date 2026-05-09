@@ -144,6 +144,7 @@ local function SkinOpenMailFrame()
     end)
 
     OpenMailDeleteButton:GwSkinButton(false, true)
+    OpenMailDeleteButton:GwSkinNegativeButton()
     OpenMailDeleteButton:SetPoint("RIGHT", OpenMailCancelButton, "LEFT", -5, 0)
 
     OpenMailCancelButton:GwSkinButton(false, true)

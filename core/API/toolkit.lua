@@ -491,6 +491,63 @@ local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover,
     button.isSkinned = true
 end
 
+local function SetButtonFontStringColor(button, r, g, b, a)
+    if button.GetFontString then
+        local fontString = button:GetFontString()
+        if fontString then
+            fontString:SetTextColor(r, g, b, a or 1)
+        end
+    end
+
+    if button.Text and button.Text.SetTextColor then
+        button.Text:SetTextColor(r, g, b, a or 1)
+    end
+
+    if button.ButtonText and button.ButtonText.SetTextColor then
+        button.ButtonText:SetTextColor(r, g, b, a or 1)
+    end
+
+    if button.GetRegions then
+        for _, region in pairs({button:GetRegions()}) do
+            if region.GetObjectType and region:GetObjectType() == "FontString" then
+                region:SetTextColor(r, g, b, a or 1)
+            end
+        end
+    end
+end
+
+local function GwSkinNegativeButton(button)
+    if not button then return end
+
+    if button.CreateTexture and button.HookScript then
+        GwAddHover(button)
+    end
+
+    SetButtonFontStringColor(button, 0.55, 0.05, 0.05)
+
+    if button.GetNormalTexture then
+        local normalTexture = button:GetNormalTexture()
+        if normalTexture and normalTexture.SetVertexColor then
+            normalTexture:SetVertexColor(1, 0.84, 0.84)
+        end
+    end
+
+    if button.hover then
+        button.hover.r, button.hover.g, button.hover.b = 1, 0.2, 0.2
+    end
+
+    if not button.HookScript or button.isGwNegativeButton then return end
+    button.isGwNegativeButton = true
+
+    button:HookScript("OnEnter", function(self)
+        if self.IsEnabled and not self:IsEnabled() then return end
+        SetButtonFontStringColor(self, 1, 0.96, 0.96)
+    end)
+    button:HookScript("OnLeave", function(self)
+        SetButtonFontStringColor(self, 0.55, 0.05, 0.05)
+    end)
+end
+
 local function GwSkinTab(tabButton, direction)
     tabButton:GwCreateBackdrop()
     direction = direction and direction == "down" and "_down" or ""
@@ -946,6 +1003,7 @@ local function addapi(object)
     if not object.GwSkinSliderFrame then mt.GwSkinSliderFrame = GwSkinSliderFrame end
     if not object.GwCreateBackdrop then mt.GwCreateBackdrop = GwCreateBackdrop end
     if not object.GwSkinButton then mt.GwSkinButton = GwSkinButton end
+    if not object.GwSkinNegativeButton then mt.GwSkinNegativeButton = GwSkinNegativeButton end
     if not object.GwSkinTab then mt.GwSkinTab = GwSkinTab end
     if not object.GwSkinScrollFrame then mt.GwSkinScrollFrame = GwSkinScrollFrame end
     if not object.GwSkinScrollBar then mt.GwSkinScrollBar = GwSkinScrollBar end

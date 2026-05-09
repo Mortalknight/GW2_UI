@@ -527,7 +527,7 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     GwCastingBar:Init(unit, showTradeSkills)
 
     if name == "GwCastingBarPlayer" then
-        RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", ALL .. ",Blizzard", nil, {"default", "scaleable"})
+        RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "Blizzard", nil, {"default", "scaleable"})
         GwCastingBar:ClearAllPoints()
         GwCastingBar:SetPoint("CENTER", GwCastingBar.gwMover)
     else

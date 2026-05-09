@@ -601,7 +601,7 @@ local function CreatePartyFrame(i, isPlayer)
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, GW.Retail and "GwPartyFrameRetailTemplate" or "GwPartyFrameTemplate")
 
     if i == 1 then
-        RegisterMovableFrame(frame, PARTY, "party_pos", ALL .. ",Unitframe,Group", nil, {"default"})
+        RegisterMovableFrame(frame, PARTY, "party_pos", "Unitframe,Group", nil, {"default"})
     end
 
     local hg = frame.healthContainer

@@ -56,7 +56,10 @@ local function HandleTalentFrameDialog(dialog)
 
     if dialog.AcceptButton then dialog.AcceptButton:GwSkinButton(false, true) end
     if dialog.CancelButton then dialog.CancelButton:GwSkinButton(false, true) end
-    if dialog.DeleteButton then dialog.DeleteButton:GwSkinButton(false, true) end
+    if dialog.DeleteButton then
+        dialog.DeleteButton:GwSkinButton(false, true)
+        dialog.DeleteButton:GwSkinNegativeButton()
+    end
 
     GW.SkinTextBox(dialog.NameControl.EditBox.Middle, dialog.NameControl.EditBox.Left, dialog.NameControl.EditBox.Right, nil, nil, 5, 5)
     dialog.NameControl.EditBox:ClearAllPoints()

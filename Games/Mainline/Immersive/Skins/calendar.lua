@@ -235,6 +235,7 @@ local function ApplyCalendarFrameSkin()
     CalendarViewEventAcceptButton:GwSkinButton(false, true)
     CalendarViewEventTentativeButton:GwSkinButton(false, true)
     CalendarViewEventRemoveButton:GwSkinButton(false, true)
+    CalendarViewEventRemoveButton:GwSkinNegativeButton()
     CalendarViewEventDeclineButton:GwSkinButton(false, true)
 
     -- Event Picker Frame

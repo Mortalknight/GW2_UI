@@ -279,7 +279,7 @@ local function LoadRaidbuffReminder()
 
     rbr:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
     rbr:SetSize(210, 32)
-    GW.RegisterMovableFrame(rbr, L["Missing Raid Buffs Bar"], "MISSING_RAID_BUFF_pos", ALL .. ",Raid,Aura", nil, {"default", "scaleable"})
+    GW.RegisterMovableFrame(rbr, L["Missing Raid Buffs Bar"], "MISSING_RAID_BUFF_pos", "Raid,Aura", nil, {"default", "scaleable"})
     rbr:ClearAllPoints()
     rbr:SetPoint("TOPLEFT", rbr.gwMover)
 

@@ -141,6 +141,7 @@ local function CreateOption(optionType, panel, name, desc, values)
         isPrivateSetting = values.isPrivateSetting, -- forbidden for addons
         optionUpdateFunc = values.optionUpdateFunc,
         isMasterToggle = values.isMasterToggle,
+        isNegativeButton = values.isNegativeButton,
 
         getter = values.getter, --for addons
         setter = values.setter, --for addons
@@ -1278,7 +1279,11 @@ local function SettingsInitOptionWidget(of, v, panel)
             --Check all dependencies on this option
             CheckDependencies()
         end)
-        of.title:SetTextColor(0, 0, 0)
+        if v.isNegativeButton then
+            of:GwSkinNegativeButton()
+        else
+            of.title:SetTextColor(0, 0, 0)
+        end
         of.title:SetShadowColor(0, 0, 0, 0)
     elseif v.optionType == "header" then
         of.title:SetFont(DAMAGE_TEXT_FONT, 16)

@@ -242,7 +242,7 @@ local function CreateStanceBar()
         GW.settings.StanceBarContainerState =  self.container:IsShown() and "open" or "close"
     end)
 
-    GW.RegisterMovableFrame(StanceButtonHolder, GW.L["Stance Bar"], "StanceBar_pos", ALL .. ",Power,Blizzard", nil, {"default", "scaleable"})
+    GW.RegisterMovableFrame(StanceButtonHolder, GW.L["Stance Bar"], "StanceBar_pos", "Power,Blizzard", nil, {"default", "scaleable"})
     StanceButtonHolder:ClearAllPoints()
     StanceButtonHolder:SetPoint("TOPLEFT", StanceButtonHolder.gwMover)
 end

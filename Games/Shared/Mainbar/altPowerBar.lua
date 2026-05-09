@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function MakeAltPowerBarMovable()
-    GW.RegisterMovableFrame(PlayerPowerBarAlt, ALTERNATE_RESOURCE_TEXT, "AltPowerBar_pos", ALL .. ",Blizzard,Widgets", {256, 64}, {"default", "scaleable"})
+    GW.RegisterMovableFrame(PlayerPowerBarAlt, ALTERNATE_RESOURCE_TEXT, "AltPowerBar_pos", "Blizzard,Widgets", {256, 64}, {"default", "scaleable"})
 
     PlayerPowerBarAlt:ClearAllPoints()
     PlayerPowerBarAlt:SetPoint("TOPLEFT", PlayerPowerBarAlt.gwMover)

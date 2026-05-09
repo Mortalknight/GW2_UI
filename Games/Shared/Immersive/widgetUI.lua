@@ -139,7 +139,7 @@ local function CheckElvUI()
 end
 
 local function BuildWidgetMover(container, moverName, setting, size)
-    GW.RegisterMovableFrame(container, moverName, setting, ALL .. ",Blizzard,Widgets", size, {"default", "scaleable"})
+    GW.RegisterMovableFrame(container, moverName, setting, "Blizzard,Widgets", size, {"default", "scaleable"})
 
     UpdatePosition(container, container.gwMover)
     hooksecurefunc(container, "SetPoint", UpdatePosition)

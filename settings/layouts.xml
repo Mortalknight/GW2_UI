@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwLayoutView" virtual="true" hidden="false">
+    <Frame name="GwLayoutView" virtual="true" hidden="true">
         <Size x="180" y="285"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativeTo="GwSmallSettingsContainer" relativePoint="TOPLEFT" x="180" y="0"></Anchor>

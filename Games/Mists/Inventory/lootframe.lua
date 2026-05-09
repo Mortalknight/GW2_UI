@@ -50,7 +50,7 @@ local function LoadLootFrameSkin()
         local pos = GW.settings.LOOTFRAME_POS
         LootFrame:ClearAllPoints()
         LootFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-        RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "LOOTFRAME_POS", ALL .. ",Blizzard", nil, {"default", "scaleable"})
+        RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "LOOTFRAME_POS", "Blizzard", nil, {"default", "scaleable"})
         hooksecurefunc("LootFrame_Show", function(self)
             LootFrame:ClearAllPoints()
             LootFrame:SetPoint("TOPLEFT", self.gwMover)

@@ -343,8 +343,8 @@ local function Migration()
         end
 
         if GW.MoveHudScaleableFrame then
+            GW.MoveHudScaleableFrame.layoutManager:SetAttribute("inMoveHudMode", false)
             GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
-            GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
         end
 
         GW.InMoveHudMode = false

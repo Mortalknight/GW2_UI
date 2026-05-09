@@ -550,7 +550,7 @@ function GW.LoadMinimap()
     hooksecurefunc(Minimap, "SetZoom", GW.SetupZoomReset)
 
     -- mobeable stuff
-    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", ALL .. ",Blizzard,Map", {Minimap:GetSize()}, {"default"}, nil, MinimapPostDrag)
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "Blizzard,Map", {Minimap:GetSize()}, {"default"}, nil, MinimapPostDrag)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
 

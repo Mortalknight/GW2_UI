@@ -403,6 +403,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     -- new, delete layout
     smallSettingsFrame.layoutView.new:SetScript("OnClick", CreateNewLayout)
     smallSettingsFrame.layoutView.delete:SetScript("OnClick", DeleteSelectedLayout)
+    smallSettingsFrame.layoutView.delete:GwSkinNegativeButton()
     smallSettingsFrame.layoutView.rename:SetScript("OnClick", RenameSelectedLayout)
 
     -- specswitch detaction things

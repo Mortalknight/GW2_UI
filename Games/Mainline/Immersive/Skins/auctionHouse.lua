@@ -473,6 +473,7 @@ local function ApplyAuctionHouseSkin()
 	local SummaryList = AuctionHouseFrameAuctionsFrame.SummaryList
 	HandleSellList(SummaryList)
 	AuctionHouseFrameAuctionsFrame.CancelAuctionButton:GwSkinButton(false, true)
+	AuctionHouseFrameAuctionsFrame.CancelAuctionButton:GwSkinNegativeButton()
 
 	SummaryList.ScrollBar:ClearAllPoints()
 	SummaryList.ScrollBar:SetPoint("TOPRIGHT", SummaryList, -5, -20)

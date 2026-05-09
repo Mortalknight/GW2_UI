@@ -2,7 +2,7 @@
 local GW = select(2, ...)
 
 local function ApplyQuestTimersSkin()
-    GW.RegisterMovableFrame(QuestTimerFrame, QUEST_TIMERS, "QUEST_TIMERS_FRAME_POSITION", ALL .. ",BLIZZARD", nil, {"default", "scaleable"})
+    GW.RegisterMovableFrame(QuestTimerFrame, QUEST_TIMERS, "QUEST_TIMERS_FRAME_POSITION", "BLIZZARD", nil, {"default", "scaleable"})
     QuestTimerFrame:ClearAllPoints()
     QuestTimerFrame:SetPoint("TOPLEFT", QuestTimerFrame.gwMover)
 

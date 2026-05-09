@@ -344,7 +344,7 @@ local function LoadPetFrame(lm)
         playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
     end
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, { "default" }, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "Unitframe", nil, { "default" }, true)
     lm:RegisterPetFrame(playerPetFrame)
 
     playerPetFrame:ClearAllPoints()

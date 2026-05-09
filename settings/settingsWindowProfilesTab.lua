@@ -315,6 +315,7 @@ local function item_OnLoad(self)
     self.changeIcon:GetFontString():SetText(L["Edit Icon"])
 
     self.delete:SetScript("OnClick", delete_OnClick)
+    self.delete:GwSkinNegativeButton()
     self.export:SetScript("OnClick", export_OnClick)
     self.rename:SetScript("OnClick", rename_OnClick)
     self.changeIcon:SetScript("OnClick", changeIcon_OnClick)
@@ -599,6 +600,7 @@ local function LoadSettingsProfileTab(container)
     settingsProfile.resetToDefaultFrame.desc:SetText(L["Load the default addon settings to the current profile."])
     settingsProfile.resetToDefaultFrame.defaultSettings:Show()
     settingsProfile.resetToDefaultFrame.defaultSettings:SetText(L["Load"])
+    settingsProfile.resetToDefaultFrame.defaultSettings:GwSkinNegativeButton()
     settingsProfile.resetToDefaultFrame.defaultSettings:SetScript("OnClick", function()
         GW.ShowPopup({
             text = L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],

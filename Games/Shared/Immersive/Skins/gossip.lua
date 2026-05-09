@@ -948,6 +948,7 @@ local function LoadGossipSkin()
         QuestLogPopupDetailFrame.tex = tex
 
         QuestLogPopupDetailFrameAbandonButton:GwSkinButton(false, true)
+        QuestLogPopupDetailFrameAbandonButton:GwSkinNegativeButton()
         QuestLogPopupDetailFrameShareButton:GwSkinButton(false, true)
         QuestLogPopupDetailFrameTrackButton:GwSkinButton(false, true)
         QuestLogPopupDetailFrameCloseButton:GwSkinButton(true)

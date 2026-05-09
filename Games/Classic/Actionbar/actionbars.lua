@@ -3,7 +3,6 @@ local GW = select(2, ...)
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local Wait = GW.Wait
 local Self_Hide = GW.Self_Hide
-local CountTable = GW.CountTable
 local AddUpdateCB = GW.AddUpdateCB
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
@@ -717,14 +716,14 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     fmMultibar:SetSize(used_width, used_height)
 
     if barName == "MultiBarLeft" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, FlyoutDirection)
     elseif barName == "MultiBarRight" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, FlyoutDirection)
     elseif barName == "MultiBarBottomLeft" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, true, FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, true, FlyoutDirection)
         lm:RegisterMultiBarLeft(fmMultibar)
     elseif barName == "MultiBarBottomRight" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, true, FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, true, FlyoutDirection)
         lm:RegisterMultiBarRight(fmMultibar)
     end
 

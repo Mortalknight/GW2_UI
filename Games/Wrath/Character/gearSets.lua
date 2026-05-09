@@ -152,6 +152,7 @@ local function LoadGearSets(parent, fmMenu)
         end
     end)
 
+    gearSetsFrame.delete:GwSkinNegativeButton()
     gearSetsFrame.delete:SetScript("OnClick", function()
         local selectedSet = gearSetsFrame.selectedSet;
         if selectedSet then

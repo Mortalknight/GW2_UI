@@ -1634,7 +1634,7 @@ local function LoadAlertSystem()
             end
         end
 
-        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"], "AlertPos", ALL .. ",Blizzard,Widgets", {300, 5}, {"default"}, nil, postDragFunction)
+        GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"], "AlertPos", "Blizzard,Widgets", {300, 5}, {"default"}, nil, postDragFunction)
 
         GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
         if not GW.Retail and not GW.Wrath then

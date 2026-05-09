@@ -1060,7 +1060,7 @@ local function LoadUnitFrame(unit, frameInvert)
 
     LoadAuras(unitframe)
 
-    RegisterMovableFrame(unitframe, unit == "target" and TARGET or FOCUS, unit .. "_pos", ALL .. ",Unitframe", nil, {"default"})
+    RegisterMovableFrame(unitframe, unit == "target" and TARGET or FOCUS, unit .. "_pos", "Unitframe", nil, {"default"})
 
     unitframe:ClearAllPoints()
     unitframe:SetPoint("CENTER", unitframe.gwMover, "CENTER")
@@ -1271,7 +1271,7 @@ local function LoadTargetOfUnit(unit, parentUnitFrame)
 
     f.castingbarNormal.Pips = {}
 
-    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", ALL .. ",Unitframe", nil, {"default"})
+    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "Unitframe", nil, {"default"})
 
     f:ClearAllPoints()
     f:SetPoint("LEFT", f.gwMover)
