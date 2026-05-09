@@ -247,7 +247,8 @@ local function setDependenciesOption(type, settingName, SetEnable, deactivateCol
     local of = GW.FindSettingsWidgetByOption(settingName)
     if not of then return end
 
-    local color, inputColor, enabled = {1, 1, 1}, {0.82, 0.82, 0.82}, true
+    local color = of.isMasterToggle and {GW.Colors.TextColors.LightHeader:GetRGB()} or {1, 1, 1}
+    local inputColor, enabled = {0.82, 0.82, 0.82}, true
 
     if overrideColor then
         color = {1, 0.65, 0}

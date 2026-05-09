@@ -318,6 +318,15 @@ local function DatabaseValueMigration()
         GW.settings.ObjectivesAutoCollapse.MythicPlus = GW.settings.OBJECTIVES_COLLAPSE_IN_M_PLUS == true
         GW.settings.OBJECTIVES_COLLAPSE_IN_M_PLUS = nil
     end
+
+    if GW.settings.TotemBar_GrowDirection ~= nil then
+        GW.settings.TotemBar.growDirection = GW.settings.TotemBar_GrowDirection
+        GW.settings.TotemBar_GrowDirection = nil
+    end
+    if GW.settings.TotemBar_SortDirection ~= nil then
+        GW.settings.TotemBar.sortDirection = GW.settings.TotemBar_SortDirection
+        GW.settings.TotemBar_SortDirection = nil
+    end
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
 

@@ -1,9 +1,14 @@
 ---@class GW2
 local GW = select(2, ...)
-local TOTEM_BAR_BUTTON_SIZE = 48
-local TOTEM_BAR_BUTTON_MARGIN = 3
 
 local classic = { 2, 1, 3, 4 }
+
+GwTotemBarMixin = {}
+
+function GwTotemBarMixin:UpdateVisibility()
+    if not self then return end
+    RegisterStateDriver(self, "visibility", GW.settings.TotemBar.enabled and "show" or "hide")
+end
 
 local function UpdateButton(button, totem)
     if not (button and totem) then return end
@@ -35,7 +40,7 @@ local function UpdateButton(button, totem)
     button:SetShown(button.cooldown:IsShown())
 end
 
-local function OnEvent(self)
+function GwTotemBarMixin:Update()
     local priority = STANDARD_TOTEM_PRIORITIES
 
     if GW.Retail then
@@ -55,60 +60,63 @@ local function OnEvent(self)
     end
 end
 
-function GW.UpdateTotembar(self)
-    local growDirection = GW.settings.TotemBar_GrowDirection
-    local sortDirection = GW.settings.TotemBar_SortDirection
+function GwTotemBarMixin:PositionAndSizeUpdate()
+    local growDirection = GW.settings.TotemBar.growDirection
+    local sortDirection = GW.settings.TotemBar.sortDirection
+    local buttonSize = GW.settings.TotemBar.buttonSize
+    local spacing = GW.settings.TotemBar.spacing
 
     for i = 1, MAX_TOTEMS do
         local button = self[i]
         local prevButton = self[i - 1]
 
-        button:SetSize(TOTEM_BAR_BUTTON_SIZE, TOTEM_BAR_BUTTON_SIZE)
+        button:SetSize(buttonSize, buttonSize)
         button:ClearAllPoints()
         if growDirection == "HORIZONTAL" and sortDirection == "ASC" then
             if i == 1 then
-                button:SetPoint("LEFT", self, "LEFT", TOTEM_BAR_BUTTON_MARGIN, 0)
+                button:SetPoint("LEFT", self, "LEFT", spacing, 0)
             else
-                button:SetPoint("LEFT", prevButton, "RIGHT", TOTEM_BAR_BUTTON_MARGIN, 0)
+                button:SetPoint("LEFT", prevButton, "RIGHT", spacing, 0)
             end
         elseif growDirection == "HORIZONTAL" and sortDirection == "DSC" then
             if i == 1 then
-                button:SetPoint("RIGHT", self, "RIGHT", -TOTEM_BAR_BUTTON_MARGIN, 0)
+                button:SetPoint("RIGHT", self, "RIGHT", -spacing, 0)
             else
-                button:SetPoint("RIGHT", prevButton, "LEFT", -TOTEM_BAR_BUTTON_MARGIN, 0)
+                button:SetPoint("RIGHT", prevButton, "LEFT", -spacing, 0)
             end
         elseif growDirection == "VERTICAL" and sortDirection == "ASC" then
             if i == 1 then
-                button:SetPoint("TOP", self, "TOP", 0, -TOTEM_BAR_BUTTON_MARGIN)
+                button:SetPoint("TOP", self, "TOP", 0, -spacing)
             else
-                button:SetPoint("TOP", prevButton, "BOTTOM", 0, -TOTEM_BAR_BUTTON_MARGIN)
+                button:SetPoint("TOP", prevButton, "BOTTOM", 0, -spacing)
             end
         elseif growDirection == "VERTICAL" and sortDirection == "DSC" then
             if i == 1 then
-                button:SetPoint("BOTTOM", self, "BOTTOM", 0, TOTEM_BAR_BUTTON_MARGIN)
+                button:SetPoint("BOTTOM", self, "BOTTOM", 0, spacing)
             else
-                button:SetPoint("BOTTOM", prevButton, "TOP", 0, TOTEM_BAR_BUTTON_MARGIN)
+                button:SetPoint("BOTTOM", prevButton, "TOP", 0, spacing)
             end
         end
     end
 
-    local size1, size2 = TOTEM_BAR_BUTTON_SIZE * MAX_TOTEMS + MAX_TOTEMS * TOTEM_BAR_BUTTON_MARGIN + TOTEM_BAR_BUTTON_MARGIN, TOTEM_BAR_BUTTON_SIZE + TOTEM_BAR_BUTTON_MARGIN * 2
+    local size1, size2 = buttonSize * MAX_TOTEMS + (MAX_TOTEMS + 1) * spacing, buttonSize + spacing * 2
     if growDirection == "HORIZONTAL" then
-        self:SetWidth(size1) -- Button Size * MAX_TOTEMS + MAX_TOTEMS * Spacing + Spacing
-        self:SetHeight(size2) -- Button Size + Spacing * 2
+        self:SetWidth(size1)
+        self:SetHeight(size2)
     else
-        self:SetHeight(size1) -- Button Size * MAX_TOTEMS + MAX_TOTEMS * Spacing + Spacing
-        self:SetWidth(size2) -- Button Size + Spacing * 2
+        self:SetHeight(size1)
+        self:SetWidth(size2)
     end
     if self.gwMover then
         self.gwMover:SetSize(self:GetSize())
     end
 
-    OnEvent(self)
+    self:Update()
 end
 
 function GW.CreateTotemBar()
-    local totemBar = CreateFrame("Frame", "GW_TotemBar", UIParent)
+    local totemBar = CreateFrame("Frame", "GwTotemBar", UIParent)
+    Mixin(totemBar, GwTotemBarMixin)
 
     for i = 1, MAX_TOTEMS do
         local button = CreateFrame("Button", totemBar:GetName() .. "Totem" .. i, totemBar)
@@ -147,7 +155,7 @@ function GW.CreateTotemBar()
         totemBar[i] = button
     end
 
-    GW.UpdateTotembar(totemBar)
+    totemBar:PositionAndSizeUpdate()
 
     totemBar:RegisterEvent("PLAYER_TOTEM_UPDATE")
     totemBar:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -156,9 +164,10 @@ function GW.CreateTotemBar()
     else
         totemBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     end
-    totemBar:SetScript("OnEvent", OnEvent)
+    totemBar:SetScript("OnEvent", totemBar.Update)
 
     GW.RegisterMovableFrame(totemBar, GW.L["Class Totems"], "TotemBar_pos", "Blizzard,Widgets", nil, {"default", "scaleable"})
+    totemBar:UpdateVisibility()
     totemBar:ClearAllPoints()
     totemBar:SetPoint("TOPLEFT", totemBar.gwMover)
 end

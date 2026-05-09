@@ -680,8 +680,13 @@ GW.globalDefault = {
             hasMoved= false,
         },
         TotemBar_pos_scale= 1,
-        TotemBar_GrowDirection= "HORIZONTAL",
-        TotemBar_SortDirection= "ASC",
+        TotemBar = {
+            enabled = true,
+            growDirection = "HORIZONTAL",
+            sortDirection= "ASC",
+            spacing = 3,
+            buttonSize = 48,
+        },
 
         StanceBar_pos= {
             point= "BOTTOMLEFT",

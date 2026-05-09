@@ -2,6 +2,7 @@
 NEW
     - Added option to change unitframe reaction colors
     - Re-enabled short value prefix style and decimal length settings for Retail health values
+    - Added Class Totems settings for enabling/disabling the bar, button size and button spacing
 
 FIXES
     - Fix Todooloo itegration

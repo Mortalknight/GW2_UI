@@ -57,19 +57,6 @@ local function LoadActionbarPanel(sWindow)
     extraBars.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     extraBars.breadcrumb:SetText(BINDING_HEADER_MULTIACTIONBAR)
 
-    local totemBar = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
-    totemBar.panelId = "actionbar_totem"
-    totemBar.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    totemBar.header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    totemBar.header:SetText(BINDING_HEADER_ACTIONBAR)
-    totemBar.sub:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    totemBar.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    totemBar.sub:SetText("")
-    totemBar.header:SetWidth(totemBar.header:GetStringWidth())
-    totemBar.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
-    totemBar.breadcrumb:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    totemBar.breadcrumb:SetText(L["Totem Bar"])
-
 
     local stanceBar = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
     stanceBar.panelId = "actionbar_stance"
@@ -213,12 +200,8 @@ local function LoadActionbarPanel(sWindow)
     })
     extraBars:AddOption(L["Invert"], nil, { getterSetter = "MultiBar7.invert", callback = GW.UpdateMultibarButtons, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), groupHeaderName = OPTION_SHOW_ACTION_BAR:format(8), incompatibleAddons = "Actionbars"})
 
-    --TOTEMBAR
-    totemBar:AddOptionDropdown(L["Class Totems Sorting"], nil, { getterSetter = "TotemBar_SortDirection", callback = function() GW.UpdateTotembar(GW_TotemBar) end, optionsList = {"ASC", "DSC"}, optionNames = {L["Ascending"], L["Descending"]}, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
-    totemBar:AddOptionDropdown(L["Class Totems Growth Direction"], nil, { getterSetter = "TotemBar_GrowDirection", callback = function() GW.UpdateTotembar(GW_TotemBar) end, optionsList = {"HORIZONTAL", "VERTICAL"}, optionNames = {L["Horizontal"], L["Vertical"]}, dependence = {["HEALTHGLOBE_ENABLED"] = true}})
-
     -- STANCEBAR
-    stanceBar:AddOption(ENABLE, nil, { getterSetter = "StanceBarEnabled", callback = function() if GwStanceBar then GwStanceBar:UpdateVisibility() end end, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars"})
+    stanceBar:AddOption(ENABLE, nil, { getterSetter = "StanceBarEnabled", isMasterToggle = true ,callback = function() if GwStanceBar then GwStanceBar:UpdateVisibility() end end, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars"})
     stanceBar:AddOptionDropdown(L["Class Totems Growth Direction"], L["Set the growth direction of the stance bar."], {
         getterSetter = "StanceBar_GrowDirection",
         callback = function()
@@ -232,6 +215,6 @@ local function LoadActionbarPanel(sWindow)
         incompatibleAddons = "Actionbars"
     })
 
-    sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, ACTIONBARS_SUBTEXT, {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars}, {name = TUTORIAL_TITLE47, frame = totemBar}, {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"], frame = stanceBar}})
+    sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, ACTIONBARS_SUBTEXT, {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars},  {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"], frame = stanceBar}})
 end
 GW.LoadActionbarPanel = LoadActionbarPanel
