@@ -133,7 +133,7 @@ local function CreateOption(optionType, panel, name, desc, values)
         optionType = optionType,
         callback = values.callback,
         dependence = values.dependence,
-        forceNewLine = values.isMasterToggle and values.forceNewLine == nil and true or values.forceNewLine,
+        forceNewLine = values.forceNewLine,
         incompatibleAddonsType = values.incompatibleAddons,
         isIncompatibleAddonLoaded = false,
         isIncompatibleAddonLoadedButOverride = false,

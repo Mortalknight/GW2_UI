@@ -15,6 +15,7 @@ local ROW_PAD_Y = 8
 local COL_GAP   = 8
 local CONTENT_W = 550
 local DEFAULT_ROW_EXTENT = 40
+local MASTER_TOGGLE_SEPARATOR_EXTENT = 5
 
 local SEARCH_ACTIVE = false
 
@@ -59,6 +60,10 @@ local function ResolveForceNewLine(opt)
     return fnl and true or false
 end
 
+local function IsMasterToggle(opt)
+    return opt and opt.isMasterToggle == true
+end
+
 local function GetOptionRowExtent(opt)
     if opt and opt.optionType == "list" then
         local optionsList = type(opt.optionsList) == "table" and opt.optionsList or {}
@@ -77,6 +82,10 @@ local function GetOptionRowExtent(opt)
 end
 
 local function GetPackedRowExtent(row)
+    if row and row.kind == "masterToggleSeparator" then
+        return MASTER_TOGGLE_SEPARATOR_EXTENT
+    end
+
     local extent = DEFAULT_ROW_EXTENT
     for _, opt in ipairs((row and row.cols) or {}) do
         extent = math.max(extent, GetOptionRowExtent(opt))
@@ -124,6 +133,23 @@ local function AnchorFullWidth(row, w)
     w:SetPoint("BOTTOMLEFT", ROW_PAD_X, ROW_PAD_Y)
     w:SetWidth(CONTENT_W)
     w:Show()
+end
+
+local function SetRowMasterToggleSeparatorShown(row, show)
+    if show then
+        if not row.masterToggleSeparator then
+            row.masterToggleSeparator = row:CreateTexture(nil, "ARTWORK")
+            row.masterToggleSeparator:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png")
+            row.masterToggleSeparator:SetTexCoord(0.5, 1, 0, 1)
+            row.masterToggleSeparator:SetSize(floor(CONTENT_W / 2), 2)
+        end
+
+        row.masterToggleSeparator:ClearAllPoints()
+        row.masterToggleSeparator:SetPoint("TOPLEFT", ROW_PAD_X, 5)
+        row.masterToggleSeparator:Show()
+    elseif row.masterToggleSeparator then
+        row.masterToggleSeparator:Hide()
+    end
 end
 
 -- =========================
@@ -283,18 +309,28 @@ end
 
 local function PackOptionsIntoRows(options)
     local rows, i = {}, 1
+
+    local function AddMasterToggleSeparatorIfNeeded(lastIndex)
+        if IsMasterToggle(options[lastIndex]) and options[lastIndex + 1] and not IsMasterToggle(options[lastIndex + 1]) then
+            rows[#rows+1] = { kind = "masterToggleSeparator" }
+        end
+    end
+
     while i <= #options do
         local a = options[i]; if not a then break end
         if ResolveForceNewLine(a) then
             rows[#rows+1] = { cols = {a} }
+            AddMasterToggleSeparatorIfNeeded(i)
             i = i + 1
         else
             local b = options[i + 1]
-            if b and not ResolveForceNewLine(b) then
+            if b and not ResolveForceNewLine(b) and IsMasterToggle(a) == IsMasterToggle(b) then
                 rows[#rows+1] = { cols = {a, b} }
+                AddMasterToggleSeparatorIfNeeded(i + 1)
                 i = i + 2
             else
                 rows[#rows+1] = { cols = {a} }
+                AddMasterToggleSeparatorIfNeeded(i)
                 i = i + 1
             end
         end
@@ -308,14 +344,14 @@ local function BuildOptionsDataProvider(panel)
 
     for _, row in ipairs(rows) do
         for k=1,2 do
-            local opt = row.cols[k]
+            local opt = row.cols and row.cols[k]
             if opt then CreateOrGetOptionWidget(panel, opt) end
         end
     end
 
     local dp = CreateDataProvider()
     for i, row in ipairs(rows) do
-        dp:Insert({ index = i, cols = row.cols, panel = panel })
+        dp:Insert({ index = i, kind = row.kind, cols = row.cols, panel = panel })
     end
     return dp
 end
@@ -325,6 +361,14 @@ local function InitRow(row, elementData)
     local panel = elementData.panel
 
     row:SetWidth(ROW_PAD_X * 2 + CONTENT_W)
+
+    if elementData.kind == "masterToggleSeparator" then
+        if row.leftAssigned  then StashWidget(row.leftAssigned,  panel); row.leftAssigned  = nil end
+        if row.rightAssigned then StashWidget(row.rightAssigned, panel); row.rightAssigned = nil end
+        SetRowMasterToggleSeparatorShown(row, true)
+        return
+    end
+    SetRowMasterToggleSeparatorShown(row, false)
 
     if SEARCH_ACTIVE then
         if row.leftAssigned  then StashWidget(row.leftAssigned,  panel); row.leftAssigned  = nil end
@@ -371,6 +415,7 @@ local function InitOptionPanel(panel)
     view:SetElementResetter(function(row)
         if row.leftAssigned  then StashWidget(row.leftAssigned,  row.__panel); row.leftAssigned  = nil end
         if row.rightAssigned then StashWidget(row.rightAssigned, row.__panel); row.rightAssigned = nil end
+        SetRowMasterToggleSeparatorShown(row, false)
     end)
 
     ScrollUtil.InitScrollBoxListWithScrollBar(panel.scroll.ScrollBox, panel.scroll.ScrollBar, view)
