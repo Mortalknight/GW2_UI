@@ -16,6 +16,7 @@ local COL_GAP   = 8
 local CONTENT_W = 550
 local DEFAULT_ROW_EXTENT = 40
 local MASTER_TOGGLE_SEPARATOR_EXTENT = 5
+local SEARCH_HIGHLIGHT_ALPHA = 0.08
 
 local SEARCH_ACTIVE = false
 
@@ -135,6 +136,23 @@ local function AnchorFullWidth(row, w)
     w:Show()
 end
 
+local function SetRowSearchHighlightShown(row, show)
+    if show then
+        if not row.searchHighlight then
+            row.searchHighlight = row:CreateTexture(nil, "BACKGROUND")
+            row.searchHighlight:SetColorTexture(GW.Colors.TextColors.LightHeader:GetRGB())
+        end
+
+        row.searchHighlight:SetAlpha(SEARCH_HIGHLIGHT_ALPHA)
+        row.searchHighlight:ClearAllPoints()
+        row.searchHighlight:SetPoint("TOPLEFT", ROW_PAD_X, -4)
+        row.searchHighlight:SetPoint("BOTTOMRIGHT", row, "BOTTOMLEFT", ROW_PAD_X + CONTENT_W, 4)
+        row.searchHighlight:Show()
+    elseif row.searchHighlight then
+        row.searchHighlight:Hide()
+    end
+end
+
 local function SetRowMasterToggleSeparatorShown(row, show)
     if show then
         if not row.masterToggleSeparator then
@@ -150,6 +168,62 @@ local function SetRowMasterToggleSeparatorShown(row, show)
     elseif row.masterToggleSeparator then
         row.masterToggleSeparator:Hide()
     end
+end
+
+local function UpdateMasterToggleStyle(of, hovered)
+    if not of or not of.isMasterToggle then return end
+
+    local checked = of.checkbutton and of.checkbutton:GetChecked()
+    local r, g, b = GW.Colors.TextColors.LightHeader:GetRGB()
+
+    if of.masterToggleBg then
+        local textWidth = of.title:GetStringWidth()
+        of.masterToggleBg:SetWidth(math.max(80, math.min(textWidth + 22, of:GetWidth() - 36)))
+        of.masterToggleBg:SetColorTexture(r, g, b, hovered and 0.16 or (checked and 0.08 or 0))
+    end
+
+    of.masterToggleAccent:SetColorTexture(r, g, b, checked and 0.75 or (hovered and 0.35 or 0))
+end
+
+local function SetupMasterToggleStyle(of)
+    if not of or not of.isMasterToggle or of.masterToggleStyleHooked then return end
+
+    of.masterToggleStyleHooked = true
+    of.masterToggleBg = of:CreateTexture(nil, "BACKGROUND")
+    of.masterToggleBg:SetPoint("LEFT", of.title, "LEFT", -9, 0)
+    of.masterToggleBg:SetHeight(24)
+
+    of.masterToggleAccent = of:CreateTexture(nil, "ARTWORK")
+    of.masterToggleAccent:SetPoint("TOPLEFT", -2, -3)
+    of.masterToggleAccent:SetPoint("BOTTOMLEFT", -2, 3)
+    of.masterToggleAccent:SetWidth(2)
+
+    of:HookScript("OnEnter", function(self)
+        UpdateMasterToggleStyle(self, true)
+    end)
+    of:HookScript("OnLeave", function(self)
+        UpdateMasterToggleStyle(self, false)
+    end)
+    of:HookScript("OnClick", function(self)
+        UpdateMasterToggleStyle(self, self:IsMouseOver())
+    end)
+
+    if of.checkbutton then
+        of.checkbutton:HookScript("OnEnter", function()
+            UpdateMasterToggleStyle(of, true)
+        end)
+        of.checkbutton:HookScript("OnLeave", function()
+            UpdateMasterToggleStyle(of, false)
+        end)
+        of.checkbutton:HookScript("OnClick", function()
+            UpdateMasterToggleStyle(of, of:IsMouseOver())
+        end)
+        hooksecurefunc(of.checkbutton, "SetChecked", function()
+            UpdateMasterToggleStyle(of, of:IsMouseOver())
+        end)
+    end
+
+    UpdateMasterToggleStyle(of)
 end
 
 -- =========================
@@ -296,9 +370,9 @@ local function CreateOrGetOptionWidget(panel, opt)
     else
         of.title:SetTextColor(1, 1, 1)
     end
-
     -- Deine vorhandene Typ-spezifische Logik hier hinein:
     GW.SettingsInitOptionWidget(of, opt, panel)
+    SetupMasterToggleStyle(of)
 
     opt.__widget = of
 
@@ -557,6 +631,7 @@ local function ResetSearchRow(row)
     if row.crumbFS  then row.crumbFS:SetText("") end
     if row.leftAssigned  then row.leftAssigned:Hide();  row.leftAssigned  = nil end
     if row.rightAssigned then row.rightAssigned:Hide(); row.rightAssigned = nil end
+    SetRowSearchHighlightShown(row, false)
 end
 
 local function WipeKeys(t)
@@ -613,6 +688,7 @@ local function InitSearchRow(row, item)
     row:SetWidth(ROW_PAD_X * 2 + CONTENT_W)
 
     if item.kind == "breadcrumb" then
+        SetRowSearchHighlightShown(row, false)
         if not row.headerFS then
             row.headerFS = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
             row.headerFS:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -633,6 +709,7 @@ local function InitSearchRow(row, item)
         if row.rightAssigned then row.rightAssigned:Hide(); row.rightAssigned = nil end
         return
     end
+    SetRowSearchHighlightShown(row, true)
 
     local leftE, rightE = item.left, item.right
     local leftW  = leftE  and leftE.widget  or nil
