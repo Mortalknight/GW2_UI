@@ -17,5 +17,27 @@ jobs:
     steps:
         - uses: actions/checkout@v4
           with:
-            ref: develop
+            fetch-depth: 0
+
+        - name: Determine alpha version
+          id: alpha
+          shell: bash
+          run: |
+            version="$(sed -n '1{/^[[:space:]]*$/d;s/[[:space:]]//g;p;q;}' CHANGELOG_NEW_VERSION.txt)"
+            if [[ -z "$version" ]]; then
+              echo "Unable to determine alpha version from CHANGELOG_NEW_VERSION.txt" >&2
+              exit 1
+            fi
+
+            short_sha="$(git rev-parse --short=7 HEAD)"
+            alpha_version="${version}-${short_sha}"
+
+            echo "alpha_version=${alpha_version}" >> "$GITHUB_OUTPUT"
+            echo "Alpha version: ${alpha_version}"
+            sed -i "s/@project-version@/${alpha_version}/g" GW2_UI_*.toc
+
         - uses: BigWigsMods/packager@master
+          with:
+            args: >-
+              -n
+              {package-name}-${{ steps.alpha.outputs.alpha_version }}{nolib}{classic}:${{ steps.alpha.outputs.alpha_version }}{classic}{nolib}
