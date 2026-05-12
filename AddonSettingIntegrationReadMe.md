@@ -83,12 +83,16 @@ by GW2_UI (two columns where possible, full row if forced).
     Creates a *section/header* row.
     Uses the *general* keys (commonly ``groupHeaderName`` for search grouping is unnecessary here,
     as the header itself acts as a group label).
-4) ``panel:AddOptionColorPicker(name, desc, values)``
+4) ``panel:AddSubGroupHeader(name, values)``
+
+    Creates a smaller, indented *sub-section/header* row below a group header.
+    Uses the *general* keys.
+5) ``panel:AddOptionColorPicker(name, desc, values)``
 
     Creates a *color picker*.
     Uses the *general* keys.
     _No additional type-specific keys._
-5) ``panel:AddOptionSlider(name, desc, values)``
+6) ``panel:AddOptionSlider(name, desc, values)``
 
     Creates a *slider*.
     *Type-specific keys (required/optional)*:
@@ -97,12 +101,12 @@ by GW2_UI (two columns where possible, full row if forced).
     - ``step`` _(number, required)_ — Step size
     - ``decimalNumbers`` _(number, optional, default 0)_ — Digits to display after decimal
     The function reads these from ``values`` and applies them to the option.
-6) ``panel:AddOptionText(name, desc, values)``
+7) ``panel:AddOptionText(name, desc, values)``
 
     Creates a *text input*.
     Type-specific keys:
     - ``multiline`` _(boolean, optional)_ — If true, uses a multiline input.
-7) ``panel:AddOptionDropdown(name, desc, values)``
+8) ``panel:AddOptionDropdown(name, desc, values)``
 
     Creates a *dropdown* (single-select by *default*; multi-select when ``checkbox = true`` is supported by template).
     Type-specific keys:
@@ -112,7 +116,7 @@ by GW2_UI (two columns where possible, full row if forced).
     - ``tooltipType`` _(any, optional)_ — Custom tooltip type hook used by your template
     - ``hasSound`` _(boolean, optional)_ — Play a click sound on change
     - ``noNewLine`` _(boolean, optional)_ — When set, try to keep dropdown in a *half-width column* (overrides template default)
-8) ``panel:AddOptionSortableList(name, desc, values)``
+9) ``panel:AddOptionSortableList(name, desc, values)``
 
     Creates a *sortable list* with drag-and-drop rows and up/down buttons for each entry. The stored value is an ordered array.
     Type-specific keys:
@@ -158,6 +162,7 @@ These keys are available on every API method:
     For dropdowns, ``noNewLine = true`` (type-specific) can force half-width placement when the template would otherwise span full width.
 
   -  Group headers created via ``AddGroupHeader()`` visually separate sections and are considered by the search.
+     Use ``AddSubGroupHeader()`` for smaller nested section labels inside a group.
 
 
 ## Search Integration

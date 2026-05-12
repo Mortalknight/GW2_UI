@@ -38,6 +38,7 @@ local optionTypes = {
     button      = {template = "GwButtonTextTmpl", frame = "Button", newLine = true},
     colorPicker = {template = "GwOptionBoxColorPickerTmpl", frame = "Button", newLine = true},
     header      = {template = "GwOptionBoxHeader", frame = "Frame", newLine = true},
+    subHeader   = {template = "GwOptionBoxSubHeader", frame = "Frame", newLine = true},
 }
 
 GwSettingsWindowSettingsTabMixin = {}

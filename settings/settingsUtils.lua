@@ -192,6 +192,10 @@ function GwSettingsPanelMixin:AddGroupHeader(name, values)
     return CreateOption("header", self, name, nil, values)
 end
 
+function GwSettingsPanelMixin:AddSubGroupHeader(name, values)
+    return CreateOption("subHeader", self, name, nil, values)
+end
+
 function GwSettingsPanelMixin:AddOptionColorPicker(name, desc, values)
     return CreateOption("colorPicker", self, name, desc, values)
 end
@@ -1301,6 +1305,9 @@ local function SettingsInitOptionWidget(of, v, panel)
         of.title:SetShadowColor(0, 0, 0, 0)
     elseif v.optionType == "header" then
         of.title:SetFont(DAMAGE_TEXT_FONT, 16)
+        of.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
+    elseif v.optionType == "subHeader" then
+        of.title:SetFont(DAMAGE_TEXT_FONT, 14)
         of.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     end
 end

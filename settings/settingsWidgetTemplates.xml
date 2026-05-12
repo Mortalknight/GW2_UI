@@ -267,4 +267,29 @@
         </Layers>
     </Frame>
 
+    <Frame name="GwOptionBoxSubHeader" frameStrata="HIGH" virtual="true">
+        <Size x="600" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="SettingsSubHeader" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="560" y="22"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="15" y="-2"/>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png">
+                    <Color r="1" g="1" b="1" a="0.45"/>
+                    <Size x="300" y="1"></Size>
+                    <TexCoords left="0.5" right="1" top="0" bottom="1"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" x="15" y="-5"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
 </Ui>
