@@ -59,16 +59,33 @@
                 <Layers>
                     <Layer>
                         <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/sliderbg.png">
+                            <Size y="12"/>
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0"/>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="-2" y="0"/>
                             </Anchors>
                         </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLevel="2">
+                        <FontString parentKey="sliderMinText" inherits="GameFontNormalSmall" justifyH="LEFT">
+                            <Size x="80" y="10"/>
+                            <Color r="0.62" g="0.58" b="0.5" a="0.9"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="2" y="-1"/>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="sliderMaxText" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                            <Size x="80" y="10"/>
+                            <Color r="0.62" g="0.58" b="0.5" a="0.9"/>
+                            <Anchors>
+                                <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-2" y="-1"/>
+                            </Anchors>
+                        </FontString>
                     </Layer>
                 </Layers>
             </Slider>
             <Frame parentKey="inputFrame" inherits="GwStandardInputField">
-                <Size x="35" y="20"/>
+                <Size x="46" y="20"/>
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="10" y="0"/>
                 </Anchors>
@@ -225,14 +242,25 @@
                 <FontString parentKey="title" text="SettingsHeader" inherits="GameFontNormal" justifyH="LEFT">
                     <Size x="600" y="25"/>
                     <Anchors>
-                        <Anchor point="LEFT" x="0" y="-10"/>
+                        <Anchor point="LEFT" x="12" y="-6"/>
                     </Anchors>
                 </FontString>
                 <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep.png">
-                    <Size x="600" y="2"></Size>
+                    <Color r="1" g="1" b="1" a="0.65"/>
+                    <Size x="360" y="2"></Size>
                     <TexCoords left="0.5" right="1" top="0" bottom="1"/>
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" x="0" y="-10"/>
+                        <Anchor point="BOTTOMLEFT" x="12" y="-5"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="accent">
+                    <Color r="1" g="1" b="1" a="0.85"/>
+                    <Size x="5" y="5"></Size>
+                    <TexCoords left="0.5" right="1" top="0" bottom="1"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="2" y="-6"/>
                     </Anchors>
                 </Texture>
             </Layer>

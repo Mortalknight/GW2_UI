@@ -202,7 +202,7 @@ local function LoadActionbarPanel(sWindow)
 
     -- STANCEBAR
     stanceBar:AddOption(ENABLE, nil, { getterSetter = "StanceBarEnabled", isMasterToggle = true ,callback = function() if GwStanceBar then GwStanceBar:UpdateVisibility() end end, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars"})
-    stanceBar:AddOptionDropdown(L["Class Totems Growth Direction"], L["Set the growth direction of the stance bar."], {
+    stanceBar:AddOptionDropdown(L["Growth Direction"], L["Set the growth direction of the stance bar."], {
         getterSetter = "StanceBar_GrowDirection",
         callback = function()
             if GwStanceBar then
@@ -210,7 +210,7 @@ local function LoadActionbarPanel(sWindow)
             end
         end,
         optionsList = {"UP", "DOWN", "LEFT", "RIGHT"},
-        optionNames = {StrUpper(L["Up"], 1, 1), StrUpper(L["Down"], 1, 1), L["Left"], L["Right"]},
+        optionNames = {L["Up"], L["Down"], L["Left"], L["Right"]},
         dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true, ["StanceBarEnabled"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(),
         incompatibleAddons = "Actionbars"
     })

@@ -275,9 +275,13 @@ local function setDependenciesOption(type, settingName, SetEnable, deactivateCol
         if enabled then
             of.slider:Enable()
             of.inputFrame.input:Enable()
+            of.slider.sliderMinText:SetTextColor(0.62, 0.58, 0.5, 0.9)
+            of.slider.sliderMaxText:SetTextColor(0.62, 0.58, 0.5, 0.9)
         else
             of.slider:Disable()
             of.inputFrame.input:Disable()
+            of.slider.sliderMinText:SetTextColor(inputColor[1], inputColor[2], inputColor[3], 0.75)
+            of.slider.sliderMaxText:SetTextColor(inputColor[1], inputColor[2], inputColor[3], 0.75)
         end
         of.inputFrame.input:SetTextColor(unpack(sliderInputColor))
     elseif type == "text" then
@@ -1167,13 +1171,12 @@ local function SettingsInitOptionWidget(of, v, panel)
 
         of:RefreshList()
     elseif v.optionType == "slider" then
-        of.inputFrame:SetWidth(46)
-        of.inputFrame:ClearAllPoints()
-        of.inputFrame:SetPoint("LEFT", of.slider, "RIGHT", 10, 0)
         of.inputFrame.input:SetJustifyH("CENTER")
         of.inputFrame.input:SetTextColor(1, 0.93, 0.73)
         of.slider:SetMinMaxValues(v.min, v.max)
         of.slider:SetValue(RoundDec(of.get(), of.decimalNumbers))
+        of.slider.sliderMinText:SetText(RoundDec(v.min, of.decimalNumbers))
+        of.slider.sliderMaxText:SetText(RoundDec(v.max, of.decimalNumbers))
         if v.step then of.slider:SetValueStep(v.step) end
         of.slider:SetObeyStepOnDrag(true)
         of.slider:SetScript("OnValueChanged", function(self)
@@ -1299,23 +1302,6 @@ local function SettingsInitOptionWidget(of, v, panel)
     elseif v.optionType == "header" then
         of.title:SetFont(DAMAGE_TEXT_FONT, 16)
         of.title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-        of.title:ClearAllPoints()
-        of.title:SetPoint("LEFT", 12, -6)
-
-        if of.seperator then
-            of.seperator:SetWidth(360)
-            of.seperator:SetAlpha(0.65)
-            of.seperator:ClearAllPoints()
-            of.seperator:SetPoint("BOTTOMLEFT", 12, -5)
-        end
-
-        if not of.accent then
-            of.accent = of:CreateTexture(nil, "ARTWORK")
-            of.accent:SetSize(5, 5)
-            of.accent:SetPoint("LEFT", 2, -6)
-            of.accent:SetColorTexture(GW.Colors.TextColors.LightHeader:GetRGB())
-            of.accent:SetAlpha(0.85)
-        end
     end
 end
 GW.SettingsInitOptionWidget = SettingsInitOptionWidget
