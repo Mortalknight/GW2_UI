@@ -696,9 +696,16 @@ GW.globalDefault = {
             hasMoved= false,
         },
         StanceBar_pos_scale= 1,
-        StanceBar_GrowDirection= "UP",
-        StanceBarContainerState= "close",
-        StanceBarEnabled = true,
+        StanceBar = {
+            enabled = true,
+            growDirection = "UP",
+            buttonSize = 30,
+            spacing = 2,
+            alpha = 1,
+            mouseOver = false,
+            visibility = "show",
+            containerState = "close",
+        },
 
         PowerBar_pos= {
             point= "BOTTOMLEFT",
@@ -1689,3 +1696,13 @@ GW.globalDefault.profile.RAID_10_BUFF_FILTER.isAuraRaidInCombatPlayer = true
 GW.globalDefault.profile.RAID_10_DEBUFF_FILTER.isAuraImportant = true
 GW.globalDefault.profile.RAID_10_DEBUFF_FILTER.isAuraImportantPlayer = true
 GW.globalDefault.profile.RAID_10_DEBUFF_FILTER.isAuraRaidPlayerDispellable = true
+
+-- game default:
+if GW.Retail or GW.Mists then
+    GW.globalDefault.profile.StanceBar.visibility = "[vehicleui][petbattle] hide; show"
+elseif GW.Wrath then
+    GW.globalDefault.profile.StanceBar.visibility = "[vehicleui] hide; show"
+else
+    GW.globalDefault.profile.StanceBar.visibility = "show"
+end
+

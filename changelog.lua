@@ -17,6 +17,7 @@ addChange("10.10.0", {
     {GW.Enum.ChangelogType.feature, [=[Added option to change unitframe reaction colors]=]},
     {GW.Enum.ChangelogType.feature, [=[Re-enabled short value prefix style and decimal length settings for Retail health values]=]},
     {GW.Enum.ChangelogType.feature, [=[Added Class Totems settings for enabling/disabling the bar, button size and button spacing]=]},
+    {GW.Enum.ChangelogType.feature, [=[Added Stance Bar settings for button size, button spacing, alpha and mouseover fade]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix Todooloo itegration]=]},
 })
 

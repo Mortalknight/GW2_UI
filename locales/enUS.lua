@@ -926,4 +926,5 @@ L["Midnight"] = true
 L["Stormarion Assault"] = true
 L["The War Within"] = true
 L["Character Pane"] = true
+L["Alpha"] = true
 L["Button Size"] = true

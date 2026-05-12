@@ -201,19 +201,13 @@ local function LoadActionbarPanel(sWindow)
     extraBars:AddOption(L["Invert"], nil, { getterSetter = "MultiBar7.invert", callback = GW.UpdateMultibarButtons, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), groupHeaderName = OPTION_SHOW_ACTION_BAR:format(8), incompatibleAddons = "Actionbars"})
 
     -- STANCEBAR
-    stanceBar:AddOption(ENABLE, nil, { getterSetter = "StanceBarEnabled", isMasterToggle = true ,callback = function() if GwStanceBar then GwStanceBar:UpdateVisibility() end end, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars"})
-    stanceBar:AddOptionDropdown(L["Growth Direction"], L["Set the growth direction of the stance bar."], {
-        getterSetter = "StanceBar_GrowDirection",
-        callback = function()
-            if GwStanceBar then
-                GwStanceBar:AdjustMaxStanceButtons()
-            end
-        end,
-        optionsList = {"UP", "DOWN", "LEFT", "RIGHT"},
-        optionNames = {L["Up"], L["Down"], L["Left"], L["Right"]},
-        dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true, ["StanceBarEnabled"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(),
-        incompatibleAddons = "Actionbars"
-    })
+    local stanceBarDependence = (function() local t = {["ACTIONBARS_ENABLED"] = true, ["StanceBar.enabled"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)()
+    stanceBar:AddOption(ENABLE, nil, { getterSetter = "StanceBar.enabled", isMasterToggle = true ,callback = function() if GwStanceBar then GwStanceBar:UpdateVisibility(); GwStanceBar:UpdateAlpha() end end, dependence = (function() local t = {["ACTIONBARS_ENABLED"] = true} if GW.Retail then t["BAR_LAYOUT_ENABLED"] = true end return t end)(), incompatibleAddons = "Actionbars"})
+    stanceBar:AddOptionDropdown(L["Growth Direction"], L["Set the growth direction of the stance bar."], {getterSetter = "StanceBar.growDirection", callback = function() if GwStanceBar then GwStanceBar:AdjustMaxStanceButtons() end end, optionsList = {"UP", "DOWN", "LEFT", "RIGHT"}, optionNames = {L["Up"], L["Down"], L["Left"], L["Right"]}, dependence = stanceBarDependence, incompatibleAddons = "Actionbars"})
+    stanceBar:AddOptionSlider(L["Button Size"], nil, {getterSetter = "StanceBar.buttonSize", callback = function() if GwStanceBar then GwStanceBar:AdjustMaxStanceButtons() end end, min = 20, max = 60, decimalNumbers = 0, step = 1, dependence = stanceBarDependence, incompatibleAddons = "Actionbars"})
+    stanceBar:AddOptionSlider(L["Button Spacing"], nil, {getterSetter = "StanceBar.spacing", callback = function() if GwStanceBar then GwStanceBar:AdjustMaxStanceButtons() end end, min = 0, max = 10, decimalNumbers = 0, step = 1, dependence = stanceBarDependence, incompatibleAddons = "Actionbars"})
+    stanceBar:AddOptionSlider(L["Alpha"], nil, {getterSetter = "StanceBar.alpha", callback = function() if GwStanceBar then GwStanceBar:UpdateAlpha() end end, min = 0, max = 1, decimalNumbers = 2, step = 0.05, dependence = stanceBarDependence, incompatibleAddons = "Actionbars"})
+    stanceBar:AddOption(L["Only on Mouse Over"], nil, {getterSetter = "StanceBar.mouseOver", callback = function() if GwStanceBar then GwStanceBar:UpdateAlpha() end end, dependence = stanceBarDependence, incompatibleAddons = "Actionbars"})
 
     sWindow:AddSettingsPanel(p, BINDING_HEADER_ACTIONBAR, ACTIONBARS_SUBTEXT, {{name = GENERAL, frame = general}, {name = L["Main Action Bar"], frame = mainBar}, {name = BINDING_HEADER_MULTIACTIONBAR, frame = extraBars},  {name = HUD_EDIT_MODE_STANCE_BAR_LABEL or L["Stance Bar"], frame = stanceBar}})
 end

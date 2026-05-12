@@ -327,6 +327,17 @@ local function DatabaseValueMigration()
         GW.settings.TotemBar.sortDirection = GW.settings.TotemBar_SortDirection
         GW.settings.TotemBar_SortDirection = nil
     end
+
+    if GW.settings.StanceBar_GrowDirection ~= nil then
+        GW.settings.StanceBar.growDirection = GW.settings.StanceBar_GrowDirection
+        GW.settings.StanceBar_GrowDirection = nil
+
+        GW.settings.StanceBar.containerState = GW.settings.StanceBarContainerState
+        GW.settings.StanceBarContainerState = nil
+
+        GW.settings.StanceBar.enabled = GW.settings.StanceBarEnabled
+        GW.settings.StanceBarEnabled = nil
+    end
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
 
