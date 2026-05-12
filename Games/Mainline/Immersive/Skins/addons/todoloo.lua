@@ -223,7 +223,7 @@ function GwTodolooContainerMixin:UpdateLayout()
         self:SetHeight(containerHeight)
     end
 
-    self:SetShown(foundTodo or self.collapsed)
+    self:SetShown(foundTodo or (self.collapsed and foundTodo))
 
     GwQuestTracker:LayoutChanged()
 end
