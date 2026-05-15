@@ -1,6 +1,0 @@
-manual-changelog: CHANGELOG.txt
-ignore:
-  - README.md
-  - _MACOSX
-  - .previews
-

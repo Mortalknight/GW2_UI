@@ -19,6 +19,9 @@ jobs:
           with:
             fetch-depth: 0
 
+        - name: Generate package changelog
+          run: python3 tools/generate_changelog_txt.py changelog.lua CHANGELOG_NEW_VERSION.txt
+
         - name: Determine alpha version
           id: alpha
           shell: bash

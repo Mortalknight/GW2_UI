@@ -14,7 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("10.10.1", {
-    {GW.Enum.ChangelogType.change, [=[In development]=]},
+    {GW.Enum.ChangelogType.change, [=[Ready Check reskin]=]},
 })
 
 addChange("10.10.0", {
