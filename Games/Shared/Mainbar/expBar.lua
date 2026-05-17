@@ -305,7 +305,7 @@ local function UpdateHonor(self)
     return true, valPrec, level, level + 1
 end
 
-local function UpdatePetXPClassic(self, level)
+local function UpdatePetXPClassic(self)
     local currXP, nextXP = GetPetExperience()
     local valPrecPet = (nextXP > 0) and (currXP / nextXP) or 0
 
@@ -314,7 +314,7 @@ local function UpdatePetXPClassic(self, level)
     local color = STATUSBAR_COLORS.PetXp
     self.PetBar:SetStatusBarColor(color.r, color.g, color.b)
 
-    return true, valPrecPet, level
+    return true, valPrecPet
 end
 
 local function SetBarLayout(bar, candy, spark, height, offset)
@@ -424,8 +424,8 @@ local function UpdateData(self)
             end
         end
 
-        if not GW.Retail and select(2, HasPetUI()) and (UnitLevel("pet") or 0) < level then
-            showPet, valPrecPet = UpdatePetXPClassic(self, level)
+        if not GW.Retail and select(2, HasPetUI()) and (UnitLevel("pet") or 0) < tonumber(level) then
+            showPet, valPrecPet = UpdatePetXPClassic(self)
         end
 
         if GW.Retail and not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
