@@ -15,6 +15,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("10.10.1", {
     {GW.Enum.ChangelogType.change, [=[Ready Check reskin]=]},
+    {GW.Enum.ChangelogType.bug, [=[Fix lua error in experience bar]=]},
 })
 
 addChange("10.10.0", {
