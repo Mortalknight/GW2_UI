@@ -467,7 +467,7 @@ local function isHigherRankKnownAndThisNot(spellId, isPet)
             for _ ,reqData in pairs(GW.Skills[GW.myclass][i]) do
                 if spellId == reqData.req then
                     isPet = reqData.pet ~= nil and reqData.pet == true
-                    if (GW.IsPlayerSpell(reqData[1]) or GW.IsSpellKnown(reqData[1], isPet) or GW.IsSpellKnownOrOverridesKnown (reqData[1], isPet)) and (not GW.IsPlayerSpell(spellId) or not GW.IsSpellKnown(spellId, isPet) or not GW.IsSpellKnownOrOverridesKnown (spellId, isPet)) then
+                    if (GW.IsPlayerSpell(reqData[1]) or GW.IsSpellKnown(reqData[1], isPet) or GW.IsSpellInSpellBook (reqData[1], isPet)) and (not GW.IsPlayerSpell(spellId) or not GW.IsSpellKnown(spellId, isPet) or not GW.IsSpellInSpellBook (spellId, isPet)) then
                         return true
                     else
                         return isHigherRankKnownAndThisNot(reqData[1], isPet)
@@ -480,8 +480,8 @@ local function isHigherRankKnownAndThisNot(spellId, isPet)
 end
 
 local function isAnyDependencieKnown(spellData, isPet)
-    if GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnown(spellData[1], isPet) or GW.IsSpellKnownOrOverridesKnown (spellData[1], isPet) then return true end
-    if GW.IsPlayerSpell(spellData.req) or GW.IsSpellKnown(spellData.req, isPet) or GW.IsSpellKnownOrOverridesKnown (spellData.req, isPet) then return true end
+    if GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnown(spellData[1], isPet) or GW.IsSpellInSpellBook (spellData[1], isPet) then return true end
+    if GW.IsPlayerSpell(spellData.req) or GW.IsSpellKnown(spellData.req, isPet) or GW.IsSpellInSpellBook (spellData.req, isPet) then return true end
 
     return false
 end
@@ -519,17 +519,17 @@ local function filterUnknownSpell(spellData)
 
             if isTalent then
                 if learned then
-                    show = not (GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnown(spellData[1], isPet) or GW.IsSpellKnownOrOverridesKnown (spellData[1], isPet)) and isAnyDependencieKnown(spellData, isPet)
+                    show = not (GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnown(spellData[1], isPet) or GW.IsSpellInSpellBook (spellData[1], isPet)) and isAnyDependencieKnown(spellData, isPet)
                 else
                     show = false
                 end
             else
-                show = not (GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnown(spellData[1], isPet) or GW.IsSpellKnownOrOverridesKnown (spellData[1], isPet)) and isAnyDependencieKnown(spellData, isPet)
+                show = not (GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnown(spellData[1], isPet) or GW.IsSpellInSpellBook (spellData[1], isPet)) and isAnyDependencieKnown(spellData, isPet)
             end
         end
     elseif isHigherKnownAndThisNot then
         show = false
-    elseif GW.IsSpellKnown(spellData[1]) or GW.IsPlayerSpell(spellData[1]) or GW.IsSpellKnownOrOverridesKnown (spellData[1]) then
+    elseif GW.IsSpellKnown(spellData[1]) or GW.IsPlayerSpell(spellData[1]) or GW.IsSpellInSpellBook (spellData[1]) then
         show = false
     end
 

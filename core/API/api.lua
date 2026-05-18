@@ -41,7 +41,7 @@ end
 CompatibleTooltip(GameTooltip)
 CompatibleTooltip(GW.ScanTooltip)
 
-function GW.IsSpellKnownOrOverridesKnown(spellID, isPet)
+function GW.IsSpellInSpellBook(spellID, isPet)
     if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
         local spellBank = isPet and Enum.SpellBookSpellBank.Pet or Enum.SpellBookSpellBank.Player
         local includeOverrides = true

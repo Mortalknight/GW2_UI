@@ -66,7 +66,7 @@ function GwCastingBarMixin:CheckForTicks()
     if talentTicks then
         for auraId, tickCount in next, talentTicks do
             if GW.IsSpellKnown(auraId) then
-                if GW.IsSpellKnownOrOverridesKnown(auraId) or GW.IsSpellKnown(auraId) then
+                if GW.IsSpellInSpellBook(auraId) or GW.IsSpellKnown(auraId) then
 					baseTicks = tickCount
 					break
 				end
