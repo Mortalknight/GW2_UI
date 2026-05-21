@@ -930,8 +930,8 @@ function GwUnitFrameMixin:ToggleSettings()
     self.auras.debuffAdvancedFilters = GW.settings[unit .. "_Debuff_Filter_advanced"]
     GW.UpdateFilters(self.auras)
 
-    self.auras.smallSize = 20
-    self.auras.bigSize = 26
+    self.auras.smallSize = GW.settings[unit .. "AuraSmallSize"]
+    self.auras.bigSize = GW.settings[unit .. "AuraBigSize"]
 
     self.shortendHealthValues = GW.settings[unit .. "_SHORT_VALUES"]
 

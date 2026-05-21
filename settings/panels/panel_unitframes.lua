@@ -273,6 +273,9 @@ local function LoadTargetPanel(sWindow)
         checkbox = true,
         groupHeaderName = AURAS}
     )
+    p_target:AddOptionSlider(L["Aura size"], nil, { getterSetter = "targetAuraSmallSize", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["TARGET_ENABLED"] = true}})
+    p_target:AddOptionSlider(L["Own aura size"], nil, { getterSetter = "targetAuraBigSize", callback = function() GwTargetUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["TARGET_ENABLED"] = true}})
+
 
     p_target:AddGroupHeader(L["Fader"])
     p_target:AddOptionDropdown(L["Fader"], nil, { getterSetter = "targetFrameFader", callback = function() GwTargetUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["TARGET_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"]})
@@ -343,6 +346,9 @@ local function LoadTargetPanel(sWindow)
         checkbox = true,
         groupHeaderName = AURAS}
     )
+    p_focus:AddOptionSlider(L["Aura size"], nil, { getterSetter = "focusAuraSmallSize", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["FOCUS_ENABLED"] = true}})
+    p_focus:AddOptionSlider(L["Own aura size"], nil, { getterSetter = "focusAuraBigSize", callback = function() GwFocusUnitFrame:ToggleSettings() end, min = 10, max = 40, decimalNumbers = 0, step = 1, groupHeaderName = AURAS, dependence = {["FOCUS_ENABLED"] = true}})
+
 
     p_focus:AddGroupHeader(L["Fader"], {hidden = GW.Classic})
     p_focus:AddOptionDropdown(L["Fader"], nil, { getterSetter = "focusFrameFader", callback = function() GwFocusUnitFrame:ToggleSettings() end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["FOCUS_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"], hidden = GW.Classic})

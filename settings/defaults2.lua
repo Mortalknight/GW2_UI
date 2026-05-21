@@ -414,6 +414,8 @@ GW.globalDefault = {
         target_ILVL = "PVP_LEVEL",
         target_SHORT_VALUES = false,
         targetFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
+        targetAuraSmallSize = 20,
+        targetAuraBigSize = 26,
 
         focus_TARGET_ENABLED= true,
         focus_TARGET_SHOW_CASTBAR= true,
@@ -437,6 +439,8 @@ GW.globalDefault = {
         focus_FRAME_ALT_BACKGROUND= false,
         focus_SHORT_VALUES = false,
         focusFrameHealthBarTexture = "GW2_UI_2_DEFAULT",
+        focusAuraSmallSize = 20,
+        focusAuraBigSize = 26,
 
         target_pos= {
             point= "TOP",
