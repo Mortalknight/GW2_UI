@@ -860,7 +860,7 @@ function GwUnitFrameMixin:OnEvent(event, unit, ...)
     end
 end
 
-local function UpdateFilters(frame)
+function GW.UpdateFilters(frame)
     for i = 1, 2 do
         local db = i == 1 and frame.buffAdvancedFilters or frame.debuffAdvancedFilters
         local isPlayer = db.isAuraPlayer
@@ -928,7 +928,7 @@ function GwUnitFrameMixin:ToggleSettings()
     self.displayDebuffs = GW.settings[unit .. "_Debuff_Filter"] == "none" and 0 or 40
     self.auras.debuffFilter = GW.settings[unit .. "_Debuff_Filter"]
     self.auras.debuffAdvancedFilters = GW.settings[unit .. "_Debuff_Filter_advanced"]
-    UpdateFilters(self.auras)
+    GW.UpdateFilters(self.auras)
 
     self.auras.smallSize = 20
     self.auras.bigSize = 26

@@ -198,13 +198,33 @@ local function LoadTargetPanel(sWindow)
     --PET
     pPlayerPet:AddOption(ENABLE, L["Use the GW2 UI improved Pet bar."], {getterSetter = "PETBAR_ENABLED", callback = function() GW.ShowRlPopup = true end, incompatibleAddons = "PetFrame", isMasterToggle = true})
     pPlayerPet:AddOption(L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], {getterSetter = "PET_FLOATING_COMBAT_TEXT", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleCombatFeedback() end end, dependence = {["PETBAR_ENABLED"] = true}})
-    pPlayerPet:AddOption(L["Show auras below"], nil, {getterSetter = "PET_AURAS_UNDER", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleAuraPosition() end end, dependence = {["PETBAR_ENABLED"] = true}})
     pPlayerPet:AddOption(COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT, L["Show health as a numerical value."], {getterSetter = "PET_HEALTH_VALUE_RAW", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
     pPlayerPet:AddOption(RAID_HEALTH_TEXT_PERC, L["Display health as a percentage. Can be used as well as, or instead of Health Value."], {getterSetter = "PET_HEALTH_VALUE_PERCENT", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
     pPlayerPet:AddOption(L["Shorten health values"], nil, {getterSetter = "PET_UNIT_HEALTH_SHORT_VALUES", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = not GW.Retail})
     pPlayerPet:AddOption(L["Show absorb bar"], nil, {getterSetter = "PET_SHOW_ABSORB_BAR", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, dependence = {["PETBAR_ENABLED"] = true}, hidden = GW.Classic or GW.TBC or GW.Wrath})
     pPlayerPet:AddOptionDropdown(L["Healthbar texture"], nil, { getterSetter = "playerPetFrameHealthBarTexture", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:UpdateSettings() end end, optionsList = statusBarTexturesOptions, optionNames = statusBarTexturesLables, dependence = {["PETBAR_ENABLED"] = true}})
 
+    pPlayerPet:AddGroupHeader(AURAS)
+    pPlayerPet:AddOption(L["Show auras below"], nil, {getterSetter = "PET_AURAS_UNDER", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleAuraPosition() end end, dependence = {["PETBAR_ENABLED"] = true}})
+    pPlayerPet:AddOptionDropdown(L["Buffs"], L["Display the target's buffs."], { getterSetter = "PET_Buff_Filter", callback = function() GwPlayerPetFrame:UpdateSettings() end, optionsList = buffOptions, optionNames = buffOptionNames, dependence = {["PETBAR_ENABLED"] = true}, groupHeaderName = AURAS})
+    pPlayerPet:AddOptionDropdown(L["Buffs: Advanced Filtering"], nil, { getterSetter = "PET_Buff_Filter_advanced",
+        callback = function() GwPlayerPetFrame:UpdateSettings() end,
+        optionsList = advancedAuraOptions,
+        optionNames = advancedAuraOptionsNames,
+        dependence = {["PETBAR_ENABLED"] = true, ["PET_Buff_Filter"] = {"advanced"}},
+        checkbox = true,
+        groupHeaderName = AURAS}
+    )
+
+    pPlayerPet:AddOptionDropdown(L["Debuffs"], L["Display the target's debuffs."], { getterSetter = "PET_Debuff_Filter", callback = function() GwPlayerPetFrame:UpdateSettings() end, optionsList = debuffOptions, optionNames = debuffOptionNames, dependence = {["PETBAR_ENABLED"] = true}, groupHeaderName = AURAS})
+    pPlayerPet:AddOptionDropdown(L["Debuffs: Advanced Filtering"], nil, { getterSetter = "PET_Debuff_Filter_advanced",
+        callback = function() GwPlayerPetFrame:UpdateSettings() end,
+        optionsList = advancedAuraOptions,
+        optionNames = advancedAuraOptionsNames,
+        dependence = {["PETBAR_ENABLED"] = true, ["PET_Debuff_Filter"] = {"advanced"}},
+        checkbox = true,
+        groupHeaderName = AURAS}
+    )
     pPlayerPet:AddGroupHeader(L["Fader"])
     pPlayerPet:AddOptionDropdown(L["Fader"], nil, { getterSetter = "petFrameFader", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, optionsList = {"casting", "combat", "hover", "dynamicflight", "vehicle", "unittarget", "playertarget"}, optionNames = {L["Casting"], COMBAT, L["Hover"], DYNAMIC_FLIGHT, L["Vehicle"], L["Unit Target"], L["Player Target"]}, dependence = {["PETBAR_ENABLED"] = true}, checkbox = true, groupHeaderName = L["Fader"]})
     pPlayerPet:AddOptionSlider(L["Smooth"], nil, { getterSetter = "petFrameFader.smooth", callback = function() if GwPlayerPetFrame then GwPlayerPetFrame:ToggleFaderOptions() end end, min = 0, max = 3, decimalNumbers = 2, step = 0.01, groupHeaderName = L["Fader"], dependence = {["PETBAR_ENABLED"] = true}})

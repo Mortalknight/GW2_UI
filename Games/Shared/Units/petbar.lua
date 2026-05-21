@@ -236,6 +236,18 @@ function GwPlayerPetFrameMixin:UpdateSettings()
     self.showHealthValue = GW.settings.PET_HEALTH_VALUE_RAW
     self.showHealthPrecentage = GW.settings.PET_HEALTH_VALUE_PERCENT
 
+    self.displayBuffs = GW.settings.PET_Buff_Filter == "none" and 0 or 32
+    self.auras.buffFilter = GW.settings.PET_Buff_Filter
+    self.auras.buffAdvancedFilters = GW.settings.PET_Buff_Filter_advanced
+
+    self.displayDebuffs = GW.settings.PET_Debuff_Filter == "none" and 0 or 40
+    self.auras.debuffFilter = GW.settings.PET_Debuff_Filter
+    self.auras.debuffAdvancedFilters = GW.settings.PET_Debuff_Filter_advanced
+    GW.UpdateFilters(self.auras)
+
+    self.auras.smallSize = 20
+    self.auras.bigSize = 24
+
     -- statusbar texture
     local texture = GW.Libs.LSM:Fetch("statusbar", GW.settings.playerPetFrameHealthBarTexture)
     self.health:SetStatusBarTexture(texture)
@@ -286,18 +298,10 @@ local function LoadPetFrame(lm)
         GameTooltip:Show()
     end)
 
-    playerPetFrame.debuffFilter = "PLAYER|HARMFUL"
-    playerPetFrame.displayBuffs = 32
-    playerPetFrame.displayDebuffs = 40
-    playerPetFrame.auras.smallSize = 20
-    playerPetFrame.auras.bigSize = 24
-    playerPetFrame.auras.buffFilter = "all"
-    playerPetFrame.auras.debuffFilter = "all"
-
     playerPetFrame.happiness:SetScript("OnEnter", function(self)
         if self.tooltip then
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText(self.tooltip)
+            GameTooltip:SetText(self.tooltip, 1, 1, 1)
             if self.tooltipDamage then
                 GameTooltip:AddLine(self.tooltipDamage, 1, 1, 1, true)
             end

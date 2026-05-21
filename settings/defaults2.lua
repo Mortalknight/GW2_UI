@@ -228,6 +228,10 @@ GW.globalDefault = {
         PET_SHOW_ABSORB_BAR = true,
         PET_HEALTH_VALUE_RAW = true,
         PET_HEALTH_VALUE_PERCENT = false,
+        PET_Buff_Filter = "all",
+        PET_Buff_Filter_advanced = CopyTable(GridAuraFilter),
+        PET_Debuff_Filter = "player",
+        PET_Debuff_Filter_advanced = CopyTable(GridAuraFilter),
 
 
         BUTTON_ASSIGNMENTS= true,
