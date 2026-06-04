@@ -13,7 +13,7 @@ end
 local function UpdateButton(button, totem)
     if not (button and totem) then return end
 
-    local slot = (GW.Classic or GW.TBC or GW.Wrath) and totem or totem.slot
+    local slot = (GW.Classic or GW.TBC or GW.Wrath or GW.Mists) and totem or totem.slot
     local _, _, startTime, duration, icon = GetTotemInfo(slot)
 
     if startTime then
@@ -43,7 +43,7 @@ end
 function GwTotemBarMixin:Update()
     local priority = STANDARD_TOTEM_PRIORITIES
 
-    if GW.Retail then
+    if GW.Retail or GW.Mists then
         for _, button in ipairs(self) do
             if button:IsShown() then
                 button:SetShown(false)

@@ -313,18 +313,10 @@ local function DisableBlizzardsObjevtiveTracker()
             end
         end)
         EventRegistry:UnregisterFrameEventAndCallback("PLAYER_ENTERING_WORLD", ObjectiveTrackerManager)
-    elseif GW.Mists then
+    elseif GW.Mists or GW.Wrath then
         WatchFrame:SetMovable(1)
         WatchFrame:SetUserPlaced(true)
-        WatchFrame:SetParent(GW.HiddenFrame)
-        WatchFrame:SetPoint("TOPLEFT", GW.HiddenFrame, "TOPLEFT", 0, 0)
-        WatchFrame:SetPoint("BOTTOMRIGHT", GW.HiddenFrame, "BOTTOMRIGHT", 0, 0)
-        WatchFrame:SetScript("OnShow",function() WatchFrame:Hide() end)
-        SetCVar("autoQuestWatch", "1")
-    elseif GW.Wrath then
-        WatchFrame:SetMovable(1)
-        WatchFrame:SetUserPlaced(true)
-        WatchFrame:GwKill()
+        WatchFrame:Hide()
         WatchFrame:SetScript("OnShow",function() WatchFrame:Hide() end)
         SetCVar("autoQuestWatch", "1")
     elseif GW.Classic or GW.TBC then

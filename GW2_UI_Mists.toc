@@ -1,4 +1,4 @@
-## Interface: 50503
+## Interface: 50504
 ## Title: |cffffedbaGW2 UI|r |cFF888888Mists|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche

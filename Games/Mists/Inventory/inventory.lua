@@ -688,6 +688,8 @@ local function LoadInventory()
     _G["BINDING_NAME_GW2UI_BAG_SORT"] = BAG_CLEANUP_BAGS
     _G["BINDING_NAME_GW2UI_BANK_SORT"] = BAG_CLEANUP_BANK
 
+    BagsBar:GwKillEditMode()
+
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
     hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)

@@ -767,7 +767,7 @@ function GW.LoadMinimap()
                 FeedbackUIButton:GwKill()
             elseif addon == "Blizzard_HybridMinimap" then
                 SetupHybridMinimap()
-            elseif addon == "Blizzard_EncounterJournal" then
+            elseif addon == "Blizzard_EncounterJournal" and EJ_HideNonInstancePanels then
                 -- Since the default non-quest map is full screen, it overrides the showing of the encounter journal
                 hooksecurefunc("EJ_HideNonInstancePanels", function()
                     if InCombatLockdown() or not WorldMapFrame:IsShown() then return end
@@ -880,7 +880,7 @@ function GW.LoadMinimap()
                 setMinimapButtons("right")
             end
         end)
-    elseif GW.TBC or GW.Wrath then
+    elseif GW.TBC or GW.Wrath or GW.Mists then
         MiniMapBattlefieldFrame:ClearAllPoints()
 
         GwAddonToggle:SetPoint("TOP", MiniMapBattlefieldFrame, "BOTTOM", 0, -20)

@@ -562,7 +562,7 @@ local function LoadSpellBook(tabContainer)
     local spellBook = CreateFrame("Frame", "GwSpellbook", tabContainer, "GwSpellbook")
     local menu = CreateFrame("Frame", "GwSpellbookMenu", spellBook, "GwSpellbookMenu")
 
-	spellBook:RegisterEvent("LEARNED_SPELL_IN_TAB")
+	spellBook:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
 	spellBook:RegisterEvent("PLAYER_GUILD_UPDATE")
 	spellBook:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     spellBook:SetScript("OnEvent", OnEvent)

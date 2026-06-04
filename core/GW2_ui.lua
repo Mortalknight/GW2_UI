@@ -644,10 +644,6 @@ local function evPlayerLogin(self)
         GW.LoadMailSkin()
     end
 
-    if GW.Mists then
-        GW.SetUpVehicleFrameMover()
-    end
-
     if GW.Mists or GW.Retail or GW.TBC or GW.Wrath then
         GW.WidgetUISetup()
     end
@@ -897,7 +893,7 @@ local function evPlayerLogin(self)
         GW.SetupSingingSockets()
     end
 
-    if GW.Retail or GW.TBC or GW.Wrath then
+    if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
         GW.HandleBlizzardEditMode()
     end
 end

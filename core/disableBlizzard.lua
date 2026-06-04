@@ -5,6 +5,7 @@ local isArenaHooked = false
 local lockedFrames = {}
 
 local MAX_PARTY = MEMBERS_PER_RAID_GROUP or MAX_PARTY_MEMBERS or 5
+local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
 local MAX_BOSS_FRAMES = 10
 
 -- lock Boss, Party, and Arena
@@ -114,7 +115,7 @@ local function DisableBlizzardFrames()
         end
 
         CompactRaidFrameContainer:HookScript("OnShow", function() CompactRaidFrameContainer:Hide() end)
-        if GW.Retail or GW.TBC then
+        if GW.Retail or GW.TBC or GW.Mists then
             CompactRaidFrameContainer:GwKillEditMode()
         end
     end
@@ -214,7 +215,7 @@ local function DisableBlizzardFrames()
         HandleFrame(PetCastingBarFrame, 1)
 
         -- disbale blizzard castingbar mover
-        if GW.Retail or GW.TBC then
+        if GW.Retail or GW.TBC or GW.Mists then
             PlayerCastingBarFrame:HookScript("OnShow", function() PlayerCastingBarFrame:Hide() end)
             PlayerCastingBarFrame:GwKillEditMode()
         end

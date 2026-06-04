@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.12.0", {
+    {GW.Enum.ChangelogType.feature, [=[Add support for Mists new patch]=]},
+})
+
 addChange("10.11.0", {
     {GW.Enum.ChangelogType.feature, [=[Add aura options to player pet frame]=]},
     {GW.Enum.ChangelogType.feature, [=[Add aura size settings to target and focus frame]=]},

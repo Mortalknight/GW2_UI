@@ -160,7 +160,7 @@ do
     frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
     frame:RegisterEvent("PLAYER_LOGIN")
 
-    if Retail or TBC or Wrath then
+    if Retail or TBC or Wrath or Mists then
         frame:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
     else
         frame:RegisterEvent("LEARNED_SPELL_IN_TAB")

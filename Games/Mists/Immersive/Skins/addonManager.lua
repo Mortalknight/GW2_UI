@@ -1,88 +1,85 @@
 ---@class GW2
 local GW = select(2, ...)
 
+local function HandleAddonEntry(entry, treeNode)
+    if not entry.IsSkinned then
+        entry.Enabled:GwSkinCheckButton()
+        entry.Enabled:SetSize(15, 15)
+        entry.Enabled:SetHitRectInsets(0, 0, 0, 0)
+        entry.LoadAddonButton:GwSkinButton(false, true)
+        entry.LoadAddonButton.gwBorderFrame:Hide()
+
+        entry.Title:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        entry.Status:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        entry.Reload:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        entry.Reload:SetTextColor(1.0, 0.3, 0.3)
+        entry.LoadAddonButton.Text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+
+        GW.AddListItemChildHoverTexture(entry)
+        entry.IsSkinned = true
+    end
+    local addonIndex = treeNode:GetData().addonIndex
+    local checkstate = C_AddOns.GetAddOnEnableState(addonIndex)
+    if checkstate == 2 then
+        entry.Status:SetTextColor(0.7, 0.7, 0.7)
+    else
+        entry.Status:SetTextColor(0.4, 0.4, 0.4)
+    end
+
+    local _, _, _, _, reason = C_AddOns.GetAddOnInfo(addonIndex)
+    local checktex = entry.Enabled:GetCheckedTexture()
+    if reason == "DEP_DISABLED" then
+        checktex:SetVertexColor(0.3, 0.3, 0.3)
+        checktex:SetDesaturated(true)
+    elseif checkstate == 1 then
+        checktex:SetVertexColor(1, 0.93, 0.73)
+        checktex:SetDesaturated(false)
+    elseif checkstate == 2 then
+        checktex:SetVertexColor(1, 1, 1)
+        checktex:SetDesaturated(false)
+    end
+end
+
 local function LoadAddonListSkin()
     if not GW.settings.ADDONLIST_SKIN_ENABLED then return end
-
     GW.HandlePortraitFrame(AddonList)
 
-    GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {AddonList.ScrollBox}, nil, nil, true)
+    GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon.png", {AddonList.ScrollBox}, nil, false, true)
 
+    AddonListTitleText:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 6)
     AddonList.CloseButton:GwSkinButton(true)
     AddonList.EnableAllButton:GwSkinButton(false, true)
     AddonList.DisableAllButton:GwSkinButton(false, true)
     AddonList.OkayButton:GwSkinButton(false, true)
     AddonList.CancelButton:GwSkinButton(false, true)
     AddonList.Dropdown:GwHandleDropDownBox()
-    AddonListForceLoad:GwSkinCheckButton()
-    AddonListForceLoad:SetSize(10, 10)
-    AddonListForceLoad:ClearAllPoints()
-    AddonListForceLoad:SetPoint("TOPRIGHT", AddonList, "TOPRIGHT", -110, -55)
+    AddonList.Dropdown:ClearAllPoints()
+    AddonList.Dropdown:SetPoint("TOPLEFT", AddonList, "TOPLEFT", 12, -35)
+    AddonList.ForceLoad:GwSkinCheckButton()
+    AddonList.ForceLoad:SetSize(10, 10)
+    AddonList.ForceLoad:ClearAllPoints()
+    AddonList.ForceLoad:SetPoint("TOPRIGHT", AddonList, "TOPRIGHT", -160, -65)
+
+    for _, region in next, { AddonList.ForceLoad:GetRegions() } do
+        if region:IsObjectType("FontString") then
+            region:SetTextColor(1, 1, 1)
+        end
+    end
+
+    GW.SkinTextBox(AddonList.SearchBox.Middle, AddonList.SearchBox.Left, AddonList.SearchBox.Right)
+    AddonList.SearchBox:ClearAllPoints()
+    AddonList.SearchBox:SetPoint("TOPRIGHT", AddonList, "TOPRIGHT", -10, -38)
+
+    AddonList.Performance.Header:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 
     AddonList.CloseButton:SetSize(25, 25)
     AddonList.CloseButton:ClearAllPoints()
     AddonList.CloseButton:SetPoint("TOPRIGHT", -5, 0)
 
-    for i = 1, _G.MAX_ADDONS_DISPLAYED do
-        _G["AddonListEntry" .. i .. "Enabled"]:GwSkinCheckButton()
-        _G["AddonListEntry" .. i .. "Enabled"]:SetHitRectInsets(0, 0, 0, 0)
-        _G["AddonListEntry" .. i .. "Enabled"]:SetSize(15, 15)
-        _G["AddonListEntry"  ..  i].LoadAddonButton:GwSkinButton(false, true)
-        _G["AddonListEntry"  ..  i].LoadAddonButton.gwBorderFrame:Hide()
-    end
+    GW.HandleTrimScrollBar(AddonList.ScrollBar)
+    GW.HandleScrollControls(AddonList)
 
-    AddonListScrollFrame:GwSkinScrollFrame()
-    AddonListScrollFrameScrollBar:GwSkinScrollBar()
-
-    hooksecurefunc("AddonList_Update", function()
-        local numEntrys = C_AddOns.GetNumAddOns()
-
-        for i = 1, MAX_ADDONS_DISPLAYED do
-            local addonIndex = AddonList.offset + i
-
-            if addonIndex <= numEntrys then
-
-            local checkall
-            local character = UIDropDownMenu_GetSelectedValue(AddonList.Dropdown)
-            local entry = _G["AddonListEntry" .. i]
-                entry.Enabled = entry.Enabled or _G["AddonListEntry" .. i .. "Enabled"]
-            if character == true then
-                character = nil
-            else
-                checkall = C_AddOns.GetAddOnEnableState(addonIndex)
-            end
-
-            entry.Reload:SetTextColor(1.0, 0.3, 0.3)
-
-            local checkstate = C_AddOns.GetAddOnEnableState(addonIndex, character)
-            local enabledForSome = not character and checkstate == 1
-            local enabled = checkstate > 0
-            local disabled = not enabled or enabledForSome
-
-            if disabled then
-                entry.Status:SetTextColor(0.4, 0.4, 0.4)
-            else
-                entry.Status:SetTextColor(0.7, 0.7, 0.7)
-            end
-
-            local checktex = entry.Enabled:GetCheckedTexture()
-            if not enabled and checkall == 1 then
-                checktex:SetVertexColor(0.3, 0.3, 0.3)
-                checktex:SetDesaturated(true)
-                checktex:Show()
-            elseif not checkstate or checkstate == 0 then
-                checktex:Hide()
-            elseif checkstate == 1 then
-                checktex:SetVertexColor(1, 0.93, 0.73)
-                checktex:SetDesaturated(true)
-                checktex:Show()
-            elseif checkstate == 2 then
-                checktex:SetVertexColor(1, 1, 1)
-                checktex:SetDesaturated(false)
-                checktex:Show()
-            end
-            end
-        end
-    end)
+    hooksecurefunc("AddonList_InitAddon", HandleAddonEntry)
+    hooksecurefunc(AddonList.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
 end
 GW.LoadAddonListSkin = LoadAddonListSkin

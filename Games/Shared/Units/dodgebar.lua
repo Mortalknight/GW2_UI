@@ -531,7 +531,7 @@ function GwDodgeBarMixin:ToggleDodgeBar()
         self:RegisterEvent("SPELLS_CHANGED")
         self:RegisterEvent("PLAYER_ENTERING_WORLD")
         self:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-        if GW.Retail or GW.TBC or GW.Wrath then
+        if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
             self:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
         else
             self:RegisterEvent("LEARNED_SPELL_IN_TAB")
@@ -546,7 +546,7 @@ function GwDodgeBarMixin:ToggleDodgeBar()
         self:UnregisterEvent("SPELLS_CHANGED")
         self:UnregisterEvent("PLAYER_ENTERING_WORLD")
         self:UnregisterEvent("UPDATE_SHAPESHIFT_FORM")
-        if GW.Retail or GW.TBC or GW.Wrath then
+        if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
             self:UnregisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
         else
             self:UnregisterEvent("LEARNED_SPELL_IN_TAB")

@@ -1387,12 +1387,12 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
         -- if we learn a spell here we should show the new spell so we remove the event from the toastQueue list
         for _, v in pairs(toastQueue) do
-            if v ~= nil and v.event == "LEARNED_SPELL_IN_TAB" then
+            if v ~= nil and (v.event == "LEARNED_SPELL_IN_TAB" or v.event == "LEARNED_SPELL_IN_SKILL_LINE") then
                 v.event = ""
             end
         end
         PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND), "Master")
-    elseif event == "LEARNED_SPELL_IN_TAB" and GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL and not self.ignoreNewSpells then
+    elseif (event == "LEARNED_SPELL_IN_TAB" or event == "LEARNED_SPELL_IN_SKILL_LINE") and GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL and not self.ignoreNewSpells then
         local spellID = ...
         if ignoreDragonRidingSpells[spellID] then return end
         local spellInfo = C_Spell.GetSpellInfo(spellID)
@@ -1410,7 +1410,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" and GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL then
         C_Timer.After(0.5, function()
             for k, v in pairs(toastQueue) do
-                if v ~= nil and v.event == "LEARNED_SPELL_IN_TAB" then
+                if v ~= nil and (v.event == "LEARNED_SPELL_IN_TAB" or v.event == "LEARNED_SPELL_IN_SKILL_LINE") then
                     toastQueue[k] = nil
                 end
             end
@@ -1638,7 +1638,11 @@ local function LoadAlertSystem()
 
         GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
         if not GW.Retail and not GW.Wrath then
-            GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+            if GW.Mists then
+                GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
+            else
+                GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+            end
             GW.Libs.GW2Lib:RegisterCombatEvent(GW.AlertContainerFrame, "SPELL_CAST_SUCCESS", CLEUHandling)
             GW.Libs.GW2Lib:RegisterCombatEvent(GW.AlertContainerFrame, "SPELL_CREATE", CLEUHandling)
         end

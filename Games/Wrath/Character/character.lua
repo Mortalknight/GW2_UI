@@ -627,7 +627,6 @@ end
 local function LoadPaperDoll(tabContainer)
     local dressingRoom = CreateFrame("Button", "GwDressingRoom", tabContainer, "GwDressingRoom")
     local heroPanelMenu = CreateFrame("Frame", "GwHeroPanelMenu", tabContainer, "GwCharacterMenuFilledTemplate")
-    local honorFrame = CreateFrame("Frame", "GwPaperHonor", tabContainer, "GwPaperHonor")
 
     --Legacy pet window
     local petContainer = CreateFrame("Frame", "GwPetContainer", tabContainer, "GwPetContainer")
@@ -758,6 +757,7 @@ local function LoadPaperDoll(tabContainer)
     GW.SetCharacterWindowOpenAttribute(heroPanelMenu.gearMenu, "gearset")
     GW.SetCharacterWindowOpenAttribute(heroPanelMenu.petMenu, "paperdollpet")
 
+    GwCharacterWindow:SetFrameRef("GwDressingRoom", dressingRoom)
     GwCharacterWindow:SetFrameRef("GwHeroPanelMenu", heroPanelMenu)
     GwCharacterWindow:SetFrameRef("GwPaperSkills", skillsFrame)
     GwCharacterWindow:SetFrameRef("GwPaperDollTitles", titleFrame)

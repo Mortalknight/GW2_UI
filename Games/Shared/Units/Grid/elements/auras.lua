@@ -489,7 +489,7 @@ local function Construct_Auras(frame)
     indicatorBar.bg:SetVertexColor(0, 0, 0, 1)
     auras.indicatorBAR = indicatorBar
 
-    if GW.Retail then
+    if GW.Retail or GW.Mists then
         auras.dispelColorCurve = C_CurveUtil.CreateColorCurve()
         auras.dispelColorCurve:SetType(Enum.LuaCurveType.Step)
         for _, dispelIndex in next, GW.Enum.DispelType do

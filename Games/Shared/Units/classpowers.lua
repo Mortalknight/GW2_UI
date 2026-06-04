@@ -1590,7 +1590,7 @@ local function setWarlock(f)
         f:RegisterEvent("UNIT_DISPLAYPOWER")
     end
     -- Register "LEARNED_SPELL_IN_TAB" so we can check for the green fire spell and check an login
-    if GW.Retail or GW.TBC or GW.Wrath then
+    if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
         f:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
     else
         f:RegisterEvent("LEARNED_SPELL_IN_TAB")

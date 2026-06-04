@@ -664,7 +664,7 @@ local function LoadXPBar()
         PetBattleFrame.BottomFrame:SetFrameLevel(PetBattleFrame.BottomFrame:GetFrameLevel() + 5)
     end
 
-    if GW.Retail or GW.TBC or GW.Wrath then
+    if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
         StatusTrackingBarManager:GwKill()
     end
 

@@ -174,7 +174,7 @@ end
 local function updateGuildButton(self, event)
     if event == "GUILD_ROSTER_UPDATE" then
         local gmb = GW.Classic and SocialsMicroButton or GuildMicroButton
-        if (GW.TBC or GW.Wrath) and SocialsMicroButton:IsShown() then
+        if (GW.TBC or GW.Wrath or GW.Mists) and SocialsMicroButton:IsShown() then
             gmb = SocialsMicroButton
         end
         if gmb == nil then
@@ -679,7 +679,7 @@ local function setupMicroButtons(mbf)
     local cref
     if GW.settings.USE_CHARACTER_WINDOW then
         --IsProtected()
-        cref = CreateFrame("Button", "GwCharacterMicroButton", mbf, ((GW.Retail or GW.Wrath) and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
+        cref = CreateFrame("Button", "GwCharacterMicroButton", mbf, ((GW.Retail or GW.Wrath or GW.Mists) and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
         if GW.Retail then
             Mixin(cref, MainMenuBarMicroButtonMixin)
         end
@@ -726,7 +726,7 @@ local function setupMicroButtons(mbf)
     cref:GwSetAnchorPoint()
 
     -- custom bag microbutton
-    local bref = CreateFrame("Button", nil, mbf, ((GW.Retail or GW.Wrath) and "" or "MainMenuBarMicroButton"))
+    local bref = CreateFrame("Button", nil, mbf, ((GW.Retail or GW.Wrath or GW.Mists) and "" or "MainMenuBarMicroButton"))
     bref.tooltipText = MicroButtonTooltipText(INVENTORY_TOOLTIP, "OPENALLBAGS")
     bref.newbieText = nil
     bref.textureName = "BagMicroButton"
@@ -745,7 +745,7 @@ local function setupMicroButtons(mbf)
     local sref
     if not GW.Retail then
         if GW.settings.USE_SPELLBOOK_WINDOW then
-            sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, (GW.Wrath and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
+            sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, ((GW.Wrath or GW.Mists) and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
             sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
             sref.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
             reskinMicroButton(sref, "SpellbookMicroButton", mbf)
@@ -777,7 +777,7 @@ local function setupMicroButtons(mbf)
     local tref
     if not GW.Retail then
         if GW.settings.USE_TALENT_WINDOW then
-            tref = CreateFrame("Button", "GwTalentMicroButton", mbf, (GW.Wrath and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
+            tref = CreateFrame("Button", "GwTalentMicroButton", mbf, ((GW.Wrath or GW.Mists) and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
             tref.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS")
             tref.newbieText = NEWBIE_TOOLTIP_TALENTS
             reskinMicroButton(tref, "TalentMicroButton", mbf)
@@ -843,7 +843,7 @@ local function setupMicroButtons(mbf)
 
     -- GuildMicroButton
    local gref
-    for i = 1, (GW.Classic or GW.TBC or GW.Wrath) and 2 or 1 do
+    for i = 1, (GW.Classic or GW.TBC or GW.Wrath or GW.Mists) and 2 or 1 do
         if i == 1 then
             gref = GuildMicroButton
         else
@@ -860,7 +860,7 @@ local function setupMicroButtons(mbf)
             GW.Guild_OnEnter(self)
         end)
         gref:SetScript("OnClick", GW.Guild_OnClick)
-        if not (GW.Classic or GW.TBC or GW.Wrath) then
+        if not (GW.Classic or GW.TBC or GW.Wrath or GW.Mists) then
             hooksecurefunc(gref, "UpdateTabard", function()
                 gref:GetDisabledTexture():SetAlpha(1)
                 gref:GetNormalTexture():SetAlpha(1)
@@ -1246,7 +1246,7 @@ hook_UpdateMicroButtons = function(fromDeferredUpdate)
 
     HelpMicroButton:Show()
     local m = GW.Classic and SocialsMicroButton or GuildMicroButton
-    if (GW.TBC or GW.Wrath) and SocialsMicroButton:IsShown() then
+    if (GW.TBC or GW.Wrath or GW.Mists) and SocialsMicroButton:IsShown() then
         m = SocialsMicroButton
     end
     m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/guildmicrobutton-up.png")
@@ -1329,7 +1329,7 @@ local function LoadMicroMenu()
         return
     end
 
-    if GW.Retail or GW.TBC or GW.Wrath then
+    if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
         MicroMenuContainer:GwKillEditMode()
     elseif GW.Classic then
         PERFORMANCEBAR_UPDATE_INTERVAL = 1
@@ -1359,7 +1359,7 @@ local function LoadMicroMenu()
         ToggleEventTimerIcon(mbf.cf)
     end
 
-    if not (GW.Retail or GW.TBC or GW.Wrath) then
+    if not (GW.Retail or GW.TBC or GW.Wrath or GW.Mists) then
         for i = 1, #MICRO_BUTTONS do
             MICRO_BUTTONS[i] = nil
         end
