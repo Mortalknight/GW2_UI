@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.12.1", {
+    {GW.Enum.ChangelogType.bug, [=[Fixed issue with Mists support]=]},
+})
+
 addChange("10.12.0", {
     {GW.Enum.ChangelogType.feature, [=[Add support for Mists new patch]=]},
 })

@@ -1335,7 +1335,7 @@ local function setShaman(f)
             f:RegisterUnitEvent("UNIT_AURA", "player")
             return true
         end
-    else
+    elseif GW.Wrath then
         if not InCombatLockdown() then
             if UIPARENT_MANAGED_FRAME_POSITIONS then
                 UIPARENT_MANAGED_FRAME_POSITIONS.MultiCastActionBarFrame = nil

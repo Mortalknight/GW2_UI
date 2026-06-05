@@ -587,7 +587,7 @@ local function evPlayerLogin(self)
     if GW.settings.MAINMENU_SKIN_ENABLED then
         GW.SkinMainMenu()
     else
-        if GW.Retail or GW.TBC or GW.Wrath then
+        if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
             hooksecurefunc(GameMenuFrame, 'InitButtons', function(menuFrame)
                 menuFrame:AddSection()
                 menuFrame:AddButton(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName), GW.ToggleGw2Settings)
