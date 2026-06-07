@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.12.2", {
+    {GW.Enum.ChangelogType.bug, [=[Auras can be cancelled again (Mists)]=]},
+})
+
 addChange("10.12.1", {
     {GW.Enum.ChangelogType.bug, [=[Fixed issue with Mists support]=]},
 })

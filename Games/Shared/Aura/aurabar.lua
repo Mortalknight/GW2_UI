@@ -644,10 +644,12 @@ local function loadAuras(lm)
         end
     end)
 
-    if GW.Retail then
-        -- Raise PetBattleFrame
+    -- Raise PetBattleFrame
+    if PetBattleFrame then
         PetBattleFrame:SetFrameLevel(hb:GetFrameLevel() + 5)
+    end
 
+    if GW.Retail then
         -- creating a mover for private auras (2 atm) -- TODO: Maybe in a future update there is a skinning way
         local privateAurasheader = CreateFrame("Frame", nil, UIParent)
         privateAurasheader:SetSize(240, 40)
