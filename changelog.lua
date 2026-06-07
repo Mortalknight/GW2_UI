@@ -15,6 +15,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("10.12.2", {
     {GW.Enum.ChangelogType.bug, [=[Auras can be cancelled again (Mists)]=]},
+    {GW.Enum.ChangelogType.bug, [=[Fixed experience bar Lua error when tracking reputation with a classic pet active]=]},
 })
 
 addChange("10.12.1", {

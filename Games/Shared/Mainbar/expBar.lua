@@ -424,7 +424,7 @@ local function UpdateData(self)
             end
         end
 
-        if not GW.Retail and select(2, HasPetUI()) and (UnitLevel("pet") or 0) < tonumber(level) then
+        if not GW.Retail and select(2, HasPetUI()) and (UnitLevel("pet") or 0) < GW.mylevel then
             showPet, valPrecPet = UpdatePetXPClassic(self)
         end
 
