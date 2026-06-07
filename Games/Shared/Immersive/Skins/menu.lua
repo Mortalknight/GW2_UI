@@ -96,12 +96,25 @@ local function SkinFrame(frame)
     end
 end
 
+local function SkinFrameAttachments(frame)
+    print(123)
+    if not frame.attachments then return end
+
+    for _, widget in next, frame.attachments do
+        if widget:IsObjectType("Texture") and widget:GetTexture() == 130940 then
+            widget:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
+            widget:SetRotation(-1.57)
+            widget:SetSize(12, 12)
+        end
+    end
+end
+
 local function OpenMenu(manager, region, menuDescription)
     local menu = manager:GetOpenMenu()
-    if menu then
-        SkinFrame(menu)
-        menuDescription:AddMenuAcquiredCallback(SkinFrame)
-    end
+    if not menu then return end
+
+    SkinFrame(menu)
+    menuDescription:AddMenuAcquiredCallback(SkinFrame)
 end
 
 local function LoadDropDownSkin()
@@ -111,7 +124,11 @@ local function LoadDropDownSkin()
     SkinUIDropDownMenu()
 
     local manager = Menu.GetManager()
-    hooksecurefunc(manager, "OpenMenu", OpenMenu)
-    hooksecurefunc(manager, "OpenContextMenu", OpenMenu)
+    if manager then
+        hooksecurefunc(manager, "OpenMenu", OpenMenu)
+        hooksecurefunc(manager, "OpenContextMenu", OpenMenu)
+    end
+
+    hooksecurefunc(CompositorMixin, "AttachTexture", SkinFrameAttachments)
 end
 GW.LoadDropDownSkin = LoadDropDownSkin
