@@ -97,14 +97,13 @@ local function SkinFrame(frame)
 end
 
 local function SkinFrameAttachments(frame)
-    print(123)
     if not frame.attachments then return end
 
     for _, widget in next, frame.attachments do
         if widget:IsObjectType("Texture") and widget:GetTexture() == 130940 then
             widget:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
             widget:SetRotation(-1.57)
-            widget:SetSize(12, 12)
+            widget:SetSize(15, 15)
         end
     end
 end
