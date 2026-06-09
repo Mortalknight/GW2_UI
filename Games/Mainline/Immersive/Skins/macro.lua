@@ -59,9 +59,9 @@ local function ApplyMacroOptionsSkin()
         end
     end
 
-    GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar, true)
+    GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar)
     GW.HandleScrollControls(MacroFrame.MacroSelector)
-    GW.HandleTrimScrollBar(MacroFrameScrollFrame.ScrollBar, true)
+    GW.HandleTrimScrollBar(MacroFrameScrollFrame.ScrollBar)
     GW.HandleScrollControls(MacroFrameScrollFrame)
 
 

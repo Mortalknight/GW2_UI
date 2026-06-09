@@ -299,10 +299,10 @@ local function worldMapSkin()
     QuestScrollFrame.ScrollBar:GwSkinScrollBar()
     QuestScrollFrame:GwSkinScrollFrame()
 
-    GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar, true)
+    GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar)
     GW.HandleScrollControls(QuestScrollFrame)
 
-    GW.HandleTrimScrollBar(QuestMapDetailsScrollFrame.ScrollBar, true)
+    GW.HandleTrimScrollBar(QuestMapDetailsScrollFrame.ScrollBar)
     GW.HandleScrollControls(QuestMapDetailsScrollFrame)
 
     GW.HandleNextPrevButton(WorldMapFrame.SidePanelToggle.CloseButton, "left")

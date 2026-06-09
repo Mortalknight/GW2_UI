@@ -1,4 +1,5 @@
-local _, GW =  ...
+---@class GW2
+local GW = select(2, ...)
 
 local lootQuality = {
     ["loottab-set-itemborder-white"] = nil, -- dont show white
@@ -438,13 +439,13 @@ local function encounterJournalSkin()
     EncounterInfo.LootContainer.filter:GwHandleDropDownBox(nil, false, nil, 120)
     EncounterInfo.LootContainer.slotFilter:GwHandleDropDownBox(nil, false, nil, 100)
 
-    GW.HandleTrimScrollBar(EncounterInfo.BossesScrollBar, true)
+    GW.HandleTrimScrollBar(EncounterInfo.BossesScrollBar)
     GW.HandleScrollControls(EncounterInfo, "BossesScrollBar")
-    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInstanceFrame.LoreScrollBar, true)
+    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInstanceFrame.LoreScrollBar)
     GW.HandleScrollControls(EncounterJournalEncounterFrameInstanceFrame, "LoreScrollBar")
-    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInfoDetailsScrollFrame.ScrollBar, true)
+    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInfoDetailsScrollFrame.ScrollBar)
     GW.HandleScrollControls(EncounterJournalEncounterFrameInfoDetailsScrollFrame)
-    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInfoOverviewScrollFrame.ScrollBar, true)
+    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInfoOverviewScrollFrame.ScrollBar)
     GW.HandleScrollControls(EncounterJournalEncounterFrameInfoOverviewScrollFrame)
 
     EncounterJournalEncounterFrameInstanceFrameBG:SetScale(0.85)
@@ -461,7 +462,7 @@ local function encounterJournalSkin()
     EncounterInfo.detailsScroll.ScrollBar:GwSkinScrollBar()
     EncounterInfo.detailsScroll.ScrollBar:SetWidth(3)
 
-    GW.HandleTrimScrollBar(EncounterInfo.LootContainer.ScrollBar, true)
+    GW.HandleTrimScrollBar(EncounterInfo.LootContainer.ScrollBar)
     GW.HandleScrollControls(EncounterInfo.LootContainer)
 
     EncounterInfo.detailsScroll:SetHeight(360)
@@ -493,7 +494,7 @@ local function encounterJournalSkin()
 
     EncounterJournalSearchResultsCloseButton:GwSkinButton(true)
     EncounterJournalSearchResultsCloseButton:SetSize(20, 20)
-    GW.HandleTrimScrollBar(EncounterJournalSearchResults.ScrollBar, true)
+    GW.HandleTrimScrollBar(EncounterJournalSearchResults.ScrollBar)
     GW.HandleScrollControls(EncounterJournalSearchResults)
 
     for i = 1, AJ_MAX_NUM_SUGGESTIONS do
@@ -571,7 +572,7 @@ local function encounterJournalSkin()
     end
 
     local LJ = EJ.LootJournal
-    GW.HandleTrimScrollBar(LJ.ScrollBar, true)
+    GW.HandleTrimScrollBar(LJ.ScrollBar)
     GW.HandleScrollControls(LJ)
 
     for _, button in next, {EncounterJournalEncounterFrameInfoFilterToggle, EncounterJournalEncounterFrameInfoSlotFilterToggle } do
@@ -722,7 +723,7 @@ local function encounterJournalSkin()
 
     do -- Item Sets
         local ItemSetsFrame = EJ.LootJournalItems.ItemSetsFrame
-        GW.HandleTrimScrollBar(ItemSetsFrame.ScrollBar, true)
+        GW.HandleTrimScrollBar(ItemSetsFrame.ScrollBar)
         GW.HandleScrollControls(ItemSetsFrame)
         ItemSetsFrame.ClassDropdown:GwHandleDropDownBox()
 

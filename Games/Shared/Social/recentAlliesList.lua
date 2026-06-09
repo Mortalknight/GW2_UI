@@ -132,7 +132,7 @@ function GW.SkinRecentAlliesList()
     if not GW.Retail then return end
 
     hooksecurefunc(RecentAlliesFrame.List.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
-    GW.HandleTrimScrollBar(RecentAlliesFrame.List.ScrollBar, true)
+    GW.HandleTrimScrollBar(RecentAlliesFrame.List.ScrollBar)
     GW.HandleScrollControls(RecentAlliesFrame.List)
     hooksecurefunc(RecentAlliesFrame.List.ScrollBox, "Update", function(scrollBox)
         scrollBox:ForEachFrame(ReskinRecentAllyButton)

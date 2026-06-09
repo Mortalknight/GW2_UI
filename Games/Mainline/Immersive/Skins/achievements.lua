@@ -1226,11 +1226,11 @@ local function skinAchevement()
 
     AchievementFrameCategories.ScrollBox:SetPoint("TOPLEFT", 0, 0)
 
-    GW.HandleTrimScrollBar(AchievementFrameCategories.ScrollBar, true)
-    GW.HandleTrimScrollBar(AchievementFrameAchievements.ScrollBar, true)
-    GW.HandleTrimScrollBar(AchievementFrameStats.ScrollBar, true)
-    GW.HandleTrimScrollBar(AchievementFrameComparison.AchievementContainer.ScrollBar, true)
-    GW.HandleTrimScrollBar(AchievementFrameComparison.StatContainer.ScrollBar, true)
+    GW.HandleTrimScrollBar(AchievementFrameCategories.ScrollBar)
+    GW.HandleTrimScrollBar(AchievementFrameAchievements.ScrollBar)
+    GW.HandleTrimScrollBar(AchievementFrameStats.ScrollBar)
+    GW.HandleTrimScrollBar(AchievementFrameComparison.AchievementContainer.ScrollBar)
+    GW.HandleTrimScrollBar(AchievementFrameComparison.StatContainer.ScrollBar)
 
     HandleAchivementsScrollControls(AchievementFrameCategories)
     HandleAchivementsScrollControls(AchievementFrameAchievements)

@@ -31,6 +31,6 @@ function GW.SkinQuickJoinList()
 
     hooksecurefunc(QuickJoinFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
     QuickJoinFrame.JoinQueueButton:GwSkinButton(false, true)
-    GW.HandleTrimScrollBar(QuickJoinFrame.ScrollBar, true)
+    GW.HandleTrimScrollBar(QuickJoinFrame.ScrollBar)
     GW.HandleScrollControls(QuickJoinFrame)
 end

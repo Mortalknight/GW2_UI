@@ -61,7 +61,7 @@ function GW.SkinRecruitAFriendList()
     RecruitAFriendFrame.RewardClaiming.backdrop:SetFrameLevel(RecruitAFriendFrame.RewardClaiming:GetFrameLevel())
 
     RecruitAFriendFrame.RecruitList.ScrollFrameInset:GwStripTextures()
-    GW.HandleTrimScrollBar(RecruitAFriendFrame.RecruitList.ScrollBar, true)
+    GW.HandleTrimScrollBar(RecruitAFriendFrame.RecruitList.ScrollBar)
     GW.HandleScrollControls(RecruitAFriendFrame.RecruitList)
     RecruitAFriendFrame.RecruitList.ScrollBox:SetSize(433, 420)
 

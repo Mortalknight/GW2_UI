@@ -32,7 +32,7 @@ local function ApplySocketUISkin()
     ItemSocketingDescription:DisableDrawLayer("BACKGROUND")
     ItemSocketingScrollFrame:GwStripTextures()
 
-    GW.HandleTrimScrollBar(ItemSocketingScrollFrame.ScrollBar, true)
+    GW.HandleTrimScrollBar(ItemSocketingScrollFrame.ScrollBar)
     GW.HandleScrollControls(ItemSocketingScrollFrame)
 
     for i = 1, MAX_NUM_SOCKETS  do

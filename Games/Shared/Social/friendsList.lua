@@ -393,7 +393,7 @@ function GW.SkinFriendList()
     FriendsFrameStatusDropdown:SetPoint("TOPLEFT", FriendsFrame.gwHeader, "BOTTOMLEFT", 5, 0)
 
     if GW.Retail then
-        GW.HandleTrimScrollBar(FriendsListFrame.ScrollBar, true)
+        GW.HandleTrimScrollBar(FriendsListFrame.ScrollBar)
         GW.HandleScrollControls(FriendsListFrame)
         hooksecurefunc(FriendsListFrame.ScrollBox, "Update", GW.HandleItemListScrollBoxHover)
     elseif GW.TBC or GW.Wrath then
@@ -434,7 +434,7 @@ function GW.SkinFriendList()
         FriendsFriendsFrame.SendRequestButton:GwSkinButton(false, true)
         FriendsFriendsFrame.CloseButton:GwSkinButton(false, true)
 
-        GW.HandleTrimScrollBar(FriendsFriendsFrame.ScrollBar, true)
+        GW.HandleTrimScrollBar(FriendsFriendsFrame.ScrollBar)
         GW.HandleScrollControls(FriendsFriendsFrame)
 
         FriendsFrameBattlenetFrame.ContactsMenuButton:SetPoint("TOPRIGHT", FriendsFrame.gwHeader, "BOTTOMRIGHT", 5, 0)

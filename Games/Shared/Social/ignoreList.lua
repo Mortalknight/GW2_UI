@@ -6,7 +6,7 @@ function GW.SkinIgnoreList()
     if IgnoreWindow then
         IgnoreWindow:GwStripTextures()
         IgnoreWindow:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        GW.HandleTrimScrollBar(IgnoreWindow.ScrollBar, true)
+        GW.HandleTrimScrollBar(IgnoreWindow.ScrollBar)
         GW.HandleScrollControls(IgnoreWindow)
         IgnoreWindow.CloseButton:GwSkinButton(true)
     end
