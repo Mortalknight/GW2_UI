@@ -1,3 +1,6 @@
+---@class GW2
+local GW = select(2, ...)
+
 local LIST_ROW_SPACING = 40
 local LIST_SAFE_WIDTH = 300
 

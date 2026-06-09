@@ -1,4 +1,5 @@
-local _, GW = ...
+---@class GW2
+local GW = select(2, ...)
 
 local function LoadPvpFrame(frame)
     for i = 1, PVPFrame:GetNumRegions() do

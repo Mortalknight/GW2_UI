@@ -1,3 +1,6 @@
+---@class GW2
+local GW = select(2, ...)
+
 GwObjectivesGroupfinderButtonMixin = {}
 local isOpeningGroupFinder = false
 
