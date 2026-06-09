@@ -50,7 +50,7 @@ local function GetColor(dif)
 end
 
 local function GuildEmblem()
-    if guild and IsInGuild() then
+    if guild and guild.Emblem and IsInGuild() then
         local texCoord = { guild.Emblem:GetTexCoord() }
         return ("|TInterface/GuildFrame/GuildEmblems_01:16:16:0:0:32:32:%d:%d:%d:%d|t"):format(
             texCoord[1] * 32, texCoord[7] * 32, texCoord[2] * 32, texCoord[8] * 32

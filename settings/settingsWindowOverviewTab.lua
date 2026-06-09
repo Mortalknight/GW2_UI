@@ -615,19 +615,19 @@ function GW.LoadSettingsOverview(container)
     end
 
     local buttons = {
-        {settingsOverview.menu.welcomebtn, L["Setup"], welcome_OnClick},
-        {settingsOverview.menu.reportbtn, L["System info"], statusReport_OnClick},
-        {settingsOverview.menu.changelog, L["Changelog"], function() ShowChangelog(settingsOverview.ScrollBox) end},
-        {settingsOverview.menu.creditsbtn, L["Credits"], function() ShowCredits(settingsOverview.ScrollBox) end},
-        {settingsOverview.menu.movehudbtn, L["Move HUD"], function()
+        {button = settingsOverview.menu.welcomebtn, text = L["Setup"], onClick = welcome_OnClick},
+        {button = settingsOverview.menu.reportbtn, text = L["System info"], onClick = statusReport_OnClick},
+        {button = settingsOverview.menu.changelog, text = L["Changelog"], onClick = function() ShowChangelog(settingsOverview.ScrollBox) end},
+        {button = settingsOverview.menu.creditsbtn, text = L["Credits"], onClick = function() ShowCredits(settingsOverview.ScrollBox) end},
+        {button = settingsOverview.menu.movehudbtn, text = L["Move HUD"], onClick = function()
             if InCombatLockdown() then
                 GW.Notice(L["You cannot move elements during combat!"])
                 return
             end
             GW.moveHudObjects(GW.MoveHudScaleableFrame)
         end},
-        {settingsOverview.menu.keybindingsbtn, KEY_BINDING, function() container:Hide() GW.DisplayHoverBinding() end},
-        {settingsOverview.menu.discordbtn, L["Join Discord"], function()
+        {button = settingsOverview.menu.keybindingsbtn, text = KEY_BINDING, onClick = function() container:Hide() GW.DisplayHoverBinding() end},
+        {button = settingsOverview.menu.discordbtn, text = L["Join Discord"], onClick = function()
             GW.ShowPopup({text = L["Join Discord"],
             hasEditBox = true,
             inputText = "https://discord.gg/MZZtRWt",
@@ -640,9 +640,9 @@ function GW.LoadSettingsOverview(container)
 
     local odd = true
     for _, button in ipairs(buttons) do
-        GW.SettingsMenuButtonSetUp(button[1], odd)
-        button[1]:SetText(button[2])
-        button[1]:SetScript("OnClick", button[3])
+        GW.SettingsMenuButtonSetUp(button.button, odd)
+        button.button:SetText(button.text)
+        button.button:SetScript("OnClick", button.onClick)
         odd = not odd
     end
 

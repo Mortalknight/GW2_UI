@@ -275,9 +275,8 @@ local function DisplayHoverBinding()
             MacroFrameTab1:HookScript("OnMouseUp", function() localmacros = 0 end)
             MacroFrameTab2:HookScript("OnMouseUp", function() localmacros = 1 end)
         end
-
         if not C_AddOns.IsAddOnLoaded("Blizzard_MacroUI") then
-            hooksecurefunc("LoadAddOn", function(addon)
+            hooksecurefunc(C_AddOns, "LoadAddOn", function(addon)
                 if addon == "Blizzard_MacroUI" then
                     registermacro()
                 end
