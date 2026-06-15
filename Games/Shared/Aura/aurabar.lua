@@ -11,6 +11,10 @@ local DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER = {
     DOWNR = 1,
     DOWN = -1,
     UP = -1,
+    UPL_COLUMN = -1,
+    UPR_COLUMN = 1,
+    DOWNL_COLUMN = -1,
+    DOWNR_COLUMN = 1,
 }
 
 local DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER = {
@@ -18,6 +22,10 @@ local DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER = {
     DOWNR = -1,
     DOWN = -1,
     UP = 1,
+    UPL_COLUMN = 1,
+    UPR_COLUMN = 1,
+    DOWNL_COLUMN = -1,
+    DOWNR_COLUMN = -1,
 }
 
 local DIRECTION_TO_POINT = {
@@ -25,6 +33,28 @@ local DIRECTION_TO_POINT = {
     DOWN = "TOPRIGHT",
     UPR = "BOTTOMLEFT",
     UP = "BOTTOMRIGHT",
+    UPL_COLUMN = "BOTTOMRIGHT",
+    UPR_COLUMN = "BOTTOMLEFT",
+    DOWNL_COLUMN = "TOPRIGHT",
+    DOWNR_COLUMN = "TOPLEFT",
+}
+
+local DIRECTION_TO_DEBUFF_ANCHOR = {
+    DOWNR = "BOTTOMLEFT",
+    DOWN = "BOTTOMRIGHT",
+    UPR = "TOPLEFT",
+    UP = "TOPRIGHT",
+    UPL_COLUMN = "TOPRIGHT",
+    UPR_COLUMN = "TOPLEFT",
+    DOWNL_COLUMN = "BOTTOMRIGHT",
+    DOWNR_COLUMN = "BOTTOMLEFT",
+}
+
+local DIRECTION_IS_COLUMN_LAYOUT = {
+    UPL_COLUMN = true,
+    UPR_COLUMN = true,
+    DOWNL_COLUMN = true,
+    DOWNR_COLUMN = true,
 }
 
 local AttributeCustomsVisibility = [[
@@ -516,6 +546,23 @@ local function UpdateAuraHeader(header)
         wrapAfter = 7
     end
 
+    local isColumnLayout = DIRECTION_IS_COLUMN_LAYOUT[grow_dir]
+    local minWidth = ((wrapAfter == 1 and 0 or horizontalSpacing) + width) * wrapAfter
+    local minHeight = height + 1
+    local xOffset = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] * (horizontalSpacing + width)
+    local yOffset = 0
+    local wrapXOffset = 0
+    local wrapYOffset = DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height)
+
+    if isColumnLayout then
+        minWidth = width + 1
+        minHeight = ((wrapAfter == 1 and 0 or verticalSpacing) + height) * wrapAfter
+        xOffset = 0
+        yOffset = DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height)
+        wrapXOffset = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] * (horizontalSpacing + width)
+        wrapYOffset = 0
+    end
+
     Debug("settings", header.setting, grow_dir, wrapAfter, width, height)
 
     header:SetAttribute("config-width", width)
@@ -527,13 +574,13 @@ local function UpdateAuraHeader(header)
     header:SetAttribute("separateOwn", db.Seperate)
     header:SetAttribute("wrapAfter", wrapAfter)
     header:SetAttribute("maxWraps", maxWraps)
-    header:SetAttribute("minWidth", ((wrapAfter == 1 and 0 or horizontalSpacing) + width) * wrapAfter)
-    header:SetAttribute("minHeight", (height + 1))
+    header:SetAttribute("minWidth", minWidth)
+    header:SetAttribute("minHeight", minHeight)
     header:SetAttribute("point", DIRECTION_TO_POINT[grow_dir])
-    header:SetAttribute("xOffset", DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] * (horizontalSpacing + width))
-    header:SetAttribute("yOffset", 0)
-    header:SetAttribute("wrapXOffset", 0)
-    header:SetAttribute("wrapYOffset", DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height))
+    header:SetAttribute("xOffset", xOffset)
+    header:SetAttribute("yOffset", yOffset)
+    header:SetAttribute("wrapXOffset", wrapXOffset)
+    header:SetAttribute("wrapYOffset", wrapYOffset)
     header:SetAttribute("growDir", grow_dir)
     header:SetAttribute("initialConfigFunction", AttributeInitialConfig)
 
@@ -554,7 +601,7 @@ local function UpdateAuraHeader(header)
         local anchor_hd
         header:ClearAllPoints()
         if not header.isMoved then
-            anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
+            anchor_hd = DIRECTION_TO_DEBUFF_ANCHOR[grow_dir]
             header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + height))
         else
             header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
