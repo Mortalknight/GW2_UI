@@ -1016,7 +1016,8 @@ local function GetBagItemQualityColor(quality)
         if quality == -1 then
             return {r = 0, g = 0, b = 0}
         end
-        return ColorManager.GetColorDataForBagItemQuality(quality)
+        local color = ColorManager.GetColorDataForBagItemQuality(quality)
+        return color or {r = 0, g = 0, b = 0}
     else
         local r, g, b = C_Item.GetItemQualityColor(quality)
         return {r = r, g = g, b = b}

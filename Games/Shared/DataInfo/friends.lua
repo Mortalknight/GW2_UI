@@ -20,7 +20,11 @@ local function inviteClick(name, guid)
         local inviteType = GetDisplayedInviteType(guid)
         if inviteType == "INVITE" or inviteType == "SUGGEST_INVITE" then
             if isBNet then
-                BNInviteFriend(name)
+                if GW.Retail then
+                    C_BattleNet.InviteFriend(name)
+                else
+                    BNInviteFriend(name)
+                end
             else
                 C_PartyInfo.InviteUnit(name)
             end
@@ -33,7 +37,11 @@ local function inviteClick(name, guid)
         end
     else
         if isBNet then
-            BNInviteFriend(name)
+            if GW.Retail then
+                C_BattleNet.InviteFriend(name)
+            else
+                BNInviteFriend(name)
+            end
         else
             C_PartyInfo.InviteUnit(name)
         end

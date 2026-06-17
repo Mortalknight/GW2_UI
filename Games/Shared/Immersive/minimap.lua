@@ -901,8 +901,10 @@ function GW.LoadMinimap()
 
     GW.HandleAddonCompartmentButton()
 
-    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
-
+    if Minimap.SetPlayerTexture then
+        Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
+    end
+    
     hideMiniMapIcons()
 
     SetMinimapHover()

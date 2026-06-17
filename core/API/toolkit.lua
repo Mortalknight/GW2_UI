@@ -921,13 +921,13 @@ local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddi
     end
 
     if textSizeType == GW.Enum.TextSizeType.BigHeader then
-        object:SetFont(font, (GW.settings.FONTS_BIG_HEADER_SIZE or 18) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, (GW.settings.FONTS_BIG_HEADER_SIZE or 18) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE or "")
     elseif textSizeType == GW.Enum.TextSizeType.Header then
-        object:SetFont(font, (GW.settings.FONTS_HEADER_SIZE or 16) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, (GW.settings.FONTS_HEADER_SIZE or 16) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE or "")
     elseif textSizeType == GW.Enum.TextSizeType.Normal then
-        object:SetFont(font, (GW.settings.FONTS_NORMAL_SIZE or 14) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, (GW.settings.FONTS_NORMAL_SIZE or 14) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE or "")
     elseif textSizeType == GW.Enum.TextSizeType.Small then
-        object:SetFont(font, (GW.settings.FONTS_SMALL_SIZE or 12) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE)
+        object:SetFont(font, (GW.settings.FONTS_SMALL_SIZE or 12) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE or "")
     end
 
     -- register font for size changes
