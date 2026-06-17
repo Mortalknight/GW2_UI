@@ -69,7 +69,7 @@ end
 local function HandleSessionTimer(window, sessionTimer)
     if not sessionTimer then return end
 
-    sessionTimer:GwNudgePoint(-15)
+    sessionTimer:GwNudgePoint(4)
     sessionTimer:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
 end
 
@@ -77,7 +77,7 @@ local function HandleTypeDropdown(window, dropdown)
     if not dropdown or dropdown.IsSkinned then return end
 
     dropdown:SetSize(20, 20)
-    dropdown:GwNudgePoint(15, -2)
+    dropdown:GwNudgePoint(0, -2)
 
     local customArrow = not dropdown.customArrow and dropdown:CreateTexture(nil, "BACKGROUND")
     if customArrow then
