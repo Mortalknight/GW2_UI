@@ -217,10 +217,11 @@ local function updateAura(element, unit, data, position)
             button.background:SetVertexColor(GW.Colors.DebuffColors.None:GetRGB())
         end
         if button.typeAura == "smallbuff" then
-            if data.isAuraImportant and data.isAuraRaidPlayerDispellable then
+            --if data.isAuraImportant and data.isAuraRaidPlayerDispellable then
+            if data.isAuraRaidPlayerDispellable then
                 size = size * GW.GetDebuffScaleBasedOnPrio()
-            elseif data.isAuraImportant then
-                size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
+            --elseif data.isAuraImportant then
+            --    size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
             elseif data.isAuraRaidPlayerDispellable then
                 size = size * tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
             end
@@ -250,8 +251,8 @@ local function CheckFilter(data, filters)
 
     return (filters.isAuraPlayer and player)
         or (filters.isAuraRaidPlayerDispellable and data.isAuraRaidPlayerDispellable)
-        or (filters.isAuraImportant and data.isAuraImportant and other)
-        or (filters.isAuraImportantPlayer and data.isAuraImportant and player)
+        --or (filters.isAuraImportant and data.isAuraImportant and other)
+        --or (filters.isAuraImportantPlayer and data.isAuraImportant and player)
         or (filters.isAuraCrowdControl and data.isAuraCrowdControl and other)
         or (filters.isAuraCrowdControlPlayer and data.isAuraCrowdControl and player)
         or (filters.isAuraBigDefensive and data.isAuraBigDefensive and other)
@@ -294,7 +295,7 @@ local function processData(unit, data, filter, newBuffAnimation)
     data.isHarmfulAura = filter:find("HARMFUL") and true
     data.isHelpfulAura = filter:find("HELPFUL") and true
 
-    data.isAuraImportant = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|IMPORTANT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|IMPORTANT")
+    --data.isAuraImportant = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|IMPORTANT") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|IMPORTANT")
     data.isAuraCancelable = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CANCELABLE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CANCELABLE")
     data.isAuraCrowdControl = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|CROWD_CONTROL") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|CROWD_CONTROL")
     data.isAuraBigDefensive = not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HELPFUL|BIG_DEFENSIVE") or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, data.auraInstanceID, "HARMFUL|BIG_DEFENSIVE")

@@ -93,12 +93,13 @@ local function PostUpdateButton(self, button, unit, data, position)
             button.backdrop:Hide()
 
             local isDispellable = data.isAuraRaidPlayerDispellable
-            local isImportant = data.isAuraImportant
+            --local isImportant = data.isAuraImportant
             local size = 16
-            if isImportant and isDispellable then
+            -- if isImportant and isDispellable then
+            if isDispellable then
                 size = size * GW.GetDebuffScaleBasedOnPrio()
-            elseif isImportant then
-                size = size * tonumber(parent.raidDebuffScale)
+            --elseif isImportant then
+            --    size = size * tonumber(parent.raidDebuffScale)
             elseif isDispellable then
                 size = size * tonumber(parent.raidDispelDebuffScale)
             end
@@ -159,8 +160,8 @@ local function CheckFilter(data, filters)
     if GW.Retail then
         return (filters.isAuraPlayer and player)
             or (filters.isAuraRaidPlayerDispellable and data.isAuraRaidPlayerDispellable)
-            or (filters.isAuraImportant and data.isAuraImportant and other)
-            or (filters.isAuraImportantPlayer and data.isAuraImportant and player)
+            --or (filters.isAuraImportant and data.isAuraImportant and other)
+            --or (filters.isAuraImportantPlayer and data.isAuraImportant and player)
             or (filters.isAuraCrowdControl and data.isAuraCrowdControl and other)
             or (filters.isAuraCrowdControlPlayer and data.isAuraCrowdControl and player)
             or (filters.isAuraBigDefensive and data.isAuraBigDefensive and other)
@@ -508,8 +509,8 @@ local function UpdateFilters(frame)
         local db = i == 1 and frame.buffFilters or frame.debuffFilters
         local isPlayer = db.isAuraPlayer
         local isRaidPlayerDispellable = db.isAuraRaidPlayerDispellable
-        local isImportant = db.isAuraImportant
-        local isImportantPlayer = db.isAuraImportantPlayer
+        --local isImportant = db.isAuraImportant
+        --local isImportantPlayer = db.isAuraImportantPlayer
         local isCrowdControl = db.isAuraCrowdControl
         local isCrowdControlPlayer = db.isAuraCrowdControlPlayer
         local isBigDefensive = db.isAuraBigDefensive
@@ -527,7 +528,7 @@ local function UpdateFilters(frame)
 
         local shared = isPlayer or isCancelable or isCancelablePlayer or notCancelable or notCancelablePlayer or isRaid or isRaidPlayer
         if GW.Retail then
-            db.noFilter = not (shared or isRaidPlayerDispellable or isImportant or isImportantPlayer or isCrowdControl or isCrowdControlPlayer or isBigDefensive or isBigDefensivePlayer or isRaidInCombat or isRaidInCombatPlayer or isExternalDefensive or isExternalDefensivePlayer)
+            db.noFilter = not (shared or isRaidPlayerDispellable or isCrowdControl or isCrowdControlPlayer or isBigDefensive or isBigDefensivePlayer or isRaidInCombat or isRaidInCombatPlayer or isExternalDefensive or isExternalDefensivePlayer)
         else
             db.noFilter = not shared
         end

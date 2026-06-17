@@ -8,10 +8,10 @@ local StrLower = GW.StrLower
 
 local playerTag = " |cFF888888(" .. PLAYER .. ")|r"
 local otherTag = " |cFF888888(" .. OTHER .. ")|r"
-local auraOptions = {"isAuraPlayer", "isAuraRaidPlayerDispellable", "HEADER", "isAuraRaidPlayer", "isAuraCancelablePlayer", "notAuraCancelablePlayer", "isAuraImportantPlayer", "isAuraCrowdControlPlayer", "isAuraBigDefensivePlayer", "isAuraRaidInCombatPlayer", "isAuraExternalDefensivePlayer"}
-local auraOptionsNames = {PLAYER, L["Dispellable"], PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag, L["Important"] .. playerTag, L["Crowd Control"] .. playerTag, L["Big Defensive"] .. playerTag, RAID_FRAMES_LABEL .. playerTag, L["External Defensives"] .. playerTag}
-local auraOptionsOther = {"HEADER", "isAuraRaid", "isAuraCancelable", "notAuraCancelable", "isAuraImportant", "isAuraCrowdControl", "isAuraBigDefensive", "isAuraRaidInCombat", "isAuraExternalDefensive"}
-local auraOptionsNamesOther = {OTHER, RAID .. otherTag, L["Is Cancelable"] .. otherTag, L["Not Cancelable"] .. otherTag, L["Important"] .. otherTag, L["Crowd Control"] .. otherTag, L["Big Defensive"] .. otherTag, RAID_FRAMES_LABEL .. otherTag, L["External Defensives"] .. otherTag}
+local auraOptions = {"isAuraPlayer", "isAuraRaidPlayerDispellable", "HEADER", "isAuraRaidPlayer", "isAuraCancelablePlayer", "notAuraCancelablePlayer", "isAuraCrowdControlPlayer", "isAuraBigDefensivePlayer", "isAuraRaidInCombatPlayer", "isAuraExternalDefensivePlayer"}
+local auraOptionsNames = {PLAYER, L["Dispellable"], PLAYER, RAID .. playerTag, L["Is Cancelable"] .. playerTag, L["Not Cancelable"] .. playerTag, L["Crowd Control"] .. playerTag, L["Big Defensive"] .. playerTag, RAID_FRAMES_LABEL .. playerTag, L["External Defensives"] .. playerTag}
+local auraOptionsOther = {"HEADER", "isAuraRaid", "isAuraCancelable", "notAuraCancelable", "isAuraCrowdControl", "isAuraBigDefensive", "isAuraRaidInCombat", "isAuraExternalDefensive"}
+local auraOptionsNamesOther = {OTHER, RAID .. otherTag, L["Is Cancelable"] .. otherTag, L["Not Cancelable"] .. otherTag, L["Crowd Control"] .. otherTag, L["Big Defensive"] .. otherTag, RAID_FRAMES_LABEL .. otherTag, L["External Defensives"] .. otherTag}
 local statusBarTexturesOptions, statusBarTexturesLables = GW.GetStatusBarTextures()
 
 for i = 1, #auraOptionsOther do
