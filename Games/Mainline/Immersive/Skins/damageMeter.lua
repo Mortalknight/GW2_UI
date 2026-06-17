@@ -5,7 +5,7 @@ local DROPDOWN_WIDTH_OFFSET = 8
 
 local function ButtonOnEnter(self)
     local normalTex = self:GetNormalTexture()
-    if not normalTex then return end
+    if not normalTex then return end 
 
     normalTex:SetVertexColor(0, 0, 0)
 end
@@ -77,7 +77,7 @@ local function HandleTypeDropdown(window, dropdown)
     if not dropdown or dropdown.IsSkinned then return end
 
     dropdown:SetSize(20, 20)
-    dropdown:GwNudgePoint(nil, -2)
+    dropdown:GwNudgePoint(15, -2)
 
     local customArrow = not dropdown.customArrow and dropdown:CreateTexture(nil, "BACKGROUND")
     if customArrow then
@@ -93,7 +93,7 @@ local function HandleTypeDropdown(window, dropdown)
     end
 
     if dropdown.TypeName then
-        dropdown.TypeName:GwNudgePoint(-4, -1)
+        dropdown.TypeName:GwNudgePoint(-2, -1)
         dropdown.TypeName:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
     end
 
@@ -276,7 +276,7 @@ local function HandleMinimizeButton(window, button)
     if not button or button.IsSkinned then return end
 
     button:SetSize(16, 16)
-    button:GwNudgePoint(13)
+    button:GwNudgePoint(0)
 
     SetMinimized(window, window.isMinimized)
     hooksecurefunc(window, "SetMinimized", SetMinimized)

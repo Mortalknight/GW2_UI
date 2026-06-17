@@ -16,6 +16,7 @@ AddChange(string addonVersion, table changeList)
 addChange("10.13.0", {
     {GW.Enum.ChangelogType.feature, [=[Added column-based player aura growth directions and clearer row/column layout labels]=]},
     {GW.Enum.ChangelogType.bug, [=[Fix some more Mists errors]=]},
+    {GW.Enum.ChangelogType.bug, [=[Fix for 12.0.7]=]},
 })
 
 addChange("10.12.2", {
