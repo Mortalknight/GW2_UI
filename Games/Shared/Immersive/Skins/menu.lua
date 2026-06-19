@@ -96,14 +96,22 @@ local function SkinFrame(frame)
     end
 end
 
+local widgets = {}
 local function SkinFrameAttachments(frame)
     if not frame.attachments then return end
 
     for _, widget in next, frame.attachments do
-        if widget:IsObjectType("Texture") and widget:GetTexture() == 130940 then
-            widget:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
-            widget:SetRotation(-1.57)
-            widget:SetSize(15, 15)
+        if widget:IsObjectType("Texture") then
+            if widget:GetTexture() == 130940 then
+                widget:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down.png")
+                widget:SetRotation(-1.57)
+                widget:SetSize(15, 15)
+
+                widgets[widget] = true
+            elseif widgets[widget] then
+                widget:SetRotation(0)
+                widgets[widget] = nil
+            end
         end
     end
 end
