@@ -102,8 +102,11 @@ local CRITICAL_ANIMATION
 local NUM_ACTIVE_FRAMES = 0
 
 local usedColorTable
+local critModifier = 1 -- cached numeric form of GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER
+local spellIconCache = {} -- spellId -> iconID (or false); spell icons are static data
 local function UpdateSettings()
     usedColorTable = GW.settings.GW_COMBAT_TEXT_BLIZZARD_COLOR and colorTable.blizzard or colorTable.gw
+    critModifier = math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER) or 1)
 end
 GW.UpdateDameTextSettings = UpdateSettings
 
@@ -186,7 +189,7 @@ local function animateTextCriticalForStackingFormat(frame)
             if p < 0.25 then
                 local scaleFade = p - 0.25
                 frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X, 0, scaleFade / 0.25)
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)), frame.textScaleModifier, scaleFade / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * critModifier, frame.textScaleModifier, scaleFade / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
@@ -232,7 +235,7 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
                 frame.anchorFrame = ClassicDummyFrame
             end
             if p < 0.25 then
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)), frame.textScaleModifier, p / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * critModifier, frame.textScaleModifier, p / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
@@ -285,16 +288,16 @@ end
 local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
     NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES + 1
     GW.AddToAnimation(frame:GetDebugName(), 0, 1, GetTime(),
-        math.min(CRITICAL_ANIMATION_DURATION * 2, (CRITICAL_ANIMATION_DURATION * (frame.dynamicScaleAdd + math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)))) / getDurationModifier()),
+        math.min(CRITICAL_ANIMATION_DURATION * 2, (CRITICAL_ANIMATION_DURATION * (frame.dynamicScaleAdd + critModifier)) / getDurationModifier()),
         function(p)
             if not frame.anchorFrame or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
                 classicPositionGrid(frame.anchorFrame)
             end
             if p < 0.05 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)), frame.dynamicScaleAdd, p / 0.05)))
+                frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * critModifier, frame.dynamicScaleAdd, p / 0.05)))
             else
-                frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER))))
+                frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * critModifier))
             end
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
             frame:SetAlpha(p > 0.9 and math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.9) / 0.1))) or 1)
@@ -426,13 +429,18 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
 
     local iconString = ""
     if GW.settings.scrollingDamageTextShowIcons and spellId then
-        local spellInfo = C_Spell.GetSpellInfo(spellId)
-        if spellInfo and spellInfo.iconID then
+        local iconID = spellIconCache[spellId]
+        if iconID == nil then
+            local spellInfo = C_Spell.GetSpellInfo(spellId)
+            iconID = (spellInfo and spellInfo.iconID) or false
+            spellIconCache[spellId] = iconID
+        end
+        if iconID then
             local _, fontSize = f.string:GetFont()
             local baseSize = (fontSize or 12)
             local iconScale = f.pet and 0.3 or 0.4
             local iconSize = math.floor(baseSize * iconScale)
-            iconString = string.format("|T%d:%d:%d:0:0:64:64:4:60:4:60|t ", spellInfo.iconID, iconSize, iconSize)
+            iconString = string.format("|T%d:%d:%d:0:0:64:64:4:60:4:60|t ", iconID, iconSize, iconSize)
         end
     end
     f.string:SetText(iconString .. tostring(text or ""))

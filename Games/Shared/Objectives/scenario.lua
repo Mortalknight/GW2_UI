@@ -845,9 +845,18 @@ end
 
 local function SetupChallengeModeTimer(self, timerID, timeLimit, time2, time3)
     self.chestoverlay:Show()
-    self:SetScript("OnUpdate", function()
+    self.timer:SetMinMaxValues(0, timeLimit)
+    self.cmTimerThrottle = 0
+    self:SetScript("OnUpdate", function(_, elapsed)
+        -- M+ timer text has second resolution; throttle to ~10x/s instead of every frame
+        -- (this runs for the whole dungeon, i.e. exactly when frame budget is tightest).
+        self.cmTimerThrottle = self.cmTimerThrottle + elapsed
+        if self.cmTimerThrottle < 0.1 then
+            return
+        end
+        self.cmTimerThrottle = 0
+
         local _, elapsedTime = GetWorldElapsedTime(timerID)
-        self.timer:SetMinMaxValues(0, timeLimit)
         self.timer:SetValue(math.max(0, timeLimit - elapsedTime))
         self.chestoverlay.chest2:SetShown(elapsedTime < time2)
         self.chestoverlay.chest3:SetShown(elapsedTime < time3)
@@ -883,10 +892,16 @@ local function SetupChallengeModeTimer(self, timerID, timeLimit, time2, time3)
 end
 
 local function SetupProvingGroundTimer(self, timerID, duration)
-    self:SetScript("OnUpdate", function()
+    self.timer:SetMinMaxValues(0, duration)
+    self.pgTimerThrottle = 0
+    self:SetScript("OnUpdate", function(_, elapsed)
+        self.pgTimerThrottle = self.pgTimerThrottle + elapsed
+        if self.pgTimerThrottle < 0.1 then
+            return
+        end
+        self.pgTimerThrottle = 0
+
         local _, elapsedTime = GetWorldElapsedTime(timerID)
-        self.timer:SetMinMaxValues(0, duration)
-        self.timer:SetValue(math.max(0, duration - elapsedTime))
         self.timer:SetValue(1 - (elapsedTime / duration))
         self.timerString:SetText(SecondsToClock(duration - elapsedTime))
     end)

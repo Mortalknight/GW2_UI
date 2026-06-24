@@ -770,13 +770,16 @@ local function UpdateChatKeywords()
 
     for stringValue in gmatch(keywords, "[^,]+") do
         if stringValue ~= "" then
-            Keywords[stringValue] = true
+            -- store the lowercased form as the value so CheckKeyword does not have to lower
+            -- every keyword again for every word of every chat message
+            Keywords[stringValue] = strlower(stringValue)
         end
     end
 end
 GW.UpdateChatKeywords = UpdateChatKeywords
 
 local protectLinks = {}
+local rebuiltWords = {} -- reused scratch list for the rebuilt message (avoids O(n^2) concat)
 local function CheckKeyword(message, author)
     local letSound = not SoundTimer and author ~= PLAYER_NAME and GW.settings.CHAT_KEYWORDS_ALERT_NEW ~= "None"
 
@@ -799,15 +802,15 @@ local function CheckKeyword(message, author)
         message = gsub(message, GW.EscapeString(hyperLink), tempLink)
     end
 
-    local rebuiltString
-    local isFirstWord = true
+    local lowerMyName = strlower(GW.myname)
+    local wordCount = 0
     for word in gmatch(message, "%s-%S+%s*") do
         if not next(protectLinks) or not protectLinks[gsub(gsub(word, "%s", ""), "|s", " ")] then
             local tempWord = gsub(word, "[%s%p]", "")
             local lowerCaseWord = strlower(tempWord)
 
-            for keyword in pairs(Keywords) do
-                if lowerCaseWord == strlower(keyword) or (lowerCaseWord == strlower(GW.myname) and keyword == "%MYNAME%") then
+            for keyword, lowerKeyword in pairs(Keywords) do
+                if lowerCaseWord == lowerKeyword or (lowerCaseWord == lowerMyName and keyword == "%MYNAME%") then
                     local keywordColor = GW.private.CHAT_KEYWORDS_ALERT_COLOR
                     word = gsub(word, tempWord, format("%s%s|r", GW.RGBToHex(keywordColor.r, keywordColor.g, keywordColor.b), tempWord))
 
@@ -836,12 +839,13 @@ local function CheckKeyword(message, author)
             end
         end
 
-        if isFirstWord then
-            rebuiltString = word
-            isFirstWord = false
-        else
-            rebuiltString = rebuiltString .. word
-        end
+        wordCount = wordCount + 1
+        rebuiltWords[wordCount] = word
+    end
+
+    local rebuiltString = table.concat(rebuiltWords, "", 1, wordCount)
+    for i = 1, wordCount do
+        rebuiltWords[i] = nil
     end
 
     for hyperLink, tempLink in pairs(protectLinks) do

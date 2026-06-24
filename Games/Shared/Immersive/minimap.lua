@@ -500,13 +500,13 @@ local function lfgAnimPvP(_, elapse)
         MiniMapBattlefieldIcon:SetAlpha(0)
         return
     end
-    if GetBattlefieldStatus(1) == "active" then
+    local status, _, _, _, _, _, isRankedArena = GetBattlefieldStatus(1)
+    if status == "active" then
         lfgAnimPvPStop()
         return
     end
     MiniMapBattlefieldFrame.animationCircle:Show()
 
-    local _, _, _, _, _, _, isRankedArena  = GetBattlefieldStatus(1)
     if isRankedArena then
         MiniMapBattlefieldIcon:SetTexture("Interface/PVPFrame/PVP-ArenaPoints-Icon");
     elseif UnitFactionGroup("player") then

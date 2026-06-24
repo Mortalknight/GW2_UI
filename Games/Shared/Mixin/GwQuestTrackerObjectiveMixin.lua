@@ -19,7 +19,15 @@ local function GetTextColor(self, timeRemaining)
 	end
 end
 
-local function TimerBarOnUpdate(self)
+local function TimerBarOnUpdate(self, elapsed)
+    -- The clock text only has second resolution; updating ~10x/s instead of every frame keeps
+    -- the bar smooth enough while skipping the per-frame SecondsToClock/SetText/SetTextColor work.
+    self.gwTimerThrottle = (self.gwTimerThrottle or 0) + (elapsed or 0)
+    if self.gwTimerThrottle < 0.1 then
+        return
+    end
+    self.gwTimerThrottle = 0
+
     local timeNow = GetTime()
 	local timeRemaining = self.duration - (timeNow - self.startTime)
 	self.TimerBar:SetValue(timeRemaining)

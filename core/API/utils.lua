@@ -193,12 +193,12 @@ GW.CountTable = CountTable
 
 local function AddActionBarCallback(callback)
     local callbacks = GW.ActionBarCallbacks
-    callbacks[CountTable(callbacks) + 1] = callback
+    callbacks[#callbacks + 1] = callback
 end
 GW.AddActionBarCallback = AddActionBarCallback
 
 local function TriggerActionBarCallbacks()
-    for _, callback in pairs(GW.ActionBarCallbacks) do
+    for _, callback in ipairs(GW.ActionBarCallbacks) do
         callback()
     end
 end
@@ -998,15 +998,28 @@ local function SetItemLevel(button, quality, itemInput, slot)
 end
 GW.SetItemLevel = SetItemLevel
 
+-- Shared read-only color objects/caches: the Retail ColorManager path already returns shared
+-- objects, so callers treat these as read-only. This avoids allocating a fresh table on every
+-- call (these run in bag/inventory refresh loops over many slots).
+local BLACK_QUALITY_COLOR = {r = 0, g = 0, b = 0}
+local qualityColorFallbackCache = {}
+
 local function GetQualityColor(quality)
     if ColorManager then
         if quality == -1 then
-            return {r = 0, g = 0, b = 0}
+            return BLACK_QUALITY_COLOR
         end
         return ColorManager.GetColorDataForItemQuality(quality)
     else
-        local r, g, b = C_Item.GetItemQualityColor(quality)
-        return {r = r, g = g, b = b}
+        local cached = qualityColorFallbackCache[quality]
+        if not cached then
+            local r, g, b = C_Item.GetItemQualityColor(quality)
+            cached = {r = r, g = g, b = b}
+            if quality ~= nil then
+                qualityColorFallbackCache[quality] = cached
+            end
+        end
+        return cached
     end
 end
 GW.GetQualityColor = GetQualityColor
@@ -1014,13 +1027,20 @@ GW.GetQualityColor = GetQualityColor
 local function GetBagItemQualityColor(quality)
     if ColorManager then
         if quality == -1 then
-            return {r = 0, g = 0, b = 0}
+            return BLACK_QUALITY_COLOR
         end
         local color = ColorManager.GetColorDataForBagItemQuality(quality)
-        return color or {r = 0, g = 0, b = 0}
+        return color or BLACK_QUALITY_COLOR
     else
-        local r, g, b = C_Item.GetItemQualityColor(quality)
-        return {r = r, g = g, b = b}
+        local cached = qualityColorFallbackCache[quality]
+        if not cached then
+            local r, g, b = C_Item.GetItemQualityColor(quality)
+            cached = {r = r, g = g, b = b}
+            if quality ~= nil then
+                qualityColorFallbackCache[quality] = cached
+            end
+        end
+        return cached
     end
 end
 GW.GetBagItemQualityColor = GetBagItemQualityColor

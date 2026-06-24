@@ -176,16 +176,17 @@ local function AddUpdateCB(func, payload, interval)
 end
 GW.AddUpdateCB = AddUpdateCB
 
+local completedAnimations = {} -- reused scratch list to avoid per-frame allocation
 local swimStateElapsed = 0
 local function gw_OnUpdate(_, elapsed)
     if next(animations) then
         local time = GetTime()
-        local completedAnimations = nil
+        local completedCount = 0
 
         for name, animation in pairs(animations) do
             if animation.completed then
-                completedAnimations = completedAnimations or {}
-                completedAnimations[#completedAnimations + 1] = name
+                completedCount = completedCount + 1
+                completedAnimations[completedCount] = name
             elseif time >= (animation.start + animation.duration) then
                 local t = animation.easeing and 1 or sin(pi * 0.5)
                 animation.progress = GW.lerp(animation.from, animation.to, t)
@@ -198,8 +199,8 @@ local function gw_OnUpdate(_, elapsed)
                     animation.onCompleteCallback()
                 end
 
-                completedAnimations = completedAnimations or {}
-                completedAnimations[#completedAnimations + 1] = name
+                completedCount = completedCount + 1
+                completedAnimations[completedCount] = name
             else
                 local t = animation.easeing and ((time - animation.start) / animation.duration) or sin((time - animation.start) / animation.duration * pi * 0.5)
                 animation.progress = GW.lerp(animation.from, animation.to, t)
@@ -210,10 +211,9 @@ local function gw_OnUpdate(_, elapsed)
             end
         end
 
-        if completedAnimations then
-            for i = 1, #completedAnimations do
-                animations[completedAnimations[i]] = nil
-            end
+        for i = 1, completedCount do
+            animations[completedAnimations[i]] = nil
+            completedAnimations[i] = nil
         end
     end
 

@@ -419,8 +419,9 @@ local function animFlare(f, scale, offset, duration, rotate)
     )
 end
 
+local getAuraDataSearchIDs = {} -- reused scratch (never returned), refilled per call
 local function GetAuraData(unit, unitSource, filter, ...)
-    local searchIDs = {}
+    local searchIDs = wipe(getAuraDataSearchIDs)
     local results = {}
     local multipleIds = select("#", ...) > 1
     for i = 1, select("#", ...) do
@@ -736,7 +737,13 @@ end
 -- EVOKER
 local FillingAnimationTime = 5.0
 
-local function Essence_OnUpdate(self)
+local function Essence_OnUpdate(self, elapsed)
+    -- The animation speed only depends on haste/regen and barely changes between frames, so
+    -- throttle the regen query and only push the multiplier to the animations when it changes.
+    self.gwEssenceThrottle = (self.gwEssenceThrottle or 0) + (elapsed or 0)
+    if self.gwEssenceThrottle < 0.1 then return end
+    self.gwEssenceThrottle = 0
+
     local peace = GetPowerRegenForPowerType(Enum.PowerType.Essence)
     if GW.IsSecretValue(peace) then return end
     if (peace == nil or peace == 0) then
@@ -744,8 +751,11 @@ local function Essence_OnUpdate(self)
     end
     local cooldownDuration = 1 / peace
     local animationSpeedMultiplier = FillingAnimationTime / cooldownDuration
-    self.EssenceFilling.FillingAnim:SetAnimationSpeedMultiplier(animationSpeedMultiplier)
-    self.EssenceFilling.CircleAnim:SetAnimationSpeedMultiplier(animationSpeedMultiplier)
+    if animationSpeedMultiplier ~= self.gwEssenceSpeed then
+        self.gwEssenceSpeed = animationSpeedMultiplier
+        self.EssenceFilling.FillingAnim:SetAnimationSpeedMultiplier(animationSpeedMultiplier)
+        self.EssenceFilling.CircleAnim:SetAnimationSpeedMultiplier(animationSpeedMultiplier)
+    end
 end
 local function SetEssennceFull(self)
     self.EssenceFilling.FillingAnim:Stop()
@@ -1103,20 +1113,19 @@ local getBlizzardRuneId = {
     [6] = 4,
 }
 
-local function getRuneData(index)
+local function getRuneData(index, out)
     if GW.Retail then
         local start, duration, ready = GetRuneCooldown(index)
         local progress = 1
         if start ~= nil and duration > 0 then
             progress = (GetTime() - start) / duration
         end
-        return {
-            start = start,
-            duration = duration,
-            ready = ready,
-            progress = progress,
-            runeType = nil, -- no need in retail
-        }
+        out.start = start
+        out.duration = duration
+        out.ready = ready
+        out.progress = progress
+        out.runeType = nil -- no need in retail
+        return out
     else
         local correctRuneId = getBlizzardRuneId[index]
         local start, duration, ready = GetRuneCooldown(correctRuneId)
@@ -1127,27 +1136,32 @@ local function getRuneData(index)
             start = GetTime()
             duration = 0
         end
-        return {
-            start = start,
-            duration = duration,
-            ready = ready,
-            progress = progress,
-            runeType = runeType,
-        }
+        out.start = start
+        out.duration = duration
+        out.ready = ready
+        out.progress = progress
+        out.runeType = runeType
+        return out
     end
 end
+
+-- Reused per-rune tables + scratch array so RUNE_POWER_UPDATE (frequent in DK combat) does not
+-- allocate 7 tables on every event.
+local runeDataPool = { {}, {}, {}, {}, {}, {} }
+local runeDataSorted = {}
+local function runeProgressSort(a, b) return a.progress > b.progress end
 
 local function powerRune(self)
     local f = self
     local fr = self.runeBar
-    local runeData = {}
+    local runeData = runeDataSorted
 
     for i = 1, 6 do
-        runeData[i] = getRuneData(i)
+        runeData[i] = getRuneData(i, runeDataPool[i])
     end
 
     if GW.Retail then
-        table.sort(runeData, function(a, b) return a.progress > b.progress end)
+        table.sort(runeData, runeProgressSort)
     end
 
     for i = 1, 6 do

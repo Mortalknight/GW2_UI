@@ -93,14 +93,14 @@ end
 
 GW.HookActionBarStateChanges()
 
+local red_R, red_G, red_B, red_A = RED_FONT_COLOR:GetRGBA()
 local function changeVertexColorActionbars(btn)
     if btn and btn.changedColor then
         local valid = C_ActionBar.IsActionInRange(btn.action)
         local checksRange = (valid ~= nil)
         local inRange = checksRange and valid
-        local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
         if checksRange and not inRange then
-            btn.icon:SetVertexColor(out_R, out_G, out_B)
+            btn.icon:SetVertexColor(red_R, red_G, red_B)
         end
     end
 end
@@ -628,7 +628,6 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
 end
 GW.setActionButtonStyle = setActionButtonStyle
 
-local red_R, red_G, red_B = RED_FONT_COLOR:GetRGB()
 local function helper_RangeUpdate(slot, inRange, checkRange)
     local btn = nil
     local indicator = "RED_OVERLAY"
@@ -691,7 +690,7 @@ local function saveVertexColor(self, r, g, b, a, bypass)
 
     -- keep out of range active
     if self:GetParent().isOutOfRange then
-        r, g, b, a = RED_FONT_COLOR:GetRGBA()
+        r, g, b, a = red_R, red_G, red_B, red_A
         self:SetVertexColor(r, g, b, a, true)
     end
 end
