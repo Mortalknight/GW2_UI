@@ -1109,7 +1109,7 @@ local function LoadUnitFrame(unit, frameInvert)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unit)
     unitframe:RegisterUnitEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", unit)
     unitframe:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
-    unitframe:RegisterEvent("UNIT_DISPLAYPOWER")
+    unitframe:RegisterUnitEvent("UNIT_DISPLAYPOWER", unit)
 
     if GW.Retail or GW.Mists then
         unitframe:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", unit)

@@ -413,6 +413,15 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
             self:CheckForTicks()
         end
 
+        -- The latency indicator's anchor and width are constant for the whole cast
+        -- (spell queue window, lag and cast span don't change per frame), so compute them
+        -- once here instead of on every animation frame.
+        self.latency:ClearAllPoints()
+        self.latency:SetPoint(self.isChanneling and "LEFT" or "RIGHT", self, self.isChanneling and "LEFT" or "RIGHT")
+        local lagWorld = select(4, GetNetStats()) / 1000
+        local sqw = settings.showSpellQueueWindow and (tonumber(GetCVar("SpellQueueWindow")) or 0) / 1000 or 0
+        self.latency:SetWidth(math.max(0.0001, math.min(1, ((sqw + lagWorld) / (self.endTime - self.startTime)))) * 176)
+
         GW.AddToAnimation(
             self.animationName,
             0,
@@ -424,8 +433,6 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
                     self.time:SetText(TimeCount(self.endTime - GetTime(), true))
                 end
                 p = self.isChanneling and (1 - p) or p
-                self.latency:ClearAllPoints()
-                self.latency:SetPoint(self.isChanneling and "LEFT" or "RIGHT", self, self.isChanneling and "LEFT" or "RIGHT")
                 self.progress:SetFillAmount(p)
                 if self.numStages > 0 and self.StagePoints then
                     for i = 1, self.numStages - 1 do
@@ -440,9 +447,6 @@ function GwCastingBarMixin:OnEvent(event, unitID, ...)
                         end
                     end
                 end
-                local lagWorld = select(4, GetNetStats()) / 1000
-                local sqw = settings.showSpellQueueWindow and (tonumber(GetCVar("SpellQueueWindow")) or 0) / 1000 or 0
-                self.latency:SetWidth(math.max(0.0001, math.min(1, ((sqw + lagWorld) / (self.endTime - self.startTime)))) * 176)
             end,
             "noease"
         )
