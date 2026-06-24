@@ -148,11 +148,48 @@ local function SkinBubble(frame, backdrop)
     frame.isSkinned = true
 end
 
-local function ChatBubble_OnEvent(_, event, msg, sender)
+local POLL_DURATION = 3 -- seconds to keep polling for a new bubble after a chat message
+
+-- chat events whose sender we map for the name shown on the bubble
+local NAME_EVENTS = {
+    CHAT_MSG_SAY = true,
+    CHAT_MSG_YELL = true,
+    CHAT_MSG_MONSTER_SAY = true,
+    CHAT_MSG_MONSTER_YELL = true,
+}
+
+local function ChatBubble_OnUpdate(self, elapsed)
+    self.pollRemaining = (self.pollRemaining or 0) - elapsed
+
+    self.lastUpdate = (self.lastUpdate or 0) + elapsed
+    if self.lastUpdate >= 0.1 then
+        self.lastUpdate = 0
+
+        local chatBubbles = C_ChatBubbles.GetAllChatBubbles()
+        for _, chatBubble in pairs(chatBubbles) do
+            local backdrop = chatBubble:GetChildren()
+            if backdrop and not backdrop:IsForbidden() and not chatBubble.isSkinned then
+                SkinBubble(chatBubble, backdrop)
+            end
+        end
+    end
+
+    -- stop polling once the window after the last chat message has elapsed; a new message
+    -- re-arms it via ChatBubble_OnEvent. This avoids a permanent per-frame poll plus the
+    -- table that GetAllChatBubbles() allocates on every call.
+    if self.pollRemaining <= 0 then
+        self:SetScript("OnUpdate", nil)
+    end
+end
+
+local function ChatBubble_OnEvent(self, event, msg, sender)
     if event == "PLAYER_ENTERING_WORLD" then
         wipe(messageToSender)
         wipe(messageOrder)
-    elseif GW.NotSecretValue(msg) then
+        return
+    end
+
+    if NAME_EVENTS[event] and GW.NotSecretValue(msg) then
         local unit = (event == "CHAT_MSG_MONSTER_SAY" or event == "CHAT_MSG_MONSTER_YELL") and 1 or 0
         local senderName = TRP3_API and TRP3_API.register.getUnitRPNameWithID(sender) or Ambiguate(sender, "none")
         messageToSender[msg] = { unitType = unit, senderName = senderName }
@@ -165,34 +202,27 @@ local function ChatBubble_OnEvent(_, event, msg, sender)
             end
         end
     end
-end
 
-local function ChatBubble_OnUpdate(self, elapsed)
-    self.lastUpdate = (self.lastUpdate or -2) + elapsed
-    if self.lastUpdate < 0.1 then
-        return
-    end
-    self.lastUpdate = 0
-
-    local chatBubbles = C_ChatBubbles.GetAllChatBubbles()
-    for _, chatBubble in pairs(chatBubbles) do
-        local backdrop = chatBubble:GetChildren()
-        if backdrop and not backdrop:IsForbidden() and not chatBubble.isSkinned then
-            SkinBubble(chatBubble, backdrop)
-        end
-    end
+    -- (re)start the short polling window: the skinning OnUpdate now only runs right after a
+    -- chat message instead of every frame for the entire session
+    self.pollRemaining = POLL_DURATION
+    self:SetScript("OnUpdate", ChatBubble_OnUpdate)
 end
 
 local function LoadChatBubbles()
     local f = CreateFrame("Frame")
 
+    -- OnUpdate is attached on demand by ChatBubble_OnEvent (only while bubbles can appear),
+    -- so it is intentionally not registered here.
     f:SetScript("OnEvent", ChatBubble_OnEvent)
-    f:SetScript("OnUpdate", ChatBubble_OnUpdate)
 
     f:RegisterEvent("CHAT_MSG_SAY")
     f:RegisterEvent("CHAT_MSG_YELL")
     f:RegisterEvent("CHAT_MSG_MONSTER_SAY")
     f:RegisterEvent("CHAT_MSG_MONSTER_YELL")
+    f:RegisterEvent("CHAT_MSG_MONSTER_EMOTE")
+    f:RegisterEvent("CHAT_MSG_PARTY")
+    f:RegisterEvent("CHAT_MSG_PARTY_LEADER")
     f:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 GW.LoadChatBubbles = LoadChatBubbles

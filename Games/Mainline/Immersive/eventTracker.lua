@@ -1155,14 +1155,26 @@ local trackers = {
     pool = {}
 }
 
+local oneEventEnabledCache
+
+local function invalidateOneEventEnabledCache()
+    oneEventEnabledCache = nil
+end
+
+-- Called on every ticker tick of every tracker, so cache the result and only recompute after
+-- a settings change (UpdateTrackers, which the settings panel triggers on every option change).
 local function isOneEventEnabled()
-    for _, event in ipairs(eventList) do
-        local data = eventData[event]
-        if GW.settings[data.dbKey].enabled == true then
-            return true
+    if oneEventEnabledCache == nil then
+        oneEventEnabledCache = false
+        for _, event in ipairs(eventList) do
+            local data = eventData[event]
+            if GW.settings[data.dbKey].enabled == true then
+                oneEventEnabledCache = true
+                break
+            end
         end
     end
-    return false
+    return oneEventEnabledCache
 end
 
 function trackers:get(event)
@@ -1206,11 +1218,25 @@ function trackers:get(event)
                 end
             end
 
-            frame.tickerInstance = C_Timer.NewTicker(functions.ticker.interval, function()
+            local interval = functions.ticker.interval
+            frame.tickerInstance = C_Timer.NewTicker(interval, function()
                 if not isOneEventEnabled() then
                     return
                 end
-                frame.tickFunc()
+                -- With the world map open we tick at full cadence for a smooth status bar.
+                -- With it closed only the alert timing matters, so throttle the work to ~1s
+                -- instead of running dateUpdater/alert every interval (the loopTimer type fires
+                -- every 0.3s) for each tracker in the background.
+                if WorldMapFrame:IsShown() and frame:IsShown() then
+                    frame.bgTickAccum = 0
+                    frame.tickFunc()
+                else
+                    frame.bgTickAccum = (frame.bgTickAccum or 0) + interval
+                    if frame.bgTickAccum >= 1 then
+                        frame.bgTickAccum = 0
+                        frame.tickFunc()
+                    end
+                end
             end)
         end
 
@@ -1259,6 +1285,7 @@ local function AddWorldMapFrame()
 end
 
 local function UpdateTrackers()
+    invalidateOneEventEnabledCache()
     local lastTracker = nil
     local usedWidth = 0
     local mapFrameWidth = WorldMapFrame:GetWidth()
