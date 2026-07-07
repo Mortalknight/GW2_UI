@@ -14,6 +14,7 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 addChange("10.13.1", {
+    {GW.Enum.ChangelogType.bug, [=[Fixed the action bar flickering/bouncing between the normal bar and the vehicle/override bar during combat (removed tainting custom button flash code; Blizzard handles auto-attack flashing natively)]=]},
     {GW.Enum.ChangelogType.change, [=[Performance: optimized aura processing, cast bar and unit frame events to cut per-frame CPU usage]=]},
     {GW.Enum.ChangelogType.change, [=[Performance: chat bubbles and the world event tracker no longer poll every frame in the background]=]},
     {GW.Enum.ChangelogType.change, [=[Performance: reduced memory churn in damage text, runes, timers, action bars and bag/inventory coloring]=]},
