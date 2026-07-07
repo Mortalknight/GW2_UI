@@ -93,7 +93,7 @@ function GW.IsPlayerSpell(spellID)
     if C_SpellBook and C_SpellBook.IsSpellKnown then
         return C_SpellBook.IsSpellKnown(spellID, Enum.SpellBookSpellBank.Player)
     else
-        return IsSpellKnown(spellID)
+        return IsSpellKnown(spellID, false)
     end
 end
 

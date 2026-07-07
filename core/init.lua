@@ -172,8 +172,8 @@ function GW.CopyTable(src, preserveMeta, seen)
     seen[src] = dst
 
     for k, v in pairs(src) do
-        local nk = (type(k) == "table") and CopyTable(k, preserveMeta, seen) or k
-        local nv = (type(v) == "table") and CopyTable(v, preserveMeta, seen) or v
+        local nk = (type(k) == "table") and GW.CopyTable(k, preserveMeta, seen) or k
+        local nv = (type(v) == "table") and GW.CopyTable(v, preserveMeta, seen) or v
         dst[nk] = nv
     end
     if preserveMeta then
