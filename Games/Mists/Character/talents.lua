@@ -441,6 +441,12 @@ local function TalentButtonOnClick(self, button)
         else
             LearnTalents(self.talentID)
         end
+    elseif button == "RightButton" and self.selected then
+        if UnitIsDeadOrGhost("player") then
+            UIErrorsFrame:AddMessage(ERR_PLAYER_DEAD, 1.0, 0.1, 0.1, 1.0)
+        else
+            StaticPopup_Show("CONFIRM_REMOVE_TALENT", nil, nil, {id = self.talentID})
+        end
     end
 end
 
