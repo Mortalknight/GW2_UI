@@ -762,7 +762,7 @@ local function LoadPlayerAuras(lm)
         ConsolidatedBuffs:GwKill()
     end
 
-    if GW.Retail then
+    if C_CurveUtil then
         debuffColorCurve = C_CurveUtil.CreateColorCurve()
         debuffColorCurve:SetType(Enum.LuaCurveType.Step)
         for _, dispelIndex in next, GW.Enum.DispelType do

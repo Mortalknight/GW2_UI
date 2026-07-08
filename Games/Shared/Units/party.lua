@@ -31,7 +31,7 @@ local PARTY_HORIZONTAL_AURA_GAP = 4
 local PARTY_HORIZONTAL_PET_GAP = 10
 local PARTY_HORIZONTAL_PET_AURA_GAP = 6
 
-if GW.Retail then
+if C_CurveUtil then
     healtTextColorCurve = C_CurveUtil.CreateColorCurve()
     healtTextColorCurve:SetType(Enum.LuaCurveType.Linear)
     healtTextColorCurve:AddPoint(0, CreateColor(1, 1, 1, 1))
