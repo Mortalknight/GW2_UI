@@ -285,8 +285,12 @@ end
 
 function GW.ChatFunctions:GetColoredName(event, _, arg2, _, _, _, _, _, arg8, _, _, _, arg12)
     if GW.IsSecretValue(arg12) then
-        local _, englishClass = GetPlayerInfoByGUID(arg12)
-        local classColor = C_ClassColor.GetClassColor(englishClass)
+        local ok, _, englishClass = pcall(GetPlayerInfoByGUID, arg12)
+        local classColor
+        if ok and englishClass then
+            ok, classColor = pcall(C_ClassColor.GetClassColor, englishClass)
+            classColor = ok and classColor or nil
+        end
         return (classColor and classColor:WrapTextInColorCode(arg2)) or arg2
     elseif GW.IsSecretValue(arg2) then
         return arg2
@@ -989,6 +993,10 @@ local function ChatThrottleIntervalHandler(message, author, ...)
 end
 
 local function HandleChatMessageFilter(_, event, message, author, ...)
+    if GW.IsSecretValue(message) or GW.IsSecretValue(author) then
+        return -- keyword/URL/smiley processing would error on secret values; pass through unchanged
+    end
+
     if GW.IsIn(event, "CHAT_MSG_CHANNEL", "CHAT_MSG_YELL", "CHAT_MSG_SAY") then
         return ChatThrottleIntervalHandler(message, author, ...)
     else
@@ -1123,6 +1131,9 @@ local function SaveChatHistory(event, ...)
     end
 
     if #tempHistory > 0 and not GW.ChatFunctions:IsMessageProtected(tempHistory[1]) then
+        -- secret values (author, bnSenderID or the colored name built from them) cannot be stored in SavedVariables
+        if GW.IsSecretValue(tempHistory[2]) or GW.IsSecretValue(tempHistory[13]) then return end
+
         tempHistory[50] = event
         tempHistory[51] = time()
 
@@ -1362,7 +1373,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         playerLinkDisplayText = ("[%s]"):format(coloredName)
     end
 
-    local playerName = (nameWithRealm ~= arg2 and nameWithRealm) or arg2
+    local playerName = (GW.NotSecretValue(arg2) and nameWithRealm ~= arg2 and nameWithRealm) or arg2
     if chatType == "COMMUNITIES_CHANNEL" then
         local messageInfo, clubId, streamId = C_Club.GetInfoFromLastCommunityChatLine()
         if messageInfo and GW.NotSecretValue(arg13) then
@@ -1406,7 +1417,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         body = not isProtected and gsub(message, "$s", sender, 1) or message
     elseif chatType == "TEXT_EMOTE" then
         local classLink = realm and playerLink and not isProtected and (info.colorNameByClass and gsub(playerLink, "(|h|c.-)|r|h$","%1-" .. realm .. "|r|h") or gsub(playerLink, "(|h.-)|h$","%1-" .. realm .. "|h"))
-        body = (classLink and gsub(message, arg2 .. "%-" .. realm, pflag .. classLink, 1)) or ((GW.NotSecretValue(arg2) and arg2 ~= sender) and gsub(message, arg2, sender, 1)) or message
+        body = (classLink and gsub(message, arg2 .. "%-" .. realm, pflag .. classLink, 1)) or ((not isProtected and GW.NotSecretValue(arg2) and arg2 ~= sender) and gsub(message, arg2, sender, 1)) or message
     elseif specialType then
         body = format(header, pflag .. sender) .. message
     else
@@ -1418,7 +1429,8 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         body = "|Hchannel:channel:" .. arg8 .. "|h[" .. ResolvePrefixedChannelName(arg4) .. "]|h " .. body
     end
 
-    if not specialType and not isProtected and GW.settings.CHAT_SHORT_CHANNEL_NAMES and (chatType ~= "EMOTE" and chatType ~= "TEXT_EMOTE") then
+    -- body can be secret even when arg1 is not: format() propagates a secret sender into it
+    if not specialType and not isProtected and GW.NotSecretValue(body) and GW.settings.CHAT_SHORT_CHANNEL_NAMES and (chatType ~= "EMOTE" and chatType ~= "TEXT_EMOTE") then
         if chatType == "RAID_LEADER" or chatType == "PARTY_LEADER" or chatType == "INSTANCE_CHAT_LEADER" then
             body = gsub(body, "|Hchannel:(.-)|h%[(.-)%]|h", format("|Hchannel:%s|h[%s]|h", (chatType == "PARTY_LEADER" and "PARTY" or chatType == "RAID_LEADER" and "RAID" or chatType == "INSTANCE_CHAT_LEADER" and "INSTANCE_CHAT") , DEFAULT_STRINGS[strupper(chatType)] or gsub(chatType, "channel:", "")))
         else
@@ -1581,7 +1593,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
         if (chatType == "SYSTEM" or chatType == "SKILL" or chatType == "CURRENCY" or chatType == "MONEY" or
             chatType == "OPENING" or chatType == "TRADESKILLS" or chatType == "PET_INFO" or chatType == "TARGETICONS" or chatType == "BN_WHISPER_PLAYER_OFFLINE") then
-            if GW.IsSecretValue(arg1) then return end
+            -- secret system messages are shown as-is; AddMessageEdits skips its formatting for them
             frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
         elseif chatType == "LOOT" then
             frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil, nil, nil, nil, isHistory, historyTime)
@@ -2486,7 +2498,7 @@ local function CollectLfgRolesForChatIcons()
             local role = UnitGroupRolesAssigned(unit .. i)
             local name, realm = UnitName(unit .. i)
 
-            if role and name then
+            if role and name and GW.NotSecretValue(name) and GW.NotSecretValue(realm) then
                 name = (realm and realm ~= "" and name .. "-" .. realm) or name .. "-" .. PLAYER_REALM
                 lfgRoles[name] = rolePaths[role]
             end
@@ -2503,7 +2515,7 @@ local function SocialQueueIsLeader(playerName, leaderName)
     end
 
     for i = 1, BNGetNumFriends() do
-        local info = C_BattleNet.GetAccountInfoByID(i)
+        local info = C_BattleNet.GetFriendAccountInfo(i)
         if info and info.accountName  then
             for y = 1, C_BattleNet.GetFriendNumGameAccounts(i) do
                 local gameInfo = C_BattleNet.GetFriendGameAccountInfo(i, y)

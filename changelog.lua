@@ -16,6 +16,8 @@ AddChange(string addonVersion, table changeList)
 addChange("10.13.1", {
     {GW.Enum.ChangelogType.feature, [=[Talents can now be unlearned via right-click in the talent frame (Mists)]=]},
     {GW.Enum.ChangelogType.bug, [=[Fixed the action bar flickering/bouncing between the normal bar and the vehicle/override bar during combat (removed tainting custom button flash code; Blizzard handles auto-attack flashing natively)]=]},
+    {GW.Enum.ChangelogType.bug, [=[Chat: fixed several secret-value errors on Retail (keyword/URL filter, message formatter, chat bubbles, LFG role icons, chat history) and no longer drop secret system messages]=]},
+    {GW.Enum.ChangelogType.bug, [=[Chat: fixed Battle.net friend lookup in the social queue leader detection using the wrong API]=]},
     {GW.Enum.ChangelogType.change, [=[Performance: optimized aura processing, cast bar and unit frame events to cut per-frame CPU usage]=]},
     {GW.Enum.ChangelogType.change, [=[Performance: chat bubbles and the world event tracker no longer poll every frame in the background]=]},
     {GW.Enum.ChangelogType.change, [=[Performance: reduced memory churn in damage text, runes, timers, action bars and bag/inventory coloring]=]},

@@ -34,7 +34,7 @@ local function UpdateBubbleBorder(self)
     end
 
     local text = messageText:GetText()
-    if not text then return end
+    if not text or GW.IsSecretValue(text) then return end -- secret text cannot be used as a table key
 
     local senderInfo = messageToSender[text]
     if senderInfo then
@@ -189,7 +189,7 @@ local function ChatBubble_OnEvent(self, event, msg, sender)
         return
     end
 
-    if NAME_EVENTS[event] and GW.NotSecretValue(msg) then
+    if NAME_EVENTS[event] and GW.NotSecretValue(msg) and GW.NotSecretValue(sender) then
         local unit = (event == "CHAT_MSG_MONSTER_SAY" or event == "CHAT_MSG_MONSTER_YELL") and 1 or 0
         local senderName = TRP3_API and TRP3_API.register.getUnitRPNameWithID(sender) or Ambiguate(sender, "none")
         messageToSender[msg] = { unitType = unit, senderName = senderName }
