@@ -1,4 +1,4 @@
-## Interface: 20505
+## Interface: 20506
 ## Title: |cffffedbaGW2 UI|r |cFF888888TBC|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
