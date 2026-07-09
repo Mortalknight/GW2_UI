@@ -15,6 +15,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("10.13.1", {
     {GW.Enum.ChangelogType.feature, [=[Talents can now be unlearned via right-click in the talent frame (Mists)]=]},
+    {GW.Enum.ChangelogType.feature, [=[Static popups and GW2 UI's own popup dialogs restyled in the ready check look: shaded footer band with divider behind the buttons and green confirm / red cancel buttons with check and cross icons]=]},
     {GW.Enum.ChangelogType.bug, [=[Fixed the action bar flickering/bouncing between the normal bar and the vehicle/override bar during combat (removed tainting custom button flash code; Blizzard handles auto-attack flashing natively)]=]},
     {GW.Enum.ChangelogType.bug, [=[Chat: fixed several secret-value errors on Retail (keyword/URL filter, message formatter, chat bubbles, LFG role icons, chat history) and no longer drop secret system messages]=]},
     {GW.Enum.ChangelogType.bug, [=[Chat: fixed Battle.net friend lookup in the social queue leader detection using the wrong API]=]},

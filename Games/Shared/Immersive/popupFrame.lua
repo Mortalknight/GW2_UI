@@ -36,31 +36,27 @@ end
 
 local function Resize(popup)
     local topPadding = 15
-    local spacingTextToInput = 10
+    local spacingTextToInput = 15 -- matches the input anchor offset in the template
     local spacingToButtons = 15
     local bottomPadding = 20
 
-    local currentY = -topPadding
-
-    currentY = currentY - popup.string:GetHeight()
-
-    if popup.info.hasEditBox then
-        currentY = currentY - spacingTextToInput
-        currentY = currentY - popup.input:GetHeight()
-    end
-
-    currentY = currentY - spacingToButtons
-
-    -- Buttons
-    popup.acceptButton:ClearAllPoints()
-    popup.acceptButton:SetPoint("TOPRIGHT", popup, "TOPRIGHT", -110, currentY)
-
+    -- anchor the buttons below the content instead of at a computed offset, so they
+    -- can never overlap the text even when the wrapped string height is measured
+    -- too small on the first frame
+    local buttonAnchor = popup.info.hasEditBox and popup.input or popup.string
     popup.cancelButton:ClearAllPoints()
-    popup.cancelButton:SetPoint("TOPRIGHT", popup, "TOPRIGHT", -15, currentY)
+    popup.cancelButton:SetPoint("TOPRIGHT", buttonAnchor, "BOTTOMRIGHT", 0, -spacingToButtons)
 
-    currentY = currentY - popup.acceptButton:GetHeight()
+    popup.acceptButton:ClearAllPoints()
+    popup.acceptButton:SetPoint("TOPRIGHT", popup.cancelButton, "TOPLEFT", -10, 0)
 
-    popup:SetHeight(-currentY + bottomPadding)
+    local height = topPadding + popup.string:GetStringHeight()
+    if popup.info.hasEditBox then
+        height = height + spacingTextToInput + popup.input:GetHeight()
+    end
+    height = height + spacingToButtons + popup.acceptButton:GetHeight() + bottomPadding
+
+    popup:SetHeight(height)
 end
 
 local function FindVisibleFrame(info)
@@ -107,6 +103,9 @@ local function ShowPopup(info, data)
     popup.info = info
     popup.acceptButton:SetText(info.button1 or ACCEPT)
     popup.cancelButton:SetText(info.button2 or CANCEL)
+    -- re-apply the ready check button look for the current label (icon fit is measured)
+    GW.SetPopupButtonScheme(popup.acceptButton, "confirm")
+    GW.SetPopupButtonScheme(popup.cancelButton, "cancel")
     if info.hasEditBox then
         popup.input:Show()
         popup.input:SetText(info.inputText or "")
@@ -129,6 +128,13 @@ local function ShowPopup(info, data)
     SetUpPosition()
     popup:Show()
     Resize(popup)
+    -- re-run once the text layout has settled; wrapped font strings can report a
+    -- too small height on the frame they are shown
+    C_Timer.After(0, function()
+        if popup:IsShown() then
+            Resize(popup)
+        end
+    end)
 end
 GW.ShowPopup = ShowPopup
 
@@ -198,7 +204,13 @@ local function CreatePopupFrame()
     for i = 1, MAX_FRAMES do
         local popup = CreateFrame("Frame", "GwPopupFrame" .. i, UIParent, "GwPopupFrameTemplate")
         popup.string:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-        popup.string:SetTextColor(1, 1, 1)
+        popup.string:SetTextColor(0.92, 0.88, 0.78)
+        popup.string:SetShadowOffset(1, -1)
+
+        -- ready check style buttons and footer band, like the static popup skin
+        GW.StylePopupButton(popup.acceptButton)
+        GW.StylePopupButton(popup.cancelButton)
+        GW.CreatePopupPanelDecoration(popup, popup.acceptButton)
 
         popup:SetScript("OnShow", OnShow)
         popup:SetScript("OnHide", OnHide)
