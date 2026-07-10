@@ -13,6 +13,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.14.0", {
+    {GW.Enum.ChangelogType.feature, [=[New chat option "Chat Buttons Position": move the chat control buttons (menu, channel, voice, social) into a small hover bar above or right of the chat; text, tabs and edit box then use the full chat width. Switches live without a reload]=]},
+})
+
 addChange("10.13.1", {
     {GW.Enum.ChangelogType.feature, [=[Talents can now be unlearned via right-click in the talent frame (Mists)]=]},
     {GW.Enum.ChangelogType.feature, [=[Static popups and GW2 UI's own popup dialogs restyled in the ready check look: shaded footer band with divider behind the buttons and green confirm / red cancel buttons with check and cross icons]=]},

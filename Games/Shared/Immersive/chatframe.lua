@@ -125,6 +125,7 @@ local historyTypes = {
     CHAT_MSG_EMOTE			= "EMOTE"
 }
 
+local chatModuleInit = false
 local throttle = {}
 local lfgRoles = {}
 local GuidCache = {}
@@ -162,6 +163,264 @@ local gw_fade_frames = {
     ChatFrameToggleVoiceDeafenButton,
     ChatFrameToggleVoiceMuteButton
 }
+-- pull the chat content into the strip of the hidden button column - the same
+-- left anchor the edit box already uses - so text and tabs are flush with the
+-- left edge of the chat background while the frame itself stays untouched
+-- (its position is owned by edit mode).
+-- The scrolling message frame anchors its first visible line to the frame
+-- itself and sizes every line to the frame width (SharedXML RefreshLayout), so
+-- the lines are shifted into the strip and widened after every relayout;
+-- with position LEFT the offset is 0, which restores the default layout
+local function AdjustChatLines(frame)
+    local buttonFrame = _G[frame:GetName() .. "ButtonFrame"]
+    local visibleLines = frame.visibleLines
+    if not buttonFrame or not visibleLines then return end
+
+    local offset = GW.settings.CHAT_BUTTONS_POSITION == "LEFT" and 0 or (buttonFrame:GetWidth() + 2)
+    local width = frame:GetWidth() + offset
+    for index, fontString in ipairs(visibleLines) do
+        if index == 1 then
+            local point, relativeTo, relativePoint, _, yOfs = fontString:GetPoint(1)
+            if point then
+                fontString:SetPoint(point, relativeTo, relativePoint, -offset, yOfs or 0)
+            end
+        end
+        fontString:SetWidth(width)
+    end
+end
+
+local function AdjustChatContent(frame)
+    local buttonFrame = _G[frame:GetName() .. "ButtonFrame"]
+    if not buttonFrame then return end
+
+    -- the container clips the lines, so it has to cover the strip as well
+    if frame.FontStringContainer then
+        frame.FontStringContainer:ClearAllPoints()
+        if GW.settings.CHAT_BUTTONS_POSITION == "LEFT" then
+            frame.FontStringContainer:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
+        else
+            frame.FontStringContainer:SetPoint("TOPLEFT", buttonFrame, "TOPLEFT", 2, 0)
+        end
+        frame.FontStringContainer:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+    end
+
+    if frame.RefreshLayout and not frame.gwLineLayoutHooked then
+        hooksecurefunc(frame, "RefreshLayout", AdjustChatLines)
+        frame.gwLineLayoutHooked = true
+    end
+    AdjustChatLines(frame)
+end
+
+local function AdjustChatDock()
+    if not GeneralDockManager or not ChatFrame1ButtonFrame then return end
+
+    GeneralDockManager:ClearAllPoints()
+    if GW.settings.CHAT_BUTTONS_POSITION == "LEFT" then
+        GeneralDockManager:SetPoint("BOTTOMLEFT", ChatFrame1, "TOPLEFT", 0, 3)
+    else
+        GeneralDockManager:SetPoint("BOTTOMLEFT", ChatFrame1ButtonFrame, "TOPLEFT", 0, 3)
+    end
+    GeneralDockManager:SetPoint("BOTTOMRIGHT", ChatFrame1, "TOPRIGHT", 0, 3)
+end
+
+-- chat controls hover bar --------------------------------------------------
+local controlsBar
+local controlsButtons
+
+local function ChatControlsFadeIn()
+    FCF_FadeInChatFrame(ChatFrame1)
+end
+
+local function ChatControlsFadeOut()
+    if GW.settings.CHATFRAME_FADE then
+        FCF_FadeOutChatFrame(ChatFrame1)
+    end
+end
+
+local function ControlButtonOnEnter(self)
+    if self.gwInChatControlsBar then
+        ChatControlsFadeIn()
+    end
+end
+
+local function ControlButtonOnLeave(self)
+    if self.gwInChatControlsBar then
+        ChatControlsFadeOut()
+    end
+end
+
+local function CollectControlsButtons()
+    if controlsButtons then return controlsButtons end
+
+    controlsButtons = {}
+    local function addButton(button)
+        if button then
+            -- snapshot the original anchoring, so switching back to LEFT can restore it
+            button.gwOrigParent = button:GetParent()
+            button.gwOrigPoints = {}
+            for i = 1, button:GetNumPoints() do
+                local point, relativeTo, relativePoint, xOfs, yOfs = button:GetPoint(i)
+                button.gwOrigPoints[i] = {point, relativeTo or button:GetParent(), relativePoint, xOfs, yOfs}
+            end
+            tinsert(controlsButtons, button)
+        end
+    end
+    addButton(QuickJoinToastButton)
+    addButton(not GW.Retail and FriendsMicroButton or nil)
+    addButton(ChatFrameMenuButton)
+    addButton(ChatFrameChannelButton)
+    addButton(GW.Retail and ChatFrameToggleVoiceMuteButton or nil)
+    addButton(GW.Retail and ChatFrameToggleVoiceDeafenButton or nil)
+
+    return controlsButtons
+end
+
+local function EnsureControlsBar()
+    if controlsBar then return controlsBar end
+
+    controlsBar = CreateFrame("Frame", "GwChatButtonsFrame", UIParent)
+    controlsBar:SetFrameStrata("MEDIUM")
+    controlsBar:EnableMouse(true)
+    controlsBar:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    controlsBar:SetScript("OnEnter", ChatControlsFadeIn)
+    controlsBar:SetScript("OnLeave", ChatControlsFadeOut)
+
+    return controlsBar
+end
+
+local function RebuildChatFadeFrames(position)
+    wipe(gw_fade_frames)
+    tinsert(gw_fade_frames, GeneralDockManager)
+    if position == "LEFT" then
+        if QuickJoinToastButton then tinsert(gw_fade_frames, QuickJoinToastButton) end
+        if ChatFrameChannelButton then tinsert(gw_fade_frames, ChatFrameChannelButton) end
+        if ChatFrameToggleVoiceDeafenButton then tinsert(gw_fade_frames, ChatFrameToggleVoiceDeafenButton) end
+        if ChatFrameToggleVoiceMuteButton then tinsert(gw_fade_frames, ChatFrameToggleVoiceMuteButton) end
+    else
+        tinsert(gw_fade_frames, controlsBar)
+    end
+end
+
+-- applies the configured controls position (LEFT column / TOP or RIGHT hover
+-- bar) at runtime; also used as the hot setting callback
+function GW.UpdateChatButtonsPosition()
+    if not chatModuleInit then return end
+
+    local position = GW.settings.CHAT_BUTTONS_POSITION
+    local buttons = CollectControlsButtons()
+
+    if position == "LEFT" then
+        if controlsBar then controlsBar:Hide() end
+
+        -- first break the bar anchor chain on ALL buttons, then restore the
+        -- original points in a second pass - the original anchors can reference
+        -- each other (e.g. mute anchors to deafen), which errors with a circular
+        -- dependency while the other button still hangs in the bar chain
+        for _, button in ipairs(buttons) do
+            if button.gwInChatControlsBar then
+                button.ClearAllPoints = nil
+                button.SetPoint = nil
+                UIFrameFadeRemoveFrame(button)
+                button:SetAlpha(1)
+                button:SetParent(button.gwOrigParent)
+                button:ClearAllPoints()
+            end
+        end
+        for _, button in ipairs(buttons) do
+            if button.gwInChatControlsBar then
+                for _, pointInfo in ipairs(button.gwOrigPoints) do
+                    button:SetPoint(pointInfo[1], pointInfo[2], pointInfo[3], pointInfo[4], pointInfo[5])
+                end
+                button.gwInChatControlsBar = nil
+            end
+        end
+
+        -- the classic gw anchor for the social button next to the dock
+        local social = QuickJoinToastButton or FriendsMicroButton
+        if social then
+            social.ClearAllPoints = nil
+            social.SetPoint = nil
+            social:ClearAllPoints()
+            social:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
+            social.ClearAllPoints = GW.NoOp
+            social.SetPoint = GW.NoOp
+        end
+    else
+        local bar = EnsureControlsBar()
+        bar:Show()
+        bar:ClearAllPoints()
+        if position == "TOP" then
+            bar:SetPoint("BOTTOMLEFT", GeneralDockManager, "TOPLEFT", 0, 2)
+        else
+            bar:SetPoint("TOPLEFT", ChatFrame1, "TOPRIGHT", 8, 0)
+        end
+
+        local PADDING, SPACING = 6, 4
+        local length = PADDING * 2 - SPACING
+        local thickness = 0
+        local previous
+        for _, button in ipairs(buttons) do
+            button.ClearAllPoints = nil
+            button.SetPoint = nil
+            button:SetParent(bar)
+            button:ClearAllPoints()
+            if position == "TOP" then
+                if previous then
+                    button:SetPoint("LEFT", previous, "RIGHT", SPACING, 0)
+                else
+                    button:SetPoint("LEFT", bar, "LEFT", PADDING, 0)
+                end
+                length = length + button:GetWidth() + SPACING
+                thickness = max(thickness, button:GetHeight())
+            else
+                if previous then
+                    button:SetPoint("TOP", previous, "BOTTOM", 0, -SPACING)
+                else
+                    button:SetPoint("TOP", bar, "TOP", 0, -PADDING)
+                end
+                length = length + button:GetHeight() + SPACING
+                thickness = max(thickness, button:GetWidth())
+            end
+
+            -- keep blizzard from moving the buttons out of the bar
+            button.ClearAllPoints = GW.NoOp
+            button.SetPoint = GW.NoOp
+            button.gwInChatControlsBar = true
+            if not button.gwControlsHoverHooked then
+                button:HookScript("OnEnter", ControlButtonOnEnter)
+                button:HookScript("OnLeave", ControlButtonOnLeave)
+                button.gwControlsHoverHooked = true
+            end
+
+            -- the buttons may have been faded individually; from now on only the bar fades
+            UIFrameFadeRemoveFrame(button)
+            button:SetAlpha(1)
+            previous = button
+        end
+
+        thickness = thickness + 10
+        if position == "TOP" then
+            bar:SetSize(length, thickness)
+        else
+            bar:SetSize(thickness, length)
+        end
+    end
+
+    RebuildChatFadeFrames(position)
+    AdjustChatDock()
+
+    for _, frameName in ipairs(CHAT_FRAMES) do
+        local frame = _G[frameName]
+        if frame then
+            AdjustChatContent(frame)
+            if frame.MarkLayoutDirty then
+                frame:MarkLayoutDirty()
+            end
+        end
+    end
+
+    GW.UpdateChatSettings()
+end
 
 local gw2StaffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label.png:14:14|t"
 local gw2StaffList = {
@@ -194,8 +453,6 @@ local gw2StaffList = {
     --Belazor
     ["Ilyxiana-Ravencrest"] = gw2StaffIcon,
 }
-
-local chatModuleInit = false
 
 do
     local accessIndex = 1
@@ -465,7 +722,7 @@ local function setButtonPosition(frame)
         editbox:SetPoint("TOPLEFT", frame.Background, "BOTTOMLEFT", 0, 0)
         editbox:SetPoint("TOPRIGHT", _G[name .. "ButtonFrame"], "BOTTOMRIGHT", 0, 0)
 
-        if QuickJoinToastButton and frame.isDocked ~= nil then
+        if QuickJoinToastButton and GW.settings.CHAT_BUTTONS_POSITION == "LEFT" and frame.isDocked ~= nil then
             QuickJoinToastButton.ClearAllPoints = nil
             QuickJoinToastButton.SetPoint = nil
             QuickJoinToastButton:ClearAllPoints()
@@ -488,7 +745,7 @@ local function setButtonPosition(frame)
         editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, -6)
         editbox:SetPoint("TOPRIGHT", frame.Background, "BOTTOMRIGHT", 0, -6)
 
-        if QuickJoinToastButton and frame.isDocked ~= nil then
+        if QuickJoinToastButton and GW.settings.CHAT_BUTTONS_POSITION == "LEFT" and frame.isDocked ~= nil then
             QuickJoinToastButton.ClearAllPoints = nil
             QuickJoinToastButton.SetPoint = nil
             QuickJoinToastButton:ClearAllPoints()
@@ -544,7 +801,9 @@ local function handleChatFrameFadeIn(chatFrame, force)
         end
 
         UIFrameFadeIn(ChatFrame1.Container, 0.5, ChatFrame1.Container:GetAlpha(), 1)
-        UIFrameFadeIn(ChatFrameMenuButton, 0.5, ChatFrameMenuButton:GetAlpha(), 1)
+        if not ChatFrameMenuButton.gwInChatControlsBar then
+            UIFrameFadeIn(ChatFrameMenuButton, 0.5, ChatFrameMenuButton:GetAlpha(), 1)
+        end
     elseif chatFrame.isDocked == nil then
         if chatFrame.Container then
             UIFrameFadeIn(chatFrame.Container, 0.5, chatFrame.Container:GetAlpha(), 1)
@@ -622,7 +881,9 @@ local function handleChatFrameFadeOut(chatFrame, force)
     UIFrameFadeOut(chatTab, 2, chatTab:GetAlpha(), 0)
 
     UIFrameFadeOut(chatFrame.buttonFrame, 2, chatFrame.buttonFrame:GetAlpha(), 0)
-    UIFrameFadeOut(ChatFrameMenuButton, 2, ChatFrameMenuButton:GetAlpha(), 0)
+    if not ChatFrameMenuButton.gwInChatControlsBar then
+        UIFrameFadeOut(ChatFrameMenuButton, 2, ChatFrameMenuButton:GetAlpha(), 0)
+    end
 
     --check if other Tabs has Containers, which need to fade out
     for i = 1, FCF_GetNumActiveChatFrames() do
@@ -2231,6 +2492,9 @@ local function styleChatWindow(frame)
         end)
     end
 
+    -- pull the message text into the button column strip (TOP/RIGHT button mode)
+    AdjustChatContent(frame)
+
     frame.styled = true
 end
 
@@ -2663,8 +2927,10 @@ local function LoadChat()
         QuickJoinToastButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton-highlight.png")
         QuickJoinToastButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton-highlight.png")
         QuickJoinToastButton:SetSize(25, 25)
-        QuickJoinToastButton:ClearAllPoints()
-        QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
+        if GW.settings.CHAT_BUTTONS_POSITION == "LEFT" then
+            QuickJoinToastButton:ClearAllPoints()
+            QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
+        end
         QuickJoinToastButton.QueueCount:GwKill()
         local _, _, fontFlags = QuickJoinToastButton.FriendCount:GetFont()
         QuickJoinToastButton.FriendCount:SetFont(_, 14, fontFlags)
@@ -2678,8 +2944,10 @@ local function LoadChat()
             QuickJoinToastButton.Toast2:GwKill()
         end
 
-        QuickJoinToastButton.ClearAllPoints = GW.NoOp
-        QuickJoinToastButton.SetPoint = GW.NoOp
+        if GW.settings.CHAT_BUTTONS_POSITION == "LEFT" then
+            QuickJoinToastButton.ClearAllPoints = GW.NoOp
+            QuickJoinToastButton.SetPoint = GW.NoOp
+        end
     end
 
     if not GW.Retail then
@@ -2688,10 +2956,12 @@ local function LoadChat()
         FriendsMicroButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton-highlight.png")
         FriendsMicroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/socialchatbutton-highlight.png")
         FriendsMicroButton:SetSize(25, 25)
-        FriendsMicroButton:ClearAllPoints()
-        FriendsMicroButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
-        FriendsMicroButton.ClearAllPoints = GW.NoOp
-        FriendsMicroButton.SetPoint = GW.NoOp
+        if GW.settings.CHAT_BUTTONS_POSITION == "LEFT" then
+            FriendsMicroButton:ClearAllPoints()
+            FriendsMicroButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
+            FriendsMicroButton.ClearAllPoints = GW.NoOp
+            FriendsMicroButton.SetPoint = GW.NoOp
+        end
         local _, _, fontFlags = FriendsMicroButtonCount:GetFont()
         FriendsMicroButtonCount:SetFont(_, 14, fontFlags)
         FriendsMicroButtonCount:SetTextColor(1, 1, 1)
@@ -2741,6 +3011,7 @@ local function LoadChat()
             local _, _, _, _, _, _, _, _, isDocked = GetChatWindowInfo(frame:GetID())
             local editbox = _G[frameName .. "EditBox"]
             styleChatWindow(frame)
+            AdjustChatContent(frame) -- the engine resets the text container on layout updates
             FCFTab_UpdateAlpha(frame)
             frame:SetTimeVisible(100)
             frame:SetFading(GW.settings.CHATFRAME_FADE)
@@ -2963,6 +3234,28 @@ local function LoadChat()
                 self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight.png")
             end
         end)
+    end
+
+    -- apply the configured controls position (hover bar / classic column);
+    -- must run after the buttons got their sizes above
+    GW.UpdateChatButtonsPosition()
+
+    -- blizzard re-anchors the dock whenever the primary dock frame changes
+    if FCFDock_SetPrimary then
+        hooksecurefunc("FCFDock_SetPrimary", AdjustChatDock)
+    end
+
+    -- re-apply the text container anchors after all sizing is done and whenever
+    -- a chat frame changes size (the engine resets the container on relayout)
+    for _, frameName in ipairs(CHAT_FRAMES) do
+        local frame = _G[frameName]
+        if frame then
+            AdjustChatContent(frame)
+            if not frame.gwContentSizeHook then
+                frame:HookScript("OnSizeChanged", AdjustChatContent)
+                frame.gwContentSizeHook = true
+            end
+        end
     end
 
     if GW.Mists then -- allow chat to stay shown

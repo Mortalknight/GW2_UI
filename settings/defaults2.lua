@@ -382,6 +382,7 @@ GW.globalDefault = {
         DISABLE_CHATFRAME= false,
         CHATFRAME_FADE= true,
         CHATFRAME_EDITBOX_HIDE= true,
+        CHAT_BUTTONS_POSITION= "LEFT",
         FADE_MICROMENU= false,
         MICROMENU_EVENT_TIMER_ICON= false,
         MICROMENU_NOTIFICATION_ICON_ANIMATION= true,
