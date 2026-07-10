@@ -116,6 +116,89 @@ local function AddDependenciesToOptionWidgetTooltip()
     end
 end
 
+-- reload tracking ------------------------------------------------------------
+-- settings callbacks flag GW.ShowRlPopup when they need a UI reload; we track
+-- WHICH settings did that (with their baseline value), so the header can show
+-- a live indicator with a tooltip and toggling a setting back to its original
+-- state removes it from the pending list again
+local pendingReloadSettings = {}
+
+local function ReloadValuesEqual(a, b)
+    if type(a) == "table" or type(b) == "table" then
+        return false -- table values (colors, lists) never auto-clear
+    end
+    return a == b
+end
+
+local function UpdateReloadIndicator()
+    local indicator = GwSettingsWindow and GwSettingsWindow.reloadIndicator
+    if indicator then
+        indicator:SetShown(GW.ShowRlPopup)
+    end
+end
+GW.UpdateReloadIndicator = UpdateReloadIndicator
+
+function GW.GetPendingReloadSettings()
+    return pendingReloadSettings
+end
+
+function GW.ClearPendingReloadSettings()
+    wipe(pendingReloadSettings)
+    GW.ShowRlPopup = false
+    UpdateReloadIndicator()
+end
+
+local function TrackReloadSetting(opt, oldValue)
+    local key = opt.optionName or opt.name or tostring(opt)
+    local hasValue = opt.get ~= nil
+    local currentValue = hasValue and opt.get() or nil
+    local entry = pendingReloadSettings[key]
+
+    if entry then
+        -- back to the original state -> no reload needed for this setting anymore
+        if hasValue and not entry.sticky and ReloadValuesEqual(entry.baseline, currentValue) then
+            pendingReloadSettings[key] = nil
+        end
+    elseif not hasValue or type(oldValue) == "table" or type(currentValue) == "table" then
+        -- no comparable value: keep it pending until the reload happens
+        pendingReloadSettings[key] = {name = opt.name, sticky = true}
+    elseif not ReloadValuesEqual(oldValue, currentValue) then
+        pendingReloadSettings[key] = {name = opt.name, baseline = oldValue}
+    end
+
+    GW.ShowRlPopup = next(pendingReloadSettings) ~= nil
+    UpdateReloadIndicator()
+end
+
+local function WrapReloadTracking(opt)
+    if opt.get and opt.set then
+        local innerSet = opt.set
+        opt.set = function(...)
+            opt.gwValueBeforeSet = opt.get()
+            return innerSet(...)
+        end
+    end
+
+    if opt.callback then
+        local innerCallback = opt.callback
+        opt.callback = function(...)
+            local oldValue = opt.gwValueBeforeSet
+            opt.gwValueBeforeSet = nil
+
+            -- detect whether this callback requested a reload
+            local before = GW.ShowRlPopup
+            GW.ShowRlPopup = false
+            innerCallback(...)
+            local flaggedReload = GW.ShowRlPopup
+            GW.ShowRlPopup = before
+
+            if flaggedReload then
+                TrackReloadSetting(opt, oldValue)
+            end
+        end
+    end
+end
+
 local function CreateOption(optionType, panel, name, desc, values)
     if not panel then return end
     values = values or {}
@@ -158,6 +241,8 @@ local function CreateOption(optionType, panel, name, desc, values)
         opt.set = values.setter
         opt.getDefault = values.getDefault
     end
+
+    WrapReloadTracking(opt)
 
     table.insert(panel.gwOptions, opt)
 
@@ -481,7 +566,7 @@ local function RefreshSettingsAfterProfileSwitch()
         end
     end
     CheckDependencies()
-    GW.ShowRlPopup = false
+    GW.ClearPendingReloadSettings()
     GW.disableGridUpdate = false
     -- Update grids with new settings
     GW.UpdateGridSettings("ALL", nil, true)

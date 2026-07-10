@@ -56,9 +56,37 @@ local function BuildSettingsWindow()
 
     settingsContainer.close:SetScript("OnClick", function() settingsContainer:Hide() end)
 
+    -- live "reload required" hint in the header with the pending settings as tooltip
+    local reloadIndicator = CreateFrame("Frame", nil, settingsContainer)
+    reloadIndicator:SetPoint("LEFT", settingsContainer.headerBreadcrumb, "RIGHT", 14, 2)
+    reloadIndicator:SetSize(260, 24)
+    reloadIndicator:EnableMouse(true)
+    reloadIndicator.text = reloadIndicator:CreateFontString(nil, "OVERLAY")
+    reloadIndicator.text:SetFont(UNIT_NAME_FONT, 12)
+    reloadIndicator.text:SetAllPoints()
+    reloadIndicator.text:SetJustifyH("LEFT")
+    reloadIndicator.text:SetTextColor(1, 0.65, 0.1)
+    reloadIndicator.text:SetText("|TInterface/DialogFrame/UI-Dialog-Icon-AlertNew:14:14|t " .. L["Reload required to take effect"])
+    reloadIndicator:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine(L["Reload required to take effect"], 1, 0.65, 0.1)
+        for _, entry in pairs(GW.GetPendingReloadSettings()) do
+            GameTooltip:AddLine(entry.name, 1, 1, 1)
+        end
+        GameTooltip:Show()
+    end)
+    reloadIndicator:SetScript("OnLeave", GameTooltip_Hide)
+    reloadIndicator:Hide()
+    settingsContainer.reloadIndicator = reloadIndicator
+
+    settingsContainer:HookScript("OnShow", GW.UpdateReloadIndicator)
+
     settingsContainer:SetScript("OnHide", function()
         if not GW.InMoveHudMode and GW.ShowRlPopup then
-            GW.ShowRlPopup = false
+            -- the pending list is NOT cleared here: if the reload is declined, the
+            -- changes still require one - the hint stays and toggling a setting
+            -- back to its original state still clears it correctly
             GW.ShowPopup({text = L["One or more of the changes you have made require a UI reload."],
                 OnAccept = function() C_UI.Reload() end,
                 button1 = ACCEPT,

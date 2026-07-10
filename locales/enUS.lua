@@ -61,6 +61,7 @@ L["Replace the default UI chat bubbles. (Only in not protected areas)"] = true
 L["Fade Chat"] = true
 L["Allow the chat to fade when not in use."] = true
 L["Chat Buttons Position"] = true
+L["Reload required to take effect"] = true
 L["Position of the chat control buttons (menu, channel, voice, social). Top and Right move them into a small hover bar, so the chat window can sit flush at the screen edge."] = true
 L["Enable the improved chat window."] = true
 L["Replace the default character window."] = true

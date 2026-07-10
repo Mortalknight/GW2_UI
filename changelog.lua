@@ -15,6 +15,7 @@ AddChange(string addonVersion, table changeList)
 
 addChange("10.14.0", {
     {GW.Enum.ChangelogType.feature, [=[New chat option "Chat Buttons Position": move the chat control buttons (menu, channel, voice, social) into a small hover bar above or right of the chat; text, tabs and edit box then use the full chat width. Switches live without a reload]=]},
+    {GW.Enum.ChangelogType.feature, [=[The settings window now shows a "Reload required" hint in the header as soon as a reload setting is changed, with a tooltip listing the pending settings; toggling a setting back to its original state removes the reload prompt again]=]},
 })
 
 addChange("10.13.1", {
