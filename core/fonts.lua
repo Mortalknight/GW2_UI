@@ -1,6 +1,5 @@
 ---@class GW2
 local GW = select(2, ...)
-local L = GW.L
 
 local function setFont(fontObject, font, size, style, shadowX, shadowY, shadowA, r, g, b, shadowR, shadowG, shadowB)
     if not fontObject then return end
