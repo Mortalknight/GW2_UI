@@ -1433,6 +1433,16 @@ local function LoadMicroMenu()
         -- fix alert positions and hide the micromenu bar
         MicroButtonAndBagsBar:SetAlpha(0)
         MicroButtonAndBagsBar:EnableMouse(false)
+
+        -- GW owns the micro buttons: blizzards micro menu reset on action bar
+        -- show runs UpdateMicroButtons and hits the protected micro button
+        -- Enable calls with our taint (ADDON_ACTION_BLOCKED, e.g. when a
+        -- cinematic ends in combat) - keep the end cap update, drop the reset
+        if MainActionBar and MainActionBar.UpdateEndCaps then
+            MainActionBar:SetScript("OnShow", function(self)
+                self:UpdateEndCaps(self.hideBarArt)
+            end)
+        end
     end
 end
 GW.LoadMicroMenu = LoadMicroMenu
