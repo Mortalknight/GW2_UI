@@ -17,8 +17,7 @@ end
 
 local function createFollower(self, i)
     local newFrame = CreateFrame("FRAME", "GwOrderHallFollower" .. i, self, "GwOrderHallFollower")
-    newFrame.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    newFrame.Count:SetShadowOffset(1, -1)
+    newFrame.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
     newFrame:SetScript("OnEnter", orderFollower_OnEnter)
     newFrame:SetScript("OnLeave", GameTooltip_Hide)
     newFrame:SetParent(self)
@@ -74,8 +73,7 @@ end
 
 local function LoadOrderBar()
     CreateFrame("FRAME", "GwOrderhallBar", UIParent, "GwOrderhallBar")
-    GwOrderhallBar.currency:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    GwOrderhallBar.currency:SetShadowOffset(1, -1)
+    GwOrderhallBar.currency:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
 
     GwOrderhallBar:RegisterUnitEvent("UNIT_AURA", "player")
     GwOrderhallBar:RegisterUnitEvent("UNIT_PHASE", "player")

@@ -18,8 +18,7 @@ local function SkinFontString(fontString, font, textSizeType, r, g, b)
         return
     end
 
-    fontString:GwSetFontTemplate(font, textSizeType)
-    fontString:SetShadowOffset(1, -1)
+    fontString:GwSetFontTemplate(font, textSizeType, "SHADOW")
     GW.LockFontStringColor(fontString, r or 1, g or 1, b or 1)
 end
 

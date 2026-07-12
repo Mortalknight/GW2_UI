@@ -676,9 +676,7 @@ local function CreatePartyFrame(i, isPlayer)
     end
     frame.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
-    frame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    frame.name:SetShadowOffset(-1, -1)
-    frame.name:SetShadowColor(0, 0, 0, 1)
+    frame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
     frame.level:SetFont(UNIT_NAME_FONT, 12, "OUTLINE")
     frame.healthString:SetFontObject(GameFontNormalSmall)
 

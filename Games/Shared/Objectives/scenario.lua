@@ -1067,19 +1067,15 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     self.timerBlock.timerlabel = self.timerBlock.timer.timerlabel
     self.timerBlock.timerString = self.timerBlock.timer.timerString
 
-    self.timerBlock.timerlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    self.timerBlock.timerlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
     self.timerBlock.timerlabel:SetTextColor(1, 1, 1)
-    self.timerBlock.timerlabel:SetShadowOffset(1, -1)
-    self.timerBlock.timerString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    self.timerBlock.timerString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
     self.timerBlock.timerString:SetTextColor(1, 1, 1)
-    self.timerBlock.timerString:SetShadowOffset(1, -1)
 
-    self.timerBlock.chestoverlay.timerStringChest2:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
+    self.timerBlock.chestoverlay.timerStringChest2:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW", -2)
     self.timerBlock.chestoverlay.timerStringChest2:SetTextColor(1, 1, 1)
-    self.timerBlock.chestoverlay.timerStringChest2:SetShadowOffset(1, -1)
-    self.timerBlock.chestoverlay.timerStringChest3:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
+    self.timerBlock.chestoverlay.timerStringChest3:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW", -2)
     self.timerBlock.chestoverlay.timerStringChest3:SetTextColor(1, 1, 1)
-    self.timerBlock.chestoverlay.timerStringChest3:SetShadowOffset(1, -1)
 
     self.timerBlock.chestoverlay.chest2:ClearAllPoints()
     self.timerBlock.chestoverlay.chest3:ClearAllPoints()
@@ -1090,9 +1086,8 @@ function GwObjectivesScenarioContainerMixin:InitModule()
     self.timerBlock.chestoverlay.timerStringChest2:SetPoint("RIGHT", self.timerBlock.chestoverlay.chest2, "LEFT", -2, -6)
     self.timerBlock.chestoverlay.timerStringChest3:SetPoint("RIGHT", self.timerBlock.chestoverlay.chest3, "LEFT", -2, -6)
 
-    self.timerBlock.deathcounter.counterlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
+    self.timerBlock.deathcounter.counterlabel:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW", -2)
     self.timerBlock.deathcounter.counterlabel:SetTextColor(1, 1, 1)
-    self.timerBlock.deathcounter.counterlabel:SetShadowOffset(1, -1)
     self.timerBlock.score.scoreString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
 
     for _, v in ipairs(self.timerBlock.affixeFrame.affixes) do

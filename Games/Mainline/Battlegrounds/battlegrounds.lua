@@ -435,9 +435,7 @@ local function LoadBattlegrounds()
     hudManager.battlegroundHud.scoreRight:SetShadowColor(0, 0, 0, 1)
     hudManager.battlegroundHud.scoreRight:SetShadowOffset(1, -1)
 
-    hudManager.battlegroundHud.timer:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    hudManager.battlegroundHud.timer:SetShadowColor(0, 0, 0, 1)
-    hudManager.battlegroundHud.timer:SetShadowOffset(1, -1)
+    hudManager.battlegroundHud.timer:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
 
     hudManager.battlegroundHud.landMarkFramePool = CreateFramePool("Frame", hudManager.battlegroundHud, "GwBattleLandMarkFrame", ResetLandMark)
     hudManager.battlegroundHud.activeBgId = 0

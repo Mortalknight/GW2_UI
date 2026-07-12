@@ -209,8 +209,7 @@ function GwObjectivesArenaContainerMixin:RegisterFrame(i)
     arenaFrame:EnableMouse(true)
     arenaFrame:RegisterForClicks("AnyDown")
 
-    arenaFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    arenaFrame.name:SetShadowOffset(1, -1)
+    arenaFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
     arenaFrame.marker:Hide()
     arenaFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons.png")
 
@@ -240,8 +239,7 @@ function GwObjectivesArenaContainerMixin:RegisterPrepFrame()
     arenaPrepFrame:RegisterForClicks("AnyDown")
     arenaPrepFrame.container = self
 
-    arenaPrepFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    arenaPrepFrame.name:SetShadowOffset(1, -1)
+    arenaPrepFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
 
     arenaPrepFrame:SetScript("OnShow", arenaPrepFrame.OnShow)
 

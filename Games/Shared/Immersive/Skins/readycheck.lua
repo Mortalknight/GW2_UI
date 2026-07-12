@@ -131,9 +131,8 @@ local function ApplyReadyCheckLayout()
     title:SetPoint("TOPLEFT", listener, "TOPLEFT", 58, -12)
     title:SetPoint("TOPRIGHT", listener, "TOPRIGHT", -18, -12)
     title:SetJustifyH("LEFT")
-    title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, nil, 1)
+    title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "SHADOW", 1)
     title:SetTextColor(GW.Colors.TextColors.LightHeader:GetRGB())
-    title:SetShadowOffset(1, -1)
 
     if GW.Retail then
         listener.TitleContainer:Hide()
@@ -171,9 +170,8 @@ local function ApplyReadyCheckLayout()
     text:SetHeight(34)
     text:SetJustifyH("LEFT")
     text:SetJustifyV("MIDDLE")
-    text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+    text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
     text:SetTextColor(0.92, 0.88, 0.78, 1)
-    text:SetShadowOffset(1, -1)
 
     local noButton = _G.ReadyCheckFrameNoButton
     local yesButton = _G.ReadyCheckFrameYesButton

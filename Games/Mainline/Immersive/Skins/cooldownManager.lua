@@ -76,15 +76,11 @@ end
 
 function CooldownManagerFunctions:UpdateTextBar(bar)
     if bar.Name then
-        bar.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-        bar.Name:SetShadowColor(0, 0, 0, 1)
-        bar.Name:SetShadowOffset(1, -1)
+        bar.Name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
     end
 
     if bar.Duration then
-        bar.Duration:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-        bar.Duration:SetShadowColor(0, 0, 0, 1)
-        bar.Duration:SetShadowOffset(1, -1)
+        bar.Duration:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
     end
 end
 

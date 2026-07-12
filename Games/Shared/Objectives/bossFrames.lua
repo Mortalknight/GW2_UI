@@ -149,8 +149,7 @@ function GwObjectivesBossContainerMixin:RegisterFrame(i)
     bossFrame:EnableMouse(true)
     bossFrame:RegisterForClicks("AnyDown")
 
-    bossFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-    bossFrame.name:SetShadowOffset(1, -1)
+    bossFrame.name:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
     bossFrame.marker:Hide()
 
     bossFrame.icon:SetVertexColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Boss]:GetRGB())

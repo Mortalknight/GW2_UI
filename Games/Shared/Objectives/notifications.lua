@@ -808,10 +808,8 @@ end
 function GwObjectivesTrackerNotificationMixin:InitModule()
     self.animatingState = false
     self.animating = false
-    self.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-    self.title:SetShadowOffset(1, -1)
-    self.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
-    self.desc:SetShadowOffset(1, -1)
+    self.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "SHADOW")
+    self.desc:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
     self.bonusbar.bar:SetOrientation("VERTICAL")
     self.bonusbar.bar:SetMinMaxValues(0, 1)
     self.bonusbar.bar:SetValue(0.5)

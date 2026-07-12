@@ -163,8 +163,7 @@ function GW.ApplyObjectivesHeaderStyle(header)
     header:SetHeight(headerHeight)
     if header.title then
         header.title:SetHeight(headerHeight)
-        header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, compact and GW.Enum.TextSizeType.Normal or GW.Enum.TextSizeType.Header)
-        header.title:SetShadowOffset(1, -1)
+        header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, compact and GW.Enum.TextSizeType.Normal or GW.Enum.TextSizeType.Header, "SHADOW")
     end
 
     if header.icon then

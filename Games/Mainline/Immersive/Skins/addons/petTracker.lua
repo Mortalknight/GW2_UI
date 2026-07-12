@@ -146,8 +146,7 @@ function GwPetTrackerContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-    self.header.title:SetShadowOffset(1, -1)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "SHADOW")
     self.header.title:SetText("Pet Tracker")
     self.header.title:SetTextColor(GW.Colors.ObjectivesTypeColors[GW.Enum.ObjectivesNotificationType.Event]:GetRGB())
 

@@ -72,16 +72,12 @@ local AttributeInitialConfig = [[
 
 local function setLongCD(self, stackCount)
     self.cooldown:Hide()
-    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -1)
-    self.status.duration:SetShadowColor(0, 0, 0, 1)
-    self.status.duration:SetShadowOffset(1, -1)
-    self.status.stacks:SetShadowColor(0, 0, 0, 1)
-    self.status.stacks:SetShadowOffset(1, -1)
+    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW", -1)
 
     if stackCount and stackCount > 99 then
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", -2)
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOWOUTLINE", -2)
     else
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE")
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOWOUTLINE")
     end
 
     self.status:ClearAllPoints()
@@ -94,16 +90,12 @@ end
 
 local function setShortCD(self, expires, duration, stackCount)
     self.cooldown:SetCooldown(expires - duration, duration)
-    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, nil, -1)
-    self.status.duration:SetShadowColor(0, 0, 0, 1)
-    self.status.duration:SetShadowOffset(1, -1)
-    self.status.stacks:SetShadowColor(0, 0, 0, 1)
-    self.status.stacks:SetShadowOffset(1, -1)
+    self.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW", -1)
 
     if stackCount and stackCount > 99 then
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", -2)
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOWOUTLINE", -2)
     else
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOWOUTLINE")
     end
 
     self.status:ClearAllPoints()
@@ -500,18 +492,14 @@ function GwAuraTmpl_OnLoad(self)
             if c:GetObjectType() == "FontString" then
                 self.cooldown.durationString = c
                 self.cooldown.durationString:SetPoint("TOP", self.status, "BOTTOM", 0, -4)
-                self.cooldown.durationString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, nil, -1)
-                self.cooldown.durationString:SetShadowColor(0, 0, 0, 1)
-                self.cooldown.durationString:SetShadowOffset(1, -1)
+                self.cooldown.durationString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW", -1)
                 break
             end
         end
 
         self.UpdateTooltip = AuraOnEnter
 
-        self.status.stacks:SetShadowColor(0, 0, 0, 1)
-        self.status.stacks:SetShadowOffset(1, -1)
-        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
+        self.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOWOUTLINE")
 
         self.status:ClearAllPoints()
         self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4)

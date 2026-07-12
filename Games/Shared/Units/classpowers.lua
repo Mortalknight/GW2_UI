@@ -2118,9 +2118,7 @@ local function LoadClassPowers()
     cpf.defaultResourceBar.spark:SetHeight(3)
     cpf.defaultResourceBar.spark:ClearAllPoints()
     cpf.defaultResourceBar.spark:SetPoint("RIGHT", cpf.defaultResourceBar:GetStatusBarTexture(), "RIGHT", 0, 0)
-    cpf.defaultResourceBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    cpf.defaultResourceBar.label:SetShadowColor(0, 0, 0, 1)
-    cpf.defaultResourceBar.label:SetShadowOffset(1, -1)
+    cpf.defaultResourceBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
 
     cpf.customResourceBar = GW.CreateAnimatedStatusBar("GwCustomResourceBar", cpf, "GwStatusPowerBar", true)
     cpf.customResourceBar.customMaskSize = 64
@@ -2147,9 +2145,7 @@ local function LoadClassPowers()
     cpf.customResourceBar:ClearAllPoints()
     cpf.customResourceBar:SetPoint("LEFT", cpf, "LEFT", 0, -11)
 
-    cpf.customResourceBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    cpf.customResourceBar.label:SetShadowColor(0, 0, 0, 1)
-    cpf.customResourceBar.label:SetShadowOffset(1, -1)
+    cpf.customResourceBar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
 
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", "Unitframe,Power", { 312, 32 },
         { "default", "scaleable" }, true)
@@ -2197,9 +2193,7 @@ local function LoadClassPowers()
     lmb.decay:SetPoint("TOPLEFT", lmb, "TOPLEFT", 0, 0)
     lmb.decay:SetPoint("BOTTOMRIGHT", lmb, "BOTTOMRIGHT", 0, 0)
     lmb:SetFrameStrata("MEDIUM")
-    lmb.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
-    lmb.label:SetShadowColor(0, 0, 0, 1)
-    lmb.label:SetShadowOffset(1, -1)
+    lmb.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
 
     --create extra mana power for retail
     cpf.lmbSecret = CreateFrame("StatusBar", "GwPlayerAltClassLmbSecret", cpf, "GwStatusPowerBarRetailTemplate")
@@ -2211,9 +2205,7 @@ local function LoadClassPowers()
     cpf.lmbSecret.spark:SetHeight(3)
     cpf.lmbSecret.spark:ClearAllPoints()
     cpf.lmbSecret.spark:SetPoint("RIGHT", cpf.lmbSecret:GetStatusBarTexture(), "RIGHT", 0, 0)
-    cpf.lmbSecret.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small)
-    cpf.lmbSecret.label:SetShadowColor(0, 0, 0, 1)
-    cpf.lmbSecret.label:SetShadowOffset(1, -1)
+    cpf.lmbSecret.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Small, "SHADOW")
 
     -- create an extra mana power bar that is used sometimes
     local exbar = GW.CreateAnimatedStatusBar("GwPlayerAltClassExBar", cpf, "GwStatusPowerBar", true)
@@ -2243,9 +2235,7 @@ local function LoadClassPowers()
     cpf.exbarSecret:SetFrameStrata("MEDIUM")
     cpf.exbarSecret.spark:ClearAllPoints()
     cpf.exbarSecret.spark:SetPoint("RIGHT", cpf.exbarSecret:GetStatusBarTexture(), "RIGHT", 0, 0)
-    cpf.exbarSecret.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    cpf.exbarSecret.label:SetShadowColor(0, 0, 0, 1)
-    cpf.exbarSecret.label:SetShadowOffset(1, -1)
+    cpf.exbarSecret.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
 
     if not (GW.Classic or GW.TBC or GW.Wrath) then
         GW.MixinHideDuringPetAndOverride(cpf)
@@ -2264,9 +2254,7 @@ local function LoadClassPowers()
     exbar:SetPoint("TOPLEFT", cpf)
 
     exbar:SetFrameStrata("MEDIUM")
-    exbar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
-    exbar.label:SetShadowColor(0, 0, 0, 1)
-    exbar.label:SetShadowOffset(1, -1)
+    exbar.label:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
 
     -- set a bunch of other init styling stuff
     cpf.decayCounter.count:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.BigHeader, "OUTLINE", 6)

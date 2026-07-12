@@ -260,9 +260,8 @@ local function LoadStaticPopupSkin()
         -- message text in the ready check look
         local text = StaticPopup.text or _G["StaticPopup" .. i .. "Text"]
         if text then
-            text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+            text:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
             text:SetTextColor(0.92, 0.88, 0.78, 1)
-            text:SetShadowOffset(1, -1)
         end
 
         --Style Buttons (ready check style; confirm/cancel coloring is applied on show)

@@ -34,9 +34,7 @@ if GW.Retail then
 end
 
 local function SetFontWithShadow(element, font, size, sizeAddition)
-    element:GwSetFontTemplate(font, size, nil, sizeAddition)
-    element:SetShadowColor(0, 0, 0, 1)
-    element:SetShadowOffset(1, -1)
+    element:GwSetFontTemplate(font, size, "SHADOW", sizeAddition)
 end
 
 local function sortFactionsStatus(tbl)

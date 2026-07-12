@@ -222,10 +222,8 @@ local function raidInfoSetup(raidinfo)
     for i = 1, #raidinfo.buttons do
         local slot = raidinfo.buttons[i]
         slot:SetWidth(raidinfo:GetWidth() - 12)
-        slot.item.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
+        slot.item.name:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "SHADOW")
         slot.item.name:SetTextColor(1, 1, 1)
-        slot.item.name:SetShadowColor(0, 0, 0, 1)
-        slot.item.name:SetShadowOffset(1, -1)
 
         slot.item.reset:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
         slot.item.reset:SetTextColor(1, 1, 1)

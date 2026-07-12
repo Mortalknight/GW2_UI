@@ -913,6 +913,64 @@ local function GwKillEditMode(object)
     object.Selection:EnableMouse(false)
 end
 
+do
+    -- Blizzard broke font shadows on FontStrings in 12.0.7; shadows only render when
+    -- defined on font objects, so we generate our own font families and set them there
+    local members, alphabets = {}, { roman = {}, korean = {}, simplifiedchinese = {}, traditionalchinese = {}, russian = {} }
+
+    local function GenerateFontMembers(font, size, style)
+        local index = 0
+        for which, data in next, alphabets do
+            index = index + 1
+
+            data.alphabet = which
+            data.file = font
+            data.height = size
+            data.flags = style
+
+            members[index] = data
+        end
+
+        return members
+    end
+
+    local familyCount = {}
+    local function GenerateFontFamily(prefix, font, size, style)
+        local count = (familyCount[prefix] or 0) + 1
+        familyCount[prefix] = count
+
+        return CreateFontFamily(prefix .. count, GenerateFontMembers(font, size, style))
+    end
+
+    local function SetFontShadow(family, style, shadow)
+        for which in next, alphabets do
+            local fontObject = family:GetFontObjectForAlphabet(which)
+            fontObject:SetShadowColor(0, 0, 0, (shadow and (style == "" and 1 or 0.6)) or 0)
+            fontObject:SetShadowOffset((shadow and 1) or 0, (shadow and -1) or 0)
+        end
+    end
+    GW.SetFontShadow = SetFontShadow
+
+    local objects = {}
+    function GW.GenerateFontObject(prefix, font, size, style, shadow)
+        local sizes = objects[font]
+        if not sizes then sizes = {} objects[font] = sizes end
+
+        local styles = sizes[size]
+        if not styles then styles = {} sizes[size] = styles end
+
+        local key = shadow and ("SHADOW" .. style) or style
+        local family = styles[key]
+        if not family then
+            family = GenerateFontFamily(prefix, font, size, style)
+            SetFontShadow(family, style, shadow)
+            styles[key] = family
+        end
+
+        return family
+    end
+end
+
 local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddition, skip)
     if not object or not font or not object.SetFont or not textSizeType then return end
 
@@ -920,14 +978,36 @@ local function GwSetFontTemplate(object, font, textSizeType, style, textSizeAddi
         object.gwFont, object.gwTextSizeType, object.gwStyle, object.gwTextSizeAddition = font, textSizeType, style, textSizeAddition
     end
 
+    local size
     if textSizeType == GW.Enum.TextSizeType.BigHeader then
-        object:SetFont(font, (GW.settings.FONTS_BIG_HEADER_SIZE or 18) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE or "")
+        size = GW.settings.FONTS_BIG_HEADER_SIZE or 18
     elseif textSizeType == GW.Enum.TextSizeType.Header then
-        object:SetFont(font, (GW.settings.FONTS_HEADER_SIZE or 16) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE or "")
+        size = GW.settings.FONTS_HEADER_SIZE or 16
     elseif textSizeType == GW.Enum.TextSizeType.Normal then
-        object:SetFont(font, (GW.settings.FONTS_NORMAL_SIZE or 14) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE or "")
+        size = GW.settings.FONTS_NORMAL_SIZE or 14
     elseif textSizeType == GW.Enum.TextSizeType.Small then
-        object:SetFont(font, (GW.settings.FONTS_SMALL_SIZE or 12) + (textSizeAddition or 0), style or GW.settings.FONTS_OUTLINE or "")
+        size = GW.settings.FONTS_SMALL_SIZE or 12
+    end
+    if not size then return end
+    size = size + (textSizeAddition or 0)
+
+    local shadow = style and strsub(style, 0, 6) == "SHADOW"
+    if shadow then
+        style = strsub(style, 7) -- shadow isnt a real style, fall back to the outline setting
+        if style == "" then style = nil end
+    end
+
+    style = style or GW.settings.FONTS_OUTLINE or ""
+    if style == "NONE" then style = "" end
+
+    if CreateFontFamily and object.SetFontObject then
+        object:SetFontObject(GW.GenerateFontObject("GW2_UI_FontTemplate", font, size, style, shadow))
+    else
+        object:SetFont(font, size, style)
+        if shadow then
+            object:SetShadowColor(0, 0, 0, style == "" and 1 or 0.6)
+            object:SetShadowOffset(1, -1)
+        end
     end
 
     -- register font for size changes

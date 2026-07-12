@@ -203,9 +203,8 @@ end
 local function CreatePopupFrame()
     for i = 1, MAX_FRAMES do
         local popup = CreateFrame("Frame", "GwPopupFrame" .. i, UIParent, "GwPopupFrameTemplate")
-        popup.string:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal)
+        popup.string:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Normal, "SHADOW")
         popup.string:SetTextColor(0.92, 0.88, 0.78)
-        popup.string:SetShadowOffset(1, -1)
 
         -- ready check style buttons and footer band, like the static popup skin
         GW.StylePopupButton(popup.acceptButton)

@@ -53,8 +53,7 @@ local function CreateAuraFrame(name, parent)
     f.nextUpdate = 0
 
     f.status.stacks:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "OUTLINE", -1)
-    f.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
-    f.status.duration:SetShadowOffset(1, -1)
+    f.status.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW", -2)
 
     f.duration = f.status.duration
     f.stacks = f.status.stacks

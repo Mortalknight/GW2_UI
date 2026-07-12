@@ -36,8 +36,7 @@ local function CreateAuraFrame(name, parent)
             f.duration = c
             f.duration:SetPoint("TOPLEFT", f.status, "BOTTOMLEFT", -10, -2)
             f.duration:SetPoint("TOPRIGHT", f.status, "BOTTOMRIGHT", 10, 0)
-            f.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
-            f.duration:SetShadowOffset(1, -1)
+            f.duration:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "SHADOW", -2)
             break
         end
     end

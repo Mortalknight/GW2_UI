@@ -565,8 +565,7 @@ function GwObjectivesQuestContainerMixin:InitModule()
     self.partialUpdateOrder = {}
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-    self.header.title:SetShadowOffset(1, -1)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "SHADOW")
 
     self.collapsed = false
     self.header:SetScript("OnMouseDown", function() self:ToggleCollapsed() end) -- this way, otherwiese we have a wrong self at the function

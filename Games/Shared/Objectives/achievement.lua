@@ -282,8 +282,7 @@ function GwAchievementTrackerContainerMixin:InitModule()
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
     self.header.icon:SetTexCoord(0, 0.5, 0, 0.25)
-    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header)
-    self.header.title:SetShadowOffset(1, -1)
+    self.header.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Header, "SHADOW")
     self.header.title:SetText(TRACKER_HEADER_ACHIEVEMENTS)
 
     self.collapsed = false
