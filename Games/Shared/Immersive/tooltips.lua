@@ -199,9 +199,9 @@ local function SetHyperlink(self, link)
 
     if select(3, string.find(link, "(%a-):")) == "achievement" then
         local _, _, achievementID = string.find(link, ":(%d+):")
-        local _, _, GUID = string.find(link, ":%d+:(.-):")
+        local _, _, guid = string.find(link, ":%d+:(.-):")
 
-        if GUID == UnitGUID("player") then
+        if guid == GW.myguid then
             self:Show()
             return
         end
@@ -401,7 +401,7 @@ end
 local function SetUnitText(self, unit, isPlayerUnit)
     local name, realm = UnitName(unit)
 
-    if isPlayerUnit and not GW.IsSecretUnit(unit) then
+    if isPlayerUnit and GW.NotSecretUnit(unit) then
         local localeClass, class = UnitClass(unit)
         if not localeClass or not class then return end
 
@@ -697,9 +697,9 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
     if self.ItemLevelShown or (not unit) or (numTries > 3) or not UnitIsPlayer(unit) or not CanInspect(unit) or (GW.Mists and not CheckInteractDistance(unit, 4)) then return end
 
     local unitGUID = UnitGUID(unit)
-    if not unitGUID then return end
+    if not unitGUID or GW.IsSecretValue(unitGUID) then return end
 
-    if unitGUID == UnitGUID("player") then
+    if unitGUID == GW.myguid then
         self.ItemLevelShown = true
         self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", GW.GetUnitItemLevel(unit), nil, nil, nil, 1, 1, 1)
     elseif GW.unitIlvlsCache[unitGUID] and GW.unitIlvlsCache[unitGUID].time then
