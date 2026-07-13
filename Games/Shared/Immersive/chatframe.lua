@@ -1680,7 +1680,11 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         local classLink = realm and playerLink and not isProtected and (info.colorNameByClass and gsub(playerLink, "(|h|c.-)|r|h$","%1-" .. realm .. "|r|h") or gsub(playerLink, "(|h.-)|h$","%1-" .. realm .. "|h"))
         body = (classLink and gsub(message, arg2 .. "%-" .. realm, pflag .. classLink, 1)) or ((not isProtected and GW.NotSecretValue(arg2) and arg2 ~= sender) and gsub(message, arg2, sender, 1)) or message
     elseif specialType then
-        body = format(header, pflag .. sender) .. message
+        if isProtected then -- keep the secret message out of the format pattern
+            body = format(header, pflag .. sender) .. message
+        else -- monster emotes carry the name placeholder inside the message itself
+            body = format(header .. message, pflag .. sender)
+        end
     else
         body = format(header .. "%s", pflag .. sender, message)
     end

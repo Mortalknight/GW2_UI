@@ -17,6 +17,7 @@ addChange("10.14.0", {
     {GW.Enum.ChangelogType.feature, [=[New chat option "Chat Buttons Position": move the chat control buttons (menu, channel, voice, social) into a small hover bar above or right of the chat; text, tabs and edit box then use the full chat width. Switches live without a reload]=]},
     {GW.Enum.ChangelogType.feature, [=[The settings window now shows a "Reload required" hint in the header as soon as a reload setting is changed, with a tooltip listing the pending settings; toggling a setting back to its original state removes the reload prompt again]=]},
     {GW.Enum.ChangelogType.bug, [=[Fixed font shadows no longer rendering on unit frames, nameplates, objectives, tooltips and other addon texts since 12.0.7 broke shadows set directly on font strings; shadows are now applied via generated font objects instead]=]},
+    {GW.Enum.ChangelogType.bug, [=[Chat: NPC emotes on non-Retail clients showed a literal %s instead of the NPC name; the name placeholder inside the emote text is formatted again]=]},
 })
 
 addChange("10.13.1", {
