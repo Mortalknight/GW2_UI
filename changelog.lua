@@ -18,6 +18,7 @@ addChange("10.14.0", {
     {GW.Enum.ChangelogType.feature, [=[The settings window now shows a "Reload required" hint in the header as soon as a reload setting is changed, with a tooltip listing the pending settings; toggling a setting back to its original state removes the reload prompt again]=]},
     {GW.Enum.ChangelogType.bug, [=[Fixed font shadows no longer rendering on unit frames, nameplates, objectives, tooltips and other addon texts since 12.0.7 broke shadows set directly on font strings; shadows are now applied via generated font objects instead]=]},
     {GW.Enum.ChangelogType.bug, [=[Chat: NPC emotes on non-Retail clients showed a literal %s instead of the NPC name; the name placeholder inside the emote text is formatted again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Talents (Mists): fixed ADDON_ACTION_FORBIDDEN errors from the protected RemoveTalent() when unlearning or switching talents; learning and unlearning now run through Blizzards secure talent buttons and a switched talent is learned automatically once the unlearn is confirmed]=]},
 })
 
 addChange("10.13.1", {
