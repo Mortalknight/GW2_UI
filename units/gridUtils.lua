@@ -518,8 +518,9 @@ local function GridUpdateAwayData(self, profile, checkReadyCheck)
         ShouldShowClassIcon(self, true)
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end
-
-    if UnitIsConnected(self.unit) and (UnitPhaseReason(self.unit) or not UnitInRange(self.unit)) then
+    local rangeCheck,checkedRange = UnitInRange(self.unit)
+   
+    if UnitIsConnected(self.unit) and (UnitPhaseReason(self.unit) or not rangeCheck) then
         local r, g, b = self.healthbar:GetStatusBarColor()
 
         self.healthbar:SetStatusBarColor(r * 0.3, g * 0.3, b * 0.3)

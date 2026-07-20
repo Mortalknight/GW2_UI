@@ -17,24 +17,28 @@ GW.UpdateDoddgeBarSettings = UpdateSettings
 
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
-local DODGEBAR_SPELLS = {} -- spell ID used to generate the bar information/tooltip
-local DODGEBAR_SPELLS_ATTR = {} -- spell ID used to cast ability on button click, if different than above
-DODGEBAR_SPELLS["WARRIOR"] = "100" -- Charge
-DODGEBAR_SPELLS["PALADIN"] = "190784" -- Divine Steed
-DODGEBAR_SPELLS["HUNTER"] = "781" -- Disengage
-DODGEBAR_SPELLS["ROGUE"] = "2983" -- Sprint
-DODGEBAR_SPELLS["PRIEST"] = "[spec:1/2,talent:2/3] 121536; 73325" -- Angelic Feather if talented, else Leap of Faith
-DODGEBAR_SPELLS["DEATHKNIGHT"] = "48265" -- Death's Advance
-DODGEBAR_SPELLS["SHAMAN"] = "[spec:2] 58875,2645" -- Spirit Walk if Enhance
-DODGEBAR_SPELLS["MAGE"] = "[talent:2/2] 212653; 1953" -- Shimmer if talented, else Blink
-DODGEBAR_SPELLS_ATTR["MAGE"] = "1953" -- use Blink instead of Shimmer for the button attr
-DODGEBAR_SPELLS["WARLOCK"] = "48020" -- Demonic Circle: Teleport; TODO disable when Demonic Circle buff not active
-DODGEBAR_SPELLS["MONK"] = "[talent:2/2] 115008; 109132" -- Chi Torpedo if talented, else Roll
-DODGEBAR_SPELLS_ATTR["MONK"] = "109132" -- use Roll instead of Chi Torpedo for the button attr
-DODGEBAR_SPELLS["DRUID"] = "[talent:2/1] 252216; [talent:2/3,form:1] 16979; [talent:2/3,form:2] 49376; [talent:2/3,form:3,swimming] 102416; [talent:2/3,form:3] 102417; [talent:2/3,form:4] 102383; [talent:2/3] 102401; 1850" -- Tiger Dash if talented, else Wild Charge if talented (with all its sub-details for different forms), else Dash
-DODGEBAR_SPELLS_ATTR["DRUID"] = "[talent:2/3] 102401; 1850" -- use Dash (instead of Tiger Dash) and Wild Charge baseline(instead of form-specific talents) for the button attr
-DODGEBAR_SPELLS["DEMONHUNTER"] = "[spec:1] 195072; [spec:2] 189110; 344865" -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
-DODGEBAR_SPELLS_ATTR["DEMONHUNTER"] = "[spec:1] 343017,320416,344865; [spec:2] 189110; 344865" -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
+local DODGEBAR_SPELLS = {}                                                                                                                                                                                                     -- spell ID used to generate the bar information/tooltip
+local DODGEBAR_SPELLS_ATTR = {}                                                                                                                                                                                                -- spell ID used to cast ability on button click, if different than above
+DODGEBAR_SPELLS["WARRIOR"] = "100"                                                                                                                                                                                             -- Charge
+DODGEBAR_SPELLS["PALADIN"] = "190784"                                                                                                                                                                                          -- Divine Steed
+DODGEBAR_SPELLS["HUNTER"] = "781"                                                                                                                                                                                              -- Disengage
+DODGEBAR_SPELLS["ROGUE"] = "2983"                                                                                                                                                                                              -- Sprint
+DODGEBAR_SPELLS["PRIEST"] = "[spec:1/2,talent:2/3] 121536; 73325"                                                                                                                                                              -- Angelic Feather if talented, else Leap of Faith
+DODGEBAR_SPELLS["DEATHKNIGHT"] = "48265"                                                                                                                                                                                       -- Death's Advance
+DODGEBAR_SPELLS["SHAMAN"] = "[spec:2] 58875,2645"                                                                                                                                                                              -- Spirit Walk if Enhance
+DODGEBAR_SPELLS["MAGE"] = "[talent:2/2] 212653; 1953"                                                                                                                                                                          -- Shimmer if talented, else Blink
+DODGEBAR_SPELLS_ATTR["MAGE"] = "1953"                                                                                                                                                                                          -- use Blink instead of Shimmer for the button attr
+DODGEBAR_SPELLS["WARLOCK"] = "48020"                                                                                                                                                                                           -- Demonic Circle: Teleport; TODO disable when Demonic Circle buff not active
+DODGEBAR_SPELLS["MONK"] = "[talent:2/2] 115008; 109132"                                                                                                                                                                        -- Chi Torpedo if talented, else Roll
+DODGEBAR_SPELLS_ATTR["MONK"] = "109132"                                                                                                                                                                                        -- use Roll instead of Chi Torpedo for the button attr
+DODGEBAR_SPELLS["DRUID"] =
+"[talent:2/1] 252216; [talent:2/3,form:1] 16979; [talent:2/3,form:2] 49376; [talent:2/3,form:3,swimming] 102416; [talent:2/3,form:3] 102417; [talent:2/3,form:4] 102383; [talent:2/3] 102401; 1850"                            -- Tiger Dash if talented, else Wild Charge if talented (with all its sub-details for different forms), else Dash
+DODGEBAR_SPELLS_ATTR["DRUID"] =
+"[talent:2/3] 102401; 1850"                                                                                                                                                                                                    -- use Dash (instead of Tiger Dash) and Wild Charge baseline(instead of form-specific talents) for the button attr
+DODGEBAR_SPELLS["DEMONHUNTER"] =
+"[spec:1] 195072; [spec:2] 189110; 344865"                                                                                                                                                                                     -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
+DODGEBAR_SPELLS_ATTR["DEMONHUNTER"] =
+"[spec:1] 343017,320416,344865; [spec:2] 189110; 344865"                                                                                                                                                                       -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
 DODGEBAR_SPELLS["EVOKER"] = "358267"
 
 local EMPTY_IN_RAD = 128 * math.pi / 180 -- the angle in radians for an empty bar
@@ -60,38 +64,36 @@ end
 GW.AddForProfiling("dodgebar", "fill_OnFinished", fill_OnFinished)
 
 local function updateAnim(self, start, duration, charges, max)
+    if not start or not duration or start <= 0 or duration <= 0 then return end
 
-    if not start or not duration or start<=0 or duration<=0 then return end
-
-    local setFillPoint = charges/max
-    local arcSnapPoint = lerp(EMPTY_IN_RAD,FULL_IN_RAD,setFillPoint)
-   -- self.arcfill.fill:SetRotation(EMPTY_IN_RAD)
+    local setFillPoint = charges / max
+    local arcSnapPoint = lerp(EMPTY_IN_RAD, FULL_IN_RAD, setFillPoint)
+    -- self.arcfill.fill:SetRotation(EMPTY_IN_RAD)
     self.arcfill.fill:SetRotation(arcSnapPoint)
-  
-    
-    local fractionWidth = EMPTY_IN_RAD/max
+
+
+    local fractionWidth = EMPTY_IN_RAD / max
     local startPoint = arcSnapPoint
-    local endPoint =  startPoint - fractionWidth
+    local endPoint = startPoint - fractionWidth
 
     --(name, from, to, start, duration, method, easeing, onCompleteCallback, doCompleteOnOverider)
     AddToAnimation("DODGEBAR", 0, 1, start, duration,
-    function()
-        local p = animations["DODGEBAR"].progress
-        local l = lerp(0,1,p)
-      --  local l2 = lerp(fromfraction,toFraction,p) / max
+        function()
+            local p = animations["DODGEBAR"].progress
+            local l = lerp(0, 1, p)
+            --  local l2 = lerp(fromfraction,toFraction,p) / max
 
-        local value = lerp(EMPTY_IN_RAD_SMALL,FULL_IN_RAD_SMALL,l)
-        local valueFraction = lerp(startPoint,endPoint,l)
-     --   self.arcfill.fill:SetRotation(value)
-      --  self.arcfill.spark:SetRotation(value)
-        self.arcfill.fillFractions:SetRotation(valueFraction)
-    end, 1, function()
-    
-        local setFillPoint = (charges+1)/max
-        local arcSnapPoint = lerp(EMPTY_IN_RAD,FULL_IN_RAD,setFillPoint)
-    -- self.arcfill.fill:SetRotation(EMPTY_IN_RAD)
-        self.arcfill.fill:SetRotation(arcSnapPoint)
-    end)
+            local value = lerp(EMPTY_IN_RAD_SMALL, FULL_IN_RAD_SMALL, l)
+            local valueFraction = lerp(startPoint, endPoint, l)
+            --   self.arcfill.fill:SetRotation(value)
+            --  self.arcfill.spark:SetRotation(value)
+            self.arcfill.fillFractions:SetRotation(valueFraction)
+        end, 1, function()
+            local setFillPoint = (charges + 1) / max
+            local arcSnapPoint = lerp(EMPTY_IN_RAD, FULL_IN_RAD, setFillPoint)
+            -- self.arcfill.fill:SetRotation(EMPTY_IN_RAD)
+            self.arcfill.fill:SetRotation(arcSnapPoint)
+        end)
 end
 GW.AddForProfiling("dodgebar", "updateAnim", updateAnim)
 
@@ -121,7 +123,8 @@ local function initBar(self, pew)
                 end
             end
         else
-            self.spellId = IsSpellKnown(tonumber(v)) and tonumber(v) or DODGEBAR_SPELLS_ATTR[GW.myclass] and tonumber(v) or nil
+            self.spellId = IsSpellKnown(tonumber(v)) and tonumber(v) or DODGEBAR_SPELLS_ATTR[GW.myclass] and tonumber(v) or
+            nil
         end
     end
     Debug("Dodgebar spell for Tooltip: ", self.spellId)
@@ -176,12 +179,12 @@ local function setupBar(self)
     -- sort out separators for multi charges
     local frameName = self:GetName()
 
-    for i=1,5 do
-        local seperator = _G[frameName.."Sep"..i]
-        if i<maxCharges then
-            local p = lerp(RAD_AT_START,RAD_AT_END-0.09,i/maxCharges)
+    for i = 1, 5 do
+        local seperator = _G[frameName .. "Sep" .. i]
+        if i < maxCharges then
+            local p = lerp(RAD_AT_START, RAD_AT_END - 0.09, i / maxCharges)
             seperator:SetRotation(p)
-            seperator:SetSize(128*2,128*2)
+            seperator:SetSize(128 * 2, 128 * 2)
             seperator:Show()
         else
             seperator:Hide()
@@ -206,7 +209,6 @@ local function dodge_OnEvent(self, event, ...)
         else
             self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
         end
-
     elseif event == "SPELL_UPDATE_COOLDOWN" then
         -- only registered when our dodge skill is actively on cooldown
         if not GW.inWorld or not self.spellId then
@@ -216,7 +218,6 @@ local function dodge_OnEvent(self, event, ...)
         if start ~= nil and start ~= 0 and duration ~= nil and duration ~= 0 then
             updateAnim(self, start, duration, 0, 1)
         end
-
     elseif event == "SPELL_UPDATE_CHARGES" then
         -- only registered when our dodge skill is actively on cooldown
         if not GW.inWorld or not self.spellId then
@@ -226,11 +227,9 @@ local function dodge_OnEvent(self, event, ...)
         if start ~= nil and start ~= 0 and duration ~= nil and duration ~= 0 then
             updateAnim(self, start, duration, charges, maxCharges)
         end
-
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- do the stuff that must be done before combat lockdown takes effect
         initBar(self, true)
-
     elseif event == "SPELLS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" or event == "LEARNED_SPELL_IN_TAB" then
         -- do remaining spell detail stuff that is (usually) not available yet in PEW or if we are not in world
         if event ~= "LEARNED_SPELL_IN_TAB" and (not GW.inWorld or not self.spellId) then
@@ -259,13 +258,13 @@ local function dodge_OnEnter(self)
 
     -- show the spell tooltip
     if self.spellId then
-      GameTooltip_SetDefaultAnchor(GameTooltip, self)
-      GameTooltip:SetSpellByID(self.spellId)
-      GameTooltip:Show()
+        GameTooltip_SetDefaultAnchor(GameTooltip, self)
+        GameTooltip:SetSpellByID(self.spellId)
+        GameTooltip:Show()
     else
-      GameTooltip_SetDefaultAnchor(GameTooltip, self)
-      GameTooltip:AddLine(self.tooltip, nil, nil, nil, true)
-      GameTooltip:Show()
+        GameTooltip_SetDefaultAnchor(GameTooltip, self)
+        GameTooltip:AddLine(self.tooltip, nil, nil, nil, true)
+        GameTooltip:Show()
     end
 end
 GW.AddForProfiling("dodgebar", "dodge_OnEnter", dodge_OnEnter)
@@ -291,13 +290,13 @@ end
 GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
 
 local function setupDragonBar(self)
-    local maxVigor = UnitPowerMax("player" , DRAGON_POWERTYPE);
+    local maxVigor = UnitPowerMax("player", DRAGON_POWERTYPE);
     local frameName = self:GetName()
 
-    for i=1,5 do
-        local seperator = _G[frameName.."Sep"..i]
-        if i<=maxVigor then
-            local p = lerp(RAD_AT_START,RAD_AT_END,i/maxVigor)
+    for i = 1, 5 do
+        local seperator = _G[frameName .. "Sep" .. i]
+        if i <= maxVigor then
+            local p = lerp(RAD_AT_START, RAD_AT_END, i / maxVigor)
             seperator:SetRotation(p)
             seperator:Show()
         else
@@ -305,9 +304,9 @@ local function setupDragonBar(self)
         end
     end
 end
-local function animateDragonBar(self,current,fraction,max)
+local function animateDragonBar(self, current, fraction, max)
     if not max or max < 1 or not current then
-            return
+        return
     end
 
     if not fraction then
@@ -317,27 +316,27 @@ local function animateDragonBar(self,current,fraction,max)
     local from = self.currentValue or 0
 
     local toFraction = current + fraction
-    local fromfraction =  self.currentValueFraction or 0
+    local fromfraction = self.currentValueFraction or 0
     fromfraction = fromfraction + current
     local flash = nil
-    if self.currentValue~=nil and current>self.currentValue then
+    if self.currentValue ~= nil and current > self.currentValue then
         FrameFlash(self.arcfill.spark, 0.2)
     end
 
     self.currentValue = current
-    self.currentValueFraction =  fraction
+    self.currentValueFraction = fraction
     AddToAnimation("DRAGONBAR", 0, 1, GetTime(), 0.8,
-    function()
-        local p = animations["DRAGONBAR"].progress
-        local l = lerp(from,to,p) / max
-        local l2 = lerp(fromfraction,toFraction,p) / max
+        function()
+            local p = animations["DRAGONBAR"].progress
+            local l = lerp(from, to, p) / max
+            local l2 = lerp(fromfraction, toFraction, p) / max
 
-        local value = lerp(EMPTY_IN_RAD_SMALL,FULL_IN_RAD_SMALL,l)
-        local valueFraction = lerp(EMPTY_IN_RAD_SMALL,FULL_IN_RAD_SMALL,l2)
-        self.arcfill.fill:SetRotation(value)
-        self.arcfill.spark:SetRotation(value)
-        self.arcfill.fillFractions:SetRotation(valueFraction)
-    end, 1, flash)
+            local value = lerp(EMPTY_IN_RAD_SMALL, FULL_IN_RAD_SMALL, l)
+            local valueFraction = lerp(EMPTY_IN_RAD_SMALL, FULL_IN_RAD_SMALL, l2)
+            self.arcfill.fill:SetRotation(value)
+            self.arcfill.spark:SetRotation(value)
+            self.arcfill.fillFractions:SetRotation(valueFraction)
+        end, 1, flash)
 end
 
 local function updateDragonRidingState(self, state, isLogin)
@@ -423,22 +422,22 @@ local function LoadDodgeBar(hg, asTargetFrame)
     -- setting these values in the XML creates animation glitches so we do it here instead
     local af = fmdb.arcfill
 
-   
+
     af.fill:SetRotation(EMPTY_IN_RAD)
-    af.fill:SetSize(128*1.38,128*1.38)
+    af.fill:SetSize(128 * 1.38, 128 * 1.38)
     af.fillFractions:SetRotation(FULL_IN_RAD)
-    af.fillFractions:SetSize(128*1.38,128*1.38)
-    af.fillFractions:SetVertexColor(255/255,197/255,51/255,0.5)
+    af.fillFractions:SetSize(128 * 1.38, 128 * 1.38)
+    af.fillFractions:SetVertexColor(255 / 255, 197 / 255, 51 / 255, 0.5)
     af.maskr_hover:ClearAllPoints()
-   
+
     af.maskr_hover:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
     af.maskr_normal:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
 
-       -- create the arc drain/fill animations
-     
-       af.gwAnimGroup = ag
-       af.gwAnimDrain = a1
-       af.gwAnimFill = a2
+    -- create the arc drain/fill animations
+
+    af.gwAnimGroup = ag
+    af.gwAnimDrain = a1
+    af.gwAnimFill = a2
     -- ag:SetScript("OnFinished", fill_OnFinished)
 
     -- setup dodgebar event handling
@@ -447,14 +446,14 @@ local function LoadDodgeBar(hg, asTargetFrame)
     fmdb:SetScript("OnLeave", dodge_OnLeave)
     fmdb:SetScript("OnEvent", dodge_OnEvent)
     fmdb:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
-   fmdb:RegisterEvent("SPELLS_CHANGED")
+    fmdb:RegisterEvent("SPELLS_CHANGED")
     fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     fmdb:RegisterEvent("LEARNED_SPELL_IN_TAB")
 
     -- setup hook to hide the dodge bar when in vehicle/override UI
     MixinHideDuringPetAndOverride(fmdb)
-        updateAnim(fmdb, GetTime(), 0.1, 0, 1)
+    updateAnim(fmdb, GetTime(), 0.1, 0, 1)
     Debug("LoadDodgeBar done")
     return fmdb
 end
@@ -464,9 +463,9 @@ local function LoadDragonBar(hg, asTargetFrame)
     -- this bar gets a global name for use in key bindings
     local fmdb = CreateFrame("Button", "GwDragonBar", UIParent, "UnsecureDodgeBar")
     fmdb:SetFrameLevel(GwDodgeBar:GetFrameLevel() - 1)
-    fmdb.arcfill.fill:SetVertexColor(1,1,1,1)
-    fmdb.arcfill.spark:SetVertexColor(1,1,1)
-    fmdb.arcfill.fillFractions:SetVertexColor(100/255,100/255,100/255)
+    fmdb.arcfill.fill:SetVertexColor(1, 1, 1, 1)
+    fmdb.arcfill.spark:SetVertexColor(1, 1, 1)
+    fmdb.arcfill.fillFractions:SetVertexColor(100 / 255, 100 / 255, 100 / 255)
     fmdb.asTargetFrame = asTargetFrame
 
     fmdb:ClearAllPoints()

@@ -923,6 +923,7 @@ local function updateQuestLogLayout(self)
                     end
                     local block = getBlockCampaign(counterCampaign)
                     if block == nil then
+                        self.isUpdating = false
                         return
                     end
 
@@ -963,6 +964,7 @@ local function updateQuestLogLayout(self)
                     end
                     local block = getBlockQuest(counterQuest, isFrequency)
                     if block == nil then
+                        self.isUpdating = false
                         return
                     end
                     updateQuest(self, block, q)
@@ -1030,6 +1032,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
     local q = QuestCache:Get(questID)
     if q==nil then 
         C_Timer.After(0.2, function() updateQuestLogLayoutSingle(self, questID, added)end)
+        self.isUpdating = false
         return
     end
     local isCampaign = q:IsCampaign()

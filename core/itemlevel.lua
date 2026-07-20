@@ -125,7 +125,7 @@ do
                     end
                 end
             end
-        else
+        elseif data.lines~=nil then
             if data.lines[1].args[2] and data.lines[1].args[2].field and data.lines[1].args[2].field == "leftText" and data.lines[1].args[2].stringVal
             and data.lines[1].args[2].stringVal == RETRIEVING_ITEM_INFO then
                 return "tooSoon"

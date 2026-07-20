@@ -41,20 +41,23 @@ local function updateButton(self, spellIdx, unlearn)
     if spellIdx then
        
         local tex = GetSpellBookItemTexture(spellIdx, BOOKTYPE_PROFESSION)
-        local name, _, spellId = GetSpellBookItemName(spellIdx, BOOKTYPE_PROFESSION)
+        local name, _, _ = GetSpellBookItemName(spellIdx, BOOKTYPE_PROFESSION)
+        local _, spellId = GetSpellBookItemInfo(spellIdx, BOOKTYPE_PROFESSION)
+       
         self.spellbookIndex = spellIdx
         self.booktype = BOOKTYPE_PROFESSION
         self.skillName = name
         self.icon:SetTexture(tex)
         self.name:SetText(name)
         self.modifiedClick = TalProfButton_OnModifiedClick
-        self:RegisterForClicks("AnyUp", "AnyDown")
+        self:RegisterForClicks("AnyDown")
         self:SetAttribute("type1", "spell")
         self:SetAttribute("type2", "spell")
         self:SetAttribute("shift-type1", "modifiedClick")
         self:SetAttribute("shift-type2", "modifiedClick")
         self:SetAttribute("ispickable", true)
         self:SetAttribute("spell", spellId)
+
         self:SetAttribute("_ondragstart", profButtonSecure_OnDragStart)
         self:Enable()
         if unlearn then

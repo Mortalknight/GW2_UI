@@ -35,43 +35,40 @@ GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
 local function LoadMerchantFrameSkin()
     if not GetSetting("MERCHANT_SKIN_ENABLED") then return end
 
+    --[[
+
+
+    ]]
+
     MerchantFrame:GwStripTextures()
-   -- MerchantFrame.NineSlice:Hide()
+    -- MerchantFrame.NineSlice:Hide()
     MerchantFrame.TopTileStreaks:Hide()
     MerchantFrame:GwCreateBackdrop()
 
-   -- MerchantFrameInset.NineSlice:Hide()
-    MerchantFrameInset:GwCreateBackdrop(constBackdropFrameBorder)
+    -- MerchantFrameInset.NineSlice:Hide()
+    --MerchantFrameInset:GwCreateBackdrop(constBackdropFrameBorder)
 
     MerchantFrameCloseButton:GwSkinButton(true)
     MerchantFrameCloseButton:SetSize(20, 20)
 
-    local tex = MerchantFrame:CreateTexture("bg", "BACKGROUND")
-    tex:SetPoint("TOP", MerchantFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = MerchantFrame:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    MerchantFrame.tex = tex
-    hooksecurefunc(MerchantFrame, "SetWidth", function()
-        local w2, h2 = MerchantFrame:GetSize()
-        MerchantFrame.tex:SetSize(w2 + 50, h2 + 50)
-    end)
 
-    local r = {MerchantFrame:GetRegions()}
+    local r = { MerchantFrame:GetRegions() }
     local i = 1
-    for _,c in pairs(r) do
+    for _, c in pairs(r) do
         if c:GetObjectType() == "FontString" then
-            if i == 2 then c:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE"); break end
+            if i == 2 then
+                c:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE"); break
+            end
             i = i + 1
         end
     end
 
-    MerchantFrame:SetWidth(360)
+    -- MerchantFrame:SetWidth(360)
 
-    MerchantBuyBackItem:GwStripTextures(true)
-    MerchantBuyBackItem:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
-    MerchantBuyBackItem.backdrop:SetPoint("TOPLEFT", -6, 6)
-    MerchantBuyBackItem.backdrop:SetPoint("BOTTOMRIGHT", 6, -6)
+    -- MerchantBuyBackItem:GwStripTextures(true)
+    --  MerchantBuyBackItem:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
+    -- MerchantBuyBackItem.backdrop:SetPoint("TOPLEFT", -6, 6)
+    --MerchantBuyBackItem.backdrop:SetPoint("BOTTOMRIGHT", 6, -6)
 
     MerchantExtraCurrencyInset:GwStripTextures()
     MerchantExtraCurrencyBg:GwStripTextures()
@@ -90,7 +87,7 @@ local function LoadMerchantFrameSkin()
     MerchantFrameTab2:SetSize(80, 24)
 
     MerchantFrameTab2:ClearAllPoints()
-    MerchantFrameTab2:SetPoint("RIGHT",  MerchantFrameTab1, "RIGHT", 75, 0)
+    MerchantFrameTab2:SetPoint("RIGHT", MerchantFrameTab1, "RIGHT", 75, 0)
 
     hooksecurefunc("PanelTemplates_SelectTab", function(tab)
         local name = tab:GetName()
@@ -139,5 +136,53 @@ local function LoadMerchantFrameSkin()
     GW.HandleNextPrevButton(MerchantPrevPageButton, nil, true)
     MerchantNextPageButton:ClearAllPoints()
     MerchantNextPageButton:SetPoint("LEFT", MerchantPageText, "RIGHT", 100, 4)
+
+
+    MerchantFrame:GwStripTextures()
+    MerchantFramePortrait:GwKill()
+    GW.CreateFrameHeaderWithBody(MerchantFrame, MerchantNameText,
+        "Interface/AddOns/GW2_UI/textures/character/loot-window-icon", {})
+    CreateFrame("Frame", "MerchantFrameLeftPanel", MerchantFrame, "GwWindowLeftPanel");
+    MerchantFrameHeader.windowIcon:SetPoint("CENTER", MerchantFrameHeader, "LEFT", -16, 5)
+
+    MerchantFrameHeader.breadcrumb = MerchantFrameHeader:CreateFontString(nil, "overlay");
+    MerchantFrameHeader.breadcrumb:ClearAllPoints()
+    MerchantFrameHeader.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 14)
+    MerchantFrameHeader.breadcrumb:SetJustifyH("LEFT")
+    MerchantFrameHeader.breadcrumb:SetJustifyV("MIDDLE")
+    MerchantFrameHeader.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    MerchantFrameHeader.breadcrumb:SetPoint("LEFT", MerchantNameText, "RIGHT", 20, 0)
+    MerchantFrameHeader.breadcrumb:SetText("Unknown")
+    MerchantFrameHeader.breadcrumb:SetSize(500, 40)
+
+    hooksecurefunc(MerchantNameText, "SetText", function(self, text)
+        if text == MERCHANT then
+            return
+        end
+        MerchantNameText:SetText(MERCHANT)
+        MerchantFrameHeader.breadcrumb:SetText(text)
+        MerchantNameText:SetWidth(MerchantNameText:GetStringWidth())
+
+    end)
+
+
+
+    local w, h = MerchantFrame:GetSize()
+    MerchantFrame.mover = CreateFrame("Frame", nil, MerchantFrame)
+    MerchantFrame.mover:EnableMouse(true)
+    MerchantFrame:SetMovable(true)
+    MerchantFrame.mover:SetSize(w, 30)
+    MerchantFrame.mover:SetPoint("BOTTOMLEFT", MerchantFrame, "TOPLEFT", 0, -20)
+    MerchantFrame.mover:SetPoint("BOTTOMRIGHT", MerchantFrame, "TOPRIGHT", 0, 20)
+    MerchantFrame.mover:RegisterForDrag("LeftButton")
+    MerchantFrame:SetClampedToScreen(true)
+    MerchantFrame.mover:SetScript("OnDragStart", function(self)
+        self:GetParent():StartMoving()
+    end)
+    MerchantFrame.mover:SetScript("OnDragStop", function(self)
+        local self = self:GetParent()
+
+        self:StopMovingOrSizing()
+    end)
 end
 GW.LoadMerchantFrameSkin = LoadMerchantFrameSkin

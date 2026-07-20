@@ -1477,7 +1477,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             end
         end
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and (IsInRaid() or IsInGroup()) then
-        local _, subEvent, _, _, srcName, _, _, _, _, _, _, spellID = CombatLogGetCurrentEventInfo()
+        local _, subEvent, _, _, srcName, _, _, _, _, _, _, spellID = ...
         if not subEvent or not spellID or not srcName then return end
 
         local groupStatus = GW.IsGroupMember(srcName)
