@@ -179,7 +179,7 @@ local function watchCurrency(self)
     for i = watchSlot, 4 do
         self["currency" .. tostring(i)]:SetText("")
         self["currency" .. tostring(i) .. "Texture"]:SetTexture(nil)
-        self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = nil
+        self["currency" .. tostring(i) .. "Frame"].CurrencyIdx = nil
     end
 end
 GW.AddForProfiling("bag", "watchCurrency", watchCurrency)

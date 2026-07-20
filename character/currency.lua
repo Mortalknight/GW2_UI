@@ -76,6 +76,7 @@ local function loadCurrency(curwin)
 
     for i = 1, #curwin.buttons do
         local slot = curwin.buttons[i]
+      
 
         local idx = i + offset
         if idx > currencyCount then
@@ -403,12 +404,20 @@ local function LoadCurrency(tabContainer)
     curwin:SetScript(
         "OnEvent",
         function(self)
-            if GW.inWorld and self:IsShown() then
+            if GW.inWorld then
                 loadCurrency(self)
             end
         end
     )
     curwin:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+    curwin:SetScript(
+        "OnShow",
+        function(self)
+            if GW.inWorld then
+                loadCurrency(self)
+            end
+        end
+    )
 
     -- update currency window when anyone adds a watch currency
     hooksecurefunc(
