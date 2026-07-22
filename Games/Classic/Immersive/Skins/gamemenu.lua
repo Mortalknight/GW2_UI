@@ -1,23 +1,21 @@
 ---@class GW2
 local GW = select(2, ...)
 local L = GW.L
-local hookDone = false
 
 local BUTTONS = {
-    {button = _G.GameMenuButtonHelp         , sprite = {1, 1}},
-    {button = _G.GameMenuButtonStore        , sprite = {2, 1}},
-    {button = _G.GameMenuButtonOptions      , sprite = {4, 1}},
-    {button = _G.GameMenuButtonUIOptions    , sprite = {1, 2}},
-    {button = _G.GameMenuButtonKeybindings  , sprite = {2, 2}},
-    {button = _G.GameMenuButtonMacros       , sprite = {3, 2}},
-    {button = _G.GameMenuButtonAddons       , sprite = {4, 2}},
-    {button = _G.GameMenuButtonLogout       , sprite = {1, 3}},
-    {button = _G.GameMenuButtonQuit         , sprite = {2, 3}},
-    {button = _G.GameMenuButtonContinue     , sprite = {3, 3}},
-    {button = _G.GameMenuButtonRatings      , sprite = {3, 1}},
-    {button = _G.GameMenuButtonMoveAnything , sprite = {4, 1}}, -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
-    {button = btn163                        , sprite = {4, 2}, onHook = true, addOn = "!!!EaseAddonController"},
-    {button = _G.GameMenuFrame              , sprite = {4, 2}},
+    [GAMEMENU_SUPPORT] = {sprite = {1, 1}},
+    [BLIZZARD_STORE] = {sprite = {2, 1}},
+    [GAMEMENU_NEW_BUTTON] = {sprite = {3, 1}},
+    [GAMEMENU_OPTIONS] = {sprite = {4, 1}},
+    [HUD_EDIT_MODE_MENU ]= {sprite = {1, 2}},
+    [MACROS] = {sprite = {3, 2}},
+    [ADDONS] = {sprite = {4, 2}},
+    [LOGOUT] = {sprite = {1, 3}},
+    [EXIT_GAME] = {sprite = {2, 3}},
+    [RETURN_TO_GAME] = {sprite = {3, 3}},
+    [RATINGS_MENU] = {sprite = {3, 1}},
+    ["MOVEANYTING"] = {sprite = {4, 1}}, -- Quick Fix for MoveAnything Menu Button -- hatdragon 15 June 2020
+    [format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName)] = {sprite = {4, 3}}
 }
 
 local ICON_SPRITES = {
@@ -39,72 +37,52 @@ local function ToggleGw2Settings()
 end
 GW.ToggleGw2Settings = ToggleGw2Settings
 
-local function PositionGameMenuButton()
-    GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() - 4)
-    local _, relTo, _, _, offY = GameMenuButtonMacros:GetPoint()
-    if relTo ~= GameMenuFrame[GW.addonName] then
-        GameMenuFrame[GW.addonName]:ClearAllPoints()
-        GameMenuFrame[GW.addonName]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
-        GameMenuButtonMacros:ClearAllPoints()
-        GameMenuButtonMacros:SetPoint("TOPLEFT", GameMenuFrame[GW.addonName], "BOTTOMLEFT", 0, offY)
+local function applyButtonStyle(b)
+    if b.Right then
+        b.Right:Hide()
     end
-end
-GW.PositionGameMenuButton = PositionGameMenuButton
+    if b.Left then
+        b.Left:Hide()
+    end
+    if b.Center then
+        b.Center:Hide()
+    end
+    if b.Middle then
+        b.Middle:Hide()
+    end
+    b:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton.png")
+    b:ClearHighlightTexture()
+    if b.GetFontString and b:GetFontString() then
+        b:GetFontString():ClearAllPoints()
+        b:GetFontString():SetPoint("LEFT", b, "LEFT", 32,0)
+        b:GetFontString():GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal)
+    end
+    b:SetSize(180, 25)
+    if b:GetNormalTexture() then
+        b:HookScript("OnEnter", function()
+            b:GetNormalTexture():SetBlendMode("ADD")
+        end)
+        b:HookScript("OnLeave", function()
+            b:GetNormalTexture():SetBlendMode("BLEND")
+        end)
+    end
 
-local function applyButtonStyle()
-    for _, f in pairs(BUTTONS) do
-        if f.onHook and not hookDone then
-            GameMenuFrame:HookScript("OnShow", function()
-                if not hookDone then
-                    applyButtonStyle()
-                    hookDone= true
-                end
-            end)
-        end
-        local b = f.button
-        if b == _G.GameMenuFrame then b = b.ElvUI end
-        if b == btn163 and f.addOn and C_AddOns.IsAddOnLoaded(f.addOn) then b = GameMenuFrame.btn163 end
-        if b then
-            if b == GameMenuFrame.btn163 then b.logo:Hide() end
-            b.Right:Hide()
-            b.Left:Hide()
-            b.Middle:Hide()
-            b:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton.png")
-            b:ClearHighlightTexture()
-            b.Text:ClearAllPoints()
-            b.Text:SetPoint("LEFT", b, "LEFT", 32,0)
-            b:SetSize(150, 25)
-            if b:GetNormalTexture() then
-                b:HookScript("OnEnter", function()
-                    b:GetNormalTexture():SetBlendMode("ADD")
-                end)
-                b:HookScript("OnLeave", function()
-                    b:GetNormalTexture():SetBlendMode("BLEND")
-                end)
-            end
-            local tex = b:CreateTexture(nil, "OVERLAY")
-            tex:SetPoint("LEFT", b, "LEFT", 0, 0)
-            tex:SetSize(32, 32)
-            tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons.png")
-            tex:SetTexCoord(GW.getSprite(ICON_SPRITES, f.sprite[1], f.sprite[2]))
-        end
+    if not b.gw2IconTex then
+        local tex = b:CreateTexture(nil, "OVERLAY")
+        tex:SetPoint("LEFT", b, "LEFT", 0, 0)
+        tex:SetSize(32, 32)
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons.png")
+        b.gw2IconTex = tex
     end
+    local buttonSprint = BUTTONS[b:GetText()]
+    if buttonSprint then
+        b.gw2IconTex:SetTexCoord(GW.getSprite(ICON_SPRITES, buttonSprint.sprite[1], buttonSprint.sprite[2]))
+    end
+    --TODO: MAYBE Remove PushedTextOffset:  current -2, -1
 end
 
 local function SkinMainMenu()
     local GameMenuFrame = _G.GameMenuFrame
-
-    local GwMainMenuFrame = CreateFrame("Button", nil, GameMenuFrame, "GameMenuButtonTemplate")
-    GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
-    GwMainMenuFrame:SetScript("OnClick", ToggleGw2Settings)
-    GameMenuFrame[GW.addonName] = GwMainMenuFrame
-    BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3}}
-
-    if not C_AddOns.IsAddOnLoaded("ConsolePortUI_Menu") then
-        GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
-        GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
-        hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", PositionGameMenuButton)
-    end
 
     local r = {GameMenuFrame:GetRegions()}
     for _, c in pairs(r) do
@@ -112,17 +90,50 @@ local function SkinMainMenu()
             c:Hide()
         end
     end
-    GameMenuFrame:GwStripTextures()
     GameMenuFrame:GwCreateBackdrop(nil)
 
     local tex = GameMenuFrame:CreateTexture(nil, "BACKGROUND")
-    tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -10)
-    tex:SetSize(256, 464)
+    tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -30)
+    tex:SetSize(286, 525)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubg.png")
 
-    GameMenuFrameHeader:Hide()
+    GameMenuFrame.Border:Hide()
+    GameMenuFrame.Header:Hide()
 
-    applyButtonStyle()
+    GameMenuFrame:SetScale(0.9)
+
+    for _, Button in next, { _G.GameMenuFrame:GetChildren() } do
+        if Button.IsObjectType and Button:IsObjectType('Button') then
+            applyButtonStyle(Button)
+        end
+    end
+
+    -- do not add our button via AddButton/AddSection: acquiring a pool button from addon code taints
+    -- the button pool, the next secure InitButtons run then wires blizzards logout/exit callbacks
+    -- tainted and the protected Logout()/Quit() fire ADDON_ACTION_FORBIDDEN; use an own button
+    -- instead which only takes part in the deferred layout via layoutIndex
+    local settingsButton
+    hooksecurefunc(GameMenuFrame, 'InitButtons', function(self)
+        if not self.buttonPool then return end
+
+        if not settingsButton then
+            settingsButton = CreateFrame("Button", "GW2_UI_SettingsButton", self, self.buttonTemplate)
+            settingsButton:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
+            settingsButton:SetScript("OnClick", ToggleGw2Settings)
+            applyButtonStyle(settingsButton)
+        end
+
+        local lastLayoutIndex = 0
+        for btn in self.buttonPool:EnumerateActive() do
+            if btn.layoutIndex and btn.layoutIndex > lastLayoutIndex then
+                lastLayoutIndex = btn.layoutIndex
+            end
+            applyButtonStyle(btn)
+        end
+
+        settingsButton.layoutIndex = lastLayoutIndex + 1
+        settingsButton.topPadding = 20
+    end)
 
     -- remove elvui transparent bg if ours is enabled
     if C_AddOns.IsAddOnLoaded("ElvUI") then

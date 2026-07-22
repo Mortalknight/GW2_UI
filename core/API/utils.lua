@@ -163,6 +163,78 @@ local function StoreGameMenuButton()
 end
 GW.StoreGameMenuButton = StoreGameMenuButton
 
+-- since 1.15.9 Logout()/Quit() are hard protected on classic clients. our edit mode layout apply
+-- inevitably taints EditModeManagerFrame.accountSettings (C_EditMode.SaveLayouts() dispatches
+-- EDIT_MODE_LAYOUTS_UPDATED synchronously in our tainted execution and blizzards handler rewrites
+-- the field), the game menus InitButtons reads that field through CanEnterEditMode() and wires every
+-- button after it tainted, so clicking logout/exit fires ADDON_ACTION_FORBIDDEN. route both buttons
+-- through invisible secure macro overlays instead, those always run secure
+local function SecureGameMenuLogoutButtons()
+    local overlays = {}
+
+    local function getOverlay(key, macroText, clickSound)
+        if overlays[key] then
+            return overlays[key]
+        end
+
+        local overlay = CreateFrame("Button", "GwGameMenuSecure" .. key .. "Button", GameMenuFrame, "SecureActionButtonTemplate")
+        overlay:SetAttribute("type", "macro")
+        overlay:SetAttribute("macrotext", macroText)
+        overlay:RegisterForClicks("AnyUp", "AnyDown") -- the secure handler picks the one matching the ActionButtonUseKeyDown cvar
+        overlay.clickSound = clickSound
+
+        overlay:SetScript("OnEnter", function(self)
+            if self.menuButton then
+                self.menuButton:LockHighlight()
+                local onEnter = self.menuButton:GetScript("OnEnter")
+                if onEnter then onEnter(self.menuButton) end
+            end
+        end)
+        overlay:SetScript("OnLeave", function(self)
+            if self.menuButton then
+                self.menuButton:UnlockHighlight()
+                local onLeave = self.menuButton:GetScript("OnLeave")
+                if onLeave then onLeave(self.menuButton) end
+            end
+        end)
+        overlay:SetScript("PostClick", function(self, _, down)
+            if down then return end
+            PlaySound(self.clickSound)
+            HideUIPanel(GameMenuFrame)
+        end)
+        overlay:Hide()
+
+        overlays[key] = overlay
+        return overlay
+    end
+
+    hooksecurefunc(GameMenuFrame, "InitButtons", function(self)
+        if not self.buttonPool or InCombatLockdown() then -- secure frames can not be moved in combat, overlays keep their last position
+            return
+        end
+
+        local logoutText = self.GetLogoutText and self:GetLogoutText() or LOGOUT
+        for button in self.buttonPool:EnumerateActive() do
+            local text = button:GetText()
+            local overlay
+            if text == logoutText then
+                overlay = getOverlay("Logout", "/logout", SOUNDKIT.IG_MAINMENU_LOGOUT)
+            elseif text == EXIT_GAME then
+                overlay = getOverlay("Quit", "/quit", SOUNDKIT.IG_MAINMENU_QUIT)
+            end
+
+            if overlay then
+                overlay.menuButton = button
+                overlay:ClearAllPoints()
+                overlay:SetAllPoints(button)
+                overlay:SetFrameLevel(button:GetFrameLevel() + 1)
+                overlay:SetShown(button:IsEnabled())
+            end
+        end
+    end)
+end
+GW.SecureGameMenuLogoutButtons = SecureGameMenuLogoutButtons
+
 if UnitIsTapDenied == nil then
     function UnitIsTapDenied()
         if (UnitIsTapped("target")) and (not UnitIsTappedByPlayer("target")) then

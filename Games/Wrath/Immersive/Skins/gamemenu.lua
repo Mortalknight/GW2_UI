@@ -108,15 +108,31 @@ local function SkinMainMenu()
         end
     end
 
+    -- do not add our button via AddButton/AddSection: acquiring a pool button from addon code taints
+    -- the button pool, the next secure InitButtons run then wires blizzards logout/exit callbacks
+    -- tainted and the protected Logout()/Quit() fire ADDON_ACTION_FORBIDDEN; use an own button
+    -- instead which only takes part in the deferred layout via layoutIndex
+    local settingsButton
     hooksecurefunc(GameMenuFrame, 'InitButtons', function(self)
         if not self.buttonPool then return end
 
-        self:AddSection()
-        self:AddButton(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName), ToggleGw2Settings)
+        if not settingsButton then
+            settingsButton = CreateFrame("Button", "GW2_UI_SettingsButton", self, self.buttonTemplate)
+            settingsButton:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
+            settingsButton:SetScript("OnClick", ToggleGw2Settings)
+            applyButtonStyle(settingsButton)
+        end
 
+        local lastLayoutIndex = 0
         for btn in self.buttonPool:EnumerateActive() do
+            if btn.layoutIndex and btn.layoutIndex > lastLayoutIndex then
+                lastLayoutIndex = btn.layoutIndex
+            end
             applyButtonStyle(btn)
         end
+
+        settingsButton.layoutIndex = lastLayoutIndex + 1
+        settingsButton.topPadding = 20
     end)
 
     -- remove elvui transparent bg if ours is enabled

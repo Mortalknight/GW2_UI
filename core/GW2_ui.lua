@@ -246,10 +246,6 @@ local function gw_OnUpdate(_, elapsed)
             cb.func(cb.payload, elapsed)
         end
     end
-
-    if GW.Classic and PetActionBarFrame:IsShown() and GW.settings.PETBAR_ENABLED and loaded and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
-        PetActionBarFrame:Hide()
-    end
 end
 
 
@@ -586,24 +582,30 @@ local function evPlayerLogin(self)
     if GW.settings.MAINMENU_SKIN_ENABLED then
         GW.SkinMainMenu()
     else
-        if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
-            hooksecurefunc(GameMenuFrame, 'InitButtons', function(menuFrame)
-                menuFrame:AddSection()
-                menuFrame:AddButton(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName), GW.ToggleGw2Settings)
-            end)
-        else
-            --Setup addon button
-            local GwMainMenuFrame = CreateFrame("Button", "GW2_UI_SettingsButton", _G.GameMenuFrame, "GameMenuButtonTemplate") -- add a button name to you that for other Addons
-            GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
-            GwMainMenuFrame:SetScript( "OnClick", GW.ToggleGw2Settings)
-            GameMenuFrame[GW.addonName] = GwMainMenuFrame
+        -- do not add our button via AddButton/AddSection: acquiring a pool button from addon code taints
+        -- the button pool, the next secure InitButtons run then wires blizzards logout/exit callbacks
+        -- tainted and the protected Logout()/Quit() fire ADDON_ACTION_FORBIDDEN; use an own button
+        -- instead which only takes part in the deferred layout via layoutIndex
+        local settingsButton
+        hooksecurefunc(GameMenuFrame, 'InitButtons', function(menuFrame)
+            if not menuFrame.buttonPool then return end
 
-            if not C_AddOns.IsAddOnLoaded("ConsolePortUI_Menu") then
-                GwMainMenuFrame:SetSize(GameMenuButtonMacros:GetWidth(), GameMenuButtonMacros:GetHeight())
-                GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
-                hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
+            if not settingsButton then
+                settingsButton = CreateFrame("Button", "GW2_UI_SettingsButton", menuFrame, menuFrame.buttonTemplate)
+                settingsButton:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
+                settingsButton:SetScript("OnClick", GW.ToggleGw2Settings)
             end
-        end
+
+            local lastLayoutIndex = 0
+            for button in menuFrame.buttonPool:EnumerateActive() do
+                if button.layoutIndex and button.layoutIndex > lastLayoutIndex then
+                    lastLayoutIndex = button.layoutIndex
+                end
+            end
+
+            settingsButton.layoutIndex = lastLayoutIndex + 1
+            settingsButton.topPadding = 20
+        end)
     end
 
     -- Skins: BLizzard & Addons
@@ -892,9 +894,10 @@ local function evPlayerLogin(self)
         GW.SetupSingingSockets()
     end
 
-    if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
-        GW.HandleBlizzardEditMode()
+    if not GW.Retail then
+        GW.SecureGameMenuLogoutButtons()
     end
+    GW.HandleBlizzardEditMode()
 end
 
 
