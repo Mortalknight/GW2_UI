@@ -102,7 +102,48 @@ local function OnClose()
     end
 end
 
+-- since 1.15.9 ClearTarget()/TargetUnit() are hard protected on classic clients, but blizzards
+-- edit mode enter/exit calls them unconditionally via (Refresh/Reset)TargetAndFocus, which fires
+-- ADDON_ACTION_FORBIDDEN whenever the edit mode is driven from our code path (layout apply on login,
+-- our close callbacks), so skip the target juggling and keep only the frame cleanup
+local function FixTargetAndFocusReset()
+    local accountSettings = EditModeManagerFrame.AccountSettings
+
+    accountSettings.ResetTargetAndFocus = function(self)
+        self:UnregisterEvent("PLAYER_TARGET_CHANGED")
+        self:UnregisterEvent("PLAYER_FOCUS_CHANGED")
+
+        self.oldTargetName = nil
+        self.oldFocusName = nil
+
+        if TargetFrame and TargetFrame.ClearHighlight then
+            TargetFrame:ClearHighlight()
+        end
+        if FocusFrame and FocusFrame.ClearHighlight then
+            FocusFrame:ClearHighlight()
+        end
+    end
+
+    accountSettings.RefreshTargetAndFocus = function(self)
+        local checkButton = self.settingsCheckButtons and self.settingsCheckButtons.TargetAndFocus
+        if checkButton and checkButton:IsControlChecked() then
+            if TargetFrame and TargetFrame.HighlightSystem then
+                TargetFrame:HighlightSystem()
+            end
+            if FocusFrame and FocusFrame.HighlightSystem then
+                FocusFrame:HighlightSystem()
+            end
+        else
+            self:ResetTargetAndFocus()
+        end
+    end
+end
+
 local function HandleBlizzardEditMode()
+    if not GW.Retail then
+        FixTargetAndFocusReset()
+    end
+
     local dialog = EditModeUnsavedChangesDialog
     dialog.ProceedButton:SetScript("OnClick", OnProceed)
     dialog.SaveAndProceedButton:SetScript("OnClick", OnSaveProceed)
