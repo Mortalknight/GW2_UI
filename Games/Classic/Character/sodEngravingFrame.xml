@@ -179,20 +179,14 @@
 					<OnEditFocusGained function="GwEngravingFrameSearchBox_OnEditFocusGained"/>
 				</Scripts>
 			</EditBox>
-            <Frame name="$parentFilterDropDown" parentKey="dropdown" inherits="UIDropDownMenuTemplate" enableMouse="true">
-                <Size x="225" y="20"></Size>
+            <DropdownButton name="$parentFilterDropDown" parentKey="dropdown" inherits="WowStyle1DropdownTemplate" enableMouse="true">
+                <Size y="24"></Size>
 				<Anchors>
-					<Anchor point="TOPLEFT"  relativeTo="$parentSearchBox" relativePoint="BOTTOMLEFT" x="-8" y="-3"/>
+					<!-- the search box background overhangs its frame by 3px and the skinned backdrop is inset by 3px/2px, so overhang the frame to visually match the search box width -->
+					<Anchor point="TOPLEFT" relativeTo="$parentSearchBox" relativePoint="BOTTOMLEFT" x="-6" y="-3"/>
+					<Anchor point="TOPRIGHT" relativeTo="$parentSearchBox" relativePoint="BOTTOMRIGHT" x="5" y="-3"/>
 				</Anchors>
-				<Scripts>
-					<OnLoad>
-						UIDropDownMenu_SetWidth(self, 225);
-						UIDropDownMenu_JustifyText(self, "LEFT");
-						UIDropDownMenu_SetText(self, ALL_RUNES);
-						UIDropDownMenu_Initialize(self, GwRuneFrameFilter_Initialize);
-					</OnLoad>
-				</Scripts>
-			</Frame>
+			</DropdownButton>
             <ScrollFrame name="$parentScrollFrame" parentKey="scrollFrame" inherits="GwHybridScrollFrameTemplate" enableMouse="true">
                 <Size x="230" y="545"></Size>
                 <Anchors>

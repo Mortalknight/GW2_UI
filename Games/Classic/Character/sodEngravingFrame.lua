@@ -143,16 +143,7 @@ local function EngravingFrame_UpdateRuneList(self)
 		scrollFrame.emptyText:Hide();
 	end
 
-	local exclusiveFilter = C_Engraving.GetExclusiveCategoryFilter();
-	if exclusiveFilter then
-		UIDropDownMenu_SetText(self.dropdown, GetItemInventorySlotInfo(exclusiveFilter));
-	else
-		if C_Engraving.IsEquippedFilterEnabled() then
-			UIDropDownMenu_SetText(self.dropdown, EQUIPPED_RUNES);
-		else
-			UIDropDownMenu_SetText(self.dropdown, ALL_RUNES);
-		end
-	end
+	self.dropdown:GenerateMenu();
 
 	EngravingFrame_UpdateCollectedLabel(self);
 end
@@ -232,48 +223,60 @@ function GwRuneHeader_OnClick (self, button)
 	EngravingFrame_UpdateRuneList(_G["GwEngravingFrame"]);
 end
 
-local function RuneFrameFilter_Modify(self, arg1)
-	if(arg1 == ALL_RUNES_CATEGORY) then
+local function IsAllRunesSelected()
+	return C_Engraving.GetExclusiveCategoryFilter() == nil and not C_Engraving.IsEquippedFilterEnabled();
+end
+
+local function IsEquippedRunesSelected()
+	return C_Engraving.IsEquippedFilterEnabled();
+end
+
+local function IsCategorySelected(category)
+	return C_Engraving.GetExclusiveCategoryFilter() == category;
+end
+
+local function SetFilterSelected(filter)
+	if (filter == ALL_RUNES_CATEGORY) then
 		C_Engraving.ClearExclusiveCategoryFilter();
 		C_Engraving.EnableEquippedFilter(false);
-	elseif(arg1 == EQUIPPED_RUNES_CATEGORY) then
+	elseif (filter == EQUIPPED_RUNES_CATEGORY) then
 		C_Engraving.ClearExclusiveCategoryFilter();
 		C_Engraving.EnableEquippedFilter(true);
 	else
-		C_Engraving.AddExclusiveCategoryFilter(arg1);
+		C_Engraving.AddExclusiveCategoryFilter(filter);
 		C_Engraving.EnableEquippedFilter(false);
 	end
 
 	EngravingFrame_UpdateRuneList(_G["GwEngravingFrame"]);
 end
 
-function GwRuneFrameFilter_Initialize()
-	local info = UIDropDownMenu_CreateInfo();
-	info.func = RuneFrameFilter_Modify;
+-- uses the modern menu api like blizzards 1.15.9 engraving frame, the old UIDropDownMenu
+-- taints the shared UIDROPDOWNMENU globals for the whole session when created from addon code
+local function SetupFilterDropdown(self)
+	self.dropdown:SetDefaultText(ALL_RUNES);
 
-	info.text = ALL_RUNES;
-	info.checked = C_Engraving.GetExclusiveCategoryFilter() == nil and not C_Engraving.IsEquippedFilterEnabled();
-	info.arg1 = ALL_RUNES_CATEGORY;
-	UIDropDownMenu_AddButton(info);
-
-	info.text = EQUIPPED_RUNES;
-	info.checked = C_Engraving.IsEquippedFilterEnabled();
-	info.arg1 = EQUIPPED_RUNES_CATEGORY;
-	UIDropDownMenu_AddButton(info);
-
-	local categories = C_Engraving.GetRuneCategories(false, true);
-	for _, category in ipairs(categories) do
-		info.text = GetItemInventorySlotInfo(category);
-
+	self.dropdown:SetSelectionText(function()
 		local exclusiveFilter = C_Engraving.GetExclusiveCategoryFilter();
-		local checked = false;
-		if(exclusiveFilter and exclusiveFilter == category) then
-			checked = true;
+		if exclusiveFilter then
+			return GetItemInventorySlotInfo(exclusiveFilter);
 		end
-		info.checked = checked;
-		info.arg1 = category;
-		UIDropDownMenu_AddButton(info);
-	end
+
+		if C_Engraving.IsEquippedFilterEnabled() then
+			return EQUIPPED_RUNES;
+		end
+		return ALL_RUNES;
+	end);
+
+	self.dropdown:SetupMenu(function(_, rootDescription)
+		rootDescription:SetTag("GW2_UI_MENU_ENGRAVING_FILTER");
+
+		rootDescription:CreateRadio(ALL_RUNES, IsAllRunesSelected, SetFilterSelected, ALL_RUNES_CATEGORY);
+		rootDescription:CreateRadio(EQUIPPED_RUNES, IsEquippedRunesSelected, SetFilterSelected, EQUIPPED_RUNES_CATEGORY);
+
+		for _, category in ipairs(C_Engraving.GetRuneCategories(false, true)) do
+			rootDescription:CreateRadio(GetItemInventorySlotInfo(category), IsCategorySelected, SetFilterSelected, category);
+		end
+	end);
 end
 
 local function LoadEngravingFrame(parent, fmMenu)
@@ -289,7 +292,8 @@ local function LoadEngravingFrame(parent, fmMenu)
 
 	HybridScrollFrame_CreateButtons(engravingFrame.scrollFrame, "GwRuneSpellButtonTemplate", 0, -1, "TOPLEFT", "TOPLEFT", 0, -1, "TOP", "BOTTOM")
 
-    engravingFrame.dropdown:GwSkinDropDownMenu(80, nil, 80)
+    SetupFilterDropdown(engravingFrame)
+    engravingFrame.dropdown:GwHandleDropDownBox() -- width comes from the anchors
 
     engravingFrame:SetScript("OnShow", EngravingFrame_OnShow)
     engravingFrame:SetScript("OnHide", EngravingFrame_OnHide)
