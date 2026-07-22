@@ -159,12 +159,7 @@ do
     frame:SetScript("OnEvent", UpdateDispels)
     frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
     frame:RegisterEvent("PLAYER_LOGIN")
-
-    if Retail or TBC or Wrath or Mists then
-        frame:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
-    else
-        frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    end
+    frame:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
 
     if not Classic then
         frame:RegisterEvent("PLAYER_TALENT_UPDATE")

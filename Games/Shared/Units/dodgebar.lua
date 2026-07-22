@@ -318,9 +318,9 @@ function GwDodgeBarMixin:OnEvent(event, ...)
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- do the stuff that must be done before combat lockdown takes effect
         self:InitBar(true)
-    elseif event == "SPELLS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" or event == "LEARNED_SPELL_IN_TAB" or event == "LEARNED_SPELL_IN_SKILL_LINE" then
+    elseif event == "SPELLS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" or event == "LEARNED_SPELL_IN_SKILL_LINE" then
         -- do remaining spell detail stuff that is (usually) not available yet in PEW or if we are not in world
-        if (event ~= "LEARNED_SPELL_IN_TAB" and event ~= "LEARNED_SPELL_IN_SKILL_LINE") and (not GW.inWorld or not self.spellId) then return end
+        if (event ~= "LEARNED_SPELL_IN_SKILL_LINE") and (not GW.inWorld or not self.spellId) then return end
         -- add a delay because spell infos sometimes not ready
         C_Timer.After(0.33, function()
             self:InitBar(false)
@@ -531,11 +531,7 @@ function GwDodgeBarMixin:ToggleDodgeBar()
         self:RegisterEvent("SPELLS_CHANGED")
         self:RegisterEvent("PLAYER_ENTERING_WORLD")
         self:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-        if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
-            self:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
-        else
-            self:RegisterEvent("LEARNED_SPELL_IN_TAB")
-        end
+        self:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
         self:InitBar(false)
         self:SetupBar()
     else
@@ -546,11 +542,7 @@ function GwDodgeBarMixin:ToggleDodgeBar()
         self:UnregisterEvent("SPELLS_CHANGED")
         self:UnregisterEvent("PLAYER_ENTERING_WORLD")
         self:UnregisterEvent("UPDATE_SHAPESHIFT_FORM")
-        if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
-            self:UnregisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
-        else
-            self:UnregisterEvent("LEARNED_SPELL_IN_TAB")
-        end
+        self:UnregisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
         self:Hide()
     end
 end

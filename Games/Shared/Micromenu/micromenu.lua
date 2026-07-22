@@ -679,7 +679,7 @@ local function setupMicroButtons(mbf)
     local cref
     if GW.settings.USE_CHARACTER_WINDOW then
         --IsProtected()
-        cref = CreateFrame("Button", "GwCharacterMicroButton", mbf, ((GW.Retail or GW.Wrath or GW.Mists or GW.TBC) and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
+        cref = CreateFrame("Button", "GwCharacterMicroButton", mbf,  "SecureHandlerClickTemplate")
         if GW.Retail then
             Mixin(cref, MainMenuBarMicroButtonMixin)
         end
@@ -726,7 +726,7 @@ local function setupMicroButtons(mbf)
     cref:GwSetAnchorPoint()
 
     -- custom bag microbutton
-    local bref = CreateFrame("Button", nil, mbf, ((GW.Retail or GW.Wrath or GW.Mists or GW.TBC) and "" or "MainMenuBarMicroButton"))
+    local bref = CreateFrame("Button", nil, mbf, "")
     bref.tooltipText = MicroButtonTooltipText(INVENTORY_TOOLTIP, "OPENALLBAGS")
     bref.newbieText = nil
     bref.textureName = "BagMicroButton"
@@ -745,7 +745,7 @@ local function setupMicroButtons(mbf)
     local sref
     if not GW.Retail then
         if GW.settings.USE_SPELLBOOK_WINDOW then
-            sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, ((GW.Wrath or GW.Mists or GW.TBC) and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
+            sref = CreateFrame("Button", "GwPlayerSpellsMicroButton", mbf, "SecureHandlerClickTemplate")
             sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
             sref.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
             reskinMicroButton(sref, "SpellbookMicroButton", mbf)
@@ -777,7 +777,7 @@ local function setupMicroButtons(mbf)
     local tref
     if not GW.Retail then
         if GW.settings.USE_TALENT_WINDOW then
-            tref = CreateFrame("Button", "GwTalentMicroButton", mbf, ((GW.Wrath or GW.Mists or GW.TBC) and "" or "MainMenuBarMicroButton,") .. "SecureHandlerClickTemplate")
+            tref = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate")
             tref.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS")
             tref.newbieText = NEWBIE_TOOLTIP_TALENTS
             reskinMicroButton(tref, "TalentMicroButton", mbf)
@@ -1329,11 +1329,7 @@ local function LoadMicroMenu()
         return
     end
 
-    if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
-        MicroMenuContainer:GwKillEditMode()
-    elseif GW.Classic then
-        PERFORMANCEBAR_UPDATE_INTERVAL = 1
-    end
+    MicroMenuContainer:GwKillEditMode()
 
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")
@@ -1357,23 +1353,6 @@ local function LoadMicroMenu()
     if GW.Retail then
         -- event timer icon
         ToggleEventTimerIcon(mbf.cf)
-    end
-
-    if not (GW.Retail or GW.TBC or GW.Wrath or GW.Mists) then
-        for i = 1, #MICRO_BUTTONS do
-            MICRO_BUTTONS[i] = nil
-        end
-
-        UpdateMicroButtonsParent(mbf.cf)
-
-        hooksecurefunc(
-            "MoveMicroButtons",
-            function()
-                if CharacterMicroButton.GwSetAnchorPoint then
-                    CharacterMicroButton:GwSetAnchorPoint()
-                end
-            end
-        )
     end
 
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)

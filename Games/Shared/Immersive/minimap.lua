@@ -877,7 +877,7 @@ function GW.LoadMinimap()
                 setMinimapButtons("right")
             end
         end)
-    elseif GW.TBC or GW.Wrath or GW.Mists then
+    elseif GW.TBC or GW.Wrath or GW.Mists or GW.Classic then
         MiniMapBattlefieldFrame:ClearAllPoints()
 
         GwAddonToggle:SetPoint("TOP", MiniMapBattlefieldFrame, "BOTTOM", 0, -20)
@@ -901,7 +901,7 @@ function GW.LoadMinimap()
     if Minimap.SetPlayerTexture then
         Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow.png")
     end
-    
+
     hideMiniMapIcons()
 
     SetMinimapHover()
@@ -909,7 +909,7 @@ function GW.LoadMinimap()
 
     GW.SkinMinimapInstanceDifficult()
 
-    if GW.TBC or GW.Wrath then
+    if GW.TBC or GW.Wrath or GW.Classic then
         MiniMapBattlefieldBorder:SetTexture(nil)
         BattlegroundShine:SetTexture(nil)
     end

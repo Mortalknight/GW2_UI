@@ -1,4 +1,4 @@
-## Interface: 11508
+## Interface: 11509
 ## Title: |cffffedbaGW2 UI|r |cFF888888Era|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche

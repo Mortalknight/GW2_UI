@@ -291,11 +291,7 @@ end
 function GW.CreateStanceBar ()
     local StanceButtonHolder = CreateStanceBarButtonHolder()
 
-    if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
-        StanceBar:GwKillEditMode()
-    else
-        StanceBarFrame:GwKill()
-    end
+    StanceBar:GwKillEditMode()
 
     StanceButtonHolder:SetFrameRef("GwStanceBarContainer", StanceButtonHolder.container)
     StanceButtonHolder:SetAttribute(

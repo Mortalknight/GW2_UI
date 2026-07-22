@@ -362,15 +362,11 @@ local function LoadPetFrame(lm)
     end
     playerPetFrame:SetActionButtonPositionAndStyle()
 
-    if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
-        PetActionBar.ignoreFramePositionManager = true
-        PetActionBar:GwKillEditMode()
-        PetActionBar:SetParent(GW.HiddenFrame)
+    PetActionBar.ignoreFramePositionManager = true
+    PetActionBar:GwKillEditMode()
+    PetActionBar:SetParent(GW.HiddenFrame)
 
-        hooksecurefunc(PetActionBar, "Update", function() playerPetFrame:Update() end)
-    else
-        hooksecurefunc("PetActionBar_Update", function() playerPetFrame:Update() end)
-    end
+    hooksecurefunc(PetActionBar, "Update", function() playerPetFrame:Update() end)
 
     -- hook hotkey update calls so we can override styling changes
     local hotkeyEventTrackerFrame = CreateFrame("Frame")

@@ -1351,10 +1351,6 @@ local function setShaman(f)
         end
     elseif GW.Wrath then
         if not InCombatLockdown() then
-            if UIPARENT_MANAGED_FRAME_POSITIONS then
-                UIPARENT_MANAGED_FRAME_POSITIONS.MultiCastActionBarFrame = nil
-            end
-
             MultiCastActionBarFrame:SetParent(f)
             MultiCastActionBarFrame:ClearAllPoints()
             MultiCastActionBarFrame:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, 5)
@@ -1471,7 +1467,7 @@ end
 
 -- WARLOCK
 local function powerSoulshard(self, event, ...)
-    if event == "LEARNED_SPELL_IN_TAB" or event == "LEARNED_SPELL_IN_SKILL_LINE" then
+    if event == "LEARNED_SPELL_IN_SKILL_LINE" then
         updateTextureBasedOnCondition(self)
         return
     end
@@ -1603,12 +1599,8 @@ local function setWarlock(f)
     if GW.Mists then
         f:RegisterEvent("UNIT_DISPLAYPOWER")
     end
-    -- Register "LEARNED_SPELL_IN_TAB" so we can check for the green fire spell and check an login
-    if GW.Retail or GW.TBC or GW.Wrath or GW.Mists then
-        f:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
-    else
-        f:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    end
+    -- Register "LEARNED_SPELL_IN_SKILL_LINE" so we can check for the green fire spell and check an login
+    f:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
     f.useRedTexture = false
 
     if GW.Retail then

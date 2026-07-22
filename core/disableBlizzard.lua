@@ -115,7 +115,7 @@ local function DisableBlizzardFrames()
         end
 
         CompactRaidFrameContainer:HookScript("OnShow", function() CompactRaidFrameContainer:Hide() end)
-        if GW.Retail or GW.TBC or GW.Mists then
+        if CompactRaidFrameContainer then
             CompactRaidFrameContainer:GwKillEditMode()
         end
     end
@@ -215,7 +215,7 @@ local function DisableBlizzardFrames()
         HandleFrame(PetCastingBarFrame, 1)
 
         -- disbale blizzard castingbar mover
-        if GW.Retail or GW.TBC or GW.Mists then
+        if GW.Retail or GW.TBC or GW.Mists or GW.TBC then
             PlayerCastingBarFrame:HookScript("OnShow", function() PlayerCastingBarFrame:Hide() end)
             PlayerCastingBarFrame:GwKillEditMode()
         end
