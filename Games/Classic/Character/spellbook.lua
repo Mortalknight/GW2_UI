@@ -79,7 +79,7 @@ end
 
 local function  spellBookMenu_onLoad(self)
     self:RegisterEvent("SPELLS_CHANGED")
-    self:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    self:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
     self:RegisterEvent("SKILL_LINES_CHANGED")
     self:RegisterEvent("PLAYER_GUILD_UPDATE")
     self:RegisterEvent("PLAYER_LEVEL_UP")
@@ -670,7 +670,7 @@ local function updateSpellbookTab()
         local lastName = ""
         local lastButton
         local header
-        local needNewHeader = true
+        local needNewHeader
 
         pagingContainer.column1 = 0
         pagingContainer.column2 = 0
@@ -683,56 +683,58 @@ local function updateSpellbookTab()
             local nameSpell, rank, spellID = GetSpellBookItemName(spellIndex, BOOKTYPE)
             local ispassive = IsPassiveSpell(spellID)
 
-            rank = rank and rank:gsub(RANK, "") or ""
+            -- skip hidden spellbook slots like blizzard does, on sod the rune book contains hidden placeholder spells for not yet learned runes
+            if not IsSpellHidden(spellIndex, BOOKTYPE) then
+                rank = rank and rank:gsub(RANK, "") or ""
 
-            needNewHeader = true
-            if lastName == nameSpell then
-                needNewHeader = false
-            end
-
-            local mainButton = setButtonStyle(ispassive, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, nameSpell, rank)
-            mainButton.modifiedClick = SpellButton_OnModifiedClick
-            if not ispassive then GW.RegisterCooldown(mainButton.cooldown) end
-            spellButtonIndex = spellButtonIndex + 1
-            boxIndex = boxIndex + 1
-
-            if needNewHeader then
-                local currentHeight = getHeaderHeight(pagingContainer, header)
-                if currentHeight > (pagingContainer:GetHeight() - 120) then
-                    pagingID = pagingID + 1
-                    pagingContainer = _G['GwSpellbookContainerTab' .. spellBookTabs .. 'container' .. pagingID]
-                    pagingContainer.headers = {}
-                    pagingContainer.column1 = 0
-                    pagingContainer.column2 = 0
-                    _G['GwSpellbookContainerTab' .. spellBookTabs].tabs = pagingID
-
+                needNewHeader = true
+                if lastName == nameSpell then
+                    needNewHeader = false
                 end
-                header = getSpellBookHeader(spellBookTabs)
-                setHeaderLocation(header, pagingContainer)
-                header.title:SetText(nameSpell)
-                header.buttons = 1
-                header.height = 80
-            end
 
-            mainButton:ClearAllPoints()
-            mainButton:SetParent(header)
-            if needNewHeader then
-                mainButton:SetPoint("TOPLEFT", header, "TOPLEFT", 15, -35)
-                header.firstButton = mainButton
-            else
-                if header.buttons == 6 then
-                    mainButton:SetPoint("TOPLEFT", header.firstButton, "BOTTOMLEFT", 0, -5)
-                    header.height = header.height + 45
+                local mainButton = setButtonStyle(ispassive, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, nameSpell, rank)
+                mainButton.modifiedClick = SpellButton_OnModifiedClick
+                if not ispassive then GW.RegisterCooldown(mainButton.cooldown) end
+                spellButtonIndex = spellButtonIndex + 1
+                boxIndex = boxIndex + 1
+
+                if needNewHeader then
+                    local currentHeight = getHeaderHeight(pagingContainer, header)
+                    if currentHeight > (pagingContainer:GetHeight() - 120) then
+                        pagingID = pagingID + 1
+                        pagingContainer = _G['GwSpellbookContainerTab' .. spellBookTabs .. 'container' .. pagingID]
+                        pagingContainer.headers = {}
+                        pagingContainer.column1 = 0
+                        pagingContainer.column2 = 0
+                        _G['GwSpellbookContainerTab' .. spellBookTabs].tabs = pagingID
+
+                    end
+                    header = getSpellBookHeader(spellBookTabs)
+                    setHeaderLocation(header, pagingContainer)
+                    header.title:SetText(nameSpell)
+                    header.buttons = 1
+                    header.height = 80
+                end
+
+                mainButton:ClearAllPoints()
+                mainButton:SetParent(header)
+                if needNewHeader then
+                    mainButton:SetPoint("TOPLEFT", header, "TOPLEFT", 15, -35)
+                    header.firstButton = mainButton
                 else
-                    mainButton:SetPoint("LEFT", lastButton, "RIGHT", 5, 0)
+                    if header.buttons == 6 then
+                        mainButton:SetPoint("TOPLEFT", header.firstButton, "BOTTOMLEFT", 0, -5)
+                        header.height = header.height + 45
+                    else
+                        mainButton:SetPoint("LEFT", lastButton, "RIGHT", 5, 0)
+                    end
+                    header.buttons = header.buttons + 1
                 end
-                header.buttons = header.buttons + 1
+
+                header:SetHeight(header.height)
+                lastName = nameSpell
+                lastButton = mainButton
             end
-
-            header:SetHeight(header.height)
-            lastName = nameSpell
-            lastButton = mainButton
-
         end
 
         setUpPaging(_G['GwSpellbookContainerTab' .. spellBookTabs])
