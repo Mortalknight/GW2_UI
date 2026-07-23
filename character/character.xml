@@ -138,13 +138,21 @@
         </Anchors>
     </Frame>
 
-    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" virtual="true">
+    <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButtonNoOutline" virtual="true">
         <Size x="231" y="36"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
         </Anchors>
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
         <Layers>
+            <Layer textureSubLevel="OVERLAY">
+                <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer>
                 <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
                     <Size x="10" y="20"></Size>
@@ -156,7 +164,7 @@
         </Layers>
     </Button>
 
-    <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" virtual="true">
+    <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButtonNoOutline" virtual="true">
         <Layers>
             <Layer level="OVERLAY" textureSubLevel="8">
                 <Texture parentKey="backarrow" file="Interface\AddOns\GW2_UI\textures\character\backicon">
