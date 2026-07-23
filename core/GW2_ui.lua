@@ -25,6 +25,7 @@ local forcedMABags = false
 local swimAnimation = 0
 local lastSwimState = true
 local hudArtFrame
+local mainbarLM -- mainbar layout manager, created in the first login stage, consumed by the second
 
 
 if GW.Retail then
@@ -548,6 +549,7 @@ local function evPlayerLogin(self)
 
     --Create the mainbar layout manager
     local lm = GW.LoadMainbarLayout()
+    mainbarLM = lm
 
     --Create Settings window
     GW.SetUpDatabaseForProfileSpecSwitch()
@@ -706,21 +708,11 @@ local function evPlayerLogin(self)
         GW.LoadCastingBar("GwCastingBarPet", "pet", false)
     end
 
-    if GW.settings.MINIMAP_ENABLED and not GW.ShouldBlockIncompatibleAddon("Minimap") then
-        GW.LoadMinimap()
-    elseif QueueStatusButton then
-        QueueStatusButton:ClearAllPoints()
-        QueueStatusButton:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
-        QueueStatusButton:SetSize(26, 26)
-        QueueStatusButton:SetParent(UIParent)
-    end
-
     if GW.settings.TOOLTIPS_ENABLED then
         GW.LoadTooltips()
     end
 
     GW.LoadImmersiveQuesting()
-    GW.LoadChat()
 
     --Create player hud
     if GW.settings.HEALTHGLOBE_ENABLED and not GW.settings.PLAYER_AS_TARGET_FRAME then
@@ -808,26 +800,6 @@ local function evPlayerLogin(self)
         GW.LoadClassPowers()
     end
 
-    -- create action bars
-    if GW.settings.ACTIONBARS_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
-        if GW.Retail then
-            if GW.settings.BAR_LAYOUT_ENABLED then
-                GW.LoadActionBars(lm, false)
-                --GW.ExtraAB_BossAB_Setup() -- Test
-            else
-                GW.LoadActionBars(lm, true)
-            end
-        else
-            GW.LoadActionBars(lm)
-            -- to update our bars
-            MultiActionBar_Update()
-
-            if GW.Mists then
-                GW.ExtraAB_BossAB_Setup()
-            end
-        end
-    end
-
     -- create pet frame
     if GW.settings.PETBAR_ENABLED and not GW.ShouldBlockIncompatibleAddon("PetFrame") then
         GW.LoadPetFrame(lm)
@@ -893,18 +865,67 @@ local function evPlayerLogin(self)
     if GW.Retail then
         GW.SetupSingingSockets()
     end
+end
+
+-- second login stage: everything in here depends on blizzard ui state that is not ready before
+-- PLAYER_LOGIN (chat windows, minimap cluster, action bar pages, edit mode). on era the first stage
+-- runs on our own ADDON_LOADED to dodge the hardcore script watchdog, splitting the work over two
+-- executions, on all other clients both stages run back to back on PLAYER_LOGIN
+local lateLoaded = false
+local function evPlayerLoginLate()
+    if lateLoaded or not loaded then
+        return
+    end
+    lateLoaded = true
+
+    if GW.settings.MINIMAP_ENABLED and not GW.ShouldBlockIncompatibleAddon("Minimap") then
+        GW.LoadMinimap()
+    elseif QueueStatusButton then
+        QueueStatusButton:ClearAllPoints()
+        QueueStatusButton:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
+        QueueStatusButton:SetSize(26, 26)
+        QueueStatusButton:SetParent(UIParent)
+    end
+
+    GW.LoadChat()
+
+    -- create action bars
+    if GW.settings.ACTIONBARS_ENABLED and not GW.ShouldBlockIncompatibleAddon("Actionbars") then
+        if GW.Retail then
+            if GW.settings.BAR_LAYOUT_ENABLED then
+                GW.LoadActionBars(mainbarLM, false)
+                --GW.ExtraAB_BossAB_Setup() -- Test
+            else
+                GW.LoadActionBars(mainbarLM, true)
+            end
+        else
+            GW.LoadActionBars(mainbarLM)
+            -- to update our bars
+            MultiActionBar_Update()
+
+            if GW.Mists then
+                GW.ExtraAB_BossAB_Setup()
+            end
+        end
+    end
 
     if not GW.Retail then
         GW.SecureGameMenuLogoutButtons()
     end
     GW.HandleBlizzardEditMode()
+
+    -- scale the frames created in this stage too
+    GW.UpdateHudScale()
 end
 
 
 -- generic event router
 local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
+        -- on era the first stage already ran on our own ADDON_LOADED, the loaded guard then only refreshes the char data here
         evPlayerLogin(self)
+        -- the blizzard dependent parts always run here, blizzard is not fully loaded before PLAYER_LOGIN
+        evPlayerLoginLate()
     elseif event == "UI_SCALE_CHANGED" then
         C_Timer.After(0, evUiScaleChanged) -- We need one frame time for setting the cvar values
     elseif event == "PLAYER_LEAVING_WORLD" then
@@ -920,7 +941,15 @@ local function gw_OnEvent(self, event, ...)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
         evPlayerSpecializationChanged()
     elseif event == "ADDON_LOADED" then
-        evAddonLoaded(self, ...)
+        local loadedAddonName = ...
+        evAddonLoaded(self, loadedAddonName)
+
+        -- on hardcore realms the PLAYER_LOGIN script budget is too small for the full ui setup and
+        -- fires "script ran too long" errors, so on the era client run the setup as soon as our own
+        -- addon has finished loading; the database setup in evAddonLoaded has to run before it
+        if GW.Classic and loadedAddonName == "GW2_UI" then
+            evPlayerLogin(self)
+        end
     end
 end
 

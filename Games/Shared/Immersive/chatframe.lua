@@ -3156,9 +3156,11 @@ local function LoadChat()
             end)
     end
 
-    CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+    if CombatLogQuickButtonFrame_CustomProgressBar then
+        CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar.png")
+        CombatLogQuickButtonFrame_CustomTexture:Hide()
+    end
 
-    CombatLogQuickButtonFrame_CustomTexture:Hide()
     BuildCopyChatFrame()
     BuildEmoticonTableFrame()
 

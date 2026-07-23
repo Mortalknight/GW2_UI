@@ -710,7 +710,9 @@ function GW.LoadMinimap()
     hooksecurefunc(Minimap, "SetZoom", GW.SetupZoomReset)
 
     MinimapCluster.ZoneTextButton:GwKill()
-    TimeManagerClockButton:GwKill()
+    if TimeManagerClockButton then
+        TimeManagerClockButton:GwKill()
+    end
 
     Minimap.gwBorder.gradient.location = Minimap.gwBorder.gradient:CreateFontString(nil, "OVERLAY")
     Minimap.gwBorder.gradient.location:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, nil, -2)
