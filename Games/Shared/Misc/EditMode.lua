@@ -23,7 +23,6 @@ local function ApplyBlizzardEditModeChanges()
     if InCombatLockdown() then
         return
     end
-    print("GW2_UI: Applying GW2 Edit Mode layout changes")
     GW.AddGw2Layout(true)
 
     if MirrorTimerContainer then
