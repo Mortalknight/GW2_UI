@@ -208,7 +208,53 @@ GW.REALM_FLAGS = {
     zhTW = "|TInterface/AddOns/GW2_UI/textures/flags/tw:10:12:0:0|t",
     zhCN = "|TInterface/AddOns/GW2_UI/textures/flags/cn:10:12:0:0|t"
 }
+GW.INDICATORS = {"BAR", "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT"}
+GW.indicatorsText = {"Bar", "Top Left", "Top", "Top Right", "Left", "Center", "Right"}
 
+GW.bossFrameExtraEnergyBar = {
+    [2469] = { -- Andui Wrynn
+        enable = true,
+        npcIds = {
+            [181954] = true,
+        },
+    },
+    [2467] = { -- Rygelon
+        enable = true,
+        npcIds = {
+            [182777] = true,
+        },
+    },
+    [2470] = { -- Artificer Xy’mox
+        enable = true,
+        npcIds = {
+            [184140] = true,
+        },
+    },
+    [2459] = { -- Dausegne, the Fallen Oracle
+        enable = true,
+        npcIds = {
+            [181224] = true,
+        },
+    },
+    [2461] = { -- Lihuvim, Principal Architect
+        enable = true,
+        npcIds = {
+            [182169] = true,
+        },
+    },
+    [2457] = { -- Lords of Dread
+        enable = true,
+        npcIds = {
+            [181398] = true,
+        },
+    },
+--    [465] = { -- Lord Overheat for testing
+--        enable = true,
+--        npcIds = {
+--            [46264] = true,
+--        },
+--    }
+}
 GW.INDICATORS = { "BAR", "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT" }
 GW.indicatorsText = { "Bar", "Top Left", "Top", "Top Right", "Left", "Center", "Right" }
 
