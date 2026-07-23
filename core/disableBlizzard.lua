@@ -211,11 +211,12 @@ local function DisableBlizzardFrames()
 
     if ourCastBar then
         HandleFrame(PlayerCastingBarFrame, 1)
+        HandleFrame("OverlayPlayerCastingBarFrame", 1) -- runs its own events on retail and its stop animations error on the secret protected CastingBarTypeInfo when tainted
         HandleFrame(CastingBarFrame, 1)
         HandleFrame(PetCastingBarFrame, 1)
 
         -- disbale blizzard castingbar mover
-        if GW.Retail or GW.TBC or GW.Mists or GW.TBC then
+        if GW.Retail or GW.TBC or GW.Mists or GW.Classic then
             PlayerCastingBarFrame:HookScript("OnShow", function() PlayerCastingBarFrame:Hide() end)
             PlayerCastingBarFrame:GwKillEditMode()
         end

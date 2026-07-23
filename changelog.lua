@@ -24,6 +24,7 @@ addChange("10.14.0", {
     {GW.Enum.ChangelogType.bug, [=[Spellbook (Season of Discovery): the rune tab no longer shows hidden placeholder spells for not yet learned runes, matching the default spellbook]=]},
     {GW.Enum.ChangelogType.bug, [=[Game menu: fixed logout and exit game failing with an ADDON_ACTION_FORBIDDEN error on classic clients; the edit mode layout apply inevitably taints the menu wiring, so both buttons are now driven by secure /logout and /quit click overlays, and the GW2 UI settings button no longer goes through Blizzards button pool]=]},
     {GW.Enum.ChangelogType.change, [=[Runes (Season of Discovery): the rune filter dropdown now uses the modern menu system like Blizzards engraving frame; the old dropdown tainted the shared dropdown globals for the whole session]=]},
+    {GW.Enum.ChangelogType.bug, [=[Cast bar: fixed a "table that cannot be accessed while tainted" error from Blizzards overlay casting bar on Retail; the overlay cast bar is now disabled like the other Blizzard cast bars when the GW2 UI cast bar is active, and the cast bar mover is now also killed on Classic Era]=]},
 })
 
 addChange("10.13.1", {
