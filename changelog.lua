@@ -13,18 +13,21 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-addChange("10.14.0", {
+addChange("10.14.1", {
     {GW.Enum.ChangelogType.feature, [=[Classic Era: update for patch 1.15.9 - the Era client now uses the modern shared UI, so action bars, stance/pet bar, micro menu, status tracking bars, game menu, addon list and minimap were moved onto the same code path as the other clients, including Edit Mode layout support]=]},
-    {GW.Enum.ChangelogType.feature, [=[New chat option "Chat Buttons Position": move the chat control buttons (menu, channel, voice, social) into a small hover bar above or right of the chat; text, tabs and edit box then use the full chat width. Switches live without a reload]=]},
-    {GW.Enum.ChangelogType.feature, [=[The settings window now shows a "Reload required" hint in the header as soon as a reload setting is changed, with a tooltip listing the pending settings; toggling a setting back to its original state removes the reload prompt again]=]},
-    {GW.Enum.ChangelogType.bug, [=[Fixed font shadows no longer rendering on unit frames, nameplates, objectives, tooltips and other addon texts since 12.0.7 broke shadows set directly on font strings; shadows are now applied via generated font objects instead]=]},
-    {GW.Enum.ChangelogType.bug, [=[Chat: NPC emotes on non-Retail clients showed a literal %s instead of the NPC name; the name placeholder inside the emote text is formatted again]=]},
-    {GW.Enum.ChangelogType.bug, [=[Talents (Mists): fixed ADDON_ACTION_FORBIDDEN errors from the protected RemoveTalent() when unlearning or switching talents; learning and unlearning now run through Blizzards secure talent buttons and a switched talent is learned automatically once the unlearn is confirmed]=]},
     {GW.Enum.ChangelogType.bug, [=[Classic: fixed an ADDON_ACTION_FORBIDDEN error from the protected ClearTarget() when the GW2 layout is applied on login or the Edit Mode is closed; the Edit Mode target/focus preview reset is skipped on classic clients since 1.15.9 protects the targeting functions]=]},
     {GW.Enum.ChangelogType.bug, [=[Spellbook (Season of Discovery): the rune tab no longer shows hidden placeholder spells for not yet learned runes, matching the default spellbook]=]},
     {GW.Enum.ChangelogType.bug, [=[Game menu: fixed logout and exit game failing with an ADDON_ACTION_FORBIDDEN error on classic clients; the edit mode layout apply inevitably taints the menu wiring, so both buttons are now driven by secure /logout and /quit click overlays, and the GW2 UI settings button no longer goes through Blizzards button pool]=]},
     {GW.Enum.ChangelogType.change, [=[Runes (Season of Discovery): the rune filter dropdown now uses the modern menu system like Blizzards engraving frame; the old dropdown tainted the shared dropdown globals for the whole session]=]},
     {GW.Enum.ChangelogType.bug, [=[Cast bar: fixed a "table that cannot be accessed while tainted" error from Blizzards overlay casting bar on Retail; the overlay cast bar is now disabled like the other Blizzard cast bars when the GW2 UI cast bar is active, and the cast bar mover is now also killed on Classic Era]=]},
+})
+
+addChange("10.14.0", {
+    {GW.Enum.ChangelogType.feature, [=[New chat option "Chat Buttons Position": move the chat control buttons (menu, channel, voice, social) into a small hover bar above or right of the chat; text, tabs and edit box then use the full chat width. Switches live without a reload]=]},
+    {GW.Enum.ChangelogType.feature, [=[The settings window now shows a "Reload required" hint in the header as soon as a reload setting is changed, with a tooltip listing the pending settings; toggling a setting back to its original state removes the reload prompt again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Fixed font shadows no longer rendering on unit frames, nameplates, objectives, tooltips and other addon texts since 12.0.7 broke shadows set directly on font strings; shadows are now applied via generated font objects instead]=]},
+    {GW.Enum.ChangelogType.bug, [=[Chat: NPC emotes on non-Retail clients showed a literal %s instead of the NPC name; the name placeholder inside the emote text is formatted again]=]},
+    {GW.Enum.ChangelogType.bug, [=[Talents (Mists): fixed ADDON_ACTION_FORBIDDEN errors from the protected RemoveTalent() when unlearning or switching talents; learning and unlearning now run through Blizzards secure talent buttons and a switched talent is learned automatically once the unlearn is confirmed]=]},
 })
 
 addChange("10.13.1", {
