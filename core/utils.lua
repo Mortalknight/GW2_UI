@@ -117,7 +117,7 @@ do
             return RAID_CLASS_COLORS.PRIEST
         end
 
-        local useBlizzardClassColor = alwaysUseBlizzardColors or GW.settings.BLIZZARDCLASSCOLOR_ENABLED
+        local useBlizzardClassColor = alwaysUseBlizzardColors
         local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
         local colorForNameString
 

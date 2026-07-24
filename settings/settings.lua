@@ -592,6 +592,8 @@ local function InitPanel(panel, hasScroll)
         of:SetScript("OnLeave", GameTooltip_Hide)
 
         if v.optionType == "colorPicker" then
+            
+
             local color = GW.settings[of.optionName]
             of.button.bg:SetColorTexture(color.r, color.g, color.b)
             of.button:SetScript("OnClick", function()
@@ -720,12 +722,14 @@ local function InitPanel(panel, hasScroll)
             end
             loadDropDown(scrollFrame)
             -- set current settings value
-            for key, val in pairs(v.options) do
-                if GW.settings[of.optionName] == val then
-                    of.button.string:SetText(v.options_names[key])
-                    break
+             if v.options then 
+                for key, val in pairs(v.options) do
+                    if GW.settings[of.optionName] == val then
+                        of.button.string:SetText(v.options_names[key])
+                        break
+                    end
                 end
-             end
+            end
 
             of.button.string:SetFont(UNIT_NAME_FONT, 12)
             of.button:SetScript(
@@ -762,6 +766,7 @@ local function InitPanel(panel, hasScroll)
                 end
             )
         elseif v.optionType == "slider" then
+         
             of.slider:SetMinMaxValues(v.min, v.max)
             of.slider:SetValue(RoundDec(GW.settings[of.optionName]))
             if v.step then of.slider:SetValueStep(v.step) end

@@ -1,5 +1,5 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
+
 
 GW2_UIAlertSystem = {}
 local toastQueue = {} --Prevent from showing all "new" spells after spec change
@@ -1299,30 +1299,30 @@ end
 local settings = {}
 
 local function UpdateSettings()
-    settings.showLevelUp = GetSetting("ALERTFRAME_NOTIFICATION_LEVEL_UP")
-    settings.levelUpSound = GetSetting("ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND")
-    settings.showNewSpell = GetSetting("ALERTFRAME_NOTIFICATION_NEW_SPELL")
-    settings.newSpellSound = GetSetting("ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND")
-    settings.showNewMail = GetSetting("ALERTFRAME_NOTIFICATION_NEW_MAIL")
-    settings.newMailSound = GetSetting("ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND")
-    settings.showRepair = GetSetting("ALERTFRAME_NOTIFICATION_REPAIR")
-    settings.repairSound = GetSetting("ALERTFRAME_NOTIFICATION_REPAIR_SOUND")
-    settings.showParagon = GetSetting("ALERTFRAME_NOTIFICATION_PARAGON")
-    settings.paragonSound = GetSetting("ALERTFRAME_NOTIFICATION_PARAGON_SOUND")
-    settings.showRare = GetSetting("ALERTFRAME_NOTIFICATION_RARE")
-    settings.rareSound = GetSetting("ALERTFRAME_NOTIFICATION_RARE_SOUND")
-    settings.showCalenderInvite = GetSetting("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE")
-    settings.calenderInviteSound = GetSetting("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND")
-    settings.showCallToArms = GetSetting("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS")
-    settings.callToArmsSound = GetSetting("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND")
-    settings.showMageTable = GetSetting("ALERTFRAME_NOTIFICATION_MAGE_TABLE")
-    settings.mageTableSound = GetSetting("ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND")
-    settings.showRitualOfSummoning = GetSetting("ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING")
-    settings.ritualOfSummoningSound = GetSetting("ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND")
-    settings.showSpoulwell = GetSetting("ALERTFRAME_NOTIFICATION_SPOULWELL")
-    settings.spoulwellSound = GetSetting("ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND")
-    settings.showMagePortal = GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL")
-    settings.magePortalSound = GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND")
+    settings.showLevelUp = GW.settings.ALERTFRAME_NOTIFICATION_LEVEL_UP
+    settings.levelUpSound = GW.settings.ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND
+    settings.showNewSpell = GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL
+    settings.newSpellSound = GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND
+    settings.showNewMail = GW.settings.ALERTFRAME_NOTIFICATION_NEW_MAIL
+    settings.newMailSound = GW.settings.ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND
+    settings.showRepair = GW.settings.ALERTFRAME_NOTIFICATION_REPAIR
+    settings.repairSound = GW.settings.ALERTFRAME_NOTIFICATION_REPAIR_SOUND
+    settings.showParagon = GW.settings.ALERTFRAME_NOTIFICATION_PARAGON
+    settings.paragonSound = GW.settings.ALERTFRAME_NOTIFICATION_PARAGON_SOUND
+    settings.showRare = GW.settings.ALERTFRAME_NOTIFICATION_RARE
+    settings.rareSound = GW.settings.ALERTFRAME_NOTIFICATION_RARE_SOUND
+    settings.showCalenderInvite = GW.settings.ALERTFRAME_NOTIFICATION_CALENDAR_INVITE
+    settings.calenderInviteSound = GW.settings.ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND
+    settings.showCallToArms = GW.settings.ALERTFRAME_NOTIFICATION_CALL_TO_ARMS
+    settings.callToArmsSound = GW.settings.ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND
+    settings.showMageTable = GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE
+    settings.mageTableSound = GW.settings.ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND
+    settings.showRitualOfSummoning = GW.settings.ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING
+    settings.ritualOfSummoningSound = GW.settings.ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND
+    settings.showSpoulwell = GW.settings.ALERTFRAME_NOTIFICATION_SPOULWELL
+    settings.spoulwellSound = GW.settings.ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND
+    settings.showMagePortal = GW.settings.ALERTFRAME_NOTIFICATION_MAGE_PORTAL
+    settings.magePortalSound = GW.settings.ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND
 end
 GW.UpdateAlertSettings = UpdateSettings
 
@@ -1525,7 +1525,7 @@ local function LoadAlertSystem()
 
     UpdateSettings()
 
-    if GetSetting("ALERTFRAME_SKIN_ENABLED") then
+    if GW.settings.ALERTFRAME_SKIN_ENABLED then
         -- Achievements
         hooksecurefunc(AchievementAlertSystem, "setUpFunction", skinAchievementAlert)
         hooksecurefunc(CriteriaAlertSystem, "setUpFunction", skinCriteriaAlert)
@@ -1602,11 +1602,11 @@ local function LoadAlertSystem()
     end)
     ]]
 
-    if GetSetting("ALERTFRAME_ENABLED") then
+    if GW.settings.ALERTFRAME_ENABLED then
         GW.AlertContainerFrame = CreateFrame("Frame", nil, UIParent)
         GW.AlertContainerFrame:SetSize(300, 5) -- 265
 
-        local point = GetSetting("AlertPos")
+        local point = GW.settings.AlertPos
         GW.AlertContainerFrame:ClearAllPoints()
         GW.AlertContainerFrame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
 

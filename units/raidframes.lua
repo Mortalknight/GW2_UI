@@ -1,5 +1,5 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
+
 local GWGetClassColor = GW.GWGetClassColor
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local SetClassIcon = GW.SetClassIcon
@@ -12,17 +12,17 @@ local previewStep = 0
 local settings = {}
 
 local function UpdateSettings()
-    settings.raidAuraTooltipInCombat = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT")
-    settings.raidClassColor = GetSetting("RAID_CLASS_COLOR")
-    settings.raidUnitMarkers = GetSetting("RAID_UNIT_MARKERS")
-    settings.raidGrow = GetSetting("RAID_GROW")
-    settings.raidWidth = GetSetting("RAID_WIDTH")
-    settings.raidHeight = GetSetting("RAID_HEIGHT")
-    settings.raidContainerWidth = GetSetting("RAID_CONT_WIDTH")
-    settings.raidContainerHeight = GetSetting("RAID_CONT_HEIGHT")
-    settings.raidUnitsPerColumn = ceil(GetSetting("RAID_UNITS_PER_COLUMN"))
-    settings.raidByRole = GetSetting("RAID_SORT_BY_ROLE")
-    settings.raidAnchor = GetSetting("RAID_ANCHOR")
+    settings.raidAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT
+    settings.raidClassColor = GW.settings.RAID_CLASS_COLOR
+    settings.raidUnitMarkers = GW.settings.RAID_UNIT_MARKERS
+    settings.raidGrow = GW.settings.RAID_GROW
+    settings.raidWidth = GW.settings.RAID_WIDTH
+    settings.raidHeight = GW.settings.RAID_HEIGHT
+    settings.raidContainerWidth = GW.settings.RAID_CONT_WIDTH
+    settings.raidContainerHeight = GW.settings.RAID_CONT_HEIGHT
+    settings.raidUnitsPerColumn = ceil(GW.settings.RAID_UNITS_PER_COLUMN)
+    settings.raidByRole = GW.settings.RAID_SORT_BY_ROLE
+    settings.raidAnchor = GW.settings.RAID_ANCHOR
 end
 GW.UpdateRaidGridSettings = UpdateSettings
 
@@ -333,7 +333,7 @@ local function LoadRaidFrames()
     UpdateSettings()
 
     local container = CreateFrame("Frame", "GwRaidFrameContainer", UIParent, "GwRaidFrameContainer")
-    local pos = GetSetting("raid_pos")
+    local pos = GW.settings.raid_pos
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 

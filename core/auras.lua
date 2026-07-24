@@ -1,14 +1,14 @@
 local _, GW = ...
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local GetSetting = GW.GetSetting
+
 
 local settings = {}
 
 local function UpdateSetting()
-    settings.raidDebuffScale = GetSetting("RAIDDEBUFFS_Scale")
-    settings.raidDebuffScalePrio = GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO")
-    settings.raidDispelDebuffScale = GetSetting("DISPELL_DEBUFFS_Scale")
+    settings.raidDebuffScale = GW.settings["RAIDDEBUFFS_Scale"]
+    settings.raidDebuffScalePrio = GW.settings["RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO"]
+    settings.raidDispelDebuffScale = GW.settings["DISPELL_DEBUFFS_Scale"]
 end
 GW.UpdateAurasSetting = UpdateSetting
 

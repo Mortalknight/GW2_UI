@@ -1,5 +1,5 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
+
 local SetSetting = GW.SetSetting
 -- get local references
 local MailFrame = _G.MailFrame
@@ -362,7 +362,7 @@ local function ClearMailTextures()
 end
 
 local function LoadMailSkin()
-        if not GetSetting("MAIL_SKIN_ENABLED") then return end
+        if not GW.settings.MAIL_SKIN_ENABLED then return end
 
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("MAIL_SHOW")
@@ -441,7 +441,7 @@ local function LoadMailSkin()
     _G.AutoCompleteBox:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     -- movable stuff
-    local pos = GetSetting("MAILBOX_POSITION")
+    local pos = GW.settings.MAILBOX_POSITION
     MailFrame.mover = CreateFrame("Frame", nil, MailFrame)
     MailFrame.mover:EnableMouse(true)
     MailFrame:SetMovable(true)
@@ -466,20 +466,20 @@ local function LoadMailSkin()
         MailFrame.SetPoint = GW.NoOp -- prevent blizz from overriding our position
 
         -- store the updated position
-        local pos = GetSetting("MAILBOX_POSITION")
+        local pos = GW.settings.MAILBOX_POSITION
         wipe(pos)
         pos.point = "TOPLEFT"
         pos.relativePoint = "BOTTOMLEFT"
         pos.xOfs = x
         pos.yOfs = y
-        SetSetting("MAILBOX_POSITION",pos)
+        GW.updateSettingsFrameSettingsValue("MAILBOX_POSITION",pos,true)
     end)
     MailFrame:ClearAllPoints()
     MailFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     MailFrame.SetPoint = GW.NoOp -- prevent blizz from overriding our position
 
     MailFrame:HookScript("OnShow", function()
-        local pos = GetSetting("MAILBOX_POSITION")
+        local pos = GW.settings.MAILBOX_POSITION
         MailFrame.SetPoint = nil
         MailFrame:ClearAllPoints()
         MailFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)

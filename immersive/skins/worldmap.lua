@@ -1,7 +1,7 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
+
 local AFP = GW.AddProfiling
-local GetSetting = GW.GetSetting
+
 
 local function SkinHeaders(header)
     if header.IsSkinned then
@@ -77,12 +77,12 @@ end
 GW.HandleReward = handleReward
 
 local function QuestInfo_Display(template)
-    if not GetSetting("GOSSIP_SKIN_ENABLED") and not GetSetting("QUESTVIEW_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
+    if not GW.settings.GOSSIP_SKIN_ENABLED and not GW.settings.QUESTVIEW_ENABLED and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
         return
     end
     local isMapStyle = false
     if template == QUEST_TEMPLATE_MAP_DETAILS or template == QUEST_TEMPLATE_MAP_REWARDS then
-        if not GetSetting("WORLDMAP_SKIN_ENABLED") then
+        if not GW.settings.WORLDMAP_SKIN_ENABLED then
             return
         end
         isMapStyle = true
@@ -162,7 +162,7 @@ local function QuestInfo_Display(template)
     fRwd.ItemChooseText:SetTextColor(1, 1, 1)
     fRwd.ItemReceiveText:SetTextColor(1, 1, 1)
 
-    if not isMapStyle and GetSetting("QUESTVIEW_ENABLED") then
+    if not isMapStyle and GW.settings.QUESTVIEW_ENABLED then
         fRwd.Header:SetTextColor(1, 1, 1)
         fRwd.Header:SetShadowColor(0, 0, 0, 1)
     elseif fRwd.Header.SetTextColor then
@@ -422,7 +422,7 @@ end
 AFP("worldMapSkin", worldMapSkin)
 
 local function LoadWorldMapSkin()
-    if not GetSetting("WORLDMAP_SKIN_ENABLED") then return end
+    if not GW.settings.WORLDMAP_SKIN_ENABLED then return end
 
     GW.RegisterLoadHook(worldMapSkin, "Blizzard_WorldMap", WorldMapFrame)
 end

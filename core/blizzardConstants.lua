@@ -186,6 +186,9 @@ end
 function C_ChatInfo.ReplaceIconAndGroupExpressions(input, noIconReplacement, noGroupReplacement)
     return ChatFrame_ReplaceIconAndGroupExpressions(input, noIconReplacement, noGroupReplacement)
 end
+function C_ChatInfo.RegisterAddonMessagePrefix(prefix)
+    return RegisterAddonMessagePrefix(prefix)
+end
 
 function C_AzeriteItem.FindActiveAzeriteItem()
     return nil

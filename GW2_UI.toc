@@ -40,6 +40,7 @@ core\init.lua
 core\incompatibleAddons.lua
 settings\api.lua
 
+core\migration.lua
 core\backdropTemplates.lua
 core\staticPopupDialogs.lua
 core\raid_debuffs.lua
@@ -223,6 +224,7 @@ objectives\monthlyActivitiesTracking.lua
 objectives\bossFrames.lua
 objectives\arenaFrames.lua
 objectives\achievement.lua
+objectives\vehicleButton.lua
 objectives\extraAB_bossAB.lua
 objectives\altPowerBar.lua
 objectives\widgetUI.lua

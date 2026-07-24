@@ -21,7 +21,7 @@ local function LoadObjectivesPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true})
 
     local encounterfKeys, encounterVales = {}, {}
-    local settingstable = GW.GetSetting("boss_frame_extra_energy_bar")
+    local settingstable = GW.settings.boss_frame_extra_energy_bar
     for encounterId, _ in pairs(GW.bossFrameExtraEnergyBar) do
         if encounterId and EJ_GetEncounterInfo(encounterId) then
             local encounterName, _, _, _, _, instanceId = EJ_GetEncounterInfo(encounterId)
@@ -38,7 +38,7 @@ local function LoadObjectivesPanel(sWindow)
                 }
 
                 GW.SetSetting("boss_frame_extra_energy_bar", newTable)
-                settingstable = GW.GetSetting("boss_frame_extra_energy_bar")
+                settingstable = GW.settings.boss_frame_extra_energy_bar
             end
 
             GW.bossFrameExtraEnergyBar[encounterId].enable = settingstable[encounterId].enable

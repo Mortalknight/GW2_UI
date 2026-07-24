@@ -1,6 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
+
 local AFP = GW.AddProfiling
 local updateIcon
 
@@ -23,8 +23,8 @@ local MICRO_BUTTONS = {
 local settings = {}
 
 local function UpdateSettings()
-    settings.fadeMicromenu = GetSetting("FADE_MICROMENU")
-    settings.showEventTimerIcon = GetSetting("MICROMENU_EVENT_TIMER_ICON")
+    settings.fadeMicromenu = GW.settings.FADE_MICROMENU
+    settings.showEventTimerIcon = GW.settings.MICROMENU_EVENT_TIMER_ICON
 end
 GW.UpdateMicroMenuSettings = UpdateSettings
 
@@ -455,7 +455,7 @@ local function setupMicroButtons(mbf)
     -- determine if we are using the default char button (for default charwin)
     -- or if we need to create our own char button for the custom hero panel
     local cref
-    if GetSetting("USE_CHARACTER_WINDOW") then
+    if GW.settings.USE_CHARACTER_WINDOW then
         cref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
@@ -506,7 +506,7 @@ local function setupMicroButtons(mbf)
     -- determine if we are using the default spell & talent buttons
     -- or if we need our custom talent button for the hero panel
     local sref
-    if GetSetting("USE_SPELLBOOK_WINDOW") then
+    if GW.settings.USE_SPELLBOOK_WINDOW then
         sref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         sref.newbieText = NEWBIE_TOOLTIP_TALENTS
@@ -877,7 +877,7 @@ local function LoadMicroMenu()
     hooksecurefunc("MainMenuMicroButton_ShowAlert", hook_MainMenuMicroButton_ShowAlert)
 
     -- if borders are hidden, hide the bg
-    if not GetSetting("BORDER_ENABLED") then
+    if not GW.settings.BORDER_ENABLED then
         mbf.cf.bg:Hide()
     end
 
@@ -934,12 +934,12 @@ local function LoadMicroMenu()
     modifyMicroAlert(LFDMicroButtonAlert, LFDMicroButton)
     modifyMicroAlert(EJMicroButtonAlert, EJMicroButton)
     modifyMicroAlert(StoreMicroButtonAlert, StoreMicroButton)
-    if GetSetting("USE_CHARACTER_WINDOW") then
+    if GW.settings.USE_CHARACTER_WINDOW then
         modifyMicroAlert(CharacterMicroButtonAlert, GwCharacterMicroButton)
     else
         modifyMicroAlert(CharacterMicroButtonAlert, CharacterMicroButton)
     end
-    if GetSetting("USE_TALENT_WINDOW") then
+    if GW.settings.USE_TALENT_WINDOW then
         modifyMicroAlert(TalentMicroButtonAlert, GwTalentMicroButton)
     else
         modifyMicroAlert(TalentMicroButtonAlert, TalentMicroButton)

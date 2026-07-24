@@ -1,6 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
+
 local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 
@@ -23,7 +23,7 @@ local settings = {
 }
 
 local function UpdateSettings()
-    settings.hoverDetailsStay = GetSetting("MINIMAP_ALWAYS_SHOW_HOVER_DETAILS")
+    settings.hoverDetailsStay = GW.settings.MINIMAP_ALWAYS_SHOW_HOVER_DETAILS
 end
 GW.UpdateMinimapSettings = UpdateSettings
 
@@ -82,7 +82,7 @@ local function MapCoordsMiniMap_OnClick(self, button)
             self.MapCoordsMiniMapPrecision = 0
         end
 
-        SetSetting("MINIMAP_COORDS_PRECISION", self.MapCoordsMiniMapPrecision)
+        GW.SetSetting("MINIMAP_COORDS_PRECISION", self.MapCoordsMiniMapPrecision,true)
         mapCoordsMiniMap_setCoords(self)
     end
 end
@@ -177,7 +177,7 @@ local function MinimapPostDrag(self)
 end
 
 local function ToogleMinimapCoorsLable()
-    if GetSetting("MINIMAP_COORDS_TOGGLE") then
+    if GW.settings.MINIMAP_COORDS_TOGGLE then
         GwMapCoords:Show()
         GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
         GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
@@ -209,7 +209,7 @@ end
 GW.ToogleMinimapCoorsLable = ToogleMinimapCoorsLable
 
 local function ToogleMinimapFpsLable()
-    if GetSetting("MINIMAP_FPS") then
+    if GW.settings.MINIMAP_FPS then
         GW.BuildAddonList()
         GwMapFPS:SetScript("OnEnter", GW.FpsOnEnter)
         GwMapFPS:SetScript("OnUpdate", GW.FpsOnUpdate)
@@ -395,7 +395,7 @@ local function LoadMinimap()
     Minimap:SetMaskTexture('Interface\\ChatFrame\\ChatFrameBackground')
     Minimap:SetScale(1.2)
 
-    local size = GetSetting("MINIMAP_SCALE")
+    local size = GW.settings.MINIMAP_SCALE
     Minimap:SetSize(size, size)
 
     GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", ALL .. ",Blizzard,Map", { Minimap:GetSize() },
@@ -550,7 +550,7 @@ local function LoadMinimap()
     GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
     GwMapCoords.Coords:SetText(NOT_APPLICABLE)
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 14, "")
-    GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
+    GwMapCoords.MapCoordsMiniMapPrecision = GW.settings.MINIMAP_COORDS_PRECISION
     ToogleMinimapCoorsLable()
 
     --FPS

@@ -1,6 +1,6 @@
 local _, GW = ...
 local AFP = GW.AddProfiling
-local GetSetting = GW.GetSetting
+
 local CoordsFrame
 local MOUSE_LABEL = MOUSE_LABEL:gsub("|[TA].-|[ta]","")
 
@@ -26,7 +26,7 @@ end
 AFP("UpdateCoords", UpdateCoords)
 
 local function ToggleWorldMapCoords()
-    if GetSetting("WORLDMAP_COORDS_TOGGLE") then
+    if GW.settings.WORLDMAP_COORDS_TOGGLE then
         CoordsFrame:Show()
     else
         CoordsFrame:Hide()

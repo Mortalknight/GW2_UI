@@ -7,7 +7,8 @@ GW.privateDefaults = {
         Layouts = {},
         PLAYER_TRACKED_DODGEBAR_SPELL = "",
         PLAYER_TRACKED_DODGEBAR_SPELL_ID = 0,
-        ISKAARAN_FISHING_NET_DATA = {}
+        ISKAARAN_FISHING_NET_DATA = {},
+        CHAT_KEYWORDS_ALERT_COLOR= {r = .5, g = .5, b = .5},
     },
 }
 
@@ -31,6 +32,7 @@ GW.globalDefault = {
         HEALTHGLOBE_ENABLED = true,
         PLAYER_BUFFS_ENABLED = true,
         ACTIONBARS_ENABLED = true,
+        BAR_LAYOUT_ENABLED = true,
         BAGS_ENABLED = true,
         NPC_CAM_ENABLED = false,
         FONTS_ENABLED = true,
@@ -38,6 +40,7 @@ GW.globalDefault = {
         ACTIONBAR_BACKGROUND_ALPHA = 0.3,
         SHOWACTIONBAR_MACRO_NAME_ENABLED = false,
         SHOW_QUESTTRACKER_COMPASS = true,
+        QUESTTRACKER_STATUSBARS_ENABLED = true,
         MINIMAP_HOVER = "NONE",
         MINIMAP_ALWAYS_SHOW_HOVER_DETAILS = {CLOCK = false,ZONE = false,COORDS = false,},
         CLASS_POWER = true,
@@ -45,14 +48,28 @@ GW.globalDefault = {
         PARTY_FRAMES = true,
         PETBAR_ENABLED = true,
         BORDER_ENABLED = true,
+
+        FONT_STYLE_TEMPLATE = "GW2",
+        FONT_NORMAL = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf",
+        CUSTOM_FONT_NORMAL = false,
+        FONTS_BIG_HEADER_SIZE = 18,
+        FONTS_HEADER_SIZE = 16,
+        FONTS_NORMAL_SIZE = 14,
+        FONTS_SMALL_SIZE = 12,
+        FONTS_OUTLINE = "",
+
         TOOLTIP_MOUSE = false,
         ADVANCED_TOOLTIP = true,
-        TOOLTIP_FONT_SIZE = 12,
+        TOOLTIP_HEADER_FONT_SIZE = 16,
+        TOOLTIP_SMALL_FONT_SIZE = 12,
+        TOOLTIP_FONT_SIZE = 14,
         HIDE_TOOLTIP_IN_COMBAT = false,
         HIDE_TOOLTIP_IN_COMBAT_UNIT = "ALL",
         HIDE_TOOLTIP_IN_COMBAT_OVERRIDE = "NONE",
         TOOLTIP_HEALTHBAER_POSITION = "BOTTOM",
         ADVANCED_TOOLTIP_OPTION_ITEMCOUNT = "BOTH",
+        ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_REAGENTS = true,
+        ADVANCED_TOOLTIP_OPTION_ITEMCOUNT_INCLUDE_WARBAND = true,
         ADVANCED_TOOLTIP_SHOW_MOUNT = true,
         ADVANCED_TOOLTIP_SHOW_TARGET_INFO = true,
         ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES = true,
@@ -71,6 +88,8 @@ GW.globalDefault = {
         XPBAR_ENABLED = true,
         ALERTFRAME_ENABLED = true,
         HIDE_BLIZZARD_VIGOR_BAR = true,
+
+        interruptAnnounce = "NONE",
 
         GW_COMBAT_TEXT_MODE= "GW2",
         GW_COMBAT_TEXT_BLIZZARD_COLOR= false,
@@ -118,6 +137,16 @@ GW.globalDefault = {
         BAG_HEADER_NAME5= "",
 
         EXTENDED_VENDOR_NUM_PAGES= 2,
+         VEHICLE_SEAT_POS_scale = 1,
+
+
+        VEHICLE_SEAT_POS= {
+            point= "LEFT",
+            relativePoint= "LEFT",
+            xOfs= 20,
+            yOfs= -45,
+            hasMoved= true,
+        },
 
         BAG_DEFAULT_CONTAINER_POSITION= {
             point= "BOTTOMRIGHT",
@@ -253,22 +282,6 @@ GW.globalDefault = {
         focus_FRAME_INVERT= false,
         focus_FRAME_ALT_BACKGROUND= false,
 
-        multibarleft_pos= {
-            point= "RIGHT",
-            relativePoint= "RIGHT",
-            xOfs= -300,
-            yOfs= 0,
-            hasMoved= false,
-        },
-
-        multibarright_pos= {
-            point= "RIGHT",
-            relativePoint= "RIGHT",
-            xOfs= -260,
-            yOfs= 0,
-            hasMoved= false,
-        },
-
         target_pos= {
             point= "TOP",
             relativePoint= "TOP",
@@ -298,7 +311,7 @@ GW.globalDefault = {
 
         targettarget_pos= {
             point= "TOP",
-            elativePoint= "TOP",
+            relativePoint= "TOP",
             xOfs= 250,
             yOfs= -110,
             hasMoved= false,
@@ -341,7 +354,7 @@ GW.globalDefault = {
         MultiBarBottomRight= {
             point= "BOTTOMRIGHT",
             relativePoint= "BOTTOM",
-            xOfs= 372,
+            xOfs= 369,
             yOfs= 120,
             hasMoved= false,
             size= 38,
@@ -489,6 +502,7 @@ GW.globalDefault = {
         StanceBar_pos_scale= 1,
         StanceBar_GrowDirection= "UP",
         StanceBarContainerState= "close",
+        StanceBarEnabled = true,
 
         PowerBar_pos= {
             point= "BOTTOMLEFT",
@@ -533,7 +547,7 @@ GW.globalDefault = {
         CHAT_CLASS_COLOR_MENTIONS= true,
         CHAT_KEYWORDS= "%MYNAME%",
         CHAT_KEYWORDS_ALERT_NEW= "GW2_UI: Ping",
-        CHAT_KEYWORDS_ALERT_COLOR= {r = .5, g = .5, b = .5},
+        CHAT_KEYWORDS_ALERT_COLOR = {r = .5, g = .5, b = .5},
         CHAT_KEYWORDS_EMOJI= true,
         CHAT_SOCIAL_LINK= true,
         CHAT_ADD_TIMESTAMP_TO_ALL= true,
@@ -662,6 +676,8 @@ GW.globalDefault = {
         RAID_WIDTH_PET= 50,
         RAID_HEIGHT_PET= 25,
         RAID_POWER_BARS_PET= false, -- always
+        RAID_UNITS_PER_COLUMN_PET = 5,
+        RAID_UNITS_PER_COLUMN = 5,
         RAID_GROUPS_PER_COLUMN_PET= 1,
         RAID_GROW_PET= "DOWN+RIGHT",
         RAID_SHOW_DEBUFFS_PET= true,
@@ -698,6 +714,14 @@ GW.globalDefault = {
         RAID_POWER_BARS= false,
         RAID_GROUPS_PER_COLUMN= 1,
         RAID_GROW= "DOWN+RIGHT",
+        RAID_UNITS_PER_COLUMN = 5,
+        RAID_UNITS_PER_COLUMN_PARTY = 1,
+            RAID_CONT_WIDTH_PARTY= 500,
+    RAID_CONT_HEIGHT_PARTY= 80,
+    RAID_CONT_WIDTH_PET = 410,
+RAID_CONT_HEIGHT_PET = 150,
+        RAID_CONT_WIDTH = 0,
+        RAID_CONT_HEIGHT = 0,
         RAID_SHOW_DEBUFFS= true,
         RAID_ONLY_DISPELL_DEBUFFS= false,
         RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF= false,
@@ -859,12 +883,12 @@ GW.globalDefault = {
         CASTINGBAR_DATA= false,
         USE_CHARACTER_WINDOW= true,
         USE_TALENT_WINDOW= true,
-        USE_SPELLBOOK_WINDOW= true,
+        USE_PROFESSION_WINDOW= true,
 
         USE_SOCIAL_WINDOW= true,
 
-        AURAS_IGNORED= strjoin(", ", unpack(GW.MapTable(GW.AURAS_IGNORED, GetSpellInfo))),
-        AURAS_MISSING= strjoin(", ", unpack(GW.MapTable(GW.AURAS_MISSING, GetSpellInfo))),
+        AURAS_IGNORED= strjoin(", ", unpack(GW.MapTable(GW.AURAS_IGNORED, C_Spell.GetSpellInfo, nil, "name"))),
+        AURAS_MISSING= strjoin(", ", unpack(GW.MapTable(GW.AURAS_MISSING, C_Spell.GetSpellInfo, nil, "name"))),
         INDICATORS_ICON= false,
         INDICATORS_TIME= true,
         INDICATOR_BAR= {
@@ -878,6 +902,7 @@ GW.globalDefault = {
         INDICATOR_CENTER= 0,
         INDICATOR_RIGHT= 0,
 
+        ADVENTURE_MAP_SKIN_ENABLED = true,
         ACHIEVEMENT_SKIN_ENABLED= true,
         MAINMENU_SKIN_ENABLED= true,
         STATICPOPUP_SKIN_ENABLED= true,
@@ -890,6 +915,7 @@ GW.globalDefault = {
         TALKINGHEAD_SKIN_ENABLED= true,
         MISC_SKIN_ENABLED= true,
         IMMERSIONADDON_SKIN_ENABLED= true,
+        AUCTIONATOR_SKIN_ENABLED = true,
         FLIGHTMAP_SKIN_ENABLED= true,
         BLIZZARDCLASSCOLOR_ENABLED= false,
         ADDONLIST_SKIN_ENABLED= true,
@@ -922,6 +948,9 @@ GW.globalDefault = {
         PERK_PROGRAM_SKIN_ENABLED= true,
         EXPANSION_LANDING_PAGE_SKIN_ENABLED= true,
         GENERIC_TRAINT_SKIN_ENABLED= true,
+        PLAYER_SPELLS_SKIN_ENABLED = true,
+        AuctionHouseSkinEnabled = true,
+        BattlefieldMapSkinEnabled = true,
 
         ALERTFRAME_NOTIFICATION_LEVEL_UP= true,
         ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND= "None",
@@ -1000,6 +1029,20 @@ GW.globalDefault = {
             yOfs= -115,
         },
 
+        AuctionHouseWindow = {
+            point= "TOPLEFT",
+            relativePoint= "TOPLEFT",
+            xOfs= 70,
+            yOfs= -150,
+        },
+
+        PvEWindow = {
+            point= "TOPLEFT",
+            relativePoint= "TOPLEFT",
+            xOfs= 70,
+            yOfs= -150,
+        },
+
         PlayerBuffFrame_Seperate= 0,
         PlayerDebuffFrame_Seperate= 0,
 
@@ -1031,14 +1074,38 @@ GW.globalDefault = {
         },
         player_pos_scale= 1,
 
-        WORLD_EVENTS_COMMUNITY_FEAST_ENABLED= true,
+        -- TWW
+        WORLD_EVENTS_TWW_PROFESSIONS_ENABLED = true,
+        WORLD_EVENTS_TWW_PROFESSIONS_DESATURATE = false,
+
+        WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_ENABLED = true,
+        WORLD_EVENTS_KHAZ_ALGAR_EMISSARY_DESATURATE = false,
+
+        WORLD_EVENTS_RINGING_DEEPS_ENABLED = true,
+        WORLD_EVENTS_RINGING_DEEPS_DESATURATE = false,
+
+        WORLD_EVENTS_SPREADING_THE_LIGHT_ENABLED = true,
+        WORLD_EVENTS_SPREADING_THE_LIGHT_DESATURATE = false,
+
+        WORLD_EVENTS_UNDERWORLD_OPERATIVE_ENABLED = true,
+        WORLD_EVENTS_UNDERWORLD_OPERATIVE_DESATURATE = false,
+
+        WORLD_EVENTS_THEATER_TROUPE_ENABLED= true,
+        WORLD_EVENTS_THEATER_TROUPE_DESATURATE= false,
+        WORLD_EVENTS_THEATER_TROUPE_ALERT= true,
+        WORLD_EVENTS_THEATER_TROUPE_ALERT_SECONDS= 600,
+        WORLD_EVENTS_THEATER_TROUPE_STOP_ALERT_IF_COMPLETED= true,
+        WORLD_EVENTS_THEATER_TROUPE_FLASH_TASKBAR= true,
+
+        -- DF
+        WORLD_EVENTS_COMMUNITY_FEAST_ENABLED= false,
         WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE= false,
         WORLD_EVENTS_COMMUNITY_FEAST_ALERT= true,
         WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS= 600,
         WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED= true,
         WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR= true,
 
-        WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED= true,
+        WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED= false,
         WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE= false,
         WORLD_EVENTS_DRAGONBANE_KEEP_ALERT= true,
         WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS= 600,
@@ -1064,14 +1131,23 @@ GW.globalDefault = {
         WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED= true,
         WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR= true,
 
-        WORLD_EVENTS_SUPER_BLOOM_ENABLED= true,
+        WORLD_EVENTS_SUPER_BLOOM_ENABLED= false,
         WORLD_EVENTS_SUPER_BLOOM_DESATURATE= false,
         WORLD_EVENTS_SUPER_BLOOM_ALERT= true,
         WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS= 600,
         WORLD_EVENTS_SUPER_BLOOM_STOP_ALERT_IF_COMPLETED= true,
         WORLD_EVENTS_SUPER_BLOOM_FLASH_TASKBAR= true,
 
+        WORLD_EVENTS_BIG_DIG_ENABLED= false,
+        WORLD_EVENTS_BIG_DIG_DESATURATE= false,
+        WORLD_EVENTS_BIG_DIG_ALERT= true,
+        WORLD_EVENTS_BIG_DIG_ALERT_SECONDS= 600,
+        WORLD_EVENTS_BIG_DIGSTOP_ALERT_IF_COMPLETED= true,
+        WORLD_EVENTS_BIG_DIG_FLASH_TASKBAR= true,
+
         SHOW_CHARACTER_ITEM_INFO= false,
+
+        pulltimerSeconds = 10,
 
         IncompatibleAddons = {
             Actionbars = {
@@ -1105,6 +1181,7 @@ GW.globalDefault = {
                     "ArkInventory",
                     "Bagnon",
                     "Sorted",
+                    "Baganator"
                 },
             },
             Minimap = {

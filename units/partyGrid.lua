@@ -1,6 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
+
 local IsIn = GW.IsIn
 local GWGetClassColor = GW.GWGetClassColor
 local RegisterMovableFrame = GW.RegisterMovableFrame
@@ -14,19 +14,19 @@ local MAX_PARTY_MEMBERS = MAX_PARTY_MEMBERS + 1
 local settings = {}
 
 local function UpdateSettings()
-    settings.raidAuraTooltipInCombat = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_PARTY")
-    settings.raidClassColor = GetSetting("RAID_CLASS_COLOR_PARTY")
-    settings.raidUnitMarkers = GetSetting("RAID_UNIT_MARKERS_PARTY")
-    settings.raidGrow = GetSetting("RAID_GROW_PARTY")
-    settings.raidWidth = GetSetting("RAID_WIDTH_PARTY")
-    settings.raidHeight = GetSetting("RAID_HEIGHT_PARTY")
-    settings.raidContainerWidth = GetSetting("RAID_CONT_WIDTH_PARTY")
-    settings.raidContainerHeight = GetSetting("RAID_CONT_HEIGHT_PARTY")
-    settings.raidUnitsPerColumn = ceil(GetSetting("RAID_UNITS_PER_COLUMN_PARTY"))
-    settings.raidByRole = GetSetting("RAID_SORT_BY_ROLE_PARTY")
-    settings.raidStyle = GetSetting("RAID_STYLE_PARTY")
-    settings.raidStyleAndPartyFrames = GetSetting("RAID_STYLE_PARTY_AND_FRAMES")
-    settings.raidAnchor = GetSetting("RAID_ANCHOR_PARTY")
+    settings.raidAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PARTY
+    settings.raidClassColor = GW.settings.RAID_CLASS_COLOR_PARTY
+    settings.raidUnitMarkers = GW.settings.RAID_UNIT_MARKERS_PARTY
+    settings.raidGrow = GW.settings.RAID_GROW_PARTY
+    settings.raidWidth = GW.settings.RAID_WIDTH_PARTY
+    settings.raidHeight = GW.settings.RAID_HEIGHT_PARTY
+    settings.raidContainerWidth = GW.settings.RAID_CONT_WIDTH_PARTY
+    settings.raidContainerHeight = GW.settings.RAID_CONT_HEIGHT_PARTY
+    settings.raidUnitsPerColumn = ceil(GW.settings.RAID_UNITS_PER_COLUMN_PARTY)
+    settings.raidByRole = GW.settings.RAID_SORT_BY_ROLE_PARTY
+    settings.raidStyle = GW.settings.RAID_STYLE_PARTY
+    settings.raidStyleAndPartyFrames = GW.settings.RAID_STYLE_PARTY_AND_FRAMES
+    settings.raidAnchor = GW.settings.RAID_ANCHOR_PARTY
 end
 GW.UpdatePartyGridSettings = UpdateSettings
 
@@ -344,7 +344,7 @@ end
 GW.GridToggleFramesPreviewParty = GridToggleFramesPreviewParty
 
 local function LoadPartyGrid()
-    if not GetSetting("RAID_STYLE_PARTY") and not GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
+    if not GW.settings.RAID_STYLE_PARTY and not GW.settings.RAID_STYLE_PARTY_AND_FRAMES then
         return
     end
 
@@ -359,7 +359,7 @@ local function LoadPartyGrid()
 
     local container = CreateFrame("Frame", "GwRaidFramePartyContainer", UIParent, "GwRaidFrameContainer")
 
-    local pos = GetSetting("raid_party_pos")
+    local pos = GW.settings.raid_party_pos
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 

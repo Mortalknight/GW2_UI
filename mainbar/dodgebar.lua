@@ -2,7 +2,7 @@ local _, GW = ...
 local Debug = GW.Debug
 local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 local FrameFlash = GW.FrameFlash
-local GetSetting = GW.GetSetting
+
 local lerp = GW.lerp
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
@@ -11,7 +11,7 @@ local DRAGON_POWERTYPE = 10
 local settings = {}
 
 local function UpdateSettings()
-    settings.hideBLizzardVigorBar = GetSetting("HIDE_BLIZZARD_VIGOR_BAR")
+    settings.hideBLizzardVigorBar = GW.settings.HIDE_BLIZZARD_VIGOR_BAR
 end
 GW.UpdateDoddgeBarSettings = UpdateSettings
 
@@ -99,7 +99,7 @@ GW.AddForProfiling("dodgebar", "updateAnim", updateAnim)
 
 local function initBar(self, pew)
     -- do everything required to make the dodge bar a secure clickable button
-    local overrideSpellID = tonumber(GetSetting("PLAYER_TRACKED_DODGEBAR_SPELL_ID"))
+    local overrideSpellID = tonumber(GW.settings.PLAYER_TRACKED_DODGEBAR_SPELL_ID)
 
     self.gwMaxCharges = nil
     self.spellId = overrideSpellID and overrideSpellID > 0 and overrideSpellID or nil
@@ -412,7 +412,7 @@ local function LoadDodgeBar(hg, asTargetFrame)
         fmdb.border:SetSize(80, 72)
         fmdb:SetPoint("TOPLEFT", hg, "TOPLEFT", -9.5, 5)
         fmdb:SetFrameStrata("BACKGROUND")
-        hg:HookScript("OnSizeChanged", function() fmdb:SetScale(GetSetting("player_pos_scale")) end)
+        hg:HookScript("OnSizeChanged", function() fmdb:SetScale(GW.settings.player_pos_scale) end)
     else
         fmdb:SetPoint("CENTER", hg, "CENTER", 0, 41)
         GW.RegisterScaleFrame(fmdb, 1.1)
@@ -480,7 +480,7 @@ local function LoadDragonBar(hg, asTargetFrame)
         fmdb.border:SetSize(80, 72)
         fmdb:SetPoint("TOPLEFT", hg, "TOPLEFT", -9.5, 5)
         fmdb:SetFrameStrata("BACKGROUND")
-        hg:HookScript("OnSizeChanged", function() fmdb:SetScale(GetSetting("player_pos_scale")) end)
+        hg:HookScript("OnSizeChanged", function() fmdb:SetScale(GW.settings.player_pos_scale) end)
     else
         fmdb:SetPoint("CENTER", hg, "CENTER", 0, 41)
         GW.RegisterScaleFrame(fmdb, 1.1)

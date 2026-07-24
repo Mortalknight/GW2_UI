@@ -1,6 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
+
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local RGBToHex = GW.RGBToHex
 local GWGetClassColor = GW.GWGetClassColor
@@ -34,31 +34,31 @@ local TT = CreateFrame("Frame")
 local settings = {}
 
 local function UpdateSettings()
-    settings.idModifier = GetSetting("ADVANCED_TOOLTIP_ID_MODIFIER")
-    settings.classColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
-    settings.showKeystoneInfo = GetSetting("ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO")
-    settings.itemCount = GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT")
-    settings.showPlayerTitles = GetSetting("ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES")
-    settings.showRealmAlways = GetSetting("ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS")
-    settings.showGuildRanks = GetSetting("ADVANCED_TOOLTIP_SHOW_GUILD_RANKS")
-    settings.showGender = GetSetting("ADVANCED_TOOLTIP_SHOW_GENDER")
-    settings.showTargetInfo = GetSetting("ADVANCED_TOOLTIP_SHOW_TARGET_INFO")
-    settings.showMountInfo = GetSetting("ADVANCED_TOOLTIP_SHOW_MOUNT")
-    settings.showRole = GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE")
-    settings.showDungeonscore = GetSetting("ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE")
-    settings.showHealthbarText = GetSetting("ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT")
-    settings.healthbarPosition = GetSetting("TOOLTIP_HEALTHBAER_POSITION")
-    settings.tooltipOnMouse = GetSetting("TOOLTIP_MOUSE")
-    settings.tooltipMouseAnchor = GetSetting("CURSOR_ANCHOR_TYPE")
-    settings.tooltipMouseAnchotX = GetSetting("ANCHOR_CURSOR_OFFSET_X")
-    settings.tooltipMouseAnchotY = GetSetting("ANCHOR_CURSOR_OFFSET_Y")
-    settings.TOOLTIP_FONT_SIZE = GetSetting("TOOLTIP_FONT_SIZE")
-    settings.TOOLTIP_HEADER_FONT_SIZE = GetSetting("TOOLTIP_HEADER_FONT_SIZE")
-    settings.TOOLTIP_SMALL_FONT_SIZE = GetSetting("TOOLTIP_SMALL_FONT_SIZE")
-    settings.hideUnitTooltipInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
-    settings.hideTooltipInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT")
-    settings.hideTooltipInCombatOverride = GetSetting("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE")
-    settings.showPremadeGroupInfo = GetSetting("TOOLTIP_SHOW_PREMADE_GROUP_INFO")
+    settings.idModifier = GW.settings.ADVANCED_TOOLTIP_ID_MODIFIER
+    settings.classColor = GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR
+    settings.showKeystoneInfo = GW.settings.ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO
+    settings.itemCount = GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT
+    settings.showPlayerTitles = GW.settings.ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES
+    settings.showRealmAlways = GW.settings.ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS
+    settings.showGuildRanks = GW.settings.ADVANCED_TOOLTIP_SHOW_GUILD_RANKS
+    settings.showGender = GW.settings.ADVANCED_TOOLTIP_SHOW_GENDER
+    settings.showTargetInfo = GW.settings.ADVANCED_TOOLTIP_SHOW_TARGET_INFO
+    settings.showMountInfo = GW.settings.ADVANCED_TOOLTIP_SHOW_MOUNT
+    settings.showRole = GW.settings.ADVANCED_TOOLTIP_SHOW_ROLE
+    settings.showDungeonscore = GW.settings.ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE
+    settings.showHealthbarText = GW.settings.ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT
+    settings.healthbarPosition = GW.settings.TOOLTIP_HEALTHBAER_POSITION
+    settings.tooltipOnMouse = GW.settings.TOOLTIP_MOUSE
+    settings.tooltipMouseAnchor = GW.settings.CURSOR_ANCHOR_TYPE
+    settings.tooltipMouseAnchotX = GW.settings.ANCHOR_CURSOR_OFFSET_X
+    settings.tooltipMouseAnchotY = GW.settings.ANCHOR_CURSOR_OFFSET_Y
+    settings.TOOLTIP_FONT_SIZE = GW.settings.TOOLTIP_FONT_SIZE
+    settings.TOOLTIP_HEADER_FONT_SIZE = GW.settings.TOOLTIP_HEADER_FONT_SIZE
+    settings.TOOLTIP_SMALL_FONT_SIZE = GW.settings.TOOLTIP_SMALL_FONT_SIZE
+    settings.hideUnitTooltipInCombat = GW.settings.HIDE_TOOLTIP_IN_COMBAT_UNIT
+    settings.hideTooltipInCombat = GW.settings.HIDE_TOOLTIP_IN_COMBAT
+    settings.hideTooltipInCombatOverride = GW.settings.HIDE_TOOLTIP_IN_COMBAT_OVERRIDE
+    settings.showPremadeGroupInfo = GW.settings.TOOLTIP_SHOW_PREMADE_GROUP_INFO
     
 end
 GW.UpdateTooltipSettings = UpdateSettings
@@ -1115,7 +1115,7 @@ local function LoadTooltips()
         hooksecurefunc("LFGListUtil_SetSearchEntryTooltip", AddPremadeGroupInfo)
     end
 
-    if GetSetting("ADVANCED_TOOLTIP") then
+    if GW.settings.ADVANCED_TOOLTIP then
         GameTooltip.StatusBar = GameTooltipStatusBar
         GameTooltip.StatusBar:SetScript("OnValueChanged", nil)
         GameTooltip.StatusBar.text = GameTooltip.StatusBar:CreateFontString(nil, "OVERLAY")

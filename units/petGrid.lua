@@ -1,6 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
+
 local IsIn = GW.IsIn
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
@@ -11,15 +11,15 @@ local previewStep = 0
 local settings = {}
 
 local function UpdateSettings()
-    settings.raidAuraTooltipInCombat = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_PET")
-    settings.raidUnitMarkers = GetSetting("RAID_UNIT_MARKERS_PET")
-    settings.raidGrow = GetSetting("RAID_GROW_PET")
-    settings.raidWidth = GetSetting("RAID_WIDTH_PET")
-    settings.raidHeight = GetSetting("RAID_HEIGHT_PET")
-    settings.raidContainerWidth = GetSetting("RAID_CONT_WIDTH_PET")
-    settings.raidContainerHeight = GetSetting("RAID_CONT_HEIGHT_PET")
-    settings.raidUnitsPerColumn = ceil(GetSetting("RAID_UNITS_PER_COLUMN_PET"))
-    settings.raidAnchor = GetSetting("RAID_ANCHOR_PET")
+    settings.raidAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PET
+    settings.raidUnitMarkers = GW.settings.RAID_UNIT_MARKERS_PET
+    settings.raidGrow = GW.settings.RAID_GROW_PET
+    settings.raidWidth = GW.settings.RAID_WIDTH_PET
+    settings.raidHeight = GW.settings.RAID_HEIGHT_PET
+    settings.raidContainerWidth = GW.settings.RAID_CONT_WIDTH_PET
+    settings.raidContainerHeight = GW.settings.RAID_CONT_HEIGHT_PET
+    settings.raidUnitsPerColumn = ceil(GW.settings.RAID_UNITS_PER_COLUMN_PET)
+    settings.raidAnchor = GW.settings.RAID_ANCHOR_PET
 end
 GW.UpdatePetGridSettings = UpdateSettings
 
@@ -278,7 +278,7 @@ end
 GW.GridToggleFramesPreviewRaidPet = GridToggleFramesPreviewRaidPet
 
 local function LoadPetGrid()
-    if not GetSetting("RAID_PET_FRAMES") then
+    if not GW.settings.RAID_PET_FRAMES then
         return
     end
 
@@ -293,7 +293,7 @@ local function LoadPetGrid()
 
     local container = CreateFrame("Frame", "GwRaidFramePetContainer", UIParent, "GwRaidFrameContainer")
 
-    local pos = GetSetting("raid_pet_pos")
+    local pos = GW.settings.raid_pet_pos
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 

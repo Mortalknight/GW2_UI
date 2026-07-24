@@ -1,5 +1,5 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
+
 
 local function SetPosition(_ ,_, relativeTo)
     local mover = VehicleSeatIndicator.gwMover
@@ -21,7 +21,7 @@ local function LoadVehicleButton()
         VehicleSeatIndicator.PositionVehicleFrameHooked = true
     end
 
-    if GetSetting("ACTIONBARS_ENABLED") then
+    if GW.settings.ACTIONBARS_ENABLED then
         VehicleSeatIndicator_UnloadTextures = function()
             VehicleSeatIndicatorBackgroundTexture:SetTexture()
             VehicleSeatIndicator:Hide()

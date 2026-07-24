@@ -5,7 +5,7 @@ local RoundInt = GW.RoundInt
 local UpdatePowerData = GW.UpdatePowerData
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
-local GetSetting = GW.GetSetting
+
 
 local CPWR_FRAME
 local CPF_HOOKED_TO_TARGETFRAME = false
@@ -216,7 +216,7 @@ local function setManaBar(f)
     f:SetHeight(14)
 
     f:ClearAllPoints()
-    if GetSetting("XPBAR_ENABLED") or (f.isMoved and not CPF_HOOKED_TO_TARGETFRAME) then
+    if GW.settings.XPBAR_ENABLED or (f.isMoved and not CPF_HOOKED_TO_TARGETFRAME) then
         f:SetPoint("TOPLEFT", f.gwMover, 0, -13)
     else
         f:SetPoint("TOPLEFT", f.gwMover, 0, -3)
@@ -1484,10 +1484,10 @@ local function LoadClassPowers()
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", {312, 32}, {"default", "scaleable"}, true)
 
     -- position mover
-    if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not cpf.isMoved  then
-        local framePoint = GetSetting("ClasspowerBar_pos")
-        local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
-        local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
+    if (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not cpf.isMoved  then
+        local framePoint = GW.settings.ClasspowerBar_pos
+        local yOff = not GW.settings.XPBAR_ENABLED and 14 or 0
+        local xOff = GW.settings.PLAYER_AS_TARGET_FRAME and 52 or 0
         cpf.gwMover:ClearAllPoints()
         cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
@@ -1497,14 +1497,14 @@ local function LoadClassPowers()
     GW.MixinHideDuringPetAndOverride(cpf)
     CPWR_FRAME = cpf
 
-    cpf.ourTarget = GetSetting("TARGET_ENABLED")
-    cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
-    cpf.ourPowerBar = GetSetting("POWERBAR_ENABLED")
+    cpf.ourTarget = GW.settings.TARGET_ENABLED
+    cpf.comboPointsOnTarget = GW.settings.target_HOOK_COMBOPOINTS
+    cpf.ourPowerBar = GW.settings.POWERBAR_ENABLED
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
     if cpf.ourPowerBar then
-        local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
-        local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
+        local anchorFrame = GW.settings.PLAYER_AS_TARGET_FRAME and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
+        local barWidth = GW.settings.PLAYER_AS_TARGET_FRAME and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
         local lmb =  GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
         lmb.customMaskSize = 64
         lmb.bar = lmb;
@@ -1530,7 +1530,7 @@ local function LoadClassPowers()
         lmb:SetHeight(5)
 
         lmb:ClearAllPoints()
-        if GetSetting("PLAYER_AS_TARGET_FRAME") then
+        if GW.settings.PLAYER_AS_TARGET_FRAME then
             lmb:SetPoint("LEFT", anchorFrame.castingbarBackground, "LEFT", 2, 5)
             lmb:SetSize(barWidth + 2, 7)
             lmb:SetWidth(barWidth - 2)

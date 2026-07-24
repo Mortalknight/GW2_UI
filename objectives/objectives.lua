@@ -1,7 +1,7 @@
 local _, GW = ...
 local RoundDec = GW.RoundDec
 local lerp = GW.lerp
-local GetSetting = GW.GetSetting
+
 local CommaValue = GW.CommaValue
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
@@ -14,7 +14,7 @@ local questInfo = {}
 local settings = {}
 
 local function UpdateSettings()
-    settings.objectivesHeight = GetSetting("QuestTracker_pos_height")
+    settings.objectivesHeight = GW.settings.QuestTracker_pos_height
 end
 GW.UpdateObjectivesSettings = UpdateSettings
 
@@ -1258,7 +1258,7 @@ local function LoadQuestTracker()
     )
 
     UpdateSettings()
-    GW.UpdateChallengeModeObjectivesSettings()
+    --GW.UpdateChallengeModeObjectivesSettings()
 
     --ObjectiveTrackerFrame:UnregisterAllEvents()
     ObjectiveTrackerFrame:SetScript("OnUpdate", nil)

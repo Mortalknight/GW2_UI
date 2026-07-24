@@ -1,5 +1,5 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
+
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
@@ -161,9 +161,9 @@ end
 
 local function TogglePlayerFrameASettings()
     if not GwPlayerUnitFrame then return end
-    GwPlayerUnitFrame.altBg:SetShown(GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
-    GwPlayerUnitFrame.classColor = GetSetting("player_CLASS_COLOR")
-    GwPlayerUnitFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
+    GwPlayerUnitFrame.altBg:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
+    GwPlayerUnitFrame.classColor = GW.settings.player_CLASS_COLOR
+    GwPlayerUnitFrame.healthTextSetting = GW.settings.PLAYER_UNIT_HEALTH
 
     updateHealthData(GwPlayerUnitFrame)
     unitFrameData(GwPlayerUnitFrame)
@@ -279,7 +279,7 @@ local function LoadPlayerFrame()
         pagIn:Play()
     end
 
-    if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
+    if not GW.settings.PLAYER_SHOW_PVP_INDICATOR then pvp:Hide() end
 
     --hide unsed things from default target frame
     NewUnitFrame.castingbarBackground:Hide()

@@ -1,5 +1,5 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
+
 local SetSetting = GW.SetSetting
 local setItemLevel = GW.setItemLevel
 
@@ -9,14 +9,14 @@ local MAX_CONTAINER_ITEMS = 36
 local settings = {}
 
 local function UpdateSettings()
-    settings.showItemQualityBorder = GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW")
-    settings.showProfessionBagColor = GetSetting("BAG_PROFESSION_BAG_COLOR")
-    settings.showItemJunkIcon = GetSetting("BAG_ITEM_JUNK_ICON_SHOW")
-    settings.showItemScrapIcon = GetSetting("BAG_ITEM_SCRAP_ICON_SHOW")
-    settings.showItemUpgradeIcon = GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW")
-    settings.showItemItemLevel = GetSetting("BAG_SHOW_ILVL")
-    settings.itemSize = GetSetting("BAG_ITEM_SIZE")
-    settings.separateBags = GetSetting("BAG_SEPARATE_BAGS")
+    settings.showItemQualityBorder = GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW
+    settings.showProfessionBagColor = GW.settings.BAG_PROFESSION_BAG_COLOR
+    settings.showItemJunkIcon = GW.settings.BAG_ITEM_JUNK_ICON_SHOW
+    settings.showItemScrapIcon = GW.settings.BAG_ITEM_SCRAP_ICON_SHOW
+    settings.showItemUpgradeIcon = GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW
+    settings.showItemItemLevel = GW.settings.BAG_SHOW_ILVL
+    settings.itemSize = GW.settings.BAG_ITEM_SIZE
+    settings.separateBags = GW.settings.BAG_SEPARATE_BAGS
 end
 GW.UpdateInventorySettings = UpdateSettings
 
@@ -231,7 +231,7 @@ local function resizeInventory()
     item_size = settings.itemSize
     if item_size > 40 then
         item_size = 40
-        SetSetting("BAG_ITEM_SIZE", 40)
+        GW.SetSetting("BAG_ITEM_SIZE", 40)
         GW.UpdateBankSettings()
         GW.UpdateInventorySettings()
 
@@ -572,7 +572,7 @@ local function onMoved(self, setting, snap_size)
 
     -- store the updated position
     if setting then
-        local pos = GetSetting(setting)
+        local pos = GW.settings[setting]
         if pos then
             wipe(pos)
         else
@@ -582,7 +582,7 @@ local function onMoved(self, setting, snap_size)
         pos.relativePoint = "BOTTOMLEFT"
         pos.xOfs = x
         pos.yOfs = y
-        SetSetting(setting, pos)
+        GW.SetSetting(setting, pos,true)
     end
 
     -- apply our snap sizing, if necessary

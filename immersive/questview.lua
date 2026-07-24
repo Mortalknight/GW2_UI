@@ -1,6 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
+
 local HandleReward = GW.HandleReward
 local Debug = GW.Debug
 local AFP = GW.AddProfiling
@@ -669,7 +669,7 @@ end
 
 function QuestViewMixin:evQuestDetail(questStartItemID)
     if (questStartItemID ~= nil and questStartItemID ~= 0) or QuestIsFromAreaTrigger() then
-        if GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
+        if GW.settings.QUESTTRACKER_ENABLED and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
             AcknowledgeAutoAcceptQuest()
         end
         return

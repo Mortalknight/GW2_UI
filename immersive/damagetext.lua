@@ -513,11 +513,11 @@ local classicGridData = {
 
 local usedColorTable
 local function UpdateSettings()
-    settings.useBlizzardColor = GW.GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR")
-    settings.useCommaFormat = GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT")
-    settings.usedFormat = GW.GetSetting("GW_COMBAT_TEXT_STYLE")
-    settings.classicFormatAnchorPoint = GW.GetSetting("GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR")
-    settings.showHealNumbers = GW.GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS")
+    settings.useBlizzardColor = GW.settings.GW_COMBAT_TEXT_BLIZZARD_COLOR
+    settings.useCommaFormat = GW.settings.GW_COMBAT_TEXT_COMMA_FORMAT
+    settings.usedFormat = GW.settings.GW_COMBAT_TEXT_STYLE
+    settings.classicFormatAnchorPoint = GW.settings.GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR
+    settings.showHealNumbers = GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS
 
     usedColorTable = settings.useBlizzardColor and colorTable.blizzard or colorTable.gw
 end

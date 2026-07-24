@@ -7,7 +7,7 @@ local createCat = GW.CreateCat
 local MapTable = GW.MapTable
 local StrUpper = GW.StrUpper
 local StrLower = GW.StrLower
-local GetSetting = GW.GetSetting
+
 local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton
 
@@ -37,7 +37,7 @@ local function LoadRaidProfile(panel)
         GameTooltip:Show()
     end)
     p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
-    p.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES"))
+    p.buttonRaidPreview:SetEnabled(GW.settings.RAID_FRAMES)
 
     addOption(p, PET, L["Show a separate grid for raid pets"], "RAID_PET_FRAMES", function() GW.ShowRlPopup = true end, nil, {["RAID_FRAMES"] = true})
     addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", function() GW.UpdateGridSettings(); GW.UpdateRaidGridSettings() end, nil, {["RAID_FRAMES"] = true})
@@ -281,7 +281,7 @@ local function LoadRaidPetProfile(panel)
         GameTooltip:Show()
     end)
     p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
-    p.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES") and GetSetting("RAID_PET_FRAMES"))
+    p.buttonRaidPreview:SetEnabled(GW.settings.RAID_FRAMES and GW.settings.RAID_PET_FRAMES)
 
     addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PET", GW.UpdateGridSettings, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PET", function() GW.UpdateGridSettings(); for i = 1, 40 do if _G["GwCompactRaidPetFrame" .. i] then GW.PetGridOnEvent(_G["GwCompactRaidPetFrame" .. i], "UNIT_AURA") end end end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true})
@@ -490,7 +490,7 @@ local function LoadPartyProfile(panel)
         GameTooltip:Show()
     end)
     p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
-    p.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES"))
+    p.buttonRaidPreview:SetEnabled(GW.settings.RAID_FRAMES)
 
     addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_PARTY", function() GW.UpdatePartyGridSettings(); GW.UpdateGridSettings() end, nil, {["RAID_FRAMES"] = true})
     addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_PARTY", GW.UpdateGridSettings, nil, {["RAID_FRAMES"] = true})

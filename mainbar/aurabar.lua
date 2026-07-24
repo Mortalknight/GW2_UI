@@ -1,7 +1,7 @@
 local _, GW = ...
 local Debug = GW.Debug
 local TimeCount = GW.TimeCount
-local GetSetting = GW.GetSetting
+
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
@@ -101,7 +101,7 @@ local function UpdateAura_OnUpdate(self, xpr, elapsed)
         if self.duration < 121 then
             setShortCD(self, xpr, self.duration, self.stackCount)
             if self.duration - remains < 0.1 then
-                if GetSetting("PLAYER_AURA_ANIMATION") then
+                if GW.settings.PLAYER_AURA_ANIMATION then
                     self.agZoomIn:Play()
                 end
             end
@@ -341,11 +341,11 @@ end
 local function UpdateAuraHeader(header, settingName)
     if not header then return end
 
-    local size = tonumber(GW.RoundDec(GetSetting(settingName .. "_ICON_SIZE")))
+    local size = tonumber(GW.RoundDec(GW.settings[settingName .. "_ICON_SIZE"]))
     local aura_tmpl = format("GwAuraSecureTmpl%d", size)
-    local grow_dir = GetSetting(settingName .. "_GrowDirection")
+    local grow_dir = GW.settings[settingName .. "_GrowDirection"]
     local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
-    local wrap_num = header.name == "GW2UIPlayerBuffs" and tonumber(GetSetting("PLAYER_AURA_WRAP_NUM")) or tonumber(GetSetting("PLAYER_AURA_WRAP_NUM_DEBUFF"))
+    local wrap_num = header.name == "GW2UIPlayerBuffs" and tonumber(GW.settings.PLAYER_AURA_WRAP_NUM) or tonumber(GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF)
     if not wrap_num or wrap_num < 1 or wrap_num > 20 then
         wrap_num = 7
     end
@@ -373,10 +373,10 @@ local function UpdateAuraHeader(header, settingName)
         yoff = 50
     end
 
-    header:SetAttribute("sortMethod", GetSetting(settingName .. "_SortMethod"))
-    header:SetAttribute("sortDirection", GetSetting(settingName .. "_SortDir"))
+    header:SetAttribute("sortMethod", GW.settings[settingName .. "_SortMethod"])
+    header:SetAttribute("sortDirection", GW.settings[settingName .. "_SortDir"])
     header:SetAttribute("template", aura_tmpl)
-    header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GetSetting(settingName .. "_Seperate"))))
+    header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GW.settings[settingName .. "_Seperate"])))
     header:SetAttribute("wrapAfter", wrap_num)
     header:SetAttribute("minWidth", (size + 1) * wrap_num)
     header:SetAttribute("minHeight", (size + 1))
@@ -477,7 +477,7 @@ local function loadAuras(lm)
 
     lm:RegisterBuffFrame(hb)
     hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function ()
-        local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
+        local grow_dir = GW.settings.PlayerBuffFrame_GrowDirection
         local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
         if not InCombatLockdown() then
@@ -491,7 +491,7 @@ local function loadAuras(lm)
     hd:Show()
     lm:RegisterDebuffFrame(hd)
     hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function ()
-        local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
+        local grow_dir = GW.settings.PlayerDebuffFrame_GrowDirection
         local anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
         if not InCombatLockdown() then

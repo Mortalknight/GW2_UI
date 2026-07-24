@@ -582,11 +582,11 @@ local function evPlayerLogin(self)
     GW.LoadHoverBinds()
 
     --load some settings
-    GW.UpdateClassColorSetting()
-    GW.UpdateHudSettings()
-    GW.UpdateObjectivesNotificationSettings()
-    GW.UpdateDoddgeBarSettings()
-    GW.UpdateMinimapSystemDataInfoSettings()
+    --GW.UpdateClassColorSetting()
+    --GW.UpdateHudSettings()
+    --GW.UpdateObjectivesNotificationSettings()
+    --GW.UpdateDoddgeBarSettings()
+    --GW.UpdateMinimapSystemDataInfoSettings()
 
     -- load alert settings
     GW.LoadAlertSystem()
@@ -690,7 +690,7 @@ local function evPlayerLogin(self)
 
     if not IsIncompatibleAddonLoadedOrOverride("FloatingCombatText", true) then -- Only touch this setting if no other addon for this is loaded
         C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
-        if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
+        if GW.settings.GW_COMBAT_TEXT_MODE == "GW2" then
             C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
             if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
                 C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
@@ -737,7 +737,7 @@ local function evPlayerLogin(self)
         local hg = GW.LoadHealthGlobe()
         GW.LoadDodgeBar(hg, false)
         --   GW.LoadDragonBar(hg, false)
-    elseif GetSetting("HEALTHGLOBE_ENABLED") and GetSetting("PLAYER_AS_TARGET_FRAME") then
+    elseif GW.settings.HEALTHGLOBE_ENABLED and GW.settings.PLAYER_AS_TARGET_FRAME then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
         --  GW.LoadDragonBar(hg, true)
@@ -755,7 +755,7 @@ local function evPlayerLogin(self)
 
     GW.SetUpExtendedVendor()
 
-    if GetSetting("USE_BATTLEGROUND_HUD") then
+    if GW.settings.USE_BATTLEGROUND_HUD then
         --NYI  GW.LoadBattlegrounds()
     end
 
@@ -849,7 +849,7 @@ local function evPlayerLogin(self)
         GW.LoadPartyFrames()
     end
 
-    if GetSetting("RAID_FRAMES") then
+    if GW.settings.RAID_FRAMES then
         GW.LoadRaidFrames()
         GW.LoadPartyGrid()
         GW.LoadPetGrid()

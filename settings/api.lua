@@ -101,9 +101,9 @@ local function GetExportString(profileName)
     local printableString = Deflate:EncodeForPrint(compressedData)
 
         return encodedData
-    end
-    GW.GetExportString = GetExportString
 end
+GW.GetExportString = GetExportString
+
 
 local function DecodeProfile(dataString)
     local dataType = LibBase64:IsBase64(dataString) and "base64" or strfind(dataString, "{") and "table" or nil

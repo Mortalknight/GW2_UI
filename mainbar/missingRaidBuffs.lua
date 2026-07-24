@@ -1,6 +1,6 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
+
 
 local LibCustomGlow = GW.Libs.CustomGlows
 local ALPHA = 0.3
@@ -9,12 +9,12 @@ local classColor = GW.GWGetClassColor(GW.myclass, true)
 local settings = {}
 
 local function UpdateSettings()
-    settings.invert = GetSetting("MISSING_RAID_BUFF_INVERT")
-    settings.dimmed = GetSetting("MISSING_RAID_BUFF_dimmed")
-    settings.grayedout = GetSetting("MISSING_RAID_BUFF_grayed_out")
-    settings.animated = GetSetting("MISSING_RAID_BUFF_animated")
-    settings.visibility = GetSetting("MISSING_RAID_BUFF")
-    settings.customsId = GetSetting("MISSING_RAID_BUFF_custom_id")
+    settings.invert = GW.settings.MISSING_RAID_BUFF_INVERT
+    settings.dimmed = GW.settings.MISSING_RAID_BUFF_dimmed
+    settings.grayedout = GW.settings.MISSING_RAID_BUFF_grayed_out
+    settings.animated = GW.settings.MISSING_RAID_BUFF_animated
+    settings.visibility = GW.settings.MISSING_RAID_BUFF
+    settings.customsId = GW.settings.MISSING_RAID_BUFF_custom_id
 end
 GW.UpdateMissingRaidBuffSettings = UpdateSettings
 

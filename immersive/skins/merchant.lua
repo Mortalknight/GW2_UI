@@ -1,7 +1,7 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 local constBackdropFrameSmallerBorder = GW.skins.constBackdropFrameSmallerBorder
-local GetSetting = GW.GetSetting
+
 
 local function SkinMerchantFrameItemButton(i)
     local button = _G["MerchantItem" .. i .. "ItemButton"]
@@ -33,7 +33,7 @@ end
 GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
 
 local function LoadMerchantFrameSkin()
-    if not GetSetting("MERCHANT_SKIN_ENABLED") then return end
+    if not GW.settings.MERCHANT_SKIN_ENABLED then return end
 
     --[[
 

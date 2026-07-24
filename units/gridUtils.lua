@@ -1,7 +1,7 @@
 local _, GW = ...
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
-local GetSetting = GW.GetSetting
+
 local SetSetting = GW.SetSetting
 local REALM_FLAGS = GW.REALM_FLAGS
 local nameRoleIcon = GW.nameRoleIcon
@@ -35,52 +35,52 @@ local settings = {
 local settingsEventFrame = CreateFrame("Frame")
 
 local function UpdateSettings()
-    settings.fontEnabled = GetSetting("FONTS_ENABLED")
-    settings.aurasIgnored = GetSetting("AURAS_IGNORED")
-    settings.aurasMissing = GetSetting("AURAS_MISSING")
-    settings.raidDebuffScale = GetSetting("RAIDDEBUFFS_Scale")
-    settings.raidDispelDebuffScale = GetSetting("DISPELL_DEBUFFS_Scale")
-    settings.raidIndicatorIcon = GetSetting("INDICATORS_ICON")
-    settings.raidIndicatorTime = GetSetting("INDICATORS_TIME")
+    settings.fontEnabled = GW.settings.FONTS_ENABLED
+    settings.aurasIgnored = GW.settings.AURAS_IGNORED
+    settings.aurasMissing = GW.settings.AURAS_MISSING
+    settings.raidDebuffScale = GW.settings.RAIDDEBUFFS_Scale
+    settings.raidDispelDebuffScale = GW.settings.DISPELL_DEBUFFS_Scale
+    settings.raidIndicatorIcon = GW.settings.INDICATORS_ICON
+    settings.raidIndicatorTime = GW.settings.INDICATORS_TIME
 
-    settings.raidClassColor.PARTY = GetSetting("RAID_CLASS_COLOR_PARTY")
-    settings.raidClassColor.RAID_PET = GetSetting("RAID_CLASS_COLOR_PET")
-    settings.raidClassColor.RAID = GetSetting("RAID_CLASS_COLOR")
+    settings.raidClassColor.PARTY = GW.settings.RAID_CLASS_COLOR_PARTY
+    settings.raidClassColor.RAID_PET = GW.settings.RAID_CLASS_COLOR_PET
+    settings.raidClassColor.RAID = GW.settings.RAID_CLASS_COLOR
 
-    settings.raidUnitHealthString.PARTY = GetSetting("RAID_UNIT_HEALTH_PARTY")
-    settings.raidUnitHealthString.RAID_PET = GetSetting("RAID_UNIT_HEALTH_PET")
-    settings.raidUnitHealthString.RAID = GetSetting("RAID_UNIT_HEALTH")
+    settings.raidUnitHealthString.PARTY = GW.settings.RAID_UNIT_HEALTH_PARTY
+    settings.raidUnitHealthString.RAID_PET = GW.settings.RAID_UNIT_HEALTH_PET
+    settings.raidUnitHealthString.RAID = GW.settings.RAID_UNIT_HEALTH
 
-    settings.raidUnitFlag.PARTY = GetSetting("RAID_UNIT_FLAGS_PARTY")
-    settings.raidUnitFlag.RAID_PET = GetSetting("RAID_UNIT_FLAGS_PET")
-    settings.raidUnitFlag.RAID = GetSetting("RAID_UNIT_FLAGS")
+    settings.raidUnitFlag.PARTY = GW.settings.RAID_UNIT_FLAGS_PARTY
+    settings.raidUnitFlag.RAID_PET = GW.settings.RAID_UNIT_FLAGS_PET
+    settings.raidUnitFlag.RAID = GW.settings.RAID_UNIT_FLAGS
 
-    settings.raidUnitMarkers.PARTY = GetSetting("RAID_UNIT_MARKERS_PARTY")
-    settings.raidUnitMarkers.RAID_PET = GetSetting("RAID_UNIT_MARKERS_PET")
-    settings.raidUnitMarkers.RAID = GetSetting("RAID_UNIT_MARKERS")
+    settings.raidUnitMarkers.PARTY = GW.settings.RAID_UNIT_MARKERS_PARTY
+    settings.raidUnitMarkers.RAID_PET = GW.settings.RAID_UNIT_MARKERS_PET
+    settings.raidUnitMarkers.RAID = GW.settings.RAID_UNIT_MARKERS
 
-    settings.raidUnitPowerBar.PARTY = GetSetting("RAID_POWER_BARS_PARTY")
-    settings.raidUnitPowerBar.RAID_PET = GetSetting("RAID_POWER_BARS_PET")
-    settings.raidUnitPowerBar.RAID = GetSetting("RAID_POWER_BARS")
+    settings.raidUnitPowerBar.PARTY = GW.settings.RAID_POWER_BARS_PARTY
+    settings.raidUnitPowerBar.RAID_PET = GW.settings.RAID_POWER_BARS_PET
+    settings.raidUnitPowerBar.RAID = GW.settings.RAID_POWER_BARS
 
-    settings.raidAuraTooltipInCombat.PARTY = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_PARTY")
-    settings.raidAuraTooltipInCombat.RAID_PET = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_PET")
-    settings.raidAuraTooltipInCombat.RAID = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT")
+    settings.raidAuraTooltipInCombat.PARTY = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PARTY
+    settings.raidAuraTooltipInCombat.RAID_PET = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PET
+    settings.raidAuraTooltipInCombat.RAID = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT
 
-    settings.raidShowDebuffs.PARTY = GetSetting("RAID_SHOW_DEBUFFS_PARTY")
-    settings.raidShowDebuffs.RAID_PET = GetSetting("RAID_SHOW_DEBUFFS_PET")
-    settings.raidShowDebuffs.RAID = GetSetting("RAID_SHOW_DEBUFFS")
+    settings.raidShowDebuffs.PARTY = GW.settings.RAID_SHOW_DEBUFFS_PARTY
+    settings.raidShowDebuffs.RAID_PET = GW.settings.RAID_SHOW_DEBUFFS_PET
+    settings.raidShowDebuffs.RAID = GW.settings.RAID_SHOW_DEBUFFS
 
-    settings.raidShowOnlyDispelDebuffs.PARTY = GetSetting("RAID_ONLY_DISPELL_DEBUFFS_PARTY")
-    settings.raidShowOnlyDispelDebuffs.RAID_PET = GetSetting("RAID_ONLY_DISPELL_DEBUFFS_PET")
-    settings.raidShowOnlyDispelDebuffs.RAID = GetSetting("RAID_ONLY_DISPELL_DEBUFFS")
+    settings.raidShowOnlyDispelDebuffs.PARTY = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_PARTY
+    settings.raidShowOnlyDispelDebuffs.RAID_PET = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_PET
+    settings.raidShowOnlyDispelDebuffs.RAID = GW.settings.RAID_ONLY_DISPELL_DEBUFFS
 
-    settings.raidShowImportendInstanceDebuffs.PARTY = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY")
-    settings.raidShowImportendInstanceDebuffs.RAID_PET = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET")
-    settings.raidShowImportendInstanceDebuffs.RAID = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
+    settings.raidShowImportendInstanceDebuffs.PARTY = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY
+    settings.raidShowImportendInstanceDebuffs.RAID_PET = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET
+    settings.raidShowImportendInstanceDebuffs.RAID = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF
 
     for _, pos in ipairs(INDICATORS) do
-        settings.raidIndicators[pos] = GetSetting("INDICATOR_" .. pos, true)
+        settings.raidIndicators[pos] = GW.settings["INDICATOR_" .. pos]
     end
 
     missing = FillTable(missing, true, strsplit(",", (settings.aurasMissing:trim():gsub("%s*,%s*", ","))))
@@ -553,7 +553,7 @@ local function onDebuffMouseUp(self, btn)
         local name = UnitDebuff(self:GetParent().unit, self.index, self.filter)
         if name then
             local s = settings.aurasIgnored or ""
-            SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
+            GW.SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
         end
     end
 end
@@ -575,13 +575,13 @@ local function onBuffMouseUp(self, btn)
             local name = GetSpellInfo(self.index)
             if name then
                 local s = (settings.aurasMissing or ""):gsub("%s*,?%s*" .. name .. "%s*,?%s*", ", "):trim(", ")
-                SetSetting("AURAS_MISSING", s)
+                GW.SetSetting("AURAS_MISSING", s)
             end
         else
             local name =  UnitBuff(self:GetParent().unit, self.index)
             if name then
                 local s = settings.aurasIgnored or ""
-                SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
+                GW.SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
             end
         end
     end

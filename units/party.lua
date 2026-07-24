@@ -1,7 +1,7 @@
 local _, GW = ...
 local TimeCount = GW.TimeCount
 local PowerBarColorCustom = GW.PowerBarColorCustom
-local GetSetting = GW.GetSetting
+
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local Bar = GW.Bar
@@ -23,17 +23,17 @@ local GW_PORTRAIT_BACKGROUND = {
 local settings = {}
 
 local function UpdateSettings()
-    settings.showDebuffs = GetSetting("PARTY_SHOW_DEBUFFS")
-    settings.showOnlyDispelDebuffs = GetSetting("PARTY_ONLY_DISPELL_DEBUFFS")
-    settings.showImportendDebuffs = GetSetting("PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
-    settings.debuffScale = GetSetting("RAIDDEBUFFS_Scale")
-    settings.dispelDebuffScale = GetSetting("DISPELL_DEBUFFS_Scale")
-    settings.unitNameString = GetSetting("PARTY_UNIT_HEALTH")
-    settings.showPlayer = GetSetting("PARTY_PLAYER_FRAME")
-    settings.showPets = GetSetting("PARTY_SHOW_PETS")
+    settings.showDebuffs = GW.settings.PARTY_SHOW_DEBUFFS
+    settings.showOnlyDispelDebuffs = GW.settings.PARTY_ONLY_DISPELL_DEBUFFS
+    settings.showImportendDebuffs = GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF
+    settings.debuffScale = GW.settings.RAIDDEBUFFS_Scale
+    settings.dispelDebuffScale = GW.settings.DISPELL_DEBUFFS_Scale
+    settings.unitNameString = GW.settings.PARTY_UNIT_HEALTH
+    settings.showPlayer = GW.settings.PARTY_PLAYER_FRAME
+    settings.showPets = GW.settings.PARTY_SHOW_PETS
 end
 GW.UpdatePartySettings = UpdateSettings
-GW.UpdatePartySettings()
+
 
 local function setPortraitBackground(self, idx)
     self.portraitBackground:SetTexCoord(GW_PORTRAIT_BACKGROUND[idx].l, GW_PORTRAIT_BACKGROUND[idx].r, GW_PORTRAIT_BACKGROUND[idx].t, GW_PORTRAIT_BACKGROUND[idx].b)
@@ -808,7 +808,7 @@ local function LoadPartyFrames()
         GW.UpdateGridSettings()
     end
 
-    if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
+    if GW.settings.RAID_FRAMES and GW.settings.RAID_STYLE_PARTY then
         return
     end
 

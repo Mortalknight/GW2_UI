@@ -1,5 +1,5 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
+
 local SetSetting = GW.SetSetting
 local GetDefault = GW.GetDefault
 local L = GW.L
@@ -312,20 +312,20 @@ local function smallSettings_resetToDefault(self)
         mf.defaultPoint.yOfs
     )
 
-    local new_point = GetSetting(mf.setting)
+    local new_point = GW.settings[mf.setting]
     new_point.point = mf.defaultPoint.point
     new_point.relativePoint = mf.defaultPoint.relativePoint
     new_point.xOfs = mf.defaultPoint.xOfs
     new_point.yOfs = mf.defaultPoint.yOfs
     new_point.hasMoved = false
-    SetSetting(mf.setting, new_point)
+    Gw.SetSetting(mf.setting, new_point)
 
     mf.parent.isMoved = false
     mf.parent:SetAttribute("isMoved", new_point.hasMoved)
 
     --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
     if mf.setting == "PlayerBuffFrame" or mf.setting == "PlayerDebuffFrame" then
-        SetSetting(mf.setting .. "_GrowDirection", "UP")
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_GrowDirection", "UP",true)
     elseif mf.setting == "MicromenuPos" then
         -- Hide/Show BG here
         mf.parent.cf.bg:Show()
@@ -335,22 +335,22 @@ local function smallSettings_resetToDefault(self)
     if mf.optionScaleable then
         local scale
         if mf.mainHudFrame then
-            scale = GetSetting("HUD_SCALE")
+            scale = GW.settings.HUD_SCALE
         else
-            scale = GetDefault(mf.setting .. "_scale")
+            scale = GW.globalDefault.profile[mf.setting .. "_scale"]
         end
         mf:SetScale(scale)
         mf.parent:SetScale(scale)
-        SetSetting(mf.setting .. "_scale", scale)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_scale", scale,true)
         self:GetParent():GetParent().options.scaleSlider.slider:SetValue(scale)
     end
 
     -- Set height back to default
     if mf.optionHeight then
-        local height = GetDefault(mf.setting .. "_height")
+        local height = GW.globalDefault.profile[mf.setting .. "_height"]
         mf:SetHeight(height)
         mf.parent:SetHeight(height)
-        SetSetting(mf.setting .. "_height", height)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_height", height,true)
         self:GetParent():GetParent().options.heightSlider.slider:SetValue(height)
 
         -- update also the matching settings
@@ -394,7 +394,7 @@ local function mover_OnDragStop(self)
 
     -- for layouts: if newPoint is old point, do not update the setting
     if self.savedPoint.point ~= point or self.savedPoint.relativePoint ~= relativePoint or self.savedPoint.xOfs ~= xOfs or self.savedPoint.yOfs ~= yOfs then
-        local new_point = GetSetting(settingsName)
+        local new_point = GW.settings[settingsName]
         new_point.point = point
         new_point.relativePoint = relativePoint
         new_point.xOfs = xOfs and GW.RoundInt(xOfs) or 0
@@ -408,7 +408,7 @@ local function mover_OnDragStop(self)
         end
         self:ClearAllPoints()
         self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
-        SetSetting(settingsName, new_point)
+        GW.updateSettingsFrameSettingsValue(settingsName, new_point,true)
         self.savedPoint = GW.copyTable(nil, new_point)
 
         self.parent.isMoved = new_point.hasMoved
@@ -438,12 +438,12 @@ local function showExtraOptions(self)
     GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider:SetShown(self.optionScaleable)
     GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider:SetShown(self.optionHeight)
     if self.optionScaleable then
-        local scale = GetSetting(self.setting .. "_scale")
+        local scale = GW.settings[self.setting .. "_scale"]
         GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider.slider:SetValue(scale)
         GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider.input:SetNumber(scale)
     end
     if self.optionHeight then
-        local height = GetSetting(self.setting .. "_height")
+        local height = GW.settings[self.setting .. "_height"]
         GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider.slider:SetValue(height)
         GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider.input:SetNumber(height)
     end
@@ -480,7 +480,7 @@ local function sliderValueChange(self)
     moverFrame:SetScale(roundValue)
     moverFrame.parent:SetScale(roundValue)
     self:GetParent().input:SetText(roundValue)
-    SetSetting(moverFrame.setting .."_scale", roundValue)
+    GW.updateSettingsFrameSettingsValue(moverFrame.setting .."_scale", roundValue,true)
 
     moverFrame.parent.isMoved = true
     moverFrame.parent:SetAttribute("isMoved", true)
@@ -497,7 +497,7 @@ local function sliderEditBoxValueChanged(self)
 
     self:GetParent().slider:SetValue(roundValue)
     self:SetText(roundValue)
-    SetSetting(moverFrame.setting .. "_scale", roundValue)
+    GW.updateSettingsFrameSettingsValue(moverFrame.setting .. "_scale", roundValue,true)
 
     moverFrame.parent.isMoved = true
     moverFrame.parent:SetAttribute("isMoved", true)
@@ -509,7 +509,7 @@ local function heightSliderValueChange(self)
     moverFrame:SetHeight(roundValue)
     moverFrame.parent:SetHeight(roundValue)
     self:GetParent().input:SetText(roundValue)
-    SetSetting(moverFrame.setting .."_height", roundValue)
+    GW.updateSettingsFrameSettingsValue(moverFrame.setting .."_height", roundValue,true)
 end
 
 local function heightEditBoxValueChanged(self)
@@ -520,7 +520,7 @@ local function heightEditBoxValueChanged(self)
     if tonumber(roundValue) > 1500 then self:SetText(1500) end
     if tonumber(roundValue) < 1 then self:SetText(1) end
 
-    SetSetting(moverFrame.setting .."_height", roundValue)
+    GW.updateSettingsFrameSettingsValue(moverFrame.setting .."_height", roundValue,true)
 
     moverFrame.parent:SetHeight(roundValue)
     moverFrame:SetHeight(roundValue)
@@ -586,8 +586,8 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf.setting = settingsName
     mf.mainHudFrame = mhf
     mf.frameOptions = frameOptions
-    mf.savedPoint = GetSetting(settingsName)
-    mf.defaultPoint = GetDefault(settingsName)
+    mf.savedPoint = GW.settings[settingsName]
+    mf.defaultPoint = GW.globalDefault.profile[settingsName]
     mf.tags = tags
 
     for _, v in pairs({strsplit(",", tags)}) do
@@ -603,14 +603,17 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
 
     for _, v in pairs(frameOptions) do
         if v == "scaleable" then
-            local scale = GetSetting(settingsName .. "_scale")
+            if GW.settings[settingsName .. "_scale"] == nil then
+                print(settingsName .. "_scale")
+            end
+            local scale = GW.settings[settingsName .. "_scale"]
             mf.parent:SetScale(scale)
             mf:SetScale(scale)
             GW.scaleableFrames[#GW.scaleableFrames + 1] = mf
 
             mf.optionScaleable = true
         elseif v == "height" then
-            local height = GetSetting(settingsName .. "_height")
+            local height = GW.settings[settingsName .. "_height"]
             mf.parent:SetHeight(height)
             mf:SetHeight(height)
 
@@ -673,7 +676,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, tags, size
     --temp to migrate to new isMoved system
     if moveframe.savedPoint.hasMoved == nil then
         moveframe.savedPoint.hasMoved = frame.isMoved
-        SetSetting(settingsName, moveframe.savedPoint)
+        GW.updateSettingsFrameSettingsValue(settingsName, moveframe.savedPoint,true)
     end
 end
 GW.RegisterMovableFrame = RegisterMovableFrame

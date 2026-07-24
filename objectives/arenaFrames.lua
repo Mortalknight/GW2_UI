@@ -8,7 +8,7 @@ local SetClassIcon = GW.SetClassIcon
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
 local nameRoleIcon = GW.nameRoleIcon
-local GetSetting = GW.GetSetting
+
 
 local countArenaFrames = 0
 local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
@@ -188,7 +188,7 @@ GW.AddForProfiling("arenaFrames", "arenaFrame_OnEvent", arenaFrame_OnEvent)
 local function registerFrame(i, container)
     local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerAreanaFrameTemp")
     local unit = "arena" .. i
-    local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
+    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
     local p = yOffset + ((35 * i) - 35)
 
     arenaFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
@@ -267,7 +267,7 @@ GW.AddForProfiling("arenaFrames", "registerFrame", registerFrame)
 
 local function registerPrepFrame(i, container)
     local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFrameTemp")
-    local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
+    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
     local p = yOffset + ((35 * i) - 35)
 
     arenaPrepFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
