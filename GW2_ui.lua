@@ -871,7 +871,7 @@ local function evPlayerLogin(self)
         HideUIPanel(GameMenuFrame)
         --GW.private.GW2_UI_VERSION = GW.VERSION_STRING
     end
-
+    GW.private.GW2_UI_VERSION = GW.VERSION_STRING
     self:SetScript("OnUpdate", gw_OnUpdate)
     GW.UpdateCharData()
 

@@ -80,7 +80,7 @@ local function DatabaseMigration()
     --GW2UI_PRIVATE_LAYOUTS = nil
     --GW2UI_SETTINGS_PROFILES = nil
     --GW2UI_LAYOUTS = nil
-end
+
 GW.DatabaseMigration = DatabaseMigration
 
 

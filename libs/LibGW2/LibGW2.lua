@@ -204,6 +204,6 @@ do
     frame:RegisterEvent("PLAYER_STOPPED_MOVING")
     frame:RegisterEvent("PLAYER_CONTROL_LOST")
     frame:RegisterEvent("PLAYER_CONTROL_GAINED")
-    frame:RegisterUnitEvent("UNIT_AURA", "player")
+   -- frame:RegisterUnitEvent("UNIT_AURA", "player")
     frame:SetScript("OnEvent", HandleEvents)
 end
