@@ -13,9 +13,15 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.14.2", {
+    {GW.Enum.ChangelogType.bug, [=[Talents (Classic Era): fixed a login error introduced with the staged loading; the talent trees are now created lazily once the server has delivered the talent data]=]},
+    {GW.Enum.ChangelogType.change, [=[Talents (Classic/TBC/Wrath/Mists): the talent frame no longer uses global frame lookups - trees, buttons and prerequisite arrows are referenced directly now and on Mists the Blizzard talent buttons for the secure click routing are cached; also removed the unused talent branch array and the dead line blocking logic]=]},
+    {GW.Enum.ChangelogType.change, [=[Spellbook (Classic/TBC/Wrath/Mists): the spellbook no longer uses global frame lookups - tab containers, buttons, headers and the future spells tab are referenced directly now; this also fixes a stale spell group header when the spell list shrinks on Classic and the future spells tab not clearing its previous entries on TBC/Wrath]=]},
+})
+
 addChange("10.14.1", {
     {GW.Enum.ChangelogType.bug, [=[Cast bar: fixed a "table that cannot be accessed while tainted" error from Blizzards overlay casting bar on Retail; the overlay cast bar is now disabled like the other Blizzard cast bars when the GW2 UI cast bar is active, and the cast bar mover is now also killed on Classic Era]=]},
-    {GW.Enum.ChangelogType.bug, [=[Classic Era: fixed "Script ran too long" errors during login on Hardcore realms; the UI setup now runs in two stages on Era - the main part right after the addon has loaded and the Blizzard dependent parts (chat, minimap, action bars, edit mode) on PLAYER_LOGIN, so no single execution exceeds the hardcore script watchdog]=]},
+    {GW.Enum.ChangelogType.bug, [=[Classic Era: fixed "Script ran too long" errors during login on Hardcore realms; the UI setup now runs in stages - on Era the main part right after the addon has loaded, the Blizzard dependent parts (chat, minimap, action bars, edit mode) on PLAYER_LOGIN, and on all clients the Blizzard/addon skins load in their own execution one frame later, so no single execution exceeds the hardcore script watchdog]=]},
 })
 
 addChange("10.14.0", {
