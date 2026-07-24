@@ -317,7 +317,11 @@ local function updateActiveSpec(self)
                     button.tier = row
                     button.selected = talentInfo.selected
                     button:SetID(talentInfo.talentID)
-                    _G["PlayerTalentFrameTalentsTalentRow" .. row .. "Talent" .. index]:SetID(talentInfo.talentID)
+                    -- cache blizzards talent button, we need it for the secure /click routing
+                    if not button.blizzardTalentButton then
+                        button.blizzardTalentButton = _G["PlayerTalentFrameTalentsTalentRow" .. row .. "Talent" .. index]
+                    end
+                    button.blizzardTalentButton:SetID(talentInfo.talentID)
 
                     button:EnableMouse(isActiveSpec and isCurrentSpec)
 

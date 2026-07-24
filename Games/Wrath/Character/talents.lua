@@ -2,7 +2,6 @@
 local GW = select(2, ...)
 -- Default 8 but none uses 8 talent rows in classic
 local MAX_NUM_TALENT_TIERS = 11
-local TALENT_BRANCH_ARRAY = {}
 
 local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
@@ -98,13 +97,17 @@ local function hookTalentButton(talentButton, container, row, index)
     talentButton.points:SetTextColor(1, 1, 1, 1)
 end
 
-local function getArrow(frame, teir, column, i)
-    local n = "GwLegacyTalentLine" .. "-" .. frame .. "-" .. teir .. "-" .. column .. "-" .. i
-    if _G[n] == nil then
-        return CreateFrame("Frame", n, _G["GwLegacyTalentTree" .. frame].treeContainer, "GwLegacyTalentLine")
+local function getArrow(container, teir, column, i)
+    local arrows = container.treeContainer.arrows
+    local key = teir .. "-" .. column .. "-" .. i
+    local arrow = arrows[key]
+    if not arrow then
+        arrow = CreateFrame("Frame", nil, container.treeContainer, "GwLegacyTalentLine")
+        arrows[key] = arrow
+    else
+        arrow:Show()
     end
-    _G[n]:Show()
-    return _G[n]
+    return arrow
 end
 
 local function colorTalentArrow(self, active)
@@ -118,19 +121,20 @@ local function colorTalentArrow(self, active)
     self.right:SetVertexColor(color.r,color.g,color.b)
 end
 
-local function drawLegacyLine(path, frame, teir, column, requirementsMet)
-    local w = _G["GwLegacyTalentTree" .. frame].treeContainer:GetWidth()
-    local h = _G["GwLegacyTalentTree" .. frame].treeContainer:GetHeight()
+local function drawLegacyLine(path, container, teir, column, requirementsMet)
+    local treeContainer = container.treeContainer
+    local w = treeContainer:GetWidth()
+    local h = treeContainer:GetHeight()
     local cTeir = teir
     local cCol = column
 
     for i = 1, #path do
         local x = (w / NUM_TALENT_COLUMNS) * (cCol - 1)
         local y = (h / MAX_NUM_TALENT_TIERS) * (cTeir - 1)
-        local arrow = getArrow(frame, cTeir, cCol, i)
+        local arrow = getArrow(container, cTeir, cCol, i)
 
         arrow:ClearAllPoints()
-        arrow:SetPoint("TOPLEFT", _G["GwLegacyTalentTree" .. frame].treeContainer, "TOPLEFT", x + (arrow:GetWidth() / 4) , -(y + (arrow:GetHeight() / 4)))
+        arrow:SetPoint("TOPLEFT", treeContainer, "TOPLEFT", x + (arrow:GetWidth() / 4) , -(y + (arrow:GetHeight() / 4)))
 
         if path[i].y ~= 0 then
             if path[i].y > 0 then
@@ -151,41 +155,33 @@ local function drawLegacyLine(path, frame, teir, column, requirementsMet)
     end
 end
 
-local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
+local function getLinePath(buttonTier, buttonColumn, tier, column, container, requirementsMet)
     --[[
         Get path to required talent
-        Blocking spells are not implemented as there are none in classic
+        Blocking talents are not implemented as there are none in classic
     ]]
     local path = {}
-    local blocked = false
 
     -- Check to see if are in the same column
     if buttonColumn == column then
         if (buttonTier - tier) > 1 then
-            for i = tier , buttonTier - 1 do
+            for _ = tier, buttonTier - 1 do
                 path[#path + 1] = {x = 0, y = 1}
             end
         else
-            path[#path + 1] = {x = 0, y= 1}
+            path[#path + 1] = {x = 0, y = 1}
         end
-        if not blocked then
-            return drawLegacyLine(path, frame, tier, column, requirementsMet)
-        end
+        return drawLegacyLine(path, container, tier, column, requirementsMet)
     end
 
-    blocked = false
     if buttonTier == tier then
         local left = min(buttonColumn, column)
         local right = max(buttonColumn, column)
 
         -- See if the distance is greater than one space
         if (right - left) > 1 then
-            for i = buttonColumn + 1, column - 1 do
-                if TALENT_BRANCH_ARRAY[frame][i][column].id ~= nil then
-                    blocked = true
-                else
-                    path[#path + 1] = {x = 1, y = 0}
-                end
+            for _ = buttonColumn + 1, column - 1 do
+                path[#path + 1] = {x = 1, y = 0}
             end
         else
             if buttonColumn < column then
@@ -194,17 +190,16 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
                 path[#path + 1] = {x = 1, y = 0}
             end
         end
-        if not blocked then
-            return drawLegacyLine(path, frame, tier, column, requirementsMet)
-        end
+        return drawLegacyLine(path, container, tier, column, requirementsMet)
     end
+
     path[#path + 1] = {x = 1, y = 0}
     path[#path + 1] = {x = 0, y = 1}
 
-    return drawLegacyLine(path, frame, tier, column, requirementsMet)
+    return drawLegacyLine(path, container, tier, column, requirementsMet)
 end
 
-local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesaturated, tierUnlocked, preview, ...)
+local function TalentFrame_SetPrereqs(container, buttonTier, buttonColumn, forceDesaturated, tierUnlocked, preview, ...)
     local requirementsMet = tierUnlocked and not forceDesaturated
 
     for i = 1, select("#", ...), 4 do
@@ -214,30 +209,31 @@ local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesa
             (not preview and not isLearnable) ) then
             requirementsMet = false
         end
-        getLinePath(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
+        getLinePath(buttonTier, buttonColumn, tier, column, container, requirementsMet)
     end
     return requirementsMet
 end
 
-local function CleanUpTalentTrees()
-    wipe(TALENT_BRANCH_ARRAY)
-    for i = 1, GetNumTalentTabs(false, isPetTalents) do
-        TALENT_BRANCH_ARRAY[i] = {}
-        for y = 1, MAX_NUM_TALENT_TIERS do
-            TALENT_BRANCH_ARRAY[i][y] = {}
-            for j = 1, NUM_TALENT_COLUMNS do
-                TALENT_BRANCH_ARRAY[i][y][j] = {id = nil, up = 0, left = 0, right = 0, down = 0, leftArrow = 0, rightArrow = 0, topArrow = 0}
-                local button = _G["GwLegacyTalentTree" .. i .. "Teir" .. y .. "index" .. j]
-                button.talentid = nil
-                button:Hide()
+-- the flat button list is filled tier by tier, so a grid slot maps to (tier - 1) * columns + column
+local function GetTreeButton(container, tier, column)
+    return container.buttons[(tier - 1) * NUM_TALENT_COLUMNS + column]
+end
 
-                for l = 1, 10 do
-                    local line = _G["GwLegacyTalentLine" .. "-" .. i .. "-" .. y .. "-" .. j .. "-" .. l]
-                    if line then
-                        line:Hide()
-                    end
+local function CleanUpTalentTrees(self)
+    if not self.container then return end
+    for i = 1, #self.container do
+        for y = 1, MAX_NUM_TALENT_TIERS do
+            for j = 1, NUM_TALENT_COLUMNS do
+                local button = GetTreeButton(self.container[i], y, j)
+                if button then
+                    button.talentid = nil
+                    button:Hide()
                 end
             end
+        end
+
+        for _, arrow in pairs(self.container[i].treeContainer.arrows) do
+            arrow:Hide()
         end
     end
 end
@@ -264,6 +260,7 @@ end
 
 local function updateTalentTrees(self)
     if InCombatLockdown() then return end
+    if not self.container or not self.container[1] then return end
 
     local activeTalentGroup = C_SpecializationInfo.GetActiveSpecGroup(false, isPetTalents)
     local hasDualSpec = GetNumTalentGroups(false, false) > 1
@@ -309,19 +306,19 @@ local function updateTalentTrees(self)
         local forceDesaturated
         local talentPoints = UpdateTalentPoints()
         local _, name, _, _, _, _, pointsSpent, _, previewPointsSpent = C_SpecializationInfo.GetSpecializationInfo(f, false, isPetTalents, nil, nil, openSpec)
-        local TalentFrame = _G["GwLegacyTalentTree" .. f]
-        TalentFrame.pointsSpent = pointsSpent + previewPointsSpent
+        local container = self.container[f]
+        container.pointsSpent = pointsSpent + previewPointsSpent
 
         if pointsSpent < 1 then
-            TalentFrame.background:SetDesaturated(true)
+            container.background:SetDesaturated(true)
         else
-            TalentFrame.background:SetDesaturated(false)
+            container.background:SetDesaturated(false)
         end
-        TalentFrame.talentPoints = talentPoints
-        TalentFrame.talentFrameId = f
+        container.talentPoints = talentPoints
+        container.talentFrameId = f
 
-        TalentFrame.info.title:SetText(name)
-        TalentFrame.info.points:SetText(pointsSpent)
+        container.info.title:SetText(name)
+        container.info.points:SetText(pointsSpent)
 
         local numTalents = GetNumTalents(f, false, isPetTalents)
         for i = 1, MAX_NUM_TALENTS do
@@ -335,7 +332,8 @@ local function updateTalentTrees(self)
                 local talentInfo = C_SpecializationInfo.GetTalentInfo(talentInfoQuery)
 
                 if talentInfo then
-                    local button = _G["GwLegacyTalentTree" .. f .. "Teir" .. talentInfo.tier .. "index" .. talentInfo.column]
+                    -- talents are indexed in list order, the buttons live in grid order
+                    local button = GetTreeButton(container, talentInfo.tier, talentInfo.column)
                     local displayRank
                     if preview then
                         displayRank = talentInfo.previewRank
@@ -343,7 +341,6 @@ local function updateTalentTrees(self)
                         displayRank = talentInfo.rank
                     end
 
-                    TALENT_BRANCH_ARRAY[f][talentInfo.tier][talentInfo.column].id = i
                     button.icon:SetTexture(talentInfo.icon)
                     button.points:SetText(displayRank .. " / " .. talentInfo.maxRank)
                     button.textBG:Show()
@@ -354,12 +351,12 @@ local function updateTalentTrees(self)
                     button:EnableMouse(true)
 
                     -- If player has no talent points or this is the inactive talent group then show only talents with points in them
-                    forceDesaturated = (TalentFrame.talentPoints <= 0 or not isActiveTalentGroup) and displayRank == 0;
+                    forceDesaturated = (container.talentPoints <= 0 or not isActiveTalentGroup) and displayRank == 0;
                     -- If the player has spent at least 5 talent points in the previous tier
-                    local tierUnlocked = (talentInfo.tier - 1) * (TalentFrame.pet and PET_TALENTS_PER_TIER or PLAYER_TALENTS_PER_TIER) <= TalentFrame.pointsSpent
+                    local tierUnlocked = (talentInfo.tier - 1) * (container.pet and PET_TALENTS_PER_TIER or PLAYER_TALENTS_PER_TIER) <= container.pointsSpent
 
                     local ispassive = not talentInfo.isExceptional
-                    local Prereqs = TalentFrame_SetPrereqs(f, talentInfo.tier, talentInfo.column, forceDesaturated, tierUnlocked, preview, GetTalentPrereqs(f, i, false, isPetTalents, openSpec))
+                    local Prereqs = TalentFrame_SetPrereqs(container, talentInfo.tier, talentInfo.column, forceDesaturated, tierUnlocked, preview, GetTalentPrereqs(f, i, false, isPetTalents, openSpec))
 
                     button.talentID = i
                     button.known = displayRank == talentInfo.maxRank
@@ -400,13 +397,11 @@ local function updateTalentTrees(self)
         end
     end
     -- Clean up unused slots
-    for i = 1, GetNumTalentTabs(false, isPetTalents) do
-        for y = 1, MAX_NUM_TALENT_TIERS do
-            for j = 1, NUM_TALENT_COLUMNS do
-                local button = _G["GwLegacyTalentTree" .. i .. "Teir" .. y .. "index" .. j]
-                if button.talentid == nil then
-                    button:Hide()
-                end
+    for i = 1, #self.container do
+        for y = 1, #self.container[i].buttons do
+            local button = self.container[i].buttons[y]
+            if button.talentid == nil then
+                button:Hide()
             end
         end
     end
@@ -419,12 +414,15 @@ local function loadTalentsFrames(self)
     mask:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg-mask.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
 
+    self.container = {}
+
     for i = 1, GetNumTalentTabs(false, isPetTalents) do
-        TALENT_BRANCH_ARRAY[i] = {}
         local container = CreateFrame("Button", "GwLegacyTalentTree" .. i, self, "GwLegacyTalentTree")
+        self.container[i] = container
+        container.buttons = {}
+        container.treeContainer.arrows = {}
 
         container:SetPoint("TOPLEFT", self, "TOPLEFT", (284 * (i - 1)) + 5, -92)
-        container.spec = i
 
         container.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/legacy/" .. GW.myClassID .. ".png")
         container.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
@@ -435,11 +433,10 @@ local function loadTalentsFrames(self)
         end)
 
         for y = 1, MAX_NUM_TALENT_TIERS do
-            TALENT_BRANCH_ARRAY[i][y] = {}
             for j = 1, NUM_TALENT_COLUMNS do
-                TALENT_BRANCH_ARRAY[i][y][j] = {id = nil, up = 0, left = 0, right = 0, down = 0, leftArrow = 0, rightArrow = 0, topArrow = 0}
                 local talentButton = CreateFrame("Button", "GwLegacyTalentTree" .. i .. "Teir" .. y .. "index" .. j, container.treeContainer, "GwTalentButton")
                 hookTalentButton(talentButton, container.treeContainer, y, j)
+                container.buttons[#container.buttons + 1] = talentButton
             end
         end
     end
@@ -477,7 +474,7 @@ local function LoadTalents(tabContainer)
     talentFrame.bottomBar.petTalentsButton:SetScript("OnClick", function()
         openSpec = 1
         isPetTalents = not isPetTalents
-        CleanUpTalentTrees()
+        CleanUpTalentTrees(talentFrame)
         updateTalentTrees(talentFrame)
     end)
     talentFrame.bottomBar.activateSpecGroup:SetScript("OnClick", function()
