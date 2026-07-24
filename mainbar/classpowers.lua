@@ -523,6 +523,33 @@ local function powerSBlock(self)
 end
 GW.AddForProfiling("classpowers", "powerSBlock", powerSBlock)
 
+
+local function powerIronFur(self)
+    local results
+   
+        results = findBuffs("player", 192081)
+    if results == nil then
+        self.customResourceBar:Hide()
+
+        return
+    end
+    self.customResourceBar:Show()
+    local duration = -1
+    local expires = -1
+    for i = 1, #results do
+        if results[i][4] > expires then
+            expires = results[i][4]
+            duration = results[i][3]
+        end
+    end
+    if expires > 0 then
+        local remainingPrecantage = (expires - GetTime()) / duration
+        local remainingTime = duration * remainingPrecantage
+        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
+    end
+end
+GW.AddForProfiling("classpowers", "powerIronFur", powerIronFur)
+
 local function setWarrior(f)
     if GW.myspec == 2 or GW.myspec == 3 then
         f.background:SetTexture(nil)
@@ -535,7 +562,6 @@ local function setWarrior(f)
         elseif GW.myspec == 3 then -- prot
             -- determine if bolster talent is selected
             setPowerTYpeBolster(f.customResourceBar)
-            f.gw_BolsterSelected = GW.IsSpellTalented(12975)
             f:SetScript("OnEvent", powerSBlock)
             powerSBlock(f)
         end
@@ -1271,7 +1297,7 @@ local function setDruid(f)
             barType = "combo|little_mana"
         elseif form == 5 then
             -- show mana in bear form
-            barType = "mana"
+            barType = "ironfur|little_mana"
         end
     elseif GW.myspec == 4 then -- resto
         if form == 1 then
@@ -1290,6 +1316,20 @@ local function setDruid(f)
         return true
     elseif barType == "combo|little_mana" then
         setComboBar(f)
+        if f.ourPowerBar then
+            setLittleManaBar(f)
+        end
+        return true
+    elseif barType == "ironfur|little_mana" then
+        f.background:SetTexture(nil)
+        f.fill:SetTexture(nil)
+        setPowerTYpeBolster(f.customResourceBar)
+        f:SetScript("OnEvent", powerIronFur)
+        powerIronFur(f)
+        f:RegisterUnitEvent("UNIT_AURA", "player")
+    
+       
+
         if f.ourPowerBar then
             setLittleManaBar(f)
         end
