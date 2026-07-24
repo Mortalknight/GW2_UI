@@ -358,7 +358,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
             local id, name, _, icon, role = C_SpecializationInfo.GetSpecializationInfo(index)
             if id then
                 specs[index] = {}
-                specs[index].name = format("|T%s:14:14:0:0:64:64:4:60:4:60|t %s |cFF888888(%s)|r", icon, name, (role and getglobal(role) or ""))
+                specs[index].name = format("|T%s:14:14:0:0:64:64:4:60:4:60|t %s |cFF888888(%s)|r", icon or "", name or "", (role and getglobal(role) or ""))
                 specs[index].id = id
                 specs[index].idx = index
             end

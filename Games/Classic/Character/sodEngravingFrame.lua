@@ -19,7 +19,7 @@ local function EngravingFrame_UpdateCollectedLabel(self)
 		local known, max = C_Engraving.GetNumRunesKnown(exclusiveFilter);
 
 		if exclusiveFilter then
-			label:SetFormattedText(RUNES_COLLECTED_SLOT, known, max, GetItemInventorySlotInfo(exclusiveFilter));
+			label:SetFormattedText(RUNES_COLLECTED_SLOT, known, max, C_Item.GetItemInventorySlotInfo(exclusiveFilter));
 		else
 			label:SetFormattedText(RUNES_COLLECTED, known, max);
 		end
@@ -86,7 +86,7 @@ local function EngravingFrame_UpdateRuneList(self)
 					currentHeader = currentHeader + 1;
 
 					header.filter = category;
-					header.name:SetText(GetItemInventorySlotInfo(category));
+					header.name:SetText(C_Item.GetItemInventorySlotInfo(category));
 
 					if C_Engraving.HasCategoryFilter(category) then
 						header.expandedIcon:Hide();
@@ -258,7 +258,7 @@ local function SetupFilterDropdown(self)
 	self.dropdown:SetSelectionText(function()
 		local exclusiveFilter = C_Engraving.GetExclusiveCategoryFilter();
 		if exclusiveFilter then
-			return GetItemInventorySlotInfo(exclusiveFilter);
+			return C_Item.GetItemInventorySlotInfo(exclusiveFilter);
 		end
 
 		if C_Engraving.IsEquippedFilterEnabled() then
@@ -274,7 +274,7 @@ local function SetupFilterDropdown(self)
 		rootDescription:CreateRadio(EQUIPPED_RUNES, IsEquippedRunesSelected, SetFilterSelected, EQUIPPED_RUNES_CATEGORY);
 
 		for _, category in ipairs(C_Engraving.GetRuneCategories(false, true)) do
-			rootDescription:CreateRadio(GetItemInventorySlotInfo(category), IsCategorySelected, SetFilterSelected, category);
+			rootDescription:CreateRadio(C_Item.GetItemInventorySlotInfo(category), IsCategorySelected, SetFilterSelected, category);
 		end
 	end);
 end
