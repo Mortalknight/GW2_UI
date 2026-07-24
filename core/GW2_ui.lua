@@ -403,41 +403,8 @@ local function evAddonLoaded(self, loadedAddonName)
     GW.HasDeModal = enabled
     Debug("DeModal status:", GW.HasDeModal)
 
-    -- TODO: moving skinning from player login to here
     -- Skins: BLizzard & Addons
     GW.PreloadStatusBarMaskTextures()
-    GW.LoadWorldMapSkin()
-    GW.LoadFlightMapSkin()
-    GW.LoadMacroOptionsSkin()
-
-    if GW.Retail then
-        GW.LoadEncounterJournalSkin()
-        GW.LoadAchivementSkin()
-        GW.LoadAlliedRacesUISkin()
-        GW.LoadBarShopUISkin()
-        GW.LoadChromieTimerSkin()
-        GW.LoadCovenantSanctumSkin()
-        GW.LoadDeathRecapSkin()
-        GW.LoadItemUpgradeSkin()
-        GW.LoadLFGSkin()
-        GW.LoadOrderHallTalentFrameSkin()
-        GW.LoadSoulbindsSkin()
-        GW.LoadWeeklyRewardsSkin()
-        GW.LoadPerksProgramSkin()
-        GW.LoadAdventureMapSkin()
-        GW.LoadPlayerSpellsSkin()
-        GW.LoadAuctionHouseSkin()
-        GW.LoadBattlefieldMapSkin()
-        GW.LoadMajorFactionsFrameSkin()
-        GW.LoadDamageMeterSkin()
-        GW.LoadCalendarSkin()
-    end
-
-    if not (GW.Classic or GW.TBC or GW.Wrath) then
-        GW.LoadSocketUISkin()
-        GW.LoadInspectFrameSkin()
-    end
-
 end
 
 
@@ -608,43 +575,6 @@ local function evPlayerLogin(self)
             settingsButton.layoutIndex = lastLayoutIndex + 1
             settingsButton.topPadding = 20
         end)
-    end
-
-    -- Skins: BLizzard & Addons
-    GW.LoadStaticPopupSkin()
-    GW.LoadBNToastSkin()
-    GW.LoadDropDownSkin()
-    GW.LoadReadyCheckSkin()
-    GW.LoadMiscBlizzardFrameSkins()
-    GW.LoadAddonListSkin()
-    GW.LoadHelperFrameSkin()
-    GW.LoadGossipSkin()
-    GW.LoadTimeManagerSkin()
-    GW.LoadMerchantFrameSkin()
-    GW.LoadLootFrameSkin()
-    GW.LoadDetailsSkin()
-    GW.AddMasqueSkin()
-    GW.SkinAndEnhanceColorPicker()
-    GW.AddCoordsToWorldMap()
-
-    if GW.Retail then
-        GW.LoadTalkingHeadSkin()
-        GW.LoadDressUpFrameSkin()
-        GW.LoadExpansionLadningPageSkin()
-        GW.LoadGenericTraitFrameSkin()
-        GW.LoadCooldownManagerSkin()
-        GW.LoadImmersionAddonSkin()
-        GW.LoadAuctionatorAddonSkin()
-        GW.LoadTSMAddonSkin()
-    else
-        GW.LoadQuestLogFrameSkin()
-        GW.LoadQuestTimersSkin()
-    end
-
-    if not (GW.Classic or GW.TBC) then
-        GW.MakeAltPowerBarMovable()
-        GW.LoadLFGSkins()
-        GW.LoadMailSkin()
     end
 
     if GW.Mists or GW.Retail or GW.TBC or GW.Wrath then
@@ -832,10 +762,6 @@ local function evPlayerLogin(self)
     -- create new microbuttons
     GW.LoadMicroMenu()
 
-    if GW.Retail then
-        GW.LoadOrderBar()
-    end
-
     if GW.settings.PARTY_FRAMES then
         GW.LoadPartyFrames()
     end
@@ -918,6 +844,85 @@ local function evPlayerLoginLate()
     GW.UpdateHudScale()
 end
 
+-- third login stage: all blizzard and addon skins load in their own execution one frame after
+-- PLAYER_LOGIN via C_Timer, so the skinning gets its own script time budget and can not push the
+-- login setup over the hardcore script watchdog
+local skinsLoaded = false
+local function evLoadSkins()
+    if skinsLoaded or not loaded then
+        return
+    end
+    skinsLoaded = true
+
+    GW.LoadWorldMapSkin()
+    GW.LoadFlightMapSkin()
+    GW.LoadMacroOptionsSkin()
+
+    GW.LoadStaticPopupSkin()
+    GW.LoadBNToastSkin()
+    GW.LoadDropDownSkin()
+    GW.LoadReadyCheckSkin()
+    GW.LoadMiscBlizzardFrameSkins()
+    GW.LoadAddonListSkin()
+    GW.LoadHelperFrameSkin()
+    GW.LoadGossipSkin()
+    GW.LoadTimeManagerSkin()
+    GW.LoadMerchantFrameSkin()
+    GW.LoadLootFrameSkin()
+    GW.LoadDetailsSkin()
+    GW.AddMasqueSkin()
+    GW.SkinAndEnhanceColorPicker()
+    GW.AddCoordsToWorldMap()
+
+    if GW.Retail then
+        GW.LoadTalkingHeadSkin()
+        GW.LoadDressUpFrameSkin()
+        GW.LoadExpansionLadningPageSkin()
+        GW.LoadGenericTraitFrameSkin()
+        GW.LoadCooldownManagerSkin()
+        GW.LoadImmersionAddonSkin()
+        GW.LoadAuctionatorAddonSkin()
+        GW.LoadTSMAddonSkin()
+
+        GW.LoadOrderBar()
+
+        GW.LoadEncounterJournalSkin()
+        GW.LoadAchivementSkin()
+        GW.LoadAlliedRacesUISkin()
+        GW.LoadBarShopUISkin()
+        GW.LoadChromieTimerSkin()
+        GW.LoadCovenantSanctumSkin()
+        GW.LoadDeathRecapSkin()
+        GW.LoadItemUpgradeSkin()
+        GW.LoadLFGSkin()
+        GW.LoadOrderHallTalentFrameSkin()
+        GW.LoadSoulbindsSkin()
+        GW.LoadWeeklyRewardsSkin()
+        GW.LoadPerksProgramSkin()
+        GW.LoadAdventureMapSkin()
+        GW.LoadPlayerSpellsSkin()
+        GW.LoadAuctionHouseSkin()
+        GW.LoadBattlefieldMapSkin()
+        GW.LoadMajorFactionsFrameSkin()
+        GW.LoadDamageMeterSkin()
+        GW.LoadCalendarSkin()
+    else
+        GW.LoadQuestLogFrameSkin()
+        GW.LoadQuestTimersSkin()
+    end
+
+    if not (GW.Classic or GW.TBC) then
+        GW.MakeAltPowerBarMovable()
+        GW.LoadLFGSkins()
+        GW.LoadMailSkin()
+    end
+
+    if not (GW.Classic or GW.TBC or GW.Wrath) then
+        GW.LoadSocketUISkin()
+        GW.LoadInspectFrameSkin()
+    end
+end
+
 
 -- generic event router
 local function gw_OnEvent(self, event, ...)
@@ -926,6 +931,8 @@ local function gw_OnEvent(self, event, ...)
         evPlayerLogin(self)
         -- the blizzard dependent parts always run here, blizzard is not fully loaded before PLAYER_LOGIN
         evPlayerLoginLate()
+        -- skins load one frame later in their own execution with a fresh script time budget
+        C_Timer.After(0, evLoadSkins)
     elseif event == "UI_SCALE_CHANGED" then
         C_Timer.After(0, evUiScaleChanged) -- We need one frame time for setting the cvar values
     elseif event == "PLAYER_LEAVING_WORLD" then
