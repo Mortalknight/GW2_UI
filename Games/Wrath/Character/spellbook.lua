@@ -2,6 +2,8 @@
 local GW = select(2, ...)
 local L = GW.L
 
+local spellbookFrame, unknownFrame
+
 local function SpellButton_OnModifiedClick(self)
     local slot = self.spellbookIndex
     local book = self.booktype
@@ -57,7 +59,7 @@ local function spell_buttonOnEnter(self)
 end
 
 local function spellbookButton_onEvent(self)
-    if not GwSpellbook:IsShown() or not self.cooldown or not self.spellId then return end
+    if not spellbookFrame:IsShown() or not self.cooldown or not self.spellId then return end
 
     local start, duration, enable, modRate = GetSpellCooldown(self.spellId)
 
@@ -393,32 +395,31 @@ local function setUpPaging(self, targetPage)
     end
 end
 
-local UNKNOW_SPELL_MAX_INDEX = 0
 local function getUnknownSpellItem(index)
-    if _G["GwSpellbookUnknownSpell"..index]~=nil then
-        return _G["GwSpellbookUnknownSpell"..index]
+    local f = unknownFrame.spellItems[index]
+    if f then
+        return f
     end
 
-    UNKNOW_SPELL_MAX_INDEX = UNKNOW_SPELL_MAX_INDEX + 1;
-
-    local f = CreateFrame("Button","GwSpellbookUnknownSpell"..index, GwSpellbookUnknown.container,"GwSpellbookUnknownSpell")
+    f = CreateFrame("Button", nil, unknownFrame.container, "GwSpellbookUnknownSpell")
     local mask = UIParent:CreateMaskTexture()
     mask:SetPoint("CENTER", f, 'CENTER', 0, 0)
     mask:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_border.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(40, 40)
 
     f.mask = mask
+    unknownFrame.spellItems[index] = f
     return f
 end
-local UNKNOW_SPELL_CONTAINER_MAX_INDEX = 0
 local function getUnknownSpellContainer(index)
-    if _G["GwUnknownSpellCat" .. index] then
-        return _G["GwUnknownSpellCat" .. index]
+    local category = unknownFrame.categories[index]
+    if category then
+        return category
     end
 
-    UNKNOW_SPELL_CONTAINER_MAX_INDEX = UNKNOW_SPELL_CONTAINER_MAX_INDEX + 1
-
-    return CreateFrame("Button", "GwUnknownSpellCat" .. index, GwSpellbookUnknown.container, "GwUnknownSpellCat")
+    category = CreateFrame("Button", nil, unknownFrame.container, "GwUnknownSpellCat")
+    unknownFrame.categories[index] = category
+    return category
 end
 local function setUnknowSpellButton(self, icon, spellID, rank, ispassive, level, money)
     self.icon:SetTexture(icon)
@@ -553,15 +554,14 @@ local function filterUnknownSpell(spellData)
 end
 
 local function updateUnknownTab()
-    UNKNOW_SPELL_MAX_INDEX = 0
-    for i = 1,UNKNOW_SPELL_MAX_INDEX do
-        _G["GwSpellbookUnknownSpell" .. i]:Hide()
+    for i = 1, #unknownFrame.spellItems do
+        unknownFrame.spellItems[i]:Hide()
     end
-    for i = 1,UNKNOW_SPELL_CONTAINER_MAX_INDEX do
-        _G["GwUnknownSpellCat" .. i]:Hide()
+    for i = 1, #unknownFrame.categories do
+        unknownFrame.categories[i]:Hide()
     end
-    GwSpellbookUnknown.slider:SetMinMaxValues(0, 0)
-    GwSpellbookUnknown.container.headers = {}
+    unknownFrame.slider:SetMinMaxValues(0, 0)
+    unknownFrame.container.headers = {}
 
     local SPELL_INDEX = 1
     local HEADER_INDEX = 1
@@ -599,7 +599,7 @@ local function updateUnknownTab()
             if i > GW.mylevel or not header then
                 lastHeader= header
                 header = getUnknownSpellContainer(HEADER_INDEX)
-                GwSpellbookUnknown.container.headers[#GwSpellbookUnknown.container.headers + 1] = header
+                unknownFrame.container.headers[#unknownFrame.container.headers + 1] = header
                 header:Show()
                 header:SetHeight(100)
                 x = 10
@@ -632,7 +632,7 @@ local function updateUnknownTab()
                 if lastHeader then
                     header:SetPoint("TOPLEFT", lastHeader, "BOTTOMLEFT", 0, -2)
                 else
-                    header:SetPoint("TOPLEFT", GwSpellbookUnknown.container, "TOPLEFT", 1, -((100 * (HEADER_INDEX - 2)) + 20))
+                    header:SetPoint("TOPLEFT", unknownFrame.container, "TOPLEFT", 1, -((100 * (HEADER_INDEX - 2)) + 20))
                 end
 
                 if i <= GW.mylevel then
@@ -654,27 +654,27 @@ local function updateUnknownTab()
     end
 
     local h = 20
-    for i = 1, #GwSpellbookUnknown.container.headers do
-        h = h + GwSpellbookUnknown.container.headers[i]:GetHeight() + 2
+    for i = 1, #unknownFrame.container.headers do
+        h = h + unknownFrame.container.headers[i]:GetHeight() + 2
     end
 
-    if #GwSpellbookUnknown.container.headers < 1 then
-        GwSpellbookUnknown.filltext:Show()
+    if #unknownFrame.container.headers < 1 then
+        unknownFrame.filltext:Show()
     else
-        GwSpellbookUnknown.filltext:Hide()
+        unknownFrame.filltext:Hide()
     end
 
-    if h <= GwSpellbookUnknown.container:GetHeight() then
-        GwSpellbookUnknown.slider:Hide()
-        GwSpellbookUnknown.ScrollButtonUp:Hide()
-        GwSpellbookUnknown.ScrollButtonDown:Hide()
+    if h <= unknownFrame.container:GetHeight() then
+        unknownFrame.slider:Hide()
+        unknownFrame.ScrollButtonUp:Hide()
+        unknownFrame.ScrollButtonDown:Hide()
     else
-        GwSpellbookUnknown.slider:Show()
-        GwSpellbookUnknown.ScrollButtonUp:Show()
-        GwSpellbookUnknown.ScrollButtonDown:Show()
-        GwSpellbookUnknown.slider.thumb:SetHeight((GwSpellbookUnknown.container:GetHeight() / h) * GwSpellbookUnknown.slider:GetHeight())
-        GwSpellbookUnknown.slider:SetMinMaxValues(0, math.max(0, h - GwSpellbookUnknown.container:GetHeight()))
-        GwSpellbookUnknown.slider:SetValue(0)
+        unknownFrame.slider:Show()
+        unknownFrame.ScrollButtonUp:Show()
+        unknownFrame.ScrollButtonDown:Show()
+        unknownFrame.slider.thumb:SetHeight((unknownFrame.container:GetHeight() / h) * unknownFrame.slider:GetHeight())
+        unknownFrame.slider:SetMinMaxValues(0, math.max(0, h - unknownFrame.container:GetHeight()))
+        unknownFrame.slider:SetValue(0)
     end
 end
 
@@ -873,6 +873,7 @@ end
 
 local function LoadSpellBook(tabContainer)
     local spellBook = CreateFrame("Frame", "GwSpellbook", tabContainer, "GwSpellbook")
+    spellbookFrame = spellBook
     local menu = CreateFrame("Frame", "GwSpellbookMenu", spellBook, "GwSpellbookMenu")
 
     spellBook:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
@@ -981,11 +982,14 @@ local function LoadSpellBook(tabContainer)
         spellBook.container[tab].headerFrame = {}
     end
 
-    local container = CreateFrame('ScrollFrame', 'GwSpellbookUnknown', GwSpellbook, 'GwSpellbookUnknown')
-    local menuItem = CreateFrame('Button', 'GwspellbookTab6', GwSpellbookMenu, 'GwspellbookTab')
+    local container = CreateFrame('ScrollFrame', 'GwSpellbookUnknown', spellBook, 'GwSpellbookUnknown')
+    unknownFrame = container
+    container.spellItems = {}
+    container.categories = {}
+    local menuItem = CreateFrame('Button', 'GwspellbookTab6', menu, 'GwspellbookTab')
     container.title:SetText(L["Future Spells"])
     container:Hide()
-    menuItem:SetPoint("TOPLEFT", GwSpellbookMenu, "TOPLEFT", 0, -menuItem:GetHeight() * 5)
+    menuItem:SetPoint("TOPLEFT", menu, "TOPLEFT", 0, -menuItem:GetHeight() * 5)
     menuItem.title:GwSetFontTemplate(DAMAGE_TEXT_FONT, GW.Enum.TextSizeType.Normal, "OUTLINE")
     menuItem.title:SetTextColor(0.7, 0.7, 0.5, 1)
     menuItem.title:SetText(L["Future Spells"])

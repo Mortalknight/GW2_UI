@@ -1,6 +1,8 @@
 ---@class GW2
 local GW = select(2, ...)
 
+local spellbookFrame
+
 local function SpellButton_OnModifiedClick(self)
     local slot = self.spellbookIndex
     local book = self.booktype
@@ -56,7 +58,7 @@ local function spell_buttonOnEnter(self)
 end
 
 local function spellbookButton_onEvent(self)
-    if not GwSpellbook:IsShown() or not self.cooldown or not self.spellId then return end
+    if not spellbookFrame:IsShown() or not self.cooldown or not self.spellId then return end
 
     local start, duration, enable, modRate = GetSpellCooldown(self.spellId)
 
@@ -560,6 +562,7 @@ end
 
 local function LoadSpellBook(tabContainer)
     local spellBook = CreateFrame("Frame", "GwSpellbook", tabContainer, "GwSpellbook")
+    spellbookFrame = spellBook
     local menu = CreateFrame("Frame", "GwSpellbookMenu", spellBook, "GwSpellbookMenu")
 
 	spellBook:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
