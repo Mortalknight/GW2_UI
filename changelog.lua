@@ -13,6 +13,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.14.3", {
+    {GW.Enum.ChangelogType.bug, [=[Bags (Classic/TBC/Wrath/Mists): fixed "SetPoint would result in anchor family connection" errors after opening the bags multiple times; the taken container item buttons are reset to a single clean anchor right away, since Blizzards container code only adds anchor points and the leftover mixed anchors bridged our bag frames with the container frames]=]},
+    {GW.Enum.ChangelogType.bug, [=[Bags (Classic Era): the bag slot buttons sit above the keyring button again; Blizzards new bags bar relayouts the backpack button on login and on edit mode updates and pulled it out of our bag bar]=]},
+})
+
 addChange("10.14.2", {
     {GW.Enum.ChangelogType.bug, [=[Talents (Classic Era): fixed a login error introduced with the staged loading; the talent trees are now created lazily once the server has delivered the talent data]=]},
     {GW.Enum.ChangelogType.change, [=[Talents (Classic/TBC/Wrath/Mists): the talent frame no longer uses global frame lookups - trees, buttons and prerequisite arrows are referenced directly now and on Mists the Blizzard talent buttons for the secure click routing are cached; also removed the unused talent branch array and the dead line blocking logic]=]},
