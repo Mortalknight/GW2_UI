@@ -60,16 +60,16 @@ local function CreateSlotStrings()
             local slot = _G[s]
             local x, z, justify = GetInspectPoints(i)
 
-        slot.enchantText = slot:CreateFontString(nil, "OVERLAY")
-        if tbl.id >= 12 then
-            slot.enchantText:SetSize(40, 30)
-            slot.enchantText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -4)
-        else
-            slot.enchantText:SetJustifyH("LEFT")
-            slot.enchantText:SetSize(100, 30)
-            slot.enchantText:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, nil, -2)
-        end
-        slot.enchantText:SetPoint(justify, slot, x + (justify == "BOTTOMLEFT" and 5 or 0), z)
+            slot.enchantText = slot:CreateFontString(nil, "OVERLAY")
+            if i ~= 1 and i ~= 3 and i ~= 16 and i ~= 17 and (i < 5 or i > 10) then
+                slot.enchantText:SetSize(40, 30)
+                slot.enchantText:SetFont(UNIT_NAME_FONT, 8, "OUTLINE")
+            else
+                slot.enchantText:SetJustifyH("LEFT")
+                slot.enchantText:SetSize(100, 30)
+                slot.enchantText:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
+            end
+            slot.enchantText:SetPoint(justify, slot, x + (justify == "BOTTOMLEFT" and 5 or 0), z)
 
         slot.itemlevel:GwSetFontTemplate(UNIT_NAME_FONT, GW.TextSizeType.SMALL, "THINOUTLINE")
 

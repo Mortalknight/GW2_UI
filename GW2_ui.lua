@@ -593,7 +593,7 @@ local function evPlayerLogin(self)
     end
 
     -- Create Warning Prompt
-    GW.CreateWarningPrompt()
+   -- GW.CreateWarningPrompt()
 
     -- load alert settings
     GW.LoadAlertSystem()
