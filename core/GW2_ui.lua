@@ -676,8 +676,6 @@ local function evPlayerLogin(self)
         CharacterBag3Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
     end
 
-    GW.SetUpExtendedVendor()
-
     if GW.Retail and GW.settings.USE_BATTLEGROUND_HUD then
         GW.LoadBattlegrounds()
     end
@@ -868,6 +866,7 @@ local function evLoadSkins()
     GW.LoadGossipSkin()
     GW.LoadTimeManagerSkin()
     GW.LoadMerchantFrameSkin()
+    GW.SetUpExtendedVendor()
     GW.LoadLootFrameSkin()
     GW.LoadDetailsSkin()
     GW.AddMasqueSkin()

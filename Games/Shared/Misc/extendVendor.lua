@@ -49,7 +49,7 @@ local function UpdateMerchantPositions()
 end
 
 
-local function SetUpExtendedVendor()
+function GW.SetUpExtendedVendor()
     if C_AddOns.IsAddOnLoaded("ExtVendor") or C_AddOns.IsAddOnLoaded("Krowi_MerchantFrameExtended") or C_AddOns.IsAddOnLoaded("Krowi_ExtendedVendorUI") or GW.settings.EXTENDED_VENDOR_NUM_PAGES == 1 then
         return
     end
@@ -78,4 +78,3 @@ local function SetUpExtendedVendor()
     hooksecurefunc("MerchantFrame_UpdateMerchantInfo", UpdateMerchantPositions)
     hooksecurefunc("MerchantFrame_UpdateBuybackInfo", UpdateBuybackPositions)
 end
-GW.SetUpExtendedVendor = SetUpExtendedVendor
