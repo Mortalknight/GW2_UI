@@ -378,6 +378,11 @@ local function takeItemButtons(p, bag_id)
         local item = _G[iname .. i]
         if item then
             item:SetParent(cf)
+            -- reset to a single neutral anchor right away: blizzards ContainerFrame_GenerateFrame only
+            -- adds anchor points without clearing, so leftover mixed anchors bridge our frames with the
+            -- container frames and its next SetPoint fails with "anchor family connection" errors
+            item:ClearAllPoints()
+            item:SetPoint("TOPLEFT", cf, "TOPLEFT", 0, 0)
             item.gw_owner = p
             cf.gw_items[i] = item
         end

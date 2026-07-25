@@ -192,22 +192,6 @@
         </Frames>
     </Frame>
 
-    <CheckButton name="GwBackpackBagTemplate" inherits="BagSlotButtonTemplate" virtual="true">
-        <Size x="28" y="28"></Size>
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture parentKey="gwBackdrop" file="Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop.png">
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"/>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-    </CheckButton>
-
     <Button name="GwKeyRingButtonTemp" virtual="true">
         <Size x="28" y="28"></Size>
         <Layers>

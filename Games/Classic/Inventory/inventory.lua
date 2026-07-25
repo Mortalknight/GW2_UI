@@ -1,6 +1,8 @@
 ---@class GW2
 local GW = select(2, ...)
 
+local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
+
 BAG_FILTER_LABELS = {
     [LE_BAG_FILTER_FLAG_EQUIPMENT] = BAG_FILTER_EQUIPMENT,
     [LE_BAG_FILTER_FLAG_CONSUMABLES] = BAG_FILTER_CONSUMABLES,
@@ -420,6 +422,11 @@ local function takeItemButtons(p, bag_id)
         local item = _G[iname .. i]
         if item then
             item:SetParent(cf)
+            -- reset to a single neutral anchor right away: blizzards ContainerFrame_GenerateFrame only
+            -- adds anchor points without clearing, so leftover mixed anchors bridge our frames with the
+            -- container frames and its next SetPoint fails with "anchor family connection" errors
+            item:ClearAllPoints()
+            item:SetPoint("TOPLEFT", cf, "TOPLEFT", 0, 0)
             item.gw_owner = p
             cf.gw_items[i] = item
         end
@@ -427,8 +434,9 @@ local function takeItemButtons(p, bag_id)
 end
 
 
-local function reskinBagBar(b)
+local function reskinBagBar(b, ha)
     local bag_size = 28
+    local highlightAlpha = ha and ha or 0
 
     b:SetSize(bag_size, bag_size)
     b.tooltipText = BANK_BAG
@@ -442,15 +450,22 @@ local function reskinBagBar(b)
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b.icon:SetAlpha(0.75)
+    b.icon:Show()
 
     local norm = b:GetNormalTexture()
     norm:SetTexture(nil)
 
     b.IconBorder:SetAllPoints(b)
-    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+    b.IconBorder:SetTexture(BORDER_TEXTURE)
+    hooksecurefunc(b.IconBorder, "SetTexture", function()
+        local t = b.IconBorder:GetTexture()
+        if t and t > 0 and t ~= BORDER_TEXTURE then
+            b.IconBorder:SetTexture(BORDER_TEXTURE)
+        end
+    end)
 
     local high = b:GetHighlightTexture()
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    high:SetTexture(BORDER_TEXTURE)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
     high:SetSize(bag_size, bag_size)
@@ -458,7 +473,7 @@ local function reskinBagBar(b)
     high:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
 
     if b.SlotHighlightTexture then
-        b.SlotHighlightTexture:SetAlpha(0)
+        b.SlotHighlightTexture:SetAlpha(highlightAlpha)
         b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
     end
 end
@@ -739,6 +754,8 @@ local function LoadInventory()
     _G["BINDING_HEADER_GW2UI_INVENTORY_BINDINGS"] = INVENTORY_TOOLTIP
     _G["BINDING_NAME_BAG_SORT"] = BAG_CLEANUP_BAGS
     _G["BINDING_NAME_BANK_SORT"] = BAG_CLEANUP_BANK
+
+    BagsBar:GwKillEditMode()
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
     hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)

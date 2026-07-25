@@ -6,6 +6,8 @@ local UpdateMoney = GW.UpdateMoney
 local EnableTooltip = GW.EnableTooltip
 local inv
 
+local NUM_TOTAL_EQUIPPED_BAG_SLOTS = NUM_TOTAL_EQUIPPED_BAG_SLOTS or 5
+
 local function setBagHeaders(frame)
     for i = 1, 5 do
         local customBagHeaderName = GW.settings["BAG_HEADER_NAME" .. i]
@@ -190,21 +192,20 @@ local function rescanBagContainers(f)
     updateBagContainers(f)
 end
 
-
 -- draws the backpack bag slots in the correct order
 local function setBagBarOrder(f)
-    local x, y = -40, nil
+    local x = -40
     local bag_size = 28
     local bag_padding = 4
     local rev = GW.settings.BAG_REVERSE_SORT
-    if rev then
-        y = 5 - ((bag_size + bag_padding) * NUM_BAG_SLOTS)
-    else
-        y = 5
-    end
+    local y = rev and (NUM_TOTAL_EQUIPPED_BAG_SLOTS - ((bag_size + bag_padding) * NUM_TOTAL_EQUIPPED_BAG_SLOTS)) or NUM_TOTAL_EQUIPPED_BAG_SLOTS
 
-    for bag_idx = BACKPACK_CONTAINER, NUM_BAG_SLOTS  do
+    f.setBagBarOrderInProgress = true
+
+    for bag_idx = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         local b = f.bags[bag_idx]
+        b.ClearAllPoints = nil
+        b.SetPoint = nil
         b:ClearAllPoints()
         b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
         if rev then
@@ -212,10 +213,13 @@ local function setBagBarOrder(f)
         else
             y = y - bag_size - bag_padding
         end
+        b.ClearAllPoints = GW.NoOp
+        b.SetPoint = GW.NoOp
+        b:Show()
     end
-    return x, y
-end
 
+    f.setBagBarOrderInProgress = false
+end
 
 local function bag_OnClick(self, button)
     -- on left click, ensure that the bag stays open despite default toggle behavior
@@ -247,30 +251,15 @@ local function createBagBar(f)
             bp.Count:SetText(bp.freeSlots)
         end
     )
+    SetItemButtonQuality(bp, 1, nil)
 
     -- create bag slot buttons for equippable bags
-    local cb0_id = CharacterBag0Slot:GetID()
-    local getInvId = function(self)
-        local inv_id, _ = GetInventorySlotInfo(strsub(self:GetName(), 10))
-        return inv_id
-    end
     for bag_idx = 1, NUM_BAG_SLOTS do
-        -- this name MUST have a 9-letter prefix and match the style "CharacterBag0Slot"
-        -- because of hard-coded string parsing in PaperDollItemSlotButton_OnLoad
-        local name = "GwInvntry" .. "Bag" .. (bag_idx - 1) .. "Slot"
-        local b = CreateFrame("CheckButton", name, f, "GwBackpackBagTemplate")
-
-        -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
-        -- The ID set here is NOT the usual bag_id; rather it is an offset from the
-        -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
-        b:SetID(cb0_id + bag_idx - 1)
-        -- unlike BankItemButtonBagTemplate, we must provide the GetInventorySlot method
-        b.GetInventorySlot = getInvId
-
-        -- remove default of capturing right-click also (we handle right-click separately)
+        local b = _G["CharacterBag" .. bag_idx - 1 .. "Slot"]
+        b:SetParent(f)
         b:RegisterForClicks("LeftButtonUp")
-        b:HookScript("OnClick", bag_OnClick)
-        b:HookScript("OnMouseDown", inv.bag_OnMouseDown)
+        b:SetScript("OnClick", bag_OnClick)
+        b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
 
         inv.reskinBagBar(b)
         local invID = C_Container.ContainerIDToInventoryID(bag_idx)
@@ -283,10 +272,9 @@ local function createBagBar(f)
 
         f.bags[bag_idx] = b
     end
-    local x, y = setBagBarOrder(f)
+
     --Add Keyringbutton here
     local b = CreateFrame("Button", "GWkeyringbutton", f, "GwKeyRingButtonTemp")
-    b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
     b:SetHighlightTexture('Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png')
     GW.SetItemButtonQualityForBags(b, 1)
     b:SetScript("OnClick",
@@ -309,6 +297,9 @@ local function createBagBar(f)
             parent.bagHeader5.icon2:SetShown(not isKeyringBagOpen)
         end
     )
+    f.bags[NUM_BAG_SLOTS + 1] = b
+
+    setBagBarOrder(f)
 end
 
 
@@ -316,7 +307,7 @@ end
 local function updateBagBar(f)
     for bag_idx = 1, NUM_BAG_SLOTS do
         local b = f.bags[bag_idx]
-        local inv_id = b:GetInventorySlot()
+        local inv_id = C_Container.ContainerIDToInventoryID(bag_idx) --b:GetInventorySlot()
         local bag_tex = GetInventoryItemTexture("player", inv_id)
         local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)
 
@@ -834,9 +825,6 @@ local function LoadBag(helpers)
         -- TODO: update the text on the compact icons config option
     end
 
-    for i = 0, 3 do
-        _G["CharacterBag" .. i .. "Slot"]:Hide()
-    end
     if KeyRingButton then
         KeyRingButton:Hide()
         hooksecurefunc(KeyRingButton, "Show", GW.Self_Hide)

@@ -261,8 +261,4 @@
         </Frames>
     </Frame>
 
-    <ItemButton name="GwBackpackBagTemplate" inherits="BaseBagSlotButtonTemplate" virtual="true">
-        <Size x="28" y="28"></Size>
-    </ItemButton>
-
 </Ui>
