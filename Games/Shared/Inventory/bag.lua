@@ -375,7 +375,7 @@ local function createBagBar(f)
         hooksecurefunc(bp, "UpdateFreeSlots", updateBackpackFreeSlots)
     end
     updateBackpackFreeSlots()
-    SetItemButtonQuality(bp, 1, nil)
+    GW.SetItemButtonQualityForBags(bp, 1)
 
     -- steal the bag slot buttons for equippable bags
     for bag_idx = 1, NUM_BAG_SLOTS do

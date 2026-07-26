@@ -516,6 +516,12 @@ local function reskinBagBar(b, ha)
     local norm = b:GetNormalTexture()
     norm:SetTexture(nil)
 
+    local pushed = b:GetPushedTexture()
+    if pushed then
+        pushed:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+        pushed:SetAllPoints(b)
+    end
+
     b.IconBorder:SetAllPoints(b)
     b.IconBorder:SetTexture(BORDER_TEXTURE)
     b.IconBorder:SetVertexColor(1, 1, 1)
