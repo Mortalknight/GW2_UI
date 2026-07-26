@@ -1,6 +1,11 @@
 ---@class GW2
 local GW = select(2, ...)
 
+local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
+
+-- the keyring only exists up to wrath, mists (and later retail) have none
+local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath
+
 BAG_FILTER_LABELS = {
     [LE_BAG_FILTER_FLAG_EQUIPMENT] = BAG_FILTER_EQUIPMENT,
     [LE_BAG_FILTER_FLAG_CONSUMABLES] = BAG_FILTER_CONSUMABLES,
@@ -57,14 +62,14 @@ local function reskinItemButton(b, overrideIconSize)
     b.icon:SetAlpha(0.9)
 
     b.IconBorder:SetAllPoints(b)
-    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+    b.IconBorder:SetTexture(BORDER_TEXTURE)
 
     local norm = b:GetNormalTexture()
     norm:SetTexture(nil)
 
     local high = b:GetHighlightTexture()
     high:SetAllPoints(b)
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+    high:SetTexture(BORDER_TEXTURE)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
@@ -86,9 +91,15 @@ local function reskinItemButton(b, overrideIconSize)
     b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
     b.Count:SetJustifyH("RIGHT")
 
-    local qtex = b.GetName and b:GetName() ~= nil and _G[b:GetName() .. "IconQuestTexture"] or nil
-    if qtex then
-        qtex:SetAlpha(0)
+    if b.IconQuestTexture then
+        if GW.Mists then
+            -- mists never shows blizzards quest banners, the marking comes from our own quest icon
+            b.IconQuestTexture:SetAlpha(0)
+        else
+            b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
+            b.IconQuestTexture:ClearAllPoints()
+            b.IconQuestTexture:SetPoint("CENTER", b, "CENTER", 0, 0)
+        end
     end
 
     if b.flash then
@@ -136,6 +147,57 @@ end
 GW.SkinBagItemButton = reskinItemButton
 
 
+local function updateItemVisuals(b, overrideIconSize)
+   if not b or not b:IsShown() then return end
+
+    local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
+
+    if b:GetWidth() ~= iconSize or b:GetHeight() ~= iconSize then
+        b:SetSize(iconSize, iconSize)
+    end
+
+    local L, R, T, B = b.icon:GetTexCoord()
+    if L ~= 0.07 or R ~= 0.93 or T ~= 0.07 or B ~= 0.93 then
+        b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    end
+    if b.icon:GetAlpha() ~= 0.9 then
+        b.icon:SetAlpha(0.9)
+    end
+
+    if b:GetHighlightTexture() then
+        local high = b:GetHighlightTexture()
+        if high:GetTexture() ~= BORDER_TEXTURE then
+            high:SetTexture(BORDER_TEXTURE)
+        end
+        if high:GetBlendMode() ~= "ADD" then
+            high:SetBlendMode("ADD")
+        end
+        if high:GetAlpha() ~= 0.33 then
+            high:SetAlpha(0.33)
+        end
+    end
+
+    local point, _, relativePoint, x, y = b.Count:GetPoint()
+    if point ~= "TOPRIGHT" or relativePoint ~= "TOPRIGHT" or x ~= 0 or y ~= -3 then
+        b.Count:ClearAllPoints()
+        b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
+    end
+    if b.Count:GetJustifyH() ~= "RIGHT" then
+        b.Count:SetJustifyH("RIGHT")
+    end
+
+    if b.IconQuestTexture and not GW.Mists then
+        local w, h = b.IconQuestTexture:GetSize()
+        if w ~= iconSize + 2 or h ~= iconSize + 2 then
+            b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
+        end
+    end
+
+    if b.flash then
+        b.flash:SetAllPoints(b)
+    end
+end
+
 local function getContainerFrame(bag_id)
     -- ContainerFrame assignment is not guaranteed; only safe approach is to
     -- search every ContainerFrame and check its ID for a match.
@@ -151,11 +213,21 @@ end
 
 
 local function reskinItemButtons()
-    -- our own bag and bank item buttons with their separate size settings
+    -- our own bag and bank item buttons with their separate size settings; hidden ones only
+    -- get the new size, the rest of the visual updates run on the next sweep while shown
     GW.ForEachOwnBagItemButton(function(slot)
         local bagID = slot:GetParent():GetID()
         local isBank = bagID == BANK_CONTAINER or bagID > NUM_BAG_SLOTS
-        reskinItemButton(slot, isBank and GW.settings.BANK_ITEM_SIZE or GW.settings.BAG_ITEM_SIZE)
+        local iconSize = isBank and GW.settings.BANK_ITEM_SIZE or GW.settings.BAG_ITEM_SIZE
+
+        if not slot.__gwSkinned then
+            reskinItemButton(slot, iconSize)
+            slot.__gwSkinned = true
+        elseif slot:IsShown() then
+            updateItemVisuals(slot, iconSize)
+        else
+            slot:SetSize(iconSize, iconSize)
+        end
     end)
 end
 
@@ -173,7 +245,7 @@ end
 
 
 local function SetItemButtonQualityForBags(button, quality)
-    button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+    button.IconBorder:SetTexture(BORDER_TEXTURE)
     button.IconOverlay:Hide()
     button.IconBorder:SetAlpha(0.9)
 
@@ -190,42 +262,34 @@ local function SetItemButtonQualityForBags(button, quality)
 end
 GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 
-
 local function GetItemEquipmentSetName(itemIDOrLink)
     local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
     if equipmentSetIDs then
         for _, equipmentSetID in ipairs(equipmentSetIDs) do
             local equipmentSetItems = C_EquipmentSet.GetItemIDs(equipmentSetID)
             for _, equipmentSetItemId in pairs(equipmentSetItems) do
-              if equipmentSetItemId == itemIDOrLink then
-                local equipmentSetName = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID);
-                if string.len(equipmentSetName) > 5 then
-                    equipmentSetName = string.sub(equipmentSetName, 1, 5)
+                if equipmentSetItemId == itemIDOrLink then
+                    local equipmentSetName = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID)
+                    if string.len(equipmentSetName) > 5 then
+                        equipmentSetName = string.sub(equipmentSetName, 1, 5)
+                    end
+                    return equipmentSetName
                 end
-                return equipmentSetName
-               end
             end
         end
     end
     return nil
 end
 
-local function hookItemQuality(button, quality, itemIDOrLink)
+local function SetItemButtonData(button, quality, itemIDOrLink)
     if not button.gwBackdrop then
         return
     end
 
-    local bag_id = button:GetParent():GetID()
-    local professionColors = GW.Colors.BagTypeColors[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
-    local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
-    local showEquipmentSetName = GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME
-
-    button.bagID = bag_id
-
     button.IconOverlay:Hide()
     local t = button.IconBorder
     local colorCommon = GW.GetBagItemQualityColor(Enum.ItemQuality.Common)
-    t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+    t:SetTexture(BORDER_TEXTURE)
     t:SetAlpha(0.9)
     t:SetVertexColor(colorCommon.r, colorCommon.g, colorCommon.b)
 
@@ -233,7 +297,15 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         t:SetVertexColor(colorCommon.r, colorCommon.g, colorCommon.b)
     end
 
-    if GW.settings.BAG_PROFESSION_BAG_COLOR and professionColors then
+    local bag_id = button:GetParent():GetID()
+    local keyring = HAS_KEYRING and bag_id == KEYRING_CONTAINER
+    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or GW.Colors.BagTypeColors[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
+    local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
+
+    button.bagID = bag_id
+
+    if GW.Mists and GW.settings.BAG_PROFESSION_BAG_COLOR and professionColors then
+        -- mists tints profession bags first, so an items quality color wins over it
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
@@ -262,14 +334,14 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         end
 
         -- Show upgrade icon if active
-        if itemInfo.hyperlink and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon then
+        if itemInfo and itemInfo.hyperlink and GW.settings.BAG_ITEM_UPGRADE_ICON_SHOW and button.UpgradeIcon then
             GW.RegisterPawnUpgradeIcon(button, itemInfo.hyperlink)
         elseif button.UpgradeIcon then
             button.UpgradeIcon:Hide()
         end
 
         -- Show ilvl if active
-        if showItemLevel then
+        if button.itemlevel and showItemLevel then
             local canShowItemLevel = GW.IsItemEligibleForItemLevelDisplay(itemIDOrLink)
             if canShowItemLevel then
                 GW.SetItemLevel(button, quality, itemIDOrLink)
@@ -282,8 +354,8 @@ local function hookItemQuality(button, quality, itemIDOrLink)
             button.__gwLastItemLink = nil
         end
 
-        -- Show equipment set name
-        if showEquipmentSetName then
+        -- Show equipment set name (the equipment manager exists since wrath, the option only on mists)
+        if GW.Mists and GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME then
             local equipmentSetName = GetItemEquipmentSetName(itemIDOrLink)
             if equipmentSetName then
                 button.itemlevel:SetTextColor(255, 255, 255, 1)
@@ -299,15 +371,27 @@ local function hookItemQuality(button, quality, itemIDOrLink)
         t:Show()
     else
         if button.junkIcon then button.junkIcon:Hide() end
-        if button.questIcon then button.questIcon:Hide() end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end
+        if button.questIcon then button.questIcon:Hide() end
         if button.itemlevel then
             button.itemlevel:SetText("")
             button.__gwLastItemLink = nil
         end
     end
+
+    if not GW.Mists and GW.settings.BAG_PROFESSION_BAG_COLOR and professionColors then
+        -- the classic flavors tint profession bags last, the tint wins over quality colors
+        t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
+        t:Show()
+    end
+
+    --Keyring
+    if keyring then
+        t:Show()
+        t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
+    end
 end
-GW.SetBagItemButtonQualitySkin = hookItemQuality
+GW.SetBagItemButtonQualitySkin = SetItemButtonData
 
 local bag_resize
 local bank_resize
@@ -357,8 +441,9 @@ local function resizeInventory()
 end
 
 
-local function reskinBagBar(b)
+local function reskinBagBar(b, ha)
     local bag_size = 28
+    local highlightAlpha = ha and ha or 0
 
     b:SetSize(bag_size, bag_size)
     b.tooltipText = BANK_BAG
@@ -372,15 +457,22 @@ local function reskinBagBar(b)
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b.icon:SetAlpha(0.75)
+    b.icon:Show()
 
     local norm = b:GetNormalTexture()
     norm:SetTexture(nil)
 
     b.IconBorder:SetAllPoints(b)
-    b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+    b.IconBorder:SetTexture(BORDER_TEXTURE)
+    hooksecurefunc(b.IconBorder, "SetTexture", function()
+        local t = b.IconBorder:GetTexture()
+        if t and t > 0 and t ~= BORDER_TEXTURE then
+            b.IconBorder:SetTexture(BORDER_TEXTURE)
+        end
+    end)
 
     local high = b:GetHighlightTexture()
-    high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+    high:SetTexture(BORDER_TEXTURE)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
     high:SetSize(bag_size, bag_size)
@@ -388,8 +480,14 @@ local function reskinBagBar(b)
     high:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
 
     if b.SlotHighlightTexture then
-        b.SlotHighlightTexture:SetAlpha(0)
+        b.SlotHighlightTexture:SetAlpha(highlightAlpha)
         b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+    end
+
+    -- blizzard checks the bag slot buttons for every open bag and with us every bag is always
+    -- open, so the yellow checked glow carries no information - kill it
+    if b.GetCheckedTexture and b:GetCheckedTexture() then
+        b:GetCheckedTexture():SetTexture(nil)
     end
 end
 
@@ -435,26 +533,35 @@ end
 
 
 -- on right click, open the bag filter dropdown (if valid) for this bag slot
+local function AddButtons_BagFilters(description, bagID)
+
+    description:CreateTitle(BAG_FILTER_ASSIGN_TO)
+
+    local function IsSelected(flag)
+        return C_Container.GetBagSlotFlag(bagID, flag)
+    end
+
+    local function SetSelected(flag)
+        local value = not IsSelected(flag)
+        C_Container.SetBagSlotFlag(bagID, flag, value)
+    end
+
+    local checkbox = description:CreateCheckbox(BAG_FILTER_IGNORE, IsSelected, SetSelected, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+    checkbox:SetResponse(MenuResponse.Close)
+end
+
 local function bag_OnMouseDown(self, button)
     if button ~= "RightButton" or not self.gwHasBag or not ((self:GetID() - CharacterBag0Slot:GetID() + 1) > 0 and (self:GetID() - CharacterBag0Slot:GetID() + 1) < 5) then
         return
     end
 
     local bag_id = self:GetID() - CharacterBag0Slot:GetID() + 1
-    MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
-        rootDescription:CreateTitle(BAG_FILTER_ASSIGN_TO)
-        local function IsSelected(flag)
-            return C_Container.GetBagSlotFlag(bag_id, flag)
-        end
-
-        local function SetSelected(flag)
-            local value = not IsSelected(flag)
-            C_Container.SetBagSlotFlag(bag_id, flag, value)
-        end
-
-        local checkbox = rootDescription:CreateCheckbox(BAG_FILTER_IGNORE, IsSelected, SetSelected, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
-        checkbox:SetResponse(MenuResponse.Close)
-    end)
+    local cf = getContainerFrame(bag_id)
+    if cf then
+        MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
+            AddButtons_BagFilters(rootDescription, bag_id)
+        end)
+    end
 end
 
 
@@ -499,13 +606,7 @@ local function layoutContainerFrame(cf, max_col, row, col, rev, item_off_x, item
 end
 
 
-local function updateFreeSpaceString(free, full)
-    local bank_space_string = free .. " / " .. full
-    GwBankFrame.spaceString:SetText(bank_space_string)
-end
-
-
--- update the number of free bank slots available and set the display for it
+-- update the number of free bag slots available and set the display for it
 local function updateFreeSlots(sp_str, start_idx, end_idx, opt_container)
     if not sp_str or not sp_str.SetText then
         return
@@ -553,8 +654,8 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
     local isizeX = size + paddingX
     local isizeY = size + paddingY
     if sep then
-        -- one row per visible section header: backpack + equipped bags on the bag frame,
-        -- main bank + equipped bank bags on the bank frame
+        -- one row per visible section header: backpack + equipped bags (+ keyring)
+        -- on the bag frame, main bank + equipped bank bags on the bank frame
         local headers = 1
         if isBag then
             for i = 1, 4 do
@@ -562,6 +663,9 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
                 if GetInventoryItemID("player", slotID) then
                     headers = headers + 1
                 end
+            end
+            if HAS_KEYRING then
+                headers = headers + 1 --Keyring
             end
         else
             for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
@@ -574,7 +678,8 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
         f.unfinishedRow = f.unfinishedRow and f.unfinishedRow or 0
         rows = f.finishedRow + headers + f.unfinishedRow
     else
-        rows = math.ceil(slots / cols)
+        -- the layout stores its actual row usage when it deviates from the plain flow (keyring gap)
+        rows = f.gw_combined_rows or math.ceil(slots / cols)
     end
     f:SetHeight(max((isizeY * rows) + 75, min_height))
     local contentWidth = (isizeX * cols) - paddingX
@@ -660,11 +765,10 @@ end
 
 local function LoadInventory()
     _G["BINDING_HEADER_GW2UI_INVENTORY_BINDINGS"] = INVENTORY_TOOLTIP
-    _G["BINDING_NAME_GW2UI_BAG_SORT"] = BAG_CLEANUP_BAGS
-    _G["BINDING_NAME_GW2UI_BANK_SORT"] = BAG_CLEANUP_BANK
+    _G["BINDING_NAME_BAG_SORT"] = BAG_CLEANUP_BAGS
+    _G["BINDING_NAME_BANK_SORT"] = BAG_CLEANUP_BANK
 
     BagsBar:GwKillEditMode()
-
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
     hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
@@ -673,7 +777,7 @@ local function LoadInventory()
     reskinItemButtons()
 
     -- whenever an ItemButton sets its quality ensure our custom border is being used
-    hooksecurefunc("SetItemButtonQuality", hookItemQuality)
+    hooksecurefunc("SetItemButtonQuality", SetItemButtonData)
 
     -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
     for i = 1, NUM_CONTAINER_FRAMES do

@@ -3,6 +3,5 @@
     <Include file ="lootframe.xml"/>
     <Script file ="bag.lua"/>
     <Script file ="lootframe.lua"/>
-    <Script file ="inventory.lua"/>
     <Script file ="sort.lua"/>
 </Ui>
