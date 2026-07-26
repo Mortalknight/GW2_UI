@@ -522,6 +522,36 @@ local function reskinBagBar(b, ha)
             b.icon:SetTexture(130716)
         end
     end
+    if b.UpdateTextures and not b.gwUpdateTexturesHooked then
+        -- blizzards UpdateTextures repaints the round slot art onto the normal,
+        -- pushed and highlight textures on every item texture/quality update and
+        -- the slot highlight ring stays shown since our bags are always open -
+        -- restore our look after every repaint
+        b.gwUpdateTexturesHooked = true
+        hooksecurefunc(b, "UpdateTextures", function(self)
+            local norm = self:GetNormalTexture()
+            if norm then
+                norm:SetAlpha(0)
+            end
+            local pushedTex = self:GetPushedTexture()
+            if pushedTex then
+                pushedTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+                pushedTex:SetAllPoints(self)
+            end
+            local highTex = self:GetHighlightTexture()
+            if highTex then
+                highTex:SetTexture(BORDER_TEXTURE)
+                highTex:SetBlendMode("ADD")
+                highTex:SetAlpha(0.33)
+                highTex:SetAllPoints(self)
+            end
+            if self.SlotHighlightTexture then
+                self.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+                self.SlotHighlightTexture:SetAlpha(0)
+            end
+        end)
+        b:UpdateTextures()
+    end
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b.icon:SetAlpha(0.75)
