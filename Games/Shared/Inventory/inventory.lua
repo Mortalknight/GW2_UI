@@ -351,10 +351,9 @@ local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays
     local bag_id = button:GetParent():GetID()
     local keyring = HAS_KEYRING and bag_id == KEYRING_CONTAINER
     local isReagentBag = HAS_REAGENT_BAG and bag_id == 5
-    local professionBagColors = GW.Colors.ProfessionBagColors or GW.Colors.BagTypeColors
     local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN]
         or isReagentBag and GW.GetBagItemQualityColor(Enum.ItemQuality.Artifact)
-        or professionBagColors[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
+        or GW.Colors.ProfessionBagColors[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
 
     button.bagID = bag_id

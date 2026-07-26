@@ -46,22 +46,18 @@ GW.Colors.PowerBarCustomColors = {
     STAGGER = CreateColor(0.52, 1.0, 0.52),
 }
 
-GW.Colors.BagTypeColors = {
-    [0x0001] = CreateColor(1, 1, 1),            --Quivers       1
-    [0x0002] = CreateColor(1, 1, 1),            --Quivers       2
-    [0x0004] = CreateColor(0.251, 0.878, 0.816),--Soul          3
-    [0x0020] = CreateColor(0.451, 1, 0),        --Herbs         6
-    [0x0040] = CreateColor(1, 0, 1)             --Enchanting    7
-}
-
+-- keyed by the bag family bit field (second return of GetContainerNumFreeSlots)
 GW.Colors.ProfessionBagColors = {
-    [8] = CreateColor(.88, .73, .29),  --leatherworking
-    [16] = CreateColor(.29, .30, .88), --inscription
-    [32] = CreateColor(.07, .71, .13), --herbs
-    [64] = CreateColor(.76, .02, .8),  --enchanting
+    [1] = CreateColor(1, 1, 1),         --quiver
+    [2] = CreateColor(1, 1, 1),         --ammo pouch
+    [4] = CreateColor(.251, .878, .816),--soul bag
+    [8] = CreateColor(.88, .73, .29),   --leatherworking
+    [16] = CreateColor(.29, .30, .88),  --inscription
+    [32] = CreateColor(.07, .71, .13),  --herbs
+    [64] = CreateColor(.76, .02, .8),   --enchanting
     [128] = CreateColor(.91, .46, .18), --engineering
     [512] = CreateColor(.03, .71, .81), --gems
-    [1024] = CreateColor(.54, .40, .04), --Mining Bag
+    [1024] = CreateColor(.54, .40, .04), --mining
     [32768] = CreateColor(.42, .59, 1), --fishing
     [65536] = CreateColor(.87, .05, .25) --cooking
 }
