@@ -359,7 +359,9 @@ local function createBagBar(f)
     bp:SetParent(f)
     inv.reskinBagBar(bp)
     bp:RegisterForClicks("LeftButtonUp")
-    bp:SetChecked(false)
+    if bp.SetChecked then
+        bp:SetChecked(false)
+    end
     bp:HookScript("OnMouseDown", inv.bag_OnMouseDown)
     bp.gwBackdrop = true -- checked by some things to see if this is a reskinned button
     f.bags[BACKPACK_CONTAINER] = bp
@@ -381,7 +383,9 @@ local function createBagBar(f)
     for bag_idx = 1, NUM_BAG_SLOTS do
         local b = _G["CharacterBag" .. bag_idx - 1 .. "Slot"]
         b:SetParent(f)
-        b:SetChecked(false)
+        if bp.SetChecked then
+            bp:SetChecked(false)
+        end
         b:RegisterForClicks("LeftButtonUp")
         b:SetScript("OnClick", bag_OnClick)
         b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
@@ -404,7 +408,9 @@ local function createBagBar(f)
         -- steal the reagent bag slot button
         local b = CharacterReagentBag0Slot
         b:SetParent(f)
-        b:SetChecked(false)
+        if bp.SetChecked then
+            bp:SetChecked(false)
+        end
         b:RegisterForClicks("LeftButtonUp")
         b:SetScript("OnClick", bag_OnClick)
         b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
@@ -448,7 +454,9 @@ local function updateBagBar(f)
         if bagLink then
             GW.SetItemButtonQualityForBags(b, select(3, C_Item.GetItemInfo(bagLink)))
         else
-            b:SetChecked(false)
+            if b.SetChecked then
+                b:SetChecked(false)
+            end
             GW.SetItemButtonQualityForBags(b, 1)
         end
     end
@@ -906,6 +914,9 @@ local function LoadBag(helpers)
     if ContainerFrame_OnShow then
         hooksecurefunc("ContainerFrame_OnShow", function()
             MainMenuBarBackpackButton:SetChecked(false)
+            if MainMenuBarBackpackButton.SetChecked then
+                MainMenuBarBackpackButton:SetChecked(false)
+            end
             GW.SetItemButtonQualityForBags(MainMenuBarBackpackButton, 1)
         end)
     end
