@@ -102,7 +102,7 @@ local function UpdateOwnContainerItemButton(button)
 end
 GW.UpdateOwnContainerItemButton = UpdateOwnContainerItemButton
 
-local function EnsureItemButton(cf, index, iconSize)
+local function EnsureItemButton(cf, index, iconSize, opts)
     local button = cf.gw_items[index]
     if button then
         return button
@@ -110,7 +110,7 @@ local function EnsureItemButton(cf, index, iconSize)
 
     local bagID = cf:GetID()
     local name = "GwContainerItem" .. (bagID >= 0 and bagID or ("N" .. -bagID)) .. "_" .. index
-    button = CreateFrame("Button", name, cf, "ContainerFrameItemButtonTemplate")
+    button = CreateFrame(opts and opts.frameType or "Button", name, cf, opts and opts.template or "ContainerFrameItemButtonTemplate")
     button.gwOwnItemButton = true
 
     -- the templates children are created by name on the classic flavors and by
@@ -143,8 +143,10 @@ end
 -- (re)builds the own item buttons of one of our containers to match the bags current size.
 -- iconSize is only used for the initial skinning of newly created buttons. straightIDs assigns
 -- the slot ids in list order like the old bank frame buttons, without it the ids are assigned
--- in reverse like blizzards container frame buttons - the layouts iterate accordingly
-local function SetupOwnContainerItemButtons(cf, bagID, iconSize, straightIDs)
+-- in reverse like blizzards container frame buttons - the layouts iterate accordingly.
+-- opts can carry a frameType/template override and an initButton callback for buttons that
+-- need more than the parent bag id and slot id (the retail bank item buttons)
+local function SetupOwnContainerItemButtons(cf, bagID, iconSize, straightIDs, opts)
     if not cf then
         return
     end
@@ -160,8 +162,12 @@ local function SetupOwnContainerItemButtons(cf, bagID, iconSize, straightIDs)
     cf.gw_num_slots = numSlots
 
     for i = 1, numSlots do
-        local button = EnsureItemButton(cf, i, iconSize)
-        button:SetID(straightIDs and i or (numSlots - i + 1))
+        local button = EnsureItemButton(cf, i, iconSize, opts)
+        local slotID = straightIDs and i or (numSlots - i + 1)
+        button:SetID(slotID)
+        if opts and opts.initButton then
+            opts.initButton(button, bagID, slotID)
+        end
         button:Show()
         UpdateOwnContainerItemButton(button)
     end

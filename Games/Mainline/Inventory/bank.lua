@@ -7,38 +7,60 @@ local inv
 local PURCHASE_TAB_ID = -1
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
-local function layoutAccountBankItems(f)
+local function layoutAccountBankItems(cf)
     if not GW.settings.BANK_ITEM_SIZE or not GW.settings.BANK_ITEM_SPACING_X or not GW.settings.BANK_ITEM_SPACING_Y then
         -- acedb can have the profile defaults detached (logout, profile operations)
         return
     end
     local item_off_x = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_X
     local item_off_y = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_Y
-    inv.layoutContainerFrame(f, f:GetParent().gw_bank_cols, 0, 0, false, item_off_x, item_off_y)
+    inv.layoutContainerFrame(cf, GwBankFrame.gw_bank_cols, 0, 0, true, item_off_x, item_off_y)
 end
 
 
 -- adjusts the bank frame size to snap to the exact row/col sizing of contents
 local function snapFrameSize(f)
-    inv.snapFrameSize(f, f.BankPanel, GW.settings.BANK_ITEM_SIZE, GW.settings.BANK_ITEM_SPACING_X, GW.settings.BANK_ITEM_SPACING_Y, 370)
+    inv.snapFrameSize(f, f.BankPanel.gw_container, GW.settings.BANK_ITEM_SIZE, GW.settings.BANK_ITEM_SPACING_X, GW.settings.BANK_ITEM_SPACING_Y, 370)
 end
 
 
-local function GrabBankItemButtons(self)
-    local idx = 1
-    for itemButton in self:EnumerateValidItems() do
-        self.gw_items[idx] = itemButton
-        inv.reskinItemButton(itemButton, GW.settings.BANK_ITEM_SIZE)
+-- the retail bank item button mixin reads the tab and slot from these fields
+-- (never store a field named slotID on the button, that taints the mixin)
+local BANK_BUTTON_OPTS = {
+    frameType = "ItemButton",
+    template = "BankItemButtonTemplate",
+    initButton = function(button, tabID, slotID)
+        button.bankTabID = tabID
+        button.containerSlotID = slotID
+    end,
+}
 
-        idx = idx + 1
+-- (re)builds our own item buttons for the selected bank tab; the bank tabs are
+-- ordinary containers, so the shared factory and content updates apply directly
+local function UpdateBankItemButtons(self)
+    local f = self:GetParent()
+    local cf = self.gw_container
+    local tabID = self:GetSelectedTabID()
+
+    -- hide blizzards pooled item buttons, we render our own
+    for itemButton in self:EnumerateValidItems() do
+        itemButton:Hide()
     end
 
-    self.gw_num_slots = self.itemButtonPool:GetNumActive()
-    layoutAccountBankItems(self)
-    snapFrameSize(self:GetParent())
-    local id = self:GetSelectedTabID()
-    if id and id > 0 then
-        inv.updateFreeSlots(self:GetParent().spaceString, id, id)
+    if tabID and tabID > 0 then
+        cf:SetID(tabID)
+        GW.SetupOwnContainerItemButtons(cf, tabID, GW.settings.BANK_ITEM_SIZE, true, BANK_BUTTON_OPTS)
+    else
+        cf.gw_num_slots = 0
+        for i = 1, #(cf.gw_items or {}) do
+            cf.gw_items[i]:Hide()
+        end
+    end
+
+    layoutAccountBankItems(cf)
+    snapFrameSize(f)
+    if tabID and tabID > 0 then
+        inv.updateFreeSlots(f.spaceString, tabID, tabID)
     end
 end
 
@@ -223,7 +245,7 @@ local function OnShow(self)
 
     OpenAllBags(self.BankPanel)
     self.BankPanel:FetchPurchasedBankTabData()
-    GrabBankItemButtons(self.BankPanel)
+    UpdateBankItemButtons(self.BankPanel)
     RefreshBankTabs(self.BankPanel)
     snapFrameSize(self)
 end
@@ -346,8 +368,39 @@ local function LoadBank(helpers)
     inv.relocateSearchBox(BankItemSearchBox, f)
 
     --Bank Panel Tab setup
-    f.BankPanel.gw_items = {}
-    f.BankPanel.gw_num_slots = 0
+    local cf = CreateFrame("Frame", nil, f.BankPanel)
+    cf.gw_items = {}
+    cf.gw_num_slots = 0
+    cf:SetAllPoints(f.BankPanel)
+    cf.GetBagID = cf.GetID
+    f.BankPanel.gw_container = cf
+
+    -- keep our own buttons in sync outside of blizzards panel refreshes
+    local watcher = CreateFrame("Frame")
+    watcher:RegisterEvent("ITEM_LOCK_CHANGED")
+    watcher:RegisterEvent("BAG_UPDATE")
+    watcher:RegisterEvent("BAG_UPDATE_COOLDOWN")
+    watcher:RegisterEvent("INVENTORY_SEARCH_UPDATE")
+    watcher:SetScript("OnEvent", function(_, event, ...)
+        if not f:IsShown() or cf.gw_num_slots == 0 then
+            return
+        end
+        if event == "ITEM_LOCK_CHANGED" then
+            local bag, slot = ...
+            if bag == cf:GetID() and slot then
+                GW.UpdateOwnContainerLockedState(cf, slot)
+            end
+        elseif event == "BAG_UPDATE" then
+            local bag = ...
+            if bag == cf:GetID() then
+                GW.UpdateOwnContainerItemButtons(cf)
+            end
+        elseif event == "BAG_UPDATE_COOLDOWN" then
+            GW.UpdateOwnContainerCooldowns(cf)
+        elseif event == "INVENTORY_SEARCH_UPDATE" then
+            GW.UpdateOwnContainerSearchResults(cf)
+        end
+    end)
     f.BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
     f.BankPanel:SetBankType(Enum.BankType.Character) -- always start with this one
 
@@ -407,7 +460,7 @@ local function LoadBank(helpers)
     BankCleanUpConfirmationPopup.HidePopupCheckbox.Label:SetTextColor(1, 1, 1)
 
     hooksecurefunc(f.BankPanel.Header, "SetShown", function(self) self:Hide() end)
-    hooksecurefunc(f.BankPanel, "GenerateItemSlotsForSelectedTab", GrabBankItemButtons)
+    hooksecurefunc(f.BankPanel, "GenerateItemSlotsForSelectedTab", UpdateBankItemButtons)
 
     f.BankPanel.RefreshBankTabs = RefreshBankTabs
 
@@ -501,7 +554,7 @@ local function LoadBank(helpers)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()
-        GrabBankItemButtons(f.BankPanel)
+        UpdateBankItemButtons(f.BankPanel)
     end
     return changeItemSize
 end
