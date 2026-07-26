@@ -158,12 +158,6 @@ local function watchCurrency(self)
 end
 
 
-local function updateFreeSpaceString(free, full)
-    local space_string = free .. " / " .. full
-    GwBagFrame.spaceString:SetText(space_string)
-end
-
-
 -- update the number of free bag slots available and set the display for it
 local function updateFreeBagSlots()
     inv.updateFreeSlots(GwBagFrame.spaceString, 1, NUM_BAG_SLOTS, BACKPACK_CONTAINER)
@@ -183,9 +177,7 @@ end
 -- rescan ALL bag ItemButtons
 local function rescanBagContainers(f)
     for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-        if bag_id <= NUM_BAG_SLOTS then
-            inv.takeItemButtons(f.ItemFrame, bag_id)
-        end
+        GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id)
     end
     updateBagContainers(f)
 end
@@ -431,6 +423,8 @@ local function bag_OnShow(self)
     self:RegisterEvent("ITEM_UNLOCKED")
     self:RegisterEvent("BAG_UPDATE")
     self:RegisterEvent("BAG_UPDATE_DELAYED")
+    self:RegisterEvent("BAG_UPDATE_COOLDOWN")
+    self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
     if not IsBagOpen(BACKPACK_CONTAINER) then
         OpenBackpack()
     end
@@ -441,7 +435,7 @@ local function bag_OnShow(self)
     end
 
     updateBagBar(self.ItemFrame)
-    updateBagContainers(self)
+    rescanBagContainers(self)
 end
 
 
@@ -458,6 +452,13 @@ local function bag_OnHide(self)
     end
 end
 
+
+local function getEventContainer(self, bag)
+    if bag and bag >= BACKPACK_CONTAINER and bag <= NUM_BAG_SLOTS then
+        return self.ItemFrame.Containers[bag]
+    end
+    return nil
+end
 
 local function bag_OnEvent(self, event, ...)
     if event == "ITEM_LOCKED" or event == "ITEM_UNLOCKED" then
@@ -477,6 +478,9 @@ local function bag_OnEvent(self, event, ...)
                 end
             end
             self.gw_need_bag_rescan = true
+        elseif slot ~= nil then
+            -- lock state of one of our own item buttons
+            GW.UpdateOwnContainerLockedState(getEventContainer(self, bag), slot)
         end
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
@@ -491,14 +495,19 @@ local function bag_OnEvent(self, event, ...)
                 end
             end
             updateBagBar(self.ItemFrame)
-            rescanBagContainers(self)
-            self.gw_need_bag_rescan = false
         end
-        if self.gw_need_bag_update then
-            self.gw_need_bag_update = false
-            if self.ItemFrame:IsShown() then
-                updateFreeBagSlots()
-            end
+        if self.gw_need_bag_rescan or self.gw_need_bag_update then
+            rescanBagContainers(self)
+        end
+        self.gw_need_bag_rescan = false
+        self.gw_need_bag_update = false
+    elseif event == "BAG_UPDATE_COOLDOWN" then
+        for _, cf in pairs(self.ItemFrame.Containers) do
+            GW.UpdateOwnContainerCooldowns(cf)
+        end
+    elseif event == "INVENTORY_SEARCH_UPDATE" then
+        for _, cf in pairs(self.ItemFrame.Containers) do
+            GW.UpdateOwnContainerSearchResults(cf)
         end
     end
 end
@@ -703,6 +712,7 @@ local function LoadBag(helpers)
                 check:AddInitializer(function(button, description, menu)
                     GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
                 end)
+                return check
             end
 
             addBagSliderControl(rootDescription, L["Icon Size"], inv.bagItemSizeConfig, function() return GW.settings.BAG_ITEM_SIZE end, setBagItemSize)

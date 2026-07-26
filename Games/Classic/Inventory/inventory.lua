@@ -27,6 +27,24 @@ local BAG_ITEM_SPACING_Y_CONFIG = {
     maxValue = 20,
     step = 1
 }
+local BANK_ITEM_SIZE_CONFIG = {
+    defaultValue = GW.globalDefault.profile.BANK_ITEM_SIZE,
+    minValue = 26,
+    maxValue = 48,
+    step = 1
+}
+local BANK_ITEM_SPACING_X_CONFIG = {
+    defaultValue = GW.globalDefault.profile.BANK_ITEM_SPACING_X,
+    minValue = 0,
+    maxValue = 20,
+    step = 1
+}
+local BANK_ITEM_SPACING_Y_CONFIG = {
+    defaultValue = GW.globalDefault.profile.BANK_ITEM_SPACING_Y,
+    minValue = 0,
+    maxValue = 20,
+    step = 1
+}
 local CONTAINER_FRAME_SIDE_PADDING = 5
 local CONTAINER_FRAME_RIGHT_PADDING = 5
 
@@ -51,6 +69,12 @@ local function reskinItemButton(b, overrideIconSize)
     high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
+
+    local pushed = b:GetPushedTexture()
+    if pushed then
+        pushed:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+        pushed:SetAllPoints(b)
+    end
 
     if not b.gwBackdrop then
         local bd = b:CreateTexture(nil, "BACKGROUND")
@@ -179,16 +203,22 @@ end
 
 
 local function reskinItemButtons()
-    for i = 1, NUM_CONTAINER_FRAMES do
-        for j = 1, MAX_CONTAINER_ITEMS do
-            local slot = _G["ContainerFrame" .. i .. "Item" .. j]
-            if not slot.__gwSkinned then
-                reskinItemButton(slot) -- will only be trigger on first init
-                slot.__gwSkinned = true
-            end
-            updateItemVisuals(slot)
+    -- our own bag and bank item buttons with their separate size settings; hidden ones only
+    -- get the new size, the rest of the visual updates run on the next sweep while shown
+    GW.ForEachOwnBagItemButton(function(slot)
+        local bagID = slot:GetParent():GetID()
+        local isBank = bagID == BANK_CONTAINER or bagID > NUM_BAG_SLOTS
+        local iconSize = isBank and GW.settings.BANK_ITEM_SIZE or GW.settings.BAG_ITEM_SIZE
+
+        if not slot.__gwSkinned then
+            reskinItemButton(slot, iconSize)
+            slot.__gwSkinned = true
+        elseif slot:IsShown() then
+            updateItemVisuals(slot, iconSize)
+        else
+            slot:SetSize(iconSize, iconSize)
         end
-    end
+    end)
 end
 
 
@@ -337,99 +367,31 @@ local function NormalizeBagItemSpacingY(value)
     return NormalizeByConfig(value, BAG_ITEM_SPACING_Y_CONFIG)
 end
 
+local function NormalizeBankItemSize(value)
+    return NormalizeByConfig(value, BANK_ITEM_SIZE_CONFIG)
+end
+
+local function NormalizeBankItemSpacingX(value)
+    return NormalizeByConfig(value, BANK_ITEM_SPACING_X_CONFIG)
+end
+
+local function NormalizeBankItemSpacingY(value)
+    return NormalizeByConfig(value, BANK_ITEM_SPACING_Y_CONFIG)
+end
+
 local function resizeInventory()
     GW.settings.BAG_ITEM_SIZE = NormalizeBagItemSize(GW.settings.BAG_ITEM_SIZE)
     GW.settings.BAG_ITEM_SPACING_X = NormalizeBagItemSpacingX(GW.settings.BAG_ITEM_SPACING_X)
     GW.settings.BAG_ITEM_SPACING_Y = NormalizeBagItemSpacingY(GW.settings.BAG_ITEM_SPACING_Y)
+    GW.settings.BANK_ITEM_SIZE = NormalizeBankItemSize(GW.settings.BANK_ITEM_SIZE)
+    GW.settings.BANK_ITEM_SPACING_X = NormalizeBankItemSpacingX(GW.settings.BANK_ITEM_SPACING_X)
+    GW.settings.BANK_ITEM_SPACING_Y = NormalizeBankItemSpacingY(GW.settings.BANK_ITEM_SPACING_Y)
     reskinItemButtons()
     if bag_resize then
         bag_resize()
     end
     if bank_resize then
         bank_resize()
-    end
-end
-
-
-local function freeItemButtons(cf, p)
-    -- return all of the ItemButtons we previously took before taking new ones, as long as
-    -- we are still the frame that took them to start with (bank/bag might have grabbed
-    -- them from each other in the mean-time)
-    if cf.gw_source ~= nil then
-        for i = 1, MAX_CONTAINER_ITEMS do
-            local item = cf.gw_items[i]
-            if item and item.gw_owner ~= nil and item.gw_owner == p then
-                item:SetParent(cf.gw_source)
-                item.gw_owner = nil
-                item:ClearAllPoints()
-                item:SetPoint("TOPLEFT", cf.gw_source, "TOPLEFT", 0, 0)
-            end
-        end
-        cf.gw_num_slots = 0
-        cf.gw_source = nil
-        wipe(cf.gw_items)
-    end
-end
-
-
-local function takeItemButtons(p, bag_id)
-    if not p or not bag_id then
-        return
-    end
-    local cf = p.Containers[bag_id]
-    if not cf then
-        return
-    end
-
-    -- NOTE: taking ownership of CF ItemButtons seems to work without causing taint,
-    -- amazingly; this is probably brittle in the long-term though and we should
-    -- someday re-implemenent all the ItemButton functionality ourselves
-
-    freeItemButtons(cf, p)
-
-    local iname
-    if bag_id == BANK_CONTAINER then
-        iname = "BankFrameItem"
-        cf.gw_source = nil -- we never have to give back the bank ItemButtons
-    elseif bag_id == KEYRING_CONTAINER then
-        if IsBagOpen(bag_id) then
-            local b = getContainerFrame(bag_id)
-            if not b then
-                return
-            end
-
-            cf.gw_source = b
-            iname = b:GetName() .. "Item"
-        else
-            cf.gw_source = nil
-            cf.gw_num_slots = 0
-            return
-        end
-    else
-        local b = getContainerFrame(bag_id)
-        if not b then
-            return
-        end
-
-        cf.gw_source = b
-        iname = b:GetName() .. "Item"
-    end
-    cf.gw_owner = p
-
-    local num_slots = C_Container.GetContainerNumSlots(bag_id)
-    cf.gw_num_slots = num_slots
-    for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
-        local item = _G[iname .. i]
-        if item then
-            item:SetParent(cf)
-            -- reset to a single neutral anchor right away: blizzards ContainerFrame_GenerateFrame only
-            -- adds anchor points without clearing, so leftover mixed anchors bridge our frames with the
-            -- container frames and its next SetPoint fails with "anchor family connection" errors
-            item:ClearAllPoints()
-            item:SetPoint("TOPLEFT", cf, "TOPLEFT", 0, 0)
-            item.gw_owner = p
-            cf.gw_items[i] = item
-        end
     end
 end
 
@@ -475,6 +437,12 @@ local function reskinBagBar(b, ha)
     if b.SlotHighlightTexture then
         b.SlotHighlightTexture:SetAlpha(highlightAlpha)
         b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
+    end
+
+    -- blizzard checks the bag slot buttons for every open bag and with us every bag is always
+    -- open, so the yellow checked glow carries no information - kill it
+    if b.GetCheckedTexture and b:GetCheckedTexture() then
+        b:GetCheckedTexture():SetTexture(nil)
     end
 end
 
@@ -627,8 +595,9 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
         return
     end
 
-    local cols = f == GwBagFrame and f.gw_bag_cols or f.gw_bank_cols
-    local sep = f == GwBagFrame and GW.settings.BAG_SEPARATE_BAGS or false
+    local isBag = f == GwBagFrame
+    local cols = isBag and f.gw_bag_cols or f.gw_bank_cols
+    local sep = isBag and GW.settings.BAG_SEPARATE_BAGS or (not isBag and GW.settings.BANK_SEPARATE_BAGS)
 
     if not cfs then
         f:SetHeight(min_height)
@@ -642,36 +611,39 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
         end
     end
 
-    local rows = 0
+    local rows
     local isizeX = size + paddingX
     local isizeY = size + paddingY
     if sep then
-        local bags_equipped = 0
-        for i = 1, 4 do
-            local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
-            local itemID = GetInventoryItemID("player", slotID)
-
-            if itemID then
-                bags_equipped = bags_equipped + 1
+        -- one row per visible section header: backpack + equipped bags + keyring
+        -- on the bag frame, main bank + equipped bank bags on the bank frame
+        local headers = 1
+        if isBag then
+            for i = 1, 4 do
+                local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
+                if GetInventoryItemID("player", slotID) then
+                    headers = headers + 1
+                end
+            end
+            headers = headers + 1 --Keyring
+        else
+            for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+                if GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(i)) then
+                    headers = headers + 1
+                end
             end
         end
-        bags_equipped = bags_equipped + 1 --Keyring
         f.finishedRow = f.finishedRow and f.finishedRow or 0
         f.unfinishedRow = f.unfinishedRow and f.unfinishedRow or 0
-        rows = f.finishedRow + bags_equipped + 1 + f.unfinishedRow
+        rows = f.finishedRow + headers + f.unfinishedRow
     else
-        rows = math.ceil(slots / cols)
+        -- the layout stores its actual row usage when it deviates from the plain flow (keyring gap)
+        rows = f.gw_combined_rows or math.ceil(slots / cols)
     end
     f:SetHeight(max((isizeY * rows) + 75, min_height))
     local contentWidth = (isizeX * cols) - paddingX
     local frameWidth = contentWidth + CONTAINER_FRAME_SIDE_PADDING + CONTAINER_FRAME_RIGHT_PADDING + 2
     f:SetWidth(frameWidth)
-    for i = 0, 5 do
-        if _G["GwBagFrameGwBagHeader" .. i] and sep then
-            _G["GwBagFrameGwBagHeader" .. i]:SetWidth(frameWidth - 5)
-            _G["GwBagFrameGwBagHeader" .. i].background:SetWidth(frameWidth - 5)
-        end
-    end
 end
 
 
@@ -760,7 +732,7 @@ local function LoadInventory()
     -- anytime a ContainerFrame has its anchors set, we re-hide it
     hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
 
-    -- reskin all the multi-use ContainerFrame ItemButtons
+    -- apply the current size settings to any already created own item buttons
     reskinItemButtons()
 
     -- whenever an ItemButton sets its quality ensure our custom border is being used
@@ -778,8 +750,6 @@ local function LoadInventory()
     helpers.reskinItemButton = reskinItemButton
     helpers.resizeInventory = resizeInventory
     helpers.getContainerFrame = getContainerFrame
-    helpers.takeItemButtons = takeItemButtons
-    helpers.freeItemButtons = freeItemButtons
     helpers.reskinBagBar = reskinBagBar
     helpers.reskinSearchBox = reskinSearchBox
     helpers.relocateSearchBox = relocateSearchBox
@@ -799,6 +769,12 @@ local function LoadInventory()
     helpers.normalizeBagItemSize = NormalizeBagItemSize
     helpers.normalizeBagItemSpacingX = NormalizeBagItemSpacingX
     helpers.normalizeBagItemSpacingY = NormalizeBagItemSpacingY
+    helpers.bankItemSizeConfig = BANK_ITEM_SIZE_CONFIG
+    helpers.bankItemSpacingXConfig = BANK_ITEM_SPACING_X_CONFIG
+    helpers.bankItemSpacingYConfig = BANK_ITEM_SPACING_Y_CONFIG
+    helpers.normalizeBankItemSize = NormalizeBankItemSize
+    helpers.normalizeBankItemSpacingX = NormalizeBankItemSpacingX
+    helpers.normalizeBankItemSpacingY = NormalizeBankItemSpacingY
 
     bag_resize = GW.LoadBag(helpers)
     bank_resize = GW.LoadBank(helpers)

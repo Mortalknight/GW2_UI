@@ -42,6 +42,8 @@ local function layoutBagItems(f)
     local col = 0
     local rev = GW.settings.BAG_REVERSE_SORT
     local sep = GW.settings.BAG_SEPARATE_BAGS
+    -- in combined mode the keyring can be set off to its own rows with a gap as separation
+    local keyringGap = not sep and GW.settings.BAG_SEPARATE_KEYRING and IsBagOpen(KEYRING_CONTAINER)
     local row = sep and 1 or 0
     local item_off_x = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_X
     local item_off_y = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_Y
@@ -92,8 +94,24 @@ local function layoutBagItems(f)
             elseif sep and not cf.shouldShow then
                 cf:Hide()
             elseif not sep then
+                if keyringGap and bag_id == 5 and not rev then
+                    -- keyring comes last: finish the bag rows and leave a gap above it
+                    if col ~= 0 then
+                        col = 0
+                        row = row + 1
+                    end
+                    row = row + 0.5
+                end
                 col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off_x, item_off_y)
                 cf:Show()
+                if keyringGap and bag_id == 5 and rev then
+                    -- keyring comes first: finish its rows and leave a gap below it
+                    if col ~= 0 then
+                        col = 0
+                        row = row + 1
+                    end
+                    row = row + 0.5
+                end
             end
 
             if unfinishedRow then parent.unfinishedRow = parent.unfinishedRow  + 1 end
@@ -115,6 +133,10 @@ local function layoutBagItems(f)
             end
         end
     end
+
+    -- with the keyring set off, the plain slots/columns row count of snapFrameSize
+    -- no longer matches - store the rows the layout actually used
+    parent.gw_combined_rows = keyringGap and (row + (col > 0 and 1 or 0)) or nil
 
     if GW.settings.BAG_SEPARATE_BAGS then
         setBagHeaders(parent)
@@ -157,13 +179,6 @@ local function updateMoney(self)
     UpdateMoney()
 end
 
-
-local function updateFreeSpaceString(free, full)
-    local space_string = free .. " / " .. full
-    GwBagFrame.spaceString:SetText(space_string)
-end
-
-
 -- update the number of free bag slots available and set the display for it
 local function updateFreeBagSlots()
     inv.updateFreeSlots(GwBagFrame.spaceString, 1, NUM_BAG_SLOTS, BACKPACK_CONTAINER)
@@ -184,9 +199,9 @@ end
 local function rescanBagContainers(f)
     for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS + 1 do
         if bag_id <= NUM_BAG_SLOTS then
-            inv.takeItemButtons(f.ItemFrame, bag_id)
+            GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id)
         else
-            inv.takeItemButtons(f.ItemFrame, KEYRING_CONTAINER)
+            GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[KEYRING_CONTAINER], KEYRING_CONTAINER)
         end
     end
     updateBagContainers(f)
@@ -257,6 +272,7 @@ local function createBagBar(f)
     for bag_idx = 1, NUM_BAG_SLOTS do
         local b = _G["CharacterBag" .. bag_idx - 1 .. "Slot"]
         b:SetParent(f)
+        b:SetChecked(false)
         b:RegisterForClicks("LeftButtonUp")
         b:SetScript("OnClick", bag_OnClick)
         b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
@@ -455,6 +471,8 @@ local function bag_OnShow(self)
     self:RegisterEvent("ITEM_UNLOCKED")
     self:RegisterEvent("BAG_UPDATE")
     self:RegisterEvent("BAG_UPDATE_DELAYED")
+    self:RegisterEvent("BAG_UPDATE_COOLDOWN")
+    self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
     if not IsBagOpen(BACKPACK_CONTAINER) then
         OpenBackpack()
     end
@@ -471,7 +489,7 @@ local function bag_OnShow(self)
         GWkeyringbutton.IconBorder:Show()
     end
     updateBagBar(self.ItemFrame)
-    updateBagContainers(self)
+    rescanBagContainers(self)
 end
 
 
@@ -492,6 +510,15 @@ local function bag_OnHide(self)
 end
 
 
+local function getEventContainer(self, bag)
+    if bag and bag >= BACKPACK_CONTAINER and bag <= NUM_BAG_SLOTS then
+        return self.ItemFrame.Containers[bag]
+    elseif bag == KEYRING_CONTAINER then
+        return self.ItemFrame.Containers[KEYRING_CONTAINER]
+    end
+    return nil
+end
+
 local function bag_OnEvent(self, event, ...)
     if event == "ITEM_LOCKED" or event == "ITEM_UNLOCKED" then
         -- check if the item un/locked is a character bag and gray it out if so
@@ -510,10 +537,13 @@ local function bag_OnEvent(self, event, ...)
                 end
             end
             self.gw_need_bag_rescan = true
+        elseif slot ~= nil then
+            -- lock state of one of our own item buttons
+            GW.UpdateOwnContainerLockedState(getEventContainer(self, bag), slot)
         end
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
-        if (bag_id <= NUM_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER) or bag == KEYRING_CONTAINER then
+        if (bag_id <= NUM_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER) or bag_id == KEYRING_CONTAINER then
             self.gw_need_bag_update = true
         end
     elseif event == "BAG_UPDATE_DELAYED" then
@@ -527,14 +557,19 @@ local function bag_OnEvent(self, event, ...)
                 OpenBag(KEYRING_CONTAINER)
             end
             updateBagBar(self.ItemFrame)
-            rescanBagContainers(self)
-            self.gw_need_bag_rescan = false
         end
-        if self.gw_need_bag_update then
-            self.gw_need_bag_update = false
-            if self.ItemFrame:IsShown() then
-                updateFreeBagSlots()
-            end
+        if self.gw_need_bag_rescan or self.gw_need_bag_update then
+            rescanBagContainers(self)
+        end
+        self.gw_need_bag_rescan = false
+        self.gw_need_bag_update = false
+    elseif event == "BAG_UPDATE_COOLDOWN" then
+        for _, cf in pairs(self.ItemFrame.Containers) do
+            GW.UpdateOwnContainerCooldowns(cf)
+        end
+    elseif event == "INVENTORY_SEARCH_UPDATE" then
+        for _, cf in pairs(self.ItemFrame.Containers) do
+            GW.UpdateOwnContainerSearchResults(cf)
         end
     end
 end
@@ -626,7 +661,7 @@ local function bagHeader_OnEnter(self)
 end
 
 local function LoadBag(helpers)
-    inv = helpers 
+    inv = helpers
 
     GW.settings.BAG_ITEM_SIZE = inv.normalizeBagItemSize(GW.settings.BAG_ITEM_SIZE)
     GW.settings.BAG_ITEM_SPACING_X = inv.normalizeBagItemSpacingX(GW.settings.BAG_ITEM_SPACING_X)
@@ -771,6 +806,7 @@ local function LoadBag(helpers)
                 check:AddInitializer(function(button, description, menu)
                     GW.BlizzardDropdownCheckButtonInitializer(button, description, menu, getter)
                 end)
+                return check
             end
 
             addBagSliderControl(rootDescription, L["Icon Size"], inv.bagItemSizeConfig, function() return GW.settings.BAG_ITEM_SIZE end, setBagItemSize)
@@ -794,6 +830,13 @@ local function LoadBag(helpers)
                      function() GW.settings.BAG_SHOW_ILVL = not GW.settings.BAG_SHOW_ILVL; ContainerFrame_UpdateAll() end)
             addCheck(L["Separate bags"], function() return GW.settings.BAG_SEPARATE_BAGS end,
                      function() local ns = not GW.settings.BAG_SEPARATE_BAGS; GW.settings.BAG_SEPARATE_BAGS = ns; layoutItems(f); snapFrameSize(f) end)
+            local keyringCheck = addCheck(L["Separate keyring"], function() return GW.settings.BAG_SEPARATE_KEYRING end,
+                     function() local ns = not GW.settings.BAG_SEPARATE_KEYRING; GW.settings.BAG_SEPARATE_KEYRING = ns; layoutItems(f); snapFrameSize(f) end)
+            keyringCheck:SetEnabled(function() return not GW.settings.BAG_SEPARATE_BAGS end)
+            keyringCheck:SetTooltip(function(tooltip, elementDescription)
+                tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
+                tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
+            end)
         end)
     end)
 

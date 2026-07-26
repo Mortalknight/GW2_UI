@@ -73,6 +73,13 @@
             </Layer>
         </Layers>
         <Frames>
+            <Button parentKey="bagHeader0" id="0" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader1" id="1" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader2" id="2" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader3" id="3" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader4" id="4" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader5" id="5" inherits="GwBagHeaderTemplate"/>
+            <Button parentKey="bagHeader6" id="6" inherits="GwBagHeaderTemplate"/>
             <Frame parentkey="mover" enableMouse="true">
                 <Size y="40" />
                 <Anchors>

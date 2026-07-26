@@ -5,15 +5,40 @@ local L = GW.L
 local EnableTooltip = GW.EnableTooltip
 local inv
 
+-- sets the bank header names in separate bags mode: custom name, bag item name or the bank default
+local function setBankHeaders(frame)
+    for i = 1, NUM_BANKBAGSLOTS do
+        local customBagHeaderName = GW.settings["BANK_HEADER_NAME" .. i]
+        local header = frame["bagHeader" .. i]
+        local itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(NUM_BAG_SLOTS + i))
+
+        if itemID then
+            local r, g, b = 1, 1, 1
+            local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
+            if itemRarity then r, g, b = C_Item.GetItemQualityColor(itemRarity) end
+
+            header.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName and itemName or UNKNOWN)
+            header.nameString:SetTextColor(r, g, b, 1)
+        else
+            header:Hide()
+        end
+    end
+    local customBagHeaderName = GW.settings.BANK_HEADER_NAME0
+    frame.bagHeader0.nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or BANK)
+    frame.bagHeader0.nameString:SetTextColor(1, 1, 1, 1)
+end
+
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutBankItems(f)
-    local max_col = f:GetParent().gw_bank_cols
-    local row = 0
+    local parent = f:GetParent()
+    local max_col = parent.gw_bank_cols
     local col = 0
     local rev = GW.settings.BANK_REVERSE_SORT
+    local sep = GW.settings.BANK_SEPARATE_BAGS
+    local row = sep and 1 or 0
 
-    local item_off_x = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_X
-    local item_off_y = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_Y
+    local item_off_x = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_X
+    local item_off_y = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_Y
 
     local iS = NUM_BAG_SLOTS
     local iE = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
@@ -23,6 +48,8 @@ local function layoutBankItems(f)
         iE = NUM_BAG_SLOTS
         iD = -1
     end
+    parent.unfinishedRow = 0
+    parent.finishedRow = 0
 
     local lcf = inv.layoutContainerFrame
     for i = iS, iE, iD do
@@ -31,30 +58,54 @@ local function layoutBankItems(f)
             bag_id = BANK_CONTAINER
         end
         local cf = f.Containers[bag_id]
-        col, row = lcf(cf, max_col, row, col, (bag_id == BANK_CONTAINER), item_off_x, item_off_y)
+        local header = parent["bagHeader" .. (i - NUM_BAG_SLOTS)]
+        local itemID
+        if bag_id ~= BANK_CONTAINER then
+            itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(bag_id))
+        end
+
+        if sep then
+            header:Show()
+            header:ClearAllPoints()
+            header:SetPoint("TOPLEFT", f, "TOPLEFT", 0, (-row + 1) * item_off_y)
+            header:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, (-row + 1) * item_off_y)
+        else
+            header:Hide()
+        end
+
+        if cf then
+            if not sep or cf.shouldShow then
+                local unfinishedRow, finishedRows
+                col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, (bag_id == BANK_CONTAINER), item_off_x, item_off_y)
+                cf:Show()
+                if unfinishedRow then parent.unfinishedRow = parent.unfinishedRow + 1 end
+                parent.finishedRow = parent.finishedRow + finishedRows
+            else
+                cf:Hide()
+            end
+
+            -- close the section under its header: the next header starts on a fresh row
+            if sep and (bag_id == BANK_CONTAINER or itemID) then
+                if col ~= 0 then
+                    row = row + 2
+                    col = 0
+                else
+                    row = row + 1
+                end
+            end
+        end
+    end
+
+    if sep then
+        setBankHeaders(parent)
     end
 end
 
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
-local function layoutReagentItems(f)
-    local max_col = f:GetParent().gw_bank_cols
-    local row = 0
-    local col = 0
-
-    local item_off_x = GW.settings.BAG_ITEM_SIZE  + GW.settings.BAG_ITEM_SPACING_X
-    local item_off_y = GW.settings.BAG_ITEM_SIZE  + GW.settings.BAG_ITEM_SPACING_Y
-
-    local cf = f.Containers[REAGENTBANK_CONTAINER]
-    inv.layoutContainerFrame(cf, max_col, row, col, true, item_off_x, item_off_y)
-end
-
--- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutItems(f)
     if f.ItemFrame:IsShown() then
         layoutBankItems(f.ItemFrame)
-    elseif f.ReagentFrame:IsShown() and IsReagentBankUnlocked() then
-        layoutReagentItems(f.ReagentFrame)
     end
 end
 
@@ -65,7 +116,7 @@ local function snapFrameSize(f)
     if f.ItemFrame:IsShown() then
         cfs = f.ItemFrame.Containers
     end
-    inv.snapFrameSize(f, cfs, GW.settings.BAG_ITEM_SIZE, GW.settings.BAG_ITEM_SPACING_X, GW.settings.BAG_ITEM_SPACING_Y, 370)
+    inv.snapFrameSize(f, cfs, GW.settings.BANK_ITEM_SIZE, GW.settings.BANK_ITEM_SPACING_X, GW.settings.BANK_ITEM_SPACING_Y, 370)
 end
 
 
@@ -82,10 +133,7 @@ end
 
 -- update all bank items and bank bags
 local function updateBankContainers(f)
-    if not f.gw_took_bank then
-        inv.takeItemButtons(f.ItemFrame, BANK_CONTAINER)
-        f.gw_took_bank = true
-    end
+    GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[BANK_CONTAINER], BANK_CONTAINER, GW.settings.BANK_ITEM_SIZE, true)
     if f:IsShown() then
         if f.ItemFrame:IsShown() then
             updateFreeBankSlots(f.ItemFrame)
@@ -99,7 +147,7 @@ end
 -- rescan ALL bank ItemButtons
 local function rescanBankContainers(f)
     for bag_id = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-        inv.takeItemButtons(f.ItemFrame, bag_id)
+        GW.SetupOwnContainerItemButtons(f.ItemFrame.Containers[bag_id], bag_id, GW.settings.BANK_ITEM_SIZE)
     end
     updateBankContainers(f)
 end
@@ -255,7 +303,7 @@ end
 
 
 local function onBankFrameChangeSize(self, _, _, skip)
-    local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, GW.settings.BAG_ITEM_SPACING_X, self:GetWidth())
+    local cols = inv.colCount(GW.settings.BANK_ITEM_SIZE, GW.settings.BANK_ITEM_SPACING_X, self:GetWidth())
 
     if not self.gw_bank_cols or self.gw_bank_cols ~= cols then
         self.gw_bank_cols = cols
@@ -267,9 +315,9 @@ end
 
 
 local function setBankItemSize(value)
-    local size = inv.normalizeBagItemSize(value)
-    if GW.settings.BAG_ITEM_SIZE ~= size then
-        GW.settings.BAG_ITEM_SIZE = size
+    local size = inv.normalizeBankItemSize(value)
+    if GW.settings.BANK_ITEM_SIZE ~= size then
+        GW.settings.BANK_ITEM_SIZE = size
         inv.resizeInventory()
     end
     return size
@@ -296,19 +344,6 @@ local function addBankSliderControl(rootDescription, title, config, getValueFunc
 end
 
 
--- reskin all the base BankFrame ItemButtons
-local function reskinBankItemButtons()
-    local items = C_Container.GetContainerNumSlots(BANK_CONTAINER)
-    for i = 1, items do
-        local iname = "BankFrameItem" .. i
-        local b = _G[iname]
-        if b then
-            inv.reskinItemButton(b)
-        end
-    end
-end
-
-
 local function bank_OnShow(self)
     PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
     self:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
@@ -316,6 +351,9 @@ local function bank_OnShow(self)
     self:RegisterEvent("ITEM_LOCKED")
     self:RegisterEvent("ITEM_UNLOCKED")
     self:RegisterEvent("BAG_UPDATE")
+    self:RegisterEvent("BAG_UPDATE_DELAYED")
+    self:RegisterEvent("BAG_UPDATE_COOLDOWN")
+    self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
 
     -- hide the bank frame off screen
     BankFrame:ClearAllPoints()
@@ -325,7 +363,7 @@ local function bank_OnShow(self)
 
     OpenAllBags(self)
     updateBagBar(self.ItemFrame)
-    updateBankContainers(self)
+    rescanBankContainers(self)
 end
 
 
@@ -356,6 +394,10 @@ local function bank_OnEvent(self, event, ...)
             rescanBankContainers(self)
         else
             -- an item was added to or removed from the base bank
+            local cf = self.ItemFrame.Containers[BANK_CONTAINER]
+            if cf and cf.gw_items and cf.gw_items[slot] then
+                GW.UpdateOwnContainerItemButton(cf.gw_items[slot])
+            end
             if self.ItemFrame:IsShown() then
                 updateFreeBankSlots(self.ItemFrame)
             end
@@ -364,10 +406,10 @@ local function bank_OnEvent(self, event, ...)
         -- the # of bank bag slots has changed
         updateBagBar(self.ItemFrame)
     elseif event == "ITEM_LOCKED" or event == "ITEM_UNLOCKED" then
-        -- check if the item un/locked is a bank bag and gray it out if so
         local bag = select(1, ...)
         local slot = select(2, ...)
-        if bag == BANK_CONTAINER and slot > NUM_BANKGENERIC_SLOTS then
+        if bag == BANK_CONTAINER and slot and slot > NUM_BANKGENERIC_SLOTS then
+            -- the item un/locked is a bank bag, gray it out
             local bag_id = slot - NUM_BANKGENERIC_SLOTS
             local b = self.ItemFrame.bags[bag_id]
             if b and b.icon and b.icon.SetDesaturated then
@@ -377,24 +419,106 @@ local function bank_OnEvent(self, event, ...)
                     b.icon:SetDesaturated(false)
                 end
             end
+        elseif bag == BANK_CONTAINER and slot then
+            GW.UpdateOwnContainerLockedState(self.ItemFrame.Containers[BANK_CONTAINER], slot)
+        elseif bag and slot and bag > NUM_BAG_SLOTS and bag <= NUM_BAG_SLOTS + NUM_BANKBAGSLOTS then
+            GW.UpdateOwnContainerLockedState(self.ItemFrame.Containers[bag], slot)
         end
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
         if bag_id == BANK_CONTAINER or bag_id > NUM_BAG_SLOTS then
-            if self.ItemFrame:IsShown() then
-                updateFreeBankSlots(self.ItemFrame)
-            end
+            self.gw_need_bank_update = true
+        end
+    elseif event == "BAG_UPDATE_DELAYED" then
+        if self.gw_need_bank_update then
+            self.gw_need_bank_update = false
+            rescanBankContainers(self)
+        end
+    elseif event == "BAG_UPDATE_COOLDOWN" then
+        for _, cf in pairs(self.ItemFrame.Containers) do
+            GW.UpdateOwnContainerCooldowns(cf)
+        end
+    elseif event == "INVENTORY_SEARCH_UPDATE" then
+        for _, cf in pairs(self.ItemFrame.Containers) do
+            GW.UpdateOwnContainerSearchResults(cf)
         end
     end
 end
 
 
+local function bankHeader_OnClick(self, btn)
+    local idx = self:GetID()
+    local parent = self:GetParent()
+    if btn == "LeftButton" then
+        local bag_id = idx == 0 and BANK_CONTAINER or (NUM_BAG_SLOTS + idx)
+        parent.ItemFrame.Containers[bag_id].shouldShow = not self.icon:IsShown()
+        self.icon:SetShown(not self.icon:IsShown())
+        self.icon2:SetShown(not self.icon:IsShown())
+
+        layoutItems(parent)
+        snapFrameSize(parent)
+    elseif btn == "RightButton" then
+        GW.ShowPopup({text = L["New Bag Name"],
+            OnAccept = function(promptFrame)
+                GW.settings["BANK_HEADER_NAME" .. idx] = promptFrame.input:GetText()
+                self.nameString:SetText(GW.settings["BANK_HEADER_NAME" .. idx])
+            end,
+            hasEditBox = true,
+            button1 = SAVE,
+            button2 = RESET,
+            EditBoxOnEscapePressed = function(popup) popup:Hide() end,
+            OnCancel = function()
+                GW.settings["BANK_HEADER_NAME" .. idx] = ""
+                if idx > 0 then
+                    local itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(NUM_BAG_SLOTS + idx))
+
+                    if itemID then
+                        local color = {r = 1, g = 1, b = 1}
+                        local itemName, _, itemRarity = C_Item.GetItemInfo(itemID)
+                        if itemRarity then
+                            color = GW.GetQualityColor(itemRarity)
+                        end
+
+                        self.nameString:SetText(itemName or UNKNOWN)
+                        self.nameString:SetTextColor(color.r, color.g, color.b, 1)
+                    end
+                else
+                    self.nameString:SetText(BANK)
+                end
+            end,
+        inputText = (function()
+            local customName = GW.settings["BANK_HEADER_NAME" .. idx]
+                if string.len(customName) == 0 then
+                    customName = nil
+                end
+                if idx > 0 then
+                    local itemID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(NUM_BAG_SLOTS + idx))
+
+                    if itemID then
+                        local itemName = C_Item.GetItemInfo(itemID)
+                        return customName or itemName or UNKNOWN
+                    end
+                else
+                    return customName or BANK
+                end
+        end)()}
+        )
+    end
+end
+
+local function bankHeader_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, -45)
+    GameTooltip:ClearLines()
+    GameTooltip_SetTitle(GameTooltip, L["Right click to customize the bag title."])
+    GameTooltip:Show()
+end
+
 local function LoadBank(helpers)
     inv = helpers
 
-    GW.settings.BAG_ITEM_SIZE = inv.normalizeBagItemSize(GW.settings.BAG_ITEM_SIZE)
-    GW.settings.BAG_ITEM_SPACING_X = inv.normalizeBagItemSpacingX(GW.settings.BAG_ITEM_SPACING_X)
-    GW.settings.BAG_ITEM_SPACING_Y = inv.normalizeBagItemSpacingY(GW.settings.BAG_ITEM_SPACING_Y)
+    GW.settings.BANK_ITEM_SIZE = inv.normalizeBankItemSize(GW.settings.BANK_ITEM_SIZE)
+    GW.settings.BANK_ITEM_SPACING_X = inv.normalizeBankItemSpacingX(GW.settings.BANK_ITEM_SPACING_X)
+    GW.settings.BANK_ITEM_SPACING_Y = inv.normalizeBankItemSpacingY(GW.settings.BANK_ITEM_SPACING_Y)
 
     -- create bank frame, restore its saved size, and init its many pieces
     local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrameTemplate")
@@ -441,8 +565,18 @@ local function LoadBank(helpers)
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
 
-    -- reskin all the BankFrame ItemButtons
-    reskinBankItemButtons()
+    -- setup bagheader stuff
+    for i = 0, NUM_BANKBAGSLOTS do
+        local header = f["bagHeader" .. i]
+        header.nameString:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+        header.nameString:SetTextColor(1, 1, 1)
+        header.nameString:SetShadowColor(0, 0, 0, 0)
+        header.icon2:Hide()
+        header:Hide()
+        header:SetScript("OnClick", bankHeader_OnClick)
+        header:SetScript("OnEnter", bankHeader_OnEnter)
+        header:SetScript("OnLeave", GameTooltip_Hide)
+    end
 
     -- take the original search box
     local BankItemSearchBox = CreateFrame("EditBox", "BankItemSearchBox", f, "BagSearchBoxTemplate")
@@ -465,6 +599,7 @@ local function LoadBank(helpers)
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
+        cf.shouldShow = true
         f.ItemFrame.Containers[bag_id] = cf
     end
 
@@ -532,17 +667,20 @@ local function LoadBank(helpers)
                 end)
             end
 
-            addBankSliderControl(rootDescription, L["Icon Size"], inv.bagItemSizeConfig, function() return GW.settings.BAG_ITEM_SIZE end, setBankItemSize)
-            addBankSliderControl(rootDescription, L["Slot Spacing X"], inv.bagItemSpacingXConfig, function() return GW.settings.BAG_ITEM_SPACING_X end, function(value) return setBankItemSpacing("BAG_ITEM_SPACING_X", inv.normalizeBagItemSpacingX, value) end)
-            addBankSliderControl(rootDescription, L["Slot Spacing Y"], inv.bagItemSpacingYConfig, function() return GW.settings.BAG_ITEM_SPACING_Y end, function(value) return setBankItemSpacing("BAG_ITEM_SPACING_Y", inv.normalizeBagItemSpacingY, value) end)
-            addCheck(L["Reverse Bag Order"], function() return GW.settings.BANK_REVERSE_SORT end, function() GW.settings.BANK_REVERSE_SORT = not GW.settings.BANK_REVERSE_SORT; ContainerFrame_UpdateAll() end)
+            addBankSliderControl(rootDescription, L["Icon Size"], inv.bankItemSizeConfig, function() return GW.settings.BANK_ITEM_SIZE end, setBankItemSize)
+            addBankSliderControl(rootDescription, L["Slot Spacing X"], inv.bankItemSpacingXConfig, function() return GW.settings.BANK_ITEM_SPACING_X end, function(value) return setBankItemSpacing("BANK_ITEM_SPACING_X", inv.normalizeBankItemSpacingX, value) end)
+            addBankSliderControl(rootDescription, L["Slot Spacing Y"], inv.bankItemSpacingYConfig, function() return GW.settings.BANK_ITEM_SPACING_Y end, function(value) return setBankItemSpacing("BANK_ITEM_SPACING_Y", inv.normalizeBankItemSpacingY, value) end)
+            addCheck(L["Reverse Bag Order"], function() return GW.settings.BANK_REVERSE_SORT end,
+                     function() GW.settings.BANK_REVERSE_SORT = not GW.settings.BANK_REVERSE_SORT; setBagBarOrder(f.ItemFrame); layoutItems(f); snapFrameSize(f) end)
             addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; ContainerFrame_UpdateAll() end)
+            addCheck(L["Separate bags"], function() return GW.settings.BANK_SEPARATE_BAGS end,
+                     function() local ns = not GW.settings.BANK_SEPARATE_BAGS; GW.settings.BANK_SEPARATE_BAGS = ns; layoutItems(f); snapFrameSize(f) end)
         end)
     end)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()
-        reskinBankItemButtons()
+        onBankFrameChangeSize(f, nil, nil, true)
         layoutItems(f)
         snapFrameSize(f)
     end

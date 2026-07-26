@@ -338,6 +338,14 @@ local function DatabaseValueMigration()
         GW.settings.StanceBar.enabled = GW.settings.StanceBarEnabled
         GW.settings.StanceBarEnabled = nil
     end
+
+    -- one time split of the bank item settings from the previously shared bag values
+    if not GW.settings.BANK_ITEM_SETTINGS_SPLIT then
+        GW.settings.BANK_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE
+        GW.settings.BANK_ITEM_SPACING_X = GW.settings.BAG_ITEM_SPACING_X
+        GW.settings.BANK_ITEM_SPACING_Y = GW.settings.BAG_ITEM_SPACING_Y
+        GW.settings.BANK_ITEM_SETTINGS_SPLIT = true
+    end
 end
 GW.DatabaseValueMigration = DatabaseValueMigration
 

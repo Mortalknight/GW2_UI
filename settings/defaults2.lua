@@ -244,6 +244,10 @@ GW.globalDefault = {
         BAG_ITEM_SIZE= 40,
         BAG_ITEM_SPACING_X= 5,
         BAG_ITEM_SPACING_Y= 5,
+        BANK_ITEM_SIZE= 40,
+        BANK_ITEM_SPACING_X= 5,
+        BANK_ITEM_SPACING_Y= 5,
+        BANK_ITEM_SETTINGS_SPLIT= false,
 
         PLAYER_UNIT_HEALTH= "VALUE",
         PLAYER_UNIT_ABSORB= "VALUE",
@@ -262,6 +266,7 @@ GW.globalDefault = {
         BAG_VENDOR_GRAYS= false,
         BAG_SHOW_ILVL= false,
         BAG_SEPARATE_BAGS= false,
+        BAG_SEPARATE_KEYRING= false,
         BAG_SHOW_EQUIPMENT_SET_NAME = false,
         BAG_HEADER_NAME0= "",
         BAG_HEADER_NAME1= "",
@@ -290,6 +295,15 @@ GW.globalDefault = {
 
         BANK_WIDTH= 720,
         BANK_REVERSE_SORT= false,
+        BANK_SEPARATE_BAGS= false,
+        BANK_HEADER_NAME0= "",
+        BANK_HEADER_NAME1= "",
+        BANK_HEADER_NAME2= "",
+        BANK_HEADER_NAME3= "",
+        BANK_HEADER_NAME4= "",
+        BANK_HEADER_NAME5= "",
+        BANK_HEADER_NAME6= "",
+        BANK_HEADER_NAME7= "",
 
         BANK_POSITION= {
             point= "TOPLEFT",
