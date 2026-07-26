@@ -166,6 +166,9 @@ function IsPlayerAtEffectiveMaxLevel()
     return (UnitLevel("player") >= GetMaxLevelForPlayerExpansion())
 end
 
+function C_AddOns.GetAddOnInfo(name)
+    return GetAddOnInfo(name)
+end
 function C_AddOns.IsAddOnLoaded(name)
     return IsAddOnLoaded(name)
 end
