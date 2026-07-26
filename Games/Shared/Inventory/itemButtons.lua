@@ -19,10 +19,30 @@ local GW = select(2, ...)
 
 local allItemButtons = {}
 
--- vanilla container frames never show blizzards quest banners (ContainerFrame_UpdateQuestItem
--- only hides the texture there), the quest marking comes from our own quest icon instead;
--- on the other flavors only when the client actually provides the banner textures
-local hasBlizzardQuestBanners = not GW.Classic and TEXTURE_ITEM_QUEST_BANG ~= nil and TEXTURE_ITEM_QUEST_BORDER ~= nil
+-- how the templates quest texture is used per flavor:
+--  banner: blizzards quest bang/border textures (tbc/wrath)
+--  icon:   the retail skin repurposes the texture as our own quest icon, we only toggle it
+--  hidden: the quest marking comes from the quality skins own quest icon (era, mists)
+local QUEST_DISPLAY = (GW.TBC or GW.Wrath) and TEXTURE_ITEM_QUEST_BANG and TEXTURE_ITEM_QUEST_BORDER and "banner" or GW.Retail and "icon" or "hidden"
+
+-- blizzards cooldown helper only exists on the classic flavors
+local function updateCooldown(bagID, button)
+    if ContainerFrame_UpdateCooldown then
+        ContainerFrame_UpdateCooldown(bagID, button)
+        return
+    end
+    local cooldown = button.cooldown
+    if not cooldown then
+        return
+    end
+    local start, duration, enable = C_Container.GetContainerItemCooldown(bagID, button:GetID())
+    CooldownFrame_Set(cooldown, start, duration, enable)
+    if duration > 0 and enable == 0 then
+        SetItemButtonTextureVertexColor(button, 0.4, 0.4, 0.4)
+    else
+        SetItemButtonTextureVertexColor(button, 1, 1, 1)
+    end
+end
 
 local function GetQuestTexture(button)
     if not button.IconQuestTexture then
@@ -52,8 +72,12 @@ local function UpdateOwnContainerItemButton(button)
     -- quest bang and border like blizzards ContainerFrame_UpdateQuestItem
     local questTexture = GetQuestTexture(button)
     if questTexture then
-        if not hasBlizzardQuestBanners then
+        if QUEST_DISPLAY == "hidden" then
             questTexture:Hide()
+        elseif QUEST_DISPLAY == "icon" then
+            -- the skin owns the texture, we only toggle the marking
+            local questInfo = C_Container.GetContainerItemQuestInfo(bagID, slotID)
+            questTexture:SetShown(questInfo.questID ~= nil or questInfo.isQuestItem == true)
         else
             local questInfo = C_Container.GetContainerItemQuestInfo(bagID, slotID)
             if questInfo.questID and not questInfo.isActive then
@@ -69,13 +93,17 @@ local function UpdateOwnContainerItemButton(button)
     end
 
     if texture then
-        ContainerFrame_UpdateCooldown(bagID, button)
+        updateCooldown(bagID, button)
         button.hasItem = 1
     else
         if button.cooldown then
             button.cooldown:Hide()
         end
         button.hasItem = nil
+    end
+    -- the retail button mixin tracks its item state itself
+    if button.SetHasItem then
+        button:SetHasItem(texture)
     end
     button.readable = readable
 
@@ -104,8 +132,9 @@ local function EnsureItemButton(cf, index, iconSize)
     button = CreateFrame("Button", name, cf, "ContainerFrameItemButtonTemplate")
     button.gwOwnItemButton = true
 
-    -- the templates children are created by name, cache the ones we need
-    button.cooldown = _G[name .. "Cooldown"]
+    -- the templates children are created by name on the classic flavors and by
+    -- parent key on retail, cache the ones we need
+    button.cooldown = _G[name .. "Cooldown"] or button.Cooldown
     GetQuestTexture(button)
 
     -- the extended slot advert and new item visuals of the template default to shown,
@@ -200,7 +229,7 @@ local function UpdateOwnContainerCooldowns(cf)
     for i = 1, cf.gw_num_slots or 0 do
         local button = cf.gw_items[i]
         if button and button.hasItem then
-            ContainerFrame_UpdateCooldown(bagID, button)
+            updateCooldown(bagID, button)
         end
     end
 end

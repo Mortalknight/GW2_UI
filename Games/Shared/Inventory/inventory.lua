@@ -3,15 +3,19 @@ local GW = select(2, ...)
 
 local BORDER_TEXTURE = "Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png"
 
--- the keyring only exists up to wrath, mists (and later retail) have none
+-- the keyring only exists up to wrath, the reagent bag only on retail
 local HAS_KEYRING = GW.Classic or GW.TBC or GW.Wrath
+local HAS_REAGENT_BAG = GW.Retail
 
-BAG_FILTER_LABELS = {
-    [LE_BAG_FILTER_FLAG_EQUIPMENT] = BAG_FILTER_EQUIPMENT,
-    [LE_BAG_FILTER_FLAG_CONSUMABLES] = BAG_FILTER_CONSUMABLES,
-    [LE_BAG_FILTER_FLAG_TRADE_GOODS] = BAG_FILTER_TRADE_GOODS,
-    [LE_BAG_FILTER_FLAG_JUNK] = BAG_FILTER_JUNK,
-};
+-- retail provides this table natively (keyed by Enum.BagSlotFlags), the classic flavors dont
+if LE_BAG_FILTER_FLAG_EQUIPMENT then
+    BAG_FILTER_LABELS = {
+        [LE_BAG_FILTER_FLAG_EQUIPMENT] = BAG_FILTER_EQUIPMENT,
+        [LE_BAG_FILTER_FLAG_CONSUMABLES] = BAG_FILTER_CONSUMABLES,
+        [LE_BAG_FILTER_FLAG_TRADE_GOODS] = BAG_FILTER_TRADE_GOODS,
+        [LE_BAG_FILTER_FLAG_JUNK] = BAG_FILTER_JUNK,
+    }
+end
 local BAG_ITEM_SIZE_CONFIG = {
     defaultValue = GW.globalDefault.profile.BAG_ITEM_SIZE,
     minValue = 26,
@@ -197,6 +201,7 @@ local function updateItemVisuals(b, overrideIconSize)
         b.flash:SetAllPoints(b)
     end
 end
+GW.UpdateBagItemButtonVisuals = updateItemVisuals
 
 local function getContainerFrame(bag_id)
     -- ContainerFrame assignment is not guaranteed; only safe approach is to
@@ -221,10 +226,10 @@ local function reskinItemButtons()
         local iconSize = isBank and GW.settings.BANK_ITEM_SIZE or GW.settings.BAG_ITEM_SIZE
 
         if not slot.__gwSkinned then
-            reskinItemButton(slot, iconSize)
+            GW.SkinBagItemButton(slot, iconSize)
             slot.__gwSkinned = true
         elseif slot:IsShown() then
-            updateItemVisuals(slot, iconSize)
+            GW.UpdateBagItemButtonVisuals(slot, iconSize)
         else
             slot:SetSize(iconSize, iconSize)
         end
@@ -250,7 +255,7 @@ local function SetItemButtonQualityForBags(button, quality)
     button.IconBorder:SetAlpha(0.9)
 
     if quality then
-        if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
+        if quality >= (LE_ITEM_QUALITY_COMMON or Enum.ItemQuality.Common) and BAG_ITEM_QUALITY_COLORS[quality] then
             button.IconBorder:Show()
             button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
         else
@@ -548,6 +553,7 @@ local function bag_OnMouseDown(self, button)
         end)
     end
 end
+GW.BagSlotOnMouseDown = bag_OnMouseDown
 
 
 -- positions ItemButtons fluidly for this container
@@ -633,9 +639,14 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
     end
 
     local slots = 0
-    for _, cf in pairs(cfs) do
-        if cf.gw_num_slots then
-            slots = slots + cf.gw_num_slots
+    if cfs.gw_num_slots then
+        -- a single container was handed in (the retail bank panel)
+        slots = cfs.gw_num_slots
+    else
+        for _, cf in pairs(cfs) do
+            if cf.gw_num_slots then
+                slots = slots + cf.gw_num_slots
+            end
         end
     end
 
@@ -643,7 +654,7 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
     local isizeX = size + paddingX
     local isizeY = size + paddingY
     if sep then
-        -- one row per visible section header: backpack + equipped bags (+ keyring)
+        -- one row per visible section header: backpack + equipped bags (+ keyring/reagent bag)
         -- on the bag frame, main bank + equipped bank bags on the bank frame
         local headers = 1
         if isBag then
@@ -655,6 +666,10 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
             end
             if HAS_KEYRING then
                 headers = headers + 1 --Keyring
+            elseif HAS_REAGENT_BAG then
+                if GetInventoryItemID("player", (GetInventorySlotInfo("ReagentBag0Slot"))) then
+                    headers = headers + 1
+                end
             end
         else
             for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
@@ -765,8 +780,11 @@ local function LoadInventory()
     -- apply the current size settings to any already created own item buttons
     reskinItemButtons()
 
-    -- whenever an ItemButton sets its quality ensure our custom border is being used
-    hooksecurefunc("SetItemButtonQuality", SetItemButtonData)
+    -- whenever an ItemButton sets its quality ensure our custom border is being used;
+    -- resolved through GW so a flavor can override the skin (retail does)
+    hooksecurefunc("SetItemButtonQuality", function(...)
+        GW.SetBagItemButtonQualitySkin(...)
+    end)
 
     -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
     for i = 1, NUM_CONTAINER_FRAMES do
@@ -777,13 +795,14 @@ local function LoadInventory()
     end
 
     local helpers = {}
-    helpers.reskinItemButton = reskinItemButton
+    -- resolved through GW so a flavor can override them (retail does)
+    helpers.reskinItemButton = function(...) return GW.SkinBagItemButton(...) end
+    helpers.bag_OnMouseDown = function(...) return GW.BagSlotOnMouseDown(...) end
     helpers.resizeInventory = resizeInventory
     helpers.getContainerFrame = getContainerFrame
     helpers.reskinBagBar = reskinBagBar
     helpers.reskinSearchBox = reskinSearchBox
     helpers.relocateSearchBox = relocateSearchBox
-    helpers.bag_OnMouseDown = bag_OnMouseDown
     helpers.layoutContainerFrame = layoutContainerFrame
     helpers.updateFreeSlots = updateFreeSlots
     helpers.snapFrameSize = snapFrameSize

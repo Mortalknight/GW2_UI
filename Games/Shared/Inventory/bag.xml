@@ -76,7 +76,7 @@
                         <Anchor point="BOTTOMRIGHT" x="-20" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture file="Interface/MoneyFrame/UI-CopperIcon">
+                <Texture parentKey="bronzeIcon" file="Interface/MoneyFrame/UI-CopperIcon">
                     <Size x="11" y="11"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-8" y="-25"></Anchor>
@@ -88,7 +88,7 @@
                         <Anchor point="BOTTOMRIGHT" x="-60" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture file="Interface/MoneyFrame/UI-SilverIcon">
+                <Texture parentKey="silverIcon" file="Interface/MoneyFrame/UI-SilverIcon">
                     <Size x="11" y="11"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-48" y="-25"></Anchor>
@@ -100,7 +100,7 @@
                         <Anchor point="BOTTOMRIGHT" x="-100" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture file="Interface/MoneyFrame/UI-GoldIcon">
+                <Texture parentKey="goldIcon" file="Interface/MoneyFrame/UI-GoldIcon">
                     <Size x="11" y="11"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-88" y="-25"></Anchor>

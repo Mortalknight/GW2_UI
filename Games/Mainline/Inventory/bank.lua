@@ -8,15 +8,19 @@ local PURCHASE_TAB_ID = -1
 
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutAccountBankItems(f)
-    local item_off_x = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_X
-    local item_off_y = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_Y
+    if not GW.settings.BANK_ITEM_SIZE or not GW.settings.BANK_ITEM_SPACING_X or not GW.settings.BANK_ITEM_SPACING_Y then
+        -- acedb can have the profile defaults detached (logout, profile operations)
+        return
+    end
+    local item_off_x = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_X
+    local item_off_y = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_Y
     inv.layoutContainerFrame(f, f:GetParent().gw_bank_cols, 0, 0, false, item_off_x, item_off_y)
 end
 
 
 -- adjusts the bank frame size to snap to the exact row/col sizing of contents
 local function snapFrameSize(f)
-    inv.snapFrameSize(f, f.BankPanel, GW.settings.BAG_ITEM_SIZE, GW.settings.BAG_ITEM_SPACING_X, GW.settings.BAG_ITEM_SPACING_Y, 370)
+    inv.snapFrameSize(f, f.BankPanel, GW.settings.BANK_ITEM_SIZE, GW.settings.BANK_ITEM_SPACING_X, GW.settings.BANK_ITEM_SPACING_Y, 370)
 end
 
 
@@ -24,7 +28,7 @@ local function GrabBankItemButtons(self)
     local idx = 1
     for itemButton in self:EnumerateValidItems() do
         self.gw_items[idx] = itemButton
-        inv.reskinItemButton(itemButton)
+        inv.reskinItemButton(itemButton, GW.settings.BANK_ITEM_SIZE)
 
         idx = idx + 1
     end
@@ -163,7 +167,13 @@ end
 
 
 local function onBankFrameChangeSize(self)
-    local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, GW.settings.BAG_ITEM_SPACING_X, self:GetWidth())
+    local size = GW.settings.BANK_ITEM_SIZE
+    local spacing = GW.settings.BANK_ITEM_SPACING_X
+    if not size or not spacing then
+        -- acedb can have the profile defaults detached (logout, profile operations)
+        return
+    end
+    local cols = inv.colCount(size, spacing, self:GetWidth())
 
     if not self.gw_bank_cols or self.gw_bank_cols ~= cols then
         self.gw_bank_cols = cols
@@ -171,10 +181,10 @@ local function onBankFrameChangeSize(self)
 end
 
 local function setBankItemSize(value)
-    local size = inv.normalizeBagItemSize(value)
+    local size = inv.normalizeBankItemSize(value)
 
-    if GW.settings.BAG_ITEM_SIZE ~= size then
-        GW.settings.BAG_ITEM_SIZE = size
+    if GW.settings.BANK_ITEM_SIZE ~= size then
+        GW.settings.BANK_ITEM_SIZE = size
         inv.resizeInventory()
     end
 
@@ -216,7 +226,6 @@ local function OnShow(self)
     GrabBankItemButtons(self.BankPanel)
     RefreshBankTabs(self.BankPanel)
     snapFrameSize(self)
-    inv.reskinItemButtons()
 end
 
 
@@ -288,12 +297,16 @@ end
 local function LoadBank(helpers)
     inv = helpers
 
+    GW.settings.BANK_ITEM_SIZE = inv.normalizeBankItemSize(GW.settings.BANK_ITEM_SIZE)
+    GW.settings.BANK_ITEM_SPACING_X = inv.normalizeBankItemSpacingX(GW.settings.BANK_ITEM_SPACING_X)
+    GW.settings.BANK_ITEM_SPACING_Y = inv.normalizeBankItemSpacingY(GW.settings.BANK_ITEM_SPACING_Y)
+
     GW.settings.BAG_ITEM_SIZE = inv.normalizeBagItemSize(GW.settings.BAG_ITEM_SIZE)
     GW.settings.BAG_ITEM_SPACING_X = inv.normalizeBagItemSpacingX(GW.settings.BAG_ITEM_SPACING_X)
     GW.settings.BAG_ITEM_SPACING_Y = inv.normalizeBagItemSpacingY(GW.settings.BAG_ITEM_SPACING_Y)
 
     -- create bank frame, restore its saved size, and init its many pieces
-    local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrameTemplate")
+    local f = CreateFrame("Frame", "GwBankFrame", UIParent, "GwBankFrameTemplateMainline")
     tinsert(UISpecialFrames, "GwBankFrame")
     f:ClearAllPoints()
     f:SetWidth(GW.settings.BANK_WIDTH)
@@ -444,9 +457,9 @@ local function LoadBank(helpers)
     f.buttonSettings:SetScript("OnClick", function(self)
         MenuUtil.CreateContextMenu(self, function(ownerRegion, rootDescription)
             rootDescription:SetMinimumWidth(1)
-            addBankSliderControl(rootDescription, L["Icon Size"], inv.bagItemSizeConfig, function() return GW.settings.BAG_ITEM_SIZE end, setBankItemSize)
-            addBankSliderControl(rootDescription, L["Slot Spacing X"], inv.bagItemSpacingXConfig, function() return GW.settings.BAG_ITEM_SPACING_X end, function(value) return setBankItemSpacing("BAG_ITEM_SPACING_X", inv.normalizeBagItemSpacingX, value) end)
-            addBankSliderControl(rootDescription, L["Slot Spacing Y"], inv.bagItemSpacingYConfig, function() return GW.settings.BAG_ITEM_SPACING_Y end, function(value) return setBankItemSpacing("BAG_ITEM_SPACING_Y", inv.normalizeBagItemSpacingY, value) end)
+            addBankSliderControl(rootDescription, L["Icon Size"], inv.bankItemSizeConfig, function() return GW.settings.BANK_ITEM_SIZE end, setBankItemSize)
+            addBankSliderControl(rootDescription, L["Slot Spacing X"], inv.bankItemSpacingXConfig, function() return GW.settings.BANK_ITEM_SPACING_X end, function(value) return setBankItemSpacing("BANK_ITEM_SPACING_X", inv.normalizeBankItemSpacingX, value) end)
+            addBankSliderControl(rootDescription, L["Slot Spacing Y"], inv.bankItemSpacingYConfig, function() return GW.settings.BANK_ITEM_SPACING_Y end, function(value) return setBankItemSpacing("BANK_ITEM_SPACING_Y", inv.normalizeBankItemSpacingY, value) end)
 
             local check = rootDescription:CreateCheckbox(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; f.BankPanel:Reset() end)
             check:AddInitializer(GW.BlizzardDropdownCheckButtonInitializer)
