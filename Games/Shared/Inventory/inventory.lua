@@ -311,10 +311,13 @@ local function SetItemButtonQualityForBags(button, quality)
     button.IconOverlay:Hide()
     button.IconBorder:SetAlpha(0.9)
 
-    if quality then
-        if quality >= (LE_ITEM_QUALITY_COMMON or Enum.ItemQuality.Common) and BAG_ITEM_QUALITY_COLORS[quality] then
+    local commonQuality = LE_ITEM_QUALITY_COMMON or Enum.ItemQuality.Common
+    if quality and quality >= commonQuality then
+        -- not every client has a common entry in blizzards color table, fall back to white
+        local color = BAG_ITEM_QUALITY_COLORS[quality] or (quality == commonQuality and GW.Colors.FallbackWhite)
+        if color then
             button.IconBorder:Show()
-            button.IconBorder:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)
+            button.IconBorder:SetVertexColor(color.r, color.g, color.b)
         else
             button.IconBorder:Hide()
         end
@@ -515,6 +518,8 @@ local function reskinBagBar(b, ha)
 
     b.IconBorder:SetAllPoints(b)
     b.IconBorder:SetTexture(BORDER_TEXTURE)
+    b.IconBorder:SetVertexColor(1, 1, 1)
+    b.IconBorder:Show()
     hooksecurefunc(b.IconBorder, "SetTexture", function()
         local t = b.IconBorder:GetTexture()
         if t and t > 0 and t ~= BORDER_TEXTURE then
