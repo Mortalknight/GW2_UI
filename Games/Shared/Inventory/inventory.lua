@@ -533,6 +533,9 @@ local function reskinBagBar(b, ha)
             if norm then
                 norm:SetAlpha(0)
             end
+            if self.NormalTexture then
+                self.NormalTexture:Hide()
+            end
             local pushedTex = self:GetPushedTexture()
             if pushedTex then
                 pushedTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/ui-quickslot-depress.png")
@@ -560,6 +563,11 @@ local function reskinBagBar(b, ha)
     local norm = b:GetNormalTexture()
     norm:SetTexture(nil)
     norm:SetAlpha(0)
+    if b.NormalTexture then
+        -- on retail the round slot ring lives on this separate parent key texture
+        b.NormalTexture:SetTexture()
+        b.NormalTexture:Hide()
+    end
 
     local pushed = b:GetPushedTexture()
     if pushed then
