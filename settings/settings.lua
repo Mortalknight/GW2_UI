@@ -387,6 +387,7 @@ local function loadDropDown(scrollFrame)
             slot.optionDisplayName = nil
         else
             if scrollFrame.data then
+             
                 if not scrollFrame.data.hasCheckbox then
                     slot.checkbutton:Hide()
                     slot.string:ClearAllPoints()
@@ -412,12 +413,15 @@ local function loadDropDown(scrollFrame)
                 slot.optionDisplayName = scrollFrame.data.options_names[idx]
 
                 if scrollFrame.data.hasCheckbox then
+                
                     local settingstable = GW.settings[scrollFrame.data.optionName]
-                    if type(settingstable[scrollFrame.data.options[idx]]) == "table" then
-                        slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]].enable)
-                    else
-                        slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]] == nil and true or settingstable[scrollFrame.data.options[idx]])
-                    end
+       
+                        if type(settingstable[scrollFrame.data.options[idx]]) == "table" then
+                            slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]].enable)
+                        else
+                            slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]] == nil and true or settingstable[scrollFrame.data.options[idx]])
+                        end
+                    
                 end
 
                 slot:Show()
@@ -666,7 +670,7 @@ local function InitPanel(panel, hasScroll)
                         else
                             of.container:Show()
                         end
-
+                        
                         GW.settings[self.optionName] = self.option
 
                         if v.isFont then
@@ -682,18 +686,29 @@ local function InitPanel(panel, hasScroll)
                         checkDependenciesOnLoad()
                     end)
                     slot.checkbutton:HookScript("OnClick", function(self)
-                        local toSet = false
-                        if self:GetChecked() then
-                            toSet = true
-                        end
+                        local toSet = self:GetChecked() and true or false
 
-                        GW.settings[self:GetParent().optionName] = toSet
+                            local optionName = self:GetParent().optionName
+                            local optionKey  = self:GetParent().option
 
-                        if v.callback then
-                            v.callback(toSet, self:GetParent().option)
-                        end
-                        --Check all dependencies on this option
-                        checkDependenciesOnLoad()
+                            -- Ensure the parent setting is a table
+                            if type(GW.settings[optionName]) ~= "table" then
+                                GW.settings[optionName] = {}
+                            end
+
+                            -- Support both boolean entries and { enable = ... } entries
+                            if type(GW.settings[optionName][optionKey]) == "table" then
+                                GW.settings[optionName][optionKey].enable = toSet
+                            else
+                                GW.settings[optionName][optionKey] = toSet
+                            end
+             
+                            if v.callback then
+                                v.callback(toSet, optionKey)
+                            end
+
+                            -- Check all dependencies on this option
+                            checkDependenciesOnLoad()
                     end)
                     slot:HookScript("OnEnter", function()
                         slot.hover:Show()
