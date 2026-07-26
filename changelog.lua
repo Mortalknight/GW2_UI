@@ -13,6 +13,14 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("10.15.0", {
+    {GW.Enum.ChangelogType.change, [=[Bags (Classic/TBC/Wrath/Mists): the bags now use their own item buttons instead of taking Blizzards multi purpose container buttons; this removes the fights with Blizzards layout and update code (anchor errors, misplaced buttons) while all behavior, settings and the resize handling stay the same]=]},
+    {GW.Enum.ChangelogType.change, [=[Bank (Classic/TBC/Wrath/Mists): the bank moved onto the same own item buttons as the bags, for the main bank slots and all bank bags]=]},
+    {GW.Enum.ChangelogType.feature, [=[Bank (Classic/TBC/Wrath/Mists): the bank got its own icon size and slot spacing settings, previously it shared them with the bags; the current bag values are carried over once so nothing changes visually]=]},
+    {GW.Enum.ChangelogType.feature, [=[Bank (Classic/TBC/Wrath/Mists): new "Separate bags" option like the bags already have it - the main bank and each bank bag get their own section with a collapsible header that can be renamed via right click; also the "Reverse Bag Order" toggle of the bank applies immediately again]=]},
+    {GW.Enum.ChangelogType.feature, [=[Bags (Classic/TBC/Wrath): new "Separate keyring" option - in the combined bag view the keyring starts on its own row with a gap as separation, so it is visible that these slots do not belong to the bags]=]},
+})
+
 addChange("10.14.3", {
     {GW.Enum.ChangelogType.bug, [=[Bags (Classic/TBC/Wrath/Mists): fixed "SetPoint would result in anchor family connection" errors after opening the bags multiple times; the taken container item buttons are reset to a single clean anchor right away, since Blizzards container code only adds anchor points and the leftover mixed anchors bridged our bag frames with the container frames]=]},
     {GW.Enum.ChangelogType.bug, [=[Bags (Classic Era): the bag slot buttons sit above the keyring button again; Blizzards new bags bar relayouts the backpack button on login and on edit mode updates and pulled it out of our bag bar]=]},
