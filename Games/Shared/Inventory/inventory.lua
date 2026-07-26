@@ -564,9 +564,14 @@ local function reskinBagBar(b, ha)
     norm:SetTexture(nil)
     norm:SetAlpha(0)
     if b.NormalTexture then
-        -- on retail the round slot ring lives on this separate parent key texture
+        -- on retail the round slot ring lives on this separate parent key texture and
+        -- the bag drop fly-in animation shows it again, keep it dead for good
         b.NormalTexture:SetTexture()
         b.NormalTexture:Hide()
+        if not b.NormalTexture.gwKilled then
+            b.NormalTexture.gwKilled = true
+            hooksecurefunc(b.NormalTexture, "Show", b.NormalTexture.Hide)
+        end
     end
 
     local pushed = b:GetPushedTexture()
