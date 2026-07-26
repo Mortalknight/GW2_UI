@@ -89,10 +89,14 @@ local function UpdateOwnContainerItemButton(button)
     button.readable = readable
 
     if GameTooltip:IsOwned(button) then
-        if info then
-            button.UpdateTooltip(button)
-        else
+        if not info then
             GameTooltip:Hide()
+        elseif button.UpdateTooltip then
+            button:UpdateTooltip()
+        elseif button.OnEnter then
+            -- the retail bank item buttons have no UpdateTooltip, their mixin
+            -- rebuilds the tooltip in OnEnter
+            button:OnEnter()
         end
     end
 
