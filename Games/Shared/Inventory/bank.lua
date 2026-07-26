@@ -12,21 +12,6 @@ local function openAllBankBags()
     end
 end
 
--- parks the blizzard bank frame off screen; we only use its open/close lifecycle
-local function parkBlizzardBank()
-    BankFrame:ClearAllPoints()
-    if GW.Mists then
-        -- the mists frame is clamped to the screen and would snap back
-        BankFrame:SetClampedToScreen(false)
-    end
-    BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    if GW.Mists then
-        BankSlotsFrame:GwKill()
-    else
-        BankSlotsFrame:Hide()
-    end
-end
-
 -- sets the bank header names in separate bags mode: custom name, bag item name or the bank default
 local function setBankHeaders(frame)
     for i = 1, NUM_BANKBAGSLOTS do
@@ -389,8 +374,6 @@ local function bank_OnShow(self)
     self:RegisterEvent("BAG_UPDATE_COOLDOWN")
     self:RegisterEvent("INVENTORY_SEARCH_UPDATE")
 
-    parkBlizzardBank()
-
     OpenAllBags(self)
     updateBagBar(self.ItemFrame)
     rescanBankContainers(self)
@@ -560,17 +543,12 @@ local function LoadBank(helpers)
     f:SetScript("OnHide", bank_OnHide)
     f.buttonClose:SetScript("OnClick", GW.Parent_Hide)
 
-    -- re-hide the BankFrame any time it gets repositioned by UIParent stuff
-    hooksecurefunc(BankFrame, "Raise", parkBlizzardBank)
+    -- make blizzards bank frame inert once, we only use its open/close lifecycle
+    inv.disableBlizzardFrame(BankFrame, true)
     if GW.Mists then
-        hooksecurefunc(BankFrame, "SetPoint", function()
-            if not BankFrame.gwSkipSetPoint then
-                BankFrame.gwSkipSetPoint = true
-                BankFrame:ClearAllPoints()
-                BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-                BankFrame.gwSkipSetPoint = false
-            end
-        end)
+        BankSlotsFrame:GwKill()
+    else
+        BankSlotsFrame:Hide()
     end
 
     -- setup movable stuff

@@ -106,13 +106,9 @@ local function setupCurrencies(f)
 end
 
 
--- blizzards combined bag view fights with our own bag frame, keep it off and parked
+-- blizzards combined bag view fights with our own bag frame; the frame itself is
+-- already made inert by the shared code, here we just keep the cvar off
 local function disableCombinedBags(f)
-    ContainerFrameCombinedBags:SetScript("OnShow", nil)
-    ContainerFrameCombinedBags:SetScript("OnHide", nil)
-    ContainerFrameCombinedBags:SetParent(GW.HiddenFrame)
-    ContainerFrameCombinedBags:ClearAllPoints()
-    ContainerFrameCombinedBags:SetPoint("BOTTOM")
     SetCVar("combinedBags", 0)
 
     local watcher = CreateFrame("Frame")

@@ -273,14 +273,35 @@ local function reskinItemButtons()
 end
 
 
-local function hookUpdateAnchors()
+-- makes a blizzard frame inert: no scripts, no events, no points - blizzards code can
+-- still show/hide it (IsBagOpen stays truthful since it only checks frame visibility),
+-- but the frame never renders or updates anything
+local function disableBlizzardFrame(frame, noRight)
+    frame:SetScript("OnShow", nil)
+    frame:SetScript("OnHide", nil)
+    frame:UnregisterAllEvents()
+    frame:ClearAllPoints()
+    if noRight then
+        -- blizzards GetContainerScale chokes on a frame without points
+        frame.GetRight = function() return 0 end
+    end
+    hooksecurefunc(frame, "SetPoint", frame.ClearAllPoints)
+end
+
+local function disableBlizzardContainers()
     for i = 1, NUM_CONTAINER_FRAMES do
         local cf = _G["ContainerFrame" .. i]
         if cf then
-            cf:ClearAllPoints()
-            cf:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-            cf:SetSize(10, 10)
+            disableBlizzardFrame(cf)
         end
+    end
+
+    local combinedBag = ContainerFrameCombinedBags
+    if combinedBag then
+        disableBlizzardFrame(combinedBag)
+        -- keeps blizzards UpdateItemLayout from erroring when first accessing a
+        -- vendor and then adding a bag
+        combinedBag:RegisterEvent("BAG_CONTAINER_UPDATE")
     end
 end
 
@@ -815,8 +836,9 @@ local function LoadInventory()
 
     BagsBar:GwKillEditMode()
 
-    -- anytime a ContainerFrame has its anchors set, we re-hide it
-    hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
+    -- make blizzards container frames inert once, we only use their open/close
+    -- lifecycle as the bag state
+    disableBlizzardContainers()
 
     -- apply the current size settings to any already created own item buttons
     reskinItemButtons()
@@ -844,6 +866,7 @@ local function LoadInventory()
     helpers.reskinBagBar = reskinBagBar
     helpers.reskinSearchBox = reskinSearchBox
     helpers.relocateSearchBox = relocateSearchBox
+    helpers.disableBlizzardFrame = disableBlizzardFrame
     helpers.layoutContainerFrame = layoutContainerFrame
     helpers.updateFreeSlots = updateFreeSlots
     helpers.snapFrameSize = snapFrameSize
