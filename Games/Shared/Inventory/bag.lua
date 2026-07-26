@@ -1,7 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 local L = GW.L
-local CommaValue = GW.CommaValue
 local UpdateMoney = GW.UpdateMoney
 local EnableTooltip = GW.EnableTooltip
 local inv
@@ -227,7 +226,7 @@ local function updateMoney(self)
 
     self.bronze:SetText(copper)
     self.silver:SetText(silver)
-    self.gold:SetText(GW.Retail and GW.GetLocalizedNumber(gold) or CommaValue(gold))
+    self.gold:SetText(GW.GetLocalizedNumber(gold))
 
     UpdateMoney()
 end
@@ -760,6 +759,39 @@ local function addBagSliderControl(rootDescription, title, config, getValueFunc,
 end
 
 
+-- skins blizzards stack split popup; the modern frame exists on all current clients,
+-- every child is guarded anyway in case a flavor differs
+local function skinStackSplit()
+    if not StackSplitFrame then
+        return
+    end
+    StackSplitFrame:GwStripTextures()
+    StackSplitFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+
+    if StackSplitFrame.OkayButton then
+        StackSplitFrame.OkayButton:GwSkinButton(false, true)
+    end
+    if StackSplitFrame.CancelButton then
+        StackSplitFrame.CancelButton:GwSkinButton(false, true)
+    end
+
+    if StackSplitFrame.RightButton then
+        GW.HandleNextPrevButton(StackSplitFrame.RightButton, "right")
+        StackSplitFrame.RightButton:SetSize(25, 25)
+        StackSplitFrame.RightButton:SetPoint("LEFT", StackSplitFrame, "CENTER", 51, 18)
+    end
+    if StackSplitFrame.LeftButton then
+        GW.HandleNextPrevButton(StackSplitFrame.LeftButton, "left")
+        StackSplitFrame.LeftButton:SetSize(25, 25)
+        StackSplitFrame.LeftButton:SetPoint("RIGHT", StackSplitFrame, "CENTER", -50, 18)
+    end
+
+    StackSplitFrame.textboxbg = StackSplitFrame:CreateTexture(nil, "BACKGROUND")
+    StackSplitFrame.textboxbg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg.png")
+    StackSplitFrame.textboxbg:SetPoint("TOPLEFT", 35, -20)
+    StackSplitFrame.textboxbg:SetPoint("BOTTOMRIGHT", -35, 55)
+end
+
 local function LoadBag(helpers)
     inv = helpers
     core.inv = helpers
@@ -792,7 +824,7 @@ local function LoadBag(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetResizeBounds(GW.Retail and 340 or 304, 340)
+    f:SetResizeBounds(340, 340)
     f:SetScript("OnSizeChanged", onBagFrameChangeSize)
     f.sizer.onResizeStop = onBagResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
@@ -983,15 +1015,15 @@ local function LoadBag(helpers)
         if GW.inWorld then
             updateMoney(self:GetParent())
         end
-        if GW.Retail then
-            GW.MoneyOnEvent()
-        end
+        GW.MoneyOnEvent()
     end)
     f.moneyFrame:RegisterEvent("PLAYER_MONEY")
     if GW.Retail then
         f.moneyFrame:RegisterEvent("ACCOUNT_MONEY")
     end
     updateMoney(f)
+
+    skinStackSplit()
 
     -- flavor specific extras once the frame is complete
     callBagModules("onLoadBag", f, core)

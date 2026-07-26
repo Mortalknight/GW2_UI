@@ -1,7 +1,6 @@
 ---@class GW2
 local GW = select(2, ...)
 local L = GW.L
-local CommaValue = GW.CommaValue
 
 local function GetItemEquipmentSetName(itemIDOrLink)
     local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
@@ -34,32 +33,68 @@ GW.RegisterItemButtonDecorator(function(button, _, itemIDOrLink)
     end
 end)
 
--- fills the three watched currency displays in the bag footer
+-- as many watched currency displays as fit between the currency button
+-- on the left and the money display on the right
+local function maxCurrencySlots(f)
+    return math.max(1, math.floor((f:GetWidth() - 273) / 60) + 1)
+end
+
+local function getCurrencyFrame(f, index)
+    local currencyFrame = f.gwCurrencyFrames[index]
+    if currencyFrame then
+        return currencyFrame
+    end
+
+    currencyFrame = CreateFrame("Button", nil, f, "GwBagWatchedCurrencyTemplate")
+    currencyFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -183 - ((index - 1) * 60), -40)
+    currencyFrame.value:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
+    currencyFrame.value:SetTextColor(1, 1, 1)
+    currencyFrame:SetScript("OnEnter", function(self)
+        if self.CurrencyIdx then
+            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+            GameTooltip:ClearLines()
+            GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+            GameTooltip:Show()
+        end
+    end)
+
+    f.gwCurrencyFrames[index] = currencyFrame
+    return currencyFrame
+end
+
+-- fills the watched currency displays in the bag footer
 local function watchCurrency(self)
+    local maxSlots = maxCurrencySlots(self)
     local watchSlot = 1
     local currencyCount = GetCurrencyListSize()
     for i = 1, currencyCount do
+        if watchSlot > maxSlots then
+            break
+        end
         local _, isHeader, _, _, isWatched, count, icon = GetCurrencyListInfo(i)
-        if not isHeader and isWatched and watchSlot < 4 then
-            local currencyFrame = self["currencyFrame" .. watchSlot]
-            currencyFrame.value:SetText(CommaValue(count))
+        if not isHeader and isWatched then
+            local currencyFrame = getCurrencyFrame(self, watchSlot)
+            currencyFrame.value:SetText(GW.GetLocalizedNumber(count))
             currencyFrame.icon:SetTexture(icon)
             currencyFrame.CurrencyIdx = i
+            currencyFrame:Show()
             watchSlot = watchSlot + 1
         end
     end
 
-    for i = watchSlot, 3 do
-        local currencyFrame = self["currencyFrame" .. i]
+    for i = watchSlot, #self.gwCurrencyFrames do
+        local currencyFrame = self.gwCurrencyFrames[i]
         currencyFrame.value:SetText("")
         currencyFrame.icon:SetTexture(nil)
         currencyFrame.CurrencyIdx = nil
+        currencyFrame:Hide()
     end
 end
 
 
 -- creates and wires the watched currency displays and the currency button
 local function setupCurrencies(f)
+    f.gwCurrencyFrames = {}
     f.currency = CreateFrame("Button", nil, f)
     f.currency:SetSize(32, 32)
     f.currency:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 2, -2)
@@ -71,24 +106,6 @@ local function setupCurrencies(f)
             ToggleCharacter("TokenFrame")
         end
     end)
-
-    local anchorX = -183
-    for i = 1, 3 do
-        local currencyFrame = CreateFrame("Button", nil, f, "GwBagWatchedCurrencyTemplate")
-        currencyFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", anchorX, -40)
-        anchorX = anchorX - 60
-        currencyFrame.value:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small)
-        currencyFrame.value:SetTextColor(1, 1, 1)
-        currencyFrame:SetScript("OnEnter", function(self)
-            if self.CurrencyIdx then
-                GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-                GameTooltip:ClearLines()
-                GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-                GameTooltip:Show()
-            end
-        end)
-        f["currencyFrame" .. i] = currencyFrame
-    end
 
     f.currency:SetScript("OnEvent", function(self)
         if GW.inWorld then
@@ -102,6 +119,7 @@ local function setupCurrencies(f)
             watchCurrency(f)
         end
     )
+    f:HookScript("OnSizeChanged", function() watchCurrency(f) end)
     watchCurrency(f)
 end
 

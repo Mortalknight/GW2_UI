@@ -22,6 +22,7 @@ addChange("10.15.0", {
     {GW.Enum.ChangelogType.change, [=[Bags & Bank (Classic/TBC/Wrath/Mists): the per game version duplicated bag, bank and inventory code moved into one shared implementation - fixes only need to be made once now; the bag bar uses blizzards real bag slot buttons on all flavors like era already did, the bag slot skin uses the era version everywhere, the bag sort keybind names resolve on every flavor and flavor extras like the mists currency display plug in as small modules]=]},
     {GW.Enum.ChangelogType.change, [=[Bags (Retail): the bags moved onto the shared implementation with own item buttons too - the reagent bag takes the extra bag bar slot the keyring uses on the classic flavors, and the retail specifics (item button skin, bag filter menus, currency display, combined bags handling) stay as retail modules on top of the shared core]=]},
     {GW.Enum.ChangelogType.feature, [=[Bank (Retail): the bank got its own icon size and slot spacing settings like the classic flavors, previously it shared them with the bags; the current bag values are carried over once so nothing changes visually]=]},
+    {GW.Enum.ChangelogType.change, [=[Bags (all): more retail goodies for every flavor - the retail styled money icons, the localized gold number format, the account money in the money tooltip updates, the skinned stack split popup and a uniform minimum frame size; the watched currency displays (retail/mists) now show as many currencies as fit the bag width instead of a fixed number]=]},
 })
 
 addChange("10.14.3", {

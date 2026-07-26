@@ -14,11 +14,15 @@ local Ticker = nil
 local warbandGold = 0
 
 local function UpdateMarketPrice()
-	return C_WowTokenPublic.UpdateMarketPrice()
+    if C_WowTokenPublic and C_WowTokenPublic.UpdateMarketPrice then
+        return C_WowTokenPublic.UpdateMarketPrice()
+    end
 end
 
 local function UpdateWarbandGold()
-	warbandGold = C_Bank.FetchDepositedMoney(Enum.BankType.Account)
+    if C_Bank and C_Bank.FetchDepositedMoney and Enum.BankType and Enum.BankType.Account then
+        warbandGold = C_Bank.FetchDepositedMoney(Enum.BankType.Account) or 0
+    end
 end
 
 local function GetGraysValue()
@@ -69,7 +73,7 @@ local function OnEvent(self, event)
 
     UpdateWarbandGold()
 
-    if not Ticker then
+    if not Ticker and C_WowTokenPublic and C_WowTokenPublic.UpdateMarketPrice then
         C_WowTokenPublic.UpdateMarketPrice()
         Ticker = C_Timer.NewTicker(60, UpdateMarketPrice)
     end
