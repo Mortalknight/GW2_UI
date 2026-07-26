@@ -55,7 +55,8 @@ local BANK_ITEM_SPACING_Y_CONFIG = {
 local CONTAINER_FRAME_SIDE_PADDING = 5
 local CONTAINER_FRAME_RIGHT_PADDING = 5
 
--- reskins an ItemButton to use GW2_UI styling
+-- reskins an ItemButton to use GW2_UI styling; one central version for every flavor,
+-- retail only parts are capability guarded
 local function reskinItemButton(b, overrideIconSize)
     if not b then return end
     local iconSize = overrideIconSize or GW.settings.BAG_ITEM_SIZE
@@ -68,8 +69,29 @@ local function reskinItemButton(b, overrideIconSize)
     b.IconBorder:SetAllPoints(b)
     b.IconBorder:SetTexture(BORDER_TEXTURE)
 
-    local norm = b:GetNormalTexture()
-    norm:SetTexture(nil)
+    if b.ClearNormalTexture then
+        b:ClearNormalTexture()
+    else
+        local norm = b:GetNormalTexture()
+        if norm then
+            norm:SetTexture(nil)
+        end
+    end
+    if b.NormalTexture then
+        b.NormalTexture:SetTexture()
+    end
+
+    if GW.Retail then
+        -- kill the retail slot background
+        if not b.ItemSlotBackground then
+            b.ItemSlotBackground = b:CreateTexture(nil, "BACKGROUND", "ItemSlotBackgroundCombinedBagsTemplate", -6)
+            b.ItemSlotBackground:SetAllPoints(b)
+        end
+        b.ItemSlotBackground:SetAlpha(0)
+    end
+    if b.Background then
+        b.Background:Hide()
+    end
 
     local high = b:GetHighlightTexture()
     high:SetAllPoints(b)
@@ -95,14 +117,23 @@ local function reskinItemButton(b, overrideIconSize)
     b.Count:GwSetFontTemplate(UNIT_NAME_FONT, GW.Enum.TextSizeType.Small, "THINOUTLINE")
     b.Count:SetJustifyH("RIGHT")
 
+    -- the templates quest texture becomes our own quest icon on every flavor,
+    -- so quest items are marked the same everywhere (the retail default)
     if b.IconQuestTexture then
-        if GW.Mists then
-            -- mists never shows blizzards quest banners, the marking comes from our own quest icon
-            b.IconQuestTexture:SetAlpha(0)
-        else
-            b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
-            b.IconQuestTexture:ClearAllPoints()
-            b.IconQuestTexture:SetPoint("CENTER", b, "CENTER", 0, 0)
+        b.IconQuestTexture:ClearAllPoints()
+        b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest.png")
+        b.IconQuestTexture:SetSize(25, 25)
+        b.IconQuestTexture:SetPoint("TOPLEFT", -7, 1)
+        b.IconQuestTexture:SetVertexColor(221 / 255, 198 / 255, 68 / 255)
+        b.IconQuestTexture:SetAlpha(1)
+        if b.UpdateQuestItem then
+            hooksecurefunc(b, "UpdateQuestItem", function()
+                b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest.png")
+            end)
+        elseif b.Refresh then --bank_slots
+            hooksecurefunc(b, "Refresh", function()
+                b.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest.png")
+            end)
         end
     end
 
@@ -117,21 +148,21 @@ local function reskinItemButton(b, overrideIconSize)
         b.junkIcon:Hide()
     end
 
+    -- scrapping only exists on retail
+    if C_Item.CanScrapItem and not b.scrapIcon then
+        b.scrapIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
+        b.scrapIcon:SetAtlas("bags-icon-scrappable")
+        b.scrapIcon:SetSize(14, 12)
+        b.scrapIcon:SetPoint("TOPLEFT", 0, 0)
+        b.scrapIcon:Hide()
+    end
+
     if not b.UpgradeIcon then
         b.UpgradeIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
         b.UpgradeIcon:SetPoint("TOPRIGHT", 7, -1)
         b.UpgradeIcon:Hide()
     end
     b.UpgradeIcon:SetSize(15, 15)
-
-    if not b.questIcon then
-        b.questIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
-        b.questIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-quest.png")
-        b.questIcon:SetSize(25, 25)
-        b.questIcon:SetPoint("TOPLEFT", -7, 1)
-        b.questIcon:SetVertexColor(221 / 255, 198 / 255, 68 / 255)
-        b.questIcon:Hide()
-    end
 
     if not b.itemlevel then
         b.itemlevel = b:CreateFontString(nil, "OVERLAY")
@@ -190,10 +221,15 @@ local function updateItemVisuals(b, overrideIconSize)
         b.Count:SetJustifyH("RIGHT")
     end
 
-    if b.IconQuestTexture and not GW.Mists then
+    if b.IconQuestTexture then
         local w, h = b.IconQuestTexture:GetSize()
-        if w ~= iconSize + 2 or h ~= iconSize + 2 then
-            b.IconQuestTexture:SetSize(iconSize + 2, iconSize + 2)
+        if w ~= 25 or h ~= 25 then
+            b.IconQuestTexture:SetSize(25, 25)
+        end
+        point, _, _, x, y = b.IconQuestTexture:GetPoint()
+        if point ~= "TOPLEFT" or x ~= -7 or y ~= 1 then
+            b.IconQuestTexture:ClearAllPoints()
+            b.IconQuestTexture:SetPoint("TOPLEFT", -7, 1)
         end
     end
 
@@ -275,7 +311,7 @@ local function RegisterItemButtonDecorator(decorator)
 end
 GW.RegisterItemButtonDecorator = RegisterItemButtonDecorator
 
-local function SetItemButtonData(button, quality, itemIDOrLink)
+local function SetItemButtonData(button, quality, itemIDOrLink, suppressOverlays)
     if not button.gwBackdrop then
         return
     end
@@ -293,27 +329,23 @@ local function SetItemButtonData(button, quality, itemIDOrLink)
 
     local bag_id = button:GetParent():GetID()
     local keyring = HAS_KEYRING and bag_id == KEYRING_CONTAINER
-    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or GW.Colors.BagTypeColors[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
+    local isReagentBag = HAS_REAGENT_BAG and bag_id == 5
+    local professionBagColors = GW.Colors.ProfessionBagColors or GW.Colors.BagTypeColors
+    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN]
+        or isReagentBag and GW.GetBagItemQualityColor(Enum.ItemQuality.Artifact)
+        or professionBagColors[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GW.settings.BAG_SHOW_ILVL and not professionColors
 
     button.bagID = bag_id
 
-    if GW.Mists and GW.settings.BAG_PROFESSION_BAG_COLOR and professionColors then
-        -- mists tints profession bags first, so an items quality color wins over it
+    if (GW.Mists or GW.Retail) and (GW.settings.BAG_PROFESSION_BAG_COLOR or isReagentBag) and professionColors then
+        -- mists and retail tint profession bags first, so an items quality color wins over it
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
 
     if itemIDOrLink then
-        local isQuestItem = select(12, C_Item.GetItemInfo(itemIDOrLink))
         if quality == nil then quality = 0 end
-
-        if isQuestItem == LE_ITEM_CLASS_QUESTITEM then
-            t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border.png")
-            button.questIcon:Show()
-        else
-            button.questIcon:Hide()
-        end
 
         -- Show junk icon if active
         local itemInfo = C_Container.GetContainerItemInfo(bag_id, button:GetID())
@@ -348,9 +380,9 @@ local function SetItemButtonData(button, quality, itemIDOrLink)
             button.__gwLastItemLink = nil
         end
 
-        -- flavor extras
+        -- flavor extras (azerite/corruption/scrap on retail, equipment set names on mists)
         for i = 1, #itemButtonDecorators do
-            itemButtonDecorators[i](button, quality, itemIDOrLink)
+            itemButtonDecorators[i](button, quality, itemIDOrLink, suppressOverlays)
         end
 
         if GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW and quality and quality > 0 then
@@ -359,18 +391,24 @@ local function SetItemButtonData(button, quality, itemIDOrLink)
         end
 
         t:Show()
+        if GetItemButtonIconTexture then
+            GetItemButtonIconTexture(button):Show()
+        end
     else
         if button.junkIcon then button.junkIcon:Hide() end
+        if button.scrapIcon then button.scrapIcon:Hide() end
         if button.UpgradeIcon then button.UpgradeIcon:Hide() end
-        if button.questIcon then button.questIcon:Hide() end
         if button.itemlevel then
             button.itemlevel:SetText("")
             button.__gwLastItemLink = nil
         end
+        if GetItemButtonIconTexture then
+            GetItemButtonIconTexture(button):Hide()
+        end
     end
 
-    if not GW.Mists and GW.settings.BAG_PROFESSION_BAG_COLOR and professionColors then
-        -- the classic flavors tint profession bags last, the tint wins over quality colors
+    if not GW.Mists and not GW.Retail and GW.settings.BAG_PROFESSION_BAG_COLOR and professionColors then
+        -- the old classic flavors tint profession bags last, the tint wins over quality colors
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end

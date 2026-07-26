@@ -19,11 +19,8 @@ local GW = select(2, ...)
 
 local allItemButtons = {}
 
--- how the templates quest texture is used per flavor:
---  banner: blizzards quest bang/border textures (tbc/wrath)
---  icon:   the retail skin repurposes the texture as our own quest icon, we only toggle it
---  hidden: the quest marking comes from the quality skins own quest icon (era, mists)
-local QUEST_DISPLAY = (GW.TBC or GW.Wrath) and TEXTURE_ITEM_QUEST_BANG and TEXTURE_ITEM_QUEST_BORDER and "banner" or GW.Retail and "icon" or "hidden"
+-- the skin repurposes the templates quest texture as our own quest icon on every
+-- flavor (the retail default), the content update here only toggles it
 
 -- blizzards cooldown helper only exists on the classic flavors
 local function updateCooldown(bagID, button)
@@ -69,27 +66,11 @@ local function UpdateOwnContainerItemButton(button)
     SetItemButtonCount(button, itemCount)
     SetItemButtonDesaturated(button, locked)
 
-    -- quest bang and border like blizzards ContainerFrame_UpdateQuestItem
+    -- toggle the quest icon (the skin owns the textures look)
     local questTexture = GetQuestTexture(button)
     if questTexture then
-        if QUEST_DISPLAY == "hidden" then
-            questTexture:Hide()
-        elseif QUEST_DISPLAY == "icon" then
-            -- the skin owns the texture, we only toggle the marking
-            local questInfo = C_Container.GetContainerItemQuestInfo(bagID, slotID)
-            questTexture:SetShown(questInfo.questID ~= nil or questInfo.isQuestItem == true)
-        else
-            local questInfo = C_Container.GetContainerItemQuestInfo(bagID, slotID)
-            if questInfo.questID and not questInfo.isActive then
-                questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG)
-                questTexture:Show()
-            elseif questInfo.questID or questInfo.isQuestItem then
-                questTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER)
-                questTexture:Show()
-            else
-                questTexture:Hide()
-            end
-        end
+        local questInfo = C_Container.GetContainerItemQuestInfo(bagID, slotID)
+        questTexture:SetShown(questInfo and (questInfo.questID ~= nil or questInfo.isQuestItem == true) or false)
     end
 
     if texture then
