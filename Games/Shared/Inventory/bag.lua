@@ -383,8 +383,8 @@ local function createBagBar(f)
     for bag_idx = 1, NUM_BAG_SLOTS do
         local b = _G["CharacterBag" .. bag_idx - 1 .. "Slot"]
         b:SetParent(f)
-        if bp.SetChecked then
-            bp:SetChecked(false)
+        if b.SetChecked then
+            b:SetChecked(false)
         end
         b:RegisterForClicks("LeftButtonUp")
         b:SetScript("OnClick", bag_OnClick)
@@ -408,8 +408,8 @@ local function createBagBar(f)
         -- steal the reagent bag slot button
         local b = CharacterReagentBag0Slot
         b:SetParent(f)
-        if bp.SetChecked then
-            bp:SetChecked(false)
+        if b.SetChecked then
+            b:SetChecked(false)
         end
         b:RegisterForClicks("LeftButtonUp")
         b:SetScript("OnClick", bag_OnClick)
@@ -913,7 +913,6 @@ local function LoadBag(helpers)
     -- anytime a ContainerFrame is shown we set the stolen backpack button back to unchecked
     if ContainerFrame_OnShow then
         hooksecurefunc("ContainerFrame_OnShow", function()
-            MainMenuBarBackpackButton:SetChecked(false)
             if MainMenuBarBackpackButton.SetChecked then
                 MainMenuBarBackpackButton:SetChecked(false)
             end

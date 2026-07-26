@@ -110,7 +110,9 @@ local function EnsureItemButton(cf, index, iconSize, opts)
 
     local bagID = cf:GetID()
     local name = "GwContainerItem" .. (bagID >= 0 and bagID or ("N" .. -bagID)) .. "_" .. index
-    button = CreateFrame(opts and opts.frameType or "Button", name, cf, opts and opts.template or "ContainerFrameItemButtonTemplate")
+    -- on retail the container item button template is based on the ItemButton
+    -- intrinsic, creating it as a plain Button would lose icon/count/border
+    button = CreateFrame(opts and opts.frameType or (GW.Retail and "ItemButton" or "Button"), name, cf, opts and opts.template or "ContainerFrameItemButtonTemplate")
     button.gwOwnItemButton = true
 
     -- the templates children are created by name on the classic flavors and by
