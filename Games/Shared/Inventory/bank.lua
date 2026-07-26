@@ -678,7 +678,7 @@ local function LoadBank(helpers)
             addBankSliderControl(rootDescription, L["Slot Spacing Y"], inv.bankItemSpacingYConfig, function() return GW.settings.BANK_ITEM_SPACING_Y end, function(value) return setBankItemSpacing("BANK_ITEM_SPACING_Y", inv.normalizeBankItemSpacingY, value) end)
             addCheck(L["Reverse Bag Order"], function() return GW.settings.BANK_REVERSE_SORT end,
                      function() GW.settings.BANK_REVERSE_SORT = not GW.settings.BANK_REVERSE_SORT; setBagBarOrder(f.ItemFrame); layoutItems(f); snapFrameSize(f) end)
-            addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; ContainerFrame_UpdateAll() end)
+            addCheck(L["Show Quality Color"], function() return GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW end, function() GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW; GW.UpdateAllOwnBagItemButtons() end)
             addCheck(L["Separate bags"], function() return GW.settings.BANK_SEPARATE_BAGS end,
                      function() local ns = not GW.settings.BANK_SEPARATE_BAGS; GW.settings.BANK_SEPARATE_BAGS = ns; layoutItems(f); snapFrameSize(f) end)
         end)

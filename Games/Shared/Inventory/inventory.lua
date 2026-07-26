@@ -262,24 +262,13 @@ local function SetItemButtonQualityForBags(button, quality)
 end
 GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 
-local function GetItemEquipmentSetName(itemIDOrLink)
-    local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
-    if equipmentSetIDs then
-        for _, equipmentSetID in ipairs(equipmentSetIDs) do
-            local equipmentSetItems = C_EquipmentSet.GetItemIDs(equipmentSetID)
-            for _, equipmentSetItemId in pairs(equipmentSetItems) do
-                if equipmentSetItemId == itemIDOrLink then
-                    local equipmentSetName = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID)
-                    if string.len(equipmentSetName) > 5 then
-                        equipmentSetName = string.sub(equipmentSetName, 1, 5)
-                    end
-                    return equipmentSetName
-                end
-            end
-        end
-    end
-    return nil
+-- flavor extras can decorate every item button after the shared quality skin ran
+-- (e.g. the equipment set name on mists), registered at file scope from the flavors
+local itemButtonDecorators = {}
+local function RegisterItemButtonDecorator(decorator)
+    itemButtonDecorators[#itemButtonDecorators + 1] = decorator
 end
+GW.RegisterItemButtonDecorator = RegisterItemButtonDecorator
 
 local function SetItemButtonData(button, quality, itemIDOrLink)
     if not button.gwBackdrop then
@@ -354,13 +343,9 @@ local function SetItemButtonData(button, quality, itemIDOrLink)
             button.__gwLastItemLink = nil
         end
 
-        -- Show equipment set name (the equipment manager exists since wrath, the option only on mists)
-        if GW.Mists and GW.settings.BAG_SHOW_EQUIPMENT_SET_NAME then
-            local equipmentSetName = GetItemEquipmentSetName(itemIDOrLink)
-            if equipmentSetName then
-                button.itemlevel:SetTextColor(255, 255, 255, 1)
-                button.itemlevel:SetText(equipmentSetName)
-            end
+        -- flavor extras
+        for i = 1, #itemButtonDecorators do
+            itemButtonDecorators[i](button, quality, itemIDOrLink)
         end
 
         if GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW and quality and quality > 0 then

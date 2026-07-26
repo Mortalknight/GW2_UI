@@ -229,16 +229,18 @@ local function ForEachOwnBagItemButton(func)
 end
 GW.ForEachOwnBagItemButton = ForEachOwnBagItemButton
 
--- the bag setting callbacks refresh via blizzards ContainerFrame_UpdateAll, which only updates
--- its own (parked) container frames - keep our visible buttons in sync; hidden ones get rebuilt
--- on the next open anyway (the function does not exist on retail anymore)
-if ContainerFrame_UpdateAll then
-    hooksecurefunc("ContainerFrame_UpdateAll", function()
-        for i = 1, #allItemButtons do
-            local button = allItemButtons[i]
-            if button:IsVisible() then
-                UpdateOwnContainerItemButton(button)
-            end
+-- central refresh for the bag/bank setting callbacks and integrations (e.g. pawn): updates
+-- all visible own item buttons and keeps blizzards (parked) container frames in sync where
+-- the function still exists; hidden buttons get rebuilt on the next open anyway
+local function UpdateAllOwnBagItemButtons()
+    if ContainerFrame_UpdateAll then
+        ContainerFrame_UpdateAll()
+    end
+    for i = 1, #allItemButtons do
+        local button = allItemButtons[i]
+        if button:IsVisible() then
+            UpdateOwnContainerItemButton(button)
         end
-    end)
+    end
 end
+GW.UpdateAllOwnBagItemButtons = UpdateAllOwnBagItemButtons

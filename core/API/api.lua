@@ -234,7 +234,7 @@ do
             return
         end
         lastRefresh = now
-        ContainerFrame_UpdateAll()
+        GW.UpdateAllOwnBagItemButtons()
     end
 
     local function OnEvent(self, event, ...)
