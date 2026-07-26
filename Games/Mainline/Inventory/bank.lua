@@ -95,15 +95,18 @@ local function reskinAccountBagBar(b)
     b.IconBorder:SetAllPoints(b)
     b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
     b.IconBorder:Show()
-    hooksecurefunc(b.IconBorder, "SetTexture", function()
-        if b.IconBorder:GetTexture() and b.IconBorder:GetTexture() > 0 and b.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
-            b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
-        end
-    end)
 
     b.SelectedTexture:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border.png")
     b.SelectedTexture:GwSetOutside()
     if not b.gwHooked then
+        b.gwHooked = true
+        -- these hooks must only be added once, the pooled tab buttons run through
+        -- this skin again on every tab refresh
+        hooksecurefunc(b.IconBorder, "SetTexture", function()
+            if b.IconBorder:GetTexture() and b.IconBorder:GetTexture() > 0 and b.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
+                b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder.png")
+            end
+        end)
         hooksecurefunc(b, "OnClick", function(self)
             for btn in self:GetParent().bankTabPool:EnumerateActive() do
                 btn.SelectedTexture:SetShown(btn:IsEnabled() and btn:IsSelected())
