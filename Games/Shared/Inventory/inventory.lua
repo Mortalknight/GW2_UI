@@ -618,6 +618,10 @@ local function snapFrameSize(f, cfs, size, paddingX, paddingY, min_height)
     if not f then
         return
     end
+    if not size or not paddingX or not paddingY then
+        -- acedb can have the profile defaults detached (logout, profile operations)
+        return
+    end
 
     local isBag = f == GwBagFrame
     local cols = isBag and f.gw_bag_cols or f.gw_bank_cols

@@ -59,6 +59,10 @@ local function layoutBankItems(f)
     local sep = GW.settings.BANK_SEPARATE_BAGS
     local row = sep and 1 or 0
 
+    if not GW.settings.BANK_ITEM_SIZE or not GW.settings.BANK_ITEM_SPACING_X or not GW.settings.BANK_ITEM_SPACING_Y then
+        -- acedb can have the profile defaults detached (logout, profile operations)
+        return
+    end
     local item_off_x = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_X
     local item_off_y = GW.settings.BANK_ITEM_SIZE + GW.settings.BANK_ITEM_SPACING_Y
 
@@ -326,7 +330,14 @@ end
 
 
 local function onBankFrameChangeSize(self, _, _, skip)
-    local cols = inv.colCount(GW.settings.BANK_ITEM_SIZE, GW.settings.BANK_ITEM_SPACING_X, self:GetWidth())
+    local size = GW.settings.BANK_ITEM_SIZE
+    local spacing = GW.settings.BANK_ITEM_SPACING_X
+    if not size or not spacing then
+        -- OnSizeChanged can fire while acedb has the profile defaults detached
+        -- (logout, profile operations) - values equal to a default read as nil then
+        return
+    end
+    local cols = inv.colCount(size, spacing, self:GetWidth())
 
     if not self.gw_bank_cols or self.gw_bank_cols ~= cols then
         self.gw_bank_cols = cols

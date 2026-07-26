@@ -79,6 +79,10 @@ local function layoutBagItems(f)
     -- in combined mode the keyring can be set off to its own rows with a gap as separation
     local keyringGap = HAS_KEYRING and not sep and GW.settings.BAG_SEPARATE_KEYRING and IsBagOpen(KEYRING_CONTAINER)
     local row = sep and 1 or 0
+    if not GW.settings.BAG_ITEM_SIZE or not GW.settings.BAG_ITEM_SPACING_X or not GW.settings.BAG_ITEM_SPACING_Y then
+        -- acedb can have the profile defaults detached (logout, profile operations)
+        return
+    end
     local item_off_x = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_X
     local item_off_y = GW.settings.BAG_ITEM_SIZE + GW.settings.BAG_ITEM_SPACING_Y
     local unfinishedRow = false
@@ -669,9 +673,17 @@ end
 
 
 local function onBagFrameChangeSize(self, _, _, skip)
-    local cols = inv.colCount(GW.settings.BAG_ITEM_SIZE, GW.settings.BAG_ITEM_SPACING_X, self:GetWidth())
-
     self.Header:SetWidth(self:GetWidth())
+
+    local size = GW.settings.BAG_ITEM_SIZE
+    local spacing = GW.settings.BAG_ITEM_SPACING_X
+    if not size or not spacing then
+        -- OnSizeChanged can fire while acedb has the profile defaults detached
+        -- (logout, profile operations) - values equal to a default read as nil then
+        return
+    end
+    local cols = inv.colCount(size, spacing, self:GetWidth())
+
     if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
         self.gw_bag_cols = cols
         if not skip then
