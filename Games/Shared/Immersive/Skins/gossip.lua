@@ -640,7 +640,7 @@ local function LoadGossipSkin()
     hooksecurefunc(GossipFrame, "Update", function()
         updateModelFrame(portraitFrame)
     end)
-    local titleText = GW.Classic and GossipFrameTitleText or (GW.Mists  or GW.TBC or GW.Wrath) and GossipFrame.TitleText or GossipFrame.TitleContainer.TitleText
+    local titleText = GW.Retail and GossipFrame.TitleContainer.TitleText or GossipFrame.TitleText
     hooksecurefunc(titleText, "SetText", function(_, txt)
         portraitFrame.npcNameText:SetText(txt)
     end)
