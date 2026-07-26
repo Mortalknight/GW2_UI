@@ -90,8 +90,12 @@ local function layoutBagItems(f)
     local col = 0
     local rev = GW.settings.BAG_REVERSE_SORT
     local sep = GW.settings.BAG_SEPARATE_BAGS
-    -- in combined mode the keyring can be set off to its own rows with a gap as separation
-    local keyringGap = HAS_KEYRING and not sep and GW.settings.BAG_SEPARATE_KEYRING and IsBagOpen(KEYRING_CONTAINER)
+    -- in combined mode the keyring (classic) or the reagent bag (retail) can be set
+    -- off to its own rows with a gap as separation
+    local extraBagGap = not sep and (
+        (HAS_KEYRING and GW.settings.BAG_SEPARATE_KEYRING and IsBagOpen(KEYRING_CONTAINER))
+        or (HAS_REAGENT_BAG and GW.settings.BAG_SEPARATE_REAGENT_BAG and f.Containers[5] and f.Containers[5].gw_num_slots > 0)
+    )
     local row = sep and 1 or 0
     if not GW.settings.BAG_ITEM_SIZE or not GW.settings.BAG_ITEM_SPACING_X or not GW.settings.BAG_ITEM_SPACING_Y then
         -- acedb can have the profile defaults detached (logout, profile operations)
@@ -146,8 +150,8 @@ local function layoutBagItems(f)
             elseif sep and not cf.shouldShow then
                 cf:Hide()
             elseif not sep then
-                if keyringGap and bag_id == 5 and not rev then
-                    -- keyring comes last: finish the bag rows and leave a gap above it
+                if extraBagGap and bag_id == 5 and not rev then
+                    -- the extra bag comes last: finish the bag rows and leave a gap above it
                     if col ~= 0 then
                         col = 0
                         row = row + 1
@@ -156,8 +160,8 @@ local function layoutBagItems(f)
                 end
                 col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off_x, item_off_y)
                 cf:Show()
-                if keyringGap and bag_id == 5 and rev then
-                    -- keyring comes first: finish its rows and leave a gap below it
+                if extraBagGap and bag_id == 5 and rev then
+                    -- the extra bag comes first: finish its rows and leave a gap below it
                     if col ~= 0 then
                         col = 0
                         row = row + 1
@@ -186,9 +190,9 @@ local function layoutBagItems(f)
         end
     end
 
-    -- with the keyring set off, the plain slots/columns row count of snapFrameSize
+    -- with the extra bag set off, the plain slots/columns row count of snapFrameSize
     -- no longer matches - store the rows the layout actually used
-    parent.gw_combined_rows = keyringGap and (row + (col > 0 and 1 or 0)) or nil
+    parent.gw_combined_rows = extraBagGap and (row + (col > 0 and 1 or 0)) or nil
 
     if GW.settings.BAG_SEPARATE_BAGS then
         setBagHeaders(parent)
@@ -1003,6 +1007,14 @@ local function LoadBag(helpers)
                          function() local ns = not GW.settings.BAG_SEPARATE_KEYRING; GW.settings.BAG_SEPARATE_KEYRING = ns; layoutItems(f); snapFrameSize(f) end)
                 keyringCheck:SetEnabled(function() return not GW.settings.BAG_SEPARATE_BAGS end)
                 keyringCheck:SetTooltip(function(tooltip, elementDescription)
+                    tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
+                    tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
+                end)
+            elseif HAS_REAGENT_BAG then
+                local reagentCheck = addCheck(L["Separate reagent bag"], function() return GW.settings.BAG_SEPARATE_REAGENT_BAG end,
+                         function() local ns = not GW.settings.BAG_SEPARATE_REAGENT_BAG; GW.settings.BAG_SEPARATE_REAGENT_BAG = ns; layoutItems(f); snapFrameSize(f) end)
+                reagentCheck:SetEnabled(function() return not GW.settings.BAG_SEPARATE_BAGS end)
+                reagentCheck:SetTooltip(function(tooltip, elementDescription)
                     tooltip:SetText(MenuUtil.GetElementText(elementDescription), 1, 1, 1)
                     tooltip:AddLine(L["Only available in the combined bag view"], 1, 1, 1, true)
                 end)

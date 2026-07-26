@@ -327,6 +327,7 @@ L["Secure"] = true
 L["Selling junk"] = true
 L["Separate bags"] = true
 L["Separate keyring"] = true
+L["Separate reagent bag"] = true
 L["Show Quality Color for Profession Bags"] = true
 L["Only available in the combined bag view"] = true
 L["New Bag Name"] = true
