@@ -17,7 +17,7 @@
     </Binding>
     <Binding category="GW2 UI" name="BANK_SORT" runOnUp="true">
         PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
-        C_Container.SortBankBags()()
+        C_Container.SortBankBags()
     </Binding>
     <Binding category="GW2 UI" name="RAID_MARKER" runOnUp="true">
         GW_RaidMark_HotkeyPressed(keystate)
